@@ -75,6 +75,7 @@ export * from './read-related-posts';
 export * from './read-site';
 export * from './read-tags';
 export * from './read-teams';
+export * from './read-thumbnails';
 export * from './reader-atmosphere';
 export * from './reader-mastodon';
 export * from './site-activity-log';

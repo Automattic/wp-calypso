@@ -22,6 +22,7 @@ import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
+import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
 import { useInitializeOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
@@ -198,6 +199,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
 			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
+			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
 			<Snackbars />
 			<PageViewTracker />
 			<NavigationBlockerRegistry />

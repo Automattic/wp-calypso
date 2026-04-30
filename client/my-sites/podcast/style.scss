@@ -1,7 +1,7 @@
 @import '@wordpress/dataviews/build-style/style.css';
 @import 'calypso/components/jetpack-page-layout/admin-ui-page';
 
-body.is-section-podcast {
+body.is-section-podcasting {
 	@include admin-ui-page-layout;
 }
 
@@ -52,6 +52,134 @@ body.is-section-podcast {
 	&:last-child {
 		border-block-end: none;
 	}
+}
+
+.podcast__settings {
+	max-inline-size: 760px;
+}
+
+// Larger cover preview with manage buttons stacked to the right.
+.podcast__settings-cover .podcast-cover-image-setting {
+	width: auto;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	column-gap: 16px;
+	row-gap: 8px;
+	align-items: start;
+}
+
+.podcast__settings-cover .podcast-cover-image-setting > label,
+.podcast__settings-cover .podcast-cover-image-setting > .form-label {
+	grid-column: 1 / -1;
+	margin: 0;
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0;
+	color: inherit;
+}
+
+.podcast__settings-cover .podcast-cover-image-setting__preview {
+	float: none;
+	grid-column: 1;
+	grid-row: 2 / span 10;
+	width: 220px;
+	height: 220px;
+	margin: 0;
+	align-self: start;
+	overflow: hidden;
+}
+
+.podcast__settings-cover .podcast-cover-image-setting__img {
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	max-height: none;
+	object-fit: cover;
+	margin: 0;
+}
+
+// Empty state: turn the preview into an obvious dashed upload zone with a
+// "+" affordance, and hide the redundant "Add" button beside it.
+.podcast__settings-cover .podcast-cover-image-setting__preview.is-blank {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 4px;
+	border: 2px dashed var( --wpds-color-stroke-base-tertiary, #c3c4c7 );
+	background: var( --wpds-color-bg-surface-base-secondary, #f6f7f7 );
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+
+	&::before {
+		content: '+';
+		font-size: 28px;
+		font-weight: 400;
+		line-height: 1;
+		color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+	}
+
+	&:hover:not( :disabled ),
+	&:focus-visible {
+		border-color: var( --wpds-color-stroke-status-info-strong, #007cba );
+		background: var( --wpds-color-bg-surface-base, #fff );
+	}
+}
+
+.podcast__settings-cover .podcast-cover-image-setting__preview.is-blank
+	.podcast-cover-image-setting__placeholder {
+	font-style: normal;
+	font-size: 12px;
+	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+}
+
+.podcast__settings-cover
+	.podcast-cover-image-setting:has( .podcast-cover-image-setting__preview.is-blank )
+	.podcast-cover-image-setting__button {
+	display: none;
+}
+
+.podcast__settings-cover .podcast-cover-image-setting__button {
+	float: none;
+	grid-column: 2;
+	margin: 0;
+	align-self: start;
+	justify-self: start;
+	width: auto;
+	min-inline-size: 110px;
+}
+
+.podcast__settings-category-add {
+	align-self: flex-start;
+}
+
+.podcast__settings-issues {
+	margin: 4px 0 0;
+	padding-inline-start: 18px;
+	list-style: disc;
+}
+
+.podcast__settings-readiness .notice-banner {
+	padding: 16px;
+	font-size: 13px;
+
+	p {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.5;
+	}
+}
+
+.podcast__settings-readiness .notice-banner__title {
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.5;
+	margin-block-end: 4px;
+}
+
+.podcast__settings-readiness .notice-banner__icon-wrapper {
+	margin-block-start: 0;
+	margin-inline-end: 12px;
 }
 
 // Plan cards: bordered surface, optional corner badge that sits flush with
@@ -205,4 +333,45 @@ body.is-section-podcast {
 	color: #fff;
 	font-size: 14px;
 	font-weight: 600;
+}
+
+.podcast__submit-modal .components-modal__content {
+	max-width: 520px;
+}
+
+.podcast__submit-steps {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.podcast__submit-step {
+	padding: 16px;
+	background: var( --wpds-color-bg-surface-tertiary, #f6f7f7 );
+	border-radius: 8px;
+}
+
+.podcast__submit-step-title {
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+}
+
+.podcast__submit-step-row {
+	@media (max-width: $break-small) {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+.podcast__submit-step-field {
+	flex: 1;
+	min-width: 0;
+}
+
+.podcast__submit-copy-button {
+	min-inline-size: 8rem;
+	align-self: flex-start;
+	justify-content: flex-start;
 }

@@ -22,6 +22,7 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import FormattedHeader from 'calypso/components/formatted-header';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -90,6 +91,7 @@ const DomainSearchStep: StepType< {
 	const { __ } = useI18n();
 
 	const isCiab = dashboard === 'ciab';
+	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 
 	const storedSiteTitle = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -291,6 +293,10 @@ const DomainSearchStep: StepType< {
 	}, [ isFirstDomainFreeForFirstYear, isCiab ] );
 
 	const headerText = useMemo( () => {
+		if ( isWooHostingSolutions ) {
+			return __( 'Name your store' );
+		}
+
 		if ( isNewsletterFlow( flow ) ) {
 			return __( 'Your domain. Your identity.' );
 		}
@@ -304,9 +310,13 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Claim your space on the web' );
-	}, [ flow, isCiab, __ ] );
+	}, [ flow, isCiab, isWooHostingSolutions, __ ] );
 
 	const subHeaderText = useMemo( () => {
+		if ( isWooHostingSolutions ) {
+			return __( 'Find a .com, .shop, or .store that customers will remember.' );
+		}
+
 		if ( isNewsletterFlow( flow ) ) {
 			return __( 'Make your newsletter stand out with a custom domain.' );
 		}
@@ -323,7 +333,7 @@ const DomainSearchStep: StepType< {
 		}
 
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flow, isCiab, __ ] );
+	}, [ flow, isCiab, isWooHostingSolutions, __ ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch

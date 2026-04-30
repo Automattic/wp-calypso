@@ -645,6 +645,13 @@ const BLOCK_SUGGESTIONS = [
 	},
 ];
 
+// ---------- capabilities ----------
+
+// Off by default; consumer flips to `true` when the dependent feature ships.
+export const capabilities = {
+	supportsSplitScreen: false,
+};
+
 /**
  * Block-aware dynamic suggestions for the AM sidebar.
  *

@@ -28,7 +28,7 @@ const useAccessGate = ( className: string = DEFAULT_CLASSNAME ) => {
 		return null;
 	}
 
-	// Mirror the legacy /settings/podcasting gating so /podcast does not
+	// Mirror the legacy /settings/podcasting gating so /podcasting does not
 	// expose flows that are unsupported elsewhere in product.
 	if ( isPrivate ) {
 		return (

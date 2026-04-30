@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyAtmosphereError } from './errors';
 import type {
+	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
@@ -132,18 +133,22 @@ export interface GetAuthorFeedParams {
 	actor: string;
 	cursor?: string;
 	limit?: number;
+	filter?: AtmosphereAuthorFeedFilter;
 }
 
 export async function getAuthorFeed(
 	params: GetAuthorFeedParams
 ): Promise< AtmosphereAuthorFeedPage > {
-	const { actor, cursor, limit } = params;
+	const { actor, cursor, limit, filter } = params;
 	const query: Record< string, string > = {};
 	if ( cursor ) {
 		query.cursor = cursor;
 	}
 	if ( limit ) {
 		query.limit = String( limit );
+	}
+	if ( filter ) {
+		query.filter = filter;
 	}
 	try {
 		return ( await wpcom.req.get(

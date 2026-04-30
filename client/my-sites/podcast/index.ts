@@ -5,12 +5,13 @@ import { siteSettings } from 'calypso/my-sites/site-settings/settings-controller
 import { createPodcast } from './controller';
 
 export default function () {
-	page( '/podcast', siteSelection, sites, makeLayout, clientRender );
-	page( '/podcast/episodes', siteSelection, sites, makeLayout, clientRender );
-	page( '/podcast/distribution', siteSelection, sites, makeLayout, clientRender );
+	page( '/podcasting', siteSelection, sites, makeLayout, clientRender );
+	page( '/podcasting/episodes', siteSelection, sites, makeLayout, clientRender );
+	page( '/podcasting/distribution', siteSelection, sites, makeLayout, clientRender );
+	page( '/podcasting/settings', siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		'/podcast/:site_id',
+		'/podcasting/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,
@@ -20,7 +21,7 @@ export default function () {
 	);
 
 	page(
-		'/podcast/:section(episodes|distribution)/:site_id',
+		'/podcasting/:section(episodes|distribution|settings)/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,
