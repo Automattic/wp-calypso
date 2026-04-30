@@ -1,10 +1,10 @@
 import { readRelatedPostsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ComponentType, useEffect } from 'react';
+import { ComponentType, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
-import type { ReadRelatedPostsScope } from '@automattic/api-core';
+import type { ReadRelatedPost, ReadRelatedPostsScope } from '@automattic/api-core';
 
 export interface WithReaderRelatedPostsOwnProps {
 	siteId: number;
@@ -35,7 +35,7 @@ export function withReaderRelatedPosts( scope: ReadRelatedPostsScope ) {
 		function WithReaderRelatedPosts(
 			props: Omit< P, keyof WithReaderRelatedPostsInjectedProps > & WithReaderRelatedPostsOwnProps
 		) {
-			const { siteId, postId } = props;
+			const { siteId, postId, ...rest } = props;
 			const dispatch = useDispatch();
 			const contentWidth = readerContentWidth();
 			const { data, isError } = useQuery(
@@ -43,19 +43,24 @@ export function withReaderRelatedPosts( scope: ReadRelatedPostsScope ) {
 			);
 			const fetchedPosts = data?.posts;
 
-			useEffect( () => {
-				if ( fetchedPosts ) {
-					dispatch( receivePosts( fetchedPosts ) );
-				}
-			}, [ dispatch, fetchedPosts ] );
+			// Mirror the fetched posts into `state.reader.posts` synchronously,
+			// before rendering the wrapped component, so `RelatedPostCard`'s
+			// `getPostById` lookup resolves on the first render. A post-render
+			// effect would render placeholders for one frame on data arrival.
+			const dispatchedPostsRef = useRef< ReadRelatedPost[] | null >( null );
+			if ( fetchedPosts?.length && dispatchedPostsRef.current !== fetchedPosts ) {
+				dispatchedPostsRef.current = fetchedPosts;
+				dispatch( receivePosts( fetchedPosts ) );
+			}
 
-			if ( isError ) {
+			// Keep cached posts visible across transient refetch errors.
+			if ( isError && ! fetchedPosts ) {
 				return null;
 			}
 
 			const posts = fetchedPosts?.map( ( p ) => p.global_ID );
 
-			return <WrappedComponent { ...( props as unknown as P ) } posts={ posts } />;
+			return <WrappedComponent { ...( rest as unknown as P ) } posts={ posts } />;
 		}
 
 		WithReaderRelatedPosts.displayName = `withReaderRelatedPosts(${ scope })(${ displayName })`;
