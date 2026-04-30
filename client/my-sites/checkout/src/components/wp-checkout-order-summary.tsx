@@ -172,7 +172,7 @@ function CheckoutSummaryPriceList() {
 	return (
 		<>
 			<CheckoutSummaryTitle className="wp-checkout-order-summary__section-title">
-				<span>{ translate( 'Your order' ) }</span>
+				<span>{ translate( 'Summary' ) }</span>
 			</CheckoutSummaryTitle>
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
 			<CheckoutSummaryAmountWrapper className="wp-checkout-order-summary__amount-wrapper">
