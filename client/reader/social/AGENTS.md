@@ -152,15 +152,23 @@ Surfaces consuming `getThreadUrl` (slice 5): the timestamp anchor in
 count, and `<PostCardHeader>`'s reply-context preface.
 
 Surfaces consuming `getProfileUrl` (slice 6): `<PostCardHeader>`'s author
-chip, `<PostCardHeader>`'s repost preface (the reposter name), and
-`<PostCardBody>` for inline `<a data-id>` @-mention anchors. The body
-component intercepts the click, reads `data-id`, calls `getProfileUrl({ id, did })`
-with the same value in both fields, and routes via `page()` when the
-resolver returns an in-app URL. Modifier-clicks (cmd/ctrl/middle/shift/alt)
-always pass through. When `data-id` is present but the resolver returns
-null the click falls through to the external href AND the body fires a
-`calypso_reader_<source>_timeline_mention_unresolved` Tracks event so a
-backend↔frontend desync is observable in dashboards.
+chip, `<PostCardHeader>`'s repost preface (the reposter name),
+`<PostCardBody>` for inline `<a data-id>` @-mention anchors in post
+content, and `<SocialProfileCard>` for inline `<a data-id>` @-mention
+anchors in author bios. The body and profile-card components intercept
+the click, read `data-id`, call `getProfileUrl({ id, handle, did })` with
+the same value in all three fields, and route via `page()` when the
+resolver returns an in-app URL. The three-field shape lets per-protocol
+resolvers pick whichever they understand and validate: atmosphere's
+resolver tries `handle` (`HANDLE_RE`) then `did` (`DID_RE`); Mastodon's
+reads `id`. Backends stamp either a DID (atmosphere, when known) or a
+numeric account id (Mastodon), and atmosphere falls back to a handle in
+`data-id` when no DID is available. Modifier-clicks (cmd/ctrl/middle/
+shift/alt) always pass through. When `data-id` is present but the
+resolver returns null the click falls through to the external href AND
+the body/profile-card fires a
+`calypso_reader_<source>_timeline_mention_unresolved` Tracks
+event so a backend↔frontend desync is observable in dashboards.
 
 When the resolver returns a string, the click target is in-app (same tab, no
 `rel`). When it returns `null` (or the resolver isn't set), the slice-4
@@ -179,8 +187,9 @@ Allow-list shape:
 - `ALLOWED_TAGS: ['p', 'br', 'a']` for post content (extend cautiously for new protocols).
 - `ALLOWED_TAGS: ['p', 'br', 'a', 'span']` for profile bios (Mastodon emits `<span>` mention scaffolding).
 - `ALLOWED_ATTR` for post content: `href`, `rel`, `target`, `data-id`. The `data-id` attribute carries the protocol's stable author identifier on @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
-- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`.
-- `ALLOW_DATA_ATTR: false` on post content. DOMPurify allows every `data-*` attribute by default; we restrict to the explicit allow-list above so a future backend change can't smuggle a new `data-*` attribute (e.g. `data-tracking`) through to the DOM.
+- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`. Bios carry the same @-mention `data-id` contract as post content; `<SocialProfileCard>` intercepts bio mention clicks via the same pattern as `<PostCardBody>`.
+- `ALLOW_DATA_ATTR: false` on both post content and profile bios. DOMPurify allows every `data-*` attribute by default; we restrict to the explicit allow-list above so a future backend change can't smuggle a new `data-*` attribute (e.g. `data-tracking`) through to the DOM.
+- `ADD_URI_SAFE_ATTR: ['data-id']` on both post content and profile bios. DOMPurify scheme-checks every attribute value containing a colon and would otherwise drop `data-id="did:plc:…"` for atmosphere DIDs as an unknown URI scheme. Use `ADD_URI_SAFE_ATTR` (extends DOMPurify's defaults) rather than `URI_SAFE_ATTRIBUTES` (replaces them and would drop `xml:lang`, `xlink:href`, etc.). Don't switch to `ALLOW_UNKNOWN_PROTOCOLS: true` — that would also loosen `href` validation.
 - DOMPurify's default scheme allow-list strips `javascript:` / `data:` / etc. on `href`. Don't extend it.
 - An `afterSanitizeAttributes` hook forces `rel="nofollow noopener noreferrer"` on any `<a target="_blank">` that survives sanitisation. Belt-and-suspenders against window-opener leaks if upstream ever drops the rel attribute.
 

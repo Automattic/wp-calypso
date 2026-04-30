@@ -44,7 +44,13 @@ export function PostCardBody( { post }: PostCardBodyProps ) {
 		if ( ! dataId ) {
 			return;
 		}
-		const inAppUrl = analytics?.getProfileUrl?.( { id: dataId, did: dataId } ) ?? null;
+		// Set all three fields to the data-id value: per-protocol resolvers
+		// pick whichever they understand and validate. Atmosphere validates
+		// handle then DID; Mastodon reads `id`. The backend stamps either a
+		// DID (atmosphere) or a numeric account id (Mastodon) when available
+		// and falls back to a handle on atmosphere when no DID is known.
+		const inAppUrl =
+			analytics?.getProfileUrl?.( { id: dataId, handle: dataId, did: dataId } ) ?? null;
 		if ( inAppUrl ) {
 			event.preventDefault();
 			page( inAppUrl );

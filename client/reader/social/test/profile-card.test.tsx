@@ -1,8 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { SocialAnalyticsProvider } from '../components/post-card/analytics-context';
 import { SocialProfileCard } from '../profile-card';
+
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
+const pageMock = jest.mocked( page );
 
 describe( 'SocialProfileCard', () => {
 	it( 'renders avatar, stats, and bio', () => {
@@ -224,6 +230,183 @@ describe( 'SocialProfileCard', () => {
 		const bio = container.querySelector( '.social-profile-card__bio' );
 		expect( bio?.querySelector( 'p' )?.textContent ).toBe( 'rich' );
 		expect( bio?.textContent ).not.toContain( 'plain' );
+	} );
+
+	it( 'preserves DID-shaped data-id on @-mention anchors in the bio', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/profile/did:plc:bobbobbobbobbobbobbobbob"' +
+					' data-id="did:plc:bobbobbobbobbobbobbobbob">@bob.bsky.social</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', 'did:plc:bobbobbobbobbobbobbobbob' );
+	} );
+
+	it( 'preserves handle-shaped data-id on @-mention anchors in the bio', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+					' data-id="alice.bsky.social">@alice.bsky.social</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', 'alice.bsky.social' );
+	} );
+
+	it( 'strips arbitrary data-* attributes from bio anchors', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://example.test/" data-id="42"' +
+					' data-tracking="x" data-evil="payload">y</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', '42' );
+		expect( link?.hasAttribute( 'data-tracking' ) ).toBe( false );
+		expect( link?.hasAttribute( 'data-evil' ) ).toBe( false );
+	} );
+} );
+
+describe( 'SocialProfileCard — bio mention click routing', () => {
+	const onClick = jest.fn();
+
+	function renderInsideProvider(
+		bioHtml: string,
+		getProfileUrl: ( ref: { id?: string | null; did?: string | null } ) => string | null
+	) {
+		return render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 7,
+					onClick,
+					getProfileUrl,
+				} }
+			>
+				<SocialProfileCard
+					bioHtml={ bioHtml }
+					statsLabel="Profile stats"
+					stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+				/>
+			</SocialAnalyticsProvider>
+		);
+	}
+
+	beforeEach( () => {
+		pageMock.mockClear();
+		onClick.mockClear();
+	} );
+
+	it( 'routes the click in-app when data-id resolves to an in-app URL', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/profile/did:plc:abc"' +
+				' data-id="did:plc:abc">@bob.bsky.social</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@bob.bsky.social' ) );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/profile/did:plc:abc' );
+	} );
+
+	it( 'leaves anchors without data-id alone (no in-app routing)', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( () => '/reader/atmosphere/7/profile/anything' );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/hashtag/SFGiants">#SFGiants</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '#SFGiants' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+		expect( getProfileUrl ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fires *_mention_unresolved Tracks when data-id is present but resolver returns null', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( () => null );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/profile/bogus" data-id="bogus">@bogus</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@bogus' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_mention_unresolved',
+			expect.objectContaining( { connection_id: 7, data_id: 'bogus' } )
+		);
+	} );
+
+	it( 'passes through modifier-clicks (cmd) so users can open in a new tab', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/profile/did:plc:abc"' +
+				' data-id="did:plc:abc">@bob.bsky.social</a></p>',
+			getProfileUrl
+		);
+		await user.keyboard( '[MetaLeft>]' );
+		await user.click( getByText( '@bob.bsky.social' ) );
+		await user.keyboard( '[/MetaLeft]' );
+		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'passes data-id as handle, did, and id so atmosphere-style resolvers can validate', async () => {
+		// Regression: bios on the atmosphere profile page render mention
+		// anchors stamped with the *handle* in data-id (e.g. "alice.bsky.social")
+		// when the backend can't resolve a DID. Atmosphere's resolver validates
+		// `ref.handle` against HANDLE_RE first; if the click handler only sent
+		// the value as `did`, the resolver returned null and the click escaped
+		// to bsky.app. Assert the call site populates all three fields so any
+		// per-protocol resolver picks whichever it understands.
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+			ref.handle ? `/reader/atmosphere/7/profile/${ ref.handle }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+				' data-id="alice.bsky.social">@alice</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( getProfileUrl ).toHaveBeenCalledWith( {
+			id: 'alice.bsky.social',
+			handle: 'alice.bsky.social',
+			did: 'alice.bsky.social',
+		} );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/profile/alice.bsky.social' );
+	} );
+
+	it( 'is a no-op when no analytics provider is in scope (slim layout)', async () => {
+		const user = userEvent.setup();
+		const { getByText } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+					' data-id="alice.bsky.social">@alice</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
 	} );
 } );
 

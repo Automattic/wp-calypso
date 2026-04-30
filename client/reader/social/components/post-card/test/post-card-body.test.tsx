@@ -116,6 +116,29 @@ describe( 'PostCardBody', () => {
 			);
 		} );
 
+		it( 'passes data-id as handle, did, and id so atmosphere-style resolvers can validate', async () => {
+			// Regression: when the backend stamps a *handle* in data-id (no DID
+			// available), atmosphere's resolver only validates `ref.handle`
+			// against HANDLE_RE — the click handler must populate all three
+			// fields so the resolver picks whichever it understands.
+			const user = userEvent.setup();
+			const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+				ref.handle ? `/reader/atmosphere/7/profile/${ ref.handle }` : null
+			);
+			const { getByText } = renderWithAnalytics(
+				'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+					' data-id="alice.bsky.social">@alice</a></p>',
+				getProfileUrl
+			);
+			await user.click( getByText( '@alice' ) );
+			expect( getProfileUrl ).toHaveBeenCalledWith( {
+				id: 'alice.bsky.social',
+				handle: 'alice.bsky.social',
+				did: 'alice.bsky.social',
+			} );
+			expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/profile/alice.bsky.social' );
+		} );
+
 		it( 'passes through modifier-clicks (cmd) so users can open in a new tab', async () => {
 			const user = userEvent.setup();
 			const getProfileUrl = jest.fn( ( ref ) =>
