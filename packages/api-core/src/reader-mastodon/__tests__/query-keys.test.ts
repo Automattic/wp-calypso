@@ -34,3 +34,26 @@ describe( 'readerMastodonKeys profile keys', () => {
 		] );
 	} );
 } );
+
+describe( 'readerMastodonKeys.authorFeed filter dimension', () => {
+	it( 'includes the filter when set', () => {
+		expect( readerMastodonKeys.authorFeed( 7, '108020', 'posts_no_replies' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'profile-feed',
+			7,
+			'108020',
+			'posts_no_replies',
+		] );
+	} );
+
+	it( 'omits the filter slot when undefined', () => {
+		expect( readerMastodonKeys.authorFeed( 7, '108020' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'profile-feed',
+			7,
+			'108020',
+		] );
+	} );
+} );
