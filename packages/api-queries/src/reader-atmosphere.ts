@@ -7,6 +7,7 @@ import {
 	getConnections,
 	getThread,
 	getTimeline,
+	isValidHashtag,
 	readerAtmosphereKeys,
 } from '@automattic/api-core';
 import {
@@ -210,7 +211,7 @@ export const atmosphereTagFeedInfiniteQuery = ( connectionId: number, hashtag: s
 			getAtmosphereTagFeed( { connectionId, hashtag: canonicalHashtag, cursor: pageParam } ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
-		enabled: connectionId > 0 && canonicalHashtag.length > 0,
+		enabled: connectionId > 0 && isValidHashtag( canonicalHashtag ),
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {
