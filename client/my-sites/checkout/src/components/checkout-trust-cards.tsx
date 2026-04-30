@@ -25,6 +25,13 @@ const TrustCardsRow = styled.div`
 		grid-template-columns: repeat( 3, 1fr );
 		gap: 24px;
 		padding: 0 40px 48px;
+
+		/* When the refund card is hidden, keep the remaining two cards centered
+		   at the same per-card width as the 3-column layout. */
+		&:has( > :nth-child( 2 ):last-child ) {
+			grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+			max-width: 880px;
+		}
 	}
 `;
 
