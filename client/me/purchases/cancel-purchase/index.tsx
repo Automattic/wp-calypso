@@ -1,3 +1,4 @@
+import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
@@ -50,7 +51,7 @@ import {
 	cancelAndRefundPurchase,
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
-import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
+import { getMutationFlowType, getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
@@ -343,7 +344,58 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 	};
 
+	removePurchase = async ( purchase: Purchases.Purchase ) => {
+		const { translate } = this.props;
+		try {
+			await removePurchaseRequest( purchase.id );
+			return {
+				success: true,
+				message: translate( '%(purchaseName)s was removed from your account.', {
+					args: { purchaseName: getName( purchase ) },
+				} ),
+			};
+		} catch ( error ) {
+			return {
+				success: false,
+				error:
+					( error as Error ).message ??
+					translate(
+						'There was a problem removing %(purchaseName)s. Please try again later or contact support.',
+						{ args: { purchaseName: getName( purchase ) } }
+					),
+			};
+		}
+	};
+
+	/**
+	 * Returns true when the user clicked Remove on Purchase Settings AND the
+	 * purchase is non-refundable. In that case the legacy flow should call
+	 * DELETE rather than disable-auto-renew (the previous fallthrough). Gated
+	 * by the `purchases/split-cancel-remove` flag because it changes
+	 * user-visible post-action state (different endpoint, deleted row vs.
+	 * expiring row).
+	 *
+	 * Refundable purchases continue to flow through `cancelAndRefund` so the
+	 * user still receives their refund — `getMutationFlowType` returns
+	 * `CANCEL_WITH_REFUND` in that case.
+	 */
+	isLegacyRemoveDeleteFlow = ( purchase: Purchases.Purchase ) => {
+		if ( ! config.isEnabled( 'purchases/split-cancel-remove' ) ) {
+			return false;
+		}
+		if ( this.props.intent !== 'remove' ) {
+			return false;
+		}
+		if ( hasAmountAvailableToRefund( purchase ) ) {
+			return false;
+		}
+		return getMutationFlowType( 'remove', purchase ) === CANCEL_FLOW_TYPE.REMOVE;
+	};
+
 	submitCancelAndRefundPurchase = async ( purchase: Purchases.Purchase ) => {
+		if ( this.isLegacyRemoveDeleteFlow( purchase ) ) {
+			return await this.removePurchase( purchase );
+		}
 		const refundable = hasAmountAvailableToRefund( purchase );
 		if ( refundable ) {
 			return await this.cancelAndRefund( purchase );
@@ -372,6 +424,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		try {
 			const isAutoRenewIntent = this.state.cancelIntent === 'autorenew';
+			const isRemoveDeleteFlow = this.isLegacyRemoveDeleteFlow( this.props.purchase );
 			const result = isAutoRenewIntent
 				? await this.cancelPurchase( this.props.purchase )
 				: await this.submitCancelAndRefundPurchase( this.props.purchase );
@@ -383,17 +436,25 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
 				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
-				if ( refundable ) {
+				if ( isRemoveDeleteFlow ) {
+					invokeSurvicateEvent( 'purchaseRemoved' );
+				} else if ( refundable ) {
 					invokeSurvicateEvent( 'purchaseRefunded' );
 				} else {
 					invokeSurvicateEvent( 'purchaseCancelled' );
 				}
-				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
-					this.props.siteSlug,
-					this.props.purchaseId
-				);
+				// After DELETE the purchase row no longer exists, so manage-purchase
+				// would 404. Redirect straight to the purchases list instead.
 				const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
-				page.redirect( managePurchaseUrl ?? backupRedirect );
+				if ( isRemoveDeleteFlow ) {
+					page.redirect( backupRedirect );
+				} else {
+					const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+						this.props.siteSlug,
+						this.props.purchaseId
+					);
+					page.redirect( managePurchaseUrl ?? backupRedirect );
+				}
 			} else {
 				this.props.errorNotice( result.error );
 			}
