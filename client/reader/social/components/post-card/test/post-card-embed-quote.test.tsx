@@ -181,8 +181,8 @@ describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
 		expect( links.length ).toBeGreaterThanOrEqual( 2 );
 		const bodyLink = links.find( ( a ) => a.getAttribute( 'href' ) === 'https://example.com' );
 		expect( bodyLink ).toBeDefined();
-		// No nested anchor structure: the inline body link's nearest <a> ancestor is itself.
-		expect( bodyLink!.closest( 'a' ) ).toBe( bodyLink );
+		// No nested anchor structure: the inline body link has no <a> ancestor.
+		expect( bodyLink!.parentElement?.closest( 'a' ) ?? null ).toBeNull();
 	} );
 
 	it( 'does not fire _quote_clicked when an inner body link is clicked', async () => {
