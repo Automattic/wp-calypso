@@ -35,22 +35,33 @@ $omnibar-highlight-color: #7b90ff;
 		position: relative;
 	}
 
-	.components-button.omnibar__menu {
+	.omnibar__menu {
+		display: inline-flex;
+		align-items: center;
 		height: var( --omnibar-height );
 		padding: 0 12px;
 		color: $omnibar-text-color;
 		background-color: transparent;
 		font-size: $omnibar-font-size;
 		line-height: var( --omnibar-height );
+		border: 0;
 		border-radius: 0;
+		text-decoration: none;
+		transition: none;
+		cursor: pointer;
 
 		&:hover,
 		&:focus,
 		&:active,
 		&[aria-expanded='true'] {
 			background-color: $omnibar-submenu-background;
+			color: $omnibar-text-color;
 			box-shadow: none;
 			outline: none;
+		}
+
+		svg {
+			fill: currentColor;
 		}
 
 		@media ( min-width: 782px ) {
@@ -89,10 +100,6 @@ $omnibar-highlight-color: #7b90ff;
 				color: $omnibar-highlight-color;
 				box-shadow: none;
 				outline: none;
-			}
-
-			svg {
-				fill: currentColor;
 			}
 		}
 	}

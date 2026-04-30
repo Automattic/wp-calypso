@@ -1,5 +1,5 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { Stack } from '@wordpress/ui';
 import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
 
@@ -46,14 +46,14 @@ export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 			node={ {
 				...node,
 				render: ( { title, meta } ) => (
-					<HStack spacing={ 1 }>
+					<Stack direction="row" gap="xs" align="center">
 						<span>{ title }</span>
 						{ meta?.subtitle && (
 							<span style={ { opacity: meta.subtitle !== '0' ? undefined : '0.5' } }>
 								{ meta.subtitle }
 							</span>
 						) }
-					</HStack>
+					</Stack>
 				),
 			} }
 		/>
