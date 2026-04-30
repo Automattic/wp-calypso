@@ -86,6 +86,7 @@ import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
 import nextStep from './next-step';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
+import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
 import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { CancelPurchaseState } from './types';
 import type {
@@ -411,6 +412,13 @@ function CancelPurchaseInner() {
 		error: offerApplyError,
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
+
+	const { isPending: isMutationPending, fireMutationOnConfirm } = useCancelMutationOnConfirm( {
+		purchase,
+		cancelAndRefundMutation,
+		removePurchaseMutator,
+		destinationRoute: purchasesRoute.to ?? '/me/billing/purchases',
+	} );
 
 	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
 
@@ -741,6 +749,116 @@ function CancelPurchaseInner() {
 		} ) );
 	};
 
+	const cancelAllMarketplaceSubscriptions = () => {
+		const cancelAndRefundActiveSubscriptions: Purchase[] = [];
+		const cancelActiveSubscriptions: Purchase[] = [];
+		const marketplaceSubscriptions = getActiveMarketplaceSubscriptions();
+		marketplaceSubscriptions.forEach( ( subscription ) => {
+			hasAmountAvailableToRefund( subscription )
+				? cancelAndRefundActiveSubscriptions.push( subscription )
+				: cancelActiveSubscriptions.push( subscription );
+		} );
+		cancelAndRefundActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
+			cancelAndRefundMutation.mutate(
+				{
+					purchaseId: marketplaceSubscription.ID,
+					options: {
+						product_id: marketplaceSubscription.product_id,
+						cancel_bundled_domain: false,
+					},
+				},
+				{
+					onError: ( error: Error ) => {
+						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
+					},
+				}
+			);
+		} );
+		cancelActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
+			setPurchaseAutoRenewMutation.mutate(
+				{ purchaseId: marketplaceSubscription.ID, autoRenew: false },
+				{
+					onError: () => {
+						const purchaseName = marketplaceSubscription.product_name;
+						createErrorNotice(
+							sprintf(
+								/* translators: %(purchaseName)s is the name of the product that was purchased. */
+								__(
+									'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
+								),
+								{ purchaseName }
+							),
+							{ type: 'snackbar' }
+						);
+						setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
+					},
+				}
+			);
+		} );
+	};
+
+	// Mirrors the survey-submit decision so the same effective flow is
+	// available before the mutation fires.
+	const computeEffectiveFlowType = (
+		cancelIntent: CancelPurchaseState[ 'cancelIntent' ]
+	): CancelFlowType => {
+		if ( intent ) {
+			return mutationFlowType;
+		}
+		if ( cancelIntent === 'refund' ) {
+			return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		}
+		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND && showRefundEligibilityNotice ) {
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+		return mutationFlowType;
+	};
+
+	// Wraps the hook's mutation-fire with the success/error UX
+	// (snackbar, Survicate, marketplace cleanup) that submitRemovePurchase
+	// and submitCancelAndRefundPurchase otherwise own on the survey-submit path.
+	const fireMutationFromConfirm = (
+		effectiveFlowType: CancelFlowType,
+		cancelBundledDomain?: boolean
+	) => {
+		fireMutationOnConfirm( effectiveFlowType, cancelBundledDomain )
+			.then( () => {
+				if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
+					if ( purchase.is_plan ) {
+						cancelAllMarketplaceSubscriptions();
+					}
+					createSuccessNotice( __( 'Your refund has been processed and your purchase removed.' ), {
+						type: 'snackbar',
+					} );
+					invokeSurvicateEvent( 'purchaseRefunded' );
+				} else {
+					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+					createSuccessNotice(
+						sprintf(
+							/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") and %(siteName)s is a domain name */
+							__( '%(productName)s was removed from %(siteName)s.' ),
+							{
+								productName: purchaseName,
+								siteName: purchase.domain,
+							}
+						),
+						{ type: 'snackbar' }
+					);
+					invokeSurvicateEvent( 'purchaseRemoved' );
+				}
+			} )
+			.catch( ( error: Error ) => {
+				createErrorNotice( error.message, { type: 'snackbar' } );
+			} );
+	};
+
+	// Returns true if the flag-gated mutation-on-confirm path applies for
+	// the given flow. CANCEL_AUTORENEW keeps the trunk in-place flow.
+	const shouldFireMutationOnConfirm = ( effectiveFlowType: CancelFlowType ): boolean =>
+		config.isEnabled( 'purchases/split-cancel-remove' ) &&
+		( effectiveFlowType === CANCEL_FLOW_TYPE.REMOVE ||
+			effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
+
 	const onCancellationComplete = () => {
 		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
 			cancellation_flow: flowType,
@@ -748,6 +866,10 @@ function CancelPurchaseInner() {
 			is_atomic: site?.is_wpcom_atomic ?? false,
 			user_lang: locale,
 		} );
+		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
+		if ( shouldFireMutationOnConfirm( effectiveFlowType ) ) {
+			fireMutationFromConfirm( effectiveFlowType, state.cancelBundledDomain ?? false );
+		}
 		setState( ( state ) => ( {
 			...state,
 			confirmationPassed: true,
@@ -786,6 +908,10 @@ function CancelPurchaseInner() {
 				is_atomic: site?.is_wpcom_atomic ?? false,
 				user_lang: locale,
 			} );
+			const effectiveFlowType = computeEffectiveFlowType( cancelIntent );
+			if ( shouldFireMutationOnConfirm( effectiveFlowType ) ) {
+				fireMutationFromConfirm( effectiveFlowType );
+			}
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,
@@ -935,54 +1061,6 @@ function CancelPurchaseInner() {
 	const activeSubscriptions = getActiveMarketplaceSubscriptions();
 	const shouldHandleMarketplaceSubscriptions = () => {
 		return activeSubscriptions?.length > 0;
-	};
-
-	const cancelAllMarketplaceSubscriptions = () => {
-		const cancelAndRefundActiveSubscriptions: Purchase[] = [];
-		const cancelActiveSubscriptions: Purchase[] = [];
-		const marketplaceSubscriptions = getActiveMarketplaceSubscriptions();
-		marketplaceSubscriptions.forEach( ( subscription ) => {
-			hasAmountAvailableToRefund( subscription )
-				? cancelAndRefundActiveSubscriptions.push( subscription )
-				: cancelActiveSubscriptions.push( subscription );
-		} );
-		cancelAndRefundActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
-			cancelAndRefundMutation.mutate(
-				{
-					purchaseId: marketplaceSubscription.ID,
-					options: {
-						product_id: marketplaceSubscription.product_id,
-						cancel_bundled_domain: false,
-					},
-				},
-				{
-					onError: ( error: Error ) => {
-						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
-					},
-				}
-			);
-		} );
-		cancelActiveSubscriptions.forEach( ( marketplaceSubscription ) => {
-			setPurchaseAutoRenewMutation.mutate(
-				{ purchaseId: marketplaceSubscription.ID, autoRenew: false },
-				{
-					onError: () => {
-						const purchaseName = marketplaceSubscription.product_name;
-						createErrorNotice(
-							sprintf(
-								/* translators: %(purchaseName)s is the name of the product that was purchased. */
-								__(
-									'There was a problem canceling %(purchaseName)s. Please try again later or contact support.'
-								),
-								{ purchaseName }
-							),
-							{ type: 'snackbar' }
-						);
-						setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
-					},
-				}
-			);
-		} );
 	};
 
 	const submitCancelAndRefundPurchase = ( purchase: Purchase ) => {
@@ -1191,6 +1269,15 @@ function CancelPurchaseInner() {
 			) {
 				effectiveFlowType = CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 			}
+		}
+
+		// Flag-on path: the mutation already fired at confirm-click via
+		// fireMutationFromConfirm. The success notice and navigation cleanup
+		// are owned by that helper; here we only need to leave the cancel
+		// flow once the user finishes (or skips) the survey.
+		if ( shouldFireMutationOnConfirm( effectiveFlowType ) ) {
+			navigate( { to: purchasesRoute.to } );
+			return;
 		}
 
 		switch ( effectiveFlowType ) {
@@ -1458,12 +1545,12 @@ function CancelPurchaseInner() {
 			atomicRevertOnClickCheckTwo={ atomicRevertOnClickCheckTwo }
 			atomicTransfer={ atomicTransfer }
 			cancelBundledDomain={ state.cancelBundledDomain }
-			cancellationInProgress={ state.isLoading }
+			cancellationInProgress={ state.isLoading || isMutationPending }
 			cancellationOffer={ cancellationOffer }
 			intent={ intent }
 			clickNext={ clickNext }
 			closeDialog={ closeDialog }
-			disableButtons={ state.isLoading }
+			disableButtons={ state.isLoading || isMutationPending }
 			downgradeClick={ downgradeClick }
 			downgradePlan={ downgradePlan }
 			flowType={ flowType }

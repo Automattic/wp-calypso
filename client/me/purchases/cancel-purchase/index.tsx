@@ -328,6 +328,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		} else {
 			// For direct cancellations (no domain options step), show survey directly
 			this.setState( { surveyShown: true } );
+			if ( this.shouldFireMutationOnConfirm() ) {
+				this.fireMutationFromConfirm();
+			}
 		}
 	};
 
@@ -341,6 +344,51 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			cancelBundledDomain: domainOptions.cancelBundledDomain,
 			confirmCancelBundledDomain: domainOptions.confirmCancelBundledDomain,
 		} );
+		if ( this.shouldFireMutationOnConfirm() ) {
+			this.fireMutationFromConfirm();
+		}
+	};
+
+	// True when the flag-gated mutation-on-confirm path applies. CANCEL_AUTORENEW
+	// keeps the trunk in-place flow (the purchase is not deleted, so there is
+	// no eventual-consistency window to manage).
+	shouldFireMutationOnConfirm = (): boolean => {
+		if ( ! config.isEnabled( 'purchases/split-cancel-remove' ) ) {
+			return false;
+		}
+		const flowType = this.getCancelFlowType( this.props.purchase );
+		return flowType === CANCEL_FLOW_TYPE.REMOVE || flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+	};
+
+	// Fire the cancel/remove mutation when the user confirms (the
+	// purchases/split-cancel-remove behavior). Mirrors onSurveyComplete's
+	// mutation block minus the page.redirect — navigation moves to the
+	// survey-submit handler so the user stays on the survey while the
+	// mutation settles.
+	fireMutationFromConfirm = async () => {
+		this.setState( { isLoading: true } );
+		try {
+			const result = await this.submitCancelAndRefundPurchase( this.props.purchase );
+			if ( result.success ) {
+				const refundable = hasAmountAvailableToRefund( this.props.purchase );
+				await this.handleMarketplaceSubscriptions( refundable );
+				this.props.refreshSitePlans( this.props.purchase.siteId );
+				this.props.clearPurchases();
+				this.props.successNotice( result.message, {
+					displayOnNextPage: true,
+					duration: 10000,
+				} );
+				invokeSurvicateEvent( refundable ? 'purchaseRefunded' : 'purchaseCancelled' );
+			} else {
+				this.props.errorNotice( result.error );
+				this.setState( { surveyShown: false, cancelIntent: null } );
+			}
+		} catch ( error ) {
+			this.props.errorNotice( ( error as Error ).message );
+			this.setState( { surveyShown: false, cancelIntent: null } );
+		} finally {
+			this.setState( { isLoading: false } );
+		}
 	};
 
 	cancelPurchase = async ( purchase: Purchases.Purchase ) => {
@@ -471,6 +519,20 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	onSurveyComplete = async () => {
+		// Flag-on path: the mutation already fired at confirm-click via
+		// fireMutationFromConfirm. The success notice and redirect are owned
+		// by that helper and this handler respectively; here we only need to
+		// leave the cancel flow once the user finishes (or skips) the survey.
+		if ( this.shouldFireMutationOnConfirm() ) {
+			const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+				this.props.siteSlug,
+				this.props.purchaseId
+			);
+			const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
+			page.redirect( managePurchaseUrl ?? backupRedirect );
+			return;
+		}
+
 		// Set loading state to show busy button
 		this.setState( { isLoading: true } );
 
