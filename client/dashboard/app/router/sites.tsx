@@ -46,10 +46,10 @@ import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tan
 import { __ } from '@wordpress/i18n';
 import {
 	canManageSite,
+	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
-	isWordPressBetaProgramEligible,
 } from '../../sites/features';
 import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
 import { reauthRequiredLink } from '../../utils/link';
@@ -907,7 +907,7 @@ export const siteSettingsWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canSwitchWordPressVersion( site ) || isWordPressBetaProgramEligible( site ) ) {
+		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
 	},

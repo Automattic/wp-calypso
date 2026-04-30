@@ -17,9 +17,9 @@ import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canOptOutOfWordPressBeta } from '../features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { BetaOptOutButton } from './beta-opt-out-button';
 import { BetaProgramNotice } from './beta-program-notice';
 import { LatestVersionNotice } from './latest-version-notice';
-import { OptOutCard } from './opt-out-card';
 import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
 import { VersionSwitchNotice } from './version-switch-notice';
@@ -67,10 +67,11 @@ function BetaProgramContent( { site }: { site: Site } ) {
 
 	if ( canOptOutOfWordPressBeta( site, currentVersion ) ) {
 		return (
-			<VStack spacing={ 6 }>
-				<BetaProgramNotice site={ site } wpVersion={ betaVersion } />
-				<OptOutCard site={ site } />
-			</VStack>
+			<BetaProgramNotice
+				site={ site }
+				wpVersion={ betaVersion }
+				actions={ <BetaOptOutButton site={ site } /> }
+			/>
 		);
 	}
 

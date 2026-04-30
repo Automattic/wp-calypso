@@ -53,23 +53,25 @@ export function canSwitchWordPressVersion( site: Site ) {
 }
 
 /**
- * Atomic/Flex site that may have been auto-enrolled in the WordPress beta
- * program despite lacking self-serve backups (and therefore the ability to
- * switch versions manually). When such a site is currently on `beta`, we
- * offer a one-way opt-out via {@link canOptOutOfWordPressBeta}.
+ * Atomic/Flex sites without self-serve backups can't switch the WordPress
+ * version manually, but if they were auto-enrolled in the beta program we
+ * still want to give them a one-way path back to the stable release.
+ *
+ * Pass the site's current `versionTag` to render the opt-out UI conditionally;
+ * pass the literal `'beta'` to check whether a site could be in the opt-out
+ * state at all (useful for gating data fetches before the version is known).
  */
-export function isWordPressBetaProgramEligible( site: Site ) {
+export function canOptOutOfWordPressBeta( site: Site, versionTag: string | undefined ) {
 	if ( ! isEnabled( 'dashboard/wp-beta-program' ) ) {
 		return false;
 	}
 	if ( ! site.is_wpcom_atomic && ! site.is_wpcom_flex ) {
 		return false;
 	}
-	return ! hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
-}
-
-export function canOptOutOfWordPressBeta( site: Site, versionTag: string | undefined ) {
-	return isWordPressBetaProgramEligible( site ) && versionTag === 'beta';
+	if ( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ) {
+		return false;
+	}
+	return versionTag === 'beta';
 }
 
 // Settings -> Actions & danger zone
