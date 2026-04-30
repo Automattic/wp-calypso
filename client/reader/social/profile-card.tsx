@@ -1,6 +1,7 @@
 import { formatNumberCompact } from '@automattic/number-formatters';
 import DOMPurify from 'dompurify';
 import { useMemo } from 'react';
+import { ensureSanitizerHook } from './components/post-card/sanitize-post-html';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 
@@ -42,34 +43,6 @@ const BIO_SANITIZE_CONFIG = {
 	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'class' ],
 };
 
-// Belt-and-suspenders: Mastodon itself ships rel="nofollow noopener noreferrer"
-// on bio anchors, but we accept target and rel as free-form attributes. Merge
-// `noopener noreferrer` into the rel set on any target="_blank" anchor so a
-// bare `<a target="_blank">` in a bio can't hand a window.opener reference
-// back to us. Preserves existing rel tokens (e.g. rel="me" verification).
-let bioRelHookRegistered = false;
-function ensureBioRelHookRegistered() {
-	if ( bioRelHookRegistered ) {
-		return;
-	}
-	DOMPurify.addHook( 'afterSanitizeAttributes', ( node ) => {
-		if ( node.tagName !== 'A' ) {
-			return;
-		}
-		// Case-insensitive: HTML target values are case-insensitive, so
-		// `target="_BLANK"` (or mixed case) opens in a new window just like
-		// `_blank` and needs the same tab-napping defense.
-		if ( ( node.getAttribute( 'target' ) ?? '' ).toLowerCase() !== '_blank' ) {
-			return;
-		}
-		const tokens = new Set( ( node.getAttribute( 'rel' ) ?? '' ).split( /\s+/ ).filter( Boolean ) );
-		tokens.add( 'noopener' );
-		tokens.add( 'noreferrer' );
-		node.setAttribute( 'rel', Array.from( tokens ).join( ' ' ) );
-	} );
-	bioRelHookRegistered = true;
-}
-
 /**
  * Presentational profile card. Covers both your-own-connection and any-author
  * rendering. The slim layout (no displayName / handle / banner) preserves the
@@ -92,7 +65,7 @@ export function SocialProfileCard( {
 		if ( ! bioHtml ) {
 			return null;
 		}
-		ensureBioRelHookRegistered();
+		ensureSanitizerHook();
 		return DOMPurify.sanitize( bioHtml, BIO_SANITIZE_CONFIG );
 	}, [ bioHtml ] );
 

@@ -179,7 +179,11 @@ describe( 'SocialProfileCard', () => {
 		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bnoreferrer\b/ );
 	} );
 
-	it( 'leaves rel alone when there is no target="_blank"', () => {
+	it( 'forces target="_blank" and merges hardened rel into existing rel tokens', () => {
+		// The shared sanitizer hook hardens every surviving anchor (not just
+		// those with target="_blank" upstream): it forces target="_blank" and
+		// merges nofollow/noopener/noreferrer into the existing rel token set
+		// so pre-existing tokens like `nofollow` survive without duplication.
 		const { container } = render(
 			<SocialProfileCard
 				bioHtml='<p><a href="https://example.test/" rel="nofollow">inline</a></p>'
@@ -188,7 +192,13 @@ describe( 'SocialProfileCard', () => {
 			/>
 		);
 		const link = container.querySelector( '.social-profile-card__bio a' );
-		expect( link?.getAttribute( 'rel' ) ).toBe( 'nofollow' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		const rel = link?.getAttribute( 'rel' ) ?? '';
+		expect( rel ).toMatch( /\bnofollow\b/ );
+		expect( rel ).toMatch( /\bnoopener\b/ );
+		expect( rel ).toMatch( /\bnoreferrer\b/ );
+		// nofollow appears exactly once (token-set merge, not naive append).
+		expect( rel.match( /\bnofollow\b/g ) ).toHaveLength( 1 );
 	} );
 
 	it( 'preserves <span class="mention"> and <a class="mention"> used by Mastodon', () => {
@@ -210,6 +220,23 @@ describe( 'SocialProfileCard', () => {
 		// Inner <span>alice</span> survives (class="h-card" / class="u-url" are
 		// on outer elements — inner span carries no class but must survive).
 		expect( mentionAnchor?.querySelector( 'span' )?.textContent ).toBe( 'alice' );
+	} );
+
+	it( 'forces target="_blank" and hardened rel on bio anchors', () => {
+		render(
+			<SocialProfileCard
+				avatar={ null }
+				stats={ [] }
+				statsLabel="Profile stats"
+				bioHtml='<p><a href="https://example.com">site</a></p>'
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'site' } );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		const rel = link.getAttribute( 'rel' ) ?? '';
+		expect( rel ).toContain( 'nofollow' );
+		expect( rel ).toContain( 'noopener' );
+		expect( rel ).toContain( 'noreferrer' );
 	} );
 
 	it( 'prefers bioHtml when both bio and bioHtml are provided', () => {
