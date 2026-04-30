@@ -215,7 +215,8 @@ export function handleUpdateBlockContent( input: any ): any {
 
 	// Substring replace when currentText is a non-empty span present in the block;
 	// otherwise the new content replaces the block content wholesale (matches the
-	// "paste-ready" candidate-resolution contract).
+	// "paste-ready" candidate-resolution contract). String.replace replaces only
+	// the first occurrence by design — duplicate spans get the leftmost edit.
 	let nextContent = content;
 	if (
 		typeof currentText === 'string' &&
@@ -280,6 +281,9 @@ export async function applyReviewEdit(
 /**
  * Revert a block's content to a pre-accept snapshot. Used by ReviewMediation's
  * per-card Undo to actually undo the mutation, not just flip UI state.
+ * Note: this writes the snapshot unconditionally, so any unrelated edits made
+ * to the same block after Accept will be clobbered. Acceptable scope for the
+ * card-Undo affordance; cross-block history is still owned by Gutenberg.
  */
 export function undoBlockEdit( clientId: string, contentBefore: string ): boolean {
 	const blockEditor = ( window as any ).wp?.data?.dispatch?.( 'core/block-editor' );
