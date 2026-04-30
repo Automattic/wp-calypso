@@ -9,6 +9,7 @@ import {
 	useMastodonAuthorProfileQuery,
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
+	useMastodonTagFeedInfiniteQuery,
 	useMastodonTimelineInfiniteQuery,
 } from '../reader-mastodon';
 
@@ -291,6 +292,42 @@ describe( 'useMastodonAuthorFeedInfiniteQuery filter', () => {
 			() => useMastodonAuthorFeedInfiniteQuery( 7, '108020', 'posts_with_replies' ),
 			{ wrapper: createWrapper() }
 		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+} );
+
+describe( 'useMastodonTagFeedInfiniteQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'fetches the first page of a tag feed', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		const { result } = renderHook( () => useMastodonTagFeedInfiniteQuery( 7, 'rust' ), {
+			wrapper: createWrapper(),
+		} );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'forwards filter=media as only_media=true', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.query( { only_media: 'true' } )
+			.reply( 200, { items: [], cursor: null } );
+		const { result } = renderHook( () => useMastodonTagFeedInfiniteQuery( 7, 'rust', 'media' ), {
+			wrapper: createWrapper(),
+		} );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'collapses filter=all to no-filter cache key', async () => {
+		// Same nock that the no-filter case would hit — keys must merge.
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		const { result } = renderHook( () => useMastodonTagFeedInfiniteQuery( 7, 'rust', 'all' ), {
+			wrapper: createWrapper(),
+		} );
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 	} );
 } );
