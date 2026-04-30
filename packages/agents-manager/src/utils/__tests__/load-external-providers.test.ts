@@ -6,10 +6,7 @@ import {
 	mergeCapabilitiesInto,
 	mergeUseSuggestionsHooks,
 } from '../load-external-providers';
-import type {
-	ProviderCapabilities,
-	UseSuggestionsHook,
-} from '../load-external-providers';
+import type { ProviderCapabilities, UseSuggestionsHook } from '../load-external-providers';
 
 describe( 'mergeCapabilitiesInto', () => {
 	it( 'is a no-op when capabilities is undefined', () => {
