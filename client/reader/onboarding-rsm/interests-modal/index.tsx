@@ -33,13 +33,14 @@ interface InterestsModalProps {
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
+const MAX_INTEREST_TOPICS = 40;
 
 const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
 	const followedTagsRef = useRef< string[] >( [] );
-	const interestTopics = useReaderInterestTags();
+	const interestTopics = useReaderInterestTags().slice( 0, MAX_INTEREST_TOPICS );
 	const { data: followedTagsFromState } = useFollowedReaderTags();
 	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
