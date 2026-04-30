@@ -22,7 +22,7 @@ const mockApplyReviewEdit = jest.fn();
 const mockFindBlockElement = jest.fn();
 const mockFindBlockListLayout = jest.fn();
 
-jest.mock( '../index', () => ( {
+jest.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
 	findBlockElement: ( ...args: any[] ) => mockFindBlockElement( ...args ),
 	findBlockListLayout: ( ...args: any[] ) => mockFindBlockListLayout( ...args ),

@@ -14,7 +14,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { applyReviewEdit, findBlockElement, findBlockListLayout } from '../index';
+import { applyReviewEdit, findBlockElement, findBlockListLayout } from '../utils/block-actions';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 
