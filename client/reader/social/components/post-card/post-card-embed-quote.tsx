@@ -31,13 +31,17 @@ export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuote
 	};
 	const externalAttrs = inAppUrl ? {} : { target: '_blank', rel: 'noopener noreferrer' };
 	return (
-		<a
-			className="social-post-card-embed-quote-link"
-			href={ href }
-			{ ...externalAttrs }
-			onClick={ handleClick }
-		>
-			<SocialPostCard post={ inner } variant="compact" />
-		</a>
+		<div className="social-post-card-embed-quote-link">
+			<SocialPostCard
+				post={ inner }
+				variant="compact"
+				cardLink={ {
+					href,
+					onClick: handleClick,
+					target: externalAttrs.target,
+					rel: externalAttrs.rel,
+				} }
+			/>
+		</div>
 	);
 }
