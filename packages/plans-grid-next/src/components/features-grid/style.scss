@@ -545,6 +545,10 @@
 	// the alternative (oveflow: auto) would break the sticky behavior on the headers
 	padding: 1px;
 
+	&.is-small {
+		padding: 0;
+	}
+
 	.plan-features-2023-grid__table-item {
 		border-right: none;
 		background-color: transparent;
