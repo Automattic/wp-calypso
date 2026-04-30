@@ -1,4 +1,5 @@
 import type {
+	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
 	MastodonConnection,
@@ -70,5 +71,18 @@ describe( 'MastodonAuthorFeedPage', () => {
 	it( 'mirrors MastodonTimelinePage', () => {
 		const page: MastodonAuthorFeedPage = { items: [] as MastodonFeedItem[], cursor: null };
 		expect( page.cursor ).toBeNull();
+	} );
+} );
+
+describe( 'MastodonAuthorFeedFilter', () => {
+	it( 'accepts the three UI tab values', () => {
+		const a: MastodonAuthorFeedFilter = 'posts_no_replies';
+		const b: MastodonAuthorFeedFilter = 'posts_with_replies';
+		const c: MastodonAuthorFeedFilter = 'posts_with_media';
+		expect( [ a, b, c ] ).toEqual( [
+			'posts_no_replies',
+			'posts_with_replies',
+			'posts_with_media',
+		] );
 	} );
 } );

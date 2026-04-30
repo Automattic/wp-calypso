@@ -154,3 +154,11 @@ export interface MastodonAuthorProfile {
 // Author-feed pages share the timeline page shape; alias rather than
 // duplicate so a future field on MastodonTimelinePage propagates here too.
 export type MastodonAuthorFeedPage = MastodonTimelinePage;
+
+// Mirrors AtmosphereAuthorFeedFilter so panel/tabs wiring is identical
+// across protocols. Mastodon's wire shape is two booleans on the same
+// endpoint (exclude_replies, only_media); the fetcher does the mapping.
+export type MastodonAuthorFeedFilter =
+	| 'posts_no_replies'
+	| 'posts_with_replies'
+	| 'posts_with_media';
