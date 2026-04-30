@@ -23,19 +23,20 @@ import getGoogleMyBusinessStatsError from 'calypso/state/selectors/get-google-my
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';
 
-const withToolTip = ( WrappedComponent ) => ( props ) => {
-	// inject interval props to renderTooltipForDatanum
-	const renderTooltipForDatanum = props.renderTooltipForDatanum
-		? ( datanum ) => props.renderTooltipForDatanum( datanum, props.tooltipInterval )
-		: null;
+const withToolTip = ( WrappedComponent ) =>
+	function WithToolTip( props ) {
+		// inject interval props to renderTooltipForDatanum
+		const renderTooltipForDatanum = props.renderTooltipForDatanum
+			? ( datanum ) => props.renderTooltipForDatanum( datanum, props.tooltipInterval )
+			: null;
 
-	const newProps = {
-		...props,
-		renderTooltipForDatanum,
+		const newProps = {
+			...props,
+			renderTooltipForDatanum,
+		};
+
+		return <WrappedComponent { ...newProps } />;
 	};
-
-	return <WrappedComponent { ...newProps } />;
-};
 
 const LineChartWithTooltip = withToolTip( LineChart );
 

@@ -1,6 +1,6 @@
 import { Children, isValidElement, cloneElement } from 'react';
 
-export default function ( element, additionalProps ) {
+export default function reactPassToChildren( element, additionalProps ) {
 	const props = { ...element.props, ...additionalProps };
 	let childElements;
 

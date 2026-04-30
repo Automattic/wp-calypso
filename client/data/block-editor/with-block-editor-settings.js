@@ -5,19 +5,20 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useBlockEditorSettingsQuery } from './use-block-editor-settings-query';
 
 const withBlockEditorSettings = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const siteId = useSelector( getSelectedSiteId );
-		const userLoggedIn = useSelector( isUserLoggedIn );
-		const { data, isLoading } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
+	( Wrapped ) =>
+		function WithBlockEditorSettings( props ) {
+			const siteId = useSelector( getSelectedSiteId );
+			const userLoggedIn = useSelector( isUserLoggedIn );
+			const { data, isLoading } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
 
-		return (
-			<Wrapped
-				{ ...props }
-				blockEditorSettings={ data }
-				areBlockEditorSettingsLoading={ isLoading }
-			/>
-		);
-	},
+			return (
+				<Wrapped
+					{ ...props }
+					blockEditorSettings={ data }
+					areBlockEditorSettingsLoading={ isLoading }
+				/>
+			);
+		},
 	'withBlockEditorSettings'
 );
 

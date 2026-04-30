@@ -4,12 +4,13 @@ import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const withMediaStorage = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const siteId = useSelector( getSelectedSiteId );
-		const { data } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
+	( Wrapped ) =>
+		function WithMediaStorage( props ) {
+			const siteId = useSelector( getSelectedSiteId );
+			const { data } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 
-		return <Wrapped { ...props } mediaStorage={ data ?? {} } />;
-	},
+			return <Wrapped { ...props } mediaStorage={ data ?? {} } />;
+		},
 	'WithMediaStorage'
 );
 

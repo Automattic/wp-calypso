@@ -59,27 +59,28 @@ export function useEditMediaMutation( queryOptions ) {
 }
 
 export const withEditMedia = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const dispatch = useDispatch();
-		const translate = useTranslate();
-		const { editMedia } = useEditMediaMutation( {
-			onMutate( { mediaId } ) {
-				dispatch( removeNotice( `update-media-notice-${ mediaId }` ) );
-			},
-			onSuccess( media, { siteId } ) {
-				dispatch( receiveMedia( siteId, media ) );
-			},
-			onError( error, { siteId, originalMediaItem } ) {
-				dispatch( receiveMedia( siteId, originalMediaItem ) );
-				dispatch(
-					errorNotice( translate( 'We were unable to process this media item.' ), {
-						id: `update-media-notice-${ originalMediaItem.ID }`,
-					} )
-				);
-			},
-		} );
+	( Wrapped ) =>
+		function WithEditMedia( props ) {
+			const dispatch = useDispatch();
+			const translate = useTranslate();
+			const { editMedia } = useEditMediaMutation( {
+				onMutate( { mediaId } ) {
+					dispatch( removeNotice( `update-media-notice-${ mediaId }` ) );
+				},
+				onSuccess( media, { siteId } ) {
+					dispatch( receiveMedia( siteId, media ) );
+				},
+				onError( error, { siteId, originalMediaItem } ) {
+					dispatch( receiveMedia( siteId, originalMediaItem ) );
+					dispatch(
+						errorNotice( translate( 'We were unable to process this media item.' ), {
+							id: `update-media-notice-${ originalMediaItem.ID }`,
+						} )
+					);
+				},
+			} );
 
-		return <Wrapped { ...props } editMedia={ editMedia } />;
-	},
+			return <Wrapped { ...props } editMedia={ editMedia } />;
+		},
 	'WithEditMedia'
 );

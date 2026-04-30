@@ -9,7 +9,7 @@ import './stream.scss';
 
 const emptyContent = () => <ConversationsEmptyContent />;
 
-export default function ( props ) {
+export default function ConversationsStream( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';
 	const intro = () => <ConversationsIntro isInternal={ isInternal } />;
 	const translate = useTranslate();
