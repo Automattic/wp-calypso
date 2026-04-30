@@ -11,6 +11,13 @@ const CONFIG = {
 	// explicit allow-list above so a future backend change can't smuggle
 	// a new data-* attribute (e.g. `data-tracking`) through to the DOM.
 	ALLOW_DATA_ATTR: false,
+	// DOMPurify scheme-checks every attribute value containing a colon and
+	// drops the attribute when the scheme isn't on its URI allow-list.
+	// Atmosphere DID values (`did:plc:…`) trip that check on `data-id` and
+	// would otherwise be stripped, so opt this attribute out of URI parsing.
+	// `ADD_URI_SAFE_ATTR` extends DOMPurify's defaults; using
+	// `URI_SAFE_ATTRIBUTES` would replace them and drop `xml:lang` etc.
+	ADD_URI_SAFE_ATTR: [ 'data-id' ],
 };
 
 let hookRegistered = false;

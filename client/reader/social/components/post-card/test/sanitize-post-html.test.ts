@@ -54,6 +54,20 @@ describe( 'sanitizePostHtml', () => {
 		expect( out ).toContain( 'data-id="108020"' );
 	} );
 
+	it( 'preserves DID-shaped data-id on atmosphere @-mention anchors', () => {
+		const html =
+			'<p><a href="https://bsky.app/profile/did:plc:bobbobbobbobbobbobbobbob" data-id="did:plc:bobbobbobbobbobbobbobbob">@bob.bsky.social</a></p>';
+		const out = sanitizePostHtml( html );
+		expect( out ).toContain( 'data-id="did:plc:bobbobbobbobbobbobbobbob"' );
+	} );
+
+	it( 'preserves handle-shaped data-id when DID is unavailable', () => {
+		const html =
+			'<p><a href="https://bsky.app/profile/alice.bsky.social" data-id="alice.bsky.social">@alice.bsky.social</a></p>';
+		const out = sanitizePostHtml( html );
+		expect( out ).toContain( 'data-id="alice.bsky.social"' );
+	} );
+
 	it( 'strips other data-* attributes', () => {
 		const html =
 			'<p><a href="https://x.example" data-id="42" data-evil="payload" data-tracking="x">y</a></p>';
