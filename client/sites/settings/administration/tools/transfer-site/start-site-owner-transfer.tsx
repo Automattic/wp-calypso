@@ -14,6 +14,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -23,6 +24,7 @@ type Props = {
 	siteOwner: string;
 	customDomains: ResponseDomain[];
 	isAtomicSite: boolean | null;
+	isInSupportSession: boolean;
 	onSiteTransferSuccess: () => void;
 	onSiteTransferError: () => void;
 	translate: ( text: string, args?: Record< string, unknown > ) => string;
@@ -241,6 +243,7 @@ const StartSiteOwnerTransfer = ( {
 	siteOwner,
 	customDomains,
 	isAtomicSite,
+	isInSupportSession,
 	onSiteTransferSuccess,
 	onSiteTransferError,
 	translate,
@@ -341,6 +344,14 @@ const StartSiteOwnerTransfer = ( {
 		</>
 	);
 
+	if ( isInSupportSession ) {
+		return (
+			<Notice status="is-error" showDismiss={ false }>
+				{ translate( 'Site transfers cannot be initiated in a support session - please ask the user to do it instead.' ) }
+			</Notice>
+		);
+	}
+
 	return (
 		<>
 			<>
@@ -375,4 +386,5 @@ export default connect( ( state: IAppState ) => ( {
 	selectedSiteId: getSelectedSiteId( state ),
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 	isAtomicSite: isSiteAutomatedTransfer( state, getSelectedSiteId( state ) ),
+	isInSupportSession: isSupportSession( state ),
 } ) )( localize( StartSiteOwnerTransfer ) );
