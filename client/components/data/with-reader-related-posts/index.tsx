@@ -1,8 +1,8 @@
 import { readRelatedPostsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { ComponentType, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import { useDispatch } from 'calypso/state';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import type { ReadRelatedPost, ReadRelatedPostsScope } from '@automattic/api-core';
 
