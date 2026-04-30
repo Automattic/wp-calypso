@@ -15,8 +15,8 @@
 }
 
 .ads__table-header-title {
-	@include stats-section-header;
 	margin-right: 4px;
+	@include stats-section-header;
 }
 
 .ads__table-header-button {

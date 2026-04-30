@@ -24,8 +24,9 @@
 	}
 
 	.onboarding-title {
-		@include onboarding-import-heading-text;
 		margin-bottom: rem(12px);
+
+		@include onboarding-import-heading-text;
 	}
 
 	.onboarding-subtitle {
@@ -50,11 +51,12 @@
 	}
 
 	.import__header {
-		@include onboarding-heading-padding;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+
+		@include onboarding-heading-padding;
 	}
 
 	.import__heading {

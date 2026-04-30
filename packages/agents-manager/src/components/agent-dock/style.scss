@@ -98,10 +98,9 @@ body.wp-admin.agents-manager-sidebar-container--closing {
 }
 
 body.wp-admin.agents-manager-sidebar-container--sidebar-open:not( .modal-open ) {
+	background-color: $gray-900;
 	@include wp-admin-sidebar-open-specific( $admin-menu-width-classic );
 	@include notice-panel-open( '#wpnt-notes-panel2' );
-
-	background-color: $gray-900;
 
 	#wpadminbar {
 		position: fixed !important;

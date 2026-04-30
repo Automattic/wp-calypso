@@ -7,6 +7,11 @@
 	flex-direction: column;
 	width: 100%;
 	align-items: center;
+	padding: 36px 36px 60px;
+	border-radius: 4px;
+	outline: var(--studio-gray-5) solid 1px;
+	transition: outline ease-in 0.15s;
+	cursor: pointer;
 
 	@include break-small {
 		max-width: 380px;
@@ -15,12 +20,6 @@
 	@include break-medium {
 		align-self: stretch;
 	}
-
-	padding: 36px 36px 60px;
-	border-radius: 4px;
-	outline: var(--studio-gray-5) solid 1px;
-	transition: outline ease-in 0.15s;
-	cursor: pointer;
 
 	.design-choice__title {
 		margin-bottom: 16px;
@@ -45,13 +44,12 @@
 	.design-choice__image-container {
 		display: flex;
 		position: relative; // Allows the price badge to be positioned absolutely
+		min-height: 226px;
+		transition: transform ease-in 0.15s;
 
 		@include break-small {
 			max-width: 308px;
 		}
-
-		min-height: 226px;
-		transition: transform ease-in 0.15s;
 	}
 
 	&:hover,

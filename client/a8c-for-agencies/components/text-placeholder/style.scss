@@ -1,8 +1,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .a4a-text-placeholder {
-	@include placeholder( --color-neutral-10 );
-
 	display: block;
 	border-radius: 4px;
+
+	@include placeholder( --color-neutral-10 );
 }

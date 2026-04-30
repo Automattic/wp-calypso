@@ -92,9 +92,8 @@
 }
 
 .line-chart__placeholder {
-	@include placeholder();
-
 	padding-bottom: 50%;
+	@include placeholder();
 }
 
 .line-chart__x-axis,

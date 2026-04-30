@@ -87,6 +87,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		overflow: visible;
 		margin: 0 auto;
 		z-index: 2;
+		// Temporarily disable dots on mobile as alignment is wonky.
+		display: none;
 
 		&::before {
 			display: inline-block;
@@ -100,8 +102,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 			margin-bottom: 0;
 		}
 
-		// Temporarily disable dots on mobile as alignment is wonky.
-		display: none;
 		@media (min-width: $wpcom-modal-breakpoint) {
 			display: block;
 		}

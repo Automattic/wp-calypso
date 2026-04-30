@@ -121,6 +121,6 @@
 }
 
 .pie-chart__placeholder-drawing-element {
-	@include placeholder();
 	fill: var(--color-neutral-0);
+	@include placeholder();
 }

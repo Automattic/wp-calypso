@@ -230,12 +230,12 @@ $card_width: $font-body * 3.75; // roughly 60px wide
 	&__warning {
 		display: flex;
 		gap: 8px;
-		.gridicon {
-			fill: var( --color-warning );
-		}
 		border: 1px solid var(--color-warning);
 		padding: 8px;
 		border-radius: 4px;
+		.gridicon {
+			fill: var( --color-warning );
+		}
 
 		p {
 			color: var( --color-warning );

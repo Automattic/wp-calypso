@@ -60,8 +60,8 @@
 				width: auto;
 			}
 			.is-placeholder & {
-				@include placeholder( --studio-gray-5 );
 				color: transparent !important;
+				@include placeholder( --studio-gray-5 );
 			}
 		}
 	}

@@ -335,12 +335,12 @@
 // Loading state
 .product-card.is-placeholder .product-card__price-group {
 	&::before {
-		@include placeholder( --color-neutral-10 );
 		content: '\00a0';
 		display: inline-block;
 		width: 150px;
 		height: 32px;
 		margin: 0 0 4px;
+		@include placeholder( --color-neutral-10 );
 
 		@include breakpoint-deprecated( '>660px' ) {
 			height: 18px;

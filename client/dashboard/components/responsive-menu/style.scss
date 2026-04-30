@@ -6,12 +6,11 @@
 	overflow-x: scroll;
 	-ms-overflow-style: none;  /* Internet Explorer 10+ */
 	scrollbar-width: none;  /* Firefox */
+	// Restores focus ring appearances
+	padding: 2px;
+	margin: -2px;
 
 	&::-webkit-scrollbar {
 		display: none;  /* Safari and Chrome */
 	}
-
-	// Restores focus ring appearances
-	padding: 2px;
-	margin: -2px;
 }

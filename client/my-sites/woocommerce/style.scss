@@ -70,11 +70,11 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 	}
 
 	.landing-page__features-section {
-		@include woocommerce-colors();
 		background-color: var(--color-woocommerce-onboarding-background);
 		margin-top: 100px;
 		padding-top: 60px;
 		padding-bottom: 40px;
+		@include woocommerce-colors();
 
 		.formatted-header .formatted-header__title {
 			@include onboarding-font-recoleta;

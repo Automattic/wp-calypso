@@ -11,11 +11,10 @@
 	}
 
 	.design-picker__header {
-		@include onboarding-heading-padding;
-
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		@include onboarding-heading-padding;
 	}
 
 	.design-picker__heading {

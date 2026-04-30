@@ -72,8 +72,8 @@
 }
 
 .people-profile__badges {
-	@include clear-fix;
 	margin-top: 8px;
+	@include clear-fix;
 }
 
 .people-profile__subscribed {

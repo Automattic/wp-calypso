@@ -124,11 +124,6 @@
 
 	.language-picker-component__labels {
 		display: none;
-
-		@include break-small() {
-			display: flex;
-		}
-
 		flex-direction: row;
 		flex-wrap: nowrap;
 		font-family: $default-font;
@@ -136,6 +131,10 @@
 		color: $gray-600;
 		font-size: 0.875rem;
 		text-transform: uppercase;
+
+		@include break-small() {
+			display: flex;
+		}
 	}
 
 	.language-picker-component__content {

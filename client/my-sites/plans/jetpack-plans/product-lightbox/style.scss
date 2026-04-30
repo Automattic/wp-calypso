@@ -53,11 +53,11 @@
 	}
 
 	.form-radio:focus {
+		box-shadow: none;
+
 		&:hover {
 			box-shadow: none;
 		}
-
-		box-shadow: none;
 	}
 }
 

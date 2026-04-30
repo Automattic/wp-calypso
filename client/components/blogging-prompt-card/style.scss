@@ -17,11 +17,11 @@
 			flex: 1;
 		}
 		.blogging-prompt__lightbulb-icon {
+			position: relative;
+			top: 1px;
 			path {
 				fill: var(--studio-gray-50);
 			}
-			position: relative;
-			top: 1px;
 		}
 		.blogging-prompt__menu {
 			margin-top: -13px;

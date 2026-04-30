@@ -3,11 +3,11 @@
 
 //TODO This className seems not to be used
 ul.module-tabs {
-	@include clear-fix;
 	border-top: 1px solid var(--color-neutral-0);
 	list-style: none;
 	background: var(--color-surface);
 	margin: 0;
+	@include clear-fix;
 
 	.module-tab {
 		margin: 0;
@@ -45,10 +45,10 @@ ul.module-tabs {
 		a,
 		.no-link {
 			@extend %mobile-link-element;
-			@include clear-fix;
 			padding: 5px 0 10px;
 			display: block;
 			background: var(--color-surface);
+			@include clear-fix;
 
 			@include breakpoint-deprecated( "<480px" ) {
 				line-height: 24px;

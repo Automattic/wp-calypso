@@ -75,11 +75,11 @@ $common-border-radius: 4px;
 		}
 
 		th {
+			padding-bottom: 24px;
+
 			&.spacer {
 				color: var(--studio-white);
 			}
-
-			padding-bottom: 24px;
 		}
 
 		td {

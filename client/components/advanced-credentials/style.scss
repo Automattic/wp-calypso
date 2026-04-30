@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 
 .advanced-credentials {
+	// remove the margin for everything at smaller widths
+	margin-left: -16px;
+	margin-right: -16px;
+
 	.step-progress {
 		margin-top: 16px;
 		margin-bottom: 16px;
@@ -21,10 +25,6 @@
 			background-color: var(--color-neutral-10);
 		}
 	}
-
-	// remove the margin for everything at smaller widths
-	margin-left: -16px;
-	margin-right: -16px;
 
 	@include break-medium {
 		margin-left: auto;
@@ -63,6 +63,7 @@
 .connection-status__disconnected,
 .connection-status__loading {
 	display: flex;
+	align-items: center;
 	*:not(:first-child) {
 		margin-left: 8px;
 	}
@@ -70,7 +71,6 @@
 		height: 16px;
 		width: 16px;
 	}
-	align-items: center;
 }
 
 .connection-status__failed,
@@ -91,8 +91,8 @@
 
 .connection-status__loading {
 	circle {
-		@include placeholder();
 		fill: var(--color-neutral-5);
+		@include placeholder();
 	}
 	span {
 		color: var(--color-neutral-5);

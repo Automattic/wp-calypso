@@ -311,12 +311,11 @@ p.jetpack-product-info__product-list-item-description {
 	font-size: $font-body-small;
 	font-weight: 400;
 	margin-block-end: 0;
+	display: none;
 
 	span {
 		white-space: nowrap;
 	}
-
-	display: none;
 
 	@media (min-width: $break-medium) {
 		display: block;

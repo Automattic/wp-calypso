@@ -802,10 +802,10 @@ $button-border: 4px;
 	}
 
 	&.theme__preview-upsell-banner {
-		@include banner-dark();
 		width: 100%;
 		margin: 0;
 		text-decoration: none;
+		@include banner-dark();
 	}
 }
 .theme__sheet-reviews-summary {

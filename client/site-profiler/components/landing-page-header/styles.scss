@@ -10,6 +10,9 @@
 }
 
 .landing-page-header {
+	// subtract the height of the landing-page-header--msg hidden element
+	margin-bottom: -1.5rem;
+
 	p + .landing-page-header--form {
 		margin-top: 2.5rem;
 
@@ -17,9 +20,6 @@
 			margin-top: 2.25rem;
 		}
 	}
-
-	// subtract the height of the landing-page-header--msg hidden element
-	margin-bottom: -1.5rem;
 }
 
 .landing-page-header--form-container {

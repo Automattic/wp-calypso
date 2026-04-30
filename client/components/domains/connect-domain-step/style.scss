@@ -30,8 +30,8 @@ body.connect-domain-setup__body-white {
 
 	&__sidebar-placeholder {
 		width: 100%;
-		@include placeholder(--color-neutral-5);
 		margin: 0;
+		@include placeholder(--color-neutral-5);
 	}
 
 	&.card {
@@ -84,13 +84,13 @@ body.connect-domain-setup__body-white {
 	}
 
 	&__info-links {
-		& + & {
-			margin-top: 8px;
-		}
-
 		font-size: $font-body-small;
 		color: var(--color-text-subtle);
 		padding: 0 16px;
+
+		& + & {
+			margin-top: 8px;
+		}
 
 		@include break-mobile {
 			padding: 0;
@@ -264,11 +264,11 @@ body.connect-domain-setup__body-white {
 	&__suggested-records {
 		.connect-domain-step__records-list-record {
 			width: 100%;
+			max-width: 100%;
+
 			@include break-mobile {
 				width: 314px;
 			}
-
-			max-width: 100%;
 
 			&-item {
 				width: 100%;

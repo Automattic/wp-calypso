@@ -116,22 +116,22 @@
 		}
 
 		@include break-medium {
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 			// select first row for a 2 column grid
 			&:first-of-type,
 			&:nth-of-type(2) {
 				margin-top: 24px;
 			}
-			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 
 		@include break-wide {
+			width: calc(33% - 10px); // 3 column grid with 20px gutter
 			// select first row for a 3 column grid
 			&:first-of-type,
 			&:nth-of-type(2),
 			&:nth-of-type(3) {
 				margin-top: 24px;
 			}
-			width: calc(33% - 10px); // 3 column grid with 20px gutter
 		}
 
 		.full-width-section & {

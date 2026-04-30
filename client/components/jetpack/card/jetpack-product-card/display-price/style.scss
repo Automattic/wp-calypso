@@ -88,19 +88,19 @@
 	}
 
 	&__price-placeholder {
-		@include placeholder( --color-neutral-10 );
-
 		width: 80px;
 		height: 54px;
 		margin-bottom: 16px;
 		margin-top: 24px;
+
+		@include placeholder( --color-neutral-10 );
 	}
 
 	&__time-frame-placeholder {
-		@include placeholder( --color-neutral-10 );
-
 		width: 80px;
 		height: 16px;
+
+		@include placeholder( --color-neutral-10 );
 	}
 
 	&__you-save,

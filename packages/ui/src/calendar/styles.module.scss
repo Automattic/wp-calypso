@@ -16,12 +16,6 @@
 	// TODO: themify / align to DS tokens
 	--a8c-calendar-range-middle-background-color: color-mix(in srgb, #{theme.$components-color-accent} 4%, transparent);
 	--a8c-calendar-preview-border-color: color-mix(in srgb, #{theme.$components-color-accent} 16%, transparent);
-
-	@include ui-mixins.when-dark-theme {
-		// Set a stronger background color in dark mode for better visibility
-		--a8c-calendar-range-middle-background-color: color-mix(in srgb, #{theme.$components-color-accent} 8%, transparent);
-	}
-
 	position: relative; /* Required to position the navigation toolbar. */
 	box-sizing: border-box;
 	display: inline flow-root;
@@ -30,6 +24,11 @@
 	font-size: variables.$font-size-medium;
 	font-weight: variables.$font-weight-regular;
 	z-index: 0; // Create a stacking context and render on top of the background.
+
+	@include ui-mixins.when-dark-theme {
+		// Set a stronger background color in dark mode for better visibility
+		--a8c-calendar-range-middle-background-color: color-mix(in srgb, #{theme.$components-color-accent} 8%, transparent);
+	}
 
 	*, *::before, *::after {
 		box-sizing: border-box;

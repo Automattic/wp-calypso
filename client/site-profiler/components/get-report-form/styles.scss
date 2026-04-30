@@ -141,10 +141,10 @@
 		font-size: 0.75rem;
 		line-height: 1.5;
 		.components-flex.components-h-stack {
+			gap: 10px;
 			@media (min-width: $break-small) {
 				align-items: center;
 			}
-			gap: 10px;
 		}
 
 		.components-checkbox-control__input {

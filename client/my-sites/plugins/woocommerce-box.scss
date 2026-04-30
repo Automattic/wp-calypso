@@ -44,10 +44,6 @@ $c-gray-100: #101517 !default;
 .woocommerce-error,
 .post-theme-info,
 .wcpv-shortcode-registration-form-errors {
-
-	* {
-		vertical-align: baseline;
-	}
 	background: $c-woocommerce-purple-5;
 	border: 1px solid $c-woocommerce-purple-10;
 	border-left-width: 1px !important;
@@ -55,6 +51,10 @@ $c-gray-100: #101517 !default;
 	color: $c-woocommerce-purple-90;
 	margin: 2em 0;
 	padding: 20px;
+
+	* {
+		vertical-align: baseline;
+	}
 
 	p {
 		margin: 0 0 1.618em;

@@ -66,13 +66,13 @@
 	color: var(--studio-gray-50);
 
 	.inline-support-link {
-		&:hover {
-			color: var(--studio-gray-100);
-		}
-
 		white-space: pre;
 		text-decoration: underline;
 		color: inherit;
+
+		&:hover {
+			color: var(--studio-gray-100);
+		}
 	}
 }
 

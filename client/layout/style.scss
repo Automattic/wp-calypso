@@ -41,7 +41,6 @@ body.is-focus-sites {
 // Setup the content element to adapt to the sidebar,
 // lack of sidebar, or the WebPreview component.
 .layout__content {
-	@include clear-fix;
 	position: relative;
 	margin: 0;
 
@@ -51,6 +50,7 @@ body.is-focus-sites {
 		calc( var( --sidebar-width-max ) + 32px + 1px );
 	box-sizing: border-box;
 	overflow: hidden;
+	@include clear-fix;
 
 	// Various screens dont use a sidebar.
 	.has-no-sidebar & {

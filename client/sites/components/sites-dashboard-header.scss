@@ -1,5 +1,9 @@
 .sites-dashboard-header {
 	.add-new-site__button {
+		outline: none;
+		border-radius: 2px 0 0 2px;
+		-moz-osx-font-smoothing: grayscale;
+
 		&.is-secondary {
 			background-color: rgb(56, 88, 233);
 			border-color: rgb(56, 88, 233);
@@ -9,10 +13,6 @@
 			font-weight: 400;
 			line-height: 22px
 		}
-
-		outline: none;
-		border-radius: 2px 0 0 2px;
-		-moz-osx-font-smoothing: grayscale;
 
 	}
 

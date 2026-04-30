@@ -8,9 +8,9 @@
 	box-shadow: 0 0 0 1px var(--color-neutral-5);
 
 	&__loading {
-		@include placeholder(--color-neutral-10);
 		height: 24px;
 		box-shadow: none;
+		@include placeholder(--color-neutral-10);
 	}
 
 	&__storage-full-icon {

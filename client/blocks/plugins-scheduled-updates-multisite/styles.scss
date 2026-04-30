@@ -117,8 +117,8 @@ $brand-display: "SF Pro Display", sans-serif;
 
 	.plugins-update-manager-multisite-card {
 		margin-bottom: 1rem;
-		@include content-padding;
 		border-bottom: solid 1px var(--studio-gray-0);
+		@include content-padding;
 
 		&:first-child {
 			border-top: solid 1px var(--studio-gray-0);

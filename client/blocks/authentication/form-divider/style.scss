@@ -76,9 +76,10 @@ $breakpoint-mobile: 660px;
 // In this case we want the separator to be vertical
 .layout:not(.is-grav-powered-client) .is-social-first {
 	.auth-form__separator {
-		@include horizontal-separator;
 		width: calc(100% - 32px);
 		margin: 20px 0;
+
+		@include horizontal-separator;
 
 		@include break-medium {
 			@include vertical-separator;

@@ -282,14 +282,14 @@ input[type="text"].form-text-input {
 	}
 
 	legend {
+		color: var(--color-neutral-70);
+		margin-bottom: 0;
+		font-size: $font-body;
+
 		small {
 			font-size: $font-body-small;
 			padding-left: 10px;
 			color: var(--color-primary);
 		}
-
-		color: var(--color-neutral-70);
-		margin-bottom: 0;
-		font-size: $font-body;
 	}
 }

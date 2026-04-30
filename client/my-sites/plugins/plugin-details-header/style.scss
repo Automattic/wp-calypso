@@ -26,17 +26,17 @@ $rating-star-color: #ffb514;
 	}
 
 	.plugin-details-header__icon {
+		border-radius: 4px;
+		margin-bottom: 15px;
+		width: $mobile-icon-height;
+		height: $mobile-icon-height;
+		flex-shrink: 0;
 		@include break-mobile {
 			width: 72px;
 			height: 72px;
 			margin-right: 20px;
 			margin-bottom: 0;
 		}
-		border-radius: 4px;
-		margin-bottom: 15px;
-		width: $mobile-icon-height;
-		height: $mobile-icon-height;
-		flex-shrink: 0;
 	}
 
 	.full-width-section & {

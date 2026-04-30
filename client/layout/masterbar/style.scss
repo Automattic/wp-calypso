@@ -13,14 +13,14 @@ $masterbar-color-secondary: #101517;
 
 // Hide the masterbar on WP Mobile App views.
 body.is-mobile-app-view {
-	.masterbar {
-		display: none;
-	}
 	/* We are ignoring these lines because without the px value the calc function does not work as expected */
 	/* stylelint-disable-next-line length-zero-no-unit */
 	--masterbar-checkout-height: 0px;
 	/* stylelint-disable-next-line length-zero-no-unit */
 	--masterbar-height: 0px;
+	.masterbar {
+		display: none;
+	}
 }
 
 // The WordPress.com Masterbar

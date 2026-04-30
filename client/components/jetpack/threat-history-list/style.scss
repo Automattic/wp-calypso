@@ -14,11 +14,11 @@
 
 	&__pagination--top.is-placeholder,
 	&__pagination--bottom.is-placeholder {
-		@include placeholder( --color-neutral-10 );
 		height: 34px;
 		width: 50%;
 		margin-left: auto;
 		margin-right: auto;
+		@include placeholder( --color-neutral-10 );
 
 		&.is-compact {
 			height: 28px;
@@ -31,11 +31,11 @@
 	}
 
 	&__filters.is-placeholder {
-		@include placeholder( --color-neutral-10 );
 		height: 36px;
 		max-width: 230px;
 		margin: 0 auto;
 		border-radius: 2px;
+		@include placeholder( --color-neutral-10 );
 	}
 
 	.segmented-control {

@@ -59,8 +59,8 @@
 
 		&.is-loading {
 			border-color: transparent;
-			@include placeholder();
 			margin: 5px;
+			@include placeholder();
 		}
 	}
 }

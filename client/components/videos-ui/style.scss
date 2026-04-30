@@ -84,6 +84,8 @@
 	}
 
 	.videos-ui__body {
+		max-width: 1280px;
+		padding: 64px 20px 97px;
 
 		&.is-loading {
 			width: 100%;
@@ -110,9 +112,6 @@
 				margin: 0 20px 20px;
 			}
 		}
-
-		max-width: 1280px;
-		padding: 64px 20px 97px;
 
 		h3 {
 			font-size: $font-title-medium;

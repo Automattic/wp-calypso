@@ -58,10 +58,10 @@
 }
 
 button.action_buttons__button.action-buttons__back.domain-transfer-or-connect__go-back {
+	margin: 16px 0 0 16px;
+	text-decoration: none;
+
 	@include break-mobile {
 		margin: 0 0 18px;
 	}
-
-	margin: 16px 0 0 16px;
-	text-decoration: none;
 }

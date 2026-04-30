@@ -309,11 +309,11 @@ $blueberry-color: #3858e9;
 	}
 
 	.odie-feedback-component-container {
+		margin-top: 32px;
+		font-size: 1rem;
 		&.odie-question-collapse {
 			margin-top: 0;
 		}
-		margin-top: 32px;
-		font-size: 1rem;
 	}
 
 	&.odie-chatbox-message.odie-chatbox-message-business.odie-chatbox-message-conversation-feedback {

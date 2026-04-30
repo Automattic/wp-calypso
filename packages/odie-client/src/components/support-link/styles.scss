@@ -27,6 +27,15 @@ $gray-700: #646970;
 
 		a,
 		button {
+			display: flex;
+			text-decoration: none;
+			color: var(--studio-gray-900);
+			font-size: $font-body-small;
+			align-items: center;
+			width: 100%;
+			min-width: 0;
+			box-sizing: border-box;
+
 			&:hover {
 				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, $help-center-blue));
 				cursor: pointer;
@@ -40,15 +49,6 @@ $gray-700: #646970;
 				outline: $help-center-blue solid 2px;
 				outline-offset: -2px;
 			}
-	
-			display: flex;
-			text-decoration: none;
-			color: var(--studio-gray-900);
-			font-size: $font-body-small;
-			align-items: center;
-			width: 100%;
-			min-width: 0;
-			box-sizing: border-box;
 
 			svg {
 				fill: $gray-700;

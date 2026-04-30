@@ -58,13 +58,13 @@
 	}
 
 	.trial-banner__chart-wrapper {
-		@media (max-width: $break-mobile) {
-			display: none;
-		}
-
 		margin-left: 50px;
 		padding: 0;
 		text-align: center;
+
+		@media (max-width: $break-mobile) {
+			display: none;
+		}
 
 		.trial-banner__chart-label {
 			color: var(--color-neutral);

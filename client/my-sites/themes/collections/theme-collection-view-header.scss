@@ -7,6 +7,8 @@
 
 .theme-showcase.is-collection-view {
 	.theme-collection-view-header {
+		padding: 32px 16px;
+
 		&.is-logged-in {
 			margin: 0;
 			padding: 0;
@@ -61,8 +63,6 @@
 				margin-bottom: 16px;
 			}
 		}
-
-		padding: 32px 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
 			padding: 48px 32px;

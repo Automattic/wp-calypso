@@ -12,6 +12,7 @@
 			@include primary-button-black-theme;
 		}
 		.formatted-header {
+			margin: 32px 16px;
 			.formatted-header__title {
 				font-size: rem(32px);
 				@include break-small {
@@ -21,7 +22,6 @@
 			@include break-small {
 				margin-top: 72px;
 			}
-			margin: 32px 16px;
 		}
 		.setup-form__form{
 			margin: 0 auto;

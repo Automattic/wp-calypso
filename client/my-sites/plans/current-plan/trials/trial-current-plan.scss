@@ -204,10 +204,10 @@ body.is-section-plans.is-business-trial-plan {
 			margin-top: 30px;
 
 			@media (max-width: $break-mobile) {
+				margin-top: 12px;
 				.feature-not-included-card__text {
 					font-size: $woo-font-body-extra-small;
 				}
-				margin-top: 12px;
 			}
 		}
 

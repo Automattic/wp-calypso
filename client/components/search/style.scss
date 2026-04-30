@@ -179,6 +179,8 @@
 		height: 100%;
 		position: relative;
 		font-size: $font-body;
+		padding-left: 8px;
+
 		&::before {
 			@include long-content-fade(
 				$size: 32px,
@@ -198,8 +200,6 @@
 				border-radius: inherit;
 			}
 		}
-
-		padding-left: 8px;
 	}
 }
 

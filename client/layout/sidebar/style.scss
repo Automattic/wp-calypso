@@ -126,15 +126,14 @@
 	display: flex;
 	align-items: center;
 	text-decoration: none;
+	// I think this is some voodoo to change the color
+	// of a link when tapped on iOS.
+	-webkit-tap-highlight-color: color-mix(in srgb, var(--color-neutral-700) 20%, transparent);
 
 	&,
 	&:visited {
 		color: var(--color-sidebar-text);
 	}
-
-	// I think this is some voodoo to change the color
-	// of a link when tapped on iOS.
-	-webkit-tap-highlight-color: color-mix(in srgb, var(--color-neutral-700) 20%, transparent);
 
 	&:hover {
 		background-color: var(--color-sidebar-menu-hover-background);

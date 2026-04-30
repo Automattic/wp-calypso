@@ -49,6 +49,15 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 	}
 
 	.campaign-item {
+		font-family: $font-sf-pro-text;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 0.875rem;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		color: #50575e;
+		padding-bottom: 8px;
+
 		&__data,
 		&__user,
 		&__status,
@@ -113,15 +122,6 @@ $font-sf-pro-text: "SF Pro Text", $sans;
 
 			@include blazepress-animated-skeleton;
 		}
-
-		font-family: $font-sf-pro-text;
-		font-style: normal;
-		font-weight: 400;
-		font-size: 0.875rem;
-		line-height: 20px;
-		letter-spacing: -0.15px;
-		color: #50575e;
-		padding-bottom: 8px;
 	}
 
 	tr {

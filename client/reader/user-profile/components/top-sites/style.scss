@@ -6,10 +6,10 @@
 		margin-top: 16px;
 
 		.skeleton {
-			@include placeholder( --color-neutral-5 );
 			width: 110px;
 			height: 30px;
 			border-radius: 2px;
+			@include placeholder( --color-neutral-5 );
 		}
 	}
 

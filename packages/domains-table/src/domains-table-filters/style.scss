@@ -14,10 +14,9 @@
 }
 
 .domains-table-filter {
-	@include search-control-wpcom-styles;
-
 	display: flex;
 	justify-content: space-between;
+	@include search-control-wpcom-styles;
 
 	@media (max-width: 480px) {
 		flex-direction: column;

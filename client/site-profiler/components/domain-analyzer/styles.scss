@@ -11,6 +11,9 @@
 }
 
 .domain-analyzer {
+	// subtract the height of the domain-analyzer--msg hidden element
+	margin-bottom: -1.5rem;
+
 	p + .domain-analyzer--form {
 		margin-top: 2.5rem;
 
@@ -18,9 +21,6 @@
 			margin-top: 2.25rem;
 		}
 	}
-
-	// subtract the height of the domain-analyzer--msg hidden element
-	margin-bottom: -1.5rem;
 }
 
 .domain-analyzer--form-container {

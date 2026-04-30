@@ -23,6 +23,9 @@
 	border-radius: 2px;
 	padding: 8px 14px;
 	appearance: none;
+	background-color: var(--color-surface);
+	color: var(--color-neutral-70);
+	border-color: var(--color-neutral-10);
 
 
 	.rtl & {
@@ -49,10 +52,6 @@
 	&.is-active {
 		border-width: 1px;
 	}
-
-	background-color: var(--color-surface);
-	color: var(--color-neutral-70);
-	border-color: var(--color-neutral-10);
 
 	&:hover {
 		border-color: var(--color-neutral-20);

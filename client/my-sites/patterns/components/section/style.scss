@@ -46,8 +46,8 @@
 }
 
 .patterns-section__premium-badge {
-	@include patterns-page-width;
 	margin-bottom: 10px;
+	@include patterns-page-width;
 	.premium-badge {
 		margin-left: 0;
 		background-color: #50575e;
@@ -55,8 +55,8 @@
 }
 
 .patterns-section__header {
-	@include patterns-page-width;
 	padding-bottom: 48px;
+	@include patterns-page-width;
 
 	@media (max-width: $break-wide) {
 		padding-bottom: 32px;

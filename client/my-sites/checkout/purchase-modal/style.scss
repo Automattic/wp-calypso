@@ -39,12 +39,12 @@ $left-margin: 36px;
 
 .purchase-modal__wrapper {
 	display: block;
-	.has-feature-list & {
-		display: flex;
-	}
 	width: 100%;
 	flex-direction: column;
 	gap: 12px;
+	.has-feature-list & {
+		display: flex;
+	}
 	@include break-medium {
 		gap: 36px;
 		flex-direction: row;

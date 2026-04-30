@@ -5,13 +5,13 @@
 .hundred-year-plan-site-picker {
 	.step-container__content {
 		.formatted-header {
+			margin: 32px 24px 0 24px;
 			.formatted-header__title {
 				font-size: rem(32px);
 				@include break-small {
 					font-size: rem(44px);
 				}
 			}
-			margin: 32px 24px 0 24px;
 			@include break-small {
 				margin-top: 72px;
 			}

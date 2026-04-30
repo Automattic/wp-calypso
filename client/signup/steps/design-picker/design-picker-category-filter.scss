@@ -29,6 +29,7 @@ $design-picker-category-filter-text-color-active: var(--studio-gray-100);
 		}
 
 		&.is-pressed {
+			background: transparent;
 			.design-picker-category-filter__item-name {
 				text-decoration: underline;
 				font-weight: 500;
@@ -38,7 +39,6 @@ $design-picker-category-filter-text-color-active: var(--studio-gray-100);
 					color: $design-picker-category-filter-text-color-active;
 				}
 			}
-			background: transparent;
 
 			&:focus:not(:disabled),
 			&:focus-visible:not(:disabled) {
@@ -78,10 +78,6 @@ $design-picker-category-filter-text-color-active: var(--studio-gray-100);
 }
 
 .design-picker-category-filter__dropdown {
-	@include break-small {
-		display: none;
-	}
-
 	font-family: $sans;
 	font-size: $font-body-small;
 	line-height: 24px;
@@ -100,6 +96,10 @@ $design-picker-category-filter-text-color-active: var(--studio-gray-100);
 		url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHJlY3QgeD0iMCIgZmlsbD0ibm9uZSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ii8+PGc+PHBhdGggZmlsbD0iI2MzYzRjNyIgZD0iTTIwIDlsLTggOC04LTggMS40MTQtMS40MTRMMTIgMTQuMTcybDYuNTg2LTYuNTg2eiIvPjwvZz48L3N2Zz4=)
 		no-repeat right 12px top 50%;
 	background-size: 20px;
+
+	@include break-small {
+		display: none;
+	}
 
 	&:focus,
 	&:focus-visible {

@@ -7,6 +7,8 @@
 
 	&.role-attachment {
 		padding: 0 16px;
+		animation: fadeInAttachment 0.2s ease-in-out forwards;
+		transform-origin: center top;
 
 		img {
 			display: block;
@@ -17,9 +19,6 @@
 			border-radius: 0;
 			padding: 0;
 		}
-
-		animation: fadeInAttachment 0.2s ease-in-out forwards;
-		transform-origin: center top;
 
 		@keyframes fadeInAttachment {
 			from {

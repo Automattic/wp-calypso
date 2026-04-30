@@ -11,8 +11,8 @@
 
 .domain__main-placeholder-card {
 	p {
-		@include placeholder( --color-neutral-10 );
 		margin-bottom: 0.5em;
+		@include placeholder( --color-neutral-10 );
 
 		&:first-child {
 			width: 35%;

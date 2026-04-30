@@ -94,11 +94,12 @@
 			}
 
 			.theme-showcase__all-themes {
+				height: 100%;
+
 				@media ( min-width: $break-mobile ) and ( min-height: $break-mobile ) {
 					overflow-y: auto;
 					overflow-x: hidden;
 				}
-				height: 100%;
 			}
 
 			.themes__controls .theme__search-container,
@@ -106,10 +107,11 @@
 			.themes__showcase .theme-showcase__all-themes {
 				margin: 0 auto;
 				padding-inline: 24px;
+				box-sizing: border-box;
+
 				@media ( max-width: 402px ) {
 					padding-inline: 24px;
 				}
-				box-sizing: border-box;
 			}
 		}
 	}

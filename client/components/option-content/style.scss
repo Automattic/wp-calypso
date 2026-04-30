@@ -10,8 +10,8 @@
 		.summary-button-title,
 		.summary-button-badge-list *,
 		.summary-button-decoration {
-			@include placeholder();
 			border-color: transparent;
+			@include placeholder();
 		}
 
 		.option-content__button svg,

@@ -323,8 +323,8 @@
 
 	&.is-placeholder>span,
 	&.is-placeholder .email-plan-mailboxes-list__mailbox-list-item-main {
-		@include placeholder(--color-neutral-5);
 		width: 50%;
+		@include placeholder(--color-neutral-5);
 	}
 
 	&.no-emails>span {

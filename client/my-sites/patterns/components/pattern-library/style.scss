@@ -18,10 +18,10 @@
 	}
 
 	.pattern-library__filters-inner {
-		@include patterns-page-width;
 		padding-top: 32px;
 		padding-bottom: 32px;
 		display: flex;
+		@include patterns-page-width;
 	}
 
 	.category-pill-navigation {
@@ -115,8 +115,8 @@
 }
 
 .pattern-library {
-	@include patterns-page-width;
 	padding-bottom: 96px;
+	@include patterns-page-width;
 
 	@media (max-width: $break-xlarge) {
 		padding-top: 24px;

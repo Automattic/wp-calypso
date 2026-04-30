@@ -34,15 +34,6 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Robo
  Cookie Banner styling.
 */
 .cookie-banner {
-	@keyframes fadeIn {
-		0% {
-			opacity: 0;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
-
 	font-family: $cookie-banner-font-family;
 	display: flex;
 	position: fixed;
@@ -65,6 +56,15 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Robo
 	animation: fadeIn 0.6s;
 	color: $cookie-banner-text-color;
 	box-sizing: border-box;
+
+	@keyframes fadeIn {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
 
 	* {
 		box-sizing: border-box;

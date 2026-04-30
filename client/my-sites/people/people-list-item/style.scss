@@ -53,6 +53,7 @@
 	align-self: center;
 	flex-shrink: 0;
 	position: relative;
+	color: var(--color-success);
 
 	&:not(.is-invite-details) {
 		// Get out of the way of the link to the invite details page
@@ -71,8 +72,6 @@
 			margin-left: 80px;
 		}
 	}
-
-	color: var(--color-success);
 
 	&.is-pending {
 		color: var(--color-text-subtle);

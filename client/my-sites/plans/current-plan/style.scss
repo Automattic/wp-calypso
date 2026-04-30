@@ -83,9 +83,8 @@
 
 	.current-plan__header-heading,
 	.current-plan__header-text {
-		@include placeholder( --color-neutral-10 );
-
 		display: block;
+		@include placeholder( --color-neutral-10 );
 
 		@include breakpoint-deprecated( "<660px" ) {
 			margin: 0 auto;

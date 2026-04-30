@@ -210,17 +210,17 @@
 
 .activity-card-list__loading-placeholder {
 	.filterbar {
-		@include placeholder( --color-neutral-10 );
 		height: 51px;
 		margin-bottom: 2rem;
+		@include placeholder( --color-neutral-10 );
 	}
 
 	.activity-card-list__pagination-top,
 	.activity-card-list__pagination-bottom {
-		@include placeholder( --color-neutral-10 );
 		height: 34px;
 		width: 50%;
 		margin: 0 auto;
+		@include placeholder( --color-neutral-10 );
 
 		&.is-compact {
 			height: 28px;

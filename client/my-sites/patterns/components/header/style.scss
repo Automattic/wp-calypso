@@ -7,7 +7,6 @@
 	background: #1d2327;
 
 	.patterns-header__inner {
-		@include patterns-page-width;
 		padding-top: 105px;
 		padding-bottom: 64px;
 		background-image: url(./images/background@3x.webp);
@@ -15,6 +14,7 @@
 		background-position: 87% top;
 		background-size: 45% auto;
 		color: var(--studio-white);
+		@include patterns-page-width;
 
 		h1 {
 			font-family: $font-recoleta;

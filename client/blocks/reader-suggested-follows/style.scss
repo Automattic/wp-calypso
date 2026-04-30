@@ -158,10 +158,10 @@
 		padding-bottom: 20px;
 
 		.is-placeholder {
-			@include placeholder();
 			background-color: var(--color-neutral-0);
 			height: 60px;
 			border-radius: 6px;
+			@include placeholder();
 		}
 
 		.is-placeholder.placeholder-title {

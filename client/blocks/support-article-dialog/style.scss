@@ -118,7 +118,7 @@
 }
 
 .support-article-dialog__placeholder-text {
-	@include placeholder();
 	margin-bottom: 16px;
 	min-height: 200px;
+	@include placeholder();
 }

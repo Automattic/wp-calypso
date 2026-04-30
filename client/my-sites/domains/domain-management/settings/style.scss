@@ -165,10 +165,10 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 .domain-settings-page {
 	.name-servers-card__loading {
-		@include placeholder();
 		display: block;
 		margin-top: 4px;
 		margin-bottom: 0;
+		@include placeholder();
 	}
 
 	.set-as-primary__notice {

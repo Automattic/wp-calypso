@@ -24,6 +24,7 @@
 	// Smaller font-size for narrower, two-column modules
 	font-size: $font-body-small;
 	line-height: 40px;
+	border-top: 1px solid color-mix( in srgb, var( --color-surface ) 0%, transparent );
 
 	// List item height shorter on 2-column modules
 	@include breakpoint-deprecated( '>960px' ) {
@@ -32,8 +33,6 @@
 			line-height: 28px;
 		}
 	}
-
-	border-top: 1px solid color-mix( in srgb, var( --color-surface ) 0%, transparent );
 
 	// Increase touch targets on mobile
 	@include breakpoint-deprecated( '<480px' ) {

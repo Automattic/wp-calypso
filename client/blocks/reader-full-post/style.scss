@@ -800,9 +800,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post__story-content-placeholder-text {
-	@include placeholder();
 	margin-bottom: 16px;
 	min-height: 200px;
+	@include placeholder();
 }
 
 .post-edit-button {

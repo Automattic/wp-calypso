@@ -25,13 +25,13 @@
 	flex: 1;
 
 	.is-placeholder &::before {
-		@include placeholder( --color-neutral-10 );
 		content: "\00a0";
 		display: inline-block;
 		width: 100%;
 		height: calc(100% - 16px);
 		min-height: 70px;
 		margin-bottom: 16px;
+		@include placeholder( --color-neutral-10 );
 
 		@include breakpoint-deprecated( ">960px" ) {
 			height: 100%;
@@ -81,12 +81,12 @@
 		}
 
 		&::before {
-			@include placeholder( --color-neutral-10 );
 			content: "\00a0";
 			display: inline-block;
 			width: 64px;
 			height: 64px;
 			border-radius: 99%;
+			@include placeholder( --color-neutral-10 );
 		}
 	}
 }
@@ -148,11 +148,11 @@
 	}
 
 	.is-placeholder &::before {
-		@include placeholder( --color-neutral-10 );
 		content: "\00a0";
 		display: inline-block;
 		width: 180px;
 		height: 18px;
+		@include placeholder( --color-neutral-10 );
 	}
 }
 
@@ -165,11 +165,11 @@
 	}
 
 	.is-placeholder &::before {
-		@include placeholder( --color-neutral-10 );
 		content: "\00a0";
 		display: inline-block;
 		width: 110px;
 		height: 29px;
+		@include placeholder( --color-neutral-10 );
 	}
 
 	.button ~ .button {

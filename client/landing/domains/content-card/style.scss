@@ -50,11 +50,11 @@
 
 	&.content-card__loading-placeholder {
 		.content-card__illustration {
-			@include placeholder( --color-neutral-10 );
 			width: 400px;
 			height: 250px;
 			margin-left: auto;
 			margin-right: auto;
+			@include placeholder( --color-neutral-10 );
 
 			@include breakpoint-deprecated( "<480px" ) {
 				display: none;
@@ -62,17 +62,17 @@
 		}
 
 		.content-card__message {
-			@include placeholder( --color-neutral-10 );
 			height: 24px;
 			margin: 0 auto 10px;
 			width: 50%;
+			@include placeholder( --color-neutral-10 );
 		}
 
 		.content-card__footer {
-			@include placeholder( --color-neutral-10 );
 			height: 20px;
 			margin: 40px auto;
 			width: 70%;
+			@include placeholder( --color-neutral-10 );
 		}
 	}
 }

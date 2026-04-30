@@ -220,6 +220,7 @@ $input-z-index: 20;
 			height: 100%;
 			position: relative;
 			font-size: $font-body;
+			padding-left: 8px;
 
 			&::before {
 				@include long-content-fade( $direction: right, $size: 32px, $z-index: $input-z-index + 2, $color: var( --color-surface ) );
@@ -237,8 +238,6 @@ $input-z-index: 20;
 					border-radius: inherit;
 				}
 			}
-
-			padding-left: 8px;
 		}
 	}
 

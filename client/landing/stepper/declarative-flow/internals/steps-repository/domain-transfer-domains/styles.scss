@@ -134,6 +134,11 @@
 		}
 
 		@media (max-width: $break-medium) {
+			gap: 0;
+			justify-content: flex-start;
+			margin-top: 24px;
+			width: 100%;
+
 			.step-container__header {
 				width: 100%;
 				margin-top: 48px;
@@ -143,11 +148,6 @@
 					text-align: left;
 				}
 			}
-
-			gap: 0;
-			justify-content: flex-start;
-			margin-top: 24px;
-			width: 100%;
 		}
 	}
 

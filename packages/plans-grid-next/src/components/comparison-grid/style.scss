@@ -208,13 +208,13 @@
 
 		.plan-comparison-grid__plan-conditional-title {
 			@extend %plan-comparison-grid__plan-subtitle;
+			text-wrap: balance;
+			max-width: 160px;
+			hyphens: unset;
 			@include plans-grid-medium-large {
 				color: unset;
 				margin-bottom: 0;
 			}
-			text-wrap: balance;
-			max-width: 160px;
-			hyphens: unset;
 		}
 
 		&:not(.has-feature):not(.has-feature-label) {

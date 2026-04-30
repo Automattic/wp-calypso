@@ -5,12 +5,6 @@
 .dashboard-page-layout {
 	--page-layout-block-padding: #{$grid-unit-20};
 	--page-layout-inline-padding: #{$grid-unit-20};
-
-	@include break-medium {
-		--page-layout-block-padding: #{$grid-unit-40};
-		--page-layout-inline-padding: #{$grid-unit-30};
-	}
-
 	margin: auto;
 	padding: var( --page-layout-block-padding ) var( --page-layout-inline-padding );
 	max-width: var( --page-layout-max-width );
@@ -19,4 +13,9 @@
 	// be on the PageLayout so that the blurred overlay can cover the entire
 	// PageLayout, including the padding.
 	position: relative;
+
+	@include break-medium {
+		--page-layout-block-padding: #{$grid-unit-40};
+		--page-layout-inline-padding: #{$grid-unit-30};
+	}
 }

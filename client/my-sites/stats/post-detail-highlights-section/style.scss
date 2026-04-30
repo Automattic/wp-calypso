@@ -4,12 +4,13 @@
 @import "@wordpress/base-styles/mixins";
 
 .stats__post-detail-highlights-section {
-	@include break-small {
-		// padding-bottom: $vertical-margin;
-	}
 	padding-top: $vertical-margin;
 
 	padding-bottom: $vertical-margin;
+
+	@include break-small {
+		// padding-bottom: $vertical-margin;
+	}
 
 	.stats > & {
 		@media (max-width: $break-small) {

@@ -37,11 +37,11 @@
 }
 
 .migration-instructions-provisioning__action-icon-error {
+	fill: var(--color-error);
+
 	> svg {
 		display: block;
 	}
-
-	fill: var(--color-error);
 }
 
 .migration-instructions-provisioning__action-text {

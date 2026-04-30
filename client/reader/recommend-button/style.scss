@@ -5,21 +5,21 @@
  */
 $support-old-button-styles: true;
 .reader-recommend-button.is-secondary:not(.is-destructive) {
+	gap: 8px;
+	padding: 12px 24px 12px 20px;
+	font-size: 14px;
+	line-height: 24px;
+	height: 48px;
 	@if $support-old-button-styles {
 		--wp-components-color-accent: initial;
 		--wp-components-color-accent-darker-20: initial;
 		--wp-admin-theme-color: var(--color-neutral-10);
 		--wp-admin-theme-color-darker-20: var(--color-neutral-10);
 		font-weight: 500;
+		color: var(--color-text);
 
 		&:hover {
 			color: var(--color-text);
 		}
-		color: var(--color-text);
 	}
-	gap: 8px;
-	padding: 12px 24px 12px 20px;
-	font-size: 14px;
-	line-height: 24px;
-	height: 48px;
 }

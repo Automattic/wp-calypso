@@ -181,6 +181,8 @@
 	}
 }
 .section-nav-updated.section-nav {
+	margin-bottom: 0;
+
 	.is-selected.section-nav-tab .section-nav-tab__link .a8c-count {
 		color: var(--color-text);
 	}
@@ -221,7 +223,6 @@
 		border: none;
 		font-weight: normal;
 	}
-	margin-bottom: 0;
 	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: none;
 	}

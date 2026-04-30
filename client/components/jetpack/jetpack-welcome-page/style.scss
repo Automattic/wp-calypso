@@ -107,12 +107,13 @@
 				padding: 0 10px 0 16px;
 
 				p {
+					margin: 0;
+
 					@include break-mobile {
 						font-size: $font-body;
 						/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 						line-height: 1.5rem;
 					}
-					margin: 0;
 				}
 			}
 		}

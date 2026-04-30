@@ -82,9 +82,6 @@
 	.survey-notice__popup {
 		view-transition-name: survey-notice-popup;
 		animation: slide-in 0.3s ease-out both 0.1s;
-		@media (prefers-reduced-motion) {
-			animation: reduced-motion-slide-in 0.5s ease-in-out both 0.7s;
-		}
 		position: absolute;
 		right: 25px;
 		bottom: 25px;
@@ -97,6 +94,10 @@
 			0 3px 8px 0 rgba(0, 0, 0, 0.12);
 		overflow: hidden;
 		background-color: var(--studio-white);
+
+		@media (prefers-reduced-motion) {
+			animation: reduced-motion-slide-in 0.5s ease-in-out both 0.7s;
+		}
 	}
 
 	.survey-notice__popup-head {

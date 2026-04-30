@@ -32,11 +32,11 @@
 
 	.thank-you__container-header {
 		padding-top: 50px;
+		min-height: 0;
+		padding-bottom: 0;
 		@media screen and (max-width: 782px) {
 			padding-top: 30px;
 		}
-		min-height: 0;
-		padding-bottom: 0;
 		img {
 			margin-bottom: 32px;
 		}

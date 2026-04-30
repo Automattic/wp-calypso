@@ -210,6 +210,6 @@ $newsletter_importer_line-height: 20px;
 }
 
 .importer-loading .is-loading {
-	@include placeholder( --color-neutral-10 );
 	margin-bottom: 0;
+	@include placeholder( --color-neutral-10 );
 }

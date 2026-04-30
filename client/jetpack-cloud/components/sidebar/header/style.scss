@@ -23,11 +23,6 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 }
 
 .jetpack-cloud-sidebar__profile-dropdown-menu {
-	// Required for older browsers
-	&[hidden] {
-		display: none;
-	}
-
 	position: absolute;
 	// 4px below the bottom of the icon
 	top: calc(100% + 4px);
@@ -35,9 +30,6 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 	// Float the dropdown to the left on small screens,
 	// and to the right on larger screens
 	right: 0;
-	@include breakpoint-deprecated( ">660px" ) {
-		right: initial;
-	}
 
 	// The menu should render "on top" of the profile picture & site switcher
 	z-index: 20;
@@ -55,6 +47,15 @@ html.accessible-focus .jetpack-cloud-sidebar__profile-dropdown-button:focus {
 	list-style-type: none;
 
 	font-size: $font-body-small;
+
+	// Required for older browsers
+	&[hidden] {
+		display: none;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		right: initial;
+	}
 }
 
 .jetpack-cloud-sidebar__profile-dropdown-menu-item {

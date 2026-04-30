@@ -71,11 +71,10 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 		width: 305px;
 
 		button.components-button {
-			@include hover-color;
-
 			padding: 0 15px;
 
 			justify-content: flex-start;
+			@include hover-color;
 
 			.reader-import-button__label,
 			.reader-export-button__label {

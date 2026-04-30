@@ -6,12 +6,11 @@
 
 	padding-inline-start: calc( var( --icon-size ) * 2.5 );
 	padding-inline-end: var( --icon-size );
+	color: var( --color-text-subtle );
 
 	@include breakpoint-deprecated( '>660px' ) {
 		--icon-size: 24px;
 	}
-
-	color: var( --color-text-subtle );
 
 	.card__icon {
 		position: absolute;

@@ -61,12 +61,11 @@
 	margin-bottom: 5px;
 
 	&.is-placeholder {
-		@include placeholder();
-
 		background-color: var(--color-success-5);
 		margin-left: auto;
 		margin-right: auto;
 		width: 35%;
+		@include placeholder();
 	}
 }
 
@@ -108,10 +107,10 @@
 
 .thank-you-card__button.is-placeholder,
 .thank-you-card__button.is-placeholder:visited {
-	@include placeholder();
 	pointer-events: none;
 	border-color: transparent;
 	border-radius: 0;
+	@include placeholder();
 }
 
 .thank-you-card__button:focus {

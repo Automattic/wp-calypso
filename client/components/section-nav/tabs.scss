@@ -64,14 +64,14 @@
 	.section-nav-tabs__list {
 		--direction-start: left;
 		--direction-end: right;
+		--fade-width: 4rem;
+		--fade-gradient-base: transparent 0%, #000 var( --fade-width );
+		--fade-gradient-composed: var( --fade-gradient-base ), #000 60%, transparent 50%;
+
 		&:dir( rtl ) {
 			--direction-start: right;
 			--direction-end: left;
 		}
-
-		--fade-width: 4rem;
-		--fade-gradient-base: transparent 0%, #000 var( --fade-width );
-		--fade-gradient-composed: var( --fade-gradient-base ), #000 60%, transparent 50%;
 
 		&.is-overflowing-first {
 			mask-image: linear-gradient(

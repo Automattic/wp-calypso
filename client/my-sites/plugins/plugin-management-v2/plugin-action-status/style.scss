@@ -31,9 +31,6 @@
 	color: #00450c;
 	/* reference busy state from https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/button/style.scss */
 	animation: plugin-action-status-inProgress__busy-animation 2500ms infinite linear;
-	@media (prefers-reduced-motion: reduce) {
-		animation-duration: 0s;
-	}
 	background-size: 100px 100%;
 	background-image: linear-gradient(
 	-45deg,
@@ -42,6 +39,9 @@
 		darken( #b8e6bf, 12%) 70%,
 		darken( #b8e6bf, 2%) 70%
 	);
+	@media (prefers-reduced-motion: reduce) {
+		animation-duration: 0s;
+	}
 }
 
 @keyframes plugin-action-status-inProgress__busy-animation {

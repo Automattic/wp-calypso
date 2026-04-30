@@ -112,10 +112,11 @@
 
 // Top margin for site results
 .main.search-stream {
+	padding: 0;
+
 	@include breakpoint-deprecated( "<660px" ) {
 		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
 	}
-	padding: 0;
 }
 
 // Post recommendations in Search

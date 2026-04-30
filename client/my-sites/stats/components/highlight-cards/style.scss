@@ -51,11 +51,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 }
 
 .highlight-cards-heading {
-	@include stats-section-header;
-
 	margin-bottom: $header-margin-bottom;
 	display: flex;
 	align-items: center;
+	@include stats-section-header;
 
 	small {
 		font-family: $highlight-card-heading-font;
@@ -83,11 +82,11 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	// Add horizontal scrolling, but without the scrollbar.
 	overflow-x: scroll;
 	scrollbar-width: none;
+	padding: 1px; // Ensures scrollable content box doesn't cover the highlight card.
+
 	&::-webkit-scrollbar {
 		display: none;
 	}
-
-	padding: 1px; // Ensures scrollable content box doesn't cover the highlight card.
 
 	.highlight-card {
 		border-color: var(--studio-gray-5);

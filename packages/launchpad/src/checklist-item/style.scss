@@ -87,11 +87,11 @@
 
 .checklist-item__task-content.components-button:hover:not([disabled]),
 .checklist-item__task-content.components-button:focus:not([disabled]) {
+	border-bottom: 1px solid var(--studio-gray-5);
 	&:is(button, a) {
 		fill: var(--studio-blue-50);
 		color: var(--studio-blue-50);
 	}
-	border-bottom: 1px solid var(--studio-gray-5);
 }
 
 .checklist-item__task-content.components-button[disabled],

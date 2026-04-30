@@ -1,7 +1,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .partner-portal-text-placeholder {
-	@include placeholder( --color-neutral-10 );
-
 	display: block;
+	@include placeholder( --color-neutral-10 );
 }

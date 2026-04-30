@@ -260,10 +260,10 @@
 
 .alphabetic-tags__table {
 	padding-bottom: 26px;
+	margin-bottom: 26px;
 	&:not(:last-child) {
 		border-bottom: 1px solid var(--studio-gray-5);
 	}
-	margin-bottom: 26px;
 
 	.alphabetic-tags__letter-title {
 		font-size: 32px;

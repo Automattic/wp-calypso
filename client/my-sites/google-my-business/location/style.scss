@@ -12,16 +12,16 @@
 
 	&.is-loading {
 		.gmb-location__name {
-			@include placeholder();
 			height: 25px;
 			width: 150px;
 			margin: 5px;
+			@include placeholder();
 		}
 		.gmb-location__address {
-			@include placeholder();
 			height: 80px;
 			width: 200px;
 			margin: 5px;
+			@include placeholder();
 		}
 	}
 }

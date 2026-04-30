@@ -199,13 +199,13 @@ body.is-section-plans.is-woo-express-plan {
 		}
 
 		.woo-express-plans-page__bottom-banner-img-wrapper {
-			@media (max-width: $break-mobile) {
-				display: none;
-			}
-
 			margin-left: 50px;
 			padding: 0 20px;
 			text-align: center;
+
+			@media (max-width: $break-mobile) {
+				display: none;
+			}
 
 			.woo-express-plans-page__bottom-banner-img {
 				width: 166px;

@@ -19,9 +19,8 @@
 
 .vertical-nav-item.is-placeholder {
 	span {
-		@include placeholder( --color-neutral-10 );
-
 		display: inline-block;
+		@include placeholder( --color-neutral-10 );
 
 		&:first-child {
 			width: 35%;

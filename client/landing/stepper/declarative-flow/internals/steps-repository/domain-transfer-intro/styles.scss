@@ -32,15 +32,15 @@ $heading-font-family: "SF Pro Display", $sans;
 		padding: 0;
 
 		@media (max-width: $break-medium) {
-			header {
-				text-align: center;
-			}
-
 			flex-direction: column;
 			gap: 0;
 			justify-content: flex-start;
 			padding-left: 20px;
 			padding-right: 20px;
+
+			header {
+				text-align: center;
+			}
 		}
 
 		.step-container.intro {
