@@ -957,8 +957,9 @@ export default function ReviewMediation( {
 											);
 										}
 										return (
-											// Intentionally not role="button" — this card contains inner
-											// buttons; keyboard users reach the inner buttons directly.
+											// Card body is a mouse-convenience for "click anywhere to focus
+											// the target block"; keyboard users reach the same action via the
+											// inner BlockRef + Accept/Dismiss buttons.
 											// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 											<article
 												className={ `jetpack-ai-review-mediation__card is-${ status }${

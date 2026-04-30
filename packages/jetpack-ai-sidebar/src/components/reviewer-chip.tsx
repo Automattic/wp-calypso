@@ -60,6 +60,11 @@ function getPillColours( name: string ): { background: string; border: string } 
  * @param           props.variant    Visual variant — 'inline' (default) or 'compact' for dense lists.
  * @returns React element.
  */
+/** Accept only `https://` avatar URLs; reject any other scheme to avoid `javascript:` / `data:` smuggling. */
+function isSafeAvatarUrl( url: string | null | undefined ): url is string {
+	return typeof url === 'string' && /^https:\/\//i.test( url );
+}
+
 export default function ReviewerChip( {
 	name,
 	metadata,
@@ -67,7 +72,7 @@ export default function ReviewerChip( {
 	variant = 'inline',
 }: ReviewerChipProps ) {
 	const tooltip = title ?? metadata?.bio ?? name;
-	const avatarUrl = metadata?.avatar_url;
+	const avatarUrl = isSafeAvatarUrl( metadata?.avatar_url ) ? metadata.avatar_url : null;
 
 	if ( avatarUrl ) {
 		return (

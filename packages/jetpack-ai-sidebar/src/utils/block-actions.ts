@@ -90,11 +90,7 @@ export function findBlockListLayout(): HTMLElement | null {
 
 // ---------- Processing effect (Flow Block shimmer) ----------
 
-/**
- * Inject processing styles into the document containing the block.
- * Uses Flow Block font + flash animation matching Big Sky's effect.
- * @param doc
- */
+/** Inject processing-effect styles. Uses system fonts so no external font fetch is needed. */
 function ensureProcessingStyles( doc: Document ): void {
 	if ( doc.getElementById( 'jetpack-ai-processing-styles' ) ) {
 		return;
@@ -102,7 +98,6 @@ function ensureProcessingStyles( doc: Document ): void {
 	const style = doc.createElement( 'style' );
 	style.id = 'jetpack-ai-processing-styles';
 	style.textContent = `
-		@import url("https://fonts.googleapis.com/css2?family=Flow+Block&display=swap");
 		@keyframes jetpack-ai-flash-text {
 			0% { opacity: 0.4; }
 			50% { opacity: 0.8; }
@@ -115,9 +110,7 @@ function ensureProcessingStyles( doc: Document ): void {
 		.jetpack-ai-is-processing,
 		.jetpack-ai-is-processing .wp-block-heading,
 		.jetpack-ai-is-processing .wp-block-paragraph {
-			font-family: "Flow Block", system-ui !important;
-			font-style: normal;
-			font-weight: 200;
+			font-style: italic;
 			transition: transform 1s;
 		}
 		.jetpack-ai-is-processing:not(:has(img)) {
