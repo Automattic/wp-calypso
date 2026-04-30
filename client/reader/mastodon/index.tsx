@@ -10,6 +10,7 @@ import {
 	mastodonAccount,
 	mastodonOauthCallback,
 	mastodonProfile,
+	mastodonTagFeed,
 	mastodonThread,
 } from './controller';
 
@@ -45,6 +46,14 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		mastodonProfile,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/mastodon/:id(\\d+)/tag/:hashtag',
+		sidebar,
+		setBeforePrimary,
+		mastodonTagFeed,
 		makeLayout,
 		clientRender
 	);
