@@ -4,11 +4,11 @@
 	"description": "React helpers for tracking viewport changes.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.jsx",
+	"calypso:src": "src/index.js",
 	"types": "./types.d.ts",
 	"exports": {
 		".": {
-			"calypso:src": "./src/index.jsx",
+			"calypso:src": "./src/index.js",
 			"types": "./types.d.ts",
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"

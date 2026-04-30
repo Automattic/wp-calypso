@@ -20,7 +20,7 @@ const blockAttributes = {
 
 const itemLineRegex = /^([ ]{0,3})([xo#*-])(\s+)(.*)/;
 
-const edit = class TodoEdit extends Component {
+const edit = class extends Component {
 	constructor() {
 		super( ...arguments );
 		this.addNewItem = this.addNewItem.bind( this );
@@ -253,7 +253,7 @@ const deprecated = [
 	},
 ];
 
-const save = class TodoSave extends Component {
+const save = class extends Component {
 	render() {
 		const list = this.props.attributes.list.filter(
 			( item ) => typeof item !== 'string' || item.trim() !== ''

@@ -1,4 +1,4 @@
-const GoogleMyBusinessLogo = ( props ) => {
+export default ( props ) => {
 	return (
 		<svg version="1.1" viewBox="0 0 512 512" { ...props }>
 			<path
@@ -59,5 +59,3 @@ const GoogleMyBusinessLogo = ( props ) => {
 		</svg>
 	);
 };
-
-export default GoogleMyBusinessLogo;

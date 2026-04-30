@@ -6,7 +6,7 @@ import loginReducer from 'calypso/state/login/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { JetpackSignup } from '../signup.jsx';
+import { JetpackSignup } from '../signup.js';
 
 jest.mock( 'calypso/components/data/document-head', () => () => 'DocumentHead' );
 jest.mock( 'calypso/components/social-buttons/google', () => () => 'GoogleSocialButton' );

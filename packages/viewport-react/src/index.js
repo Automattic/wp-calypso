@@ -65,7 +65,7 @@ export function useDesktopBreakpoint() {
 export const withBreakpoint = ( breakpoint ) =>
 	createHigherOrderComponent(
 		( WrappedComponent ) =>
-			forwardRef( function WithBreakpoint( props, ref ) {
+			forwardRef( ( props, ref ) => {
 				const isActive = useBreakpoint( breakpoint );
 				return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
 			} ),
@@ -80,7 +80,7 @@ export const withBreakpoint = ( breakpoint ) =>
  */
 export const withMobileBreakpoint = createHigherOrderComponent(
 	( WrappedComponent ) =>
-		forwardRef( function WithMobileBreakpoint( props, ref ) {
+		forwardRef( ( props, ref ) => {
 			const isActive = useBreakpoint( MOBILE_BREAKPOINT );
 			return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
 		} ),
@@ -95,7 +95,7 @@ export const withMobileBreakpoint = createHigherOrderComponent(
  */
 export const withDesktopBreakpoint = createHigherOrderComponent(
 	( WrappedComponent ) =>
-		forwardRef( function WithDesktopBreakpoint( props, ref ) {
+		forwardRef( ( props, ref ) => {
 			const isActive = useBreakpoint( DESKTOP_BREAKPOINT );
 			return <WrappedComponent { ...props } isBreakpointActive={ isActive } ref={ ref } />;
 		} ),
