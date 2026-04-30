@@ -13,12 +13,16 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { invokeSurvicateEvent } from '@automattic/survicate';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
+import { Button as GutenbergButton } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
-import { Component } from 'react';
+import { Component, useCallback } from 'react';
 import { connect } from 'react-redux';
 import BackupRetentionOptionOnCancelPurchase from 'calypso/components/backup-retention-management/retention-option-on-cancel-purchase';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -81,9 +85,57 @@ import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { UpgradesCancelFeaturesResponse } from '@automattic/api-core';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
-import type { ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
+
+function ContactSupportButton( {
+	purchase,
+	displayVariant,
+	children,
+	...props
+}: {
+	purchase: { siteId: number; siteUrl: string; productName: string };
+	displayVariant: 'cancel' | 'remove';
+	children?: ReactNode;
+} & ButtonHTMLAttributes< HTMLButtonElement > ) {
+	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
+
+	const handleClick = useCallback( () => {
+		if ( canConnectToZendeskMessaging ) {
+			setNewMessagingChat( {
+				initialMessage:
+					displayVariant === 'remove'
+						? `I have questions about removing my ${ purchase.productName }. Can I speak with a human?`
+						: `I have questions about canceling my ${ purchase.productName }. Can I speak with a human?`,
+				siteUrl: purchase.siteUrl,
+				siteId: String( purchase.siteId ),
+			} );
+		} else {
+			setNavigateToRoute( '/odie' );
+			setShowHelpCenter( true );
+		}
+	}, [
+		canConnectToZendeskMessaging,
+		displayVariant,
+		purchase.productName,
+		purchase.siteUrl,
+		purchase.siteId,
+		setNewMessagingChat,
+		setNavigateToRoute,
+		setShowHelpCenter,
+	] );
+
+	return (
+		<GutenbergButton variant="link" onClick={ handleClick } { ...props }>
+			{ children }
+		</GutenbergButton>
+	);
+}
 
 interface MomentProps {
 	moment: typeof moment;
@@ -756,7 +808,16 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					<p className="cancel-purchase__support-text">
 						{ translate( 'Our support team is here for you. {{a}}Contact us{{/a}}', {
 							components: {
-								a: (
+								a: isSplitEnabled ? (
+									<ContactSupportButton
+										purchase={ {
+											siteId: purchase.siteId,
+											siteUrl: purchase.siteSlug ?? purchase.domain,
+											productName: purchase.productName,
+										} }
+										displayVariant={ displayVariant }
+									/>
+								) : (
 									<a
 										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
 										target="_blank"
