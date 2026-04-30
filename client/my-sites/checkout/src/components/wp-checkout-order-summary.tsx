@@ -705,11 +705,11 @@ const CheckoutSummaryFeatures = styled.div`
 	justify-self: flex-start;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding: 24px 0; ) }
+		padding: 24px 0;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		padding: 24px 0; ) }
+		padding: 24px 0;
 	}
 `;
 
