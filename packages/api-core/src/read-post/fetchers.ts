@@ -17,6 +17,7 @@ const fetchReadBlogPost = (
 			`/read/sites/${ encodeURIComponent( blogId ) }/posts/${ encodeURIComponent( postId ) }`,
 			widthQuery( contentWidth )
 		),
+		apiVersion: '1.1',
 		method: 'GET',
 	} );
 
