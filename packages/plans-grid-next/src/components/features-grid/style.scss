@@ -131,8 +131,7 @@
 	.plans-grid-next-features-grid__mobile-plan-card {
 		background-color: var(--studio-white);
 		border: 1px solid #e0e0e0;
-		/* stylelint-disable-next-line */
-		border-radius: 5px;
+		border-radius: 4px;
 		padding: 20px 0 20px 0;
 
 		/*
@@ -189,7 +188,7 @@
 	color: var(--color-text-subtle);
 	table-layout: fixed;
 	border: 1px solid #e0e0e0;
-	border-radius: 5px; /* stylelint-disable-line */
+	border-radius: 4px;
 	background-color: #fff;
 	margin: 0 auto;
 	border-spacing: 0;
@@ -310,8 +309,7 @@
 	max-width: 100%;
 	margin-bottom: 64px;
 	border: 1px solid #e0e0e0;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 5px;
+	border-radius: 4px;
 	display: flex;
 	justify-content: space-between;
 
