@@ -472,6 +472,7 @@ export function CheckoutSummaryFeaturesList( props: {
 				<CheckoutSummaryPlanFeatures
 					hasDomainsInCart={ hasDomainsInCart }
 					nextDomainIsFree={ nextDomainIsFree }
+					hasDomainTransferInCart={ hasDomainTransferProduct }
 				/>
 			) }
 
@@ -521,25 +522,18 @@ export function CheckoutSummaryFeaturesList( props: {
 function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
-	let bundledDomainText = isDomainTransfer( domain )
-		? translate( '{{strong}}%(domain)s{{/strong}} domain transfer free for one year', {
-				components: {
-					strong: <strong />,
-				},
-				args: {
-					domain: domain.meta,
-				},
-				comment: 'domain name and bundling message for a domain transfer',
-		  } )
-		: translate( '{{strong}}%(domain)s{{/strong}} domain registration free for one year', {
-				components: {
-					strong: <strong />,
-				},
-				args: {
-					domain: domain.meta,
-				},
-				comment: 'domain name and bundling message',
-		  } );
+	let bundledDomainText = translate(
+		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
+		{
+			components: {
+				strong: <strong />,
+			},
+			args: {
+				domain: domain.meta,
+			},
+			comment: 'domain name and bundling message',
+		}
+	);
 
 	if ( domain.is_included_for_100yearplan ) {
 		bundledDomainText = translate( '{{strong}}%(domain)s{{/strong}} included with your plan', {
@@ -631,8 +625,9 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 function CheckoutSummaryPlanFeatures( props: {
 	hasDomainsInCart: boolean;
 	nextDomainIsFree: boolean;
+	hasDomainTransferInCart: boolean;
 } ) {
-	const { hasDomainsInCart, nextDomainIsFree } = props;
+	const { hasDomainsInCart, nextDomainIsFree, hasDomainTransferInCart } = props;
 
 	const translate = useTranslate();
 	const cartKey = useCartKey();
@@ -652,7 +647,8 @@ function CheckoutSummaryPlanFeatures( props: {
 		hasDomainsInCart,
 		hasRenewalInCart,
 		nextDomainIsFree && ! isHundredYearPlan,
-		showPricingGridFeatures
+		showPricingGridFeatures,
+		hasDomainTransferInCart
 	);
 
 	return (

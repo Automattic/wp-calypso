@@ -25,7 +25,8 @@ export default function getPlanFeatures(
 	hasDomainsInCart: boolean,
 	hasRenewalInCart: boolean,
 	nextDomainIsFree: boolean,
-	showPricingGridFeatures?: boolean
+	showPricingGridFeatures?: boolean,
+	hasDomainTransferInCart?: boolean
 ): string[] {
 	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
 	const productSlug = plan?.product_slug;
@@ -56,7 +57,12 @@ export default function getPlanFeatures(
 			.filter( ( feature ) => ! isMonthlyPlan || ! annualPlanOnlyFeatures.includes( feature ) )
 			// Show the free domain feature if `showFreeDomainFeature` is true
 			.filter( ( feature ) => feature !== FEATURE_CUSTOM_DOMAIN || showFreeDomainFeature )
-			.map( ( feature ) => String( getFeatureByKey( feature )?.getTitle() ) );
+			.map( ( feature ) => {
+				if ( feature === FEATURE_CUSTOM_DOMAIN && hasDomainTransferInCart ) {
+					return String( translate( 'Free domain renewal for one year' ) );
+				}
+				return String( getFeatureByKey( feature )?.getTitle() );
+			} );
 
 		// If the new feature list is available, return it.
 		// Else fallback to the previous list of features.
@@ -72,7 +78,11 @@ export default function getPlanFeatures(
 	const fastSupport = String( translate( 'Fast support' ) );
 	const prioritySupport = String( translate( 'Priority support 24/7' ) );
 	const freeOneYearDomain = showFreeDomainFeature
-		? String( translate( 'Free domain for one year' ) )
+		? String(
+				hasDomainTransferInCart
+					? translate( 'Free domain renewal for one year' )
+					: translate( 'Free domain for one year' )
+		  )
 		: undefined;
 	const googleAnalytics = String( translate( 'Track your stats with Google Analytics' ) );
 
