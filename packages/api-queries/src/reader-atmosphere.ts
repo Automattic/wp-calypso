@@ -1,5 +1,6 @@
 import {
 	createConnection,
+	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
@@ -26,6 +27,7 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereError,
+	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 	CreateConnectionParams,
@@ -192,4 +194,34 @@ export interface UseAuthorFeedInfiniteQueryParams {
 
 export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfiniteQueryParams ) {
 	return useInfiniteQuery( authorFeedInfiniteQuery( actor, filter ) );
+}
+
+export const atmosphereTagFeedInfiniteQuery = ( connectionId: number, hashtag: string ) => {
+	const canonicalHashtag = hashtag.trim().toLowerCase().replace( /^#/, '' );
+	return infiniteQueryOptions<
+		AtmosphereTagFeedPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereTagFeedPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.tagFeed( connectionId, canonicalHashtag ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereTagFeed( { connectionId, hashtag: canonicalHashtag, cursor: pageParam } ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: connectionId > 0 && canonicalHashtag.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
+	} );
+};
+
+export function useAtmosphereTagFeedInfiniteQuery( connectionId: number, hashtag: string ) {
+	return useInfiniteQuery( atmosphereTagFeedInfiniteQuery( connectionId, hashtag ) );
 }

@@ -7,6 +7,7 @@ import type {
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
+	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 } from './types';
@@ -158,6 +159,42 @@ export async function getAuthorFeed(
 			},
 			query
 		) ) as AtmosphereAuthorFeedPage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAtmosphereTagFeedParams {
+	connectionId: number;
+	hashtag: string;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getAtmosphereTagFeed(
+	params: GetAtmosphereTagFeedParams
+): Promise< AtmosphereTagFeedPage > {
+	const { connectionId, hashtag, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				// Encode `hashtag` defensively. HASHTAG_RE-validated values
+				// already contain only safe Unicode chars, but encoding keeps
+				// multibyte segments safe in the request path.
+				path: `/reader/atmosphere/connections/${ connectionId }/tag/${ encodeURIComponent(
+					hashtag
+				) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereTagFeedPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}
