@@ -35,13 +35,13 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
-function mockApi() {
-	mockSite( site );
+function mockApi( versionTag: string = 'latest', mockedSite: Site = site ) {
+	mockSite( mockedSite );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version` )
 		.query( true )
-		.reply( 200, 'latest' );
+		.reply( 200, JSON.stringify( versionTag ), { 'Content-Type': 'application/json' } );
 
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -128,6 +128,67 @@ describe( '<WordPressSettings>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders opt-out button for an Atomic site auto-enrolled on beta without self-serve backups', async () => {
+		const user = userEvent.setup();
+
+		const autoEnrolledSite = {
+			...site,
+			is_wpcom_staging_site: false,
+			plan: {
+				product_slug: 'value_bundle',
+				product_name_short: 'Premium',
+				is_free: false,
+				features: { active: [ 'atomic' ] },
+			},
+		} as unknown as Site;
+
+		mockApi( 'beta', autoEnrolledSite );
+
+		render( <WordPressSettings siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect(
+			await screen.findByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
+		).toBeVisible();
+		expect(
+			screen.queryByRole( 'combobox', { name: 'WordPress version' } )
+		).not.toBeInTheDocument();
+
+		const scope = mockWordPressVersionSaved( 'latest' );
+		await user.click(
+			screen.getByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
+		);
+
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		// After a successful opt-out, the rolled-back notice replaces the opt-out card.
+		expect( await screen.findByText( 'WordPress version updated' ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'renders the upsell (not opt-out) for an Atomic site without self-serve backups when on latest', async () => {
+		mockSite( {
+			...site,
+			is_wpcom_staging_site: false,
+			plan: {
+				product_slug: 'value_bundle',
+				product_name_short: 'Premium',
+				is_free: false,
+				features: { active: [ 'atomic' ] },
+			},
+		} as unknown as Site );
+
+		render( <WordPressSettings siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: /Opt out/ } ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'with beta program disabled', () => {
