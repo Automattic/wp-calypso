@@ -1081,7 +1081,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			: baseFeatures;
 	},
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, WPCOM_FEATURES_FULL_ACTIVITY_LOG ],
+	getIncludedFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+		WPCOM_FEATURES_BIG_SKY,
+	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1938,6 +1942,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AUDIO_UPLOADS,
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+		WPCOM_FEATURES_BIG_SKY,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
