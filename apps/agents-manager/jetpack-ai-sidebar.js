@@ -18,6 +18,7 @@ import {
 	getEmptyViewSuggestions,
 	useSuggestions,
 	useCheckpoint,
+	capabilities,
 } from '@automattic/jetpack-ai-sidebar';
 
 // Expose on window for the ESM wrapper to re-export
@@ -29,4 +30,5 @@ window.__JetpackAIProvider = {
 	getEmptyViewSuggestions,
 	useSuggestions,
 	useCheckpoint,
+	capabilities,
 };
