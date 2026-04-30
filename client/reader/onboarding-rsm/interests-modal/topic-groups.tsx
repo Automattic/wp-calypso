@@ -37,6 +37,18 @@ const createPlaceholderImage = ( label: string ): string =>
 		</svg>`
 	) }`;
 
+const placeholderImageCache = new Map< string, string >();
+
+const getPlaceholderImage = ( label: string ): string => {
+	const cachedImage = placeholderImageCache.get( label );
+	if ( cachedImage ) {
+		return cachedImage;
+	}
+	const image = createPlaceholderImage( label );
+	placeholderImageCache.set( label, image );
+	return image;
+};
+
 export const getTopicGroups = (): TopicGroup[] => {
 	const titles = {
 		mostSubscribed: __( 'Most Subscribed' ),
@@ -52,14 +64,14 @@ export const getTopicGroups = (): TopicGroup[] => {
 	// Inline SVG placeholders avoid third-party image requests while preserving
 	// thumbnail rendering until first-party curated artwork is available.
 	const img = {
-		mostSubscribed: createPlaceholderImage( titles.mostSubscribed ),
-		foodDrinks: createPlaceholderImage( titles.foodDrinks ),
-		travelWorld: createPlaceholderImage( titles.travelWorld ),
-		photographyArts: createPlaceholderImage( titles.photographyArts ),
-		techDevelopment: createPlaceholderImage( titles.techDevelopment ),
-		natureScience: createPlaceholderImage( titles.natureScience ),
-		designCraft: createPlaceholderImage( titles.designCraft ),
-		musicCulture: createPlaceholderImage( titles.musicCulture ),
+		mostSubscribed: getPlaceholderImage( titles.mostSubscribed ),
+		foodDrinks: getPlaceholderImage( titles.foodDrinks ),
+		travelWorld: getPlaceholderImage( titles.travelWorld ),
+		photographyArts: getPlaceholderImage( titles.photographyArts ),
+		techDevelopment: getPlaceholderImage( titles.techDevelopment ),
+		natureScience: getPlaceholderImage( titles.natureScience ),
+		designCraft: getPlaceholderImage( titles.designCraft ),
+		musicCulture: getPlaceholderImage( titles.musicCulture ),
 	};
 
 	return [

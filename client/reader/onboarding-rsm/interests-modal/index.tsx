@@ -40,7 +40,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
 	const followedTagsRef = useRef< string[] >( [] );
-	const interestTopics = useReaderInterestTags().slice( 0, MAX_INTEREST_TOPICS );
+	const interestTopics = useReaderInterestTags( { enabled: isOpen } ).slice(
+		0,
+		MAX_INTEREST_TOPICS
+	);
 	const { data: followedTagsFromState } = useFollowedReaderTags();
 	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
@@ -53,12 +56,24 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
 	useEffect( () => {
-		if ( ! followedTagsFromState || hasSyncedFromServerRef.current ) {
+		if ( ! isOpen || ! followedTagsFromState || hasSyncedFromServerRef.current ) {
 			return;
 		}
-		setFollowedTags( followedTagsFromState.map( ( tag ) => tag.slug ) );
+		if ( inFlightTagOpsRef.current.size > 0 ) {
+			return;
+		}
+		const syncedTags = followedTagsFromState.map( ( tag ) => tag.slug );
+		followedTagsRef.current = syncedTags;
+		setFollowedTags( syncedTags );
 		hasSyncedFromServerRef.current = true;
-	}, [ followedTagsFromState ] );
+	}, [ isOpen, followedTagsFromState ] );
+
+	useEffect( () => {
+		if ( isOpen ) {
+			return;
+		}
+		hasSyncedFromServerRef.current = false;
+	}, [ isOpen ] );
 
 	useEffect( () => {
 		followedTagsRef.current = followedTags;
