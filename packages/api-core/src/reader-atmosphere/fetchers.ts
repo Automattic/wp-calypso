@@ -185,9 +185,8 @@ export async function getAtmosphereTagFeed(
 	try {
 		return ( await wpcom.req.get(
 			{
-				// Encode `hashtag` defensively. HASHTAG_RE-validated values
-				// already contain only safe Unicode chars, but encoding keeps
-				// multibyte segments safe in the request path.
+				// Percent-encode the hashtag: HASHTAG_RE allows any Unicode
+				// letter/number/mark, which must be encoded for the URL path.
 				path: `/reader/atmosphere/connections/${ connectionId }/tag/${ encodeURIComponent(
 					hashtag
 				) }/feed`,

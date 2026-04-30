@@ -37,9 +37,11 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 
 	const feed = useAtmosphereTagFeedInfiniteQuery( connection.id, hashtag );
 
-	// Fire tag_feed_viewed exactly once per (connection, hashtag) — gated on
-	// resolved feed data so the payload reflects what the user actually saw
-	// on first load. Subsequent fetches (pagination) don't re-fire.
+	// Fire tag_feed_viewed once per mounted (connection, hashtag) pair —
+	// gated on resolved feed data so the payload reflects what the user
+	// actually saw on first load. Pagination doesn't re-fire; switching
+	// hashtags within the same mount does. Re-mounting (e.g., navigating
+	// away and back) re-fires intentionally — that's a fresh view.
 	const viewedFor = useRef< string | null >( null );
 	useEffect( () => {
 		const key = `${ connection.id }:${ hashtag }`;

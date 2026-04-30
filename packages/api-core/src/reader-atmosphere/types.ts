@@ -212,19 +212,17 @@ export type AtmosphereAuthorFeedFilter =
 	| 'posts_with_media'
 	| 'posts_and_author_threads';
 
-// Optional metadata embedded in the tag-feed response. The backend MAY
-// include nothing today (the public AppView's `hitsTotal` is documented
-// as "may be rounded/truncated" and is sometimes absent); render hashtag
-// name as a plain header and only show `count` / `url` when set.
+// Optional metadata embedded in the tag-feed response. The AppView's
+// `hitsTotal` is documented as approximate and may be absent, so `count`
+// is optional; `url` is also optional in case the backend omits it.
 export interface AtmosphereTagInfo {
 	name: string;
-	// Approximate post count from the AppView's `hitsTotal`. Render as a
-	// "N posts" line under the hashtag header; omit the line when undefined.
+	// Approximate post count from the AppView's `hitsTotal`.
 	count?: number;
 	// Canonical bsky.app hashtag URL (e.g. `https://bsky.app/hashtag/rust`).
-	// Provided so we can offer an external "View on Bluesky" link. Always
-	// `https:`-validated server-side, but consumers should validate again
-	// before rendering as a defence-in-depth.
+	// Built server-side as `https://bsky.app/hashtag/<encoded>`, but
+	// consumers should re-validate the protocol before rendering as
+	// defence-in-depth against a future backend regression.
 	url?: string;
 }
 
