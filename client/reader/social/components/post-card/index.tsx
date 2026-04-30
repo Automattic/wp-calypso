@@ -18,6 +18,7 @@ interface SocialPostCardProps {
 	post: SocialPost;
 	variant?: SocialPostCardVariant;
 	expandedVideo?: boolean;
+	connectionId?: number;
 	// When true, the inline timestamp moves out of the header and renders as
 	// a standalone block between the embed and the counts row (matches
 	// bsky.app's single-post layout). Used by ThreadTree for the target post.
@@ -28,6 +29,7 @@ export function SocialPostCard( {
 	post,
 	variant = 'default',
 	expandedVideo,
+	connectionId,
 	prominentTimestamp,
 }: SocialPostCardProps ) {
 	const isCompact = variant === 'compact';
@@ -73,7 +75,7 @@ export function SocialPostCard( {
 					bodyAndEmbed
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
-				{ ! isCompact && <PostCardCounts counts={ post.counts } postUri={ post.uri } /> }
+				{ ! isCompact && <PostCardCounts post={ post } connectionId={ connectionId } /> }
 			</CardBody>
 		</Card>
 	);

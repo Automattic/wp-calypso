@@ -10,6 +10,7 @@ const BSKY_PROFILE_BASE = 'https://bsky.app/profile/';
 export function mapAtmosphereFeedItemToSocialPost( item: AtmosphereFeedItem ): SocialPost {
 	return {
 		uri: item.uri,
+		cid: item.cid,
 		permalink: item.bluesky_url,
 		text: item.text,
 		html: item.html,
@@ -40,6 +41,7 @@ export function mapAtmosphereFeedItemToSocialPost( item: AtmosphereFeedItem ): S
 			  }
 			: null,
 		counts: item.counts,
+		viewer: item.viewer,
 		embed: item.embed ? mapEmbed( item.embed ) : null,
 	};
 }
