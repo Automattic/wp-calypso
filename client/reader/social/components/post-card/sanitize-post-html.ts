@@ -15,7 +15,10 @@ const CONFIG = {
 
 let hookRegistered = false;
 
-function ensureHook() {
+// Exported so other call sites that sanitize via DOMPurify directly
+// (e.g. profile-card's bio rendering, which uses a wider tag allow-list)
+// can guarantee the hardening hook is registered before they run.
+export function ensureSanitizerHook() {
 	if ( hookRegistered ) {
 		return;
 	}
@@ -23,10 +26,7 @@ function ensureHook() {
 		if ( node.tagName !== 'A' ) {
 			return;
 		}
-		const target = node.getAttribute( 'target' );
-		if ( target?.toLowerCase() !== '_blank' ) {
-			return;
-		}
+		node.setAttribute( 'target', '_blank' );
 		const existing = ( node.getAttribute( 'rel' ) || '' ).split( /\s+/ ).filter( Boolean );
 		for ( const token of [ 'nofollow', 'noopener', 'noreferrer' ] ) {
 			if ( ! existing.includes( token ) ) {
@@ -42,6 +42,6 @@ export function sanitizePostHtml( html: string ): string {
 	if ( ! html ) {
 		return '';
 	}
-	ensureHook();
+	ensureSanitizerHook();
 	return DOMPurify.sanitize( html, CONFIG );
 }
