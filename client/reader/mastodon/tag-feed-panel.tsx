@@ -1,5 +1,5 @@
 import { useMastodonTagFeedInfiniteQuery } from '@automattic/api-queries';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -177,6 +177,21 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 			  } )
 			: null;
 
+	// Defence-in-depth on a third-party-supplied URL: only honour https URLs
+	// even though the backend should only ever emit a Mastodon home-instance
+	// URL. Anything else (javascript:, http://, malformed) falls through to
+	// no link rather than reaching the DOM as an anchor href.
+	const externalTagUrl = ( () => {
+		if ( ! tagInfo?.url ) {
+			return null;
+		}
+		try {
+			return new URL( tagInfo.url ).protocol === 'https:' ? tagInfo.url : null;
+		} catch {
+			return null;
+		}
+	} )();
+
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			<VStack spacing={ 4 } className="mastodon-tag-feed">
@@ -187,15 +202,10 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 				<div className="mastodon-tag-feed__header">
 					<h1 className="mastodon-tag-feed__heading">{ `#${ hashtag }` }</h1>
 					{ countLine ? <p className="mastodon-tag-feed__count">{ countLine }</p> : null }
-					{ tagInfo?.url ? (
-						<a
-							className="mastodon-tag-feed__external-link"
-							href={ tagInfo.url }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
+					{ externalTagUrl ? (
+						<ExternalLink className="mastodon-tag-feed__external-link" href={ externalTagUrl }>
 							{ translate( 'View on Mastodon' ) }
-						</a>
+						</ExternalLink>
 					) : null }
 				</div>
 				<MastodonTagFeedTabs

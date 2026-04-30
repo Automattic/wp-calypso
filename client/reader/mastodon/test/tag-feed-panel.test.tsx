@@ -106,10 +106,13 @@ describe( 'MastodonTagFeedPanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 
-		const link = await screen.findByRole( 'link', { name: 'View on Mastodon' } );
+		const link = await screen.findByRole( 'link', { name: /View on Mastodon/ } );
 		expect( link ).toHaveAttribute( 'href', 'https://mastodon.social/tags/rust' );
 		expect( link ).toHaveAttribute( 'target', '_blank' );
-		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+		// `ExternalLink` enforces `rel="external noreferrer noopener"`; assert the
+		// security tokens are present without locking to the exact ordering.
+		const rel = ( link.getAttribute( 'rel' ) ?? '' ).split( /\s+/ );
+		expect( rel ).toEqual( expect.arrayContaining( [ 'noopener', 'noreferrer' ] ) );
 	} );
 
 	it( 'omits the external link when tag.url is not provided', async () => {
@@ -122,7 +125,24 @@ describe( 'MastodonTagFeedPanel', () => {
 		} );
 
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#rust' } ) ).toBeVisible() );
-		expect( screen.queryByRole( 'link', { name: 'View on Mastodon' } ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: /View on Mastodon/ } ) ).toBeNull();
+	} );
+
+	it( 'rejects non-https tag.url values (defence-in-depth)', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.reply( 200, {
+				items: [],
+				cursor: null,
+				tag: { name: 'rust', url: 'javascript:alert(1)' },
+			} );
+
+		renderWithProvider( <MastodonTagFeedPanel connection={ connection } hashtag="rust" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#rust' } ) ).toBeVisible() );
+		expect( screen.queryByRole( 'link', { name: /View on Mastodon/ } ) ).toBeNull();
 	} );
 
 	it( 'flows ?tab=media through to the feed query as only_media=true', async () => {
