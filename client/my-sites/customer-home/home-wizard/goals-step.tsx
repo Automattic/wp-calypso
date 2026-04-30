@@ -69,7 +69,7 @@ export default function GoalsStep( { value, onChange }: Props ) {
 		<div className="home-wizard__step">
 			<header className="home-wizard__step-header">
 				<Heading level={ 2 } size={ 20 }>
-					{ translate( "What's the main goal of your site?" ) }
+					{ translate( "What's your main goal?" ) }
 				</Heading>
 				<Text variant="muted">{ translate( 'This helps us tailor your setup checklist.' ) }</Text>
 			</header>

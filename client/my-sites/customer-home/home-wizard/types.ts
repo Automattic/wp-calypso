@@ -4,9 +4,9 @@ export type FeatureKey =
 	| 'forms'
 	| 'newsletter'
 	| 'store'
-	| 'comments'
-	| 'analytics'
-	| 'ai-assistant'
+	| 'bookings'
+	| 'gallery'
+	| 'video'
 	| 'memberships'
 	| 'donations';
 
