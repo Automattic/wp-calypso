@@ -167,7 +167,7 @@ export class EditorPage {
 	 */
 	private async waitForEditorLoadedRequests( timeout: number = 60 * 1000 ): Promise< void > {
 		const isEditorUrl = ( url: URL ): boolean =>
-			/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/page(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/post\.php$)/.test(
+			/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/page(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/post\.php$)|(^\/wp-admin\/post-new\.php$)|(^\/wp-admin\/post\.php$)/.test(
 				url.pathname
 			);
 
@@ -181,7 +181,7 @@ export class EditorPage {
 				const editorPathRegex = new RegExp( regexSource );
 				return editorPathRegex.test( window.location.pathname );
 			},
-			/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/page(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/post\.php$)/
+			/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/page(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/post\.php$)|(^\/wp-admin\/post-new\.php$)|(^\/wp-admin\/post\.php$)/
 				.source,
 			{ timeout }
 		);
