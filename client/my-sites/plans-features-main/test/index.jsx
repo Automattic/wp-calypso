@@ -121,7 +121,7 @@ describe( 'PlansFeaturesMain', () => {
 		test( 'Should render <PlanFeatures /> with Newsletter plans when called with newsletter intent', () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-newsletter" /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
+				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ] )
 			);
 		} );
 
@@ -132,7 +132,7 @@ describe( 'PlansFeaturesMain', () => {
 			} ) );
 			renderWithProvider( <PlansFeaturesMain { ...props } /> );
 			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
+				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ] )
 			);
 		} );
 

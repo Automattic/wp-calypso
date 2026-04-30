@@ -1984,6 +1984,10 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	},
 	getBlogOnboardingTagLine: () =>
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate(
+			'Scale your newsletter with advanced customization, powerful publishing tools, and priority support.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for developers and business owners:{{/strong}} Use powerful developer and business tools, without the overhead.',
@@ -2044,6 +2048,23 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_THEMES_PLUGINS,
 		FEATURE_200GB_STORAGE,
 		FEATURE_ALL_PREMIUM_FEATURES,
+	],
+	getNewsletterSignupFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_UNLIMITED_SUBSCRIBERS,
+		FEATURE_PAYMENT_TRANSACTION_FEES_2,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_CONNECT_ANALYTICS,
+		FEATURE_REALTIME_BACKUPS_JP,
+		FEATURE_DEV_TOOLS,
+	],
+	getNewsletterHighlightedFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_UNLIMITED_EMAILS,
+		FEATURE_PRIORITY_24_7_SUPPORT,
+		FEATURE_PLUGINS_THEMES,
+		FEATURE_REALTIME_BACKUPS_JP,
 	],
 	getSignupCompareAvailableFeatures: () => {
 		const baseFeatures = [
