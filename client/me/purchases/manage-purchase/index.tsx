@@ -147,6 +147,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
+	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -230,6 +231,7 @@ export interface ManagePurchaseConnectedProps {
 	isAtomicSite?: boolean | null;
 	isDomainOnlySite?: boolean | null;
 	isProductOwner?: boolean | null;
+	willAtomicSiteRevert?: boolean;
 	isPurchaseTheme?: boolean | null;
 	plan: FilteredPlan | false | undefined;
 	primaryDomain?: ResponseDomain | null;
@@ -1587,6 +1589,7 @@ class ManagePurchase extends Component<
 			getAddNewPaymentMethodUrlFor,
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
+			willAtomicSiteRevert,
 		} = this.props;
 
 		// If there is no purchase, query to load the purchases
@@ -1660,6 +1663,7 @@ class ManagePurchase extends Component<
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
 						isProductOwner={ isProductOwner }
+						willAtomicSiteRevert={ willAtomicSiteRevert }
 						getAddNewPaymentMethodUrlFor={
 							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
 						}
@@ -1913,6 +1917,9 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		isProductOwner,
+		willAtomicSiteRevert: purchase
+			? willAtomicSiteRevertAfterPurchaseDeactivation( state, purchase.id, [] )
+			: false,
 		isPurchaseTheme,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
 		primaryDomain: primaryDomain,

@@ -11,7 +11,6 @@ import saved from './saved/reducer';
 import siteBlocks from './site-blocks/reducer';
 import sites from './sites/reducer';
 import streams from './streams/reducer';
-import thumbnails from './thumbnails/reducer';
 
 const combinedReducer = combineReducers( {
 	conversations,
@@ -25,7 +24,6 @@ const combinedReducer = combineReducers( {
 	siteBlocks,
 	sites,
 	streams,
-	thumbnails,
 } );
 const readerReducer = withStorageKey( 'reader', combinedReducer );
 export default readerReducer;

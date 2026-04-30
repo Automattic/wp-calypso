@@ -53,6 +53,7 @@
 		"asana-phrase": "^0.0.8",
 		"babel-jest": "^29.6.1",
 		"babel-plugin-dynamic-import-node": "^2.3.0",
+		"dotenv": "^9.0.2",
 		"eslint": "^8.34.0",
 		"eslint-plugin-jest": "^25.3.0",
 		"esm": "^3.2.25",

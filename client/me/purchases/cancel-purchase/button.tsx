@@ -241,6 +241,7 @@ class CancelPurchaseButton extends Component<
 						onClose={ this.closeDialog }
 						onSurveyComplete={ this.props.onSurveyComplete }
 						cancellationInProgress={ isLoading }
+						intent={ this.props.displayVariant === 'remove' ? 'remove' : 'cancel' }
 					/>
 				) }
 

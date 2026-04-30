@@ -1,4 +1,5 @@
-import { Button, DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { Button } from '@wordpress/ui';
 import { OmnibarNodeContent } from './omnibar-node';
 import type { OmnibarNode } from '../types';
 
@@ -49,7 +50,13 @@ export function OmnibarMenu( { node }: { node: OmnibarNode } ) {
 
 	if ( ! node.children ) {
 		return (
-			<Button className="omnibar__menu" href={ node.href } onClick={ node.onClick } label={ label }>
+			<Button
+				variant="unstyled"
+				className="omnibar__menu"
+				render={ node.href ? <a href={ node.href } /> : undefined }
+				onClick={ node.onClick }
+				aria-label={ label }
+			>
 				<OmnibarNodeContent node={ node } />
 			</Button>
 		);
