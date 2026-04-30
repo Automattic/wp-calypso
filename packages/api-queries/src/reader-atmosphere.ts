@@ -1,11 +1,14 @@
 import {
 	createConnection,
+	createLike,
+	deleteLike,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
 	getConnections,
 	getThread,
 	getTimeline,
+	PENDING_LIKE_URI,
 	readerAtmosphereKeys,
 } from '@automattic/api-core';
 import {
@@ -16,6 +19,7 @@ import {
 	useQuery,
 	useQueryClient,
 	type InfiniteData,
+	type QueryClient,
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
@@ -26,9 +30,11 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereError,
+	AtmosphereFeedItem,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 	CreateConnectionParams,
+	CreateLikeResult,
 } from '@automattic/api-core';
 
 const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( [
@@ -192,4 +198,97 @@ export interface UseAuthorFeedInfiniteQueryParams {
 
 export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfiniteQueryParams ) {
 	return useInfiniteQuery( authorFeedInfiniteQuery( actor, filter ) );
+}
+
+interface OptimisticContext {
+	snapshots: Array< [ QueryKey, InfiniteData< AtmosphereTimelinePage > | undefined ] >;
+}
+
+/**
+ * Walk every cached `useTimelineInfiniteQuery` entry for the given
+ * connection, find any page whose items contain the post by URI, and
+ * apply `patch` to that item. Pages that don't contain the URI pass
+ * through untouched. Returns the per-key snapshots so `onError` can
+ * restore the exact pre-mutation cache state.
+ */
+function patchTimelineCache(
+	queryClient: QueryClient,
+	connectionId: number,
+	postUri: string,
+	patch: ( item: AtmosphereFeedItem ) => AtmosphereFeedItem
+): OptimisticContext {
+	const key = readerAtmosphereKeys.timeline( connectionId );
+	const snapshots: OptimisticContext[ 'snapshots' ] = [];
+	const data = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( key );
+	snapshots.push( [ key, data ] );
+	if ( ! data ) {
+		return { snapshots };
+	}
+	queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >( key, {
+		...data,
+		pages: data.pages.map( ( page ) => ( {
+			...page,
+			items: page.items.map( ( item ) => ( item.uri === postUri ? patch( item ) : item ) ),
+		} ) ),
+	} );
+	return { snapshots };
+}
+
+function restoreTimelineSnapshots( queryClient: QueryClient, ctx: OptimisticContext | undefined ) {
+	if ( ! ctx ) {
+		return;
+	}
+	for ( const [ key, snapshot ] of ctx.snapshots ) {
+		queryClient.setQueryData( key, snapshot );
+	}
+}
+
+export function useCreateLikeMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation<
+		CreateLikeResult,
+		AtmosphereError,
+		{ postUri: string; postCid: string },
+		OptimisticContext
+	>( {
+		mutationFn: ( { postUri, postCid } ) => createLike( { connectionId, postUri, postCid } ),
+		onMutate: ( { postUri } ) =>
+			patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
+				...item,
+				viewer: {
+					like: PENDING_LIKE_URI,
+					repost: item.viewer?.repost ?? null,
+				},
+				counts: { ...item.counts, likes: item.counts.likes + 1 },
+			} ) ),
+		onError: ( _err, _vars, ctx ) => restoreTimelineSnapshots( queryClient, ctx ),
+		onSuccess: ( result, { postUri } ) => {
+			patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
+				...item,
+				viewer: {
+					like: result.uri,
+					repost: item.viewer?.repost ?? null,
+				},
+			} ) );
+		},
+	} );
+}
+
+export function useDeleteLikeMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, AtmosphereError, { rkey: string; postUri: string }, OptimisticContext >(
+		{
+			mutationFn: ( { rkey } ) => deleteLike( { connectionId, rkey } ),
+			onMutate: ( { postUri } ) =>
+				patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
+					...item,
+					viewer: {
+						like: null,
+						repost: item.viewer?.repost ?? null,
+					},
+					counts: { ...item.counts, likes: Math.max( 0, item.counts.likes - 1 ) },
+				} ) ),
+			onError: ( _err, _vars, ctx ) => restoreTimelineSnapshots( queryClient, ctx ),
+		}
+	);
 }

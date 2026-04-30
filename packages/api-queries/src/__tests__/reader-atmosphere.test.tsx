@@ -1,11 +1,13 @@
 import {
+	PENDING_LIKE_URI,
 	readerAtmosphereKeys,
 	type AtmosphereFeedItem,
 	type AtmosphereThreadResponse,
+	type AtmosphereTimelinePage,
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 } from '@automattic/api-core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, type InfiniteData } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
@@ -14,6 +16,8 @@ import {
 	useConnectionQuery,
 	useConnectionsQuery,
 	useCreateConnectionMutation,
+	useCreateLikeMutation,
+	useDeleteLikeMutation,
 	useThreadQuery,
 	useTimelineInfiniteQuery,
 } from '../reader-atmosphere';
@@ -576,6 +580,266 @@ describe( 'reader-atmosphere hooks', () => {
 				queryKey: readerAtmosphereKeys.authorFeed( 'alice.bsky.social' ),
 			} );
 			expect( matched ).toHaveLength( 2 );
+		} );
+	} );
+
+	describe( 'useCreateLikeMutation / useDeleteLikeMutation', () => {
+		const CONNECTION_ID = 42;
+		const TARGET_URI = 'at://did:plc:target/app.bsky.feed.post/3ktarget';
+		const TARGET_CID = 'cid-target';
+		const OTHER_URI = 'at://did:plc:other/app.bsky.feed.post/3kother';
+		const SERVER_LIKE_URI = 'at://did:plc:viewer/app.bsky.feed.like/3klike';
+		const SERVER_LIKE_RKEY = '3klike';
+
+		function makeFeedItemWithViewer(
+			overrides: Partial< AtmosphereFeedItem > = {}
+		): AtmosphereFeedItem {
+			return makeFeedItem( {
+				viewer: { like: null, repost: null },
+				...overrides,
+			} );
+		}
+
+		function seedTimeline(
+			client: QueryClient,
+			pages: AtmosphereTimelinePage[],
+			pageParams: ( string | undefined )[]
+		) {
+			const data: InfiniteData< AtmosphereTimelinePage > = { pages, pageParams };
+			client.setQueryData( readerAtmosphereKeys.timeline( CONNECTION_ID ), data );
+		}
+
+		function getTimelineCache( client: QueryClient ) {
+			return client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+				readerAtmosphereKeys.timeline( CONNECTION_ID )
+			);
+		}
+
+		describe( 'useCreateLikeMutation', () => {
+			it( 'optimistically sets PENDING_LIKE_URI + increments likes; replaces with real URI on success', async () => {
+				const target = makeFeedItemWithViewer( {
+					uri: TARGET_URI,
+					cid: TARGET_CID,
+					counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
+				} );
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/likes`, {
+						post_uri: TARGET_URI,
+						post_cid: TARGET_CID,
+					} )
+					.delay( 100 )
+					.reply( 200, {
+						like: { uri: SERVER_LIKE_URI, cid: 'cid-like', rkey: SERVER_LIKE_RKEY },
+					} );
+
+				const { result } = renderHook(
+					() => {
+						const m = useCreateLikeMutation( CONNECTION_ID );
+						void m.isPending;
+						void m.isSuccess;
+						void m.isError;
+						void m.data;
+						return m;
+					},
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					result.current.mutate( { postUri: TARGET_URI, postCid: TARGET_CID } );
+					await Promise.resolve();
+				} );
+
+				await waitFor( () => {
+					const optimistic = getTimelineCache( client );
+					expect( optimistic?.pages[ 0 ].items[ 0 ].viewer?.like ).toBe( PENDING_LIKE_URI );
+					expect( optimistic?.pages[ 0 ].items[ 0 ].counts.likes ).toBe( 6 );
+				} );
+
+				await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+				const settled = getTimelineCache( client );
+				expect( settled?.pages[ 0 ].items[ 0 ].viewer?.like ).toBe( SERVER_LIKE_URI );
+				expect( settled?.pages[ 0 ].items[ 0 ].counts.likes ).toBe( 6 );
+			} );
+
+			it( 'rolls back to the pre-mutation snapshot on error', async () => {
+				const target = makeFeedItemWithViewer( {
+					uri: TARGET_URI,
+					cid: TARGET_CID,
+					counts: { replies: 1, reposts: 2, likes: 7, quotes: 3 },
+				} );
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
+				const snapshot = getTimelineCache( client );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/likes` )
+					.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+				const { result } = renderHook(
+					() => {
+						const m = useCreateLikeMutation( CONNECTION_ID );
+						void m.isPending;
+						void m.isError;
+						void m.error;
+						return m;
+					},
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					result.current.mutate( { postUri: TARGET_URI, postCid: TARGET_CID } );
+					await Promise.resolve();
+				} );
+
+				await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+				expect( getTimelineCache( client ) ).toEqual( snapshot );
+			} );
+
+			it( 'patches only the matching post across multiple pages', async () => {
+				const otherPost = makeFeedItemWithViewer( {
+					uri: OTHER_URI,
+					cid: 'cid-other',
+					counts: { replies: 0, reposts: 0, likes: 1, quotes: 0 },
+				} );
+				const target = makeFeedItemWithViewer( {
+					uri: TARGET_URI,
+					cid: TARGET_CID,
+					counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
+				} );
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				seedTimeline(
+					client,
+					[
+						{ items: [ otherPost ], cursor: 'p2' },
+						{ items: [ target ], cursor: null },
+					],
+					[ undefined, 'p2' ]
+				);
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/likes` )
+					.reply( 200, {
+						like: { uri: SERVER_LIKE_URI, cid: 'cid-like', rkey: SERVER_LIKE_RKEY },
+					} );
+
+				const { result } = renderHook(
+					() => {
+						const m = useCreateLikeMutation( CONNECTION_ID );
+						void m.isPending;
+						void m.isSuccess;
+						return m;
+					},
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					result.current.mutate( { postUri: TARGET_URI, postCid: TARGET_CID } );
+					await Promise.resolve();
+				} );
+
+				await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+				const settled = getTimelineCache( client );
+				expect( settled?.pages ).toHaveLength( 2 );
+				// Page 1 (other post) untouched.
+				expect( settled?.pages[ 0 ].items[ 0 ].uri ).toBe( OTHER_URI );
+				expect( settled?.pages[ 0 ].items[ 0 ].viewer?.like ).toBe( null );
+				expect( settled?.pages[ 0 ].items[ 0 ].counts.likes ).toBe( 1 );
+				// Page 2 (target) updated with the real URI + incremented count.
+				expect( settled?.pages[ 1 ].items[ 0 ].uri ).toBe( TARGET_URI );
+				expect( settled?.pages[ 1 ].items[ 0 ].viewer?.like ).toBe( SERVER_LIKE_URI );
+				expect( settled?.pages[ 1 ].items[ 0 ].counts.likes ).toBe( 6 );
+			} );
+		} );
+
+		describe( 'useDeleteLikeMutation', () => {
+			it( 'optimistically clears viewer.like and decrements likes', async () => {
+				const target = makeFeedItemWithViewer( {
+					uri: TARGET_URI,
+					cid: TARGET_CID,
+					viewer: { like: SERVER_LIKE_URI, repost: null },
+					counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
+				} );
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
+
+				nock( BASE )
+					.delete(
+						`/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/likes/${ SERVER_LIKE_RKEY }`
+					)
+					.delay( 100 )
+					.reply( 200, {} );
+
+				const { result } = renderHook(
+					() => {
+						const m = useDeleteLikeMutation( CONNECTION_ID );
+						void m.isPending;
+						void m.isSuccess;
+						return m;
+					},
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					result.current.mutate( { rkey: SERVER_LIKE_RKEY, postUri: TARGET_URI } );
+					await Promise.resolve();
+				} );
+
+				await waitFor( () => {
+					const optimistic = getTimelineCache( client );
+					expect( optimistic?.pages[ 0 ].items[ 0 ].viewer?.like ).toBe( null );
+					expect( optimistic?.pages[ 0 ].items[ 0 ].counts.likes ).toBe( 4 );
+				} );
+
+				await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+				const settled = getTimelineCache( client );
+				expect( settled?.pages[ 0 ].items[ 0 ].viewer?.like ).toBe( null );
+				expect( settled?.pages[ 0 ].items[ 0 ].counts.likes ).toBe( 4 );
+			} );
+
+			it( 'rolls back to the pre-mutation snapshot on error', async () => {
+				const target = makeFeedItemWithViewer( {
+					uri: TARGET_URI,
+					cid: TARGET_CID,
+					viewer: { like: SERVER_LIKE_URI, repost: null },
+					counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
+				} );
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
+				const snapshot = getTimelineCache( client );
+
+				nock( BASE )
+					.delete(
+						`/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/likes/${ SERVER_LIKE_RKEY }`
+					)
+					.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+				const { result } = renderHook(
+					() => {
+						const m = useDeleteLikeMutation( CONNECTION_ID );
+						void m.isPending;
+						void m.isError;
+						void m.error;
+						return m;
+					},
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					result.current.mutate( { rkey: SERVER_LIKE_RKEY, postUri: TARGET_URI } );
+					await Promise.resolve();
+				} );
+
+				await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+				expect( getTimelineCache( client ) ).toEqual( snapshot );
+			} );
 		} );
 	} );
 } );
