@@ -31,10 +31,6 @@ $omnibar-highlight-color: #7b90ff;
 		margin-inline-start: auto;
 	}
 
-	.omnibar__dropdown {
-		position: relative;
-	}
-
 	.omnibar__menu {
 		display: inline-flex;
 		align-items: center;
@@ -42,6 +38,7 @@ $omnibar-highlight-color: #7b90ff;
 		padding: 0 12px;
 		color: $omnibar-text-color;
 		background-color: transparent;
+		font-family: inherit;
 		font-size: $omnibar-font-size;
 		line-height: var( --omnibar-height );
 		border: 0;
@@ -70,37 +67,30 @@ $omnibar-highlight-color: #7b90ff;
 	}
 }
 
-.components-popover.omnibar__popover {
-	will-change: auto;
+.omnibar__popover {
+	// All colors used by the Menu's internal Emotion styles read from these
+	// CSS custom properties (see node_modules/@wordpress/components/src/menu/styles.ts).
+	// Setting them here re-skins the entire popover without specificity wars.
+	--wp-components-color-background: #{$omnibar-submenu-background};
+	--wp-components-color-foreground: #{$omnibar-text-color};
+	--wp-components-color-accent: transparent; // hover/active item bg
+	--wp-components-color-accent-inverted: #{$omnibar-highlight-color}; // hover/active item text
+	--wp-components-color-gray-100: transparent; // submenu-trigger-open bg
+	--wp-components-color-gray-700: #{$omnibar-text-color}; // prefix / suffix text
 
-	.components-popover__content {
+	// Padding, border-radius, and the elevation portion of the popover's
+	// box-shadow are hardcoded (not tokens). Class is doubled to outrank
+	// Emotion's auto-generated selector at the popover level.
+	&.omnibar__popover {
 		border-radius: 0;
 		box-shadow: none;
 	}
 
-	.components-dropdown-menu__menu {
-		background-color: $omnibar-submenu-background;
-		border-color: $omnibar-submenu-background;
-
-		.components-menu-group {
-			padding: 4px;
-		}
-
-		.components-menu-group + .components-menu-group {
-			border-color: $omnibar-base-color;
-		}
-
-		.components-button.components-menu-item__button {
-			color: $omnibar-text-color;
-
-			&:hover,
-			&:focus,
-			&:active {
-				background-color: transparent;
-				color: $omnibar-highlight-color;
-				box-shadow: none;
-				outline: none;
-			}
-		}
+	[role='menuitem'],
+	[role='menuitemradio'],
+	[role='menuitemcheckbox'] {
+		border-radius: 0;
+		grid-template-columns: minmax( 0, max-content ) 1fr;
+		padding-inline: 6px;
 	}
 }

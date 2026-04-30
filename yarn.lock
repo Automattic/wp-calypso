@@ -1891,6 +1891,7 @@ __metadata:
     "@wordpress/components": "npm:^29.0.0"
     "@wordpress/compose": "npm:^7.23.0"
     "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/private-apis": "npm:^1.39.0"
     "@wordpress/ui": "npm:^0.9.0"
     typescript: "npm:^5.8.3"
   peerDependencies:

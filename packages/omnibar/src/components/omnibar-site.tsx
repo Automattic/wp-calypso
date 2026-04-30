@@ -18,15 +18,10 @@ export function OmnibarSiteNode( {
 		? node
 		: {
 				...node,
-				children: [
-					...( node.children || [] ),
-					...( actionNodes || [] ).filter( ( { id } ) => id !== 'new-content' ),
-				],
+				children: [ ...( node.children || [] ), ...( actionNodes || [] ) ],
 		  };
 
-	const siteActionNodes = isDesktop
-		? actionNodes
-		: actionNodes?.filter( ( { id } ) => id === 'new-content' );
+	const siteActionNodes = isDesktop ? actionNodes : undefined;
 
 	return [
 		<OmnibarMenu key={ siteNode.id } node={ siteNode } />,
