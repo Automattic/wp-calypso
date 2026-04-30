@@ -194,6 +194,7 @@ function useRedirectOnTransactionSuccess( {
 	const cartKey = useCartKey();
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const cartSnapshotRef = useRef< ResponseCart | undefined >( undefined );
+	// Write once so receipt-fetch fallback is not overwritten by the emptied post-purchase cart.
 	if ( ! cartSnapshotRef.current && responseCart.total_cost >= 0.01 ) {
 		cartSnapshotRef.current = responseCart;
 	}

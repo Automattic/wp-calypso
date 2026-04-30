@@ -142,13 +142,6 @@ function recordPostPurchaseWpcomGoogleAdsPurchase( {
 	rememberTrackedPurchase( dedupeKey );
 	loadTrackingScriptsWithoutWaiting();
 
-	debug( 'recordPostPurchaseTracking: Record WPCom Google Ads Purchase', {
-		receiptId,
-		source,
-		value: conversionValue.value,
-		currency: conversionValue.currency,
-	} );
-
 	recordWpcomGoogleAdsPurchaseConversion( {
 		value: conversionValue.value,
 		currency: conversionValue.currency,

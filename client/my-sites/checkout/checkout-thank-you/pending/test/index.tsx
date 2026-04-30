@@ -186,6 +186,30 @@ describe( 'CheckoutPending post-purchase tracking', () => {
 		expect( page ).toHaveBeenCalledWith( '/done' );
 	} );
 
+	it( 'records loaded receipt details before redirecting successful orders', async () => {
+		const receipt = makeReceipt();
+		queryResult = {
+			data: receipt,
+			isSuccess: true,
+			isError: false,
+		};
+
+		render( <CheckoutPending orderId=":orderId" receiptId={ 12345 } redirectTo="/done" /> );
+
+		await waitFor( () =>
+			expect( recordPostPurchaseTracking ).toHaveBeenCalledWith( {
+				receiptId: 12345,
+				receipt,
+				cart: responseCart,
+				source: 'checkout-pending',
+			} )
+		);
+		expect( page ).toHaveBeenCalledWith( '/done' );
+		expect( recordPostPurchaseTracking.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			page.mock.invocationCallOrder[ 0 ]
+		);
+	} );
+
 	it( 'redirects when post-purchase tracking throws', async () => {
 		( recordPostPurchaseTracking as jest.Mock ).mockImplementation( () => {
 			throw new Error( 'tracking failed' );
