@@ -254,6 +254,9 @@ export const getOdieInitialMessage = (
 		) }** \n\n ${ __(
 			"I'm your personal AI assistant. I can help with any questions about your site or account.",
 			__i18n_text_domain__
+		) } ${ __(
+			'Want to browse guides instead? [Browse guides](https://wordpress.com/support/guides/)',
+			__i18n_text_domain__
 		) }`,
 		role: 'bot',
 		type: 'introduction',
