@@ -1,3 +1,4 @@
+import { SCOPE_OTHER, SCOPE_SAME } from '@automattic/api-core';
 import clsx from 'clsx';
 import { times } from 'lodash';
 import RelatedPost from 'calypso/blocks/reader-related-card';
@@ -43,5 +44,5 @@ function RelatedPosts( { posts, title, className = '', onPostClick = noop, onSit
 	);
 }
 
-export const RelatedPostsFromSameSite = withReaderRelatedPosts( 'same' )( RelatedPosts );
-export const RelatedPostsFromOtherSites = withReaderRelatedPosts( 'other' )( RelatedPosts );
+export const RelatedPostsFromSameSite = withReaderRelatedPosts( SCOPE_SAME )( RelatedPosts );
+export const RelatedPostsFromOtherSites = withReaderRelatedPosts( SCOPE_OTHER )( RelatedPosts );
