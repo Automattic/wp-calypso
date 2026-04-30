@@ -121,6 +121,11 @@ export type AtmosphereEmbed =
 	| AtmosphereEmbedQuote
 	| AtmosphereEmbedQuoteWithMedia;
 
+export interface AtmosphereFeedItemViewer {
+	like: string | null;
+	repost: string | null;
+}
+
 export interface AtmosphereFeedItem {
 	uri: string;
 	cid: string;
@@ -135,6 +140,7 @@ export interface AtmosphereFeedItem {
 	reason: AtmosphereRepostReason | null;
 	embed: AtmosphereEmbed | null;
 	counts: AtmosphereCounts;
+	viewer?: AtmosphereFeedItemViewer;
 	bluesky_url: string;
 }
 
@@ -211,3 +217,20 @@ export type AtmosphereAuthorFeedFilter =
 	| 'posts_with_replies'
 	| 'posts_with_media'
 	| 'posts_and_author_threads';
+
+export interface CreateLikeParams {
+	connectionId: number;
+	postUri: string;
+	postCid: string;
+}
+
+export interface CreateLikeResult {
+	uri: string;
+	cid: string;
+	rkey: string;
+}
+
+export interface DeleteLikeParams {
+	connectionId: number;
+	rkey: string;
+}
