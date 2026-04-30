@@ -103,20 +103,16 @@ const sassPackageImporter = {
 	},
 };
 
-// The dep pre-bundling scanner runs a separate rolldown pass that bypasses the
-// Vite plugin pipeline, so we define this plugin at the top level and register
-// it in both `plugins` (build/serve) and `optimizeDeps.rolldownOptions.plugins`
-// (scanner). Without the scanner registration the scanner fails to parse JSX in
-// .js files and aborts with PARSE_ERROR before the dev server starts.
-const transformJsxInJsPlugin: Plugin = {
-	name: 'calypso-transform-jsx-in-js',
+// @automattic/react-virtualized currently publishes JSX in .js files.
+// Keep this scoped transform until the package ships parseable JS or .jsx files.
+const transformReactVirtualizedJsxPlugin: Plugin = {
+	name: 'calypso-transform-react-virtualized-jsx',
 	enforce: 'pre',
 	async transform( code: string, id: string ) {
 		if (
-			! id.endsWith( '.js' ) ||
-			( /[/\\]node_modules[/\\]/.test( id ) &&
-				! /[/\\]@automattic[/\\]react-virtualized[/\\]dist[/\\]jsx/.test( id ) ) ||
-			/^\0rolldown[/\\]runtime\.js$/.test( id )
+			! /[/\\]node_modules[/\\]@automattic[/\\]react-virtualized[/\\]dist[/\\]jsx[/\\].+\.js(?:\?.*)?$/.test(
+				id
+			)
 		) {
 			return null;
 		}
@@ -344,11 +340,9 @@ export default defineConfig(
 		plugins: [
 			// jsxImportSource replaces @emotion/babel-plugin: emotion's JSX runtime handles
 			// the css prop at runtime rather than compile-time, eliminating the Babel dependency.
-			// OXC handles JSX for .ts/.tsx/.jsx files; transformJsxInJs below handles .js files.
 			react( { jsxImportSource: '@emotion/react' } ),
 
-			// See transformJsxInJsPlugin definition above.
-			transformJsxInJsPlugin,
+			transformReactVirtualizedJsxPlugin,
 
 			browserConditionalRequiresPlugin,
 
@@ -388,9 +382,7 @@ export default defineConfig(
 
 		optimizeDeps: {
 			rolldownOptions: {
-				// The scanner uses this rolldown pass (not the Vite plugin pipeline),
-				// so transformJsxInJsPlugin must be registered here as well.
-				plugins: [ transformJsxInJsPlugin ],
+				plugins: [ transformReactVirtualizedJsxPlugin ],
 			},
 		},
 

@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { vitePluginSections } from '@automattic/vite-plugin-calypso-sections';
 import react from '@vitejs/plugin-react';
-import { defineConfig, transformWithOxc } from 'vite';
+import { defineConfig, transformWithOxc, type Plugin } from 'vite';
 const require = createRequire( import.meta.url );
 
 const __dirname = fileURLToPath( new URL( '.', import.meta.url ) );
@@ -31,6 +31,23 @@ function getMonorepoPackageNames(): string[] {
 }
 
 const monorepoPackageNames = getMonorepoPackageNames();
+
+// @automattic/react-virtualized currently publishes JSX in .js files.
+// Keep this scoped transform until the package ships parseable JS or .jsx files.
+const transformReactVirtualizedJsxPlugin: Plugin = {
+	name: 'calypso-transform-react-virtualized-jsx',
+	enforce: 'pre',
+	async transform( code: string, id: string ) {
+		if (
+			! /[/\\]node_modules[/\\]@automattic[/\\]react-virtualized[/\\]dist[/\\]jsx[/\\].+\.js(?:\?.*)?$/.test(
+				id
+			)
+		) {
+			return null;
+		}
+		return transformWithOxc( code, id, { lang: 'jsx' } );
+	},
+};
 
 export default defineConfig( {
 	root: projectRoot,
@@ -182,27 +199,9 @@ export default defineConfig( {
 			},
 		},
 
-		// OXC handles JSX for .ts/.tsx/.jsx files.
 		react(),
 
-		// OXC's lang is determined by file extension and cannot be overridden via OxcOptions.
-		// Use transformWithOxc directly with lang:'jsx' for plain .js files that contain JSX.
-		// @automattic/react-virtualized/dist/jsx ships JSX in .js files, so it's included.
-		{
-			name: 'calypso-transform-jsx-in-js',
-			enforce: 'pre' as const,
-			async transform( code: string, id: string ) {
-				if (
-					! id.endsWith( '.js' ) ||
-					( /[/\\]node_modules[/\\]/.test( id ) &&
-						! /[/\\]@automattic[/\\]react-virtualized[/\\]dist[/\\]jsx/.test( id ) ) ||
-					/^\0rolldown[/\\]runtime\.js$/.test( id )
-				) {
-					return null;
-				}
-				return transformWithOxc( code, id, { lang: 'jsx' } );
-			},
-		},
+		transformReactVirtualizedJsxPlugin,
 
 		// Same as in the browser config: OXC erases interface/type-alias exports
 		// entirely, so .js files that import them get a MISSING_EXPORT hard error
