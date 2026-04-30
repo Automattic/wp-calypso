@@ -64,10 +64,9 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		followedTagsRef.current = followedTags;
 	}, [ followedTags ] );
 
-	// Resolve each topic group's blog list once per modal session. The random
-	// selection is therefore stable for the lifetime of the modal, which is
-	// important because subscribed-status is checked against these specific
-	// feed IDs.
+	// Resolve each topic group's blog list once per mounted component instance.
+	// The random selection remains stable while this component stays mounted,
+	// which keeps subscribed-status checks anchored to these specific feed IDs.
 	const packs = useMemo< ResolvedPack[] >(
 		() =>
 			getTopicGroups()
@@ -101,7 +100,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		return followedBlogCount === pack.blogs.length;
 	};
 
-	const isContinueDisabled = followedTags.length < 4;
+	const isContinueDisabled = followedTags.length < 3;
 
 	const handleTopicChange = async ( checked: boolean, tag: string ): Promise< boolean > => {
 		const existingOperation = inFlightTagOpsRef.current.get( tag );
@@ -188,7 +187,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 				}
 
 				const didFollowTag = await handleTopicChange( true, tag );
-				if ( ! didFollowTag || ! followedTagsRef.current.includes( tag ) ) {
+				if ( ! didFollowTag ) {
 					return;
 				}
 			}
