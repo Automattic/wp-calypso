@@ -21,11 +21,13 @@ global.requestAnimationFrame = jest.fn( ( cb ) => {
 const mockApplyReviewEdit = jest.fn();
 const mockFindBlockElement = jest.fn();
 const mockFindBlockListLayout = jest.fn();
+const mockUndoBlockEdit = jest.fn();
 
 jest.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
 	findBlockElement: ( ...args: any[] ) => mockFindBlockElement( ...args ),
 	findBlockListLayout: ( ...args: any[] ) => mockFindBlockListLayout( ...args ),
+	undoBlockEdit: ( ...args: any[] ) => mockUndoBlockEdit( ...args ),
 } ) );
 
 const mockSelectBlock = jest.fn();
@@ -102,6 +104,7 @@ beforeEach( () => {
 	mockApplyReviewEdit.mockReset();
 	mockFindBlockElement.mockReset();
 	mockFindBlockListLayout.mockReset();
+	mockUndoBlockEdit.mockReset();
 	mockSelectBlock.mockReset();
 	mockBlocks = blocks;
 } );
@@ -306,6 +309,30 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		// Back to pending: rationale + Accept button restored.
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'reverts the block content via undoBlockEdit on Undo', async () => {
+		mockApplyReviewEdit.mockResolvedValueOnce( {
+			success: true,
+			contentBefore: 'The council voted last Tuesday on the procedural matter.',
+		} );
+
+		render( <ReviewMediation { ...editsPayload } /> );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+		} );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
+		} );
+
+		fireEvent.click( screen.getByText( 'Undo' ) );
+
+		expect( mockUndoBlockEdit ).toHaveBeenCalledWith(
+			'b1',
+			'The council voted last Tuesday on the procedural matter.'
+		);
 	} );
 
 	it( 'marks the row failed (and not collapsed) when applyReviewEdit rejects', async () => {

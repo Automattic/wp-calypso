@@ -14,7 +14,12 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { applyReviewEdit, findBlockElement, findBlockListLayout } from '../utils/block-actions';
+import {
+	applyReviewEdit,
+	findBlockElement,
+	findBlockListLayout,
+	undoBlockEdit,
+} from '../utils/block-actions';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 
@@ -191,6 +196,10 @@ export default function ReviewMediation( {
 	const [ conflictStatuses, setConflictStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ bulkRunning, setBulkRunning ] = useState( false );
 
+	type UndoSnapshot = { clientId: string; contentBefore: string };
+	const editSnapshots = useRef< Record< number, UndoSnapshot > >( {} );
+	const conflictSnapshots = useRef< Record< number, UndoSnapshot > >( {} );
+
 	// Controlled open-state per PanelBody so the stats-strip click handler
 	// can programmatically expand a section before scrolling to it.
 	const [ openSections, setOpenSections ] = useState< Record< SectionKey, boolean > >( {
@@ -285,18 +294,25 @@ export default function ReviewMediation( {
 	}, [] );
 
 	const applyTextToBlock = useCallback(
-		async ( blockIndex: number | null, text: string, currentText?: string ): Promise< boolean > => {
+		async (
+			blockIndex: number | null,
+			text: string,
+			currentText?: string
+		): Promise< { success: boolean; clientId?: string; contentBefore?: string } > => {
 			const clientId = getClientId( blockIndex );
 			if ( ! clientId ) {
-				return false;
+				return { success: false };
 			}
 			try {
 				const result = await applyReviewEdit( clientId, text, undefined, currentText );
-				return !! result?.success;
+				if ( result?.success ) {
+					return { success: true, clientId, contentBefore: result.contentBefore };
+				}
+				return { success: false };
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
 				console.warn( '[ReviewMediation] applyReviewEdit threw', err );
-				return false;
+				return { success: false };
 			}
 		},
 		[ getClientId ]
@@ -310,10 +326,31 @@ export default function ReviewMediation( {
 				return;
 			}
 			setEditStatus( editIndex, 'applying' );
-			const ok = await applyTextToBlock( edit.block_index, edit.suggested_text, edit.current_text );
-			setEditStatus( editIndex, ok ? 'accepted' : 'failed' );
+			const result = await applyTextToBlock(
+				edit.block_index,
+				edit.suggested_text,
+				edit.current_text
+			);
+			if ( result.success && result.clientId && typeof result.contentBefore === 'string' ) {
+				editSnapshots.current[ editIndex ] = {
+					clientId: result.clientId,
+					contentBefore: result.contentBefore,
+				};
+			}
+			setEditStatus( editIndex, result.success ? 'accepted' : 'failed' );
 		},
 		[ applyTextToBlock, setEditStatus ]
+	);
+	const handleUndoEdit = useCallback(
+		( editIndex: number ) => {
+			const snap = editSnapshots.current[ editIndex ];
+			if ( snap ) {
+				undoBlockEdit( snap.clientId, snap.contentBefore );
+				delete editSnapshots.current[ editIndex ];
+			}
+			setEditStatus( editIndex, 'pending' );
+		},
+		[ setEditStatus ]
 	);
 	const handleDismissEdit = useCallback(
 		( editIndex: number ) => setEditStatus( editIndex, 'dismissed' ),
@@ -328,10 +365,27 @@ export default function ReviewMediation( {
 				return;
 			}
 			setConflictStatus( conflictIndex, 'applying' );
-			const ok = await applyTextToBlock( candidate.block_index, candidate.text );
-			setConflictStatus( conflictIndex, ok ? 'accepted' : 'failed' );
+			const result = await applyTextToBlock( candidate.block_index, candidate.text );
+			if ( result.success && result.clientId && typeof result.contentBefore === 'string' ) {
+				conflictSnapshots.current[ conflictIndex ] = {
+					clientId: result.clientId,
+					contentBefore: result.contentBefore,
+				};
+			}
+			setConflictStatus( conflictIndex, result.success ? 'accepted' : 'failed' );
 		},
 		[ applyTextToBlock, setConflictStatus ]
+	);
+	const handleUndoConflict = useCallback(
+		( conflictIndex: number ) => {
+			const snap = conflictSnapshots.current[ conflictIndex ];
+			if ( snap ) {
+				undoBlockEdit( snap.clientId, snap.contentBefore );
+				delete conflictSnapshots.current[ conflictIndex ];
+			}
+			setConflictStatus( conflictIndex, 'pending' );
+		},
+		[ setConflictStatus ]
 	);
 	const handleDismissConflict = useCallback(
 		( conflictIndex: number ) => setConflictStatus( conflictIndex, 'dismissed' ),
@@ -384,8 +438,14 @@ export default function ReviewMediation( {
 			}
 			setConflictStatus( i, 'applying' );
 			// eslint-disable-next-line no-await-in-loop
-			const ok = await applyTextToBlock( aiCandidate.block_index, aiCandidate.text );
-			setConflictStatus( i, ok ? 'accepted' : 'failed' );
+			const result = await applyTextToBlock( aiCandidate.block_index, aiCandidate.text );
+			if ( result.success && result.clientId && typeof result.contentBefore === 'string' ) {
+				conflictSnapshots.current[ i ] = {
+					clientId: result.clientId,
+					contentBefore: result.contentBefore,
+				};
+			}
+			setConflictStatus( i, result.success ? 'accepted' : 'failed' );
 		}
 		for ( let i = 0; i < suggested_edits.length; i++ ) {
 			const status = editStatuses[ i ] ?? 'pending';
@@ -398,8 +458,18 @@ export default function ReviewMediation( {
 			}
 			setEditStatus( i, 'applying' );
 			// eslint-disable-next-line no-await-in-loop
-			const ok = await applyTextToBlock( edit.block_index, edit.suggested_text, edit.current_text );
-			setEditStatus( i, ok ? 'accepted' : 'failed' );
+			const result = await applyTextToBlock(
+				edit.block_index,
+				edit.suggested_text,
+				edit.current_text
+			);
+			if ( result.success && result.clientId && typeof result.contentBefore === 'string' ) {
+				editSnapshots.current[ i ] = {
+					clientId: result.clientId,
+					contentBefore: result.contentBefore,
+				};
+			}
+			setEditStatus( i, result.success ? 'accepted' : 'failed' );
 		}
 		setBulkRunning( false );
 	}, [
@@ -633,11 +703,11 @@ export default function ReviewMediation( {
 													<button
 														type="button"
 														className="jetpack-ai-review-mediation__collapsed-undo"
-														onClick={ () => setConflictStatus( i, 'pending' ) }
+														onClick={ () => handleUndoConflict( i ) }
 														title={
 															status === 'accepted'
 																? __(
-																		'Re-show this conflict. The block edit itself can be reverted via the editor’s Undo (Cmd/Ctrl+Z).',
+																		'Revert the block change and re-show this conflict.',
 																		'jetpack'
 																  )
 																: __( 'Re-show this conflict.', 'jetpack' )
@@ -826,8 +896,8 @@ export default function ReviewMediation( {
 											}
 										};
 										if ( isCollapsed ) {
-											// Compact row for done items. Undo flips UI state only;
-											// block content rollback is via Gutenberg's Cmd/Ctrl+Z.
+											// Compact row for done items. Undo on accepted rows reverts
+											// the block content via the pre-accept snapshot.
 											return (
 												<article
 													className={ `jetpack-ai-review-mediation__card is-${ status } is-collapsed` }
@@ -871,11 +941,11 @@ export default function ReviewMediation( {
 													<button
 														type="button"
 														className="jetpack-ai-review-mediation__collapsed-undo"
-														onClick={ () => setEditStatus( i, 'pending' ) }
+														onClick={ () => handleUndoEdit( i ) }
 														title={
 															status === 'accepted'
 																? __(
-																		'Re-show this suggestion. The block edit itself can be reverted via the editor’s Undo (Cmd/Ctrl+Z).',
+																		'Revert the block change and re-show this suggestion.',
 																		'jetpack'
 																  )
 																: __( 'Re-show this suggestion.', 'jetpack' )

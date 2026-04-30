@@ -189,7 +189,8 @@ function getBlockSnapshot( clientId: string ): { name: string; content: string }
 /**
  * Handle the update-block-content tool call: apply text changes to a block.
  * @param {any} input - Tool input with clientId, content, and optional summary / currentText.
- * @returns {Object} Result with returnToAgent: false.
+ * @returns Result with success flag and (on success) the pre-edit `contentBefore`
+ *   so callers can revert later via `undoBlockEdit`.
  */
 export function handleUpdateBlockContent( input: any ): any {
 	const { clientId, content, summary, currentText } = input;
@@ -257,7 +258,7 @@ export function handleUpdateBlockContent( input: any ): any {
 				} );
 			}
 
-			resolve( { success: true, returnToAgent: false } );
+			resolve( { success: true, contentBefore: snapshot.content, returnToAgent: false } );
 		}, 800 );
 	} );
 }
@@ -266,15 +267,38 @@ export function handleUpdateBlockContent( input: any ): any {
  * Apply a mediation-suggested edit. When `currentText` is provided and present in
  * the block, only that span is replaced; otherwise the full block content is replaced.
  * Returns `success: false` for unsupported block types so the UI can show 'failed'
- * rather than corrupting the block.
+ * rather than corrupting the block. On success, returns `contentBefore` so the
+ * caller can pair it with `clientId` and call `undoBlockEdit` later.
  */
 export async function applyReviewEdit(
 	clientId: string,
 	content: string,
 	summary?: string,
 	currentText?: string
-): Promise< { success: boolean; error?: string; returnToAgent?: boolean } > {
+): Promise< {
+	success: boolean;
+	contentBefore?: string;
+	error?: string;
+	returnToAgent?: boolean;
+} > {
 	const checkpointId = `review-edit-${ Date.now() }`;
 	moduleCheckpointApi?.setCheckpoint( checkpointId );
 	return handleUpdateBlockContent( { clientId, content, summary, currentText } );
+}
+
+/**
+ * Revert a block's content to a pre-accept snapshot. Used by ReviewMediation's
+ * per-card Undo to actually undo the mutation, not just flip UI state.
+ */
+export function undoBlockEdit( clientId: string, contentBefore: string ): boolean {
+	const blockEditor = ( window as any ).wp?.data?.dispatch?.( 'core/block-editor' );
+	if ( ! blockEditor?.updateBlockAttributes ) {
+		return false;
+	}
+	try {
+		blockEditor.updateBlockAttributes( clientId, { content: contentBefore } );
+		return true;
+	} catch {
+		return false;
+	}
 }
