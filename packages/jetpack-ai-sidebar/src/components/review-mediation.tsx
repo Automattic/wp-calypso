@@ -285,13 +285,13 @@ export default function ReviewMediation( {
 	}, [] );
 
 	const applyTextToBlock = useCallback(
-		async ( blockIndex: number | null, text: string ): Promise< boolean > => {
+		async ( blockIndex: number | null, text: string, currentText?: string ): Promise< boolean > => {
 			const clientId = getClientId( blockIndex );
 			if ( ! clientId ) {
 				return false;
 			}
 			try {
-				const result = await applyReviewEdit( clientId, text );
+				const result = await applyReviewEdit( clientId, text, undefined, currentText );
 				return !! result?.success;
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
@@ -310,7 +310,7 @@ export default function ReviewMediation( {
 				return;
 			}
 			setEditStatus( editIndex, 'applying' );
-			const ok = await applyTextToBlock( edit.block_index, edit.suggested_text );
+			const ok = await applyTextToBlock( edit.block_index, edit.suggested_text, edit.current_text );
 			setEditStatus( editIndex, ok ? 'accepted' : 'failed' );
 		},
 		[ applyTextToBlock, setEditStatus ]
@@ -398,7 +398,7 @@ export default function ReviewMediation( {
 			}
 			setEditStatus( i, 'applying' );
 			// eslint-disable-next-line no-await-in-loop
-			const ok = await applyTextToBlock( edit.block_index, edit.suggested_text );
+			const ok = await applyTextToBlock( edit.block_index, edit.suggested_text, edit.current_text );
 			setEditStatus( i, ok ? 'accepted' : 'failed' );
 		}
 		setBulkRunning( false );

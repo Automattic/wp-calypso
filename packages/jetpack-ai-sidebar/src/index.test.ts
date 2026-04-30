@@ -224,9 +224,16 @@ describe( 'useCheckpoint', () => {
 } );
 
 // Minimal wp.data mock covering both core/editor (for checkpoint) and
-// core/block-editor (for updateBlockAttributes). Tracks calls on both so
+// core/block-editor (for updateBlockAttributes / getBlock). Tracks calls so
 // tests can assert exact dispatches.
-function installWpDataMockWithBlockEditor() {
+function installWpDataMockWithBlockEditor(
+	blocks: Record< string, { name: string; attributes: { content?: string } } > = {
+		'550e8400-e29b-41d4-a716-446655440000': {
+			name: 'core/paragraph',
+			attributes: { content: 'original block content' },
+		},
+	}
+) {
 	const editorState: { title: string } = { title: 'original' };
 	const blockUpdates: Array< { clientId: string; attrs: Record< string, unknown > } > = [];
 	( window as any ).wp = {
@@ -236,6 +243,11 @@ function installWpDataMockWithBlockEditor() {
 					return {
 						getEditedPostAttribute: ( attr: string ) =>
 							attr === 'title' ? editorState.title : undefined,
+					};
+				}
+				if ( store === 'core/block-editor' ) {
+					return {
+						getBlock: ( clientId: string ) => blocks[ clientId ] ?? null,
 					};
 				}
 				return undefined;
@@ -261,7 +273,7 @@ function installWpDataMockWithBlockEditor() {
 			},
 		},
 	};
-	return { editorState, blockUpdates };
+	return { editorState, blockUpdates, blocks };
 }
 
 describe( 'applyReviewEdit', () => {
@@ -341,6 +353,70 @@ describe( 'applyReviewEdit', () => {
 	// wrap the returned copy rather than the module-level singleton that
 	// applyReviewEdit actually invokes. The checkpoint API's own behaviour is
 	// covered by the `useCheckpoint` describe block below.
+
+	it( 'replaces only the matching span when currentText is provided', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'The board voted last Tuesday on the proposal.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'voted on Tuesday',
+			undefined,
+			'voted last Tuesday'
+		);
+		jest.advanceTimersByTime( 1000 );
+		await promise;
+
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'The board voted on Tuesday on the proposal.' },
+			},
+		] );
+	} );
+
+	it( 'falls back to full replacement when currentText is not present in the block', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'Unrelated paragraph content.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'replacement text',
+			undefined,
+			'span that is not in the block'
+		);
+		jest.advanceTimersByTime( 1000 );
+		await promise;
+
+		expect( blockUpdates[ 0 ].attrs ).toEqual( { content: 'replacement text' } );
+	} );
+
+	it( 'fails safely on unsupported block types', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/list',
+				attributes: { content: 'A list item.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( { success: false } );
+		expect( blockUpdates ).toEqual( [] );
+	} );
 
 	it( 'returns an error result when clientId is missing', async () => {
 		installWpDataMockWithBlockEditor();

@@ -272,7 +272,12 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
 		} );
 
-		expect( mockApplyReviewEdit ).toHaveBeenCalledWith( 'b1', 'voted on Tuesday' );
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'b1',
+			'voted on Tuesday',
+			undefined,
+			'voted last Tuesday'
+		);
 
 		await waitFor( () => {
 			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
@@ -373,7 +378,12 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: "Accept Marcus's wording" } ) );
 		} );
 
-		expect( mockApplyReviewEdit ).toHaveBeenCalledWith( 'b1', 'voted softly on Tuesday' );
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'b1',
+			'voted softly on Tuesday',
+			undefined,
+			undefined
+		);
 		await waitFor( () => {
 			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
 		} );
@@ -388,7 +398,12 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
 		} );
 
-		expect( mockApplyReviewEdit ).toHaveBeenCalledWith( 'b1', 'voted on Tuesday' );
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'b1',
+			'voted on Tuesday',
+			undefined,
+			undefined
+		);
 	} );
 } );
 
@@ -439,8 +454,14 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 		await waitFor( () => {
 			expect( mockApplyReviewEdit ).toHaveBeenCalledTimes( 2 );
 		} );
-		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith( 1, 'b1', 'AI rewrite' );
-		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith( 2, 'b2', 'tighter copy' );
+		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith(
+			1,
+			'b1',
+			'AI rewrite',
+			undefined,
+			undefined
+		);
+		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith( 2, 'b2', 'tighter copy', undefined, '' );
 
 		// Footer disappears once everything is accepted (totalPendingCount === 0).
 		await waitFor( () => {

@@ -173,13 +173,26 @@ export function startBlockShimmer(): void {
 
 // ---------- Ability callbacks ----------
 
+/** Block types whose `content` attribute can be safely replaced by a plain text/HTML string. */
+export const SUPPORTED_EDIT_BLOCK_TYPES = [ 'core/paragraph', 'core/heading' ] as const;
+
+function getBlockSnapshot( clientId: string ): { name: string; content: string } | null {
+	const block = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlock?.( clientId );
+	if ( ! block ) {
+		return null;
+	}
+	const raw = block.attributes?.content;
+	const content = typeof raw === 'string' ? raw : raw?.toHTMLString?.() ?? '';
+	return { name: block.name, content };
+}
+
 /**
  * Handle the update-block-content tool call: apply text changes to a block.
- * @param {any} input - Tool input with clientId, content, and optional summary.
+ * @param {any} input - Tool input with clientId, content, and optional summary / currentText.
  * @returns {Object} Result with returnToAgent: false.
  */
 export function handleUpdateBlockContent( input: any ): any {
-	const { clientId, content, summary } = input;
+	const { clientId, content, summary, currentText } = input;
 	if ( ! clientId || content === undefined || content === null ) {
 		return { success: false, error: 'clientId and content are required', returnToAgent: false };
 	}
@@ -194,6 +207,30 @@ export function handleUpdateBlockContent( input: any ): any {
 		return { success: false, error: 'Block editor not available', returnToAgent: false };
 	}
 
+	const snapshot = getBlockSnapshot( clientId );
+	if ( ! snapshot ) {
+		return { success: false, error: 'block not found', returnToAgent: false };
+	}
+	if ( ! ( SUPPORTED_EDIT_BLOCK_TYPES as readonly string[] ).includes( snapshot.name ) ) {
+		return {
+			success: false,
+			error: `unsupported block type: ${ snapshot.name }`,
+			returnToAgent: false,
+		};
+	}
+
+	// Substring replace when currentText is a non-empty span present in the block;
+	// otherwise the new content replaces the block content wholesale (matches the
+	// "paste-ready" candidate-resolution contract).
+	let nextContent = content;
+	if (
+		typeof currentText === 'string' &&
+		currentText !== '' &&
+		snapshot.content.includes( currentText )
+	) {
+		nextContent = snapshot.content.replace( currentText, content );
+	}
+
 	// Apply shimmer briefly, then update content and show highlight
 	const blockEl = findBlockElement( clientId );
 	if ( blockEl ) {
@@ -203,7 +240,7 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
-			blockEditor.updateBlockAttributes( clientId, { content } );
+			blockEditor.updateBlockAttributes( clientId, { content: nextContent } );
 
 			if ( blockEl ) {
 				removeProcessingEffect( blockEl );
@@ -226,20 +263,18 @@ export function handleUpdateBlockContent( input: any ): any {
 }
 
 /**
- * Apply a mediation-suggested edit to a block. Snapshots a checkpoint so AM's
- * Undo can restore the pre-edit state, then delegates to handleUpdateBlockContent.
- * ReviewMediation omits `summary` to keep the mediation card as `isLastMessage`.
- * @param {string}             clientId - Target block's clientId.
- * @param {string}             content  - The new content to apply.
- * @param {string | undefined} summary  - Optional rationale; when provided, posted to chat.
- * @returns {Promise<{success: boolean, error?: string}>} The `handleUpdateBlockContent` result.
+ * Apply a mediation-suggested edit. When `currentText` is provided and present in
+ * the block, only that span is replaced; otherwise the full block content is replaced.
+ * Returns `success: false` for unsupported block types so the UI can show 'failed'
+ * rather than corrupting the block.
  */
 export async function applyReviewEdit(
 	clientId: string,
 	content: string,
-	summary?: string
+	summary?: string,
+	currentText?: string
 ): Promise< { success: boolean; error?: string; returnToAgent?: boolean } > {
 	const checkpointId = `review-edit-${ Date.now() }`;
 	moduleCheckpointApi?.setCheckpoint( checkpointId );
-	return handleUpdateBlockContent( { clientId, content, summary } );
+	return handleUpdateBlockContent( { clientId, content, summary, currentText } );
 }
