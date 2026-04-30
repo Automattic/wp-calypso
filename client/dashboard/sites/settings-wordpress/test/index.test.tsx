@@ -150,18 +150,26 @@ describe( '<WordPressSettings>', () => {
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
 		expect(
-			await screen.findByRole( 'button', { name: /Switch to WordPress|Opt out/ } )
+			await screen.findByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
 		).toBeVisible();
 		expect(
 			screen.queryByRole( 'combobox', { name: 'WordPress version' } )
 		).not.toBeInTheDocument();
 
 		const scope = mockWordPressVersionSaved( 'latest' );
-		await user.click( screen.getByRole( 'button', { name: /Switch to WordPress|Opt out/ } ) );
+		await user.click(
+			screen.getByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
+		);
 
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
+
+		// After a successful opt-out, the rolled-back notice replaces the opt-out card.
+		expect( await screen.findByText( 'WordPress version updated' ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the upsell (not opt-out) for an Atomic site without self-serve backups when on latest', async () => {

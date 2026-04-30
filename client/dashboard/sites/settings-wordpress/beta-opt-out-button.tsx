@@ -1,16 +1,23 @@
-import { siteWordPressVersionMutation, wpOrgCoreVersionQuery } from '@automattic/api-queries';
+import {
+	queryClient,
+	siteBySlugQuery,
+	sitePendingWordPressVersionQuery,
+	siteWordPressVersionMutation,
+	siteWordPressVersionQuery,
+	wpOrgCoreVersionQuery,
+} from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { formatWordPressVersion } from '../../utils/wp-version';
 import type { Site } from '@automattic/api-core';
 
 interface BetaOptOutButtonProps {
 	site: Site;
+	onSuccess?: () => void;
 }
 
-export function BetaOptOutButton( { site }: BetaOptOutButtonProps ) {
+export function BetaOptOutButton( { site, onSuccess }: BetaOptOutButtonProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
@@ -23,6 +30,13 @@ export function BetaOptOutButton( { site }: BetaOptOutButtonProps ) {
 				error: __( 'Failed to opt out of the WordPress beta version.' ),
 			},
 		},
+		onSuccess: () => {
+			queryClient.invalidateQueries( siteWordPressVersionQuery( site.ID ) );
+			queryClient.invalidateQueries( sitePendingWordPressVersionQuery( site.ID ) );
+			// Also refresh the site so the displayed software_version reflects the rollback.
+			queryClient.invalidateQueries( siteBySlugQuery( site.slug ) );
+			onSuccess?.();
+		},
 	} );
 
 	const handleClick = () => {
@@ -34,8 +48,6 @@ export function BetaOptOutButton( { site }: BetaOptOutButtonProps ) {
 		mutation.mutate( 'latest' );
 	};
 
-	const latestLabel = formatWordPressVersion( latestVersion ?? '', 'latest', true );
-
 	return (
 		<Button
 			variant="primary"
@@ -43,13 +55,7 @@ export function BetaOptOutButton( { site }: BetaOptOutButtonProps ) {
 			isBusy={ mutation.isPending }
 			disabled={ mutation.isPending }
 		>
-			{ latestLabel
-				? sprintf(
-						/* translators: %s is the WordPress version, e.g. "6.8 (Latest)" */
-						__( 'Switch to WordPress %s' ),
-						latestLabel
-				  )
-				: __( 'Opt out of the WordPress beta version' ) }
+			{ __( 'Opt out of the WordPress beta version' ) }
 		</Button>
 	);
 }

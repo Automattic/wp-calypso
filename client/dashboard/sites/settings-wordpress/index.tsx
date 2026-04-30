@@ -9,6 +9,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
@@ -62,15 +63,21 @@ function VersionManagement( { site }: { site: Site } ) {
 }
 
 function BetaProgramContent( { site }: { site: Site } ) {
+	const [ justOptedOut, setJustOptedOut ] = useState( false );
 	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
 	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
+
+	if ( justOptedOut ) {
+		return <LatestVersionNotice wpVersion={ latestVersion } />;
+	}
 
 	if ( canOptOutOfWordPressBeta( site, currentVersion ) ) {
 		return (
 			<BetaProgramNotice
 				site={ site }
 				wpVersion={ betaVersion }
-				actions={ <BetaOptOutButton site={ site } /> }
+				actions={ <BetaOptOutButton site={ site } onSuccess={ () => setJustOptedOut( true ) } /> }
 			/>
 		);
 	}
