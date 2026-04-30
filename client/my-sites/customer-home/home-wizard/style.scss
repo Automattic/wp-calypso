@@ -209,50 +209,6 @@ body.is-home-wizard-open {
 	line-height: 1.4;
 }
 
-.home-wizard__chips {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 10px;
-
-	@media (max-width: 600px) {
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
-
-.home-wizard__chip {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 12px 14px;
-	background: #fff;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 13px;
-	font-weight: 500;
-	transition: border-color 120ms ease, background 120ms ease;
-
-	&:hover {
-		border-color: var(--wp-admin-theme-color, #3858e9);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
-		outline-offset: 2px;
-	}
-
-	&.is-selected {
-		border-color: var(--wp-admin-theme-color, #3858e9);
-		background: rgba(56, 88, 233, 0.06);
-		color: var(--wp-admin-theme-color, #3858e9);
-	}
-
-	svg {
-		flex-shrink: 0;
-		fill: currentColor;
-	}
-}
-
 .home-wizard__footer {
 	display: flex;
 	align-items: center;
@@ -266,90 +222,38 @@ body.is-home-wizard-open {
 	gap: 8px;
 }
 
-// --- Prompt-variant wizard (shared step shell) ---
-
-.home-wizard--textarea,
-.home-wizard--chips {
-	.home-wizard__step {
-		padding: 8px 0;
-	}
+.home-wizard__step {
+	padding: 8px 0;
 }
 
-// Variant 1: textarea + example sentences
-.home-wizard__prompt-examples {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
+.home-wizard__prompt-chips {
+	flex-wrap: wrap;
+	row-gap: 8px;
 }
 
-.home-wizard__prompt-example {
-	display: block;
-	width: 100%;
-	text-align: left;
-	background: transparent;
-	border: 0;
-	padding: 8px 12px;
-	border-radius: 4px;
-	color: #50575e;
-	font-size: 13px;
-	line-height: 1.4;
-	cursor: pointer;
-	transition: background 120ms ease, color 120ms ease;
-
-	&:hover {
-		background: #f6f7f7;
-		color: var(--wp-admin-theme-color, #3858e9);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
-		outline-offset: 2px;
-	}
-}
-
-// Variant 2: chips grid
-.home-wizard__chip-grid {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 8px;
-
-	@media (max-width: 480px) {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-}
-
-.home-wizard__type-chip {
-	display: block;
-	width: 100%;
-	padding: 16px 12px;
-	background: #fff;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	font-size: 14px;
-	font-weight: 500;
+.home-wizard__prompt-chip.components-button {
+	border-radius: 24px;
+	padding: 4px 12px;
+	height: auto;
+	min-height: 28px;
+	font-size: 12px;
+	font-weight: 400;
+	white-space: nowrap;
+	background: #f6f7f7;
 	color: #1e1e1e;
-	cursor: pointer;
-	transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
 
-	&:hover {
-		border-color: var(--wp-admin-theme-color, #3858e9);
+	&:hover:not(:disabled) {
+		background: #f0f0f1;
+		color: #1e1e1e;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
 	}
 
-	&:focus-visible {
-		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
-		outline-offset: 2px;
-	}
-
-	&.is-selected {
-		border-color: var(--wp-admin-theme-color, #3858e9);
-		background: rgba(56, 88, 233, 0.08);
-		color: var(--wp-admin-theme-color, #3858e9);
+	&:focus:not(:disabled) {
+		box-shadow:
+			inset 0 0 0 1px rgba(0, 0, 0, 0.12),
+			0 0 0 2px var(--wp-admin-theme-color, #3858e9);
 	}
 }
+
 
