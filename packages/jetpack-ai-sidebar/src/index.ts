@@ -63,12 +63,7 @@ const MEDIATE_REVIEW_SUGGESTION = {
 };
 
 function isReviewMediatorEnabled(): boolean {
-	if ( typeof agentsManagerData !== 'undefined' ) {
-		return !! agentsManagerData?.reviewMediatorEnabled;
-	}
-
-	return !! ( globalThis as { agentsManagerData?: { reviewMediatorEnabled?: boolean } } )
-		.agentsManagerData?.reviewMediatorEnabled;
+	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.reviewMediatorEnabled;
 }
 
 function getReviewMediatorSuggestions() {

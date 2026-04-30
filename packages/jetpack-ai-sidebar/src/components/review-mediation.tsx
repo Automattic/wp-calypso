@@ -105,10 +105,8 @@ type EditStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
 type SectionKey = 'summary' | 'conflicts' | 'implications' | 'edits' | 'violations';
 
 /**
- * Coarse relative-time formatter for the cached-run hint. Kept intentionally
- * local — calypso's `moment` is heavy for a single muted line, and `Intl.RelativeTimeFormat`
- * requires a locale plumbing we don't have here. Rounds to the nearest
- * friendly unit ("just now", "5 minutes ago", "2 hours ago", "yesterday").
+ * Coarse relative-time formatter for the cached-run hint. Returns "just now",
+ * "N minutes ago", "N hours ago", or "N days ago".
  * @param timestamp Unix seconds.
  * @returns Human string.
  */
@@ -142,11 +140,11 @@ function formatRelativeTime( timestamp: number ): string {
 }
 
 /**
- * Truncate a snippet of free text to a sane preview length. Strips repeated
- * whitespace + trailing punctuation so the collapsed card row reads cleanly.
+ * Truncate a snippet of free text to a sane preview length. Collapses repeated
+ * whitespace and appends an ellipsis when over the limit.
  * @param text  Raw text.
  * @param limit Character budget.
- * @returns The truncated, ellipsis-suffixed string.
+ * @returns The truncated string.
  */
 function truncateText( text: string, limit = 60 ): string {
 	if ( ! text ) {
@@ -505,9 +503,10 @@ export default function ReviewMediation( {
 		guideline_violations.length === 0;
 
 	// Lookup helper — `reviewers_metadata` may be absent on older payloads.
-	const getReviewerMetadata = ( name: string ): ReviewerMetadata | null => {
-		return reviewers_metadata?.[ name ] ?? null;
-	};
+	const getReviewerMetadata = useCallback(
+		( name: string ): ReviewerMetadata | null => reviewers_metadata?.[ name ] ?? null,
+		[ reviewers_metadata ]
+	);
 
 	return (
 		<div className="jetpack-ai-review-mediation">

@@ -274,8 +274,6 @@ export async function applyReviewEdit(
 	error?: string;
 	returnToAgent?: boolean;
 } > {
-	const checkpointId = `review-edit-${ Date.now() }`;
-	moduleCheckpointApi?.setCheckpoint( checkpointId );
 	return handleUpdateBlockContent( { clientId, content, summary, currentText } );
 }
 
