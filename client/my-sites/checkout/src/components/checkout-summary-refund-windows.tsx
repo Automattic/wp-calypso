@@ -72,6 +72,7 @@ export function CheckoutSummaryRefundWindows( {
 		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
 			count: days,
 			args: { days },
+			comment: 'The number of days until the shortest refund window in the cart expires.',
 		} );
 	}
 
