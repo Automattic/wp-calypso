@@ -1,10 +1,10 @@
 import { readRelatedPostsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ComponentType, useRef } from 'react';
+import { ComponentType, useLayoutEffect } from 'react';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
-import type { ReadRelatedPost, ReadRelatedPostsScope } from '@automattic/api-core';
+import type { ReadRelatedPostsScope } from '@automattic/api-core';
 
 export interface WithReaderRelatedPostsOwnProps {
 	siteId: number;
@@ -18,8 +18,9 @@ export interface WithReaderRelatedPostsInjectedProps {
 /**
  * HOC that fetches reader related posts via React Query for the given
  * `siteId`/`postId`/`scope` and injects `posts` (array of `global_ID`s) as a
- * prop on the wrapped component. Returns `null` on fetch error so the slot
- * stays empty rather than getting stuck on placeholders.
+ * prop on the wrapped component. Returns `null` only when the fetch errors
+ * and there are no cached posts, so cached posts remain visible across
+ * transient refetch errors instead of the slot getting stuck on placeholders.
  *
  * Also dispatches `receivePosts` so consumers that read individual post objects
  * from `state.reader.posts` (e.g. `RelatedPostCard`) keep working.
@@ -43,15 +44,15 @@ export function withReaderRelatedPosts( scope: ReadRelatedPostsScope ) {
 			);
 			const fetchedPosts = data?.posts;
 
-			// Mirror the fetched posts into `state.reader.posts` synchronously,
-			// before rendering the wrapped component, so `RelatedPostCard`'s
-			// `getPostById` lookup resolves on the first render. A post-render
-			// effect would render placeholders for one frame on data arrival.
-			const dispatchedPostsRef = useRef< ReadRelatedPost[] | null >( null );
-			if ( fetchedPosts?.length && dispatchedPostsRef.current !== fetchedPosts ) {
-				dispatchedPostsRef.current = fetchedPosts;
-				dispatch( receivePosts( fetchedPosts ) );
-			}
+			// Mirror the fetched posts into `state.reader.posts` before paint, so
+			// the re-render triggered by `receivePosts` lands before the browser
+			// paints the placeholder cards `RelatedPostCard` would otherwise show
+			// while `getPostById` returns undefined.
+			useLayoutEffect( () => {
+				if ( fetchedPosts?.length ) {
+					dispatch( receivePosts( fetchedPosts ) );
+				}
+			}, [ dispatch, fetchedPosts ] );
 
 			// Keep cached posts visible across transient refetch errors.
 			if ( isError && ! fetchedPosts ) {

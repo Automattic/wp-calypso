@@ -1,11 +1,11 @@
-import { fetchReadRelatedPosts } from '@automattic/api-core';
+import { fetchReadRelatedPosts, SCOPE_ALL } from '@automattic/api-core';
 import { queryOptions } from '@tanstack/react-query';
 import type { ReadRelatedPostsScope } from '@automattic/api-core';
 
 export const readRelatedPostsQuery = (
 	siteId: number | null | undefined,
 	postId: number | null | undefined,
-	scope: ReadRelatedPostsScope = 'all',
+	scope: ReadRelatedPostsScope = SCOPE_ALL,
 	size: number = 2,
 	contentWidth?: number
 ) => {
@@ -21,5 +21,8 @@ export const readRelatedPostsQuery = (
 			} ),
 		staleTime: 5 * 60 * 1000,
 		enabled: siteId != null && postId != null,
+		// Memory-only: queryKey includes per-post identifiers and would
+		// accumulate stale entries in localStorage across sessions.
+		meta: { persist: false },
 	} );
 };

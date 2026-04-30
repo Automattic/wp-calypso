@@ -1,12 +1,12 @@
 import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
-import { SCOPE_OTHER, SCOPE_SAME } from './types';
+import { SCOPE_ALL, SCOPE_OTHER, SCOPE_SAME } from './types';
 import type { ReadRelatedPostsParams, ReadRelatedPostsResponse } from './types';
 
 export const fetchReadRelatedPosts = ( {
 	siteId,
 	postId,
-	scope = 'all',
+	scope = SCOPE_ALL,
 	size = 2,
 	contentWidth,
 }: ReadRelatedPostsParams ): Promise< ReadRelatedPostsResponse > => {
