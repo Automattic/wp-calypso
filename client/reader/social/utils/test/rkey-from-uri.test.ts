@@ -1,4 +1,4 @@
-import { rkeyFromUri } from '../rkey-from-uri';
+import { PENDING_LIKE_URI, rkeyFromUri } from '../rkey-from-uri';
 
 describe( 'rkeyFromUri', () => {
 	it( 'extracts rkey from a typical at-uri', () => {
@@ -8,7 +8,7 @@ describe( 'rkeyFromUri', () => {
 	} );
 
 	it( 'returns null for the pending sentinel', () => {
-		expect( rkeyFromUri( '__pending_like__' ) ).toBeNull();
+		expect( rkeyFromUri( PENDING_LIKE_URI ) ).toBeNull();
 	} );
 
 	it( 'returns null for an at-uri without an rkey segment', () => {
@@ -21,5 +21,9 @@ describe( 'rkeyFromUri', () => {
 
 	it( 'returns null for empty input', () => {
 		expect( rkeyFromUri( '' ) ).toBeNull();
+	} );
+
+	it( 'returns null for an at-uri with a trailing-slash empty rkey', () => {
+		expect( rkeyFromUri( 'at://did:plc:abc/app.bsky.feed.like/' ) ).toBeNull();
 	} );
 } );

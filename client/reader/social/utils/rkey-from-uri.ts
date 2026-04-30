@@ -10,6 +10,9 @@
 export const PENDING_LIKE_URI = '__pending_like__';
 
 export function rkeyFromUri( uri: string ): string | null {
+	if ( uri === PENDING_LIKE_URI ) {
+		return null;
+	}
 	if ( ! uri || ! uri.startsWith( 'at://' ) ) {
 		return null;
 	}
