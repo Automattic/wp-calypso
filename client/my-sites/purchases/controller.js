@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { getCancelIntentFromQuery } from 'calypso/lib/purchases/utils';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import CrmDownloads from 'calypso/my-sites/purchases/crm-downloads';
 import {
@@ -44,6 +45,7 @@ export const purchaseCancel = ( context, next ) => {
 		<PurchaseCancel
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			intent={ getCancelIntentFromQuery( context.query ?? {} ) }
 		/>
 	);
 	next();

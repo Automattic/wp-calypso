@@ -1,3 +1,6 @@
+// Must come before ./lib/pw-base so .env is loaded before
+// @automattic/calypso-e2e's env-variables module is evaluated.
+import './load-env';
 import { defineConfig, devices, type ReporterDescription } from 'playwright/test';
 import { tags, type CustomOptions } from './lib/pw-base';
 

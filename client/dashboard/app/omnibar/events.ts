@@ -23,6 +23,8 @@ export const omnibarEvents = {
 	notificationsAnchor: createOmnibarEvent< HTMLElement | null >(),
 	notifications: createOmnibarEvent(),
 	notificationsUnseenCount: createOmnibarEvent< number >(),
+	siteSwitcher: createOmnibarEvent(),
+	siteSwitcherAnchor: createOmnibarEvent< HTMLElement | null >(),
 	linkClick: createOmnibarEvent< { href: string; event: MouseEvent } >(),
 };
 

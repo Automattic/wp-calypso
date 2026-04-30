@@ -280,6 +280,7 @@
 		"chroma-js": "^2.6.0",
 		"css-loader": "^6.11.0",
 		"doctrine": "^3.0.0",
+		"dotenv": "^9.0.2",
 		"dotenv-webpack": "^8.1.0",
 		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",

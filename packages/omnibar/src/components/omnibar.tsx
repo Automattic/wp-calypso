@@ -14,7 +14,13 @@ export function Omnibar( { nodes, onClickResponsiveMenu }: OmnibarProps ) {
 				<OmnibarResponsiveMenu onClickResponsiveMenu={ onClickResponsiveMenu } />
 			) }
 			{ nodes.home && <OmnibarHomeNode node={ nodes.home } /> }
-			{ nodes.site && <OmnibarSiteNode node={ nodes.site } actionNodes={ nodes.siteActions } /> }
+			{ nodes.site && (
+				<OmnibarSiteNode
+					node={ nodes.site }
+					pluginNodes={ nodes.sitePlugins }
+					actionNodes={ nodes.siteActions }
+				/>
+			) }
 			<div className="omnibar__secondary">
 				{ nodes.plugins && <OmnibarPluginsNode nodes={ nodes.plugins } /> }
 				{ nodes.user && <OmnibarUserNode node={ nodes.user } /> }

@@ -1,7 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Page } from '@wordpress/admin-ui';
 import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryTerms from 'calypso/components/data/query-terms';
@@ -15,18 +16,18 @@ import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Distribution from './components/distribution';
 import Episodes from './components/episodes';
+import Settings from './components/settings';
 import Welcome from './components/welcome';
 import useAccessGate from './hooks/use-access-gate';
 
 import './style.scss';
 
-type PodcastSection = 'episodes' | 'distribution';
+const VALID_SECTIONS = [ 'episodes', 'distribution', 'settings' ] as const;
+type PodcastSection = ( typeof VALID_SECTIONS )[ number ];
 
 type PodcastMainProps = {
 	section?: string;
 };
-
-const VALID_SECTIONS: readonly PodcastSection[] = [ 'episodes', 'distribution' ] as const;
 
 const isValidSection = ( s: string | undefined ): s is PodcastSection =>
 	!! s && ( VALID_SECTIONS as readonly string[] ).includes( s );
@@ -36,15 +37,17 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const accessGate = useAccessGate();
-	// Match the Episodes-tab resolution: prefer the legacy setting, then fall
-	// back to a category named "Podcast" so sites with episodes already
-	// flowing through that term land on Episodes by default.
+	// If podcasting_category_id is set, trust it (0 = user disabled). Only
+	// when the setting is missing do we fall back to a "Podcast" category
+	// heuristic so sites with episodes already flowing through that term
+	// land on Episodes by default.
 	const isSetUp = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
 		}
-		if ( getPodcastingCategoryId( state, siteId ) ) {
-			return true;
+		const categoryId = getPodcastingCategoryId( state, siteId );
+		if ( categoryId !== null ) {
+			return Number( categoryId ) > 0;
 		}
 		const terms = getTerms( state, siteId, 'category' );
 		return Array.isArray( terms )
@@ -52,14 +55,14 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 			: false;
 	} );
 	// True once we have a definitive answer for `isSetUp` — either the
-	// setting is set, or the terms list has loaded. Used to suppress a
-	// welcome → tabs flash on the bare /podcast/[site] URL while data
-	// is still in flight.
+	// setting has loaded (any value, including 0), or the terms list has
+	// loaded. Used to suppress a welcome → tabs flash on the bare
+	// /podcasting/[site] URL while data is still in flight.
 	const isSetupResolved = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return true;
 		}
-		if ( getPodcastingCategoryId( state, siteId ) ) {
+		if ( getPodcastingCategoryId( state, siteId ) !== null ) {
 			return true;
 		}
 		return Array.isArray( getTerms( state, siteId, 'category' ) );
@@ -67,7 +70,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
 	// Tabs only show when podcasting is actually set up. A deep link to
-	// /podcast/episodes/[site] on a non-set-up site bounces back to the
+	// /podcasting/episodes/[site] on a non-set-up site bounces back to the
 	// welcome via the URL-sync effect below.
 	const showTabs = isSetUp;
 
@@ -85,31 +88,49 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	}, [ section ] );
 
 	// Keep the URL in sync with the current view: tabs live at
-	// /podcast/<section>/[site], welcome at the bare /podcast/[site]. A
-	// disabled podcast on a section URL gets bounced back to welcome.
+	// /podcasting/<section>/[site], welcome at the bare /podcasting/[site]. A
+	// disabled podcast on episodes/distribution gets bounced back to welcome,
+	// but /podcasting/settings stays accessible so the user can flip podcasting on.
 	useEffect( () => {
 		if ( ! isSetupResolved ) {
 			return;
 		}
 		const path = window.location.pathname;
-		const isSectionUrl = /^\/podcast\/(episodes|distribution)(\/|$)/.test( path );
+		const isSectionUrl = /^\/podcasting\/(episodes|distribution|settings)(\/|$)/.test( path );
+		const isContentSectionUrl = /^\/podcasting\/(episodes|distribution)(\/|$)/.test( path );
 		if ( showTabs && ! isSectionUrl ) {
-			window.history.replaceState( null, '', '/podcast/episodes' + pathSuffix );
-		} else if ( ! showTabs && isSectionUrl ) {
-			window.history.replaceState( null, '', '/podcast' + pathSuffix );
+			window.history.replaceState( null, '', '/podcasting/episodes' + pathSuffix );
+		} else if ( ! showTabs && isContentSectionUrl ) {
+			window.history.replaceState( null, '', '/podcasting' + pathSuffix );
 		}
 	}, [ showTabs, isSetupResolved, pathSuffix ] );
+
+	// Detect a true→false transition on isSetUp (the user just disabled
+	// podcasting from Settings) and bounce them to Welcome via page.show so
+	// the controller re-runs with no `section` prop.
+	const prevIsSetUp = useRef( isSetUp );
+	useEffect( () => {
+		if ( isSetupResolved && prevIsSetUp.current && ! isSetUp ) {
+			page.show( '/podcasting' + pathSuffix );
+		}
+		prevIsSetUp.current = isSetUp;
+	}, [ isSetUp, isSetupResolved, pathSuffix ] );
 
 	const tabs = [
 		{
 			name: 'episodes' as const,
 			title: translate( 'Episodes' ) as string,
-			path: '/podcast/episodes' + pathSuffix,
+			path: '/podcasting/episodes' + pathSuffix,
 		},
 		{
 			name: 'distribution' as const,
 			title: translate( 'Distribution' ) as string,
-			path: '/podcast/distribution' + pathSuffix,
+			path: '/podcasting/distribution' + pathSuffix,
+		},
+		{
+			name: 'settings' as const,
+			title: translate( 'Settings' ) as string,
+			path: '/podcasting/settings' + pathSuffix,
 		},
 	];
 
@@ -127,14 +148,13 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		}
 	};
 
-	// Render nothing until we know whether podcasting is set up — prevents a
-	// Welcome flash before terms/site-settings resolve and we switch to tabs.
-	const isWaitingForSetup = ! isSetupResolved;
-
 	let pageContent;
 	if ( accessGate ) {
 		pageContent = accessGate;
-	} else if ( isWaitingForSetup ) {
+	} else if ( ! isSetupResolved ) {
+		// Render nothing until we know whether podcasting is set up — prevents
+		// a Welcome flash before terms/site-settings resolve and we switch to
+		// tabs.
 		pageContent = null;
 	} else if ( showTabs ) {
 		pageContent = (
@@ -165,12 +185,25 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 						<Distribution />
 					</div>
 				</Tabs.Panel>
+				<Tabs.Panel value="settings">
+					<div className="podcast__tab-content">
+						<Settings />
+					</div>
+				</Tabs.Panel>
 			</Tabs.Root>
+		);
+	} else if ( section === 'settings' ) {
+		// Pre-setup users land here from Welcome's "Enable podcasting" CTA;
+		// render Settings on its own so they can pick a category.
+		pageContent = (
+			<div className="podcast__tab-content">
+				<Settings />
+			</div>
 		);
 	} else {
 		pageContent = (
 			<div className="podcast__tab-content">
-				<Welcome planTier="free" />
+				<Welcome />
 			</div>
 		);
 	}

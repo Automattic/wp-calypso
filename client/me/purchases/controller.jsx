@@ -12,6 +12,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getCancelIntentFromQuery } from 'calypso/lib/purchases/utils';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import {
@@ -94,8 +95,7 @@ export function addCreditCard( context, next ) {
 }
 
 export function cancelPurchase( context, next ) {
-	const rawIntent = context.query?.intent;
-	const intent = rawIntent === 'cancel' || rawIntent === 'remove' ? rawIntent : null;
+	const intent = getCancelIntentFromQuery( context.query ?? {} );
 	// Match the browser-tab/page title to the button the user clicked on
 	// Purchase Settings — "Remove" for Remove, "Cancel Purchase" otherwise.
 	const pageTitle =
