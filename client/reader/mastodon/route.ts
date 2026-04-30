@@ -77,3 +77,28 @@ export function getProfileUrl(
 	}
 	return `/reader/mastodon/${ connectionId }/profile/${ encodeURIComponent( canonical ) }`;
 }
+
+// Mastodon hashtags: ASCII alphanumeric + underscore, 1-128 chars. The
+// protocol allows a wider Unicode set per joinmastodon.org; restrict to
+// the safe ASCII subset for now and revisit if non-ASCII tags become a
+// real signal. Anchored, single-line, rejects path-traversal characters
+// by construction.
+export const HASHTAG_RE = /^[A-Za-z0-9_]{1,128}$/;
+
+export function isValidHashtag( hashtag: string ): boolean {
+	return HASHTAG_RE.test( hashtag );
+}
+
+// Build the in-app hashtag-feed URL. Lowercases the input, strips a
+// leading `#`, validates the canonical form, and percent-encodes the
+// path segment for safety.
+export function getTagFeedUrl( connectionId: number, hashtag: string ): string | null {
+	if ( ! Number.isFinite( connectionId ) || connectionId <= 0 ) {
+		return null;
+	}
+	const canonical = hashtag.trim().toLowerCase().replace( /^#/, '' );
+	if ( ! isValidHashtag( canonical ) ) {
+		return null;
+	}
+	return `/reader/mastodon/${ connectionId }/tag/${ encodeURIComponent( canonical ) }`;
+}

@@ -162,3 +162,23 @@ export type MastodonAuthorFeedFilter =
 	| 'posts_no_replies'
 	| 'posts_with_replies'
 	| 'posts_with_media';
+
+// Filter values that map to Mastodon's GET /api/v1/timelines/tag/:hashtag
+// query params. Values mirror the UI tab slugs 1:1 so the slug ↔ filter
+// map at the tabs layer is identity beyond the case of `all`.
+export type MastodonTagFilter = 'all' | 'media' | 'local';
+
+// Optional metadata embedded in the feed response. The backend MAY include
+// nothing today; render hashtag name as a plain header and only show
+// `count` when set.
+export interface MastodonTagInfo {
+	name: string;
+	count?: number;
+	url?: string;
+}
+
+export interface MastodonTagFeedPage {
+	items: MastodonFeedItem[];
+	cursor: string | null;
+	tag?: MastodonTagInfo;
+}
