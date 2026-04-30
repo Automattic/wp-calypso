@@ -1,4 +1,7 @@
-import { Button, ButtonGroup } from '@wordpress/components';
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import type { SourceFilter } from '../../types';
 
@@ -17,18 +20,22 @@ const FILTERS: { value: SourceFilter; label: string }[] = [
 export default function SourceFilterTabs( { activeFilter, onFilterChange }: SourceFilterProps ) {
 	return (
 		<div className="content-research-source-filter">
-			<ButtonGroup>
+			<ToggleGroupControl
+				label={ __( 'Source', 'content-research' ) }
+				value={ activeFilter }
+				isBlock
+				hideLabelFromVision
+				__nextHasNoMarginBottom
+				onChange={ ( value ) => onFilterChange( value as SourceFilter ) }
+			>
 				{ FILTERS.map( ( filter ) => (
-					<Button
+					<ToggleGroupControlOption
 						key={ filter.value }
-						variant={ activeFilter === filter.value ? 'primary' : 'secondary' }
-						size="compact"
-						onClick={ () => onFilterChange( filter.value ) }
-					>
-						{ filter.label }
-					</Button>
+						value={ filter.value }
+						label={ filter.label }
+					/>
 				) ) }
-			</ButtonGroup>
+			</ToggleGroupControl>
 		</div>
 	);
 }

@@ -1,12 +1,13 @@
 @import "./components/search-input/style";
 @import "./components/result-card/style";
-@import "./components/source-filter/style";
 @import "./components/ai-summary/style";
+
+.content-research-source-filter {
+	padding-bottom: 16px;
+}
 
 .content-research-sidebar {
 	&__results {
-		max-height: 60vh;
-		overflow-y: auto;
 		padding-top: 4px;
 	}
 
