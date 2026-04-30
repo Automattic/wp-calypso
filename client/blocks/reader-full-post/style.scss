@@ -767,7 +767,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		border-radius: 4px;
 		position: relative;
 		display: block;
-		inline-size: 100%;
+		max-inline-size: 100%;
 	}
 }
 
