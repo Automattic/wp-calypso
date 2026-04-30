@@ -2285,7 +2285,6 @@ const WPCheckoutCompletedWrapper = styled.div`
 const WPCheckoutMainContent = styled.div`
 	grid-area: main-content;
 	margin-top: 50px;
-	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
