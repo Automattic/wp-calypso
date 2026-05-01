@@ -162,7 +162,12 @@ export interface CancelPurchaseActions {
 	refreshSitePlans: ( siteId: string | number ) => void;
 	successNotice: (
 		message: string | ReactNode,
-		properties: { displayOnNextPage?: boolean; duration?: number }
+		properties: {
+			displayOnNextPage?: boolean;
+			duration?: number;
+			button?: string;
+			href?: string;
+		}
 	) => void;
 	errorNotice: ( message: string | ReactNode ) => void;
 }
@@ -563,6 +568,24 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				await this.handleMarketplaceSubscriptions( refundable );
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
+				if ( isRemoveDeleteFlow && this.props.atomicTransfer?.created_at ) {
+					this.props.successNotice(
+						this.props.translate(
+							'Your site has been removed. Download a backup to save your themes and plugins.'
+						),
+						{
+							displayOnNextPage: true,
+							duration: 10000,
+							button: this.props.translate( 'Download a backup' ),
+							href: `//${ this.props.purchase.domain }/wp-admin/export.php`,
+						}
+					);
+				} else {
+					this.props.successNotice( result.message, {
+						displayOnNextPage: true,
+						duration: 10000,
+					} );
+				}
 				if ( isRemoveDeleteFlow ) {
 					invokeSurvicateEvent( 'purchaseRemoved' );
 				} else if ( refundable ) {

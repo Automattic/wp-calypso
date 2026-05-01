@@ -1121,12 +1121,34 @@ function CancelPurchaseInner() {
 
 		removePurchaseMutator.mutate( purchase.ID, {
 			onSuccess: () => {
+				if ( purchase.will_atomic_revert_after_removal ) {
+					createSuccessNotice(
+						/* translators: Shown after removing a product from an Atomic site */
+						__( 'Your site has been removed. Download a backup to save your themes and plugins.' ),
+						{
+							type: 'snackbar',
+							actions: [
+								{
+									label: __( 'Download a backup' ),
+									url: `//${ purchase.domain }/wp-admin/export.php`,
+								},
+							],
+						}
+					);
+				} else {
+					createSuccessNotice(
+						sprintf(
+							/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
+							__( '%(productName)s was removed.' ),
+							{
+								productName: purchase.is_domain ? purchase.meta : purchase.product_name,
+							}
+						),
+						{ type: 'snackbar' }
+					);
+				}
 				invokeSurvicateEvent( 'purchaseRemoved' );
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: purchase.ID },
-					search: { cancelled: true },
-				} );
+				navigate( { to: purchasesRoute.to } );
 			},
 			onError: () => {
 				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
