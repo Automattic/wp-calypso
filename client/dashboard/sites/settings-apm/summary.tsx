@@ -1,13 +1,22 @@
-import { HostingFeatures, type Site } from '@automattic/api-core';
+import { BusinessPlans, EcommercePlans, type Site } from '@automattic/api-core';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { hasHostingFeature } from '../../utils/site-features';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
+function hasApmAccess( productSlug: string | undefined ) {
+	if ( ! productSlug ) {
+		return false;
+	}
+	return (
+		( BusinessPlans as readonly string[] ).includes( productSlug ) ||
+		( EcommercePlans as readonly string[] ).includes( productSlug )
+	);
+}
+
 export default function ApmSettingsSummary( { site, density }: { site: Site; density?: Density } ) {
-	const canView = hasHostingFeature( site, HostingFeatures.APM );
+	const canView = hasApmAccess( site.plan?.product_slug );
 
 	const getBadge = () => {
 		if ( ! canView ) {
