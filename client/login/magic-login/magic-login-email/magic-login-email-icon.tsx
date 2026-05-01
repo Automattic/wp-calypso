@@ -25,6 +25,8 @@ interface MagicLoginEmailIconProps {
 export function MagicLoginEmailIcon( { icon }: MagicLoginEmailIconProps ) {
 	switch ( icon ) {
 		case 'apple':
+			// No async import because AppleIcon is already in the login bundle via
+			// social-buttons/apple, so AsyncLoad cannot split it.
 			return <AppleIcon />;
 		case 'gmail':
 			return <AsyncLoad require={ loadGmail } placeholder={ null } />;
