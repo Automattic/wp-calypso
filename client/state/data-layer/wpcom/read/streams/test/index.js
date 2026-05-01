@@ -48,8 +48,17 @@ describe( 'streams', () => {
 			lang: 'en',
 		};
 
-		it( 'returns undefined for migrated stream types so no HTTP fires', () => {
-			expect( requestPage( makeAction( { streamKey: 'following' } ) ) ).toBeUndefined();
+		it.each( [
+			'following',
+			'discover:recommended',
+			'discover:recommended--wordpress--blogging',
+			'discover:latest',
+			'discover:latest--wordpress',
+			'discover:tags',
+			'discover:dailyprompt',
+			'discover:freshly-pressed',
+		] )( 'returns undefined for migrated streamKey %s', ( streamKey ) => {
+			expect( requestPage( makeAction( { streamKey } ) ) ).toBeUndefined();
 		} );
 
 		describe( 'stream types', () => {
@@ -57,49 +66,6 @@ describe( 'streams', () => {
 			// each test is an assertion of the http call that should be made
 			// when the given stream id is handed to request page
 			[
-				{
-					stream: 'discover:freshly-pressed',
-					expected: {
-						method: 'GET',
-						path: '/freshly-pressed',
-						apiVersion: '1.2',
-						query: {
-							number: INITIAL_FETCH,
-							lang: 'en',
-						},
-					},
-				},
-				{
-					stream: 'discover:recommended',
-					expected: {
-						method: 'GET',
-						path: '/read/streams/discover',
-						apiNamespace: 'wpcom/v2',
-						query: {
-							...query,
-							tag_recs_per_card: 5,
-							site_recs_per_card: 5,
-							tags: [],
-							age_based_decay: 0.5,
-							orderBy: 'popular',
-						},
-					},
-				},
-				{
-					stream: 'discover:dailyprompt',
-					expected: {
-						method: 'GET',
-						path: `/read/streams/discover?tags=dailyprompt`,
-						apiNamespace: 'wpcom/v2',
-						query: {
-							...query,
-							tag_recs_per_card: 5,
-							site_recs_per_card: 5,
-							tags: [],
-							age_based_decay: 0.5,
-						},
-					},
-				},
 				{
 					stream: 'a8c',
 					expected: {

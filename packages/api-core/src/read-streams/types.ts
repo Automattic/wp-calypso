@@ -20,8 +20,25 @@ export interface ReadStreamDateRange {
 	before?: string | null;
 }
 
+export interface ReadStreamRecommendedSite {
+	feed_ID?: number;
+	URL?: string;
+	icon?: { ico?: string };
+	description?: string;
+	name?: string;
+	feed_URL?: string;
+	[ key: string ]: unknown;
+}
+
+export type ReadStreamCard =
+	| { type: 'post'; data: ReadStreamPost }
+	| { type: 'recommended_blogs'; data: ReadStreamRecommendedSite[] }
+	| { type: 'new_sites'; data: ReadStreamRecommendedSite[] }
+	| { type: string; data: unknown };
+
 export interface ReadStreamResponse {
 	posts?: ReadStreamPost[];
+	cards?: ReadStreamCard[];
 	date_range?: ReadStreamDateRange;
 	next_page?: string;
 	next_page_handle?: string;
