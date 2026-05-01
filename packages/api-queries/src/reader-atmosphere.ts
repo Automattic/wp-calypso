@@ -1,5 +1,6 @@
 import {
 	createConnection,
+	createFollow,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
@@ -11,12 +12,14 @@ import {
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
+	mutationOptions,
 	queryOptions,
 	useInfiniteQuery,
 	useMutation,
 	useQuery,
 	useQueryClient,
 	type InfiniteData,
+	type QueryClient,
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
@@ -26,6 +29,7 @@ import type {
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
+	AtmosphereCreateFollowResponse,
 	AtmosphereError,
 	AtmosphereScopedProfile,
 	AtmosphereThreadResponse,
@@ -219,3 +223,83 @@ export interface UseAuthorFeedInfiniteQueryParams {
 export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfiniteQueryParams ) {
 	return useInfiniteQuery( authorFeedInfiniteQuery( actor, filter ) );
 }
+
+export interface FollowAtmosphereActorVars {
+	connectionId: number;
+	actor: string;
+	subjectDid: string;
+}
+
+export interface FollowAtmosphereMutationContext {
+	prev: AtmosphereScopedProfile | undefined;
+}
+
+/**
+ * Mutation factory for creating an `app.bsky.graph.follow` record.
+ * Optimistically marks the cached scoped-profile entry as following
+ * (with sentinel rkey 'pending') in `onMutate`; replaces the
+ * sentinel with the real URI/rkey in `onSuccess`; rolls back to
+ * the prior cached value in `onError`.
+ *
+ * Accepts the consumer's QueryClient because Calypso boots its own
+ * separate from the singleton in `@automattic/api-queries`. See
+ * `client/reader/AGENTS.md` for the rationale.
+ */
+export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		AtmosphereCreateFollowResponse,
+		AtmosphereError,
+		FollowAtmosphereActorVars,
+		FollowAtmosphereMutationContext
+	>( {
+		mutationFn: ( vars ) =>
+			createFollow( { connectionId: vars.connectionId, subject_did: vars.subjectDid } ),
+		onMutate: async ( vars ) => {
+			const key = atmosphereScopedProfileQuery( {
+				connectionId: vars.connectionId,
+				actor: vars.actor,
+			} ).queryKey;
+			await queryClient.cancelQueries( { queryKey: key } );
+			const prev = queryClient.getQueryData< AtmosphereScopedProfile >( key );
+			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: 'pending',
+								following_rkey: 'pending',
+							},
+					  }
+					: old
+			);
+			return { prev };
+		},
+		onError: ( _err, vars, ctx ) => {
+			if ( ctx?.prev ) {
+				const key = atmosphereScopedProfileQuery( {
+					connectionId: vars.connectionId,
+					actor: vars.actor,
+				} ).queryKey;
+				queryClient.setQueryData( key, ctx.prev );
+			}
+		},
+		onSuccess: ( data, vars ) => {
+			const key = atmosphereScopedProfileQuery( {
+				connectionId: vars.connectionId,
+				actor: vars.actor,
+			} ).queryKey;
+			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: data.follow.uri,
+								following_rkey: data.follow.rkey,
+							},
+					  }
+					: old
+			);
+		},
+	} );
