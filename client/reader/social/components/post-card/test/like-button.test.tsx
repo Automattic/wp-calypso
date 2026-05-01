@@ -1,11 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { PENDING_LIKE_URI } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { PENDING_LIKE_URI } from 'calypso/reader/social/utils/rkey-from-uri';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
@@ -126,19 +126,42 @@ describe( '<LikeButton>', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 
-	it( 'click during pending sentinel state is ignored', async () => {
+	it( 'disables the button while the pending sentinel is set', async () => {
 		const interceptor = nock( BASE )
 			.delete( /\/likes\// )
 			.reply( 204 );
 
 		const user = userEvent.setup();
 		renderLikeButton( makePost( { viewer: { like: PENDING_LIKE_URI, repost: null } } ) );
-		await user.click( screen.getByRole( 'button', { name: /like, 5 likes/i } ) );
+		const button = screen.getByRole( 'button', { name: /like, 5 likes/i } );
+		expect( button ).toBeDisabled();
+		await user.click( button );
 
 		expect( interceptor.isDone() ).toBe( false );
 	} );
 
-	it( 'mutation error dispatches errorNotice + Tracks error event', async () => {
+	it( 'treats viewer:undefined as not-liked and POSTs on click', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/likes', {
+				post_uri: POST_URI,
+				post_cid: POST_CID,
+			} )
+			.reply( 200, {
+				like: { uri: LIKE_URI, cid: 'bafy-like-cid', rkey: '3krkeyrkeyrke' },
+			} );
+
+		const user = userEvent.setup();
+		const post = makePost();
+		delete ( post as Partial< AtmosphereFeedItem > ).viewer;
+		renderLikeButton( post );
+		const button = screen.getByRole( 'button', { name: /like, 5 likes/i } );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
+
+		await user.click( button );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'create-like error dispatches errorNotice + Tracks error event', async () => {
 		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/likes' )
@@ -155,6 +178,29 @@ describe( '<LikeButton>', () => {
 			)
 		);
 		expect( errorNoticeSpy ).toHaveBeenCalledWith( 'Could not save your like. Please try again.' );
+	} );
+
+	it( 'delete-like error dispatches errorNotice + Tracks unlike-error event', async () => {
+		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		nock( BASE )
+			.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkeyrkeyrke' )
+			.reply( 401, { error: 'atmosphere_unauthenticated' } );
+
+		const user = userEvent.setup();
+		const { onClick } = renderLikeButton(
+			makePost( { viewer: { like: LIKE_URI, repost: null } } )
+		);
+		await user.click( screen.getByRole( 'button', { name: /like, 5 likes/i } ) );
+
+		await waitFor( () =>
+			expect( onClick ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_like_error_shown',
+				expect.objectContaining( { error_kind: 'auth_required', direction: 'unlike' } )
+			)
+		);
+		expect( errorNoticeSpy ).toHaveBeenCalledWith(
+			'Reconnect your Bluesky account to like posts.'
+		);
 	} );
 
 	it( 'click does not bubble to parent listener', async () => {

@@ -472,8 +472,8 @@ export function useCreateLikeMutation( connectionId: number ) {
 			return patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
 				...item,
 				viewer: {
+					...( item.viewer ?? { like: null, repost: null } ),
 					like: PENDING_LIKE_URI,
-					repost: item.viewer?.repost ?? null,
 				},
 				counts: { ...item.counts, likes: item.counts.likes + 1 },
 			} ) );
@@ -483,8 +483,8 @@ export function useCreateLikeMutation( connectionId: number ) {
 			patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
 				...item,
 				viewer: {
+					...( item.viewer ?? { like: null, repost: null } ),
 					like: result.uri,
-					repost: item.viewer?.repost ?? null,
 				},
 			} ) );
 		},
@@ -503,8 +503,8 @@ export function useDeleteLikeMutation( connectionId: number ) {
 				return patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
 					...item,
 					viewer: {
+						...( item.viewer ?? { like: null, repost: null } ),
 						like: null,
-						repost: item.viewer?.repost ?? null,
 					},
 					counts: { ...item.counts, likes: Math.max( 0, item.counts.likes - 1 ) },
 				} ) );

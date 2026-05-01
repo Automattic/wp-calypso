@@ -106,9 +106,12 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/mastodon/:id/thread/:status_id`   | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
 | `/reader/mastodon/:id/profile/:actor`      | `client/reader/mastodon/author-profile-view.tsx`                          |
 
-The ATmosphere timeline tab now includes an interactive likes count in
-`client/reader/social/components/post-card/like-button.tsx`, wired only from
-`client/reader/atmosphere/timeline-panel.tsx` for slice 7a.
+The likes count on `<SocialPostCard>` becomes an interactive
+`<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
+when the host shell passes both a `connectionId` and a post `cid` down to
+`<PostCardCounts>`. Today only `client/reader/atmosphere/timeline-panel.tsx`
+opts in; surfaces that don't pass those props (thread, author-feed,
+quoted-post, non-ATmosphere cards) render the static likes count.
 
 ### SSR file variants
 

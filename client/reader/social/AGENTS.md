@@ -253,7 +253,7 @@ As of slice 5, the card-link / quote / replies-count / reply-context surfaces al
 
 When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` and `getProfileUrl` from the analytics context before constructing any post- or profile-destination URL.
 
-### Slice 7a — Like interactions
+### Like interactions
 
 ATmosphere timeline payloads can include `viewer: { like, repost }` on each
 `AtmosphereFeedItem`. The field is optional during the backend rollout window,
@@ -263,8 +263,7 @@ viewer data as "not liked".
 `<LikeButton>` lives next to the post-card subcomponents and is rendered by
 `<PostCardCounts>` only when it receives both a `connectionId` and a post `cid`.
 Thread, author-feed, quoted-post, and non-ATmosphere card contexts fall back to
-the static likes count unless they deliberately pass those props in a later
-slice.
+the static likes count unless the host shell deliberately passes those props.
 
 The button uses `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
 `@automattic/api-queries`. Those hooks optimistically patch every cached

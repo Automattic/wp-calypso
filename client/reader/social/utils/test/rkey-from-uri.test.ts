@@ -1,4 +1,5 @@
-import { PENDING_LIKE_URI, rkeyFromUri } from '../rkey-from-uri';
+import { PENDING_LIKE_URI } from '@automattic/api-core';
+import { rkeyFromUri } from '../rkey-from-uri';
 
 describe( 'rkeyFromUri', () => {
 	it( 'extracts rkey from a typical at-uri', () => {

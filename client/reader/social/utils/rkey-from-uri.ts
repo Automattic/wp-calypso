@@ -9,8 +9,6 @@ import { PENDING_LIKE_URI } from '@automattic/api-core';
  * pending-like sentinel (used during the optimistic-update window
  * before the server response lands).
  */
-export { PENDING_LIKE_URI };
-
 export function rkeyFromUri( uri: string ): string | null {
 	if ( uri === PENDING_LIKE_URI ) {
 		return null;

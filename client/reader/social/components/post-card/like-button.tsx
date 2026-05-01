@@ -1,5 +1,7 @@
+import { PENDING_LIKE_URI } from '@automattic/api-core';
 import { useCreateLikeMutation, useDeleteLikeMutation } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
@@ -47,7 +49,12 @@ export function LikeButton( { post, connectionId }: LikeButtonProps ) {
 	const remove = useDeleteLikeMutation( connectionId );
 
 	const isLiked = Boolean( post.viewer?.like );
-	const isPending = create.isPending || remove.isPending;
+	// Disable across every instance of this post while a create-like is in
+	// flight: cache carries `PENDING_LIKE_URI` even on instances whose own
+	// mutation hooks aren't pending, so a user who clicks the like button on
+	// a duplicate render (e.g. timeline + thread) would otherwise hit a dead
+	// rkey and silently no-op.
+	const isPending = create.isPending || remove.isPending || post.viewer?.like === PENDING_LIKE_URI;
 	const formattedLikes = formatNumber( post.counts.likes );
 	const accessibleLabel = translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
 		count: post.counts.likes,
@@ -103,9 +110,10 @@ export function LikeButton( { post, connectionId }: LikeButtonProps ) {
 	return (
 		<button
 			type="button"
-			className={ `social-post-card-like-button${ isLiked ? ' is-liked' : '' }${
-				isPending ? ' is-pending' : ''
-			}` }
+			className={ clsx( 'social-post-card-like-button', {
+				'is-liked': isLiked,
+				'is-pending': isPending,
+			} ) }
 			aria-pressed={ isLiked }
 			aria-label={ accessibleLabel }
 			disabled={ isPending }
