@@ -10,6 +10,13 @@ export interface FollowButtonProps {
 	isFollowedBy: boolean;
 	/** Disable the button while a follow / unfollow request is in flight. */
 	isPending?: boolean;
+	/**
+	 * Optional handle of the target actor (without leading `@`). When supplied,
+	 * the Following-state button announces "Unfollow @{handle}" to assistive
+	 * tech so screen-reader and touch-AT users hear the action they're about
+	 * to take rather than just the current state.
+	 */
+	actorHandle?: string;
 	onFollow: () => void;
 	onUnfollow: () => void;
 }
@@ -28,21 +35,35 @@ export function FollowButton( {
 	isFollowing,
 	isFollowedBy,
 	isPending = false,
+	actorHandle,
 	onFollow,
 	onUnfollow,
 }: FollowButtonProps ) {
 	const translate = useTranslate();
 
 	if ( isFollowing ) {
+		// Visible label is "Following" by default and CSS-swaps to "Unfollow"
+		// on hover / focus. Touch and screen-reader users (no hover; focus and
+		// activation can be effectively simultaneous) wouldn't otherwise see
+		// the "Unfollow" affordance before the click commits, so override the
+		// accessible name to always describe the action.
+		const unfollowLabel = actorHandle
+			? translate( 'Unfollow @%(handle)s', { args: { handle: actorHandle } } )
+			: translate( 'Unfollow' );
 		return (
 			<Button
 				variant="secondary"
 				disabled={ isPending }
 				onClick={ onUnfollow }
 				className="follow-button follow-button--following"
+				aria-label={ String( unfollowLabel ) }
 			>
-				<span className="follow-button__label-following">{ translate( 'Following' ) }</span>
-				<span className="follow-button__label-unfollow">{ translate( 'Unfollow' ) }</span>
+				<span aria-hidden="true" className="follow-button__label-following">
+					{ translate( 'Following' ) }
+				</span>
+				<span aria-hidden="true" className="follow-button__label-unfollow">
+					{ translate( 'Unfollow' ) }
+				</span>
 			</Button>
 		);
 	}

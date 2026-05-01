@@ -171,10 +171,8 @@ export interface GetScopedProfileParams {
 }
 
 /**
- * Authed companion to `getAuthorProfile`. Returns the same profile
- * shape plus the caller-relative `viewer` block ({ following,
- * following_rkey, followed_by }) used to render the Follow / Follow
- * back / Following button on the Bluesky author profile page.
+ * Authed companion to `getAuthorProfile`. Adds the caller-relative
+ * `viewer` subtree (see `AtmosphereProfileViewer`).
  */
 export async function getScopedProfile(
 	params: GetScopedProfileParams
@@ -198,11 +196,9 @@ export interface CreateFollowParams {
 }
 
 /**
- * Creates an `app.bsky.graph.follow` record on the caller's PDS
- * (the connection identified by `connectionId` follows the actor
- * identified by `subject_did`). Returns the URI / CID / rkey of
- * the new record so callers can issue the matching DELETE without
- * splitting the AT-URI.
+ * Creates an `app.bsky.graph.follow` record on the caller's PDS so the
+ * connection identified by `connectionId` follows the actor identified
+ * by `subject_did`. The rkey-rationale lives on `AtmosphereFollowRecord`.
  */
 export async function createFollow(
 	params: CreateFollowParams
@@ -225,9 +221,11 @@ export interface DeleteFollowParams {
 }
 
 /**
- * Drops an `app.bsky.graph.follow` record from the caller's PDS.
- * Idempotent: a missing rkey returns success (mirroring upstream
- * `deleteRecord` semantics).
+ * Drops an `app.bsky.graph.follow` record from the caller's PDS. The
+ * matching DELETE is dispatched as `wpcom.req.post({ method: 'DELETE' })`
+ * because the wpcom client routes by `method`. The backend mirrors
+ * upstream `deleteRecord` semantics for missing rkeys, but this wrapper
+ * still classifies any non-2xx response as an `AtmosphereError`.
  */
 export async function deleteFollow( params: DeleteFollowParams ): Promise< void > {
 	const { connectionId, rkey } = params;

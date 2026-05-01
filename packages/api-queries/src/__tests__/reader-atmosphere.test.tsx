@@ -694,10 +694,8 @@ describe( 'reader-atmosphere hooks', () => {
 				} )
 			);
 
-			// deleteFollow uses wpcom.req.post( { ..., method: 'DELETE' } ).
-			// The wpcom → send-request → wpcom-xhr-request pipeline resolves
-			// `method: 'DELETE'` to a real HTTP DELETE via superagent['delete'](),
-			// so nock must intercept DELETE (not POST with _method=DELETE).
+			// deleteFollow uses wpcom.req.post({ ..., method: 'DELETE' }), which
+			// the wpcom client resolves to a real HTTP DELETE — intercept DELETE.
 			nock( BASE )
 				.delete( '/wpcom/v2/reader/atmosphere/connections/1/follows/3krkeyrkeyrke' )
 				.reply( 204 );
@@ -735,7 +733,7 @@ describe( 'reader-atmosphere hooks', () => {
 			} );
 			client.setQueryData( key, original );
 
-			// Same real-DELETE wire shape as Test C, but reply 502.
+			// Same real-DELETE wire shape as the success case above, but replies 502.
 			nock( BASE )
 				.delete( '/wpcom/v2/reader/atmosphere/connections/1/follows/3krkeyrkeyrke' )
 				.reply( 502, { code: 'atmosphere_upstream_unavailable', message: 'Bluesky unreachable.' } );

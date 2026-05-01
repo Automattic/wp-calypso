@@ -179,6 +179,15 @@ export const atmosphereScopedProfileQuery = ( params: AtmosphereScopedProfileQue
 		enabled: params.actor.length > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
+		// Match threadQueryOptions' policy: bail immediately on terminal errors
+		// (auth, 404, rate-limit, …) so the EmptyContent surfaces fast, but
+		// retry transient failures twice before showing the error UI.
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
 	} );
 
 export function useAtmosphereScopedProfileQuery( params: AtmosphereScopedProfileQueryParams ) {
@@ -226,15 +235,23 @@ export interface FollowAtmosphereActorVars {
 }
 
 export interface FollowAtmosphereMutationContext {
-	prev: AtmosphereScopedProfile | undefined;
+	previous: AtmosphereScopedProfile | undefined;
 }
+
+const scopedProfileKey = ( vars: { connectionId: number; actor: string } ) =>
+	atmosphereScopedProfileQuery( {
+		connectionId: vars.connectionId,
+		actor: vars.actor,
+	} ).queryKey;
 
 /**
  * Mutation factory for creating an `app.bsky.graph.follow` record.
  * Optimistically marks the cached scoped-profile entry as following
- * (with sentinel rkey 'pending') in `onMutate`; replaces the
- * sentinel with the real URI/rkey in `onSuccess`; rolls back to
- * the prior cached value in `onError`.
+ * (with placeholder rkey `'pending'`) in `onMutate`; writes the real
+ * URI / rkey returned by the server in `onSuccess`; rolls back to the
+ * prior cached value in `onError`. The `'pending'` placeholder is
+ * never observed by `handleUnfollow` because <FollowButton> is
+ * disabled while `followMut.isPending` is true.
  *
  * Accepts the consumer's QueryClient because Calypso boots its own
  * separate from the singleton in `@automattic/api-queries`. See
@@ -250,12 +267,9 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 		mutationFn: ( vars ) =>
 			createFollow( { connectionId: vars.connectionId, subject_did: vars.subjectDid } ),
 		onMutate: async ( vars ) => {
-			const key = atmosphereScopedProfileQuery( {
-				connectionId: vars.connectionId,
-				actor: vars.actor,
-			} ).queryKey;
+			const key = scopedProfileKey( vars );
 			await queryClient.cancelQueries( { queryKey: key } );
-			const prev = queryClient.getQueryData< AtmosphereScopedProfile >( key );
+			const previous = queryClient.getQueryData< AtmosphereScopedProfile >( key );
 			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
 				old
 					? {
@@ -268,23 +282,15 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
-			return { prev };
+			return { previous };
 		},
-		onError: ( _err, vars, ctx ) => {
-			if ( ctx?.prev ) {
-				const key = atmosphereScopedProfileQuery( {
-					connectionId: vars.connectionId,
-					actor: vars.actor,
-				} ).queryKey;
-				queryClient.setQueryData( key, ctx.prev );
+		onError: ( _err, vars, context ) => {
+			if ( context?.previous ) {
+				queryClient.setQueryData( scopedProfileKey( vars ), context.previous );
 			}
 		},
 		onSuccess: ( data, vars ) => {
-			const key = atmosphereScopedProfileQuery( {
-				connectionId: vars.connectionId,
-				actor: vars.actor,
-			} ).queryKey;
-			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
+			queryClient.setQueryData< AtmosphereScopedProfile >( scopedProfileKey( vars ), ( old ) =>
 				old
 					? {
 							...old,
@@ -326,12 +332,9 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 	>( {
 		mutationFn: ( vars ) => deleteFollow( { connectionId: vars.connectionId, rkey: vars.rkey } ),
 		onMutate: async ( vars ) => {
-			const key = atmosphereScopedProfileQuery( {
-				connectionId: vars.connectionId,
-				actor: vars.actor,
-			} ).queryKey;
+			const key = scopedProfileKey( vars );
 			await queryClient.cancelQueries( { queryKey: key } );
-			const prev = queryClient.getQueryData< AtmosphereScopedProfile >( key );
+			const previous = queryClient.getQueryData< AtmosphereScopedProfile >( key );
 			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
 				old
 					? {
@@ -344,15 +347,11 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
-			return { prev };
+			return { previous };
 		},
-		onError: ( _err, vars, ctx ) => {
-			if ( ctx?.prev ) {
-				const key = atmosphereScopedProfileQuery( {
-					connectionId: vars.connectionId,
-					actor: vars.actor,
-				} ).queryKey;
-				queryClient.setQueryData( key, ctx.prev );
+		onError: ( _err, vars, context ) => {
+			if ( context?.previous ) {
+				queryClient.setQueryData( scopedProfileKey( vars ), context.previous );
 			}
 		},
 	} );

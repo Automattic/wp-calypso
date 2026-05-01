@@ -213,33 +213,38 @@ export type AtmosphereAuthorFeedFilter =
 	| 'posts_and_author_threads';
 
 /**
+ * Discriminated union encoding the "is the caller following the target?"
+ * relationship. Both members of the pair are populated together (the
+ * server extracts `following_rkey` from `following` so the frontend
+ * doesn't slice AT-URIs). Modeling them as a union enforces the coupling
+ * at the type level — readers that need the rkey only see a non-null
+ * value once they've narrowed `following` to a string.
+ */
+export type AtmosphereProfileFollowState =
+	| { following: null; following_rkey: null }
+	| { following: string; following_rkey: string };
+
+/**
  * Caller-relative relationship state surfaced on the authed
  * /connections/{id}/profile/{actor} endpoint. Derived from the
  * upstream `viewer` subtree on `app.bsky.actor.getProfile`, but
  * deliberately narrower than upstream:
  *
- * - `following` mirrors upstream's AT-URI of the caller→target
- *   follow record; null when the caller does not follow the target.
- * - `following_rkey` is the rkey extracted server-side from
- *   `following` so the frontend doesn't slice AT-URIs. Coupled to
- *   `following` — either both are null or both are populated.
+ * - `following` / `following_rkey` are the AT-URI / rkey of the
+ *   caller→target follow record (or both null when the caller is
+ *   not following). See `AtmosphereProfileFollowState`.
  * - `followed_by` is `true` when upstream populates
  *   `viewer.followedBy` (an AT-URI of the target→caller follow);
  *   collapsed to a boolean here because the UI only needs the
  *   "do they follow me back?" signal, never the inbound rkey.
  */
-export interface AtmosphereProfileViewer {
-	following: string | null;
-	following_rkey: string | null;
+export type AtmosphereProfileViewer = AtmosphereProfileFollowState & {
 	followed_by: boolean;
-}
+};
 
 /**
- * Authed companion to AtmosphereAuthorProfile. Returned by
- * GET /reader/atmosphere/connections/{id}/profile/{actor}, which
- * runs an authed app.bsky.actor.getProfile so the upstream `viewer`
- * subtree is populated. Used by the Follow / Follow back / Following
- * button on the Bluesky author profile page.
+ * Authed companion to `AtmosphereAuthorProfile`, populating the
+ * caller-relative `viewer` subtree from `app.bsky.actor.getProfile`.
  */
 export interface AtmosphereScopedProfile extends AtmosphereAuthorProfile {
 	viewer: AtmosphereProfileViewer;
@@ -256,9 +261,6 @@ export interface AtmosphereFollowRecord {
 	rkey: string;
 }
 
-/**
- * Response shape for POST /reader/atmosphere/connections/{id}/follows.
- */
 export interface AtmosphereCreateFollowResponse {
 	follow: AtmosphereFollowRecord;
 }

@@ -1,10 +1,13 @@
 import nock from 'nock';
 import {
 	createConnection,
+	createFollow,
+	deleteFollow,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
 	getConnections,
+	getScopedProfile,
 	getThread,
 	getTimeline,
 } from '../fetchers';
@@ -12,6 +15,7 @@ import type {
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereFeedItem,
+	AtmosphereScopedProfile,
 	AtmosphereThreadResponse,
 } from '../types';
 
@@ -495,6 +499,112 @@ describe( 'atmosphere fetchers', () => {
 			await expect( getAuthorFeed( { actor: 'alice.bsky.social' } ) ).rejects.toMatchObject( {
 				kind: 'unknown',
 			} );
+		} );
+	} );
+
+	describe( 'getScopedProfile', () => {
+		const payload: AtmosphereScopedProfile = {
+			did: 'did:plc:abc',
+			handle: 'alice.bsky.social',
+			display_name: 'Alice',
+			description: '',
+			description_html: '',
+			avatar: null,
+			banner: null,
+			bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
+			counts: { followers: 1, follows: 2, posts: 3 },
+			viewer: { following: null, following_rkey: null, followed_by: false },
+		};
+
+		it( 'GETs /reader/atmosphere/connections/:id/profile/:actor and returns the typed profile', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, payload );
+
+			const res = await getScopedProfile( { connectionId: 42, actor: 'alice.bsky.social' } );
+			expect( res.viewer.followed_by ).toBe( false );
+			expect( res.handle ).toBe( 'alice.bsky.social' );
+		} );
+
+		it( 'percent-encodes the actor in the path', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/did%3Aplc%3Aabc123' )
+				.reply( 200, payload );
+
+			await getScopedProfile( { connectionId: 42, actor: 'did:plc:abc123' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'classifies a 401 response as auth_required', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 401, { error: 'atmosphere_auth_required' } );
+
+			await expect(
+				getScopedProfile( { connectionId: 42, actor: 'alice.bsky.social' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+	} );
+
+	describe( 'createFollow', () => {
+		const followResponse = {
+			follow: {
+				uri: 'at://did:plc:viewer/app.bsky.graph.follow/3kfollow',
+				cid: 'bafy',
+				rkey: '3kfollow',
+			},
+		};
+
+		it( 'POSTs subject_did to /reader/atmosphere/connections/:id/follows', async () => {
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/follows', {
+					subject_did: 'did:plc:abc',
+				} )
+				.reply( 201, followResponse );
+
+			const res = await createFollow( { connectionId: 42, subject_did: 'did:plc:abc' } );
+			expect( scope.isDone() ).toBe( true );
+			expect( res.follow.rkey ).toBe( '3kfollow' );
+		} );
+
+		it( 'classifies a 502 response as upstream_unavailable', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/follows' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			await expect(
+				createFollow( { connectionId: 42, subject_did: 'did:plc:abc' } )
+			).rejects.toMatchObject( { kind: 'upstream_unavailable' } );
+		} );
+	} );
+
+	describe( 'deleteFollow', () => {
+		it( 'dispatches a real HTTP DELETE to /reader/atmosphere/connections/:id/follows/:rkey', async () => {
+			const scope = nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/follows/3kfollow' )
+				.reply( 204 );
+
+			await deleteFollow( { connectionId: 42, rkey: '3kfollow' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'percent-encodes the rkey in the path', async () => {
+			const scope = nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/follows/odd%2Frkey' )
+				.reply( 204 );
+
+			await deleteFollow( { connectionId: 42, rkey: 'odd/rkey' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'classifies a 429 response as rate_limited', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/follows/3kfollow' )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+			await expect( deleteFollow( { connectionId: 42, rkey: '3kfollow' } ) ).rejects.toMatchObject(
+				{ kind: 'rate_limited' }
+			);
 		} );
 	} );
 } );

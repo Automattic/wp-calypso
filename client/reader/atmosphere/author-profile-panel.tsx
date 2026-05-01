@@ -22,7 +22,7 @@ import {
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
 import { projectAtmosphereError } from './error-projection';
@@ -38,6 +38,26 @@ import type {
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
+
+/**
+ * Action-aware copy for follow / unfollow failure toasts. Most kinds are
+ * semantically identical to a profile-load failure (auth, rate limit,
+ * upstream), so we delegate to the shared `errorMessage`. The exception is
+ * `not_found`: the shared copy is profile-load-shaped and would mislead the
+ * user when an actor disappears between profile load and the follow click.
+ */
+function followErrorMessage(
+	error: AtmosphereError,
+	action: 'follow' | 'unfollow',
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult {
+	if ( error.kind === 'not_found' ) {
+		return action === 'follow'
+			? translate( 'Couldn’t follow this account.' )
+			: translate( 'Couldn’t unfollow this account.' );
+	}
+	return errorMessage( error, translate );
+}
 
 function buildEmptyTitle(
 	filter: AtmosphereAuthorFeedFilter,
@@ -284,6 +304,30 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 
 	const isOwnProfile = profile.data?.did === connection.did;
 
+	// .mutate is the only stable handle on the useMutation result; depending on
+	// the result object would re-create handleFollow / handleUnfollow every render.
+	const followMutate = followMut.mutate;
+	const unfollowMutate = unfollowMut.mutate;
+
+	const showFollowError = useCallback(
+		( error: AtmosphereError, action: 'follow' | 'unfollow' ) => {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_follow_error', {
+					connection_id: connection.id,
+					actor,
+					action,
+					error_kind: error.kind,
+				} )
+			);
+			dispatch(
+				errorNotice( followErrorMessage( error, action, translate ), {
+					id: 'atmosphere-follow-error',
+				} )
+			);
+		},
+		[ connection.id, actor, dispatch, translate ]
+	);
+
 	const handleFollow = useCallback( () => {
 		if ( ! profile.data ) {
 			return;
@@ -296,30 +340,27 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				was_followed_by: profile.data.viewer.followed_by,
 			} )
 		);
-		followMut.mutate(
+		followMutate(
 			{ connectionId: connection.id, actor, subjectDid: profile.data.did },
 			{
-				onError: ( error ) => {
-					dispatch(
-						recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_follow_error', {
-							connection_id: connection.id,
-							actor,
-							action: 'follow',
-							error_kind: error.kind,
-						} )
-					);
-					dispatch(
-						errorNotice( errorMessage( error, translate ), {
-							id: 'atmosphere-follow-error',
-						} )
-					);
+				onSuccess: () => {
+					dispatch( removeNotice( 'atmosphere-follow-error' ) );
 				},
+				onError: ( error ) => showFollowError( error, 'follow' ),
 			}
 		);
-	}, [ profile.data, connection.id, actor, dispatch, followMut, translate ] );
+	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError ] );
 
 	const handleUnfollow = useCallback( () => {
-		if ( ! profile.data?.viewer.following_rkey ) {
+		if ( ! profile.data ) {
+			return;
+		}
+		// AtmosphereProfileFollowState is a discriminated union: once `following`
+		// is non-null, `following_rkey` is type-narrowed to string. The button
+		// only renders the unfollow action when `following` is non-null, so this
+		// guard handles the same edge cases as the follow handler (loading /
+		// race) rather than the rkey-coupling invariant.
+		if ( profile.data.viewer.following === null ) {
 			return;
 		}
 		const rkey = profile.data.viewer.following_rkey;
@@ -330,27 +371,16 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				actor_did: profile.data.did,
 			} )
 		);
-		unfollowMut.mutate(
+		unfollowMutate(
 			{ connectionId: connection.id, actor, rkey },
 			{
-				onError: ( error ) => {
-					dispatch(
-						recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_follow_error', {
-							connection_id: connection.id,
-							actor,
-							action: 'unfollow',
-							error_kind: error.kind,
-						} )
-					);
-					dispatch(
-						errorNotice( errorMessage( error, translate ), {
-							id: 'atmosphere-follow-error',
-						} )
-					);
+				onSuccess: () => {
+					dispatch( removeNotice( 'atmosphere-follow-error' ) );
 				},
+				onError: ( error ) => showFollowError( error, 'unfollow' ),
 			}
 		);
-	}, [ profile.data, connection.id, actor, dispatch, unfollowMut, translate ] );
+	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError ] );
 
 	const renderHeaderError = ( error: AtmosphereError ) => {
 		const noRetry = new Set< AtmosphereError[ 'kind' ] >( [
@@ -380,16 +410,16 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	};
 
 	const renderHeaderBody = ( profileData: AtmosphereScopedProfile ) => {
-		const followButton =
-			! isOwnProfile && profileData.viewer ? (
-				<FollowButton
-					isFollowing={ Boolean( profileData.viewer.following ) }
-					isFollowedBy={ profileData.viewer.followed_by }
-					isPending={ followMut.isPending || unfollowMut.isPending }
-					onFollow={ handleFollow }
-					onUnfollow={ handleUnfollow }
-				/>
-			) : null;
+		const followButton = ! isOwnProfile ? (
+			<FollowButton
+				isFollowing={ profileData.viewer.following !== null }
+				isFollowedBy={ profileData.viewer.followed_by }
+				isPending={ followMut.isPending || unfollowMut.isPending }
+				actorHandle={ profileData.handle }
+				onFollow={ handleFollow }
+				onUnfollow={ handleUnfollow }
+			/>
+		) : null;
 
 		return (
 			<SocialProfileCard

@@ -429,6 +429,134 @@ describe( 'AuthorProfilePanel', () => {
 		} );
 	} );
 
+	describe( 'follow / unfollow', () => {
+		it( 'fires _follow_clicked, POSTs to /follows, and optimistically swaps to "Following"', async () => {
+			const user = userEvent.setup();
+			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+			const followScope = nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/follows', {
+					subject_did: 'did:plc:abc',
+				} )
+				.reply( 201, {
+					follow: {
+						uri: 'at://did:plc:viewer/app.bsky.graph.follow/3krkeyrkeyrke',
+						cid: 'bafy',
+						rkey: '3krkeyrkeyrke',
+					},
+				} );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			const followButton = await screen.findByRole( 'button', { name: /^follow$/i } );
+			await user.click( followButton );
+
+			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
+			expect(
+				spy.mock.calls.some(
+					( [ event ] ) => event === 'calypso_reader_atmosphere_profile_follow_clicked'
+				)
+			).toBe( true );
+			// Optimistic update flips the cached profile, which re-renders the
+			// button into its Following state with the action-aware aria-label.
+			expect(
+				await screen.findByRole( 'button', { name: /unfollow @alice\.bsky\.social/i } )
+			).toBeVisible();
+		} );
+
+		it( 'renders "Follow back" when the actor follows the viewer but the viewer doesn’t follow yet', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, {
+					...profilePayload,
+					viewer: { following: null, following_rkey: null, followed_by: true },
+				} );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByRole( 'button', { name: /follow back/i } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /^follow$/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /unfollow/i } ) ).toBeNull();
+		} );
+
+		it( 'fires _follow_error with action and error_kind on a 502 follow response', async () => {
+			const user = userEvent.setup();
+			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/follows' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: /^follow$/i } ) );
+
+			// _follow_error is the analytics signal Atmosphere uses to track upstream
+			// failure rates by error_kind; the toast itself isn't rendered because
+			// renderWithProvider doesn't mount the global notice list.
+			await waitFor( () =>
+				expect(
+					spy.mock.calls.some(
+						( [ event, props ] ) =>
+							event === 'calypso_reader_atmosphere_profile_follow_error' &&
+							( props as Record< string, unknown > )?.error_kind === 'upstream_unavailable' &&
+							( props as Record< string, unknown > )?.action === 'follow'
+					)
+				).toBe( true )
+			);
+		} );
+
+		it( 'does not render the Follow button on the viewer’s own profile', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social' )
+				.reply( 200, {
+					...profilePayload,
+					did: connection.did,
+					handle: 'viewer.bsky.social',
+					display_name: 'Viewer',
+				} );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/viewer.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="viewer.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByRole( 'heading', { level: 2, name: 'Viewer' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /^follow$/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /follow back/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /unfollow/i } ) ).toBeNull();
+		} );
+	} );
+
 	it( 'dedupes feed items by uri across pages (Bluesky returns repeats)', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
