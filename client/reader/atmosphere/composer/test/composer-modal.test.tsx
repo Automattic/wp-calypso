@@ -230,4 +230,95 @@ describe( '<ComposerModal>', () => {
 		// users can reach the placeholder while it remains inert.
 		expect( media ).not.toBeDisabled();
 	} );
+
+	it( 'Cmd+Enter on empty text does not POST (matches the disabled Post button)', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		// Focus is on the textarea (asserted elsewhere); fire the shortcut.
+		await user.keyboard( '{Meta>}{Enter}{/Meta}' );
+
+		// Network was never hit; modal stays open.
+		expect( scope.isDone() ).toBe( false );
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+		nock.cleanAll();
+	} );
+
+	it( 'Cmd+Enter when text exceeds the limit does not POST', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		// 301 chars of plain ASCII = 301 graphemes (LIMIT is 300).
+		await user.type( screen.getByRole( 'textbox' ), 'a'.repeat( 301 ) );
+		await user.keyboard( '{Meta>}{Enter}{/Meta}' );
+
+		expect( scope.isDone() ).toBe( false );
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+		nock.cleanAll();
+	}, 15_000 );
+
+	it( 'Keep Editing returns to the draft with text preserved', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.keyboard( '{Escape}' );
+
+		await user.click( await screen.findByRole( 'button', { name: /keep editing/i } ) );
+		// Composer modal still mounted, draft preserved.
+		expect( screen.getByRole( 'dialog', { name: /reply/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'hi' );
+		// Discard confirm gone.
+		expect( screen.queryByRole( 'button', { name: /^discard$/i } ) ).toBeNull();
+	} );
+
+	it( 'Discard closes both modals and clears the draft', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.keyboard( '{Escape}' );
+
+		await user.click( await screen.findByRole( 'button', { name: /^discard$/i } ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+
+		// Reopening the composer starts from a clean draft.
+		await user.click( screen.getByText( 'open' ) );
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( '' );
+	} );
+
+	it( 'recovers after a bad_request error: edit, resubmit, success closes the modal', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 400, { error: 'atmosphere_bad_request' } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		// First submit: error banner appears, modal stays open.
+		expect( await screen.findByText( /shorten/i ) ).toBeVisible();
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+
+		// Edit and resubmit.
+		await user.type( screen.getByRole( 'textbox' ), ' more' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		// Modal closes after the successful retry.
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+	} );
 } );

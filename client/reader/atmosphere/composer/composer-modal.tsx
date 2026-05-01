@@ -98,6 +98,12 @@ export function ComposerModal() {
 		if ( ! mode || mutation.isPending ) {
 			return;
 		}
+		// Guard against the Cmd/Ctrl+Enter shortcut bypassing the
+		// disabled Post button when the textarea is empty or over the
+		// limit. Mirrors the disabled logic in <ComposerFooter>.
+		if ( graphemeCount === 0 || graphemeCount > LIMIT ) {
+			return;
+		}
 		const params = buildParamsForMode( mode, text );
 		mutation.mutate( params, {
 			onSuccess: () => {
@@ -113,7 +119,7 @@ export function ComposerModal() {
 				closeComposer();
 			},
 		} );
-	}, [ mode, mutation, text, closeComposer, dispatch ] );
+	}, [ mode, mutation, text, graphemeCount, closeComposer, dispatch ] );
 
 	if ( ! mode ) {
 		return null;
@@ -143,10 +149,18 @@ export function ComposerModal() {
 					onSubmit={ handleSubmit }
 					placeholder={ placeholder }
 					disabled={ mutation.isPending }
-					aria-describedby="atmosphere-composer-count"
+					aria-label={ title }
+					// Include the error region id when an error is showing so AT
+					// users can navigate from the textarea to the explanation.
+					aria-describedby={
+						errorMessage
+							? 'atmosphere-composer-error atmosphere-composer-count'
+							: 'atmosphere-composer-count'
+					}
+					aria-invalid={ errorMessage ? true : undefined }
 				/>
 				{ errorMessage && (
-					<div className="atmosphere-composer__error" role="alert">
+					<div id="atmosphere-composer-error" className="atmosphere-composer__error" role="alert">
 						{ errorMessage }
 					</div>
 				) }
@@ -186,7 +200,11 @@ function placeholderForMode(
 	handle: string | undefined
 ): string {
 	if ( mode.kind === 'reply' ) {
-		return t( 'Replying to @%(handle)s…', { args: { handle: handle ?? '' } } ) as string;
+		return t( 'Replying to @%(handle)s…', {
+			args: { handle: handle ?? '' },
+			comment:
+				'Placeholder text in the reply composer; %(handle)s is the Bluesky handle of the user being replied to.',
+		} ) as string;
 	}
 	if ( mode.kind === 'quote' ) {
 		return t( 'Add a comment…' ) as string;
@@ -216,21 +234,31 @@ function buildParamsForMode( mode: ActiveMode, text: string ): CreatePostParams 
 function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTranslate > ): ReactNode {
 	switch ( err.kind ) {
 		case 'bad_request':
+			// `err.message` is intentionally not surfaced here: the wpcom
+			// transport defaults `Error.message` to the response body's
+			// `error` code when no user-facing message is provided, so
+			// "honoring" it would render strings like "atmosphere_bad_request"
+			// to users. A future classifier change could distinguish the two.
 			return t( "We couldn't post this. Try shortening your post." );
 		case 'auth_required':
-			return (
-				<>
-					{ t( 'Your Bluesky connection needs to be reconnected.' ) }{ ' ' }
-					<a href="/reader/atmosphere/connect" target="_blank" rel="noopener noreferrer">
-						{ t( 'Reconnect' ) }
-					</a>
-				</>
-			);
+		case 'auth_failed':
+		case 'invalid_credentials':
+			return t( 'Your Bluesky connection needs to be reconnected. {{a}}Reconnect{{/a}}', {
+				components: {
+					a: <a href="/reader/atmosphere/connect" target="_blank" rel="noopener noreferrer" />,
+				},
+				comment:
+					'Composer error shown when the user’s Bluesky session expired; {{a}}…{{/a}} wraps a link to reconnect.',
+			} );
 		case 'rate_limited':
 			return t( "You're posting too quickly. Try again in a moment." );
 		case 'upstream_unavailable':
 			return t( 'Bluesky is taking longer than usual. Please try again.' );
-		default:
+		case 'connection_not_found':
+		case 'not_found':
+			return t( 'This Bluesky connection no longer exists.' );
+		case 'invalid_handle':
+		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );
 	}
 }

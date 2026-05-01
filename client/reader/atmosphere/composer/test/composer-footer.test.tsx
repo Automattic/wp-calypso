@@ -76,4 +76,27 @@ describe( '<ComposerFooter>', () => {
 		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
 		expect( onSubmit ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'count is aria-live="off" outside the warn threshold', () => {
+		render(
+			<ComposerFooter graphemeCount={ 249 } onSubmit={ noop } isPending={ false } limit={ 300 } />
+		);
+		// remaining = 51, which is above WARN_THRESHOLD_REMAINING (50).
+		expect( screen.getByText( '51' ) ).toHaveAttribute( 'aria-live', 'off' );
+	} );
+
+	it( 'count is aria-live="polite" once the warn threshold is reached', () => {
+		render(
+			<ComposerFooter graphemeCount={ 250 } onSubmit={ noop } isPending={ false } limit={ 300 } />
+		);
+		// remaining = 50, which equals WARN_THRESHOLD_REMAINING (boundary).
+		expect( screen.getByText( '50' ) ).toHaveAttribute( 'aria-live', 'polite' );
+	} );
+
+	it( 'count is aria-live="polite" when over the limit', () => {
+		render(
+			<ComposerFooter graphemeCount={ 305 } onSubmit={ noop } isPending={ false } limit={ 300 } />
+		);
+		expect( screen.getByText( '-5' ) ).toHaveAttribute( 'aria-live', 'polite' );
+	} );
 } );

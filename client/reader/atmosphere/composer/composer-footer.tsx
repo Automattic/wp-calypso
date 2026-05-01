@@ -39,14 +39,24 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 				</button>
 			</div>
 			<HStack spacing={ 2 } className="atmosphere-composer__footer-right">
-				<span id="atmosphere-composer-count" className={ countClass } aria-live="polite">
+				<span
+					id="atmosphere-composer-count"
+					className={ countClass }
+					// Only announce when the user is near or past the limit so
+					// screen readers don't read out the count on every keystroke.
+					aria-live={ remaining <= WARN_THRESHOLD_REMAINING ? 'polite' : 'off' }
+				>
 					{ remaining }
 				</span>
 				<Button
 					variant="primary"
 					disabled={ disabled }
 					onClick={ onSubmit }
-					aria-label={ translate( 'Post' ) }
+					// Visible "Post" label is the accessible name in the idle
+					// state; while pending the visible text is replaced by a
+					// presentation-only spinner, so the button needs an
+					// explicit accessible name.
+					aria-label={ isPending ? translate( 'Posting…' ) : undefined }
 				>
 					{ isPending ? <Spinner /> : translate( 'Post' ) }
 				</Button>
