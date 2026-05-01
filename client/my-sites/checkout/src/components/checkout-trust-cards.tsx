@@ -1,13 +1,6 @@
-import {
-	AmexLogo,
-	DiscoverLogo,
-	JcbLogo,
-	MastercardLogo,
-	VisaLogo,
-} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
-import { reusableBlock, shield, payment } from '@wordpress/icons';
+import { reusableBlock, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { getRefundWindowSummary } from './refund-policies';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -19,19 +12,12 @@ const TrustCardsRow = styled.div`
 	margin: 32px auto 0;
 	padding: 0 24px 32px;
 	box-sizing: border-box;
-	max-width: 1280px;
+	max-width: 880px;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		grid-template-columns: repeat( 3, 1fr );
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 		gap: 24px;
 		padding: 0 40px 48px;
-
-		/* When the refund card is hidden, keep the remaining two cards centered
-		   at the same per-card width as the 3-column layout. */
-		&:has( > :nth-child( 2 ):last-child ) {
-			grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
-			max-width: 880px;
-		}
 	}
 `;
 
@@ -67,38 +53,12 @@ const TrustCardBody = styled.div`
 	font-size: 13px;
 `;
 
-const CardLogos = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	flex-wrap: wrap;
-
-	svg {
-		height: 20px;
-		width: auto;
-	}
-`;
-
 export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
 	const refundDays = getRefundWindowSummary( cart )?.days ?? null;
 
 	return (
 		<TrustCardsRow className="checkout-trust-cards">
-			<TrustCard>
-				<TrustCardHeader>
-					<Icon icon={ payment } size={ 20 } />
-					{ translate( 'Accepted cards' ) }
-				</TrustCardHeader>
-				<CardLogos>
-					<VisaLogo />
-					<MastercardLogo />
-					<AmexLogo />
-					<DiscoverLogo />
-					<JcbLogo />
-				</CardLogos>
-			</TrustCard>
-
 			{ refundDays !== null && (
 				<TrustCard>
 					<TrustCardHeader>

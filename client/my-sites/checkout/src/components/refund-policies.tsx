@@ -260,16 +260,6 @@ export function getRefundWindowSummary( cart: ResponseCart ): RefundWindowSummar
 		return null;
 	}
 
-	const allCartItemsAreDomains = refundPolicies.every(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.DomainNameRegistration ||
-			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
-			refundPolicy === RefundPolicy.DomainNameRenewal
-	);
-	if ( allCartItemsAreDomains ) {
-		return null;
-	}
-
 	if ( refundWindows.length === 1 ) {
 		const usePlanProductName = refundPolicies.some(
 			( refundPolicy ) =>
