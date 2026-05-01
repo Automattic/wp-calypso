@@ -436,7 +436,7 @@ describe( 'getRefundWindowSummary', () => {
 		expect( getRefundWindowSummary( cart ) ).toBeNull();
 	} );
 
-	test( 'returns null for an all-domains cart (paid domain only)', () => {
+	test( 'paid-domain-only cart → 4 days, usePlanProductName false', () => {
 		const cart = getEmptyResponseCart();
 		cart.products.push( {
 			...getEmptyResponseCartProduct(),
@@ -446,7 +446,10 @@ describe( 'getRefundWindowSummary', () => {
 			product_slug: 'dotlive_domain',
 		} );
 
-		expect( getRefundWindowSummary( cart ) ).toBeNull();
+		expect( getRefundWindowSummary( cart ) ).toEqual( {
+			days: 4,
+			usePlanProductName: false,
+		} );
 	} );
 
 	test( 'returns null for an empty / free-domain-only cart (no refund window applies)', () => {
