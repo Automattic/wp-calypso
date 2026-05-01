@@ -46,7 +46,7 @@ export type SiteSubscriptionDetails< DateT = Date > = {
 	payment_details: SiteSubscriptionPaymentDetails[];
 };
 
-export type SubscriptionDetailsErrorResponse = {
+export type ReadSubscriptionDetailsErrorResponse = {
 	errors: {
 		invalid_blog?: string[];
 		invalid_user?: string[];
@@ -61,6 +61,6 @@ export type SubscriptionDetailsErrorResponse = {
 	};
 };
 
-export type SubscriptionDetailsResponse< DateT = Date > =
+export type ReadSubscriptionDetailsResponse< DateT = Date > =
 	| SiteSubscriptionDetails< DateT >
-	| SubscriptionDetailsErrorResponse;
+	| ReadSubscriptionDetailsErrorResponse;

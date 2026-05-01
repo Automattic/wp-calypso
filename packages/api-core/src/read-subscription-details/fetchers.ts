@@ -1,19 +1,19 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { SubscriptionDetailsResponse } from './types';
+import type { ReadSubscriptionDetailsResponse } from './types';
 
-type FetchSubscriptionDetailsParams = {
+type FetchReadSubscriptionDetailsParams = {
 	blogId?: string;
 	subscriptionId?: string;
 };
 
-const buildPath = ( { blogId, subscriptionId }: FetchSubscriptionDetailsParams ): string => {
+const buildPath = ( { blogId, subscriptionId }: FetchReadSubscriptionDetailsParams ): string => {
 	if ( blogId ) {
 		return `/read/sites/${ blogId }/subscription-details`;
 	}
 	if ( subscriptionId ) {
 		return `/read/subscriptions/${ subscriptionId }`;
 	}
-	throw new Error( 'fetchSubscriptionDetails: blogId or subscriptionId is required' );
+	throw new Error( 'fetchReadSubscriptionDetails: blogId or subscriptionId is required' );
 };
 
 const getSubkey = (): string | undefined =>
@@ -23,9 +23,9 @@ const getSubkey = (): string | undefined =>
 		}
 	 ).currentUser?.subscriptionManagementSubkey;
 
-export const fetchSubscriptionDetails = async (
-	params: FetchSubscriptionDetailsParams
-): Promise< SubscriptionDetailsResponse< string > > => {
+export const fetchReadSubscriptionDetails = async (
+	params: FetchReadSubscriptionDetailsParams
+): Promise< ReadSubscriptionDetailsResponse< string > > => {
 	const path = buildPath( params );
 	const subkey = getSubkey();
 

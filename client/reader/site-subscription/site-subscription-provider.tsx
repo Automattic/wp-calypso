@@ -1,4 +1,4 @@
-import { subscriptionDetailsQuery } from '@automattic/api-queries';
+import { readSubscriptionDetailsQuery } from '@automattic/api-queries';
 import { Reader } from '@automattic/data-stores';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useMemo } from 'react';
@@ -26,7 +26,7 @@ const SiteSubscriptionProvider: React.FC< SiteSubscriptionProviderProps > = ( {
 	subscriptionId,
 } ) => {
 	const { data, isLoading, error } = useQuery(
-		subscriptionDetailsQuery( { blogId, subscriptionId } )
+		readSubscriptionDetailsQuery( { blogId, subscriptionId } )
 	);
 
 	let subscriptionData: Reader.SiteSubscriptionDetails< string > | undefined;

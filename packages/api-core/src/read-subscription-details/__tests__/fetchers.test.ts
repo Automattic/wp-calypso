@@ -1,7 +1,7 @@
 import nock from 'nock';
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
-import { fetchSubscriptionDetails } from '../fetchers';
+import { fetchReadSubscriptionDetails } from '../fetchers';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -9,7 +9,7 @@ type SubkeyWindow = typeof window & {
 	currentUser?: { subscriptionManagementSubkey?: string };
 };
 
-describe( 'fetchSubscriptionDetails', () => {
+describe( 'fetchReadSubscriptionDetails', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		delete ( window as SubkeyWindow ).currentUser;
@@ -21,7 +21,7 @@ describe( 'fetchSubscriptionDetails', () => {
 				.get( '/wpcom/v2/read/sites/123/subscription-details' )
 				.reply( 200, { ID: 1, blog_ID: 123, name: 'Example' } );
 
-			const result = await fetchSubscriptionDetails( { blogId: '123' } );
+			const result = await fetchReadSubscriptionDetails( { blogId: '123' } );
 			expect( result ).toMatchObject( { ID: 1, blog_ID: 123, name: 'Example' } );
 		} );
 
@@ -30,7 +30,7 @@ describe( 'fetchSubscriptionDetails', () => {
 				.get( '/wpcom/v2/read/subscriptions/42' )
 				.reply( 200, { ID: 42, blog_ID: 999, name: 'Other' } );
 
-			const result = await fetchSubscriptionDetails( { subscriptionId: '42' } );
+			const result = await fetchReadSubscriptionDetails( { subscriptionId: '42' } );
 			expect( result ).toMatchObject( { ID: 42 } );
 		} );
 
@@ -39,12 +39,12 @@ describe( 'fetchSubscriptionDetails', () => {
 				.get( '/wpcom/v2/read/sites/123/subscription-details' )
 				.reply( 200, { ID: 1, blog_ID: 123, name: 'Example' } );
 
-			const result = await fetchSubscriptionDetails( { blogId: '123', subscriptionId: '42' } );
+			const result = await fetchReadSubscriptionDetails( { blogId: '123', subscriptionId: '42' } );
 			expect( result ).toMatchObject( { blog_ID: 123 } );
 		} );
 
 		it( 'throws when neither blogId nor subscriptionId is provided', async () => {
-			await expect( fetchSubscriptionDetails( {} ) ).rejects.toThrow(
+			await expect( fetchReadSubscriptionDetails( {} ) ).rejects.toThrow(
 				/blogId or subscriptionId is required/
 			);
 		} );
@@ -66,7 +66,7 @@ describe( 'fetchSubscriptionDetails', () => {
 				.get( '/wpcom/v2/read/sites/123/subscription-details' )
 				.reply( 200, { ID: 1, blog_ID: 123, name: 'Subkey' } );
 
-			const result = await fetchSubscriptionDetails( { blogId: '123' } );
+			const result = await fetchReadSubscriptionDetails( { blogId: '123' } );
 			expect( result ).toMatchObject( { name: 'Subkey' } );
 		} );
 
@@ -79,7 +79,7 @@ describe( 'fetchSubscriptionDetails', () => {
 				.get( '/wpcom/v2/read/subscriptions/42' )
 				.reply( 200, { ID: 42, blog_ID: 999, name: 'Subkey-sub' } );
 
-			const result = await fetchSubscriptionDetails( { subscriptionId: '42' } );
+			const result = await fetchReadSubscriptionDetails( { subscriptionId: '42' } );
 			expect( result ).toMatchObject( { ID: 42 } );
 		} );
 	} );
