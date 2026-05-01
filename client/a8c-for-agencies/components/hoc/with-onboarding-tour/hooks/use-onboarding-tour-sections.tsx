@@ -1,5 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { Icon, external } from '@wordpress/icons';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import OverviewSidebarGrowthAcceleratorCta from 'calypso/a8c-for-agencies/sections/overview/sidebar/growth-accelerator/cta';
@@ -278,7 +278,10 @@ export default function useOnboardingTourSections() {
 							{
 								components: {
 									a: (
-										<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/" />
+										<ExternalLink
+											href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
+											children={ null }
+										/>
 									),
 								},
 							}
