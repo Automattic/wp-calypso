@@ -1,11 +1,13 @@
+agents:
+  queue: mac
+env:
+  IMAGE_ID: xcode-26.4.1
+
 steps:
   - label: ":desktop_computer: Desktop yarn install"
-    agents:
-      queue: mac
     plugins:
       - automattic/nvm#0.6.0
     env:
-      IMAGE_ID: xcode-26.4.1
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
       COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
@@ -22,12 +24,8 @@ steps:
   # Gate it on `ainfra-*` branches until the port is stabilized.
   - label: ":desktop_computer: Build desktop (mac, unsigned)"
     branches: ainfra-*
-    agents:
-      queue: mac
     plugins:
       - automattic/nvm#0.6.0
-    env:
-      IMAGE_ID: xcode-26.4.1
     command: .buildkite/commands/build-desktop-mac.sh
     artifact_paths:
       - desktop/release/*
