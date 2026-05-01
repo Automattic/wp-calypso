@@ -1042,13 +1042,13 @@ export default function CheckoutMainContent( {
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
+				{ isLargeViewport && (
+					<>
+						<CheckoutProcessorNotice />
+						<CheckoutTrustCards cart={ responseCart } />
+					</>
+				) }
 			</StepContainerV2CheckoutFixer>
-			{ isLargeViewport && (
-				<>
-					<CheckoutProcessorNotice />
-					<CheckoutTrustCards cart={ responseCart } />
-				</>
-			) }
 		</SubmitButtonSlotContext.Provider>
 	);
 }
