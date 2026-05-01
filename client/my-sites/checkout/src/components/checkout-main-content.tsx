@@ -1230,6 +1230,30 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.checkout-sidebar-content {
 				flex: 1;
 			}
+			/*
+			 * Keep the totals + Pay CTA + terms always visible regardless of
+			 * cart length. Cap the summary card itself (not the whole area)
+			 * at viewport height, scroll the line items list inside, and
+			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+			 *
+			 * The Save 19% upsell below the card sits at its natural size;
+			 * if it doesn't fit alongside the card in a short viewport,
+			 * it scrolls past the bottom — the Pay CTA is the priority.
+			 */
+			.checkout__summary-card {
+				max-height: calc( 100vh - 64px );
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__products-list {
+				flex: 1 1 auto;
+				min-height: 0;
+				overflow-y: auto;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__section-title,
+			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+				flex-shrink: 0;
+			}
 		` }
 	${ ( props ) =>
 		props.isCheckoutUiRedesignV1 &&
@@ -1953,6 +1977,30 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-loading-sidebar,
 			.checkout-sidebar-plan-upsell {
 				min-width: 384px;
+			}
+			/*
+			 * Keep the totals + Pay CTA + terms always visible regardless of
+			 * cart length. Cap the summary card itself (not the whole area)
+			 * at viewport height, scroll the line items list inside, and
+			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+			 *
+			 * The Save 19% upsell below the card sits at its natural size;
+			 * if it doesn't fit alongside the card in a short viewport,
+			 * it scrolls past the bottom — the Pay CTA is the priority.
+			 */
+			.checkout__summary-card {
+				max-height: calc( 100vh - 64px );
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__products-list {
+				flex: 1 1 auto;
+				min-height: 0;
+				overflow-y: auto;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__section-title,
+			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+				flex-shrink: 0;
 			}
 		` }
 	${ ( props ) =>
