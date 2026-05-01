@@ -211,3 +211,27 @@ export type AtmosphereAuthorFeedFilter =
 	| 'posts_with_replies'
 	| 'posts_with_media'
 	| 'posts_and_author_threads';
+
+// Metadata embedded in the tag-feed response. The backend always emits
+// the `tag` block; `count` is `null` when the AppView's `hitsTotal` is
+// absent (it is documented as approximate). `url` is currently always
+// present, kept optional so a future backend that omits it for an
+// invalid hashtag does not break the type.
+export interface AtmosphereTagInfo {
+	name: string;
+	// Approximate post count from the AppView's `hitsTotal`. Null when
+	// the AppView omits the field; consumers should hide the count line
+	// rather than render a placeholder.
+	count: number | null;
+	// Canonical bsky.app hashtag URL (e.g. `https://bsky.app/hashtag/rust`).
+	// Built server-side as `https://bsky.app/hashtag/<encoded>`, but
+	// consumers should re-validate the protocol before rendering as
+	// defence-in-depth against a future backend regression.
+	url?: string;
+}
+
+export interface AtmosphereTagFeedPage {
+	items: AtmosphereFeedItem[];
+	cursor: string | null;
+	tag?: AtmosphereTagInfo;
+}

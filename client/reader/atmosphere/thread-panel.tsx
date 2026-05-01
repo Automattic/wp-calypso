@@ -10,6 +10,7 @@ import { SocialAnalyticsProvider } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import {
 	getProfileUrl as buildProfileUrl,
+	getTagFeedUrl as buildTagUrl,
 	getThreadUrl as buildThreadUrl,
 	type ProfileRefInput,
 } from './route';
@@ -119,6 +120,11 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		[ connection.id ]
 	);
 
+	const getTagUrl = useCallback(
+		( tag: string ) => buildTagUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -126,8 +132,9 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 			onClick: onClickAnalytics,
 			getThreadUrl,
 			getProfileUrl,
+			getTagUrl,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl ]
 	);
 
 	return (

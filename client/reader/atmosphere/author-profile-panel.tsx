@@ -19,7 +19,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
-import { getProfileUrl, getThreadUrl, getTimelineUrl } from './route';
+import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
 import type {
 	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorProfile,
@@ -230,6 +230,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		[ connection.id ]
 	);
 
+	const buildTagUrl = useCallback(
+		( tag: string ) => getTagFeedUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
@@ -267,8 +272,9 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			onClick: onClickAnalytics,
 			getThreadUrl: buildThreadUrl,
 			getProfileUrl: buildProfileUrl,
+			getTagUrl: buildTagUrl,
 		} ),
-		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl ]
+		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl ]
 	);
 
 	const renderHeaderError = ( error: AtmosphereError ) => {
