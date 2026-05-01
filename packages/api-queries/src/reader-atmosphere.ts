@@ -2,6 +2,7 @@ import {
 	createConnection,
 	createFollow,
 	createLike,
+	createPost,
 	deleteFollow,
 	deleteLike,
 	getAtmosphereTagFeed,
@@ -13,6 +14,7 @@ import {
 	getThread,
 	getTimeline,
 	PENDING_LIKE_URI,
+	PENDING_REPLY_URI,
 	isValidHashtag,
 	readerAtmosphereKeys,
 } from '@automattic/api-core';
@@ -45,6 +47,8 @@ import type {
 	AtmosphereTimelinePage,
 	CreateConnectionParams,
 	CreateLikeResult,
+	CreatePostParams,
+	CreatePostResult,
 } from '@automattic/api-core';
 
 const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( [
@@ -704,3 +708,208 @@ export const atmosphereTagFeedInfiniteQuery = ( connectionId: number, hashtag: s
 export function useAtmosphereTagFeedInfiniteQuery( connectionId: number, hashtag: string ) {
 	return useInfiniteQuery( atmosphereTagFeedInfiniteQuery( connectionId, hashtag ) );
 }
+
+interface CreatePostContext {
+	// Snapshots from `patchAtmospherePostCaches`, covering parent-count
+	// bumps in timeline / profile / tag-feed (and the in-thread parent
+	// post node, since the thread cache is in `readerAtmosphereKeys.all`).
+	parentCountsContext: OptimisticContext;
+	// Full pre-mutation thread snapshot for `root.uri`. Captured *before*
+	// `patchAtmospherePostCaches` runs so it reverts both the count bump
+	// and the placeholder insertion in a single setQueryData call.
+	threadKey: QueryKey | null;
+	threadPrevious: AtmosphereThreadResponse | undefined;
+}
+
+/**
+ * Build a placeholder `AtmosphereFeedItem` representing an in-flight
+ * reply. The URI is the `PENDING_REPLY_URI` sentinel so consumers can
+ * detect the optimistic state and suppress race-y delete actions.
+ */
+function buildPlaceholderReply( text: string ): AtmosphereFeedItem {
+	return {
+		uri: PENDING_REPLY_URI,
+		cid: '',
+		author: { did: '', handle: '', display_name: '', avatar: null },
+		created_at: new Date().toISOString(),
+		indexed_at: new Date().toISOString(),
+		text,
+		html: '',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		viewer: { like: null, repost: null },
+		bluesky_url: '',
+	};
+}
+
+/**
+ * Walk the thread tree and append a synthesized placeholder reply node
+ * under the post node whose `.post.uri` matches `parentUri`. Returns a
+ * structurally-shared tree (untouched branches keep their identity).
+ */
+function insertPlaceholderUnderParent(
+	node: AtmosphereThreadNode,
+	parentUri: string,
+	placeholder: AtmosphereFeedItem
+): AtmosphereThreadNode {
+	if ( node.type !== 'post' ) {
+		return node;
+	}
+	if ( node.post.uri === parentUri ) {
+		return {
+			...node,
+			replies: [ ...node.replies, { type: 'post', post: placeholder, parent: null, replies: [] } ],
+		};
+	}
+	let changed = false;
+	const replies = node.replies.map( ( reply ) => {
+		const next = insertPlaceholderUnderParent( reply, parentUri, placeholder );
+		if ( next !== reply ) {
+			changed = true;
+		}
+		return next;
+	} );
+	const parent = node.parent
+		? insertPlaceholderUnderParent( node.parent, parentUri, placeholder )
+		: null;
+	if ( ! changed && parent === node.parent ) {
+		return node;
+	}
+	return { ...node, replies, parent };
+}
+
+/**
+ * Walk the thread tree and rewrite the (single) PENDING_REPLY_URI post
+ * with one carrying the real `result.uri` / `result.cid`.
+ */
+function replacePlaceholderInThread(
+	node: AtmosphereThreadNode,
+	result: CreatePostResult
+): AtmosphereThreadNode {
+	if ( node.type !== 'post' ) {
+		return node;
+	}
+	if ( node.post.uri === PENDING_REPLY_URI ) {
+		return {
+			...node,
+			post: { ...node.post, uri: result.uri, cid: result.cid },
+		};
+	}
+	let changed = false;
+	const replies = node.replies.map( ( reply ) => {
+		const next = replacePlaceholderInThread( reply, result );
+		if ( next !== reply ) {
+			changed = true;
+		}
+		return next;
+	} );
+	const parent = node.parent ? replacePlaceholderInThread( node.parent, result ) : null;
+	if ( ! changed && parent === node.parent ) {
+		return node;
+	}
+	return { ...node, replies, parent };
+}
+
+/**
+ * Mutation factory for creating an `app.bsky.feed.post` record.
+ *
+ * In reply mode, optimistically:
+ *   1. Inserts a `PENDING_REPLY_URI` placeholder reply under the parent
+ *      node in the cached thread query for `reply.root.uri`.
+ *   2. Bumps `counts.replies` on the parent post in every cached
+ *      timeline / profile / tag-feed page (and, transitively, in the
+ *      thread cache where the parent appears as a post node).
+ *
+ * On error both snapshots are restored.
+ *
+ * On success the placeholder URI/cid in the thread cache is rewritten
+ * to the real values returned by the server. The optimistic count bump
+ * stays — it matches the server's post-success state.
+ *
+ * Quote and standalone modes are wired through the body shape and the
+ * `mutationFn` signature; cache patching for those modes is added by
+ * later slices.
+ *
+ * Accepts the consumer's QueryClient because Calypso boots its own
+ * separate from the singleton in `@automattic/api-queries`. See
+ * `client/reader/AGENTS.md` for the rationale.
+ */
+export const createPostMutation = ( queryClient: QueryClient ) =>
+	mutationOptions< CreatePostResult, AtmosphereError, CreatePostParams, CreatePostContext >( {
+		mutationFn: createPost,
+		onMutate: async ( vars ) => {
+			await queryClient.cancelQueries( { queryKey: readerAtmosphereKeys.all } );
+
+			const ctx: CreatePostContext = {
+				parentCountsContext: { snapshots: [] },
+				threadKey: null,
+				threadPrevious: undefined,
+			};
+
+			if ( ! vars.reply ) {
+				return ctx;
+			}
+
+			const { root, parent } = vars.reply;
+			const threadKey = readerAtmosphereKeys.thread( root.uri );
+			ctx.threadKey = threadKey;
+			ctx.threadPrevious = queryClient.getQueryData< AtmosphereThreadResponse >( threadKey );
+
+			// Bump counts.replies on the parent post in every atmosphere
+			// cache where it appears (timeline / profile / tag-feed AND
+			// the parent post node inside the thread tree).
+			ctx.parentCountsContext = patchAtmospherePostCaches( queryClient, parent.uri, ( item ) => ( {
+				...item,
+				counts: { ...item.counts, replies: item.counts.replies + 1 },
+			} ) );
+
+			// Layer the placeholder reply under the parent node in the
+			// thread cache. Done after `patchAtmospherePostCaches` so the
+			// already-bumped parent post stays bumped.
+			const threadAfterBump = queryClient.getQueryData< AtmosphereThreadResponse >( threadKey );
+			if ( threadAfterBump ) {
+				const placeholder = buildPlaceholderReply( vars.text );
+				queryClient.setQueryData< AtmosphereThreadResponse >( threadKey, {
+					...threadAfterBump,
+					thread: insertPlaceholderUnderParent( threadAfterBump.thread, parent.uri, placeholder ),
+				} );
+			}
+
+			return ctx;
+		},
+		onError: ( _err, _vars, ctx ) => {
+			if ( ! ctx ) {
+				return;
+			}
+			// Restore the thread cache first so the placeholder + count
+			// bump are both reverted in one shot. Do this before
+			// `restoreAtmospherePostSnapshots` so that helper sees the
+			// already-restored thread (its restore pass is a no-op there).
+			if ( ctx.threadKey && ctx.threadPrevious !== undefined ) {
+				queryClient.setQueryData( ctx.threadKey, ctx.threadPrevious );
+			}
+			restoreAtmospherePostSnapshots( queryClient, ctx.parentCountsContext );
+		},
+		onSuccess: ( result, vars ) => {
+			if ( ! vars.reply ) {
+				return;
+			}
+			const threadKey = readerAtmosphereKeys.thread( vars.reply.root.uri );
+			const current = queryClient.getQueryData< AtmosphereThreadResponse >( threadKey );
+			if ( ! current ) {
+				return;
+			}
+			const next = replacePlaceholderInThread( current.thread, result );
+			if ( next === current.thread ) {
+				return;
+			}
+			queryClient.setQueryData< AtmosphereThreadResponse >( threadKey, {
+				...current,
+				thread: next,
+			} );
+		},
+	} );

@@ -1,5 +1,6 @@
 import {
 	PENDING_LIKE_URI,
+	PENDING_REPLY_URI,
 	readerAtmosphereKeys,
 	type AtmosphereFeedItem,
 	type AtmosphereScopedProfile,
@@ -19,6 +20,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	atmosphereScopedProfileQuery,
+	createPostMutation,
 	followAtmosphereActorMutation,
 	unfollowAtmosphereActorMutation,
 	useAuthorFeedInfiniteQuery,
@@ -1345,6 +1347,180 @@ describe( 'reader-atmosphere hooks', () => {
 
 				expect( getTimelineCache( client ) ).toEqual( snapshot );
 			} );
+		} );
+	} );
+
+	describe( 'createPostMutation — reply mode', () => {
+		const connectionId = 42;
+		const root = { uri: 'at://did:plc:r/app.bsky.feed.post/root', cid: 'rcid' };
+		const parent = { uri: 'at://did:plc:p/app.bsky.feed.post/parent', cid: 'pcid' };
+
+		afterEach( () => nock.cleanAll() );
+
+		function seedThreadWithParent( client: QueryClient ): AtmosphereThreadResponse {
+			const initial: AtmosphereThreadResponse = {
+				thread: {
+					type: 'post',
+					post: makeFeedItem( {
+						uri: root.uri,
+						cid: root.cid,
+						counts: { replies: 1, reposts: 0, likes: 0, quotes: 0 },
+					} ),
+					parent: null,
+					replies: [
+						{
+							type: 'post',
+							post: makeFeedItem( {
+								uri: parent.uri,
+								cid: parent.cid,
+								counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+							} ),
+							parent: null,
+							replies: [],
+						},
+					],
+				},
+			};
+			client.setQueryData( readerAtmosphereKeys.thread( root.uri ), initial );
+			return initial;
+		}
+
+		it( 'POSTs the body and returns the new post reference', async () => {
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts`, {
+					text: 'hello',
+					reply: { root, parent },
+				} )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId,
+					text: 'hello',
+					reply: { root, parent },
+				} );
+			} );
+
+			expect( result.current.data ).toEqual( { uri: 'at://new', cid: 'newcid', rkey: 'abc' } );
+		} );
+
+		it( 'optimistically inserts a placeholder reply under the parent in the thread query', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedThreadWithParent( client );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.delay( 100 )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( {
+					connectionId,
+					text: 'reply text',
+					reply: { root, parent },
+				} );
+				await Promise.resolve();
+			} );
+
+			await waitFor( () => {
+				const thread = client.getQueryData< AtmosphereThreadResponse >(
+					readerAtmosphereKeys.thread( root.uri )
+				);
+				expect( thread?.thread.type ).toBe( 'post' );
+				if ( thread?.thread.type !== 'post' ) {
+					throw new Error( 'expected root to be a post node' );
+				}
+				expect( thread.thread.replies ).toHaveLength( 1 );
+				const parentNode = thread.thread.replies[ 0 ];
+				expect( parentNode.type ).toBe( 'post' );
+				if ( parentNode.type !== 'post' ) {
+					throw new Error( 'expected parent to be a post node' );
+				}
+				expect( parentNode.replies ).toHaveLength( 1 );
+				const placeholder = parentNode.replies[ 0 ];
+				expect( placeholder.type ).toBe( 'post' );
+				if ( placeholder.type !== 'post' ) {
+					throw new Error( 'expected placeholder to be a post node' );
+				}
+				expect( placeholder.post.uri ).toBe( PENDING_REPLY_URI );
+				expect( placeholder.post.text ).toBe( 'reply text' );
+			} );
+
+			await promise;
+		} );
+
+		it( 'restores the snapshot on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const initial = seedThreadWithParent( client );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId,
+						text: 'reply text',
+						reply: { root, parent },
+					} );
+				} catch {
+					/* expected */
+				}
+			} );
+
+			expect(
+				client.getQueryData< AtmosphereThreadResponse >( readerAtmosphereKeys.thread( root.uri ) )
+			).toEqual( initial );
+		} );
+
+		it( 'increments parent counts.replies in cached timeline pages', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const parentItem = makeFeedItem( {
+				uri: parent.uri,
+				cid: parent.cid,
+				counts: { replies: 3, reposts: 0, likes: 0, quotes: 0 },
+			} );
+			const timelineData: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [ { items: [ parentItem ], cursor: null } ],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( connectionId ), timelineData );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId,
+					text: 'reply text',
+					reply: { root, parent },
+				} );
+			} );
+
+			const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+				readerAtmosphereKeys.timeline( connectionId )
+			);
+			expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 4 );
 		} );
 	} );
 } );
