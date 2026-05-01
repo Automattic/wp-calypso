@@ -57,6 +57,7 @@ export const A4A_WOOPAYMENTS_SITE_SETUP_LINK = `${ A4A_WOOPAYMENTS_LINK }/site-s
 export const A4A_WOOPAYMENTS_OVERVIEW_LINK = `${ A4A_WOOPAYMENTS_LINK }/overview`;
 export const A4A_EXCLUSIVE_OFFERS_LINK = '/exclusive-offers';
 export const A4A_AMPLIFY_LINK = '/amplify';
+export const A4A_AMPLIFY_REPORTS_LINK = `${ A4A_AMPLIFY_LINK }/reports`;
 export const A4A_RESOURCES_LINK = '/resources-and-tools';
 export const A4A_LEARN_LINK = `${ A4A_RESOURCES_LINK }/learn`;
 export const A4A_DEV_TOOLS_LINK = `${ A4A_RESOURCES_LINK }/dev-tools`;

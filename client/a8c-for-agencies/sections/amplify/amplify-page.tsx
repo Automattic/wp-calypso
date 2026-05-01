@@ -8,9 +8,28 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import AmplifyOverviewContent from './amplify-overview-content';
+import AmplifyReportsContent from './amplify-reports-content';
+import type { ReactNode } from 'react';
 
-export default function AmplifyOverview() {
-	const title = __( 'Amplify' );
+export type AmplifyTab = 'overview' | 'reports';
+
+type Props = {
+	selectedTab: AmplifyTab;
+};
+
+export default function AmplifyPage( { selectedTab }: Props ) {
+	let title: string;
+	let content: ReactNode;
+	switch ( selectedTab ) {
+		case 'overview':
+			title = __( 'Overview' );
+			content = <AmplifyOverviewContent />;
+			break;
+		case 'reports':
+			title = __( 'Reports' );
+			content = <AmplifyReportsContent />;
+			break;
+	}
 
 	return (
 		<Layout title={ title } wide>
@@ -23,9 +42,7 @@ export default function AmplifyOverview() {
 				</LayoutHeader>
 			</LayoutTop>
 
-			<LayoutBody>
-				<AmplifyOverviewContent />
-			</LayoutBody>
+			<LayoutBody>{ content }</LayoutBody>
 		</Layout>
 	);
 }

@@ -4,6 +4,7 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 import useFetchActiveSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-active-sites';
+import AmplifyAnalysisModal from './amplify-analysis-modal';
 
 type Site = {
 	id: number;
@@ -21,6 +22,7 @@ export default function AmplifySiteSelect() {
 	const { data, isLoading } = useFetchActiveSites( { autoRefresh: false } );
 	const [ selectedUrl, setSelectedUrl ] = useState< string | null >( null );
 	const [ search, setSearch ] = useState( '' );
+	const [ analysisFlowSite, setAnalysisFlowSite ] = useState< string | null >( null );
 
 	const allSites: Site[] = useMemo( () => {
 		const list = Array.isArray( data ) ? ( data as Site[] ) : [];
@@ -140,11 +142,17 @@ export default function AmplifySiteSelect() {
 				variant="primary"
 				disabled={ ! selectedUrl }
 				onClick={ () => {
-					/* Wired in a follow-up. */
+					if ( selectedUrl ) {
+						setAnalysisFlowSite( selectedUrl );
+					}
 				} }
 			>
 				{ __( 'Amplify it' ) }
 			</Button>
+			<AmplifyAnalysisModal
+				site={ analysisFlowSite }
+				onClose={ () => setAnalysisFlowSite( null ) }
+			/>
 		</div>
 	);
 }
