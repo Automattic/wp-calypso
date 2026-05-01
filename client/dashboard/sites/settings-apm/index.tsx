@@ -1,4 +1,4 @@
-import { BusinessPlans, EcommercePlans, type Site } from '@automattic/api-core';
+import { type Site } from '@automattic/api-core';
 import { siteApmEnabledMutation, siteBySlugQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -10,17 +10,8 @@ import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
+import { hasBackendAccess } from '../performance/backend-access';
 import { getBackendCalloutProps } from '../performance/backend-callout';
-
-function hasApmAccess( productSlug: string | undefined ) {
-	if ( ! productSlug ) {
-		return false;
-	}
-	return (
-		( BusinessPlans as readonly string[] ).includes( productSlug ) ||
-		( EcommercePlans as readonly string[] ).includes( productSlug )
-	);
-}
 
 function ApmToggle( { site }: { site: Site } ) {
 	const enabled = !! site.options?.apm_enabled;
@@ -95,7 +86,7 @@ export default function ApmSettings( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 		>
-			{ hasApmAccess( site.plan?.product_slug ) ? (
+			{ hasBackendAccess( site.plan?.product_slug ) ? (
 				<ApmToggle site={ site } />
 			) : (
 				<UpsellCallout site={ site } { ...getBackendCalloutProps() } />
