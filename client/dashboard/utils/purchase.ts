@@ -685,19 +685,12 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 /**
  * Returns true if the refund eligibility notice should be shown for the given purchase.
  *
- * The notice is shown for refundable WordPress.com plans when the experiment is enabled.
- * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
- * flow, offering the refund as an explicit opt-in action instead.
- * @param purchase  - the purchase to check
- * @param isEnabled - whether the user is assigned to the treatment variation of the
- *                    calypso_split_cancel_refund experiment. Use the
- *                    `useShowRefundEligibilityNotice` hook to determine this in React components.
+ * The notice is shown for refundable WordPress.com plans. When shown, it replaces the
+ * standard refund flow with an auto-renew cancellation flow, offering the refund as
+ * an explicit opt-in action instead.
  */
-export function shouldShowRefundEligibilityNotice(
-	purchase: Purchase,
-	isEnabled: boolean
-): boolean {
-	return isEnabled && hasAmountAvailableToRefund( purchase ) && isDotcomPlan( purchase );
+export function shouldShowRefundEligibilityNotice( purchase: Purchase ): boolean {
+	return hasAmountAvailableToRefund( purchase ) && isDotcomPlan( purchase );
 }
 
 /**

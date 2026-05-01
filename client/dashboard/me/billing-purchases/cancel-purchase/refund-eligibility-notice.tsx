@@ -2,10 +2,12 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Notice from '../../../components/notice';
-import { hasAmountAvailableToRefund } from '../../../utils/purchase';
+import {
+	hasAmountAvailableToRefund,
+	shouldShowRefundEligibilityNotice,
+} from '../../../utils/purchase';
 import { getRefundNoticeCopy } from './get-confirmation-copy';
 import RefundAmountString from './refund-amount-string';
-import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { Purchase } from '@automattic/api-core';
 
 interface RefundEligibilityNoticePromoProps {
@@ -26,7 +28,6 @@ type RefundEligibilityNoticeProps =
 
 export default function RefundEligibilityNotice( props: RefundEligibilityNoticeProps ) {
 	const { purchase, mode = 'promo' } = props;
-	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
 
 	if ( ! hasAmountAvailableToRefund( purchase ) ) {
 		return null;
@@ -42,9 +43,7 @@ export default function RefundEligibilityNotice( props: RefundEligibilityNoticeP
 		return <Notice variant="info">{ getRefundNoticeCopy( { purchase, refundAmount } ) }</Notice>;
 	}
 
-	// Promo mode is gated by the ExPlat experiment — only shown to treatment arm
-	// users on the flag-off single-button UI.
-	if ( ! showRefundEligibilityNotice ) {
+	if ( ! shouldShowRefundEligibilityNotice( purchase ) ) {
 		return null;
 	}
 

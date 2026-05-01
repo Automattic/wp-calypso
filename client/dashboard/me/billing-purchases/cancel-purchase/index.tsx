@@ -60,6 +60,7 @@ import {
 	isAkismetProduct,
 	isPartnerPurchase,
 	isOneTimePurchase,
+	shouldShowRefundEligibilityNotice,
 } from '../../../utils/purchase';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
@@ -87,7 +88,6 @@ import nextStep from './next-step';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
-import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -467,7 +467,7 @@ function CancelPurchaseInner() {
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
 
-	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
+	const showRefundEligibilityNotice = shouldShowRefundEligibilityNotice( purchase );
 
 	// Handler helpers
 	const purchases = purchase && sitePurchases;
