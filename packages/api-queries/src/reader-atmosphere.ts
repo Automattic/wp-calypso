@@ -4,6 +4,7 @@ import {
 	getAuthorProfile,
 	getConnection,
 	getConnections,
+	getScopedProfile,
 	getThread,
 	getTimeline,
 	readerAtmosphereKeys,
@@ -26,6 +27,7 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereError,
+	AtmosphereScopedProfile,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 	CreateConnectionParams,
@@ -158,6 +160,30 @@ export interface UseAuthorProfileQueryParams {
 
 export function useAuthorProfileQuery( { actor }: UseAuthorProfileQueryParams ) {
 	return useQuery( profileQueryOptions( actor ) );
+}
+
+export interface AtmosphereScopedProfileQueryParams {
+	connectionId: number;
+	actor: string;
+}
+
+export const atmosphereScopedProfileQuery = ( params: AtmosphereScopedProfileQueryParams ) =>
+	queryOptions< AtmosphereScopedProfile, AtmosphereError >( {
+		queryKey: readerAtmosphereKeys.scopedProfile( params.connectionId, params.actor ),
+		queryFn: () => getScopedProfile( params ),
+		enabled: params.actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
+	} );
+
+export function useAtmosphereScopedProfileQuery( params: AtmosphereScopedProfileQueryParams ) {
+	return useQuery( atmosphereScopedProfileQuery( params ) );
 }
 
 export const authorFeedInfiniteQuery = ( actor: string, filter?: AtmosphereAuthorFeedFilter ) => {
