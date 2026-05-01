@@ -44,7 +44,7 @@ export const getTopicGroups = (): TopicGroup[] => {
 			id: 'most-subscribed',
 			title: titles.mostSubscribed,
 			description: __(
-				'Check our most read sites and authors from the entire WordPress universe.'
+				'Check out our most read sites and authors from the entire WordPress universe.'
 			),
 			imageUrl: img.mostSubscribed,
 			tags: [],
