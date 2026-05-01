@@ -5,6 +5,7 @@ import {
 	createRepost,
 	deleteFollow,
 	deleteLike,
+	deleteRepost,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -711,6 +712,32 @@ export function useCreateRepostMutation( connectionId: number ) {
 			} ) );
 		},
 	} );
+}
+
+export function useDeleteRepostMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, AtmosphereError, { rkey: string; postUri: string }, OptimisticContext >(
+		{
+			mutationFn: ( { rkey } ) => deleteRepost( { connectionId, rkey } ),
+			onMutate: async ( { postUri } ) => {
+				await queryClient.cancelQueries( {
+					queryKey: readerAtmosphereKeys.all,
+				} );
+				return patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
+					...item,
+					viewer: {
+						...( item.viewer ?? { like: null, repost: null } ),
+						repost: null,
+					},
+					counts: {
+						...item.counts,
+						reposts: Math.max( 0, item.counts.reposts - 1 ),
+					},
+				} ) );
+			},
+			onError: ( _err, _vars, ctx ) => restoreAtmospherePostSnapshots( queryClient, ctx ),
+		}
+	);
 }
 
 export const atmosphereTagFeedInfiniteQuery = ( connectionId: number, hashtag: string ) => {
