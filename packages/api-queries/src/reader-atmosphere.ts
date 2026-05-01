@@ -179,12 +179,6 @@ export const atmosphereScopedProfileQuery = ( params: AtmosphereScopedProfileQue
 		enabled: params.actor.length > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
-		retry: ( failureCount, error ) => {
-			if ( isTerminalError( error ) ) {
-				return false;
-			}
-			return failureCount < 2;
-		},
 	} );
 
 export function useAtmosphereScopedProfileQuery( params: AtmosphereScopedProfileQueryParams ) {
