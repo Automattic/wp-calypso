@@ -22,7 +22,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 	const postUri = post.uri;
 	const inAppUrl = analytics?.getThreadUrl?.( postUri ) ?? null;
 
-	const fireRepliesClicked = () => {
+	const fireRepliesClicked = ( destination: 'in_app_thread' | 'bsky_app' | 'composer' ) => {
 		if ( ! analytics ) {
 			return;
 		}
@@ -30,7 +30,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 			connection_id: analytics.connectionId,
 			post_uri: postUri,
 			replies_count: counts.replies,
-			destination: inAppUrl ? 'in_app_thread' : 'bsky_app',
+			destination,
 		} );
 	};
 
@@ -51,15 +51,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 					className="social-post-card-counts__reply-button"
 					onClick={ () => {
 						onReplyClick( post );
-						analytics.onClick(
-							`calypso_reader_${ analytics.source }_timeline_replies_count_clicked`,
-							{
-								connection_id: analytics.connectionId,
-								post_uri: postUri,
-								replies_count: counts.replies,
-								destination: 'composer',
-							}
-						);
+						fireRepliesClicked( 'composer' );
 					} }
 					aria-label={ translate( 'Reply' ) }
 				>
@@ -72,7 +64,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 				<a
 					className="social-post-card-counts__link"
 					href={ inAppUrl }
-					onClick={ fireRepliesClicked }
+					onClick={ () => fireRepliesClicked( inAppUrl ? 'in_app_thread' : 'bsky_app' ) }
 				>
 					{ repliesContent }
 				</a>

@@ -6,6 +6,7 @@
 	.social-post-card-header__reason-author,
 	.social-post-card-header__reply-context-link,
 	.social-post-card-counts__link,
+	.social-post-card-counts__reply-button,
 	.social-post-card-body a,
 	a.social-post-card-embed-external,
 	.social-post-card-embed-quote-link,
@@ -231,7 +232,8 @@ a.social-post-card-header__timestamp::after {
 	gap: 16px;
 
 	span,
-	.social-post-card-counts__link {
+	.social-post-card-counts__link,
+	.social-post-card-counts__reply-button {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
@@ -240,6 +242,20 @@ a.social-post-card-header__timestamp::after {
 	.social-post-card-counts__link {
 		color: inherit;
 		text-decoration: none;
+
+		&:hover,
+		&:focus-visible {
+			color: var( --studio-blue-50 );
+		}
+	}
+
+	.social-post-card-counts__reply-button {
+		background: transparent;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		color: inherit;
+		font: inherit;
 
 		&:hover,
 		&:focus-visible {
