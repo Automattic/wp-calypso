@@ -47,13 +47,28 @@ export class PurchasesPage {
 	/**
 	 * Clicks a cancellation action for the purchase.
 	 *
+	 * For refundable purchases the cancel-purchase page surfaces a "Remove plan
+	 * and claim refund." opt-in alongside the default "Cancel subscription"
+	 * (auto-renew disable) button. Tests need the purchase fully removed so the
+	 * next test starts from a clean account, so we prefer the refund opt-in
+	 * when it's present.
+	 *
 	 * @param {PurchaseActions} action Action to click.
 	 */
 	async cancelPurchase( action: PurchaseActions ) {
 		await this.page.getByRole( 'link', { name: action } ).click();
 
-		if ( action === 'Cancel plan' || action === 'Cancel subscription' ) {
-			await this.page.getByRole( 'button', { name: 'Cancel subscription' } ).click();
+		const claimRefund = this.page.getByRole( 'button', {
+			name: 'Remove plan and claim refund.',
+		} );
+		const cancelSubscription = this.page.getByRole( 'button', { name: 'Cancel subscription' } );
+
+		await claimRefund.or( cancelSubscription ).first().waitFor( { state: 'visible' } );
+
+		if ( await claimRefund.isVisible() ) {
+			await claimRefund.click();
+		} else {
+			await cancelSubscription.click();
 		}
 	}
 }
