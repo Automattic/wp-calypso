@@ -47,6 +47,10 @@ describe( 'streams', () => {
 			lang: 'en',
 		};
 
+		it( 'returns undefined for migrated stream types so no HTTP fires', () => {
+			expect( requestPage( makeAction( { streamKey: 'following' } ) ) ).toBeUndefined();
+		} );
+
 		describe( 'stream types', () => {
 			// a bunch of test cases
 			// each test is an assertion of the http call that should be made

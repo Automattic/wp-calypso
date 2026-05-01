@@ -18,6 +18,7 @@ import {
 	receiveUpdates,
 	receiveStreamError,
 } from 'calypso/state/reader/streams/actions';
+import { MIGRATED_STREAM_TYPES } from 'calypso/state/reader/streams/migrated-stream-types';
 import {
 	PER_FETCH,
 	INITIAL_FETCH,
@@ -336,6 +337,15 @@ export function requestPage( action ) {
 	const {
 		payload: { streamKey, streamType, feedId, pageHandle, isPoll, gap, localeSlug, page, perPage },
 	} = action;
+
+	// Migrated stream types are fetched by the React Query thunk in
+	// `client/state/reader/streams/actions.js`. The action is still dispatched
+	// so the reducer's `isRequesting`/`error` transitions fire, but the HTTP
+	// call must not be issued here too.
+	if ( MIGRATED_STREAM_TYPES.has( streamType ) ) {
+		return;
+	}
+
 	const api = streamApis[ streamType ];
 
 	if ( ! api ) {

@@ -187,9 +187,16 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
  */
 export const requestPage = ( params ) => ( dispatch ) => {
 	const streamType = getStreamType( params.streamKey );
+	const action = buildPageRequestAction( params );
+
+	// Dispatch the legacy request action so the reducer sets `isRequesting`
+	// and clears any prior `error` state. For migrated stream types the
+	// data-layer's `requestPage` is gated on `MIGRATED_STREAM_TYPES` and
+	// no-ops, so this dispatch only drives reducer state.
+	dispatch( action );
 
 	if ( ! MIGRATED_STREAM_TYPES.has( streamType ) ) {
-		return dispatch( buildPageRequestAction( params ) );
+		return action;
 	}
 
 	// SSR no-op: matches the legacy data-layer, which never fired stream
