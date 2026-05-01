@@ -35,7 +35,8 @@ const post: SocialPost = {
 function wrap(
 	ui: React.ReactNode,
 	getThreadUrl?: ( uri: string ) => string | null,
-	onClick = jest.fn()
+	onClick = jest.fn(),
+	onReplyClick?: ( post: SocialPost ) => void
 ) {
 	return (
 		<SocialAnalyticsProvider
@@ -44,6 +45,7 @@ function wrap(
 				connectionId: 7,
 				onClick,
 				getThreadUrl,
+				onReplyClick,
 			} }
 		>
 			{ ui }
@@ -94,5 +96,32 @@ describe( 'PostCardCounts', () => {
 		const button = screen.getByRole( 'button', { name: /like/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 		expect( button ).toHaveTextContent( '9' );
+	} );
+
+	it( 'renders replies count as a button that calls onReplyClick when bound', async () => {
+		const onReplyClick = jest.fn();
+		const onClick = jest.fn();
+		const user = userEvent.setup();
+		render( wrap( <PostCardCounts post={ post } />, undefined, onClick, onReplyClick ) );
+		const button = screen.getByRole( 'button', { name: /reply/i } );
+		expect( button ).toHaveTextContent( '5' );
+		await user.click( button );
+		expect( onReplyClick ).toHaveBeenCalledWith( post );
+		expect( onClick ).toHaveBeenCalledWith(
+			expect.stringContaining( '_replies_count_clicked' ),
+			expect.objectContaining( {
+				connection_id: 7,
+				post_uri: post.uri,
+				replies_count: 5,
+				destination: 'composer',
+			} )
+		);
+	} );
+
+	it( 'falls back to a link when onReplyClick is not bound', () => {
+		const getThreadUrl = () => '/threads/x';
+		render( wrap( <PostCardCounts post={ post } />, getThreadUrl ) );
+		const link = screen.getByRole( 'link', { name: /replies/i } );
+		expect( link ).toHaveAttribute( 'href', '/threads/x' );
 	} );
 } );

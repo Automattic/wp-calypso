@@ -42,14 +42,33 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 		</>
 	);
 
-	return (
-		<HStack
-			alignment="center"
-			spacing={ 4 }
-			justify="flex-start"
-			className="social-post-card-counts"
-		>
-			{ inAppUrl ? (
+	const renderRepliesNode = () => {
+		if ( analytics?.onReplyClick ) {
+			const onReplyClick = analytics.onReplyClick;
+			return (
+				<button
+					type="button"
+					className="social-post-card-counts__reply-button"
+					onClick={ () => {
+						onReplyClick( post );
+						analytics.onClick(
+							`calypso_reader_${ analytics.source }_timeline_replies_count_clicked`,
+							{
+								connection_id: analytics.connectionId,
+								post_uri: postUri,
+								replies_count: counts.replies,
+								destination: 'composer',
+							}
+						);
+					} }
+					aria-label={ translate( 'Reply' ) }
+				>
+					{ repliesContent }
+				</button>
+			);
+		}
+		if ( inAppUrl ) {
+			return (
 				<a
 					className="social-post-card-counts__link"
 					href={ inAppUrl }
@@ -57,9 +76,19 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 				>
 					{ repliesContent }
 				</a>
-			) : (
-				<span>{ repliesContent }</span>
-			) }
+			);
+		}
+		return <span>{ repliesContent }</span>;
+	};
+
+	return (
+		<HStack
+			alignment="center"
+			spacing={ 4 }
+			justify="flex-start"
+			className="social-post-card-counts"
+		>
+			{ renderRepliesNode() }
 			<span>
 				<ReaderRepostIcon iconSize={ ICON_SIZE } />
 				<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
