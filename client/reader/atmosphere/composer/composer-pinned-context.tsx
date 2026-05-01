@@ -1,4 +1,4 @@
-import { sanitizePostHtml } from 'calypso/reader/social/components/post-card/sanitize-post-html';
+import { sanitizePostHtml } from 'calypso/reader/social';
 import type { ActiveMode } from './composer-provider';
 
 interface Props {
