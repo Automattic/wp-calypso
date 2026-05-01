@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { ComposerPinnedContext } from '../composer-pinned-context';
-import type { ActiveMode } from '../composer-provider';
+import type { ActiveMode, PreviewPost } from '../composer-provider';
 
 const previewPost = {
 	uri: 'at://x',
@@ -47,5 +47,30 @@ describe( '<ComposerPinnedContext>', () => {
 	it( 'renders nothing when mode is null', () => {
 		const { container } = render( <ComposerPinnedContext mode={ null } /> );
 		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	it( 'falls back to raw text when previewPost.html is empty', () => {
+		const previewWithoutHtml: PreviewPost = {
+			uri: 'at://x',
+			cid: 'c',
+			author: {
+				did: 'did:plc:alice',
+				handle: 'alice.bsky.social',
+				display_name: 'Alice',
+				avatar: null,
+			},
+			text: 'Plain text only',
+			html: '',
+		};
+		const replyModeNoHtml: ActiveMode = {
+			kind: 'reply',
+			connectionId: 42,
+			root: { uri: 'at://r', cid: 'rcid' },
+			parent: { uri: 'at://p', cid: 'pcid' },
+			previewPost: previewWithoutHtml,
+		};
+		render( <ComposerPinnedContext mode={ replyModeNoHtml } /> );
+		expect( screen.getByText( 'Alice' ) ).toBeVisible();
+		expect( screen.getByText( 'Plain text only' ) ).toBeVisible();
 	} );
 } );

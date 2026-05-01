@@ -11,6 +11,23 @@ export function ComposerPinnedContext( { mode }: Props ) {
 	}
 
 	const { previewPost } = mode;
+
+	const authorChip = (
+		<div className="atmosphere-composer__pinned-author">
+			<strong>{ previewPost.author.display_name }</strong>
+			<span className="atmosphere-composer__pinned-handle">{ `@${ previewPost.author.handle }` }</span>
+		</div>
+	);
+
+	if ( ! previewPost.html ) {
+		return (
+			<div className="atmosphere-composer__pinned-context">
+				{ authorChip }
+				<p className="atmosphere-composer__pinned-snippet">{ previewPost.text }</p>
+			</div>
+		);
+	}
+
 	// DOMPurify-sanitised via sanitizePostHtml; see sanitize-post-html.ts.
 	// The backend already wp_kses-sanitises post.html with the same
 	// allow-list, so this is defence-in-depth, not the only line of defence.
@@ -18,10 +35,7 @@ export function ComposerPinnedContext( { mode }: Props ) {
 
 	return (
 		<div className="atmosphere-composer__pinned-context">
-			<div className="atmosphere-composer__pinned-author">
-				<strong>{ previewPost.author.display_name }</strong>
-				<span className="atmosphere-composer__pinned-handle">{ `@${ previewPost.author.handle }` }</span>
-			</div>
+			{ authorChip }
 			<div
 				className="atmosphere-composer__pinned-snippet"
 				// eslint-disable-next-line react/no-danger
