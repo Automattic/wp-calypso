@@ -50,6 +50,11 @@ export function RepostButton( { post, connectionId }: RepostButtonProps ) {
 	const remove = useDeleteRepostMutation( connectionId );
 
 	const isReposted = Boolean( post.viewer?.repost );
+	// Disable across every instance of this post while a create-repost is in
+	// flight: cache carries `PENDING_REPOST_URI` even on instances whose own
+	// mutation hooks aren't pending, so a user who clicks the repost button on
+	// a duplicate render (e.g. timeline + thread) would otherwise either fire
+	// a duplicate create or hit a dead rkey on un-repost and silently no-op.
 	const isPending =
 		create.isPending || remove.isPending || post.viewer?.repost === PENDING_REPOST_URI;
 	const formattedReposts = formatNumber( post.counts.reposts );
@@ -76,7 +81,7 @@ export function RepostButton( { post, connectionId }: RepostButtonProps ) {
 	};
 
 	const handleRepost = () => {
-		analytics?.onClick( `calypso_reader_${ analytics.source }_repost_published`, {
+		analytics?.onClick( `calypso_reader_${ analytics.source }_repost_clicked`, {
 			connection_id: connectionId,
 			post_uri: post.uri,
 		} );
@@ -91,7 +96,7 @@ export function RepostButton( { post, connectionId }: RepostButtonProps ) {
 		if ( ! rkey ) {
 			return;
 		}
-		analytics?.onClick( `calypso_reader_${ analytics.source }_repost_undone`, {
+		analytics?.onClick( `calypso_reader_${ analytics.source }_unrepost_clicked`, {
 			connection_id: connectionId,
 			post_uri: post.uri,
 		} );

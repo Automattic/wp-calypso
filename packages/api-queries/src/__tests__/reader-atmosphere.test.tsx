@@ -1521,6 +1521,41 @@ describe( 'reader-atmosphere hooks', () => {
 			expect( after.pages[ 0 ].items[ 1 ].counts.reposts ).toBe( 2 );
 			expect( after.pages[ 0 ].items[ 1 ].viewer?.repost ).toBe( REPOST_URI );
 		} );
+
+		it( 'patches the matching post in a thread cache entry', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 200, { repost: { uri: REPOST_URI, cid: 'bafy-r-cid', rkey: '3krkeyrkeyrke' } } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const target = makeFeedItem( {
+				uri: POST_URI,
+				cid: POST_CID,
+				counts: { replies: 0, reposts: 2, likes: 0, quotes: 0 },
+				viewer: { like: null, repost: null },
+			} );
+			client.setQueryData< AtmosphereThreadResponse >( readerAtmosphereKeys.thread( POST_URI ), {
+				thread: { type: 'post', post: target, parent: null, replies: [] },
+			} );
+
+			const { result } = renderHook( () => useCreateRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { postUri: POST_URI, postCid: POST_CID } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const after = client.getQueryData< AtmosphereThreadResponse >(
+				readerAtmosphereKeys.thread( POST_URI )
+			);
+			expect( after?.thread.type ).toBe( 'post' );
+			const post = after?.thread.type === 'post' ? after.thread.post : null;
+			expect( post?.viewer?.repost ).toBe( REPOST_URI );
+			expect( post?.counts.reposts ).toBe( 3 );
+		} );
 	} );
 
 	describe( 'useDeleteRepostMutation', () => {

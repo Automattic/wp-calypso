@@ -615,6 +615,9 @@ function restoreAtmospherePostSnapshots(
 		}
 		const current = queryClient.getQueryData( key );
 		if ( ! current ) {
+			// Cache entry was evicted between onMutate and onError (e.g. via
+			// gcTime or an explicit removeQueries). Nothing to roll back —
+			// the next refetch will reload from the server.
 			continue;
 		}
 		queryClient.setQueryData( key, restoreAtmosphereQueryData( current, items ) );

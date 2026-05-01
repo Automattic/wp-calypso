@@ -99,7 +99,7 @@ describe( '<RepostButton>', () => {
 		expect( quoteItem ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
-	it( 'clicking the Repost menu item fires POST and the published Tracks event', async () => {
+	it( 'clicking the Repost menu item fires POST and the repost_clicked Tracks event', async () => {
 		nock( BASE )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts', {
 				post_uri: POST_URI,
@@ -115,7 +115,7 @@ describe( '<RepostButton>', () => {
 		await user.click( await screen.findByRole( 'menuitem', { name: 'Repost' } ) );
 
 		expect( onClick ).toHaveBeenCalledWith(
-			'calypso_reader_atmosphere_repost_published',
+			'calypso_reader_atmosphere_repost_clicked',
 			expect.objectContaining( { connection_id: 42, post_uri: POST_URI } )
 		);
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
@@ -144,10 +144,67 @@ describe( '<RepostButton>', () => {
 
 		expect( screen.queryByRole( 'menuitem', { name: 'Repost' } ) ).toBeNull();
 		expect( onClick ).toHaveBeenCalledWith(
-			'calypso_reader_atmosphere_repost_undone',
+			'calypso_reader_atmosphere_unrepost_clicked',
 			expect.objectContaining( { connection_id: 42, post_uri: POST_URI } )
 		);
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'does not fire DELETE when the reposted-state URI parses to no rkey', async () => {
+		const interceptor = nock( BASE )
+			.delete( /\/reposts\// )
+			.reply( 204 );
+
+		const user = userEvent.setup();
+		const { onClick } = renderRepostButton(
+			// Malformed at-uri: starts with `at://` but missing the rkey segment
+			// after the collection. `rkeyFromUri()` returns null for this shape,
+			// which gates the DELETE in `handleUnrepost`.
+			makePost( { viewer: { like: null, repost: 'at://did:plc:caller/app.bsky.feed.repost' } } )
+		);
+		await user.click( screen.getByRole( 'button', { name: /undo repost, 4 reposts/i } ) );
+
+		expect( interceptor.isDone() ).toBe( false );
+		expect( onClick ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders the singular aria-label when reposts === 1', () => {
+		renderRepostButton( makePost( { counts: { replies: 0, reposts: 1, likes: 0, quotes: 0 } } ) );
+		expect( screen.getByRole( 'button', { name: /^repost, 1 repost$/i } ) ).toBeVisible();
+	} );
+
+	it( 'shows a rate-limit notice on rate_limited create errors', async () => {
+		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+		const user = userEvent.setup();
+		renderRepostButton();
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Repost' } ) );
+
+		await waitFor( () =>
+			expect( errorNoticeSpy ).toHaveBeenCalledWith(
+				"You're reposting too quickly. Try again in a moment."
+			)
+		);
+	} );
+
+	it( 'shows a connection-missing notice on connection_not_found errors', async () => {
+		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+			.reply( 404, { error: 'connection_not_found' } );
+
+		const user = userEvent.setup();
+		renderRepostButton();
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Repost' } ) );
+
+		await waitFor( () =>
+			expect( errorNoticeSpy ).toHaveBeenCalledWith( 'This connection no longer exists.' )
+		);
 	} );
 
 	it( 'disables the button while the pending sentinel is set', async () => {
