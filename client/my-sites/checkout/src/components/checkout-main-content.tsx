@@ -1205,6 +1205,31 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.checkout-loading-sidebar {
 				min-width: 384px;
 			}
+			/*
+			 * Give the sticky .checkout__summary-area room to slide.
+			 *
+			 * TwoColumnLayout's row uses align-items: flex-start at break-large
+			 * (packages/onboarding/.../TwoColumnLayout/style.scss), so its
+			 * column wrappers size to content instead of stretching to row
+			 * height. With the right column collapsed, .checkout-sidebar-content
+			 * inside it is just as short as the .checkout__summary-area it
+			 * contains — so the sticky rule above has zero distance to travel.
+			 *
+			 * Override the row's align-items to stretch (so both column wrappers
+			 * match row height), then promote the sidebar's column wrapper to a
+			 * flex column so .checkout-sidebar-content fills it. The legacy
+			 * WPCheckoutWrapper path gets this for free via grid-area stretching.
+			 */
+			.step-container-v2__content-row--two-column-layout {
+				align-items: stretch;
+			}
+			.step-container-v2__content-row--two-column-layout > div:has( > .checkout-sidebar-content ) {
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout-sidebar-content {
+				flex: 1;
+			}
 		` }
 	${ ( props ) =>
 		props.isCheckoutUiRedesignV1 &&
