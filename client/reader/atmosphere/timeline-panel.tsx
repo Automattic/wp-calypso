@@ -11,6 +11,7 @@ import {
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
 import {
 	getProfileUrl as buildProfileUrl,
@@ -107,6 +108,33 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			const parent = { uri: post.uri, cid: post.cid };
+			// `reply_root` is null when the post itself is the root of its
+			// thread; in that case the post is also its own root. When set,
+			// the timeline shape only carries the root's URI (no `cid`).
+			// Reuse the parent's cid as the best available stand-in — the
+			// backend authoritatively resolves both refs server-side from
+			// the supplied URIs when it constructs the AT Protocol record.
+			const root = post.reply_root ? { uri: post.reply_root.uri, cid: post.cid } : parent;
+			openComposer( {
+				kind: 'reply',
+				root,
+				parent,
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => (
 			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
@@ -123,8 +151,9 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			getThreadUrl,
 			getProfileUrl,
 			getTagUrl,
+			onReplyClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
 	);
 
 	return (

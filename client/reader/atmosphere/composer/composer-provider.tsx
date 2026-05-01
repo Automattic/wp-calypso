@@ -7,10 +7,28 @@ import {
 	useRef,
 	useState,
 } from 'react';
-import type { AtUriRef, AtmosphereFeedItem } from '@automattic/api-core';
+import type { AtUriRef } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
-export type PreviewPost = Pick< AtmosphereFeedItem, 'uri' | 'cid' | 'author' | 'text' | 'html' >;
+/**
+ * Structural shape consumed by `<ComposerPinnedContext>`. Both
+ * `AtmosphereFeedItem` (per-protocol) and `SocialPost` (protocol-agnostic
+ * mapped shape) satisfy this — we only need the four fields the pinned
+ * preview reads (`text`, `html`, `author.handle`, `author.display_name`)
+ * plus the post identity (`uri`, optional `cid`) that callers have on
+ * hand. Kept structural so the per-protocol panels can hand us a
+ * `SocialPost` directly without re-deriving an `AtmosphereFeedItem`.
+ */
+export interface PreviewPost {
+	uri: string;
+	cid?: string;
+	text: string;
+	html: string;
+	author: {
+		handle: string;
+		display_name: string;
+	};
+}
 
 export type ComposerMode =
 	| { kind: 'reply'; root: AtUriRef; parent: AtUriRef; previewPost: PreviewPost }
@@ -80,4 +98,14 @@ export function useComposer(): ComposerContextValue {
 		throw new Error( 'useComposer must be called inside <ComposerProvider>' );
 	}
 	return ctx;
+}
+
+/**
+ * Soft variant: returns `null` outside a `<ComposerProvider>` instead of
+ * throwing. Use this in components that opt into the composer when one
+ * is mounted (e.g. panels rendering post cards) but should still render
+ * fine in tests or shells that don't provide a composer.
+ */
+export function useOptionalComposer(): ComposerContextValue | null {
+	return useContext( ComposerContext );
 }

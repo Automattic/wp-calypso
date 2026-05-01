@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
 import { SocialAnalyticsProvider } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { useOptionalComposer } from './composer';
 import {
 	getProfileUrl as buildProfileUrl,
 	getTagFeedUrl as buildTagUrl,
@@ -23,6 +24,7 @@ import type {
 	AtmosphereError,
 	AtmosphereThreadNode,
 } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
 
 interface ThreadPanelProps {
@@ -125,6 +127,31 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		[ connection.id ]
 	);
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			const parent = { uri: post.uri, cid: post.cid };
+			// See timeline-panel.tsx for the cid-stand-in rationale: the
+			// shared `SocialPost` shape doesn't carry a root cid, so we
+			// reuse the parent's. The backend authoritatively resolves
+			// both refs server-side from the URIs.
+			const root = post.reply_root ? { uri: post.reply_root.uri, cid: post.cid } : parent;
+			openComposer( {
+				kind: 'reply',
+				root,
+				parent,
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -133,8 +160,9 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 			getThreadUrl,
 			getProfileUrl,
 			getTagUrl,
+			onReplyClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
 	);
 
 	return (

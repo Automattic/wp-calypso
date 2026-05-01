@@ -54,10 +54,8 @@ describe( '<ComposerPinnedContext>', () => {
 			uri: 'at://x',
 			cid: 'c',
 			author: {
-				did: 'did:plc:alice',
 				handle: 'alice.bsky.social',
 				display_name: 'Alice',
-				avatar: null,
 			},
 			text: 'Plain text only',
 			html: '',
