@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 
 body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-placeholder {
-	padding: 16px 24px 12px 24px;
+	padding: 12px 0;
 
 	.reader__post-title {
 		margin-top: 0;
@@ -17,77 +17,113 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 $actions-height: 64px;
 
 .subscribe-modal {
+	&.components-modal__frame,
+	.components-modal__frame {
+		width: min( 1024px, calc( 100vw - 64px ) );
+		max-width: min( 1024px, calc( 100vw - 64px ) );
+
+		@media ( max-width: $break-medium ) {
+			width: 100vw;
+			max-width: 100vw;
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
+
 	&__title {
 		font-family: Recoleta, sans-serif;
 		font-size: 2.25rem;
 		font-weight: 400;
 		line-height: 1.2;
-		margin-bottom: 16px;
+		margin: 0;
 		text-wrap: balance;
+		text-align: center;
 
 		@media ( max-width: $break-medium ) {
 			font-size: 1.5rem;
 		}
 	}
 
-	&__content {
-		// Since the actions container is positioned absolutely,
-		// this padding bottom ensures that the content wrapper will properly
-		// detect overflowing content and start showing scrollbars at the right
-		// moment. Without this padding, the content would render under the actions
-		// bar without causing the wrapper to show a scrollbar.
-		padding-bottom: $actions-height;
+	&__description {
+		margin: 0;
+		text-align: center;
+		color: var( --color-text-subtle );
+		text-wrap: balance;
+	}
 
+	&__content {
+		padding-bottom: $actions-height;
 		display: flex;
 		flex-direction: column;
-		height: calc( 100vh - 200px );
-		align-items: center;
+		min-height: 520px;
+		max-height: min( 680px, calc( 100vh - 180px ) );
+		overflow: hidden;
+	}
 
-		@media ( min-width: 1200px ) {
-			flex-direction: row;
-			overflow: hidden;
-			align-items: initial;
+	&__intro {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		padding: 20px 24px 10px;
+	}
+
+	&__columns {
+		display: flex;
+		flex: 1;
+		min-height: 0;
+		padding: 20px 24px 0;
+		gap: 16px;
+
+		@media ( max-width: 1199px ) {
+			padding-inline: 0;
 		}
 	}
 
 	&__site-list-column {
-		flex: 1;
-		padding: 20px 20px 0;
+		flex: 0 0 34%;
+		padding-top: 2px;
 		overflow-y: auto;
-		max-width: 600px;
+		max-width: 320px;
+		padding-inline-end: 12px;
+		overflow-x: visible;
 
-		@media ( min-width: 1200px ) {
-			max-width: 450px;
-		}
-
-		@media ( max-width: $break-medium ) {
-			padding: 0;
+		@media ( max-width: 1199px ) {
+			flex: 1;
 			max-width: 700px;
-		}
-
-		p {
-			text-wrap: balance;
-		}
-
-		.subscribe-modal__description {
-			@media ( max-width: 1199px ) {
-				display: none;
-			}
+			padding-inline: 20px;
 		}
 
 		.reader-subscription-list-item {
+			position: relative;
 			padding: 12px;
-			border: 1px solid var( --color-neutral-5 );
+			border: 1px solid var( --color-neutral-10 );
 			border-radius: 6px; /* stylelint-disable-line scales/radii */
 			margin-bottom: 12px;
+			cursor: pointer;
 
-			@media ( min-width: 1200px ) {
-				cursor: pointer;
-				&.is-selected {
-					background-color: #e6f3fa;
-					border: 1px solid #0087be;
-					border-radius: 6px; /* stylelint-disable-line scales/radii */
+			&.is-selected {
+				background-color: #e6f3fa;
+				border-color: color-mix( in srgb, #0087be 55%, #fff );
+
+				&::after {
+					content: '';
+					position: absolute;
+					inset-inline-end: -12px;
+					top: 50%;
+					width: 12px;
+					height: 26px;
+					background: #e6f3fa;
+					border-top: 1px solid color-mix( in srgb, #0087be 55%, #fff );
+					border-right: 1px solid color-mix( in srgb, #0087be 55%, #fff );
+					border-bottom: 1px solid color-mix( in srgb, #0087be 55%, #fff );
+					clip-path: polygon( 0 0, 100% 50%, 0 100% );
+					transform: translateY( -50% );
 				}
+			}
+
+			.reader-subscription-list-item__options {
+				display: none;
 			}
 
 			.reader-subscription-list-item__site-url-timestamp {
@@ -103,13 +139,10 @@ $actions-height: 64px;
 	}
 
 	&__preview-column {
-		flex: 1;
-		padding: 24px;
+		flex: 1 1 auto;
 		display: none;
 		flex-direction: column;
 		overflow: hidden;
-
-		clip-path: inset( 0 0 0 0 );
 
 		@media ( min-width: 1200px ) {
 			display: flex;
@@ -124,47 +157,105 @@ $actions-height: 64px;
 	}
 
 	&__preview-placeholder {
-		justify-content: center;
-		border: 1px solid #f2f2f2;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 0;
+		border: 1px solid var( --color-neutral-5 );
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
-		background-color: #f2f2f2;
-		height: calc( 100vh - 224px );
-		width: calc( 100vw - 620px );
+		background-color: #fff;
 		overflow: hidden;
-		position: fixed;
+		position: relative;
 	}
 
 	&__preview-stream-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px 14px;
 		background-color: #fff;
-		text-align: center;
-		line-height: rem( 36px );
-		font-size: rem( 14px );
+		border-bottom: 1px solid var( --color-neutral-5 );
+
+		h3 {
+			margin: 0;
+			font-size: rem( 14px );
+			font-weight: 500;
+		}
+
+		.follow-button.has-button-style {
+			box-sizing: border-box;
+			min-width: 106px;
+			min-height: 36px;
+			padding: 8px 14px;
+			border-radius: 4px;
+			border: 1px solid var( --color-accent );
+			line-height: 18px;
+			transition: none;
+		}
+
+		.follow-button.has-button-style:hover,
+		.follow-button.has-button-style:focus,
+		.follow-button.has-button-style:active {
+			padding: 8px 14px;
+			border-width: 1px;
+			border-radius: 4px;
+			box-shadow: none;
+		}
+	}
+
+	&__preview-site {
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 
 	&__preview-stream-container {
-		height: 100%;
+		flex: 1;
+		min-height: 0;
 		overflow-y: auto;
-		padding-top: 40px;
-	}
+		padding: 0;
+		background: #fff;
 
-	.components-modal__header {
-		.components-button {
-			&.is-link {
-				margin-right: auto;
-			}
+		.reader,
+		.reader__content,
+		.reader__content .stream__list,
+		.reader-stream__content {
+			max-width: none;
+			padding-inline: 0;
+			padding-top: 0;
+			margin: 0;
+		}
 
-			&.is-primary {
-				margin-left: 16px;
-			}
+		.reader__card.card,
+		.reader-post-card.card.is-compact {
+			margin-bottom: 0;
+			border-radius: 0;
+			border-inline: 0;
+			border-top: 0;
+			border-bottom: 1px solid var( --color-neutral-5 );
+			padding: 14px 16px 12px;
+		}
+
+		.reader__card.card.is-compact .reader-post-card__post-content:not(.reader-post-card__no-excerpt)
+			.reader-featured-image {
+			width: 212px !important;
+			height: auto !important;
+			aspect-ratio: 16 / 9;
+			overflow: hidden;
+		}
+
+		.reader__card.card.is-compact .reader-featured-image img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
 		}
 	}
 
 	&.is-disabled {
 		.subscribe-modal__container {
-			height: calc( 100vh - 188px ); // Modal margin + modal padding + modal heading
-			overflow: hidden;
-			padding: 1px;
+			height: 100%;
 		}
+
 		.subscribe-modal__content {
 			opacity: 0.5;
 			pointer-events: none;
