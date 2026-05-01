@@ -150,7 +150,7 @@ test.describe(
 
 			await test.step( 'Then I see a cancellation confirmation notice', async function () {
 				await flowLOHPThemeSignup.noticeComponent.noticeShown(
-					'Your refund has been processed and your purchase removed.',
+					'was successfully cancelled. It will be available for use until it expires on',
 					{
 						timeout: 30000,
 					}
