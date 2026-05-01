@@ -9,6 +9,11 @@ import { createContext, useContext, type ReactNode } from 'react';
 // prefix so the rewrite stays the single source of truth.
 
 export interface SocialProfileRefInput {
+	// Universal protocol-agnostic identifier — DID for atmosphere, numeric
+	// account id for Mastodon. Per-protocol resolvers decide which they
+	// understand and which to validate.
+	id?: string | null;
+	// Atmosphere-named alias kept for back-compat with the slice-6 wiring.
 	did?: string | null;
 	handle?: string | null;
 }
@@ -25,6 +30,13 @@ export interface SocialAnalyticsContextValue {
 	getThreadUrl?: ( postUri: string ) => string | null;
 	/** Slice 6: resolve an author ref to an in-app profile URL, or null to fall back. */
 	getProfileUrl?: ( ref: SocialProfileRefInput ) => string | null;
+	/**
+	 * Slice 8: in-app hashtag-feed URL for a tag, or null to fall back.
+	 * Mastodon panels bind this; protocols without a hashtag concept
+	 * (atmosphere) leave it unset and `<PostCardBody>` falls back to the
+	 * anchor's external href.
+	 */
+	getTagUrl?: ( tag: string ) => string | null;
 }
 
 const Ctx = createContext< SocialAnalyticsContextValue | null >( null );

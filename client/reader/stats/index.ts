@@ -120,6 +120,7 @@ const Routes: RoutesMapping[] = [
 	{ route: matches( /^\/reader\/mastodon\/\d+\/timeline$/ ), tracking: 'mastodon_timeline' },
 	{ route: matches( /^\/reader\/mastodon\/\d+\/profile$/ ), tracking: 'mastodon_profile' },
 	{ route: matches( /^\/reader\/mastodon\/\d+\/settings$/ ), tracking: 'mastodon_settings' },
+	{ route: matches( /^\/reader\/mastodon\/\d+\/tag\/[^/]+$/ ), tracking: 'mastodon_tag_feed' },
 	{ route: exactMatch( '/reader/mastodon' ), tracking: 'mastodon_landing' },
 
 	{ route: SinglePostRoute, tracking: 'single_post' },

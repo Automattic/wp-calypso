@@ -29,6 +29,47 @@ const base: SocialPost = {
 	permalink: 'https://bsky.app/profile/alice.bsky.social/post/x',
 };
 
+describe( 'PostCardHeader compact + timestampLink', () => {
+	it( 'renders the timestamp as an anchor when timestampLink is provided', () => {
+		const onClick = jest.fn();
+		render(
+			<PostCardHeader
+				post={ base }
+				variant="compact"
+				timestampLink={ {
+					href: '/reader/atmosphere/7/thread/x/y',
+					onClick,
+				} }
+			/>
+		);
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/7/thread/x/y' );
+		expect( link ).toHaveClass( 'social-post-card-header__timestamp' );
+	} );
+
+	it( 'fires the supplied onClick when the timestamp is clicked', async () => {
+		const onClick = jest.fn();
+		render(
+			<PostCardHeader
+				post={ base }
+				variant="compact"
+				timestampLink={ {
+					href: '/reader/atmosphere/7/thread/x/y',
+					onClick,
+				} }
+			/>
+		);
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'link' ) );
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'renders plain TimeSince in compact mode when timestampLink is omitted', () => {
+		render( <PostCardHeader post={ base } variant="compact" /> );
+		expect( screen.queryByRole( 'link' ) ).toBeNull();
+	} );
+} );
+
 describe( 'PostCardHeader', () => {
 	it( 'renders display name, handle, and a link to the author profile on bsky.app', () => {
 		render( <PostCardHeader post={ base } variant="default" /> );

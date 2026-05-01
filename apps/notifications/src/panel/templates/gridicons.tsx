@@ -14,6 +14,7 @@ const Gridicons = forwardRef< SVGSVGElement, GridiconsProps >(
 		const gridiconClass = `gridicons-${ icon }`;
 		const sharedProps = {
 			className: clsx( 'gridicon', gridiconClass ),
+			fill: 'currentColor',
 			height: size,
 			width: size,
 			onClick,

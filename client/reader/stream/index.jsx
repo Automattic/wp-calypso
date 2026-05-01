@@ -30,7 +30,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
@@ -846,7 +845,6 @@ export default connect(
 			error: stream.error,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
-			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
 			isLoggedIn,

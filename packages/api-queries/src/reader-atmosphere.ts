@@ -19,6 +19,7 @@ import {
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
+	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
@@ -159,27 +160,36 @@ export function useAuthorProfileQuery( { actor }: UseAuthorProfileQueryParams ) 
 	return useQuery( profileQueryOptions( actor ) );
 }
 
-export const authorFeedInfiniteQuery = ( actor: string ) =>
-	infiniteQueryOptions<
+export const authorFeedInfiniteQuery = ( actor: string, filter?: AtmosphereAuthorFeedFilter ) => {
+	// Collapse the default filter to undefined so the cache key and request
+	// URL stay clean for the default tab. Callers can pass 'posts_no_replies'
+	// without paying a cache-key change versus passing nothing at all —
+	// matters for slice-6 cache compatibility. Centralized here (not in the
+	// hook) so any direct factory caller gets the same behavior.
+	const normalizedFilter = filter === 'posts_no_replies' ? undefined : filter;
+	return infiniteQueryOptions<
 		AtmosphereAuthorFeedPage,
 		AtmosphereError,
 		InfiniteData< AtmosphereAuthorFeedPage >,
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerAtmosphereKeys.authorFeed( actor ),
-		queryFn: ( { pageParam } ) => getAuthorFeed( { actor, cursor: pageParam } ),
+		queryKey: readerAtmosphereKeys.authorFeed( actor, normalizedFilter ),
+		queryFn: ( { pageParam } ) =>
+			getAuthorFeed( { actor, cursor: pageParam, filter: normalizedFilter } ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
 		enabled: actor.length > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 	} );
+};
 
 export interface UseAuthorFeedInfiniteQueryParams {
 	actor: string;
+	filter?: AtmosphereAuthorFeedFilter;
 }
 
-export function useAuthorFeedInfiniteQuery( { actor }: UseAuthorFeedInfiniteQueryParams ) {
-	return useInfiniteQuery( authorFeedInfiniteQuery( actor ) );
+export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfiniteQueryParams ) {
+	return useInfiniteQuery( authorFeedInfiniteQuery( actor, filter ) );
 }

@@ -1,8 +1,10 @@
+import page from '@automattic/calypso-router';
 import { formatNumberCompact } from '@automattic/number-formatters';
-import DOMPurify from 'dompurify';
 import { useMemo } from 'react';
+import { useSocialAnalytics } from './components/post-card/analytics-context';
+import { sanitizeReaderSocialHtml } from './components/post-card/sanitize-post-html';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 
 export interface SocialProfileStat {
 	key: string;
@@ -36,39 +38,25 @@ export interface SocialProfileCardProps {
 
 // Mastodon bios include paragraphs, line breaks, and anchors (including rel="me"
 // verification links and @-mention spans). Restrict the allowlist to that set
-// so we never render scripts, media, iframes, or style/on* attributes.
+// so we never render scripts, media, iframes, or style/on* attributes. The
+// `data-id` attribute carries the protocol's stable author identifier on
+// @-mention anchors so the click handler below can route mentions in-app via
+// `getProfileUrl` without parsing the href.
 const BIO_SANITIZE_CONFIG = {
 	ALLOWED_TAGS: [ 'p', 'br', 'a', 'span' ],
-	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'class' ],
+	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'class', 'data-id' ],
+	// DOMPurify allows every data-* attribute by default; restrict to the
+	// explicit allow-list above so a future backend change can't smuggle a
+	// new data-* attribute (e.g. `data-tracking`) through to the DOM.
+	ALLOW_DATA_ATTR: false,
+	// DOMPurify scheme-checks every attribute value containing a colon and
+	// drops the attribute when the scheme isn't on its URI allow-list.
+	// Atmosphere DID values (`did:plc:…`) trip that check on `data-id` and
+	// would otherwise be stripped, so opt this attribute out of URI parsing.
+	// `ADD_URI_SAFE_ATTR` extends DOMPurify's defaults; using
+	// `URI_SAFE_ATTRIBUTES` would replace them and drop `xml:lang` etc.
+	ADD_URI_SAFE_ATTR: [ 'data-id' ],
 };
-
-// Belt-and-suspenders: Mastodon itself ships rel="nofollow noopener noreferrer"
-// on bio anchors, but we accept target and rel as free-form attributes. Merge
-// `noopener noreferrer` into the rel set on any target="_blank" anchor so a
-// bare `<a target="_blank">` in a bio can't hand a window.opener reference
-// back to us. Preserves existing rel tokens (e.g. rel="me" verification).
-let bioRelHookRegistered = false;
-function ensureBioRelHookRegistered() {
-	if ( bioRelHookRegistered ) {
-		return;
-	}
-	DOMPurify.addHook( 'afterSanitizeAttributes', ( node ) => {
-		if ( node.tagName !== 'A' ) {
-			return;
-		}
-		// Case-insensitive: HTML target values are case-insensitive, so
-		// `target="_BLANK"` (or mixed case) opens in a new window just like
-		// `_blank` and needs the same tab-napping defense.
-		if ( ( node.getAttribute( 'target' ) ?? '' ).toLowerCase() !== '_blank' ) {
-			return;
-		}
-		const tokens = new Set( ( node.getAttribute( 'rel' ) ?? '' ).split( /\s+/ ).filter( Boolean ) );
-		tokens.add( 'noopener' );
-		tokens.add( 'noreferrer' );
-		node.setAttribute( 'rel', Array.from( tokens ).join( ' ' ) );
-	} );
-	bioRelHookRegistered = true;
-}
 
 /**
  * Presentational profile card. Covers both your-own-connection and any-author
@@ -88,23 +76,86 @@ export function SocialProfileCard( {
 	statsLabel,
 	headerActions,
 }: SocialProfileCardProps ) {
+	const analytics = useSocialAnalytics();
+
 	const sanitizedBio = useMemo( () => {
 		if ( ! bioHtml ) {
 			return null;
 		}
-		ensureBioRelHookRegistered();
-		return DOMPurify.sanitize( bioHtml, BIO_SANITIZE_CONFIG );
+		return sanitizeReaderSocialHtml( bioHtml, BIO_SANITIZE_CONFIG );
 	}, [ bioHtml ] );
+
+	// Mirrors PostCardBody: backend stamps @-mention anchors in bios with
+	// `data-id="<author-id>"` (DID for atmosphere, numeric account id for
+	// Mastodon). When present, route the click in-app via the analytics
+	// context's `getProfileUrl` resolver. Modifier-clicks pass through so
+	// users can still open mentions in a new tab. When the resolver is not
+	// in scope (slim layouts wrap SocialProfileCard outside any provider)
+	// the click falls through to the anchor's normal href.
+	const handleBioClick = ( event: MouseEvent< HTMLDivElement > ) => {
+		if (
+			event.defaultPrevented ||
+			event.button !== 0 ||
+			event.metaKey ||
+			event.ctrlKey ||
+			event.shiftKey ||
+			event.altKey
+		) {
+			return;
+		}
+		const anchor = ( event.target as Element | null )?.closest( 'a' );
+		if ( ! anchor ) {
+			return;
+		}
+		const dataId = anchor.getAttribute( 'data-id' );
+		if ( ! dataId ) {
+			return;
+		}
+		// Set all three fields to the data-id value: per-protocol resolvers
+		// pick whichever they understand and validate. Atmosphere validates
+		// handle then DID; Mastodon reads `id`. The backend stamps either a
+		// DID (atmosphere) or a numeric account id (Mastodon) when available
+		// and falls back to a handle on atmosphere when no DID is known.
+		const inAppUrl =
+			analytics?.getProfileUrl?.( { id: dataId, handle: dataId, did: dataId } ) ?? null;
+		if ( inAppUrl ) {
+			event.preventDefault();
+			page( inAppUrl );
+			return;
+		}
+		if ( ! analytics ) {
+			return;
+		}
+		// data-id present but resolver returned null — likely a backend ↔
+		// frontend desync. Surface the event so it's observable instead of
+		// silently routing to the external host with no analytics signal.
+		// eslint-disable-next-line no-console
+		console.warn( '[reader-social] data-id mention anchor not resolved to in-app URL', {
+			dataId,
+			href: anchor.getAttribute( 'href' ),
+			source: analytics.source,
+		} );
+		analytics.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
+			connection_id: analytics.connectionId,
+			data_id: dataId,
+		} );
+	};
 
 	let bioNode = null;
 	if ( sanitizedBio ) {
+		// onClick on the wrapper div is event delegation onto the real <a>
+		// children produced by injected HTML — anchors handle keyboard
+		// activation themselves, so the div isn't actually interactive.
+		/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 		bioNode = (
 			<div
 				className="social-profile-card__bio"
+				onClick={ handleBioClick }
 				// eslint-disable-next-line react/no-danger -- sanitized above with a strict allowlist.
 				dangerouslySetInnerHTML={ { __html: sanitizedBio } }
 			/>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
 	} else if ( bio ) {
 		bioNode = <p className="social-profile-card__bio">{ bio }</p>;
 	}

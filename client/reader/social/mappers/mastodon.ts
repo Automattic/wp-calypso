@@ -1,3 +1,4 @@
+import type { SocialProfileCardProps } from '../profile-card';
 import type {
 	SocialEmbed,
 	SocialEmbedAudio,
@@ -9,6 +10,7 @@ import type {
 	SocialThreadPostNode,
 } from '../types';
 import type {
+	MastodonAuthorProfile,
 	MastodonFeedItem,
 	MastodonMediaAttachment,
 	MastodonThreadNode,
@@ -89,6 +91,23 @@ function mapAccount( account: MastodonTimelineAccount, instance: string ): Socia
 // `acct: 'carol@infosec.exchange'`. Always render fully-qualified.
 function qualifyAcct( acct: string, instance: string ): string {
 	return acct.includes( '@' ) ? acct : `${ acct }@${ instance }`;
+}
+
+// Map a Mastodon Account-shaped profile onto the subset of SocialProfileCard
+// props we control (avatar / banner / displayName / handle / bioHtml). Stats
+// and statsLabel come from the panel since they're translation-bound.
+export function mapMastodonAccountToSocialProfileCardProps(
+	profile: MastodonAuthorProfile,
+	options: MapMastodonOptions
+): Pick< SocialProfileCardProps, 'avatar' | 'banner' | 'displayName' | 'handle' | 'bioHtml' > {
+	return {
+		avatar: profile.avatar,
+		banner: profile.header,
+		// Empty display_name → fall back to handle inside SocialProfileCard.
+		displayName: profile.display_name ? profile.display_name : undefined,
+		handle: qualifyAcct( profile.acct, options.instance ),
+		bioHtml: profile.note,
+	};
 }
 
 // Local: `https://<connection-instance>/@<username>`.

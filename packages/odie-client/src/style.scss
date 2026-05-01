@@ -70,7 +70,7 @@ $blueberry-blue: #3858e9;
 	width: 100%;
 	height: 0;
 	flex: 1;
-	background-color: #fff;
+	background-color: var(--color-surface, #fff);
 }
 
 .using-environment-badge {
@@ -79,7 +79,7 @@ $blueberry-blue: #3858e9;
 }
 
 .chatbox-header-button {
-	color: #ece6f6;
+	color: var( --color-foreground );
 	border: none;
 	outline: none;
 	padding: 0;

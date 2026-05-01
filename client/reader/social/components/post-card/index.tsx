@@ -11,6 +11,7 @@ import { PostCardHeader } from './post-card-header';
 import { PostCardLink } from './post-card-link';
 import { PostCardTimestamp } from './post-card-timestamp';
 import type { SocialContentWarning, SocialPost } from '../../types';
+import type React from 'react';
 
 type SocialPostCardVariant = 'default' | 'compact';
 
@@ -22,6 +23,13 @@ interface SocialPostCardProps {
 	// a standalone block between the embed and the counts row (matches
 	// bsky.app's single-post layout). Used by ThreadTree for the target post.
 	prominentTimestamp?: boolean;
+	cardLink?: {
+		href: string;
+		onClick?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
+		target?: string;
+		rel?: string;
+		ariaLabel?: string;
+	};
 }
 
 export function SocialPostCard( {
@@ -29,6 +37,7 @@ export function SocialPostCard( {
 	variant = 'default',
 	expandedVideo,
 	prominentTimestamp,
+	cardLink,
 }: SocialPostCardProps ) {
 	const isCompact = variant === 'compact';
 	const showProminentTimestamp = ! isCompact && Boolean( prominentTimestamp );
@@ -66,6 +75,7 @@ export function SocialPostCard( {
 					post={ post }
 					variant={ variant }
 					prominentTimestamp={ showProminentTimestamp }
+					timestampLink={ isCompact ? cardLink : undefined }
 				/>
 				{ cwGate ? (
 					<ContentWarningGate warning={ cwGate }>{ bodyAndEmbed }</ContentWarningGate>
@@ -77,13 +87,6 @@ export function SocialPostCard( {
 			</CardBody>
 		</Card>
 	);
-
-	// Compact mode renders without any anchors so the consumer
-	// (e.g. PostCardEmbedQuote) can wrap it in its own outer anchor without
-	// creating invalid nested-<a> markup.
-	if ( isCompact ) {
-		return card;
-	}
 
 	return <PostCardLink variant={ variant }>{ card }</PostCardLink>;
 }

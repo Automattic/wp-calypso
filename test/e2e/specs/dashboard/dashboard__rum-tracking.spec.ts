@@ -131,7 +131,7 @@ test.describe( 'Dashboard: RUM Performance Tracking', { tag: [ tags.DASHBOARD_PR
 				// With omnibar: click Domains in the responsive sidebar.
 				// On mobile, open the sidebar first via the masterbar menu button.
 				if ( viewportName === 'mobile' ) {
-					await page.getByTitle( 'Menu', { exact: true } ).click();
+					await page.getByRole( 'button', { name: 'Menu', exact: true } ).click();
 				}
 				await page.getByRole( 'link', { name: 'Domains' } ).click();
 			} else if ( viewportName === 'mobile' ) {
