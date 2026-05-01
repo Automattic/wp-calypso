@@ -1,8 +1,4 @@
-import {
-	makeErrorResponse,
-	makeRedirectResponse,
-	makeSuccessResponse,
-} from '@automattic/composite-checkout';
+import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/number-formatters';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
@@ -113,13 +109,6 @@ export default async function blikProcessor(
 				throw new Error( genericErrorMessage );
 			}
 
-			const pendingPageUrl = addUrlToPendingPageRedirect( thankYouUrl, {
-				siteSlug,
-				fromSiteSlug,
-				orderId: response.order_id,
-				urlType: 'absolute',
-			} );
-
 			let isModalActive = true;
 			let explicitClosureMessage: string | undefined;
 			displayModal( {
@@ -135,10 +124,6 @@ export default async function blikProcessor(
 			let orderStatus = 'processing';
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
 				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
-			}
-			if ( orderStatus === 'payment-confirmed' ) {
-				safeDismissModal();
-				return makeRedirectResponse( pendingPageUrl );
 			}
 			if ( orderStatus !== 'success' ) {
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
@@ -169,10 +154,7 @@ async function pollForOrderStatus(
 		console.error( 'Order was not found.' );
 		throw new Error( genericErrorMessage );
 	}
-	if (
-		orderData.processing_status === 'success' ||
-		orderData.processing_status === 'payment-confirmed'
-	) {
+	if ( orderData.processing_status === 'success' ) {
 		return orderData.processing_status;
 	}
 	await new Promise( ( resolve ) => setTimeout( resolve, pollInterval ) );
