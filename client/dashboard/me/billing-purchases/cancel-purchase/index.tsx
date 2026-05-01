@@ -410,7 +410,6 @@ function CancelPurchaseInner() {
 	} = useCancelMutationOnConfirm( {
 		purchase: livePurchase as Purchase,
 		cancelAndRefundMutation,
-		removePurchaseMutator,
 		setPurchaseAutoRenewMutation,
 	} );
 
@@ -865,58 +864,60 @@ function CancelPurchaseInner() {
 		return mutationFlowType;
 	};
 
-	// Wraps the hook's mutation-fire with the success/error UX
-	// (snackbar, Survicate, marketplace cleanup) that submitRemovePurchase
-	// and submitCancelAndRefundPurchase otherwise own on the survey-submit path.
-	const fireMutationFromConfirm = (
+	// Fire the cancel mutation at confirm-time and only advance to the survey
+	// once it resolves. The snackbar is deferred to onSurveyComplete so it
+	// shows on the destination (purchase management) screen, not mid-survey.
+	// Survicate stays tied to mutation success — a background analytics
+	// concern the user doesn't see in the UI.
+	const fireMutationFromConfirm = async (
 		effectiveFlowType: CancelFlowType,
 		cancelBundledDomain?: boolean
 	) => {
-		fireMutationOnConfirm( effectiveFlowType, cancelBundledDomain )
-			.then( () => {
-				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-				if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
-					if ( purchase.is_plan ) {
-						cancelAllMarketplaceSubscriptions();
-					}
-					createSuccessNotice( __( 'Your refund has been processed and your purchase removed.' ), {
-						type: 'snackbar',
-					} );
-					invokeSurvicateEvent( 'purchaseRefunded' );
-				} else if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
-					const subscriptionEndDate = intlFormat(
-						purchase.expiry_date,
-						{ dateStyle: 'medium' },
-						{ locale: 'en-US' }
-					);
-					createSuccessNotice(
-						sprintf(
-							/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
-							__(
-								'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
-							),
-							{ purchaseName, subscriptionEndDate }
-						),
-						{ type: 'snackbar' }
-					);
-					invokeSurvicateEvent( 'purchaseCancelled' );
-				} else {
-					createSuccessNotice( getRemoveSuccessMessage( purchase ), { type: 'snackbar' } );
-					invokeSurvicateEvent( 'purchaseRemoved' );
-				}
-			} )
-			.catch( ( error: Error ) => {
-				createErrorNotice( error.message, { type: 'snackbar' } );
-			} );
+		try {
+			await fireMutationOnConfirm( effectiveFlowType, cancelBundledDomain );
+			invokeSurvicateEvent( 'purchaseCancelled' );
+			setState( ( state ) => ( {
+				...state,
+				confirmationPassed: true,
+				surveyShown: true,
+				isLoading: false,
+			} ) );
+		} catch ( error ) {
+			createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
+			// Stay on the confirmation page so the user can retry or back out.
+		}
 	};
 
-	// Returns true if the flag-gated mutation-on-confirm path applies. The
-	// compliance driver (one-click cancel) covers all cancel flows, so any
-	// effectiveFlowType qualifies — REMOVE / CANCEL_WITH_REFUND go through
-	// the deletion-aware cache machinery in the hook; CANCEL_AUTORENEW
-	// dispatches setPurchaseAutoRenewMutation without touching the cache.
+	// Snackbar copy shown on the destination screen after the user finishes (or
+	// skips) the survey on the cancel-intent path. Only CANCEL_AUTORENEW and
+	// CANCEL_WITH_REFUND can reach here — the cancel-intent gate excludes
+	// REMOVE flows.
+	const getCancelSuccessMessage = ( effectiveFlowType: CancelFlowType ): string => {
+		if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
+			return __( 'Your refund has been processed and your purchase removed.' );
+		}
+		const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
+		const subscriptionEndDate = intlFormat(
+			purchase.expiry_date,
+			{ dateStyle: 'medium' },
+			{ locale: 'en-US' }
+		);
+		return sprintf(
+			/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
+			__(
+				'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
+			),
+			{ purchaseName, subscriptionEndDate }
+		);
+	};
+
+	// Fire-on-confirm applies to the URL-intent Cancel path only — the user
+	// clicked "Cancel" on Purchase Settings and we want their cancellation to
+	// settle before the survey appears (so the heading can read "Cancellation
+	// confirmed"). Remove (and the no-intent legacy deep link) defer the
+	// mutation to onSurveyComplete, matching trunk's submit-handlers.
 	const shouldFireMutationOnConfirm = (): boolean =>
-		config.isEnabled( 'purchases/split-cancel-remove' );
+		config.isEnabled( 'purchases/split-cancel-remove' ) && intent === 'cancel';
 
 	const onCancellationComplete = () => {
 		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
@@ -926,8 +927,13 @@ function CancelPurchaseInner() {
 			user_lang: locale,
 		} );
 		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
+		// Cancel intent fires the mutation now and only advances to the survey
+		// after it resolves — see fireMutationFromConfirm. Remove (and any non-
+		// intent path) defers to onSurveyComplete and navigates to the survey
+		// synchronously.
 		if ( shouldFireMutationOnConfirm() ) {
 			fireMutationFromConfirm( effectiveFlowType, state.cancelBundledDomain ?? false );
+			return;
 		}
 		setState( ( state ) => ( {
 			...state,
@@ -968,8 +974,17 @@ function CancelPurchaseInner() {
 				user_lang: locale,
 			} );
 			const effectiveFlowType = computeEffectiveFlowType( cancelIntent );
+			// See onCancellationComplete for the rationale on why the cancel
+			// intent path defers surveyShown until the mutation resolves.
 			if ( shouldFireMutationOnConfirm() ) {
+				setState( ( state ) => ( {
+					...state,
+					cancelIntent,
+					customerConfirmedUnderstanding,
+					siteId: purchase.blog_id,
+				} ) );
 				fireMutationFromConfirm( effectiveFlowType );
+				return;
 			}
 			setState( ( state ) => ( {
 				...state,
@@ -1290,12 +1305,15 @@ function CancelPurchaseInner() {
 
 		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
 
-		// Flag-on path: the mutation already fired at confirm-click via
-		// fireMutationFromConfirm. The success notice and navigation cleanup
-		// are owned by that helper; here we only need to leave the cancel
-		// flow once the user finishes (or skips) the survey.
 		if ( shouldFireMutationOnConfirm() ) {
-			navigate( { to: purchasesRoute.to } );
+			// Cancel intent: the mutation already fired at confirm-click via
+			// fireMutationFromConfirm. Show the deferred success snackbar on the
+			// destination (purchase management) screen, then navigate.
+			createSuccessNotice( getCancelSuccessMessage( effectiveFlowType ), { type: 'snackbar' } );
+			navigate( {
+				to: purchaseSettingsRoute.fullPath,
+				params: { purchaseId: purchase.ID },
+			} );
 			return;
 		}
 
@@ -1622,6 +1640,7 @@ function CancelPurchaseInner() {
 							displayVariant={ displayVariant }
 							purchase={ purchase }
 							surveyStep={ state.surveyStep }
+							surveyShown={ state.surveyShown }
 						/>
 					}
 					prefix={ <Breadcrumbs length={ 4 } /> }
@@ -1654,6 +1673,7 @@ function CancelPurchaseInner() {
 									selectedDomain={ selectedDomain }
 									state={ state }
 									purchaseCancelFeatures={ purchaseCancelFeatures }
+									isBusy={ isMutationPending }
 									onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 									onDomainConfirmationChange={ onDomainConfirmationChange }
 									onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }

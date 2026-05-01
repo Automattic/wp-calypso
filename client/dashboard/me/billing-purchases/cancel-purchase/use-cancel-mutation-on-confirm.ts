@@ -24,14 +24,15 @@ interface SetAutoRenewVariables {
 interface UseCancelMutationOnConfirmArgs {
 	purchase: Purchase;
 	cancelAndRefundMutation: MutationLike< CancelAndRefundVariables >;
-	removePurchaseMutator: MutationLike< number >;
 	setPurchaseAutoRenewMutation: MutationLike< SetAutoRenewVariables >;
 }
 
+// Hook for the Cancel paths (CANCEL_AUTORENEW, CANCEL_WITH_REFUND) only —
+// REMOVE defers its mutation to survey-submit, so it doesn't need the
+// snapshot/cache-guard machinery here.
 export function useCancelMutationOnConfirm( {
 	purchase,
 	cancelAndRefundMutation,
-	removePurchaseMutator,
 	setPurchaseAutoRenewMutation,
 }: UseCancelMutationOnConfirmArgs ) {
 	const queryClient = useQueryClient();
@@ -44,7 +45,7 @@ export function useCancelMutationOnConfirm( {
 
 			// CANCEL_AUTORENEW just disables auto-renew — the purchase stays in
 			// the user's list. None of the deletion-flow cache machinery
-			// (strip-from-list, removeQueries, subscription guard) applies.
+			// (strip-from-list, snapshot) applies.
 			if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
 				return setPurchaseAutoRenewMutation
 					.mutateAsync( { purchaseId: purchase.ID, autoRenew: false } )
@@ -54,23 +55,19 @@ export function useCancelMutationOnConfirm( {
 					} );
 			}
 
-			// Capture snapshot synchronously, before the mutation fires. From this
-			// point, the component reads from the snapshot instead of the live
-			// query cache, which the mutation's invalidation will tear down.
+			// CANCEL_WITH_REFUND deletes the purchase. Capture a snapshot
+			// synchronously so survey rendering keeps working after the
+			// mutation's invalidation tears down the live purchase query.
 			setSnapshotPurchase( purchase );
 
-			const mutationPromise =
-				effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-					? cancelAndRefundMutation.mutateAsync( {
-							purchaseId: purchase.ID,
-							options: {
-								product_id: purchase.product_id,
-								cancel_bundled_domain: cancelBundledDomain ?? false,
-							},
-					  } )
-					: removePurchaseMutator.mutateAsync( purchase.ID );
-
-			return mutationPromise
+			return cancelAndRefundMutation
+				.mutateAsync( {
+					purchaseId: purchase.ID,
+					options: {
+						product_id: purchase.product_id,
+						cancel_bundled_domain: cancelBundledDomain ?? false,
+					},
+				} )
 				.then( () => {
 					// One-shot strip on success. If the server's eventual-consistency
 					// window returns the deleted purchase back on a subsequent
@@ -86,13 +83,7 @@ export function useCancelMutationOnConfirm( {
 					setIsPending( false );
 				} );
 		},
-		[
-			purchase,
-			cancelAndRefundMutation,
-			removePurchaseMutator,
-			setPurchaseAutoRenewMutation,
-			queryClient,
-		]
+		[ purchase, cancelAndRefundMutation, setPurchaseAutoRenewMutation, queryClient ]
 	);
 
 	return { isPending, fireMutationOnConfirm, snapshotPurchase };

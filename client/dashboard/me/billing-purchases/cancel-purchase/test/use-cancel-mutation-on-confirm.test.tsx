@@ -35,7 +35,6 @@ function makeMutation() {
 
 function makeMutations() {
 	return {
-		removePurchaseMutator: makeMutation(),
 		cancelAndRefundMutation: makeMutation(),
 		setPurchaseAutoRenewMutation: makeMutation(),
 	};
@@ -57,30 +56,6 @@ function makeTestWrapper( queryClient: QueryClient ) {
 }
 
 describe( 'useCancelMutationOnConfirm', () => {
-	test( 'fireMutationOnConfirm dispatches the remove mutation for REMOVE flow', async () => {
-		const mutations = makeMutations();
-		const queryClient = makeQueryClient();
-
-		const { result } = renderHook(
-			() =>
-				useCancelMutationOnConfirm( {
-					purchase: mockPurchase,
-					...mutations,
-				} ),
-			{ wrapper: makeTestWrapper( queryClient ) }
-		);
-
-		act( () => {
-			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.REMOVE );
-		} );
-
-		await waitFor( () => {
-			expect( mutations.removePurchaseMutator.mutateAsync ).toHaveBeenCalledWith( mockPurchase.ID );
-		} );
-		expect( mutations.cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
-		expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).not.toHaveBeenCalled();
-	} );
-
 	test( 'fireMutationOnConfirm dispatches the auto-renew-off mutation for CANCEL_AUTORENEW flow', async () => {
 		const mutations = makeMutations();
 		const queryClient = makeQueryClient();
@@ -104,7 +79,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				autoRenew: false,
 			} );
 		} );
-		expect( mutations.removePurchaseMutator.mutateAsync ).not.toHaveBeenCalled();
 		expect( mutations.cancelAndRefundMutation.mutateAsync ).not.toHaveBeenCalled();
 	} );
 
@@ -139,11 +113,10 @@ describe( 'useCancelMutationOnConfirm', () => {
 				},
 			} );
 		} );
-		expect( mutations.removePurchaseMutator.mutateAsync ).not.toHaveBeenCalled();
 		expect( mutations.setPurchaseAutoRenewMutation.mutateAsync ).not.toHaveBeenCalled();
 	} );
 
-	test( 'fireMutationOnConfirm strips the deleted purchase from userPurchasesQuery cache after success', async () => {
+	test( 'fireMutationOnConfirm strips the deleted purchase from userPurchasesQuery cache after CANCEL_WITH_REFUND', async () => {
 		const mutations = makeMutations();
 		const queryClient = makeQueryClient();
 
@@ -160,37 +133,13 @@ describe( 'useCancelMutationOnConfirm', () => {
 		);
 
 		act( () => {
-			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.REMOVE );
+			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
 		} );
 
 		await waitFor( () => {
 			expect( queryClient.getQueryData( userPurchasesQuery().queryKey ) ).toEqual( [
 				otherPurchase,
 			] );
-		} );
-	} );
-
-	test( 'fireMutationOnConfirm captures the purchase into snapshotPurchase for REMOVE flow', async () => {
-		const mutations = makeMutations();
-		const queryClient = makeQueryClient();
-
-		const { result } = renderHook(
-			() =>
-				useCancelMutationOnConfirm( {
-					purchase: mockPurchase,
-					...mutations,
-				} ),
-			{ wrapper: makeTestWrapper( queryClient ) }
-		);
-
-		expect( result.current.snapshotPurchase ).toBeNull();
-
-		act( () => {
-			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.REMOVE );
-		} );
-
-		await waitFor( () => {
-			expect( result.current.snapshotPurchase ).toBe( mockPurchase );
 		} );
 	} );
 
@@ -241,7 +190,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 
 	test( 'isPending is true while the mutation is in flight, false after it resolves', async () => {
 		let resolveMutation: ( value?: unknown ) => void = () => {};
-		const removePurchaseMutator = {
+		const cancelAndRefundMutation = {
 			mutateAsync: jest.fn(
 				() =>
 					new Promise( ( resolve ) => {
@@ -249,7 +198,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 					} )
 			),
 		} as unknown as { mutateAsync: jest.Mock };
-		const cancelAndRefundMutation = makeMutation();
 		const setPurchaseAutoRenewMutation = makeMutation();
 		const queryClient = makeQueryClient();
 
@@ -258,7 +206,6 @@ describe( 'useCancelMutationOnConfirm', () => {
 				useCancelMutationOnConfirm( {
 					purchase: mockPurchase,
 					cancelAndRefundMutation,
-					removePurchaseMutator,
 					setPurchaseAutoRenewMutation,
 				} ),
 			{ wrapper: makeTestWrapper( queryClient ) }
@@ -267,7 +214,7 @@ describe( 'useCancelMutationOnConfirm', () => {
 		expect( result.current.isPending ).toBe( false );
 
 		act( () => {
-			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.REMOVE );
+			result.current.fireMutationOnConfirm( CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND );
 		} );
 
 		await waitFor( () => expect( result.current.isPending ).toBe( true ) );
