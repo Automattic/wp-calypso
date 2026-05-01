@@ -119,8 +119,10 @@ function discoverSubTab( streamKey ) {
 }
 
 /**
- * Build the query params for a discover sub-tab so the migrated request hits
- * the API with the same shape the legacy data-layer used.
+ * Build the query params for a discover sub-tab. Mirrors the legacy
+ * `streamApis.discover.query` in
+ * `client/state/data-layer/wpcom/read/streams/index.js` so the migrated request
+ * hits the API with the same shape.
  *
  * - `freshly-pressed` returns the raw extras (no `getQueryString` wrap), so it
  *   does not pick up `meta`/`content_width`/default `orderBy`.
