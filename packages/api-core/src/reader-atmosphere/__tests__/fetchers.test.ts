@@ -3,8 +3,10 @@ import {
 	createConnection,
 	createFollow,
 	createLike,
+	createRepost,
 	deleteFollow,
 	deleteLike,
+	deleteRepost,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -725,6 +727,117 @@ describe( 'atmosphere fetchers', () => {
 			).rejects.toMatchObject( {
 				kind: 'upstream_unavailable',
 			} );
+		} );
+	} );
+
+	describe( 'createRepost', () => {
+		it( 'POSTs to /reposts and unwraps the repost envelope', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts', {
+					post_uri: 'at://did:plc:author/app.bsky.feed.post/3kabc',
+					post_cid: 'bafyreid27zk7',
+				} )
+				.reply( 200, {
+					repost: {
+						uri: 'at://did:plc:caller/app.bsky.feed.repost/3krkeyrkeyrke',
+						cid: 'bafyreig27zk7',
+						rkey: '3krkeyrkeyrke',
+					},
+				} );
+
+			const result = await createRepost( {
+				connectionId: 42,
+				postUri: 'at://did:plc:author/app.bsky.feed.post/3kabc',
+				postCid: 'bafyreid27zk7',
+			} );
+
+			expect( result ).toEqual( {
+				uri: 'at://did:plc:caller/app.bsky.feed.repost/3krkeyrkeyrke',
+				cid: 'bafyreig27zk7',
+				rkey: '3krkeyrkeyrke',
+			} );
+		} );
+
+		it( 'classifies 400 as bad_request', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 400, { error: 'atmosphere_bad_request', message: 'Invalid post reference.' } );
+
+			await expect(
+				createRepost( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
+			).rejects.toMatchObject( { kind: 'bad_request' } );
+		} );
+
+		it( 'classifies 401 as auth_required', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 401, { error: 'atmosphere_unauthenticated' } );
+
+			await expect(
+				createRepost( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+
+		it( 'classifies 429 as rate_limited', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+			await expect(
+				createRepost( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
+			).rejects.toMatchObject( { kind: 'rate_limited' } );
+		} );
+
+		it( 'classifies 502 as upstream_unavailable', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			await expect(
+				createRepost( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
+			).rejects.toMatchObject( { kind: 'upstream_unavailable' } );
+		} );
+	} );
+
+	describe( 'deleteRepost', () => {
+		it( 'DELETEs /reposts/{rkey} and resolves on 204', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 204 );
+
+			await expect(
+				deleteRepost( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).resolves.toBeUndefined();
+		} );
+
+		it( 'classifies 401 as auth_required', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 401, { error: 'atmosphere_unauthenticated' } );
+
+			await expect(
+				deleteRepost( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+
+		it( 'classifies 429 as rate_limited', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+			await expect(
+				deleteRepost( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( { kind: 'rate_limited' } );
+		} );
+
+		it( 'classifies 502 as upstream_unavailable', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			await expect(
+				deleteRepost( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( { kind: 'upstream_unavailable' } );
 		} );
 	} );
 

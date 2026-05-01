@@ -288,6 +288,23 @@ export interface DeleteLikeParams {
 	rkey: string;
 }
 
+export interface CreateRepostParams {
+	connectionId: number;
+	postUri: string;
+	postCid: string;
+}
+
+export interface CreateRepostResult {
+	uri: string;
+	cid: string;
+	rkey: string;
+}
+
+export interface DeleteRepostParams {
+	connectionId: number;
+	rkey: string;
+}
+
 // Metadata embedded in the tag-feed response. The backend always emits
 // the `tag` block; `count` is `null` when the AppView's `hitsTotal` is
 // absent (it is documented as approximate). `url` is currently always
