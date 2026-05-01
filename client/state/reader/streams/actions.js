@@ -90,17 +90,17 @@ function buildStreamQueryParams( {
 	if ( isPoll ) {
 		return getQueryStringForPoll( [], commonQueryParams );
 	}
-	const baseParams = getQueryString( {
+	const extras = {
 		...commonQueryParams,
 		...pageHandle,
 		number,
 		lang,
 		page,
-	} );
+	};
 	if ( streamType === 'discover' ) {
-		return applyDiscoverQueryParams( baseParams, streamKey );
+		return buildDiscoverQueryParams( extras, streamKey );
 	}
-	return baseParams;
+	return getQueryString( extras );
 }
 
 function discoverSubTab( streamKey ) {
@@ -119,21 +119,22 @@ function discoverSubTab( streamKey ) {
 }
 
 /**
- * Augment the base stream query params with discover-specific fields. Mirrors
- * the legacy `streamApis.discover.query` in
+ * Build the query params for a discover sub-tab. Mirrors the legacy
+ * `streamApis.discover.query` in
  * `client/state/data-layer/wpcom/read/streams/index.js` so the migrated request
  * hits the API with the same shape.
  *
- * - `freshly-pressed` ignores all extras and uses only the base params.
+ * - `freshly-pressed` returns the raw extras (no `getQueryString` wrap), so it
+ *   does not pick up `meta`/`content_width`/default `orderBy`.
  * - `recommended` sorts by popularity; `latest` and `tags` sort by date.
  */
-function applyDiscoverQueryParams( baseParams, streamKey ) {
+function buildDiscoverQueryParams( extras, streamKey ) {
 	const subTab = discoverSubTab( streamKey );
 	if ( subTab === 'freshly-pressed' ) {
-		return baseParams;
+		return { ...extras };
 	}
-	return {
-		...baseParams,
+	return getQueryString( {
+		...extras,
 		// Do not supply an empty fallback — `null` is meaningful for
 		// `getDiscoverStreamTags` on the server side.
 		tags: getTagsFromStreamKey( streamKey ),
@@ -141,7 +142,7 @@ function applyDiscoverQueryParams( baseParams, streamKey ) {
 		site_recs_per_card: 5,
 		age_based_decay: 0.5,
 		orderBy: subTab === 'recommended' ? 'popular' : 'date',
-	};
+	} );
 }
 
 async function dispatchMigratedStreamRequest( dispatch, params ) {

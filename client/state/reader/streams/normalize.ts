@@ -123,18 +123,16 @@ export function createStreamSitesFromRecommendedSites( sites: RawSite[] | null |
 	if ( ! Array.isArray( sites ) ) {
 		return [];
 	}
-	return sites
-		.map( ( site ) => ( {
-			feed_ID: site.feed_ID,
-			url: site.URL,
-			site_icon: site.icon?.ico,
-			site_description: site.description,
-			site_name: site.name,
-			feed_URL: site.feed_URL,
-			// `recommended-sites` reducer filters by `feedId`.
-			feedId: site.feed_ID,
-		} ) )
-		.filter( ( item ) => item !== null );
+	return sites.map( ( site ) => ( {
+		feed_ID: site.feed_ID,
+		url: site.URL,
+		site_icon: site.icon?.ico,
+		site_description: site.description,
+		site_name: site.name,
+		feed_URL: site.feed_URL,
+		// `recommended-sites` reducer filters by `feedId`.
+		feedId: site.feed_ID,
+	} ) );
 }
 
 interface CardBuckets {

@@ -386,6 +386,12 @@ describe( 'requestPage thunk', () => {
 			expect( capturedQuery ).not.toHaveProperty( 'site_recs_per_card' );
 			expect( capturedQuery ).not.toHaveProperty( 'age_based_decay' );
 			expect( capturedQuery ).not.toHaveProperty( 'tags' );
+			// Legacy parity: this sub-tab bypassed `getQueryString`, so the
+			// default `orderBy=date`, `meta`, and `content_width` must not be
+			// added by the migrated path either.
+			expect( capturedQuery ).not.toHaveProperty( 'orderBy' );
+			expect( capturedQuery ).not.toHaveProperty( 'meta' );
+			expect( capturedQuery ).not.toHaveProperty( 'content_width' );
 		} );
 
 		it( 'does not rewrite streamKey for non-recommended sub-tabs even when user_interests is present', async () => {
