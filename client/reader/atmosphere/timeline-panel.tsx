@@ -121,11 +121,14 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			const parent = { uri: post.uri, cid: post.cid };
 			// `reply_root` is null when the post itself is the root of its
 			// thread; in that case the post is also its own root. When set,
-			// the timeline shape only carries the root's URI (no `cid`).
-			// Reuse the parent's cid as the best available stand-in — the
-			// backend authoritatively resolves both refs server-side from
-			// the supplied URIs when it constructs the AT Protocol record.
-			const root = post.reply_root ? { uri: post.reply_root.uri, cid: post.cid } : parent;
+			// prefer the root's own `cid` (preserved through the atmosphere
+			// mapper) so reply-to-reply submissions round-trip the actual
+			// root strong-ref to AT-Proto's `createRecord`. Fall back to the
+			// parent's `cid` for protocols that don't carry CIDs natively
+			// (Mastodon) or older backend payloads where the field is absent.
+			const root = post.reply_root
+				? { uri: post.reply_root.uri, cid: post.reply_root.cid ?? post.cid }
+				: parent;
 			openComposer( {
 				kind: 'reply',
 				root,

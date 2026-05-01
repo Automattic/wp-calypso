@@ -8,6 +8,12 @@ export interface SocialAuthor {
 
 export interface SocialReplyRef {
 	uri: string;
+	// Strong-ref CID for the referenced record. Optional because not every
+	// protocol exposes one (Mastodon has no native CIDs) and the atmosphere
+	// backend may omit it during the rollout window for `reply_root` /
+	// `reply_parent`. Reply-to-reply submission paths fall back to the
+	// surrounding post's `cid` when this is missing.
+	cid?: string;
 	author: { id?: string; handle: string };
 }
 

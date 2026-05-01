@@ -310,11 +310,13 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				return;
 			}
 			const parent = { uri: post.uri, cid: post.cid };
-			// See timeline-panel.tsx for the cid-stand-in rationale: the
-			// shared `SocialPost` shape doesn't carry a root cid, so we
-			// reuse the parent's. The backend authoritatively resolves
-			// both refs server-side from the URIs.
-			const root = post.reply_root ? { uri: post.reply_root.uri, cid: post.cid } : parent;
+			// See timeline-panel.tsx for the rationale. Prefer the root's
+			// own `cid` from `reply_root` so reply-to-reply submissions send
+			// the real root strong-ref; fall back to the parent's `cid` for
+			// protocols without CIDs or older backend payloads.
+			const root = post.reply_root
+				? { uri: post.reply_root.uri, cid: post.reply_root.cid ?? post.cid }
+				: parent;
 			openComposer( {
 				kind: 'reply',
 				root,
