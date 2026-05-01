@@ -9,15 +9,17 @@ const TrustCardsRow = styled.div`
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 16px;
-	margin: 32px auto 0;
-	padding: 0 24px 32px;
+	margin: 32px 0 32px;
 	box-sizing: border-box;
-	max-width: 880px;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
-		gap: 24px;
-		padding: 0 40px 48px;
+		gap: 12px;
+		/* Mirror StepContentWrapper's left inset (composite-checkout
+		   checkout-steps.tsx) so the cards line up with the form selectors
+		   above instead of the green step icons in the gutter. */
+		padding-inline-start: 40px;
+		margin-block-end: 48px;
 	}
 `;
 
@@ -25,9 +27,9 @@ const TrustCard = styled.div`
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	padding: 20px 24px;
+	padding: 20px;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	border-radius: 8px;
+	border-radius: 3px;
 	background: ${ ( props ) => props.theme.colors.surface };
 	box-sizing: border-box;
 `;

@@ -9,11 +9,14 @@ const Notice = styled.p`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	max-width: 1280px;
 	box-sizing: border-box;
+	white-space: pre-line;
 `;
 
 // Legal disclosure; must not be translated. The en-dashes (U+2013) are intentional.
+// The newline between "Inc." and "60" renders as a line break via the
+// `white-space: pre-line` rule on Notice above.
 const PROCESSOR_ADDRESS =
-	'Automattic Inc. 60 29th Street #343 – San Francisco, CA 94110 – United States of America';
+	'Automattic Inc.\n60 29th Street #343 – San Francisco, CA 94110 – United States of America';
 
 export default function CheckoutProcessorNotice() {
 	const translate = useTranslate();
