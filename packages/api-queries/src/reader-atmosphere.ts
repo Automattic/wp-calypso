@@ -719,20 +719,37 @@ interface CreatePostContext {
 	// and the placeholder insertion in a single setQueryData call.
 	threadKey: QueryKey | null;
 	threadPrevious: AtmosphereThreadResponse | undefined;
+	// Per-mutation placeholder URI. Two replies in flight at the same
+	// time would otherwise collide on the shared `PENDING_REPLY_URI`
+	// sentinel — `replacePlaceholderInThread` would rewrite whichever
+	// node it found first when the second response landed, losing the
+	// other reply. Each mutation stamps its own suffix so onSuccess
+	// rewrites only its own placeholder.
+	pendingUri: string;
 }
+
+// Module-level counter producing collision-free pending URIs. Suffix is
+// a `#`-separated ordinal so the result is still parseable by anything
+// that does a `startsWith( PENDING_REPLY_URI )` check; `rkeyFromUri`
+// already returns null because the result does not start with `at://`.
+let pendingReplyCounter = 0;
+const nextPendingReplyUri = () => `${ PENDING_REPLY_URI }#${ ++pendingReplyCounter }`;
 
 /**
  * Build a placeholder `AtmosphereFeedItem` representing an in-flight
- * reply. The URI is the `PENDING_REPLY_URI` sentinel so consumers can
- * detect the optimistic state and suppress race-y delete actions.
+ * reply. The URI is a `PENDING_REPLY_URI`-prefixed sentinel unique to
+ * the in-flight mutation so consumers can detect the optimistic state
+ * and suppress race-y delete actions, and so concurrent replies do not
+ * collide on rewrite.
  */
-function buildPlaceholderReply( text: string ): AtmosphereFeedItem {
+function buildPlaceholderReply( text: string, pendingUri: string ): AtmosphereFeedItem {
+	const now = new Date().toISOString();
 	return {
-		uri: PENDING_REPLY_URI,
+		uri: pendingUri,
 		cid: '',
 		author: { did: '', handle: '', display_name: '', avatar: null },
-		created_at: new Date().toISOString(),
-		indexed_at: new Date().toISOString(),
+		created_at: now,
+		indexed_at: now,
 		text,
 		html: '',
 		lang: [],
@@ -783,17 +800,20 @@ function insertPlaceholderUnderParent(
 }
 
 /**
- * Walk the thread tree and rewrite the (single) PENDING_REPLY_URI post
- * with one carrying the real `result.uri` / `result.cid`.
+ * Walk the thread tree and rewrite the placeholder post identified by
+ * `pendingUri` with one carrying the real `result.uri` / `result.cid`.
+ * Matching on a per-mutation URI prevents concurrent replies from
+ * stomping on each other's placeholders.
  */
 function replacePlaceholderInThread(
 	node: AtmosphereThreadNode,
-	result: CreatePostResult
+	result: CreatePostResult,
+	pendingUri: string
 ): AtmosphereThreadNode {
 	if ( node.type !== 'post' ) {
 		return node;
 	}
-	if ( node.post.uri === PENDING_REPLY_URI ) {
+	if ( node.post.uri === pendingUri ) {
 		return {
 			...node,
 			post: { ...node.post, uri: result.uri, cid: result.cid },
@@ -801,13 +821,13 @@ function replacePlaceholderInThread(
 	}
 	let changed = false;
 	const replies = node.replies.map( ( reply ) => {
-		const next = replacePlaceholderInThread( reply, result );
+		const next = replacePlaceholderInThread( reply, result, pendingUri );
 		if ( next !== reply ) {
 			changed = true;
 		}
 		return next;
 	} );
-	const parent = node.parent ? replacePlaceholderInThread( node.parent, result ) : null;
+	const parent = node.parent ? replacePlaceholderInThread( node.parent, result, pendingUri ) : null;
 	if ( ! changed && parent === node.parent ) {
 		return node;
 	}
@@ -848,6 +868,7 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				parentCountsContext: { snapshots: [] },
 				threadKey: null,
 				threadPrevious: undefined,
+				pendingUri: nextPendingReplyUri(),
 			};
 
 			if ( ! vars.reply ) {
@@ -872,7 +893,7 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 			// already-bumped parent post stays bumped.
 			const threadAfterBump = queryClient.getQueryData< AtmosphereThreadResponse >( threadKey );
 			if ( threadAfterBump ) {
-				const placeholder = buildPlaceholderReply( vars.text );
+				const placeholder = buildPlaceholderReply( vars.text, ctx.pendingUri );
 				queryClient.setQueryData< AtmosphereThreadResponse >( threadKey, {
 					...threadAfterBump,
 					thread: insertPlaceholderUnderParent( threadAfterBump.thread, parent.uri, placeholder ),
@@ -894,17 +915,27 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 			}
 			restoreAtmospherePostSnapshots( queryClient, ctx.parentCountsContext );
 		},
-		onSuccess: ( result, vars ) => {
-			if ( ! vars.reply ) {
+		onSuccess: ( result, vars, ctx ) => {
+			if ( ! vars.reply || ! ctx ) {
 				return;
 			}
 			const threadKey = readerAtmosphereKeys.thread( vars.reply.root.uri );
 			const current = queryClient.getQueryData< AtmosphereThreadResponse >( threadKey );
 			if ( ! current ) {
+				// Cache evicted between onMutate and onSuccess (gc, route
+				// change, manual removeQueries). Schedule a refetch so the
+				// real reply does not silently disappear next time the
+				// thread is opened.
+				queryClient.invalidateQueries( { queryKey: threadKey } );
 				return;
 			}
-			const next = replacePlaceholderInThread( current.thread, result );
+			const next = replacePlaceholderInThread( current.thread, result, ctx.pendingUri );
 			if ( next === current.thread ) {
+				// Tree shape shifted between onMutate and onSuccess (e.g. a
+				// concurrent refetch dropped the placeholder branch). Fall
+				// back to invalidate so the reply re-materialises from the
+				// server rather than being silently lost.
+				queryClient.invalidateQueries( { queryKey: threadKey } );
 				return;
 			}
 			queryClient.setQueryData< AtmosphereThreadResponse >( threadKey, {

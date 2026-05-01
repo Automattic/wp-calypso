@@ -1452,7 +1452,10 @@ describe( 'reader-atmosphere hooks', () => {
 				if ( placeholder.type !== 'post' ) {
 					throw new Error( 'expected placeholder to be a post node' );
 				}
-				expect( placeholder.post.uri ).toBe( PENDING_REPLY_URI );
+				// Each in-flight reply is stamped with a unique
+				// `${PENDING_REPLY_URI}#<n>` suffix so concurrent replies
+				// can't collide on rewrite. Match on the prefix.
+				expect( placeholder.post.uri.startsWith( PENDING_REPLY_URI ) ).toBe( true );
 				expect( placeholder.post.text ).toBe( 'reply text' );
 			} );
 
@@ -1521,6 +1524,93 @@ describe( 'reader-atmosphere hooks', () => {
 				readerAtmosphereKeys.timeline( connectionId )
 			);
 			expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 4 );
+		} );
+
+		it( 'invalidates the thread query when the cache was evicted between onMutate and onSuccess', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedThreadWithParent( client );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.delay( 30 )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( {
+					connectionId,
+					text: 'reply text',
+					reply: { root, parent },
+				} );
+				await Promise.resolve();
+			} );
+
+			// Evict the thread cache while the request is in flight, simulating
+			// a route change / gc / removeQueries between onMutate and onSuccess.
+			client.removeQueries( { queryKey: readerAtmosphereKeys.thread( root.uri ) } );
+
+			await promise;
+
+			// onSuccess should have asked the cache to invalidate the thread key
+			// so the user's reply is fetched fresh next time the thread loads.
+			expect(
+				invalidateSpy.mock.calls.some( ( [ filters ] ) => {
+					const queryKey = ( filters as { queryKey?: readonly unknown[] } )?.queryKey;
+					return (
+						Array.isArray( queryKey ) &&
+						JSON.stringify( queryKey ) === JSON.stringify( readerAtmosphereKeys.thread( root.uri ) )
+					);
+				} )
+			).toBe( true );
+		} );
+
+		it( 'invalidates the thread query when the placeholder is no longer in the tree on success', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedThreadWithParent( client );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.delay( 30 )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( {
+					connectionId,
+					text: 'reply text',
+					reply: { root, parent },
+				} );
+				await Promise.resolve();
+			} );
+
+			// Simulate a concurrent refetch that drops the placeholder branch
+			// while the request is still in flight: re-seed the thread cache
+			// without the optimistic placeholder.
+			seedThreadWithParent( client );
+
+			await promise;
+
+			expect(
+				invalidateSpy.mock.calls.some( ( [ filters ] ) => {
+					const queryKey = ( filters as { queryKey?: readonly unknown[] } )?.queryKey;
+					return (
+						Array.isArray( queryKey ) &&
+						JSON.stringify( queryKey ) === JSON.stringify( readerAtmosphereKeys.thread( root.uri ) )
+					);
+				} )
+			).toBe( true );
 		} );
 	} );
 } );
