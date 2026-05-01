@@ -1,5 +1,3 @@
-import { siteApmOverviewQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -26,9 +24,14 @@ function formatRelativeTime( timestamp: number ): string {
 	return `${ diffHr }h ago`;
 }
 
-export default function SlowRequestsList( { site }: { site: Site } ) {
+export default function SlowRequestsList( {
+	site,
+	slowRequests,
+}: {
+	site: Site;
+	slowRequests: ApmSlowRequest[];
+} ) {
 	const router = useRouter();
-	const { data } = useSuspenseQuery( siteApmOverviewQuery( site.ID ) );
 
 	const navigateToRequest = ( request: ApmSlowRequest ) => {
 		router.navigate( {
@@ -53,7 +56,7 @@ export default function SlowRequestsList( { site }: { site: Site } ) {
 						</tr>
 					</thead>
 					<tbody>
-						{ data.slow_requests.map( ( request ) => (
+						{ slowRequests.map( ( request ) => (
 							<tr key={ request.id }>
 								<td style={ { padding: '8px 0' } }>
 									<Button variant="link" onClick={ () => navigateToRequest( request ) }>
