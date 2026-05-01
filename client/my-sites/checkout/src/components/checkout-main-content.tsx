@@ -753,7 +753,7 @@ export default function CheckoutMainContent( {
 				<CheckoutStepGroup
 					loadingHeader={ loadingHeader }
 					onStepChanged={ onStepChanged }
-					scrollToStepOnForwardNavigation
+					scrollToStepOnForwardNavigation={ ! isLargeViewport }
 				>
 					<PerformanceTrackerStop />
 					{ infoMessage }
@@ -1032,7 +1032,11 @@ export default function CheckoutMainContent( {
 						if ( isLargeViewport ) {
 							return (
 								<>
-									{ checkoutMainContent }
+									<div className="checkout-main-column">
+										{ checkoutMainContent }
+										<CheckoutProcessorNotice />
+										<CheckoutTrustCards cart={ responseCart } />
+									</div>
 									{ checkoutSummary }
 								</>
 							);
@@ -1042,12 +1046,6 @@ export default function CheckoutMainContent( {
 					} }
 				</Step.TwoColumnLayout>
 				<LeaveCheckoutModal { ...leaveModalProps } />
-				{ isLargeViewport && (
-					<>
-						<CheckoutProcessorNotice />
-						<CheckoutTrustCards cart={ responseCart } />
-					</>
-				) }
 			</StepContainerV2CheckoutFixer>
 		</SubmitButtonSlotContext.Provider>
 	);
@@ -1942,8 +1940,8 @@ const WPCheckoutWrapper = styled.div< {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
 		grid-template-areas:
 			'main-content main-content sidebar-content sidebar-content'
-			'processor-notice processor-notice processor-notice processor-notice'
-			'trust-cards trust-cards trust-cards trust-cards';
+			'. processor-notice sidebar-content sidebar-content'
+			'. trust-cards sidebar-content sidebar-content';
 		justify-items: end;
 	}
 
