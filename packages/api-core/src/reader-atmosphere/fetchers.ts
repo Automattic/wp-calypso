@@ -286,16 +286,14 @@ export interface GetAtmosphereTagFeedParams {
 
 export async function createRepost( params: CreateRepostParams ): Promise< CreateRepostResult > {
 	try {
-		const res = ( await wpcom.req.post(
-			{
-				path: `/reader/atmosphere/connections/${ params.connectionId }/reposts`,
-				apiNamespace: NAMESPACE,
-			},
-			{
+		const res = ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ params.connectionId }/reposts`,
+			apiNamespace: NAMESPACE,
+			body: {
 				post_uri: params.postUri,
 				post_cid: params.postCid,
-			}
-		) ) as { repost: CreateRepostResult };
+			},
+		} ) ) as { repost: CreateRepostResult };
 		return res.repost;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
