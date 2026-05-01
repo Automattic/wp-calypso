@@ -1,0 +1,16 @@
+.follow-button--following {
+	.follow-button__label-unfollow {
+		display: none;
+	}
+
+	&:hover,
+	&:focus-visible {
+		.follow-button__label-following {
+			display: none;
+		}
+
+		.follow-button__label-unfollow {
+			display: inline;
+		}
+	}
+}

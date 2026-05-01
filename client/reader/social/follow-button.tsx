@@ -1,3 +1,5 @@
+import './follow-button.scss';
+
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 
@@ -20,10 +22,7 @@ export interface FollowButtonProps {
  * Three states:
  * - `isFollowing: false, isFollowedBy: false` → "Follow" (primary)
  * - `isFollowing: false, isFollowedBy: true`  → "Follow back" (primary)
- * - `isFollowing: true`                       → "Following" (secondary)
- *
- * (The Following state is implemented in a follow-up task; this slice
- * covers Follow and Follow back only.)
+ * - `isFollowing: true`                       → "Following" (secondary); on hover/focus, reveals "Unfollow" label
  */
 export function FollowButton( {
 	isFollowing,
@@ -35,10 +34,6 @@ export function FollowButton( {
 	const translate = useTranslate();
 
 	if ( isFollowing ) {
-		// Following state lands in a follow-up task; render the same
-		// secondary affordance with the Unfollow handler in the meantime
-		// so consumers passing isFollowing get a sensible click target
-		// rather than nothing.
 		return (
 			<Button
 				variant="secondary"
@@ -46,7 +41,8 @@ export function FollowButton( {
 				onClick={ onUnfollow }
 				className="follow-button follow-button--following"
 			>
-				{ translate( 'Following' ) }
+				<span className="follow-button__label-following">{ translate( 'Following' ) }</span>
+				<span className="follow-button__label-unfollow">{ translate( 'Unfollow' ) }</span>
 			</Button>
 		);
 	}
