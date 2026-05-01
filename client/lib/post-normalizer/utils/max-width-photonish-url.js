@@ -10,6 +10,24 @@ const SERVICE_HOSTNAME_PATTERNS = {
 	gravatar: /(^|\.)gravatar\.com$/,
 };
 
+/**
+ * Appends or replaces image-sizing query parameters on a Photon-compatible or
+ * Gravatar CDN URL so that the image is served at the requested display width.
+ *
+ * For Photon/WordPress.com hosts the function sets the `w` (width), `quality`,
+ * and `strip` parameters and removes conflicting sizing params (`h`, `crop`,
+ * `resize`, `fit`). For Gravatar hosts it sets the `s` (size) parameter instead.
+ * The requested width is automatically doubled on high-DPI (retina) displays.
+ *
+ * Path-relative and path-absolute URLs (those without a host component) are
+ * returned unchanged. URLs that do not match a recognised CDN hostname are also
+ * returned with sizing params appended (best-effort).
+ *
+ * @param {string} imageURL - The original image URL to transform.
+ * @param {number} width - The desired display width in CSS pixels.
+ * @returns {string} The transformed URL with sizing parameters applied, or the
+ *   original `imageURL` if it is falsy or has no host component.
+ */
 export function maxWidthPhotonishURL( imageURL, width ) {
 	if ( ! imageURL ) {
 		return imageURL;
