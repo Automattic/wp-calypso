@@ -10,7 +10,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfilePanel } from '../author-profile-panel';
-import type { AtmosphereAuthorProfile, AtmosphereConnection } from '@automattic/api-core';
+import type { AtmosphereScopedProfile, AtmosphereConnection } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -25,7 +25,7 @@ const connection: AtmosphereConnection = {
 	avatar: null,
 };
 
-const profilePayload: AtmosphereAuthorProfile = {
+const profilePayload: AtmosphereScopedProfile = {
 	did: 'did:plc:abc',
 	handle: 'alice.bsky.social',
 	display_name: 'Alice',
@@ -35,6 +35,7 @@ const profilePayload: AtmosphereAuthorProfile = {
 	banner: null,
 	bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 	counts: { followers: 10, follows: 5, posts: 3 },
+	viewer: { following: null, following_rkey: null, followed_by: false },
 };
 
 const feedItem = {
@@ -84,7 +85,7 @@ describe( 'AuthorProfilePanel', () => {
 
 	it( 'renders the header and feed once both queries resolve', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -108,7 +109,7 @@ describe( 'AuthorProfilePanel', () => {
 	it( 'fires profile_viewed on mount', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -133,7 +134,7 @@ describe( 'AuthorProfilePanel', () => {
 
 	it( 'shows a not-found empty state when the profile endpoint 404s', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/missing' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/missing' )
 			.reply( 404, { error: 'atmosphere_not_found' } );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/missing/feed' )
@@ -150,7 +151,7 @@ describe( 'AuthorProfilePanel', () => {
 	it( 'allows retry on a 502 error', async () => {
 		const user = userEvent.setup();
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -170,7 +171,7 @@ describe( 'AuthorProfilePanel', () => {
 		expect( retries.length ).toBeGreaterThanOrEqual( 1 );
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -186,7 +187,7 @@ describe( 'AuthorProfilePanel', () => {
 		const user = userEvent.setup();
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -212,7 +213,7 @@ describe( 'AuthorProfilePanel', () => {
 
 	it( 'paginates when sentinel comes into view', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -248,7 +249,7 @@ describe( 'AuthorProfilePanel', () => {
 			window.history.replaceState( {}, '', '/reader/atmosphere/42/profile/alice.bsky.social' );
 
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			const feedScope = nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -270,7 +271,7 @@ describe( 'AuthorProfilePanel', () => {
 			);
 
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			const feedScope = nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -288,7 +289,7 @@ describe( 'AuthorProfilePanel', () => {
 			window.history.replaceState( {}, '', '/reader/atmosphere/42/profile/alice.bsky.social' );
 
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -315,7 +316,7 @@ describe( 'AuthorProfilePanel', () => {
 			);
 
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -343,7 +344,7 @@ describe( 'AuthorProfilePanel', () => {
 			);
 
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 429, { error: 'atmosphere_rate_limited' } );
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -385,7 +386,7 @@ describe( 'AuthorProfilePanel', () => {
 			);
 
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -410,7 +411,7 @@ describe( 'AuthorProfilePanel', () => {
 			);
 
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -430,7 +431,7 @@ describe( 'AuthorProfilePanel', () => {
 
 	it( 'dedupes feed items by uri across pages (Bluesky returns repeats)', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )

@@ -1,4 +1,10 @@
-import { useAuthorFeedInfiniteQuery, useAuthorProfileQuery } from '@automattic/api-queries';
+import {
+	followAtmosphereActorMutation,
+	unfollowAtmosphereActorMutation,
+	useAtmosphereScopedProfileQuery,
+	useAuthorFeedInfiniteQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -6,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import {
 	AuthorProfileHeader,
+	FollowButton,
 	SocialAnalyticsProvider,
 	SocialFeedList,
 	SocialPostCard,
@@ -15,6 +22,7 @@ import {
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
 import { projectAtmosphereError } from './error-projection';
@@ -22,7 +30,7 @@ import { errorMessage } from './profile-errors';
 import { getProfileUrl, getThreadUrl, getTimelineUrl } from './route';
 import type {
 	AtmosphereAuthorFeedFilter,
-	AtmosphereAuthorProfile,
+	AtmosphereScopedProfile,
 	AtmosphereConnection,
 	AtmosphereError,
 	AtmosphereFeedItem,
@@ -74,7 +82,10 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		feed: null,
 	} );
 
-	const profile = useAuthorProfileQuery( { actor } );
+	const queryClient = useQueryClient();
+	const profile = useAtmosphereScopedProfileQuery( { connectionId: connection.id, actor } );
+	const followMut = useMutation( followAtmosphereActorMutation( queryClient ) );
+	const unfollowMut = useMutation( unfollowAtmosphereActorMutation( queryClient ) );
 	const feed = useAuthorFeedInfiniteQuery( { actor, filter } );
 
 	// Reset the error_shown dedup ref when navigating between profiles so the
@@ -271,6 +282,76 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl ]
 	);
 
+	const isOwnProfile = profile.data?.did === connection.did;
+
+	const handleFollow = useCallback( () => {
+		if ( ! profile.data ) {
+			return;
+		}
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_follow_clicked', {
+				connection_id: connection.id,
+				actor,
+				actor_did: profile.data.did,
+				was_followed_by: profile.data.viewer.followed_by,
+			} )
+		);
+		followMut.mutate(
+			{ connectionId: connection.id, actor, subjectDid: profile.data.did },
+			{
+				onError: ( error ) => {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_follow_error', {
+							connection_id: connection.id,
+							actor,
+							action: 'follow',
+							error_kind: error.kind,
+						} )
+					);
+					dispatch(
+						errorNotice( errorMessage( error, translate ), {
+							id: 'atmosphere-follow-error',
+						} )
+					);
+				},
+			}
+		);
+	}, [ profile.data, connection.id, actor, dispatch, followMut, translate ] );
+
+	const handleUnfollow = useCallback( () => {
+		if ( ! profile.data?.viewer.following_rkey ) {
+			return;
+		}
+		const rkey = profile.data.viewer.following_rkey;
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_unfollow_clicked', {
+				connection_id: connection.id,
+				actor,
+				actor_did: profile.data.did,
+			} )
+		);
+		unfollowMut.mutate(
+			{ connectionId: connection.id, actor, rkey },
+			{
+				onError: ( error ) => {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_follow_error', {
+							connection_id: connection.id,
+							actor,
+							action: 'unfollow',
+							error_kind: error.kind,
+						} )
+					);
+					dispatch(
+						errorNotice( errorMessage( error, translate ), {
+							id: 'atmosphere-follow-error',
+						} )
+					);
+				},
+			}
+		);
+	}, [ profile.data, connection.id, actor, dispatch, unfollowMut, translate ] );
+
 	const renderHeaderError = ( error: AtmosphereError ) => {
 		const noRetry = new Set< AtmosphereError[ 'kind' ] >( [
 			'auth_required',
@@ -298,7 +379,18 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		);
 	};
 
-	const renderHeaderBody = ( profileData: AtmosphereAuthorProfile ) => {
+	const renderHeaderBody = ( profileData: AtmosphereScopedProfile ) => {
+		const followButton =
+			! isOwnProfile && profileData.viewer ? (
+				<FollowButton
+					isFollowing={ Boolean( profileData.viewer.following ) }
+					isFollowedBy={ profileData.viewer.followed_by }
+					isPending={ followMut.isPending || unfollowMut.isPending }
+					onFollow={ handleFollow }
+					onUnfollow={ handleUnfollow }
+				/>
+			) : null;
+
 		return (
 			<SocialProfileCard
 				avatar={ profileData.avatar }
@@ -308,6 +400,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				bioHtml={ profileData.description_html }
 				stats={ stats }
 				statsLabel={ String( translate( 'Profile stats' ) ) }
+				headerActions={ followButton }
 			/>
 		);
 	};
