@@ -135,8 +135,8 @@ function buildDiscoverQueryParams( extras, streamKey ) {
 	}
 	return getQueryString( {
 		...extras,
-		// Do not supply an empty fallback — `null` is meaningful for
-		// `getDiscoverStreamTags` on the server side.
+		// `getTagsFromStreamKey` always returns an array (empty when no tags),
+		// never `null`. `tags=[]` is sent through to the API as-is.
 		tags: getTagsFromStreamKey( streamKey ),
 		tag_recs_per_card: 5,
 		site_recs_per_card: 5,
