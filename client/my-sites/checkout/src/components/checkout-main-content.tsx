@@ -753,7 +753,7 @@ export default function CheckoutMainContent( {
 				<CheckoutStepGroup
 					loadingHeader={ loadingHeader }
 					onStepChanged={ onStepChanged }
-					scrollToStepOnForwardNavigation
+					scrollToStepOnForwardNavigation={ ! isLargeViewport }
 				>
 					<PerformanceTrackerStop />
 					{ infoMessage }
