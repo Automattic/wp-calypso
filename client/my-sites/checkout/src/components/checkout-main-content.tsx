@@ -1181,9 +1181,19 @@ const StepContainerV2CheckoutFixer = styled.div< {
 	${ ( props ) =>
 		props.isLargeViewport &&
 		css`
-			div:has( .checkout-sidebar-content ) {
+			/*
+			 * Stick the sidebar itself, not an ancestor div picked by :has().
+			 * The :has() selector previously matched multiple wrappers (the
+			 * fixer + every Step.TwoColumnLayout-internal div containing the
+			 * sidebar), each of which became sticky with no bounded containing
+			 * block — so the upsell card painted over the trust cards row at
+			 * scroll-bottom. Pinning the sidebar element directly keeps its
+			 * containing block bounded by the TwoColumnLayout's right column.
+			 */
+			.checkout-sidebar-content {
 				position: sticky;
 				top: 32px;
+				align-self: start;
 			}
 			.checkout__summary-area,
 			.checkout-loading-sidebar {
