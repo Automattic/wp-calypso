@@ -1,14 +1,18 @@
 import {
 	readerAtmosphereKeys,
 	type AtmosphereFeedItem,
+	type AtmosphereScopedProfile,
 	type AtmosphereThreadResponse,
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 } from '@automattic/api-core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	atmosphereScopedProfileQuery,
+	followAtmosphereActorMutation,
+	unfollowAtmosphereActorMutation,
 	useAuthorFeedInfiniteQuery,
 	useAuthorProfileQuery,
 	useConnectionQuery,
@@ -576,6 +580,189 @@ describe( 'reader-atmosphere hooks', () => {
 				queryKey: readerAtmosphereKeys.authorFeed( 'alice.bsky.social' ),
 			} );
 			expect( matched ).toHaveLength( 2 );
+		} );
+	} );
+
+	describe( 'follow / unfollow mutations', () => {
+		function makeScopedProfile(
+			overrides: Partial< AtmosphereScopedProfile > = {}
+		): AtmosphereScopedProfile {
+			return {
+				did: 'did:plc:target',
+				handle: 'alice.bsky.social',
+				display_name: 'Alice',
+				description: '',
+				description_html: '',
+				avatar: null,
+				banner: null,
+				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
+				counts: { followers: 0, follows: 0, posts: 0 },
+				viewer: {
+					following: null,
+					following_rkey: null,
+					followed_by: false,
+				},
+				...overrides,
+			};
+		}
+
+		it( 'followAtmosphereActorMutation optimistically marks following and confirms on success', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = atmosphereScopedProfileQuery( {
+				connectionId: 1,
+				actor: 'alice.bsky.social',
+			} ).queryKey;
+			client.setQueryData( key, makeScopedProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/1/follows' )
+				.reply( 201, {
+					follow: {
+						uri: 'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke',
+						cid: 'bafy',
+						rkey: '3krkeyrkeyrke',
+					},
+				} );
+
+			const { result } = renderHook( () => useMutation( followAtmosphereActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: 'alice.bsky.social',
+					subjectDid: 'did:plc:target',
+				} );
+			} );
+
+			const updated = client.getQueryData< AtmosphereScopedProfile >( key );
+			expect( updated?.viewer.following ).toBe(
+				'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke'
+			);
+			expect( updated?.viewer.following_rkey ).toBe( '3krkeyrkeyrke' );
+		} );
+
+		it( 'followAtmosphereActorMutation rolls back on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = atmosphereScopedProfileQuery( {
+				connectionId: 1,
+				actor: 'alice.bsky.social',
+			} ).queryKey;
+			const original = makeScopedProfile();
+			client.setQueryData( key, original );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/1/follows' )
+				.reply( 502, { code: 'atmosphere_upstream_unavailable', message: 'Bluesky unreachable.' } );
+
+			const { result } = renderHook( () => useMutation( followAtmosphereActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId: 1,
+						actor: 'alice.bsky.social',
+						subjectDid: 'did:plc:target',
+					} );
+				} catch {
+					// expected
+				}
+			} );
+
+			const after = client.getQueryData< AtmosphereScopedProfile >( key );
+			expect( after?.viewer.following ).toBeNull();
+			expect( after?.viewer.following_rkey ).toBeNull();
+		} );
+
+		it( 'unfollowAtmosphereActorMutation optimistically clears following and stays cleared on success', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = atmosphereScopedProfileQuery( {
+				connectionId: 1,
+				actor: 'alice.bsky.social',
+			} ).queryKey;
+			client.setQueryData(
+				key,
+				makeScopedProfile( {
+					viewer: {
+						following: 'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke',
+						following_rkey: '3krkeyrkeyrke',
+						followed_by: false,
+					},
+				} )
+			);
+
+			// deleteFollow uses wpcom.req.post( { ..., method: 'DELETE' } ).
+			// The wpcom → send-request → wpcom-xhr-request pipeline resolves
+			// `method: 'DELETE'` to a real HTTP DELETE via superagent['delete'](),
+			// so nock must intercept DELETE (not POST with _method=DELETE).
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/1/follows/3krkeyrkeyrke' )
+				.reply( 204 );
+
+			const { result } = renderHook(
+				() => useMutation( unfollowAtmosphereActorMutation( client ) ),
+				{ wrapper: makeWrapper( client ) }
+			);
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: 'alice.bsky.social',
+					rkey: '3krkeyrkeyrke',
+				} );
+			} );
+
+			const after = client.getQueryData< AtmosphereScopedProfile >( key );
+			expect( after?.viewer.following ).toBeNull();
+			expect( after?.viewer.following_rkey ).toBeNull();
+		} );
+
+		it( 'unfollowAtmosphereActorMutation rolls back on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = atmosphereScopedProfileQuery( {
+				connectionId: 1,
+				actor: 'alice.bsky.social',
+			} ).queryKey;
+			const original = makeScopedProfile( {
+				viewer: {
+					following: 'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke',
+					following_rkey: '3krkeyrkeyrke',
+					followed_by: true,
+				},
+			} );
+			client.setQueryData( key, original );
+
+			// Same real-DELETE wire shape as Test C, but reply 502.
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/1/follows/3krkeyrkeyrke' )
+				.reply( 502, { code: 'atmosphere_upstream_unavailable', message: 'Bluesky unreachable.' } );
+
+			const { result } = renderHook(
+				() => useMutation( unfollowAtmosphereActorMutation( client ) ),
+				{ wrapper: makeWrapper( client ) }
+			);
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId: 1,
+						actor: 'alice.bsky.social',
+						rkey: '3krkeyrkeyrke',
+					} );
+				} catch {
+					// expected
+				}
+			} );
+
+			const after = client.getQueryData< AtmosphereScopedProfile >( key );
+			expect( after?.viewer.following ).toBe(
+				'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke'
+			);
+			expect( after?.viewer.following_rkey ).toBe( '3krkeyrkeyrke' );
+			expect( after?.viewer.followed_by ).toBe( true );
 		} );
 	} );
 } );
