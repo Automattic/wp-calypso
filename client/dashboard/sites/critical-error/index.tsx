@@ -2,9 +2,14 @@ import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Button,
+	Notice,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon, envelope, formatListBullets, help } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -16,6 +21,7 @@ import { Text } from '../../components/text';
 import { hasHostingFeature } from '../../utils/site-features';
 import {
 	getJetpackCriticalErrorMessage,
+	getJetpackRecoverySessionErrors,
 	isInJetpackCriticalErrorState,
 } from '../../utils/site-jetpack-critical-error';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
@@ -62,6 +68,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	}, [ hasRecovered, navigate, siteSlug ] );
 
 	const message = getJetpackCriticalErrorMessage( site );
+	const recoveryErrors = isAdmin ? getJetpackRecoverySessionErrors( site ) : [];
 
 	const items: Item[] = [];
 	if ( isAdmin ) {
@@ -114,19 +121,60 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 			}
 			size="small"
 		>
-			<Card>
-				{ items.map( ( item, index ) => (
-					<Fragment key={ index }>
-						<CardBody>
-							<HStack spacing={ 3 } alignment="center" justify="flex-start">
-								<Icon icon={ item.icon } size={ 20 } />
-								<Text>{ item.text }</Text>
-							</HStack>
-						</CardBody>
-						{ index < items.length - 1 && <CardDivider /> }
-					</Fragment>
-				) ) }
-			</Card>
+			<VStack spacing={ 4 }>
+				{ recoveryErrors.length > 0 && (
+					<VStack spacing={ 2 }>
+						{ recoveryErrors.map( ( error, index ) => (
+							<Notice
+								key={ error.signature ?? `${ error.kind }-${ error.slug }-${ index }` }
+								status="error"
+								isDismissible={ false }
+							>
+								<VStack spacing={ 1 }>
+									<Text weight={ 500 }>
+										{ sprintf(
+											/* translators: 1: extension type (e.g. "plugin"), 2: extension slug */
+											__( 'Error in %1$s: %2$s' ),
+											error.kind,
+											error.slug
+										) }
+										{ error.version
+											? ' ' +
+											  sprintf(
+													/* translators: %s: extension version */
+													__( '(v%s)' ),
+													error.version
+											  )
+											: '' }
+									</Text>
+									<Text>{ error.message }</Text>
+									<Text variant="muted">
+										{ sprintf(
+											/* translators: 1: file path, 2: line number */
+											__( '%1$s:%2$d' ),
+											error.file,
+											error.line
+										) }
+									</Text>
+								</VStack>
+							</Notice>
+						) ) }
+					</VStack>
+				) }
+				<Card>
+					{ items.map( ( item, index ) => (
+						<Fragment key={ index }>
+							<CardBody>
+								<HStack spacing={ 3 } alignment="center" justify="flex-start">
+									<Icon icon={ item.icon } size={ 20 } />
+									<Text>{ item.text }</Text>
+								</HStack>
+							</CardBody>
+							{ index < items.length - 1 && <CardDivider /> }
+						</Fragment>
+					) ) }
+				</Card>
+			</VStack>
 		</PageLayout>
 	);
 };

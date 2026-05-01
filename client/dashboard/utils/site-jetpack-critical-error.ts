@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { Site } from '@automattic/api-core';
+import type { JetpackRecoverySessionError, Site } from '@automattic/api-core';
 
 const FIFTEEN_MINUTES = 15 * 60;
 
@@ -39,6 +39,10 @@ export function hasJetpackCriticalError( site: Site ): boolean {
 // Criteria for being redirected to /critical-error.
 export function isInJetpackCriticalErrorState( site: Site ): boolean {
 	return !! site.__inaccessible_jetpack_error && hasJetpackCriticalError( site );
+}
+
+export function getJetpackRecoverySessionErrors( site: Site ): JetpackRecoverySessionError[] {
+	return site.options?.jetpack_recovery_mode_status?.recovery_session_errors ?? [];
 }
 
 export function getJetpackCriticalErrorMessage( site: Site ): string | null {
