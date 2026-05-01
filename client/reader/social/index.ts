@@ -3,6 +3,9 @@ import './style.scss';
 export { SocialProfileCard } from './profile-card';
 export type { SocialProfileCardProps, SocialProfileStat } from './profile-card';
 
+export { FollowButton } from './follow-button';
+export type { FollowButtonProps } from './follow-button';
+
 export { SocialPostCard } from './components/post-card';
 export { SocialFeedList } from './components/feed-list';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
