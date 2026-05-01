@@ -13,7 +13,7 @@ export { useGetUnreadConversations } from './use-get-unread-conversations';
 export { useGetZendeskConversation } from './use-get-zendesk-conversation';
 export { calculateUnread } from './use-get-unread-conversations';
 
-export { isTestModeEnvironment, getBadRatingReasons } from './util';
+export { isTestModeEnvironment, getBadRatingReasons, playNotificationSound } from './util';
 
 export {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,

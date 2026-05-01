@@ -68,6 +68,16 @@ function getIndividualConfig( options = {} ) {
 						from: path.join( __dirname, 'help-icon.svg' ),
 						to: path.join( __dirname, 'dist' ),
 					},
+					{
+						from: path.join(
+							__dirname,
+							'../../packages/help-center/src/live-ai-assistant/tools/notification-sound-tool/the-sounds.mp3'
+						),
+						to: path.join(
+							__dirname,
+							'dist/@packages/help-center/src/live-ai-assistant/tools/notification-sound-tool/the-sounds.mp3'
+						),
+					},
 				],
 			} ),
 		],

@@ -1,37 +1,82 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+	GET_BLOCK_EXAMPLES_TOOL_NAME,
+	getBlockExamplesToolDefinition,
+	executeGetBlockExamplesTool,
+} from './tools/block-examples-tool';
+import {
+	FORMAT_TEXT_TOOL_NAME,
+	GET_BLOCK_TOOL_NAME,
+	GET_BLOCK_TYPE_TOOL_NAME,
+	GET_BLOCK_TYPES_TOOL_NAME,
 	GET_EDITOR_BLOCKS_TOOL_NAME,
 	GET_INSERTER_ITEMS_TOOL_NAME,
 	GET_SELECTED_BLOCK_TOOL_NAME,
 	HAS_SELECTED_BLOCK_TOOL_NAME,
+	INSERT_BLOCK_TOOL_NAME,
+	INSERT_BLOCKS_TOOL_NAME,
+	MOVE_BLOCK_TOOL_NAME,
+	REMOVE_BLOCK_TOOL_NAME,
+	REPLACE_BLOCK_TOOL_NAME,
 	SELECT_BLOCK_TOOL_NAME,
+	UPDATE_BLOCK_ATTRIBUTES_TOOL_NAME,
+	executeFormatTextTool,
+	executeGetBlockTool,
+	executeGetBlockTypeTool,
+	executeGetBlockTypesTool,
 	executeGetEditorBlocksTool,
 	executeGetInserterItemsTool,
 	executeGetSelectedBlockTool,
 	executeHasSelectedBlockTool,
+	executeInsertBlockTool,
+	executeInsertBlocksTool,
+	executeMoveBlockTool,
+	executeRemoveBlockTool,
+	executeReplaceBlockTool,
 	executeSelectBlockTool,
+	executeUpdateBlockAttributesTool,
+	getBlockTitle,
+	formatTextToolDefinition,
+	getBlockToolDefinition,
+	getBlockTypeToolDefinition,
+	getBlockTypesToolDefinition,
 	getEditorBlocksToolDefinition,
 	getInserterItemsToolDefinition,
 	getSelectedBlockToolDefinition,
 	hasSelectedBlockToolDefinition,
+	insertBlockToolDefinition,
+	insertBlocksToolDefinition,
+	moveBlockToolDefinition,
+	removeBlockToolDefinition,
+	replaceBlockToolDefinition,
 	selectBlockToolDefinition,
+	updateBlockAttributesToolDefinition,
 } from './tools/editor-blocks-tool';
 import {
-	HIGHLIGHT_TOOL_NAME,
-	highlightToolDefinition,
-	executeHighlightTool,
-} from './tools/highlight-tool';
+	GET_POST_INFO_TOOL_NAME,
+	PUBLISH_POST_TOOL_NAME,
+	REDO_TOOL_NAME,
+	SAVE_POST_TOOL_NAME,
+	SET_POST_TITLE_TOOL_NAME,
+	UNDO_TOOL_NAME,
+	executeGetPostInfoTool,
+	executePublishPostTool,
+	executeRedoTool,
+	executeSavePostTool,
+	executeSetPostTitleTool,
+	executeUndoTool,
+	getPostInfoToolDefinition,
+	publishPostToolDefinition,
+	redoToolDefinition,
+	savePostToolDefinition,
+	setPostTitleToolDefinition,
+	undoToolDefinition,
+} from './tools/editor-post-tool';
 import {
-	PAGE_SUMMARY_TOOL_NAME,
-	pageSummaryToolDefinition,
-	executePageSummaryTool,
-} from './tools/page-summary-tool';
-import {
-	POINTED_ELEMENT_TOOL_NAME,
-	pointedElementToolDefinition,
-	executePointedElementTool,
-} from './tools/pointed-element-tool';
-import type { PageSummaryMetadata, PointerPosition } from './tools/shared';
+	PLAY_DONE_SOUND_TOOL_NAME,
+	playDoneSoundToolDefinition,
+	executePlayDoneSoundTool,
+} from './tools/notification-sound-tool';
 
 export type RealtimeStatus =
 	| 'idle'
@@ -47,6 +92,15 @@ export interface RealtimeTranscriptEntry {
 	role: 'user' | 'assistant';
 	text: string;
 	isFinal: boolean;
+	/** When this message bubble first appeared; used to interleave with tool activity. */
+	timestamp: number;
+}
+
+export interface RealtimeToolEvent {
+	id: string;
+	label: string;
+	status: 'done' | 'error';
+	timestamp: number;
 }
 
 export interface UseRealtimeSessionOptions {
@@ -76,19 +130,138 @@ interface UseRealtimeSessionResult {
 	error: string | null;
 	isMuted: boolean;
 	transcript: RealtimeTranscriptEntry[];
+	toolEvents: RealtimeToolEvent[];
 	start: () => Promise< void >;
 	stop: () => void;
 	toggleMute: () => void;
 	sendText: ( text: string ) => void;
 	sendEvent: ( eventName: string, details?: string ) => void;
-	updatePointerPosition: ( x: number, y: number ) => void;
 }
 
 const DEFAULT_MODEL = 'gpt-realtime';
 const DEFAULT_VOICE = 'alloy';
 const DEFAULT_TOKEN_ENDPOINT = '/openai/realtime-token';
 const OPENAI_REALTIME_URL = 'https://api.openai.com/v1/realtime/calls';
-const POINTER_HINT_DURATION_MS = 4000;
+const MAX_TOOL_EVENTS = 40;
+
+/**
+ * Map a tool name + arguments + result to a short, user-facing label that we
+ * surface in the assistant panel as a subtle activity log entry. Read-only or
+ * housekeeping tools (lookups, page summaries, etc.) return null so they do
+ * not clutter the log.
+ */
+function describeToolCall(
+	name: string | undefined,
+	rawArgs: unknown,
+	result: unknown
+): string | null {
+	if ( ! name ) {
+		return null;
+	}
+
+	const args = ( () => {
+		try {
+			if ( typeof rawArgs === 'string' ) {
+				return JSON.parse( rawArgs ) as Record< string, unknown >;
+			}
+			if ( rawArgs && typeof rawArgs === 'object' ) {
+				return rawArgs as Record< string, unknown >;
+			}
+		} catch {
+			// fall through
+		}
+		return {} as Record< string, unknown >;
+	} )();
+
+	const isObjectResult = !! result && typeof result === 'object';
+	const ok = isObjectResult && ( result as { ok?: boolean } ).ok !== false;
+	const errorPrefix = ok ? '' : 'Failed: ';
+
+	const blockTitleFromArg = ( key: string ): string | null => {
+		const val = args[ key ];
+		return typeof val === 'string' && val ? getBlockTitle( val ) : null;
+	};
+
+	switch ( name ) {
+		case INSERT_BLOCK_TOOL_NAME: {
+			const title = blockTitleFromArg( 'name' );
+			return `${ errorPrefix }Inserted ${ title || 'a block' }`;
+		}
+		case INSERT_BLOCKS_TOOL_NAME: {
+			const blocks = Array.isArray( args.blocks ) ? args.blocks : [];
+			if ( blocks.length === 1 ) {
+				const first = blocks[ 0 ] as { name?: string } | undefined;
+				const title = first?.name ? getBlockTitle( first.name ) : null;
+				return `${ errorPrefix }Inserted ${ title || 'a block' }`;
+			}
+			return `${ errorPrefix }Inserted ${ blocks.length } blocks`;
+		}
+		case UPDATE_BLOCK_ATTRIBUTES_TOOL_NAME: {
+			const attrs = ( args.attributes as Record< string, unknown > ) || {};
+			const style = attrs.style as { color?: { text?: string; background?: string } } | undefined;
+			if ( style?.color?.text ) {
+				return `${ errorPrefix }Set text color`;
+			}
+			if ( style?.color?.background ) {
+				return `${ errorPrefix }Set background color`;
+			}
+			if ( typeof attrs.level === 'number' ) {
+				return `${ errorPrefix }Changed heading level`;
+			}
+			if ( typeof attrs.content === 'string' ) {
+				return `${ errorPrefix }Updated text`;
+			}
+			return `${ errorPrefix }Updated block`;
+		}
+		case REPLACE_BLOCK_TOOL_NAME: {
+			const title = blockTitleFromArg( 'name' );
+			return `${ errorPrefix }Replaced with ${ title || 'block' }`;
+		}
+		case REMOVE_BLOCK_TOOL_NAME:
+			return `${ errorPrefix }Removed block`;
+		case MOVE_BLOCK_TOOL_NAME: {
+			const dir = typeof args.direction === 'string' ? args.direction : null;
+			if ( dir === 'up' ) {
+				return `${ errorPrefix }Moved block up`;
+			}
+			if ( dir === 'down' ) {
+				return `${ errorPrefix }Moved block down`;
+			}
+			if ( typeof args.to_index === 'number' ) {
+				return `${ errorPrefix }Moved block`;
+			}
+			return `${ errorPrefix }Moved block`;
+		}
+		case SELECT_BLOCK_TOOL_NAME:
+			return `${ errorPrefix }Selected block`;
+		case FORMAT_TEXT_TOOL_NAME: {
+			const fmt = typeof args.format === 'string' ? args.format : null;
+			const verbs: Record< string, string > = {
+				bold: 'Made bold',
+				italic: 'Italicized',
+				strikethrough: 'Struck through',
+				code: 'Formatted as code',
+				link: 'Linked',
+				underline: 'Underlined',
+				subscript: 'Made subscript',
+				superscript: 'Made superscript',
+			};
+			return `${ errorPrefix }${ ( fmt && verbs[ fmt ] ) || 'Formatted text' }`;
+		}
+		case SET_POST_TITLE_TOOL_NAME:
+			return `${ errorPrefix }Set post title`;
+		case SAVE_POST_TOOL_NAME:
+			return `${ errorPrefix }Saved draft`;
+		case PUBLISH_POST_TOOL_NAME:
+			return `${ errorPrefix }Published post`;
+		case UNDO_TOOL_NAME:
+			return `${ errorPrefix }Undid last change`;
+		case REDO_TOOL_NAME:
+			return `${ errorPrefix }Redid last change`;
+		default:
+			return null;
+	}
+}
 
 interface FetchEphemeralKeyArgs {
 	tokenEndpoint: string;
@@ -151,37 +324,24 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	const [ error, setError ] = useState< string | null >( null );
 	const [ isMuted, setIsMuted ] = useState( false );
 	const [ transcript, setTranscript ] = useState< RealtimeTranscriptEntry[] >( [] );
+	const [ toolEvents, setToolEvents ] = useState< RealtimeToolEvent[] >( [] );
 
 	const peerConnectionRef = useRef< RTCPeerConnection | null >( null );
 	const dataChannelRef = useRef< RTCDataChannel | null >( null );
 	const localStreamRef = useRef< MediaStream | null >( null );
 	const audioElementRef = useRef< HTMLAudioElement | null >( null );
-	const lastPageSummaryRef = useRef< PageSummaryMetadata | null >( null );
-	const pointerPositionRef = useRef< PointerPosition | null >( null );
-	const hasPageSummaryRef = useRef( false );
-	const highlightOverlayRef = useRef< HTMLDivElement | null >( null );
-	const highlightOverlayTimeoutRef = useRef< number | null >( null );
-
-	const clearHighlightOverlay = useCallback( () => {
-		if ( highlightOverlayTimeoutRef.current !== null ) {
-			window.clearTimeout( highlightOverlayTimeoutRef.current );
-			highlightOverlayTimeoutRef.current = null;
-		}
-		if ( highlightOverlayRef.current ) {
-			highlightOverlayRef.current.remove();
-			highlightOverlayRef.current = null;
-		}
-	}, [] );
-
-	const stopScreenShare = useCallback( () => {
-		clearHighlightOverlay();
-		lastPageSummaryRef.current = null;
-		pointerPositionRef.current = null;
-		hasPageSummaryRef.current = false;
-	}, [ clearHighlightOverlay ] );
+	// Tracks whether a response is currently being generated by the server.
+	// Set on response.create send / response.created, cleared on response.done /
+	// response.cancelled / response.failed. Used to gate response.create so we
+	// don't trigger "Conversation already has an active response in progress".
+	const activeResponseRef = useRef( false );
+	// Set when safeCreateResponse() is called while activeResponseRef is true.
+	// Drained when the active response ends.
+	const pendingResponseCreateRef = useRef( false );
 
 	const cleanup = useCallback( () => {
-		stopScreenShare();
+		activeResponseRef.current = false;
+		pendingResponseCreateRef.current = false;
 
 		try {
 			dataChannelRef.current?.close();
@@ -209,54 +369,41 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			} catch {}
 			audioElementRef.current = null;
 		}
-	}, [ stopScreenShare ] );
+	}, [] );
 
 	useEffect( () => {
 		return () => cleanup();
 	}, [ cleanup ] );
 
-	const getToolRuntimeContext = useCallback(
-		() => ( {
-			isPageContextEnabled: hasPageSummaryRef.current,
-			lastPageSummary: lastPageSummaryRef.current,
-			pointerPosition: pointerPositionRef.current,
-		} ),
-		[]
-	);
-
-	const setPageSummaryMetadata = useCallback( ( metadata: PageSummaryMetadata ) => {
-		lastPageSummaryRef.current = metadata;
-		hasPageSummaryRef.current = true;
+	/**
+	 * Sends a response.create event, but only if no response is currently in
+	 * flight. If one is, queues a single deferred send via
+	 * pendingResponseCreateRef which gets drained when the active response ends.
+	 * This prevents the "Conversation already has an active response in
+	 * progress" error from racing tool-call follow-ups against server-VAD-driven
+	 * responses.
+	 */
+	const safeCreateResponse = useCallback( () => {
+		const dc = dataChannelRef.current;
+		if ( ! dc || dc.readyState !== 'open' ) {
+			return;
+		}
+		if ( activeResponseRef.current ) {
+			pendingResponseCreateRef.current = true;
+			return;
+		}
+		activeResponseRef.current = true;
+		pendingResponseCreateRef.current = false;
+		dc.send( JSON.stringify( { type: 'response.create' } ) );
 	}, [] );
 
-	const showHighlightOverlay = useCallback(
-		( target: HTMLElement ) => {
-			clearHighlightOverlay();
-
-			const rect = target.getBoundingClientRect();
-			const padding = 6;
-			const overlay = document.createElement( 'div' );
-			overlay.setAttribute( 'aria-hidden', 'true' );
-			overlay.style.position = 'fixed';
-			overlay.style.left = `${ Math.max( 0, rect.left - padding ) }px`;
-			overlay.style.top = `${ Math.max( 0, rect.top - padding ) }px`;
-			overlay.style.width = `${ Math.max( 12, rect.width + padding * 2 ) }px`;
-			overlay.style.height = `${ Math.max( 12, rect.height + padding * 2 ) }px`;
-			overlay.style.border = '4px solid #d63638';
-			overlay.style.borderRadius = '10px';
-			overlay.style.background = 'rgba(214, 54, 56, 0.08)';
-			overlay.style.boxShadow = '0 0 0 10px rgba(214, 54, 56, 0.12)';
-			overlay.style.pointerEvents = 'none';
-			overlay.style.zIndex = '2147483647';
-			overlay.style.transition = 'opacity 0.2s ease';
-			document.body.appendChild( overlay );
-			highlightOverlayRef.current = overlay;
-			highlightOverlayTimeoutRef.current = window.setTimeout( () => {
-				clearHighlightOverlay();
-			}, POINTER_HINT_DURATION_MS );
-		},
-		[ clearHighlightOverlay ]
-	);
+	const flushPendingResponseCreate = useCallback( () => {
+		if ( ! pendingResponseCreateRef.current ) {
+			return;
+		}
+		pendingResponseCreateRef.current = false;
+		safeCreateResponse();
+	}, [ safeCreateResponse ] );
 
 	const handleToolCalls = useCallback(
 		async ( event: { response?: { output?: unknown[] } } ) => {
@@ -283,20 +430,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				}
 
 				let result: unknown;
-				if ( call.name === PAGE_SUMMARY_TOOL_NAME ) {
-					result = executePageSummaryTool( call.arguments, {
-						setPageSummaryMetadata,
-					} );
-				} else if ( call.name === POINTED_ELEMENT_TOOL_NAME ) {
-					result = executePointedElementTool( call.arguments, {
-						pointerPosition: pointerPositionRef.current,
-					} );
-				} else if ( call.name === HIGHLIGHT_TOOL_NAME ) {
-					result = executeHighlightTool( call.arguments, {
-						...getToolRuntimeContext(),
-						showHighlight: showHighlightOverlay,
-					} );
-				} else if ( call.name === GET_EDITOR_BLOCKS_TOOL_NAME ) {
+				if ( call.name === GET_EDITOR_BLOCKS_TOOL_NAME ) {
 					result = executeGetEditorBlocksTool( call.arguments );
 				} else if ( call.name === GET_SELECTED_BLOCK_TOOL_NAME ) {
 					result = executeGetSelectedBlockTool();
@@ -306,8 +440,61 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					result = executeHasSelectedBlockTool();
 				} else if ( call.name === SELECT_BLOCK_TOOL_NAME ) {
 					result = await executeSelectBlockTool( call.arguments );
+				} else if ( call.name === GET_BLOCK_TYPES_TOOL_NAME ) {
+					result = executeGetBlockTypesTool( call.arguments );
+				} else if ( call.name === GET_BLOCK_TYPE_TOOL_NAME ) {
+					result = executeGetBlockTypeTool( call.arguments );
+				} else if ( call.name === GET_BLOCK_EXAMPLES_TOOL_NAME ) {
+					result = executeGetBlockExamplesTool( call.arguments );
+				} else if ( call.name === INSERT_BLOCK_TOOL_NAME ) {
+					result = await executeInsertBlockTool( call.arguments );
+				} else if ( call.name === INSERT_BLOCKS_TOOL_NAME ) {
+					result = await executeInsertBlocksTool( call.arguments );
+				} else if ( call.name === UPDATE_BLOCK_ATTRIBUTES_TOOL_NAME ) {
+					result = await executeUpdateBlockAttributesTool( call.arguments );
+				} else if ( call.name === REPLACE_BLOCK_TOOL_NAME ) {
+					result = await executeReplaceBlockTool( call.arguments );
+				} else if ( call.name === REMOVE_BLOCK_TOOL_NAME ) {
+					result = await executeRemoveBlockTool( call.arguments );
+				} else if ( call.name === MOVE_BLOCK_TOOL_NAME ) {
+					result = await executeMoveBlockTool( call.arguments );
+				} else if ( call.name === GET_BLOCK_TOOL_NAME ) {
+					result = executeGetBlockTool( call.arguments );
+				} else if ( call.name === FORMAT_TEXT_TOOL_NAME ) {
+					result = await executeFormatTextTool( call.arguments );
+				} else if ( call.name === SET_POST_TITLE_TOOL_NAME ) {
+					result = await executeSetPostTitleTool( call.arguments );
+				} else if ( call.name === SAVE_POST_TOOL_NAME ) {
+					result = await executeSavePostTool( call.arguments );
+				} else if ( call.name === PUBLISH_POST_TOOL_NAME ) {
+					result = await executePublishPostTool();
+				} else if ( call.name === UNDO_TOOL_NAME ) {
+					result = await executeUndoTool();
+				} else if ( call.name === REDO_TOOL_NAME ) {
+					result = await executeRedoTool();
+				} else if ( call.name === GET_POST_INFO_TOOL_NAME ) {
+					result = executeGetPostInfoTool();
+				} else if ( call.name === PLAY_DONE_SOUND_TOOL_NAME ) {
+					result = executePlayDoneSoundTool();
 				} else {
 					continue;
+				}
+
+				const label = describeToolCall( call.name, call.arguments, result );
+				if ( label ) {
+					const ok =
+						!! result && typeof result === 'object' && ( result as { ok?: boolean } ).ok !== false;
+					setToolEvents( ( prev ) => {
+						const next = prev.concat( {
+							id: call.call_id ?? `${ Date.now() }-${ Math.random().toString( 36 ).slice( 2, 7 ) }`,
+							label,
+							status: ok ? 'done' : 'error',
+							timestamp: Date.now(),
+						} );
+						return next.length > MAX_TOOL_EVENTS
+							? next.slice( next.length - MAX_TOOL_EVENTS )
+							: next;
+					} );
 				}
 
 				dc.send(
@@ -322,9 +509,9 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				);
 			}
 
-			dc.send( JSON.stringify( { type: 'response.create' } ) );
+			safeCreateResponse();
 		},
-		[ getToolRuntimeContext, setPageSummaryMetadata, showHighlightOverlay ]
+		[ safeCreateResponse ]
 	);
 
 	const handleServerEvent = useCallback(
@@ -354,13 +541,35 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					setTranscript( ( prev ) => upsertEntry( prev, itemId, 'assistant', delta, isFinal ) );
 					break;
 				}
-				case 'response.done': {
-					void handleToolCalls( evt as { response?: { output?: unknown[] } } );
+				case 'response.created': {
+					activeResponseRef.current = true;
+					break;
+				}
+				case 'response.done':
+				case 'response.cancelled':
+				case 'response.failed': {
+					activeResponseRef.current = false;
+					if ( evt.type === 'response.done' ) {
+						void handleToolCalls( evt as { response?: { output?: unknown[] } } );
+					}
+					flushPendingResponseCreate();
 					break;
 				}
 				case 'error': {
-					const message =
-						( evt.error as { message?: string } | undefined )?.message || 'Realtime session error';
+					const errorObj = evt.error as { code?: string; message?: string } | undefined;
+					const message = errorObj?.message || 'Realtime session error';
+					// Treat the "active response in progress" race as benign: the server
+					// already has a response running (typically because server VAD started
+					// one from the user's audio mid-tool-call). Mark active and queue ours
+					// so it fires when that response ends.
+					const isActiveResponseConflict =
+						errorObj?.code === 'conversation_already_has_active_response' ||
+						/already\s+has\s+an?\s+active\s+response/i.test( message );
+					if ( isActiveResponseConflict ) {
+						activeResponseRef.current = true;
+						pendingResponseCreateRef.current = true;
+						break;
+					}
 					setError( message );
 					setStatus( 'error' );
 					break;
@@ -369,7 +578,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					break;
 			}
 		},
-		[ handleToolCalls ]
+		[ flushPendingResponseCreate, handleToolCalls ]
 	);
 
 	const start = useCallback( async () => {
@@ -379,6 +588,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 		setError( null );
 		setTranscript( [] );
+		setToolEvents( [] );
 
 		try {
 			setStatus( 'requesting-token' );
@@ -420,14 +630,29 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 							type: 'realtime',
 							instructions,
 							tools: [
-								pageSummaryToolDefinition,
-								pointedElementToolDefinition,
-								highlightToolDefinition,
 								getEditorBlocksToolDefinition,
 								getSelectedBlockToolDefinition,
 								getInserterItemsToolDefinition,
 								hasSelectedBlockToolDefinition,
 								selectBlockToolDefinition,
+								getBlockTypesToolDefinition,
+								getBlockTypeToolDefinition,
+								getBlockExamplesToolDefinition,
+								insertBlockToolDefinition,
+								insertBlocksToolDefinition,
+								updateBlockAttributesToolDefinition,
+								replaceBlockToolDefinition,
+								removeBlockToolDefinition,
+								moveBlockToolDefinition,
+								getBlockToolDefinition,
+								formatTextToolDefinition,
+								setPostTitleToolDefinition,
+								savePostToolDefinition,
+								publishPostToolDefinition,
+								undoToolDefinition,
+								redoToolDefinition,
+								getPostInfoToolDefinition,
+								playDoneSoundToolDefinition,
 							],
 							tool_choice: 'auto',
 							audio: {
@@ -518,23 +743,26 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		setIsMuted( nextMuted );
 	}, [ isMuted ] );
 
-	const sendText = useCallback( ( text: string ) => {
-		const dc = dataChannelRef.current;
-		if ( ! dc || dc.readyState !== 'open' || ! text.trim() ) {
-			return;
-		}
-		dc.send(
-			JSON.stringify( {
-				type: 'conversation.item.create',
-				item: {
-					type: 'message',
-					role: 'user',
-					content: [ { type: 'input_text', text } ],
-				},
-			} )
-		);
-		dc.send( JSON.stringify( { type: 'response.create' } ) );
-	}, [] );
+	const sendText = useCallback(
+		( text: string ) => {
+			const dc = dataChannelRef.current;
+			if ( ! dc || dc.readyState !== 'open' || ! text.trim() ) {
+				return;
+			}
+			dc.send(
+				JSON.stringify( {
+					type: 'conversation.item.create',
+					item: {
+						type: 'message',
+						role: 'user',
+						content: [ { type: 'input_text', text } ],
+					},
+				} )
+			);
+			safeCreateResponse();
+		},
+		[ safeCreateResponse ]
+	);
 
 	const sendEvent = useCallback( ( eventName: string, details?: string ) => {
 		const dc = dataChannelRef.current;
@@ -562,28 +790,17 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		);
 	}, [] );
 
-	const updatePointerPosition = useCallback( ( x: number, y: number ) => {
-		if ( ! Number.isFinite( x ) || ! Number.isFinite( y ) ) {
-			return;
-		}
-
-		pointerPositionRef.current = {
-			x: Math.max( 0, Math.round( x ) ),
-			y: Math.max( 0, Math.round( y ) ),
-		};
-	}, [] );
-
 	return {
 		status,
 		error,
 		isMuted,
 		transcript,
+		toolEvents,
 		start,
 		stop,
 		toggleMute,
 		sendText,
 		sendEvent,
-		updatePointerPosition,
 	};
 }
 
@@ -596,7 +813,8 @@ function upsertEntry(
 ): RealtimeTranscriptEntry[] {
 	const existingIndex = prev.findIndex( ( entry ) => entry.id === id );
 	if ( existingIndex === -1 ) {
-		return [ ...prev, { id, role, text: delta, isFinal } ];
+		const timestamp = Date.now();
+		return [ ...prev, { id, role, text: delta, isFinal, timestamp } ];
 	}
 	const updated = [ ...prev ];
 	const existing = updated[ existingIndex ];
