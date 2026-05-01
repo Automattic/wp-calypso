@@ -33,8 +33,7 @@ export interface ReadStreamRecommendedSite {
 export type ReadStreamCard =
 	| { type: 'post'; data: ReadStreamPost }
 	| { type: 'recommended_blogs'; data: ReadStreamRecommendedSite[] }
-	| { type: 'new_sites'; data: ReadStreamRecommendedSite[] }
-	| { type: string; data: unknown };
+	| { type: 'new_sites'; data: ReadStreamRecommendedSite[] };
 
 export interface ReadStreamResponse {
 	posts?: ReadStreamPost[];
