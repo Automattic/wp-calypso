@@ -122,7 +122,12 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	try {
 		const queryClient = getCalypsoQueryClient();
 		const queryOpts = readStreamQuery( streamKey, queryParams, pageHandle ?? null );
-		data = queryClient ? await queryClient.fetchQuery( queryOpts ) : await queryOpts.queryFn();
+		// Polls share the same queryKey as the initial page (both have a null
+		// pageHandle), so without bypassing freshness a poll within `staleTime`
+		// would return cached data and the "N new posts" indicator would never
+		// update.
+		const fetchOpts = isPoll ? { ...queryOpts, staleTime: 0 } : queryOpts;
+		data = queryClient ? await queryClient.fetchQuery( fetchOpts ) : await queryOpts.queryFn();
 	} catch ( error ) {
 		dispatch(
 			receiveStreamError(
