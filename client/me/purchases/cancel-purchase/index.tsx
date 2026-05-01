@@ -178,7 +178,6 @@ export interface CancelPurchaseConnectedProps {
 	isHundredYearDomain: boolean | undefined;
 	isJetpack: boolean;
 	isJetpackPurchase: boolean;
-	isRefundEligibilityNoticeEnabled: boolean;
 	productsList: Record< string, { product_type: string; billing_product_slug: string } >;
 	purchase: Purchases.Purchase;
 	purchases: Purchases.Purchase[];
@@ -735,16 +734,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	shouldUseAutoRenewFlow = ( purchase: Purchases.Purchase ) => {
 		// When the user clicked Cancel on Purchase Settings, always take the
-		// auto-renew flow (disable auto-renew, keep features until expiry) —
-		// regardless of the experiment assignment.
+		// auto-renew flow (disable auto-renew, keep features until expiry).
 		if ( this.props.intent === 'cancel' ) {
 			return true;
 		}
-		return Boolean(
-			this.props.isRefundEligibilityNoticeEnabled &&
-				hasAmountAvailableToRefund( purchase ) &&
-				isPlan( purchase ) &&
-				isWpComPlan( purchase?.productSlug )
+		return (
+			hasAmountAvailableToRefund( purchase ) &&
+			isPlan( purchase ) &&
+			isWpComPlan( purchase?.productSlug )
 		);
 	};
 
@@ -1234,8 +1231,4 @@ const ConnectedCancelPurchase = connect(
 	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice, errorNotice }
 )( localize( withLocalizedMoment( CancelPurchase ) ) );
 
-function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
-	return <ConnectedCancelPurchase { ...props } isRefundEligibilityNoticeEnabled />;
-}
-
-export default CancelPurchaseWithExperiment;
+export default ConnectedCancelPurchase;
