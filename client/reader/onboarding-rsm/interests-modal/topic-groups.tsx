@@ -44,7 +44,7 @@ export const getTopicGroups = (): TopicGroup[] => {
 			id: 'most-subscribed',
 			title: titles.mostSubscribed,
 			description: __(
-				'Check out most read sites and authors from the entire WordPress universe.'
+				'Check our most read sites and authors from the entire WordPress universe.'
 			),
 			imageUrl: img.mostSubscribed,
 			tags: [],
@@ -53,7 +53,7 @@ export const getTopicGroups = (): TopicGroup[] => {
 			id: 'food-drinks',
 			title: titles.foodDrinks,
 			description: __(
-				'Recipes, restaurant culture, and the joy of cooking from a few sites set out.'
+				'Recipes, restaurant culture, and the joy of cooking from writers who eat well.'
 			),
 			imageUrl: img.foodDrinks,
 			tags: [ 'food', 'drinks', 'dining' ],
@@ -69,7 +69,7 @@ export const getTopicGroups = (): TopicGroup[] => {
 			id: 'photography-arts',
 			title: titles.photographyArts,
 			description: __(
-				'Photographers, illustrators, writers and makers sharing process, art, and work.'
+				'Photographers, illustrators, writers and makers sharing process and work.'
 			),
 			imageUrl: img.photographyArts,
 			tags: [ 'photography', 'art' ],
@@ -87,7 +87,7 @@ export const getTopicGroups = (): TopicGroup[] => {
 			id: 'nature-science',
 			title: titles.natureScience,
 			description: __(
-				'Plant notes, big ideas, and the keen wonder of paying attention to the world.'
+				'Field notes, big ideas, and the slow wonder of paying attention to the world.'
 			),
 			imageUrl: img.natureScience,
 			tags: [ 'nature', 'science', 'space' ],
@@ -102,9 +102,7 @@ export const getTopicGroups = (): TopicGroup[] => {
 		{
 			id: 'music-culture',
 			title: titles.musicCulture,
-			description: __(
-				'Music writing that goes beyond the chart — reviews, history, true stories.'
-			),
+			description: __( 'Music writing that goes beyond the chart — reviews, history, interviews.' ),
 			imageUrl: img.musicCulture,
 			tags: [ 'music', 'culture' ],
 		},
