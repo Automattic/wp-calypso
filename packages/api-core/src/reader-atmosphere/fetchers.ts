@@ -1,11 +1,13 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyAtmosphereError } from './errors';
 import type {
+	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
+	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 } from './types';
@@ -132,12 +134,47 @@ export interface GetAuthorFeedParams {
 	actor: string;
 	cursor?: string;
 	limit?: number;
+	filter?: AtmosphereAuthorFeedFilter;
 }
 
 export async function getAuthorFeed(
 	params: GetAuthorFeedParams
 ): Promise< AtmosphereAuthorFeedPage > {
-	const { actor, cursor, limit } = params;
+	const { actor, cursor, limit, filter } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	if ( filter ) {
+		query.filter = filter;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereAuthorFeedPage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAtmosphereTagFeedParams {
+	connectionId: number;
+	hashtag: string;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getAtmosphereTagFeed(
+	params: GetAtmosphereTagFeedParams
+): Promise< AtmosphereTagFeedPage > {
+	const { connectionId, hashtag, cursor, limit } = params;
 	const query: Record< string, string > = {};
 	if ( cursor ) {
 		query.cursor = cursor;
@@ -148,11 +185,15 @@ export async function getAuthorFeed(
 	try {
 		return ( await wpcom.req.get(
 			{
-				path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }/feed`,
+				// Percent-encode the hashtag: HASHTAG_RE allows any Unicode
+				// letter/number/mark, which must be encoded for the URL path.
+				path: `/reader/atmosphere/connections/${ connectionId }/tag/${ encodeURIComponent(
+					hashtag
+				) }/feed`,
 				apiNamespace: NAMESPACE,
 			},
 			query
-		) ) as AtmosphereAuthorFeedPage;
+		) ) as AtmosphereTagFeedPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

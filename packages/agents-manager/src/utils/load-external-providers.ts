@@ -122,6 +122,28 @@ export type UseCheckpointHook = () => UseCheckpointReturn;
 
 export type { ImageUploadHook };
 
+/** Optional flags providers can declare to opt into AM chat-dock features. */
+export interface ProviderCapabilities {
+	/** Adds the "Split screen sidebar" chat-header menu item when true. */
+	supportsSplitScreen?: boolean;
+}
+
+/**
+ * OR-merge a provider's `capabilities` into the running map. Works on both
+ * plain objects and lazy Proxies (probed by direct key access, not iteration).
+ */
+export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilities: unknown ): void {
+	if ( ! capabilities || typeof capabilities !== 'object' ) {
+		return;
+	}
+	const caps = capabilities as ProviderCapabilities;
+	// Strict `=== true` because `capabilities` arrives as `unknown` from
+	// runtime-imported modules; a stray `'false'` string would otherwise opt in.
+	if ( caps.supportsSplitScreen === true ) {
+		merged.supportsSplitScreen = true;
+	}
+}
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -136,6 +158,7 @@ export interface LoadedProviders {
 	siteBuildUtils?: SiteBuildUtils;
 	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
+	capabilities?: ProviderCapabilities;
 }
 
 /**
@@ -179,6 +202,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
+	// OR-merged across all providers.
+	const mergedCapabilities: ProviderCapabilities = {};
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
@@ -256,6 +281,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
 			mergedUseCheckpoint = module.useCheckpoint;
 		}
+
+		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
 	}
 
 	// Merge toolProviders: first-write-wins by ability name, matching the
@@ -395,5 +422,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		siteBuildUtils: mergedSiteBuildUtils,
 		useImageUpload: mergedImageUpload,
 		useCheckpoint: mergedUseCheckpoint,
+		// Match peer fields: undefined when no provider opted in.
+		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
 	};
 }

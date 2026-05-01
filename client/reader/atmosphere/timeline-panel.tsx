@@ -14,6 +14,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { projectAtmosphereError } from './error-projection';
 import {
 	getProfileUrl as buildProfileUrl,
+	getTagFeedUrl as buildTagUrl,
 	getThreadUrl as buildThreadUrl,
 	type ProfileRefInput,
 } from './route';
@@ -101,6 +102,11 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const getTagUrl = useCallback(
+		( tag: string ) => buildTagUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
@@ -114,8 +120,9 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			onClick: onClickAnalytics,
 			getThreadUrl,
 			getProfileUrl,
+			getTagUrl,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl ]
 	);
 
 	return (

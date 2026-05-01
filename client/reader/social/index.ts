@@ -27,8 +27,16 @@ export type {
 	SocialThreadTombstoneNode,
 	SocialError,
 } from './types';
+export { AuthorProfileHeader } from './author-profile-header';
+export { SocialAuthorProfileTabs } from './author-profile-tabs';
+export type { TabSpec } from './author-profile-tabs';
+export { useTabSlug } from './use-tab-slug';
+export { SocialAuthorProfilePanel } from './author-profile-panel';
+export type { SocialAuthorProfilePanelProps } from './author-profile-panel';
+export { SocialProfileHeaderSkeleton } from './profile-header-skeleton';
 export { mapAtmosphereFeedItemToSocialPost } from './mappers/atmosphere';
 export {
+	mapMastodonAccountToSocialProfileCardProps,
 	mapMastodonFeedItemToSocialPost,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from './mappers/mastodon';

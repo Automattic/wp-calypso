@@ -1,4 +1,4 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { Stack } from '@wordpress/ui';
 import type { OmnibarNode } from '../types';
 
 export function OmnibarNodeContent( { node }: { node: OmnibarNode } ) {
@@ -7,10 +7,10 @@ export function OmnibarNodeContent( { node }: { node: OmnibarNode } ) {
 	}
 	if ( node.icon && node.title ) {
 		return (
-			<HStack>
+			<Stack direction="row" gap="sm" align="center">
 				{ node.icon }
 				<span>{ node.title }</span>
-			</HStack>
+			</Stack>
 		);
 	}
 	return node.icon ?? node.title;

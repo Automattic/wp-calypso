@@ -42,7 +42,12 @@ class PodcastCoverImageSetting extends PureComponent {
 		onSelect: PropTypes.func,
 		onUploadStateChange: PropTypes.func,
 		isDisabled: PropTypes.bool,
+		previewSize: PropTypes.number,
 		addMedia: PropTypes.func,
+	};
+
+	static defaultProps = {
+		previewSize: 96,
 	};
 
 	state = {
@@ -178,11 +183,11 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	renderCoverPreview() {
-		const { coverImageUrl, siteId, translate, isDisabled } = this.props;
+		const { coverImageUrl, siteId, translate, isDisabled, previewSize } = this.props;
 		const { transientMediaId, isUploading } = this.state;
 		const media = transientMediaId && this.props.getMediaItem( siteId, transientMediaId );
 		const imageUrl = ( media && media.URL ) || coverImageUrl;
-		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
+		const imageSrc = imageUrl && resizeImageUrl( imageUrl, previewSize );
 		const isTransient = !! transientMediaId;
 
 		const classNames = clsx( 'podcast-cover-image-setting__preview', {

@@ -64,7 +64,7 @@ $blueberry-color: #3858e9;
 	display: flex;
 	flex-direction: column;
 	word-wrap: break-word;
-	color: $gray-900;
+	color: var(--color-text, $gray-900);
 	font-size: $font-size-large;
 	line-height: 1.6;
 	width: 100%;
@@ -83,7 +83,7 @@ $blueberry-color: #3858e9;
 
 	&.odie-chatbox-message-user {
 		border-radius: 24px 24px 8px 24px;
-		background-color: $gray-200;
+		background-color: var(--studio-gray-5, $gray-200);
 		width: max-content;
 		margin-right: 16px;
 		padding: 10px 16px;
@@ -91,7 +91,7 @@ $blueberry-color: #3858e9;
 		align-self: flex-end;
 
 		p {
-			color: $gray-900;
+			color: var(--color-text, $gray-900);
 			padding: 0;
 			span {
 				background-color: transparent;

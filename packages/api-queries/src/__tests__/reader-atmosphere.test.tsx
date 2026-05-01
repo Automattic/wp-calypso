@@ -469,5 +469,113 @@ describe( 'reader-atmosphere hooks', () => {
 			await waitFor( () => expect( result.current.data?.pages.length ).toBe( 2 ) );
 			expect( result.current.hasNextPage ).toBe( false );
 		} );
+
+		it( 'forwards filter to the fetcher when set', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( { filter: 'posts_with_media' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( {
+						actor: 'alice.bsky.social',
+						filter: 'posts_with_media',
+					} );
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'treats filter=posts_no_replies the same as no filter (default normalization)', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( ( q ) => ! ( 'filter' in q ) )
+				.reply( 200, { items: [], cursor: null } );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+			const { result } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( {
+						actor: 'alice.bsky.social',
+						filter: 'posts_no_replies',
+					} );
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( scope.isDone() ).toBe( true );
+
+			// And the cache key should match the slice-6 4-element shape, not 5-element.
+			const cacheKey = queryClient.getQueryCache().getAll()[ 0 ]?.queryKey;
+			expect( cacheKey ).toEqual( [ 'reader', 'atmosphere', 'author-feed', 'alice.bsky.social' ] );
+		} );
+
+		it( 'caches results independently per filter value', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( ( q ) => ! ( 'filter' in q ) )
+				.reply( 200, { items: [], cursor: null } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( { filter: 'posts_with_replies' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+
+			const { result: noFilter } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( { actor: 'alice.bsky.social' } );
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+			await waitFor( () => expect( noFilter.current.isSuccess ).toBe( true ) );
+
+			const { result: withFilter } = renderHook(
+				() => {
+					const q = useAuthorFeedInfiniteQuery( {
+						actor: 'alice.bsky.social',
+						filter: 'posts_with_replies',
+					} );
+					void q.data;
+					void q.isError;
+					void q.error;
+					void q.isSuccess;
+					return q;
+				},
+				{ wrapper }
+			);
+			await waitFor( () => expect( withFilter.current.isSuccess ).toBe( true ) );
+
+			// Both queries resolved independently — the cache key includes filter,
+			// so the second hook did not reuse the first hook's data.
+			const matched = queryClient.getQueryCache().findAll( {
+				queryKey: readerAtmosphereKeys.authorFeed( 'alice.bsky.social' ),
+			} );
+			expect( matched ).toHaveLength( 2 );
+		} );
 	} );
 } );

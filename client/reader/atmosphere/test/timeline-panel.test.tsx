@@ -230,6 +230,7 @@ describe( 'TimelinePanel', () => {
 	it( 'fires quote_clicked when a live quote embed is clicked', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		const inner = makePost( 'at://quoted', 'inner text' );
+		inner.bluesky_url = 'https://bsky.app/profile/alice.bsky.social/post/quoted';
 		const outer = makePost( 'at://abc', 'outer' );
 		( outer as unknown as { embed: unknown } ).embed = { type: 'quote', post: inner };
 		nock( BASE )
@@ -241,7 +242,14 @@ describe( 'TimelinePanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		await waitFor( () => expect( screen.getByText( 'inner text' ) ).toBeVisible() );
-		await user.click( screen.getByText( 'inner text' ) );
+		const quoteLink = screen
+			.getAllByRole( 'link' )
+			.find(
+				( link ) =>
+					link.getAttribute( 'href' ) === 'https://bsky.app/profile/alice.bsky.social/post/quoted'
+			);
+		expect( quoteLink ).toBeDefined();
+		await user.click( quoteLink as HTMLElement );
 		expect( spy ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_timeline_quote_clicked',
 			expect.objectContaining( {
@@ -376,7 +384,14 @@ describe( 'TimelinePanel in-app click destinations', () => {
 		await screen.findAllByRole( 'link' );
 		const quoteLink = screen
 			.getAllByRole( 'link' )
-			.find( ( a ) => a.className.includes( 'embed-quote-link' ) );
+			.find(
+				( a ) =>
+					a
+						.getAttribute( 'href' )
+						?.includes(
+							'/reader/atmosphere/7/thread/did:plc:def234567defghi234567jkl/3kdefghijklmn'
+						)
+			);
 		expect( quoteLink ).toHaveAttribute(
 			'href',
 			expect.stringContaining( '/reader/atmosphere/7/thread/did:plc:def' )

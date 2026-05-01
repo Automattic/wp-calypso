@@ -1,6 +1,7 @@
 import nock from 'nock';
 import {
 	createConnection,
+	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
@@ -445,6 +446,29 @@ describe( 'atmosphere fetchers', () => {
 			expect( scope.isDone() ).toBe( true );
 		} );
 
+		it( 'forwards filter as a query param when set', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( { filter: 'posts_with_replies' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAuthorFeed( {
+				actor: 'alice.bsky.social',
+				filter: 'posts_with_replies',
+			} );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'omits filter from the query string when undefined', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( ( q ) => ! ( 'filter' in q ) )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAuthorFeed( { actor: 'alice.bsky.social' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
 		it( 'percent-encodes the actor in the path', async () => {
 			const scope = nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/profile/did%3Aplc%3Aabc123/feed' )
@@ -472,6 +496,67 @@ describe( 'atmosphere fetchers', () => {
 			await expect( getAuthorFeed( { actor: 'alice.bsky.social' } ) ).rejects.toMatchObject( {
 				kind: 'unknown',
 			} );
+		} );
+	} );
+
+	describe( 'getAtmosphereTagFeed', () => {
+		it( 'GETs /reader/atmosphere/connections/:id/tag/<hashtag>/feed', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/7/tag/rust/feed' )
+				.reply( 200, {
+					items: [],
+					cursor: 'NEXT',
+					tag: { name: 'rust', count: 100, url: 'https://bsky.app/hashtag/rust' },
+				} );
+			const result = await getAtmosphereTagFeed( { connectionId: 7, hashtag: 'rust' } );
+			expect( result.cursor ).toBe( 'NEXT' );
+			expect( result.tag?.name ).toBe( 'rust' );
+			expect( result.tag?.count ).toBe( 100 );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'forwards cursor and limit as query params', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/7/tag/rust/feed' )
+				.query( { cursor: 'PAGE2', limit: '50' } )
+				.reply( 200, { items: [], cursor: null } );
+			await getAtmosphereTagFeed( {
+				connectionId: 7,
+				hashtag: 'rust',
+				cursor: 'PAGE2',
+				limit: 50,
+			} );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'percent-encodes Unicode hashtags in the path', async () => {
+			const scope = nock( BASE )
+				.get(
+					'/wpcom/v2/reader/atmosphere/connections/7/tag/' +
+						encodeURIComponent( '日本語' ) +
+						'/feed'
+				)
+				.reply( 200, { items: [], cursor: null } );
+			await getAtmosphereTagFeed( { connectionId: 7, hashtag: '日本語' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'classifies a 401 as auth_required', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/7/tag/rust/feed' )
+				.reply( 401, { error: 'atmosphere_auth_required' } );
+			await expect(
+				getAtmosphereTagFeed( { connectionId: 7, hashtag: 'rust' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+
+		it( 'classifies a 429 as rate_limited', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/7/tag/rust/feed' )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+			await expect(
+				getAtmosphereTagFeed( { connectionId: 7, hashtag: 'rust' } )
+			).rejects.toMatchObject( { kind: 'rate_limited' } );
 		} );
 	} );
 } );

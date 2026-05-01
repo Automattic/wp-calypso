@@ -1,11 +1,13 @@
 import {
 	createConnection,
+	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
 	getConnections,
 	getThread,
 	getTimeline,
+	isValidHashtag,
 	readerAtmosphereKeys,
 } from '@automattic/api-core';
 import {
@@ -19,12 +21,14 @@ import {
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
+	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereError,
+	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 	CreateConnectionParams,
@@ -159,27 +163,66 @@ export function useAuthorProfileQuery( { actor }: UseAuthorProfileQueryParams ) 
 	return useQuery( profileQueryOptions( actor ) );
 }
 
-export const authorFeedInfiniteQuery = ( actor: string ) =>
-	infiniteQueryOptions<
+export const authorFeedInfiniteQuery = ( actor: string, filter?: AtmosphereAuthorFeedFilter ) => {
+	// Collapse the default filter to undefined so the cache key and request
+	// URL stay clean for the default tab. Callers can pass 'posts_no_replies'
+	// without paying a cache-key change versus passing nothing at all —
+	// matters for slice-6 cache compatibility. Centralized here (not in the
+	// hook) so any direct factory caller gets the same behavior.
+	const normalizedFilter = filter === 'posts_no_replies' ? undefined : filter;
+	return infiniteQueryOptions<
 		AtmosphereAuthorFeedPage,
 		AtmosphereError,
 		InfiniteData< AtmosphereAuthorFeedPage >,
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerAtmosphereKeys.authorFeed( actor ),
-		queryFn: ( { pageParam } ) => getAuthorFeed( { actor, cursor: pageParam } ),
+		queryKey: readerAtmosphereKeys.authorFeed( actor, normalizedFilter ),
+		queryFn: ( { pageParam } ) =>
+			getAuthorFeed( { actor, cursor: pageParam, filter: normalizedFilter } ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
 		enabled: actor.length > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 	} );
+};
 
 export interface UseAuthorFeedInfiniteQueryParams {
 	actor: string;
+	filter?: AtmosphereAuthorFeedFilter;
 }
 
-export function useAuthorFeedInfiniteQuery( { actor }: UseAuthorFeedInfiniteQueryParams ) {
-	return useInfiniteQuery( authorFeedInfiniteQuery( actor ) );
+export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfiniteQueryParams ) {
+	return useInfiniteQuery( authorFeedInfiniteQuery( actor, filter ) );
+}
+
+export const atmosphereTagFeedInfiniteQuery = ( connectionId: number, hashtag: string ) => {
+	const canonicalHashtag = hashtag.trim().toLowerCase().replace( /^#/, '' );
+	return infiniteQueryOptions<
+		AtmosphereTagFeedPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereTagFeedPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.tagFeed( connectionId, canonicalHashtag ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereTagFeed( { connectionId, hashtag: canonicalHashtag, cursor: pageParam } ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: connectionId > 0 && isValidHashtag( canonicalHashtag ),
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
+	} );
+};
+
+export function useAtmosphereTagFeedInfiniteQuery( connectionId: number, hashtag: string ) {
+	return useInfiniteQuery( atmosphereTagFeedInfiniteQuery( connectionId, hashtag ) );
 }
