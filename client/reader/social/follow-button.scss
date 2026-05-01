@@ -16,20 +16,20 @@
 	}
 }
 
-// Following state: render as a subtle outline button. On hover/focus,
-// swap to a destructive look so the "Unfollow" affordance is unambiguous.
-// Mirrors the GitHub follow-toggle pattern.
+// Following state: subtle outline button (matching `client/blocks/follow-button`'s
+// neutral approach). On hover/focus the visible label swaps from "Following"
+// to "Unfollow" so the action is unambiguous, but the colors stay neutral —
+// destructive red isn't used elsewhere in the repo for follow toggles.
 .follow-button--following {
 	&.components-button.is-secondary {
-		box-shadow: inset 0 0 0 1px var( --studio-gray-10, #c3c4c7 );
-		background: var( --studio-white, #fff );
-		color: var( --studio-gray-90, #1d2327 );
+		box-shadow: inset 0 0 0 1px var( --color-neutral-10, #c3c4c7 );
+		background: var( --color-surface, #fff );
+		color: var( --color-text, #1d2327 );
 
 		&:hover:not( [disabled] ),
 		&:focus-visible:not( [disabled] ) {
-			box-shadow: inset 0 0 0 1px var( --studio-red-50, #d63638 );
-			background: var( --studio-red-0, #fcf0f1 );
-			color: var( --studio-red-50, #d63638 );
+			box-shadow: inset 0 0 0 1px var( --color-neutral-30, #a7aaad );
+			background: var( --color-neutral-0, #f6f7f7 );
 		}
 	}
 
