@@ -659,3 +659,143 @@ describe( 'TimelinePanel — reply composer integration', () => {
 		expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 2 );
 	} );
 } );
+
+describe( 'TimelinePanel — reply composer errors', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	function makeOnePagePayload(
+		uri: string,
+		cid: string,
+		counts: { replies: number; reposts: number; likes: number; quotes: number }
+	): InfiniteData< AtmosphereTimelinePage > {
+		const item: AtmosphereFeedItem = {
+			...makePost( uri, 'parent post' ),
+			cid,
+			counts,
+		};
+		return {
+			pages: [ { items: [ item ], cursor: null } ],
+			pageParams: [ undefined ],
+		};
+	}
+
+	const ERROR_CASES = [
+		{
+			status: 400,
+			code: 'atmosphere_bad_request',
+			kind: 'bad_request',
+			copy: /shorten/i,
+		},
+		{
+			status: 401,
+			code: 'atmosphere_auth_required',
+			kind: 'auth_required',
+			copy: /reconnected/i,
+		},
+		{
+			status: 429,
+			code: 'atmosphere_rate_limited',
+			kind: 'rate_limited',
+			copy: /posting too quickly/i,
+		},
+		{
+			status: 502,
+			code: 'atmosphere_upstream_unavailable',
+			kind: 'upstream_unavailable',
+			copy: /taking longer/i,
+		},
+	] as const;
+
+	it.each( ERROR_CASES )(
+		'maps HTTP $status to kind $kind, keeps modal + draft, and fires _error_shown',
+		async ( { status, code, kind, copy } ) => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+			const queryClient = makeQueryClient();
+			queryClient.setQueryData(
+				readerAtmosphereKeys.timeline( 42 ),
+				makeOnePagePayload( 'at://parent', 'pcid', {
+					replies: 1,
+					reposts: 0,
+					likes: 0,
+					quotes: 0,
+				} )
+			);
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( status, { error: code } );
+
+			const user = userEvent.setup();
+			renderWithProvider(
+				<ComposerProvider connectionId={ 42 }>
+					<TimelinePanel connection={ connection } />
+					<ComposerModal />
+				</ComposerProvider>,
+				{ queryClient }
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: /reply/i } ) );
+			await user.type( screen.getByRole( 'textbox' ), 'hi' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			await screen.findByText( copy );
+			expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+			expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'hi' );
+
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_reply_error_shown',
+					expect.objectContaining( {
+						connection_id: 42,
+						parent_uri: 'at://parent',
+						error_kind: kind,
+					} )
+				)
+			);
+		}
+	);
+
+	it( 'auth_required Reconnect link opens in a new tab with rel=noopener', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.timeline( 42 ),
+			makeOnePagePayload( 'at://parent', 'pcid', {
+				replies: 1,
+				reposts: 0,
+				likes: 0,
+				quotes: 0,
+			} )
+		);
+
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 401, { error: 'atmosphere_auth_required' } );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /reply/i } ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		const reconnect = await screen.findByRole( 'link', { name: /reconnect/i } );
+		expect( reconnect ).toHaveAttribute( 'target', '_blank' );
+		expect( reconnect ).toHaveAttribute( 'rel', expect.stringContaining( 'noopener' ) );
+	} );
+} );
