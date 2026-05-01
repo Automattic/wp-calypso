@@ -4,7 +4,6 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import {
 	Button,
-	Notice,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -15,8 +14,10 @@ import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { Card, CardBody, CardDivider } from '../../components/card';
+import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import { hasHostingFeature } from '../../utils/site-features';
 import {
@@ -25,6 +26,7 @@ import {
 	isInJetpackCriticalErrorState,
 } from '../../utils/site-jetpack-critical-error';
 import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
+import type { JetpackRecoverySessionError } from '@automattic/api-core';
 import type { ReactElement, ReactNode } from 'react';
 
 type Item = {
@@ -35,6 +37,31 @@ type Item = {
 // Poll while the user is on the critical-error screen so we can send them back
 // to the overview as soon as the site comes back online.
 const RECOVERY_POLL_INTERVAL_MS = 30_000;
+
+const RecoveryErrorNotice = ( { error }: { error: JetpackRecoverySessionError } ) => (
+	<VStack spacing={ 3 }>
+		<SectionHeader
+			level={ 3 }
+			title={ error.kind === 'themes' ? __( 'Suspected theme' ) : __( 'Suspected plugin' ) }
+		/>
+		<Notice variant="error">
+			<VStack spacing={ 1 }>
+				<Text weight={ 500 }>
+					{ error.version ? `${ error.slug } (v${ error.version })` : error.slug }
+				</Text>
+				<Text>{ error.message }</Text>
+				<Text variant="muted">
+					{ sprintf(
+						/* translators: 1: file path, 2: line number */
+						__( '%1$s:%2$d' ),
+						error.file,
+						error.line
+					) }
+				</Text>
+			</VStack>
+		</Notice>
+	</VStack>
+);
 
 const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	const { data: site } = useSuspenseQuery( {
@@ -74,7 +101,11 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	if ( isAdmin ) {
 		items.push( {
 			icon: envelope,
-			text: __( 'Check your site admin email inbox for instructions to troubleshoot.' ),
+			text: createInterpolateElement(
+				// translators: <q/> is the search phrase to use in the email inbox.
+				__( 'Search your admin email inbox for <q/> for troubleshooting instructions.' ),
+				{ q: <strong>{ __( 'critical error' ) }</strong> }
+			),
 		} );
 	}
 	if ( canAccessPhpLogs ) {
@@ -122,58 +153,28 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 			size="small"
 		>
 			<VStack spacing={ 4 }>
-				{ recoveryErrors.length > 0 && (
-					<VStack spacing={ 2 }>
-						{ recoveryErrors.map( ( error, index ) => (
-							<Notice
-								key={ error.signature ?? `${ error.kind }-${ error.slug }-${ index }` }
-								status="error"
-								isDismissible={ false }
-							>
-								<VStack spacing={ 1 }>
-									<Text weight={ 500 }>
-										{ sprintf(
-											/* translators: 1: extension type (e.g. "plugin"), 2: extension slug */
-											__( 'Error in %1$s: %2$s' ),
-											error.kind,
-											error.slug
-										) }
-										{ error.version
-											? ' ' +
-											  sprintf(
-													/* translators: %s: extension version */
-													__( '(v%s)' ),
-													error.version
-											  )
-											: '' }
-									</Text>
-									<Text>{ error.message }</Text>
-									<Text variant="muted">
-										{ sprintf(
-											/* translators: 1: file path, 2: line number */
-											__( '%1$s:%2$d' ),
-											error.file,
-											error.line
-										) }
-									</Text>
-								</VStack>
-							</Notice>
+				{ recoveryErrors.map( ( error, index ) => (
+					<RecoveryErrorNotice
+						key={ error.signature ?? `${ error.kind }-${ error.slug }-${ index }` }
+						error={ error }
+					/>
+				) ) }
+				<VStack spacing={ 3 }>
+					<SectionHeader level={ 3 } title={ __( 'What you can try next' ) } />
+					<Card>
+						{ items.map( ( item, index ) => (
+							<Fragment key={ index }>
+								<CardBody>
+									<HStack spacing={ 3 } alignment="center" justify="flex-start">
+										<Icon icon={ item.icon } size={ 20 } />
+										<Text>{ item.text }</Text>
+									</HStack>
+								</CardBody>
+								{ index < items.length - 1 && <CardDivider /> }
+							</Fragment>
 						) ) }
-					</VStack>
-				) }
-				<Card>
-					{ items.map( ( item, index ) => (
-						<Fragment key={ index }>
-							<CardBody>
-								<HStack spacing={ 3 } alignment="center" justify="flex-start">
-									<Icon icon={ item.icon } size={ 20 } />
-									<Text>{ item.text }</Text>
-								</HStack>
-							</CardBody>
-							{ index < items.length - 1 && <CardDivider /> }
-						</Fragment>
-					) ) }
-				</Card>
+					</Card>
+				</VStack>
 			</VStack>
 		</PageLayout>
 	);
