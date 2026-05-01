@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
 import type { AtUriRef, AtmosphereFeedItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -32,6 +40,19 @@ interface Props {
 export function ComposerProvider( { connectionId, children }: Props ) {
 	const [ mode, setMode ] = useState< ActiveMode | null >( null );
 	const triggerRef = useRef< HTMLElement | null >( null );
+	const wasOpenRef = useRef( false );
+
+	useEffect( () => {
+		if ( mode ) {
+			wasOpenRef.current = true;
+			return;
+		}
+		// mode just transitioned from non-null to null — restore focus.
+		if ( wasOpenRef.current ) {
+			wasOpenRef.current = false;
+			triggerRef.current?.focus();
+		}
+	}, [ mode ] );
 
 	const openComposer = useCallback(
 		( next: ComposerMode ) => {
@@ -43,7 +64,6 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 
 	const closeComposer = useCallback( () => {
 		setMode( null );
-		queueMicrotask( () => triggerRef.current?.focus() );
 	}, [] );
 
 	const value = useMemo(
