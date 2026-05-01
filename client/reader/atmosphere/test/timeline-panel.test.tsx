@@ -305,6 +305,58 @@ describe( 'TimelinePanel', () => {
 		expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toHaveTextContent( '6' );
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
+
+	it( 'opens the repost menu, fires POST on Repost click, and toggles directly on un-repost', async () => {
+		const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3krepost';
+		const REPOST_URI = 'at://did:plc:caller/app.bsky.feed.repost/3krrkeyrkeyrk';
+
+		nock( BASE )
+			.get( PATH )
+			.query( {} )
+			.reply( 200, {
+				items: [
+					{
+						...makePost( POST_URI, 'repostable post' ),
+						cid: 'bafy-cid',
+						counts: { replies: 0, reposts: 5, likes: 0, quotes: 0 },
+						viewer: { like: null, repost: null },
+					},
+				],
+				cursor: null,
+			} );
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts', {
+				post_uri: POST_URI,
+				post_cid: 'bafy-cid',
+			} )
+			.reply( 200, {
+				repost: { uri: REPOST_URI, cid: 'bafy-r-cid', rkey: '3krrkeyrkeyrk' },
+			} );
+
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const trigger = await screen.findByRole( 'button', { name: /repost, 5 reposts/i } );
+		expect( trigger ).toHaveAttribute( 'aria-haspopup', 'menu' );
+		await user.click( trigger );
+
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Repost' } ) );
+
+		const updated = await screen.findByRole( 'button', { name: /undo repost, 6 reposts/i } );
+		expect( updated ).toHaveAttribute( 'aria-pressed', 'true' );
+
+		nock( BASE )
+			.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krrkeyrkeyrk' )
+			.reply( 204 );
+
+		await user.click( updated );
+		expect( screen.queryByRole( 'menuitem', { name: 'Repost' } ) ).toBeNull();
+
+		const reverted = await screen.findByRole( 'button', { name: /repost, 5 reposts/i } );
+		expect( reverted ).toHaveAttribute( 'aria-haspopup', 'menu' );
+	} );
 } );
 
 const connection7: AtmosphereConnection = {
