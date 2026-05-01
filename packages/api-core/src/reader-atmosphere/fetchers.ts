@@ -14,6 +14,8 @@ import type {
 	AtmosphereTimelinePage,
 	CreateLikeParams,
 	CreateLikeResult,
+	CreatePostParams,
+	CreatePostResult,
 	DeleteLikeParams,
 } from './types';
 
@@ -257,6 +259,27 @@ export async function createLike( params: CreateLikeParams ): Promise< CreateLik
 			},
 		} ) ) as { like: CreateLikeResult };
 		return res.like;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function createPost( params: CreatePostParams ): Promise< CreatePostResult > {
+	const { connectionId, text, reply, quote } = params;
+	const body: Record< string, unknown > = { text };
+	if ( reply ) {
+		body.reply = reply;
+	}
+	if ( quote ) {
+		body.quote = quote;
+	}
+	try {
+		const response = ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ connectionId }/posts`,
+			apiNamespace: NAMESPACE,
+			body,
+		} ) ) as { post: CreatePostResult };
+		return response.post;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}
