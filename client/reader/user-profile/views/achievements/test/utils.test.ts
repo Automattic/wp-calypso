@@ -1,6 +1,6 @@
 import {
-	dedupeById,
-	deduplicateAchievements,
+	deduplicateAchievementsById,
+	deduplicateAchievementsBySlug,
 	isFullyEarned,
 	isLockedSecret,
 	isMaskedSecret,
@@ -82,9 +82,9 @@ describe( 'isLockedSecret', () => {
 	} );
 } );
 
-describe( 'dedupeById', () => {
+describe( 'deduplicateAchievementsById', () => {
 	test( 'keeps the first occurrence of each achievement_id', () => {
-		const result = dedupeById( [
+		const result = deduplicateAchievementsById( [
 			{ achievement_id: 1, name: 'first' },
 			{ achievement_id: 2, name: 'second' },
 			{ achievement_id: 1, name: 'duplicate' },
@@ -98,11 +98,11 @@ describe( 'dedupeById', () => {
 
 	test( 'returns the input unchanged when there are no duplicates', () => {
 		const input = [ { achievement_id: 1 }, { achievement_id: 2 }, { achievement_id: 3 } ];
-		expect( dedupeById( input ) ).toEqual( input );
+		expect( deduplicateAchievementsById( input ) ).toEqual( input );
 	} );
 } );
 
-describe( 'deduplicateAchievements', () => {
+describe( 'deduplicateAchievementsBySlug', () => {
 	test( 'keeps the highest level and oldest date for a leveled slug', () => {
 		const a: Achievement = { ...fullyEarned, achievement_id: 10, level: 1, date: '2026-01-01' };
 		const b: Achievement = {
@@ -113,7 +113,7 @@ describe( 'deduplicateAchievements', () => {
 			image: 'https://example.com/level2.png',
 		};
 
-		const result = deduplicateAchievements( [ a, b ] );
+		const result = deduplicateAchievementsBySlug( [ a, b ] );
 
 		expect( result ).toHaveLength( 1 );
 		expect( result[ 0 ].level ).toBe( 2 );

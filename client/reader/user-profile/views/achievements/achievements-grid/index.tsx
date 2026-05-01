@@ -2,7 +2,12 @@ import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
-import { dedupeById, deduplicateAchievements, isFullyEarned, isMaskedSecret } from '../utils';
+import {
+	deduplicateAchievementsById,
+	deduplicateAchievementsBySlug,
+	isFullyEarned,
+	isMaskedSecret,
+} from '../utils';
 import AnniversaryAchievement from './anniversary-achievement';
 import GenericAchievement from './generic-achievement';
 import LockedAchievementCard from './locked-achievement-card';
@@ -46,9 +51,9 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 	}
 
 	const earned = achievements.filter( isFullyEarned );
-	const maskedSecrets = dedupeById( achievements.filter( isMaskedSecret ) );
-	const dedupedEarned = deduplicateAchievements( earned );
-	const sortedLocked = dedupeById(
+	const maskedSecrets = deduplicateAchievementsById( achievements.filter( isMaskedSecret ) );
+	const dedupedEarned = deduplicateAchievementsBySlug( earned );
+	const sortedLocked = deduplicateAchievementsById(
 		[ ...lockedAchievements ].sort( ( a, b ) => a.date_created.localeCompare( b.date_created ) )
 	);
 

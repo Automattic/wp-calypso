@@ -26,7 +26,7 @@ export function getOldestAchievement(
  * - For leveled achievements, keep the highest level.
  * - Otherwise, keep the oldest (first unlocked).
  */
-export function deduplicateAchievements( achievements: Achievement[] ): Achievement[] {
+export function deduplicateAchievementsBySlug( achievements: Achievement[] ): Achievement[] {
 	// Build a map of slug → highest level for that slug.
 	const highestBySlug = achievements.reduce( ( map, achievement ) => {
 		const existing = map.get( achievement.slug );
@@ -51,7 +51,9 @@ export function deduplicateAchievements( achievements: Achievement[] ): Achievem
  * shapes that lack a slug (masked secrets and locked entries) — the backend
  * may return the same id more than once for secret achievements.
  */
-export function dedupeById< T extends { achievement_id: number } >( entries: T[] ): T[] {
+export function deduplicateAchievementsById< T extends { achievement_id: number } >(
+	entries: T[]
+): T[] {
 	const seen = new Set< number >();
 	const result: T[] = [];
 	for ( const entry of entries ) {
