@@ -232,23 +232,50 @@ function isFormValid( state: BlikPaymentMethodState ): boolean {
 	return isValid;
 }
 
-// Placeholder logo: BLIK's brand mark in their primary pink. Swap for the
-// official SVG asset once it's been added to the repo.
-const BlikLogo = styled.span`
-	display: inline-block;
-	padding: 2px 8px;
-	border-radius: 4px;
-	background: #e60074;
-	color: #ffffff;
-	font-weight: 700;
-	font-size: 12px;
-	letter-spacing: 0.5px;
-	line-height: 1.4;
-
-	&::before {
-		content: 'BLIK';
-	}
+const BlikLogo = styled( BlikLogoSvg )`
+	height: 20px;
 `;
+
+function BlikLogoSvg( { className }: { className?: string } ) {
+	return (
+		<svg
+			className={ className }
+			xmlns="http://www.w3.org/2000/svg"
+			width="43"
+			height="20"
+			viewBox="0 0 43 20"
+			fill="none"
+		>
+			<path fill="#fff" d="M0 0h42.268v20H0z" />
+			<path
+				fill="#000"
+				d="M33.12 17.15h3.183l-3.823-4.935 3.465-4.24H33.06l-3.403 4.266v-9.1h-2.47v14.008h2.47v-4.896z"
+			/>
+			<path fill="#fff" d="M16.136 4.654a2.21 2.21 0 1 0-4.419-.03 2.21 2.21 0 0 0 4.419.03" />
+			<path
+				fill="#000"
+				d="M17.871 3.139h2.47v14.008h-2.47zM22.531 7.97h2.47v9.177h-2.47zM11.45 7.881a4.67 4.67 0 0 0-2.215.556V3.139h-2.47v9.422a4.684 4.684 0 1 0 4.685-4.68m0 6.937a2.253 2.253 0 1 1 0-4.506 2.253 2.253 0 0 1 0 4.505"
+			/>
+			<path
+				fill="url(#blik-logo-fill)"
+				d="M16.136 4.654a2.21 2.21 0 1 0-4.419-.03 2.21 2.21 0 0 0 4.419.03"
+			/>
+			<defs>
+				<linearGradient
+					id="blik-logo-fill"
+					x1="12.352"
+					x2="15.501"
+					y1="6.189"
+					y2="3.085"
+					gradientUnits="userSpaceOnUse"
+				>
+					<stop stopColor="#e52f08" />
+					<stop offset="1" stopColor="#e94f96" />
+				</linearGradient>
+			</defs>
+		</svg>
+	);
+}
 
 function BlikLabel() {
 	const { __ } = useI18n();
