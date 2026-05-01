@@ -1,6 +1,7 @@
 import {
 	createConnection,
 	createFollow,
+	deleteFollow,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
@@ -301,5 +302,63 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
+		},
+	} );
+
+export interface UnfollowAtmosphereActorVars {
+	connectionId: number;
+	actor: string;
+	rkey: string;
+}
+
+/**
+ * Mutation factory for deleting an `app.bsky.graph.follow` record.
+ * Optimistically clears the cached scoped-profile entry's
+ * `viewer.following` / `viewer.following_rkey` to null in
+ * `onMutate`; rolls back on error. There is no `onSuccess` cache
+ * write because the optimistic state is already the success state
+ * — a successful DELETE returns 204 with no body.
+ *
+ * Accepts the consumer's QueryClient because Calypso boots its own
+ * separate from the singleton in `@automattic/api-queries`. See
+ * `client/reader/AGENTS.md` for the rationale.
+ */
+export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		void,
+		AtmosphereError,
+		UnfollowAtmosphereActorVars,
+		FollowAtmosphereMutationContext
+	>( {
+		mutationFn: ( vars ) => deleteFollow( { connectionId: vars.connectionId, rkey: vars.rkey } ),
+		onMutate: async ( vars ) => {
+			const key = atmosphereScopedProfileQuery( {
+				connectionId: vars.connectionId,
+				actor: vars.actor,
+			} ).queryKey;
+			await queryClient.cancelQueries( { queryKey: key } );
+			const prev = queryClient.getQueryData< AtmosphereScopedProfile >( key );
+			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: null,
+								following_rkey: null,
+							},
+					  }
+					: old
+			);
+			return { prev };
+		},
+		onError: ( _err, vars, ctx ) => {
+			if ( ctx?.prev ) {
+				const key = atmosphereScopedProfileQuery( {
+					connectionId: vars.connectionId,
+					actor: vars.actor,
+				} ).queryKey;
+				queryClient.setQueryData( key, ctx.prev );
+			}
 		},
 	} );
