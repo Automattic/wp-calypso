@@ -1,4 +1,4 @@
-import { PENDING_LIKE_URI } from '@automattic/api-core';
+import { PENDING_LIKE_URI, PENDING_REPOST_URI } from '@automattic/api-core';
 import { rkeyFromUri } from '../rkey-from-uri';
 
 describe( 'rkeyFromUri', () => {
@@ -8,8 +8,12 @@ describe( 'rkeyFromUri', () => {
 		);
 	} );
 
-	it( 'returns null for the pending sentinel', () => {
+	it( 'returns null for the pending-like sentinel', () => {
 		expect( rkeyFromUri( PENDING_LIKE_URI ) ).toBeNull();
+	} );
+
+	it( 'returns null for the pending-repost sentinel', () => {
+		expect( rkeyFromUri( PENDING_REPOST_URI ) ).toBeNull();
 	} );
 
 	it( 'returns null for an at-uri without an rkey segment', () => {
