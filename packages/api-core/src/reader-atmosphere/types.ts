@@ -311,3 +311,21 @@ export interface AtmosphereTagFeedPage {
 	cursor: string | null;
 	tag?: AtmosphereTagInfo;
 }
+
+export interface AtUriRef {
+	uri: string;
+	cid: string;
+}
+
+export interface CreatePostParams {
+	connectionId: number;
+	text: string;
+	reply?: { root: AtUriRef; parent: AtUriRef };
+	quote?: AtUriRef;
+}
+
+export interface CreatePostResult {
+	uri: string;
+	cid: string;
+	rkey: string;
+}

@@ -6,3 +6,11 @@
  * suppress any DELETE that would race the in-flight POST.
  */
 export const PENDING_LIKE_URI = '__pending_like__';
+
+/**
+ * Sentinel used in the optimistic-update window after a reply-mutation
+ * fires but before the server response lands. Mirrors PENDING_LIKE_URI:
+ * consumers that parse rkeys must treat this value as "no real rkey yet"
+ * and suppress any DELETE that would race the in-flight POST.
+ */
+export const PENDING_REPLY_URI = '__pending_reply__';
