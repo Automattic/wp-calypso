@@ -55,6 +55,11 @@ describe( 'isFullyEarned', () => {
 	test( 'returns false for a MaskedSecretAchievement', () => {
 		expect( isFullyEarned( maskedSecret ) ).toBe( false );
 	} );
+
+	test( 'returns true for a legacy Achievement without is_secret set', () => {
+		const { is_secret: _omit, ...legacy } = fullyEarned;
+		expect( isFullyEarned( legacy as Achievement ) ).toBe( true );
+	} );
 } );
 
 describe( 'isMaskedSecret', () => {

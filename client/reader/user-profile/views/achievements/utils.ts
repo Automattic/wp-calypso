@@ -64,7 +64,7 @@ export function dedupeById< T extends { achievement_id: number } >( entries: T[]
 }
 
 export const isFullyEarned = ( a: EarnedAchievementEntry ): a is Achievement =>
-	a.is_secret === false;
+	a.is_secret !== true;
 
 export const isMaskedSecret = ( a: EarnedAchievementEntry ): a is MaskedSecretAchievement =>
 	a.is_secret === true;

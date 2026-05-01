@@ -248,6 +248,20 @@ describe( 'AchievementsGrid', () => {
 		expect( screen.getAllByText( 'Secret achievement' ) ).toHaveLength( 1 );
 	} );
 
+	test( 'renders earned achievements from a legacy response that omits is_secret', () => {
+		const { is_secret: _omit, ...legacy } = earned();
+		useAchievementsQuery.mockReturnValue( {
+			...baseQueryReturn,
+			achievements: [ legacy ],
+			lockedAchievements: [],
+		} );
+
+		renderGrid( { userLogin: 'me', isOwnProfile: true } );
+
+		expect( screen.getByText( 'First Post' ) ).toBeVisible();
+		expect( screen.queryByText( 'No achievements yet.' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'shows the loading spinner while pages are still being fetched', () => {
 		useAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,

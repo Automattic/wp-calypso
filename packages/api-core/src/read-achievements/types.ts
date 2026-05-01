@@ -12,7 +12,8 @@ export interface Achievement {
 	date: string;
 	image: string;
 	retired: boolean;
-	is_secret: false;
+	/** Optional — legacy responses (pre-locked-achievements rollout) omit it. */
+	is_secret?: false;
 	/** Only present when viewing your own achievements. */
 	site_ID?: number;
 	/** Only present when viewing your own achievements. */
