@@ -472,7 +472,6 @@ export function CheckoutSummaryFeaturesList( props: {
 				<CheckoutSummaryPlanFeatures
 					hasDomainsInCart={ hasDomainsInCart }
 					nextDomainIsFree={ nextDomainIsFree }
-					hasDomainTransferInCart={ hasDomainTransferProduct }
 				/>
 			) }
 
@@ -625,9 +624,8 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 function CheckoutSummaryPlanFeatures( props: {
 	hasDomainsInCart: boolean;
 	nextDomainIsFree: boolean;
-	hasDomainTransferInCart: boolean;
 } ) {
-	const { hasDomainsInCart, nextDomainIsFree, hasDomainTransferInCart } = props;
+	const { hasDomainsInCart, nextDomainIsFree } = props;
 
 	const translate = useTranslate();
 	const cartKey = useCartKey();
@@ -647,8 +645,7 @@ function CheckoutSummaryPlanFeatures( props: {
 		hasDomainsInCart,
 		hasRenewalInCart,
 		nextDomainIsFree && ! isHundredYearPlan,
-		showPricingGridFeatures,
-		hasDomainTransferInCart
+		showPricingGridFeatures
 	);
 
 	return (

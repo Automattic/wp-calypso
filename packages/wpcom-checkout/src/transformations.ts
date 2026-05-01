@@ -1,3 +1,4 @@
+import { isDomainTransfer } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { translate, useTranslate } from 'i18n-calypso';
 import { getContactDetailsType } from './get-contact-details-type';
@@ -191,15 +192,31 @@ export function isUserVisibleCostOverride( costOverride: {
 	return true;
 }
 
+/**
+ * Replace the API-provided "Free domain for first year" reason on a bundled
+ * domain transfer with copy that correctly describes a transfer (a renewal of
+ * an existing domain, not a new registration). Matches on the original reason
+ * so we never clobber an unrelated cost override that may also be present on
+ * the same product.
+ */
 function makeDomainTransferBundleReasonUnique(
 	costOverride: ResponseCartCostOverride,
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >
 ): ResponseCartCostOverride {
-	if ( product.product_slug === 'domain_transfer' && product.is_bundled ) {
+	if (
+		isDomainTransfer( product ) &&
+		product.is_bundled &&
+		costOverride.human_readable_reason === 'Free domain for first year'
+	) {
 		return {
 			...costOverride,
-			human_readable_reason: String( translate( 'Free domain renewal for one year' ) ),
+			human_readable_reason: String(
+				translate( 'Free domain renewal for one year', {
+					comment:
+						'Shown in checkout cost-override list for a domain transfer bundled free with a paid plan. A transfer renews an existing domain rather than registering a new one.',
+				} )
+			),
 		};
 	}
 	return costOverride;

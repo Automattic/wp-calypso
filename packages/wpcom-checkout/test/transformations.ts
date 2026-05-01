@@ -1,5 +1,7 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { translate } from 'i18n-calypso';
 import {
+	filterCostOverridesForLineItem,
 	getCreditsLineItemFromCart,
 	getSubtotalWithoutDiscountsForProduct,
 	getTaxLineItemFromCart,
@@ -349,5 +351,81 @@ describe( 'getSubtotalWithoutDiscountsForProduct', function () {
 		};
 
 		expect( getSubtotalWithoutDiscountsForProduct( product ) ).toBe( 8000 );
+	} );
+} );
+
+describe( 'filterCostOverridesForLineItem', function () {
+	const bundledTransferOverride = {
+		human_readable_reason: 'Free domain for first year',
+		old_subtotal_integer: 1500,
+		new_subtotal_integer: 0,
+		override_code: 'recurring-bundle',
+		does_override_original_cost: false,
+		percentage: 100,
+		first_unit_only: false,
+	};
+
+	it( 'rewrites the bundled domain transfer reason to "Free domain renewal for one year"', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'domain_transfer',
+			is_bundled: true,
+			cost_overrides: [ bundledTransferOverride ],
+		};
+
+		const result = filterCostOverridesForLineItem( product, translate );
+
+		expect( result ).toHaveLength( 1 );
+		expect( result[ 0 ].humanReadableReason ).toBe( 'Free domain renewal for one year' );
+	} );
+
+	it( 'leaves a non-bundled domain transfer override unchanged', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'domain_transfer',
+			is_bundled: false,
+			cost_overrides: [ bundledTransferOverride ],
+		};
+
+		const result = filterCostOverridesForLineItem( product, translate );
+
+		expect( result[ 0 ].humanReadableReason ).toBe( 'Free domain for first year' );
+	} );
+
+	it( 'leaves a bundled non-transfer product override unchanged', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'dotcom_domain',
+			is_bundled: true,
+			cost_overrides: [ bundledTransferOverride ],
+		};
+
+		const result = filterCostOverridesForLineItem( product, translate );
+
+		expect( result[ 0 ].humanReadableReason ).toBe( 'Free domain for first year' );
+	} );
+
+	it( 'does not clobber a sale-coupon override that happens to also be on a bundled domain transfer', () => {
+		const product = {
+			...getEmptyResponseCartProduct(),
+			product_slug: 'domain_transfer',
+			product_name: 'example.com',
+			is_bundled: true,
+			cost_overrides: [
+				{
+					human_readable_reason: 'Item on sale',
+					old_subtotal_integer: 1500,
+					new_subtotal_integer: 750,
+					override_code: 'sale-coupon-discount-1',
+					does_override_original_cost: false,
+					percentage: 50,
+					first_unit_only: true,
+				},
+			],
+		};
+
+		const result = filterCostOverridesForLineItem( product, translate );
+
+		expect( result[ 0 ].humanReadableReason ).toBe( 'Sale: example.com' );
 	} );
 } );
