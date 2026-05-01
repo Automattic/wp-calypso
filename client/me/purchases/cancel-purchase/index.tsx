@@ -41,7 +41,6 @@ import {
 	getButtonLabels,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { useExperiment } from 'calypso/lib/explat';
 import {
 	getName,
 	hasAmountAvailableToRefund,
@@ -1236,17 +1235,7 @@ const ConnectedCancelPurchase = connect(
 )( localize( withLocalizedMoment( CancelPurchase ) ) );
 
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_split_cancel_refund_20260316'
-	);
-	const isRefundEligibilityNoticeEnabled =
-		! isLoadingExperiment && experimentAssignment?.variationName === 'treatment';
-	return (
-		<ConnectedCancelPurchase
-			{ ...props }
-			isRefundEligibilityNoticeEnabled={ isRefundEligibilityNoticeEnabled }
-		/>
-	);
+	return <ConnectedCancelPurchase { ...props } isRefundEligibilityNoticeEnabled />;
 }
 
 export default CancelPurchaseWithExperiment;
