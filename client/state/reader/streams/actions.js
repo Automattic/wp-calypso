@@ -122,11 +122,15 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	try {
 		const queryClient = getCalypsoQueryClient();
 		const queryOpts = readStreamQuery( streamKey, queryParams, pageHandle ?? null );
-		// Polls share the same queryKey as the initial page (both have a null
-		// pageHandle), so without bypassing freshness a poll within `staleTime`
-		// would return cached data and the "N new posts" indicator would never
-		// update.
-		const fetchOpts = isPoll ? { ...queryOpts, staleTime: 0 } : queryOpts;
+		// Every call into this thunk represents an explicit intent to fetch
+		// (initial load, pagination, poll, refresh after `clearStream`, locale
+		// change). The legacy data-layer always hit the network, so callers
+		// like `subscribe-modal` rely on `clearStream` + `requestPage` returning
+		// fresh data — without bypassing freshness, `fetchQuery` could serve a
+		// stale cache entry within `staleTime` and miss newly-followed sites or
+		// new posts. Keep `readStreamQuery`'s `staleTime` as a sane default for
+		// future `useQuery` consumers, but force network here.
+		const fetchOpts = { ...queryOpts, staleTime: 0 };
 		data = queryClient ? await queryClient.fetchQuery( fetchOpts ) : await queryOpts.queryFn();
 	} catch ( error ) {
 		dispatch(
