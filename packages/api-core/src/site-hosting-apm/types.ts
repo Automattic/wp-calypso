@@ -1,5 +1,3 @@
-export type ApmTransactionType = 'db' | 'wp_core' | 'plugin' | 'external';
-
 export interface ApmTimePoint {
 	timestamp: number;
 	db: number;
@@ -17,16 +15,7 @@ export interface ApmSlowRequest {
 	timestamp: number;
 }
 
-export interface ApmTransaction {
-	type: ApmTransactionType;
-	name: string;
-	duration_ms: number;
-	start_offset_ms: number;
-}
-
-export interface ApmRequestDetail extends ApmSlowRequest {
-	transactions: ApmTransaction[];
-}
+export type ApmRequestDetail = ApmSlowRequest;
 
 export interface ApmOverview {
 	timeseries: ApmTimePoint[];

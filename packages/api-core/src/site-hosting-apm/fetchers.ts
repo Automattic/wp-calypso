@@ -1,10 +1,4 @@
-import type {
-	ApmOverview,
-	ApmRequestDetail,
-	ApmSlowRequest,
-	ApmTransaction,
-	ApmTransactionType,
-} from './types';
+import type { ApmOverview, ApmRequestDetail, ApmSlowRequest } from './types';
 
 // Mulberry32: tiny deterministic PRNG so mock data is stable per seed.
 function rng( seed: number ) {
@@ -37,29 +31,6 @@ const SAMPLE_PATHS = [
 	'/wp-login.php',
 	'/wp-json/jetpack/v4/sync',
 	'/feed/',
-];
-
-const SAMPLE_DB_QUERIES = [
-	'SELECT * FROM wp_posts WHERE post_status = "publish"',
-	'SELECT * FROM wp_options WHERE autoload = "yes"',
-	'SELECT meta_value FROM wp_postmeta WHERE post_id = ?',
-	'UPDATE wp_users SET user_activation_key = ?',
-	'SELECT * FROM wp_woocommerce_order_items',
-];
-
-const SAMPLE_PLUGINS = [
-	'WooCommerce: woocommerce_init',
-	'Yoast SEO: wpseo_head',
-	'Jetpack: jetpack_sync_action',
-	'Akismet: akismet_init',
-	'Elementor: render_widget',
-];
-
-const SAMPLE_EXTERNAL = [
-	'GET https://api.stripe.com/v1/charges',
-	'POST https://api.mailchimp.com/3.0/lists',
-	'GET https://maps.googleapis.com/maps/api/place/details/json',
-	'POST https://hooks.slack.com/services/…',
 ];
 
 function pickWeighted< T >( random: () => number, choices: Array< [ T, number ] > ): T {
@@ -131,49 +102,12 @@ export async function fetchApmRequest(
 	const seed = siteId ^ hashString( requestId );
 	const random = rng( seed );
 
-	const url = SAMPLE_PATHS[ Math.floor( random() * SAMPLE_PATHS.length ) ];
-	const duration_ms = Math.round( 1500 + random() * 8500 );
-	const transactions: ApmTransaction[] = [];
-
-	let cursor = 0;
-	while ( cursor < duration_ms - 50 ) {
-		const types: ApmTransactionType[] = [ 'db', 'wp_core', 'plugin', 'external' ];
-		const type = types[ Math.floor( random() * types.length ) ];
-		const span = Math.min(
-			duration_ms - cursor,
-			Math.round( 30 + random() * ( type === 'external' ? 600 : 250 ) )
-		);
-		let name = '';
-		switch ( type ) {
-			case 'db':
-				name = SAMPLE_DB_QUERIES[ Math.floor( random() * SAMPLE_DB_QUERIES.length ) ];
-				break;
-			case 'plugin':
-				name = SAMPLE_PLUGINS[ Math.floor( random() * SAMPLE_PLUGINS.length ) ];
-				break;
-			case 'external':
-				name = SAMPLE_EXTERNAL[ Math.floor( random() * SAMPLE_EXTERNAL.length ) ];
-				break;
-			case 'wp_core':
-				name = random() < 0.5 ? 'Action: init' : 'Filter: the_content';
-				break;
-		}
-		transactions.push( {
-			type,
-			name,
-			duration_ms: span,
-			start_offset_ms: cursor,
-		} );
-		cursor += span;
-	}
-
 	return Promise.resolve( {
 		id: requestId,
-		url,
+		url: SAMPLE_PATHS[ Math.floor( random() * SAMPLE_PATHS.length ) ],
 		method: random() < 0.7 ? 'GET' : 'POST',
-		duration_ms,
+		duration_ms: Math.round( 1500 + random() * 8500 ),
 		status: 200,
 		timestamp: Date.now() - Math.round( random() * 60 * 60 * 1000 ),
-		transactions,
 	} );
 }

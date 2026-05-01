@@ -7,10 +7,9 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../../../app/breadcrumbs';
-import { Card, CardBody, CardHeader } from '../../../../components/card';
+import { Card, CardHeader } from '../../../../components/card';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
-import TransactionsWaterfall from './transactions-waterfall';
 
 function formatMs( ms: number ): string {
 	if ( ms >= 1000 ) {
@@ -49,12 +48,6 @@ export default function RequestDetail( {
 						</HStack>
 					</VStack>
 				</CardHeader>
-				<CardBody>
-					<TransactionsWaterfall
-						transactions={ request.transactions }
-						totalMs={ request.duration_ms }
-					/>
-				</CardBody>
 			</Card>
 		</PageLayout>
 	);
