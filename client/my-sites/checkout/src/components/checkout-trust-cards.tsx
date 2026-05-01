@@ -67,11 +67,7 @@ export default function CheckoutTrustCards( { cart }: { cart: ResponseCart } ) {
 							args: { days: refundDays },
 						} ) }
 					</TrustCardHeader>
-					<TrustCardBody>
-						{ translate( 'Full refund within %(days)d days, no questions asked.', {
-							args: { days: refundDays },
-						} ) }
-					</TrustCardBody>
+					<TrustCardBody>{ translate( 'Full refund, no questions asked.' ) }</TrustCardBody>
 				</TrustCard>
 			) }
 
