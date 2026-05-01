@@ -11,6 +11,21 @@ import type { MastodonAuthorProfile, MastodonConnection } from '@automattic/api-
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
+// NavTabs (rendered via MastodonAuthorProfileTabs inside the panel) uses
+// IntersectionObserver, which jsdom doesn't provide.
+beforeAll( () => {
+	global.IntersectionObserver = class IntersectionObserver {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	} as unknown as typeof global.IntersectionObserver;
+} );
+
+afterAll( () => {
+	// @ts-expect-error -- cleaning up the stub
+	delete global.IntersectionObserver;
+} );
+
 const BASE = 'https://public-api.wordpress.com';
 
 const connection: MastodonConnection = {
@@ -53,6 +68,9 @@ describe( 'MastodonAuthorProfilePanel', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.restoreAllMocks();
+		// Reset URL between tests so a previous test's `?tab=` doesn't leak
+		// into the useTabSlug hook on the next render.
+		window.history.replaceState( {}, '', '/' );
 	} );
 
 	it( 'renders the mapped profile and feed counts', async () => {
@@ -61,6 +79,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			.reply( 200, makeProfile() );
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { exclude_replies: 'true' } )
 			.reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
@@ -80,6 +99,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			.reply( 200, makeProfile() );
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { exclude_replies: 'true' } )
 			.reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
@@ -106,6 +126,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			.reply( 200, makeProfile( { locked: true } ) );
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { exclude_replies: 'true' } )
 			.reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
@@ -124,6 +145,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 		// isn't actually empty, it errored.
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { exclude_replies: 'true' } )
 			.reply( 404, { error: 'connection_not_found' } );
 
 		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
@@ -141,5 +163,23 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			).toBe( true )
 		);
 		expect( screen.queryByText( /posts are private/i ) ).toBeNull();
+	} );
+
+	it( 'flows ?tab=media through to the feed query as only_media=true', async () => {
+		window.history.replaceState( {}, '', '/reader/mastodon/7/profile/108020?tab=media' );
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+			.reply( 200, makeProfile() );
+		const feedScope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+			.query( { only_media: 'true' } )
+			.reply( 200, { items: [], cursor: null } );
+
+		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible() );
+		await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );
 	} );
 } );

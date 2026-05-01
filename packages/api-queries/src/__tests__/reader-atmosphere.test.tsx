@@ -2,6 +2,7 @@ import {
 	PENDING_LIKE_URI,
 	readerAtmosphereKeys,
 	type AtmosphereFeedItem,
+	type AtmosphereTagFeedPage,
 	type AtmosphereThreadResponse,
 	type AtmosphereTimelinePage,
 	AtmosphereAuthorFeedPage,
@@ -615,6 +616,46 @@ describe( 'reader-atmosphere hooks', () => {
 			);
 		}
 
+		function seedAuthorFeed(
+			client: QueryClient,
+			pages: AtmosphereAuthorFeedPage[],
+			pageParams: ( string | undefined )[]
+		) {
+			const data: InfiniteData< AtmosphereAuthorFeedPage > = { pages, pageParams };
+			client.setQueryData( readerAtmosphereKeys.authorFeed( 'alice.bsky.social' ), data );
+		}
+
+		function getAuthorFeedCache( client: QueryClient ) {
+			return client.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+				readerAtmosphereKeys.authorFeed( 'alice.bsky.social' )
+			);
+		}
+
+		function seedTagFeed(
+			client: QueryClient,
+			pages: AtmosphereTagFeedPage[],
+			pageParams: ( string | undefined )[]
+		) {
+			const data: InfiniteData< AtmosphereTagFeedPage > = { pages, pageParams };
+			client.setQueryData( readerAtmosphereKeys.tagFeed( CONNECTION_ID, 'rust' ), data );
+		}
+
+		function getTagFeedCache( client: QueryClient ) {
+			return client.getQueryData< InfiniteData< AtmosphereTagFeedPage > >(
+				readerAtmosphereKeys.tagFeed( CONNECTION_ID, 'rust' )
+			);
+		}
+
+		function seedThread( client: QueryClient, thread: AtmosphereThreadResponse ) {
+			client.setQueryData( readerAtmosphereKeys.thread( TARGET_URI ), thread );
+		}
+
+		function getThreadCache( client: QueryClient ) {
+			return client.getQueryData< AtmosphereThreadResponse >(
+				readerAtmosphereKeys.thread( TARGET_URI )
+			);
+		}
+
 		describe( 'useCreateLikeMutation', () => {
 			it( 'optimistically sets PENDING_LIKE_URI + increments likes; replaces with real URI on success', async () => {
 				const target = makeFeedItemWithViewer( {
@@ -659,7 +700,7 @@ describe( 'reader-atmosphere hooks', () => {
 					expect( optimistic?.pages[ 0 ].items[ 0 ].counts.likes ).toBe( 6 );
 				} );
 				expect( cancelQueriesSpy ).toHaveBeenCalledWith( {
-					queryKey: readerAtmosphereKeys.timeline( CONNECTION_ID ),
+					queryKey: readerAtmosphereKeys.all,
 				} );
 
 				await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
@@ -974,6 +1015,60 @@ describe( 'reader-atmosphere hooks', () => {
 				expect( settled?.pages[ 1 ].items[ 0 ].uri ).toBe( TARGET_URI );
 				expect( settled?.pages[ 1 ].items[ 0 ].viewer?.like ).toBe( SERVER_LIKE_URI );
 				expect( settled?.pages[ 1 ].items[ 0 ].counts.likes ).toBe( 6 );
+			} );
+
+			it( 'patches matching posts across timeline, profile, tag, and thread caches', async () => {
+				const target = makeFeedItemWithViewer( {
+					uri: TARGET_URI,
+					cid: TARGET_CID,
+					counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
+				} );
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
+				seedAuthorFeed( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
+				seedTagFeed(
+					client,
+					[ { items: [ target ], cursor: null, tag: { name: 'rust', count: 1 } } ],
+					[ undefined ]
+				);
+				seedThread( client, {
+					thread: { type: 'post', post: target, parent: null, replies: [] },
+				} );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/likes` )
+					.reply( 200, {
+						like: { uri: SERVER_LIKE_URI, cid: 'cid-like', rkey: SERVER_LIKE_RKEY },
+					} );
+
+				const { result } = renderHook(
+					() => {
+						const m = useCreateLikeMutation( CONNECTION_ID );
+						void m.isSuccess;
+						return m;
+					},
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					result.current.mutate( { postUri: TARGET_URI, postCid: TARGET_CID } );
+					await Promise.resolve();
+				} );
+
+				await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+				expect( getTimelineCache( client )?.pages[ 0 ].items[ 0 ].viewer?.like ).toBe(
+					SERVER_LIKE_URI
+				);
+				expect( getAuthorFeedCache( client )?.pages[ 0 ].items[ 0 ].viewer?.like ).toBe(
+					SERVER_LIKE_URI
+				);
+				expect( getTagFeedCache( client )?.pages[ 0 ].items[ 0 ].viewer?.like ).toBe(
+					SERVER_LIKE_URI
+				);
+				const thread = getThreadCache( client )?.thread;
+				expect( thread?.type ).toBe( 'post' );
+				expect( thread?.type === 'post' ? thread.post.viewer?.like : null ).toBe( SERVER_LIKE_URI );
 			} );
 		} );
 

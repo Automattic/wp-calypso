@@ -2,6 +2,7 @@ import {
 	createConnection,
 	createLike,
 	deleteLike,
+	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
@@ -9,6 +10,7 @@ import {
 	getThread,
 	getTimeline,
 	PENDING_LIKE_URI,
+	isValidHashtag,
 	readerAtmosphereKeys,
 } from '@automattic/api-core';
 import {
@@ -31,7 +33,9 @@ import type {
 	AtmosphereCreateConnectionResponse,
 	AtmosphereError,
 	AtmosphereFeedItem,
+	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
+	AtmosphereThreadNode,
 	AtmosphereTimelinePage,
 	CreateConnectionParams,
 	CreateLikeResult,
@@ -207,6 +211,11 @@ interface OptimisticContext {
 	} >;
 }
 
+interface FeedPageWithItems {
+	items: AtmosphereFeedItem[];
+	[ key: string ]: unknown;
+}
+
 function getOptimisticItemKey( item: AtmosphereFeedItem ): string {
 	if ( ! item.reason ) {
 		return `${ item.uri }\nreason:none`;
@@ -214,46 +223,224 @@ function getOptimisticItemKey( item: AtmosphereFeedItem ): string {
 	return `${ item.uri }\nreason:${ item.reason.type }:${ item.reason.by.did }:${ item.reason.by.handle }`;
 }
 
-/**
- * Walk every cached `useTimelineInfiniteQuery` entry for the given
- * connection, find any page whose items contain the post by URI, and
- * apply `patch` to that item. Pages that don't contain the URI pass
- * through untouched. Returns the pre-mutation items so `onError` can
- * roll back only this post without clobbering other optimistic updates.
- */
-function patchTimelineCache(
+function isObject( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null;
+}
+
+function isInfiniteFeedData( data: unknown ): data is InfiniteData< FeedPageWithItems > {
+	if ( ! isObject( data ) || ! Array.isArray( data.pages ) ) {
+		return false;
+	}
+	return data.pages.some(
+		( page ) => isObject( page ) && Array.isArray( ( page as { items?: unknown } ).items )
+	);
+}
+
+function patchFeedItems(
+	items: AtmosphereFeedItem[],
+	postUri: string,
+	patch: ( item: AtmosphereFeedItem ) => AtmosphereFeedItem,
+	snapshots: OptimisticContext[ 'snapshots' ][ number ][ 'items' ],
+	seenOccurrences: Map< string, number >
+): AtmosphereFeedItem[] {
+	return items.map( ( item ) => {
+		if ( item.uri !== postUri ) {
+			return item;
+		}
+		const itemKey = getOptimisticItemKey( item );
+		const occurrence = seenOccurrences.get( itemKey ) ?? 0;
+		seenOccurrences.set( itemKey, occurrence + 1 );
+		snapshots.push( { itemKey, occurrence, item } );
+		return patch( item );
+	} );
+}
+
+function patchThreadNode(
+	node: AtmosphereThreadNode,
+	postUri: string,
+	patch: ( item: AtmosphereFeedItem ) => AtmosphereFeedItem,
+	snapshots: OptimisticContext[ 'snapshots' ][ number ][ 'items' ],
+	seenOccurrences: Map< string, number >
+): AtmosphereThreadNode {
+	if ( node.type !== 'post' ) {
+		return node;
+	}
+
+	const beforeSnapshotCount = snapshots.length;
+	const post =
+		node.post.uri === postUri
+			? patchFeedItems( [ node.post ], postUri, patch, snapshots, seenOccurrences )[ 0 ]
+			: node.post;
+	const parent = node.parent
+		? patchThreadNode( node.parent, postUri, patch, snapshots, seenOccurrences )
+		: null;
+	const replies = node.replies.map( ( reply ) =>
+		patchThreadNode( reply, postUri, patch, snapshots, seenOccurrences )
+	);
+
+	if (
+		snapshots.length === beforeSnapshotCount &&
+		parent === node.parent &&
+		replies.every( ( reply, idx ) => reply === node.replies[ idx ] )
+	) {
+		return node;
+	}
+
+	return { ...node, post, parent, replies };
+}
+
+function patchAtmosphereQueryData(
+	data: unknown,
+	postUri: string,
+	patch: ( item: AtmosphereFeedItem ) => AtmosphereFeedItem
+): { data: unknown; items: OptimisticContext[ 'snapshots' ][ number ][ 'items' ] } {
+	const items: OptimisticContext[ 'snapshots' ][ number ][ 'items' ] = [];
+	const seenOccurrences = new Map< string, number >();
+
+	if ( isInfiniteFeedData( data ) ) {
+		return {
+			items,
+			data: {
+				...data,
+				pages: data.pages.map( ( page ) =>
+					Array.isArray( page.items )
+						? {
+								...page,
+								items: patchFeedItems( page.items, postUri, patch, items, seenOccurrences ),
+						  }
+						: page
+				),
+			},
+		};
+	}
+
+	if ( isObject( data ) && isObject( data.thread ) ) {
+		return {
+			items,
+			data: {
+				...data,
+				thread: patchThreadNode(
+					data.thread as unknown as AtmosphereThreadNode,
+					postUri,
+					patch,
+					items,
+					seenOccurrences
+				),
+			},
+		};
+	}
+
+	return { data, items };
+}
+
+function patchAtmospherePostCaches(
 	queryClient: QueryClient,
-	connectionId: number,
 	postUri: string,
 	patch: ( item: AtmosphereFeedItem ) => AtmosphereFeedItem
 ): OptimisticContext {
-	const key = readerAtmosphereKeys.timeline( connectionId );
-	const items: OptimisticContext[ 'snapshots' ][ number ][ 'items' ] = [];
-	const seenOccurrences = new Map< string, number >();
-	const data = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( key );
-	if ( ! data ) {
-		return { snapshots: [ { key, items } ] };
+	const snapshots: OptimisticContext[ 'snapshots' ] = [];
+	for ( const [ key, data ] of queryClient.getQueriesData( {
+		queryKey: readerAtmosphereKeys.all,
+	} ) ) {
+		const result = patchAtmosphereQueryData( data, postUri, patch );
+		if ( ! result.items.length ) {
+			continue;
+		}
+		queryClient.setQueryData( key, result.data );
+		snapshots.push( { key, items: result.items } );
 	}
-	queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >( key, {
-		...data,
-		pages: data.pages.map( ( page ) => ( {
-			...page,
-			items: page.items.map( ( item ) => {
-				if ( item.uri !== postUri ) {
-					return item;
-				}
-				const itemKey = getOptimisticItemKey( item );
-				const occurrence = seenOccurrences.get( itemKey ) ?? 0;
-				seenOccurrences.set( itemKey, occurrence + 1 );
-				items.push( { itemKey, occurrence, item } );
-				return patch( item );
-			} ),
-		} ) ),
-	} );
-	return { snapshots: [ { key, items } ] };
+	return { snapshots };
 }
 
-function restoreTimelineSnapshots( queryClient: QueryClient, ctx: OptimisticContext | undefined ) {
+function restoreFeedItems(
+	items: AtmosphereFeedItem[],
+	itemSnapshots: Map< string, AtmosphereFeedItem[] >,
+	seenOccurrences: Map< string, number >
+): AtmosphereFeedItem[] {
+	return items.map( ( item ) => {
+		const itemKey = getOptimisticItemKey( item );
+		const snapshots = itemSnapshots.get( itemKey );
+		if ( ! snapshots ) {
+			return item;
+		}
+		const occurrence = seenOccurrences.get( itemKey ) ?? 0;
+		seenOccurrences.set( itemKey, occurrence + 1 );
+		return snapshots[ occurrence ] ?? item;
+	} );
+}
+
+function restoreThreadNode(
+	node: AtmosphereThreadNode,
+	itemSnapshots: Map< string, AtmosphereFeedItem[] >,
+	seenOccurrences: Map< string, number >
+): AtmosphereThreadNode {
+	if ( node.type !== 'post' ) {
+		return node;
+	}
+
+	const post = restoreFeedItems( [ node.post ], itemSnapshots, seenOccurrences )[ 0 ];
+	const parent = node.parent
+		? restoreThreadNode( node.parent, itemSnapshots, seenOccurrences )
+		: null;
+	const replies = node.replies.map( ( reply ) =>
+		restoreThreadNode( reply, itemSnapshots, seenOccurrences )
+	);
+
+	if (
+		post === node.post &&
+		parent === node.parent &&
+		replies.every( ( reply, idx ) => reply === node.replies[ idx ] )
+	) {
+		return node;
+	}
+
+	return { ...node, post, parent, replies };
+}
+
+function restoreAtmosphereQueryData(
+	data: unknown,
+	items: OptimisticContext[ 'snapshots' ][ number ][ 'items' ]
+): unknown {
+	const itemSnapshots = new Map< string, AtmosphereFeedItem[] >();
+	for ( const { itemKey, occurrence, item } of items ) {
+		const snapshots = itemSnapshots.get( itemKey ) ?? [];
+		snapshots[ occurrence ] = item;
+		itemSnapshots.set( itemKey, snapshots );
+	}
+	const seenOccurrences = new Map< string, number >();
+
+	if ( isInfiniteFeedData( data ) ) {
+		return {
+			...data,
+			pages: data.pages.map( ( page ) =>
+				Array.isArray( page.items )
+					? {
+							...page,
+							items: restoreFeedItems( page.items, itemSnapshots, seenOccurrences ),
+					  }
+					: page
+			),
+		};
+	}
+
+	if ( isObject( data ) && isObject( data.thread ) ) {
+		return {
+			...data,
+			thread: restoreThreadNode(
+				data.thread as unknown as AtmosphereThreadNode,
+				itemSnapshots,
+				seenOccurrences
+			),
+		};
+	}
+
+	return data;
+}
+
+function restoreAtmospherePostSnapshots(
+	queryClient: QueryClient,
+	ctx: OptimisticContext | undefined
+) {
 	if ( ! ctx ) {
 		return;
 	}
@@ -261,33 +448,11 @@ function restoreTimelineSnapshots( queryClient: QueryClient, ctx: OptimisticCont
 		if ( ! items.length ) {
 			continue;
 		}
-		const current = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( key );
+		const current = queryClient.getQueryData( key );
 		if ( ! current ) {
 			continue;
 		}
-		const itemSnapshots = new Map< string, AtmosphereFeedItem[] >();
-		for ( const { itemKey, occurrence, item } of items ) {
-			const snapshots = itemSnapshots.get( itemKey ) ?? [];
-			snapshots[ occurrence ] = item;
-			itemSnapshots.set( itemKey, snapshots );
-		}
-		const seenOccurrences = new Map< string, number >();
-		queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >( key, {
-			...current,
-			pages: current.pages.map( ( page ) => ( {
-				...page,
-				items: page.items.map( ( item ) => {
-					const itemKey = getOptimisticItemKey( item );
-					const snapshots = itemSnapshots.get( itemKey );
-					if ( ! snapshots ) {
-						return item;
-					}
-					const occurrence = seenOccurrences.get( itemKey ) ?? 0;
-					seenOccurrences.set( itemKey, occurrence + 1 );
-					return snapshots[ occurrence ] ?? item;
-				} ),
-			} ) ),
-		} );
+		queryClient.setQueryData( key, restoreAtmosphereQueryData( current, items ) );
 	}
 }
 
@@ -302,9 +467,9 @@ export function useCreateLikeMutation( connectionId: number ) {
 		mutationFn: ( { postUri, postCid } ) => createLike( { connectionId, postUri, postCid } ),
 		onMutate: async ( { postUri } ) => {
 			await queryClient.cancelQueries( {
-				queryKey: readerAtmosphereKeys.timeline( connectionId ),
+				queryKey: readerAtmosphereKeys.all,
 			} );
-			return patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
+			return patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
 				...item,
 				viewer: {
 					like: PENDING_LIKE_URI,
@@ -313,9 +478,9 @@ export function useCreateLikeMutation( connectionId: number ) {
 				counts: { ...item.counts, likes: item.counts.likes + 1 },
 			} ) );
 		},
-		onError: ( _err, _vars, ctx ) => restoreTimelineSnapshots( queryClient, ctx ),
+		onError: ( _err, _vars, ctx ) => restoreAtmospherePostSnapshots( queryClient, ctx ),
 		onSuccess: ( result, { postUri } ) => {
-			patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
+			patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
 				...item,
 				viewer: {
 					like: result.uri,
@@ -333,9 +498,9 @@ export function useDeleteLikeMutation( connectionId: number ) {
 			mutationFn: ( { rkey } ) => deleteLike( { connectionId, rkey } ),
 			onMutate: async ( { postUri } ) => {
 				await queryClient.cancelQueries( {
-					queryKey: readerAtmosphereKeys.timeline( connectionId ),
+					queryKey: readerAtmosphereKeys.all,
 				} );
-				return patchTimelineCache( queryClient, connectionId, postUri, ( item ) => ( {
+				return patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
 					...item,
 					viewer: {
 						like: null,
@@ -344,7 +509,37 @@ export function useDeleteLikeMutation( connectionId: number ) {
 					counts: { ...item.counts, likes: Math.max( 0, item.counts.likes - 1 ) },
 				} ) );
 			},
-			onError: ( _err, _vars, ctx ) => restoreTimelineSnapshots( queryClient, ctx ),
+			onError: ( _err, _vars, ctx ) => restoreAtmospherePostSnapshots( queryClient, ctx ),
 		}
 	);
+}
+
+export const atmosphereTagFeedInfiniteQuery = ( connectionId: number, hashtag: string ) => {
+	const canonicalHashtag = hashtag.trim().toLowerCase().replace( /^#/, '' );
+	return infiniteQueryOptions<
+		AtmosphereTagFeedPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereTagFeedPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.tagFeed( connectionId, canonicalHashtag ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereTagFeed( { connectionId, hashtag: canonicalHashtag, cursor: pageParam } ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: connectionId > 0 && isValidHashtag( canonicalHashtag ),
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
+	} );
+};
+
+export function useAtmosphereTagFeedInfiniteQuery( connectionId: number, hashtag: string ) {
+	return useInfiniteQuery( atmosphereTagFeedInfiniteQuery( connectionId, hashtag ) );
 }

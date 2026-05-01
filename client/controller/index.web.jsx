@@ -39,13 +39,13 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { makeLayoutMiddleware } from './shared.js';
+import { makeLayoutMiddleware } from './shared.jsx';
 import { hydrate, render } from './web-util.js';
 
 /**
  * Re-export
  */
-export { setLocaleMiddleware, setSectionMiddleware } from './shared.js';
+export { setLocaleMiddleware, setSectionMiddleware } from './shared.jsx';
 export { hydrate, render } from './web-util.js';
 
 export const ProviderWrappedLayout = ( {

@@ -1,4 +1,5 @@
 import type {
+	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
 	MastodonConnection,
@@ -7,6 +8,9 @@ import type {
 	MastodonCreateConnectionResponse,
 	MastodonFeedItem,
 	MastodonProfileCounts,
+	MastodonTagFilter,
+	MastodonTagInfo,
+	MastodonTagFeedPage,
 } from '../types';
 
 describe( 'reader-mastodon types compile', () => {
@@ -70,5 +74,37 @@ describe( 'MastodonAuthorFeedPage', () => {
 	it( 'mirrors MastodonTimelinePage', () => {
 		const page: MastodonAuthorFeedPage = { items: [] as MastodonFeedItem[], cursor: null };
 		expect( page.cursor ).toBeNull();
+	} );
+} );
+
+describe( 'MastodonAuthorFeedFilter', () => {
+	it( 'accepts the three UI tab values', () => {
+		const a: MastodonAuthorFeedFilter = 'posts_no_replies';
+		const b: MastodonAuthorFeedFilter = 'posts_with_replies';
+		const c: MastodonAuthorFeedFilter = 'posts_with_media';
+		expect( [ a, b, c ] ).toEqual( [
+			'posts_no_replies',
+			'posts_with_replies',
+			'posts_with_media',
+		] );
+	} );
+} );
+
+describe( 'MastodonTagFilter', () => {
+	it( 'accepts the three UI tab values', () => {
+		const a: MastodonTagFilter = 'all';
+		const b: MastodonTagFilter = 'media';
+		const c: MastodonTagFilter = 'local';
+		expect( [ a, b, c ] ).toEqual( [ 'all', 'media', 'local' ] );
+	} );
+} );
+
+describe( 'MastodonTagFeedPage', () => {
+	it( 'has items + cursor + optional tag info', () => {
+		const tag: MastodonTagInfo = { name: 'rust', count: 42 };
+		const page: MastodonTagFeedPage = { items: [], cursor: null, tag };
+		expect( page.tag?.name ).toBe( 'rust' );
+		const minimal: MastodonTagFeedPage = { items: [], cursor: null };
+		expect( minimal.tag ).toBeUndefined();
 	} );
 } );

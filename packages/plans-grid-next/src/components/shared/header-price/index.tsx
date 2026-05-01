@@ -79,7 +79,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			prices,
 			currencyCode: currencyCode || 'USD',
 			ignoreWhitespace: true,
-		} ) && ! showBillingDescriptionForIncreasedRenewalPrice?.includes( 'crossed_price' ); // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
+		} ) && ! showBillingDescriptionForIncreasedRenewalPrice; // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
 
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -133,8 +133,6 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 				( ( compareToMonthlyPrice - monthlyPrice ) / compareToMonthlyPrice ) * 100
 			);
 		}
-		const hideCrossedPrice = showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price';
-
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
@@ -152,17 +150,15 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						'is-large-currency': isLargeCurrency,
 					} ) }
 				>
-					{ ! hideCrossedPrice && (
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ compareToMonthlyPrice }
-							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
-							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							original
-						/>
-					) }
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ compareToMonthlyPrice }
+						displayPerMonthNotation={ false }
+						isLargeCurrency={ isLargeCurrency }
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						original
+					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ monthlyPrice }
@@ -249,7 +245,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isAnyPlanPriceDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				{ showBillingDescriptionForIncreasedRenewalPrice === 'crossed_price' && savings ? (
+				{ showBillingDescriptionForIncreasedRenewalPrice && savings ? (
 					<div className={ pricingBadgeClassName }>
 						{ translate( 'Save %(savings)d%%', {
 							args: { savings },

@@ -1,12 +1,10 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { forwardRef, useContext, useMemo } from 'react';
-import PressableOffer from 'calypso/a8c-for-agencies/components/a4a-pressable-offer';
+import { forwardRef, useMemo } from 'react';
 import NavItem from 'calypso/components/section-nav/item';
 import { preventWidows } from 'calypso/lib/formatting';
 import { SectionProps } from '..';
-import { MarketplaceTypeContext } from '../../context';
 
 import './style.scss';
 
@@ -19,10 +17,6 @@ export function HeroSection(
 	{ section, onSectionChange, isCompact }: Props,
 	ref: React.Ref< HTMLDivElement >
 ) {
-	const { marketplaceType } = useContext( MarketplaceTypeContext );
-
-	const isReferMode = marketplaceType === 'referral';
-
 	const translate = useTranslate();
 
 	const isLargeScreen = useBreakpoint( '>1280px' );
@@ -91,7 +85,6 @@ export function HeroSection(
 						)
 					) }
 				</div>
-				<PressableOffer isReferMode={ isReferMode } />
 			</div>
 
 			<ul className="hosting-hero-section__tabs">{ navItems }</ul>

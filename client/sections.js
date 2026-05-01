@@ -539,6 +539,7 @@ const sections = [
 			'/reader/mastodon/:id/:tab',
 			'/reader/mastodon/:id/thread/:status_id',
 			'/reader/mastodon/:id/profile/:actor',
+			'/reader/mastodon/:id/tag/:hashtag',
 		],
 		module: 'calypso/reader/mastodon',
 		group: 'reader',

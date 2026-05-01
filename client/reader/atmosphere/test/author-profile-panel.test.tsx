@@ -103,6 +103,7 @@ describe( 'AuthorProfilePanel', () => {
 		expect( handles.length ).toBeGreaterThanOrEqual( 1 );
 		expect( handles[ 0 ] ).toBeVisible();
 		expect( await screen.findByText( 'hello' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
 	} );
 
 	it( 'fires profile_viewed on mount', async () => {

@@ -12,7 +12,13 @@ export type AtmosphereError =
 	| { kind: 'unknown'; cause: unknown };
 
 interface WpErrorLike {
+	// The wpcom-proxy / wpcom-xhr-request transports surface the WP REST
+	// envelope's error code as `code` on the thrown error. Some legacy
+	// callsites (and the existing test fixtures) populate `error` instead.
+	// Accept both so live errors classify correctly regardless of which
+	// transport raised them.
 	error?: string;
+	code?: string;
 	statusCode?: number;
 	status?: number;
 	message?: string;
@@ -20,14 +26,18 @@ interface WpErrorLike {
 }
 
 function isWpErrorLike( e: unknown ): e is WpErrorLike {
-	return typeof e === 'object' && e !== null && 'error' in ( e as object );
+	if ( typeof e !== 'object' || e === null ) {
+		return false;
+	}
+	return 'error' in ( e as object ) || 'code' in ( e as object );
 }
 
 export function classifyAtmosphereError( raw: unknown ): AtmosphereError {
 	if ( ! isWpErrorLike( raw ) ) {
 		return { kind: 'unknown', cause: raw };
 	}
-	switch ( raw.error ) {
+	const errorCode = raw.error ?? raw.code;
+	switch ( errorCode ) {
 		case 'invalid_handle':
 			return { kind: 'invalid_handle' };
 		case 'invalid_credentials':

@@ -12,4 +12,6 @@ export const readerAtmosphereKeys = {
 		filter
 			? ( [ ...readerAtmosphereKeys.all, 'author-feed', actor, filter ] as const )
 			: ( [ ...readerAtmosphereKeys.all, 'author-feed', actor ] as const ),
+	tagFeed: ( connectionId: number, hashtag: string ) =>
+		[ ...readerAtmosphereKeys.all, 'tag-feed', connectionId, hashtag ] as const,
 };

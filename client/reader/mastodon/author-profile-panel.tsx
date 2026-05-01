@@ -12,9 +12,10 @@ import {
 	mapMastodonFeedItemToSocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { MastodonAuthorProfileTabs, useMastodonAuthorFeedFilter } from './author-profile-tabs';
 import { projectMastodonError } from './error-projection';
 import { errorMessage } from './profile-errors';
-import { getProfileUrl, getThreadUrl, getTimelineUrl } from './route';
+import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
 import type {
 	MastodonAuthorProfile,
 	MastodonConnection,
@@ -33,8 +34,10 @@ export function MastodonAuthorProfilePanel( {
 }: MastodonAuthorProfilePanelProps ) {
 	const translate = useTranslate();
 
+	const filter = useMastodonAuthorFeedFilter();
+
 	const profile = useMastodonAuthorProfileQuery( connection.id, actor );
-	const feed = useMastodonAuthorFeedInfiniteQuery( connection.id, actor );
+	const feed = useMastodonAuthorFeedInfiniteQuery( connection.id, actor, filter );
 
 	const stats: SocialProfileStat[] = profile.data
 		? [
@@ -66,14 +69,21 @@ export function MastodonAuthorProfilePanel( {
 				instance: connection.instance,
 			} );
 			return (
-				<SocialProfileCard
-					{ ...cardProps }
-					stats={ stats }
-					statsLabel={ String( translate( 'Profile stats' ) ) }
-				/>
+				<>
+					<SocialProfileCard
+						{ ...cardProps }
+						stats={ stats }
+						statsLabel={ String( translate( 'Profile stats' ) ) }
+					/>
+					<MastodonAuthorProfileTabs
+						connectionId={ connection.id }
+						actor={ actor }
+						activeFilter={ filter }
+					/>
+				</>
 			);
 		},
-		[ connection.instance, stats, translate ]
+		[ connection.id, connection.instance, actor, filter, stats, translate ]
 	);
 
 	const renderProfileError = useCallback(
@@ -109,8 +119,12 @@ export function MastodonAuthorProfilePanel( {
 		( profileData: MastodonAuthorProfile ) => ( {
 			actor_id: profileData.id,
 			actor_handle: profileData.acct,
+			// Capture the active filter at first profile-data resolution so
+			// dashboards can split "what tab did the user open this profile
+			// on". Tab switches don't re-fire profile_viewed.
+			initial_filter: filter,
 		} ),
-		[]
+		[ filter ]
 	);
 
 	const feedItemKey = useCallback( ( item: MastodonFeedItem ) => item.id, [] );
@@ -136,6 +150,11 @@ export function MastodonAuthorProfilePanel( {
 
 	const buildThreadUrl = useCallback(
 		( uri: string ) => getThreadUrl( connection.id, uri ),
+		[ connection.id ]
+	);
+
+	const buildTagUrl = useCallback(
+		( tag: string ) => getTagFeedUrl( connection.id, tag ),
 		[ connection.id ]
 	);
 
@@ -167,6 +186,7 @@ export function MastodonAuthorProfilePanel( {
 			projectFeedError={ projectMastodonError }
 			buildProfileUrl={ buildProfileUrl }
 			buildThreadUrl={ buildThreadUrl }
+			buildTagUrl={ buildTagUrl }
 			emptyTitle={
 				isLockedEmpty
 					? String( translate( 'This account’s posts are private.' ) )
@@ -189,6 +209,7 @@ export function MastodonAuthorProfilePanel( {
 			protocolHomeURL="/reader/mastodon"
 			protocolHomeLabel={ translate( 'Back to Mastodon' ) }
 			className="mastodon-author-profile"
+			feedDimension={ filter }
 		/>
 	);
 }

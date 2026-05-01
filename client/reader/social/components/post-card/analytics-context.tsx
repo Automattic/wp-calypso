@@ -30,6 +30,13 @@ export interface SocialAnalyticsContextValue {
 	getThreadUrl?: ( postUri: string ) => string | null;
 	/** Slice 6: resolve an author ref to an in-app profile URL, or null to fall back. */
 	getProfileUrl?: ( ref: SocialProfileRefInput ) => string | null;
+	/**
+	 * Slice 8: in-app hashtag-feed URL for a tag, or null to fall back.
+	 * Mastodon panels bind this; protocols without a hashtag concept
+	 * (atmosphere) leave it unset and `<PostCardBody>` falls back to the
+	 * anchor's external href.
+	 */
+	getTagUrl?: ( tag: string ) => string | null;
 }
 
 const Ctx = createContext< SocialAnalyticsContextValue | null >( null );

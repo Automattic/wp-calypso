@@ -1,3 +1,5 @@
+@use '../../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 @import '@wordpress/base-styles/variables';
 
 .dashboard-snackbars {
@@ -8,6 +10,41 @@
 	flex-direction: column;
 	align-items: flex-start;
 	margin: $grid-unit-20;
+
+	@include ui-mixins.when-dark-theme {
+		.components-snackbar {
+			background: var( --dashboard-surface__background-color );
+			border: 1px solid var( --dashboard-surface__border-color );
+			color: var( --dashboard__text-color );
+			box-shadow:
+				0 0 0 1px rgba( 0, 0, 0, 0.12 ),
+				0 8px 24px rgba( 0, 0, 0, 0.35 );
+		}
+
+		.components-snackbar:focus {
+			box-shadow:
+				inset 0 0 0 1px var( --dashboard-surface__background-color ),
+				0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color ),
+				0 8px 24px rgba( 0, 0, 0, 0.35 );
+		}
+
+		.components-snackbar__icon {
+			color: var( --dashboard__text-muted-color );
+		}
+
+		.components-snackbar.is-success .components-snackbar__icon {
+			color: var( --dashboard__foreground-color-success );
+		}
+
+		.components-snackbar.is-error .components-snackbar__icon {
+			color: var( --dashboard__foreground-color-error );
+		}
+
+		.components-snackbar__action.components-button,
+		.components-snackbar__action.components-external-link {
+			color: var( --wp-admin-theme-color-darker-20 );
+		}
+	}
 }
 
 body:has( .dashboard-snackbar-back-button ) .dashboard-snackbars {

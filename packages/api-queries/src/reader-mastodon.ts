@@ -5,6 +5,7 @@ import {
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonTagFeed,
 	getMastodonThread,
 	getMastodonTimeline,
 	readerMastodonKeys,
@@ -23,7 +24,9 @@ import type {
 	AuthorizeMastodonConnectionParams,
 	CompleteMastodonConnectionParams,
 	GetMastodonAuthorFeedParams,
+	GetMastodonTagFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
@@ -31,6 +34,8 @@ import type {
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
 	MastodonError,
+	MastodonTagFilter,
+	MastodonTagFeedPage,
 	MastodonThreadResponse,
 	MastodonTimelinePage,
 } from '@automattic/api-core';
@@ -202,8 +207,18 @@ export function useMastodonAuthorProfileQuery( connectionId: number, actor: stri
 	return useQuery( mastodonAuthorProfileQueryOptions( connectionId, actor ) );
 }
 
-export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: string ) => {
-	const normalized = normalizeActor( actor );
+export const mastodonAuthorFeedInfiniteQuery = (
+	connectionId: number,
+	actor: string,
+	filter?: MastodonAuthorFeedFilter
+) => {
+	const normalizedActor = normalizeActor( actor );
+	// `posts_with_replies` is the wire default (no filter param); collapse
+	// to undefined so callers that pass it share the slice-6 cache key with
+	// no-filter callers. `posts_no_replies` and `posts_with_media` survive
+	// as distinct dimensions.
+	const normalizedFilter: MastodonAuthorFeedFilter | undefined =
+		filter === 'posts_with_replies' ? undefined : filter;
 	return infiniteQueryOptions<
 		MastodonAuthorFeedPage,
 		MastodonError,
@@ -211,18 +226,19 @@ export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: st
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerMastodonKeys.authorFeed( connectionId, normalized ),
+		queryKey: readerMastodonKeys.authorFeed( connectionId, normalizedActor, normalizedFilter ),
 		queryFn: ( { pageParam } ) =>
 			getMastodonAuthorFeed( {
 				connectionId,
-				actor: normalized,
+				actor: normalizedActor,
 				cursor: pageParam,
+				filter: normalizedFilter,
 			} as GetMastodonAuthorFeedParams ),
 		initialPageParam: undefined,
 		// `|| undefined` (not `??`): an empty-string cursor terminates pagination.
 		// Atmosphere slice 6 hardened this exact path against an upstream returning ''.
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
-		enabled: connectionId > 0 && normalized.length > 0,
+		enabled: connectionId > 0 && normalizedActor.length > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {
@@ -240,6 +256,62 @@ export const mastodonAuthorFeedInfiniteQuery = ( connectionId: number, actor: st
 	} );
 };
 
-export function useMastodonAuthorFeedInfiniteQuery( connectionId: number, actor: string ) {
-	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor ) );
+export function useMastodonAuthorFeedInfiniteQuery(
+	connectionId: number,
+	actor: string,
+	filter?: MastodonAuthorFeedFilter
+) {
+	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor, filter ) );
+}
+
+export const mastodonTagFeedInfiniteQuery = (
+	connectionId: number,
+	hashtag: string,
+	filter?: MastodonTagFilter
+) => {
+	const canonicalHashtag = hashtag.trim().toLowerCase().replace( /^#/, '' );
+	// `all` is the wire default (no filter param); collapse to undefined so
+	// callers that pass it share one cache entry with no-filter callers.
+	const normalizedFilter: MastodonTagFilter | undefined = filter === 'all' ? undefined : filter;
+	return infiniteQueryOptions<
+		MastodonTagFeedPage,
+		MastodonError,
+		InfiniteData< MastodonTagFeedPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.tagFeed( connectionId, canonicalHashtag, normalizedFilter ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonTagFeed( {
+				connectionId,
+				hashtag: canonicalHashtag,
+				cursor: pageParam,
+				filter: normalizedFilter,
+			} as GetMastodonTagFeedParams ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: connectionId > 0 && canonicalHashtag.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonTagFeedInfiniteQuery(
+	connectionId: number,
+	hashtag: string,
+	filter?: MastodonTagFilter
+) {
+	return useInfiniteQuery( mastodonTagFeedInfiniteQuery( connectionId, hashtag, filter ) );
 }

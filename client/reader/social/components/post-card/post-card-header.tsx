@@ -3,15 +3,28 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
 import type { SocialPost } from '../../types';
+import type React from 'react';
 import type { ReactNode } from 'react';
 
 interface PostCardHeaderProps {
 	post: SocialPost;
 	variant: 'default' | 'compact';
 	prominentTimestamp?: boolean;
+	timestampLink?: {
+		href: string;
+		onClick?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
+		target?: string;
+		rel?: string;
+		ariaLabel?: string;
+	};
 }
 
-export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardHeaderProps ) {
+export function PostCardHeader( {
+	post,
+	variant,
+	prominentTimestamp,
+	timestampLink,
+}: PostCardHeaderProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const isCompact = variant === 'compact';
@@ -108,11 +121,34 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 		: null;
 
 	const renderTimestamp = () => {
+		if ( isCompact ) {
+			if ( timestampLink ) {
+				return (
+					<a
+						className="social-post-card-header__timestamp"
+						href={ timestampLink.href }
+						target={ timestampLink.target }
+						rel={ timestampLink.rel }
+						aria-label={ timestampLink.ariaLabel }
+						onClick={ timestampLink.onClick }
+					>
+						{ timestampIso ? (
+							<TimeSince date={ timestampIso } />
+						) : (
+							<span className="screen-reader-text">
+								{ timestampLink.ariaLabel || translate( 'Open quoted post' ) }
+							</span>
+						) }
+					</a>
+				);
+			}
+			if ( ! timestampIso ) {
+				return null;
+			}
+			return <TimeSince className="social-post-card-header__timestamp" date={ timestampIso } />;
+		}
 		if ( ! timestampIso ) {
 			return null;
-		}
-		if ( isCompact ) {
-			return <TimeSince className="social-post-card-header__timestamp" date={ timestampIso } />;
 		}
 		if ( inAppPostUrl ) {
 			return (
@@ -222,11 +258,13 @@ export function PostCardHeader( { post, variant, prominentTimestamp }: PostCardH
 						{ authorBody }
 					</a>
 				) }
-				{ timestampIso && ! prominentTimestamp && (
+				{ ! prominentTimestamp && ( timestampIso || ( isCompact && timestampLink ) ) && (
 					<>
-						<span className="social-post-card-header__dot" aria-hidden="true">
-							·
-						</span>
+						{ timestampIso && (
+							<span className="social-post-card-header__dot" aria-hidden="true">
+								·
+							</span>
+						) }
 						{ renderTimestamp() }
 					</>
 				) }

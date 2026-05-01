@@ -91,6 +91,10 @@ export interface SocialAuthorProfilePanelProps<
 		handle?: string | null;
 	} ) => string | null;
 	buildThreadUrl: ( postUri: string ) => string | null;
+	// Slice-8 hashtag resolver. Optional: protocols without a hashtag
+	// concept (atmosphere) leave it unset and `<PostCardBody>` falls
+	// back to the anchor's external href.
+	buildTagUrl?: ( tag: string ) => string | null;
 
 	// Empty / error vocabulary for the SocialFeedList. Wrappers compute
 	// these (e.g. Mastodon swaps in a locked-account variant when the
@@ -105,6 +109,12 @@ export interface SocialAuthorProfilePanelProps<
 
 	// Wrapper-specific class on the VStack (allows protocol-scoped CSS).
 	className?: string;
+
+	// Wrapper-supplied dimension (e.g. the active filter slug). When this
+	// value changes, the panel resets its feed-surface `error_shown` dedup
+	// so each dimension's first error fires its own analytics event even
+	// when the kind matches the prior dimension.
+	feedDimension?: string;
 }
 
 // Shared author-profile surface used by every protocol shell. Owns the
@@ -129,6 +139,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 	projectFeedError,
 	buildProfileUrl,
 	buildThreadUrl,
+	buildTagUrl,
 	emptyTitle,
 	emptyLine,
 	emptyActionLabel,
@@ -137,6 +148,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 	protocolHomeURL,
 	protocolHomeLabel,
 	className,
+	feedDimension,
 }: SocialAuthorProfilePanelProps< TProfile, TError, TFeedItem > ) {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const lastErrorKind = useRef< { header: string | null; feed: string | null } >( {
@@ -149,6 +161,16 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 	useEffect( () => {
 		lastErrorKind.current = { header: null, feed: null };
 	}, [ actor, connectionId ] );
+
+	// Per-dimension feed errors must each fire their own _error_shown
+	// (e.g. rate_limited on Posts then again on Replies). Reset only the
+	// feed-side dedup so the header-surface dedup is unaffected.
+	useEffect( () => {
+		if ( feedDimension === undefined ) {
+			return;
+		}
+		lastErrorKind.current.feed = null;
+	}, [ feedDimension ] );
 
 	// Fire profile_viewed exactly once per (actor, connection) — gated on
 	// resolved profile data so the Tracks payload carries identifiers.
@@ -282,8 +304,9 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 			onClick: onClickAnalytics,
 			getThreadUrl: buildThreadUrl,
 			getProfileUrl: buildProfileUrl,
+			getTagUrl: buildTagUrl,
 		} ),
-		[ source, connectionId, onClickAnalytics, buildThreadUrl, buildProfileUrl ]
+		[ source, connectionId, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl ]
 	);
 
 	const renderHeader = () => {
