@@ -55,7 +55,10 @@ export default function CancelButton( {
 		<Button
 			disabled={ isDisabled }
 			isBusy={ isBusy ?? state.isLoading ?? false }
-			onClick={ onClick }
+			onClick={ ( event: React.MouseEvent< HTMLButtonElement > ) => {
+				event.currentTarget.blur();
+				onClick?.();
+			} }
 			isDestructive
 			variant="primary"
 		>
