@@ -227,6 +227,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteSlug,
 									siteId,
 									fromPostCheckoutSetupSite: '1',
+									...( refParameter ? { ref: refParameter } : {} ),
 								} )
 							);
 							return;

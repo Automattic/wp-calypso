@@ -8,7 +8,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, FormEvent } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -76,8 +75,7 @@ const LaunchBigSky: StepType = function ( props ) {
 	const { __ } = useI18n();
 	const { siteSlug, siteId, site } = useSiteData();
 	const urlQuery = useQuery();
-	const { get: getFlowState } = useFlowState();
-	const entryPoint = getFlowState( 'flow' )?.entryPoint;
+	const ref = urlQuery.get( 'ref' );
 	const { isEligible } = useIsBigSkyEligible( flow );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
 		useDispatch( SITE_STORE );
@@ -169,7 +167,7 @@ const LaunchBigSky: StepType = function ( props ) {
 					specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
 				}
 
-				const source = entryPoint === WOO_HOSTING_SOLUTIONS_REF ? 'woo-hosting-solutions' : flow;
+				const source = ref === WOO_HOSTING_SOLUTIONS_REF ? 'woo-hosting-solutions' : flow;
 
 				window.location.replace(
 					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ flow }${ promptParam }&source=${ source }${ specIdParam }`
@@ -181,8 +179,8 @@ const LaunchBigSky: StepType = function ( props ) {
 		[
 			flow,
 			urlQuery,
+			ref,
 			assemblerThemeActive,
-			entryPoint,
 			hasStaticHomepage,
 			setDesignOnSite,
 			setStaticHomepageOnSite,
