@@ -1,5 +1,6 @@
 import deepfreeze from 'deep-freeze';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
 import { requestPage, handlePage, INITIAL_FETCH, QUERY_META } from '../';
 
@@ -18,7 +19,7 @@ function makeAction( { streamKey, ...overrides } ) {
 	const colon = streamKey.indexOf( ':' );
 	const streamType = colon === -1 ? streamKey : streamKey.substring( 0, colon );
 	return deepfreeze( {
-		type: 'READER_STREAMS_PAGE_REQUEST',
+		type: READER_STREAMS_PAGE_REQUEST,
 		payload: {
 			streamKey,
 			streamType,
