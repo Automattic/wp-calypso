@@ -211,3 +211,50 @@ export type AtmosphereAuthorFeedFilter =
 	| 'posts_with_replies'
 	| 'posts_with_media'
 	| 'posts_and_author_threads';
+
+/**
+ * Caller-relative relationship state surfaced on the authed
+ * /connections/{id}/profile/{actor} endpoint. Mirrors the upstream
+ * `viewer.following` / `viewer.followedBy` fields, but the rkey is
+ * parsed server-side from the AT-URI so the frontend doesn't have
+ * to slice URIs.
+ *
+ * - `following`: AT-URI of the caller→target follow record, or null.
+ * - `following_rkey`: rkey extracted from `following`, or null.
+ * - `followed_by`: true when the target's profile carries a follow
+ *   record pointing at the caller's DID.
+ */
+export interface AtmosphereProfileViewer {
+	following: string | null;
+	following_rkey: string | null;
+	followed_by: boolean;
+}
+
+/**
+ * Authed companion to AtmosphereAuthorProfile. Returned by
+ * GET /reader/atmosphere/connections/{id}/profile/{actor}, which
+ * runs an authed app.bsky.actor.getProfile so the upstream `viewer`
+ * subtree is populated. Used by the Follow / Follow back / Following
+ * button on the Bluesky author profile page.
+ */
+export interface AtmosphereScopedProfile extends AtmosphereAuthorProfile {
+	viewer: AtmosphereProfileViewer;
+}
+
+/**
+ * A single follow record returned by the create-follow endpoint.
+ * The rkey is parsed server-side from `uri` so callers can issue
+ * the matching DELETE without splitting the AT-URI themselves.
+ */
+export interface AtmosphereFollowRecord {
+	uri: string;
+	cid: string;
+	rkey: string;
+}
+
+/**
+ * Response shape for POST /reader/atmosphere/connections/{id}/follows.
+ */
+export interface AtmosphereCreateFollowResponse {
+	follow: AtmosphereFollowRecord;
+}
