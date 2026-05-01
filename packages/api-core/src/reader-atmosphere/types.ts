@@ -214,15 +214,19 @@ export type AtmosphereAuthorFeedFilter =
 
 /**
  * Caller-relative relationship state surfaced on the authed
- * /connections/{id}/profile/{actor} endpoint. Mirrors the upstream
- * `viewer.following` / `viewer.followedBy` fields, but the rkey is
- * parsed server-side from the AT-URI so the frontend doesn't have
- * to slice URIs.
+ * /connections/{id}/profile/{actor} endpoint. Derived from the
+ * upstream `viewer` subtree on `app.bsky.actor.getProfile`, but
+ * deliberately narrower than upstream:
  *
- * - `following`: AT-URI of the caller→target follow record, or null.
- * - `following_rkey`: rkey extracted from `following`, or null.
- * - `followed_by`: true when the target's profile carries a follow
- *   record pointing at the caller's DID.
+ * - `following` mirrors upstream's AT-URI of the caller→target
+ *   follow record; null when the caller does not follow the target.
+ * - `following_rkey` is the rkey extracted server-side from
+ *   `following` so the frontend doesn't slice AT-URIs. Coupled to
+ *   `following` — either both are null or both are populated.
+ * - `followed_by` is `true` when upstream populates
+ *   `viewer.followedBy` (an AT-URI of the target→caller follow);
+ *   collapsed to a boolean here because the UI only needs the
+ *   "do they follow me back?" signal, never the inbound rkey.
  */
 export interface AtmosphereProfileViewer {
 	following: string | null;
