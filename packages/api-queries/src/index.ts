@@ -74,6 +74,7 @@ export * from './read-organizations';
 export * from './read-post';
 export * from './read-related-posts';
 export * from './read-site';
+export * from './read-streams';
 export * from './read-tags';
 export * from './read-teams';
 export * from './read-thumbnails';

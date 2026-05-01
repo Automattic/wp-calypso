@@ -17,6 +17,7 @@ interface CancellationPreSurveyContentProps {
 	selectedDomain?: Domain;
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
+	isBusy?: boolean;
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
@@ -36,6 +37,7 @@ export default function CancellationPreSurveyContent( {
 	selectedDomain,
 	state,
 	purchaseCancelFeatures,
+	isBusy,
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
@@ -66,6 +68,7 @@ export default function CancellationPreSurveyContent( {
 			selectedDomain={ selectedDomain }
 			state={ state }
 			purchaseCancelFeatures={ purchaseCancelFeatures }
+			isBusy={ isBusy }
 			onCancelConfirmationStateChange={ onCancelConfirmationStateChange }
 			onDomainConfirmationChange={ onDomainConfirmationChange }
 			onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }

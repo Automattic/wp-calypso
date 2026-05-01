@@ -259,6 +259,52 @@ describe( 'TimelinePanel', () => {
 			} )
 		);
 	} );
+
+	it( 'click on like button fires POST, updates count and pressed state', async () => {
+		nock( BASE )
+			.get( PATH )
+			.query( {} )
+			.reply( 200, {
+				items: [
+					{
+						...makePost( 'at://did:plc:author/app.bsky.feed.post/3kabc', 'likeable post' ),
+						cid: 'bafy-cid',
+						counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
+						viewer: { like: null, repost: null },
+					},
+				],
+				cursor: null,
+			} );
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/likes', {
+				post_uri: 'at://did:plc:author/app.bsky.feed.post/3kabc',
+				post_cid: 'bafy-cid',
+			} )
+			.reply( 200, {
+				like: {
+					uri: 'at://did:plc:caller/app.bsky.feed.like/3krkeyrkeyrke',
+					cid: 'bafy-like-cid',
+					rkey: '3krkeyrkeyrke',
+				},
+			} );
+
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+		const button = await screen.findByRole( 'button', { name: /like, 5 likes/i } );
+		expect( button ).toHaveTextContent( '5' );
+
+		await user.click( button );
+
+		await waitFor( () => expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ) );
+		expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
+		expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toHaveTextContent( '6' );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
 } );
 
 const connection7: AtmosphereConnection = {

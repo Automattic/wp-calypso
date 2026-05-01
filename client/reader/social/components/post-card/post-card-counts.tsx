@@ -5,18 +5,21 @@ import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import { useSocialAnalytics } from './analytics-context';
-import type { SocialCounts } from '../../types';
+import { LikeButton } from './like-button';
+import type { SocialPost } from '../../types';
 
 const ICON_SIZE = 16;
 
 interface PostCardCountsProps {
-	counts: SocialCounts;
-	postUri: string;
+	post: SocialPost;
+	connectionId?: number;
 }
 
-export function PostCardCounts( { counts, postUri }: PostCardCountsProps ) {
+export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
+	const counts = post.counts;
+	const postUri = post.uri;
 	const inAppUrl = analytics?.getThreadUrl?.( postUri ) ?? null;
 
 	const fireRepliesClicked = () => {
@@ -62,11 +65,23 @@ export function PostCardCounts( { counts, postUri }: PostCardCountsProps ) {
 				<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
 				{ counts.reposts }
 			</span>
-			<span>
-				<ReaderLikeIcon iconSize={ ICON_SIZE } liked={ false } />
-				<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
-				{ counts.likes }
-			</span>
+			{ connectionId && post.cid ? (
+				<LikeButton
+					post={ {
+						uri: post.uri,
+						cid: post.cid,
+						counts: post.counts,
+						viewer: post.viewer,
+					} }
+					connectionId={ connectionId }
+				/>
+			) : (
+				<span>
+					<ReaderLikeIcon iconSize={ ICON_SIZE } liked={ false } />
+					<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
+					{ counts.likes }
+				</span>
+			) }
 			<span>
 				<Icon icon={ quote } size={ ICON_SIZE } />
 				<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>

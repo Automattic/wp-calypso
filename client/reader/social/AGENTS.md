@@ -253,6 +253,30 @@ As of slice 5, the card-link / quote / replies-count / reply-context surfaces al
 
 When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` and `getProfileUrl` from the analytics context before constructing any post- or profile-destination URL.
 
+### Like interactions
+
+ATmosphere timeline payloads can include `viewer: { like, repost }` on each
+`AtmosphereFeedItem`. The field is optional during the backend rollout window,
+so consumers must use `post.viewer?.like ?? null` semantics and treat missing
+viewer data as "not liked".
+
+`<LikeButton>` lives next to the post-card subcomponents and is rendered by
+`<PostCardCounts>` only when it receives both a `connectionId` and a post `cid`.
+Thread, author-feed, quoted-post, and non-ATmosphere card contexts fall back to
+the static likes count unless the host shell deliberately passes those props.
+
+The button uses `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
+`@automattic/api-queries`. Those hooks optimistically patch every cached
+timeline page containing the target post, then restore the snapshot on error.
+The create path temporarily stores `PENDING_LIKE_URI` in `viewer.like`; keep
+using `rkeyFromUri()` for unlike/delete flows because it returns `null` for that
+sentinel and prevents a DELETE with a fake rkey.
+
+The connection ID flows from the protocol shell:
+`TimelinePanel` → `SocialPostCard` → `PostCardCounts` → `LikeButton`. Any future
+interactive count button that writes via a user's PDS should follow the same
+shape rather than reading connection identity from global state.
+
 ## Boundaries (for new code)
 
 Inherits everything from `client/reader/AGENTS.md` and `client/AGENTS.md`. Highlights worth restating because they trip up new contributors:

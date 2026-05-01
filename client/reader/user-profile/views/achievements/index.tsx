@@ -43,7 +43,7 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 				) }
 				{ isOwnProfile && <AchievementsSettings /> }
 			</div>
-			<AchievementsGrid userLogin={ user.user_login } />
+			<AchievementsGrid userLogin={ user.user_login } isOwnProfile={ isOwnProfile } />
 		</div>
 	);
 };

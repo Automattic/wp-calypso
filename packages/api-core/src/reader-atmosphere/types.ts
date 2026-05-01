@@ -121,6 +121,11 @@ export type AtmosphereEmbed =
 	| AtmosphereEmbedQuote
 	| AtmosphereEmbedQuoteWithMedia;
 
+export interface AtmosphereFeedItemViewer {
+	like: string | null;
+	repost: string | null;
+}
+
 export interface AtmosphereFeedItem {
 	uri: string;
 	cid: string;
@@ -135,6 +140,7 @@ export interface AtmosphereFeedItem {
 	reason: AtmosphereRepostReason | null;
 	embed: AtmosphereEmbed | null;
 	counts: AtmosphereCounts;
+	viewer?: AtmosphereFeedItemViewer;
 	bluesky_url: string;
 }
 
@@ -263,4 +269,45 @@ export interface AtmosphereFollowRecord {
 
 export interface AtmosphereCreateFollowResponse {
 	follow: AtmosphereFollowRecord;
+}
+
+export interface CreateLikeParams {
+	connectionId: number;
+	postUri: string;
+	postCid: string;
+}
+
+export interface CreateLikeResult {
+	uri: string;
+	cid: string;
+	rkey: string;
+}
+
+export interface DeleteLikeParams {
+	connectionId: number;
+	rkey: string;
+}
+
+// Metadata embedded in the tag-feed response. The backend always emits
+// the `tag` block; `count` is `null` when the AppView's `hitsTotal` is
+// absent (it is documented as approximate). `url` is currently always
+// present, kept optional so a future backend that omits it for an
+// invalid hashtag does not break the type.
+export interface AtmosphereTagInfo {
+	name: string;
+	// Approximate post count from the AppView's `hitsTotal`. Null when
+	// the AppView omits the field; consumers should hide the count line
+	// rather than render a placeholder.
+	count: number | null;
+	// Canonical bsky.app hashtag URL (e.g. `https://bsky.app/hashtag/rust`).
+	// Built server-side as `https://bsky.app/hashtag/<encoded>`, but
+	// consumers should re-validate the protocol before rendering as
+	// defence-in-depth against a future backend regression.
+	url?: string;
+}
+
+export interface AtmosphereTagFeedPage {
+	items: AtmosphereFeedItem[];
+	cursor: string | null;
+	tag?: AtmosphereTagInfo;
 }

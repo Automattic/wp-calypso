@@ -139,6 +139,7 @@ export interface SocialContentWarning {
 
 export interface SocialPost {
 	uri: string;
+	cid?: string;
 	permalink: string;
 	text: string;
 	html: string;
@@ -151,6 +152,10 @@ export interface SocialPost {
 	reason: SocialReason | null;
 	embed: SocialEmbed | null;
 	counts: SocialCounts;
+	viewer?: {
+		like: string | null;
+		repost: string | null;
+	};
 	// Optional content warning — undefined for protocols that don't
 	// expose them (atmosphere) or for posts that aren't flagged.
 	content_warning?: SocialContentWarning;
