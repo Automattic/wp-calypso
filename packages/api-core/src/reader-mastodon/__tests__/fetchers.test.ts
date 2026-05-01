@@ -90,12 +90,13 @@ describe( 'mastodon fetchers', () => {
 	} );
 
 	it( 'getMastodonConnections classifies 401 as auth_required', async () => {
-		nock( BASE ).get( '/wpcom/v2/reader/mastodon/connections' ).reply( 401, {
-			error: 'not_authenticated',
-			message: '',
-			statusCode: 401,
-			status: 401,
-		} );
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections' )
+			.reply( 401, {
+				code: 'not_authenticated',
+				message: 'Authentication required.',
+				data: { status: 401 },
+			} );
 		await expect( getMastodonConnections() ).rejects.toMatchObject( { kind: 'auth_required' } );
 	} );
 } );
@@ -124,7 +125,11 @@ describe( 'getMastodonTimeline', () => {
 	it( 'classifies mastodon_rate_limited with retry_after', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/timeline' )
-			.reply( 429, { error: 'mastodon_rate_limited', data: { retry_after: 30 } } );
+			.reply( 429, {
+				code: 'mastodon_rate_limited',
+				message: '',
+				data: { status: 429, retry_after: 30 },
+			} );
 		await expect( getMastodonTimeline( { connectionId: 7 } ) ).rejects.toEqual( {
 			kind: 'rate_limited',
 			retry_after: 30,
@@ -178,7 +183,11 @@ describe( 'getMastodonAuthorProfile', () => {
 	it( 'classifies a 401 as auth_required', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
-			.reply( 401, { error: 'not_authenticated', message: '', statusCode: 401, status: 401 } );
+			.reply( 401, {
+				code: 'not_authenticated',
+				message: 'Authentication required.',
+				data: { status: 401 },
+			} );
 		await expect(
 			getMastodonAuthorProfile( { connectionId: 7, actor: '108020' } )
 		).rejects.toMatchObject( { kind: 'auth_required' } );
@@ -303,7 +312,11 @@ describe( 'getMastodonTagFeed', () => {
 	it( 'classifies a 401 as auth_required', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
-			.reply( 401, { error: 'not_authenticated', message: '', statusCode: 401, status: 401 } );
+			.reply( 401, {
+				code: 'not_authenticated',
+				message: 'Authentication required.',
+				data: { status: 401 },
+			} );
 		await expect(
 			getMastodonTagFeed( { connectionId: 7, hashtag: 'rust' } )
 		).rejects.toMatchObject( { kind: 'auth_required' } );
