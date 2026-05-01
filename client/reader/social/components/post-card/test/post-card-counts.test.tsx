@@ -95,4 +95,22 @@ describe( 'PostCardCounts', () => {
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 		expect( button ).toHaveTextContent( '9' );
 	} );
+
+	it( 'renders reposts as a menu trigger when connectionId and cid are supplied', () => {
+		renderWithProvider( wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) );
+		const button = screen.getByRole( 'button', { name: /repost, 2 reposts/i } );
+		expect( button ).toHaveAttribute( 'aria-haspopup', 'menu' );
+		expect( button ).toHaveTextContent( '2' );
+	} );
+
+	it( 'renders reposts as a static span when connectionId is missing', () => {
+		render( wrap( <PostCardCounts post={ post } /> ) );
+		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
+	} );
+
+	it( 'renders reposts as a static span when post.cid is missing', () => {
+		const cidlessPost = { ...post, cid: '' };
+		renderWithProvider( wrap( <PostCardCounts post={ cidlessPost } connectionId={ 7 } /> ) );
+		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
+	} );
 } );

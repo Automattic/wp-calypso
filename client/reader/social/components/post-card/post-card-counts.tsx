@@ -6,6 +6,7 @@ import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import { useSocialAnalytics } from './analytics-context';
 import { LikeButton } from './like-button';
+import { RepostButton } from './repost-button';
 import type { SocialPost } from '../../types';
 
 const ICON_SIZE = 16;
@@ -60,11 +61,23 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 			) : (
 				<span>{ repliesContent }</span>
 			) }
-			<span>
-				<ReaderRepostIcon iconSize={ ICON_SIZE } />
-				<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
-				{ counts.reposts }
-			</span>
+			{ connectionId && post.cid ? (
+				<RepostButton
+					post={ {
+						uri: post.uri,
+						cid: post.cid,
+						counts: post.counts,
+						viewer: post.viewer,
+					} }
+					connectionId={ connectionId }
+				/>
+			) : (
+				<span>
+					<ReaderRepostIcon iconSize={ ICON_SIZE } />
+					<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
+					{ counts.reposts }
+				</span>
+			) }
 			{ connectionId && post.cid ? (
 				<LikeButton
 					post={ {
