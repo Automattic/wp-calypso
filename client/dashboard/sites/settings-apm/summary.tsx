@@ -18,7 +18,7 @@ export default function ApmSettingsSummary( { site, density }: { site: Site; den
 			return [
 				{
 					text: __( 'Enabled' ),
-					intent: 'info' as const,
+					intent: 'success' as const,
 				},
 			];
 		}
