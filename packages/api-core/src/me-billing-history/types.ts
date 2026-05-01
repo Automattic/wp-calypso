@@ -79,6 +79,8 @@ export interface ReceiptItem {
 	introductory_offer_terms: IntroductoryOfferTerms | null;
 	price_tier_slug: string;
 	saas_redirect_url: string;
+	marketplace_product_type?: string;
+	marketplace_product_slug?: string;
 }
 
 export interface Receipt {

@@ -1,4 +1,8 @@
-import { receiptQuery, siteAutomatedTransferStatusQuery } from '@automattic/api-queries';
+import {
+	receiptQuery,
+	siteAutomatedTransferStatusQuery,
+	sitePluginsQuery,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
@@ -7,8 +11,9 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
@@ -25,7 +30,7 @@ import { storePersistedStateItem } from 'calypso/state/persisted-state';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
@@ -56,6 +61,7 @@ interface CheckoutPendingProps {
 
 const MIN_PENDING_HOLD_MS = 3000;
 const MAX_ATOMIC_TRANSFER_WAIT_MS = 90_000;
+const MAX_PLUGIN_INSTALL_WAIT_MS = 60_000;
 const ATOMIC_TRANSFER_POLL_INTERVAL_MS = 2000;
 
 function PendingPageHelpLink() {
@@ -98,6 +104,8 @@ function CheckoutPending( {
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 
+	const translate = useTranslate();
+
 	const { isAtomicTransferExpected } = useRedirectOnTransactionSuccess( {
 		orderId,
 		receiptId,
@@ -108,7 +116,15 @@ function CheckoutPending( {
 	const loadingPhrase = useAtomicTransferLoadingPhrase( isAtomicTransferExpected );
 
 	const content = (
-		<Step.Loading topBarRightElement={ <PendingPageHelpLink /> } title={ loadingPhrase } />
+		<Step.Loading
+			topBarRightElement={ <PendingPageHelpLink /> }
+			title={ loadingPhrase }
+			subtitle={
+				isAtomicTransferExpected
+					? translate( 'This can take a moment. Please keep this tab open.' )
+					: undefined
+			}
+		/>
 	);
 
 	return (
@@ -135,31 +151,39 @@ function useAtomicTransferLoadingPhrase( enabled: boolean ): string | undefined 
 	const translate = useTranslate();
 	const [ phraseIndex, setPhraseIndex ] = useState( -1 );
 
+	const phrases = useMemo(
+		() => [
+			{ text: translate( 'Preparing your site' ), duration: 4_000 },
+			{ text: translate( 'Building your workspace' ), duration: 6_000 },
+			{ text: translate( 'Setting up your tools' ), duration: 4_000 },
+			{ text: translate( 'Adding new capabilities' ), duration: 6_000 },
+			{ text: translate( 'Connecting the pieces' ), duration: 4_000 },
+			{ text: translate( 'Configuring your features' ), duration: 6_000 },
+			{ text: translate( 'Activating new features' ), duration: 4_000 },
+			{ text: translate( 'Running final checks' ), duration: 6_000 },
+			{ text: translate( "Making sure everything's ready" ), duration: 6_000 },
+			{ text: translate( 'Almost ready' ), duration: 0 },
+		],
+		[ translate ]
+	);
+
 	useEffect( () => {
 		if ( ! enabled ) {
 			return;
 		}
-		const timeouts = [
-			window.setTimeout( () => setPhraseIndex( 0 ), 1_000 ),
-			window.setTimeout( () => setPhraseIndex( 1 ), 10_000 ),
-			window.setTimeout( () => setPhraseIndex( 2 ), 25_000 ),
-			window.setTimeout( () => setPhraseIndex( 3 ), 45_000 ),
-		];
+		let cumulative = 1_000; // first phrase appears at T+1s
+		const timeouts = phrases.map( ( _, index ) => {
+			const id = window.setTimeout( () => setPhraseIndex( index ), cumulative );
+			cumulative += phrases[ index ].duration;
+			return id;
+		} );
 		return () => timeouts.forEach( window.clearTimeout );
-	}, [ enabled ] );
+	}, [ enabled, phrases ] );
 
 	if ( phraseIndex < 0 ) {
 		return undefined;
 	}
-
-	const phrases = [
-		translate( 'Preparing your site' ),
-		translate( 'Adding new capabilities' ),
-		translate( 'Activating features' ),
-		translate( 'Almost ready' ),
-	];
-
-	return phrases[ phraseIndex ];
+	return phrases[ phraseIndex ].text;
 }
 
 function performRedirect( url: string ): void {
@@ -233,17 +257,44 @@ function useRedirectOnTransactionSuccess( {
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
 
+	// Best-effort: capture marketplace plugin slugs from the receipt. The receipt
+	// is the authoritative source — the cart may be empty for redirect payment
+	// methods (e.g. PayPal) by the time the pending page loads.
+	const marketplacePluginSlugs = useMemo(
+		() =>
+			( receipt?.items ?? [] )
+				.filter(
+					( item ) =>
+						item.marketplace_product_type === 'marketplace_plugin' ||
+						item.marketplace_product_type === 'saas_plugin'
+				)
+				.map( ( item ) => item.marketplace_product_slug )
+				.filter( ( slug ): slug is string => !! slug ),
+		[ receipt ]
+	);
+	const isMarketplacePluginPurchase = marketplacePluginSlugs.length > 0;
+
+	const marketplaceThemeSlugs = useMemo(
+		() =>
+			( receipt?.items ?? [] )
+				.filter( ( item ) => item.marketplace_product_type === 'marketplace_theme' )
+				.map( ( item ) => item.marketplace_product_slug )
+				.filter( ( slug ): slug is string => !! slug ),
+		[ receipt ]
+	);
+	const isMarketplaceThemePurchase = marketplaceThemeSlugs.length > 0;
+
+	// For theme+plugin bundles, marketplace-thank-you handles activation polling — don't
+	// also wait on the pending page or users get double-waits and the wrong destination.
+	const shouldWaitForPluginInstall = isMarketplacePluginPurchase && ! isMarketplaceThemePurchase;
+
 	const error: Error | null = useSelector( ( state ) =>
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
 	const reduxDispatch = useDispatch();
 	const currentUserId = useSelector( getCurrentUserId );
 	const cartKey = useCartKey();
-	const { reloadFromServer: reloadCart, responseCart } = useShoppingCart( cartKey );
-	// Best-effort: capture cart products at mount to extract the marketplace plugin
-	// slug for the post-Atomic redirect. The cart may be empty for redirect payment
-	// methods (e.g. PayPal), in which case we fall back to the stale-slug fix below.
-	const [ cartProductsAtMount ] = useState( () => responseCart.products );
+	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 
 	const firstItem = receipt?.items[ 0 ];
 	const isRenewal = receipt?.items.some( ( item ) => item.type === 'recurring' ) ?? false;
@@ -251,6 +302,11 @@ function useRedirectOnTransactionSuccess( {
 	const blogId = firstItem?.site_id;
 	const freshSiteSlug = useSelector( ( state ) =>
 		blogId ? getSiteSlug( state, blogId ) : null
+	);
+	const siteAdminPluginsUrl = useSelector( ( state ) =>
+		blogId
+			? getSiteAdminUrl( state, blogId, 'plugins.php?activate=true&plugin_status=active' )
+			: null
 	);
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
@@ -314,6 +370,30 @@ function useRedirectOnTransactionSuccess( {
 	const isFinalSiteAtomic = useSelector( ( state ) =>
 		blogId ? isSiteWpcomAtomic( state, blogId ) : false
 	);
+
+	const [ pluginInstallTimedOut, setPluginInstallTimedOut ] = useState( false );
+	const { data: sitePluginsData } = useQuery( {
+		...sitePluginsQuery( blogId ?? 0 ),
+		enabled:
+			!! blogId && shouldWaitForPluginInstall && isFinalSiteAtomic && ! pluginInstallTimedOut,
+		refetchInterval: ( query ) => {
+			const plugins = query.state.data?.plugins;
+			if ( ! plugins ) {
+				return ATOMIC_TRANSFER_POLL_INTERVAL_MS;
+			}
+			const allInstalledAndActive = marketplacePluginSlugs.every( ( slug ) =>
+				plugins.some( ( plugin ) => plugin.slug === slug && plugin.active )
+			);
+			return allInstalledAndActive ? false : ATOMIC_TRANSFER_POLL_INTERVAL_MS;
+		},
+	} );
+	const isPluginInstalled =
+		! shouldWaitForPluginInstall ||
+		pluginInstallTimedOut ||
+		marketplacePluginSlugs.every( ( slug ) =>
+			( sitePluginsData?.plugins ?? [] ).some( ( plugin ) => plugin.slug === slug && plugin.active )
+		);
+
 	const isAtomicTransferComplete =
 		! isAtomicTransferExpected || isFinalSiteAtomic || atomicWaitTimedOut;
 
@@ -349,6 +429,19 @@ function useRedirectOnTransactionSuccess( {
 		}, MAX_ATOMIC_TRANSFER_WAIT_MS );
 		return () => window.clearTimeout( timeoutId );
 	}, [ isAtomicTransferExpected, isAtomicTransferComplete ] );
+
+	// Plugin install watchdog. Start counting only once the site is Atomic.
+	// If the plugin isn't active within MAX_PLUGIN_INSTALL_WAIT_MS, give up
+	// and redirect anyway so the user isn't stuck on the loader forever.
+	useEffect( () => {
+		if ( ! shouldWaitForPluginInstall || ! isFinalSiteAtomic || isPluginInstalled ) {
+			return;
+		}
+		const timeoutId = window.setTimeout( () => {
+			setPluginInstallTimedOut( true );
+		}, MAX_PLUGIN_INSTALL_WAIT_MS );
+		return () => window.clearTimeout( timeoutId );
+	}, [ shouldWaitForPluginInstall, isFinalSiteAtomic, isPluginInstalled ] );
 
 	// Redirect and display notices.
 	const [ mountTime ] = useState( () => Date.now() );
@@ -387,6 +480,13 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
+		// Wait for the plugin to be installed and active before redirecting.
+		// Without this the destination page would render before the install
+		// completes, showing a confusing "not installed" state for a moment.
+		if ( ! isPluginInstalled ) {
+			return;
+		}
+
 		// For siteless purchases where the new site's ID was unknown at the time the
 		// redirect URL was generated (e.g. redirect payment methods like PayPal that
 		// build the thank-you URL before the transaction begins), resolve the site using
@@ -412,27 +512,36 @@ function useRedirectOnTransactionSuccess( {
 		// For purchases that triggered an Atomic transfer, the redirect URL
 		// was generated before the transfer and contains the pre-Atomic site
 		// slug (e.g. example.wordpress.com instead of example.wpcomstaging.com).
-		// Additionally, plugin purchases get a generic /home destination from
-		// the stepper. Fix both: use the fresh slug from Redux (populated by
-		// the requestSite polling that already ran), and for plugin purchases
-		// redirect to the installed plugin's page.
+		// Fix the destination and slug based on what was purchased.
 		const postAtomicRedirectTo = ( () => {
 			if ( ! isAtomicTransferExpected || ! freshSiteSlug ) {
 				return effectiveRedirectTo;
 			}
-			// Extract the plugin slug from the cart products captured at mount.
-			// The transfer status API doesn't return uploaded_plugin_slug for
-			// marketplace purchases — only for direct plugin uploads.
-			const marketplacePlugin = cartProductsAtMount.find(
-				( { extra } ) =>
-					extra?.product_type === 'marketplace_plugin' || extra?.product_type === 'saas_plugin'
-			);
-			const pluginSlug = marketplacePlugin?.extra?.product_slug;
-			if ( pluginSlug ) {
-				return `/plugins/${ pluginSlug }/${ freshSiteSlug }`;
+			if ( marketplaceThemeSlugs.length ) {
+				// Theme purchases (with or without companion plugins) need the
+				// marketplace-thank-you page to handle theme activation polling and
+				// display. Skipping it would leave the theme inactive — and for
+				// theme+plugin bundles, going straight to wp-admin/plugins.php
+				// would hide theme activation from the user entirely.
+				return addQueryArgs(
+					{
+						themes: marketplaceThemeSlugs.join( ',' ),
+						...( marketplacePluginSlugs.length && {
+							plugins: marketplacePluginSlugs.join( ',' ),
+						} ),
+					},
+					`/marketplace/thank-you/${ freshSiteSlug }`
+				);
 			}
-			// No plugin slug available — fix the stale site slug in the
-			// existing redirect URL so at least the destination resolves.
+			if ( marketplacePluginSlugs.length && siteAdminPluginsUrl ) {
+				// Plugin-only path: the pending page already waited for atomic transfer
+				// AND plugin install completion. Hard-redirect to wp-admin's
+				// installed-plugins screen, mirroring core WordPress behaviour after
+				// a plugin activation.
+				return siteAdminPluginsUrl;
+			}
+			// No marketplace plugin or theme in the receipt — fix the stale site slug
+			// in the existing redirect URL so at least the destination resolves.
 			if ( siteSlug && effectiveRedirectTo?.includes( siteSlug ) ) {
 				return effectiveRedirectTo.replace( siteSlug, freshSiteSlug );
 			}
@@ -530,9 +639,15 @@ function useRedirectOnTransactionSuccess( {
 		isTransferStatusFetched,
 		isAtomicTransferComplete,
 		isAtomicTransferExpected,
+		isPluginInstalled,
+		isMarketplacePluginPurchase,
+		isMarketplaceThemePurchase,
+		shouldWaitForPluginInstall,
+		marketplacePluginSlugs,
+		marketplaceThemeSlugs,
+		siteAdminPluginsUrl,
 		isRenewal,
 		blogId,
-		cartProductsAtMount,
 		currentUserId,
 		orderId,
 		productName,

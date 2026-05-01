@@ -8,6 +8,7 @@ import './style.scss';
 
 interface LoadingProps {
 	title?: ReactNode;
+	subtitle?: ReactNode;
 	progress?: number;
 	delay?: number;
 	compactLogo?: TopBarProps[ 'compactLogo' ];
@@ -16,6 +17,7 @@ interface LoadingProps {
 
 export const Loading = ( {
 	title,
+	subtitle,
 	progress,
 	delay = 0,
 	compactLogo,
@@ -53,6 +55,11 @@ export const Loading = ( {
 					</div>
 				) }
 				<ProgressBar className="step-container-v2--loading__progress-bar" value={ progress } />
+				{ subtitle && (
+					<div className="step-container-v2--loading__subtitle-wrapper">
+						<p className="step-container-v2--loading__subtitle">{ subtitle }</p>
+					</div>
+				) }
 			</div>
 		</StepContainerV2>
 	);

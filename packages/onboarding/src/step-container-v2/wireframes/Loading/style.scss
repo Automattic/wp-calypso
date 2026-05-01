@@ -19,4 +19,26 @@
 	&__progress-bar {
 		--wp-components-color-foreground: var( --color-accent, #3858e9 );
 	}
+
+	&__subtitle-wrapper {
+		position: absolute;
+		height: 0;
+	}
+}
+
+.step-container-v2--loading__subtitle {
+	color: var( --studio-gray-50 );
+	font-size: 1rem;
+	letter-spacing: -0.02em;
+	line-height: 21px;
+	transform: translateY( 3rem );
+	text-align: center;
+	opacity: 0;
+	animation: step-container-v2--loading__subtitle-fade-in 600ms ease-in 5s forwards;
+}
+
+@keyframes step-container-v2--loading__subtitle-fade-in {
+	to {
+		opacity: 1;
+	}
 }
