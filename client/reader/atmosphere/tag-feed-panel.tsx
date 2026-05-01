@@ -1,5 +1,5 @@
 import { useAtmosphereTagFeedInfiniteQuery } from '@automattic/api-queries';
-import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -165,20 +165,6 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 			  } )
 			: null;
 
-	// Defence-in-depth on a third-party-supplied URL: only honour https URLs.
-	// Anything else (javascript:, http://, malformed) falls through to no link
-	// rather than reaching the DOM as an anchor href.
-	const externalTagUrl = ( () => {
-		if ( ! tagInfo?.url ) {
-			return null;
-		}
-		try {
-			return new URL( tagInfo.url ).protocol === 'https:' ? tagInfo.url : null;
-		} catch {
-			return null;
-		}
-	} )();
-
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			<VStack spacing={ 4 } className="atmosphere-tag-feed">
@@ -189,11 +175,6 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 				<div className="atmosphere-tag-feed__header">
 					<h1 className="atmosphere-tag-feed__heading">{ `#${ hashtag }` }</h1>
 					{ countLine ? <p className="atmosphere-tag-feed__count">{ countLine }</p> : null }
-					{ externalTagUrl ? (
-						<ExternalLink className="atmosphere-tag-feed__external-link" href={ externalTagUrl }>
-							{ translate( 'View on Bluesky' ) }
-						</ExternalLink>
-					) : null }
 				</div>
 				<SocialFeedList< SocialPost >
 					items={ items }

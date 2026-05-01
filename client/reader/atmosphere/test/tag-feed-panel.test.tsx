@@ -95,44 +95,6 @@ describe( 'TagFeedPanel', () => {
 		expect( screen.queryByText( /\d+ posts?/i ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders the View on Bluesky link only for https URLs', async () => {
-		nock( BASE )
-			.get( PATH )
-			.reply( 200, {
-				items: [],
-				cursor: null,
-				tag: { name: 'rust', url: 'https://bsky.app/hashtag/rust' },
-			} );
-
-		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="rust" />, {
-			queryClient: makeQueryClient(),
-		} );
-
-		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: /View on Bluesky/i } ) ).toHaveAttribute(
-				'href',
-				'https://bsky.app/hashtag/rust'
-			)
-		);
-	} );
-
-	it( 'omits the View on Bluesky link when the URL is non-https', async () => {
-		nock( BASE )
-			.get( PATH )
-			.reply( 200, {
-				items: [],
-				cursor: null,
-				tag: { name: 'rust', url: 'javascript:alert(1)' },
-			} );
-
-		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="rust" />, {
-			queryClient: makeQueryClient(),
-		} );
-
-		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#rust' } ) ).toBeVisible() );
-		expect( screen.queryByRole( 'link', { name: /View on Bluesky/i } ) ).not.toBeInTheDocument();
-	} );
-
 	it( 'fires the tag_feed_viewed Tracks event when data resolves', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( BASE )
