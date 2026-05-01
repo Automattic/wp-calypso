@@ -7,6 +7,8 @@ import type {
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
+	AtmosphereCreateFollowResponse,
+	AtmosphereScopedProfile,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 } from './types';
@@ -158,6 +160,85 @@ export async function getAuthorFeed(
 			},
 			query
 		) ) as AtmosphereAuthorFeedPage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetScopedProfileParams {
+	connectionId: number;
+	actor: string;
+}
+
+/**
+ * Authed companion to `getAuthorProfile`. Returns the same profile
+ * shape plus the caller-relative `viewer` block ({ following,
+ * following_rkey, followed_by }) used to render the Follow / Follow
+ * back / Following button on the Bluesky author profile page.
+ */
+export async function getScopedProfile(
+	params: GetScopedProfileParams
+): Promise< AtmosphereScopedProfile > {
+	const { connectionId, actor } = params;
+	try {
+		return ( await wpcom.req.get( {
+			path: `/reader/atmosphere/connections/${ connectionId }/profile/${ encodeURIComponent(
+				actor
+			) }`,
+			apiNamespace: NAMESPACE,
+		} ) ) as AtmosphereScopedProfile;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface CreateFollowParams {
+	connectionId: number;
+	subject_did: string;
+}
+
+/**
+ * Creates an `app.bsky.graph.follow` record on the caller's PDS
+ * (the connection identified by `connectionId` follows the actor
+ * identified by `subject_did`). Returns the URI / CID / rkey of
+ * the new record so callers can issue the matching DELETE without
+ * splitting the AT-URI.
+ */
+export async function createFollow(
+	params: CreateFollowParams
+): Promise< AtmosphereCreateFollowResponse > {
+	const { connectionId, subject_did } = params;
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ connectionId }/follows`,
+			apiNamespace: NAMESPACE,
+			body: { subject_did },
+		} ) ) as AtmosphereCreateFollowResponse;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface DeleteFollowParams {
+	connectionId: number;
+	rkey: string;
+}
+
+/**
+ * Drops an `app.bsky.graph.follow` record from the caller's PDS.
+ * Idempotent: a missing rkey returns success (mirroring upstream
+ * `deleteRecord` semantics).
+ */
+export async function deleteFollow( params: DeleteFollowParams ): Promise< void > {
+	const { connectionId, rkey } = params;
+	try {
+		await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ connectionId }/follows/${ encodeURIComponent(
+				rkey
+			) }`,
+			apiNamespace: NAMESPACE,
+			method: 'DELETE',
+		} );
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}
