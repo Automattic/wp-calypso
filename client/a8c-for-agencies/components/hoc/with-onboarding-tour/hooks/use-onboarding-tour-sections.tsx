@@ -274,17 +274,12 @@ export default function useOnboardingTourSections() {
 							"If you build sites using WooCommerce, you're leaving money on the table by not using WooPayments, Woo's fully-integrated payments solution."
 						),
 						translate(
-							'Earn recurring revenue share on client store sales when they use WooPayments. {{a}}Rates vary based on whether the store is new or pre-existing — see details{{icon/}}{{/a}}.',
+							'Earn recurring revenue share on client store sales when they use WooPayments. {{a}}Rates vary based on whether the store is new or pre-existing — see details{{/a}}.',
 							{
 								components: {
 									a: (
-										<a
-											href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
+										<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/" />
 									),
-									icon: <Icon icon={ external } size={ 18 } />,
 								},
 							}
 						),
