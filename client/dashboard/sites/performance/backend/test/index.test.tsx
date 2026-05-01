@@ -21,7 +21,7 @@ const businessSite = ( apmEnabled: boolean ) =>
 			product_slug: 'business-bundle',
 			product_name_short: 'Business',
 			is_free: false,
-			features: { active: [ 'atomic' ] },
+			features: { active: [ 'atomic', 'apm' ] },
 		},
 		options: { apm_enabled: apmEnabled },
 	} ) as unknown as Site;

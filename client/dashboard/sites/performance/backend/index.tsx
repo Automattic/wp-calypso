@@ -1,3 +1,4 @@
+import { HostingFeatures, type Site } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -6,16 +7,15 @@ import { __ } from '@wordpress/i18n';
 import { Card, CardBody, CardHeader } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { hasHostingFeature } from '../../../utils/site-features';
 import UpsellCallout from '../../hosting-feature-gated-with-callout/upsell';
 import { getBackendCalloutProps } from '../backend-callout';
-import { hasApmAccess } from './access';
 import Database from './database';
 import EnableApmCallout from './enable-apm-callout';
 import ExternalRequests from './external-requests';
 import Overview from './overview';
 import Requests from './requests';
 import Transactions from './transactions';
-import type { Site } from '@automattic/api-core';
 
 export type ApmTab = 'overview' | 'requests' | 'transactions' | 'database' | 'external-requests';
 
@@ -99,7 +99,7 @@ export default function SitePerformanceBackend( {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const renderContent = () => {
-		if ( ! hasApmAccess( site.plan?.product_slug ) ) {
+		if ( ! hasHostingFeature( site, HostingFeatures.APM ) ) {
 			return <UpsellCallout site={ site } { ...getBackendCalloutProps() } />;
 		}
 

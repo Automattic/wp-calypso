@@ -1,3 +1,4 @@
+import { HostingFeatures, type Site } from '@automattic/api-core';
 import { siteApmEnabledMutation, siteBySlugQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -8,10 +9,9 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { hasHostingFeature } from '../../utils/site-features';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
-import { hasApmAccess } from '../performance/backend/access';
 import { getBackendCalloutProps } from '../performance/backend-callout';
-import type { Site } from '@automattic/api-core';
 
 function ApmToggle( { site }: { site: Site } ) {
 	const enabled = !! site.options?.apm_enabled;
@@ -86,7 +86,7 @@ export default function ApmSettings( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 		>
-			{ hasApmAccess( site.plan?.product_slug ) ? (
+			{ hasHostingFeature( site, HostingFeatures.APM ) ? (
 				<ApmToggle site={ site } />
 			) : (
 				<UpsellCallout site={ site } { ...getBackendCalloutProps() } />
