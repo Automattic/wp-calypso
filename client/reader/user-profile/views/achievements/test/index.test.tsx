@@ -14,9 +14,13 @@ jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility' 
 
 jest.mock( 'calypso/data/reader/use-achievements-query' );
 
+const mockAchievementsGridProps = jest.fn();
 jest.mock( '../achievements-grid', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="achievements-grid" />,
+	default: ( props: { userLogin: string; isOwnProfile: boolean } ) => {
+		mockAchievementsGridProps( props );
+		return <div data-testid="achievements-grid" />;
+	},
 } ) );
 
 jest.mock( '../achievements-settings', () => ( {
@@ -56,8 +60,13 @@ describe( 'UserAchievements', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockAchievementsGridProps.mockClear();
 		mockIsEnabled.mockReturnValue( true );
-		useAchievementsQuery.mockReturnValue( { yearsOfService: undefined, isLoading: false } );
+		useAchievementsQuery.mockReturnValue( {
+			yearsOfService: undefined,
+			lockedAchievements: [],
+			isLoading: false,
+		} );
 	} );
 
 	test( 'should render nothing when feature flag is disabled', () => {
@@ -168,10 +177,42 @@ describe( 'UserAchievements', () => {
 			isVisible: true,
 			isLoading: false,
 		} );
-		useAchievementsQuery.mockReturnValue( { yearsOfService: undefined, isLoading: false } );
+		useAchievementsQuery.mockReturnValue( {
+			yearsOfService: undefined,
+			lockedAchievements: [],
+			isLoading: false,
+		} );
 
 		render( <UserAchievements user={ defaultUser } /> );
 
 		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'forwards isOwnProfile=true to AchievementsGrid on own profile', () => {
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			isVisible: true,
+			isLoading: false,
+		} );
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		expect( mockAchievementsGridProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { userLogin: 'test_user', isOwnProfile: true } )
+		);
+	} );
+
+	test( 'forwards isOwnProfile=false to AchievementsGrid on someone else’s profile', () => {
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: true,
+			isLoading: false,
+		} );
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		expect( mockAchievementsGridProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { userLogin: 'test_user', isOwnProfile: false } )
+		);
 	} );
 } );

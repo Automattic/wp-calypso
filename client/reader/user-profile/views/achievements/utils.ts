@@ -1,4 +1,10 @@
-import type { Achievement } from '@automattic/api-core';
+import type {
+	Achievement,
+	EarnedAchievementEntry,
+	LockedAchievementEntry,
+	LockedSecretAchievement,
+	MaskedSecretAchievement,
+} from '@automattic/api-core';
 
 /**
  * Find the oldest achievement of a given slug by comparing dates.
@@ -39,3 +45,29 @@ export function deduplicateAchievements( achievements: Achievement[] ): Achievem
 		return highest;
 	} );
 }
+
+/**
+ * Deduplicate by `achievement_id`, keeping the first occurrence. Used for
+ * shapes that lack a slug (masked secrets and locked entries) — the backend
+ * may return the same id more than once for secret achievements.
+ */
+export function dedupeById< T extends { achievement_id: number } >( entries: T[] ): T[] {
+	const seen = new Set< number >();
+	const result: T[] = [];
+	for ( const entry of entries ) {
+		if ( ! seen.has( entry.achievement_id ) ) {
+			seen.add( entry.achievement_id );
+			result.push( entry );
+		}
+	}
+	return result;
+}
+
+export const isFullyEarned = ( a: EarnedAchievementEntry ): a is Achievement =>
+	a.is_secret === false;
+
+export const isMaskedSecret = ( a: EarnedAchievementEntry ): a is MaskedSecretAchievement =>
+	a.is_secret === true;
+
+export const isLockedSecret = ( a: LockedAchievementEntry ): a is LockedSecretAchievement =>
+	a.is_secret === true;
