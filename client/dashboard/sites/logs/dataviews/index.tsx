@@ -73,6 +73,7 @@ function SiteLogsDataViews( {
 		slug: `site-logs-${ logType }`,
 		defaultView: logType === LogType.PHP ? DEFAULT_PHP_LOGS_VIEW : DEFAULT_SERVER_LOGS_VIEW,
 		queryParams: search,
+		queryParamFilterFields: logType === LogType.PHP ? [ 'severity' ] : [],
 	} );
 
 	// We want to parse 'from' and 'to' from the URL.

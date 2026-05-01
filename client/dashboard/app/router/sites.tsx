@@ -323,6 +323,9 @@ export const siteLogsPhpRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'php',
 	loader: loadSiteLogsRoute,
+	validateSearch: ( search ): { severity?: string } => ( {
+		severity: typeof search.severity === 'string' ? search.severity : undefined,
+	} ),
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
