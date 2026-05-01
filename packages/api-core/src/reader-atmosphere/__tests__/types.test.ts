@@ -38,7 +38,6 @@ describe( 'reader-atmosphere types compile', () => {
 			avatar: null,
 			banner: null,
 			counts,
-			raw: {},
 		};
 		expect( [ list, created ] ).toHaveLength( 2 );
 		expect( details.counts.followers ).toBe( 0 );

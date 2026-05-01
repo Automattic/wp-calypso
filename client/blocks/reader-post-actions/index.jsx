@@ -1,10 +1,13 @@
+import { readTeamsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import LikeButton from 'calypso/reader/like-button';
 import {
 	isCommentsOpen,
@@ -14,7 +17,6 @@ import {
 } from 'calypso/reader/post/capabilities';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
 import './style.scss';
 
@@ -33,7 +35,8 @@ const ReaderPostActions = ( {
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
 	const listClassnames = clsx( 'reader-post-actions', className );
-	const isAutomattician = useSelector( isA8cTeamMember );
+	const { data } = useQuery( readTeamsQuery() );
+	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
 	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
 
 	return (

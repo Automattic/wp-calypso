@@ -74,6 +74,11 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
+const loadUploadDropZone = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-upload-drop-zone" */ 'calypso/blocks/upload-drop-zone'
+	);
+
 class Upload extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -288,11 +293,7 @@ class Upload extends Component {
 				<Card>
 					{ ! inProgress && ! complete && (
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-blocks-upload-drop-zone" */ 'calypso/blocks/upload-drop-zone'
-								)
-							}
+							require={ loadUploadDropZone }
 							placeholder={ null }
 							doUpload={ uploadAction }
 							disabled={ isDisabled }

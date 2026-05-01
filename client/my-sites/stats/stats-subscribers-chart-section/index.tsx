@@ -19,6 +19,11 @@ import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
 
 import './style.scss';
+const loadLineChart = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
+	);
+
 interface SubscribersData {
 	period: PeriodType;
 	subscribers: number;
@@ -277,11 +282,7 @@ export default function SubscribersChartSection( {
 					<div className="subscribers-section-legend" ref={ legendRef }></div>
 					{ isChartLibraryEnabled ? (
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
-								)
-							}
+							require={ loadLineChart }
 							chartData={ lineChartData }
 							height={ 300 }
 							curveType="monotone" // can use smooth, linear, monotone

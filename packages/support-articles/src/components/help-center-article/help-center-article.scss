@@ -34,6 +34,7 @@
 
 				svg.gridicons-external {
 					top: 3px;
+					fill: currentColor;
 				}
 			}
 
@@ -65,7 +66,7 @@
 			}
 
 			a[name='toc'] span {
-				color: var( --color-neutral-80 );
+				color: var( --color-text );
 				font-size: $font-body;
 			}
 
@@ -104,13 +105,13 @@
 			p {
 				font-size: $font-size-large;
 				line-height: 1.6;
-				color: var( --color-neutral-80 );
+				color: var( --color-text );
 			}
 
 			ul,
 			ol.wp-block-list {
 				font-size: $font-body-small;
-				color: var( --color-neutral-80 );
+				color: var( --color-text );
 				list-style-position: outside;
 				margin: 0 0 1.5em 1.5em;
 
@@ -136,7 +137,7 @@
 				background-color: var( --color-neutral-0 );
 				border-left: none;
 				padding: 16px;
-				color: var( --color-neutral-80 );
+				color: var( --color-text );
 			}
 
 			.wp-block-separator {
@@ -192,8 +193,8 @@
 			}
 
 			.callout .wp-block-column {
-				$callout-border: #dcdcde;
-				$callout-background: #fff;
+				$callout-border: var(--studio-gray-5);
+				$callout-background: var(--color-surface);
 				$callout-large-font-size: 40px;
 
 				padding: 0.5em;
@@ -623,7 +624,7 @@
 	.help-center-article__error {
 		padding: 16px 30px 20px;
 		font-size: 0.875rem;
-		color: var( --color-neutral-80 );
+		color: var( --color-text );
 	}
 
 	.help-center-article-lesson-navigation {
@@ -666,7 +667,7 @@
 		&__title {
 			font-size: $font-body;
 			font-weight: 500;
-			color: var( --color-neutral-80 );
+			color: var( --color-text );
 		}
 	}
 }

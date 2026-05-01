@@ -75,6 +75,69 @@ import '@automattic/components/src/card/style.scss';
 
 import './style.scss';
 
+const loadWooCoreProfiler = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-woo-core-profiler" */ 'calypso/layout/masterbar/woo-core-profiler'
+	);
+const loadBlazePro = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-blaze-pro" */ 'calypso/layout/masterbar/blaze-pro'
+	);
+const loadReaderHeader = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-components-header" */ 'calypso/reader/components/header'
+	);
+const loadCelebrateSiteLaunchModal = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-customer-home-celebrate-site-launch-modal" */ 'calypso/my-sites/customer-home/celebrate-site-launch-modal'
+	);
+const loadGuidedTours = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-guided-tours" */ 'calypso/layout/guided-tours'
+	);
+const loadJetpackCloudStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-jetpack-cloud-style" */ 'calypso/jetpack-cloud/style'
+	);
+const loadA8cForAgenciesStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
+	);
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+const loadCommunityTranslator = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-community-translator" */ 'calypso/layout/community-translator'
+	);
+const loadWebpackBuildMonitor = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
+	);
+const loadSupportArticleDialog = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
+	);
+const loadCookieBanner = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
+	);
+const loadAppBanner = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-app-banner" */ 'calypso/blocks/app-banner'
+	);
+const loadLegalUpdatesBanner = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-legal-updates-banner" */ 'calypso/blocks/legal-updates-banner'
+	);
+const loadGlobalNotifications = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-global-notifications" */ 'calypso/layout/global-notifications'
+	);
+
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
@@ -183,28 +246,10 @@ class Layout extends Component {
 			return <EmptyMasterbar />;
 		}
 		if ( this.props.isWooJPC ) {
-			return (
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-layout-masterbar-woo-core-profiler" */ 'calypso/layout/masterbar/woo-core-profiler'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad require={ loadWooCoreProfiler } placeholder={ null } />;
 		}
 		if ( this.props.isBlazePro ) {
-			return (
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-layout-masterbar-blaze-pro" */ 'calypso/layout/masterbar/blaze-pro'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad require={ loadBlazePro } placeholder={ null } />;
 		}
 
 		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
@@ -212,16 +257,7 @@ class Layout extends Component {
 		}
 
 		if ( this.props.isMSDEnabledForReader ) {
-			return (
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-reader-components-header" */ 'calypso/reader/components/header'
-						)
-					}
-					placeholder={ null }
-				/>
-			);
+			return <AsyncLoad require={ loadReaderHeader } placeholder={ null } />;
 		}
 
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
@@ -260,11 +296,7 @@ class Layout extends Component {
 
 		return (
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-my-sites-customer-home-celebrate-site-launch-modal" */ 'calypso/my-sites/customer-home/celebrate-site-launch-modal'
-					)
-				}
+				require={ loadCelebrateSiteLaunchModal }
 				placeholder={ null }
 				siteId={ this.props.siteId }
 			/>
@@ -357,61 +389,26 @@ class Layout extends Component {
 				<QuerySiteAdminColor siteId={ this.props.siteId } />
 				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-layout-guided-tours" */ 'calypso/layout/guided-tours'
-							)
-						}
-						placeholder={ null }
-					/>
+					<AsyncLoad require={ loadGuidedTours } placeholder={ null } />
 				) }
 				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
 				<LayoutLoader />
-				{ isJetpackCloud() && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-jetpack-cloud-style" */ 'calypso/jetpack-cloud/style'
-							)
-						}
-						placeholder={ null }
-					/>
-				) }
+				{ isJetpackCloud() && <AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } /> }
 				{ isA8CForAgencies() && (
 					<>
-						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
-								)
-							}
-							placeholder={ null }
-						/>
+						<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 						<QueryAgencies />
 					</>
 				) }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm'
-								)
-							}
+							require={ loadJitm }
 							placeholder={ null }
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 						/>
 					) }
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-							)
-						}
-						placeholder={ null }
-						id="notices"
-					/>
+					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
 						<>
 							<div id="secondary" className="layout__secondary" role="navigation">
@@ -424,77 +421,28 @@ class Layout extends Component {
 						</>
 					) }
 				</div>
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-layout-community-translator" */ 'calypso/layout/community-translator'
-						)
-					}
-					placeholder={ null }
-				/>
+				<AsyncLoad require={ loadCommunityTranslator } placeholder={ null } />
 				{ 'development' === process.env.NODE_ENV && (
 					<>
 						<SympathyDevWarning />
-						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
-								)
-							}
-							placeholder={ null }
-						/>
+						<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />
 					</>
 				) }
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
-							)
-						}
-						placeholder={ null }
-					/>
+					<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
-							)
-						}
-						placeholder={ null }
-					/>
+					<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-app-banner" */ 'calypso/blocks/app-banner'
-							)
-						}
-						placeholder={ null }
-					/>
+					<AsyncLoad require={ loadAppBanner } placeholder={ null } />
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-legal-updates-banner" */ 'calypso/blocks/legal-updates-banner'
-							)
-						}
-						placeholder={ null }
-					/>
+					<AsyncLoad require={ loadLegalUpdatesBanner } placeholder={ null } />
 				) }
 
 				{ ! this.props.isMSDEnabledForReader && (
-					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-layout-global-notifications" */ 'calypso/layout/global-notifications'
-							)
-						}
-						placeholder={ null }
-					/>
+					<AsyncLoad require={ loadGlobalNotifications } placeholder={ null } />
 				) }
 				{ this.renderCelebrateSiteLaunchModal() }
 			</div>

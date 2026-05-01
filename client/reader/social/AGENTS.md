@@ -26,9 +26,13 @@ Out of scope (lives elsewhere):
 client/reader/social/
   index.ts                      # public barrel — only export from here
   profile-card.tsx              # SocialProfileCard (used by every protocol's profile/verify view)
-  style.scss                    # SocialProfileCard styles
+  author-profile-header.tsx     # AuthorProfileHeader — back-button shim for the profile route (slice 6)
+  author-profile-panel.tsx      # SocialAuthorProfilePanel — generic author-profile surface, both protocols wrap (slice 6)
+  profile-header-skeleton.tsx   # SocialProfileHeaderSkeleton — layout-stable placeholder used by the panel (slice 6)
+  style.scss                    # SocialProfileCard + skeleton styles
   test/
     profile-card.test.tsx
+    author-profile-header.test.tsx
 
   components/                   # mirror of client/reader/discover/components/ shape
     feed-list/
@@ -57,6 +61,12 @@ client/reader/social/
       test/
 ```
 
+The atmosphere thread surface (`ThreadTree`, `ThreadNode`, `ThreadTombstone`,
+`ThreadTreeSkeleton`) lives at `client/reader/atmosphere/thread-tree/` —
+the layout is bsky-shaped (AT-URI-based parent walking, `AtmosphereThreadNode`
+recursion, scroll-to-target via at:// URI). When Mastodon's slice 5 ships
+its own thread view, it adds a sibling under `client/reader/mastodon/`.
+
 ## Architectural decisions
 
 ### Bluesky-shaped types today, abstract when Mastodon arrives
@@ -72,11 +82,14 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 
 ### What's already protocol-agnostic (reuse as-is for Mastodon)
 
-- `SocialProfileCard` — generic over a `stats[]` array; accepts plain-text `bio` or sanitised `bioHtml`. Already used by ATmosphere and intended for Mastodon.
+- `SocialProfileCard` — generic over a `stats[]` array; accepts plain-text `bio` or sanitised `bioHtml`. Slice-6 widened the prop set so the same component covers both the slim verify/your-own-connection layout and the full author-profile header: `banner`, `displayName`, `handle`, and `headerActions` switch the component into a richer band-and-stats layout (banner above avatar, name + `@handle`, action slot for buttons/links). Already used by ATmosphere for both surfaces; intended for Mastodon.
 - `SocialFeedList<T>` — generic over item type via `renderItem` and `itemKey`. Mastodon plugs in a different data hook and a different `renderItem` callback; the list shell, sentinel-based pagination, skeleton, and error variants don't change.
 - `PostCardLink` — the card-link accessibility pattern (one real `<a>` + `::after` overlay + nested `position: relative; z-index: 1` anchors).
-- `sanitizePostHtml` — DOMPurify wrapper with allow-list (`<p> <br> <a>` / `href, rel, target`) and the `target="_blank"` rel-hardening hook. Conservative enough for Mastodon content too, possibly with a small extension to that allow-list once we see what Mastodon emits.
-- `SocialAnalyticsProvider` / `useSocialAnalytics` — the per-protocol shell wraps its tree with a `source` ('atmosphere' | 'mastodon' | …) + `connectionId` + `onClick(event, props)` callback. The post-card subcomponents call into this context instead of dispatching `recordReaderTracksEvent` directly. Adding a protocol just means adding a `source` value and wiring up the protocol's per-event Tracks call in the shell.
+- `sanitizePostHtml` — DOMPurify wrapper with allow-list (`<p> <br> <a>` / `href, rel, target, data-id`, `ALLOW_DATA_ATTR: false`) and a scoped `afterSanitizeAttributes` hook that forces `target="_blank"` and `rel="nofollow noopener noreferrer"` on every surviving anchor (post body and bio alike — `SocialProfileCard` reuses the same hardening via `sanitizeReaderSocialHtml`). The `data-id` attribute is carried by @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
+- `SocialAnalyticsProvider` / `useSocialAnalytics` — the per-protocol shell wraps its tree with a `source` ('atmosphere' | 'mastodon' | …) + `connectionId` + `onClick(event, props)` callback, plus optional URL resolvers (`getThreadUrl`, `getProfileUrl`). The post-card subcomponents call into this context instead of dispatching `recordReaderTracksEvent` directly. Adding a protocol just means adding a `source` value, wiring up the protocol's per-event Tracks call in the shell, and binding the protocol's URL builders to the resolvers.
+- `SocialAuthorProfilePanel` (slice 6) — generic author-profile surface that owns the layout (back-button + profile header + feed list), the `profile_viewed` / `profile_error_shown` / `profile_retry_clicked` / `profile_back_to_timeline_clicked` Tracks events with ref-based dedupe, and the `SocialAnalyticsProvider` value. Per-protocol wrappers inject already-fetched query results, mappers, error projectors, URL builders, and copy. Atmosphere's wrapper is `client/reader/atmosphere/author-profile-panel.tsx`; Mastodon's is `client/reader/mastodon/author-profile-panel.tsx`. Both shrink to ~150 lines of config.
+- `SocialProfileHeaderSkeleton` (slice 6) — layout-stable placeholder used as the default `renderProfileLoading` slot of `SocialAuthorProfilePanel`. Mirrors `SocialProfileCard`'s sizing so the surface doesn't shift when profile data resolves.
+- `AuthorProfileHeader` — back-button shim taking `timelineUrl: string`. Both protocols use it directly via the shared panel.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
@@ -103,6 +116,68 @@ Use the `SocialAnalyticsProvider` context, not direct `recordReaderTracksEvent` 
 
 All Reader Tracks events use the `calypso_reader_*` prefix per `client/reader/AGENTS.md`. Emit them via the `recordReaderTracksEvent` Redux action — `recordTrack()` from `client/reader/stats` is deprecated.
 
+Tracks events emitted from click-destination surfaces gain a `destination` property so dashboards can split by routing behaviour without renaming the events:
+
+- Thread-routing surfaces (timestamp anchor, quote embed, replies count, reply-context preface) carry `destination: 'in_app_thread' | 'bsky_app'` (slice 5).
+- Profile-routing surfaces (author chip via `_author_clicked`, repost preface via the slice-6 `_repost_author_clicked` event) carry `destination: 'in_app' | 'bsky_app'` (slice 6).
+
+The slice-6 `calypso_reader_<source>_timeline_repost_author_clicked` event additionally carries `reposter_did`, `reposter_handle`, and the original `post_uri`. The shell rewrites the `_timeline_` prefix to a surface-specific one (e.g. `_thread_`) inside its `onClick` callback exactly as for the existing events.
+
+### URL resolution (slice 5+)
+
+Post-card subcomponents that re-target click destinations read optional URL
+resolvers from the analytics context. Two resolvers exist today, both with the
+same null-means-fall-back contract:
+
+```ts
+interface SocialAnalyticsContextValue {
+	// ...
+	// Slice 5: in-app thread URL for a post URI, or null to fall back.
+	getThreadUrl?: ( postUri: string ) => string | null;
+	// Slice 6: in-app profile URL for an author ref, or null to fall back.
+	// `id` is the universal protocol-agnostic identifier (DID for atmosphere,
+	// numeric account id for Mastodon). `did` is kept as an atmosphere-named
+	// alias so existing call sites keep working — both fields point to the
+	// same value when post-card-header passes them.
+	getProfileUrl?: ( ref: {
+		id?: string | null;
+		did?: string | null;
+		handle?: string | null;
+	} ) => string | null;
+}
+```
+
+Surfaces consuming `getThreadUrl` (slice 5): the timestamp anchor in
+`<PostCardHeader>`, `<PostCardEmbedQuote>`, `<PostCardCounts>`'s replies
+count, and `<PostCardHeader>`'s reply-context preface.
+
+Surfaces consuming `getProfileUrl` (slice 6): `<PostCardHeader>`'s author
+chip, `<PostCardHeader>`'s repost preface (the reposter name),
+`<PostCardBody>` for inline `<a data-id>` @-mention anchors in post
+content, and `<SocialProfileCard>` for inline `<a data-id>` @-mention
+anchors in author bios. The body and profile-card components intercept
+the click, read `data-id`, call `getProfileUrl({ id, handle, did })` with
+the same value in all three fields, and route via `page()` when the
+resolver returns an in-app URL. The three-field shape lets per-protocol
+resolvers pick whichever they understand and validate: atmosphere's
+resolver tries `handle` (`HANDLE_RE`) then `did` (`DID_RE`); Mastodon's
+reads `id`. Backends stamp either a DID (atmosphere, when known) or a
+numeric account id (Mastodon), and atmosphere falls back to a handle in
+`data-id` when no DID is available. Modifier-clicks (cmd/ctrl/middle/
+shift/alt) always pass through. When `data-id` is present but the
+resolver returns null the click falls through to the external href AND
+the body/profile-card fires a
+`calypso_reader_<source>_timeline_mention_unresolved` Tracks
+event so a backend↔frontend desync is observable in dashboards.
+
+When the resolver returns a string, the click target is in-app (same tab, no
+`rel`). When it returns `null` (or the resolver isn't set), the slice-4
+bsky.app fallback is used (`https://bsky.app/profile/<handle>` for
+`getProfileUrl`, `target="_blank" rel="noopener noreferrer"`). Per-protocol
+shells (`TimelinePanel`, `ThreadPanel`) bind the connection ID and the
+protocol-specific URL builders (e.g. `getThreadUrl` and `getProfileUrl` from
+`client/reader/atmosphere/route.ts`).
+
 ### HTML sanitisation (defence-in-depth)
 
 Every place this directory injects HTML from a third-party network — `SocialProfileCard` for bios, `PostCardBody` for post content — runs the input through DOMPurify with a tight allow-list **before** handing it to React's HTML-injection prop. The backend already runs `wp_kses` over the same content with a matching allow-list, but the client double-sanitises so a future backend change can't silently widen what reaches the DOM.
@@ -111,23 +186,72 @@ Allow-list shape:
 
 - `ALLOWED_TAGS: ['p', 'br', 'a']` for post content (extend cautiously for new protocols).
 - `ALLOWED_TAGS: ['p', 'br', 'a', 'span']` for profile bios (Mastodon emits `<span>` mention scaffolding).
-- `ALLOWED_ATTR` capped to `href`, `rel`, `target`, `class` (bio only).
+- `ALLOWED_ATTR` for post content: `href`, `rel`, `target`, `data-id`. The `data-id` attribute carries the protocol's stable author identifier on @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
+- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`. Bios carry the same @-mention `data-id` contract as post content; `<SocialProfileCard>` intercepts bio mention clicks via the same pattern as `<PostCardBody>`.
+- `ALLOW_DATA_ATTR: false` on both post content and profile bios. DOMPurify allows every `data-*` attribute by default; we restrict to the explicit allow-list above so a future backend change can't smuggle a new `data-*` attribute (e.g. `data-tracking`) through to the DOM.
+- `ADD_URI_SAFE_ATTR: ['data-id']` on both post content and profile bios. DOMPurify scheme-checks every attribute value containing a colon and would otherwise drop `data-id="did:plc:…"` for atmosphere DIDs as an unknown URI scheme. Use `ADD_URI_SAFE_ATTR` (extends DOMPurify's defaults) rather than `URI_SAFE_ATTRIBUTES` (replaces them and would drop `xml:lang`, `xlink:href`, etc.). Don't switch to `ALLOW_UNKNOWN_PROTOCOLS: true` — that would also loosen `href` validation.
 - DOMPurify's default scheme allow-list strips `javascript:` / `data:` / etc. on `href`. Don't extend it.
-- An `afterSanitizeAttributes` hook forces `rel="nofollow noopener noreferrer"` on any `<a target="_blank">` that survives sanitisation. Belt-and-suspenders against window-opener leaks if upstream ever drops the rel attribute.
+- A scoped `afterSanitizeAttributes` hook (installed only while `sanitize-post-html.ts` sanitizes Reader Social HTML, and reused by `profile-card.tsx` via `sanitizeReaderSocialHtml`) forces `target="_blank"` and `rel="nofollow noopener noreferrer"` on every surviving `<a>`. Belt-and-suspenders against window-opener leaks and against upstream HTML that omits `target`. Pre-existing rel tokens (e.g. `rel="me"` for IndieAuth-style verification) are preserved.
 
 ### Card-link accessibility pattern
 
 `PostCardLink` implements [Inclusive Components' card-link pattern](https://inclusive-components.design/cards/):
 
-- Exactly one real `<a>` per card (the post timestamp), with a `::after` pseudo-element covering the whole card as the click target.
-- Inner clickable elements (author chip, external embed, quote embed) are `position: relative; z-index: 1` so they sit above the overlay and remain individually clickable.
+- Exactly one real `<a>` per card unit (the post timestamp), with a `::after` pseudo-element covering the whole unit as the click target. The pattern applies both to top-level cards (default variant — the timestamp anchor is derived internally from `analytics.getThreadUrl(post.uri) ?? post.permalink`) and to compact cards used inside a quote embed (compact variant — the consumer passes a `cardLink` prop on `<SocialPostCard>`, which is forwarded to `<PostCardHeader>` as `timestampLink` and renders the compact timestamp as an anchor with the supplied href/onClick/target/rel).
+- Inner clickable elements (author chip, external embed, quote embed, body inline anchors injected via `PostCardBody`) are raised to `position: relative; z-index: 1` so they sit above the overlay and remain individually clickable. The full raise list lives in `client/reader/social/components/post-card/style.scss`.
 - Card text remains selectable (the overlay sits behind text via `z-index`-stacking, not in front of it).
 
-Don't replace this with a `<a>`-wrapping-the-whole-card structure (illegal nested anchors) or `onClick` on a `<div>` (kills keyboard navigation and screen-reader semantics).
+Don't replace this with a `<a>`-wrapping-the-whole-card structure: when the body content contains inline anchors (mentions, hashtags, URLs) injected via `innerHTML`, the parser does not split the surrounding `<a>` and the DOM ends up with literal nested anchors with undefined click behaviour. The quote embed (`PostCardEmbedQuote`) used to wrap its compact card in an outer `<a>` for exactly this reason and has since been refactored to use the `cardLink` prop instead — copy that pattern for any new quote-shaped surface. `onClick` on a `<div>` is also out (kills keyboard navigation and screen-reader semantics).
+
+### Inline video — thumbnail vs. expanded
+
+`<PostCardEmbedVideo>` defaults to thumbnail-only (slice-4 behaviour, used by
+the timeline). When `expanded={true}`, the component renders a native
+`<video>` element pointed at the HLS playlist exposed in
+`AtmosphereEmbedVideo.playlist` (served by `video.bsky.app`):
+
+- Safari / iOS WebKit play HLS natively — the playlist is set as `video.src`.
+- Other browsers lazy-load `hls.js` via dynamic `import()`, so timeline pages
+  and thread pages without expanded video pay zero bytes for it. The Reader
+  webpack chunk only pulls `hls.js` in when a thread root carries video AND
+  the browser lacks native HLS support.
+
+The thumbnail is used as the `<video poster>` so users see a frame before
+hitting play. `<SocialPostCard>` forwards `expandedVideo` only for the
+highlighted root node inside `<ThreadTree>` — replies and parents stay
+thumbnail-only.
+
+This mirrors what bsky.app's own web app and other modern Bluesky clients do.
+The static `embed.bsky.app` widget was an earlier attempt but doesn't include
+an inline player for video posts — it's a "view on bluesky" surface, not a
+playback surface.
+
+CSP hosts required for the ATmosphere thread view
+(`client/server/pages/index.js`):
+
+- `img-src` += `https://cdn.bsky.app` (avatars + post images),
+  `https://video.bsky.app` (video poster thumbnails),
+  `https://video.cdn.bsky.app` (the thumbnail URL 302-redirects here, same
+  redirect pattern as HLS segments).
+- `media-src` += `blob:` (MediaSource object URLs created by hls.js when it
+  attaches to the `<video>` element on non-Safari browsers),
+  `https://video.bsky.app`, `https://video.cdn.bsky.app` (Safari native HLS
+  path; segment URLs 302-redirect from `video.bsky.app` to the CDN).
+- `connect-src` += same two `video.*` hosts (`hls.js` follows the same
+  redirect via XHR/fetch).
+
+hls.js is constructed with `enableWorker: false` so transmuxing runs on
+the main thread. That keeps a `worker-src blob:` allowance off the CSP —
+hls.js's default worker is loaded from a runtime-generated `blob:` URL,
+which would otherwise need to be permitted. Bluesky videos are short
+enough that main-thread transmuxing is fine; revisit if we ever ship
+longer-form video.
 
 ### Click destinations
 
-Today every click destination opens `bsky.app` in a new tab (`target="_blank" rel="noopener noreferrer"`). Slice 5 will rewrite three of those (parent post → in-app thread route, quote → in-app thread route, author → in-app profile route) without touching the card-link plumbing itself. When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents.
+As of slice 5, the card-link / quote / replies-count / reply-context surfaces all route in-app via `getThreadUrl` when the resolver is set by the per-protocol shell. As of slice 6, the post-author chip and the repost preface name route in-app via `getProfileUrl` on the same fall-back-to-bsky.app contract. The bsky.app `target="_blank"` fallback is retained for contexts where no resolver is bound.
+
+When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` and `getProfileUrl` from the analytics context before constructing any post- or profile-destination URL.
 
 ## Boundaries (for new code)
 
@@ -149,8 +273,8 @@ Inherits everything from `client/reader/AGENTS.md` and `client/AGENTS.md`. Highl
 - ARIA queries (`getByRole`, `getByLabelText`). No CSS selectors. No `data-testid` unless absolutely unavoidable.
 - `renderWithProvider` from `calypso/test-helpers/testing-library` for components needing Redux + React Query.
 - `nock` for HTTP mocking. Never mock components that contain real behaviour.
-- DOMPurify allow-list tests: assert preserved tags, stripped tags, stripped attributes, stripped `javascript:` URLs, and the `target="_blank"` rel-hardening hook.
-- For the card-link pattern, test the surface map: timestamp-as-real-`<a>`, author chip click target, quote click target, external click target, card-background click via overlay, and that all anchors carry `target="_blank" rel="noopener noreferrer"`.
+- DOMPurify allow-list tests: assert preserved tags, stripped tags, stripped attributes, stripped `javascript:` URLs, that `data-id` survives, that arbitrary `data-*` attributes (e.g. `data-tracking`) are stripped, and the unconditional rel + target hardening hook (every surviving `<a>` gains `target="_blank"` and the merged `rel="nofollow noopener noreferrer"`, with pre-existing rel tokens preserved).
+- For the card-link pattern, test the surface map: timestamp-as-real-`<a>`, author chip click target, quote click target (the quote wrapper is a `<div>` and the inner timestamp anchor is the card-link target — verify there are no nested anchors), external click target, body inline link click target (assert it does not fire `_post_clicked`), card-background click via overlay, and that all anchors carry `target="_blank" rel="noopener noreferrer"` (body anchors additionally carry `nofollow`).
 
 Run tests with:
 
@@ -173,13 +297,21 @@ When wiring up a second (Mastodon) or third social protocol, expect to:
 Future-extraction candidates flagged for later PRs (currently in `client/reader/atmosphere/`, expected to move shared-side once Mastodon needs them):
 
 - `connect-form.tsx` — likely shareable with Mastodon's connect flow.
-- `verify-panel.tsx` — already uses `SocialProfileCard`; the panel shell could move shared-side.
+- `profile-panel.tsx` (your-own-connection profile) — already uses `SocialProfileCard` (rich variant); the panel shell could move shared-side once Mastodon's profile shape is fully aligned.
 - `atmosphere-navigation.tsx` — the Timeline / Profile / Settings tab structure likely ports.
+
+`author-profile-panel.tsx` was extracted to this directory as
+`SocialAuthorProfilePanel` in slice 6 — both protocols already wrap the
+shared component.
 
 ## References
 
 - Reader-wide guidance: [`client/reader/AGENTS.md`](../AGENTS.md).
 - Calypso-wide guidance: [`client/AGENTS.md`](../../AGENTS.md).
+- Slice 6 design (in-app author profile): `~/notes/1-Projects/code/a8c/calypso/2026-04-28-reader-atmosphere-slice6-design.md`.
+- Slice 6 plan: `~/notes/1-Projects/code/a8c/calypso/2026-04-28-reader-atmosphere-slice6-plan.md`.
+- Slice 5 design (in-app thread view): `~/notes/1-Projects/code/a8c/calypso/2026-04-28-reader-atmosphere-slice5-design.md`.
+- Slice 5 plan: `~/notes/1-Projects/code/a8c/calypso/2026-04-28-reader-atmosphere-slice5-plan.md`.
 - Slice 4 design (Bluesky timeline frontend): `~/notes/1-Projects/code/a8c/calypso/2026-04-27-reader-atmosphere-slice4-frontend-design.md`.
 - Slice 4 plan (task-by-task): `~/notes/1-Projects/code/a8c/calypso/2026-04-27-reader-atmosphere-slice4-frontend-plan.md`.
 - Slice 1 (connections + profile): `~/notes/1-Projects/code/a8c/calypso/2026-04-22-reader-atmosphere-slice1-design.md` and `…-plan.md`.

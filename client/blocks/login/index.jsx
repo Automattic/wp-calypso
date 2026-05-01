@@ -61,6 +61,19 @@ import { shouldUseMagicCode } from './utils/should-use-magic-code';
 
 import './style.scss';
 
+const loadSocialConnectPrompt = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-login-social-connect-prompt" */ './social-connect-prompt'
+	);
+const loadLostPasswordForm = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-login-lost-password-form" */ './lost-password-form'
+	);
+const loadTwoFactorContent = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-login-two-factor-authentication-two-factor-content" */ './two-factor-authentication/two-factor-content'
+	);
+
 class Login extends Component {
 	static propTypes = {
 		disableAutoFocus: PropTypes.bool,
@@ -410,16 +423,7 @@ class Login extends Component {
 		const signupLink = this.getSignupLinkComponent();
 
 		if ( socialConnect ) {
-			return (
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-login-social-connect-prompt" */ './social-connect-prompt'
-						)
-					}
-					onSuccess={ this.handleValidLogin }
-				/>
-			);
+			return <AsyncLoad require={ loadSocialConnectPrompt } onSuccess={ this.handleValidLogin } />;
 		}
 
 		if ( action === 'lostpassword' ) {
@@ -427,11 +431,7 @@ class Login extends Component {
 				<Fragment>
 					<div className="login__lost-password-form-wrapper">
 						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-blocks-login-lost-password-form" */ './lost-password-form'
-								)
-							}
+							require={ loadLostPasswordForm }
 							redirectToAfterLoginUrl={ this.props.redirectTo }
 							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 							locale={ locale }
@@ -449,11 +449,7 @@ class Login extends Component {
 			return (
 				<Fragment>
 					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-blocks-login-two-factor-authentication-two-factor-content" */ './two-factor-authentication/two-factor-content'
-							)
-						}
+						require={ loadTwoFactorContent }
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
 						isBlazePro={ isBlazePro }

@@ -60,6 +60,10 @@ function errorMessage(
 			return translate( "We couldn't reach that Mastodon instance. Check the URL and try again." );
 		case 'auth_failed':
 			return translate( 'We couldn’t start the authorization. Try again.' );
+		case 'auth_required':
+			return translate(
+				'Your Mastodon connection needs to be re-authorized. Disconnect and reconnect.'
+			);
 		case 'rate_limited':
 			return translate( 'The Mastodon instance is asking us to slow down. Try again in a minute.' );
 		case 'upstream_unavailable':
@@ -68,6 +72,8 @@ function errorMessage(
 			return translate( "That doesn't look like a valid instance. Check the URL and try again." );
 		case 'connection_not_found':
 			return translate( 'That connection is no longer available.' );
+		case 'not_found':
+			return translate( 'That Mastodon resource is no longer available.' );
 		case 'unknown':
 			return translate( 'Something went wrong.' );
 		default:

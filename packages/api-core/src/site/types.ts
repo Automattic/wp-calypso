@@ -20,6 +20,7 @@ export interface SiteCapabilities {
 
 export interface SiteOptions {
 	admin_url: string;
+	apm_enabled?: boolean;
 	created_at?: string;
 	is_domain_only?: boolean;
 	is_redirect?: boolean;

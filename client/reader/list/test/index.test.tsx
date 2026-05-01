@@ -52,19 +52,11 @@ const listData = {
 	is_public: true,
 };
 
-function readerListsState( { list = listData }: { list?: typeof listData | null } = {} ) {
-	return {
-		reader: {
-			lists: {
-				items: list ? { [ list.ID ]: list } : {},
-				listItems: {},
-			},
-		},
-		currentUser: {
-			user: { username: 'test_user' },
-		},
-	};
-}
+const readerListsState = {
+	currentUser: {
+		user: { username: 'test_user' },
+	},
+};
 
 function createQueryClient() {
 	return new QueryClient( {
@@ -88,7 +80,7 @@ describe( 'ReaderList', () => {
 			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
 			{
 				reducers,
-				initialState: readerListsState( { list: null } ),
+				initialState: readerListsState,
 				queryClient: createQueryClient(),
 			}
 		);
@@ -105,7 +97,7 @@ describe( 'ReaderList', () => {
 
 		renderWithProvider(
 			<ReaderList owner="test_user" slug="my-list" view="posts" streamKey="list:1" />,
-			{ reducers, initialState: readerListsState(), queryClient: createQueryClient() }
+			{ reducers, initialState: readerListsState, queryClient: createQueryClient() }
 		);
 
 		await waitFor( () => {
@@ -121,7 +113,7 @@ describe( 'ReaderList', () => {
 
 		renderWithProvider(
 			<ReaderList owner="test_user" slug="my-list" view="sites" streamKey="list:1" />,
-			{ reducers, initialState: readerListsState(), queryClient: createQueryClient() }
+			{ reducers, initialState: readerListsState, queryClient: createQueryClient() }
 		);
 
 		await waitFor( () => {

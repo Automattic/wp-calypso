@@ -16,6 +16,13 @@ import { addQueryArgs } from 'calypso/lib/route';
 import Item from './item';
 import Masterbar from './masterbar';
 
+const loadMasterbarHelpCenter = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
+	);
+const loadCheckout = () =>
+	import( /* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx' );
+
 class MasterbarLoggedOut extends Component {
 	static propTypes = {
 		redirectUri: PropTypes.string,
@@ -124,11 +131,7 @@ class MasterbarLoggedOut extends Component {
 
 		return (
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
-					)
-				}
+				require={ loadMasterbarHelpCenter }
 				siteId={ siteId }
 				tooltip={ translate( 'Help' ) }
 				placeholder={ null }
@@ -241,11 +244,7 @@ class MasterbarLoggedOut extends Component {
 		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return (
 				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx'
-						)
-					}
+					require={ loadCheckout }
 					placeholder={ null }
 					title={ title }
 					isLeavingAllowed={ ! isCheckoutPending }

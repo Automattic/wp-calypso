@@ -62,8 +62,12 @@ describe( 'AtmosphereLandingView', () => {
 	} );
 
 	it( 'shows an error with a retry button when the connections query errors', async () => {
-		nock( 'https://public-api.wordpress.com' ).get( connectionsUrl ).reply( 500 );
-		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		// Connection query retries unknown errors up to 2 more times before
+		// surrendering — match the predicate in connectionsQueryOptions.
+		nock( 'https://public-api.wordpress.com' ).get( connectionsUrl ).times( 3 ).reply( 500 );
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+		} );
 		renderWithProvider( <AtmosphereLandingView />, { queryClient } );
 
 		await screen.findByRole( 'alert' );

@@ -84,6 +84,15 @@ import StatsPlanUsage from './stats-plan-usage';
 import StatsUpsell from './stats-upsell/traffic-upsell';
 import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
 
+const loadJetpackUpsellSection = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-jetpack-upsell-section" */ 'calypso/my-sites/stats/jetpack-upsell-section'
+	);
+const loadTrackResurrections = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
+	);
+
 // Sync hidable modules with StatsNavigation.
 const HIDDABLE_MODULES = AVAILABLE_PAGE_MODULES.traffic.map( ( module ) => {
 	return module.key;
@@ -796,27 +805,12 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			{ supportsPlanUsage && (
 				<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			) }
-			{ ! shouldShowUpsells ? null : (
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-my-sites-stats-jetpack-upsell-section" */ 'calypso/my-sites/stats/jetpack-upsell-section'
-						)
-					}
-				/>
-			) }
+			{ ! shouldShowUpsells ? null : <AsyncLoad require={ loadJetpackUpsellSection } /> }
 			{ ! wpcomShowUpsell && (
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 			) }
 			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
-			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
-					)
-				}
-				placeholder={ null }
-			/>
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</div>
 	);
 }

@@ -68,30 +68,43 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 
 ### Page entrypoints
 
-| Route                                | Entrypoint                                                                |
-| ------------------------------------ | ------------------------------------------------------------------------- |
-| `/reader`                            | `client/reader/following/main.tsx`                                        |
-| `/reader/feeds/:feed_id`             | `client/reader/feed-stream/`                                              |
-| `/reader/blogs/:blog_id`             | `client/reader/site-stream/`                                              |
-| `/reader/feeds/:feed/posts/:post`    | `client/reader/full-post/`                                                |
-| `/reader/blogs/:blog/posts/:post`    | `client/reader/full-post/`                                                |
-| `/reader/a8c`                        | `client/reader/a8c/main.jsx`                                              |
-| `/reader/p2`                         | `client/reader/p2/main.jsx`                                               |
-| `/reader/search`                     | `client/reader/search/`                                                   |
-| `/reader/notifications`              | `client/reader/notifications/`                                            |
-| `/reader/new`                        | `client/reader/new-subscription/`                                         |
-| `/reader/subscriptions`              | `client/reader/site-subscriptions-manager/`                               |
-| `/reader/subscriptions/comments`     | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
-| `/reader/subscriptions/pending`      | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
-| `/reader/subscriptions/:id`          | `client/reader/site-subscription/`                                        |
-| `/reader/site/subscription/:blog_id` | `client/reader/site-subscription/`                                        |
-| `/reader/conversations`              | `client/reader/conversations/`                                            |
-| `/reader/list/*`                     | `client/reader/list/`                                                     |
-| `/discover/*`                        | `client/reader/discover/`                                                 |
-| `/tag/:tag`                          | `client/reader/tag-stream/`                                               |
-| `/tags`                              | `client/reader/tags/`                                                     |
-| `/activities/likes`                  | `client/reader/liked-stream/`                                             |
-| `/reader/users/*`                    | `client/reader/user-profile/`                                             |
+| Route                                      | Entrypoint                                                                |
+| ------------------------------------------ | ------------------------------------------------------------------------- |
+| `/reader`                                  | `client/reader/following/main.tsx`                                        |
+| `/reader/feeds/:feed_id`                   | `client/reader/feed-stream/`                                              |
+| `/reader/blogs/:blog_id`                   | `client/reader/site-stream/`                                              |
+| `/reader/feeds/:feed/posts/:post`          | `client/reader/full-post/`                                                |
+| `/reader/blogs/:blog/posts/:post`          | `client/reader/full-post/`                                                |
+| `/reader/a8c`                              | `client/reader/a8c/main.jsx`                                              |
+| `/reader/p2`                               | `client/reader/p2/main.jsx`                                               |
+| `/reader/search`                           | `client/reader/search/`                                                   |
+| `/reader/notifications`                    | `client/reader/notifications/`                                            |
+| `/reader/new`                              | `client/reader/new-subscription/`                                         |
+| `/reader/subscriptions`                    | `client/reader/site-subscriptions-manager/`                               |
+| `/reader/subscriptions/comments`           | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
+| `/reader/subscriptions/pending`            | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
+| `/reader/subscriptions/:id`                | `client/reader/site-subscription/`                                        |
+| `/reader/site/subscription/:blog_id`       | `client/reader/site-subscription/`                                        |
+| `/reader/conversations`                    | `client/reader/conversations/`                                            |
+| `/reader/list/*`                           | `client/reader/list/`                                                     |
+| `/discover/*`                              | `client/reader/discover/`                                                 |
+| `/tag/:tag`                                | `client/reader/tag-stream/`                                               |
+| `/tags`                                    | `client/reader/tags/`                                                     |
+| `/activities/likes`                        | `client/reader/liked-stream/`                                             |
+| `/reader/users/*`                          | `client/reader/user-profile/`                                             |
+| `/reader/atmosphere`                       | `client/reader/atmosphere/atmosphere-landing-view.tsx`                    |
+| `/reader/atmosphere/connect`               | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
+| `/reader/atmosphere/:id`                   | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
+| `/reader/atmosphere/:id/:tab`              | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
+| `/reader/atmosphere/:id/thread/:did/:rkey` | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
+| `/reader/atmosphere/:id/profile/:actor`    | `client/reader/atmosphere/author-profile-view.tsx`                        |
+| `/reader/mastodon`                         | `client/reader/mastodon/mastodon-landing-view.tsx`                        |
+| `/reader/mastodon/connect`                 | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
+| `/reader/mastodon/oauth-callback`          | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |
+| `/reader/mastodon/:id`                     | `client/reader/mastodon/controller.tsx` (redirect handler)                |
+| `/reader/mastodon/:id/:tab`                | `client/reader/mastodon/mastodon-account-view.tsx`                        |
+| `/reader/mastodon/:id/thread/:status_id`   | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
+| `/reader/mastodon/:id/profile/:actor`      | `client/reader/mastodon/author-profile-view.tsx`                          |
 
 ### SSR file variants
 

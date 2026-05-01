@@ -230,6 +230,7 @@ describe( 'TimelinePanel', () => {
 	it( 'fires quote_clicked when a live quote embed is clicked', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		const inner = makePost( 'at://quoted', 'inner text' );
+		inner.bluesky_url = 'https://bsky.app/profile/alice.bsky.social/post/quoted';
 		const outer = makePost( 'at://abc', 'outer' );
 		( outer as unknown as { embed: unknown } ).embed = { type: 'quote', post: inner };
 		nock( BASE )
@@ -241,13 +242,292 @@ describe( 'TimelinePanel', () => {
 			queryClient: makeQueryClient(),
 		} );
 		await waitFor( () => expect( screen.getByText( 'inner text' ) ).toBeVisible() );
-		await user.click( screen.getByText( 'inner text' ) );
+		const quoteLink = screen
+			.getAllByRole( 'link' )
+			.find(
+				( link ) =>
+					link.getAttribute( 'href' ) === 'https://bsky.app/profile/alice.bsky.social/post/quoted'
+			);
+		expect( quoteLink ).toBeDefined();
+		await user.click( quoteLink as HTMLElement );
 		expect( spy ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_timeline_quote_clicked',
 			expect.objectContaining( {
 				connection_id: 42,
 				parent_uri: 'at://abc',
 				quoted_uri: 'at://quoted',
+			} )
+		);
+	} );
+} );
+
+const connection7: AtmosphereConnection = {
+	id: 7,
+	did: 'did:plc:abc234567defghi234567jklab',
+	handle: 'alice.bsky.social',
+	display_name: 'Alice',
+	avatar: null,
+};
+
+function makeFeedItem( overrides: Record< string, unknown > = {} ) {
+	return {
+		...makePost( 'at://did:plc:abc234567defghi234567jklab/app.bsky.feed.post/3kabcdefghijk' ),
+		...overrides,
+	};
+}
+
+describe( 'TimelinePanel in-app click destinations', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	const TARGET_URI = 'at://did:plc:abc234567defghi234567jkl/app.bsky.feed.post/3kabcdefghijk';
+	const QUOTED_URI = 'at://did:plc:def234567defghi234567jkl/app.bsky.feed.post/3kdefghijklmn';
+	const PARENT_URI = 'at://did:plc:ghi234567defghi234567jkl/app.bsky.feed.post/3kghijklmnopq';
+
+	function pageWithReplyAndQuote() {
+		return {
+			items: [
+				makeFeedItem( {
+					uri: TARGET_URI,
+					reply_parent: {
+						uri: PARENT_URI,
+						author: {
+							did: 'did:plc:ghi234567defghi234567jkl',
+							handle: 'bob.bsky.social',
+						},
+					},
+					embed: {
+						type: 'quote',
+						post: makeFeedItem( {
+							uri: QUOTED_URI,
+							bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kdefghijklmn',
+						} ),
+					},
+					counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+					bluesky_url: 'https://bsky.app/profile/jane.bsky.social/post/3kabcdefghijk',
+				} ),
+			],
+			cursor: null,
+		};
+	}
+
+	it( 'card-link timestamp uses the in-app thread URL', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		// Wait for posts to render by waiting for at least one link to appear
+		await screen.findAllByRole( 'link' );
+		const inAppLinks = screen
+			.getAllByRole( 'link' )
+			.filter( ( a ) => a.getAttribute( 'href' )?.startsWith( '/reader/atmosphere/7/thread/' ) );
+		expect( inAppLinks.length ).toBeGreaterThanOrEqual( 1 );
+	} );
+
+	it( 'replies count is a real <a> to the in-app thread URL', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const repliesLink = await screen.findByRole( 'link', { name: /replies/i } );
+		expect( repliesLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/reader/atmosphere/7/thread/' )
+		);
+	} );
+
+	it( 'reply-context preface is a real <a> to the parent thread URL', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const link = await screen.findByRole( 'link', { name: /Replying to @bob/i } );
+		expect( link ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/reader/atmosphere/7/thread/did:plc:ghi' )
+		);
+	} );
+
+	it( 'quote embed routes in-app to the quoted post', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithReplyAndQuote() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findAllByRole( 'link' );
+		const quoteLink = screen
+			.getAllByRole( 'link' )
+			.find(
+				( a ) =>
+					a
+						.getAttribute( 'href' )
+						?.includes(
+							'/reader/atmosphere/7/thread/did:plc:def234567defghi234567jkl/3kdefghijklmn'
+						)
+			);
+		expect( quoteLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/reader/atmosphere/7/thread/did:plc:def' )
+		);
+	} );
+} );
+
+describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () => {
+	const REPOST_URI = 'at://did:plc:abc234567defghi234567jkl/app.bsky.feed.post/3kabcdefghijk';
+	const reposterDid = 'did:plc:rep234567defghi234567jklab';
+	const reposterHandle = 'joe.bsky.social';
+
+	function pageWithRepost() {
+		return {
+			items: [
+				makeFeedItem( {
+					uri: REPOST_URI,
+					reason: {
+						type: 'repost',
+						by: {
+							did: reposterDid,
+							handle: reposterHandle,
+							display_name: 'Joe',
+							avatar: null,
+						},
+						indexed_at: '2026-04-27T11:00:00Z',
+					},
+					bluesky_url: 'https://bsky.app/profile/alice.bsky.social/post/3kabcdefghijk',
+				} ),
+			],
+			cursor: null,
+		};
+	}
+
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'author chip <a> href is the in-app profile URL (same-tab, no target/rel)', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithRepost() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findAllByRole( 'link' );
+		const authorLink = screen
+			.getAllByRole( 'link' )
+			.find(
+				( a ) => a.getAttribute( 'href' ) === '/reader/atmosphere/7/profile/alice.bsky.social'
+			);
+		expect( authorLink ).toBeDefined();
+		expect( authorLink ).not.toHaveAttribute( 'target' );
+		expect( authorLink ).not.toHaveAttribute( 'rel' );
+	} );
+
+	it( 'repost preface name is a real <a> to the reposter in-app profile URL', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithRepost() );
+
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const repostLink = await screen.findByRole( 'link', { name: /Joe/i } );
+		expect( repostLink ).toHaveAttribute(
+			'href',
+			`/reader/atmosphere/7/profile/${ reposterHandle }`
+		);
+		expect( repostLink ).not.toHaveAttribute( 'target' );
+		expect( repostLink ).not.toHaveAttribute( 'rel' );
+	} );
+
+	it( 'fires author_clicked with destination=in_app after the rewrite', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithRepost() );
+
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findAllByRole( 'link' );
+		const authorLink = screen
+			.getAllByRole( 'link' )
+			.find(
+				( a ) => a.getAttribute( 'href' ) === '/reader/atmosphere/7/profile/alice.bsky.social'
+			);
+		await user.click( authorLink as HTMLElement );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_author_clicked',
+			expect.objectContaining( {
+				connection_id: 7,
+				author_handle: 'alice.bsky.social',
+				destination: 'in_app',
+			} )
+		);
+	} );
+
+	it( 'fires repost_author_clicked with destination=in_app when the reposter link is clicked', async () => {
+		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.get( /\/connections\/7\/timeline/ )
+			.query( true )
+			.reply( 200, pageWithRepost() );
+
+		const user = userEvent.setup();
+		renderWithProvider( <TimelinePanel connection={ connection7 } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		const repostLink = await screen.findByRole( 'link', { name: /Joe/i } );
+		await user.click( repostLink );
+		expect( spy ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_repost_author_clicked',
+			expect.objectContaining( {
+				connection_id: 7,
+				post_uri: REPOST_URI,
+				reposter_did: reposterDid,
+				reposter_handle: reposterHandle,
+				destination: 'in_app',
 			} )
 		);
 	} );

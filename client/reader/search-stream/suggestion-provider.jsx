@@ -1,9 +1,8 @@
 import { map, sampleSize, times } from 'lodash';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { suggestions } from 'calypso/reader/search-stream/suggestions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 
 function createRandomId( randomBytesLength = 9 ) {
 	// 9 * 4/3 = 12
@@ -90,17 +89,17 @@ function getSuggestions( count, tags, trendingTags ) {
 	return newSuggestions;
 }
 
-const SuggestionsProvider = ( Element, count = 3 ) =>
-	class extends Component {
+const SuggestionsProvider = ( Element, count = 3 ) => {
+	class SuggestionsClass extends Component {
 		// never let the suggestions change once its been set to non-null so that suggestions
-		// don't keep getting recalulated every redux-store change
+		// don't keep getting recalulated every render
 		memoizedSuggestions = null;
-		getFirstSuggestions = ( state ) =>
+		getFirstSuggestions = () =>
 			this.memoizedSuggestions
 				? this.memoizedSuggestions
 				: ( this.memoizedSuggestions = getSuggestions(
 						count,
-						getReaderFollowedTags( state ),
+						this.props.followedTags,
 						this.props.trendingTags
 				  ) );
 
@@ -109,14 +108,15 @@ const SuggestionsProvider = ( Element, count = 3 ) =>
 			this.memoizedSuggestions = null;
 		}
 
-		EnhancedComponent = connect( ( state ) => ( {
-			suggestions: this.getFirstSuggestions( state ),
-		} ) )( Element );
-
 		render() {
-			const EnhancedComponent = this.EnhancedComponent;
-			return <EnhancedComponent { ...this.props } />;
+			return <Element { ...this.props } suggestions={ this.getFirstSuggestions() } />;
 		}
+	}
+
+	return function SuggestionsProviderWrapper( props ) {
+		const { data: followedTags } = useFollowedReaderTags();
+		return <SuggestionsClass { ...props } followedTags={ followedTags } />;
 	};
+};
 
 export default SuggestionsProvider;

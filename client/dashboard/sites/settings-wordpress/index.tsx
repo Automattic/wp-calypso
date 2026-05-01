@@ -9,13 +9,16 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { canOptOutOfWordPressBeta, canSwitchWordPressVersion } from '../features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { BetaOptOutButton } from './beta-opt-out-button';
 import { BetaProgramNotice } from './beta-program-notice';
 import { LatestVersionNotice } from './latest-version-notice';
 import { useVersionSwitch } from './use-version-switch';
@@ -59,20 +62,53 @@ function VersionManagement( { site }: { site: Site } ) {
 	);
 }
 
+function BetaProgramContent( { site }: { site: Site } ) {
+	const [ justOptedOut, setJustOptedOut ] = useState( false );
+	const isEligible = canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' );
+	const { data: currentVersion } = useQuery( {
+		...siteWordPressVersionQuery( site.ID ),
+		enabled: isEligible,
+	} );
+	const { data: betaVersion = '' } = useQuery( {
+		...wpOrgCoreVersionQuery( 'beta' ),
+		enabled: isEligible,
+	} );
+	const { data: latestVersion = '' } = useQuery( {
+		...wpOrgCoreVersionQuery(),
+		enabled: isEligible,
+	} );
+
+	if ( justOptedOut ) {
+		return <LatestVersionNotice wpVersion={ latestVersion } />;
+	}
+
+	if ( canOptOutOfWordPressBeta( site, currentVersion ) ) {
+		return (
+			<BetaProgramNotice
+				site={ site }
+				wpVersion={ betaVersion }
+				actions={ <BetaOptOutButton site={ site } onSuccess={ () => setJustOptedOut( true ) } /> }
+			/>
+		);
+	}
+
+	return (
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.BACKUPS_SELF_SERVE }
+			upsellId="site-settings-wordpress"
+		>
+			<VersionManagement site={ site } />
+		</HostingFeatureGatedWithCallout>
+	);
+}
+
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	const renderContent = () => {
 		if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
-			return (
-				<HostingFeatureGatedWithCallout
-					site={ site }
-					feature={ HostingFeatures.BACKUPS_SELF_SERVE }
-					upsellId="site-settings-wordpress"
-				>
-					<VersionManagement site={ site } />
-				</HostingFeatureGatedWithCallout>
-			);
+			return <BetaProgramContent site={ site } />;
 		}
 
 		if ( site.is_wpcom_staging_site ) {

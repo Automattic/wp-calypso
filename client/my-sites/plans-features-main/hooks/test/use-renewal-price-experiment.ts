@@ -14,6 +14,9 @@ jest.mock( 'calypso/landing/stepper/utils/get-flow-from-url', () => ( {
 	getFlowFromURL: jest.fn( () => null ),
 } ) );
 jest.mock( 'calypso/lib/akismet/is-akismet-checkout', () => jest.fn( () => false ) );
+jest.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: jest.fn(),
+} ) );
 jest.mock( 'calypso/lib/jetpack/is-jetpack-checkout', () => jest.fn( () => false ) );
 jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteFlowName: jest.fn( () => null ),
@@ -26,6 +29,7 @@ import { Plans } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { renderHook } from '@testing-library/react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
@@ -60,11 +64,36 @@ describe( 'useRenewalPricingExperiment', () => {
 		( isAkismetCheckout as jest.Mock ).mockReturnValue( false );
 		( isJetpackCheckout as jest.Mock ).mockReturnValue( false );
 		( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( null );
+		( useExperiment as jest.Mock ).mockReturnValue( [ false, null ] );
 	} );
 
 	it( 'returns crossed_price for logged-out users when all conditions are met', () => {
 		const { result } = renderHook( () => useRenewalPricingExperiment() );
 		expect( result.current ).toEqual( [ false, 'crossed_price' ] );
+	} );
+
+	it( 'blocks V1 until V2 is not loading', () => {
+		( useExperiment as jest.Mock ).mockReturnValue( [ true, null ] );
+		const { result } = renderHook( () => useRenewalPricingExperiment() );
+		expect( result.current ).toEqual( [ true, null ] );
+	} );
+
+	it( 'falls back to V1 when V2 is loaded and assignment is null (control)', () => {
+		( useExperiment as jest.Mock ).mockReturnValue( [ false, null ] );
+		const { result } = renderHook( () => useRenewalPricingExperiment() );
+		expect( result.current ).toEqual( [ false, 'crossed_price' ] );
+	} );
+
+	it( 'uses V2 variationName when assigned', () => {
+		( useExperiment as jest.Mock ).mockReturnValue( [ false, { variationName: 'variant_a' } ] );
+		const { result } = renderHook( () => useRenewalPricingExperiment() );
+		expect( result.current ).toEqual( [ false, 'variant_a' ] );
+	} );
+
+	it( 'uses V1 when V2 is ineligible', () => {
+		( isJetpackCheckout as jest.Mock ).mockReturnValue( true ); // makes V2 ineligible by isEligibleForExperiment
+		const { result } = renderHook( () => useRenewalPricingExperiment() );
+		expect( result.current ).toEqual( [ false, null ] ); // V1 also ineligible because Jetpack checkout is excluded
 	} );
 
 	describe( 'locale gating', () => {
@@ -178,7 +207,7 @@ describe( 'isRenewalPricingTreatment', () => {
 		expect( isRenewalPricingTreatment( undefined ) ).toBe( false );
 	} );
 
-	it( 'returns false for unrelated variation names', () => {
-		expect( isRenewalPricingTreatment( 'control' ) ).toBe( false );
+	it( 'returns true for unrelated variation names', () => {
+		expect( isRenewalPricingTreatment( 'anything' ) ).toBe( true );
 	} );
 } );

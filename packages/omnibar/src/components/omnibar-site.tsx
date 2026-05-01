@@ -1,13 +1,15 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { Stack } from '@wordpress/ui';
 import { OmnibarMenu } from './omnibar-menu';
 import type { OmnibarNode } from '../types';
 
 export function OmnibarSiteNode( {
 	node,
+	pluginNodes,
 	actionNodes,
 }: {
 	node: OmnibarNode;
+	pluginNodes?: OmnibarNode[];
 	actionNodes?: OmnibarNode[];
 } ) {
 	const isDesktop = useViewportMatch( 'medium' );
@@ -16,31 +18,20 @@ export function OmnibarSiteNode( {
 		? node
 		: {
 				...node,
-				children: [
-					...( node.children || [] ),
-					...( actionNodes || [] ).filter( ( { id } ) => id !== 'new-content' ),
-				],
+				children: [ ...( node.children || [] ), ...( actionNodes || [] ) ],
 		  };
 
-	const siteActionNodes = isDesktop
-		? actionNodes
-		: actionNodes?.filter( ( { id } ) => id === 'new-content' );
+	const siteActionNodes = isDesktop ? actionNodes : undefined;
 
 	return [
-		<OmnibarMenu
-			key={ siteNode.id }
-			node={ {
-				...siteNode,
-				render: ( { icon, title } ) => (
-					<HStack>
-						{ icon }
-						<span>{ title }</span>
-					</HStack>
-				),
-			} }
-		/>,
+		<OmnibarMenu key={ siteNode.id } node={ siteNode } />,
+		pluginNodes && <OmnibarSitePluginsNode nodes={ pluginNodes } />,
 		siteActionNodes && <OmnibarSiteActionsNode nodes={ siteActionNodes } />,
 	].filter( Boolean );
+}
+
+export function OmnibarSitePluginsNode( { nodes }: { nodes: OmnibarNode[] } ) {
+	return nodes.map( ( node ) => <OmnibarMenu key={ node.id } node={ node } /> );
 }
 
 export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
@@ -50,14 +41,14 @@ export function OmnibarSiteActionsNode( { nodes }: { nodes: OmnibarNode[] } ) {
 			node={ {
 				...node,
 				render: ( { title, meta } ) => (
-					<HStack spacing={ 1 }>
+					<Stack direction="row" gap="xs" align="center">
 						<span>{ title }</span>
 						{ meta?.subtitle && (
 							<span style={ { opacity: meta.subtitle !== '0' ? undefined : '0.5' } }>
 								{ meta.subtitle }
 							</span>
 						) }
-					</HStack>
+					</Stack>
 				),
 			} }
 		/>

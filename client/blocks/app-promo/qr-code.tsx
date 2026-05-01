@@ -4,6 +4,8 @@ import AsyncLoad from 'calypso/components/async-load';
 
 import './style.scss';
 
+const loadQrCode = () => import( /* webpackChunkName: "async-load-qrcode-react" */ 'qrcode.react' );
+
 interface QrCodeProps {
 	campaign?: string;
 	size?: number;
@@ -16,9 +18,7 @@ export const QrCode = ( { campaign = 'calypso-app-promo', size = 150 }: QrCodePr
 		<div className="app-promo__qr-code">
 			<div className="app-promo__qr-code-canvas">
 				<AsyncLoad
-					require={ () =>
-						import( /* webpackChunkName: "async-load-qrcode-react" */ 'qrcode.react' )
-					}
+					require={ loadQrCode }
 					placeholder={
 						<div
 							className="app-promo__qr-code-placeholder"

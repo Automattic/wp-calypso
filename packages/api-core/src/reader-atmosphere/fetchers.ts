@@ -1,9 +1,13 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyAtmosphereError } from './errors';
 import type {
+	AtmosphereAuthorFeedFilter,
+	AtmosphereAuthorFeedPage,
+	AtmosphereAuthorProfile,
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
+	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
 } from './types';
 
@@ -73,6 +77,87 @@ export async function getTimeline( params: GetTimelineParams ): Promise< Atmosph
 			},
 			query
 		) ) as AtmosphereTimelinePage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetThreadParams {
+	uri: string;
+	depth?: number;
+	parentHeight?: number;
+}
+
+export async function getThread( params: GetThreadParams ): Promise< AtmosphereThreadResponse > {
+	const { uri, depth, parentHeight } = params;
+	const query: Record< string, string > = { uri };
+	// typeof guard preserves depth=0 (root only) and parentHeight=0 — valid backend values.
+	if ( typeof depth === 'number' ) {
+		query.depth = String( depth );
+	}
+	if ( typeof parentHeight === 'number' ) {
+		query.parentHeight = String( parentHeight );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: '/reader/atmosphere/thread',
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereThreadResponse;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAuthorProfileParams {
+	actor: string;
+}
+
+export async function getAuthorProfile(
+	params: GetAuthorProfileParams
+): Promise< AtmosphereAuthorProfile > {
+	const { actor } = params;
+	try {
+		return ( await wpcom.req.get( {
+			path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }`,
+			apiNamespace: NAMESPACE,
+		} ) ) as AtmosphereAuthorProfile;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAuthorFeedParams {
+	actor: string;
+	cursor?: string;
+	limit?: number;
+	filter?: AtmosphereAuthorFeedFilter;
+}
+
+export async function getAuthorFeed(
+	params: GetAuthorFeedParams
+): Promise< AtmosphereAuthorFeedPage > {
+	const { actor, cursor, limit, filter } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	if ( filter ) {
+		query.filter = filter;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereAuthorFeedPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

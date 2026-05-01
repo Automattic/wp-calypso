@@ -147,6 +147,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
+	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -195,6 +196,11 @@ import type { Theme } from 'calypso/types';
 
 import './style.scss';
 
+const loadProductPlanOverlapNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
+	);
+
 export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
@@ -225,6 +231,7 @@ export interface ManagePurchaseConnectedProps {
 	isAtomicSite?: boolean | null;
 	isDomainOnlySite?: boolean | null;
 	isProductOwner?: boolean | null;
+	willAtomicSiteRevert?: boolean;
 	isPurchaseTheme?: boolean | null;
 	plan: FilteredPlan | false | undefined;
 	primaryDomain?: ResponseDomain | null;
@@ -1582,6 +1589,7 @@ class ManagePurchase extends Component<
 			getAddNewPaymentMethodUrlFor,
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
+			willAtomicSiteRevert,
 		} = this.props;
 
 		// If there is no purchase, query to load the purchases
@@ -1655,6 +1663,7 @@ class ManagePurchase extends Component<
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
 						isProductOwner={ isProductOwner }
+						willAtomicSiteRevert={ willAtomicSiteRevert }
 						getAddNewPaymentMethodUrlFor={
 							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
 						}
@@ -1793,11 +1802,7 @@ function PlanOverlapNotice( {
 		}
 		return (
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
-					)
-				}
+				require={ loadProductPlanOverlapNotices }
 				placeholder={ null }
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
@@ -1812,11 +1817,7 @@ function PlanOverlapNotice( {
 	}
 	return (
 		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
-				)
-			}
+			require={ loadProductPlanOverlapNotices }
 			placeholder={ null }
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }
@@ -1916,6 +1917,9 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		isProductOwner,
+		willAtomicSiteRevert: purchase
+			? willAtomicSiteRevertAfterPurchaseDeactivation( state, purchase.id, [] )
+			: false,
 		isPurchaseTheme,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
 		primaryDomain: primaryDomain,
