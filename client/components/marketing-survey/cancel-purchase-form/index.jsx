@@ -446,7 +446,9 @@ class CancelPurchaseForm extends Component {
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
 					intent={ intent }
-					declineButtonText={ intent === 'remove' ? translate( 'Continue removal' ) : translate( 'No, thanks' ) }
+					declineButtonText={
+						intent === 'remove' ? translate( 'Continue removal' ) : translate( 'No, thanks' )
+					}
 					downgradePlanPrice={
 						'downgrade-personal' === this.state.upsell
 							? this.props.downgradePlanToPersonalPrice
