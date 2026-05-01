@@ -225,6 +225,8 @@ export class Login extends Component {
 			<a
 				className="one-login__footer-link"
 				href="/support/category/manage-your-account/account-settings/"
+				target="_blank"
+				rel="noopener noreferrer"
 			>
 				{ this.props.translate( 'Support' ) }
 			</a>
