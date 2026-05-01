@@ -1,9 +1,22 @@
 import {
+	fetchReadA8c,
 	fetchReadDiscoverFreshlyPressed,
 	fetchReadDiscoverLatest,
 	fetchReadDiscoverRecommended,
 	fetchReadDiscoverTags,
+	fetchReadFeedPosts,
 	fetchReadFollowing,
+	fetchReadFollowingP2,
+	fetchReadListPosts,
+	fetchReadNotifications,
+	fetchReadOnThisDay,
+	fetchReadRecent,
+	fetchReadSearch,
+	fetchReadSiteFeatured,
+	fetchReadSitePosts,
+	fetchReadTagPopular,
+	fetchReadTagPosts,
+	fetchReadUserPosts,
 	type ReadStreamQueryParams,
 	type ReadStreamResponse,
 } from '@automattic/api-core';
@@ -41,17 +54,13 @@ const fetchDiscover = (
 /**
  * React Query factory for Reader stream pages (READ-485).
  *
- * Migrated so far: `following` and every `discover:*` sub-tab. The remaining
- * stream types (`recent`, `feed`, `site`, `featured`, `tag`, `tag_popular`,
- * `p2`, `a8c`, `likes`, `notifications`, `user`, `on_this_day`, `search`,
- * `list`, `conversations`, `conversations-a8c`, `recommendations_posts`,
- * `custom_recs_*`) are migrated incrementally in the follow-up PRs of this
- * same task — each PR adds the fetcher in `@automattic/api-core`, a case in
- * the switch below, and the streamType to the `isMigratedStream` gate in
- * `client/state/reader/streams/migrated-stream-types.ts`. Until then those
- * streams keep flowing through the legacy data-layer at
- * `client/state/data-layer/wpcom/read/streams/index.js` and never reach this
- * factory.
+ * Migrated: `following`, every `discover:*` sub-tab, plus `recent`, `search`,
+ * `feed`, `site`, `notifications`, `featured`, `p2`, `a8c`, `tag`,
+ * `tag_popular`, `list`, `on_this_day`, and `user`. Streams still served by
+ * the legacy data-layer (non-`date` dateProperty or non-stream endpoints):
+ * `conversations`, `conversations-a8c`, `likes`, `recommendations_posts`,
+ * `custom_recs_*`. Those will land in a final cleanup PR that also deletes
+ * the data-layer file.
  */
 export const readStreamQuery = (
 	streamKey: string,
@@ -62,11 +71,40 @@ export const readStreamQuery = (
 		queryKey: [ 'read', 'stream', streamKey, pageHandle ?? null ],
 		queryFn: () => {
 			const streamType = getStreamType( streamKey );
+			const suffix = streamKeySuffix( streamKey );
 			switch ( streamType ) {
 				case 'following':
 					return fetchReadFollowing( queryParams );
 				case 'discover':
 					return fetchDiscover( streamKey, queryParams );
+				case 'recent':
+					return fetchReadRecent( queryParams );
+				case 'search':
+					return fetchReadSearch( queryParams );
+				case 'feed':
+					return fetchReadFeedPosts( suffix, queryParams );
+				case 'site':
+					return fetchReadSitePosts( suffix, queryParams );
+				case 'notifications':
+					return fetchReadNotifications( queryParams );
+				case 'featured':
+					return fetchReadSiteFeatured( suffix, queryParams );
+				case 'p2':
+					return fetchReadFollowingP2( queryParams );
+				case 'a8c':
+					return fetchReadA8c( queryParams );
+				case 'tag':
+					return fetchReadTagPosts( suffix, queryParams );
+				case 'tag_popular':
+					return fetchReadTagPopular( suffix, queryParams );
+				case 'list': {
+					const { owner, slug } = JSON.parse( suffix ) as { owner: string; slug: string };
+					return fetchReadListPosts( owner, slug, queryParams );
+				}
+				case 'user':
+					return fetchReadUserPosts( suffix, queryParams );
+				case 'on_this_day':
+					return fetchReadOnThisDay( queryParams );
 				default:
 					throw new Error(
 						`readStreamQuery: unsupported streamType "${ streamType }". Add the fetcher in @automattic/api-core and a case here when migrating this stream.`
