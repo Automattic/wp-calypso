@@ -7,6 +7,8 @@ const getSubkey = (): string | undefined =>
 		}
 	 ).currentUser?.subscriptionManagementSubkey;
 
+const isLoggedOut = (): boolean => Boolean( getSubkey() );
+
 type PostReadSubscriptionOptions = {
 	path: string;
 	apiVersion: '1.1' | '1.2' | '2';
@@ -44,5 +46,50 @@ export const postReadSubscription = async < T >( {
 		apiVersion,
 		apiNamespace,
 		body,
+	} );
+};
+
+export type UnsubscribeFromReadSiteParams = {
+	subscriptionId?: number;
+	blogId?: number | string;
+	url?: string;
+	emailId?: string;
+};
+
+export type UnsubscribeFromReadSiteResponse = {
+	success?: boolean;
+	subscribed?: boolean;
+	subscription?: null;
+};
+
+export const unsubscribeFromReadSite = (
+	params: UnsubscribeFromReadSiteParams
+): Promise< UnsubscribeFromReadSiteResponse > => {
+	const { subscriptionId, blogId, url, emailId } = params;
+
+	if ( isLoggedOut() ) {
+		if ( ! blogId ) {
+			throw new Error( 'unsubscribeFromReadSite: blogId is required for logged-out users' );
+		}
+		return postReadSubscription< UnsubscribeFromReadSiteResponse >( {
+			path: `/read/site/${ blogId }/post_email_subscriptions/delete`,
+			apiVersion: '1.2',
+			body: emailId ? { email_id: emailId } : {},
+		} );
+	}
+
+	if ( ! subscriptionId && ! url ) {
+		throw new Error( 'unsubscribeFromReadSite: subscriptionId or url is required' );
+	}
+
+	return postReadSubscription< UnsubscribeFromReadSiteResponse >( {
+		path: '/read/following/mine/delete',
+		apiVersion: '1.1',
+		body: {
+			source: 'calypso',
+			...( subscriptionId ? { sub_id: subscriptionId } : { url } ),
+			...( emailId ? { email_id: emailId } : {} ),
+			...( blogId ? { blog_id: blogId } : {} ),
+		},
 	} );
 };

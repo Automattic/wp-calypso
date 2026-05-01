@@ -12,7 +12,6 @@ import {
 	useSiteEmailMeNewPostsMutation,
 	useSiteNotifyMeOfNewPostsMutation,
 	useSiteSubscribeMutation,
-	useSiteUnsubscribeMutation,
 	useUserSettingsMutation,
 } from './mutations';
 import {
@@ -46,7 +45,6 @@ export const SubscriptionManager = {
 	useSiteSubscribeMutation,
 	useSiteSubscriptionsQuery,
 	useSiteSubscriptionsQueryProps,
-	useSiteUnsubscribeMutation,
 	useSubscriberEmailAddress,
 	useSubscriptionsCountQuery,
 	useUserSettingsMutation,

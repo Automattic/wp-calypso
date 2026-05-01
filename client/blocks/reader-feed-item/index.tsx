@@ -1,8 +1,12 @@
-import { readFeedQuery, readFeedSiteQuery } from '@automattic/api-queries';
+import {
+	readFeedQuery,
+	readFeedSiteQuery,
+	unsubscribeFromReadSiteMutation,
+} from '@automattic/api-queries';
 import { recordTrainTracksInteract, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -61,8 +65,10 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const dispatch = useDispatch();
 	const { isPending: isSubscribing, mutate: onSubscribe } =
 		SubscriptionManager.useSiteSubscribeMutation();
-	const { isPending: isUnsubscribing, mutate: onUnsubscribe } =
-		SubscriptionManager.useSiteUnsubscribeMutation();
+	const queryClient = useQueryClient();
+	const { isPending: isUnsubscribing, mutate: onUnsubscribe } = useMutation(
+		unsubscribeFromReadSiteMutation( queryClient )
+	);
 
 	// Hook for tracking.
 	const recordSiteIconClicked = useRecordSiteIconClicked();
@@ -110,41 +116,45 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 		const noticeOptions: NoticeOptions = { duration: 5000 };
 		if ( subscriptionId ) {
-			onUnsubscribe( {
-				subscriptionId: subscriptionId,
-				blog_id: blogId ?? undefined,
-				url: subscribeUrl,
-				onSuccess: () => {
-					dispatch(
-						successNotice(
-							translate( 'Success! You are now unsubscribed to "%s".', {
-								args: title ?? filteredDisplayUrl,
-							} ),
-							noticeOptions
-						)
-					);
-
-					recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
-					onChangeSubscribe?.( false );
-
-					if ( shouldTrackRecommendedSearch ) {
-						// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
-						// subscriptions: action: recommended_search_item_site_subscribed, railcar
-						recordTrainTracksInteract( {
-							railcarId: railcar.railcar,
-							action: 'recommended_search_item_site_unsubscribed',
-						} );
-					}
+			onUnsubscribe(
+				{
+					subscriptionId: subscriptionId,
+					blogId: blogId ?? undefined,
+					url: subscribeUrl,
 				},
-				onError: () => {
-					dispatch(
-						errorNotice(
-							translate( 'Sorry, we had a problem unsubscribing. Please try again.' ),
-							noticeOptions
-						)
-					);
-				},
-			} );
+				{
+					onSuccess: () => {
+						dispatch(
+							successNotice(
+								translate( 'Success! You are now unsubscribed to "%s".', {
+									args: title ?? filteredDisplayUrl,
+								} ),
+								noticeOptions
+							)
+						);
+
+						recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+						onChangeSubscribe?.( false );
+
+						if ( shouldTrackRecommendedSearch ) {
+							// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
+							// subscriptions: action: recommended_search_item_site_subscribed, railcar
+							recordTrainTracksInteract( {
+								railcarId: railcar.railcar,
+								action: 'recommended_search_item_site_unsubscribed',
+							} );
+						}
+					},
+					onError: () => {
+						dispatch(
+							errorNotice(
+								translate( 'Sorry, we had a problem unsubscribing. Please try again.' ),
+								noticeOptions
+							)
+						);
+					},
+				}
+			);
 		} else {
 			onSubscribe( {
 				blog_id: blogId ?? undefined,

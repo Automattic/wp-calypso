@@ -1,15 +1,14 @@
 import './style.scss';
-import { readFeedSearchQuery } from '@automattic/api-queries';
+import { readFeedSearchQuery, unsubscribeFromReadSiteMutation } from '@automattic/api-queries';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
 
-const { useSiteSubscriptionsQuery, useSiteUnsubscribeMutation, useSiteSubscriptionsQueryProps } =
-	SubscriptionManager;
+const { useSiteSubscriptionsQuery, useSiteSubscriptionsQueryProps } = SubscriptionManager;
 
 interface Props {
 	hideTitle?: boolean;
@@ -17,7 +16,10 @@ interface Props {
 export const UnsubscribedFeedsSearchList = ( props: Props ) => {
 	const { hideTitle = false } = props;
 	const { searchTerm } = useSiteSubscriptionsQueryProps();
-	const { isPending: isUnsubscribing } = useSiteUnsubscribeMutation();
+	const queryClient = useQueryClient();
+	const { isPending: isUnsubscribing } = useMutation(
+		unsubscribeFromReadSiteMutation( queryClient )
+	);
 	const translate = useTranslate();
 	const {
 		data: { subscriptions },

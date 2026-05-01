@@ -1,7 +1,9 @@
 import './styles.scss';
+import { unsubscribeFromReadSiteMutation } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Badge, TimeSince } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
@@ -45,12 +47,13 @@ const SiteSubscriptionDetails = ( {
 		isSuccess: subscribed,
 		error: subscribeError,
 	} = SubscriptionManager.useSiteSubscribeMutation();
+	const queryClient = useQueryClient();
 	const {
 		mutate: unsubscribe,
 		isPending: unsubscribing,
 		isSuccess: unsubscribed,
 		error: unsubscribeError,
-	} = SubscriptionManager.useSiteUnsubscribeMutation();
+	} = useMutation( unsubscribeFromReadSiteMutation( queryClient ) );
 
 	const [ paymentPlans, setPaymentPlans ] = useState< PaymentPlan[] >( [] );
 
@@ -109,7 +112,7 @@ const SiteSubscriptionDetails = ( {
 			setShowUnsubscribeModal( true );
 		} else {
 			const emailId = getQueryArgs()?.email_id as string;
-			unsubscribe( { blog_id: blogId, url, emailId, subscriptionId } );
+			unsubscribe( { blogId, url, emailId, subscriptionId } );
 		}
 	};
 

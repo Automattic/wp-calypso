@@ -1,6 +1,8 @@
+import { unsubscribeFromReadSiteMutation } from '@automattic/api-queries';
 import { ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack, FormToggle } from '@wordpress/components';
 import { closeSmall, Icon, trash, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -135,8 +137,10 @@ const SiteSubscriptionRow = ( {
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
 	const { mutate: updateEmailMeNewComments, isPending: updatingEmailMeNewComments } =
 		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
-	const { mutate: unsubscribe, isPending: unsubscribing } =
-		SubscriptionManager.useSiteUnsubscribeMutation();
+	const queryClient = useQueryClient();
+	const { mutate: unsubscribe, isPending: unsubscribing } = useMutation(
+		unsubscribeFromReadSiteMutation( queryClient )
+	);
 	const { mutate: resubscribe } = SubscriptionManager.useSiteSubscribeMutation();
 
 	// Tracks events recording
@@ -183,30 +187,34 @@ const SiteSubscriptionRow = ( {
 	const onUnsubscribe = () => {
 		unsubscribeInProgress.current = true;
 		unsubscribeCallback();
-		unsubscribe( {
-			blog_id,
-			subscriptionId: Number( subscriptionId ),
-			url,
-			doNotInvalidateSiteSubscriptions: true,
-			onSuccess: () => {
-				unsubscribeInProgress.current = false;
-
-				if ( resubscribePending.current ) {
-					resubscribePending.current = false;
-					resubscribe( {
-						blog_id,
-						url,
-						doNotInvalidateSiteSubscriptions: true,
-						resubscribed: true,
-					} );
-					recordSiteResubscribed( {
-						blog_id,
-						url,
-						source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
-					} );
-				}
+		unsubscribe(
+			{
+				blogId: blog_id,
+				subscriptionId: Number( subscriptionId ),
+				url,
+				doNotInvalidateSiteSubscriptions: true,
 			},
-		} );
+			{
+				onSuccess: () => {
+					unsubscribeInProgress.current = false;
+
+					if ( resubscribePending.current ) {
+						resubscribePending.current = false;
+						resubscribe( {
+							blog_id,
+							url,
+							doNotInvalidateSiteSubscriptions: true,
+							resubscribed: true,
+						} );
+						recordSiteResubscribed( {
+							blog_id,
+							url,
+							source: SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE,
+						} );
+					}
+				},
+			}
+		);
 	};
 
 	const { isReaderPortal, isSubscriptionsPortal } = useSubscriptionManagerContext();
