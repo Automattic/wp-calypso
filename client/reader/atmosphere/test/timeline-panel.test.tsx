@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { readerAtmosphereKeys } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -8,8 +9,14 @@ import nock from 'nock';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ComposerModal, ComposerProvider } from '../composer';
 import { TimelinePanel } from '../timeline-panel';
-import type { AtmosphereConnection } from '@automattic/api-core';
+import type {
+	AtmosphereConnection,
+	AtmosphereFeedItem,
+	AtmosphereTimelinePage,
+} from '@automattic/api-core';
+import type { InfiniteData } from '@tanstack/react-query';
 
 const connection: AtmosphereConnection = {
 	id: 42,
@@ -576,5 +583,79 @@ describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () 
 				destination: 'in_app',
 			} )
 		);
+	} );
+} );
+
+describe( 'TimelinePanel — reply composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	function makeOnePagePayload(
+		uri: string,
+		cid: string,
+		counts: { replies: number; reposts: number; likes: number; quotes: number }
+	): InfiniteData< AtmosphereTimelinePage > {
+		const item: AtmosphereFeedItem = {
+			...makePost( uri, 'parent post' ),
+			cid,
+			counts,
+		};
+		return {
+			pages: [ { items: [ item ], cursor: null } ],
+			pageParams: [ undefined ],
+		};
+	}
+
+	it( 'opens the reply composer from the replies count and posts on submit', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.timeline( 42 ),
+			makeOnePagePayload( 'at://parent', 'pcid', {
+				replies: 1,
+				reposts: 0,
+				likes: 0,
+				quotes: 0,
+			} )
+		);
+
+		nock( BASE )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', {
+				text: 'great post',
+				reply: {
+					root: { uri: 'at://parent', cid: 'pcid' },
+					parent: { uri: 'at://parent', cid: 'pcid' },
+				},
+			} )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'r' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /reply/i } ) );
+		expect( await screen.findByRole( 'dialog', { name: /reply/i } ) ).toBeVisible();
+		await user.type( screen.getByRole( 'textbox' ), 'great post' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+
+		const timeline = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+			readerAtmosphereKeys.timeline( 42 )
+		);
+		expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 2 );
 	} );
 } );
