@@ -179,6 +179,8 @@ const LaunchBigSky: StepType = function ( props ) {
 			}
 		},
 		[
+			flow,
+			urlQuery,
 			assemblerThemeActive,
 			entryPoint,
 			hasStaticHomepage,
@@ -195,9 +197,7 @@ const LaunchBigSky: StepType = function ( props ) {
 				updateBigSkyPlugin( siteId, { enable: true, setup_assembler_theme: true } ),
 			] );
 			// Poll until the async job that sets big_sky_enable on the remote site has
-			// completed. Plugin activation triggers a PHP-FPM restart, so the option isn't
-			// readable via SSH until PHP-FPM recovers — at which point remote_option_ready
-			// flips to true and it's safe to redirect to site-editor.php.
+			// completed.
 			await waitForRemoteOptionReady( siteId );
 			setGoalsOnSite( siteSlug, goals );
 			exitFlow( siteId.toString(), siteSlug );
