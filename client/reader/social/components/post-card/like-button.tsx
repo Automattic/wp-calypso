@@ -36,6 +36,10 @@ function errorMessageForLike(
 		case 'bad_request':
 		case 'invalid_handle':
 		case 'upstream_unavailable':
+		case 'text_too_long':
+		case 'reply_disabled':
+		case 'quote_disabled':
+		case 'target_unavailable':
 		case 'unknown':
 			return translate( 'Could not save your like. Please try again.' );
 	}
