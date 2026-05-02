@@ -140,6 +140,12 @@ export function ComposerModal() {
 				onRequestClose={ handleClose }
 				className="atmosphere-composer"
 				focusOnMount
+				// `size="medium"` pins the frame to a fixed 512px max
+				// regardless of pinned-context text length. Without it the
+				// frame is content-driven (350px min-width grows to viewport
+				// max), so a short reply preview yields a 350px modal and a
+				// long one fills the screen.
+				size="medium"
 			>
 				<ComposerPinnedContext mode={ mode } />
 				<ComposerTextarea
