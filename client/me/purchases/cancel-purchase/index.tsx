@@ -565,7 +565,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		if ( isRemoveDeleteFlow ) {
 			// Capture props before the timeout — connect() + useSyncExternalStore
 			// may update this.props synchronously when the Redux store changes.
-			const { purchase, purchaseId, atomicTransfer, purchaseListUrl } = this.props;
+			const { purchase, purchaseId, atomicTransfer, purchaseListUrl, translate } = this.props;
 			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
 			const isAtomic = Boolean( atomicTransfer?.created_at );
 			const backupRedirect = purchaseListUrl ?? purchasesRoot;
@@ -584,8 +584,12 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				}
 				page.redirect( `${ backupRedirect }?${ params.toString() }` );
 
-				// 3. Fire mutation in background (fire-and-forget)
-				removePurchaseRequest( purchase.id ).catch( () => {} );
+				// 3. Fire mutation in background
+				removePurchaseRequest( purchase.id ).catch( () => {
+					this.props.errorNotice(
+						translate( 'There was a problem removing your purchase. Please try again.' )
+					);
+				} );
 			}, 1500 );
 			return;
 		}
