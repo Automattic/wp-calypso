@@ -72,7 +72,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 				<a
 					className="social-post-card-counts__link"
 					href={ inAppUrl }
-					onClick={ () => fireRepliesClicked( inAppUrl ? 'in_app_thread' : 'bsky_app' ) }
+					onClick={ () => fireRepliesClicked( 'in_app_thread' ) }
 				>
 					{ repliesContent }
 				</a>
