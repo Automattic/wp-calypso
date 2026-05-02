@@ -66,6 +66,13 @@ const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( 
 	// rate_limited surfaces a wait-then-Retry UI; auto-retrying immediately
 	// would contradict the user-facing message.
 	'rate_limited',
+	// Slice 7c POST /posts wire codes — all client-actionable, none transient.
+	// Auto-retrying any of these would either repeat a guaranteed-fail call or
+	// contradict the user-facing copy.
+	'text_too_long',
+	'reply_disabled',
+	'quote_disabled',
+	'target_unavailable',
 ] );
 
 const isTerminalError = ( error: AtmosphereError ): boolean =>

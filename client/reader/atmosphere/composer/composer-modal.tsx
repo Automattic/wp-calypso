@@ -240,6 +240,8 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 			// "honoring" it would render strings like "atmosphere_bad_request"
 			// to users. A future classifier change could distinguish the two.
 			return t( "We couldn't post this. Try shortening your post." );
+		case 'text_too_long':
+			return t( 'Your post is too long. Try shortening it.' );
 		case 'auth_required':
 		case 'auth_failed':
 		case 'invalid_credentials':
@@ -250,6 +252,10 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 				comment:
 					'Composer error shown when the user’s Bluesky session expired; {{a}}…{{/a}} wraps a link to reconnect.',
 			} );
+		case 'reply_disabled':
+			return t( 'The author has restricted who can reply to this post.' );
+		case 'quote_disabled':
+			return t( "This post can't be quoted." );
 		case 'rate_limited':
 			return t( "You're posting too quickly. Try again in a moment." );
 		case 'upstream_unavailable':
@@ -257,6 +263,8 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 		case 'connection_not_found':
 		case 'not_found':
 			return t( 'This Bluesky connection no longer exists.' );
+		case 'target_unavailable':
+			return t( 'This post is no longer available.' );
 		case 'invalid_handle':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );

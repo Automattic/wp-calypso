@@ -130,6 +130,32 @@ describe( '<ComposerModal>', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'hi' );
 	} );
 
+	it.each( [
+		[ 'atmosphere_text_too_long', 400, /your post is too long\. try shortening it\./i ] as const,
+		[
+			'atmosphere_reply_disabled',
+			403,
+			/the author has restricted who can reply to this post\./i,
+		] as const,
+		[ 'atmosphere_quote_disabled', 403, /this post can't be quoted\./i ] as const,
+		[ 'atmosphere_target_unavailable', 404, /this post is no longer available\./i ] as const,
+	] )( 'maps %s (HTTP %i) to its dedicated copy', async ( errorCode, status, copyMatcher ) => {
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( status, { error: errorCode } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		expect( await screen.findByText( copyMatcher ) ).toBeVisible();
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+		// Text preserved so the user can edit and resubmit.
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'hi' );
+	} );
+
 	it( 'maps 401 to a Reconnect link with target=_blank', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )

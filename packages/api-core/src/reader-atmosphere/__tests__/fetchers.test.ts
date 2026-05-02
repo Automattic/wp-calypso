@@ -946,10 +946,16 @@ describe( 'atmosphere fetchers', () => {
 
 		it.each( [
 			[ 400, 'atmosphere_bad_request', 'bad_request' ],
+			[ 400, 'atmosphere_text_too_long', 'text_too_long' ],
 			[ 401, 'atmosphere_auth_required', 'auth_required' ],
+			[ 401, 'atmosphere_unauthenticated', 'auth_required' ],
+			[ 403, 'atmosphere_reply_disabled', 'reply_disabled' ],
+			[ 403, 'atmosphere_quote_disabled', 'quote_disabled' ],
+			[ 404, 'atmosphere_not_found', 'not_found' ],
+			[ 404, 'atmosphere_target_unavailable', 'target_unavailable' ],
 			[ 429, 'atmosphere_rate_limited', 'rate_limited' ],
 			[ 502, 'atmosphere_upstream_unavailable', 'upstream_unavailable' ],
-		] )( 'classifies HTTP %i as kind %s', async ( status, error, kind ) => {
+		] )( 'classifies HTTP %i %s as kind %s', async ( status, error, kind ) => {
 			nock( BASE )
 				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
 				.reply( status as number, { error } );
