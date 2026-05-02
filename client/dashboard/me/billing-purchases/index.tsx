@@ -4,15 +4,16 @@ import {
 	allSitesQuery,
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { purchasesRoute } from '../../app/router/me';
+import { purchasesIndexRoute, purchasesRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -26,9 +27,29 @@ import {
 	getItemId,
 	usePurchasesListActions,
 } from './dataviews';
+import { PurchaseRemovedNotice } from './purchase-removed-notice';
 
 export default function PurchasesList() {
 	const currentSearchParams = purchasesRoute.useSearch();
+	const { removed, removedDomain } = purchasesIndexRoute.useSearch();
+	// Capture notice data on first render — useSearch() may lose the values
+	// after replaceState strips the URL params.
+	const [ removedNoticeData ] = useState( () =>
+		removed ? { productNoun: removed, atomicDomain: removedDomain } : null
+	);
+	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
+
+	useEffect( () => {
+		if ( removed ) {
+			// Strip notice params from the URL without triggering a TanStack Router
+			// re-navigation — avoids a route loader re-run and layout shift.
+			const url = new URL( window.location.href );
+			url.searchParams.delete( 'removed' );
+			url.searchParams.delete( 'removedDomain' );
+			window.history.replaceState( window.history.state, '', url.toString() );
+		}
+	}, [ removed ] );
+
 	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
@@ -88,6 +109,13 @@ export default function PurchasesList() {
 				/>
 			}
 		>
+			{ config.isEnabled( 'purchases/split-cancel-remove' ) && showRemovedNotice && (
+				<PurchaseRemovedNotice
+					productNoun={ removedNoticeData?.productNoun ?? '' }
+					atomicDomain={ removedNoticeData?.atomicDomain }
+					onClose={ () => setShowRemovedNotice( false ) }
+				/>
+			) }
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">
 					{ ! isLoading && <PerformanceTrackerStop /> }
