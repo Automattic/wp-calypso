@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import * as noticeActions from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ComposerModal } from '../composer-modal';
@@ -11,7 +12,7 @@ import { ComposerProvider, useComposer } from '../composer-provider';
 
 function makePreview() {
 	return {
-		uri: 'at://p',
+		uri: 'at://did:plc:alice/app.bsky.feed.post/bbbbbbbbbbbbb',
 		cid: 'pcid',
 		author: {
 			did: 'did:plc:alice',
@@ -32,8 +33,8 @@ function TriggerAndModal() {
 				onClick={ () =>
 					openComposer( {
 						kind: 'reply',
-						root: { uri: 'at://r', cid: 'rcid' },
-						parent: { uri: 'at://p', cid: 'pcid' },
+						root: { uri: 'at://did:plc:alice/app.bsky.feed.post/aaaaaaaaaaaaa', cid: 'rcid' },
+						parent: { uri: 'at://did:plc:alice/app.bsky.feed.post/bbbbbbbbbbbbb', cid: 'pcid' },
 						previewPost: makePreview(),
 					} )
 				}
@@ -61,6 +62,7 @@ describe( '<ComposerModal>', () => {
 		jest
 			.spyOn( analytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		jest.spyOn( noticeActions, 'successNotice' );
 	} );
 
 	afterEach( () => {
@@ -188,8 +190,8 @@ describe( '<ComposerModal>', () => {
 				'calypso_reader_atmosphere_reply_composer_opened',
 				expect.objectContaining( {
 					connection_id: 42,
-					parent_uri: 'at://p',
-					root_uri: 'at://r',
+					parent_uri: 'at://did:plc:alice/app.bsky.feed.post/bbbbbbbbbbbbb',
+					root_uri: 'at://did:plc:alice/app.bsky.feed.post/aaaaaaaaaaaaa',
 				} )
 			)
 		);
@@ -203,8 +205,8 @@ describe( '<ComposerModal>', () => {
 				'calypso_reader_atmosphere_reply_published',
 				expect.objectContaining( {
 					connection_id: 42,
-					parent_uri: 'at://p',
-					root_uri: 'at://r',
+					parent_uri: 'at://did:plc:alice/app.bsky.feed.post/bbbbbbbbbbbbb',
+					root_uri: 'at://did:plc:alice/app.bsky.feed.post/aaaaaaaaaaaaa',
 				} )
 			)
 		);
@@ -346,5 +348,22 @@ describe( '<ComposerModal>', () => {
 		// Modal closes after the successful retry.
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+	} );
+
+	it( 'dispatches a success notice with reply copy on publish', async () => {
+		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect( successSpy ).toHaveBeenCalledWith( 'Your reply was posted.', expect.anything() )
+		);
 	} );
 } );
