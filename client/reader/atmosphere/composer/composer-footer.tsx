@@ -48,11 +48,16 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 					// Visible text is the bare integer; the accessible label
 					// adds units so the live-region announcement is meaningful
 					// without relying on the surrounding visual context.
-					aria-label={ translate( '%(count)d characters remaining', {
-						args: { count: remaining },
-						comment:
-							'Composer post-length counter; %(count)d is the integer count of characters still allowed before the limit. Negative when the user is over the limit.',
-					} ) }
+					aria-label={ translate(
+						'%(count)d character remaining',
+						'%(count)d characters remaining',
+						{
+							count: remaining,
+							args: { count: remaining },
+							comment:
+								'Composer post-length counter; %(count)d is the integer count of characters still allowed before the limit. Negative when the user is over the limit.',
+						}
+					) }
 				>
 					{ remaining }
 				</span>

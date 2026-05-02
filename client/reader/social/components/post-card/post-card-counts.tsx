@@ -61,7 +61,11 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 						onReplyClick( post );
 						fireRepliesClicked( 'composer' );
 					} }
-					aria-label={ translate( 'Reply' ) }
+					aria-label={ translate( 'Reply, %(count)d reply', 'Reply, %(count)d replies', {
+						count: counts.replies,
+						args: { count: counts.replies },
+						textOnly: true,
+					} ) }
 				>
 					{ repliesContent }
 				</button>
