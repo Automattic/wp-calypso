@@ -34,6 +34,7 @@ import {
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
+	AtmosphereAuthor,
 	AtmosphereAuthorFeedFilter,
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
@@ -810,19 +811,45 @@ interface CreatePostContext {
 let pendingReplyCounter = 0;
 const nextPendingReplyUri = () => `${ PENDING_REPLY_URI }#${ ++pendingReplyCounter }`;
 
+function authorFromConnection(
+	connection: AtmosphereConnectionDetails | undefined
+): AtmosphereAuthor {
+	if ( ! connection ) {
+		return { did: '', handle: '', display_name: '', avatar: null };
+	}
+	return {
+		did: connection.did,
+		handle: connection.handle,
+		display_name: connection.display_name ?? '',
+		avatar: connection.avatar,
+	};
+}
+
 /**
  * Build a placeholder `AtmosphereFeedItem` representing an in-flight
  * reply. The URI is a `PENDING_REPLY_URI`-prefixed sentinel unique to
  * the in-flight mutation so consumers can detect the optimistic state
  * and suppress race-y delete actions, and so concurrent replies do not
  * collide on rewrite.
+ *
+ * The author is hydrated from the cached connection details so the
+ * placeholder renders with the user's real handle / display name /
+ * avatar instead of a blank chip while the request is in flight (and,
+ * after onSuccess rewrites the URI / CID, until the next thread
+ * refetch). When the connection cache is cold the author falls back to
+ * empty fields — `replacePlaceholderInThread` re-applies the connection
+ * lookup on success so a late cache populate still corrects the chip.
  */
-function buildPlaceholderReply( text: string, pendingUri: string ): AtmosphereFeedItem {
+function buildPlaceholderReply(
+	text: string,
+	pendingUri: string,
+	connection: AtmosphereConnectionDetails | undefined
+): AtmosphereFeedItem {
 	const now = new Date().toISOString();
 	return {
 		uri: pendingUri,
 		cid: '',
-		author: { did: '', handle: '', display_name: '', avatar: null },
+		author: authorFromConnection( connection ),
 		created_at: now,
 		indexed_at: now,
 		text,
@@ -878,31 +905,39 @@ function insertPlaceholderUnderParent(
  * Walk the thread tree and rewrite the placeholder post identified by
  * `pendingUri` with one carrying the real `result.uri` / `result.cid`.
  * Matching on a per-mutation URI prevents concurrent replies from
- * stomping on each other's placeholders.
+ * stomping on each other's placeholders. When the placeholder author
+ * is still empty (cold connection cache at onMutate time) and a fresh
+ * `connection` is now available, fill it in so the chip renders the
+ * user's handle / display name / avatar instead of a blank placeholder.
  */
 function replacePlaceholderInThread(
 	node: AtmosphereThreadNode,
 	result: CreatePostResult,
-	pendingUri: string
+	pendingUri: string,
+	connection: AtmosphereConnectionDetails | undefined
 ): AtmosphereThreadNode {
 	if ( node.type !== 'post' ) {
 		return node;
 	}
 	if ( node.post.uri === pendingUri ) {
+		const author =
+			node.post.author.handle === '' ? authorFromConnection( connection ) : node.post.author;
 		return {
 			...node,
-			post: { ...node.post, uri: result.uri, cid: result.cid },
+			post: { ...node.post, uri: result.uri, cid: result.cid, author },
 		};
 	}
 	let changed = false;
 	const replies = node.replies.map( ( reply ) => {
-		const next = replacePlaceholderInThread( reply, result, pendingUri );
+		const next = replacePlaceholderInThread( reply, result, pendingUri, connection );
 		if ( next !== reply ) {
 			changed = true;
 		}
 		return next;
 	} );
-	const parent = node.parent ? replacePlaceholderInThread( node.parent, result, pendingUri ) : null;
+	const parent = node.parent
+		? replacePlaceholderInThread( node.parent, result, pendingUri, connection )
+		: null;
 	if ( ! changed && parent === node.parent ) {
 		return node;
 	}
@@ -965,10 +1000,15 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 
 			// Layer the placeholder reply under the parent node in the
 			// thread cache. Done after `patchAtmospherePostCaches` so the
-			// already-bumped parent post stays bumped.
+			// already-bumped parent post stays bumped. The placeholder
+			// author is hydrated from the cached connection details so the
+			// optimistic chip carries the user's real handle / avatar.
 			const threadAfterBump = queryClient.getQueryData< AtmosphereThreadResponse >( threadKey );
 			if ( threadAfterBump ) {
-				const placeholder = buildPlaceholderReply( vars.text, ctx.pendingUri );
+				const connection = queryClient.getQueryData< AtmosphereConnectionDetails >(
+					readerAtmosphereKeys.connection( vars.connectionId )
+				);
+				const placeholder = buildPlaceholderReply( vars.text, ctx.pendingUri, connection );
 				queryClient.setQueryData< AtmosphereThreadResponse >( threadKey, {
 					...threadAfterBump,
 					thread: insertPlaceholderUnderParent( threadAfterBump.thread, parent.uri, placeholder ),
@@ -1004,7 +1044,13 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				queryClient.invalidateQueries( { queryKey: threadKey } );
 				return;
 			}
-			const next = replacePlaceholderInThread( current.thread, result, ctx.pendingUri );
+			// Re-resolve the connection on success: a deep-link can land in
+			// the thread surface before the connection cache populates, so
+			// the placeholder built in onMutate may have an empty author.
+			const connection = queryClient.getQueryData< AtmosphereConnectionDetails >(
+				readerAtmosphereKeys.connection( vars.connectionId )
+			);
+			const next = replacePlaceholderInThread( current.thread, result, ctx.pendingUri, connection );
 			if ( next === current.thread ) {
 				// Tree shape shifted between onMutate and onSuccess (e.g. a
 				// concurrent refetch dropped the placeholder branch). Fall
