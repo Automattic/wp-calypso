@@ -16,7 +16,10 @@ import type {
 	CreateLikeResult,
 	CreatePostParams,
 	CreatePostResult,
+	CreateRepostParams,
+	CreateRepostResult,
 	DeleteLikeParams,
+	DeleteRepostParams,
 } from './types';
 
 const NAMESPACE = 'wpcom/v2';
@@ -302,6 +305,34 @@ export interface GetAtmosphereTagFeedParams {
 	hashtag: string;
 	cursor?: string;
 	limit?: number;
+}
+
+export async function createRepost( params: CreateRepostParams ): Promise< CreateRepostResult > {
+	try {
+		const res = ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ params.connectionId }/reposts`,
+			apiNamespace: NAMESPACE,
+			body: {
+				post_uri: params.postUri,
+				post_cid: params.postCid,
+			},
+		} ) ) as { repost: CreateRepostResult };
+		return res.repost;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function deleteRepost( params: DeleteRepostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/atmosphere/connections/${ params.connectionId }/reposts/${ params.rkey }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
 }
 
 export async function getAtmosphereTagFeed(

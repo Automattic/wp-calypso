@@ -3,8 +3,10 @@ import {
 	createFollow,
 	createLike,
 	createPost,
+	createRepost,
 	deleteFollow,
 	deleteLike,
+	deleteRepost,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -15,6 +17,7 @@ import {
 	getTimeline,
 	PENDING_LIKE_URI,
 	PENDING_REPLY_URI,
+	PENDING_REPOST_URI,
 	isValidHashtag,
 	readerAtmosphereKeys,
 } from '@automattic/api-core';
@@ -49,6 +52,7 @@ import type {
 	CreateLikeResult,
 	CreatePostParams,
 	CreatePostResult,
+	CreateRepostResult,
 } from '@automattic/api-core';
 
 const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( [
@@ -615,6 +619,9 @@ function restoreAtmospherePostSnapshots(
 		}
 		const current = queryClient.getQueryData( key );
 		if ( ! current ) {
+			// Cache entry was evicted between onMutate and onError (e.g. via
+			// gcTime or an explicit removeQueries). Nothing to roll back —
+			// the next refetch will reload from the server.
 			continue;
 		}
 		queryClient.setQueryData( key, restoreAtmosphereQueryData( current, items ) );
@@ -672,6 +679,67 @@ export function useDeleteLikeMutation( connectionId: number ) {
 						like: null,
 					},
 					counts: { ...item.counts, likes: Math.max( 0, item.counts.likes - 1 ) },
+				} ) );
+			},
+			onError: ( _err, _vars, ctx ) => restoreAtmospherePostSnapshots( queryClient, ctx ),
+		}
+	);
+}
+
+export function useCreateRepostMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation<
+		CreateRepostResult,
+		AtmosphereError,
+		{ postUri: string; postCid: string },
+		OptimisticContext
+	>( {
+		mutationFn: ( { postUri, postCid } ) => createRepost( { connectionId, postUri, postCid } ),
+		onMutate: async ( { postUri } ) => {
+			await queryClient.cancelQueries( {
+				queryKey: readerAtmosphereKeys.all,
+			} );
+			return patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
+				...item,
+				viewer: {
+					...( item.viewer ?? { like: null, repost: null } ),
+					repost: PENDING_REPOST_URI,
+				},
+				counts: { ...item.counts, reposts: item.counts.reposts + 1 },
+			} ) );
+		},
+		onError: ( _err, _vars, ctx ) => restoreAtmospherePostSnapshots( queryClient, ctx ),
+		onSuccess: ( result, { postUri } ) => {
+			patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
+				...item,
+				viewer: {
+					...( item.viewer ?? { like: null, repost: null } ),
+					repost: result.uri,
+				},
+			} ) );
+		},
+	} );
+}
+
+export function useDeleteRepostMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, AtmosphereError, { rkey: string; postUri: string }, OptimisticContext >(
+		{
+			mutationFn: ( { rkey } ) => deleteRepost( { connectionId, rkey } ),
+			onMutate: async ( { postUri } ) => {
+				await queryClient.cancelQueries( {
+					queryKey: readerAtmosphereKeys.all,
+				} );
+				return patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( {
+					...item,
+					viewer: {
+						...( item.viewer ?? { like: null, repost: null } ),
+						repost: null,
+					},
+					counts: {
+						...item.counts,
+						reposts: Math.max( 0, item.counts.reposts - 1 ),
+					},
 				} ) );
 			},
 			onError: ( _err, _vars, ctx ) => restoreAtmospherePostSnapshots( queryClient, ctx ),

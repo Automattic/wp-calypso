@@ -1,6 +1,7 @@
 import {
 	PENDING_LIKE_URI,
 	PENDING_REPLY_URI,
+	PENDING_REPOST_URI,
 	readerAtmosphereKeys,
 	type AtmosphereFeedItem,
 	type AtmosphereScopedProfile,
@@ -29,7 +30,9 @@ import {
 	useConnectionsQuery,
 	useCreateConnectionMutation,
 	useCreateLikeMutation,
+	useCreateRepostMutation,
 	useDeleteLikeMutation,
+	useDeleteRepostMutation,
 	useThreadQuery,
 	useTimelineInfiniteQuery,
 } from '../reader-atmosphere';
@@ -1611,6 +1614,363 @@ describe( 'reader-atmosphere hooks', () => {
 					);
 				} )
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'useCreateRepostMutation', () => {
+		const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kabc';
+		const POST_CID = 'bafy-cid';
+		const REPOST_URI = 'at://did:plc:caller/app.bsky.feed.repost/3krkeyrkeyrke';
+
+		function seedTimeline( client: QueryClient, item: AtmosphereFeedItem ) {
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [ { items: [ item ], cursor: 'NEXT' } as unknown as AtmosphereTimelinePage ],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( 42 ), data );
+		}
+
+		it( 'optimistically flips viewer.repost to the pending sentinel and bumps counts.reposts', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.delay( 100 )
+				.reply( 200, { repost: { uri: REPOST_URI, cid: 'bafy-r-cid', rkey: '3krkeyrkeyrke' } } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline(
+				client,
+				makeFeedItem( {
+					uri: POST_URI,
+					cid: POST_CID,
+					counts: { replies: 0, reposts: 2, likes: 5, quotes: 0 },
+					viewer: { like: null, repost: null },
+				} )
+			);
+
+			const { result } = renderHook( () => useCreateRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { postUri: POST_URI, postCid: POST_CID } );
+			} );
+
+			await waitFor( () => {
+				const data = client.getQueryData(
+					readerAtmosphereKeys.timeline( 42 )
+				) as InfiniteData< AtmosphereTimelinePage >;
+				const item = data.pages[ 0 ].items[ 0 ];
+				expect( item.viewer?.repost ).toBe( PENDING_REPOST_URI );
+				expect( item.counts.reposts ).toBe( 3 );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const after = client.getQueryData(
+				readerAtmosphereKeys.timeline( 42 )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			expect( after.pages[ 0 ].items[ 0 ].viewer?.repost ).toBe( REPOST_URI );
+			expect( after.pages[ 0 ].items[ 0 ].counts.reposts ).toBe( 3 );
+		} );
+
+		it( 'preserves viewer.like across an optimistic repost patch', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 200, { repost: { uri: REPOST_URI, cid: 'bafy-r-cid', rkey: '3krkeyrkeyrke' } } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const existingLikeUri = 'at://did:plc:caller/app.bsky.feed.like/3kalreadyliked';
+			seedTimeline(
+				client,
+				makeFeedItem( {
+					uri: POST_URI,
+					cid: POST_CID,
+					counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
+					viewer: { like: existingLikeUri, repost: null },
+				} )
+			);
+
+			const { result } = renderHook( () => useCreateRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { postUri: POST_URI, postCid: POST_CID } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const after = client.getQueryData(
+				readerAtmosphereKeys.timeline( 42 )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			const item = after.pages[ 0 ].items[ 0 ];
+			expect( item.viewer?.like ).toBe( existingLikeUri );
+			expect( item.viewer?.repost ).toBe( REPOST_URI );
+			expect( item.counts.likes ).toBe( 5 );
+		} );
+
+		it( 'rolls the cache back on error', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline(
+				client,
+				makeFeedItem( {
+					uri: POST_URI,
+					cid: POST_CID,
+					counts: { replies: 0, reposts: 2, likes: 0, quotes: 0 },
+					viewer: { like: null, repost: null },
+				} )
+			);
+
+			const { result } = renderHook( () => useCreateRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { postUri: POST_URI, postCid: POST_CID } );
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+			const after = client.getQueryData(
+				readerAtmosphereKeys.timeline( 42 )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			const item = after.pages[ 0 ].items[ 0 ];
+			expect( item.viewer?.repost ).toBeNull();
+			expect( item.counts.reposts ).toBe( 2 );
+		} );
+
+		it( 'leaves non-matching posts in the cache untouched', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 200, { repost: { uri: REPOST_URI, cid: 'bafy-r-cid', rkey: '3krkeyrkeyrke' } } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const otherPost = makeFeedItem( {
+				uri: 'at://did:plc:other/app.bsky.feed.post/3kother',
+				cid: 'cid-other',
+				counts: { replies: 0, reposts: 7, likes: 0, quotes: 0 },
+				viewer: { like: null, repost: null },
+			} );
+			const targetPost = makeFeedItem( {
+				uri: POST_URI,
+				cid: POST_CID,
+				counts: { replies: 0, reposts: 1, likes: 0, quotes: 0 },
+				viewer: { like: null, repost: null },
+			} );
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [
+					{ items: [ otherPost, targetPost ], cursor: null } as unknown as AtmosphereTimelinePage,
+				],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( 42 ), data );
+
+			const { result } = renderHook( () => useCreateRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { postUri: POST_URI, postCid: POST_CID } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const after = client.getQueryData(
+				readerAtmosphereKeys.timeline( 42 )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			expect( after.pages[ 0 ].items[ 0 ].counts.reposts ).toBe( 7 );
+			expect( after.pages[ 0 ].items[ 0 ].viewer?.repost ).toBeNull();
+			expect( after.pages[ 0 ].items[ 1 ].counts.reposts ).toBe( 2 );
+			expect( after.pages[ 0 ].items[ 1 ].viewer?.repost ).toBe( REPOST_URI );
+		} );
+
+		it( 'patches the matching post in a thread cache entry', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 200, { repost: { uri: REPOST_URI, cid: 'bafy-r-cid', rkey: '3krkeyrkeyrke' } } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const target = makeFeedItem( {
+				uri: POST_URI,
+				cid: POST_CID,
+				counts: { replies: 0, reposts: 2, likes: 0, quotes: 0 },
+				viewer: { like: null, repost: null },
+			} );
+			client.setQueryData< AtmosphereThreadResponse >( readerAtmosphereKeys.thread( POST_URI ), {
+				thread: { type: 'post', post: target, parent: null, replies: [] },
+			} );
+
+			const { result } = renderHook( () => useCreateRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { postUri: POST_URI, postCid: POST_CID } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const after = client.getQueryData< AtmosphereThreadResponse >(
+				readerAtmosphereKeys.thread( POST_URI )
+			);
+			expect( after?.thread.type ).toBe( 'post' );
+			const post = after?.thread.type === 'post' ? after.thread.post : null;
+			expect( post?.viewer?.repost ).toBe( REPOST_URI );
+			expect( post?.counts.reposts ).toBe( 3 );
+		} );
+	} );
+
+	describe( 'useDeleteRepostMutation', () => {
+		const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kabc';
+		const POST_CID = 'bafy-cid';
+		const REPOST_URI = 'at://did:plc:caller/app.bsky.feed.repost/3krkeyrkeyrke';
+
+		function seedTimeline( client: QueryClient, item: AtmosphereFeedItem ) {
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [ { items: [ item ], cursor: 'NEXT' } as unknown as AtmosphereTimelinePage ],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( 42 ), data );
+		}
+
+		it( 'optimistically clears viewer.repost and decrements counts.reposts', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline(
+				client,
+				makeFeedItem( {
+					uri: POST_URI,
+					cid: POST_CID,
+					counts: { replies: 0, reposts: 4, likes: 0, quotes: 0 },
+					viewer: { like: null, repost: REPOST_URI },
+				} )
+			);
+
+			const { result } = renderHook( () => useDeleteRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { rkey: '3krkeyrkeyrke', postUri: POST_URI } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const after = client.getQueryData(
+				readerAtmosphereKeys.timeline( 42 )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			const item = after.pages[ 0 ].items[ 0 ];
+			expect( item.viewer?.repost ).toBeNull();
+			expect( item.counts.reposts ).toBe( 3 );
+		} );
+
+		it( 'floors counts.reposts at 0 when the cache is stale at 0', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline(
+				client,
+				makeFeedItem( {
+					uri: POST_URI,
+					cid: POST_CID,
+					counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+					viewer: { like: null, repost: REPOST_URI },
+				} )
+			);
+
+			const { result } = renderHook( () => useDeleteRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { rkey: '3krkeyrkeyrke', postUri: POST_URI } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const after = client.getQueryData(
+				readerAtmosphereKeys.timeline( 42 )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			expect( after.pages[ 0 ].items[ 0 ].counts.reposts ).toBe( 0 );
+		} );
+
+		it( 'rolls the cache back on error', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 401, { error: 'atmosphere_unauthenticated' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline(
+				client,
+				makeFeedItem( {
+					uri: POST_URI,
+					cid: POST_CID,
+					counts: { replies: 0, reposts: 4, likes: 0, quotes: 0 },
+					viewer: { like: null, repost: REPOST_URI },
+				} )
+			);
+
+			const { result } = renderHook( () => useDeleteRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { rkey: '3krkeyrkeyrke', postUri: POST_URI } );
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+			const after = client.getQueryData(
+				readerAtmosphereKeys.timeline( 42 )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			const item = after.pages[ 0 ].items[ 0 ];
+			expect( item.viewer?.repost ).toBe( REPOST_URI );
+			expect( item.counts.reposts ).toBe( 4 );
+		} );
+
+		it( 'preserves viewer.like across an optimistic delete-repost patch', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const existingLikeUri = 'at://did:plc:caller/app.bsky.feed.like/3kalreadyliked';
+			seedTimeline(
+				client,
+				makeFeedItem( {
+					uri: POST_URI,
+					cid: POST_CID,
+					counts: { replies: 0, reposts: 4, likes: 5, quotes: 0 },
+					viewer: { like: existingLikeUri, repost: REPOST_URI },
+				} )
+			);
+
+			const { result } = renderHook( () => useDeleteRepostMutation( 42 ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { rkey: '3krkeyrkeyrke', postUri: POST_URI } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const after = client.getQueryData(
+				readerAtmosphereKeys.timeline( 42 )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			const item = after.pages[ 0 ].items[ 0 ];
+			expect( item.viewer?.like ).toBe( existingLikeUri );
+			expect( item.viewer?.repost ).toBeNull();
+			expect( item.counts.likes ).toBe( 5 );
 		} );
 	} );
 } );

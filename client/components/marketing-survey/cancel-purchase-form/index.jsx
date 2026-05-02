@@ -445,9 +445,8 @@ class CancelPurchaseForm extends Component {
 					site={ site }
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
-					declineButtonText={
-						intent === 'remove' ? translate( 'Remove my current plan' ) : undefined
-					}
+					intent={ intent }
+					declineButtonText={ intent === 'remove' ? translate( 'Continue removal' ) : undefined }
 					downgradePlanPrice={
 						'downgrade-personal' === this.state.upsell
 							? this.props.downgradePlanToPersonalPrice
@@ -605,7 +604,7 @@ class CancelPurchaseForm extends Component {
 	}
 
 	renderStepButtons = () => {
-		const { translate, disableButtons, purchase } = this.props;
+		const { translate, disableButtons, purchase, intent } = this.props;
 		const { isSubmitting, surveyStep, solution } = this.state;
 		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
@@ -621,10 +620,11 @@ class CancelPurchaseForm extends Component {
 				<GutenbergButton
 					isPrimary
 					isDefault
+					isDestructive={ intent === 'remove' }
 					disabled={ ! this.canGoNext() }
 					onClick={ this.clickNext }
 				>
-					{ translate( 'Continue' ) }
+					{ intent === 'remove' ? translate( 'Continue removal' ) : translate( 'Continue' ) }
 				</GutenbergButton>
 			);
 		}
@@ -650,6 +650,32 @@ class CancelPurchaseForm extends Component {
 						onClick={ this.closeDialog }
 					>
 						{ translate( 'Keep plan' ) }
+					</GutenbergButton>
+				</>
+			);
+		}
+
+		if ( intent === 'remove' ) {
+			return (
+				<>
+					<GutenbergButton
+						isPrimary
+						isDefault
+						isDestructive
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.onSubmit }
+					>
+						{ translate( 'Complete removal' ) }
+					</GutenbergButton>
+					<GutenbergButton
+						isDestructive
+						variant="tertiary"
+						isBusy={ isCancelling }
+						disabled={ isCancelling }
+						onClick={ this.onSubmit }
+					>
+						{ translate( 'Skip and remove' ) }
 					</GutenbergButton>
 				</>
 			);
