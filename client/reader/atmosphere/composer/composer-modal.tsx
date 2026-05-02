@@ -65,7 +65,7 @@ export function ComposerModal() {
 			return;
 		}
 		if ( mutation.isError && mutation.error ) {
-			const errorKind = ( mutation.error as AtmosphereError ).kind;
+			const errorKind = mutation.error.kind;
 			if ( errorKind !== lastErrorKindRef.current ) {
 				lastErrorKindRef.current = errorKind;
 				dispatch(
@@ -130,9 +130,8 @@ export function ComposerModal() {
 
 	const title = titleForMode( mode, translate );
 	const placeholder = placeholderForMode( mode, translate, handle );
-	const errorMessage = mutation.isError
-		? errorMessageFor( mutation.error as AtmosphereError, translate )
-		: null;
+	const errorMessage =
+		mutation.isError && mutation.error ? errorMessageFor( mutation.error, translate ) : null;
 
 	return (
 		<>
@@ -268,7 +267,13 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 		case 'invalid_handle':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );
+		default:
+			return assertNever( err );
 	}
+}
+
+function assertNever( value: never ): never {
+	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }
 
 function DiscardConfirm( props: { onCancel: () => void; onConfirm: () => void } ) {
