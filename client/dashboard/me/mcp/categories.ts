@@ -52,6 +52,7 @@ const SUB_CATEGORIES = {
 	CATEGORIES_TAGS: __( 'Categories & tags', 'calypso' ),
 	// Sites sub-categories
 	SITES: __( 'Sites', 'calypso' ),
+	PLUGINS: __( 'Plugins', 'calypso' ),
 	MEDIA: __( 'Media', 'calypso' ),
 	SITE_SETTINGS: __( 'Site settings', 'calypso' ),
 	ANALYTICS: __( 'Analytics', 'calypso' ),
@@ -78,6 +79,7 @@ export const SUB_CATEGORY_ORDER: Record< string, readonly string[] > = {
 	],
 	[ DISPLAY_CATEGORIES.SITES ]: [
 		SUB_CATEGORIES.SITES,
+		SUB_CATEGORIES.PLUGINS,
 		SUB_CATEGORIES.SITE_SETTINGS,
 		SUB_CATEGORIES.MEDIA,
 		SUB_CATEGORIES.ANALYTICS,
@@ -139,7 +141,7 @@ const API_CATEGORY_TO_SUB_CATEGORY: Record< string, string > = {
 	sites: SUB_CATEGORIES.SITES,
 	media: SUB_CATEGORIES.MEDIA,
 	users: SUB_CATEGORIES.SITE_SETTINGS,
-	plugins: SUB_CATEGORIES.SITE_SETTINGS,
+	plugins: SUB_CATEGORIES.PLUGINS,
 	'site-settings': SUB_CATEGORIES.SITE_SETTINGS,
 	analytics: SUB_CATEGORIES.ANALYTICS,
 	// Account card sub-categories
@@ -224,7 +226,6 @@ export function isWriteTool( toolId: string, ability?: { readonly?: boolean } ):
  * backend but belong in the Design card. Tool ID prefix takes precedence over
  * the API category for these tools.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getDisplayCategory( toolId: string, ability?: { category?: string } ): string {
 	const apiCategory = ability?.category;
 
