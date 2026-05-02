@@ -359,7 +359,7 @@ describe( 'filterCostOverridesForLineItem', function () {
 		human_readable_reason: 'Free domain for first year',
 		old_subtotal_integer: 1500,
 		new_subtotal_integer: 0,
-		override_code: 'recurring-bundle',
+		override_code: 'bundled-domain-credit',
 		does_override_original_cost: false,
 		percentage: 100,
 		first_unit_only: false,

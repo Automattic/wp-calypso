@@ -195,9 +195,9 @@ export function isUserVisibleCostOverride( costOverride: {
 /**
  * Replace the API-provided "Free domain for first year" reason on a bundled
  * domain transfer with copy that correctly describes a transfer (a renewal of
- * an existing domain, not a new registration). Matches on the original reason
- * so we never clobber an unrelated cost override that may also be present on
- * the same product.
+ * an existing domain, not a new registration). Gated on the specific
+ * bundled-domain-credit override code so we never clobber an unrelated cost
+ * override that may also be present on the same product.
  */
 function makeDomainTransferBundleReasonUnique(
 	costOverride: ResponseCartCostOverride,
@@ -207,16 +207,15 @@ function makeDomainTransferBundleReasonUnique(
 	if (
 		isDomainTransfer( product ) &&
 		product.is_bundled &&
-		costOverride.human_readable_reason === 'Free domain for first year'
+		costOverride.override_code === 'bundled-domain-credit'
 	) {
 		return {
 			...costOverride,
-			human_readable_reason: String(
-				translate( 'Free domain renewal for one year', {
-					comment:
-						'Shown in checkout cost-override list for a domain transfer bundled free with a paid plan. A transfer renews an existing domain rather than registering a new one.',
-				} )
-			),
+			human_readable_reason: translate( 'Free domain renewal for one year', {
+				textOnly: true,
+				comment:
+					'Shown in checkout cost-override list for a domain transfer bundled free with a paid plan. A transfer renews an existing domain rather than registering a new one.',
+			} ),
 		};
 	}
 	return costOverride;
