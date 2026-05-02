@@ -12,7 +12,7 @@ import { ComposerProvider, useComposer } from '../composer-provider';
 
 function makePreview() {
 	return {
-		uri: 'at://did:plc:alice/app.bsky.feed.post/bbbbbbbbbbbbb',
+		uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
 		cid: 'pcid',
 		author: {
 			did: 'did:plc:alice',
@@ -33,8 +33,14 @@ function TriggerAndModal() {
 				onClick={ () =>
 					openComposer( {
 						kind: 'reply',
-						root: { uri: 'at://did:plc:alice/app.bsky.feed.post/aaaaaaaaaaaaa', cid: 'rcid' },
-						parent: { uri: 'at://did:plc:alice/app.bsky.feed.post/bbbbbbbbbbbbb', cid: 'pcid' },
+						root: {
+							uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/aaaaaaaaaaaaa',
+							cid: 'rcid',
+						},
+						parent: {
+							uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+							cid: 'pcid',
+						},
 						previewPost: makePreview(),
 					} )
 				}
@@ -190,8 +196,8 @@ describe( '<ComposerModal>', () => {
 				'calypso_reader_atmosphere_reply_composer_opened',
 				expect.objectContaining( {
 					connection_id: 42,
-					parent_uri: 'at://did:plc:alice/app.bsky.feed.post/bbbbbbbbbbbbb',
-					root_uri: 'at://did:plc:alice/app.bsky.feed.post/aaaaaaaaaaaaa',
+					parent_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+					root_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/aaaaaaaaaaaaa',
 				} )
 			)
 		);
@@ -205,8 +211,8 @@ describe( '<ComposerModal>', () => {
 				'calypso_reader_atmosphere_reply_published',
 				expect.objectContaining( {
 					connection_id: 42,
-					parent_uri: 'at://did:plc:alice/app.bsky.feed.post/bbbbbbbbbbbbb',
-					root_uri: 'at://did:plc:alice/app.bsky.feed.post/aaaaaaaaaaaaa',
+					parent_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+					root_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/aaaaaaaaaaaaa',
 				} )
 			)
 		);
@@ -362,8 +368,7 @@ describe( '<ComposerModal>', () => {
 		await user.type( screen.getByRole( 'textbox' ), 'hi' );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
-		await waitFor( () =>
-			expect( successSpy ).toHaveBeenCalledWith( 'Your reply was posted.', expect.anything() )
-		);
+		await waitFor( () => expect( successSpy ).toHaveBeenCalled() );
+		expect( successSpy.mock.calls[ 0 ][ 0 ] ).toBe( 'Your reply was posted.' );
 	} );
 } );
