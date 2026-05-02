@@ -54,6 +54,7 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 						{
 							count: remaining,
 							args: { count: remaining },
+							textOnly: true,
 							comment:
 								'Composer post-length counter; %(count)d is the integer count of characters still allowed before the limit. Negative when the user is over the limit.',
 						}
