@@ -9,17 +9,19 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 const Row = styled.div< { count: number } >`
 	display: grid;
-	grid-template-columns: repeat( ${ ( props ) => props.count }, 1fr );
+	grid-template-columns: repeat( ${ ( props ) => props.count }, minmax( 0, 1fr ) );
 	gap: 10px;
-	margin: 20px 0;
+	margin: 16px 0;
 	width: 100%;
 `;
 
 const Tile = styled.button< { active: boolean } >`
 	display: flex;
-	align-items: center;
-	gap: 14px;
-	padding: ${ ( props ) => ( props.active ? '12px 17px' : '13px 18px' ) };
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: center;
+	gap: 6px;
+	padding: ${ ( props ) => ( props.active ? '15px 12px' : '16px 13px' ) };
 	border: ${ ( props ) =>
 		props.active
 			? `2px solid ${ colorStudio.colors[ 'Blue 50' ] }`
@@ -27,7 +29,6 @@ const Tile = styled.button< { active: boolean } >`
 	border-radius: 3px;
 	background: #fff;
 	cursor: pointer;
-	text-align: start;
 	font: inherit;
 
 	&:disabled {
@@ -42,24 +43,20 @@ const Tile = styled.button< { active: boolean } >`
 `;
 
 const Label = styled.span`
-	flex: 1;
 	font-size: 15px;
 	font-weight: 500;
+	line-height: 20px;
 	color: ${ colorStudio.colors[ 'Black' ] };
-`;
-
-const PriceColumn = styled.span`
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	gap: 4px;
+	text-align: start;
 `;
 
 const Price = styled.span`
 	font-size: 15px;
 	font-weight: 500;
+	line-height: 20px;
 	font-variant-numeric: tabular-nums;
 	color: ${ colorStudio.colors[ 'Black' ] };
+	text-align: start;
 `;
 
 const PriceSuffix = styled.span`
@@ -67,6 +64,8 @@ const PriceSuffix = styled.span`
 `;
 
 const SavePill = styled.span`
+	align-self: flex-start;
+	width: fit-content;
 	font-size: 11px;
 	font-weight: 500;
 	line-height: 16px;
@@ -75,6 +74,15 @@ const SavePill = styled.span`
 	padding: 1px 7px;
 	border-radius: 3px;
 	white-space: nowrap;
+`;
+
+const SavePillPlaceholder = styled.span`
+	align-self: flex-start;
+	width: fit-content;
+	font-size: 11px;
+	line-height: 16px;
+	padding: 1px 7px;
+	visibility: hidden;
 `;
 
 interface TileProps {
@@ -126,19 +134,19 @@ const ButtonTile: FunctionComponent< TileProps > = ( {
 			} }
 		>
 			<Label>{ label }</Label>
-			<PriceColumn>
-				<Price>
-					{ pricePerMonthFormatted }
-					<PriceSuffix>{ translate( '/mo' ) }</PriceSuffix>
-				</Price>
-				{ discountPercentage > 0 && (
-					<SavePill>
-						{ translate( 'Save %(percent)s%%', {
-							args: { percent: discountPercentage },
-						} ) }
-					</SavePill>
-				) }
-			</PriceColumn>
+			<Price>
+				{ pricePerMonthFormatted }
+				<PriceSuffix>{ translate( '/mo' ) }</PriceSuffix>
+			</Price>
+			{ discountPercentage > 0 ? (
+				<SavePill>
+					{ translate( 'Save %(percent)s%%', {
+						args: { percent: discountPercentage },
+					} ) }
+				</SavePill>
+			) : (
+				<SavePillPlaceholder aria-hidden="true">&nbsp;</SavePillPlaceholder>
+			) }
 		</Tile>
 	);
 };
