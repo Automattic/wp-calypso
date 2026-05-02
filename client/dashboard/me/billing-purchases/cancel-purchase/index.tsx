@@ -23,10 +23,11 @@ import {
 	siteFeaturesQuery,
 	removePurchaseMutation,
 	userPreferenceQuery,
+	userPurchasesQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
+import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -59,6 +60,10 @@ import {
 	isPartnerPurchase,
 	isOneTimePurchase,
 } from '../../../utils/purchase';
+import {
+	classifyPurchaseForCopy,
+	getProductNounForCategory,
+} from '../purchase-settings/classify-purchase-for-copy';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
 import {
@@ -326,6 +331,7 @@ export default function CancelPurchase() {
 }
 
 function CancelPurchaseInner() {
+	const queryClient = useQueryClient();
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
@@ -1119,52 +1125,34 @@ function CancelPurchaseInner() {
 			return;
 		}
 
-		removePurchaseMutator.mutate( purchase.ID, {
-			onSuccess: () => {
-				if ( purchase.will_atomic_revert_after_removal ) {
-					createSuccessNotice(
-						/* translators: Shown after removing a product from an Atomic site */
-						__( 'Your site has been removed. Download a backup to save your themes and plugins.' ),
-						{
-							type: 'snackbar',
-							actions: [
-								{
-									label: __( 'Download a backup' ),
-									url: `//${ purchase.domain }/wp-admin/export.php`,
-								},
-							],
-						}
-					);
-				} else {
-					createSuccessNotice(
-						sprintf(
-							/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
-							__( '%(productName)s was removed.' ),
-							{
-								productName: purchase.is_domain ? purchase.meta : purchase.product_name,
-							}
-						),
-						{ type: 'snackbar' }
-					);
-				}
-				invokeSurvicateEvent( 'purchaseRemoved' );
-				navigate( { to: purchasesRoute.to } );
-			},
-			onError: () => {
-				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-				createErrorNotice(
-					sprintf(
-						/* translators: %(purchaseName)s is the name of the product that was purchased. */
-						__(
-							'There was a problem removing %(purchaseName)s. Please try again later or contact support.'
-						),
-						{ purchaseName }
-					),
-					{ type: 'snackbar' }
-				);
-				setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
-			},
-		} );
+		// Delay everything for tactile feedback (button stays busy for 1.5s)
+		setTimeout( () => {
+			// 1. Strip purchase from cache optimistically
+			queryClient.setQueryData( userPurchasesQuery().queryKey, ( old: Purchase[] | undefined ) =>
+				( old ?? [] ).filter( ( p ) => p.ID !== purchase.ID )
+			);
+
+			// 2. Navigate with notice params
+			invokeSurvicateEvent( 'purchaseRemoved' );
+			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
+			navigate( {
+				to: purchasesRoute.to,
+				search: {
+					removed: productNoun,
+					...( purchase.will_atomic_revert_after_removal
+						? { removedDomain: purchase.domain }
+						: {} ),
+				},
+			} );
+
+			// 3. Fire mutation in background — built-in onSuccess at the package
+			//    level still fires invalidateQueries for eventual consistency
+			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
+				createErrorNotice( __( 'There was a problem removing your purchase. Please try again.' ), {
+					type: 'snackbar',
+				} );
+			} );
+		}, 1500 );
 	};
 
 	const submitTurnOffAutoRenew = ( purchase: Purchase ) => {
