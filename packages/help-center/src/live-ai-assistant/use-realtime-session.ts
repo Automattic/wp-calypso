@@ -265,6 +265,7 @@ function describeToolCall(
 			return null;
 	}
 }
+const GET_USER_MEDIA_TIMEOUT_MS = 30_000;
 
 interface FetchEphemeralKeyArgs {
 	tokenEndpoint: string;
@@ -591,7 +592,12 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	);
 
 	const start = useCallback( async () => {
-		if ( status === 'active' || status === 'connecting' || status === 'requesting-token' ) {
+		if (
+			status === 'active' ||
+			status === 'connecting' ||
+			status === 'requesting-token' ||
+			status === 'requesting-mic'
+		) {
 			return;
 		}
 
@@ -600,6 +606,25 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		setToolEvents( [] );
 
 		try {
+			// Check mic permission before prompting so we can fail fast if denied.
+			if ( navigator.permissions ) {
+				try {
+					const permissionStatus = await navigator.permissions.query( {
+						name: 'microphone' as PermissionName,
+					} );
+					if ( permissionStatus.state === 'denied' ) {
+						throw new Error(
+							'Microphone access is blocked. Please allow microphone access in your browser settings and try again.'
+						);
+					}
+				} catch ( permErr ) {
+					// Re-throw our own "denied" error; ignore browser compat errors.
+					if ( permErr instanceof Error && permErr.message.includes( 'blocked' ) ) {
+						throw permErr;
+					}
+				}
+			}
+
 			setStatus( 'requesting-token' );
 			const ephemeralKey = await fetchEphemeralKey( {
 				tokenEndpoint,
@@ -608,7 +633,20 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			} );
 
 			setStatus( 'requesting-mic' );
-			const localStream = await navigator.mediaDevices.getUserMedia( { audio: true } );
+			const localStream = await Promise.race( [
+				navigator.mediaDevices.getUserMedia( { audio: true } ),
+				new Promise< never >( ( _, reject ) =>
+					setTimeout(
+						() =>
+							reject(
+								new Error(
+									'Microphone request timed out. Check for a browser permission prompt near the address bar.'
+								)
+							),
+						GET_USER_MEDIA_TIMEOUT_MS
+					)
+				),
+			] );
 			localStreamRef.current = localStream;
 
 			setStatus( 'connecting' );
