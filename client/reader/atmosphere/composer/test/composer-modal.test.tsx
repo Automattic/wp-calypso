@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -9,6 +10,11 @@ import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ComposerModal } from '../composer-modal';
 import { ComposerProvider, useComposer } from '../composer-provider';
+
+jest.mock( '@automattic/calypso-router', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
 
 function makePreview() {
 	return {
@@ -370,5 +376,35 @@ describe( '<ComposerModal>', () => {
 
 		await waitFor( () => expect( successSpy ).toHaveBeenCalled() );
 		expect( successSpy.mock.calls[ 0 ][ 0 ] ).toBe( 'Your reply was posted.' );
+	} );
+
+	it( 'success notice carries a View button that navigates to the parent thread', async () => {
+		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
+		const pageMock = page as unknown as jest.Mock;
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( successSpy ).toHaveBeenCalled() );
+
+		const [ , options ] = successSpy.mock.calls[ 0 ];
+		expect( options ).toEqual(
+			expect.objectContaining( {
+				button: 'View',
+				onClick: expect.any( Function ),
+			} )
+		);
+
+		options.onClick();
+		expect( pageMock ).toHaveBeenCalledWith(
+			'/reader/atmosphere/42/thread/did:plc:abcdefghijklmnopqrstuvwx/bbbbbbbbbbbbb'
+		);
 	} );
 } );
