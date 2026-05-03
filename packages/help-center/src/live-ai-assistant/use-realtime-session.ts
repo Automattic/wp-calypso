@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import {
 	GET_BLOCK_EXAMPLES_TOOL_NAME,
 	getBlockExamplesToolDefinition,
@@ -107,13 +108,6 @@ export interface UseRealtimeSessionOptions {
 	 * System instructions for the assistant.
 	 */
 	instructions: string;
-	/**
-	 * Endpoint that mints a short-lived client_secret for the Realtime API.
-	 * Must respond with `{ client_secret: { value: string } }` (OpenAI shape) or
-	 * `{ value: string }`. If not provided the hook will look for a developer
-	 * ephemeral key in `localStorage.wp_openai_realtime_key` (useful for local testing).
-	 */
-	tokenEndpoint?: string;
 }
 
 interface UseRealtimeSessionResult {
@@ -130,7 +124,8 @@ interface UseRealtimeSessionResult {
 }
 
 const DEFAULT_MODEL = 'gpt-realtime';
-const DEFAULT_TOKEN_ENDPOINT = '/openai/realtime-token';
+/** Proxied by WP.com REST to OpenAI `/v1/realtime/client_secrets`. */
+const REALTIME_CLIENT_SECRETS_PATH = '/ai-api-proxy/v1/realtime/client_secrets';
 const OPENAI_REALTIME_URL = 'https://api.openai.com/v1/realtime/calls';
 const MAX_TOOL_EVENTS = 40;
 
@@ -263,45 +258,36 @@ function describeToolCall(
 const GET_USER_MEDIA_TIMEOUT_MS = 30_000;
 
 interface FetchEphemeralKeyArgs {
-	tokenEndpoint: string;
 	model: string;
 	instructions: string;
 }
 
+function extractClientSecretValue( data: unknown ): string {
+	const body = data as { client_secret?: { value?: string }; value?: string; token?: string };
+	const value = body.client_secret?.value ?? body.value ?? body.token;
+	return value ?? '';
+}
+
 async function fetchEphemeralKey( {
-	tokenEndpoint,
 	model,
 	instructions,
 }: FetchEphemeralKeyArgs ): Promise< string > {
-	try {
-		const response = await fetch( tokenEndpoint, {
-			method: 'POST',
-			credentials: 'include',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify( { model, instructions } ),
-		} );
-		if ( response.ok ) {
-			const data = await response.json();
-			const value = data?.client_secret?.value ?? data?.value ?? data?.token;
-			if ( typeof value === 'string' && value.length ) {
-				return value;
-			}
-		}
-	} catch {
-		// Fall through to the dev-key fallback below.
-	}
-
-	// Developer fallback: a pasted ephemeral key, handy when running outside the Calypso dev server.
-	if ( typeof window !== 'undefined' ) {
-		const devKey = window.localStorage?.getItem( 'wp_openai_realtime_key' );
-		if ( devKey ) {
-			return devKey;
-		}
-	}
-
-	throw new Error(
-		'Could not obtain an OpenAI Realtime client secret. Make sure the Calypso dev server is running with OPENAI_API_KEY set in .env, or paste a key into localStorage.wp_openai_realtime_key.'
-	);
+	const response = await wpcomRequest( {
+		path: REALTIME_CLIENT_SECRETS_PATH,
+		method: 'POST',
+		apiNamespace: 'wpcom/v2',
+		query: {
+			'X-WPCOM-AI-Feature': 'wpcom-dictation-tool',
+		},
+		body: {
+			session: {
+				type: 'realtime',
+				model,
+				instructions,
+			},
+		},
+	} );
+	return extractClientSecretValue( response );
 }
 
 /**
@@ -310,7 +296,7 @@ async function fetchEphemeralKey( {
  * speech). Data-channel events carry transcripts and tool callbacks.
  */
 export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRealtimeSessionResult {
-	const { model = DEFAULT_MODEL, instructions, tokenEndpoint = DEFAULT_TOKEN_ENDPOINT } = options;
+	const { model = DEFAULT_MODEL, instructions } = options;
 
 	const [ status, setStatus ] = useState< RealtimeStatus >( 'idle' );
 	const [ error, setError ] = useState< string | null >( null );
@@ -620,7 +606,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 			setStatus( 'requesting-token' );
 			const ephemeralKey = await fetchEphemeralKey( {
-				tokenEndpoint,
 				model,
 				instructions,
 			} );
@@ -752,7 +737,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			setStatus( 'error' );
 			cleanup();
 		}
-	}, [ cleanup, handleServerEvent, instructions, model, status, tokenEndpoint ] );
+	}, [ cleanup, handleServerEvent, instructions, model, status ] );
 
 	const stop = useCallback( () => {
 		setStatus( 'ending' );
