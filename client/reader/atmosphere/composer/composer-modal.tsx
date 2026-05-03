@@ -118,12 +118,12 @@ export function ComposerModal() {
 							root_uri: mode.root.uri,
 						} )
 					);
+					const { text: noticeText, threadUrl } = successNoticeFor( mode, translate );
+					const options = threadUrl
+						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
+						: undefined;
+					dispatch( successNotice( noticeText, options ) );
 				}
-				const { text: noticeText, threadUrl } = successNoticeFor( mode, translate );
-				const options = threadUrl
-					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
-					: undefined;
-				dispatch( successNotice( noticeText, options ) );
 				closeComposer();
 			},
 		} );
@@ -287,17 +287,16 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 }
 
 function successNoticeFor(
-	mode: ActiveMode,
+	mode: Extract< ActiveMode, { kind: 'reply' } >,
 	t: ReturnType< typeof useTranslate >
 ): { text: ReactNode; threadUrl: string | null } {
-	if ( mode.kind === 'reply' ) {
-		return {
-			text: t( 'Your reply was posted.' ),
-			threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
-		};
-	}
-	// quote / standalone arms land with their respective slices.
-	return assertNever( mode );
+	// quote / standalone success copy lands with their respective slices —
+	// gate the call site on `mode.kind` so TS catches missing cases when
+	// those modes are wired through `<ComposerModal>`.
+	return {
+		text: t( 'Your reply was posted.' ),
+		threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
+	};
 }
 
 function assertNever( value: never ): never {
