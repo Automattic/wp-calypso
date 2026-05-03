@@ -1,5 +1,6 @@
 import './style.scss';
 import { createPostMutation } from '@automattic/api-queries';
+import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -9,6 +10,7 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getThreadUrl } from '../route';
 import { ComposerFooter } from './composer-footer';
 import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer, type ActiveMode } from './composer-provider';
@@ -116,8 +118,12 @@ export function ComposerModal() {
 							root_uri: mode.root.uri,
 						} )
 					);
-					dispatch( successNotice( translate( 'Your reply was posted.' ) as string ) );
 				}
+				const { text, threadUrl } = successNoticeFor( mode, translate );
+				const options = threadUrl
+					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
+					: undefined;
+				dispatch( successNotice( text, options ) );
 				closeComposer();
 			},
 		} );
@@ -278,6 +284,20 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 		default:
 			return assertNever( err );
 	}
+}
+
+function successNoticeFor(
+	mode: ActiveMode,
+	t: ReturnType< typeof useTranslate >
+): { text: ReactNode; threadUrl: string | null } {
+	if ( mode.kind === 'reply' ) {
+		return {
+			text: t( 'Your reply was posted.' ),
+			threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
+		};
+	}
+	// quote / standalone arms land with their respective slices.
+	return assertNever( mode );
 }
 
 function assertNever( value: never ): never {
