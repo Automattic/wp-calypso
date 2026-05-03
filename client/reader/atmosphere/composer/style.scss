@@ -4,6 +4,10 @@
 		background: var(--studio-gray-0, #f6f7f7);
 		border-radius: 4px;
 		margin-block-end: 8px;
+		// Long unbreakable strings (URLs, gibberish) in the snippet, display
+		// name, or handle would otherwise overflow the fixed-width modal and
+		// add a horizontal scrollbar. `overflow-wrap` is inherited.
+		overflow-wrap: anywhere;
 	}
 
 	.atmosphere-composer__pinned-author {
