@@ -75,6 +75,7 @@ describe( '<ComposerModal>', () => {
 			.spyOn( analytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 		jest.spyOn( noticeActions, 'successNotice' );
+		( page as unknown as jest.Mock ).mockReset();
 	} );
 
 	afterEach( () => {
