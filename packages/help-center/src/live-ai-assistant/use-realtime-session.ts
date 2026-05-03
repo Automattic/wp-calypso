@@ -72,11 +72,6 @@ import {
 	setPostTitleToolDefinition,
 	undoToolDefinition,
 } from './tools/editor-post-tool';
-import {
-	PLAY_DONE_SOUND_TOOL_NAME,
-	playDoneSoundToolDefinition,
-	executePlayDoneSoundTool,
-} from './tools/notification-sound-tool';
 
 export type RealtimeStatus =
 	| 'idle'
@@ -468,8 +463,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					result = await executeRedoTool();
 				} else if ( call.name === GET_POST_INFO_TOOL_NAME ) {
 					result = executeGetPostInfoTool();
-				} else if ( call.name === PLAY_DONE_SOUND_TOOL_NAME ) {
-					result = executePlayDoneSoundTool();
 				} else {
 					continue;
 				}
@@ -690,7 +683,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 								undoToolDefinition,
 								redoToolDefinition,
 								getPostInfoToolDefinition,
-								playDoneSoundToolDefinition,
 							],
 							tool_choice: 'auto',
 							audio: {
