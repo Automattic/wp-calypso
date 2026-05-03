@@ -27,7 +27,13 @@ import {
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { useSuspenseQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+	useSuspenseQuery,
+	useQuery,
+	useMutation,
+	useQueryClient,
+	type QueryCacheNotifyEvent,
+} from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -1125,14 +1131,60 @@ function CancelPurchaseInner() {
 			return;
 		}
 
-		// Delay everything for tactile feedback (button stays busy for 1.5s)
 		setTimeout( () => {
-			// 1. Strip purchase from cache optimistically
-			queryClient.setQueryData( userPurchasesQuery().queryKey, ( old: Purchase[] | undefined ) =>
-				( old ?? [] ).filter( ( p ) => p.ID !== purchase.ID )
-			);
+			// 1. Optimistic cache strip
+			const stripPurchaseFromList = () => {
+				queryClient.setQueryData( userPurchasesQuery().queryKey, ( old: Purchase[] | undefined ) =>
+					( old ?? [] ).filter( ( p ) => p.ID !== purchase.ID )
+				);
+			};
 
-			// 2. Navigate with notice params
+			stripPurchaseFromList();
+
+			// 2. Cache guard — re-strip if a stale refetch brings the purchase back.
+			// Pattern: packages/api-queries/src/site-collision-listener.ts
+			let guardActive = true;
+			let processing = false;
+
+			const unsubscribeGuard = queryClient
+				.getQueryCache()
+				.subscribe( ( event: QueryCacheNotifyEvent ) => {
+					if (
+						! guardActive ||
+						processing ||
+						event.type !== 'updated' ||
+						event.action.type !== 'success' ||
+						event.query.queryKey[ 0 ] !== 'upgrades'
+					) {
+						return;
+					}
+
+					const data = event.query.state.data as Purchase[] | undefined;
+					if ( data?.some( ( p ) => p.ID === purchase.ID ) ) {
+						processing = true;
+						try {
+							stripPurchaseFromList();
+						} finally {
+							processing = false;
+						}
+					}
+				} );
+
+			const cleanupGuard = () => {
+				if ( ! guardActive ) {
+					return;
+				}
+				guardActive = false;
+				unsubscribeGuard();
+			};
+
+			// Self-terminate after 15s with a final authoritative fetch
+			setTimeout( () => {
+				cleanupGuard();
+				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
+			}, 15_000 );
+
+			// 3. Navigate with notice params
 			invokeSurvicateEvent( 'purchaseRemoved' );
 			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
 			navigate( {
@@ -1145,12 +1197,14 @@ function CancelPurchaseInner() {
 				},
 			} );
 
-			// 3. Fire mutation in background — built-in onSuccess at the package
-			//    level still fires invalidateQueries for eventual consistency
+			// 4. Fire mutation in background
 			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
+				// Mutation failed — stop guarding and roll back the optimistic strip
+				cleanupGuard();
 				createErrorNotice( __( 'There was a problem removing your purchase. Please try again.' ), {
 					type: 'snackbar',
 				} );
+				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
 			} );
 		}, 1500 );
 	};
