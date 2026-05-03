@@ -15,7 +15,6 @@ import Draggable, { DraggableProps } from 'react-draggable';
  */
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useActionHooks } from '../hooks';
-import LiveAIAssistant from '../live-ai-assistant';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
@@ -107,7 +106,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 				bounds="body"
 			>
 				<Card className={ classNames } ref={ cardMergeRefs }>
-					<LiveAIAssistant />
 					<HelpCenterHeader onDismiss={ onDismiss } />
 					<HelpCenterContent currentRoute={ currentRoute } />
 					{ ! isMinimized && <HelpCenterFooter /> }

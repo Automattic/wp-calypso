@@ -16,7 +16,6 @@ import {
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
 import { useGetSupportInteractions } from '../hooks/use-get-support-interactions';
-import LiveAIAssistant from '../live-ai-assistant';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
@@ -90,7 +89,6 @@ const HelpCenter: React.FC< Container > = ( {
 			{ canConnectToZendesk && (
 				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
 			) }
-			<LiveAIAssistant />
 		</>,
 		container
 	);
