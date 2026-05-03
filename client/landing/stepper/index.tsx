@@ -8,7 +8,6 @@ import {
 	User as UserStore,
 	HelpCenter,
 } from '@automattic/data-stores';
-import { LiveAIAssistant } from '@automattic/help-center';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
@@ -254,7 +253,6 @@ async function main() {
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
-						<LiveAIAssistant />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
