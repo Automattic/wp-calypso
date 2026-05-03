@@ -72,7 +72,7 @@ function scrollBlockIntoView( clientId: string | null | undefined ): void {
 			const iframeDocument = editor?.contentWindow?.document;
 			const el = iframeDocument?.getElementById( `block-${ clientId }` );
 			if ( el && typeof el.scrollIntoView === 'function' ) {
-				el.scrollIntoView( { behavior: 'smooth', block: 'nearest', inline: 'nearest' } );
+				el.scrollIntoView( { behavior: 'smooth', block: 'center', inline: 'nearest' } );
 			}
 		} catch {
 			// scrollIntoView is best-effort; never let it break the tool result.

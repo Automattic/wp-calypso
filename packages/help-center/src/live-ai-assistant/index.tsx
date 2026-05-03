@@ -91,9 +91,6 @@ interface LiveAIAssistantProps {
 	layout?: 'floating' | 'sidebar';
 }
 
-const PAGE_EVENT_DEBOUNCE_MS = 100;
-const PUBLIC_API_WPCOM_ORIGIN = 'https://public-api.wordpress.com';
-
 function buildInstructions( locale: string, extra?: string ): string {
 	const base = [
 		'You are the WordPress.com Dictation Assistant for the Gutenberg block editor.',
@@ -122,6 +119,7 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'7. Use remove_block_tool when the user says "delete that", "remove the last paragraph", "scratch the heading". Defaults to selecting the previous block so dictation can continue.',
 		'8. Use move_block_tool to reorder blocks ("move that up", "move this to the top" → to_index: 0).',
 		"9. Use format_text_tool for inline RichText formatting: bold, italic, strikethrough, code, link (with url), underline, subscript, superscript. Pass target_text to format a substring of the current/selected block, or omit it to use the editor's active text selection.",
+		'Formatting fallback: if you cannot achieve what the user asked on a paragraph (format_text_tool errors, RichText strips forbidden tags or refuses the markup, update_block_attributes on core/paragraph will not persist the layout/colors/snippet — do not spiral on retries forever) — swap to the Custom HTML block (core/html) via replace_block_tool on that paragraph or insert_block_tool at the end following placement rules, with attributes.content as valid equivalent HTML preserving their dictated text.',
 		'10. Use select_block to move focus when the user says "go back to the first paragraph". Use get_inserter_items_tool only when you need to know what is allowed inside a particular container (rare).',
 		'Post-level workflow:',
 		'- Use set_post_title_tool when the user dictates a title or says "make this the title" / "the title is …". The title is NOT a block — it has its own field above the blocks.',
@@ -129,7 +127,7 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'- Use publish_post_tool ONLY when the user explicitly says "publish" / "publish it" / "go ahead and publish". Never publish proactively.',
 		'- Use undo_tool / redo_tool for "undo that" / "redo".',
 		'- Use get_post_info_tool sparingly, e.g. when the user asks "is it saved?" / "did it publish?" / "what\'s the status?".',
-		'Common attribute shapes: core/paragraph → { content: "..." }; core/heading → { content: "...", level: 2 }; core/list → { ordered: false } with inner_blocks of core/list-item, each { content: "..." }; core/quote → inner_blocks of core/paragraph plus optional citation; core/image → { url, alt }. When unsure, call get_block_type_tool with the exact block name to see its full attribute schema.',
+		'Common attribute shapes: core/paragraph → { content: "..." }; core/html (Custom HTML) → { content: "<p>...</p>" } raw markup when paragraph/RichText cannot hold what they asked; core/heading → { content: "...", level: 2 }; core/list → { ordered: false } with inner_blocks of core/list-item, each { content: "..." }; core/quote → inner_blocks of core/paragraph plus optional citation; core/image → { url, alt }. When unsure, call get_block_type_tool with the exact block name to see its full attribute schema.',
 		'Coloring blocks: to set the text color or background color of a block (e.g. "make that paragraph red", "make the heading on a black background"), call update_block_attributes_tool and write to attributes.style.color. Text color goes at attributes.style.color.text and background goes at attributes.style.color.background. Use a hex string like "#ff0000". To recolor inline links inside the same block, also set attributes.style.elements.link.color.text to the same value. Example: a red core/paragraph looks like { "name": "core/paragraph", "attributes": { "content": "I was there twenty years ago…", "dropCap": false, "style": { "color": { "text": "#ff0000" }, "elements": { "link": { "color": { "text": "#ff0000" } } } } } }. Always merge with existing attributes — do not drop other style keys you did not intend to change.',
 		'Reading block content: when get_editor_blocks_tool / get_selected_block_tool / get_block_tool return a block, the readable content lives in attributes.content (a string of HTML for RichText blocks like core/paragraph, core/heading, core/list-item, core/code, core/html). Each top-level block also includes a saved_html field — the canonical Gutenberg-serialized markup including comment delimiters — and may include originalContent (the parsed HTML the block was loaded from). Trust attributes.content for editing decisions and use saved_html only as a sanity check; never echo the raw HTML back to the user.',
 		'Never speak passwords, credit card numbers, or two-factor codes out loud, and never write them into the post.',
@@ -170,14 +168,12 @@ export function LiveAIAssistant( {
 	const [ isFloatingPanelOpen, setFloatingPanelOpen ] = useState( false );
 	const showPanel = isSidebar ? true : isFloatingPanelOpen;
 	const locale = useLocale();
-	const eventTimeoutRef = useRef< number | null >( null );
-
 	const instructions = useMemo(
 		() => buildInstructions( locale, contextualInstructions ),
 		[ locale, contextualInstructions ]
 	);
 
-	const { status, error, isMuted, transcript, toolEvents, start, stop, toggleMute, sendEvent } =
+	const { status, error, isMuted, transcript, toolEvents, start, stop, toggleMute } =
 		useRealtimeSession( { instructions } );
 
 	const timelineRows = useMemo(
@@ -200,54 +196,6 @@ export function LiveAIAssistant( {
 		status === 'requesting-mic' ||
 		status === 'connecting' ||
 		status === 'ending';
-
-	useEffect( () => {
-		if ( status !== 'active' ) {
-			return;
-		}
-
-		const scheduleEvent = ( eventName: string, details?: string ) => {
-			if ( eventTimeoutRef.current !== null ) {
-				window.clearTimeout( eventTimeoutRef.current );
-			}
-
-			eventTimeoutRef.current = window.setTimeout( () => {
-				eventTimeoutRef.current = null;
-				sendEvent( eventName, details );
-			}, PAGE_EVENT_DEBOUNCE_MS );
-		};
-
-		const handleKeydown = ( event: KeyboardEvent ) => {
-			const target = event.target as HTMLElement | null;
-			const tagName = target?.tagName?.toLowerCase() ?? 'unknown';
-			scheduleEvent( 'user-typed', `target=${ tagName }` );
-		};
-
-		const handleScroll = () => {
-			scheduleEvent( 'user-scrolled' );
-		};
-
-		const handleWpcomMessage = ( event: MessageEvent ) => {
-			if ( event.origin !== PUBLIC_API_WPCOM_ORIGIN ) {
-				return;
-			}
-			scheduleEvent( 'network-request-done', `origin=${ event.origin }` );
-		};
-
-		window.addEventListener( 'keydown', handleKeydown, true );
-		window.addEventListener( 'scroll', handleScroll, true );
-		window.addEventListener( 'message', handleWpcomMessage );
-
-		return () => {
-			if ( eventTimeoutRef.current !== null ) {
-				window.clearTimeout( eventTimeoutRef.current );
-				eventTimeoutRef.current = null;
-			}
-			window.removeEventListener( 'keydown', handleKeydown, true );
-			window.removeEventListener( 'scroll', handleScroll, true );
-			window.removeEventListener( 'message', handleWpcomMessage );
-		};
-	}, [ sendEvent, status ] );
 
 	const handleToggleFloatingPanel = () => {
 		if ( isSidebar ) {
