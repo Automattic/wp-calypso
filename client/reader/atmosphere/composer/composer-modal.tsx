@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { ComposerFooter } from './composer-footer';
 import { ComposerPinnedContext } from './composer-pinned-context';
@@ -115,11 +116,12 @@ export function ComposerModal() {
 							root_uri: mode.root.uri,
 						} )
 					);
+					dispatch( successNotice( translate( 'Your reply was posted.' ) as string ) );
 				}
 				closeComposer();
 			},
 		} );
-	}, [ mode, mutation, text, graphemeCount, closeComposer, dispatch ] );
+	}, [ mode, mutation, text, graphemeCount, closeComposer, dispatch, translate ] );
 
 	if ( ! mode ) {
 		return null;
