@@ -66,6 +66,35 @@ function Harness( props: { connectionId: number } ) {
 	);
 }
 
+function TriggerAndModalInvalidUri() {
+	const { openComposer } = useComposer();
+	return (
+		<>
+			<button
+				onClick={ () =>
+					openComposer( {
+						kind: 'reply',
+						root: { uri: 'at://garbage', cid: 'rcid' },
+						parent: { uri: 'at://garbage', cid: 'pcid' },
+						previewPost: makePreview(),
+					} )
+				}
+			>
+				open
+			</button>
+			<ComposerModal />
+		</>
+	);
+}
+
+function HarnessInvalidUri( props: { connectionId: number } ) {
+	return (
+		<ComposerProvider connectionId={ props.connectionId }>
+			<TriggerAndModalInvalidUri />
+		</ComposerProvider>
+	);
+}
+
 describe( '<ComposerModal>', () => {
 	beforeEach( () => {
 		// recordReaderTracksEvent is a thunk that reads state.reader.follows.
@@ -407,5 +436,25 @@ describe( '<ComposerModal>', () => {
 		expect( pageMock ).toHaveBeenCalledWith(
 			'/reader/atmosphere/42/thread/did:plc:abcdefghijklmnopqrstuvwx/bbbbbbbbbbbbb'
 		);
+	} );
+
+	it( 'omits the View button when the thread URL cannot be built', async () => {
+		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessInvalidUri connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( successSpy ).toHaveBeenCalled() );
+
+		const [ text, options ] = successSpy.mock.calls[ 0 ];
+		expect( text ).toBe( 'Your reply was posted.' );
+		expect( options ).toBeUndefined();
 	} );
 } );
