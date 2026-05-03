@@ -119,11 +119,11 @@ export function ComposerModal() {
 						} )
 					);
 				}
-				const { text, threadUrl } = successNoticeFor( mode, translate );
+				const { text: noticeText, threadUrl } = successNoticeFor( mode, translate );
 				const options = threadUrl
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
 					: undefined;
-				dispatch( successNotice( text, options ) );
+				dispatch( successNotice( noticeText, options ) );
 				closeComposer();
 			},
 		} );
@@ -301,7 +301,7 @@ function successNoticeFor(
 }
 
 function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
+	throw new Error( `Unhandled discriminated-union case: ${ JSON.stringify( value ) }` );
 }
 
 function DiscardConfirm( props: { onCancel: () => void; onConfirm: () => void } ) {
