@@ -2049,16 +2049,24 @@ export async function executeFormatTextTool( rawArgs: unknown ) {
 	}
 	const attrs = ( block.attributes ?? {} ) as Record< string, unknown >;
 	const raw = attrs[ parsed.attributeKey ];
-	if ( typeof raw !== 'string' ) {
-		return {
-			ok: false,
-			error: `Block attribute "${ parsed.attributeKey }" is not a string and cannot be formatted.`,
-		};
+	let inputHtml: string;
+	if ( typeof raw === 'string' ) {
+		inputHtml = raw;
+	} else {
+		const converted = richTextValueToHtml( raw );
+		if ( converted !== null ) {
+			inputHtml = converted;
+		} else {
+			return {
+				ok: false,
+				error: `Block attribute "${ parsed.attributeKey }" is not a string and cannot be formatted.`,
+			};
+		}
 	}
 
 	let value: RichTextValue;
 	try {
-		value = richText.create!( { html: raw } );
+		value = richText.create!( { html: inputHtml } );
 	} catch ( err ) {
 		const message = err instanceof Error ? err.message : 'unknown error';
 		return { ok: false, error: `richText.create failed: ${ message }` };
