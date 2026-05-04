@@ -256,7 +256,7 @@ function placeholderForMode(
 	if ( mode.kind === 'quote' ) {
 		return t( 'Add a comment…' ) as string;
 	}
-	return t( "What's up?" ) as string;
+	return t( 'What’s up?' ) as string;
 }
 
 function buildParamsForMode( mode: ActiveMode, text: string ): CreatePostParams {
