@@ -683,20 +683,6 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
- * Returns true if the split cancel/remove flow should be used for the given purchase.
- *
- * The split flow is enabled for refundable WordPress.com plans when the experiment is active.
- * When enabled, the cancel and remove actions are presented as separate explicit choices
- * instead of a single combined flow.
- * @param purchase  - the purchase to check
- * @param isEnabled - whether the split cancel/remove flow is active (experiment treatment or
- *                    feature flag). Use the `useIsSplitCancelRemoveEnabled` hook in React components.
- */
-export function shouldUseSplitCancelRemoveFlow( purchase: Purchase, isEnabled: boolean ): boolean {
-	return isEnabled && hasAmountAvailableToRefund( purchase ) && isDotcomPlan( purchase );
-}
-
-/**
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {

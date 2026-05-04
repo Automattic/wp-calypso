@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	Button,
@@ -12,6 +11,7 @@ import { useHelpCenter } from '../../../app/help-center';
 import { Text } from '../../../components/text';
 import { DisplayVariant } from '../../../utils/purchase';
 import { getCheckboxLabel } from './get-confirmation-copy';
+import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
@@ -35,7 +35,7 @@ export default function ConfirmCheckbox( {
 	onCustomerConfirmedUnderstandingAtomicPlanRevert,
 }: ConfirmCheckboxProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
-	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const { setNewMessagingChat } = useHelpCenter();
 
 	const supportHeadingText =

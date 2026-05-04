@@ -105,38 +105,22 @@ type TopNoticeArgs = {
 	displayVariant: 'cancel' | 'remove';
 	purchase: Purchase;
 	intent: 'cancel' | 'remove' | null;
-	isSplitCancelRemoveEnabled: boolean;
-	onClaimRefund: () => void;
 };
 
 function renderTopNotice( args: TopNoticeArgs ) {
-	const {
-		surveyShown,
-		showDomainOptionsStep,
-		displayVariant,
-		purchase,
-		intent,
-		isSplitCancelRemoveEnabled,
-		onClaimRefund,
-	} = args;
+	const { surveyShown, showDomainOptionsStep, displayVariant, purchase, intent } = args;
 
 	if ( surveyShown || showDomainOptionsStep ) {
 		return null;
 	}
 
-	// 1. Intent-remove with a refund → confirmed refund-amount notice (no CTA,
-	//    replaces the promo banner for split-button users).
+	// Intent-remove with a refund → confirmed refund-amount notice (no CTA).
 	if ( displayVariant === 'remove' && hasAmountAvailableToRefund( purchase ) ) {
-		return <RefundEligibilityNotice purchase={ purchase } mode="confirmed" />;
+		return <RefundEligibilityNotice purchase={ purchase } />;
 	}
 
-	// 2. No URL intent + experiment treatment + refund → today's promo banner.
-	if ( ! intent && isSplitCancelRemoveEnabled ) {
-		return <RefundEligibilityNotice purchase={ purchase } onClaimRefund={ onClaimRefund } />;
-	}
-
-	// 3. Everything else → time-remaining notice (itself suppressed on
-	//    the Remove variant via its own displayVariant check).
+	// Everything else → time-remaining notice (itself suppressed on
+	// the Remove variant via its own displayVariant check).
 	return (
 		<TimeRemainingNotice
 			purchase={ purchase }
@@ -467,7 +451,7 @@ function CancelPurchaseInner() {
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
 
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled( purchase );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	// Handler helpers
 	const purchases = purchase && sitePurchases;
@@ -502,7 +486,7 @@ function CancelPurchaseInner() {
 	};
 	const flowType = getPurchaseCancellationFlowType( purchase );
 	// Intent is set when the user clicks either Cancel or Remove on Purchase
-	// Settings (behind the purchases/split-cancel-remove flag). When present,
+	// Settings (behind the split cancel/remove experiment). When present,
 	// it drives both the screen variant (copy) and the backend mutation.
 	// When absent (flag-off, old deep link), fall back to today's flowType heuristic.
 	const intent = getCancelIntentFromSearch( useSearch( { from: cancelPurchaseRoute.fullPath } ) );
@@ -917,7 +901,7 @@ function CancelPurchaseInner() {
 	// confirmed"). Remove (and the no-intent legacy deep link) defer the
 	// mutation to onSurveyComplete, matching trunk's submit-handlers.
 	const shouldFireMutationOnConfirm = (): boolean =>
-		config.isEnabled( 'purchases/split-cancel-remove' ) && intent === 'cancel';
+		isSplitCancelRemoveEnabled && intent === 'cancel';
 
 	const onCancellationComplete = () => {
 		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
@@ -995,12 +979,6 @@ function CancelPurchaseInner() {
 				surveyShown: true,
 			} ) );
 		}
-	};
-
-	const onCancellationStartForRefund = () => {
-		// Explicitly clicking the refund notice button is the user's confirmation — skip the
-		// confirmation checkbox that would otherwise be required on the pre-survey screen.
-		onCancellationStart( 'refund', true );
 	};
 
 	const clickNext = () => {
@@ -1531,10 +1509,9 @@ function CancelPurchaseInner() {
 	}
 
 	const planName = purchase.is_domain_registration ? purchase.meta : purchase.product_name;
-	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 	const isDomainRemoval = flowType === CANCEL_FLOW_TYPE.REMOVE && purchase.is_domain_registration;
 
-	if ( isDomainRemoval && ! isSplitEnabled ) {
+	if ( isDomainRemoval && ! isSplitCancelRemoveEnabled ) {
 		return (
 			<PageLayout
 				size="small"
@@ -1570,7 +1547,7 @@ function CancelPurchaseInner() {
 		state.surveyStep === UPSELL_STEP &&
 		config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
 		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
-	// Under the split-cancel-remove flag the pre-survey confirmation screen
+	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
 	// `surveyShown` gate.
 	const atSurvey = Boolean( isSplitEnabled ? state.confirmationPassed : state.surveyShown );
@@ -1653,8 +1630,6 @@ function CancelPurchaseInner() {
 				displayVariant,
 				purchase,
 				intent,
-				isSplitCancelRemoveEnabled,
-				onClaimRefund: onCancellationStartForRefund,
 			} ) }
 		>
 			{ isSolutionsStep ? (
