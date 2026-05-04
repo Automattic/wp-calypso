@@ -45,6 +45,51 @@ interface AgentsManagerChatState {
 	floatingPosition: string;
 }
 
+type AgentsManagerExternalContextDelivery = 'next-message' | 'conversation';
+
+interface AgentsManagerExternalContextEntry {
+	id: string;
+	type?: string;
+	contentType?: string;
+	source?: string;
+	title?: string;
+	description?: string;
+	data?: unknown;
+	payload?: unknown;
+	getData?: () => unknown;
+	delivery?: AgentsManagerExternalContextDelivery;
+	createdAt?: string;
+	expiresAt?: string;
+}
+
+interface AgentsManagerExternalContextCardAction {
+	id?: string;
+	label: string;
+	prompt?: string;
+	type?: 'prefill' | 'submit';
+}
+
+interface AgentsManagerExternalContextCardStat {
+	label: string;
+	value: string;
+	description?: string;
+}
+
+interface AgentsManagerExternalContextCard {
+	id: string;
+	contextEntryId?: string;
+	title: string;
+	subtitle?: string;
+	description?: string;
+	source?: string;
+	tone?: 'default' | 'info' | 'success' | 'warning';
+	stats?: AgentsManagerExternalContextCardStat[];
+	bullets?: string[];
+	actions?: AgentsManagerExternalContextCardAction[];
+	createdAt?: string;
+	expiresAt?: string;
+}
+
 /**
  * Public API shape exposed on `window.__agentsManagerActions`.
  */
@@ -56,6 +101,14 @@ interface AgentsManagerActions {
 	setChatEnabled: ( isEnabled: boolean ) => void;
 	setChatCompactMode: ( isCompact: boolean ) => void;
 	setChatDesktopMediaQuery: ( query: string ) => void;
+	setChatInput?: ( value: string ) => void;
+	submitChatMessage?: ( message?: string ) => Promise< void >;
+	setContextEntry: ( entry: AgentsManagerExternalContextEntry ) => void;
+	removeContextEntry: ( id: string ) => void;
+	clearContextEntries: () => void;
+	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
+	removeContextCard: ( id: string ) => void;
+	clearContextCards: () => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;

@@ -17,6 +17,14 @@ Once the hook is mounted, `window.__agentsManagerActions` provides:
 | `setChatEnabled`           | `(isEnabled: boolean) => void`                          | Enables or disables chat rendering.                                                              |
 | `setChatCompactMode`       | `(isCompact: boolean) => void`                          | Toggles compact mode (undocked only).                                                            |
 | `setChatDesktopMediaQuery` | `(query: string) => void`                               | Sets the media query used to determine whether the chat can dock into the sidebar.               |
+| `setChatInput`             | `(value: string) => void`                               | Sets the current chat input value and focuses the input.                                         |
+| `submitChatMessage`        | `(message?: string) => Promise<void>`                   | Submits a message programmatically. If omitted, submits the current input value.                 |
+| `setContextEntry`          | `(entry: AgentsManagerExternalContextEntry) => void`    | Adds or replaces context that is merged into `clientContext.contextEntries`.                     |
+| `removeContextEntry`       | `(id: string) => void`                                  | Removes a context entry. Cards linked by `contextEntryId` are removed too.                       |
+| `clearContextEntries`      | `() => void`                                            | Removes all externally declared context entries and cards.                                       |
+| `setContextCard`           | `(card: AgentsManagerExternalContextCard) => void`      | Adds or replaces a graphical card shown inside the chat.                                         |
+| `removeContextCard`        | `(id: string) => void`                                  | Removes a graphical context card.                                                                |
+| `clearContextCards`        | `() => void`                                            | Removes all graphical context cards.                                                             |
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
 | `isReady`                  | `boolean`                                               | `true` once the actions API is fully populated and safe to call.                                 |
 
@@ -81,6 +89,35 @@ window.__agentsManagerActions.setChatEnabled( false );
 
 // Set desktop media query
 window.__agentsManagerActions.setChatDesktopMediaQuery( '(min-width: 1200px)' );
+
+// Attach context that will be sent with the next chat message
+window.__agentsManagerActions.setContextEntry( {
+	id: 'my-plugin/current-report',
+	type: 'my-plugin/report',
+	title: 'Current report',
+	delivery: 'next-message',
+	data: {
+		reportId: 123,
+		summary: 'Aggregate data only. No customer rows included.',
+	},
+} );
+
+// Show a matching card in the chat UI
+window.__agentsManagerActions.setContextCard( {
+	id: 'my-plugin/current-report-card',
+	contextEntryId: 'my-plugin/current-report',
+	source: 'My plugin',
+	title: 'Report attached',
+	subtitle: 'Sent with your next message',
+	stats: [ { label: 'Rows', value: '124' } ],
+	actions: [
+		{
+			label: 'Analyze report',
+			type: 'submit',
+			prompt: 'Analyze the attached report and recommend next steps.',
+		},
+	],
+} );
 
 // Pre-set initial values before mount
 window.__agentsManagerActions = {

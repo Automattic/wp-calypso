@@ -18,11 +18,13 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
+import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
+import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -83,6 +85,12 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
+	/** Context cards declared by the host application. */
+	contextCards?: ExternalContextCard[];
+	/** Called when a context card action is selected. */
+	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
+	/** Called when a context card is dismissed. */
+	onDismissContextCard?: ( card: ExternalContextCard ) => void;
 }
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
@@ -169,6 +177,9 @@ export default function AgentChat( {
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 	alternativeFooter,
+	contextCards = [],
+	onContextCardAction,
+	onDismissContextCard,
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
@@ -238,6 +249,11 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
+				<ContextCards
+					cards={ contextCards }
+					onAction={ onContextCardAction }
+					onDismiss={ onDismissContextCard }
+				/>
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
 				) }

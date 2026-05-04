@@ -3,6 +3,14 @@ import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import {
+	clearExternalContextCards,
+	clearExternalContextEntries,
+	removeExternalContextCard,
+	removeExternalContextEntry,
+	setExternalContextCard,
+	setExternalContextEntry,
+} from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -139,6 +147,12 @@ export default function useSetupCustomActions( {
 			setChatEnabled,
 			setChatCompactMode,
 			setChatDesktopMediaQuery,
+			setContextEntry: setExternalContextEntry,
+			removeContextEntry: removeExternalContextEntry,
+			clearContextEntries: clearExternalContextEntries,
+			setContextCard: setExternalContextCard,
+			removeContextCard: removeExternalContextCard,
+			clearContextCards: clearExternalContextCards,
 			chatNavigate: navigate,
 			isReady: true,
 		};

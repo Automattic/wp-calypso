@@ -10,6 +10,7 @@ import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
+import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
@@ -100,12 +101,23 @@ async function createWrappedContextProvider(
 		getClientContext: () => {
 			const pluginContext = contextProvider.getClientContext();
 
-			const resolvedContext = pluginContext.contextEntries?.length
+			let resolvedContext = pluginContext.contextEntries?.length
 				? {
 						...pluginContext,
 						contextEntries: resolveContextEntries( pluginContext.contextEntries ),
 				  }
 				: pluginContext;
+
+			const externalEntries = getExternalContextEntries();
+			if ( externalEntries.length ) {
+				resolvedContext = {
+					...resolvedContext,
+					contextEntries: [
+						...( resolvedContext.contextEntries || [] ),
+						...resolveContextEntries( externalEntries ),
+					],
+				};
+			}
 
 			return {
 				...resolvedContext,
@@ -146,6 +158,11 @@ async function createDefaultContextProvider(
 						.agentsManagerData ?? {}
 				: {};
 
+			const externalEntries = getExternalContextEntries();
+			const contextEntries = externalEntries.length
+				? resolveContextEntries( externalEntries )
+				: undefined;
+
 			return {
 				url: window.location.href,
 				pathname: currentRoute || window.location.pathname,
@@ -158,6 +175,7 @@ async function createDefaultContextProvider(
 				...( hostData.currentPost ? { currentPost: hostData.currentPost } : {} ),
 				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
+				...( contextEntries ? { contextEntries } : {} ),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( version && { constructorArguments: { version } } ),
 			};
