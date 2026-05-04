@@ -933,6 +933,23 @@ export function buildPlaceholderStandalonePost(
 }
 
 /**
+ * Build a real `AtmosphereFeedItem` from the server's `CreatePostResult`
+ * by re-using `buildPlaceholderStandalonePost` for shape and overwriting
+ * the URI / CID with the server-assigned values. Keeps the placeholder
+ * and the real item perfectly congruent (same author / timestamps /
+ * counts / lang / embed shape) so swapping one for the other in the
+ * cache is a pure reference change.
+ */
+export function buildFeedItemFromCreateResult(
+	result: CreatePostResult,
+	text: string,
+	connection: AtmosphereConnectionDetails | undefined
+): AtmosphereFeedItem {
+	const base = buildPlaceholderStandalonePost( text, result.uri, connection );
+	return { ...base, cid: result.cid };
+}
+
+/**
  * Walk the thread tree and append a synthesized placeholder reply node
  * under the post node whose `.post.uri` matches `parentUri`. Returns a
  * structurally-shared tree (untouched branches keep their identity).
@@ -1009,6 +1026,44 @@ function replacePlaceholderInThread(
 		return node;
 	}
 	return { ...node, replies, parent };
+}
+
+/**
+ * Swap a standalone-composer placeholder feed item for the real one in
+ * an `InfiniteData` page list. Walks pages in order so that if a
+ * concurrent refetch shifted the placeholder past page 0 (e.g. fresh
+ * items prepended above it), it is still found. Returns the input
+ * unchanged when no item with `pendingUri` is present so the caller can
+ * decide whether to invalidate as a fallback. Generic over the page
+ * shape because timeline pages and author-feed pages share the
+ * `{ items: AtmosphereFeedItem[] }` field but otherwise differ.
+ *
+ * Note: when the placeholder isn't found at all (cache still exists but
+ * its placeholder was already removed by a concurrent refetch), the
+ * helper just returns `data`. The consumer detects this by reference
+ * equality and falls back to `invalidateQueries` so the new post is
+ * not silently lost.
+ */
+export function swapPlaceholder< P extends { items: AtmosphereFeedItem[] } >(
+	data: InfiniteData< P >,
+	pendingUri: string,
+	replacement: AtmosphereFeedItem
+): InfiniteData< P > {
+	let swapped = false;
+	const pages = data.pages.map( ( page ) => {
+		if ( swapped ) {
+			return page;
+		}
+		const idx = page.items.findIndex( ( item ) => item.uri === pendingUri );
+		if ( idx === -1 ) {
+			return page;
+		}
+		swapped = true;
+		const items = [ ...page.items ];
+		items[ idx ] = replacement;
+		return { ...page, items };
+	} );
+	return swapped ? { ...data, pages } : data;
 }
 
 /**
@@ -1179,9 +1234,60 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 			restoreAtmospherePostSnapshots( queryClient, ctx.parentCountsContext );
 		},
 		onSuccess: ( result, vars, ctx ) => {
-			if ( ! vars.reply || ! ctx ) {
+			if ( ! ctx ) {
 				return;
 			}
+
+			// Standalone branch — swap the placeholder we prepended in
+			// onMutate (timeline + each patched author-feed cache) for an
+			// item carrying the real `uri` / `cid`. When a cache was
+			// evicted between onMutate and onSuccess (gc, route change,
+			// manual removeQueries), invalidate it so the real post
+			// re-materialises from the server on next read instead of
+			// being silently lost.
+			if ( ! vars.reply && ! vars.quote ) {
+				const connection = queryClient.getQueryData< AtmosphereConnectionDetails >(
+					readerAtmosphereKeys.connection( vars.connectionId )
+				);
+				const realItem = buildFeedItemFromCreateResult( result, vars.text, connection );
+
+				if ( ctx.timelineSnapshot ) {
+					const timelineKey = ctx.timelineSnapshot.queryKey;
+					const current =
+						queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey );
+					if ( ! current ) {
+						queryClient.invalidateQueries( { queryKey: timelineKey } );
+					} else {
+						queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >(
+							timelineKey,
+							swapPlaceholder( current, ctx.pendingUri, realItem )
+						);
+					}
+				}
+
+				for ( const snap of ctx.authorFeedSnapshots ) {
+					const current = queryClient.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+						snap.queryKey
+					);
+					if ( ! current ) {
+						queryClient.invalidateQueries( { queryKey: snap.queryKey } );
+						continue;
+					}
+					queryClient.setQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+						snap.queryKey,
+						swapPlaceholder( current, ctx.pendingUri, realItem )
+					);
+				}
+
+				return;
+			}
+
+			if ( ! vars.reply ) {
+				// Quote-only success — cache patching for quotes is wired
+				// in a later slice.
+				return;
+			}
+
 			const threadKey = readerAtmosphereKeys.thread( vars.reply.root.uri );
 			const current = queryClient.getQueryData< AtmosphereThreadResponse >( threadKey );
 			if ( ! current ) {
