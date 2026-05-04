@@ -1,6 +1,7 @@
+import './quote-button.scss';
+
 import { formatNumber } from '@automattic/number-formatters';
 import { Icon, quote } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
 import type { SocialPost } from '../../types';
@@ -25,12 +26,11 @@ export function QuoteButton( { post }: QuoteButtonProps ) {
 	return (
 		<button
 			type="button"
-			className={ clsx( 'social-post-card-quote-button' ) }
+			className="social-post-card-quote-button"
 			aria-label={ label as string }
 			onClick={ ( event ) => {
-				event.preventDefault();
 				event.stopPropagation();
-				onQuoteClick( post as SocialPost );
+				onQuoteClick( post );
 			} }
 		>
 			<Icon icon={ quote } size={ 16 } />
