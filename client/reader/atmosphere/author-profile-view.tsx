@@ -70,6 +70,10 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 		);
 	}
 
+	const subtabBasePath = `/reader/atmosphere/${ connection.id }/profile/${ encodeURIComponent(
+		actor
+	) }`;
+
 	return (
 		<ComposerProvider connectionId={ connection.id }>
 			<ReaderMain className="atmosphere-view">
@@ -81,9 +85,7 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 				<AuthorProfilePanel
 					connection={ connection }
 					actor={ actor }
-					subtabBasePath={ `/reader/atmosphere/${ connection.id }/profile/${ encodeURIComponent(
-						actor
-					) }` }
+					subtabBasePath={ subtabBasePath }
 				/>
 			</ReaderMain>
 			<ComposerModal />

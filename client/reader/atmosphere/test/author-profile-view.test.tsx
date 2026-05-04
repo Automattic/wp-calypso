@@ -124,7 +124,7 @@ describe( 'AuthorProfileView', () => {
 
 	it( 'renders the back-to-timeline button above the panel', async () => {
 		const user = userEvent.setup();
-		// jsdom starts with history.length === 1, so BackButton will call page() directly.
+		// Force history.length === 1 so BackButton routes via page() instead of history.back().
 		jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
 
 		nock( 'https://public-api.wordpress.com' )
@@ -160,11 +160,10 @@ describe( 'AuthorProfileView', () => {
 
 		renderWithProvider( <AuthorProfileView connectionId={ 42 } actor="alice.bsky.social" /> );
 
-		// Wait for the panel to render (connection resolved), then verify the
-		// back button is present in the view and navigates to the timeline.
 		await screen.findByRole( 'heading', { level: 2, name: 'Alice' } );
-		const backButton = screen.getByRole( 'button', { name: /back/i } );
-		await user.click( backButton );
+		const backButtons = screen.getAllByRole( 'button', { name: /back/i } );
+		expect( backButtons ).toHaveLength( 1 );
+		await user.click( backButtons[ 0 ] );
 		expect( page as unknown as jest.Mock ).toHaveBeenCalledWith( '/reader/atmosphere/42/timeline' );
 		expect( analytics.recordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_profile_back_to_timeline_clicked',

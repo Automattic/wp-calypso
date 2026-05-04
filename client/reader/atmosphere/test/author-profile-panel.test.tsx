@@ -111,6 +111,28 @@ describe( 'AuthorProfilePanel', () => {
 		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
 	} );
 
+	it( 'does not render the back-to-timeline button (it is owned by the parent view)', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+			.reply( 200, profilePayload );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.query( true )
+			.reply( 200, { items: [], cursor: null } );
+
+		renderWithProvider(
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		await screen.findByRole( 'heading', { level: 2, name: 'Alice' } );
+		expect( screen.queryByRole( 'button', { name: /back/i } ) ).toBeNull();
+	} );
+
 	it( 'fires profile_viewed on mount', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( 'https://public-api.wordpress.com' )

@@ -110,7 +110,6 @@ describe( 'ProfilePanel (own profile)', () => {
 			queryClient: makeQueryClient(),
 		} );
 
-		// Wait for the panel to render before reading hrefs.
 		await screen.findByRole( 'heading', { level: 2, name: 'Viewer Name' } );
 
 		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toHaveAttribute(
@@ -139,12 +138,39 @@ describe( 'ProfilePanel (own profile)', () => {
 		expect( screen.queryByRole( 'button', { name: /^Following$/i } ) ).toBeNull();
 	} );
 
+	it( 'does not render the back-to-timeline button on the own-profile route', async () => {
+		setupHappyPath();
+
+		renderWithProvider( <ProfilePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findByRole( 'heading', { level: 2, name: 'Viewer Name' } );
+		expect( screen.queryByRole( 'button', { name: /back/i } ) ).toBeNull();
+	} );
+
+	it( 'preserves unrelated query params when building subtab hrefs', async () => {
+		setupHappyPath();
+		window.history.replaceState( {}, '', '/reader/atmosphere/42/profile?from=tabs&foo=bar' );
+
+		renderWithProvider( <ProfilePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await screen.findByRole( 'heading', { level: 2, name: 'Viewer Name' } );
+		expect( screen.getByRole( 'menuitem', { name: 'Replies' } ) ).toHaveAttribute(
+			'href',
+			'/reader/atmosphere/42/profile?from=tabs&foo=bar&tab=replies'
+		);
+	} );
+
 	it( 'renders an error state when the profile endpoint fails', async () => {
-		// Use .times(3) to cover the initial attempt plus up to 2 retries that
-		// atmosphereScopedProfileQuery makes for non-terminal errors.
+		// atmosphereScopedProfileQuery retries non-terminal errors; persist the
+		// 502 reply so retry-policy tweaks don't make this test pass for the
+		// wrong reason.
 		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social' )
-			.times( 3 )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/viewer.bsky.social/feed' )
