@@ -1,5 +1,6 @@
 import { BigSkyIcon, cn } from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
+import { ShareReelAction } from './share-reel-action';
 import './style.scss';
 
 export const GenerateLayout = ( {
@@ -32,6 +33,7 @@ export const GenerateLayout = ( {
 					playsInline
 					preload="metadata"
 				/>
+				<ShareReelAction />
 			</div>
 		);
 	}
