@@ -75,6 +75,8 @@ function FeatureClipPanel(): JSX.Element {
 	return (
 		<PluginDocumentSettingPanel
 			name={ PANEL_NAME }
+			// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
+			// the pill must live in the title row so it stays visible when the panel is collapsed.
 			title={ titleNode as unknown as string }
 			className="image-studio-feature-clip-panel"
 		>

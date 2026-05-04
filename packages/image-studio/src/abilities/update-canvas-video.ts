@@ -127,7 +127,7 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 				addNotice( __( 'Video saved to Media Library', __i18n_text_domain__ ), 'success', [
 					{
 						label: __( 'View', __i18n_text_domain__ ),
-						url: `/wp-admin/post.php?post=${ attachmentId }&action=edit`,
+						url: `post.php?post=${ attachmentId }&action=edit`,
 						openInNewTab: true,
 					},
 				] );
