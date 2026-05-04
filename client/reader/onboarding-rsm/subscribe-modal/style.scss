@@ -130,7 +130,13 @@ $actions-height: 64px;
 			}
 
 			.reader-subscription-list-item__options {
-				display: none;
+				display: flex;
+				align-items: flex-start;
+				flex-shrink: 0;
+
+				.follow-button__label {
+					display: none;
+				}
 			}
 
 			.reader-subscription-list-item__site-url-timestamp {
@@ -211,6 +217,24 @@ $actions-height: 64px;
 			border-width: 1px;
 			border-radius: 4px;
 			box-shadow: none;
+		}
+
+		.button.follow-button.has-button-style.is-following,
+		.button.follow-button.has-button-style.is-following:hover {
+			background-color: var( --studio-gray-90, #1e1e1e );
+			border-color: var( --studio-gray-90, #1e1e1e );
+
+			svg.reader-following-feed {
+				fill: var( --studio-white, #fff );
+
+				* {
+					fill: var( --studio-white, #fff );
+				}
+			}
+
+			.follow-button__label {
+				color: var( --studio-white, #fff );
+			}
 		}
 	}
 

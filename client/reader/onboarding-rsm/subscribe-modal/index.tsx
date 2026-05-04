@@ -3,17 +3,18 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { AnyAction } from 'redux';
+import FollowButtonContainer from 'calypso/blocks/follow-button';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
-import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
@@ -372,15 +373,23 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 													<SiteIcon size={ 24 } iconUrl={ selectedFeedIconUrl } />
 													<h3>{ formatUrl( selectedSite.site_URL ) }</h3>
 												</div>
-												<ReaderFollowButton
+												<FollowButtonContainer
 													siteUrl={ selectedSite.site_URL }
 													feedId={ selectedSite.feed_ID }
 													siteId={ selectedSite.site_ID }
-													followSource="reader-onboarding-modal"
 													hasButtonStyle
 													onFollowToggle={ ( following: boolean ) => {
 														void handleFollowToggle( selectedSite, following );
 													} }
+													followIcon={ <></> }
+													followingIcon={
+														<Icon
+															key="following"
+															className="reader-following-feed"
+															icon={ check }
+															size={ 18 }
+														/>
+													}
 												/>
 											</div>
 											<div className="subscribe-modal__preview-stream-container">
