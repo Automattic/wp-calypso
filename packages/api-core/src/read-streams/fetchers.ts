@@ -126,7 +126,7 @@ export const fetchReadTagPosts = (
 	params: ReadStreamQueryParams = {}
 ): Promise< ReadStreamResponse > =>
 	wpcom.req.get( {
-		path: addQueryArgs( `/read/tags/${ tagSlug }/posts`, params ),
+		path: addQueryArgs( `/read/tags/${ encodeURIComponent( tagSlug ) }/posts`, params ),
 		apiNamespace: 'wpcom/v2',
 		method: 'GET',
 	} );
@@ -139,7 +139,7 @@ export const fetchReadTagPopular = (
 	params: ReadStreamQueryParams = {}
 ): Promise< ReadStreamResponse > =>
 	wpcom.req.get( {
-		path: addQueryArgs( `/read/streams/tag/${ tag }`, params ),
+		path: addQueryArgs( `/read/streams/tag/${ encodeURIComponent( tag ) }`, params ),
 		apiNamespace: 'wpcom/v2',
 		method: 'GET',
 	} );
@@ -156,7 +156,10 @@ export const fetchReadListPosts = (
 	params: ReadStreamQueryParams = {}
 ): Promise< ReadStreamResponse > =>
 	wpcom.req.get( {
-		path: addQueryArgs( `/read/list/${ owner }/${ slug }/posts`, params ),
+		path: addQueryArgs(
+			`/read/list/${ encodeURIComponent( owner ) }/${ encodeURIComponent( slug ) }/posts`,
+			params
+		),
 		apiVersion: '1.3',
 		method: 'GET',
 	} );
