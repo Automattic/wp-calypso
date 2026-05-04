@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { monetizeSubscriptionRoute } from '../../app/router/me';
 import { DataViewsCard } from '../../components/dataviews';
+import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
@@ -97,25 +98,37 @@ function MonetizeSubscriptions() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ getMonetizeSubscriptionsPageTitle() }
-					description={ __( 'Manage your Monetize subscriptions.' ) }
+					description={ __(
+						'Track subscriptions from readers who pay for access to your content.'
+					) }
 				/>
 			}
 		>
-			<div ref={ ref }>
-				<DataViewsCard>
-					<DataViews
-						data={ adjustedMonetizeSubscriptions }
-						isLoading={ isLoadingMonetize }
-						fields={ monetizeDataFields }
-						view={ currentView }
-						onChangeView={ setView }
-						defaultLayouts={ { table: {} } }
-						actions={ actions }
-						getItemId={ getItemId }
-						paginationInfo={ paginationInfo }
-					/>
-				</DataViewsCard>
-			</div>
+			{ ! isLoadingMonetize && ( ! monetizeSubscriptions || monetizeSubscriptions.length === 0 ) ? (
+				<EmptyState.Wrapper isCompact>
+					<EmptyState>
+						<EmptyState.Description>
+							{ __( "You don't have any subscriptions yet." ) }
+						</EmptyState.Description>
+					</EmptyState>
+				</EmptyState.Wrapper>
+			) : (
+				<div ref={ ref }>
+					<DataViewsCard>
+						<DataViews
+							data={ adjustedMonetizeSubscriptions }
+							isLoading={ isLoadingMonetize }
+							fields={ monetizeDataFields }
+							view={ currentView }
+							onChangeView={ setView }
+							defaultLayouts={ { table: {} } }
+							actions={ actions }
+							getItemId={ getItemId }
+							paginationInfo={ paginationInfo }
+						/>
+					</DataViewsCard>
+				</div>
+			) }
 		</PageLayout>
 	);
 }
