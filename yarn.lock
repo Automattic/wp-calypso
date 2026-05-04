@@ -268,6 +268,7 @@ __metadata:
     "@tanstack/query-sync-storage-persister": "npm:^5.83.0"
     "@tanstack/react-query": "npm:^5.83.0"
     "@tanstack/react-query-persist-client": "npm:^5.83.0"
+    "@wordpress/html-entities": "npm:^4.23.0"
     fast-deep-equal: "npm:^3.1.3"
     react: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
@@ -296,22 +297,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/babel-plugin-transform-wpcalypso-async@workspace:^, @automattic/babel-plugin-transform-wpcalypso-async@workspace:packages/babel-plugin-transform-wpcalypso-async":
-  version: 0.0.0-use.local
-  resolution: "@automattic/babel-plugin-transform-wpcalypso-async@workspace:packages/babel-plugin-transform-wpcalypso-async"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/core": "npm:^7.27.1"
-    lodash: "npm:^4.17.21"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/blaze-dashboard@workspace:apps/blaze-dashboard":
   version: 0.0.0-use.local
   resolution: "@automattic/blaze-dashboard@workspace:apps/blaze-dashboard"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
-    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -460,7 +450,6 @@ __metadata:
   dependencies:
     "@automattic/babel-plugin-i18n-calypso": "workspace:^"
     "@automattic/babel-plugin-preserve-i18n": "workspace:^"
-    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@babel/cli": "npm:^7.27.2"
     "@babel/core": "npm:^7.27.1"
     "@babel/helpers": "npm:^7.27.1"
@@ -533,7 +522,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
-    "@types/node": "npm:^22.10.10"
+    "@types/node": "npm:^24.12.2"
     postcss: "npm:^8.5.3"
     postcss-custom-properties: "npm:^12.1.11"
     sass: "npm:1.54.0"
@@ -547,7 +536,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": "npm:^0.6.0"
-    "@types/node": "npm:^22.7.5"
+    "@types/node": "npm:^24.12.2"
     cookie: "npm:^0.7.2"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
@@ -579,7 +568,7 @@ __metadata:
     "@jest/types": "npm:^29.6.3"
     "@playwright/browser-chromium": "npm:1.57.0"
     "@playwright/browser-firefox": "npm:1.57.0"
-    "@types/node": "npm:^22.7.5"
+    "@types/node": "npm:^24.12.2"
     "@types/totp-generator": "npm:^0.0.8"
     "@wordpress/i18n": "npm:^5.23.0"
     asana-phrase: "npm:^0.0.8"
@@ -933,7 +922,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
     "@types/canvas-confetti": "npm:^1.6.0"
-    "@types/node": "npm:^22.7.5"
+    "@types/node": "npm:^24.12.2"
     "@wordpress/base-styles": "npm:^5.23.0"
     "@wordpress/components": "npm:^32.1.0"
     "@wordpress/compose": "npm:7.23.0"
@@ -1473,9 +1462,11 @@ __metadata:
     "@wordpress/components": "npm:^30.9.0"
     "@wordpress/compose": "npm:^7.2.0"
     "@wordpress/core-data": "npm:^7.23.0"
+    "@wordpress/editor": "npm:^14.23.0"
     "@wordpress/hooks": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/plugins": "npm:^7.23.0"
     "@wordpress/primitives": "npm:^4.23.0"
     "@wordpress/url": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
@@ -1511,7 +1502,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/allure-js-commons": "npm:^0.0.4"
-    "@types/node": "npm:^22.7.5"
+    "@types/node": "npm:^24.12.2"
     allure-js-commons: "npm:2.0.0-beta.9"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -1849,7 +1840,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/odyssey-stats@workspace:apps/odyssey-stats"
   dependencies:
-    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -1901,6 +1891,10 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/components": "npm:^29.0.0"
+    "@wordpress/compose": "npm:^7.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/private-apis": "npm:^1.39.0"
+    "@wordpress/ui": "npm:^0.9.0"
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@wordpress/data": ^10.23.0
@@ -9002,12 +8996,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.10.10, @types/node@npm:^22.15.3, @types/node@npm:^22.7.5":
-  version: 22.15.3
-  resolution: "@types/node@npm:22.15.3"
+"@types/node@npm:^24.12.2":
+  version: 24.12.2
+  resolution: "@types/node@npm:24.12.2"
   dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 2879f012d1aeba0bfdb5fed80d165f4f2cb3d1f2e1f98a24b18d4a211b4ace7d64bf2622784c78355982ffc1081ba79d0934efc2fb8353913e5871a63609661f
+    undici-types: "npm:~7.16.0"
+  checksum: 710050c42f89075c4479e4e1e4c2532486b0c41b1e2a8a13ad88641c88b88cdaea87414e19224f30028719737bd70e327edcaa184d50e86b9418941edd7eb02b
   languageName: node
   linkType: hard
 
@@ -13551,6 +13545,7 @@ __metadata:
     get-video-id: "npm:^3.1.4"
     hash.js: "npm:^1.1.7"
     he: "npm:^1.2.0"
+    hls.js: "npm:^1.6.16"
     html-loader: "npm:^0.5.5"
     html-to-react: "npm:^1.5.1"
     i18n-calypso: "workspace:^"
@@ -19536,6 +19531,13 @@ __metadata:
   dependencies:
     "@babel/runtime": "npm:^7.7.6"
   checksum: 812ec839386222d6437bd78d9f05db32e47d105ada0ad8834b32626919dd2fee7a10001bc489510f93a8069d02f118214bd8d42a82f7cf9daf8e84fbcbbb2016
+  languageName: node
+  linkType: hard
+
+"hls.js@npm:^1.6.16":
+  version: 1.6.16
+  resolution: "hls.js@npm:1.6.16"
+  checksum: dedf0255fdea857f29e46caab990b2bbdfde9410e64932466e03fc95018238b94486ce57e4b6a96aa4d0e8f9fd26c877e3905951f900fd58437f5eab2b284722
   languageName: node
   linkType: hard
 
@@ -31980,13 +31982,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.21.0":
-  version: 6.21.0
-  resolution: "undici-types@npm:6.21.0"
-  checksum: c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
-  languageName: node
-  linkType: hard
-
 "undici-types@npm:~7.16.0":
   version: 7.16.0
   resolution: "undici-types@npm:7.16.0"
@@ -33391,7 +33386,7 @@ __metadata:
     "@types/jest": "npm:^29.5.14"
     "@types/jest-when": "npm:^3.5.5"
     "@types/lodash": "npm:^4.17.17"
-    "@types/node": "npm:^22.15.3"
+    "@types/node": "npm:^24.12.2"
     "@types/page": "npm:^1.11.9"
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:^18.3.23"
@@ -33446,6 +33441,7 @@ __metadata:
     d3-time-format: "npm:^4.1.0"
     debug: "npm:^4.4.1"
     doctrine: "npm:^3.0.0"
+    dotenv: "npm:^9.0.2"
     dotenv-webpack: "npm:^8.1.0"
     enhanced-resolve: "npm:5.9.3"
     eslint: "npm:^8.57.1"
@@ -33539,6 +33535,7 @@ __metadata:
     "@types/archiver": "npm:^5.3.1"
     archiver: "npm:^5.3.0"
     asana-phrase: "npm:^0.0.8"
+    dotenv: "npm:^9.0.2"
     eslint: "npm:^8.34.0"
     eslint-plugin-playwright: "npm:^2.10.1"
     form-data: "npm:^4.0.4"

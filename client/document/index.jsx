@@ -2,7 +2,6 @@ import { parse } from 'path';
 import config from '@automattic/calypso-config';
 import { WordPressLogo } from '@automattic/components';
 import { isLocaleRtl } from '@automattic/i18n-utils';
-import { Omnibar } from '@automattic/omnibar';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useMemo, Component } from 'react';
@@ -16,12 +15,14 @@ import EnvironmentBadge, {
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
 	StoreSandboxHelper,
+	DarkModeHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
+import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -72,6 +73,7 @@ class Document extends Component {
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
+			darkModeHelper,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -167,7 +169,7 @@ class Document extends Component {
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
 					{ dashboard && config.isEnabled( 'dashboard/omnibar-radical' ) && (
 						<div id="wpcom-omnibar">
-							<Omnibar nodes={ {} } />
+							<InitialOmnibar user={ user } />
 						</div>
 					) }
 					{ dashboard &&
@@ -213,6 +215,7 @@ class Document extends Component {
 					) }
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
+							{ darkModeHelper && <DarkModeHelper /> }
 							{ reactQueryDevtoolsHelper && <ReactQueryDevtoolsHelper /> }
 							{ accountSettingsHelper && <AccountSettingsHelper /> }
 							{ preferencesHelper && <PreferencesHelper /> }
@@ -245,8 +248,9 @@ class Document extends Component {
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
-						manifests.map( ( manifest ) => (
+						manifests.map( ( manifest, index ) => (
 							<script
+								key={ `manifest-${ index }` }
 								nonce={ inlineScriptNonce }
 								dangerouslySetInnerHTML={ {
 									__html: manifest,

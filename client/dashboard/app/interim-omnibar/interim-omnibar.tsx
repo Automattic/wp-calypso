@@ -7,7 +7,7 @@ import { MasterbarLoggedIn } from 'calypso/layout/masterbar/logged-in';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { logout } from '../auth';
-import { omnibarEvents, useOmnibarEvent } from './omnibar-events';
+import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { createOmnibarStore } from './omnibar-store';
 import type { User, Site } from '@automattic/api-core';
 

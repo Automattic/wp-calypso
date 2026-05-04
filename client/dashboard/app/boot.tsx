@@ -13,8 +13,8 @@ import wpcom from 'calypso/lib/wp';
 import isDashboardEnv from '../utils/is-dashboard-env';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
-import { omnibarEvents } from './interim-omnibar/omnibar-events';
 import Layout from './layout';
+import { omnibarEvents } from './omnibar/events';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
 
@@ -25,6 +25,7 @@ import './style.scss';
 import 'calypso/layout/masterbar/style.scss';
 import './interim-omnibar/style.scss';
 import './omnibar/style.scss';
+import '@automattic/omnibar/style.scss';
 
 function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {

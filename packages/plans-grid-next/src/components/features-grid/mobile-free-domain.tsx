@@ -20,7 +20,7 @@ const MobileFreeDomain = ( {
 	paidDomainName,
 }: MobileFreeDomainProps ) => {
 	const translate = useTranslate();
-	const { isExperimentVariant, useFocusedComparisonFeatures } = usePlansGridContext();
+	const { isExperimentVariant } = usePlansGridContext();
 
 	if ( isMonthlyPlan || isWpComFreePlan( planSlug ) || isWpcomEnterpriseGridPlan( planSlug ) ) {
 		return null;
@@ -40,10 +40,8 @@ const MobileFreeDomain = ( {
 		  } )
 		: translate( 'Free domain for one year' );
 
-	// Apply green styling for experiment variants (which use "Everything in X, plus:" features)
-	// but not for focused long-list variants or control experience
-	const shouldHighlightDomain =
-		isExperimentVariant && ! useFocusedComparisonFeatures && paidDomainName;
+	// Apply green styling for the rolled-out cohort (uses "Everything in X, plus:" features).
+	const shouldHighlightDomain = isExperimentVariant && paidDomainName;
 
 	const titleClasses = clsx( 'plan-features-2023-grid__item-title', 'is-bold', {
 		'is-domain-included-highlight': shouldHighlightDomain,

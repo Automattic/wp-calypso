@@ -1,0 +1,15 @@
+.image-studio-feature-clip-panel {
+	&__description {
+		margin: 0 0 16px;
+		font-size: 13px;
+		line-height: 1.4;
+	}
+
+	&__button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		border-radius: 2px;
+	}
+}

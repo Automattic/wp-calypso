@@ -23,7 +23,6 @@
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
 		"@automattic/babel-plugin-preserve-i18n": "workspace:^",
-		"@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^",
 		"@babel/cli": "^7.27.2",
 		"@babel/core": "^7.27.1",
 		"@babel/helpers": "^7.27.1",

@@ -26,16 +26,18 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 		let editorPage: EditorPage;
 		let postsPage: PostsPage;
 		let postURL: URL;
+		let siteSlug: string;
 
 		await test.step( 'Given I am authenticated', async () => {
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+			siteSlug = testAccount.getSiteURL( { protocol: false } );
 		} );
 
 		await test.step( 'When I start a new post from the Posts page', async () => {
 			postsPage = new PostsPage( page );
-			await postsPage.visit();
-			await postsPage.newPost();
+			await postsPage.visit( { siteSlug } );
+			await postsPage.newPost( { siteSlug } );
 		} );
 
 		await test.step( 'When I enter post title', async () => {
@@ -65,7 +67,7 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 		} );
 
 		await test.step( 'When I re-open the published post from the Posts page', async () => {
-			await postsPage!.visit();
+			await postsPage!.visit( { siteSlug } );
 			await postsPage!.clickPost( postTitle );
 			// Redefine EditorPage without target since opening from PostsPage always uses iframe.
 			// See: https://github.com/Automattic/wp-calypso/issues/74925
@@ -101,7 +103,7 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 		} );
 
 		await test.step( 'When I re-open the post and switch to draft', async () => {
-			await postsPage!.visit();
+			await postsPage!.visit( { siteSlug } );
 			await postsPage!.clickPost( postTitle );
 			editorPage = new EditorPage( page );
 			await editorPage.unpublish();
@@ -123,7 +125,7 @@ test.describe( 'Editor: Advanced Post Flow', { tag: [ tags.GUTENBERG, tags.CALYP
 		} );
 
 		await test.step( 'When I visit the Posts page and go to Drafts', async () => {
-			await postsPage!.visit();
+			await postsPage!.visit( { siteSlug } );
 		} );
 
 		await test.step( 'When I trash post', async () => {

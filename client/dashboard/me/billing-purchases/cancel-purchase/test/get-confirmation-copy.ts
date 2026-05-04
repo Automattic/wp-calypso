@@ -226,16 +226,16 @@ describe( 'getButtonLabels', () => {
 			} );
 		}
 	} );
-	test( 'Remove uses category labels', () => {
+	test( 'Remove primary is "Continue removal"; secondary stays per-category', () => {
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'plan' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove plan', secondary: 'Keep plan' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep plan' } );
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'domain' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove domain', secondary: 'Keep domain' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep domain' } );
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'email' ), intent: 'remove' } )
-		).toEqual( { primary: 'Remove email', secondary: 'Keep email' } );
+		).toEqual( { primary: 'Continue removal', secondary: 'Keep email' } );
 	} );
 } );
 

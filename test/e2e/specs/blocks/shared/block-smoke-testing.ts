@@ -41,14 +41,16 @@ export function createBlockTests(
 			test( `${ specName }: smoke test ${ prefix }`, async ( { page, pageEditor } ) => {
 				let editorContext: EditorContext;
 				let publishedPostContext: PublishedPostContext;
+				let siteSlug: string;
 
 				await test.step( 'Given I am authenticated', async () => {
 					const testAccount = new TestAccount( accountName );
 					await testAccount.authenticate( page );
+					siteSlug = testAccount.getSiteURL( { protocol: false } );
 				} );
 
 				await test.step( 'When I visit the new post page', async () => {
-					await pageEditor.visit( 'post' );
+					await pageEditor.visit( 'post', { siteSlug } );
 				} );
 
 				await test.step( 'When I enter the post title', async () => {

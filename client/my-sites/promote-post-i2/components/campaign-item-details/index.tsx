@@ -493,17 +493,20 @@ export default function CampaignItemDetails( props: Props ) {
 		? `$${ formatCents( total_budget_used || 0, 2 ) }`
 		: '- ';
 
-	const adPreviewLabel =
-		// maybe we will need to edit this condition when we add more templates
-		format !== 'html5_v2' ? (
-			<div className="campaign-item-details__preview-header-dimensions">
-				<span>{ `${ width }x${ height }` }</span>
-			</div>
-		) : (
-			<div className="campaign-item-details__preview-header-preview-button">
-				<AdPreviewModal templateFormat={ format || '' } htmlCode={ creative_html || '' } />
-			</div>
-		);
+	// Both the classic (html5_v2) and AI-generated (html5_v3) responsive WP
+	// placements ship a renderable HTML doc — anything else has no preview,
+	// just dimensions.
+	const isWpcomHtmlFormat = format === 'html5_v2' || format === 'html5_v3';
+
+	const adPreviewLabel = isWpcomHtmlFormat ? (
+		<div className="campaign-item-details__preview-header-preview-button">
+			<AdPreviewModal templateFormat={ format || '' } htmlCode={ creative_html || '' } />
+		</div>
+	) : (
+		<div className="campaign-item-details__preview-header-dimensions">
+			<span>{ `${ width }x${ height }` }</span>
+		</div>
+	);
 
 	const getDestinationLabel = () => {
 		switch ( type ) {
@@ -1566,7 +1569,7 @@ export default function CampaignItemDetails( props: Props ) {
 								isLoading={ isLoading }
 								htmlCode={ creative_html || '' }
 								templateFormat={ format || '' }
-								width={ format === 'html5_v2' ? '100%' : '300px' }
+								width={ isWpcomHtmlFormat ? '100%' : '300px' }
 							/>
 							<div className="campaign-item-details__preview-disclosure">
 								{ getExternalTabletIcon() }

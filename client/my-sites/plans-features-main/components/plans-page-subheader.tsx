@@ -308,6 +308,14 @@ const PlansPageSubheader = ( {
 				</Subheader>
 			);
 		}
+
+		// Woo hosting solutions intent: subhead is rendered upstream by the
+		// stepper plans step, so suppress this onboarding fallback to avoid
+		// stacking two subheads.
+		if ( intent === 'plans-woo-hosting-solutions' ) {
+			return null;
+		}
+
 		if ( deemphasizeFreePlan && offeringFreePlan ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>

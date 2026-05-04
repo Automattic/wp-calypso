@@ -6,12 +6,14 @@ import {
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { differenceInCalendarDays } from 'date-fns';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
@@ -32,19 +34,36 @@ import {
 	isInExpirationGracePeriod,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
+import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
 } from './other-renewable-purchases-notice';
+import { PurchaseCancelledNotice } from './purchase-cancelled-notice';
 import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-expiring-notice';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const { refunded } = purchaseSettingsRoute.useSearch();
+	const { refunded, upgraded, cancelled } = purchaseSettingsRoute.useSearch();
+	const navigate = purchaseSettingsRoute.useNavigate();
+	// Show the transient cancelled success notice once after a cancel redirects
+	// here. The URL search param is cleared immediately so that a refresh / back
+	// navigation falls through to the regular expiring notice.
+	const [ showCancelledNotice, setShowCancelledNotice ] = useState( Boolean( cancelled ) );
+	useEffect( () => {
+		if ( cancelled ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { cancelled: _cancelled, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ cancelled, navigate ] );
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -75,6 +94,38 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} }
 		/>
 	) : null;
+
+	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( () => Boolean( upgraded ) );
+
+	useEffect( () => {
+		if ( upgraded ) {
+			// Strip ?upgraded from the URL so the notice doesn't survive refresh.
+			navigate( {
+				search: { refunded },
+				replace: true,
+			} );
+		}
+	}, [ upgraded, refunded, navigate ] );
+
+	// Transient cancelled success notice — suppresses every other notice until
+	// dismissed, refreshed, or navigated-away-and-back. Gated on the
+	// `?cancelled=true` search param set by the cancel redirect.
+	if ( config.isEnabled( 'purchases/split-cancel-remove' ) && showCancelledNotice ) {
+		return (
+			<PurchaseCancelledNotice
+				purchase={ purchase }
+				onClose={ () => setShowCancelledNotice( false ) }
+			/>
+		);
+	}
+
+	if ( showUpgradedNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowUpgradedNotice( false ) }>
+				{ __( 'Thank you for your purchase. Your site has been upgraded.' ) }
+			</Notice>
+		);
+	}
 
 	if ( purchase.async_pending_payment_block_is_set ) {
 		return <AsyncPendingNotice />;
@@ -339,7 +390,8 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				to_checkout: false,
 			} );
 
-			window.location.href = getSitePurchaseUpgradeUrl( purchase ) ?? '';
+			window.location.href =
+				getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() ) ?? '';
 			return;
 		}
 

@@ -44,6 +44,7 @@ import {
 	currencyDollar,
 	commentAuthorAvatar,
 	layout,
+	info,
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../../app/analytics';
@@ -93,7 +94,7 @@ import {
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 } from '../../../utils/purchase';
-import { getSitePurchaseUpgradeUrl } from '../../../utils/site-url';
+import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -137,6 +138,7 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 		...( siteSlug && { siteSlug } ),
 		cancel_to: backUrl,
 		dashboard: getCurrentDashboard(),
+		redirect_to: getUpgradedPurchaseRedirectUrl(),
 	} );
 }
 
@@ -222,7 +224,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
-	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const { recordTracksEvent } = useAnalytics();
 	const menuItems = [
 		purchase.is_upgradable && upgradeUrl && (
@@ -424,7 +426,7 @@ function UpgradeActionButton( { purchase }: { purchase: Purchase } ) {
 	if ( ! purchase.is_upgradable ) {
 		return null;
 	}
-	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	if ( ! upgradeUrl ) {
 		return null;
 	}
@@ -589,6 +591,19 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	// empty shell.
 	if ( isCentennialPurchase( purchase ) ) {
 		return null;
+	}
+
+	// Expired purchases get only the "Pick another plan/product" CTA — the
+	// other actions (reinstall, upgrade, renew, cancel/remove) don't apply
+	// once the purchase has lapsed.
+	if ( isExpired( purchase ) ) {
+		return (
+			<VStack spacing={ 4 }>
+				<ActionList>
+					<ReSubscribeActionButton purchase={ purchase } />
+				</ActionList>
+			</VStack>
+		);
 	}
 
 	return (
@@ -775,6 +790,17 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 	const isCentennial = isCentennialPurchase( purchase );
 	if ( isCentennial ) {
+		return (
+			<OverviewCard
+				icon={ currencyDollar }
+				title={ __( 'Price' ) }
+				heading={ formatCurrency( purchase.price_integer, purchase.currency_code, {
+					isSmallestUnit: true,
+				} ) }
+			/>
+		);
+	}
+	if ( isExpired( purchase ) ) {
 		return (
 			<OverviewCard
 				icon={ currencyDollar }
@@ -1248,7 +1274,7 @@ export default function PurchaseSettings() {
 	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
-	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase );
+	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const willRenew = Boolean(
 		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
 	);
@@ -1322,53 +1348,57 @@ export default function PurchaseSettings() {
 			<VStack spacing={ 6 }>
 				<PurchaseNotice purchase={ purchase } />
 				<Grid columns={ columns } gap={ spacing }>
-					<OverviewCard
-						icon={ calendar }
-						title={ expiryDateTitle }
-						heading={ ( () => {
-							if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
-								return __( 'Never expires' );
-							}
-							if ( isInExpirationGracePeriod( purchase ) ) {
+					{ isExpired( purchase ) ? (
+						<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
+					) : (
+						<OverviewCard
+							icon={ calendar }
+							title={ expiryDateTitle }
+							heading={ ( () => {
+								if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
+									return __( 'Never expires' );
+								}
+								if ( isInExpirationGracePeriod( purchase ) ) {
+									return formattedExpiry;
+								}
+								if ( willRenew ) {
+									return formattedRenewal;
+								}
+								if ( purchase.subscription_status !== 'active' ) {
+									return __( 'Inactive' );
+								}
 								return formattedExpiry;
-							}
-							if ( willRenew ) {
-								return formattedRenewal;
-							}
-							if ( purchase.subscription_status !== 'active' ) {
-								return __( 'Inactive' );
-							}
-							return formattedExpiry;
-						} )() }
-						description={ ( () => {
-							if ( isCentennial ) {
-								return undefined;
-							}
-							if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
-								return __( 'Pending renewal' );
-							}
-							if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
-								return __( 'Auto-renew is enabled' );
-							}
-							if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
-								return (
-									<Link
-										to={ purchaseSettingsRoute.fullPath }
-										params={ { purchaseId: purchase.attached_to_purchase_id } }
-									>
-										{ __( 'Renews with plan' ) }
-									</Link>
-								);
-							}
-							if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
-								return undefined;
-							}
-							if ( purchase.is_auto_renew_enabled ) {
-								return __( 'Will not auto-renew because there is no payment method' );
-							}
-							return __( 'Auto-renew is disabled' );
-						} )() }
-					/>
+							} )() }
+							description={ ( () => {
+								if ( isCentennial ) {
+									return undefined;
+								}
+								if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
+									return __( 'Pending renewal' );
+								}
+								if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
+									return __( 'Auto-renew is enabled' );
+								}
+								if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
+									return (
+										<Link
+											to={ purchaseSettingsRoute.fullPath }
+											params={ { purchaseId: purchase.attached_to_purchase_id } }
+										>
+											{ __( 'Renews with plan' ) }
+										</Link>
+									);
+								}
+								if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
+									return undefined;
+								}
+								if ( purchase.is_auto_renew_enabled ) {
+									return __( 'Will not auto-renew because there is no payment method' );
+								}
+								return __( 'Auto-renew is disabled' );
+							} )() }
+						/>
+					) }
 					<PurchasePriceCard purchase={ purchase } />
 					{ site &&
 						( site.options?.is_domain_only &&

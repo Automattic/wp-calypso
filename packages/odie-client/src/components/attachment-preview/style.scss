@@ -7,7 +7,7 @@
 	box-sizing: border-box;
 	width: 128px;
 	padding: 6px;
-	background-color: $gray-100;
+	background-color: var(--studio-gray-100);
 	align-items: center;
 	border-radius: 4px;
 	flex-shrink: 0;
@@ -15,9 +15,9 @@
 	&.is-attaching-file {
 		background: linear-gradient(
 			90deg,
-			color-mix( in srgb, $gray-100 20%, $gray-400 ),
-			$gray-100,
-			color-mix( in srgb, $gray-100 20%, $gray-400 )
+			color-mix( in srgb, var(--studio-gray-100) 20%, var(--studio-gray-400) ),
+			var(--studio-gray-100),
+			color-mix( in srgb, var(--studio-gray-100) 20%, var(--studio-gray-400) )
 		);
 		background-size: 200% 100%;
 		animation: shimmer 2000ms infinite linear 0ms;

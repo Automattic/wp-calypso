@@ -27,6 +27,7 @@ interface CancellationMainContentProps {
 	selectedDomain?: Domain;
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
+	isBusy?: boolean;
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
@@ -56,6 +57,7 @@ export default function CancellationMainContent( {
 	selectedDomain,
 	state,
 	purchaseCancelFeatures,
+	isBusy,
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
@@ -154,6 +156,7 @@ export default function CancellationMainContent( {
 				includedDomainPurchase={ includedDomainPurchase }
 				atomicTransfer={ atomicTransfer }
 				state={ state }
+				isBusy={ isBusy }
 				onDomainConfirmationChange={ onDomainConfirmationChange }
 				onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
 				onCustomerConfirmedUnderstandingAtomicPlanRevert={

@@ -1,6 +1,21 @@
 @import '@wordpress/base-styles/breakpoints';
 
 $actions-height: 64px;
+$entry-duration: 640ms;
+$entry-ease: cubic-bezier( 0.22, 1, 0.36, 1 );
+$entry-offset: 10px;
+
+@keyframes welcome-modal-fade-up {
+	from {
+		opacity: 0;
+		transform: translateY( $entry-offset );
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+}
 
 @mixin tile-circle-frame {
 	width: 64px;
@@ -29,6 +44,21 @@ $actions-height: 64px;
 	&__content {
 		padding-top: 20px;
 		padding-bottom: calc( $actions-height + 64px );
+	}
+
+	&__animate-in {
+		opacity: 0;
+		transform: translateY( $entry-offset );
+		animation: welcome-modal-fade-up $entry-duration $entry-ease forwards;
+		will-change: opacity, transform;
+	}
+
+	&__animate-in--intro {
+		animation-delay: 0ms;
+	}
+
+	&__animate-in--people {
+		animation-delay: 200ms;
 	}
 
 	&__intro {
@@ -163,5 +193,16 @@ $actions-height: 64px;
 
 	.reader-onboarding-modal__footer {
 		border-top: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.reader-welcome-modal {
+		&__animate-in {
+			opacity: 1;
+			transform: none;
+			animation: none;
+			will-change: auto;
+		}
 	}
 }

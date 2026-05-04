@@ -174,7 +174,9 @@ test.describe(
 			await test.step( 'Click Back to return to form', async () => {
 				await page.getByRole( 'button', { name: /Back|Go back/ } ).click();
 				await publishedFormLocator.getByRole( 'button', { name: 'Send' } ).waitFor();
-				await page.waitForTimeout( 500 );
+				await page
+					.getByText( /Thank you for your response\.|Your message has been sent/ )
+					.waitFor( { state: 'hidden', timeout: 5000 } );
 			} );
 
 			// --- Fill and submit second form ---

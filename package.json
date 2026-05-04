@@ -53,7 +53,7 @@
 		]
 	},
 	"engines": {
-		"node": "^v22.9.0",
+		"node": "^v24.15.0",
 		"yarn": "^4.0.0"
 	},
 	"scripts": {
@@ -184,7 +184,7 @@
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/jest": "^29.5.14",
 		"@types/lodash": "^4.17.17",
-		"@types/node": "^22.15.3",
+		"@types/node": "^24.12.2",
 		"@types/page": "^1.11.9",
 		"@types/qs": "^6.9.7",
 		"@types/react": "^18.3.23",
@@ -280,6 +280,7 @@
 		"chroma-js": "^2.6.0",
 		"css-loader": "^6.11.0",
 		"doctrine": "^3.0.0",
+		"dotenv": "^9.0.2",
 		"dotenv-webpack": "^8.1.0",
 		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",
