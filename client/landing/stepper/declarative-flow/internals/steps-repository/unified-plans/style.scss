@@ -37,6 +37,23 @@
 		padding-bottom: 0;
 	}
 
+	// Style the inline `start with a free plan` CTA inside Step.Heading subText
+	// to look like a link instead of a default borderless button. The legacy
+	// <PlansPageSubheader> applied equivalent styles to the same button via its
+	// styled <Subheader>; those don't carry over to Step.Heading's <p>.
+	.step-container-v2__heading p button.is-borderless {
+		padding: 0;
+		color: inherit;
+		font-size: inherit;
+		font-weight: 500;
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: inherit;
+		}
+	}
+
 	@media ( max-width: calc($break-medium - 1px) ) {
 		.plan-type-selector {
 			width: 100%;
