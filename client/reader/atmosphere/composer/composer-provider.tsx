@@ -7,6 +7,7 @@ import {
 	useRef,
 	useState,
 } from 'react';
+import { ComposeFab } from './triggers/compose-fab';
 import type { AtUriRef } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -96,7 +97,12 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 		[ mode, openComposer, closeComposer ]
 	);
 
-	return <ComposerContext.Provider value={ value }>{ children }</ComposerContext.Provider>;
+	return (
+		<ComposerContext.Provider value={ value }>
+			{ children }
+			<ComposeFab />
+		</ComposerContext.Provider>
+	);
 }
 
 export function useComposer(): ComposerContextValue {
