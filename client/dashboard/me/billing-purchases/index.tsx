@@ -31,13 +31,11 @@ import { PurchaseRemovedNotice } from './purchase-removed-notice';
 
 export default function PurchasesList() {
 	const currentSearchParams = purchasesRoute.useSearch();
-	const { removed, removedDomain, removedSendsEmail } = purchasesIndexRoute.useSearch();
+	const { removed, removedDomain } = purchasesIndexRoute.useSearch();
 	// Capture notice data on first render — useSearch() may lose the values
 	// after replaceState strips the URL params.
 	const [ removedNoticeData ] = useState( () =>
-		removed
-			? { productNoun: removed, atomicDomain: removedDomain, sendsEmail: removedSendsEmail }
-			: null
+		removed ? { productNoun: removed, atomicDomain: removedDomain } : null
 	);
 	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
 
@@ -48,7 +46,6 @@ export default function PurchasesList() {
 			const url = new URL( window.location.href );
 			url.searchParams.delete( 'removed' );
 			url.searchParams.delete( 'removedDomain' );
-			url.searchParams.delete( 'removedSendsEmail' );
 			window.history.replaceState( window.history.state, '', url.toString() );
 		}
 	}, [ removed ] );
@@ -123,7 +120,6 @@ export default function PurchasesList() {
 				<PurchaseRemovedNotice
 					productNoun={ removedNoticeData?.productNoun ?? '' }
 					atomicDomain={ removedNoticeData?.atomicDomain }
-					sendsEmail={ removedNoticeData?.sendsEmail }
 					onClose={ () => setShowRemovedNotice( false ) }
 				/>
 			) }
