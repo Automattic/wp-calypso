@@ -243,8 +243,9 @@ export async function getMastodonTagFeed(
 export async function createMastodonFavourite( params: CreateFavouriteParams ): Promise< void > {
 	try {
 		await wpcom.req.post( {
-			path: `/reader/mastodon/connections/${ params.connectionId }/favourites/${ params.statusId }`,
+			path: `/reader/mastodon/connections/${ params.connectionId }/likes`,
 			apiNamespace: NAMESPACE,
+			body: { status_id: params.statusId },
 		} );
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
@@ -255,7 +256,7 @@ export async function deleteMastodonFavourite( params: DeleteFavouriteParams ): 
 	try {
 		await wpcom.req.post( {
 			method: 'DELETE',
-			path: `/reader/mastodon/connections/${ params.connectionId }/favourites/${ params.statusId }`,
+			path: `/reader/mastodon/connections/${ params.connectionId }/likes/${ params.statusId }`,
 			apiNamespace: NAMESPACE,
 		} );
 	} catch ( raw ) {

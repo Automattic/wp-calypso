@@ -393,11 +393,11 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 	afterEach( () => nock.cleanAll() );
 
 	describe( 'useCreateMastodonFavouriteMutation', () => {
-		it( 'POSTs to the favourites endpoint and resolves', async () => {
+		it( 'POSTs to the likes endpoint and resolves', async () => {
 			nock( BASE )
-				.post(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
+					status_id: TARGET_ID,
+				} )
 				.reply( 200, {} );
 
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
@@ -422,9 +422,9 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 			seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
 
 			nock( BASE )
-				.post(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
+					status_id: TARGET_ID,
+				} )
 				.delay( 100 )
 				.reply( 200, {} );
 
@@ -471,9 +471,9 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 			const snapshot = getTimelineCache( client );
 
 			nock( BASE )
-				.post(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
+					status_id: TARGET_ID,
+				} )
 				.reply( 401, { error: 'unauthorized' } );
 
 			const { result } = renderHook(
@@ -509,9 +509,9 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 			} );
 
 			nock( BASE )
-				.post(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
+					status_id: TARGET_ID,
+				} )
 				.reply( 200, {} );
 
 			const { result } = renderHook(
@@ -555,9 +555,9 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 			const threadSnapshot = getThreadCache( client );
 
 			nock( BASE )
-				.post(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
+					status_id: TARGET_ID,
+				} )
 				.reply( 401, { error: 'unauthorized' } );
 
 			const { result } = renderHook(
@@ -583,11 +583,9 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 	} );
 
 	describe( 'useDeleteMastodonFavouriteMutation', () => {
-		it( 'DELETEs the favourites endpoint and resolves', async () => {
+		it( 'DELETEs the likes endpoint and resolves', async () => {
 			nock( BASE )
-				.delete(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ TARGET_ID }` )
 				.reply( 200, {} );
 
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
@@ -611,9 +609,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 			seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
 
 			nock( BASE )
-				.delete(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ TARGET_ID }` )
 				.delay( 100 )
 				.reply( 200, {} );
 
@@ -654,9 +650,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 			seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
 
 			nock( BASE )
-				.delete(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ TARGET_ID }` )
 				.reply( 200, {} );
 
 			const { result } = renderHook(
@@ -686,9 +680,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 			const snapshot = getTimelineCache( client );
 
 			nock( BASE )
-				.delete(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ TARGET_ID }` )
 				.reply( 401, { error: 'unauthorized' } );
 
 			const { result } = renderHook(
@@ -727,9 +719,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 			seedTimeline( client, [ { items: [ otherPost, target ], cursor: null } ], [ undefined ] );
 
 			nock( BASE )
-				.delete(
-					`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ TARGET_ID }`
-				)
+				.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ TARGET_ID }` )
 				.reply( 200, {} );
 
 			const { result } = renderHook(

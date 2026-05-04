@@ -98,9 +98,11 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 		expect( button ).toHaveTextContent( '7' );
 	} );
 
-	it( 'favourite() POSTs to the favourites endpoint and fires _favourite_clicked Tracks', async () => {
+	it( 'favourite() POSTs to the likes endpoint and fires _favourite_clicked Tracks', async () => {
 		nock( BASE )
-			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ STATUS_ID }` )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
+				status_id: STATUS_ID,
+			} )
 			.reply( 200 );
 
 		const user = userEvent.setup();
@@ -114,11 +116,9 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 
-	it( 'unfavourite() DELETEs from the favourites endpoint and fires _unfavourite_clicked Tracks', async () => {
+	it( 'unfavourite() DELETEs from the likes endpoint and fires _unfavourite_clicked Tracks', async () => {
 		nock( BASE )
-			.delete(
-				`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ STATUS_ID }`
-			)
+			.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ STATUS_ID }` )
 			.reply( 200 );
 
 		const user = userEvent.setup();
@@ -137,7 +137,9 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 	it( 'on create-favourite error fires _favourite_error_shown Tracks with error_kind and direction', async () => {
 		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
 		nock( BASE )
-			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ STATUS_ID }` )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
+				status_id: STATUS_ID,
+			} )
 			.reply( 502, { error: 'upstream_unavailable' } );
 
 		const user = userEvent.setup();
@@ -161,9 +163,7 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 	it( 'on delete-favourite auth error fires _favourite_error_shown Tracks with auth error copy', async () => {
 		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
 		nock( BASE )
-			.delete(
-				`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ STATUS_ID }`
-			)
+			.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ STATUS_ID }` )
 			.reply( 401, { error: 'not_authenticated' } );
 
 		const user = userEvent.setup();
