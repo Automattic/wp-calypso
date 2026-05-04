@@ -61,8 +61,6 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 		const isLiked = Boolean( post.viewer?.like );
 		const isPending = create.isPending || remove.isPending;
 
-		const error: { kind: string } | null = create.error ?? remove.error ?? null;
-
 		const trackError = ( mastodonError: MastodonError, direction: LikeDirection ) => {
 			dispatch( errorNotice( errorMessageForLike( mastodonError, translate ) ) );
 			analytics?.onClick( `calypso_reader_${ analytics.source }_favourite_error_shown`, {
@@ -106,11 +104,7 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 			supported: true,
 			isLiked,
 			isPending,
-			error,
-			label: {
-				action: translate( 'Favourite' ),
-				accessibleLabel,
-			},
+			label: { accessibleLabel },
 			like,
 			unlike,
 		};

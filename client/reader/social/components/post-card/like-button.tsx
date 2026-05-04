@@ -1,5 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { useLikeAction } from './like-context';
 import type { SocialPost } from '../../types';
@@ -10,16 +11,29 @@ interface LikeButtonProps {
 	post: SocialPost;
 }
 
-export function LikeButton( { post }: LikeButtonProps ) {
-	const action = useLikeAction( post );
+const ICON_SIZE = 16;
 
+export function LikeButton( { post }: LikeButtonProps ) {
+	const translate = useTranslate();
+	const action = useLikeAction( post );
+	const formattedLikes = formatNumber( post.counts.likes );
+
+	// No <LikeProvider> mounted (or the adapter declined to support the post)
+	// — render a static count so the cell isn't empty. Mirrors the
+	// non-interactive markup `<PostCardCounts>` used to inline before the
+	// adapter pattern took over the gate.
 	if ( ! action.supported ) {
-		return null;
+		return (
+			<span className="social-post-card-like-button social-post-card-like-button--static">
+				<ReaderLikeIcon liked={ false } iconSize={ ICON_SIZE } />
+				<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
+				<span className="social-post-card-like-button__count">{ formattedLikes }</span>
+			</span>
+		);
 	}
 
 	const isLiked = action.isLiked;
 	const isPending = action.isPending;
-	const formattedLikes = formatNumber( post.counts.likes );
 	const accessibleLabel = action.label.accessibleLabel( post.counts.likes );
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
@@ -50,7 +64,7 @@ export function LikeButton( { post }: LikeButtonProps ) {
 			disabled={ isPending }
 			onClick={ onClick }
 		>
-			<ReaderLikeIcon liked={ isLiked } iconSize={ 16 } />
+			<ReaderLikeIcon liked={ isLiked } iconSize={ ICON_SIZE } />
 			<span className="social-post-card-like-button__count">{ formattedLikes }</span>
 		</button>
 	);

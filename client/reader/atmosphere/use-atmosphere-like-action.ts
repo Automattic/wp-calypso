@@ -65,8 +65,6 @@ export function makeUseAtmosphereLikeAction( connectionId: number ): UseLikeActi
 		const isPending =
 			create.isPending || remove.isPending || post.viewer?.like === PENDING_LIKE_URI;
 
-		const error: { kind: string } | null = create.error ?? remove.error ?? null;
-
 		const trackError = ( atmosphereError: AtmosphereError, direction: LikeDirection ) => {
 			dispatch( errorNotice( errorMessageForLike( atmosphereError, translate ) ) );
 			analytics?.onClick( `calypso_reader_${ analytics.source }_like_error_shown`, {
@@ -114,11 +112,7 @@ export function makeUseAtmosphereLikeAction( connectionId: number ): UseLikeActi
 			supported: true,
 			isLiked,
 			isPending,
-			error,
-			label: {
-				action: translate( 'Like' ),
-				accessibleLabel,
-			},
+			label: { accessibleLabel },
 			like,
 			unlike,
 		};

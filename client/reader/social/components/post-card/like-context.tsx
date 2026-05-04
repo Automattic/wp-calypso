@@ -10,10 +10,7 @@ export interface LikeAction {
 	supported: boolean;
 	isLiked: boolean;
 	isPending: boolean;
-	error: { kind: string } | null;
 	label: {
-		/** Short action label — e.g. "Like". */
-		action: TranslateResult;
 		/** Accessible label with count — e.g. "Like, 5 likes". */
 		accessibleLabel: ( count: number ) => TranslateResult;
 	};
@@ -31,9 +28,7 @@ const nullLikeActionFn: UseLikeActionFn = () => ( {
 	supported: false,
 	isLiked: false,
 	isPending: false,
-	error: null,
 	label: {
-		action: '',
 		accessibleLabel: () => '',
 	},
 	like: () => {},
