@@ -3,10 +3,10 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { makeUseAtmosphereFavouriteAction } from 'calypso/reader/atmosphere/use-atmosphere-favourite-action';
+import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
-import { FavouritesProvider } from '../favourites-context';
+import { LikeProvider } from '../like-context';
 import { PostCardCounts } from '../post-card-counts';
 import type { SocialPost } from '../../../types';
 
@@ -93,12 +93,12 @@ describe( 'PostCardCounts', () => {
 		expect( links ).toHaveLength( 1 ); // only replies
 	} );
 
-	it( 'renders likes as a toggle button when connectionId and FavouritesProvider are supplied', () => {
-		const useAtmosphereFavouriteAction = makeUseAtmosphereFavouriteAction( 7 );
+	it( 'renders likes as a toggle button when connectionId and LikeProvider are supplied', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
 		renderWithProvider(
-			<FavouritesProvider value={ useAtmosphereFavouriteAction }>
+			<LikeProvider value={ useAtmosphereLikeAction }>
 				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
-			</FavouritesProvider>
+			</LikeProvider>
 		);
 		const button = screen.getByRole( 'button', { name: /like/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );

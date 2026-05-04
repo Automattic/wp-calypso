@@ -9,8 +9,8 @@ import nock from 'nock';
 import {
 	useAuthorizeMastodonConnectionMutation,
 	useCompleteMastodonConnectionMutation,
-	useCreateMastodonFavouriteMutation,
-	useDeleteMastodonFavouriteMutation,
+	useCreateMastodonLikeMutation,
+	useDeleteMastodonLikeMutation,
 	useMastodonAuthorFeedInfiniteQuery,
 	useMastodonAuthorProfileQuery,
 	useMastodonConnectionQuery,
@@ -338,7 +338,7 @@ describe( 'useMastodonTagFeedInfiniteQuery', () => {
 	} );
 } );
 
-describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutation', () => {
+describe( 'useCreateMastodonLikeMutation / useDeleteMastodonLikeMutation', () => {
 	const CONNECTION_ID = 42;
 	const TARGET_ID = '108020';
 	const OTHER_ID = '999999';
@@ -392,7 +392,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 	afterEach( () => nock.cleanAll() );
 
-	describe( 'useCreateMastodonFavouriteMutation', () => {
+	describe( 'useCreateMastodonLikeMutation', () => {
 		it( 'POSTs to the likes endpoint and resolves', async () => {
 			nock( BASE )
 				.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
@@ -401,7 +401,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 				.reply( 200, {} );
 
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-			const { result } = renderHook( () => useCreateMastodonFavouriteMutation( CONNECTION_ID ), {
+			const { result } = renderHook( () => useCreateMastodonLikeMutation( CONNECTION_ID ), {
 				wrapper: makeWrapper( client ),
 			} );
 
@@ -430,7 +430,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 			const { result } = renderHook(
 				() => {
-					const m = useCreateMastodonFavouriteMutation( CONNECTION_ID );
+					const m = useCreateMastodonLikeMutation( CONNECTION_ID );
 					void m.isPending;
 					void m.isSuccess;
 					return m;
@@ -478,7 +478,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 			const { result } = renderHook(
 				() => {
-					const m = useCreateMastodonFavouriteMutation( CONNECTION_ID );
+					const m = useCreateMastodonLikeMutation( CONNECTION_ID );
 					void m.isPending;
 					void m.isError;
 					void m.error;
@@ -516,7 +516,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 			const { result } = renderHook(
 				() => {
-					const m = useCreateMastodonFavouriteMutation( CONNECTION_ID );
+					const m = useCreateMastodonLikeMutation( CONNECTION_ID );
 					void m.isSuccess;
 					return m;
 				},
@@ -562,7 +562,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 			const { result } = renderHook(
 				() => {
-					const m = useCreateMastodonFavouriteMutation( CONNECTION_ID );
+					const m = useCreateMastodonLikeMutation( CONNECTION_ID );
 					void m.isPending;
 					void m.isError;
 					return m;
@@ -582,14 +582,14 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 		} );
 	} );
 
-	describe( 'useDeleteMastodonFavouriteMutation', () => {
+	describe( 'useDeleteMastodonLikeMutation', () => {
 		it( 'DELETEs the likes endpoint and resolves', async () => {
 			nock( BASE )
 				.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ TARGET_ID }` )
 				.reply( 200, {} );
 
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-			const { result } = renderHook( () => useDeleteMastodonFavouriteMutation( CONNECTION_ID ), {
+			const { result } = renderHook( () => useDeleteMastodonLikeMutation( CONNECTION_ID ), {
 				wrapper: makeWrapper( client ),
 			} );
 
@@ -615,7 +615,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 			const { result } = renderHook(
 				() => {
-					const m = useDeleteMastodonFavouriteMutation( CONNECTION_ID );
+					const m = useDeleteMastodonLikeMutation( CONNECTION_ID );
 					void m.isPending;
 					void m.isSuccess;
 					return m;
@@ -655,7 +655,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 			const { result } = renderHook(
 				() => {
-					const m = useDeleteMastodonFavouriteMutation( CONNECTION_ID );
+					const m = useDeleteMastodonLikeMutation( CONNECTION_ID );
 					void m.isSuccess;
 					return m;
 				},
@@ -685,7 +685,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 			const { result } = renderHook(
 				() => {
-					const m = useDeleteMastodonFavouriteMutation( CONNECTION_ID );
+					const m = useDeleteMastodonLikeMutation( CONNECTION_ID );
 					void m.isPending;
 					void m.isError;
 					void m.error;
@@ -724,7 +724,7 @@ describe( 'useCreateMastodonFavouriteMutation / useDeleteMastodonFavouriteMutati
 
 			const { result } = renderHook(
 				() => {
-					const m = useDeleteMastodonFavouriteMutation( CONNECTION_ID );
+					const m = useDeleteMastodonLikeMutation( CONNECTION_ID );
 					void m.isSuccess;
 					return m;
 				},

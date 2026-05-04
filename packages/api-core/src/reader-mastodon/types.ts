@@ -201,12 +201,12 @@ export interface MastodonFeedItemViewer {
 	reblogged: boolean;
 }
 
-export interface CreateFavouriteParams {
+export interface MastodonCreateLikeParams {
 	connectionId: number;
 	statusId: string;
 }
 
-export interface DeleteFavouriteParams {
+export interface MastodonDeleteLikeParams {
 	connectionId: number;
 	statusId: string;
 }

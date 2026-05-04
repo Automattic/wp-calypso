@@ -270,23 +270,23 @@ shared `SocialPost.viewer.{like,repost}` shape using a marker string
 `Boolean(post.viewer?.like)` and gets the right answer for both protocols.
 
 `<LikeButton>` is presentational and protocol-agnostic. It calls
-`useFavouriteAction(post)` from `<FavouritesProvider>` (defined in
-`favourites-context.tsx`), and renders nothing when no provider is mounted.
+`useLikeAction(post)` from `<LikeProvider>` (defined in
+`like-context.tsx`), and renders nothing when no provider is mounted.
 `<PostCardCounts>` falls back to a static count in that case.
 
 Each protocol shell wires its own adapter hook factory:
 
-- ATmosphere: `client/reader/atmosphere/use-atmosphere-favourite-action.ts`
-  exports `makeUseAtmosphereFavouriteAction(connectionId)`. It calls
+- ATmosphere: `client/reader/atmosphere/use-atmosphere-like-action.ts`
+  exports `makeUseAtmosphereLikeAction(connectionId)`. It calls
   `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
   `@automattic/api-queries`, uses `rkeyFromUri(viewer.like)` to derive the
   delete key (returns `null` for `PENDING_LIKE_URI`, preventing a DELETE
   with a fake rkey), and emits the labels "Like" / "Like, %d like(s)".
   Tracks events: `_like_clicked`, `_unlike_clicked`, `_like_error_shown`.
-- Mastodon: `client/reader/mastodon/use-mastodon-favourite-action.ts`
-  exports `makeUseMastodonFavouriteAction(connectionId)`. It calls
-  `useCreateMastodonFavouriteMutation()` /
-  `useDeleteMastodonFavouriteMutation()`, uses `post.uri` (the status_id)
+- Mastodon: `client/reader/mastodon/use-mastodon-like-action.ts`
+  exports `makeUseMastodonLikeAction(connectionId)`. It calls
+  `useCreateMastodonLikeMutation()` /
+  `useDeleteMastodonLikeMutation()`, uses `post.uri` (the status_id)
   for the delete call, and emits the UK-spelled labels "Favourite" /
   "Favourite, %d favourite(s)". Tracks events: `_favourite_clicked`,
   `_unfavourite_clicked`, `_favourite_error_shown`.
@@ -296,7 +296,7 @@ protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
 The connection ID flows from the protocol panel:
-`Panel` → `<FavouritesProvider value={makeUse…FavouriteAction(id)}>` plus
+`Panel` → `<LikeProvider value={makeUse…LikeAction(id)}>` plus
 `<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<LikeButton>`.
 Any future interactive count button (repost, follow, bookmark) should
 follow the same provider-injected adapter shape rather than reading

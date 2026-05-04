@@ -1,7 +1,7 @@
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
-import { useFavouriteAction } from './favourites-context';
+import { useLikeAction } from './like-context';
 
 import './like-button.scss';
 
@@ -15,13 +15,13 @@ interface LikeButtonProps {
 }
 
 export function LikeButton( { post }: LikeButtonProps ) {
-	const action = useFavouriteAction( post );
+	const action = useLikeAction( post );
 
 	if ( ! action.supported ) {
 		return null;
 	}
 
-	const isLiked = action.isFavourited;
+	const isLiked = action.isLiked;
 	const isPending = action.isPending;
 	const formattedLikes = formatNumber( post.counts.likes );
 	const accessibleLabel = action.label.accessibleLabel( post.counts.likes );
@@ -35,11 +35,11 @@ export function LikeButton( { post }: LikeButtonProps ) {
 		}
 
 		if ( isLiked ) {
-			action.unfavourite();
+			action.unlike();
 			return;
 		}
 
-		action.favourite();
+		action.like();
 	};
 
 	return (

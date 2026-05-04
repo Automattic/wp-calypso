@@ -8,9 +8,9 @@ import nock from 'nock';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../../social/components/post-card/analytics-context';
-import { FavouritesProvider } from '../../social/components/post-card/favourites-context';
 import { LikeButton } from '../../social/components/post-card/like-button';
-import { makeUseMastodonFavouriteAction } from '../use-mastodon-favourite-action';
+import { LikeProvider } from '../../social/components/post-card/like-context';
+import { makeUseMastodonLikeAction } from '../use-mastodon-like-action';
 import type { SocialPost } from '../../social/types';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -48,11 +48,11 @@ function makeQueryClient() {
 	return new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 }
 
-function renderFavouriteButton(
+function renderLikeButton(
 	post = makePost(),
 	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
 ) {
-	const useMastodonFavouriteAction = makeUseMastodonFavouriteAction( CONNECTION_ID );
+	const useMastodonLikeAction = makeUseMastodonLikeAction( CONNECTION_ID );
 	return {
 		onClick,
 		...renderWithProvider(
@@ -63,42 +63,42 @@ function renderFavouriteButton(
 					onClick,
 				} }
 			>
-				<FavouritesProvider value={ useMastodonFavouriteAction }>
+				<LikeProvider value={ useMastodonLikeAction }>
 					<LikeButton post={ post } />
-				</FavouritesProvider>
+				</LikeProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		),
 	};
 }
 
-describe( 'makeUseMastodonFavouriteAction', () => {
+describe( 'makeUseMastodonLikeAction', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.restoreAllMocks();
 	} );
 
-	it( 'isFavourited is false when viewer.like is null', () => {
-		renderFavouriteButton( makePost( { viewer: { like: null, repost: null } } ) );
+	it( 'isLiked is false when viewer.like is null', () => {
+		renderLikeButton( makePost( { viewer: { like: null, repost: null } } ) );
 		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 	} );
 
-	it( 'isFavourited is true when viewer.like is truthy', () => {
-		renderFavouriteButton( makePost( { viewer: { like: 'favourited', repost: null } } ) );
+	it( 'isLiked is true when viewer.like is truthy', () => {
+		renderLikeButton( makePost( { viewer: { like: 'favourited', repost: null } } ) );
 		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
 	it( 'renders label "Favourite" and accessible label with formatted count', () => {
-		renderFavouriteButton();
+		renderLikeButton();
 		// The button text is the count; the aria-label contains the accessible label.
 		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
 		expect( button ).toBeVisible();
 		expect( button ).toHaveTextContent( '7' );
 	} );
 
-	it( 'favourite() POSTs to the likes endpoint and fires _favourite_clicked Tracks', async () => {
+	it( 'like() POSTs to the likes endpoint and fires _favourite_clicked Tracks', async () => {
 		nock( BASE )
 			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
 				status_id: STATUS_ID,
@@ -106,7 +106,7 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 			.reply( 200 );
 
 		const user = userEvent.setup();
-		const { onClick } = renderFavouriteButton();
+		const { onClick } = renderLikeButton();
 		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
 
 		expect( onClick ).toHaveBeenCalledWith(
@@ -116,13 +116,13 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 
-	it( 'unfavourite() DELETEs from the likes endpoint and fires _unfavourite_clicked Tracks', async () => {
+	it( 'unlike() DELETEs from the likes endpoint and fires _unfavourite_clicked Tracks', async () => {
 		nock( BASE )
 			.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ STATUS_ID }` )
 			.reply( 200 );
 
 		const user = userEvent.setup();
-		const { onClick } = renderFavouriteButton(
+		const { onClick } = renderLikeButton(
 			makePost( { viewer: { like: 'favourited', repost: null } } )
 		);
 		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
@@ -134,7 +134,7 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 
-	it( 'on create-favourite error fires _favourite_error_shown Tracks with error_kind and direction', async () => {
+	it( 'on like() error fires _favourite_error_shown Tracks with error_kind and direction', async () => {
 		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
@@ -143,7 +143,7 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 			.reply( 502, { error: 'upstream_unavailable' } );
 
 		const user = userEvent.setup();
-		const { onClick } = renderFavouriteButton();
+		const { onClick } = renderLikeButton();
 		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
 
 		await waitFor( () =>
@@ -160,14 +160,14 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 		);
 	} );
 
-	it( 'on delete-favourite auth error fires _favourite_error_shown Tracks with auth error copy', async () => {
+	it( 'on unlike() auth error fires _favourite_error_shown Tracks with auth error copy', async () => {
 		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ STATUS_ID }` )
 			.reply( 401, { error: 'not_authenticated' } );
 
 		const user = userEvent.setup();
-		const { onClick } = renderFavouriteButton(
+		const { onClick } = renderLikeButton(
 			makePost( { viewer: { like: 'favourited', repost: null } } )
 		);
 		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
@@ -186,10 +186,10 @@ describe( 'makeUseMastodonFavouriteAction', () => {
 		);
 	} );
 
-	it( 'isFavourited is false when viewer is absent', () => {
+	it( 'isLiked is false when viewer is absent', () => {
 		const post = makePost();
 		delete ( post as Partial< SocialPost > ).viewer;
-		renderFavouriteButton( post );
+		renderLikeButton( post );
 		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 	} );

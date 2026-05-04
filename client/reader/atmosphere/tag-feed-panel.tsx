@@ -11,7 +11,7 @@ import {
 	mapAtmosphereFeedItemToSocialPost,
 	type SocialPost,
 } from 'calypso/reader/social';
-import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectAtmosphereError } from './error-projection';
 import {
@@ -21,7 +21,7 @@ import {
 	getTimelineUrl,
 	type ProfileRefInput,
 } from './route';
-import { makeUseAtmosphereFavouriteAction } from './use-atmosphere-favourite-action';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
@@ -157,8 +157,8 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl ]
 	);
 
-	const useFavouriteAction = useMemo(
-		() => makeUseAtmosphereFavouriteAction( connection.id ),
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
 		[ connection.id ]
 	);
 
@@ -176,7 +176,7 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<FavouritesProvider value={ useFavouriteAction }>
+			<LikeProvider value={ useLikeAction }>
 				<VStack spacing={ 4 } className="atmosphere-tag-feed">
 					<AuthorProfileHeader
 						timelineUrl={ getTimelineUrl( connection.id ) }
@@ -206,7 +206,7 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 						protocolHomeLabel={ String( translate( 'Back to ATmosphere' ) ) }
 					/>
 				</VStack>
-			</FavouritesProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

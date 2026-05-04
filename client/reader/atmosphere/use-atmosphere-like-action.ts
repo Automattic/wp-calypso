@@ -6,10 +6,7 @@ import { useDispatch } from 'react-redux';
 import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useSocialAnalytics } from '../social/components/post-card/analytics-context';
-import type {
-	FavouriteAction,
-	UseFavouriteActionFn,
-} from '../social/components/post-card/favourites-context';
+import type { LikeAction, UseLikeActionFn } from '../social/components/post-card/like-context';
 import type { AtmosphereError } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 
@@ -42,29 +39,29 @@ function errorMessageForLike(
 }
 
 /**
- * Factory that produces an atmosphere-protocol favourite-action hook for a
+ * Factory that produces an atmosphere-protocol like-action hook for a
  * given connection.
  *
  * Usage in panel render:
  *
- *   const useFavAction = useMemo(
- *     () => makeUseAtmosphereFavouriteAction( connection.id ),
+ *   const useLikeAction = useMemo(
+ *     () => makeUseAtmosphereLikeAction( connection.id ),
  *     [ connection.id ]
  *   );
- *   <FavouritesProvider value={ useFavAction }>…</FavouritesProvider>
+ *   <LikeProvider value={ useLikeAction }>…</LikeProvider>
  *
  * The returned function is itself a custom hook (it calls useCreateLikeMutation
  * etc.), so it must only be called inside a React component.
  */
-export function makeUseAtmosphereFavouriteAction( connectionId: number ): UseFavouriteActionFn {
-	return function useAtmosphereFavouriteAction( post: SocialPost ): FavouriteAction {
+export function makeUseAtmosphereLikeAction( connectionId: number ): UseLikeActionFn {
+	return function useAtmosphereLikeAction( post: SocialPost ): LikeAction {
 		const translate = useTranslate();
 		const dispatch = useDispatch();
 		const analytics = useSocialAnalytics();
 		const create = useCreateLikeMutation( connectionId );
 		const remove = useDeleteLikeMutation( connectionId );
 
-		const isFavourited = Boolean( post.viewer?.like );
+		const isLiked = Boolean( post.viewer?.like );
 		const isPending =
 			create.isPending || remove.isPending || post.viewer?.like === PENDING_LIKE_URI;
 
@@ -80,7 +77,7 @@ export function makeUseAtmosphereFavouriteAction( connectionId: number ): UseFav
 			} );
 		};
 
-		const favourite = () => {
+		const like = () => {
 			analytics?.onClick( `calypso_reader_${ analytics.source }_like_clicked`, {
 				connection_id: connectionId,
 				post_uri: post.uri,
@@ -91,7 +88,7 @@ export function makeUseAtmosphereFavouriteAction( connectionId: number ): UseFav
 			);
 		};
 
-		const unfavourite = () => {
+		const unlike = () => {
 			const rkey = rkeyFromUri( post.viewer?.like ?? '' );
 			if ( ! rkey ) {
 				return;
@@ -115,15 +112,15 @@ export function makeUseAtmosphereFavouriteAction( connectionId: number ): UseFav
 
 		return {
 			supported: true,
-			isFavourited,
+			isLiked,
 			isPending,
 			error,
 			label: {
 				action: translate( 'Like' ),
 				accessibleLabel,
 			},
-			favourite,
-			unfavourite,
+			like,
+			unlike,
 		};
 	};
 }

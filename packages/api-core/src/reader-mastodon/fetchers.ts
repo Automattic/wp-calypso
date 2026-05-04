@@ -1,8 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
-	CreateFavouriteParams,
-	DeleteFavouriteParams,
+	MastodonCreateLikeParams,
+	MastodonDeleteLikeParams,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
@@ -240,7 +240,7 @@ export async function getMastodonTagFeed(
 	}
 }
 
-export async function createMastodonFavourite( params: CreateFavouriteParams ): Promise< void > {
+export async function createMastodonLike( params: MastodonCreateLikeParams ): Promise< void > {
 	try {
 		await wpcom.req.post( {
 			path: `/reader/mastodon/connections/${ params.connectionId }/likes`,
@@ -252,7 +252,7 @@ export async function createMastodonFavourite( params: CreateFavouriteParams ): 
 	}
 }
 
-export async function deleteMastodonFavourite( params: DeleteFavouriteParams ): Promise< void > {
+export async function deleteMastodonLike( params: MastodonDeleteLikeParams ): Promise< void > {
 	try {
 		await wpcom.req.post( {
 			method: 'DELETE',

@@ -7,7 +7,7 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
 import { SocialAnalyticsProvider } from 'calypso/reader/social';
-import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
 import {
@@ -20,7 +20,7 @@ import { ThreadHeader } from './thread-header';
 import { ThreadTree } from './thread-tree';
 import { ThreadTombstone } from './thread-tree/thread-tombstone';
 import { ThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
-import { makeUseAtmosphereFavouriteAction } from './use-atmosphere-favourite-action';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import type {
 	AtmosphereConnection,
 	AtmosphereError,
@@ -169,8 +169,8 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
 	);
 
-	const useFavouriteAction = useMemo(
-		() => makeUseAtmosphereFavouriteAction( connection.id ),
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
 		[ connection.id ]
 	);
 
@@ -178,7 +178,7 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider value={ analyticsValue }>
-				<FavouritesProvider value={ useFavouriteAction }>
+				<LikeProvider value={ useLikeAction }>
 					{ renderBody( {
 						translate,
 						data,
@@ -190,7 +190,7 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 						targetUri,
 						connectionId: connection.id,
 					} ) }
-				</FavouritesProvider>
+				</LikeProvider>
 			</SocialAnalyticsProvider>
 		</>
 	);

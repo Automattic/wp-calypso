@@ -10,7 +10,7 @@ import {
 	SocialPostCard,
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
-import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
@@ -20,7 +20,7 @@ import {
 	getThreadUrl as buildThreadUrl,
 	type ProfileRefInput,
 } from './route';
-import { makeUseAtmosphereFavouriteAction } from './use-atmosphere-favourite-action';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
@@ -161,14 +161,14 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
 	);
 
-	const useFavouriteAction = useMemo(
-		() => makeUseAtmosphereFavouriteAction( connection.id ),
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
 		[ connection.id ]
 	);
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<FavouritesProvider value={ useFavouriteAction }>
+			<LikeProvider value={ useLikeAction }>
 				<SocialFeedList< SocialPost >
 					items={ items }
 					isPending={ isPending }
@@ -188,7 +188,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 					protocolHomeURL="/reader/atmosphere"
 					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
 				/>
-			</FavouritesProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

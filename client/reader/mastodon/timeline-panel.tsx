@@ -10,11 +10,11 @@ import {
 	SocialPostCard,
 	mapMastodonFeedItemToSocialPost,
 } from 'calypso/reader/social';
-import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectMastodonError } from './error-projection';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
-import { makeUseMastodonFavouriteAction } from './use-mastodon-favourite-action';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
 import type { MastodonConnection, MastodonFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
@@ -114,8 +114,8 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
-	const useFavouriteAction = useMemo(
-		() => makeUseMastodonFavouriteAction( connection.id ),
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
 		[ connection.id ]
 	);
 
@@ -141,7 +141,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<FavouritesProvider value={ useFavouriteAction }>
+			<LikeProvider value={ useLikeAction }>
 				<SocialFeedList< SocialPost >
 					items={ items }
 					isPending={ isPending }
@@ -161,7 +161,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 					protocolHomeURL="/reader/mastodon"
 					protocolHomeLabel={ translate( 'Back to Mastodon' ) }
 				/>
-			</FavouritesProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

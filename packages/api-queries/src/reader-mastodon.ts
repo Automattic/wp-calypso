@@ -1,8 +1,8 @@
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
-	createMastodonFavourite,
-	deleteMastodonFavourite,
+	createMastodonLike,
+	deleteMastodonLike,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
@@ -580,10 +580,10 @@ function restoreMastodonPostSnapshots(
 	}
 }
 
-export function useCreateMastodonFavouriteMutation( connectionId: number ) {
+export function useCreateMastodonLikeMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
-		mutationFn: ( { statusId } ) => createMastodonFavourite( { connectionId, statusId } ),
+		mutationFn: ( { statusId } ) => createMastodonLike( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			await queryClient.cancelQueries( { queryKey: readerMastodonKeys.all } );
 			return patchMastodonPostCaches( queryClient, statusId, ( item ) => ( {
@@ -600,10 +600,10 @@ export function useCreateMastodonFavouriteMutation( connectionId: number ) {
 	} );
 }
 
-export function useDeleteMastodonFavouriteMutation( connectionId: number ) {
+export function useDeleteMastodonLikeMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
-		mutationFn: ( { statusId } ) => deleteMastodonFavourite( { connectionId, statusId } ),
+		mutationFn: ( { statusId } ) => deleteMastodonLike( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
 			await queryClient.cancelQueries( { queryKey: readerMastodonKeys.all } );
 			return patchMastodonPostCaches( queryClient, statusId, ( item ) => ( {

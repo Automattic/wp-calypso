@@ -6,12 +6,12 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { makeUseAtmosphereFavouriteAction } from 'calypso/reader/atmosphere/use-atmosphere-favourite-action';
+import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
-import { FavouritesProvider } from '../favourites-context';
 import { LikeButton } from '../like-button';
+import { LikeProvider } from '../like-context';
 import type { SocialPost } from '../../../types';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -54,7 +54,7 @@ function renderLikeButton(
 	post = makePost(),
 	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
 ) {
-	const useAtmosphereFavouriteAction = makeUseAtmosphereFavouriteAction( 42 );
+	const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 42 );
 	return {
 		onClick,
 		...renderWithProvider(
@@ -65,9 +65,9 @@ function renderLikeButton(
 					onClick,
 				} }
 			>
-				<FavouritesProvider value={ useAtmosphereFavouriteAction }>
+				<LikeProvider value={ useAtmosphereLikeAction }>
 					<LikeButton post={ post } />
-				</FavouritesProvider>
+				</LikeProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		),
@@ -212,7 +212,7 @@ describe( '<LikeButton>', () => {
 	it( 'click does not bubble to parent listener', async () => {
 		const onParentClick = jest.fn();
 		const user = userEvent.setup();
-		const useAtmosphereFavouriteAction = makeUseAtmosphereFavouriteAction( 42 );
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 42 );
 		renderWithProvider(
 			<SocialAnalyticsProvider
 				value={ {
@@ -221,11 +221,11 @@ describe( '<LikeButton>', () => {
 					onClick: jest.fn(),
 				} }
 			>
-				<FavouritesProvider value={ useAtmosphereFavouriteAction }>
+				<LikeProvider value={ useAtmosphereLikeAction }>
 					<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>
 						<LikeButton post={ makePost( { viewer: { like: PENDING_LIKE_URI, repost: null } } ) } />
 					</div>
-				</FavouritesProvider>
+				</LikeProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		);

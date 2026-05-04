@@ -12,12 +12,12 @@ import {
 	mapMastodonFeedItemToSocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
-import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { MastodonAuthorProfileTabs, useMastodonAuthorFeedFilter } from './author-profile-tabs';
 import { projectMastodonError } from './error-projection';
 import { errorMessage } from './profile-errors';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
-import { makeUseMastodonFavouriteAction } from './use-mastodon-favourite-action';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
 import type {
 	MastodonAuthorProfile,
 	MastodonConnection,
@@ -171,13 +171,13 @@ export function MastodonAuthorProfilePanel( {
 		profile.data?.locked === true && items.length === 0 && ! feed.isPending && ! feed.isError;
 	const emptyHandle = profile.data?.acct ?? actor;
 
-	const useFavouriteAction = useMemo(
-		() => makeUseMastodonFavouriteAction( connection.id ),
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
 		[ connection.id ]
 	);
 
 	return (
-		<FavouritesProvider value={ useFavouriteAction }>
+		<LikeProvider value={ useLikeAction }>
 			<SocialAuthorProfilePanel< MastodonAuthorProfile, MastodonError, MastodonFeedItem >
 				connectionId={ connection.id }
 				actor={ actor }
@@ -221,6 +221,6 @@ export function MastodonAuthorProfilePanel( {
 				className="mastodon-author-profile"
 				feedDimension={ filter }
 			/>
-		</FavouritesProvider>
+		</LikeProvider>
 	);
 }

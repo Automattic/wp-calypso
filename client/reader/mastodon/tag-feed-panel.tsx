@@ -11,12 +11,12 @@ import {
 	mapMastodonFeedItemToSocialPost,
 	type SocialPost,
 } from 'calypso/reader/social';
-import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectMastodonError } from './error-projection';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
 import { MastodonTagFeedTabs, useMastodonTagFilter } from './tag-feed-tabs';
-import { makeUseMastodonFavouriteAction } from './use-mastodon-favourite-action';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
 import type { MastodonConnection, MastodonFeedItem } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
@@ -152,8 +152,8 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 		);
 	}, [ feed.data, connection.instance ] );
 
-	const useFavouriteAction = useMemo(
-		() => makeUseMastodonFavouriteAction( connection.id ),
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
 		[ connection.id ]
 	);
 
@@ -203,7 +203,7 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<FavouritesProvider value={ useFavouriteAction }>
+			<LikeProvider value={ useLikeAction }>
 				<VStack spacing={ 4 } className="mastodon-tag-feed">
 					<AuthorProfileHeader
 						timelineUrl={ getTimelineUrl( connection.id ) }
@@ -243,7 +243,7 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 						protocolHomeLabel={ String( translate( 'Back to Mastodon' ) ) }
 					/>
 				</VStack>
-			</FavouritesProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

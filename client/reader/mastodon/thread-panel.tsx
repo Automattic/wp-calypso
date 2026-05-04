@@ -10,13 +10,13 @@ import {
 	SocialAnalyticsProvider,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from 'calypso/reader/social';
-import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
 import { ThreadHeader } from './thread-header';
 import { MastodonThreadTree } from './thread-tree';
 import { MastodonThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
-import { makeUseMastodonFavouriteAction } from './use-mastodon-favourite-action';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
 import type {
 	MastodonConnection,
 	MastodonError,
@@ -142,8 +142,8 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
 	);
 
-	const useFavouriteAction = useMemo(
-		() => makeUseMastodonFavouriteAction( connection.id ),
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
 		[ connection.id ]
 	);
 
@@ -151,7 +151,7 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider value={ analyticsValue }>
-				<FavouritesProvider value={ useFavouriteAction }>
+				<LikeProvider value={ useLikeAction }>
 					{ renderBody( {
 						translate,
 						data,
@@ -164,7 +164,7 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 						handleRetry,
 						targetUri: statusId,
 					} ) }
-				</FavouritesProvider>
+				</LikeProvider>
 			</SocialAnalyticsProvider>
 		</>
 	);

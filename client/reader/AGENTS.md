@@ -109,10 +109,10 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 The likes/favourites count on `<SocialPostCard>` becomes an interactive
 `<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
 when the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
-the tree with a `<FavouritesProvider>` carrying a per-protocol adapter hook.
+the tree with a `<LikeProvider>` carrying a per-protocol adapter hook.
 ATmosphere panels (timeline / thread / tag-feed) wire
-`makeUseAtmosphereFavouriteAction(connection.id)`; Mastodon panels (timeline
-/ thread / tag-feed) wire `makeUseMastodonFavouriteAction(connection.id)`.
+`makeUseAtmosphereLikeAction(connection.id)`; Mastodon panels (timeline
+/ thread / tag-feed) wire `makeUseMastodonLikeAction(connection.id)`.
 Surfaces without a provider (quoted-post embeds, the shared
 `SocialAuthorProfilePanel` until it forwards `connectionId`, non-social
 cards) fall back to the static count.

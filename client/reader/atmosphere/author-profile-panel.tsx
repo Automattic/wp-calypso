@@ -22,7 +22,7 @@ import {
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
-import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
@@ -30,7 +30,7 @@ import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
-import { makeUseAtmosphereFavouriteAction } from './use-atmosphere-favourite-action';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import type {
 	AtmosphereAuthorFeedFilter,
 	AtmosphereScopedProfile,
@@ -341,8 +341,8 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
 	);
 
-	const useFavouriteAction = useMemo(
-		() => makeUseAtmosphereFavouriteAction( connection.id ),
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
 		[ connection.id ]
 	);
 
@@ -496,7 +496,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<FavouritesProvider value={ useFavouriteAction }>
+			<LikeProvider value={ useLikeAction }>
 				<VStack spacing={ 4 } className="atmosphere-author-profile">
 					<AuthorProfileHeader
 						timelineUrl={ getTimelineUrl( connection.id ) }
@@ -526,7 +526,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 						protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
 					/>
 				</VStack>
-			</FavouritesProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }
