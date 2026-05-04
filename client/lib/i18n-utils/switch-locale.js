@@ -7,7 +7,7 @@ import { defaultI18n } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
-import { getLoadedSections, onSectionLoaded, offSectionLoaded } from 'calypso/sections-middleware';
+import { getLoadedSections, onSectionLoaded, offSectionLoaded } from 'calypso/sections-helper';
 const debug = debugFactory( 'calypso:i18n' );
 
 const getPromises = {};

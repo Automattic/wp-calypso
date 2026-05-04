@@ -44,3 +44,31 @@ export function load( sectionName, moduleName ) {
 	// code splitting. The return value must be explicitly resolved to Promise.
 	return Promise.resolve( section.load() );
 }
+
+// module path → section name, for all sections that have finished loading.
+const _loadedSectionNames = {};
+
+// Subscribers notified when a section finishes loading.
+const _sectionLoadedListeners = [];
+
+export function recordSectionLoaded( modulePath, sectionName ) {
+	_loadedSectionNames[ modulePath ] = sectionName;
+	for ( const listener of _sectionLoadedListeners ) {
+		listener( sectionName );
+	}
+}
+
+export function getLoadedSections() {
+	return Object.values( _loadedSectionNames );
+}
+
+export function onSectionLoaded( callback ) {
+	_sectionLoadedListeners.push( callback );
+}
+
+export function offSectionLoaded( callback ) {
+	const idx = _sectionLoadedListeners.indexOf( callback );
+	if ( idx !== -1 ) {
+		_sectionLoadedListeners.splice( idx, 1 );
+	}
+}
