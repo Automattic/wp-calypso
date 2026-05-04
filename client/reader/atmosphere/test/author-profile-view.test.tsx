@@ -5,6 +5,7 @@ import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfileView } from '../author-profile-view';
 import type React from 'react';
@@ -16,10 +17,6 @@ jest.mock(
 			return <div>{ children }</div>;
 		}
 );
-
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: () => ( { type: '@@TEST/NOOP' } ),
-} ) );
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
@@ -42,6 +39,15 @@ beforeAll( () => {
 afterAll( () => {
 	// @ts-expect-error -- cleaning up the stub
 	delete global.IntersectionObserver;
+} );
+
+beforeEach( () => {
+	// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+	// Replace it with a no-op action creator so dispatch() doesn't throw,
+	// while still letting spies observe call-site arguments.
+	jest
+		.spyOn( analytics, 'recordReaderTracksEvent' )
+		.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 } );
 
 afterEach( () => {
@@ -160,5 +166,9 @@ describe( 'AuthorProfileView', () => {
 		const backButton = screen.getByRole( 'button', { name: /back/i } );
 		await user.click( backButton );
 		expect( page as unknown as jest.Mock ).toHaveBeenCalledWith( '/reader/atmosphere/42/timeline' );
+		expect( analytics.recordReaderTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_profile_back_to_timeline_clicked',
+			{ connection_id: 42, actor: 'alice.bsky.social' }
+		);
 	} );
 } );
