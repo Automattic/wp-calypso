@@ -379,7 +379,7 @@ function CancelPurchaseInner() {
 	// The route loader pre-fetches via `ensureQueryData`, so first paint is
 	// instant — `livePurchase` is defined on first render.
 	const { data: livePurchase, isPending: purchaseQueryIsPending } = useQuery(
-		purchaseQuery( parseInt( purchaseId ) )
+		purchaseQuery( parseInt( purchaseId, 10 ) )
 	);
 
 	// Mutations consumed by useCancelMutationOnConfirm
@@ -409,7 +409,7 @@ function CancelPurchaseInner() {
 	);
 	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const { data: purchaseCancelFeatures } = useQuery(
-		purchaseCancelFeaturesQuery( parseInt( purchaseId ) )
+		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
 	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
@@ -990,7 +990,6 @@ function CancelPurchaseInner() {
 		setState( ( state ) => ( {
 			...state,
 			domainConfirmationConfirmed: checked,
-			// customerConfirmedUnderstanding: checked,
 		} ) );
 
 		// Record tracks event for domain confirmation checkbox
