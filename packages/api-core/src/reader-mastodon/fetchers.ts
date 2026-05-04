@@ -256,7 +256,12 @@ export async function deleteMastodonRepost( params: MastodonDeleteRepostParams )
 	try {
 		await wpcom.req.post( {
 			method: 'DELETE',
-			path: `/reader/mastodon/connections/${ params.connectionId }/reposts/${ params.statusId }`,
+			// Encode the status id defensively — values are numeric strings
+			// today, but a malformed `post.uri` flowing through (mapper bug,
+			// whitespace, slashes) shouldn't smuggle path segments.
+			path: `/reader/mastodon/connections/${ params.connectionId }/reposts/${ encodeURIComponent(
+				params.statusId
+			) }`,
 			apiNamespace: NAMESPACE,
 		} );
 	} catch ( raw ) {

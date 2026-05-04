@@ -12,16 +12,28 @@ interface RepostButtonProps {
 	post: SocialPost;
 }
 
+const ICON_SIZE = 16;
+
 export function RepostButton( { post }: RepostButtonProps ) {
 	const translate = useTranslate();
 	const action = useRepostAction( post );
+	const formattedReposts = formatNumber( post.counts.reposts );
 
+	// No <RepostProvider> mounted (or the adapter declined to support the
+	// post) — render a static count so the cell isn't empty. Mirrors the
+	// non-interactive markup `<PostCardCounts>` used to inline before the
+	// adapter pattern took over the gate.
 	if ( ! action.supported ) {
-		return null;
+		return (
+			<span className="social-post-card-repost-button social-post-card-repost-button--static">
+				<ReaderRepostIcon iconSize={ ICON_SIZE } />
+				<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
+				<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
+			</span>
+		);
 	}
 
 	const { isReposted, isPending } = action;
-	const formattedReposts = formatNumber( post.counts.reposts );
 	const accessibleLabel = String( action.label.accessibleLabel( post.counts.reposts, isReposted ) );
 
 	if ( isReposted ) {
@@ -44,7 +56,7 @@ export function RepostButton( { post }: RepostButtonProps ) {
 					action.unrepost();
 				} }
 			>
-				<ReaderRepostIcon iconSize={ 16 } />
+				<ReaderRepostIcon iconSize={ ICON_SIZE } />
 				<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
 			</button>
 		);
@@ -70,7 +82,7 @@ export function RepostButton( { post }: RepostButtonProps ) {
 						onToggle();
 					} }
 				>
-					<ReaderRepostIcon iconSize={ 16 } />
+					<ReaderRepostIcon iconSize={ ICON_SIZE } />
 					<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
 				</button>
 			) }

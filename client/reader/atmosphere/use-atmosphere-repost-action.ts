@@ -73,8 +73,6 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 		const isPending =
 			create.isPending || remove.isPending || post.viewer?.repost === PENDING_REPOST_URI;
 
-		const error: { kind: string } | null = create.error ?? remove.error ?? null;
-
 		const trackError = ( atmosphereError: AtmosphereError, direction: RepostDirection ) => {
 			dispatch( errorNotice( errorMessageForRepost( atmosphereError, translate ) ) );
 			analytics?.onClick( `calypso_reader_${ analytics.source }_repost_error_shown`, {
@@ -134,7 +132,6 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 			supported: true,
 			isReposted,
 			isPending,
-			error,
 			label: {
 				action: translate( 'Repost' ),
 				accessibleLabel,

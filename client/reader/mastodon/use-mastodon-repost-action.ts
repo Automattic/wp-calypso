@@ -70,8 +70,6 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 		const isReposted = Boolean( post.viewer?.repost );
 		const isPending = create.isPending || remove.isPending;
 
-		const error: { kind: string } | null = create.error ?? remove.error ?? null;
-
 		const trackError = ( mastodonError: MastodonError, direction: BoostDirection ) => {
 			dispatch( errorNotice( errorMessageForBoost( mastodonError, translate ) ) );
 			analytics?.onClick( `calypso_reader_${ analytics.source }_boost_error_shown`, {
@@ -121,7 +119,6 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 			supported: true,
 			isReposted,
 			isPending,
-			error,
 			label: {
 				action: translate( 'Boost' ),
 				accessibleLabel,

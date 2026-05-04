@@ -10,9 +10,8 @@ export interface RepostAction {
 	supported: boolean;
 	isReposted: boolean;
 	isPending: boolean;
-	error: { kind: string } | null;
 	label: {
-		/** Short action label — e.g. "Repost". */
+		/** Short action label rendered in the dropdown menu — e.g. "Repost" / "Boost". */
 		action: TranslateResult;
 		/**
 		 * Accessible label with count — e.g. "Repost, 5 reposts".
@@ -33,13 +32,12 @@ export type UseRepostActionFn = ( post: SocialPost ) => RepostAction;
 
 /**
  * The null-action default: no provider mounted; all interactions are no-ops.
- * The button renders null when `supported === false`.
+ * The button renders a static-count fallback when `supported === false`.
  */
 const nullRepostActionFn: UseRepostActionFn = () => ( {
 	supported: false,
 	isReposted: false,
 	isPending: false,
-	error: null,
 	label: {
 		action: '',
 		accessibleLabel: () => '',
