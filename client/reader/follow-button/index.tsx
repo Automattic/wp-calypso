@@ -14,6 +14,8 @@ interface ReaderFollowButtonProps {
 	className?: string;
 	feedId?: number;
 	followSource?: string;
+	followIcon?: JSX.Element;
+	followingIcon?: JSX.Element;
 	hasButtonStyle?: boolean;
 	iconSize?: number;
 	isButtonOnly?: boolean;
@@ -46,8 +48,9 @@ export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JS
 		}
 	}
 
-	const followingIcon = ReaderFollowingFeedIcon( { iconSize: iconSize || 20 } );
-	const followIcon = ReaderFollowFeedIcon( { iconSize: iconSize || 20 } );
+	const followingIcon =
+		props.followingIcon ?? ReaderFollowingFeedIcon( { iconSize: iconSize || 20 } );
+	const followIcon = props.followIcon ?? ReaderFollowFeedIcon( { iconSize: iconSize || 20 } );
 
 	return (
 		<FollowButtonContainer
