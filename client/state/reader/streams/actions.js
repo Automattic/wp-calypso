@@ -119,10 +119,8 @@ function discoverSubTab( streamKey ) {
 }
 
 /**
- * Build the query params for a discover sub-tab. Mirrors the legacy
- * `streamApis.discover.query` in
- * `client/state/data-layer/wpcom/read/streams/index.js` so the migrated request
- * hits the API with the same shape.
+ * Build the query params for a discover sub-tab so the migrated request hits
+ * the API with the same shape the legacy data-layer used.
  *
  * - `freshly-pressed` returns the raw extras (no `getQueryString` wrap), so it
  *   does not pick up `meta`/`content_width`/default `orderBy`.
@@ -247,7 +245,9 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	// to avoid a second request when the interests action lands. See p-paYKcK-3zo.
 	let receiveStreamKey = streamKey;
 	if ( streamKey === 'discover:recommended' && data.user_interests ) {
-		receiveStreamKey = buildDiscoverStreamKey( 'recommended', data.user_interests );
+		// Clone before passing — `buildDiscoverStreamKey` sorts the array in place,
+		// and we don't want to mutate the response payload.
+		receiveStreamKey = buildDiscoverStreamKey( 'recommended', [ ...data.user_interests ] );
 	}
 
 	dispatch(
