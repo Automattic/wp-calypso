@@ -449,8 +449,10 @@ describe( 'useCreateMastodonRepostMutation / useDeleteMastodonRepostMutation', (
 				expect( optimistic?.pages[ 0 ].items[ 0 ].counts.boosts ).toBe( 4 );
 			} );
 
+			// Cancellation is connection-scoped via predicate so concurrent
+			// mutations on a different connection's queries aren't aborted.
 			expect( cancelQueriesSpy ).toHaveBeenCalledWith( {
-				queryKey: readerMastodonKeys.all,
+				predicate: expect.any( Function ),
 			} );
 
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
