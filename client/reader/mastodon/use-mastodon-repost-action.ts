@@ -5,6 +5,7 @@ import {
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useSocialAnalytics } from '../social/components/post-card/analytics-context';
 import type {
@@ -84,6 +85,19 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 				post_uri: post.uri,
 				error_kind: mastodonError.kind,
 				direction,
+			} );
+			// Pipeline-level log so failures stay observable in dashboards
+			// even when no Tracks dashboard is consulted.
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: `Reader Mastodon ${ direction } mutation failed`,
+				severity: 'error',
+				extra: {
+					type: `reader_mastodon_${ direction }_mutation_error`,
+					connection_id: connectionId,
+					status_id: post.uri,
+					error_kind: mastodonError.kind,
+				},
 			} );
 		};
 

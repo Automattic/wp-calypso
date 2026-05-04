@@ -1,6 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+// `logToLogstash` fires a real HTTPS request — mute it so the
+// rkey-missing/cid-missing observability paths in the atmosphere
+// repost adapter don't trigger unmocked nock requests.
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 import { PENDING_REPOST_URI } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
@@ -157,7 +164,7 @@ describe( '<RepostButton>', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 
-	it( 'does not fire DELETE when the reposted-state URI parses to no rkey', async () => {
+	it( 'does not fire DELETE when the reposted-state URI parses to no rkey, and surfaces the failure', async () => {
 		const interceptor = nock( BASE )
 			.delete( /\/reposts\// )
 			.reply( 204 );
@@ -172,7 +179,13 @@ describe( '<RepostButton>', () => {
 		await user.click( screen.getByRole( 'button', { name: /undo repost, 4 reposts/i } ) );
 
 		expect( interceptor.isDone() ).toBe( false );
-		expect( onClick ).not.toHaveBeenCalled();
+		// The button used to silently no-op here; it now fires an
+		// observability Tracks event so dashboards see the rate of stuck
+		// pending vs. malformed-uri unrepost attempts.
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_unrepost_rkey_missing',
+			expect.objectContaining( { connection_id: 42, post_uri: POST_URI } )
+		);
 	} );
 
 	it( 'renders the singular aria-label when reposts === 1', () => {

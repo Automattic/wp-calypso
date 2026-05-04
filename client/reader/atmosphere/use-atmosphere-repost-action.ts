@@ -3,6 +3,7 @@ import { useCreateRepostMutation, useDeleteRepostMutation } from '@automattic/ap
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useSocialAnalytics } from '../social/components/post-card/analytics-context';
@@ -88,15 +89,43 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 				error_kind: atmosphereError.kind,
 				direction,
 			} );
+			// Pipeline-level log so failures stay observable in dashboards
+			// even when no Tracks dashboard is consulted.
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: `Reader ATmosphere ${ direction } mutation failed`,
+				severity: 'error',
+				extra: {
+					type: `reader_atmosphere_${ direction }_mutation_error`,
+					connection_id: connectionId,
+					post_uri: post.uri,
+					error_kind: atmosphereError.kind,
+				},
+			} );
 		};
 
 		const repost = () => {
 			// Atmosphere requires a strong-ref `cid` for the repost record.
 			// The post-card-counts gate used to enforce this; now that the
-			// gate is provider-presence, guard here instead. Bail silently —
-			// rendering the button without a cid is a panel-wiring bug, not
-			// a user error.
+			// gate is provider-presence, guard here. Rendering the button
+			// without a cid is a panel-wiring bug, not a user error — but
+			// log it so it's observable in dashboards rather than dead-button
+			// silently in production.
 			if ( ! post.cid ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Atmosphere repost: post.cid missing on click',
+					severity: 'warning',
+					extra: {
+						type: 'reader_atmosphere_repost_missing_cid',
+						connection_id: connectionId,
+						post_uri: post.uri,
+					},
+				} );
+				analytics?.onClick( `calypso_reader_${ analytics.source }_repost_missing_cid`, {
+					connection_id: connectionId,
+					post_uri: post.uri,
+				} );
 				return;
 			}
 			analytics?.onClick( `calypso_reader_${ analytics.source }_repost_clicked`, {
@@ -112,6 +141,32 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 		const unrepost = () => {
 			const rkey = rkeyFromUri( post.viewer?.repost ?? '' );
 			if ( ! rkey ) {
+				// `viewer.repost` is set (button shows pressed) but the URI
+				// doesn't yield a valid rkey — either it's the
+				// `PENDING_REPOST_URI` sentinel still in flight, or the wire
+				// payload is malformed. Surface to the user (otherwise the
+				// button stays "reposted" forever) and log so dashboards see
+				// the rate of stuck-pending vs. malformed-uri.
+				dispatch(
+					errorNotice(
+						translate( "We couldn't undo your repost. Please try again in a moment." ) as string
+					)
+				);
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Atmosphere unrepost: rkey not derivable from viewer.repost',
+					severity: 'warning',
+					extra: {
+						type: 'reader_atmosphere_unrepost_rkey_missing',
+						connection_id: connectionId,
+						post_uri: post.uri,
+						viewer_repost: post.viewer?.repost ?? null,
+					},
+				} );
+				analytics?.onClick( `calypso_reader_${ analytics.source }_unrepost_rkey_missing`, {
+					connection_id: connectionId,
+					post_uri: post.uri,
+				} );
 				return;
 			}
 			analytics?.onClick( `calypso_reader_${ analytics.source }_unrepost_clicked`, {

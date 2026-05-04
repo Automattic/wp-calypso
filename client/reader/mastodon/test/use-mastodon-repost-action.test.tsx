@@ -13,6 +13,13 @@ import { RepostProvider } from '../../social/components/post-card/repost-context
 import { makeUseMastodonRepostAction } from '../use-mastodon-repost-action';
 import type { SocialPost } from '../../social/types';
 
+// `logToLogstash` fires a real HTTPS request — mute it so the
+// pipeline-level error log in the repost adapter doesn't trigger an
+// unmocked nock request during error-path tests.
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 const BASE = 'https://public-api.wordpress.com';
 const STATUS_ID = '109876543210';
 const CONNECTION_ID = 99;
