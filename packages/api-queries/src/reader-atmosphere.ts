@@ -841,8 +841,10 @@ export function useDeleteRepostMutation( connectionId: number ) {
 
 interface RemovalContext {
 	prev: Array< { key: QueryKey; data: unknown } >;
-	/** Snapshot from patchAtmospherePostCaches for the reply parent's counts.replies decrement.
-	 *  Only present when the deleted post was a reply and `replyParentUri` was supplied. */
+	/**
+	 * Snapshot from patchAtmospherePostCaches for the reply parent's counts.replies decrement.
+	 *  Only present when the deleted post was a reply and `replyParentUri` was supplied.
+	 */
 	parentCounts?: OptimisticContext;
 }
 
