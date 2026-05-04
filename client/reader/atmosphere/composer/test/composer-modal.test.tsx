@@ -588,6 +588,49 @@ describe( '<ComposerModal>', () => {
 		}
 	);
 
+	it( 'on standalone success, dispatches _compose_published, shows a "Your post was published." notice with a View action linking to the new post, and closes', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
+		const pageMock = page as unknown as jest.Mock;
+
+		const newPostUri = 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/ccccccccccccc';
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: newPostUri, cid: 'newcid', rkey: 'ccccccccccccc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_compose_published',
+				expect.objectContaining( { connection_id: 42 } )
+			)
+		);
+
+		await waitFor( () => expect( successSpy ).toHaveBeenCalled() );
+		const [ noticeText, options ] = successSpy.mock.calls[ 0 ];
+		expect( noticeText ).toBe( 'Your post was published.' );
+		expect( options ).toEqual(
+			expect.objectContaining( {
+				button: 'View',
+				onClick: expect.any( Function ),
+			} )
+		);
+
+		options.onClick();
+		expect( pageMock ).toHaveBeenCalledWith(
+			'/reader/atmosphere/42/thread/did:plc:abcdefghijklmnopqrstuvwx/ccccccccccccc'
+		);
+
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+	} );
+
 	it( 'omits the View button when the thread URL cannot be built', async () => {
 		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
 

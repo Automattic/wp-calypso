@@ -16,7 +16,7 @@ import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer, type ActiveMode } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
 import { countGraphemes } from './grapheme-count';
-import type { AtmosphereError, CreatePostParams } from '@automattic/api-core';
+import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { ReactNode } from 'react';
 
@@ -132,7 +132,7 @@ export function ComposerModal() {
 		}
 		const params = buildParamsForMode( mode, text );
 		mutation.mutate( params, {
-			onSuccess: () => {
+			onSuccess: ( result ) => {
 				if ( mode.kind === 'reply' ) {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_published', {
@@ -141,7 +141,18 @@ export function ComposerModal() {
 							root_uri: mode.root.uri,
 						} )
 					);
-					const { text: noticeText, threadUrl } = successNoticeFor( mode, translate );
+					const { text: noticeText, threadUrl } = successNoticeFor( mode, result, translate );
+					const options = threadUrl
+						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
+						: undefined;
+					dispatch( successNotice( noticeText, options ) );
+				} else if ( mode.kind === 'standalone' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_published', {
+							connection_id: mode.connectionId,
+						} )
+					);
+					const { text: noticeText, threadUrl } = successNoticeFor( mode, result, translate );
 					const options = threadUrl
 						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
 						: undefined;
@@ -310,16 +321,24 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 }
 
 function successNoticeFor(
-	mode: Extract< ActiveMode, { kind: 'reply' } >,
+	mode: ActiveMode,
+	result: CreatePostResult,
 	t: ReturnType< typeof useTranslate >
 ): { text: ReactNode; threadUrl: string | null } {
-	// quote / standalone success copy lands with their respective slices —
-	// gate the call site on `mode.kind` so TS catches missing cases when
-	// those modes are wired through `<ComposerModal>`.
-	return {
-		text: t( 'Your reply was posted.' ),
-		threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
-	};
+	if ( mode.kind === 'reply' ) {
+		return {
+			text: t( 'Your reply was posted.' ),
+			threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
+		};
+	}
+	if ( mode.kind === 'standalone' ) {
+		return {
+			text: t( 'Your post was published.' ),
+			threadUrl: getThreadUrl( mode.connectionId, result.uri ),
+		};
+	}
+	// quote success copy lands with slice 7d.
+	return { text: t( 'Your post was published.' ), threadUrl: null };
 }
 
 function assertNever( value: never ): never {
