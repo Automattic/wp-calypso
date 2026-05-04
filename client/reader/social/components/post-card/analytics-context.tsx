@@ -58,7 +58,7 @@ export interface SocialAnalyticsContextValue {
 	 * matching `post.author.did`, `<SocialPostCard>` renders the post-actions
 	 * kebab in the header. Per-protocol shells set this to `connection.did`.
 	 */
-	ownerDid?: string | null;
+	ownerDid?: string;
 }
 
 const Ctx = createContext< SocialAnalyticsContextValue | null >( null );

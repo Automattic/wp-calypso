@@ -9,7 +9,6 @@ import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useSocialAnalytics } from './analytics-context';
-import type { SocialPost } from '../../types';
 import type { AtmosphereError, AtmosphereFeedItem } from '@automattic/api-core';
 
 import './repost-button.scss';
@@ -17,6 +16,14 @@ import './repost-button.scss';
 interface RepostButtonProps {
 	post: Pick< AtmosphereFeedItem, 'uri' | 'cid' | 'counts' | 'viewer' >;
 	connectionId: number;
+	/**
+	 * When set, the "Quote post" menu item becomes active and invokes this
+	 * callback. The host (`<PostCardCounts>`) closes over the full `SocialPost`
+	 * so the composer's preview has every field it needs (author, html, embed,
+	 * counts) — `<RepostButton>` only carries the minimal `Pick` required for
+	 * its own mutations.
+	 */
+	onQuote?: () => void;
 }
 
 type RepostDirection = 'repost' | 'unrepost';
@@ -47,7 +54,7 @@ function errorMessageForRepost(
 	}
 }
 
-export function RepostButton( { post, connectionId }: RepostButtonProps ) {
+export function RepostButton( { post, connectionId, onQuote }: RepostButtonProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const analytics = useSocialAnalytics();
@@ -172,10 +179,10 @@ export function RepostButton( { post, connectionId }: RepostButtonProps ) {
 						{ translate( 'Repost' ) }
 					</MenuItem>
 					<MenuItem
-						disabled={ ! analytics?.onQuoteClick }
+						disabled={ ! onQuote }
 						onClick={ () => {
 							onClose();
-							analytics?.onQuoteClick?.( post as unknown as SocialPost );
+							onQuote?.();
 						} }
 					>
 						{ translate( 'Quote post' ) }

@@ -103,6 +103,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 						viewer: post.viewer,
 					} }
 					connectionId={ connectionId }
+					onQuote={ analytics?.onQuoteClick ? () => analytics.onQuoteClick?.( post ) : undefined }
 				/>
 			) : (
 				<span>

@@ -66,27 +66,12 @@ export function SocialPostCard( {
 		connectionId !== undefined &&
 		Boolean( analytics?.ownerDid ) &&
 		analytics?.ownerDid === post.author.id;
-	// PostActionsMenu expects Pick<AtmosphereFeedItem, 'uri' | 'author' | 'reply_parent'>.
 	// SocialPost.author.id holds the DID (mapped from AtmosphereAuthor.did).
 	const postActionsPost = showPostActions
 		? {
 				uri: post.uri,
-				author: {
-					did: post.author.id,
-					handle: post.author.handle,
-					display_name: post.author.display_name,
-					avatar: post.author.avatar,
-				},
-				reply_parent: post.reply_parent
-					? {
-							uri: post.reply_parent.uri,
-							cid: post.reply_parent.cid,
-							author: {
-								did: post.reply_parent.author.id ?? '',
-								handle: post.reply_parent.author.handle,
-							},
-					  }
-					: null,
+				author: { did: post.author.id },
+				reply_parent: post.reply_parent ? { uri: post.reply_parent.uri } : null,
 		  }
 		: null;
 	const headerActions =
