@@ -65,13 +65,13 @@ afterEach( () => {
 describe( 'requestPage thunk', () => {
 	describe( 'unmigrated stream type', () => {
 		it( 'dispatches the legacy READER_STREAMS_PAGE_REQUEST', () => {
-			const { dispatch } = runThunk( { streamKey: 'likes' } );
+			const { dispatch } = runThunk( { streamKey: 'recommendations_posts' } );
 			expect( dispatch ).toHaveBeenCalledTimes( 1 );
 			const action = dispatch.mock.calls[ 0 ][ 0 ];
 			expect( action.type ).toBe( READER_STREAMS_PAGE_REQUEST );
 			expect( action.payload ).toMatchObject( {
-				streamKey: 'likes',
-				streamType: 'likes',
+				streamKey: 'recommendations_posts',
+				streamType: 'recommendations_posts',
 				isPoll: false,
 			} );
 		} );
@@ -533,6 +533,12 @@ describe( 'requestPage thunk', () => {
 			path: '/rest/v1/users/42/posts',
 			expectedQuery: { orderBy: 'date' },
 		},
+		{
+			name: 'likes',
+			streamKey: 'likes',
+			path: '/rest/v1.2/read/liked',
+			expectedQuery: { orderBy: 'date', meta: 'post,discover_original_post' },
+		},
 	] )( '$name hits $path with the right query', async ( c ) => {
 		let captured;
 		nock( BASE )
@@ -599,6 +605,85 @@ describe( 'requestPage thunk', () => {
 
 		expect( captured.number ).toBe( '20' );
 	} );
+
+	// `likes` has a non-default `dateProperty` (`date_liked`) and a custom
+	// poll query (`fields=…,date_liked`). Verify both survived the migration.
+	describe( 'likes stream specifics', () => {
+		// Two posts whose `date_liked` order intentionally diverges from `date`
+		// so we can confirm the thunk uses `date_liked` to build streamItems.
+		const likesResponse = {
+			posts: [
+				{
+					ID: 30,
+					site_ID: 300,
+					feed_ID: 990,
+					feed_item_ID: 70,
+					date: '2026-01-01',
+					date_liked: '2026-04-10',
+					URL: 'https://example.com/post-30',
+					site_name: 'Liked Example A',
+				},
+				{
+					ID: 31,
+					site_ID: 301,
+					feed_ID: 991,
+					feed_item_ID: 71,
+					date: '2026-04-15',
+					date_liked: '2026-02-20',
+					URL: 'https://example.com/post-31',
+					site_name: 'Liked Example B',
+				},
+			],
+			date_range: { after: '2026-02-20' },
+			found: 2,
+		};
+
+		it( 'builds streamItems using `date_liked` instead of `date`', async () => {
+			nock( BASE ).get( '/rest/v1.2/read/liked' ).query( true ).reply( 200, likesResponse );
+
+			const { dispatch, result } = runThunk( { streamKey: 'likes' } );
+			await result;
+
+			const receivePageAction = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
+			const dates = receivePageAction.payload.streamItems.map( ( item ) => item.date );
+			expect( dates ).toEqual( [ '2026-04-10', '2026-02-20' ] );
+		} );
+
+		it( 'sends `date_liked` in the poll fields query param', async () => {
+			let captured;
+			nock( BASE )
+				.get( '/rest/v1.2/read/liked' )
+				.query( ( q ) => {
+					captured = q;
+					return true;
+				} )
+				.reply( 200, likesResponse );
+
+			const { result } = runThunk( { streamKey: 'likes', isPoll: true } );
+			await result;
+
+			expect( captured.fields ).toBeDefined();
+			expect( captured.fields.split( ',' ) ).toContain( 'date_liked' );
+		} );
+
+		it( 'does not send the selected Recent feed id in the poll query', async () => {
+			let captured;
+			nock( BASE )
+				.get( '/rest/v1.2/read/liked' )
+				.query( ( q ) => {
+					captured = q;
+					return true;
+				} )
+				.reply( 200, likesResponse );
+
+			const { result } = runThunk( { streamKey: 'likes', isPoll: true, feedId: 1234 } );
+			await result;
+
+			expect( captured ).not.toHaveProperty( 'feed_id' );
+		} );
+	} );
 } );
 
 describe( 'requestPaginatedStream thunk', () => {
@@ -647,7 +732,7 @@ describe( 'requestPaginatedStream thunk', () => {
 
 	it( 'returns the legacy action for unmigrated streamKey', () => {
 		const { dispatch, result } = runPaginatedThunk( {
-			streamKey: 'likes',
+			streamKey: 'recommendations_posts',
 			page: 1,
 			perPage: 10,
 		} );
@@ -655,7 +740,7 @@ describe( 'requestPaginatedStream thunk', () => {
 		// path. The first dispatch carried the same action.
 		expect( result ).toMatchObject( {
 			type: 'READER_STREAMS_PAGINATED_REQUEST',
-			payload: { streamKey: 'likes', page: 1, perPage: 10 },
+			payload: { streamKey: 'recommendations_posts', page: 1, perPage: 10 },
 		} );
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
 	} );

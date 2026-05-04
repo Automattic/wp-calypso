@@ -38,12 +38,14 @@ import 'calypso/state/reader/init';
 /**
  * Per-stream date property used by `createStreamDataFromPosts` to populate
  * `streamItem.date`. Mirrors `streamApis[type].dateProperty` in the legacy
- * data-layer (`client/state/data-layer/wpcom/read/streams/index.js`). When
- * `likes` migrates next this will need a `'likes'` case (`date_liked`).
+ * data-layer (`client/state/data-layer/wpcom/read/streams/index.js`).
  */
 function getDatePropertyForStream( streamType ) {
 	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
 		return 'last_comment_date_gmt';
+	}
+	if ( streamType === 'likes' ) {
+		return 'date_liked';
 	}
 	return 'date';
 }
@@ -119,6 +121,10 @@ function buildStreamQueryParams( {
 				...commonQueryParams,
 				index: 'a8c',
 			} );
+		}
+		if ( streamType === 'likes' ) {
+			// Legacy `streamApis.likes.pollQuery`.
+			return getQueryStringForPoll( [ 'date_liked' ] );
 		}
 		return getQueryStringForPoll( [], commonQueryParams );
 	}

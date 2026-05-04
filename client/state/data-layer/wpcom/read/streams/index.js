@@ -81,11 +81,6 @@ const defaultQueryFn = getQueryString;
 const seed = random( 0, 1000 );
 
 const streamApis = {
-	likes: {
-		path: () => '/read/liked',
-		dateProperty: 'date_liked',
-		pollQuery: () => getQueryStringForPoll( [ 'date_liked' ] ),
-	},
 	recommendations_posts: {
 		path: () => '/read/recommendations/posts',
 		dateProperty: 'date',

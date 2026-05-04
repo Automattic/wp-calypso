@@ -2,7 +2,7 @@ import deepfreeze from 'deep-freeze';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
-import { requestPage, handlePage, INITIAL_FETCH, QUERY_META } from '../';
+import { requestPage, handlePage, INITIAL_FETCH, PER_FETCH, QUERY_META } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -34,10 +34,11 @@ function makeAction( { streamKey, ...overrides } ) {
 }
 
 describe( 'streams', () => {
-	// All `date`-based streams plus `following`/`discover`/`conversations` are
-	// migrated to React Query (see client/state/reader/streams/test/actions.js).
-	// Use a still-unmigrated stream type for the shared `handlePage` action.
-	const action = makeAction( { streamKey: 'likes' } );
+	// All `date`-based streams plus `following`/`discover`/`conversations`/
+	// `likes` are migrated to React Query (see
+	// client/state/reader/streams/test/actions.js). Use a still-unmigrated
+	// stream type for the shared `handlePage` action.
+	const action = makeAction( { streamKey: 'recommendations_posts' } );
 
 	describe( 'requestPage', () => {
 		const query = {
@@ -74,6 +75,7 @@ describe( 'streams', () => {
 			'user:42',
 			'conversations',
 			'conversations-a8c',
+			'likes',
 		] )( 'returns undefined for migrated streamKey %s', ( streamKey ) => {
 			expect( requestPage( makeAction( { streamKey } ) ) ).toBeUndefined();
 		} );
@@ -83,15 +85,6 @@ describe( 'streams', () => {
 			// each test is an assertion of the http call that should be made
 			// when the given stream id is handed to request page
 			[
-				{
-					stream: 'likes',
-					expected: {
-						method: 'GET',
-						path: '/read/liked',
-						apiVersion: '1.2',
-						query,
-					},
-				},
 				{
 					stream: 'recommendations_posts',
 					expected: {
@@ -155,6 +148,8 @@ describe( 'streams', () => {
 		it( 'should return a receivePage action', () => {
 			const { streamKey, query } = action.payload;
 			const result = handlePage( action, data );
+			// `recommendations_posts` matches the `streamType.includes('rec')`
+			// branch in `extractPageHandle`, which returns an offset cursor.
 			expect( result ).toEqual( [
 				expect.any( Function ), // receivePosts thunk
 				receivePage( {
@@ -162,7 +157,7 @@ describe( 'streams', () => {
 					query,
 					streamItems: data.posts,
 					gap: null,
-					pageHandle: { before: '2018' },
+					pageHandle: { offset: PER_FETCH },
 					totalItems: 1,
 					totalPages: 1,
 				} ),
@@ -179,7 +174,7 @@ describe( 'streams', () => {
 					query,
 					streamItems: data.posts,
 					gap: null,
-					pageHandle: { before: '2018' },
+					pageHandle: { offset: PER_FETCH },
 				} ),
 			] );
 		} );

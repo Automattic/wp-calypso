@@ -8,6 +8,7 @@ import {
 	fetchReadFeedPosts,
 	fetchReadFollowing,
 	fetchReadFollowingP2,
+	fetchReadLiked,
 	fetchReadListPosts,
 	fetchReadNotifications,
 	fetchReadOnThisDay,
@@ -57,9 +58,9 @@ const fetchDiscover = (
  *
  * Migrated: `following`, every `discover:*` sub-tab, plus `recent`, `search`,
  * `feed`, `site`, `notifications`, `featured`, `p2`, `a8c`, `tag`,
- * `tag_popular`, `list`, `on_this_day`, `user`, `conversations`, and
- * `conversations-a8c`. Streams still served by the legacy data-layer:
- * `likes`, `recommendations_posts`, `custom_recs_*`. Those will land in a
+ * `tag_popular`, `list`, `on_this_day`, `user`, `conversations`,
+ * `conversations-a8c`, and `likes`. Streams still served by the legacy
+ * data-layer: `recommendations_posts`, `custom_recs_*`. Those will land in a
  * final cleanup PR that also deletes the data-layer file.
  */
 export const readStreamQuery = (
@@ -108,6 +109,8 @@ export const readStreamQuery = (
 				case 'conversations':
 				case 'conversations-a8c':
 					return fetchReadConversations( queryParams );
+				case 'likes':
+					return fetchReadLiked( queryParams );
 				default:
 					throw new Error(
 						`readStreamQuery: unsupported streamType "${ streamType }". Add the fetcher in @automattic/api-core and a case here when migrating this stream.`
