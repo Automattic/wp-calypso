@@ -47,6 +47,7 @@ import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
+import useSyncCartTaxCountryWithForm from '../hooks/use-sync-cart-tax-country-with-form';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
@@ -345,6 +346,7 @@ export default function CheckoutMain( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	useDetectedCountryCode();
+	useSyncCartTaxCountryWithForm();
 
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
