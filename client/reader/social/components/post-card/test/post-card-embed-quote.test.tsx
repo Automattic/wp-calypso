@@ -128,6 +128,24 @@ describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
 		const link = screen.getByRole( 'link' );
 		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/7/thread/did:plc:def/3kdef' );
 		expect( link ).not.toHaveAttribute( 'target' );
+		expect( link ).toHaveAccessibleName( 'Open quoted post by default.bsky.social' );
+	} );
+
+	it( 'keeps the quoted card linked when the quoted post has no timestamp', () => {
+		const timestamplessPost = makeSocialPost( {
+			created_at: '',
+			indexed_at: '',
+		} );
+		const timestamplessEmbed: SocialEmbedQuote = { type: 'quote', post: timestamplessPost };
+		render(
+			wrap(
+				<PostCardEmbedQuote embed={ timestamplessEmbed } parentPostUri="at://parent" />,
+				() => '/in-app/thread'
+			)
+		);
+
+		const link = screen.getByRole( 'link', { name: 'Open quoted post by default.bsky.social' } );
+		expect( link ).toHaveAttribute( 'href', '/in-app/thread' );
 	} );
 
 	it( 'falls back to the permalink when resolver returns null', () => {
@@ -161,5 +179,49 @@ describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
 				destination: 'in_app_thread',
 			} )
 		);
+	} );
+
+	it( 'renders inline body links inside the quote as their own anchors (no nested anchors)', () => {
+		const quotedWithLink: SocialPost = makeSocialPost( {
+			uri: 'at://did:plc:def/app.bsky.feed.post/3kdef',
+			permalink: 'https://bsky.app/profile/jane.bsky.social/post/3kdef',
+			html: '<p>quoted with <a href="https://example.com">a link</a></p>',
+		} );
+		const embedWithLink: SocialEmbedQuote = { type: 'quote', post: quotedWithLink };
+		render(
+			wrap(
+				<PostCardEmbedQuote embed={ embedWithLink } parentPostUri="at://parent" />,
+				() => '/in-app/thread'
+			)
+		);
+		const links = screen.getAllByRole( 'link' );
+		// Two anchors: the quoted-card timestamp (in-app thread) and the inline body link.
+		expect( links.length ).toBeGreaterThanOrEqual( 2 );
+		const bodyLink = links.find( ( a ) => a.getAttribute( 'href' ) === 'https://example.com' );
+		expect( bodyLink ).toBeDefined();
+		// No nested anchor structure: the inline body link has no <a> ancestor.
+		expect( bodyLink!.parentElement?.closest( 'a' ) ?? null ).toBeNull();
+	} );
+
+	it( 'does not fire _quote_clicked when an inner body link is clicked', async () => {
+		const onClick = jest.fn();
+		const quotedWithLink: SocialPost = makeSocialPost( {
+			html: '<p>quoted with <a href="https://example.com">a link</a></p>',
+		} );
+		const embedWithLink: SocialEmbedQuote = { type: 'quote', post: quotedWithLink };
+		render(
+			wrap(
+				<PostCardEmbedQuote embed={ embedWithLink } parentPostUri="at://parent" />,
+				() => '/in-app/thread',
+				onClick
+			)
+		);
+		const user = userEvent.setup();
+		const bodyLink = screen
+			.getAllByRole( 'link' )
+			.find( ( a ) => a.getAttribute( 'href' ) === 'https://example.com' );
+		expect( bodyLink ).toBeDefined();
+		await user.click( bodyLink! );
+		expect( onClick ).not.toHaveBeenCalled();
 	} );
 } );

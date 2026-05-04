@@ -6,6 +6,7 @@ import { Button, Card, CardBody } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon, envelope, formatListBullets, help } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { HostingHero } from 'calypso/components/hosting-hero';
@@ -78,7 +79,11 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 									translate( '<phpLogsLink/> to locate any fatal errors on your site.' ) as string,
 									{
 										phpLogsLink: (
-											<a href={ `/site-logs/${ siteSlug }/php` }>
+											<a
+												href={ addQueryArgs( `/site-logs/${ siteSlug }/php`, {
+													severity: 'Fatal error',
+												} ) }
+											>
 												{ translate( 'Review the PHP logs' ) }
 											</a>
 										),

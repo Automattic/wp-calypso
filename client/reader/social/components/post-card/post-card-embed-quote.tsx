@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import { useSocialAnalytics } from './analytics-context';
 import { PostCardEmbedQuoteTombstone } from './post-card-embed-quote-tombstone';
 import { SocialPostCard } from './index';
@@ -9,6 +10,7 @@ interface PostCardEmbedQuoteProps {
 }
 
 export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuoteProps ) {
+	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	// SocialPost has no `type` field; the discriminator only exists on
 	// the tombstone shape, so narrow via `in` rather than property access.
@@ -16,6 +18,7 @@ export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuote
 		return <PostCardEmbedQuoteTombstone tombstone={ embed.post } />;
 	}
 	const inner = embed.post;
+	const authorName = inner.author.display_name || inner.author.handle;
 	const inAppUrl = analytics?.getThreadUrl?.( inner.uri ) ?? null;
 	const href = inAppUrl ?? inner.permalink;
 	const handleClick = () => {
@@ -31,13 +34,21 @@ export function PostCardEmbedQuote( { embed, parentPostUri }: PostCardEmbedQuote
 	};
 	const externalAttrs = inAppUrl ? {} : { target: '_blank', rel: 'noopener noreferrer' };
 	return (
-		<a
-			className="social-post-card-embed-quote-link"
-			href={ href }
-			{ ...externalAttrs }
-			onClick={ handleClick }
-		>
-			<SocialPostCard post={ inner } variant="compact" />
-		</a>
+		<div className="social-post-card-embed-quote-link">
+			<SocialPostCard
+				post={ inner }
+				variant="compact"
+				cardLink={ {
+					href,
+					onClick: handleClick,
+					target: externalAttrs.target,
+					rel: externalAttrs.rel,
+					ariaLabel: translate( 'Open quoted post by %(author)s', {
+						args: { author: authorName },
+						comment: 'Accessible label for the full-card link that opens a quoted social post.',
+					} ) as string,
+				} }
+			/>
+		</div>
 	);
 }

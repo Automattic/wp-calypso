@@ -1,10 +1,9 @@
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
-import { random, map, includes, get } from 'lodash';
+import { random, map } from 'lodash';
 import { buildDiscoverStreamKey, getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -19,6 +18,23 @@ import {
 	receiveUpdates,
 	receiveStreamError,
 } from 'calypso/state/reader/streams/actions';
+import { MIGRATED_STREAM_TYPES } from 'calypso/state/reader/streams/migrated-stream-types';
+import {
+	PER_FETCH,
+	INITIAL_FETCH,
+	PER_GAP,
+	QUERY_META,
+	SITE_LIMITER_FIELDS,
+	analyticsForStream,
+	createStreamDataFromPosts,
+	extractPageHandle,
+	getAlgorithmForStream,
+	getQueryString,
+	getQueryStringForPoll,
+} from 'calypso/state/reader/streams/normalize';
+
+// Re-exported for legacy consumers (e.g. client/reader/stream/index.jsx).
+export { PER_FETCH, INITIAL_FETCH, QUERY_META, SITE_LIMITER_FIELDS };
 
 /**
  * Pull the suffix off of a stream key
@@ -41,37 +57,6 @@ function streamKeySuffix( streamKey ) {
 	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
 }
 
-const analyticsAlgoMap = new Map();
-function analyticsForStream( { streamKey, algorithm, items } ) {
-	if ( ! streamKey || ! algorithm || ! items ) {
-		return [];
-	}
-
-	analyticsAlgoMap.set( streamKey, algorithm );
-
-	const eventName = 'calypso_traintracks_render';
-	const analyticsActions = items
-		.filter( ( item ) => !! item.railcar )
-		.map( ( item ) => recordTracksEvent( eventName, item.railcar ) );
-	return analyticsActions;
-}
-const getAlgorithmForStream = ( streamKey ) => analyticsAlgoMap.get( streamKey );
-
-function createStreamItemFromPost( post, dateProperty ) {
-	return {
-		...keyForPost( post ),
-		date: post[ dateProperty ],
-		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
-		url: post.URL,
-		site_icon: post.site_icon?.ico,
-		site_description: post.description,
-		site_name: post.site_name,
-		feed_URL: post.feed_URL,
-		feed_ID: post.feed_ID,
-		xPostMetadata: XPostHelper.getXPostMetadata( post ),
-	};
-}
-
 function createStreamItemFromSiteAndPost( site, post, dateProperty ) {
 	return {
 		...keyForPost( post ),
@@ -85,14 +70,6 @@ function createStreamItemFromSiteAndPost( site, post, dateProperty ) {
 		feed_ID: post.feed_ID,
 		xPostMetadata: XPostHelper.getXPostMetadata( post ),
 	};
-}
-
-function createStreamDataFromPosts( posts, dateProperty ) {
-	const streamItems = Array.isArray( posts )
-		? posts.map( ( post ) => createStreamItemFromPost( post, dateProperty ) )
-		: [];
-	const streamPosts = posts;
-	return { streamItems, streamPosts };
 }
 
 function createStreamItemFromSite( site, dateProperty ) {
@@ -159,36 +136,8 @@ function createStreamSitesFromRecommendedSites( sites ) {
 	return streamSites.filter( ( item ) => item !== null );
 }
 
-export const PER_FETCH = 7;
-export const INITIAL_FETCH = 4;
-const PER_POLL = 40;
-const PER_GAP = 40;
-
-export const QUERY_META = [ 'post', 'discover_original_post' ].join( ',' );
-export const getQueryString = ( extras = {} ) => {
-	return { orderBy: 'date', meta: QUERY_META, ...extras, content_width: 675 };
-};
 const defaultQueryFn = getQueryString;
 
-export const SITE_LIMITER_FIELDS = [
-	'ID',
-	'site_ID',
-	'date',
-	'feed_ID',
-	'feed_item_ID',
-	'global_ID',
-	'metadata',
-	'site_URL',
-	'URL',
-];
-function getQueryStringForPoll( extraFields = [], extraQueryParams = {} ) {
-	return {
-		orderBy: 'date',
-		number: PER_POLL,
-		fields: [ SITE_LIMITER_FIELDS, ...extraFields ].join( ',' ),
-		...extraQueryParams,
-	};
-}
 const seed = random( 0, 1000 );
 
 const streamApis = {
@@ -388,6 +337,15 @@ export function requestPage( action ) {
 	const {
 		payload: { streamKey, streamType, feedId, pageHandle, isPoll, gap, localeSlug, page, perPage },
 	} = action;
+
+	// Migrated stream types are fetched by the React Query thunk in
+	// `client/state/reader/streams/actions.js`. The action is still dispatched
+	// so the reducer's `isRequesting`/`error` transitions fire, but the HTTP
+	// call must not be issued here too.
+	if ( MIGRATED_STREAM_TYPES.has( streamType ) ) {
+		return;
+	}
+
 	const api = streamApis[ streamType ];
 
 	if ( ! api ) {
@@ -434,30 +392,10 @@ export function requestPage( action ) {
 	} );
 }
 
-function get_page_handle( streamType, action, data ) {
-	const { date_range, meta, next_page, next_page_handle } = data;
-	if ( next_page_handle ) {
-		return { page_handle: next_page_handle };
-	} else if ( includes( streamType, 'rec' ) ) {
-		const offset = get( action, 'payload.pageHandle.offset', 0 ) + PER_FETCH;
-		return { offset };
-	} else if ( next_page || ( meta && meta.next_page ) ) {
-		// sites give page handles nested within the meta key
-		return { page_handle: next_page || meta.next_page };
-	} else if ( date_range && date_range.after ) {
-		// feeds use date_range. no next_page handles here
-		// search api will give you a date_range but for relevance search it will have before/after=null
-		// and offsets must be used
-		const { after } = date_range;
-		return { before: after };
-	}
-	return null;
-}
-
 export function handlePage( action, data ) {
 	const { posts, sites, cards } = data;
 	const { streamKey, query, isPoll, gap, streamType, page, perPage } = action.payload;
-	const pageHandle = get_page_handle( streamType, action, data );
+	const pageHandle = extractPageHandle( streamType, action, data );
 	const { dateProperty } = streamApis[ streamType ];
 
 	let streamItems = [];

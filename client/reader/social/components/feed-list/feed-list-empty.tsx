@@ -107,7 +107,11 @@ export function FeedListEmpty( {
 			return (
 				<EmptyContent
 					title={ translate( "Couldn't load timeline" ) }
-					line={ translate( 'Something went wrong.' ) }
+					// Prefer the backend-supplied message when the projector
+					// passed one through (e.g. bad_request validation copy).
+					// Falls back to the generic line for protocol-side errors
+					// that don't carry actionable detail.
+					line={ error.message ?? translate( 'Something went wrong.' ) }
 					action={
 						<Button variant="primary" onClick={ onRetry }>
 							{ translate( 'Retry' ) }

@@ -11,6 +11,7 @@ import { PostCardHeader } from './post-card-header';
 import { PostCardLink } from './post-card-link';
 import { PostCardTimestamp } from './post-card-timestamp';
 import type { SocialContentWarning, SocialPost } from '../../types';
+import type React from 'react';
 
 type SocialPostCardVariant = 'default' | 'compact';
 
@@ -18,17 +19,27 @@ interface SocialPostCardProps {
 	post: SocialPost;
 	variant?: SocialPostCardVariant;
 	expandedVideo?: boolean;
+	connectionId?: number;
 	// When true, the inline timestamp moves out of the header and renders as
 	// a standalone block between the embed and the counts row (matches
 	// bsky.app's single-post layout). Used by ThreadTree for the target post.
 	prominentTimestamp?: boolean;
+	cardLink?: {
+		href: string;
+		onClick?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
+		target?: string;
+		rel?: string;
+		ariaLabel?: string;
+	};
 }
 
 export function SocialPostCard( {
 	post,
 	variant = 'default',
 	expandedVideo,
+	connectionId,
 	prominentTimestamp,
+	cardLink,
 }: SocialPostCardProps ) {
 	const isCompact = variant === 'compact';
 	const showProminentTimestamp = ! isCompact && Boolean( prominentTimestamp );
@@ -66,6 +77,7 @@ export function SocialPostCard( {
 					post={ post }
 					variant={ variant }
 					prominentTimestamp={ showProminentTimestamp }
+					timestampLink={ isCompact ? cardLink : undefined }
 				/>
 				{ cwGate ? (
 					<ContentWarningGate warning={ cwGate }>{ bodyAndEmbed }</ContentWarningGate>
@@ -73,17 +85,10 @@ export function SocialPostCard( {
 					bodyAndEmbed
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
-				{ ! isCompact && <PostCardCounts counts={ post.counts } postUri={ post.uri } /> }
+				{ ! isCompact && <PostCardCounts post={ post } connectionId={ connectionId } /> }
 			</CardBody>
 		</Card>
 	);
-
-	// Compact mode renders without any anchors so the consumer
-	// (e.g. PostCardEmbedQuote) can wrap it in its own outer anchor without
-	// creating invalid nested-<a> markup.
-	if ( isCompact ) {
-		return card;
-	}
 
 	return <PostCardLink variant={ variant }>{ card }</PostCardLink>;
 }

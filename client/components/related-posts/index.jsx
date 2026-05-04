@@ -1,23 +1,12 @@
+import { SCOPE_OTHER, SCOPE_SAME } from '@automattic/api-core';
 import clsx from 'clsx';
 import { times } from 'lodash';
-import { connect } from 'react-redux';
 import RelatedPost from 'calypso/blocks/reader-related-card';
-import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
-import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
-import { SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
+import { withReaderRelatedPosts } from 'calypso/components/data/with-reader-related-posts';
 
 const noop = () => {};
 
-function RelatedPosts( {
-	siteId,
-	postId,
-	posts,
-	title,
-	scope,
-	className = '',
-	onPostClick = noop,
-	onSiteClick = noop,
-} ) {
+function RelatedPosts( { posts, title, className = '', onPostClick = noop, onSiteClick = noop } ) {
 	let listItems;
 
 	if ( ! posts ) {
@@ -48,7 +37,6 @@ function RelatedPosts( {
 	return (
 		/* eslint-disable */
 		<div className={ clsx( 'reader-related-card__blocks', className ) }>
-			{ ! posts && <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ scope } /> }
 			<h1 className="reader-related-card__heading">{ title }</h1>
 			<ul className="reader-related-card__list">{ listItems }</ul>
 		</div>
@@ -56,16 +44,5 @@ function RelatedPosts( {
 	);
 }
 
-export const RelatedPostsFromSameSite = connect( ( state, ownProps ) => {
-	return {
-		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_SAME ),
-		scope: SCOPE_SAME,
-	};
-} )( RelatedPosts );
-
-export const RelatedPostsFromOtherSites = connect( ( state, ownProps ) => {
-	return {
-		posts: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
-		scope: SCOPE_OTHER,
-	};
-} )( RelatedPosts );
+export const RelatedPostsFromSameSite = withReaderRelatedPosts( SCOPE_SAME )( RelatedPosts );
+export const RelatedPostsFromOtherSites = withReaderRelatedPosts( SCOPE_OTHER )( RelatedPosts );

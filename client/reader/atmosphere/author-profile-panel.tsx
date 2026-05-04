@@ -1,25 +1,37 @@
-import { useAuthorFeedInfiniteQuery, useAuthorProfileQuery } from '@automattic/api-queries';
+import {
+	followAtmosphereActorMutation,
+	unfollowAtmosphereActorMutation,
+	useAtmosphereScopedProfileQuery,
+	useAuthorFeedInfiniteQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import {
+	AuthorProfileHeader,
+	FollowButton,
 	SocialAnalyticsProvider,
 	SocialFeedList,
 	SocialPostCard,
 	SocialProfileCard,
+	SocialProfileHeaderSkeleton,
 	mapAtmosphereFeedItemToSocialPost,
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { AuthorProfileHeader } from './author-profile-header';
+import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
+import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
-import { getBlueskyProfileUrl, getProfileUrl, getThreadUrl } from './route';
+import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
 import type {
-	AtmosphereAuthorProfile,
+	AtmosphereAuthorFeedFilter,
+	AtmosphereScopedProfile,
 	AtmosphereConnection,
 	AtmosphereError,
 	AtmosphereFeedItem,
@@ -27,6 +39,55 @@ import type {
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
+
+/**
+ * Action-aware copy for follow / unfollow failure toasts. Most kinds are
+ * semantically identical to a profile-load failure (auth, rate limit,
+ * upstream), so we delegate to the shared `errorMessage`. The exception is
+ * `not_found`: the shared copy is profile-load-shaped and would mislead the
+ * user when an actor disappears between profile load and the follow click.
+ */
+function followErrorMessage(
+	error: AtmosphereError,
+	action: 'follow' | 'unfollow',
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult {
+	if ( error.kind === 'not_found' ) {
+		return action === 'follow'
+			? translate( 'Couldn’t follow this account.' )
+			: translate( 'Couldn’t unfollow this account.' );
+	}
+	return errorMessage( error, translate );
+}
+
+function buildEmptyTitle(
+	filter: AtmosphereAuthorFeedFilter,
+	handle: string,
+	translate: ReturnType< typeof useTranslate >
+): string {
+	switch ( filter ) {
+		case 'posts_with_replies':
+			return String(
+				translate( '@%(handle)s hasn’t replied to anyone yet.', {
+					args: { handle },
+				} )
+			);
+		case 'posts_with_media':
+			return String(
+				translate( '@%(handle)s hasn’t posted any media yet.', {
+					args: { handle },
+				} )
+			);
+		case 'posts_no_replies':
+		case 'posts_and_author_threads':
+		default:
+			return String(
+				translate( '@%(handle)s hasn’t posted yet.', {
+					args: { handle },
+				} )
+			);
+	}
+}
 
 interface AuthorProfilePanelProps {
 	connection: AtmosphereConnection;
@@ -36,19 +97,29 @@ interface AuthorProfilePanelProps {
 export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
+	const filter = useAuthorProfileFilter();
 	const lastErrorKind = useRef< { header: string | null; feed: string | null } >( {
 		header: null,
 		feed: null,
 	} );
 
-	const profile = useAuthorProfileQuery( { actor } );
-	const feed = useAuthorFeedInfiniteQuery( { actor } );
+	const queryClient = useQueryClient();
+	const profile = useAtmosphereScopedProfileQuery( { connectionId: connection.id, actor } );
+	const followMut = useMutation( followAtmosphereActorMutation( queryClient ) );
+	const unfollowMut = useMutation( unfollowAtmosphereActorMutation( queryClient ) );
+	const feed = useAuthorFeedInfiniteQuery( { actor, filter } );
 
 	// Reset the error_shown dedup ref when navigating between profiles so the
 	// next author's first error fires its analytics even when the kind matches.
 	useEffect( () => {
 		lastErrorKind.current = { header: null, feed: null };
 	}, [ actor, connection.id ] );
+
+	// Per-filter feed errors must each fire their own _error_shown event,
+	// even when the kinds match (e.g. rate_limited on Posts then Replies).
+	useEffect( () => {
+		lastErrorKind.current.feed = null;
+	}, [ filter ] );
 
 	// Fire profile_viewed exactly once per (actor, connection) — but wait until
 	// the profile data resolves so the Tracks payload carries the resolved DID
@@ -62,14 +133,19 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			return;
 		}
 		viewedFor.current = key;
+		// Capture filter at first-fire time. The event semantics are "what filter
+		// was active when the user first opened this profile", which is decided
+		// the moment profile.data resolves — not on subsequent tab switches.
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_viewed', {
 				connection_id: connection.id,
 				actor,
 				actor_did: profile.data.did,
 				actor_handle: profile.data.handle,
+				initial_filter: filter,
 			} )
 		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ actor, connection.id, profile.data, dispatch ] );
 
 	useEffect( () => {
@@ -98,13 +174,14 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					actor,
 					error_kind: feed.error.kind,
 					surface: 'feed',
+					filter,
 				} )
 			);
 		}
 		if ( ! feed.isError ) {
 			lastErrorKind.current.feed = null;
 		}
-	}, [ feed.isError, feed.error, connection.id, actor, dispatch ] );
+	}, [ feed.isError, feed.error, connection.id, actor, filter, dispatch ] );
 
 	const items: SocialPost[] = useMemo( () => {
 		// Bluesky's getAuthorFeed can return the same post URI more than once
@@ -185,9 +262,16 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		[ connection.id ]
 	);
 
+	const buildTagUrl = useCallback(
+		( tag: string ) => getTagFeedUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
-		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
-		[]
+		( post: SocialPost ) => (
+			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
+		),
+		[ connection.id ]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
@@ -215,6 +299,33 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		  ]
 		: [];
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			const parent = { uri: post.uri, cid: post.cid };
+			// See timeline-panel.tsx for the rationale. Prefer the root's
+			// own `cid` from `reply_root` so reply-to-reply submissions send
+			// the real root strong-ref; fall back to the parent's `cid` for
+			// protocols without CIDs or older backend payloads.
+			const root = post.reply_root
+				? { uri: post.reply_root.uri, cid: post.reply_root.cid ?? post.cid }
+				: parent;
+			openComposer( {
+				kind: 'reply',
+				root,
+				parent,
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -222,9 +333,91 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			onClick: onClickAnalytics,
 			getThreadUrl: buildThreadUrl,
 			getProfileUrl: buildProfileUrl,
+			getTagUrl: buildTagUrl,
+			onReplyClick,
 		} ),
-		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl ]
+		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
 	);
+
+	const isOwnProfile = profile.data?.did === connection.did;
+
+	// .mutate is the only stable handle on the useMutation result; depending on
+	// the result object would re-create handleFollow / handleUnfollow every render.
+	const followMutate = followMut.mutate;
+	const unfollowMutate = unfollowMut.mutate;
+
+	const showFollowError = useCallback(
+		( error: AtmosphereError, action: 'follow' | 'unfollow' ) => {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_follow_error', {
+					connection_id: connection.id,
+					actor,
+					action,
+					error_kind: error.kind,
+				} )
+			);
+			dispatch(
+				errorNotice( followErrorMessage( error, action, translate ), {
+					id: 'atmosphere-follow-error',
+				} )
+			);
+		},
+		[ connection.id, actor, dispatch, translate ]
+	);
+
+	const handleFollow = useCallback( () => {
+		if ( ! profile.data ) {
+			return;
+		}
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_follow_clicked', {
+				connection_id: connection.id,
+				actor,
+				actor_did: profile.data.did,
+				was_followed_by: profile.data.viewer.followed_by,
+			} )
+		);
+		followMutate(
+			{ connectionId: connection.id, actor, subjectDid: profile.data.did },
+			{
+				onSuccess: () => {
+					dispatch( removeNotice( 'atmosphere-follow-error' ) );
+				},
+				onError: ( error ) => showFollowError( error, 'follow' ),
+			}
+		);
+	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError ] );
+
+	const handleUnfollow = useCallback( () => {
+		if ( ! profile.data ) {
+			return;
+		}
+		// AtmosphereProfileFollowState is a discriminated union: once `following`
+		// is non-null, `following_rkey` is type-narrowed to string. The button
+		// only renders the unfollow action when `following` is non-null, so this
+		// guard handles the same edge cases as the follow handler (loading /
+		// race) rather than the rkey-coupling invariant.
+		if ( profile.data.viewer.following === null ) {
+			return;
+		}
+		const rkey = profile.data.viewer.following_rkey;
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_unfollow_clicked', {
+				connection_id: connection.id,
+				actor,
+				actor_did: profile.data.did,
+			} )
+		);
+		unfollowMutate(
+			{ connectionId: connection.id, actor, rkey },
+			{
+				onSuccess: () => {
+					dispatch( removeNotice( 'atmosphere-follow-error' ) );
+				},
+				onError: ( error ) => showFollowError( error, 'unfollow' ),
+			}
+		);
+	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError ] );
 
 	const renderHeaderError = ( error: AtmosphereError ) => {
 		const noRetry = new Set< AtmosphereError[ 'kind' ] >( [
@@ -253,7 +446,18 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		);
 	};
 
-	const renderHeaderBody = ( profileData: AtmosphereAuthorProfile ) => {
+	const renderHeaderBody = ( profileData: AtmosphereScopedProfile ) => {
+		const followButton = ! isOwnProfile ? (
+			<FollowButton
+				isFollowing={ profileData.viewer.following !== null }
+				isFollowedBy={ profileData.viewer.followed_by }
+				isPending={ followMut.isPending || unfollowMut.isPending }
+				actorHandle={ profileData.handle }
+				onFollow={ handleFollow }
+				onUnfollow={ handleUnfollow }
+			/>
+		) : null;
+
 		return (
 			<SocialProfileCard
 				avatar={ profileData.avatar }
@@ -263,13 +467,14 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				bioHtml={ profileData.description_html }
 				stats={ stats }
 				statsLabel={ String( translate( 'Profile stats' ) ) }
+				headerActions={ followButton }
 			/>
 		);
 	};
 
 	const renderHeader = () => {
 		if ( profile.isPending ) {
-			return <ProfileHeaderSkeleton />;
+			return <SocialProfileHeaderSkeleton />;
 		}
 		if ( profile.isError && profile.error ) {
 			return renderHeaderError( profile.error );
@@ -285,8 +490,12 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			<VStack spacing={ 4 } className="atmosphere-author-profile">
-				<AuthorProfileHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
+				<AuthorProfileHeader
+					timelineUrl={ getTimelineUrl( connection.id ) }
+					onBackToTimeline={ handleBackToTimeline }
+				/>
 				{ renderHeader() }
+				<AuthorProfileTabs connectionId={ connection.id } actor={ actor } activeFilter={ filter } />
 				<SocialFeedList< SocialPost >
 					items={ items }
 					isPending={ feed.isPending }
@@ -298,31 +507,13 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					refetch={ handleFeedRetry }
 					renderItem={ renderItem }
 					itemKey={ itemKey }
-					emptyTitle={ String(
-						translate( '@%(handle)s hasn’t posted yet.', {
-							args: { handle: emptyHandle },
-						} )
-					) }
-					emptyLine={ String( translate( 'Their feed is empty.' ) ) }
-					emptyActionLabel={ String( translate( 'View on Bluesky' ) ) }
-					emptyActionURL={ profile.data?.bluesky_url ?? getBlueskyProfileUrl( actor ) }
+					emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
+					emptyLine=""
 					protocolLabel="Bluesky"
 					protocolHomeURL="/reader/atmosphere"
 					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
 				/>
 			</VStack>
 		</SocialAnalyticsProvider>
-	);
-}
-
-function ProfileHeaderSkeleton() {
-	return (
-		<div className="atmosphere-profile__header-skeleton" aria-hidden="true">
-			<div className="atmosphere-profile__header-skeleton-banner" />
-			<div className="atmosphere-profile__header-skeleton-avatar" />
-			<div className="atmosphere-profile__header-skeleton-name" />
-			<div className="atmosphere-profile__header-skeleton-handle" />
-			<div className="atmosphere-profile__header-skeleton-stats" />
-		</div>
 	);
 }

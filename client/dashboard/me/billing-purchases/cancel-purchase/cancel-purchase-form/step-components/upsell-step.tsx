@@ -13,6 +13,7 @@ import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 type UpsellProps = {
 	children?: React.ReactNode;
+	intent?: string;
 	title: string;
 	acceptButtonText: string;
 	acceptButtonUrl?: string;
@@ -32,13 +33,19 @@ function Upsell( { ...props }: UpsellProps ) {
 			<ButtonStack justify="flex-start">
 				<Button
 					variant="primary"
+					isDestructive={ props.intent === 'remove' }
 					href={ props.acceptButtonUrl }
 					onClick={ props.onAccept }
 					isBusy={ props.isBusy }
 				>
 					{ props.acceptButtonText }
 				</Button>
-				<Button variant="secondary" onClick={ props.onDecline } disabled={ props.isBusy }>
+				<Button
+					variant={ props.intent === 'remove' ? 'tertiary' : 'secondary' }
+					isDestructive={ props.intent === 'remove' }
+					onClick={ props.onDecline }
+					disabled={ props.isBusy }
+				>
 					{ declineButtonText }
 				</Button>
 			</ButtonStack>
@@ -70,6 +77,7 @@ type StepProps = {
 	declineButtonText?: string;
 	downgradePlan?: PlanProduct | null;
 	includedDomainPurchase?: object;
+	intent?: string;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onClickFreeMonthOffer?: () => void;
 	onDeclineUpsell?: () => void;
@@ -133,6 +141,7 @@ export default function UpsellStep( {
 
 						props.closeDialog && props.closeDialog();
 					} }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
@@ -170,6 +179,7 @@ export default function UpsellStep( {
 						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
 						window.location.replace( builtByURL );
 					} }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
@@ -203,6 +213,7 @@ export default function UpsellStep( {
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
@@ -232,6 +243,7 @@ export default function UpsellStep( {
 					title={ __( 'Switch to flexible monthly payments' ) }
 					acceptButtonText={ __( 'Switch to monthly payments' ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
@@ -281,6 +293,7 @@ export default function UpsellStep( {
 						plan: personalPlanName,
 					} ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }
@@ -314,6 +327,7 @@ export default function UpsellStep( {
 					title={ __( 'How about a free month?' ) }
 					acceptButtonText={ __( 'Get a free month' ) }
 					onAccept={ () => props.onClickFreeMonthOffer?.() }
+					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					isBusy={ cancellationInProgress }

@@ -29,3 +29,7 @@ export const contextProvider = new Proxy(
 	{},
 	{ get: ( _, prop ) => window.__JetpackAIProvider?.contextProvider?.[ prop ] }
 );
+export const capabilities = new Proxy(
+	{},
+	{ get: ( _, prop ) => window.__JetpackAIProvider?.capabilities?.[ prop ] }
+);

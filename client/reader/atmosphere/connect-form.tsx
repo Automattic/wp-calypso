@@ -84,6 +84,15 @@ function errorMessage(
 		case 'connection_not_found':
 		case 'not_found':
 		case 'bad_request':
+		// The slice 7c POST /posts wire codes shouldn't surface from the
+		// connect form (it doesn't post), but the AtmosphereError union
+		// covers the whole atmosphere surface, so list them explicitly to
+		// keep `assertNever` exhaustive without changing the user-visible
+		// copy on this screen.
+		case 'text_too_long':
+		case 'reply_disabled':
+		case 'quote_disabled':
+		case 'target_unavailable':
 		case 'unknown':
 			return translate( 'Something went wrong.' );
 		default:

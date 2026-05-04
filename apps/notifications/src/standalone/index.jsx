@@ -1,14 +1,16 @@
 import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
+import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
-const debug = require( 'debug' )( 'notifications:standalone' );
 
 import '../panel/boot/stylesheets/style.scss';
+
+const debug = debugFactory( 'notifications:standalone' );
 
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec( document.location.search );

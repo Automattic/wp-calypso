@@ -270,7 +270,7 @@ export type GridContextProps = {
 	 */
 	showSimplifiedBillingDescription?: boolean;
 	/**
-	 * If, and how to present increased renewal pricing (null, 'crossed_price', 'no_crossed_price')
+	 * If, and how to present increased renewal pricing (null or the assigned variant name)
 	 */
 	showBillingDescriptionForIncreasedRenewalPrice?: string | null;
 

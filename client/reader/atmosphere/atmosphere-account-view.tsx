@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { AtmosphereNavigation } from './atmosphere-navigation';
+import { ComposerModal, ComposerProvider } from './composer';
 import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
 import { ProfilePanel } from './profile-panel';
 import { SettingsPanel } from './settings-panel';
@@ -55,14 +56,17 @@ export function AtmosphereAccountView( { connectionId, tab }: Props ) {
 	const title = connection.display_name || connection.handle;
 
 	return (
-		<ReaderMain className="atmosphere-view">
-			<DocumentHead title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: title } ) } />
-			<NavigationHeader title={ title } subtitle={ `@${ connection.handle }` } />
-			<AtmosphereNavigation connectionId={ connection.id } selectedTab={ tab } />
-			<VStack spacing={ 4 } className="atmosphere-view__body">
-				{ renderTab( tab, connection ) }
-			</VStack>
-		</ReaderMain>
+		<ComposerProvider connectionId={ connection.id }>
+			<ReaderMain className="atmosphere-view">
+				<DocumentHead title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: title } ) } />
+				<NavigationHeader title={ title } subtitle={ `@${ connection.handle }` } />
+				<AtmosphereNavigation connectionId={ connection.id } selectedTab={ tab } />
+				<VStack spacing={ 4 } className="atmosphere-view__body">
+					{ renderTab( tab, connection ) }
+				</VStack>
+			</ReaderMain>
+			<ComposerModal />
+		</ComposerProvider>
 	);
 }
 

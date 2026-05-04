@@ -10,7 +10,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfilePanel } from '../author-profile-panel';
-import type { AtmosphereAuthorProfile, AtmosphereConnection } from '@automattic/api-core';
+import type { AtmosphereScopedProfile, AtmosphereConnection } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -25,7 +25,7 @@ const connection: AtmosphereConnection = {
 	avatar: null,
 };
 
-const profilePayload: AtmosphereAuthorProfile = {
+const profilePayload: AtmosphereScopedProfile = {
 	did: 'did:plc:abc',
 	handle: 'alice.bsky.social',
 	display_name: 'Alice',
@@ -35,6 +35,7 @@ const profilePayload: AtmosphereAuthorProfile = {
 	banner: null,
 	bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 	counts: { followers: 10, follows: 5, posts: 3 },
+	viewer: { following: null, following_rkey: null, followed_by: false },
 };
 
 const feedItem = {
@@ -77,11 +78,14 @@ describe( 'AuthorProfilePanel', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.restoreAllMocks();
+		// Reset window.location so per-test ?tab= overrides don't leak into
+		// the next test's useAuthorProfileFilter() read.
+		window.history.replaceState( {}, '', '/' );
 	} );
 
 	it( 'renders the header and feed once both queries resolve', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -100,12 +104,13 @@ describe( 'AuthorProfilePanel', () => {
 		expect( handles.length ).toBeGreaterThanOrEqual( 1 );
 		expect( handles[ 0 ] ).toBeVisible();
 		expect( await screen.findByText( 'hello' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
 	} );
 
 	it( 'fires profile_viewed on mount', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -130,7 +135,7 @@ describe( 'AuthorProfilePanel', () => {
 
 	it( 'shows a not-found empty state when the profile endpoint 404s', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/missing' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/missing' )
 			.reply( 404, { error: 'atmosphere_not_found' } );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/missing/feed' )
@@ -147,7 +152,7 @@ describe( 'AuthorProfilePanel', () => {
 	it( 'allows retry on a 502 error', async () => {
 		const user = userEvent.setup();
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -167,7 +172,7 @@ describe( 'AuthorProfilePanel', () => {
 		expect( retries.length ).toBeGreaterThanOrEqual( 1 );
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -183,7 +188,7 @@ describe( 'AuthorProfilePanel', () => {
 		const user = userEvent.setup();
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -209,7 +214,7 @@ describe( 'AuthorProfilePanel', () => {
 
 	it( 'paginates when sentinel comes into view', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -240,9 +245,322 @@ describe( 'AuthorProfilePanel', () => {
 		expect( await screen.findByText( 'second' ) ).toBeVisible();
 	} );
 
+	describe( 'filter tabs', () => {
+		it( 'fetches the feed with no filter when ?tab is absent', async () => {
+			window.history.replaceState( {}, '', '/reader/atmosphere/42/profile/alice.bsky.social' );
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			const feedScope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( ( q ) => ! ( 'filter' in q ) )
+				.reply( 200, { items: [ feedItem ], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+			await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );
+		} );
+
+		it( 'fetches the feed with filter=posts_with_replies when ?tab=replies', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/reader/atmosphere/42/profile/alice.bsky.social?tab=replies'
+			);
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			const feedScope = nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( { filter: 'posts_with_replies' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+			await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );
+		} );
+
+		it( 'renders three tabs above the feed', async () => {
+			window.history.replaceState( {}, '', '/reader/atmosphere/42/profile/alice.bsky.social' );
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			// NavItem renders <a role="menuitem">, not role="link" (verified in
+			// the author-profile-tabs tests).
+			expect( await screen.findByRole( 'menuitem', { name: 'Posts' } ) ).toBeVisible();
+			expect( screen.getByRole( 'menuitem', { name: 'Replies' } ) ).toBeVisible();
+			expect( screen.getByRole( 'menuitem', { name: 'Media' } ) ).toBeVisible();
+		} );
+
+		it( '_profile_viewed includes initial_filter matching the URL on first paint', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/reader/atmosphere/42/profile/alice.bsky.social?tab=media'
+			);
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await waitFor( () =>
+				expect( analytics.recordReaderTracksEvent ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_profile_viewed',
+					expect.objectContaining( { initial_filter: 'posts_with_media' } )
+				)
+			);
+		} );
+
+		it( '_profile_error_shown for surface=feed includes filter; surface=header does not', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/reader/atmosphere/42/profile/alice.bsky.social?tab=replies'
+			);
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await waitFor( () =>
+				expect( analytics.recordReaderTracksEvent ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_profile_error_shown',
+					expect.objectContaining( { surface: 'feed', filter: 'posts_with_replies' } )
+				)
+			);
+			await waitFor( () =>
+				expect( analytics.recordReaderTracksEvent ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_profile_error_shown',
+					expect.objectContaining( { surface: 'header' } )
+				)
+			);
+			const headerCall = (
+				analytics.recordReaderTracksEvent as unknown as jest.Mock
+			 ).mock.calls.find(
+				( c ) =>
+					c[ 0 ] === 'calypso_reader_atmosphere_profile_error_shown' && c[ 1 ]?.surface === 'header'
+			);
+			expect( headerCall ).toBeDefined();
+			expect( headerCall![ 1 ] ).not.toHaveProperty( 'filter' );
+		} );
+
+		it( 'shows per-tab empty title and no "View on Bluesky" action', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/reader/atmosphere/42/profile/alice.bsky.social?tab=replies'
+			);
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByText( /hasn’t replied to anyone yet/i ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /view on bluesky/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'link', { name: /view on bluesky/i } ) ).toBeNull();
+		} );
+
+		it( 'shows the Media-tab empty title and no "View on Bluesky" action when ?tab=media', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/reader/atmosphere/42/profile/alice.bsky.social?tab=media'
+			);
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByText( /hasn’t posted any media yet/i ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /view on bluesky/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'link', { name: /view on bluesky/i } ) ).toBeNull();
+		} );
+	} );
+
+	describe( 'follow / unfollow', () => {
+		it( 'fires _follow_clicked, POSTs to /follows, and optimistically swaps to "Following"', async () => {
+			const user = userEvent.setup();
+			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+			const followScope = nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/follows', {
+					subject_did: 'did:plc:abc',
+				} )
+				.reply( 201, {
+					follow: {
+						uri: 'at://did:plc:viewer/app.bsky.graph.follow/3krkeyrkeyrke',
+						cid: 'bafy',
+						rkey: '3krkeyrkeyrke',
+					},
+				} );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			const followButton = await screen.findByRole( 'button', { name: /^follow$/i } );
+			await user.click( followButton );
+
+			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
+			expect(
+				spy.mock.calls.some(
+					( [ event ] ) => event === 'calypso_reader_atmosphere_profile_follow_clicked'
+				)
+			).toBe( true );
+			// Optimistic update flips the cached profile, which re-renders the
+			// button into its Following state with the action-aware aria-label.
+			expect(
+				await screen.findByRole( 'button', { name: /unfollow @alice\.bsky\.social/i } )
+			).toBeVisible();
+		} );
+
+		it( 'renders "Follow back" when the actor follows the viewer but the viewer doesn’t follow yet', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, {
+					...profilePayload,
+					viewer: { following: null, following_rkey: null, followed_by: true },
+				} );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByRole( 'button', { name: /follow back/i } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /^follow$/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /unfollow/i } ) ).toBeNull();
+		} );
+
+		it( 'fires _follow_error with action and error_kind on a 502 follow response', async () => {
+			const user = userEvent.setup();
+			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+				.reply( 200, profilePayload );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/follows' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: /^follow$/i } ) );
+
+			// _follow_error is the analytics signal Atmosphere uses to track upstream
+			// failure rates by error_kind; the toast itself isn't rendered because
+			// renderWithProvider doesn't mount the global notice list.
+			await waitFor( () =>
+				expect(
+					spy.mock.calls.some(
+						( [ event, props ] ) =>
+							event === 'calypso_reader_atmosphere_profile_follow_error' &&
+							( props as Record< string, unknown > )?.error_kind === 'upstream_unavailable' &&
+							( props as Record< string, unknown > )?.action === 'follow'
+					)
+				).toBe( true )
+			);
+		} );
+
+		it( 'does not render the Follow button on the viewer’s own profile', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social' )
+				.reply( 200, {
+					...profilePayload,
+					did: connection.did,
+					handle: 'viewer.bsky.social',
+					display_name: 'Viewer',
+				} );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/reader/atmosphere/profile/viewer.bsky.social/feed' )
+				.query( true )
+				.reply( 200, { items: [], cursor: null } );
+
+			renderWithProvider(
+				<AuthorProfilePanel connection={ connection } actor="viewer.bsky.social" />,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByRole( 'heading', { level: 2, name: 'Viewer' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /^follow$/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /follow back/i } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /unfollow/i } ) ).toBeNull();
+		} );
+	} );
+
 	it( 'dedupes feed items by uri across pages (Bluesky returns repeats)', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
