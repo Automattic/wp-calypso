@@ -11,10 +11,12 @@ import {
 	mapMastodonFeedItemToSocialPost,
 	type SocialPost,
 } from 'calypso/reader/social';
+import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectMastodonError } from './error-projection';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
 import { MastodonTagFeedTabs, useMastodonTagFilter } from './tag-feed-tabs';
+import { makeUseMastodonFavouriteAction } from './use-mastodon-favourite-action';
 import type { MastodonConnection, MastodonFeedItem } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
@@ -150,9 +152,16 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 		);
 	}, [ feed.data, connection.instance ] );
 
+	const useFavouriteAction = useMemo(
+		() => makeUseMastodonFavouriteAction( connection.id ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
-		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
-		[]
+		( post: SocialPost ) => (
+			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
+		),
+		[ connection.id ]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
@@ -194,45 +203,47 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<VStack spacing={ 4 } className="mastodon-tag-feed">
-				<AuthorProfileHeader
-					timelineUrl={ getTimelineUrl( connection.id ) }
-					onBackToTimeline={ handleBackToTimeline }
-				/>
-				<div className="mastodon-tag-feed__header">
-					<h1 className="mastodon-tag-feed__heading">{ `#${ hashtag }` }</h1>
-					{ countLine ? <p className="mastodon-tag-feed__count">{ countLine }</p> : null }
-					{ externalTagUrl ? (
-						<ExternalLink className="mastodon-tag-feed__external-link" href={ externalTagUrl }>
-							{ translate( 'View on Mastodon' ) }
-						</ExternalLink>
-					) : null }
-				</div>
-				<MastodonTagFeedTabs
-					connectionId={ connection.id }
-					hashtag={ hashtag }
-					activeFilter={ filter }
-				/>
-				<SocialFeedList< SocialPost >
-					items={ items }
-					isPending={ feed.isPending }
-					isError={ feed.isError }
-					error={ projectMastodonError( feed.error ) }
-					hasNextPage={ Boolean( feed.hasNextPage ) }
-					isFetchingNextPage={ feed.isFetchingNextPage }
-					fetchNextPage={ feed.fetchNextPage }
-					refetch={ handleRetry }
-					renderItem={ renderItem }
-					itemKey={ itemKey }
-					emptyTitle={ String(
-						translate( 'No posts found for #%(hashtag)s.', { args: { hashtag } } )
-					) }
-					emptyLine={ String( translate( 'Try a different filter or check back later.' ) ) }
-					protocolLabel="Mastodon"
-					protocolHomeURL="/reader/mastodon"
-					protocolHomeLabel={ String( translate( 'Back to Mastodon' ) ) }
-				/>
-			</VStack>
+			<FavouritesProvider value={ useFavouriteAction }>
+				<VStack spacing={ 4 } className="mastodon-tag-feed">
+					<AuthorProfileHeader
+						timelineUrl={ getTimelineUrl( connection.id ) }
+						onBackToTimeline={ handleBackToTimeline }
+					/>
+					<div className="mastodon-tag-feed__header">
+						<h1 className="mastodon-tag-feed__heading">{ `#${ hashtag }` }</h1>
+						{ countLine ? <p className="mastodon-tag-feed__count">{ countLine }</p> : null }
+						{ externalTagUrl ? (
+							<ExternalLink className="mastodon-tag-feed__external-link" href={ externalTagUrl }>
+								{ translate( 'View on Mastodon' ) }
+							</ExternalLink>
+						) : null }
+					</div>
+					<MastodonTagFeedTabs
+						connectionId={ connection.id }
+						hashtag={ hashtag }
+						activeFilter={ filter }
+					/>
+					<SocialFeedList< SocialPost >
+						items={ items }
+						isPending={ feed.isPending }
+						isError={ feed.isError }
+						error={ projectMastodonError( feed.error ) }
+						hasNextPage={ Boolean( feed.hasNextPage ) }
+						isFetchingNextPage={ feed.isFetchingNextPage }
+						fetchNextPage={ feed.fetchNextPage }
+						refetch={ handleRetry }
+						renderItem={ renderItem }
+						itemKey={ itemKey }
+						emptyTitle={ String(
+							translate( 'No posts found for #%(hashtag)s.', { args: { hashtag } } )
+						) }
+						emptyLine={ String( translate( 'Try a different filter or check back later.' ) ) }
+						protocolLabel="Mastodon"
+						protocolHomeURL="/reader/mastodon"
+						protocolHomeLabel={ String( translate( 'Back to Mastodon' ) ) }
+					/>
+				</VStack>
+			</FavouritesProvider>
 		</SocialAnalyticsProvider>
 	);
 }
