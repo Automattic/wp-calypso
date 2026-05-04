@@ -9,7 +9,14 @@ import {
 	type ActiveMode,
 	type ComposerMode,
 } from '../../composer-provider';
-import { ComposeFab } from '../compose-fab';
+
+// Note: this test file does NOT render `<ComposeFab>` directly. Task 6 wires
+// the FAB into `<ComposerProvider>` itself, so any consumer of the provider
+// implicitly gets the FAB. Rendering it explicitly here would mount a
+// duplicate after Task 6 lands and break `getByRole` (which throws on
+// multiple matches). The red phase still produces a valid failure: the FAB
+// is absent until Task 6 wires it through, so `getByRole( ..., { name: 'Compose post' } )`
+// throws "Unable to find element".
 
 function Spy( { onMode }: { onMode: ( m: ActiveMode ) => void } ) {
 	const { mode } = useComposer();
@@ -25,7 +32,6 @@ describe( '<ComposeFab>', () => {
 		const onMode = jest.fn();
 		render(
 			<ComposerProvider connectionId={ 7 }>
-				<ComposeFab />
 				<Spy onMode={ onMode } />
 			</ComposerProvider>
 		);
@@ -51,7 +57,6 @@ describe( '<ComposeFab>', () => {
 
 		render(
 			<ComposerProvider connectionId={ 7 }>
-				<ComposeFab />
 				<Trigger />
 			</ComposerProvider>
 		);
