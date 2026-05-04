@@ -68,7 +68,7 @@ describe( 'AuthorProfileView', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, {} );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <AuthorProfileView connectionId={ 42 } actor="alice.bsky.social" /> );
@@ -105,7 +105,7 @@ describe( 'AuthorProfileView', () => {
 				viewer: { following: null, following_rkey: null, followed_by: false },
 			} );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <AuthorProfileView connectionId={ 42 } actor="alice.bsky.social" /> );

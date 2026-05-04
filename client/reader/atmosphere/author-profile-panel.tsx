@@ -1,8 +1,8 @@
 import {
 	followAtmosphereActorMutation,
 	unfollowAtmosphereActorMutation,
+	useAtmosphereScopedAuthorFeedInfiniteQuery,
 	useAtmosphereScopedProfileQuery,
-	useAuthorFeedInfiniteQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -107,7 +107,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	const profile = useAtmosphereScopedProfileQuery( { connectionId: connection.id, actor } );
 	const followMut = useMutation( followAtmosphereActorMutation( queryClient ) );
 	const unfollowMut = useMutation( unfollowAtmosphereActorMutation( queryClient ) );
-	const feed = useAuthorFeedInfiniteQuery( { actor, filter } );
+	const feed = useAtmosphereScopedAuthorFeedInfiniteQuery( {
+		connectionId: connection.id,
+		actor,
+		filter,
+	} );
 
 	// Reset the error_shown dedup ref when navigating between profiles so the
 	// next author's first error fires its analytics even when the kind matches.

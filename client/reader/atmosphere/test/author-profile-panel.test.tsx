@@ -88,7 +88,7 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [ feedItem ], cursor: null } );
 
@@ -113,7 +113,7 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [], cursor: null } );
 
@@ -138,7 +138,7 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/missing' )
 			.reply( 404, { error: 'atmosphere_not_found' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/missing/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/missing/feed' )
 			.query( true )
 			.reply( 404, { error: 'atmosphere_not_found' } );
 
@@ -155,7 +155,7 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 
@@ -175,7 +175,7 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [ feedItem ], cursor: null } );
 
@@ -191,7 +191,7 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [], cursor: null } );
 
@@ -217,11 +217,11 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( ( q ) => ! q.cursor )
 			.reply( 200, { items: [ feedItem ], cursor: 'page-2' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( ( q ) => q.cursor === 'page-2' )
 			.reply( 200, {
 				items: [
@@ -253,7 +253,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			const feedScope = nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( ( q ) => ! ( 'filter' in q ) )
 				.reply( 200, { items: [ feedItem ], cursor: null } );
 
@@ -275,7 +275,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			const feedScope = nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( { filter: 'posts_with_replies' } )
 				.reply( 200, { items: [], cursor: null } );
 
@@ -293,7 +293,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
@@ -320,7 +320,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
@@ -348,7 +348,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 429, { error: 'atmosphere_rate_limited' } );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 429, { error: 'atmosphere_rate_limited' } );
 
@@ -390,7 +390,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
@@ -415,7 +415,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
@@ -438,7 +438,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 			const followScope = nock( 'https://public-api.wordpress.com' )
@@ -482,7 +482,7 @@ describe( 'AuthorProfilePanel', () => {
 					viewer: { following: null, following_rkey: null, followed_by: true },
 				} );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
@@ -503,7 +503,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 			nock( 'https://public-api.wordpress.com' )
@@ -542,7 +542,7 @@ describe( 'AuthorProfilePanel', () => {
 					display_name: 'Viewer',
 				} );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/viewer.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
@@ -563,11 +563,11 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( ( q ) => ! q.cursor )
 			.reply( 200, { items: [ feedItem ], cursor: 'page-2' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( ( q ) => q.cursor === 'page-2' )
 			.reply( 200, {
 				items: [

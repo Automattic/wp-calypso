@@ -1,4 +1,4 @@
-import { useThreadQuery } from '@automattic/api-queries';
+import { useAtmosphereScopedThreadQuery } from '@automattic/api-queries';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -40,7 +40,8 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 
 	const targetUri = useMemo( () => `at://${ did }/app.bsky.feed.post/${ rkey }`, [ did, rkey ] );
 
-	const { data, isPending, isFetching, isError, error, refetch } = useThreadQuery( {
+	const { data, isPending, isFetching, isError, error, refetch } = useAtmosphereScopedThreadQuery( {
+		connectionId: connection.id,
 		uri: targetUri,
 	} );
 
