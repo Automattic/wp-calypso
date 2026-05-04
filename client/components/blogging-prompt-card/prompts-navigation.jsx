@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { decodeEntities } from '@wordpress/html-entities';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -150,7 +151,9 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 					>
 						<Gridicon icon={ backIcon } size={ 18 } />
 					</Button>
-					<p className="blogging-prompt__prompt-text">{ getPrompt()?.text }</p>
+					<p className="blogging-prompt__prompt-text">
+						{ decodeEntities( getPrompt()?.text ?? '' ) }
+					</p>
 					<Button
 						aria-label={ translate( 'Show next prompt' ) }
 						borderless={ false }
