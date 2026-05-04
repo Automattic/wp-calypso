@@ -58,6 +58,7 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSectionGroup } from 'calypso/state/ui/selectors';
+import { ArcadeLivesCounter } from '../arcade-mode/lives-counter';
 import Item from './item';
 import Masterbar from './masterbar';
 import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
@@ -862,6 +863,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
 					{ this.renderNotifications() }
+					<ArcadeLivesCounter />
 					{ this.renderProfileMenu() }
 				</div>
 			</Masterbar>
