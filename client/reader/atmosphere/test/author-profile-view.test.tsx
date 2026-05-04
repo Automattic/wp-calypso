@@ -3,6 +3,7 @@
  */
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfileView } from '../author-profile-view';
@@ -22,10 +23,11 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
-jest.mock( '@automattic/calypso-router', () => ( {
-	__esModule: true,
-	default: { replace: jest.fn() },
-} ) );
+jest.mock( '@automattic/calypso-router', () => {
+	const mockPage = jest.fn();
+	mockPage.replace = jest.fn();
+	return { __esModule: true, default: mockPage };
+} );
 
 // NavTabs (used by AuthorProfileTabs inside AuthorProfilePanel) relies on
 // IntersectionObserver, which jsdom does not provide.
@@ -45,6 +47,7 @@ afterAll( () => {
 afterEach( () => {
 	nock.cleanAll();
 	jest.restoreAllMocks();
+	( page as unknown as jest.Mock ).mockClear();
 	( page.replace as jest.Mock ).mockClear();
 } );
 
@@ -111,5 +114,51 @@ describe( 'AuthorProfileView', () => {
 		renderWithProvider( <AuthorProfileView connectionId={ 42 } actor="alice.bsky.social" /> );
 
 		expect( await screen.findByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+	} );
+
+	it( 'renders the back-to-timeline button above the panel', async () => {
+		const user = userEvent.setup();
+		// jsdom starts with history.length === 1, so BackButton will call page() directly.
+		jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections' )
+			.reply( 200, {
+				connections: [
+					{
+						id: 42,
+						did: 'did:plc:viewer',
+						handle: 'viewer.bsky.social',
+						display_name: 'Viewer',
+						avatar: null,
+					},
+				],
+			} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+			.reply( 200, {
+				did: 'did:plc:abc',
+				handle: 'alice.bsky.social',
+				display_name: 'Alice',
+				description: '',
+				description_html: '',
+				avatar: null,
+				banner: null,
+				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
+				counts: { followers: 0, follows: 0, posts: 0 },
+				viewer: { following: null, following_rkey: null, followed_by: false },
+			} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.reply( 200, { items: [], cursor: null } );
+
+		renderWithProvider( <AuthorProfileView connectionId={ 42 } actor="alice.bsky.social" /> );
+
+		// Wait for the panel to render (connection resolved), then verify the
+		// back button is present in the view and navigates to the timeline.
+		await screen.findByRole( 'heading', { level: 2, name: 'Alice' } );
+		const backButton = screen.getByRole( 'button', { name: /back/i } );
+		await user.click( backButton );
+		expect( page as unknown as jest.Mock ).toHaveBeenCalledWith( '/reader/atmosphere/42/timeline' );
 	} );
 } );

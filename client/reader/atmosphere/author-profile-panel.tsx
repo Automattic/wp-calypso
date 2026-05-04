@@ -11,7 +11,6 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import {
-	AuthorProfileHeader,
 	FollowButton,
 	SocialAnalyticsProvider,
 	SocialFeedList,
@@ -28,7 +27,7 @@ import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs
 import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
-import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
+import { getProfileUrl, getTagFeedUrl, getThreadUrl } from './route';
 import type {
 	AtmosphereAuthorFeedFilter,
 	AtmosphereScopedProfile,
@@ -92,9 +91,14 @@ function buildEmptyTitle(
 interface AuthorProfilePanelProps {
 	connection: AtmosphereConnection;
 	actor: string;
+	subtabBasePath: string;
 }
 
-export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelProps ) {
+export function AuthorProfilePanel( {
+	connection,
+	actor,
+	subtabBasePath,
+}: AuthorProfilePanelProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const filter = useAuthorProfileFilter();
@@ -224,15 +228,6 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		);
 		feed.refetch();
 	}, [ connection.id, actor, feed, dispatch ] );
-
-	const handleBackToTimeline = useCallback( () => {
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_back_to_timeline_clicked', {
-				connection_id: connection.id,
-				actor,
-			} )
-		);
-	}, [ connection.id, actor, dispatch ] );
 
 	const onClickAnalytics = useCallback(
 		( event: string, props: Record< string, unknown > ) => {
@@ -490,17 +485,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			<VStack spacing={ 4 } className="atmosphere-author-profile">
-				<AuthorProfileHeader
-					timelineUrl={ getTimelineUrl( connection.id ) }
-					onBackToTimeline={ handleBackToTimeline }
-				/>
 				{ renderHeader() }
 				<AuthorProfileTabs
 					connectionId={ connection.id }
 					actor={ actor }
-					basePath={ `/reader/atmosphere/${ connection.id }/profile/${ encodeURIComponent(
-						actor
-					) }` }
+					basePath={ subtabBasePath }
 					activeFilter={ filter }
 				/>
 				<SocialFeedList< SocialPost >
