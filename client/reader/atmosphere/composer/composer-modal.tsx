@@ -58,8 +58,18 @@ export function ComposerModal() {
 					root_uri: mode.root.uri,
 				} )
 			);
+			return;
 		}
-		// quote / standalone Tracks events are emitted by later slices.
+		if ( mode.kind === 'standalone' ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_opened', {
+					connection_id: mode.connectionId,
+					entry_point: mode.entry_point,
+				} )
+			);
+			return;
+		}
+		// quote Tracks events emitted by slice 7d.
 	}, [ mode, dispatch ] );
 
 	// Tracks: error_shown with ref-tracked dedupe per error_kind transition.

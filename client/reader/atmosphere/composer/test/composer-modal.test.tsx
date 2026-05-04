@@ -95,6 +95,38 @@ function HarnessInvalidUri( props: { connectionId: number } ) {
 	);
 }
 
+function TriggerAndModalStandalone( props: {
+	entryPoint: 'timeline_inline' | 'profile_inline' | 'fab';
+} ) {
+	const { openComposer } = useComposer();
+	return (
+		<>
+			<button
+				onClick={ () =>
+					openComposer( {
+						kind: 'standalone',
+						entry_point: props.entryPoint,
+					} )
+				}
+			>
+				open
+			</button>
+			<ComposerModal />
+		</>
+	);
+}
+
+function HarnessStandalone( props: {
+	connectionId: number;
+	entryPoint: 'timeline_inline' | 'profile_inline' | 'fab';
+} ) {
+	return (
+		<ComposerProvider connectionId={ props.connectionId }>
+			<TriggerAndModalStandalone entryPoint={ props.entryPoint } />
+		</ComposerProvider>
+	);
+}
+
 describe( '<ComposerModal>', () => {
 	beforeEach( () => {
 		// recordReaderTracksEvent is a thunk that reads state.reader.follows.
@@ -437,6 +469,26 @@ describe( '<ComposerModal>', () => {
 			'/reader/atmosphere/42/thread/did:plc:abcdefghijklmnopqrstuvwx/bbbbbbbbbbbbb'
 		);
 	} );
+
+	it.each( [ 'timeline_inline', 'profile_inline', 'fab' ] as const )(
+		'fires _compose_opened with entry_point=%s when opened in standalone mode',
+		async ( entryPoint ) => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint={ entryPoint } /> );
+			await user.click( screen.getByText( 'open' ) );
+
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_compose_opened',
+					expect.objectContaining( {
+						connection_id: 42,
+						entry_point: entryPoint,
+					} )
+				)
+			);
+		}
+	);
 
 	it( 'omits the View button when the thread URL cannot be built', async () => {
 		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
