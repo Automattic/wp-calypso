@@ -143,13 +143,10 @@ describe( 'readStreamQuery', () => {
 		expect( result.current.data?.posts?.[ 0 ].date_liked ).toBe( '2026-04-10' );
 	} );
 
-	it( 'throws when called for an unmigrated streamType', () => {
-		// `recommendations_posts` is still served by the legacy data-layer
-		// (custom `seed` + `algorithm` query shape); update this case when it
-		// lands in `readStreamQuery`.
-		const opts = readStreamQuery( 'recommendations_posts', { number: 4 }, null );
+	it( 'throws when called for an unsupported streamType', () => {
+		const opts = readStreamQuery( 'unknown_stream', { number: 4 }, null );
 		expect( () => opts.queryFn!( {} as never ) ).toThrow(
-			/unsupported streamType "recommendations_posts"/
+			/unsupported streamType "unknown_stream"/
 		);
 	} );
 } );

@@ -20,7 +20,6 @@ import {
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import { getStream } from 'calypso/state/reader/streams/selectors';
-import { isMigratedStream } from './migrated-stream-types';
 import {
 	PER_FETCH,
 	INITIAL_FETCH,
@@ -436,28 +435,19 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 /**
  * Fetch posts into a stream
  *
- * For migrated stream types (see `isMigratedStream`), runs through React
- * Query via `queryClient.fetchQuery` and dispatches the same receive actions
- * the legacy data-layer used to. For unmigrated stream types, dispatches the
- * legacy `READER_STREAMS_PAGE_REQUEST` so the existing data-layer handler
- * keeps working — this gate shrinks per PR until the data-layer is deleted.
+ * Runs through React Query via `queryClient.fetchQuery` and dispatches the same
+ * receive actions the legacy data-layer used to.
  * @param {Object} params
  * @param {string} params.streamKey The stream to fetch posts for
  * @returns {Function} Thunk
  */
 export const requestPage = ( params ) => ( dispatch ) => {
-	const streamType = getStreamType( params.streamKey );
 	const action = buildPageRequestAction( params );
 
-	// Dispatch the legacy request action so the reducer sets `isRequesting`
-	// and clears any prior `error` state. For migrated streams the data-layer's
-	// `requestPage` is gated on the same `isMigratedStream` predicate and
-	// no-ops, so this dispatch only drives reducer state.
+	// Dispatch the request action so the reducer sets `isRequesting` and clears
+	// any prior `error` state. The legacy data-layer no-ops for migrated
+	// streams, so this dispatch only drives reducer state.
 	dispatch( action );
-
-	if ( ! isMigratedStream( streamType ) ) {
-		return action;
-	}
 
 	// SSR no-op: matches the legacy data-layer, which never fired stream
 	// requests during server-side rendering.
@@ -569,14 +559,8 @@ export const requestPaginatedStream =
 			},
 		};
 
-		// Dispatch so the reducer's `isRequesting`/`error` transitions still
-		// fire. For unmigrated streams the legacy data-layer handles
-		// READER_STREAMS_PAGINATED_REQUEST and issues the HTTP request.
+		// Dispatch so the reducer's `isRequesting`/`error` transitions still fire.
 		dispatch( action );
-
-		if ( ! isMigratedStream( streamType ) ) {
-			return action;
-		}
 
 		// SSR no-op: matches the legacy data-layer.
 		if ( typeof window === 'undefined' ) {

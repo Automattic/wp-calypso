@@ -63,17 +63,25 @@ afterEach( () => {
 } );
 
 describe( 'requestPage thunk', () => {
-	describe( 'unmigrated stream type', () => {
-		it( 'dispatches the legacy READER_STREAMS_PAGE_REQUEST', () => {
-			const { dispatch } = runThunk( { streamKey: 'recommendations_posts' } );
-			expect( dispatch ).toHaveBeenCalledTimes( 1 );
+	describe( 'unsupported stream type', () => {
+		it( 'dispatches PAGE_REQUEST then stream error', async () => {
+			const { dispatch, result } = runThunk( { streamKey: 'unknown_stream' } );
+			await result;
+
 			const action = dispatch.mock.calls[ 0 ][ 0 ];
 			expect( action.type ).toBe( READER_STREAMS_PAGE_REQUEST );
 			expect( action.payload ).toMatchObject( {
-				streamKey: 'recommendations_posts',
-				streamType: 'recommendations_posts',
+				streamKey: 'unknown_stream',
+				streamType: 'unknown_stream',
 				isPoll: false,
 			} );
+
+			const errorAction = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_ERROR );
+			expect( errorAction.payload.error.message ).toContain(
+				'unsupported streamType "unknown_stream"'
+			);
 		} );
 	} );
 
@@ -936,19 +944,20 @@ describe( 'requestPaginatedStream thunk', () => {
 		expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
 	} );
 
-	it( 'returns the legacy action for unmigrated streamKey', () => {
+	it( 'dispatches stream error for an unknown streamKey', async () => {
 		const { dispatch, result } = runPaginatedThunk( {
-			streamKey: 'recommendations_posts',
+			streamKey: 'unknown_stream',
 			page: 1,
 			perPage: 10,
 		} );
-		// Action object returned, not a Promise — legacy data-layer
-		// path. The first dispatch carried the same action.
-		expect( result ).toMatchObject( {
-			type: 'READER_STREAMS_PAGINATED_REQUEST',
-			payload: { streamKey: 'recommendations_posts', page: 1, perPage: 10 },
-		} );
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		await result;
+
+		const errorAction = dispatch.mock.calls
+			.map( ( c ) => c[ 0 ] )
+			.find( ( a ) => a && a.type === READER_STREAMS_ERROR );
+		expect( errorAction.payload.error.message ).toContain(
+			'unsupported streamType "unknown_stream"'
+		);
 	} );
 
 	it( 'does not collapse overlapping page requests for the same streamKey', async () => {
