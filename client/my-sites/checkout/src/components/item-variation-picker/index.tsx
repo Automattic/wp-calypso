@@ -1,5 +1,7 @@
 import { isWpComPlan } from '@automattic/calypso-products';
+import { useViewportMatch } from '@wordpress/compose';
 import { FunctionComponent } from 'react';
+import { ItemVariationButtonRow } from './item-variation-button-row';
 import { ItemVariationDropDown } from './item-variation-dropdown';
 import { ItemVariationRadioButtons } from './item-variation-radio-buttons';
 import type { ItemVariationPickerProps } from './types';
@@ -10,8 +12,12 @@ import type { ItemVariationPickerProps } from './types';
  */
 export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( props ) => {
 	const { selectedItem } = props;
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
 	if ( isWpComPlan( selectedItem.product_slug ) ) {
+		if ( isLargeViewport ) {
+			return <ItemVariationButtonRow { ...props } />;
+		}
 		return <ItemVariationRadioButtons { ...props } />;
 	}
 

@@ -15,11 +15,20 @@ const TrustCardsRow = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 		gap: 12px;
-		/* Mirror StepContentWrapper's left inset (composite-checkout
-		   checkout-steps.tsx) so the cards line up with the form selectors
-		   above instead of the green step icons in the gutter. */
-		padding-inline-start: 40px;
+		/* Mirror WPCheckoutMainContent's 24px padding-inline-start +
+		   StepContentWrapper's 40px inset so the cards line up with the
+		   form's step content above (line items, contact form, payment),
+		   not with the green step icons in the gutter. */
+		padding-inline-start: 64px;
 		margin-block-end: 48px;
+	}
+
+	/* Above 1024px the form column restores its 64px right padding for
+	   breathing room from the sidebar; mirror it here so the trust cards'
+	   right edge stays aligned with the form's step content. Below 1024px
+	   both extend to col-2's right edge with no right padding. */
+	@media ( min-width: 1025px ) {
+		padding-inline-end: 64px;
 	}
 `;
 

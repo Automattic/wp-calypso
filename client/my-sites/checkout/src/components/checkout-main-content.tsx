@@ -2370,11 +2370,18 @@ const WPCheckoutMainContent = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: calc( var( --masterbar-checkout-height ) + 24px );
 		max-width: 688px;
-		padding: 0 64px 0 24px;
+		padding-block: 0;
+		padding-inline-start: 24px;
+		padding-inline-end: 64px;
+	}
 
-		.rtl & {
-			padding: 0 24px 0 64px;
-		}
+	/* On narrower desktops the 64px between form and sidebar is too tight
+	   when stacked with the sidebar's own 64px left padding. Drop the form's
+	   right padding so its content reaches col-2's right edge, matching the
+	   trust cards row beneath. Restored above 1024px where the layout has
+	   room to breathe. */
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) and ( max-width: 1024px ) {
+		padding-inline-end: 0;
 	}
 	${ ( props ) => css`
 		.checkout-line-item .checkout-line-item__remove-product {
