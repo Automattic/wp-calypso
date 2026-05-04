@@ -1,12 +1,16 @@
 import { Button } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, useSyncExternalStore } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import './style.scss';
-import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
+import {
+	getExternalContextCards,
+	subscribeToExternalContext,
+	type ExternalContextCard,
+	type ExternalContextCardAction,
+} from '../../utils/external-context';
 
 interface Props {
-	cards: ExternalContextCard[];
 	onAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	onDismiss?: ( card: ExternalContextCard ) => void;
 }
@@ -19,12 +23,18 @@ interface RenderedCard {
 // Keep in sync with $context-card-leave-duration in style.scss.
 const LEAVE_DURATION_MS = 220;
 
-export default function ContextCards( { cards, onAction, onDismiss }: Props ) {
+export default function ContextCards( { onAction, onDismiss }: Props ) {
+	const cards = useSyncExternalStore(
+		subscribeToExternalContext,
+		getExternalContextCards,
+		getExternalContextCards
+	);
+
 	const [ rendered, setRendered ] = useState< RenderedCard[] >( () =>
 		cards.map( ( card ) => ( { card, leaving: false } ) )
 	);
 
-	// Reconcile local render list with incoming props: keep order, mark removed
+	// Reconcile local render list with the store: keep order, mark removed
 	// cards as leaving, append new ones.
 	useEffect( () => {
 		setRendered( ( prev ) => {
@@ -54,8 +64,7 @@ export default function ContextCards( { cards, onAction, onDismiss }: Props ) {
 
 	// Drop leaving cards from the DOM after the transition completes.
 	useEffect( () => {
-		const hasLeaving = rendered.some( ( entry ) => entry.leaving );
-		if ( ! hasLeaving ) {
+		if ( ! rendered.some( ( entry ) => entry.leaving ) ) {
 			return;
 		}
 

@@ -21,10 +21,8 @@ import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
 import {
 	consumeNextMessageExternalContextEntries,
-	getExternalContextCards,
 	removeExternalContextCard,
 	removeExternalContextEntry,
-	subscribeToExternalContext,
 	type ExternalContextCard,
 	type ExternalContextCardAction,
 } from '../../utils/external-context';
@@ -108,9 +106,6 @@ export default function OrchestratorChat( {
 	const [ isBuildingSite, setIsBuildingSite ] = useState( false );
 	const [ deletedMessageIds, setDeletedMessageIds ] = useState< Set< string > >( new Set() );
 	const [ hasUserSentMessage, setHasUserSentMessage ] = useState( false );
-	const [ contextCards, setContextCards ] = useState< ExternalContextCard[] >( () =>
-		getExternalContextCards()
-	);
 	const currentPostId = useSelect( ( select ) => {
 		return ( select( 'core/editor' ) as { getCurrentPostId?: () => number } )?.getCurrentPostId?.();
 	}, [] );
@@ -196,13 +191,6 @@ export default function OrchestratorChat( {
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];
 	const uploadImagesToWordPress = imageUpload?.uploadImagesToWordPress;
-
-	useEffect( () => {
-		const updateContextCards = () => setContextCards( getExternalContextCards() );
-
-		updateContextCards();
-		return subscribeToExternalContext( updateContextCards );
-	}, [] );
 
 	const onSubmitWithImages = useCallback(
 		async ( message: string ) => {
@@ -489,7 +477,6 @@ export default function OrchestratorChat( {
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }
-			contextCards={ contextCards }
 			onContextCardAction={ handleContextCardAction }
 			onDismissContextCard={ dismissContextCard }
 		/>

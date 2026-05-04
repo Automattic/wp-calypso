@@ -97,10 +97,8 @@ interface AgentsManagerActions {
 	submitChatMessage?: ( message?: string ) => Promise< void >;
 	setContextEntry: ( entry: AgentsManagerExternalContextEntry ) => void;
 	removeContextEntry: ( id: string ) => void;
-	clearContextEntries: () => void;
 	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
 	removeContextCard: ( id: string ) => void;
-	clearContextCards: () => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;

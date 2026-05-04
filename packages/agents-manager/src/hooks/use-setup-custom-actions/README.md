@@ -21,10 +21,8 @@ Once the hook is mounted, `window.__agentsManagerActions` provides:
 | `submitChatMessage`        | `(message?: string) => Promise<void>`                   | Submits a message programmatically. If omitted, submits the current input value.                 |
 | `setContextEntry`          | `(entry: AgentsManagerExternalContextEntry) => void`    | Adds or replaces context that is merged into `clientContext.contextEntries`.                     |
 | `removeContextEntry`       | `(id: string) => void`                                  | Removes a context entry. Cards linked by `contextEntryId` are removed too.                       |
-| `clearContextEntries`      | `() => void`                                            | Removes all externally declared context entries and cards.                                       |
 | `setContextCard`           | `(card: AgentsManagerExternalContextCard) => void`      | Adds or replaces a graphical card shown inside the chat.                                         |
 | `removeContextCard`        | `(id: string) => void`                                  | Removes a graphical context card.                                                                |
-| `clearContextCards`        | `() => void`                                            | Removes all graphical context cards.                                                             |
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
 | `isReady`                  | `boolean`                                               | `true` once the actions API is fully populated and safe to call.                                 |
 

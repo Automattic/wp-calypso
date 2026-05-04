@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
 import type { ContextEntry } from '../extension-types';
+import type { ReactNode } from 'react';
 
 export type ExternalContextDelivery = 'next-message' | 'conversation';
 
@@ -12,7 +12,6 @@ export interface ExternalContextEntry extends Omit< ContextEntry, 'type' > {
 	payload?: unknown;
 	delivery?: ExternalContextDelivery;
 	createdAt?: string;
-	expiresAt?: string;
 }
 
 export interface ExternalContextCardAction {
@@ -32,7 +31,6 @@ export interface ExternalContextCard {
 	body: ReactNode;
 	actions?: ExternalContextCardAction[];
 	createdAt?: string;
-	expiresAt?: string;
 }
 
 const EXTERNAL_CONTEXT_CHANGE_EVENT = 'agents-manager-context-change';
@@ -40,60 +38,14 @@ const EXTERNAL_CONTEXT_CHANGE_EVENT = 'agents-manager-context-change';
 const contextEntries = new Map< string, ExternalContextEntry >();
 const contextCards = new Map< string, ExternalContextCard >();
 
-function hasExpired( item: { expiresAt?: string } ): boolean {
-	if ( ! item.expiresAt ) {
-		return false;
-	}
-
-	const expiresAt = Date.parse( item.expiresAt );
-	return Number.isFinite( expiresAt ) && expiresAt <= Date.now();
-}
-
-function emitExternalContextChange(): void {
-	if ( typeof window === 'undefined' ) {
-		return;
-	}
-
-	window.dispatchEvent( new CustomEvent( EXTERNAL_CONTEXT_CHANGE_EVENT ) );
-}
-
-function pruneExpiredContext(): void {
-	let changed = false;
-
-	for ( const [ id, entry ] of contextEntries ) {
-		if ( hasExpired( entry ) ) {
-			contextEntries.delete( id );
-			changed = true;
-		}
-	}
-
-	for ( const [ id, card ] of contextCards ) {
-		if (
-			hasExpired( card ) ||
-			( card.contextEntryId && ! contextEntries.has( card.contextEntryId ) )
-		) {
-			contextCards.delete( id );
-			changed = true;
-		}
-	}
-
-	if ( changed ) {
-		emitExternalContextChange();
-	}
-}
+// Stable snapshots regenerated on each mutation. Required for React 18's
+// useSyncExternalStore — it compares snapshot identity to decide whether
+// to re-render, so returning a fresh array on every read would loop.
+let entriesSnapshot: ContextEntry[] = [];
+let cardsSnapshot: ExternalContextCard[] = [];
 
 function toContextEntry( entry: ExternalContextEntry ): ContextEntry {
-	const {
-		contentType,
-		delivery,
-		payload,
-		source,
-		title,
-		description,
-		createdAt,
-		expiresAt,
-		...rest
-	} = entry;
+	const { contentType, delivery, payload, source, title, description, createdAt, ...rest } = entry;
 
 	return {
 		...rest,
@@ -103,8 +55,20 @@ function toContextEntry( entry: ExternalContextEntry ): ContextEntry {
 		title,
 		description,
 		createdAt,
-		expiresAt,
 	} as ContextEntry;
+}
+
+function refreshSnapshots(): void {
+	entriesSnapshot = Array.from( contextEntries.values(), toContextEntry );
+	cardsSnapshot = Array.from( contextCards.values() );
+}
+
+function emitExternalContextChange(): void {
+	refreshSnapshots();
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+	window.dispatchEvent( new CustomEvent( EXTERNAL_CONTEXT_CHANGE_EVENT ) );
 }
 
 export function setExternalContextEntry( entry: ExternalContextEntry ): void {
@@ -134,15 +98,8 @@ export function removeExternalContextEntry( id: string ): void {
 	emitExternalContextChange();
 }
 
-export function clearExternalContextEntries(): void {
-	contextEntries.clear();
-	contextCards.clear();
-	emitExternalContextChange();
-}
-
 export function getExternalContextEntries(): ContextEntry[] {
-	pruneExpiredContext();
-	return Array.from( contextEntries.values(), toContextEntry );
+	return entriesSnapshot;
 }
 
 export function consumeNextMessageExternalContextEntries(): void {
@@ -186,14 +143,8 @@ export function removeExternalContextCard( id: string ): void {
 	emitExternalContextChange();
 }
 
-export function clearExternalContextCards(): void {
-	contextCards.clear();
-	emitExternalContextChange();
-}
-
 export function getExternalContextCards(): ExternalContextCard[] {
-	pruneExpiredContext();
-	return Array.from( contextCards.values() );
+	return cardsSnapshot;
 }
 
 export function subscribeToExternalContext( callback: () => void ): () => void {

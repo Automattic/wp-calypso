@@ -85,11 +85,9 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
-	/** Context cards declared by the host application. */
-	contextCards?: ExternalContextCard[];
-	/** Called when a context card action is selected. */
+	/** Called when a context card action button is clicked. */
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
-	/** Called when a context card is dismissed. */
+	/** Called when a context card's dismiss button is clicked. */
 	onDismissContextCard?: ( card: ExternalContextCard ) => void;
 }
 
@@ -177,7 +175,6 @@ export default function AgentChat( {
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 	alternativeFooter,
-	contextCards = [],
 	onContextCardAction,
 	onDismissContextCard,
 }: Props ) {
@@ -249,11 +246,7 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
-				<ContextCards
-					cards={ contextCards }
-					onAction={ onContextCardAction }
-					onDismiss={ onDismissContextCard }
-				/>
+				<ContextCards onAction={ onContextCardAction } onDismiss={ onDismissContextCard } />
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
 				) }

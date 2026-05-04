@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
 import {
-	clearExternalContextCards,
-	clearExternalContextEntries,
 	removeExternalContextCard,
 	removeExternalContextEntry,
 	setExternalContextCard,
@@ -149,10 +147,8 @@ export default function useSetupCustomActions( {
 			setChatDesktopMediaQuery,
 			setContextEntry: setExternalContextEntry,
 			removeContextEntry: removeExternalContextEntry,
-			clearContextEntries: clearExternalContextEntries,
 			setContextCard: setExternalContextCard,
 			removeContextCard: removeExternalContextCard,
-			clearContextCards: clearExternalContextCards,
 			chatNavigate: navigate,
 			isReady: true,
 		};
