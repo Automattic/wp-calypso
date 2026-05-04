@@ -19,7 +19,6 @@ import type {
 import type { LocalizeProps } from 'i18n-calypso';
 
 type StripeBlikTransactionRequest = {
-	name: string;
 	code: string;
 };
 
@@ -195,5 +194,5 @@ function isValidTransactionData( submitData: unknown ): submitData is StripeBlik
 		return false;
 	}
 	const data = submitData as StripeBlikTransactionRequest;
-	return typeof data.name === 'string' && typeof data.code === 'string';
+	return typeof data.code === 'string';
 }

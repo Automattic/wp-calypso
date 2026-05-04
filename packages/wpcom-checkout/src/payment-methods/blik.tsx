@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import { useEffect, useId, useState, Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
-import { SummaryLine, SummaryDetails } from '../summary-details';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'wpcom-checkout:blik-payment-method' );
@@ -13,7 +12,6 @@ const debug = debugFactory( 'wpcom-checkout:blik-payment-method' );
 const BLIK_CODE_PATTERN = /^\d{6}$/;
 
 interface BlikPaymentMethodStateShape {
-	customerName: string;
 	blikCode: string;
 }
 
@@ -21,16 +19,18 @@ type BlikPaymentMethodKey = keyof BlikPaymentMethodStateShape;
 
 type StateSubscriber = () => void;
 
+// BLIK doesn't collect a customer name on the payment method itself: Stripe
+// has no way to verify a holder name for BLIK (the bank only exposes a
+// privacy-protected buyer_id, not the name), and any name needed for billing
+// comes from checkout's Contact Details step.
 class BlikPaymentMethodState {
 	data: BlikPaymentMethodStateShape = {
-		customerName: '',
 		blikCode: '',
 	};
 
 	subscribers: StateSubscriber[] = [];
 
 	isTouched: Record< BlikPaymentMethodKey, boolean > = {
-		customerName: false,
 		blikCode: false,
 	};
 
@@ -70,7 +70,6 @@ export function createBlikMethod( {
 		label: <BlikLabel />,
 		activeContent: <BlikFields state={ state } />,
 		submitButton: <BlikPayButton state={ state } submitButtonContent={ submitButtonContent } />,
-		inactiveContent: <BlikSummary state={ state } />,
 		getAriaLabel: () => 'BLIK',
 	};
 }
@@ -130,17 +129,6 @@ function BlikFields( { state }: { state: BlikPaymentMethodState } ) {
 	return (
 		<BlikFormWrapper>
 			<BlikField
-				id="blik-cardholder-name"
-				type="Text"
-				autoComplete="cc-name"
-				label={ __( 'Your name' ) }
-				value={ state.data.customerName }
-				onChange={ ( value: string ) => state.change( 'customerName', value ) }
-				isError={ state.isTouched.customerName && state.data.customerName.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-			<BlikField
 				id="blik-code"
 				type="Text"
 				autoComplete="off"
@@ -188,7 +176,6 @@ function BlikPayButton( {
 					if ( isFormValid( state ) ) {
 						debug( 'submitting blik payment' );
 						onClick( {
-							name: state.data.customerName,
 							code: state.data.blikCode,
 						} );
 					}
@@ -205,31 +192,13 @@ function BlikPayButton( {
 	);
 }
 
-function BlikSummary( { state }: { state: BlikPaymentMethodState } ) {
-	useSubscribeToEventEmitter( state );
-
-	return (
-		<SummaryDetails>
-			<SummaryLine>{ state.data.customerName }</SummaryLine>
-		</SummaryDetails>
-	);
-}
-
 function isFormValid( state: BlikPaymentMethodState ): boolean {
-	let isValid = true;
-
-	if ( ! state.data.customerName.length ) {
-		// Touch the field so it displays a validation error.
-		state.change( 'customerName', '' );
-		isValid = false;
-	}
 	if ( ! BLIK_CODE_PATTERN.test( state.data.blikCode ) ) {
 		// Re-emit the current value so the touched flag flips on for the error to render.
 		state.change( 'blikCode', state.data.blikCode );
-		isValid = false;
+		return false;
 	}
-
-	return isValid;
+	return true;
 }
 
 function BlikLogo() {
