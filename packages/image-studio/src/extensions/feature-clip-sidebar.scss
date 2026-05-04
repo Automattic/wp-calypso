@@ -54,6 +54,10 @@
 			radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px);
 		background-size: 30px 30px, 50px 50px, 70px 70px;
 		animation: image-studio-feature-clip-dots-drift 12s linear infinite;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
 	}
 
 	&__hero-content {
