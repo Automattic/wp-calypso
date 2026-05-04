@@ -1,40 +1,23 @@
 /* global helpCenterData, __i18n_text_domain__ */
-import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import HelpCenter, { HelpIcon, LiveAIAssistant } from '@automattic/help-center';
+import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, DropdownMenu, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/editor';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, backup, page, video, rss } from '@wordpress/icons';
+import { backup, comment, page, rss, video } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
+import './config';
+import './help-center.scss';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 import { getEditorType } from './utils';
-import './help-center.scss';
 
 const queryClient = new QueryClient();
-
-const SMART_DICTATION_SIDEBAR_NAME = 'wpcom-smart-dictation';
-
-const MicrophoneIcon = () => (
-	<svg
-		width="20"
-		height="20"
-		viewBox="0 0 24 24"
-		fill="currentColor"
-		xmlns="http://www.w3.org/2000/svg"
-		aria-hidden="true"
-	>
-		<path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
-		<path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.751 6.751 0 0 1-6 6.709v2.291h3a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5h3v-2.291a6.751 6.751 0 0 1-6-6.709v-1.5A.75.75 0 0 1 6 10.5Z" />
-	</svg>
-);
 
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
@@ -226,28 +209,9 @@ registerPlugin( 'jetpack-help-center', {
 	render: () => <HelpCenterContentWithProvider />,
 } );
 
-function JetpackSmartDictationPlugin() {
-	return (
-		<>
-			<PluginSidebarMoreMenuItem target={ SMART_DICTATION_SIDEBAR_NAME } icon={ MicrophoneIcon }>
-				{ __( 'WP.com Smart Dictation', __i18n_text_domain__ ) }
-			</PluginSidebarMoreMenuItem>
-			<PluginSidebar
-				name={ SMART_DICTATION_SIDEBAR_NAME }
-				title={ __( 'WP.com Smart Dictation', __i18n_text_domain__ ) }
-				icon={ MicrophoneIcon }
-			>
-				<div className="wpcom-smart-dictation-sidebar-root">
-					<QueryClientProvider client={ queryClient }>
-						<LiveAIAssistant layout="sidebar" />
-					</QueryClientProvider>
-				</div>
-			</PluginSidebar>
-		</>
-	);
+// Gate for proxied users with wpcom-smart-dictation=true flag.
+if ( helpCenterData.isProxied ) {
+	if ( window.location.search.includes( 'wpcom-smart-dictation=true' ) ) {
+		import( './help-center-wpcom-transcription' );
+	}
 }
-
-registerPlugin( 'jetpack-live-ai-assistant', {
-	icon: MicrophoneIcon,
-	render: () => <JetpackSmartDictationPlugin />,
-} );
