@@ -17,6 +17,8 @@ export default function SuffixInputControl( {
 	suffix,
 	...props
 }: ComponentProps< typeof ValidatedInputControl > ) {
+	// Needed while the @wordpress/components Yarn patch is active: patched and
+	// unpatched instances can generate duplicate ids. Remove with the patch.
 	const fallbackId = useId();
 
 	return (
