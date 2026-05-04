@@ -87,7 +87,7 @@ describe( 'ProfilePanel (own profile)', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/viewer.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [ feedItem ], cursor: null } );
 	}
@@ -173,7 +173,7 @@ describe( 'ProfilePanel (own profile)', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social' )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/viewer.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [], cursor: null } );
 

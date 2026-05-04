@@ -9,6 +9,7 @@ import {
 	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_ERROR,
 	READER_POSTS_RECEIVE,
+	READER_RECOMMENDED_SITES_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { requestPage } from '../actions';
 
@@ -160,6 +161,252 @@ describe( 'requestPage thunk', () => {
 				.filter( ( a ) => a && typeof a === 'object' && a.type )
 				.map( ( a ) => a.type );
 			expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
+		} );
+	} );
+
+	describe( 'migrated `discover:recommended` stream', () => {
+		const cardsResponse = {
+			cards: [
+				{
+					type: 'post',
+					data: {
+						ID: 11,
+						site_ID: 201,
+						feed_ID: 998,
+						feed_item_ID: 51,
+						date: '2026-02-01',
+						URL: 'https://example.com/post-11',
+						site_name: 'Discover Example',
+					},
+				},
+				{
+					type: 'recommended_blogs',
+					data: [
+						{
+							feed_ID: 700,
+							URL: 'https://recommended.example.com',
+							name: 'Recommended Blog',
+							feed_URL: 'https://recommended.example.com/feed',
+							icon: { ico: 'icon.png' },
+						},
+					],
+				},
+				{
+					type: 'new_sites',
+					data: [
+						{
+							feed_ID: 800,
+							URL: 'https://newsite.example.com',
+							name: 'New Site',
+							feed_URL: 'https://newsite.example.com/feed',
+						},
+					],
+				},
+			],
+			total_cards: 1,
+		};
+
+		it( 'hits /wpcom/v2/read/streams/discover with the discover-specific params', async () => {
+			let capturedQuery;
+			nock( BASE )
+				.get( '/wpcom/v2/read/streams/discover' )
+				.query( ( q ) => {
+					capturedQuery = q;
+					return true;
+				} )
+				.reply( 200, cardsResponse );
+
+			const { result } = runThunk( { streamKey: 'discover:recommended' } );
+			await result;
+
+			expect( capturedQuery ).toMatchObject( {
+				tag_recs_per_card: '5',
+				site_recs_per_card: '5',
+				age_based_decay: '0.5',
+				orderBy: 'popular',
+			} );
+		} );
+
+		it( 'splits cards into posts + recommendedSites and dispatches both seeds', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/read/streams/discover' )
+				.query( true )
+				.reply( 200, cardsResponse );
+
+			const { dispatch, result } = runThunk( { streamKey: 'discover:recommended' } );
+			await result;
+
+			const recommendedSiteActions = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.filter( ( a ) => a && a.type === READER_RECOMMENDED_SITES_RECEIVE );
+
+			const seeds = recommendedSiteActions.map( ( a ) => a.seed );
+			expect( seeds ).toEqual(
+				expect.arrayContaining( [ 'discover-recommendations', 'discover-new-sites' ] )
+			);
+		} );
+
+		it( 'rewrites streamKey using user_interests for the bare discover:recommended request', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/read/streams/discover' )
+				.query( true )
+				.reply( 200, { ...cardsResponse, user_interests: [ 'photography', 'travel' ] } );
+
+			const { dispatch, result } = runThunk( { streamKey: 'discover:recommended' } );
+			await result;
+
+			const receivePageAction = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
+
+			// Tags are sorted by buildDiscoverStreamKey so the streamKey is stable
+			// regardless of input order.
+			expect( receivePageAction.payload.streamKey ).toBe(
+				'discover:recommended--photography--travel'
+			);
+		} );
+
+		it( 'does not rewrite streamKey when one already includes user-interest tags', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/read/streams/discover' )
+				.query( true )
+				.reply( 200, { ...cardsResponse, user_interests: [ 'photography' ] } );
+
+			const { dispatch, result } = runThunk( {
+				streamKey: 'discover:recommended--photography--travel',
+			} );
+			await result;
+
+			const receivePageAction = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
+			expect( receivePageAction.payload.streamKey ).toBe(
+				'discover:recommended--photography--travel'
+			);
+		} );
+
+		it( 'does not dispatch recommended-site actions when there are no card sites', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/read/streams/discover' )
+				.query( true )
+				.reply( 200, { cards: [ cardsResponse.cards[ 0 ] ] } );
+
+			const { dispatch, result } = runThunk( { streamKey: 'discover:recommended' } );
+			await result;
+
+			const types = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.filter( ( a ) => a && typeof a === 'object' && a.type )
+				.map( ( a ) => a.type );
+			expect( types ).not.toContain( READER_RECOMMENDED_SITES_RECEIVE );
+			expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
+		} );
+	} );
+
+	describe( 'other migrated `discover` sub-tabs', () => {
+		const postsResponse = {
+			posts: [
+				{
+					ID: 12,
+					site_ID: 202,
+					feed_ID: 997,
+					feed_item_ID: 52,
+					date: '2026-03-01',
+					URL: 'https://example.com/post-12',
+					site_name: 'Latest Example',
+				},
+			],
+			date_range: { after: '2026-03-01' },
+			found: 1,
+		};
+
+		it( 'discover:latest hits /wpcom/v2/read/tags/posts with orderBy=date', async () => {
+			let capturedQuery;
+			nock( BASE )
+				.get( '/wpcom/v2/read/tags/posts' )
+				.query( ( q ) => {
+					capturedQuery = q;
+					return true;
+				} )
+				.reply( 200, postsResponse );
+
+			const { dispatch, result } = runThunk( { streamKey: 'discover:latest' } );
+			await result;
+
+			expect( capturedQuery ).toMatchObject( {
+				tag_recs_per_card: '5',
+				site_recs_per_card: '5',
+				age_based_decay: '0.5',
+				orderBy: 'date',
+			} );
+			const types = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.filter( ( a ) => a && typeof a === 'object' && a.type )
+				.map( ( a ) => a.type );
+			expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
+		} );
+
+		it( 'discover:tags falls back to /wpcom/v2/read/streams/discover with the tag in the path', async () => {
+			let capturedQuery;
+			nock( BASE )
+				.get( '/wpcom/v2/read/streams/discover' )
+				.query( ( q ) => {
+					capturedQuery = q;
+					return true;
+				} )
+				.reply( 200, postsResponse );
+
+			const { result } = runThunk( { streamKey: 'discover:dailyprompt' } );
+			await result;
+
+			// `tags=dailyprompt` lives in the path; the rest of the params still get
+			// the discover extras with orderBy=date (since suffix !== `recommended`).
+			expect( capturedQuery ).toMatchObject( {
+				tags: 'dailyprompt',
+				orderBy: 'date',
+			} );
+		} );
+
+		it( 'discover:freshly-pressed hits /rest/v1.2/freshly-pressed without discover extras', async () => {
+			let capturedQuery;
+			nock( BASE )
+				.get( '/rest/v1.2/freshly-pressed' )
+				.query( ( q ) => {
+					capturedQuery = q;
+					return true;
+				} )
+				.reply( 200, postsResponse );
+
+			const { result } = runThunk( { streamKey: 'discover:freshly-pressed' } );
+			await result;
+
+			// freshly-pressed only sends the base stream params; the discover
+			// extras (tags, age decay, recs-per-card) must not be merged in.
+			expect( capturedQuery ).not.toHaveProperty( 'tag_recs_per_card' );
+			expect( capturedQuery ).not.toHaveProperty( 'site_recs_per_card' );
+			expect( capturedQuery ).not.toHaveProperty( 'age_based_decay' );
+			expect( capturedQuery ).not.toHaveProperty( 'tags' );
+			// Legacy parity: this sub-tab bypassed `getQueryString`, so the
+			// default `orderBy=date`, `meta`, and `content_width` must not be
+			// added by the migrated path either.
+			expect( capturedQuery ).not.toHaveProperty( 'orderBy' );
+			expect( capturedQuery ).not.toHaveProperty( 'meta' );
+			expect( capturedQuery ).not.toHaveProperty( 'content_width' );
+		} );
+
+		it( 'does not rewrite streamKey for non-recommended sub-tabs even when user_interests is present', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/read/tags/posts' )
+				.query( true )
+				.reply( 200, { ...postsResponse, user_interests: [ 'travel' ] } );
+
+			const { dispatch, result } = runThunk( { streamKey: 'discover:latest' } );
+			await result;
+
+			const receivePageAction = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
+			expect( receivePageAction.payload.streamKey ).toBe( 'discover:latest' );
 		} );
 	} );
 } );
