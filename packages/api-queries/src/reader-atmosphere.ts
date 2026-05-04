@@ -1067,6 +1067,38 @@ export function swapPlaceholder< P extends { items: AtmosphereFeedItem[] } >(
 }
 
 /**
+ * Remove a standalone-composer placeholder feed item from an
+ * `InfiniteData` page list. Walks pages in order and strips the first
+ * item whose `uri` matches `pendingUri`. Returns the input unchanged
+ * when no match is found.
+ *
+ * Used by `onError` to clean up the optimistic prepend without
+ * clobbering sibling state. A whole-tree snapshot restore would also
+ * wipe placeholders prepended by concurrent mutations between this
+ * mutation's onMutate and onError, so surgical removal is required for
+ * concurrency safety.
+ */
+export function removePlaceholder< P extends { items: AtmosphereFeedItem[] } >(
+	data: InfiniteData< P >,
+	pendingUri: string
+): InfiniteData< P > {
+	let removed = false;
+	const pages = data.pages.map( ( page ) => {
+		if ( removed ) {
+			return page;
+		}
+		const idx = page.items.findIndex( ( item ) => item.uri === pendingUri );
+		if ( idx === -1 ) {
+			return page;
+		}
+		removed = true;
+		const items = page.items.slice( 0, idx ).concat( page.items.slice( idx + 1 ) );
+		return { ...page, items };
+	} );
+	return removed ? { ...data, pages } : data;
+}
+
+/**
  * Mutation factory for creating an `app.bsky.feed.post` record.
  *
  * In reply mode, optimistically:
@@ -1213,15 +1245,34 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 			if ( ! ctx ) {
 				return;
 			}
-			// Standalone-mode restore: the timeline + author-feed caches
-			// were patched in onMutate, so revert each captured snapshot.
-			// Both branches are no-ops for reply / quote mutations
-			// (timelineSnapshot is undefined, authorFeedSnapshots is []).
+			// Standalone-mode rollback: surgically remove only this
+			// mutation's placeholder by `pendingUri`. A whole-tree
+			// snapshot restore would also wipe placeholders prepended
+			// by sibling mutations that ran between this mutation's
+			// onMutate and onError. Both branches are no-ops for reply
+			// / quote mutations (timelineSnapshot is undefined,
+			// authorFeedSnapshots is []).
 			if ( ctx.timelineSnapshot ) {
-				queryClient.setQueryData( ctx.timelineSnapshot.queryKey, ctx.timelineSnapshot.previous );
+				const current = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					ctx.timelineSnapshot.queryKey
+				);
+				if ( current ) {
+					queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >(
+						ctx.timelineSnapshot.queryKey,
+						removePlaceholder( current, ctx.pendingUri )
+					);
+				}
 			}
 			for ( const snap of ctx.authorFeedSnapshots ) {
-				queryClient.setQueryData( snap.queryKey, snap.previous );
+				const current = queryClient.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+					snap.queryKey
+				);
+				if ( current ) {
+					queryClient.setQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+						snap.queryKey,
+						removePlaceholder( current, ctx.pendingUri )
+					);
+				}
 			}
 
 			// Reply-mode restore: revert the thread cache (placeholder +
@@ -1258,10 +1309,20 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 					if ( ! current ) {
 						queryClient.invalidateQueries( { queryKey: timelineKey } );
 					} else {
-						queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >(
-							timelineKey,
-							swapPlaceholder( current, ctx.pendingUri, realItem )
-						);
+						const next = swapPlaceholder( current, ctx.pendingUri, realItem );
+						if ( next === current ) {
+							// Placeholder evicted between onMutate and onSuccess
+							// (concurrent refetch / sibling mutation rollback).
+							// Mirror the reply path: invalidate so the new post
+							// re-materialises from the server instead of being
+							// silently lost.
+							queryClient.invalidateQueries( { queryKey: timelineKey } );
+						} else {
+							queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >(
+								timelineKey,
+								next
+							);
+						}
 					}
 				}
 
@@ -1273,9 +1334,14 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 						queryClient.invalidateQueries( { queryKey: snap.queryKey } );
 						continue;
 					}
+					const next = swapPlaceholder( current, ctx.pendingUri, realItem );
+					if ( next === current ) {
+						queryClient.invalidateQueries( { queryKey: snap.queryKey } );
+						continue;
+					}
 					queryClient.setQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
 						snap.queryKey,
-						swapPlaceholder( current, ctx.pendingUri, realItem )
+						next
 					);
 				}
 

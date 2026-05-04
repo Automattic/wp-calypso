@@ -27,6 +27,7 @@ import {
 	createPostMutation,
 	followAtmosphereActorMutation,
 	nextPendingPostUri,
+	removePlaceholder,
 	swapPlaceholder,
 	unfollowAtmosphereActorMutation,
 	useAuthorFeedInfiniteQuery,
@@ -2251,6 +2252,105 @@ describe( 'reader-atmosphere hooks', () => {
 
 			invalidateSpy.mockRestore();
 		} );
+
+		it( 'invalidates the timeline when the cache exists but the placeholder was already removed', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			seedTimeline( client, existing );
+
+			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.delay( 50 )
+				.reply( 200, {
+					post: {
+						uri: 'at://did:plc:caller/app.bsky.feed.post/3kgone',
+						cid: 'bafygone',
+						rkey: '3kgone',
+					},
+				} );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( { connectionId, text: 'gone' } );
+				await Promise.resolve();
+			} );
+
+			// Concurrent refetch dropped the placeholder from the cache while
+			// the cache itself remained populated.
+			const timelineKey = readerAtmosphereKeys.timeline( connectionId );
+			client.setQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey, {
+				pages: [ { items: [ existing ], cursor: null } ],
+				pageParams: [ undefined ],
+			} );
+
+			await act( async () => {
+				await promise;
+			} );
+
+			const invalidatedKeys = invalidateSpy.mock.calls.map( ( c ) =>
+				JSON.stringify( c[ 0 ]?.queryKey )
+			);
+			expect( invalidatedKeys ).toContain( JSON.stringify( timelineKey ) );
+
+			invalidateSpy.mockRestore();
+		} );
+
+		it( 'on error, removes only this mutation’s placeholder and preserves a sibling placeholder', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			seedTimeline( client, existing );
+
+			// Simulate a sibling in-flight mutation that prepended its own
+			// placeholder after our onMutate captured its snapshot. A
+			// whole-tree snapshot restore would clobber this; surgical
+			// removal must leave it alone.
+			const siblingPendingUri = `${ PENDING_POST_URI }#sibling`;
+			const timelineKey = readerAtmosphereKeys.timeline( connectionId );
+			const before = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey );
+			client.setQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey, {
+				...( before as InfiniteData< AtmosphereTimelinePage > ),
+				pages: ( before as InfiniteData< AtmosphereTimelinePage > ).pages.map( ( page, idx ) =>
+					idx === 0
+						? {
+								...page,
+								items: [ makeFeedItem( { uri: siblingPendingUri, cid: '' } ), ...page.items ],
+						  }
+						: page
+				),
+			} );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( { connectionId, text: 'fails' } );
+				} catch {
+					/* expected */
+				}
+			} );
+
+			const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey );
+			const uris = timeline?.pages[ 0 ].items.map( ( i ) => i.uri ) ?? [];
+			expect( uris ).toContain( siblingPendingUri );
+			expect( uris ).toContain( 'at://existing' );
+			expect(
+				uris.some( ( u ) => u.startsWith( PENDING_POST_URI ) && u !== siblingPendingUri )
+			).toBe( false );
+		} );
 	} );
 
 	describe( 'useCreateRepostMutation', () => {
@@ -2742,5 +2842,65 @@ describe( 'swapPlaceholder', () => {
 		expect( next.pages[ 0 ].items[ 0 ].uri ).toBe( 'at://real' );
 		// Page 2's duplicate untouched (helper stops after first swap).
 		expect( next.pages[ 1 ].items[ 0 ].uri ).toBe( pendingUri );
+	} );
+} );
+
+describe( 'removePlaceholder', () => {
+	const pendingUri = `${ PENDING_POST_URI }#42`;
+	const placeholder = ( uri: string ): AtmosphereFeedItem =>
+		makeFeedItem( { uri, cid: '', text: 'pending' } );
+
+	it( 'removes the placeholder on page 0 and preserves the remaining items', () => {
+		const data: InfiniteData< { items: AtmosphereFeedItem[] } > = {
+			pages: [
+				{
+					items: [
+						placeholder( pendingUri ),
+						makeFeedItem( { uri: 'at://other-1', cid: 'c1' } ),
+						makeFeedItem( { uri: 'at://other-2', cid: 'c2' } ),
+					],
+				},
+			],
+			pageParams: [ undefined ],
+		};
+		const next = removePlaceholder( data, pendingUri );
+
+		expect( next ).not.toBe( data );
+		expect( next.pages[ 0 ].items ).toHaveLength( 2 );
+		expect( next.pages[ 0 ].items.map( ( i ) => i.uri ) ).toEqual( [
+			'at://other-1',
+			'at://other-2',
+		] );
+	} );
+
+	it( 'leaves a sibling placeholder (different pendingUri) in place', () => {
+		const otherPendingUri = `${ PENDING_POST_URI }#99`;
+		const data: InfiniteData< { items: AtmosphereFeedItem[] } > = {
+			pages: [
+				{
+					items: [
+						placeholder( otherPendingUri ),
+						placeholder( pendingUri ),
+						makeFeedItem( { uri: 'at://existing', cid: 'c1' } ),
+					],
+				},
+			],
+			pageParams: [ undefined ],
+		};
+		const next = removePlaceholder( data, pendingUri );
+
+		expect( next.pages[ 0 ].items ).toHaveLength( 2 );
+		expect( next.pages[ 0 ].items[ 0 ].uri ).toBe( otherPendingUri );
+		expect( next.pages[ 0 ].items[ 1 ].uri ).toBe( 'at://existing' );
+	} );
+
+	it( 'returns the input unchanged when no placeholder matches', () => {
+		const data: InfiniteData< { items: AtmosphereFeedItem[] } > = {
+			pages: [ { items: [ makeFeedItem( { uri: 'at://only-this', cid: 'c0' } ) ] } ],
+			pageParams: [ undefined ],
+		};
+		const next = removePlaceholder( data, pendingUri );
+
+		expect( next ).toBe( data );
 	} );
 } );
