@@ -3,6 +3,7 @@ import {
 	Button,
 	Card,
 	CardBody,
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -92,7 +93,7 @@ function Distribution() {
 					<VStack spacing={ 8 }>
 						<VStack spacing={ 4 }>
 							<VStack spacing={ 1 }>
-								<h3 className="podcast__card-title">{ translate( 'RSS feed' ) }</h3>
+								<Heading level={ 3 }>{ translate( 'RSS feed' ) }</Heading>
 								<Text variant="muted">
 									{ translate(
 										'Copy this URL, then submit it to each directory below to publish your podcast.'
@@ -111,7 +112,7 @@ function Distribution() {
 						</VStack>
 						<VStack spacing={ 4 }>
 							<VStack spacing={ 1 }>
-								<h3 className="podcast__card-title">{ translate( 'Podcast directories' ) }</h3>
+								<Heading level={ 3 }>{ translate( 'Podcast directories' ) }</Heading>
 								<Text variant="muted">
 									{ translate(
 										'Submit your podcast to the directories below where you want it to appear. Most take a few days to go live.'
