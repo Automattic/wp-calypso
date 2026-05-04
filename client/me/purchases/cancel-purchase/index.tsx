@@ -313,7 +313,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.setState( { cancelIntent: intent } );
 		}
 
-		const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow( purchase );
+		const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow();
 		const effectiveIntent = intent ?? this.state.cancelIntent;
 		const shouldSkipDomainOptions = shouldUseAutoRenewFlow && effectiveIntent !== 'refund';
 
@@ -753,7 +753,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				: CANCEL_FLOW_TYPE.REMOVE;
 		}
 
-		if ( ! this.shouldUseAutoRenewFlow( purchase ) ) {
+		if ( ! this.shouldUseAutoRenewFlow() ) {
 			return getPurchaseCancellationFlowType( purchase );
 		}
 
@@ -818,7 +818,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			displayVariant: this.props.intent === 'remove' ? ( 'remove' as const ) : undefined,
 			cancelIntentOverride:
 				urlIntentOverride ??
-				( this.shouldUseAutoRenewFlow( purchase ) ? ( 'autorenew' as const ) : undefined ),
+				( this.shouldUseAutoRenewFlow() ? ( 'autorenew' as const ) : undefined ),
 			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
 			onCancellationStart: this.onCancellationStart,
 			onCancellationComplete: this.onCancellationComplete,

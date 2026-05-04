@@ -1550,7 +1550,9 @@ function CancelPurchaseInner() {
 	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
 	// `surveyShown` gate.
-	const atSurvey = Boolean( isSplitEnabled ? state.confirmationPassed : state.surveyShown );
+	const atSurvey = Boolean(
+		isSplitCancelRemoveEnabled ? state.confirmationPassed : state.surveyShown
+	);
 	const form = (
 		<CancelPurchaseForm
 			atomicRevertCheckOne={ state.atomicRevertCheckOne }
