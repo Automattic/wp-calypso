@@ -738,16 +738,6 @@
 		border-top-color: var( --dashboard-surface__border-color );
 	}
 
-	.plugin-switcher-card-body,
-	.plugin-sites-card-body {
-		&::-webkit-scrollbar,
-		&::-webkit-scrollbar-track,
-		&::-webkit-scrollbar-track-piece,
-		&::-webkit-scrollbar-corner {
-			background: transparent;
-		}
-	}
-
 	.plugin-switcher-item {
 		border-top-color: var( --dashboard-surface__border-color );
 
