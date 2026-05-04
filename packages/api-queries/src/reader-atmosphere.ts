@@ -940,14 +940,40 @@ function restoreRemovalContext( queryClient: QueryClient, ctx: RemovalContext | 
 	}
 }
 
-export function useDeletePostMutation( connectionId: number ) {
+interface DeletePostMutationVars {
+	rkey: string;
+	postUri: string;
+	authorDid: string;
+	replyParentUri?: string;
+}
+
+interface DeletePostMutationCallbacks {
+	/**
+	 * Fired after the cache has been invalidated on a successful DELETE.
+	 * Survives the component unmount that follows the optimistic removal,
+	 * because the factory's lifecycle callbacks run from `Mutation.execute`
+	 * (mutation-cache-owned) rather than the observer (component-owned).
+	 * Use this for user-facing notices and Tracks events that must fire
+	 * even when `<PostActionsMenu>` unmounts as the post leaves the list.
+	 */
+	onSuccess?: ( vars: DeletePostMutationVars ) => void;
+	/**
+	 * Fired after the cache rollback runs (or, for an idempotent 404,
+	 * fired without a rollback). Same unmount-safety reasoning as
+	 * `onSuccess` — keeps the user-facing error notice and the
+	 * not_found / error_shown Tracks events out of the per-call options
+	 * passed to `mutate(...)`, which are skipped when the observer has
+	 * no listeners.
+	 */
+	onError?: ( err: AtmosphereError, vars: DeletePostMutationVars ) => void;
+}
+
+export function useDeletePostMutation(
+	connectionId: number,
+	callbacks?: DeletePostMutationCallbacks
+) {
 	const queryClient = useQueryClient();
-	return useMutation<
-		void,
-		AtmosphereError,
-		{ rkey: string; postUri: string; authorDid: string; replyParentUri?: string },
-		RemovalContext
-	>( {
+	return useMutation< void, AtmosphereError, DeletePostMutationVars, RemovalContext >( {
 		mutationFn: ( { rkey } ) => deletePost( { connectionId, rkey } ),
 		onMutate: async ( { postUri, replyParentUri } ) => {
 			await queryClient.cancelQueries( { queryKey: readerAtmosphereKeys.all } );
@@ -978,24 +1004,25 @@ export function useDeletePostMutation( connectionId: number ) {
 
 			return { ...ctx, parentCounts };
 		},
-		onError: ( err, _vars, ctx ) => {
-			if ( err.kind === 'not_found' ) {
-				// Idempotent: server says the record is already gone — keep optimistic
-				// removal in place and let the next refetch confirm.
-				return;
+		onError: ( err, vars, ctx ) => {
+			if ( err.kind !== 'not_found' ) {
+				// Restore parent-counts patch first. For pages that also contained
+				// the deleted reply, the subsequent removal snapshot restore will
+				// overwrite with the full prior page data (redundant but harmless —
+				// since `prev` was taken before the parent-count patch, it already
+				// carries the original count). For pages that only contained the
+				// parent, this is the only restore path.
+				if ( ctx?.parentCounts ) {
+					restoreAtmospherePostSnapshots( queryClient, ctx.parentCounts );
+				}
+				restoreRemovalContext( queryClient, ctx );
 			}
-			// Restore parent-counts patch first. For pages that also contained
-			// the deleted reply, the subsequent removal snapshot restore will
-			// overwrite with the full prior page data (redundant but harmless —
-			// since `prev` was taken before the parent-count patch, it already
-			// carries the original count). For pages that only contained the
-			// parent, this is the only restore path.
-			if ( ctx?.parentCounts ) {
-				restoreAtmospherePostSnapshots( queryClient, ctx.parentCounts );
-			}
-			restoreRemovalContext( queryClient, ctx );
+			// `not_found` is idempotent — keep optimistic removal in place and
+			// let the next refetch confirm. The consumer callback still fires so
+			// it can emit a `_post_delete_not_found` Tracks event without a notice.
+			callbacks?.onError?.( err, vars );
 		},
-		onSuccess: () => {
+		onSuccess: ( _data, vars ) => {
 			// Invalidate via prefix so we cover every cached `actor` (handle or DID)
 			// and every `filter` variant. Real consumers key these caches by the
 			// route param (typically the handle), not by DID, so a DID-keyed
@@ -1006,6 +1033,7 @@ export function useDeletePostMutation( connectionId: number ) {
 			queryClient.invalidateQueries( {
 				queryKey: [ ...readerAtmosphereKeys.all, 'scoped-profile', connectionId ],
 			} );
+			callbacks?.onSuccess?.( vars );
 		},
 	} );
 }

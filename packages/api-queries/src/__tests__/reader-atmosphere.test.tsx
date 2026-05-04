@@ -2334,6 +2334,64 @@ describe( 'reader-atmosphere hooks', () => {
 			expect( client.getQueryState( handleProfileKey )?.isInvalidated ).toBe( true );
 		} );
 
+		it( 'fires the consumer onSuccess / onError callbacks even after the consumer unmounts', async () => {
+			// Regression: optimistic removal in `onMutate` unmounts `<PostActionsMenu>`
+			// before the DELETE settles. Per-call callbacks passed to `mutate(vars, { onSuccess })`
+			// are dropped when the observer has no listeners; the consumer callbacks
+			// hooked into `useDeletePostMutation`'s factory options must survive.
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline( client, makeTargetPost() );
+
+			const onSuccess = jest.fn();
+			const { result, unmount } = renderHook(
+				() => useDeletePostMutation( connectionId, { onSuccess } ),
+				{ wrapper: makeWrapper( client ) }
+			);
+
+			act( () => {
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI, authorDid: AUTHOR_DID } );
+			} );
+
+			// Simulate the post-card unmounting as the optimistic removal lands.
+			unmount();
+
+			await waitFor( () =>
+				expect( onSuccess ).toHaveBeenCalledWith( expect.objectContaining( { postUri: POST_URI } ) )
+			);
+		} );
+
+		it( 'fires consumer onError after unmount on real errors', async () => {
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline( client, makeTargetPost() );
+
+			const onError = jest.fn();
+			const { result, unmount } = renderHook(
+				() => useDeletePostMutation( connectionId, { onError } ),
+				{ wrapper: makeWrapper( client ) }
+			);
+
+			act( () => {
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI, authorDid: AUTHOR_DID } );
+			} );
+
+			unmount();
+
+			await waitFor( () =>
+				expect( onError ).toHaveBeenCalledWith(
+					expect.objectContaining( { kind: 'upstream_unavailable' } ),
+					expect.objectContaining( { postUri: POST_URI } )
+				)
+			);
+		} );
+
 		it( 'decrements the parent reply-count when deleting a reply', async () => {
 			const PARENT_URI = 'at://did:plc:other/app.bsky.feed.post/3kparent';
 			nock( BASE )
