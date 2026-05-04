@@ -3,9 +3,12 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ComposerModal, ComposerProvider, useComposer } from '../composer';
 import { ProfilePanel } from '../profile-panel';
+import type { ActiveMode } from '../composer';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
 const connection: AtmosphereConnection = {
@@ -70,5 +73,55 @@ describe( 'ProfilePanel (own profile)', () => {
 		} );
 
 		expect( await screen.findByText( /Bluesky is unreachable right now\./i ) ).toBeVisible();
+	} );
+} );
+
+describe( 'ProfilePanel — compose pill', () => {
+	// Match either a curly or straight apostrophe — the production placeholder
+	// uses the curly form (CLAUDE.md preserves it).
+	const PLACEHOLDER_RE = /what['’]s up/i;
+
+	function Spy( { onMode }: { onMode: ( m: ActiveMode ) => void } ) {
+		const { mode } = useComposer();
+		if ( mode ) {
+			onMode( mode );
+		}
+		return null;
+	}
+
+	it( 'renders the compose pill above the profile card and opens the standalone modal with entry_point=profile_inline', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42' )
+			.reply( 200, {
+				did: 'did:plc:viewer',
+				handle: 'viewer.bsky.social',
+				display_name: 'Viewer Name',
+				description: 'About me.',
+				avatar: 'https://cdn.example/a.jpg',
+				banner: 'https://cdn.example/b.jpg',
+				counts: { followers: 12, follows: 7, posts: 4 },
+			} );
+
+		const onMode = jest.fn();
+		const user = userEvent.setup();
+
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 }>
+				<ProfilePanel connection={ connection } />
+				<Spy onMode={ onMode } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		const pill = await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
+		expect( pill ).toBeVisible();
+
+		await user.click( pill );
+
+		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+		expect( onMode ).toHaveBeenCalledWith(
+			expect.objectContaining( { kind: 'standalone', entry_point: 'profile_inline' } )
+		);
 	} );
 } );

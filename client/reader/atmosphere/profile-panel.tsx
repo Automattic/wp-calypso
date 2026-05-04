@@ -2,6 +2,8 @@ import { useConnectionQuery } from '@automattic/api-queries';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { SocialProfileCard, type SocialProfileStat } from 'calypso/reader/social';
+import { useOptionalComposer } from './composer';
+import { TimelineComposePill } from './composer/triggers/timeline-compose-pill';
 import { errorMessage } from './profile-errors';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
@@ -11,6 +13,7 @@ interface ProfilePanelProps {
 
 export function ProfilePanel( { connection }: ProfilePanelProps ) {
 	const translate = useTranslate();
+	const composer = useOptionalComposer();
 	const { data, error, isPending } = useConnectionQuery( connection.id );
 
 	if ( isPending && ! data ) {
@@ -55,15 +58,18 @@ export function ProfilePanel( { connection }: ProfilePanelProps ) {
 	];
 
 	return (
-		<SocialProfileCard
-			avatar={ data.avatar }
-			banner={ data.banner }
-			displayName={ data.display_name ?? undefined }
-			handle={ data.handle }
-			bio={ data.description }
-			stats={ stats }
-			statsLabel={ String( translate( 'Profile stats' ) ) }
-		/>
+		<>
+			{ composer && <TimelineComposePill connection={ connection } entryPoint="profile_inline" /> }
+			<SocialProfileCard
+				avatar={ data.avatar }
+				banner={ data.banner }
+				displayName={ data.display_name ?? undefined }
+				handle={ data.handle }
+				bio={ data.description }
+				stats={ stats }
+				statsLabel={ String( translate( 'Profile stats' ) ) }
+			/>
+		</>
 	);
 }
 
