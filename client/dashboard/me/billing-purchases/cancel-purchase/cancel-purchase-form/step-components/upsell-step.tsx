@@ -41,7 +41,7 @@ function Upsell( { ...props }: UpsellProps ) {
 					{ props.acceptButtonText }
 				</Button>
 				<Button
-					variant={ props.intent === 'remove' ? 'tertiary' : 'secondary' }
+					variant={ props.intent ? 'tertiary' : 'secondary' }
 					isDestructive={ props.intent === 'remove' }
 					onClick={ props.onDecline }
 					disabled={ props.isBusy }
