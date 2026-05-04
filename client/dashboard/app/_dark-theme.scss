@@ -495,14 +495,6 @@
 @mixin dashboard-dark-theme-dataviews {
 	--wp-dataviews-color-background: var( --dashboard-surface__background-color );
 
-	// Inset the wrapper by 1px on the sides/bottom so the card's 1px inset
-	// box-shadow border stays visible all around. Gutenberg's default sets
-	// `padding: 10px 0 0` on this element, which lets the wrapper paint over
-	// the card border on the left, right, and bottom.
-	.components-card__body:has( > .dataviews-wrapper ) {
-		padding: $grid-unit-10 1px 1px;
-	}
-
 	// Table
 	.dataviews-view-table {
 		// Match the upstream light-mode table default, where non-primary fields
@@ -742,6 +734,10 @@
 
 /* Plugins */
 @mixin dashboard-dark-theme-plugins {
+	.plugin-tabs-panel {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
 	.plugin-switcher-item {
 		border-top-color: var( --dashboard-surface__border-color );
 
