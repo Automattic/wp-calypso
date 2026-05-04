@@ -257,7 +257,14 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	let data;
 	try {
 		const queryClient = getCalypsoQueryClient();
-		const queryOpts = readStreamQuery( streamKey, queryParams, pageHandle ?? null );
+		// `readStreamQuery`'s third arg is the per-request cache-key discriminator.
+		// Cursor-paginated streams pass `pageHandle`; numbered-page streams (e.g.
+		// `recent`) carry no `pageHandle`, so we key on `{ page, perPage }`
+		// instead. Without this, two in-flight paginated requests for the same
+		// `streamKey` collapse to one promise via `fetchQuery` dedup, and the
+		// later page receives the earlier page's rows.
+		const cacheKey = page != null ? { page, perPage } : pageHandle ?? null;
+		const queryOpts = readStreamQuery( streamKey, queryParams, cacheKey );
 		// Every call into this thunk represents an explicit intent to fetch
 		// (initial load, pagination, poll, refresh after `clearStream`, locale
 		// change). The legacy data-layer always hit the network, so callers

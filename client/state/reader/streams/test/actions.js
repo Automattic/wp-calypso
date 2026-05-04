@@ -65,13 +65,13 @@ afterEach( () => {
 describe( 'requestPage thunk', () => {
 	describe( 'unmigrated stream type', () => {
 		it( 'dispatches the legacy READER_STREAMS_PAGE_REQUEST', () => {
-			const { dispatch } = runThunk( { streamKey: 'site:1234' } );
+			const { dispatch } = runThunk( { streamKey: 'conversations' } );
 			expect( dispatch ).toHaveBeenCalledTimes( 1 );
 			const action = dispatch.mock.calls[ 0 ][ 0 ];
 			expect( action.type ).toBe( READER_STREAMS_PAGE_REQUEST );
 			expect( action.payload ).toMatchObject( {
-				streamKey: 'site:1234',
-				streamType: 'site',
+				streamKey: 'conversations',
+				streamType: 'conversations',
 				isPoll: false,
 			} );
 		} );
@@ -658,5 +658,67 @@ describe( 'requestPaginatedStream thunk', () => {
 			payload: { streamKey: 'conversations', page: 1, perPage: 10 },
 		} );
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not collapse overlapping page requests for the same streamKey', async () => {
+		// Both pages in flight at once must hit the network independently —
+		// otherwise `fetchQuery` dedups them and page 2 receives page 1's rows.
+		const page1Response = {
+			...recentResponse,
+			posts: [
+				{
+					...recentResponse.posts[ 0 ],
+					ID: 1,
+					feed_item_ID: 1,
+					URL: 'https://example.com/post-1',
+				},
+			],
+		};
+		const page2Response = {
+			...recentResponse,
+			posts: [
+				{
+					...recentResponse.posts[ 0 ],
+					ID: 2,
+					feed_item_ID: 2,
+					URL: 'https://example.com/post-2',
+				},
+			],
+		};
+
+		nock( BASE )
+			.get( '/wpcom/v2/read/streams/following' )
+			.query( ( q ) => q.page === '1' )
+			.reply( 200, page1Response );
+		nock( BASE )
+			.get( '/wpcom/v2/read/streams/following' )
+			.query( ( q ) => q.page === '2' )
+			.reply( 200, page2Response );
+
+		const { dispatch: dispatch1, result: result1 } = runPaginatedThunk( {
+			streamKey: 'recent',
+			page: 1,
+			perPage: 10,
+		} );
+		const { dispatch: dispatch2, result: result2 } = runPaginatedThunk( {
+			streamKey: 'recent',
+			page: 2,
+			perPage: 10,
+		} );
+		await Promise.all( [ result1, result2 ] );
+
+		const findReceive = ( dispatch ) =>
+			dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
+
+		const receive1 = findReceive( dispatch1 );
+		const receive2 = findReceive( dispatch2 );
+
+		expect( receive1.payload.page ).toBe( 1 );
+		expect( receive2.payload.page ).toBe( 2 );
+		expect( receive1.payload.streamItems[ 0 ].postId ).not.toBe(
+			receive2.payload.streamItems[ 0 ].postId
+		);
 	} );
 } );
