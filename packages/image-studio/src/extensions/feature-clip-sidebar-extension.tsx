@@ -116,12 +116,11 @@ let pluginRegistered = false;
  * editor package isn't loaded on the page (e.g. wp-admin Media Library).
  */
 export function registerFeatureClipSidebar(): void {
-	if ( ! window.imageStudioData?.isDevMode ) {
+	if ( window.imageStudioData?.canUploadVideos === false ) {
 		return;
 	}
 
-	// Explicit `=== false` so an undefined flag (older Jetpack) preserves today's behavior.
-	if ( window.imageStudioData?.canUploadVideos === false ) {
+	if ( ! window.imageStudioData?.isDevMode ) {
 		return;
 	}
 
