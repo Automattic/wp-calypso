@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { AuthorProfilePanel } from './author-profile-panel';
-import { ComposerModal, ComposerProvider } from './composer';
+import { ComposeFab, ComposerModal, ComposerProvider } from './composer';
 
 interface Props {
 	connectionId: number;
@@ -60,6 +60,7 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 				<DocumentHead title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: actor } ) } />
 				<AuthorProfilePanel connection={ connection } actor={ actor } />
 			</ReaderMain>
+			<ComposeFab />
 			<ComposerModal />
 		</ComposerProvider>
 	);

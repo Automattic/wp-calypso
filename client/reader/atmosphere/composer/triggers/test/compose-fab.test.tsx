@@ -9,14 +9,7 @@ import {
 	type ActiveMode,
 	type ComposerMode,
 } from '../../composer-provider';
-
-// Note: this test file does NOT render `<ComposeFab>` directly. Task 6 wires
-// the FAB into `<ComposerProvider>` itself, so any consumer of the provider
-// implicitly gets the FAB. Rendering it explicitly here would mount a
-// duplicate after Task 6 lands and break `getByRole` (which throws on
-// multiple matches). The red phase still produces a valid failure: the FAB
-// is absent until Task 6 wires it through, so `getByRole( ..., { name: 'Compose post' } )`
-// throws "Unable to find element".
+import { ComposeFab } from '../compose-fab';
 
 function Spy( { onMode }: { onMode: ( m: ActiveMode ) => void } ) {
 	const { mode } = useComposer();
@@ -32,6 +25,7 @@ describe( '<ComposeFab>', () => {
 		const onMode = jest.fn();
 		render(
 			<ComposerProvider connectionId={ 7 }>
+				<ComposeFab />
 				<Spy onMode={ onMode } />
 			</ComposerProvider>
 		);
@@ -47,7 +41,7 @@ describe( '<ComposeFab>', () => {
 		);
 	} );
 
-	it( 'is hidden while a mode is active', async () => {
+	it( 'is removed from the accessibility tree while a mode is active', async () => {
 		let openFn: ( ( m: ComposerMode ) => void ) | null = null;
 		function Trigger() {
 			const { openComposer } = useComposer();
@@ -57,6 +51,7 @@ describe( '<ComposeFab>', () => {
 
 		render(
 			<ComposerProvider connectionId={ 7 }>
+				<ComposeFab />
 				<Trigger />
 			</ComposerProvider>
 		);
@@ -67,6 +62,9 @@ describe( '<ComposeFab>', () => {
 			openFn?.( { kind: 'standalone', entry_point: 'fab' } );
 		} );
 
+		// FAB stays mounted (so the provider's `triggerRef` keeps a live DOM
+		// node for focus restoration) but is hidden from the a11y tree via
+		// `aria-hidden` so screen readers and `getByRole` skip it.
 		expect( screen.queryByRole( 'button', { name: 'Compose post' } ) ).toBeNull();
 	} );
 } );
