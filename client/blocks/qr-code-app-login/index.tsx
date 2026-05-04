@@ -6,6 +6,7 @@ import TimerBar from './timer-bar';
 import { useApprove } from './use-approve';
 import { useCountdown } from './use-countdown';
 import { useCreateToken } from './use-create-token';
+import { useDocumentVisible } from './use-document-visible';
 import { useStatus } from './use-status';
 
 import './style.scss';
@@ -23,7 +24,8 @@ export default function QRCodeAppLogin() {
 		createToken();
 	}, [ createToken ] );
 
-	const { data: statusData, isError: isStatusError } = useStatus( token?.token );
+	const isVisible = useDocumentVisible();
+	const { data: statusData, isError: isStatusError } = useStatus( token?.token, isVisible );
 	const countdown = useCountdown( token?.expires );
 
 	const [ wrongNumber, setWrongNumber ] = useState( false );
