@@ -111,10 +111,6 @@ export default function setup() {
 		response.end( "console.log('Stats are disabled');" );
 	} );
 
-	if ( config.isEnabled( 'devdocs' ) ) {
-		app.use( require( 'calypso/server/devdocs' ).default() );
-	}
-
 	app.use( api() );
 
 	// attach the pages module

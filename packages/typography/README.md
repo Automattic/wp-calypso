@@ -49,4 +49,4 @@ Note that the `fonts.scss` file imports the `variables.scss` file.
 
 <br>
 
-Please refer to the [Calypso Typography Docs](https://wpcalypso.wordpress.com/devdocs/typography) for more information.
+Please refer to the [Calypso Typography Docs](https://github.com/Automattic/wp-calypso/tree/trunk/docs/typography.md) for more information.

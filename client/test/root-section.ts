@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import pageLibrary from '@automattic/calypso-router';
 import { waitFor } from '@testing-library/dom';
 import initRootSection from '../root';
@@ -20,20 +19,6 @@ function initRouter( { state }: { state: any } ) {
 
 	return { dispatch, getState, page };
 }
-
-describe( 'Logged Out Landing Page', () => {
-	test( 'logged out goes to devdocs', async () => {
-		// This is the behaviour only in non-production environments
-		expect( isEnabled( 'devdocs/redirect-loggedout-homepage' ) ).toBeTruthy();
-
-		const state = { currentUser: { id: null } };
-		const { page } = initRouter( { state } );
-
-		page( '/' );
-
-		await waitFor( () => expect( page.current ).toBe( '/devdocs/start' ) );
-	} );
-} );
 
 describe( 'Logged In Landing Page', () => {
 	test( 'user with no sites goes to Sites Dashboard', async () => {

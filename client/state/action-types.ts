@@ -5,7 +5,7 @@
  * Please keep this list alphabetized!
  *
  * Unsure how to name an action type? Refer to our guidelines:
- *  - https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md#actions
+ *  - https://github.com/Automattic/wp-calypso/blob/trunk/docs/our-approach-to-data.md#actions
  */
 export const ACCOUNT_CLOSE = 'ACCOUNT_CLOSE';
 export const ACCOUNT_CLOSE_SUCCESS = 'ACCOUNT_CLOSE_SUCCESS';

@@ -23,8 +23,6 @@ const baseProps: DocumentProps = {
 	clientData: null,
 	commitChecksum: '',
 	commitSha: '',
-	devDocs: false,
-	devDocsURL: '',
 	entrypoint: {
 		js: [],
 		'css.ltr': [],
