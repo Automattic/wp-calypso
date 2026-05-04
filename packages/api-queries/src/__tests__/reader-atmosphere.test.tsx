@@ -2302,13 +2302,14 @@ describe( 'reader-atmosphere hooks', () => {
 				.reply( 204 );
 
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-			// Seed minimal data so onMutate has something to work with
-			client.setQueryData( readerAtmosphereKeys.scopedAuthorFeed( connectionId, AUTHOR_DID ), {
+			// Real consumers key the scoped-author-feed and scoped-profile caches by
+			// the route `actor` param (typically the handle), not the DID.
+			const AUTHOR_HANDLE = 'caller.bsky.social';
+			client.setQueryData( readerAtmosphereKeys.scopedAuthorFeed( connectionId, AUTHOR_HANDLE ), {
 				pages: [],
 				pageParams: [],
 			} );
-			client.setQueryData( readerAtmosphereKeys.scopedProfile( connectionId, AUTHOR_DID ), {} );
-			const spy = jest.spyOn( client, 'invalidateQueries' );
+			client.setQueryData( readerAtmosphereKeys.scopedProfile( connectionId, AUTHOR_HANDLE ), {} );
 
 			const postB = makeTargetPost();
 			seedTimeline( client, postB );
@@ -2327,13 +2328,10 @@ describe( 'reader-atmosphere hooks', () => {
 
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
-			const invalidateCalls = spy.mock.calls.map( ( [ opts ] ) => opts?.queryKey );
-			expect( invalidateCalls ).toContainEqual(
-				readerAtmosphereKeys.scopedAuthorFeed( connectionId, AUTHOR_DID )
-			);
-			expect( invalidateCalls ).toContainEqual(
-				readerAtmosphereKeys.scopedProfile( connectionId, AUTHOR_DID )
-			);
+			const handleFeedKey = readerAtmosphereKeys.scopedAuthorFeed( connectionId, AUTHOR_HANDLE );
+			const handleProfileKey = readerAtmosphereKeys.scopedProfile( connectionId, AUTHOR_HANDLE );
+			expect( client.getQueryState( handleFeedKey )?.isInvalidated ).toBe( true );
+			expect( client.getQueryState( handleProfileKey )?.isInvalidated ).toBe( true );
 		} );
 
 		it( 'decrements the parent reply-count when deleting a reply', async () => {

@@ -905,11 +905,9 @@ function removePostFromQueryData( data: unknown, postUri: string ): unknown {
 	}
 
 	if ( isObject( data ) && isObject( data.thread ) ) {
-		const nextThread = tombstoneThreadNode(
-			data.thread as unknown as AtmosphereThreadNode,
-			postUri
-		);
-		return nextThread === data.thread ? data : { ...data, thread: nextThread };
+		const prevThread = data.thread as unknown as AtmosphereThreadNode;
+		const nextThread = tombstoneThreadNode( prevThread, postUri );
+		return nextThread === prevThread ? data : { ...data, thread: nextThread };
 	}
 
 	return data;
@@ -997,12 +995,16 @@ export function useDeletePostMutation( connectionId: number ) {
 			}
 			restoreRemovalContext( queryClient, ctx );
 		},
-		onSuccess: ( _result, { authorDid } ) => {
+		onSuccess: () => {
+			// Invalidate via prefix so we cover every cached `actor` (handle or DID)
+			// and every `filter` variant. Real consumers key these caches by the
+			// route param (typically the handle), not by DID, so a DID-keyed
+			// invalidation would miss the active surface.
 			queryClient.invalidateQueries( {
-				queryKey: readerAtmosphereKeys.scopedAuthorFeed( connectionId, authorDid ),
+				queryKey: [ ...readerAtmosphereKeys.all, 'scoped-author-feed', connectionId ],
 			} );
 			queryClient.invalidateQueries( {
-				queryKey: readerAtmosphereKeys.scopedProfile( connectionId, authorDid ),
+				queryKey: [ ...readerAtmosphereKeys.all, 'scoped-profile', connectionId ],
 			} );
 		},
 	} );
