@@ -1,5 +1,6 @@
 import './style.scss';
 import { createPostMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button, __experimentalHStack as HStack } from '@wordpress/components';
@@ -8,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getThreadUrl } from '../route';
@@ -16,7 +18,7 @@ import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer, type ActiveMode } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
 import { countGraphemes } from './grapheme-count';
-import type { AtmosphereError, CreatePostParams } from '@automattic/api-core';
+import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { ReactNode } from 'react';
 
@@ -58,26 +60,65 @@ export function ComposerModal() {
 					root_uri: mode.root.uri,
 				} )
 			);
+			return;
 		}
-		// quote / standalone Tracks events are emitted by later slices.
+		if ( mode.kind === 'standalone' ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_opened', {
+					connection_id: mode.connectionId,
+					entry_point: mode.entry_point,
+				} )
+			);
+			return;
+		}
+		// Quote-mode telemetry is not yet wired.
 	}, [ mode, dispatch ] );
 
 	// Tracks: error_shown with ref-tracked dedupe per error_kind transition.
 	useEffect( () => {
-		if ( ! mode || mode.kind !== 'reply' ) {
+		if ( ! mode ) {
+			return;
+		}
+		if ( mode.kind !== 'reply' && mode.kind !== 'standalone' ) {
 			return;
 		}
 		if ( mutation.isError && mutation.error ) {
 			const errorKind = mutation.error.kind;
 			if ( errorKind !== lastErrorKindRef.current ) {
 				lastErrorKindRef.current = errorKind;
-				dispatch(
-					recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
-						connection_id: mode.connectionId,
-						parent_uri: mode.parent.uri,
-						error_kind: errorKind,
-					} )
-				);
+				if ( errorKind === 'bad_request' ) {
+					// `bad_request` is the catch-all for non-classified server
+					// errors; log the raw response code so the error-copy
+					// classifier can be tuned with real production data.
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Atmosphere composer bad_request',
+						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+						extra: {
+							env: config( 'env_id' ),
+							type: 'reader_atmosphere_composer_bad_request',
+							mode: mode.kind,
+							error_message: mutation.error.message,
+						},
+					} );
+				}
+				if ( mode.kind === 'reply' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
+							connection_id: mode.connectionId,
+							parent_uri: mode.parent.uri,
+							error_kind: errorKind,
+						} )
+					);
+				} else {
+					// Standalone has no parent_uri, so it gets its own Tracks event.
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_error_shown', {
+							connection_id: mode.connectionId,
+							error_kind: errorKind,
+						} )
+					);
+				}
 			}
 		} else if ( ! mutation.isError ) {
 			lastErrorKindRef.current = null;
@@ -109,7 +150,7 @@ export function ComposerModal() {
 		}
 		const params = buildParamsForMode( mode, text );
 		mutation.mutate( params, {
-			onSuccess: () => {
+			onSuccess: ( result ) => {
 				if ( mode.kind === 'reply' ) {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_published', {
@@ -118,7 +159,18 @@ export function ComposerModal() {
 							root_uri: mode.root.uri,
 						} )
 					);
-					const { text: noticeText, threadUrl } = successNoticeFor( mode, translate );
+					const { text: noticeText, threadUrl } = successNoticeFor( mode, result, translate );
+					const options = threadUrl
+						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
+						: undefined;
+					dispatch( successNotice( noticeText, options ) );
+				} else if ( mode.kind === 'standalone' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_published', {
+							connection_id: mode.connectionId,
+						} )
+					);
+					const { text: noticeText, threadUrl } = successNoticeFor( mode, result, translate );
 					const options = threadUrl
 						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
 						: undefined;
@@ -222,7 +274,7 @@ function placeholderForMode(
 	if ( mode.kind === 'quote' ) {
 		return t( 'Add a comment…' ) as string;
 	}
-	return t( "What's up?" ) as string;
+	return t( 'What’s up?' ) as string;
 }
 
 function buildParamsForMode( mode: ActiveMode, text: string ): CreatePostParams {
@@ -282,21 +334,37 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );
 		default:
-			return assertNever( err );
+			// Compile-time exhaustiveness: if `AtmosphereError['kind']` ever
+			// gains a new value, this fails to type-check.
+			err satisfies never;
+			// Runtime fallback: a backend-introduced kind shouldn't crash
+			// the modal — show generic copy instead.
+			return t( 'Something went wrong. Please try again.' );
 	}
 }
 
 function successNoticeFor(
-	mode: Extract< ActiveMode, { kind: 'reply' } >,
+	mode: Extract< ActiveMode, { kind: 'reply' | 'standalone' } >,
+	result: CreatePostResult,
 	t: ReturnType< typeof useTranslate >
 ): { text: ReactNode; threadUrl: string | null } {
-	// quote / standalone success copy lands with their respective slices —
-	// gate the call site on `mode.kind` so TS catches missing cases when
-	// those modes are wired through `<ComposerModal>`.
-	return {
-		text: t( 'Your reply was posted.' ),
-		threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
-	};
+	if ( mode.kind === 'reply' ) {
+		return {
+			text: t( 'Your reply was posted.' ),
+			threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
+		};
+	}
+	if ( mode.kind === 'standalone' ) {
+		return {
+			text: t( 'Your post was published.' ),
+			threadUrl: getThreadUrl( mode.connectionId, result.uri ),
+		};
+	}
+	// Quote success copy is unimplemented. Narrowing the param type via
+	// Extract forces TS to flag this branch when the quote arm is wired
+	// at the call site, instead of silently returning the reply/standalone
+	// string.
+	return assertNever( mode );
 }
 
 function assertNever( value: never ): never {

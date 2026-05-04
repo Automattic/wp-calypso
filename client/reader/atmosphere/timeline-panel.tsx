@@ -1,4 +1,4 @@
-import { useTimelineInfiniteQuery } from '@automattic/api-queries';
+import { useConnectionQuery, useTimelineInfiniteQuery } from '@automattic/api-queries';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -13,6 +13,7 @@ import {
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
+import { TimelineComposePill } from './composer/triggers/timeline-compose-pill';
 import { projectAtmosphereError } from './error-projection';
 import {
 	getProfileUrl as buildProfileUrl,
@@ -112,6 +113,12 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 
 	const composer = useOptionalComposer();
 	const openComposer = composer?.openComposer;
+	// Surfaces the real avatar on the compose pill — the list endpoint
+	// that supplied `connection` always returns null for `avatar`. Pass
+	// `null` when there is no composer upstream so `useConnectionQuery`
+	// short-circuits and we don't warm the cache for shells that won't
+	// render the pill.
+	const { data: connectionDetails } = useConnectionQuery( composer ? connection.id : null );
 	const onReplyClick = useMemo( () => {
 		if ( ! openComposer ) {
 			return undefined;
@@ -169,6 +176,13 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			<LikeProvider value={ useLikeAction }>
+				{ composer && (
+					<TimelineComposePill
+						connection={ connection }
+						avatar={ connectionDetails?.avatar }
+						entryPoint="timeline_inline"
+					/>
+				) }
 				<SocialFeedList< SocialPost >
 					items={ items }
 					isPending={ isPending }

@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { ComposerModal, ComposerProvider } from './composer';
+import { ComposeFab, ComposerModal, ComposerProvider } from './composer';
 import { ThreadPanel } from './thread-panel';
 
 interface Props {
@@ -63,6 +63,7 @@ export function AtmosphereThreadView( { connectionId, did, rkey }: Props ) {
 				/>
 				<ThreadPanel connection={ connection } did={ did } rkey={ rkey } />
 			</ReaderMain>
+			<ComposeFab />
 			<ComposerModal />
 		</ComposerProvider>
 	);

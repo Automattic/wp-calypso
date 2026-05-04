@@ -18,6 +18,7 @@ import {
 	getThread,
 	getTimeline,
 	PENDING_LIKE_URI,
+	PENDING_POST_URI,
 	PENDING_REPLY_URI,
 	PENDING_REPOST_URI,
 	isValidHashtag,
@@ -885,6 +886,25 @@ interface CreatePostContext {
 	// other reply. Each mutation stamps its own suffix so onSuccess
 	// rewrites only its own placeholder.
 	pendingUri: string;
+	// Standalone-mode timeline snapshot — captured before the placeholder
+	// is prepended so onError can revert atomically. Undefined when the
+	// mutation is a reply or quote (those branches don't touch the
+	// timeline cache directly; `parentCountsContext` covers them).
+	timelineSnapshot?: {
+		queryKey: QueryKey;
+		previous: InfiniteData< AtmosphereTimelinePage > | undefined;
+	};
+	// Standalone-mode author-feed snapshots — one per filter variant the
+	// placeholder was prepended into (no-filter / posts_no_replies /
+	// posts_with_replies / posts_and_author_threads; posts_with_media
+	// is skipped since text-only posts don't surface there). Always an
+	// array so onError can iterate without a null check; empty for
+	// reply / quote mutations or when the connection handle isn't yet
+	// in cache.
+	authorFeedSnapshots: Array< {
+		queryKey: QueryKey;
+		previous: InfiniteData< AtmosphereAuthorFeedPage > | undefined;
+	} >;
 }
 
 // Module-level counter producing collision-free pending URIs. Suffix is
@@ -893,6 +913,24 @@ interface CreatePostContext {
 // already returns null because the result does not start with `at://`.
 let pendingReplyCounter = 0;
 const nextPendingReplyUri = () => `${ PENDING_REPLY_URI }#${ ++pendingReplyCounter }`;
+
+// Sibling counter for in-flight standalone composer posts. Same shape as
+// `nextPendingReplyUri` but anchored on `PENDING_POST_URI` so consumers can
+// distinguish a placeholder root post from a placeholder reply by sentinel
+// prefix alone.
+let pendingPostCounter = 0;
+export const nextPendingPostUri = () => `${ PENDING_POST_URI }#${ ++pendingPostCounter }`;
+
+// Breadcrumb for the post-creation invalidate-as-fallback paths. Each
+// branch firing means the placeholder couldn't be swapped in place
+// (cache evicted, concurrent refetch, etc.), and we're falling back to
+// a server refetch. console.debug is suppressed by default in browsers,
+// so this only surfaces to anyone with devtools open and debug-level
+// filtering on.
+function logPlaceholderLost( reason: string ) {
+	// eslint-disable-next-line no-console
+	console.debug( `[atmosphere] createPostMutation: invalidating (${ reason })` );
+}
 
 function authorFromConnection(
 	connection: AtmosphereConnectionDetails | undefined
@@ -946,6 +984,63 @@ function buildPlaceholderReply(
 		viewer: { like: null, repost: null },
 		bluesky_url: '',
 	};
+}
+
+/**
+ * Build a placeholder `AtmosphereFeedItem` representing an in-flight
+ * standalone composer post. Shape-wise this is identical to
+ * `buildPlaceholderReply` — both produce a feed item with a sentinel
+ * `uri`, empty `cid`, hydrated author, current ISO timestamps, empty
+ * counts, and null `reply_parent` / `reply_root`. The semantic
+ * difference is the URI sentinel comes from `PENDING_POST_URI` and the
+ * downstream consumer prepends to the timeline / author-feed caches
+ * rather than splicing under a parent in the thread tree.
+ *
+ * Kept as its own function (rather than aliasing `buildPlaceholderReply`)
+ * so the standalone composer call sites read clearly and so future
+ * divergence — say, attaching a default `embed` for link cards — does
+ * not have to fork the reply path.
+ */
+export function buildPlaceholderStandalonePost(
+	text: string,
+	pendingUri: string,
+	connection: AtmosphereConnectionDetails | undefined
+): AtmosphereFeedItem {
+	const now = new Date().toISOString();
+	return {
+		uri: pendingUri,
+		cid: '',
+		author: authorFromConnection( connection ),
+		created_at: now,
+		indexed_at: now,
+		text,
+		html: '',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		viewer: { like: null, repost: null },
+		bluesky_url: '',
+	};
+}
+
+/**
+ * Build a real `AtmosphereFeedItem` from the server's `CreatePostResult`
+ * by re-using `buildPlaceholderStandalonePost` for shape and overwriting
+ * the URI / CID with the server-assigned values. Keeps the placeholder
+ * and the real item perfectly congruent (same author / timestamps /
+ * counts / lang / embed shape) so swapping one for the other in the
+ * cache is a pure reference change.
+ */
+export function buildFeedItemFromCreateResult(
+	result: CreatePostResult,
+	text: string,
+	connection: AtmosphereConnectionDetails | undefined
+): AtmosphereFeedItem {
+	const base = buildPlaceholderStandalonePost( text, result.uri, connection );
+	return { ...base, cid: result.cid };
 }
 
 /**
@@ -1028,6 +1123,76 @@ function replacePlaceholderInThread(
 }
 
 /**
+ * Swap a standalone-composer placeholder feed item for the real one in
+ * an `InfiniteData` page list. Walks pages in order so that if a
+ * concurrent refetch shifted the placeholder past page 0 (e.g. fresh
+ * items prepended above it), it is still found. Returns the input
+ * unchanged when no item with `pendingUri` is present so the caller can
+ * decide whether to invalidate as a fallback. Generic over the page
+ * shape because timeline pages and author-feed pages share the
+ * `{ items: AtmosphereFeedItem[] }` field but otherwise differ.
+ *
+ * Note: when the placeholder isn't found at all (cache still exists but
+ * its placeholder was already removed by a concurrent refetch), the
+ * helper just returns `data`. The consumer detects this by reference
+ * equality and falls back to `invalidateQueries` so the new post is
+ * not silently lost.
+ */
+export function swapPlaceholder< P extends { items: AtmosphereFeedItem[] } >(
+	data: InfiniteData< P >,
+	pendingUri: string,
+	replacement: AtmosphereFeedItem
+): InfiniteData< P > {
+	let swapped = false;
+	const pages = data.pages.map( ( page ) => {
+		if ( swapped ) {
+			return page;
+		}
+		const idx = page.items.findIndex( ( item ) => item.uri === pendingUri );
+		if ( idx === -1 ) {
+			return page;
+		}
+		swapped = true;
+		const items = [ ...page.items ];
+		items[ idx ] = replacement;
+		return { ...page, items };
+	} );
+	return swapped ? { ...data, pages } : data;
+}
+
+/**
+ * Remove a standalone-composer placeholder feed item from an
+ * `InfiniteData` page list. Walks pages in order and strips the first
+ * item whose `uri` matches `pendingUri`. Returns the input unchanged
+ * when no match is found.
+ *
+ * Used by `onError` to clean up the optimistic prepend without
+ * clobbering sibling state. A whole-tree snapshot restore would also
+ * wipe placeholders prepended by concurrent mutations between this
+ * mutation's onMutate and onError, so surgical removal is required for
+ * concurrency safety.
+ */
+export function removePlaceholder< P extends { items: AtmosphereFeedItem[] } >(
+	data: InfiniteData< P >,
+	pendingUri: string
+): InfiniteData< P > {
+	let removed = false;
+	const pages = data.pages.map( ( page ) => {
+		if ( removed ) {
+			return page;
+		}
+		const idx = page.items.findIndex( ( item ) => item.uri === pendingUri );
+		if ( idx === -1 ) {
+			return page;
+		}
+		removed = true;
+		const items = page.items.slice( 0, idx ).concat( page.items.slice( idx + 1 ) );
+		return { ...page, items };
+	} );
+	return removed ? { ...data, pages } : data;
+}
+
+/**
  * Mutation factory for creating an `app.bsky.feed.post` record.
  *
  * In reply mode, optimistically:
@@ -1043,9 +1208,9 @@ function replacePlaceholderInThread(
  * to the real values returned by the server. The optimistic count bump
  * stays — it matches the server's post-success state.
  *
- * Quote and standalone modes are wired through the body shape and the
- * `mutationFn` signature; cache patching for those modes is added by
- * later slices.
+ * Standalone-mode posts prepend a placeholder to the timeline and
+ * author-feed caches and swap it on success (rolling back to the snapshot on
+ * error). Quote-mode cache patching is not yet implemented.
  *
  * Accepts the consumer's QueryClient because Calypso boots its own
  * separate from the singleton in `@automattic/api-queries`. See
@@ -1062,9 +1227,78 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				threadKey: null,
 				threadPrevious: undefined,
 				pendingUri: nextPendingReplyUri(),
+				authorFeedSnapshots: [],
 			};
 
+			if ( ! vars.reply && ! vars.quote ) {
+				// Standalone composer post — prepend a placeholder to the
+				// connected user's timeline and to every author-feed filter
+				// where a fresh top-level post should appear. Snapshot each
+				// patched cache first so onError can restore atomically. No
+				// `counts.*` bumps here: a brand-new top-level post has no
+				// parent reference.
+				ctx.pendingUri = nextPendingPostUri();
+				const connection = queryClient.getQueryData< AtmosphereConnectionDetails >(
+					readerAtmosphereKeys.connection( vars.connectionId )
+				);
+				const placeholder = buildPlaceholderStandalonePost( vars.text, ctx.pendingUri, connection );
+
+				// Timeline cache is keyed on connection id alone, so the
+				// patch works even when the connection details cache is
+				// cold (deep-link / first-load case).
+				const timelineKey = readerAtmosphereKeys.timeline( vars.connectionId );
+				const timelinePrev =
+					queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey );
+				ctx.timelineSnapshot = { queryKey: timelineKey, previous: timelinePrev };
+				if ( timelinePrev && timelinePrev.pages.length > 0 ) {
+					const [ firstPage, ...restPages ] = timelinePrev.pages;
+					queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey, {
+						...timelinePrev,
+						pages: [ { ...firstPage, items: [ placeholder, ...firstPage.items ] }, ...restPages ],
+					} );
+				}
+
+				// Author-feed caches are keyed on the user's handle, which
+				// only comes from the cached connection details. When that
+				// cache is cold (cold deep-link), skip the prepend — the
+				// success path's invalidate will repopulate.
+				const handle = connection?.handle;
+				if ( handle ) {
+					// `posts_with_media` deliberately skipped: text-only
+					// posts from this composer never carry an embed, so
+					// prepending would seed a phantom item that the server
+					// would never confirm.
+					const filters: Array< AtmosphereAuthorFeedFilter | undefined > = [
+						undefined,
+						'posts_no_replies',
+						'posts_with_replies',
+						'posts_and_author_threads',
+					];
+					for ( const filter of filters ) {
+						const key = readerAtmosphereKeys.authorFeed( handle, filter );
+						const prev =
+							queryClient.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >( key );
+						ctx.authorFeedSnapshots.push( { queryKey: key, previous: prev } );
+						if ( prev && prev.pages.length > 0 ) {
+							const [ firstPage, ...restPages ] = prev.pages;
+							queryClient.setQueryData< InfiniteData< AtmosphereAuthorFeedPage > >( key, {
+								...prev,
+								pages: [
+									{ ...firstPage, items: [ placeholder, ...firstPage.items ] },
+									...restPages,
+								],
+							} );
+						}
+					}
+				}
+
+				return ctx;
+			}
+
 			if ( ! vars.reply ) {
+				// Quote-only branch — cache patching for quotes is not yet
+				// implemented; carry the per-mutation pending URI so the
+				// success / error paths have a stable context shape.
 				return ctx;
 			}
 
@@ -1104,19 +1338,119 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 			if ( ! ctx ) {
 				return;
 			}
-			// Restore the thread cache first so the placeholder + count
-			// bump are both reverted in one shot. Do this before
-			// `restoreAtmospherePostSnapshots` so that helper sees the
-			// already-restored thread (its restore pass is a no-op there).
+			// Standalone-mode rollback: surgically remove only this
+			// mutation's placeholder by `pendingUri`. A whole-tree
+			// snapshot restore would also wipe placeholders prepended
+			// by sibling mutations that ran between this mutation's
+			// onMutate and onError. Both branches are no-ops for reply
+			// / quote mutations (timelineSnapshot is undefined,
+			// authorFeedSnapshots is []).
+			if ( ctx.timelineSnapshot ) {
+				const current = queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					ctx.timelineSnapshot.queryKey
+				);
+				if ( current ) {
+					queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >(
+						ctx.timelineSnapshot.queryKey,
+						removePlaceholder( current, ctx.pendingUri )
+					);
+				}
+			}
+			for ( const snap of ctx.authorFeedSnapshots ) {
+				const current = queryClient.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+					snap.queryKey
+				);
+				if ( current ) {
+					queryClient.setQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+						snap.queryKey,
+						removePlaceholder( current, ctx.pendingUri )
+					);
+				}
+			}
+
+			// Reply-mode restore: revert the thread cache (placeholder +
+			// count bump in one shot) before `restoreAtmospherePostSnapshots`
+			// so that helper sees the already-restored thread (its restore
+			// pass is a no-op there).
 			if ( ctx.threadKey && ctx.threadPrevious !== undefined ) {
 				queryClient.setQueryData( ctx.threadKey, ctx.threadPrevious );
 			}
 			restoreAtmospherePostSnapshots( queryClient, ctx.parentCountsContext );
 		},
 		onSuccess: ( result, vars, ctx ) => {
-			if ( ! vars.reply || ! ctx ) {
+			if ( ! ctx ) {
 				return;
 			}
+
+			// Standalone branch — swap the placeholder we prepended in
+			// onMutate (timeline + each patched author-feed cache) for an
+			// item carrying the real `uri` / `cid`. When a cache was
+			// evicted between onMutate and onSuccess (gc, route change,
+			// manual removeQueries), invalidate it so the real post
+			// re-materialises from the server on next read instead of
+			// being silently lost.
+			if ( ! vars.reply && ! vars.quote ) {
+				const connection = queryClient.getQueryData< AtmosphereConnectionDetails >(
+					readerAtmosphereKeys.connection( vars.connectionId )
+				);
+				const realItem = buildFeedItemFromCreateResult( result, vars.text, connection );
+
+				if ( ctx.timelineSnapshot ) {
+					const timelineKey = ctx.timelineSnapshot.queryKey;
+					const current =
+						queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey );
+					if ( ! current ) {
+						logPlaceholderLost( 'timeline cache evicted' );
+						queryClient.invalidateQueries( { queryKey: timelineKey } );
+					} else {
+						const next = swapPlaceholder( current, ctx.pendingUri, realItem );
+						if ( next === current ) {
+							// Placeholder evicted between onMutate and onSuccess
+							// (concurrent refetch / sibling mutation rollback).
+							// Mirror the reply path: invalidate so the new post
+							// re-materialises from the server instead of being
+							// silently lost.
+							logPlaceholderLost( 'timeline placeholder missing' );
+							queryClient.invalidateQueries( { queryKey: timelineKey } );
+						} else {
+							queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >(
+								timelineKey,
+								next
+							);
+						}
+					}
+				}
+
+				for ( const snap of ctx.authorFeedSnapshots ) {
+					const current = queryClient.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+						snap.queryKey
+					);
+					if ( ! current ) {
+						logPlaceholderLost( 'author-feed cache evicted' );
+						queryClient.invalidateQueries( { queryKey: snap.queryKey } );
+						continue;
+					}
+					const next = swapPlaceholder( current, ctx.pendingUri, realItem );
+					if ( next === current ) {
+						logPlaceholderLost( 'author-feed placeholder missing' );
+						queryClient.invalidateQueries( { queryKey: snap.queryKey } );
+						continue;
+					}
+					queryClient.setQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+						snap.queryKey,
+						next
+					);
+				}
+
+				return;
+			}
+
+			if ( ! vars.reply ) {
+				// Quote-only success — cache patching for quotes is not yet
+				// implemented.
+				return;
+			}
+
 			const threadKey = readerAtmosphereKeys.thread( vars.reply.root.uri );
 			const current = queryClient.getQueryData< AtmosphereThreadResponse >( threadKey );
 			if ( ! current ) {
@@ -1124,6 +1458,7 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				// change, manual removeQueries). Schedule a refetch so the
 				// real reply does not silently disappear next time the
 				// thread is opened.
+				logPlaceholderLost( 'thread cache evicted' );
 				queryClient.invalidateQueries( { queryKey: threadKey } );
 				return;
 			}
@@ -1139,6 +1474,7 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				// concurrent refetch dropped the placeholder branch). Fall
 				// back to invalidate so the reply re-materialises from the
 				// server rather than being silently lost.
+				logPlaceholderLost( 'thread placeholder missing' );
 				queryClient.invalidateQueries( { queryKey: threadKey } );
 				return;
 			}
