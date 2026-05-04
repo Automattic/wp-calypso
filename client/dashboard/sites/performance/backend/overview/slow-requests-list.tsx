@@ -1,6 +1,6 @@
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalText as Text, Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import type { ApmSlowRequest, Site } from '@automattic/api-core';
 
@@ -8,7 +8,11 @@ function formatDuration( ms: number ): string {
 	if ( ms >= 1000 ) {
 		return `${ ( ms / 1000 ).toFixed( 2 ) } s`;
 	}
-	return `${ ms } ms`;
+	return sprintf(
+		/* translators: %d is a number of milliseconds. */
+		__( '%d ms' ),
+		ms
+	);
 }
 
 function formatRelativeTime( timestamp: number ): string {
@@ -18,10 +22,18 @@ function formatRelativeTime( timestamp: number ): string {
 	}
 	const diffMin = Math.floor( diffSec / 60 );
 	if ( diffMin < 60 ) {
-		return `${ diffMin }m ago`;
+		return sprintf(
+			/* translators: %d is a number of minutes. */
+			__( '%dm ago' ),
+			diffMin
+		);
 	}
 	const diffHr = Math.floor( diffMin / 60 );
-	return `${ diffHr }h ago`;
+	return sprintf(
+		/* translators: %d is a number of hours. */
+		__( '%dh ago' ),
+		diffHr
+	);
 }
 
 export default function SlowRequestsList( {

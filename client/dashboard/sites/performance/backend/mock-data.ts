@@ -1,6 +1,10 @@
-import type { ApmOverview, ApmRequestDetail, ApmSlowRequest } from './types';
+// Temporary scaffold: real APM endpoints don't exist yet, so the queries below
+// resolve against deterministic mock generators. When the WPCOM endpoints land,
+// move the fetchers to `@automattic/api-core` and the queries to
+// `@automattic/api-queries`, then delete this file.
+import { queryOptions } from '@tanstack/react-query';
+import type { ApmOverview, ApmRequestDetail, ApmSlowRequest } from '@automattic/api-core';
 
-// Mulberry32: tiny deterministic PRNG so mock data is stable per seed.
 function rng( seed: number ) {
 	let state = seed | 0;
 	return () => {
@@ -74,7 +78,7 @@ function generateSlowRequests( seed: number, count: number ): ApmSlowRequest[] {
 	return requests.sort( ( a, b ) => b.duration_ms - a.duration_ms );
 }
 
-export async function fetchApmOverview( siteId: number ): Promise< ApmOverview > {
+function fetchApmOverview( siteId: number ): Promise< ApmOverview > {
 	const random = rng( siteId );
 	const now = Date.now();
 	const timeseries = Array.from( { length: 24 }, ( _, i ) => ( {
@@ -91,14 +95,11 @@ export async function fetchApmOverview( siteId: number ): Promise< ApmOverview >
 	} );
 }
 
-export async function fetchApmSlowRequests( siteId: number ): Promise< ApmSlowRequest[] > {
+function fetchApmSlowRequests( siteId: number ): Promise< ApmSlowRequest[] > {
 	return Promise.resolve( generateSlowRequests( siteId * 7, 25 ) );
 }
 
-export async function fetchApmRequest(
-	siteId: number,
-	requestId: string
-): Promise< ApmRequestDetail > {
+function fetchApmRequest( siteId: number, requestId: string ): Promise< ApmRequestDetail > {
 	const seed = siteId ^ hashString( requestId );
 	const random = rng( seed );
 
@@ -111,3 +112,21 @@ export async function fetchApmRequest(
 		timestamp: Date.now() - Math.round( random() * 60 * 60 * 1000 ),
 	} );
 }
+
+export const siteApmOverviewQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'apm', 'overview' ],
+		queryFn: () => fetchApmOverview( siteId ),
+	} );
+
+export const siteApmSlowRequestsQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'apm', 'slow-requests' ],
+		queryFn: () => fetchApmSlowRequests( siteId ),
+	} );
+
+export const siteApmRequestQuery = ( siteId: number, requestId: string ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'apm', 'request', requestId ],
+		queryFn: () => fetchApmRequest( siteId, requestId ),
+	} );

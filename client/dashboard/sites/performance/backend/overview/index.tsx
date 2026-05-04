@@ -1,6 +1,6 @@
-import { siteApmOverviewQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
+import { siteApmOverviewQuery } from '../mock-data';
 import ChartSlot from './chart-slot';
 import SlowRequestsList from './slow-requests-list';
 import type { Site } from '@automattic/api-core';
