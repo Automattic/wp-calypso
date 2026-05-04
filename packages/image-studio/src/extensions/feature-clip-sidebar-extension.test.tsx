@@ -74,6 +74,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
 		( window as Record< string, unknown > ).imageStudioData = { isDevMode: true };
+		jest.resetModules();
 	} );
 
 	afterEach( () => {
