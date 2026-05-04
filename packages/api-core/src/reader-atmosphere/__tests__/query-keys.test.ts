@@ -77,3 +77,74 @@ describe( 'readerAtmosphereKeys.authorFeed', () => {
 		).not.toEqual( readerAtmosphereKeys.authorFeed( 'alice.bsky.social', 'posts_with_replies' ) );
 	} );
 } );
+
+describe( 'readerAtmosphereKeys.scopedThread', () => {
+	const URI = 'at://did:plc:abc/app.bsky.feed.post/3kabc';
+
+	it( 'returns a stable key shape keyed on connectionId and uri', () => {
+		expect( readerAtmosphereKeys.scopedThread( 42, URI ) ).toEqual( [
+			'reader',
+			'atmosphere',
+			'scoped-thread',
+			42,
+			URI,
+		] );
+	} );
+
+	it( 'differs from the public thread key for the same uri', () => {
+		expect( readerAtmosphereKeys.scopedThread( 42, URI ) ).not.toEqual(
+			readerAtmosphereKeys.thread( URI )
+		);
+	} );
+
+	it( 'differs across connections for the same uri', () => {
+		expect( readerAtmosphereKeys.scopedThread( 1, URI ) ).not.toEqual(
+			readerAtmosphereKeys.scopedThread( 2, URI )
+		);
+	} );
+} );
+
+describe( 'readerAtmosphereKeys.scopedAuthorFeed', () => {
+	it( 'returns a stable 5-element key shape when filter is undefined', () => {
+		expect( readerAtmosphereKeys.scopedAuthorFeed( 42, 'alice.bsky.social' ) ).toEqual( [
+			'reader',
+			'atmosphere',
+			'scoped-author-feed',
+			42,
+			'alice.bsky.social',
+		] );
+	} );
+
+	it( 'appends the filter as a sixth element when set', () => {
+		expect(
+			readerAtmosphereKeys.scopedAuthorFeed( 42, 'alice.bsky.social', 'posts_with_replies' )
+		).toEqual( [
+			'reader',
+			'atmosphere',
+			'scoped-author-feed',
+			42,
+			'alice.bsky.social',
+			'posts_with_replies',
+		] );
+	} );
+
+	it( 'differs from the public author-feed key for the same actor + filter', () => {
+		expect(
+			readerAtmosphereKeys.scopedAuthorFeed( 42, 'alice.bsky.social', 'posts_with_media' )
+		).not.toEqual( readerAtmosphereKeys.authorFeed( 'alice.bsky.social', 'posts_with_media' ) );
+	} );
+
+	it( 'differs across connections for the same actor', () => {
+		expect( readerAtmosphereKeys.scopedAuthorFeed( 1, 'alice.bsky.social' ) ).not.toEqual(
+			readerAtmosphereKeys.scopedAuthorFeed( 2, 'alice.bsky.social' )
+		);
+	} );
+
+	it( 'differs across filter values for the same connection + actor', () => {
+		expect(
+			readerAtmosphereKeys.scopedAuthorFeed( 42, 'alice.bsky.social', 'posts_no_replies' )
+		).not.toEqual(
+			readerAtmosphereKeys.scopedAuthorFeed( 42, 'alice.bsky.social', 'posts_with_replies' )
+		);
+	} );
+} );

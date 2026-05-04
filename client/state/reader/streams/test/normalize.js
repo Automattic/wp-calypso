@@ -7,8 +7,10 @@ import {
 	QUERY_META,
 	SITE_LIMITER_FIELDS,
 	analyticsForStream,
+	createStreamDataFromCards,
 	createStreamDataFromPosts,
 	createStreamItemFromPost,
+	createStreamSitesFromRecommendedSites,
 	extractPageHandle,
 	getAlgorithmForStream,
 	getQueryString,
@@ -127,6 +129,118 @@ describe( 'createStreamDataFromPosts', () => {
 		expect( result.streamItems ).toHaveLength( 2 );
 		expect( result.streamItems[ 0 ] ).toMatchObject( { blogId: 10, postId: 1, date: 'a' } );
 		expect( result.streamPosts ).toBe( posts );
+	} );
+} );
+
+describe( 'createStreamSitesFromRecommendedSites', () => {
+	it( 'returns an empty array for null/undefined input', () => {
+		expect( createStreamSitesFromRecommendedSites( null ) ).toEqual( [] );
+		expect( createStreamSitesFromRecommendedSites( undefined ) ).toEqual( [] );
+	} );
+
+	it( 'maps API site shape to the streamSites shape (with feedId mirror)', () => {
+		const result = createStreamSitesFromRecommendedSites( [
+			{
+				feed_ID: 700,
+				URL: 'https://recommended.example.com',
+				icon: { ico: 'icon.png' },
+				description: 'A recommendation',
+				name: 'Recommended Blog',
+				feed_URL: 'https://recommended.example.com/feed',
+			},
+		] );
+		expect( result ).toEqual( [
+			{
+				feed_ID: 700,
+				url: 'https://recommended.example.com',
+				site_icon: 'icon.png',
+				site_description: 'A recommendation',
+				site_name: 'Recommended Blog',
+				feed_URL: 'https://recommended.example.com/feed',
+				feedId: 700,
+			},
+		] );
+	} );
+
+	it( 'tolerates missing optional fields', () => {
+		const result = createStreamSitesFromRecommendedSites( [ { feed_ID: 1 } ] );
+		expect( result[ 0 ] ).toMatchObject( { feed_ID: 1, feedId: 1 } );
+		expect( result[ 0 ].site_icon ).toBeUndefined();
+	} );
+} );
+
+describe( 'createStreamDataFromCards', () => {
+	const postCard = {
+		type: 'post',
+		data: { ID: 1, site_ID: 10, date: '2026-01-01', URL: 'https://example.com/p' },
+	};
+	const recommendedCard = {
+		type: 'recommended_blogs',
+		data: [ { feed_ID: 700, URL: 'https://r.example.com', name: 'R' } ],
+	};
+	const newSitesCard = {
+		type: 'new_sites',
+		data: [ { feed_ID: 800, URL: 'https://n.example.com', name: 'N' } ],
+	};
+
+	it( 'returns empty buckets for null/undefined cards', () => {
+		expect( createStreamDataFromCards( null, 'date' ) ).toEqual( {
+			streamItems: [],
+			streamPosts: [],
+			streamSites: [],
+			streamNewSites: [],
+		} );
+		expect( createStreamDataFromCards( undefined, 'date' ) ).toEqual( {
+			streamItems: [],
+			streamPosts: [],
+			streamSites: [],
+			streamNewSites: [],
+		} );
+	} );
+
+	it( 'splits cards into posts, recommended sites, and new sites', () => {
+		const result = createStreamDataFromCards( [ postCard, recommendedCard, newSitesCard ], 'date' );
+		expect( result.streamPosts ).toEqual( [ postCard.data ] );
+		expect( result.streamItems ).toHaveLength( 1 );
+		expect( result.streamItems[ 0 ] ).toMatchObject( { blogId: 10, postId: 1 } );
+		expect( result.streamSites ).toEqual( [
+			expect.objectContaining( { feed_ID: 700, feedId: 700 } ),
+		] );
+		expect( result.streamNewSites ).toEqual( [
+			expect.objectContaining( { feed_ID: 800, feedId: 800 } ),
+		] );
+	} );
+
+	it( 'ignores card types it does not understand', () => {
+		const result = createStreamDataFromCards(
+			[ postCard, { type: 'unknown_card', data: { foo: 'bar' } } ],
+			'date'
+		);
+		expect( result.streamPosts ).toEqual( [ postCard.data ] );
+		expect( result.streamSites ).toEqual( [] );
+		expect( result.streamNewSites ).toEqual( [] );
+	} );
+
+	it( 'accumulates multiple post cards', () => {
+		const second = {
+			type: 'post',
+			data: { ID: 2, site_ID: 10, date: '2026-01-02', URL: 'https://example.com/q' },
+		};
+		const result = createStreamDataFromCards( [ postCard, second ], 'date' );
+		expect( result.streamPosts ).toHaveLength( 2 );
+		expect( result.streamItems ).toHaveLength( 2 );
+	} );
+
+	it( 'treats missing site arrays inside a card as empty', () => {
+		const result = createStreamDataFromCards(
+			[
+				{ type: 'recommended_blogs', data: null },
+				{ type: 'new_sites', data: null },
+			],
+			'date'
+		);
+		expect( result.streamSites ).toEqual( [] );
+		expect( result.streamNewSites ).toEqual( [] );
 	} );
 } );
 

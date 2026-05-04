@@ -122,6 +122,45 @@ export async function getThread( params: GetThreadParams ): Promise< AtmosphereT
 	}
 }
 
+export interface GetScopedThreadParams {
+	connectionId: number;
+	uri: string;
+	depth?: number;
+	parentHeight?: number;
+}
+
+/**
+ * Authed companion to `getThread`. Routes through the connection's PDS
+ * session so the Bluesky AppView can populate per-viewer fields
+ * (`viewer.like`, `viewer.repost`) on every post in the returned tree.
+ * The unauthenticated `getThread` is retained for SSR / embed callers
+ * that have no connection identity.
+ */
+export async function getScopedThread(
+	params: GetScopedThreadParams
+): Promise< AtmosphereThreadResponse > {
+	const { connectionId, uri, depth, parentHeight } = params;
+	const query: Record< string, string > = { uri };
+	// typeof guard preserves depth=0 (root only) and parentHeight=0 — valid backend values.
+	if ( typeof depth === 'number' ) {
+		query.depth = String( depth );
+	}
+	if ( typeof parentHeight === 'number' ) {
+		query.parentHeight = String( parentHeight );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/thread`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereThreadResponse;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
 export interface GetAuthorProfileParams {
 	actor: string;
 }
@@ -165,6 +204,50 @@ export async function getAuthorFeed(
 		return ( await wpcom.req.get(
 			{
 				path: `/reader/atmosphere/profile/${ encodeURIComponent( actor ) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereAuthorFeedPage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetScopedAuthorFeedParams {
+	connectionId: number;
+	actor: string;
+	cursor?: string;
+	limit?: number;
+	filter?: AtmosphereAuthorFeedFilter;
+}
+
+/**
+ * Authed companion to `getAuthorFeed`. Routes through the connection's
+ * PDS session so the Bluesky AppView can populate per-viewer fields
+ * (`viewer.like`, `viewer.repost`) on every post in the returned page.
+ * The unauthenticated `getAuthorFeed` is retained for SSR / embed
+ * callers that have no connection identity.
+ */
+export async function getScopedAuthorFeed(
+	params: GetScopedAuthorFeedParams
+): Promise< AtmosphereAuthorFeedPage > {
+	const { connectionId, actor, cursor, limit, filter } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	if ( filter ) {
+		query.filter = filter;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/profile/${ encodeURIComponent(
+					actor
+				) }/feed`,
 				apiNamespace: NAMESPACE,
 			},
 			query

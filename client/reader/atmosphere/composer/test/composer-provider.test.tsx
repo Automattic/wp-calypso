@@ -124,6 +124,31 @@ describe( 'useComposer', () => {
 	it( 'throws if useComposer is called outside ComposerProvider', () => {
 		expect( () => renderHook( () => useComposer() ) ).toThrow();
 	} );
+
+	it( 'preserves entry_point on standalone mode', async () => {
+		const user = userEvent.setup();
+
+		function TestConsumer() {
+			const { mode, openComposer } = useComposer();
+			return (
+				<>
+					<button onClick={ () => openComposer( { kind: 'standalone', entry_point: 'fab' } ) }>
+						open
+					</button>
+					<span data-testid="entry">{ mode?.kind === 'standalone' ? mode.entry_point : '' }</span>
+				</>
+			);
+		}
+
+		render(
+			<ComposerProvider connectionId={ 1 }>
+				<TestConsumer />
+			</ComposerProvider>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'open' } ) );
+		expect( screen.getByTestId( 'entry' ) ).toHaveTextContent( 'fab' );
+	} );
 } );
 
 function makePreview( uri: string ) {

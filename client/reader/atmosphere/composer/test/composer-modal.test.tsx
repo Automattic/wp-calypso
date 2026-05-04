@@ -16,6 +16,10 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 function makePreview() {
 	return {
 		uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
@@ -91,6 +95,38 @@ function HarnessInvalidUri( props: { connectionId: number } ) {
 	return (
 		<ComposerProvider connectionId={ props.connectionId }>
 			<TriggerAndModalInvalidUri />
+		</ComposerProvider>
+	);
+}
+
+function TriggerAndModalStandalone( props: {
+	entryPoint: 'timeline_inline' | 'profile_inline' | 'fab';
+} ) {
+	const { openComposer } = useComposer();
+	return (
+		<>
+			<button
+				onClick={ () =>
+					openComposer( {
+						kind: 'standalone',
+						entry_point: props.entryPoint,
+					} )
+				}
+			>
+				open
+			</button>
+			<ComposerModal />
+		</>
+	);
+}
+
+function HarnessStandalone( props: {
+	connectionId: number;
+	entryPoint: 'timeline_inline' | 'profile_inline' | 'fab';
+} ) {
+	return (
+		<ComposerProvider connectionId={ props.connectionId }>
+			<TriggerAndModalStandalone entryPoint={ props.entryPoint } />
 		</ComposerProvider>
 	);
 }
@@ -436,6 +472,214 @@ describe( '<ComposerModal>', () => {
 		expect( pageMock ).toHaveBeenCalledWith(
 			'/reader/atmosphere/42/thread/did:plc:abcdefghijklmnopqrstuvwx/bbbbbbbbbbbbb'
 		);
+	} );
+
+	it( 'fires _compose_error_shown once on a standalone mutation error', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_compose_error_shown',
+				expect.objectContaining( {
+					connection_id: 42,
+					error_kind: 'rate_limited',
+				} )
+			)
+		);
+
+		const composeErrorCalls = recordSpy.mock.calls.filter(
+			( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+		);
+		expect( composeErrorCalls ).toHaveLength( 1 );
+	} );
+
+	it( 'dedupes _compose_error_shown across two consecutive same-kind errors', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect(
+				recordSpy.mock.calls.filter(
+					( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+				)
+			).toHaveLength( 1 )
+		);
+
+		// Second submission yields the same error_kind — dedupe should hold.
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+
+		const composeErrorCalls = recordSpy.mock.calls.filter(
+			( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+		);
+		expect( composeErrorCalls ).toHaveLength( 1 );
+	} );
+
+	it( 'fires _compose_error_shown again when the error_kind transitions', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 400, { error: 'atmosphere_text_too_long' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_compose_error_shown',
+				expect.objectContaining( { error_kind: 'rate_limited' } )
+			)
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_compose_error_shown',
+				expect.objectContaining( { error_kind: 'text_too_long' } )
+			)
+		);
+
+		const composeErrorCalls = recordSpy.mock.calls.filter(
+			( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+		);
+		expect( composeErrorCalls ).toHaveLength( 2 );
+	} );
+
+	it( 'fires _compose_error_shown again when the same kind recurs after a successful submission', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		// Error → success → same error again. The ref guarding the dedupe
+		// must reset after the success so the second error still emits.
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect(
+				recordSpy.mock.calls.filter(
+					( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+				)
+			).toHaveLength( 1 )
+		);
+
+		// Successful submission closes the modal; reopen and submit again.
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect(
+				recordSpy.mock.calls.filter(
+					( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+				)
+			).toHaveLength( 2 )
+		);
+	} );
+
+	it.each( [ 'timeline_inline', 'profile_inline', 'fab' ] as const )(
+		'fires _compose_opened with entry_point=%s when opened in standalone mode',
+		async ( entryPoint ) => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint={ entryPoint } /> );
+			await user.click( screen.getByText( 'open' ) );
+
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_compose_opened',
+					expect.objectContaining( {
+						connection_id: 42,
+						entry_point: entryPoint,
+					} )
+				)
+			);
+		}
+	);
+
+	it( 'on standalone success, dispatches _compose_published, shows a "Your post was published." notice with a View action linking to the new post, and closes', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
+		const pageMock = page as unknown as jest.Mock;
+
+		const newPostUri = 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/ccccccccccccc';
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: newPostUri, cid: 'newcid', rkey: 'ccccccccccccc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_compose_published',
+				expect.objectContaining( { connection_id: 42 } )
+			)
+		);
+
+		await waitFor( () => expect( successSpy ).toHaveBeenCalled() );
+		const [ noticeText, options ] = successSpy.mock.calls[ 0 ];
+		expect( noticeText ).toBe( 'Your post was published.' );
+		expect( options ).toEqual(
+			expect.objectContaining( {
+				button: 'View',
+				onClick: expect.any( Function ),
+			} )
+		);
+
+		options.onClick();
+		expect( pageMock ).toHaveBeenCalledWith(
+			'/reader/atmosphere/42/thread/did:plc:abcdefghijklmnopqrstuvwx/ccccccccccccc'
+		);
+
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
 	} );
 
 	it( 'omits the View button when the thread URL cannot be built', async () => {

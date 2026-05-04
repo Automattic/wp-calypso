@@ -34,10 +34,10 @@ function makeAction( { streamKey, ...overrides } ) {
 }
 
 describe( 'streams', () => {
-	// `following` is migrated to React Query (see
-	// client/state/reader/streams/test/actions.js). Use a still-unmigrated
-	// stream type for the shared `handlePage` action below.
-	const action = makeAction( { streamKey: 'site:1234' } );
+	// All `date`-based streams plus `following`/`discover`/`conversations` are
+	// migrated to React Query (see client/state/reader/streams/test/actions.js).
+	// Use a still-unmigrated stream type for the shared `handlePage` action.
+	const action = makeAction( { streamKey: 'likes' } );
 
 	describe( 'requestPage', () => {
 		const query = {
@@ -48,8 +48,34 @@ describe( 'streams', () => {
 			lang: 'en',
 		};
 
-		it( 'returns undefined for migrated stream types so no HTTP fires', () => {
-			expect( requestPage( makeAction( { streamKey: 'following' } ) ) ).toBeUndefined();
+		it.each( [
+			'following',
+			'discover:recommended',
+			'discover:recommended--wordpress--blogging',
+			'discover:latest',
+			'discover:latest--wordpress',
+			'discover:tags',
+			'discover:dailyprompt',
+			'discover:freshly-pressed',
+			'recent',
+			'recent:1234',
+			'search:{"q":"foo","sort":"date"}',
+			'feed:1234',
+			'site:1234',
+			'notifications',
+			'featured:1234',
+			'p2',
+			'a8c',
+			'tag:photography',
+			'tag_popular:photography',
+			'list:{"owner":"alice","slug":"favs"}',
+			'on_this_day',
+			'on_this_day:3:15',
+			'user:42',
+			'conversations',
+			'conversations-a8c',
+		] )( 'returns undefined for migrated streamKey %s', ( streamKey ) => {
+			expect( requestPage( makeAction( { streamKey } ) ) ).toBeUndefined();
 		} );
 
 		describe( 'stream types', () => {
@@ -57,142 +83,6 @@ describe( 'streams', () => {
 			// each test is an assertion of the http call that should be made
 			// when the given stream id is handed to request page
 			[
-				{
-					stream: 'discover:freshly-pressed',
-					expected: {
-						method: 'GET',
-						path: '/freshly-pressed',
-						apiVersion: '1.2',
-						query: {
-							number: INITIAL_FETCH,
-							lang: 'en',
-						},
-					},
-				},
-				{
-					stream: 'discover:recommended',
-					expected: {
-						method: 'GET',
-						path: '/read/streams/discover',
-						apiNamespace: 'wpcom/v2',
-						query: {
-							...query,
-							tag_recs_per_card: 5,
-							site_recs_per_card: 5,
-							tags: [],
-							age_based_decay: 0.5,
-							orderBy: 'popular',
-						},
-					},
-				},
-				{
-					stream: 'discover:dailyprompt',
-					expected: {
-						method: 'GET',
-						path: `/read/streams/discover?tags=dailyprompt`,
-						apiNamespace: 'wpcom/v2',
-						query: {
-							...query,
-							tag_recs_per_card: 5,
-							site_recs_per_card: 5,
-							tags: [],
-							age_based_decay: 0.5,
-						},
-					},
-				},
-				{
-					stream: 'a8c',
-					expected: {
-						method: 'GET',
-						path: '/read/a8c',
-						apiVersion: '1.2',
-						query,
-					},
-				},
-				{
-					stream: 'p2',
-					expected: {
-						method: 'GET',
-						path: '/read/following/p2',
-						apiVersion: '1.2',
-						query,
-					},
-				},
-				{
-					stream: 'conversations',
-					expected: {
-						method: 'GET',
-						path: '/read/conversations',
-						apiVersion: '1.2',
-						query: { ...query, comments_per_post: 20 },
-					},
-				},
-				{
-					stream: 'conversations-a8c',
-					expected: {
-						method: 'GET',
-						path: '/read/conversations',
-						apiVersion: '1.2',
-						query: { ...query, comments_per_post: 20, index: 'a8c' },
-					},
-				},
-				{
-					stream: 'search: { "q": "foo", "sort": "date" }',
-					expected: {
-						method: 'GET',
-						path: '/read/search',
-						apiVersion: '1.2',
-						query: {
-							sort: 'date',
-							q: 'foo',
-							lang: 'en',
-							number: INITIAL_FETCH,
-							content_width: 675,
-						},
-					},
-				},
-				{
-					stream: 'search: { "q": "foo:bar", "sort": "relevance" }',
-					expected: {
-						method: 'GET',
-						path: '/read/search',
-						apiVersion: '1.2',
-						query: {
-							sort: 'relevance',
-							q: 'foo:bar',
-							lang: 'en',
-							number: INITIAL_FETCH,
-							content_width: 675,
-						},
-					},
-				},
-				{
-					stream: 'feed:1234',
-					expected: {
-						method: 'GET',
-						path: '/read/feed/1234/posts',
-						apiVersion: '1.2',
-						query,
-					},
-				},
-				{
-					stream: 'site:1234',
-					expected: {
-						method: 'GET',
-						path: '/read/sites/1234/posts',
-						apiVersion: '1.2',
-						query,
-					},
-				},
-				{
-					stream: 'featured:1234',
-					expected: {
-						method: 'GET',
-						path: '/read/sites/1234/featured',
-						apiVersion: '1.2',
-						query,
-					},
-				},
 				{
 					stream: 'likes',
 					expected: {
