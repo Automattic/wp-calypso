@@ -455,6 +455,12 @@ a.social-post-card-header__timestamp::after {
 	font-style: italic;
 }
 
+.social-post-card-header__actions {
+	margin-inline-start: auto;
+	position: relative;
+	z-index: 1;
+}
+
 // Override @wordpress/components VStack's higher-specificity `gap` so the
 // inner quote and media stack tightly. Selector specificity must beat the
 // component's own internal rule.
