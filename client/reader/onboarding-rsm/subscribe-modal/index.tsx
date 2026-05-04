@@ -386,7 +386,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 											<div className="subscribe-modal__preview-stream-container">
 												<TypedStream
 													streamKey={ `feed:${ selectedSite.feed_ID }` }
-													className="is-site-stream subscribe-modal__preview-stream"
+													className="is-site-stream subscribe-modal__preview-stream no-padding"
 													followSource="reader_subscribe_modal"
 													useCompactCards
 													trackScrollPage={ trackScrollPage.bind( null ) }

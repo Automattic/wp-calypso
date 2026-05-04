@@ -226,28 +226,10 @@ $actions-height: 64px;
 			margin: 0;
 		}
 
-		.reader__card.card,
 		.reader-post-card.card.is-compact {
 			margin-bottom: 0;
 			border-radius: 0;
-			border-inline: 0;
-			border-top: 0;
-			border-bottom: 1px solid var( --color-neutral-5 );
 			padding: 14px 16px 12px;
-		}
-
-		.reader__card.card.is-compact .reader-post-card__post-content:not(.reader-post-card__no-excerpt)
-			.reader-featured-image {
-			width: 212px !important;
-			height: auto !important;
-			aspect-ratio: 16 / 9;
-			overflow: hidden;
-		}
-
-		.reader__card.card.is-compact .reader-featured-image img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
 		}
 	}
 
