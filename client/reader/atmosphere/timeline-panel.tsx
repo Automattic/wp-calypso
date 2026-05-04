@@ -11,50 +11,20 @@ import {
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getThreadUrl as buildThreadUrl } from './route';
-import type {
-	AtmosphereConnection,
-	AtmosphereError,
-	AtmosphereFeedItem,
-} from '@automattic/api-core';
-import type { SocialError, SocialPost } from 'calypso/reader/social';
+import { useOptionalComposer } from './composer';
+import { projectAtmosphereError } from './error-projection';
+import {
+	getProfileUrl as buildProfileUrl,
+	getTagFeedUrl as buildTagUrl,
+	getThreadUrl as buildThreadUrl,
+	type ProfileRefInput,
+} from './route';
+import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
 
 interface TimelinePanelProps {
 	connection: AtmosphereConnection;
-}
-
-function projectAtmosphereError( err: AtmosphereError | null | undefined ): SocialError | null {
-	if ( ! err ) {
-		return null;
-	}
-	switch ( err.kind ) {
-		case 'auth_required':
-		case 'not_found':
-		case 'upstream_unavailable':
-			return { kind: err.kind };
-		case 'auth_failed':
-		case 'invalid_credentials':
-			// Stale credentials — same recovery as auth_required.
-			return { kind: 'auth_required' };
-		case 'connection_not_found':
-			// User-side connection deleted — semantically a not_found.
-			return { kind: 'not_found' };
-		case 'rate_limited':
-			return err.retry_after !== undefined
-				? { kind: 'rate_limited', retry_after: err.retry_after }
-				: { kind: 'rate_limited' };
-		case 'invalid_handle':
-		case 'bad_request':
-		case 'unknown':
-			return { kind: 'unknown', cause: err };
-		default:
-			return assertNever( err );
-	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }
 
 export function TimelinePanel( { connection }: TimelinePanelProps ) {
@@ -128,9 +98,51 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const getProfileUrl = useCallback(
+		( ref: ProfileRefInput ) => buildProfileUrl( connection.id, ref ),
+		[ connection.id ]
+	);
+
+	const getTagUrl = useCallback(
+		( tag: string ) => buildTagUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			const parent = { uri: post.uri, cid: post.cid };
+			// `reply_root` is null when the post itself is the root of its
+			// thread; in that case the post is also its own root. When set,
+			// prefer the root's own `cid` (preserved through the atmosphere
+			// mapper) so reply-to-reply submissions round-trip the actual
+			// root strong-ref to AT-Proto's `createRecord`. Fall back to the
+			// parent's `cid` for protocols that don't carry CIDs natively
+			// (Mastodon) or older backend payloads where the field is absent.
+			const root = post.reply_root
+				? { uri: post.reply_root.uri, cid: post.reply_root.cid ?? post.cid }
+				: parent;
+			openComposer( {
+				kind: 'reply',
+				root,
+				parent,
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const renderItem = useCallback(
-		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
-		[]
+		( post: SocialPost ) => (
+			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
+		),
+		[ connection.id ]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
@@ -140,8 +152,11 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			connectionId: connection.id,
 			onClick: onClickAnalytics,
 			getThreadUrl,
+			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
 	);
 
 	return (

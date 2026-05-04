@@ -29,6 +29,47 @@ const base: SocialPost = {
 	permalink: 'https://bsky.app/profile/alice.bsky.social/post/x',
 };
 
+describe( 'PostCardHeader compact + timestampLink', () => {
+	it( 'renders the timestamp as an anchor when timestampLink is provided', () => {
+		const onClick = jest.fn();
+		render(
+			<PostCardHeader
+				post={ base }
+				variant="compact"
+				timestampLink={ {
+					href: '/reader/atmosphere/7/thread/x/y',
+					onClick,
+				} }
+			/>
+		);
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/7/thread/x/y' );
+		expect( link ).toHaveClass( 'social-post-card-header__timestamp' );
+	} );
+
+	it( 'fires the supplied onClick when the timestamp is clicked', async () => {
+		const onClick = jest.fn();
+		render(
+			<PostCardHeader
+				post={ base }
+				variant="compact"
+				timestampLink={ {
+					href: '/reader/atmosphere/7/thread/x/y',
+					onClick,
+				} }
+			/>
+		);
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'link' ) );
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'renders plain TimeSince in compact mode when timestampLink is omitted', () => {
+		render( <PostCardHeader post={ base } variant="compact" /> );
+		expect( screen.queryByRole( 'link' ) ).toBeNull();
+	} );
+} );
+
 describe( 'PostCardHeader', () => {
 	it( 'renders display name, handle, and a link to the author profile on bsky.app', () => {
 		render( <PostCardHeader post={ base } variant="default" /> );
@@ -62,7 +103,8 @@ describe( 'PostCardHeader', () => {
 				variant="default"
 			/>
 		);
-		expect( screen.getByText( /Reposted by Bob/ ) ).toBeVisible();
+		expect( screen.getByText( /Reposted by/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Bob' } ) ).toBeVisible();
 	} );
 
 	it( 'renders the reply context when post.reply_parent is present', () => {
@@ -187,5 +229,175 @@ describe( 'PostCardHeader getThreadUrl rewiring', () => {
 				parent_uri: post.reply_parent!.uri,
 			} )
 		);
+	} );
+} );
+
+describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
+	function renderWithAnalytics(
+		post: SocialPost,
+		getProfileUrl: ( ref: { did?: string | null; handle?: string | null } ) => string | null
+	) {
+		const onClick = jest.fn();
+		render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick,
+					getProfileUrl,
+				} }
+			>
+				<PostCardHeader post={ post } variant="default" />
+			</SocialAnalyticsProvider>
+		);
+		return { onClick };
+	}
+
+	const basePost: SocialPost = {
+		uri: 'at://did:plc:abc/app.bsky.feed.post/xyz',
+		author: {
+			id: 'did:plc:abc',
+			handle: 'alice.bsky.social',
+			display_name: 'Alice',
+			avatar: null,
+			profile_url: 'https://bsky.app/profile/alice.bsky.social',
+		},
+		created_at: '2024-01-01T00:00:00.000Z',
+		indexed_at: '2024-01-01T00:00:00.000Z',
+		text: '',
+		html: '',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		permalink: 'https://bsky.app/profile/alice.bsky.social/post/xyz',
+	};
+
+	it( 'uses the in-app URL when the resolver returns a string', () => {
+		renderWithAnalytics( basePost, () => '/reader/atmosphere/42/profile/alice.bsky.social' );
+		const link = screen.getByRole( 'link', { name: /Alice/ } );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/42/profile/alice.bsky.social' );
+		expect( link ).not.toHaveAttribute( 'target' );
+		expect( link ).not.toHaveAttribute( 'rel' );
+	} );
+
+	it( 'fires _author_clicked with destination=in_app when in-app', async () => {
+		const user = userEvent.setup();
+		const { onClick } = renderWithAnalytics(
+			basePost,
+			() => '/reader/atmosphere/42/profile/alice.bsky.social'
+		);
+		await user.click( screen.getByRole( 'link', { name: /Alice/ } ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_author_clicked',
+			expect.objectContaining( { destination: 'in_app' } )
+		);
+	} );
+
+	it( 'falls back to bsky.app + new tab when the resolver returns null', () => {
+		renderWithAnalytics( basePost, () => null );
+		const link = screen.getByRole( 'link', { name: /Alice/ } );
+		expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/alice.bsky.social' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+	} );
+
+	it( 'fires _author_clicked with destination=bsky_app when falling back', async () => {
+		const user = userEvent.setup();
+		const { onClick } = renderWithAnalytics( basePost, () => null );
+		await user.click( screen.getByRole( 'link', { name: /Alice/ } ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_author_clicked',
+			expect.objectContaining( { destination: 'bsky_app' } )
+		);
+	} );
+
+	describe( 'PostCardHeader — repost preface clickability', () => {
+		const repostedPost: SocialPost = {
+			...basePost,
+			reason: {
+				type: 'repost',
+				by: { id: 'did:plc:joe', handle: 'joe.example.com', display_name: 'Joe' },
+			},
+		};
+
+		function renderRepost(
+			getProfileUrl?: ( ref: { did?: string | null; handle?: string | null } ) => string | null
+		) {
+			const onClick = jest.fn();
+			render(
+				<SocialAnalyticsProvider
+					value={ {
+						source: 'atmosphere',
+						connectionId: 42,
+						onClick,
+						getProfileUrl,
+					} }
+				>
+					<PostCardHeader post={ repostedPost } variant="default" />
+				</SocialAnalyticsProvider>
+			);
+			return { onClick };
+		}
+
+		it( 'renders the reposter as an in-app link when the resolver returns a string', () => {
+			renderRepost( () => '/reader/atmosphere/42/profile/joe.example.com' );
+			const link = screen.getByRole( 'link', { name: 'Joe' } );
+			expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/42/profile/joe.example.com' );
+			expect( link ).not.toHaveAttribute( 'target' );
+			expect( link ).not.toHaveAttribute( 'rel' );
+		} );
+
+		it( 'fires _repost_author_clicked with destination=in_app', async () => {
+			const user = userEvent.setup();
+			const { onClick } = renderRepost( () => '/reader/atmosphere/42/profile/joe.example.com' );
+			await user.click( screen.getByRole( 'link', { name: 'Joe' } ) );
+			expect( onClick ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_timeline_repost_author_clicked',
+				expect.objectContaining( {
+					connection_id: 42,
+					reposter_did: 'did:plc:joe',
+					reposter_handle: 'joe.example.com',
+					destination: 'in_app',
+				} )
+			);
+		} );
+
+		it( 'falls back to bsky.app + new tab when the resolver returns null', () => {
+			renderRepost( () => null );
+			const link = screen.getByRole( 'link', { name: 'Joe' } );
+			expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/joe.example.com' );
+			expect( link ).toHaveAttribute( 'target', '_blank' );
+			expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+		} );
+
+		it( 'falls back when no resolver is provided', () => {
+			renderRepost( undefined );
+			const link = screen.getByRole( 'link', { name: 'Joe' } );
+			expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/joe.example.com' );
+			expect( link ).toHaveAttribute( 'target', '_blank' );
+		} );
+
+		it( 'fires _repost_author_clicked with destination=bsky_app when falling back', async () => {
+			const user = userEvent.setup();
+			const { onClick } = renderRepost( () => null );
+			await user.click( screen.getByRole( 'link', { name: 'Joe' } ) );
+			expect( onClick ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_timeline_repost_author_clicked',
+				expect.objectContaining( { destination: 'bsky_app' } )
+			);
+		} );
+
+		it( 'does not render a preface when post.reason is null', () => {
+			const onClick = jest.fn();
+			render(
+				<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 42, onClick } }>
+					<PostCardHeader post={ basePost } variant="default" />
+				</SocialAnalyticsProvider>
+			);
+			expect( screen.queryByText( /Reposted by/i ) ).toBeNull();
+		} );
 	} );
 } );

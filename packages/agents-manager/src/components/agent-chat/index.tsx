@@ -15,6 +15,7 @@ import { useMemo, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import CustomALink from '../custom-a-link';
@@ -92,6 +93,51 @@ const DEFAULT_ACCEPTED_IMAGE_TYPES = [
 	'image/heic-sequence',
 	'image/heif-sequence',
 ];
+
+/**
+ * Read a string override from `window.agentsManagerData[key]`. Reader-chat
+ * hosts can customize the empty-view greeting/help copy by setting these
+ * keys before AgentsManager mounts.
+ */
+function readAgentsManagerDataString(
+	key: 'emptyViewHeading' | 'emptyViewHelp'
+): string | undefined {
+	if ( typeof window === 'undefined' || ! isReaderChatHost() ) {
+		return undefined;
+	}
+	const data = ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+		.agentsManagerData;
+	const value = data?.[ key ];
+	return typeof value === 'string' ? value : undefined;
+}
+
+/**
+ * Returns the empty-view greeting. Priority:
+ *   1. Explicit host override via `window.agentsManagerData.emptyViewHeading`.
+ *   2. Reader-chat default (contextual to blog frontends).
+ *   3. Orchestrator default.
+ */
+function getEmptyViewHeading(): string {
+	const override = readAgentsManagerDataString( 'emptyViewHeading' );
+	if ( override ) {
+		return override;
+	}
+	if ( isReaderChatHost() ) {
+		return __( 'Ask me anything about this blog.', '__i18n_text_domain__' );
+	}
+	return __( 'Howdy! How can I help you today?', '__i18n_text_domain__' );
+}
+
+function getEmptyViewHelp(): string {
+	const override = readAgentsManagerDataString( 'emptyViewHelp' );
+	if ( override ) {
+		return override;
+	}
+	if ( isReaderChatHost() ) {
+		return __( 'Or type your own question below.', '__i18n_text_domain__' );
+	}
+	return __( 'Got a different request? Ask away.', '__i18n_text_domain__' );
+}
 
 export default function AgentChat( {
 	messages,
@@ -181,12 +227,8 @@ export default function AgentChat( {
 					<ChatMessageSkeleton count={ 3 } />
 				) : (
 					<EmptyView
-						heading={ __( 'Howdy! How can I help you today?', '__i18n_text_domain__' ) }
-						help={
-							emptyViewSuggestions.length > 0
-								? __( 'Got a different request? Ask away.', '__i18n_text_domain__' )
-								: undefined
-						}
+						heading={ getEmptyViewHeading() }
+						help={ emptyViewSuggestions.length > 0 ? getEmptyViewHelp() : undefined }
 						suggestions={ emptyViewSuggestions }
 						icon={ <AI size={ 32 } /> }
 					/>

@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThreadTree } from '../index';
 import type { AtmosphereThreadNode, AtmosphereFeedItem } from '@automattic/api-core';
 
@@ -63,7 +64,7 @@ describe( 'ThreadTree', () => {
 			parent: null,
 			replies: [],
 		};
-		render( <ThreadTree root={ root } targetUri="at://root" /> );
+		renderWithProvider( <ThreadTree connectionId={ 42 } root={ root } targetUri="at://root" /> );
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 1 );
 		expect( scrollIntoView ).not.toHaveBeenCalled();
 	} );
@@ -94,7 +95,7 @@ describe( 'ThreadTree', () => {
 			},
 			replies: [],
 		};
-		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		renderWithProvider( <ThreadTree connectionId={ 42 } root={ root } targetUri="at://target" /> );
 		const articles = screen.getAllByRole( 'article' );
 		expect( articles ).toHaveLength( 4 );
 		expect( articles[ 0 ] ).toHaveTextContent( 'gg' );
@@ -113,7 +114,7 @@ describe( 'ThreadTree', () => {
 			parent: { type: 'post', post: parent, parent: null, replies: [] },
 			replies: [],
 		};
-		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		renderWithProvider( <ThreadTree connectionId={ 42 } root={ root } targetUri="at://target" /> );
 		expect( scrollIntoView ).toHaveBeenCalledTimes( 1 );
 		expect( scrollIntoView ).toHaveBeenCalledWith( {
 			block: 'start',
@@ -140,7 +141,7 @@ describe( 'ThreadTree', () => {
 				},
 			],
 		};
-		render( <ThreadTree root={ root } targetUri="at://root" /> );
+		renderWithProvider( <ThreadTree connectionId={ 42 } root={ root } targetUri="at://root" /> );
 		expect( screen.getAllByRole( 'note' ) ).toHaveLength( 2 ); // not_found + blocked
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 2 ); // root + reply1
 	} );
@@ -170,7 +171,7 @@ describe( 'ThreadTree', () => {
 			},
 			replies: [],
 		};
-		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		renderWithProvider( <ThreadTree connectionId={ 42 } root={ root } targetUri="at://target" /> );
 		expect( screen.queryByText( 'sibling reply' ) ).toBeNull();
 		// Only parent + target should be in the article list.
 		const articles = screen.getAllByRole( 'article' );
@@ -196,7 +197,7 @@ describe( 'ThreadTree', () => {
 			parent: chain,
 			replies: [],
 		};
-		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		renderWithProvider( <ThreadTree connectionId={ 42 } root={ root } targetUri="at://target" /> );
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 81 );
 	} );
 
@@ -227,7 +228,7 @@ describe( 'ThreadTree', () => {
 			parent: nodeA,
 			replies: [],
 		};
-		render( <ThreadTree root={ root } targetUri="at://target" /> );
+		renderWithProvider( <ThreadTree connectionId={ 42 } root={ root } targetUri="at://target" /> );
 		// Target + nodeA + nodeB — cycle detection breaks before re-rendering nodeA.
 		expect( screen.getAllByRole( 'article' ) ).toHaveLength( 3 );
 		expect( screen.getAllByText( 'cycle-a' ) ).toHaveLength( 1 );

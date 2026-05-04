@@ -1,6 +1,7 @@
 export interface OmnibarNode {
 	id: string;
-	title: string;
+	title?: string;
+	label?: string;
 	icon?: React.ReactElement;
 	group?: boolean;
 	href?: string;
@@ -23,6 +24,7 @@ export interface OmnibarNodes {
 	home?: OmnibarNode;
 	site?: OmnibarNode;
 	siteActions?: OmnibarNode[];
+	sitePlugins?: OmnibarNode[];
 	plugins?: OmnibarNode[];
 	user?: OmnibarNode;
 }

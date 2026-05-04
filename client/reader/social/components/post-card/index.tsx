@@ -11,6 +11,7 @@ import { PostCardHeader } from './post-card-header';
 import { PostCardLink } from './post-card-link';
 import { PostCardTimestamp } from './post-card-timestamp';
 import type { SocialContentWarning, SocialPost } from '../../types';
+import type React from 'react';
 
 type SocialPostCardVariant = 'default' | 'compact';
 
@@ -18,17 +19,27 @@ interface SocialPostCardProps {
 	post: SocialPost;
 	variant?: SocialPostCardVariant;
 	expandedVideo?: boolean;
+	connectionId?: number;
 	// When true, the inline timestamp moves out of the header and renders as
 	// a standalone block between the embed and the counts row (matches
 	// bsky.app's single-post layout). Used by ThreadTree for the target post.
 	prominentTimestamp?: boolean;
+	cardLink?: {
+		href: string;
+		onClick?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
+		target?: string;
+		rel?: string;
+		ariaLabel?: string;
+	};
 }
 
 export function SocialPostCard( {
 	post,
 	variant = 'default',
 	expandedVideo,
+	connectionId,
 	prominentTimestamp,
+	cardLink,
 }: SocialPostCardProps ) {
 	const isCompact = variant === 'compact';
 	const showProminentTimestamp = ! isCompact && Boolean( prominentTimestamp );
@@ -38,7 +49,10 @@ export function SocialPostCard( {
 	const showEmbed = post.embed && ( ! isCompact || ! isQuoteEmbed );
 
 	const cw = post.content_warning;
-	const cwActive = Boolean( cw?.sensitive );
+	// Whole-post CW gate fires when spoiler_text is set. Bare `sensitive`
+	// (no spoiler) gates only the media embed (handled inside PostCardEmbed
+	// via the `sensitive` prop) so the body still renders.
+	const cwGate = cw && cw.spoiler_text ? cw : null;
 
 	const bodyAndEmbed: ReactNode = (
 		<>
@@ -49,6 +63,8 @@ export function SocialPostCard( {
 					parentPostUri={ post.uri }
 					expandedVideo={ expandedVideo }
 					compact={ isCompact }
+					// Bare `sensitive` (no whole-post CW) blurs the media.
+					sensitive={ ! cwGate && Boolean( cw?.sensitive ) }
 				/>
 			) }
 		</>
@@ -61,32 +77,26 @@ export function SocialPostCard( {
 					post={ post }
 					variant={ variant }
 					prominentTimestamp={ showProminentTimestamp }
+					timestampLink={ isCompact ? cardLink : undefined }
 				/>
-				{ cwActive && cw ? (
-					<ContentWarningGate warning={ cw }>{ bodyAndEmbed }</ContentWarningGate>
+				{ cwGate ? (
+					<ContentWarningGate warning={ cwGate }>{ bodyAndEmbed }</ContentWarningGate>
 				) : (
 					bodyAndEmbed
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
-				{ ! isCompact && <PostCardCounts counts={ post.counts } postUri={ post.uri } /> }
+				{ ! isCompact && <PostCardCounts post={ post } connectionId={ connectionId } /> }
 			</CardBody>
 		</Card>
 	);
-
-	// Compact mode renders without any anchors so the consumer
-	// (e.g. PostCardEmbedQuote) can wrap it in its own outer anchor without
-	// creating invalid nested-<a> markup.
-	if ( isCompact ) {
-		return card;
-	}
 
 	return <PostCardLink variant={ variant }>{ card }</PostCardLink>;
 }
 
 // Gates BOTH the post body (text) and any media embed behind a "Show
-// content" button when the post is flagged sensitive. Matches native
-// Mastodon clients — gating only text would leave NSFW images / videos
-// fully visible, which is a real safety regression.
+// content" button when the post carries a content-warning spoiler.
+// Used by the Mastodon spoiler_text path; bare `sensitive` media blurs
+// without triggering this gate (handled by PostCardEmbed instead).
 function ContentWarningGate( {
 	warning,
 	children,
@@ -101,15 +111,9 @@ function ContentWarningGate( {
 		return <>{ children }</>;
 	}
 
-	const label = warning.spoiler_text
-		? translate( 'Show content: %(reason)s', { args: { reason: warning.spoiler_text } } )
-		: translate( 'Show sensitive content' );
-
 	return (
 		<div className="social-post-card-content-warning">
-			{ warning.spoiler_text && (
-				<p className="social-post-card-content-warning__spoiler">{ warning.spoiler_text }</p>
-			) }
+			<p className="social-post-card-content-warning__spoiler">{ warning.spoiler_text }</p>
 			<Button
 				variant="secondary"
 				onClick={ ( e: React.MouseEvent ) => {
@@ -119,7 +123,7 @@ function ContentWarningGate( {
 					setRevealed( true );
 				} }
 			>
-				{ label }
+				{ translate( 'Show content' ) }
 			</Button>
 		</div>
 	);

@@ -28,6 +28,38 @@ export const clearPurchases = () => ( dispatch, getState ) => {
 	}
 };
 
+/**
+ * Strips a single purchase from the Redux store without resetting the
+ * hasLoaded flags. Unlike clearPurchases (which dispatches PURCHASES_REMOVE
+ * and wipes the store, forcing QueryUserPurchases to refetch), this dispatches
+ * PURCHASE_REMOVE_COMPLETED with the current list minus the target purchase —
+ * keeping hasLoadedUserPurchasesFromServer / hasLoadedSitePurchasesFromServer
+ * at true so no refetch cascade is triggered.
+ *
+ * Also refreshes the admin menu to match the sibling thunks (clearPurchases,
+ * removePurchase): removing a purchase can change which items appear in the
+ * site's wp-admin sidebar (e.g. a removed plugin's menu section), so the menu
+ * needs to be re-fetched to avoid stale entries until the next navigation.
+ *
+ * NOTE: temporary bridge for the legacy `client/me/purchases` surface, which
+ * still reads purchases from Redux. The dashboard surface uses React Query
+ * directly (see `removePurchaseMutation` in
+ * `packages/api-queries/src/upgrades.ts`). Once `client/me/purchases/**`
+ * migrates to `useQuery`, this helper can be removed.
+ */
+export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) => {
+	const state = getState();
+	const currentData = state.purchases.data ?? [];
+	const siteId = getSelectedSiteId( state );
+	dispatch( {
+		type: PURCHASE_REMOVE_COMPLETED,
+		purchases: currentData.filter( ( p ) => String( p.ID ) !== String( purchaseId ) ),
+	} );
+	if ( siteId ) {
+		dispatch( requestAdminMenu( siteId ) );
+	}
+};
+
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 	dispatch( {
 		type: PURCHASES_SITE_FETCH,

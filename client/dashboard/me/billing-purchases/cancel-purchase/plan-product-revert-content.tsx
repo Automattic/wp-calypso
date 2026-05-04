@@ -13,6 +13,7 @@ interface PlanProductRevertContentProps {
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
+	isBusy?: boolean;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingAtomicPlanRevert: ( checked: boolean ) => void;
@@ -26,6 +27,7 @@ export default function PlanProductRevertContent( {
 	includedDomainPurchase,
 	atomicTransfer,
 	state,
+	isBusy,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
 	onCustomerConfirmedUnderstandingAtomicPlanRevert,
@@ -55,6 +57,7 @@ export default function PlanProductRevertContent( {
 					includedDomainPurchase={ includedDomainPurchase }
 					atomicTransfer={ atomicTransfer }
 					state={ state }
+					isBusy={ isBusy }
 					onClick={ onCancelClick }
 				/>
 				<KeepSubscriptionButton

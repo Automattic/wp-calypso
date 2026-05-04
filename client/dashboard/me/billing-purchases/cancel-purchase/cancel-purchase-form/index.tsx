@@ -193,9 +193,10 @@ function SurveyContent( {
 				cancellationReason={ questionOneText }
 				closeDialog={ closeDialog }
 				currencyCode={ purchase.currency_code }
-				declineButtonText={ intent === 'remove' ? __( 'Remove my current plan' ) : undefined }
+				declineButtonText={ intent === 'remove' ? __( 'Continue removal' ) : undefined }
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
+				intent={ intent ?? undefined }
 				onClickDowngrade={ downgradeClick }
 				onClickFreeMonthOffer={ freeMonthOfferClick }
 				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
@@ -295,6 +296,7 @@ function StepButtons( {
 	clickNext,
 	closeDialog,
 	disableButtons,
+	intent,
 	isSubmitting,
 	onSubmit,
 	solution,
@@ -320,6 +322,21 @@ function StepButtons( {
 	}
 
 	if ( ! isLastStep ) {
+		if ( intent === 'remove' ) {
+			return (
+				<ButtonStack justify="flex-start">
+					<Button
+						variant="primary"
+						isDestructive
+						disabled={ ! canGoNext || isCancelling }
+						onClick={ clickNext }
+					>
+						{ __( 'Continue removal' ) }
+					</Button>
+				</ButtonStack>
+			);
+		}
+
 		return (
 			<ButtonStack justify="flex-start">
 				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ clickNext }>
@@ -384,6 +401,31 @@ function StepButtons( {
 					variant="secondary"
 				>
 					{ __( 'No, thanks' ) }
+				</Button>
+			</ButtonStack>
+		);
+	}
+
+	if ( intent === 'remove' ) {
+		return (
+			<ButtonStack justify="flex-start">
+				<Button
+					isDestructive
+					disabled={ ! canGoNext }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant="primary"
+				>
+					{ __( 'Complete removal' ) }
+				</Button>
+				<Button
+					isDestructive
+					variant="tertiary"
+					isBusy={ isCancelling }
+					disabled={ isCancelling }
+					onClick={ onSubmit }
+				>
+					{ __( 'Skip and remove' ) }
 				</Button>
 			</ButtonStack>
 		);

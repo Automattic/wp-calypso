@@ -1,11 +1,8 @@
 import deepfreeze from 'deep-freeze';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import {
-	requestPage as requestPageAction,
-	receivePage,
-	receiveUpdates,
-} from 'calypso/state/reader/streams/actions';
-import { requestPage, handlePage, INITIAL_FETCH, PER_FETCH, QUERY_META } from '../';
+import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
+import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
+import { requestPage, handlePage, INITIAL_FETCH, QUERY_META } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -15,8 +12,32 @@ jest.mock( 'calypso/lib/wp' );
 jest.mock( 'calypso/reader/stats', () => ( { recordTrack: () => {} } ) );
 jest.mock( '@wordpress/warning', () => () => {} );
 
+// `requestPage` in `state/reader/streams/actions` is a thunk; it dispatches the
+// action below for unmigrated streams. Build the action shape directly here so
+// these legacy data-layer tests don't depend on the thunk's runtime.
+function makeAction( { streamKey, ...overrides } ) {
+	const colon = streamKey.indexOf( ':' );
+	const streamType = colon === -1 ? streamKey : streamKey.substring( 0, colon );
+	return deepfreeze( {
+		type: READER_STREAMS_PAGE_REQUEST,
+		payload: {
+			streamKey,
+			streamType,
+			pageHandle: undefined,
+			isPoll: false,
+			gap: null,
+			localeSlug: null,
+			feedId: undefined,
+			...overrides,
+		},
+	} );
+}
+
 describe( 'streams', () => {
-	const action = deepfreeze( requestPageAction( { streamKey: 'following', page: 2 } ) );
+	// `following` is migrated to React Query (see
+	// client/state/reader/streams/test/actions.js). Use a still-unmigrated
+	// stream type for the shared `handlePage` action below.
+	const action = makeAction( { streamKey: 'site:1234' } );
 
 	describe( 'requestPage', () => {
 		const query = {
@@ -27,34 +48,8 @@ describe( 'streams', () => {
 			lang: 'en',
 		};
 
-		it( 'should return an http request', () => {
-			expect( requestPage( action ) ).toEqual(
-				http( {
-					method: 'GET',
-					path: '/read/following',
-					apiVersion: '1.2',
-					query,
-					onSuccess: action,
-					onFailure: action,
-				} )
-			);
-		} );
-
-		it( 'should set proper params for subsequent fetches', () => {
-			const pageHandle = { after: 'the robots attack' };
-			const secondPage = { ...action, payload: { ...action.payload, pageHandle, feedId: 1234 } };
-			const httpAction = requestPage( secondPage );
-
-			expect( httpAction ).toEqual(
-				http( {
-					method: 'GET',
-					path: '/read/following',
-					apiVersion: '1.2',
-					query: { ...query, feed_id: 1234, number: PER_FETCH, after: 'the robots attack' },
-					onSuccess: secondPage,
-					onFailure: secondPage,
-				} )
-			);
+		it( 'returns undefined for migrated stream types so no HTTP fires', () => {
+			expect( requestPage( makeAction( { streamKey: 'following' } ) ) ).toBeUndefined();
 		} );
 
 		describe( 'stream types', () => {
@@ -62,15 +57,6 @@ describe( 'streams', () => {
 			// each test is an assertion of the http call that should be made
 			// when the given stream id is handed to request page
 			[
-				{
-					stream: 'following',
-					expected: {
-						method: 'GET',
-						path: '/read/following',
-						apiVersion: '1.2',
-						query,
-					},
-				},
 				{
 					stream: 'discover:freshly-pressed',
 					expected: {
@@ -243,7 +229,7 @@ describe( 'streams', () => {
 				},
 			].forEach( ( testCase ) => {
 				it( testCase.stream + ' should pass the expected params', () => {
-					const pageAction = requestPageAction( { streamKey: testCase.stream } );
+					const pageAction = makeAction( { streamKey: testCase.stream } );
 					const expected = {
 						onSuccess: pageAction,
 						onFailure: pageAction,
@@ -311,7 +297,7 @@ describe( 'streams', () => {
 
 	describe( 'handlePage with sites data (custom_recs_sites_with_images)', () => {
 		const makeSiteAction = () =>
-			deepfreeze( requestPageAction( { streamKey: 'custom_recs_sites_with_images', page: 1 } ) );
+			makeAction( { streamKey: 'custom_recs_sites_with_images', page: 1 } );
 
 		it( 'should not throw when a site is missing the posts property', () => {
 			const siteAction = makeSiteAction();

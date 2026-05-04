@@ -1,9 +1,11 @@
+import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
 import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from './wpcom';
-const debug = require( 'debug' )( 'notifications:rest-client' );
+
+const debug = debugFactory( 'notifications:rest-client' );
 
 const settings = {
 	max_refresh_ms: 180000,

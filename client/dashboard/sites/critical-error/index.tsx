@@ -78,7 +78,9 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 				__( '<phpLogsLink/> to locate any fatal errors on your site.' ),
 				{
 					phpLogsLink: (
-						<Link to={ `/sites/${ siteSlug }/logs/php` }>{ __( 'Review the PHP logs' ) }</Link>
+						<Link to={ `/sites/${ siteSlug }/logs/php` } search={ { severity: 'Fatal error' } }>
+							{ __( 'Review the PHP logs' ) }
+						</Link>
 					),
 				}
 			),

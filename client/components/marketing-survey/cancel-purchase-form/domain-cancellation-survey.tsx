@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from '@automattic/urls';
 import { Button, SelectControl, TextareaControl } from '@wordpress/components';
@@ -23,6 +24,7 @@ interface Props {
 	purchase: Purchase;
 	purchaseListUrl: string;
 	isVisible: boolean;
+	intent?: 'cancel' | 'remove' | null;
 	onClose: () => void;
 	onSurveyComplete: () => void;
 	cancellationInProgress?: boolean;
@@ -41,6 +43,7 @@ interface DomainCancellationReason {
 const DomainCancellationSurvey: React.FC< Props > = ( {
 	isVisible = false,
 	purchase,
+	intent,
 	...props
 } ) => {
 	const translate = useTranslate();
@@ -139,18 +142,44 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	const renderButtons = () => {
 		const { disableButtons, cancellationInProgress } = props;
 		const disabled = disableButtons || ! selectedReason;
+		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isRemoveIntent = intent === 'remove';
+		const getCompleteLabel = () => {
+			if ( ! isSplitEnabled ) {
+				return translate( 'Submit' );
+			}
+			return isRemoveIntent
+				? translate( 'Complete removal' )
+				: translate( 'Complete cancellation' );
+		};
+		const getCompletingLabel = () =>
+			isRemoveIntent ? translate( 'Completing removal' ) : translate( 'Completing cancellation' );
+		const primaryLabel =
+			isSplitEnabled && cancellationInProgress ? getCompletingLabel() : getCompleteLabel();
 
 		return (
 			<div className="cancel-purchase-form__actions">
 				<div className="cancel-purchase-form__buttons">
 					<Button
 						variant="primary"
+						isDestructive={ isSplitEnabled }
 						isBusy={ cancellationInProgress }
 						disabled={ disabled }
 						onClick={ handleSubmit }
 					>
-						{ translate( 'Submit' ) }
+						{ primaryLabel }
 					</Button>
+					{ isSplitEnabled && disabled && (
+						<Button
+							variant="tertiary"
+							isDestructive
+							isBusy={ cancellationInProgress }
+							disabled={ cancellationInProgress }
+							onClick={ handleSubmit }
+						>
+							{ isRemoveIntent ? translate( 'Skip and remove' ) : translate( 'Skip and cancel' ) }
+						</Button>
+					) }
 				</div>
 			</div>
 		);

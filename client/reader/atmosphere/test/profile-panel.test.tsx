@@ -2,52 +2,73 @@
  * @jest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ProfilePanel } from '../profile-panel';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
-const BASE = 'https://public-api.wordpress.com';
-
-function makeClient() {
-	return new QueryClient( {
-		defaultOptions: { queries: { retry: false, staleTime: 0 } },
-	} );
-}
-
 const connection: AtmosphereConnection = {
-	id: 101,
-	handle: 'alice.bsky.social',
-	display_name: 'Alice',
-	did: 'did:plc:a',
+	id: 42,
+	did: 'did:plc:viewer',
+	handle: 'viewer.bsky.social',
+	display_name: 'Viewer',
 	avatar: null,
 };
 
-describe( 'ProfilePanel', () => {
-	afterEach( () => nock.cleanAll() );
+function makeQueryClient() {
+	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+}
 
-	it( 'renders the verified profile for the passed connection', async () => {
-		nock( BASE )
-			.get( '/wpcom/v2/reader/atmosphere/connections/101' )
+afterEach( () => {
+	nock.cleanAll();
+} );
+
+describe( 'ProfilePanel (own profile)', () => {
+	it( 'shows a loading status while the connection details are pending', () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42' )
+			.delay( 5000 )
+			.reply( 200, {} );
+
+		renderWithProvider( <ProfilePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( /loading/i );
+	} );
+
+	it( 'renders the rich SocialProfileCard once the data resolves', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42' )
 			.reply( 200, {
-				did: 'did:plc:a',
-				handle: 'alice.bsky.social',
-				display_name: 'Alice',
-				description: 'hello there',
-				avatar: null,
-				banner: null,
-				counts: { followers: 10, follows: 5, posts: 42 },
-				raw: {},
+				did: 'did:plc:viewer',
+				handle: 'viewer.bsky.social',
+				display_name: 'Viewer Name',
+				description: 'About me.',
+				avatar: 'https://cdn.example/a.jpg',
+				banner: 'https://cdn.example/b.jpg',
+				counts: { followers: 12, follows: 7, posts: 4 },
 			} );
 
 		renderWithProvider( <ProfilePanel connection={ connection } />, {
-			queryClient: makeClient(),
+			queryClient: makeQueryClient(),
 		} );
 
-		await waitFor( () => expect( screen.getByText( 'hello there' ) ).toBeVisible() );
-		const stats = screen.getByRole( 'list', { name: /profile stats/i } );
-		expect( stats ).toHaveTextContent( '42 posts' );
-		expect( stats ).toHaveTextContent( '10 followers' );
+		expect( await screen.findByRole( 'heading', { level: 2, name: 'Viewer Name' } ) ).toBeVisible();
+		expect( screen.getByText( '@viewer.bsky.social' ) ).toBeVisible();
+		expect( screen.getByText( 'About me.' ) ).toBeVisible();
+	} );
+
+	it( 'renders an error state when the connection endpoint fails', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42' )
+			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+		renderWithProvider( <ProfilePanel connection={ connection } />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		expect( await screen.findByText( /Bluesky is unreachable right now\./i ) ).toBeVisible();
 	} );
 } );

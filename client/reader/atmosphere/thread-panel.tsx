@@ -8,7 +8,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
 import { SocialAnalyticsProvider } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getThreadUrl as buildThreadUrl } from './route';
+import { useOptionalComposer } from './composer';
+import {
+	getProfileUrl as buildProfileUrl,
+	getTagFeedUrl as buildTagUrl,
+	getThreadUrl as buildThreadUrl,
+	type ProfileRefInput,
+} from './route';
 import { ThreadHeader } from './thread-header';
 import { ThreadTree } from './thread-tree';
 import { ThreadTombstone } from './thread-tree/thread-tombstone';
@@ -18,6 +24,7 @@ import type {
 	AtmosphereError,
 	AtmosphereThreadNode,
 } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
 
 interface ThreadPanelProps {
@@ -110,14 +117,54 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		[ connection.id ]
 	);
 
+	const getProfileUrl = useCallback(
+		( ref: ProfileRefInput ) => buildProfileUrl( connection.id, ref ),
+		[ connection.id ]
+	);
+
+	const getTagUrl = useCallback(
+		( tag: string ) => buildTagUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			const parent = { uri: post.uri, cid: post.cid };
+			// See timeline-panel.tsx for the rationale. Prefer the root's
+			// own `cid` from `reply_root` so reply-to-reply submissions send
+			// the real root strong-ref; fall back to the parent's `cid` for
+			// protocols without CIDs or older backend payloads.
+			const root = post.reply_root
+				? { uri: post.reply_root.uri, cid: post.reply_root.cid ?? post.cid }
+				: parent;
+			openComposer( {
+				kind: 'reply',
+				root,
+				parent,
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
 			connectionId: connection.id,
 			onClick: onClickAnalytics,
 			getThreadUrl,
+			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
 	);
 
 	return (
@@ -133,6 +180,7 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 					error: error ?? null,
 					handleRetry,
 					targetUri,
+					connectionId: connection.id,
 				} ) }
 			</SocialAnalyticsProvider>
 		</>
@@ -148,6 +196,7 @@ function renderBody( {
 	error,
 	handleRetry,
 	targetUri,
+	connectionId,
 }: {
 	translate: ReturnType< typeof useTranslate >;
 	data: { thread: AtmosphereThreadNode } | undefined;
@@ -157,6 +206,7 @@ function renderBody( {
 	error: AtmosphereError | null;
 	handleRetry: () => void;
 	targetUri: string;
+	connectionId: number;
 } ) {
 	if ( isPending ) {
 		return <ThreadTreeSkeleton />;
@@ -173,7 +223,7 @@ function renderBody( {
 	if ( data.thread.type === 'blocked' ) {
 		return <ThreadTombstone kind="blocked" />;
 	}
-	return <ThreadTree root={ data.thread } targetUri={ targetUri } />;
+	return <ThreadTree root={ data.thread } targetUri={ targetUri } connectionId={ connectionId } />;
 }
 
 function renderError( {

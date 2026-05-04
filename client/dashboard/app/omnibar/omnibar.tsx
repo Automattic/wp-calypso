@@ -6,14 +6,14 @@ import {
 } from '@automattic/api-queries';
 import { AdminBarNode, Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
-import { __ } from '@wordpress/i18n';
-import { Icon, helpFilled } from '@wordpress/icons';
 import { useEffect, useMemo, useState } from 'react';
 import SiteIcon from '../../components/site-icon';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { useHelpCenter } from '../help-center';
 import { omnibarEvents } from './events';
 import { OmnibarHomeIcon } from './home';
+import { useHelpCenterPlugin } from './plugin-help-center';
+import { useNotificationsPlugin } from './plugin-notifications';
+import { useSiteSwitcherPlugin } from './plugin-site-switcher';
 import type { User } from '@automattic/api-core';
 
 const onClickResponsiveMenu = () => omnibarEvents.mobileMenu.emit();
@@ -47,17 +47,12 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 		enabled: hydrated && !! siteId,
 	} );
 
-	const { isShown: isHelpCenterShown, setShowHelpCenter } = useHelpCenter();
-
-	const omnibarNodes = useMemo( () => {
+	const baseOmnibarNodes = useMemo( () => {
 		const nodes = siteNodes ?? dashboardNodes ?? [];
 		const result = buildOmnibarNodesFromAdminBarNodes( removeUnsupportedDotcomNodes( nodes ) );
 
 		if ( ! result.home ) {
-			result.home = {
-				id: '',
-				title: '',
-			};
+			result.home = { id: '' };
 		}
 
 		result.home.icon = <OmnibarHomeIcon />;
@@ -66,7 +61,6 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			if ( ! result.site ) {
 				result.site = {
 					id: 'site-name',
-					title: '',
 					children: [],
 				};
 			}
@@ -75,17 +69,18 @@ export default function OmnibarContainer( { user }: { user?: User } ) {
 			result.site.title = getSiteDisplayName( site );
 		}
 
-		result.plugins = [
-			{
-				id: 'help-center',
-				title: __( 'Help' ),
-				icon: <Icon icon={ helpFilled } />,
-				onClick: () => setShowHelpCenter( ! isHelpCenterShown ),
-			},
-		];
-
 		return result;
-	}, [ dashboardNodes, siteNodes, site, isHelpCenterShown, setShowHelpCenter ] );
+	}, [ dashboardNodes, siteNodes, site ] );
+
+	const helpCenterPluginNode = useHelpCenterPlugin();
+	const notificationsPluginNode = useNotificationsPlugin( { user } );
+	const siteSwitcherPluginNode = useSiteSwitcherPlugin();
+
+	const omnibarNodes = {
+		...baseOmnibarNodes,
+		sitePlugins: [ siteSwitcherPluginNode ],
+		plugins: [ helpCenterPluginNode, notificationsPluginNode ],
+	};
 
 	if ( ! hydrated ) {
 		return <InitialOmnibar user={ user } />;
@@ -99,12 +94,10 @@ export function InitialOmnibar( { user }: { user?: User } ) {
 			nodes={ {
 				home: {
 					id: '',
-					title: '',
 					icon: <OmnibarHomeIcon />,
 				},
 				user: {
 					id: '',
-					title: '',
 					icon: user ? <img src={ user.avatar_URL } alt="" /> : undefined,
 				},
 			} }

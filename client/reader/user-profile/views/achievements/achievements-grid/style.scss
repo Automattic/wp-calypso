@@ -72,4 +72,35 @@
 		margin-top: 26px;
 		text-align: center;
 	}
+
+	.achievement-card.is-locked {
+		opacity: 0.5;
+	}
+
+	.achievement-card__icon--lock {
+		align-items: center;
+		background: var( --studio-gray-5 );
+		border-radius: 50%;
+		color: var( --studio-gray-40 );
+		display: flex;
+		height: 48px;
+		justify-content: center;
+		width: 48px;
+	}
+
+	.achievements__locked-heading {
+		font-size: 1.25rem;
+		font-weight: 500;
+		margin: 32px 0 16px;
+	}
+
+	.achievements-grid--locked {
+		margin-top: 0;
+	}
+
+	.achievements-grid__celebratory {
+		color: var( --studio-gray-60 );
+		margin: 24px 0 0;
+		text-align: center;
+	}
 }

@@ -1,8 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { SocialAnalyticsProvider } from '../components/post-card/analytics-context';
 import { SocialProfileCard } from '../profile-card';
+
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
+const pageMock = jest.mocked( page );
 
 describe( 'SocialProfileCard', () => {
 	it( 'renders avatar, stats, and bio', () => {
@@ -26,6 +32,27 @@ describe( 'SocialProfileCard', () => {
 		expect( stats ).toHaveTextContent( '5 following' );
 		expect( stats ).toHaveTextContent( '42 posts' );
 		expect( screen.getByText( 'hello world' ) ).toBeVisible();
+	} );
+
+	it( 'formats large stat counts in compact notation', () => {
+		render(
+			<SocialProfileCard
+				statsLabel="Profile stats"
+				stats={ [
+					{ key: 'followers', count: 605312, label: 'followers' },
+					{ key: 'following', count: 1234, label: 'following' },
+					{ key: 'posts', count: 1500000, label: 'posts' },
+				] }
+			/>
+		);
+
+		const stats = screen.getByRole( 'list', { name: 'Profile stats' } );
+		// formatNumberCompact uses Intl.NumberFormat compact notation with
+		// maximumFractionDigits: 1, so 605312 -> 605.3K, 1234 -> 1.2K, etc.
+		expect( stats ).toHaveTextContent( '605.3K followers' );
+		expect( stats ).toHaveTextContent( '1.2K following' );
+		expect( stats ).toHaveTextContent( '1.5M posts' );
+		expect( stats ).not.toHaveTextContent( '605312' );
 	} );
 
 	it( 'omits avatar when null', () => {
@@ -158,7 +185,11 @@ describe( 'SocialProfileCard', () => {
 		expect( link?.getAttribute( 'rel' ) ).toMatch( /\bnoreferrer\b/ );
 	} );
 
-	it( 'leaves rel alone when there is no target="_blank"', () => {
+	it( 'forces target="_blank" and merges hardened rel into existing rel tokens', () => {
+		// The shared sanitizer hook hardens every surviving anchor (not just
+		// those with target="_blank" upstream): it forces target="_blank" and
+		// merges nofollow/noopener/noreferrer into the existing rel token set
+		// so pre-existing tokens like `nofollow` survive without duplication.
 		const { container } = render(
 			<SocialProfileCard
 				bioHtml='<p><a href="https://example.test/" rel="nofollow">inline</a></p>'
@@ -167,7 +198,13 @@ describe( 'SocialProfileCard', () => {
 			/>
 		);
 		const link = container.querySelector( '.social-profile-card__bio a' );
-		expect( link?.getAttribute( 'rel' ) ).toBe( 'nofollow' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		const rel = link?.getAttribute( 'rel' ) ?? '';
+		expect( rel ).toMatch( /\bnofollow\b/ );
+		expect( rel ).toMatch( /\bnoopener\b/ );
+		expect( rel ).toMatch( /\bnoreferrer\b/ );
+		// nofollow appears exactly once (token-set merge, not naive append).
+		expect( rel.match( /\bnofollow\b/g ) ).toHaveLength( 1 );
 	} );
 
 	it( 'preserves <span class="mention"> and <a class="mention"> used by Mastodon', () => {
@@ -191,6 +228,23 @@ describe( 'SocialProfileCard', () => {
 		expect( mentionAnchor?.querySelector( 'span' )?.textContent ).toBe( 'alice' );
 	} );
 
+	it( 'forces target="_blank" and hardened rel on bio anchors', () => {
+		render(
+			<SocialProfileCard
+				avatar={ null }
+				stats={ [] }
+				statsLabel="Profile stats"
+				bioHtml='<p><a href="https://example.com">site</a></p>'
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'site' } );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		const rel = link.getAttribute( 'rel' ) ?? '';
+		expect( rel ).toContain( 'nofollow' );
+		expect( rel ).toContain( 'noopener' );
+		expect( rel ).toContain( 'noreferrer' );
+	} );
+
 	it( 'prefers bioHtml when both bio and bioHtml are provided', () => {
 		const { container } = render(
 			<SocialProfileCard
@@ -203,5 +257,251 @@ describe( 'SocialProfileCard', () => {
 		const bio = container.querySelector( '.social-profile-card__bio' );
 		expect( bio?.querySelector( 'p' )?.textContent ).toBe( 'rich' );
 		expect( bio?.textContent ).not.toContain( 'plain' );
+	} );
+
+	it( 'preserves DID-shaped data-id on @-mention anchors in the bio', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/profile/did:plc:bobbobbobbobbobbobbobbob"' +
+					' data-id="did:plc:bobbobbobbobbobbobbobbob">@bob.bsky.social</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', 'did:plc:bobbobbobbobbobbobbobbob' );
+	} );
+
+	it( 'preserves handle-shaped data-id on @-mention anchors in the bio', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+					' data-id="alice.bsky.social">@alice.bsky.social</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', 'alice.bsky.social' );
+	} );
+
+	it( 'strips arbitrary data-* attributes from bio anchors', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://example.test/" data-id="42"' +
+					' data-tracking="x" data-evil="payload">y</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', '42' );
+		expect( link?.hasAttribute( 'data-tracking' ) ).toBe( false );
+		expect( link?.hasAttribute( 'data-evil' ) ).toBe( false );
+	} );
+} );
+
+describe( 'SocialProfileCard — bio mention click routing', () => {
+	const onClick = jest.fn();
+
+	function renderInsideProvider(
+		bioHtml: string,
+		getProfileUrl: ( ref: {
+			id?: string | null;
+			handle?: string | null;
+			did?: string | null;
+		} ) => string | null
+	) {
+		return render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 7,
+					onClick,
+					getProfileUrl,
+				} }
+			>
+				<SocialProfileCard
+					bioHtml={ bioHtml }
+					statsLabel="Profile stats"
+					stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+				/>
+			</SocialAnalyticsProvider>
+		);
+	}
+
+	beforeEach( () => {
+		pageMock.mockClear();
+		onClick.mockClear();
+	} );
+
+	it( 'routes the click in-app when data-id resolves to an in-app URL', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/profile/did:plc:abc"' +
+				' data-id="did:plc:abc">@bob.bsky.social</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@bob.bsky.social' ) );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/profile/did:plc:abc' );
+	} );
+
+	it( 'leaves anchors without data-id alone (no in-app routing)', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( () => '/reader/atmosphere/7/profile/anything' );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/hashtag/SFGiants">#SFGiants</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '#SFGiants' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+		expect( getProfileUrl ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fires *_mention_unresolved Tracks when data-id is present but resolver returns null', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( () => null );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/profile/bogus" data-id="bogus">@bogus</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@bogus' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_mention_unresolved',
+			expect.objectContaining( { connection_id: 7, data_id: 'bogus' } )
+		);
+	} );
+
+	it( 'passes through modifier-clicks (cmd) so users can open in a new tab', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/profile/did:plc:abc"' +
+				' data-id="did:plc:abc">@bob.bsky.social</a></p>',
+			getProfileUrl
+		);
+		await user.keyboard( '[MetaLeft>]' );
+		await user.click( getByText( '@bob.bsky.social' ) );
+		await user.keyboard( '[/MetaLeft]' );
+		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'passes data-id as handle, did, and id so atmosphere-style resolvers can validate', async () => {
+		// Regression: bios on the atmosphere profile page render mention
+		// anchors stamped with the *handle* in data-id (e.g. "alice.bsky.social")
+		// when the backend can't resolve a DID. Atmosphere's resolver validates
+		// `ref.handle` against HANDLE_RE first; if the click handler only sent
+		// the value as `did`, the resolver returned null and the click escaped
+		// to bsky.app. Assert the call site populates all three fields so any
+		// per-protocol resolver picks whichever it understands.
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+			ref.handle ? `/reader/atmosphere/7/profile/${ ref.handle }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+				' data-id="alice.bsky.social">@alice</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( getProfileUrl ).toHaveBeenCalledWith( {
+			id: 'alice.bsky.social',
+			handle: 'alice.bsky.social',
+			did: 'alice.bsky.social',
+		} );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/profile/alice.bsky.social' );
+	} );
+
+	it( 'is a no-op when no analytics provider is in scope (slim layout)', async () => {
+		const user = userEvent.setup();
+		const { getByText } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+					' data-id="alice.bsky.social">@alice</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'SocialProfileCard — rich variant', () => {
+	it( 'renders banner, display name, handle, bio and stats together', () => {
+		render(
+			<SocialProfileCard
+				avatar="https://cdn.example/a.jpg"
+				banner="https://cdn.example/b.jpg"
+				displayName="Alice"
+				handle="alice.bsky.social"
+				bioHtml="<p>Hi.</p>"
+				stats={ [
+					{ key: 'followers', count: 10, label: 'followers' },
+					{ key: 'follows', count: 5, label: 'following' },
+					{ key: 'posts', count: 3, label: 'posts' },
+				] }
+				statsLabel="Profile stats"
+				headerActions={ <button type="button">View on Bluesky</button> }
+			/>
+		);
+
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+		expect( screen.getByText( '@alice.bsky.social' ) ).toBeVisible();
+		expect( screen.getByText( 'Hi.' ) ).toBeVisible();
+		expect( screen.getByRole( 'list', { name: 'Profile stats' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'View on Bluesky' } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to the handle when displayName is missing', () => {
+		render(
+			<SocialProfileCard handle="alice.bsky.social" stats={ [] } statsLabel="Profile stats" />
+		);
+		expect( screen.getByRole( 'heading', { level: 2, name: 'alice.bsky.social' } ) ).toBeVisible();
+	} );
+
+	it( 'omits the heading and handle when both are absent (slim layout)', () => {
+		render(
+			<SocialProfileCard
+				avatar="https://cdn.example/a.jpg"
+				bio="Plain bio."
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		expect( screen.queryByRole( 'heading' ) ).toBeNull();
+		expect( screen.queryByText( /@/ ) ).toBeNull();
+		expect( screen.getByText( 'Plain bio.' ) ).toBeVisible();
+	} );
+
+	it( 'hides the banner image on load failure', () => {
+		const { container } = render(
+			<SocialProfileCard
+				banner="https://cdn.example/broken.jpg"
+				displayName="Alice"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const banner = container.querySelector(
+			'.social-profile-card__banner'
+		) as HTMLImageElement | null;
+		expect( banner ).not.toBeNull();
+		banner!.dispatchEvent( new Event( 'error', { bubbles: true } ) );
+		expect( banner!.style.display ).toBe( 'none' );
 	} );
 } );
