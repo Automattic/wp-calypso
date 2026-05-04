@@ -5,6 +5,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ComposerModal, ComposerProvider, useComposer } from '../composer';
 import { ProfilePanel } from '../profile-panel';
@@ -23,8 +24,18 @@ function makeQueryClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 }
 
+beforeEach( () => {
+	// recordReaderTracksEvent is a thunk that reads state.reader.follows.
+	// Stub it so the modal's _compose_opened effect doesn't hit the
+	// missing slice of the test store.
+	jest
+		.spyOn( analytics, 'recordReaderTracksEvent' )
+		.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+} );
+
 afterEach( () => {
 	nock.cleanAll();
+	jest.restoreAllMocks();
 } );
 
 describe( 'ProfilePanel (own profile)', () => {
