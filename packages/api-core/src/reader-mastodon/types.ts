@@ -189,3 +189,13 @@ export interface MastodonTagFeedPage {
 	cursor: string | null;
 	tag?: MastodonTagInfo;
 }
+
+export interface MastodonCreateRepostParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonDeleteRepostParams {
+	connectionId: number;
+	statusId: string;
+}

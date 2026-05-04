@@ -8,6 +8,8 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonCreateRepostParams,
+	MastodonDeleteRepostParams,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadResponse,
@@ -233,6 +235,30 @@ export async function getMastodonTagFeed(
 			},
 			query
 		) ) as MastodonTagFeedPage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function createMastodonRepost( params: MastodonCreateRepostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ params.connectionId }/reposts`,
+			apiNamespace: NAMESPACE,
+			body: { status_id: params.statusId },
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function deleteMastodonRepost( params: MastodonDeleteRepostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/mastodon/connections/${ params.connectionId }/reposts/${ params.statusId }`,
+			apiNamespace: NAMESPACE,
+		} );
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
