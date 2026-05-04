@@ -902,22 +902,7 @@
 
 // useful to indicate to the browser that this stylesheet supports dark mode (for example Safari might style scrollbars differently)
 @mixin dashboard-color-scheme {
-	html {
-		color-scheme: dark;
-	}
-}
-
-@mixin dashboard-dark-theme-scrollbars {
-	&,
-	* {
-		scrollbar-color: var( --wp-components-color-gray-400 ) transparent;
-	}
-	.components-surface.components-card::-webkit-scrollbar-track:vertical,
-	.plugin-switcher-card-body::-webkit-scrollbar-track:vertical,
-	.plugin-sites-card-body::-webkit-scrollbar-track:vertical,
-	.dashboard-notifications .dataviews-layout__container::-webkit-scrollbar-track:vertical {
-		box-shadow: inset 1px 0 0 var( --dashboard-surface__border-color );
-	}
+	color-scheme: dark;
 }
 
 // :root variables overridden for dark theme
