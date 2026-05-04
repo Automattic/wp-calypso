@@ -6,8 +6,12 @@
 	padding: 10px 16px;
 	background: var(--studio-white, #fff);
 	border: 1px solid var(--studio-gray-5, #dcdcde);
+	// 6px matches the Reader's existing compose entry (`.quick-post`)
+	// and the search / stream input radii. The fully-rounded `999px`
+	// idiom (Bluesky / X) is unique in `client/reader/` and reads as
+	// out-of-place next to the surrounding cards.
 	/* stylelint-disable-next-line scales/radii */
-	border-radius: 999px;
+	border-radius: 6px;
 	cursor: pointer;
 	text-align: start;
 	font: inherit;
