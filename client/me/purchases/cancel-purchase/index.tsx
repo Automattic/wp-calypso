@@ -1,10 +1,8 @@
 import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isPlan,
-	isWpComPlan,
 	hasMarketplaceProduct,
 	isJetpackPlan,
 	isJetpackProduct,
@@ -40,8 +38,8 @@ import {
 	getCheckboxLabel,
 	getButtonLabels,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { useExperiment } from 'calypso/lib/explat';
 import {
 	getName,
 	hasAmountAvailableToRefund,
@@ -179,7 +177,7 @@ export interface CancelPurchaseConnectedProps {
 	isHundredYearDomain: boolean | undefined;
 	isJetpack: boolean;
 	isJetpackPurchase: boolean;
-	isRefundEligibilityNoticeEnabled: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 	productsList: Record< string, { product_type: string; billing_product_slug: string } >;
 	purchase: Purchases.Purchase;
 	purchases: Purchases.Purchase[];
@@ -266,7 +264,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// canAutoRenewBeTurnedOff so the page doesn't redirect away.
 		if (
 			! isValidForCancellation &&
-			config.isEnabled( 'purchases/split-cancel-remove' ) &&
+			props.isSplitCancelRemoveEnabled &&
 			props.intent === 'remove'
 		) {
 			return true;
@@ -314,7 +312,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.setState( { cancelIntent: intent } );
 		}
 
-		const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow( purchase );
+		const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow();
 		const effectiveIntent = intent ?? this.state.cancelIntent;
 		const shouldSkipDomainOptions = shouldUseAutoRenewFlow && effectiveIntent !== 'refund';
 
@@ -358,7 +356,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	// confirmed"). Remove (and the no-intent legacy deep link) defer the
 	// mutation to onSurveyComplete, matching trunk's submit-handlers.
 	shouldFireMutationOnConfirm = (): boolean =>
-		config.isEnabled( 'purchases/split-cancel-remove' ) && this.props.intent === 'cancel';
+		this.props.isSplitCancelRemoveEnabled && this.props.intent === 'cancel';
 
 	// Fire the cancel mutation when the user confirms, then advance to the
 	// survey. The success notice is queued with displayOnNextPage so it shows
@@ -477,7 +475,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	 * Returns true when the user clicked Remove on Purchase Settings AND the
 	 * purchase is non-refundable. In that case the legacy flow should call
 	 * DELETE rather than disable-auto-renew (the previous fallthrough). Gated
-	 * by the `purchases/split-cancel-remove` flag because it changes
+	 * by the split cancel/remove experiment because it changes
 	 * user-visible post-action state (different endpoint, deleted row vs.
 	 * expiring row).
 	 *
@@ -486,7 +484,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	 * `CANCEL_WITH_REFUND` in that case.
 	 */
 	isLegacyRemoveDeleteFlow = ( purchase: Purchases.Purchase ) => {
-		if ( ! config.isEnabled( 'purchases/split-cancel-remove' ) ) {
+		if ( ! this.props.isSplitCancelRemoveEnabled ) {
 			return false;
 		}
 		if ( this.props.intent !== 'remove' ) {
@@ -734,19 +732,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		return null;
 	};
 
-	shouldUseAutoRenewFlow = ( purchase: Purchases.Purchase ) => {
-		// When the user clicked Cancel on Purchase Settings, always take the
-		// auto-renew flow (disable auto-renew, keep features until expiry) —
-		// regardless of the experiment assignment.
-		if ( this.props.intent === 'cancel' ) {
-			return true;
-		}
-		return Boolean(
-			this.props.isRefundEligibilityNoticeEnabled &&
-				hasAmountAvailableToRefund( purchase ) &&
-				isPlan( purchase ) &&
-				isWpComPlan( purchase?.productSlug )
-		);
+	shouldUseAutoRenewFlow = () => {
+		// The Cancel split-button always carries intent=cancel, which routes to
+		// auto-renew cancellation (disable auto-renew, keep features until expiry).
+		return this.props.intent === 'cancel';
 	};
 
 	getCancelFlowType = ( purchase: Purchases.Purchase ) => {
@@ -763,7 +752,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				: CANCEL_FLOW_TYPE.REMOVE;
 		}
 
-		if ( ! this.shouldUseAutoRenewFlow( purchase ) ) {
+		if ( ! this.shouldUseAutoRenewFlow() ) {
 			return getPurchaseCancellationFlowType( purchase );
 		}
 
@@ -791,18 +780,20 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const needsAtomicRevertConfirmation =
 			this.props.atomicTransfer?.created_at && ! isRefundable( purchase );
 
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const { isSplitCancelRemoveEnabled } = this.props;
 
 		const isDisabled =
 			( this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain ) ||
-			( ! isSplitEnabled &&
+			( ! isSplitCancelRemoveEnabled &&
 				needsAtomicRevertConfirmation &&
 				! this.state.atomicRevertConfirmed &&
 				isPlan( purchase ) ) ||
-			( ! isSplitEnabled &&
+			( ! isSplitCancelRemoveEnabled &&
 				isDomainRegistrationPurchase &&
 				! this.state.domainConfirmationConfirmed ) ||
-			( isSplitEnabled && ! this.state.surveyShown && ! this.state.customerConfirmedUnderstanding );
+			( isSplitCancelRemoveEnabled &&
+				! this.state.surveyShown &&
+				! this.state.customerConfirmedUnderstanding );
 
 		// cancelIntentOverride drives the CancelPurchaseButton's label + mutation
 		// choice. URL intent is authoritative when present:
@@ -826,7 +817,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			displayVariant: this.props.intent === 'remove' ? ( 'remove' as const ) : undefined,
 			cancelIntentOverride:
 				urlIntentOverride ??
-				( this.shouldUseAutoRenewFlow( purchase ) ? ( 'autorenew' as const ) : undefined ),
+				( this.shouldUseAutoRenewFlow() ? ( 'autorenew' as const ) : undefined ),
 			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
 			onCancellationStart: this.onCancellationStart,
 			onCancellationComplete: this.onCancellationComplete,
@@ -879,7 +870,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			purchaseCancelFeatures,
 			translate,
 		} = this.props;
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const { isSplitCancelRemoveEnabled } = this.props;
 		const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
@@ -921,7 +912,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					purchase={ purchase }
 					onConfirmationChange={ this.onAtomicRevertConfirmationChange }
 					needsAtomicRevertConfirmation={ Boolean(
-						! isSplitEnabled &&
+						! isSplitCancelRemoveEnabled &&
 							isPlan( purchase ) &&
 							atomicTransfer?.created_at &&
 							! isRefundable( purchase )
@@ -940,7 +931,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					<p className="cancel-purchase__support-text">
 						{ translate( 'Our support team is here for you. {{a}}Contact us{{/a}}', {
 							components: {
-								a: isSplitEnabled ? (
+								a: isSplitCancelRemoveEnabled ? (
 									<ContactSupportButton
 										purchase={ {
 											siteId: purchase.siteId,
@@ -964,7 +955,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 				{ ! this.state.surveyShown && (
 					<div className="cancel-purchase__confirm-section">
-						{ isDomainRegistrationPurchase && ! isSplitEnabled && (
+						{ isDomainRegistrationPurchase && ! isSplitCancelRemoveEnabled && (
 							<div className="cancel-purchase__domain-confirmation">
 								<FormCheckbox
 									checked={ this.state.domainConfirmationConfirmed }
@@ -980,7 +971,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								</span>
 							</div>
 						) }
-						{ isSplitEnabled && (
+						{ isSplitCancelRemoveEnabled && (
 							<label className="cancel-purchase__confirm-checkbox">
 								<FormCheckbox
 									checked={ this.state.customerConfirmedUnderstanding ?? false }
@@ -1109,14 +1100,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainHasRadioButtons || this.state.cancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
-		// Promo banner (with "Remove plan and claim refund" CTA) is suppressed
-		// when URL intent is set — the user has already expressed intent at the
-		// button click, so a redundant CTA would be noise.
-		const shouldShowRefundEligibilityNotice =
-			! intent && Boolean( refundAmountString ) && this.shouldUseAutoRenewFlow( purchase );
-
-		const cancelButtonProps = this.getCancelPurchaseButtonProps();
-
 		return (
 			<>
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
@@ -1166,15 +1149,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 							purchase={ purchase }
 						/>
 					) }
-					{ ! this.state.showDomainOptionsStep &&
-						refundAmountString &&
-						! intent &&
-						shouldShowRefundEligibilityNotice && (
-							<RefundEligibilityNotice
-								refundAmount={ refundAmountString }
-								cancelButtonProps={ cancelButtonProps }
-							/>
-						) }
 					{ ! this.state.showDomainOptionsStep &&
 						( ! refundAmountString || intent === 'cancel' ) && (
 							<TimeRemainingNotice
@@ -1236,15 +1210,11 @@ const ConnectedCancelPurchase = connect(
 )( localize( withLocalizedMoment( CancelPurchase ) ) );
 
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_split_cancel_refund_20260316'
-	);
-	const isRefundEligibilityNoticeEnabled =
-		! isLoadingExperiment && experimentAssignment?.variationName === 'treatment';
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	return (
 		<ConnectedCancelPurchase
 			{ ...props }
-			isRefundEligibilityNoticeEnabled={ isRefundEligibilityNoticeEnabled }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
 		/>
 	);
 }
