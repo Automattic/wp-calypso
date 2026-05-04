@@ -1,0 +1,196 @@
+/**
+ * @jest-environment jsdom
+ */
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import * as notices from 'calypso/state/notices/actions';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { SocialAnalyticsProvider } from '../../social/components/post-card/analytics-context';
+import { FavouritesProvider } from '../../social/components/post-card/favourites-context';
+import { LikeButton } from '../../social/components/post-card/like-button';
+import { makeUseMastodonFavouriteAction } from '../use-mastodon-favourite-action';
+import type { SocialPost } from '../../social/types';
+
+const BASE = 'https://public-api.wordpress.com';
+const STATUS_ID = '109876543210';
+const CONNECTION_ID = 99;
+
+function makePost( overrides: Partial< SocialPost > = {} ): SocialPost {
+	return {
+		uri: STATUS_ID,
+		cid: undefined,
+		permalink: `https://mastodon.social/@alice/${ STATUS_ID }`,
+		author: {
+			id: '12345',
+			handle: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			profile_url: 'https://mastodon.social/@alice',
+		},
+		created_at: '2026-04-30T12:00:00Z',
+		indexed_at: '2026-04-30T12:00:00Z',
+		text: 'hello mastodon',
+		html: '<p>hello mastodon</p>',
+		lang: [ 'en' ],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 7, quotes: 0 },
+		viewer: { like: null, repost: null },
+		...overrides,
+	};
+}
+
+function makeQueryClient() {
+	return new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+}
+
+function renderFavouriteButton(
+	post = makePost(),
+	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
+) {
+	const useMastodonFavouriteAction = makeUseMastodonFavouriteAction( CONNECTION_ID );
+	return {
+		onClick,
+		...renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'mastodon',
+					connectionId: CONNECTION_ID,
+					onClick,
+				} }
+			>
+				<FavouritesProvider value={ useMastodonFavouriteAction }>
+					<LikeButton post={ post } />
+				</FavouritesProvider>
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		),
+	};
+}
+
+describe( 'makeUseMastodonFavouriteAction', () => {
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'isFavourited is false when viewer.like is null', () => {
+		renderFavouriteButton( makePost( { viewer: { like: null, repost: null } } ) );
+		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
+	} );
+
+	it( 'isFavourited is true when viewer.like is truthy', () => {
+		renderFavouriteButton( makePost( { viewer: { like: 'favourited', repost: null } } ) );
+		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
+	} );
+
+	it( 'renders label "Favourite" and accessible label with formatted count', () => {
+		renderFavouriteButton();
+		// The button text is the count; the aria-label contains the accessible label.
+		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
+		expect( button ).toBeVisible();
+		expect( button ).toHaveTextContent( '7' );
+	} );
+
+	it( 'favourite() POSTs to the favourites endpoint and fires _favourite_clicked Tracks', async () => {
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ STATUS_ID }` )
+			.reply( 200 );
+
+		const user = userEvent.setup();
+		const { onClick } = renderFavouriteButton();
+		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
+
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_mastodon_favourite_clicked',
+			expect.objectContaining( { connection_id: CONNECTION_ID, post_uri: STATUS_ID } )
+		);
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'unfavourite() DELETEs from the favourites endpoint and fires _unfavourite_clicked Tracks', async () => {
+		nock( BASE )
+			.delete(
+				`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ STATUS_ID }`
+			)
+			.reply( 200 );
+
+		const user = userEvent.setup();
+		const { onClick } = renderFavouriteButton(
+			makePost( { viewer: { like: 'favourited', repost: null } } )
+		);
+		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
+
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_mastodon_unfavourite_clicked',
+			expect.objectContaining( { connection_id: CONNECTION_ID, post_uri: STATUS_ID } )
+		);
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'on create-favourite error fires _favourite_error_shown Tracks with error_kind and direction', async () => {
+		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ STATUS_ID }` )
+			.reply( 502, { error: 'upstream_unavailable' } );
+
+		const user = userEvent.setup();
+		const { onClick } = renderFavouriteButton();
+		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
+
+		await waitFor( () =>
+			expect( onClick ).toHaveBeenCalledWith(
+				'calypso_reader_mastodon_favourite_error_shown',
+				expect.objectContaining( {
+					error_kind: 'upstream_unavailable',
+					direction: 'favourite',
+				} )
+			)
+		);
+		expect( errorNoticeSpy ).toHaveBeenCalledWith(
+			'Could not save your favourite. Please try again.'
+		);
+	} );
+
+	it( 'on delete-favourite auth error fires _favourite_error_shown Tracks with auth error copy', async () => {
+		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		nock( BASE )
+			.delete(
+				`/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/favourites/${ STATUS_ID }`
+			)
+			.reply( 401, { error: 'not_authenticated' } );
+
+		const user = userEvent.setup();
+		const { onClick } = renderFavouriteButton(
+			makePost( { viewer: { like: 'favourited', repost: null } } )
+		);
+		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
+
+		await waitFor( () =>
+			expect( onClick ).toHaveBeenCalledWith(
+				'calypso_reader_mastodon_favourite_error_shown',
+				expect.objectContaining( {
+					error_kind: 'auth_required',
+					direction: 'unfavourite',
+				} )
+			)
+		);
+		expect( errorNoticeSpy ).toHaveBeenCalledWith(
+			'Reconnect your Mastodon account to favourite posts.'
+		);
+	} );
+
+	it( 'isFavourited is false when viewer is absent', () => {
+		const post = makePost();
+		delete ( post as Partial< SocialPost > ).viewer;
+		renderFavouriteButton( post );
+		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
+	} );
+} );
