@@ -88,7 +88,7 @@ function Distribution() {
 
 	return (
 		<>
-			<Card className="site-settings__card podcast__card">
+			<Card className="site-settings__card podcast__card podcast__distribution">
 				<CardBody>
 					<VStack spacing={ 8 }>
 						<VStack spacing={ 4 }>
