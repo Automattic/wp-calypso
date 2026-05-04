@@ -69,28 +69,14 @@ interface AgentsManagerExternalContextCardAction {
 	type?: 'prefill' | 'submit';
 }
 
-interface AgentsManagerExternalContextCardStat {
-	label: string;
-	value: string;
-	description?: string;
-}
-
 interface AgentsManagerExternalContextCard {
 	id: string;
 	contextEntryId?: string;
 	/**
-	 * Optional fully-custom card body. When provided, Agents Manager renders
-	 * only the dismiss button and actions row around it; all structured
-	 * fields below are ignored.
+	 * Publisher-owned card body. AM renders this inside the card frame
+	 * and only adds the dismiss button and actions row.
 	 */
-	body?: import('react').ReactNode;
-	title?: string;
-	subtitle?: string;
-	description?: string;
-	source?: string;
-	tone?: 'default' | 'info' | 'success' | 'warning';
-	stats?: AgentsManagerExternalContextCardStat[];
-	bullets?: string[];
+	body: import('react').ReactNode;
 	actions?: AgentsManagerExternalContextCardAction[];
 	createdAt?: string;
 	expiresAt?: string;

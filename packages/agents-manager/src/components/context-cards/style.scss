@@ -36,119 +36,28 @@ $context-card-leave-easing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .agents-manager-context-card {
-	border: 1px solid rgba( 30, 30, 30, 0.12 );
+	background: #fff;
+	border: 1px solid rgba(30, 30, 30, 0.12);
 	border-radius: 16px;
-	background: linear-gradient( 135deg, #f8fbf6 0%, #fff 58%, #f6f0e7 100% );
-	box-shadow: 0 10px 28px rgba( 30, 30, 30, 0.08 );
+	box-shadow: 0 10px 28px rgba(30, 30, 30, 0.08);
 	color: #1e1e1e;
 	padding: 14px;
 	position: relative;
 }
 
-// Custom-body mode: publisher owns everything inside .__body. AM only
-// supplies the dismiss affordance (floating) and the actions row below.
-.agents-manager-context-card--custom {
-	background: #fff;
-}
-
 .agents-manager-context-card__body {
-	// Inherits from card frame; isolation so the publisher's stacking
-	// contexts don't leak out, but otherwise hands-off styling.
+	// Isolate the publisher's stacking context so it can't leak out of the card.
 	isolation: isolate;
-}
-
-.agents-manager-context-card__dismiss--floating.components-button {
-	position: absolute;
-	top: 8px;
-	right: 8px;
-	z-index: 1;
-}
-
-.agents-manager-context-card--info {
-	background: linear-gradient( 135deg, #eef7fb 0%, #fff 60%, #f6f8fb 100% );
-}
-
-.agents-manager-context-card--success {
-	background: linear-gradient( 135deg, #eef8ee 0%, #fff 58%, #f8f3e8 100% );
-}
-
-.agents-manager-context-card--warning {
-	background: linear-gradient( 135deg, #fff7e0 0%, #fff 62%, #f7ece3 100% );
-}
-
-.agents-manager-context-card__header {
-	align-items: flex-start;
-	display: flex;
-	gap: 12px;
-	justify-content: space-between;
-}
-
-.agents-manager-context-card__source {
-	color: #6f6a62;
-	font-size: 11px;
-	font-weight: 600;
-	letter-spacing: 0.04em;
-	line-height: 1.2;
-	margin-bottom: 4px;
-	text-transform: uppercase;
-}
-
-.agents-manager-context-card__title {
-	font-size: 15px;
-	line-height: 1.25;
-	margin: 0;
-}
-
-.agents-manager-context-card__subtitle,
-.agents-manager-context-card__description {
-	color: #4b4741;
-	font-size: 13px;
-	line-height: 1.45;
-	margin: 6px 0 0;
 }
 
 .agents-manager-context-card__dismiss.components-button {
 	color: #5f5a52;
-	flex: 0 0 auto;
 	height: auto;
 	padding: 2px 6px;
-}
-
-.agents-manager-context-card__stats {
-	display: grid;
-	gap: 8px;
-	grid-template-columns: repeat( auto-fit, minmax( 92px, 1fr ) );
-	margin-top: 12px;
-}
-
-.agents-manager-context-card__stat {
-	border: 1px solid rgba( 30, 30, 30, 0.08 );
-	border-radius: 8px;
-	background: rgba( 255, 255, 255, 0.65 );
-	padding: 8px;
-}
-
-.agents-manager-context-card__stat strong {
-	display: block;
-	font-size: 17px;
-	line-height: 1.1;
-}
-
-.agents-manager-context-card__stat span,
-.agents-manager-context-card__stat small {
-	color: #5f5a52;
-	display: block;
-	font-size: 11px;
-	line-height: 1.3;
-	margin-top: 3px;
-}
-
-.agents-manager-context-card__bullets {
-	color: #3b3833;
-	font-size: 12px;
-	line-height: 1.45;
-	margin: 12px 0 0;
-	padding-left: 18px;
+	position: absolute;
+	right: 8px;
+	top: 8px;
+	z-index: 1;
 }
 
 .agents-manager-context-card__actions {
@@ -159,6 +68,8 @@ $context-card-leave-easing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .agenttic.dark .agents-manager-context-card {
-	border-color: rgba( 255, 255, 255, 0.14 );
-	box-shadow: 0 14px 36px rgba( 0, 0, 0, 0.35 );
+	background: #1f1d1a;
+	border-color: rgba(255, 255, 255, 0.14);
+	box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+	color: #e8e6e1;
 }

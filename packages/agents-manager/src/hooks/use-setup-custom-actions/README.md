@@ -102,14 +102,12 @@ window.__agentsManagerActions.setContextEntry( {
 	},
 } );
 
-// Show a matching card in the chat UI
+// Show a matching card in the chat UI. The `body` is publisher-owned
+// React; AM only adds the dismiss button and the actions row around it.
 window.__agentsManagerActions.setContextCard( {
 	id: 'my-plugin/current-report-card',
 	contextEntryId: 'my-plugin/current-report',
-	source: 'My plugin',
-	title: 'Report attached',
-	subtitle: 'Sent with your next message',
-	stats: [ { label: 'Rows', value: '124' } ],
+	body: <MyReportCard reportId={ 123 } />,
 	actions: [
 		{
 			label: 'Analyze report',

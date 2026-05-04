@@ -22,29 +22,14 @@ export interface ExternalContextCardAction {
 	type?: 'prefill' | 'submit';
 }
 
-export interface ExternalContextCardStat {
-	label: string;
-	value: string;
-	description?: string;
-}
-
 export interface ExternalContextCard {
 	id: string;
 	contextEntryId?: string;
 	/**
-	 * When provided, the publisher fully owns the card body. Agents Manager
-	 * only renders the dismiss affordance and the actions row around it.
-	 * The structured fields below (title, subtitle, description, source,
-	 * tone, stats, bullets) are ignored in this mode.
+	 * Publisher-owned card body. Agents Manager renders this inside its
+	 * card frame and only adds the dismiss affordance plus the actions row.
 	 */
-	body?: ReactNode;
-	title?: string;
-	subtitle?: string;
-	description?: string;
-	source?: string;
-	tone?: 'default' | 'info' | 'success' | 'warning';
-	stats?: ExternalContextCardStat[];
-	bullets?: string[];
+	body: ReactNode;
 	actions?: ExternalContextCardAction[];
 	createdAt?: string;
 	expiresAt?: string;
