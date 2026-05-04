@@ -264,7 +264,7 @@ export default function MonitoringHttpResponsesCard( {
 						x: xAxisOptions,
 					},
 				} }
-				legendPosition="top"
+				legend={ { position: 'top' } }
 			/>
 		</MonitoringCard>
 	);

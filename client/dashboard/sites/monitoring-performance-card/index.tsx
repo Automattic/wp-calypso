@@ -209,7 +209,7 @@ export default function MonitoringPerformanceCard( {
 							x: xAxisOptions,
 						},
 					} }
-					legendPosition="top"
+					legend={ { position: 'top' } }
 				/>
 			) : (
 				<VStack alignment="center">

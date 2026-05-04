@@ -53,7 +53,6 @@ function useSiteRequestMethodsData( siteId: number, timeRange: number ): SiteReq
 					return {
 						label: method.toUpperCase(),
 						value: value,
-						percentage: valuePercentage,
 						valueDisplay: ( Math.round( valuePercentage * 10 ) / 10 ).toString() + '%',
 						color: chartColors[ index % chartColors.length ],
 					};

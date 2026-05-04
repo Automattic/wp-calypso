@@ -6,6 +6,7 @@ import {
 	recordTracksPageViewWithPageParams,
 } from '@automattic/calypso-analytics';
 import { GlobalChartsProvider } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
