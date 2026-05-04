@@ -1,12 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { readerAtmosphereKeys } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ComposerModal, ComposerProvider } from '../composer';
 import { ThreadPanel } from '../thread-panel';
 import type { AtmosphereConnection, AtmosphereThreadResponse } from '@automattic/api-core';
 
@@ -447,5 +449,62 @@ describe( 'ThreadPanel — slice 6 author chip + repost preface rewrites', () =>
 				destination: 'in_app',
 			} )
 		);
+	} );
+} );
+
+describe( 'ThreadPanel — quote composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( "opens the composer in quote mode when the quotes count is clicked on the user's own post in the thread", async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( readerAtmosphereKeys.scopedThread( connection.id, TARGET_URI ), {
+			thread: {
+				type: 'post',
+				post: {
+					uri: TARGET_URI,
+					cid: 'pcid',
+					author: {
+						did: connection.did,
+						handle: connection.handle,
+						display_name: connection.display_name,
+						avatar: null,
+					},
+					created_at: '2026-04-28T10:00:00Z',
+					indexed_at: '2026-04-28T10:00:00Z',
+					text: 'my own post',
+					html: '<p>my own post</p>',
+					lang: [ 'en' ],
+					reply_parent: null,
+					reply_root: null,
+					reason: null,
+					embed: null,
+					counts: { replies: 0, reposts: 0, likes: 0, quotes: 3 },
+					bluesky_url: 'https://bsky.app/profile/viewer.bsky.social/post/3kabcdefghijk',
+				},
+				parent: null,
+				replies: [],
+			},
+		} );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ connection.id }>
+				<ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /quote, 3 quotes/i } ) );
+		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
 	} );
 } );
