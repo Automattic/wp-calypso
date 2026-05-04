@@ -2,7 +2,9 @@ import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import QRCode, { QRCodePlaceholder } from './qr-code';
+import TimerBar from './timer-bar';
 import { useApprove } from './use-approve';
+import { useCountdown } from './use-countdown';
 import { useCreateToken } from './use-create-token';
 import { useStatus } from './use-status';
 
@@ -22,6 +24,7 @@ export default function QRCodeAppLogin() {
 	}, [ createToken ] );
 
 	const { data: statusData, isError: isStatusError } = useStatus( token?.token );
+	const countdown = useCountdown( token?.expires );
 
 	const [ wrongNumber, setWrongNumber ] = useState( false );
 	const { mutate: approve, isPending: isApproving } = useApprove();
@@ -75,8 +78,9 @@ export default function QRCodeAppLogin() {
 	}
 
 	const status = statusData?.status;
+	const isExpired = status === 'expired' || countdown?.hasExpired === true;
 
-	if ( status === 'expired' ) {
+	if ( isExpired ) {
 		return (
 			<div className="qr-code-app-login is-error">
 				<p className="qr-code-app-login__error">{ __( 'This sign-in attempt has expired.' ) }</p>
@@ -131,6 +135,9 @@ export default function QRCodeAppLogin() {
 						</li>
 					) ) }
 				</ul>
+				{ countdown && (
+					<TimerBar remainingMs={ countdown.remainingMs } totalMs={ countdown.totalMs } />
+				) }
 			</div>
 		);
 	}
@@ -143,6 +150,9 @@ export default function QRCodeAppLogin() {
 			<p className="qr-code-app-login__instructions">
 				{ __( 'Open the app on your phone and scan this code.' ) }
 			</p>
+			{ countdown && (
+				<TimerBar remainingMs={ countdown.remainingMs } totalMs={ countdown.totalMs } />
+			) }
 			{ isCreatingToken && (
 				<p className="qr-code-app-login__status">{ __( 'Generating code…' ) }</p>
 			) }
