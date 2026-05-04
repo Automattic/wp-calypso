@@ -47,6 +47,22 @@ import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
 import './style.scss';
 
+const STUDIO_EXPERIMENTAL_DISMISS_KEY = 'image-studio-modal-experimental-dismissed';
+
+function readStudioExperimentalDismissed(): boolean {
+	try {
+		return window.localStorage?.getItem( STUDIO_EXPERIMENTAL_DISMISS_KEY ) === '1';
+	} catch {
+		return false;
+	}
+}
+
+function persistStudioExperimentalDismissed(): void {
+	try {
+		window.localStorage?.setItem( STUDIO_EXPERIMENTAL_DISMISS_KEY, '1' );
+	} catch {}
+}
+
 function ImageStudioAgentChat( {
 	agentConfig: agentConfigProp,
 	attachmentId,
@@ -322,6 +338,14 @@ const ImageStudioContent = withInstanceId(
 
 		const { addNotice, setIsSidebarOpen } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
+		const [ experimentalBannerOpen, setExperimentalBannerOpen ] = useState< boolean >(
+			() => ! readStudioExperimentalDismissed()
+		);
+		const dismissExperimentalBanner = useCallback( () => {
+			setExperimentalBannerOpen( false );
+			persistStudioExperimentalDismissed();
+		}, [] );
+
 		const {
 			handleAnnotationDone,
 			hasAnnotations,
@@ -554,6 +578,28 @@ const ImageStudioContent = withInstanceId(
 							hasPreviousImage={ hasPreviousImage }
 							hasNextImage={ hasNextImage }
 						/>
+
+						{ isVideoMode && experimentalBannerOpen && (
+							<div className="image-studio-modal__experimental-banner" role="note">
+								<span className="image-studio-modal__experimental-banner-pill">
+									{ __( 'Experimental', __i18n_text_domain__ ) }
+								</span>
+								<span className="image-studio-modal__experimental-banner-text">
+									{ __(
+										'This is an experimental AI feature. Outputs may need editing before publishing.',
+										__i18n_text_domain__
+									) }
+								</span>
+								<button
+									type="button"
+									className="image-studio-modal__experimental-banner-dismiss"
+									aria-label={ __( 'Dismiss', __i18n_text_domain__ ) }
+									onClick={ dismissExperimentalBanner }
+								>
+									×
+								</button>
+							</div>
+						) }
 
 						{ mode === ImageStudioMode.Edit ? (
 							<EditLayout
