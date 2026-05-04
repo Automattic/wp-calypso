@@ -58,6 +58,10 @@ function buildPageRequestAction( {
 	};
 }
 
+function streamKeySuffix( streamKey ) {
+	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
+}
+
 /**
  * Build the WordPress.com REST query payload for a migrated stream request.
  *
@@ -88,6 +92,10 @@ function buildStreamQueryParams( {
 	const commonQueryParams = { ...algorithm, feed_id: feedId };
 
 	if ( isPoll ) {
+		if ( streamType === 'user' ) {
+			// Legacy `streamApis.user.pollQuery` polled with `number: 20`.
+			return getQueryStringForPoll( [], { ...commonQueryParams, number: 20 } );
+		}
 		return getQueryStringForPoll( [], commonQueryParams );
 	}
 	const extras = {
@@ -97,10 +105,88 @@ function buildStreamQueryParams( {
 		lang,
 		page,
 	};
-	if ( streamType === 'discover' ) {
-		return buildDiscoverQueryParams( extras, streamKey );
+	switch ( streamType ) {
+		case 'discover':
+			return buildDiscoverQueryParams( extras, streamKey );
+		case 'recent':
+			return buildRecentQueryParams( extras, streamKey );
+		case 'search':
+			return buildSearchQueryParams( extras, streamKey );
+		case 'tag_popular':
+			return buildTagPopularQueryParams( extras, streamKey );
+		case 'list':
+			return buildListQueryParams( extras );
+		case 'on_this_day':
+			return buildOnThisDayQueryParams( extras, streamKey );
+		default:
+			return getQueryString( extras );
 	}
-	return getQueryString( extras );
+}
+
+/**
+ * `recent` filters by feed_id when the streamKey carries a suffix. Mirrors
+ * `streamApis.recent.query` in the legacy data-layer.
+ */
+function buildRecentQueryParams( extras, streamKey ) {
+	const suffix = streamKeySuffix( streamKey );
+	const queryParams = { ...extras };
+	if ( suffix !== 'recent' ) {
+		queryParams.feed_id = suffix;
+	}
+	return getQueryString( queryParams );
+}
+
+/**
+ * `search` parses `{ sort, q }` out of the streamKey suffix and (in the
+ * legacy data-layer) skipped `getQueryString`, so `meta`/`orderBy` are not
+ * defaulted — only `content_width` is added explicitly.
+ */
+function buildSearchQueryParams( extras, streamKey ) {
+	const { sort, q } = JSON.parse( streamKeySuffix( streamKey ) );
+	return { sort, q, ...extras, content_width: 675 };
+}
+
+/**
+ * `tag_popular` always carries the suffix as `tags=` plus the
+ * recommendation-card extras. Mirrors `streamApis.tag_popular.query`.
+ */
+function buildTagPopularQueryParams( extras, streamKey ) {
+	return getQueryString( {
+		...extras,
+		tags: streamKeySuffix( streamKey ),
+		tag_recs_per_card: 5,
+		site_recs_per_card: 5,
+	} );
+}
+
+/**
+ * Behaviour change vs. the legacy data-layer: the legacy `streamApis.list.query`
+ * shipped a typoed spread (`...{ extras, number: 40 }`) that wrapped extras
+ * under the literal key `extras`, dropping meta/orderBy/content_width/lang/
+ * feed_id/algorithm/page from the wire query. Fixed here so list streams send
+ * the same enriched query shape as every other stream.
+ */
+function buildListQueryParams( extras ) {
+	return getQueryString( { ...extras, number: 40 } );
+}
+
+/**
+ * `on_this_day` parses optional `month`/`day` numerics out of the streamKey
+ * suffix (`on_this_day:{m}:{d}`) and always pins `number: 15`.
+ */
+function buildOnThisDayQueryParams( extras, streamKey ) {
+	const base = { ...extras, number: 15 };
+	if ( streamKey?.startsWith( 'on_this_day:' ) ) {
+		const parts = streamKey.split( ':' );
+		if ( parts.length >= 3 ) {
+			const month = parseInt( parts[ 1 ], 10 );
+			const day = parseInt( parts[ 2 ], 10 );
+			if ( Number.isFinite( month ) && Number.isFinite( day ) ) {
+				return getQueryString( { ...base, month, day } );
+			}
+		}
+	}
+	return getQueryString( base );
 }
 
 function discoverSubTab( streamKey ) {
@@ -119,8 +205,10 @@ function discoverSubTab( streamKey ) {
 }
 
 /**
- * Build the query params for a discover sub-tab so the migrated request hits
- * the API with the same shape the legacy data-layer used.
+ * Build the query params for a discover sub-tab. Mirrors the legacy
+ * `streamApis.discover.query` in
+ * `client/state/data-layer/wpcom/read/streams/index.js` so the migrated request
+ * hits the API with the same shape.
  *
  * - `freshly-pressed` returns the raw extras (no `getQueryString` wrap), so it
  *   does not pick up `meta`/`content_width`/default `orderBy`.
@@ -169,7 +257,14 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	let data;
 	try {
 		const queryClient = getCalypsoQueryClient();
-		const queryOpts = readStreamQuery( streamKey, queryParams, pageHandle ?? null );
+		// `readStreamQuery`'s third arg is the per-request cache-key discriminator.
+		// Cursor-paginated streams pass `pageHandle`; numbered-page streams (e.g.
+		// `recent`) carry no `pageHandle`, so we key on `{ page, perPage }`
+		// instead. Without this, two in-flight paginated requests for the same
+		// `streamKey` collapse to one promise via `fetchQuery` dedup, and the
+		// later page receives the earlier page's rows.
+		const cacheKey = page != null ? { page, perPage } : pageHandle ?? null;
+		const queryOpts = readStreamQuery( streamKey, queryParams, cacheKey );
 		// Every call into this thunk represents an explicit intent to fetch
 		// (initial load, pagination, poll, refresh after `clearStream`, locale
 		// change). The legacy data-layer always hit the network, so callers
@@ -190,9 +285,9 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 		return;
 	}
 
-	// `dateProperty` will diverge per streamType once we migrate
-	// `conversations`/`likes`. For now `following` and `discover:recommended`
-	// both use `date`.
+	// Every migrated streamType uses `date`. This will need to become
+	// per-streamType once `conversations` (`last_comment_date_gmt`) and
+	// `likes` (`date_liked`) migrate.
 	const dateProperty = 'date';
 	let streamItems = [];
 	let streamPosts = [];
@@ -385,21 +480,43 @@ export function clearStream( { streamKey } ) {
 	};
 }
 
-export function requestPaginatedStream( { streamKey, page = 1, perPage = 10, localeSlug = null } ) {
-	const streamType = getStreamType( streamKey );
+export const requestPaginatedStream =
+	( { streamKey, page = 1, perPage = 10, localeSlug = null } ) =>
+	( dispatch ) => {
+		const streamType = getStreamType( streamKey );
+		const action = {
+			type: READER_STREAMS_PAGINATED_REQUEST,
+			payload: {
+				streamKey,
+				streamType,
+				isPoll: false,
+				page,
+				perPage,
+				localeSlug,
+			},
+		};
 
-	return {
-		type: READER_STREAMS_PAGINATED_REQUEST,
-		payload: {
+		// Dispatch so the reducer's `isRequesting`/`error` transitions still
+		// fire. For unmigrated streams the legacy data-layer handles
+		// READER_STREAMS_PAGINATED_REQUEST and issues the HTTP request.
+		dispatch( action );
+
+		if ( ! isMigratedStream( streamType ) ) {
+			return action;
+		}
+
+		// SSR no-op: matches the legacy data-layer.
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+
+		return dispatchMigratedStreamRequest( dispatch, {
 			streamKey,
-			streamType,
-			isPoll: false,
 			page,
 			perPage,
 			localeSlug,
-		},
+		} );
 	};
-}
 
 /**
  * Returns an action object to signal that an error was encountered

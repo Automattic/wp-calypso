@@ -4,18 +4,34 @@
 import { isMigratedStream } from '../migrated-stream-types';
 
 describe( 'isMigratedStream', () => {
-	it( 'returns true for `following`', () => {
-		expect( isMigratedStream( 'following' ) ).toBe( true );
+	it.each( [
+		'following',
+		'discover',
+		'recent',
+		'search',
+		'feed',
+		'site',
+		'notifications',
+		'featured',
+		'p2',
+		'a8c',
+		'tag',
+		'tag_popular',
+		'list',
+		'on_this_day',
+		'user',
+	] )( 'returns true for `%s`', ( streamType ) => {
+		expect( isMigratedStream( streamType ) ).toBe( true );
 	} );
 
-	it( 'returns true for every `discover` sub-tab', () => {
-		expect( isMigratedStream( 'discover' ) ).toBe( true );
-	} );
-
-	it( 'returns false for unmigrated stream types', () => {
-		expect( isMigratedStream( 'site' ) ).toBe( false );
-		expect( isMigratedStream( 'feed' ) ).toBe( false );
-		expect( isMigratedStream( 'a8c' ) ).toBe( false );
-		expect( isMigratedStream( 'recommendations_posts' ) ).toBe( false );
+	it.each( [
+		'conversations',
+		'conversations-a8c',
+		'likes',
+		'recommendations_posts',
+		'custom_recs_posts_with_images',
+		'custom_recs_sites_with_images',
+	] )( 'returns false for unmigrated `%s`', ( streamType ) => {
+		expect( isMigratedStream( streamType ) ).toBe( false );
 	} );
 } );

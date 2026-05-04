@@ -146,7 +146,8 @@ const EMPTY_BUCKETS: CardBuckets = { cardPosts: [], cardRecommendedSites: [], ne
 /**
  * Split a `cards` payload (used by `discover:recommended` and tag-specific
  * `discover:<tag>` streams) into post stream items, recommended sites, and
- * new sites.
+ * new sites. Mirrors the legacy `createStreamDataFromCards` in
+ * `client/state/data-layer/wpcom/read/streams/index.js`.
  */
 export function createStreamDataFromCards(
 	cards: RawCard[] | null | undefined,
