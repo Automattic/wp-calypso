@@ -239,6 +239,10 @@ $actions-height: 64px;
 		}
 	}
 
+	&__preview-stream {
+		pointer-events: none;
+	}
+
 	&.is-disabled {
 		.subscribe-modal__container {
 			height: 100%;
