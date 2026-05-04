@@ -38,6 +38,13 @@ function errorMessageForRepost(
 		case 'target_unavailable':
 		case 'unknown':
 			return translate( 'Could not save your repost. Please try again.' );
+		default:
+			// Defensive fallback if the AtmosphereError union widens before
+			// this switch is updated. TypeScript exhaustiveness keeps this
+			// branch unreachable today; without it, an empty-toast notice
+			// would render via `errorNotice( undefined )` for a kind we
+			// haven't classified yet.
+			return translate( 'Could not save your repost. Please try again.' );
 	}
 }
 
@@ -84,12 +91,20 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 		};
 
 		const repost = () => {
+			// Atmosphere requires a strong-ref `cid` for the repost record.
+			// The post-card-counts gate used to enforce this; now that the
+			// gate is provider-presence, guard here instead. Bail silently —
+			// rendering the button without a cid is a panel-wiring bug, not
+			// a user error.
+			if ( ! post.cid ) {
+				return;
+			}
 			analytics?.onClick( `calypso_reader_${ analytics.source }_repost_clicked`, {
 				connection_id: connectionId,
 				post_uri: post.uri,
 			} );
 			create.mutate(
-				{ postUri: post.uri, postCid: post.cid ?? '' },
+				{ postUri: post.uri, postCid: post.cid },
 				{ onError: ( err ) => trackError( err, 'repost' ) }
 			);
 		};

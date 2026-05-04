@@ -454,8 +454,19 @@ function patchMastodonQueryData(
 	return { data, items };
 }
 
+// Mastodon cache keys carry `connectionId` at slot 3 for every query type
+// that holds posts (timeline / thread / profile-feed / tag-feed).
+// `connections` and `connection` keys don't hold posts so they're silently
+// no-op walked. Status IDs are instance-local — same numeric id on a
+// different connection is a different post — so the patch must be
+// connection-scoped or boosts on connection A leak into B's caches.
+function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean {
+	return Array.isArray( key ) && key[ 3 ] === connectionId;
+}
+
 function patchMastodonPostCaches(
 	queryClient: QueryClient,
+	connectionId: number,
 	statusId: string,
 	patch: ( item: MastodonFeedItem ) => MastodonFeedItem
 ): OptimisticContext {
@@ -463,6 +474,9 @@ function patchMastodonPostCaches(
 	for ( const [ key, data ] of queryClient.getQueriesData( {
 		queryKey: readerMastodonKeys.all,
 	} ) ) {
+		if ( ! isQueryKeyForConnection( key, connectionId ) ) {
+			continue;
+		}
 		const result = patchMastodonQueryData( data, statusId, patch );
 		if ( ! result.items.length ) {
 			continue;
@@ -580,13 +594,21 @@ function restoreMastodonPostSnapshots(
 	}
 }
 
+// Cancel only this connection's in-flight Mastodon queries — boosting on
+// connection A shouldn't kill connection B's pagination/thread loads.
+function cancelMastodonQueriesForConnection( queryClient: QueryClient, connectionId: number ) {
+	return queryClient.cancelQueries( {
+		predicate: ( query ) => isQueryKeyForConnection( query.queryKey, connectionId ),
+	} );
+}
+
 export function useCreateMastodonRepostMutation( connectionId: number ) {
 	const queryClient = useQueryClient();
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
 		mutationFn: ( { statusId } ) => createMastodonRepost( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
-			await queryClient.cancelQueries( { queryKey: readerMastodonKeys.all } );
-			return patchMastodonPostCaches( queryClient, statusId, ( item ) => ( {
+			await cancelMastodonQueriesForConnection( queryClient, connectionId );
+			return patchMastodonPostCaches( queryClient, connectionId, statusId, ( item ) => ( {
 				...item,
 				viewer: {
 					...( item.viewer ?? { favourited: false, reblogged: false } ),
@@ -605,8 +627,8 @@ export function useDeleteMastodonRepostMutation( connectionId: number ) {
 	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
 		mutationFn: ( { statusId } ) => deleteMastodonRepost( { connectionId, statusId } ),
 		onMutate: async ( { statusId } ) => {
-			await queryClient.cancelQueries( { queryKey: readerMastodonKeys.all } );
-			return patchMastodonPostCaches( queryClient, statusId, ( item ) => ( {
+			await cancelMastodonQueriesForConnection( queryClient, connectionId );
+			return patchMastodonPostCaches( queryClient, connectionId, statusId, ( item ) => ( {
 				...item,
 				viewer: {
 					...( item.viewer ?? { favourited: false, reblogged: false } ),
