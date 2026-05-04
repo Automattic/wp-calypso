@@ -552,7 +552,10 @@ export function trackImageStudioReelShareClicked( {
 	attachmentId: number;
 	durationSeconds?: number | null;
 } ): void {
-	const properties: Record< string, string | number > = { attachment_id: attachmentId };
+	const properties: Record< string, string | number > = {
+		mode: 'generate',
+		attachment_id: attachmentId,
+	};
 	if ( durationSeconds ) {
 		properties.duration_seconds = durationSeconds;
 	}

@@ -132,7 +132,10 @@ export function useReelShare(): UseReelShareReturn {
 			durationSeconds: currentDurationSeconds,
 		} );
 
-		// Re-evaluate pre-checks at click time — state may have changed since render.
+		// Pre-check guards on closure-captured values from the latest render.
+		// useSelect re-renders on store changes, so by click time these reflect
+		// the most recent store state. Defensive against the rare case where
+		// isVisible let the button render but state shifted before the click.
 		if ( ! currentVideoUrl || ! currentAttachmentId ) {
 			trackImageStudioReelShareInvalidState();
 			await addNotice(
