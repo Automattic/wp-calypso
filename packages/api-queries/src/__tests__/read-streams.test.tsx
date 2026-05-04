@@ -56,12 +56,61 @@ describe( 'readStreamQuery', () => {
 		expect( result.current.data?.date_range?.after ).toBe( '2026-01-01' );
 	} );
 
-	it( 'throws when called for an unmigrated streamType', () => {
-		// `conversations` is still served by the legacy data-layer (different
-		// dateProperty); update this case when it lands in `readStreamQuery`.
-		const opts = readStreamQuery( 'conversations', { number: 4 }, null );
-		expect( () => opts.queryFn!( {} as never ) ).toThrow(
-			/unsupported streamType "conversations"/
+	it( 'fetches conversations posts from /read/conversations', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/conversations' )
+			.query( ( query ) => query.comments_per_post === '20' )
+			.reply( 200, {
+				posts: [
+					{
+						ID: 1,
+						site_ID: 100,
+						last_comment_date_gmt: '2026-04-30',
+						URL: 'https://example.com/a',
+					},
+				],
+				date_range: { after: '2026-04-30' },
+			} );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() =>
+				useQuery( readStreamQuery( 'conversations', { number: 4, comments_per_post: 20 }, null ) ),
+			{ wrapper: makeWrapper( client ) }
 		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data?.posts ).toHaveLength( 1 );
+	} );
+
+	it( 'fetches conversations-a8c posts with the a8c index filter', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/conversations' )
+			.query( ( query ) => query.index === 'a8c' && query.comments_per_post === '20' )
+			.reply( 200, { posts: [], date_range: { after: null } } );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() =>
+				useQuery(
+					readStreamQuery(
+						'conversations-a8c',
+						{ number: 4, comments_per_post: 20, index: 'a8c' },
+						null
+					)
+				),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'throws when called for an unmigrated streamType', () => {
+		// `likes` is still served by the legacy data-layer (different
+		// dateProperty); update this case when it lands in `readStreamQuery`.
+		const opts = readStreamQuery( 'likes', { number: 4 }, null );
+		expect( () => opts.queryFn!( {} as never ) ).toThrow( /unsupported streamType "likes"/ );
 	} );
 } );
