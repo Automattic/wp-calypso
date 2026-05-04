@@ -170,9 +170,8 @@ function createStreamItemFromSite( site: RawSiteWithPosts, dateProperty: string 
 /**
  * Split a `sites` payload (used by `custom_recs_sites_with_images`) into
  * stream items and the underlying posts. Each site carries its top post
- * under `posts[0]`; sites without a post are skipped. Mirrors the legacy
- * `createStreamDataFromSites` in
- * `client/state/data-layer/wpcom/read/streams/index.js`.
+ * under `posts[0]`; sites without a post are skipped. Mirrors the former
+ * legacy `createStreamDataFromSites` behavior.
  */
 export function createStreamDataFromSites(
 	sites: RawSiteWithPosts[] | null | undefined,
@@ -208,8 +207,7 @@ const EMPTY_BUCKETS: CardBuckets = { cardPosts: [], cardRecommendedSites: [], ne
 /**
  * Split a `cards` payload (used by `discover:recommended` and tag-specific
  * `discover:<tag>` streams) into post stream items, recommended sites, and
- * new sites. Mirrors the legacy `createStreamDataFromCards` in
- * `client/state/data-layer/wpcom/read/streams/index.js`.
+ * new sites. Mirrors the former legacy `createStreamDataFromCards` behavior.
  */
 export function createStreamDataFromCards(
 	cards: RawCard[] | null | undefined,
@@ -253,10 +251,8 @@ interface PageHandleData {
 /**
  * Extract the next-page handle from a stream response.
  *
- * Mirrors the legacy `get_page_handle` from
- * `client/state/data-layer/wpcom/read/streams/index.js`. Branch order matters:
- * the API uses different pagination conventions per endpoint family and the
- * legacy code preferred them in this order.
+ * Mirrors the former legacy `get_page_handle` behavior. Branch order matters:
+ * the API uses different pagination conventions per endpoint family.
  */
 export function extractPageHandle(
 	streamType: string,

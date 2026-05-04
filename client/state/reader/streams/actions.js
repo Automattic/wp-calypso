@@ -33,7 +33,6 @@ import {
 	getQueryString,
 	getQueryStringForPoll,
 } from './normalize';
-import 'calypso/state/data-layer/wpcom/read/streams';
 import 'calypso/state/reader/init';
 
 // Stable seed for the recommendation streams (`recommendations_posts`,
@@ -44,8 +43,8 @@ const recommendationsSeed = random( 0, 1000 );
 
 /**
  * Per-stream date property used by `createStreamDataFromPosts` to populate
- * `streamItem.date`. Mirrors `streamApis[type].dateProperty` in the legacy
- * data-layer (`client/state/data-layer/wpcom/read/streams/index.js`).
+ * `streamItem.date`. Mirrors the date fields used by the former legacy
+ * data-layer stream handlers.
  */
 function getDatePropertyForStream( streamType ) {
 	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
@@ -273,10 +272,9 @@ function discoverSubTab( streamKey ) {
 }
 
 /**
- * Build the query params for a discover sub-tab. Mirrors the legacy
- * `streamApis.discover.query` in
- * `client/state/data-layer/wpcom/read/streams/index.js` so the migrated request
- * hits the API with the same shape.
+ * Build the query params for a discover sub-tab. Mirrors the former legacy
+ * `streamApis.discover.query` behavior so the migrated request hits the API
+ * with the same shape.
  *
  * - `freshly-pressed` returns the raw extras (no `getQueryString` wrap), so it
  *   does not pick up `meta`/`content_width`/default `orderBy`.
