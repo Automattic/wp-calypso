@@ -1,114 +1,28 @@
-import { PENDING_REPOST_URI } from '@automattic/api-core';
-import { useCreateRepostMutation, useDeleteRepostMutation } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
-import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { useSocialAnalytics } from './analytics-context';
-import type { AtmosphereError, AtmosphereFeedItem } from '@automattic/api-core';
+import { useRepostAction } from './repost-context';
+import type { SocialPost } from '../../types';
 
 import './repost-button.scss';
 
 interface RepostButtonProps {
-	post: Pick< AtmosphereFeedItem, 'uri' | 'cid' | 'counts' | 'viewer' >;
-	connectionId: number;
+	post: SocialPost;
 }
 
-type RepostDirection = 'repost' | 'unrepost';
-
-function errorMessageForRepost(
-	error: AtmosphereError,
-	translate: ReturnType< typeof useTranslate >
-): string {
-	switch ( error.kind ) {
-		case 'auth_required':
-		case 'auth_failed':
-		case 'invalid_credentials':
-			return translate( 'Reconnect your Bluesky account to repost.' );
-		case 'rate_limited':
-			return translate( "You're reposting too quickly. Try again in a moment." );
-		case 'connection_not_found':
-		case 'not_found':
-			return translate( 'This connection no longer exists.' );
-		case 'bad_request':
-		case 'invalid_handle':
-		case 'upstream_unavailable':
-		case 'text_too_long':
-		case 'reply_disabled':
-		case 'quote_disabled':
-		case 'target_unavailable':
-		case 'unknown':
-			return translate( 'Could not save your repost. Please try again.' );
-	}
-}
-
-export function RepostButton( { post, connectionId }: RepostButtonProps ) {
+export function RepostButton( { post }: RepostButtonProps ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const analytics = useSocialAnalytics();
-	const create = useCreateRepostMutation( connectionId );
-	const remove = useDeleteRepostMutation( connectionId );
+	const action = useRepostAction( post );
 
-	const isReposted = Boolean( post.viewer?.repost );
-	// Disable across every instance of this post while a create-repost is in
-	// flight: cache carries `PENDING_REPOST_URI` even on instances whose own
-	// mutation hooks aren't pending, so a user who clicks the repost button on
-	// a duplicate render (e.g. timeline + thread) would otherwise either fire
-	// a duplicate create or hit a dead rkey on un-repost and silently no-op.
-	const isPending =
-		create.isPending || remove.isPending || post.viewer?.repost === PENDING_REPOST_URI;
+	if ( ! action.supported ) {
+		return null;
+	}
+
+	const { isReposted, isPending } = action;
 	const formattedReposts = formatNumber( post.counts.reposts );
-	const accessibleLabel = isReposted
-		? translate( 'Undo repost, %(count)s repost', 'Undo repost, %(count)s reposts', {
-				count: post.counts.reposts,
-				args: { count: formattedReposts },
-				textOnly: true,
-		  } )
-		: translate( 'Repost, %(count)s repost', 'Repost, %(count)s reposts', {
-				count: post.counts.reposts,
-				args: { count: formattedReposts },
-				textOnly: true,
-		  } );
-
-	const trackError = ( error: AtmosphereError, direction: RepostDirection ) => {
-		dispatch( errorNotice( errorMessageForRepost( error, translate ) ) );
-		analytics?.onClick( `calypso_reader_${ analytics.source }_repost_error_shown`, {
-			connection_id: connectionId,
-			post_uri: post.uri,
-			error_kind: error.kind,
-			direction,
-		} );
-	};
-
-	const handleRepost = () => {
-		analytics?.onClick( `calypso_reader_${ analytics.source }_repost_clicked`, {
-			connection_id: connectionId,
-			post_uri: post.uri,
-		} );
-		create.mutate(
-			{ postUri: post.uri, postCid: post.cid },
-			{ onError: ( error ) => trackError( error, 'repost' ) }
-		);
-	};
-
-	const handleUnrepost = () => {
-		const rkey = rkeyFromUri( post.viewer?.repost ?? '' );
-		if ( ! rkey ) {
-			return;
-		}
-		analytics?.onClick( `calypso_reader_${ analytics.source }_unrepost_clicked`, {
-			connection_id: connectionId,
-			post_uri: post.uri,
-		} );
-		remove.mutate(
-			{ rkey, postUri: post.uri },
-			{ onError: ( error ) => trackError( error, 'unrepost' ) }
-		);
-	};
+	const accessibleLabel = String( action.label.accessibleLabel( post.counts.reposts, isReposted ) );
 
 	if ( isReposted ) {
 		return (
@@ -127,7 +41,7 @@ export function RepostButton( { post, connectionId }: RepostButtonProps ) {
 					if ( isPending ) {
 						return;
 					}
-					handleUnrepost();
+					action.unrepost();
 				} }
 			>
 				<ReaderRepostIcon iconSize={ 16 } />
@@ -165,12 +79,23 @@ export function RepostButton( { post, connectionId }: RepostButtonProps ) {
 					<MenuItem
 						onClick={ () => {
 							onClose();
-							handleRepost();
+							action.repost();
 						} }
 					>
-						{ translate( 'Repost' ) }
+						{ action.label.action }
 					</MenuItem>
-					<MenuItem disabled>{ translate( 'Quote post' ) }</MenuItem>
+					<MenuItem
+						disabled={ ! action.canQuote }
+						onClick={ () => {
+							if ( ! action.canQuote ) {
+								return;
+							}
+							onClose();
+							action.quote();
+						} }
+					>
+						{ translate( 'Quote post' ) }
+					</MenuItem>
 				</MenuGroup>
 			) }
 		/>

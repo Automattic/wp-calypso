@@ -93,16 +93,8 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 			className="social-post-card-counts"
 		>
 			{ renderRepliesNode() }
-			{ connectionId && post.cid ? (
-				<RepostButton
-					post={ {
-						uri: post.uri,
-						cid: post.cid,
-						counts: post.counts,
-						viewer: post.viewer,
-					} }
-					connectionId={ connectionId }
-				/>
+			{ connectionId ? (
+				<RepostButton post={ post } />
 			) : (
 				<span>
 					<ReaderRepostIcon iconSize={ ICON_SIZE } />

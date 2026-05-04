@@ -22,6 +22,7 @@ import {
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
@@ -29,6 +30,7 @@ import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
+import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type {
 	AtmosphereAuthorFeedFilter,
 	AtmosphereScopedProfile,
@@ -339,6 +341,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
 	);
 
+	const useRepostAction = useMemo(
+		() => makeUseAtmosphereRepostAction( connection.id ),
+		[ connection.id ]
+	);
+
 	const isOwnProfile = profile.data?.did === connection.did;
 
 	// .mutate is the only stable handle on the useMutation result; depending on
@@ -489,31 +496,37 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<VStack spacing={ 4 } className="atmosphere-author-profile">
-				<AuthorProfileHeader
-					timelineUrl={ getTimelineUrl( connection.id ) }
-					onBackToTimeline={ handleBackToTimeline }
-				/>
-				{ renderHeader() }
-				<AuthorProfileTabs connectionId={ connection.id } actor={ actor } activeFilter={ filter } />
-				<SocialFeedList< SocialPost >
-					items={ items }
-					isPending={ feed.isPending }
-					isError={ feed.isError }
-					error={ projectAtmosphereError( feed.error ) }
-					hasNextPage={ Boolean( feed.hasNextPage ) }
-					isFetchingNextPage={ feed.isFetchingNextPage }
-					fetchNextPage={ feed.fetchNextPage }
-					refetch={ handleFeedRetry }
-					renderItem={ renderItem }
-					itemKey={ itemKey }
-					emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
-					emptyLine=""
-					protocolLabel="Bluesky"
-					protocolHomeURL="/reader/atmosphere"
-					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
-				/>
-			</VStack>
+			<RepostProvider value={ useRepostAction }>
+				<VStack spacing={ 4 } className="atmosphere-author-profile">
+					<AuthorProfileHeader
+						timelineUrl={ getTimelineUrl( connection.id ) }
+						onBackToTimeline={ handleBackToTimeline }
+					/>
+					{ renderHeader() }
+					<AuthorProfileTabs
+						connectionId={ connection.id }
+						actor={ actor }
+						activeFilter={ filter }
+					/>
+					<SocialFeedList< SocialPost >
+						items={ items }
+						isPending={ feed.isPending }
+						isError={ feed.isError }
+						error={ projectAtmosphereError( feed.error ) }
+						hasNextPage={ Boolean( feed.hasNextPage ) }
+						isFetchingNextPage={ feed.isFetchingNextPage }
+						fetchNextPage={ feed.fetchNextPage }
+						refetch={ handleFeedRetry }
+						renderItem={ renderItem }
+						itemKey={ itemKey }
+						emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
+						emptyLine=""
+						protocolLabel="Bluesky"
+						protocolHomeURL="/reader/atmosphere"
+						protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+					/>
+				</VStack>
+			</RepostProvider>
 		</SocialAnalyticsProvider>
 	);
 }

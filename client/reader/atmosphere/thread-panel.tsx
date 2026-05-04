@@ -7,6 +7,7 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
 import { SocialAnalyticsProvider } from 'calypso/reader/social';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
 import {
@@ -19,6 +20,7 @@ import { ThreadHeader } from './thread-header';
 import { ThreadTree } from './thread-tree';
 import { ThreadTombstone } from './thread-tree/thread-tombstone';
 import { ThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
+import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type {
 	AtmosphereConnection,
 	AtmosphereError,
@@ -167,21 +169,28 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
 	);
 
+	const useRepostAction = useMemo(
+		() => makeUseAtmosphereRepostAction( connection.id ),
+		[ connection.id ]
+	);
+
 	return (
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider value={ analyticsValue }>
-				{ renderBody( {
-					translate,
-					data,
-					isPending,
-					isFetching,
-					isError,
-					error: error ?? null,
-					handleRetry,
-					targetUri,
-					connectionId: connection.id,
-				} ) }
+				<RepostProvider value={ useRepostAction }>
+					{ renderBody( {
+						translate,
+						data,
+						isPending,
+						isFetching,
+						isError,
+						error: error ?? null,
+						handleRetry,
+						targetUri,
+						connectionId: connection.id,
+					} ) }
+				</RepostProvider>
 			</SocialAnalyticsProvider>
 		</>
 	);

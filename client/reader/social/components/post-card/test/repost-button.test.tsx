@@ -6,10 +6,13 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { makeUseAtmosphereRepostAction } from 'calypso/reader/atmosphere/use-atmosphere-repost-action';
+import { mapAtmosphereFeedItemToSocialPost } from 'calypso/reader/social';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { RepostButton } from '../repost-button';
+import { RepostProvider } from '../repost-context';
 import type { AtmosphereFeedItem } from '@automattic/api-core';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -51,6 +54,8 @@ function renderRepostButton(
 	post = makePost(),
 	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
 ) {
+	const useRepostAction = makeUseAtmosphereRepostAction( 42 );
+	const socialPost = mapAtmosphereFeedItemToSocialPost( post );
 	return {
 		onClick,
 		...renderWithProvider(
@@ -61,7 +66,9 @@ function renderRepostButton(
 					onClick,
 				} }
 			>
-				<RepostButton post={ post } connectionId={ 42 } />
+				<RepostProvider value={ useRepostAction }>
+					<RepostButton post={ socialPost } />
+				</RepostProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		),
@@ -159,7 +166,7 @@ describe( '<RepostButton>', () => {
 		const { onClick } = renderRepostButton(
 			// Malformed at-uri: starts with `at://` but missing the rkey segment
 			// after the collection. `rkeyFromUri()` returns null for this shape,
-			// which gates the DELETE in `handleUnrepost`.
+			// which gates the DELETE in `unrepost`.
 			makePost( { viewer: { like: null, repost: 'at://did:plc:caller/app.bsky.feed.repost' } } )
 		);
 		await user.click( screen.getByRole( 'button', { name: /undo repost, 4 reposts/i } ) );
@@ -279,16 +286,19 @@ describe( '<RepostButton>', () => {
 	it( 'click does not bubble to a parent listener', async () => {
 		const onParentClick = jest.fn();
 		const user = userEvent.setup();
+		const useRepostAction = makeUseAtmosphereRepostAction( 42 );
+		const socialPost = mapAtmosphereFeedItemToSocialPost(
+			makePost( { viewer: { like: null, repost: PENDING_REPOST_URI } } )
+		);
 		renderWithProvider(
 			<SocialAnalyticsProvider
 				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
 			>
-				<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>
-					<RepostButton
-						post={ makePost( { viewer: { like: null, repost: PENDING_REPOST_URI } } ) }
-						connectionId={ 42 }
-					/>
-				</div>
+				<RepostProvider value={ useRepostAction }>
+					<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>
+						<RepostButton post={ socialPost } />
+					</div>
+				</RepostProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		);
