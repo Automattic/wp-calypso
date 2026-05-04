@@ -347,8 +347,7 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 	.signup-form {
 		max-width: 758px;
-		margin-left: auto;
-		margin-right: auto;
+		margin-inline: auto;
 
 		.layout & .signup-form__passwordless-form-wrapper .card.logged-out-form,
 		.layout & > .card.auth-form__social {
