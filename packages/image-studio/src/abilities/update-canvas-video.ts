@@ -124,7 +124,13 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 					isAnnotated: false,
 				} );
 
-				addNotice( __( 'Video saved to Media Library', __i18n_text_domain__ ), 'success' );
+				addNotice( __( 'Video saved to Media Library', __i18n_text_domain__ ), 'success', [
+					{
+						label: __( 'View', __i18n_text_domain__ ),
+						url: `/wp-admin/post.php?post=${ attachmentId }&action=edit`,
+						openInNewTab: true,
+					},
+				] );
 
 				return { ok: true };
 			},
