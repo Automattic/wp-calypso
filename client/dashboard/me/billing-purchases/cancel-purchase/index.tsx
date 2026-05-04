@@ -532,7 +532,7 @@ function CancelPurchaseInner() {
 		purchase,
 		upsell: state.upsell,
 		cancellationOffer,
-		hasQuestionTwo: Boolean( questionTwoOrder.length ),
+		hasQuestionTwo: Boolean( state.questionTwoOrder?.length ),
 		plans,
 		userHasCompletedCancelSurveyForPurchase,
 	} );
