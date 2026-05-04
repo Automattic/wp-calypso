@@ -12,7 +12,11 @@ import { useSocialAnalytics } from './analytics-context';
 import type { AtmosphereError, AtmosphereFeedItem } from '@automattic/api-core';
 
 interface PostActionsMenuProps {
-	post: Pick< AtmosphereFeedItem, 'uri' | 'author' | 'reply_parent' >;
+	post: {
+		uri: string;
+		author: Pick< AtmosphereFeedItem[ 'author' ], 'did' >;
+		reply_parent: { uri: string } | null;
+	};
 	connectionId: number;
 }
 
@@ -40,7 +44,13 @@ function errorMessageForDelete(
 		case 'not_found':
 		case 'unknown':
 			return t( "Couldn't delete that post. Please try again." ) as string;
+		default:
+			return assertNever( err );
 	}
+}
+
+function assertNever( value: never ): never {
+	throw new Error( `Unhandled discriminated-union case: ${ JSON.stringify( value ) }` );
 }
 
 export function PostActionsMenu( { post, connectionId }: PostActionsMenuProps ) {
@@ -61,6 +71,9 @@ export function PostActionsMenu( { post, connectionId }: PostActionsMenuProps ) 
 	}
 
 	const handleConfirm = () => {
+		if ( mutation.isPending ) {
+			return;
+		}
 		setConfirming( false );
 		mutation.mutate(
 			{
@@ -71,7 +84,7 @@ export function PostActionsMenu( { post, connectionId }: PostActionsMenuProps ) 
 			},
 			{
 				onSuccess: () => {
-					analytics?.onClick( 'calypso_reader_atmosphere_post_deleted', {
+					analytics?.onClick( `calypso_reader_${ analytics.source }_post_deleted`, {
 						connection_id: connectionId,
 						post_uri: post.uri,
 					} );
@@ -79,10 +92,17 @@ export function PostActionsMenu( { post, connectionId }: PostActionsMenuProps ) 
 				},
 				onError: ( err: AtmosphereError ) => {
 					if ( err.kind === 'not_found' ) {
-						return; // idempotent — keep optimistic state, no notice
+						// Idempotent — keep optimistic state, no user-facing notice. Emit a
+						// dedicated Tracks event so an unexpected 404 spike (auth/race/backend
+						// regression) is observable on dashboards instead of fully silent.
+						analytics?.onClick( `calypso_reader_${ analytics.source }_post_delete_not_found`, {
+							connection_id: connectionId,
+							post_uri: post.uri,
+						} );
+						return;
 					}
 					dispatch( errorNotice( errorMessageForDelete( err, translate ) ) );
-					analytics?.onClick( 'calypso_reader_atmosphere_post_delete_error_shown', {
+					analytics?.onClick( `calypso_reader_${ analytics.source }_post_delete_error_shown`, {
 						connection_id: connectionId,
 						post_uri: post.uri,
 						error_kind: err.kind,
@@ -114,10 +134,19 @@ export function PostActionsMenu( { post, connectionId }: PostActionsMenuProps ) 
 				>
 					<p>{ translate( "This can't be undone." ) }</p>
 					<HStack justify="flex-end" spacing={ 2 }>
-						<Button variant="tertiary" onClick={ () => setConfirming( false ) }>
+						<Button
+							variant="tertiary"
+							onClick={ () => setConfirming( false ) }
+							disabled={ mutation.isPending }
+						>
 							{ translate( 'Cancel' ) }
 						</Button>
-						<Button variant="primary" isDestructive onClick={ handleConfirm }>
+						<Button
+							variant="primary"
+							isDestructive
+							onClick={ handleConfirm }
+							disabled={ mutation.isPending }
+						>
 							{ translate( 'Delete' ) }
 						</Button>
 					</HStack>

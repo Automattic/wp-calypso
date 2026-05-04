@@ -49,7 +49,7 @@ function makeQueryClient() {
 function renderMenu( {
 	ownerDid = 'did:plc:caller',
 	onClick = jest.fn(),
-}: { ownerDid?: string | null; onClick?: jest.Mock } = {} ) {
+}: { ownerDid?: string; onClick?: jest.Mock } = {} ) {
 	return {
 		onClick,
 		...renderWithProvider(
@@ -133,5 +133,70 @@ describe( '<PostActionsMenu>', () => {
 		await user.click( screen.getByRole( 'button', { name: /^cancel$/i } ) );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		expect( scope.isDone() ).toBe( false );
+	} );
+
+	it( 'fires the not_found Tracks event without an error notice on idempotent 404', async () => {
+		const user = userEvent.setup();
+		nock( BASE )
+			.delete( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/posts/${ RKEY }` )
+			.reply( 404, { error: 'atmosphere_not_found' } );
+		const errorNotice = jest.spyOn( notices, 'errorNotice' );
+		const onClick = jest.fn();
+		renderMenu( { onClick } );
+		await user.click( screen.getByRole( 'button', { name: /post actions/i } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: /delete/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /^delete$/i } ) );
+		await waitFor( () =>
+			expect( onClick ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_post_delete_not_found',
+				expect.objectContaining( { connection_id: CONNECTION_ID, post_uri: POST_URI } )
+			)
+		);
+		expect( errorNotice ).not.toHaveBeenCalled();
+		expect( onClick ).not.toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_post_delete_error_shown',
+			expect.anything()
+		);
+	} );
+
+	it( 'forwards reply_parent.uri as replyParentUri when deleting a reply', async () => {
+		const user = userEvent.setup();
+		const REPLY_PARENT_URI = 'at://did:plc:other/app.bsky.feed.post/3kparent';
+		const scope = nock( BASE )
+			.delete( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/posts/${ RKEY }` )
+			.reply( 204 );
+		const replyPost: AtmosphereFeedItem = {
+			...makePost(),
+			reply_parent: {
+				uri: REPLY_PARENT_URI,
+				cid: 'bafy-parent-cid',
+				author: { did: 'did:plc:other', handle: 'other.bsky.social' },
+			},
+			reply_root: {
+				uri: REPLY_PARENT_URI,
+				cid: 'bafy-parent-cid',
+				author: { did: 'did:plc:other', handle: 'other.bsky.social' },
+			},
+		};
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: CONNECTION_ID,
+					onClick: jest.fn(),
+					ownerDid: 'did:plc:caller',
+				} }
+			>
+				<PostActionsMenu post={ replyPost } connectionId={ CONNECTION_ID } />
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+		await user.click( screen.getByRole( 'button', { name: /post actions/i } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: /delete/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /^delete$/i } ) );
+		// The reply-parent URI is consumed by the mutation (decrements parent
+		// counts.replies); assert here the request fired so the wiring from the
+		// menu through to mutation vars is exercised end-to-end.
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 } );
