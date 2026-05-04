@@ -12,10 +12,12 @@ const mockRegisterAbilityCategory = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
+const mockAddNotice = jest.fn();
 const mockDispatch = jest.fn( () => ( {
 	setCurrentVideoUrl: mockSetCurrentVideoUrl,
 	setCurrentAttachmentId: mockSetCurrentAttachmentId,
 	setCurrentDurationSeconds: mockSetCurrentDurationSeconds,
+	addNotice: mockAddNotice,
 } ) );
 
 jest.mock(
