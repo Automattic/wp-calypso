@@ -163,16 +163,24 @@ function buildStreamQueryParams( {
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':
 			return getQueryString( { ...extras, comments_per_post: 20, index: 'a8c' } );
-		case 'recommendations_posts':
-			// Legacy `streamApis.recommendations_posts.query` destructured a
-			// non-existent `query` field from extras and shipped only seed +
-			// algorithm — no `number`, `offset`, `lang`, `meta`, `orderBy`,
-			// `content_width`, `page`. Preserved exactly here to avoid wire-shape
-			// regressions; cleanup is tracked separately.
-			return {
+		case 'recommendations_posts': {
+			// Legacy first request: only seed + algorithm (no meta/orderBy/etc.).
+			const base = {
 				seed: recommendationsSeed,
 				algorithm: 'read:recommendations:posts/es/1',
 			};
+			// Paginated requests: `extractPageHandle` uses an `offset` cursor; without
+			// `offset` + `number` the API repeats page 1 (see Copilot on READ-499).
+			if ( ! pageHandle ) {
+				return base;
+			}
+			return {
+				...base,
+				...pageHandle,
+				number,
+				lang,
+			};
+		}
 		case 'custom_recs_posts_with_images':
 			return getQueryString( {
 				...extras,

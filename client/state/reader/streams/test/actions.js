@@ -654,6 +654,43 @@ describe( 'requestPage thunk', () => {
 			} );
 		} );
 
+		it( 'recommendations_posts paginated request sends offset, number, lang with same seed + algorithm', async () => {
+			let capturedFirst;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( ( q ) => {
+					capturedFirst = q;
+					return true;
+				} )
+				.reply( 200, recsPostsResponse );
+
+			const { result: r1 } = runThunk( { streamKey: 'recommendations_posts' } );
+			await r1;
+
+			let capturedPage2;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( ( q ) => {
+					capturedPage2 = q;
+					return true;
+				} )
+				.reply( 200, recsPostsResponse );
+
+			const { result: r2 } = runThunk( {
+				streamKey: 'recommendations_posts',
+				pageHandle: { offset: 7 },
+			} );
+			await r2;
+
+			expect( capturedPage2 ).toMatchObject( {
+				seed: capturedFirst.seed,
+				algorithm: 'read:recommendations:posts/es/1',
+				offset: '7',
+				number: '7',
+			} );
+			expect( capturedPage2.lang ).toBeDefined();
+		} );
+
 		it( 'custom_recs_posts_with_images ships the enriched query with seed + alg_prefix', async () => {
 			let captured;
 			nock( BASE )
