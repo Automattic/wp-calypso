@@ -275,7 +275,6 @@ if ( helpCenterData.isProxied ) {
 	if ( ! canAccessWpcomApis() ) {
 		// In case someone tries to test on an Atomic site.
 		window.alert( 'The dictation tool is only available for simple sites.' );
-		return;
 	}
 	if ( window.location.search.includes( 'wpcom-smart-dictation=true' ) ) {
 		import( './help-center-wpcom-transcription' );
