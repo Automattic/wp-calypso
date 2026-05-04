@@ -54,7 +54,7 @@ export default function Appearance() {
 							level={ 3 }
 							title={ __( 'Color scheme' ) }
 							description={ __(
-								'Set the dashboard to light, dark, or your system setting. This is experimental, so please report any issues you find.'
+								'Set the dashboard appearance to light, dark, or your system setting. This is experimental, if you like it or find issues we’d love to hear your feedback on it.'
 							) }
 						/>
 						<ToggleGroupControl
