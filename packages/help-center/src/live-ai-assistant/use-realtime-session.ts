@@ -129,6 +129,16 @@ const REALTIME_CLIENT_SECRETS_PATH = '/ai-api-proxy/v1/realtime/client_secrets';
 const OPENAI_REALTIME_URL = 'https://api.openai.com/v1/realtime/calls';
 const MAX_TOOL_EVENTS = 40;
 
+declare global {
+	interface Window {
+		/**
+		 * TEMPORARY: inject user text into the active Smart Dictation realtime
+		 * session (e.g. from the devtools console). Remove when no longer needed.
+		 */
+		sendToDictation?: ( text: string ) => void;
+	}
+}
+
 function assistantTurnEntryId( evt: Record< string, unknown > ): string {
 	const itemId = typeof evt.item_id === 'string' ? evt.item_id : '';
 	const responseId = typeof evt.response_id === 'string' ? evt.response_id : '';
@@ -767,15 +777,57 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		setIsMuted( nextMuted );
 	}, [ isMuted ] );
 
-	/** Voice-only UX: dictated user content must not arrive as typed `input_text` items. */
-	const sendText = useCallback( ( text: string ) => {
-		void text;
-	}, [] );
+	/**
+	 * Programmatic user text (dev / testing). Normal UX is voice-only; the UI
+	 * does not surface this. Uses the same Realtime channel as typed input.
+	 */
+	const sendText = useCallback(
+		( text: string ) => {
+			const dc = dataChannelRef.current;
+			if ( ! dc || dc.readyState !== 'open' ) {
+				// eslint-disable-next-line no-console -- TEMPORARY dev hook
+				console.warn( '[sendToDictation] No open realtime data channel (start dictation first).' );
+				return;
+			}
+			const trimmed = typeof text === 'string' ? text.trim() : '';
+			if ( ! trimmed.length ) {
+				return;
+			}
+
+			const itemId = `programmatic-user-${ Date.now() }`;
+			setTranscript( ( prev ) => upsertEntry( prev, itemId, 'user', trimmed, true ) );
+
+			dc.send(
+				JSON.stringify( {
+					type: 'conversation.item.create',
+					item: {
+						type: 'message',
+						role: 'user',
+						content: [ { type: 'input_text', text: trimmed } ],
+					},
+				} )
+			);
+			safeCreateResponse();
+		},
+		[ safeCreateResponse ]
+	);
 
 	const sendEvent = useCallback( ( eventName: string, details?: string ) => {
 		void eventName;
 		void details;
 	}, [] );
+
+	useEffect( () => {
+		const fn: ( text: string ) => void = ( text ) => {
+			sendText( text );
+		};
+		window.sendToDictation = fn;
+		return () => {
+			if ( window.sendToDictation === fn ) {
+				delete window.sendToDictation;
+			}
+		};
+	}, [ sendText ] );
 
 	return {
 		status,
