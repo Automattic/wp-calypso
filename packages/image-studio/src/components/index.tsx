@@ -216,9 +216,13 @@ function ImageStudioAgentChat( {
 				<p className="image-studio-modal__media-library-disclaimer">
 					<em>
 						{ __(
-							'Outputs from this experimental feature may need editing before publishing. All generated videos are saved to your Media library.',
+							'Outputs from this experimental feature may need editing before publishing.',
 							__i18n_text_domain__
 						) }
+					</em>
+					<br />
+					<em>
+						{ __( 'All generated videos are saved to your Media library.', __i18n_text_domain__ ) }
 					</em>
 				</p>
 			) }
