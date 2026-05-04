@@ -47,22 +47,6 @@ import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
 import './style.scss';
 
-const STUDIO_EXPERIMENTAL_DISMISS_KEY = 'image-studio-modal-experimental-dismissed';
-
-function readStudioExperimentalDismissed(): boolean {
-	try {
-		return window.localStorage?.getItem( STUDIO_EXPERIMENTAL_DISMISS_KEY ) === '1';
-	} catch {
-		return false;
-	}
-}
-
-function persistStudioExperimentalDismissed(): void {
-	try {
-		window.localStorage?.setItem( STUDIO_EXPERIMENTAL_DISMISS_KEY, '1' );
-	} catch {}
-}
-
 function ImageStudioAgentChat( {
 	agentConfig: agentConfigProp,
 	attachmentId,
@@ -232,21 +216,10 @@ function ImageStudioAgentChat( {
 				<p className="image-studio-modal__media-library-disclaimer">
 					<em>
 						{ __(
-							'All generated videos will be automatically saved to your media library.',
+							'Outputs from this experimental feature may need editing before publishing. All generated videos are saved to your Media library.',
 							__i18n_text_domain__
 						) }
 					</em>
-					{ isVideoGeneratingPhase && (
-						<>
-							<br />
-							<em>
-								{ __(
-									"You can close this — we'll save it when it's ready.",
-									__i18n_text_domain__
-								) }
-							</em>
-						</>
-					) }
 				</p>
 			) }
 		</>
@@ -337,14 +310,6 @@ const ImageStudioContent = withInstanceId(
 		}, [] );
 
 		const { addNotice, setIsSidebarOpen } = useDispatch( imageStudioStore ) as ImageStudioActions;
-
-		const [ experimentalBannerOpen, setExperimentalBannerOpen ] = useState< boolean >(
-			() => ! readStudioExperimentalDismissed()
-		);
-		const dismissExperimentalBanner = useCallback( () => {
-			setExperimentalBannerOpen( false );
-			persistStudioExperimentalDismissed();
-		}, [] );
 
 		const {
 			handleAnnotationDone,
@@ -579,25 +544,11 @@ const ImageStudioContent = withInstanceId(
 							hasNextImage={ hasNextImage }
 						/>
 
-						{ isVideoMode && experimentalBannerOpen && (
-							<div className="image-studio-modal__experimental-banner" role="note">
-								<span className="image-studio-modal__experimental-banner-pill">
+						{ isVideoMode && (
+							<div className="image-studio-modal__experimental-tag">
+								<span className="image-studio-modal__experimental-tag-pill" role="note">
 									{ __( 'Experimental', __i18n_text_domain__ ) }
 								</span>
-								<span className="image-studio-modal__experimental-banner-text">
-									{ __(
-										'This is an experimental AI feature. Outputs may need editing before publishing.',
-										__i18n_text_domain__
-									) }
-								</span>
-								<button
-									type="button"
-									className="image-studio-modal__experimental-banner-dismiss"
-									aria-label={ __( 'Dismiss', __i18n_text_domain__ ) }
-									onClick={ dismissExperimentalBanner }
-								>
-									×
-								</button>
 							</div>
 						) }
 
