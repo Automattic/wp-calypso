@@ -179,7 +179,7 @@ export interface CancelPurchaseConnectedProps {
 	isHundredYearDomain: boolean | undefined;
 	isJetpack: boolean;
 	isJetpackPurchase: boolean;
-	isRefundEligibilityNoticeEnabled: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 	productsList: Record< string, { product_type: string; billing_product_slug: string } >;
 	purchase: Purchases.Purchase;
 	purchases: Purchases.Purchase[];
@@ -742,7 +742,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return true;
 		}
 		return Boolean(
-			this.props.isRefundEligibilityNoticeEnabled &&
+			this.props.isSplitCancelRemoveEnabled &&
 				hasAmountAvailableToRefund( purchase ) &&
 				isPlan( purchase ) &&
 				isWpComPlan( purchase?.productSlug )
@@ -1237,14 +1237,15 @@ const ConnectedCancelPurchase = connect(
 
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_split_cancel_refund_20260316'
+		'calypso_new_cancel_refund_flow_20260408'
 	);
-	const isRefundEligibilityNoticeEnabled =
-		! isLoadingExperiment && experimentAssignment?.variationName === 'treatment';
+	const isSplitCancelRemoveEnabled =
+		config.isEnabled( 'purchases/split-cancel-remove' ) ||
+		( ! isLoadingExperiment && experimentAssignment?.variationName === 'treatment' );
 	return (
 		<ConnectedCancelPurchase
 			{ ...props }
-			isRefundEligibilityNoticeEnabled={ isRefundEligibilityNoticeEnabled }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
 		/>
 	);
 }

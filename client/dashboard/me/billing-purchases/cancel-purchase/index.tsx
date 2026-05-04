@@ -87,7 +87,7 @@ import nextStep from './next-step';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
-import { useShowRefundEligibilityNotice } from './use-show-refund-eligibility-notice';
+import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -105,7 +105,7 @@ type TopNoticeArgs = {
 	displayVariant: 'cancel' | 'remove';
 	purchase: Purchase;
 	intent: 'cancel' | 'remove' | null;
-	showRefundEligibilityNotice: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 	onClaimRefund: () => void;
 };
 
@@ -116,7 +116,7 @@ function renderTopNotice( args: TopNoticeArgs ) {
 		displayVariant,
 		purchase,
 		intent,
-		showRefundEligibilityNotice,
+		isSplitCancelRemoveEnabled,
 		onClaimRefund,
 	} = args;
 
@@ -131,7 +131,7 @@ function renderTopNotice( args: TopNoticeArgs ) {
 	}
 
 	// 2. No URL intent + experiment treatment + refund → today's promo banner.
-	if ( ! intent && showRefundEligibilityNotice ) {
+	if ( ! intent && isSplitCancelRemoveEnabled ) {
 		return <RefundEligibilityNotice purchase={ purchase } onClaimRefund={ onClaimRefund } />;
 	}
 
@@ -467,7 +467,7 @@ function CancelPurchaseInner() {
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
 
-	const showRefundEligibilityNotice = useShowRefundEligibilityNotice( purchase );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled( purchase );
 
 	// Handler helpers
 	const purchases = purchase && sitePurchases;
@@ -858,7 +858,7 @@ function CancelPurchaseInner() {
 		if ( cancelIntent === 'refund' ) {
 			return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
 		}
-		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND && showRefundEligibilityNotice ) {
+		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND && isSplitCancelRemoveEnabled ) {
 			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		}
 		return mutationFlowType;
@@ -951,7 +951,7 @@ function CancelPurchaseInner() {
 		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
 		// no need to ask about the domain. Skip straight to the survey.
 		const skippingDomainOptionsForAutoRenew =
-			showRefundEligibilityNotice && cancelIntent !== 'refund';
+			isSplitCancelRemoveEnabled && cancelIntent !== 'refund';
 
 		const needsDomainOptions =
 			! skippingDomainOptionsForAutoRenew &&
@@ -1653,7 +1653,7 @@ function CancelPurchaseInner() {
 				displayVariant,
 				purchase,
 				intent,
-				showRefundEligibilityNotice,
+				isSplitCancelRemoveEnabled,
 				onClaimRefund: onCancellationStartForRefund,
 			} ) }
 		>
