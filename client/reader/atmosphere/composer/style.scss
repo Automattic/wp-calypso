@@ -1,3 +1,103 @@
+.atmosphere-compose-pill {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 10px 16px;
+	background: var(--studio-white, #fff);
+	border: 1px solid var(--studio-gray-5, #dcdcde);
+	// 6px matches the Reader's existing compose entry (`.quick-post`)
+	// and the search / stream input radii. The fully-rounded `999px`
+	// idiom (Bluesky / X) is unique in `client/reader/` and reads as
+	// out-of-place next to the surrounding cards.
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+	cursor: pointer;
+	text-align: start;
+	font: inherit;
+	color: inherit;
+
+	&:hover {
+		border-color: var(--studio-gray-20, #a7aaad);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--studio-blue-50, #3858e9);
+		outline-offset: 2px;
+	}
+}
+
+.atmosphere-compose-pill__avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	flex: 0 0 32px;
+	object-fit: cover;
+	background: var(--studio-gray-5, #dcdcde);
+}
+
+.atmosphere-compose-pill__placeholder {
+	flex: 1;
+	color: var(--studio-gray-50, #646970);
+	font-size: 15px;
+}
+
+.atmosphere-compose-pill__icon {
+	color: var(--studio-gray-30, #8c8f94);
+	flex: 0 0 auto;
+}
+
+.atmosphere-compose-fab {
+	position: fixed;
+	inset-block-end: 40px;
+	// Align the FAB's trailing edge with the right edge of the centered
+	// `<Main>` content (max-width 720px, sitting in the content area to
+	// the right of the global sidebar) so the FAB tracks the column
+	// instead of hugging the far viewport edge on wide screens. On
+	// narrower viewports the calc goes negative and the `max()` floor
+	// clamps to a 24px gutter.
+	inset-inline-end: max(
+		24px,
+		calc((100vw - var(--sidebar-width-max, 0px) - 720px) / 2)
+	);
+	height: auto;
+	min-height: 40px;
+	padding: 8px 16px;
+	gap: 6px;
+	// 6px matches `.atmosphere-compose-pill` and the rest of the
+	// Reader's compose surfaces (search, stream input, `.quick-post`).
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+	background: var(--studio-blue-50, #3858e9);
+	color: var(--studio-white, #fff);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	// `.main` sits at z-index 20 in Calypso's global stacking scheme
+	// (see `_z-index.scss`), and the FAB is rendered as its sibling.
+	// Anything below 20 lets post images and embeds inside the feed
+	// paint over the FAB. 25 keeps it above feed content while staying
+	// under the modal/popover layer (>=30).
+	z-index: 25;
+	transition: background-color 150ms ease, box-shadow 150ms ease;
+
+	&:hover {
+		background: var(--studio-blue-60, #1d35b4);
+		color: var(--studio-white, #fff);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--studio-blue-30, #7b90ff);
+		outline-offset: 2px;
+	}
+
+	&.is-hidden {
+		display: none;
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
 .atmosphere-composer {
 	.atmosphere-composer__pinned-context {
 		padding: 8px 12px;
