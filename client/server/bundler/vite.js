@@ -21,8 +21,55 @@ const DEV_ENTRIES = {
 	'entry-reauth-required': '/client/reauth-required/bundle.js',
 };
 
-// Write build/assets.json so the Node server knows which JS URL to inject for each
-// entry point. CSS is injected via Vite's HMR runtime in dev mode (no separate files).
+const DEV_ENTRY_STYLES = {
+	'entry-main': [ '/client/assets/stylesheets/style.scss' ],
+	'entry-domains-landing': [
+		'/client/assets/stylesheets/style.scss',
+		'/client/landing/domains/style.scss',
+	],
+	'entry-login': [ '/client/assets/stylesheets/style.scss' ],
+	'entry-stepper': [ '/client/assets/stylesheets/style.scss' ],
+	'entry-browsehappy': [
+		'/client/assets/stylesheets/style.scss',
+		'/client/landing/browsehappy/style.scss',
+	],
+	'entry-subscriptions': [ '/client/landing/subscriptions/styles/styles.scss' ],
+	'entry-dashboard-dotcom': [
+		'/node_modules/@wordpress/components/build-style/style.css',
+		'/node_modules/@wordpress/commands/build-style/style.css',
+		'/client/dashboard/app/style.scss',
+		'/client/layout/masterbar/style.scss',
+		'/client/dashboard/app/interim-omnibar/style.scss',
+		'/client/dashboard/app/omnibar/style.scss',
+		'/node_modules/@automattic/omnibar/src/style.scss',
+		'/client/dashboard/app-dotcom/style.scss',
+	],
+	'entry-dashboard-ciab': [
+		'/node_modules/@wordpress/components/build-style/style.css',
+		'/node_modules/@wordpress/commands/build-style/style.css',
+		'/client/dashboard/app/style.scss',
+		'/client/layout/masterbar/style.scss',
+		'/client/dashboard/app/interim-omnibar/style.scss',
+		'/client/dashboard/app/omnibar/style.scss',
+		'/node_modules/@automattic/omnibar/src/style.scss',
+		'/client/dashboard/app-ciab/style.scss',
+	],
+	'entry-reauth-required': [ '/client/reauth-required/style.scss' ],
+};
+
+const asDirectCss = ( url ) => `${ url }?direct`;
+const asDirectRtlCss = ( url ) => `${ url }?direct&rtl`;
+
+const getDevStylesForEntry = ( entryName ) =>
+	( DEV_ENTRY_STYLES[ entryName ] ?? [] ).flatMap( ( styleUrl ) => [
+		asDirectCss( styleUrl ),
+		asDirectRtlCss( styleUrl ),
+	] );
+
+// Write build/assets.json so the Node server knows which JS/CSS URLs to inject
+// for each entry point. Vite's HMR runtime also injects imported CSS, but the initial
+// document still needs stylesheet links for the dashboard shell to avoid FOUC
+// before the entry module runs.
 async function writeDevAssetsJson() {
 	const buildDir = path.join( process.cwd(), 'build' );
 	await mkdir( buildDir, { recursive: true } );
@@ -30,7 +77,10 @@ async function writeDevAssetsJson() {
 		manifests: [],
 		viteDev: true,
 		assets: Object.fromEntries(
-			Object.entries( DEV_ENTRIES ).map( ( [ name, url ] ) => [ name, [ url ] ] )
+			Object.entries( DEV_ENTRIES ).map( ( [ name, url ] ) => [
+				name,
+				[ url, ...getDevStylesForEntry( name ) ],
+			] )
 		),
 	};
 	await writeFile( path.join( buildDir, 'assets.json' ), JSON.stringify( assets, null, 2 ) );
