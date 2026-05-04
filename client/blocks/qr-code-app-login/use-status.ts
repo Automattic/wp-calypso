@@ -4,7 +4,7 @@ import type { Status } from './types';
 
 const POLL_INTERVAL_MS = 2000;
 
-const TERMINAL_STATUSES: Status[ 'status' ][] = [ 'consumed', 'expired' ];
+const TERMINAL_STATUSES: Status[ 'status' ][] = [ 'consumed', 'expired', 'rejected' ];
 
 export function useStatus( token: string | undefined, isVisible = true ) {
 	return useQuery< Status >( {

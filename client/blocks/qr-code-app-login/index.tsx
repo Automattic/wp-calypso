@@ -53,11 +53,14 @@ export default function QRCodeAppLogin() {
 		);
 	};
 
-	if ( wrongNumber ) {
+	const status = statusData?.status;
+	const isRejected = wrongNumber || status === 'rejected';
+
+	if ( isRejected ) {
 		return (
 			<div className="qr-code-app-login is-error">
 				<p className="qr-code-app-login__error">
-					{ __( 'Wrong number — this sign-in attempt has been cancelled.' ) }
+					{ __( 'Login was rejected — this sign-in attempt has been cancelled.' ) }
 				</p>
 				<Button variant="primary" onClick={ startOver }>
 					{ __( 'Start over' ) }
@@ -79,7 +82,6 @@ export default function QRCodeAppLogin() {
 		);
 	}
 
-	const status = statusData?.status;
 	const isExpired = status === 'expired' || countdown?.hasExpired === true;
 
 	if ( isExpired ) {

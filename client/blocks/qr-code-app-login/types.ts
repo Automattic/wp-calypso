@@ -26,9 +26,14 @@ export interface StatusExpired {
 	status: 'expired';
 }
 
+export interface StatusRejected {
+	status: 'rejected';
+}
+
 export type Status =
 	| StatusPending
 	| StatusScanned
 	| StatusApproved
 	| StatusConsumed
-	| StatusExpired;
+	| StatusExpired
+	| StatusRejected;
