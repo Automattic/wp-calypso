@@ -124,7 +124,7 @@ function buildStreamQueryParams( {
 		}
 		if ( streamType === 'likes' ) {
 			// Legacy `streamApis.likes.pollQuery`.
-			return getQueryStringForPoll( [ 'date_liked' ], commonQueryParams );
+			return getQueryStringForPoll( [ 'date_liked' ] );
 		}
 		return getQueryStringForPoll( [], commonQueryParams );
 	}

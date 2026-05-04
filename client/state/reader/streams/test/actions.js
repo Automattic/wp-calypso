@@ -667,6 +667,22 @@ describe( 'requestPage thunk', () => {
 			expect( captured.fields ).toBeDefined();
 			expect( captured.fields.split( ',' ) ).toContain( 'date_liked' );
 		} );
+
+		it( 'does not send the selected Recent feed id in the poll query', async () => {
+			let captured;
+			nock( BASE )
+				.get( '/rest/v1.2/read/liked' )
+				.query( ( q ) => {
+					captured = q;
+					return true;
+				} )
+				.reply( 200, likesResponse );
+
+			const { result } = runThunk( { streamKey: 'likes', isPoll: true, feedId: 1234 } );
+			await result;
+
+			expect( captured ).not.toHaveProperty( 'feed_id' );
+		} );
 	} );
 } );
 
