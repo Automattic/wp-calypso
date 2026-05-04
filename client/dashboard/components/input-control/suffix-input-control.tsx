@@ -3,8 +3,8 @@ import {
 	privateApis,
 } from '@wordpress/components';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { useId, type ComponentProps } from 'react';
 import { Text } from '../../components/text';
-import type React from 'react';
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -13,12 +13,16 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { ValidatedInputControl } = unlock( privateApis );
 
 export default function SuffixInputControl( {
+	id,
 	suffix,
 	...props
-}: React.ComponentProps< typeof ValidatedInputControl > ) {
+}: ComponentProps< typeof ValidatedInputControl > ) {
+	const fallbackId = useId();
+
 	return (
 		<ValidatedInputControl
 			{ ...props }
+			id={ id ?? fallbackId }
 			suffix={
 				<InputControlSuffixWrapper>
 					<Text variant="muted" style={ { whiteSpace: 'nowrap' } }>
