@@ -321,7 +321,7 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 }
 
 function successNoticeFor(
-	mode: ActiveMode,
+	mode: Extract< ActiveMode, { kind: 'reply' | 'standalone' } >,
 	result: CreatePostResult,
 	t: ReturnType< typeof useTranslate >
 ): { text: ReactNode; threadUrl: string | null } {
@@ -337,8 +337,11 @@ function successNoticeFor(
 			threadUrl: getThreadUrl( mode.connectionId, result.uri ),
 		};
 	}
-	// quote success copy lands with slice 7d.
-	return { text: t( 'Your post was published.' ), threadUrl: null };
+	// Quote success copy lands with slice 7d. Narrowing the parameter
+	// type forces TS to flag this branch when the quote arm is wired
+	// at the call site, instead of silently falling through to a
+	// reply/standalone string.
+	return assertNever( mode );
 }
 
 function assertNever( value: never ): never {

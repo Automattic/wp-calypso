@@ -112,8 +112,11 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 	const composer = useOptionalComposer();
 	const openComposer = composer?.openComposer;
 	// Surfaces the real avatar on the compose pill — the list endpoint
-	// that supplied `connection` always returns null for `avatar`.
-	const { data: connectionDetails } = useConnectionQuery( connection.id );
+	// that supplied `connection` always returns null for `avatar`. Pass
+	// `null` when there is no composer upstream so `useConnectionQuery`
+	// short-circuits and we don't warm the cache for shells that won't
+	// render the pill.
+	const { data: connectionDetails } = useConnectionQuery( composer ? connection.id : null );
 	const onReplyClick = useMemo( () => {
 		if ( ! openComposer ) {
 			return undefined;
