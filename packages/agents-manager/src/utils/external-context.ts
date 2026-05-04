@@ -5,11 +5,9 @@ export type ExternalContextDelivery = 'next-message' | 'conversation';
 
 export interface ExternalContextEntry extends Omit< ContextEntry, 'type' > {
 	type?: string;
-	contentType?: string;
 	source?: string;
 	title?: string;
 	description?: string;
-	payload?: unknown;
 	delivery?: ExternalContextDelivery;
 	createdAt?: string;
 }
@@ -23,7 +21,13 @@ export interface ExternalContextCardAction {
 
 export interface ExternalContextCard {
 	id: string;
-	contextEntryId?: string;
+	/**
+	 * IDs of context entries linked to this card. When the card is dismissed
+	 * or any of these entries is consumed/removed, both sides are cleaned up
+	 * together. A card can reference multiple entries — useful when a single
+	 * visual aggregates data from several sources.
+	 */
+	contextEntryIds?: string[];
 	/**
 	 * Publisher-owned card body. Agents Manager renders this inside its
 	 * card frame and only adds the dismiss affordance plus the actions row.
@@ -45,16 +49,10 @@ let entriesSnapshot: ContextEntry[] = [];
 let cardsSnapshot: ExternalContextCard[] = [];
 
 function toContextEntry( entry: ExternalContextEntry ): ContextEntry {
-	const { contentType, delivery, payload, source, title, description, createdAt, ...rest } = entry;
-
+	const { delivery, ...rest } = entry;
 	return {
 		...rest,
-		type: entry.type || contentType || 'external-context',
-		data: rest.data ?? payload,
-		source,
-		title,
-		description,
-		createdAt,
+		type: entry.type || 'external-context',
 	} as ContextEntry;
 }
 
@@ -91,7 +89,7 @@ export function removeExternalContextEntry( id: string ): void {
 
 	contextEntries.delete( id );
 	for ( const [ cardId, card ] of contextCards ) {
-		if ( card.contextEntryId === id ) {
+		if ( card.contextEntryIds?.includes( id ) ) {
 			contextCards.delete( cardId );
 		}
 	}
@@ -109,7 +107,7 @@ export function consumeNextMessageExternalContextEntries(): void {
 		if ( ( entry.delivery || 'next-message' ) === 'next-message' ) {
 			contextEntries.delete( id );
 			for ( const [ cardId, card ] of contextCards ) {
-				if ( card.contextEntryId === id ) {
+				if ( card.contextEntryIds?.includes( id ) ) {
 					contextCards.delete( cardId );
 				}
 			}

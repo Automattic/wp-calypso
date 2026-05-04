@@ -314,9 +314,9 @@ export default function OrchestratorChat( {
 
 	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {
 		removeExternalContextCard( card.id );
-		if ( card.contextEntryId ) {
-			removeExternalContextEntry( card.contextEntryId );
-		}
+		card.contextEntryIds?.forEach( ( entryId ) => {
+			removeExternalContextEntry( entryId );
+		} );
 	}, [] );
 
 	// Handle navigation continuation if hook is provided
@@ -478,7 +478,7 @@ export default function OrchestratorChat( {
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }
 			onContextCardAction={ handleContextCardAction }
-			onDismissContextCard={ dismissContextCard }
+			onContextCardDismiss={ dismissContextCard }
 		/>
 	);
 }

@@ -88,7 +88,7 @@ interface Props {
 	/** Called when a context card action button is clicked. */
 	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
 	/** Called when a context card's dismiss button is clicked. */
-	onDismissContextCard?: ( card: ExternalContextCard ) => void;
+	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
 }
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
@@ -176,7 +176,7 @@ export default function AgentChat( {
 	onCancelFeedback = () => {},
 	alternativeFooter,
 	onContextCardAction,
-	onDismissContextCard,
+	onContextCardDismiss,
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
@@ -246,7 +246,7 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
-				<ContextCards onAction={ onContextCardAction } onDismiss={ onDismissContextCard } />
+				<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
 				) }

@@ -50,16 +50,12 @@ type AgentsManagerExternalContextDelivery = 'next-message' | 'conversation';
 interface AgentsManagerExternalContextEntry {
 	id: string;
 	type?: string;
-	contentType?: string;
 	source?: string;
 	title?: string;
 	description?: string;
 	data?: unknown;
-	payload?: unknown;
-	getData?: () => unknown;
 	delivery?: AgentsManagerExternalContextDelivery;
 	createdAt?: string;
-	expiresAt?: string;
 }
 
 interface AgentsManagerExternalContextCardAction {
@@ -71,7 +67,12 @@ interface AgentsManagerExternalContextCardAction {
 
 interface AgentsManagerExternalContextCard {
 	id: string;
-	contextEntryId?: string;
+	/**
+	 * IDs of context entries linked to this card. Dismissing the card or
+	 * consuming any linked entry cleans up both sides. A card may reference
+	 * multiple entries when its body aggregates data from several sources.
+	 */
+	contextEntryIds?: string[];
 	/**
 	 * Publisher-owned card body. AM renders this inside the card frame
 	 * and only adds the dismiss button and actions row.
@@ -79,7 +80,6 @@ interface AgentsManagerExternalContextCard {
 	body: import('react').ReactNode;
 	actions?: AgentsManagerExternalContextCardAction[];
 	createdAt?: string;
-	expiresAt?: string;
 }
 
 /**
