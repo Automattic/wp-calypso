@@ -34,6 +34,7 @@
 		"@automattic/block-notes": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/image-studio": "workspace:^",
+		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^28.23.0",
 		"@wordpress/compose": "^7.23.0",
@@ -47,6 +48,7 @@
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.24.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.24.0",
+		"copy-webpack-plugin": "^10.2.4",
 		"webpack": "^5.99.8"
 	},
 	"peerDependencies": {

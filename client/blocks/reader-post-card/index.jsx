@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { localeRegexString } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import closest from 'component-closest';
-import { truncate } from 'lodash';
+import { flowRight as compose, truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
+import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -19,7 +20,6 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
@@ -300,18 +300,20 @@ class ReaderPostCard extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		currentRoute: getCurrentRoute( state ),
-		isWPForTeamsItem:
-			ownProps.postKey &&
-			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
-				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
-		hasOrganization:
-			ownProps.postKey &&
-			hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
-		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
-		teams: getReaderTeams( state ),
-	} ),
-	{ expandCard: expandCardAction }
+export default compose(
+	withReaderTeams,
+	connect(
+		( state, ownProps ) => ( {
+			currentRoute: getCurrentRoute( state ),
+			isWPForTeamsItem:
+				ownProps.postKey &&
+				( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
+					isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
+			hasOrganization:
+				ownProps.postKey &&
+				hasReaderFollowOrganization( state, ownProps.postKey.feedId, ownProps.postKey.blogId ),
+			isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
+		} ),
+		{ expandCard: expandCardAction }
+	)
 )( ReaderPostCard );

@@ -13,6 +13,7 @@ module.exports = {
 							'calypso/data/*',
 							'!calypso/data/data-center',
 							'!calypso/data/php-versions',
+							// Allowed: calypso/lib/color-scheme
 							// Allowed: calypso/lib/explat
 							// Allowed: calypso/lib/interval/use-interval (temporary)
 							// Allowed: calypso/lib/load-dev-helpers
@@ -20,6 +21,7 @@ module.exports = {
 							// Allowed: calypso/lib/wp
 							'!calypso/lib',
 							'calypso/lib/*',
+							'!calypso/lib/color-scheme',
 							'!calypso/lib/explat',
 							'!calypso/lib/interval',
 							'!calypso/lib/load-dev-helpers',
@@ -77,6 +79,7 @@ module.exports = {
 							'!@automattic/survicate',
 							'!@automattic/viewport',
 							'!@automattic/browser-data-collector',
+							'!@automattic/omnibar',
 							'!@automattic/posthog',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.

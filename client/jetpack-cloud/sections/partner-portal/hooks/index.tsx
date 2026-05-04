@@ -1,8 +1,10 @@
 import page from '@automattic/calypso-router';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import getPressablePlan from 'calypso/a8c-for-agencies/sections/marketplace/pressable-overview/lib/get-pressable-plan';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import ensurePartnerPortalReturnUrl from '../lib/ensure-partner-portal-return-url';
 
@@ -117,8 +119,8 @@ export function useProductDescription( productSlug: string ): {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		let description = '';
-		const features = [];
+		let description: TranslateResult | null = null;
+		const features: TranslateResult[] = [];
 
 		if ( productSlug.startsWith( 'pressable-addon-storage-' ) ) {
 			description = translate( 'Add additional storage capacity to your Pressable plan limit.' );
@@ -127,6 +129,21 @@ export function useProductDescription( productSlug: string ): {
 		if ( productSlug.startsWith( 'pressable-addon-visits-' ) ) {
 			description = translate(
 				'Add additional monthly visits capacity to your Pressable plan limit.'
+			);
+		}
+
+		if ( productSlug.startsWith( 'pressable-addon-php-memory-' ) ) {
+			const plan = getPressablePlan( productSlug );
+			const phpMemory =
+				plan?.phpMemory != null ? `${ formatNumber( plan.phpMemory ) } MB` : '512 MB';
+
+			description = translate(
+				'Add %(phpMemory)s of PHP memory for each PHP worker/process on your Pressable plan.',
+				{
+					args: {
+						phpMemory,
+					},
+				}
 			);
 		}
 

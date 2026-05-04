@@ -41,11 +41,18 @@ export const CanvasControls = ( {
 	onFeedback,
 	onSubmitFeedbackText,
 }: CanvasControlsProps ) => {
+	// FORNO-348: tolerate an older registered image-studio store that pre-dates
+	// FORNO-277's rating selectors/actions. No-op instead of crashing the modal.
 	const selectedFeedback = useSelect(
-		( select ) => select( imageStudioStore ).getImageRating( attachmentId ),
+		( select ) => {
+			const selectors = select( imageStudioStore ) as unknown as {
+				getImageRating?: ( id: number | null ) => 'up' | 'down' | null;
+			};
+			return selectors.getImageRating?.( attachmentId ) ?? null;
+		},
 		[ attachmentId ]
 	);
-	const { setImageRating } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { setImageRating } = useDispatch( imageStudioStore ) as Partial< ImageStudioActions >;
 	const [ showFeedbackPopover, setShowFeedbackPopover ] = useState( false );
 	const feedbackAnchorRef = useRef< HTMLDivElement | null >( null );
 
@@ -58,6 +65,11 @@ export const CanvasControls = ( {
 		( feedback: 'up' | 'down' ) => {
 			// Don't allow changing feedback once submitted for this image
 			if ( selectedFeedback !== null || attachmentId === null ) {
+				return;
+			}
+
+			// FORNO-348: skip tracking/popover when we can't persist the rating.
+			if ( ! setImageRating ) {
 				return;
 			}
 

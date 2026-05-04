@@ -1,0 +1,69 @@
+.atmosphere-composer {
+	.atmosphere-composer__pinned-context {
+		padding: 8px 12px;
+		background: var(--studio-gray-0, #f6f7f7);
+		border-radius: 4px;
+		margin-block-end: 8px;
+		// Long unbreakable strings (URLs, gibberish) in the snippet, display
+		// name, or handle would otherwise overflow the fixed-width modal and
+		// add a horizontal scrollbar. `overflow-wrap` is inherited.
+		overflow-wrap: anywhere;
+	}
+
+	.atmosphere-composer__pinned-author {
+		font-weight: 600;
+	}
+
+	.atmosphere-composer__pinned-handle {
+		color: var(--studio-gray-50, #646970);
+		margin-inline-start: 6px;
+		font-weight: 400;
+	}
+
+	.atmosphere-composer__pinned-snippet {
+		margin-block: 4px 0;
+	}
+
+	.atmosphere-composer__textarea {
+		width: 100%;
+		min-height: 80px;
+		resize: none;
+		border: none;
+		outline: none;
+		font: inherit;
+		padding: 8px 0;
+		background: transparent;
+	}
+
+	.atmosphere-composer__error {
+		color: #b32d2e;
+		padding: 0 12px;
+		margin-block: 8px;
+	}
+
+	.atmosphere-composer__footer {
+		margin-block-start: 8px;
+	}
+
+	.atmosphere-composer__media {
+		background: transparent;
+		border: none;
+		cursor: default;
+		padding: 4px;
+		color: var(--studio-gray-50, #646970);
+	}
+
+	.atmosphere-composer__count {
+		color: var(--studio-gray-50, #646970);
+		font-variant-numeric: tabular-nums;
+
+		&.is-warn {
+			color: #b26200;
+		}
+
+		&.is-over {
+			color: #b32d2e;
+			font-weight: 600;
+		}
+	}
+}

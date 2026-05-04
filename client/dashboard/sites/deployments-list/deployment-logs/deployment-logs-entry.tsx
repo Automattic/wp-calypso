@@ -86,8 +86,14 @@ export const DeploymentLogsEntry = ( {
 	return (
 		<HStack spacing={ 3 }>
 			<VStack spacing={ 2 }>
-				<Text style={ { color: '#FBFBFB', whiteSpace: 'pre-wrap' } } as="code">
-					<Text style={ { color: '#B3AFAE' } }>
+				<Text
+					style={ {
+						color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
+						whiteSpace: 'pre-wrap',
+					} }
+					as="code"
+				>
+					<Text style={ { color: 'var(--wp-components-color-gray-700, #757575)' } }>
 						{ formatDate( new Date( entry.timestamp ), locale, { timeStyle: 'medium' } ) }
 					</Text>{ ' ' }
 					{ entry.level.toUpperCase() } { entry.message }
@@ -95,7 +101,7 @@ export const DeploymentLogsEntry = ( {
 						<Button
 							variant="link"
 							style={ {
-								color: '#FBFBFB',
+								color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
 								marginInlineStart: '4px',
 							} }
 							onClick={ toggleExpandDetail }
@@ -106,7 +112,13 @@ export const DeploymentLogsEntry = ( {
 					) }
 				</Text>
 				{ detailExpanded && (
-					<Text style={ { color: '#FBFBFB', whiteSpace: 'pre-wrap' } } as="code">
+					<Text
+						style={ {
+							color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
+							whiteSpace: 'pre-wrap',
+						} }
+						as="code"
+					>
 						{ getDetail() }
 					</Text>
 				) }

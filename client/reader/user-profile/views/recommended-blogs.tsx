@@ -3,13 +3,13 @@ import { siteLogo, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
-import { UserProfileData } from 'calypso/lib/user/user';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface UserRecommendedBlogsProps {
-	user: UserProfileData;
+	user: ReaderUser;
 }
 
 const UserRecommendedBlogs = ( { user }: UserRecommendedBlogsProps ): JSX.Element | null => {

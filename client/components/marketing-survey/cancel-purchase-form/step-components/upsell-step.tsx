@@ -27,6 +27,7 @@ const HELP_CENTER_STORE = HelpCenter.register();
 type UpsellProps = {
 	children?: React.ReactNode;
 	image: string;
+	intent?: string;
 	title: TranslateResult;
 	acceptButtonText: TranslateResult;
 	acceptButtonUrl?: string;
@@ -53,6 +54,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 				<div className="cancel-purchase-form__upsell-buttons">
 					<Button
 						variant="primary"
+						isDestructive={ props.intent === 'remove' }
 						href={ props.acceptButtonUrl }
 						onClick={ () => {
 							setBusyButton( 'accept' );
@@ -63,7 +65,8 @@ function Upsell( { image, ...props }: UpsellProps ) {
 						{ props.acceptButtonText }
 					</Button>
 					<Button
-						variant="secondary"
+						variant={ props.intent === 'remove' ? 'tertiary' : 'secondary' }
+						isDestructive={ props.intent === 'remove' }
 						onClick={ () => {
 							setBusyButton( 'decline' );
 							props.onDecline?.();
@@ -106,10 +109,12 @@ type StepProps = {
 	closeDialog?: () => void;
 	cancelBundledDomain?: boolean;
 	includedDomainPurchase?: object;
+	intent?: string;
 	onDeclineUpsell?: () => void;
 	onClickFreeMonthOffer?: () => void;
 	onClickDowngrade?: ( upsell: string ) => void;
 	cancellationReason?: string;
+	declineButtonText?: TranslateResult;
 };
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
@@ -158,6 +163,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 
 						props.closeDialog?.();
 					} }
+					intent={ props.intent }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
 				>
@@ -190,6 +197,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
 						window.location.replace( builtByURL );
 					} }
+					intent={ props.intent }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBuiltBy }
 				>
@@ -213,6 +222,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
+					intent={ props.intent }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBusinessPlan }
 				>
@@ -241,6 +252,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					title={ translate( 'Switch to flexible monthly payments' ) }
 					acceptButtonText={ translate( 'Switch to monthly payments' ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					intent={ props.intent }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgMonthlyPayments }
 				>
@@ -286,6 +299,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						args: { plan: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 					} ) }
 					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					intent={ props.intent }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgSwitchPlan }
 				>
@@ -325,6 +340,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					title={ translate( 'How about a free month?' ) }
 					acceptButtonText={ translate( 'Get a free month' ) }
 					onAccept={ () => props.onClickFreeMonthOffer?.() }
+					intent={ props.intent }
+					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgFreeMonth }
 				>

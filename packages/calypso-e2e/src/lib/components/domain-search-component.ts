@@ -197,7 +197,7 @@ export class DomainSearchComponent {
 
 		if ( waitForContinueButton ) {
 			const continueButton = row.getByRole( 'button', { name: 'Continue' } );
-			await continueButton.waitFor();
+			await continueButton.waitFor( { timeout: 30000 } );
 		}
 
 		return selectedDomain;

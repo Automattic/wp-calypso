@@ -1,5 +1,6 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -27,7 +28,6 @@ import {
 	siteDomainsRoute,
 	siteSettingsRoute,
 } from '../../app/router/sites';
-import { menuDot } from '../../components/icons';
 import {
 	SidebarBackButton,
 	SidebarExpandableMenuItem,
@@ -70,6 +70,7 @@ export default function SiteSidebar() {
 function SiteMenuSidebar( { site }: { site: Site } ) {
 	const siteSlug = site.slug;
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
+	const isApmEnabled = isEnabled( 'performance/apm' );
 
 	if ( isSiteMigrationInProgress( site ) ) {
 		return null;
@@ -123,11 +124,26 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					{ __( 'Deployments' ) }
 				</SidebarMenuItem>
 			) }
-			{ isAvailable( sitePerformanceRoute ) && siteTypeSupports.performance && (
-				<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
-					{ __( 'Performance' ) }
-				</SidebarMenuItem>
-			) }
+			{ isAvailable( sitePerformanceRoute ) &&
+				siteTypeSupports.performance &&
+				( isApmEnabled ? (
+					<SidebarExpandableMenuItem
+						label={ __( 'Performance' ) }
+						icon={ chartBar }
+						to={ `/sites/${ siteSlug }/performance` }
+					>
+						<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/frontend` }>
+							{ __( 'Frontend' ) }
+						</SidebarMenuItem>
+						<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/backend` }>
+							{ __( 'Backend' ) }
+						</SidebarMenuItem>
+					</SidebarExpandableMenuItem>
+				) : (
+					<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
+						{ __( 'Performance' ) }
+					</SidebarMenuItem>
+				) ) }
 			{ isAvailable( siteMonitoringRoute ) && siteTypeSupports.monitoring && (
 				<SidebarMenuItem icon={ pending } to={ `/sites/${ siteSlug }/monitoring` }>
 					{ __( 'Monitoring' ) }
@@ -139,13 +155,13 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					icon={ formatListBullets }
 					to={ `/sites/${ siteSlug }/logs` }
 				>
-					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/activity` }>
+					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/activity` }>
 						{ __( 'Activity' ) }
 					</SidebarMenuItem>
-					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/php` }>
+					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/php` }>
 						{ __( 'PHP errors' ) }
 					</SidebarMenuItem>
-					<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/logs/server` }>
+					<SidebarMenuItem to={ `/sites/${ siteSlug }/logs/server` }>
 						{ __( 'Web server' ) }
 					</SidebarMenuItem>
 				</SidebarExpandableMenuItem>
@@ -158,10 +174,10 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 						icon={ shield }
 						to={ `/sites/${ siteSlug }/scan` }
 					>
-						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/scan/active` }>
+						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/active` }>
 							{ __( 'Active threats' ) }
 						</SidebarMenuItem>
-						<SidebarMenuItem icon={ menuDot } to={ `/sites/${ siteSlug }/scan/history` }>
+						<SidebarMenuItem to={ `/sites/${ siteSlug }/scan/history` }>
 							{ __( 'History' ) }
 						</SidebarMenuItem>
 					</SidebarExpandableMenuItem>

@@ -1,0 +1,51 @@
+.is-reader-page {
+	.user-hovercard__header {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.user-hovercard__avatar {
+		&,
+		a {
+			display: inline-flex;
+		}
+
+		img {
+			border-radius: 50%;
+		}
+	}
+
+	.user-hovercard__name {
+		a {
+			color: var( --color-text );
+			font-size: rem( 32px );
+			font-weight: 700;
+			line-height: 35px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			line-clamp: 1;
+			-webkit-box-orient: vertical;
+
+			&:not( :hover ) {
+				text-decoration: none;
+			}
+		}
+	}
+
+	.user-hovercard__description {
+		color: var( --color-gray-900 );
+		font-size: 14px;
+		font-weight: normal;
+		line-height: 21px;
+		margin: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+		-webkit-box-orient: vertical;
+	}
+}

@@ -18,6 +18,21 @@ import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
 import { appendQueryStringForRedirection } from './utils';
 
+const loadOverview = () =>
+	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-overview" */ './overview' );
+const loadSummary = () =>
+	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-summary" */ './summary' );
+const loadStatsPostDetail = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-stats-post-detail" */ './stats-post-detail'
+	);
+const loadCommentFollows = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-comment-follows" */ './comment-follows'
+	);
+const loadWordads = () =>
+	import( /* webpackChunkName: "async-load-calypso-my-sites-stats-wordads" */ './wordads' );
+
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
 	const durationAgo = moment.duration( endOfCurrentPeriod.diff( date ) );
@@ -148,7 +163,7 @@ export function overview( context, next ) {
 		siteId !== null ? (
 			<StatsPageLoader>
 				<AsyncLoad
-					require="calypso/my-sites/stats/overview"
+					require={ loadOverview }
 					placeholder={ PageLoading }
 					period={ activeFilter.period }
 					path={ context.pathname }
@@ -156,7 +171,7 @@ export function overview( context, next ) {
 			</StatsPageLoader>
 		) : (
 			<AsyncLoad
-				require="calypso/my-sites/stats/overview"
+				require={ loadOverview }
 				placeholder={ PageLoading }
 				period={ activeFilter.period }
 				path={ context.pathname }
@@ -307,7 +322,7 @@ export function summary( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/summary"
+				require={ loadSummary }
 				placeholder={ PageLoading }
 				path={ context.pathname }
 				statsQueryOptions={ statsQueryOptions }
@@ -337,7 +352,7 @@ export function post( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/stats-post-detail"
+				require={ loadStatsPostDetail }
 				placeholder={ PageLoading }
 				path={ context.path }
 				postId={ postId }
@@ -375,7 +390,7 @@ export function follows( context, next ) {
 	context.primary = (
 		<StatsPageLoader>
 			<AsyncLoad
-				require="calypso/my-sites/stats/comment-follows"
+				require={ loadCommentFollows }
 				placeholder={ PageLoading }
 				path={ context.path }
 				page={ pageNum }
@@ -421,7 +436,7 @@ export function wordAds( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/my-sites/stats/wordads"
+			require={ loadWordads }
 			placeholder={ PageLoading }
 			path={ context.pathname }
 			date={ date }

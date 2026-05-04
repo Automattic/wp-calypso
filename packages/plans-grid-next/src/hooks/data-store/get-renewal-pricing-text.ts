@@ -39,11 +39,6 @@ export function getRenewalPricingText( {
 		isSmallestUnit: true,
 	} );
 
-	const formattedFullPrice = formatCurrency( currentFullPrice, currencyCode, {
-		stripZeros: true,
-		isSmallestUnit: true,
-	} );
-
 	// Determine the billing period in months
 	let billingMonths = 12; // default to annual
 
@@ -55,8 +50,8 @@ export function getRenewalPricingText( {
 		billingMonths = 12;
 	}
 
-	// Different text based on variation
-	if ( showBillingDescriptionForIncreasedRenewalPrice === 'crossed_price' ) {
+	// Renewal pricing experiment: crossed-price copy for all active variants
+	if ( showBillingDescriptionForIncreasedRenewalPrice ) {
 		return translate( 'Auto-renews at %(price)s per month. Billed every %(months)s months.', {
 			args: {
 				price: formattedMonthlyPrice,
@@ -65,19 +60,6 @@ export function getRenewalPricingText( {
 			comment:
 				'%(price)s is a formatted price like $10, %(months)s is the billing period in months (12, 24, or 36)',
 		} );
-	} else if ( showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price' ) {
-		return translate(
-			'Get %(months)s months for %(fullPrice)s. Auto-renews at %(price)s per month.',
-			{
-				args: {
-					months: billingMonths,
-					fullPrice: formattedFullPrice,
-					price: formattedMonthlyPrice,
-				},
-				comment:
-					'%(months)s is the billing period (12, 24, or 36), %(fullPrice)s is the current/intro total price like $100, %(price)s is the renewal monthly price like $12',
-			}
-		);
 	}
 
 	return null;

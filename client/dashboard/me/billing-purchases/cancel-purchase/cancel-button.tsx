@@ -1,18 +1,15 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	hasAmountAvailableToRefund,
-	isNonDomainSubscription,
-	isOneTimePurchase,
-	getPurchaseCancellationFlowType,
-	CANCEL_FLOW_TYPE,
-} from '../../../utils/purchase';
+import { DisplayVariant } from '../../../utils/purchase';
 import { ATOMIC_REVERT_STEP } from './cancel-purchase-form/steps';
+import { getButtonLabels } from './get-confirmation-copy';
 import type { CancelPurchaseState } from './types';
 import type { Purchase, AtomicTransfer } from '@automattic/api-core';
 
 interface CancelButtonProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	state: CancelPurchaseState;
@@ -23,6 +20,7 @@ interface CancelButtonProps {
 
 export default function CancelButton( {
 	purchase,
+	displayVariant,
 	includedDomainPurchase,
 	atomicTransfer,
 	state,
@@ -31,6 +29,7 @@ export default function CancelButton( {
 	onClick,
 }: CancelButtonProps ) {
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
+	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 
 	// Check if we need atomic revert confirmation
 	const needsAtomicRevertConfirmation = atomicTransfer?.created_at;
@@ -42,45 +41,15 @@ export default function CancelButton( {
 			needsAtomicRevertConfirmation &&
 			! state.atomicRevertConfirmed &&
 			purchase.is_plan ) ||
-		( isDomainRegistrationPurchase && ! state.domainConfirmationConfirmed ) ||
+		( ! isSplitEnabled && isDomainRegistrationPurchase && ! state.domainConfirmationConfirmed ) ||
 		( ! state.showDomainOptionsStep && ! state.customerConfirmedUnderstanding );
 
-	const cancelButtonText = ( () => {
-		if ( includedDomainPurchase ) {
-			return __( 'Continue with cancellation' );
-		}
-
-		if (
-			getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE &&
-			isNonDomainSubscription( purchase )
-		) {
-			if ( purchase.is_plan ) {
-				return __( 'Remove plan' );
-			}
-
-			return __( 'Remove product' );
-		}
-
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			if ( purchase.is_domain_registration ) {
-				return __( 'Cancel domain and refund' );
-			}
-			if ( isNonDomainSubscription( purchase ) ) {
-				return __( 'Cancel plan' );
-			}
-			if ( isOneTimePurchase( purchase ) ) {
-				return __( 'Cancel and refund' );
-			}
-		}
-
-		if ( purchase.is_domain_registration ) {
-			return __( 'Cancel domain' );
-		}
-
-		if ( isNonDomainSubscription( purchase ) ) {
-			return __( 'Cancel plan' );
-		}
-	} )();
+	const cancelButtonText = includedDomainPurchase
+		? __( 'Continue with cancellation' )
+		: getButtonLabels( {
+				purchase,
+				intent: displayVariant === 'remove' ? 'remove' : 'cancel',
+		  } ).primary;
 
 	return (
 		<Button

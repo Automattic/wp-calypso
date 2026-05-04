@@ -10,6 +10,7 @@ import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
+import { isReaderChatAgent } from './is-reader-chat-agent';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -77,15 +78,24 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 	};
 }
 
+async function canAccessZendeskForAgent( agentId?: string ): Promise< boolean > {
+	if ( isReaderChatAgent( agentId ) ) {
+		return false;
+	}
+
+	return canConnectToZendesk();
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
 async function createWrappedContextProvider(
 	contextProvider: ContextProvider,
 	siteId?: number,
+	agentId?: string,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
-	const canAccessZendesk = await canConnectToZendesk();
+	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
 			const pluginContext = contextProvider.getClientContext();
@@ -120,22 +130,38 @@ async function createDefaultContextProvider(
 	currentRoute: string | undefined,
 	environment: string,
 	siteId?: number,
+	agentId?: string,
 	version?: string
 ): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
-	const canAccessZendesk = await canConnectToZendesk();
+	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
-		getClientContext: () => ( {
-			url: window.location.href,
-			pathname: currentRoute || window.location.pathname,
-			search: window.location.search,
-			can_access_zendesk: canAccessZendesk,
-			environment,
-			// Match Odie's context shape so the server can read current_screen.url
-			currentScreen: { url: window.location.href },
-			...( siteId && { selectedSiteId: siteId } ),
-			// TODO: Remove once agenttic-client supports top-level constructorArguments
-			...( version && { constructorArguments: { version } } ),
-		} ),
+		getClientContext: () => {
+			// Hosts that don't have a plugin context (e.g. reader-chat on a
+			// blog frontend) can still surface page metadata by assigning it
+			// to `window.agentsManagerData`. Pick up `currentPost`, `siteName`,
+			// and `siteUrl` here so the orchestrator knows which post the
+			// reader is viewing without every host wiring its own provider.
+			const hostData = isReaderChatAgent( agentId )
+				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+						.agentsManagerData ?? {}
+				: {};
+
+			return {
+				url: window.location.href,
+				pathname: currentRoute || window.location.pathname,
+				search: window.location.search,
+				can_access_zendesk: canAccessZendesk,
+				environment,
+				// Match Odie's context shape so the server can read current_screen.url
+				currentScreen: { url: window.location.href },
+				...( siteId && { selectedSiteId: siteId } ),
+				...( hostData.currentPost ? { currentPost: hostData.currentPost } : {} ),
+				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
+				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
+				// TODO: Remove once agenttic-client supports top-level constructorArguments
+				...( version && { constructorArguments: { version } } ),
+			};
+		},
 	};
 }
 
@@ -173,12 +199,18 @@ export async function createAgentConfig(
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = await createWrappedContextProvider( contextProvider, siteId, version );
+		config.contextProvider = await createWrappedContextProvider(
+			contextProvider,
+			siteId,
+			agentId,
+			version
+		);
 	} else {
 		config.contextProvider = await createDefaultContextProvider(
 			currentRoute,
 			environment,
 			siteId,
+			agentId,
 			version
 		);
 	}

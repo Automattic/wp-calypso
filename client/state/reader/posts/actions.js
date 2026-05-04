@@ -2,7 +2,7 @@ import { filter, forEach, partition, get } from 'lodash';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import { keyForPost, keyToString } from 'calypso/reader/post-key';
+import { keyForPost } from 'calypso/reader/post-key';
 import { receiveLikes } from 'calypso/state/posts/likes/actions';
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
 import { runFastRules, runSlowRules } from './normalization-rules';
@@ -21,33 +21,6 @@ if ( process.env.NODE_ENV !== 'test' ) {
 
 function trackRailcarRender( post ) {
 	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
-}
-
-function fetchForKey( postKey ) {
-	const query = {};
-
-	const contentWidth = readerContentWidth();
-	if ( contentWidth ) {
-		query.content_width = contentWidth;
-	}
-
-	if ( postKey.blogId ) {
-		return wpcom.req.get(
-			`/read/sites/${ encodeURIComponent( postKey.blogId ) }/posts/${ encodeURIComponent(
-				postKey.postId
-			) }`,
-			query
-		);
-	}
-	const { postId, feedId, ...params } = postKey;
-	return wpcom.req.get(
-		`/read/feed/${ encodeURIComponent( feedId ) }/posts/${ encodeURIComponent( postId ) }`,
-		{
-			apiVersion: '1.2',
-			...params,
-			...query,
-		}
-	);
 }
 
 // helper that hides promise rejections so they return successfully with null instead of rejecting
@@ -103,54 +76,29 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 	return Promise.resolve( normalizedPosts );
 };
 
-const requestsInFlight = new Set();
-export const fetchPost =
-	( postKey, isHelpCenter = false ) =>
-	( dispatch ) => {
-		const requestKey = keyToString( postKey );
-		if ( requestsInFlight.has( requestKey ) ) {
-			return;
-		}
-
-		requestsInFlight.add( requestKey );
-		function removeKey() {
-			requestsInFlight.delete( requestKey );
-		}
-		return fetchForKey( postKey, isHelpCenter )
-			.then( ( data ) => {
-				removeKey();
-				return dispatch( receivePosts( [ data ] ) );
-			} )
-			.catch( ( error ) => {
-				removeKey();
-				return dispatch( receiveErrorForPostKey( error, postKey ) );
-			} );
-	};
-
-function receiveErrorForPostKey( error, postKey ) {
-	return {
-		type: READER_POSTS_RECEIVE,
-		posts: [
-			{
-				feed_ID: postKey.feedId,
-				ID: postKey.postId,
-				site_ID: postKey.blogId,
-				is_external: ! postKey.blogId,
-				global_ID: crypto.randomUUID(),
-				is_error: true,
-				feed_item_ID: postKey.postId,
-				error,
-			},
-		],
-	};
-}
-
 export function reloadPost( post ) {
 	return function ( dispatch ) {
 		// keep track of any railcars we might have
 		const railcar = post.railcar;
 		const postKey = keyForPost( post );
-		fetchForKey( postKey ).then( ( data ) => {
+		const contentWidth = readerContentWidth();
+		const query = contentWidth ? { content_width: contentWidth } : {};
+
+		const request = postKey.blogId
+			? wpcom.req.get(
+					`/read/sites/${ encodeURIComponent( postKey.blogId ) }/posts/${ encodeURIComponent(
+						postKey.postId
+					) }`,
+					query
+			  )
+			: wpcom.req.get(
+					`/read/feed/${ encodeURIComponent( postKey.feedId ) }/posts/${ encodeURIComponent(
+						postKey.postId
+					) }`,
+					{ apiVersion: '1.2', ...query }
+			  );
+
+		request.then( ( data ) => {
 			data.railcar = railcar;
 			dispatch( receivePosts( [ data ] ) );
 		} );

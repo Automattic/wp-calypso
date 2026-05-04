@@ -4,6 +4,13 @@
 import { renderHook } from '@testing-library/react';
 import useSetupCustomActions from '../use-setup-custom-actions';
 
+const mockSetIsOpen = jest.fn();
+const mockSetIsDocked = jest.fn();
+let mockContext = {
+	getActiveSessionId: jest.fn( () => 'session-123' ),
+	agentConfig: { agentId: 'reader-chat' },
+};
+
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn( () => ( {
 		hasLoaded: true,
@@ -12,8 +19,8 @@ jest.mock( '@wordpress/data', () => ( {
 		floatingPosition: '',
 	} ) ),
 	useDispatch: jest.fn( () => ( {
-		setIsOpen: jest.fn(),
-		setIsDocked: jest.fn(),
+		setIsOpen: mockSetIsOpen,
+		setIsDocked: mockSetIsDocked,
 	} ) ),
 } ) );
 
@@ -22,9 +29,7 @@ jest.mock( 'react-router-dom', () => ( {
 } ) );
 
 jest.mock( '../../contexts', () => ( {
-	useAgentsManagerContext: jest.fn( () => ( {
-		getActiveSessionId: jest.fn( () => 'session-123' ),
-	} ) ),
+	useAgentsManagerContext: jest.fn( () => mockContext ),
 } ) );
 
 jest.mock( '../../stores', () => ( {
@@ -44,7 +49,12 @@ const baseProps = {
 
 describe( 'useSetupCustomActions — ready signal', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
 		delete window.__agentsManagerActions;
+		mockContext = {
+			getActiveSessionId: jest.fn( () => 'session-123' ),
+			agentConfig: { agentId: 'reader-chat' },
+		};
 	} );
 
 	it( 'sets isReady on the global after mount', () => {
@@ -88,5 +98,25 @@ describe( 'useSetupCustomActions — ready signal', () => {
 		expect( snapshot?.setChatOpen ).toBeInstanceOf( Function );
 		expect( snapshot?.setChatDocked ).toBeInstanceOf( Function );
 		expect( snapshot?.isReady ).toBe( true );
+	} );
+
+	it( 'opens Reader Chat without persisting shared Agents Manager state', () => {
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, false );
+	} );
+
+	it( 'opens regular agents while preserving shared Agents Manager state persistence', () => {
+		mockContext = {
+			getActiveSessionId: jest.fn( () => 'session-123' ),
+			agentConfig: { agentId: 'wp-orchestrator' },
+		};
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
 	} );
 } );

@@ -65,6 +65,25 @@ import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
 
+const loadCheckout = () =>
+	import( /* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx' );
+const loadQuickLanguageSwitcher = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-quick-language-switcher" */ './quick-language-switcher'
+	);
+const loadMasterbarCartWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-cart-masterbar-cart-wrapper" */ './masterbar-cart/masterbar-cart-wrapper'
+	);
+const loadMasterbarAgentsManager = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager" */ './masterbar-agents-manager'
+	);
+const loadMasterbarHelpCenter = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
+	);
+
 class MasterbarLoggedIn extends Component {
 	static propTypes = {
 		user: PropTypes.object.isRequired,
@@ -311,7 +330,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require="calypso/layout/masterbar/checkout"
+				require={ loadCheckout }
 				placeholder={ null }
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
@@ -728,7 +747,7 @@ class MasterbarLoggedIn extends Component {
 
 	renderLanguageSwitcher() {
 		if ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) {
-			return <AsyncLoad require="./quick-language-switcher" placeholder={ null } />;
+			return <AsyncLoad require={ loadQuickLanguageSwitcher } placeholder={ null } />;
 		}
 		return null;
 	}
@@ -741,7 +760,7 @@ class MasterbarLoggedIn extends Component {
 		}
 		return (
 			<AsyncLoad
-				require="./masterbar-cart/masterbar-cart-wrapper"
+				require={ loadMasterbarCartWrapper }
 				placeholder={ null }
 				goToCheckout={ this.goToCheckout }
 				onRemoveProduct={ this.onRemoveCartProduct }
@@ -788,7 +807,7 @@ class MasterbarLoggedIn extends Component {
 
 			return (
 				<AsyncLoad
-					require="./masterbar-agents-manager"
+					require={ loadMasterbarAgentsManager }
 					siteId={ siteId }
 					tooltip={ __( 'Help' ) }
 					placeholder={ placeholder }
@@ -810,7 +829,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require="./masterbar-help-center"
+				require={ loadMasterbarHelpCenter }
 				siteId={ siteId }
 				tooltip={ __( 'Help' ) }
 				placeholder={ placeholder }

@@ -114,6 +114,9 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
+			'isFromJetpackConnector',
+			'isUnifiedConnectionFlow',
+			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
 			'currentQuery',
@@ -370,6 +373,9 @@ export class Login extends Component {
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
+						isFromJetpackConnector={ this.props.isFromJetpackConnector }
+						isUnifiedConnectionFlow={ this.props.isUnifiedConnectionFlow }
+						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
@@ -398,6 +404,8 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
+		isFromJetpackConnector,
+		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
@@ -421,6 +429,8 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
+		isFromJetpackConnector,
+		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
@@ -462,11 +472,25 @@ const LoginWithContext = ( props ) => {
 	);
 };
 
+const trimString = ( s ) => s.trim();
+
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
+
+		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
+		const connectorFromParam = redirectParams.get( 'from' ) || get( currentQuery, 'from' );
+		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
+		const isUnifiedConnectionFlow =
+			isFromJetpackConnector || connectorFromParam === 'jetpack-onboarding';
+		const connectorPlugins = isFromJetpackConnector
+			? ( redirectParams.get( 'plugins' ) || get( currentQuery, 'plugins' ) || '' )
+					.split( ',' )
+					.map( trimString )
+					.filter( Boolean )
+			: [];
 
 		return {
 			locale: getCurrentLocaleSlug( state ),
@@ -506,6 +530,9 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+			isFromJetpackConnector,
+			isUnifiedConnectionFlow,
+			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
