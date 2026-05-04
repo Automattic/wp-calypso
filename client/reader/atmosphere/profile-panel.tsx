@@ -59,7 +59,13 @@ export function ProfilePanel( { connection }: ProfilePanelProps ) {
 
 	return (
 		<>
-			{ composer && <TimelineComposePill connection={ connection } entryPoint="profile_inline" /> }
+			{ composer && (
+				<TimelineComposePill
+					connection={ connection }
+					avatar={ data.avatar }
+					entryPoint="profile_inline"
+				/>
+			) }
 			<SocialProfileCard
 				avatar={ data.avatar }
 				banner={ data.banner }

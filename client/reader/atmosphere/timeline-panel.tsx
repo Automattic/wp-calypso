@@ -1,4 +1,4 @@
-import { useTimelineInfiniteQuery } from '@automattic/api-queries';
+import { useConnectionQuery, useTimelineInfiniteQuery } from '@automattic/api-queries';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -111,6 +111,9 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 
 	const composer = useOptionalComposer();
 	const openComposer = composer?.openComposer;
+	// Surfaces the real avatar on the compose pill — the list endpoint
+	// that supplied `connection` always returns null for `avatar`.
+	const { data: connectionDetails } = useConnectionQuery( connection.id );
 	const onReplyClick = useMemo( () => {
 		if ( ! openComposer ) {
 			return undefined;
@@ -162,7 +165,13 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			{ composer && <TimelineComposePill connection={ connection } entryPoint="timeline_inline" /> }
+			{ composer && (
+				<TimelineComposePill
+					connection={ connection }
+					avatar={ connectionDetails?.avatar }
+					entryPoint="timeline_inline"
+				/>
+			) }
 			<SocialFeedList< SocialPost >
 				items={ items }
 				isPending={ isPending }

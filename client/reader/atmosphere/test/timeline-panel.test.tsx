@@ -54,8 +54,40 @@ function makePost( uri: string, text = 'hello' ) {
 	};
 }
 
+// Pre-seed the connection-details cache (keyed by id) so the panel's
+// useConnectionQuery call is a cache hit and never issues a network
+// request the test isn't nocking. Tests that care about the avatar
+// can override the seeded data per-test.
 function makeQueryClient() {
-	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	client.setQueryData( readerAtmosphereKeys.connection( 42 ), {
+		did: 'did:plc:abc',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	client.setQueryData( readerAtmosphereKeys.connection( 7 ), {
+		did: 'did:plc:abc234567defghi234567jklab',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	client.setQueryData( readerAtmosphereKeys.connection( 99 ), {
+		did: 'did:plc:other',
+		handle: 'bob.bsky.social',
+		display_name: 'Bob',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	return client;
 }
 
 describe( 'TimelinePanel', () => {
@@ -887,6 +919,38 @@ describe( 'TimelinePanel — compose pill', () => {
 		await user.click( pill );
 
 		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+	} );
+
+	it( 'renders the pill avatar from the connection-details cache, not the list-endpoint shape', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
+
+		// Override the seeded connection-details so avatar is non-null.
+		const queryClient = makeQueryClient();
+		const detailsAvatar = 'https://cdn.example/timeline-avatar.jpg';
+		queryClient.setQueryData( readerAtmosphereKeys.connection( 42 ), {
+			did: 'did:plc:abc',
+			handle: 'alice.bsky.social',
+			display_name: 'Alice',
+			description: '',
+			avatar: detailsAvatar,
+			banner: null,
+			counts: { followers: 0, follows: 0, posts: 0 },
+		} );
+
+		const { container } = renderWithProvider(
+			<ComposerProvider connectionId={ 42 }>
+				<TimelinePanel connection={ connection } />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
+
+		const avatarImg = container.querySelector< HTMLImageElement >(
+			'.atmosphere-compose-pill__avatar'
+		);
+		expect( avatarImg?.tagName ).toBe( 'IMG' );
+		expect( avatarImg?.getAttribute( 'src' ) ).toBe( detailsAvatar );
 	} );
 } );
 

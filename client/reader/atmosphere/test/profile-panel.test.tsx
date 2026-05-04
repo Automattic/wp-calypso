@@ -135,4 +135,38 @@ describe( 'ProfilePanel — compose pill', () => {
 			expect.objectContaining( { kind: 'standalone', entry_point: 'profile_inline' } )
 		);
 	} );
+
+	it( 'renders the pill avatar from the connection-details query, not the list-endpoint shape', async () => {
+		// The list endpoint that supplies `connection` always returns
+		// `avatar: null`. The pill must source the avatar URL from the
+		// connection-details query passed in by the panel.
+		const detailsAvatar = 'https://cdn.example/details-avatar.jpg';
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42' )
+			.reply( 200, {
+				did: 'did:plc:viewer',
+				handle: 'viewer.bsky.social',
+				display_name: 'Viewer Name',
+				description: 'About me.',
+				avatar: detailsAvatar,
+				banner: null,
+				counts: { followers: 0, follows: 0, posts: 0 },
+			} );
+
+		const { container } = renderWithProvider(
+			<ComposerProvider connectionId={ 42 }>
+				<ProfilePanel connection={ connection } />
+			</ComposerProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		// Wait for the pill to render after the connection details resolve.
+		await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
+
+		const avatarImg = container.querySelector< HTMLImageElement >(
+			'.atmosphere-compose-pill__avatar'
+		);
+		expect( avatarImg?.tagName ).toBe( 'IMG' );
+		expect( avatarImg?.getAttribute( 'src' ) ).toBe( detailsAvatar );
+	} );
 } );

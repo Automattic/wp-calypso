@@ -7,13 +7,17 @@ import type { AtmosphereConnection } from '@automattic/api-core';
 interface Props {
 	connection: AtmosphereConnection;
 	entryPoint: Exclude< ComposerEntryPoint, 'fab' >;
+	avatar?: string | null;
 	className?: string;
 }
 
-export function TimelineComposePill( { connection, entryPoint, className }: Props ) {
+export function TimelineComposePill( { connection, entryPoint, avatar, className }: Props ) {
 	const translate = useTranslate();
 	const { openComposer } = useComposer();
 	const placeholder = translate( 'What’s up?' ) as string;
+	// `connection.avatar` always comes from the list endpoint, which omits
+	// avatars; the real URL is supplied by callers from useConnectionQuery.
+	const avatarUrl = avatar ?? connection.avatar;
 
 	return (
 		<button
@@ -22,10 +26,10 @@ export function TimelineComposePill( { connection, entryPoint, className }: Prop
 			aria-label={ placeholder }
 			onClick={ () => openComposer( { kind: 'standalone', entry_point: entryPoint } ) }
 		>
-			{ connection.avatar ? (
+			{ avatarUrl ? (
 				<img
 					className="atmosphere-compose-pill__avatar"
-					src={ connection.avatar }
+					src={ avatarUrl }
 					alt=""
 					aria-hidden="true"
 				/>
