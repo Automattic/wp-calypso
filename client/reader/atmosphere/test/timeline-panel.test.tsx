@@ -853,6 +853,43 @@ describe( 'TimelinePanel — reply composer errors', () => {
 	} );
 } );
 
+describe( 'TimelinePanel — compose pill', () => {
+	// Match either a curly or straight apostrophe — the production placeholder
+	// uses the curly form (CLAUDE.md preserves it).
+	const PLACEHOLDER_RE = /what['’]s up/i;
+
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'renders the compose pill at the top of the feed and opens the standalone modal on click', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		const pill = await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
+		expect( pill ).toBeVisible();
+
+		await user.click( pill );
+
+		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+	} );
+} );
+
 describe( 'TimelinePanel — reply composer optimistic + stickiness', () => {
 	beforeEach( () => {
 		jest

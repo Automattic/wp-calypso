@@ -12,6 +12,7 @@ import {
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
+import { TimelineComposePill } from './composer/triggers/timeline-compose-pill';
 import { projectAtmosphereError } from './error-projection';
 import {
 	getProfileUrl as buildProfileUrl,
@@ -161,6 +162,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
+			{ composer && <TimelineComposePill connection={ connection } entryPoint="timeline_inline" /> }
 			<SocialFeedList< SocialPost >
 				items={ items }
 				isPending={ isPending }
