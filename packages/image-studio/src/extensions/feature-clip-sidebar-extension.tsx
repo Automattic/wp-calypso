@@ -2,15 +2,17 @@
  * "Generate Feature Clip" post-editor sidebar panel.
  *
  * Registers a PluginDocumentSettingPanel (from `@wordpress/editor`) in the
- * Gutenberg post editor with a single button that opens the studio in
- * video-generation mode. Mirrors the shape of Jetpack's "Generate featured
- * image" sidebar panel.
+ * Gutenberg post editor with a hero card that opens the studio in
+ * video-generation mode. Surfaces an "Experimental" pill in the panel header
+ * and a dismissible callout explaining the experimental nature of the
+ * feature. Mirrors the framing of Jetpack's "Generate featured image"
+ * sidebar panel.
  */
-import { Button } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { useState } from 'react';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
@@ -19,8 +21,33 @@ import './feature-clip-sidebar.scss';
 
 const PLUGIN_NAME = 'image-studio-feature-clip';
 const PANEL_NAME = 'image-studio-feature-clip-panel';
+const EXPERIMENTAL_DISMISS_KEY = 'image-studio-feature-clip-experimental-dismissed';
+
+function readDismissed(): boolean {
+	try {
+		return window.localStorage?.getItem( EXPERIMENTAL_DISMISS_KEY ) === '1';
+	} catch {
+		return false;
+	}
+}
+
+function persistDismissed(): void {
+	try {
+		window.localStorage?.setItem( EXPERIMENTAL_DISMISS_KEY, '1' );
+	} catch {}
+}
+
+function ExperimentalPill(): JSX.Element {
+	return (
+		<span className="image-studio-feature-clip-panel__experimental-pill">
+			{ __( 'Experimental', __i18n_text_domain__ ) }
+		</span>
+	);
+}
 
 function FeatureClipPanel(): JSX.Element {
+	const [ calloutOpen, setCalloutOpen ] = useState< boolean >( () => ! readDismissed() );
+
 	const handleClick = async () => {
 		const { openImageStudio } = dispatch( imageStudioStore );
 		// Reset any previously generated clip so a fresh session starts with
@@ -44,26 +71,69 @@ function FeatureClipPanel(): JSX.Element {
 		openImageStudio( undefined, undefined, ImageStudioEntryPoint.PostEditorFeatureClip );
 	};
 
+	const dismissCallout = () => {
+		setCalloutOpen( false );
+		persistDismissed();
+	};
+
+	const titleNode = (
+		<span className="image-studio-feature-clip-panel__title">
+			{ __( 'Generate Feature Clip', __i18n_text_domain__ ) }
+			<ExperimentalPill />
+		</span>
+	);
+
 	return (
 		<PluginDocumentSettingPanel
 			name={ PANEL_NAME }
-			title={ __( 'Generate Feature Clip', __i18n_text_domain__ ) }
+			title={ titleNode as unknown as string }
 			className="image-studio-feature-clip-panel"
 		>
-			<p className="image-studio-feature-clip-panel__description">
-				{ __(
-					'Generate a short video clip based on this post. We use the post content and your site guidelines as a starting point.',
-					__i18n_text_domain__
-				) }
-			</p>
-			<Button
-				variant="secondary"
-				className="image-studio-feature-clip-panel__button"
-				__next40pxDefaultSize
-				onClick={ handleClick }
-			>
-				{ __( 'Generate clip', __i18n_text_domain__ ) }
-			</Button>
+			<div className="image-studio-feature-clip-panel__hero">
+				<div className="image-studio-feature-clip-panel__hero-dots" aria-hidden="true" />
+				<div className="image-studio-feature-clip-panel__hero-content">
+					<div className="image-studio-feature-clip-panel__hero-title">
+						{ __( 'Turn this post into a short clip', __i18n_text_domain__ ) }
+					</div>
+					<div className="image-studio-feature-clip-panel__hero-subtitle">
+						{ __(
+							"We'll use your post and site style as a starting point.",
+							__i18n_text_domain__
+						) }
+					</div>
+					<button
+						type="button"
+						className="image-studio-feature-clip-panel__hero-button"
+						onClick={ handleClick }
+					>
+						<span aria-hidden="true" className="image-studio-feature-clip-panel__hero-button-icon">
+							✦
+						</span>
+						{ __( 'Generate clip', __i18n_text_domain__ ) }
+					</button>
+				</div>
+			</div>
+			{ calloutOpen && (
+				<div className="image-studio-feature-clip-panel__callout" role="note">
+					<span aria-hidden="true" className="image-studio-feature-clip-panel__callout-icon">
+						ⓘ
+					</span>
+					<span className="image-studio-feature-clip-panel__callout-text">
+						{ __(
+							'This is an experimental AI feature. Outputs may need editing before publishing.',
+							__i18n_text_domain__
+						) }
+					</span>
+					<button
+						type="button"
+						className="image-studio-feature-clip-panel__callout-dismiss"
+						aria-label={ __( 'Dismiss', __i18n_text_domain__ ) }
+						onClick={ dismissCallout }
+					>
+						×
+					</button>
+				</div>
+			) }
 		</PluginDocumentSettingPanel>
 	);
 }
