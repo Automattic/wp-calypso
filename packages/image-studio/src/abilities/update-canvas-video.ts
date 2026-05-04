@@ -9,6 +9,8 @@
 
 import { registerAbility } from '@wordpress/abilities';
 import { dispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { store as imageStudioStore, type ImageStudioActions } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioImageGenerated } from '../utils/tracking';
@@ -104,6 +106,7 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 				const { setCurrentVideoUrl, setCurrentAttachmentId, setCurrentDurationSeconds } = dispatch(
 					videoStudioStore
 				) as VideoStudioActions;
+				const { addNotice } = dispatch( imageStudioStore ) as ImageStudioActions;
 
 				try {
 					await preloadVideo( url );
@@ -120,6 +123,8 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 					attachmentId,
 					isAnnotated: false,
 				} );
+
+				addNotice( __( 'Video saved to Media Library', __i18n_text_domain__ ), 'success' );
 
 				return { ok: true };
 			},
