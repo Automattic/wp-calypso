@@ -253,29 +253,55 @@ As of slice 5, the card-link / quote / replies-count / reply-context surfaces al
 
 When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` and `getProfileUrl` from the analytics context before constructing any post- or profile-destination URL.
 
-### Like interactions
+### Like / Favourite interactions
 
-ATmosphere timeline payloads can include `viewer: { like, repost }` on each
-`AtmosphereFeedItem`. The field is optional during the backend rollout window,
-so consumers must use `post.viewer?.like ?? null` semantics and treat missing
-viewer data as "not liked".
+Both protocols expose a per-viewer interaction state on each feed item.
+ATmosphere uses `viewer: { like: string | null; repost: string | null }` —
+the value is the user's like/repost record URI (or `PENDING_LIKE_URI`
+during the optimistic window). Mastodon uses
+`viewer: { favourited: boolean; reblogged: boolean }`. The field is
+optional during the backend rollout window on both protocols; consumers
+must treat a missing `viewer` as "not liked / not favourited".
 
-`<LikeButton>` lives next to the post-card subcomponents and is rendered by
-`<PostCardCounts>` only when it receives both a `connectionId` and a post `cid`.
-Thread, author-feed, quoted-post, and non-ATmosphere card contexts fall back to
-the static likes count unless the host shell deliberately passes those props.
+The Mastodon mapper (`mappers/mastodon.ts`) projects the booleans onto the
+shared `SocialPost.viewer.{like,repost}` shape using a marker string
+(`'favourited'` / `'reblogged'`) for true and `null` for false. That keeps
+`<LikeButton>` and consumers protocol-agnostic — every consumer reads
+`Boolean(post.viewer?.like)` and gets the right answer for both protocols.
 
-The button uses `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
-`@automattic/api-queries`. Those hooks optimistically patch every cached
-timeline page containing the target post, then restore the snapshot on error.
-The create path temporarily stores `PENDING_LIKE_URI` in `viewer.like`; keep
-using `rkeyFromUri()` for unlike/delete flows because it returns `null` for that
-sentinel and prevents a DELETE with a fake rkey.
+`<LikeButton>` is presentational and protocol-agnostic. It calls
+`useFavouriteAction(post)` from `<FavouritesProvider>` (defined in
+`favourites-context.tsx`), and renders nothing when no provider is mounted.
+`<PostCardCounts>` falls back to a static count in that case.
 
-The connection ID flows from the protocol shell:
-`TimelinePanel` → `SocialPostCard` → `PostCardCounts` → `LikeButton`. Any future
-interactive count button that writes via a user's PDS should follow the same
-shape rather than reading connection identity from global state.
+Each protocol shell wires its own adapter hook factory:
+
+- ATmosphere: `client/reader/atmosphere/use-atmosphere-favourite-action.ts`
+  exports `makeUseAtmosphereFavouriteAction(connectionId)`. It calls
+  `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
+  `@automattic/api-queries`, uses `rkeyFromUri(viewer.like)` to derive the
+  delete key (returns `null` for `PENDING_LIKE_URI`, preventing a DELETE
+  with a fake rkey), and emits the labels "Like" / "Like, %d like(s)".
+  Tracks events: `_like_clicked`, `_unlike_clicked`, `_like_error_shown`.
+- Mastodon: `client/reader/mastodon/use-mastodon-favourite-action.ts`
+  exports `makeUseMastodonFavouriteAction(connectionId)`. It calls
+  `useCreateMastodonFavouriteMutation()` /
+  `useDeleteMastodonFavouriteMutation()`, uses `post.uri` (the status_id)
+  for the delete call, and emits the UK-spelled labels "Favourite" /
+  "Favourite, %d favourite(s)". Tracks events: `_favourite_clicked`,
+  `_unfavourite_clicked`, `_favourite_error_shown`.
+
+Both mutation hooks optimistically patch every cached query under their
+protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
+plus thread-tree nodes recursively), then restore snapshots on error.
+
+The connection ID flows from the protocol panel:
+`Panel` → `<FavouritesProvider value={makeUse…FavouriteAction(id)}>` plus
+`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<LikeButton>`.
+Any future interactive count button (repost, follow, bookmark) should
+follow the same provider-injected adapter shape rather than reading
+connection identity from global state or hard-coding protocol logic into
+the shared button.
 
 ### Repost interactions
 
