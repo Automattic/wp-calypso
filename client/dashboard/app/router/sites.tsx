@@ -51,6 +51,7 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
+import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
 import { shouldLoadWpVersionNotice } from '../../sites/overview/wp-version-notice';
 import { reauthRequiredLink } from '../../utils/link';
 import {
@@ -323,6 +324,9 @@ export const siteLogsPhpRoute = createRoute( {
 	getParentRoute: () => siteLogsRoute,
 	path: 'php',
 	loader: loadSiteLogsRoute,
+	validateSearch: ( search ): { severity?: ( typeof VALUES_SEVERITY )[ number ] } => ( {
+		severity: VALUES_SEVERITY.find( ( v ) => v === search.severity ),
+	} ),
 } ).lazy( () =>
 	import( '../../sites/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {

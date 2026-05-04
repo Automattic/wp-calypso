@@ -12,7 +12,7 @@ import {
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectMastodonError } from './error-projection';
-import { getProfileUrl, getThreadUrl as buildThreadUrl } from './route';
+import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
 import type { MastodonConnection, MastodonFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
@@ -107,6 +107,11 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id, connection.instance ]
 	);
 
+	const buildTagUrl = useCallback(
+		( tag: string ) => getTagFeedUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
@@ -120,8 +125,9 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			onClick: onClickAnalytics,
 			getThreadUrl,
 			getProfileUrl: buildProfileUrl,
+			getTagUrl: buildTagUrl,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
 	);
 
 	return (

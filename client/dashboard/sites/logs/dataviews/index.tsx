@@ -73,6 +73,7 @@ function SiteLogsDataViews( {
 		slug: `site-logs-${ logType }`,
 		defaultView: logType === LogType.PHP ? DEFAULT_PHP_LOGS_VIEW : DEFAULT_SERVER_LOGS_VIEW,
 		queryParams: search,
+		queryParamFilterFields: logType === LogType.PHP ? [ 'severity' ] : [],
 	} );
 
 	// We want to parse 'from' and 'to' from the URL.
@@ -155,6 +156,9 @@ function SiteLogsDataViews( {
 	}, [] );
 
 	useEffect( () => {
+		if ( ! view.page || view.page === 1 ) {
+			return;
+		}
 		updateView( { ...view, page: 1 } );
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
 	}, [ dateRangeVersion ] );

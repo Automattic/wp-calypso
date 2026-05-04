@@ -57,3 +57,26 @@ describe( 'readerMastodonKeys.authorFeed filter dimension', () => {
 		] );
 	} );
 } );
+
+describe( 'readerMastodonKeys.tagFeed', () => {
+	it( 'keys by connection id and hashtag (no filter slot)', () => {
+		expect( readerMastodonKeys.tagFeed( 7, 'rust' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'tag-feed',
+			7,
+			'rust',
+		] );
+	} );
+
+	it( 'appends the filter when set', () => {
+		expect( readerMastodonKeys.tagFeed( 7, 'rust', 'media' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'tag-feed',
+			7,
+			'rust',
+			'media',
+		] );
+	} );
+} );

@@ -91,6 +91,10 @@ export interface SocialAuthorProfilePanelProps<
 		handle?: string | null;
 	} ) => string | null;
 	buildThreadUrl: ( postUri: string ) => string | null;
+	// Slice-8 hashtag resolver. Optional: protocols without a hashtag
+	// concept (atmosphere) leave it unset and `<PostCardBody>` falls
+	// back to the anchor's external href.
+	buildTagUrl?: ( tag: string ) => string | null;
 
 	// Empty / error vocabulary for the SocialFeedList. Wrappers compute
 	// these (e.g. Mastodon swaps in a locked-account variant when the
@@ -135,6 +139,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 	projectFeedError,
 	buildProfileUrl,
 	buildThreadUrl,
+	buildTagUrl,
 	emptyTitle,
 	emptyLine,
 	emptyActionLabel,
@@ -299,8 +304,9 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 			onClick: onClickAnalytics,
 			getThreadUrl: buildThreadUrl,
 			getProfileUrl: buildProfileUrl,
+			getTagUrl: buildTagUrl,
 		} ),
-		[ source, connectionId, onClickAnalytics, buildThreadUrl, buildProfileUrl ]
+		[ source, connectionId, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl ]
 	);
 
 	const renderHeader = () => {

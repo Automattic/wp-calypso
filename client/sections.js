@@ -539,6 +539,7 @@ const sections = [
 			'/reader/mastodon/:id/:tab',
 			'/reader/mastodon/:id/thread/:status_id',
 			'/reader/mastodon/:id/profile/:actor',
+			'/reader/mastodon/:id/tag/:hashtag',
 		],
 		module: 'calypso/reader/mastodon',
 		group: 'reader',
@@ -603,12 +604,6 @@ const sections = [
 		paths: [ '/migrate' ],
 		module: 'calypso/my-sites/migrate',
 		group: 'sites',
-	},
-	{
-		name: 'devdocs',
-		paths: [ '/devdocs' ],
-		module: 'calypso/devdocs',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'home',

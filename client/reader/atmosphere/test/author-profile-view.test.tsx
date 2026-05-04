@@ -65,7 +65,7 @@ describe( 'AuthorProfileView', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections' )
 			.reply( 200, { connections: [] } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, {} );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
@@ -91,15 +91,18 @@ describe( 'AuthorProfileView', () => {
 				],
 			} );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, {
 				did: 'did:plc:abc',
 				handle: 'alice.bsky.social',
 				display_name: 'Alice',
 				description: '',
+				description_html: '',
 				avatar: null,
 				banner: null,
+				bluesky_url: 'https://bsky.app/profile/alice.bsky.social',
 				counts: { followers: 0, follows: 0, posts: 0 },
+				viewer: { following: null, following_rkey: null, followed_by: false },
 			} );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )

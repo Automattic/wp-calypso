@@ -928,6 +928,15 @@ const PlansFeaturesMain = ( {
 								coupon={ coupon }
 							/>
 						) }
+						{ intent === 'plans-woo-hosting-solutions' && (
+							<p className="plans-features-main__money-back-guarantee">
+								{ translate( 'Every plan is backed by our %(days)d-day money-back guarantee.', {
+									args: {
+										days: compatibleIntervalType === 'monthly' ? 7 : 14,
+									},
+								} ) }
+							</p>
+						) }
 						<div
 							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
 								'is-scrollable': plansWithScroll,

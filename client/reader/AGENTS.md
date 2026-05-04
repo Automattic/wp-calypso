@@ -106,6 +106,13 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/mastodon/:id/thread/:status_id`   | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
 | `/reader/mastodon/:id/profile/:actor`      | `client/reader/mastodon/author-profile-view.tsx`                          |
 
+The likes count on `<SocialPostCard>` becomes an interactive
+`<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
+when the host shell passes both a `connectionId` and a post `cid` down to
+`<PostCardCounts>`. Today only `client/reader/atmosphere/timeline-panel.tsx`
+opts in; surfaces that don't pass those props (thread, author-feed,
+quoted-post, non-ATmosphere cards) render the static likes count.
+
 ### SSR file variants
 
 Some routes have both `.node.js` (server) and `.web.js` (client) file variants for isomorphic rendering. Examples: `discover/index.node.js` / `discover/index.web.js`, `tags/index.node.js` / `tags/index.web.js`. The `.node.js` variant renders placeholder components for SSR, while `.web.js` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required.

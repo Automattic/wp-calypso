@@ -162,3 +162,30 @@ export type MastodonAuthorFeedFilter =
 	| 'posts_no_replies'
 	| 'posts_with_replies'
 	| 'posts_with_media';
+
+// Filter values that map to Mastodon's GET /api/v1/timelines/tag/:hashtag
+// query params. Values mirror the UI tab slugs 1:1 so the slug ↔ filter
+// map at the tabs layer is identity beyond the case of `all`.
+export type MastodonTagFilter = 'all' | 'media' | 'local';
+
+// Optional metadata embedded in the feed response. The backend MAY include
+// nothing today; render hashtag name as a plain header and only show
+// `count` when set.
+export interface MastodonTagInfo {
+	name: string;
+	// Cumulative recent-post count from Mastodon's `history[]` aggregate
+	// when the backend chooses to project it. Render as a "N posts" line
+	// under the hashtag header; omit the line entirely when undefined.
+	count?: number;
+	// Home-instance Mastodon tag-page URL (e.g.
+	// `https://mastodon.social/tags/rust`). Provided so we can offer an
+	// external "View on Mastodon" link for users who want the home-instance
+	// view.
+	url?: string;
+}
+
+export interface MastodonTagFeedPage {
+	items: MastodonFeedItem[];
+	cursor: string | null;
+	tag?: MastodonTagInfo;
+}

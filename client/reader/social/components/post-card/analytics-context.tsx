@@ -1,4 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
+import type { SocialPost } from '../../types';
 
 // Tracks event-name contract for shared post-card subcomponents:
 // emit `calypso_reader_<source>_timeline_*` regardless of the surface
@@ -30,6 +31,21 @@ export interface SocialAnalyticsContextValue {
 	getThreadUrl?: ( postUri: string ) => string | null;
 	/** Slice 6: resolve an author ref to an in-app profile URL, or null to fall back. */
 	getProfileUrl?: ( ref: SocialProfileRefInput ) => string | null;
+	/**
+	 * Slice 8: in-app hashtag-feed URL for a tag, or null to fall back.
+	 * Mastodon panels bind this; protocols without a hashtag concept
+	 * (atmosphere) leave it unset and `<PostCardBody>` falls back to the
+	 * anchor's external href.
+	 */
+	getTagUrl?: ( tag: string ) => string | null;
+	/**
+	 * Slice 7c: open the reply composer for a post. When bound,
+	 * `<PostCardCounts>` renders the replies count as a button that
+	 * invokes this callback instead of routing to the in-app thread.
+	 * Per-protocol shells without a composer leave it unset and the
+	 * existing in-app-thread / external-thread fallback applies.
+	 */
+	onReplyClick?: ( post: SocialPost ) => void;
 }
 
 const Ctx = createContext< SocialAnalyticsContextValue | null >( null );

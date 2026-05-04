@@ -6,6 +6,7 @@ import {
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonTagFeed,
 	getMastodonTimeline,
 } from '../fetchers';
 
@@ -89,12 +90,13 @@ describe( 'mastodon fetchers', () => {
 	} );
 
 	it( 'getMastodonConnections classifies 401 as auth_required', async () => {
-		nock( BASE ).get( '/wpcom/v2/reader/mastodon/connections' ).reply( 401, {
-			error: 'not_authenticated',
-			message: '',
-			statusCode: 401,
-			status: 401,
-		} );
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections' )
+			.reply( 401, {
+				code: 'not_authenticated',
+				message: 'Authentication required.',
+				data: { status: 401 },
+			} );
 		await expect( getMastodonConnections() ).rejects.toMatchObject( { kind: 'auth_required' } );
 	} );
 } );
@@ -123,7 +125,11 @@ describe( 'getMastodonTimeline', () => {
 	it( 'classifies mastodon_rate_limited with retry_after', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/timeline' )
-			.reply( 429, { error: 'mastodon_rate_limited', data: { retry_after: 30 } } );
+			.reply( 429, {
+				code: 'mastodon_rate_limited',
+				message: '',
+				data: { status: 429, retry_after: 30 },
+			} );
 		await expect( getMastodonTimeline( { connectionId: 7 } ) ).rejects.toEqual( {
 			kind: 'rate_limited',
 			retry_after: 30,
@@ -177,7 +183,11 @@ describe( 'getMastodonAuthorProfile', () => {
 	it( 'classifies a 401 as auth_required', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
-			.reply( 401, { error: 'not_authenticated', message: '', statusCode: 401, status: 401 } );
+			.reply( 401, {
+				code: 'not_authenticated',
+				message: 'Authentication required.',
+				data: { status: 401 },
+			} );
 		await expect(
 			getMastodonAuthorProfile( { connectionId: 7, actor: '108020' } )
 		).rejects.toMatchObject( { kind: 'auth_required' } );
@@ -250,5 +260,65 @@ describe( 'getMastodonAuthorFeed filter mapping', () => {
 			filter: 'posts_with_replies',
 		} );
 		expect( scope.isDone() ).toBe( true );
+	} );
+} );
+
+describe( 'getMastodonTagFeed', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'GETs /reader/mastodon/connections/:id/tag/<hashtag>/feed', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		const page = await getMastodonTagFeed( { connectionId: 7, hashtag: 'rust' } );
+		expect( page.cursor ).toBeNull();
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'sends only_media=true for filter=media', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.query( { only_media: 'true' } )
+			.reply( 200, { items: [], cursor: null } );
+		await getMastodonTagFeed( { connectionId: 7, hashtag: 'rust', filter: 'media' } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'sends local=true for filter=local', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.query( { local: 'true' } )
+			.reply( 200, { items: [], cursor: null } );
+		await getMastodonTagFeed( { connectionId: 7, hashtag: 'rust', filter: 'local' } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'sends no filter params for filter=all', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		await getMastodonTagFeed( { connectionId: 7, hashtag: 'rust', filter: 'all' } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'percent-encodes the hashtag in the path', async () => {
+		const scope = nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust_lang/feed' )
+			.reply( 200, { items: [], cursor: null } );
+		await getMastodonTagFeed( { connectionId: 7, hashtag: 'rust_lang' } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
+			.reply( 401, {
+				code: 'not_authenticated',
+				message: 'Authentication required.',
+				data: { status: 401 },
+			} );
+		await expect(
+			getMastodonTagFeed( { connectionId: 7, hashtag: 'rust' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
 	} );
 } );
