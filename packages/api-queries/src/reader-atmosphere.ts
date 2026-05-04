@@ -803,6 +803,25 @@ interface CreatePostContext {
 	// other reply. Each mutation stamps its own suffix so onSuccess
 	// rewrites only its own placeholder.
 	pendingUri: string;
+	// Standalone-mode timeline snapshot — captured before the placeholder
+	// is prepended so onError can revert atomically. Undefined when the
+	// mutation is a reply or quote (those branches don't touch the
+	// timeline cache directly; `parentCountsContext` covers them).
+	timelineSnapshot?: {
+		queryKey: QueryKey;
+		previous: InfiniteData< AtmosphereTimelinePage > | undefined;
+	};
+	// Standalone-mode author-feed snapshots — one per filter variant the
+	// placeholder was prepended into (no-filter / posts_no_replies /
+	// posts_with_replies / posts_and_author_threads; posts_with_media
+	// is skipped since text-only posts don't surface there). Always an
+	// array so onError can iterate without a null check; empty for
+	// reply / quote mutations or when the connection handle isn't yet
+	// in cache.
+	authorFeedSnapshots: Array< {
+		queryKey: QueryKey;
+		previous: InfiniteData< AtmosphereAuthorFeedPage > | undefined;
+	} >;
 }
 
 // Module-level counter producing collision-free pending URIs. Suffix is
@@ -1027,9 +1046,79 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				threadKey: null,
 				threadPrevious: undefined,
 				pendingUri: nextPendingReplyUri(),
+				authorFeedSnapshots: [],
 			};
 
+			if ( ! vars.reply && ! vars.quote ) {
+				// Standalone composer post — prepend a placeholder to the
+				// connected user's timeline and to every author-feed filter
+				// where a fresh top-level post should appear. Snapshot each
+				// patched cache first so Task 14's onError restores
+				// atomically. No `counts.*` bumps here: a brand-new
+				// top-level post has no parent reference.
+				ctx.pendingUri = nextPendingPostUri();
+				const connection = queryClient.getQueryData< AtmosphereConnectionDetails >(
+					readerAtmosphereKeys.connection( vars.connectionId )
+				);
+				const placeholder = buildPlaceholderStandalonePost( vars.text, ctx.pendingUri, connection );
+
+				// Timeline cache is keyed on connection id alone, so the
+				// patch works even when the connection details cache is
+				// cold (deep-link / first-load case).
+				const timelineKey = readerAtmosphereKeys.timeline( vars.connectionId );
+				const timelinePrev =
+					queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey );
+				ctx.timelineSnapshot = { queryKey: timelineKey, previous: timelinePrev };
+				if ( timelinePrev && timelinePrev.pages.length > 0 ) {
+					const [ firstPage, ...restPages ] = timelinePrev.pages;
+					queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey, {
+						...timelinePrev,
+						pages: [ { ...firstPage, items: [ placeholder, ...firstPage.items ] }, ...restPages ],
+					} );
+				}
+
+				// Author-feed caches are keyed on the user's handle, which
+				// only comes from the cached connection details. When that
+				// cache is cold (cold deep-link), skip the prepend — the
+				// success path's invalidate (Task 15) will repopulate.
+				const handle = connection?.handle;
+				if ( handle ) {
+					// `posts_with_media` deliberately skipped: text-only
+					// posts in this slice never carry an embed, so prepending
+					// would seed a phantom item that the server would never
+					// confirm.
+					const filters: Array< AtmosphereAuthorFeedFilter | undefined > = [
+						undefined,
+						'posts_no_replies',
+						'posts_with_replies',
+						'posts_and_author_threads',
+					];
+					for ( const filter of filters ) {
+						const key = readerAtmosphereKeys.authorFeed( handle, filter );
+						const prev =
+							queryClient.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >( key );
+						ctx.authorFeedSnapshots.push( { queryKey: key, previous: prev } );
+						if ( prev && prev.pages.length > 0 ) {
+							const [ firstPage, ...restPages ] = prev.pages;
+							queryClient.setQueryData< InfiniteData< AtmosphereAuthorFeedPage > >( key, {
+								...prev,
+								pages: [
+									{ ...firstPage, items: [ placeholder, ...firstPage.items ] },
+									...restPages,
+								],
+							} );
+						}
+					}
+				}
+
+				return ctx;
+			}
+
 			if ( ! vars.reply ) {
+				// Quote-only branch — cache patching for quotes is wired
+				// in a later slice; for now just carry the per-mutation
+				// pending URI so the success / error paths have a stable
+				// context shape.
 				return ctx;
 			}
 

@@ -1764,6 +1764,265 @@ describe( 'reader-atmosphere hooks', () => {
 		} );
 	} );
 
+	describe( 'createPostMutation — standalone mode', () => {
+		const connectionId = 42;
+		const handle = 'me.bsky.social';
+
+		const connectionDetails: AtmosphereConnectionDetails = {
+			did: 'did:plc:me',
+			handle,
+			display_name: 'Me',
+			description: '',
+			avatar: 'https://cdn.bsky.app/me/avatar.jpg',
+			banner: null,
+			counts: { followers: 0, follows: 0, posts: 0 },
+		};
+
+		function seedConnection( client: QueryClient ) {
+			client.setQueryData( readerAtmosphereKeys.connection( connectionId ), connectionDetails );
+		}
+
+		function seedTimeline( client: QueryClient, item: AtmosphereFeedItem ) {
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [ { items: [ item ], cursor: null } ],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( connectionId ), data );
+			return data;
+		}
+
+		function seedAuthorFeed(
+			client: QueryClient,
+			filter:
+				| 'posts_no_replies'
+				| 'posts_with_replies'
+				| 'posts_with_media'
+				| 'posts_and_author_threads'
+				| undefined,
+			item: AtmosphereFeedItem
+		) {
+			const data: InfiniteData< AtmosphereAuthorFeedPage > = {
+				pages: [ { items: [ item ], cursor: null } ],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.authorFeed( handle, filter ), data );
+			return data;
+		}
+
+		afterEach( () => nock.cleanAll() );
+
+		it( 'optimistically prepends a placeholder post to the connected timeline first page', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			seedTimeline( client, existing );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts`, {
+					text: 'hello world',
+				} )
+				.delay( 100 )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( { connectionId, text: 'hello world' } );
+				await Promise.resolve();
+			} );
+
+			await waitFor( () => {
+				const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					readerAtmosphereKeys.timeline( connectionId )
+				);
+				expect( timeline?.pages[ 0 ].items ).toHaveLength( 2 );
+				const placeholder = timeline?.pages[ 0 ].items[ 0 ];
+				expect( placeholder?.uri.startsWith( PENDING_POST_URI ) ).toBe( true );
+				expect( placeholder?.text ).toBe( 'hello world' );
+				expect( placeholder?.author.handle ).toBe( handle );
+				// Existing item still present, in the same position.
+				expect( timeline?.pages[ 0 ].items[ 1 ].uri ).toBe( 'at://existing' );
+			} );
+
+			await promise;
+		} );
+
+		it( 'prepends the placeholder to all four author-feed filter caches when the handle is in cache', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			seedAuthorFeed( client, undefined, existing );
+			seedAuthorFeed( client, 'posts_no_replies', existing );
+			seedAuthorFeed( client, 'posts_with_replies', existing );
+			seedAuthorFeed( client, 'posts_and_author_threads', existing );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.delay( 100 )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( { connectionId, text: 'standalone' } );
+				await Promise.resolve();
+			} );
+
+			await waitFor( () => {
+				for ( const filter of [
+					undefined,
+					'posts_no_replies' as const,
+					'posts_with_replies' as const,
+					'posts_and_author_threads' as const,
+				] ) {
+					const feed = client.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+						readerAtmosphereKeys.authorFeed( handle, filter )
+					);
+					expect( feed?.pages[ 0 ].items ).toHaveLength( 2 );
+					expect( feed?.pages[ 0 ].items[ 0 ].uri.startsWith( PENDING_POST_URI ) ).toBe( true );
+					expect( feed?.pages[ 0 ].items[ 0 ].text ).toBe( 'standalone' );
+					expect( feed?.pages[ 0 ].items[ 1 ].uri ).toBe( 'at://existing' );
+				}
+			} );
+
+			await promise;
+		} );
+
+		it( 'does NOT prepend to the posts_with_media author-feed cache', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+
+			const existing = makeFeedItem( { uri: 'at://existing-media', cid: 'media-cid' } );
+			const seeded = seedAuthorFeed( client, 'posts_with_media', existing );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.delay( 100 )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( { connectionId, text: 'no media' } );
+				await Promise.resolve();
+			} );
+
+			// Give onMutate a microtask to run before asserting.
+			await act( async () => {
+				await Promise.resolve();
+			} );
+
+			const mediaFeed = client.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+				readerAtmosphereKeys.authorFeed( handle, 'posts_with_media' )
+			);
+			expect( mediaFeed ).toEqual( seeded );
+
+			await promise;
+		} );
+
+		it( 'skips author-feed prepend when connection details are not in cache, but still patches the timeline', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			// No seedConnection(): cold connection cache (deep-link).
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			seedTimeline( client, existing );
+			// Pre-seed an author-feed cache under the same handle that *would*
+			// be patched if the connection were known. After onMutate it
+			// should remain untouched.
+			const seededFeed = seedAuthorFeed( client, undefined, existing );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.delay( 100 )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( { connectionId, text: 'cold deep-link' } );
+				await Promise.resolve();
+			} );
+
+			await waitFor( () => {
+				const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					readerAtmosphereKeys.timeline( connectionId )
+				);
+				expect( timeline?.pages[ 0 ].items ).toHaveLength( 2 );
+				expect( timeline?.pages[ 0 ].items[ 0 ].uri.startsWith( PENDING_POST_URI ) ).toBe( true );
+			} );
+
+			// Author-feed cache untouched because the handle wasn't resolvable.
+			const feed = client.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+				readerAtmosphereKeys.authorFeed( handle, undefined )
+			);
+			expect( feed ).toEqual( seededFeed );
+
+			await promise;
+		} );
+
+		it( 'does not bump counts on any cached post (standalone has no parent)', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+			const existing = makeFeedItem( {
+				uri: 'at://existing',
+				cid: 'existing-cid',
+				counts: { replies: 7, reposts: 3, likes: 11, quotes: 2 },
+			} );
+			seedTimeline( client, existing );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.delay( 100 )
+				.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let promise: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				promise = result.current.mutateAsync( { connectionId, text: 'no bump' } );
+				await Promise.resolve();
+			} );
+
+			await waitFor( () => {
+				const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					readerAtmosphereKeys.timeline( connectionId )
+				);
+				expect( timeline?.pages[ 0 ].items ).toHaveLength( 2 );
+			} );
+
+			// The existing post's counts must be unchanged: standalone has
+			// no parent reference to bump.
+			const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+				readerAtmosphereKeys.timeline( connectionId )
+			);
+			const existingAfter = timeline?.pages[ 0 ].items.find(
+				( item ) => item.uri === 'at://existing'
+			);
+			expect( existingAfter?.counts ).toEqual( {
+				replies: 7,
+				reposts: 3,
+				likes: 11,
+				quotes: 2,
+			} );
+
+			await promise;
+		} );
+	} );
+
 	describe( 'useCreateRepostMutation', () => {
 		const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kabc';
 		const POST_CID = 'bafy-cid';
