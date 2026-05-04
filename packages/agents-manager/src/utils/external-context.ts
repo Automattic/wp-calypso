@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { ContextEntry } from '../extension-types';
 
 export type ExternalContextDelivery = 'next-message' | 'conversation';
@@ -30,7 +31,14 @@ export interface ExternalContextCardStat {
 export interface ExternalContextCard {
 	id: string;
 	contextEntryId?: string;
-	title: string;
+	/**
+	 * When provided, the publisher fully owns the card body. Agents Manager
+	 * only renders the dismiss affordance and the actions row around it.
+	 * The structured fields below (title, subtitle, description, source,
+	 * tone, stats, bullets) are ignored in this mode.
+	 */
+	body?: ReactNode;
+	title?: string;
 	subtitle?: string;
 	description?: string;
 	source?: string;

@@ -86,55 +86,90 @@ export default function ContextCards( { cards, onAction, onDismiss }: Props ) {
 					<section
 						className={ clsx(
 							'agents-manager-context-card',
-							`agents-manager-context-card--${ card.tone || 'default' }`
+							`agents-manager-context-card--${ card.tone || 'default' }`,
+							{ 'agents-manager-context-card--custom': !! card.body }
 						) }
 					>
-						<div className="agents-manager-context-card__header">
-							<div>
-								{ card.source && (
-									<div className="agents-manager-context-card__source">{ card.source }</div>
-								) }
-								<h3 className="agents-manager-context-card__title">{ card.title }</h3>
-								{ card.subtitle && (
-									<p className="agents-manager-context-card__subtitle">{ card.subtitle }</p>
-								) }
-							</div>
-							{ onDismiss && (
-								<Button
-									className="agents-manager-context-card__dismiss"
-									variant="tertiary"
-									size="small"
-									onClick={ () => onDismiss( card ) }
-									aria-label={ __( 'Dismiss context card', '__i18n_text_domain__' ) }
-									disabled={ leaving }
-								>
-									{ __( 'Dismiss', '__i18n_text_domain__' ) }
-								</Button>
-							) }
-						</div>
-						{ card.description && (
-							<p className="agents-manager-context-card__description">{ card.description }</p>
-						) }
-						{ card.stats && card.stats.length > 0 && (
-							<div className="agents-manager-context-card__stats">
-								{ card.stats.map( ( stat ) => (
-									<div
-										key={ `${ stat.label }-${ stat.value }` }
-										className="agents-manager-context-card__stat"
+						{ card.body ? (
+							<>
+								{ onDismiss && (
+									<Button
+										className="agents-manager-context-card__dismiss agents-manager-context-card__dismiss--floating"
+										variant="tertiary"
+										size="small"
+										onClick={ () => onDismiss( card ) }
+										aria-label={ __(
+											'Dismiss context card',
+											'__i18n_text_domain__'
+										) }
+										disabled={ leaving }
 									>
-										<strong>{ stat.value }</strong>
-										<span>{ stat.label }</span>
-										{ stat.description && <small>{ stat.description }</small> }
+										{ __( 'Dismiss', '__i18n_text_domain__' ) }
+									</Button>
+								) }
+								<div className="agents-manager-context-card__body">{ card.body }</div>
+							</>
+						) : (
+							<>
+								<div className="agents-manager-context-card__header">
+									<div>
+										{ card.source && (
+											<div className="agents-manager-context-card__source">
+												{ card.source }
+											</div>
+										) }
+										{ card.title && (
+											<h3 className="agents-manager-context-card__title">{ card.title }</h3>
+										) }
+										{ card.subtitle && (
+											<p className="agents-manager-context-card__subtitle">
+												{ card.subtitle }
+											</p>
+										) }
 									</div>
-								) ) }
-							</div>
-						) }
-						{ card.bullets && card.bullets.length > 0 && (
-							<ul className="agents-manager-context-card__bullets">
-								{ card.bullets.map( ( bullet ) => (
-									<li key={ bullet }>{ bullet }</li>
-								) ) }
-							</ul>
+									{ onDismiss && (
+										<Button
+											className="agents-manager-context-card__dismiss"
+											variant="tertiary"
+											size="small"
+											onClick={ () => onDismiss( card ) }
+											aria-label={ __(
+												'Dismiss context card',
+												'__i18n_text_domain__'
+											) }
+											disabled={ leaving }
+										>
+											{ __( 'Dismiss', '__i18n_text_domain__' ) }
+										</Button>
+									) }
+								</div>
+								{ card.description && (
+									<p className="agents-manager-context-card__description">
+										{ card.description }
+									</p>
+								) }
+								{ card.stats && card.stats.length > 0 && (
+									<div className="agents-manager-context-card__stats">
+										{ card.stats.map( ( stat ) => (
+											<div
+												key={ `${ stat.label }-${ stat.value }` }
+												className="agents-manager-context-card__stat"
+											>
+												<strong>{ stat.value }</strong>
+												<span>{ stat.label }</span>
+												{ stat.description && <small>{ stat.description }</small> }
+											</div>
+										) ) }
+									</div>
+								) }
+								{ card.bullets && card.bullets.length > 0 && (
+									<ul className="agents-manager-context-card__bullets">
+										{ card.bullets.map( ( bullet ) => (
+											<li key={ bullet }>{ bullet }</li>
+										) ) }
+									</ul>
+								) }
+							</>
 						) }
 						{ card.actions && card.actions.length > 0 && (
 							<div className="agents-manager-context-card__actions">

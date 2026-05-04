@@ -78,7 +78,13 @@ interface AgentsManagerExternalContextCardStat {
 interface AgentsManagerExternalContextCard {
 	id: string;
 	contextEntryId?: string;
-	title: string;
+	/**
+	 * Optional fully-custom card body. When provided, Agents Manager renders
+	 * only the dismiss button and actions row around it; all structured
+	 * fields below are ignored.
+	 */
+	body?: import('react').ReactNode;
+	title?: string;
 	subtitle?: string;
 	description?: string;
 	source?: string;

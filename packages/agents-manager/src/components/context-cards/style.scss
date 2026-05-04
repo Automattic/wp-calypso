@@ -42,6 +42,26 @@ $context-card-leave-easing: cubic-bezier(0.4, 0, 0.2, 1);
 	box-shadow: 0 10px 28px rgba( 30, 30, 30, 0.08 );
 	color: #1e1e1e;
 	padding: 14px;
+	position: relative;
+}
+
+// Custom-body mode: publisher owns everything inside .__body. AM only
+// supplies the dismiss affordance (floating) and the actions row below.
+.agents-manager-context-card--custom {
+	background: #fff;
+}
+
+.agents-manager-context-card__body {
+	// Inherits from card frame; isolation so the publisher's stacking
+	// contexts don't leak out, but otherwise hands-off styling.
+	isolation: isolate;
+}
+
+.agents-manager-context-card__dismiss--floating.components-button {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 1;
 }
 
 .agents-manager-context-card--info {
