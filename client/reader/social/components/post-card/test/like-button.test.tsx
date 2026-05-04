@@ -14,6 +14,13 @@ import { LikeButton } from '../like-button';
 import { LikeProvider } from '../like-context';
 import type { SocialPost } from '../../../types';
 
+// `logToLogstash` fires a real HTTPS request — mute it so the
+// rkey-missing path in the atmosphere unlike adapter doesn't trigger
+// an unmocked nock request.
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 const BASE = 'https://public-api.wordpress.com';
 const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kabc';
 const POST_CID = 'bafy-cid';

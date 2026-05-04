@@ -1,3 +1,10 @@
+// `logToLogstash` fires a real HTTPS request to the wpcom logstash
+// endpoint. Mute it so the optimistic-mutation onError tests don't
+// trigger an unmocked nock request.
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 import {
 	readerMastodonKeys,
 	type MastodonFeedItem,
@@ -449,8 +456,10 @@ describe( 'useCreateMastodonLikeMutation / useDeleteMastodonLikeMutation', () =>
 				expect( optimistic?.pages[ 0 ].items[ 0 ].counts.favourites ).toBe( 6 );
 			} );
 
+			// Cancellation is connection-scoped via predicate so concurrent
+			// mutations on a different connection's queries aren't aborted.
 			expect( cancelQueriesSpy ).toHaveBeenCalledWith( {
-				queryKey: readerMastodonKeys.all,
+				predicate: expect.any( Function ),
 			} );
 
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );

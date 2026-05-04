@@ -5,6 +5,7 @@ import {
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useSocialAnalytics } from '../social/components/post-card/analytics-context';
 import type { LikeAction, UseLikeActionFn } from '../social/components/post-card/like-context';
@@ -30,6 +31,13 @@ function errorMessageForLike(
 		case 'bad_request':
 		case 'upstream_unavailable':
 		case 'unknown':
+			return translate( 'Could not save your favourite. Please try again.' );
+		default:
+			// Defensive fallback if MastodonError widens before this switch
+			// is updated. TypeScript exhaustiveness keeps this branch
+			// unreachable today; without it, an empty-toast notice would
+			// render via `errorNotice( undefined )` for a kind we haven't
+			// classified yet.
 			return translate( 'Could not save your favourite. Please try again.' );
 	}
 }
@@ -68,6 +76,19 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 				post_uri: post.uri,
 				error_kind: mastodonError.kind,
 				direction,
+			} );
+			// Pipeline-level log so failures stay observable in dashboards
+			// even when no Tracks dashboard is consulted.
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: `Reader Mastodon ${ direction } mutation failed`,
+				severity: 'error',
+				extra: {
+					type: `reader_mastodon_${ direction }_mutation_error`,
+					connection_id: connectionId,
+					status_id: post.uri,
+					error_kind: mastodonError.kind,
+				},
 			} );
 		};
 
