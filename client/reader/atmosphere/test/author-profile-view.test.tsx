@@ -21,8 +21,9 @@ jest.mock(
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
 jest.mock( '@automattic/calypso-router', () => {
-	const mockPage = jest.fn();
-	mockPage.replace = jest.fn();
+	const mockPage: jest.Mock & { replace: jest.Mock } = Object.assign( jest.fn(), {
+		replace: jest.fn(),
+	} );
 	return { __esModule: true, default: mockPage };
 } );
 
