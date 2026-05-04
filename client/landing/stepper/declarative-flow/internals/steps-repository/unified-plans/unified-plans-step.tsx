@@ -543,6 +543,16 @@ function UnifiedPlansStep( {
 			);
 		}
 
+		// In stepper-v2, <PlansPageSubheader>'s deemphasize branch is suppressed,
+		// so surface its "Unlock a powerful bundle…" copy here as Step.Heading subText
+		// to keep the free-plan CTA visible.
+		if ( useStepContainerV2 && deemphasizeFreePlan ) {
+			return translate(
+				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
+				{ components: { link: freePlanButton } }
+			);
+		}
+
 		if ( deemphasizeFreePlanFromProps ) {
 			return null;
 		}
