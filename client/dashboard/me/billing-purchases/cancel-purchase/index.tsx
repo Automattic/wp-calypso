@@ -1186,11 +1186,14 @@ function CancelPurchaseInner() {
 
 			// 3. Navigate with notice params
 			invokeSurvicateEvent( 'purchaseRemoved' );
-			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
+			const category = classifyPurchaseForCopy( purchase );
+			const productNoun = getProductNounForCategory( category );
+			const sendsEmail = category === 'plan' || category === 'domain';
 			navigate( {
 				to: purchasesRoute.to,
 				search: {
 					removed: productNoun,
+					...( sendsEmail ? { removedSendsEmail: true } : {} ),
 					...( purchase.will_atomic_revert_after_removal
 						? { removedDomain: purchase.domain }
 						: {} ),

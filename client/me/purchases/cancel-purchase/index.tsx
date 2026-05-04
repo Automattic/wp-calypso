@@ -566,7 +566,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			// Capture props before the timeout — connect() + useSyncExternalStore
 			// may update this.props synchronously when the Redux store changes.
 			const { purchase, purchaseId, atomicTransfer, purchaseListUrl, translate } = this.props;
-			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
+			const category = classifyPurchaseForCopy( purchase );
+			const productNoun = getProductNounForCategory( category );
+			const sendsEmail = category === 'plan' || category === 'domain';
 			const isAtomic = Boolean( atomicTransfer?.created_at );
 			const backupRedirect = purchaseListUrl ?? purchasesRoot;
 
@@ -579,6 +581,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				invokeSurvicateEvent( 'purchaseRemoved' );
 				const params = new URLSearchParams();
 				params.set( 'removed', productNoun );
+				if ( sendsEmail ) {
+					params.set( 'removedSendsEmail', '1' );
+				}
 				if ( isAtomic ) {
 					params.set( 'removedDomain', purchase.domain );
 				}

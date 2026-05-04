@@ -11,10 +11,12 @@ import Notice from '../../components/notice';
 export function PurchaseRemovedNotice( {
 	productNoun,
 	atomicDomain,
+	sendsEmail,
 	onClose,
 }: {
 	productNoun: string;
 	atomicDomain?: string;
+	sendsEmail?: boolean;
 	onClose: () => void;
 } ) {
 	if ( atomicDomain ) {
@@ -29,26 +31,40 @@ export function PurchaseRemovedNotice( {
 					</Button>
 				}
 			>
-				{ sprintf(
-					/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
-					__(
-						'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 download a backup to save your content, themes, and plugins. You\u2019ll receive a confirmation email shortly.'
-					),
-					{ productNoun }
-				) }
+				{ sendsEmail
+					? sprintf(
+							/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+							__(
+								'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 download a backup to save your content, themes, and plugins. You\u2019ll receive a confirmation email shortly.'
+							),
+							{ productNoun }
+					  )
+					: sprintf(
+							/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+							__(
+								'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 download a backup to save your content, themes, and plugins.'
+							),
+							{ productNoun }
+					  ) }
 			</Notice>
 		);
 	}
 
 	return (
 		<Notice variant="success" onClose={ onClose }>
-			{ sprintf(
-				/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
-				__(
-					'Your %(productNoun)s has been removed. You\u2019ll receive a confirmation email shortly.'
-				),
-				{ productNoun }
-			) }
+			{ sendsEmail
+				? sprintf(
+						/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+						__(
+							'Your %(productNoun)s has been removed. You\u2019ll receive a confirmation email shortly.'
+						),
+						{ productNoun }
+				  )
+				: sprintf(
+						/* translators: %(productNoun)s is plan/domain/email/theme/plugin/subscription. */
+						__( 'Your %(productNoun)s has been removed.' ),
+						{ productNoun }
+				  ) }
 		</Notice>
 	);
 }

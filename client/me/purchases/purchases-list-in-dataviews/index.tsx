@@ -108,13 +108,15 @@ const PurchasesListDataView: React.FC<
 			return null;
 		}
 		const removedDomain = params.get( 'removedDomain' );
+		const sendsEmail = params.get( 'removedSendsEmail' ) === '1';
 		params.delete( 'removed' );
 		params.delete( 'removedDomain' );
+		params.delete( 'removedSendsEmail' );
 		const newSearch = params.toString();
 		const newUrl =
 			window.location.pathname + ( newSearch ? '?' + newSearch : '' ) + window.location.hash;
 		window.history.replaceState( window.history.state, '', newUrl );
-		return { productNoun: removed, atomicDomain: removedDomain };
+		return { productNoun: removed, atomicDomain: removedDomain, sendsEmail };
 	} );
 	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
 
@@ -184,28 +186,53 @@ const PurchasesListDataView: React.FC<
 						onDismissClick={ () => setShowRemovedNotice( false ) }
 						status="is-success"
 					>
-						{ removedNoticeData.atomicDomain
-							? translate(
-									'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 {{a}}download a backup{{/a}} to save your content, themes, and plugins. You\u2019ll receive a confirmation email shortly.',
-									{
-										args: { productNoun: removedNoticeData.productNoun },
-										components: {
-											a: (
-												<a
-													href={ `https://${ removedNoticeData.atomicDomain }/wp-admin/export.php` }
-													target="_blank"
-													rel="noreferrer"
-												/>
-											),
-										},
-									}
-							  )
-							: translate(
-									'Your %(productNoun)s has been removed. You\u2019ll receive a confirmation email shortly.',
-									{
-										args: { productNoun: removedNoticeData.productNoun },
-									}
-							  ) }
+						{ removedNoticeData.atomicDomain &&
+							removedNoticeData.sendsEmail &&
+							translate(
+								'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 {{a}}download a backup{{/a}} to save your content, themes, and plugins. You\u2019ll receive a confirmation email shortly.',
+								{
+									args: { productNoun: removedNoticeData.productNoun },
+									components: {
+										a: (
+											<a
+												href={ `https://${ removedNoticeData.atomicDomain }/wp-admin/export.php` }
+												target="_blank"
+												rel="noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						{ removedNoticeData.atomicDomain &&
+							! removedNoticeData.sendsEmail &&
+							translate(
+								'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 {{a}}download a backup{{/a}} to save your content, themes, and plugins.',
+								{
+									args: { productNoun: removedNoticeData.productNoun },
+									components: {
+										a: (
+											<a
+												href={ `https://${ removedNoticeData.atomicDomain }/wp-admin/export.php` }
+												target="_blank"
+												rel="noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						{ ! removedNoticeData.atomicDomain &&
+							removedNoticeData.sendsEmail &&
+							translate(
+								'Your %(productNoun)s has been removed. You\u2019ll receive a confirmation email shortly.',
+								{
+									args: { productNoun: removedNoticeData.productNoun },
+								}
+							) }
+						{ ! removedNoticeData.atomicDomain &&
+							! removedNoticeData.sendsEmail &&
+							translate( 'Your %(productNoun)s has been removed.', {
+								args: { productNoun: removedNoticeData.productNoun },
+							} ) }
 					</Notice>
 				) }
 			<PurchasesContent
