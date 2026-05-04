@@ -8615,16 +8615,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-useragent@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "@types/express-useragent@npm:1.0.5"
-  dependencies:
-    "@types/express": "npm:*"
-  checksum: 58fce8ab583390c8975f25dbc8d237638236b695e13333a227e740e44582f8e59589556c7f718e943c458c91ad8d09077b269858e025ec8c10a154a876fe5e40
-  languageName: node
-  linkType: hard
-
-"@types/express@npm:*, @types/express@npm:^4.17.22":
+"@types/express@npm:^4.17.22":
   version: 4.17.22
   resolution: "@types/express@npm:4.17.22"
   dependencies:
@@ -13521,7 +13512,6 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@testing-library/user-event": "npm:^14.6.1"
     "@types/express": "npm:^4.17.22"
-    "@types/express-useragent": "npm:^1.0.5"
     "@types/prismjs": "npm:^1.26.6"
     "@types/react": "npm:^18.3.23"
     "@types/react-slider": "npm:^1.3.6"
@@ -13590,7 +13580,7 @@ __metadata:
     emoji-text: "npm:^0.2.6"
     express: "npm:^4.21.2"
     express-async-handler: "npm:^1.1.4"
-    express-useragent: "npm:^1.0.15"
+    express-useragent: "npm:^2.1.0"
     fake-indexeddb: "npm:^3.1.8"
     fast-deep-equal: "npm:^3.1.3"
     fast-json-stable-stringify: "npm:^2.1.0"
@@ -17851,10 +17841,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express-useragent@npm:^1.0.15":
-  version: 1.0.15
-  resolution: "express-useragent@npm:1.0.15"
-  checksum: 875cb6a5109525f79b7fef60a1799046f2eb1dca53df474bed77153a94c8105b69ceacc1cf8e6fddbfcf7bcd8e18aedc5d440a9f864b901b3359678b95594099
+"express-useragent@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "express-useragent@npm:2.1.0"
+  checksum: a268db8461141555eefa28573326d41222d4db39ef5fb329b17ec66c4df0710139d04ab2d7c58d854fee3a5ea3055beb5e69257f7a82769a9ae85ec986cee7f2
   languageName: node
   linkType: hard
 
