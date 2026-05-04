@@ -929,10 +929,7 @@ function CancelPurchaseInner() {
 		} ) );
 	};
 
-	const onCancellationStart = (
-		cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null,
-		customerConfirmedUnderstanding?: boolean
-	) => {
+	const onCancellationStart = ( cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null ) => {
 		// When the eligibility notice is active and the user clicks the default cancel button
 		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
 		// no need to ask about the domain. Skip straight to the survey.
@@ -948,8 +945,6 @@ function CancelPurchaseInner() {
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,
-				customerConfirmedUnderstanding:
-					customerConfirmedUnderstanding ?? state.customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				showDomainOptionsStep: true,
 			} ) );
@@ -967,8 +962,6 @@ function CancelPurchaseInner() {
 				setState( ( state ) => ( {
 					...state,
 					cancelIntent,
-					customerConfirmedUnderstanding:
-						customerConfirmedUnderstanding ?? state.customerConfirmedUnderstanding,
 					siteId: purchase.blog_id,
 				} ) );
 				fireMutationFromConfirm( effectiveFlowType );
@@ -978,8 +971,6 @@ function CancelPurchaseInner() {
 				...state,
 				cancelIntent,
 				confirmationPassed: true,
-				customerConfirmedUnderstanding:
-					customerConfirmedUnderstanding ?? state.customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				surveyShown: true,
 			} ) );
