@@ -470,6 +470,104 @@ describe( '<ComposerModal>', () => {
 		);
 	} );
 
+	it( 'fires _compose_error_shown once on a standalone mutation error', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_compose_error_shown',
+				expect.objectContaining( {
+					connection_id: 42,
+					error_kind: 'rate_limited',
+				} )
+			)
+		);
+
+		const composeErrorCalls = recordSpy.mock.calls.filter(
+			( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+		);
+		expect( composeErrorCalls ).toHaveLength( 1 );
+	} );
+
+	it( 'dedupes _compose_error_shown across two consecutive same-kind errors', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect(
+				recordSpy.mock.calls.filter(
+					( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+				)
+			).toHaveLength( 1 )
+		);
+
+		// Second submission yields the same error_kind — dedupe should hold.
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+
+		const composeErrorCalls = recordSpy.mock.calls.filter(
+			( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+		);
+		expect( composeErrorCalls ).toHaveLength( 1 );
+	} );
+
+	it( 'fires _compose_error_shown again when the error_kind transitions', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 400, { error: 'atmosphere_text_too_long' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_compose_error_shown',
+				expect.objectContaining( { error_kind: 'rate_limited' } )
+			)
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'calypso_reader_atmosphere_compose_error_shown',
+				expect.objectContaining( { error_kind: 'text_too_long' } )
+			)
+		);
+
+		const composeErrorCalls = recordSpy.mock.calls.filter(
+			( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+		);
+		expect( composeErrorCalls ).toHaveLength( 2 );
+	} );
+
 	it.each( [ 'timeline_inline', 'profile_inline', 'fab' ] as const )(
 		'fires _compose_opened with entry_point=%s when opened in standalone mode',
 		async ( entryPoint ) => {

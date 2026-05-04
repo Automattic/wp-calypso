@@ -74,20 +74,33 @@ export function ComposerModal() {
 
 	// Tracks: error_shown with ref-tracked dedupe per error_kind transition.
 	useEffect( () => {
-		if ( ! mode || mode.kind !== 'reply' ) {
+		if ( ! mode ) {
+			return;
+		}
+		if ( mode.kind !== 'reply' && mode.kind !== 'standalone' ) {
 			return;
 		}
 		if ( mutation.isError && mutation.error ) {
 			const errorKind = mutation.error.kind;
 			if ( errorKind !== lastErrorKindRef.current ) {
 				lastErrorKindRef.current = errorKind;
-				dispatch(
-					recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
-						connection_id: mode.connectionId,
-						parent_uri: mode.parent.uri,
-						error_kind: errorKind,
-					} )
-				);
+				if ( mode.kind === 'reply' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
+							connection_id: mode.connectionId,
+							parent_uri: mode.parent.uri,
+							error_kind: errorKind,
+						} )
+					);
+				} else {
+					// mode.kind === 'standalone'
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_error_shown', {
+							connection_id: mode.connectionId,
+							error_kind: errorKind,
+						} )
+					);
+				}
 			}
 		} else if ( ! mutation.isError ) {
 			lastErrorKindRef.current = null;
