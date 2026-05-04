@@ -270,8 +270,8 @@ registerPlugin( 'jetpack-help-center', {
 	render: () => <HelpCenterContentWithProvider />,
 } );
 
-// @alshakero, @ebuccelli
-const BETA_TESTERS = [ 115118448, 128962475 ];
+// @alshakero, @ebuccelli, @omertestingios
+const BETA_TESTERS = [ 115118448, 128962475, 279870302 ];
 
 // Gate for proxied users with wpcom-smart-dictation=true flag.
 if ( helpCenterData.isProxied ) {
