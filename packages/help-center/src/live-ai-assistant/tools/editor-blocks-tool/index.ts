@@ -1425,8 +1425,30 @@ export async function executeInsertBlockTool( rawArgs: unknown ) {
 		}
 	}
 
+	// Auto-wrap: when the block type declares a `parent` constraint (e.g.
+	// core/button requires core/buttons) and we are inserting at the top
+	// level, wrap the block inside an instance of its first allowed parent
+	// so Gutenberg does not silently discard it.
+	let blockToInsert = built.block;
+	let wasAutoWrapped = false;
+	if ( ! rootClientId && reg && typeof reg.getBlockType === 'function' ) {
+		const bt = reg.getBlockType( parsed.spec.name );
+		if ( bt?.parent && bt.parent.length > 0 ) {
+			const wrapperName = bt.parent[ 0 ];
+			const wrapperType = reg.getBlockType( wrapperName );
+			if ( wrapperType ) {
+				try {
+					blockToInsert = create( wrapperName, {}, [ built.block ] );
+					wasAutoWrapped = true;
+				} catch {
+					// Fall through — insert the original block and let Gutenberg decide.
+				}
+			}
+		}
+	}
+
 	try {
-		const out = d.insertBlock( built.block, index, rootClientId, parsed.updateSelection );
+		const out = d.insertBlock( blockToInsert, index, rootClientId, parsed.updateSelection );
 		if ( out && typeof ( out as Promise< unknown > ).then === 'function' ) {
 			await ( out as Promise< unknown > );
 		}
@@ -1435,12 +1457,17 @@ export async function executeInsertBlockTool( rawArgs: unknown ) {
 		return { ok: false, error: `insertBlock failed: ${ message }` };
 	}
 
-	const insertedClientId = ( built.block as { clientId?: string } | null )?.clientId;
+	const insertedClientId = wasAutoWrapped
+		? ( blockToInsert as { clientId?: string } | null )?.clientId
+		: ( built.block as { clientId?: string } | null )?.clientId;
 	scrollBlockIntoView( insertedClientId );
 
 	return {
 		ok: true,
-		inserted: summarizeCreatedBlock( built.block, MAX_INNER_DEPTH ),
+		inserted: wasAutoWrapped
+			? summarizeCreatedBlock( blockToInsert, MAX_INNER_DEPTH )
+			: summarizeCreatedBlock( built.block, MAX_INNER_DEPTH ),
+		auto_wrapped_in: wasAutoWrapped ? ( blockToInsert as { name?: string } ).name : undefined,
 		index: index ?? null,
 		root_client_id: rootClientId ?? null,
 		update_selection: parsed.updateSelection,
