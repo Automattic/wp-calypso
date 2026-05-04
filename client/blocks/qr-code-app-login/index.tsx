@@ -1,7 +1,8 @@
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import QRCode, { QRCodePlaceholder } from './qr-code';
+import { useApprove } from './use-approve';
 import { useCreateToken } from './use-create-token';
 import { useStatus } from './use-status';
 
@@ -22,10 +23,43 @@ export default function QRCodeAppLogin() {
 
 	const { data: statusData, isError: isStatusError } = useStatus( token?.token );
 
+	const [ wrongNumber, setWrongNumber ] = useState( false );
+	const { mutate: approve, isPending: isApproving } = useApprove();
+
 	const startOver = () => {
+		setWrongNumber( false );
 		resetCreateToken();
 		createToken();
 	};
+
+	const handleApprove = ( chosenNumber: number ) => {
+		if ( ! token ) {
+			return;
+		}
+		approve(
+			{ token: token.token, chosenNumber },
+			{
+				onError: ( error ) => {
+					if ( error.code === 'wrong_number' ) {
+						setWrongNumber( true );
+					}
+				},
+			}
+		);
+	};
+
+	if ( wrongNumber ) {
+		return (
+			<div className="qr-code-app-login is-error">
+				<p className="qr-code-app-login__error">
+					{ __( 'Wrong number — this sign-in attempt has been cancelled.' ) }
+				</p>
+				<Button variant="primary" onClick={ startOver }>
+					{ __( 'Start over' ) }
+				</Button>
+			</div>
+		);
+	}
 
 	if ( isTokenError ) {
 		return (
@@ -85,8 +119,15 @@ export default function QRCodeAppLogin() {
 				</p>
 				<ul className="qr-code-app-login__numbers">
 					{ statusData.numbers.map( ( n ) => (
-						<li key={ n } className="qr-code-app-login__number">
-							{ n }
+						<li key={ n }>
+							<button
+								type="button"
+								className="qr-code-app-login__number"
+								disabled={ isApproving }
+								onClick={ () => handleApprove( n ) }
+							>
+								{ n }
+							</button>
 						</li>
 					) ) }
 				</ul>
@@ -94,7 +135,6 @@ export default function QRCodeAppLogin() {
 		);
 	}
 
-	// Default: pending — show QR code.
 	return (
 		<div className="qr-code-app-login">
 			<div className="qr-code-app-login__token">
