@@ -61,7 +61,9 @@ const feedItem = {
 };
 
 function makeQueryClient() {
-	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return new QueryClient( {
+		defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+	} );
 }
 
 describe( 'AuthorProfilePanel', () => {
@@ -151,12 +153,15 @@ describe( 'AuthorProfilePanel', () => {
 
 	it( 'allows retry on a 502 error', async () => {
 		const user = userEvent.setup();
+		// Both the profile and the scoped author feed retry transient
+		// upstream_unavailable up to 2 more times (3 total) before surrendering.
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
+			.times( 3 )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 
 		renderWithProvider(

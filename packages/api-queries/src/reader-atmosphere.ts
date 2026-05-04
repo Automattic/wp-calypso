@@ -318,6 +318,15 @@ export const atmosphereScopedAuthorFeedInfiniteQuery = (
 		enabled: params.actor.length > 0 && params.connectionId > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
+		// Match threadQueryOptions' policy: bail immediately on terminal errors
+		// (auth, 404, rate-limit, …) so the EmptyContent surfaces fast, but
+		// retry transient failures twice before showing the error UI.
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
 	} );
 };
 
