@@ -1,5 +1,4 @@
 import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -39,8 +38,8 @@ import {
 	getCheckboxLabel,
 	getButtonLabels,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { useExperiment } from 'calypso/lib/explat';
 import {
 	getName,
 	hasAmountAvailableToRefund,
@@ -1211,12 +1210,7 @@ const ConnectedCancelPurchase = connect(
 )( localize( withLocalizedMoment( CancelPurchase ) ) );
 
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_new_cancel_refund_flow_20260408'
-	);
-	const isSplitCancelRemoveEnabled =
-		config.isEnabled( 'purchases/split-cancel-remove' ) ||
-		( ! isLoadingExperiment && experimentAssignment?.variationName === 'treatment' );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	return (
 		<ConnectedCancelPurchase
 			{ ...props }
