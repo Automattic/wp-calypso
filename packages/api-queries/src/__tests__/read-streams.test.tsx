@@ -107,10 +107,49 @@ describe( 'readStreamQuery', () => {
 		expect( scope.isDone() ).toBe( true );
 	} );
 
+	it( 'fetches liked posts from /read/liked', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/liked' )
+			.query( true )
+			.reply( 200, {
+				posts: [
+					{
+						ID: 30,
+						site_ID: 300,
+						date: '2026-01-01',
+						date_liked: '2026-04-10',
+						URL: 'https://example.com/liked',
+					},
+				],
+				date_range: { after: '2026-04-10' },
+			} );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() =>
+				useQuery(
+					readStreamQuery(
+						'likes',
+						{ orderBy: 'date', meta: 'post,discover_original_post', number: 4, content_width: 675 },
+						null
+					)
+				),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data?.posts ).toHaveLength( 1 );
+		expect( result.current.data?.posts?.[ 0 ].date_liked ).toBe( '2026-04-10' );
+	} );
+
 	it( 'throws when called for an unmigrated streamType', () => {
-		// `likes` is still served by the legacy data-layer (different
-		// dateProperty); update this case when it lands in `readStreamQuery`.
-		const opts = readStreamQuery( 'likes', { number: 4 }, null );
-		expect( () => opts.queryFn!( {} as never ) ).toThrow( /unsupported streamType "likes"/ );
+		// `recommendations_posts` is still served by the legacy data-layer
+		// (custom `seed` + `algorithm` query shape); update this case when it
+		// lands in `readStreamQuery`.
+		const opts = readStreamQuery( 'recommendations_posts', { number: 4 }, null );
+		expect( () => opts.queryFn!( {} as never ) ).toThrow(
+			/unsupported streamType "recommendations_posts"/
+		);
 	} );
 } );

@@ -4,7 +4,7 @@ import type { ReadStreamQueryParams, ReadStreamResponse } from './types';
 
 // READ-485: streams migrated incrementally. Streams still served by the
 // legacy data-layer at `client/state/data-layer/wpcom/read/streams/index.js`:
-// `likes`, `recommendations_posts`, `custom_recs_posts_with_images`,
+// `recommendations_posts`, `custom_recs_posts_with_images`,
 // `custom_recs_sites_with_images`. See the legacy `streamApis` map for their
 // canonical per-shape `path`, `apiVersion`, `apiNamespace`, and `query`
 // definitions to mirror when porting each one.
@@ -244,6 +244,20 @@ export const fetchReadDiscoverFreshlyPressed = (
 ): Promise< ReadStreamResponse > =>
 	wpcom.req.get( {
 		path: addQueryArgs( '/freshly-pressed', params ),
+		apiVersion: '1.2',
+		method: 'GET',
+	} );
+
+/**
+ * Fetch the `likes` stream — posts the current user has liked. Hits
+ * `/read/liked` on REST `1.2`. The API orders results by `date_liked`
+ * (the `dateProperty` the thunk uses to build `streamItems`).
+ */
+export const fetchReadLiked = (
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/read/liked', params ),
 		apiVersion: '1.2',
 		method: 'GET',
 	} );
