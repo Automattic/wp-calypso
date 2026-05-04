@@ -34,10 +34,10 @@ function makeAction( { streamKey, ...overrides } ) {
 }
 
 describe( 'streams', () => {
-	// `following` is migrated to React Query (see
-	// client/state/reader/streams/test/actions.js). Use a still-unmigrated
-	// stream type for the shared `handlePage` action below.
-	const action = makeAction( { streamKey: 'site:1234' } );
+	// All `date`-based streams plus `following`/`discover` are migrated to
+	// React Query (see client/state/reader/streams/test/actions.js). Use a
+	// still-unmigrated stream type for the shared `handlePage` action below.
+	const action = makeAction( { streamKey: 'conversations' } );
 
 	describe( 'requestPage', () => {
 		const query = {
@@ -57,6 +57,21 @@ describe( 'streams', () => {
 			'discover:tags',
 			'discover:dailyprompt',
 			'discover:freshly-pressed',
+			'recent',
+			'recent:1234',
+			'search:{"q":"foo","sort":"date"}',
+			'feed:1234',
+			'site:1234',
+			'notifications',
+			'featured:1234',
+			'p2',
+			'a8c',
+			'tag:photography',
+			'tag_popular:photography',
+			'list:{"owner":"alice","slug":"favs"}',
+			'on_this_day',
+			'on_this_day:3:15',
+			'user:42',
 		] )( 'returns undefined for migrated streamKey %s', ( streamKey ) => {
 			expect( requestPage( makeAction( { streamKey } ) ) ).toBeUndefined();
 		} );
@@ -66,24 +81,6 @@ describe( 'streams', () => {
 			// each test is an assertion of the http call that should be made
 			// when the given stream id is handed to request page
 			[
-				{
-					stream: 'a8c',
-					expected: {
-						method: 'GET',
-						path: '/read/a8c',
-						apiVersion: '1.2',
-						query,
-					},
-				},
-				{
-					stream: 'p2',
-					expected: {
-						method: 'GET',
-						path: '/read/following/p2',
-						apiVersion: '1.2',
-						query,
-					},
-				},
 				{
 					stream: 'conversations',
 					expected: {
@@ -100,63 +97,6 @@ describe( 'streams', () => {
 						path: '/read/conversations',
 						apiVersion: '1.2',
 						query: { ...query, comments_per_post: 20, index: 'a8c' },
-					},
-				},
-				{
-					stream: 'search: { "q": "foo", "sort": "date" }',
-					expected: {
-						method: 'GET',
-						path: '/read/search',
-						apiVersion: '1.2',
-						query: {
-							sort: 'date',
-							q: 'foo',
-							lang: 'en',
-							number: INITIAL_FETCH,
-							content_width: 675,
-						},
-					},
-				},
-				{
-					stream: 'search: { "q": "foo:bar", "sort": "relevance" }',
-					expected: {
-						method: 'GET',
-						path: '/read/search',
-						apiVersion: '1.2',
-						query: {
-							sort: 'relevance',
-							q: 'foo:bar',
-							lang: 'en',
-							number: INITIAL_FETCH,
-							content_width: 675,
-						},
-					},
-				},
-				{
-					stream: 'feed:1234',
-					expected: {
-						method: 'GET',
-						path: '/read/feed/1234/posts',
-						apiVersion: '1.2',
-						query,
-					},
-				},
-				{
-					stream: 'site:1234',
-					expected: {
-						method: 'GET',
-						path: '/read/sites/1234/posts',
-						apiVersion: '1.2',
-						query,
-					},
-				},
-				{
-					stream: 'featured:1234',
-					expected: {
-						method: 'GET',
-						path: '/read/sites/1234/featured',
-						apiVersion: '1.2',
-						query,
 					},
 				},
 				{

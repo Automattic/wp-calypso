@@ -61,7 +61,9 @@ const feedItem = {
 };
 
 function makeQueryClient() {
-	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	return new QueryClient( {
+		defaultOptions: { queries: { retry: false, retryDelay: 0 } },
+	} );
 }
 
 describe( 'AuthorProfilePanel', () => {
@@ -88,12 +90,16 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [ feedItem ], cursor: null } );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -107,18 +113,44 @@ describe( 'AuthorProfilePanel', () => {
 		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
 	} );
 
+	it( 'does not render the back-to-timeline button (it is owned by the parent view)', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+			.reply( 200, profilePayload );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
+			.query( true )
+			.reply( 200, { items: [], cursor: null } );
+
+		renderWithProvider(
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		await screen.findByRole( 'heading', { level: 2, name: 'Alice' } );
+		expect( screen.queryByRole( 'button', { name: /back/i } ) ).toBeNull();
+	} );
+
 	it( 'fires profile_viewed on mount', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -138,29 +170,43 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/missing' )
 			.reply( 404, { error: 'atmosphere_not_found' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/missing/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/missing/feed' )
 			.query( true )
 			.reply( 404, { error: 'atmosphere_not_found' } );
 
-		renderWithProvider( <AuthorProfilePanel connection={ connection } actor="missing" />, {
-			queryClient: makeQueryClient(),
-		} );
+		renderWithProvider(
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="missing"
+				subtabBasePath="/reader/atmosphere/42/profile/missing"
+			/>,
+			{
+				queryClient: makeQueryClient(),
+			}
+		);
 
 		expect( await screen.findByText( /Profile not found/i ) ).toBeVisible();
 	} );
 
 	it( 'allows retry on a 502 error', async () => {
 		const user = userEvent.setup();
+		// Both the profile and the scoped author feed retry transient
+		// upstream_unavailable up to 2 more times (3 total) before surrendering.
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
+			.times( 3 )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -175,7 +221,7 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( true )
 			.reply( 200, { items: [ feedItem ], cursor: null } );
 
@@ -184,44 +230,16 @@ describe( 'AuthorProfilePanel', () => {
 		expect( await screen.findByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
 	} );
 
-	it( 'navigates to the connection timeline when the back button is clicked', async () => {
-		const user = userEvent.setup();
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
-			.reply( 200, profilePayload );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
-			.query( true )
-			.reply( 200, { items: [], cursor: null } );
-
-		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
-			{ queryClient: makeQueryClient() }
-		);
-
-		const back = await screen.findByRole( 'button', { name: /back/i } );
-		await user.click( back );
-		expect( page ).toHaveBeenCalledWith( '/reader/atmosphere/42/timeline' );
-		expect( spy ).toHaveBeenCalledWith(
-			'calypso_reader_atmosphere_profile_back_to_timeline_clicked',
-			expect.objectContaining( {
-				connection_id: 42,
-				actor: 'alice.bsky.social',
-			} )
-		);
-	} );
-
 	it( 'paginates when sentinel comes into view', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( ( q ) => ! q.cursor )
 			.reply( 200, { items: [ feedItem ], cursor: 'page-2' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( ( q ) => q.cursor === 'page-2' )
 			.reply( 200, {
 				items: [
@@ -236,7 +254,11 @@ describe( 'AuthorProfilePanel', () => {
 			} );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -253,12 +275,16 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			const feedScope = nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( ( q ) => ! ( 'filter' in q ) )
 				.reply( 200, { items: [ feedItem ], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 			await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );
@@ -275,12 +301,16 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			const feedScope = nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( { filter: 'posts_with_replies' } )
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 			await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );
@@ -293,12 +323,16 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -320,12 +354,16 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -348,12 +386,16 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 429, { error: 'atmosphere_rate_limited' } );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 429, { error: 'atmosphere_rate_limited' } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -390,12 +432,16 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -415,12 +461,16 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -438,7 +488,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 			const followScope = nock( 'https://public-api.wordpress.com' )
@@ -454,7 +504,11 @@ describe( 'AuthorProfilePanel', () => {
 				} );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -482,12 +536,16 @@ describe( 'AuthorProfilePanel', () => {
 					viewer: { following: null, following_rkey: null, followed_by: true },
 				} );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -503,7 +561,7 @@ describe( 'AuthorProfilePanel', () => {
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 			nock( 'https://public-api.wordpress.com' )
@@ -511,7 +569,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -542,12 +604,16 @@ describe( 'AuthorProfilePanel', () => {
 					display_name: 'Viewer',
 				} );
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/reader/atmosphere/profile/viewer.bsky.social/feed' )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/viewer.bsky.social/feed' )
 				.query( true )
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="viewer.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="viewer.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/viewer.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -563,11 +629,11 @@ describe( 'AuthorProfilePanel', () => {
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( ( q ) => ! q.cursor )
 			.reply( 200, { items: [ feedItem ], cursor: 'page-2' } );
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/profile/alice.bsky.social/feed' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
 			.query( ( q ) => q.cursor === 'page-2' )
 			.reply( 200, {
 				items: [
@@ -585,7 +651,11 @@ describe( 'AuthorProfilePanel', () => {
 			} );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 

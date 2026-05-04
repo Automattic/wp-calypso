@@ -34,27 +34,6 @@ import {
 // Re-exported for legacy consumers (e.g. client/reader/stream/index.jsx).
 export { PER_FETCH, INITIAL_FETCH, QUERY_META, SITE_LIMITER_FIELDS };
 
-/**
- * Pull the suffix off of a stream key
- *
- * A stream key is a : delimited string, with the form
- * {prefix}:{suffix}
- *
- * Prefix cannot contain a colon, while the suffix may.
- *
- * A colon is not required.
- *
- * Valid IDs look like
- * `following`
- * `site:1234`
- * `search:a:value` ( prefix is `search`, suffix is `a:value` )
- * @param  {string} streamKey The stream ID to break apart
- * @returns {string}          The stream ID suffix
- */
-function streamKeySuffix( streamKey ) {
-	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
-}
-
 function createStreamItemFromSiteAndPost( site, post, dateProperty ) {
 	return {
 		...keyForPost( post ),
@@ -102,61 +81,11 @@ const defaultQueryFn = getQueryString;
 const seed = random( 0, 1000 );
 
 const streamApis = {
-	following: {
-		path: () => '/read/following',
-		dateProperty: 'date',
-	},
-	recent: {
-		path: () => '/read/streams/following',
-		dateProperty: 'date',
-		apiNamespace: () => 'wpcom/v2',
-		query: ( extras, { streamKey } ) => {
-			const feedId = streamKeySuffix( streamKey );
-			const queryParams = { ...extras };
-			if ( feedId !== 'recent' ) {
-				// 'recent' without a suffix means don't filter by feedId
-				queryParams.feed_id = feedId;
-			}
-			return getQueryString( queryParams );
-		},
-	},
-	search: {
-		path: () => '/read/search',
-		dateProperty: 'date',
-		query: ( pageHandle, { streamKey } ) => {
-			const { sort, q } = JSON.parse( streamKeySuffix( streamKey ) );
-			return { sort, q, ...pageHandle, content_width: 675 };
-		},
-	},
-	feed: {
-		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
-		dateProperty: 'date',
-	},
-	site: {
-		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
-		dateProperty: 'date',
-	},
 	conversations: {
 		path: () => '/read/conversations',
 		dateProperty: 'last_comment_date_gmt',
 		query: ( extras ) => getQueryString( { ...extras, comments_per_post: 20 } ),
 		pollQuery: () => getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ] ),
-	},
-	notifications: {
-		path: () => '/read/notifications',
-		dateProperty: 'date',
-	},
-	featured: {
-		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
-		dateProperty: 'date',
-	},
-	p2: {
-		path: () => '/read/following/p2',
-		dateProperty: 'date',
-	},
-	a8c: {
-		path: () => '/read/a8c',
-		dateProperty: 'date',
 	},
 	'conversations-a8c': {
 		path: () => '/read/conversations',
@@ -199,61 +128,6 @@ const streamApis = {
 		// Recommended sites can only return a max of 10 sites per request, so we need to override the default number.
 		pollQuery: ( extraFields = [], extraQueryParams = {} ) =>
 			getQueryStringForPoll( extraFields, { ...extraQueryParams, number: 10 } ),
-	},
-	tag: {
-		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
-		apiNamespace: () => 'wpcom/v2',
-		dateProperty: 'date',
-	},
-	tag_popular: {
-		path: ( { streamKey } ) => `/read/streams/tag/${ streamKeySuffix( streamKey ) }`,
-		apiNamespace: () => 'wpcom/v2',
-		query: ( extras, { streamKey } ) =>
-			getQueryString( {
-				...extras,
-				tags: streamKeySuffix( streamKey ),
-				tag_recs_per_card: 5,
-				site_recs_per_card: 5,
-			} ),
-	},
-	list: {
-		path: ( { streamKey } ) => {
-			const { owner, slug } = JSON.parse( streamKeySuffix( streamKey ) );
-			return `/read/list/${ owner }/${ slug }/posts`;
-		},
-		dateProperty: 'date',
-		apiVersion: '1.3',
-		query: ( extras, { pageHandle } ) => {
-			return {
-				...{ extras, number: 40 },
-				...pageHandle,
-			};
-		},
-	},
-	user: {
-		path: ( { streamKey } ) => `/users/${ streamKeySuffix( streamKey ) }/posts`,
-		dateProperty: 'date',
-		apiVersion: '1',
-		pollQuery: () => getQueryStringForPoll( [], { number: 20 } ),
-	},
-	on_this_day: {
-		path: () => '/read/streams/on-this-day',
-		dateProperty: 'date',
-		apiNamespace: () => 'wpcom/v2',
-		query: ( extras, { streamKey } ) => {
-			const base = { ...extras, number: 15 };
-			if ( streamKey?.startsWith( 'on_this_day:' ) ) {
-				const parts = streamKey.split( ':' );
-				if ( parts.length >= 3 ) {
-					const month = parseInt( parts[ 1 ], 10 );
-					const day = parseInt( parts[ 2 ], 10 );
-					if ( Number.isFinite( month ) && Number.isFinite( day ) ) {
-						return getQueryString( { ...base, month, day } );
-					}
-				}
-			}
-			return getQueryString( base );
-		},
 	},
 };
 

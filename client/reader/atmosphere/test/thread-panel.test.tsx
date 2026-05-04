@@ -27,7 +27,7 @@ const connection: AtmosphereConnection = {
 };
 
 const BASE = 'https://public-api.wordpress.com';
-const PATH = '/wpcom/v2/reader/atmosphere/thread';
+const PATH = `/wpcom/v2/reader/atmosphere/connections/${ connection.id }/thread`;
 
 const DID = 'did:plc:abc234567defghi234567jkl';
 const RKEY = '3kabcdefghijk';

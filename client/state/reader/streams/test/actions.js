@@ -11,7 +11,7 @@ import {
 	READER_POSTS_RECEIVE,
 	READER_RECOMMENDED_SITES_RECEIVE,
 } from 'calypso/state/reader/action-types';
-import { requestPage } from '../actions';
+import { requestPage, requestPaginatedStream } from '../actions';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -43,24 +43,35 @@ function runThunk( params ) {
 	return { dispatch, result };
 }
 
-describe( 'requestPage thunk', () => {
-	beforeEach( () => {
-		mockQueryClient = newClient();
+function runPaginatedThunk( params ) {
+	const dispatch = jest.fn( ( action ) => {
+		if ( typeof action === 'function' ) {
+			return action( dispatch, () => ( {} ) );
+		}
+		return action;
 	} );
-	afterEach( () => {
-		nock.cleanAll();
-		mockQueryClient = null;
-	} );
+	const result = requestPaginatedStream( params )( dispatch );
+	return { dispatch, result };
+}
 
+beforeEach( () => {
+	mockQueryClient = newClient();
+} );
+afterEach( () => {
+	nock.cleanAll();
+	mockQueryClient = null;
+} );
+
+describe( 'requestPage thunk', () => {
 	describe( 'unmigrated stream type', () => {
 		it( 'dispatches the legacy READER_STREAMS_PAGE_REQUEST', () => {
-			const { dispatch } = runThunk( { streamKey: 'site:1234' } );
+			const { dispatch } = runThunk( { streamKey: 'conversations' } );
 			expect( dispatch ).toHaveBeenCalledTimes( 1 );
 			const action = dispatch.mock.calls[ 0 ][ 0 ];
 			expect( action.type ).toBe( READER_STREAMS_PAGE_REQUEST );
 			expect( action.payload ).toMatchObject( {
-				streamKey: 'site:1234',
-				streamType: 'site',
+				streamKey: 'conversations',
+				streamType: 'conversations',
 				isPoll: false,
 			} );
 		} );
@@ -408,5 +419,306 @@ describe( 'requestPage thunk', () => {
 				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
 			expect( receivePageAction.payload.streamKey ).toBe( 'discover:latest' );
 		} );
+	} );
+
+	const baseResponse = {
+		posts: [
+			{
+				ID: 99,
+				site_ID: 555,
+				feed_ID: 444,
+				feed_item_ID: 22,
+				date: '2026-04-01',
+				URL: 'https://example.com/post-99',
+				site_name: 'Example',
+			},
+		],
+		date_range: { after: '2026-04-01' },
+		found: 1,
+	};
+
+	// Each case asserts the migrated thunk hits the legacy URL with the
+	// legacy query shape (number/lang/orderBy/meta defaults from
+	// getQueryString unless the stream historically bypassed it).
+	it.each( [
+		{
+			name: 'recent without suffix',
+			streamKey: 'recent',
+			path: '/wpcom/v2/read/streams/following',
+			expectedQuery: { orderBy: 'date', meta: 'post,discover_original_post' },
+			notInQuery: [ 'feed_id' ],
+		},
+		{
+			name: 'recent with feed suffix',
+			streamKey: 'recent:1234',
+			path: '/wpcom/v2/read/streams/following',
+			expectedQuery: { feed_id: '1234' },
+		},
+		{
+			name: 'search parses sort+q from JSON suffix',
+			streamKey: 'search:{"sort":"relevance","q":"react"}',
+			path: '/rest/v1.2/read/search',
+			expectedQuery: { sort: 'relevance', q: 'react', content_width: '675' },
+			// Search historically bypassed getQueryString, so meta/orderBy must NOT be added.
+			notInQuery: [ 'meta', 'orderBy' ],
+		},
+		{
+			name: 'feed',
+			streamKey: 'feed:1234',
+			path: '/rest/v1.2/read/feed/1234/posts',
+			expectedQuery: { orderBy: 'date', meta: 'post,discover_original_post' },
+		},
+		{
+			name: 'site',
+			streamKey: 'site:1234',
+			path: '/rest/v1.2/read/sites/1234/posts',
+			expectedQuery: { orderBy: 'date' },
+		},
+		{
+			name: 'notifications',
+			streamKey: 'notifications',
+			path: '/rest/v1.2/read/notifications',
+			expectedQuery: { orderBy: 'date' },
+		},
+		{
+			name: 'featured',
+			streamKey: 'featured:1234',
+			path: '/rest/v1.2/read/sites/1234/featured',
+			expectedQuery: { orderBy: 'date' },
+		},
+		{
+			name: 'p2',
+			streamKey: 'p2',
+			path: '/rest/v1.2/read/following/p2',
+			expectedQuery: { orderBy: 'date' },
+		},
+		{
+			name: 'a8c',
+			streamKey: 'a8c',
+			path: '/rest/v1.2/read/a8c',
+			expectedQuery: { orderBy: 'date' },
+		},
+		{
+			name: 'tag',
+			streamKey: 'tag:photography',
+			path: '/wpcom/v2/read/tags/photography/posts',
+			expectedQuery: { orderBy: 'date' },
+		},
+		{
+			name: 'tag_popular',
+			streamKey: 'tag_popular:photography',
+			path: '/wpcom/v2/read/streams/tag/photography',
+			expectedQuery: {
+				tags: 'photography',
+				tag_recs_per_card: '5',
+				site_recs_per_card: '5',
+			},
+		},
+		{
+			name: 'on_this_day without month/day',
+			streamKey: 'on_this_day',
+			path: '/wpcom/v2/read/streams/on-this-day',
+			expectedQuery: { number: '15' },
+			notInQuery: [ 'month', 'day' ],
+		},
+		{
+			name: 'on_this_day with month/day',
+			streamKey: 'on_this_day:3:15',
+			path: '/wpcom/v2/read/streams/on-this-day',
+			expectedQuery: { number: '15', month: '3', day: '15' },
+		},
+		{
+			name: 'user',
+			streamKey: 'user:42',
+			path: '/rest/v1/users/42/posts',
+			expectedQuery: { orderBy: 'date' },
+		},
+	] )( '$name hits $path with the right query', async ( c ) => {
+		let captured;
+		nock( BASE )
+			.get( c.path )
+			.query( ( q ) => {
+				captured = q;
+				return true;
+			} )
+			.reply( 200, baseResponse );
+
+		const { result } = runThunk( { streamKey: c.streamKey } );
+		await result;
+
+		expect( captured ).toMatchObject( c.expectedQuery );
+		for ( const key of c.notInQuery ?? [] ) {
+			expect( captured ).not.toHaveProperty( key );
+		}
+	} );
+
+	// The legacy `streamApis.list.query` shipped a typoed spread that
+	// dropped meta/orderBy/content_width/lang from the wire query. The
+	// migration fixes it — assert that the new shape is sent and the old
+	// nested `extras` literal key is gone.
+	it( 'list now sends the same enriched shape as other streams (bug fixed)', async () => {
+		let captured;
+		nock( BASE )
+			.get( '/rest/v1.3/read/list/alice/favs/posts' )
+			.query( ( q ) => {
+				captured = q;
+				return true;
+			} )
+			.reply( 200, baseResponse );
+
+		const { result } = runThunk( {
+			streamKey: 'list:{"owner":"alice","slug":"favs"}',
+		} );
+		await result;
+
+		expect( captured ).toMatchObject( {
+			orderBy: 'date',
+			meta: 'post,discover_original_post',
+			content_width: '675',
+			number: '40',
+		} );
+		expect( captured.lang ).toBeDefined();
+		// The legacy bug nested the extras under a literal key — confirm gone.
+		expect( captured ).not.toHaveProperty( 'extras' );
+	} );
+
+	// `user` had a custom poll query (`number: 20`); other streams use the
+	// PER_POLL default. Verify the override survives the migration.
+	it( 'user poll overrides number to 20', async () => {
+		let captured;
+		nock( BASE )
+			.get( '/rest/v1/users/42/posts' )
+			.query( ( q ) => {
+				captured = q;
+				return true;
+			} )
+			.reply( 200, baseResponse );
+
+		const { result } = runThunk( { streamKey: 'user:42', isPoll: true } );
+		await result;
+
+		expect( captured.number ).toBe( '20' );
+	} );
+} );
+
+describe( 'requestPaginatedStream thunk', () => {
+	const recentResponse = {
+		posts: [
+			{
+				ID: 7,
+				site_ID: 7,
+				feed_ID: 7,
+				feed_item_ID: 7,
+				date: '2026-05-01',
+				URL: 'https://example.com/post-7',
+				site_name: 'Recent',
+			},
+		],
+		total_pages: 3,
+		found: 25,
+	};
+
+	it( 'routes migrated `recent` through React Query with page+perPage', async () => {
+		let captured;
+		nock( BASE )
+			.get( '/wpcom/v2/read/streams/following' )
+			.query( ( q ) => {
+				captured = q;
+				return true;
+			} )
+			.reply( 200, recentResponse );
+
+		const { dispatch, result } = runPaginatedThunk( {
+			streamKey: 'recent',
+			page: 2,
+			perPage: 10,
+		} );
+		await result;
+
+		expect( captured.page ).toBe( '2' );
+		expect( captured.number ).toBe( '10' );
+
+		const types = dispatch.mock.calls
+			.map( ( c ) => c[ 0 ] )
+			.filter( ( a ) => a && typeof a === 'object' && a.type )
+			.map( ( a ) => a.type );
+		expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
+	} );
+
+	it( 'returns the legacy action for unmigrated streamKey', () => {
+		const { dispatch, result } = runPaginatedThunk( {
+			streamKey: 'conversations',
+			page: 1,
+			perPage: 10,
+		} );
+		// Action object returned, not a Promise — legacy data-layer
+		// path. The first dispatch carried the same action.
+		expect( result ).toMatchObject( {
+			type: 'READER_STREAMS_PAGINATED_REQUEST',
+			payload: { streamKey: 'conversations', page: 1, perPage: 10 },
+		} );
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not collapse overlapping page requests for the same streamKey', async () => {
+		// Both pages in flight at once must hit the network independently —
+		// otherwise `fetchQuery` dedups them and page 2 receives page 1's rows.
+		const page1Response = {
+			...recentResponse,
+			posts: [
+				{
+					...recentResponse.posts[ 0 ],
+					ID: 1,
+					feed_item_ID: 1,
+					URL: 'https://example.com/post-1',
+				},
+			],
+		};
+		const page2Response = {
+			...recentResponse,
+			posts: [
+				{
+					...recentResponse.posts[ 0 ],
+					ID: 2,
+					feed_item_ID: 2,
+					URL: 'https://example.com/post-2',
+				},
+			],
+		};
+
+		nock( BASE )
+			.get( '/wpcom/v2/read/streams/following' )
+			.query( ( q ) => q.page === '1' )
+			.reply( 200, page1Response );
+		nock( BASE )
+			.get( '/wpcom/v2/read/streams/following' )
+			.query( ( q ) => q.page === '2' )
+			.reply( 200, page2Response );
+
+		const { dispatch: dispatch1, result: result1 } = runPaginatedThunk( {
+			streamKey: 'recent',
+			page: 1,
+			perPage: 10,
+		} );
+		const { dispatch: dispatch2, result: result2 } = runPaginatedThunk( {
+			streamKey: 'recent',
+			page: 2,
+			perPage: 10,
+		} );
+		await Promise.all( [ result1, result2 ] );
+
+		const findReceive = ( dispatch ) =>
+			dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
+
+		const receive1 = findReceive( dispatch1 );
+		const receive2 = findReceive( dispatch2 );
+
+		expect( receive1.payload.page ).toBe( 1 );
+		expect( receive2.payload.page ).toBe( 2 );
+		expect( receive1.payload.streamItems[ 0 ].postId ).not.toBe(
+			receive2.payload.streamItems[ 0 ].postId
+		);
 	} );
 } );

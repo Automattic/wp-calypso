@@ -57,7 +57,11 @@ describe( 'readStreamQuery', () => {
 	} );
 
 	it( 'throws when called for an unmigrated streamType', () => {
-		const opts = readStreamQuery( 'site:1234', { number: 4 }, null );
-		expect( () => opts.queryFn!( {} as never ) ).toThrow( /unsupported streamType "site"/ );
+		// `conversations` is still served by the legacy data-layer (different
+		// dateProperty); update this case when it lands in `readStreamQuery`.
+		const opts = readStreamQuery( 'conversations', { number: 4 }, null );
+		expect( () => opts.queryFn!( {} as never ) ).toThrow(
+			/unsupported streamType "conversations"/
+		);
 	} );
 } );
