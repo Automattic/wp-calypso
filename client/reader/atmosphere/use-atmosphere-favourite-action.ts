@@ -1,0 +1,129 @@
+import { PENDING_LIKE_URI } from '@automattic/api-core';
+import { useCreateLikeMutation, useDeleteLikeMutation } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
+import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { useSocialAnalytics } from '../social/components/post-card/analytics-context';
+import type {
+	FavouriteAction,
+	UseFavouriteActionFn,
+} from '../social/components/post-card/favourites-context';
+import type { AtmosphereError } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social';
+
+type LikeDirection = 'like' | 'unlike';
+
+function errorMessageForLike(
+	error: AtmosphereError,
+	translate: ReturnType< typeof useTranslate >
+): string {
+	switch ( error.kind ) {
+		case 'auth_required':
+		case 'auth_failed':
+		case 'invalid_credentials':
+			return translate( 'Reconnect your Bluesky account to like posts.' );
+		case 'rate_limited':
+			return translate( "You're liking posts too quickly. Try again in a moment." );
+		case 'connection_not_found':
+		case 'not_found':
+			return translate( 'This connection no longer exists.' );
+		case 'bad_request':
+		case 'invalid_handle':
+		case 'upstream_unavailable':
+		case 'text_too_long':
+		case 'reply_disabled':
+		case 'quote_disabled':
+		case 'target_unavailable':
+		case 'unknown':
+			return translate( 'Could not save your like. Please try again.' );
+	}
+}
+
+/**
+ * Factory that produces an atmosphere-protocol favourite-action hook for a
+ * given connection.
+ *
+ * Usage in panel render:
+ *
+ *   const useFavAction = useMemo(
+ *     () => makeUseAtmosphereFavouriteAction( connection.id ),
+ *     [ connection.id ]
+ *   );
+ *   <FavouritesProvider value={ useFavAction }>…</FavouritesProvider>
+ *
+ * The returned function is itself a custom hook (it calls useCreateLikeMutation
+ * etc.), so it must only be called inside a React component.
+ */
+export function makeUseAtmosphereFavouriteAction( connectionId: number ): UseFavouriteActionFn {
+	return function useAtmosphereFavouriteAction( post: SocialPost ): FavouriteAction {
+		const translate = useTranslate();
+		const dispatch = useDispatch();
+		const analytics = useSocialAnalytics();
+		const create = useCreateLikeMutation( connectionId );
+		const remove = useDeleteLikeMutation( connectionId );
+
+		const isFavourited = Boolean( post.viewer?.like );
+		const isPending =
+			create.isPending || remove.isPending || post.viewer?.like === PENDING_LIKE_URI;
+
+		const error: { kind: string } | null = create.error ?? remove.error ?? null;
+
+		const trackError = ( atmosphereError: AtmosphereError, direction: LikeDirection ) => {
+			dispatch( errorNotice( errorMessageForLike( atmosphereError, translate ) ) );
+			analytics?.onClick( `calypso_reader_${ analytics.source }_like_error_shown`, {
+				connection_id: connectionId,
+				post_uri: post.uri,
+				error_kind: atmosphereError.kind,
+				direction,
+			} );
+		};
+
+		const favourite = () => {
+			analytics?.onClick( `calypso_reader_${ analytics.source }_like_clicked`, {
+				connection_id: connectionId,
+				post_uri: post.uri,
+			} );
+			create.mutate(
+				{ postUri: post.uri, postCid: post.cid ?? '' },
+				{ onError: ( err ) => trackError( err, 'like' ) }
+			);
+		};
+
+		const unfavourite = () => {
+			const rkey = rkeyFromUri( post.viewer?.like ?? '' );
+			if ( ! rkey ) {
+				return;
+			}
+			analytics?.onClick( `calypso_reader_${ analytics.source }_unlike_clicked`, {
+				connection_id: connectionId,
+				post_uri: post.uri,
+			} );
+			remove.mutate(
+				{ rkey, postUri: post.uri },
+				{ onError: ( err ) => trackError( err, 'unlike' ) }
+			);
+		};
+
+		const accessibleLabel = ( count: number ) =>
+			translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
+				count,
+				args: { count: formatNumber( count ) },
+				textOnly: true,
+			} );
+
+		return {
+			supported: true,
+			isFavourited,
+			isPending,
+			error,
+			label: {
+				action: translate( 'Like' ),
+				accessibleLabel,
+			},
+			favourite,
+			unfavourite,
+		};
+	};
+}

@@ -110,7 +110,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 					{ counts.reposts }
 				</span>
 			) }
-			{ connectionId && post.cid ? (
+			{ connectionId ? (
 				<LikeButton
 					post={ {
 						uri: post.uri,
@@ -118,7 +118,6 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 						counts: post.counts,
 						viewer: post.viewer,
 					} }
-					connectionId={ connectionId }
 				/>
 			) : (
 				<span>

@@ -10,6 +10,7 @@ import {
 	SocialPostCard,
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
+import { FavouritesProvider } from 'calypso/reader/social/components/post-card/favourites-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
@@ -19,6 +20,7 @@ import {
 	getThreadUrl as buildThreadUrl,
 	type ProfileRefInput,
 } from './route';
+import { makeUseAtmosphereFavouriteAction } from './use-atmosphere-favourite-action';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
@@ -159,27 +161,34 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
 	);
 
+	const useFavouriteAction = useMemo(
+		() => makeUseAtmosphereFavouriteAction( connection.id ),
+		[ connection.id ]
+	);
+
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<SocialFeedList< SocialPost >
-				items={ items }
-				isPending={ isPending }
-				isError={ isError }
-				error={ projectAtmosphereError( error ) }
-				hasNextPage={ Boolean( hasNextPage ) }
-				isFetchingNextPage={ isFetchingNextPage }
-				fetchNextPage={ fetchNextPage }
-				refetch={ handleRetry }
-				renderItem={ renderItem }
-				itemKey={ itemKey }
-				emptyTitle={ translate( "You're all caught up." ) }
-				emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
-				emptyActionLabel={ translate( 'Browse Bluesky' ) }
-				emptyActionURL="https://bsky.app"
-				protocolLabel="Bluesky"
-				protocolHomeURL="/reader/atmosphere"
-				protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
-			/>
+			<FavouritesProvider value={ useFavouriteAction }>
+				<SocialFeedList< SocialPost >
+					items={ items }
+					isPending={ isPending }
+					isError={ isError }
+					error={ projectAtmosphereError( error ) }
+					hasNextPage={ Boolean( hasNextPage ) }
+					isFetchingNextPage={ isFetchingNextPage }
+					fetchNextPage={ fetchNextPage }
+					refetch={ handleRetry }
+					renderItem={ renderItem }
+					itemKey={ itemKey }
+					emptyTitle={ translate( "You're all caught up." ) }
+					emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
+					emptyActionLabel={ translate( 'Browse Bluesky' ) }
+					emptyActionURL="https://bsky.app"
+					protocolLabel="Bluesky"
+					protocolHomeURL="/reader/atmosphere"
+					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+				/>
+			</FavouritesProvider>
 		</SocialAnalyticsProvider>
 	);
 }
