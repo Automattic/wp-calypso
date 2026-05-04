@@ -30,7 +30,7 @@ describe( '<ComposeFab>', () => {
 			</ComposerProvider>
 		);
 
-		await user.click( screen.getByRole( 'button', { name: 'Compose post' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Compose' } ) );
 
 		expect( onMode ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -56,7 +56,7 @@ describe( '<ComposeFab>', () => {
 			</ComposerProvider>
 		);
 
-		expect( screen.getByRole( 'button', { name: 'Compose post' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Compose' } ) ).toBeVisible();
 
 		await act( async () => {
 			openFn?.( { kind: 'standalone', entry_point: 'fab' } );
@@ -65,6 +65,6 @@ describe( '<ComposeFab>', () => {
 		// FAB stays mounted (so the provider's `triggerRef` keeps a live DOM
 		// node for focus restoration) but is hidden from the a11y tree via
 		// `aria-hidden` so screen readers and `getByRole` skip it.
-		expect( screen.queryByRole( 'button', { name: 'Compose post' } ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Compose' } ) ).toBeNull();
 	} );
 } );

@@ -49,7 +49,7 @@
 
 .atmosphere-compose-fab {
 	position: fixed;
-	inset-block-end: 24px;
+	inset-block-end: 40px;
 	// Align the FAB's trailing edge with the right edge of the centered
 	// `<Main>` content (max-width 720px, sitting in the content area to
 	// the right of the global sidebar) so the FAB tracks the column
@@ -60,10 +60,14 @@
 		24px,
 		calc((100vw - var(--sidebar-width-max, 0px) - 720px) / 2)
 	);
-	width: 56px;
-	height: 56px;
-	min-width: 56px;
-	border-radius: 50%;
+	height: auto;
+	min-height: 40px;
+	padding: 8px 16px;
+	gap: 6px;
+	// 6px matches `.atmosphere-compose-pill` and the rest of the
+	// Reader's compose surfaces (search, stream input, `.quick-post`).
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
 	background: var(--studio-blue-50, #3858e9);
 	color: var(--studio-white, #fff);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
@@ -89,7 +93,6 @@
 		display: none;
 	}
 
-	// Keep the icon centered within the round button.
 	svg {
 		fill: currentColor;
 	}

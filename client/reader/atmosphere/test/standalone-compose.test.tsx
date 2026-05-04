@@ -144,7 +144,7 @@ describe( 'Standalone compose end-to-end', () => {
 		} );
 
 		// Click the FAB to open the standalone composer.
-		const fab = await screen.findByRole( 'button', { name: 'Compose post' } );
+		const fab = await screen.findByRole( 'button', { name: 'Compose' } );
 		await user.click( fab );
 
 		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
@@ -249,7 +249,7 @@ describe( 'Standalone compose end-to-end', () => {
 			queryClient: makeQueryClient(),
 		} );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Compose post' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Compose' } ) );
 		await user.type( screen.getByRole( 'textbox' ), 'will fail' );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
@@ -290,7 +290,7 @@ describe( 'Standalone compose end-to-end', () => {
 			queryClient: makeQueryClient(),
 		} );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Compose post' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Compose' } ) );
 		await user.type( screen.getByRole( 'textbox' ), 'auth fail' );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
 

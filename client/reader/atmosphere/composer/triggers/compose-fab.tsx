@@ -22,7 +22,7 @@ export function ComposeFab() {
 		<Button
 			className={ clsx( 'atmosphere-compose-fab', { 'is-hidden': isHidden } ) }
 			icon={ edit }
-			label={ translate( 'Compose post' ) as string }
+			text={ translate( 'Compose' ) as string }
 			aria-hidden={ isHidden || undefined }
 			tabIndex={ isHidden ? -1 : undefined }
 			onClick={ () => openComposer( { kind: 'standalone', entry_point: 'fab' } ) }
