@@ -3,12 +3,11 @@ import { wpcom } from '../wpcom-fetcher';
 import type { ReadStreamQueryParams, ReadStreamResponse } from './types';
 
 // READ-485: streams migrated incrementally. Streams still served by the
-// legacy data-layer at `client/state/data-layer/wpcom/read/streams/index.js`
-// (with non-`date` dateProperty or non-stream endpoints): `conversations`,
-// `conversations-a8c`, `likes`, `recommendations_posts`,
-// `custom_recs_posts_with_images`, `custom_recs_sites_with_images`. See the
-// legacy `streamApis` map for their canonical per-shape `path`, `apiVersion`,
-// `apiNamespace`, and `query` definitions to mirror when porting each one.
+// legacy data-layer at `client/state/data-layer/wpcom/read/streams/index.js`:
+// `likes`, `recommendations_posts`, `custom_recs_posts_with_images`,
+// `custom_recs_sites_with_images`. See the legacy `streamApis` map for their
+// canonical per-shape `path`, `apiVersion`, `apiNamespace`, and `query`
+// definitions to mirror when porting each one.
 export const fetchReadFollowing = (
 	params: ReadStreamQueryParams = {}
 ): Promise< ReadStreamResponse > =>
@@ -245,6 +244,22 @@ export const fetchReadDiscoverFreshlyPressed = (
 ): Promise< ReadStreamResponse > =>
 	wpcom.req.get( {
 		path: addQueryArgs( '/freshly-pressed', params ),
+		apiVersion: '1.2',
+		method: 'GET',
+	} );
+
+/**
+ * Fetch the `conversations` stream — `/read/conversations`. The thunk in
+ * `client/state/reader/streams/actions.js` always passes `comments_per_post: 20`
+ * and (for the a8c variant) `index: 'a8c'` in `params`, mirroring the legacy
+ * `streamApis.conversations` definition. Pagination is date-based via
+ * `last_comment_date_gmt` on the response.
+ */
+export const fetchReadConversations = (
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/read/conversations', params ),
 		apiVersion: '1.2',
 		method: 'GET',
 	} );
