@@ -211,7 +211,8 @@ export async function executePublishPostTool() {
 	if ( ! d || typeof d.editPost !== 'function' || typeof d.savePost !== 'function' ) {
 		return {
 			ok: false,
-			error: 'Post editor is not available (core/editor store missing or editPost/savePost missing).',
+			error:
+				'Post editor is not available (core/editor store missing or editPost/savePost missing).',
 		};
 	}
 	try {
@@ -242,12 +243,12 @@ export async function executePublishPostTool() {
 export async function executeUndoTool() {
 	const editor = getEditorDispatch();
 	const core = getCoreDispatch();
-	const undoFn =
-		typeof editor?.undo === 'function'
-			? editor.undo.bind( editor )
-			: typeof core?.undo === 'function'
-				? core.undo.bind( core )
-				: null;
+	let undoFn: ( () => unknown ) | null = null;
+	if ( typeof editor?.undo === 'function' ) {
+		undoFn = editor.undo.bind( editor );
+	} else if ( typeof core?.undo === 'function' ) {
+		undoFn = core.undo.bind( core );
+	}
 	if ( ! undoFn ) {
 		return { ok: false, error: 'Undo is not available in this editor build.' };
 	}
@@ -266,12 +267,12 @@ export async function executeUndoTool() {
 export async function executeRedoTool() {
 	const editor = getEditorDispatch();
 	const core = getCoreDispatch();
-	const redoFn =
-		typeof editor?.redo === 'function'
-			? editor.redo.bind( editor )
-			: typeof core?.redo === 'function'
-				? core.redo.bind( core )
-				: null;
+	let redoFn: ( () => unknown ) | null = null;
+	if ( typeof editor?.redo === 'function' ) {
+		redoFn = editor.redo.bind( editor );
+	} else if ( typeof core?.redo === 'function' ) {
+		redoFn = core.redo.bind( core );
+	}
 	if ( ! redoFn ) {
 		return { ok: false, error: 'Redo is not available in this editor build.' };
 	}
@@ -303,13 +304,12 @@ export function executeGetPostInfoTool() {
 	const id =
 		typeof sel.getCurrentPostId === 'function'
 			? sel.getCurrentPostId()
-			: ( ( sel.getCurrentPost?.() as { id?: number } | undefined )?.id ?? null );
+			: ( sel.getCurrentPost?.() as { id?: number } | undefined )?.id ?? null;
 	const isDirty = typeof sel.isEditedPostDirty === 'function' ? sel.isEditedPostDirty() : null;
 	const isSaving = typeof sel.isSavingPost === 'function' ? sel.isSavingPost() : null;
 	const isPublished =
 		typeof sel.isCurrentPostPublished === 'function' ? sel.isCurrentPostPublished() : null;
-	const isAutosaving =
-		typeof sel.isAutosavingPost === 'function' ? sel.isAutosavingPost() : null;
+	const isAutosaving = typeof sel.isAutosavingPost === 'function' ? sel.isAutosavingPost() : null;
 	return {
 		ok: true,
 		id,
