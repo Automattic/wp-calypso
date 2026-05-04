@@ -2,7 +2,7 @@ import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkou
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useEffect, useState, Fragment, ReactNode } from 'react';
+import { useEffect, useId, useState, Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -237,6 +237,7 @@ const BlikLogo = styled( BlikLogoSvg )`
 `;
 
 function BlikLogoSvg( { className }: { className?: string } ) {
+	const gradientId = useId();
 	return (
 		<svg
 			className={ className }
@@ -257,12 +258,12 @@ function BlikLogoSvg( { className }: { className?: string } ) {
 				d="M17.871 3.139h2.47v14.008h-2.47zM22.531 7.97h2.47v9.177h-2.47zM11.45 7.881a4.67 4.67 0 0 0-2.215.556V3.139h-2.47v9.422a4.684 4.684 0 1 0 4.685-4.68m0 6.937a2.253 2.253 0 1 1 0-4.506 2.253 2.253 0 0 1 0 4.505"
 			/>
 			<path
-				fill="url(#blik-logo-fill)"
+				fill={ `url(#${ gradientId })` }
 				d="M16.136 4.654a2.21 2.21 0 1 0-4.419-.03 2.21 2.21 0 0 0 4.419.03"
 			/>
 			<defs>
 				<linearGradient
-					id="blik-logo-fill"
+					id={ gradientId }
 					x1="12.352"
 					x2="15.501"
 					y1="6.189"
