@@ -154,6 +154,16 @@
 				padding-top: 0;
 			}
 		}
+
+		.plan-features-2023-grid__header,
+		.plan-features-2023-grid__header-logo,
+		.plans-grid-next-header-price,
+		.plan-features-2023-grid__header-tagline,
+		.plan-features-2023-grid__header-billing-info,
+		.plan-features-2023-grid__table-item.is-top-buttons,
+		.plan-features-2023-grid__item {
+			padding-inline: 16px;
+		}
 	}
 
 	.plans-grid-next-storage-feature-label__volume {
