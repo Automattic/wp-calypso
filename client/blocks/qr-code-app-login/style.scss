@@ -5,5 +5,63 @@
 .qr-code-app-login {
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	gap: 24px;
+}
+
+.qr-code-app-login__token {
+	width: 300px;
+	height: 300px;
+	max-width: 100%;
+	max-height: calc(100vw - 48px);
+
+	svg {
+		max-width: 100%;
+		max-height: calc(100vw - 48px);
+	}
+}
+
+.qr-code-app-login__placeholder {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	background-color: var(--color-neutral-0);
+
+	@include placeholder( --color-neutral-0 );
+
+	:nth-child(2) {
+		inset-inline-start: auto;
+		inset-inline-end: 0;
+	}
+
+	:nth-child(3) {
+		inset-block-start: auto;
+		inset-block-end: 0;
+	}
+}
+
+.qr-code-app-login__corner-box {
+	position: absolute;
+	border: 5px solid var(--color-neutral-0);
+	outline: 5px solid #fff;
+	background-color: var(--color-neutral-0);
+	width: 16px;
+	height: 16px;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+}
+
+.qr-code-app-login__instructions {
+	text-align: center;
+	margin: 0;
+}
+
+.qr-code-app-login__status,
+.qr-code-app-login__error {
+	margin: 0;
+	text-align: center;
+}
+
+.qr-code-app-login__error {
+	color: var(--color-error);
 }
