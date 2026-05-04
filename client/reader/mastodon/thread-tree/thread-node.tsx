@@ -14,6 +14,7 @@ interface ThreadNodeProps {
 	// `node.replies`. Used by ThreadTree's parent chain so a parent's other
 	// replies don't show up above the target post.
 	renderReplies?: boolean;
+	connectionId?: number;
 }
 
 // Visual indentation caps at 4 levels deep — past that, every reply renders
@@ -23,7 +24,15 @@ const MAX_VISUAL_DEPTH = 4;
 
 export const MastodonThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >(
 	function MastodonThreadNode(
-		{ node, depth, highlighted, expandedVideo, prominentTimestamp, renderReplies = true },
+		{
+			node,
+			depth,
+			highlighted,
+			expandedVideo,
+			prominentTimestamp,
+			renderReplies = true,
+			connectionId,
+		},
 		ref
 	) {
 		const isCapped = depth > MAX_VISUAL_DEPTH;
@@ -59,6 +68,7 @@ export const MastodonThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >(
 				>
 					<SocialPostCard
 						post={ node.post }
+						connectionId={ connectionId }
 						variant="default"
 						expandedVideo={ expandedVideo }
 						prominentTimestamp={ prominentTimestamp }
@@ -71,6 +81,7 @@ export const MastodonThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >(
 							node={ reply }
 							depth={ depth + 1 }
 							highlighted={ false }
+							connectionId={ connectionId }
 						/>
 					) ) }
 			</>
