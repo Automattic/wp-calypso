@@ -52,7 +52,13 @@ $actions-height: 64px;
 	}
 
 	&__content {
+		// Since the actions container is positioned absolutely,
+		// this padding bottom ensures that the content wrapper will properly
+		// detect overflowing content and start showing scrollbars at the right
+		// moment. Without this padding, the content would render under the actions
+		// bar without causing the wrapper to show a scrollbar.
 		padding-bottom: $actions-height;
+
 		display: flex;
 		flex-direction: column;
 		min-height: 520px;
