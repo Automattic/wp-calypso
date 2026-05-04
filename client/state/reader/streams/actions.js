@@ -1,5 +1,6 @@
 import { readStreamQuery } from '@automattic/api-queries';
 import i18n from 'i18n-calypso';
+import { random } from 'lodash';
 import { buildDiscoverStreamKey, getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { getStreamType } from 'calypso/reader/utils';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
@@ -27,6 +28,7 @@ import {
 	analyticsForStream,
 	createStreamDataFromCards,
 	createStreamDataFromPosts,
+	createStreamDataFromSites,
 	extractPageHandle,
 	getAlgorithmForStream,
 	getQueryString,
@@ -34,6 +36,12 @@ import {
 } from './normalize';
 import 'calypso/state/data-layer/wpcom/read/streams';
 import 'calypso/state/reader/init';
+
+// Stable seed for the recommendation streams (`recommendations_posts`,
+// `custom_recs_posts_with_images`). Mirrors the legacy data-layer behavior:
+// declared once per session so pagination and randomization stay consistent
+// across requests. `custom_recs_sites_with_images` does not use it.
+const recommendationsSeed = random( 0, 1000 );
 
 /**
  * Per-stream date property used by `createStreamDataFromPosts` to populate
@@ -126,6 +134,11 @@ function buildStreamQueryParams( {
 			// Legacy `streamApis.likes.pollQuery`.
 			return getQueryStringForPoll( [ 'date_liked' ] );
 		}
+		if ( streamType === 'custom_recs_sites_with_images' ) {
+			// Legacy `streamApis.custom_recs_sites_with_images.pollQuery` capped
+			// `number` at 10 — recommended sites max 10 per request.
+			return getQueryStringForPoll( [], { ...commonQueryParams, number: 10 } );
+		}
 		return getQueryStringForPoll( [], commonQueryParams );
 	}
 	const extras = {
@@ -152,6 +165,28 @@ function buildStreamQueryParams( {
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':
 			return getQueryString( { ...extras, comments_per_post: 20, index: 'a8c' } );
+		case 'recommendations_posts':
+			// Legacy `streamApis.recommendations_posts.query` destructured a
+			// non-existent `query` field from extras and shipped only seed +
+			// algorithm — no `number`, `offset`, `lang`, `meta`, `orderBy`,
+			// `content_width`, `page`. Preserved exactly here to avoid wire-shape
+			// regressions; cleanup is tracked separately.
+			return {
+				seed: recommendationsSeed,
+				algorithm: 'read:recommendations:posts/es/1',
+			};
+		case 'custom_recs_posts_with_images':
+			return getQueryString( {
+				...extras,
+				seed: recommendationsSeed,
+				alg_prefix: 'read:recommendations:posts',
+			} );
+		case 'custom_recs_sites_with_images':
+			return getQueryString( {
+				...extras,
+				algorithm: 'read:recommendations:sites/es/2',
+				posts_per_site: 1,
+			} );
 		default:
 			return getQueryString( extras );
 	}
@@ -330,6 +365,13 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 		streamPosts = fromCards.streamPosts;
 		streamSites = fromCards.streamSites;
 		streamNewSites = fromCards.streamNewSites;
+	} else if ( data.sites ) {
+		// `custom_recs_sites_with_images` returns `{ sites: [...] }`. Each site
+		// carries its top post under `posts[0]`; the legacy `handlePage` flattens
+		// into post stream items + posts, never dispatching `receiveRecommendedSites`.
+		const fromSites = createStreamDataFromSites( data.sites, dateProperty );
+		streamItems = fromSites.streamItems;
+		streamPosts = fromSites.streamPosts;
 	} else {
 		const fromPosts = createStreamDataFromPosts( data.posts, dateProperty );
 		streamItems = fromPosts.streamItems;

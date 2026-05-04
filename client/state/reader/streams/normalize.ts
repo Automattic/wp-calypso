@@ -135,6 +135,68 @@ export function createStreamSitesFromRecommendedSites( sites: RawSite[] | null |
 	} ) );
 }
 
+interface RawSiteWithPosts extends RawSite {
+	posts?: RawPost[];
+}
+
+function createStreamItemFromSiteAndPost(
+	site: RawSiteWithPosts,
+	post: RawPost,
+	dateProperty: string
+) {
+	return {
+		...keyForPost( post ),
+		date: post[ dateProperty ],
+		// Include comments for conversations.
+		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ),
+		url: post.URL,
+		site_icon: site.icon?.ico,
+		site_description: site.description,
+		site_name: site.name,
+		feed_URL: post.feed_URL,
+		feed_ID: post.feed_ID,
+		xPostMetadata: XPostHelper.getXPostMetadata( post ),
+	};
+}
+
+function createStreamItemFromSite( site: RawSiteWithPosts, dateProperty: string ) {
+	const post = site.posts?.[ 0 ] ?? null;
+	if ( ! post ) {
+		return null;
+	}
+	return createStreamItemFromSiteAndPost( site, post, dateProperty );
+}
+
+/**
+ * Split a `sites` payload (used by `custom_recs_sites_with_images`) into
+ * stream items and the underlying posts. Each site carries its top post
+ * under `posts[0]`; sites without a post are skipped. Mirrors the legacy
+ * `createStreamDataFromSites` in
+ * `client/state/data-layer/wpcom/read/streams/index.js`.
+ */
+export function createStreamDataFromSites(
+	sites: RawSiteWithPosts[] | null | undefined,
+	dateProperty: string
+) {
+	const streamItems: ReturnType< typeof createStreamItemFromSiteAndPost >[] = [];
+	const streamPosts: RawPost[] = [];
+
+	if ( Array.isArray( sites ) ) {
+		sites.forEach( ( site ) => {
+			const streamItem = createStreamItemFromSite( site, dateProperty );
+			if ( streamItem !== null ) {
+				streamItems.push( streamItem );
+			}
+			const post = site.posts?.[ 0 ];
+			if ( post !== undefined ) {
+				streamPosts.push( post );
+			}
+		} );
+	}
+
+	return { streamItems, streamPosts };
+}
+
 interface CardBuckets {
 	cardPosts: RawPost[];
 	cardRecommendedSites: RawSite[];

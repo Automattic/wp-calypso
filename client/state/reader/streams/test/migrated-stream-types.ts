@@ -23,15 +23,14 @@ describe( 'isMigratedStream', () => {
 		'conversations',
 		'conversations-a8c',
 		'likes',
+		'recommendations_posts',
+		'custom_recs_posts_with_images',
+		'custom_recs_sites_with_images',
 	] )( 'returns true for `%s`', ( streamType ) => {
 		expect( isMigratedStream( streamType ) ).toBe( true );
 	} );
 
-	it.each( [
-		'recommendations_posts',
-		'custom_recs_posts_with_images',
-		'custom_recs_sites_with_images',
-	] )( 'returns false for unmigrated `%s`', ( streamType ) => {
-		expect( isMigratedStream( streamType ) ).toBe( false );
+	it( 'returns false for an unknown stream type', () => {
+		expect( isMigratedStream( 'unknown_stream' ) ).toBe( false );
 	} );
 } );

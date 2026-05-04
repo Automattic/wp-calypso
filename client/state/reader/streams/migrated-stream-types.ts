@@ -6,10 +6,7 @@
  *
  * Each PR in the READ-485 migration extends this once the matching fetcher
  * exists in `@automattic/api-core` and is wired into `readStreamQuery` in
- * `@automattic/api-queries`. Streams still served by the legacy data-layer:
- * `recommendations_posts`, `custom_recs_posts_with_images`,
- * `custom_recs_sites_with_images`. Those land in a final cleanup PR that
- * deletes the data-layer file entirely.
+ * `@automattic/api-queries`.
  */
 const MIGRATED_STREAM_TYPES: ReadonlySet< string > = new Set( [
 	'following',
@@ -30,6 +27,9 @@ const MIGRATED_STREAM_TYPES: ReadonlySet< string > = new Set( [
 	'conversations',
 	'conversations-a8c',
 	'likes',
+	'recommendations_posts',
+	'custom_recs_posts_with_images',
+	'custom_recs_sites_with_images',
 ] );
 
 export function isMigratedStream( streamType: string ): boolean {
