@@ -16,6 +16,7 @@ import {
 	getThread,
 	getTimeline,
 	PENDING_LIKE_URI,
+	PENDING_POST_URI,
 	PENDING_REPLY_URI,
 	PENDING_REPOST_URI,
 	isValidHashtag,
@@ -811,6 +812,13 @@ interface CreatePostContext {
 let pendingReplyCounter = 0;
 const nextPendingReplyUri = () => `${ PENDING_REPLY_URI }#${ ++pendingReplyCounter }`;
 
+// Sibling counter for in-flight standalone composer posts (Tasks 13+).
+// Same shape as `nextPendingReplyUri` but anchored on `PENDING_POST_URI`
+// so consumers can distinguish a placeholder root post from a placeholder
+// reply by sentinel prefix alone.
+let pendingPostCounter = 0;
+export const nextPendingPostUri = () => `${ PENDING_POST_URI }#${ ++pendingPostCounter }`;
+
 function authorFromConnection(
 	connection: AtmosphereConnectionDetails | undefined
 ): AtmosphereAuthor {
@@ -841,6 +849,46 @@ function authorFromConnection(
  * lookup on success so a late cache populate still corrects the chip.
  */
 function buildPlaceholderReply(
+	text: string,
+	pendingUri: string,
+	connection: AtmosphereConnectionDetails | undefined
+): AtmosphereFeedItem {
+	const now = new Date().toISOString();
+	return {
+		uri: pendingUri,
+		cid: '',
+		author: authorFromConnection( connection ),
+		created_at: now,
+		indexed_at: now,
+		text,
+		html: '',
+		lang: [],
+		reply_parent: null,
+		reply_root: null,
+		reason: null,
+		embed: null,
+		counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+		viewer: { like: null, repost: null },
+		bluesky_url: '',
+	};
+}
+
+/**
+ * Build a placeholder `AtmosphereFeedItem` representing an in-flight
+ * standalone composer post. Shape-wise this is identical to
+ * `buildPlaceholderReply` — both produce a feed item with a sentinel
+ * `uri`, empty `cid`, hydrated author, current ISO timestamps, empty
+ * counts, and null `reply_parent` / `reply_root`. The semantic
+ * difference is the URI sentinel comes from `PENDING_POST_URI` and the
+ * downstream consumer prepends to the timeline / author-feed caches
+ * rather than splicing under a parent in the thread tree.
+ *
+ * Kept as its own function (rather than aliasing `buildPlaceholderReply`)
+ * so the standalone composer call sites read clearly and so future
+ * divergence — say, attaching a default `embed` for link cards — does
+ * not have to fork the reply path.
+ */
+export function buildPlaceholderStandalonePost(
 	text: string,
 	pendingUri: string,
 	connection: AtmosphereConnectionDetails | undefined

@@ -1,8 +1,10 @@
 import {
 	PENDING_LIKE_URI,
+	PENDING_POST_URI,
 	PENDING_REPLY_URI,
 	PENDING_REPOST_URI,
 	readerAtmosphereKeys,
+	type AtmosphereConnectionDetails,
 	type AtmosphereFeedItem,
 	type AtmosphereScopedProfile,
 	type AtmosphereTagFeedPage,
@@ -21,8 +23,10 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	atmosphereScopedProfileQuery,
+	buildPlaceholderStandalonePost,
 	createPostMutation,
 	followAtmosphereActorMutation,
+	nextPendingPostUri,
 	unfollowAtmosphereActorMutation,
 	useAuthorFeedInfiniteQuery,
 	useAuthorProfileQuery,
@@ -2115,5 +2119,64 @@ describe( 'reader-atmosphere hooks', () => {
 			expect( item.viewer?.repost ).toBeNull();
 			expect( item.counts.likes ).toBe( 5 );
 		} );
+	} );
+} );
+
+describe( 'nextPendingPostUri', () => {
+	it( 'produces unique URIs prefixed with the PENDING_POST_URI sentinel', () => {
+		const a = nextPendingPostUri();
+		const b = nextPendingPostUri();
+		expect( a.startsWith( `${ PENDING_POST_URI }#` ) ).toBe( true );
+		expect( b.startsWith( `${ PENDING_POST_URI }#` ) ).toBe( true );
+		expect( a ).toMatch( /^__pending_post__#\d+$/ );
+		expect( a ).not.toBe( b );
+	} );
+} );
+
+describe( 'buildPlaceholderStandalonePost', () => {
+	const connection: AtmosphereConnectionDetails = {
+		did: 'did:plc:alice',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		description: '',
+		avatar: 'https://example.test/a.jpg',
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	};
+
+	it( 'builds a placeholder feed item with sentinel URI, empty CID, hydrated author, and zero counts', () => {
+		const pendingUri = `${ PENDING_POST_URI }#1`;
+		const item = buildPlaceholderStandalonePost( 'hello world', pendingUri, connection );
+
+		expect( item.uri ).toBe( pendingUri );
+		expect( item.cid ).toBe( '' );
+		expect( item.text ).toBe( 'hello world' );
+		expect( item.html ).toBe( '' );
+		expect( item.lang ).toEqual( [] );
+		expect( item.author.did ).toBe( 'did:plc:alice' );
+		expect( item.author.handle ).toBe( 'alice.bsky.social' );
+		expect( item.author.display_name ).toBe( 'Alice' );
+		expect( item.author.avatar ).toBe( 'https://example.test/a.jpg' );
+		expect( item.counts ).toEqual( { replies: 0, reposts: 0, likes: 0, quotes: 0 } );
+		expect( item.reply_parent ).toBeNull();
+		expect( item.reply_root ).toBeNull();
+		expect( item.reason ).toBeNull();
+		expect( item.embed ).toBeNull();
+		expect( item.viewer ).toEqual( { like: null, repost: null } );
+		expect( item.bluesky_url ).toBe( '' );
+		// Timestamps are populated with a real ISO string.
+		expect( typeof item.created_at ).toBe( 'string' );
+		expect( item.created_at ).toBe( item.indexed_at );
+		expect( Number.isNaN( Date.parse( item.created_at ) ) ).toBe( false );
+	} );
+
+	it( 'falls back to empty author fields when no connection is provided', () => {
+		const item = buildPlaceholderStandalonePost( 'x', `${ PENDING_POST_URI }#2`, undefined );
+
+		expect( item.author.did ).toBe( '' );
+		expect( item.author.handle ).toBe( '' );
+		expect( item.author.display_name ).toBe( '' );
+		expect( item.author.avatar ).toBeNull();
+		expect( item.text ).toBe( 'x' );
 	} );
 } );
