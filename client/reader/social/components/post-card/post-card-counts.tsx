@@ -111,14 +111,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 				</span>
 			) }
 			{ connectionId ? (
-				<LikeButton
-					post={ {
-						uri: post.uri,
-						cid: post.cid,
-						counts: post.counts,
-						viewer: post.viewer,
-					} }
-				/>
+				<LikeButton post={ post } />
 			) : (
 				<span>
 					<ReaderLikeIcon iconSize={ ICON_SIZE } liked={ false } />

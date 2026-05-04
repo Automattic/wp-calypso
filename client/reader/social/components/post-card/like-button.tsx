@@ -2,16 +2,12 @@ import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { useLikeAction } from './like-context';
+import type { SocialPost } from '../../types';
 
 import './like-button.scss';
 
 interface LikeButtonProps {
-	post: {
-		uri: string;
-		counts: { likes: number };
-		viewer?: { like: string | null; repost: string | null } | undefined;
-		cid?: string;
-	};
+	post: SocialPost;
 }
 
 export function LikeButton( { post }: LikeButtonProps ) {
