@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { useCompleteAllSteps } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch as useWordPressDataDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -8,7 +7,6 @@ import { useEffect, useRef, useState } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import useCartKey from '../../use-cart-key';
 import { convertErrorToString } from '../lib/analytics';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { useCachedContactDetails } from './use-cached-contact-details';
@@ -24,8 +22,6 @@ function useCachedContactDetailsForCheckoutForm(
 	const countriesList = useCountryList();
 	const reduxDispatch = useReduxDispatch();
 	const completeAllSteps = useCompleteAllSteps();
-	const cartKey = useCartKey();
-	const { responseCart, updateLocation } = useShoppingCart( cartKey );
 	const [ isComplete, setComplete ] = useState( false );
 	const didFillForm = useRef( false );
 
@@ -88,26 +84,6 @@ function useCachedContactDetailsForCheckoutForm(
 				}
 				if ( cachedContactDetails.countryCode ) {
 					setShouldShowContactDetailsValidationErrors?.( false );
-
-					// Seed the cart's tax location from the geolocated/cached country
-					// (and postal code, where supported) so taxes appear in the
-					// summary before the user submits the contact form. Skip the
-					// roundtrip when the cart already reflects this country. Fire
-					// and forget — failures fall through to the cart's own error
-					// surface and must not block form prefill.
-					const currentCartCountry = responseCart.tax?.location?.country_code ?? '';
-					if ( currentCartCountry !== cachedContactDetails.countryCode ) {
-						updateLocation( {
-							countryCode: cachedContactDetails.countryCode,
-							postalCode:
-								arePostalCodesSupported && cachedContactDetails.postalCode
-									? cachedContactDetails.postalCode
-									: undefined,
-						} ).catch( () => {
-							/* best-effort tax preview */
-						} );
-					}
-
 					debug( 'Contact details are populated; attempting to auto-complete all steps' );
 					return completeAllSteps();
 				}
@@ -152,8 +128,6 @@ function useCachedContactDetailsForCheckoutForm(
 		arePostalCodesSupported,
 		loadDomainContactDetailsFromCache,
 		countriesList,
-		responseCart,
-		updateLocation,
 	] );
 
 	return isComplete;
@@ -161,7 +135,7 @@ function useCachedContactDetailsForCheckoutForm(
 
 /**
  * Load cached contact details from the server and use them to populate the
- * checkout contact form and the shopping cart tax location.
+ * checkout contact form.
  */
 export function usePrefillCheckoutContactForm( {
 	setShouldShowContactDetailsValidationErrors,
