@@ -1205,7 +1205,7 @@ function CancelPurchaseInner() {
 				// Mutation failed — stop guarding and roll back the optimistic strip
 				cleanupGuard();
 				window.dispatchEvent( new CustomEvent( 'purchase-remove-failed' ) );
-				createErrorNotice( __( 'There was a problem removing your purchase. Please try again.' ), {
+				createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
 					type: 'snackbar',
 				} );
 				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
