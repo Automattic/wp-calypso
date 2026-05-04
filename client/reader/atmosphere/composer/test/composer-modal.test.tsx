@@ -16,6 +16,10 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 function makePreview() {
 	return {
 		uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
@@ -566,6 +570,53 @@ describe( '<ComposerModal>', () => {
 			( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
 		);
 		expect( composeErrorCalls ).toHaveLength( 2 );
+	} );
+
+	it( 'fires _compose_error_shown again when the same kind recurs after a successful submission', async () => {
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		// Error → success → same error again. The ref guarding the dedupe
+		// must reset after the success so the second error still emits.
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect(
+				recordSpy.mock.calls.filter(
+					( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+				)
+			).toHaveLength( 1 )
+		);
+
+		// Successful submission closes the modal; reopen and submit again.
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'hi' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () =>
+			expect(
+				recordSpy.mock.calls.filter(
+					( [ event ] ) => event === 'calypso_reader_atmosphere_compose_error_shown'
+				)
+			).toHaveLength( 2 )
+		);
 	} );
 
 	it.each( [ 'timeline_inline', 'profile_inline', 'fab' ] as const )(

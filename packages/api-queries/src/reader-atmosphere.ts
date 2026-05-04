@@ -914,12 +914,23 @@ interface CreatePostContext {
 let pendingReplyCounter = 0;
 const nextPendingReplyUri = () => `${ PENDING_REPLY_URI }#${ ++pendingReplyCounter }`;
 
-// Sibling counter for in-flight standalone composer posts (Tasks 13+).
-// Same shape as `nextPendingReplyUri` but anchored on `PENDING_POST_URI`
-// so consumers can distinguish a placeholder root post from a placeholder
-// reply by sentinel prefix alone.
+// Sibling counter for in-flight standalone composer posts. Same shape as
+// `nextPendingReplyUri` but anchored on `PENDING_POST_URI` so consumers can
+// distinguish a placeholder root post from a placeholder reply by sentinel
+// prefix alone.
 let pendingPostCounter = 0;
 export const nextPendingPostUri = () => `${ PENDING_POST_URI }#${ ++pendingPostCounter }`;
+
+// Breadcrumb for the post-creation invalidate-as-fallback paths. Each
+// branch firing means the placeholder couldn't be swapped in place
+// (cache evicted, concurrent refetch, etc.), and we're falling back to
+// a server refetch. console.debug is suppressed by default in browsers,
+// so this only surfaces to anyone with devtools open and debug-level
+// filtering on.
+function logPlaceholderLost( reason: string ) {
+	// eslint-disable-next-line no-console
+	console.debug( `[atmosphere] createPostMutation: invalidating (${ reason })` );
+}
 
 function authorFromConnection(
 	connection: AtmosphereConnectionDetails | undefined
@@ -1197,9 +1208,9 @@ export function removePlaceholder< P extends { items: AtmosphereFeedItem[] } >(
  * to the real values returned by the server. The optimistic count bump
  * stays — it matches the server's post-success state.
  *
- * Quote and standalone modes are wired through the body shape and the
- * `mutationFn` signature; cache patching for those modes is added by
- * later slices.
+ * Standalone-mode posts prepend a placeholder to the timeline and
+ * author-feed caches and swap it on success (rolling back to the snapshot on
+ * error). Quote-mode cache patching is not yet implemented.
  *
  * Accepts the consumer's QueryClient because Calypso boots its own
  * separate from the singleton in `@automattic/api-queries`. See
@@ -1223,9 +1234,9 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				// Standalone composer post — prepend a placeholder to the
 				// connected user's timeline and to every author-feed filter
 				// where a fresh top-level post should appear. Snapshot each
-				// patched cache first so Task 14's onError restores
-				// atomically. No `counts.*` bumps here: a brand-new
-				// top-level post has no parent reference.
+				// patched cache first so onError can restore atomically. No
+				// `counts.*` bumps here: a brand-new top-level post has no
+				// parent reference.
 				ctx.pendingUri = nextPendingPostUri();
 				const connection = queryClient.getQueryData< AtmosphereConnectionDetails >(
 					readerAtmosphereKeys.connection( vars.connectionId )
@@ -1250,13 +1261,13 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				// Author-feed caches are keyed on the user's handle, which
 				// only comes from the cached connection details. When that
 				// cache is cold (cold deep-link), skip the prepend — the
-				// success path's invalidate (Task 15) will repopulate.
+				// success path's invalidate will repopulate.
 				const handle = connection?.handle;
 				if ( handle ) {
 					// `posts_with_media` deliberately skipped: text-only
-					// posts in this slice never carry an embed, so prepending
-					// would seed a phantom item that the server would never
-					// confirm.
+					// posts from this composer never carry an embed, so
+					// prepending would seed a phantom item that the server
+					// would never confirm.
 					const filters: Array< AtmosphereAuthorFeedFilter | undefined > = [
 						undefined,
 						'posts_no_replies',
@@ -1285,10 +1296,9 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 			}
 
 			if ( ! vars.reply ) {
-				// Quote-only branch — cache patching for quotes is wired
-				// in a later slice; for now just carry the per-mutation
-				// pending URI so the success / error paths have a stable
-				// context shape.
+				// Quote-only branch — cache patching for quotes is not yet
+				// implemented; carry the per-mutation pending URI so the
+				// success / error paths have a stable context shape.
 				return ctx;
 			}
 
@@ -1390,6 +1400,7 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 					const current =
 						queryClient.getQueryData< InfiniteData< AtmosphereTimelinePage > >( timelineKey );
 					if ( ! current ) {
+						logPlaceholderLost( 'timeline cache evicted' );
 						queryClient.invalidateQueries( { queryKey: timelineKey } );
 					} else {
 						const next = swapPlaceholder( current, ctx.pendingUri, realItem );
@@ -1399,6 +1410,7 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 							// Mirror the reply path: invalidate so the new post
 							// re-materialises from the server instead of being
 							// silently lost.
+							logPlaceholderLost( 'timeline placeholder missing' );
 							queryClient.invalidateQueries( { queryKey: timelineKey } );
 						} else {
 							queryClient.setQueryData< InfiniteData< AtmosphereTimelinePage > >(
@@ -1414,11 +1426,13 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 						snap.queryKey
 					);
 					if ( ! current ) {
+						logPlaceholderLost( 'author-feed cache evicted' );
 						queryClient.invalidateQueries( { queryKey: snap.queryKey } );
 						continue;
 					}
 					const next = swapPlaceholder( current, ctx.pendingUri, realItem );
 					if ( next === current ) {
+						logPlaceholderLost( 'author-feed placeholder missing' );
 						queryClient.invalidateQueries( { queryKey: snap.queryKey } );
 						continue;
 					}
@@ -1432,8 +1446,8 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 			}
 
 			if ( ! vars.reply ) {
-				// Quote-only success — cache patching for quotes is wired
-				// in a later slice.
+				// Quote-only success — cache patching for quotes is not yet
+				// implemented.
 				return;
 			}
 
@@ -1444,6 +1458,7 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				// change, manual removeQueries). Schedule a refetch so the
 				// real reply does not silently disappear next time the
 				// thread is opened.
+				logPlaceholderLost( 'thread cache evicted' );
 				queryClient.invalidateQueries( { queryKey: threadKey } );
 				return;
 			}
@@ -1459,6 +1474,7 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 				// concurrent refetch dropped the placeholder branch). Fall
 				// back to invalidate so the reply re-materialises from the
 				// server rather than being silently lost.
+				logPlaceholderLost( 'thread placeholder missing' );
 				queryClient.invalidateQueries( { queryKey: threadKey } );
 				return;
 			}

@@ -23,8 +23,7 @@ function Spy( { onMode }: { onMode: ( m: ActiveMode ) => void } ) {
 	return null;
 }
 
-// Match either a curly or straight apostrophe inside test matchers — the
-// production placeholder uses the curly form (CLAUDE.md preserves it).
+// Tolerate either apostrophe form in matchers.
 const PLACEHOLDER_RE = /what['’]s up/i;
 
 describe( '<TimelineComposePill>', () => {
@@ -35,16 +34,11 @@ describe( '<TimelineComposePill>', () => {
 			</ComposerProvider>
 		);
 
-		// One accessible button, named after the placeholder copy.
 		expect( screen.getByRole( 'button', { name: PLACEHOLDER_RE } ) ).toBeVisible();
-
-		// Placeholder text is rendered visibly inside the button.
 		expect( screen.getByText( PLACEHOLDER_RE ) ).toBeVisible();
 
-		// Avatar is decorative — must be aria-hidden so it's not in the
-		// accessibility tree, hence not queryable via getByRole('img').
-		const avatar = screen.queryByRole( 'img' );
-		expect( avatar ).toBeNull();
+		// Avatar is decorative — aria-hidden keeps it out of the a11y tree.
+		expect( screen.queryByRole( 'img' ) ).toBeNull();
 	} );
 
 	it( 'opens the composer in standalone mode with entry_point=timeline_inline', async () => {

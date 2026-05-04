@@ -1,5 +1,6 @@
 import './style.scss';
 import { createPostMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button, __experimentalHStack as HStack } from '@wordpress/components';
@@ -8,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getThreadUrl } from '../route';
@@ -69,7 +71,7 @@ export function ComposerModal() {
 			);
 			return;
 		}
-		// quote Tracks events emitted by slice 7d.
+		// Quote-mode telemetry is not yet wired.
 	}, [ mode, dispatch ] );
 
 	// Tracks: error_shown with ref-tracked dedupe per error_kind transition.
@@ -84,6 +86,22 @@ export function ComposerModal() {
 			const errorKind = mutation.error.kind;
 			if ( errorKind !== lastErrorKindRef.current ) {
 				lastErrorKindRef.current = errorKind;
+				if ( errorKind === 'bad_request' ) {
+					// `bad_request` is the catch-all for non-classified server
+					// errors; log the raw response code so the error-copy
+					// classifier can be tuned with real production data.
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Atmosphere composer bad_request',
+						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+						extra: {
+							env: config( 'env_id' ),
+							type: 'reader_atmosphere_composer_bad_request',
+							mode: mode.kind,
+							error_message: mutation.error.message,
+						},
+					} );
+				}
 				if ( mode.kind === 'reply' ) {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
@@ -93,7 +111,7 @@ export function ComposerModal() {
 						} )
 					);
 				} else {
-					// mode.kind === 'standalone'
+					// Standalone has no parent_uri, so it gets its own Tracks event.
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_error_shown', {
 							connection_id: mode.connectionId,
@@ -316,7 +334,12 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );
 		default:
-			return assertNever( err );
+			// Compile-time exhaustiveness: if `AtmosphereError['kind']` ever
+			// gains a new value, this fails to type-check.
+			err satisfies never;
+			// Runtime fallback: a backend-introduced kind shouldn't crash
+			// the modal — show generic copy instead.
+			return t( 'Something went wrong. Please try again.' );
 	}
 }
 
@@ -337,10 +360,10 @@ function successNoticeFor(
 			threadUrl: getThreadUrl( mode.connectionId, result.uri ),
 		};
 	}
-	// Quote success copy lands with slice 7d. Narrowing the parameter
-	// type forces TS to flag this branch when the quote arm is wired
-	// at the call site, instead of silently falling through to a
-	// reply/standalone string.
+	// Quote success copy is unimplemented. Narrowing the param type via
+	// Extract forces TS to flag this branch when the quote arm is wired
+	// at the call site, instead of silently returning the reply/standalone
+	// string.
 	return assertNever( mode );
 }
 

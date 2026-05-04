@@ -19,6 +19,10 @@ import type {
 } from '@automattic/api-core';
 import type { InfiniteData } from '@tanstack/react-query';
 
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 const connection: AtmosphereConnection = {
 	id: 42,
 	did: 'did:plc:abc',

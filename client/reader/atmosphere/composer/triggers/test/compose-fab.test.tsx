@@ -62,9 +62,7 @@ describe( '<ComposeFab>', () => {
 			openFn?.( { kind: 'standalone', entry_point: 'fab' } );
 		} );
 
-		// FAB stays mounted (so the provider's `triggerRef` keeps a live DOM
-		// node for focus restoration) but is hidden from the a11y tree via
-		// `aria-hidden` so screen readers and `getByRole` skip it.
+		// aria-hidden removes from the accessibility tree (see ComposeFab docs).
 		expect( screen.queryByRole( 'button', { name: 'Compose' } ) ).toBeNull();
 	} );
 } );

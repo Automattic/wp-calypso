@@ -2340,6 +2340,61 @@ describe( 'reader-atmosphere hooks', () => {
 			invalidateSpy.mockRestore();
 		} );
 
+		it( 'two concurrent standalone posts each swap their own placeholder for the right real item', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			seedTimeline( client, existing );
+
+			const realUriA = 'at://did:plc:caller/app.bsky.feed.post/3kaaa';
+			const realUriB = 'at://did:plc:caller/app.bsky.feed.post/3kbbb';
+			// Reverse-order replies so B settles before A — exercises the
+			// per-pendingUri swap targeting under realistic interleavings.
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts`, {
+					text: 'first',
+				} )
+				.delay( 80 )
+				.reply( 200, { post: { uri: realUriA, cid: 'cidA', rkey: '3kaaa' } } );
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts`, {
+					text: 'second',
+				} )
+				.delay( 20 )
+				.reply( 200, { post: { uri: realUriB, cid: 'cidB', rkey: '3kbbb' } } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let pA: Promise< unknown > = Promise.resolve();
+			let pB: Promise< unknown > = Promise.resolve();
+			await act( async () => {
+				pA = result.current.mutateAsync( { connectionId, text: 'first' } );
+				await Promise.resolve();
+				pB = result.current.mutateAsync( { connectionId, text: 'second' } );
+				await Promise.resolve();
+			} );
+
+			await act( async () => {
+				await Promise.all( [ pA, pB ] );
+			} );
+
+			const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+				readerAtmosphereKeys.timeline( connectionId )
+			);
+			const items = timeline?.pages[ 0 ].items ?? [];
+			// Both real items present, no placeholders left, original existing item preserved.
+			const uris = items.map( ( i ) => i.uri );
+			expect( uris ).toContain( realUriA );
+			expect( uris ).toContain( realUriB );
+			expect( uris ).toContain( 'at://existing' );
+			expect( uris.some( ( u ) => u.startsWith( PENDING_POST_URI ) ) ).toBe( false );
+			// Each real item carries the text from its own mutation.
+			expect( items.find( ( i ) => i.uri === realUriA )?.text ).toBe( 'first' );
+			expect( items.find( ( i ) => i.uri === realUriB )?.text ).toBe( 'second' );
+		} );
+
 		it( 'on error, removes only this mutation’s placeholder and preserves a sibling placeholder', async () => {
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 			seedConnection( client );
