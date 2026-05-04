@@ -90,8 +90,8 @@ $actions-height: 64px;
 		flex: 0 0 34%;
 		padding-top: 2px;
 		overflow-y: auto;
-		max-width: 320px;
-		padding-inline-end: 12px;
+		max-width: 300px;
+		padding-inline-end: 32px;
 		overflow-x: visible;
 
 		@media ( max-width: 1199px ) {
@@ -109,22 +109,23 @@ $actions-height: 64px;
 			cursor: pointer;
 
 			&.is-selected {
-				background-color: #e6f3fa;
-				border-color: color-mix( in srgb, #0087be 55%, #fff );
+				background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
+				border-color: color-mix( in srgb, var( --color-accent ) 25%, #fff );
 
-				&::after {
-					content: '';
-					position: absolute;
-					inset-inline-end: -12px;
-					top: 50%;
-					width: 12px;
-					height: 26px;
-					background: #e6f3fa;
-					border-top: 1px solid color-mix( in srgb, #0087be 55%, #fff );
-					border-right: 1px solid color-mix( in srgb, #0087be 55%, #fff );
-					border-bottom: 1px solid color-mix( in srgb, #0087be 55%, #fff );
-					clip-path: polygon( 0 0, 100% 50%, 0 100% );
-					transform: translateY( -50% );
+				@media ( min-width: 1200px ) {
+					&::after {
+						content: '';
+						position: absolute;
+						top: 50%;
+						inset-inline-end: -1px;
+						width: 20px;
+						height: 20px;
+						background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
+						border-top: 1px solid color-mix( in srgb, var( --color-accent ) 25%, #fff );
+						border-right: 1px solid color-mix( in srgb, var( --color-accent ) 25%, #fff );
+						border-radius: 2px;
+						transform: translate( 50%, -50% ) rotate( 45deg );
+					}
 				}
 			}
 
@@ -142,6 +143,10 @@ $actions-height: 64px;
 
 	&__recommended-sites {
 		margin-bottom: 24px;
+
+		.reader-subscription-list-item__byline {
+			// margin-right: 0;
+		}
 	}
 
 	&__preview-column {
