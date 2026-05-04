@@ -38,7 +38,7 @@ export type ComposerMode =
 			previewPost: PreviewPost;
 			replyTo?: { root: AtUriRef; parent: AtUriRef };
 	  }
-	| { kind: 'standalone' };
+	| { kind: 'standalone'; entry_point: 'timeline_inline' | 'profile_inline' | 'fab' };
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 
