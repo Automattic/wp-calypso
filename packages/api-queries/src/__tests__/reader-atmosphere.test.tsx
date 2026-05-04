@@ -24,6 +24,8 @@ import {
 	createPostMutation,
 	followAtmosphereActorMutation,
 	unfollowAtmosphereActorMutation,
+	useAtmosphereScopedAuthorFeedInfiniteQuery,
+	useAtmosphereScopedThreadQuery,
 	useAuthorFeedInfiniteQuery,
 	useAuthorProfileQuery,
 	useConnectionQuery,
@@ -595,6 +597,42 @@ describe( 'reader-atmosphere hooks', () => {
 				queryKey: readerAtmosphereKeys.authorFeed( 'alice.bsky.social' ),
 			} );
 			expect( matched ).toHaveLength( 2 );
+		} );
+	} );
+
+	describe( 'useAtmosphereScopedThreadQuery', () => {
+		it( 'is disabled when connectionId is 0', () => {
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+
+			renderHook(
+				() =>
+					useAtmosphereScopedThreadQuery( {
+						connectionId: 0,
+						uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
+					} ),
+				{ wrapper }
+			);
+
+			expect( queryClient.isFetching() ).toBe( 0 );
+		} );
+	} );
+
+	describe( 'useAtmosphereScopedAuthorFeedInfiniteQuery', () => {
+		it( 'is disabled when connectionId is 0', () => {
+			const queryClient = new QueryClient();
+			const wrapper = makeWrapper( queryClient );
+
+			renderHook(
+				() =>
+					useAtmosphereScopedAuthorFeedInfiniteQuery( {
+						connectionId: 0,
+						actor: 'alice.bsky.social',
+					} ),
+				{ wrapper }
+			);
+
+			expect( queryClient.isFetching() ).toBe( 0 );
 		} );
 	} );
 

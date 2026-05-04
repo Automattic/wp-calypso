@@ -12,7 +12,9 @@ import {
 	getAuthorProfile,
 	getConnection,
 	getConnections,
+	getScopedAuthorFeed,
 	getScopedProfile,
+	getScopedThread,
 	getThread,
 	getTimeline,
 	PENDING_LIKE_URI,
@@ -175,6 +177,33 @@ export function useThreadQuery( { uri }: UseThreadQueryParams ) {
 	return useQuery( threadQueryOptions( uri ) );
 }
 
+export interface AtmosphereScopedThreadQueryParams {
+	connectionId: number;
+	uri: string;
+}
+
+export const atmosphereScopedThreadQuery = ( params: AtmosphereScopedThreadQueryParams ) =>
+	queryOptions< AtmosphereThreadResponse, AtmosphereError >( {
+		queryKey: readerAtmosphereKeys.scopedThread( params.connectionId, params.uri ),
+		queryFn: () => getScopedThread( params ),
+		enabled: params.uri.length > 0 && params.connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		// Match threadQueryOptions' policy: bail immediately on terminal errors
+		// (auth, 404, rate-limit, …) so the EmptyContent surfaces fast, but
+		// retry transient failures twice before showing the error UI.
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
+	} );
+
+export function useAtmosphereScopedThreadQuery( params: AtmosphereScopedThreadQueryParams ) {
+	return useQuery( atmosphereScopedThreadQuery( params ) );
+}
+
 export const profileQueryOptions = ( actor: string ) =>
 	queryOptions< AtmosphereAuthorProfile, AtmosphereError >( {
 		queryKey: readerAtmosphereKeys.profile( actor ),
@@ -251,6 +280,60 @@ export interface UseAuthorFeedInfiniteQueryParams {
 
 export function useAuthorFeedInfiniteQuery( { actor, filter }: UseAuthorFeedInfiniteQueryParams ) {
 	return useInfiniteQuery( authorFeedInfiniteQuery( actor, filter ) );
+}
+
+export interface AtmosphereScopedAuthorFeedInfiniteQueryParams {
+	connectionId: number;
+	actor: string;
+	filter?: AtmosphereAuthorFeedFilter;
+}
+
+export const atmosphereScopedAuthorFeedInfiniteQuery = (
+	params: AtmosphereScopedAuthorFeedInfiniteQueryParams
+) => {
+	// Mirror authorFeedInfiniteQuery: collapse the default filter to undefined
+	// so the cache key and request URL stay clean for the default tab.
+	const normalizedFilter = params.filter === 'posts_no_replies' ? undefined : params.filter;
+	return infiniteQueryOptions<
+		AtmosphereAuthorFeedPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereAuthorFeedPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.scopedAuthorFeed(
+			params.connectionId,
+			params.actor,
+			normalizedFilter
+		),
+		queryFn: ( { pageParam } ) =>
+			getScopedAuthorFeed( {
+				connectionId: params.connectionId,
+				actor: params.actor,
+				cursor: pageParam,
+				filter: normalizedFilter,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.actor.length > 0 && params.connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		// Match threadQueryOptions' policy: bail immediately on terminal errors
+		// (auth, 404, rate-limit, …) so the EmptyContent surfaces fast, but
+		// retry transient failures twice before showing the error UI.
+		retry: ( failureCount, error ) => {
+			if ( isTerminalError( error ) ) {
+				return false;
+			}
+			return failureCount < 2;
+		},
+	} );
+};
+
+export function useAtmosphereScopedAuthorFeedInfiniteQuery(
+	params: AtmosphereScopedAuthorFeedInfiniteQueryParams
+) {
+	return useInfiniteQuery( atmosphereScopedAuthorFeedInfiniteQuery( params ) );
 }
 
 export interface FollowAtmosphereActorVars {

@@ -104,6 +104,78 @@ export function createStreamDataFromPosts(
 	return { streamItems, streamPosts };
 }
 
+interface RawSite {
+	feed_ID?: number;
+	URL?: string;
+	icon?: { ico?: string };
+	description?: string;
+	name?: string;
+	feed_URL?: string;
+	[ key: string ]: unknown;
+}
+
+interface RawCard {
+	type: string;
+	data: unknown;
+}
+
+export function createStreamSitesFromRecommendedSites( sites: RawSite[] | null | undefined ) {
+	if ( ! Array.isArray( sites ) ) {
+		return [];
+	}
+	return sites.map( ( site ) => ( {
+		feed_ID: site.feed_ID,
+		url: site.URL,
+		site_icon: site.icon?.ico,
+		site_description: site.description,
+		site_name: site.name,
+		feed_URL: site.feed_URL,
+		// `recommended-sites` reducer filters by `feedId`.
+		feedId: site.feed_ID,
+	} ) );
+}
+
+interface CardBuckets {
+	cardPosts: RawPost[];
+	cardRecommendedSites: RawSite[];
+	newSites: RawSite[];
+}
+
+const EMPTY_BUCKETS: CardBuckets = { cardPosts: [], cardRecommendedSites: [], newSites: [] };
+
+/**
+ * Split a `cards` payload (used by `discover:recommended` and tag-specific
+ * `discover:<tag>` streams) into post stream items, recommended sites, and
+ * new sites.
+ */
+export function createStreamDataFromCards(
+	cards: RawCard[] | null | undefined,
+	dateProperty: string
+) {
+	const buckets = Array.isArray( cards )
+		? cards.reduce< CardBuckets >(
+				( acc, card ) => {
+					if ( card.type === 'post' ) {
+						return { ...acc, cardPosts: [ ...acc.cardPosts, card.data as RawPost ] };
+					}
+					if ( card.type === 'recommended_blogs' ) {
+						return { ...acc, cardRecommendedSites: ( card.data as RawSite[] ) ?? [] };
+					}
+					if ( card.type === 'new_sites' ) {
+						return { ...acc, newSites: ( card.data as RawSite[] ) ?? [] };
+					}
+					return acc;
+				},
+				{ cardPosts: [], cardRecommendedSites: [], newSites: [] }
+		  )
+		: EMPTY_BUCKETS;
+	return {
+		...createStreamDataFromPosts( buckets.cardPosts, dateProperty ),
+		streamSites: createStreamSitesFromRecommendedSites( buckets.cardRecommendedSites ),
+		streamNewSites: createStreamSitesFromRecommendedSites( buckets.newSites ),
+	};
+}
+
 interface PageHandleAction {
 	payload?: { pageHandle?: { offset?: number } };
 }

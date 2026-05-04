@@ -19,3 +19,60 @@ export const fetchReadFollowing = (
 		apiVersion: '1.2',
 		method: 'GET',
 	} );
+
+/**
+ * Fetch the discover (`recommended` sub-tab) stream.
+ *
+ * Hits `/read/streams/discover` on the `wpcom/v2` namespace.
+ */
+export const fetchReadDiscoverRecommended = (
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/read/streams/discover', params ),
+		apiNamespace: 'wpcom/v2',
+		method: 'GET',
+	} );
+
+/**
+ * Fetch the discover `latest` sub-tab — recent posts across followed/default
+ * tags. Hits `/read/tags/posts` on the `wpcom/v2` namespace.
+ */
+export const fetchReadDiscoverLatest = (
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/read/tags/posts', params ),
+		apiNamespace: 'wpcom/v2',
+		method: 'GET',
+	} );
+
+/**
+ * Fetch the discover `tags:<tag>` sub-tab — `/read/streams/discover` with a
+ * single tag in the `tags` query parameter. Forces `tags=<tag>` over whatever
+ * the caller passed (the thunk always populates `tags` from the streamKey, but
+ * for this sub-tab the suffix *is* the tag, so it has to win).
+ */
+export const fetchReadDiscoverTags = (
+	tag: string,
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/read/streams/discover', { ...params, tags: tag } ),
+		apiNamespace: 'wpcom/v2',
+		method: 'GET',
+	} );
+
+/**
+ * Fetch the `/freshly-pressed` stream. Unlike the other discover sub-tabs this
+ * one uses REST `1.2` without a namespace and ignores the discover-specific
+ * extras (tags/age decay/etc.).
+ */
+export const fetchReadDiscoverFreshlyPressed = (
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/freshly-pressed', params ),
+		apiVersion: '1.2',
+		method: 'GET',
+	} );
