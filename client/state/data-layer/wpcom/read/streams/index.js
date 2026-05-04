@@ -1,7 +1,6 @@
 import warn from '@wordpress/warning';
 import i18n from 'i18n-calypso';
 import { random, map } from 'lodash';
-import { buildDiscoverStreamKey, getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { keyForPost } from 'calypso/reader/post-key';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -12,13 +11,12 @@ import {
 	READER_STREAMS_PAGINATED_REQUEST,
 } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
-import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import {
 	receivePage,
 	receiveUpdates,
 	receiveStreamError,
 } from 'calypso/state/reader/streams/actions';
-import { MIGRATED_STREAM_TYPES } from 'calypso/state/reader/streams/migrated-stream-types';
+import { isMigratedStream } from 'calypso/state/reader/streams/migrated-stream-types';
 import {
 	PER_FETCH,
 	INITIAL_FETCH,
@@ -80,26 +78,6 @@ function createStreamItemFromSite( site, dateProperty ) {
 	return createStreamItemFromSiteAndPost( site, post, dateProperty );
 }
 
-function createStreamDataFromCards( cards, dateProperty ) {
-	// TODO: We may want to extract the related tags and update related tags stream too
-	const cardPosts = [];
-	let cardRecommendedSites = [];
-	let newSites = [];
-	cards.forEach( ( card ) => {
-		if ( card.type === 'post' ) {
-			cardPosts.push( card.data );
-		} else if ( card.type === 'recommended_blogs' ) {
-			cardRecommendedSites = card.data;
-		} else if ( card.type === 'new_sites' ) {
-			newSites = card.data;
-		}
-	} );
-
-	const streamSites = createStreamSitesFromRecommendedSites( cardRecommendedSites );
-	const streamNewSites = createStreamSitesFromRecommendedSites( newSites );
-	return { ...createStreamDataFromPosts( cardPosts, dateProperty ), streamSites, streamNewSites };
-}
-
 function createStreamDataFromSites( sites, dateProperty ) {
 	const streamItems = [];
 	const streamPosts = [];
@@ -117,23 +95,6 @@ function createStreamDataFromSites( sites, dateProperty ) {
 	} );
 
 	return { streamItems, streamPosts };
-}
-
-function createStreamSitesFromRecommendedSites( sites ) {
-	const streamSites = sites.map( ( site ) => {
-		return {
-			feed_ID: site.feed_ID,
-			url: site.URL,
-			site_icon: site.icon?.ico,
-			site_description: site.description,
-			site_name: site.name,
-			feed_URL: site.feed_URL,
-			feedId: site.feed_ID, // filtered by feedId in receiveRecommendedSites reducer
-		};
-	} );
-
-	// Filter out nulls
-	return streamSites.filter( ( item ) => item !== null );
 }
 
 const defaultQueryFn = getQueryString;
@@ -170,38 +131,6 @@ const streamApis = {
 	feed: {
 		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
-	},
-
-	discover: {
-		path: ( { streamKey } ) => {
-			if ( streamKeySuffix( streamKey ).includes( 'recommended' ) ) {
-				return '/read/streams/discover';
-			} else if ( streamKeySuffix( streamKey ).includes( 'latest' ) ) {
-				return '/read/tags/posts';
-			} else if ( streamKeySuffix( streamKey ).includes( 'freshly-pressed' ) ) {
-				return '/freshly-pressed';
-			}
-
-			return `/read/streams/discover?tags=${ streamKeySuffix( streamKey ) }`;
-		},
-		dateProperty: 'date',
-		query: ( extras, { streamKey } ) => {
-			if ( streamKeySuffix( streamKey ).includes( 'freshly-pressed' ) ) {
-				return { ...extras };
-			}
-			return getQueryString( {
-				...extras,
-				// Do not supply an empty fallback as null is good info for getDiscoverStreamTags
-				tags: getTagsFromStreamKey( streamKey ),
-				tag_recs_per_card: 5,
-				site_recs_per_card: 5,
-				age_based_decay: 0.5,
-				// Default order is by date (latest) unless we're on the recommended tab which shows popular instead.
-				orderBy: streamKeySuffix( streamKey ).includes( 'recommended' ) ? 'popular' : 'date',
-			} );
-		},
-		apiNamespace: ( { streamKey } ) =>
-			streamKeySuffix( streamKey ).includes( 'freshly-pressed' ) ? null : 'wpcom/v2',
 	},
 	site: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
@@ -338,11 +267,11 @@ export function requestPage( action ) {
 		payload: { streamKey, streamType, feedId, pageHandle, isPoll, gap, localeSlug, page, perPage },
 	} = action;
 
-	// Migrated stream types are fetched by the React Query thunk in
+	// Migrated streams are fetched by the React Query thunk in
 	// `client/state/reader/streams/actions.js`. The action is still dispatched
 	// so the reducer's `isRequesting`/`error` transitions fire, but the HTTP
 	// call must not be issued here too.
-	if ( MIGRATED_STREAM_TYPES.has( streamType ) ) {
+	if ( isMigratedStream( streamType ) ) {
 		return;
 	}
 
@@ -393,20 +322,14 @@ export function requestPage( action ) {
 }
 
 export function handlePage( action, data ) {
-	const { posts, sites, cards } = data;
+	const { posts, sites } = data;
 	const { streamKey, query, isPoll, gap, streamType, page, perPage } = action.payload;
 	const pageHandle = extractPageHandle( streamType, action, data );
 	const { dateProperty } = streamApis[ streamType ];
 
 	let streamItems = [];
 	let streamPosts = [];
-	let streamSites = [];
-	let streamNewSites = [];
 
-	// If the payload has posts, then this stream is intended to be a post stream
-	// If the payload has sites, then we need to extract the posts from the sites and update the post stream
-	// If the payload has cards, then we need to extract the posts from the cards and update the post stream
-	// Cards also contain recommended sites which we need to extract and update the sites stream
 	if ( posts ) {
 		const streamData = createStreamDataFromPosts( posts, dateProperty );
 		streamItems = streamData.streamItems;
@@ -415,13 +338,6 @@ export function handlePage( action, data ) {
 		const streamData = createStreamDataFromSites( sites, dateProperty );
 		streamItems = streamData.streamItems;
 		streamPosts = streamData.streamPosts;
-	} else if ( cards ) {
-		// Need to extract the posts and recommended sites from the cards
-		const streamData = createStreamDataFromCards( cards, dateProperty );
-		streamItems = streamData.streamItems;
-		streamPosts = streamData.streamPosts;
-		streamSites = streamData.streamSites;
-		streamNewSites = streamData.streamNewSites;
 	}
 
 	const actions = analyticsForStream( {
@@ -432,48 +348,30 @@ export function handlePage( action, data ) {
 
 	if ( isPoll ) {
 		actions.push( receiveUpdates( { streamKey, streamItems, query } ) );
-	} else {
-		if ( streamPosts.length > 0 ) {
-			actions.push( receivePosts( streamPosts ) );
-		}
-		if ( streamSites.length > 0 ) {
-			actions.push(
-				receiveRecommendedSites( { seed: 'discover-recommendations', sites: streamSites } )
-			);
-		}
-		if ( streamNewSites.length > 0 ) {
-			actions.push(
-				receiveRecommendedSites( { seed: 'discover-new-sites', sites: streamNewSites } )
-			);
-		}
-
-		const totalItems = data.total_cards || data.found || streamItems.length;
-		const totalPages =
-			data.total_pages || Math.ceil( totalItems / ( action.payload.perPage || PER_FETCH ) );
-
-		// The first request when going to wordpress.com/discover does not include tags in the streamKey
-		// because it is still waiting for the user's interests to be fetched.
-		// Given that the user interests will be retrieved in the response from /read/streams/discover we
-		// use that values to generate a correct streamKey and prevent doing a new request when the user
-		// interests are finally fetched. More context here: paYKcK-3zo-p2#comment-2528.
-		let newStreamKey = streamKey;
-		if ( streamKey === 'discover:recommended' && data.user_interests ) {
-			newStreamKey = buildDiscoverStreamKey( 'recommended', data.user_interests );
-		}
-		actions.push(
-			receivePage( {
-				streamKey: newStreamKey,
-				query,
-				streamItems,
-				pageHandle,
-				gap,
-				totalItems,
-				totalPages,
-				page,
-				perPage,
-			} )
-		);
+		return actions;
 	}
+
+	if ( streamPosts.length > 0 ) {
+		actions.push( receivePosts( streamPosts ) );
+	}
+
+	const totalItems = data.total_cards || data.found || streamItems.length;
+	const totalPages =
+		data.total_pages || Math.ceil( totalItems / ( action.payload.perPage || PER_FETCH ) );
+
+	actions.push(
+		receivePage( {
+			streamKey,
+			query,
+			streamItems,
+			pageHandle,
+			gap,
+			totalItems,
+			totalPages,
+			page,
+			perPage,
+		} )
+	);
 
 	return actions;
 }
