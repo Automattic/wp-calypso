@@ -495,7 +495,14 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					onBackToTimeline={ handleBackToTimeline }
 				/>
 				{ renderHeader() }
-				<AuthorProfileTabs connectionId={ connection.id } actor={ actor } activeFilter={ filter } />
+				<AuthorProfileTabs
+					connectionId={ connection.id }
+					actor={ actor }
+					basePath={ `/reader/atmosphere/${ connection.id }/profile/${ encodeURIComponent(
+						actor
+					) }` }
+					activeFilter={ filter }
+				/>
 				<SocialFeedList< SocialPost >
 					items={ items }
 					isPending={ feed.isPending }
