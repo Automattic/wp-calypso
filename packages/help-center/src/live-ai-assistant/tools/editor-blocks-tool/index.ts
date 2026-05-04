@@ -642,6 +642,154 @@ type InsertBlockSpec = {
 	inner_blocks?: InsertBlockSpec[];
 };
 
+function isPlainObject( value: unknown ): value is Record< string, unknown > {
+	return !! value && typeof value === 'object' && ! Array.isArray( value );
+}
+
+function normalizeTableCell(
+	cellRaw: unknown,
+	defaultTag: 'th' | 'td'
+): Record< string, unknown > {
+	if ( isPlainObject( cellRaw ) ) {
+		const contentRaw = cellRaw.content;
+		const richTextHtml = richTextValueToHtml( contentRaw );
+		let content: string;
+		if ( typeof contentRaw === 'string' ) {
+			content = contentRaw;
+		} else if ( richTextHtml !== null ) {
+			content = richTextHtml;
+		} else if ( contentRaw === undefined || contentRaw === null ) {
+			content = '';
+		} else {
+			content = String( contentRaw );
+		}
+		const tag = cellRaw.tag === 'th' || cellRaw.tag === 'td' ? cellRaw.tag : defaultTag;
+		return {
+			...cellRaw,
+			content,
+			tag,
+		};
+	}
+	return {
+		content: cellRaw === undefined || cellRaw === null ? '' : String( cellRaw ),
+		tag: defaultTag,
+	};
+}
+
+function normalizeTableSectionRows(
+	sectionRaw: unknown,
+	defaultTag: 'th' | 'td'
+): Record< string, unknown >[] | null {
+	if ( sectionRaw === undefined ) {
+		return null;
+	}
+	if ( ! Array.isArray( sectionRaw ) ) {
+		return [];
+	}
+	return sectionRaw.map( ( rowRaw ) => {
+		if ( Array.isArray( rowRaw ) ) {
+			return {
+				cells: rowRaw.map( ( cell ) => normalizeTableCell( cell, defaultTag ) ),
+			};
+		}
+		if ( isPlainObject( rowRaw ) ) {
+			const cellsRaw = Array.isArray( rowRaw.cells ) ? rowRaw.cells : [];
+			return {
+				...rowRaw,
+				cells: cellsRaw.map( ( cell ) => normalizeTableCell( cell, defaultTag ) ),
+			};
+		}
+		return {
+			cells: [ normalizeTableCell( rowRaw, defaultTag ) ],
+		};
+	} );
+}
+
+function normalizeTableRowsToColumnCount(
+	rows: Record< string, unknown >[] | undefined,
+	columnCount: number,
+	defaultTag: 'th' | 'td'
+): Record< string, unknown >[] | undefined {
+	if ( ! rows ) {
+		return rows;
+	}
+	return rows.map( ( row ) => {
+		const rawCells = Array.isArray( row.cells ) ? row.cells : [];
+		const normalizedCells = rawCells.map( ( cell ) => normalizeTableCell( cell, defaultTag ) );
+		while ( normalizedCells.length < columnCount ) {
+			normalizedCells.push( normalizeTableCell( '', defaultTag ) );
+		}
+		if ( normalizedCells.length > columnCount ) {
+			normalizedCells.length = columnCount;
+		}
+		return {
+			...row,
+			cells: normalizedCells,
+		};
+	} );
+}
+
+function sanitizeTableAttributes( attrs: Record< string, unknown > ): Record< string, unknown > {
+	const next: Record< string, unknown > = { ...attrs };
+
+	const headRows = normalizeTableSectionRows( next.head, 'th' );
+	const bodyRows = normalizeTableSectionRows( next.body, 'td' );
+	const footRows = normalizeTableSectionRows( next.foot, 'td' );
+
+	if ( headRows !== null ) {
+		next.head = headRows;
+	}
+	if ( bodyRows !== null ) {
+		next.body = bodyRows;
+	}
+	if ( footRows !== null ) {
+		next.foot = footRows;
+	}
+
+	const allRows = [ ...( headRows ?? [] ), ...( bodyRows ?? [] ), ...( footRows ?? [] ) ];
+	let columnCount = 0;
+	for ( const row of allRows ) {
+		if ( Array.isArray( row.cells ) && row.cells.length > 0 ) {
+			columnCount = row.cells.length;
+			break;
+		}
+	}
+
+	if ( columnCount > 0 ) {
+		next.head = normalizeTableRowsToColumnCount(
+			Array.isArray( next.head ) ? ( next.head as Record< string, unknown >[] ) : undefined,
+			columnCount,
+			'th'
+		);
+		next.body = normalizeTableRowsToColumnCount(
+			Array.isArray( next.body ) ? ( next.body as Record< string, unknown >[] ) : undefined,
+			columnCount,
+			'td'
+		);
+		next.foot = normalizeTableRowsToColumnCount(
+			Array.isArray( next.foot ) ? ( next.foot as Record< string, unknown >[] ) : undefined,
+			columnCount,
+			'td'
+		);
+	}
+
+	const style = isPlainObject( next.style )
+		? { ...( next.style as Record< string, unknown > ) }
+		: null;
+	const styleClassName = style && typeof style.className === 'string' ? style.className : null;
+	if ( styleClassName && ( typeof next.className !== 'string' || ! next.className.length ) ) {
+		next.className = styleClassName;
+	}
+	if ( style && 'className' in style ) {
+		delete style.className;
+	}
+	if ( style && Object.keys( style ).length > 0 ) {
+		next.style = style;
+	}
+
+	return next;
+}
+
 function getBlockEditorSelect(): BlockEditorSelectors | null {
 	try {
 		return select( 'core/block-editor' ) as unknown as BlockEditorSelectors;
@@ -1202,7 +1350,11 @@ function buildBlockFromSpec(
 		}
 	}
 	try {
-		const block = create( spec.name, spec.attributes ?? {}, innerBlocks );
+		const attributes =
+			spec.name === 'core/table' && spec.attributes
+				? sanitizeTableAttributes( spec.attributes )
+				: spec.attributes ?? {};
+		const block = create( spec.name, attributes, innerBlocks );
 		if ( ! block || typeof block !== 'object' ) {
 			return { ok: false, error: `createBlock returned an invalid block for "${ spec.name }".` };
 		}
@@ -1477,8 +1629,14 @@ export async function executeUpdateBlockAttributesTool( rawArgs: unknown ) {
 	if ( ! parsed.ok ) {
 		return { ok: false, error: parsed.error };
 	}
+	const be = getBlockEditorSelect();
+	const targetBlock = be?.getBlock?.( parsed.clientId ) ?? null;
+	const nextAttributes =
+		targetBlock?.name === 'core/table'
+			? sanitizeTableAttributes( parsed.attributes )
+			: parsed.attributes;
 	try {
-		const out = d.updateBlockAttributes( parsed.clientId, parsed.attributes );
+		const out = d.updateBlockAttributes( parsed.clientId, nextAttributes );
 		if ( out && typeof ( out as Promise< unknown > ).then === 'function' ) {
 			await ( out as Promise< unknown > );
 		}
@@ -1487,7 +1645,7 @@ export async function executeUpdateBlockAttributesTool( rawArgs: unknown ) {
 		return { ok: false, error: `updateBlockAttributes failed: ${ message }` };
 	}
 	scrollBlockIntoView( parsed.clientId );
-	return { ok: true, client_id: parsed.clientId, updated_keys: Object.keys( parsed.attributes ) };
+	return { ok: true, client_id: parsed.clientId, updated_keys: Object.keys( nextAttributes ) };
 }
 
 function parseReplaceBlockArgs(
