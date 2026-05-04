@@ -88,10 +88,10 @@ describe( 'feature-clip-sidebar-extension', () => {
 		expect( mockRegisterPlugin ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not register the plugin when canUploadVideos is false', () => {
+	it( 'does not register the plugin when canGenerateVideoClips is false', () => {
 		( window as Record< string, unknown > ).imageStudioData = {
 			isDevMode: true,
-			canUploadVideos: false,
+			canGenerateVideoClips: false,
 		};
 		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
 		registerFeatureClipSidebar();

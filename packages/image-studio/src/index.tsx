@@ -26,7 +26,7 @@ interface ImageStudioData {
 	enabled?: boolean | string;
 	environment?: 'wp-admin' | 'ciab-admin';
 	isDevMode?: boolean;
-	canUploadVideos?: boolean;
+	canGenerateVideoClips?: boolean;
 }
 
 declare global {
