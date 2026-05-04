@@ -65,13 +65,13 @@ afterEach( () => {
 describe( 'requestPage thunk', () => {
 	describe( 'unmigrated stream type', () => {
 		it( 'dispatches the legacy READER_STREAMS_PAGE_REQUEST', () => {
-			const { dispatch } = runThunk( { streamKey: 'conversations' } );
+			const { dispatch } = runThunk( { streamKey: 'likes' } );
 			expect( dispatch ).toHaveBeenCalledTimes( 1 );
 			const action = dispatch.mock.calls[ 0 ][ 0 ];
 			expect( action.type ).toBe( READER_STREAMS_PAGE_REQUEST );
 			expect( action.payload ).toMatchObject( {
-				streamKey: 'conversations',
-				streamType: 'conversations',
+				streamKey: 'likes',
+				streamType: 'likes',
 				isPoll: false,
 			} );
 		} );
@@ -647,7 +647,7 @@ describe( 'requestPaginatedStream thunk', () => {
 
 	it( 'returns the legacy action for unmigrated streamKey', () => {
 		const { dispatch, result } = runPaginatedThunk( {
-			streamKey: 'conversations',
+			streamKey: 'likes',
 			page: 1,
 			perPage: 10,
 		} );
@@ -655,7 +655,7 @@ describe( 'requestPaginatedStream thunk', () => {
 		// path. The first dispatch carried the same action.
 		expect( result ).toMatchObject( {
 			type: 'READER_STREAMS_PAGINATED_REQUEST',
-			payload: { streamKey: 'conversations', page: 1, perPage: 10 },
+			payload: { streamKey: 'likes', page: 1, perPage: 10 },
 		} );
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
 	} );
