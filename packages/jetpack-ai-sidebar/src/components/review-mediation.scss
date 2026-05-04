@@ -223,15 +223,6 @@
 			margin-top: 0.625rem;
 		}
 
-		&.is-clickable {
-			cursor: pointer;
-
-			&:hover {
-				border-color: rgba(255, 255, 255, 0.3);
-				background: rgba(255, 255, 255, 0.04);
-			}
-		}
-
 		&.is-applying {
 			border-color: var(--wp-admin-theme-color, #3858e9);
 			opacity: 0.85;

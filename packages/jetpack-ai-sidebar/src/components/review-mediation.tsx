@@ -886,14 +886,6 @@ export default function ReviewMediation( {
 											status === 'accepted' ||
 											status === 'dismissed' ||
 											bulkRunning;
-										const onCardClick = ( e: React.MouseEvent< HTMLElement > ) => {
-											if ( ( e.target as HTMLElement ).closest( 'button' ) ) {
-												return;
-											}
-											if ( clickable ) {
-												focusBlock( edit.block_index );
-											}
-										};
 										if ( isCollapsed ) {
 											// Compact row for done items. Undo on accepted rows reverts
 											// the block content via the pre-accept snapshot.
@@ -956,16 +948,9 @@ export default function ReviewMediation( {
 											);
 										}
 										return (
-											// Card body is a mouse-convenience for "click anywhere to focus
-											// the target block"; keyboard users reach the same action via the
-											// inner BlockRef + Accept/Dismiss buttons.
-											// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 											<article
-												className={ `jetpack-ai-review-mediation__card is-${ status }${
-													clickable ? ' is-clickable' : ''
-												}` }
+												className={ `jetpack-ai-review-mediation__card is-${ status }` }
 												key={ `edit-${ i }` }
-												onClick={ onCardClick }
 											>
 												<p className="jetpack-ai-review-mediation__block-ref">
 													<BlockRef

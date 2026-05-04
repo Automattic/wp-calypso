@@ -352,6 +352,26 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'keeps block focus on the explicit block reference button', () => {
+		const blockElement = document.createElement( 'div' );
+		const layoutElement = document.createElement( 'div' );
+		mockFindBlockElement.mockReturnValue( blockElement );
+		mockFindBlockListLayout.mockReturnValue( layoutElement );
+
+		render( <ReviewMediation { ...editsPayload } /> );
+
+		const card = screen.getByText( 'Concise.' ).closest( 'article' );
+		expect( card ).toBeInTheDocument();
+
+		fireEvent.click( card! );
+		expect( mockSelectBlock ).not.toHaveBeenCalled();
+
+		fireEvent.click( screen.getByTitle( 'Scroll to block in editor' ) );
+		expect( mockSelectBlock ).toHaveBeenCalledWith( 'b1' );
+		expect( mockFindBlockElement ).toHaveBeenCalledWith( 'b1' );
+		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
+	} );
+
 	it( 'collapses the card on Dismiss without calling applyReviewEdit', () => {
 		render( <ReviewMediation { ...editsPayload } /> );
 
