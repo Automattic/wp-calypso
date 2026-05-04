@@ -222,7 +222,7 @@ function ImageStudioAgentChat( {
 					</em>
 					<br />
 					<em>
-						{ __( 'All generated videos are saved to your Media library.', __i18n_text_domain__ ) }
+						{ __( 'All generated videos are saved to your Media Library.', __i18n_text_domain__ ) }
 					</em>
 				</p>
 			) }

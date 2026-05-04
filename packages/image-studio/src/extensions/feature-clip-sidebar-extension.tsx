@@ -32,7 +32,6 @@ function ExperimentalPill(): JSX.Element {
 				className="image-studio-feature-clip-panel__experimental-pill"
 				// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focusable so keyboard users can surface the tooltip
 				tabIndex={ 0 }
-				role="note"
 			>
 				{ __( 'Experimental', __i18n_text_domain__ ) }
 			</span>
