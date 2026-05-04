@@ -63,6 +63,8 @@ export default async function blikProcessor(
 		paymentMethodId,
 		{
 			...submitData,
+			// BLIK form has no name field; TransactionRequest.name is required.
+			name: '',
 			successUrl,
 			cancelUrl,
 			couponId: responseCart.coupon,
