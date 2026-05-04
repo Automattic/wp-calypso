@@ -120,6 +120,11 @@ export function registerFeatureClipSidebar(): void {
 		return;
 	}
 
+	// Explicit `=== false` so an undefined flag (older Jetpack) preserves today's behavior.
+	if ( window.imageStudioData?.canUploadVideos === false ) {
+		return;
+	}
+
 	if ( pluginRegistered ) {
 		return;
 	}
