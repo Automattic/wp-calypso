@@ -10,6 +10,8 @@
 import { registerAbility } from '@wordpress/abilities';
 import { dispatch } from '@wordpress/data';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
+import { ImageStudioMode } from '../types';
+import { trackImageStudioImageGenerated } from '../utils/tracking';
 
 const ABILITY_NAME = 'image-studio/update-canvas-video';
 
@@ -112,6 +114,12 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 				await setCurrentVideoUrl( url );
 				await setCurrentAttachmentId( attachmentId );
 				await setCurrentDurationSeconds( durationSeconds );
+
+				trackImageStudioImageGenerated( {
+					mode: ImageStudioMode.Generate,
+					attachmentId,
+					isAnnotated: false,
+				} );
 
 				return { ok: true };
 			},
