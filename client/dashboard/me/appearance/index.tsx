@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/ui';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -42,6 +43,7 @@ export default function Appearance() {
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Appearance' ) }
 					description={ __( 'Customize the dashboard display.' ) }
+					actions={ <Badge>{ __( 'Experimental' ) }</Badge> }
 				/>
 			}
 		>
@@ -51,7 +53,9 @@ export default function Appearance() {
 						<SectionHeader
 							level={ 3 }
 							title={ __( 'Color scheme' ) }
-							description={ __( 'Set the dashboard to light, dark, or your system setting.' ) }
+							description={ __(
+								'This setting is experimental. Set the dashboard to light, dark, or your system setting, and report any issues you find.'
+							) }
 						/>
 						<ToggleGroupControl
 							__next40pxDefaultSize
