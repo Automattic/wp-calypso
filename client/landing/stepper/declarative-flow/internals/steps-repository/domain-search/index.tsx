@@ -117,19 +117,14 @@ const DomainSearchStep: StepType< {
 		const allowedTlds = tldQuery?.split( ',' ) ?? [];
 
 		return {
-			// Woo hosting solutions traffic is store-builder-intent, so use the
-			// ecommerce vendor variant — it surfaces commerce-native TLDs (.shop,
-			// .store, .market, etc.) server-side and still leads with the
-			// canonical .com when it's available.
-			vendor: isWooHostingSolutions
-				? 'ecommerce'
-				: getSuggestionsVendor( {
-						isSignup:
-							! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
-						isDomainOnly: isDomainFlow( flow ),
-						isCiab,
-						flowName: flow,
-				  } ),
+			vendor: getSuggestionsVendor( {
+				isSignup:
+					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
+				isDomainOnly: isDomainFlow( flow ),
+				isCiab,
+				isWooHostingSolutions,
+				flowName: flow,
+			} ),
 			priceRules: {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
