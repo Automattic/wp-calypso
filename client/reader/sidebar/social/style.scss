@@ -1,19 +1,19 @@
 @import '@automattic/typography/styles/variables';
 
-// Reader's togglable sidebar applies `font-weight: 600` and the
-// selected-text color to `.selected .sidebar__menu-link` (see
-// client/reader/sidebar/style.scss), which makes social account rows
-// look louder than the neighbouring Recent rows. Keep the selected
-// background, but reset the weight and color so the rows read like the
-// rest of the sidebar. Selector specificity has to match the reader
-// override (7 classes) to win the cascade.
-.theme-default .global-sidebar .sidebar .sidebar__menu.is-togglable .sidebar-social__account-item.selected .sidebar__menu-link {
-	font-weight: normal;
-
-	&,
-	&:visited {
-		color: var( --color-sidebar-text );
-	}
+// Inside .is-togglable, the base sidebar rule
+// (.selected .sidebar__menu-link { background-color: ... } in
+// client/layout/sidebar/style.scss) doesn't reach the link — the
+// togglable cascade leaves selected social rows without a background.
+// Match the togglable selector specificity (7 classes) and apply the
+// standard selected background so the active connection row reads as
+// "you are here" alongside its bold weight + selected text color.
+.theme-default
+	.global-sidebar
+	.sidebar
+	.sidebar__menu.is-togglable
+	.sidebar-social__account-item.selected
+	.sidebar__menu-link {
+	background-color: var( --color-sidebar-menu-selected-background );
 }
 
 .sidebar-social__account-handle {

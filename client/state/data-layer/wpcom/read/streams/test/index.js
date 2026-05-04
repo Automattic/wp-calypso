@@ -34,10 +34,10 @@ function makeAction( { streamKey, ...overrides } ) {
 }
 
 describe( 'streams', () => {
-	// All `date`-based streams plus `following`/`discover` are migrated to
-	// React Query (see client/state/reader/streams/test/actions.js). Use a
-	// still-unmigrated stream type for the shared `handlePage` action below.
-	const action = makeAction( { streamKey: 'conversations' } );
+	// All `date`-based streams plus `following`/`discover`/`conversations` are
+	// migrated to React Query (see client/state/reader/streams/test/actions.js).
+	// Use a still-unmigrated stream type for the shared `handlePage` action.
+	const action = makeAction( { streamKey: 'likes' } );
 
 	describe( 'requestPage', () => {
 		const query = {
@@ -72,6 +72,8 @@ describe( 'streams', () => {
 			'on_this_day',
 			'on_this_day:3:15',
 			'user:42',
+			'conversations',
+			'conversations-a8c',
 		] )( 'returns undefined for migrated streamKey %s', ( streamKey ) => {
 			expect( requestPage( makeAction( { streamKey } ) ) ).toBeUndefined();
 		} );
@@ -81,24 +83,6 @@ describe( 'streams', () => {
 			// each test is an assertion of the http call that should be made
 			// when the given stream id is handed to request page
 			[
-				{
-					stream: 'conversations',
-					expected: {
-						method: 'GET',
-						path: '/read/conversations',
-						apiVersion: '1.2',
-						query: { ...query, comments_per_post: 20 },
-					},
-				},
-				{
-					stream: 'conversations-a8c',
-					expected: {
-						method: 'GET',
-						path: '/read/conversations',
-						apiVersion: '1.2',
-						query: { ...query, comments_per_post: 20, index: 'a8c' },
-					},
-				},
 				{
 					stream: 'likes',
 					expected: {

@@ -30,6 +30,13 @@ export interface PreviewPost {
 	};
 }
 
+/**
+ * Analytics dimension carried on the standalone variant of `ComposerMode`.
+ * Populates the `entry_point` Tracks property on `_compose_opened`. The
+ * snake_case is intentional — it matches the Tracks property name.
+ */
+export type ComposerEntryPoint = 'timeline_inline' | 'profile_inline' | 'fab';
+
 export type ComposerMode =
 	| { kind: 'reply'; root: AtUriRef; parent: AtUriRef; previewPost: PreviewPost }
 	| {
@@ -38,7 +45,7 @@ export type ComposerMode =
 			previewPost: PreviewPost;
 			replyTo?: { root: AtUriRef; parent: AtUriRef };
 	  }
-	| { kind: 'standalone' };
+	| { kind: 'standalone'; entry_point: ComposerEntryPoint };
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 

@@ -20,13 +20,13 @@ describe( 'isMigratedStream', () => {
 		'list',
 		'on_this_day',
 		'user',
+		'conversations',
+		'conversations-a8c',
 	] )( 'returns true for `%s`', ( streamType ) => {
 		expect( isMigratedStream( streamType ) ).toBe( true );
 	} );
 
 	it.each( [
-		'conversations',
-		'conversations-a8c',
 		'likes',
 		'recommendations_posts',
 		'custom_recs_posts_with_images',

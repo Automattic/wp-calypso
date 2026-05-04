@@ -9,7 +9,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { AuthorProfileHeader } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfilePanel } from './author-profile-panel';
-import { ComposerModal, ComposerProvider } from './composer';
+import { ComposeFab, ComposerModal, ComposerProvider } from './composer';
 import { getTimelineUrl } from './route';
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
@@ -88,6 +88,7 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 					subtabBasePath={ subtabBasePath }
 				/>
 			</ReaderMain>
+			<ComposeFab />
 			<ComposerModal />
 		</ComposerProvider>
 	);

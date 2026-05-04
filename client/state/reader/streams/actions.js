@@ -35,6 +35,19 @@ import {
 import 'calypso/state/data-layer/wpcom/read/streams';
 import 'calypso/state/reader/init';
 
+/**
+ * Per-stream date property used by `createStreamDataFromPosts` to populate
+ * `streamItem.date`. Mirrors `streamApis[type].dateProperty` in the legacy
+ * data-layer (`client/state/data-layer/wpcom/read/streams/index.js`). When
+ * `likes` migrates next this will need a `'likes'` case (`date_liked`).
+ */
+function getDatePropertyForStream( streamType ) {
+	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
+		return 'last_comment_date_gmt';
+	}
+	return 'date';
+}
+
 function buildPageRequestAction( {
 	streamKey,
 	feedId,
@@ -96,6 +109,17 @@ function buildStreamQueryParams( {
 			// Legacy `streamApis.user.pollQuery` polled with `number: 20`.
 			return getQueryStringForPoll( [], { ...commonQueryParams, number: 20 } );
 		}
+		if ( streamType === 'conversations' ) {
+			// Legacy `streamApis.conversations.pollQuery`.
+			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], commonQueryParams );
+		}
+		if ( streamType === 'conversations-a8c' ) {
+			// Legacy `streamApis['conversations-a8c'].pollQuery`.
+			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], {
+				...commonQueryParams,
+				index: 'a8c',
+			} );
+		}
 		return getQueryStringForPoll( [], commonQueryParams );
 	}
 	const extras = {
@@ -118,6 +142,10 @@ function buildStreamQueryParams( {
 			return buildListQueryParams( extras );
 		case 'on_this_day':
 			return buildOnThisDayQueryParams( extras, streamKey );
+		case 'conversations':
+			return getQueryString( { ...extras, comments_per_post: 20 } );
+		case 'conversations-a8c':
+			return getQueryString( { ...extras, comments_per_post: 20, index: 'a8c' } );
 		default:
 			return getQueryString( extras );
 	}
@@ -285,10 +313,7 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 		return;
 	}
 
-	// Every migrated streamType uses `date`. This will need to become
-	// per-streamType once `conversations` (`last_comment_date_gmt`) and
-	// `likes` (`date_liked`) migrate.
-	const dateProperty = 'date';
+	const dateProperty = getDatePropertyForStream( streamType );
 	let streamItems = [];
 	let streamPosts = [];
 	let streamSites = [];
