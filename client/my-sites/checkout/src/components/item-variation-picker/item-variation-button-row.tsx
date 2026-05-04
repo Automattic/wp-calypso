@@ -2,7 +2,16 @@ import colorStudio from '@automattic/color-studio';
 import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, type FunctionComponent } from 'react';
+import {
+	forwardRef,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	type ForwardedRef,
+	type FunctionComponent,
+	type KeyboardEvent,
+} from 'react';
 import { getItemVariantDiscount } from './util';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -59,10 +68,6 @@ const Price = styled.span`
 	text-align: start;
 `;
 
-const PriceSuffix = styled.span`
-	color: ${ colorStudio.colors[ 'Gray 60' ] };
-`;
-
 const SavePill = styled.span`
 	align-self: flex-start;
 	width: fit-content;
@@ -92,64 +97,76 @@ interface TileProps {
 	isDisabled: boolean;
 	compareTo?: WPCOMProductVariant;
 	isActive: boolean;
+	tabIndex: number;
 }
 
-const ButtonTile: FunctionComponent< TileProps > = ( {
-	productVariant,
-	selectedItem,
-	onChangeItemVariant,
-	isDisabled,
-	compareTo,
-	isActive,
-} ) => {
-	const translate = useTranslate();
-	const { variantLabel, productSlug, productId, termIntervalInMonths } = productVariant;
+const ButtonTile = forwardRef(
+	(
+		{
+			productVariant,
+			selectedItem,
+			onChangeItemVariant,
+			isDisabled,
+			compareTo,
+			isActive,
+			tabIndex,
+		}: TileProps,
+		ref: ForwardedRef< HTMLButtonElement >
+	) => {
+		const translate = useTranslate();
+		const { variantLabel, productSlug, productId, termIntervalInMonths } = productVariant;
 
-	let priceTermIntervalInMonths = termIntervalInMonths;
-	if ( productVariant.introductoryTerm === 'month' ) {
-		priceTermIntervalInMonths = productVariant.introductoryInterval ?? 1;
-	}
-	const pricePerMonth = Math.round( productVariant.priceInteger / priceTermIntervalInMonths );
-	const pricePerMonthFormatted = formatCurrency( pricePerMonth, productVariant.currency, {
-		stripZeros: true,
-		isSmallestUnit: true,
-	} );
+		let priceTermIntervalInMonths = termIntervalInMonths;
+		if ( productVariant.introductoryTerm === 'month' ) {
+			priceTermIntervalInMonths = productVariant.introductoryInterval ?? 1;
+		}
+		const pricePerMonth = Math.round( productVariant.priceInteger / priceTermIntervalInMonths );
+		const pricePerMonthFormatted = formatCurrency( pricePerMonth, productVariant.currency, {
+			stripZeros: true,
+			isSmallestUnit: true,
+		} );
 
-	const label = termIntervalInMonths === 1 ? translate( 'Month' ) : variantLabel.noun;
-	const discountPercentage = getItemVariantDiscount( productVariant, compareTo );
+		const label = termIntervalInMonths === 1 ? translate( 'Month' ) : variantLabel.noun;
+		const discountPercentage = getItemVariantDiscount( productVariant, compareTo );
 
-	return (
-		<Tile
-			type="button"
-			role="radio"
-			aria-checked={ isActive }
-			active={ isActive }
-			disabled={ isDisabled }
-			data-product-slug={ productSlug }
-			onClick={ () => {
-				if ( isDisabled || isActive ) {
-					return;
-				}
-				onChangeItemVariant( selectedItem.uuid, productSlug, productId );
-			} }
-		>
-			<Label>{ label }</Label>
-			<Price>
-				{ pricePerMonthFormatted }
-				<PriceSuffix>{ translate( '/mo' ) }</PriceSuffix>
-			</Price>
-			{ discountPercentage > 0 ? (
-				<SavePill>
-					{ translate( 'Save %(percent)s%%', {
-						args: { percent: discountPercentage },
+		return (
+			<Tile
+				ref={ ref }
+				type="button"
+				role="radio"
+				aria-checked={ isActive }
+				active={ isActive }
+				disabled={ isDisabled }
+				tabIndex={ tabIndex }
+				data-product-slug={ productSlug }
+				onClick={ () => {
+					if ( isDisabled || isActive ) {
+						return;
+					}
+					onChangeItemVariant( selectedItem.uuid, productSlug, productId );
+				} }
+			>
+				<Label>{ label }</Label>
+				<Price>
+					{ translate( '%(pricePerMonth)s/mo', {
+						args: { pricePerMonth: pricePerMonthFormatted },
 					} ) }
-				</SavePill>
-			) : (
-				<SavePillPlaceholder aria-hidden="true">&nbsp;</SavePillPlaceholder>
-			) }
-		</Tile>
-	);
-};
+				</Price>
+				{ discountPercentage > 0 ? (
+					<SavePill>
+						{ translate( 'Save %(percent)s%%', {
+							args: { percent: discountPercentage },
+						} ) }
+					</SavePill>
+				) : (
+					<SavePillPlaceholder aria-hidden="true">&nbsp;</SavePillPlaceholder>
+				) }
+			</Tile>
+		);
+	}
+);
+
+ButtonTile.displayName = 'ButtonTile';
 
 export const ItemVariationButtonRow: FunctionComponent< ItemVariationPickerProps > = ( {
 	selectedItem,
@@ -161,21 +178,78 @@ export const ItemVariationButtonRow: FunctionComponent< ItemVariationPickerProps
 	const [ optimisticSelectedItem, setOptimisticSelectedItem ] = useState(
 		selectedItem.product_slug
 	);
+	const tileRefs = useRef< Array< HTMLButtonElement | null > >( [] );
 
 	useEffect( () => {
 		setOptimisticSelectedItem( selectedItem.product_slug );
 	}, [ selectedItem ] );
+
+	const selectedIndex = variants.findIndex(
+		( variant ) => variant.productSlug === optimisticSelectedItem
+	);
+
+	const handleChange: OnChangeItemVariant = useCallback(
+		( uuid, productSlug, productId, volume ) => {
+			setOptimisticSelectedItem( productSlug );
+			onChangeItemVariant( uuid, productSlug, productId, volume );
+		},
+		[ onChangeItemVariant ]
+	);
+
+	const moveSelection = useCallback(
+		( newIndex: number ) => {
+			const variant = variants[ newIndex ];
+			if ( ! variant ) {
+				return;
+			}
+			tileRefs.current[ newIndex ]?.focus();
+			if ( variant.productSlug !== optimisticSelectedItem ) {
+				handleChange( selectedItem.uuid, variant.productSlug, variant.productId, variant.volume );
+			}
+		},
+		[ variants, optimisticSelectedItem, selectedItem.uuid, handleChange ]
+	);
+
+	const handleKeyDown = useCallback(
+		( event: KeyboardEvent< HTMLDivElement > ) => {
+			if ( isDisabled ) {
+				return;
+			}
+			const last = variants.length - 1;
+			const current = selectedIndex >= 0 ? selectedIndex : 0;
+			let next: number | null = null;
+			switch ( event.key ) {
+				case 'ArrowRight':
+				case 'ArrowDown':
+					next = current === last ? 0 : current + 1;
+					break;
+				case 'ArrowLeft':
+				case 'ArrowUp':
+					next = current === 0 ? last : current - 1;
+					break;
+				case 'Home':
+					next = 0;
+					break;
+				case 'End':
+					next = last;
+					break;
+			}
+			if ( next !== null ) {
+				event.preventDefault();
+				moveSelection( next );
+			}
+		},
+		[ isDisabled, variants.length, selectedIndex, moveSelection ]
+	);
 
 	if ( variants.length < 2 ) {
 		return null;
 	}
 
 	const compareTo = variants[ 0 ];
-
-	const handleChange: OnChangeItemVariant = ( uuid, productSlug, productId, volume ) => {
-		setOptimisticSelectedItem( productSlug );
-		onChangeItemVariant( uuid, productSlug, productId, volume );
-	};
+	// If nothing matches the cart's selected slug, make the first tile the
+	// keyboard entry point so the radiogroup is still focusable.
+	const focusableIndex = selectedIndex >= 0 ? selectedIndex : 0;
 
 	return (
 		<Row
@@ -183,16 +257,21 @@ export const ItemVariationButtonRow: FunctionComponent< ItemVariationPickerProps
 			aria-label={ translate( 'Pick a product term' ) }
 			className="item-variation-picker"
 			count={ variants.length }
+			onKeyDown={ handleKeyDown }
 		>
-			{ variants.map( ( variant ) => (
+			{ variants.map( ( variant, index ) => (
 				<ButtonTile
 					key={ variant.productSlug + variant.variantLabel.noun }
+					ref={ ( el ) => {
+						tileRefs.current[ index ] = el;
+					} }
 					productVariant={ variant }
 					selectedItem={ selectedItem }
 					onChangeItemVariant={ handleChange }
 					isDisabled={ isDisabled }
 					compareTo={ compareTo }
 					isActive={ variant.productSlug === optimisticSelectedItem }
+					tabIndex={ index === focusableIndex ? 0 : -1 }
 				/>
 			) ) }
 		</Row>

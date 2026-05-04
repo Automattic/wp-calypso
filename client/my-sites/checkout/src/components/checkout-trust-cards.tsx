@@ -22,6 +22,14 @@ const TrustCardsRow = styled.div`
 		padding-inline-start: 64px;
 		margin-block-end: 48px;
 	}
+
+	/* Above 1024px the form column restores its 64px right padding for
+	   breathing room from the sidebar; mirror it here so the trust cards'
+	   right edge stays aligned with the form's step content. Below 1024px
+	   both extend to col-2's right edge with no right padding. */
+	@media ( min-width: 1025px ) {
+		padding-inline-end: 64px;
+	}
 `;
 
 const TrustCard = styled.div`
