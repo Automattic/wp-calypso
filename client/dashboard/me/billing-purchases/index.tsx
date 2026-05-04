@@ -50,6 +50,13 @@ export default function PurchasesList() {
 		}
 	}, [ removed ] );
 
+	// Dismiss the success notice if the background mutation fails.
+	useEffect( () => {
+		const dismiss = () => setShowRemovedNotice( false );
+		window.addEventListener( 'purchase-remove-failed', dismiss );
+		return () => window.removeEventListener( 'purchase-remove-failed', dismiss );
+	}, [] );
+
 	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()

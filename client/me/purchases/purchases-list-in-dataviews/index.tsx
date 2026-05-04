@@ -5,7 +5,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import useGetJetpackTransferredLicensePurchases from '@automattic/data-stores/src/purchases/queries/use-get-jetpack-transferred-license-purchases';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
@@ -117,6 +117,13 @@ const PurchasesListDataView: React.FC<
 		return { productNoun: removed, atomicDomain: removedDomain };
 	} );
 	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
+
+	// Dismiss the success notice if the background mutation fails.
+	useEffect( () => {
+		const dismiss = () => setShowRemovedNotice( false );
+		window.addEventListener( 'purchase-remove-failed', dismiss );
+		return () => window.removeEventListener( 'purchase-remove-failed', dismiss );
+	}, [] );
 
 	const {
 		data: transferredOwnershipPurchases = [],

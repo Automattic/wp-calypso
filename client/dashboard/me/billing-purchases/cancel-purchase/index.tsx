@@ -1201,6 +1201,7 @@ function CancelPurchaseInner() {
 			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
 				// Mutation failed — stop guarding and roll back the optimistic strip
 				cleanupGuard();
+				window.dispatchEvent( new CustomEvent( 'purchase-remove-failed' ) );
 				createErrorNotice( __( 'There was a problem removing your purchase. Please try again.' ), {
 					type: 'snackbar',
 				} );

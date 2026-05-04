@@ -586,6 +586,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 				// 3. Fire mutation in background
 				removePurchaseRequest( purchase.id ).catch( () => {
+					window.dispatchEvent( new CustomEvent( 'purchase-remove-failed' ) );
 					this.props.errorNotice(
 						translate( 'There was a problem removing your purchase. Please try again.' )
 					);
