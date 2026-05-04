@@ -47,7 +47,7 @@ const fetchDiscover = (
  * `list`, `conversations`, `conversations-a8c`, `recommendations_posts`,
  * `custom_recs_*`) are migrated incrementally in the follow-up PRs of this
  * same task — each PR adds the fetcher in `@automattic/api-core`, a case in
- * the switch below, and the streamType to `MIGRATED_STREAM_TYPES` in
+ * the switch below, and the streamType to the `isMigratedStream` gate in
  * `client/state/reader/streams/migrated-stream-types.ts`. Until then those
  * streams keep flowing through the legacy data-layer at
  * `client/state/data-layer/wpcom/read/streams/index.js` and never reach this
