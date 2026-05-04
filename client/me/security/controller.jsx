@@ -98,3 +98,9 @@ export function sshKey( context, next ) {
 	context.primary = <SecuritySSHKey queryParams={ context.query } />;
 	next();
 }
+
+export function qrCodeAppLogin( context, next ) {
+	const QRCodeAppLoginPage = require( 'calypso/me/qr-code-app-login' ).default;
+	context.primary = createElement( QRCodeAppLoginPage, {} );
+	next();
+}
