@@ -16,6 +16,8 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 
+import '../style.scss';
+
 export default function AiMcpAvailableToolsContent() {
 	const dispatch = useDispatch();
 

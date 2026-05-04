@@ -89,7 +89,7 @@ export default function AiMcpOverviewContent() {
 							/>
 						</VStack>
 					</CardBody>
-					<CardDivider style={ { borderColor: '#f0f0f0' } } />
+					<CardDivider style={ { borderColor: 'var(--color-neutral-5)' } } />
 					<DashboardSummaryButton
 						density="medium"
 						title={ __( 'Available tools' ) }
