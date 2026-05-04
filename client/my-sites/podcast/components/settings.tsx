@@ -391,15 +391,6 @@ const PodcastingSettingsForm = ( {
 
 	return (
 		<form id="site-settings" onSubmit={ handleSubmitForm }>
-			<header className="podcast__section-header">
-				<h2 className="podcast__section-heading">{ translate( 'Settings' ) }</h2>
-				<p className="podcast__section-description">
-					{ translate(
-						'Configure your podcast feed details. These show up in Apple Podcasts, Spotify, and other directories.'
-					) }
-				</p>
-			</header>
-
 			<VStack spacing={ 4 } className="podcast__settings">
 				{ siteId && coverImageId && <QueryMedia siteId={ siteId } mediaId={ coverImageId } /> }
 
@@ -431,7 +422,7 @@ const PodcastingSettingsForm = ( {
 				<Card className="site-settings__card podcast__card">
 					<CardHeader>
 						<VStack spacing={ 1 }>
-							<Heading level={ 4 }>{ translate( 'Podcast category' ) }</Heading>
+							<Heading level={ 3 }>{ translate( 'Podcast category' ) }</Heading>
 							<Text variant="muted">
 								{ translate(
 									'Posts in this category are treated as podcast episodes. Add an audio or video block to each one so listeners have something to play.'
@@ -484,7 +475,7 @@ const PodcastingSettingsForm = ( {
 				<Card className="site-settings__card podcast__card">
 					<CardHeader>
 						<VStack spacing={ 1 }>
-							<Heading level={ 4 }>{ translate( 'Show details' ) }</Heading>
+							<Heading level={ 3 }>{ translate( 'Show details' ) }</Heading>
 							<Text variant="muted">
 								{ translate(
 									'This information appears in podcast apps like Apple Podcasts and Spotify.'
@@ -552,7 +543,7 @@ const PodcastingSettingsForm = ( {
 				<Card className="site-settings__card podcast__card">
 					<CardHeader>
 						<VStack spacing={ 1 }>
-							<Heading level={ 4 }>{ translate( 'Feed settings' ) }</Heading>
+							<Heading level={ 3 }>{ translate( 'Feed settings' ) }</Heading>
 							<Text variant="muted">
 								{ translate( 'Configure how your podcast appears in directories and apps.' ) }
 							</Text>
@@ -621,7 +612,7 @@ const PodcastingSettingsForm = ( {
 					<Card className="site-settings__card podcast__card">
 						<CardHeader>
 							<VStack spacing={ 1 }>
-								<Heading level={ 4 }>{ translate( 'Disable podcasting' ) }</Heading>
+								<Heading level={ 3 }>{ translate( 'Disable podcasting' ) }</Heading>
 								<Text variant="muted">
 									{ translate(
 										'Stops publishing your podcast feed. Your show details stay saved, so you can set it up again later.'

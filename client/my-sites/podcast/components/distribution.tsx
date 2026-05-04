@@ -87,15 +87,6 @@ function Distribution() {
 
 	return (
 		<>
-			<header className="podcast__section-header">
-				<h2 className="podcast__section-heading">{ translate( 'Distribution' ) }</h2>
-				<p className="podcast__section-description">
-					{ translate(
-						'Submit your feed to podcast directories and track where your show is listed.'
-					) }
-				</p>
-			</header>
-
 			<Card className="site-settings__card podcast__card">
 				<CardBody>
 					<VStack spacing={ 8 }>
