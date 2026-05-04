@@ -29,6 +29,7 @@ const replyMode: ActiveMode = {
 const standaloneMode: ActiveMode = {
 	kind: 'standalone',
 	connectionId: 1,
+	entry_point: 'fab',
 };
 
 describe( '<ComposerPinnedContext>', () => {
