@@ -14,6 +14,7 @@ import { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import './config';
 import './help-center.scss';
+import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 import { getEditorType } from './utils';
@@ -271,6 +272,11 @@ registerPlugin( 'jetpack-help-center', {
 
 // Gate for proxied users with wpcom-smart-dictation=true flag.
 if ( helpCenterData.isProxied ) {
+	if ( ! canAccessWpcomApis() ) {
+		// In case someone tries to test on an Atomic site.
+		window.alert( 'The dictation tool is only available for simple sites.' );
+		return;
+	}
 	if ( window.location.search.includes( 'wpcom-smart-dictation=true' ) ) {
 		import( './help-center-wpcom-transcription' );
 	}
