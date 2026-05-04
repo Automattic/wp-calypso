@@ -22,7 +22,13 @@ export const AuthorAchievementBadges = ( {
 
 	const badges = [
 		!! yearsOfService && (
-			<YearsOfServiceBadge key="years-of-service" size={ size } yearsOfService={ yearsOfService } />
+			<YearsOfServiceBadge
+				key="years-of-service"
+				size={ size }
+				yearsOfService={ yearsOfService }
+				linked
+				userLogin={ authorLogin }
+			/>
 		),
 	].filter( Boolean );
 

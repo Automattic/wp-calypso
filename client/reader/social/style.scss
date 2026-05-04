@@ -96,3 +96,77 @@
 .social-profile-card__stat-label {
 	color: var( --studio-gray-50, #646970 );
 }
+
+// Layout-stable skeleton mirrored on SocialProfileCard. Uses the same sizing
+// so the page doesn't shift when profile data resolves. Block colour matches
+// the post-list skeleton row so the loading state reads as one surface.
+@keyframes social-profile-card-skeleton-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.5;
+	}
+}
+
+.social-profile-card-skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	animation: social-profile-card-skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.social-profile-card-skeleton__banner {
+	inline-size: 100%;
+	block-size: clamp( 80px, 28vw, 200px );
+	background: var( --studio-gray-5, #dcdcde );
+	border-radius: 4px;
+}
+
+.social-profile-card-skeleton__header-row {
+	display: flex;
+	align-items: flex-end;
+	gap: 1rem;
+	padding-inline: 0.5rem;
+	margin-block-start: -2.5rem;
+
+	@media ( max-width: 600px ) {
+		margin-block-start: -1.75rem;
+	}
+}
+
+.social-profile-card-skeleton__avatar {
+	inline-size: 5rem;
+	block-size: 5rem;
+	border-radius: 50%;
+	border: 3px solid var( --studio-white, #fff );
+	background: var( --studio-gray-10, #c3c4c7 );
+}
+
+.social-profile-card-skeleton__name {
+	block-size: 1.5rem;
+	inline-size: 40%;
+	background: var( --studio-gray-5, #dcdcde );
+	border-radius: 4px;
+}
+
+.social-profile-card-skeleton__handle {
+	block-size: 1rem;
+	inline-size: 28%;
+	background: var( --studio-gray-5, #dcdcde );
+	border-radius: 4px;
+}
+
+.social-profile-card-skeleton__stats {
+	display: flex;
+	gap: 1.25rem;
+}
+
+.social-profile-card-skeleton__stat {
+	block-size: 1rem;
+	inline-size: 4rem;
+	background: var( --studio-gray-5, #dcdcde );
+	border-radius: 4px;
+}

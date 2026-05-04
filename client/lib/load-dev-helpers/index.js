@@ -77,4 +77,13 @@ export default function loadDevHelpers( reduxStore ) {
 			).then( ( helper ) => helper.default( el ) );
 		}
 	}
+
+	if ( config.isEnabled( 'dark-mode' ) ) {
+		const el = document.querySelector( '.environment.is-dark-mode' );
+		if ( el ) {
+			import(
+				/* webpackChunkName: "async-load-calypso-lib-dark-mode-helper" */ 'calypso/lib/dark-mode-helper'
+			).then( ( helper ) => helper.default( el ) );
+		}
+	}
 }

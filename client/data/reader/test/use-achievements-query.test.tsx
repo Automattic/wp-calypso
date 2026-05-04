@@ -113,4 +113,39 @@ describe( 'useAchievementsQuery', () => {
 
 		expect( result.current.yearsOfService ).toBeUndefined();
 	} );
+
+	test( 'should expose lockedAchievements from the first page', async () => {
+		mockGet.mockResolvedValue( {
+			found: 0,
+			achievements: [],
+			locked_achievements: [
+				{
+					achievement_id: 99,
+					slug: 'locked',
+					name: 'Locked',
+					description: 'd',
+					badge_prefix: 'p',
+					is_secret: false,
+					date_created: '2026-01-01T00:00:00Z',
+				},
+			],
+		} );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.lockedAchievements ).toHaveLength( 1 );
+		expect( result.current.lockedAchievements[ 0 ].achievement_id ).toBe( 99 );
+	} );
+
+	test( 'should default lockedAchievements to an empty array when absent', async () => {
+		mockGet.mockResolvedValue( { found: 0, achievements: [] } );
+
+		const { result } = renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( result.current.lockedAchievements ).toEqual( [] );
+	} );
 } );

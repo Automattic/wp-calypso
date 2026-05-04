@@ -24,7 +24,7 @@
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
 		"cookie-banner": false,
-		"dark-mode": false,
+		"dark-mode": true,
 		"dashboard/omnibar": true,
 		"dashboard/omnibar-radical": true,
 		"dashboard/plans": true,

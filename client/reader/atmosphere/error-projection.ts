@@ -32,15 +32,24 @@ export function projectAtmosphereError(
 			return err.retry_after !== undefined
 				? { kind: 'rate_limited', retry_after: err.retry_after }
 				: { kind: 'rate_limited' };
-		case 'invalid_handle':
 		case 'bad_request':
+			// Surface the backend's validation message — collapsing to a generic
+			// "Something went wrong" copy hides actionable detail (e.g. "Hashtag
+			// too long" or "Invalid handle"). Mirrors the Mastodon projector.
+			return { kind: 'unknown', cause: err, message: err.message ?? undefined };
+		case 'invalid_handle':
 		case 'unknown':
 			return { kind: 'unknown', cause: err };
 		default:
-			return assertNever( err );
+			// Soft fallback: a future AtmosphereError variant landing in
+			// production before this switch is updated would otherwise crash
+			// the panel mid-render. Surface the gap to devtools and ship the
+			// generic copy. Mirrors the Mastodon projector.
+			// eslint-disable-next-line no-console
+			console.warn(
+				'[reader-atmosphere] unhandled AtmosphereError kind in projectAtmosphereError()',
+				err
+			);
+			return { kind: 'unknown', cause: err };
 	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }

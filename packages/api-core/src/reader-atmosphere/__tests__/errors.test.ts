@@ -9,6 +9,19 @@ function wpErr( code: string, statusCode: number, message = '' ): unknown {
 	return e;
 }
 
+// Mirror the actual shape that wpcom-proxy-request raises for a WP REST
+// envelope error: the WP error code lands on `.code`, not `.error`. The
+// classifier must recognise both to avoid silently falling through to
+// `{ kind: 'unknown' }` for live upstream failures.
+function wpProxyErr( code: string, statusCode: number, message = '' ): unknown {
+	const e = new Error( message );
+	( e as unknown as Record< string, unknown > ).code = code;
+	( e as unknown as Record< string, unknown > ).statusCode = statusCode;
+	( e as unknown as Record< string, unknown > ).status = statusCode;
+	( e as unknown as Record< string, unknown > ).message = message;
+	return e;
+}
+
 describe( 'classifyAtmosphereError', () => {
 	it( 'maps invalid_handle', () => {
 		expect( classifyAtmosphereError( wpErr( 'invalid_handle', 400 ) ).kind ).toBe(
@@ -39,5 +52,42 @@ describe( 'classifyAtmosphereError', () => {
 	it( 'falls back to unknown', () => {
 		const e = classifyAtmosphereError( new Error( 'boom' ) );
 		expect( e.kind ).toBe( 'unknown' );
+	} );
+
+	it( 'classifies wpcom-proxy errors that surface the code on .code', () => {
+		expect(
+			classifyAtmosphereError( wpProxyErr( 'atmosphere_upstream_unavailable', 403 ) ).kind
+		).toBe( 'upstream_unavailable' );
+		expect( classifyAtmosphereError( wpProxyErr( 'atmosphere_rate_limited', 429 ) ).kind ).toBe(
+			'rate_limited'
+		);
+		expect( classifyAtmosphereError( wpProxyErr( 'connection_not_found', 404 ) ).kind ).toBe(
+			'connection_not_found'
+		);
+	} );
+
+	// Slice 7c POST /reader/atmosphere/connections/{id}/posts ships nine
+	// wire-stable error codes; pin the four newcomers so they don't
+	// silently regress to `{ kind: 'unknown' }` (which renders the generic
+	// "Something went wrong" banner).
+	it( 'maps atmosphere_text_too_long', () => {
+		expect( classifyAtmosphereError( wpErr( 'atmosphere_text_too_long', 400 ) ).kind ).toBe(
+			'text_too_long'
+		);
+	} );
+	it( 'maps atmosphere_reply_disabled', () => {
+		expect( classifyAtmosphereError( wpErr( 'atmosphere_reply_disabled', 403 ) ).kind ).toBe(
+			'reply_disabled'
+		);
+	} );
+	it( 'maps atmosphere_quote_disabled', () => {
+		expect( classifyAtmosphereError( wpErr( 'atmosphere_quote_disabled', 403 ) ).kind ).toBe(
+			'quote_disabled'
+		);
+	} );
+	it( 'maps atmosphere_target_unavailable', () => {
+		expect( classifyAtmosphereError( wpErr( 'atmosphere_target_unavailable', 404 ) ).kind ).toBe(
+			'target_unavailable'
+		);
 	} );
 } );

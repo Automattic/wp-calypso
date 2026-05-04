@@ -1,5 +1,6 @@
 import deepfreeze from 'deep-freeze';
 import moment from 'moment';
+import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 import {
 	receivePage,
@@ -7,7 +8,6 @@ import {
 	receiveUpdates,
 	selectNextItem,
 	selectPrevItem,
-	requestPage,
 	receiveStreamError,
 	clearStream,
 } from '../actions';
@@ -23,6 +23,12 @@ import {
 } from '../reducer';
 
 jest.mock( '@wordpress/warning', () => () => {} );
+
+// `requestPage` is now a thunk; for reducer tests we only need the legacy
+// action it would dispatch for unmigrated streams, so build it inline.
+function pageRequestAction( streamKey ) {
+	return { type: READER_STREAMS_PAGE_REQUEST, payload: { streamKey } };
+}
 
 const TIME1 = '2018-01-01T00:00:00.000Z';
 const TIME2 = '2018-01-02T00:00:00.000Z';
@@ -288,7 +294,7 @@ describe( 'streams.isRequesting', () => {
 	} );
 
 	it( 'should set to true after request is initiated', () => {
-		const action = requestPage( { streamKey: 'following' } );
+		const action = pageRequestAction( 'following' );
 		expect( isRequesting( undefined, action ) ).toBe( true );
 	} );
 
@@ -313,7 +319,7 @@ describe( 'streams.error', () => {
 
 	it( 'should cleanup the error after a page request', () => {
 		const previousError = new Error( 'test error' );
-		const action = requestPage( { streamKey: 'following' } );
+		const action = pageRequestAction( 'following' );
 
 		expect( error( previousError, action ) ).toBe( null );
 	} );

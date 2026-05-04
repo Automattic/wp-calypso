@@ -8,6 +8,12 @@ export interface SocialAuthor {
 
 export interface SocialReplyRef {
 	uri: string;
+	// Strong-ref CID for the referenced record. Optional because not every
+	// protocol exposes one (Mastodon has no native CIDs) and the atmosphere
+	// backend may omit it during the rollout window for `reply_root` /
+	// `reply_parent`. Reply-to-reply submission paths fall back to the
+	// surrounding post's `cid` when this is missing.
+	cid?: string;
 	author: { id?: string; handle: string };
 }
 
@@ -139,6 +145,7 @@ export interface SocialContentWarning {
 
 export interface SocialPost {
 	uri: string;
+	cid?: string;
 	permalink: string;
 	text: string;
 	html: string;
@@ -151,6 +158,10 @@ export interface SocialPost {
 	reason: SocialReason | null;
 	embed: SocialEmbed | null;
 	counts: SocialCounts;
+	viewer?: {
+		like: string | null;
+		repost: string | null;
+	};
 	// Optional content warning — undefined for protocols that don't
 	// expose them (atmosphere) or for posts that aren't flagged.
 	content_warning?: SocialContentWarning;
@@ -158,10 +169,13 @@ export interface SocialPost {
 
 // Narrow error type covering only the kinds FeedListEmpty switches on.
 // Both AtmosphereError and MastodonError emit these kinds (others fall to
-// the 'unknown' bucket via per-protocol mappers in the panel layer).
+// the 'unknown' bucket via per-protocol mappers in the panel layer). The
+// optional `message` on `unknown` lets per-protocol projectors surface the
+// backend's human-readable copy (e.g. `bad_request` validation messages)
+// instead of being collapsed to the generic "Something went wrong" line.
 export type SocialError =
 	| { kind: 'auth_required' }
 	| { kind: 'not_found' }
 	| { kind: 'rate_limited'; retry_after?: number }
 	| { kind: 'upstream_unavailable' }
-	| { kind: 'unknown'; cause?: unknown };
+	| { kind: 'unknown'; cause?: unknown; message?: string };
