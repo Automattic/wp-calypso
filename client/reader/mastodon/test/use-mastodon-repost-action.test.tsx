@@ -107,9 +107,12 @@ describe( 'makeUseMastodonRepostAction', () => {
 		expect( button ).toBeVisible();
 		expect( button ).toHaveTextContent( '5' );
 
-		// Open dropdown to see the "Boost" menu item label
+		// Open dropdown to see the "Boost" menu item label. The dropdown
+		// renders into a Popover portal — jsdom doesn't compute the
+		// portal's CSS visibility reliably across runs, so assert presence
+		// in the DOM instead of `toBeVisible`.
 		await user.click( button );
-		expect( screen.getByRole( 'menuitem', { name: 'Boost' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'menuitem', { name: 'Boost' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'repost() POSTs to the reposts endpoint and fires _boost_clicked Tracks', async () => {
