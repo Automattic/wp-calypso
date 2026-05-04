@@ -1,5 +1,8 @@
+import { addQueryArgs } from '@wordpress/url';
 import { QRCodeSVG } from 'qrcode.react';
 import type { Token } from './types';
+
+const DEEP_LINK_BASE = 'woocommerce://qr-login';
 
 interface Props {
 	token: Token;
@@ -7,7 +10,10 @@ interface Props {
 }
 
 export default function QRCode( { token, size = 300 }: Props ) {
-	const value = JSON.stringify( { token: token.token, encrypted: token.encrypted } );
+	const value = addQueryArgs( DEEP_LINK_BASE, {
+		token: token.token,
+		encrypted: token.encrypted,
+	} );
 	return <QRCodeSVG value={ value } size={ size } />;
 }
 
