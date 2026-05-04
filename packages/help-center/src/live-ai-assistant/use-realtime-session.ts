@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import {
-	GET_BLOCK_EXAMPLES_TOOL_NAME,
-	getBlockExamplesToolDefinition,
-	executeGetBlockExamplesTool,
-} from './tools/block-examples-tool';
-import {
 	FORMAT_TEXT_TOOL_NAME,
 	GET_BLOCK_TOOL_NAME,
 	GET_BLOCK_TYPE_TOOL_NAME,
@@ -419,8 +414,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					result = executeGetBlockTypesTool( call.arguments );
 				} else if ( call.name === GET_BLOCK_TYPE_TOOL_NAME ) {
 					result = executeGetBlockTypeTool( call.arguments );
-				} else if ( call.name === GET_BLOCK_EXAMPLES_TOOL_NAME ) {
-					result = executeGetBlockExamplesTool( call.arguments );
 				} else if ( call.name === INSERT_BLOCK_TOOL_NAME ) {
 					result = await executeInsertBlockTool( call.arguments );
 				} else if ( call.name === INSERT_BLOCKS_TOOL_NAME ) {
@@ -653,7 +646,6 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 								selectBlockToolDefinition,
 								getBlockTypesToolDefinition,
 								getBlockTypeToolDefinition,
-								getBlockExamplesToolDefinition,
 								insertBlockToolDefinition,
 								insertBlocksToolDefinition,
 								updateBlockAttributesToolDefinition,

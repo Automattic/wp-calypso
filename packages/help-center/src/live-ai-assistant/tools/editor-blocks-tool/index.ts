@@ -199,7 +199,7 @@ export const getBlockTypesToolDefinition = {
 	type: 'function',
 	name: GET_BLOCK_TYPES_TOOL_NAME,
 	description:
-		'List all registered Gutenberg block types as a lightweight catalog of just { name, description }. Uses wp.data select("core/blocks").getBlockTypes. Use this to discover which blocks exist (e.g. "core/paragraph", "core/heading", "core/list", "core/quote", "core/image"). It deliberately does NOT include attribute schemas, supports, parent/ancestor, etc. — call get_block_type_tool with a single block name when you actually need the full schema before inserting or updating that block.',
+		'List all registered Gutenberg block type names only (strings like "core/paragraph"). Uses wp.data select("core/blocks").getBlockTypes. Optional search/category filters still match title, description, and keywords, but the response contains names only — no titles or descriptions. Use this to discover or search block names. You MUST call get_block_type_tool with each exact name before insert_block_tool, insert_blocks_tool, update_block_attributes_tool, replace_block_tool, or any write that sets block attributes (including every distinct block type in inner_blocks).',
 	parameters: {
 		type: 'object',
 		properties: {
@@ -222,7 +222,7 @@ export const getBlockTypeToolDefinition = {
 	type: 'function',
 	name: GET_BLOCK_TYPE_TOOL_NAME,
 	description:
-		'Get the full schema for ONE registered Gutenberg block type by exact name (e.g. "core/paragraph"). Uses wp.data select("core/blocks").getBlockType. Returns name, title, description, category, keywords, parent/ancestor constraints, allowedBlocks, supports, and the full attributes map (type, default, enum, source). Call this on demand right before insert_block_tool / update_block_attributes_tool / replace_block_tool when you need to know what a specific block accepts. Prefer this over fetching every block type up front.',
+		'Get the full schema for ONE registered Gutenberg block type by exact name (e.g. "core/paragraph"). Uses wp.data select("core/blocks").getBlockType (same shape as items from getBlockTypes). The returned block_type includes an attributes map (types, defaults, enum, source) and may include example.attributes — when example.attributes is present, use it as the structural template for insert_block_tool / createBlock payloads: start from those keys and values, then substitute the user\'s content while preserving the shape. When example is missing, build attributes from defaults and types in block_type.attributes. Call this immediately before every insert, replace, or attribute update for that block type.',
 	parameters: {
 		type: 'object',
 		properties: {
@@ -240,7 +240,7 @@ export const insertBlockToolDefinition = {
 	type: 'function',
 	name: INSERT_BLOCK_TOOL_NAME,
 	description:
-		'Insert a new block into the post using wp.blocks.createBlock and wp.data dispatch("core/block-editor").insertBlock. Use AFTER get_block_types_tool to confirm the block name and attributes. Common dictation use cases: insert a "core/paragraph" with content, a "core/heading" with content/level, a "core/list" with inner list-item blocks, a "core/quote", "core/image", etc. For dictation: ALWAYS append at the end of the post (omit index, root_client_id, after_client_id) unless the user explicitly asked to place it elsewhere; never choose a middle position based on selection alone. Pass index and root_client_id to insert at a specific location, or pass after_client_id to insert immediately after an existing block — only when instructed. inner_blocks can be supplied recursively for container blocks (list, group, columns, quote).',
+		'Insert a new block into the post using wp.blocks.createBlock and wp.data dispatch("core/block-editor").insertBlock. Call get_block_type_tool for this block name (and for every inner block type) immediately before this call; build the attributes argument from block_type.example.attributes when present, otherwise from block_type.attributes defaults. Common dictation use cases: insert a "core/paragraph" with content, a "core/heading" with content/level, a "core/list" with inner list-item blocks, a "core/quote", "core/image", etc. For dictation: ALWAYS append at the end of the post (omit index, root_client_id, after_client_id) unless the user explicitly asked to place it elsewhere; never choose a middle position based on selection alone. Pass index and root_client_id to insert at a specific location, or pass after_client_id to insert immediately after an existing block — only when instructed. inner_blocks can be supplied recursively for container blocks (list, group, columns, quote).',
 	parameters: {
 		type: 'object',
 		properties: {
@@ -252,7 +252,7 @@ export const insertBlockToolDefinition = {
 			attributes: {
 				type: 'object',
 				description:
-					'Attributes for the block (shape depends on the block type — call get_block_types_tool first). For "core/paragraph" use { "content": "text" }. For "core/heading" use { "content": "text", "level": 2 }. Plain RichText attributes can be strings.',
+					'Attributes for the block. After get_block_type_tool, prefer starting from block_type.example.attributes when it exists (same keys/shape; swap in user text and media). Otherwise use block_type.attributes defaults and types. For "core/paragraph" typically { "content": "text" }; "core/heading" { "content": "text", "level": 2 }; RichText values are strings.',
 				additionalProperties: true,
 			},
 			inner_blocks: {
@@ -300,7 +300,7 @@ export const insertBlocksToolDefinition = {
 	type: 'function',
 	name: INSERT_BLOCKS_TOOL_NAME,
 	description:
-		'Insert MULTIPLE blocks in a single batched call using wp.data dispatch("core/block-editor").insertBlocks. Prefer this over calling insert_block_tool repeatedly when laying down a structured chunk (e.g. a heading followed by a couple of paragraphs and a list). Same placement as insert_block_tool: for dictation omit placement args to append at the end of the post — do not splice into the middle unless the user explicitly directed a position. Or specify index + root_client_id, or after_client_id to insert immediately after an existing block when they asked for that.',
+		'Insert MULTIPLE blocks in a single batched call using wp.data dispatch("core/block-editor").insertBlocks. Call get_block_type_tool for every distinct block name in the batch (including nested inner_blocks) immediately before this call; use each block_type.example.attributes as the attributes template when available. Prefer this over calling insert_block_tool repeatedly when laying down a structured chunk (e.g. a heading followed by a couple of paragraphs and a list). Same placement as insert_block_tool: for dictation omit placement args to append at the end of the post — do not splice into the middle unless the user explicitly directed a position. Or specify index + root_client_id, or after_client_id to insert immediately after an existing block when they asked for that.',
 	parameters: {
 		type: 'object',
 		properties: {
@@ -350,7 +350,7 @@ export const updateBlockAttributesToolDefinition = {
 	type: 'function',
 	name: UPDATE_BLOCK_ATTRIBUTES_TOOL_NAME,
 	description:
-		'Update one or more attributes on an existing block, leaving other attributes unchanged. Uses wp.data dispatch("core/block-editor").updateBlockAttributes. Use this for things like appending or rewriting a paragraph\'s content, changing a heading\'s level, or tweaking image alt text. For steady forward dictation, prefer the LAST top-level trailing block\'s clientId (see get_editor_blocks_tool) unless the user clearly asked you to patch a named or selected block ("this"/"that", positional edit). Call get_block_types_tool first if unsure which attributes the block accepts.',
+		'Update one or more attributes on an existing block, leaving other attributes unchanged. Uses wp.data dispatch("core/block-editor").updateBlockAttributes. Call get_block_type_tool for that block\'s type (from get_block_tool or get_editor_blocks_tool) immediately before this call if you are not already certain of the attribute schema. Use this for things like appending or rewriting a paragraph\'s content, changing a heading\'s level, or tweaking image alt text. For steady forward dictation, prefer the LAST top-level trailing block\'s clientId (see get_editor_blocks_tool) unless the user clearly asked you to patch a named or selected block ("this"/"that", positional edit).',
 	parameters: {
 		type: 'object',
 		properties: {
@@ -375,7 +375,7 @@ export const replaceBlockToolDefinition = {
 	type: 'function',
 	name: REPLACE_BLOCK_TOOL_NAME,
 	description:
-		'Replace an existing block with a brand-new block (different type or wholesale rewrite). Uses wp.data dispatch("core/block-editor").replaceBlock combined with wp.blocks.createBlock. Use this when the user says things like "turn this paragraph into a heading" or "change this list to a quote". Prefer update_block_attributes_tool when the block type stays the same.',
+		'Replace an existing block with a brand-new block (different type or wholesale rewrite). Uses wp.data dispatch("core/block-editor").replaceBlock combined with wp.blocks.createBlock. Call get_block_type_tool for the new block name (and inner types) immediately before this call. Use this when the user says things like "turn this paragraph into a heading" or "change this list to a quote". Prefer update_block_attributes_tool when the block type stays the same.',
 	parameters: {
 		type: 'object',
 		properties: {
@@ -386,7 +386,7 @@ export const replaceBlockToolDefinition = {
 			name: {
 				type: 'string',
 				description:
-					'Name of the new block, e.g. "core/heading", "core/quote", "core/list". Call get_block_types_tool first if unsure.',
+					'Name of the new block, e.g. "core/heading", "core/quote", "core/list". Call get_block_type_tool for this name immediately before replace_block_tool.',
 			},
 			attributes: {
 				type: 'object',
@@ -992,58 +992,6 @@ function richTextValueToHtml( value: unknown ): string | null {
 	return null;
 }
 
-function summarizeAttributeSpec( spec: BlockAttributeSpec ): Record< string, unknown > {
-	const out: Record< string, unknown > = {};
-	if ( spec.type !== undefined ) {
-		out.type = spec.type;
-	}
-	if ( 'default' in spec ) {
-		out.default = truncateAttributeValue( spec.default, 2 );
-	}
-	if ( Array.isArray( spec.enum ) ) {
-		out.enum = spec.enum.slice( 0, 20 );
-	}
-	if ( typeof spec.source === 'string' ) {
-		out.source = spec.source;
-	}
-	if ( typeof spec.selector === 'string' ) {
-		out.selector = spec.selector;
-	}
-	if ( typeof spec.attribute === 'string' ) {
-		out.attribute = spec.attribute;
-	}
-	return out;
-}
-
-function summarizeBlockType( bt: BlockTypeLike, full: boolean ) {
-	const attributes: Record< string, unknown > = {};
-	if ( bt.attributes && typeof bt.attributes === 'object' ) {
-		for ( const [ key, spec ] of Object.entries( bt.attributes ) ) {
-			attributes[ key ] = summarizeAttributeSpec( spec || {} );
-		}
-	}
-	const base: Record< string, unknown > = {
-		name: bt.name,
-		title: bt.title,
-		category: bt.category,
-		keywords: Array.isArray( bt.keywords ) ? bt.keywords.slice( 0, 12 ) : undefined,
-		parent: Array.isArray( bt.parent ) ? bt.parent : undefined,
-		ancestor: Array.isArray( bt.ancestor ) ? bt.ancestor : undefined,
-		attributes,
-	};
-	if ( full ) {
-		base.description = bt.description;
-		base.allowedBlocks = Array.isArray( bt.allowedBlocks ) ? bt.allowedBlocks : undefined;
-		base.supports = bt.supports
-			? ( truncateAttributeValue( bt.supports, 3 ) as Record< string, unknown > )
-			: undefined;
-	} else if ( typeof bt.description === 'string' && bt.description.length ) {
-		base.description =
-			bt.description.length > 160 ? bt.description.slice( 0, 160 ) + '…' : bt.description;
-	}
-	return base;
-}
-
 function parseGetBlockTypesArgs( rawArgs: unknown ): {
 	search?: string;
 	category?: string;
@@ -1081,25 +1029,6 @@ function parseGetBlockTypeArgs( rawArgs: unknown ): { name?: string } {
 	} catch {
 		return {};
 	}
-}
-
-function summarizeBlockTypeSlim( bt: BlockTypeLike ): {
-	name: string;
-	title: string;
-	description: string;
-} {
-	let description = '';
-	if ( typeof bt.description === 'string' && bt.description.length ) {
-		description =
-			bt.description.length > 200 ? bt.description.slice( 0, 200 ) + '…' : bt.description;
-	} else if ( typeof bt.title === 'string' ) {
-		description = bt.title;
-	}
-	return {
-		name: bt.name,
-		title: typeof bt.title === 'string' ? bt.title : getBlockTitle( bt.name ),
-		description,
-	};
 }
 
 export function executeGetBlockTypesTool( rawArgs: unknown ) {
@@ -1141,7 +1070,7 @@ export function executeGetBlockTypesTool( rawArgs: unknown ) {
 		count: filtered.length,
 		returned: sliced.length,
 		truncated: filtered.length > sliced.length,
-		block_types: sliced.map( summarizeBlockTypeSlim ),
+		names: sliced.map( ( bt ) => bt.name ),
 	};
 }
 
@@ -1164,7 +1093,7 @@ export function executeGetBlockTypeTool( rawArgs: unknown ) {
 	if ( ! bt ) {
 		return { ok: false, error: `Block type "${ name }" is not registered in this editor.` };
 	}
-	return { ok: true, block_type: summarizeBlockType( bt, true ) };
+	return { ok: true, block_type: bt };
 }
 
 function normalizeInsertBlockSpec(
