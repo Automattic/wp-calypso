@@ -2021,6 +2021,107 @@ describe( 'reader-atmosphere hooks', () => {
 
 			await promise;
 		} );
+
+		it( 'restores the timeline snapshot on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			const initialTimeline = seedTimeline( client, existing );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( { connectionId, text: 'oops' } );
+				} catch {
+					/* expected */
+				}
+			} );
+
+			const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+				readerAtmosphereKeys.timeline( connectionId )
+			);
+			expect( timeline ).toEqual( initialTimeline );
+			expect( timeline?.pages[ 0 ].items ).toHaveLength( 1 );
+			expect( timeline?.pages[ 0 ].items[ 0 ].uri ).toBe( 'at://existing' );
+		} );
+
+		it( 'restores all author-feed snapshots on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedConnection( client );
+
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			const filters = [
+				undefined,
+				'posts_no_replies' as const,
+				'posts_with_replies' as const,
+				'posts_and_author_threads' as const,
+			];
+			const seeded = filters.map( ( filter ) => ( {
+				filter,
+				data: seedAuthorFeed( client, filter, existing ),
+			} ) );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( { connectionId, text: 'oops' } );
+				} catch {
+					/* expected */
+				}
+			} );
+
+			for ( const { filter, data } of seeded ) {
+				const feed = client.getQueryData< InfiniteData< AtmosphereAuthorFeedPage > >(
+					readerAtmosphereKeys.authorFeed( handle, filter )
+				);
+				expect( feed ).toEqual( data );
+				expect( feed?.pages[ 0 ].items ).toHaveLength( 1 );
+				expect( feed?.pages[ 0 ].items[ 0 ].uri ).toBe( 'at://existing' );
+			}
+		} );
+
+		it( 'cold-cache standalone error restores timeline without throwing on missing author-feed snapshots', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			// No seedConnection(): cold connection cache so author-feed
+			// snapshots are never captured.
+			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
+			const initialTimeline = seedTimeline( client, existing );
+
+			nock( BASE )
+				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( createPostMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( { connectionId, text: 'cold deep-link' } );
+				} catch {
+					/* expected */
+				}
+			} );
+
+			const timeline = client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+				readerAtmosphereKeys.timeline( connectionId )
+			);
+			expect( timeline ).toEqual( initialTimeline );
+		} );
 	} );
 
 	describe( 'useCreateRepostMutation', () => {

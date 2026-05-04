@@ -1158,10 +1158,21 @@ export const createPostMutation = ( queryClient: QueryClient ) =>
 			if ( ! ctx ) {
 				return;
 			}
-			// Restore the thread cache first so the placeholder + count
-			// bump are both reverted in one shot. Do this before
-			// `restoreAtmospherePostSnapshots` so that helper sees the
-			// already-restored thread (its restore pass is a no-op there).
+			// Standalone-mode restore: the timeline + author-feed caches
+			// were patched in onMutate, so revert each captured snapshot.
+			// Both branches are no-ops for reply / quote mutations
+			// (timelineSnapshot is undefined, authorFeedSnapshots is []).
+			if ( ctx.timelineSnapshot ) {
+				queryClient.setQueryData( ctx.timelineSnapshot.queryKey, ctx.timelineSnapshot.previous );
+			}
+			for ( const snap of ctx.authorFeedSnapshots ) {
+				queryClient.setQueryData( snap.queryKey, snap.previous );
+			}
+
+			// Reply-mode restore: revert the thread cache (placeholder +
+			// count bump in one shot) before `restoreAtmospherePostSnapshots`
+			// so that helper sees the already-restored thread (its restore
+			// pass is a no-op there).
 			if ( ctx.threadKey && ctx.threadPrevious !== undefined ) {
 				queryClient.setQueryData( ctx.threadKey, ctx.threadPrevious );
 			}
