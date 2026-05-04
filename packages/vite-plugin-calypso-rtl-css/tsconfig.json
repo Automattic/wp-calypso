@@ -1,0 +1,7 @@
+{
+	"extends": "@automattic/calypso-typescript-config/bundler-package.json",
+	"compilerOptions": {
+		"rootDir": "."
+	},
+	"include": [ "**/*.ts" ]
+}

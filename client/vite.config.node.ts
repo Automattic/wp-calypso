@@ -294,10 +294,7 @@ export default defineConfig( {
 		// fallback instead of a Proxy.
 		{
 			name: 'calypso-guard-circular-inits',
-			generateBundle(
-				_options: unknown,
-				bundle: Record< string, { type: string; isEntry: boolean; code: string } >
-			) {
+			generateBundle( _options, bundle ) {
 				for ( const [ fileName, chunk ] of Object.entries( bundle ) ) {
 					if ( chunk.type !== 'chunk' ) {
 						continue;

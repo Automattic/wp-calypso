@@ -1,0 +1,12 @@
+{
+	"extends": "./ts-package.json",
+
+	"compilerOptions": {
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"moduleDetection": "force",
+		"verbatimModuleSyntax": true,
+		"noEmit": true,
+		"types": [ "node" ]
+	}
+}

@@ -21,5 +21,6 @@
 		"./package.json",
 		"./state/data-layer/wpcom/sites/jitm/schema.json",
 		"./declarations.d.ts"
-	]
+	],
+	"exclude": [ "./vite.config.ts", "./vite.config.node.ts" ]
 }
