@@ -1,6 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	CreateFavouriteParams,
+	DeleteFavouriteParams,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
@@ -233,6 +235,29 @@ export async function getMastodonTagFeed(
 			},
 			query
 		) ) as MastodonTagFeedPage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function createMastodonFavourite( params: CreateFavouriteParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ params.connectionId }/favourites/${ params.statusId }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function deleteMastodonFavourite( params: DeleteFavouriteParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/mastodon/connections/${ params.connectionId }/favourites/${ params.statusId }`,
+			apiNamespace: NAMESPACE,
+		} );
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
