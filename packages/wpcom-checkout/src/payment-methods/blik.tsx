@@ -232,21 +232,10 @@ function isFormValid( state: BlikPaymentMethodState ): boolean {
 	return isValid;
 }
 
-const BlikLogo = styled( BlikLogoSvg )`
-	height: 20px;
-`;
-
-function BlikLogoSvg( { className }: { className?: string } ) {
+function BlikLogo() {
 	const gradientId = useId();
 	return (
-		<svg
-			className={ className }
-			xmlns="http://www.w3.org/2000/svg"
-			width="43"
-			height="20"
-			viewBox="0 0 43 20"
-			fill="none"
-		>
+		<svg xmlns="http://www.w3.org/2000/svg" width="43" height="20" viewBox="0 0 43 20" fill="none">
 			<path fill="#fff" d="M0 0h42.268v20H0z" />
 			<path
 				fill="#000"

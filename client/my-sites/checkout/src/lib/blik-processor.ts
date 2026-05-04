@@ -64,7 +64,6 @@ export default async function blikProcessor(
 		paymentMethodId,
 		{
 			...submitData,
-			name: submitData.name ?? '',
 			successUrl,
 			cancelUrl,
 			couponId: responseCart.coupon,
@@ -87,10 +86,9 @@ export default async function blikProcessor(
 		'Payment failed. Please check your account and try again.'
 	);
 
-	const formattedTotal = formatCurrency(
-		responseCart.total_cost_integer / 100,
-		responseCart.currency
-	);
+	const formattedTotal = formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+		isSmallestUnit: true,
+	} );
 
 	const root = getRenderRoot( genericErrorMessage );
 	let rootUnmounted = false;
@@ -193,9 +191,9 @@ function displayModal( {
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is StripeBlikTransactionRequest {
-	const data = submitData as StripeBlikTransactionRequest;
-	if ( ! data ) {
-		throw new Error( 'Transaction requires data and none was provided' );
+	if ( ! submitData || typeof submitData !== 'object' ) {
+		return false;
 	}
-	return true;
+	const data = submitData as StripeBlikTransactionRequest;
+	return typeof data.name === 'string' && typeof data.code === 'string';
 }
