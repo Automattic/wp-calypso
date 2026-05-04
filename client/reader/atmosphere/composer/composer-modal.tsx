@@ -58,26 +58,45 @@ export function ComposerModal() {
 					root_uri: mode.root.uri,
 				} )
 			);
+			return;
 		}
-		// quote / standalone Tracks events are emitted by later slices.
+		if ( mode.kind === 'quote' ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_composer_opened', {
+					connection_id: mode.connectionId,
+					quoted_uri: mode.quote.uri,
+				} )
+			);
+		}
+		// standalone Tracks event lands with that slice.
 	}, [ mode, dispatch ] );
 
 	// Tracks: error_shown with ref-tracked dedupe per error_kind transition.
 	useEffect( () => {
-		if ( ! mode || mode.kind !== 'reply' ) {
+		if ( ! mode || mode.kind === 'standalone' ) {
 			return;
 		}
 		if ( mutation.isError && mutation.error ) {
 			const errorKind = mutation.error.kind;
 			if ( errorKind !== lastErrorKindRef.current ) {
 				lastErrorKindRef.current = errorKind;
-				dispatch(
-					recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
-						connection_id: mode.connectionId,
-						parent_uri: mode.parent.uri,
-						error_kind: errorKind,
-					} )
-				);
+				if ( mode.kind === 'reply' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
+							connection_id: mode.connectionId,
+							parent_uri: mode.parent.uri,
+							error_kind: errorKind,
+						} )
+					);
+				} else if ( mode.kind === 'quote' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_error_shown', {
+							connection_id: mode.connectionId,
+							quoted_uri: mode.quote.uri,
+							error_kind: errorKind,
+						} )
+					);
+				}
 			}
 		} else if ( ! mutation.isError ) {
 			lastErrorKindRef.current = null;
@@ -109,7 +128,7 @@ export function ComposerModal() {
 		}
 		const params = buildParamsForMode( mode, text );
 		mutation.mutate( params, {
-			onSuccess: () => {
+			onSuccess: ( result ) => {
 				if ( mode.kind === 'reply' ) {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_published', {
@@ -118,11 +137,24 @@ export function ComposerModal() {
 							root_uri: mode.root.uri,
 						} )
 					);
-					const { text: noticeText, threadUrl } = successNoticeFor( mode, translate );
+					const threadUrl = getThreadUrl( mode.connectionId, mode.parent.uri );
 					const options = threadUrl
 						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
 						: undefined;
-					dispatch( successNotice( noticeText, options ) );
+					dispatch( successNotice( translate( 'Your reply was posted.' ), options ) );
+				} else if ( mode.kind === 'quote' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_published', {
+							connection_id: mode.connectionId,
+							quoted_uri: mode.quote.uri,
+							new_post_uri: result.uri,
+						} )
+					);
+					const threadUrl = getThreadUrl( mode.connectionId, result.uri );
+					const options = threadUrl
+						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
+						: undefined;
+					dispatch( successNotice( translate( 'Your post was published.' ), options ) );
 				}
 				closeComposer();
 			},
@@ -284,19 +316,6 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 		default:
 			return assertNever( err );
 	}
-}
-
-function successNoticeFor(
-	mode: Extract< ActiveMode, { kind: 'reply' } >,
-	t: ReturnType< typeof useTranslate >
-): { text: ReactNode; threadUrl: string | null } {
-	// quote / standalone success copy lands with their respective slices —
-	// gate the call site on `mode.kind` so TS catches missing cases when
-	// those modes are wired through `<ComposerModal>`.
-	return {
-		text: t( 'Your reply was posted.' ),
-		threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
-	};
 }
 
 function assertNever( value: never ): never {
