@@ -73,6 +73,11 @@ import {
 	setPostTitleToolDefinition,
 	undoToolDefinition,
 } from './tools/editor-post-tool';
+import {
+	VERIFY_YOUTUBE_URL_TOOL_NAME,
+	executeVerifyYoutubeUrlTool,
+	verifyYoutubeUrlToolDefinition,
+} from './tools/youtube-oembed-tool';
 
 export type RealtimeStatus =
 	| 'idle'
@@ -251,6 +256,16 @@ function describeToolCall(
 			return `${ errorPrefix }Undid last change`;
 		case REDO_TOOL_NAME:
 			return `${ errorPrefix }Redid last change`;
+		case VERIFY_YOUTUBE_URL_TOOL_NAME: {
+			if ( ! ok ) {
+				return "I couldn't find the right video.";
+			}
+			const title =
+				isObjectResult && typeof ( result as { title?: unknown } ).title === 'string'
+					? ( result as { title: string } ).title
+					: null;
+			return title ? `Verified YouTube URL: ${ title }` : 'Verified YouTube URL';
+		}
 		default:
 			return null;
 	}
@@ -449,6 +464,8 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					result = await executeRedoTool();
 				} else if ( call.name === GET_POST_INFO_TOOL_NAME ) {
 					result = executeGetPostInfoTool();
+				} else if ( call.name === VERIFY_YOUTUBE_URL_TOOL_NAME ) {
+					result = await executeVerifyYoutubeUrlTool( call.arguments );
 				} else {
 					continue;
 				}
@@ -668,6 +685,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 								undoToolDefinition,
 								redoToolDefinition,
 								getPostInfoToolDefinition,
+								verifyYoutubeUrlToolDefinition,
 							],
 							tool_choice: 'auto',
 							audio: {
