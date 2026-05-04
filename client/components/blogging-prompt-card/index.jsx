@@ -5,10 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
-import {
-	useAIBloggingPrompts,
-	mergePromptStreams,
-} from 'calypso/data/blogging-prompt/use-ai-blogging-prompts';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import {
@@ -34,12 +30,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const januaryDate = '--01-01';
 	const startDate = isBloganuary() ? januaryDate : today;
 
-	let { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
-	// This will not do a request until we have the `isEnabled( 'calypso/ai-blogging-prompts' )` feature flag enabled.
-	const { data: aiPrompts } = useAIBloggingPrompts( siteId );
-	if ( prompts && aiPrompts && ! isBloganuary() ) {
-		prompts = mergePromptStreams( prompts, aiPrompts );
-	}
+	const { data: prompts } = useBloggingPrompts( siteId, startDate, maxNumberOfPrompts );
 
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
