@@ -9,6 +9,7 @@ import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useSocialAnalytics } from './analytics-context';
+import type { SocialPost } from '../../types';
 import type { AtmosphereError, AtmosphereFeedItem } from '@automattic/api-core';
 
 import './repost-button.scss';
@@ -170,7 +171,15 @@ export function RepostButton( { post, connectionId }: RepostButtonProps ) {
 					>
 						{ translate( 'Repost' ) }
 					</MenuItem>
-					<MenuItem disabled>{ translate( 'Quote post' ) }</MenuItem>
+					<MenuItem
+						disabled={ ! analytics?.onQuoteClick }
+						onClick={ () => {
+							onClose();
+							analytics?.onQuoteClick?.( post as unknown as SocialPost );
+						} }
+					>
+						{ translate( 'Quote post' ) }
+					</MenuItem>
 				</MenuGroup>
 			) }
 		/>
