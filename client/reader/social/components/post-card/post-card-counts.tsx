@@ -129,7 +129,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 				</span>
 			) }
 			{ connectionId && post.cid && analytics?.onQuoteClick ? (
-				<QuoteButton post={ { uri: post.uri, counts: post.counts } } />
+				<QuoteButton post={ post } />
 			) : (
 				<span>
 					<Icon icon={ quote } size={ ICON_SIZE } />

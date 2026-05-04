@@ -6,7 +6,7 @@ import { useSocialAnalytics } from './analytics-context';
 import type { SocialPost } from '../../types';
 
 interface QuoteButtonProps {
-	post: Pick< SocialPost, 'uri' | 'counts' >;
+	post: SocialPost;
 }
 
 export function QuoteButton( { post }: QuoteButtonProps ) {
