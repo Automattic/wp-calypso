@@ -40,16 +40,6 @@ export function Branch( { branchName, commitChecksum } ) {
 	);
 }
 
-export function DevDocsLink( { url } ) {
-	return (
-		<span className="environment is-docs">
-			<a href={ url } title="DevDocs">
-				docs
-			</a>
-		</span>
-	);
-}
-
 function EnvironmentBadge( { badge, feedbackURL, children } ) {
 	// Static HTML only is produced here. Event listeners get added in
 	// load-dev-helpers/index.js

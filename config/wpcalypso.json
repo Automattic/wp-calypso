@@ -49,8 +49,6 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
-		"devdocs": true,
-		"devdocs/redirect-loggedout-homepage": true,
 		"dolly/telegram": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,
