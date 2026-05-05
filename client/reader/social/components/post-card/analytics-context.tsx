@@ -1,4 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
+import type { SocialPost } from '../../types';
 
 // Tracks event-name contract for shared post-card subcomponents:
 // emit `calypso_reader_<source>_timeline_*` regardless of the surface
@@ -37,6 +38,27 @@ export interface SocialAnalyticsContextValue {
 	 * anchor's external href.
 	 */
 	getTagUrl?: ( tag: string ) => string | null;
+	/**
+	 * Slice 7c: open the reply composer for a post. When bound,
+	 * `<PostCardCounts>` renders the replies count as a button that
+	 * invokes this callback instead of routing to the in-app thread.
+	 * Per-protocol shells without a composer leave it unset and the
+	 * existing in-app-thread / external-thread fallback applies.
+	 */
+	onReplyClick?: ( post: SocialPost ) => void;
+	/**
+	 * Slice 7d: open the quote composer for a post. When bound,
+	 * `<PostCardCounts>` renders the quotes count as a button and
+	 * `<RepostButton>`'s "Quote post" menu item becomes active. Per-protocol
+	 * shells without a quote concept (Mastodon) leave it unset.
+	 */
+	onQuoteClick?: ( post: SocialPost ) => void;
+	/**
+	 * Slice 7d: DID of the user owning the active connection. When set and
+	 * matching `post.author.did`, `<SocialPostCard>` renders the post-actions
+	 * kebab in the header. Per-protocol shells set this to `connection.did`.
+	 */
+	ownerDid?: string;
 }
 
 const Ctx = createContext< SocialAnalyticsContextValue | null >( null );

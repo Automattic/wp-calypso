@@ -145,6 +145,7 @@
 			span {
 				margin: auto 0;
 				flex: 1;
+				min-width: 0;
 			}
 
 			.gridicon {
@@ -184,10 +185,7 @@
 
 .cancel-purchase__confirm-buttons {
 	display: flex;
-
-	.form-button {
-		margin-left: 8px;
-	}
+	gap: 16px;
 }
 
 .cancel-purchase__purchase-name {
@@ -316,6 +314,7 @@
 			span {
 				margin: auto 0;
 				flex: 1;
+				min-width: 0;
 			}
 
 			.gridicon {

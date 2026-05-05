@@ -253,6 +253,61 @@ As of slice 5, the card-link / quote / replies-count / reply-context surfaces al
 
 When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` and `getProfileUrl` from the analytics context before constructing any post- or profile-destination URL.
 
+### Like interactions
+
+ATmosphere timeline payloads can include `viewer: { like, repost }` on each
+`AtmosphereFeedItem`. The field is optional during the backend rollout window,
+so consumers must use `post.viewer?.like ?? null` semantics and treat missing
+viewer data as "not liked".
+
+`<LikeButton>` lives next to the post-card subcomponents and is rendered by
+`<PostCardCounts>` only when it receives both a `connectionId` and a post `cid`.
+Thread, author-feed, quoted-post, and non-ATmosphere card contexts fall back to
+the static likes count unless the host shell deliberately passes those props.
+
+The button uses `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
+`@automattic/api-queries`. Those hooks optimistically patch every cached
+timeline page containing the target post, then restore the snapshot on error.
+The create path temporarily stores `PENDING_LIKE_URI` in `viewer.like`; keep
+using `rkeyFromUri()` for unlike/delete flows because it returns `null` for that
+sentinel and prevents a DELETE with a fake rkey.
+
+The connection ID flows from the protocol shell:
+`TimelinePanel` → `SocialPostCard` → `PostCardCounts` → `LikeButton`. Any future
+interactive count button that writes via a user's PDS should follow the same
+shape rather than reading connection identity from global state.
+
+### Repost interactions
+
+`<RepostButton>` lives next to `<LikeButton>` and is rendered by `<PostCardCounts>`
+under the same gating as `<LikeButton>` — only when the host shell passes both a
+`connectionId` and a post `cid`. Today only
+`client/reader/atmosphere/timeline-panel.tsx` opts in; thread, author-feed,
+quoted-post, and non-ATmosphere card contexts fall back to the static reposts
+count.
+
+Two render branches by viewer state:
+
+- **Reposted** — plain `<button aria-pressed="true">`. Clicking it fires the
+  delete-repost mutation directly; no menu opens. Loses access to the Quote-post
+  menu item on a reposted post; that's a known follow-up.
+- **Not reposted** — `<Dropdown>` from `@wordpress/components` whose toggle is
+  the same shape of button (`aria-haspopup="menu"`). The menu has two
+  `<MenuItem>`s: "Repost" (enabled, fires the create-repost mutation) and
+  "Quote post" (disabled — wires up in slice 7d).
+
+The button uses `useCreateRepostMutation()` / `useDeleteRepostMutation()` from
+`@automattic/api-queries`. Like the like mutations, those hooks reuse the
+generic `patchAtmospherePostCaches` helper to optimistically patch every cached
+atmosphere query containing the target post, then restore the snapshot on error.
+The create path temporarily stores `PENDING_REPOST_URI` in `viewer.repost`; keep
+using `rkeyFromUri()` for un-repost flows because it returns `null` for that
+sentinel and prevents a DELETE with a fake rkey.
+
+The connection ID flows from the protocol shell:
+`TimelinePanel` → `SocialPostCard` → `PostCardCounts` → `RepostButton`. Same
+shape as the like button.
+
 ## Boundaries (for new code)
 
 Inherits everything from `client/reader/AGENTS.md` and `client/AGENTS.md`. Highlights worth restating because they trip up new contributors:

@@ -8,6 +8,7 @@
 
 import { isEnabled } from '@automattic/calypso-config';
 import { Modal } from '@wordpress/components';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
@@ -16,6 +17,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import SignupForm from 'calypso/blocks/signup-form';
+import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
@@ -41,6 +43,7 @@ import {
 } from 'calypso/state/notices/actions';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import AuthFormHeader from './auth-form-header';
+import { getConnectorBranding } from './connector-branding-config';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
@@ -155,6 +158,18 @@ export class JetpackSignup extends Component {
 
 	isFromAutomatticForAgenciesPlugin() {
 		return 'automattic-for-agencies-client' === this.props.authQuery.from;
+	}
+
+	isFromJetpackConnector( props = this.props ) {
+		return 'jetpack-connector' === props.authQuery.from;
+	}
+
+	isFromJetpackOnboarding( props = this.props ) {
+		return 'jetpack-onboarding' === props.authQuery.from;
+	}
+
+	isUnifiedConnectionFlow( props = this.props ) {
+		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
 	}
 
 	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
@@ -302,6 +317,10 @@ export class JetpackSignup extends Component {
 	render() {
 		const { isCreatingAccount, newUsername, bearerToken } = this.state;
 		const isWooJPC = this.isWooJPC();
+		const isFromJetpackConnector = this.isFromJetpackConnector();
+		const connectorBranding = isFromJetpackConnector
+			? getConnectorBranding( this.props.authQuery.plugins )
+			: null;
 
 		const isLogging = newUsername && bearerToken;
 		if ( isWooJPC && ( isCreatingAccount || isLogging ) ) {
@@ -324,18 +343,30 @@ export class JetpackSignup extends Component {
 
 		return (
 			<MainWrapper
+				className={ clsx( {
+					'jetpack-connect__authorize-form-wrapper--connector': isFromJetpackConnector,
+				} ) }
 				isWooJPC={ isWooJPC }
+				isJetpackConnector={ isFromJetpackConnector }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
-					{ this.renderLocaleSuggestions() }
-					<AuthFormHeader
-						authQuery={ this.props.authQuery }
-						isWooJPC={ isWooJPC }
-						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-						disableSiteCard={ isWooJPC }
-						wooDnaConfig={ this.getWooDnaConfig() }
-					/>
+					{ isFromJetpackConnector && connectorBranding ? (
+						<BrandHeader
+							logo={ connectorBranding.logo }
+							logoAlt=""
+							title={ connectorBranding.title }
+							description={ connectorBranding.subtitle }
+						/>
+					) : (
+						<AuthFormHeader
+							authQuery={ this.props.authQuery }
+							isWooJPC={ isWooJPC }
+							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
+							disableSiteCard={ isWooJPC }
+							wooDnaConfig={ this.getWooDnaConfig() }
+						/>
+					) }
 					<SignupForm
 						disabled={ isCreatingAccount }
 						isPasswordless={ isWooJPC }
@@ -361,6 +392,7 @@ export class JetpackSignup extends Component {
 					/>
 
 					{ this.renderLoginUser() }
+					{ this.renderLocaleSuggestions() }
 				</div>
 				{ isWooJPC && this.props.authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
 			</MainWrapper>

@@ -1,4 +1,4 @@
-import { useTimelineInfiniteQuery } from '@automattic/api-queries';
+import { useConnectionQuery, useTimelineInfiniteQuery } from '@automattic/api-queries';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -11,9 +11,12 @@ import {
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { useOptionalComposer } from './composer';
+import { TimelineComposePill } from './composer/triggers/timeline-compose-pill';
 import { projectAtmosphereError } from './error-projection';
 import {
 	getProfileUrl as buildProfileUrl,
+	getTagFeedUrl as buildTagUrl,
 	getThreadUrl as buildThreadUrl,
 	type ProfileRefInput,
 } from './route';
@@ -101,9 +104,68 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const getTagUrl = useCallback(
+		( tag: string ) => buildTagUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	// Surfaces the real avatar on the compose pill — the list endpoint
+	// that supplied `connection` always returns null for `avatar`. Pass
+	// `null` when there is no composer upstream so `useConnectionQuery`
+	// short-circuits and we don't warm the cache for shells that won't
+	// render the pill.
+	const { data: connectionDetails } = useConnectionQuery( composer ? connection.id : null );
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			const parent = { uri: post.uri, cid: post.cid };
+			// `reply_root` is null when the post itself is the root of its
+			// thread; in that case the post is also its own root. When set,
+			// prefer the root's own `cid` (preserved through the atmosphere
+			// mapper) so reply-to-reply submissions round-trip the actual
+			// root strong-ref to AT-Proto's `createRecord`. Fall back to the
+			// parent's `cid` for protocols that don't carry CIDs natively
+			// (Mastodon) or older backend payloads where the field is absent.
+			const root = post.reply_root
+				? { uri: post.reply_root.uri, cid: post.reply_root.cid ?? post.cid }
+				: parent;
+			openComposer( {
+				kind: 'reply',
+				root,
+				parent,
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const renderItem = useCallback(
-		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
-		[]
+		( post: SocialPost ) => (
+			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
+		),
+		[ connection.id ]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
@@ -114,12 +176,32 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			onClick: onClickAnalytics,
 			getThreadUrl,
 			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			getThreadUrl,
+			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
 	);
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
+			{ composer && (
+				<TimelineComposePill
+					connection={ connection }
+					avatar={ connectionDetails?.avatar }
+					entryPoint="timeline_inline"
+				/>
+			) }
 			<SocialFeedList< SocialPost >
 				items={ items }
 				isPending={ isPending }

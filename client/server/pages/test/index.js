@@ -442,11 +442,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.featuresHelper ).toEqual( false );
 	} );
 
-	it( 'sets devDocsUrl', async () => {
-		const { request } = await app.run();
-		expect( request.context.devDocsURL ).toEqual( '/devdocs' );
-	} );
-
 	it( 'sets redux store', async () => {
 		const theStore = {};
 		app.withReduxStore( theStore );
@@ -558,11 +553,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			expect( request.context.badge ).toEqual( 'wpcalypso' );
 		} );
 
-		it( 'sets devDocs', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.devDocs ).toEqual( true );
-		} );
-
 		it( 'sets the feedback url', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.feedbackURL ).toEqual(
@@ -660,11 +650,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'dev' );
-		} );
-
-		it( 'sets devDocs', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.devDocs ).toEqual( true );
 		} );
 
 		it( 'sets the feedback url', async () => {
