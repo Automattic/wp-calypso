@@ -1,4 +1,4 @@
-import { HelpCenter } from '@automattic/data-stores';
+import { HelpCenter as HelpCenterDataStore } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useDispatch } from '@wordpress/data';
@@ -16,9 +16,9 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const importHelpCenter = () =>
-	import( /* webpackChunkName: "async-load-automattic-help-center" */ '@automattic/help-center' );
+	import( /* webpackChunkName: "async-load-calypso-layout-help-center" */ './help-center' );
 
-const HELP_CENTER_STORE = HelpCenter.register();
+const HELP_CENTER_STORE = HelpCenterDataStore.register();
 
 type Props = {
 	sectionName: string;
