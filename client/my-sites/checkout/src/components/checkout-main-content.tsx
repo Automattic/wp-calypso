@@ -63,6 +63,7 @@ import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
+import { useRsmBetterCheckoutExperiment } from 'calypso/my-sites/checkout/src/hooks/use-rsm-better-checkout-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import {
@@ -548,6 +549,7 @@ export default function CheckoutMainContent( {
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const isRsmBetterCheckout = useRsmBetterCheckoutExperiment();
 	const originalPriceForHeader = responseCart.products.reduce(
 		( sum, product ) => sum + product.item_original_subtotal_integer,
 		0
@@ -599,9 +601,11 @@ export default function CheckoutMainContent( {
 	) {
 		debug( 'rendering empty cart page' );
 		return (
-			<WPCheckoutWrapper>
-				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent>
+			<WPCheckoutWrapper isRsmBetterCheckout={ isRsmBetterCheckout }>
+				<WPCheckoutSidebarContent
+					isRsmBetterCheckout={ isRsmBetterCheckout }
+				></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isRsmBetterCheckout={ isRsmBetterCheckout }>
 					<PerformanceTrackerStop />
 					<WPCheckoutTitle className="checkout__main-title">
 						{ translate( 'Checkout' ) }
@@ -634,7 +638,10 @@ export default function CheckoutMainContent( {
 	};
 
 	const checkoutSummary = (
-		<WPCheckoutSidebarContent className="checkout-sidebar-content">
+		<WPCheckoutSidebarContent
+			className="checkout-sidebar-content"
+			isRsmBetterCheckout={ isRsmBetterCheckout }
+		>
 			{ isLoading && <LoadingSidebarContent /> }
 			{ ! isLoading && (
 				<>
@@ -716,11 +723,28 @@ export default function CheckoutMainContent( {
 							</CheckoutSummaryBody>
 						</CheckoutErrorBoundary>
 						{
-							// Rendered inside CheckoutSummaryArea so it sits within the sticky
-							// container and stays 24px below the order card as the page scrolls.
-							// At desktop width the upsell is always visible; at mobile it's only
-							// shown when the checkout summary is toggled open.
-							isCheckoutUiRedesignV1 && ( isSummaryVisible || isLargeViewport ) && (
+							// In treatment, render the upsell inside CheckoutSummaryArea so it
+							// sits within the sticky container and stays 24px below the order
+							// card as the page scrolls. In control it renders outside the area
+							// (legacy position).
+							isRsmBetterCheckout &&
+								isCheckoutUiRedesignV1 &&
+								( isSummaryVisible || isLargeViewport ) && (
+									<CheckoutSummaryNudgeArea>
+										<CheckoutSidebarNudge
+											addItemToCart={ addItemToCart }
+											areThereDomainProductsInCart={ areThereDomainProductsInCart }
+										/>
+									</CheckoutSummaryNudgeArea>
+								)
+						}
+					</CheckoutSummaryArea>
+					{
+						// Legacy position for the upsell, used when not in the rsm
+						// better-checkout treatment.
+						! isRsmBetterCheckout &&
+							isCheckoutUiRedesignV1 &&
+							( isSummaryVisible || isLargeViewport ) && (
 								<CheckoutSummaryNudgeArea>
 									<CheckoutSidebarNudge
 										addItemToCart={ addItemToCart }
@@ -728,8 +752,7 @@ export default function CheckoutMainContent( {
 									/>
 								</CheckoutSummaryNudgeArea>
 							)
-						}
-					</CheckoutSummaryArea>
+					}
 				</>
 			) }
 		</WPCheckoutSidebarContent>
@@ -737,7 +760,10 @@ export default function CheckoutMainContent( {
 
 	const checkoutMainContent = (
 		<RestorableProductsProvider>
-			<WPCheckoutMainContent className="checkout-main-content">
+			<WPCheckoutMainContent
+				className="checkout-main-content"
+				isRsmBetterCheckout={ isRsmBetterCheckout }
+			>
 				<CheckoutOrderBanner />
 				{ isStepContainerV2 ? (
 					<Step.Heading
@@ -753,7 +779,7 @@ export default function CheckoutMainContent( {
 				<CheckoutStepGroup
 					loadingHeader={ loadingHeader }
 					onStepChanged={ onStepChanged }
-					scrollToStepOnForwardNavigation={ ! isLargeViewport }
+					scrollToStepOnForwardNavigation={ ! ( isRsmBetterCheckout && isLargeViewport ) }
 				>
 					<PerformanceTrackerStop />
 					{ infoMessage }
@@ -941,9 +967,9 @@ export default function CheckoutMainContent( {
 						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
-						isLargeViewport={ isLargeViewport }
+						isLargeViewport={ isRsmBetterCheckout && isLargeViewport }
 					/>
-					{ isLargeViewport ? (
+					{ isRsmBetterCheckout && isLargeViewport ? (
 						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
 					) : (
 						<CheckoutFormSubmit
@@ -970,6 +996,7 @@ export default function CheckoutMainContent( {
 					className="checkout-wrapper"
 					isLargeViewport={ isLargeViewport }
 					isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+					isRsmBetterCheckout={ isRsmBetterCheckout }
 				>
 					{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
 						<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
@@ -978,7 +1005,7 @@ export default function CheckoutMainContent( {
 					) }
 					{ checkoutSummary }
 					{ checkoutMainContent }
-					{ isLargeViewport && (
+					{ isRsmBetterCheckout && isLargeViewport && (
 						<>
 							<CheckoutProcessorNotice />
 							<CheckoutTrustCards cart={ responseCart } />
@@ -994,6 +1021,7 @@ export default function CheckoutMainContent( {
 			<StepContainerV2CheckoutFixer
 				isLargeViewport={ isLargeViewport }
 				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+				isRsmBetterCheckout={ isRsmBetterCheckout }
 			>
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 8 }
@@ -1032,11 +1060,15 @@ export default function CheckoutMainContent( {
 						if ( isLargeViewport ) {
 							return (
 								<>
-									<div className="checkout-main-column">
-										{ checkoutMainContent }
-										<CheckoutProcessorNotice />
-										<CheckoutTrustCards cart={ responseCart } />
-									</div>
+									{ isRsmBetterCheckout ? (
+										<div className="checkout-main-column">
+											{ checkoutMainContent }
+											<CheckoutProcessorNotice />
+											<CheckoutTrustCards cart={ responseCart } />
+										</div>
+									) : (
+										checkoutMainContent
+									) }
 									{ checkoutSummary }
 								</>
 							);
@@ -1054,6 +1086,7 @@ export default function CheckoutMainContent( {
 const StepContainerV2CheckoutFixer = styled.div< {
 	isLargeViewport: boolean;
 	isCheckoutUiRedesignV1?: boolean;
+	isRsmBetterCheckout?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
@@ -1156,6 +1189,20 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				background: none;
 				position: relative;
 				height: 100%;
+
+				${ ! props.isRsmBetterCheckout &&
+				css`
+					&:before {
+						content: '';
+						display: block;
+						background: var( --color-neutral-0 );
+						position: fixed;
+						top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+						transform: translateX( calc( var( --left-padding ) * -1 ) );
+						width: 100vw;
+						bottom: 0;
+					}
+				` }
 			}
 
 			.checkout__summary-area,
@@ -1178,6 +1225,20 @@ const StepContainerV2CheckoutFixer = styled.div< {
 		` }
 	${ ( props ) =>
 		props.isLargeViewport &&
+		! props.isRsmBetterCheckout &&
+		css`
+			div:has( .checkout-sidebar-content ) {
+				position: sticky;
+				top: 32px;
+			}
+			.checkout__summary-area,
+			.checkout-loading-sidebar {
+				min-width: 384px;
+			}
+		` }
+	${ ( props ) =>
+		props.isLargeViewport &&
+		props.isRsmBetterCheckout &&
 		css`
 			/*
 			 * Stick the inner summary area, not the sidebar wrapper.
@@ -1250,6 +1311,14 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			}
 			.checkout__summary-card > .wp-checkout-order-summary__section-title,
 			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+				flex-shrink: 0;
+			}
+			/*
+			 * Lock intrinsic child sizing so the 24px gap between the sticky order
+			 * card and the two-year upsell isn't collapsed when the sticky area
+			 * reaches the bottom of its grid cell.
+			 */
+			.checkout__summary-area > * {
 				flex-shrink: 0;
 			}
 		` }
@@ -1547,15 +1616,6 @@ const CheckoutSummary = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-
-	/*
-	 * Lock intrinsic child sizing so the 24px gap between the sticky order card
-	 * and the two-year upsell isn't collapsed when the sticky area reaches the
-	 * bottom of its grid cell and some browsers compress flex children to fit.
-	 */
-	& > * {
-		flex-shrink: 0;
-	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding-left: 24px;
@@ -1922,32 +1982,56 @@ const SubmitButtonHeaderWrapper = styled.div`
 const WPCheckoutWrapper = styled.div< {
 	isLargeViewport?: boolean;
 	isCheckoutUiRedesignV1?: boolean;
+	isRsmBetterCheckout?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-areas:
-		'sidebar-content'
-		'main-content'
-		'processor-notice'
-		'trust-cards';
-	align-content: start;
+	${ ( props ) =>
+		props.isRsmBetterCheckout
+			? css`
+					grid-template-areas:
+						'sidebar-content'
+						'main-content'
+						'processor-notice'
+						'trust-cards';
+					align-content: start;
+			  `
+			: css`
+					grid-template-rows: auto;
+					grid-template-areas: 'sidebar-content' 'main-content';
+			  ` }
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas:
-			'main-content main-content sidebar-content sidebar-content'
-			'. processor-notice sidebar-content sidebar-content'
-			'. trust-cards sidebar-content sidebar-content';
+		${ ( props ) =>
+			props.isRsmBetterCheckout
+				? css`
+						grid-template-areas:
+							'main-content main-content sidebar-content sidebar-content'
+							'. processor-notice sidebar-content sidebar-content'
+							'. trust-cards sidebar-content sidebar-content';
+				  `
+				: css`
+						grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
+				  ` }
 		justify-items: end;
 	}
 
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
+
+		${ ( props ) =>
+			! props.isRsmBetterCheckout &&
+			css`
+				@media ( ${ props.theme.breakpoints.desktopUp } ) {
+					min-height: 100vh;
+				}
+			` }
 	}
 
 	& > .checkout-trust-cards {
@@ -1976,41 +2060,58 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-sidebar-plan-upsell {
 				min-width: 384px;
 			}
-			/*
-			 * Keep the totals + Pay CTA + terms always visible regardless of
-			 * cart length. Cap the summary card itself (not the whole area)
-			 * at viewport height, scroll the line items list inside, and
-			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
-			 *
-			 * The Save 19% upsell below the card sits at its natural size;
-			 * if it doesn't fit alongside the card in a short viewport,
-			 * it scrolls past the bottom — the Pay CTA is the priority.
-			 */
-			.checkout__summary-card {
-				max-height: calc( 100vh - 64px );
-				display: flex;
-				flex-direction: column;
-			}
-			.checkout__summary-card > .wp-checkout-order-summary__products-list {
-				flex: 1 1 auto;
-				min-height: 0;
-				overflow-y: auto;
-			}
-			.checkout__summary-card > .wp-checkout-order-summary__section-title,
-			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
-				flex-shrink: 0;
-			}
+			${ props.isRsmBetterCheckout &&
+			css`
+				/*
+				 * Keep the totals + Pay CTA + terms always visible regardless of
+				 * cart length. Cap the summary card itself (not the whole area)
+				 * at viewport height, scroll the line items list inside, and
+				 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+				 *
+				 * The Save 19% upsell below the card sits at its natural size;
+				 * if it doesn't fit alongside the card in a short viewport,
+				 * it scrolls past the bottom — the Pay CTA is the priority.
+				 */
+				.checkout__summary-card {
+					max-height: calc( 100vh - 64px );
+					display: flex;
+					flex-direction: column;
+				}
+				.checkout__summary-card > .wp-checkout-order-summary__products-list {
+					flex: 1 1 auto;
+					min-height: 0;
+					overflow-y: auto;
+				}
+				.checkout__summary-card > .wp-checkout-order-summary__section-title,
+				.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+					flex-shrink: 0;
+				}
+				/*
+				 * Lock intrinsic child sizing so the 24px gap between the sticky
+				 * order card and the two-year upsell isn't collapsed when the
+				 * sticky area reaches the bottom of its grid cell.
+				 */
+				.checkout__summary-area > * {
+					flex-shrink: 0;
+				}
+			` }
 		` }
 	${ ( props ) =>
 		props.isCheckoutUiRedesignV1 &&
 		! props.isLargeViewport &&
 		css`
-			grid-template-areas:
-				'checkout-title-area'
-				'sidebar-content'
-				'main-content'
-				'processor-notice'
-				'trust-cards';
+			${ props.isRsmBetterCheckout
+				? css`
+						grid-template-areas:
+							'checkout-title-area'
+							'sidebar-content'
+							'main-content'
+							'processor-notice'
+							'trust-cards';
+				  `
+				: css`
+						grid-template-areas: 'checkout-title-area' 'sidebar-content' 'main-content';
+				  ` }
 			.checkout-sidebar-content {
 				background: ${ colorStudio.colors[ 'White' ] };
 			}
@@ -2358,9 +2459,14 @@ const WPCheckoutCompletedWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutMainContent = styled.div`
+const WPCheckoutMainContent = styled.div< { isRsmBetterCheckout?: boolean } >`
 	grid-area: main-content;
 	margin-top: 50px;
+	${ ( props ) =>
+		! props.isRsmBetterCheckout &&
+		css`
+			min-height: 100vh;
+		` }
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
@@ -2370,19 +2476,34 @@ const WPCheckoutMainContent = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: calc( var( --masterbar-checkout-height ) + 24px );
 		max-width: 688px;
-		padding-block: 0;
-		padding-inline-start: 24px;
-		padding-inline-end: 64px;
+		${ ( props ) =>
+			props.isRsmBetterCheckout
+				? css`
+						padding-block: 0;
+						padding-inline-start: 24px;
+						padding-inline-end: 64px;
+				  `
+				: css`
+						padding: 0 64px 0 24px;
+
+						.rtl & {
+							padding: 0 24px 0 64px;
+						}
+				  ` }
 	}
 
-	/* On narrower desktops the 64px between form and sidebar is too tight
-	   when stacked with the sidebar's own 64px left padding. Drop the form's
-	   right padding so its content reaches col-2's right edge, matching the
-	   trust cards row beneath. Restored above 1024px where the layout has
-	   room to breathe. */
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) and ( max-width: 1024px ) {
-		padding-inline-end: 0;
-	}
+	${ ( props ) =>
+		props.isRsmBetterCheckout &&
+		css`
+			/* On narrower desktops the 64px between form and sidebar is too tight
+			   when stacked with the sidebar's own 64px left padding. Drop the form's
+			   right padding so its content reaches col-2's right edge, matching the
+			   trust cards row beneath. Restored above 1024px where the layout has
+			   room to breathe. */
+			@media ( ${ props.theme.breakpoints.desktopUp } ) and ( max-width: 1024px ) {
+				padding-inline-end: 0;
+			}
+		` }
 	${ ( props ) => css`
 		.checkout-line-item .checkout-line-item__remove-product {
 			font-size: 14px;
@@ -2415,7 +2536,7 @@ const WPCheckoutCompletedMainContent = styled.div`
 	}
 `;
 
-const WPCheckoutSidebarContent = styled.div`
+const WPCheckoutSidebarContent = styled.div< { isRsmBetterCheckout?: boolean } >`
 	background: ${ ( props ) => props.theme.colors.background };
 	grid-area: sidebar-content;
 	margin-top: var( --masterbar-checkout-height );
@@ -2425,13 +2546,24 @@ const WPCheckoutSidebarContent = styled.div`
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		background: ${ colorStudio.colors[ 'White' ] };
 		margin-top: 0;
-		padding: 144px 24px 24px 64px;
+		${ ( props ) =>
+			props.isRsmBetterCheckout
+				? css`
+						background: ${ colorStudio.colors[ 'White' ] };
+						padding: 144px 24px 24px 64px;
 
-		.rtl & {
-			padding: 144px 64px 24px 24px;
-		}
+						.rtl & {
+							padding: 144px 64px 24px 24px;
+						}
+				  `
+				: css`
+						padding: 144px 24px 144px 64px;
+
+						.rtl & {
+							padding: 144px 64px 0 24px;
+						}
+				  ` }
 	}
 `;
 const SitePreviewWrapper = styled.div`
