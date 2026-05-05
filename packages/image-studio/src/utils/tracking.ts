@@ -601,3 +601,49 @@ export function trackImageStudioReelShareFailed( errorMessage?: string ): void {
 	}
 	recordImageStudioEvent( 'image_studio_reel_share_failed', properties );
 }
+
+/**
+ * Tracks when the generic share button is clicked.
+ * @param options        - Tracking options
+ * @param options.method - 'web-share' (Web Share API) or 'download' (fallback)
+ */
+export function trackImageStudioGenericShareClicked( {
+	method,
+}: {
+	method: 'web-share' | 'download';
+} ): void {
+	recordImageStudioEvent( 'image_studio_generic_share_clicked', { method } );
+}
+
+/**
+ * Tracks when the generic share completed successfully.
+ * @param options        - Tracking options
+ * @param options.method - 'web-share' or 'download'
+ */
+export function trackImageStudioGenericShareCompleted( {
+	method,
+}: {
+	method: 'web-share' | 'download';
+} ): void {
+	recordImageStudioEvent( 'image_studio_generic_share_completed', { method } );
+}
+
+/**
+ * Tracks when the generic share failed.
+ * @param options         - Tracking options
+ * @param options.method  - 'web-share' or 'download'
+ * @param options.message - Optional error message
+ */
+export function trackImageStudioGenericShareFailed( {
+	method,
+	message,
+}: {
+	method: 'web-share' | 'download';
+	message?: string;
+} ): void {
+	const properties: Record< string, string | number > = { method };
+	if ( message ) {
+		properties.error_message = message;
+	}
+	recordImageStudioEvent( 'image_studio_generic_share_failed', properties );
+}
