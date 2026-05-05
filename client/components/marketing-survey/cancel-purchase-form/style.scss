@@ -286,12 +286,12 @@
 	}
 }
 
-.cancel-purchase-form__header-spinner {
-	position: absolute !important;
+.blank-canvas .cancel-purchase-form__header-spinner {
+	position: absolute;
 	inset-block-start: calc(2rem - 10px);
 	inset-inline-end: 1.5rem;
 	z-index: 1;
-	margin: 0 !important;
+	margin: 0;
 }
 
 .cancel-purchase-form__upsell-buttons {
