@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import QRCode, { QRCodePlaceholder } from './qr-code';
@@ -77,9 +77,9 @@ export default function QRCodeAppLogin() {
 	if ( isRejected ) {
 		return (
 			<div className="qr-code-app-login is-error">
-				<p className="qr-code-app-login__error">
+				<Notice status="error" isDismissible={ false }>
 					{ translate( 'Login was rejected — this sign-in attempt has been cancelled.' ) }
-				</p>
+				</Notice>
 				<Button variant="primary" onClick={ startOver }>
 					{ translate( 'Start over' ) }
 				</Button>
@@ -90,10 +90,10 @@ export default function QRCodeAppLogin() {
 	if ( isTokenError ) {
 		return (
 			<div className="qr-code-app-login is-error">
-				<p className="qr-code-app-login__error">
+				<Notice status="error" isDismissible={ false }>
 					{ translate( 'Could not generate a sign-in code. Please try again later.' ) }
-				</p>
-				<Button variant="secondary" onClick={ startOver }>
+				</Notice>
+				<Button variant="primary" onClick={ startOver }>
 					{ translate( 'Start over' ) }
 				</Button>
 			</div>
@@ -105,9 +105,9 @@ export default function QRCodeAppLogin() {
 	if ( isExpired ) {
 		return (
 			<div className="qr-code-app-login is-error">
-				<p className="qr-code-app-login__error">
+				<Notice status="warning" isDismissible={ false }>
 					{ translate( 'This sign-in attempt has expired.' ) }
-				</p>
+				</Notice>
 				<Button variant="primary" onClick={ startOver }>
 					{ translate( 'Start over' ) }
 				</Button>
