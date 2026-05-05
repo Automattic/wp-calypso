@@ -145,6 +145,22 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => (
 			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
@@ -162,8 +178,19 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			getProfileUrl,
 			getTagUrl,
 			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			getThreadUrl,
+			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
 	);
 
 	return (

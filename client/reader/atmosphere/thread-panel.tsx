@@ -155,6 +155,22 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -164,8 +180,19 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 			getProfileUrl,
 			getTagUrl,
 			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			getThreadUrl,
+			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
 	);
 
 	return (

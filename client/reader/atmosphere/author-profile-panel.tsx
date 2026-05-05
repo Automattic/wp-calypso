@@ -325,6 +325,22 @@ export function AuthorProfilePanel( {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -334,8 +350,19 @@ export function AuthorProfilePanel( {
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
 			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			buildThreadUrl,
+			buildProfileUrl,
+			buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
 	);
 
 	const isOwnProfile = profile.data?.did === connection.did;

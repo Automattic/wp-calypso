@@ -8,6 +8,7 @@ import {
 	type AtmosphereFeedItem,
 	type AtmosphereScopedProfile,
 	type AtmosphereTagFeedPage,
+	type AtmosphereThreadNode,
 	type AtmosphereThreadResponse,
 	type AtmosphereTimelinePage,
 	AtmosphereAuthorFeedPage,
@@ -40,6 +41,7 @@ import {
 	useCreateLikeMutation,
 	useCreateRepostMutation,
 	useDeleteLikeMutation,
+	useDeletePostMutation,
 	useDeleteRepostMutation,
 	useThreadQuery,
 	useTimelineInfiniteQuery,
@@ -2800,6 +2802,491 @@ describe( 'reader-atmosphere hooks', () => {
 			expect( item.viewer?.like ).toBe( existingLikeUri );
 			expect( item.viewer?.repost ).toBeNull();
 			expect( item.counts.likes ).toBe( 5 );
+		} );
+	} );
+
+	describe( 'useDeletePostMutation', () => {
+		const connectionId = 42;
+		const POST_URI = 'at://did:plc:caller/app.bsky.feed.post/3kxyz';
+		const RKEY = '3kxyz';
+		const AUTHOR_DID = 'did:plc:caller';
+
+		function seedTimeline( client: QueryClient, ...items: AtmosphereFeedItem[] ) {
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [ { items, cursor: 'NEXT' } as unknown as AtmosphereTimelinePage ],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( connectionId ), data );
+		}
+
+		function makeTargetPost( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+			return makeFeedItem( {
+				uri: POST_URI,
+				cid: 'cid-target',
+				author: {
+					did: AUTHOR_DID,
+					handle: 'caller.bsky.social',
+					display_name: 'Caller',
+					avatar: null,
+				},
+				...overrides,
+			} );
+		}
+
+		it( 'optimistically removes the post from cached timeline pages and tombstones it in thread caches', async () => {
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+			const postA = makeFeedItem( {
+				uri: 'at://did:plc:caller/app.bsky.feed.post/3ka',
+				cid: 'cid-a',
+			} );
+			const postB = makeTargetPost();
+			const postC = makeFeedItem( {
+				uri: 'at://did:plc:caller/app.bsky.feed.post/3kc',
+				cid: 'cid-c',
+			} );
+			seedTimeline( client, postA, postB, postC );
+
+			// Seed thread cache with target as root
+			client.setQueryData< AtmosphereThreadResponse >( readerAtmosphereKeys.thread( POST_URI ), {
+				thread: { type: 'post', post: postB, parent: null, replies: [] },
+			} );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			// Timeline: post B should be removed
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			expect( afterTimeline.pages[ 0 ].items ).toHaveLength( 2 );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( postA.uri );
+			expect( afterTimeline.pages[ 0 ].items[ 1 ].uri ).toBe( postC.uri );
+
+			// Thread: root should be tombstoned
+			const afterThread = client.getQueryData< AtmosphereThreadResponse >(
+				readerAtmosphereKeys.thread( POST_URI )
+			);
+			expect( afterThread?.thread ).toEqual( { type: 'not_found', uri: POST_URI } );
+		} );
+
+		it( 'restores the snapshot on mutation error and surfaces the classified error', async () => {
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const postA = makeFeedItem( {
+				uri: 'at://did:plc:caller/app.bsky.feed.post/3ka',
+				cid: 'cid-a',
+			} );
+			const postB = makeTargetPost();
+			seedTimeline( client, postA, postB );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+			// Rollback: both posts should be restored
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			expect( afterTimeline.pages[ 0 ].items ).toHaveLength( 2 );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( postA.uri );
+			expect( afterTimeline.pages[ 0 ].items[ 1 ].uri ).toBe( postB.uri );
+		} );
+
+		it( 'treats a 404 as success (idempotency) — keeps optimistic state, no rollback', async () => {
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 404, { error: 'atmosphere_not_found' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const postA = makeFeedItem( {
+				uri: 'at://did:plc:caller/app.bsky.feed.post/3ka',
+				cid: 'cid-a',
+			} );
+			const postB = makeTargetPost();
+			seedTimeline( client, postA, postB );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+			// Optimistic state should be kept: post B removed
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			expect( afterTimeline.pages[ 0 ].items ).toHaveLength( 1 );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( postA.uri );
+		} );
+
+		it( 'invalidates scoped-author-feed and scoped-profile queries on success', async () => {
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			// Real consumers key the scoped-author-feed and scoped-profile caches by
+			// the route `actor` param (typically the handle), not the DID.
+			const AUTHOR_HANDLE = 'caller.bsky.social';
+			client.setQueryData( readerAtmosphereKeys.scopedAuthorFeed( connectionId, AUTHOR_HANDLE ), {
+				pages: [],
+				pageParams: [],
+			} );
+			client.setQueryData( readerAtmosphereKeys.scopedProfile( connectionId, AUTHOR_HANDLE ), {} );
+
+			const postB = makeTargetPost();
+			seedTimeline( client, postB );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					rkey: RKEY,
+					postUri: POST_URI,
+				} );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const handleFeedKey = readerAtmosphereKeys.scopedAuthorFeed( connectionId, AUTHOR_HANDLE );
+			const handleProfileKey = readerAtmosphereKeys.scopedProfile( connectionId, AUTHOR_HANDLE );
+			expect( client.getQueryState( handleFeedKey )?.isInvalidated ).toBe( true );
+			expect( client.getQueryState( handleProfileKey )?.isInvalidated ).toBe( true );
+		} );
+
+		it( 'fires the consumer onSuccess / onError callbacks even after the consumer unmounts', async () => {
+			// Regression: optimistic removal in `onMutate` unmounts `<PostActionsMenu>`
+			// before the DELETE settles. Per-call callbacks passed to `mutate(vars, { onSuccess })`
+			// are dropped when the observer has no listeners; the consumer callbacks
+			// hooked into `useDeletePostMutation`'s factory options must survive.
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline( client, makeTargetPost() );
+
+			const onSuccess = jest.fn();
+			const { result, unmount } = renderHook(
+				() => useDeletePostMutation( connectionId, { onSuccess } ),
+				{ wrapper: makeWrapper( client ) }
+			);
+
+			act( () => {
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
+			} );
+
+			// Simulate the post-card unmounting as the optimistic removal lands.
+			unmount();
+
+			await waitFor( () =>
+				expect( onSuccess ).toHaveBeenCalledWith( expect.objectContaining( { postUri: POST_URI } ) )
+			);
+		} );
+
+		it( 'fires consumer onError after unmount on real errors', async () => {
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			seedTimeline( client, makeTargetPost() );
+
+			const onError = jest.fn();
+			const { result, unmount } = renderHook(
+				() => useDeletePostMutation( connectionId, { onError } ),
+				{ wrapper: makeWrapper( client ) }
+			);
+
+			act( () => {
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
+			} );
+
+			unmount();
+
+			await waitFor( () =>
+				expect( onError ).toHaveBeenCalledWith(
+					expect.objectContaining( { kind: 'upstream_unavailable' } ),
+					expect.objectContaining( { postUri: POST_URI } )
+				)
+			);
+		} );
+
+		it( 'decrements the parent reply-count when deleting a reply', async () => {
+			const PARENT_URI = 'at://did:plc:other/app.bsky.feed.post/3kparent';
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+			const parentPost = makeFeedItem( {
+				uri: PARENT_URI,
+				cid: 'cid-parent',
+				counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+			} );
+			const targetReply = makeTargetPost();
+			seedTimeline( client, parentPost, targetReply );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( {
+					rkey: RKEY,
+					postUri: POST_URI,
+					replyParentUri: PARENT_URI,
+				} );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			// Reply removed, parent's counts.replies decremented from 5 → 4
+			expect( afterTimeline.pages[ 0 ].items ).toHaveLength( 1 );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( PARENT_URI );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 4 );
+		} );
+
+		it( 'restores parent reply-count on error when deleting a reply', async () => {
+			const PARENT_URI = 'at://did:plc:other/app.bsky.feed.post/3kparent';
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+			const parentPost = makeFeedItem( {
+				uri: PARENT_URI,
+				cid: 'cid-parent',
+				counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+			} );
+			const targetReply = makeTargetPost();
+			seedTimeline( client, parentPost, targetReply );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( {
+					rkey: RKEY,
+					postUri: POST_URI,
+					replyParentUri: PARENT_URI,
+				} );
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			// Both posts restored, parent's counts.replies back to 5
+			expect( afterTimeline.pages[ 0 ].items ).toHaveLength( 2 );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( PARENT_URI );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 5 );
+			expect( afterTimeline.pages[ 0 ].items[ 1 ].uri ).toBe( POST_URI );
+		} );
+
+		it( 'decrements parent counts on a different page than the deleted reply', async () => {
+			// Cross-page scenario: parent lives on page A, deleted reply lives on
+			// page B. The removal-snapshot path only touches page B (it's the only
+			// page that contains the deleted reply); page A relies on the
+			// `parentCounts` patch to decrement the parent's counts.replies.
+			const PARENT_URI = 'at://did:plc:other/app.bsky.feed.post/3kparent';
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+			const parentPost = makeFeedItem( {
+				uri: PARENT_URI,
+				cid: 'cid-parent',
+				counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+			} );
+			const targetReply = makeTargetPost();
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [
+					{ items: [ parentPost ], cursor: 'NEXT' } as unknown as AtmosphereTimelinePage,
+					{ items: [ targetReply ], cursor: null } as unknown as AtmosphereTimelinePage,
+				],
+				pageParams: [ undefined, 'NEXT' ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( connectionId ), data );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( {
+					rkey: RKEY,
+					postUri: POST_URI,
+					replyParentUri: PARENT_URI,
+				} );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			// Page A: parent count decremented from 5 → 4
+			expect( afterTimeline.pages[ 0 ].items ).toHaveLength( 1 );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( PARENT_URI );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 4 );
+			// Page B: reply removed
+			expect( afterTimeline.pages[ 1 ].items ).toHaveLength( 0 );
+		} );
+
+		it( 'restores cross-page parent counts on error', async () => {
+			// Same cross-page shape as above, but the DELETE fails — the parent
+			// count on page A must roll back to its pre-mutation value via the
+			// `parentCounts` snapshot, since `prev` only captured page B.
+			const PARENT_URI = 'at://did:plc:other/app.bsky.feed.post/3kparent';
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+			const parentPost = makeFeedItem( {
+				uri: PARENT_URI,
+				cid: 'cid-parent',
+				counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+			} );
+			const targetReply = makeTargetPost();
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [
+					{ items: [ parentPost ], cursor: 'NEXT' } as unknown as AtmosphereTimelinePage,
+					{ items: [ targetReply ], cursor: null } as unknown as AtmosphereTimelinePage,
+				],
+				pageParams: [ undefined, 'NEXT' ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( connectionId ), data );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( {
+					rkey: RKEY,
+					postUri: POST_URI,
+					replyParentUri: PARENT_URI,
+				} );
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			// Page A: parent count restored to 5
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( PARENT_URI );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 5 );
+			// Page B: reply restored
+			expect( afterTimeline.pages[ 1 ].items ).toHaveLength( 1 );
+			expect( afterTimeline.pages[ 1 ].items[ 0 ].uri ).toBe( POST_URI );
+		} );
+
+		it( 'tombstones a deleted post as a nested reply in the thread tree', async () => {
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+			const ROOT_URI = 'at://did:plc:other/app.bsky.feed.post/3kroot';
+			const rootPost = makeFeedItem( { uri: ROOT_URI, cid: 'cid-root' } );
+			const targetReply = makeTargetPost();
+			const otherReply = makeFeedItem( {
+				uri: 'at://did:plc:other/app.bsky.feed.post/3kother',
+				cid: 'cid-other',
+			} );
+
+			// Thread: root → ourReply (target) → otherReply (child of target)
+			const thread: AtmosphereThreadNode = {
+				type: 'post',
+				post: rootPost,
+				parent: null,
+				replies: [
+					{
+						type: 'post',
+						post: targetReply,
+						parent: null,
+						replies: [
+							{
+								type: 'post',
+								post: otherReply,
+								parent: null,
+								replies: [],
+							},
+						],
+					},
+				],
+			};
+
+			client.setQueryData< AtmosphereThreadResponse >( readerAtmosphereKeys.thread( ROOT_URI ), {
+				thread,
+			} );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const afterThread = client.getQueryData< AtmosphereThreadResponse >(
+				readerAtmosphereKeys.thread( ROOT_URI )
+			);
+			const afterThreadNode = afterThread?.thread as AtmosphereThreadNode;
+			// Root is untouched
+			expect( afterThreadNode.type ).toBe( 'post' );
+			expect(
+				( afterThreadNode as Extract< AtmosphereThreadNode, { type: 'post' } > ).post.uri
+			).toBe( ROOT_URI );
+			// The nested reply (target) is tombstoned — tombstoneThreadNode returns
+			// { type: 'not_found', uri } immediately on match, dropping its children.
+			const tombstonedReply = (
+				afterThreadNode as Extract< AtmosphereThreadNode, { type: 'post' } >
+			 ).replies[ 0 ];
+			expect( tombstonedReply ).toEqual( { type: 'not_found', uri: POST_URI } );
 		} );
 	} );
 } );

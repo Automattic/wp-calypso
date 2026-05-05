@@ -62,6 +62,15 @@ export function ComposerModal() {
 			);
 			return;
 		}
+		if ( mode.kind === 'quote' ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_composer_opened', {
+					connection_id: mode.connectionId,
+					quoted_uri: mode.quote.uri,
+				} )
+			);
+			return;
+		}
 		if ( mode.kind === 'standalone' ) {
 			dispatch(
 				recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_opened', {
@@ -69,17 +78,12 @@ export function ComposerModal() {
 					entry_point: mode.entry_point,
 				} )
 			);
-			return;
 		}
-		// Quote-mode telemetry is not yet wired.
 	}, [ mode, dispatch ] );
 
 	// Tracks: error_shown with ref-tracked dedupe per error_kind transition.
 	useEffect( () => {
 		if ( ! mode ) {
-			return;
-		}
-		if ( mode.kind !== 'reply' && mode.kind !== 'standalone' ) {
 			return;
 		}
 		if ( mutation.isError && mutation.error ) {
@@ -110,7 +114,15 @@ export function ComposerModal() {
 							error_kind: errorKind,
 						} )
 					);
-				} else {
+				} else if ( mode.kind === 'quote' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_error_shown', {
+							connection_id: mode.connectionId,
+							quoted_uri: mode.quote.uri,
+							error_kind: errorKind,
+						} )
+					);
+				} else if ( mode.kind === 'standalone' ) {
 					// Standalone has no parent_uri, so it gets its own Tracks event.
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_error_shown', {
@@ -159,23 +171,26 @@ export function ComposerModal() {
 							root_uri: mode.root.uri,
 						} )
 					);
-					const { text: noticeText, threadUrl } = successNoticeFor( mode, result, translate );
-					const options = threadUrl
-						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
-						: undefined;
-					dispatch( successNotice( noticeText, options ) );
+				} else if ( mode.kind === 'quote' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_published', {
+							connection_id: mode.connectionId,
+							quoted_uri: mode.quote.uri,
+							new_post_uri: result.uri,
+						} )
+					);
 				} else if ( mode.kind === 'standalone' ) {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_published', {
 							connection_id: mode.connectionId,
 						} )
 					);
-					const { text: noticeText, threadUrl } = successNoticeFor( mode, result, translate );
-					const options = threadUrl
-						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
-						: undefined;
-					dispatch( successNotice( noticeText, options ) );
 				}
+				const { text: noticeText, threadUrl } = successNoticeFor( mode, result, translate );
+				const options = threadUrl
+					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
+					: undefined;
+				dispatch( successNotice( noticeText, options ) );
 				closeComposer();
 			},
 		} );
@@ -344,7 +359,7 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 }
 
 function successNoticeFor(
-	mode: Extract< ActiveMode, { kind: 'reply' | 'standalone' } >,
+	mode: ActiveMode,
 	result: CreatePostResult,
 	t: ReturnType< typeof useTranslate >
 ): { text: ReactNode; threadUrl: string | null } {
@@ -354,16 +369,18 @@ function successNoticeFor(
 			threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
 		};
 	}
+	if ( mode.kind === 'quote' ) {
+		return {
+			text: t( 'Your post was published.' ),
+			threadUrl: getThreadUrl( mode.connectionId, result.uri ),
+		};
+	}
 	if ( mode.kind === 'standalone' ) {
 		return {
 			text: t( 'Your post was published.' ),
 			threadUrl: getThreadUrl( mode.connectionId, result.uri ),
 		};
 	}
-	// Quote success copy is unimplemented. Narrowing the param type via
-	// Extract forces TS to flag this branch when the quote arm is wired
-	// at the call site, instead of silently returning the reply/standalone
-	// string.
 	return assertNever( mode );
 }
 

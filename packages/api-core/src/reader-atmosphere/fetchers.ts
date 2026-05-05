@@ -19,6 +19,7 @@ import type {
 	CreateRepostParams,
 	CreateRepostResult,
 	DeleteLikeParams,
+	DeletePostParams,
 	DeleteRepostParams,
 } from './types';
 
@@ -376,6 +377,18 @@ export async function deleteLike( params: DeleteLikeParams ): Promise< void > {
 		await wpcom.req.post( {
 			method: 'DELETE',
 			path: `/reader/atmosphere/connections/${ params.connectionId }/likes/${ params.rkey }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function deletePost( params: DeletePostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/atmosphere/connections/${ params.connectionId }/posts/${ params.rkey }`,
 			apiNamespace: NAMESPACE,
 		} );
 	} catch ( raw ) {
