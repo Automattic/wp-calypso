@@ -294,6 +294,9 @@ export const purchaseSettingsRoute = createRoute( {
 		cancelled?: true;
 		downgraded?: true;
 		intent?: 'auto-renew';
+		plan?: string;
+		refund?: string;
+		currency?: string;
 	} => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
 		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
@@ -306,6 +309,9 @@ export const purchaseSettingsRoute = createRoute( {
 			...( isCancelled ? { cancelled: true } : {} ),
 			...( isDowngraded ? { downgraded: true } : {} ),
 			...( intent ? { intent } : {} ),
+			...( typeof search.plan === 'string' ? { plan: search.plan } : {} ),
+			...( typeof search.refund === 'string' ? { refund: search.refund } : {} ),
+			...( typeof search.currency === 'string' ? { currency: search.currency } : {} ),
 		};
 	},
 } );

@@ -6,13 +6,17 @@ import {
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
+import { isRefundable } from 'calypso/lib/purchases';
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
@@ -119,17 +123,78 @@ const PlanNoticeUpgradeCredit = ( {
 	visiblePlans,
 	intent,
 }: Props ) => {
+	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const upgradeCreditsNoticeData = useUpgradeCreditsNoticeData( siteId, visiblePlans || [] );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
+	// For plans-switch intent, look up the current purchase's refund options.
+	const purchaseIdParam =
+		typeof window !== 'undefined'
+			? new URLSearchParams( window.location.search ).get( 'purchaseId' )
+			: null;
+	const purchaseIdNum = purchaseIdParam ? parseInt( purchaseIdParam, 10 ) : 0;
+	const currentPurchase = useSelector( ( state ) =>
+		purchaseIdNum ? getByPurchaseId( state, purchaseIdNum ) : undefined
+	) as Purchase | undefined;
+	const maxRefundAmount = useMemo( () => {
+		if (
+			intent !== 'plans-switch' ||
+			! currentPurchase ||
+			! isRefundable( currentPurchase ) ||
+			! Array.isArray( currentPurchase.refundOptions )
+		) {
+			return null;
+		}
+		const amounts = currentPurchase.refundOptions
+			.map( ( opt ) => opt.refund_amount )
+			.filter( ( amount ) => amount > 0 );
+		if ( ! amounts.length ) {
+			return null;
+		}
+		return {
+			amount: Math.max( ...amounts ),
+			currencyCode: currentPurchase.currencyCode,
+		};
+	}, [ intent, currentPurchase ] );
+
 	const credits = upgradeCreditsNoticeData?.credits ?? 0;
-	const showNotice = credits > 0;
 
 	// Check if this is the plans-upgrade flow which requires compact styling.
 	const isUpgradeFlow = intent === 'plans-upgrade';
+	const isSwitchPlan = intent === 'plans-switch';
+
+	// For plans-switch with a refundable purchase, show refund notice instead.
+	if ( isSwitchPlan && maxRefundAmount ) {
+		const formattedAmount = formatCurrency( maxRefundAmount.amount, maxRefundAmount.currencyCode );
+		return (
+			<>
+				<QueryUserPurchases />
+				<Notice
+					className={ className }
+					showDismiss={ !! onDismissClick }
+					onDismissClick={ onDismissClick }
+					icon="info-outline"
+					status="is-success"
+					theme="light"
+				>
+					{ translate(
+						'You\u2019re eligible for a refund of up to %(amount)s if you switch to a lower plan. The refund will be processed to your original payment method.',
+						{ args: { amount: formattedAmount } }
+					) }
+				</Notice>
+			</>
+		);
+	}
+
+	const showNotice = credits > 0;
 
 	if ( ! showNotice ) {
+		// Render the query component for plans-switch so purchase data loads for
+		// future re-renders when the data arrives.
+		if ( isSwitchPlan ) {
+			return <QueryUserPurchases />;
+		}
 		return null;
 	}
 
@@ -146,6 +211,7 @@ const PlanNoticeUpgradeCredit = ( {
 		<>
 			<QuerySitePlans siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
+			{ isSwitchPlan && <QueryUserPurchases /> }
 			{ isUpgradeFlow ? (
 				<div className="plan-upgrade-credit-notice-compact">
 					<UpgradeCreditsNoticeText variant="compact" amountInCurrency={ amountInCurrency } />

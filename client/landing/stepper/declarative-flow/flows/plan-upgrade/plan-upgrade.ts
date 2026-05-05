@@ -13,6 +13,7 @@ import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { isExternal } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
 
@@ -145,16 +146,98 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 							if ( isDowngrade ) {
 								const targetProductId = selectedPlanObj?.getProductId();
 								if ( targetProductId && purchaseId ) {
-									const destination = cancelTo || redirectTo || dashboardLink( '/sites' );
-									cancelAndRefundPurchaseAsync( parseInt( purchaseId, 10 ), {
-										type: 'downgrade' as const,
-										to_product_id: targetProductId,
-									} )
-										.then( () => {
-											window.location.assign( destination );
+									const fallbackDestination = redirectTo || dashboardLink( '/sites' );
+									const planTitle = String( selectedPlanObj?.getTitle() ?? '' );
+									const isDashboard = cancelTo?.includes( '/me/billing/' );
+
+									// Pre-fetch the old purchase to extract refund options
+									// before the downgrade mutation changes them.
+									wpcom.req
+										.get( {
+											path: '/me/purchases',
+											apiVersion: '1.1',
 										} )
+										.then(
+											(
+												purchases: Array< {
+													ID: number;
+													product_id: number;
+													blog_id: number;
+													is_refundable: boolean;
+													refund_options: Array< {
+														to_product_id: number;
+														refund_amount: number;
+														refund_currency_symbol: string;
+													} > | null;
+												} >
+											) => {
+												const oldPurchase = purchases.find(
+													( p ) => p.ID === parseInt( purchaseId, 10 )
+												);
+												const matchingRefund =
+													oldPurchase?.is_refundable && Array.isArray( oldPurchase.refund_options )
+														? oldPurchase.refund_options.find(
+																( o ) => o.to_product_id === targetProductId
+														  )
+														: null;
+
+												return cancelAndRefundPurchaseAsync( parseInt( purchaseId, 10 ), {
+													type: 'downgrade' as const,
+													to_product_id: targetProductId,
+												} ).then( () => matchingRefund );
+											}
+										)
+										.then(
+											(
+												matchingRefund:
+													| {
+															refund_amount: number;
+															refund_currency_symbol: string;
+													  }
+													| null
+													| undefined
+											) =>
+												wpcom.req
+													.get( {
+														path: '/me/purchases',
+														apiVersion: '1.1',
+													} )
+													.then(
+														(
+															freshPurchases: Array< {
+																ID: number;
+																product_id: number;
+																blog_id: number;
+															} >
+														) => {
+															const newPurchase = freshPurchases.find(
+																( p ) => p.product_id === targetProductId && p.blog_id === site?.ID
+															);
+
+															const params: Record< string, string > = {
+																downgraded: 'true',
+																plan: planTitle,
+															};
+															if ( matchingRefund && matchingRefund.refund_amount > 0 ) {
+																params.refund = String( matchingRefund.refund_amount );
+																params.currency = matchingRefund.refund_currency_symbol;
+															}
+
+															if ( newPurchase ) {
+																const basePath = isDashboard
+																	? dashboardLink( '/me/billing/purchases/' + newPurchase.ID )
+																	: `/me/purchases/${ siteSlug }/${ newPurchase.ID }`;
+																window.location.assign( addQueryArgs( basePath, params ) );
+															} else {
+																window.location.assign(
+																	addQueryArgs( fallbackDestination, params )
+																);
+															}
+														}
+													)
+										)
 										.catch( () => {
-											window.location.assign( destination );
+											window.location.assign( fallbackDestination );
 										} );
 									return;
 								}

@@ -101,22 +101,22 @@ class PurchaseNotice extends Component<
 		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
 	};
 
-	state = {
-		showUpcomingRenewalsDialog: false,
-		// Seeded from `?cancelled=true` on first render. The URL param is cleared
-		// in componentDidMount so refresh / back-navigation doesn't re-show this
-		// transient notice.
-		showCancelledRedirectNotice:
-			typeof window !== 'undefined' &&
-			new URLSearchParams( window.location.search ).get( 'cancelled' ) === 'true',
-		cancelledIntent:
-			typeof window !== 'undefined'
-				? new URLSearchParams( window.location.search ).get( 'intent' )
-				: null,
-		showDowngradedRedirectNotice:
-			typeof window !== 'undefined' &&
-			new URLSearchParams( window.location.search ).get( 'downgraded' ) === 'true',
-	};
+	state = ( () => {
+		const params =
+			typeof window !== 'undefined' ? new URLSearchParams( window.location.search ) : null;
+		return {
+			showUpcomingRenewalsDialog: false,
+			// Seeded from `?cancelled=true` on first render. The URL param is cleared
+			// in componentDidMount so refresh / back-navigation doesn't re-show this
+			// transient notice.
+			showCancelledRedirectNotice: params?.get( 'cancelled' ) === 'true',
+			cancelledIntent: params?.get( 'intent' ) ?? null,
+			showDowngradedRedirectNotice: params?.get( 'downgraded' ) === 'true',
+			downgradedPlan: params?.get( 'plan' ) || '',
+			downgradedRefund: params?.get( 'refund' ) || '',
+			downgradedCurrency: params?.get( 'currency' ) || '',
+		};
+	} )();
 
 	componentDidMount() {
 		if ( typeof window === 'undefined' ) {
@@ -131,6 +131,9 @@ class PurchaseNotice extends Component<
 		}
 		if ( params.get( 'downgraded' ) === 'true' ) {
 			params.delete( 'downgraded' );
+			params.delete( 'plan' );
+			params.delete( 'refund' );
+			params.delete( 'currency' );
 			changed = true;
 		}
 		if ( changed ) {
@@ -229,13 +232,35 @@ class PurchaseNotice extends Component<
 		if ( ! this.state.showDowngradedRedirectNotice ) {
 			return null;
 		}
+		const { translate } = this.props;
+		const { downgradedPlan, downgradedRefund, downgradedCurrency } = this.state;
+
+		let noticeText: string;
+		if ( downgradedPlan ) {
+			noticeText = translate( 'Your plan has been changed to %(plan)s.', {
+				args: { plan: downgradedPlan },
+			} ) as string;
+		} else {
+			noticeText = translate( 'Your plan has been changed successfully.' ) as string;
+		}
+		if ( downgradedRefund && downgradedCurrency ) {
+			noticeText +=
+				' ' +
+				( translate(
+					'A refund of %(currency)s%(refund)s will be processed to your original payment method.',
+					{
+						args: { currency: downgradedCurrency, refund: downgradedRefund },
+					}
+				) as string );
+		}
+
 		return (
 			<Notice
 				className="manage-purchase__purchase-expiring-notice"
 				showDismiss
 				onDismissClick={ this.dismissDowngradedRedirectNotice }
 				status="is-success"
-				text={ this.props.translate( 'You\u2019ve switched to monthly billing.' ) }
+				text={ noticeText }
 			/>
 		);
 	}

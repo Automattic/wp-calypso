@@ -48,7 +48,16 @@ import type { Purchase } from '@automattic/api-core';
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const { refunded, upgraded, cancelled, downgraded, intent } = purchaseSettingsRoute.useSearch();
+	const {
+		refunded,
+		upgraded,
+		cancelled,
+		downgraded,
+		intent,
+		plan: downgradedPlan,
+		refund: downgradedRefund,
+		currency: downgradedCurrency,
+	} = purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
@@ -71,7 +80,13 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		if ( downgraded ) {
 			navigate( {
 				search: ( prev: Record< string, unknown > ) => {
-					const { downgraded: _downgraded, ...rest } = prev;
+					const {
+						downgraded: _downgraded,
+						plan: _plan,
+						refund: _refund,
+						currency: _currency,
+						...rest
+					} = prev;
 					return rest;
 				},
 				replace: true,
@@ -135,9 +150,30 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( showDowngradedNotice ) {
+		let downgradedMessage: string;
+		if ( downgradedPlan ) {
+			downgradedMessage = sprintf(
+				/* translators: %s is the name of the new plan the user switched to */
+				__( 'Your plan has been changed to %s.' ),
+				downgradedPlan
+			);
+		} else {
+			downgradedMessage = __( 'Your plan has been changed successfully.' );
+		}
+		if ( downgradedRefund && downgradedCurrency ) {
+			downgradedMessage +=
+				' ' +
+				sprintf(
+					/* translators: %(currency)s is the currency symbol, %(refund)s is the refund amount */
+					__(
+						'A refund of %(currency)s%(refund)s will be processed to your original payment method.'
+					),
+					{ currency: downgradedCurrency, refund: downgradedRefund }
+				);
+		}
 		return (
 			<Notice variant="success" onClose={ () => setShowDowngradedNotice( false ) }>
-				{ __( 'You\u2019ve switched to monthly billing.' ) }
+				{ downgradedMessage }
 			</Notice>
 		);
 	}
