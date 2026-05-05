@@ -159,15 +159,15 @@ function getDefaultFields( {
 
 				return mapped.sort( ( a, b ) => {
 					// "No Plan" always sorts last.
-					if ( a.label === 'No Plan' ) {
+					if ( a.value === 'No Plan' ) {
 						return 1;
 					}
-					if ( b.label === 'No Plan' ) {
+					if ( b.value === 'No Plan' ) {
 						return -1;
 					}
 
-					const indexA = planOrder.indexOf( a.label );
-					const indexB = planOrder.indexOf( b.label );
+					const indexA = planOrder.indexOf( a.value );
+					const indexB = planOrder.indexOf( b.value );
 					const rankA = indexA === -1 ? planOrder.length : indexA;
 					const rankB = indexB === -1 ? planOrder.length : indexB;
 
