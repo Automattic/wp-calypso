@@ -19,9 +19,9 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 	const closeModal = () => setOpen( false );
 
 	const [ previewSelected, setPreviewSelected ] = useState< Device >( 'mobile' );
-	const isV3Template = templateFormat === 'html5_v3';
+	const hasNoDesktopPreview = [ 'html5_v3', 'html5_v4' ].includes( templateFormat || '' );
 	const effectivePreviewSelected =
-		isV3Template && previewSelected === 'desktop' ? 'tablet' : previewSelected;
+		hasNoDesktopPreview && previewSelected === 'desktop' ? 'tablet' : previewSelected;
 
 	const MobileIcon = () => {
 		return (
@@ -143,10 +143,10 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 							) }
 						>
 							<TabletIcon />
-							<span>{ isV3Template ? __( 'Tablet/Desktop' ) : __( 'Tablet' ) }</span>
+							<span>{ hasNoDesktopPreview ? __( 'Tablet/Desktop' ) : __( 'Tablet' ) }</span>
 						</button>
 
-						{ ! isV3Template && (
+						{ ! hasNoDesktopPreview && (
 							<button
 								onClick={ showDesktopPreview }
 								color="inherit"
