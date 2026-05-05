@@ -33,7 +33,7 @@ interface OwnProps {
 }
 
 interface ConnectedProps {
-	theme?: Theme;
+	theme: Theme | null;
 	siteDomain?: string | null;
 	supportsFullSetup: boolean;
 }
