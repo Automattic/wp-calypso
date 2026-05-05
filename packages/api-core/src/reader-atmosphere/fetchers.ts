@@ -361,7 +361,7 @@ export async function uploadBlob( params: UploadBlobParams ): Promise< UploadBlo
 	// Match the established pattern used by `client/post-editor/media-modal`
 	// so the transport produces a real multipart `file` part instead of a
 	// stringified Blob field.
-	const fileName = ( file as File ).name ?? 'blob';
+	const fileName = file instanceof File && file.name ? file.name : 'blob';
 	const formData: [ string, { fileContents: Blob; fileName: string } ][] = [
 		[ 'file', { fileContents: file, fileName } ],
 	];
