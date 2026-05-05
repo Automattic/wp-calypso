@@ -7,8 +7,11 @@ import {
 	useRef,
 	useState,
 } from 'react';
+import { useImageUploads } from './media/use-image-uploads';
 import type { AtUriRef } from '@automattic/api-core';
 import type { ReactNode } from 'react';
+
+type ImageUploads = ReturnType< typeof useImageUploads >;
 
 /**
  * Structural shape consumed by `<ComposerPinnedContext>`. Both
@@ -49,7 +52,7 @@ export type ComposerMode =
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 
-interface ComposerContextValue {
+interface ComposerContextValue extends ImageUploads {
 	mode: ActiveMode | null;
 	openComposer: ( mode: ComposerMode ) => void;
 	closeComposer: () => void;
@@ -91,9 +94,25 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 		setMode( null );
 	}, [] );
 
+	const imageUploads = useImageUploads( {
+		connectionId: mode?.connectionId ?? 0,
+		max: 4,
+	} );
+
+	// Reset images when the composer closes (mode transitions to null).
+	useEffect( () => {
+		if ( ! mode ) {
+			imageUploads.images.forEach( ( i ) => imageUploads.removeImage( i.localId ) );
+		}
+		// `imageUploads` is recreated each render — capturing it in deps would
+		// re-run the effect every render. The closure reads the snapshot at
+		// effect time, which is the desired behavior.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ mode ] );
+
 	const value = useMemo(
-		() => ( { mode, openComposer, closeComposer } ),
-		[ mode, openComposer, closeComposer ]
+		() => ( { mode, openComposer, closeComposer, ...imageUploads } ),
+		[ mode, openComposer, closeComposer, imageUploads ]
 	);
 
 	return <ComposerContext.Provider value={ value }>{ children }</ComposerContext.Provider>;

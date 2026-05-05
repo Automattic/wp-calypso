@@ -1,11 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComposerProvider, useComposer, type ActiveMode } from '../../composer-provider';
 import { TimelineComposePill } from '../timeline-compose-pill';
 import type { AtmosphereConnection } from '@automattic/api-core';
+
+// `ComposerProvider` consumes `useImageUploads`, which requires a
+// `QueryClientProvider` in the tree.
+function withQueryClient( ui: React.ReactNode ) {
+	return <QueryClientProvider client={ new QueryClient() }>{ ui }</QueryClientProvider>;
+}
 
 const fakeConnection: AtmosphereConnection = {
 	id: 42,
@@ -29,9 +36,11 @@ const PLACEHOLDER_RE = /what['’]s up/i;
 describe( '<TimelineComposePill>', () => {
 	it( 'renders the avatar, placeholder, and is a single button', () => {
 		render(
-			<ComposerProvider connectionId={ 42 }>
-				<TimelineComposePill connection={ fakeConnection } entryPoint="timeline_inline" />
-			</ComposerProvider>
+			withQueryClient(
+				<ComposerProvider connectionId={ 42 }>
+					<TimelineComposePill connection={ fakeConnection } entryPoint="timeline_inline" />
+				</ComposerProvider>
+			)
 		);
 
 		expect( screen.getByRole( 'button', { name: PLACEHOLDER_RE } ) ).toBeVisible();
@@ -45,10 +54,12 @@ describe( '<TimelineComposePill>', () => {
 		const user = userEvent.setup();
 		const onMode = jest.fn();
 		render(
-			<ComposerProvider connectionId={ 42 }>
-				<TimelineComposePill connection={ fakeConnection } entryPoint="timeline_inline" />
-				<Spy onMode={ onMode } />
-			</ComposerProvider>
+			withQueryClient(
+				<ComposerProvider connectionId={ 42 }>
+					<TimelineComposePill connection={ fakeConnection } entryPoint="timeline_inline" />
+					<Spy onMode={ onMode } />
+				</ComposerProvider>
+			)
 		);
 
 		await user.click( screen.getByRole( 'button', { name: PLACEHOLDER_RE } ) );
@@ -66,10 +77,12 @@ describe( '<TimelineComposePill>', () => {
 		const user = userEvent.setup();
 		const onMode = jest.fn();
 		render(
-			<ComposerProvider connectionId={ 42 }>
-				<TimelineComposePill connection={ fakeConnection } entryPoint="profile_inline" />
-				<Spy onMode={ onMode } />
-			</ComposerProvider>
+			withQueryClient(
+				<ComposerProvider connectionId={ 42 }>
+					<TimelineComposePill connection={ fakeConnection } entryPoint="profile_inline" />
+					<Spy onMode={ onMode } />
+				</ComposerProvider>
+			)
 		);
 
 		await user.click( screen.getByRole( 'button', { name: PLACEHOLDER_RE } ) );
