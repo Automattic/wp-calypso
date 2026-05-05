@@ -26,11 +26,17 @@ import { activateStyleVariation } from './activate-style-variation';
  * @param {string}  [options.source]     The source that is requesting theme activation, e.g. 'showcase'
  * @param {boolean} [options.purchased]  Whether the theme has been purchased prior to activation
  * @param {boolean} [options.showSuccessNotice]  Whether the theme has been purchased prior to activation
+ * @param {'basic'|'full'} [options.setupChoice] The user's setup choice from the activation modal: `'full'` runs `/theme-setup` after activation to add the theme's extra demo content; `'basic'` skips it. Omit on direct activate paths that don't surface the choice (e.g., when the modal isn't shown).
  * @returns {Function}        Action thunk
  */
 export function activateTheme( themeId, siteId, options = {} ) {
 	return ( dispatch, getState ) => {
-		const { source = 'unknown', purchased = false, showSuccessNotice = false } = options || {};
+		const {
+			source = 'unknown',
+			purchased = false,
+			showSuccessNotice = false,
+			setupChoice,
+		} = options || {};
 		const themeOptions = getThemePreviewThemeOptions( getState() );
 		const styleVariationSlug =
 			themeOptions && themeOptions.themeId === themeId
@@ -60,11 +66,37 @@ export function activateTheme( themeId, siteId, options = {} ) {
 
 				return theme;
 			} )
+			.then( async ( theme ) => {
+				if ( setupChoice === 'full' ) {
+					try {
+						await wpcom.req.post( {
+							path: `/sites/${ siteId }/theme-setup/?_locale=user`,
+							apiNamespace: 'wpcom/v2',
+						} );
+					} catch ( error ) {
+						dispatch(
+							errorNotice(
+								translate(
+									"Your theme was activated, but we couldn't complete the full setup. The theme's extra content wasn't added."
+								)
+							)
+						);
+					}
+				}
+				return theme;
+			} )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
 				const themeStylesheet = theme.stylesheet || themeId;
 				dispatch(
-					themeActivated( themeStylesheet, siteId, source, purchased, styleVariationSlug )
+					themeActivated(
+						themeStylesheet,
+						siteId,
+						source,
+						purchased,
+						styleVariationSlug,
+						setupChoice
+					)
 				);
 
 				if ( showSuccessNotice ) {
