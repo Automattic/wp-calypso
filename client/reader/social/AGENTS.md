@@ -336,9 +336,12 @@ Two render branches by viewer state:
   toggle is the same shape of button (`aria-haspopup="menu"`). The menu
   has two `<MenuItem>`s: the action item (label provided by the adapter
   — "Repost" for ATmosphere, "Boost" for Mastodon) and "Quote post"
-  (disabled when `action.canQuote === false` — true today for both
-  protocols; ATmosphere wires up in slice 7d, Mastodon has no native
-  quote concept).
+  (disabled when `action.canQuote === false`). ATmosphere enables the
+  item when both `analytics.onQuoteClick` is bound (the composer is
+  mounted upstream) and the post carries a strong-ref `cid`; clicking
+  it routes through `analytics.onQuoteClick(post)` which opens the
+  shared composer in `kind: 'quote'` mode. Mastodon has no native quote
+  concept and stays `canQuote: false`.
 
 Each protocol shell wires its own adapter hook factory:
 

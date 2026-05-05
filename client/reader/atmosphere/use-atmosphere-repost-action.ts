@@ -179,8 +179,37 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 			);
 		};
 
+		const onQuoteClick = analytics?.onQuoteClick;
+
 		const quote = () => {
-			// Slice-7d work — disabled menu item for now. No-op.
+			// Atmosphere quote requires a strong-ref `cid`. Same observability
+			// shape as `repost` — log + Tracks event so a panel-wiring bug
+			// (cid missing) doesn't dead-button silently in production.
+			if ( ! post.cid ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Atmosphere quote: post.cid missing on click',
+					severity: 'warning',
+					extra: {
+						type: 'reader_atmosphere_quote_missing_cid',
+						connection_id: connectionId,
+						post_uri: post.uri,
+					},
+				} );
+				analytics?.onClick( `calypso_reader_${ analytics.source }_quote_missing_cid`, {
+					connection_id: connectionId,
+					post_uri: post.uri,
+				} );
+				return;
+			}
+			if ( ! onQuoteClick ) {
+				return;
+			}
+			analytics?.onClick( `calypso_reader_${ analytics.source }_quote_clicked`, {
+				connection_id: connectionId,
+				post_uri: post.uri,
+			} );
+			onQuoteClick( post );
 		};
 
 		const accessibleLabel = ( count: number, reposted: boolean ) => {
@@ -206,7 +235,13 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 				action: translate( 'Repost' ),
 				accessibleLabel,
 			},
-			canQuote: false, // slice-7d
+			// Quote menu item is enabled only when (a) the per-protocol shell
+			// has wired `analytics.onQuoteClick` (the composer is mounted
+			// upstream), AND (b) the post carries a strong-ref `cid`.
+			// `quote()` itself re-checks both before firing for defence in
+			// depth — `canQuote` only drives the disabled state of the
+			// menu item.
+			canQuote: Boolean( onQuoteClick && post.cid ),
 			repost,
 			unrepost,
 			quote,

@@ -297,18 +297,76 @@ describe( '<RepostButton>', () => {
 	} );
 
 	// The dropdown's "Quote post" menu item is disabled when the adapter
-	// reports `canQuote === false`. The atmosphere adapter sets `canQuote:
-	// false` until slice 7d wires composer-driven quoting, so this is the
-	// only case the cm-660 design covers today. The previously passing
-	// "enables Quote post via onQuote prop" test was replaced when the
-	// RepostButton signature lost its `onQuote` prop in favour of the
-	// adapter contract.
-	it( 'leaves "Quote post" disabled when the adapter reports canQuote=false', async () => {
+	// reports `canQuote === false`. The atmosphere adapter (slice 7d)
+	// sets `canQuote: Boolean( onQuoteClick && post.cid )`, so the menu
+	// item is disabled when no `onQuoteClick` is bound on the analytics
+	// context (e.g. when no `<ComposerProvider>` is mounted upstream).
+	it( 'leaves "Quote post" disabled when no onQuoteClick is bound', async () => {
 		const user = userEvent.setup();
 		renderRepostButton();
 		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
 		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
 		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	it( 'enables "Quote post" when onQuoteClick is bound and post has cid; click invokes the handler', async () => {
+		const onQuoteClick = jest.fn();
+		const onClick = jest.fn();
+		const user = userEvent.setup();
+		const useRepostAction = makeUseAtmosphereRepostAction( 42 );
+		const socialPost = mapAtmosphereFeedItemToSocialPost( makePost() );
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick,
+					onQuoteClick,
+				} }
+			>
+				<RepostProvider value={ useRepostAction }>
+					<RepostButton post={ socialPost } />
+				</RepostProvider>
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
+		expect( item ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		await user.click( item );
+		expect( onQuoteClick ).toHaveBeenCalledWith( socialPost );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_quote_clicked',
+			expect.objectContaining( { connection_id: 42, post_uri: POST_URI } )
+		);
+	} );
+
+	it( 'leaves "Quote post" disabled when onQuoteClick is bound but post.cid is missing', async () => {
+		const onQuoteClick = jest.fn();
+		const user = userEvent.setup();
+		const useRepostAction = makeUseAtmosphereRepostAction( 42 );
+		const cidlessPost = mapAtmosphereFeedItemToSocialPost( makePost( { cid: '' } ) );
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick: jest.fn(),
+					onQuoteClick,
+				} }
+			>
+				<RepostProvider value={ useRepostAction }>
+					<RepostButton post={ cidlessPost } />
+				</RepostProvider>
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
+		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( onQuoteClick ).not.toHaveBeenCalled();
 	} );
 
 	it( 'click does not bubble to a parent listener', async () => {
