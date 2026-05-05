@@ -21,18 +21,18 @@ export function ShareReelAction(): JSX.Element | null {
 
 	return (
 		<div className="image-studio-share-reel-action">
+			<span className="image-studio-share-reel-action__label" aria-hidden="true">
+				{ visibleText }
+			</span>
 			<Button
 				className="image-studio-share-reel-action__button"
-				aria-label={ ariaLabel }
+				icon={ <SocialLogo icon="instagram" size={ 18 } /> }
+				label={ ariaLabel }
+				showTooltip
 				disabled={ isSharing }
 				isBusy={ isSharing }
 				onClick={ handleShare }
-			>
-				<span className="image-studio-share-reel-action__label">{ visibleText }</span>
-				<span className="image-studio-share-reel-action__icon">
-					<SocialLogo icon="instagram" size={ 18 } />
-				</span>
-			</Button>
+			/>
 		</div>
 	);
 }

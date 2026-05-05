@@ -4,7 +4,9 @@
 	// right edge aligns with the chat input's right edge — not the modal's
 	// far edge.
 	display: flex;
+	align-items: center;
 	justify-content: flex-end;
+	gap: 6px;
 	flex: 0 0 auto;
 	width: 100%;
 	max-width: 600px;
@@ -12,35 +14,23 @@
 	padding: 0 16px;
 	margin-top: 8px;
 
-	&__button {
-		// Pill-style text + icon. Reads as "Share: [Instagram]".
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		height: 32px;
-		padding: 0 12px;
-		border-radius: 16px;
+	&__label {
 		font-size: 13px;
-		color: #f0f0f0;
-		background: transparent;
-		transition: background 0.15s ease;
-
-		&:disabled {
-			opacity: 0.6;
-		}
+		color: #c4c4c4;
+		line-height: 1;
 	}
 
-	&__icon {
-		display: inline-flex;
-		align-items: center;
-		color: #c4c4c4;
+	// Hover/focus delight on the icon glyph — the @wordpress/components
+	// Button's default state already gives us a subtle bg highlight; we
+	// add an icon-specific brighten + scale on top.
+	&__button svg {
 		transition:
 			color 0.15s ease,
 			transform 0.15s ease;
 	}
 
-	&__button:hover:not( :disabled ) &__icon,
-	&__button:focus-visible:not( :disabled ) &__icon {
+	&__button:hover:not( :disabled ) svg,
+	&__button:focus-visible:not( :disabled ) svg {
 		color: #fff;
 		transform: scale(1.12);
 	}
