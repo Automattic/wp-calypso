@@ -434,6 +434,86 @@ describe( 'useImageUploads', () => {
 		expect( removedCalls[ 0 ][ 1 ].was_uploaded ).toBe( false );
 	} );
 
+	it( 'clearAll removes every entry without firing _compose_media_removed', async () => {
+		// Composer close-cleanup uses `clearAll` so a user closing the modal
+		// doesn't fire one `media_removed` event per attached image — those
+		// would all carry stale labels (mode/connection_id snap to defaults
+		// once the composer's `mode` flips to null) and aren't meaningful as
+		// "user removed an image" events anyway.
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		const files = [
+			new File( [ 'a' ], 'a.png', { type: 'image/png' } ),
+			new File( [ 'b' ], 'b.png', { type: 'image/png' } ),
+		];
+		await act( async () => {
+			await result.current.addFiles( files );
+		} );
+
+		await waitFor( () => {
+			expect( result.current.images.every( ( i ) => i.kind === 'uploaded' ) ).toBe( true );
+		} );
+
+		onTrack.mockClear();
+		act( () => result.current.clearAll() );
+
+		expect( result.current.images ).toHaveLength( 0 );
+		expect(
+			onTrack.mock.calls.filter(
+				( [ name ] ) => name === 'calypso_reader_atmosphere_compose_media_removed'
+			)
+		).toHaveLength( 0 );
+	} );
+
+	it( 'retryImage does not fire _compose_media_removed', async () => {
+		// `retryImage` internally drops the failed entry and re-enters the
+		// upload pipeline with the same source file. The user clicked Retry,
+		// not ×, so `media_removed` would be wrong analytics — the entry
+		// hasn't been "removed" from the user's perspective, it's being
+		// retried.
+		jest
+			.spyOn( wpcom.req, 'post' )
+			.mockRejectedValueOnce( { kind: 'unknown', cause: new Error( 'down' ) } )
+			.mockResolvedValueOnce( okBlobResponse );
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		const file = new File( [ 'src' ], 'a.png', { type: 'image/png' } );
+		await act( async () => {
+			await result.current.addFiles( [ file ] );
+		} );
+
+		await waitFor( () => expect( result.current.images[ 0 ].kind ).toBe( 'failed' ) );
+
+		const failedId = result.current.images[ 0 ].localId;
+		onTrack.mockClear();
+		await act( async () => {
+			await result.current.retryImage( failedId );
+		} );
+
+		await waitFor( () => {
+			expect( result.current.images[ 0 ].kind ).toBe( 'uploaded' );
+		} );
+
+		expect(
+			onTrack.mock.calls.filter(
+				( [ name ] ) => name === 'calypso_reader_atmosphere_compose_media_removed'
+			)
+		).toHaveLength( 0 );
+	} );
+
 	it( 'fires _compose_alt_text_added with length only (never the text)', async () => {
 		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 

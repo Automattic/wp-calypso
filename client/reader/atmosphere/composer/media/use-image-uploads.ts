@@ -222,7 +222,11 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 	const imagesRef = useRef< ComposerImage[] >( images );
 	imagesRef.current = images;
 
-	const removeImage = useCallback( ( id: string ) => {
+	// Internal removal worker. `silent: true` skips the
+	// `media_removed` Tracks event — used by `clearAll` (close cleanup
+	// is a system action, not a user click) and by `retryImage` (the
+	// user clicked Retry, not ×). Public `removeImage` always reports.
+	const doRemove = useCallback( ( id: string, silent: boolean ) => {
 		const entry = imagesRef.current.find( ( i ) => i.localId === id );
 		if ( ! entry ) {
 			return;
@@ -236,24 +240,43 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 		}
 		slotCountRef.current = Math.max( 0, slotCountRef.current - 1 );
 		setImages( ( cur ) => cur.filter( ( i ) => i.localId !== id ) );
-		onTrackRef.current?.( 'calypso_reader_atmosphere_compose_media_removed', {
-			connection_id: connectionIdRef.current,
-			was_uploaded: entry.kind === 'uploaded',
-			mode: modeRef.current,
-		} );
+		if ( ! silent ) {
+			onTrackRef.current?.( 'calypso_reader_atmosphere_compose_media_removed', {
+				connection_id: connectionIdRef.current,
+				was_uploaded: entry.kind === 'uploaded',
+				mode: modeRef.current,
+			} );
+		}
 	}, [] );
+
+	const removeImage = useCallback(
+		( id: string ) => {
+			doRemove( id, false );
+		},
+		[ doRemove ]
+	);
+
+	const clearAll = useCallback( () => {
+		// Snapshot the ids first — `doRemove` mutates the underlying state,
+		// and `imagesRef.current` reflects the latest commit, but iterating
+		// the live array while removing entries is a footgun. The ref array
+		// itself is stable inside this synchronous loop (state updates are
+		// batched), but a snapshot keeps the intent explicit.
+		const ids = imagesRef.current.map( ( i ) => i.localId );
+		ids.forEach( ( id ) => doRemove( id, true ) );
+	}, [ doRemove ] );
 
 	const retryImage = useCallback(
 		async ( id: string ) => {
-			const target = images.find( ( i ) => i.localId === id );
+			const target = imagesRef.current.find( ( i ) => i.localId === id );
 			if ( ! target || target.kind !== 'failed' ) {
 				return;
 			}
 			const sourceFile = target.sourceFile;
-			removeImage( id );
+			doRemove( id, true );
 			await startOne( sourceFile );
 		},
-		[ images, removeImage, startOne ]
+		[ doRemove, startOne ]
 	);
 
 	const setAlt = useCallback( ( id: string, alt: string ) => {
@@ -298,5 +321,14 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 		[]
 	);
 
-	return { images, addFiles, removeImage, retryImage, setAlt, isAllUploaded, isAnyPending };
+	return {
+		images,
+		addFiles,
+		removeImage,
+		clearAll,
+		retryImage,
+		setAlt,
+		isAllUploaded,
+		isAnyPending,
+	};
 }

@@ -116,9 +116,13 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 	} );
 
 	// Reset images when the composer closes (mode transitions to null).
+	// `clearAll` skips the `media_removed` Tracks event for each entry —
+	// close-cleanup is a system action, not a user click on ×. (And by
+	// the time this effect runs, `mode` is already null, so the
+	// `connection_id` / `mode` labels would be garbage anyway.)
 	useEffect( () => {
 		if ( ! mode ) {
-			imageUploads.images.forEach( ( i ) => imageUploads.removeImage( i.localId ) );
+			imageUploads.clearAll();
 		}
 		// `imageUploads` is recreated each render — capturing it in deps would
 		// re-run the effect every render. The closure reads the snapshot at

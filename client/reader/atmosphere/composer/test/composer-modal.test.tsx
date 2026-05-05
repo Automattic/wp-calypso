@@ -46,6 +46,7 @@ function makeImageUploadsState(
 		images: [],
 		addFiles: jest.fn(),
 		removeImage: jest.fn(),
+		clearAll: jest.fn(),
 		retryImage: jest.fn(),
 		setAlt: jest.fn(),
 		isAllUploaded: true,
