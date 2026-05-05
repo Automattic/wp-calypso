@@ -28,7 +28,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
-	isBillingInfoEmpty,
+	isCartTaxLocationIncomplete,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
@@ -47,6 +47,7 @@ import useEquivalentMonthlyTotals, {
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
+import useCountryList from '../hooks/use-country-list';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
@@ -153,6 +154,7 @@ function TaxNotCalculatedLineItem() {
 function CheckoutSummaryPriceList() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const countriesList = useCountryList();
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
@@ -221,7 +223,9 @@ function CheckoutSummaryPriceList() {
 							<span>{ taxLineItem.formattedAmount }</span>
 						</CheckoutSummaryLineItem>
 					) ) }
-					{ isBillingInfoEmpty( responseCart ) && <TaxNotCalculatedLineItem /> }
+					{ isCartTaxLocationIncomplete( responseCart, countriesList ) && (
+						<TaxNotCalculatedLineItem />
+					) }
 					{ creditsLineItem && responseCart.sub_total_integer > 0 && (
 						<CheckoutSummaryLineItem
 							key={ 'checkout-summary-line-item-' + creditsLineItem.id }

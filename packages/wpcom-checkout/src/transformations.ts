@@ -1,8 +1,9 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import { translate, useTranslate } from 'i18n-calypso';
 import { getContactDetailsType } from './get-contact-details-type';
+import { getCountryTaxRequirements } from './get-country-tax-requirements';
 import { getIntroductoryOfferIntervalDisplay } from './introductory-offer';
-import type { LineItemType } from './types';
+import type { CountryListItem, LineItemType } from './types';
 import type {
 	IntroductoryOfferTerms,
 	IntroductoryOfferUnit,
@@ -540,4 +541,41 @@ export function isBillingInfoEmpty( responseCart: ResponseCart ): boolean {
 		return false;
 	}
 	return true;
+}
+
+/**
+ * True if the cart's tax location is missing fields the backend needs before
+ * it can compute tax. Covers two cases:
+ *
+ *   1. No country has been chosen yet (same as `isBillingInfoEmpty`).
+ *   2. A country is chosen but it requires a subdivision (e.g. US sales tax,
+ *      CA GST) and the cart has no `subdivision_code` yet.
+ *
+ * Use this to decide whether to show a "Tax: to be calculated" placeholder
+ * in the summary instead of letting the line silently disappear when a
+ * subdivision-required country is selected without a state.
+ *
+ * Falls back to `isBillingInfoEmpty` semantics when the countries list has
+ * not loaded yet, so callers do not need to guard the call themselves.
+ */
+export function isCartTaxLocationIncomplete(
+	responseCart: ResponseCart,
+	countries: CountryListItem[]
+): boolean {
+	if ( isBillingInfoEmpty( responseCart ) ) {
+		return true;
+	}
+	if ( ! countries.length ) {
+		return false;
+	}
+	const { country_code: countryCode, subdivision_code: subdivisionCode } =
+		responseCart.tax.location;
+	if ( ! countryCode ) {
+		return false;
+	}
+	const requirements = getCountryTaxRequirements( countries, countryCode );
+	if ( requirements.subdivision && ! subdivisionCode ) {
+		return true;
+	}
+	return false;
 }
