@@ -33,6 +33,7 @@ import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
@@ -232,10 +233,7 @@ export class CheckoutThankYou extends Component<
 
 		if ( isOnlyDomainTransfers( getPurchases( this.props ) ) ) {
 			// We need to reset the store upon checkout completion, on the bulk domain transfer flow
-			// We do it dinamically to avoid loading unnecessary javascript if not necessary.
-			import( 'calypso/landing/stepper/stores' ).then( ( imports ) =>
-				( dispatch( imports.ONBOARD_STORE ) as OnboardActions ).resetOnboardStore()
-			);
+			( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
 
 			if ( mayWeTrackByTracker( 'googleAds' ) ) {
 				const params: [ 'event', 'conversion', { send_to: string } ] = [
