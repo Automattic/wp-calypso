@@ -29,7 +29,8 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 import { StreamError } from '../stream/error';
-import { useReaderStream, type PostKey } from './use-reader-stream';
+import { useStreamPostKeySelection } from './use-stream-post-key-selection';
+import { useStreamPosts, type PostKey } from './use-stream-posts';
 
 import 'calypso/reader/stream/style.scss';
 
@@ -103,23 +104,24 @@ export function StreamV2( props: StreamV2Props ) {
 	const primarySiteId = useSelector( getPrimarySiteId );
 	const notificationsOpen = useSelector( isNotificationsOpen );
 
-	const stream = useReaderStream( {
+	const stream = useStreamPosts( {
 		streamKey,
 		feedId: null,
 		localeSlug,
 	} );
-	const {
+	const { items, isLoading, isFetching, lastPage, error, fetchNextPage } = stream;
+	const selection = useStreamPostKeySelection( {
+		streamKey,
+		feedId: null,
+		localeSlug,
 		items,
-		isLoading,
-		isFetching,
-		lastPage,
-		error,
-		fetchNextPage,
-		selected,
-		selectItem,
-		selectNext,
-		selectPrev,
-	} = stream;
+	} );
+	const {
+		selectedPostKey: selected,
+		selectPostKey: selectItem,
+		selectNextPost: selectNext,
+		selectPreviousPost: selectPrev,
+	} = selection;
 
 	const selectedPost = useSelector( ( state ) =>
 		selected ? getPostByKey( state, selected ) : null

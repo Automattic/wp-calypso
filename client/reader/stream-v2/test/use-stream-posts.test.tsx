@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import initialReducer from 'calypso/state/reducer';
-import { useReaderStream } from '../use-reader-stream';
+import { useStreamPosts } from '../use-stream-posts';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -54,7 +54,7 @@ function postKey( id: number, siteId = 100 ) {
 	return { blogId: siteId, postId: id };
 }
 
-describe( 'useReaderStream — fetching', () => {
+describe( 'useStreamPosts — fetching', () => {
 	it( 'fetches the initial likes page and exposes items', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
@@ -66,7 +66,7 @@ describe( 'useReaderStream — fetching', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -95,7 +95,7 @@ describe( 'useReaderStream — fetching', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -117,7 +117,7 @@ describe( 'useReaderStream — fetching', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -126,137 +126,7 @@ describe( 'useReaderStream — fetching', () => {
 	} );
 } );
 
-describe( 'useReaderStream — selection', () => {
-	async function setupWithItems() {
-		nock( BASE )
-			.get( LIKES_PATH )
-			.query( true )
-			.reply( 200, {
-				posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
-				date_range: { after: null, before: null },
-			} );
-
-		const queryClient = makeQueryClient();
-		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
-			wrapper: Wrapper,
-		} );
-		await waitFor( () => expect( result.current.items ).toHaveLength( 3 ) );
-		return { result };
-	}
-
-	it( 'starts with no selection', async () => {
-		const { result } = await setupWithItems();
-		expect( result.current.selected ).toBeNull();
-	} );
-
-	it( 'selectItem sets the current selection', async () => {
-		const { result } = await setupWithItems();
-		act( () => {
-			result.current.selectItem( result.current.items[ 1 ] );
-		} );
-		expect( result.current.selected ).toMatchObject( postKey( 2 ) );
-	} );
-
-	it( 'selectNext from null picks the first item', async () => {
-		const { result } = await setupWithItems();
-		act( () => {
-			result.current.selectNext();
-		} );
-		expect( result.current.selected ).toMatchObject( postKey( 1 ) );
-	} );
-
-	it( 'selectNext advances to the following item', async () => {
-		const { result } = await setupWithItems();
-		act( () => {
-			result.current.selectItem( result.current.items[ 0 ] );
-		} );
-		act( () => {
-			result.current.selectNext();
-		} );
-		expect( result.current.selected ).toMatchObject( postKey( 2 ) );
-	} );
-
-	it( 'selectNext at the last item stays put', async () => {
-		const { result } = await setupWithItems();
-		act( () => {
-			result.current.selectItem( result.current.items[ 2 ] );
-		} );
-		act( () => {
-			result.current.selectNext();
-		} );
-		expect( result.current.selected ).toMatchObject( postKey( 3 ) );
-	} );
-
-	it( 'selectPrev from null is a no-op (matches legacy)', async () => {
-		const { result } = await setupWithItems();
-		act( () => {
-			result.current.selectPrev();
-		} );
-		expect( result.current.selected ).toBeNull();
-	} );
-
-	it( 'selectPrev moves backward', async () => {
-		const { result } = await setupWithItems();
-		act( () => {
-			result.current.selectItem( result.current.items[ 1 ] );
-		} );
-		act( () => {
-			result.current.selectPrev();
-		} );
-		expect( result.current.selected ).toMatchObject( postKey( 1 ) );
-	} );
-
-	it( 'selectPrev at the first item stays put', async () => {
-		const { result } = await setupWithItems();
-		act( () => {
-			result.current.selectItem( result.current.items[ 0 ] );
-		} );
-		act( () => {
-			result.current.selectPrev();
-		} );
-		expect( result.current.selected ).toMatchObject( postKey( 1 ) );
-	} );
-
-	it( 'selection is preserved after fetching the next page', async () => {
-		nock.cleanAll();
-		nock( BASE )
-			.get( LIKES_PATH )
-			.query( ( q: Record< string, string | string[] | undefined > ) => ! ( 'before' in q ) )
-			.reply( 200, {
-				posts: [ apiPost( 1 ), apiPost( 2 ) ],
-				date_range: { after: '2026-04-01', before: null },
-			} );
-		nock( BASE )
-			.get( LIKES_PATH )
-			.query( ( q: Record< string, string | string[] | undefined > ) => q.before === '2026-04-01' )
-			.reply( 200, {
-				posts: [ apiPost( 3 ) ],
-				date_range: { after: null, before: null },
-			} );
-
-		const queryClient = makeQueryClient();
-		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
-			wrapper: Wrapper,
-		} );
-		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
-
-		act( () => {
-			result.current.selectItem( result.current.items[ 0 ] );
-		} );
-		expect( result.current.selected ).toMatchObject( postKey( 1 ) );
-
-		act( () => {
-			result.current.fetchNextPage();
-		} );
-		await waitFor( () => expect( result.current.items ).toHaveLength( 3 ) );
-
-		expect( result.current.selected ).toMatchObject( postKey( 1 ) );
-	} );
-} );
-
-describe( 'useReaderStream — removeItem', () => {
+describe( 'useStreamPosts — removeItem', () => {
 	it( 'filters the post out of the items list', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
@@ -268,7 +138,7 @@ describe( 'useReaderStream — removeItem', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
@@ -282,8 +152,8 @@ describe( 'useReaderStream — removeItem', () => {
 	} );
 } );
 
-describe( 'useReaderStream — streamKey change', () => {
-	it( 'resets selected and removed state when the streamKey changes', async () => {
+describe( 'useStreamPosts — streamKey change', () => {
+	it( 'resets removed state when the streamKey changes', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -302,28 +172,25 @@ describe( 'useReaderStream — streamKey change', () => {
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
 		const { result, rerender } = renderHook(
-			( { streamKey }: { streamKey: string } ) => useReaderStream( { streamKey } ),
+			( { streamKey }: { streamKey: string } ) => useStreamPosts( { streamKey } ),
 			{ wrapper: Wrapper, initialProps: { streamKey: 'likes' } }
 		);
 
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
 		act( () => {
-			result.current.selectItem( result.current.items[ 0 ] );
 			result.current.removeItem( result.current.items[ 1 ] );
 		} );
-		expect( result.current.selected ).toMatchObject( postKey( 1 ) );
 		expect( result.current.items ).toHaveLength( 1 );
 
 		rerender( { streamKey: 'following' } );
 
 		await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 99 ) ) );
-		expect( result.current.selected ).toBeNull();
 		// `removedIds` from the previous stream must not bleed in either.
 		expect( result.current.items ).toHaveLength( 1 );
 	} );
 } );
 
-describe( 'useReaderStream — keepPreviousData', () => {
+describe( 'useStreamPosts — keepPreviousData', () => {
 	it( 'keeps the previous stream items on screen while the new query loads', async () => {
 		// First stream resolves immediately.
 		nock( BASE )
@@ -346,7 +213,7 @@ describe( 'useReaderStream — keepPreviousData', () => {
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
 		const { result, rerender } = renderHook(
-			( { streamKey }: { streamKey: string } ) => useReaderStream( { streamKey } ),
+			( { streamKey }: { streamKey: string } ) => useStreamPosts( { streamKey } ),
 			{ wrapper: Wrapper, initialProps: { streamKey: 'likes' } }
 		);
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
@@ -366,7 +233,7 @@ describe( 'useReaderStream — keepPreviousData', () => {
 	} );
 } );
 
-describe( 'useReaderStream — cache (stale-while-revalidate)', () => {
+describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 	it( 'second mount with the same QueryClient hits cache without refetching', async () => {
 		// First mount: one network call satisfies the page.
 		nock( BASE )
@@ -379,7 +246,7 @@ describe( 'useReaderStream — cache (stale-while-revalidate)', () => {
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const first = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+		const first = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 		await waitFor( () => expect( first.result.current.items ).toHaveLength( 1 ) );
@@ -389,7 +256,7 @@ describe( 'useReaderStream — cache (stale-while-revalidate)', () => {
 		// to fetch again, the request would 404 / time out.
 		expect( nock.pendingMocks() ).toHaveLength( 0 );
 
-		const second = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+		const second = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
@@ -420,7 +287,7 @@ describe( 'useReaderStream — cache (stale-while-revalidate)', () => {
 		// rehydration from storage).
 		{
 			const { Wrapper } = makeWrapper( makeQueryClient() );
-			const { result, unmount } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+			const { result, unmount } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 				wrapper: Wrapper,
 			} );
 			await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) ) );
@@ -428,7 +295,7 @@ describe( 'useReaderStream — cache (stale-while-revalidate)', () => {
 		}
 		{
 			const { Wrapper } = makeWrapper( makeQueryClient() );
-			const { result } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+			const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 				wrapper: Wrapper,
 			} );
 			await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 2 ) ) );

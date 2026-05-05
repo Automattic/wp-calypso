@@ -1,7 +1,7 @@
 import { fetchReadStream, getStreamType } from '@automattic/api-queries';
 import { infiniteQueryOptions, keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
@@ -25,7 +25,7 @@ export interface PostKey {
 	[ key: string ]: unknown;
 }
 
-export interface UseReaderStreamResult {
+export interface UseStreamPostsResult {
 	items: PostKey[];
 	isLoading: boolean;
 	isFetching: boolean;
@@ -42,10 +42,6 @@ export interface UseReaderStreamResult {
 	error: unknown;
 	fetchNextPage: () => void;
 	refetch: () => void;
-	selected: PostKey | null;
-	selectItem: ( postKey: PostKey | null ) => void;
-	selectNext: ( fromList?: PostKey[] ) => void;
-	selectPrev: ( fromList?: PostKey[] ) => void;
 	removeItem: ( postKey: PostKey ) => void;
 }
 
@@ -87,7 +83,7 @@ function normalizePage( data: ReadStreamResponse, streamType: string ): Normaliz
 const postKeyId = ( postKey: PostKey | null | undefined ): string =>
 	postKey ? keyToString( postKey ) ?? '' : '';
 
-interface UseReaderStreamOptions {
+interface UseStreamPostsOptions {
 	streamKey: string;
 	feedId?: number | null;
 	localeSlug?: string | null;
@@ -95,21 +91,21 @@ interface UseReaderStreamOptions {
 
 /**
  * Cursor-paginated reader stream hook backed by `useInfiniteQuery`. Owns
- * `selected` and `removedIds` locally; the legacy Redux slice (`state.reader.streams`)
- * is not touched. `state.reader.posts` is still populated via `receivePosts`
+ * `removedIds` locally; the legacy Redux slice (`state.reader.streams`) is
+ * not touched. `state.reader.posts` is still populated via `receivePosts`
  * because `<PostLifecycle>` and the full-post navigation read post bodies from
  * there.
  */
-export function useReaderStream( {
+export function useStreamPosts( {
 	streamKey,
 	feedId = null,
 	localeSlug = null,
-}: UseReaderStreamOptions ): UseReaderStreamResult {
+}: UseStreamPostsOptions ): UseStreamPostsResult {
 	const dispatch = useDispatch();
 	const streamType = getStreamType( streamKey );
 
-	const [ selected, setSelected ] = useState< PostKey | null >( null );
 	const [ removedIds, setRemovedIds ] = useState< Set< string > >( () => new Set() );
+	const streamIdentity = `${ streamKey }|${ feedId ?? '' }|${ localeSlug ?? '' }`;
 
 	const buildPageParams = useCallback(
 		( pageHandle: PageHandle ): ReadStreamQueryParams =>
@@ -204,16 +200,15 @@ export function useReaderStream( {
 		lastDispatchedRef.current = { streamKey, pageCount: pages.length };
 	}, [ streamKey, streamType, query.data, dispatch ] );
 
-	// Reset local selection when streamKey changes.
-	const previousStreamKeyRef = useRef( streamKey );
+	// Reset local per-instance state when the stream identity changes.
+	const previousStreamIdentityRef = useRef( streamIdentity );
 	useEffect( () => {
-		if ( previousStreamKeyRef.current === streamKey ) {
+		if ( previousStreamIdentityRef.current === streamIdentity ) {
 			return;
 		}
-		previousStreamKeyRef.current = streamKey;
-		setSelected( null );
+		previousStreamIdentityRef.current = streamIdentity;
 		setRemovedIds( new Set() );
-	}, [ streamKey ] );
+	}, [ streamIdentity ] );
 
 	const items: PostKey[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];
@@ -230,47 +225,6 @@ export function useReaderStream( {
 		}
 		return combined.filter( ( item ) => ! removedIds.has( postKeyId( item ) ) );
 	}, [ query.data, streamType, removedIds ] );
-
-	const selectItem = useCallback( ( postKey: PostKey | null ) => {
-		setSelected( postKey );
-	}, [] );
-
-	const selectNext = useCallback(
-		( fromList?: PostKey[] ) => {
-			const list = fromList ?? items;
-			setSelected( ( current ) => {
-				if ( ! list.length ) {
-					return current;
-				}
-				const idx = list.findIndex( ( item ) => keysAreEqual( item, current ) );
-				if ( idx === -1 ) {
-					return list[ 0 ];
-				}
-				if ( idx === list.length - 1 ) {
-					return current;
-				}
-				return list[ idx + 1 ];
-			} );
-		},
-		[ items ]
-	);
-
-	const selectPrev = useCallback(
-		( fromList?: PostKey[] ) => {
-			const list = fromList ?? items;
-			setSelected( ( current ) => {
-				if ( ! list.length ) {
-					return current;
-				}
-				const idx = list.findIndex( ( item ) => keysAreEqual( item, current ) );
-				if ( idx <= 0 ) {
-					return current;
-				}
-				return list[ idx - 1 ];
-			} );
-		},
-		[ items ]
-	);
 
 	const removeItem = useCallback( ( postKey: PostKey ) => {
 		setRemovedIds( ( previous ) => {
@@ -299,10 +253,6 @@ export function useReaderStream( {
 		error: query.error,
 		fetchNextPage,
 		refetch,
-		selected,
-		selectItem,
-		selectNext,
-		selectPrev,
 		removeItem,
 	};
 }

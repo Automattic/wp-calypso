@@ -71,12 +71,16 @@ jest.mock( 'calypso/components/infinite-list', () => {
 	// the real list renders `renderLoadingPlaceholders()` instead of
 	// `renderItem`. Without this branch the test would never see skeleton
 	// markup even when the production path renders it.
-	return ReactLib.forwardRef( function InfiniteList( props: {
-		items: Array< { postId: number } >;
-		fetchingNextPage?: boolean;
-		renderItem: ( postKey: { postId: number }, idx: number ) => ReactNode;
-		renderLoadingPlaceholders?: () => ReactNode;
-	} ) {
+	return ReactLib.forwardRef( function InfiniteList(
+		props: {
+			items: Array< { postId: number } >;
+			fetchingNextPage?: boolean;
+			renderItem: ( postKey: { postId: number }, idx: number ) => ReactNode;
+			renderLoadingPlaceholders?: () => ReactNode;
+		},
+		_ref: unknown
+	) {
+		void _ref;
 		const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders } = props;
 		const showPlaceholders = items.length === 0 && fetchingNextPage;
 		return (
@@ -98,6 +102,15 @@ jest.mock( '@automattic/calypso-router', () => {
 
 const BASE = 'https://public-api.wordpress.com';
 const LIKES_PATH = '/rest/v1.2/read/liked';
+const originalScrollTo = window.scrollTo;
+
+beforeAll( () => {
+	Object.defineProperty( window, 'scrollTo', { writable: true, value: jest.fn() } );
+} );
+
+afterAll( () => {
+	Object.defineProperty( window, 'scrollTo', { writable: true, value: originalScrollTo } );
+} );
 
 afterEach( () => {
 	nock.cleanAll();
@@ -138,8 +151,11 @@ const baseState = {
 	posts: { likes: {} },
 };
 
-function renderStream( extraProps: Record< string, unknown > = {}, initialStateOverride = {} ) {
-	const queryClient = makeQueryClient();
+function renderStream(
+	extraProps: Record< string, unknown > = {},
+	initialStateOverride = {},
+	queryClient = makeQueryClient()
+) {
 	// Identity reducer over the test fixture: the production store shape is
 	// large and combineReducers-driven, so a passthrough keeps the test focused
 	// on selectors / hook behavior rather than every reducer's default state.
@@ -343,5 +359,40 @@ describe( 'StreamV2 — click', () => {
 
 		await waitFor( () => expect( getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' ) );
 		expect( getByTestId( 'post-10' ) ).not.toHaveClass( 'is-selected' );
+	} );
+
+	it( 'restores the selected post after unmount and remount with the same QueryClient', async () => {
+		mockLikesEndpoint( [ apiPost( 10 ), apiPost( 20 ) ] );
+		const queryClient = makeQueryClient();
+		const first = renderStream( {}, {}, queryClient );
+		await waitFor( () => expect( first.getByTestId( 'post-10' ) ).toBeVisible() );
+
+		fireEvent.click( first.getByTestId( 'post-20' ) );
+		await waitFor( () => expect( first.getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' ) );
+		first.unmount();
+
+		const second = renderStream( {}, {}, queryClient );
+
+		expect( second.getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' );
+		expect( second.getByTestId( 'post-10' ) ).not.toHaveClass( 'is-selected' );
+	} );
+
+	it( 'continues keyboard navigation from the restored selection after remount', async () => {
+		mockLikesEndpoint( [ apiPost( 10 ), apiPost( 20 ), apiPost( 30 ) ] );
+		const queryClient = makeQueryClient();
+		const first = renderStream( {}, {}, queryClient );
+		await waitFor( () => expect( first.getByTestId( 'post-10' ) ).toBeVisible() );
+
+		fireEvent.click( first.getByTestId( 'post-20' ) );
+		await waitFor( () => expect( first.getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' ) );
+		first.unmount();
+
+		const second = renderStream( {}, {}, queryClient );
+		expect( second.getByTestId( 'post-20' ) ).toHaveClass( 'is-selected' );
+
+		fireEvent.keyDown( document, { key: 'j' } );
+
+		await waitFor( () => expect( second.getByTestId( 'post-30' ) ).toHaveClass( 'is-selected' ) );
+		expect( second.getByTestId( 'post-20' ) ).not.toHaveClass( 'is-selected' );
 	} );
 } );
