@@ -267,6 +267,213 @@ describe( 'useImageUploads', () => {
 		expect( result.current.images ).toHaveLength( 1 );
 	} );
 
+	it( 'fires _compose_media_picked when files are added', async () => {
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		const files = [
+			new File( [ 'a' ], 'a.png', { type: 'image/png' } ),
+			new File( [ 'b' ], 'b.png', { type: 'image/png' } ),
+		];
+		await act( async () => {
+			await result.current.addFiles( files );
+		} );
+
+		expect( onTrack ).toHaveBeenCalledWith( 'calypso_reader_atmosphere_compose_media_picked', {
+			connection_id: 9,
+			count: 2,
+			mode: 'standalone',
+		} );
+	} );
+
+	it( 'fires _compose_media_uploaded with byte totals after all uploads finish', async () => {
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+
+		// Override the default compressImage mock for this test so we
+		// can assert specific byte sizes ended up in the event payload.
+		const { compressImage } = jest.requireMock( '../compress-image' );
+		( compressImage as jest.Mock ).mockResolvedValueOnce( {
+			blob: new Blob( [ 'x'.repeat( 25 ) ], { type: 'image/jpeg' } ),
+			width: 800,
+			height: 600,
+			size: 25,
+		} );
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'reply', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		// Source file size: payload 'src-bytes-here' = 14 chars.
+		const file = new File( [ 'src-bytes-here' ], 'a.png', { type: 'image/png' } );
+		await act( async () => {
+			await result.current.addFiles( [ file ] );
+		} );
+
+		await waitFor( () => expect( result.current.images[ 0 ].kind ).toBe( 'uploaded' ) );
+
+		expect( onTrack ).toHaveBeenCalledWith( 'calypso_reader_atmosphere_compose_media_uploaded', {
+			connection_id: 9,
+			count: 1,
+			total_bytes_before_compress: 14,
+			total_bytes_after_compress: 25,
+			mode: 'reply',
+		} );
+	} );
+
+	it( 'fires _compose_media_upload_error_shown when an upload fails', async () => {
+		// Surface any classifier-mapped `error_kind` from the rejected
+		// response. The exact shape of the rejection that `uploadBlob`
+		// re-throws is exercised in the mutation factory's own tests; here
+		// we only need the hook to forward the resulting `error.kind` into
+		// the Tracks event once per failed upload.
+		jest
+			.spyOn( wpcom.req, 'post' )
+			.mockRejectedValue( { kind: 'rate_limited', message: 'slow down' } );
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'quote', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		const file = new File( [ 'src' ], 'a.png', { type: 'image/png' } );
+		await act( async () => {
+			await result.current.addFiles( [ file ] );
+		} );
+
+		await waitFor( () => expect( result.current.images[ 0 ].kind ).toBe( 'failed' ) );
+
+		const failed = result.current.images[ 0 ];
+		if ( failed.kind !== 'failed' ) {
+			throw new Error( 'expected failed' );
+		}
+		const errorCalls = onTrack.mock.calls.filter(
+			( [ name ] ) => name === 'calypso_reader_atmosphere_compose_media_upload_error_shown'
+		);
+		expect( errorCalls ).toHaveLength( 1 );
+		expect( errorCalls[ 0 ][ 1 ] ).toEqual( {
+			connection_id: 9,
+			mode: 'quote',
+			error_kind: failed.error.kind,
+		} );
+	} );
+
+	it( 'fires _compose_media_removed with was_uploaded flag', async () => {
+		// Scenario 1: full upload then remove → was_uploaded: true.
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		const file = new File( [ 'src' ], 'a.png', { type: 'image/png' } );
+		await act( async () => {
+			await result.current.addFiles( [ file ] );
+		} );
+
+		await waitFor( () => expect( result.current.images[ 0 ].kind ).toBe( 'uploaded' ) );
+
+		const uploadedId = result.current.images[ 0 ].localId;
+		act( () => result.current.removeImage( uploadedId ) );
+
+		const removedCalls = onTrack.mock.calls.filter(
+			( [ name ] ) => name === 'calypso_reader_atmosphere_compose_media_removed'
+		);
+		expect( removedCalls ).toHaveLength( 1 );
+		expect( removedCalls[ 0 ][ 1 ] ).toEqual( {
+			connection_id: 9,
+			was_uploaded: true,
+			mode: 'standalone',
+		} );
+	} );
+
+	it( 'fires _compose_media_removed with was_uploaded: false when removed during compressing', async () => {
+		// `compressImage` returns a never-resolving promise, so the entry
+		// stays in `compressing` while we issue `removeImage`. This is
+		// the only state where `kind !== 'uploaded'` is reachable
+		// synchronously from the test.
+		const { compressImage } = jest.requireMock( '../compress-image' );
+		( compressImage as jest.Mock ).mockImplementationOnce( () => new Promise( () => {} ) );
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		const file = new File( [ 'src' ], 'a.png', { type: 'image/png' } );
+		// Don't await — the compressing promise never resolves.
+		act( () => {
+			void result.current.addFiles( [ file ] );
+		} );
+
+		await waitFor( () => expect( result.current.images[ 0 ]?.kind ).toBe( 'compressing' ) );
+
+		const compressingId = result.current.images[ 0 ].localId;
+		act( () => result.current.removeImage( compressingId ) );
+
+		const removedCalls = onTrack.mock.calls.filter(
+			( [ name ] ) => name === 'calypso_reader_atmosphere_compose_media_removed'
+		);
+		expect( removedCalls ).toHaveLength( 1 );
+		expect( removedCalls[ 0 ][ 1 ].was_uploaded ).toBe( false );
+	} );
+
+	it( 'fires _compose_alt_text_added with length only (never the text)', async () => {
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		const file = new File( [ 'src' ], 'a.png', { type: 'image/png' } );
+		await act( async () => {
+			await result.current.addFiles( [ file ] );
+		} );
+		await waitFor( () => expect( result.current.images[ 0 ].kind ).toBe( 'uploaded' ) );
+
+		const id = result.current.images[ 0 ].localId;
+		act( () => result.current.setAlt( id, 'hello world' ) );
+
+		const altCalls = onTrack.mock.calls.filter(
+			( [ name ] ) => name === 'calypso_reader_atmosphere_compose_alt_text_added'
+		);
+		expect( altCalls ).toHaveLength( 1 );
+		const props = altCalls[ 0 ][ 1 ];
+		expect( props ).toEqual( {
+			connection_id: 9,
+			mode: 'standalone',
+			length: 11,
+		} );
+		expect( props ).not.toHaveProperty( 'text' );
+
+		// Subsequent edits (still non-empty) must NOT fire again.
+		act( () => result.current.setAlt( id, 'hello world!' ) );
+		expect(
+			onTrack.mock.calls.filter(
+				( [ name ] ) => name === 'calypso_reader_atmosphere_compose_alt_text_added'
+			)
+		).toHaveLength( 1 );
+	} );
+
 	it( 'isAllUploaded and isAnyPending reflect derived state', async () => {
 		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 

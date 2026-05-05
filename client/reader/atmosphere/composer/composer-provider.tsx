@@ -7,10 +7,15 @@ import {
 	useRef,
 	useState,
 } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { MAX_IMAGES } from './media/constants';
 import { useImageUploads } from './media/use-image-uploads';
 import type { AtUriRef } from '@automattic/api-core';
+import type { AppState } from 'calypso/types';
 import type { ReactNode } from 'react';
+import type { UnknownAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 
 type ImageUploads = ReturnType< typeof useImageUploads >;
 
@@ -95,9 +100,19 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 		setMode( null );
 	}, [] );
 
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
+	const onTrack = useCallback(
+		( event: string, props: Record< string, unknown > ) => {
+			dispatch( recordReaderTracksEvent( event, props ) );
+		},
+		[ dispatch ]
+	);
+
 	const imageUploads = useImageUploads( {
 		connectionId: mode?.connectionId ?? 0,
 		max: MAX_IMAGES,
+		mode: mode?.kind ?? 'standalone',
+		onTrack,
 	} );
 
 	// Reset images when the composer closes (mode transitions to null).

@@ -5,18 +5,28 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore } from 'redux';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import { ComposerProvider, useComposer } from '../composer-provider';
 
 // `ComposerProvider` consumes `useImageUploads`, which requires a
-// `QueryClientProvider` in the tree. Each test gets its own client so
-// cached state never leaks between cases.
-function withQueryClient( ui: React.ReactNode ) {
-	return <QueryClientProvider client={ new QueryClient() }>{ ui }</QueryClientProvider>;
+// `QueryClientProvider` in the tree, and dispatches Tracks events via
+// `useDispatch`, which requires a Redux `<Provider>`. Each test gets its
+// own client + a permissive noop store so cached state and dispatched
+// actions never leak between cases.
+function withProviders( ui: React.ReactNode ) {
+	const store = createStore( ( s = {} ) => s, applyMiddleware( thunkMiddleware ) );
+	return (
+		<QueryClientProvider client={ new QueryClient() }>
+			<Provider store={ store }>{ ui }</Provider>
+		</QueryClientProvider>
+	);
 }
 
 const wrap = ( connectionId: number ) =>
 	function Wrapper( { children }: { children: React.ReactNode } ) {
-		return withQueryClient(
+		return withProviders(
 			<ComposerProvider connectionId={ connectionId }>{ children }</ComposerProvider>
 		);
 	};
@@ -85,7 +95,7 @@ describe( 'useComposer', () => {
 			);
 		}
 
-		render( withQueryClient( <Harness /> ) );
+		render( withProviders( <Harness /> ) );
 		expect( screen.getByTestId( 'probe' ) ).toHaveTextContent( 'closed' );
 		await user.click( screen.getByRole( 'button', { name: 'open' } ) );
 		expect( screen.getByTestId( 'probe' ) ).toHaveTextContent( '42' );
@@ -118,7 +128,7 @@ describe( 'useComposer', () => {
 		}
 
 		render(
-			withQueryClient(
+			withProviders(
 				<ComposerProvider connectionId={ 42 }>
 					<FocusHarness />
 				</ComposerProvider>
@@ -136,7 +146,7 @@ describe( 'useComposer', () => {
 	it( 'throws if useComposer is called outside ComposerProvider', () => {
 		expect( () =>
 			renderHook( () => useComposer(), {
-				wrapper: ( { children }: { children: React.ReactNode } ) => withQueryClient( children ),
+				wrapper: ( { children }: { children: React.ReactNode } ) => withProviders( children ),
 			} )
 		).toThrow();
 	} );
@@ -158,7 +168,7 @@ describe( 'useComposer', () => {
 		}
 
 		render(
-			withQueryClient(
+			withProviders(
 				<ComposerProvider connectionId={ 42 }>
 					<Probe />
 				</ComposerProvider>
@@ -184,7 +194,7 @@ describe( 'useComposer', () => {
 		}
 
 		render(
-			withQueryClient(
+			withProviders(
 				<ComposerProvider connectionId={ 1 }>
 					<TestConsumer />
 				</ComposerProvider>

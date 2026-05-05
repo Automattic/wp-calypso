@@ -45,6 +45,20 @@ export function toAtmosphereError( err: unknown ): AtmosphereError {
 export interface UseImageUploadsOptions {
 	connectionId: number;
 	max: number;
+	/**
+	 * Composer mode at the time the hook is mounted. Forwarded as the
+	 * `mode` property on every Tracks event the hook fires. Optional so
+	 * existing tests don't have to thread it through; defaults to
+	 * `'standalone'`.
+	 */
+	mode?: 'standalone' | 'reply' | 'quote';
+	/**
+	 * Tracks dispatcher injected by the caller. Decouples the hook from
+	 * Redux for testability — the provider wires this to
+	 * `dispatch( recordReaderTracksEvent( ... ) )`. Optional so existing
+	 * tests that don't assert on events can omit it.
+	 */
+	onTrack?: ( event: string, props: Record< string, unknown > ) => void;
 }
 
 export function useImageUploads( opts: UseImageUploadsOptions ) {
@@ -52,6 +66,17 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 	const { mutateAsync: uploadBlob } = useMutation( uploadBlobMutation( queryClient ) );
 	const [ images, setImages ] = useState< ComposerImage[] >( [] );
 	const previewsRef = useRef< Set< string > >( new Set() );
+	// Stable refs for the analytics inputs so callbacks below don't
+	// re-create on every render. The provider re-creates `onTrack` only
+	// when its `dispatch` reference changes (effectively never), but
+	// guarding through a ref is cheap and avoids cascade invalidation if
+	// the caller ever forgets `useCallback`.
+	const modeRef = useRef( opts.mode ?? 'standalone' );
+	modeRef.current = opts.mode ?? 'standalone';
+	const onTrackRef = useRef( opts.onTrack );
+	onTrackRef.current = opts.onTrack;
+	const connectionIdRef = useRef( opts.connectionId );
+	connectionIdRef.current = opts.connectionId;
 	// Synchronous slot count. `images.length` only reflects the count
 	// after the next render commits, so two concurrent `addFiles` calls
 	// would both capture the same `images.length` and admit more files
@@ -74,7 +99,7 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 	}, [] );
 
 	const startOne = useCallback(
-		async ( file: File ) => {
+		async ( file: File, batch?: { bytesBefore: number; bytesAfter: number; uploaded: number } ) => {
 			const localId = newLocalId();
 			slotCountRef.current += 1;
 			setImages( ( cur ) => [ ...cur, { kind: 'compressing', localId, sourceFile: file } ] );
@@ -90,6 +115,11 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 					aspectRatio: { width: 0, height: 0 },
 					sourceFile: file,
 					error: { kind: 'blob_decode_failed' },
+				} );
+				onTrackRef.current?.( 'calypso_reader_atmosphere_compose_media_upload_error_shown', {
+					connection_id: connectionIdRef.current,
+					mode: modeRef.current,
+					error_kind: 'blob_decode_failed',
 				} );
 				return;
 			}
@@ -119,7 +149,13 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 					aspectRatio,
 					blob: result.blob,
 				} );
+				if ( batch ) {
+					batch.bytesBefore += file.size;
+					batch.bytesAfter += compressed.size;
+					batch.uploaded += 1;
+				}
 			} catch ( err ) {
+				const error = toAtmosphereError( err );
 				update( localId, {
 					kind: 'failed',
 					localId,
@@ -127,7 +163,12 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 					alt: '',
 					aspectRatio,
 					sourceFile: file,
-					error: toAtmosphereError( err ),
+					error,
+				} );
+				onTrackRef.current?.( 'calypso_reader_atmosphere_compose_media_upload_error_shown', {
+					connection_id: connectionIdRef.current,
+					mode: modeRef.current,
+					error_kind: error.kind,
 				} );
 			}
 		},
@@ -143,26 +184,62 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 			// second concurrent call sees the first call's reservations.
 			const remainingSlots = opts.max - slotCountRef.current;
 			const accepted = files.slice( 0, Math.max( 0, remainingSlots ) );
-			await Promise.all( accepted.map( startOne ) );
+			if ( accepted.length === 0 ) {
+				return;
+			}
+			onTrackRef.current?.( 'calypso_reader_atmosphere_compose_media_picked', {
+				connection_id: connectionIdRef.current,
+				count: accepted.length,
+				mode: modeRef.current,
+			} );
+
+			// `media_uploaded` fires once per `addFiles` call (per-batch),
+			// not once per global "all uploads done" moment. This is a
+			// deliberate simplification: tracking a global transition would
+			// have to reason about overlapping `addFiles` invocations and
+			// images removed mid-flight. Per-batch reporting keeps the
+			// signal simple — each picker session yields at most one
+			// `media_uploaded` event when ≥1 image succeeds.
+			const batch = { bytesBefore: 0, bytesAfter: 0, uploaded: 0 };
+			await Promise.all( accepted.map( ( f ) => startOne( f, batch ) ) );
+			if ( batch.uploaded > 0 ) {
+				onTrackRef.current?.( 'calypso_reader_atmosphere_compose_media_uploaded', {
+					connection_id: connectionIdRef.current,
+					count: batch.uploaded,
+					total_bytes_before_compress: batch.bytesBefore,
+					total_bytes_after_compress: batch.bytesAfter,
+					mode: modeRef.current,
+				} );
+			}
 		},
 		[ opts.max, startOne ]
 	);
 
+	// `imagesRef` mirrors the latest `images` state so callbacks below can
+	// inspect the current image without forcing the callback's identity to
+	// change on every render. The ref is updated in a layout effect (see
+	// below) so it is in sync before any user-driven event handler runs.
+	const imagesRef = useRef< ComposerImage[] >( images );
+	imagesRef.current = images;
+
 	const removeImage = useCallback( ( id: string ) => {
-		setImages( ( cur ) => {
-			const entry = cur.find( ( i ) => i.localId === id );
-			if ( ! entry ) {
-				return cur;
-			}
-			if ( entry.kind !== 'compressing' ) {
-				URL.revokeObjectURL( entry.previewUrl );
-				previewsRef.current.delete( entry.previewUrl );
-			}
-			if ( entry.kind === 'uploading' ) {
-				entry.abort.abort();
-			}
-			slotCountRef.current = Math.max( 0, slotCountRef.current - 1 );
-			return cur.filter( ( i ) => i.localId !== id );
+		const entry = imagesRef.current.find( ( i ) => i.localId === id );
+		if ( ! entry ) {
+			return;
+		}
+		if ( entry.kind !== 'compressing' ) {
+			URL.revokeObjectURL( entry.previewUrl );
+			previewsRef.current.delete( entry.previewUrl );
+		}
+		if ( entry.kind === 'uploading' ) {
+			entry.abort.abort();
+		}
+		slotCountRef.current = Math.max( 0, slotCountRef.current - 1 );
+		setImages( ( cur ) => cur.filter( ( i ) => i.localId !== id ) );
+		onTrackRef.current?.( 'calypso_reader_atmosphere_compose_media_removed', {
+			connection_id: connectionIdRef.current,
+			was_uploaded: entry.kind === 'uploaded',
+			mode: modeRef.current,
 		} );
 	}, [] );
 
@@ -180,6 +257,13 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 	);
 
 	const setAlt = useCallback( ( id: string, alt: string ) => {
+		const target = imagesRef.current.find( ( i ) => i.localId === id );
+		const didTransition = Boolean(
+			target &&
+				( target.kind === 'uploading' || target.kind === 'uploaded' || target.kind === 'failed' ) &&
+				target.alt.length === 0 &&
+				alt.length > 0
+		);
 		setImages( ( cur ) =>
 			cur.map( ( i ) => {
 				if ( i.localId !== id ) {
@@ -191,6 +275,16 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 				return i;
 			} )
 		);
+		if ( didTransition ) {
+			// Fire only on the empty → non-empty transition (not on every
+			// keystroke). Length is included for distribution analysis;
+			// the alt text itself is intentionally NEVER reported.
+			onTrackRef.current?.( 'calypso_reader_atmosphere_compose_alt_text_added', {
+				connection_id: connectionIdRef.current,
+				mode: modeRef.current,
+				length: alt.length,
+			} );
+		}
 	}, [] );
 
 	const isAllUploaded = images.every( ( i ) => i.kind === 'uploaded' );
