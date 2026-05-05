@@ -2,7 +2,7 @@ import { translate, fixMe } from 'i18n-calypso';
 import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Stream from 'calypso/reader/stream';
+import Stream from 'calypso/reader/stream-v2';
 import EmptyContent from './empty';
 
 const title = translate( 'My Likes' );
