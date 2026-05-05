@@ -29,7 +29,9 @@ export function ShareReelAction(): JSX.Element | null {
 				onClick={ handleShare }
 			>
 				<span className="image-studio-share-reel-action__label">{ visibleText }</span>
-				<SocialLogo icon="instagram" size={ 18 } />
+				<span className="image-studio-share-reel-action__icon">
+					<SocialLogo icon="instagram" size={ 18 } />
+				</span>
 			</Button>
 		</div>
 	);

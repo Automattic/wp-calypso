@@ -1,8 +1,13 @@
 .image-studio-share-reel-action {
+	// Sits at the bottom of the generate-layout column, right-aligned so it
+	// hugs the inner edge of the modal just above the chat box.
 	display: flex;
+	justify-content: flex-end;
+	flex: 0 0 auto;
+	margin-top: 8px;
 
 	&__button {
-		// Pill-style text + icon button. Reads as "Share: [Instagram]".
+		// Pill-style text + icon. Reads as "Share: [Instagram]".
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
@@ -11,19 +16,26 @@
 		border-radius: 16px;
 		font-size: 13px;
 		color: #f0f0f0;
-		background: rgba(255, 255, 255, 0.08);
-
-		&:hover:not( :disabled ) {
-			background: rgba(255, 255, 255, 0.16);
-			color: #fff;
-		}
+		background: transparent;
+		transition: background 0.15s ease;
 
 		&:disabled {
 			opacity: 0.6;
 		}
 	}
 
-	&__label {
-		line-height: 1;
+	&__icon {
+		display: inline-flex;
+		align-items: center;
+		color: #c4c4c4;
+		transition:
+			color 0.15s ease,
+			transform 0.15s ease;
+	}
+
+	&__button:hover:not( :disabled ) &__icon,
+	&__button:focus-visible:not( :disabled ) &__icon {
+		color: #fff;
+		transform: scale(1.12);
 	}
 }
