@@ -61,6 +61,7 @@ import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
+import MasterbarCartWrapper from './masterbar-cart/masterbar-cart-wrapper';
 import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import { MasterbarLaunchButton } from './masterbar-launch-button';
 import Notifications from './masterbar-notifications/notifications-button';
@@ -70,10 +71,6 @@ const loadCheckout = () =>
 const loadQuickLanguageSwitcher = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-quick-language-switcher" */ './quick-language-switcher'
-	);
-const loadMasterbarCartWrapper = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-cart-masterbar-cart-wrapper" */ './masterbar-cart/masterbar-cart-wrapper'
 	);
 const loadMasterbarAgentsManager = () =>
 	import(
@@ -759,9 +756,7 @@ class MasterbarLoggedIn extends Component {
 			return null;
 		}
 		return (
-			<AsyncLoad
-				require={ loadMasterbarCartWrapper }
-				placeholder={ null }
+			<MasterbarCartWrapper
 				goToCheckout={ this.goToCheckout }
 				onRemoveProduct={ this.onRemoveCartProduct }
 				onRemoveCoupon={ this.onRemoveCartProduct }
