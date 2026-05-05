@@ -341,11 +341,34 @@ export interface AtUriRef {
 	cid: string;
 }
 
+export interface AtmosphereBlobRef {
+	$type: 'blob';
+	ref: { $link: string };
+	mimeType: string;
+	size: number;
+}
+
+export interface AtmosphereImageEmbed {
+	blob: AtmosphereBlobRef;
+	alt: string;
+	aspectRatio?: { width: number; height: number };
+}
+
+export interface UploadBlobParams {
+	connectionId: number;
+	file: Blob;
+}
+
+export interface UploadBlobResult {
+	blob: AtmosphereBlobRef;
+}
+
 export interface CreatePostParams {
 	connectionId: number;
 	text: string;
 	reply?: { root: AtUriRef; parent: AtUriRef };
 	quote?: AtUriRef;
+	media?: { images: AtmosphereImageEmbed[] };
 }
 
 export interface CreatePostResult {

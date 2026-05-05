@@ -38,6 +38,7 @@ function errorMessageForRepost(
 		case 'quote_disabled':
 		case 'target_unavailable':
 		case 'unknown':
+		case 'blob_decode_failed':
 			return translate( 'Could not save your repost. Please try again.' );
 		default:
 			// Defensive fallback if the AtmosphereError union widens before

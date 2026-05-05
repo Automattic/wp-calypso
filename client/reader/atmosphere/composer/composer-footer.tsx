@@ -2,22 +2,40 @@ import { __experimentalHStack as HStack, Button, Spinner } from '@wordpress/comp
 import { Icon, image } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useRef } from 'react';
+import { useComposer } from './composer-provider';
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES } from './media/constants';
 
 interface Props {
 	graphemeCount: number;
 	onSubmit: () => void;
 	isPending: boolean;
 	limit: number;
+	/**
+	 * Optional override for the Post button's disabled state. When provided,
+	 * fully replaces the footer's internal `isPending || tooLong || empty`
+	 * logic so the parent can extend it (e.g. gating on uploaded media).
+	 */
+	disabled?: boolean;
 }
 
 const WARN_THRESHOLD_REMAINING = 50;
 
-export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: Props ) {
+export function ComposerFooter( {
+	graphemeCount,
+	onSubmit,
+	isPending,
+	limit,
+	disabled: disabledProp,
+}: Props ) {
 	const translate = useTranslate();
+	const { images, addFiles } = useComposer();
+	const inputRef = useRef< HTMLInputElement >( null );
+	const atMax = images.length >= MAX_IMAGES;
 	const remaining = limit - graphemeCount;
 	const tooLong = remaining < 0;
 	const empty = graphemeCount === 0;
-	const disabled = isPending || tooLong || empty;
+	const disabled = disabledProp ?? ( isPending || tooLong || empty );
 
 	const countClass = clsx( 'atmosphere-composer__count', {
 		'is-warn': remaining > 0 && remaining <= WARN_THRESHOLD_REMAINING,
@@ -27,16 +45,42 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 	return (
 		<HStack className="atmosphere-composer__footer" justify="space-between" alignment="center">
 			<div className="atmosphere-composer__footer-left">
-				{ /* Slice 8 wires this up — image / video upload + alt-text + content warnings. */ }
 				<button
 					type="button"
 					className="atmosphere-composer__media"
-					aria-disabled="true"
-					tabIndex={ 0 }
-					aria-label={ translate( 'Add media' ) }
+					aria-disabled={ atMax || undefined }
+					aria-label={
+						atMax
+							? ( translate( 'Maximum %(count)d images', {
+									args: { count: MAX_IMAGES },
+									comment:
+										'Tooltip on the composer "Add media" button when the user has reached the per-post image cap; %(count)d is the maximum number of images allowed on a single post.',
+							  } ) as string )
+							: ( translate( 'Add media' ) as string )
+					}
+					onClick={ () => {
+						if ( ! atMax ) {
+							inputRef.current?.click();
+						}
+					} }
 				>
 					<Icon icon={ image } size={ 18 } />
 				</button>
+				<input
+					ref={ inputRef }
+					type="file"
+					accept={ ACCEPTED_IMAGE_TYPES }
+					multiple
+					hidden
+					onChange={ ( e ) => {
+						const files = Array.from( e.target.files ?? [] );
+						if ( files.length > 0 ) {
+							addFiles( files );
+						}
+						// Reset so picking the same file again still triggers onChange.
+						e.target.value = '';
+					} }
+				/>
 			</div>
 			<HStack spacing={ 2 } className="atmosphere-composer__footer-right">
 				<span

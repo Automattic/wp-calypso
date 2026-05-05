@@ -24,6 +24,7 @@ import {
 	PENDING_REPOST_URI,
 	isValidHashtag,
 	readerAtmosphereKeys,
+	uploadBlob,
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
@@ -46,6 +47,7 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereCreateFollowResponse,
+	AtmosphereEmbed,
 	AtmosphereError,
 	AtmosphereFeedItem,
 	AtmosphereScopedProfile,
@@ -58,6 +60,8 @@ import type {
 	CreatePostParams,
 	CreatePostResult,
 	CreateRepostResult,
+	UploadBlobParams,
+	UploadBlobResult,
 } from '@automattic/api-core';
 
 const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( [
@@ -612,6 +616,27 @@ function patchAtmospherePostCaches(
 		snapshots.push( { key, items: result.items } );
 	}
 	return { snapshots };
+}
+
+/**
+ * Patch the `embed` field of every cached `AtmosphereFeedItem` whose
+ * `uri` matches `postUri`, across all atmosphere queries (timeline,
+ * author-feed, thread, tag-feed). Used by the composer to inject a
+ * local-preview-URL embed onto the just-published placeholder so the
+ * timeline shows the user's just-attached images during the brief
+ * window before the next refetch replaces them with real CDN URLs from
+ * the AppView.
+ *
+ * No rollback is captured: this runs AFTER the mutation succeeds and is
+ * superseded by the next refetch. If no cache entry matches `postUri`
+ * (placeholder evicted, cache cold), the call is a no-op.
+ */
+export function setAtmospherePostEmbed(
+	queryClient: QueryClient,
+	postUri: string,
+	embed: AtmosphereEmbed
+): void {
+	patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( { ...item, embed } ) );
 }
 
 function restoreFeedItems(
@@ -1390,6 +1415,18 @@ export function removePlaceholder< P extends { items: AtmosphereFeedItem[] } >(
 	} );
 	return removed ? { ...data, pages } : data;
 }
+
+/**
+ * Wraps the uploadBlob fetcher. No cache invalidation needed — blob
+ * uploads are a transient step toward createPost. The QueryClient
+ * parameter is kept for symmetry with sibling factories in this module
+ * so future cache touches don't refactor the call sites.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const uploadBlobMutation = ( _queryClient: QueryClient ) =>
+	mutationOptions< UploadBlobResult, AtmosphereError, UploadBlobParams >( {
+		mutationFn: uploadBlob,
+	} );
 
 /**
  * Mutation factory for creating an `app.bsky.feed.post` record.
