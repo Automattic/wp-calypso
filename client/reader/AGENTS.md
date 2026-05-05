@@ -160,6 +160,16 @@ Surfaces without a provider (quoted-post embeds, the shared
 `SocialAuthorProfilePanel` until it forwards `connectionId`, non-social
 cards) fall back to the static count.
 
+The reposts count likewise becomes an interactive `<RepostButton>` when
+the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
+the tree with `<RepostProvider>` carrying a per-protocol adapter hook.
+ATmosphere panels (timeline / thread / tag-feed) wire
+`makeUseAtmosphereRepostAction(connection.id)`; Mastodon panels (timeline
+/ thread / tag-feed) wire `makeUseMastodonRepostAction(connection.id)` and
+render the UK-spelled "Boost" label. Surfaces without a provider
+(quoted-post embeds, the shared `SocialAuthorProfilePanel` until it
+forwards `connectionId`, non-social cards) fall back to the static count.
+
 ### SSR file variants
 
 Some routes have both `.node.js` (server) and `.web.js` (client) file variants for isomorphic rendering. Examples: `discover/index.node.js` / `discover/index.web.js`, `tags/index.node.js` / `tags/index.web.js`. The `.node.js` variant renders placeholder components for SSR, while `.web.js` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required.

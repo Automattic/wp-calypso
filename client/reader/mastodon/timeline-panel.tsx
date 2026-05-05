@@ -11,10 +11,12 @@ import {
 	mapMastodonFeedItemToSocialPost,
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectMastodonError } from './error-projection';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
 import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
+import { makeUseMastodonRepostAction } from './use-mastodon-repost-action';
 import type { MastodonConnection, MastodonFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
@@ -139,28 +141,35 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
 	);
 
+	const useRepostAction = useMemo(
+		() => makeUseMastodonRepostAction( connection.id ),
+		[ connection.id ]
+	);
+
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			<LikeProvider value={ useLikeAction }>
-				<SocialFeedList< SocialPost >
-					items={ items }
-					isPending={ isPending }
-					isError={ isError }
-					error={ projectMastodonError( error ) }
-					hasNextPage={ Boolean( hasNextPage ) }
-					isFetchingNextPage={ isFetchingNextPage }
-					fetchNextPage={ fetchNextPage }
-					refetch={ handleRetry }
-					renderItem={ renderItem }
-					itemKey={ itemKey }
-					emptyTitle={ translate( "You're all caught up." ) }
-					emptyLine={ translate( 'Follow some accounts on Mastodon to see posts here.' ) }
-					emptyActionLabel={ translate( 'Open your Mastodon instance' ) }
-					emptyActionURL={ `https://${ connection.instance }` }
-					protocolLabel="Mastodon"
-					protocolHomeURL="/reader/mastodon"
-					protocolHomeLabel={ translate( 'Back to Mastodon' ) }
-				/>
+				<RepostProvider value={ useRepostAction }>
+					<SocialFeedList< SocialPost >
+						items={ items }
+						isPending={ isPending }
+						isError={ isError }
+						error={ projectMastodonError( error ) }
+						hasNextPage={ Boolean( hasNextPage ) }
+						isFetchingNextPage={ isFetchingNextPage }
+						fetchNextPage={ fetchNextPage }
+						refetch={ handleRetry }
+						renderItem={ renderItem }
+						itemKey={ itemKey }
+						emptyTitle={ translate( "You're all caught up." ) }
+						emptyLine={ translate( 'Follow some accounts on Mastodon to see posts here.' ) }
+						emptyActionLabel={ translate( 'Open your Mastodon instance' ) }
+						emptyActionURL={ `https://${ connection.instance }` }
+						protocolLabel="Mastodon"
+						protocolHomeURL="/reader/mastodon"
+						protocolHomeLabel={ translate( 'Back to Mastodon' ) }
+					/>
+				</RepostProvider>
 			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);

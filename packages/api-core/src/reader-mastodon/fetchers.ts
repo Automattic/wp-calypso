@@ -10,6 +10,8 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonCreateRepostParams,
+	MastodonDeleteRepostParams,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadResponse,
@@ -260,6 +262,32 @@ export async function deleteMastodonLike( params: MastodonDeleteLikeParams ): Pr
 			// today, but a malformed `post.uri` flowing through (mapper bug,
 			// whitespace, slashes) shouldn't smuggle path segments.
 			path: `/reader/mastodon/connections/${ params.connectionId }/likes/${ encodeURIComponent(
+				params.statusId
+			) }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function createMastodonRepost( params: MastodonCreateRepostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ params.connectionId }/reposts`,
+			apiNamespace: NAMESPACE,
+			body: { status_id: params.statusId },
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function deleteMastodonRepost( params: MastodonDeleteRepostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/mastodon/connections/${ params.connectionId }/reposts/${ encodeURIComponent(
 				params.statusId
 			) }`,
 			apiNamespace: NAMESPACE,
