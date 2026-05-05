@@ -3,7 +3,8 @@
  */
 import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { FediverseLandingView } from '../fediverse-landing-view';
 import { getAccountUrl, getConnectUrl } from '../route';
 import type React from 'react';
@@ -22,6 +23,7 @@ jest.mock( '@automattic/calypso-router', () => {
 // Mock @wordpress/components to avoid the full package import.
 jest.mock( '@wordpress/components', () => ( {
 	Spinner: () => null,
+	Button: ( props: React.ButtonHTMLAttributes< HTMLButtonElement > ) => <button { ...props } />,
 } ) );
 
 // Mock @automattic/api-queries entirely.
@@ -150,19 +152,27 @@ describe( 'FediverseLandingView', () => {
 	} );
 
 	// -------------------------------------------------------------------------
-	// 4. Error: redirect to connect page
+	// 4. Error: shows retry UI instead of silently redirecting
 	// -------------------------------------------------------------------------
 
-	it( 'redirects to connect page when query fails', async () => {
+	it( 'shows an error with a retry button when the query fails', async () => {
+		const refetch = jest.fn();
 		mockUseFediverseConnectionsQuery.mockReturnValue( {
 			data: undefined,
 			isPending: false,
 			isError: true,
+			refetch,
 		} );
 
 		renderView();
 
-		await waitFor( () => expect( page.replace ).toHaveBeenCalledWith( getConnectUrl() ) );
+		expect( screen.getByRole( 'alert' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /try again/i } ) ).toBeVisible();
+		expect( page.replace ).not.toHaveBeenCalled();
+
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'button', { name: /try again/i } ) );
+		expect( refetch ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'redirects to connect page even when data is null', async () => {

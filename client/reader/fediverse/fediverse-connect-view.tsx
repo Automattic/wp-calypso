@@ -5,6 +5,7 @@ import {
 	useEnableFediverseUserActorsMutation,
 	useFediverseSiteCapabilitiesQuery,
 } from '@automattic/api-queries';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useReducer } from 'react';
 import { useDispatch } from 'calypso/state';
 import { trackFediverseEvent } from './analytics';
@@ -38,9 +39,16 @@ function isPermissionDenied( err: unknown ): boolean {
 	return false;
 }
 
-export function FediverseConnectView() {
+interface Props {
+	query?: { error?: string };
+}
+
+export function FediverseConnectView( { query }: Props = {} ) {
 	const reduxDispatch = useDispatch();
+	const translate = useTranslate();
 	const [ state, dispatch ] = useReducer( wizardReducer, INITIAL_STATE );
+
+	const callbackError = query?.error;
 
 	// Fire capabilities query whenever blogId is set; the query disables itself when blogId is 0.
 	const capabilitiesQuery = useFediverseSiteCapabilitiesQuery( state.blogId ?? 0 );
@@ -59,8 +67,11 @@ export function FediverseConnectView() {
 			reduxDispatch( trackFediverseEvent( 'CAPABILITY_CHECK', { blog_id: state.blogId } ) );
 			dispatch( { type: 'CAPABILITIES_LOADED', capabilities: capabilitiesQuery.data } );
 		} else if ( capabilitiesQuery.isError ) {
-			const message = errorMessage( capabilitiesQuery.error );
-			dispatch( { type: 'CAPABILITIES_FAILED', message } );
+			dispatch( {
+				type: 'CAPABILITIES_FAILED',
+				message: errorMessage( capabilitiesQuery.error ),
+				permissionDenied: isPermissionDenied( capabilitiesQuery.error ),
+			} );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ state.name, capabilitiesQuery.isSuccess, capabilitiesQuery.isError ] );
@@ -85,7 +96,7 @@ export function FediverseConnectView() {
 						type: 'ENABLE_STEP_FAILED',
 						step: 'feature',
 						message: errorMessage( refetched.error ),
-						permissionDenied: false,
+						permissionDenied: isPermissionDenied( refetched.error ),
 					} );
 				}
 			},
@@ -121,7 +132,7 @@ export function FediverseConnectView() {
 						type: 'ENABLE_STEP_FAILED',
 						step: 'c2s',
 						message: errorMessage( refetched.error ),
-						permissionDenied: false,
+						permissionDenied: isPermissionDenied( refetched.error ),
 					} );
 				}
 			},
@@ -157,7 +168,7 @@ export function FediverseConnectView() {
 						type: 'ENABLE_STEP_FAILED',
 						step: 'user_actors',
 						message: errorMessage( refetched.error ),
-						permissionDenied: false,
+						permissionDenied: isPermissionDenied( refetched.error ),
 					} );
 				}
 			},
@@ -202,15 +213,28 @@ export function FediverseConnectView() {
 		window.location.assign( state.authorizeUrl );
 	}, [ state.name, state.authorizeUrl ] );
 
+	// Surface an error banner when the OAuth callback redirected back here
+	// with `?error=` (provider-denied, state mismatch, expired link, etc.).
+	// Hide it as soon as the user starts a new attempt to avoid stale copy.
+	const showCallbackError = callbackError && state.name === 'PICKING_SITE';
+	const callbackErrorBanner = showCallbackError ? (
+		<p role="alert" className="fediverse-connect__callback-error">
+			{ callbackErrorMessage( callbackError, translate ) }
+		</p>
+	) : null;
+
 	switch ( state.name ) {
 		case 'PICKING_SITE':
 			return (
-				<SitePickerStep
-					onPick={ ( blogId ) => {
-						reduxDispatch( trackFediverseEvent( 'CONNECT_STARTED', { blog_id: blogId } ) );
-						dispatch( { type: 'PICK_SITE', blogId } );
-					} }
-				/>
+				<>
+					{ callbackErrorBanner }
+					<SitePickerStep
+						onPick={ ( blogId ) => {
+							reduxDispatch( trackFediverseEvent( 'CONNECT_STARTED', { blog_id: blogId } ) );
+							dispatch( { type: 'PICK_SITE', blogId } );
+						} }
+					/>
+				</>
 			);
 		case 'CHECKING_CAPABILITIES':
 		case 'CHECKLIST_READY':
@@ -219,7 +243,6 @@ export function FediverseConnectView() {
 		case 'ENABLING_USER_ACTORS':
 		case 'AUTHORIZING':
 		case 'REDIRECTING':
-		case 'COMPLETING':
 			return (
 				<CapabilityChecklist
 					state={ state }
@@ -237,5 +260,29 @@ export function FediverseConnectView() {
 		case 'DONE':
 		default:
 			return null;
+	}
+}
+
+function callbackErrorMessage( kind: string, t: ReturnType< typeof useTranslate > ): string {
+	switch ( kind ) {
+		case 'access_denied':
+			return t( 'You declined the authorization on the site.' ) as string;
+		case 'state_mismatch':
+		case 'state_expired':
+		case 'missing_params':
+			return t(
+				'This authorization link has expired or doesn’t match. Please try connecting again.'
+			) as string;
+		case 'auth_failed':
+		case 'auth_required':
+		case 'forbidden':
+		case 'not_found':
+			return t( 'Connection couldn’t be completed. Please try again.' ) as string;
+		case 'rate_limited':
+			return t( 'Too many attempts. Please wait a moment and try again.' ) as string;
+		case 'upstream_unavailable':
+			return t( 'The Fediverse site is temporarily unavailable. Please try again.' ) as string;
+		default:
+			return t( 'Something went wrong. Please try again.' ) as string;
 	}
 }

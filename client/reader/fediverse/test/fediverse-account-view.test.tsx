@@ -74,6 +74,7 @@ jest.mock( '../composer', () => ( {
 // Mock @wordpress/components to avoid the full package import.
 jest.mock( '@wordpress/components', () => ( {
 	__experimentalVStack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+	Button: ( props: React.ButtonHTMLAttributes< HTMLButtonElement > ) => <button { ...props } />,
 } ) );
 
 // Mock i18n-calypso.

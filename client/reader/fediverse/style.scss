@@ -1,2 +1,6 @@
-// Placeholder for future fediverse-section-level styles. Composer styles
-// live in client/reader/fediverse/composer/style.scss.
+// Composer styles live in client/reader/fediverse/composer/style.scss.
+
+.fediverse-connect__callback-error {
+	color: var( --color-error, #b91c1c );
+	margin-block-end: 1rem;
+}

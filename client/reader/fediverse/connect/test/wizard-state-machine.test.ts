@@ -76,10 +76,22 @@ describe( 'wizardReducer', () => {
 			const next = wizardReducer( state, {
 				type: 'CAPABILITIES_FAILED',
 				message: 'network error',
+				permissionDenied: false,
 			} );
 			expect( next.name ).toBe( 'ERROR' );
 			expect( next.errorStep ).toBe( 'capability_check' );
 			expect( next.errorMessage ).toBe( 'network error' );
+		} );
+
+		it( 'moves to ERROR with errorStep permission_denied when permissionDenied is true', () => {
+			const state: WizardState = { ...INITIAL_STATE, name: 'CHECKING_CAPABILITIES', blogId: 5 };
+			const next = wizardReducer( state, {
+				type: 'CAPABILITIES_FAILED',
+				message: '',
+				permissionDenied: true,
+			} );
+			expect( next.name ).toBe( 'ERROR' );
+			expect( next.errorStep ).toBe( 'permission_denied' );
 		} );
 	} );
 
@@ -255,27 +267,6 @@ describe( 'wizardReducer', () => {
 			expect( next.name ).toBe( 'ERROR' );
 			expect( next.errorStep ).toBe( 'authorize' );
 			expect( next.errorMessage ).toBe( 'auth failed' );
-		} );
-	} );
-
-	describe( 'COMPLETE_DONE', () => {
-		it( 'moves to DONE', () => {
-			const state: WizardState = { ...INITIAL_STATE, name: 'COMPLETING', blogId: 1 };
-			const next = wizardReducer( state, { type: 'COMPLETE_DONE' } );
-			expect( next.name ).toBe( 'DONE' );
-		} );
-	} );
-
-	describe( 'COMPLETE_FAILED', () => {
-		it( 'moves to ERROR with errorStep complete', () => {
-			const state: WizardState = { ...INITIAL_STATE, name: 'COMPLETING', blogId: 1 };
-			const next = wizardReducer( state, {
-				type: 'COMPLETE_FAILED',
-				message: 'completion failed',
-			} );
-			expect( next.name ).toBe( 'ERROR' );
-			expect( next.errorStep ).toBe( 'complete' );
-			expect( next.errorMessage ).toBe( 'completion failed' );
 		} );
 	} );
 

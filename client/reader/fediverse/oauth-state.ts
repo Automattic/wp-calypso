@@ -23,11 +23,14 @@ export function saveOauthState( value: FediverseOauthState ): void {
 	}
 	try {
 		storage.setItem( STORAGE_KEY, JSON.stringify( value ) );
-	} catch {
+	} catch ( err ) {
 		// sessionStorage can throw in private-mode or when the quota is
-		// exceeded. Save is best-effort; if it fails, the callback view
-		// will detect the missing stored state and surface a retry
-		// prompt rather than silently continuing.
+		// exceeded. Save is best-effort; the callback view will detect
+		// the missing stored state and surface a retry prompt. Log so
+		// the failure mode is visible in the browser console rather
+		// than disappearing silently.
+		// eslint-disable-next-line no-console
+		console.error( 'Fediverse OAuth state save failed:', err );
 	}
 }
 
@@ -51,7 +54,9 @@ export function loadOauthState(): FediverseOauthState | null {
 			return parsed as FediverseOauthState;
 		}
 		return null;
-	} catch {
+	} catch ( err ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Fediverse OAuth state load failed:', err );
 		return null;
 	}
 }

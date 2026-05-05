@@ -1,6 +1,6 @@
 import { useFediverseConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -24,14 +24,14 @@ interface Props {
 
 export function FediverseAccountView( { connectionId, tab }: Props ) {
 	const translate = useTranslate();
-	const { data, isPending } = useFediverseConnectionsQuery();
+	const { data, isPending, isError, refetch } = useFediverseConnectionsQuery();
 
 	const connections = data?.connections ?? [];
 	const connection = connections.find( ( c ) => c.id === connectionId ) ?? null;
 	const tabValid = VALID_TABS.has( tab );
 
 	useEffect( () => {
-		if ( isPending ) {
+		if ( isPending || isError ) {
 			return;
 		}
 		if ( ! connection ) {
@@ -41,7 +41,21 @@ export function FediverseAccountView( { connectionId, tab }: Props ) {
 		if ( ! tabValid ) {
 			page.replace( getAccountUrl( connection.id, TIMELINE_TAB ) );
 		}
-	}, [ isPending, connection, tabValid ] );
+	}, [ isPending, isError, connection, tabValid ] );
+
+	if ( isError ) {
+		return (
+			<ReaderMain className="fediverse-view">
+				<DocumentHead title={ translate( 'Fediverse ‹ Reader' ) } />
+				<div role="alert" className="fediverse-account-error">
+					<p>{ translate( "We couldn't load your Fediverse connections." ) }</p>
+					<Button variant="secondary" onClick={ () => refetch() }>
+						{ translate( 'Try again' ) }
+					</Button>
+				</div>
+			</ReaderMain>
+		);
+	}
 
 	if ( ! connection || ! tabValid ) {
 		return (

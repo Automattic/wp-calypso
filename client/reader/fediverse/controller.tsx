@@ -40,7 +40,10 @@ export const fediverseConnect = ( context: Context, next: () => void ) => {
 	if ( ! ensureFediverseEnabled() ) {
 		return;
 	}
-	context.primary = <AsyncLoad require={ loadFediverseConnectView } placeholder={ null } />;
+	const query = context.query as { error?: string };
+	context.primary = (
+		<AsyncLoad require={ loadFediverseConnectView } placeholder={ null } query={ query } />
+	);
 	next();
 };
 

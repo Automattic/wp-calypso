@@ -8,6 +8,12 @@ import type { FediverseSiteCapabilities } from '@automattic/api-core';
 
 export { INITIAL_STATE } from './wizard-types';
 
+const ENABLE_STEP_TO_ERROR_STEP = {
+	feature: 'enable_feature',
+	c2s: 'enable_c2s',
+	user_actors: 'enable_user_actors',
+} as const;
+
 function nextEnableStepFor( caps: FediverseSiteCapabilities ): WizardStateName {
 	if ( ! caps.activitypub_active ) {
 		return 'ENABLING_FEATURE';
@@ -45,7 +51,7 @@ export function wizardReducer( state: WizardState, action: WizardAction ): Wizar
 			return {
 				...state,
 				name: 'ERROR',
-				errorStep: 'capability_check',
+				errorStep: action.permissionDenied ? 'permission_denied' : 'capability_check',
 				errorMessage: action.message,
 			};
 
@@ -69,7 +75,7 @@ export function wizardReducer( state: WizardState, action: WizardAction ): Wizar
 		case 'ENABLE_STEP_FAILED': {
 			const errorStep = action.permissionDenied
 				? 'permission_denied'
-				: ( `enable_${ action.step }` as 'enable_feature' | 'enable_c2s' | 'enable_user_actors' );
+				: ENABLE_STEP_TO_ERROR_STEP[ action.step ];
 			return {
 				...state,
 				name: 'ERROR',
@@ -90,20 +96,6 @@ export function wizardReducer( state: WizardState, action: WizardAction ): Wizar
 				...state,
 				name: 'ERROR',
 				errorStep: 'authorize',
-				errorMessage: action.message,
-			};
-
-		case 'COMPLETE_DONE':
-			return {
-				...state,
-				name: 'DONE',
-			};
-
-		case 'COMPLETE_FAILED':
-			return {
-				...state,
-				name: 'ERROR',
-				errorStep: 'complete',
 				errorMessage: action.message,
 			};
 

@@ -9,7 +9,6 @@ export type WizardStateName =
 	| 'ENABLING_USER_ACTORS'
 	| 'AUTHORIZING'
 	| 'REDIRECTING'
-	| 'COMPLETING'
 	| 'DONE'
 	| 'ERROR';
 
@@ -19,7 +18,6 @@ export type WizardErrorStep =
 	| 'enable_c2s'
 	| 'enable_user_actors'
 	| 'authorize'
-	| 'complete'
 	| 'permission_denied';
 
 export interface WizardState {
@@ -34,7 +32,7 @@ export interface WizardState {
 export type WizardAction =
 	| { type: 'PICK_SITE'; blogId: number }
 	| { type: 'CAPABILITIES_LOADED'; capabilities: FediverseSiteCapabilities }
-	| { type: 'CAPABILITIES_FAILED'; message: string }
+	| { type: 'CAPABILITIES_FAILED'; message: string; permissionDenied: boolean }
 	| { type: 'CONNECT_CLICKED' }
 	| {
 			type: 'ENABLE_STEP_DONE';
@@ -49,8 +47,6 @@ export type WizardAction =
 	  }
 	| { type: 'AUTHORIZE_DONE'; authorizeUrl: string }
 	| { type: 'AUTHORIZE_FAILED'; message: string }
-	| { type: 'COMPLETE_DONE' }
-	| { type: 'COMPLETE_FAILED'; message: string }
 	| { type: 'RETRY_FROM_ERROR' }
 	| { type: 'RESET' };
 

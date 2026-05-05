@@ -61,6 +61,12 @@ export function ComposerModal() {
 						err && typeof err === 'object' && 'kind' in err
 							? String( ( err as { kind: string } ).kind )
 							: 'unknown';
+					// Surface the underlying cause so an unclassified backend
+					// error doesn't disappear into a generic 'unknown' bucket.
+					if ( errorCode === 'unknown' ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Fediverse note post failed (unclassified):', err );
+					}
 					dispatch(
 						trackFediverseEvent( 'NOTE_FAILED', {
 							connection_id: mode.connectionId,
