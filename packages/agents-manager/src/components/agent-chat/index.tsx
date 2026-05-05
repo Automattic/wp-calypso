@@ -247,10 +247,7 @@ export default function AgentChat( {
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
 				{ ( onContextCardAction || onContextCardDismiss ) && (
-					<ContextCards
-						onAction={ onContextCardAction }
-						onDismiss={ onContextCardDismiss }
-					/>
+					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
 				) }
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
