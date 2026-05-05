@@ -27,6 +27,8 @@ export default function QRCodeAppLogin() {
 	const countdown = useCountdown( token?.expires );
 
 	const [ wrongNumber, setWrongNumber ] = useState( false );
+	const [ forcedExpired, setForcedExpired ] = useState( false );
+	const [ approveError, setApproveError ] = useState< string | null >( null );
 	const { mutate: approve, isPending: isApproving } = useApprove();
 
 	const handleGenerate = () => {
@@ -36,6 +38,8 @@ export default function QRCodeAppLogin() {
 
 	const startOver = () => {
 		setWrongNumber( false );
+		setForcedExpired( false );
+		setApproveError( null );
 		resetCreateToken();
 		setHasStarted( false );
 	};
@@ -59,13 +63,20 @@ export default function QRCodeAppLogin() {
 		if ( ! token ) {
 			return;
 		}
+		setApproveError( null );
 		approve(
 			{ token: token.token, chosenNumber },
 			{
 				onError: ( error ) => {
 					if ( error.code === 'wrong_number' ) {
 						setWrongNumber( true );
+						return;
 					}
+					if ( error.code === 'token_expired' || error.code === 'expired' ) {
+						setForcedExpired( true );
+						return;
+					}
+					setApproveError( translate( 'Could not confirm sign-in. Please try again.' ) as string );
 				},
 			}
 		);
@@ -100,7 +111,7 @@ export default function QRCodeAppLogin() {
 		);
 	}
 
-	const isExpired = status === 'expired' || countdown?.hasExpired === true;
+	const isExpired = forcedExpired || status === 'expired' || countdown?.hasExpired === true;
 
 	if ( isExpired ) {
 		return (
@@ -123,12 +134,17 @@ export default function QRCodeAppLogin() {
 		);
 	}
 
+	const connectionLost = isStatusError && (
+		<p className="qr-code-app-login__error">{ translate( 'Lost connection — retrying…' ) }</p>
+	);
+
 	if ( status === 'approved' ) {
 		return (
 			<div className="qr-code-app-login">
 				<p className="qr-code-app-login__status">
 					{ translate( 'Approved — waiting for the app to finish signing in…' ) }
 				</p>
+				{ connectionLost }
 			</div>
 		);
 	}
@@ -144,6 +160,11 @@ export default function QRCodeAppLogin() {
 				<p className="qr-code-app-login__instructions">
 					{ translate( 'Tap the number shown on your phone.' ) }
 				</p>
+				{ approveError && (
+					<Notice status="error" isDismissible={ false }>
+						{ approveError }
+					</Notice>
+				) }
 				<ul className="qr-code-app-login__numbers">
 					{ statusData.numbers.map( ( n ) => (
 						<li key={ n }>
@@ -161,6 +182,7 @@ export default function QRCodeAppLogin() {
 				{ countdown && (
 					<TimerBar remainingMs={ countdown.remainingMs } totalMs={ countdown.totalMs } />
 				) }
+				{ connectionLost }
 			</div>
 		);
 	}
@@ -195,9 +217,7 @@ export default function QRCodeAppLogin() {
 				{ isCreatingToken && (
 					<p className="qr-code-app-login__status">{ translate( 'Generating code…' ) }</p>
 				) }
-				{ isStatusError && (
-					<p className="qr-code-app-login__error">{ translate( 'Lost connection — retrying…' ) }</p>
-				) }
+				{ connectionLost }
 			</div>
 		</div>
 	);
