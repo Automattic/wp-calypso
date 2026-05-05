@@ -81,7 +81,7 @@ export default function SiteSettings( { siteSlug }: { siteSlug: string } ) {
 						<PrimaryDataCenterSettingsSummary site={ site } />
 						<StaticFile404SettingsSummary site={ site } />
 						<CachingSettingsSummary site={ site } />
-						{ isEnabled( 'performance/apm' ) && <ApmSettingsSummary site={ site } /> }
+						{ isEnabled( 'performance/apm' ) ? <ApmSettingsSummary site={ site } /> : null }
 					</SummaryButtonList>
 				</VStack>
 			) }
