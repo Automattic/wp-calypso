@@ -1,4 +1,4 @@
-import { sanitizePostHtml } from 'calypso/reader/social';
+import { sanitizePostHtml } from '../components/post-card/sanitize-post-html';
 import type { ActiveMode } from './composer-provider';
 
 interface Props {
@@ -13,17 +13,17 @@ export function ComposerPinnedContext( { mode }: Props ) {
 	const { previewPost } = mode;
 
 	const authorChip = (
-		<div className="atmosphere-composer__pinned-author">
+		<div className="social-composer__pinned-author">
 			<strong>{ previewPost.author.display_name }</strong>
-			<span className="atmosphere-composer__pinned-handle">{ `@${ previewPost.author.handle }` }</span>
+			<span className="social-composer__pinned-handle">{ `@${ previewPost.author.handle }` }</span>
 		</div>
 	);
 
 	if ( ! previewPost.html ) {
 		return (
-			<div className="atmosphere-composer__pinned-context">
+			<div className="social-composer__pinned-context">
 				{ authorChip }
-				<p className="atmosphere-composer__pinned-snippet">{ previewPost.text }</p>
+				<p className="social-composer__pinned-snippet">{ previewPost.text }</p>
 			</div>
 		);
 	}
@@ -34,10 +34,10 @@ export function ComposerPinnedContext( { mode }: Props ) {
 	const __html = sanitizePostHtml( previewPost.html );
 
 	return (
-		<div className="atmosphere-composer__pinned-context">
+		<div className="social-composer__pinned-context">
 			{ authorChip }
 			<div
-				className="atmosphere-composer__pinned-snippet"
+				className="social-composer__pinned-snippet"
 				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={ { __html } }
 			/>

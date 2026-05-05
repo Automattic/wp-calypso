@@ -7,17 +7,28 @@ import {
 	useRef,
 	useState,
 } from 'react';
-import type { AtUriRef } from '@automattic/api-core';
+import { ComposerConfigProvider, type ComposerConfig } from './composer-config';
 import type { ReactNode } from 'react';
 
 /**
+ * Generic strong-ref for the post being replied to / quoted. Atmosphere
+ * supplies `{ uri, cid }` (AT-Proto strong-ref). Mastodon supplies
+ * `{ uri }` where `uri` is the instance-local status id — `cid` is
+ * unused. The generic shape lets the composer pass a parent reference
+ * through to a per-protocol `buildParams` mapper without leaking
+ * AT-Proto-specific terminology into the shared layer.
+ */
+export interface ComposerParentRef {
+	uri: string;
+	cid?: string;
+}
+
+/**
  * Structural shape consumed by `<ComposerPinnedContext>`. Both
- * `AtmosphereFeedItem` (per-protocol) and `SocialPost` (protocol-agnostic
- * mapped shape) satisfy this — we only need the four fields the pinned
- * preview reads (`text`, `html`, `author.handle`, `author.display_name`)
- * plus the post identity (`uri`, optional `cid`) that callers have on
- * hand. Kept structural so the per-protocol panels can hand us a
- * `SocialPost` directly without re-deriving an `AtmosphereFeedItem`.
+ * per-protocol feed items and the shared `SocialPost` shape satisfy
+ * this — the pinned preview only reads four fields plus the post
+ * identity. Keeping it structural means callers can pass a `SocialPost`
+ * directly without re-deriving a protocol-specific item.
  */
 export interface PreviewPost {
 	uri: string;
@@ -32,18 +43,22 @@ export interface PreviewPost {
 
 /**
  * Analytics dimension carried on the standalone variant of `ComposerMode`.
- * Populates the `entry_point` Tracks property on `_compose_opened`. The
- * snake_case is intentional — it matches the Tracks property name.
+ * Populates the `entry_point` Tracks property on `_compose_opened`.
  */
 export type ComposerEntryPoint = 'timeline_inline' | 'profile_inline' | 'fab';
 
 export type ComposerMode =
-	| { kind: 'reply'; root: AtUriRef; parent: AtUriRef; previewPost: PreviewPost }
+	| {
+			kind: 'reply';
+			root: ComposerParentRef;
+			parent: ComposerParentRef;
+			previewPost: PreviewPost;
+	  }
 	| {
 			kind: 'quote';
-			quote: AtUriRef;
+			quote: ComposerParentRef;
 			previewPost: PreviewPost;
-			replyTo?: { root: AtUriRef; parent: AtUriRef };
+			replyTo?: { root: ComposerParentRef; parent: ComposerParentRef };
 	  }
 	| { kind: 'standalone'; entry_point: ComposerEntryPoint };
 
@@ -57,12 +72,17 @@ interface ComposerContextValue {
 
 const ComposerContext = createContext< ComposerContextValue | null >( null );
 
-interface Props {
+interface Props< TError, TParams, TResult > {
 	connectionId: number;
+	config: ComposerConfig< TError, TParams, TResult >;
 	children: ReactNode;
 }
 
-export function ComposerProvider( { connectionId, children }: Props ) {
+export function ComposerProvider< TError, TParams, TResult >( {
+	connectionId,
+	config,
+	children,
+}: Props< TError, TParams, TResult > ) {
 	const [ mode, setMode ] = useState< ActiveMode | null >( null );
 	const triggerRef = useRef< HTMLElement | null >( null );
 	const wasOpenRef = useRef( false );
@@ -72,7 +92,6 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 			wasOpenRef.current = true;
 			return;
 		}
-		// mode just transitioned from non-null to null — restore focus.
 		if ( wasOpenRef.current ) {
 			wasOpenRef.current = false;
 			triggerRef.current?.focus();
@@ -81,10 +100,13 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 
 	const openComposer = useCallback(
 		( next: ComposerMode ) => {
+			if ( ! config.supportedModes.includes( next.kind ) ) {
+				return;
+			}
 			triggerRef.current = document.activeElement as HTMLElement | null;
 			setMode( { ...next, connectionId } );
 		},
-		[ connectionId ]
+		[ connectionId, config.supportedModes ]
 	);
 
 	const closeComposer = useCallback( () => {
@@ -96,7 +118,11 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 		[ mode, openComposer, closeComposer ]
 	);
 
-	return <ComposerContext.Provider value={ value }>{ children }</ComposerContext.Provider>;
+	return (
+		<ComposerContext.Provider value={ value }>
+			<ComposerConfigProvider value={ config }>{ children }</ComposerConfigProvider>
+		</ComposerContext.Provider>
+	);
 }
 
 export function useComposer(): ComposerContextValue {

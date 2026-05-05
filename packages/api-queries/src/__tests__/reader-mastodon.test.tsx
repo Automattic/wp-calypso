@@ -1,8 +1,9 @@
 import { readerMastodonKeys } from '@automattic/api-core';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	createMastodonPostMutation,
 	useAuthorizeMastodonConnectionMutation,
 	useCompleteMastodonConnectionMutation,
 	useMastodonAuthorFeedInfiniteQuery,
@@ -12,6 +13,12 @@ import {
 	useMastodonTagFeedInfiniteQuery,
 	useMastodonTimelineInfiniteQuery,
 } from '../reader-mastodon';
+import type {
+	MastodonFeedItem,
+	MastodonThreadResponse,
+	MastodonTimelinePage,
+} from '@automattic/api-core';
+import type { InfiniteData } from '@tanstack/react-query';
 
 const BASE = 'https://public-api.wordpress.com';
 function makeWrapper( c: QueryClient ) {
@@ -329,5 +336,264 @@ describe( 'useMastodonTagFeedInfiniteQuery', () => {
 			wrapper: createWrapper(),
 		} );
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+} );
+
+function makeMastodonFeedItem( overrides: Partial< MastodonFeedItem > = {} ): MastodonFeedItem {
+	return {
+		id: '1',
+		url: 'https://mastodon.social/@alice/1',
+		created_at: '2026-01-01T00:00:00Z',
+		account: {
+			id: '1',
+			username: 'alice',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+		},
+		content: '<p>hi</p>',
+		spoiler_text: '',
+		sensitive: false,
+		language: null,
+		in_reply_to_id: null,
+		in_reply_to_account_id: null,
+		boost: null,
+		media: [],
+		counts: { replies: 0, boosts: 0, favourites: 0 },
+		...overrides,
+	};
+}
+
+function seedTimelineWithParent(
+	client: QueryClient,
+	connectionId: number,
+	parentId: string,
+	parentReplies: number
+): InfiniteData< MastodonTimelinePage > {
+	const data: InfiniteData< MastodonTimelinePage > = {
+		pages: [
+			{
+				items: [
+					makeMastodonFeedItem( {
+						id: parentId,
+						counts: { replies: parentReplies, boosts: 0, favourites: 0 },
+					} ),
+				],
+				cursor: null,
+			},
+		],
+		pageParams: [ undefined ],
+	};
+	client.setQueryData( readerMastodonKeys.timeline( connectionId ), data );
+	return data;
+}
+
+describe( 'createMastodonPostMutation', () => {
+	const connectionId = 42;
+	const parentId = '108020';
+
+	afterEach( () => nock.cleanAll() );
+
+	it( 'POSTs status to /reader/mastodon/connections/:id/statuses (standalone)', async () => {
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses`, {
+				status: 'hello world',
+			} )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: null,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( { connectionId, status: 'hello world' } );
+		} );
+
+		expect( result.current.data ).toEqual( {
+			id: '999',
+			url: 'https://mastodon.social/@me/999',
+			in_reply_to_id: null,
+		} );
+	} );
+
+	it( 'POSTs status + in_reply_to_id when replying', async () => {
+		const scope = nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses`, {
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: parentId,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( {
+				connectionId,
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} );
+		} );
+
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'optimistically bumps counts.replies on the parent post in the timeline cache', async () => {
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		seedTimelineWithParent( client, connectionId, parentId, 3 );
+
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.delay( 50 )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: parentId,
+			} );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		let promise: Promise< unknown > = Promise.resolve();
+		await act( async () => {
+			promise = result.current.mutateAsync( {
+				connectionId,
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} );
+			await Promise.resolve();
+		} );
+
+		await waitFor( () => {
+			const timeline = client.getQueryData< InfiniteData< MastodonTimelinePage > >(
+				readerMastodonKeys.timeline( connectionId )
+			);
+			expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 4 );
+		} );
+
+		await promise;
+	} );
+
+	it( 'also bumps counts.replies on the parent inside the thread cache', async () => {
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const initial: MastodonThreadResponse = {
+			thread: {
+				type: 'post',
+				post: makeMastodonFeedItem( {
+					id: parentId,
+					counts: { replies: 1, boosts: 0, favourites: 0 },
+				} ),
+				parent: null,
+				replies: [],
+			},
+		};
+		client.setQueryData( readerMastodonKeys.thread( connectionId, parentId ), initial );
+
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.delay( 50 )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: parentId,
+			} );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		let promise: Promise< unknown > = Promise.resolve();
+		await act( async () => {
+			promise = result.current.mutateAsync( {
+				connectionId,
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} );
+			await Promise.resolve();
+		} );
+
+		await waitFor( () => {
+			const thread = client.getQueryData< MastodonThreadResponse >(
+				readerMastodonKeys.thread( connectionId, parentId )
+			);
+			if ( thread?.thread.type !== 'post' ) {
+				throw new Error( 'expected thread root to be a post node' );
+			}
+			expect( thread.thread.post.counts.replies ).toBe( 2 );
+		} );
+
+		await promise;
+	} );
+
+	it( 'restores the parent counts snapshot on error', async () => {
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		seedTimelineWithParent( client, connectionId, parentId, 3 );
+
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.reply( 500, { error: 'mastodon_upstream_unavailable' } );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await expect(
+				result.current.mutateAsync( {
+					connectionId,
+					status: 'a reply',
+					in_reply_to_id: parentId,
+				} )
+			).rejects.toBeTruthy();
+		} );
+
+		const timeline = client.getQueryData< InfiniteData< MastodonTimelinePage > >(
+			readerMastodonKeys.timeline( connectionId )
+		);
+		expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 3 );
+	} );
+
+	it( 'invalidates the timeline query on success', async () => {
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: null,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( { connectionId, status: 'standalone' } );
+		} );
+
+		expect(
+			invalidateSpy.mock.calls.some( ( [ filters ] ) => {
+				const queryKey = ( filters as { queryKey?: readonly unknown[] } )?.queryKey;
+				return (
+					Array.isArray( queryKey ) &&
+					JSON.stringify( queryKey ) ===
+						JSON.stringify( readerMastodonKeys.timeline( connectionId ) )
+				);
+			} )
+		).toBe( true );
 	} );
 } );

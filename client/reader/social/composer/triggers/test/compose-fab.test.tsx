@@ -9,6 +9,7 @@ import {
 	type ActiveMode,
 	type ComposerMode,
 } from '../../composer-provider';
+import { testComposerConfig } from '../../test-config';
 import { ComposeFab } from '../compose-fab';
 
 function Spy( { onMode }: { onMode: ( m: ActiveMode ) => void } ) {
@@ -24,7 +25,7 @@ describe( '<ComposeFab>', () => {
 		const user = userEvent.setup();
 		const onMode = jest.fn();
 		render(
-			<ComposerProvider connectionId={ 7 }>
+			<ComposerProvider connectionId={ 7 } config={ testComposerConfig }>
 				<ComposeFab />
 				<Spy onMode={ onMode } />
 			</ComposerProvider>
@@ -50,7 +51,7 @@ describe( '<ComposeFab>', () => {
 		}
 
 		render(
-			<ComposerProvider connectionId={ 7 }>
+			<ComposerProvider connectionId={ 7 } config={ testComposerConfig }>
 				<ComposeFab />
 				<Trigger />
 			</ComposerProvider>

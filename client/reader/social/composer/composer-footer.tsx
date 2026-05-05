@@ -19,18 +19,18 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 	const empty = graphemeCount === 0;
 	const disabled = isPending || tooLong || empty;
 
-	const countClass = clsx( 'atmosphere-composer__count', {
+	const countClass = clsx( 'social-composer__count', {
 		'is-warn': remaining > 0 && remaining <= WARN_THRESHOLD_REMAINING,
 		'is-over': remaining <= 0,
 	} );
 
 	return (
-		<HStack className="atmosphere-composer__footer" justify="space-between" alignment="center">
-			<div className="atmosphere-composer__footer-left">
+		<HStack className="social-composer__footer" justify="space-between" alignment="center">
+			<div className="social-composer__footer-left">
 				{ /* Slice 8 wires this up — image / video upload + alt-text + content warnings. */ }
 				<button
 					type="button"
-					className="atmosphere-composer__media"
+					className="social-composer__media"
 					aria-disabled="true"
 					tabIndex={ 0 }
 					aria-label={ translate( 'Add media' ) }
@@ -38,9 +38,9 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 					<Icon icon={ image } size={ 18 } />
 				</button>
 			</div>
-			<HStack spacing={ 2 } className="atmosphere-composer__footer-right">
+			<HStack spacing={ 2 } className="social-composer__footer-right">
 				<span
-					id="atmosphere-composer-count"
+					id="social-composer-count"
 					className={ countClass }
 					// Only announce when the user is near or past the limit so
 					// screen readers don't read out the count on every keystroke.

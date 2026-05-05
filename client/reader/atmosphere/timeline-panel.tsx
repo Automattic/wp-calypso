@@ -10,9 +10,8 @@ import {
 	SocialPostCard,
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
+import { useOptionalComposer, TimelineComposePill } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { useOptionalComposer } from './composer';
-import { TimelineComposePill } from './composer/triggers/timeline-compose-pill';
 import { projectAtmosphereError } from './error-projection';
 import {
 	getProfileUrl as buildProfileUrl,
@@ -197,8 +196,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			{ composer && (
 				<TimelineComposePill
-					connection={ connection }
-					avatar={ connectionDetails?.avatar }
+					avatar={ connectionDetails?.avatar ?? connection.avatar }
 					entryPoint="timeline_inline"
 				/>
 			) }

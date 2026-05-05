@@ -7,8 +7,8 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
 import { SocialAnalyticsProvider } from 'calypso/reader/social';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { useOptionalComposer } from './composer';
 import {
 	getProfileUrl as buildProfileUrl,
 	getTagFeedUrl as buildTagUrl,

@@ -4,16 +4,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComposerProvider, useComposer, type ActiveMode } from '../../composer-provider';
+import { testComposerConfig } from '../../test-config';
 import { TimelineComposePill } from '../timeline-compose-pill';
-import type { AtmosphereConnection } from '@automattic/api-core';
-
-const fakeConnection: AtmosphereConnection = {
-	id: 42,
-	did: 'did:plc:alice',
-	handle: 'alice.bsky.social',
-	display_name: 'Alice',
-	avatar: 'https://example.test/a.jpg',
-};
 
 function Spy( { onMode }: { onMode: ( m: ActiveMode ) => void } ) {
 	const { mode } = useComposer();
@@ -29,8 +21,8 @@ const PLACEHOLDER_RE = /what['’]s up/i;
 describe( '<TimelineComposePill>', () => {
 	it( 'renders the avatar, placeholder, and is a single button', () => {
 		render(
-			<ComposerProvider connectionId={ 42 }>
-				<TimelineComposePill connection={ fakeConnection } entryPoint="timeline_inline" />
+			<ComposerProvider connectionId={ 42 } config={ testComposerConfig }>
+				<TimelineComposePill avatar="https://example.test/a.jpg" entryPoint="timeline_inline" />
 			</ComposerProvider>
 		);
 
@@ -45,8 +37,8 @@ describe( '<TimelineComposePill>', () => {
 		const user = userEvent.setup();
 		const onMode = jest.fn();
 		render(
-			<ComposerProvider connectionId={ 42 }>
-				<TimelineComposePill connection={ fakeConnection } entryPoint="timeline_inline" />
+			<ComposerProvider connectionId={ 42 } config={ testComposerConfig }>
+				<TimelineComposePill avatar="https://example.test/a.jpg" entryPoint="timeline_inline" />
 				<Spy onMode={ onMode } />
 			</ComposerProvider>
 		);
@@ -66,8 +58,8 @@ describe( '<TimelineComposePill>', () => {
 		const user = userEvent.setup();
 		const onMode = jest.fn();
 		render(
-			<ComposerProvider connectionId={ 42 }>
-				<TimelineComposePill connection={ fakeConnection } entryPoint="profile_inline" />
+			<ComposerProvider connectionId={ 42 } config={ testComposerConfig }>
+				<TimelineComposePill avatar={ null } entryPoint="profile_inline" />
 				<Spy onMode={ onMode } />
 			</ComposerProvider>
 		);
@@ -81,5 +73,17 @@ describe( '<TimelineComposePill>', () => {
 				connectionId: 42,
 			} )
 		);
+	} );
+
+	it( 'renders the avatar placeholder when avatar is null', () => {
+		render(
+			<ComposerProvider connectionId={ 42 } config={ testComposerConfig }>
+				<TimelineComposePill avatar={ null } entryPoint="timeline_inline" />
+			</ComposerProvider>
+		);
+		// Placeholder span carries the placeholder modifier class.
+		expect(
+			document.querySelector( '.social-compose-pill__avatar--placeholder' )
+		).toBeInTheDocument();
 	} );
 } );

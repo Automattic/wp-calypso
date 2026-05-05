@@ -21,10 +21,10 @@ import {
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
-import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl } from './route';
