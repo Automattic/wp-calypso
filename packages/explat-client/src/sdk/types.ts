@@ -1,9 +1,3 @@
-// ExPlat SDK — shared types for the pure feature-flag evaluator.
-//
-// Mirrors the PHP reference in WPCOM. Cross-runtime
-// parity is gated by test/cases.json; any change to a payload shape here must
-// be mirrored in PHP and exercised by a vector.
-
 export type Range = [ number, number ];
 
 export type FeatureValue =
