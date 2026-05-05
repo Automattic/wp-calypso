@@ -304,10 +304,19 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		height: auto;
 	}
 
-	// WP.com brand serif for the main title
+	// WP.com brand serif for the main title. Capped at 2.25rem on large
+	// screens (the BrandHeader default escalates to 2.75rem at break-large,
+	// which made "Connect your account" wrap inside the 520px column) and
+	// pinned to a single line — mobile keeps the 2rem default, which fits
+	// comfortably in any common viewport.
 	.connect-screen-brand-header__title {
 		font-family: $brand-serif;
 		color: var( --color-neutral-100 );
+		white-space: nowrap;
+
+		@include break-large {
+			font-size: 2.25rem;
+		}
 	}
 
 	// Dotcom-prominent description treatment, matching the login page's
