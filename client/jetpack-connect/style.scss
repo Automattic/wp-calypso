@@ -305,14 +305,16 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	}
 
 	// WP.com brand serif for the main title. Capped at 2.25rem on large
-	// screens (the BrandHeader default escalates to 2.75rem at break-large,
-	// which made "Connect your account" wrap inside the 520px column) and
-	// pinned to a single line — mobile keeps the 2rem default, which fits
-	// comfortably in any common viewport.
+	// screens — the BrandHeader default escalates to 2.75rem at break-large,
+	// which made the English "Connect your account" / "Create your account"
+	// wrap inside the 520px column. With the cap, English fits on one line
+	// without forcing it; longer translations (e.g. Russian, German) still
+	// wrap naturally rather than overflowing the viewport on narrow screens.
+	// `text-wrap: balance` keeps any wrap that does happen visually balanced.
 	.connect-screen-brand-header__title {
 		font-family: $brand-serif;
 		color: var( --color-neutral-100 );
-		white-space: nowrap;
+		text-wrap: balance;
 
 		@include break-large {
 			font-size: 2.25rem;
