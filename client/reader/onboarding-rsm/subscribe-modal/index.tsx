@@ -237,12 +237,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		[ selectedSite ]
 	);
 
-	const formatUrl = ( url: string ): string => {
-		return url
-			.replace( /^(https?:\/\/)?(www\.)?/, '' ) // Remove protocol and www
-			.replace( /\/$/, '' ); // Remove trailing slash
-	};
-
 	const handleClose = useCallback( () => {
 		dispatch( requestFollows() );
 		dispatch( clearStream( { streamKey: 'following' } ) );
@@ -335,7 +329,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 											<div className="subscribe-modal__preview-stream-header">
 												<div className="subscribe-modal__preview-site">
 													<SiteIcon size={ 24 } iconUrl={ selectedFeedIconUrl } />
-													<h3>{ formatUrl( selectedSite.site_URL ) }</h3>
 												</div>
 												<ReaderFollowButton
 													siteUrl={ selectedSite.site_URL }
