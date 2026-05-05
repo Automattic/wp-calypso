@@ -1,3 +1,10 @@
+/*
+ * The FNV-1a implementations below are derived from GrowthBook's open-source
+ * SDK (https://github.com/growthbook/growthbook), used under the MIT License.
+ * Copyright (c) 2025 GrowthBook, Inc. Full MIT license text in
+ * `THIRD_PARTY_NOTICES.md` at the package root.
+ */
+
 /**
  * FNV-1a 32-bit hash over JavaScript UTF-16 code units. Returns a uint32.
  *

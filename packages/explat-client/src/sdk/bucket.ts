@@ -1,3 +1,11 @@
+/*
+ * `getEqualWeights`, `getBucketRanges`, `inRange`, and `chooseVariation` below
+ * are derived from GrowthBook's open-source SDK
+ * (https://github.com/growthbook/growthbook), used under the MIT License.
+ * Copyright (c) 2025 GrowthBook, Inc. Full MIT license text in
+ * `THIRD_PARTY_NOTICES.md` at the package root.
+ */
+
 import type { ExperimentVariation, Range } from './types';
 
 export function getEqualWeights( n: number ): number[] {
