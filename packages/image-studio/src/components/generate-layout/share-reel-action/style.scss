@@ -1,9 +1,15 @@
 .image-studio-share-reel-action {
-	// Sits at the bottom of the generate-layout column, right-aligned so it
-	// hugs the inner edge of the modal just above the chat box.
+	// Sits just above the chat box (footer). Width-matched and centered to
+	// the same 600px column the .image-studio-footer uses, so the button's
+	// right edge aligns with the chat input's right edge — not the modal's
+	// far edge.
 	display: flex;
 	justify-content: flex-end;
 	flex: 0 0 auto;
+	width: 100%;
+	max-width: 600px;
+	align-self: center;
+	padding: 0 16px;
 	margin-top: 8px;
 
 	&__button {
