@@ -98,7 +98,7 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 				<p>{ message }</p>
 			</HostingHero>
 			{ recoveryErrors.length > 0 && (
-				<VStack spacing={ 4 } className="critical-error-overview__recovery-errors">
+				<VStack spacing={ 0 } className="critical-error-overview__recovery-errors">
 					{ recoveryErrors.map( ( error, index ) => (
 						<RecoveryErrorNotice
 							key={ `${ error.kind }-${ error.slug }-${ index }` }
@@ -107,60 +107,65 @@ export const CriticalErrorOverview = ( { siteSlug }: { siteSlug: string } ) => {
 					) ) }
 				</VStack>
 			) }
-			<Card className="critical-error-overview__card">
-				<CardBody>
-					<div className="critical-error-overview__items">
-						{ isAdmin && (
-							<Item icon={ envelope }>
+			<VStack spacing={ 3 } className="critical-error-overview__next-steps">
+				<SectionHeader level={ 3 } title={ translate( 'What you can try next' ) } />
+				<Card>
+					<CardBody>
+						<div className="critical-error-overview__items">
+							{ isAdmin && (
+								<Item icon={ envelope }>
+									{ createInterpolateElement(
+										// translators: <q/> is the search phrase to use in the email inbox.
+										translate(
+											'Search your admin email inbox for the keyword <q/> for troubleshooting instructions.'
+										) as string,
+										{ q: <strong>{ translate( 'critical error' ) }</strong> }
+									) }
+								</Item>
+							) }
+							{ canAccessPhpLogs && (
+								<Item icon={ formatListBullets }>
+									{ createInterpolateElement(
+										// translators: <phpLogsLink/> is a link to the PHP logs page with the text "Review the PHP logs"
+										translate(
+											'<phpLogsLink/> to locate any fatal errors on your site.'
+										) as string,
+										{
+											phpLogsLink: (
+												<a
+													href={ addQueryArgs( `/site-logs/${ siteSlug }/php`, {
+														severity: 'Fatal error',
+													} ) }
+												>
+													{ translate( 'Review the PHP logs' ) }
+												</a>
+											),
+										}
+									) }
+								</Item>
+							) }
+							<Item icon={ help }>
 								{ createInterpolateElement(
-									// translators: <q/> is the search phrase to use in the email inbox.
 									translate(
-										'Search your admin email inbox for the keyword <q/> for troubleshooting instructions.'
+										'<button>Contact WordPress.com support</button> and we will help you get back online.'
 									) as string,
-									{ q: <strong>{ translate( 'critical error' ) }</strong> }
-								) }
-							</Item>
-						) }
-						{ canAccessPhpLogs && (
-							<Item icon={ formatListBullets }>
-								{ createInterpolateElement(
-									// translators: <phpLogsLink/> is a link to the PHP logs page with the text "Review the PHP logs"
-									translate( '<phpLogsLink/> to locate any fatal errors on your site.' ) as string,
 									{
-										phpLogsLink: (
-											<a
-												href={ addQueryArgs( `/site-logs/${ siteSlug }/php`, {
-													severity: 'Fatal error',
-												} ) }
-											>
-												{ translate( 'Review the PHP logs' ) }
-											</a>
+										button: (
+											<Button
+												variant="link"
+												onClick={ () => {
+													recordTracksEvent( 'calypso_critical_error_contact_support_click' );
+													setShowHelpCenter( true );
+												} }
+											/>
 										),
 									}
 								) }
 							</Item>
-						) }
-						<Item icon={ help }>
-							{ createInterpolateElement(
-								translate(
-									'<button>Contact WordPress.com support</button> and we will help you get back online.'
-								) as string,
-								{
-									button: (
-										<Button
-											variant="link"
-											onClick={ () => {
-												recordTracksEvent( 'calypso_critical_error_contact_support_click' );
-												setShowHelpCenter( true );
-											} }
-										/>
-									),
-								}
-							) }
-						</Item>
-					</div>
-				</CardBody>
-			</Card>
+						</div>
+					</CardBody>
+				</Card>
+			</VStack>
 		</div>
 	);
 };
