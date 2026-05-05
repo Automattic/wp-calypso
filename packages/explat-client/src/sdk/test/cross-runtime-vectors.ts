@@ -1,9 +1,3 @@
-// Cross-runtime parity gate. Same vectors `cases.json` runs against the PHP
-// SDK in wpcom — if either runtime drifts, this suite fails.
-//
-// The runtime types here are intentionally loose. cases.json is a black box of
-// shapes and we're asserting behavior, not the schema.
-
 import { getBucketRanges, chooseVariation } from '../bucket';
 import { evalCondition } from '../condition';
 import { evalFeature } from '../evaluator';
