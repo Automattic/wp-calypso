@@ -103,7 +103,6 @@ export default async function upiProcessor(
 		paymentMethodId,
 		{
 			...submitData,
-			name: submitData.name ?? '',
 			successUrl,
 			cancelUrl,
 			couponId: responseCart.coupon,
@@ -221,7 +220,7 @@ async function getRedirectUrl(
 	if ( message && typeof message === 'object' && 'setup_intent_client_secret' in message ) {
 		return confirmUpiSetupIntent(
 			String( ( message as { setup_intent_client_secret: string } ).setup_intent_client_secret ),
-			submitData.name ?? '',
+			submitData.name,
 			options,
 			genericErrorMessage
 		);
@@ -345,9 +344,17 @@ function displayModal( {
 }
 
 function isValidTransactionData( submitData: unknown ): submitData is StripeUpiTransactionRequest {
-	const data = submitData as StripeUpiTransactionRequest;
-	if ( ! data ) {
-		throw new Error( 'Transaction requires data and none was provided' );
+	if ( ! submitData || typeof submitData !== 'object' ) {
+		return false;
 	}
-	return true;
+	const data = submitData as StripeUpiTransactionRequest;
+	return (
+		typeof data.name === 'string' &&
+		typeof data.address === 'string' &&
+		typeof data.streetNumber === 'string' &&
+		typeof data.city === 'string' &&
+		typeof data.state === 'string' &&
+		typeof data.postalCode === 'string' &&
+		typeof data.country === 'string'
+	);
 }
