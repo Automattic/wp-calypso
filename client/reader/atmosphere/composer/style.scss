@@ -245,6 +245,25 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	color: var(--studio-gray-30, #8c8f94);
+	transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
+
+	// `@wordpress/icons` SVGs don't all inherit `currentColor` for fill;
+	// match the FAB / media button pattern so the icon tracks button color.
+	svg {
+		fill: currentColor;
+	}
+
+	&:hover {
+		color: var(--studio-blue-50, #3858e9);
+		border-color: var(--studio-blue-50, #3858e9);
+		background-color: var(--studio-blue-0, #f0f6fc);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--studio-blue-50, #3858e9);
+		outline-offset: 2px;
+	}
 }
 
 .atmosphere-composer__image-remove {
