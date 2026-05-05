@@ -9,6 +9,10 @@ import { render } from '../../../../test-utils';
 import SitePerformanceBackend from '../index';
 import type { Site } from '@automattic/api-core';
 
+jest.mock( '@automattic/charts', () => ( {
+	AreaChart: () => null,
+} ) );
+
 const siteSlug = 'test-site.wordpress.com';
 const siteId = 1;
 
