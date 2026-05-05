@@ -1,8 +1,4 @@
-import {
-	makeErrorResponse,
-	makeRedirectResponse,
-	makeSuccessResponse,
-} from '@automattic/composite-checkout';
+import { makeErrorResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import { createElement } from 'react';
 import { Root, createRoot } from 'react-dom/client';
 import { PurchaseOrderStatus, fetchPurchaseOrder } from '../hooks/use-purchase-order';
@@ -149,14 +145,6 @@ export default async function upiProcessor(
 				genericErrorMessage
 			);
 
-			const pendingPageUrl = addUrlToPendingPageRedirect( thankYouUrl, {
-				siteSlug,
-				fromSiteSlug,
-				fromExternalCheckout,
-				orderId: response.order_id,
-				urlType: 'absolute',
-			} );
-
 			let isModalActive = true;
 			let explicitClosureMessage: string | undefined;
 			displayModal( {
@@ -178,11 +166,7 @@ export default async function upiProcessor(
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
 				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
 			}
-			if ( orderStatus === 'payment-confirmed' ) {
-				safeDismissModal();
-				return makeRedirectResponse( pendingPageUrl );
-			}
-			if ( orderStatus !== 'success' ) {
+			if ( orderStatus !== 'success' && orderStatus !== 'payment-confirmed' ) {
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
 
