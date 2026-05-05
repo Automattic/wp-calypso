@@ -64,7 +64,9 @@ export function ImageStudioNotice() {
 						className: `image-studio-notice-${ notice.type }`,
 						id: notice.id,
 						content: notice.content,
-						explicitDismiss: notice.type === 'error',
+						// Errors and any notice carrying an action persist until dismissed —
+						// 10s isn't enough time to read + decide whether to click the action.
+						explicitDismiss: notice.type === 'error' || ( notice.actions?.length ?? 0 ) > 0,
 						...( notice.actions?.length && {
 							actions: notice.actions.map( ( action ) => ( {
 								label: action.label,
