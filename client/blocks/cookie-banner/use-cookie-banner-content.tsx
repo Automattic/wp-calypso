@@ -1,7 +1,7 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { isServer } from '.';
+import { isServer } from './is-server';
 import type { CookieBannerProps } from '@automattic/privacy-toolset';
 import type { PropsWithChildren } from 'react';
 

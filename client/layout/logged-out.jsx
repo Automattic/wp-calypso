@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
+import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner/ssr';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
