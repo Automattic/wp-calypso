@@ -105,6 +105,7 @@ beforeEach( () => {
 	mockFindBlockElement.mockReset();
 	mockFindBlockListLayout.mockReset();
 	mockUndoBlockEdit.mockReset();
+	mockUndoBlockEdit.mockReturnValue( true );
 	mockSelectBlock.mockReset();
 	mockBlocks = blocks;
 } );
@@ -333,6 +334,37 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		);
 	} );
 
+	it( 'keeps the accepted row and snapshot when undoBlockEdit fails', async () => {
+		mockApplyReviewEdit.mockResolvedValueOnce( {
+			success: true,
+			contentBefore: 'The council voted last Tuesday on the procedural matter.',
+		} );
+		mockUndoBlockEdit.mockReturnValueOnce( false ).mockReturnValueOnce( true );
+
+		render( <ReviewMediation { ...editsPayload } /> );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+		} );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
+		} );
+
+		fireEvent.click( screen.getByText( 'Undo' ) );
+
+		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
+
+		fireEvent.click( screen.getByText( 'Undo' ) );
+
+		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 2 );
+		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeInTheDocument();
+	} );
+
 	it( 'marks the row failed (and not collapsed) when applyReviewEdit rejects', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: false } );
 
@@ -452,6 +484,38 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			undefined,
 			undefined
 		);
+	} );
+
+	it( 'keeps the accepted conflict and snapshot when undoBlockEdit fails', async () => {
+		mockApplyReviewEdit.mockResolvedValueOnce( {
+			success: true,
+			contentBefore: 'The council voted last Tuesday on the procedural matter.',
+		} );
+		mockUndoBlockEdit.mockReturnValueOnce( false ).mockReturnValueOnce( true );
+
+		render( <ReviewMediation { ...conflictPayload } /> );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) );
+		} );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
+		} );
+
+		fireEvent.click( screen.getByText( 'Undo' ) );
+
+		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
+		).not.toBeInTheDocument();
+		expect( screen.getByText( 'Undo' ) ).toBeInTheDocument();
+
+		fireEvent.click( screen.getByText( 'Undo' ) );
+
+		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 2 );
+		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeInTheDocument();
 	} );
 } );
 

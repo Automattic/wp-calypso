@@ -264,10 +264,11 @@ export function handleUpdateBlockContent( input: any ): any {
 
 /**
  * Apply a mediation-suggested edit. When `currentText` is provided and present in
- * the block, only that span is replaced; otherwise the full block content is replaced.
- * Returns `success: false` for unsupported block types so the UI can show 'failed'
- * rather than corrupting the block. On success, returns `contentBefore` so the
- * caller can pair it with `clientId` and call `undoBlockEdit` later.
+ * the block, only that span is replaced. When `currentText` is provided but not
+ * found, the edit fails safely rather than replacing the whole block. Returns
+ * `success: false` for unsupported block types so the UI can show 'failed' rather
+ * than corrupting the block. On success, returns `contentBefore` so the caller can
+ * pair it with `clientId` and call `undoBlockEdit` later.
  */
 export async function applyReviewEdit(
 	clientId: string,

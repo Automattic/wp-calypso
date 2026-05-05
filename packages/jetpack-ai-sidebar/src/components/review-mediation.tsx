@@ -364,7 +364,9 @@ export default function ReviewMediation( {
 		( editIndex: number ) => {
 			const snap = editSnapshots.current[ editIndex ];
 			if ( snap ) {
-				undoBlockEdit( snap.clientId, snap.contentBefore );
+				if ( ! undoBlockEdit( snap.clientId, snap.contentBefore ) ) {
+					return;
+				}
 				delete editSnapshots.current[ editIndex ];
 			}
 			setEditStatus( editIndex, 'pending' );
@@ -399,7 +401,9 @@ export default function ReviewMediation( {
 		( conflictIndex: number ) => {
 			const snap = conflictSnapshots.current[ conflictIndex ];
 			if ( snap ) {
-				undoBlockEdit( snap.clientId, snap.contentBefore );
+				if ( ! undoBlockEdit( snap.clientId, snap.contentBefore ) ) {
+					return;
+				}
 				delete conflictSnapshots.current[ conflictIndex ];
 			}
 			setConflictStatus( conflictIndex, 'pending' );
