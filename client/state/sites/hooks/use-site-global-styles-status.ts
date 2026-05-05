@@ -1,10 +1,11 @@
-import { ExperimentAssignment } from '@automattic/explat-client';
 import { useQuery } from '@tanstack/react-query';
+import { loadExperimentAssignment as loadExperimentAssignmentFromExPlat } from 'calypso/lib/explat';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ExperimentAssignment } from '@automattic/explat-client';
 
 export type GlobalStylesStatus = {
 	shouldLimitGlobalStyles: boolean;
@@ -22,21 +23,22 @@ const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 	variation: null,
 };
 
-/*
- * We cannot import `loadExperimentAssignment` directly from 'calypso/lib/explat'
- * because it runs a side effect that produces an error on SSR contexts.
- */
-let loadExperimentAssignment = ( experimentName: string ): Promise< ExperimentAssignment > =>
-	Promise.resolve( { experimentName, variationName: null, retrievedTimestamp: 0, ttl: 0 } );
+const getFallbackExperimentAssignment = ( experimentName: string ): ExperimentAssignment => ( {
+	experimentName,
+	variationName: null,
+	retrievedTimestamp: 0,
+	ttl: 0,
+} );
 
-if ( typeof window !== 'undefined' ) {
-	import( 'calypso/lib/explat' )
-		.then( ( module ) => {
-			loadExperimentAssignment = module.loadExperimentAssignment;
-		} )
-		// eslint-disable-next-line @typescript-eslint/no-empty-function
-		.catch( () => {} );
-}
+const loadGlobalStylesExperimentAssignment = (
+	experimentName: string
+): Promise< ExperimentAssignment > => {
+	if ( typeof window === 'undefined' ) {
+		return Promise.resolve( getFallbackExperimentAssignment( experimentName ) );
+	}
+
+	return loadExperimentAssignmentFromExPlat( experimentName );
+};
 
 function shouldRunGlobalStylesOnPersonalExperiment(
 	siteId: number | null,
@@ -78,14 +80,15 @@ const getGlobalStylesInfoForSite = (
 	}
 
 	if ( siteId === null ) {
-		return loadExperimentAssignment( 'calypso_plans_global_styles_personal_20251124_v5' ).then(
-			( experimentAssignment ) =>
-				Promise.resolve( {
-					shouldLimitGlobalStyles: true,
-					globalStylesInUse: false,
-					globalStylesInPersonalPlan: !! experimentAssignment?.variationName,
-					variation: experimentAssignment?.variationName,
-				} )
+		return loadGlobalStylesExperimentAssignment(
+			'calypso_plans_global_styles_personal_20251124_v5'
+		).then( ( experimentAssignment ) =>
+			Promise.resolve( {
+				shouldLimitGlobalStyles: true,
+				globalStylesInUse: false,
+				globalStylesInPersonalPlan: !! experimentAssignment?.variationName,
+				variation: experimentAssignment?.variationName,
+			} )
 		);
 	}
 
