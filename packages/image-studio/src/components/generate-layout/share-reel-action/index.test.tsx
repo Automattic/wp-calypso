@@ -12,8 +12,26 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => ( {
-	Button: ( { children, variant, isBusy, __next40pxDefaultSize, ...props }: any ) => (
-		<button { ...props }>{ children }</button>
+	Button: ( {
+		children,
+		variant,
+		isBusy,
+		__next40pxDefaultSize,
+		icon,
+		label,
+		showTooltip,
+		...props
+	}: any ) => (
+		<button aria-label={ label } { ...props }>
+			{ icon }
+			{ children }
+		</button>
+	),
+} ) );
+
+jest.mock( 'social-logos', () => ( {
+	SocialLogo: ( { icon, size }: { icon: string; size: number } ) => (
+		<span data-testid="social-logo" data-icon={ icon } data-size={ size } />
 	),
 } ) );
 

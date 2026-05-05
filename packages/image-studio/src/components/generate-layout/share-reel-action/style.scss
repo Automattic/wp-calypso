@@ -1,9 +1,35 @@
 .image-studio-share-reel-action {
-	display: flex;
-	justify-content: center;
-	margin-top: 16px;
+	position: absolute;
+	bottom: 12px;
+	right: 12px;
+	z-index: 2;
 
 	&__button {
-		min-width: 220px;
+		// Small circular overlay button — mirrors the visual weight of the
+		// other overlay actions in Image Studio. Semi-transparent backdrop
+		// keeps the icon legible over any video frame.
+		min-width: 32px;
+		width: 32px;
+		height: 32px;
+		padding: 0;
+		border-radius: 50%;
+		background: rgba(0, 0, 0, 0.6);
+		color: #fff;
+		backdrop-filter: blur(4px);
+
+		&:hover:not( :disabled ) {
+			background: rgba(0, 0, 0, 0.8);
+			color: #fff;
+		}
+
+		&:disabled {
+			opacity: 0.6;
+		}
+
+		// @wordpress/components Button forces a min-width on icon buttons;
+		// override so the circular shape stays.
+		&.has-icon {
+			min-width: 32px !important;
+		}
 	}
 }
