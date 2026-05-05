@@ -309,12 +309,16 @@ describe( '<RepostButton>', () => {
 	it( 'leaves "Quote post" disabled when the post is missing a cid', async () => {
 		const onQuoteClick = jest.fn();
 		const user = userEvent.setup();
-		renderRepostButton( makePost( { cid: '' } ), { onQuoteClick } );
+		const { onClick } = renderRepostButton( makePost( { cid: '' } ), { onQuoteClick } );
 		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
 		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
 		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
 		await user.click( item );
 		expect( onQuoteClick ).not.toHaveBeenCalled();
+		expect( onClick ).not.toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_quote_clicked',
+			expect.anything()
+		);
 	} );
 
 	it( 'enables "Quote post" and invokes onQuoteClick when the analytics context wires it', async () => {
