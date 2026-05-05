@@ -262,7 +262,7 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		} );
 	} );
 
-	it( 'shows a success notice with a relative View action linking to the attachment editor', async () => {
+	it( 'shows a persistent success notice whose action links to the attachment editor in a new tab', async () => {
 		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
 		await registerUpdateCanvasVideoAbility();
 
@@ -272,13 +272,19 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 			attachmentId: 99,
 		} );
 
-		expect( mockAddNotice ).toHaveBeenCalledWith( 'Video saved to Media Library', 'success', [
-			{
-				label: 'View',
-				url: 'post.php?post=99&action=edit',
-				openInNewTab: true,
-			},
-		] );
+		expect( mockAddNotice ).toHaveBeenCalledWith(
+			'',
+			'success',
+			[
+				{
+					label: 'Open the video in the media library',
+					url: 'post.php?post=99&action=edit',
+					openInNewTab: true,
+				},
+			],
+			undefined,
+			true
+		);
 	} );
 
 	it( 'does not fire the success notice or tracking event when input is invalid', async () => {

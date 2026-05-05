@@ -64,18 +64,12 @@ export function ImageStudioNotice() {
 						className: `image-studio-notice-${ notice.type }`,
 						id: notice.id,
 						content: notice.content,
-						// Errors and any notice carrying an action persist until dismissed —
-						// 10s isn't enough time to read + decide whether to click the action.
-						explicitDismiss: notice.type === 'error' || ( notice.actions?.length ?? 0 ) > 0,
+						explicitDismiss: notice.explicitDismiss ?? notice.type === 'error',
 						...( notice.actions?.length && {
 							actions: notice.actions.map( ( action ) => ( {
 								label: action.label,
-								onClick: () => {
-									const newWindow = window.open( action.url, '_blank' );
-									if ( newWindow ) {
-										newWindow.opener = null;
-									}
-								},
+								url: action.url,
+								openInNewTab: action.openInNewTab,
 							} ) ),
 						} ),
 					} ) ) }

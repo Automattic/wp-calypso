@@ -124,13 +124,19 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 					isAnnotated: false,
 				} );
 
-				addNotice( __( 'Video saved to Media Library', __i18n_text_domain__ ), 'success', [
-					{
-						label: __( 'View', __i18n_text_domain__ ),
-						url: `post.php?post=${ attachmentId }&action=edit`,
-						openInNewTab: true,
-					},
-				] );
+				addNotice(
+					'',
+					'success',
+					[
+						{
+							label: __( 'Open the video in the media library', __i18n_text_domain__ ),
+							url: `post.php?post=${ attachmentId }&action=edit`,
+							openInNewTab: true,
+						},
+					],
+					undefined,
+					true
+				);
 
 				return { ok: true };
 			},

@@ -39,6 +39,7 @@ export interface Notice {
 	type: NoticeType;
 	actions?: NoticeAction[];
 	dismissible?: boolean;
+	explicitDismiss?: boolean;
 }
 
 export enum ImageStudioEntryPoint {
@@ -721,7 +722,8 @@ export interface ImageStudioActions {
 		content: string,
 		type: NoticeType,
 		noticeActions?: NoticeAction[],
-		dismissible?: boolean
+		dismissible?: boolean,
+		explicitDismiss?: boolean
 	) => Promise< AddNoticeAction >;
 	removeNotice: ( noticeId: string ) => Promise< RemoveNoticeAction >;
 	setNavigableAttachmentIds: (
@@ -879,7 +881,8 @@ const actions = {
 		content: string,
 		type: NoticeType,
 		noticeActions?: NoticeAction[],
-		dismissible?: boolean
+		dismissible?: boolean,
+		explicitDismiss?: boolean
 	): AddNoticeAction {
 		return {
 			type: 'ADD_NOTICE',
@@ -889,6 +892,7 @@ const actions = {
 				content,
 				type,
 				dismissible: resolveNoticeDismissible( type, dismissible ),
+				...( explicitDismiss !== undefined && { explicitDismiss } ),
 				...( noticeActions?.length && {
 					actions: noticeActions,
 				} ),
