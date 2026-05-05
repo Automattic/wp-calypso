@@ -147,14 +147,14 @@ export default function QRCodeAppLogin() {
 				<ul className="qr-code-app-login__numbers">
 					{ statusData.numbers.map( ( n ) => (
 						<li key={ n }>
-							<button
-								type="button"
+							<Button
 								className="qr-code-app-login__number"
+								variant="secondary"
 								disabled={ isApproving }
 								onClick={ () => handleApprove( n ) }
 							>
 								{ n }
-							</button>
+							</Button>
 						</li>
 					) ) }
 				</ul>

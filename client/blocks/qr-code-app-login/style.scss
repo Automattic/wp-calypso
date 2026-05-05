@@ -113,7 +113,7 @@
 	justify-content: center;
 }
 
-.qr-code-app-login__number {
+.qr-code-app-login__number.components-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -121,17 +121,4 @@
 	height: 80px;
 	font-size: 32px;
 	font-weight: 600;
-	border: 1px solid var(--color-neutral-10);
-	border-radius: 8px;
-	background: transparent;
-	cursor: pointer;
-
-	&:hover:not(:disabled) {
-		background: var(--color-neutral-0);
-	}
-
-	&:disabled {
-		cursor: default;
-		opacity: 0.6;
-	}
 }
