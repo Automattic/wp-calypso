@@ -207,6 +207,13 @@ body.js.is-image-studio-open {
 	text-align: center;
 }
 
+.image-studio-modal__experimental-tag {
+	position: absolute;
+	top: 14px;
+	left: 16px;
+	z-index: 5;
+}
+
 /* ==========================================================================
    Image Studio Chat - Match SidebarPortal Styling
    ========================================================================== */

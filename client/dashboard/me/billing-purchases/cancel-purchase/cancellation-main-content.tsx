@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import {
@@ -11,6 +10,7 @@ import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import GSuiteAccessMessage from './gsuite-access-message';
 import PlanProductRevertContent from './plan-product-revert-content';
+import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -69,6 +69,7 @@ export default function CancellationMainContent( {
 	const isAkismet = isAkismetProduct( purchase );
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	const atomicRevertChanges = [
 		{
@@ -139,7 +140,7 @@ export default function CancellationMainContent( {
 
 			<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 
-			{ isGSuite && ! config.isEnabled( 'purchases/split-cancel-remove' ) && (
+			{ isGSuite && ! isSplitCancelRemoveEnabled && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 

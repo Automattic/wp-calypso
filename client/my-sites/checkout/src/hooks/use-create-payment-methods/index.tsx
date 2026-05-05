@@ -4,6 +4,7 @@ import {
 	createApplePayMethod,
 	createGooglePayMethod,
 	createBancontactMethod,
+	createBlikMethod,
 	createP24Method,
 	createEpsMethod,
 	createIdealMethod,
@@ -237,6 +238,28 @@ function useCreateIdeal( {
 	);
 }
 
+function useCreateBlik( {
+	isStripeLoading,
+	stripeLoadingError,
+}: {
+	isStripeLoading: boolean;
+	stripeLoadingError: StripeLoadingError;
+} ): PaymentMethod | null {
+	// BLIK availability is gated server-side in WPCOM_Billing_Stripe_Redirect::get_active_payment_methods,
+	// which filters BLIK out of the cart's allowed_payment_methods unless the request is sandboxed.
+	// No additional client gate is needed.
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
+	return useMemo(
+		() =>
+			shouldLoad
+				? createBlikMethod( {
+						submitButtonContent: <CheckoutSubmitButtonContent />,
+				  } )
+				: null,
+		[ shouldLoad ]
+	);
+}
+
 function useCreateSofort( {
 	isStripeLoading,
 	stripeLoadingError,
@@ -438,6 +461,11 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
+	const blikMethod = useCreateBlik( {
+		isStripeLoading,
+		stripeLoadingError,
+	} );
+
 	const pixMethod = useCreatePix();
 	const pixAutomaticoMethod = useCreatePixAutomatico();
 	const alipayMethod = useCreateAlipay( {
@@ -555,6 +583,7 @@ export default function useCreatePaymentMethods( {
 		paypalExpressMethod,
 		paypalPPCPMethod,
 		idealMethod,
+		blikMethod,
 		sofortMethod,
 		netbankingMethod,
 		pixMethod,

@@ -41,6 +41,13 @@ export interface AtmosphereAuthor {
 
 export interface AtmosphereReplyRef {
 	uri: string;
+	// Strong-ref CID for the referenced record. AT-Proto's reply pointers
+	// are `com.atproto.repo.strongRef` pairs ({uri, cid}), so the upstream
+	// data always carries it. Optional in the typed wire shape during the
+	// backend rollout window — older normalizer revisions emit `{uri, author}`
+	// only. Consumers should treat it as a strong-ref hint and fall back to
+	// the post's own cid when missing.
+	cid?: string;
 	author: { did: string; handle: string };
 }
 
@@ -327,4 +334,50 @@ export interface AtmosphereTagFeedPage {
 	items: AtmosphereFeedItem[];
 	cursor: string | null;
 	tag?: AtmosphereTagInfo;
+}
+
+export interface AtUriRef {
+	uri: string;
+	cid: string;
+}
+
+export interface AtmosphereBlobRef {
+	$type: 'blob';
+	ref: { $link: string };
+	mimeType: string;
+	size: number;
+}
+
+export interface AtmosphereImageEmbed {
+	blob: AtmosphereBlobRef;
+	alt: string;
+	aspectRatio?: { width: number; height: number };
+}
+
+export interface UploadBlobParams {
+	connectionId: number;
+	file: Blob;
+}
+
+export interface UploadBlobResult {
+	blob: AtmosphereBlobRef;
+}
+
+export interface CreatePostParams {
+	connectionId: number;
+	text: string;
+	reply?: { root: AtUriRef; parent: AtUriRef };
+	quote?: AtUriRef;
+	media?: { images: AtmosphereImageEmbed[] };
+}
+
+export interface CreatePostResult {
+	uri: string;
+	cid: string;
+	rkey: string;
+}
+
+export interface DeletePostParams {
+	connectionId: number;
+	rkey: string;
 }

@@ -11,6 +11,7 @@ import {
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -420,6 +421,7 @@ export const cancelPurchaseRoute = createRoute( {
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
+			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
 		return { purchase, intent };
 	},

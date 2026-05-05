@@ -28,6 +28,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			let page: Page;
 			let editorPage: EditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
+			let siteSlug: string;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
@@ -35,13 +36,14 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				const accountName = getTestAccountByFeature( features );
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				editorPage = new EditorPage( page );
 			} );
 
 			it( 'Start a new post', async function () {
-				await editorPage.visit( 'post' );
+				await editorPage.visit( 'post', { siteSlug } );
 				await editorPage.waitUntilLoaded();
 			} );
 
