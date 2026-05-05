@@ -43,6 +43,15 @@ export interface UseStreamPostsResult {
 	fetchNextPage: () => void;
 	refetch: () => void;
 	removeItem: ( postKey: PostKey ) => void;
+	/**
+	 * Number of items returned by the last `checkForUpdates` poll that are not
+	 * yet in `items`. Drives the "X new posts" pill.
+	 */
+	pendingCount: number;
+	/** Best-effort poll for new items at the head of the stream. */
+	checkForUpdates: () => Promise< void >;
+	/** Clear the pending counter and refetch loaded pages. */
+	consumePending: () => void;
 }
 
 const datePropertyForStream = ( streamType: string ): string => {
@@ -268,6 +277,59 @@ export function useStreamPosts( {
 		query.refetch();
 	}, [ query ] );
 
+	// "X new posts" pill state. We do a one-off fetch of the first page on each
+	// poll tick (bypassing React Query cache) and compare against currently
+	// rendered keys. `consumePending` clears the counter and triggers a real
+	// refetch through the infinite query.
+	const [ pendingCount, setPendingCount ] = useState( 0 );
+	const itemsRef = useRef( items );
+	useEffect( () => {
+		itemsRef.current = items;
+	}, [ items ] );
+	useEffect( () => {
+		setPendingCount( 0 );
+	}, [ streamIdentity ] );
+
+	const checkForUpdates = useCallback( async () => {
+		try {
+			const initialPageParam: PageHandle = startDate ? { before: startDate } : null;
+			const params = buildStreamQueryParams( {
+				streamKey,
+				feedId,
+				pageHandle: initialPageParam,
+				localeSlug,
+				isPoll: true,
+				gap: null,
+				page: undefined,
+				perPage: undefined,
+			} ) as ReadStreamQueryParams;
+			const response = await fetchReadStream( streamKey, params );
+			const { streamItems } = normalizePage( response, streamType );
+			const seen = new Set< string >();
+			for ( const it of itemsRef.current ) {
+				const id = postKeyId( it );
+				if ( id ) {
+					seen.add( id );
+				}
+			}
+			let count = 0;
+			for ( const k of streamItems ) {
+				const id = postKeyId( k );
+				if ( id && ! seen.has( id ) ) {
+					count += 1;
+				}
+			}
+			setPendingCount( count );
+		} catch {
+			// Polling is best-effort; leave the previous count in place on failure.
+		}
+	}, [ streamKey, feedId, localeSlug, startDate, streamType ] );
+
+	const consumePending = useCallback( () => {
+		setPendingCount( 0 );
+		query.refetch();
+	}, [ query ] );
+
 	return {
 		items,
 		isLoading: query.isLoading,
@@ -280,5 +342,8 @@ export function useStreamPosts( {
 		fetchNextPage,
 		refetch,
 		removeItem,
+		pendingCount,
+		checkForUpdates,
+		consumePending,
 	};
 }

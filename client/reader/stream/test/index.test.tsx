@@ -83,13 +83,31 @@ jest.mock( '@automattic/calypso-router', () => {
 const BASE = 'https://public-api.wordpress.com';
 const LIKES_PATH = '/rest/v1.2/read/liked';
 const originalScrollTo = window.scrollTo;
+const originalIntersectionObserver = ( window as unknown as { IntersectionObserver?: unknown } )
+	.IntersectionObserver;
+
+class IntersectionObserverStub {
+	observe = jest.fn();
+	unobserve = jest.fn();
+	disconnect = jest.fn();
+	takeRecords = jest.fn( () => [] );
+	root = null;
+	rootMargin = '';
+	thresholds: number[] = [];
+}
 
 beforeAll( () => {
 	Object.defineProperty( window, 'scrollTo', { writable: true, value: jest.fn() } );
+	// `<SectionNav>` (rendered in narrow-viewport layouts) installs an
+	// IntersectionObserver to detect tab overflow; jsdom doesn't ship one.
+	( window as unknown as { IntersectionObserver: unknown } ).IntersectionObserver =
+		IntersectionObserverStub;
 } );
 
 afterAll( () => {
 	Object.defineProperty( window, 'scrollTo', { writable: true, value: originalScrollTo } );
+	( window as unknown as { IntersectionObserver: unknown } ).IntersectionObserver =
+		originalIntersectionObserver;
 } );
 
 afterEach( () => {
@@ -203,14 +221,26 @@ describe( 'Stream — render states', () => {
 	} );
 
 	it( 'renders stream sidebar in wide layout, including empty state', async () => {
-		mockLikesEndpoint( [] );
-		renderStream( {
-			wideLayout: true,
-			streamSidebar: () => <div data-testid="stream-sidebar">sidebar</div>,
-		} );
+		// `<Stream>` decides two-column layout from `window.innerWidth` (matching
+		// the legacy `withDimensions`-based implementation), so jsdom needs to
+		// report a viewport wider than `WIDE_DISPLAY_CUTOFF` for this case.
+		const originalInnerWidth = window.innerWidth;
+		Object.defineProperty( window, 'innerWidth', { configurable: true, value: 1200 } );
+		try {
+			mockLikesEndpoint( [] );
+			renderStream( {
+				wideLayout: true,
+				streamSidebar: () => <div data-testid="stream-sidebar">sidebar</div>,
+			} );
 
-		await waitFor( () => expect( screen.getByText( "You're all caught up." ) ).toBeVisible() );
-		expect( screen.getByTestId( 'stream-sidebar' ) ).toBeVisible();
+			await waitFor( () => expect( screen.getByText( "You're all caught up." ) ).toBeVisible() );
+			expect( screen.getByTestId( 'stream-sidebar' ) ).toBeVisible();
+		} finally {
+			Object.defineProperty( window, 'innerWidth', {
+				configurable: true,
+				value: originalInnerWidth,
+			} );
+		}
 	} );
 
 	it( 'renders posts once the API responds', async () => {

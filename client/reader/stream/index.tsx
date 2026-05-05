@@ -1,10 +1,17 @@
+import { Gridicon } from '@automattic/components';
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
+import AppPromo from 'calypso/blocks/app-promo';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { EVERY_MINUTE, useInterval } from 'calypso/lib/interval';
 import scrollTo from 'calypso/lib/scroll-to';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isLikeable } from 'calypso/reader/post/capabilities';
@@ -13,7 +20,7 @@ import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
 import ReaderStreamLoginPrompt from 'calypso/reader/stream/login-prompt';
 import PostLifecycle from 'calypso/reader/stream/post-lifecycle';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
-import { showSelectedPost as showSelectedPostUtil } from 'calypso/reader/utils';
+import { showSelectedPost as showSelectedPostUtil, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -24,6 +31,7 @@ import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { INITIAL_FETCH, PER_FETCH } from 'calypso/state/reader/streams/normalize';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -34,14 +42,70 @@ import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import { useStreamPosts, type PostKey } from './use-stream-posts';
 
 import './style.scss';
+import 'calypso/reader/update-notice/style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
+
+// Two-column layout breakpoint: 950px content + 64*2 padding + 8*2 margin.
+export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
+
+const NO_POLL_STREAM_TYPES = new Set( [ 'search', 'custom_recs_posts_with_images', 'discover' ] );
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
 // Tracks how many "scroll loads" each stream has triggered, to feed into
 // `trackScrollPage`. Module-level so it survives unmounts (matching the
 // legacy Stream implementation pattern).
 const pagesByKey = new Map< string, number >();
+
+// Effective stream key for the Following stream when a sub-feed is selected
+// in the recent sidebar — mirrors the legacy `getStreamKey` helper so the
+// React Query cache, polling, and selection state all share one key.
+function deriveStreamKey( streamKey: string, selectedFeedId: number | null ): string {
+	if ( streamKey === 'following' && selectedFeedId ) {
+		return `following:feed-${ selectedFeedId }`;
+	}
+	return streamKey;
+}
+
+function findScrollContainer( element: Element | null ): Element | false {
+	if ( ! element || element.ownerDocument === element.parentNode ) {
+		return false;
+	}
+	const { overflowY } = getComputedStyle( element );
+	if ( /(auto|scroll)/.test( overflowY ) ) {
+		return element;
+	}
+	return findScrollContainer( element.parentElement );
+}
+
+function useViewportWidth(): number {
+	const [ width, setWidth ] = useState( () =>
+		typeof window === 'undefined' ? 0 : window.innerWidth
+	);
+	useEffect( () => {
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+		let frame: number | null = null;
+		const handle = () => {
+			if ( frame !== null ) {
+				return;
+			}
+			frame = window.requestAnimationFrame( () => {
+				frame = null;
+				setWidth( window.innerWidth );
+			} );
+		};
+		window.addEventListener( 'resize', handle );
+		return () => {
+			window.removeEventListener( 'resize', handle );
+			if ( frame !== null ) {
+				window.cancelAnimationFrame( frame );
+			}
+		};
+	}, [] );
+	return width;
+}
 
 export interface StreamProps {
 	streamKey: string;
@@ -77,7 +141,7 @@ const defaultEmptyContent = () => <EmptyContent />;
 
 export function Stream( props: StreamProps ) {
 	const {
-		streamKey,
+		streamKey: rawStreamKey,
 		className = '',
 		isMain = true,
 		wideLayout = false,
@@ -96,14 +160,17 @@ export function Stream( props: StreamProps ) {
 		emptyContent = defaultEmptyContent,
 		intro,
 		streamHeader,
+		sidebarTabTitle,
 		streamSidebar,
 		placeholderFactory,
 		transformStreamItems,
 		trackScrollPage,
+		onUpdatesShown,
 		children,
 	} = props;
 
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	const rawLocale = useSelector( getCurrentLocaleSlug );
 	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
@@ -111,17 +178,43 @@ export function Stream( props: StreamProps ) {
 	const blockedSites = useSelector( getBlockedSites );
 	const primarySiteId = useSelector( getPrimarySiteId );
 	const notificationsOpen = useSelector( isNotificationsOpen );
+	const selectedRecentFeedId = useSelector( getSelectedRecentFeedId );
+
+	// Resolve the effective stream key (Following + selected sub-feed gets a
+	// distinct key so the cache and selection state don't bleed across feeds).
+	const streamKey = useMemo(
+		() => deriveStreamKey( rawStreamKey, selectedRecentFeedId ?? null ),
+		[ rawStreamKey, selectedRecentFeedId ]
+	);
+	const streamType = getStreamType( streamKey );
+
+	// Width-measured wide-layout switch. The legacy stream used the wrapping
+	// div's actual width via `withDimensions`; window width is a close proxy
+	// since the stream takes the full viewport content area.
+	const viewportWidth = useViewportWidth();
+	const wideDisplay = viewportWidth > WIDE_DISPLAY_CUTOFF;
 
 	const stream = useStreamPosts( {
 		streamKey,
-		feedId: null,
+		feedId: selectedRecentFeedId ?? null,
 		localeSlug,
 		startDate: startDate ?? null,
 		options: {
 			enabled: ! forcePlaceholders,
 		},
 	} );
-	const { items, isLoading, isFetching, lastPage, error, fetchNextPage } = stream;
+	const {
+		items,
+		isLoading,
+		isFetching,
+		lastPage,
+		error,
+		fetchNextPage,
+		pendingCount,
+		checkForUpdates,
+		consumePending,
+	} = stream;
+
 	const selection = useStreamPostKeySelection( {
 		streamKey,
 		localeSlug,
@@ -149,6 +242,7 @@ export function Stream( props: StreamProps ) {
 	const listRef = useRef< InfiniteList | null >( null );
 	const overlayRef = useRef< HTMLDivElement | null >( null );
 	const wasSelectedByOpeningPostRef = useRef( false );
+	const [ selectedTab, setSelectedTab ] = useState< 'posts' | 'sites' >( 'posts' );
 
 	const isLoginPromptVisible = useCallback(
 		() => ! isLoggedIn && items.length > MAX_POSTS_FOR_LOGGED_OUT_USERS,
@@ -163,8 +257,9 @@ export function Stream( props: StreamProps ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ streamKey ] );
 
-	// Scroll restoration on `popstate` (browser back). Manual restoration so
-	// the page returns to where the user left off — not the top.
+	// Manual scroll restoration so the page returns to where the user left off
+	// when navigating back, not the top. Restored on unmount so we don't leak
+	// the manual mode into pages outside the Reader.
 	const scrollToSelectedPost = useCallback(
 		( animate: boolean ) => {
 			const scrollContainer: Window | Element = listContext || window;
@@ -205,13 +300,43 @@ export function Stream( props: StreamProps ) {
 			}
 		};
 		window.addEventListener( 'popstate', handlePopstate );
+		let priorScrollRestoration: ScrollRestoration | undefined;
 		if ( 'scrollRestoration' in window.history ) {
+			priorScrollRestoration = window.history.scrollRestoration;
 			window.history.scrollRestoration = 'manual';
 		}
 		return () => {
 			window.removeEventListener( 'popstate', handlePopstate );
+			if ( priorScrollRestoration && 'scrollRestoration' in window.history ) {
+				window.history.scrollRestoration = priorScrollRestoration;
+			}
 		};
 	}, [ selected, restoreScroll, scrollToSelectedPost ] );
+
+	// Briefly mask the layout shift while we scroll-to and focus the
+	// previously-selected post on initial mount. Matches the legacy 100ms
+	// timer so users navigating back into a stream don't see the unselected
+	// list pop in before the scroll lands on the selected card.
+	useEffect( () => {
+		const overlay = overlayRef.current;
+		if ( ! overlay || ! selected ) {
+			return;
+		}
+		overlay.classList.add( 'stream__init-overlay-enabled' );
+		const timer = window.setTimeout( () => {
+			if ( restoreScroll ) {
+				scrollToSelectedPost( false );
+			}
+			overlay.classList.remove( 'stream__init-overlay-enabled' );
+		}, 100 );
+		return () => {
+			window.clearTimeout( timer );
+			overlay.classList.remove( 'stream__init-overlay-enabled' );
+		};
+		// Initial-mount only; subsequent selection changes go through the
+		// focus/scroll effect below.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	// Refocus / scroll when the selected post key changes.
 	const previousSelectedRef = useRef< PostKey | null >( null );
@@ -238,6 +363,30 @@ export function Stream( props: StreamProps ) {
 			firstLink?.focus();
 		}
 	}, [ selected, scrollToSelectedPost ] );
+
+	// Recompute the scroll container whenever the body class changes — e.g.
+	// `is-reader-page` being added/removed by `<ReaderMain>` toggles which
+	// ancestor scrolls. Without this, fresh route navigations sometimes leave
+	// the stream wired to a stale container.
+	useEffect( () => {
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+		const observer = new MutationObserver( () => {
+			const list = listRef.current;
+			if ( ! list ) {
+				return;
+			}
+			const node = ReactDom.findDOMNode( list );
+			if ( ! ( node instanceof Element ) ) {
+				return;
+			}
+			const next = findScrollContainer( node );
+			setListContext( ( previous ) => ( previous === next ? previous : next ) );
+		} );
+		observer.observe( document.body, { attributeFilter: [ 'class' ] } );
+		return () => observer.disconnect();
+	}, [] );
 
 	// Keyboard shortcuts (j/k/arrows/Enter/v/l).
 	const handleOpenSelection = useCallback( () => {
@@ -370,22 +519,27 @@ export function Stream( props: StreamProps ) {
 		if ( ! ( node instanceof Element ) ) {
 			return;
 		}
-		const findScrollContainer = ( element: Element | null ): Element | false => {
-			if ( ! element || element.ownerDocument === element.parentNode ) {
-				return false;
-			}
-			const { overflowY } = getComputedStyle( element );
-			if ( /(auto|scroll)/.test( overflowY ) ) {
-				return element;
-			}
-			return findScrollContainer( element.parentElement );
-		};
 		setListContext( findScrollContainer( node ) );
 	}, [] );
 
 	const tryAgain = useCallback( () => {
 		stream.refetch();
 	}, [ stream ] );
+
+	// Live poll for new posts at the head of the stream and surface the
+	// orange "X new posts" pill. Skipped for stream types where polling adds
+	// no value (search results, recommendation feeds, discover surfaces).
+	const shouldPoll = ! NO_POLL_STREAM_TYPES.has( streamType ) && ! forcePlaceholders;
+	useInterval( checkForUpdates, shouldPoll ? EVERY_MINUTE : null );
+
+	const handleShowUpdates = useCallback( () => {
+		consumePending();
+		// `InfiniteList.scrollToTop` is implemented on the class component but
+		// not exposed in its TypeScript surface yet.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		( listRef.current as any )?.scrollToTop?.();
+		onUpdatesShown?.();
+	}, [ consumePending, onUpdatesShown ] );
 
 	const handleFetchNextPage = useCallback(
 		( options?: { triggeredByScroll?: boolean } ) => {
@@ -413,6 +567,26 @@ export function Stream( props: StreamProps ) {
 	}, [ items.length, placeholderFactory ] );
 
 	const getPostRef = useCallback( ( postKey: PostKey ) => keyToString( postKey ), [] );
+
+	const renderAppPromo = useCallback(
+		( index: number ) => {
+			// Discover-only mid-stream Jetpack mobile app promo at index 3 to
+			// match the legacy placement.
+			if ( index !== 3 || ! isDiscoverStream ) {
+				return null;
+			}
+			return (
+				<AppPromo
+					iconSize={ 40 }
+					campaign="calypso-reader-stream"
+					title={ translate( 'Read on the go with the Jetpack Mobile App' ) }
+					hasQRCode
+					hasGetAppButton={ false }
+				/>
+			);
+		},
+		[ isDiscoverStream, translate ]
+	);
 
 	const renderPost = useCallback(
 		( postKey: PostKey, index: number ) => {
@@ -445,6 +619,7 @@ export function Stream( props: StreamProps ) {
 			};
 			return (
 				<React.Fragment key={ itemKey }>
+					{ renderAppPromo( index ) }
 					<div ref={ captureRef } data-postkey={ itemKey }>
 						<PostLifecycle
 							isSelected={ isSelectedItem }
@@ -485,14 +660,14 @@ export function Stream( props: StreamProps ) {
 			showFollowButton,
 			fixedHeaderHeight,
 			dispatch,
+			renderAppPromo,
 		]
 	);
 
 	let body: React.ReactNode;
 	let showingStream = false;
 	let baseClassNames = [ 'following', className ].filter( Boolean ).join( ' ' );
-	const sidebarContent =
-		typeof streamSidebar === 'function' ? streamSidebar( Boolean( wideLayout ) ) : null;
+	const sidebarContent = typeof streamSidebar === 'function' ? streamSidebar( wideDisplay ) : null;
 	let visibleItems = items;
 	let fetching = isFetching;
 
@@ -516,7 +691,7 @@ export function Stream( props: StreamProps ) {
 	} else if ( hasNoPosts ) {
 		const renderedEmpty = emptyContent();
 		const emptyBody = renderedEmpty ?? ( hideDefaultEmptyContentIfMissing ? null : null );
-		if ( wideLayout && sidebarContent ) {
+		if ( wideDisplay && sidebarContent && streamType !== 'search' ) {
 			body = (
 				<div className="stream__two-column">
 					<div className="reader__content">{ emptyBody }</div>
@@ -546,7 +721,14 @@ export function Stream( props: StreamProps ) {
 				restoreScroll={ restoreScroll }
 			/>
 		);
-		if ( wideLayout && sidebarContent ) {
+		if ( ! sidebarContent || streamType === 'search' ) {
+			body = (
+				<div className="reader__content">
+					{ streamHeader?.() }
+					{ streamList }
+				</div>
+			);
+		} else if ( wideDisplay ) {
 			body = (
 				<div className="stream__two-column">
 					<div className="reader__content">
@@ -558,11 +740,38 @@ export function Stream( props: StreamProps ) {
 			);
 			baseClassNames = [ 'is-two-columns', baseClassNames ].filter( Boolean ).join( ' ' );
 		} else {
+			// Narrow viewport with a sidebar: render Posts/Subscriptions tabs so
+			// the sidebar content stays reachable on phones and tablets.
 			body = (
-				<div className="reader__content">
+				<>
 					{ streamHeader?.() }
-					{ streamList }
-				</div>
+					<div className="stream__container">
+						<div className="stream__header">
+							<SectionNav selectedText={ selectedTab }>
+								<NavTabs label={ translate( 'Status' ) }>
+									<NavItem
+										key="posts"
+										selected={ selectedTab === 'posts' }
+										onClick={ () => setSelectedTab( 'posts' ) }
+									>
+										{ translate( 'Posts' ) }
+									</NavItem>
+									<NavItem
+										key="sites"
+										selected={ selectedTab === 'sites' }
+										onClick={ () => setSelectedTab( 'sites' ) }
+									>
+										{ sidebarTabTitle || translate( 'Subscriptions' ) }
+									</NavItem>
+								</NavTabs>
+							</SectionNav>
+						</div>
+						{ selectedTab === 'posts' && <div className="reader__content">{ streamList }</div> }
+						{ selectedTab === 'sites' && (
+							<div className="stream__right-column">{ sidebarContent }</div>
+						) }
+					</div>
+				</>
 			);
 		}
 	}
@@ -570,6 +779,20 @@ export function Stream( props: StreamProps ) {
 	const inner = (
 		<>
 			<div ref={ overlayRef } className="stream__init-overlay" />
+			{ pendingCount > 0 && (
+				<button
+					type="button"
+					className="reader-update-notice is-active"
+					onClick={ handleShowUpdates }
+				>
+					<Gridicon icon="arrow-up" size={ 18 } />
+					{ translate( '%s new post', '%s new posts', {
+						args: [ String( pendingCount ) ],
+						count: pendingCount,
+						comment: '%s is the number of new posts. For example: "1" or "40+"',
+					} ) }
+				</button>
+			) }
 			{ children }
 			{ showingStream && visibleItems.length > 0 && intro?.() }
 			{ body }
