@@ -29,7 +29,7 @@ export function evalFeature( feature: Feature, attrs: Attributes ): Result {
 
 		const n = hash( rule.seed, hashValue );
 		const i = chooseVariation( n, variations );
-		if ( i === null ) {
+		if ( i < 0 ) {
 			continue;
 		}
 
