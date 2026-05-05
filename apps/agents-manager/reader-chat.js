@@ -281,6 +281,13 @@ function getReaderEmptyViewHeading( config ) {
 		: 'Ask me anything about this blog.';
 }
 
+function getReaderClientContext( currentPost = readerCurrentPost, siteId = readerSiteId ) {
+	return {
+		...( siteId ? { selectedSiteId: siteId } : {} ),
+		...( currentPost ? { currentPost } : {} ),
+	};
+}
+
 function createAbortController() {
 	return typeof window.AbortController === 'function' ? new window.AbortController() : null;
 }
@@ -414,10 +421,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
 					{
 						type: 'data',
 						data: {
-							clientContext: {
-								post_url: readerCurrentPost?.url || '',
-								selectedSiteId: readerSiteId,
-							},
+							clientContext: getReaderClientContext(),
 						},
 					},
 				],
@@ -966,6 +970,7 @@ export {
 	normalizeReaderSiteId,
 	decodeHtmlEntities,
 	getReaderEmptyViewHeading,
+	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
 };

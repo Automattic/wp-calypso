@@ -55,6 +55,7 @@ const {
 	normalizeReaderSiteId,
 	decodeHtmlEntities,
 	getReaderEmptyViewHeading,
+	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
 } = require( '../reader-chat' );
@@ -217,6 +218,31 @@ describe( 'getReaderEmptyViewHeading', () => {
 				currentPost: { id: 1, title: 'Home', url: 'https://example.com/' },
 			} )
 		).toBe( 'Ask me anything about this blog.' );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// getReaderClientContext
+// ---------------------------------------------------------------------------
+
+describe( 'getReaderClientContext', () => {
+	it( 'sends selected site and current post context for server-side resolution', () => {
+		const currentPost = {
+			id: 123,
+			title: 'Reader post',
+			url: 'https://example.com/reader-post/',
+		};
+
+		expect( getReaderClientContext( currentPost, 247750866 ) ).toEqual( {
+			selectedSiteId: 247750866,
+			currentPost,
+		} );
+	} );
+
+	it( 'omits currentPost on blog-level views', () => {
+		expect( getReaderClientContext( null, 247750866 ) ).toEqual( {
+			selectedSiteId: 247750866,
+		} );
 	} );
 } );
 
