@@ -99,10 +99,12 @@ function errorMessage(
 		case 'blob_decode_failed':
 			return translate( 'Something went wrong.' );
 		default:
-			return assertNever( error );
+			// Defensive fallback if AtmosphereError widens before this
+			// switch is updated. TypeScript exhaustiveness keeps this
+			// branch unreachable today; without it, an empty-toast notice
+			// would render via `errorNotice( undefined )` for a kind we
+			// haven't classified yet. See `client/reader/AGENTS.md` —
+			// "Add a default: arm to error-message switches."
+			return translate( 'Something went wrong.' );
 	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }

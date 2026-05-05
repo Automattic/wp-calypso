@@ -46,12 +46,14 @@ function errorMessageForDelete(
 		case 'blob_decode_failed':
 			return t( "Couldn't delete that post. Please try again." ) as string;
 		default:
-			return assertNever( err );
+			// Defensive fallback if AtmosphereError widens before this
+			// switch is updated. TypeScript exhaustiveness keeps this
+			// branch unreachable today; without it, an empty-toast notice
+			// would render via `errorNotice( undefined )` for a kind we
+			// haven't classified yet. See `client/reader/AGENTS.md` —
+			// "Add a default: arm to error-message switches."
+			return t( "Couldn't delete that post. Please try again." ) as string;
 	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled discriminated-union case: ${ JSON.stringify( value ) }` );
 }
 
 export function PostActionsMenu( { post, connectionId }: PostActionsMenuProps ) {
