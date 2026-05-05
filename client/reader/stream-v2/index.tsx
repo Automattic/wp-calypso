@@ -57,6 +57,7 @@ export interface StreamV2Props {
 	isDiscoverStream?: boolean;
 	hideDefaultEmptyContentIfMissing?: boolean;
 	restoreScroll?: boolean;
+	forcePlaceholders?: boolean;
 	fixedHeaderHeight?: number;
 	followSource?: string;
 	startDate?: string;
@@ -88,6 +89,7 @@ export function StreamV2( props: StreamV2Props ) {
 		isDiscoverStream = false,
 		hideDefaultEmptyContentIfMissing,
 		restoreScroll = true,
+		forcePlaceholders = false,
 		fixedHeaderHeight,
 		followSource,
 		startDate,
@@ -115,6 +117,9 @@ export function StreamV2( props: StreamV2Props ) {
 		feedId: null,
 		localeSlug,
 		startDate: startDate ?? null,
+		options: {
+			enabled: ! forcePlaceholders,
+		},
 	} );
 	const { items, isLoading, isFetching, lastPage, error, fetchNextPage } = stream;
 	const selection = useStreamPostKeySelection( {
@@ -500,8 +505,17 @@ export function StreamV2( props: StreamV2Props ) {
 	let baseClassNames = [ 'following', className ].filter( Boolean ).join( ' ' );
 	const sidebarContent =
 		typeof streamSidebar === 'function' ? streamSidebar( Boolean( wideLayout ) ) : null;
+	let visibleItems = items;
+	let fetching = isFetching;
 
-	const hasNoPosts = ! isLoading && items.length === 0 && ! error;
+	// Match legacy Stream behavior: allow callers to force skeleton state
+	// regardless of currently available items.
+	if ( forcePlaceholders ) {
+		visibleItems = [];
+		fetching = true;
+	}
+
+	const hasNoPosts = ! isLoading && visibleItems.length === 0 && ! fetching && ! error;
 
 	if ( error ) {
 		body = (
@@ -532,9 +546,9 @@ export function StreamV2( props: StreamV2Props ) {
 		const streamList = (
 			<InfiniteList
 				ref={ handleListContextRef }
-				items={ items }
+				items={ visibleItems }
 				lastPage={ lastPage }
-				fetchingNextPage={ isFetching }
+				fetchingNextPage={ fetching }
 				guessedItemHeight={ GUESSED_POST_HEIGHT }
 				fetchNextPage={ handleFetchNextPage }
 				getItemRef={ getPostRef }
@@ -571,9 +585,9 @@ export function StreamV2( props: StreamV2Props ) {
 		<>
 			<div ref={ overlayRef } className="stream__init-overlay" />
 			{ children }
-			{ showingStream && items.length > 0 && intro?.() }
+			{ showingStream && visibleItems.length > 0 && intro?.() }
 			{ body }
-			{ showingStream && items.length > 0 && ! isFetching && <ListEnd /> }
+			{ showingStream && visibleItems.length > 0 && ! fetching && <ListEnd /> }
 			{ isLoginPromptVisible() && (
 				<ReaderStreamLoginPrompt redirectPath={ window.location.pathname } />
 			) }

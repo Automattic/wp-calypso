@@ -10,8 +10,8 @@ import { useFollowedReaderTags, useReaderTagBySlug } from 'calypso/data/reader/u
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import Stream from 'calypso/reader/stream';
 import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
+import Stream from 'calypso/reader/stream-v2';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';

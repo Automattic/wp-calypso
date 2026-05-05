@@ -88,6 +88,9 @@ interface UseStreamPostsOptions {
 	feedId?: number | null;
 	localeSlug?: string | null;
 	startDate?: string | null;
+	options?: {
+		enabled?: boolean;
+	};
 }
 
 /**
@@ -102,9 +105,11 @@ export function useStreamPosts( {
 	feedId = null,
 	localeSlug = null,
 	startDate = null,
+	options,
 }: UseStreamPostsOptions ): UseStreamPostsResult {
 	const dispatch = useDispatch();
 	const streamType = getStreamType( streamKey );
+	const enabled = options?.enabled ?? true;
 
 	const [ removedIds, setRemovedIds ] = useState< Set< string > >( () => new Set() );
 	const streamIdentity = `${ streamKey }|${ feedId ?? '' }|${ localeSlug ?? '' }|${
@@ -156,6 +161,7 @@ export function useStreamPosts( {
 				] as const,
 				queryFn: ( { pageParam } ) => fetchReadStream( streamKey, buildPageParams( pageParam ) ),
 				initialPageParam: startDate ? { before: startDate } : null,
+				enabled,
 				getNextPageParam: ( lastPage, _allPages, lastPageParam ) => {
 					// `extractPageHandle` only consults `payload.pageHandle.offset` for
 					// the recommendations family; for cursor / date streams the rest of
@@ -190,7 +196,7 @@ export function useStreamPosts( {
 				placeholderData: keepPreviousData,
 				refetchOnWindowFocus: false,
 			} ),
-		[ streamKey, feedId, localeSlug, startDate, streamType, buildPageParams ]
+		[ streamKey, feedId, localeSlug, startDate, enabled, streamType, buildPageParams ]
 	);
 
 	const query = useInfiniteQuery( queryOptions );

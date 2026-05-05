@@ -147,6 +147,21 @@ describe( 'useStreamPosts — fetching', () => {
 		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 5 ) );
 		expect( nock.isDone() ).toBe( true );
 	} );
+
+	it( 'does not fetch when enabled is false', async () => {
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const { result } = renderHook(
+			() => useStreamPosts( { streamKey: 'likes', options: { enabled: false } } ),
+			{
+				wrapper: Wrapper,
+			}
+		);
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		expect( result.current.items ).toHaveLength( 0 );
+		expect( nock.isDone() ).toBe( true );
+	} );
 } );
 
 describe( 'useStreamPosts — removeItem', () => {

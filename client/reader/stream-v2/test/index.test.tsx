@@ -206,6 +206,16 @@ describe( 'StreamV2 — render states', () => {
 		);
 	} );
 
+	it( 'forces skeleton placeholders when forcePlaceholders is true', async () => {
+		mockLikesEndpoint( [ apiPost( 10 ) ] );
+		renderStream( { forcePlaceholders: true } );
+
+		await waitFor( () =>
+			expect( screen.queryAllByTestId( 'post-placeholder' ).length ).toBeGreaterThan( 0 )
+		);
+		expect( screen.queryByTestId( 'post-10' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders the empty state when the API returns no posts', async () => {
 		mockLikesEndpoint( [] );
 		const emptyContent = jest.fn( () => <div data-testid="empty">no posts</div> );
