@@ -310,8 +310,12 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		color: var( --color-neutral-100 );
 	}
 
+	// Dotcom-prominent description treatment, matching the login page's
+	// `is-prominent` subtitle slot: slightly darker than the default
+	// `--color-text-subtle` and a step up on the typography scale.
 	.connect-screen-brand-header__description {
-		color: var( --studio-gray-50, #646970 );
+		color: var( --color-text, var( --studio-gray-80 ) );
+		font-size: $font-body-large;
 	}
 
 	.connect-screen-permissions-list__title,

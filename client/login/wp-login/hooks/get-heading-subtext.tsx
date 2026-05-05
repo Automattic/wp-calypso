@@ -31,16 +31,6 @@ const getHeadingSubText = ( {
 		return null;
 	}
 
-	// Unified connection flow (jetpack-connector): acknowledge that the site
-	// is already registered with WordPress.com. PR 3 will append the
-	// family-driven benefit clause to this same subtitle slot.
-	if ( isFromJetpackConnector && 'lostpassword' !== action ) {
-		return {
-			primary: getRegistrationAcknowledgement( connectorPlugins ?? [] ),
-			secondary: null,
-		};
-	}
-
 	const tos = (
 		<span className="wp-login__one-login-layout-tos">
 			{ partnerConfig
@@ -88,6 +78,18 @@ const getHeadingSubText = ( {
 				  ) }
 		</span>
 	);
+
+	// Unified connection flow (jetpack-connector): a prominent, dotcom-styled
+	// registration acknowledgement sits between the H1 and the existing ToS
+	// line. PR 3 will append the family-driven benefit clause to this slot;
+	// the ToS keeps its established subtle styling underneath. Lostpassword
+	// keeps the standard reset-instructions copy for clarity.
+	if ( isFromJetpackConnector && 'lostpassword' !== action ) {
+		return {
+			primary: getRegistrationAcknowledgement( connectorPlugins ?? [] ),
+			secondary: tos,
+		};
+	}
 
 	const primary = isWooJPC
 		? translate(

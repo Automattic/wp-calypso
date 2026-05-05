@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
@@ -48,6 +49,13 @@ interface OneLoginLayoutProps {
 	 * Optional flag to control whether the heading logo should be displayed. Defaults to true.
 	 */
 	showLogo?: boolean;
+	/**
+	 * When true, the primary subtext slot is rendered in the dotcom-prominent
+	 * variant (slightly darker text color and a step up on the typography
+	 * scale). Use it when the primary line is a real subtitle rather than the
+	 * default quiet ToS treatment.
+	 */
+	subHeadingProminent?: boolean;
 }
 
 const OneLoginLayout = ( {
@@ -62,6 +70,7 @@ const OneLoginLayout = ( {
 	noThanksRedirectUrl,
 	columnWidth,
 	showLogo = true,
+	subHeadingProminent = false,
 }: OneLoginLayoutProps ) => {
 	const translate = useTranslate();
 	const urlLocale = useLocale();
@@ -171,7 +180,13 @@ const OneLoginLayout = ( {
 						}
 					/>
 					<div className="wp-login__one-login-layout-heading-subtext-wrapper">
-						<h2 className="wp-login__one-login-layout-heading-subtext">{ subHeadingText }</h2>
+						<h2
+							className={ clsx( 'wp-login__one-login-layout-heading-subtext', {
+								'is-prominent': subHeadingProminent,
+							} ) }
+						>
+							{ subHeadingText }
+						</h2>
 						{ subHeadingTextSecondary && (
 							<h3 className="wp-login__one-login-layout-heading-subtext is-secondary">
 								{ subHeadingTextSecondary }

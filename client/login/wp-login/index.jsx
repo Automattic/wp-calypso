@@ -379,6 +379,7 @@ export class Login extends Component {
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
+						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 					>
 						{ mainContent }
 					</OneLoginLayout>
