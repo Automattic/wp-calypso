@@ -36,7 +36,7 @@ import {
 	domainMapping,
 } from 'calypso/my-sites/domains/paths';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
@@ -77,6 +77,7 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
@@ -413,8 +414,11 @@ const DomainSearchStep: StepType< {
 					backDestination = navigation.goBack;
 					backLabelText = __( 'Back' );
 				} else {
+					if ( ! isLoggedIn || ! userSiteCount ) {
+						return;
+					}
 					backDestination = defaultBackUrl;
-					backLabelText = sitesBackLabelText;
+					backLabelText = __( 'Back' );
 				}
 			}
 
@@ -437,7 +441,7 @@ const DomainSearchStep: StepType< {
 				<>
 					{ config.allowsUsingOwnDomain && (
 						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-							{ __( 'Use a domain I already own' ) }
+							{ __( 'Use a domain I own' ) }
 						</Step.LinkButton>
 					) }
 				</>
@@ -496,7 +500,7 @@ const DomainSearchStep: StepType< {
 				onClick={ () => events.onExternalDomainClick( query ) }
 				variant="link"
 			>
-				<span>{ __( 'Use a domain I already own' ) }</span>
+				<span>{ __( 'Use a domain I own' ) }</span>
 			</Button>
 		);
 	};

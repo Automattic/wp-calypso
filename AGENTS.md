@@ -67,11 +67,23 @@ yarn test-client --testNamePattern="<TestName>" # Run a specific client unit tes
 # E2E tests - refer to: test/e2e/AGENTS.md
 
 # Code Quality
-yarn lint           # Lint everything
-yarn lint:css       # Lint CSS
-yarn lint:js        # Lint JavaScript
-yarn reformat-files # Fix formatting with Prettier
+yarn lint             # Lint everything
+yarn lint:css         # Lint CSS
+yarn lint:js          # Lint JavaScript
+yarn reformat-files   # Fix formatting with Prettier
+yarn typecheck-client # Type-check client
 ```
+
+## Pre-PR checks
+
+Before pushing a branch or running `gh pr create`, run the type-check that CI will run. PRs touching `client/` may fail the `type_check_client` CI check after opening, so verify locally first:
+
+```bash
+yarn               # Install dependencies first if you haven't already
+yarn typecheck-client
+```
+
+If it fails, fix the type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description. Other CI type-checks worth running when relevant: `yarn typecheck-packages`, `yarn typecheck-apps`.
 
 ## Creating Pull Requests
 
