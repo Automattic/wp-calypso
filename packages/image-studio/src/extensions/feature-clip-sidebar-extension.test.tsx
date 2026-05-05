@@ -16,6 +16,7 @@ const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
 
 jest.mock( '@wordpress/components', () => ( {
+	Tooltip: ( { children }: { children: React.ReactNode; text: string } ) => <>{ children }</>,
 	Button: ( {
 		children,
 		onClick,
@@ -76,6 +77,7 @@ jest.mock( '../utils/tracking', () => ( {
 } ) );
 
 jest.mock( './feature-clip-sidebar.scss', () => ( {} ), { virtual: true } );
+jest.mock( '../components/experimental-badge/style.scss', () => ( {} ), { virtual: true } );
 
 describe( 'feature-clip-sidebar-extension', () => {
 	beforeEach( () => {
@@ -93,6 +95,23 @@ describe( 'feature-clip-sidebar-extension', () => {
 		delete ( window as Record< string, unknown > ).imageStudioData;
 	} );
 
+	it( 'does not register the plugin when isDevMode is false', () => {
+		( window as Record< string, unknown > ).imageStudioData = { isDevMode: false };
+		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
+		registerFeatureClipSidebar();
+		expect( mockRegisterPlugin ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not register the plugin when canGenerateVideoClips is false', () => {
+		( window as Record< string, unknown > ).imageStudioData = {
+			isDevMode: true,
+			canGenerateVideoClips: false,
+		};
+		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
+		registerFeatureClipSidebar();
+		expect( mockRegisterPlugin ).not.toHaveBeenCalled();
+	} );
+
 	it( 'registers a sidebar plugin exactly once', () => {
 		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
 		registerFeatureClipSidebar();
@@ -101,13 +120,6 @@ describe( 'feature-clip-sidebar-extension', () => {
 
 		expect( mockRegisterPlugin ).toHaveBeenCalledTimes( 1 );
 		expect( mockRegisterPlugin.mock.calls[ 0 ][ 0 ] ).toBe( 'image-studio-feature-clip' );
-	} );
-
-	it( 'does not register the plugin when isDevMode is false', () => {
-		( window as Record< string, unknown > ).imageStudioData = { isDevMode: false };
-		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
-		registerFeatureClipSidebar();
-		expect( mockRegisterPlugin ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens Image Studio with the post-editor entry point on click', async () => {

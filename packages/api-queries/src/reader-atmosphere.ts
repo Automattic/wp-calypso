@@ -6,6 +6,7 @@ import {
 	createRepost,
 	deleteFollow,
 	deleteLike,
+	deletePost,
 	deleteRepost,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
@@ -23,6 +24,7 @@ import {
 	PENDING_REPOST_URI,
 	isValidHashtag,
 	readerAtmosphereKeys,
+	uploadBlob,
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
@@ -45,6 +47,7 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereCreateFollowResponse,
+	AtmosphereEmbed,
 	AtmosphereError,
 	AtmosphereFeedItem,
 	AtmosphereScopedProfile,
@@ -57,6 +60,8 @@ import type {
 	CreatePostParams,
 	CreatePostResult,
 	CreateRepostResult,
+	UploadBlobParams,
+	UploadBlobResult,
 } from '@automattic/api-core';
 
 const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( [
@@ -613,6 +618,27 @@ function patchAtmospherePostCaches(
 	return { snapshots };
 }
 
+/**
+ * Patch the `embed` field of every cached `AtmosphereFeedItem` whose
+ * `uri` matches `postUri`, across all atmosphere queries (timeline,
+ * author-feed, thread, tag-feed). Used by the composer to inject a
+ * local-preview-URL embed onto the just-published placeholder so the
+ * timeline shows the user's just-attached images during the brief
+ * window before the next refetch replaces them with real CDN URLs from
+ * the AppView.
+ *
+ * No rollback is captured: this runs AFTER the mutation succeeds and is
+ * superseded by the next refetch. If no cache entry matches `postUri`
+ * (placeholder evicted, cache cold), the call is a no-op.
+ */
+export function setAtmospherePostEmbed(
+	queryClient: QueryClient,
+	postUri: string,
+	embed: AtmosphereEmbed
+): void {
+	patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( { ...item, embed } ) );
+}
+
 function restoreFeedItems(
 	items: AtmosphereFeedItem[],
 	itemSnapshots: Map< string, AtmosphereFeedItem[] >,
@@ -837,6 +863,204 @@ export function useDeleteRepostMutation( connectionId: number ) {
 			onError: ( _err, _vars, ctx ) => restoreAtmospherePostSnapshots( queryClient, ctx ),
 		}
 	);
+}
+
+interface RemovalContext {
+	prev: Array< { key: QueryKey; data: unknown } >;
+	/**
+	 * Snapshot from patchAtmospherePostCaches for the reply parent's counts.replies decrement.
+	 *  Only present when the deleted post was a reply and `replyParentUri` was supplied.
+	 */
+	parentCounts?: OptimisticContext;
+}
+
+function removePostFromAtmosphereCaches(
+	queryClient: QueryClient,
+	postUri: string
+): RemovalContext {
+	const prev: RemovalContext[ 'prev' ] = [];
+	for ( const [ key, data ] of queryClient.getQueriesData( {
+		queryKey: readerAtmosphereKeys.all,
+	} ) ) {
+		if ( ! data ) {
+			continue;
+		}
+		const next = removePostFromQueryData( data, postUri );
+		if ( next === data ) {
+			continue;
+		}
+		prev.push( { key, data } );
+		queryClient.setQueryData( key, next );
+	}
+	return { prev };
+}
+
+/**
+ * Remove or tombstone a single post from one cached query entry.
+ *
+ * Coverage:
+ *  - Feed lists: walks `pages[].items[]` and filters out the matching URI.
+ *  - Thread caches: walks the `thread.*` tree and replaces the matching node
+ *    with `{ type: 'not_found', uri }` (a tombstone). Children of the
+ *    tombstoned node are dropped because `tombstoneThreadNode` returns
+ *    immediately on match without descending further.
+ *
+ * Gap — quote-embed references in OTHER posts that quote the deleted one:
+ *  This function (and `patchAtmospherePostCaches`) do NOT walk
+ *  `embed.type === 'quote'` references in feed items. A post that quotes the
+ *  deleted post will continue to show a stale quote card until the next
+ *  refetch. A future enhancement could replace matched quote embeds with an
+ *  `AtmosphereQuoteNotFoundTombstone`. Track as a follow-up if user-visible
+ *  quote-embed staleness becomes a problem.
+ */
+function removePostFromQueryData( data: unknown, postUri: string ): unknown {
+	if ( isInfiniteFeedData( data ) ) {
+		let mutated = false;
+		const pages = data.pages.map( ( page ) => {
+			if ( ! Array.isArray( page.items ) ) {
+				return page;
+			}
+			const filtered = page.items.filter( ( item ) => item.uri !== postUri );
+			if ( filtered.length === page.items.length ) {
+				return page;
+			}
+			mutated = true;
+			return { ...page, items: filtered };
+		} );
+		return mutated ? { ...data, pages } : data;
+	}
+
+	if ( isObject( data ) && isObject( data.thread ) ) {
+		const prevThread = data.thread as unknown as AtmosphereThreadNode;
+		const nextThread = tombstoneThreadNode( prevThread, postUri );
+		return nextThread === prevThread ? data : { ...data, thread: nextThread };
+	}
+
+	return data;
+}
+
+function tombstoneThreadNode( node: AtmosphereThreadNode, postUri: string ): AtmosphereThreadNode {
+	if ( node.type !== 'post' ) {
+		return node;
+	}
+	if ( node.post.uri === postUri ) {
+		return { type: 'not_found', uri: postUri };
+	}
+	const parent = node.parent ? tombstoneThreadNode( node.parent, postUri ) : null;
+	const replies = node.replies.map( ( reply ) => tombstoneThreadNode( reply, postUri ) );
+	if (
+		parent === node.parent &&
+		replies.every( ( reply, idx ) => reply === node.replies[ idx ] )
+	) {
+		return node;
+	}
+	return { ...node, parent, replies };
+}
+
+function restoreRemovalContext( queryClient: QueryClient, ctx: RemovalContext | undefined ) {
+	if ( ! ctx ) {
+		return;
+	}
+	for ( const { key, data } of ctx.prev ) {
+		queryClient.setQueryData( key, data );
+	}
+}
+
+interface DeletePostMutationVars {
+	rkey: string;
+	postUri: string;
+	replyParentUri?: string;
+}
+
+interface DeletePostMutationCallbacks {
+	/**
+	 * Fired after the cache has been invalidated on a successful DELETE.
+	 * Survives the component unmount that follows the optimistic removal,
+	 * because the factory's lifecycle callbacks run from `Mutation.execute`
+	 * (mutation-cache-owned) rather than the observer (component-owned).
+	 * Use this for user-facing notices and Tracks events that must fire
+	 * even when `<PostActionsMenu>` unmounts as the post leaves the list.
+	 */
+	onSuccess?: ( vars: DeletePostMutationVars ) => void;
+	/**
+	 * Fired after the cache rollback runs (or, for an idempotent 404,
+	 * fired without a rollback). Same unmount-safety reasoning as
+	 * `onSuccess` — keeps the user-facing error notice and the
+	 * not_found / error_shown Tracks events out of the per-call options
+	 * passed to `mutate(...)`, which are skipped when the observer has
+	 * no listeners.
+	 */
+	onError?: ( err: AtmosphereError, vars: DeletePostMutationVars ) => void;
+}
+
+export function useDeletePostMutation(
+	connectionId: number,
+	callbacks?: DeletePostMutationCallbacks
+) {
+	const queryClient = useQueryClient();
+	return useMutation< void, AtmosphereError, DeletePostMutationVars, RemovalContext >( {
+		mutationFn: ( { rkey } ) => deletePost( { connectionId, rkey } ),
+		onMutate: async ( { postUri, replyParentUri } ) => {
+			await queryClient.cancelQueries( { queryKey: readerAtmosphereKeys.all } );
+
+			// Snapshot and remove the deleted post first, before touching the
+			// parent counts. This way `prev` captures the page's original state
+			// (parent still at its pre-decrement reply count), so restoring `prev`
+			// on error is sufficient for any page that contained both the parent
+			// and the deleted reply.
+			const ctx = removePostFromAtmosphereCaches( queryClient, postUri );
+
+			// When deleting a reply, decrement the parent's counts.replies in
+			// every cache where the parent appears. We do this AFTER the removal
+			// pass so that `prev` already holds the original page data.
+			// For pages that contain the parent but NOT the deleted reply,
+			// parentCounts covers the rollback (the removal pass won't have
+			// touched those pages, so `prev` has no entry for them).
+			let parentCounts: OptimisticContext | undefined;
+			if ( replyParentUri ) {
+				parentCounts = patchAtmospherePostCaches( queryClient, replyParentUri, ( item ) => ( {
+					...item,
+					counts: {
+						...item.counts,
+						replies: Math.max( 0, item.counts.replies - 1 ),
+					},
+				} ) );
+			}
+
+			return { ...ctx, parentCounts };
+		},
+		onError: ( err, vars, ctx ) => {
+			if ( err.kind !== 'not_found' ) {
+				// Restore parent-counts patch first. For pages that also contained
+				// the deleted reply, the subsequent removal snapshot restore will
+				// overwrite with the full prior page data (redundant but harmless —
+				// since `prev` was taken before the parent-count patch, it already
+				// carries the original count). For pages that only contained the
+				// parent, this is the only restore path.
+				if ( ctx?.parentCounts ) {
+					restoreAtmospherePostSnapshots( queryClient, ctx.parentCounts );
+				}
+				restoreRemovalContext( queryClient, ctx );
+			}
+			// `not_found` is idempotent — keep optimistic removal in place and
+			// let the next refetch confirm. The consumer callback still fires so
+			// it can emit a `_post_delete_not_found` Tracks event without a notice.
+			callbacks?.onError?.( err, vars );
+		},
+		onSuccess: ( _data, vars ) => {
+			// Invalidate via prefix so we cover every cached `actor` (handle or DID)
+			// and every `filter` variant. Real consumers key these caches by the
+			// route param (typically the handle), not by DID, so a DID-keyed
+			// invalidation would miss the active surface.
+			queryClient.invalidateQueries( {
+				queryKey: [ ...readerAtmosphereKeys.all, 'scoped-author-feed', connectionId ],
+			} );
+			queryClient.invalidateQueries( {
+				queryKey: [ ...readerAtmosphereKeys.all, 'scoped-profile', connectionId ],
+			} );
+			callbacks?.onSuccess?.( vars );
+		},
+	} );
 }
 
 export const atmosphereTagFeedInfiniteQuery = ( connectionId: number, hashtag: string ) => {
@@ -1191,6 +1415,18 @@ export function removePlaceholder< P extends { items: AtmosphereFeedItem[] } >(
 	} );
 	return removed ? { ...data, pages } : data;
 }
+
+/**
+ * Wraps the uploadBlob fetcher. No cache invalidation needed — blob
+ * uploads are a transient step toward createPost. The QueryClient
+ * parameter is kept for symmetry with sibling factories in this module
+ * so future cache touches don't refactor the call sites.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const uploadBlobMutation = ( _queryClient: QueryClient ) =>
+	mutationOptions< UploadBlobResult, AtmosphereError, UploadBlobParams >( {
+		mutationFn: uploadBlob,
+	} );
 
 /**
  * Mutation factory for creating an `app.bsky.feed.post` record.

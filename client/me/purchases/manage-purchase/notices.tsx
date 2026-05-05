@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -69,6 +70,7 @@ import './notices.scss';
 const eventProperties = ( warning: string ) => ( { warning, position: 'individual-purchase' } );
 
 export interface PurchaseNoticeProps {
+	isSplitCancelRemoveEnabled?: boolean;
 	changePaymentMethodPath: string | false;
 	getAddNewPaymentMethodUrlFor: ( siteSlug: string ) => string | undefined;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
@@ -135,7 +137,7 @@ class PurchaseNotice extends Component<
 	renderCancelledRedirectNotice() {
 		const { purchase, translate, moment, willAtomicSiteRevert } = this.props;
 		if (
-			! config.isEnabled( 'purchases/split-cancel-remove' ) ||
+			! this.props.isSplitCancelRemoveEnabled ||
 			! this.state.showCancelledRedirectNotice ||
 			! purchase
 		) {
@@ -1416,6 +1418,18 @@ class PurchaseNotice extends Component<
 	}
 }
 
-export default connect( null, { recordTracksEvent } )(
+const ConnectedPurchaseNotice = connect( null, { recordTracksEvent } )(
 	localize( withLocalizedMoment( PurchaseNotice ) )
 );
+
+function PurchaseNoticeWithExperiment( props: PurchaseNoticeProps ) {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	return (
+		<ConnectedPurchaseNotice
+			{ ...props }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+		/>
+	);
+}
+
+export default PurchaseNoticeWithExperiment;

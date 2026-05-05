@@ -675,6 +675,50 @@ describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () 
 	} );
 } );
 
+describe( 'TimelinePanel — quote composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'opens the composer in quote mode when the quotes count is clicked', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( readerAtmosphereKeys.timeline( 42 ), {
+			pages: [
+				{
+					items: [
+						{
+							...makePost( 'at://parent', 'quotable post' ),
+							cid: 'pcid',
+							counts: { replies: 0, reposts: 0, likes: 0, quotes: 3 },
+						},
+					],
+					cursor: null,
+				},
+			],
+			pageParams: [ undefined ],
+		} );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /quote, 3 quotes/i } ) );
+		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
+	} );
+} );
+
 describe( 'TimelinePanel — reply composer integration', () => {
 	beforeEach( () => {
 		jest

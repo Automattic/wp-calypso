@@ -57,7 +57,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	// True once we have a definitive answer for `isSetUp` — either the
 	// setting has loaded (any value, including 0), or the terms list has
 	// loaded. Used to suppress a welcome → tabs flash on the bare
-	// /podcasting/[site] URL while data is still in flight.
+	// /settings/podcast/[site] URL while data is still in flight.
 	const isSetupResolved = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return true;
@@ -70,7 +70,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
 	// Tabs only show when podcasting is actually set up. A deep link to
-	// /podcasting/episodes/[site] on a non-set-up site bounces back to the
+	// /settings/podcast/episodes/[site] on a non-set-up site bounces back to the
 	// welcome via the URL-sync effect below.
 	const showTabs = isSetUp;
 
@@ -88,20 +88,22 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	}, [ section ] );
 
 	// Keep the URL in sync with the current view: tabs live at
-	// /podcasting/<section>/[site], welcome at the bare /podcasting/[site]. A
+	// /settings/podcast/<section>/[site], welcome at the bare /settings/podcast/[site]. A
 	// disabled podcast on episodes/distribution gets bounced back to welcome,
-	// but /podcasting/settings stays accessible so the user can flip podcasting on.
+	// but /settings/podcast/settings stays accessible so the user can flip podcasting on.
 	useEffect( () => {
 		if ( ! isSetupResolved ) {
 			return;
 		}
 		const path = window.location.pathname;
-		const isSectionUrl = /^\/podcasting\/(episodes|distribution|settings)(\/|$)/.test( path );
-		const isContentSectionUrl = /^\/podcasting\/(episodes|distribution)(\/|$)/.test( path );
+		const isSectionUrl = /^\/settings\/podcast\/(episodes|distribution|settings)(\/|$)/.test(
+			path
+		);
+		const isContentSectionUrl = /^\/settings\/podcast\/(episodes|distribution)(\/|$)/.test( path );
 		if ( showTabs && ! isSectionUrl ) {
-			window.history.replaceState( null, '', '/podcasting/episodes' + pathSuffix );
+			window.history.replaceState( null, '', '/settings/podcast/episodes' + pathSuffix );
 		} else if ( ! showTabs && isContentSectionUrl ) {
-			window.history.replaceState( null, '', '/podcasting' + pathSuffix );
+			window.history.replaceState( null, '', '/settings/podcast' + pathSuffix );
 		}
 	}, [ showTabs, isSetupResolved, pathSuffix ] );
 
@@ -111,7 +113,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const prevIsSetUp = useRef( isSetUp );
 	useEffect( () => {
 		if ( isSetupResolved && prevIsSetUp.current && ! isSetUp ) {
-			page.show( '/podcasting' + pathSuffix );
+			page.show( '/settings/podcast' + pathSuffix );
 		}
 		prevIsSetUp.current = isSetUp;
 	}, [ isSetUp, isSetupResolved, pathSuffix ] );
@@ -120,17 +122,17 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		{
 			name: 'episodes' as const,
 			title: translate( 'Episodes' ) as string,
-			path: '/podcasting/episodes' + pathSuffix,
+			path: '/settings/podcast/episodes' + pathSuffix,
 		},
 		{
 			name: 'distribution' as const,
 			title: translate( 'Distribution' ) as string,
-			path: '/podcasting/distribution' + pathSuffix,
+			path: '/settings/podcast/distribution' + pathSuffix,
 		},
 		{
 			name: 'settings' as const,
 			title: translate( 'Settings' ) as string,
-			path: '/podcasting/settings' + pathSuffix,
+			path: '/settings/podcast/settings' + pathSuffix,
 		},
 	];
 

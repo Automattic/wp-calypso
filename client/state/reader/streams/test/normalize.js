@@ -9,6 +9,7 @@ import {
 	analyticsForStream,
 	createStreamDataFromCards,
 	createStreamDataFromPosts,
+	createStreamDataFromSites,
 	createStreamItemFromPost,
 	createStreamSitesFromRecommendedSites,
 	extractPageHandle,
@@ -166,6 +167,92 @@ describe( 'createStreamSitesFromRecommendedSites', () => {
 		const result = createStreamSitesFromRecommendedSites( [ { feed_ID: 1 } ] );
 		expect( result[ 0 ] ).toMatchObject( { feed_ID: 1, feedId: 1 } );
 		expect( result[ 0 ].site_icon ).toBeUndefined();
+	} );
+} );
+
+describe( 'createStreamDataFromSites', () => {
+	it( 'returns empty arrays for null/undefined input', () => {
+		expect( createStreamDataFromSites( null, 'date' ) ).toEqual( {
+			streamItems: [],
+			streamPosts: [],
+		} );
+		expect( createStreamDataFromSites( undefined, 'date' ) ).toEqual( {
+			streamItems: [],
+			streamPosts: [],
+		} );
+	} );
+
+	it( 'maps site → top-post into a stream item with site-level metadata', () => {
+		const result = createStreamDataFromSites(
+			[
+				{
+					name: 'Recommended Site',
+					description: 'A recommendation',
+					icon: { ico: 'site-icon.png' },
+					posts: [
+						{
+							ID: 10,
+							site_ID: 200,
+							feed_ID: 999,
+							feed_URL: 'https://example.com/feed',
+							date: '2026-01-01',
+							URL: 'https://example.com/p',
+						},
+					],
+				},
+			],
+			'date'
+		);
+
+		expect( result.streamItems ).toHaveLength( 1 );
+		expect( result.streamItems[ 0 ] ).toMatchObject( {
+			blogId: 200,
+			postId: 10,
+			date: '2026-01-01',
+			url: 'https://example.com/p',
+			site_name: 'Recommended Site',
+			site_description: 'A recommendation',
+			// Site-level icon overrides post-level icon — mirrors legacy
+			// `createStreamItemFromSiteAndPost` in the data-layer.
+			site_icon: 'site-icon.png',
+			feed_URL: 'https://example.com/feed',
+			feed_ID: 999,
+		} );
+		expect( result.streamPosts ).toEqual( [ expect.objectContaining( { ID: 10, site_ID: 200 } ) ] );
+	} );
+
+	it( 'skips sites missing posts and sites with empty posts arrays', () => {
+		const result = createStreamDataFromSites(
+			[
+				{ name: 'No Posts Property' },
+				{ name: 'Empty Posts', posts: [] },
+				{
+					name: 'Valid',
+					posts: [ { ID: 1, site_ID: 1, date: 'x', URL: 'https://example.com/a' } ],
+				},
+			],
+			'date'
+		);
+		expect( result.streamItems ).toHaveLength( 1 );
+		expect( result.streamItems[ 0 ] ).toMatchObject( { postId: 1 } );
+	} );
+
+	it( 'uses the first post per site (sites with multiple posts are not flattened)', () => {
+		const result = createStreamDataFromSites(
+			[
+				{
+					name: 'Site',
+					posts: [
+						{ ID: 1, site_ID: 1, date: 'a', URL: 'https://example.com/a' },
+						{ ID: 2, site_ID: 1, date: 'b', URL: 'https://example.com/b' },
+					],
+				},
+			],
+			'date'
+		);
+		expect( result.streamItems ).toHaveLength( 1 );
+		expect( result.streamItems[ 0 ].postId ).toBe( 1 );
+		expect( result.streamPosts ).toHaveLength( 1 );
 	} );
 } );
 

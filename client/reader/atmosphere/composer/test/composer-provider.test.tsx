@@ -1,14 +1,34 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore } from 'redux';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import { ComposerProvider, useComposer } from '../composer-provider';
+
+// `ComposerProvider` consumes `useImageUploads`, which requires a
+// `QueryClientProvider` in the tree, and dispatches Tracks events via
+// `useDispatch`, which requires a Redux `<Provider>`. Each test gets its
+// own client + a permissive noop store so cached state and dispatched
+// actions never leak between cases.
+function withProviders( ui: React.ReactNode ) {
+	const store = createStore( ( s = {} ) => s, applyMiddleware( thunkMiddleware ) );
+	return (
+		<QueryClientProvider client={ new QueryClient() }>
+			<Provider store={ store }>{ ui }</Provider>
+		</QueryClientProvider>
+	);
+}
 
 const wrap = ( connectionId: number ) =>
 	function Wrapper( { children }: { children: React.ReactNode } ) {
-		return <ComposerProvider connectionId={ connectionId }>{ children }</ComposerProvider>;
+		return withProviders(
+			<ComposerProvider connectionId={ connectionId }>{ children }</ComposerProvider>
+		);
 	};
 
 describe( 'useComposer', () => {
@@ -75,7 +95,7 @@ describe( 'useComposer', () => {
 			);
 		}
 
-		render( <Harness /> );
+		render( withProviders( <Harness /> ) );
 		expect( screen.getByTestId( 'probe' ) ).toHaveTextContent( 'closed' );
 		await user.click( screen.getByRole( 'button', { name: 'open' } ) );
 		expect( screen.getByTestId( 'probe' ) ).toHaveTextContent( '42' );
@@ -102,15 +122,17 @@ describe( 'useComposer', () => {
 					>
 						open
 					</button>
-					{ mode && <button onClick={ closeComposer }>close</button> }
+					{ mode && <button onClick={ () => closeComposer() }>close</button> }
 				</>
 			);
 		}
 
 		render(
-			<ComposerProvider connectionId={ 42 }>
-				<FocusHarness />
-			</ComposerProvider>
+			withProviders(
+				<ComposerProvider connectionId={ 42 }>
+					<FocusHarness />
+				</ComposerProvider>
+			)
 		);
 
 		const openBtn = screen.getByRole( 'button', { name: 'open' } );
@@ -122,7 +144,38 @@ describe( 'useComposer', () => {
 	} );
 
 	it( 'throws if useComposer is called outside ComposerProvider', () => {
-		expect( () => renderHook( () => useComposer() ) ).toThrow();
+		expect( () =>
+			renderHook( () => useComposer(), {
+				wrapper: ( { children }: { children: React.ReactNode } ) => withProviders( children ),
+			} )
+		).toThrow();
+	} );
+
+	it( 'exposes the image-upload state machine through the composer context', () => {
+		function Probe() {
+			const ctx = useComposer();
+			return (
+				<ul data-testid="probe">
+					{ 'images' in ctx && <li>images</li> }
+					{ 'addFiles' in ctx && <li>addFiles</li> }
+					{ 'removeImage' in ctx && <li>removeImage</li> }
+					{ 'retryImage' in ctx && <li>retryImage</li> }
+					{ 'setAlt' in ctx && <li>setAlt</li> }
+					{ 'isAllUploaded' in ctx && <li>isAllUploaded</li> }
+					{ 'isAnyPending' in ctx && <li>isAnyPending</li> }
+				</ul>
+			);
+		}
+
+		render(
+			withProviders(
+				<ComposerProvider connectionId={ 42 }>
+					<Probe />
+				</ComposerProvider>
+			)
+		);
+
+		expect( screen.getByTestId( 'probe' ).children ).toHaveLength( 7 );
 	} );
 
 	it( 'preserves entry_point on standalone mode', async () => {
@@ -141,9 +194,11 @@ describe( 'useComposer', () => {
 		}
 
 		render(
-			<ComposerProvider connectionId={ 1 }>
-				<TestConsumer />
-			</ComposerProvider>
+			withProviders(
+				<ComposerProvider connectionId={ 1 }>
+					<TestConsumer />
+				</ComposerProvider>
+			)
 		);
 
 		await user.click( screen.getByRole( 'button', { name: 'open' } ) );

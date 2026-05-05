@@ -10,6 +10,8 @@ import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ComposerModal } from '../composer-modal';
 import { ComposerProvider, useComposer } from '../composer-provider';
+import { useImageUploads } from '../media/use-image-uploads';
+import type { ComposerImage } from '../media/types';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -19,6 +21,39 @@ jest.mock( '@automattic/calypso-router', () => ( {
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn(),
 } ) );
+
+jest.mock( '../media/use-image-uploads', () => ( {
+	useImageUploads: jest.fn(),
+} ) );
+
+const mockUseImageUploads = useImageUploads as jest.MockedFunction< typeof useImageUploads >;
+
+function makeUploadedImage( id: string ): ComposerImage {
+	return {
+		kind: 'uploaded',
+		localId: id,
+		previewUrl: `blob:${ id }`,
+		alt: '',
+		aspectRatio: { width: 100, height: 100 },
+		blob: { ref: { $link: id }, mimeType: 'image/jpeg', size: 100 } as never,
+	};
+}
+
+function makeImageUploadsState(
+	overrides: Partial< ReturnType< typeof useImageUploads > > = {}
+): ReturnType< typeof useImageUploads > {
+	return {
+		images: [],
+		addFiles: jest.fn(),
+		removeImage: jest.fn(),
+		clearAll: jest.fn(),
+		retryImage: jest.fn(),
+		setAlt: jest.fn(),
+		isAllUploaded: true,
+		isAnyPending: false,
+		...overrides,
+	};
+}
 
 function makePreview() {
 	return {
@@ -59,6 +94,37 @@ function TriggerAndModal() {
 			</button>
 			<ComposerModal />
 		</>
+	);
+}
+
+function TriggerAndModalQuote() {
+	const { openComposer } = useComposer();
+	return (
+		<>
+			<button
+				onClick={ () =>
+					openComposer( {
+						kind: 'quote',
+						quote: {
+							uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+							cid: 'pcid',
+						},
+						previewPost: makePreview(),
+					} )
+				}
+			>
+				open
+			</button>
+			<ComposerModal />
+		</>
+	);
+}
+
+function HarnessQuote( props: { connectionId: number } ) {
+	return (
+		<ComposerProvider connectionId={ props.connectionId }>
+			<TriggerAndModalQuote />
+		</ComposerProvider>
 	);
 }
 
@@ -141,6 +207,7 @@ describe( '<ComposerModal>', () => {
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 		jest.spyOn( noticeActions, 'successNotice' );
 		( page as unknown as jest.Mock ).mockReset();
+		mockUseImageUploads.mockReturnValue( makeImageUploadsState() );
 	} );
 
 	afterEach( () => {
@@ -236,6 +303,29 @@ describe( '<ComposerModal>', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'hi' );
 	} );
 
+	it( 'shows the bad_request copy after a /posts media rejection', async () => {
+		// The slice-8a backend collapses every media-body validation
+		// failure into the generic `atmosphere_bad_request` wire code (see
+		// `reader-atmosphere/AGENTS.md` — "the wire stays stable"), so the
+		// composer renders its existing `bad_request` copy rather than a
+		// media-specific message.
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 400, { error: 'atmosphere_bad_request', message: 'Invalid media payload.' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		expect( await screen.findByText( /we couldn't post this/i ) ).toBeVisible();
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+	} );
+
 	it( 'maps 401 to a Reconnect link with target=_blank', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
@@ -324,17 +414,166 @@ describe( '<ComposerModal>', () => {
 		expect( count ).toBeVisible();
 	} );
 
-	it( 'media button is aria-disabled and tab-reachable inside the dialog', async () => {
+	it( 'media button opens the file picker when clicked', async () => {
+		const addFiles = jest.fn();
+		mockUseImageUploads.mockReturnValue( makeImageUploadsState( { addFiles } ) );
+
 		const user = userEvent.setup();
 		renderWithProvider( <Harness connectionId={ 42 } /> );
 		await user.click( screen.getByText( 'open' ) );
 
-		const media = screen.getByRole( 'button', { name: /add media/i } );
+		const media = screen.getByRole( 'button', { name: 'Add media' } );
+		// The hidden file input is a sibling of the button. Spy on its
+		// .click() — the integration we care about is button → input.click().
+		// Scope to the footer-left wrapper since <ImageGrid> can also render
+		// a hidden file input once images are attached.
+		const dialog = screen.getByRole( 'dialog' );
+		const input = dialog.querySelector(
+			'.atmosphere-composer__footer-left input[type="file"]'
+		) as HTMLInputElement | null;
+		expect( input ).not.toBeNull();
+		const inputClickSpy = jest.spyOn( input as HTMLInputElement, 'click' );
+
+		await user.click( media );
+		expect( inputClickSpy ).toHaveBeenCalledTimes( 1 );
+
+		// And once the input fires onChange (via userEvent.upload), addFiles
+		// is invoked with the picked files. This proves the second half of
+		// the wiring without depending on the browser's actual picker.
+		const file = new File( [ 'x' ], 'a.jpg', { type: 'image/jpeg' } );
+		await user.upload( input as HTMLInputElement, [ file ] );
+		expect( addFiles ).toHaveBeenCalledTimes( 1 );
+		expect( addFiles.mock.calls[ 0 ][ 0 ] ).toHaveLength( 1 );
+		expect( addFiles.mock.calls[ 0 ][ 0 ][ 0 ].name ).toBe( 'a.jpg' );
+	} );
+
+	it( 'media button is disabled at 4 images and reads "Maximum 4 images"', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( {
+				images: [
+					makeUploadedImage( 'a' ),
+					makeUploadedImage( 'b' ),
+					makeUploadedImage( 'c' ),
+					makeUploadedImage( 'd' ),
+				],
+			} )
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+
+		const media = screen.getByRole( 'button', { name: 'Maximum 4 images' } );
 		expect( media ).toHaveAttribute( 'aria-disabled', 'true' );
-		// The native HTML `disabled` attribute would remove the button
-		// from the tab order. We use aria-disabled so screen-reader
-		// users can reach the placeholder while it remains inert.
+		// We use aria-disabled (not the native HTML `disabled` attribute) so
+		// screen-reader users can still focus the button and hear the label.
 		expect( media ).not.toBeDisabled();
+	} );
+
+	it( 'renders the ImageGrid below the textarea when images are attached', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+
+		// Grid renders an <img> for each uploaded thumbnail.
+		const dialog = screen.getByRole( 'dialog' );
+		const textbox = screen.getByRole( 'textbox' );
+		const thumb = dialog.querySelector( '.atmosphere-composer__image-grid img' );
+		expect( thumb ).not.toBeNull();
+		// DOM order: textarea precedes the grid.
+		expect(
+			textbox.compareDocumentPosition( thumb as HTMLElement ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'enables Post when text is empty and one image is uploaded', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+
+		expect( screen.getByRole( 'button', { name: 'Post' } ) ).toBeEnabled();
+	} );
+
+	it( 'submits with media payload (standalone mode)', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body: unknown ) => {
+				const b = body as {
+					text?: string;
+					media?: { images?: Array< { blob?: unknown; alt?: string } > };
+				};
+				return (
+					b.text === '' &&
+					Array.isArray( b.media?.images ) &&
+					b.media?.images?.length === 1 &&
+					b.media?.images?.[ 0 ]?.alt === '' &&
+					!! b.media?.images?.[ 0 ]?.blob
+				);
+			} )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'submits with quote + media (recordWithMedia)', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body: unknown ) => {
+				const b = body as {
+					text?: string;
+					quote?: { uri?: string; cid?: string };
+					media?: { images?: unknown[] };
+				};
+				return (
+					b.text === 'q' &&
+					b.quote?.uri ===
+						'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb' &&
+					b.quote?.cid === 'pcid' &&
+					Array.isArray( b.media?.images ) &&
+					b.media?.images?.length === 1
+				);
+			} )
+			.reply( 200, { post: { uri: 'at://new-quote', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'q' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'shows DiscardConfirm when closing the modal with attached images and no text', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.keyboard( '{Escape}' );
+
+		expect( await screen.findByRole( 'button', { name: /^discard$/i } ) ).toBeVisible();
 	} );
 
 	it( 'Cmd+Enter on empty text does not POST (matches the disabled Post button)', async () => {
@@ -700,5 +939,160 @@ describe( '<ComposerModal>', () => {
 		const [ text, options ] = successSpy.mock.calls[ 0 ];
 		expect( text ).toBe( 'Your reply was posted.' );
 		expect( options ).toBeUndefined();
+	} );
+
+	describe( 'quote mode', () => {
+		it( 'fires _quote_composer_opened on open with quoted_uri', async () => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_quote_composer_opened',
+					expect.objectContaining( {
+						connection_id: 42,
+						quoted_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+					} )
+				)
+			);
+		} );
+
+		it( 'sends body { text, quote: { uri, cid } } and fires _quote_published on success', async () => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body: unknown ) => {
+					const b = body as {
+						text?: string;
+						quote?: { uri?: string; cid?: string };
+						reply?: unknown;
+					};
+					return (
+						b.text === 'hello quote' &&
+						b.quote?.uri ===
+							'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb' &&
+						b.quote?.cid === 'pcid' &&
+						! b.reply
+					);
+				} )
+				.reply( 200, { post: { uri: 'at://new-quote', cid: 'newcid', rkey: 'abc' } } );
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+			await user.type( screen.getByRole( 'textbox' ), 'hello quote' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_quote_published',
+					expect.objectContaining( {
+						connection_id: 42,
+						quoted_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+						new_post_uri: 'at://new-quote',
+					} )
+				)
+			);
+		} );
+
+		it( "success notice 'View' button links to getThreadUrl( connection_id, new_post.uri )", async () => {
+			const successSpy = noticeActions.successNotice as unknown as jest.Mock;
+			const pageMock = page as unknown as jest.Mock;
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( 200, {
+					post: {
+						uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/zzzzzzzzzzzzz',
+						cid: 'newcid',
+						rkey: 'abc',
+					},
+				} );
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+			await user.type( screen.getByRole( 'textbox' ), 'quoting!' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			await waitFor( () => expect( successSpy ).toHaveBeenCalled() );
+
+			const [ noticeText, options ] = successSpy.mock.calls[ 0 ];
+			expect( noticeText ).toBe( 'Your post was published.' );
+			expect( options ).toEqual(
+				expect.objectContaining( {
+					button: 'View',
+					onClick: expect.any( Function ),
+				} )
+			);
+
+			options.onClick();
+			expect( pageMock ).toHaveBeenCalledWith(
+				'/reader/atmosphere/42/thread/did:plc:abcdefghijklmnopqrstuvwx/zzzzzzzzzzzzz'
+			);
+		} );
+
+		it( 'fires _quote_error_shown once per error_kind transition', async () => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+			// First submit → 502.
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+			await user.type( screen.getByRole( 'textbox' ), 'hi' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_quote_error_shown',
+					expect.objectContaining( {
+						connection_id: 42,
+						quoted_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+						error_kind: 'upstream_unavailable',
+					} )
+				)
+			);
+
+			const callCountAfterFirst = recordSpy.mock.calls.filter(
+				( c: [ string, unknown ] ) => c[ 0 ] === 'calypso_reader_atmosphere_quote_error_shown'
+			).length;
+
+			// Second submit with the SAME error → no re-fire.
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+
+			const callCountAfterSecond = recordSpy.mock.calls.filter(
+				( c: [ string, unknown ] ) => c[ 0 ] === 'calypso_reader_atmosphere_quote_error_shown'
+			).length;
+
+			expect( callCountAfterSecond ).toBe( callCountAfterFirst );
+		} );
+
+		it( 'renders the quote_disabled error copy', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( 403, { error: 'atmosphere_quote_disabled' } );
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+			await user.type( screen.getByRole( 'textbox' ), 'hi' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			expect( await screen.findByText( /this post can't be quoted\./i ) ).toBeVisible();
+			expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+		} );
 	} );
 } );

@@ -7,8 +7,17 @@ import {
 	useRef,
 	useState,
 } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { MAX_IMAGES } from './media/constants';
+import { useImageUploads } from './media/use-image-uploads';
 import type { AtUriRef } from '@automattic/api-core';
+import type { AppState } from 'calypso/types';
 import type { ReactNode } from 'react';
+import type { UnknownAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+
+type ImageUploads = ReturnType< typeof useImageUploads >;
 
 /**
  * Structural shape consumed by `<ComposerPinnedContext>`. Both
@@ -49,10 +58,23 @@ export type ComposerMode =
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 
-interface ComposerContextValue {
+export interface CloseComposerOptions {
+	/**
+	 * When `true`, defers revocation of every attached image's local
+	 * preview blob URL so cache entries that reference them (e.g. the
+	 * standalone-post placeholder embed patched in by the modal's
+	 * `onSuccess`) remain renderable past the timeline's staleTime.
+	 * The publish path passes this when ≥1 image was uploaded; the
+	 * cancel / discard path leaves it `false` (or omits it) so URLs
+	 * are reclaimed immediately.
+	 */
+	keepPreviewUrlsAlive?: boolean;
+}
+
+interface ComposerContextValue extends ImageUploads {
 	mode: ActiveMode | null;
 	openComposer: ( mode: ComposerMode ) => void;
-	closeComposer: () => void;
+	closeComposer: ( options?: CloseComposerOptions ) => void;
 }
 
 const ComposerContext = createContext< ComposerContextValue | null >( null );
@@ -87,13 +109,55 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 		[ connectionId ]
 	);
 
-	const closeComposer = useCallback( () => {
+	// Tracks whether the most recent close should keep preview URLs alive.
+	// Read inside the `mode → null` effect that calls `clearAll`. Stored on
+	// a ref because the effect can't take a parameter, and stuffing the flag
+	// into `mode` itself would couple it to the open-state model.
+	const keepPreviewUrlsAliveRef = useRef( false );
+
+	const closeComposer = useCallback( ( options?: CloseComposerOptions ) => {
+		keepPreviewUrlsAliveRef.current = options?.keepPreviewUrlsAlive ?? false;
 		setMode( null );
 	}, [] );
 
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
+	const onTrack = useCallback(
+		( event: string, props: Record< string, unknown > ) => {
+			dispatch( recordReaderTracksEvent( event, props ) );
+		},
+		[ dispatch ]
+	);
+
+	const imageUploads = useImageUploads( {
+		connectionId: mode?.connectionId ?? 0,
+		max: MAX_IMAGES,
+		mode: mode?.kind ?? 'standalone',
+		onTrack,
+	} );
+
+	// Reset images when the composer closes (mode transitions to null).
+	// `clearAll` skips the `media_removed` Tracks event for each entry —
+	// close-cleanup is a system action, not a user click on ×. (And by
+	// the time this effect runs, `mode` is already null, so the
+	// `connection_id` / `mode` labels would be garbage anyway.)
+	useEffect( () => {
+		if ( ! mode ) {
+			const deferRevocation = keepPreviewUrlsAliveRef.current;
+			// Reset before calling clearAll so a subsequent cancel/discard
+			// close (no flag) doesn't inherit a stale `true` from a prior
+			// successful publish.
+			keepPreviewUrlsAliveRef.current = false;
+			imageUploads.clearAll( { deferRevocation } );
+		}
+		// `imageUploads` is recreated each render — capturing it in deps would
+		// re-run the effect every render. The closure reads the snapshot at
+		// effect time, which is the desired behavior.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ mode ] );
+
 	const value = useMemo(
-		() => ( { mode, openComposer, closeComposer } ),
-		[ mode, openComposer, closeComposer ]
+		() => ( { mode, openComposer, closeComposer, ...imageUploads } ),
+		[ mode, openComposer, closeComposer, imageUploads ]
 	);
 
 	return <ComposerContext.Provider value={ value }>{ children }</ComposerContext.Provider>;
