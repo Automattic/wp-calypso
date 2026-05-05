@@ -15,9 +15,7 @@ export default function AdPreview( { htmlCode, isLoading, templateFormat, width 
 
 	// Responsive WPCOM templates emit the same `wa-inline-frame` postMessage
 	// protocol to size the iframe.
-	const isResponsiveHtmlFormat = [ 'html5_v2', 'html5_v3', 'html5_v4' ].includes(
-		templateFormat
-	);
+	const isResponsiveHtmlFormat = [ 'html5_v2', 'html5_v3', 'html5_v4' ].includes( templateFormat );
 
 	useEffect( () => {
 		if ( ! isLoading && isResponsiveHtmlFormat ) {
