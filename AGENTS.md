@@ -71,7 +71,7 @@ yarn lint             # Lint everything
 yarn lint:css         # Lint CSS
 yarn lint:js          # Lint JavaScript
 yarn reformat-files   # Fix formatting with Prettier
-yarn typecheck-client # Type-check client/ (matches CI's type_check_client)
+yarn typecheck-client # Type-check client
 ```
 
 ## Pre-PR checks
