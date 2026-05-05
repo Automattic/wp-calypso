@@ -328,7 +328,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 										<>
 											<div className="subscribe-modal__preview-stream-header">
 												<div className="subscribe-modal__preview-site">
-													<SiteIcon size={ 24 } iconUrl={ selectedFeedIconUrl } />
+													<SiteIcon size={ 36 } iconUrl={ selectedFeedIconUrl } />
 												</div>
 												<ReaderFollowButton
 													siteUrl={ selectedSite.site_URL }

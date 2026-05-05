@@ -132,6 +132,11 @@ $actions-height: 64px;
 				min-width: 0;
 			}
 
+			.site-icon.site-icon {
+				border-radius: 50%;
+				overflow: hidden;
+			}
+
 			&.is-selected {
 				background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
 				border-color: color-mix( in srgb, var( --color-accent ) 25%, #fff );
@@ -288,6 +293,11 @@ $actions-height: 64px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
+
+		.site-icon.site-icon {
+			border-radius: 50%;
+			overflow: hidden;
+		}
 	}
 
 	&__preview-stream-container {
