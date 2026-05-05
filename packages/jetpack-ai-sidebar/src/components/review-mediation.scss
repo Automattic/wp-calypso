@@ -202,6 +202,15 @@
 		margin: 0.5rem 0 0;
 	}
 
+	&__status {
+		font-size: 12px;
+		margin: 0.5rem 0 0;
+
+		&.is-failed {
+			color: #d63638;
+		}
+	}
+
 	// ---------- Suggested edit cards ----------
 	&__card {
 		border: 1px solid rgba(255, 255, 255, 0.12);

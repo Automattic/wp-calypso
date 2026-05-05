@@ -213,16 +213,21 @@ export function handleUpdateBlockContent( input: any ): any {
 		};
 	}
 
-	// Substring replace when currentText is a non-empty span present in the block;
-	// otherwise the new content replaces the block content wholesale (matches the
-	// "paste-ready" candidate-resolution contract). String.replace replaces only
-	// the first occurrence by design — duplicate spans get the leftmost edit.
+	// Substring replace when currentText is a non-empty span present in the block.
+	// If that span no longer exists, fail rather than replacing the whole block
+	// with a partial suggested edit.
 	let nextContent = content;
-	if (
-		typeof currentText === 'string' &&
-		currentText !== '' &&
-		snapshot.content.includes( currentText )
-	) {
+	const hasCurrentText = typeof currentText === 'string' && currentText !== '';
+	if ( hasCurrentText && ! snapshot.content.includes( currentText ) ) {
+		// eslint-disable-next-line no-console
+		console.warn( '[ReviewMediation] currentText not found in block content', { clientId } );
+		return {
+			success: false,
+			error: 'currentText not found in block content',
+			returnToAgent: false,
+		};
+	}
+	if ( hasCurrentText ) {
 		nextContent = snapshot.content.replace( currentText, content );
 	}
 

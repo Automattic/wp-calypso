@@ -7,6 +7,9 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { act, render } from '@testing-library/react';
+import React from 'react';
+import ReviewMediation from './components/review-mediation';
 import TitlePicker from './components/title-picker';
 import {
 	applyReviewEdit,
@@ -17,7 +20,37 @@ import {
 	toolProvider,
 	useAbilitiesSetup,
 	useCheckpoint,
+	useSuggestions,
 } from './index';
+
+const mockSetIsSplitScreen = jest.fn();
+let mockSelectedBlock: any = null;
+
+jest.mock( '@wordpress/components', () => {
+	const React = require( 'react' );
+	return {
+		Panel: ( { children }: any ) => React.createElement( 'div', null, children ),
+		PanelBody: ( { children }: any ) => React.createElement( 'section', null, children ),
+	};
+} );
+
+jest.mock( '@wordpress/data', () => ( {
+	dispatch: jest.fn( ( store: string ) => {
+		if ( store === 'automattic/agents-manager' ) {
+			return { setIsSplitScreen: mockSetIsSplitScreen };
+		}
+		return {};
+	} ),
+	useDispatch: () => ( {
+		editPost: jest.fn(),
+		selectBlock: jest.fn(),
+	} ),
+	useSelect: ( fn: any ) =>
+		fn( () => ( {
+			getSelectedBlock: () => mockSelectedBlock,
+			getBlocks: () => [],
+		} ) ),
+} ) );
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
 // can read/write the post title via the core/editor store.
@@ -51,9 +84,21 @@ function installWpDataMock( initialTitle: string ) {
 	return state;
 }
 
+function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: any[] ) => void } ) {
+	const { suggestions } = useSuggestions();
+	React.useEffect( () => {
+		onSuggestions( suggestions );
+	}, [ onSuggestions, suggestions ] );
+	return null;
+}
+
 describe( 'getChatComponent', () => {
 	it( 'returns TitlePicker for type "title-picker"', () => {
 		expect( getChatComponent( 'title-picker' ) ).toBe( TitlePicker );
+	} );
+
+	it( 'returns ReviewMediation for type "review-mediation"', () => {
+		expect( getChatComponent( 'review-mediation' ) ).toBe( ReviewMediation );
 	} );
 
 	it( 'returns null for an unknown type', () => {
@@ -79,6 +124,51 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'Mediate review notes' );
+	} );
+} );
+
+describe( 'useSuggestions', () => {
+	beforeEach( () => {
+		mockSelectedBlock = null;
+		mockSetIsSplitScreen.mockReset();
+		delete ( globalThis as any ).agentsManagerData;
+	} );
+
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+	} );
+
+	it( 'does not append Review Mediator to block-specific suggestions', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).not.toContain(
+			'Mediate review notes'
+		);
+	} );
+
+	it( 'opens split-screen when the Review Mediator suggestion is clicked', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		const mediationPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'mediate-review-notes'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: mediationPrompt },
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
 	} );
 } );
 
@@ -380,7 +470,7 @@ describe( 'applyReviewEdit', () => {
 		] );
 	} );
 
-	it( 'falls back to full replacement when currentText is not present in the block', async () => {
+	it( 'fails without replacing the block when currentText is not present in the block', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor( {
 			'550e8400-e29b-41d4-a716-446655440000': {
 				name: 'core/paragraph',
@@ -388,6 +478,7 @@ describe( 'applyReviewEdit', () => {
 			},
 		} );
 		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 		const promise = applyReviewEdit(
 			'550e8400-e29b-41d4-a716-446655440000',
@@ -396,9 +487,18 @@ describe( 'applyReviewEdit', () => {
 			'span that is not in the block'
 		);
 		jest.advanceTimersByTime( 1000 );
-		await promise;
+		const result = await promise;
 
-		expect( blockUpdates[ 0 ].attrs ).toEqual( { content: 'replacement text' } );
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'currentText not found in block content',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+		expect( warn ).toHaveBeenCalledWith(
+			'[ReviewMediation] currentText not found in block content',
+			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
+		);
+		warn.mockRestore();
 	} );
 
 	it( 'fails safely on unsupported block types', async () => {

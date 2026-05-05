@@ -157,6 +157,23 @@ function truncateText( text: string, limit = 60 ): string {
 	return stripped.slice( 0, limit ).trimEnd() + '…';
 }
 
+function getGuidelineCategoryLabel( category: GuidelineViolation[ 'category' ] ): string {
+	switch ( category ) {
+		case 'site':
+			return __( 'Site', 'jetpack' );
+		case 'copy':
+			return __( 'Copy', 'jetpack' );
+		case 'images':
+			return __( 'Images', 'jetpack' );
+		case 'additional':
+			return __( 'Additional', 'jetpack' );
+		case 'block':
+			return __( 'Block', 'jetpack' );
+		default:
+			return String( category );
+	}
+}
+
 /**
  * Lookup rather than a nested ternary. Keeps the JSX flat and makes eslint
  * `no-nested-ternary` happy while still i18n-ing each phrase.
@@ -305,6 +322,10 @@ export default function ReviewMediation( {
 				const result = await applyReviewEdit( clientId, text, undefined, currentText );
 				if ( result?.success ) {
 					return { success: true, clientId, contentBefore: result.contentBefore };
+				}
+				if ( result?.error ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[ReviewMediation] applyReviewEdit failed', result.error );
 				}
 				return { success: false };
 			} catch ( err ) {
@@ -968,6 +989,14 @@ export default function ReviewMediation( {
 													<ins>{ edit.suggested_text }</ins>
 												</p>
 												<p className="jetpack-ai-review-mediation__rationale">{ edit.rationale }</p>
+												{ status === 'failed' && (
+													<p className="jetpack-ai-review-mediation__status is-failed">
+														{ __(
+															'Could not apply automatically. The original text may have changed.',
+															'jetpack'
+														) }
+													</p>
+												) }
 												{ edit.supported_by_reviewers.length > 0 && (
 													<p className="jetpack-ai-review-mediation__reviewers">
 														{ __( 'Requested by:', 'jetpack' ) }{ ' ' }
@@ -1038,7 +1067,7 @@ export default function ReviewMediation( {
 													<span
 														className={ `jetpack-ai-review-mediation__category-pill is-${ v.category }` }
 													>
-														{ v.category }
+														{ getGuidelineCategoryLabel( v.category ) }
 													</span>
 													{ v.block_name && (
 														<span className="jetpack-ai-review-mediation__violation-block-name">

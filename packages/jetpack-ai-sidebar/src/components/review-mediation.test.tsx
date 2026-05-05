@@ -175,9 +175,7 @@ describe( 'ReviewMediation — smoke render', () => {
 		expect( screen.getByText( 'Implications' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Suggested edits' ) ).toBeInTheDocument();
 		expect( screen.getByText( /Guideline violations/ ) ).toBeInTheDocument();
-
-		// Category pill renders the literal category name in lowercase.
-		expect( screen.getByText( 'copy' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Copy' ) ).toBeInTheDocument();
 		// Violating excerpt rendered in its own blockquote.
 		expect( screen.getByText( 'was voted upon' ) ).toBeInTheDocument();
 	} );
@@ -349,6 +347,9 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		} );
 		// Card stays expanded on failure.
 		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( 'Could not apply automatically. The original text may have changed.' )
+		).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 	} );
 

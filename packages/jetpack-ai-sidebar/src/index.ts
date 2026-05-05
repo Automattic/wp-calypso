@@ -57,7 +57,7 @@ const MEDIATE_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
 	label: __( 'Mediate review notes', 'jetpack' ),
 	prompt: __(
-		'Review the notes and comments on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+		'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
 		'jetpack'
 	),
 };
@@ -551,17 +551,12 @@ export function useSuggestions(): {
 		return { suggestions: [] };
 	}
 
-	const reviewMediatorSuggestions = getReviewMediatorSuggestions();
-
 	if ( ! selectedBlock ) {
 		return { suggestions: getPostLevelSuggestions() };
 	}
 
 	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
 	return {
-		suggestions: [
-			...applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
-			...reviewMediatorSuggestions,
-		],
+		suggestions: applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
 	};
 }
