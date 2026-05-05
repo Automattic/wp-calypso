@@ -234,6 +234,7 @@ export default function SolutionsCardsUpsellStep( {
 	const changePlanUrl = addQueryArgs( '/setup/plan-upgrade', {
 		siteSlug: site.slug,
 		switch_plan: 'true',
+		purchaseId: purchase.id,
 		cancel_to: '/me/purchases/' + site.slug + '/' + purchase.id,
 		redirect_to: '/me/purchases',
 	} );

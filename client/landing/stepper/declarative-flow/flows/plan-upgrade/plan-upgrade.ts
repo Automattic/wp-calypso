@@ -1,5 +1,7 @@
+import { getPlan } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
-import { resolveSelect } from '@wordpress/data';
+import { resolveSelect, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
@@ -9,6 +11,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
+import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { isExternal } from 'calypso/lib/url';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
@@ -90,7 +93,6 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				...( isSwitchPlan && {
 					hideFreePlan: true,
 					hideEnterprisePlan: true,
-					isInSignup: true,
 				} ),
 
 				// Provide a custom back handler that goes to back_to or /sites
@@ -107,6 +109,20 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const query = useQuery();
 		const siteSlug = query.get( 'siteSlug' );
 		const redirectTo = query.get( 'redirect_to' );
+		const purchaseId = query.get( 'purchaseId' );
+		const cancelTo = query.get( 'cancel_to' );
+
+		const site = useSelect(
+			( select ) => {
+				if ( ! siteSlug ) {
+					return null;
+				}
+				return select( SITE_STORE ).getSite( siteSlug );
+			},
+			[ siteSlug ]
+		);
+		const currentPlan = Plans.useCurrentPlan( { siteId: site?.ID } );
+		const currentPlanSlug = currentPlan?.planSlug;
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -117,6 +133,33 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 					if ( providedDependencies?.cartItems && providedDependencies.cartItems.length > 0 ) {
 						const selectedPlan = providedDependencies.cartItems[ 0 ]?.product_slug;
 						if ( selectedPlan && siteSlug ) {
+							// Detect downgrade: selected plan's availableFor doesn't include current plan
+							const selectedPlanObj = getPlan( selectedPlan );
+							const isDowngrade = Boolean(
+								selectedPlanObj &&
+									currentPlanSlug &&
+									purchaseId &&
+									! selectedPlanObj.availableFor?.( currentPlanSlug )
+							);
+
+							if ( isDowngrade ) {
+								const targetProductId = selectedPlanObj?.getProductId();
+								if ( targetProductId && purchaseId ) {
+									const destination = cancelTo || redirectTo || dashboardLink( '/sites' );
+									cancelAndRefundPurchaseAsync( parseInt( purchaseId, 10 ), {
+										type: 'downgrade' as const,
+										to_product_id: targetProductId,
+									} )
+										.then( () => {
+											window.location.assign( destination );
+										} )
+										.catch( () => {
+											window.location.assign( destination );
+										} );
+									return;
+								}
+							}
+
 							const checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }/${ selectedPlan }`;
 							const currentPath = window.location.href.replace( window.location.origin, '' );
 

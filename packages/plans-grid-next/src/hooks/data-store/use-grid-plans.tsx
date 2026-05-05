@@ -237,6 +237,7 @@ export const usePlanTypesWithIntent = ( {
 			}
 
 			break;
+		case 'plans-switch':
 		case 'plans-default-wpcom':
 			planTypes = [
 				TYPE_FREE,

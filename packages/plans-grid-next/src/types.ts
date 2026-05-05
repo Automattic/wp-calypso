@@ -84,6 +84,7 @@ export type PlansIntent =
 	| 'plans-guided-segment-nonprofit'
 	| 'plans-guided-segment-consumer-or-business'
 	| 'plans-site-selected-legacy'
+	| 'plans-switch'
 	| 'plans-playground'
 	| 'plans-playground-premium' // This plan intent is currently not utilized but will be soon
 	| 'plans-upgrade'

@@ -6,6 +6,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	getPlanClass,
 	planMatches,
+	TERM_MONTHLY,
 	TERM_TRIENNIALLY,
 	TERM_BIENNIALLY,
 	TERM_ANNUALLY,
@@ -455,9 +456,10 @@ function getLoggedInPlansAction( {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
 	// This allows monthly/yearly versions of the same plan to be considered "current"
 	const isUpgradeFlow =
-		plansIntent && [ 'plans-upgrade', 'plans-woo-hosted' ].includes( plansIntent );
+		plansIntent && [ 'plans-upgrade', 'plans-woo-hosted', 'plans-switch' ].includes( plansIntent );
+	const isSwitchPlan = plansIntent === 'plans-switch';
 	const current =
-		isUpgradeFlow && sitePlanSlug
+		isUpgradeFlow && sitePlanSlug && ! isSwitchPlan
 			? getPlanClass( sitePlanSlug ) === getPlanClass( planSlug )
 			: sitePlanSlug === planSlug;
 	const isTrialPlan =
@@ -505,7 +507,7 @@ function getLoggedInPlansAction( {
 					callback: () => {},
 					status: 'disabled',
 					text: translate( 'Your plan' ),
-					variant: 'secondary',
+					variant: isSwitchPlan ? 'primary' : 'secondary',
 				},
 			};
 		}
@@ -555,6 +557,7 @@ function getLoggedInPlansAction( {
 		sitePlanSlug &&
 		! current &&
 		! isTrialPlan &&
+		! isSwitchPlan &&
 		currentPlanBillingPeriod &&
 		billingPeriod &&
 		currentPlanBillingPeriod > billingPeriod
@@ -605,6 +608,21 @@ function getLoggedInPlansAction( {
 		getPlanClass( planSlug ) === getPlanClass( sitePlanSlug ) &&
 		! isTrialPlan
 	) {
+		if ( isSwitchPlan ) {
+			if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
+				return createLoggedInPlansAction( translate( 'Switch to triennial' ) );
+			}
+			if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
+				return createLoggedInPlansAction( translate( 'Switch to biennial' ) );
+			}
+			if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
+				return createLoggedInPlansAction( translate( 'Switch to yearly' ) );
+			}
+			if ( planMatches( planSlug, { term: TERM_MONTHLY } ) ) {
+				return createLoggedInPlansAction( translate( 'Switch to monthly' ) );
+			}
+		}
+
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
 			return createLoggedInPlansAction( translate( 'Upgrade to Triennial' ) );
 		}
