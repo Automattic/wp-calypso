@@ -125,7 +125,7 @@ Reader Previews
 1. `client/reader/index.js`
 2. `client/reader/controller.js`
 3. `client/reader/following/main.jsx`
-4. `client/reader/stream/index.jsx`
+4. `client/reader/stream/index.tsx`
 5. `client/reader/stream/post-lifecycle.jsx`
 6. `client/reader/stream/post.jsx`
 7. `client/blocks/reader-post-card/standard.jsx`

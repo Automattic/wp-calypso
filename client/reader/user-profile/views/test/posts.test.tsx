@@ -9,7 +9,7 @@ import UserPosts from '../posts';
 import type { ReaderUser } from '@automattic/api-core';
 
 jest.mock(
-	'calypso/reader/stream-v2',
+	'calypso/reader/stream',
 	() =>
 		( {
 			streamKey,

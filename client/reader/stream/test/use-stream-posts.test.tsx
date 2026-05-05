@@ -223,14 +223,12 @@ describe( 'useStreamPosts — streamKey change', () => {
 		rerender( { streamKey: 'following' } );
 
 		await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 99 ) ) );
-		// `removedIds` from the previous stream must not bleed in either.
 		expect( result.current.items ).toHaveLength( 1 );
 	} );
 } );
 
 describe( 'useStreamPosts — keepPreviousData', () => {
 	it( 'keeps the previous stream items on screen while the new query loads', async () => {
-		// First stream resolves immediately.
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -238,7 +236,6 @@ describe( 'useStreamPosts — keepPreviousData', () => {
 				posts: [ apiPost( 1 ), apiPost( 2 ) ],
 				date_range: { after: null, before: null },
 			} );
-		// Second stream is delayed so we can observe the placeholder window.
 		nock( BASE )
 			.get( '/rest/v1.2/read/following' )
 			.query( true )
@@ -257,14 +254,11 @@ describe( 'useStreamPosts — keepPreviousData', () => {
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
 		expect( result.current.isPlaceholderData ).toBe( false );
 
-		// Switch streamKey — old items must remain visible while the new query
-		// loads, with `isPlaceholderData` flipping to true.
 		rerender( { streamKey: 'following' } );
 		expect( result.current.items ).toHaveLength( 2 );
 		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) );
 		expect( result.current.isPlaceholderData ).toBe( true );
 
-		// Once the new fetch resolves, items swap and placeholder flag clears.
 		await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 99 ) ) );
 		expect( result.current.isPlaceholderData ).toBe( false );
 		expect( result.current.items ).toHaveLength( 1 );
@@ -273,7 +267,6 @@ describe( 'useStreamPosts — keepPreviousData', () => {
 
 describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 	it( 'second mount with the same QueryClient hits cache without refetching', async () => {
-		// First mount: one network call satisfies the page.
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -290,17 +283,12 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 		await waitFor( () => expect( first.result.current.items ).toHaveLength( 1 ) );
 		first.unmount();
 
-		// nock has no more interceptors registered — if the second mount tried
-		// to fetch again, the request would 404 / time out.
 		expect( nock.pendingMocks() ).toHaveLength( 0 );
 
 		const second = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 
-		// Synchronous cache hit: items are populated on the very first render,
-		// no `isLoading: true` window. This is what makes the skeleton skip
-		// for warm Reader navigations.
 		expect( second.result.current.items ).toHaveLength( 1 );
 		expect( second.result.current.isLoading ).toBe( false );
 	} );
@@ -321,8 +309,6 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 				date_range: { after: null, before: null },
 			} );
 
-		// Two independent QueryClients (mimics a hard reload without
-		// rehydration from storage).
 		{
 			const { Wrapper } = makeWrapper( makeQueryClient() );
 			const { result, unmount } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
@@ -339,12 +325,6 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 			await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 2 ) ) );
 		}
 
-		// Both interceptors fired.
 		expect( nock.isDone() ).toBe( true );
 	} );
 } );
-
-// Note: x-post deduplication via `combineXPosts` is exercised end-to-end by
-// the slice's own `normalize` tests (`client/state/reader/streams/test/normalize.js`).
-// The hook just composes that helper; trusting it here keeps the test surface
-// focused on streaming behavior we own.

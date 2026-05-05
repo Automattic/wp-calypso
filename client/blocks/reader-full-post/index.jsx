@@ -37,7 +37,7 @@ import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { useStreamPostKeySelection } from 'calypso/reader/stream-v2/use-stream-post-key-selection';
+import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import { useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';

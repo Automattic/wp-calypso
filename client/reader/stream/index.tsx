@@ -28,19 +28,19 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
-import EmptyContent from '../stream/empty';
-import { StreamError } from '../stream/error';
+import EmptyContent from './empty';
+import { StreamError } from './error';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import { useStreamPosts, type PostKey } from './use-stream-posts';
 
-import 'calypso/reader/stream/style.scss';
+import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
 // Tracks how many "scroll loads" each stream has triggered, to feed into
-// `trackScrollPage`. Module-level so it survives unmounts (the legacy Stream
-// uses the same pattern in `client/reader/stream/index.jsx`).
+// `trackScrollPage`. Module-level so it survives unmounts (matching the
+// legacy Stream implementation pattern).
 const pagesByKey = new Map< string, number >();
 
 export interface StreamV2Props {
@@ -308,10 +308,6 @@ export function StreamV2( props: StreamV2Props ) {
 			if ( notificationsOpen ) {
 				return;
 			}
-			// `event.target` may be the `document` itself (no `tagName`) when the
-			// shortcut is fired with focus outside the stream — that should still
-			// route through to navigation. We only bail when the target is an
-			// element that actually accepts text input.
 			const target = event.target as Element | Document | null;
 			if ( target instanceof Element ) {
 				if ( inputTags.includes( target.tagName ) || ( target as HTMLElement ).isContentEditable ) {
@@ -324,7 +320,6 @@ export function StreamV2( props: StreamV2Props ) {
 			switch ( event.key ) {
 				case 'ArrowRight':
 				case 'j': {
-					// Has selection AND a visible selected card → just advance.
 					const selectedCard = ( listContext || document ).querySelector?.( '.card.is-selected' );
 					if ( selected && selectedCard ) {
 						selectNext( items );
@@ -371,7 +366,6 @@ export function StreamV2( props: StreamV2Props ) {
 		if ( ! component ) {
 			return;
 		}
-		// Walk up looking for the nearest scrollable ancestor.
 		const node = ReactDom.findDOMNode( component );
 		if ( ! ( node instanceof Element ) ) {
 			return;
@@ -436,11 +430,6 @@ export function StreamV2( props: StreamV2Props ) {
 					} ) as never
 				);
 			};
-			// Populate `InfiniteList.refs[itemKey]` from outside since string refs
-			// (`ref={ itemKey }` in legacy `<Stream>`) only resolve when the owning
-			// component is a class — V2 is a function component. `InfiniteList`
-			// reads `this.refs[ref]` for `getItemBoundingClientRect`; a raw DOM
-			// node works there because `findDOMNode( domNode )` is the identity.
 			const captureRef = ( node: HTMLDivElement | null ) => {
 				const list = listRef.current as
 					| ( InfiniteList & { refs: Record< string, unknown > } )
@@ -499,7 +488,6 @@ export function StreamV2( props: StreamV2Props ) {
 		]
 	);
 
-	// Compose the body.
 	let body: React.ReactNode;
 	let showingStream = false;
 	let baseClassNames = [ 'following', className ].filter( Boolean ).join( ' ' );
@@ -508,8 +496,6 @@ export function StreamV2( props: StreamV2Props ) {
 	let visibleItems = items;
 	let fetching = isFetching;
 
-	// Match legacy Stream behavior: allow callers to force skeleton state
-	// regardless of currently available items.
 	if ( forcePlaceholders ) {
 		visibleItems = [];
 		fetching = true;
@@ -594,14 +580,6 @@ export function StreamV2( props: StreamV2Props ) {
 		</>
 	);
 
-	// `is-reader-page` is normally added to `<body>` from
-	// `<ReaderMain>`'s `componentDidMount`, but on the first paint of a fresh
-	// route navigation the class isn't there yet — placeholder cards then
-	// render with their default `<Card>` chrome (border + padding) and only
-	// "snap" to the slim Reader-style skeleton once the body class lands.
-	// Mirroring the class on the wrapper here makes the
-	// `.is-reader-page .reader__card.card.is-placeholder` overrides match
-	// from the very first paint.
 	const wrapperClassName = [ 'is-reader-page', baseClassNames ].filter( Boolean ).join( ' ' );
 
 	if ( isMain ) {

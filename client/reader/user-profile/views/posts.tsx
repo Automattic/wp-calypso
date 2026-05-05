@@ -1,7 +1,7 @@
 import { Icon, postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
-import Stream from 'calypso/reader/stream-v2';
+import Stream from 'calypso/reader/stream';
 import type { ReaderUser } from '@automattic/api-core';
 
 interface UserPostsProps {

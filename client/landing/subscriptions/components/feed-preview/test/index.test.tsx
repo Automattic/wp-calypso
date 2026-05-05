@@ -22,7 +22,7 @@ jest.mock( 'use-debounce', () => ( {
 	useDebounce: ( value: string ) => [ value ],
 } ) );
 
-jest.mock( 'calypso/reader/stream-v2', () => {
+jest.mock( 'calypso/reader/stream', () => {
 	return jest.fn( () => <div data-testid="mock-stream" data-restore-scroll="false" /> );
 } );
 

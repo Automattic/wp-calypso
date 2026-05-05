@@ -11,7 +11,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderList from '..';
 
 // StreamV2 has deep dependency chains (post cards, infinite scroll, data layer).
-jest.mock( 'calypso/reader/stream-v2', () => ( {
+jest.mock( 'calypso/reader/stream', () => ( {
 	__esModule: true,
 	default: ( { children }: { children: React.ReactNode } ) => (
 		<div data-testid="stream">{ children }</div>

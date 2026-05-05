@@ -6,7 +6,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import wpcom from 'calypso/lib/wp';
-import Stream from 'calypso/reader/stream-v2';
+import Stream from 'calypso/reader/stream';
 
 interface GetFeedResponse {
 	feeds: Reader.FeedItem[];

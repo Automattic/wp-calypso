@@ -7,7 +7,7 @@ import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-
 import { QuickPostSkeleton } from 'calypso/reader/components/quick-post/skeleton';
 import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
-import ReaderStream from 'calypso/reader/stream-v2';
+import ReaderStream from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';

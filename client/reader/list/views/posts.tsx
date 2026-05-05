@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import ListEmpty from 'calypso/reader/list/components/empty';
 import { ReaderList } from 'calypso/reader/list-manage/types';
-import Stream from 'calypso/reader/stream-v2';
+import Stream from 'calypso/reader/stream';
 
 interface ListPostsProps {
 	list?: ReaderList;
