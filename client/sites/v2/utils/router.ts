@@ -5,6 +5,8 @@ import type { AnyRoute, AnyRouter } from '@tanstack/react-router';
 import type { AppConfig } from 'calypso/dashboard/app/context';
 
 export function getRouterOptions( config: AppConfig ) {
+	const initialPath = typeof window !== 'undefined' ? window.location.pathname : config.basePath;
+
 	return {
 		basepath: config.basePath,
 		context: {
@@ -18,7 +20,7 @@ export function getRouterOptions( config: AppConfig ) {
 
 		// Use memory history to compartmentalize TanStack Router's history management.
 		// This way, we separate TanStack Router's history implementation from the browser history used by page.js.
-		history: createMemoryHistory( { initialEntries: [ window.location.pathname ] } ),
+		history: createMemoryHistory( { initialEntries: [ initialPath ] } ),
 	};
 }
 

@@ -442,6 +442,32 @@ export default defineConfig( {
 							`var ${ varName } = new Proxy( {}, { get( _, k ) { return ${ reqFn }()[ k ]; } } );`
 					);
 
+					// var import_debug = new Proxy( ... require_src() ... );
+					// var debug = (0, import_debug.default)("namespace");
+					//
+					// The Proxy defers the require_* call until property access, but debug
+					// factories are often invoked immediately at module scope.  During a
+					// circular load the require_* binding imported from server.mjs can still
+					// be undefined, so guard this generated pattern with the same no-op
+					// fallback used for direct require_*()("namespace") calls below.
+					const proxyRequireFns = new Map< string, string >();
+					for ( const match of chunk.code.matchAll(
+						/^var ([\w$]+) = new Proxy\( \{\}, \{ get\( _, k \) \{ return __toESM\( (require_[\w$]+)\(\) \)\[ k \]; \} \} \);$/gm
+					) ) {
+						proxyRequireFns.set( match[ 1 ], match[ 2 ] );
+					}
+					for ( const [ proxyVar, reqFn ] of proxyRequireFns ) {
+						const escapedProxyVar = proxyVar.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+						chunk.code = chunk.code.replace(
+							new RegExp(
+								`^var ([\\w$]+) = \\(0, ${ escapedProxyVar }\\.default\\)\\(("(?:[^"\\\\]|\\\\.)*")\\);$`,
+								'gm'
+							),
+							( match: string, varName: string, ns: string ) =>
+								`var ${ varName } = typeof ${ reqFn } === 'function' ? (0, ${ proxyVar }.default)( ${ ns } ) : () => {};`
+						);
+					}
+
 					// var X = require_Y()("namespace");  (debug logger factory pattern)
 					chunk.code = chunk.code.replace(
 						/^var ([\w$]+) = (require_[\w$]+)\(\)\(("(?:[^"\\]|\\.)*")\);$/gm,

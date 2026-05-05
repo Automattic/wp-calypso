@@ -1,7 +1,6 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { download } from '@wordpress/icons';
-import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -51,7 +50,7 @@ class StatsDownloadCsv extends Component {
 		} );
 	};
 
-	downloadCsv = ( event ) => {
+	downloadCsv = async ( event ) => {
 		event.preventDefault();
 		const { siteSlug, path, period, data, headers } = this.props;
 
@@ -84,6 +83,7 @@ class StatsDownloadCsv extends Component {
 
 		const blob = new Blob( [ csvString ], { type: 'text/csv;charset=utf-8' } );
 
+		const { saveAs } = await import( 'browser-filesaver' );
 		saveAs( blob, fileName );
 	};
 

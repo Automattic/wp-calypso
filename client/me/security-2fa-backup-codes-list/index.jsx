@@ -1,5 +1,4 @@
 import { Button, Gridicon, FormLabel, Tooltip } from '@automattic/components';
-import { saveAs } from 'browser-filesaver';
 import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -81,11 +80,12 @@ class Security2faBackupCodesList extends Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
 	};
 
-	saveCodesToFile = () => {
+	saveCodesToFile = async () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
 
 		const backupCodes = this.props.backupCodes.join( '\n' );
 		const toSave = new globalThis.Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
+		const { saveAs } = await import( 'browser-filesaver' );
 		saveAs( toSave, `${ this.props.username }-backup-codes.txt` );
 	};
 

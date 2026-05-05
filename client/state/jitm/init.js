@@ -1,4 +1,6 @@
 import { registerReducer } from 'calypso/state/redux-store';
 import reducer from './reducer';
 
-registerReducer( [ 'jitm' ], reducer );
+if ( typeof window !== 'undefined' ) {
+	registerReducer( [ 'jitm' ], reducer );
+}
