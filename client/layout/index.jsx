@@ -19,6 +19,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
+import BlazeProMasterbar from 'calypso/layout/masterbar/blaze-pro';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -78,10 +79,6 @@ import './style.scss';
 const loadWooCoreProfiler = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-woo-core-profiler" */ 'calypso/layout/masterbar/woo-core-profiler'
-	);
-const loadBlazePro = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-masterbar-blaze-pro" */ 'calypso/layout/masterbar/blaze-pro'
 	);
 const loadReaderHeader = () =>
 	import(
@@ -249,7 +246,7 @@ class Layout extends Component {
 			return <AsyncLoad require={ loadWooCoreProfiler } placeholder={ null } />;
 		}
 		if ( this.props.isBlazePro ) {
-			return <AsyncLoad require={ loadBlazePro } placeholder={ null } />;
+			return <BlazeProMasterbar />;
 		}
 
 		if ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) {
