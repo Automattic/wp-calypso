@@ -236,4 +236,104 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( built ).toContain( 'You DO NOT call any tools' );
 		expect( built ).toContain( 'inner prompt body' );
 	} );
+
+	it( 'asks the loader for 5 dense two-axis suggestions (15-28 words) instead of 3 single-axis ones', () => {
+		renderHook( () =>
+			useVideoClipSuggestions( {
+				registerSuggestions: jest.fn(),
+				clearSuggestions: jest.fn(),
+				messages: [],
+			} )
+		);
+
+		const callArgs = mockUseAsyncSuggestionsLoader.mock.calls[ 0 ][ 0 ];
+		// New count + length envelope.
+		expect( callArgs.prompt ).toMatch( /5\s+dense/i );
+		expect( callArgs.prompt ).toContain( '15-28 words' );
+		expect( callArgs.prompt ).not.toContain( '8-14 words' );
+		// Two-axis instruction.
+		expect( callArgs.prompt ).toMatch( /COMBINES TWO/i );
+		// Safety rails preserved.
+		expect( callArgs.prompt ).toMatch( /free of people/i );
+		expect( callArgs.prompt ).toContain( 'signage' );
+
+		// System prompt should reflect the new shape too.
+		const built = callArgs.buildSystemPrompt( 'inner prompt body', 'en' );
+		expect( built ).toMatch( /exactly\s+5\s+suggestions/i );
+		expect( built ).toContain( '15-28 word' );
+		expect( built ).not.toContain( '8-14 word' );
+		// Chip label budget unchanged.
+		expect( built ).toContain( '2-4 word' );
+	} );
+
+	it( 'hides chips while the user is typing and re-shows them when the input is cleared (no message sent yet)', () => {
+		const registerSuggestions = jest.fn();
+		const clearSuggestions = jest.fn();
+		mockUseAsyncSuggestionsLoader.mockReturnValue( {
+			suggestions: [ { id: 'a', label: 'Drift', prompt: 'Slow drift' } ],
+			isLoading: false,
+			abortLoading: noopAbort,
+		} );
+
+		const { rerender } = renderHook(
+			( props: { inputValue: string } ) =>
+				useVideoClipSuggestions( {
+					registerSuggestions,
+					clearSuggestions,
+					messages: [],
+					inputValue: props.inputValue,
+				} ),
+			{ initialProps: { inputValue: '' } }
+		);
+
+		// Initial empty input → chips registered once.
+		expect( registerSuggestions ).toHaveBeenCalledTimes( 1 );
+		expect( registerSuggestions ).toHaveBeenLastCalledWith( [
+			{ id: 'a', label: 'Drift', prompt: 'Slow drift' },
+		] );
+		expect( clearSuggestions ).not.toHaveBeenCalled();
+
+		// User starts typing — chips clear, no re-register.
+		rerender( { inputValue: 'mountains at' } );
+		expect( clearSuggestions ).toHaveBeenCalledTimes( 1 );
+		expect( registerSuggestions ).toHaveBeenCalledTimes( 1 );
+
+		// User clears the input before sending anything — chips return.
+		rerender( { inputValue: '' } );
+		expect( registerSuggestions ).toHaveBeenCalledTimes( 2 );
+		expect( registerSuggestions ).toHaveBeenLastCalledWith( [
+			{ id: 'a', label: 'Drift', prompt: 'Slow drift' },
+		] );
+		// And the rendered tracking event fires for the re-show too (tracked via formatted ids).
+		expect( mockTrackImageStudioSuggestionsRendered ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'keeps suggestions cleared once a message has been sent, regardless of input value', () => {
+		const clearSuggestions = jest.fn();
+		const registerSuggestions = jest.fn();
+		mockUseAsyncSuggestionsLoader.mockReturnValue( {
+			suggestions: [ { id: 'a', label: 'Drift', prompt: 'Slow drift' } ],
+			isLoading: false,
+			abortLoading: noopAbort,
+		} );
+
+		const { rerender } = renderHook(
+			( props: { inputValue: string } ) =>
+				useVideoClipSuggestions( {
+					registerSuggestions,
+					clearSuggestions,
+					messages: [ { id: 'msg-1', role: 'user' } ],
+					inputValue: props.inputValue,
+				} ),
+			{ initialProps: { inputValue: '' } }
+		);
+
+		// First-message cleared path takes precedence over input-driven re-show.
+		expect( clearSuggestions ).toHaveBeenCalled();
+		expect( registerSuggestions ).not.toHaveBeenCalled();
+
+		// Even when input goes empty again later, chips do NOT come back.
+		rerender( { inputValue: '' } );
+		expect( registerSuggestions ).not.toHaveBeenCalled();
+	} );
 } );

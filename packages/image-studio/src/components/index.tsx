@@ -113,6 +113,7 @@ function ImageStudioAgentChat( {
 		registerSuggestions: agentChatProps.registerSuggestions,
 		clearSuggestions: agentChatProps.clearSuggestions,
 		messages: displayMessages,
+		inputValue,
 		disabled: ! isVideoMode,
 	} );
 

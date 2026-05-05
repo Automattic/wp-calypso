@@ -41,16 +41,26 @@ export function postBodyToPlainText( raw: string ): string {
  * substitution — sending that placeholder leaves the LLM with no context
  * and an active video tool, and it ends up calling the tool instead of
  * returning chips.
+ *
+ * Each prompt deliberately combines TWO descriptive axes (e.g. camera
+ * move + lighting, or texture + time-of-day). Single-axis prompts read
+ * thin to Veo and tend to produce generic outputs; pairing two axes
+ * gives the model concrete intent in both motion and look.
  */
 export function buildVideoClipSuggestionsPrompt( postBody: string ): string {
 	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
-	return `Below is the body of a WordPress post. Propose 3 short directional prompts for an 8-second 9:16 vertical video clip that would complement the post.
+	return `Below is the body of a WordPress post. Propose 5 dense directional prompts for an 8-second 9:16 vertical video clip that would complement the post.
 
 Each prompt MUST be:
 - Grounded in the post's subject matter (a place, object, environment, mood, or texture mentioned in the post — not the post's literal headline).
-- Phrased as a single piece of visual direction: choose ONE of camera move (slow drift, gentle pan, dolly-in, crane, held wide), framing (wide, low-angle, establishing), or aesthetic register (golden hour, naturalistic light, contemplative, motion-rich, energetic).
-- 8-14 words, no trailing punctuation.
-- Free of people, faces, hands, crowds, signage, on-screen text, dialogue, or copyrighted properties.
+- Phrased as a single piece of visual direction that COMBINES TWO of the following axes (never just one):
+  - Camera move (slow drift, gentle pan, dolly-in, crane, push-in, held wide, parallax tracking).
+  - Subject specificity (a concrete object/place from the post — not a generic noun).
+  - Lighting / mood (golden hour, overcast, naturalistic key, contemplative, motion-rich, energetic, twilight ambient).
+  - Texture / material detail (worn copper, weathered linen, polished oak, condensation on glass, matte ceramic).
+  - Time-of-day (dawn, blue hour, late afternoon, deep dusk).
+- 15-28 words, no trailing punctuation.
+- Free of people, faces, hands, crowds, signage, on-screen text, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.
 
 POST BODY:
 ${ trimmed }`;
@@ -61,8 +71,10 @@ function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ):
 
 ${ suggestionPrompt }
 
-Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls):
-{"suggestions":[{"label":"2-4 word chip","prompt":"8-14 word directional sentence"}]}
+Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). Return exactly 5 suggestions:
+{"suggestions":[{"label":"2-4 word chip","prompt":"15-28 word directional sentence combining two axes"}]}
+
+The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the dense one — 15-28 words, two axes combined.
 
 Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
 
@@ -73,6 +85,13 @@ interface UseVideoClipSuggestionsParams {
 	registerSuggestions?: ( suggestions: Suggestion[] ) => void;
 	clearSuggestions?: () => void;
 	messages?: AgentMessage[];
+	/**
+	 * Current chat input value. When this transitions from non-empty to
+	 * empty BEFORE any message has been sent, chips re-appear (mirrors the
+	 * initial-load condition). Once a message has been sent the chip-row
+	 * stays cleared regardless of input value.
+	 */
+	inputValue?: string;
 	disabled?: boolean;
 }
 
@@ -89,6 +108,7 @@ export function useVideoClipSuggestions( {
 	registerSuggestions,
 	clearSuggestions,
 	messages,
+	inputValue,
 	disabled = false,
 }: UseVideoClipSuggestionsParams ): UseVideoClipSuggestionsReturn {
 	const lastTrackedSuggestionsRef = useRef< string >( '' );
@@ -136,6 +156,9 @@ export function useVideoClipSuggestions( {
 	} );
 
 	const hasMessages = Boolean( messages?.length );
+	// Treat undefined inputValue as "empty" so consumers that don't thread
+	// it through still get the original behavior.
+	const isInputEmpty = ! inputValue;
 
 	useEffect( () => {
 		if ( disabled ) {
@@ -143,6 +166,16 @@ export function useVideoClipSuggestions( {
 		}
 		if ( hasMessages ) {
 			clearSuggestions?.();
+			return;
+		}
+		// Before any message has been sent, the chip row should reflect
+		// "input is empty" — same precondition as the initial load. If the
+		// user has typed something, hide the chips; if they then clear the
+		// input, the next render lands here with isInputEmpty = true and
+		// the chips re-register below.
+		if ( ! isInputEmpty ) {
+			clearSuggestions?.();
+			lastTrackedSuggestionsRef.current = '';
 			return;
 		}
 		if ( asyncSuggestions.length === 0 ) {
@@ -159,7 +192,14 @@ export function useVideoClipSuggestions( {
 			mode: ImageStudioMode.Generate,
 			suggestionType: 'default',
 		} );
-	}, [ disabled, hasMessages, asyncSuggestions, registerSuggestions, clearSuggestions ] );
+	}, [
+		disabled,
+		hasMessages,
+		isInputEmpty,
+		asyncSuggestions,
+		registerSuggestions,
+		clearSuggestions,
+	] );
 
 	const handleSuggestionClick = useCallback(
 		( selectedSuggestion: Suggestion, availableSuggestions: Suggestion[] ) => {
