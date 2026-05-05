@@ -8,10 +8,16 @@ const mockUseAsyncSuggestionsLoader = jest.fn();
 const mockTrackImageStudioSuggestionsRendered = jest.fn();
 const mockTrackImageStudioSuggestionClick = jest.fn();
 const mockGetCurrentPostId = jest.fn();
+const mockGetEditedPostContent = jest.fn();
+const mockGetEditedPostAttribute = jest.fn();
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( selector: ( fn: unknown ) => unknown ) =>
-		selector( () => ( { getCurrentPostId: mockGetCurrentPostId } ) ),
+		selector( () => ( {
+			getCurrentPostId: mockGetCurrentPostId,
+			getEditedPostContent: mockGetEditedPostContent,
+			getEditedPostAttribute: mockGetEditedPostAttribute,
+		} ) ),
 } ) );
 
 jest.mock( '@wordpress/editor', () => ( {
@@ -50,7 +56,12 @@ beforeEach( () => {
 	mockTrackImageStudioSuggestionsRendered.mockClear();
 	mockTrackImageStudioSuggestionClick.mockClear();
 	mockGetCurrentPostId.mockReset();
+	mockGetEditedPostContent.mockReset();
+	mockGetEditedPostAttribute.mockReset();
 	mockGetCurrentPostId.mockReturnValue( 42 );
+	mockGetEditedPostContent.mockReturnValue(
+		'<!-- wp:paragraph --><p>A quiet coastal kitchen at dawn.</p><!-- /wp:paragraph -->'
+	);
 	mockUseAsyncSuggestionsLoader.mockReturnValue( {
 		suggestions: [],
 		isLoading: false,
@@ -187,5 +198,42 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( mockUseAsyncSuggestionsLoader ).toHaveBeenCalledWith(
 			expect.objectContaining( { cacheKey: null } )
 		);
+	} );
+
+	it( 'disables the loader when the post body is empty so the agent never sees a content-less prompt', () => {
+		mockGetEditedPostContent.mockReturnValue( '' );
+		mockGetEditedPostAttribute.mockReturnValue( '' );
+
+		renderHook( () =>
+			useVideoClipSuggestions( {
+				registerSuggestions: jest.fn(),
+				clearSuggestions: jest.fn(),
+				messages: [],
+			} )
+		);
+
+		expect( mockUseAsyncSuggestionsLoader ).toHaveBeenCalledWith(
+			expect.objectContaining( { enabled: false, prompt: '' } )
+		);
+	} );
+
+	it( 'inlines the plain-text post body into the loader prompt and passes a video-flavored buildSystemPrompt', () => {
+		renderHook( () =>
+			useVideoClipSuggestions( {
+				registerSuggestions: jest.fn(),
+				clearSuggestions: jest.fn(),
+				messages: [],
+			} )
+		);
+
+		const callArgs = mockUseAsyncSuggestionsLoader.mock.calls[ 0 ][ 0 ];
+		expect( callArgs.prompt ).toContain( 'POST BODY:' );
+		expect( callArgs.prompt ).toContain( 'A quiet coastal kitchen at dawn.' );
+		expect( callArgs.prompt ).not.toContain( '[[client.gutenberg_page' );
+		expect( typeof callArgs.buildSystemPrompt ).toBe( 'function' );
+
+		const built = callArgs.buildSystemPrompt( 'inner prompt body', 'en' );
+		expect( built ).toContain( 'You DO NOT call any tools' );
+		expect( built ).toContain( 'inner prompt body' );
 	} );
 } );
