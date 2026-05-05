@@ -102,3 +102,5 @@ function renderTab( slug: string, connection: FediverseConnection ) {
 			return <TimelinePanel connectionId={ connection.id } handle={ connection.handle } />;
 	}
 }
+
+export default FediverseAccountView;

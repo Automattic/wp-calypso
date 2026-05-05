@@ -286,3 +286,5 @@ function callbackErrorMessage( kind: string, t: ReturnType< typeof useTranslate 
 			return t( 'Something went wrong. Please try again.' ) as string;
 	}
 }
+
+export default FediverseConnectView;
