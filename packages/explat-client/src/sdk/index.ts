@@ -1,6 +1,4 @@
-// ExPlat SDK — pure feature-flag primitives. Re-exported from
-// `@automattic/explat-client` under the `ExPlatSdk` namespace so SDK names
-// don't collide with the existing `loadExperimentAssignment` API surface.
+export const SDK_VERSION = '1.0.0';
 
 export type {
 	Range,

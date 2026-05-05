@@ -1,6 +1,3 @@
-// Runtime condition matcher. See ./README.md for design notes (MongoDB-shaped
-// query syntax, fail-closed semantics, cross-runtime parity).
-
 import type { Attributes } from './types';
 
 /**

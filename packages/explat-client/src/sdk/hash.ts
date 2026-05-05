@@ -1,5 +1,3 @@
-// ExPlat SDK — pure FNV-1a + double-FNV hash. Identical to the PHP impl in WPCOM; gated by test/cases.json parity tests.
-
 /**
  * FNV-1a 32-bit hash over JavaScript UTF-16 code units. Returns a uint32.
  *
