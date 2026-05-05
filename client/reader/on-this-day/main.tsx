@@ -7,7 +7,7 @@ import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-
 import { QuickPostSkeleton } from 'calypso/reader/components/quick-post/skeleton';
 import ReaderOnboardingGate from 'calypso/reader/onboarding/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
-import ReaderStream from 'calypso/reader/stream';
+import ReaderStream from 'calypso/reader/stream-v2';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
@@ -69,7 +69,11 @@ function OnThisDayStream() {
 			{ currentView === 'recent' ? (
 				<OnThisDay viewToggle={ <ViewToggle /> } streamKey={ onThisDayStreamKey } />
 			) : (
-				<ReaderStream streamKey={ onThisDayStreamKey } trackScrollPage className="following">
+				<ReaderStream
+					streamKey={ onThisDayStreamKey }
+					trackScrollPage={ () => {} }
+					className="following"
+				>
 					<NavigationHeader
 						title={ translate( 'On This Day' ) }
 						subtitle={ translate( 'Posts from this day in previous years.' ) }
