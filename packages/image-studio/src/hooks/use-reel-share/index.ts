@@ -58,6 +58,7 @@ export function useReelShare(): UseReelShareReturn {
 		currentAttachmentId,
 		currentDurationSeconds,
 		entryPoint,
+		isAiProcessing,
 		isPublished,
 		currentMeta,
 		hasInstagramConnection,
@@ -87,6 +88,7 @@ export function useReelShare(): UseReelShareReturn {
 			currentAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
 			currentDurationSeconds: videoStore.getCurrentDurationSeconds?.() ?? null,
 			entryPoint: studio.getEntryPoint?.() ?? null,
+			isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
 			isPublished: editor?.isCurrentPostPublished?.() ?? false,
 			currentMeta:
 				( editor?.getEditedPostAttribute?.( 'meta' ) as Record< string, unknown > ) ?? {},
@@ -113,7 +115,8 @@ export function useReelShare(): UseReelShareReturn {
 		entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip &&
 		!! currentVideoUrl &&
 		!! currentAttachmentId &&
-		!! sharePath;
+		!! sharePath &&
+		! isAiProcessing;
 
 	let reason: ReelShareReason | null = null;
 	if ( ! currentVideoUrl || ! currentAttachmentId ) {

@@ -22,6 +22,7 @@ let mockState: {
 	currentAttachmentId: number | null;
 	currentDurationSeconds: number | null;
 	entryPoint: string;
+	isAiProcessing: boolean;
 	currentPostId: number | null;
 	isCurrentPostPublished: boolean;
 	currentMeta: Record< string, unknown >;
@@ -45,6 +46,7 @@ jest.mock( '@wordpress/data', () => ( {
 			if ( storeName === 'image-studio' ) {
 				return {
 					getEntryPoint: () => mockState.entryPoint,
+					getImageStudioAiProcessing: () => mockState.isAiProcessing,
 				};
 			}
 			if ( storeName === 'core/editor' ) {
@@ -141,6 +143,7 @@ describe( 'useReelShare', () => {
 			currentAttachmentId: 555,
 			currentDurationSeconds: 12,
 			entryPoint: 'post_editor_feature_clip',
+			isAiProcessing: false,
 			currentPostId: 999,
 			isCurrentPostPublished: true,
 			currentMeta: { jetpack_social_options: { version: 2 } },
@@ -172,6 +175,12 @@ describe( 'useReelShare', () => {
 
 		it( 'is false when the attachment ID is null (half-set state)', () => {
 			mockState.currentAttachmentId = null;
+			const { result } = renderHook( () => useReelShare() );
+			expect( result.current.isVisible ).toBe( false );
+		} );
+
+		it( 'is false while AI is regenerating a video', () => {
+			mockState.isAiProcessing = true;
 			const { result } = renderHook( () => useReelShare() );
 			expect( result.current.isVisible ).toBe( false );
 		} );
