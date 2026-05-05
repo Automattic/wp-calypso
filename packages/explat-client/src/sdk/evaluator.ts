@@ -1,11 +1,3 @@
-// ExPlat SDK — pure assignment function. Walks a flag's rule list in order;
-// the first rule whose condition (if any) passes and whose action resolves to
-// a value wins. Force rules return their literal value; experiment rules hash
-// the named identity attribute and pick a variation.
-//
-// No DB, no globals, no clocks, no I/O. cases.json runs identical inputs
-// through every runtime; if this drifts from the PHP impl, CI fails.
-
 import { chooseVariation } from './bucket';
 import { evalCondition } from './condition';
 import { hash } from './hash';
@@ -22,6 +14,11 @@ export function evalFeature( feature: Feature, attrs: Attributes ): Result {
 		}
 
 		// type === 'experiment'
+		const variations = rule.variations;
+		if ( ! Array.isArray( variations ) || variations.length === 0 ) {
+			continue;
+		}
+
 		const hashAttr: IdentityAttribute = rule.hash_attribute;
 		const hashValue = ( attrs as Record< IdentityAttribute, string | null | undefined > )[
 			hashAttr
@@ -31,12 +28,12 @@ export function evalFeature( feature: Feature, attrs: Attributes ): Result {
 		}
 
 		const n = hash( rule.seed, hashValue );
-		const i = chooseVariation( n, rule.variations );
-		if ( i < 0 ) {
+		const i = chooseVariation( n, variations );
+		if ( i === null ) {
 			continue;
 		}
 
-		const variation = rule.variations[ i ];
+		const variation = variations[ i ];
 		return {
 			value: variation.value,
 			source: 'experiment',
