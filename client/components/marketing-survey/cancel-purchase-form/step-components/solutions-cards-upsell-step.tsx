@@ -219,7 +219,11 @@ export default function SolutionsCardsUpsellStep( {
 		onClickDowngrade,
 		onSelectSwitchToMonthly: () => {
 			( document.activeElement as HTMLElement )?.blur();
-			( onSwitchToMonthly ?? ( () => setShowDowngradeStep( true ) ) )();
+			if ( onSwitchToMonthly ) {
+				onSwitchToMonthly();
+			} else {
+				setShowDowngradeStep( true );
+			}
 		},
 		setNewMessagingChat,
 		setOpenOdieWithContext,
