@@ -208,6 +208,43 @@ const getDowngradePlanForPurchase = (
 	}
 };
 
+function getYearlyPlanSlug( plans: PlanProduct[], purchase: Purchase ): string {
+	if ( ! plans ) {
+		return '';
+	}
+	// Only for monthly plans
+	if ( purchase.bill_period_days !== SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
+		return '';
+	}
+
+	const plan = plans.find( ( p ) => p.product_id === purchase.product_id );
+	if ( ! plan ) {
+		return '';
+	}
+
+	// Strategy 1: downgrade_paths — look for annual billing period
+	const annualPath = plan.downgrade_paths.find(
+		( path ) => path.bill_period === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+	);
+	if ( annualPath ) {
+		return annualPath.product_slug;
+	}
+
+	// Strategy 2: product_tier_id match from full plans list
+	if ( plan.product_tier_id ) {
+		const annualPlan = plans.find(
+			( p ) =>
+				p.product_tier_id === plan.product_tier_id &&
+				p.bill_period === SubscriptionBillPeriod.PLAN_ANNUAL_PERIOD
+		);
+		if ( annualPlan ) {
+			return annualPlan.product_slug;
+		}
+	}
+
+	return '';
+}
+
 function getOfferDiscountBasedOnPurchasePrice(
 	purchase: Purchase,
 	cancellationOffer: CancellationOffer | undefined
@@ -520,6 +557,7 @@ function CancelPurchaseInner() {
 	let questionTwoOrder = [];
 
 	const downgradePlan = getDowngradePlanForPurchase( plans, purchase, state.upsell );
+	const yearlyPlanSlug = getYearlyPlanSlug( plans, purchase );
 
 	const getActiveMarketplaceSubscriptions = (): Purchase[] => {
 		if ( ! purchase.is_plan || ! productsList ) {
@@ -1693,6 +1731,7 @@ function CancelPurchaseInner() {
 			surveyStep={ state.surveyStep }
 			allSteps={ allSteps }
 			upsell={ state.upsell }
+			yearlyPlanSlug={ yearlyPlanSlug }
 		/>
 	);
 	return (

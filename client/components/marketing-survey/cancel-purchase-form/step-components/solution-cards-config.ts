@@ -1,3 +1,4 @@
+import { getYearlyPlanByMonthly } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -77,6 +78,22 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		subtitle: 'Keep things flexible with monthly billing.',
 		onClick: ( ctx ) => {
 			ctx.onSelectSwitchToMonthly?.();
+		},
+	},
+	{
+		id: 'switch-to-yearly',
+		title: 'Switch to yearly billing',
+		subtitle: 'Pay less over time by switching to an annual plan.',
+		getHref: ( ctx ) => {
+			const yearlySlug = getYearlyPlanByMonthly( ctx.purchase.productSlug );
+			return yearlySlug ? `/checkout/${ ctx.site.slug }/${ yearlySlug }` : undefined;
+		},
+		onClick: ( ctx ) => {
+			const yearlySlug = getYearlyPlanByMonthly( ctx.purchase.productSlug );
+			if ( yearlySlug ) {
+				page( `/checkout/${ ctx.site.slug }/${ yearlySlug }` );
+				ctx.closeDialog();
+			}
 		},
 	},
 	{

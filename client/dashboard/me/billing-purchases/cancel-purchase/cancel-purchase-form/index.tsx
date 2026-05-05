@@ -97,6 +97,7 @@ interface CancelPurchaseFormProps {
 	surveyStep?: string;
 	upsell?: string;
 	willAtomicSiteRevert?: boolean;
+	yearlyPlanSlug?: string;
 }
 
 function SurveyContent( {
@@ -140,6 +141,7 @@ function SurveyContent( {
 	isAkismet,
 	intent,
 	onSwitchToMonthly,
+	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
@@ -179,6 +181,7 @@ function SurveyContent( {
 					onSwitchToMonthly={ onSwitchToMonthly }
 					purchase={ purchase }
 					refundAmount={ refundAmount }
+					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
 			);
 		}
