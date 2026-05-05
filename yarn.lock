@@ -1715,18 +1715,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.1.0, @automattic/number-formatters@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@automattic/number-formatters@npm:1.1.2"
-  dependencies:
-    "@wordpress/date": "npm:^5.19.0"
-    debug: "npm:^4.4.0"
-    tslib: "npm:^2.5.0"
-  checksum: bd83f99d1d53a81ccc9879c7062f66b6c9e1b1b0103ae5943189fd546fcb20d1a27d20f2d55f20c80164b64cf0bee5dbc72e533123e9b3f873b4e3670a6d67da
-  languageName: node
-  linkType: hard
-
-"@automattic/number-formatters@npm:^1.1.7":
+"@automattic/number-formatters@npm:^1.1.0, @automattic/number-formatters@npm:^1.1.2, @automattic/number-formatters@npm:^1.1.7":
   version: 1.1.7
   resolution: "@automattic/number-formatters@npm:1.1.7"
   dependencies:
@@ -4185,7 +4174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.29.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.28.6, @babel/runtime@npm:^7.29.2, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:7.29.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.29.2, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
   version: 7.29.2
   resolution: "@babel/runtime@npm:7.29.2"
   checksum: 30b80a0140d16467792e1bbeb06f655b0dab70407da38dfac7fedae9c859f9ae9d846ef14ad77bd3814c064295fe9b1bc551f1541ea14646ae9f22b71a8bc17a
@@ -4228,28 +4217,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.2.0":
-  version: 1.3.0
-  resolution: "@base-ui/react@npm:1.3.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.28.6"
-    "@base-ui/utils": "npm:0.2.6"
-    "@floating-ui/react-dom": "npm:^2.1.8"
-    "@floating-ui/utils": "npm:^0.2.11"
-    tabbable: "npm:^6.4.0"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    "@types/react": ^17 || ^18 || ^19
-    react: ^17 || ^18 || ^19
-    react-dom: ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 36c9d2d77a82b41cb3783be39340aa0713bbe102fb18213f8f3e2c4f1295beb8359dd97067248bea34925f4a40eab281ddc42f05009179db1d5a7a99e4bfecdc
-  languageName: node
-  linkType: hard
-
-"@base-ui/react@npm:^1.4.0":
+"@base-ui/react@npm:^1.2.0, @base-ui/react@npm:^1.4.0":
   version: 1.4.1
   resolution: "@base-ui/react@npm:1.4.1"
   dependencies:
@@ -4272,25 +4240,6 @@ __metadata:
     date-fns:
       optional: true
   checksum: 913361cd1e09f256d95bbd905287a10c34b2dab23482bf4ad5e595e4d72f5ea22e0b0b23657df6b548a938b248be3129c0bf1242c90753b59618a615c9e90ad5
-  languageName: node
-  linkType: hard
-
-"@base-ui/utils@npm:0.2.6":
-  version: 0.2.6
-  resolution: "@base-ui/utils@npm:0.2.6"
-  dependencies:
-    "@babel/runtime": "npm:^7.28.6"
-    "@floating-ui/utils": "npm:^0.2.11"
-    reselect: "npm:^5.1.1"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    "@types/react": ^17 || ^18 || ^19
-    react: ^17 || ^18 || ^19
-    react-dom: ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 5611442ac37066774277cd3360d16ebc3f599dc7b8efdfdfbf5b66b6d2eb6e87a18c0f9922b061818850e781d9bbc70aa5fc4ffb1dfd7fb234eefc401e070090
   languageName: node
   linkType: hard
 
@@ -16334,19 +16283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.2.6, dompurify@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "dompurify@npm:3.3.1"
-  dependencies:
-    "@types/trusted-types": "npm:^2.0.7"
-  dependenciesMeta:
-    "@types/trusted-types":
-      optional: true
-  checksum: fa0a8c55a436ba0d54389195e3d2337e311f56de709a2fc9efc98dbbc7746fa53bb4b74b6ac043b77a279a8f2ebd8685f0ebaa6e58c9e32e92051d529bc0baf8
-  languageName: node
-  linkType: hard
-
-"dompurify@npm:^3.3.3":
+"dompurify@npm:^3.2.6, dompurify@npm:^3.3.1, dompurify@npm:^3.3.3":
   version: 3.4.2
   resolution: "dompurify@npm:3.4.2"
   dependencies:
