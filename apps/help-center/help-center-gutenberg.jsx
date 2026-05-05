@@ -1,4 +1,5 @@
 /* global helpCenterData, __i18n_text_domain__ */
+import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -12,12 +13,11 @@ import { backup, comment, page, rss, video } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { useRef } from 'react';
 import ReactDOM from 'react-dom';
-import './config';
-import './help-center.scss';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 import { getEditorType } from './utils';
+import './help-center.scss';
 
 const queryClient = new QueryClient();
 
