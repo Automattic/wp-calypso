@@ -1,4 +1,4 @@
-import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
+import { useShouldUseUnifiedAgent } from '@automattic/agents-manager/src/hooks/use-should-use-unified-agent';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -7,9 +7,7 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, isSiteSection } from 'calypso/state/ui/selectors';
 
 const importAgentsManager = () =>
-	import(
-		/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
-	);
+	import( /* webpackChunkName: "async-load-calypso-layout-agents-manager" */ './agents-manager' );
 
 export default function AgentsManagerLoader( {
 	sectionName,
