@@ -1150,16 +1150,21 @@ describe( 'atmosphere fetchers', () => {
 			expect( result.blob.size ).toBe( 3 );
 		} );
 
-		it( 'classifies a 400 atmosphere_blob_too_large into a typed error', async () => {
+		it( 'classifies a 400 atmosphere_bad_request into a bad_request kind', async () => {
+			// The slice-8a backend collapses every /blobs rejection
+			// (oversize, unsupported MIME, undecodable bytes, …) into
+			// `atmosphere_bad_request` rather than a specific subtype. The
+			// classifier mirrors that shape.
 			jest.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
-				code: 'atmosphere_blob_too_large',
-				message: 'too large',
+				code: 'atmosphere_bad_request',
+				message: 'Image is too large.',
 				statusCode: 400,
 			} );
 
 			const file = new Blob( [ 'x' ], { type: 'image/jpeg' } );
 			await expect( uploadBlob( { connectionId: 42, file } ) ).rejects.toMatchObject( {
-				kind: 'blob_too_large',
+				kind: 'bad_request',
+				message: 'Image is too large.',
 			} );
 		} );
 	} );

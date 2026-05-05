@@ -88,17 +88,15 @@ function errorMessage(
 		// connect form (it doesn't post), but the AtmosphereError union
 		// covers the whole atmosphere surface, so list them explicitly to
 		// keep `assertNever` exhaustive without changing the user-visible
-		// copy on this screen. Slice-8a media kinds are listed here for
-		// the same reason — they won't surface from the connect form.
+		// copy on this screen. The slice-8a `blob_decode_failed` kind is
+		// set client-side from `compressImage` failures and listed here
+		// for the same reason — it won't surface from the connect form.
 		case 'text_too_long':
 		case 'reply_disabled':
 		case 'quote_disabled':
 		case 'target_unavailable':
 		case 'unknown':
-		case 'blob_too_large':
-		case 'blob_unsupported_type':
 		case 'blob_decode_failed':
-		case 'media_invalid':
 			return translate( 'Something went wrong.' );
 		default:
 			return assertNever( error );

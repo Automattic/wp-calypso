@@ -303,23 +303,26 @@ describe( '<ComposerModal>', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'hi' );
 	} );
 
-	it( 'shows a media_invalid error message after a /posts rejection', async () => {
+	it( 'shows the bad_request copy after a /posts media rejection', async () => {
+		// The slice-8a backend collapses every media-body validation
+		// failure into the generic `atmosphere_bad_request` wire code (see
+		// `reader-atmosphere/AGENTS.md` — "the wire stays stable"), so the
+		// composer renders its existing `bad_request` copy rather than a
+		// media-specific message.
 		mockUseImageUploads.mockReturnValue(
 			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
 		);
 
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
-			.reply( 400, { error: 'atmosphere_media_invalid' } );
+			.reply( 400, { error: 'atmosphere_bad_request', message: 'Invalid media payload.' } );
 
 		const user = userEvent.setup();
 		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
 		await user.click( screen.getByText( 'open' ) );
 		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
 
-		expect(
-			await screen.findByText( /something’s wrong with the attached images/i )
-		).toBeVisible();
+		expect( await screen.findByText( /we couldn't post this/i ) ).toBeVisible();
 		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
 	} );
 

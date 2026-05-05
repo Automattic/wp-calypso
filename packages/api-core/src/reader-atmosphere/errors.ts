@@ -13,10 +13,11 @@ export type AtmosphereError =
 	| { kind: 'reply_disabled' }
 	| { kind: 'quote_disabled' }
 	| { kind: 'target_unavailable' }
-	| { kind: 'blob_too_large' }
-	| { kind: 'blob_unsupported_type' }
+	// Set client-side from `compressImage` failures; the server never emits
+	// a matching wire code (the slice-8a backend collapses every blob/media
+	// rejection into `atmosphere_bad_request`, which lands as `bad_request`
+	// above).
 	| { kind: 'blob_decode_failed' }
-	| { kind: 'media_invalid' }
 	| { kind: 'unknown'; cause: unknown };
 
 interface WpErrorLike {
@@ -81,14 +82,6 @@ export function classifyAtmosphereError( raw: unknown ): AtmosphereError {
 			return { kind: 'quote_disabled' };
 		case 'atmosphere_target_unavailable':
 			return { kind: 'target_unavailable' };
-		case 'atmosphere_blob_too_large':
-			return { kind: 'blob_too_large' };
-		case 'atmosphere_blob_unsupported_type':
-			return { kind: 'blob_unsupported_type' };
-		case 'atmosphere_blob_decode_failed':
-			return { kind: 'blob_decode_failed' };
-		case 'atmosphere_media_invalid':
-			return { kind: 'media_invalid' };
 		default:
 			return { kind: 'unknown', cause: raw };
 	}

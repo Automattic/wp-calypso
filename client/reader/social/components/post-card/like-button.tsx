@@ -41,10 +41,7 @@ function errorMessageForLike(
 		case 'quote_disabled':
 		case 'target_unavailable':
 		case 'unknown':
-		case 'blob_too_large':
-		case 'blob_unsupported_type':
 		case 'blob_decode_failed':
-		case 'media_invalid':
 			return translate( 'Could not save your like. Please try again.' );
 	}
 }
