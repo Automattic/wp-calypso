@@ -69,6 +69,11 @@ import {
 	undoToolDefinition,
 } from './tools/editor-post-tool';
 import {
+	PICK_IMAGE_TOOL_NAME,
+	executePickImageTool,
+	pickImageToolDefinition,
+} from './tools/image-picker-tool';
+import {
 	VERIFY_YOUTUBE_URL_TOOL_NAME,
 	executeVerifyYoutubeUrlTool,
 	verifyYoutubeUrlToolDefinition,
@@ -116,6 +121,7 @@ interface UseRealtimeSessionResult {
 	isMuted: boolean;
 	transcript: RealtimeTranscriptEntry[];
 	toolEvents: RealtimeToolEvent[];
+	imagePickerState: import('./image-picker-modal').ImagePickerState;
 	start: () => Promise< void >;
 	stop: () => void;
 	toggleMute: () => void;
@@ -272,6 +278,23 @@ function describeToolCall(
 					: null;
 			return title ? `Verified YouTube URL: ${ title }` : 'Verified YouTube URL';
 		}
+		case PICK_IMAGE_TOOL_NAME: {
+			const action = typeof args.action === 'string' ? args.action : '';
+			if ( action === 'open' ) {
+				return `${ errorPrefix }Opened image picker`;
+			}
+			if ( action === 'select' ) {
+				const purpose = typeof args.purpose === 'string' ? args.purpose : '';
+				if ( purpose === 'featured_image' ) {
+					return `${ errorPrefix }Set featured image`;
+				}
+				return `${ errorPrefix }Inserted image`;
+			}
+			if ( action === 'close' ) {
+				return 'Closed image picker';
+			}
+			return `${ errorPrefix }Image picker`;
+		}
 		default:
 			return null;
 	}
@@ -324,6 +347,25 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	const [ isMuted, setIsMuted ] = useState( false );
 	const [ transcript, setTranscript ] = useState< RealtimeTranscriptEntry[] >( [] );
 	const [ toolEvents, setToolEvents ] = useState< RealtimeToolEvent[] >( [] );
+	const [ imagePickerState, setImagePickerState ] = useState<
+		import('./image-picker-modal').ImagePickerState
+	>( {
+		isOpen: false,
+		images: [],
+		selectedNumber: null,
+		purpose: 'block',
+	} );
+
+	useEffect( () => {
+		const onUpdate = () => {
+			const s = window.__dictationImagePicker;
+			if ( s ) {
+				setImagePickerState( { ...s } );
+			}
+		};
+		window.addEventListener( 'dictation-image-picker-update', onUpdate );
+		return () => window.removeEventListener( 'dictation-image-picker-update', onUpdate );
+	}, [] );
 
 	const peerConnectionRef = useRef< RTCPeerConnection | null >( null );
 	const dataChannelRef = useRef< RTCDataChannel | null >( null );
@@ -482,6 +524,8 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					result = executeGetPostInfoTool();
 				} else if ( call.name === VERIFY_YOUTUBE_URL_TOOL_NAME ) {
 					result = await executeVerifyYoutubeUrlTool( call.arguments );
+				} else if ( call.name === PICK_IMAGE_TOOL_NAME ) {
+					result = await executePickImageTool( call.arguments );
 				} else {
 					continue;
 				}
@@ -701,6 +745,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 								redoToolDefinition,
 								getPostInfoToolDefinition,
 								verifyYoutubeUrlToolDefinition,
+								pickImageToolDefinition,
 							],
 							tool_choice: 'auto',
 							audio: {
@@ -877,6 +922,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		isMuted,
 		transcript,
 		toolEvents,
+		imagePickerState,
 		start,
 		stop,
 		toggleMute,

@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { close, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ImagePickerModal } from './image-picker-modal';
 import { useRealtimeSession } from './use-realtime-session';
 import type { RealtimeToolEvent, RealtimeTranscriptEntry } from './use-realtime-session';
 import './style.scss';
@@ -176,8 +177,17 @@ export function LiveAIAssistant( {
 		[ locale, contextualInstructions ]
 	);
 
-	const { status, error, isMuted, transcript, toolEvents, start, stop, toggleMute } =
-		useRealtimeSession( { instructions } );
+	const {
+		status,
+		error,
+		isMuted,
+		transcript,
+		toolEvents,
+		imagePickerState,
+		start,
+		stop,
+		toggleMute,
+	} = useRealtimeSession( { instructions } );
 
 	const timelineRows = useMemo(
 		() => buildTimelineRows( transcript, toolEvents ),
@@ -395,6 +405,7 @@ export function LiveAIAssistant( {
 					</div>
 				) }
 			</div>
+			<ImagePickerModal state={ imagePickerState } />
 		</>
 	);
 }
