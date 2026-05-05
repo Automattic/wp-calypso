@@ -10,36 +10,40 @@
 		box-shadow: 0 0 8px 0 #0007;
 	}
 
+	// Layout for snackbars that carry an action and/or an explicit dismiss
+	// button. The default WP Snackbar layout collapses the action against the
+	// dismiss control on a single row; the grid keeps content / action / dismiss
+	// in legible positions.
+	.components-snackbar__content {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: start;
+	}
+
+	.components-snackbar__action {
+		grid-column: 1;
+		grid-row: 2;
+		margin-left: 0;
+		margin-top: 4px;
+		color: var( --wp-admin-theme-color, #0069b0 );
+		text-decoration: underline;
+		font-weight: 400;
+
+		&:hover {
+			color: var( --wp-admin-theme-color-darker-10, #004c82 );
+			text-decoration: none;
+		}
+	}
+
+	.components-snackbar__dismiss-button {
+		grid-column: 2;
+		grid-row: 1;
+		align-self: start;
+	}
+
 	&-error {
 		background-color: #f4a2a2;
 		border-left: 3px solid #cc1818;
-
-		.components-snackbar__content {
-			display: grid;
-			grid-template-columns: 1fr auto;
-			align-items: start;
-		}
-
-		.components-snackbar__action {
-			grid-column: 1;
-			grid-row: 2;
-			margin-left: 0;
-			margin-top: 4px;
-			color: var( --wp-admin-theme-color, #0069b0 );
-			text-decoration: underline;
-			font-weight: 400;
-
-			&:hover {
-				color: var( --wp-admin-theme-color-darker-10, #004c82 );
-				text-decoration: none;
-			}
-		}
-
-		.components-snackbar__dismiss-button {
-			grid-column: 2;
-			grid-row: 1;
-			align-self: start;
-		}
 	}
 
 	&-success {
