@@ -122,7 +122,7 @@ describe( 'useComposer', () => {
 					>
 						open
 					</button>
-					{ mode && <button onClick={ closeComposer }>close</button> }
+					{ mode && <button onClick={ () => closeComposer() }>close</button> }
 				</>
 			);
 		}
