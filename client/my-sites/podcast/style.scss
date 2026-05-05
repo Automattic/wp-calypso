@@ -54,8 +54,10 @@ body.is-section-podcasting {
 	}
 }
 
-.podcast__settings {
-	max-inline-size: 760px;
+.podcast__settings,
+.podcast__distribution {
+	max-inline-size: 680px;
+	margin-inline: auto;
 }
 
 // Larger cover preview with manage buttons stacked to the right.

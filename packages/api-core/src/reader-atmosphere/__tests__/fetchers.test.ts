@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { wpcom } from '../../wpcom-fetcher';
 import {
 	createConnection,
 	createFollow,
@@ -19,6 +20,7 @@ import {
 	getScopedThread,
 	getThread,
 	getTimeline,
+	uploadBlob,
 } from '../fetchers';
 import type {
 	AtmosphereAuthorFeedPage,
@@ -1111,6 +1113,99 @@ describe( 'atmosphere fetchers', () => {
 				.reply( status as number, { error } );
 
 			await expect( createPost( { connectionId, text: 'x' } ) ).rejects.toMatchObject( { kind } );
+		} );
+	} );
+
+	describe( 'uploadBlob', () => {
+		// Multipart uploads can't be exercised end-to-end through nock here:
+		// the wpcom transport hands its `formData` to superagent's Node
+		// adapter, which streams via `form-data` and rejects jsdom Blob/File
+		// instances with `source.on is not a function`. Spying on
+		// `wpcom.req.post` keeps the fetcher contract under test (path,
+		// namespace, formData shape, error classification) without taking on
+		// the transport's stream wiring.
+		afterEach( () => jest.restoreAllMocks() );
+
+		it( 'POSTs to /connections/{id}/blobs with a multipart file field', async () => {
+			const file = new Blob( [ new Uint8Array( [ 0xff, 0xd8, 0xff ] ) ], { type: 'image/jpeg' } );
+			const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+				blob: {
+					$type: 'blob',
+					ref: { $link: 'bafkrei' + 'a'.repeat( 50 ) },
+					mimeType: 'image/jpeg',
+					size: 3,
+				},
+			} );
+
+			const result = await uploadBlob( { connectionId: 42, file } );
+
+			expect( post ).toHaveBeenCalledTimes( 1 );
+			const callArg = post.mock.calls[ 0 ][ 0 ];
+			expect( callArg.path ).toBe( '/reader/atmosphere/connections/42/blobs' );
+			expect( callArg.apiNamespace ).toBe( 'wpcom/v2' );
+			expect( callArg.formData ).toHaveLength( 1 );
+			expect( callArg.formData[ 0 ][ 0 ] ).toBe( 'file' );
+			expect( result.blob.$type ).toBe( 'blob' );
+			expect( result.blob.mimeType ).toBe( 'image/jpeg' );
+			expect( result.blob.size ).toBe( 3 );
+		} );
+
+		it( 'classifies a 400 atmosphere_bad_request into a bad_request kind', async () => {
+			// The slice-8a backend collapses every /blobs rejection
+			// (oversize, unsupported MIME, undecodable bytes, …) into
+			// `atmosphere_bad_request` rather than a specific subtype. The
+			// classifier mirrors that shape.
+			jest.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
+				code: 'atmosphere_bad_request',
+				message: 'Image is too large.',
+				statusCode: 400,
+			} );
+
+			const file = new Blob( [ 'x' ], { type: 'image/jpeg' } );
+			await expect( uploadBlob( { connectionId: 42, file } ) ).rejects.toMatchObject( {
+				kind: 'bad_request',
+				message: 'Image is too large.',
+			} );
+		} );
+	} );
+
+	describe( 'createPost — media forwarding', () => {
+		it( 'forwards optional media body when provided', async () => {
+			let capturedBody: any = null;
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/9/posts', ( body ) => {
+					capturedBody = body;
+					return true;
+				} )
+				.reply( 200, {
+					post: {
+						uri: 'at://did:plc:x/app.bsky.feed.post/abc',
+						cid: 'bafkreiabc',
+						rkey: 'abc',
+					},
+				} );
+
+			await createPost( {
+				connectionId: 9,
+				text: '',
+				media: {
+					images: [
+						{
+							blob: {
+								$type: 'blob',
+								ref: { $link: 'bafkrei' + 'b'.repeat( 50 ) },
+								mimeType: 'image/jpeg',
+								size: 100,
+							},
+							alt: 'a sunset',
+							aspectRatio: { width: 2000, height: 1500 },
+						},
+					],
+				},
+			} );
+
+			expect( capturedBody.text ).toBe( '' );
+			expect( capturedBody.media.images[ 0 ].alt ).toBe( 'a sunset' );
 		} );
 	} );
 

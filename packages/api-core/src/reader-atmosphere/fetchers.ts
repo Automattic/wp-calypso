@@ -21,6 +21,8 @@ import type {
 	DeleteLikeParams,
 	DeletePostParams,
 	DeleteRepostParams,
+	UploadBlobParams,
+	UploadBlobResult,
 } from './types';
 
 const NAMESPACE = 'wpcom/v2';
@@ -351,14 +353,41 @@ export async function createLike( params: CreateLikeParams ): Promise< CreateLik
 	}
 }
 
+export async function uploadBlob( params: UploadBlobParams ): Promise< UploadBlobResult > {
+	const { connectionId, file } = params;
+	// `wpcom-xhr-request` expects each formData value to be either a primitive
+	// or a `{ fileContents, fileName }` envelope (it inspects `fileContents
+	// instanceof Blob` to decide whether to call `req.attach` vs `req.field`).
+	// Match the established pattern used by `client/post-editor/media-modal`
+	// so the transport produces a real multipart `file` part instead of a
+	// stringified Blob field.
+	const fileName = file instanceof File && file.name ? file.name : 'blob';
+	const formData: [ string, { fileContents: Blob; fileName: string } ][] = [
+		[ 'file', { fileContents: file, fileName } ],
+	];
+
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ connectionId }/blobs`,
+			apiNamespace: NAMESPACE,
+			formData,
+		} ) ) as UploadBlobResult;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
 export async function createPost( params: CreatePostParams ): Promise< CreatePostResult > {
-	const { connectionId, text, reply, quote } = params;
+	const { connectionId, text, reply, quote, media } = params;
 	const body: Record< string, unknown > = { text };
 	if ( reply ) {
 		body.reply = reply;
 	}
 	if ( quote ) {
 		body.quote = quote;
+	}
+	if ( media ) {
+		body.media = media;
 	}
 	try {
 		const response = ( await wpcom.req.post( {
