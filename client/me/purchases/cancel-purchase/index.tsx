@@ -62,6 +62,7 @@ import {
 	type DisplayVariant,
 } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
+import wpcom from 'calypso/lib/wp';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { classifyPurchaseForCopy } from 'calypso/me/purchases/manage-purchase/classify-purchase-for-copy';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -75,6 +76,7 @@ import {
 	clearPurchases,
 	removePurchaseFromState,
 	restorePurchaseToState,
+	setUserPurchases,
 } from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
@@ -179,6 +181,7 @@ export interface CancelPurchaseActions {
 		properties: { [ key: string ]: string | boolean | number }
 	) => void;
 	clearPurchases: () => void;
+	setUserPurchases: ( purchases: unknown[] ) => void;
 	refreshSitePlans: ( siteId: string | number ) => void;
 	removePurchaseFromState: ( purchaseId: string | number ) => Purchases.RawPurchase | null;
 	restorePurchaseToState: ( purchase: Purchases.RawPurchase ) => void;
@@ -811,6 +814,78 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		);
 	};
 
+	onSwitchToMonthly = async () => {
+		if ( this.state.isLoading ) {
+			return;
+		}
+
+		const { purchase } = this.props;
+		const monthlyProductSlug = getMonthlyPlanByYearly( purchase.productSlug );
+		const downgradePlan = getPlan( monthlyProductSlug );
+
+		if ( ! downgradePlan ) {
+			this.props.errorNotice( this.props.translate( 'Cannot find a monthly plan to switch to.' ) );
+			return;
+		}
+
+		this.setState( { isLoading: true } );
+		this.props.recordTracksEvent( 'calypso_purchases_downgrade_form_submit' );
+
+		try {
+			await cancelAndRefundPurchaseAsync( purchase.id, {
+				product_id: purchase.productId,
+				type: 'downgrade',
+				to_product_id: downgradePlan.getProductId(),
+			} );
+
+			// Fetch fresh purchases to find the new monthly purchase.
+			const freshPurchases = await wpcom.req.get( {
+				path: '/me/purchases',
+				apiVersion: '1.2',
+			} );
+
+			const newPurchase = freshPurchases?.find(
+				( p: { product_id: number; blog_id: number } ) =>
+					p.product_id === downgradePlan.getProductId() && p.blog_id === purchase.siteId
+			);
+
+			// Compute the redirect URL BEFORE hydrating Redux. setUserPurchases below
+			// replaces state.purchases.data with the fresh list; the cancelled yearly
+			// is no longer in that list, so this.props.site (derived via getSite from
+			// the looked-up purchase) flips to undefined synchronously when connect's
+			// subscriber re-runs mapStateToProps. siteSlug is a stable route prop set
+			// by controller.cancelPurchase from context.params.site and never depends
+			// on Redux purchase state, so it's safe to use here.
+			const targetUrl = newPurchase
+				? ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+						this.props.siteSlug,
+						newPurchase.ID
+				  ) + '?downgraded=true'
+				: null;
+
+			// Hydrate Redux so the destination manage-purchase finds the new monthly
+			// via getByPurchaseId and isDataValid passes on mount (no destination bounce).
+			this.props.setUserPurchases( freshPurchases );
+
+			if ( targetUrl ) {
+				page.redirect( targetUrl );
+			} else {
+				// Fallback: new purchase not yet in /me/purchases response (eventual
+				// consistency edge case). Land on purchases list with success notice.
+				this.props.refreshSitePlans( purchase.siteId );
+				this.props.successNotice(
+					this.props.translate( 'Your plan has been switched to monthly billing.' ),
+					{ displayOnNextPage: true }
+				);
+				page.redirect( this.props.purchaseListUrl ?? purchasesRoot );
+			}
+		} catch ( err ) {
+			this.props.errorNotice( ( err as Error ).message );
+		} finally {
+			this.setState( { isLoading: false } );
+		}
+	};
+
 	freeMonthOfferClick = async () => {
 		const { purchase } = this.props;
 
@@ -1294,6 +1369,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						onSetLoading={ this.onSetLoading }
 						downgradeClick={ this.downgradeClick }
 						freeMonthOfferClick={ this.freeMonthOfferClick }
+						onSwitchToMonthly={ this.onSwitchToMonthly }
 						// Disable marketplace dialog in domain options step to prevent double display
 						showMarketplaceDialog={ false }
 					/>
@@ -1367,6 +1443,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						cancellationInProgress={ this.state.isLoading }
 						downgradeClick={ this.downgradeClick }
 						freeMonthOfferClick={ this.freeMonthOfferClick }
+						onSwitchToMonthly={ this.onSwitchToMonthly }
 						intent={ this.props.intent }
 					/>
 				) }
@@ -1484,6 +1561,7 @@ const ConnectedCancelPurchase = connect(
 	{
 		recordTracksEvent,
 		clearPurchases,
+		setUserPurchases,
 		refreshSitePlans,
 		removePurchaseFromState,
 		restorePurchaseToState,

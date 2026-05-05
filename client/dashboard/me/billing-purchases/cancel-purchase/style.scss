@@ -22,6 +22,8 @@
 
 /* Vertically center the icon (decoration) in solutions cards */
 .cancel-purchase-form__solution-card.summary-button {
+	text-align: start;
+
 	> * {
 		align-items: center;
 	}

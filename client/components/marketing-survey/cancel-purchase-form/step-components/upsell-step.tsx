@@ -44,7 +44,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 	return (
 		<div className="cancel-purchase-form__upsell">
 			<div className="cancel-purchase-form__upsell-content">
-				{ ! isEnabled( 'cancel-flow/solutions-cards-upsell' ) && (
+				{ ! isEnabled( 'purchases/split-cancel-remove' ) && (
 					<div className="cancel-purchase-form__upsell-subheader">
 						{ translate( 'Here is an idea' ) }
 					</div>

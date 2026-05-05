@@ -5,7 +5,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ReactElement } from 'react';
 
 const BUILT_BY_URL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
-const RENEW_COUPON = 'biz25';
+const RENEW_COUPON = 'DONTGO25';
 const SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/' );
 const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' );
 const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );
@@ -53,8 +53,8 @@ export type SolutionCardConfigEntry = {
 export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	{
 		id: 'change-plan',
-		title: 'Change plan',
-		subtitle: 'Find a plan that better suits your needs.',
+		title: 'Switch to a different plan',
+		subtitle: 'You can change to a plan with the features and pricing that work for you.',
 		getHref: ( ctx ) => ctx.changePlanUrl,
 		onClick: ( ctx ) => {
 			page( ctx.changePlanUrl );

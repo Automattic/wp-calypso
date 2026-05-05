@@ -76,6 +76,7 @@ interface CancelPurchaseFormProps {
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onSubmit?: () => void;
 	onSurveyComplete?: () => void;
+	onSwitchToMonthly?: () => void;
 	onTextOneChange: (
 		eventOrValue: React.ChangeEvent< HTMLInputElement > | string,
 		detailsValue?: string
@@ -138,6 +139,7 @@ function SurveyContent( {
 	includedDomainPurchase,
 	isAkismet,
 	intent,
+	onSwitchToMonthly,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	if ( surveyStep === FEEDBACK_STEP ) {
@@ -160,7 +162,7 @@ function SurveyContent( {
 
 		const solutions = getSolutionsForReason( questionOneText ?? '' );
 		const useSolutionsCards =
-			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) && solutions && solutions.length > 0;
+			config.isEnabled( 'purchases/split-cancel-remove' ) && solutions && solutions.length > 0;
 
 		if ( useSolutionsCards ) {
 			return (
@@ -171,8 +173,10 @@ function SurveyContent( {
 					closeDialog={ closeDialog }
 					downgradePlan={ downgradePlan }
 					includedDomainPurchase={ includedDomainPurchase }
+					intent={ intent ?? undefined }
 					onClickDowngrade={ downgradeClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
+					onSwitchToMonthly={ onSwitchToMonthly }
 					purchase={ purchase }
 					refundAmount={ refundAmount }
 				/>

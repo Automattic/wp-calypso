@@ -7,7 +7,7 @@ import {
 	isDomainRegistration,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { Button as GutenbergButton } from '@wordpress/components';
+import { Button as GutenbergButton, Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -205,7 +205,7 @@ class CancelPurchaseForm extends Component {
 				!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
 		} );
 		const hasSolutionsCards =
-			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+			config.isEnabled( 'purchases/split-cancel-remove' ) &&
 			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 		const newState = {
 			...this.state,
@@ -403,9 +403,7 @@ class CancelPurchaseForm extends Component {
 
 			const solutions = getSolutionsForReason( this.state.questionOneText || '' );
 			const useSolutionsCards =
-				config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
-				solutions &&
-				solutions.length > 0;
+				config.isEnabled( 'purchases/split-cancel-remove' ) && solutions && solutions.length > 0;
 
 			// When flag is on and we have solution cards for this reason, show them
 			// instead of the legacy education or single-upsell step.
@@ -413,12 +411,15 @@ class CancelPurchaseForm extends Component {
 				return (
 					<SolutionsCardsUpsellStep
 						cancellationReason={ this.state.questionOneText }
+						cancellationInProgress={ this.props.cancellationInProgress }
 						cancelBundledDomain={ this.props.cancelBundledDomain }
 						closeDialog={ this.closeDialog }
 						downgradePlanPrice={ this.props.downgradePlanToMonthlyPrice }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
+						intent={ intent }
 						onClickDowngrade={ this.downgradeClick }
 						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
+						onSwitchToMonthly={ this.props.onSwitchToMonthly }
 						purchase={ purchase }
 						refundAmount={ this.getRefundAmount() }
 						site={ site }
@@ -877,6 +878,9 @@ class CancelPurchaseForm extends Component {
 								surveyStep={ surveyStep }
 							/>
 						</BlankCanvas.Header>
+						{ this.props.cancellationInProgress && (
+							<Spinner className="cancel-purchase-form__header-spinner" />
+						) }
 						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">

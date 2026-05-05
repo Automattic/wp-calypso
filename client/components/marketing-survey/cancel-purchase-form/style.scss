@@ -257,6 +257,8 @@
 	overflow: hidden;
 
 	.cancel-purchase-form__solution-card.summary-button {
+		text-align: start;
+
 		/* Vertically center the icon (decoration) with the card content */
 		> * {
 			align-items: center;
@@ -270,6 +272,25 @@
 			border-bottom: none;
 		}
 	}
+}
+
+.cancel-purchase-form__upsell-content--solutions {
+	.formatted-header.is-without-subhead {
+		text-align: center;
+	}
+
+	.cancel-purchase-form__upsell-buttons {
+		justify-content: center;
+		margin-block: 0;
+	}
+}
+
+.cancel-purchase-form__header-spinner {
+	position: absolute !important;
+	inset-block-start: calc(2rem - 10px);
+	inset-inline-end: 1.5rem;
+	z-index: 1;
+	margin: 0 !important;
 }
 
 .cancel-purchase-form__upsell-buttons {

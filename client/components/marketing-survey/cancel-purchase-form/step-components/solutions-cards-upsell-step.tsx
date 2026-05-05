@@ -1,4 +1,5 @@
 import {
+	isPersonalPlan,
 	isWpComAnnualPlan,
 	isWpComBiennialPlan,
 	isWpComTriennialPlan,
@@ -33,6 +34,14 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
+
+const PRICE_MOTIVATED_REASONS = new Set( [
+	'tooExpensive',
+	'lackOfCustomization',
+	'foundBetterValue',
+	'freeIsGoodEnough',
+	'budgetConstraints',
+] );
 
 const CARD_ICONS: Record< string, React.ReactElement > = {
 	'change-plan': reusableBlock,
@@ -73,7 +82,7 @@ function getConfigForId( id: string ) {
 function getTranslatedTitle( id: string, translate: ( s: string ) => string ): string {
 	switch ( id ) {
 		case 'change-plan':
-			return translate( 'Change plan' );
+			return translate( 'Switch to a different plan' );
 		case 'renew-now-pay-less':
 			return translate( 'Renew now and pay less' );
 		case 'switch-to-monthly':
@@ -109,7 +118,9 @@ function getTranslatedSubtitle(
 ): string | undefined {
 	switch ( id ) {
 		case 'change-plan':
-			return translate( 'Find a plan that better suits your needs.' );
+			return translate(
+				'You can change to a plan with the features and pricing that work for you.'
+			);
 		case 'renew-now-pay-less':
 			return translate( 'Get an exclusive 25% discount automatically applied at checkout.' );
 		case 'switch-to-monthly':
@@ -141,12 +152,15 @@ function getTranslatedSubtitle(
 
 type SolutionsCardsUpsellStepProps = {
 	cancellationReason: string;
+	cancellationInProgress?: boolean;
 	cancelBundledDomain?: boolean;
 	closeDialog: () => void;
 	downgradePlanPrice?: number | null;
 	includedDomainPurchase?: object;
+	intent?: string;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onDeclineUpsell: () => void;
+	onSwitchToMonthly?: () => void;
 	purchase: Purchase;
 	refundAmount?: string;
 	site: SiteDetails;
@@ -154,12 +168,15 @@ type SolutionsCardsUpsellStepProps = {
 
 export default function SolutionsCardsUpsellStep( {
 	cancellationReason = '',
+	cancellationInProgress,
 	cancelBundledDomain,
 	closeDialog,
 	downgradePlanPrice,
 	includedDomainPurchase,
+	intent,
 	onClickDowngrade,
 	onDeclineUpsell,
+	onSwitchToMonthly,
 	purchase,
 	refundAmount,
 	site,
@@ -171,9 +188,19 @@ export default function SolutionsCardsUpsellStep( {
 	const { setNewMessagingChat, setOpenOdieWithContext } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase.productSlug );
-	const filteredSolutions = solutions?.filter(
-		( card ) => card.id !== 'switch-to-monthly' || showSwitchToMonthly
-	);
+
+	const hideChangePlan =
+		isPersonalPlan( purchase.productSlug ) && PRICE_MOTIVATED_REASONS.has( cancellationReason );
+
+	const filteredSolutions = solutions?.filter( ( card ) => {
+		if ( card.id === 'switch-to-monthly' && ! showSwitchToMonthly ) {
+			return false;
+		}
+		if ( card.id === 'change-plan' && hideChangePlan ) {
+			return false;
+		}
+		return true;
+	} );
 
 	if ( ! filteredSolutions?.length ) {
 		return null;
@@ -190,7 +217,10 @@ export default function SolutionsCardsUpsellStep( {
 		renewNowUrl,
 		cancellationReason,
 		onClickDowngrade,
-		onSelectSwitchToMonthly: () => setShowDowngradeStep( true ),
+		onSelectSwitchToMonthly: () => {
+			( document.activeElement as HTMLElement )?.blur();
+			( onSwitchToMonthly ?? ( () => setShowDowngradeStep( true ) ) )();
+		},
 		setNewMessagingChat,
 		setOpenOdieWithContext,
 	};
@@ -220,7 +250,7 @@ export default function SolutionsCardsUpsellStep( {
 
 	return (
 		<div className="cancel-purchase-form__upsell">
-			<div className="cancel-purchase-form__upsell-content">
+			<div className="cancel-purchase-form__upsell-content cancel-purchase-form__upsell-content--solutions">
 				<FormattedHeader
 					brandFont
 					headerText={
@@ -257,18 +287,22 @@ export default function SolutionsCardsUpsellStep( {
 								onClick={ hasAction ? handleClick : undefined }
 								showArrow={ hasAction }
 								density="medium-low"
+								disabled={ cancellationInProgress }
 							/>
 						);
 					} ) }
 				</div>
-				<div>
+				<div className="cancel-purchase-form__upsell-buttons">
 					<Button
-						variant="secondary"
+						variant="tertiary"
+						isDestructive={ intent === 'remove' }
 						onClick={ handleDecline }
 						isBusy={ busyButton === 'decline' }
-						disabled={ Boolean( busyButton && busyButton !== 'decline' ) }
+						disabled={ cancellationInProgress || Boolean( busyButton && busyButton !== 'decline' ) }
 					>
-						{ translate( 'No thanks, cancel my plan' ) }
+						{ intent === 'remove'
+							? translate( 'No thanks, continue removal' )
+							: translate( 'No, thanks' ) }
 					</Button>
 				</div>
 			</div>
