@@ -43,7 +43,7 @@ const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 // legacy Stream implementation pattern).
 const pagesByKey = new Map< string, number >();
 
-export interface StreamV2Props {
+export interface StreamProps {
 	streamKey: string;
 	className?: string;
 	listName?: string;
@@ -75,7 +75,7 @@ export interface StreamV2Props {
 
 const defaultEmptyContent = () => <EmptyContent />;
 
-export function StreamV2( props: StreamV2Props ) {
+export function Stream( props: StreamProps ) {
 	const {
 		streamKey,
 		className = '',
@@ -226,7 +226,7 @@ export function StreamV2( props: StreamV2Props ) {
 		}
 		wasSelectedByOpeningPostRef.current = false;
 		// Focus first link inside the selected card. Lookup is by `data-postkey`
-		// rather than React refs because `<StreamV2>` is a function component
+		// rather than React refs because `<Stream>` is a function component
 		// (string refs would require a class owner; see `captureRef` in
 		// `renderPost`).
 		const refKey = selected ? keyToString( selected ) : null;
@@ -592,4 +592,4 @@ export function StreamV2( props: StreamV2Props ) {
 	return <div className={ wrapperClassName }>{ inner }</div>;
 }
 
-export default StreamV2;
+export default Stream;

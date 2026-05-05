@@ -11,7 +11,7 @@ import { combineXPosts } from 'calypso/state/reader/streams/utils';
 import type { PostKey } from './use-stream-posts';
 import type { ReadStreamResponse } from '@automattic/api-core';
 
-type SelectedPostQueryKey = readonly [ 'read', 'stream', 'v2', 'selected', string, string | null ];
+type SelectedPostQueryKey = readonly [ 'read', 'stream', 'selected', string, string | null ];
 
 const SELECTED_POST_GC_TIME = 30 * 60 * 1000;
 
@@ -21,12 +21,12 @@ interface UseStreamPostKeySelectionOptions {
 	/**
 	 * Explicit stream items to use for prev/next calculation.
 	 *
-	 * Current behavior requires callers to pass items (e.g. `<StreamV2>`).
+	 * Current behavior requires callers to pass items (e.g. `<Stream>`).
 	 *
 	 * Planned behavior for full-post integration:
 	 * - make this optional
 	 * - when omitted, resolve items from in-memory React Query cache for
-	 *   `['read','stream','v2','infinite', streamKey, localeSlug]`
+	 *   `['read','stream','infinite', streamKey, localeSlug]`
 	 * - do not trigger network fetches from this hook
 	 */
 	items?: PostKey[];
@@ -71,7 +71,7 @@ function getOffsetPostKey(
 	return offsetItem.xPostMetadata ? ( offsetItem.xPostMetadata as PostKey ) : offsetItem;
 }
 
-type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'v2', 'infinite', string ];
+type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'infinite', string ];
 
 function datePropertyForStream( streamType: string ): string {
 	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
@@ -109,11 +109,11 @@ export function useStreamPostKeySelection( {
 	const queryClient = useQueryClient();
 	const streamType = getStreamType( streamKey );
 	const selectedQueryKey = useMemo< SelectedPostQueryKey >(
-		() => [ 'read', 'stream', 'v2', 'selected', streamKey, localeSlug ] as const,
+		() => [ 'read', 'stream', 'selected', streamKey, localeSlug ] as const,
 		[ streamKey, localeSlug ]
 	);
 	const streamQueryKeyPrefix = useMemo< StreamInfiniteQueryKeyPrefix >(
-		() => [ 'read', 'stream', 'v2', 'infinite', streamKey ] as const,
+		() => [ 'read', 'stream', 'infinite', streamKey ] as const,
 		[ streamKey ]
 	);
 	const selectedQuery = useQuery< PostKey | null, Error, PostKey | null, SelectedPostQueryKey >( {
@@ -138,8 +138,8 @@ export function useStreamPostKeySelection( {
 				return false;
 			}
 			// Infinite stream keys are:
-			// ['read','stream','v2','infinite', streamKey, feedId, localeSlug, startDate]
-			const cachedLocaleSlug = queryKey[ 6 ] ?? null;
+			// ['read','stream','infinite', streamKey, feedId, localeSlug, startDate]
+			const cachedLocaleSlug = queryKey[ 5 ] ?? null;
 			return cachedLocaleSlug === normalizedLocaleSlug;
 		} );
 		const matchingEntry = localeMatchedEntry ?? cachedEntries[ 0 ] ?? null;

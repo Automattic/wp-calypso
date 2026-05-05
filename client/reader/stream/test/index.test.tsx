@@ -7,7 +7,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { StreamV2 } from '../index';
+import { Stream } from '../index';
 import type { ReactNode } from 'react';
 
 jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
@@ -142,7 +142,7 @@ function renderStream(
 	const utils = render(
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
-				<StreamV2 streamKey="likes" trackScrollPage={ jest.fn() } { ...extraProps } />
+				<Stream streamKey="likes" trackScrollPage={ jest.fn() } { ...extraProps } />
 			</Provider>
 		</QueryClientProvider>
 	);
@@ -159,7 +159,7 @@ function mockLikesEndpoint( posts: ApiPost[], dateAfter: string | null = null ) 
 		} );
 }
 
-describe( 'StreamV2 — render states', () => {
+describe( 'Stream — render states', () => {
 	it( 'renders skeleton placeholders during the initial fetch', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
@@ -240,7 +240,7 @@ describe( 'StreamV2 — render states', () => {
 	} );
 } );
 
-describe( 'StreamV2 — keyboard navigation', () => {
+describe( 'Stream — keyboard navigation', () => {
 	async function setupAndSelectFirst() {
 		mockLikesEndpoint( [ apiPost( 10 ), apiPost( 20 ), apiPost( 30 ) ] );
 		const utils = renderStream();

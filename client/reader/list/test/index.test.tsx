@@ -10,7 +10,7 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderList from '..';
 
-// StreamV2 has deep dependency chains (post cards, infinite scroll, data layer).
+// Stream has deep dependency chains (post cards, infinite scroll, data layer).
 jest.mock( 'calypso/reader/stream', () => ( {
 	__esModule: true,
 	default: ( { children }: { children: React.ReactNode } ) => (

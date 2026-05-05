@@ -140,7 +140,6 @@ export function useStreamPosts( {
 				readonly [
 					'read',
 					'stream',
-					'v2',
 					'infinite',
 					string,
 					number | null,
@@ -152,7 +151,6 @@ export function useStreamPosts( {
 				queryKey: [
 					'read',
 					'stream',
-					'v2',
 					'infinite',
 					streamKey,
 					feedId,

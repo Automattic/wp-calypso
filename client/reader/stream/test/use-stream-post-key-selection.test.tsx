@@ -141,7 +141,7 @@ describe( 'useStreamPostKeySelection', () => {
 
 	it( 'derives previous/next from react-query cache when items are omitted', () => {
 		const queryClient = makeQueryClient();
-		queryClient.setQueryData( [ 'read', 'stream', 'v2', 'infinite', 'likes', null, null ], {
+		queryClient.setQueryData( [ 'read', 'stream', 'infinite', 'likes', null, null ], {
 			pages: [
 				{
 					posts: [

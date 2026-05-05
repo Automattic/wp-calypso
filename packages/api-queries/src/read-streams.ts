@@ -57,7 +57,7 @@ const fetchDiscover = (
 
 /**
  * Route a stream fetch to the right `@automattic/api-core` fetcher based on
- * the streamKey prefix. Exposed so consumers (incl. `<StreamV2>`) can wire it
+ * the streamKey prefix. Exposed so consumers (incl. `<Stream>`) can wire it
  * into their own `queryOptions` / `infiniteQueryOptions` without re-implementing
  * the switch.
  */
