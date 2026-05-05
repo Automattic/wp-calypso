@@ -29,14 +29,17 @@ interface AgentMessage {
  * @param agentChatProps
  * @param agentChatProps.isProcessing
  * @param agentChatProps.messages
+ * @param agentChatProps.error
  */
 export function useImageStudioAgentSync( agentChatProps: {
 	isProcessing?: boolean;
 	messages?: Array< AgentMessage >;
+	error?: string | null;
 } ) {
-	const { isProcessing, messages } = agentChatProps || {};
+	const { isProcessing, messages, error } = agentChatProps || {};
 	const lastTrackedMessageId = useRef< string | null >( null );
 	const surfacedErrorMessageIds = useRef< Set< string > >( new Set() );
+	const lastSurfacedAgentError = useRef< string | null >( null );
 
 	const { setImageStudioAiProcessing, setLastAgentMessageId, addNotice } = useDispatch(
 		imageStudioStore
@@ -107,4 +110,25 @@ export function useImageStudioAgentSync( agentChatProps: {
 			}
 		}
 	}, [ messages, addNotice ] );
+
+	// Surface JSON-RPC envelope errors from the agent server. The orchestrator
+	// emits a redacted "An error occurred…" string when it fails before any
+	// tool runs (tool failures come through the structured-error path above).
+	// Without this, the only signal users get is the agent posting that string
+	// as a chat reply, with no notice and no tracking.
+	useEffect( () => {
+		if ( ! error ) {
+			lastSurfacedAgentError.current = null;
+			return;
+		}
+		if ( error === lastSurfacedAgentError.current ) {
+			return;
+		}
+		lastSurfacedAgentError.current = error;
+		addNotice( error, 'error' );
+		trackImageStudioError( {
+			mode: ImageStudioMode.Generate,
+			errorType: 'other',
+		} );
+	}, [ error, addNotice ] );
 }

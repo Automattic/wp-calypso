@@ -158,3 +158,59 @@ describe( 'useImageStudioAgentSync — tool error surfacing', () => {
 		expect( mockAddNotice ).not.toHaveBeenCalled();
 	} );
 } );
+
+describe( 'useImageStudioAgentSync — agent envelope error surfacing', () => {
+	it( 'surfaces a JSON-RPC envelope error as a notice and tracks it as "other"', () => {
+		renderHook( () =>
+			useImageStudioAgentSync( {
+				isProcessing: false,
+				messages: [],
+				error: 'An error occurred while processing the request. Please try again later.',
+			} )
+		);
+
+		expect( mockAddNotice ).toHaveBeenCalledTimes( 1 );
+		expect( mockAddNotice ).toHaveBeenCalledWith(
+			'An error occurred while processing the request. Please try again later.',
+			'error'
+		);
+		expect( mockTrackImageStudioError ).toHaveBeenCalledWith( {
+			mode: 'generate',
+			errorType: 'other',
+		} );
+	} );
+
+	it( 'does not double-fire on re-render with the same error string', () => {
+		const { rerender } = renderHook(
+			( { err }: { err: string | null } ) =>
+				useImageStudioAgentSync( { isProcessing: false, messages: [], error: err } ),
+			{ initialProps: { err: 'boom' } }
+		);
+		rerender( { err: 'boom' } );
+
+		expect( mockAddNotice ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'fires again when the error string changes after clearing', () => {
+		const { rerender } = renderHook(
+			( { err }: { err: string | null } ) =>
+				useImageStudioAgentSync( { isProcessing: false, messages: [], error: err } ),
+			{ initialProps: { err: 'first' as string | null } }
+		);
+		rerender( { err: null } );
+		rerender( { err: 'second' } );
+
+		expect( mockAddNotice ).toHaveBeenCalledTimes( 2 );
+		expect( mockAddNotice ).toHaveBeenNthCalledWith( 1, 'first', 'error' );
+		expect( mockAddNotice ).toHaveBeenNthCalledWith( 2, 'second', 'error' );
+	} );
+
+	it( 'is a no-op when error is null or empty', () => {
+		renderHook( () =>
+			useImageStudioAgentSync( { isProcessing: false, messages: [], error: null } )
+		);
+		renderHook( () => useImageStudioAgentSync( { isProcessing: false, messages: [], error: '' } ) );
+
+		expect( mockAddNotice ).not.toHaveBeenCalled();
+	} );
+} );
