@@ -91,3 +91,16 @@ describe( 'classifyAtmosphereError', () => {
 		);
 	} );
 } );
+
+describe( 'classifyAtmosphereError — slice 8a kinds', () => {
+	it.each( [
+		[ 'atmosphere_blob_too_large', 'blob_too_large' ],
+		[ 'atmosphere_blob_unsupported_type', 'blob_unsupported_type' ],
+		[ 'atmosphere_blob_decode_failed', 'blob_decode_failed' ],
+		[ 'atmosphere_media_invalid', 'media_invalid' ],
+	] )( 'maps %s to kind %s', ( serverCode, expectedKind ) => {
+		const raw = { code: serverCode, message: 'm', status: 400 };
+		const err = classifyAtmosphereError( raw );
+		expect( err.kind ).toBe( expectedKind );
+	} );
+} );
