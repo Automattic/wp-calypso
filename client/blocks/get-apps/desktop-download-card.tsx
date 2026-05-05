@@ -97,24 +97,14 @@ const DesktopDownloadCard: React.FC< DesktopDownloadCardProps > = ( { appConfig 
 
 	if ( isLoading ) {
 		return (
-			<AppsCard
-				logo={ appConfig.logo }
-				logoName={ appConfig.logoName }
-				title={ appConfig.title }
-				subtitle={ appConfig.subtitle }
-			>
+			<AppsCard logo={ appConfig.logo } title={ appConfig.title } subtitle={ appConfig.subtitle }>
 				<div className="get-apps__loading">Loading...</div>
 			</AppsCard>
 		);
 	}
 
 	return (
-		<AppsCard
-			logo={ appConfig.logo }
-			logoName={ appConfig.logoName }
-			title={ appConfig.title }
-			subtitle={ appConfig.subtitle }
-		>
+		<AppsCard logo={ appConfig.logo } title={ appConfig.title } subtitle={ appConfig.subtitle }>
 			<DesktopDownloadOptions
 				appConfig={ appConfig }
 				currentPlatformConfig={ currentPlatformConfig }

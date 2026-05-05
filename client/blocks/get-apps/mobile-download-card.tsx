@@ -13,7 +13,6 @@ const MobileDownloadCardTest = () => {
 	return (
 		<AppsCard
 			logo={ JetpackAppLogo }
-			logoName="jetpack-app-logo"
 			title={ translate( 'Jetpack mobile app for WordPress' ) }
 			subtitle={ translate( 'Create, design, manage, and grow your WordPress website.' ) }
 		>

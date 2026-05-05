@@ -32,7 +32,6 @@ export interface PlatformConfig extends BasePlatformConfig {
 export interface DesktopAppConfig {
 	id: string;
 	logo: string;
-	logoName: string;
 	title: string;
 	subtitle: string;
 	link: Substitution;
@@ -107,7 +106,6 @@ export const createWordPressDesktopConfig = (
 	return {
 		id: 'wordpress',
 		logo: DesktopAppLogo,
-		logoName: 'desktop-app-logo',
 		title: translate( 'WordPress.com desktop app' ),
 		subtitle: translate(
 			'The full WordPress.com experience packaged as an app for your laptop or desktop.'
@@ -160,7 +158,6 @@ export const createWordPressStudioConfig = (
 	return {
 		id: 'wordpress-studio',
 		logo: StudioAppLogo,
-		logoName: 'studio-app-logo',
 		title: translate( 'WordPress Studio' ),
 		subtitle: translate(
 			'A fast, free way to develop locally with WordPress. Share your local sites with clients or colleagues and keep your local development process smooth and simple.'
