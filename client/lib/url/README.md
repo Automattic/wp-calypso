@@ -24,3 +24,22 @@ offer a way of handling all types of URLs.
 
 **IMPORTANT NOTE**: URL part names are different between Node's `url` and `lib/url`. This is because
 `lib/url` is aligned to the `URL` / `URLSearchParam` standard in detriment of the legacy API.
+
+## Exported utilities
+
+- `addQueryArgs( args, url )` — Adds or overrides query parameters on a URL, supporting all URL types (absolute, path-absolute, protocol-relative, path-relative).
+- `withoutHttp( url )` — Strips the `http://` or `https://` scheme from a URL.
+- `urlToSlug( url )` — Converts a URL to a site slug by removing the scheme and replacing `/` with `::`.
+- `urlToDomainAndPath( url )` — Removes the protocol and trailing slash from a URL, returning the domain and path.
+- `urlToDomain( url )` — Removes the protocol and all trailing slashes from a URL, returning the domain.
+- `omitUrlParams( url, paramsToOmit )` — Removes specified query parameters from a URL.
+- `isExternal( url )` — Returns `true` if the URL points to a domain other than the current Calypso hostname.
+- `resemblesUrl( query )` — Returns `true` if a string looks like a URL (has a dot-separated hostname with a valid TLD).
+- `isOutsideCalypso( url )` — Returns `true` if the URL is external or targets a non-Calypso path such as `/support` or `/forums`.
+- `isHttps( url )` — Returns `true` if the URL uses the `https://` scheme.
+- `addSchemeIfMissing( url, scheme )` — Prepends a scheme to a URL that has no scheme (e.g. a bare hostname).
+- `setUrlScheme( url, scheme )` — Replaces the existing scheme of a URL, or adds one if missing.
+- `decodeURIIfValid( encodedURI )` — Safely decodes a URI, returning the original string on error instead of throwing.
+- `decodeURIComponentIfValid( encodedURIComponent )` — Safely decodes a URI component, returning the original string on error instead of throwing.
+- `resolveRelativePath( basePath, relativePath )` — Resolves a relative path against an absolute base path.
+- `pathToUrl( path )` — Converts a Calypso-relative path to a full URL using the configured hostname and protocol.
