@@ -260,6 +260,24 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	cursor: pointer;
+
+	// `@wordpress/icons` SVGs don't always inherit `currentColor` for
+	// fill, so the `closeSmall` glyph rendered in its native dark stroke
+	// against the dark chip background. Force the inherit so the × tracks
+	// the button's white `color`.
+	svg {
+		fill: currentColor;
+	}
+
+	&:hover {
+		background: rgba(0, 0, 0, 0.85);
+	}
+
+	&:focus-visible {
+		outline: 2px solid #fff;
+		outline-offset: 1px;
+	}
 }
 
 .atmosphere-composer__image-alt {
