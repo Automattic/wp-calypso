@@ -299,6 +299,7 @@ const ImageStudioContent = withInstanceId(
 			originalAttachmentId,
 			isSidebarOpen,
 			currentVideoUrl,
+			currentVideoAttachmentId,
 			isVideoMode,
 		} = useSelect( ( select ) => {
 			const selectors = select( imageStudioStore );
@@ -308,6 +309,7 @@ const ImageStudioContent = withInstanceId(
 			// Older bundles never registered this store, so the selector is
 			// always present in the bundle that wrote it.
 			const videoUrl = select( videoStudioStore ).getCurrentVideoUrl?.() ?? null;
+			const videoAttachmentId = select( videoStudioStore ).getCurrentAttachmentId?.() ?? null;
 			const entryPoint = selectors.getEntryPoint();
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
@@ -322,6 +324,7 @@ const ImageStudioContent = withInstanceId(
 				originalAttachmentId: selectors.getOriginalAttachmentId(),
 				isSidebarOpen: selectors.getIsSidebarOpen(),
 				currentVideoUrl: videoUrl,
+				currentVideoAttachmentId: videoAttachmentId,
 				isVideoMode: entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip,
 			};
 		}, [] );
@@ -529,6 +532,19 @@ const ImageStudioContent = withInstanceId(
 			/>
 		) : null;
 
+		const videoCanvasControls =
+			isVideoMode && currentVideoUrl ? (
+				<CanvasControls
+					imageUrl={ currentVideoUrl }
+					attachmentId={ currentVideoAttachmentId }
+					mode={ ImageStudioMode.Generate }
+					showFeedbackButtons
+					showRevisionNavigator={ false }
+					onFeedback={ handleFeedback }
+					onSubmitFeedbackText={ handleSubmitFeedbackText }
+				/>
+			) : null;
+
 		return (
 			<>
 				<Modal
@@ -587,6 +603,7 @@ const ImageStudioContent = withInstanceId(
 								isAiProcessing={ isAiProcessing }
 								isPromptSent={ isPromptSent }
 								videoUrl={ isVideoMode ? currentVideoUrl : null }
+								canvasControls={ videoCanvasControls }
 							/>
 						) }
 

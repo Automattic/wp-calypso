@@ -1,15 +1,18 @@
 import { BigSkyIcon, cn } from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
+import type { ReactNode } from 'react';
 import './style.scss';
 
 export const GenerateLayout = ( {
 	isAiProcessing,
 	isPromptSent,
 	videoUrl,
+	canvasControls,
 }: {
 	isPromptSent: boolean;
 	isAiProcessing: boolean;
 	videoUrl?: string | null;
+	canvasControls?: ReactNode;
 } ) => {
 	// Once a video URL is available we swap the placeholder for an HTML5 player
 	// pinned to a 9:16 frame (the only AR Veo produces today). VideoPress is the
@@ -32,6 +35,9 @@ export const GenerateLayout = ( {
 					playsInline
 					preload="metadata"
 				/>
+				{ canvasControls && (
+					<div className="image-studio-modal__generated-video-controls">{ canvasControls }</div>
+				) }
 			</div>
 		);
 	}

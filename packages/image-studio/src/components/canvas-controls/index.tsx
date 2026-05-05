@@ -24,6 +24,7 @@ interface CanvasControlsProps {
 	mode: ImageStudioMode;
 	showFeedbackButtons: boolean;
 	showImageActionsMenu?: boolean;
+	showRevisionNavigator?: boolean;
 	onSave?: () => void;
 	onRevertToOriginal?: () => void;
 	onFeedback?: ( feedback: 'up' | 'down' ) => void;
@@ -36,6 +37,7 @@ export const CanvasControls = ( {
 	mode,
 	showFeedbackButtons,
 	showImageActionsMenu = false,
+	showRevisionNavigator = true,
 	onSave,
 	onRevertToOriginal,
 	onFeedback,
@@ -152,9 +154,11 @@ export const CanvasControls = ( {
 					</Popover>
 				) }
 			</div>
-			<div className="canvas-controls__right">
-				<RevisionNavigator />
-			</div>
+			{ showRevisionNavigator && (
+				<div className="canvas-controls__right">
+					<RevisionNavigator />
+				</div>
+			) }
 		</motion.div>
 	);
 };

@@ -17,6 +17,7 @@
 
 .image-studio-modal {
 	&__generate-layout--video {
+		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -35,6 +36,15 @@
 		object-fit: contain;
 		background: #000;
 		border-radius: 8px;
+	}
+
+	&__generated-video-controls {
+		position: absolute;
+		left: 50%;
+		bottom: 16px;
+		transform: translateX(-50%);
+		pointer-events: auto;
+		z-index: 1;
 	}
 
 	&__generate-layout {
