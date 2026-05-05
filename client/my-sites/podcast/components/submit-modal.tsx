@@ -297,6 +297,10 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 										value={ draftUrl }
 										onChange={ ( value ) => {
 											hasInitializedDraft.current = true;
+											// Pin the form open so a late `storedUrl` hydration
+											// can't swap us back to the saved/read-only view
+											// mid-keystroke.
+											setIsEditing( true );
 											setDraftUrl( value );
 											setSaveError( null );
 										} }
