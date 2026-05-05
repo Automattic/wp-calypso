@@ -10,7 +10,7 @@ const PARENT_WALK_LIMIT = 80;
 interface MastodonThreadTreeProps {
 	root: SocialThreadNode;
 	targetUri: string;
-	connectionId: number;
+	connectionId?: number;
 }
 
 // Mastodon-specific thread layout: parents stacked above the focal post

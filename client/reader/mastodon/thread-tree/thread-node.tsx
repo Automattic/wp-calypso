@@ -10,6 +10,7 @@ interface ThreadNodeProps {
 	highlighted: boolean;
 	expandedVideo?: boolean;
 	prominentTimestamp?: boolean;
+	connectionId?: number;
 	// When false, render only the post row itself without recursing into
 	// `node.replies`. Used by ThreadTree's parent chain so a parent's other
 	// replies don't show up above the target post.
@@ -30,8 +31,8 @@ export const MastodonThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >(
 			highlighted,
 			expandedVideo,
 			prominentTimestamp,
-			renderReplies = true,
 			connectionId,
+			renderReplies = true,
 		},
 		ref
 	) {

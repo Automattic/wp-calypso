@@ -10,6 +10,7 @@ import {
 	SocialPostCard,
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
@@ -21,6 +22,7 @@ import {
 	getThreadUrl as buildThreadUrl,
 	type ProfileRefInput,
 } from './route';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
@@ -147,6 +149,22 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => (
 			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
@@ -164,8 +182,24 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			getProfileUrl,
 			getTagUrl,
 			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			getThreadUrl,
+			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
+	);
+
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
+		[ connection.id ]
 	);
 
 	const useRepostAction = useMemo(
@@ -175,34 +209,36 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<RepostProvider value={ useRepostAction }>
-				{ composer && (
-					<TimelineComposePill
-						connection={ connection }
-						avatar={ connectionDetails?.avatar }
-						entryPoint="timeline_inline"
+			<LikeProvider value={ useLikeAction }>
+				<RepostProvider value={ useRepostAction }>
+					{ composer && (
+						<TimelineComposePill
+							connection={ connection }
+							avatar={ connectionDetails?.avatar }
+							entryPoint="timeline_inline"
+						/>
+					) }
+					<SocialFeedList< SocialPost >
+						items={ items }
+						isPending={ isPending }
+						isError={ isError }
+						error={ projectAtmosphereError( error ) }
+						hasNextPage={ Boolean( hasNextPage ) }
+						isFetchingNextPage={ isFetchingNextPage }
+						fetchNextPage={ fetchNextPage }
+						refetch={ handleRetry }
+						renderItem={ renderItem }
+						itemKey={ itemKey }
+						emptyTitle={ translate( "You're all caught up." ) }
+						emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
+						emptyActionLabel={ translate( 'Browse Bluesky' ) }
+						emptyActionURL="https://bsky.app"
+						protocolLabel="Bluesky"
+						protocolHomeURL="/reader/atmosphere"
+						protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
 					/>
-				) }
-				<SocialFeedList< SocialPost >
-					items={ items }
-					isPending={ isPending }
-					isError={ isError }
-					error={ projectAtmosphereError( error ) }
-					hasNextPage={ Boolean( hasNextPage ) }
-					isFetchingNextPage={ isFetchingNextPage }
-					fetchNextPage={ fetchNextPage }
-					refetch={ handleRetry }
-					renderItem={ renderItem }
-					itemKey={ itemKey }
-					emptyTitle={ translate( "You're all caught up." ) }
-					emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
-					emptyActionLabel={ translate( 'Browse Bluesky' ) }
-					emptyActionURL="https://bsky.app"
-					protocolLabel="Bluesky"
-					protocolHomeURL="/reader/atmosphere"
-					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
-				/>
-			</RepostProvider>
+				</RepostProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

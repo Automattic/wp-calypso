@@ -201,6 +201,26 @@ export interface MastodonTagFeedPage {
 	tag?: MastodonTagInfo;
 }
 
+// Wire shape: Mastodon's status object includes per-viewer interaction
+// state. Both fields are booleans — favourited toggles via the favourites
+// endpoint, reblogged via boosts (slice 7b territory). Optional during the
+// backend rollout window; consumers must treat missing viewer as
+// "not favourited / not reblogged".
+export interface MastodonFeedItemViewer {
+	favourited: boolean;
+	reblogged: boolean;
+}
+
+export interface MastodonCreateLikeParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonDeleteLikeParams {
+	connectionId: number;
+	statusId: string;
+}
+
 export interface MastodonCreateRepostParams {
 	connectionId: number;
 	statusId: string;

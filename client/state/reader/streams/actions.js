@@ -1,5 +1,6 @@
 import { readStreamQuery } from '@automattic/api-queries';
 import i18n from 'i18n-calypso';
+import { random } from 'lodash';
 import { buildDiscoverStreamKey, getTagsFromStreamKey } from 'calypso/reader/discover/helper';
 import { getStreamType } from 'calypso/reader/utils';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
@@ -19,7 +20,6 @@ import {
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 import { getStream } from 'calypso/state/reader/streams/selectors';
-import { isMigratedStream } from './migrated-stream-types';
 import {
 	PER_FETCH,
 	INITIAL_FETCH,
@@ -27,18 +27,24 @@ import {
 	analyticsForStream,
 	createStreamDataFromCards,
 	createStreamDataFromPosts,
+	createStreamDataFromSites,
 	extractPageHandle,
 	getAlgorithmForStream,
 	getQueryString,
 	getQueryStringForPoll,
 } from './normalize';
-import 'calypso/state/data-layer/wpcom/read/streams';
 import 'calypso/state/reader/init';
+
+// Stable seed for the recommendation streams (`recommendations_posts`,
+// `custom_recs_posts_with_images`). Mirrors the legacy data-layer behavior:
+// declared once per session so pagination and randomization stay consistent
+// across requests. `custom_recs_sites_with_images` does not use it.
+const recommendationsSeed = random( 0, 1000 );
 
 /**
  * Per-stream date property used by `createStreamDataFromPosts` to populate
- * `streamItem.date`. Mirrors `streamApis[type].dateProperty` in the legacy
- * data-layer (`client/state/data-layer/wpcom/read/streams/index.js`).
+ * `streamItem.date`. Mirrors the date fields used by the former legacy
+ * data-layer stream handlers.
  */
 function getDatePropertyForStream( streamType ) {
 	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
@@ -126,6 +132,11 @@ function buildStreamQueryParams( {
 			// Legacy `streamApis.likes.pollQuery`.
 			return getQueryStringForPoll( [ 'date_liked' ] );
 		}
+		if ( streamType === 'custom_recs_sites_with_images' ) {
+			// Legacy `streamApis.custom_recs_sites_with_images.pollQuery` capped
+			// `number` at 10 — recommended sites max 10 per request.
+			return getQueryStringForPoll( [], { ...commonQueryParams, number: 10 } );
+		}
 		return getQueryStringForPoll( [], commonQueryParams );
 	}
 	const extras = {
@@ -152,6 +163,36 @@ function buildStreamQueryParams( {
 			return getQueryString( { ...extras, comments_per_post: 20 } );
 		case 'conversations-a8c':
 			return getQueryString( { ...extras, comments_per_post: 20, index: 'a8c' } );
+		case 'recommendations_posts': {
+			// Legacy first request: only seed + algorithm (no meta/orderBy/etc.).
+			const base = {
+				seed: recommendationsSeed,
+				algorithm: 'read:recommendations:posts/es/1',
+			};
+			// Paginated requests: `extractPageHandle` uses an `offset` cursor; without
+			// `offset` + `number` the API repeats page 1 (see Copilot on READ-499).
+			if ( ! pageHandle ) {
+				return base;
+			}
+			return {
+				...base,
+				...pageHandle,
+				number,
+				lang,
+			};
+		}
+		case 'custom_recs_posts_with_images':
+			return getQueryString( {
+				...extras,
+				seed: recommendationsSeed,
+				alg_prefix: 'read:recommendations:posts',
+			} );
+		case 'custom_recs_sites_with_images':
+			return getQueryString( {
+				...extras,
+				algorithm: 'read:recommendations:sites/es/2',
+				posts_per_site: 1,
+			} );
 		default:
 			return getQueryString( extras );
 	}
@@ -239,10 +280,9 @@ function discoverSubTab( streamKey ) {
 }
 
 /**
- * Build the query params for a discover sub-tab. Mirrors the legacy
- * `streamApis.discover.query` in
- * `client/state/data-layer/wpcom/read/streams/index.js` so the migrated request
- * hits the API with the same shape.
+ * Build the query params for a discover sub-tab. Mirrors the former legacy
+ * `streamApis.discover.query` behavior so the migrated request hits the API
+ * with the same shape.
  *
  * - `freshly-pressed` returns the raw extras (no `getQueryString` wrap), so it
  *   does not pick up `meta`/`content_width`/default `orderBy`.
@@ -330,6 +370,13 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 		streamPosts = fromCards.streamPosts;
 		streamSites = fromCards.streamSites;
 		streamNewSites = fromCards.streamNewSites;
+	} else if ( data.sites ) {
+		// `custom_recs_sites_with_images` returns `{ sites: [...] }`. Each site
+		// carries its top post under `posts[0]`; the legacy `handlePage` flattens
+		// into post stream items + posts, never dispatching `receiveRecommendedSites`.
+		const fromSites = createStreamDataFromSites( data.sites, dateProperty );
+		streamItems = fromSites.streamItems;
+		streamPosts = fromSites.streamPosts;
 	} else {
 		const fromPosts = createStreamDataFromPosts( data.posts, dateProperty );
 		streamItems = fromPosts.streamItems;
@@ -394,28 +441,19 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 /**
  * Fetch posts into a stream
  *
- * For migrated stream types (see `isMigratedStream`), runs through React
- * Query via `queryClient.fetchQuery` and dispatches the same receive actions
- * the legacy data-layer used to. For unmigrated stream types, dispatches the
- * legacy `READER_STREAMS_PAGE_REQUEST` so the existing data-layer handler
- * keeps working — this gate shrinks per PR until the data-layer is deleted.
+ * Runs through React Query via `queryClient.fetchQuery` and dispatches the same
+ * receive actions the legacy data-layer used to.
  * @param {Object} params
  * @param {string} params.streamKey The stream to fetch posts for
  * @returns {Function} Thunk
  */
 export const requestPage = ( params ) => ( dispatch ) => {
-	const streamType = getStreamType( params.streamKey );
 	const action = buildPageRequestAction( params );
 
-	// Dispatch the legacy request action so the reducer sets `isRequesting`
-	// and clears any prior `error` state. For migrated streams the data-layer's
-	// `requestPage` is gated on the same `isMigratedStream` predicate and
-	// no-ops, so this dispatch only drives reducer state.
+	// Dispatch the request action so the reducer sets `isRequesting` and clears
+	// any prior `error` state. The legacy data-layer no-ops for migrated
+	// streams, so this dispatch only drives reducer state.
 	dispatch( action );
-
-	if ( ! isMigratedStream( streamType ) ) {
-		return action;
-	}
 
 	// SSR no-op: matches the legacy data-layer, which never fired stream
 	// requests during server-side rendering.
@@ -527,14 +565,8 @@ export const requestPaginatedStream =
 			},
 		};
 
-		// Dispatch so the reducer's `isRequesting`/`error` transitions still
-		// fire. For unmigrated streams the legacy data-layer handles
-		// READER_STREAMS_PAGINATED_REQUEST and issues the HTTP request.
+		// Dispatch so the reducer's `isRequesting`/`error` transitions still fire.
 		dispatch( action );
-
-		if ( ! isMigratedStream( streamType ) ) {
-			return action;
-		}
 
 		// SSR no-op: matches the legacy data-layer.
 		if ( typeof window === 'undefined' ) {

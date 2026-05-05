@@ -7,6 +7,7 @@ import {
 	createRepost,
 	deleteFollow,
 	deleteLike,
+	deletePost,
 	deleteRepost,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
@@ -1110,6 +1111,34 @@ describe( 'atmosphere fetchers', () => {
 				.reply( status as number, { error } );
 
 			await expect( createPost( { connectionId, text: 'x' } ) ).rejects.toMatchObject( { kind } );
+		} );
+	} );
+
+	describe( 'deletePost', () => {
+		const connectionId = 99;
+		const rkey = '3kabc';
+
+		it( 'issues DELETE to the connection-scoped post path with no body', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ rkey }` )
+				.reply( 204 );
+
+			await expect( deletePost( { connectionId, rkey } ) ).resolves.toBeUndefined();
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it.each( [
+			[ 401, 'atmosphere_auth_required', 'auth_required' ],
+			[ 404, 'atmosphere_not_found', 'not_found' ],
+			[ 429, 'atmosphere_rate_limited', 'rate_limited' ],
+			[ 502, 'atmosphere_upstream_unavailable', 'upstream_unavailable' ],
+			[ 500, 'whatever', 'unknown' ],
+		] as const )( 'classifies %i (%s) responses as %s', async ( status, errorCode, kind ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ rkey }` )
+				.reply( status, { error: errorCode, message: 'no' } );
+
+			await expect( deletePost( { connectionId, rkey } ) ).rejects.toMatchObject( { kind } );
 		} );
 	} );
 } );

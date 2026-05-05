@@ -296,6 +296,21 @@ describe( '<RepostButton>', () => {
 		expect( errorNoticeSpy ).toHaveBeenCalledWith( 'Reconnect your Bluesky account to repost.' );
 	} );
 
+	// The dropdown's "Quote post" menu item is disabled when the adapter
+	// reports `canQuote === false`. The atmosphere adapter sets `canQuote:
+	// false` until slice 7d wires composer-driven quoting, so this is the
+	// only case the cm-660 design covers today. The previously passing
+	// "enables Quote post via onQuote prop" test was replaced when the
+	// RepostButton signature lost its `onQuote` prop in favour of the
+	// adapter contract.
+	it( 'leaves "Quote post" disabled when the adapter reports canQuote=false', async () => {
+		const user = userEvent.setup();
+		renderRepostButton();
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
+		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
 	it( 'click does not bubble to a parent listener', async () => {
 		const onParentClick = jest.fn();
 		const user = userEvent.setup();

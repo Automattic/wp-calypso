@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { readerAtmosphereKeys } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
@@ -10,6 +11,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfilePanel } from '../author-profile-panel';
+import { ComposerModal, ComposerProvider } from '../composer';
 import type { AtmosphereScopedProfile, AtmosphereConnection } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
@@ -624,6 +626,46 @@ describe( 'AuthorProfilePanel', () => {
 		} );
 	} );
 
+	it( "shows the post-actions kebab on the user's own posts in their author feed", async () => {
+		const ownFeedItem = {
+			...feedItem,
+			author: {
+				did: connection.did,
+				handle: connection.handle,
+				display_name: connection.display_name,
+				avatar: null,
+			},
+		};
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.scopedProfile( connection.id, connection.handle ),
+			{
+				...profilePayload,
+				did: connection.did,
+				handle: connection.handle,
+				display_name: connection.display_name,
+			}
+		);
+		queryClient.setQueryData(
+			[ ...readerAtmosphereKeys.scopedAuthorFeed( connection.id, connection.handle ) ],
+			{
+				pages: [ { items: [ ownFeedItem ], cursor: null } ],
+				pageParams: [ undefined ],
+			}
+		);
+
+		renderWithProvider(
+			<AuthorProfilePanel
+				connection={ connection }
+				actor={ connection.handle }
+				subtabBasePath={ `/reader/atmosphere/${ connection.id }/profile/${ connection.handle }` }
+			/>,
+			{ queryClient }
+		);
+
+		expect( await screen.findByRole( 'button', { name: /post actions/i } ) ).toBeVisible();
+	} );
+
 	it( 'dedupes feed items by uri across pages (Bluesky returns repeats)', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
@@ -664,5 +706,56 @@ describe( 'AuthorProfilePanel', () => {
 		expect( await screen.findByText( 'unique' ) ).toBeVisible();
 		// Duplicate URI from page 2 was dropped — only the page-1 occurrence renders.
 		expect( screen.queryByText( 'hello (duplicate)' ) ).toBeNull();
+	} );
+} );
+
+describe( 'AuthorProfilePanel — quote composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		( page as unknown as jest.Mock ).mockReset();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+		window.history.replaceState( {}, '', '/' );
+	} );
+
+	it( 'opens the composer in quote mode from the author feed', async () => {
+		const quotableFeedItem = {
+			...feedItem,
+			cid: 'pcid',
+			counts: { replies: 0, reposts: 0, likes: 0, quotes: 3 },
+		};
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.scopedProfile( connection.id, 'alice.bsky.social' ),
+			profilePayload
+		);
+		queryClient.setQueryData(
+			[ ...readerAtmosphereKeys.scopedAuthorFeed( connection.id, 'alice.bsky.social' ) ],
+			{
+				pages: [ { items: [ quotableFeedItem ], cursor: null } ],
+				pageParams: [ undefined ],
+			}
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ connection.id }>
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /quote, 3 quotes/i } ) );
+		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
 	} );
 } );

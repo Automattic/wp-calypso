@@ -17,6 +17,7 @@ interface PostCardHeaderProps {
 		rel?: string;
 		ariaLabel?: string;
 	};
+	headerActions?: ReactNode;
 }
 
 export function PostCardHeader( {
@@ -24,6 +25,7 @@ export function PostCardHeader( {
 	variant,
 	prominentTimestamp,
 	timestampLink,
+	headerActions,
 }: PostCardHeaderProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
@@ -268,6 +270,9 @@ export function PostCardHeader( {
 						{ renderTimestamp() }
 					</>
 				) }
+				{ headerActions ? (
+					<div className="social-post-card-header__actions">{ headerActions }</div>
+				) : null }
 			</div>
 		</VStack>
 	);

@@ -63,17 +63,25 @@ afterEach( () => {
 } );
 
 describe( 'requestPage thunk', () => {
-	describe( 'unmigrated stream type', () => {
-		it( 'dispatches the legacy READER_STREAMS_PAGE_REQUEST', () => {
-			const { dispatch } = runThunk( { streamKey: 'recommendations_posts' } );
-			expect( dispatch ).toHaveBeenCalledTimes( 1 );
+	describe( 'unsupported stream type', () => {
+		it( 'dispatches PAGE_REQUEST then stream error', async () => {
+			const { dispatch, result } = runThunk( { streamKey: 'unknown_stream' } );
+			await result;
+
 			const action = dispatch.mock.calls[ 0 ][ 0 ];
 			expect( action.type ).toBe( READER_STREAMS_PAGE_REQUEST );
 			expect( action.payload ).toMatchObject( {
-				streamKey: 'recommendations_posts',
-				streamType: 'recommendations_posts',
+				streamKey: 'unknown_stream',
+				streamType: 'unknown_stream',
 				isPoll: false,
 			} );
+
+			const errorAction = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_ERROR );
+			expect( errorAction.payload.error.message ).toContain(
+				'unsupported streamType "unknown_stream"'
+			);
 		} );
 	} );
 
@@ -588,6 +596,249 @@ describe( 'requestPage thunk', () => {
 		expect( captured ).not.toHaveProperty( 'extras' );
 	} );
 
+	describe( 'recommendation streams (READ-499)', () => {
+		const recsPostsResponse = {
+			posts: [
+				{
+					ID: 31,
+					site_ID: 301,
+					feed_ID: 991,
+					feed_item_ID: 71,
+					date: '2026-04-01',
+					URL: 'https://example.com/post-31',
+					site_name: 'Recommended',
+				},
+			],
+			found: 1,
+		};
+
+		const recsSitesResponse = {
+			sites: [
+				{
+					name: 'Recommended Blog',
+					description: 'A recommendation',
+					icon: { ico: 'icon.png' },
+					posts: [
+						{
+							ID: 41,
+							site_ID: 401,
+							feed_ID: 992,
+							feed_URL: 'https://r.example.com/feed',
+							date: '2026-04-02',
+							URL: 'https://r.example.com/p',
+						},
+					],
+				},
+				// Site without a top post — the migrated thunk must skip these
+				// (mirrors legacy `createStreamItemFromSite` returning null).
+				{ name: 'No Posts Site' },
+			],
+		};
+
+		it( 'recommendations_posts ships only seed + algorithm — no number/lang/meta/orderBy/content_width (legacy behaviour preserved)', async () => {
+			let captured;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( ( q ) => {
+					captured = q;
+					return true;
+				} )
+				.reply( 200, recsPostsResponse );
+
+			const { result } = runThunk( { streamKey: 'recommendations_posts' } );
+			await result;
+
+			expect( captured ).toEqual( {
+				seed: expect.stringMatching( /^\d+$/ ),
+				algorithm: 'read:recommendations:posts/es/1',
+			} );
+		} );
+
+		it( 'recommendations_posts paginated request sends offset, number, lang with same seed + algorithm', async () => {
+			let capturedFirst;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( ( q ) => {
+					capturedFirst = q;
+					return true;
+				} )
+				.reply( 200, recsPostsResponse );
+
+			const { result: r1 } = runThunk( { streamKey: 'recommendations_posts' } );
+			await r1;
+
+			let capturedPage2;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( ( q ) => {
+					capturedPage2 = q;
+					return true;
+				} )
+				.reply( 200, recsPostsResponse );
+
+			const { result: r2 } = runThunk( {
+				streamKey: 'recommendations_posts',
+				pageHandle: { offset: 7 },
+			} );
+			await r2;
+
+			expect( capturedPage2 ).toMatchObject( {
+				seed: capturedFirst.seed,
+				algorithm: 'read:recommendations:posts/es/1',
+				offset: '7',
+				number: '7',
+			} );
+			expect( capturedPage2.lang ).toBeDefined();
+		} );
+
+		it( 'custom_recs_posts_with_images ships the enriched query with seed + alg_prefix', async () => {
+			let captured;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( ( q ) => {
+					captured = q;
+					return true;
+				} )
+				.reply( 200, recsPostsResponse );
+
+			const { result } = runThunk( { streamKey: 'custom_recs_posts_with_images' } );
+			await result;
+
+			expect( captured ).toMatchObject( {
+				orderBy: 'date',
+				meta: 'post,discover_original_post',
+				content_width: '675',
+				alg_prefix: 'read:recommendations:posts',
+				seed: expect.stringMatching( /^\d+$/ ),
+			} );
+			expect( captured.lang ).toBeDefined();
+		} );
+
+		it( 'custom_recs_sites_with_images hits /read/recommendations/sites with the algorithm + posts_per_site override', async () => {
+			let captured;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/sites' )
+				.query( ( q ) => {
+					captured = q;
+					return true;
+				} )
+				.reply( 200, recsSitesResponse );
+
+			const { result } = runThunk( { streamKey: 'custom_recs_sites_with_images' } );
+			await result;
+
+			expect( captured ).toMatchObject( {
+				orderBy: 'date',
+				algorithm: 'read:recommendations:sites/es/2',
+				posts_per_site: '1',
+			} );
+		} );
+
+		it( 'custom_recs_sites_with_images flattens data.sites into stream items via the top post', async () => {
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/sites' )
+				.query( true )
+				.reply( 200, recsSitesResponse );
+
+			const { dispatch, result } = runThunk( { streamKey: 'custom_recs_sites_with_images' } );
+			await result;
+
+			const receivePageAction = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
+			expect( receivePageAction.payload.streamItems ).toHaveLength( 1 );
+			expect( receivePageAction.payload.streamItems[ 0 ] ).toMatchObject( {
+				postId: 41,
+				blogId: 401,
+				site_name: 'Recommended Blog',
+				site_icon: 'icon.png',
+			} );
+		} );
+
+		it( 'custom_recs_sites_with_images poll caps number at 10', async () => {
+			let captured;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/sites' )
+				.query( ( q ) => {
+					captured = q;
+					return true;
+				} )
+				.reply( 200, recsSitesResponse );
+
+			const { result } = runThunk( {
+				streamKey: 'custom_recs_sites_with_images',
+				isPoll: true,
+			} );
+			await result;
+
+			expect( captured.number ).toBe( '10' );
+		} );
+
+		it( 'custom_recs_sites_with_images does not dispatch receiveRecommendedSites — the legacy handlePage did not, and the migrated thunk must not either', async () => {
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/sites' )
+				.query( true )
+				.reply( 200, recsSitesResponse );
+
+			const { dispatch, result } = runThunk( { streamKey: 'custom_recs_sites_with_images' } );
+			await result;
+
+			const types = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.filter( ( a ) => a && typeof a === 'object' && a.type )
+				.map( ( a ) => a.type );
+			expect( types ).not.toContain( READER_RECOMMENDED_SITES_RECEIVE );
+			expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
+		} );
+
+		it( 'recommendation streams keep the same seed across pagination requests within a session', async () => {
+			let firstSeed;
+			let secondSeed;
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( ( q ) => {
+					firstSeed = q.seed;
+					return true;
+				} )
+				.reply( 200, recsPostsResponse );
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( ( q ) => {
+					secondSeed = q.seed;
+					return true;
+				} )
+				.reply( 200, recsPostsResponse );
+
+			const { result: r1 } = runThunk( { streamKey: 'custom_recs_posts_with_images' } );
+			await r1;
+			const { result: r2 } = runThunk( {
+				streamKey: 'custom_recs_posts_with_images',
+				pageHandle: { offset: 7 },
+			} );
+			await r2;
+
+			expect( firstSeed ).toBeDefined();
+			expect( secondSeed ).toBe( firstSeed );
+		} );
+
+		it( 'recommendation streams paginate via offset (extractPageHandle thread)', async () => {
+			nock( BASE )
+				.get( '/rest/v1.2/read/recommendations/posts' )
+				.query( true )
+				.reply( 200, recsPostsResponse );
+
+			const { dispatch, result } = runThunk( { streamKey: 'custom_recs_posts_with_images' } );
+			await result;
+
+			const receivePageAction = dispatch.mock.calls
+				.map( ( c ) => c[ 0 ] )
+				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
+			// Initial request has no pageHandle, so extractPageHandle (with the
+			// `streamType.includes('rec')` branch) returns offset=PER_FETCH.
+			expect( receivePageAction.payload.pageHandle ).toEqual( { offset: 7 } );
+		} );
+	} );
+
 	// `user` had a custom poll query (`number: 20`); other streams use the
 	// PER_POLL default. Verify the override survives the migration.
 	it( 'user poll overrides number to 20', async () => {
@@ -730,19 +981,20 @@ describe( 'requestPaginatedStream thunk', () => {
 		expect( types ).toContain( READER_STREAMS_PAGE_RECEIVE );
 	} );
 
-	it( 'returns the legacy action for unmigrated streamKey', () => {
+	it( 'dispatches stream error for an unknown streamKey', async () => {
 		const { dispatch, result } = runPaginatedThunk( {
-			streamKey: 'recommendations_posts',
+			streamKey: 'unknown_stream',
 			page: 1,
 			perPage: 10,
 		} );
-		// Action object returned, not a Promise — legacy data-layer
-		// path. The first dispatch carried the same action.
-		expect( result ).toMatchObject( {
-			type: 'READER_STREAMS_PAGINATED_REQUEST',
-			payload: { streamKey: 'recommendations_posts', page: 1, perPage: 10 },
-		} );
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		await result;
+
+		const errorAction = dispatch.mock.calls
+			.map( ( c ) => c[ 0 ] )
+			.find( ( a ) => a && a.type === READER_STREAMS_ERROR );
+		expect( errorAction.payload.error.message ).toContain(
+			'unsupported streamType "unknown_stream"'
+		);
 	} );
 
 	it( 'does not collapse overlapping page requests for the same streamKey', async () => {

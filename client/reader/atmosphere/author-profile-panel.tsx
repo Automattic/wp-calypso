@@ -21,6 +21,7 @@ import {
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -29,6 +30,7 @@ import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl } from './route';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type {
 	AtmosphereAuthorFeedFilter,
@@ -327,6 +329,22 @@ export function AuthorProfilePanel( {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -336,8 +354,24 @@ export function AuthorProfilePanel( {
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
 			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			buildThreadUrl,
+			buildProfileUrl,
+			buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
+	);
+
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
+		[ connection.id ]
 	);
 
 	const useRepostAction = useMemo(
@@ -495,34 +529,36 @@ export function AuthorProfilePanel( {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<RepostProvider value={ useRepostAction }>
-				<VStack spacing={ 4 } className="atmosphere-author-profile">
-					{ renderHeader() }
-					<AuthorProfileTabs
-						connectionId={ connection.id }
-						actor={ actor }
-						basePath={ subtabBasePath }
-						activeFilter={ filter }
-					/>
-					<SocialFeedList< SocialPost >
-						items={ items }
-						isPending={ feed.isPending }
-						isError={ feed.isError }
-						error={ projectAtmosphereError( feed.error ) }
-						hasNextPage={ Boolean( feed.hasNextPage ) }
-						isFetchingNextPage={ feed.isFetchingNextPage }
-						fetchNextPage={ feed.fetchNextPage }
-						refetch={ handleFeedRetry }
-						renderItem={ renderItem }
-						itemKey={ itemKey }
-						emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
-						emptyLine=""
-						protocolLabel="Bluesky"
-						protocolHomeURL="/reader/atmosphere"
-						protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
-					/>
-				</VStack>
-			</RepostProvider>
+			<LikeProvider value={ useLikeAction }>
+				<RepostProvider value={ useRepostAction }>
+					<VStack spacing={ 4 } className="atmosphere-author-profile">
+						{ renderHeader() }
+						<AuthorProfileTabs
+							connectionId={ connection.id }
+							actor={ actor }
+							basePath={ subtabBasePath }
+							activeFilter={ filter }
+						/>
+						<SocialFeedList< SocialPost >
+							items={ items }
+							isPending={ feed.isPending }
+							isError={ feed.isError }
+							error={ projectAtmosphereError( feed.error ) }
+							hasNextPage={ Boolean( feed.hasNextPage ) }
+							isFetchingNextPage={ feed.isFetchingNextPage }
+							fetchNextPage={ feed.fetchNextPage }
+							refetch={ handleFeedRetry }
+							renderItem={ renderItem }
+							itemKey={ itemKey }
+							emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
+							emptyLine=""
+							protocolLabel="Bluesky"
+							protocolHomeURL="/reader/atmosphere"
+							protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+						/>
+					</VStack>
+				</RepostProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

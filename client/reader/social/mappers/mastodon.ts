@@ -65,6 +65,14 @@ export function mapMastodonFeedItemToSocialPost(
 		},
 		embed: mapMedia( item.media ),
 	};
+
+	if ( item.viewer ) {
+		post.viewer = {
+			like: item.viewer.favourited ? 'favourited' : null,
+			repost: item.viewer.reblogged ? 'reblogged' : null,
+		};
+	}
+
 	// Mastodon distinguishes spoiler_text (whole-post CW gate) from
 	// sensitive (media blur). Set content_warning when either is present
 	// so the post-card can decide independently.

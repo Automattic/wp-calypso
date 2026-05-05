@@ -161,12 +161,23 @@ jobs:
             - Do NOT suggest to add new tests other than for top-level React components in a TanStack Router route.
             - Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
 
+            ## Finding labels
+
+            Tag every inline comment with exactly one of:
+
+            - `[fix here]` — correctness, security, deploy-safety. Should be addressed in this PR.
+            - `[follow-up]` — legitimate concern but cross-cutting refactor or rewrite ask. Author can defensibly defer to a separate PR.
+            - `[nit]` — style or minor preference; author can ignore without consequence.
+
+            Default to `[fix here]` for correctness, security, and deploy-safety findings regardless of fix locality. Use `[follow-up]` only when the fix requires a structural rewrite the PR explicitly is not doing, or touches code outside the PR's stated scope.
+
             ## Output Format
 
             - Be concise.
             - Do NOT use checkboxes, todo lists, or progress indicators.
             - Only comment if there are issues worth addressing.
             - DO NOT comment on lines that are not related to the guidelines.
+            - Each inline comment header: `**[fix here|follow-up|nit] Issue:** <one-line problem>` then `**Suggestion:** <fix>`.
             - For each comment, cite the source documentation file as a clickable link in the format of `https://github.com/Automattic/wp-calypso/blob/trunk/<path to the file relative to the project>`.
             - For each comment, quote the specific sentence(s) from the cited source that justifies the comment, in a blockquote.
 
@@ -217,12 +228,23 @@ jobs:
             - Don't nitpick minor style issues unless they violate the documented guidelines.
             - Before suggesting alternative implementations, check if the PR description already addresses why that approach wasn't used.
 
+            ## Finding labels
+
+            Tag every inline comment with exactly one of:
+
+            - `[fix here]` — correctness, security, deploy-safety. Should be addressed in this PR.
+            - `[follow-up]` — legitimate concern but cross-cutting refactor or rewrite ask. Author can defensibly defer to a separate PR.
+            - `[nit]` — style or minor preference; author can ignore without consequence.
+
+            Default to `[fix here]` for correctness, security, and deploy-safety findings regardless of fix locality. Use `[follow-up]` only when the fix requires a structural rewrite the PR explicitly is not doing, or touches code outside the PR's stated scope.
+
             ## Output Format
 
             - Be concise.
             - Do NOT use checkboxes, todo lists, or progress indicators.
             - Only comment if there are issues worth addressing.
             - DO NOT comment on lines that are not related to the guidelines listed above.
+            - Each inline comment header: `**[fix here|follow-up|nit] Issue:** <one-line problem>` then `**Suggestion:** <fix>`.
             - For each comment, cite the source documentation file as a clickable link in the format of `https://github.com/Automattic/wp-calypso/blob/trunk/<path to the file relative to the project>`.
             - For each comment, quote the specific sentence(s) from the cited source that justifies the comment, in a blockquote.
 
@@ -304,15 +326,24 @@ jobs:
             **11. Shared-package consumer audit.** Flag when the diff changes a public export in `packages/**`. Grep `apps/**` and `client/**` for imports.
             Message: `<package> is consumed by <list apps>. Verify the change is compatible.`
 
+            ## Finding labels
+
+            Tag every inline comment with exactly one of:
+
+            - `[fix here]` — correctness, security, deploy-safety. Should be addressed in this PR.
+            - `[follow-up]` — legitimate concern but cross-cutting refactor or rewrite ask. Author can defensibly defer to a separate PR.
+            - `[nit]` — style or minor preference; author can ignore without consequence.
+
+            Default to `[fix here]` for correctness, security, and deploy-safety findings regardless of fix locality. Use `[follow-up]` only when the fix requires a structural rewrite the PR explicitly is not doing, or touches code outside the PR's stated scope.
+
             ## Output Format
 
             - Be concise. Only comment if a trigger matched.
-            - Each comment shape: `**Issue:** <one-line problem>` then `**Suggestion:** <fix>`.
+            - Each inline comment header: `**[fix here|follow-up|nit] Issue:** <one-line problem>` then `**Suggestion:** <fix>`.
             - DO NOT comment on lines that are not related to the guidelines listed above.
             - Don't nitpick minor style issues unless they violate the documented guidelines.
             - Cite the source documentation as a clickable link when AGENTS.md or a project README covers the issue (`https://github.com/Automattic/wp-calypso/blob/trunk/<path>`); blockquote the relevant sentence. For security categories not in repo docs, name the axis from this prompt and add a one-line rationale; do not fabricate doc URLs.
             - DO NOT use checkboxes, todo lists, or progress indicators.
-            - If you read prior bot/human comments, post a single summary comment classifying them: `RESOLVED:` / `STILL OUTSTANDING:` / `NEW:`. Post inline only for NEW.
             - If no triggers matched, post: `AI Code Review: no issues found.`
 
             Remember: Calypso is large and shared. Prioritize correctness, security, and cross-client blast radius over style. Flag intent, not taste.
