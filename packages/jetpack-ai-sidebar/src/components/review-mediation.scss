@@ -84,7 +84,8 @@
 		border-radius: 8px;
 		border: 1px solid transparent;
 		font-weight: 500;
-		white-space: nowrap;
+		max-width: 100%;
+		white-space: normal;
 	}
 
 	&.is-compact {

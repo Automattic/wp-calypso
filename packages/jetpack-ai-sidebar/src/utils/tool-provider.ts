@@ -37,7 +37,7 @@ export const UPDATE_BLOCK_CONTENT_ABILITY: Tool = {
 			currentText: {
 				type: 'string',
 				description:
-					'Optional: an exact substring of the existing block content that should be replaced by `content`. When provided and present in the block, only that span is replaced. When provided and not found, the update fails safely. Omit `currentText` to replace the full block content.',
+					'Optional: an exact substring of the existing block content that should be replaced by `content`. When provided and matched exactly once, only that span is replaced. When provided but missing or ambiguous, the update fails safely. Omit `currentText` to replace the full block content.',
 			},
 		},
 		required: [ 'clientId', 'content' ],

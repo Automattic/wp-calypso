@@ -169,6 +169,26 @@ export function startBlockShimmer(): void {
 /** Block types whose `content` attribute can be safely replaced by a plain text/HTML string. */
 export const SUPPORTED_EDIT_BLOCK_TYPES = [ 'core/paragraph', 'core/heading' ] as const;
 
+export function isSupportedEditBlockType( blockName?: string | null ): boolean {
+	return (
+		typeof blockName === 'string' &&
+		( SUPPORTED_EDIT_BLOCK_TYPES as readonly string[] ).includes( blockName )
+	);
+}
+
+function countOccurrences( source: string, needle: string ): number {
+	let count = 0;
+	let startIndex = 0;
+	while ( true ) {
+		const index = source.indexOf( needle, startIndex );
+		if ( index === -1 ) {
+			return count;
+		}
+		count++;
+		startIndex = index + needle.length;
+	}
+}
+
 function getBlockSnapshot( clientId: string ): { name: string; content: string } | null {
 	const block = ( window as any ).wp?.data?.select( 'core/block-editor' )?.getBlock?.( clientId );
 	if ( ! block ) {
@@ -205,7 +225,7 @@ export function handleUpdateBlockContent( input: any ): any {
 	if ( ! snapshot ) {
 		return { success: false, error: 'block not found', returnToAgent: false };
 	}
-	if ( ! ( SUPPORTED_EDIT_BLOCK_TYPES as readonly string[] ).includes( snapshot.name ) ) {
+	if ( ! isSupportedEditBlockType( snapshot.name ) ) {
 		return {
 			success: false,
 			error: `unsupported block type: ${ snapshot.name }`,
@@ -216,19 +236,29 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Substring replace when currentText is a non-empty span present in the block.
 	// If that span no longer exists, fail rather than replacing the whole block
 	// with a partial suggested edit.
-	let nextContent = content;
 	const hasCurrentText = typeof currentText === 'string' && currentText !== '';
-	if ( hasCurrentText && ! snapshot.content.includes( currentText ) ) {
-		// eslint-disable-next-line no-console
-		console.warn( '[ReviewMediation] currentText not found in block content', { clientId } );
-		return {
-			success: false,
-			error: 'currentText not found in block content',
-			returnToAgent: false,
-		};
-	}
 	if ( hasCurrentText ) {
-		nextContent = snapshot.content.replace( currentText, content );
+		const matchCount = countOccurrences( snapshot.content, currentText );
+		if ( matchCount === 0 ) {
+			// eslint-disable-next-line no-console
+			console.warn( '[ReviewMediation] currentText not found in block content', { clientId } );
+			return {
+				success: false,
+				error: 'currentText not found in block content',
+				returnToAgent: false,
+			};
+		}
+		if ( matchCount > 1 ) {
+			// eslint-disable-next-line no-console
+			console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
+				clientId,
+			} );
+			return {
+				success: false,
+				error: 'currentText matches multiple spans in block content',
+				returnToAgent: false,
+			};
+		}
 	}
 
 	// Apply shimmer briefly, then update content and show highlight
@@ -240,6 +270,48 @@ export function handleUpdateBlockContent( input: any ): any {
 	// Short delay so the shimmer is visible before content swaps
 	return new Promise< any >( ( resolve ) => {
 		setTimeout( () => {
+			const latestSnapshot = getBlockSnapshot( clientId );
+			const resolveFailure = ( error: string ) => {
+				if ( blockEl ) {
+					removeProcessingEffect( blockEl );
+				}
+				resolve( { success: false, error, returnToAgent: false } );
+			};
+
+			if ( ! latestSnapshot ) {
+				resolveFailure( 'block not found' );
+				return;
+			}
+			if ( ! isSupportedEditBlockType( latestSnapshot.name ) ) {
+				resolveFailure( `unsupported block type: ${ latestSnapshot.name }` );
+				return;
+			}
+
+			let nextContent = content;
+			if ( hasCurrentText ) {
+				const matchCount = countOccurrences( latestSnapshot.content, currentText );
+				if ( matchCount === 0 ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[ReviewMediation] currentText not found in block content', { clientId } );
+					resolveFailure( 'currentText not found in block content' );
+					return;
+				}
+				if ( matchCount > 1 ) {
+					// eslint-disable-next-line no-console
+					console.warn( '[ReviewMediation] currentText matches multiple spans in block content', {
+						clientId,
+					} );
+					resolveFailure( 'currentText matches multiple spans in block content' );
+					return;
+				}
+				nextContent = latestSnapshot.content.replace( currentText, content );
+			} else if ( latestSnapshot.content !== snapshot.content ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[ReviewMediation] block content changed while applying edit', { clientId } );
+				resolveFailure( 'block content changed while applying edit' );
+				return;
+			}
+
 			blockEditor.updateBlockAttributes( clientId, { content: nextContent } );
 
 			if ( blockEl ) {
@@ -257,15 +329,15 @@ export function handleUpdateBlockContent( input: any ): any {
 				} );
 			}
 
-			resolve( { success: true, contentBefore: snapshot.content, returnToAgent: false } );
+			resolve( { success: true, contentBefore: latestSnapshot.content, returnToAgent: false } );
 		}, 800 );
 	} );
 }
 
 /**
- * Apply a mediation-suggested edit. When `currentText` is provided and present in
- * the block, only that span is replaced. When `currentText` is provided but not
- * found, the edit fails safely rather than replacing the whole block. Returns
+ * Apply a mediation-suggested edit. When `currentText` is provided and uniquely
+ * matches a span in the block, only that span is replaced. When it is missing or
+ * ambiguous, the edit fails safely rather than replacing the whole block. Returns
  * `success: false` for unsupported block types so the UI can show 'failed' rather
  * than corrupting the block. On success, returns `contentBefore` so the caller can
  * pair it with `clientId` and call `undoBlockEdit` later.

@@ -470,6 +470,71 @@ describe( 'applyReviewEdit', () => {
 		] );
 	} );
 
+	it( 'revalidates currentText against the latest block content before writing', async () => {
+		const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'The board voted last Tuesday on the proposal.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'voted on Tuesday',
+			undefined,
+			'voted last Tuesday'
+		);
+		blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content =
+			'Updated intro. The board voted last Tuesday on the proposal.';
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Updated intro. The board voted last Tuesday on the proposal.',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Updated intro. The board voted on Tuesday on the proposal.' },
+			},
+		] );
+	} );
+
+	it( 'fails safely when currentText disappears before the delayed write', async () => {
+		const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'The board voted last Tuesday on the proposal.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'voted on Tuesday',
+			undefined,
+			'voted last Tuesday'
+		);
+		blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content =
+			'The board voted yesterday on the proposal.';
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'currentText not found in block content',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+		expect( warn ).toHaveBeenCalledWith(
+			'[ReviewMediation] currentText not found in block content',
+			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
+		);
+		warn.mockRestore();
+	} );
+
 	it( 'fails without replacing the block when currentText is not present in the block', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor( {
 			'550e8400-e29b-41d4-a716-446655440000': {
@@ -496,6 +561,37 @@ describe( 'applyReviewEdit', () => {
 		expect( blockUpdates ).toEqual( [] );
 		expect( warn ).toHaveBeenCalledWith(
 			'[ReviewMediation] currentText not found in block content',
+			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
+		);
+		warn.mockRestore();
+	} );
+
+	it( 'fails without replacing the block when currentText is ambiguous', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'vote now, then vote again after discussion.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'cast a ballot',
+			undefined,
+			'vote'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'currentText matches multiple spans in block content',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+		expect( warn ).toHaveBeenCalledWith(
+			'[ReviewMediation] currentText matches multiple spans in block content',
 			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
 		);
 		warn.mockRestore();

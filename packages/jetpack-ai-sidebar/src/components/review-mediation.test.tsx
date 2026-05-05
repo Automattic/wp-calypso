@@ -27,6 +27,8 @@ jest.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
 	findBlockElement: ( ...args: any[] ) => mockFindBlockElement( ...args ),
 	findBlockListLayout: ( ...args: any[] ) => mockFindBlockListLayout( ...args ),
+	isSupportedEditBlockType: ( blockName?: string | null ) =>
+		[ 'core/paragraph', 'core/heading' ].includes( blockName ?? '' ),
 	undoBlockEdit: ( ...args: any[] ) => mockUndoBlockEdit( ...args ),
 } ) );
 
@@ -385,6 +387,37 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( screen.queryByRole( 'button', { name: 'Undo' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'disables Accept for unsupported block targets', () => {
+		mockBlocks = [
+			...blocks,
+			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },
+		];
+
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 3,
+							current_text: 'List content',
+							suggested_text: 'Updated list content',
+							rationale: 'Lists are not supported by automatic block edits.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const accept = screen.getByTitle( 'Needs manual edit — unsupported block type' );
+		expect( accept ).toBeDisabled();
+		expect( accept ).toHaveAttribute( 'title', 'Needs manual edit — unsupported block type' );
+		fireEvent.click( accept );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'keeps block focus on the explicit block reference button', () => {
 		const blockElement = document.createElement( 'div' );
 		const layoutElement = document.createElement( 'div' );
@@ -517,11 +550,56 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 2 );
 		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeInTheDocument();
 	} );
+
+	it( 'disables candidate buttons for unsupported block targets', () => {
+		mockBlocks = [
+			...blocks,
+			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },
+		];
+
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'List wording',
+							positions: [],
+							guideline_anchor: null,
+							recommended_resolution: 'Use the AI wording.',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 3,
+									text: 'Updated list content',
+									rationale: '',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const acceptAi = screen.getByTitle( 'Needs manual edit — unsupported block type' );
+		expect( acceptAi ).toBeDisabled();
+		expect( acceptAi ).toHaveAttribute( 'title', 'Needs manual edit — unsupported block type' );
+		fireEvent.click( acceptAi );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+	} );
 } );
 
 describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
-	it( 'applies pending AI conflict candidate AND pending suggested edit sequentially', async () => {
+	it( 'applies only supported pending edits sequentially', async () => {
 		mockApplyReviewEdit.mockResolvedValue( { success: true } );
+		mockBlocks = [
+			...blocks,
+			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },
+			{ clientId: 'b4', name: 'core/image', attributes: { content: 'Image content' } },
+		];
 
 		render(
 			<ReviewMediation
@@ -543,12 +621,35 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 								},
 							],
 						},
+						{
+							subject: 'List wording',
+							positions: [],
+							guideline_anchor: null,
+							recommended_resolution: '',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI',
+									block_index: 3,
+									text: 'Unsupported rewrite',
+									rationale: '',
+								},
+							],
+						},
 					],
 					suggested_edits: [
 						{
 							block_index: 2,
 							current_text: '',
 							suggested_text: 'tighter copy',
+							rationale: '',
+							supported_by_reviewers: [],
+						},
+						{
+							block_index: 4,
+							current_text: '',
+							suggested_text: 'unsupported image text',
 							rationale: '',
 							supported_by_reviewers: [],
 						},

@@ -18,6 +18,7 @@ import {
 	applyReviewEdit,
 	findBlockElement,
 	findBlockListLayout,
+	isSupportedEditBlockType,
 	undoBlockEdit,
 } from '../utils/block-actions';
 import BlockRef, { type BlockSnapshot } from './block-ref';
@@ -268,14 +269,23 @@ export default function ReviewMediation( {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const { selectBlock } = useDispatch( 'core/block-editor' ) as any;
 
-	const getClientId = useCallback(
-		( blockIndex: number | null ): string | null => {
+	const getBlock = useCallback(
+		( blockIndex: number | null ): BlockSnapshot | null => {
 			if ( blockIndex === null || blockIndex < 0 || blockIndex >= blocks.length ) {
 				return null;
 			}
-			return blocks[ blockIndex ]?.clientId ?? null;
+			return blocks[ blockIndex ] ?? null;
 		},
 		[ blocks ]
+	);
+	const getClientId = useCallback(
+		( blockIndex: number | null ): string | null => getBlock( blockIndex )?.clientId ?? null,
+		[ getBlock ]
+	);
+	const isSupportedBlockIndex = useCallback(
+		( blockIndex: number | null ): boolean =>
+			isSupportedEditBlockType( getBlock( blockIndex )?.name ),
+		[ getBlock ]
 	);
 
 	const focusBlock = useCallback(
@@ -314,6 +324,9 @@ export default function ReviewMediation( {
 			text: string,
 			currentText?: string
 		): Promise< { success: boolean; clientId?: string; contentBefore?: string } > => {
+			if ( ! isSupportedBlockIndex( blockIndex ) ) {
+				return { success: false };
+			}
 			const clientId = getClientId( blockIndex );
 			if ( ! clientId ) {
 				return { success: false };
@@ -334,7 +347,7 @@ export default function ReviewMediation( {
 				return { success: false };
 			}
 		},
-		[ getClientId ]
+		[ getClientId, isSupportedBlockIndex ]
 	);
 
 	// ---------- Suggested edit handlers ----------
@@ -423,11 +436,11 @@ export default function ReviewMediation( {
 				return acc;
 			}
 			const aiCandidate = conflict.candidate_resolutions?.find(
-				( c ) => c.source === 'ai' && c.block_index !== null
+				( c ) => c.source === 'ai' && isSupportedBlockIndex( c.block_index )
 			);
 			return aiCandidate ? acc + 1 : acc;
 		}, 0 );
-	}, [ conflicts, conflictStatuses ] );
+	}, [ conflicts, conflictStatuses, isSupportedBlockIndex ] );
 
 	const pendingEditCount = useMemo( () => {
 		return suggested_edits.reduce( ( acc, edit, i ) => {
@@ -435,9 +448,9 @@ export default function ReviewMediation( {
 			if ( status !== 'pending' && status !== 'failed' ) {
 				return acc;
 			}
-			return edit.block_index !== null ? acc + 1 : acc;
+			return isSupportedBlockIndex( edit.block_index ) ? acc + 1 : acc;
 		}, 0 );
-	}, [ suggested_edits, editStatuses ] );
+	}, [ suggested_edits, editStatuses, isSupportedBlockIndex ] );
 
 	const totalPendingCount = pendingAiConflictCount + pendingEditCount;
 
@@ -454,7 +467,7 @@ export default function ReviewMediation( {
 				continue;
 			}
 			const aiCandidate = conflicts[ i ].candidate_resolutions?.find(
-				( c ) => c.source === 'ai' && c.block_index !== null
+				( c ) => c.source === 'ai' && isSupportedBlockIndex( c.block_index )
 			);
 			if ( ! aiCandidate ) {
 				continue;
@@ -476,7 +489,7 @@ export default function ReviewMediation( {
 				continue;
 			}
 			const edit = suggested_edits[ i ];
-			if ( edit.block_index === null ) {
+			if ( ! isSupportedBlockIndex( edit.block_index ) ) {
 				continue;
 			}
 			setEditStatus( i, 'applying' );
@@ -503,6 +516,7 @@ export default function ReviewMediation( {
 		suggested_edits,
 		editStatuses,
 		applyTextToBlock,
+		isSupportedBlockIndex,
 		setConflictStatus,
 		setEditStatus,
 	] );
@@ -672,6 +686,8 @@ export default function ReviewMediation( {
 										const aiCandidate = candidates.find(
 											( c ) => c.source === 'ai' && c.block_index !== null
 										);
+										const isCandidateSupported = ( candidate: CandidateResolution ) =>
+											isSupportedBlockIndex( candidate.block_index );
 										// Block reference for the card header — prefer the AI candidate's
 										// target, fall back to the first reviewer candidate with a block.
 										const headerBlockIndex =
@@ -809,7 +825,12 @@ export default function ReviewMediation( {
 																type="button"
 																className="jetpack-ai-review-mediation__action is-reviewer"
 																key={ `candidate-${ i }-${ k }` }
-																disabled={ actionsDisabled }
+																disabled={ actionsDisabled || ! isCandidateSupported( candidate ) }
+																title={
+																	isCandidateSupported( candidate )
+																		? undefined
+																		: __( 'Needs manual edit — unsupported block type', 'jetpack' )
+																}
 																onClick={ () => handleAcceptCandidate( i, candidate ) }
 															>
 																{ sprintf(
@@ -823,7 +844,14 @@ export default function ReviewMediation( {
 															<button
 																type="button"
 																className="jetpack-ai-review-mediation__action is-accept"
-																disabled={ actionsDisabled }
+																disabled={
+																	actionsDisabled || ! isCandidateSupported( aiCandidate )
+																}
+																title={
+																	isCandidateSupported( aiCandidate )
+																		? undefined
+																		: __( 'Needs manual edit — unsupported block type', 'jetpack' )
+																}
 																onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
 															>
 																{ getAiButtonLabel( status ) }
@@ -898,10 +926,19 @@ export default function ReviewMediation( {
 									{ suggested_edits.map( ( edit, i ) => {
 										const status = editStatuses[ i ] ?? 'pending';
 										const isPostWide = edit.block_index === null;
+										const isUnsupportedTarget =
+											! isPostWide && ! isSupportedBlockIndex( edit.block_index );
+										let acceptTitle: string | undefined;
+										if ( isPostWide ) {
+											acceptTitle = __( 'Needs manual edit — no single block target', 'jetpack' );
+										} else if ( isUnsupportedTarget ) {
+											acceptTitle = __( 'Needs manual edit — unsupported block type', 'jetpack' );
+										}
 										const clickable = ! isPostWide;
 										const isCollapsed = status === 'accepted' || status === 'dismissed';
 										const acceptDisabled =
 											isPostWide ||
+											isUnsupportedTarget ||
 											status === 'applying' ||
 											status === 'accepted' ||
 											status === 'dismissed' ||
@@ -1021,11 +1058,7 @@ export default function ReviewMediation( {
 														type="button"
 														className="jetpack-ai-review-mediation__action is-accept"
 														disabled={ acceptDisabled }
-														title={
-															isPostWide
-																? __( 'Needs manual edit — no single block target', 'jetpack' )
-																: undefined
-														}
+														title={ acceptTitle }
 														onClick={ () => handleAcceptEdit( edit, i ) }
 													>
 														{ /* `accepted`/`dismissed` are unreachable here — the
