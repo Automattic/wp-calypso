@@ -138,8 +138,8 @@ function getDefaultFields( {
 				} ) );
 
 				return mapped.sort( ( a, b ) => {
-					const indexA = planOrder.indexOf( a.value );
-					const indexB = planOrder.indexOf( b.value );
+					const indexA = planOrder.indexOf( a.label );
+					const indexB = planOrder.indexOf( b.label );
 					// Unknown plans go to the end, before "No Plan"
 					return (
 						( indexA === -1 ? planOrder.length - 1 : indexA ) -
