@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { close, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ImagePickerModal } from './image-picker-modal';
+import { DictationFileUpload, ImagePickerModal } from './image-picker-modal';
 import { useRealtimeSession } from './use-realtime-session';
 import type { RealtimeToolEvent, RealtimeTranscriptEntry } from './use-realtime-session';
 import './style.scss';
@@ -406,6 +406,7 @@ export function LiveAIAssistant( {
 				) }
 			</div>
 			<ImagePickerModal state={ imagePickerState } />
+			<DictationFileUpload />
 		</>
 	);
 }

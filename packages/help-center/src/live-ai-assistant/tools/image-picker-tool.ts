@@ -13,15 +13,18 @@ export const pickImageToolDefinition = {
 		'this AUTOMATICALLY inserts a core/image block (purpose "block") or sets the featured image (purpose "featured_image"). ' +
 		'Do NOT call insert_block_tool or any other tool after "select" — the image is already inserted/set. ' +
 		'Use action "close" to dismiss without selecting. ' +
+		'Use action "upload" when the user wants to upload a new image from their computer — ' +
+		'this opens the OS file picker (the user must manually select the file), then the image ' +
+		'is automatically uploaded and inserted. ' +
 		'When the user asks to insert an image, add a photo, set the featured image, or change an image, call this tool with action "open" first.',
 	parameters: {
 		type: 'object',
 		properties: {
 			action: {
 				type: 'string',
-				enum: [ 'open', 'select', 'close' ],
+				enum: [ 'open', 'select', 'close', 'upload' ],
 				description:
-					'"open" = fetch images and show picker grid. "select" = pick image by number. "close" = dismiss picker.',
+					'"open" = fetch images and show picker grid. "select" = pick image by number. "close" = dismiss picker. "upload" = open OS file picker to upload a new image.',
 			},
 			number: {
 				type: 'number',
@@ -47,6 +50,7 @@ export const pickImageToolDefinition = {
 declare global {
 	interface Window {
 		__dictationImagePicker?: ImagePickerState;
+		__dictationUploadPurpose?: 'block' | 'featured_image';
 	}
 }
 
@@ -241,8 +245,9 @@ export async function executePickImageTool( rawArgs: unknown ) {
 					'A grid of numbered images is now visible to the user. ' +
 					'Tell them to say a number (1–' +
 					images.length +
-					') to pick one. ' +
-					'When they say a number, call this tool again with action "select" and that number.',
+					') to pick one, or say "upload" to upload a new image from their computer. ' +
+					'When they say a number, call this tool again with action "select" and that number. ' +
+					'When they say "upload", call this tool with action "upload".',
 			};
 		} catch ( err ) {
 			return {
@@ -296,5 +301,31 @@ export async function executePickImageTool( rawArgs: unknown ) {
 		return { ok: true, action: 'closed' };
 	}
 
-	return { ok: false, error: `Unknown action "${ action }". Use "open", "select", or "close".` };
+	if ( action === 'upload' ) {
+		// Close the grid if it was open.
+		updatePickerState( { isOpen: false, images: [], selectedNumber: null } );
+
+		window.__dictationUploadPurpose = purpose;
+		window.dispatchEvent( new CustomEvent( 'dictation-file-upload' ) );
+
+		return {
+			ok: true,
+			action: 'upload_dialog_opened',
+			purpose,
+			instruction:
+				'A file picker dialog has been opened. Tell the user to select an image file ' +
+				'from their computer. Once they pick a file it will be uploaded to the media ' +
+				'library and automatically ' +
+				( purpose === 'featured_image'
+					? 'set as the featured image'
+					: 'inserted as an image block' ) +
+				'. You will receive a follow-up notification when the upload completes. ' +
+				'Do NOT call insert_block_tool — it is handled automatically.',
+		};
+	}
+
+	return {
+		ok: false,
+		error: `Unknown action "${ action }". Use "open", "select", "close", or "upload".`,
+	};
 }

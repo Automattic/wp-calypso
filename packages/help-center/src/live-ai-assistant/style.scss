@@ -498,6 +498,14 @@
 	text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
+.dictation-image-picker__hint {
+	display: block;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 13px;
+	font-weight: 400;
+	margin-top: 4px;
+}
+
 .dictation-image-picker__grid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
