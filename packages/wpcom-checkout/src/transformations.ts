@@ -545,15 +545,19 @@ export function isBillingInfoEmpty( responseCart: ResponseCart ): boolean {
 
 /**
  * True if the cart's tax location is missing fields the backend needs before
- * it can compute tax. Covers two cases:
+ * it can compute tax. Covers three cases:
  *
  *   1. No country has been chosen yet (same as `isBillingInfoEmpty`).
- *   2. A country is chosen but it requires a subdivision (e.g. US sales tax,
- *      CA GST) and the cart has no `subdivision_code` yet.
+ *   2. A country is chosen but it requires a subdivision (e.g. CA GST) and
+ *      the cart has no `subdivision_code` yet.
+ *   3. A country is chosen, tax is not yet computed (`display_taxes` is
+ *      false), and the country uses postal codes (e.g. US sales tax, where
+ *      the rate is ZIP-driven) — the missing postal code is what is
+ *      blocking the tax computation.
  *
  * Use this to decide whether to show a "Tax: to be calculated" placeholder
  * in the summary instead of letting the line silently disappear when a
- * subdivision-required country is selected without a state.
+ * country is selected without enough information to compute tax.
  *
  * Falls back to `isBillingInfoEmpty` semantics when the countries list has
  * not loaded yet, so callers do not need to guard the call themselves.
@@ -568,13 +572,27 @@ export function isCartTaxLocationIncomplete(
 	if ( ! countries.length ) {
 		return false;
 	}
-	const { country_code: countryCode, subdivision_code: subdivisionCode } =
-		responseCart.tax.location;
+	// If the backend has computed tax, the line item already renders and we
+	// do not need a placeholder.
+	if ( responseCart.tax.display_taxes ) {
+		return false;
+	}
+	const {
+		country_code: countryCode,
+		subdivision_code: subdivisionCode,
+		postal_code: postalCode,
+	} = responseCart.tax.location;
 	if ( ! countryCode ) {
 		return false;
 	}
 	const requirements = getCountryTaxRequirements( countries, countryCode );
 	if ( requirements.subdivision && ! subdivisionCode ) {
+		return true;
+	}
+	const countryListItem = countries.find(
+		( country ) => country.code === countryCode.toUpperCase()
+	);
+	if ( countryListItem?.has_postal_codes && ! postalCode ) {
 		return true;
 	}
 	return false;
