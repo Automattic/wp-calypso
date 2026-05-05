@@ -1,10 +1,10 @@
 import { useFediverseConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Icon, globe } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarItem from 'calypso/layout/sidebar/item';
+import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-icon';
 import { TIMELINE_TAB } from 'calypso/reader/fediverse/helper';
 import { SocialAccountMenuItem, SocialAddAccountMenuItem } from 'calypso/reader/sidebar/social';
 import { useDispatch } from 'calypso/state';
@@ -101,7 +101,7 @@ function ReaderSidebarFediverse( { path }: Props ) {
 				label={ translate( 'Fediverse' ) }
 				link={ BASE_PATH }
 				onNavigate={ recordClick }
-				customIcon={ <Icon icon={ globe } size={ 24 } /> }
+				customIcon={ <ReaderFediverseIcon /> }
 				className={ ReaderSidebarHelper.itemLinkClass( BASE_PATH, path, {
 					'sidebar-streams__fediverse': true,
 				} ) }
@@ -127,7 +127,7 @@ function ReaderSidebarFediverse( { path }: Props ) {
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
 				title={ translate( 'Fediverse' ) }
-				customIcon={ <Icon icon={ globe } size={ 24 } /> }
+				customIcon={ <ReaderFediverseIcon /> }
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
 				disableFlyout
