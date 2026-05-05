@@ -266,6 +266,41 @@
 	position: absolute;
 	inset-block-end: 4px;
 	inset-inline-start: 4px;
+
+	// Override the `@wordpress/components` secondary Button so the ALT
+	// badge reads against any photo background — the default
+	// blue-on-white treatment all but disappears on light or
+	// high-contrast images. Mirror the remove button's opaque-dark
+	// chip pattern (rgba(0, 0, 0, 0.7) + #fff text) so both badges
+	// share a consistent visual language at the corners of a
+	// thumbnail.
+	.components-button.is-secondary {
+		background: rgba(0, 0, 0, 0.7);
+		color: #fff;
+		box-shadow: none;
+		border: 0;
+		font-weight: 600;
+		font-size: 11px;
+		min-height: 0;
+		height: auto;
+		padding: 2px 6px;
+		line-height: 1.4;
+		// Match the thumbnail's rounded chip aesthetic without picking
+		// up the design system's larger Button radius.
+		border-radius: 4px;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled) {
+			background: rgba(0, 0, 0, 0.85);
+			color: #fff;
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid #fff;
+			outline-offset: 1px;
+		}
+	}
 }
 
 .atmosphere-composer__image-error {
