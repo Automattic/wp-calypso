@@ -10,12 +10,14 @@ import {
 	SocialAnalyticsProvider,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
 import { ThreadHeader } from './thread-header';
 import { MastodonThreadTree } from './thread-tree';
 import { MastodonThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
 import type {
 	MastodonConnection,
 	MastodonError,
@@ -159,21 +161,29 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
 	);
 
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
 	return (
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider value={ analyticsValue }>
-				{ renderBody( {
-					translate,
-					data,
-					instance: connection.instance,
-					isPending,
-					isFetching,
-					isError,
-					error: error ?? null,
-					handleRetry,
-					targetUri: statusId,
-				} ) }
+				<LikeProvider value={ useLikeAction }>
+					{ renderBody( {
+						translate,
+						data,
+						instance: connection.instance,
+						connectionId: connection.id,
+						isPending,
+						isFetching,
+						isError,
+						error: error ?? null,
+						handleRetry,
+						targetUri: statusId,
+					} ) }
+				</LikeProvider>
 			</SocialAnalyticsProvider>
 		</>
 	);
@@ -183,6 +193,7 @@ function renderBody( {
 	translate,
 	data,
 	instance,
+	connectionId,
 	isPending,
 	isFetching,
 	isError,
@@ -193,6 +204,7 @@ function renderBody( {
 	translate: ReturnType< typeof useTranslate >;
 	data: MastodonThreadResponse | undefined;
 	instance: string;
+	connectionId: number;
 	isPending: boolean;
 	isFetching: boolean;
 	isError: boolean;
@@ -222,7 +234,7 @@ function renderBody( {
 		);
 	}
 	const root = mapMastodonThreadResponseToSocialThreadNode( data, { instance } );
-	return <MastodonThreadTree root={ root } targetUri={ targetUri } />;
+	return <MastodonThreadTree root={ root } targetUri={ targetUri } connectionId={ connectionId } />;
 }
 
 function renderError( {

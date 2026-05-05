@@ -10,6 +10,7 @@ const PARENT_WALK_LIMIT = 80;
 interface MastodonThreadTreeProps {
 	root: SocialThreadNode;
 	targetUri: string;
+	connectionId?: number;
 }
 
 // Mastodon-specific thread layout: parents stacked above the focal post
@@ -17,7 +18,7 @@ interface MastodonThreadTreeProps {
 // ThreadTree's structure but takes SocialThreadNode (output of
 // mapMastodonThreadResponseToSocialThreadNode) instead of
 // AtmosphereThreadNode, so it can never accidentally consume Bluesky data.
-export function MastodonThreadTree( { root, targetUri }: MastodonThreadTreeProps ) {
+export function MastodonThreadTree( { root, targetUri, connectionId }: MastodonThreadTreeProps ) {
 	const targetRef = useRef< HTMLDivElement >( null );
 	const parents = useMemo( () => flattenParents( root ), [ root ] );
 
@@ -42,6 +43,7 @@ export function MastodonThreadTree( { root, targetUri }: MastodonThreadTreeProps
 					depth={ 0 }
 					highlighted={ false }
 					renderReplies={ false }
+					connectionId={ connectionId }
 				/>
 			) ) }
 			<MastodonThreadNode
@@ -51,6 +53,7 @@ export function MastodonThreadTree( { root, targetUri }: MastodonThreadTreeProps
 				highlighted={ root.type === 'post' && root.post.uri === targetUri }
 				expandedVideo
 				prominentTimestamp
+				connectionId={ connectionId }
 			/>
 		</VStack>
 	);

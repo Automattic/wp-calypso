@@ -1,7 +1,9 @@
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	createMastodonLike,
 	createMastodonPost,
+	deleteMastodonLike,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
@@ -461,7 +463,7 @@ function patchMastodonQueryData(
 // `connections` and `connection` keys don't hold posts so they're silently
 // no-op walked. Status IDs are instance-local — same numeric id on a
 // different connection is a different post — so the patch must be
-// connection-scoped or replies on connection A leak into B's caches.
+// connection-scoped or favourites on connection A leak into B's caches.
 function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean {
 	return Array.isArray( key ) && key[ 3 ] === connectionId;
 }
@@ -489,8 +491,8 @@ function patchMastodonPostCaches(
 	return { snapshots };
 }
 
-// Cancel only this connection's in-flight Mastodon queries — replying on
-// connection A shouldn't kill connection B's pagination/thread loads.
+// Cancel only this connection's in-flight Mastodon queries — favouriting
+// on connection A shouldn't kill connection B's pagination/thread loads.
 // Wrapped at call sites in try/catch: if cancelQueries rejects (rare —
 // teardown / route change), the optimistic patch should still apply and
 // the mutation should still fire.
@@ -605,6 +607,61 @@ function restoreMastodonPostSnapshots(
 		}
 		queryClient.setQueryData( key, restoreMastodonQueryData( current, items ) );
 	}
+}
+
+export function useCreateMastodonLikeMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		mutationFn: ( { statusId } ) => createMastodonLike( { connectionId, statusId } ),
+		onMutate: async ( { statusId } ) => {
+			// cancelQueries is best-effort — TanStack docs flag it as such.
+			// If it rejects (rare; route-change teardown races) we want to
+			// continue with the optimistic patch and the actual mutation
+			// rather than treat the whole call as failed before it starts.
+			try {
+				await cancelMastodonQueriesForConnection( queryClient, connectionId );
+			} catch {
+				// Swallow; the optimistic patch below + mutationFn must
+				// still run. Snapshot rollback on real onError is unaffected.
+			}
+			return patchMastodonPostCaches( queryClient, connectionId, statusId, ( item ) => ( {
+				...item,
+				viewer: {
+					...( item.viewer ?? { favourited: false, reblogged: false } ),
+					favourited: true,
+				},
+				counts: { ...item.counts, favourites: item.counts.favourites + 1 },
+			} ) );
+		},
+		onError: ( _err, _vars, ctx ) => restoreMastodonPostSnapshots( queryClient, ctx ),
+		// No onSuccess re-patch — the boolean is already correct from onMutate.
+	} );
+}
+
+export function useDeleteMastodonLikeMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		mutationFn: ( { statusId } ) => deleteMastodonLike( { connectionId, statusId } ),
+		onMutate: async ( { statusId } ) => {
+			try {
+				await cancelMastodonQueriesForConnection( queryClient, connectionId );
+			} catch {
+				// See useCreateMastodonLikeMutation for rationale.
+			}
+			return patchMastodonPostCaches( queryClient, connectionId, statusId, ( item ) => ( {
+				...item,
+				viewer: {
+					...( item.viewer ?? { favourited: false, reblogged: false } ),
+					favourited: false,
+				},
+				counts: {
+					...item.counts,
+					favourites: Math.max( 0, item.counts.favourites - 1 ),
+				},
+			} ) );
+		},
+		onError: ( _err, _vars, ctx ) => restoreMastodonPostSnapshots( queryClient, ctx ),
+	} );
 }
 
 interface CreatePostContext {

@@ -21,6 +21,7 @@ import {
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -28,6 +29,7 @@ import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl } from './route';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import type {
 	AtmosphereAuthorFeedFilter,
 	AtmosphereScopedProfile,
@@ -365,6 +367,11 @@ export function AuthorProfilePanel( {
 		]
 	);
 
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
 	const isOwnProfile = profile.data?.did === connection.did;
 
 	// .mutate is the only stable handle on the useMutation result; depending on
@@ -515,32 +522,34 @@ export function AuthorProfilePanel( {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<VStack spacing={ 4 } className="atmosphere-author-profile">
-				{ renderHeader() }
-				<AuthorProfileTabs
-					connectionId={ connection.id }
-					actor={ actor }
-					basePath={ subtabBasePath }
-					activeFilter={ filter }
-				/>
-				<SocialFeedList< SocialPost >
-					items={ items }
-					isPending={ feed.isPending }
-					isError={ feed.isError }
-					error={ projectAtmosphereError( feed.error ) }
-					hasNextPage={ Boolean( feed.hasNextPage ) }
-					isFetchingNextPage={ feed.isFetchingNextPage }
-					fetchNextPage={ feed.fetchNextPage }
-					refetch={ handleFeedRetry }
-					renderItem={ renderItem }
-					itemKey={ itemKey }
-					emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
-					emptyLine=""
-					protocolLabel="Bluesky"
-					protocolHomeURL="/reader/atmosphere"
-					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
-				/>
-			</VStack>
+			<LikeProvider value={ useLikeAction }>
+				<VStack spacing={ 4 } className="atmosphere-author-profile">
+					{ renderHeader() }
+					<AuthorProfileTabs
+						connectionId={ connection.id }
+						actor={ actor }
+						basePath={ subtabBasePath }
+						activeFilter={ filter }
+					/>
+					<SocialFeedList< SocialPost >
+						items={ items }
+						isPending={ feed.isPending }
+						isError={ feed.isError }
+						error={ projectAtmosphereError( feed.error ) }
+						hasNextPage={ Boolean( feed.hasNextPage ) }
+						isFetchingNextPage={ feed.isFetchingNextPage }
+						fetchNextPage={ feed.fetchNextPage }
+						refetch={ handleFeedRetry }
+						renderItem={ renderItem }
+						itemKey={ itemKey }
+						emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
+						emptyLine=""
+						protocolLabel="Bluesky"
+						protocolHomeURL="/reader/atmosphere"
+						protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+					/>
+				</VStack>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

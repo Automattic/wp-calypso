@@ -2,15 +2,18 @@
  * "Generate Feature Clip" post-editor sidebar panel.
  *
  * Registers a PluginDocumentSettingPanel (from `@wordpress/editor`) in the
- * Gutenberg post editor with a single button that opens the studio in
- * video-generation mode. Mirrors the shape of Jetpack's "Generate featured
- * image" sidebar panel.
+ * Gutenberg post editor with a short description + Generate clip button. The
+ * panel header carries an "Experimental" badge with a tooltip explaining the
+ * feature's status. Visual rhythm matches the surrounding sidebar panels
+ * (Excerpt, Categories, Featured Image) rather than introducing a saturated
+ * hero card.
  */
 import { Button } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { ExperimentalBadge } from '../components/experimental-badge';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
@@ -23,10 +26,6 @@ const PANEL_NAME = 'image-studio-feature-clip-panel';
 function FeatureClipPanel(): JSX.Element {
 	const handleClick = async () => {
 		const { openImageStudio } = dispatch( imageStudioStore );
-		// Reset any previously generated clip so a fresh session starts with
-		// an empty canvas instead of replaying the prior video. wp-data action
-		// dispatches resolve asynchronously, so await them before opening the
-		// modal to prevent a stale clip flashing on first render.
 		const { setCurrentVideoUrl, setCurrentAttachmentId, setCurrentDurationSeconds } = dispatch(
 			videoStudioStore
 		) as VideoStudioActions;
@@ -44,21 +43,35 @@ function FeatureClipPanel(): JSX.Element {
 		openImageStudio( undefined, undefined, ImageStudioEntryPoint.PostEditorFeatureClip );
 	};
 
+	const titleNode = (
+		<span className="image-studio-feature-clip-panel__title">
+			<span className="image-studio-feature-clip-panel__title-line">
+				{ __( 'Generate', __i18n_text_domain__ ) }
+			</span>
+			<span className="image-studio-feature-clip-panel__title-line">
+				{ __( 'Feature Clip', __i18n_text_domain__ ) }
+				<ExperimentalBadge variant="light" withTooltip />
+			</span>
+		</span>
+	);
+
 	return (
 		<PluginDocumentSettingPanel
 			name={ PANEL_NAME }
-			title={ __( 'Generate Feature Clip', __i18n_text_domain__ ) }
+			// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
+			// the badge must live in the title row so it stays visible when the panel is collapsed.
+			title={ titleNode as unknown as string }
 			className="image-studio-feature-clip-panel"
 		>
 			<p className="image-studio-feature-clip-panel__description">
 				{ __(
-					'Generate a short video clip based on this post. We use the post content and your site guidelines as a starting point.',
+					'Turn this post into a short vertical video. Powered by your site guidelines.',
 					__i18n_text_domain__
 				) }
 			</p>
 			<Button
 				variant="secondary"
-				className="image-studio-feature-clip-panel__button"
+				className="image-studio-feature-clip-panel__cta"
 				__next40pxDefaultSize
 				onClick={ handleClick }
 			>
@@ -77,10 +90,10 @@ let pluginRegistered = false;
  * editor package isn't loaded on the page (e.g. wp-admin Media Library).
  */
 export function registerFeatureClipSidebar(): void {
-	// Server-side dev-mode flag — synchronous read, no network. The host
-	// platform decides which environments expose this panel and injects the
-	// flag inline before this script runs. Gate first so production sites
-	// skip the rest of the checks entirely.
+	if ( window.imageStudioData?.canGenerateVideoClips === false ) {
+		return;
+	}
+
 	if ( ! window.imageStudioData?.isDevMode ) {
 		return;
 	}
