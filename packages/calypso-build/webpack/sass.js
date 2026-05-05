@@ -37,7 +37,11 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
-				additionalData: prelude,
+				additionalData: ( content, loaderContext ) => {
+					return prelude && ! loaderContext.resourcePath.endsWith( '.css' )
+						? `${ prelude }${ content }`
+						: content;
+				},
 				api: 'modern',
 				sassOptions: {
 					loadPaths: includePaths,

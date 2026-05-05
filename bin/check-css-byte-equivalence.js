@@ -117,7 +117,7 @@ async function main() {
 		await prepareWorktree( 'head', headDir );
 		await buildTargets( 'head', headDir );
 
-		mismatchCount = compareTargets( baseDir, headDir );
+		mismatchCount = await compareTargets( baseDir, headDir );
 	} finally {
 		if ( args.keepTemp ) {
 			console.log( `Keeping temporary worktrees at ${ tempRoot }` );
@@ -149,7 +149,7 @@ async function buildTargets( label, worktreeDir ) {
 	}
 }
 
-function compareTargets( baseDir, headDir ) {
+async function compareTargets( baseDir, headDir ) {
 	const failures = [];
 	let comparedFiles = 0;
 
@@ -174,6 +174,22 @@ function compareTargets( baseDir, headDir ) {
 		for ( const failure of failures ) {
 			console.error( `- ${ failure.target }/${ failure.file }: ${ failure.message }` );
 		}
+
+		if ( args.diffOutput ) {
+			const diffOutputDirectory = await writeDiffOutput(
+				args.diffOutput,
+				baseDir,
+				headDir,
+				failures
+			);
+			console.error( `\nWrote CSS diff output to ${ diffOutputDirectory }` );
+			console.error( `  Raw files: ${ path.join( diffOutputDirectory, 'base' ) }` );
+			console.error( `             ${ path.join( diffOutputDirectory, 'head' ) }` );
+			console.error( `  Pretty files: ${ path.join( diffOutputDirectory, 'pretty/base' ) }` );
+			console.error( `                ${ path.join( diffOutputDirectory, 'pretty/head' ) }` );
+			console.error( `  Pretty diff: ${ path.join( diffOutputDirectory, 'pretty.diff' ) }` );
+		}
+
 		return failures.length;
 	}
 
@@ -190,6 +206,8 @@ function compareFiles( targetName, baseDir, headDir, files, failures ) {
 			failures.push( {
 				target: targetName,
 				file,
+				baseExists: fs.existsSync( baseFile ),
+				headExists: fs.existsSync( headFile ),
 				message: `missing in ${ fs.existsSync( baseFile ) ? 'head' : 'base' } output`,
 			} );
 			continue;
@@ -202,6 +220,8 @@ function compareFiles( targetName, baseDir, headDir, files, failures ) {
 			failures.push( {
 				target: targetName,
 				file,
+				baseExists: true,
+				headExists: true,
 				message: [
 					`base ${ baseBytes.length } bytes sha256:${ sha256( baseBytes ) }`,
 					`head ${ headBytes.length } bytes sha256:${ sha256( headBytes ) }`,
@@ -217,6 +237,174 @@ function compareFiles( targetName, baseDir, headDir, files, failures ) {
 			) })`
 		);
 	}
+}
+
+async function writeDiffOutput( outputDir, baseDir, headDir, failures ) {
+	const absoluteOutputDir = path.resolve( outputDir );
+	prepareDiffOutputDirectory( absoluteOutputDir );
+
+	const baseOutputDir = path.join( absoluteOutputDir, 'base' );
+	const headOutputDir = path.join( absoluteOutputDir, 'head' );
+	const prettyBaseOutputDir = path.join( absoluteOutputDir, 'pretty/base' );
+	const prettyHeadOutputDir = path.join( absoluteOutputDir, 'pretty/head' );
+	fs.mkdirSync( baseOutputDir, { recursive: true } );
+	fs.mkdirSync( headOutputDir, { recursive: true } );
+	fs.mkdirSync( prettyBaseOutputDir, { recursive: true } );
+	fs.mkdirSync( prettyHeadOutputDir, { recursive: true } );
+
+	const manifest = {
+		base: baseRef,
+		head: headRef,
+		generatedAt: new Date().toISOString(),
+		failures: [],
+	};
+
+	for ( const failure of failures ) {
+		const outputFile = path.join( failure.target, failure.file );
+		const baseFormatError = await copyFailureFile(
+			baseDir,
+			path.join( baseOutputDir, outputFile ),
+			path.join( prettyBaseOutputDir, outputFile ),
+			failure,
+			'base'
+		);
+		const headFormatError = await copyFailureFile(
+			headDir,
+			path.join( headOutputDir, outputFile ),
+			path.join( prettyHeadOutputDir, outputFile ),
+			failure,
+			'head'
+		);
+
+		manifest.failures.push( {
+			target: failure.target,
+			file: failure.file,
+			baseExists: failure.baseExists,
+			headExists: failure.headExists,
+			message: failure.message,
+			...( baseFormatError || headFormatError
+				? {
+						prettyFormatErrors: {
+							...( baseFormatError ? { base: baseFormatError } : {} ),
+							...( headFormatError ? { head: headFormatError } : {} ),
+						},
+				  }
+				: {} ),
+		} );
+	}
+
+	fs.writeFileSync(
+		path.join( absoluteOutputDir, 'manifest.json' ),
+		`${ JSON.stringify( manifest, null, 2 ) }\n`
+	);
+	fs.writeFileSync( path.join( absoluteOutputDir, 'README.md' ), diffOutputReadme() );
+	runDiffCommand( baseOutputDir, headOutputDir, path.join( absoluteOutputDir, 'all.diff' ) );
+	runDiffCommand(
+		prettyBaseOutputDir,
+		prettyHeadOutputDir,
+		path.join( absoluteOutputDir, 'pretty.diff' )
+	);
+
+	return absoluteOutputDir;
+}
+
+function prepareDiffOutputDirectory( directory ) {
+	if ( fs.existsSync( directory ) && fs.readdirSync( directory ).length > 0 ) {
+		throw new Error( `--diff-output directory must be empty: ${ directory }` );
+	}
+
+	fs.mkdirSync( directory, { recursive: true } );
+}
+
+async function copyFailureFile( sourceRoot, destination, prettyDestination, failure, side ) {
+	if ( ! failure[ `${ side }Exists` ] ) {
+		return '';
+	}
+
+	const sourceFile = path.join( sourceRoot, failure.file );
+	fs.mkdirSync( path.dirname( destination ), { recursive: true } );
+	fs.copyFileSync( sourceFile, destination );
+
+	const sourceCss = fs.readFileSync( sourceFile, 'utf8' );
+	let prettyCss = sourceCss;
+
+	try {
+		prettyCss = await formatCss( sourceCss );
+	} catch ( error ) {
+		prettyCss = sourceCss;
+		return writePrettyFile( prettyDestination, prettyCss, error.message );
+	}
+
+	return writePrettyFile( prettyDestination, prettyCss );
+}
+
+async function formatCss( css ) {
+	const prettier = require( 'prettier' );
+
+	return prettier.format( css, {
+		parser: 'css',
+		printWidth: 100,
+	} );
+}
+
+function writePrettyFile( destination, css, formatError = '' ) {
+	fs.mkdirSync( path.dirname( destination ), { recursive: true } );
+	fs.writeFileSync( destination, css );
+
+	return formatError;
+}
+
+function runDiffCommand( baseOutputDir, headOutputDir, diffFile ) {
+	const diffFileDescriptor = fs.openSync( diffFile, 'w' );
+
+	try {
+		const result = spawnSync(
+			'git',
+			[
+				'diff',
+				'--no-index',
+				'--no-color',
+				'--',
+				path.relative( path.dirname( diffFile ), baseOutputDir ),
+				path.relative( path.dirname( diffFile ), headOutputDir ),
+			],
+			{
+				cwd: path.dirname( diffFile ),
+				encoding: 'utf8',
+				stdio: [ 'ignore', diffFileDescriptor, 'pipe' ],
+			}
+		);
+
+		if ( result.error ) {
+			throw result.error;
+		}
+
+		if ( result.status !== 0 && result.status !== 1 ) {
+			throw new Error(
+				`Command failed: git diff --no-index${ result.stderr ? `\n${ result.stderr.trim() }` : '' }`
+			);
+		}
+	} finally {
+		fs.closeSync( diffFileDescriptor );
+	}
+}
+
+function diffOutputReadme() {
+	return `# CSS Byte Equivalence Diff Output
+
+This directory contains only CSS files that failed the byte-equivalence check.
+
+- \`base/\`: generated CSS from ${ baseRef }
+- \`head/\`: generated CSS from ${ headRef }
+- \`pretty/base/\`: Prettier-formatted generated CSS from ${ baseRef }
+- \`pretty/head/\`: Prettier-formatted generated CSS from ${ headRef }
+- \`manifest.json\`: metadata for each mismatch
+- \`all.diff\`: unified diff for all copied mismatches
+- \`pretty.diff\`: unified diff for all formatted mismatches
+
+Open \`pretty/base/\` and \`pretty/head/\` in a directory diff viewer for human review.
+Use \`base/\`, \`head/\`, and \`all.diff\` when you need the exact generated bytes.
+`;
 }
 
 function addWorktree( directory, commit ) {
@@ -363,6 +551,7 @@ function parseArgs( argv ) {
 		allCss: false,
 		buildCommand: '',
 		cssFiles: [],
+		diffOutput: '',
 		head: '',
 		help: false,
 		installCommand: '',
@@ -384,6 +573,8 @@ function parseArgs( argv ) {
 			parsed.buildCommand = requireValue( argv, ++index, arg );
 		} else if ( arg === '--css-file' ) {
 			parsed.cssFiles.push( requireValue( argv, ++index, arg ) );
+		} else if ( arg === '--diff-output' ) {
+			parsed.diffOutput = requireValue( argv, ++index, arg );
 		} else if ( arg === '--head' ) {
 			parsed.head = requireValue( argv, ++index, arg );
 		} else if ( arg === '--help' || arg === '-h' ) {
@@ -479,6 +670,8 @@ Options:
   --css-file <path>         CSS output to compare for --build-command mode. Can be repeated.
                             Defaults to ${ DEFAULT_CSS_FILES.join( ' and ' ) } in custom mode.
   --all-css                 Compare every .css file under public/ in --build-command mode.
+  --diff-output <dir>       Write base/head copies, pretty copies, a manifest, and diffs.
+                            The directory must be empty.
   --install-command <cmd>   Install command. Default: "yarn install --immutable".
   --no-install              Skip dependency installation in the temporary worktrees.
   --keep-temp               Keep temporary worktrees for inspection.
@@ -487,6 +680,7 @@ Options:
 Examples:
   node bin/check-css-byte-equivalence.js
   node bin/check-css-byte-equivalence.js --target notifications --target o2-blocks
+  node bin/check-css-byte-equivalence.js --target help-center --diff-output .cache/css-diffs
   node bin/check-css-byte-equivalence.js --base trunk --head mixed-decl-scss-2
   node bin/check-css-byte-equivalence.js --build-command "yarn run build-client" --all-css` );
 }
