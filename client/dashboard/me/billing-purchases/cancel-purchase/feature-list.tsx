@@ -65,7 +65,8 @@ const CancelPurchaseFeatureList = ( {
 	// When the split-cancel-remove flag is on, use client-side feature overrides
 	// instead of the server-provided list. Falls back to API features when the
 	// override returns null (no entries yet for this product category).
-	const overrideFeatures = config.isEnabled( 'purchases/split-cancel-remove' )
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
+	const overrideFeatures = isSplitEnabled
 		? getOverrideCancellationFeatures( purchase )
 		: null;
 
