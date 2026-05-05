@@ -316,6 +316,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( {
 			success: true,
 			contentBefore: 'The council voted last Tuesday on the procedural matter.',
+			contentAfter: 'The council voted on Tuesday on the procedural matter.',
 		} );
 
 		render( <ReviewMediation { ...editsPayload } /> );
@@ -332,7 +333,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 		expect( mockUndoBlockEdit ).toHaveBeenCalledWith(
 			'b1',
-			'The council voted last Tuesday on the procedural matter.'
+			'The council voted last Tuesday on the procedural matter.',
+			'The council voted on Tuesday on the procedural matter.'
 		);
 	} );
 
@@ -340,6 +342,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( {
 			success: true,
 			contentBefore: 'The council voted last Tuesday on the procedural matter.',
+			contentAfter: 'The council voted on Tuesday on the procedural matter.',
 		} );
 		mockUndoBlockEdit.mockReturnValueOnce( false ).mockReturnValueOnce( true );
 
@@ -438,6 +441,87 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( layoutElement.classList.contains( 'is-focus-mode' ) ).toBe( true );
 	} );
 
+	it( 'maps block_index against the recursive flattened block tree', async () => {
+		mockBlocks = [
+			{
+				clientId: 'empty-wrapper',
+				attributes: {},
+				innerBlocks: [
+					{
+						clientId: 'ignored-nested',
+						name: 'core/paragraph',
+						attributes: { content: 'Ignored nested paragraph.' },
+					},
+				],
+			},
+			{
+				clientId: 'group-0',
+				name: 'core/group',
+				attributes: {},
+				innerBlocks: [
+					{
+						clientId: 'nested-1',
+						name: 'core/paragraph',
+						attributes: { content: 'Nested paragraph text.' },
+					},
+				],
+			},
+		];
+		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
+
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'Nested paragraph text.',
+							suggested_text: 'Updated nested paragraph text.',
+							rationale: 'Nested block edit.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+		} );
+
+		expect( mockApplyReviewEdit ).toHaveBeenCalledWith(
+			'nested-1',
+			'Updated nested paragraph text.',
+			undefined,
+			'Nested paragraph text.'
+		);
+	} );
+
+	it( 'disables Accept when the source text no longer matches the block content', () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'outdated text',
+							suggested_text: 'fresh text',
+							rationale: 'Avoid stale source edits.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const accept = screen.getByTitle( 'Needs manual edit — source text changed' );
+		expect( accept ).toBeDisabled();
+		fireEvent.click( accept );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'collapses the card on Dismiss without calling applyReviewEdit', () => {
 		render( <ReviewMediation { ...editsPayload } /> );
 
@@ -466,6 +550,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 						reviewer_name: 'Marcus',
 						label: "Marcus's wording",
 						block_index: 1,
+						current_text: 'voted last Tuesday',
 						text: 'voted softly on Tuesday',
 						rationale: '',
 					},
@@ -474,6 +559,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 						reviewer_name: null,
 						label: 'AI resolution',
 						block_index: 1,
+						current_text: 'voted last Tuesday',
 						text: 'voted on Tuesday',
 						rationale: '',
 					},
@@ -495,7 +581,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'b1',
 			'voted softly on Tuesday',
 			undefined,
-			undefined
+			'voted last Tuesday'
 		);
 		await waitFor( () => {
 			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
@@ -515,7 +601,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'b1',
 			'voted on Tuesday',
 			undefined,
-			undefined
+			'voted last Tuesday'
 		);
 	} );
 
@@ -523,6 +609,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( {
 			success: true,
 			contentBefore: 'The council voted last Tuesday on the procedural matter.',
+			contentAfter: 'The council voted on Tuesday on the procedural matter.',
 		} );
 		mockUndoBlockEdit.mockReturnValueOnce( false ).mockReturnValueOnce( true );
 
@@ -538,6 +625,11 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 
 		fireEvent.click( screen.getByText( 'Undo' ) );
 
+		expect( mockUndoBlockEdit ).toHaveBeenCalledWith(
+			'b1',
+			'The council voted last Tuesday on the procedural matter.',
+			'The council voted on Tuesday on the procedural matter.'
+		);
 		expect( mockUndoBlockEdit ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
 		expect(
@@ -590,6 +682,83 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'disables conflict candidates without exact source text', () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Procedural framing',
+							positions: [],
+							guideline_anchor: null,
+							recommended_resolution: 'Use the AI wording.',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 1,
+									text: 'voted on Tuesday',
+									rationale: '',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const acceptAi = screen.getByTitle( 'Needs manual edit — no exact source text' );
+		expect( acceptAi ).toBeDisabled();
+		fireEvent.click( acceptAi );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'disables conflict candidates when the source text appears more than once', () => {
+		mockBlocks = [
+			{
+				clientId: 'repeat',
+				name: 'core/paragraph',
+				attributes: { content: 'Use neutral language. Use neutral language.' },
+			},
+		];
+
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Repeated source text',
+							positions: [],
+							guideline_anchor: null,
+							recommended_resolution: 'Use the AI wording.',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 0,
+									current_text: 'Use neutral language.',
+									text: 'Use clearer neutral language.',
+									rationale: '',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		const acceptAi = screen.getByTitle( 'Needs manual edit — source text appears more than once' );
+		expect( acceptAi ).toBeDisabled();
+		fireEvent.click( acceptAi );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+	} );
 } );
 
 describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
@@ -616,6 +785,7 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 									reviewer_name: null,
 									label: 'AI',
 									block_index: 1,
+									current_text: 'voted last Tuesday',
 									text: 'AI rewrite',
 									rationale: '',
 								},
@@ -641,7 +811,7 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 					suggested_edits: [
 						{
 							block_index: 2,
-							current_text: '',
+							current_text: 'Funding',
 							suggested_text: 'tighter copy',
 							rationale: '',
 							supported_by_reviewers: [],
@@ -672,9 +842,15 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 			'b1',
 			'AI rewrite',
 			undefined,
-			undefined
+			'voted last Tuesday'
 		);
-		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith( 2, 'b2', 'tighter copy', undefined, '' );
+		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith(
+			2,
+			'b2',
+			'tighter copy',
+			undefined,
+			'Funding'
+		);
 
 		// Footer disappears once everything is accepted (totalPendingCount === 0).
 		await waitFor( () => {

@@ -329,7 +329,12 @@ export function handleUpdateBlockContent( input: any ): any {
 				} );
 			}
 
-			resolve( { success: true, contentBefore: latestSnapshot.content, returnToAgent: false } );
+			resolve( {
+				success: true,
+				contentBefore: latestSnapshot.content,
+				contentAfter: nextContent,
+				returnToAgent: false,
+			} );
 		}, 800 );
 	} );
 }
@@ -350,6 +355,7 @@ export async function applyReviewEdit(
 ): Promise< {
 	success: boolean;
 	contentBefore?: string;
+	contentAfter?: string;
 	error?: string;
 	returnToAgent?: boolean;
 } > {
@@ -359,16 +365,26 @@ export async function applyReviewEdit(
 /**
  * Revert a block's content to a pre-accept snapshot. Used by ReviewMediation's
  * per-card Undo to actually undo the mutation, not just flip UI state.
- * Note: this writes the snapshot unconditionally, so any unrelated edits made
- * to the same block after Accept will be clobbered. Acceptable scope for the
- * card-Undo affordance; cross-block history is still owned by Gutenberg.
+ * When `expectedContent` is supplied, only restore if the block still contains
+ * the content this row applied. This avoids clobbering later accepted edits on
+ * the same block.
  */
-export function undoBlockEdit( clientId: string, contentBefore: string ): boolean {
+export function undoBlockEdit(
+	clientId: string,
+	contentBefore: string,
+	expectedContent?: string
+): boolean {
 	const blockEditor = ( window as any ).wp?.data?.dispatch?.( 'core/block-editor' );
 	if ( ! blockEditor?.updateBlockAttributes ) {
 		return false;
 	}
 	try {
+		if ( expectedContent !== undefined ) {
+			const snapshot = getBlockSnapshot( clientId );
+			if ( ! snapshot || snapshot.content !== expectedContent ) {
+				return false;
+			}
+		}
 		blockEditor.updateBlockAttributes( clientId, { content: contentBefore } );
 		return true;
 	} catch {

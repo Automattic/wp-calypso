@@ -15,12 +15,13 @@ export interface BlockSnapshot {
 	name?: string;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	attributes?: Record< string, any >;
+	innerBlocks?: BlockSnapshot[];
 }
 
 interface BlockRefProps {
 	/** 0-based block index from the mediation payload. Null = post-wide. */
 	index: number | null;
-	/** Flat list of top-level blocks from `getBlocks()`. */
+	/** Flat pre-order block list from the mediator/editor block tree. */
 	blocks: BlockSnapshot[];
 	/** Called on click for in-bounds refs; a no-op when out of bounds. */
 	onFocus?: ( index: number ) => void;
@@ -108,7 +109,7 @@ function getBlockLabel( block: BlockSnapshot ): string {
  * Render a block reference.
  * @param           props             BlockRefProps.
  * @param {number}  props.index       0-based block index, or null for post-wide.
- * @param           props.blocks      Flat block snapshot list from `getBlocks()`.
+ * @param           props.blocks      Flat pre-order block snapshot list.
  * @param           props.onFocus     Optional click handler; when omitted the ref renders as a plain span.
  * @param {string}  props.className   Optional extra class name.
  * @returns React element.

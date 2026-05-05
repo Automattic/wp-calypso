@@ -11,6 +11,7 @@ import { act, render } from '@testing-library/react';
 import React from 'react';
 import ReviewMediation from './components/review-mediation';
 import TitlePicker from './components/title-picker';
+import { undoBlockEdit } from './utils/block-actions';
 import {
 	applyReviewEdit,
 	findBlockElement,
@@ -388,7 +389,11 @@ describe( 'applyReviewEdit', () => {
 		jest.advanceTimersByTime( 1000 );
 		const result = await promise;
 
-		expect( result ).toMatchObject( { success: true } );
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'original block content',
+			contentAfter: 'new text',
+		} );
 		expect( blockUpdates ).toEqual( [
 			{
 				clientId: '550e8400-e29b-41d4-a716-446655440000',
@@ -460,7 +465,12 @@ describe( 'applyReviewEdit', () => {
 			'voted last Tuesday'
 		);
 		jest.advanceTimersByTime( 1000 );
-		await promise;
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			contentBefore: 'The board voted last Tuesday on the proposal.',
+			contentAfter: 'The board voted on Tuesday on the proposal.',
+		} );
 
 		expect( blockUpdates ).toEqual( [
 			{
@@ -493,6 +503,7 @@ describe( 'applyReviewEdit', () => {
 		expect( result ).toMatchObject( {
 			success: true,
 			contentBefore: 'Updated intro. The board voted last Tuesday on the proposal.',
+			contentAfter: 'Updated intro. The board voted on Tuesday on the proposal.',
 		} );
 		expect( blockUpdates ).toEqual( [
 			{
@@ -626,6 +637,41 @@ describe( 'applyReviewEdit', () => {
 		const result = await promise;
 
 		expect( result ).toMatchObject( { success: false } );
+	} );
+
+	it( 'undoBlockEdit restores only when the expected content still matches', () => {
+		const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'The board voted on Tuesday.' },
+			},
+		} );
+
+		const restored = undoBlockEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'The board voted last Tuesday.',
+			'The board voted on Tuesday.'
+		);
+
+		expect( restored ).toBe( true );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'The board voted last Tuesday.' },
+			},
+		] );
+
+		blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content =
+			'The board voted on Wednesday.';
+
+		const blocked = undoBlockEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'The board voted last Tuesday.',
+			'The board voted on Tuesday.'
+		);
+
+		expect( blocked ).toBe( false );
+		expect( blockUpdates ).toHaveLength( 1 );
 	} );
 } );
 
