@@ -338,6 +338,7 @@ export class MagicLogin extends Component {
 			<OneLoginLayout
 				isJetpack={ isJetpackLogin }
 				isFromJetpackConnector={ isFromJetpackConnector }
+				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 				connectorPlugins={ connectorPlugins }
 			>
 				{ mainContent }
@@ -389,14 +390,20 @@ const MagicLoginWithContext = ( props ) => {
 	);
 };
 
-export const getConnectionFlowFromRedirectTo = ( redirectToOriginal ) => {
+export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
 	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
-	const from = redirectToParams.get( 'from' );
-	const plugins = redirectToParams.get( 'plugins' );
+	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
+	const isFromJetpackConnector = from === 'jetpack-connector';
+	const rawPlugins = isFromJetpackConnector
+		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
+		: '';
 	return {
 		isUnifiedConnectionFlow: [ 'jetpack-onboarding', 'jetpack-connector' ].includes( from ),
-		isFromJetpackConnector: 'jetpack-connector' === from,
-		connectorPlugins: plugins ? plugins.split( ',' ).filter( Boolean ) : [],
+		isFromJetpackConnector,
+		connectorPlugins: rawPlugins
+			.split( ',' )
+			.map( ( s ) => s.trim() )
+			.filter( Boolean ),
 	};
 };
 
@@ -405,7 +412,7 @@ const mapState = ( state ) => {
 	const currentQuery = getCurrentQueryArguments( state );
 	const initialQuery = getInitialQueryArguments( state );
 	const redirectToOriginal = getRedirectToOriginal( state );
-	const connectorParams = getConnectionFlowFromRedirectTo( redirectToOriginal );
+	const connectorParams = getConnectionFlowFromRedirectTo( redirectToOriginal, currentQuery );
 
 	return {
 		locale: getCurrentLocaleSlug( state ),
