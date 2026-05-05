@@ -30,8 +30,15 @@ export class SiteSelectComponent {
 	 * @returns {Promise<boolean>} Whether the site selector is shown.
 	 */
 	async isSiteSelectorVisible(): Promise< boolean > {
-		await this.page.waitForLoadState( 'load' );
-		return await this.page.isVisible( ':has-text("Select a site")' );
+		try {
+			await this.page
+				.locator( ':has-text("Select a site")' )
+				.first()
+				.waitFor( { state: 'visible', timeout: 5000 } );
+			return true;
+		} catch {
+			return false;
+		}
 	}
 
 	/**
