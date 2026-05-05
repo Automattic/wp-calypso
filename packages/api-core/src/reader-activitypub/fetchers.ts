@@ -72,16 +72,13 @@ export interface CompleteFediverseConnectionParams {
 
 export async function completeFediverseConnection(
 	params: CompleteFediverseConnectionParams
-): Promise< { connection: FediverseConnection } > {
+): Promise< FediverseConnection > {
 	try {
-		// The upstream returns `{ connection: FediverseConnection }` matching the
-		// mastodon complete-connection shape. We cast directly to that wrapper
-		// rather than rebundling at the fetcher level.
 		return ( await wpcom.req.post( {
 			path: '/reader/activitypub/connections',
 			apiNamespace: NAMESPACE,
 			body: { step: 'complete', ...params },
-		} ) ) as { connection: FediverseConnection };
+		} ) ) as FediverseConnection;
 	} catch ( raw ) {
 		throw classifyFediverseError( raw );
 	}

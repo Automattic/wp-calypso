@@ -45,7 +45,7 @@ export function FediverseOauthCallbackView( { query }: Props ) {
 		complete.mutate(
 			{ code, state },
 			{
-				onSuccess: ( { connection } ) => {
+				onSuccess: ( connection ) => {
 					clearOauthState();
 					reduxDispatch(
 						trackFediverseEvent( 'CONNECT_COMPLETED', { connection_id: connection.id } )

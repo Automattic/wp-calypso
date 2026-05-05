@@ -72,13 +72,9 @@ export function useAuthorizeFediverseConnectionMutation() {
 
 export function useCompleteFediverseConnectionMutation() {
 	const client = useQueryClient();
-	return useMutation<
-		{ connection: FediverseConnection },
-		FediverseError,
-		CompleteFediverseConnectionParams
-	>( {
+	return useMutation< FediverseConnection, FediverseError, CompleteFediverseConnectionParams >( {
 		mutationFn: completeFediverseConnection,
-		onSuccess: ( { connection } ) => {
+		onSuccess: ( connection ) => {
 			// Seed the list cache synchronously so the route we `page.replace`
 			// to next can resolve the new connection without waiting for a
 			// refetch. Without this, the account view reads the stale cached

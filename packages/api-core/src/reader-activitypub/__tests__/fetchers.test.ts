@@ -97,7 +97,7 @@ describe( 'fediverse activitypub fetchers', () => {
 		expect( res.authorize_url ).toContain( 'authorize' );
 	} );
 
-	it( 'completeFediverseConnection posts step=complete and returns the connection wrapper', async () => {
+	it( 'completeFediverseConnection posts step=complete and returns the connection', async () => {
 		nock( BASE )
 			.post( '/wpcom/v2/reader/activitypub/connections', {
 				step: 'complete',
@@ -105,18 +105,16 @@ describe( 'fediverse activitypub fetchers', () => {
 				state: 'abc',
 			} )
 			.reply( 200, {
-				connection: {
-					id: 99,
-					site_host: 'example.wordpress.com',
-					handle: '@alice@example.wordpress.com',
-					avatar: 'https://cdn/avatar.png',
-					actor_url: 'https://example.wordpress.com/wp-json/activitypub/1.0/users/1',
-					blog_id: 123,
-					actor_type: 'user',
-				},
+				id: 99,
+				site_host: 'example.wordpress.com',
+				handle: '@alice@example.wordpress.com',
+				avatar: 'https://cdn/avatar.png',
+				actor_url: 'https://example.wordpress.com/wp-json/activitypub/1.0/users/1',
+				blog_id: 123,
+				actor_type: 'user',
 			} );
 		const res = await completeFediverseConnection( { code: 'xyz', state: 'abc' } );
-		expect( res.connection.id ).toBe( 99 );
+		expect( res.id ).toBe( 99 );
 	} );
 
 	it( 'completeFediverseConnection classifies ERR_AUTH_REQUIRED as auth_required', async () => {

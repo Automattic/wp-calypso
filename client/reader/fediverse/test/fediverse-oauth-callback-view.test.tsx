@@ -86,11 +86,8 @@ describe( 'FediverseOauthCallbackView', () => {
 		saveOauthState( { state: 'abc', blog_id: 123 } );
 
 		mockMutate.mockImplementation(
-			(
-				_params: unknown,
-				{ onSuccess }: { onSuccess: ( data: { connection: { id: number } } ) => void }
-			) => {
-				onSuccess( { connection: { id: 99 } } );
+			( _params: unknown, { onSuccess }: { onSuccess: ( data: { id: number } ) => void } ) => {
+				onSuccess( { id: 99 } );
 			}
 		);
 
@@ -106,11 +103,8 @@ describe( 'FediverseOauthCallbackView', () => {
 		saveOauthState( { state: 'abc', blog_id: 123 } );
 
 		mockMutate.mockImplementation(
-			(
-				_params: unknown,
-				{ onSuccess }: { onSuccess: ( data: { connection: { id: number } } ) => void }
-			) => {
-				onSuccess( { connection: { id: 99 } } );
+			( _params: unknown, { onSuccess }: { onSuccess: ( data: { id: number } ) => void } ) => {
+				onSuccess( { id: 99 } );
 			}
 		);
 
@@ -129,12 +123,9 @@ describe( 'FediverseOauthCallbackView', () => {
 		let callCount = 0;
 
 		mockMutate.mockImplementation(
-			(
-				_params: unknown,
-				{ onSuccess }: { onSuccess: ( data: { connection: { id: number } } ) => void }
-			) => {
+			( _params: unknown, { onSuccess }: { onSuccess: ( data: { id: number } ) => void } ) => {
 				callCount++;
-				onSuccess( { connection: { id: 99 } } );
+				onSuccess( { id: 99 } );
 			}
 		);
 
