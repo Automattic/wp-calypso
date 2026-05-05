@@ -1,5 +1,5 @@
-import { CheckoutModal } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { Dialog } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -74,23 +74,28 @@ export const LeaveCheckoutModal = ( {
 }: ReturnType< typeof useCheckoutLeaveModal > ) => {
 	const translate = useTranslate();
 
-	const modalTitleText = translate( 'You are about to leave checkout with items in your cart' );
-	const modalBodyText = translate( 'You can leave the items in the cart or empty the cart.' );
+	const modalTitleText = translate( 'Save your cart for later?' );
 	/* translators: The label to a button that will exit checkout without removing items from the shopping cart. */
-	const modalPrimaryText = translate( 'Leave items' );
+	const modalPrimaryText = translate( 'Save cart' );
 	/* translators: The label to a button that will remove all items from the shopping cart. */
 	const modalSecondaryText = translate( 'Empty cart' );
 
 	return (
-		<CheckoutModal
-			title={ modalTitleText }
-			copy={ modalBodyText }
-			closeModal={ () => setIsModalVisible( false ) }
-			isVisible={ isModalVisible }
-			primaryButtonCTA={ modalPrimaryText }
-			primaryAction={ closeAndLeave }
-			secondaryButtonCTA={ modalSecondaryText }
-			secondaryAction={ clearCartAndLeave }
-		/>
+		<Dialog.Root open={ isModalVisible } onOpenChange={ setIsModalVisible }>
+			<Dialog.Popup size="small">
+				<Dialog.Header>
+					<Dialog.Title>{ modalTitleText }</Dialog.Title>
+					<Dialog.CloseIcon />
+				</Dialog.Header>
+				<Dialog.Footer>
+					<Dialog.Action variant="outline" tone="neutral" onClick={ () => clearCartAndLeave() }>
+						{ modalSecondaryText }
+					</Dialog.Action>
+					<Dialog.Action variant="solid" onClick={ () => closeAndLeave() }>
+						{ modalPrimaryText }
+					</Dialog.Action>
+				</Dialog.Footer>
+			</Dialog.Popup>
+		</Dialog.Root>
 	);
 };
