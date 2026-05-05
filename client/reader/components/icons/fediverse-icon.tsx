@@ -17,11 +17,10 @@ export function ReaderFediverseIcon() {
 			<text
 				x="12"
 				y="12"
-				dy="0.05em"
 				textAnchor="middle"
 				dominantBaseline="central"
-				fontSize="22"
-				fontWeight="600"
+				fontSize="16"
+				fontWeight="700"
 				fill="currentColor"
 			>
 				⁂
