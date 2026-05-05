@@ -16,7 +16,7 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
-import Stream from 'calypso/reader/stream';
+import Stream from 'calypso/reader/stream-v2';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';

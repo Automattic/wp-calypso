@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Stream from 'calypso/reader/stream';
+import Stream from 'calypso/reader/stream-v2';
 import ConversationsIntro from './intro';
 import './stream.scss';
 
