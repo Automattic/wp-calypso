@@ -63,6 +63,8 @@ export interface StreamV2Props {
 	emptyContent?: () => React.ReactNode;
 	intro?: () => React.ReactNode;
 	streamHeader?: () => React.ReactNode;
+	sidebarTabTitle?: string;
+	streamSidebar?: ( isWideLayout: boolean ) => React.ReactNode;
 	placeholderFactory?: ( args: { key: string } ) => React.ReactElement | null;
 	transformStreamItems?: ( postKey: PostKey ) => PostKey;
 	trackScrollPage: ( pageId: number ) => void;
@@ -92,6 +94,7 @@ export function StreamV2( props: StreamV2Props ) {
 		emptyContent = defaultEmptyContent,
 		intro,
 		streamHeader,
+		streamSidebar,
 		placeholderFactory,
 		transformStreamItems,
 		trackScrollPage,
@@ -494,9 +497,11 @@ export function StreamV2( props: StreamV2Props ) {
 	// Compose the body.
 	let body: React.ReactNode;
 	let showingStream = false;
+	let baseClassNames = [ 'following', className ].filter( Boolean ).join( ' ' );
+	const sidebarContent =
+		typeof streamSidebar === 'function' ? streamSidebar( Boolean( wideLayout ) ) : null;
 
 	const hasNoPosts = ! isLoading && items.length === 0 && ! error;
-	const baseClassNames = [ 'following', className ].filter( Boolean ).join( ' ' );
 
 	if ( error ) {
 		body = (
@@ -510,29 +515,56 @@ export function StreamV2( props: StreamV2Props ) {
 		);
 	} else if ( hasNoPosts ) {
 		const renderedEmpty = emptyContent();
-		body = renderedEmpty ?? ( hideDefaultEmptyContentIfMissing ? null : null );
+		const emptyBody = renderedEmpty ?? ( hideDefaultEmptyContentIfMissing ? null : null );
+		if ( wideLayout && sidebarContent ) {
+			body = (
+				<div className="stream__two-column">
+					<div className="reader__content">{ emptyBody }</div>
+					<div className="stream__right-column">{ sidebarContent }</div>
+				</div>
+			);
+			baseClassNames = [ 'is-two-columns', baseClassNames ].filter( Boolean ).join( ' ' );
+		} else {
+			body = emptyBody;
+		}
 	} else {
 		showingStream = true;
-		body = (
-			<div className="reader__content">
-				{ streamHeader?.() }
-				<InfiniteList
-					ref={ handleListContextRef }
-					items={ items }
-					lastPage={ lastPage }
-					fetchingNextPage={ isFetching }
-					guessedItemHeight={ GUESSED_POST_HEIGHT }
-					fetchNextPage={ handleFetchNextPage }
-					getItemRef={ getPostRef }
-					renderItem={ renderPost }
-					renderLoadingPlaceholders={ renderLoadingPlaceholders }
-					className="stream__list"
-					context={ listContext }
-					selectedItem={ selected }
-					restoreScroll={ restoreScroll }
-				/>
-			</div>
+		const streamList = (
+			<InfiniteList
+				ref={ handleListContextRef }
+				items={ items }
+				lastPage={ lastPage }
+				fetchingNextPage={ isFetching }
+				guessedItemHeight={ GUESSED_POST_HEIGHT }
+				fetchNextPage={ handleFetchNextPage }
+				getItemRef={ getPostRef }
+				renderItem={ renderPost }
+				renderLoadingPlaceholders={ renderLoadingPlaceholders }
+				className="stream__list"
+				context={ listContext }
+				selectedItem={ selected }
+				restoreScroll={ restoreScroll }
+			/>
 		);
+		if ( wideLayout && sidebarContent ) {
+			body = (
+				<div className="stream__two-column">
+					<div className="reader__content">
+						{ streamHeader?.() }
+						{ streamList }
+					</div>
+					<div className="stream__right-column">{ sidebarContent }</div>
+				</div>
+			);
+			baseClassNames = [ 'is-two-columns', baseClassNames ].filter( Boolean ).join( ' ' );
+		} else {
+			body = (
+				<div className="reader__content">
+					{ streamHeader?.() }
+					{ streamList }
+				</div>
+			);
+		}
 	}
 
 	const inner = (

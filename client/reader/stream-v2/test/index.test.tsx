@@ -224,6 +224,17 @@ describe( 'StreamV2 — render states', () => {
 		expect( screen.getByText( 'No new posts.' ) ).toBeVisible();
 	} );
 
+	it( 'renders stream sidebar in wide layout, including empty state', async () => {
+		mockLikesEndpoint( [] );
+		renderStream( {
+			wideLayout: true,
+			streamSidebar: () => <div data-testid="stream-sidebar">sidebar</div>,
+		} );
+
+		await waitFor( () => expect( screen.getByText( "You're all caught up." ) ).toBeVisible() );
+		expect( screen.getByTestId( 'stream-sidebar' ) ).toBeVisible();
+	} );
+
 	it( 'renders posts once the API responds', async () => {
 		mockLikesEndpoint( [ apiPost( 10 ), apiPost( 20 ) ] );
 		renderStream();
