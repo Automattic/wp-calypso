@@ -116,7 +116,27 @@ describe( 'JetpackAuthorize', () => {
 			/>
 		);
 
-		expect( container ).toMatchSnapshot();
+		// Connector visual treatment: wrapper class is applied to the main element.
+		expect(
+			container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+		).toBeInTheDocument();
+
+		// H1 carries the unified-flow account copy.
+		expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
+			'Connect your account'
+		);
+
+		// Subtitle (BrandHeader description) reflects the store wording when a
+		// Woo plugin is present in the active plugin list.
+		expect(
+			screen.getByText( 'Your store is registered with WordPress.com.' )
+		).toBeInTheDocument();
+
+		// Composite Woo + Jetpack logo is rendered (vs. the Jetpack-only fallback).
+		expect( container.querySelector( '.connect-screen-brand-header__logo-image' ) ).toHaveAttribute(
+			'src',
+			'jetpack-connect-woo.svg'
+		);
 	} );
 
 	describe( 'isSso', () => {
