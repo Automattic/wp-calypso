@@ -294,7 +294,7 @@ function describeToolCall(
 				return 'Closed image picker';
 			}
 			if ( action === 'upload' ) {
-				return `${ errorPrefix }Opened file upload`;
+				return `${ errorPrefix }Opened upload prompt`;
 			}
 			return `${ errorPrefix }Image picker`;
 		}

@@ -14,8 +14,8 @@ export const pickImageToolDefinition = {
 		'Do NOT call insert_block_tool or any other tool after "select" — the image is already inserted/set. ' +
 		'Use action "close" to dismiss without selecting. ' +
 		'Use action "upload" when the user wants to upload a new image from their computer — ' +
-		'this opens the OS file picker (the user must manually select the file), then the image ' +
-		'is automatically uploaded and inserted. ' +
+		'a prompt appears where they tap "Choose image file" once (required by browsers); then ' +
+		'the image is uploaded and inserted automatically. ' +
 		'When the user asks to insert an image, add a photo, set the featured image, or change an image, call this tool with action "open" first.',
 	parameters: {
 		type: 'object',
@@ -24,7 +24,7 @@ export const pickImageToolDefinition = {
 				type: 'string',
 				enum: [ 'open', 'select', 'close', 'upload' ],
 				description:
-					'"open" = fetch images and show picker grid. "select" = pick image by number. "close" = dismiss picker. "upload" = open OS file picker to upload a new image.',
+					'"open" = fetch images and show picker grid. "select" = pick image by number. "close" = dismiss picker. "upload" = show upload prompt (user taps once to open files).',
 			},
 			number: {
 				type: 'number',
@@ -313,13 +313,13 @@ export async function executePickImageTool( rawArgs: unknown ) {
 			action: 'upload_dialog_opened',
 			purpose,
 			instruction:
-				'A file picker dialog has been opened. Tell the user to select an image file ' +
-				'from their computer. Once they pick a file it will be uploaded to the media ' +
-				'library and automatically ' +
+				'An upload prompt is on screen. Tell the user they must tap "Choose image file" once ' +
+				'(browsers block fully voice-driven file dialogs). After they pick a file from their ' +
+				'computer it will upload to the media library and automatically ' +
 				( purpose === 'featured_image'
-					? 'set as the featured image'
-					: 'inserted as an image block' ) +
-				'. You will receive a follow-up notification when the upload completes. ' +
+					? 'be set as the featured image'
+					: 'be inserted as an image block' ) +
+				'. You will receive a follow-up when upload finishes or if they cancel. ' +
 				'Do NOT call insert_block_tool — it is handled automatically.',
 		};
 	}

@@ -1,6 +1,7 @@
+import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
 export interface ImagePickerItem {
 	id: number;
@@ -102,23 +103,114 @@ async function uploadFileToMediaLibrary( file: File ): Promise< UploadedMedia > 
 	} ) ) as UploadedMedia;
 }
 
+async function insertUploadedImageBlock( img: ImagePickerItem ) {
+	const wpBlocks = ( window as unknown as { wp?: { blocks?: { createBlock?: unknown } } } ).wp;
+	const createBlock = wpBlocks?.blocks?.createBlock as
+		| ( ( name: string, attrs?: Record< string, unknown > ) => unknown )
+		| undefined;
+	const d = dispatch( 'core/block-editor' ) as unknown as {
+		insertBlock: ( block: unknown ) => void | Promise< unknown >;
+	};
+	if ( ! createBlock || ! d?.insertBlock ) {
+		throw new Error( 'Block editor not available' );
+	}
+	const block = createBlock( 'core/image', {
+		id: img.id,
+		url: img.url,
+		alt: img.alt,
+		caption: '',
+	} );
+	const out = d.insertBlock( block );
+	if ( out && typeof ( out as Promise< unknown > ).then === 'function' ) {
+		await out;
+	}
+}
+
+async function setUploadedFeaturedMedia( mediaId: number ) {
+	const d = dispatch( 'core/editor' ) as unknown as {
+		editPost: ( edits: Record< string, unknown > ) => void | Promise< unknown >;
+	};
+	if ( ! d?.editPost ) {
+		throw new Error( 'Post editor not available' );
+	}
+	const out = d.editPost( { featured_media: mediaId } );
+	if ( out && typeof ( out as Promise< unknown > ).then === 'function' ) {
+		await out;
+	}
+}
+
 /**
- * Hidden file input that lets the pick-image tool trigger an OS file dialog.
- * After the user selects a file it is uploaded to the WP media library and
- * automatically inserted (or set as featured image). The AI is notified via
- * `sendToDictation` so it can acknowledge without duplicating the action.
+ * Upload UI for dictation: browsers block programmatic `.click()` on file inputs when there is
+ * no recent user gesture, and ignore clicks on inputs with `display: none`. We show a short-lived
+ * overlay with a label-linked control so opening the OS picker uses a real tap/click.
  */
 export function DictationFileUpload() {
 	const inputRef = useRef< HTMLInputElement | null >( null );
+	const cancelNotifiedRef = useRef( false );
+	const uploadInputId = useId();
+	const titleId = `${ uploadInputId }-title`;
+	const [ promptOpen, setPromptOpen ] = useState( false );
+
+	useEffect( () => {
+		if ( promptOpen ) {
+			cancelNotifiedRef.current = false;
+		}
+	}, [ promptOpen ] );
+
+	const notifyCancelled = useCallback( () => {
+		if ( cancelNotifiedRef.current ) {
+			return;
+		}
+		cancelNotifiedRef.current = true;
+		const notify = window.sendToDictation;
+		if ( notify ) {
+			void notify(
+				'[Upload cancelled — no file was chosen. Acknowledge briefly and offer to try again.]'
+			);
+		}
+	}, [] );
+
+	const handleCancel = useCallback( () => {
+		setPromptOpen( false );
+		if ( inputRef.current ) {
+			inputRef.current.value = '';
+		}
+		notifyCancelled();
+	}, [ notifyCancelled ] );
+
+	useEffect( () => {
+		if ( ! promptOpen ) {
+			return;
+		}
+		const onKey = ( e: KeyboardEvent ) => {
+			if ( e.key === 'Escape' ) {
+				handleCancel();
+			}
+		};
+		window.addEventListener( 'keydown', onKey );
+		return () => window.removeEventListener( 'keydown', onKey );
+	}, [ promptOpen, handleCancel ] );
+
+	useEffect( () => {
+		const onUploadRequest = () => {
+			if ( inputRef.current ) {
+				inputRef.current.value = '';
+			}
+			setPromptOpen( true );
+		};
+		window.addEventListener( 'dictation-file-upload', onUploadRequest );
+		return () => window.removeEventListener( 'dictation-file-upload', onUploadRequest );
+	}, [] );
 
 	const handleChange = useCallback( async ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		const file = e.target.files?.[ 0 ];
-		// Reset so the same file can be re-selected.
 		e.target.value = '';
 
 		if ( ! file ) {
 			return;
 		}
+
+		setPromptOpen( false );
 
 		const purpose = window.__dictationUploadPurpose || 'block';
 		const notify = window.sendToDictation;
@@ -135,32 +227,10 @@ export function DictationFileUpload() {
 				height: 0,
 			};
 
-			// Reuse the same block-insertion / featured-image helpers via dispatch.
-			const { dispatch } = await import( '@wordpress/data' );
 			if ( purpose === 'featured_image' ) {
-				const d = dispatch( 'core/editor' ) as unknown as {
-					editPost: ( edits: Record< string, unknown > ) => void | Promise< unknown >;
-				};
-				if ( d?.editPost ) {
-					await d.editPost( { featured_media: img.id } );
-				}
+				await setUploadedFeaturedMedia( img.id );
 			} else {
-				const wp = ( window as unknown as { wp?: { blocks?: { createBlock?: unknown } } } ).wp;
-				const createBlock = wp?.blocks?.createBlock as
-					| ( ( name: string, attrs?: Record< string, unknown > ) => unknown )
-					| undefined;
-				const d = dispatch( 'core/block-editor' ) as unknown as {
-					insertBlock: ( block: unknown ) => void | Promise< unknown >;
-				};
-				if ( createBlock && d?.insertBlock ) {
-					const block = createBlock( 'core/image', {
-						id: img.id,
-						url: img.url,
-						alt: img.alt,
-						caption: '',
-					} );
-					await d.insertBlock( block );
-				}
+				await insertUploadedImageBlock( img );
 			}
 
 			if ( notify ) {
@@ -179,21 +249,54 @@ export function DictationFileUpload() {
 		}
 	}, [] );
 
-	useEffect( () => {
-		const onUploadRequest = () => {
-			inputRef.current?.click();
-		};
-		window.addEventListener( 'dictation-file-upload', onUploadRequest );
-		return () => window.removeEventListener( 'dictation-file-upload', onUploadRequest );
-	}, [] );
-
 	return (
-		<input
-			ref={ inputRef }
-			type="file"
-			accept="image/*"
-			style={ { display: 'none' } }
-			onChange={ handleChange }
-		/>
+		<>
+			<input
+				ref={ inputRef }
+				id={ uploadInputId }
+				type="file"
+				accept="image/*"
+				className="dictation-file-upload__input"
+				onChange={ handleChange }
+				tabIndex={ -1 }
+			/>
+			{ promptOpen && (
+				<div className="dictation-file-upload">
+					<button
+						type="button"
+						className="dictation-file-upload__backdrop"
+						aria-label={ __( 'Cancel upload' ) }
+						onClick={ handleCancel }
+					/>
+					<div
+						role="dialog"
+						aria-modal="true"
+						aria-labelledby={ titleId }
+						className="dictation-file-upload__dialog"
+					>
+						<h2 id={ titleId } className="dictation-file-upload__title">
+							{ __( 'Upload an image' ) }
+						</h2>
+						<p className="dictation-file-upload__body">
+							{ __(
+								'Browsers require you to tap the button below once to open your files. Then choose an image — it will upload and be added automatically.'
+							) }
+						</p>
+						<div className="dictation-file-upload__actions">
+							<label htmlFor={ uploadInputId } className="dictation-file-upload__choose">
+								{ __( 'Choose image file' ) }
+							</label>
+							<button
+								type="button"
+								className="dictation-file-upload__cancel"
+								onClick={ handleCancel }
+							>
+								{ __( 'Cancel' ) }
+							</button>
+						</div>
+					</div>
+				</div>
+			) }
+		</>
 	);
 }
