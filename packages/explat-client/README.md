@@ -72,7 +72,7 @@ Checklist for use:
 - [ ] ~~Is `dangerouslyGetExperimentAssignment` wrapped in a try-catch block~~
 - [ ] Are there no `console.log` errors being emitted?
 
-# ExPlat SDK (`ExPlatSdk` namespace)
+## ExPlat SDK (`ExPlatSdk` namespace)
 
 A pure TypeScript port of the WPCOM PHP feature-flag evaluator. Self-contained, byte-deterministic, no I/O — same inputs, same answers, every runtime. Lives in `src/sdk/` and is re-exported from `@automattic/explat-client` under the `ExPlatSdk` namespace so SDK names don't collide with the existing `loadExperimentAssignment` API.
 
