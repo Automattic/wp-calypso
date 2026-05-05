@@ -79,11 +79,17 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 	const [ isEditing, setIsEditing ] = useState( false );
 	const [ saveError, setSaveError ] = useState< string | null >( null );
 	const copyTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+	const inputContainerRef = useRef< HTMLDivElement >( null );
 	// `storedUrl` may be empty on mount if site settings haven't hydrated yet;
 	// once it lands, mirror it into the draft. We flip this ref whenever the
 	// draft is touched (sync, typing, or Replace) so late hydration can never
 	// clobber input the user has already started.
 	const hasInitializedDraft = useRef( !! storedUrl );
+	// Set when Replace is clicked so the post-render effect knows to move
+	// focus into the now-mounted input. We don't trigger on every isEditing
+	// flip — typing also flips it, and grabbing focus mid-keystroke would be
+	// disruptive.
+	const shouldFocusInputRef = useRef( false );
 
 	useEffect(
 		() => () => {
@@ -100,6 +106,17 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 			setDraftUrl( storedUrl );
 		}
 	}, [ storedUrl ] );
+
+	useEffect( () => {
+		if ( ! shouldFocusInputRef.current || ! isEditing ) {
+			return;
+		}
+		shouldFocusInputRef.current = false;
+		const input = inputContainerRef.current?.querySelector( 'input' );
+		input?.focus();
+		// Pre-select so the user can type over the existing URL immediately.
+		input?.select();
+	}, [ isEditing ] );
 
 	const handleCopy = async () => {
 		if ( ! feedUrl || ! navigator.clipboard?.writeText ) {
@@ -287,6 +304,7 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 								aria-label={ translate( 'Replace %(service)s URL', serviceArgs ) as string }
 								onClick={ () => {
 									hasInitializedDraft.current = true;
+									shouldFocusInputRef.current = true;
 									setDraftUrl( storedUrl );
 									setSaveError( null );
 									setIsEditing( true );
@@ -298,7 +316,7 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 					) : (
 						<form className="podcast__submit-step-form" onSubmit={ handleSave }>
 							<HStack spacing={ 2 } alignment="center" className="podcast__submit-step-row">
-								<div className="podcast__submit-step-field">
+								<div className="podcast__submit-step-field" ref={ inputContainerRef }>
 									<TextControl
 										label={ translate( '%(service)s URL', serviceArgs ) as string }
 										hideLabelFromVision
