@@ -19,7 +19,15 @@ describe( 'compressImage', () => {
 			const match = name.match( /(\d+)x(\d+)/ );
 			const width = match ? parseInt( match[ 1 ], 10 ) : 1200;
 			const height = match ? parseInt( match[ 2 ], 10 ) : 800;
-			return new ImageBitmap( width, height );
+			// `new ImageBitmap()` isn't constructible — fabricate an instance whose
+			// prototype satisfies `instanceof ImageBitmap` (jest-canvas-mock's
+			// `drawImage` checks via `instanceof`).
+			const bitmap = Object.assign( Object.create( ImageBitmap.prototype ) as ImageBitmap, {
+				width,
+				height,
+				close: () => {},
+			} );
+			return bitmap;
 		} ) as typeof createImageBitmap;
 	} );
 

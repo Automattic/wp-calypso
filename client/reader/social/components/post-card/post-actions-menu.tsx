@@ -43,6 +43,10 @@ function errorMessageForDelete(
 		case 'target_unavailable':
 		case 'not_found':
 		case 'unknown':
+		case 'blob_too_large':
+		case 'blob_unsupported_type':
+		case 'blob_decode_failed':
+		case 'media_invalid':
 			return t( "Couldn't delete that post. Please try again." ) as string;
 		default:
 			return assertNever( err );
