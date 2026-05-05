@@ -122,14 +122,34 @@ function getDefaultFields( {
 				);
 
 				const planOrder = [
+					// WordPress.com plans, highest tier to lowest.
+					'Enterprise',
+					'100-Year',
 					'Commerce',
 					'Business',
+					'Pro',
 					'Premium',
 					'Personal',
+					'Starter',
+					'Blogger',
 					'Free',
-					'Jetpack Free',
+					// Jetpack plans, highest tier to lowest.
+					'Jetpack Complete',
+					'Security (1TB)',
 					'Security (10GB)',
-					'No Plan',
+					'Akismet',
+					'Backup',
+					'Boost',
+					'Search',
+					'Social',
+					'Stats',
+					'VideoPress',
+					'Growth',
+					'Jetpack Starter',
+					'Jetpack Personal',
+					'Jetpack Premium',
+					'Jetpack Professional',
+					'Jetpack Free',
 				];
 
 				const mapped = Object.entries( elements ).map( ( [ label, value ] ) => ( {
@@ -138,13 +158,25 @@ function getDefaultFields( {
 				} ) );
 
 				return mapped.sort( ( a, b ) => {
+					// "No Plan" always sorts last.
+					if ( a.label === 'No Plan' ) {
+						return 1;
+					}
+					if ( b.label === 'No Plan' ) {
+						return -1;
+					}
+
 					const indexA = planOrder.indexOf( a.label );
 					const indexB = planOrder.indexOf( b.label );
-					// Unknown plans go to the end, before "No Plan"
-					return (
-						( indexA === -1 ? planOrder.length - 1 : indexA ) -
-						( indexB === -1 ? planOrder.length - 1 : indexB )
-					);
+					const rankA = indexA === -1 ? planOrder.length : indexA;
+					const rankB = indexB === -1 ? planOrder.length : indexB;
+
+					if ( rankA !== rankB ) {
+						return rankA - rankB;
+					}
+
+					// Same rank (both unknown): alphabetical by label.
+					return a.label.localeCompare( b.label );
 				} );
 			},
 			filterBy: {
