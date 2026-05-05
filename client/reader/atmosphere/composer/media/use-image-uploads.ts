@@ -55,10 +55,12 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 	// Synchronous slot count. `images.length` only reflects the count
 	// after the next render commits, so two concurrent `addFiles` calls
 	// would both capture the same `images.length` and admit more files
-	// than `max - images.length`. The ref is incremented under the cap
-	// check in `addFiles` (atomic reservation); decrement only happens if
-	// the user removes an image (Task 8), since failed entries still
-	// occupy a slot in the grid.
+	// than `max - images.length`. Each call to `startOne` reserves a slot
+	// (every image, including failed ones, occupies a grid cell), and
+	// `removeImage` releases it. Putting the increment inside `startOne`
+	// — instead of in `addFiles` — means `retryImage` (which calls
+	// `removeImage` to clear the failed entry, then `startOne` for the
+	// fresh attempt) nets to zero capacity change automatically.
 	const slotCountRef = useRef( 0 );
 
 	const update = useCallback( ( id: string, next: ComposerImage ) => {
@@ -74,6 +76,7 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 	const startOne = useCallback(
 		async ( file: File ) => {
 			const localId = newLocalId();
+			slotCountRef.current += 1;
 			setImages( ( cur ) => [ ...cur, { kind: 'compressing', localId, sourceFile: file } ] );
 			let compressed;
 			try {
@@ -135,15 +138,63 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 		async ( files: File[] ) => {
 			// Reserve slots synchronously so back-to-back calls (mobile share
 			// sheet, double-tap) can't both observe the same count and admit
-			// more files than `max`. The ref is the source of truth between
-			// the cap check and React committing the new images.
+			// more files than `max`. The actual increment happens inside
+			// `startOne` per file; we slice here against the live ref so the
+			// second concurrent call sees the first call's reservations.
 			const remainingSlots = opts.max - slotCountRef.current;
 			const accepted = files.slice( 0, Math.max( 0, remainingSlots ) );
-			slotCountRef.current += accepted.length;
 			await Promise.all( accepted.map( startOne ) );
 		},
 		[ opts.max, startOne ]
 	);
+
+	const removeImage = useCallback( ( id: string ) => {
+		setImages( ( cur ) => {
+			const entry = cur.find( ( i ) => i.localId === id );
+			if ( ! entry ) {
+				return cur;
+			}
+			if ( entry.kind !== 'compressing' ) {
+				URL.revokeObjectURL( entry.previewUrl );
+				previewsRef.current.delete( entry.previewUrl );
+			}
+			if ( entry.kind === 'uploading' ) {
+				entry.abort.abort();
+			}
+			slotCountRef.current = Math.max( 0, slotCountRef.current - 1 );
+			return cur.filter( ( i ) => i.localId !== id );
+		} );
+	}, [] );
+
+	const retryImage = useCallback(
+		async ( id: string ) => {
+			const target = images.find( ( i ) => i.localId === id );
+			if ( ! target || target.kind !== 'failed' ) {
+				return;
+			}
+			const sourceFile = target.sourceFile;
+			removeImage( id );
+			await startOne( sourceFile );
+		},
+		[ images, removeImage, startOne ]
+	);
+
+	const setAlt = useCallback( ( id: string, alt: string ) => {
+		setImages( ( cur ) =>
+			cur.map( ( i ) => {
+				if ( i.localId !== id ) {
+					return i;
+				}
+				if ( i.kind === 'uploading' || i.kind === 'uploaded' || i.kind === 'failed' ) {
+					return { ...i, alt };
+				}
+				return i;
+			} )
+		);
+	}, [] );
+
+	const isAllUploaded = images.every( ( i ) => i.kind === 'uploaded' );
+	const isAnyPending = images.some( ( i ) => i.kind === 'compressing' || i.kind === 'uploading' );
 
 	useEffect(
 		() => () => {
@@ -153,5 +204,5 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 		[]
 	);
 
-	return { images, addFiles };
+	return { images, addFiles, removeImage, retryImage, setAlt, isAllUploaded, isAnyPending };
 }
