@@ -224,6 +224,8 @@ export default function SolutionsCardsUpsellStep( {
 				cancel_to: purchaseSettingsUrl,
 		  } )
 		: baseRenewUrl;
+	const yearlySlug = getYearlyPlanByMonthly( purchase.productSlug );
+	const yearlyPlanUrl = yearlySlug ? `/checkout/${ site.slug }/${ yearlySlug }` : undefined;
 
 	const context: CardActionContext = {
 		site,
@@ -231,6 +233,7 @@ export default function SolutionsCardsUpsellStep( {
 		closeDialog,
 		changePlanUrl,
 		renewNowUrl,
+		yearlyPlanUrl,
 		cancellationReason,
 		onClickDowngrade,
 		onSelectSwitchToMonthly: () => {

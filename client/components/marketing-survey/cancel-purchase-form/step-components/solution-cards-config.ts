@@ -1,4 +1,3 @@
-import { getYearlyPlanByMonthly } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -22,6 +21,7 @@ export type CardActionContext = {
 	closeDialog: () => void;
 	changePlanUrl: string;
 	renewNowUrl: string;
+	yearlyPlanUrl?: string;
 	cancellationReason: string;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onSelectSwitchToMonthly?: () => void;
@@ -84,14 +84,10 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		id: 'switch-to-yearly',
 		title: 'Switch to yearly billing',
 		subtitle: 'Pay less over time by switching to an annual plan.',
-		getHref: ( ctx ) => {
-			const yearlySlug = getYearlyPlanByMonthly( ctx.purchase.productSlug );
-			return yearlySlug ? `/checkout/${ ctx.site.slug }/${ yearlySlug }` : undefined;
-		},
+		getHref: ( ctx ) => ctx.yearlyPlanUrl,
 		onClick: ( ctx ) => {
-			const yearlySlug = getYearlyPlanByMonthly( ctx.purchase.productSlug );
-			if ( yearlySlug ) {
-				page( `/checkout/${ ctx.site.slug }/${ yearlySlug }` );
+			if ( ctx.yearlyPlanUrl ) {
+				page( ctx.yearlyPlanUrl );
 				ctx.closeDialog();
 			}
 		},
