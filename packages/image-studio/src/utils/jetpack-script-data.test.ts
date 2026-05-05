@@ -1,36 +1,67 @@
-import { getReelSharePostPath } from './jetpack-script-data';
+import { getConnectionsManagementUrl, getReelSharePostPath } from './jetpack-script-data';
+
+const originalScriptData = ( window as unknown as { JetpackScriptData?: unknown } )
+	.JetpackScriptData;
+
+function setScriptData( value: unknown ): void {
+	( window as unknown as { JetpackScriptData?: unknown } ).JetpackScriptData = value;
+}
+
+afterEach( () => {
+	setScriptData( originalScriptData );
+} );
 
 describe( 'getReelSharePostPath', () => {
-	const originalScriptData = ( window as unknown as { JetpackScriptData?: unknown } )
-		.JetpackScriptData;
-
-	afterEach( () => {
-		( window as unknown as { JetpackScriptData?: unknown } ).JetpackScriptData = originalScriptData;
-	} );
-
 	it( 'returns null when window.JetpackScriptData is undefined', () => {
-		( window as unknown as { JetpackScriptData?: unknown } ).JetpackScriptData = undefined;
+		setScriptData( undefined );
 		expect( getReelSharePostPath() ).toBeNull();
 	} );
 
 	it( 'returns null when social.api_paths.resharePost is missing', () => {
-		( window as unknown as { JetpackScriptData?: unknown } ).JetpackScriptData = {
-			social: { api_paths: {} },
-		};
+		setScriptData( { social: { api_paths: {} } } );
 		expect( getReelSharePostPath() ).toBeNull();
 	} );
 
 	it( 'returns the resharePost path string when present', () => {
-		( window as unknown as { JetpackScriptData?: unknown } ).JetpackScriptData = {
+		setScriptData( {
 			social: { api_paths: { resharePost: '/wpcom/v2/publicize/share-post/{postId}' } },
-		};
+		} );
 		expect( getReelSharePostPath() ).toBe( '/wpcom/v2/publicize/share-post/{postId}' );
 	} );
 
 	it( 'returns null when the path is a non-string value', () => {
-		( window as unknown as { JetpackScriptData?: unknown } ).JetpackScriptData = {
-			social: { api_paths: { resharePost: 42 } },
-		};
+		setScriptData( { social: { api_paths: { resharePost: 42 } } } );
 		expect( getReelSharePostPath() ).toBeNull();
+	} );
+} );
+
+describe( 'getConnectionsManagementUrl', () => {
+	it( 'returns null when window.JetpackScriptData is undefined', () => {
+		setScriptData( undefined );
+		expect( getConnectionsManagementUrl() ).toBeNull();
+	} );
+
+	it( 'returns null when social.urls.connectionsManagementPage is missing', () => {
+		setScriptData( { social: { urls: {} } } );
+		expect( getConnectionsManagementUrl() ).toBeNull();
+	} );
+
+	it( 'returns the connections management URL when present', () => {
+		setScriptData( {
+			social: {
+				urls: {
+					connectionsManagementPage:
+						'https://wordpress.com/marketing/connections/example.wordpress.com',
+				},
+			},
+		} );
+		expect( getConnectionsManagementUrl() ).toBe(
+			'https://wordpress.com/marketing/connections/example.wordpress.com'
+		);
+	} );
+
+	it( 'returns null when the URL is a non-string value', () => {
+		setScriptData( { social: { urls: { connectionsManagementPage: false } } } );
+		expect( getConnectionsManagementUrl() ).toBeNull();
 	} );
 } );

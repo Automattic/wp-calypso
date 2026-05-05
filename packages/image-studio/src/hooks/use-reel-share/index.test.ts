@@ -30,6 +30,7 @@ let mockState: {
 };
 
 let mockReelSharePath: string | null;
+let mockConnectionsUrl: string | null;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn( ( selector ) => {
@@ -107,6 +108,7 @@ jest.mock( '../../stores/video-studio', () => ( {
 
 jest.mock( '../../utils/jetpack-script-data', () => ( {
 	getReelSharePostPath: jest.fn( () => mockReelSharePath ),
+	getConnectionsManagementUrl: jest.fn( () => mockConnectionsUrl ),
 } ) );
 
 jest.mock( '../../utils/tracking', () => ( {
@@ -133,6 +135,7 @@ describe( 'useReelShare', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockReelSharePath = '/wpcom/v2/publicize/share-post/{postId}';
+		mockConnectionsUrl = 'https://wordpress.com/marketing/connections/example.wordpress.com';
 		mockState = {
 			currentVideoUrl: 'https://example.com/clip.mp4',
 			currentAttachmentId: 555,
@@ -163,6 +166,12 @@ describe( 'useReelShare', () => {
 
 		it( 'is false when the video URL is empty', () => {
 			mockState.currentVideoUrl = null;
+			const { result } = renderHook( () => useReelShare() );
+			expect( result.current.isVisible ).toBe( false );
+		} );
+
+		it( 'is false when the attachment ID is null (half-set state)', () => {
+			mockState.currentAttachmentId = null;
 			const { result } = renderHook( () => useReelShare() );
 			expect( result.current.isVisible ).toBe( false );
 		} );
@@ -263,8 +272,27 @@ describe( 'useReelShare', () => {
 				expect.stringMatching( /Connect Instagram/i ),
 				'warning',
 				expect.arrayContaining( [
-					expect.objectContaining( { label: expect.any( String ), url: expect.any( String ) } ),
+					expect.objectContaining( {
+						label: expect.any( String ),
+						url: 'https://wordpress.com/marketing/connections/example.wordpress.com',
+					} ),
 				] )
+			);
+		} );
+
+		it( 'falls back to /marketing/connections when Jetpack does not expose a connections URL', async () => {
+			mockState.connections = [ twitterConnection ];
+			mockConnectionsUrl = null;
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( mockAddNotice ).toHaveBeenCalledWith(
+				expect.stringMatching( /Connect Instagram/i ),
+				'warning',
+				expect.arrayContaining( [ expect.objectContaining( { url: '/marketing/connections' } ) ] )
 			);
 		} );
 

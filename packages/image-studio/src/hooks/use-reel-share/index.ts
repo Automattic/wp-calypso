@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore, type ImageStudioActions } from '../../store';
 import { ImageStudioEntryPoint } from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
-import { getReelSharePostPath } from '../../utils/jetpack-script-data';
+import { getConnectionsManagementUrl, getReelSharePostPath } from '../../utils/jetpack-script-data';
 import {
 	trackImageStudioReelShareClicked,
 	trackImageStudioReelShareDispatched,
@@ -42,12 +42,12 @@ interface UseReelShareReturn {
 }
 
 function getConnectInstagramUrl(): string {
-	// Marketing connections page. We don't append a site slug here because Image
-	// Studio's bundle doesn't have access to one — the spec's `{site}` token is
-	// resolved by Calypso's router when the URL is opened (it redirects to the
-	// primary site's marketing page). Opens in a new tab so the Studio modal
-	// stays mounted.
-	return '/marketing/connections';
+	// Prefer the site-resolved URL Jetpack injects via script-data; that's a
+	// fully-formed URL pointing at the current site's marketing connections
+	// page. Fall back to the unscoped Calypso path only if Jetpack Social
+	// isn't loaded — in that case the user is probably on a site without
+	// Publicize anyway, so the path is best-effort.
+	return getConnectionsManagementUrl() ?? '/marketing/connections';
 }
 
 export function useReelShare(): UseReelShareReturn {
@@ -112,6 +112,7 @@ export function useReelShare(): UseReelShareReturn {
 	const isVisible =
 		entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip &&
 		!! currentVideoUrl &&
+		!! currentAttachmentId &&
 		!! sharePath;
 
 	let reason: ReelShareReason | null = null;
