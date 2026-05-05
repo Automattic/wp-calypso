@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	Icon,
 	__experimentalHStack as HStack,
@@ -17,6 +16,7 @@ import {
 	getSingleItemRemoveCopy,
 } from './get-confirmation-copy';
 import { getOverrideCancellationFeatures } from './get-override-features';
+import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {
@@ -66,9 +66,7 @@ const CancelPurchaseFeatureList = ( {
 	// instead of the server-provided list. Falls back to API features when the
 	// override returns null (no entries yet for this product category).
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
-	const overrideFeatures = isSplitEnabled
-		? getOverrideCancellationFeatures( purchase )
-		: null;
+	const overrideFeatures = isSplitEnabled ? getOverrideCancellationFeatures( purchase ) : null;
 
 	const lossItems = getLossItems( overrideFeatures, cancellationFeatures, purchase );
 
