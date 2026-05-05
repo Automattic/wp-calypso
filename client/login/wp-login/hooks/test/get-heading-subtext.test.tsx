@@ -83,7 +83,7 @@ describe( 'getHeadingSubText', () => {
 		expect( subtext?.secondary ).toBeTruthy();
 	} );
 
-	test( 'falls back to standard subtext on lostpassword even if from=jetpack-connector', () => {
+	test( 'falls back to lostpassword instructions even when from=jetpack-connector', () => {
 		const subtext = getHeadingSubText( {
 			isSocialFirst: true,
 			twoFactorAuthType: '',
@@ -93,6 +93,8 @@ describe( 'getHeadingSubText', () => {
 			connectorPlugins: [ 'jetpack' ],
 		} );
 
-		expect( subtext?.primary ).not.toBe( 'Your site is registered with WordPress.com.' );
+		expect( subtext?.primary ).toBe(
+			"Please enter your username or email address. You'll receive a link to create a new password via email."
+		);
 	} );
 } );

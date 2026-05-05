@@ -33,22 +33,6 @@ export function isStore( pluginSlugs: readonly string[] ): boolean {
 }
 
 /**
- * Code-level enum of the site/store noun the flow should use for a given
- * plugin set. Untranslated on purpose — callers feed this into a copy
- * resolver that picks pre-composed translated sentences.
- */
-export type SiteOrStore = 'site' | 'store';
-
-/**
- * Return `'store'` when any active plugin is part of the WooCommerce
- * family, otherwise `'site'`. Internal selector consumed by the copy
- * resolvers; not for direct rendering.
- */
-export function getSiteOrStoreLabel( pluginSlugs: readonly string[] ): SiteOrStore {
-	return isStore( pluginSlugs ) ? 'store' : 'site';
-}
-
-/**
  * Return true when the full Jetpack plugin is among the active plugins.
  *
  * Used by later PRs to choose between the "full Jetpack" copy variants and

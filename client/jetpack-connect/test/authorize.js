@@ -104,6 +104,21 @@ describe( 'JetpackAuthorize', () => {
 		expect( container ).toMatchSnapshot();
 	} );
 
+	test( 'should render with the connector branding when from=jetpack-connector', () => {
+		const { container } = renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'jetpack', 'woocommerce' ],
+				} }
+			/>
+		);
+
+		expect( container ).toMatchSnapshot();
+	} );
+
 	describe( 'isSso', () => {
 		const isSso = new JetpackAuthorize().isSso;
 		const queryDataSiteId = 12349876;

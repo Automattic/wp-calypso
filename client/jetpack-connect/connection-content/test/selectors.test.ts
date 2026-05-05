@@ -1,7 +1,6 @@
 import {
 	getOverflowSlugs,
 	getPresentFamilies,
-	getSiteOrStoreLabel,
 	getTopFamilies,
 	hasFullJetpack,
 	isStore,
@@ -67,21 +66,6 @@ describe( 'isStore', () => {
 		expect( isStore( [ 'jetpack' ] ) ).toBe( false );
 		expect( isStore( [ 'jetpack-boost', 'unknown' ] ) ).toBe( false );
 		expect( isStore( [ 'automattic-for-agencies-client' ] ) ).toBe( false );
-	} );
-} );
-
-describe( 'getSiteOrStoreLabel', () => {
-	test( "returns 'store' when any Woo-family plugin is active", () => {
-		expect( getSiteOrStoreLabel( [ 'woocommerce' ] ) ).toBe( 'store' );
-		expect( getSiteOrStoreLabel( [ 'woocommerce-payments' ] ) ).toBe( 'store' );
-		expect( getSiteOrStoreLabel( [ 'jetpack', 'woocommerce' ] ) ).toBe( 'store' );
-	} );
-
-	test( "returns 'site' otherwise", () => {
-		expect( getSiteOrStoreLabel( [] ) ).toBe( 'site' );
-		expect( getSiteOrStoreLabel( [ 'jetpack' ] ) ).toBe( 'site' );
-		expect( getSiteOrStoreLabel( [ 'automattic-for-agencies-client' ] ) ).toBe( 'site' );
-		expect( getSiteOrStoreLabel( [ 'jetpack-boost', 'unknown' ] ) ).toBe( 'site' );
 	} );
 } );
 

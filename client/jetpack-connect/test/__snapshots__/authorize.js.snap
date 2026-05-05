@@ -168,3 +168,194 @@ exports[`JetpackAuthorize renders as expected 1`] = `
   </main>
 </div>
 `;
+
+exports[`JetpackAuthorize should render with the connector branding when from=jetpack-connector 1`] = `
+<div>
+  <main
+    class="jetpack-connect__authorize-form-wrapper--onboarding jetpack-connect__authorize-form-wrapper--connector jetpack-connect__main is-jetpack-connector-flow main"
+    role="main"
+  >
+    <div
+      class="jetpack-connect__authorize-form feature-flag-woocommerce-core-profiler-passwordless-auth"
+    >
+      <div>
+        <div
+          class="connect-screen-brand-header"
+        >
+          <div
+            class="connect-screen-brand-header__logo"
+          >
+            <img
+              alt=""
+              class="connect-screen-brand-header__logo-image"
+              src="jetpack-connect-woo.svg"
+            />
+          </div>
+          <h1
+            class="connect-screen-brand-header__title"
+          >
+            Connect your account
+          </h1>
+          <p
+            class="connect-screen-brand-header__description"
+          >
+            Your store is registered with WordPress.com.
+          </p>
+        </div>
+        <div
+          class="card connect-screen-user-card is-small"
+        >
+          <img
+            alt="A User's Name"
+            class="gravatar"
+            height="48"
+            src="https://www.gravatar.com/avatar/0?s=96&d=mm"
+            width="48"
+          />
+          <div
+            class="connect-screen-user-card__info"
+          >
+            <span
+              class="connect-screen-user-card__name"
+            >
+              A User's Name
+            </span>
+            <span
+              class="connect-screen-user-card__details"
+            />
+          </div>
+        </div>
+        <div
+          class="connect-screen-permissions-list"
+        >
+          <h3
+            class="connect-screen-permissions-list__title"
+          >
+            This connection allows Jetpack to:
+          </h3>
+          <ul
+            class="connect-screen-permissions-list__items"
+          >
+            <li
+              class="connect-screen-permissions-list__item"
+            >
+              <span
+                class="connect-screen-permissions-list__icon"
+              >
+                <svg
+                  aria-hidden="true"
+                  focusable="false"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    clip-rule="evenodd"
+                    d="M11.25 5h1.5v15h-1.5V5zM6 10h1.5v10H6V10zm12 4h-1.5v6H18v-6z"
+                    fill-rule="evenodd"
+                  />
+                </svg>
+              </span>
+              <span
+                class="connect-screen-permissions-list__label"
+              >
+                Process detailed visitor stats in the cloud, so your site stays fast.
+              </span>
+            </li>
+            <li
+              class="connect-screen-permissions-list__item"
+            >
+              <span
+                class="connect-screen-permissions-list__icon"
+              >
+                <svg
+                  aria-hidden="true"
+                  focusable="false"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.6 6L5.4 7l4.5 5-4.5 5 1.1 1 5.5-6-5.4-6zm6 0l-1.1 1 4.5 5-4.5 5 1.1 1 5.5-6-5.5-6z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="connect-screen-permissions-list__label"
+              >
+                Improve your site's performance and SEO automatically.
+              </span>
+            </li>
+            <li
+              class="connect-screen-permissions-list__item"
+            >
+              <span
+                class="connect-screen-permissions-list__icon"
+              >
+                <svg
+                  aria-hidden="true"
+                  focusable="false"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9 11.8l6.1-4.5c.1.4.4.7.9.7h2c.6 0 1-.4 1-1V5c0-.6-.4-1-1-1h-2c-.6 0-1 .4-1 1v.4l-6.4 4.8c-.2-.1-.4-.2-.6-.2H6c-.6 0-1 .4-1 1v2c0 .6.4 1 1 1h2c.2 0 .4-.1.6-.2l6.4 4.8v.4c0 .6.4 1 1 1h2c.6 0 1-.4 1-1v-2c0-.6-.4-1-1-1h-2c-.5 0-.8.3-.9.7L9 12.2v-.4z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="connect-screen-permissions-list__label"
+              >
+                Automatically share your site's posts on social media.
+              </span>
+            </li>
+          </ul>
+        </div>
+        <p
+          class="connect-screen-consent-text"
+        >
+          <span
+            class=""
+          >
+            By connecting your site, you agree to 
+            <a
+              class="jetpack-connect__sso-actions-modal-link"
+              href="https://jetpack.com/support/what-data-does-jetpack-sync/"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              share details
+            </a>
+             between WordPress.com and Example Blog.
+          </span>
+        </p>
+        <div
+          class="connect-screen-action-buttons"
+        >
+          <div
+            class="connect-screen-action-buttons__main"
+          >
+            <button
+              class="components-button connect-screen-action-buttons__primary is-primary"
+              type="button"
+            >
+              Connect account
+            </button>
+          </div>
+        </div>
+        <a
+          class="logged-out-form__link-item"
+          href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&from=jetpack-connector"
+          style="text-align: center;"
+        >
+          Use a different account
+        </a>
+      </div>
+    </div>
+  </main>
+</div>
+`;

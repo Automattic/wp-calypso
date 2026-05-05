@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { type LocalizeProps } from 'i18n-calypso';
-import { getRegistrationAcknowledgement } from 'calypso/jetpack-connect/connection-content';
+import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
@@ -80,13 +80,13 @@ const getHeadingSubText = ( {
 	);
 
 	// Unified connection flow (jetpack-connector): a prominent, dotcom-styled
-	// registration acknowledgement sits between the H1 and the existing ToS
-	// line. PR 3 will append the family-driven benefit clause to this slot;
-	// the ToS keeps its established subtle styling underneath. Lostpassword
-	// keeps the standard reset-instructions copy for clarity.
+	// subtitle sourced from the shared resolver sits between the H1 and the
+	// existing ToS line. PR 3 will extend the resolver with the family-driven
+	// benefit clause; the ToS keeps its established subtle styling
+	// underneath. Lostpassword keeps the standard reset-instructions copy.
 	if ( isFromJetpackConnector && 'lostpassword' !== action ) {
 		return {
-			primary: getRegistrationAcknowledgement( connectorPlugins ?? [] ),
+			primary: getLoginCopy( connectorPlugins ).subtitle,
 			secondary: tos,
 		};
 	}

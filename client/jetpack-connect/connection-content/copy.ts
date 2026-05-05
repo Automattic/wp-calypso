@@ -16,7 +16,7 @@ export interface SurfaceCopy {
  * alone, so we ship two pre-composed sentences (one per noun) rather than
  * a template — translators get a real sentence, not a fragment.
  */
-export function getRegistrationAcknowledgement( pluginSlugs: readonly string[] ): string {
+export function getRegistrationAcknowledgement( pluginSlugs: readonly string[] = [] ): string {
 	return isStore( pluginSlugs )
 		? __( 'Your store is registered with WordPress.com.' )
 		: __( 'Your site is registered with WordPress.com.' );

@@ -1,5 +1,6 @@
 import { TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
+import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -75,6 +76,7 @@ export function getHeaderText( {
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
 	isFromJetpackConnector,
+	connectorPlugins,
 	partnerConfig,
 	isGravPoweredClient,
 	currentQuery,
@@ -101,9 +103,9 @@ export function getHeaderText( {
 		if ( isFromJetpackConnector ) {
 			// In the unified connection flow the site is already registered by
 			// the time the user lands on the login page, so the H1 stays
-			// neutral. Plugin-specific framing now lives in the subtitle and
-			// (in PR 4) in the "Connection enables" section.
-			headerText = translate( 'Log in to WordPress.com' );
+			// neutral. The shared resolver owns the contract — PR 3 may make
+			// the title plugin-dependent, so we already pass the plugin set.
+			headerText = getLoginCopy( connectorPlugins ).title;
 		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
 				args: { partner: partnerConfig.displayName },
