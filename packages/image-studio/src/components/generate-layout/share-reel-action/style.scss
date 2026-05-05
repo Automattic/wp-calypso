@@ -1,24 +1,21 @@
 .image-studio-share-reel-action {
-	position: absolute;
-	bottom: 12px;
-	right: 12px;
-	z-index: 2;
+	display: flex;
+	justify-content: center;
 
 	&__button {
-		// Small circular overlay button — mirrors the visual weight of the
-		// other overlay actions in Image Studio. Semi-transparent backdrop
-		// keeps the icon legible over any video frame.
+		// Small circular icon-only button, sized to match other compact
+		// affordances in Image Studio (e.g. the chat input arrow). Sits
+		// directly below the generated video preview.
 		min-width: 32px;
 		width: 32px;
 		height: 32px;
 		padding: 0;
 		border-radius: 50%;
-		background: rgba(0, 0, 0, 0.6);
-		color: #fff;
-		backdrop-filter: blur(4px);
+		color: #f0f0f0;
+		background: rgba(255, 255, 255, 0.08);
 
 		&:hover:not( :disabled ) {
-			background: rgba(0, 0, 0, 0.8);
+			background: rgba(255, 255, 255, 0.16);
 			color: #fff;
 		}
 
