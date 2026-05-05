@@ -39,9 +39,14 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
-	useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
-} ) );
+jest.mock( '@wordpress/element', () => {
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	const React = require( 'react' );
+	return {
+		useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
+		useRef: React.useRef,
+	};
+} );
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
@@ -208,6 +213,52 @@ describe( 'useGenericShare', () => {
 			expect( mockTrackCompleted ).toHaveBeenCalledWith( { method: 'download' } );
 		} );
 
+		it( 'falls through to download and tracks web-share-unsupported when canShare rejects files', async () => {
+			const mockShare = jest.fn();
+			const mockCanShare = jest.fn().mockReturnValue( false );
+			setNavigatorShare( { share: mockShare, canShare: mockCanShare } );
+
+			global.fetch = jest.fn() as unknown as typeof fetch;
+			const mockOpen = jest.fn().mockReturnValue( {} );
+			window.open = mockOpen as unknown as typeof window.open;
+
+			const { result } = renderHook( () => useGenericShare() );
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( global.fetch ).not.toHaveBeenCalled();
+			expect( mockShare ).not.toHaveBeenCalled();
+			expect( mockTrackFailed ).toHaveBeenCalledWith( {
+				method: 'web-share-unsupported',
+				failureKind: 'unknown',
+			} );
+			expect( mockOpen ).toHaveBeenCalled();
+			expect( mockTrackCompleted ).toHaveBeenCalledWith( { method: 'download' } );
+		} );
+
+		it( 'classifies CORS-shaped fetch errors as kind=cors when falling through', async () => {
+			const mockShare = jest.fn();
+			const mockCanShare = jest.fn().mockReturnValue( true );
+			setNavigatorShare( { share: mockShare, canShare: mockCanShare } );
+
+			global.fetch = jest
+				.fn()
+				.mockRejectedValue(
+					new TypeError( 'Failed to fetch (CORS preflight)' )
+				) as unknown as typeof fetch;
+			window.open = jest.fn().mockReturnValue( {} ) as unknown as typeof window.open;
+
+			const { result } = renderHook( () => useGenericShare() );
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( mockTrackFailed ).toHaveBeenCalledWith(
+				expect.objectContaining( { method: 'web-share', failureKind: 'cors' } )
+			);
+		} );
+
 		it( 'shows an error notice when window.open is blocked', async () => {
 			setNavigatorShare( { share: undefined, canShare: undefined } );
 			const mockOpen = jest.fn().mockReturnValue( null );
@@ -220,12 +271,43 @@ describe( 'useGenericShare', () => {
 
 			expect( mockTrackFailed ).toHaveBeenCalledWith( {
 				method: 'download',
+				failureKind: 'open-blocked',
 				message: 'window.open returned null',
 			} );
 			expect( mockAddNotice ).toHaveBeenCalledWith(
 				expect.stringMatching( /Could not open the video/i ),
 				'error'
 			);
+		} );
+	} );
+
+	describe( 'double-click guard', () => {
+		it( 'ignores a second click while the first share is still in flight', async () => {
+			let resolveShare: () => void = () => {};
+			const sharePromise = new Promise< void >( ( resolve ) => {
+				resolveShare = resolve;
+			} );
+			const mockShare = jest.fn().mockReturnValue( sharePromise );
+			const mockCanShare = jest.fn().mockReturnValue( true );
+			setNavigatorShare( { share: mockShare, canShare: mockCanShare } );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				status: 200,
+				blob: () => Promise.resolve( new Blob( [ 'v' ], { type: 'video/mp4' } ) ),
+			} ) as unknown as typeof fetch;
+
+			const { result } = renderHook( () => useGenericShare() );
+
+			await act( async () => {
+				const firstClick = result.current.handleShare();
+				await result.current.handleShare();
+				resolveShare();
+				await firstClick;
+			} );
+
+			expect( mockShare ).toHaveBeenCalledTimes( 1 );
+			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

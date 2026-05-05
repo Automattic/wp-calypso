@@ -26,7 +26,6 @@ function readNonEmptyString( value: unknown ): string | null {
 
 /**
  * Read the Jetpack Social "reshare post" REST path.
- *
  * @returns The path template (e.g. `/wpcom/v2/publicize/share-post/{postId}`)
  *          or `null` if Jetpack Social isn't available on this page.
  */
@@ -38,7 +37,6 @@ export function getReelSharePostPath(): string | null {
  * Read the Jetpack Social "connections management page" URL — a full,
  * site-resolved URL pointing at the marketing connections screen for the
  * current site (e.g. `https://wordpress.com/marketing/connections/example.wordpress.com`).
- *
  * @returns The full URL or `null` if Jetpack Social isn't available on this page.
  */
 export function getConnectionsManagementUrl(): string | null {

@@ -20,22 +20,31 @@ jest.mock( '@wordpress/icons', () => ( {
 	share: 'share-icon',
 } ) );
 
+type ButtonMockProps = {
+	children?: unknown;
+	variant?: unknown;
+	isBusy?: unknown;
+	icon?: unknown;
+	label?: unknown;
+	showTooltip?: unknown;
+} & Record< string, unknown >;
+
 jest.mock( '@wordpress/components', () => ( {
-	Button: ( {
-		children,
-		variant,
-		isBusy,
-		__next40pxDefaultSize,
-		icon,
-		label,
-		showTooltip,
-		...props
-	}: any ) => (
-		<button aria-label={ label } { ...props }>
-			{ icon }
-			{ children }
-		</button>
-	),
+	Button: ( props: ButtonMockProps ) => {
+		const { children, variant, isBusy, icon, label, showTooltip, ...rest } = props;
+		void variant;
+		void isBusy;
+		void showTooltip;
+		return (
+			<button
+				aria-label={ typeof label === 'string' ? label : undefined }
+				{ ...( rest as Record< string, unknown > ) }
+			>
+				{ icon as React.ReactNode }
+				{ children as React.ReactNode }
+			</button>
+		);
+	},
 } ) );
 
 jest.mock( 'social-logos', () => ( {

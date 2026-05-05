@@ -18,12 +18,16 @@ The end-to-end Reels submission path is already shipped on wpcom. The chain we l
 
 ## In scope
 
-- A new `<ShareReelAction />` component rendered inside `GenerateLayout` when a generated video is available and the entry point is `PostEditorFeatureClip`.
-- A new `useReelShare` hook encapsulating the click handler and pre-checks. Component stays a thin renderer (per the package's "prefer hooks over components" convention).
-- Pre-check pipeline: connection, publication state, defensive state guards.
-- Click handler: write meta → dispatch `shareCurrentPost` with non-IG connections skipped → snackbar on success.
-- Telemetry via `recordImageStudioEvent()`.
-- Notices via the existing `ImageStudioNotice` component (driven by the Image Studio store's `addNotice` action).
+The shipped feature renders **two** small icon-only buttons in a single row below the generated video, right-aligned to the chat-box's right edge, prefixed with a "Share:" label:
+
+1. **Instagram Reel (Publicize path)** — uses `useReelShare` hook + `shareCurrentPost` thunk → wpcom's `Instagram_Business_Connection::submission()`. Visible only when an active `instagram-business` connection exists, the post is published, and Jetpack Social script-data is available.
+2. **Generic share (Web Share API + download fallback)** — uses `useGenericShare` hook + `navigator.share({ files })` on supported browsers, falling back to opening the MP4 URL in a new tab. Visible whenever a generated video and a feature-clip entry point are present. Covers TikTok, Stories, WhatsApp, email, etc. via the OS share sheet.
+
+Both buttons hide independently while AI is regenerating, when video state is half-set, or outside the Feature Clip entry point. Each has its own visibility hook and telemetry stream.
+
+The container is wrapped in a `role="group"` with `aria-label="Share generated video"` so screen readers announce the grouping; the visible "Share:" label remains exposed to AT.
+
+Both hooks use a `useRef` synchronous double-click guard so a fast second click can't dispatch a duplicate share. Logic lives in the hooks; components stay thin renderers (per the package's "prefer hooks over components" convention). Notices route through the existing `addNotice` action / `ImageStudioNotice` component. All telemetry routes through `recordImageStudioEvent()`.
 
 ## Out of scope (explicit)
 
@@ -38,12 +42,12 @@ Same as the Linear issue, plus:
 
 ## User flow
 
-### Happy path
+### Happy path (Instagram Reel)
 
 1. User is editing an already-published post.
 2. Opens the "Generate Feature Clip" sidebar panel, generates a video clip.
-3. Studio canvas shows the generated MP4 in a 9:16 frame. Below it: a `<Button variant="primary">` labeled "Share as Instagram Reel" with an Instagram icon.
-4. User clicks. Button enters in-flight state (disabled, loading spinner).
+3. Studio canvas shows the generated MP4 in a 9:16 frame. Below it, right-aligned to the chat box: "Share:" label + a generic-share icon button + an Instagram icon button.
+4. User clicks the Instagram icon. Button enters in-flight state (disabled, loading spinner). The "Share:" label flips to "Sharing…".
 5. We:
    a. Dispatch `editorStore.editPost({ meta: { jetpack_social_options: { ...current, attached_media: [{ id, url, type: 'video/mp4' }], media_source: 'upload-video' } } })`.
    b. Compute `skipped_connections` = all enabled connections where `service_name !== 'instagram-business'`.
@@ -51,6 +55,14 @@ Same as the Linear issue, plus:
 6. Server processes the share. Polling inside `Instagram_Business_Connection::submission()` may take 10s–several minutes depending on clip size.
 7. On success: snackbar "Shared to Instagram as a Reel". Button returns to enabled state.
 8. On failure: `shareCurrentPost` already creates an error notice via `@wordpress/notices`; we don't add a second one.
+
+### Happy path (generic share)
+
+1. User clicks the generic-share icon (anywhere a video is present, no connection requirements).
+2. Hook probes `navigator.canShare({ files: [probe-MP4] })` to decide whether to take the Web Share path without paying for a video fetch.
+3. If the platform supports file shares: fetch the MP4 → wrap in `File` → `navigator.share({ files })` → OS share sheet opens. User picks any compatible app.
+4. Otherwise: open the MP4 URL in a new tab (`window.open(..., '_blank', 'noopener')`) so the browser can save it.
+5. AbortError from a cancelled share sheet is silent — no notice, no fallback. Other errors fall through to the download path.
 
 ### Error states (in order — first failure wins)
 
@@ -67,16 +79,23 @@ packages/image-studio/src/
 ├── components/
 │   └── generate-layout/
 │       ├── index.tsx                         (modified — render <ShareReelAction />)
+│       ├── style.scss                        (modified — column layout for video + share row)
 │       └── share-reel-action/
-│           ├── index.tsx                     (new — thin renderer)
+│           ├── index.tsx                     (new — thin renderer composing both buttons)
 │           ├── index.test.tsx                (new)
 │           └── style.scss                    (new)
 ├── hooks/
-│   └── use-reel-share/
-│       ├── index.ts                          (new — selectors, pre-checks, click handler, telemetry)
+│   ├── use-reel-share/                       (Publicize → Instagram Reels path)
+│   │   ├── index.ts                          (new)
+│   │   └── index.test.ts                     (new)
+│   └── use-generic-share/                    (Web Share API + download fallback)
+│       ├── index.ts                          (new)
 │       └── index.test.ts                     (new)
 └── utils/
-    └── tracking.ts                           (modified — add reel-share event helpers)
+    ├── jetpack-script-data.ts                (new — typed window.JetpackScriptData reads)
+    ├── jetpack-script-data.test.ts           (new)
+    ├── tracking.ts                           (modified — 9 new event helpers)
+    └── tracking.test.ts                      (modified)
 ```
 
 ### Cross-bundle data access

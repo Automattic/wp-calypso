@@ -80,9 +80,14 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
-	useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
-} ) );
+jest.mock( '@wordpress/element', () => {
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	const React = require( 'react' );
+	return {
+		useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
+		useRef: React.useRef,
+	};
+} );
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
@@ -363,6 +368,29 @@ describe( 'useReelShare', () => {
 
 			expect( mockTrackFailed ).toHaveBeenCalledWith( 'boom' );
 			expect( mockTrackDispatched ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'double-click guard', () => {
+		it( 'ignores a second click while the first share is still in flight', async () => {
+			let resolveShare: ( value: boolean ) => void = () => {};
+			const inFlight = new Promise< boolean >( ( resolve ) => {
+				resolveShare = resolve;
+			} );
+			mockShareCurrentPost.mockReturnValueOnce( inFlight );
+
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				const firstClick = result.current.handleShare();
+				await result.current.handleShare();
+				resolveShare( true );
+				await firstClick;
+			} );
+
+			expect( mockEditPost ).toHaveBeenCalledTimes( 1 );
+			expect( mockShareCurrentPost ).toHaveBeenCalledTimes( 1 );
+			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

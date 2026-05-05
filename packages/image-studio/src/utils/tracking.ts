@@ -610,7 +610,7 @@ export function trackImageStudioReelShareFailed( errorMessage?: string ): void {
 export function trackImageStudioGenericShareClicked( {
 	method,
 }: {
-	method: 'web-share' | 'download';
+	method: 'web-share' | 'web-share-unsupported' | 'download';
 } ): void {
 	recordImageStudioEvent( 'image_studio_generic_share_clicked', { method } );
 }
@@ -623,27 +623,33 @@ export function trackImageStudioGenericShareClicked( {
 export function trackImageStudioGenericShareCompleted( {
 	method,
 }: {
-	method: 'web-share' | 'download';
+	method: 'web-share' | 'web-share-unsupported' | 'download';
 } ): void {
 	recordImageStudioEvent( 'image_studio_generic_share_completed', { method } );
 }
 
 /**
  * Tracks when the generic share failed.
- * @param options         - Tracking options
- * @param options.method  - 'web-share' or 'download'
- * @param options.message - Optional error message
+ * @param options             - Tracking options
+ * @param options.method      - 'web-share', 'web-share-unsupported', or 'download'
+ * @param options.message     - Optional error message
+ * @param options.failureKind - Optional categorical reason: 'cors' | 'network' | 'http' | 'aborted' | 'open-blocked' | 'unknown'
  */
 export function trackImageStudioGenericShareFailed( {
 	method,
 	message,
+	failureKind,
 }: {
-	method: 'web-share' | 'download';
+	method: 'web-share' | 'web-share-unsupported' | 'download';
 	message?: string;
+	failureKind?: 'cors' | 'network' | 'http' | 'aborted' | 'open-blocked' | 'unknown';
 } ): void {
 	const properties: Record< string, string | number > = { method };
 	if ( message ) {
 		properties.error_message = message;
+	}
+	if ( failureKind ) {
+		properties.failure_kind = failureKind;
 	}
 	recordImageStudioEvent( 'image_studio_generic_share_failed', properties );
 }

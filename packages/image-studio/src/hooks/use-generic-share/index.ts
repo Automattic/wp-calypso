@@ -1,5 +1,5 @@
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore, type ImageStudioActions } from '../../store';
 import { ImageStudioEntryPoint } from '../../store';
@@ -15,8 +15,6 @@ interface UseGenericShareReturn {
 	handleShare: () => Promise< void >;
 }
 
-type ShareMethod = 'web-share' | 'download';
-
 interface NavigatorWithShare {
 	share?: ( data: { files?: File[]; title?: string; text?: string } ) => Promise< void >;
 	canShare?: ( data: { files?: File[] } ) => boolean;
@@ -27,6 +25,43 @@ function getNavigator(): NavigatorWithShare | null {
 		return null;
 	}
 	return navigator as unknown as NavigatorWithShare;
+}
+
+/**
+ * Probe whether the platform's Web Share API can accept video files at all,
+ * without paying for a full video fetch first. Builds a 0-byte File with the
+ * target MIME and asks `navigator.canShare`. Returns false on browsers where
+ * `navigator.share` exists but doesn't support files (most desktop Chromium).
+ */
+function canShareVideoFiles( nav: NavigatorWithShare, filename: string ): boolean {
+	if ( typeof nav.share !== 'function' || typeof nav.canShare !== 'function' ) {
+		return false;
+	}
+	try {
+		const probe = new File( [], filename, { type: 'video/mp4' } );
+		return nav.canShare( { files: [ probe ] } );
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Heuristic for distinguishing CORS failures from generic network failures.
+ * `fetch` throws an opaque `TypeError` for both — there's no programmatic way
+ * to tell them apart, but the message and `Response.type` give hints.
+ */
+function classifyFetchError( err: unknown ): 'cors' | 'network' | 'http' | 'unknown' {
+	if ( err instanceof TypeError ) {
+		const msg = err.message.toLowerCase();
+		if ( msg.includes( 'cors' ) || msg.includes( 'opaque' ) ) {
+			return 'cors';
+		}
+		return 'network';
+	}
+	if ( err instanceof Error && err.message.startsWith( 'Fetch failed:' ) ) {
+		return 'http';
+	}
+	return 'unknown';
 }
 
 export function useGenericShare(): UseGenericShareReturn {
@@ -46,6 +81,9 @@ export function useGenericShare(): UseGenericShareReturn {
 
 	const { addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
+	// Synchronous double-click guard — same rationale as in useReelShare.
+	const isSharingRef = useRef( false );
+
 	const isVisible =
 		entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip &&
 		!! currentVideoUrl &&
@@ -53,66 +91,80 @@ export function useGenericShare(): UseGenericShareReturn {
 		! isAiProcessing;
 
 	const handleShare = useCallback( async () => {
+		if ( isSharingRef.current ) {
+			return;
+		}
 		if ( ! currentVideoUrl ) {
 			return;
 		}
 
 		const filename = `clip-${ currentAttachmentId ?? Date.now() }.mp4`;
 		const nav = getNavigator();
-		const canTryWebShare =
-			!! nav && typeof nav.share === 'function' && typeof nav.canShare === 'function';
 
-		// Web Share API path — works on iOS Safari, Android Chrome, etc.
-		if ( canTryWebShare && nav ) {
-			const method: ShareMethod = 'web-share';
-			try {
-				const response = await fetch( currentVideoUrl );
-				if ( ! response.ok ) {
-					throw new Error( `Fetch failed: ${ response.status }` );
-				}
-				const blob = await response.blob();
-				const file = new File( [ blob ], filename, { type: 'video/mp4' } );
+		isSharingRef.current = true;
+		try {
+			// Probe before fetching — saves a full MP4 download on browsers
+			// that expose navigator.share but reject files (most desktops).
+			if ( nav && canShareVideoFiles( nav, filename ) ) {
+				try {
+					const response = await fetch( currentVideoUrl );
+					if ( ! response.ok ) {
+						throw new Error( `Fetch failed: ${ response.status }` );
+					}
+					const blob = await response.blob();
+					const file = new File( [ blob ], filename, { type: 'video/mp4' } );
 
-				if ( nav.canShare && nav.canShare( { files: [ file ] } ) ) {
-					trackImageStudioGenericShareClicked( { method } );
+					trackImageStudioGenericShareClicked( { method: 'web-share' } );
 					await nav.share?.( {
 						files: [ file ],
 						title: __( 'Generated video clip', __i18n_text_domain__ ),
 					} );
-					trackImageStudioGenericShareCompleted( { method } );
+					trackImageStudioGenericShareCompleted( { method: 'web-share' } );
 					return;
+				} catch ( err ) {
+					if ( err instanceof DOMException && err.name === 'AbortError' ) {
+						// User cancelled the share sheet — silent, no notice, no fallback.
+						return;
+					}
+					const message = err instanceof Error ? err.message : '';
+					trackImageStudioGenericShareFailed( {
+						method: 'web-share',
+						failureKind: classifyFetchError( err ),
+						message,
+					} );
+					// Fall through to download.
 				}
-			} catch ( err ) {
-				const isAbort = err instanceof DOMException && err.name === 'AbortError';
-				if ( isAbort ) {
-					// User cancelled the share sheet — silent, no notice.
-					return;
-				}
-				const message = err instanceof Error ? err.message : '';
-				trackImageStudioGenericShareFailed( { method, message } );
-				// Fall through to download.
+			} else if ( nav && typeof nav.share === 'function' ) {
+				// Web Share API exists but doesn't accept video files — record this
+				// case so we can see how often it happens vs. a clean download path.
+				trackImageStudioGenericShareFailed( {
+					method: 'web-share-unsupported',
+					failureKind: 'unknown',
+				} );
 			}
-		}
 
-		// Fallback: open the MP4 URL in a new tab so the browser can save it.
-		const downloadMethod: ShareMethod = 'download';
-		trackImageStudioGenericShareClicked( { method: downloadMethod } );
-		const opened = window.open( currentVideoUrl, '_blank', 'noopener' );
-		if ( opened ) {
-			trackImageStudioGenericShareCompleted( { method: downloadMethod } );
-			return;
+			// Fallback: open the MP4 URL in a new tab so the browser can save it.
+			trackImageStudioGenericShareClicked( { method: 'download' } );
+			const opened = window.open( currentVideoUrl, '_blank', 'noopener' );
+			if ( opened ) {
+				trackImageStudioGenericShareCompleted( { method: 'download' } );
+				return;
+			}
+			trackImageStudioGenericShareFailed( {
+				method: 'download',
+				failureKind: 'open-blocked',
+				message: 'window.open returned null',
+			} );
+			await addNotice(
+				__(
+					'Could not open the video for download. Allow popups for this site and try again.',
+					__i18n_text_domain__
+				),
+				'error'
+			);
+		} finally {
+			isSharingRef.current = false;
 		}
-		trackImageStudioGenericShareFailed( {
-			method: downloadMethod,
-			message: 'window.open returned null',
-		} );
-		await addNotice(
-			__(
-				'Could not open the video for download. Allow popups for this site and try again.',
-				__i18n_text_domain__
-			),
-			'error'
-		);
 	}, [ addNotice, currentAttachmentId, currentVideoUrl ] );
 
 	return {

@@ -23,10 +23,12 @@ export function ShareReelAction(): JSX.Element | null {
 		: __( 'Share:', __i18n_text_domain__ );
 
 	return (
-		<div className="image-studio-share-reel-action">
-			<span className="image-studio-share-reel-action__label" aria-hidden="true">
-				{ visibleText }
-			</span>
+		<div
+			className="image-studio-share-reel-action"
+			role="group"
+			aria-label={ __( 'Share generated video', __i18n_text_domain__ ) }
+		>
+			<span className="image-studio-share-reel-action__label">{ visibleText }</span>
 			{ generic.isVisible && (
 				<Button
 					className="image-studio-share-reel-action__button"
