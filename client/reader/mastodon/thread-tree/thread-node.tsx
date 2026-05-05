@@ -15,7 +15,6 @@ interface ThreadNodeProps {
 	// `node.replies`. Used by ThreadTree's parent chain so a parent's other
 	// replies don't show up above the target post.
 	renderReplies?: boolean;
-	connectionId?: number;
 }
 
 // Visual indentation caps at 4 levels deep — past that, every reply renders
