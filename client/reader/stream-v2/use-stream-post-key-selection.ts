@@ -138,7 +138,7 @@ export function useStreamPostKeySelection( {
 				return false;
 			}
 			// Infinite stream keys are:
-			// ['read','stream','v2','infinite', streamKey, feedId, localeSlug]
+			// ['read','stream','v2','infinite', streamKey, feedId, localeSlug, startDate]
 			const cachedLocaleSlug = queryKey[ 6 ] ?? null;
 			return cachedLocaleSlug === normalizedLocaleSlug;
 		} );

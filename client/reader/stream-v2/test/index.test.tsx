@@ -144,6 +144,7 @@ function makeQueryClient() {
 const baseState = {
 	ui: { language: { localeSlug: 'en' }, isNotificationsOpen: false },
 	currentUser: { id: 1, user: { ID: 1, primary_blog: null } },
+	readerUi: { sidebar: { selectedRecentSite: null } },
 	reader: {
 		siteBlocks: { items: {} },
 		posts: { items: {} },
@@ -213,6 +214,14 @@ describe( 'StreamV2 — render states', () => {
 
 		await waitFor( () => expect( screen.getByTestId( 'empty' ) ).toBeVisible() );
 		expect( emptyContent ).toHaveBeenCalled();
+	} );
+
+	it( 'renders the default empty content when emptyContent is not provided', async () => {
+		mockLikesEndpoint( [] );
+		renderStream();
+
+		await waitFor( () => expect( screen.getByText( "You're all caught up." ) ).toBeVisible() );
+		expect( screen.getByText( 'No new posts.' ) ).toBeVisible();
 	} );
 
 	it( 'renders posts once the API responds', async () => {

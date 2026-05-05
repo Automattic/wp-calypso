@@ -124,6 +124,29 @@ describe( 'useStreamPosts — fetching', () => {
 		await waitFor( () => expect( result.current.error ).toBeTruthy() );
 		expect( result.current.items ).toHaveLength( 0 );
 	} );
+
+	it( 'uses startDate as initial before cursor when provided', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => q.before === '2026-04-01' )
+			.reply( 200, {
+				posts: [ apiPost( 5 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const { result } = renderHook(
+			() => useStreamPosts( { streamKey: 'likes', startDate: '2026-04-01' } ),
+			{
+				wrapper: Wrapper,
+			}
+		);
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 1 ) );
+		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 5 ) );
+		expect( nock.isDone() ).toBe( true );
+	} );
 } );
 
 describe( 'useStreamPosts — removeItem', () => {

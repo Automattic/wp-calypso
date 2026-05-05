@@ -87,6 +87,7 @@ interface UseStreamPostsOptions {
 	streamKey: string;
 	feedId?: number | null;
 	localeSlug?: string | null;
+	startDate?: string | null;
 }
 
 /**
@@ -100,12 +101,15 @@ export function useStreamPosts( {
 	streamKey,
 	feedId = null,
 	localeSlug = null,
+	startDate = null,
 }: UseStreamPostsOptions ): UseStreamPostsResult {
 	const dispatch = useDispatch();
 	const streamType = getStreamType( streamKey );
 
 	const [ removedIds, setRemovedIds ] = useState< Set< string > >( () => new Set() );
-	const streamIdentity = `${ streamKey }|${ feedId ?? '' }|${ localeSlug ?? '' }`;
+	const streamIdentity = `${ streamKey }|${ feedId ?? '' }|${ localeSlug ?? '' }|${
+		startDate ?? ''
+	}`;
 
 	const buildPageParams = useCallback(
 		( pageHandle: PageHandle ): ReadStreamQueryParams =>
@@ -128,12 +132,30 @@ export function useStreamPosts( {
 				ReadStreamResponse,
 				Error,
 				{ pageParams: PageHandle[]; pages: ReadStreamResponse[] },
-				readonly [ 'read', 'stream', 'v2', 'infinite', string, number | null, string | null ],
+				readonly [
+					'read',
+					'stream',
+					'v2',
+					'infinite',
+					string,
+					number | null,
+					string | null,
+					string | null,
+				],
 				PageHandle
 			>( {
-				queryKey: [ 'read', 'stream', 'v2', 'infinite', streamKey, feedId, localeSlug ] as const,
+				queryKey: [
+					'read',
+					'stream',
+					'v2',
+					'infinite',
+					streamKey,
+					feedId,
+					localeSlug,
+					startDate,
+				] as const,
 				queryFn: ( { pageParam } ) => fetchReadStream( streamKey, buildPageParams( pageParam ) ),
-				initialPageParam: null,
+				initialPageParam: startDate ? { before: startDate } : null,
 				getNextPageParam: ( lastPage, _allPages, lastPageParam ) => {
 					// `extractPageHandle` only consults `payload.pageHandle.offset` for
 					// the recommendations family; for cursor / date streams the rest of
@@ -168,7 +190,7 @@ export function useStreamPosts( {
 				placeholderData: keepPreviousData,
 				refetchOnWindowFocus: false,
 			} ),
-		[ streamKey, feedId, localeSlug, streamType, buildPageParams ]
+		[ streamKey, feedId, localeSlug, startDate, streamType, buildPageParams ]
 	);
 
 	const query = useInfiniteQuery( queryOptions );

@@ -28,6 +28,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
+import EmptyContent from '../stream/empty';
 import { StreamError } from '../stream/error';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import { useStreamPosts, type PostKey } from './use-stream-posts';
@@ -58,6 +59,7 @@ export interface StreamV2Props {
 	restoreScroll?: boolean;
 	fixedHeaderHeight?: number;
 	followSource?: string;
+	startDate?: string;
 	emptyContent?: () => React.ReactNode;
 	intro?: () => React.ReactNode;
 	streamHeader?: () => React.ReactNode;
@@ -68,7 +70,7 @@ export interface StreamV2Props {
 	children?: React.ReactNode;
 }
 
-const defaultEmptyContent = () => null;
+const defaultEmptyContent = () => <EmptyContent />;
 
 export function StreamV2( props: StreamV2Props ) {
 	const {
@@ -86,6 +88,7 @@ export function StreamV2( props: StreamV2Props ) {
 		restoreScroll = true,
 		fixedHeaderHeight,
 		followSource,
+		startDate,
 		emptyContent = defaultEmptyContent,
 		intro,
 		streamHeader,
@@ -108,6 +111,7 @@ export function StreamV2( props: StreamV2Props ) {
 		streamKey,
 		feedId: null,
 		localeSlug,
+		startDate: startDate ?? null,
 	} );
 	const { items, isLoading, isFetching, lastPage, error, fetchNextPage } = stream;
 	const selection = useStreamPostKeySelection( {
