@@ -777,7 +777,7 @@ function CancelPurchaseInner() {
 		}
 
 		const monthlyPlan = getDowngradePlanForPurchase( plans, purchase, 'downgrade-monthly' );
-		if ( ! monthlyPlan ) {
+			createErrorNotice( __( 'Failed to switch to monthly billing.' ), { type: 'snackbar' } );
 			createErrorNotice( __( 'Cannot find a monthly plan to switch to.' ), { type: 'snackbar' } );
 			return;
 		}
