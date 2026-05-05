@@ -6,7 +6,6 @@ export interface JetpackRecoverySessionError {
 	message: string;
 	file: string;
 	line: number;
-	signature?: string;
 }
 
 interface SitePlan {

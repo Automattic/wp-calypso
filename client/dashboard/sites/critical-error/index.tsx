@@ -103,7 +103,9 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 			icon: envelope,
 			text: createInterpolateElement(
 				// translators: <q/> is the search phrase to use in the email inbox.
-				__( 'Search your admin email inbox for <q/> for troubleshooting instructions.' ),
+				__(
+					'Search your admin email inbox for the keyword <q/> for troubleshooting instructions.'
+				),
 				{ q: <strong>{ __( 'critical error' ) }</strong> }
 			),
 		} );
@@ -155,7 +157,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 			<VStack spacing={ 4 }>
 				{ recoveryErrors.map( ( error, index ) => (
 					<RecoveryErrorNotice
-						key={ error.signature ?? `${ error.kind }-${ error.slug }-${ index }` }
+						key={ `${ error.kind }-${ error.slug }-${ index }` }
 						error={ error }
 					/>
 				) ) }
