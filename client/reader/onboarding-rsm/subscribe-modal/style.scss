@@ -252,6 +252,7 @@ $actions-height: 64px;
 
 		.follow-button.has-button-style {
 			box-sizing: border-box;
+			flex-shrink: 0;
 			min-width: 106px;
 			min-height: 36px;
 			padding: 8px 14px;
@@ -293,11 +294,25 @@ $actions-height: 64px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
+		// Must be able to shrink so a long title doesn't push the follow button off screen.
+		min-width: 0;
+		overflow: hidden;
 
 		.site-icon.site-icon {
+			flex-shrink: 0;
 			border-radius: 50%;
 			overflow: hidden;
 		}
+	}
+
+	&__preview-site-title {
+		min-width: 0; // flex-item must opt in to shrinking for ellipsis to fire
+		font-size: rem( 14px );
+		font-weight: 600;
+		color: var( --color-neutral-80 );
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	&__preview-stream-container {
