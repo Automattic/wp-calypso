@@ -22,19 +22,14 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 	}
 
 	let intent: 'error' | 'success' | 'warning' | 'upsell' = 'warning';
+	let title = __( 'Expires' );
 
 	if ( domain.expired ) {
 		intent = 'error';
+		title = __( 'Expired' );
 	} else if ( domain.auto_renewing ) {
 		intent = 'success';
-	}
-
-	let title = __( 'Expires' );
-
-	if ( domain.auto_renewing ) {
 		title = __( 'Renews' );
-	} else if ( domain.expired ) {
-		title = __( 'Expired' );
 	}
 
 	const formattedDate = formatDate( new Date( date ), locale, {
