@@ -25,19 +25,19 @@ export const GenerateLayout = ( {
 					'is-prompt-sent': isPromptSent,
 				} ) }
 			>
-				<video
-					className="image-studio-modal__generated-video"
-					src={ videoUrl }
-					aria-label={ __( 'Generated feature clip preview', __i18n_text_domain__ ) }
-					controls
-					loop
-					muted
-					playsInline
-					preload="metadata"
-				/>
-				{ canvasControls && (
-					<div className="image-studio-modal__generated-video-controls">{ canvasControls }</div>
-				) }
+				<div className="image-studio-modal__generated-video-frame">
+					<video
+						className="image-studio-modal__generated-video"
+						src={ videoUrl }
+						aria-label={ __( 'Generated feature clip preview', __i18n_text_domain__ ) }
+						controls
+						loop
+						muted
+						playsInline
+						preload="metadata"
+					/>
+					{ canvasControls }
+				</div>
 			</div>
 		);
 	}
