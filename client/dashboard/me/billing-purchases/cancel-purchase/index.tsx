@@ -1365,8 +1365,7 @@ function CancelPurchaseInner() {
 		// Purchase Settings instead of re-showing the confirmation screen.
 		// Bypass when surveyShown is true — the post-mutation survey should
 		// still render within the same session.
-		const isAlreadyCancelledForSplitFlag =
-			config.isEnabled( 'purchases/split-cancel-remove' ) &&
+			isSplitCancelRemoveEnabled &&
 			intent === 'cancel' &&
 			! purchase.is_auto_renew_enabled;
 
