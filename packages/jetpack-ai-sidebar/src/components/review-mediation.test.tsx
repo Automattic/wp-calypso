@@ -182,6 +182,36 @@ describe( 'ReviewMediation — smoke render', () => {
 		// Violating excerpt rendered in its own blockquote.
 		expect( screen.getByText( 'was voted upon' ) ).toBeInTheDocument();
 	} );
+
+	it.each( [
+		[ 'null', null ],
+		[ 'empty string', '' ],
+		[ 'whitespace-only', '   ' ],
+	] )( 'suppresses the guideline_quote blockquote when the value is %s', ( _label, quote ) => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					guideline_violations: [
+						{
+							category: 'copy',
+							block_name: null,
+							guideline_quote: quote as string | null,
+							block_index: 1,
+							violating_text: 'was voted upon',
+							issue: 'Reviewer-asserted with no matching site clause.',
+						},
+					],
+				} ) }
+			/>
+		);
+
+		// The issue line still renders.
+		expect(
+			screen.getByText( /Reviewer-asserted with no matching site clause/ )
+		).toBeInTheDocument();
+		// And no empty/whitespace blockquote leaks through.
+		expect( document.querySelector( '.jetpack-ai-review-mediation__guideline-anchor' ) ).toBeNull();
+	} );
 } );
 
 describe( 'ReviewMediation — stats strip', () => {

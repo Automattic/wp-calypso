@@ -69,7 +69,7 @@ interface SuggestedEdit {
 interface GuidelineViolation {
 	category: 'site' | 'copy' | 'images' | 'additional' | 'block';
 	block_name: string | null;
-	guideline_quote: string;
+	guideline_quote: string | null;
 	block_index: number | null;
 	violating_text: string;
 	issue: string;
@@ -254,6 +254,10 @@ function getTextTargetDisabledReason(
 		return __( 'Needs manual edit — source text appears more than once', 'jetpack' );
 	}
 	return undefined;
+}
+
+function hasRenderableGuidelineQuote( quote: string | null ): boolean {
+	return typeof quote === 'string' && quote.trim() !== '';
 }
 
 /**
@@ -1229,9 +1233,11 @@ export default function ReviewMediation( {
 														</>
 													) }
 												</p>
-												<blockquote className="jetpack-ai-review-mediation__guideline-anchor">
-													{ v.guideline_quote }
-												</blockquote>
+												{ hasRenderableGuidelineQuote( v.guideline_quote ) && (
+													<blockquote className="jetpack-ai-review-mediation__guideline-anchor">
+														{ v.guideline_quote }
+													</blockquote>
+												) }
 												{ v.violating_text && (
 													<blockquote
 														className="jetpack-ai-review-mediation__violating-text"
