@@ -281,6 +281,20 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return true;
 		}
 
+		// Under the split flag, if intent=cancel but auto-renew is already off
+		// (e.g. page refresh after cancel-autorenew mutation), redirect to
+		// Purchase Settings instead of re-showing the confirmation screen.
+		// Bypass when surveyShown is true — the post-mutation survey should
+		// still render within the same session.
+		if (
+			props.isSplitCancelRemoveEnabled &&
+			props.intent === 'cancel' &&
+			! purchase.isAutoRenewEnabled &&
+			! this.state.surveyShown
+		) {
+			return false;
+		}
+
 		// Under the split flag, any purchase reached via ?intent=remove renders
 		// the unified confirmation screen. Allow through regardless of
 		// canAutoRenewBeTurnedOff so the page doesn't redirect away.
@@ -299,10 +313,18 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { purchase, siteSlug } = this.props;
 		let redirectPath = this.props.purchaseListUrl ?? purchasesRoot;
 
+		const isAlreadyCancelledForSplitFlag =
+			this.props.isSplitCancelRemoveEnabled &&
+			this.props.intent === 'cancel' &&
+			purchase &&
+			! purchase.isAutoRenewEnabled;
+
 		if (
 			siteSlug &&
 			purchase &&
-			( ! canAutoRenewBeTurnedOff( purchase ) || isDomainTransfer( purchase ) )
+			( isAlreadyCancelledForSplitFlag ||
+				! canAutoRenewBeTurnedOff( purchase ) ||
+				isDomainTransfer( purchase ) )
 		) {
 			redirectPath = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 				siteSlug,
