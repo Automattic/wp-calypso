@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import QRCode, { QRCodePlaceholder } from './qr-code';
 import TimerBar from './timer-bar';
@@ -12,6 +12,7 @@ import { useStatus } from './use-status';
 import './style.scss';
 
 export default function QRCodeAppLogin() {
+	const translate = useTranslate();
 	const {
 		mutate: createToken,
 		data: token,
@@ -60,10 +61,10 @@ export default function QRCodeAppLogin() {
 		return (
 			<div className="qr-code-app-login is-error">
 				<p className="qr-code-app-login__error">
-					{ __( 'Login was rejected — this sign-in attempt has been cancelled.' ) }
+					{ translate( 'Login was rejected — this sign-in attempt has been cancelled.' ) }
 				</p>
 				<Button variant="primary" onClick={ startOver }>
-					{ __( 'Start over' ) }
+					{ translate( 'Start over' ) }
 				</Button>
 			</div>
 		);
@@ -73,10 +74,10 @@ export default function QRCodeAppLogin() {
 		return (
 			<div className="qr-code-app-login is-error">
 				<p className="qr-code-app-login__error">
-					{ __( 'Could not generate a sign-in code. Please try again later.' ) }
+					{ translate( 'Could not generate a sign-in code. Please try again later.' ) }
 				</p>
 				<Button variant="secondary" onClick={ startOver }>
-					{ __( 'Start over' ) }
+					{ translate( 'Start over' ) }
 				</Button>
 			</div>
 		);
@@ -87,9 +88,11 @@ export default function QRCodeAppLogin() {
 	if ( isExpired ) {
 		return (
 			<div className="qr-code-app-login is-error">
-				<p className="qr-code-app-login__error">{ __( 'This sign-in attempt has expired.' ) }</p>
+				<p className="qr-code-app-login__error">
+					{ translate( 'This sign-in attempt has expired.' ) }
+				</p>
 				<Button variant="primary" onClick={ startOver }>
-					{ __( 'Start over' ) }
+					{ translate( 'Start over' ) }
 				</Button>
 			</div>
 		);
@@ -98,7 +101,7 @@ export default function QRCodeAppLogin() {
 	if ( status === 'consumed' ) {
 		return (
 			<div className="qr-code-app-login">
-				<p className="qr-code-app-login__status">{ __( 'Sign-in complete.' ) }</p>
+				<p className="qr-code-app-login__status">{ translate( 'Sign-in complete.' ) }</p>
 			</div>
 		);
 	}
@@ -107,23 +110,22 @@ export default function QRCodeAppLogin() {
 		return (
 			<div className="qr-code-app-login">
 				<p className="qr-code-app-login__status">
-					{ __( 'Approved — waiting for the app to finish signing in…' ) }
+					{ translate( 'Approved — waiting for the app to finish signing in…' ) }
 				</p>
 			</div>
 		);
 	}
 
 	if ( status === 'scanned' && statusData ) {
-		const deviceLabel = sprintf(
-			/* translators: %s: device name reported by the mobile app, e.g. "Pixel 7". */
-			__( 'Confirm sign-in on %s' ),
-			statusData.device
-		);
+		const deviceLabel = translate( 'Confirm sign-in on %(device)s', {
+			args: { device: statusData.device },
+			comment: 'device name reported by the mobile app, e.g. "Pixel 7"',
+		} );
 		return (
 			<div className="qr-code-app-login">
 				<p className="qr-code-app-login__status">{ deviceLabel }</p>
 				<p className="qr-code-app-login__instructions">
-					{ __( 'Tap the number shown on your phone.' ) }
+					{ translate( 'Tap the number shown on your phone.' ) }
 				</p>
 				<ul className="qr-code-app-login__numbers">
 					{ statusData.numbers.map( ( n ) => (
@@ -152,16 +154,16 @@ export default function QRCodeAppLogin() {
 				{ token ? <QRCode token={ token } /> : <QRCodePlaceholder /> }
 			</div>
 			<p className="qr-code-app-login__instructions">
-				{ __( 'Open the app on your phone and scan this code.' ) }
+				{ translate( 'Open the app on your phone and scan this code.' ) }
 			</p>
 			{ countdown && (
 				<TimerBar remainingMs={ countdown.remainingMs } totalMs={ countdown.totalMs } />
 			) }
 			{ isCreatingToken && (
-				<p className="qr-code-app-login__status">{ __( 'Generating code…' ) }</p>
+				<p className="qr-code-app-login__status">{ translate( 'Generating code…' ) }</p>
 			) }
 			{ isStatusError && (
-				<p className="qr-code-app-login__error">{ __( 'Lost connection — retrying…' ) }</p>
+				<p className="qr-code-app-login__error">{ translate( 'Lost connection — retrying…' ) }</p>
 			) }
 		</div>
 	);
