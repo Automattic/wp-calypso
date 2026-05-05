@@ -1,6 +1,6 @@
 import { Button, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import QRCode, { QRCodePlaceholder } from './qr-code';
 import TimerBar from './timer-bar';
 import { useApprove } from './use-approve';
@@ -30,6 +30,13 @@ export default function QRCodeAppLogin() {
 	const [ forcedExpired, setForcedExpired ] = useState( false );
 	const [ approveError, setApproveError ] = useState< string | null >( null );
 	const { mutate: approve, isPending: isApproving } = useApprove();
+
+	const scannedHeadingRef = useRef< HTMLParagraphElement | null >( null );
+	useEffect( () => {
+		if ( statusData?.status === 'scanned' ) {
+			scannedHeadingRef.current?.focus();
+		}
+	}, [ statusData?.status ] );
 
 	const handleGenerate = () => {
 		setHasStarted( true );
@@ -129,7 +136,9 @@ export default function QRCodeAppLogin() {
 	if ( status === 'consumed' ) {
 		return (
 			<div className="qr-code-app-login">
-				<p className="qr-code-app-login__status">{ translate( 'Sign-in complete.' ) }</p>
+				<p className="qr-code-app-login__status" role="status" aria-live="polite">
+					{ translate( 'Sign-in complete.' ) }
+				</p>
 			</div>
 		);
 	}
@@ -141,7 +150,7 @@ export default function QRCodeAppLogin() {
 	if ( status === 'approved' ) {
 		return (
 			<div className="qr-code-app-login">
-				<p className="qr-code-app-login__status">
+				<p className="qr-code-app-login__status" role="status" aria-live="polite">
 					{ translate( 'Approved — waiting for the app to finish signing in…' ) }
 				</p>
 				{ connectionLost }
@@ -156,7 +165,15 @@ export default function QRCodeAppLogin() {
 		} );
 		return (
 			<div className="qr-code-app-login">
-				<p className="qr-code-app-login__status">{ deviceLabel }</p>
+				<p
+					className="qr-code-app-login__status"
+					role="status"
+					aria-live="polite"
+					tabIndex={ -1 }
+					ref={ scannedHeadingRef }
+				>
+					{ deviceLabel }
+				</p>
 				<p className="qr-code-app-login__instructions">
 					{ translate( 'Tap the number shown on your phone.' ) }
 				</p>
@@ -173,6 +190,11 @@ export default function QRCodeAppLogin() {
 								variant="secondary"
 								disabled={ isApproving }
 								onClick={ () => handleApprove( n ) }
+								aria-label={
+									translate( 'Confirm sign-in by tapping %(number)s', {
+										args: { number: String( n ) },
+									} ) as string
+								}
 							>
 								{ n }
 							</Button>
