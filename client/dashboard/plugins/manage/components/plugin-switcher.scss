@@ -1,5 +1,9 @@
 @import './variables.scss';
 
+.plugin-switcher-card {
+	overflow-y: hidden;
+}
+
 .plugin-switcher-card-body {
 	max-height: $card-height;
 	padding: 8px 0 0;
@@ -14,6 +18,7 @@
 
 .plugin-switcher-item {
 	border-top: 1px solid #f0f0f0;
+	border-radius: 0;
 	padding: calc(4px * 4) calc(4px * 6);
 
 	&.is-selected {

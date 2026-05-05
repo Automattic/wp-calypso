@@ -345,6 +345,69 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		color: var( --color-accent );
 	}
 
+	.signup-form {
+		max-width: 758px;
+		margin-inline: auto;
+
+		.layout & .signup-form__passwordless-form-wrapper .card.logged-out-form,
+		.layout & > .card.auth-form__social {
+			box-shadow: none;
+			border: 0;
+			background: transparent;
+			clip-path: unset;
+		}
+
+		.signup-form__passwordless-form-wrapper .form-fieldset {
+			margin-bottom: 0;
+		}
+
+		@media ( min-width: 782px ) {
+			display: flex;
+			flex-direction: row;
+			align-items: stretch;
+			justify-content: center;
+
+			> .signup-form__passwordless-form-wrapper,
+			> .card.auth-form__social {
+				flex: 0 0 327px;
+				max-width: 327px;
+				margin: 0;
+			}
+
+			> .signup-form__passwordless-form-wrapper,
+			> .signup-form__passwordless-form-wrapper .card.logged-out-form,
+			> .signup-form__passwordless-form-wrapper form {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+
+			.auth-form__separator {
+				flex: 0 0 auto;
+				width: 24px;
+				margin: 0 24px;
+
+				&::before,
+				&::after {
+					border-inline-start: 1px solid var( --color-border-subtle );
+					border-block-start: 0;
+					inset-block-start: 0;
+					inset-inline-start: 50%;
+					height: 40%;
+					width: 0;
+				}
+
+				&::after {
+					top: 60%;
+				}
+
+				.auth-form__separator-text {
+					padding: 24px 0;
+				}
+			}
+		}
+	}
+
 	@media screen and ( max-width: $break-mobile ) {
 		padding: 0 16px;
 	}

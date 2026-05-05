@@ -14,6 +14,10 @@ img.plugin-icon {
 	height: 48px;
 }
 
+.plugin-sites-card {
+	overflow-y: hidden;
+}
+
 .plugin-sites-card-body {
 	max-height: $card-height;
 	padding-inline-start: 0;
@@ -30,4 +34,3 @@ img.plugin-icon {
 		height: 48px;
 	}
 }
-

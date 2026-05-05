@@ -90,6 +90,7 @@ export interface MastodonFeedItem {
 	boost: MastodonBoost | null;
 	media: MastodonMediaAttachment[];
 	counts: MastodonCounts;
+	viewer?: MastodonFeedItemViewer;
 }
 
 export interface MastodonTimelinePage {
@@ -126,4 +127,86 @@ export type MastodonThreadNode =
 
 export interface MastodonThreadResponse {
 	thread: MastodonThreadNode;
+}
+
+// Backend projects the home-instance Mastodon Account object. We surface
+// only the fields we render plus `raw` for forward-compat (matches the
+// existing MastodonConnectionDetails convention). `note` arrives sanitized
+// from the wire and is sanitized again client-side (defence-in-depth).
+// `id` is instance-local — same handle on a different home instance has a
+// different id; we still use it as the URL key when known because the
+// home-instance perspective is stable per connection. Webfinger handle
+// (`acct` qualified to `@user@instance`) is the cross-instance fallback
+// when only the handle is on hand. Counts are projected into the nested
+// `counts` object the same way `MastodonConnectionDetails` exposes them
+// (followers / following / posts), not the upstream flat `*_count` form.
+export interface MastodonAuthorProfile {
+	id: string;
+	acct: string;
+	display_name: string;
+	avatar: string | null;
+	header: string | null;
+	note: string;
+	counts: MastodonProfileCounts;
+	locked: boolean;
+	raw: Record< string, unknown >;
+}
+
+// Author-feed pages share the timeline page shape; alias rather than
+// duplicate so a future field on MastodonTimelinePage propagates here too.
+export type MastodonAuthorFeedPage = MastodonTimelinePage;
+
+// Mirrors AtmosphereAuthorFeedFilter so panel/tabs wiring is identical
+// across protocols. Mastodon's wire shape is two booleans on the same
+// endpoint (exclude_replies, only_media); the fetcher does the mapping.
+export type MastodonAuthorFeedFilter =
+	| 'posts_no_replies'
+	| 'posts_with_replies'
+	| 'posts_with_media';
+
+// Filter values that map to Mastodon's GET /api/v1/timelines/tag/:hashtag
+// query params. Values mirror the UI tab slugs 1:1 so the slug ↔ filter
+// map at the tabs layer is identity beyond the case of `all`.
+export type MastodonTagFilter = 'all' | 'media' | 'local';
+
+// Optional metadata embedded in the feed response. The backend MAY include
+// nothing today; render hashtag name as a plain header and only show
+// `count` when set.
+export interface MastodonTagInfo {
+	name: string;
+	// Cumulative recent-post count from Mastodon's `history[]` aggregate
+	// when the backend chooses to project it. Render as a "N posts" line
+	// under the hashtag header; omit the line entirely when undefined.
+	count?: number;
+	// Home-instance Mastodon tag-page URL (e.g.
+	// `https://mastodon.social/tags/rust`). Provided so we can offer an
+	// external "View on Mastodon" link for users who want the home-instance
+	// view.
+	url?: string;
+}
+
+export interface MastodonTagFeedPage {
+	items: MastodonFeedItem[];
+	cursor: string | null;
+	tag?: MastodonTagInfo;
+}
+
+// Wire shape: Mastodon's status object includes per-viewer interaction
+// state. Both fields are booleans — favourited toggles via the favourites
+// endpoint, reblogged via boosts (slice 7b territory). Optional during the
+// backend rollout window; consumers must treat missing viewer as
+// "not favourited / not reblogged".
+export interface MastodonFeedItemViewer {
+	favourited: boolean;
+	reblogged: boolean;
+}
+
+export interface MastodonCreateLikeParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonDeleteLikeParams {
+	connectionId: number;
+	statusId: string;
 }

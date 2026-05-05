@@ -146,6 +146,8 @@ export interface TransactionRequest {
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string | undefined;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 }
@@ -200,6 +202,8 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	pan?: string;
 	gstin?: string;
 	nik?: string;
+	// 6-digit BLIK code generated in the customer's banking app.
+	code?: string;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
 };
@@ -348,7 +352,8 @@ export type CheckoutPaymentMethodSlug =
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay' // a synonym for 'web-pay'
 	| 'razorpay'
-	| 'stripe-upi';
+	| 'stripe-upi'
+	| 'stripe-blik';
 
 /**
  * Payment method slugs as returned by the WPCOM backend.
@@ -373,7 +378,8 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico'
 	| 'WPCOM_Billing_Razorpay'
-	| 'WPCOM_Billing_Stripe_Upi';
+	| 'WPCOM_Billing_Stripe_Upi'
+	| 'WPCOM_Billing_Stripe_Blik';
 
 export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
 

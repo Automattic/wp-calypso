@@ -197,7 +197,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 				streamKey,
 				page: view.page,
 				perPage: view.perPage,
-			} ) as UnknownAction
+			} )
 		);
 	}, [ dispatch, view, streamKey ] );
 

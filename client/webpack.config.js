@@ -450,7 +450,7 @@ const webpackConfig = {
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
 				overlay: false,
-				exclude: [ /node_modules/, /devdocs/ ],
+				exclude: [ /node_modules/ ],
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],

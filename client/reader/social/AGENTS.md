@@ -26,9 +26,13 @@ Out of scope (lives elsewhere):
 client/reader/social/
   index.ts                      # public barrel — only export from here
   profile-card.tsx              # SocialProfileCard (used by every protocol's profile/verify view)
-  style.scss                    # SocialProfileCard styles
+  author-profile-header.tsx     # AuthorProfileHeader — back-button shim for the profile route (slice 6)
+  author-profile-panel.tsx      # SocialAuthorProfilePanel — generic author-profile surface, both protocols wrap (slice 6)
+  profile-header-skeleton.tsx   # SocialProfileHeaderSkeleton — layout-stable placeholder used by the panel (slice 6)
+  style.scss                    # SocialProfileCard + skeleton styles
   test/
     profile-card.test.tsx
+    author-profile-header.test.tsx
 
   components/                   # mirror of client/reader/discover/components/ shape
     feed-list/
@@ -81,8 +85,11 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 - `SocialProfileCard` — generic over a `stats[]` array; accepts plain-text `bio` or sanitised `bioHtml`. Slice-6 widened the prop set so the same component covers both the slim verify/your-own-connection layout and the full author-profile header: `banner`, `displayName`, `handle`, and `headerActions` switch the component into a richer band-and-stats layout (banner above avatar, name + `@handle`, action slot for buttons/links). Already used by ATmosphere for both surfaces; intended for Mastodon.
 - `SocialFeedList<T>` — generic over item type via `renderItem` and `itemKey`. Mastodon plugs in a different data hook and a different `renderItem` callback; the list shell, sentinel-based pagination, skeleton, and error variants don't change.
 - `PostCardLink` — the card-link accessibility pattern (one real `<a>` + `::after` overlay + nested `position: relative; z-index: 1` anchors).
-- `sanitizePostHtml` — DOMPurify wrapper with allow-list (`<p> <br> <a>` / `href, rel, target`) and the `target="_blank"` rel-hardening hook. Conservative enough for Mastodon content too, possibly with a small extension to that allow-list once we see what Mastodon emits.
+- `sanitizePostHtml` — DOMPurify wrapper with allow-list (`<p> <br> <a>` / `href, rel, target, data-id`, `ALLOW_DATA_ATTR: false`) and a scoped `afterSanitizeAttributes` hook that forces `target="_blank"` and `rel="nofollow noopener noreferrer"` on every surviving anchor (post body and bio alike — `SocialProfileCard` reuses the same hardening via `sanitizeReaderSocialHtml`). The `data-id` attribute is carried by @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
 - `SocialAnalyticsProvider` / `useSocialAnalytics` — the per-protocol shell wraps its tree with a `source` ('atmosphere' | 'mastodon' | …) + `connectionId` + `onClick(event, props)` callback, plus optional URL resolvers (`getThreadUrl`, `getProfileUrl`). The post-card subcomponents call into this context instead of dispatching `recordReaderTracksEvent` directly. Adding a protocol just means adding a `source` value, wiring up the protocol's per-event Tracks call in the shell, and binding the protocol's URL builders to the resolvers.
+- `SocialAuthorProfilePanel` (slice 6) — generic author-profile surface that owns the layout (back-button + profile header + feed list), the `profile_viewed` / `profile_error_shown` / `profile_retry_clicked` / `profile_back_to_timeline_clicked` Tracks events with ref-based dedupe, and the `SocialAnalyticsProvider` value. Per-protocol wrappers inject already-fetched query results, mappers, error projectors, URL builders, and copy. Atmosphere's wrapper is `client/reader/atmosphere/author-profile-panel.tsx`; Mastodon's is `client/reader/mastodon/author-profile-panel.tsx`. Both shrink to ~150 lines of config.
+- `SocialProfileHeaderSkeleton` (slice 6) — layout-stable placeholder used as the default `renderProfileLoading` slot of `SocialAuthorProfilePanel`. Mirrors `SocialProfileCard`'s sizing so the surface doesn't shift when profile data resolves.
+- `AuthorProfileHeader` — back-button shim taking `timelineUrl: string`. Both protocols use it directly via the shared panel.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
@@ -128,7 +135,15 @@ interface SocialAnalyticsContextValue {
 	// Slice 5: in-app thread URL for a post URI, or null to fall back.
 	getThreadUrl?: ( postUri: string ) => string | null;
 	// Slice 6: in-app profile URL for an author ref, or null to fall back.
-	getProfileUrl?: ( ref: { did?: string | null; handle?: string | null } ) => string | null;
+	// `id` is the universal protocol-agnostic identifier (DID for atmosphere,
+	// numeric account id for Mastodon). `did` is kept as an atmosphere-named
+	// alias so existing call sites keep working — both fields point to the
+	// same value when post-card-header passes them.
+	getProfileUrl?: ( ref: {
+		id?: string | null;
+		did?: string | null;
+		handle?: string | null;
+	} ) => string | null;
 }
 ```
 
@@ -137,7 +152,23 @@ Surfaces consuming `getThreadUrl` (slice 5): the timestamp anchor in
 count, and `<PostCardHeader>`'s reply-context preface.
 
 Surfaces consuming `getProfileUrl` (slice 6): `<PostCardHeader>`'s author
-chip, and `<PostCardHeader>`'s repost preface (the reposter name).
+chip, `<PostCardHeader>`'s repost preface (the reposter name),
+`<PostCardBody>` for inline `<a data-id>` @-mention anchors in post
+content, and `<SocialProfileCard>` for inline `<a data-id>` @-mention
+anchors in author bios. The body and profile-card components intercept
+the click, read `data-id`, call `getProfileUrl({ id, handle, did })` with
+the same value in all three fields, and route via `page()` when the
+resolver returns an in-app URL. The three-field shape lets per-protocol
+resolvers pick whichever they understand and validate: atmosphere's
+resolver tries `handle` (`HANDLE_RE`) then `did` (`DID_RE`); Mastodon's
+reads `id`. Backends stamp either a DID (atmosphere, when known) or a
+numeric account id (Mastodon), and atmosphere falls back to a handle in
+`data-id` when no DID is available. Modifier-clicks (cmd/ctrl/middle/
+shift/alt) always pass through. When `data-id` is present but the
+resolver returns null the click falls through to the external href AND
+the body/profile-card fires a
+`calypso_reader_<source>_timeline_mention_unresolved` Tracks
+event so a backend↔frontend desync is observable in dashboards.
 
 When the resolver returns a string, the click target is in-app (same tab, no
 `rel`). When it returns `null` (or the resolver isn't set), the slice-4
@@ -155,19 +186,22 @@ Allow-list shape:
 
 - `ALLOWED_TAGS: ['p', 'br', 'a']` for post content (extend cautiously for new protocols).
 - `ALLOWED_TAGS: ['p', 'br', 'a', 'span']` for profile bios (Mastodon emits `<span>` mention scaffolding).
-- `ALLOWED_ATTR` capped to `href`, `rel`, `target`, `class` (bio only).
+- `ALLOWED_ATTR` for post content: `href`, `rel`, `target`, `data-id`. The `data-id` attribute carries the protocol's stable author identifier on @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
+- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`. Bios carry the same @-mention `data-id` contract as post content; `<SocialProfileCard>` intercepts bio mention clicks via the same pattern as `<PostCardBody>`.
+- `ALLOW_DATA_ATTR: false` on both post content and profile bios. DOMPurify allows every `data-*` attribute by default; we restrict to the explicit allow-list above so a future backend change can't smuggle a new `data-*` attribute (e.g. `data-tracking`) through to the DOM.
+- `ADD_URI_SAFE_ATTR: ['data-id']` on both post content and profile bios. DOMPurify scheme-checks every attribute value containing a colon and would otherwise drop `data-id="did:plc:…"` for atmosphere DIDs as an unknown URI scheme. Use `ADD_URI_SAFE_ATTR` (extends DOMPurify's defaults) rather than `URI_SAFE_ATTRIBUTES` (replaces them and would drop `xml:lang`, `xlink:href`, etc.). Don't switch to `ALLOW_UNKNOWN_PROTOCOLS: true` — that would also loosen `href` validation.
 - DOMPurify's default scheme allow-list strips `javascript:` / `data:` / etc. on `href`. Don't extend it.
-- An `afterSanitizeAttributes` hook forces `rel="nofollow noopener noreferrer"` on any `<a target="_blank">` that survives sanitisation. Belt-and-suspenders against window-opener leaks if upstream ever drops the rel attribute.
+- A scoped `afterSanitizeAttributes` hook (installed only while `sanitize-post-html.ts` sanitizes Reader Social HTML, and reused by `profile-card.tsx` via `sanitizeReaderSocialHtml`) forces `target="_blank"` and `rel="nofollow noopener noreferrer"` on every surviving `<a>`. Belt-and-suspenders against window-opener leaks and against upstream HTML that omits `target`. Pre-existing rel tokens (e.g. `rel="me"` for IndieAuth-style verification) are preserved.
 
 ### Card-link accessibility pattern
 
 `PostCardLink` implements [Inclusive Components' card-link pattern](https://inclusive-components.design/cards/):
 
-- Exactly one real `<a>` per card (the post timestamp), with a `::after` pseudo-element covering the whole card as the click target.
-- Inner clickable elements (author chip, external embed, quote embed) are `position: relative; z-index: 1` so they sit above the overlay and remain individually clickable.
+- Exactly one real `<a>` per card unit (the post timestamp), with a `::after` pseudo-element covering the whole unit as the click target. The pattern applies both to top-level cards (default variant — the timestamp anchor is derived internally from `analytics.getThreadUrl(post.uri) ?? post.permalink`) and to compact cards used inside a quote embed (compact variant — the consumer passes a `cardLink` prop on `<SocialPostCard>`, which is forwarded to `<PostCardHeader>` as `timestampLink` and renders the compact timestamp as an anchor with the supplied href/onClick/target/rel).
+- Inner clickable elements (author chip, external embed, quote embed, body inline anchors injected via `PostCardBody`) are raised to `position: relative; z-index: 1` so they sit above the overlay and remain individually clickable. The full raise list lives in `client/reader/social/components/post-card/style.scss`.
 - Card text remains selectable (the overlay sits behind text via `z-index`-stacking, not in front of it).
 
-Don't replace this with a `<a>`-wrapping-the-whole-card structure (illegal nested anchors) or `onClick` on a `<div>` (kills keyboard navigation and screen-reader semantics).
+Don't replace this with a `<a>`-wrapping-the-whole-card structure: when the body content contains inline anchors (mentions, hashtags, URLs) injected via `innerHTML`, the parser does not split the surrounding `<a>` and the DOM ends up with literal nested anchors with undefined click behaviour. The quote embed (`PostCardEmbedQuote`) used to wrap its compact card in an outer `<a>` for exactly this reason and has since been refactored to use the `cardLink` prop instead — copy that pattern for any new quote-shaped surface. `onClick` on a `<div>` is also out (kills keyboard navigation and screen-reader semantics).
 
 ### Inline video — thumbnail vs. expanded
 
@@ -219,6 +253,112 @@ As of slice 5, the card-link / quote / replies-count / reply-context surfaces al
 
 When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` and `getProfileUrl` from the analytics context before constructing any post- or profile-destination URL.
 
+### Like / Favourite interactions
+
+Both protocols expose a per-viewer interaction state on each feed item.
+ATmosphere uses `viewer: { like: string | null; repost: string | null }` —
+the value is the user's like/repost record URI (or `PENDING_LIKE_URI`
+during the optimistic window). Mastodon uses
+`viewer: { favourited: boolean; reblogged: boolean }`. The field is
+optional during the backend rollout window on both protocols; consumers
+must treat a missing `viewer` as "not liked / not favourited".
+
+The Mastodon mapper (`mappers/mastodon.ts`) projects the booleans onto the
+shared `SocialPost.viewer.{like,repost}` shape using a marker string
+(`'favourited'` / `'reblogged'`) for true and `null` for false. That keeps
+`<LikeButton>` and consumers protocol-agnostic — every consumer reads
+`Boolean(post.viewer?.like)` and gets the right answer for both protocols.
+
+`<LikeButton>` is presentational and protocol-agnostic. It calls
+`useLikeAction(post)` from `<LikeProvider>` (defined in
+`like-context.tsx`). When no provider is mounted (`action.supported ===
+false`), the button renders an inline static count (icon + count +
+screen-reader text) — **not** `null`, and **not** delegated back to
+`<PostCardCounts>` for a fallback. Keeping the fallback inside the
+button means a panel that passes `connectionId` to `<SocialPostCard>`
+without also mounting a `<LikeProvider>` shows a populated cell instead
+of an empty one. `<PostCardCounts>` therefore always renders
+`<LikeButton>` unconditionally.
+
+Each protocol shell wires its own adapter hook factory:
+
+- ATmosphere: `client/reader/atmosphere/use-atmosphere-like-action.ts`
+  exports `makeUseAtmosphereLikeAction(connectionId)`. It calls
+  `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
+  `@automattic/api-queries`, uses `rkeyFromUri(viewer.like)` to derive the
+  delete key (returns `null` for `PENDING_LIKE_URI`, preventing a DELETE
+  with a fake rkey), and emits the labels "Like" / "Like, %d like(s)".
+  Tracks events: `_like_clicked`, `_unlike_clicked`, `_like_error_shown`.
+- Mastodon: `client/reader/mastodon/use-mastodon-like-action.ts`
+  exports `makeUseMastodonLikeAction(connectionId)`. It calls
+  `useCreateMastodonLikeMutation()` /
+  `useDeleteMastodonLikeMutation()`, uses `post.uri` (the status_id)
+  for the delete call, and emits the UK-spelled labels "Favourite" /
+  "Favourite, %d favourite(s)". Tracks events: `_favourite_clicked`,
+  `_unfavourite_clicked`, `_favourite_error_shown`.
+
+Both mutation hooks optimistically patch every cached query under their
+protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
+plus thread-tree nodes recursively), then restore snapshots on error.
+
+The connection ID flows from the protocol panel:
+`Panel` → `<LikeProvider value={makeUse…LikeAction(id)}>` plus
+`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<LikeButton>`.
+Any future interactive count button (repost, follow, bookmark) should
+follow the same provider-injected adapter shape rather than reading
+connection identity from global state or hard-coding protocol logic into
+the shared button.
+
+### Repost / Boost interactions
+
+Both protocols expose a per-viewer repost state on each feed item.
+ATmosphere uses `viewer.repost: string | null` — the value is the
+user's repost record URI (or `PENDING_REPOST_URI` during the optimistic
+window). Mastodon uses `viewer.reblogged: boolean`. The Mastodon mapper
+projects the boolean onto the shared `SocialPost.viewer.repost` shape
+using the marker string `'reblogged'` so consumers can read
+`Boolean(post.viewer?.repost)` regardless of protocol.
+
+`<RepostButton>` is presentational and protocol-agnostic. Like
+`<LikeButton>`, it calls `useRepostAction(post)` from `<RepostProvider>`
+(defined in `repost-context.tsx`). When no provider is mounted, the
+button renders an inline static count — **not** `null`. Same rule as
+`<LikeButton>`: the fallback lives inside the button so panels that
+pass `connectionId` without also mounting a provider don't end up with
+empty cells.
+
+Two render branches by viewer state:
+
+- **Reposted / boosted** — plain `<button aria-pressed="true">`. Clicking
+  it fires the delete-mutation directly; no menu opens.
+- **Not reposted** — `<Dropdown>` from `@wordpress/components` whose
+  toggle is the same shape of button (`aria-haspopup="menu"`). The menu
+  has two `<MenuItem>`s: the action item (`action.label.action` —
+  "Repost" / "Boost") and "Quote post" (disabled when
+  `action.canQuote === false` — true for both protocols today;
+  ATmosphere wires up in slice 7d, Mastodon has no native quote).
+
+Each protocol shell wires its own adapter hook factory:
+
+- ATmosphere: `client/reader/atmosphere/use-atmosphere-repost-action.ts`
+  exports `makeUseAtmosphereRepostAction(connectionId)`. Calls
+  `useCreateRepostMutation()` / `useDeleteRepostMutation()`, uses
+  `rkeyFromUri(viewer.repost)` for the delete key (returns `null` for
+  `PENDING_REPOST_URI`, preventing a DELETE with a fake rkey), guards
+  the create on missing `post.cid`, emits "Repost" labels. Tracks
+  events: `_repost_clicked`, `_unrepost_clicked`, `_repost_error_shown`.
+- Mastodon: `client/reader/mastodon/use-mastodon-repost-action.ts`
+  exports `makeUseMastodonRepostAction(connectionId)`. Calls
+  `useCreateMastodonRepostMutation()` /
+  `useDeleteMastodonRepostMutation()`, uses `post.uri` (the status_id)
+  for the delete call, emits the UK-spelled "Boost" labels. Tracks
+  events: `_boost_clicked`, `_unboost_clicked`, `_boost_error_shown`.
+
+The connection ID flows from the protocol panel:
+`Panel` → `<RepostProvider value={makeUse…RepostAction(id)}>` plus
+`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<RepostButton>`.
+Mirrors the like / favourite flow.
+
 ## Boundaries (for new code)
 
 Inherits everything from `client/reader/AGENTS.md` and `client/AGENTS.md`. Highlights worth restating because they trip up new contributors:
@@ -239,8 +379,8 @@ Inherits everything from `client/reader/AGENTS.md` and `client/AGENTS.md`. Highl
 - ARIA queries (`getByRole`, `getByLabelText`). No CSS selectors. No `data-testid` unless absolutely unavoidable.
 - `renderWithProvider` from `calypso/test-helpers/testing-library` for components needing Redux + React Query.
 - `nock` for HTTP mocking. Never mock components that contain real behaviour.
-- DOMPurify allow-list tests: assert preserved tags, stripped tags, stripped attributes, stripped `javascript:` URLs, and the `target="_blank"` rel-hardening hook.
-- For the card-link pattern, test the surface map: timestamp-as-real-`<a>`, author chip click target, quote click target, external click target, card-background click via overlay, and that all anchors carry `target="_blank" rel="noopener noreferrer"`.
+- DOMPurify allow-list tests: assert preserved tags, stripped tags, stripped attributes, stripped `javascript:` URLs, that `data-id` survives, that arbitrary `data-*` attributes (e.g. `data-tracking`) are stripped, and the unconditional rel + target hardening hook (every surviving `<a>` gains `target="_blank"` and the merged `rel="nofollow noopener noreferrer"`, with pre-existing rel tokens preserved).
+- For the card-link pattern, test the surface map: timestamp-as-real-`<a>`, author chip click target, quote click target (the quote wrapper is a `<div>` and the inner timestamp anchor is the card-link target — verify there are no nested anchors), external click target, body inline link click target (assert it does not fire `_post_clicked`), card-background click via overlay, and that all anchors carry `target="_blank" rel="noopener noreferrer"` (body anchors additionally carry `nofollow`).
 
 Run tests with:
 
@@ -263,8 +403,12 @@ When wiring up a second (Mastodon) or third social protocol, expect to:
 Future-extraction candidates flagged for later PRs (currently in `client/reader/atmosphere/`, expected to move shared-side once Mastodon needs them):
 
 - `connect-form.tsx` — likely shareable with Mastodon's connect flow.
-- `profile-panel.tsx` / `author-profile-panel.tsx` — both already use `SocialProfileCard` (rich variant) plus a feed list; the panel shells could move shared-side once Mastodon's profile shapes are in front of us.
+- `profile-panel.tsx` (your-own-connection profile) — already uses `SocialProfileCard` (rich variant); the panel shell could move shared-side once Mastodon's profile shape is fully aligned.
 - `atmosphere-navigation.tsx` — the Timeline / Profile / Settings tab structure likely ports.
+
+`author-profile-panel.tsx` was extracted to this directory as
+`SocialAuthorProfilePanel` in slice 6 — both protocols already wrap the
+shared component.
 
 ## References
 

@@ -10,46 +10,17 @@ import {
 	SocialPostCard,
 	mapMastodonFeedItemToSocialPost,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getThreadUrl as buildThreadUrl } from './route';
-import type { MastodonConnection, MastodonError, MastodonFeedItem } from '@automattic/api-core';
-import type { SocialError, SocialPost } from 'calypso/reader/social';
+import { projectMastodonError } from './error-projection';
+import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
+import type { MastodonConnection, MastodonFeedItem } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
 
 interface TimelinePanelProps {
 	connection: MastodonConnection;
-}
-
-function projectMastodonError( err: MastodonError | null | undefined ): SocialError | null {
-	if ( ! err ) {
-		return null;
-	}
-	switch ( err.kind ) {
-		case 'auth_required':
-		case 'not_found':
-		case 'upstream_unavailable':
-			return { kind: err.kind };
-		case 'auth_failed':
-			// Stale Keyring token — same recovery as auth_required.
-			return { kind: 'auth_required' };
-		case 'connection_not_found':
-			// User-side connection deleted — semantically a not_found.
-			return { kind: 'not_found' };
-		case 'rate_limited':
-			return err.retry_after !== undefined
-				? { kind: 'rate_limited', retry_after: err.retry_after }
-				: { kind: 'rate_limited' };
-		case 'invalid_instance':
-		case 'bad_request':
-		case 'unknown':
-			return { kind: 'unknown', cause: err };
-		default:
-			return assertNever( err );
-	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled MastodonError kind: ${ JSON.stringify( value ) }` );
 }
 
 export function TimelinePanel( { connection }: TimelinePanelProps ) {
@@ -125,9 +96,34 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const buildProfileUrl = useCallback(
+		( ref: { id?: string | null; handle?: string | null } ) => {
+			if ( ref.id ) {
+				return getProfileUrl( connection.id, ref.id );
+			}
+			if ( ref.handle ) {
+				return getProfileUrl( connection.id, ref.handle, { instance: connection.instance } );
+			}
+			return null;
+		},
+		[ connection.id, connection.instance ]
+	);
+
+	const buildTagUrl = useCallback(
+		( tag: string ) => getTagFeedUrl( connection.id, tag ),
+		[ connection.id ]
+	);
+
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
-		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
-		[]
+		( post: SocialPost ) => (
+			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
+		),
+		[ connection.id ]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
@@ -137,31 +133,35 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			connectionId: connection.id,
 			onClick: onClickAnalytics,
 			getThreadUrl,
+			getProfileUrl: buildProfileUrl,
+			getTagUrl: buildTagUrl,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
 	);
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<SocialFeedList< SocialPost >
-				items={ items }
-				isPending={ isPending }
-				isError={ isError }
-				error={ projectMastodonError( error ) }
-				hasNextPage={ Boolean( hasNextPage ) }
-				isFetchingNextPage={ isFetchingNextPage }
-				fetchNextPage={ fetchNextPage }
-				refetch={ handleRetry }
-				renderItem={ renderItem }
-				itemKey={ itemKey }
-				emptyTitle={ translate( "You're all caught up." ) }
-				emptyLine={ translate( 'Follow some accounts on Mastodon to see posts here.' ) }
-				emptyActionLabel={ translate( 'Open your Mastodon instance' ) }
-				emptyActionURL={ `https://${ connection.instance }` }
-				protocolLabel="Mastodon"
-				protocolHomeURL="/reader/mastodon"
-				protocolHomeLabel={ translate( 'Back to Mastodon' ) }
-			/>
+			<LikeProvider value={ useLikeAction }>
+				<SocialFeedList< SocialPost >
+					items={ items }
+					isPending={ isPending }
+					isError={ isError }
+					error={ projectMastodonError( error ) }
+					hasNextPage={ Boolean( hasNextPage ) }
+					isFetchingNextPage={ isFetchingNextPage }
+					fetchNextPage={ fetchNextPage }
+					refetch={ handleRetry }
+					renderItem={ renderItem }
+					itemKey={ itemKey }
+					emptyTitle={ translate( "You're all caught up." ) }
+					emptyLine={ translate( 'Follow some accounts on Mastodon to see posts here.' ) }
+					emptyActionLabel={ translate( 'Open your Mastodon instance' ) }
+					emptyActionURL={ `https://${ connection.instance }` }
+					protocolLabel="Mastodon"
+					protocolHomeURL="/reader/mastodon"
+					protocolHomeLabel={ translate( 'Back to Mastodon' ) }
+				/>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

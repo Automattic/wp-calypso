@@ -1,6 +1,7 @@
 .webpack-cache
 .sass-cache
 .babel-cache
+.superpowers/
 .vagrant
 .unison
 .env
