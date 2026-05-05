@@ -35,20 +35,30 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, softLimit 
 					// Only announce when the user is near or past the soft limit so
 					// screen readers don't read out the count on every keystroke.
 					aria-live={ remaining <= WARN_THRESHOLD_REMAINING ? 'polite' : 'off' }
-					// Visible text is the bare integer; the accessible label
-					// adds units so the live-region announcement is meaningful
-					// without relying on the surrounding visual context.
-					aria-label={ translate(
-						'%(count)d character remaining',
-						'%(count)d characters remaining',
-						{
-							count: remaining,
-							args: { count: remaining },
-							textOnly: true,
-							comment:
-								'Composer post-length counter; %(count)d is the integer count of characters still allowed before the soft limit. Negative when the user is over the soft limit.',
-						}
-					) }
+					// Plural rules in many locales don't define a form for
+					// negative counts, so we branch on sign and feed _n / sprintf
+					// a non-negative integer in either case.
+					aria-label={
+						remaining >= 0
+							? translate( '%(count)d character remaining', '%(count)d characters remaining', {
+									count: remaining,
+									args: { count: remaining },
+									textOnly: true,
+									comment:
+										'Composer post-length counter; %(count)d is characters remaining before the soft limit.',
+							  } )
+							: translate(
+									'%(count)d character over the recommended length',
+									'%(count)d characters over the recommended length',
+									{
+										count: -remaining,
+										args: { count: -remaining },
+										textOnly: true,
+										comment:
+											'Composer post-length counter when the user has typed past the soft limit; %(count)d is how many characters over.',
+									}
+							  )
+					}
 				>
 					{ remaining }
 				</span>

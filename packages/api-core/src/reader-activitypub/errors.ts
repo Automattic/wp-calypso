@@ -62,9 +62,6 @@ export function classifyFediverseError( raw: unknown ): FediverseError {
 			return { kind: 'upstream_unavailable' };
 	}
 	const statusCode = raw.statusCode ?? raw.status;
-	if ( statusCode === 400 && errorCode === 'state_expired' ) {
-		return { kind: 'state_expired' };
-	}
 	if ( statusCode === 401 ) {
 		return { kind: 'auth_required' };
 	}

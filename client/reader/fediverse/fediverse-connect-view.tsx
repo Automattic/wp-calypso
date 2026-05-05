@@ -15,15 +15,19 @@ import { INITIAL_STATE, wizardReducer } from './connect/wizard-state-machine';
 import { saveOauthState } from './oauth-state';
 import type { FediverseError } from '@automattic/api-core';
 
+// Returns a server-provided human-readable message when one is available
+// (only `bad_request` carries one). For closed-set kinds we return an empty
+// string so the wizard's error card shows only the translated step title and
+// doesn't leak machine codes like `forbidden` / `not_found` to users. The
+// `kind` is still carried separately for telemetry via `isPermissionDenied`.
 function errorMessage( err: unknown ): string {
 	if ( err && typeof err === 'object' && 'kind' in err ) {
 		const e = err as FediverseError;
-		if ( e.kind === 'bad_request' ) {
-			return e.message ?? e.kind;
+		if ( e.kind === 'bad_request' && e.message ) {
+			return e.message;
 		}
-		return e.kind;
 	}
-	return String( err );
+	return '';
 }
 
 function isPermissionDenied( err: unknown ): boolean {

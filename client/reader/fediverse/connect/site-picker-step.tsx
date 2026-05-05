@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import SiteSelector from 'calypso/components/site-selector';
