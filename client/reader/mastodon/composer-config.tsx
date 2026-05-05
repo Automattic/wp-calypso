@@ -1,4 +1,5 @@
 import { createMastodonPostMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl } from './route';
 import type {
@@ -117,8 +118,9 @@ export const mastodonComposerConfig: ComposerConfig<
 		logToLogstash( {
 			feature: 'calypso_client',
 			message: 'Mastodon composer bad_request',
-			severity: 'debug',
+			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 			extra: {
+				env: config( 'env_id' ),
 				type: 'reader_mastodon_composer_bad_request',
 				mode: mode.kind,
 				error_message: error.message,
