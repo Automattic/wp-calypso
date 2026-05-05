@@ -314,7 +314,7 @@ export default function SolutionsCardsUpsellStep( {
 	const changePlanUrl = addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		siteSlug: purchase.site_slug,
 		switch_plan: 'true',
-		cancel_to: window.location.href,
+		cancel_to: dashboardLink( '/me/billing/purchases/' + purchase.ID ),
 		redirect_to: dashboardLink( '/me/billing/purchases' ),
 	} );
 	const purchaseSettingsUrl = dashboardLink( '/me/billing/purchases/' + purchase.ID );

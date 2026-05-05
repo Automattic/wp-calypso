@@ -90,6 +90,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				...( isSwitchPlan && {
 					hideFreePlan: true,
 					hideEnterprisePlan: true,
+					isInSignup: true,
 				} ),
 
 				// Provide a custom back handler that goes to back_to or /sites

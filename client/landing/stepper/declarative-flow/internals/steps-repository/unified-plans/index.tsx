@@ -97,6 +97,8 @@ type ProvidedDependencies = {
 const PlansStepAdaptor: StepType< {
 	submits: ProvidedDependencies;
 	accepts: {
+		hideEnterprisePlan?: boolean;
+		hideFreePlan?: boolean;
 		isInSignup?: boolean;
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
@@ -109,8 +111,15 @@ const PlansStepAdaptor: StepType< {
 		};
 	};
 } > = ( props ) => {
-	const { displayedIntervals, isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } =
-		props;
+	const {
+		displayedIntervals,
+		hideEnterprisePlan: hideEnterprisePlanProp,
+		hideFreePlan: hideFreePlanProp,
+		isInSignup,
+		isStepperUpgradeFlow,
+		selectedFeature,
+		wrapperProps,
+	} = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -212,7 +221,8 @@ const PlansStepAdaptor: StepType< {
 	return (
 		<UnifiedPlansStep
 			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
-			hideFreePlan={ hideFreePlan }
+			hideFreePlan={ hideFreePlanProp || hideFreePlan }
+			hideEnterprisePlan={ hideEnterprisePlanProp }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );

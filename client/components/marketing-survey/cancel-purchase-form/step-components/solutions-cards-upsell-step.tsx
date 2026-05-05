@@ -234,7 +234,7 @@ export default function SolutionsCardsUpsellStep( {
 	const changePlanUrl = addQueryArgs( '/setup/plan-upgrade', {
 		siteSlug: site.slug,
 		switch_plan: 'true',
-		cancel_to: window.location.pathname + window.location.search,
+		cancel_to: '/me/purchases/' + site.slug + '/' + purchase.id,
 		redirect_to: '/me/purchases',
 	} );
 	const baseRenewUrl = `/checkout/${ site.slug }/${ purchase.productSlug }?coupon=${ RENEW_COUPON }`;
