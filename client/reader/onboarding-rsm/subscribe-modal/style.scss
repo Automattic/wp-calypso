@@ -126,6 +126,12 @@ $actions-height: 64px;
 			margin-bottom: 12px;
 			cursor: pointer;
 
+			// Without min-width: 0 the byline flex-item expands to its content
+			// width, pushing __options off the right edge of the card.
+			.reader-subscription-list-item__byline {
+				min-width: 0;
+			}
+
 			&.is-selected {
 				background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
 				border-color: color-mix( in srgb, var( --color-accent ) 25%, #fff );
@@ -160,6 +166,31 @@ $actions-height: 64px;
 			.reader-subscription-list-item__site-url-timestamp {
 				&:not( .is-placeholder )::after {
 					background: none;
+				}
+
+				// ul and li must not block the width constraint from reaching the anchor.
+				ul,
+				li {
+					overflow: hidden;
+				}
+
+				// Force the URL to one line with ellipsis while keeping the
+				// external-link icon always visible at the end.
+				.reader-subscription-list-item__site-url.has-icon {
+					display: block;
+					position: relative;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					// Reserve room for the 14px icon + a small gap.
+					padding-inline-end: 18px;
+
+					svg {
+						position: absolute;
+						inset-inline-end: 0;
+						top: 50%;
+						transform: translateY( -50% );
+					}
 				}
 			}
 		}
