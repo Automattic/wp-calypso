@@ -37,17 +37,14 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 		{
 			loader: require.resolve( 'sass-loader' ),
 			options: {
-				additionalData: ( content, loaderContext ) => {
-					return prelude && ! loaderContext.resourcePath.endsWith( '.css' )
-						? `${ prelude }${ content }`
-						: content;
-				},
+				additionalData: prelude,
 				api: 'modern',
-				sassOptions: {
+				sassOptions: ( loaderContext ) => ( {
 					loadPaths: includePaths,
 					quietDeps: true,
 					silenceDeprecations: [ 'mixed-decls' ],
-				},
+					...( loaderContext.resourcePath.endsWith( '.css' ) ? { syntax: 'scss' } : {} ),
+				} ),
 			},
 		},
 	],
