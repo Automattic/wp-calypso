@@ -1,10 +1,5 @@
-// ExPlat SDK — runtime condition matcher.
-//
-// Borrows MongoDB-shaped query syntax for familiarity; **no MongoDB anywhere
-// in the stack**. The five MVP operators are `$eq`, `$in`, `$exists`, `$and`,
-// `$or`. This file is the runtime evaluator only — authoring-time validation
-// belongs elsewhere — and never crashes on bad input. Unknown operators yield
-// non-match plus a `console.warn`. Cross-runtime parity required (PHP / TS).
+// Runtime condition matcher. See ./README.md for design notes (MongoDB-shaped
+// query syntax, fail-closed semantics, cross-runtime parity).
 
 import type { Attributes } from './types';
 
@@ -41,7 +36,6 @@ export function evalCondition( attrs: Attributes, cond: unknown ): boolean {
 		}
 
 		if ( field.startsWith( '$' ) ) {
-			warnUnknownOperator( field );
 			return false;
 		}
 
@@ -81,7 +75,15 @@ function evalField( attrs: Attributes, field: string, expr: unknown ): boolean {
 		return false;
 	}
 
-	for ( const [ op, arg ] of Object.entries( expr as Record< string, unknown > ) ) {
+	const entries = Object.entries( expr as Record< string, unknown > );
+	// Empty operator object: PHP decodes `{}` as an empty associative array
+	// and falls through to the empty-list `$in` shorthand, which is non-match.
+	// Mirror that here so the runtimes agree.
+	if ( entries.length === 0 ) {
+		return false;
+	}
+
+	for ( const [ op, arg ] of entries ) {
 		switch ( op ) {
 			case '$eq':
 				if ( ! present || value !== arg ) {
@@ -102,20 +104,9 @@ function evalField( attrs: Attributes, field: string, expr: unknown ): boolean {
 				break;
 
 			default:
-				warnUnknownOperator( op );
 				return false;
 		}
 	}
 
 	return true;
 }
-
-/* eslint-disable no-console */
-function warnUnknownOperator( operator: string ): void {
-	if ( typeof console !== 'undefined' && typeof console.warn === 'function' ) {
-		console.warn(
-			`[ExPlat SDK] Unknown condition operator ${ operator }; treating rule as non-matching`
-		);
-	}
-}
-/* eslint-enable no-console */
