@@ -1,7 +1,3 @@
-// ExPlat SDK — bucket-range and variation-choice primitives. Pure functions
-// paired with the FNV-1a-double `hash()` to map a hashed user into a variation.
-// Cross-runtime parity is required (PHP / TS / edge).
-
 import type { ExperimentVariation, Range } from './types';
 
 export function getEqualWeights( n: number ): number[] {
@@ -65,22 +61,22 @@ export function inRange( n: number, range: Range ): boolean {
 }
 
 /**
- * Index of the variation whose inline `range` contains `n`, or `-1` if none.
+ * Index of the variation whose inline `range` contains `n`, or `null` if none.
  *
  * Each variation carries an inline `range` tuple; this function walks the
  * variations directly rather than a parallel ranges array so any future
- * per-variation field is a one-place change. Callers treat `-1` as "user is
+ * per-variation field is a one-place change. Callers treat `null` as "user is
  * outside coverage" — fall through to the next rule, do not crash.
  */
 export function chooseVariation(
 	n: number,
 	variations: Array< Pick< ExperimentVariation, 'range' > >
-): number {
+): number | null {
 	for ( let i = 0; i < variations.length; i++ ) {
 		const range = variations[ i ]?.range ?? [ 0, 0 ];
 		if ( inRange( n, range ) ) {
 			return i;
 		}
 	}
-	return -1;
+	return null;
 }
