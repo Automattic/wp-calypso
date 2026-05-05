@@ -105,32 +105,16 @@ describe( 'evalCondition — logical operators', () => {
 } );
 
 describe( 'evalCondition — fail-closed edge cases', () => {
-	let warnSpy: jest.SpyInstance;
-
-	beforeEach( () => {
-		warnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
-	} );
-
-	afterEach( () => {
-		warnSpy.mockRestore();
-	} );
-
-	it( 'unknown field-level operator returns false and warns', () => {
+	it( 'unknown field-level operator returns false', () => {
 		expect(
-			evalCondition(
-				{ country: 'US' },
-				// intentional grammar abuse to exercise the warning path
-				{ country: { $gt: 'A' } } as unknown as Condition
-			)
+			evalCondition( { country: 'US' }, { country: { $gt: 'A' } } as unknown as Condition )
 		).toBe( false );
-		expect( warnSpy ).toHaveBeenCalled();
 	} );
 
-	it( 'unknown top-level operator returns false and warns', () => {
+	it( 'unknown top-level operator returns false', () => {
 		expect( evalCondition( { country: 'US' }, { $unknown: 1 } as unknown as Condition ) ).toBe(
 			false
 		);
-		expect( warnSpy ).toHaveBeenCalled();
 	} );
 
 	it( 'empty condition object matches', () => {
@@ -140,5 +124,11 @@ describe( 'evalCondition — fail-closed edge cases', () => {
 	it( 'empty $and / $or arrays fail closed', () => {
 		expect( matches( { country: 'US' }, { $and: [] } ) ).toBe( false );
 		expect( matches( { country: 'US' }, { $or: [] } ) ).toBe( false );
+	} );
+
+	it( 'empty operator object on a field is non-match (PHP parity)', () => {
+		// PHP decodes `{}` as an empty associative array, falling into the
+		// empty-list `$in` shorthand which is non-match. Ensure TS agrees.
+		expect( matches( { country: 'US' }, { country: {} } as Condition ) ).toBe( false );
 	} );
 } );

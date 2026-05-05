@@ -89,8 +89,8 @@ describe( 'chooseVariation', () => {
 			{ range: [ 0, 0.25 ] as [ number, number ] },
 			{ range: [ 0.5, 0.75 ] as [ number, number ] },
 		];
-		expect( chooseVariation( 0.8, partial ) ).toBe( -1 );
-		expect( chooseVariation( 0.4, partial ) ).toBe( -1 );
+		expect( chooseVariation( 0.8, partial ) ).toBeNull();
+		expect( chooseVariation( 0.4, partial ) ).toBeNull();
 	} );
 } );
 
