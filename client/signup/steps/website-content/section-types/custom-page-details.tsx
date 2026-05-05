@@ -35,7 +35,7 @@ export function CustomPageDetails( {
 	const description = useTranslatedPageDescriptions( CUSTOM_PAGE, context );
 
 	const { onCheckboxChanged, onFieldChanged } = useChangeHandlers( {
-		pageId: page.id,
+		pageId: String( page.id ),
 		onChangeField,
 	} );
 

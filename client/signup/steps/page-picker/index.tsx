@@ -750,12 +750,14 @@ function DIFMPagePicker( props: StepProps ) {
 	const isStoreFlow = 'do-it-for-me-store' === flowName;
 	const [ isCheckoutPressed, setIsCheckoutPressed ] = useState( false );
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
-	const [ pageInstances, setPageInstances ] = useState< PageInstance[] >( () =>
-		( isStoreFlow
-			? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
-			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
-		).map( ( type ) => ( { id: type, type } ) )
-	);
+	const [ pageInstances, setPageInstances ] = useState< PageInstance[] >( () => {
+		const initialTypes = (
+			isStoreFlow
+				? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
+				: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
+		) satisfies PageId[];
+		return initialTypes.map( ( type ): PageInstance => ( { id: type, type } ) );
+	} );
 	const selectedPages = pageInstances.map( ( instance ) => instance.type );
 
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) ) || siteIdFromDependencies;

@@ -131,3 +131,16 @@ export function synthesizeInstancesFromTitles( titles: PageId[] ): PageInstance[
 		return { id, type };
 	} );
 }
+
+const PAGE_DATA_ID_SUFFIX = /^(.+)_(\d+)$/;
+
+/**
+ * Map an accordion/page row `id` (instance key like SERVICES_PAGE_2 or a bare PageId) to its PageId type.
+ */
+export function getPageTypeFromPageDataId( pageDataId: PageId | string ): PageId {
+	const m = PAGE_DATA_ID_SUFFIX.exec( pageDataId );
+	if ( m ) {
+		return m[ 1 ] as PageId;
+	}
+	return pageDataId as PageId;
+}

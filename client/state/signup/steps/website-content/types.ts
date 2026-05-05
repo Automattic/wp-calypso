@@ -12,7 +12,7 @@ export type Media = {
 };
 
 /** One selected page instance (id may be type or type_n for multi-add). */
-export type SelectedPageInstance = { id: string; type: PageId };
+export type SelectedPageInstance = { id: string; type: PageId; title?: string };
 
 export type PageData = {
 	id: PageId | string; // string allows instance ids (e.g. SERVICES_PAGE_2, CUSTOM_PAGE_2)
@@ -74,7 +74,7 @@ export type WebsiteContentRequestDTO = {
 
 export type WebsiteContentResponseDTO = WebsiteContentRequestDTO & {
 	selected_page_titles: PageId[];
-	selected_page_instances?: Array< { id: string; type: PageId } >;
+	selected_page_instances?: Array< { id: string; type: PageId; title?: string } >;
 	is_website_content_submitted: boolean;
 	is_store_flow: boolean;
 };
