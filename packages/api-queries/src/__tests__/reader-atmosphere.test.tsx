@@ -22,6 +22,7 @@ import {
 } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { wpcom } from '../../../api-core/src/wpcom-fetcher';
 import {
 	atmosphereScopedProfileQuery,
 	buildPlaceholderStandalonePost,
@@ -43,6 +44,7 @@ import {
 	useDeleteLikeMutation,
 	useDeletePostMutation,
 	useDeleteRepostMutation,
+	uploadBlobMutation,
 	useThreadQuery,
 	useTimelineInfiniteQuery,
 } from '../reader-atmosphere';
@@ -3482,5 +3484,38 @@ describe( 'removePlaceholder', () => {
 		const next = removePlaceholder( data, pendingUri );
 
 		expect( next ).toBe( data );
+	} );
+} );
+
+describe( 'uploadBlobMutation', () => {
+	// Mirrors the api-core fetcher tests: nock can't be used here because
+	// superagent's Node adapter streams formData via `form-data`, which
+	// rejects jsdom Blob/File instances before any HTTP request goes out.
+	// Spying on `wpcom.req.post` keeps the factory contract under test
+	// (mutationFn wiring + result propagation) without taking on the
+	// transport's stream wiring.
+	afterEach( () => jest.restoreAllMocks() );
+
+	it( 'wires uploadBlob into mutationFn and returns the blob ref', async () => {
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			blob: {
+				$type: 'blob',
+				ref: { $link: 'bafkrei' + 'a'.repeat( 50 ) },
+				mimeType: 'image/jpeg',
+				size: 3,
+			},
+		} );
+
+		const file = new Blob( [ new Uint8Array( [ 0xff, 0xd8, 0xff ] ) ], { type: 'image/jpeg' } );
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+		const { result } = renderHook( () => useMutation( uploadBlobMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		const value = await result.current.mutateAsync( { connectionId: 7, file } );
+
+		expect( value.blob.mimeType ).toBe( 'image/jpeg' );
+		expect( value.blob.$type ).toBe( 'blob' );
 	} );
 } );

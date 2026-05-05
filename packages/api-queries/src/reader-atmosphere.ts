@@ -24,6 +24,7 @@ import {
 	PENDING_REPOST_URI,
 	isValidHashtag,
 	readerAtmosphereKeys,
+	uploadBlob,
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
@@ -58,6 +59,8 @@ import type {
 	CreatePostParams,
 	CreatePostResult,
 	CreateRepostResult,
+	UploadBlobParams,
+	UploadBlobResult,
 } from '@automattic/api-core';
 
 const TERMINAL_ERROR_KINDS: ReadonlySet< AtmosphereError[ 'kind' ] > = new Set( [
@@ -1390,6 +1393,18 @@ export function removePlaceholder< P extends { items: AtmosphereFeedItem[] } >(
 	} );
 	return removed ? { ...data, pages } : data;
 }
+
+/**
+ * Wraps the uploadBlob fetcher. No cache invalidation needed — blob
+ * uploads are a transient step toward createPost. The QueryClient
+ * parameter is kept for symmetry with sibling factories in this module
+ * so future cache touches don't refactor the call sites.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const uploadBlobMutation = ( _queryClient: QueryClient ) =>
+	mutationOptions< UploadBlobResult, AtmosphereError, UploadBlobParams >( {
+		mutationFn: uploadBlob,
+	} );
 
 /**
  * Mutation factory for creating an `app.bsky.feed.post` record.
