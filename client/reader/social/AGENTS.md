@@ -336,9 +336,11 @@ Two render branches by viewer state:
   toggle is the same shape of button (`aria-haspopup="menu"`). The menu
   has two `<MenuItem>`s: the action item (label provided by the adapter
   — "Repost" for ATmosphere, "Boost" for Mastodon) and "Quote post"
-  (disabled when `action.canQuote === false` — true today for both
-  protocols; ATmosphere wires up in slice 7d, Mastodon has no native
-  quote concept).
+  (disabled when `action.canQuote === false`). ATmosphere reports
+  `canQuote: true` when the panel has wired `onQuoteClick` on the
+  analytics context AND the post carries a `cid`; clicking the item
+  opens the same composer as the standalone `<QuoteButton>`. Mastodon
+  has no native quote concept and reports `canQuote: false` always.
 
 Each protocol shell wires its own adapter hook factory:
 
@@ -350,7 +352,9 @@ Each protocol shell wires its own adapter hook factory:
   DELETE with a fake rkey), guards the create on missing `post.cid`, and
   emits the labels "Repost" / "Repost, %d repost(s)" / "Undo repost, %d
   repost(s)". Tracks events: `_repost_clicked`, `_unrepost_clicked`,
-  `_repost_error_shown`.
+  `_quote_clicked`, `_repost_error_shown`. The `quote()` action delegates
+  to the analytics context's `onQuoteClick`, sharing the composer wiring
+  with the standalone `<QuoteButton>`.
 - Mastodon: `client/reader/mastodon/use-mastodon-repost-action.ts`
   exports `makeUseMastodonRepostAction(connectionId)`. It calls
   `useCreateMastodonRepostMutation()` / `useDeleteMastodonRepostMutation()`,

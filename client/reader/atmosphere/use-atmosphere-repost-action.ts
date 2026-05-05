@@ -180,8 +180,22 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 			);
 		};
 
+		// Composer-driven quote handler is provided by the panel via the
+		// analytics context (`onQuoteClick`). The menu item is only active
+		// when the panel has wired the composer AND the post carries the
+		// `cid` strong-ref the composer needs to mint an AT-Proto quote.
+		const onQuoteClick = analytics?.onQuoteClick;
+		const canQuote = Boolean( post.cid && onQuoteClick );
+
 		const quote = () => {
-			// Slice-7d work — disabled menu item for now. No-op.
+			if ( ! canQuote || ! onQuoteClick ) {
+				return;
+			}
+			analytics?.onClick( `calypso_reader_${ analytics.source }_quote_clicked`, {
+				connection_id: connectionId,
+				post_uri: post.uri,
+			} );
+			onQuoteClick( post );
 		};
 
 		const accessibleLabel = ( count: number, reposted: boolean ) => {
@@ -207,7 +221,7 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 				action: translate( 'Repost' ),
 				accessibleLabel,
 			},
-			canQuote: false, // slice-7d
+			canQuote,
 			repost,
 			unrepost,
 			quote,
