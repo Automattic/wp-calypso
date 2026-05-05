@@ -26,6 +26,18 @@ $actions-height: 64px;
 		padding-bottom: $actions-height;
 	}
 
+	.reader-onboarding-modal__footer {
+		// The global footer uses margin-based tricks that leave a scrollbar gap on
+		// the right and mis-align content when the modal padding is 24px (not 32px).
+		// Use explicit inset + matching padding so the footer spans the full width
+		// and its content aligns with the rest of the modal body.
+		inset-inline-start: 0;
+		inset-inline-end: 0;
+		width: auto;
+		margin-inline: 0;
+		padding-inline: 24px;
+	}
+
 	&__title {
 		font-family: Recoleta, sans-serif;
 		font-size: 2.75rem;
