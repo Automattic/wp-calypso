@@ -51,7 +51,11 @@ export function ComposerFooter( {
 					aria-disabled={ atMax || undefined }
 					aria-label={
 						atMax
-							? ( translate( 'Maximum 4 images' ) as string )
+							? ( translate( 'Maximum %(count)d images', {
+									args: { count: MAX_IMAGES },
+									comment:
+										'Tooltip on the composer "Add media" button when the user has reached the per-post image cap; %(count)d is the maximum number of images allowed on a single post.',
+							  } ) as string )
 							: ( translate( 'Add media' ) as string )
 					}
 					onClick={ () => {
