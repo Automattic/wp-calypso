@@ -193,13 +193,6 @@ $entry-offset: 10px;
 
 	.reader-onboarding-modal__footer {
 		border-top: 0;
-		// Same fix as interests-modal: use explicit inset + matching padding so the
-		// footer covers the full width and its content aligns with the modal body.
-		inset-inline-start: 0;
-		inset-inline-end: 0;
-		width: auto;
-		margin-inline: 0;
-		padding-inline: 24px;
 	}
 }
 
