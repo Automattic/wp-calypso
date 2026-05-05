@@ -1,3 +1,12 @@
+/*
+ * The condition-evaluation logic below (top-level `$and`/`$or` handling,
+ * `$eq`/`$in`/`$exists` operator object, and string/array shorthands) is
+ * derived from GrowthBook's open-source SDK
+ * (https://github.com/growthbook/growthbook), used under the MIT License.
+ * Copyright (c) 2025 GrowthBook, Inc. Full MIT license text in
+ * `THIRD_PARTY_NOTICES.md` at the package root.
+ */
+
 import type { Attributes } from './types';
 
 /**
