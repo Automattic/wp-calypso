@@ -83,11 +83,11 @@ packages/image-studio/src/
 
 Image Studio runs in its own bundle. We do not import from `jetpack-publicize` or any Calypso state code. Access is via `@wordpress/data` against three stores that are guaranteed to be present in the post-editor context:
 
-| Store | Reads | Writes |
-|---|---|---|
-| `video-studio` (own) | `getCurrentVideoUrl`, `getCurrentAttachmentId` | — |
-| `core/editor` | `getCurrentPostId`, `isCurrentPostPublished`, `getEditedPostAttribute('meta')` | `editPost` |
-| `jetpack-social-plugin` | `getConnections`, `getConnectionsByService`, `isSharingCurrentPost` | `shareCurrentPost` (thunk) |
+| Store                   | Reads                                                                          | Writes                     |
+| ----------------------- | ------------------------------------------------------------------------------ | -------------------------- |
+| `video-studio` (own)    | `getCurrentVideoUrl`, `getCurrentAttachmentId`                                 | —                          |
+| `core/editor`           | `getCurrentPostId`, `isCurrentPostPublished`, `getEditedPostAttribute('meta')` | `editPost`                 |
+| `jetpack-social-plugin` | `getConnections`, `getConnectionsByService`, `isSharingCurrentPost`            | `shareCurrentPost` (thunk) |
 
 The `share-post` API path is read directly from the global Jetpack script-data: `window.JetpackScriptData?.social?.api_paths?.resharePost`. We don't add a runtime dependency on `@automattic/jetpack-script-data` or `@automattic/jetpack-publicize-components` — image-studio is a separate bundle and intentionally avoids cross-package imports for cross-bundle state. If the global isn't present, the share button is hidden (defensive — we're not in a Jetpack-Social-enabled context). A single typed helper, e.g. `getResharePath()`, encapsulates the read so the global access is in one place with a clear comment.
 
@@ -108,6 +108,7 @@ function useReelShare(): ReelShareApi;
 ```
 
 `handleShare` performs:
+
 1. Tracks `image_studio_reel_share_clicked`.
 2. Re-evaluates pre-checks (state may have changed since render). Routes to the appropriate `addNotice` + tracking event.
 3. On happy path: dispatches `editPost`, computes `skipped_connections`, dispatches `shareCurrentPost`, awaits the promise, dispatches success/failure notice + tracking event.
@@ -134,14 +135,14 @@ The button shows a tooltip on hover/focus only for the in-flight disabled state 
 
 All events go through `recordImageStudioEvent()` (auto-prefixes `jetpack_big_sky_` / `wpcom_big_sky_`):
 
-| Event | Fires when | Properties |
-|---|---|---|
-| `image_studio_reel_share_clicked` | Button click, before any check | `mode`, `attachment_id`, `duration_seconds` |
-| `image_studio_reel_share_not_connected` | Pre-check 1 fails | (base) |
-| `image_studio_reel_share_post_not_published` | Pre-check 2 fails | (base) |
-| `image_studio_reel_share_invalid_state` | Pre-check 3 fails | (base) |
-| `image_studio_reel_share_dispatched` | `shareCurrentPost` resolved truthy | (base) |
-| `image_studio_reel_share_failed` | `shareCurrentPost` resolved falsy or threw | `error_message` if available |
+| Event                                        | Fires when                                 | Properties                                  |
+| -------------------------------------------- | ------------------------------------------ | ------------------------------------------- |
+| `image_studio_reel_share_clicked`            | Button click, before any check             | `mode`, `attachment_id`, `duration_seconds` |
+| `image_studio_reel_share_not_connected`      | Pre-check 1 fails                          | (base)                                      |
+| `image_studio_reel_share_post_not_published` | Pre-check 2 fails                          | (base)                                      |
+| `image_studio_reel_share_invalid_state`      | Pre-check 3 fails                          | (base)                                      |
+| `image_studio_reel_share_dispatched`         | `shareCurrentPost` resolved truthy         | (base)                                      |
+| `image_studio_reel_share_failed`             | `shareCurrentPost` resolved falsy or threw | `error_message` if available                |
 
 `(base)` = standard set added by the wrapper (session id, entry point, platform prefix).
 
