@@ -1,6 +1,7 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import QRCode, { QRCodePlaceholder } from './qr-code';
 import TimerBar from './timer-bar';
 import { useApprove } from './use-approve';
@@ -38,17 +39,59 @@ export default function QRCodeAppLogin() {
 		}
 	}, [ statusData?.status ] );
 
+	const firedEventsRef = useRef< Set< string > >( new Set() );
+	const recordOnce = useCallback( ( name: string ) => {
+		if ( firedEventsRef.current.has( name ) ) {
+			return;
+		}
+		firedEventsRef.current.add( name );
+		recordTracksEvent( name );
+	}, [] );
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_qr_app_login_page_view' );
+	}, [] );
+
+	useEffect( () => {
+		if ( token ) {
+			recordOnce( 'calypso_qr_app_login_token_created' );
+		}
+	}, [ token, recordOnce ] );
+
+	useEffect( () => {
+		if ( isTokenError ) {
+			recordOnce( 'calypso_qr_app_login_token_failed' );
+		}
+	}, [ isTokenError, recordOnce ] );
+
+	const pollStatus = statusData?.status;
+	useEffect( () => {
+		if ( pollStatus ) {
+			recordOnce( `calypso_qr_app_login_${ pollStatus }` );
+		}
+	}, [ pollStatus, recordOnce ] );
+
+	const localExpired = forcedExpired || countdown?.hasExpired === true;
+	useEffect( () => {
+		if ( localExpired ) {
+			recordOnce( 'calypso_qr_app_login_expired' );
+		}
+	}, [ localExpired, recordOnce ] );
+
 	const handleGenerate = () => {
+		recordTracksEvent( 'calypso_qr_app_login_generate_clicked' );
 		setHasStarted( true );
 		createToken();
 	};
 
 	const startOver = () => {
+		recordTracksEvent( 'calypso_qr_app_login_start_over' );
 		setWrongNumber( false );
 		setForcedExpired( false );
 		setApproveError( null );
 		resetCreateToken();
 		setHasStarted( false );
+		firedEventsRef.current = new Set();
 	};
 
 	if ( ! hasStarted ) {
@@ -70,12 +113,14 @@ export default function QRCodeAppLogin() {
 		if ( ! token ) {
 			return;
 		}
+		recordTracksEvent( 'calypso_qr_app_login_approve_clicked' );
 		setApproveError( null );
 		approve(
 			{ token: token.token, chosenNumber },
 			{
 				onError: ( error ) => {
 					if ( error.code === 'wrong_number' ) {
+						recordTracksEvent( 'calypso_qr_app_login_wrong_number' );
 						setWrongNumber( true );
 						return;
 					}
@@ -83,6 +128,9 @@ export default function QRCodeAppLogin() {
 						setForcedExpired( true );
 						return;
 					}
+					recordTracksEvent( 'calypso_qr_app_login_approve_error', {
+						error_code: error.code ?? 'unknown',
+					} );
 					setApproveError( translate( 'Could not confirm sign-in. Please try again.' ) as string );
 				},
 			}
