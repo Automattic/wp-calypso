@@ -166,6 +166,9 @@ export default async function upiProcessor(
 			while ( isModalActive && [ 'processing', 'async-pending' ].includes( orderStatus ) ) {
 				orderStatus = await pollForOrderStatus( response.order_id, 2000, genericErrorMessage );
 			}
+			// `payment-confirmed` is treated as success: Stripe has accepted the payment
+			// but order finalization can still take a while. Hand off to the framework's
+			// pending page rather than keeping the user waiting in the modal.
 			if ( orderStatus !== 'success' && orderStatus !== 'payment-confirmed' ) {
 				throw new Error( explicitClosureMessage ?? genericFailureMessage );
 			}
