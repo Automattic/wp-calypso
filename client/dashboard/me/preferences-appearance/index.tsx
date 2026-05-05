@@ -1,6 +1,6 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { styles } from '@wordpress/icons';
@@ -28,8 +28,17 @@ function PreferencesAppearanceSummary( {
 	density?: Density;
 	config: AppConfig;
 } ) {
-	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );
+	const {
+		data: optIn,
+		isLoading,
+		isError,
+	} = useQuery( userPreferenceQuery( 'hosting-dashboard-opt-in' ) );
 	const { colorScheme } = useColorScheme();
+
+	if ( isLoading || isError ) {
+		return null;
+	}
+
 	const isDashboardEnrolled =
 		config.optIn &&
 		( optIn?.value === 'opt-in' ||

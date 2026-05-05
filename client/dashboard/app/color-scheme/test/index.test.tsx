@@ -2,121 +2,65 @@
  * @jest-environment jsdom
  */
 
+import { queryClient } from '@automattic/api-queries';
 import '@testing-library/jest-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { ColorSchemeProvider, useColorScheme } from '..';
+import { render } from '../../../test-utils';
+import type { ColorScheme } from '..';
 
 const PREFERENCE_KEY = 'hosting-dashboard-color-scheme';
-let mockPreferences: Record< string, unknown > = {};
+const API_BASE = 'https://public-api.wordpress.com';
+const PREFERENCES_PATH = '/rest/v1.1/me/preferences';
+
 const mockUpdatePreference = jest.fn();
 const mockOnSaveSuccess = jest.fn();
-let mockPreferenceQueryMode: 'success' | 'fail' | 'defer' = 'success';
-let mockMutationMode: 'success' | 'fail' | 'defer' = 'success';
-const mockPendingPreferenceQueries: {
-	resolve: () => void;
-}[] = [];
-const mockPendingMutations: {
-	preferenceName: string;
-	value: unknown;
-	resolve: () => void;
-	reject: () => void;
-}[] = [];
 
-function mockSavePreference( preferenceName: string, value: unknown ) {
-	mockUpdatePreference( preferenceName, value );
+function mockGetPreferences(
+	preferences: Record< string, unknown >,
+	options: { status?: number; delay?: number } = {}
+) {
+	const { status = 200, delay = 0 } = options;
+	const scope = nock( API_BASE ).get( PREFERENCES_PATH );
 
-	if ( mockMutationMode === 'fail' ) {
-		return Promise.reject( new Error( 'Could not save preference.' ) );
+	if ( delay ) {
+		scope.delay( delay );
 	}
 
-	if ( mockMutationMode === 'defer' ) {
-		return new Promise< Record< string, unknown > >( ( resolve, reject ) => {
-			mockPendingMutations.push( {
-				preferenceName,
-				value,
-				resolve: () => {
-					mockPreferences = { ...mockPreferences, [ preferenceName ]: value };
-					resolve( mockPreferences );
-				},
-				reject: () => reject( new Error( 'Could not save preference.' ) ),
-			} );
-		} );
-	}
-
-	mockPreferences = { ...mockPreferences, [ preferenceName ]: value };
-	return Promise.resolve( mockPreferences );
+	return scope.reply(
+		status,
+		status >= 400 ? { error: 'could_not_load_preferences' } : { calypso_preferences: preferences }
+	);
 }
 
-function mockFetchPreferences() {
-	if ( mockPreferenceQueryMode === 'fail' ) {
-		return Promise.reject( new Error( 'Could not load preferences.' ) );
-	}
-
-	if ( mockPreferenceQueryMode === 'defer' ) {
-		return new Promise< Record< string, unknown > >( ( resolve ) => {
-			mockPendingPreferenceQueries.push( {
-				resolve: () => resolve( mockPreferences ),
-			} );
-		} );
-	}
-
-	return Promise.resolve( mockPreferences );
-}
-
-jest.mock(
-	'@automattic/api-queries',
-	() => {
-		const { QueryClient: TestQueryClient } = jest.requireActual( '@tanstack/react-query' );
-		const queryClient = new TestQueryClient( {
-			defaultOptions: {
-				queries: { retry: false },
+function mockUpdateColorScheme(
+	scheme: ColorScheme,
+	options: { status?: number; delay?: number } = {}
+) {
+	const { status = 200, delay = 0 } = options;
+	const scope = nock( API_BASE ).post( PREFERENCES_PATH, ( body ) => {
+		mockUpdatePreference( body );
+		expect( body ).toMatchObject( {
+			calypso_preferences: {
+				[ PREFERENCE_KEY ]: scheme,
 			},
 		} );
+		return true;
+	} );
 
-		return {
-			queryClient,
-			rawUserPreferencesQuery: jest.fn( () => ( {
-				// eslint-disable-next-line @tanstack/query/exhaustive-deps
-				queryKey: [ 'me', 'preferences' ],
-				queryFn: mockFetchPreferences,
-			} ) ),
-			userPreferenceQuery: jest.fn( ( preferenceName ) => ( {
-				// eslint-disable-next-line @tanstack/query/exhaustive-deps
-				queryKey: [ 'me', 'preferences' ],
-				queryFn: mockFetchPreferences,
-				select: ( preferences: Record< string, unknown > ) =>
-					preferences[ preferenceName ] === undefined ? 'light' : preferences[ preferenceName ],
-			} ) ),
-			userPreferenceOptimisticMutation: jest.fn( ( preferenceName ) => ( {
-				mutationFn: ( value: unknown ) => mockSavePreference( preferenceName, value ),
-				onMutate: async ( value: unknown ) => {
-					await queryClient.cancelQueries( { queryKey: [ 'me', 'preferences' ] } );
-					const previous = queryClient.getQueryData( [ 'me', 'preferences' ] );
-					queryClient.setQueryData(
-						[ 'me', 'preferences' ],
-						( oldData: Record< string, unknown > | undefined ) => ( {
-							...oldData,
-							[ preferenceName ]: value,
-						} )
-					);
-					return { previous };
-				},
-				onError: (
-					_error: unknown,
-					_value: unknown,
-					context: { previous?: Record< string, unknown > } | undefined
-				) => {
-					if ( context?.previous ) {
-						queryClient.setQueryData( [ 'me', 'preferences' ], context.previous );
-					}
-				},
-			} ) ),
-		};
-	},
-	{ virtual: true }
-);
+	if ( delay ) {
+		scope.delay( delay );
+	}
+
+	return scope.reply(
+		status,
+		status >= 400
+			? { error: 'could_not_save_preferences' }
+			: { calypso_preferences: { [ PREFERENCE_KEY ]: scheme } }
+	);
+}
 
 function CurrentScheme() {
 	const { colorScheme, setColorScheme } = useColorScheme();
@@ -143,34 +87,33 @@ function CurrentScheme() {
 	);
 }
 
-function getMockQueryClient(): QueryClient {
-	return require( '@automattic/api-queries' ).queryClient;
-}
-
 function renderColorSchemeProvider() {
-	const queryClient = getMockQueryClient();
 	return render(
-		<QueryClientProvider client={ queryClient }>
-			<ColorSchemeProvider>
-				<CurrentScheme />
-			</ColorSchemeProvider>
-		</QueryClientProvider>
+		<ColorSchemeProvider>
+			<CurrentScheme />
+		</ColorSchemeProvider>,
+		{ queryClient }
 	);
 }
 
 beforeEach( () => {
-	mockPreferences = {};
+	queryClient.clear();
+	queryClient.setDefaultOptions( {
+		queries: { retry: false },
+	} );
 	mockUpdatePreference.mockClear();
 	mockOnSaveSuccess.mockClear();
-	mockPreferenceQueryMode = 'success';
-	mockMutationMode = 'success';
-	mockPendingPreferenceQueries.length = 0;
-	mockPendingMutations.length = 0;
-	getMockQueryClient().clear();
+	nock.cleanAll();
 	document.documentElement.removeAttribute( 'data-theme' );
 } );
 
+afterEach( () => {
+	nock.cleanAll();
+} );
+
 test( 'defaults to light when no server preference is available', async () => {
+	mockGetPreferences( {} );
+
 	renderColorSchemeProvider();
 
 	await waitFor( () => {
@@ -182,7 +125,7 @@ test( 'defaults to light when no server preference is available', async () => {
 } );
 
 test( 'defaults to light when the loaded server preference is invalid', async () => {
-	mockPreferences = { [ PREFERENCE_KEY ]: 'blue' };
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'blue' } );
 
 	renderColorSchemeProvider();
 
@@ -195,7 +138,7 @@ test( 'defaults to light when the loaded server preference is invalid', async ()
 } );
 
 test( 'uses a valid loaded server preference', async () => {
-	mockPreferences = { [ PREFERENCE_KEY ]: 'dark' };
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'dark' } );
 
 	renderColorSchemeProvider();
 
@@ -208,14 +151,11 @@ test( 'uses a valid loaded server preference', async () => {
 } );
 
 test( 'waits for preferences before rendering when no cached preference is available', async () => {
-	mockPreferences = { [ PREFERENCE_KEY ]: 'dark' };
-	mockPreferenceQueryMode = 'defer';
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'dark' }, { delay: 50 } );
 
 	renderColorSchemeProvider();
 
 	expect( screen.queryByTestId( 'scheme' ) ).not.toBeInTheDocument();
-
-	mockPendingPreferenceQueries[ 0 ].resolve();
 
 	await waitFor( () => {
 		expect( screen.getByTestId( 'scheme' ) ).toHaveTextContent( 'dark' );
@@ -227,9 +167,8 @@ test( 'waits for preferences before rendering when no cached preference is avail
 
 test( 'uses cached preferences while the query refetches', async () => {
 	const user = userEvent.setup();
-	mockPreferences = { [ PREFERENCE_KEY ]: 'dark' };
-	mockPreferenceQueryMode = 'defer';
-	getMockQueryClient().setQueryData( [ 'me', 'preferences' ], mockPreferences );
+	queryClient.setQueryData( [ 'me', 'preferences' ], { [ PREFERENCE_KEY ]: 'dark' } );
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'dark' }, { delay: 50 } );
 
 	renderColorSchemeProvider();
 
@@ -237,16 +176,13 @@ test( 'uses cached preferences while the query refetches', async () => {
 
 	await user.click( screen.getByRole( 'button', { name: 'Dark' } ) );
 
-	await waitFor( () => {
-		expect( mockUpdatePreference ).not.toHaveBeenCalled();
-		expect( mockOnSaveSuccess ).not.toHaveBeenCalled();
-	} );
+	expect( mockUpdatePreference ).not.toHaveBeenCalled();
+	expect( mockOnSaveSuccess ).not.toHaveBeenCalled();
 } );
 
 test( 'keeps cached preferences when the query refetch fails', async () => {
-	mockPreferences = { [ PREFERENCE_KEY ]: 'dark' };
-	mockPreferenceQueryMode = 'fail';
-	getMockQueryClient().setQueryData( [ 'me', 'preferences' ], mockPreferences );
+	queryClient.setQueryData( [ 'me', 'preferences' ], { [ PREFERENCE_KEY ]: 'dark' } );
+	mockGetPreferences( {}, { status: 500 } );
 
 	renderColorSchemeProvider();
 
@@ -259,7 +195,7 @@ test( 'keeps cached preferences when the query refetch fails', async () => {
 } );
 
 test( 'defaults to light when loading preferences fails without cached preferences', async () => {
-	mockPreferenceQueryMode = 'fail';
+	mockGetPreferences( {}, { status: 500 } );
 
 	renderColorSchemeProvider();
 
@@ -273,8 +209,8 @@ test( 'defaults to light when loading preferences fails without cached preferenc
 
 test( 'optimistically applies a user-initiated color scheme change', async () => {
 	const user = userEvent.setup();
-	mockPreferences = { [ PREFERENCE_KEY ]: 'light' };
-	mockMutationMode = 'defer';
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'light' } );
+	mockUpdateColorScheme( 'dark', { delay: 50 } );
 
 	renderColorSchemeProvider();
 
@@ -285,15 +221,15 @@ test( 'optimistically applies a user-initiated color scheme change', async () =>
 	await waitFor( () => {
 		expect( screen.getByTestId( 'scheme' ) ).toHaveTextContent( 'dark' );
 		expect( document.documentElement.dataset.theme ).toBe( 'dark' );
-		expect( mockPendingMutations ).toHaveLength( 1 );
+		expect( mockUpdatePreference ).toHaveBeenCalledTimes( 1 );
 		expect( mockOnSaveSuccess ).not.toHaveBeenCalled();
 	} );
 } );
 
 test( 'rolls back an optimistic color scheme change when saving fails', async () => {
 	const user = userEvent.setup();
-	mockPreferences = { [ PREFERENCE_KEY ]: 'light' };
-	mockMutationMode = 'defer';
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'light' } );
+	mockUpdateColorScheme( 'dark', { status: 500 } );
 
 	renderColorSchemeProvider();
 
@@ -301,8 +237,6 @@ test( 'rolls back an optimistic color scheme change when saving fails', async ()
 
 	await user.click( screen.getByRole( 'button', { name: 'Dark' } ) );
 	await waitFor( () => expect( screen.getByTestId( 'scheme' ) ).toHaveTextContent( 'dark' ) );
-
-	mockPendingMutations[ 0 ].reject();
 
 	await waitFor( () => {
 		expect( screen.getByTestId( 'scheme' ) ).toHaveTextContent( 'light' );
@@ -312,8 +246,8 @@ test( 'rolls back an optimistic color scheme change when saving fails', async ()
 
 test( 'ignores additional color scheme changes while a save is pending', async () => {
 	const user = userEvent.setup();
-	mockPreferences = { [ PREFERENCE_KEY ]: 'light' };
-	mockMutationMode = 'defer';
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'light' } );
+	mockUpdateColorScheme( 'dark', { delay: 50 } );
 
 	renderColorSchemeProvider();
 
@@ -324,16 +258,14 @@ test( 'ignores additional color scheme changes while a save is pending', async (
 
 	await user.click( screen.getByRole( 'button', { name: 'System' } ) );
 
-	expect( mockPendingMutations ).toHaveLength( 1 );
+	expect( mockUpdatePreference ).toHaveBeenCalledTimes( 1 );
 	expect( screen.getByTestId( 'scheme' ) ).toHaveTextContent( 'dark' );
-
-	mockPendingMutations[ 0 ].resolve();
 
 	await waitFor( () => {
 		expect( mockOnSaveSuccess ).toHaveBeenCalledTimes( 1 );
 		expect( mockOnSaveSuccess ).toHaveBeenCalledWith( 'dark', 'light' );
 		expect(
-			getMockQueryClient().getQueryData< Record< string, unknown > >( [ 'me', 'preferences' ] )
+			queryClient.getQueryData< Record< string, unknown > >( [ 'me', 'preferences' ] )
 		).toMatchObject( {
 			[ PREFERENCE_KEY ]: 'dark',
 		} );
@@ -342,7 +274,8 @@ test( 'ignores additional color scheme changes while a save is pending', async (
 
 test( 'runs the success callback after saving a user-initiated color scheme change', async () => {
 	const user = userEvent.setup();
-	mockPreferences = { [ PREFERENCE_KEY ]: 'light' };
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'light' } );
+	mockUpdateColorScheme( 'dark' );
 
 	renderColorSchemeProvider();
 
@@ -357,8 +290,8 @@ test( 'runs the success callback after saving a user-initiated color scheme chan
 
 test( 'does not run the success callback after a failed color scheme change', async () => {
 	const user = userEvent.setup();
-	mockPreferences = { [ PREFERENCE_KEY ]: 'light' };
-	mockMutationMode = 'fail';
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'light' } );
+	mockUpdateColorScheme( 'dark', { status: 500 } );
 
 	renderColorSchemeProvider();
 
@@ -374,7 +307,7 @@ test( 'does not run the success callback after a failed color scheme change', as
 
 test( 'does not save when selecting the current color scheme', async () => {
 	const user = userEvent.setup();
-	mockPreferences = { [ PREFERENCE_KEY ]: 'light' };
+	mockGetPreferences( { [ PREFERENCE_KEY ]: 'light' } );
 
 	renderColorSchemeProvider();
 
