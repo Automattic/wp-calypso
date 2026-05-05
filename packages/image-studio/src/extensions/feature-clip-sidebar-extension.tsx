@@ -70,14 +70,11 @@ function FeatureClipPanel(): JSX.Element {
 				) }
 			</p>
 			<Button
-				variant="primary"
+				variant="secondary"
 				className="image-studio-feature-clip-panel__cta"
 				__next40pxDefaultSize
 				onClick={ handleClick }
 			>
-				<span aria-hidden="true" className="image-studio-feature-clip-panel__cta-icon">
-					✦
-				</span>
 				{ __( 'Generate clip', __i18n_text_domain__ ) }
 			</Button>
 		</PluginDocumentSettingPanel>
