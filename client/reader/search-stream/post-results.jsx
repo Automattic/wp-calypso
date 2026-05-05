@@ -2,8 +2,8 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
-import Stream from 'calypso/reader/stream';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
+import Stream from 'calypso/reader/stream-v2';
 import EmptyContent from './empty';
 
 const defaultTransform = ( item ) => item;
