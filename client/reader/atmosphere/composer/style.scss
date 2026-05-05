@@ -150,25 +150,46 @@
 		border: none;
 		cursor: pointer;
 		padding: 4px;
+		// 4px matches the radius the focus-visible outline rounds to,
+		// so the hover background and focus ring share the same shape.
+		border-radius: 4px;
 		color: var(--studio-gray-50, #646970);
+		transition: color 120ms ease, background-color 120ms ease;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		// `@wordpress/icons` SVGs do not all inherit `fill` from
+		// `currentColor` automatically (the `image` glyph used here is one
+		// of the holdouts). Mirror the FAB's pattern so the icon tracks
+		// the button's text color through hover / focus / disabled states.
+		svg {
+			fill: currentColor;
+		}
 
 		&:hover {
 			color: var(--studio-blue-50, #3858e9);
+			background-color: var(--studio-blue-0, #f0f6fc);
 		}
 
 		&:focus-visible {
 			outline: 2px solid var(--studio-blue-50, #3858e9);
 			outline-offset: 2px;
-			border-radius: 2px;
 		}
 
 		// Native `disabled` would block focus; the button uses
 		// `aria-disabled` instead so AT users can still discover the
 		// "Maximum N images" tooltip via keyboard. Mirror that with the
-		// not-allowed cursor + muted color.
+		// not-allowed cursor + muted color, and suppress the hover
+		// affordance so the button visually reads as inert.
 		&[aria-disabled='true'] {
 			cursor: not-allowed;
 			color: var(--studio-gray-20, #a7aaad);
+
+			&:hover {
+				color: var(--studio-gray-20, #a7aaad);
+				background-color: transparent;
+			}
 		}
 	}
 
