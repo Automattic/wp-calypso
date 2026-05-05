@@ -532,6 +532,19 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [
+			'/reader/fediverse',
+			'/reader/fediverse/connect',
+			'/reader/fediverse/oauth-callback',
+			'/reader/fediverse/:id',
+			'/reader/fediverse/:id/:tab',
+		],
+		module: 'calypso/reader/fediverse',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
+		name: 'reader',
+		paths: [
 			'/reader/mastodon',
 			'/reader/mastodon/connect',
 			'/reader/mastodon/oauth-callback',
