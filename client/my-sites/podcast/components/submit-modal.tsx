@@ -78,6 +78,11 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 	const [ isEditing, setIsEditing ] = useState( false );
 	const [ saveError, setSaveError ] = useState< string | null >( null );
 	const copyTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
+	// `storedUrl` may be empty on mount if site settings haven't hydrated yet;
+	// once it lands, mirror it into the draft. We flip this ref whenever the
+	// draft is touched (sync, typing, or Replace) so late hydration can never
+	// clobber input the user has already started.
+	const hasInitializedDraft = useRef( !! storedUrl );
 
 	useEffect(
 		() => () => {
@@ -87,6 +92,13 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 		},
 		[]
 	);
+
+	useEffect( () => {
+		if ( ! hasInitializedDraft.current && storedUrl ) {
+			hasInitializedDraft.current = true;
+			setDraftUrl( storedUrl );
+		}
+	}, [ storedUrl ] );
 
 	const handleCopy = async () => {
 		if ( ! feedUrl || ! navigator.clipboard?.writeText ) {
@@ -117,7 +129,7 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 	) as string;
 
 	const normalizedDraft = normalizeShowUrl( draftUrl );
-	const isUnchanged = normalizedDraft === storedUrl;
+	const isUnchanged = draftUrl === storedUrl;
 
 	const handleSave = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
@@ -266,6 +278,7 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 								variant="secondary"
 								__next40pxDefaultSize
 								onClick={ () => {
+									hasInitializedDraft.current = true;
 									setDraftUrl( storedUrl );
 									setSaveError( null );
 									setIsEditing( true );
@@ -283,6 +296,7 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 										hideLabelFromVision
 										value={ draftUrl }
 										onChange={ ( value ) => {
+											hasInitializedDraft.current = true;
 											setDraftUrl( value );
 											setSaveError( null );
 										} }
