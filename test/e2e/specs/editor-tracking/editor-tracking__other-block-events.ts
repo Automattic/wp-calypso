@@ -26,19 +26,21 @@ describe(
 			let page: Page;
 			let editorPage: EditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
+			let siteSlug: string;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
 
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				editorPage = new EditorPage( page );
 			} );
 
 			it( 'Start a new post', async function () {
-				await editorPage.visit( 'post' );
+				await editorPage.visit( 'post', { siteSlug } );
 				await editorPage.waitUntilLoaded();
 				// We'll be exiting without saving.
 				editorPage.allowLeavingWithoutSaving();

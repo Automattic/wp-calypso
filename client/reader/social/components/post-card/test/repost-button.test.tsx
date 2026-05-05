@@ -1,15 +1,25 @@
 /**
  * @jest-environment jsdom
  */
+// `logToLogstash` fires a real HTTPS request — mute it so the
+// rkey-missing/cid-missing observability paths in the atmosphere
+// repost adapter don't trigger unmocked nock requests.
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 import { PENDING_REPOST_URI } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { makeUseAtmosphereRepostAction } from 'calypso/reader/atmosphere/use-atmosphere-repost-action';
+import { mapAtmosphereFeedItemToSocialPost } from 'calypso/reader/social';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { RepostButton } from '../repost-button';
+import { RepostProvider } from '../repost-context';
 import type { AtmosphereFeedItem } from '@automattic/api-core';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -51,6 +61,8 @@ function renderRepostButton(
 	post = makePost(),
 	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
 ) {
+	const useRepostAction = makeUseAtmosphereRepostAction( 42 );
+	const socialPost = mapAtmosphereFeedItemToSocialPost( post );
 	return {
 		onClick,
 		...renderWithProvider(
@@ -61,7 +73,9 @@ function renderRepostButton(
 					onClick,
 				} }
 			>
-				<RepostButton post={ post } connectionId={ 42 } />
+				<RepostProvider value={ useRepostAction }>
+					<RepostButton post={ socialPost } />
+				</RepostProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		),
@@ -150,7 +164,7 @@ describe( '<RepostButton>', () => {
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 
-	it( 'does not fire DELETE when the reposted-state URI parses to no rkey', async () => {
+	it( 'does not fire DELETE when the reposted-state URI parses to no rkey, and surfaces the failure', async () => {
 		const interceptor = nock( BASE )
 			.delete( /\/reposts\// )
 			.reply( 204 );
@@ -159,13 +173,19 @@ describe( '<RepostButton>', () => {
 		const { onClick } = renderRepostButton(
 			// Malformed at-uri: starts with `at://` but missing the rkey segment
 			// after the collection. `rkeyFromUri()` returns null for this shape,
-			// which gates the DELETE in `handleUnrepost`.
+			// which gates the DELETE in `unrepost`.
 			makePost( { viewer: { like: null, repost: 'at://did:plc:caller/app.bsky.feed.repost' } } )
 		);
 		await user.click( screen.getByRole( 'button', { name: /undo repost, 4 reposts/i } ) );
 
 		expect( interceptor.isDone() ).toBe( false );
-		expect( onClick ).not.toHaveBeenCalled();
+		// The button used to silently no-op here; it now fires an
+		// observability Tracks event so dashboards see the rate of stuck
+		// pending vs. malformed-uri unrepost attempts.
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_unrepost_rkey_missing',
+			expect.objectContaining( { connection_id: 42, post_uri: POST_URI } )
+		);
 	} );
 
 	it( 'renders the singular aria-label when reposts === 1', () => {
@@ -276,28 +296,16 @@ describe( '<RepostButton>', () => {
 		expect( errorNoticeSpy ).toHaveBeenCalledWith( 'Reconnect your Bluesky account to repost.' );
 	} );
 
-	it( 'enables the "Quote post" menu item and calls onQuote when bound', async () => {
-		const onQuote = jest.fn();
+	// The dropdown's "Quote post" menu item is disabled when the adapter
+	// reports `canQuote === false`. The atmosphere adapter sets `canQuote:
+	// false` until slice 7d wires composer-driven quoting, so this is the
+	// only case the cm-660 design covers today. The previously passing
+	// "enables Quote post via onQuote prop" test was replaced when the
+	// RepostButton signature lost its `onQuote` prop in favour of the
+	// adapter contract.
+	it( 'leaves "Quote post" disabled when the adapter reports canQuote=false', async () => {
 		const user = userEvent.setup();
-		renderWithProvider(
-			<SocialAnalyticsProvider
-				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
-			>
-				<RepostButton post={ makePost() } connectionId={ 42 } onQuote={ onQuote } />
-			</SocialAnalyticsProvider>,
-			{ queryClient: makeQueryClient() }
-		);
-
-		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
-		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
-		expect( item ).not.toHaveAttribute( 'aria-disabled', 'true' );
-		await user.click( item );
-		expect( onQuote ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'leaves "Quote post" disabled when onQuote is not bound', async () => {
-		const user = userEvent.setup();
-		renderRepostButton(); // existing helper without onQuote
+		renderRepostButton();
 		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
 		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
 		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
@@ -306,16 +314,19 @@ describe( '<RepostButton>', () => {
 	it( 'click does not bubble to a parent listener', async () => {
 		const onParentClick = jest.fn();
 		const user = userEvent.setup();
+		const useRepostAction = makeUseAtmosphereRepostAction( 42 );
+		const socialPost = mapAtmosphereFeedItemToSocialPost(
+			makePost( { viewer: { like: null, repost: PENDING_REPOST_URI } } )
+		);
 		renderWithProvider(
 			<SocialAnalyticsProvider
 				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
 			>
-				<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>
-					<RepostButton
-						post={ makePost( { viewer: { like: null, repost: PENDING_REPOST_URI } } ) }
-						connectionId={ 42 }
-					/>
-				</div>
+				<RepostProvider value={ useRepostAction }>
+					<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>
+						<RepostButton post={ socialPost } />
+					</div>
+				</RepostProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		);
