@@ -56,9 +56,28 @@ describe( 'getAuthCopy', () => {
 } );
 
 describe( 'getSignupCopy', () => {
-	test( 'mirrors getAuthCopy in PR 2', () => {
-		expect( getSignupCopy( [ 'jetpack' ] ) ).toEqual( getAuthCopy( [ 'jetpack' ] ) );
-		expect( getSignupCopy( [ 'woocommerce' ] ) ).toEqual( getAuthCopy( [ 'woocommerce' ] ) );
+	test( 'returns the static "Create your account" title regardless of plugins', () => {
+		expect( getSignupCopy( [] ).title ).toBe( 'Create your account' );
+		expect( getSignupCopy( [ 'woocommerce' ] ).title ).toBe( 'Create your account' );
+		expect( getSignupCopy( [ 'jetpack', 'automattic-for-agencies-client' ] ).title ).toBe(
+			'Create your account'
+		);
+	} );
+
+	test( 'subtitle reflects site/store branching with a forward-looking value-prop', () => {
+		expect( getSignupCopy( [ 'jetpack' ] ).subtitle ).toBe(
+			"You'll use it to unlock powerful features on your site."
+		);
+		expect( getSignupCopy( [ 'woocommerce' ] ).subtitle ).toBe(
+			"You'll use it to unlock powerful features on your store."
+		);
+	} );
+
+	test( 'works with the default empty argument', () => {
+		expect( getSignupCopy() ).toEqual( {
+			title: 'Create your account',
+			subtitle: "You'll use it to unlock powerful features on your site.",
+		} );
 	} );
 } );
 

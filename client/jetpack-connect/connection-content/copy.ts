@@ -38,11 +38,27 @@ export function getAuthCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy 
 /**
  * Title + subtitle for the signup page in the unified connection flow.
  *
- * Currently mirrors the auth page; kept as its own resolver so the two
- * surfaces can diverge in PR 3 without rippling through call sites.
+ * The signup page is "step 2" in the connector journey: the user has
+ * already seen the registration acknowledgement on the login page and
+ * chose to create a new WordPress.com account instead of signing in.
+ * Repeating the acknowledgement would be redundant, so the signup page
+ * uses its own forward-looking copy that explains why a WordPress.com
+ * account matters in this flow.
+ *
+ * The H1 is intentionally light (no "WordPress.com") because the user
+ * has just come from "Log in to WordPress.com" — the brand context is
+ * already established and repeating it on every screen reads heavy.
+ *
+ * Two pre-composed sentences (one per noun) are shipped rather than a
+ * template so translators get a real sentence, not a fragment.
  */
 export function getSignupCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
-	return getAuthCopy( pluginSlugs );
+	return {
+		title: __( 'Create your account' ),
+		subtitle: isStore( pluginSlugs )
+			? __( "You'll use it to unlock powerful features on your store." )
+			: __( "You'll use it to unlock powerful features on your site." ),
+	};
 }
 
 /**
