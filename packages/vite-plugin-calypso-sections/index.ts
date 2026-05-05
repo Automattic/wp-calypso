@@ -7,6 +7,7 @@ const require = createRequire( import.meta.url );
 interface Section {
 	name: string;
 	module: string;
+	isomorphic?: boolean;
 }
 
 function exportSectionsAsEsm( code: string ): string {
@@ -57,6 +58,7 @@ export function vitePluginSections( { root }: { root: string } ): Plugin {
 				return;
 			}
 
+			let sections: Section[] | undefined;
 			try {
 				const vm = require( 'vm' );
 				const esmToCommonJs = code
@@ -66,8 +68,8 @@ export function vitePluginSections( { root }: { root: string } ): Plugin {
 				const ctx = vm.createContext( { module: { exports: null } } );
 				vm.runInContext( esmToCommonJs, ctx );
 
-				const sections: Section[] = ctx.module.exports;
-				if ( Array.isArray( sections ) ) {
+				if ( Array.isArray( ctx.module.exports ) ) {
+					sections = ctx.module.exports;
 					for ( const section of sections ) {
 						if ( section.module && section.name ) {
 							moduleToSectionName.set( section.module, section.name );
@@ -80,14 +82,25 @@ export function vitePluginSections( { root }: { root: string } ): Plugin {
 			}
 
 			if ( isSSR ) {
-				// For SSR, use static imports so section.load() returns the module
-				// namespace synchronously. The server calls section.load().default(...)
-				// without await, so async dynamic import() would break it.
+				// Match webpack's server sections-loader: only isomorphic sections need
+				// server-side load() functions. Keep them synchronous because the server
+				// calls section.load().default(...) without await.
+				const isomorphicModulePaths = sections
+					? new Set(
+							sections
+								.filter( ( section ) => section.isomorphic && section.module )
+								.map( ( section ) => section.module )
+					  )
+					: null;
 				const modulePaths: string[] = [];
 				const modified = exportSectionsAsEsm(
 					code.replace(
 						/\bmodule: (["'])([^"']+)\1/g,
 						( _match: string, quote: string, modulePath: string ) => {
+							if ( isomorphicModulePaths && ! isomorphicModulePaths.has( modulePath ) ) {
+								return _match;
+							}
+
 							let varIdx = modulePaths.indexOf( modulePath );
 							if ( varIdx === -1 ) {
 								varIdx = modulePaths.push( modulePath ) - 1;
