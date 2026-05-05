@@ -644,10 +644,6 @@ function UnifiedPlansStep( {
 
 	if ( useStepContainerV2 && wrapperProps ) {
 		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
-		const handleOnboardingBack = () => {
-			window.location.href = '/setup/onboarding/domains';
-		};
-		const backClick = isOnboardingFlow( flowName ) ? handleOnboardingBack : goBack;
 
 		return (
 			<>
@@ -657,8 +653,8 @@ function UnifiedPlansStep( {
 					topBar={
 						<Step.TopBar
 							leftElement={
-								backClick ? (
-									<Step.BackButton onClick={ backClick }>{ backLabelText }</Step.BackButton>
+								goBack ? (
+									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
 								) : undefined
 							}
 							rightElement={
@@ -669,13 +665,6 @@ function UnifiedPlansStep( {
 											{ translate( 'Need help?' ) }
 										</Step.LinkButton>
 									</>
-								) : undefined
-							}
-							rightElement={
-								isOnboardingFlow( flowName ) ? (
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ translate( 'Need help?' ) }
-									</Step.LinkButton>
 								) : undefined
 							}
 						/>
