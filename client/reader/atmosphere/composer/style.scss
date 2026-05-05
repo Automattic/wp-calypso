@@ -167,3 +167,77 @@
 		}
 	}
 }
+
+.atmosphere-composer__image-grid {
+	display: flex;
+	gap: 8px;
+	margin-block-start: 12px;
+	flex-wrap: wrap;
+}
+
+.atmosphere-composer__image,
+.atmosphere-composer__image-add {
+	position: relative;
+	inline-size: 90px;
+	block-size: 90px;
+	// 6px matches the surrounding compose surfaces (`.atmosphere-compose-pill`,
+	// `.atmosphere-compose-fab`, `.quick-post`) instead of the design-system
+	// scale.
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.atmosphere-composer__image img {
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+}
+
+.atmosphere-composer__image.is-failed {
+	outline: 2px solid var(--studio-red-50, #d63638);
+}
+
+.atmosphere-composer__image-add {
+	border: 2px dashed var(--studio-gray-10, #c3c4c7);
+	background: transparent;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.atmosphere-composer__image-remove {
+	position: absolute;
+	inset-block-start: 4px;
+	inset-inline-end: 4px;
+	background: rgba(0, 0, 0, 0.7);
+	color: #fff;
+	border: 0;
+	border-radius: 50%;
+	inline-size: 20px;
+	block-size: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.atmosphere-composer__image-alt {
+	position: absolute;
+	inset-block-end: 4px;
+	inset-inline-start: 4px;
+}
+
+.atmosphere-composer__image-error {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.7);
+	color: #fff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 6px;
+	text-align: center;
+	font-size: 11px;
+}
