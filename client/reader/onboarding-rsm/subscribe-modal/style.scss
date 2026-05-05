@@ -30,6 +30,11 @@ $actions-height: 64px;
 		}
 	}
 
+	// Prevent WP modal's own content wrapper from producing an outer scrollbar.
+	.components-modal__content {
+		overflow: hidden;
+	}
+
 	&__title {
 		font-family: Recoleta, sans-serif;
 		font-size: 2.25rem;
@@ -52,17 +57,18 @@ $actions-height: 64px;
 	}
 
 	&__content {
-		// Since the actions container is positioned absolutely,
-		// this padding bottom ensures that the content wrapper will properly
-		// detect overflowing content and start showing scrollbars at the right
-		// moment. Without this padding, the content would render under the actions
-		// bar without causing the wrapper to show a scrollbar.
+		// padding-bottom reserves space for the absolutely-positioned footer so
+		// the scrollable columns never slip behind it.
 		padding-bottom: $actions-height;
 
 		display: flex;
 		flex-direction: column;
-		min-height: 520px;
-		max-height: min( 680px, calc( 100vh - 180px ) );
+		// max-height is derived from the WP modal frame's own max-height (70vh)
+		// minus the WP modal header (~72px) and the WP content vertical padding
+		// (~28px). This keeps our content within the frame so the WP content
+		// wrapper never needs to scroll and the outer scrollbar never appears.
+		max-height: calc( 70vh - 100px );
+		min-height: 0;
 		overflow: hidden;
 	}
 
