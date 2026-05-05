@@ -10,6 +10,8 @@ import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ComposerModal } from '../composer-modal';
 import { ComposerProvider, useComposer } from '../composer-provider';
+import { useImageUploads } from '../media/use-image-uploads';
+import type { ComposerImage } from '../media/types';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -19,6 +21,38 @@ jest.mock( '@automattic/calypso-router', () => ( {
 jest.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn(),
 } ) );
+
+jest.mock( '../media/use-image-uploads', () => ( {
+	useImageUploads: jest.fn(),
+} ) );
+
+const mockUseImageUploads = useImageUploads as jest.MockedFunction< typeof useImageUploads >;
+
+function makeUploadedImage( id: string ): ComposerImage {
+	return {
+		kind: 'uploaded',
+		localId: id,
+		previewUrl: `blob:${ id }`,
+		alt: '',
+		aspectRatio: { width: 100, height: 100 },
+		blob: { ref: { $link: id }, mimeType: 'image/jpeg', size: 100 } as never,
+	};
+}
+
+function makeImageUploadsState(
+	overrides: Partial< ReturnType< typeof useImageUploads > > = {}
+): ReturnType< typeof useImageUploads > {
+	return {
+		images: [],
+		addFiles: jest.fn(),
+		removeImage: jest.fn(),
+		retryImage: jest.fn(),
+		setAlt: jest.fn(),
+		isAllUploaded: true,
+		isAnyPending: false,
+		...overrides,
+	};
+}
 
 function makePreview() {
 	return {
@@ -172,6 +206,7 @@ describe( '<ComposerModal>', () => {
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 		jest.spyOn( noticeActions, 'successNotice' );
 		( page as unknown as jest.Mock ).mockReset();
+		mockUseImageUploads.mockReturnValue( makeImageUploadsState() );
 	} );
 
 	afterEach( () => {
@@ -355,16 +390,55 @@ describe( '<ComposerModal>', () => {
 		expect( count ).toBeVisible();
 	} );
 
-	it( 'media button is aria-disabled and tab-reachable inside the dialog', async () => {
+	it( 'media button opens the file picker when clicked', async () => {
+		const addFiles = jest.fn();
+		mockUseImageUploads.mockReturnValue( makeImageUploadsState( { addFiles } ) );
+
 		const user = userEvent.setup();
 		renderWithProvider( <Harness connectionId={ 42 } /> );
 		await user.click( screen.getByText( 'open' ) );
 
-		const media = screen.getByRole( 'button', { name: /add media/i } );
+		const media = screen.getByRole( 'button', { name: 'Add media' } );
+		// The hidden file input is a sibling of the button. Spy on its
+		// .click() — the integration we care about is button → input.click().
+		const dialog = screen.getByRole( 'dialog' );
+		const input = dialog.querySelector( 'input[type="file"]' ) as HTMLInputElement | null;
+		expect( input ).not.toBeNull();
+		const inputClickSpy = jest.spyOn( input as HTMLInputElement, 'click' );
+
+		await user.click( media );
+		expect( inputClickSpy ).toHaveBeenCalledTimes( 1 );
+
+		// And once the input fires onChange (via userEvent.upload), addFiles
+		// is invoked with the picked files. This proves the second half of
+		// the wiring without depending on the browser's actual picker.
+		const file = new File( [ 'x' ], 'a.jpg', { type: 'image/jpeg' } );
+		await user.upload( input as HTMLInputElement, [ file ] );
+		expect( addFiles ).toHaveBeenCalledTimes( 1 );
+		expect( addFiles.mock.calls[ 0 ][ 0 ] ).toHaveLength( 1 );
+		expect( addFiles.mock.calls[ 0 ][ 0 ][ 0 ].name ).toBe( 'a.jpg' );
+	} );
+
+	it( 'media button is disabled at 4 images and reads "Maximum 4 images"', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( {
+				images: [
+					makeUploadedImage( 'a' ),
+					makeUploadedImage( 'b' ),
+					makeUploadedImage( 'c' ),
+					makeUploadedImage( 'd' ),
+				],
+			} )
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <Harness connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+
+		const media = screen.getByRole( 'button', { name: 'Maximum 4 images' } );
 		expect( media ).toHaveAttribute( 'aria-disabled', 'true' );
-		// The native HTML `disabled` attribute would remove the button
-		// from the tab order. We use aria-disabled so screen-reader
-		// users can reach the placeholder while it remains inert.
+		// We use aria-disabled (not the native HTML `disabled` attribute) so
+		// screen-reader users can still focus the button and hear the label.
 		expect( media ).not.toBeDisabled();
 	} );
 

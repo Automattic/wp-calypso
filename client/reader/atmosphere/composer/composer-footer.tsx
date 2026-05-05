@@ -2,6 +2,9 @@ import { __experimentalHStack as HStack, Button, Spinner } from '@wordpress/comp
 import { Icon, image } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useRef } from 'react';
+import { useComposer } from './composer-provider';
+import { ACCEPTED_IMAGE_TYPES } from './media/constants';
 
 interface Props {
 	graphemeCount: number;
@@ -11,9 +14,13 @@ interface Props {
 }
 
 const WARN_THRESHOLD_REMAINING = 50;
+const MAX_IMAGES = 4;
 
 export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: Props ) {
 	const translate = useTranslate();
+	const { images, addFiles } = useComposer();
+	const inputRef = useRef< HTMLInputElement >( null );
+	const atMax = images.length >= MAX_IMAGES;
 	const remaining = limit - graphemeCount;
 	const tooLong = remaining < 0;
 	const empty = graphemeCount === 0;
@@ -27,16 +34,38 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 	return (
 		<HStack className="atmosphere-composer__footer" justify="space-between" alignment="center">
 			<div className="atmosphere-composer__footer-left">
-				{ /* Slice 8 wires this up — image / video upload + alt-text + content warnings. */ }
 				<button
 					type="button"
 					className="atmosphere-composer__media"
-					aria-disabled="true"
-					tabIndex={ 0 }
-					aria-label={ translate( 'Add media' ) }
+					aria-disabled={ atMax || undefined }
+					aria-label={
+						atMax
+							? ( translate( 'Maximum 4 images' ) as string )
+							: ( translate( 'Add media' ) as string )
+					}
+					onClick={ () => {
+						if ( ! atMax ) {
+							inputRef.current?.click();
+						}
+					} }
 				>
 					<Icon icon={ image } size={ 18 } />
 				</button>
+				<input
+					ref={ inputRef }
+					type="file"
+					accept={ ACCEPTED_IMAGE_TYPES }
+					multiple
+					hidden
+					onChange={ ( e ) => {
+						const files = Array.from( e.target.files ?? [] );
+						if ( files.length > 0 ) {
+							addFiles( files );
+						}
+						// Reset so picking the same file again still triggers onChange.
+						e.target.value = '';
+					} }
+				/>
 			</div>
 			<HStack spacing={ 2 } className="atmosphere-composer__footer-right">
 				<span
