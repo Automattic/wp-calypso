@@ -323,6 +323,122 @@ describe( 'useReaderStream — streamKey change', () => {
 	} );
 } );
 
+describe( 'useReaderStream — keepPreviousData', () => {
+	it( 'keeps the previous stream items on screen while the new query loads', async () => {
+		// First stream resolves immediately.
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ) ],
+				date_range: { after: null, before: null },
+			} );
+		// Second stream is delayed so we can observe the placeholder window.
+		nock( BASE )
+			.get( '/rest/v1.2/read/following' )
+			.query( true )
+			.delay( 100 )
+			.reply( 200, {
+				posts: [ apiPost( 99 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const { result, rerender } = renderHook(
+			( { streamKey }: { streamKey: string } ) => useReaderStream( { streamKey } ),
+			{ wrapper: Wrapper, initialProps: { streamKey: 'likes' } }
+		);
+		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
+		expect( result.current.isPlaceholderData ).toBe( false );
+
+		// Switch streamKey — old items must remain visible while the new query
+		// loads, with `isPlaceholderData` flipping to true.
+		rerender( { streamKey: 'following' } );
+		expect( result.current.items ).toHaveLength( 2 );
+		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) );
+		expect( result.current.isPlaceholderData ).toBe( true );
+
+		// Once the new fetch resolves, items swap and placeholder flag clears.
+		await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 99 ) ) );
+		expect( result.current.isPlaceholderData ).toBe( false );
+		expect( result.current.items ).toHaveLength( 1 );
+	} );
+} );
+
+describe( 'useReaderStream — cache (stale-while-revalidate)', () => {
+	it( 'second mount with the same QueryClient hits cache without refetching', async () => {
+		// First mount: one network call satisfies the page.
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const first = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+			wrapper: Wrapper,
+		} );
+		await waitFor( () => expect( first.result.current.items ).toHaveLength( 1 ) );
+		first.unmount();
+
+		// nock has no more interceptors registered — if the second mount tried
+		// to fetch again, the request would 404 / time out.
+		expect( nock.pendingMocks() ).toHaveLength( 0 );
+
+		const second = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+			wrapper: Wrapper,
+		} );
+
+		// Synchronous cache hit: items are populated on the very first render,
+		// no `isLoading: true` window. This is what makes the skeleton skip
+		// for warm Reader navigations.
+		expect( second.result.current.items ).toHaveLength( 1 );
+		expect( second.result.current.isLoading ).toBe( false );
+	} );
+
+	it( 'a fresh QueryClient does refetch (cache is per-client)', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ) ],
+				date_range: { after: null, before: null },
+			} );
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 2 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		// Two independent QueryClients (mimics a hard reload without
+		// rehydration from storage).
+		{
+			const { Wrapper } = makeWrapper( makeQueryClient() );
+			const { result, unmount } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+				wrapper: Wrapper,
+			} );
+			await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) ) );
+			unmount();
+		}
+		{
+			const { Wrapper } = makeWrapper( makeQueryClient() );
+			const { result } = renderHook( () => useReaderStream( { streamKey: 'likes' } ), {
+				wrapper: Wrapper,
+			} );
+			await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 2 ) ) );
+		}
+
+		// Both interceptors fired.
+		expect( nock.isDone() ).toBe( true );
+	} );
+} );
+
 // Note: x-post deduplication via `combineXPosts` is exercised end-to-end by
 // the slice's own `normalize` tests (`client/state/reader/streams/test/normalize.js`).
 // The hook just composes that helper; trusting it here keeps the test surface

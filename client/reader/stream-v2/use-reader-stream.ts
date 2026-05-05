@@ -1,5 +1,5 @@
 import { fetchReadStream, getStreamType } from '@automattic/api-queries';
-import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query';
+import { infiniteQueryOptions, keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
@@ -30,6 +30,13 @@ export interface UseReaderStreamResult {
 	isLoading: boolean;
 	isFetching: boolean;
 	isFetchingNextPage: boolean;
+	/**
+	 * `true` when the items currently exposed are the previous stream's data
+	 * being kept on screen (`placeholderData: keepPreviousData`) while a new
+	 * `streamKey` / `feedId` / `localeSlug` query is loading in the
+	 * background. Consumers can render a subtle "refreshing" treatment.
+	 */
+	isPlaceholderData: boolean;
 	hasNextPage: boolean;
 	lastPage: boolean;
 	error: unknown;
@@ -142,8 +149,27 @@ export function useReaderStream( {
 					};
 					return extractPageHandle( streamType, action, lastPage ) ?? undefined;
 				},
-				staleTime: 30 * 1000,
-				meta: { persist: false },
+				// Cache is treated as "fresh" for 5 minutes: within that window
+				// `useInfiniteQuery` serves data straight from cache and never
+				// touches the network — long enough that quick back-and-forth
+				// navigation inside the Reader is instant, short enough that newly
+				// liked posts surface on the next deliberate visit. After 5
+				// minutes the cache is still rendered immediately; a refetch
+				// happens silently in the background and the screen swaps in
+				// the fresh data when it lands.
+				staleTime: 5 * 60 * 1000,
+				// `meta.persist` is omitted so Calypso's persistence layer (see
+				// client/state/query-client.ts + should-dehydrate-query.ts) writes
+				// pages to localStorage. After a page reload, the very first paint
+				// rehydrates already-fetched streams from storage instead of
+				// showing a skeleton.
+				//
+				// When the queryKey changes (streamKey / feedId / localeSlug),
+				// keep showing the previous stream's pages until the new query
+				// resolves. The user sees their familiar list with a brief stale
+				// indicator instead of a skeleton swap. `query.isPlaceholderData`
+				// flips while the previous data is being shown.
+				placeholderData: keepPreviousData,
 				refetchOnWindowFocus: false,
 			} ),
 		[ streamKey, feedId, localeSlug, streamType, buildPageParams ]
@@ -267,6 +293,7 @@ export function useReaderStream( {
 		isLoading: query.isLoading,
 		isFetching: query.isFetching,
 		isFetchingNextPage: query.isFetchingNextPage,
+		isPlaceholderData: query.isPlaceholderData,
 		hasNextPage: !! query.hasNextPage,
 		lastPage: ! query.hasNextPage && ! query.isFetchingNextPage && query.isFetched,
 		error: query.error,
