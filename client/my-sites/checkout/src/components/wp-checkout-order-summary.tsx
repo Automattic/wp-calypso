@@ -47,6 +47,7 @@ import useEquivalentMonthlyTotals, {
 import { useSelector } from 'calypso/state';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
+import { useRsmBetterCheckoutExperiment } from '../hooks/use-rsm-better-checkout-experiment';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
@@ -159,6 +160,7 @@ function CheckoutSummaryPriceList() {
 	const translate = useTranslate();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const isRsmBetterCheckout = useRsmBetterCheckoutExperiment();
 	const { setSlotEl } = useSubmitButtonSlot();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
@@ -172,7 +174,7 @@ function CheckoutSummaryPriceList() {
 	return (
 		<>
 			<CheckoutSummaryTitle className="wp-checkout-order-summary__section-title">
-				<span>{ translate( 'Summary' ) }</span>
+				<span>{ isRsmBetterCheckout ? translate( 'Summary' ) : translate( 'Your order' ) }</span>
 			</CheckoutSummaryTitle>
 			<ProductsAndCostOverridesList responseCart={ responseCart } />
 			<CheckoutSummaryAmountWrapper className="wp-checkout-order-summary__amount-wrapper">
@@ -244,7 +246,7 @@ function CheckoutSummaryPriceList() {
 						{ totalLineItem.formattedAmount }
 					</span>
 				</CheckoutSummaryTotal>
-				{ isLargeViewport && (
+				{ isRsmBetterCheckout && isLargeViewport && (
 					<>
 						<CheckoutSummaryPayButtonSlot
 							ref={ setSlotEl }
