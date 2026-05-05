@@ -199,7 +199,7 @@ function ImageStudioAgentChat( {
 				inputValue={ inputValue }
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
-				maxInputLength={ 1000 }
+				maxInputLength={ isVideoMode ? 2000 : 1000 }
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
