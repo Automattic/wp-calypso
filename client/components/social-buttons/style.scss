@@ -25,3 +25,33 @@
 		max-width: 200px;
 	}
 }
+
+.social-buttons__last-used {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.social-buttons__last-used-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 24px;
+	padding: 0 8px;
+	background: var( --wp-blue-50, #3858e9 );
+	color: #fff;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+}
+
+// The matched button: blue border to match the tab,
+// and a flat top-left corner so the tab sits flush against it.
+.social-buttons__last-used .a8c-components-wp-button.social-buttons__button {
+	width: 100%;
+	border-color: var( --wp-blue-50, #3858e9 );
+	border-top-left-radius: 0;
+}

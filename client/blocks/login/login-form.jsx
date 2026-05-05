@@ -18,7 +18,6 @@ import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { LastUsedSocialButton } from 'calypso/components/social-buttons';
 import Notice from 'calypso/dashboard/components/notice';
 import {
 	getSignupUrl,
@@ -629,33 +628,17 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isWoo,
 			isSendingEmail,
-			isSocialFirst,
 			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
 		} = this.props;
-		const { lastUsedAuthenticationMethod } = this.state;
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
 		const isSubmitButtonDisabled = isFormDisabled;
-		let loginUrl;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
-
-		if ( lastUsedAuthenticationMethod === 'qr-code' ) {
-			loginUrl = this.getQrLoginLink();
-		} else if ( lastUsedAuthenticationMethod === 'magic-login' ) {
-			loginUrl = this.getMagicLoginPageLink();
-		}
-
-		const showLastUsedAuthenticationMethod =
-			lastUsedAuthenticationMethod &&
-			lastUsedAuthenticationMethod !== 'password' &&
-			lastUsedAuthenticationMethod !== 'magic-login' &&
-			isSocialFirst &&
-			! linkingSocialUser;
 
 		const signUpUrlWithEmail = addQueryArgs(
 			{
@@ -711,156 +694,141 @@ export class LoginForm extends Component {
 
 		return (
 			<Card className="login__form">
-				{ showLastUsedAuthenticationMethod ? (
-					<>
-						<span className="last-used-authentication-method">
-							{ this.props.translate( 'Previously used' ) }
-						</span>
-						<LastUsedSocialButton
-							lastUsedAuthenticationMethod={ this.state.lastUsedAuthenticationMethod }
-							handleLogin={ this.handleSocialLogin }
-							loginUrl={ loginUrl }
-							onClick={ ( event ) => this.trackLoginAndRememberRedirect( event, true ) }
-							socialServiceResponse={ this.props.socialServiceResponse }
+				<>
+					{ isWoo && <ErrorNotice /> }
+
+					<div className="login__form-userdata">
+						{ linkingSocialUser && renderSocialLinkingNotice() }
+
+						<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
+							{ this.renderUsernameorEmailLabel() }
+						</FormLabel>
+
+						<FormTextInput
+							autoCapitalize="off"
+							autoCorrect="off"
+							spellCheck="false"
+							autoComplete="username"
+							className={ clsx( {
+								'is-error': requestError && requestError.field === 'usernameOrEmail',
+							} ) }
+							onChange={ this.onChangeUsernameOrEmailField }
+							id="usernameOrEmail"
+							name="usernameOrEmail"
+							ref={ this.saveUsernameOrEmailRef }
+							value={ this.state.usernameOrEmail }
+							disabled={ isEmailOrUsernameInputDisabled }
+							hasCoreStyles
 						/>
-					</>
-				) : (
-					<>
-						{ isWoo && <ErrorNotice /> }
 
-						<div className="login__form-userdata">
-							{ linkingSocialUser && renderSocialLinkingNotice() }
-
-							<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
-								{ this.renderUsernameorEmailLabel() }
-							</FormLabel>
-
-							<FormTextInput
-								autoCapitalize="off"
-								autoCorrect="off"
-								spellCheck="false"
-								autoComplete="username"
-								className={ clsx( {
-									'is-error': requestError && requestError.field === 'usernameOrEmail',
-								} ) }
-								onChange={ this.onChangeUsernameOrEmailField }
-								id="usernameOrEmail"
-								name="usernameOrEmail"
-								ref={ this.saveUsernameOrEmailRef }
-								value={ this.state.usernameOrEmail }
-								disabled={ isEmailOrUsernameInputDisabled }
-								hasCoreStyles
-							/>
-
-							{ requestError && requestError.field === 'usernameOrEmail' && (
-								<FormInputValidation isError text={ requestError.message }>
-									{ requestError.code === 'unknown_user' &&
-										this.props.translate(
-											' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
-											{
-												components: {
-													newAccountLink: (
-														<a
-															onClick={ ( e ) => {
-																e.preventDefault();
-																window.location.href = signUpUrlWithEmail;
-															} }
-															href={ signUpUrlWithEmail }
-														/>
-													),
-												},
-											}
-										) }
-								</FormInputValidation>
-							) }
-
-							{ ! requestError && this.state.emailSuggestionError && (
-								<FormInputValidation
-									isError
-									text={ this.props.translate(
-										'User does not exist. Did you mean {{suggestedEmail/}}, or would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+						{ requestError && requestError.field === 'usernameOrEmail' && (
+							<FormInputValidation isError text={ requestError.message }>
+								{ requestError.code === 'unknown_user' &&
+									this.props.translate(
+										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
 										{
 											components: {
 												newAccountLink: (
 													<a
-														href={ addQueryArgs(
-															{
-																user_email: this.state.usernameOrEmail,
-															},
-															signupUrl
-														) }
+														onClick={ ( e ) => {
+															e.preventDefault();
+															window.location.href = signUpUrlWithEmail;
+														} }
+														href={ signUpUrlWithEmail }
 													/>
-												),
-												suggestedEmail: (
-													<span
-														className="login__form-suggested-email"
-														onKeyDown={ ( e ) => {
-															if ( e.key === 'Enter' ) {
-																this.handleAcceptEmailSuggestion();
-															}
-														} }
-														onClick={ () => {
-															this.handleAcceptEmailSuggestion();
-														} }
-														role="button"
-														tabIndex="0"
-													>
-														{ this.state.emailSuggestion }
-													</span>
 												),
 											},
 										}
 									) }
-								/>
-							) }
+							</FormInputValidation>
+						) }
 
-							<div
-								className={ clsx( 'login__form-password', {
-									'is-hidden': isPasswordHidden,
-								} ) }
-								aria-hidden={ isPasswordHidden }
-							>
-								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
-									{ this.props.translate( 'Password' ) }
-								</FormLabel>
-
-								<FormPasswordInput
-									autoCapitalize="off"
-									autoComplete="current-password"
-									className={ clsx( {
-										'is-error': requestError && requestError.field === 'password',
-									} ) }
-									onChange={ this.onChangeField }
-									id="password"
-									name="password"
-									ref={ this.savePasswordRef }
-									value={ this.state.password }
-									disabled={ isFormDisabled }
-									tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
-									hasCoreStyles
-									isHidden={ isPasswordHidden }
-								/>
-
-								{ requestError && requestError.field === 'password' && (
-									<FormInputValidation isError text={ this.renderPasswordValidationError() } />
+						{ ! requestError && this.state.emailSuggestionError && (
+							<FormInputValidation
+								isError
+								text={ this.props.translate(
+									'User does not exist. Did you mean {{suggestedEmail/}}, or would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
+									{
+										components: {
+											newAccountLink: (
+												<a
+													href={ addQueryArgs(
+														{
+															user_email: this.state.usernameOrEmail,
+														},
+														signupUrl
+													) }
+												/>
+											),
+											suggestedEmail: (
+												<span
+													className="login__form-suggested-email"
+													onKeyDown={ ( e ) => {
+														if ( e.key === 'Enter' ) {
+															this.handleAcceptEmailSuggestion();
+														}
+													} }
+													onClick={ () => {
+														this.handleAcceptEmailSuggestion();
+													} }
+													role="button"
+													tabIndex="0"
+												>
+													{ this.state.emailSuggestion }
+												</span>
+											),
+										},
+									}
 								) }
-							</div>
-						</div>
-
-						{ isGravPoweredClient && <p className="login__form-terms">{ renderTerms() }</p> }
-
-						{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
-
-						<div className="login__form-action">
-							<LoginSubmitButton
-								isWoo={ isWoo }
-								isSendingEmail={ isSendingEmail }
-								isDisabled={ isSubmitButtonDisabled }
-								buttonText={ this.getLoginButtonText() }
 							/>
+						) }
+
+						<div
+							className={ clsx( 'login__form-password', {
+								'is-hidden': isPasswordHidden,
+							} ) }
+							aria-hidden={ isPasswordHidden }
+						>
+							<FormLabel htmlFor="password" hasCoreStylesNoCaps>
+								{ this.props.translate( 'Password' ) }
+							</FormLabel>
+
+							<FormPasswordInput
+								autoCapitalize="off"
+								autoComplete="current-password"
+								className={ clsx( {
+									'is-error': requestError && requestError.field === 'password',
+								} ) }
+								onChange={ this.onChangeField }
+								id="password"
+								name="password"
+								ref={ this.savePasswordRef }
+								value={ this.state.password }
+								disabled={ isFormDisabled }
+								tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
+								hasCoreStyles
+								isHidden={ isPasswordHidden }
+							/>
+
+							{ requestError && requestError.field === 'password' && (
+								<FormInputValidation isError text={ this.renderPasswordValidationError() } />
+							) }
 						</div>
-					</>
-				) }
+					</div>
+
+					{ isGravPoweredClient && <p className="login__form-terms">{ renderTerms() }</p> }
+
+					{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+
+					<div className="login__form-action">
+						<LoginSubmitButton
+							isWoo={ isWoo }
+							isSendingEmail={ isSendingEmail }
+							isDisabled={ isSubmitButtonDisabled }
+							buttonText={ this.getLoginButtonText() }
+						/>
+					</div>
+				</>
 			</Card>
 		);
 	}

@@ -11,6 +11,7 @@ import {
 	MagicLoginButton,
 	QrCodeLoginButton,
 	UsernameOrEmailButton,
+	LastUsedBadge,
 } from 'calypso/components/social-buttons';
 
 import './social.scss';
@@ -120,14 +121,9 @@ class SocialLoginForm extends Component {
 		const renderedButtons = buttons
 			.filter( ( { enabled } ) => enabled )
 			.map( ( { service, button } ) => {
-				// Replace lastUsedAuthenticationMethod with UsernameOrEmailButton
-				if ( isSocialFirst && service === lastUsedAuthenticationMethod ) {
-					return (
-						<UsernameOrEmailButton
-							key="social-login-button-username-or-email"
-							onClick={ this.props.resetLastUsedAuthenticationMethod }
-						/>
-					);
+				// Wrap the matching service with a small "Last used" badge.
+				if ( isSocialFirst && service === lastUsedAuthenticationMethod && button ) {
+					return <LastUsedBadge key={ button.key }>{ button }</LastUsedBadge>;
 				}
 				return button;
 			} );
