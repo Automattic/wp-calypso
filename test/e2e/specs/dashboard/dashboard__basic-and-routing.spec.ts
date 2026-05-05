@@ -2,7 +2,7 @@ import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Dashboard: Basic & Routing',
-	{ tag: [ tags.DASHBOARD_PR, tags.CALYPSO_RELEASE ] },
+	{ tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE, tags.DASHBOARD_PR ] },
 	() => {
 		test( 'As a WordPress.com user, I can see the new Multi-site Dashboard page as a list of my sites', async ( {
 			accountGivenByEnvironment,

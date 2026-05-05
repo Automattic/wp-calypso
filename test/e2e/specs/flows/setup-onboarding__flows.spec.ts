@@ -11,7 +11,7 @@ import { apiCloseAccount, apiDeleteSite } from '../shared';
 test.describe(
 	'Setup Onboarding Flows',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_PR ],
 	},
 	() => {
 		const accountsToCleanup: {
@@ -69,46 +69,50 @@ test.describe(
 			} );
 		} );
 
-		test( 'As a new user, I can complete the onboarding flow and purchase a plan without a custom domain', async ( {
-			page,
-			componentDomainSearch,
-			helperData,
-			pageCartCheckout,
-			pageSignupPickPlan,
-			pageUserSignUp,
-		} ) => {
-			const testUser = helperData.getNewTestUser();
-			const planName = 'Personal';
-			let newUserDetails: NewUserResponse;
-			let newSiteDetails: NewSiteResponse;
+		test(
+			'As a new user, I can complete the onboarding flow and purchase a plan without a custom domain',
+			{ tag: [ tags.CALYPSO_RELEASE ] },
+			async ( {
+				page,
+				componentDomainSearch,
+				helperData,
+				pageCartCheckout,
+				pageSignupPickPlan,
+				pageUserSignUp,
+			} ) => {
+				const testUser = helperData.getNewTestUser();
+				const planName = 'Personal';
+				let newUserDetails: NewUserResponse;
+				let newSiteDetails: NewSiteResponse;
 
-			await test.step( 'When I enter the onboarding flow', async function () {
-				BrowserManager.setStoreCookie( page, { currency: 'USD' } );
-				await page.goto( helperData.getCalypsoURL( '/setup/onboarding' ) );
-			} );
+				await test.step( 'When I enter the onboarding flow', async function () {
+					BrowserManager.setStoreCookie( page, { currency: 'USD' } );
+					await page.goto( helperData.getCalypsoURL( '/setup/onboarding' ) );
+				} );
 
-			await test.step( 'And I sign up as a new user', async function () {
-				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
-			} );
+				await test.step( 'And I sign up as a new user', async function () {
+					newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+				} );
 
-			await test.step( 'And I skip domain purchase', async function () {
-				await componentDomainSearch.search( helperData.getBlogName() );
-				await componentDomainSearch.skipPurchase();
-			} );
+				await test.step( 'And I skip domain purchase', async function () {
+					await componentDomainSearch.search( helperData.getBlogName() );
+					await componentDomainSearch.skipPurchase();
+				} );
 
-			await test.step( `And I select the ${ planName } plan`, async function () {
-				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
-				accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
-			} );
+				await test.step( `And I select the ${ planName } plan`, async function () {
+					newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+					accountsToCleanup.push( { testUser, newUserDetails, newSiteDetails } );
+				} );
 
-			await test.step( 'Then I see the plan at checkout', async function () {
-				await pageCartCheckout.validateCartItem( `WordPress.com ${ planName }` );
-			} );
+				await test.step( 'Then I see the plan at checkout', async function () {
+					await pageCartCheckout.validateCartItem( `WordPress.com ${ planName }` );
+				} );
 
-			await test.step( 'And I see only one item in the cart', async function () {
-				await pageCartCheckout.validateCartItemsCount( 1 );
-			} );
-		} );
+				await test.step( 'And I see only one item in the cart', async function () {
+					await pageCartCheckout.validateCartItemsCount( 1 );
+				} );
+			}
+		);
 
 		test( 'As a new user, I can complete the onboarding flow with domain transfer and plan purchase', async ( {
 			page,

@@ -5,7 +5,7 @@ import { apiCloseAccount } from '../shared';
 test.describe(
 	'Signup: Tailored Start Writing Flow',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_PR ],
 		annotation: {
 			type: 'flowchart',
 			description:

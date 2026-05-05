@@ -6,7 +6,7 @@ import type { NewSiteResponse, TestAccount } from '@automattic/calypso-e2e';
 test.describe(
 	'Plans: Create a WordPress.com/Business site as existing user',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_PR ],
 	},
 	() => {
 		const planName = 'Business';

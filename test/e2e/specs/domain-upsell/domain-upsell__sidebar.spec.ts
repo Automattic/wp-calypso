@@ -1,6 +1,6 @@
 import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-base';
 
-test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_RELEASE ] }, () => {
+test.describe( 'Domain: Upsell (Sidebar)', { tag: [ tags.CALYPSO_PR ] }, () => {
 	skipIfMailosaurLimitReached();
 
 	const planName = 'Premium';

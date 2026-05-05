@@ -6,7 +6,7 @@ const TEST_SUBSTACK_EXPORT_FILE_PATH = path.join( __dirname, 'import-files', 'su
 test.describe(
 	'Site Import: Calypso: Substack',
 	{
-		tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ],
+		tag: [ tags.CALYPSO_PR, tags.IMPORTS, tags.DESKTOP_ONLY ],
 		annotation: {
 			type: 'flowchart',
 			description:

@@ -3,7 +3,7 @@ import { tags, test, expect } from '../../lib/pw-base';
 
 test.describe(
 	'Authentication: Login SSR + hydration (localized)',
-	{ tag: [ tags.AUTHENTICATION, tags.CALYPSO_RELEASE ] },
+	{ tag: [ tags.AUTHENTICATION, tags.CALYPSO_PR, tags.CALYPSO_RELEASE ] },
 	() => {
 		test( 'Default locale: headings SSR and controls interactive', async ( { page } ) => {
 			await page.goto( DataHelper.getCalypsoURL( 'log-in' ), {

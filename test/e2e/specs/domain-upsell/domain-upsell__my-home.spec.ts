@@ -3,7 +3,7 @@ import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-ba
 test.describe(
 	'Domain: Upsell (Home)',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE ],
 	},
 	() => {
 		skipIfMailosaurLimitReached();

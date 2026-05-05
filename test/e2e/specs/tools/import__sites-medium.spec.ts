@@ -10,7 +10,7 @@ const TEST_MEDIUM_EXPORT_FILE_PATH = path.join(
 test.describe(
 	'Site Import: Calypso: Medium',
 	{
-		tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ],
+		tag: [ tags.CALYPSO_PR, tags.IMPORTS, tags.DESKTOP_ONLY ],
 		annotation: {
 			type: 'flowchart',
 			description:

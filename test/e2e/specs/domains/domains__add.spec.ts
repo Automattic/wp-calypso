@@ -4,7 +4,7 @@ import { expect, skipIfMailosaurLimitReached, tags, test } from '../../lib/pw-ba
 test.describe(
 	'Domains: Add to current site',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE ],
 	},
 	() => {
 		skipIfMailosaurLimitReached();

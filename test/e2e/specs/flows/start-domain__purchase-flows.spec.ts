@@ -11,7 +11,7 @@ import { apiCloseAccount, apiDeleteSite } from '../shared';
 test.describe(
 	'Start Domain Only Flows',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_PR ],
 	},
 	() => {
 		const accountsToCleanup: {

@@ -9,7 +9,14 @@ import { apiCloseAccount, apiDeleteSite, swapBaseUrl } from '../shared';
 
 test.describe(
 	'Onboarding: Launch site from WP Admin',
-	{ tag: [ tags.CALYPSO_RELEASE, tags.JETPACK_WPCOM_INTEGRATION, tags.DESKTOP_ONLY ] },
+	{
+		tag: [
+			tags.CALYPSO_PR,
+			tags.CALYPSO_RELEASE,
+			tags.JETPACK_WPCOM_INTEGRATION,
+			tags.DESKTOP_ONLY,
+		],
+	},
 	() => {
 		const accountsToCleanup: {
 			testUser: NewTestUserDetails;

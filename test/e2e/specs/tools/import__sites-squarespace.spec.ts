@@ -10,7 +10,7 @@ const TEST_SQUARESPACE_EXPORT_FILE_PATH = path.join(
 test.describe(
 	'Site Import: Calypso: Squarespace',
 	{
-		tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ],
+		tag: [ tags.CALYPSO_PR, tags.IMPORTS, tags.DESKTOP_ONLY ],
 		annotation: {
 			type: 'flowchart',
 			description:
