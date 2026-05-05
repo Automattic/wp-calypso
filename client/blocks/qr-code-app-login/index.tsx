@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import QRCode, { QRCodePlaceholder } from './qr-code';
 import TimerBar from './timer-bar';
 import { useApprove } from './use-approve';
@@ -13,6 +13,7 @@ import './style.scss';
 
 export default function QRCodeAppLogin() {
 	const translate = useTranslate();
+	const [ hasStarted, setHasStarted ] = useState( false );
 	const {
 		mutate: createToken,
 		data: token,
@@ -21,10 +22,6 @@ export default function QRCodeAppLogin() {
 		reset: resetCreateToken,
 	} = useCreateToken();
 
-	useEffect( () => {
-		createToken();
-	}, [ createToken ] );
-
 	const isVisible = useDocumentVisible();
 	const { data: statusData, isError: isStatusError } = useStatus( token?.token, isVisible );
 	const countdown = useCountdown( token?.expires );
@@ -32,11 +29,31 @@ export default function QRCodeAppLogin() {
 	const [ wrongNumber, setWrongNumber ] = useState( false );
 	const { mutate: approve, isPending: isApproving } = useApprove();
 
+	const handleGenerate = () => {
+		setHasStarted( true );
+		createToken();
+	};
+
 	const startOver = () => {
 		setWrongNumber( false );
 		resetCreateToken();
-		createToken();
+		setHasStarted( false );
 	};
+
+	if ( ! hasStarted ) {
+		return (
+			<div className="qr-code-app-login is-intent">
+				<p className="qr-code-app-login__instructions">
+					{ translate(
+						'Generate a one-time code to sign in to the WooCommerce app on your phone. The code expires in 2 minutes.'
+					) }
+				</p>
+				<Button variant="primary" onClick={ handleGenerate }>
+					{ translate( 'Generate code' ) }
+				</Button>
+			</div>
+		);
+	}
 
 	const handleApprove = ( chosenNumber: number ) => {
 		if ( ! token ) {
