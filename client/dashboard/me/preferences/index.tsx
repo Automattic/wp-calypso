@@ -27,7 +27,7 @@ export default function Preferences() {
 		>
 			<SummaryButtonList>
 				{ optIn ? <PreferencesNewHostingDashboard /> : null }
-				<PreferencesAppearance />
+				{ isEnabled( 'dark-mode' ) ? <PreferencesAppearance /> : null }
 				{ isEnabled( 'mcp-settings' ) ? <PreferencesAiMcp /> : null }
 				<PreferencesLanguage />
 				<PreferencesDefaults />
