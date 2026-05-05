@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcom from 'calypso/lib/wp';
-import { useImageUploads } from '../use-image-uploads';
+import { toAtmosphereError, useImageUploads } from '../use-image-uploads';
 
 jest.mock( '../compress-image', () => ( {
 	compressImage: jest.fn( async () => ( {
@@ -114,34 +114,32 @@ describe( 'useImageUploads', () => {
 		expect( result.current.images.length ).toBeLessThanOrEqual( 4 );
 		expect( result.current.images.length ).toBe( 4 );
 	} );
+} );
 
-	it( 'narrows non-AtmosphereError throws to { kind: "unknown" }', async () => {
-		// `uploadBlob` normally classifies its rejections through
-		// `classifyAtmosphereError`, but a transport-level failure (network
-		// drop, abort) can short-circuit before that runs. Casting `err as
-		// AtmosphereError` would let downstream `error.kind` reads return
-		// `undefined`; the type guard collapses anything unrecognized to
-		// `{ kind: 'unknown', cause: err }`.
-		jest.spyOn( wpcom.req, 'post' ).mockRejectedValue( new Error( 'network down' ) );
+describe( 'toAtmosphereError', () => {
+	// `uploadBlob` normally classifies its rejections through
+	// `classifyAtmosphereError`, but a transport-level failure (network
+	// drop, abort, JSON parse error) can short-circuit before that runs.
+	// Casting `err as AtmosphereError` would let downstream `error.kind`
+	// reads return `undefined`; the guard collapses anything unrecognized
+	// to `{ kind: 'unknown', cause: err }` so failed-state consumers stay
+	// sound.
+	it( 'passes through valid AtmosphereError shapes', () => {
+		const e = { kind: 'rate_limited', message: 'slow down' };
+		expect( toAtmosphereError( e ) ).toBe( e );
+	} );
 
-		const qc = new QueryClient();
-		const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
-			wrapper: wrap( qc ),
-		} );
+	it( 'narrows Error instances to unknown', () => {
+		const e = new Error( 'boom' );
+		const narrowed = toAtmosphereError( e );
+		expect( narrowed.kind ).toBe( 'unknown' );
+		expect( ( narrowed as { cause?: unknown } ).cause ).toBe( e );
+	} );
 
-		const file = new File( [ 'src' ], 'a.png', { type: 'image/png' } );
-		await act( async () => {
-			await result.current.addFiles( [ file ] );
-		} );
-
-		await waitFor( () => {
-			expect( result.current.images[ 0 ]?.kind ).toBe( 'failed' );
-		} );
-
-		const failed = result.current.images[ 0 ];
-		if ( failed.kind !== 'failed' ) {
-			throw new Error( 'expected failed' );
-		}
-		expect( failed.error.kind ).toBe( 'unknown' );
+	it( 'narrows arbitrary thrown values to unknown', () => {
+		expect( toAtmosphereError( 'string oops' ).kind ).toBe( 'unknown' );
+		expect( toAtmosphereError( { foo: 'bar' } ).kind ).toBe( 'unknown' );
+		expect( toAtmosphereError( null ).kind ).toBe( 'unknown' );
+		expect( toAtmosphereError( undefined ).kind ).toBe( 'unknown' );
 	} );
 } );

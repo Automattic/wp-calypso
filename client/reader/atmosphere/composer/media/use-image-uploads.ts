@@ -38,7 +38,7 @@ function isAtmosphereError( e: unknown ): e is AtmosphereError {
 	);
 }
 
-function toAtmosphereError( err: unknown ): AtmosphereError {
+export function toAtmosphereError( err: unknown ): AtmosphereError {
 	return isAtmosphereError( err ) ? err : { kind: 'unknown', cause: err };
 }
 
