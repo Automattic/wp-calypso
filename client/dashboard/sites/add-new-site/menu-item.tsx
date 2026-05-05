@@ -33,7 +33,7 @@ function MenuItem( {
 					<Icon className="dashboard-add-new-site__menu-item-icon" icon={ icon } />
 				</div>
 				<VStack>
-					<Text>{ title }</Text>
+					<Text weight="medium">{ title }</Text>
 					<Text variant="muted" as="p">
 						{ description }
 					</Text>

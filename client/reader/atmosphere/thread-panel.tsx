@@ -1,4 +1,4 @@
-import { useThreadQuery } from '@automattic/api-queries';
+import { useAtmosphereScopedThreadQuery } from '@automattic/api-queries';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -7,6 +7,7 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
 import { SocialAnalyticsProvider } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
 import {
@@ -19,6 +20,7 @@ import { ThreadHeader } from './thread-header';
 import { ThreadTree } from './thread-tree';
 import { ThreadTombstone } from './thread-tree/thread-tombstone';
 import { ThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import type {
 	AtmosphereConnection,
 	AtmosphereError,
@@ -40,7 +42,8 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 
 	const targetUri = useMemo( () => `at://${ did }/app.bsky.feed.post/${ rkey }`, [ did, rkey ] );
 
-	const { data, isPending, isFetching, isError, error, refetch } = useThreadQuery( {
+	const { data, isPending, isFetching, isError, error, refetch } = useAtmosphereScopedThreadQuery( {
+		connectionId: connection.id,
 		uri: targetUri,
 	} );
 
@@ -154,6 +157,22 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -163,25 +182,43 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 			getProfileUrl,
 			getTagUrl,
 			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			getThreadUrl,
+			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
+	);
+
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
+		[ connection.id ]
 	);
 
 	return (
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider value={ analyticsValue }>
-				{ renderBody( {
-					translate,
-					data,
-					isPending,
-					isFetching,
-					isError,
-					error: error ?? null,
-					handleRetry,
-					targetUri,
-					connectionId: connection.id,
-				} ) }
+				<LikeProvider value={ useLikeAction }>
+					{ renderBody( {
+						translate,
+						data,
+						isPending,
+						isFetching,
+						isError,
+						error: error ?? null,
+						handleRetry,
+						targetUri,
+						connectionId: connection.id,
+					} ) }
+				</LikeProvider>
 			</SocialAnalyticsProvider>
 		</>
 	);

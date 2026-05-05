@@ -276,6 +276,33 @@ describe( '<RepostButton>', () => {
 		expect( errorNoticeSpy ).toHaveBeenCalledWith( 'Reconnect your Bluesky account to repost.' );
 	} );
 
+	it( 'enables the "Quote post" menu item and calls onQuote when bound', async () => {
+		const onQuote = jest.fn();
+		const user = userEvent.setup();
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+			>
+				<RepostButton post={ makePost() } connectionId={ 42 } onQuote={ onQuote } />
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
+		expect( item ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		await user.click( item );
+		expect( onQuote ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'leaves "Quote post" disabled when onQuote is not bound', async () => {
+		const user = userEvent.setup();
+		renderRepostButton(); // existing helper without onQuote
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
+		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
 	it( 'click does not bubble to a parent listener', async () => {
 		const onParentClick = jest.fn();
 		const user = userEvent.setup();

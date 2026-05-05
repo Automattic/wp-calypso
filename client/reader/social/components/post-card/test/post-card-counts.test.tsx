@@ -3,8 +3,10 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
+import { LikeProvider } from '../like-context';
 import { PostCardCounts } from '../post-card-counts';
 import type { SocialPost } from '../../../types';
 
@@ -91,8 +93,13 @@ describe( 'PostCardCounts', () => {
 		expect( links ).toHaveLength( 1 ); // only replies
 	} );
 
-	it( 'renders likes as a toggle button when connectionId is supplied', () => {
-		renderWithProvider( wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) );
+	it( 'renders likes as a toggle button when connectionId and LikeProvider are supplied', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
+		renderWithProvider(
+			<LikeProvider value={ useAtmosphereLikeAction }>
+				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+			</LikeProvider>
+		);
 		const button = screen.getByRole( 'button', { name: /like/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 		expect( button ).toHaveTextContent( '9' );
@@ -141,5 +148,33 @@ describe( 'PostCardCounts', () => {
 		const cidlessPost = { ...post, cid: '' };
 		renderWithProvider( wrap( <PostCardCounts post={ cidlessPost } connectionId={ 7 } /> ) );
 		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
+	} );
+
+	it( 'renders QuoteButton when analytics.onQuoteClick is bound and post has cid', () => {
+		const onQuoteClick = jest.fn();
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick: jest.fn(),
+					onQuoteClick,
+				} }
+			>
+				<PostCardCounts post={ post } connectionId={ 42 } />
+			</SocialAnalyticsProvider>
+		);
+		expect( screen.getByRole( 'button', { name: /quote, .* quote/i } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to static quotes count when onQuoteClick is not bound', () => {
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+			>
+				<PostCardCounts post={ post } connectionId={ 42 } />
+			</SocialAnalyticsProvider>
+		);
+		expect( screen.queryByRole( 'button', { name: /quote/i } ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -1,0 +1,27 @@
+.image-studio-experimental-badge {
+	display: inline-flex;
+	align-items: center;
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.4;
+	letter-spacing: 0.02em;
+	border-radius: 2px;
+	padding: 2px 8px;
+
+	&--light {
+		color: #7d4d00;
+		background: #fcf0d6;
+		cursor: help;
+
+		&:focus-visible {
+			outline: 2px solid #7d4d00;
+			outline-offset: 1px;
+		}
+	}
+
+	&--dark {
+		color: #f0d089;
+		background: rgba(217, 150, 23, 0.18);
+		border: 1px solid rgba(217, 150, 23, 0.35);
+	}
+}

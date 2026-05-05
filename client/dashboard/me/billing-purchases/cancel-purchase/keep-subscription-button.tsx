@@ -22,7 +22,7 @@ export default function KeepSubscriptionButton( {
 
 	return (
 		<Button
-			variant="secondary"
+			variant="tertiary"
 			onClick={ () => {
 				navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 				onKeepSubscriptionClick();

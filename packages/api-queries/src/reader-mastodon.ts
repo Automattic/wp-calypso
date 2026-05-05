@@ -1,6 +1,8 @@
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	createMastodonLike,
+	deleteMastodonLike,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
@@ -18,6 +20,7 @@ import {
 	useQuery,
 	useQueryClient,
 	type InfiniteData,
+	type QueryClient,
 	type QueryKey,
 } from '@tanstack/react-query';
 import type {
@@ -34,8 +37,10 @@ import type {
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
 	MastodonError,
+	MastodonFeedItem,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
+	MastodonThreadNode,
 	MastodonThreadResponse,
 	MastodonTimelinePage,
 } from '@automattic/api-core';
@@ -314,4 +319,343 @@ export function useMastodonTagFeedInfiniteQuery(
 	filter?: MastodonTagFilter
 ) {
 	return useInfiniteQuery( mastodonTagFeedInfiniteQuery( connectionId, hashtag, filter ) );
+}
+
+// ---------------------------------------------------------------------------
+// Optimistic favourite/unfavourite infrastructure (private to this file)
+// ---------------------------------------------------------------------------
+
+interface OptimisticContext {
+	snapshots: Array< {
+		key: QueryKey;
+		items: Array< { itemKey: string; occurrence: number; item: MastodonFeedItem } >;
+	} >;
+}
+
+interface FeedPageWithItems {
+	items: MastodonFeedItem[];
+	[ key: string ]: unknown;
+}
+
+function getOptimisticItemKey( item: MastodonFeedItem ): string {
+	if ( ! item.boost ) {
+		return `${ item.id }\nboost:none`;
+	}
+	return `${ item.id }\nboost:${ item.boost.by.id }:${ item.boost.by.acct }`;
+}
+
+function isObject( value: unknown ): value is Record< string, unknown > {
+	return typeof value === 'object' && value !== null;
+}
+
+function isInfiniteFeedData( data: unknown ): data is InfiniteData< FeedPageWithItems > {
+	if ( ! isObject( data ) || ! Array.isArray( data.pages ) ) {
+		return false;
+	}
+	return data.pages.some(
+		( page ) => isObject( page ) && Array.isArray( ( page as { items?: unknown } ).items )
+	);
+}
+
+function patchFeedItems(
+	items: MastodonFeedItem[],
+	statusId: string,
+	patch: ( item: MastodonFeedItem ) => MastodonFeedItem,
+	snapshots: OptimisticContext[ 'snapshots' ][ number ][ 'items' ],
+	seenOccurrences: Map< string, number >
+): MastodonFeedItem[] {
+	return items.map( ( item ) => {
+		if ( item.id !== statusId ) {
+			return item;
+		}
+		const itemKey = getOptimisticItemKey( item );
+		const occurrence = seenOccurrences.get( itemKey ) ?? 0;
+		seenOccurrences.set( itemKey, occurrence + 1 );
+		snapshots.push( { itemKey, occurrence, item } );
+		return patch( item );
+	} );
+}
+
+function patchThreadNode(
+	node: MastodonThreadNode,
+	statusId: string,
+	patch: ( item: MastodonFeedItem ) => MastodonFeedItem,
+	snapshots: OptimisticContext[ 'snapshots' ][ number ][ 'items' ],
+	seenOccurrences: Map< string, number >
+): MastodonThreadNode {
+	if ( node.type !== 'post' ) {
+		return node;
+	}
+
+	const beforeSnapshotCount = snapshots.length;
+	const post =
+		node.post.id === statusId
+			? patchFeedItems( [ node.post ], statusId, patch, snapshots, seenOccurrences )[ 0 ]
+			: node.post;
+	const parent = node.parent
+		? patchThreadNode( node.parent, statusId, patch, snapshots, seenOccurrences )
+		: null;
+	const replies = node.replies.map( ( reply ) =>
+		patchThreadNode( reply, statusId, patch, snapshots, seenOccurrences )
+	);
+
+	if (
+		snapshots.length === beforeSnapshotCount &&
+		parent === node.parent &&
+		replies.every( ( reply, idx ) => reply === node.replies[ idx ] )
+	) {
+		return node;
+	}
+
+	return { ...node, post, parent, replies };
+}
+
+function patchMastodonQueryData(
+	data: unknown,
+	statusId: string,
+	patch: ( item: MastodonFeedItem ) => MastodonFeedItem
+): { data: unknown; items: OptimisticContext[ 'snapshots' ][ number ][ 'items' ] } {
+	const items: OptimisticContext[ 'snapshots' ][ number ][ 'items' ] = [];
+	const seenOccurrences = new Map< string, number >();
+
+	if ( isInfiniteFeedData( data ) ) {
+		return {
+			items,
+			data: {
+				...data,
+				pages: data.pages.map( ( page ) =>
+					Array.isArray( page.items )
+						? {
+								...page,
+								items: patchFeedItems( page.items, statusId, patch, items, seenOccurrences ),
+						  }
+						: page
+				),
+			},
+		};
+	}
+
+	if ( isObject( data ) && isObject( data.thread ) ) {
+		return {
+			items,
+			data: {
+				...data,
+				thread: patchThreadNode(
+					data.thread as unknown as MastodonThreadNode,
+					statusId,
+					patch,
+					items,
+					seenOccurrences
+				),
+			},
+		};
+	}
+
+	return { data, items };
+}
+
+// Mastodon cache keys carry `connectionId` at slot 3 for every query type
+// that holds posts (timeline / thread / profile-feed / tag-feed).
+// `connections` and `connection` keys don't hold posts so they're silently
+// no-op walked. Status IDs are instance-local — same numeric id on a
+// different connection is a different post — so the patch must be
+// connection-scoped or favourites on connection A leak into B's caches.
+function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean {
+	return Array.isArray( key ) && key[ 3 ] === connectionId;
+}
+
+function patchMastodonPostCaches(
+	queryClient: QueryClient,
+	connectionId: number,
+	statusId: string,
+	patch: ( item: MastodonFeedItem ) => MastodonFeedItem
+): OptimisticContext {
+	const snapshots: OptimisticContext[ 'snapshots' ] = [];
+	for ( const [ key, data ] of queryClient.getQueriesData( {
+		queryKey: readerMastodonKeys.all,
+	} ) ) {
+		if ( ! isQueryKeyForConnection( key, connectionId ) ) {
+			continue;
+		}
+		const result = patchMastodonQueryData( data, statusId, patch );
+		if ( ! result.items.length ) {
+			continue;
+		}
+		queryClient.setQueryData( key, result.data );
+		snapshots.push( { key, items: result.items } );
+	}
+	return { snapshots };
+}
+
+// Cancel only this connection's in-flight Mastodon queries — favouriting
+// on connection A shouldn't kill connection B's pagination/thread loads.
+// Wrapped at call sites in try/catch: if cancelQueries rejects (rare —
+// teardown / route change), the optimistic patch should still apply and
+// the mutation should still fire.
+function cancelMastodonQueriesForConnection( queryClient: QueryClient, connectionId: number ) {
+	return queryClient.cancelQueries( {
+		predicate: ( query ) => isQueryKeyForConnection( query.queryKey, connectionId ),
+	} );
+}
+
+function restoreFeedItems(
+	items: MastodonFeedItem[],
+	itemSnapshots: Map< string, MastodonFeedItem[] >,
+	seenOccurrences: Map< string, number >
+): MastodonFeedItem[] {
+	return items.map( ( item ) => {
+		const itemKey = getOptimisticItemKey( item );
+		const snapshots = itemSnapshots.get( itemKey );
+		if ( ! snapshots ) {
+			return item;
+		}
+		const occurrence = seenOccurrences.get( itemKey ) ?? 0;
+		seenOccurrences.set( itemKey, occurrence + 1 );
+		return snapshots[ occurrence ] ?? item;
+	} );
+}
+
+function restoreThreadNode(
+	node: MastodonThreadNode,
+	itemSnapshots: Map< string, MastodonFeedItem[] >,
+	seenOccurrences: Map< string, number >
+): MastodonThreadNode {
+	if ( node.type !== 'post' ) {
+		return node;
+	}
+
+	const post = restoreFeedItems( [ node.post ], itemSnapshots, seenOccurrences )[ 0 ];
+	const parent = node.parent
+		? restoreThreadNode( node.parent, itemSnapshots, seenOccurrences )
+		: null;
+	const replies = node.replies.map( ( reply ) =>
+		restoreThreadNode( reply, itemSnapshots, seenOccurrences )
+	);
+
+	if (
+		post === node.post &&
+		parent === node.parent &&
+		replies.every( ( reply, idx ) => reply === node.replies[ idx ] )
+	) {
+		return node;
+	}
+
+	return { ...node, post, parent, replies };
+}
+
+function restoreMastodonQueryData(
+	data: unknown,
+	items: OptimisticContext[ 'snapshots' ][ number ][ 'items' ]
+): unknown {
+	const itemSnapshots = new Map< string, MastodonFeedItem[] >();
+	for ( const { itemKey, occurrence, item } of items ) {
+		const snapshots = itemSnapshots.get( itemKey ) ?? [];
+		snapshots[ occurrence ] = item;
+		itemSnapshots.set( itemKey, snapshots );
+	}
+	const seenOccurrences = new Map< string, number >();
+
+	if ( isInfiniteFeedData( data ) ) {
+		return {
+			...data,
+			pages: data.pages.map( ( page ) =>
+				Array.isArray( page.items )
+					? {
+							...page,
+							items: restoreFeedItems( page.items, itemSnapshots, seenOccurrences ),
+					  }
+					: page
+			),
+		};
+	}
+
+	if ( isObject( data ) && isObject( data.thread ) ) {
+		return {
+			...data,
+			thread: restoreThreadNode(
+				data.thread as unknown as MastodonThreadNode,
+				itemSnapshots,
+				seenOccurrences
+			),
+		};
+	}
+
+	return data;
+}
+
+function restoreMastodonPostSnapshots(
+	queryClient: QueryClient,
+	ctx: OptimisticContext | undefined
+) {
+	if ( ! ctx ) {
+		return;
+	}
+	for ( const { key, items } of ctx.snapshots ) {
+		if ( ! items.length ) {
+			continue;
+		}
+		const current = queryClient.getQueryData( key );
+		if ( ! current ) {
+			// Cache entry was evicted between onMutate and onError (e.g. via
+			// gcTime or an explicit removeQueries). Nothing to roll back —
+			// the next refetch will reload from the server.
+			continue;
+		}
+		queryClient.setQueryData( key, restoreMastodonQueryData( current, items ) );
+	}
+}
+
+export function useCreateMastodonLikeMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		mutationFn: ( { statusId } ) => createMastodonLike( { connectionId, statusId } ),
+		onMutate: async ( { statusId } ) => {
+			// cancelQueries is best-effort — TanStack docs flag it as such.
+			// If it rejects (rare; route-change teardown races) we want to
+			// continue with the optimistic patch and the actual mutation
+			// rather than treat the whole call as failed before it starts.
+			try {
+				await cancelMastodonQueriesForConnection( queryClient, connectionId );
+			} catch {
+				// Swallow; the optimistic patch below + mutationFn must
+				// still run. Snapshot rollback on real onError is unaffected.
+			}
+			return patchMastodonPostCaches( queryClient, connectionId, statusId, ( item ) => ( {
+				...item,
+				viewer: {
+					...( item.viewer ?? { favourited: false, reblogged: false } ),
+					favourited: true,
+				},
+				counts: { ...item.counts, favourites: item.counts.favourites + 1 },
+			} ) );
+		},
+		onError: ( _err, _vars, ctx ) => restoreMastodonPostSnapshots( queryClient, ctx ),
+		// No onSuccess re-patch — the boolean is already correct from onMutate.
+	} );
+}
+
+export function useDeleteMastodonLikeMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		mutationFn: ( { statusId } ) => deleteMastodonLike( { connectionId, statusId } ),
+		onMutate: async ( { statusId } ) => {
+			try {
+				await cancelMastodonQueriesForConnection( queryClient, connectionId );
+			} catch {
+				// See useCreateMastodonLikeMutation for rationale.
+			}
+			return patchMastodonPostCaches( queryClient, connectionId, statusId, ( item ) => ( {
+				...item,
+				viewer: {
+					...( item.viewer ?? { favourited: false, reblogged: false } ),
+					favourited: false,
+				},
+				counts: {
+					...item.counts,
+					favourites: Math.max( 0, item.counts.favourites - 1 ),
+				},
+			} ) );
+		},
+		onError: ( _err, _vars, ctx ) => restoreMastodonPostSnapshots( queryClient, ctx ),
+	} );
 }

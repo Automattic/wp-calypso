@@ -38,6 +38,7 @@ import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
+import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
@@ -216,21 +217,14 @@ function ImageStudioAgentChat( {
 				<p className="image-studio-modal__media-library-disclaimer">
 					<em>
 						{ __(
-							'All generated videos will be automatically saved to your media library.',
+							'Outputs from this experimental feature may need editing before publishing.',
 							__i18n_text_domain__
 						) }
 					</em>
-					{ isVideoGeneratingPhase && (
-						<>
-							<br />
-							<em>
-								{ __(
-									"You can close this — we'll save it when it's ready.",
-									__i18n_text_domain__
-								) }
-							</em>
-						</>
-					) }
+					<br />
+					<em>
+						{ __( 'All generated videos are saved to your Media Library.', __i18n_text_domain__ ) }
+					</em>
 				</p>
 			) }
 		</>
@@ -554,6 +548,12 @@ const ImageStudioContent = withInstanceId(
 							hasPreviousImage={ hasPreviousImage }
 							hasNextImage={ hasNextImage }
 						/>
+
+						{ isVideoMode && (
+							<div className="image-studio-modal__experimental-tag">
+								<ExperimentalBadge variant="dark" />
+							</div>
+						) }
 
 						{ mode === ImageStudioMode.Edit ? (
 							<EditLayout

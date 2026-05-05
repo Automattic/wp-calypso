@@ -2,6 +2,8 @@ import nock from 'nock';
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	createMastodonLike,
+	deleteMastodonLike,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
@@ -320,5 +322,66 @@ describe( 'getMastodonTagFeed', () => {
 		await expect(
 			getMastodonTagFeed( { connectionId: 7, hashtag: 'rust' } )
 		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+} );
+
+describe( 'createMastodonLike', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'POSTs /reader/mastodon/connections/:id/likes with status_id in the body', async () => {
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/likes', { status_id: '108020' } )
+			.reply( 200, { status_id: '108020' } );
+		await createMastodonLike( { connectionId: 7, statusId: '108020' } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/likes', { status_id: '108020' } )
+			.reply( 401, { error: 'not_authenticated', message: '', statusCode: 401, status: 401 } );
+		await expect(
+			createMastodonLike( { connectionId: 7, statusId: '108020' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+
+	it( 'classifies a 429 as rate_limited with retry_after', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/likes', { status_id: '108020' } )
+			.reply( 429, { error: 'mastodon_rate_limited', data: { retry_after: 30 } } );
+		await expect( createMastodonLike( { connectionId: 7, statusId: '108020' } ) ).rejects.toEqual( {
+			kind: 'rate_limited',
+			retry_after: 30,
+		} );
+	} );
+} );
+
+describe( 'deleteMastodonLike', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'DELETEs /reader/mastodon/connections/:id/likes/:status_id', async () => {
+		const scope = nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/likes/108020' )
+			.reply( 204 );
+		await deleteMastodonLike( { connectionId: 7, statusId: '108020' } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/likes/108020' )
+			.reply( 401, { error: 'not_authenticated', message: '', statusCode: 401, status: 401 } );
+		await expect(
+			deleteMastodonLike( { connectionId: 7, statusId: '108020' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+
+	it( 'classifies a 404 as not_found (e.g. another user’s connection)', async () => {
+		nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/likes/108020' )
+			.reply( 404, { error: 'connection_not_found', message: '', statusCode: 404, status: 404 } );
+		await expect(
+			deleteMastodonLike( { connectionId: 7, statusId: '108020' } )
+		).rejects.toMatchObject( { kind: 'connection_not_found' } );
 	} );
 } );

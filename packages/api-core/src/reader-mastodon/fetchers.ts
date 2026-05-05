@@ -1,6 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	MastodonCreateLikeParams,
+	MastodonDeleteLikeParams,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
@@ -233,6 +235,35 @@ export async function getMastodonTagFeed(
 			},
 			query
 		) ) as MastodonTagFeedPage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function createMastodonLike( params: MastodonCreateLikeParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ params.connectionId }/likes`,
+			apiNamespace: NAMESPACE,
+			body: { status_id: params.statusId },
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function deleteMastodonLike( params: MastodonDeleteLikeParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			// Encode the status id defensively — values are numeric strings
+			// today, but a malformed `post.uri` flowing through (mapper bug,
+			// whitespace, slashes) shouldn't smuggle path segments.
+			path: `/reader/mastodon/connections/${ params.connectionId }/likes/${ encodeURIComponent(
+				params.statusId
+			) }`,
+			apiNamespace: NAMESPACE,
+		} );
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
