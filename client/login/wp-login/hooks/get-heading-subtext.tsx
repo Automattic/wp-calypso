@@ -1,5 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { type LocalizeProps } from 'i18n-calypso';
+import { getRegistrationAcknowledgement } from 'calypso/jetpack-connect/connection-content';
 import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
 	action?: string;
 	isWooJPC?: boolean;
 	partnerConfig?: PartnerConfig | null;
+	isFromJetpackConnector?: boolean;
+	connectorPlugins?: string[];
 	translate: LocalizeProps[ 'translate' ];
 }
 
@@ -21,9 +24,21 @@ const getHeadingSubText = ( {
 	translate,
 	isWooJPC,
 	partnerConfig,
+	isFromJetpackConnector,
+	connectorPlugins,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
+	}
+
+	// Unified connection flow (jetpack-connector): acknowledge that the site
+	// is already registered with WordPress.com. PR 3 will append the
+	// family-driven benefit clause to this same subtitle slot.
+	if ( isFromJetpackConnector && 'lostpassword' !== action ) {
+		return {
+			primary: getRegistrationAcknowledgement( connectorPlugins ?? [] ),
+			secondary: null,
+		};
 	}
 
 	const tos = (

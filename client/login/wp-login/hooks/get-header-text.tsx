@@ -75,7 +75,6 @@ export function getHeaderText( {
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
 	isFromJetpackConnector,
-	connectorPlugins,
 	partnerConfig,
 	isGravPoweredClient,
 	currentQuery,
@@ -100,10 +99,11 @@ export function getHeaderText( {
 
 	if ( isSocialFirst ) {
 		if ( isFromJetpackConnector ) {
-			const hasWoo = connectorPlugins?.some( ( slug: string ) => slug.startsWith( 'woocommerce' ) );
-			headerText = hasWoo
-				? translate( 'Log in to WordPress.com to connect your store' )
-				: translate( 'Log in to WordPress.com to connect your site' );
+			// In the unified connection flow the site is already registered by
+			// the time the user lands on the login page, so the H1 stays
+			// neutral. Plugin-specific framing now lives in the subtitle and
+			// (in PR 4) in the "Connection enables" section.
+			headerText = translate( 'Log in to WordPress.com' );
 		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
 				args: { partner: partnerConfig.displayName },

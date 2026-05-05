@@ -445,6 +445,8 @@ function getInitialHeadingState( props, translate ) {
 		translate,
 		isWooJPC,
 		partnerConfig,
+		isFromJetpackConnector,
+		connectorPlugins,
 	} );
 
 	return {
