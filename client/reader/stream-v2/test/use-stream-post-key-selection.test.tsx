@@ -138,4 +138,33 @@ describe( 'useStreamPostKeySelection', () => {
 		rerender( { streamKey: 'likes' } );
 		expect( result.current.selectedPostKey ).toMatchObject( postKey( 2 ) );
 	} );
+
+	it( 'derives previous/next from react-query cache when items are omitted', () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( [ 'read', 'stream', 'v2', 'infinite', 'likes', null, null ], {
+			pages: [
+				{
+					posts: [
+						{ ID: 1, site_ID: 100, date_liked: '2026-04-01T00:00:00Z' },
+						{ ID: 2, site_ID: 100, date_liked: '2026-04-02T00:00:00Z' },
+						{ ID: 3, site_ID: 100, date_liked: '2026-04-03T00:00:00Z' },
+					],
+					date_range: { after: null, before: null },
+				},
+			],
+		} );
+
+		const { result } = renderHook(
+			() =>
+				useStreamPostKeySelection( {
+					streamKey: 'likes',
+					currentPostKey: postKey( 2 ),
+				} ),
+			{ wrapper: makeWrapper( queryClient ) }
+		);
+
+		expect( result.current.currentPostKey ).toMatchObject( postKey( 2 ) );
+		expect( result.current.previousPostKey ).toMatchObject( postKey( 1 ) );
+		expect( result.current.nextPostKey ).toMatchObject( postKey( 3 ) );
+	} );
 } );

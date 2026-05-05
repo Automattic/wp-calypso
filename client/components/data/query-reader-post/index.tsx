@@ -41,7 +41,16 @@ export default function QueryReaderPost( { postKey }: QueryReaderPostProps ) {
 	// a stream response). Mirrors the legacy `! post || post._state === 'minimal'`
 	// guard and keeps the bridge cheap for consumers that mount it unconditionally.
 	const cachedPost = useSelector( ( state ) => getPostByKey( state, postKey ) );
-	const shouldFetch = ! cachedPost || cachedPost._state === 'minimal';
+	const hasRenderablePostContent = !! (
+		cachedPost?.content ||
+		cachedPost?.excerpt ||
+		cachedPost?.better_excerpt ||
+		cachedPost?.use_excerpt
+	);
+	const shouldFetch =
+		! cachedPost ||
+		cachedPost._state === 'minimal' ||
+		( ! cachedPost.is_error && ! hasRenderablePostContent );
 
 	const queryOptions = readerPostQuery( postKey, readerContentWidth() );
 	const { data, isError, error } = useQuery( {

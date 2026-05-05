@@ -112,7 +112,6 @@ export function StreamV2( props: StreamV2Props ) {
 	const { items, isLoading, isFetching, lastPage, error, fetchNextPage } = stream;
 	const selection = useStreamPostKeySelection( {
 		streamKey,
-		feedId: null,
 		localeSlug,
 		items,
 	} );

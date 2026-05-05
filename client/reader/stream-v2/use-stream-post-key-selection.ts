@@ -1,25 +1,35 @@
+import { getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { keysAreEqual } from 'calypso/reader/post-key';
+import {
+	createStreamDataFromCards,
+	createStreamDataFromPosts,
+	createStreamDataFromSites,
+} from 'calypso/state/reader/streams/normalize';
+import { combineXPosts } from 'calypso/state/reader/streams/utils';
 import type { PostKey } from './use-stream-posts';
+import type { ReadStreamResponse } from '@automattic/api-core';
 
-type SelectedPostQueryKey = readonly [
-	'read',
-	'stream',
-	'v2',
-	'selected',
-	string,
-	number | null,
-	string | null,
-];
+type SelectedPostQueryKey = readonly [ 'read', 'stream', 'v2', 'selected', string, string | null ];
 
 const SELECTED_POST_GC_TIME = 30 * 60 * 1000;
 
 interface UseStreamPostKeySelectionOptions {
 	streamKey: string;
-	feedId?: number | null;
 	localeSlug?: string | null;
-	items: PostKey[];
+	/**
+	 * Explicit stream items to use for prev/next calculation.
+	 *
+	 * Current behavior requires callers to pass items (e.g. `<StreamV2>`).
+	 *
+	 * Planned behavior for full-post integration:
+	 * - make this optional
+	 * - when omitted, resolve items from in-memory React Query cache for
+	 *   `['read','stream','v2','infinite', streamKey, localeSlug]`
+	 * - do not trigger network fetches from this hook
+	 */
+	items?: PostKey[];
 	currentPostKey?: PostKey | null;
 }
 
@@ -61,17 +71,50 @@ function getOffsetPostKey(
 	return offsetItem.xPostMetadata ? ( offsetItem.xPostMetadata as PostKey ) : offsetItem;
 }
 
+type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'v2', 'infinite', string ];
+
+function datePropertyForStream( streamType: string ): string {
+	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
+		return 'last_comment_date_gmt';
+	}
+	if ( streamType === 'likes' ) {
+		return 'date_liked';
+	}
+	return 'date';
+}
+
+function normalizeStreamItems( data: ReadStreamResponse, streamType: string ): PostKey[] {
+	const dateProperty = datePropertyForStream( streamType );
+	if ( data.cards ) {
+		return createStreamDataFromCards( data.cards, dateProperty ).streamItems as PostKey[];
+	}
+	if ( data.sites ) {
+		return createStreamDataFromSites(
+			data.sites as Parameters< typeof createStreamDataFromSites >[ 0 ],
+			dateProperty
+		).streamItems as PostKey[];
+	}
+	return createStreamDataFromPosts(
+		data.posts as Parameters< typeof createStreamDataFromPosts >[ 0 ],
+		dateProperty
+	).streamItems as PostKey[];
+}
+
 export function useStreamPostKeySelection( {
 	streamKey,
-	feedId = null,
 	localeSlug = null,
-	items,
+	items: explicitItems,
 	currentPostKey: controlledCurrentPostKey = null,
 }: UseStreamPostKeySelectionOptions ): UseStreamPostKeySelectionResult {
 	const queryClient = useQueryClient();
+	const streamType = getStreamType( streamKey );
 	const selectedQueryKey = useMemo< SelectedPostQueryKey >(
-		() => [ 'read', 'stream', 'v2', 'selected', streamKey, feedId, localeSlug ] as const,
-		[ streamKey, feedId, localeSlug ]
+		() => [ 'read', 'stream', 'v2', 'selected', streamKey, localeSlug ] as const,
+		[ streamKey, localeSlug ]
+	);
+	const streamQueryKeyPrefix = useMemo< StreamInfiniteQueryKeyPrefix >(
+		() => [ 'read', 'stream', 'v2', 'infinite', streamKey ] as const,
+		[ streamKey ]
 	);
 	const selectedQuery = useQuery< PostKey | null, Error, PostKey | null, SelectedPostQueryKey >( {
 		queryKey: selectedQueryKey,
@@ -84,6 +127,34 @@ export function useStreamPostKeySelection( {
 		refetchOnReconnect: false,
 		refetchOnWindowFocus: false,
 	} );
+
+	const cachedItems = useMemo( () => {
+		const cachedEntries = queryClient.getQueriesData< { pages: ReadStreamResponse[] } >( {
+			queryKey: streamQueryKeyPrefix,
+		} );
+		const normalizedLocaleSlug = localeSlug ?? null;
+		const localeMatchedEntry = cachedEntries.find( ( [ queryKey ] ) => {
+			if ( ! Array.isArray( queryKey ) ) {
+				return false;
+			}
+			// Infinite stream keys are:
+			// ['read','stream','v2','infinite', streamKey, feedId, localeSlug]
+			const cachedLocaleSlug = queryKey[ 6 ] ?? null;
+			return cachedLocaleSlug === normalizedLocaleSlug;
+		} );
+		const matchingEntry = localeMatchedEntry ?? cachedEntries[ 0 ] ?? null;
+		const pages = matchingEntry?.[ 1 ]?.pages ?? [];
+		if ( ! pages.length ) {
+			return [] as PostKey[];
+		}
+		const collected: PostKey[] = [];
+		for ( const page of pages ) {
+			collected.push( ...normalizeStreamItems( page, streamType ) );
+		}
+		return combineXPosts( collected ) as PostKey[];
+	}, [ queryClient, streamQueryKeyPrefix, streamType, localeSlug ] );
+
+	const items = explicitItems ?? cachedItems;
 
 	const selectedPostKey = selectedQuery.data ?? null;
 	const currentPostKey = controlledCurrentPostKey ?? selectedPostKey;
