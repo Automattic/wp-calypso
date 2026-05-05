@@ -18,6 +18,7 @@ import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { LastUsedBadge } from 'calypso/components/social-buttons';
 import Notice from 'calypso/dashboard/components/notice';
 import {
 	getSignupUrl,
@@ -630,7 +631,11 @@ export class LoginForm extends Component {
 			isSendingEmail,
 			isGravPoweredClient,
 			isGravatarFixedAccountLogin,
+			isSocialFirst,
 		} = this.props;
+
+		const isLastUsedPassword =
+			isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
 
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
@@ -704,22 +709,31 @@ export class LoginForm extends Component {
 							{ this.renderUsernameorEmailLabel() }
 						</FormLabel>
 
-						<FormTextInput
-							autoCapitalize="off"
-							autoCorrect="off"
-							spellCheck="false"
-							autoComplete="username"
-							className={ clsx( {
-								'is-error': requestError && requestError.field === 'usernameOrEmail',
-							} ) }
-							onChange={ this.onChangeUsernameOrEmailField }
-							id="usernameOrEmail"
-							name="usernameOrEmail"
-							ref={ this.saveUsernameOrEmailRef }
-							value={ this.state.usernameOrEmail }
-							disabled={ isEmailOrUsernameInputDisabled }
-							hasCoreStyles
-						/>
+						{ ( () => {
+							const usernameInput = (
+								<FormTextInput
+									autoCapitalize="off"
+									autoCorrect="off"
+									spellCheck="false"
+									autoComplete="username"
+									className={ clsx( {
+										'is-error': requestError && requestError.field === 'usernameOrEmail',
+									} ) }
+									onChange={ this.onChangeUsernameOrEmailField }
+									id="usernameOrEmail"
+									name="usernameOrEmail"
+									ref={ this.saveUsernameOrEmailRef }
+									value={ this.state.usernameOrEmail }
+									disabled={ isEmailOrUsernameInputDisabled }
+									hasCoreStyles
+								/>
+							);
+							return isLastUsedPassword ? (
+								<LastUsedBadge>{ usernameInput }</LastUsedBadge>
+							) : (
+								usernameInput
+							);
+						} )() }
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
 							<FormInputValidation isError text={ requestError.message }>
@@ -851,11 +865,7 @@ export class LoginForm extends Component {
 			oauth2Client
 		);
 
-		const showLastUsedAuthenticationMethod =
-			lastUsedAuthenticationMethod &&
-			lastUsedAuthenticationMethod !== 'password' &&
-			lastUsedAuthenticationMethod !== 'magic-login' &&
-			isSocialFirst;
+		const showLastUsedAuthenticationMethod = lastUsedAuthenticationMethod && isSocialFirst;
 
 		const shouldShowSocialLoginForm =
 			config.isEnabled( 'signup/social' ) &&
