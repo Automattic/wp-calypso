@@ -71,6 +71,8 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const safeBackTo =
 			backTo && ( ! isExternal( backTo ) || isValidBackTo ) ? backTo : dashboardLink( '/sites' );
 
+		const isSwitchPlan = query.get( 'switch_plan' ) === 'true';
+
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				// Note that this step uses this flow name to select the `plans-upgrade` intent.
@@ -83,6 +85,12 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 
 				// Pass the feature parameter for feature-based plan filtering
 				selectedFeature,
+
+				// When switching plans from the cancel flow, hide Free and Enterprise tiers
+				...( isSwitchPlan && {
+					hideFreePlan: true,
+					hideEnterprisePlan: true,
+				} ),
 
 				// Provide a custom back handler that goes to back_to or /sites
 				wrapperProps: {

@@ -77,6 +77,9 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 		case ONBOARDING_UNIFIED_FLOW:
 			return 'plans-affiliate';
 		case PLAN_UPGRADE_FLOW:
+			if ( search.get( 'switch_plan' ) === 'true' ) {
+				return 'plans-default-wpcom';
+			}
 			return 'plans-upgrade';
 		case WOO_HOSTED_PLANS_FLOW:
 			return 'plans-woo-hosted';

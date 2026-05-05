@@ -231,7 +231,12 @@ export default function SolutionsCardsUpsellStep( {
 		return null;
 	}
 
-	const changePlanUrl = `/plans/${ site.slug }`;
+	const changePlanUrl = addQueryArgs( '/setup/plan-upgrade', {
+		siteSlug: site.slug,
+		switch_plan: 'true',
+		cancel_to: window.location.pathname + window.location.search,
+		redirect_to: '/me/purchases',
+	} );
 	const baseRenewUrl = `/checkout/${ site.slug }/${ purchase.productSlug }?coupon=${ RENEW_COUPON }`;
 	const renewNowUrl = purchaseSettingsUrl
 		? addQueryArgs( baseRenewUrl, {
