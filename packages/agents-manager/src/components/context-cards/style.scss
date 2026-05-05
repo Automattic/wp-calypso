@@ -3,8 +3,6 @@ $context-card-leave-duration: 220ms;
 $context-card-leave-easing: cubic-bezier(0.4, 0, 0.2, 1);
 
 .agents-manager-context-cards {
-	display: flex;
-	flex-direction: column;
 	margin: 12px 16px 4px;
 }
 
@@ -12,7 +10,6 @@ $context-card-leave-easing: cubic-bezier(0.4, 0, 0.2, 1);
 	display: grid;
 	grid-template-rows: 1fr;
 	margin-bottom: 12px;
-	opacity: 1;
 	transition:
 		grid-template-rows $context-card-leave-duration $context-card-leave-easing,
 		margin-bottom $context-card-leave-duration $context-card-leave-easing,

@@ -20,7 +20,7 @@ Once the hook is mounted, `window.__agentsManagerActions` provides:
 | `setChatInput`             | `(value: string) => void`                               | Sets the current chat input value and focuses the input.                                         |
 | `submitChatMessage`        | `(message?: string) => Promise<void>`                   | Submits a message programmatically. If omitted, submits the current input value.                 |
 | `setContextEntry`          | `(entry: AgentsManagerExternalContextEntry) => void`    | Adds or replaces context that is merged into `clientContext.contextEntries`.                     |
-| `removeContextEntry`       | `(id: string) => void`                                  | Removes a context entry. Cards linked by `contextEntryId` are removed too.                       |
+| `removeContextEntry`       | `(id: string) => void`                                  | Removes a context entry. Cards listing this id in `contextEntryIds` are removed too.             |
 | `setContextCard`           | `(card: AgentsManagerExternalContextCard) => void`      | Adds or replaces a graphical card shown inside the chat.                                         |
 | `removeContextCard`        | `(id: string) => void`                                  | Removes a graphical context card.                                                                |
 | `chatNavigate`             | `NavigateFunction`                                      | The `react-router-dom` navigate function. Accepts a path string with options or a numeric delta. |
@@ -104,7 +104,7 @@ window.__agentsManagerActions.setContextEntry( {
 // React; AM only adds the dismiss button and the actions row around it.
 window.__agentsManagerActions.setContextCard( {
 	id: 'my-plugin/current-report-card',
-	contextEntryId: 'my-plugin/current-report',
+	contextEntryIds: [ 'my-plugin/current-report' ],
 	body: <MyReportCard reportId={ 123 } />,
 	actions: [
 		{

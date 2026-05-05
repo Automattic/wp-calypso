@@ -22,11 +22,6 @@ export type {
 
 export { useShouldUseUnifiedAgent } from './hooks/use-should-use-unified-agent';
 export { useImageUpload } from './hooks/use-image-upload';
-export type {
-	ExternalContextCard,
-	ExternalContextCardAction,
-	ExternalContextEntry,
-} from './utils/external-context';
 
 // Feedback exports
 export {

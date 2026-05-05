@@ -12,6 +12,26 @@ import {
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
+// Action keys this hook owns on `window.__agentsManagerActions`. Cleanup
+// only removes these so other consumers writing to the same object (for
+// example `OrchestratorChat`'s `setChatInput`/`submitChatMessage`) survive
+// re-runs of this effect's deps.
+const OWNED_ACTION_KEYS: ReadonlyArray< keyof AgentsManagerActions > = [
+	'getChatState',
+	'getSessionId',
+	'setChatOpen',
+	'setChatDocked',
+	'setChatEnabled',
+	'setChatCompactMode',
+	'setChatDesktopMediaQuery',
+	'setContextEntry',
+	'removeContextEntry',
+	'setContextCard',
+	'removeContextCard',
+	'chatNavigate',
+	'isReady',
+];
+
 interface Props {
 	dock: () => void;
 	undock: () => void;
@@ -162,7 +182,13 @@ export default function useSetupCustomActions( {
 		}
 
 		return () => {
-			delete window.__agentsManagerActions;
+			const actions = window.__agentsManagerActions;
+			if ( ! actions ) {
+				return;
+			}
+			OWNED_ACTION_KEYS.forEach( ( key ) => {
+				delete actions[ key ];
+			} );
 		};
 	}, [
 		hasLoaded,
