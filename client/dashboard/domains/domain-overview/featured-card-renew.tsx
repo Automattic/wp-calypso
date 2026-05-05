@@ -29,6 +29,14 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 		intent = 'success';
 	}
 
+	let title = __( 'Expires' );
+
+	if ( domain.auto_renewing ) {
+		title = __( 'Renews' );
+	} else if ( domain.expired ) {
+		title = __( 'Expired' );
+	}
+
 	const formattedDate = formatDate( new Date( date ), locale, {
 		day: 'numeric',
 		month: 'long',
@@ -37,7 +45,7 @@ export default function FeaturedCardRenew( { domain }: Props ) {
 
 	return (
 		<OverviewCard
-			title={ domain.auto_renewing ? __( 'Renews' ) : __( 'Expires' ) }
+			title={ title }
 			heading={ formattedDate }
 			icon={ <Icon icon={ calendar } /> }
 			link={
