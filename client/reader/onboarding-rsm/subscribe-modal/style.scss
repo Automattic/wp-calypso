@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 
 body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-placeholder {
-	padding: 16px 24px 12px 24px;
+	padding: 12px 0;
 
 	.reader__post-title {
 		margin-top: 0;
@@ -17,82 +17,184 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 $actions-height: 64px;
 
 .subscribe-modal {
+	&.components-modal__frame,
+	.components-modal__frame {
+		width: min( 1024px, calc( 100vw - 64px ) );
+		max-width: min( 1024px, calc( 100vw - 64px ) );
+
+		@media ( max-width: $break-medium ) {
+			width: 100vw;
+			max-width: 100vw;
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
+
+	// Remove WP modal's block/inline padding so the footer spans the full modal
+	// width and no gap appears below it at the frame bottom.
+	.components-modal__content {
+		padding-inline: 0;
+		padding-block-end: 0;
+	}
+
+	// The preview stream has z-index: 20 which would otherwise render above the
+	// absolute footer at small viewports. Raise the footer's z-index above it.
+	.reader-onboarding-modal__footer {
+		margin-inline: 0;
+		z-index: 25;
+	}
+
 	&__title {
 		font-family: Recoleta, sans-serif;
 		font-size: 2.25rem;
 		font-weight: 400;
 		line-height: 1.2;
-		margin-bottom: 16px;
+		margin: 0;
 		text-wrap: balance;
+		text-align: center;
 
 		@media ( max-width: $break-medium ) {
 			font-size: 1.5rem;
 		}
 	}
 
+	&__description {
+		margin: 0;
+		text-align: center;
+		color: var( --color-text-subtle );
+		text-wrap: balance;
+	}
+
 	&__content {
-		// Since the actions container is positioned absolutely,
-		// this padding bottom ensures that the content wrapper will properly
-		// detect overflowing content and start showing scrollbars at the right
-		// moment. Without this padding, the content would render under the actions
-		// bar without causing the wrapper to show a scrollbar.
+		// padding-bottom reserves space for the absolutely-positioned footer so
+		// the scrollable columns never slip behind it.
 		padding-bottom: $actions-height;
 
 		display: flex;
 		flex-direction: column;
-		height: calc( 100vh - 200px );
-		align-items: center;
+		// max-height keeps content within the WP modal frame (max-height: 70vh)
+		// minus the WP modal header (~72px) and the WP content top padding (~4px).
+		// WP content's bottom padding is zeroed out above, so the formula is
+		// 70vh - 76px rather than the original 70vh - 100px.
+		// min-height ensures columns stay usable (~2 post-card heights); below
+		// ~709px the WP content wrapper scrolls and the absolute footer remains
+		// pinned at the frame bottom via its z-index: 25 over the stream.
+		max-height: calc( 70vh - 76px );
+		min-height: 420px;
+		overflow: hidden;
+	}
 
-		@media ( min-width: 1200px ) {
-			flex-direction: row;
-			overflow: hidden;
-			align-items: initial;
+	&__intro {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		padding: 20px 24px 10px;
+	}
+
+	&__columns {
+		display: flex;
+		flex: 1;
+		min-height: 0;
+		padding: 20px 24px 0;
+		gap: 16px;
+
+		@media ( max-width: 1199px ) {
+			padding-inline: 0;
 		}
 	}
 
 	&__site-list-column {
-		flex: 1;
-		padding: 20px 20px 0;
+		flex: 0 0 34%;
+		padding-top: 2px;
 		overflow-y: auto;
-		max-width: 600px;
+		max-width: 300px;
+		padding-inline-end: 32px;
 
-		@media ( min-width: 1200px ) {
-			max-width: 450px;
-		}
-
-		@media ( max-width: $break-medium ) {
-			padding: 0;
+		@media ( max-width: 1199px ) {
+			flex: 1;
 			max-width: 700px;
-		}
-
-		p {
-			text-wrap: balance;
-		}
-
-		.subscribe-modal__description {
-			@media ( max-width: 1199px ) {
-				display: none;
-			}
+			padding-inline: 20px;
 		}
 
 		.reader-subscription-list-item {
+			position: relative;
 			padding: 12px;
 			border: 1px solid var( --color-neutral-5 );
 			border-radius: 6px; /* stylelint-disable-line scales/radii */
 			margin-bottom: 12px;
+			cursor: pointer;
 
-			@media ( min-width: 1200px ) {
-				cursor: pointer;
-				&.is-selected {
-					background-color: #e6f3fa;
-					border: 1px solid #0087be;
-					border-radius: 6px; /* stylelint-disable-line scales/radii */
+			// Without min-width: 0 the byline flex-item expands to its content
+			// width, pushing __options off the right edge of the card.
+			.reader-subscription-list-item__byline {
+				min-width: 0;
+			}
+
+			.site-icon.site-icon {
+				border-radius: 50%;
+				overflow: hidden;
+			}
+
+			&.is-selected {
+				background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
+				border-color: color-mix( in srgb, var( --color-accent ) 25%, #fff );
+
+				@media ( min-width: 1200px ) {
+					&::after {
+						content: '';
+						position: absolute;
+						top: 50%;
+						inset-inline-end: -1px;
+						width: 20px;
+						height: 20px;
+						background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
+						border-top: 1px solid color-mix( in srgb, var( --color-accent ) 25%, #fff );
+						border-right: 1px solid color-mix( in srgb, var( --color-accent ) 25%, #fff );
+						border-radius: 2px;
+						transform: translate( 50%, -50% ) rotate( 45deg );
+					}
+				}
+			}
+
+			.reader-subscription-list-item__options {
+				display: flex;
+				align-items: flex-start;
+				flex-shrink: 0;
+
+				.follow-button__label {
+					display: none;
 				}
 			}
 
 			.reader-subscription-list-item__site-url-timestamp {
 				&:not( .is-placeholder )::after {
 					background: none;
+				}
+
+				// ul and li must not block the width constraint from reaching the anchor.
+				ul,
+				li {
+					overflow: hidden;
+				}
+
+				// Force the URL to one line with ellipsis while keeping the
+				// external-link icon always visible at the end.
+				.reader-subscription-list-item__site-url.has-icon {
+					display: block;
+					position: relative;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					// Reserve room for the 14px icon + a small gap.
+					padding-inline-end: 18px;
+
+					svg {
+						position: absolute;
+						inset-inline-end: 0;
+						top: 50%;
+						transform: translateY( -50% );
+					}
 				}
 			}
 		}
@@ -103,13 +205,10 @@ $actions-height: 64px;
 	}
 
 	&__preview-column {
-		flex: 1;
-		padding: 24px;
+		flex: 1 1 auto;
 		display: none;
 		flex-direction: column;
 		overflow: hidden;
-
-		clip-path: inset( 0 0 0 0 );
 
 		@media ( min-width: 1200px ) {
 			display: flex;
@@ -124,47 +223,124 @@ $actions-height: 64px;
 	}
 
 	&__preview-placeholder {
-		justify-content: center;
-		border: 1px solid #f2f2f2;
-		border-radius: 6px; /* stylelint-disable-line scales/radii */
-		background-color: #f2f2f2;
-		height: calc( 100vh - 224px );
-		width: calc( 100vw - 620px );
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 0;
+		border: 1px solid var( --color-neutral-5 );
+		border-block-end: none;
+		border-radius: 6px 6px 0 0; /* stylelint-disable-line scales/radii */
+		background-color: #fff;
 		overflow: hidden;
-		position: fixed;
+		position: relative;
 	}
 
 	&__preview-stream-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px 14px;
 		background-color: #fff;
-		text-align: center;
-		line-height: rem( 36px );
+		border-bottom: 1px solid var( --color-neutral-5 );
+
+		.follow-button.has-button-style {
+			box-sizing: border-box;
+			flex-shrink: 0;
+			min-width: 106px;
+			min-height: 36px;
+			padding: 8px 14px;
+			border-radius: 4px;
+			border: 1px solid var( --color-accent );
+			line-height: 18px;
+			transition: none;
+		}
+
+		.follow-button.has-button-style:hover,
+		.follow-button.has-button-style:focus,
+		.follow-button.has-button-style:active {
+			padding: 8px 14px;
+			border-width: 1px;
+			border-radius: 4px;
+			box-shadow: none;
+		}
+
+		.button.follow-button.has-button-style.is-following,
+		.button.follow-button.has-button-style.is-following:hover {
+			background-color: var( --studio-gray-90, #1e1e1e );
+			border-color: var( --studio-gray-90, #1e1e1e );
+
+			svg.reader-following-feed {
+				fill: var( --studio-white, #fff );
+
+				* {
+					fill: var( --studio-white, #fff );
+				}
+			}
+
+			.follow-button__label {
+				color: var( --studio-white, #fff );
+			}
+		}
+	}
+
+	&__preview-site {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		// Must be able to shrink so a long title doesn't push the follow button off screen.
+		min-width: 0;
+		overflow: hidden;
+
+		.site-icon.site-icon {
+			flex-shrink: 0;
+			border-radius: 50%;
+			overflow: hidden;
+		}
+	}
+
+	&__preview-site-title {
+		min-width: 0; // flex-item must opt in to shrinking for ellipsis to fire
 		font-size: rem( 14px );
+		font-weight: 600;
+		color: var( --color-neutral-80 );
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	&__preview-stream-container {
-		height: 100%;
+		flex: 1;
+		min-height: 0;
 		overflow-y: auto;
-		padding-top: 40px;
+		padding: 0;
+		background: #fff;
+
+		.reader,
+		.reader__content,
+		.reader__content .stream__list,
+		.reader-stream__content {
+			max-width: none;
+			padding-inline: 0;
+			padding-top: 0;
+			margin: 0;
+		}
+
+		.reader-post-card.card.is-compact {
+			margin-bottom: 0;
+			border-radius: 0;
+			padding: 14px 16px 12px;
+		}
 	}
 
-	.components-modal__header {
-		.components-button {
-			&.is-link {
-				margin-right: auto;
-			}
-
-			&.is-primary {
-				margin-left: 16px;
-			}
-		}
+	&__preview-stream {
+		pointer-events: none;
 	}
 
 	&.is-disabled {
 		.subscribe-modal__container {
-			height: calc( 100vh - 188px ); // Modal margin + modal padding + modal heading
-			overflow: hidden;
-			padding: 1px;
+			height: 100%;
 		}
+
 		.subscribe-modal__content {
 			opacity: 0.5;
 			pointer-events: none;
