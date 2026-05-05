@@ -13,7 +13,7 @@ import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
-import Stream from 'calypso/reader/stream-v2';
+import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
