@@ -64,12 +64,16 @@ export function ImageStudioNotice() {
 						className: `image-studio-notice-${ notice.type }`,
 						id: notice.id,
 						content: notice.content,
-						explicitDismiss: notice.explicitDismiss ?? notice.type === 'error',
+						explicitDismiss: notice.type === 'error',
 						...( notice.actions?.length && {
 							actions: notice.actions.map( ( action ) => ( {
 								label: action.label,
-								url: action.url,
-								openInNewTab: action.openInNewTab,
+								onClick: () => {
+									const newWindow = window.open( action.url, '_blank' );
+									if ( newWindow ) {
+										newWindow.opener = null;
+									}
+								},
 							} ) ),
 						} ),
 					} ) ) }
