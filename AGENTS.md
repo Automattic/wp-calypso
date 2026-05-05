@@ -32,6 +32,8 @@
 
 ## Development
 
+> **Note**: The Calypso dev server uses the `PORT` environment variable (check repo-root `.env`) and falls back to port `3000`. Do not create or modify `.env` unless explicitly asked.
+
 ```bash
 # Setup
 yarn install
