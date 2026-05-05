@@ -48,6 +48,7 @@ module.exports = {
 							'!@automattic/calypso-sentry',
 							'!@automattic/calypso-support-session',
 							'!@automattic/charts',
+							'!@automattic/charts-next',
 							'!@automattic/components',
 							'@automattic/components/*',
 							'!@automattic/components/src',
