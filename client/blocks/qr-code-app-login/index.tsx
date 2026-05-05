@@ -165,23 +165,40 @@ export default function QRCodeAppLogin() {
 		);
 	}
 
+	const steps = [
+		translate( 'Open the WooCommerce app on your phone.' ),
+		translate( 'Tap the {{strong}}Menu{{/strong}} tab.', {
+			components: { strong: <strong /> },
+		} ),
+		translate( 'Tap the {{strong}}Scan login code{{/strong}} option.', {
+			components: { strong: <strong /> },
+		} ),
+		translate( 'Point your phone at this screen to scan the code.' ),
+	];
+
 	return (
-		<div className="qr-code-app-login">
+		<div className="qr-code-app-login is-pending">
 			<div className="qr-code-app-login__token">
 				{ token ? <QRCode token={ token } /> : <QRCodePlaceholder /> }
 			</div>
-			<p className="qr-code-app-login__instructions">
-				{ translate( 'Open the app on your phone and scan this code.' ) }
-			</p>
-			{ countdown && (
-				<TimerBar remainingMs={ countdown.remainingMs } totalMs={ countdown.totalMs } />
-			) }
-			{ isCreatingToken && (
-				<p className="qr-code-app-login__status">{ translate( 'Generating code…' ) }</p>
-			) }
-			{ isStatusError && (
-				<p className="qr-code-app-login__error">{ translate( 'Lost connection — retrying…' ) }</p>
-			) }
+			<div className="qr-code-app-login__instructions">
+				<ol className="qr-code-app-login__steps">
+					{ steps.map( ( step, index ) => (
+						<li key={ index } className="qr-code-app-login__step">
+							{ step }
+						</li>
+					) ) }
+				</ol>
+				{ countdown && (
+					<TimerBar remainingMs={ countdown.remainingMs } totalMs={ countdown.totalMs } />
+				) }
+				{ isCreatingToken && (
+					<p className="qr-code-app-login__status">{ translate( 'Generating code…' ) }</p>
+				) }
+				{ isStatusError && (
+					<p className="qr-code-app-login__error">{ translate( 'Lost connection — retrying…' ) }</p>
+				) }
+			</div>
 		</div>
 	);
 }

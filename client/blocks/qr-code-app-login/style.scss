@@ -9,9 +9,20 @@
 	gap: 24px;
 }
 
+.qr-code-app-login.is-pending {
+	gap: 16px 48px;
+
+	@include break-small {
+		flex-direction: row-reverse;
+		justify-content: center;
+		align-items: flex-start;
+	}
+}
+
 .qr-code-app-login__token {
 	width: 300px;
 	height: 300px;
+	flex: 0 0 300px;
 	max-width: 100%;
 	max-height: calc(100vw - 48px);
 
@@ -19,6 +30,16 @@
 		max-width: 100%;
 		max-height: calc(100vw - 48px);
 	}
+}
+
+.qr-code-app-login__steps {
+	margin: 0;
+	padding-inline-start: 20px;
+	line-height: 1.6;
+}
+
+.qr-code-app-login__step {
+	margin-block-end: 8px;
 }
 
 .qr-code-app-login__placeholder {
