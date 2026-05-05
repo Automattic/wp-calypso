@@ -38,6 +38,7 @@ import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
+import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
@@ -550,9 +551,7 @@ const ImageStudioContent = withInstanceId(
 
 						{ isVideoMode && (
 							<div className="image-studio-modal__experimental-tag">
-								<span className="image-studio-modal__experimental-tag-pill" role="note">
-									{ __( 'Experimental', __i18n_text_domain__ ) }
-								</span>
+								<ExperimentalBadge variant="dark" />
 							</div>
 						) }
 

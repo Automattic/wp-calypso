@@ -17,6 +17,19 @@ const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
 
 jest.mock( '@wordpress/components', () => ( {
 	Tooltip: ( { children }: { children: React.ReactNode; text: string } ) => <>{ children }</>,
+	Button: ( {
+		children,
+		onClick,
+		className,
+	}: {
+		children: React.ReactNode;
+		onClick?: () => void;
+		className?: string;
+	} ) => (
+		<button className={ className } onClick={ onClick }>
+			{ children }
+		</button>
+	),
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
@@ -64,6 +77,7 @@ jest.mock( '../utils/tracking', () => ( {
 } ) );
 
 jest.mock( './feature-clip-sidebar.scss', () => ( {} ), { virtual: true } );
+jest.mock( '../components/experimental-badge/style.scss', () => ( {} ), { virtual: true } );
 
 describe( 'feature-clip-sidebar-extension', () => {
 	beforeEach( () => {

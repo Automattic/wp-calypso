@@ -2,15 +2,18 @@
  * "Generate Feature Clip" post-editor sidebar panel.
  *
  * Registers a PluginDocumentSettingPanel (from `@wordpress/editor`) in the
- * Gutenberg post editor with a hero card that opens the studio in
- * video-generation mode. The panel header carries an "Experimental" pill
- * with a hover/focus tooltip explaining the feature's status.
+ * Gutenberg post editor with a short description + Generate clip button. The
+ * panel header carries an "Experimental" badge with a tooltip explaining the
+ * feature's status. Visual rhythm matches the surrounding sidebar panels
+ * (Excerpt, Categories, Featured Image) rather than introducing a saturated
+ * hero card.
  */
-import { Tooltip } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { ExperimentalBadge } from '../components/experimental-badge';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
@@ -19,25 +22,6 @@ import './feature-clip-sidebar.scss';
 
 const PLUGIN_NAME = 'image-studio-feature-clip';
 const PANEL_NAME = 'image-studio-feature-clip-panel';
-
-function ExperimentalPill(): JSX.Element {
-	return (
-		<Tooltip
-			text={ __(
-				'This is an experimental AI feature. Outputs may need editing before publishing.',
-				__i18n_text_domain__
-			) }
-		>
-			<span
-				className="image-studio-feature-clip-panel__experimental-pill"
-				// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- focusable so keyboard users can surface the tooltip
-				tabIndex={ 0 }
-			>
-				{ __( 'Experimental', __i18n_text_domain__ ) }
-			</span>
-		</Tooltip>
-	);
-}
 
 function FeatureClipPanel(): JSX.Element {
 	const handleClick = async () => {
@@ -66,7 +50,7 @@ function FeatureClipPanel(): JSX.Element {
 			</span>
 			<span className="image-studio-feature-clip-panel__title-line">
 				{ __( 'Feature Clip', __i18n_text_domain__ ) }
-				<ExperimentalPill />
+				<ExperimentalBadge variant="light" withTooltip />
 			</span>
 		</span>
 	);
@@ -75,34 +59,27 @@ function FeatureClipPanel(): JSX.Element {
 		<PluginDocumentSettingPanel
 			name={ PANEL_NAME }
 			// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
-			// the pill must live in the title row so it stays visible when the panel is collapsed.
+			// the badge must live in the title row so it stays visible when the panel is collapsed.
 			title={ titleNode as unknown as string }
 			className="image-studio-feature-clip-panel"
 		>
-			<div className="image-studio-feature-clip-panel__hero">
-				<div className="image-studio-feature-clip-panel__hero-dots" aria-hidden="true" />
-				<div className="image-studio-feature-clip-panel__hero-content">
-					<div className="image-studio-feature-clip-panel__hero-title">
-						{ __( 'Turn this post into a short clip', __i18n_text_domain__ ) }
-					</div>
-					<div className="image-studio-feature-clip-panel__hero-subtitle">
-						{ __(
-							"We'll use your post and site style as a starting point.",
-							__i18n_text_domain__
-						) }
-					</div>
-					<button
-						type="button"
-						className="image-studio-feature-clip-panel__hero-button"
-						onClick={ handleClick }
-					>
-						<span aria-hidden="true" className="image-studio-feature-clip-panel__hero-button-icon">
-							✦
-						</span>
-						{ __( 'Generate clip', __i18n_text_domain__ ) }
-					</button>
-				</div>
-			</div>
+			<p className="image-studio-feature-clip-panel__description">
+				{ __(
+					'Turn this post into a short vertical video. Powered by your site guidelines.',
+					__i18n_text_domain__
+				) }
+			</p>
+			<Button
+				variant="primary"
+				className="image-studio-feature-clip-panel__cta"
+				__next40pxDefaultSize
+				onClick={ handleClick }
+			>
+				<span aria-hidden="true" className="image-studio-feature-clip-panel__cta-icon">
+					✦
+				</span>
+				{ __( 'Generate clip', __i18n_text_domain__ ) }
+			</Button>
 		</PluginDocumentSettingPanel>
 	);
 }

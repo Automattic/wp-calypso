@@ -212,21 +212,6 @@ body.js.is-image-studio-open {
 	top: 14px;
 	left: 16px;
 	z-index: 5;
-
-	&-pill {
-		display: inline-flex;
-		align-items: center;
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.04em;
-		color: #f0d089;
-		background: rgba(217, 150, 23, 0.18);
-		border: 1px solid rgba(217, 150, 23, 0.35);
-		border-radius: 3px;
-		padding: 4px 10px;
-		line-height: 1.4;
-		text-transform: uppercase;
-	}
 }
 
 /* ==========================================================================
