@@ -19,11 +19,10 @@ import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
-import { useDispatch, useStore } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
 	requestPage,
 	clearStream,
@@ -86,7 +85,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		( selectedFeed as { site_icon?: string; image?: string } | null )?.site_icon ??
 		( selectedFeed as { site_icon?: string; image?: string } | null )?.image;
 	const dispatch = useDispatch();
-	const store = useStore();
 	const currentLocale = getLocaleSlug();
 	const SITES_PER_PAGE = 6;
 	const queryClient = useQueryClient();
@@ -239,41 +237,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		[ selectedSite ]
 	);
 
-	const handleFollowToggle = useCallback(
-		async ( site: CardData, following: boolean ) => {
-			// Read fresh follow state from the store on each call to avoid stale closure issues
-			// inside the retry loop where the captured `follows` array won't reflect updates
-			// dispatched mid-loop.
-			const isFollowingSite = () => {
-				const currentFollows = getReaderFollows( store.getState() );
-				return currentFollows.some(
-					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
-				);
-			};
-
-			// Exit early if the follow state already matches what we want.
-			if ( following === isFollowingSite() ) {
-				return;
-			}
-
-			// Maximum number of retries
-			const MAX_RETRIES = 3;
-
-			for ( let attempt = 0; attempt < MAX_RETRIES; attempt++ ) {
-				// Update the subscriptions list behind the modal.
-				await dispatch( requestFollows() );
-
-				// Delay the next attempt.
-				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
-
-				if ( following === isFollowingSite() ) {
-					return;
-				}
-			}
-		},
-		[ store, dispatch ]
-	);
-
 	const formatUrl = ( url: string ): string => {
 		return url
 			.replace( /^(https?:\/\/)?(www\.)?/, '' ) // Remove protocol and www
@@ -281,6 +244,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	};
 
 	const handleClose = useCallback( () => {
+		dispatch( requestFollows() );
 		dispatch( clearStream( { streamKey: 'following' } ) );
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch( requestPage( { streamKey: 'following' } as any ) );
@@ -350,9 +314,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 												replaceStreamClickWithItemClick
 												onItemClick={ () => handleItemClick( site ) }
 												isSelected={ selectedSite?.feed_ID === site.feed_ID }
-												onFollowToggle={ ( following: boolean ) =>
-													handleFollowToggle( site, following )
-												}
 											/>
 										) ) }
 									</div>
@@ -390,9 +351,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 															icon={ check }
 															size={ 18 }
 														/>
-													}
-													onFollowToggle={ ( following: boolean ) =>
-														handleFollowToggle( selectedSite, following )
 													}
 												/>
 											</div>
