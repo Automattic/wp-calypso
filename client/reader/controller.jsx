@@ -9,6 +9,7 @@ import wpcom from 'calypso/lib/wp';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import SiteSubscriptionsManager from 'calypso/reader/site-subscriptions-manager';
 import { recordTrack } from 'calypso/reader/stats';
 import { getCurrentTabFromURL } from 'calypso/reader/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -48,10 +49,6 @@ const loadMain = () =>
 	import( /* webpackChunkName: "async-load-calypso-reader-a8c-main" */ 'calypso/reader/a8c/main' );
 const loadP2Main = () =>
 	import( /* webpackChunkName: "async-load-calypso-reader-p2-main" */ 'calypso/reader/p2/main' );
-const loadSiteSubscriptionsManager = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-site-subscriptions-manager" */ 'calypso/reader/site-subscriptions-manager'
-	);
 const loadSiteSubscription = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-site-subscription" */ 'calypso/reader/site-subscription'
@@ -368,7 +365,7 @@ export async function siteSubscriptionsManager( context, next ) {
 	const mcKey = 'subscription-sites';
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-	context.primary = <AsyncLoad require={ loadSiteSubscriptionsManager } />;
+	context.primary = <SiteSubscriptionsManager />;
 	next();
 }
 
