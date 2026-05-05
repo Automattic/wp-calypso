@@ -6,13 +6,8 @@ import type {
 	MastodonCreatePostResult,
 	MastodonError,
 } from '@automattic/api-core';
-import type { ActiveMode, ComposerConfig } from 'calypso/reader/social/composer';
-import type { I18N } from 'i18n-calypso';
+import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
-
-type Translate = ReturnType< I18N[ 'translate' ] > extends infer R
-	? ( ...args: Parameters< I18N[ 'translate' ] > ) => R
-	: never;
 
 // Mastodon's per-instance limit defaults to 500. Instances can configure a
 // different value (advertised via the `instance.configuration.statuses.

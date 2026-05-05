@@ -1,5 +1,5 @@
 import { mutationOptions } from '@tanstack/react-query';
-import type { ComposerConfig } from '../composer-config';
+import type { ComposerConfig } from './composer-config';
 
 interface TestError {
 	kind: string;

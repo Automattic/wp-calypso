@@ -68,10 +68,10 @@ export const MastodonThreadNode = forwardRef< HTMLDivElement, ThreadNodeProps >(
 				>
 					<SocialPostCard
 						post={ node.post }
+						connectionId={ connectionId }
 						variant="default"
 						expandedVideo={ expandedVideo }
 						prominentTimestamp={ prominentTimestamp }
-						connectionId={ connectionId }
 					/>
 				</div>
 				{ renderReplies &&

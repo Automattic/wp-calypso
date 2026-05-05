@@ -330,29 +330,38 @@ empty cells.
 Two render branches by viewer state:
 
 - **Reposted / boosted** — plain `<button aria-pressed="true">`. Clicking
-  it fires the delete-mutation directly; no menu opens.
+  it fires the delete-mutation directly; no menu opens. Loses access to
+  the Quote-post menu item on a reposted post; that's a known follow-up.
 - **Not reposted** — `<Dropdown>` from `@wordpress/components` whose
   toggle is the same shape of button (`aria-haspopup="menu"`). The menu
-  has two `<MenuItem>`s: the action item (`action.label.action` —
-  "Repost" / "Boost") and "Quote post" (disabled when
-  `action.canQuote === false` — true for both protocols today;
-  ATmosphere wires up in slice 7d, Mastodon has no native quote).
+  has two `<MenuItem>`s: the action item (label provided by the adapter
+  — "Repost" for ATmosphere, "Boost" for Mastodon) and "Quote post"
+  (disabled when `action.canQuote === false` — true today for both
+  protocols; ATmosphere wires up in slice 7d, Mastodon has no native
+  quote concept).
 
 Each protocol shell wires its own adapter hook factory:
 
 - ATmosphere: `client/reader/atmosphere/use-atmosphere-repost-action.ts`
-  exports `makeUseAtmosphereRepostAction(connectionId)`. Calls
-  `useCreateRepostMutation()` / `useDeleteRepostMutation()`, uses
-  `rkeyFromUri(viewer.repost)` for the delete key (returns `null` for
-  `PENDING_REPOST_URI`, preventing a DELETE with a fake rkey), guards
-  the create on missing `post.cid`, emits "Repost" labels. Tracks
-  events: `_repost_clicked`, `_unrepost_clicked`, `_repost_error_shown`.
+  exports `makeUseAtmosphereRepostAction(connectionId)`. It calls
+  `useCreateRepostMutation()` / `useDeleteRepostMutation()` from
+  `@automattic/api-queries`, uses `rkeyFromUri(viewer.repost)` to derive
+  the delete key (returns `null` for `PENDING_REPOST_URI`, preventing a
+  DELETE with a fake rkey), guards the create on missing `post.cid`, and
+  emits the labels "Repost" / "Repost, %d repost(s)" / "Undo repost, %d
+  repost(s)". Tracks events: `_repost_clicked`, `_unrepost_clicked`,
+  `_repost_error_shown`.
 - Mastodon: `client/reader/mastodon/use-mastodon-repost-action.ts`
-  exports `makeUseMastodonRepostAction(connectionId)`. Calls
-  `useCreateMastodonRepostMutation()` /
-  `useDeleteMastodonRepostMutation()`, uses `post.uri` (the status_id)
-  for the delete call, emits the UK-spelled "Boost" labels. Tracks
-  events: `_boost_clicked`, `_unboost_clicked`, `_boost_error_shown`.
+  exports `makeUseMastodonRepostAction(connectionId)`. It calls
+  `useCreateMastodonRepostMutation()` / `useDeleteMastodonRepostMutation()`,
+  uses `post.uri` (the status_id) for the delete call, and emits the
+  UK-spelled labels "Boost" / "Boost, %d boost(s)" / "Undo boost, %d
+  boost(s)". Tracks events: `_boost_clicked`, `_unboost_clicked`,
+  `_boost_error_shown`.
+
+Both mutation hooks optimistically patch every cached query under their
+protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
+plus thread-tree nodes recursively), then restore snapshots on error.
 
 The connection ID flows from the protocol panel:
 `Panel` → `<RepostProvider value={makeUse…RepostAction(id)}>` plus

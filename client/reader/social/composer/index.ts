@@ -9,4 +9,4 @@ export type {
 	ComposerEntryPoint,
 	ComposerParentRef,
 } from './composer-provider';
-export type { ComposerConfig } from './composer-config';
+export type { ComposerConfig, Translate } from './composer-config';

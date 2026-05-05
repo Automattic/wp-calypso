@@ -25,7 +25,8 @@ const previewPost: PreviewPost = {
 	},
 };
 
-function wrapper( config: ComposerConfig< unknown, unknown, unknown > = testComposerConfig ) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function wrapper( config: ComposerConfig< any, any, any > = testComposerConfig ) {
 	return function Wrapper( { children }: { children: ReactNode } ) {
 		return (
 			<ComposerProvider connectionId={ 7 } config={ config }>

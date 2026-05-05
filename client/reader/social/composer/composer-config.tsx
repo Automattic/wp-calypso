@@ -1,12 +1,18 @@
 import { createContext, useContext } from 'react';
 import type { ActiveMode, ComposerMode } from './composer-provider';
-import type { QueryClient, MutationOptions } from '@tanstack/react-query';
-import type { I18N } from 'i18n-calypso';
+import type { QueryClient, UseMutationOptions } from '@tanstack/react-query';
+import type { useTranslate } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 
-type Translate = ReturnType< I18N[ 'translate' ] > extends infer R
-	? ( ...args: Parameters< I18N[ 'translate' ] > ) => R
-	: never;
+/**
+ * The translate function from `useTranslate()` — has overloads for 1/2/3
+ * args. Re-export so per-protocol configs can refer to the same shape
+ * without each redeclaring it. Capturing it via `useTranslate` (a hook)
+ * is intentional: `i18n-calypso`'s `I18N['translate']` type drops the
+ * overload set down to just the most-args signature, which would force
+ * `t( 'string' )` calls to fail typechecking.
+ */
+export type Translate = ReturnType< typeof useTranslate >;
 
 /**
  * Per-protocol configuration injected into `<ComposerProvider>` to drive the
@@ -27,9 +33,23 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	/**
 	 * Mutation factory accepting the consumer's QueryClient — Calypso boots
 	 * its own client separate from the api-queries singleton. See
-	 * `client/reader/AGENTS.md` for the rationale.
+	 * `client/reader/AGENTS.md` for the rationale. The mutation context is
+	 * intentionally widened to `unknown` so per-protocol factories can carry
+	 * their own onMutate snapshot shapes (atmosphere's `CreatePostContext`,
+	 * mastodon's optimistic snapshots) without leaking that shape into the
+	 * generic config.
 	 */
-	mutationFactory: ( queryClient: QueryClient ) => MutationOptions< TResult, TError, TParams >;
+	mutationFactory: ( queryClient: QueryClient ) => Omit<
+		// `any` for TContext is intentional: per-protocol factories carry
+		// their own onMutate snapshot shape (atmosphere's CreatePostContext,
+		// mastodon's optimistic snapshots) and the modal never reads the
+		// context. `UseMutationOptions` is invariant in TContext, so a
+		// concrete shape can't be widened to `unknown`/`void` without
+		// triggering TS2322 — `any` is the right escape hatch here.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		UseMutationOptions< TResult, TError, TParams, any >,
+		'mutationKey'
+	>;
 	/** Build the wire params from the active mode and the composed text. */
 	buildParams: ( mode: ActiveMode, text: string ) => TParams;
 	/**

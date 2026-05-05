@@ -3,13 +3,8 @@ import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl } from './route';
 import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
-import type { ActiveMode, ComposerConfig } from 'calypso/reader/social/composer';
-import type { I18N } from 'i18n-calypso';
+import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
-
-type Translate = ReturnType< I18N[ 'translate' ] > extends infer R
-	? ( ...args: Parameters< I18N[ 'translate' ] > ) => R
-	: never;
 
 const LIMIT = 300;
 
