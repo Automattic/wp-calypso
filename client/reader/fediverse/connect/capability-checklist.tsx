@@ -14,7 +14,6 @@ const IN_FLIGHT_STATES: WizardStateName[] = [
 	'ENABLING_USER_ACTORS',
 	'AUTHORIZING',
 	'REDIRECTING',
-	'COMPLETING',
 ];
 
 function ChecklistIcon( { checked, spinning }: { checked: boolean; spinning: boolean } ) {

@@ -43,12 +43,6 @@ describe( 'WizardErrorStates', () => {
 			expect( screen.getByText( /connection failed during authorization/i ) ).toBeVisible();
 		} );
 
-		it( 'shows the complete copy', () => {
-			const state = makeErrorState( { errorStep: 'complete' } );
-			render( <WizardErrorStates state={ state } onRetry={ jest.fn() } onReset={ jest.fn() } /> );
-			expect( screen.getByText( /session may have expired/i ) ).toBeVisible();
-		} );
-
 		it( 'shows the permission_denied copy', () => {
 			const state = makeErrorState( { errorStep: 'permission_denied' } );
 			render( <WizardErrorStates state={ state } onRetry={ jest.fn() } onReset={ jest.fn() } /> );
@@ -83,7 +77,6 @@ describe( 'WizardErrorStates', () => {
 			'enable_c2s',
 			'enable_user_actors',
 			'authorize',
-			'complete',
 		] as const;
 
 		it.each( retrySteps )( 'shows a retry button for errorStep %s', ( errorStep ) => {

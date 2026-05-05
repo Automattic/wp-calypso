@@ -30,11 +30,6 @@ export function WizardErrorStates( { state, onRetry, onReset }: Props ) {
 		case 'authorize':
 			title = translate( 'Connection failed during authorization.' ) as string;
 			break;
-		case 'complete':
-			title = translate(
-				'Your connection couldn’t be completed. The session may have expired.'
-			) as string;
-			break;
 		case 'permission_denied':
 			title = translate(
 				'You don’t have permission to enable this on this site. Ask a site administrator to enable Fediverse posting.'

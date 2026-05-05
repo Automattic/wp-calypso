@@ -20,7 +20,7 @@ describe( 'useComposer', () => {
 	it( 'openComposer sets mode + connectionId; closeComposer clears it', () => {
 		const { result } = renderHook( () => useComposer(), { wrapper: wrap( 42 ) } );
 		act( () => {
-			result.current.openComposer( { connectionId: 0, entry_point: 'fab' } );
+			result.current.openComposer( { entry_point: 'fab' } );
 		} );
 		expect( result.current.mode ).toMatchObject( {
 			connectionId: 42,
@@ -30,11 +30,10 @@ describe( 'useComposer', () => {
 		expect( result.current.mode ).toBeNull();
 	} );
 
-	it( 'stamps the provider connectionId onto the mode, ignoring the caller-supplied one', () => {
+	it( 'stamps the provider connectionId onto the mode', () => {
 		const { result } = renderHook( () => useComposer(), { wrapper: wrap( 99 ) } );
 		act( () => {
-			// caller passes connectionId: 0 (the sentinel from ComposeFab)
-			result.current.openComposer( { connectionId: 0, entry_point: 'fab' } );
+			result.current.openComposer( { entry_point: 'fab' } );
 		} );
 		expect( result.current.mode?.connectionId ).toBe( 99 );
 	} );
@@ -46,11 +45,7 @@ describe( 'useComposer', () => {
 			const { mode, openComposer } = useComposer();
 			return (
 				<>
-					<button
-						onClick={ () => openComposer( { connectionId: 0, entry_point: 'timeline_inline' } ) }
-					>
-						open
-					</button>
+					<button onClick={ () => openComposer( { entry_point: 'timeline_inline' } ) }>open</button>
 					<span data-testid="entry">{ mode?.entry_point ?? '' }</span>
 				</>
 			);
@@ -73,9 +68,7 @@ describe( 'useComposer', () => {
 			const { openComposer, closeComposer, mode } = useComposer();
 			return (
 				<>
-					<button onClick={ () => openComposer( { connectionId: 0, entry_point: 'fab' } ) }>
-						open
-					</button>
+					<button onClick={ () => openComposer( { entry_point: 'fab' } ) }>open</button>
 					{ mode && <button onClick={ closeComposer }>close</button> }
 				</>
 			);
@@ -112,11 +105,7 @@ describe( 'useComposer', () => {
 
 		function Opener() {
 			const { openComposer } = useComposer();
-			return (
-				<button onClick={ () => openComposer( { connectionId: 0, entry_point: 'fab' } ) }>
-					open
-				</button>
-			);
+			return <button onClick={ () => openComposer( { entry_point: 'fab' } ) }>open</button>;
 		}
 
 		function Harness() {

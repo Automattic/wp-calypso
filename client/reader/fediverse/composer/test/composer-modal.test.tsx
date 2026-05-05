@@ -86,9 +86,7 @@ function TriggerAndModal() {
 	const { openComposer } = useComposer();
 	return (
 		<>
-			<button onClick={ () => openComposer( { connectionId: 0, entry_point: 'fab' } ) }>
-				open
-			</button>
+			<button onClick={ () => openComposer( { entry_point: 'fab' } ) }>open</button>
 			<ComposerModal />
 		</>
 	);

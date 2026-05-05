@@ -71,11 +71,7 @@ function HarnessWithOpener( { connectionId = 42 }: { connectionId?: number } ) {
 
 function OpenerButton() {
 	const { openComposer } = useComposer();
-	return (
-		<button onClick={ () => openComposer( { connectionId: 0, entry_point: 'timeline_inline' } ) }>
-			open
-		</button>
-	);
+	return <button onClick={ () => openComposer( { entry_point: 'timeline_inline' } ) }>open</button>;
 }
 
 // ---------------------------------------------------------------------------

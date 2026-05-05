@@ -18,7 +18,7 @@ export interface ComposerActiveMode {
 
 interface ComposerContextValue {
 	mode: ComposerActiveMode | null;
-	openComposer: ( mode: ComposerActiveMode ) => void;
+	openComposer: ( mode: Omit< ComposerActiveMode, 'connectionId' > ) => void;
 	closeComposer: () => void;
 }
 
@@ -46,10 +46,8 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 	}, [ mode ] );
 
 	const openComposer = useCallback(
-		( next: ComposerActiveMode ) => {
+		( next: Omit< ComposerActiveMode, 'connectionId' > ) => {
 			triggerRef.current = document.activeElement as HTMLElement | null;
-			// Always re-key with the connectionId from props so callers
-			// don't have to pass it through every openComposer call.
 			setMode( { ...next, connectionId } );
 		},
 		[ connectionId ]

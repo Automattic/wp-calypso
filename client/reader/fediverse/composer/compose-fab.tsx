@@ -25,12 +25,7 @@ export function ComposeFab() {
 			text={ translate( 'Compose' ) as string }
 			aria-hidden={ isHidden || undefined }
 			tabIndex={ isHidden ? -1 : undefined }
-			onClick={ () =>
-				openComposer( {
-					connectionId: 0, // overridden by ComposerProvider with its own connectionId
-					entry_point: 'fab',
-				} )
-			}
+			onClick={ () => openComposer( { entry_point: 'fab' } ) }
 		/>
 	);
 }
