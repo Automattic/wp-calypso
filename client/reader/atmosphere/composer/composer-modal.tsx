@@ -396,6 +396,15 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 			return t( 'This Bluesky connection no longer exists.' );
 		case 'target_unavailable':
 			return t( 'This post is no longer available.' );
+		case 'media_invalid':
+			return t( 'Something’s wrong with the attached images. Please remove and re-add them.' );
+		case 'blob_too_large':
+		case 'blob_unsupported_type':
+		case 'blob_decode_failed':
+			// Should only surface from /blobs (handled inline by ImageGrid). If we
+			// ever see them bubble up here from a /posts response, render generic
+			// copy rather than something misleading.
+			return t( 'Something went wrong. Please try again.' );
 		case 'invalid_handle':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );

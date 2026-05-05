@@ -303,6 +303,26 @@ describe( '<ComposerModal>', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'hi' );
 	} );
 
+	it( 'shows a media_invalid error message after a /posts rejection', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+			.reply( 400, { error: 'atmosphere_media_invalid' } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		expect(
+			await screen.findByText( /something’s wrong with the attached images/i )
+		).toBeVisible();
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+	} );
+
 	it( 'maps 401 to a Reconnect link with target=_blank', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
