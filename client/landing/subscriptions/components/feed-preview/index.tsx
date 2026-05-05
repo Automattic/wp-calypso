@@ -6,7 +6,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import wpcom from 'calypso/lib/wp';
-import Stream from 'calypso/reader/stream';
+import Stream from 'calypso/reader/stream-v2';
 
 interface GetFeedResponse {
 	feeds: Reader.FeedItem[];
@@ -93,7 +93,6 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 								className="no-padding"
 								streamKey={ `feed:${ feed?.feed_ID }` }
 								showFollowButton={ false }
-								showBack={ false }
 								trackScrollPage={ () => {} }
 								restoreScroll={ false }
 								useCompactCards
