@@ -4,19 +4,30 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { useComposer } from './composer-provider';
-import { ACCEPTED_IMAGE_TYPES } from './media/constants';
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES } from './media/constants';
 
 interface Props {
 	graphemeCount: number;
 	onSubmit: () => void;
 	isPending: boolean;
 	limit: number;
+	/**
+	 * Optional override for the Post button's disabled state. When provided,
+	 * fully replaces the footer's internal `isPending || tooLong || empty`
+	 * logic so the parent can extend it (e.g. gating on uploaded media).
+	 */
+	disabled?: boolean;
 }
 
 const WARN_THRESHOLD_REMAINING = 50;
-const MAX_IMAGES = 4;
 
-export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: Props ) {
+export function ComposerFooter( {
+	graphemeCount,
+	onSubmit,
+	isPending,
+	limit,
+	disabled: disabledProp,
+}: Props ) {
 	const translate = useTranslate();
 	const { images, addFiles } = useComposer();
 	const inputRef = useRef< HTMLInputElement >( null );
@@ -24,7 +35,7 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 	const remaining = limit - graphemeCount;
 	const tooLong = remaining < 0;
 	const empty = graphemeCount === 0;
-	const disabled = isPending || tooLong || empty;
+	const disabled = disabledProp ?? ( isPending || tooLong || empty );
 
 	const countClass = clsx( 'atmosphere-composer__count', {
 		'is-warn': remaining > 0 && remaining <= WARN_THRESHOLD_REMAINING,

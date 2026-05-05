@@ -401,8 +401,12 @@ describe( '<ComposerModal>', () => {
 		const media = screen.getByRole( 'button', { name: 'Add media' } );
 		// The hidden file input is a sibling of the button. Spy on its
 		// .click() — the integration we care about is button → input.click().
+		// Scope to the footer-left wrapper since <ImageGrid> can also render
+		// a hidden file input once images are attached.
 		const dialog = screen.getByRole( 'dialog' );
-		const input = dialog.querySelector( 'input[type="file"]' ) as HTMLInputElement | null;
+		const input = dialog.querySelector(
+			'.atmosphere-composer__footer-left input[type="file"]'
+		) as HTMLInputElement | null;
 		expect( input ).not.toBeNull();
 		const inputClickSpy = jest.spyOn( input as HTMLInputElement, 'click' );
 
@@ -440,6 +444,112 @@ describe( '<ComposerModal>', () => {
 		// We use aria-disabled (not the native HTML `disabled` attribute) so
 		// screen-reader users can still focus the button and hear the label.
 		expect( media ).not.toBeDisabled();
+	} );
+
+	it( 'renders the ImageGrid below the textarea when images are attached', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+
+		// Grid renders an <img> for each uploaded thumbnail.
+		const dialog = screen.getByRole( 'dialog' );
+		const textbox = screen.getByRole( 'textbox' );
+		const thumb = dialog.querySelector( '.atmosphere-composer__image-grid img' );
+		expect( thumb ).not.toBeNull();
+		// DOM order: textarea precedes the grid.
+		expect(
+			textbox.compareDocumentPosition( thumb as HTMLElement ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
+	it( 'enables Post when text is empty and one image is uploaded', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+
+		expect( screen.getByRole( 'button', { name: 'Post' } ) ).toBeEnabled();
+	} );
+
+	it( 'submits with media payload (standalone mode)', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body: unknown ) => {
+				const b = body as {
+					text?: string;
+					media?: { images?: Array< { blob?: unknown; alt?: string } > };
+				};
+				return (
+					b.text === '' &&
+					Array.isArray( b.media?.images ) &&
+					b.media?.images?.length === 1 &&
+					b.media?.images?.[ 0 ]?.alt === '' &&
+					!! b.media?.images?.[ 0 ]?.blob
+				);
+			} )
+			.reply( 200, { post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'submits with quote + media (recordWithMedia)', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body: unknown ) => {
+				const b = body as {
+					text?: string;
+					quote?: { uri?: string; cid?: string };
+					media?: { images?: unknown[] };
+				};
+				return (
+					b.text === 'q' &&
+					b.quote?.uri ===
+						'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb' &&
+					b.quote?.cid === 'pcid' &&
+					Array.isArray( b.media?.images ) &&
+					b.media?.images?.length === 1
+				);
+			} )
+			.reply( 200, { post: { uri: 'at://new-quote', cid: 'newcid', rkey: 'abc' } } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.type( screen.getByRole( 'textbox' ), 'q' );
+		await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+	} );
+
+	it( 'shows DiscardConfirm when closing the modal with attached images and no text', async () => {
+		mockUseImageUploads.mockReturnValue(
+			makeImageUploadsState( { images: [ makeUploadedImage( 'a' ) ] } )
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider( <HarnessStandalone connectionId={ 42 } entryPoint="timeline_inline" /> );
+		await user.click( screen.getByText( 'open' ) );
+		await user.keyboard( '{Escape}' );
+
+		expect( await screen.findByRole( 'button', { name: /^discard$/i } ) ).toBeVisible();
 	} );
 
 	it( 'Cmd+Enter on empty text does not POST (matches the disabled Post button)', async () => {

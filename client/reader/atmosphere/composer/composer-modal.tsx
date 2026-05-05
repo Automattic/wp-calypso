@@ -18,6 +18,9 @@ import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer, type ActiveMode } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
 import { countGraphemes } from './grapheme-count';
+import { MAX_IMAGES } from './media/constants';
+import { ImageGrid } from './media/image-grid';
+import type { ComposerImage } from './media/types';
 import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { ReactNode } from 'react';
@@ -26,7 +29,17 @@ const LIMIT = 300;
 
 export function ComposerModal() {
 	const translate = useTranslate();
-	const { mode, closeComposer } = useComposer();
+	const {
+		mode,
+		closeComposer,
+		images,
+		addFiles,
+		removeImage,
+		retryImage,
+		setAlt,
+		isAllUploaded,
+		isAnyPending,
+	} = useComposer();
 	const queryClient = useQueryClient();
 	const mutation = useMutation( createPostMutation( queryClient ) );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -143,24 +156,29 @@ export function ComposerModal() {
 		if ( mutation.isPending ) {
 			return;
 		}
-		if ( text.trim().length > 0 ) {
+		if ( text.trim().length > 0 || images.length > 0 ) {
 			setConfirmDiscard( true );
 			return;
 		}
 		closeComposer();
-	}, [ mutation.isPending, text, closeComposer ] );
+	}, [ mutation.isPending, text, images.length, closeComposer ] );
+
+	const empty = graphemeCount === 0;
+	const tooLong = graphemeCount > LIMIT;
+	const hasImage = images.some( ( i ) => i.kind === 'uploaded' );
+	const canSubmit =
+		! mutation.isPending && ! tooLong && ! isAnyPending && isAllUploaded && ( ! empty || hasImage );
 
 	const handleSubmit = useCallback( () => {
 		if ( ! mode || mutation.isPending ) {
 			return;
 		}
 		// Guard against the Cmd/Ctrl+Enter shortcut bypassing the
-		// disabled Post button when the textarea is empty or over the
-		// limit. Mirrors the disabled logic in <ComposerFooter>.
-		if ( graphemeCount === 0 || graphemeCount > LIMIT ) {
+		// disabled Post button. Mirrors `canSubmit` above.
+		if ( ! canSubmit ) {
 			return;
 		}
-		const params = buildParamsForMode( mode, text );
+		const params = buildParamsForMode( mode, text, images );
 		mutation.mutate( params, {
 			onSuccess: ( result ) => {
 				if ( mode.kind === 'reply' ) {
@@ -194,7 +212,7 @@ export function ComposerModal() {
 				closeComposer();
 			},
 		} );
-	}, [ mode, mutation, text, graphemeCount, closeComposer, dispatch, translate ] );
+	}, [ mode, mutation, text, images, canSubmit, closeComposer, dispatch, translate ] );
 
 	if ( ! mode ) {
 		return null;
@@ -239,6 +257,14 @@ export function ComposerModal() {
 					}
 					aria-invalid={ errorMessage ? true : undefined }
 				/>
+				<ImageGrid
+					images={ images }
+					max={ MAX_IMAGES }
+					onPickFiles={ addFiles }
+					onRemove={ removeImage }
+					onRetry={ retryImage }
+					onSetAlt={ setAlt }
+				/>
 				{ errorMessage && (
 					<div id="atmosphere-composer-error" className="atmosphere-composer__error" role="alert">
 						{ errorMessage }
@@ -249,6 +275,7 @@ export function ComposerModal() {
 					onSubmit={ handleSubmit }
 					isPending={ mutation.isPending }
 					limit={ LIMIT }
+					disabled={ ! canSubmit }
 				/>
 			</Modal>
 			{ confirmDiscard && (
@@ -292,12 +319,31 @@ function placeholderForMode(
 	return t( 'What’s up?' ) as string;
 }
 
-function buildParamsForMode( mode: ActiveMode, text: string ): CreatePostParams {
+function buildParamsForMode(
+	mode: ActiveMode,
+	text: string,
+	images: ComposerImage[]
+): CreatePostParams {
+	const uploaded = images.filter(
+		( i ): i is Extract< ComposerImage, { kind: 'uploaded' } > => i.kind === 'uploaded'
+	);
+	const media =
+		uploaded.length > 0
+			? {
+					images: uploaded.map( ( i ) => ( {
+						blob: i.blob,
+						alt: i.alt,
+						aspectRatio: i.aspectRatio,
+					} ) ),
+			  }
+			: undefined;
+
 	if ( mode.kind === 'reply' ) {
 		return {
 			connectionId: mode.connectionId,
 			text,
 			reply: { root: mode.root, parent: mode.parent },
+			...( media ? { media } : {} ),
 		};
 	}
 	if ( mode.kind === 'quote' ) {
@@ -306,9 +352,14 @@ function buildParamsForMode( mode: ActiveMode, text: string ): CreatePostParams 
 			text,
 			quote: mode.quote,
 			...( mode.replyTo ? { reply: mode.replyTo } : {} ),
+			...( media ? { media } : {} ),
 		};
 	}
-	return { connectionId: mode.connectionId, text };
+	return {
+		connectionId: mode.connectionId,
+		text,
+		...( media ? { media } : {} ),
+	};
 }
 
 function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTranslate > ): ReactNode {

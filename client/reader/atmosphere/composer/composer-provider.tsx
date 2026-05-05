@@ -7,6 +7,7 @@ import {
 	useRef,
 	useState,
 } from 'react';
+import { MAX_IMAGES } from './media/constants';
 import { useImageUploads } from './media/use-image-uploads';
 import type { AtUriRef } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -96,7 +97,7 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 
 	const imageUploads = useImageUploads( {
 		connectionId: mode?.connectionId ?? 0,
-		max: 4,
+		max: MAX_IMAGES,
 	} );
 
 	// Reset images when the composer closes (mode transitions to null).
