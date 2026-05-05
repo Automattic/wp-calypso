@@ -16,6 +16,14 @@ import './repost-button.scss';
 interface RepostButtonProps {
 	post: Pick< AtmosphereFeedItem, 'uri' | 'cid' | 'counts' | 'viewer' >;
 	connectionId: number;
+	/**
+	 * When set, the "Quote post" menu item becomes active and invokes this
+	 * callback. The host (`<PostCardCounts>`) closes over the full `SocialPost`
+	 * so the composer's preview has every field it needs (author, html, embed,
+	 * counts) — `<RepostButton>` only carries the minimal `Pick` required for
+	 * its own mutations.
+	 */
+	onQuote?: () => void;
 }
 
 type RepostDirection = 'repost' | 'unrepost';
@@ -46,7 +54,7 @@ function errorMessageForRepost(
 	}
 }
 
-export function RepostButton( { post, connectionId }: RepostButtonProps ) {
+export function RepostButton( { post, connectionId, onQuote }: RepostButtonProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const analytics = useSocialAnalytics();
@@ -170,7 +178,15 @@ export function RepostButton( { post, connectionId }: RepostButtonProps ) {
 					>
 						{ translate( 'Repost' ) }
 					</MenuItem>
-					<MenuItem disabled>{ translate( 'Quote post' ) }</MenuItem>
+					<MenuItem
+						disabled={ ! onQuote }
+						onClick={ () => {
+							onClose();
+							onQuote?.();
+						} }
+					>
+						{ translate( 'Quote post' ) }
+					</MenuItem>
 				</MenuGroup>
 			) }
 		/>

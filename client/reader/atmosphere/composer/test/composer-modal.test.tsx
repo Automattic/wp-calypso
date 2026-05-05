@@ -62,6 +62,37 @@ function TriggerAndModal() {
 	);
 }
 
+function TriggerAndModalQuote() {
+	const { openComposer } = useComposer();
+	return (
+		<>
+			<button
+				onClick={ () =>
+					openComposer( {
+						kind: 'quote',
+						quote: {
+							uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+							cid: 'pcid',
+						},
+						previewPost: makePreview(),
+					} )
+				}
+			>
+				open
+			</button>
+			<ComposerModal />
+		</>
+	);
+}
+
+function HarnessQuote( props: { connectionId: number } ) {
+	return (
+		<ComposerProvider connectionId={ props.connectionId }>
+			<TriggerAndModalQuote />
+		</ComposerProvider>
+	);
+}
+
 function Harness( props: { connectionId: number } ) {
 	return (
 		<ComposerProvider connectionId={ props.connectionId }>
@@ -700,5 +731,160 @@ describe( '<ComposerModal>', () => {
 		const [ text, options ] = successSpy.mock.calls[ 0 ];
 		expect( text ).toBe( 'Your reply was posted.' );
 		expect( options ).toBeUndefined();
+	} );
+
+	describe( 'quote mode', () => {
+		it( 'fires _quote_composer_opened on open with quoted_uri', async () => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_quote_composer_opened',
+					expect.objectContaining( {
+						connection_id: 42,
+						quoted_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+					} )
+				)
+			);
+		} );
+
+		it( 'sends body { text, quote: { uri, cid } } and fires _quote_published on success', async () => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body: unknown ) => {
+					const b = body as {
+						text?: string;
+						quote?: { uri?: string; cid?: string };
+						reply?: unknown;
+					};
+					return (
+						b.text === 'hello quote' &&
+						b.quote?.uri ===
+							'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb' &&
+						b.quote?.cid === 'pcid' &&
+						! b.reply
+					);
+				} )
+				.reply( 200, { post: { uri: 'at://new-quote', cid: 'newcid', rkey: 'abc' } } );
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+			await user.type( screen.getByRole( 'textbox' ), 'hello quote' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_quote_published',
+					expect.objectContaining( {
+						connection_id: 42,
+						quoted_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+						new_post_uri: 'at://new-quote',
+					} )
+				)
+			);
+		} );
+
+		it( "success notice 'View' button links to getThreadUrl( connection_id, new_post.uri )", async () => {
+			const successSpy = noticeActions.successNotice as unknown as jest.Mock;
+			const pageMock = page as unknown as jest.Mock;
+
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( 200, {
+					post: {
+						uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/zzzzzzzzzzzzz',
+						cid: 'newcid',
+						rkey: 'abc',
+					},
+				} );
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+			await user.type( screen.getByRole( 'textbox' ), 'quoting!' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			await waitFor( () => expect( successSpy ).toHaveBeenCalled() );
+
+			const [ noticeText, options ] = successSpy.mock.calls[ 0 ];
+			expect( noticeText ).toBe( 'Your post was published.' );
+			expect( options ).toEqual(
+				expect.objectContaining( {
+					button: 'View',
+					onClick: expect.any( Function ),
+				} )
+			);
+
+			options.onClick();
+			expect( pageMock ).toHaveBeenCalledWith(
+				'/reader/atmosphere/42/thread/did:plc:abcdefghijklmnopqrstuvwx/zzzzzzzzzzzzz'
+			);
+		} );
+
+		it( 'fires _quote_error_shown once per error_kind transition', async () => {
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+
+			// First submit → 502.
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+			await user.type( screen.getByRole( 'textbox' ), 'hi' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			await waitFor( () =>
+				expect( recordSpy ).toHaveBeenCalledWith(
+					'calypso_reader_atmosphere_quote_error_shown',
+					expect.objectContaining( {
+						connection_id: 42,
+						quoted_uri: 'at://did:plc:abcdefghijklmnopqrstuvwx/app.bsky.feed.post/bbbbbbbbbbbbb',
+						error_kind: 'upstream_unavailable',
+					} )
+				)
+			);
+
+			const callCountAfterFirst = recordSpy.mock.calls.filter(
+				( c: [ string, unknown ] ) => c[ 0 ] === 'calypso_reader_atmosphere_quote_error_shown'
+			).length;
+
+			// Second submit with the SAME error → no re-fire.
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+
+			const callCountAfterSecond = recordSpy.mock.calls.filter(
+				( c: [ string, unknown ] ) => c[ 0 ] === 'calypso_reader_atmosphere_quote_error_shown'
+			).length;
+
+			expect( callCountAfterSecond ).toBe( callCountAfterFirst );
+		} );
+
+		it( 'renders the quote_disabled error copy', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( 403, { error: 'atmosphere_quote_disabled' } );
+
+			const user = userEvent.setup();
+			renderWithProvider( <HarnessQuote connectionId={ 42 } /> );
+			await user.click( screen.getByText( 'open' ) );
+			await user.type( screen.getByRole( 'textbox' ), 'hi' );
+			await user.click( screen.getByRole( 'button', { name: 'Post' } ) );
+
+			expect( await screen.findByText( /this post can't be quoted\./i ) ).toBeVisible();
+			expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+		} );
 	} );
 } );

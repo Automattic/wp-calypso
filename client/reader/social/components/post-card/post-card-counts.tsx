@@ -5,6 +5,7 @@ import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import { useSocialAnalytics } from './analytics-context';
 import { LikeButton } from './like-button';
+import { QuoteButton } from './quote-button';
 import { RepostButton } from './repost-button';
 import type { SocialPost } from '../../types';
 
@@ -101,6 +102,7 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 						viewer: post.viewer,
 					} }
 					connectionId={ connectionId }
+					onQuote={ analytics?.onQuoteClick ? () => analytics.onQuoteClick?.( post ) : undefined }
 				/>
 			) : (
 				<span>
@@ -110,11 +112,15 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 				</span>
 			) }
 			<LikeButton post={ post } />
-			<span>
-				<Icon icon={ quote } size={ ICON_SIZE } />
-				<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>
-				{ counts.quotes }
-			</span>
+			{ connectionId && post.cid && analytics?.onQuoteClick ? (
+				<QuoteButton post={ post } />
+			) : (
+				<span>
+					<Icon icon={ quote } size={ ICON_SIZE } />
+					<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>
+					{ counts.quotes }
+				</span>
+			) }
 		</HStack>
 	);
 }

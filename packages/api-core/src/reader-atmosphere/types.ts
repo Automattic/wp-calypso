@@ -353,3 +353,8 @@ export interface CreatePostResult {
 	cid: string;
 	rkey: string;
 }
+
+export interface DeletePostParams {
+	connectionId: number;
+	rkey: string;
+}
