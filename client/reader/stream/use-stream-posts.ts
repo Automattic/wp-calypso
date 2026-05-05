@@ -5,13 +5,9 @@ import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
-import {
-	createStreamDataFromCards,
-	createStreamDataFromPosts,
-	createStreamDataFromSites,
-	extractPageHandle,
-} from 'calypso/state/reader/streams/normalize';
+import { extractPageHandle } from 'calypso/state/reader/streams/normalize';
 import { combineXPosts } from 'calypso/state/reader/streams/utils';
+import { normalizeStreamPage } from './stream-normalization';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
 
 export type PageHandle = { page_handle: string } | { offset: number } | { before: string } | null;
@@ -43,54 +39,41 @@ export interface UseStreamPostsResult {
 	fetchNextPage: () => void;
 	refetch: () => void;
 	removeItem: ( postKey: PostKey ) => void;
-	/**
-	 * Number of items returned by the last `checkForUpdates` poll that are not
-	 * yet in `items`. Drives the "X new posts" pill.
-	 */
-	pendingCount: number;
-	/** Best-effort poll for new items at the head of the stream. */
-	checkForUpdates: () => Promise< void >;
-	/** Clear the pending counter and refetch loaded pages. */
-	consumePending: () => void;
-}
-
-const datePropertyForStream = ( streamType: string ): string => {
-	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
-		return 'last_comment_date_gmt';
-	}
-	if ( streamType === 'likes' ) {
-		return 'date_liked';
-	}
-	return 'date';
-};
-
-interface NormalizedPage {
-	streamItems: PostKey[];
-	streamPosts: Array< Record< string, unknown > >;
-}
-
-function normalizePage( data: ReadStreamResponse, streamType: string ): NormalizedPage {
-	const dateProperty = datePropertyForStream( streamType );
-	if ( data.cards ) {
-		const fromCards = createStreamDataFromCards( data.cards, dateProperty );
-		return { streamItems: fromCards.streamItems, streamPosts: fromCards.streamPosts };
-	}
-	if ( data.sites ) {
-		const fromSites = createStreamDataFromSites(
-			data.sites as Parameters< typeof createStreamDataFromSites >[ 0 ],
-			dateProperty
-		);
-		return { streamItems: fromSites.streamItems, streamPosts: fromSites.streamPosts };
-	}
-	const fromPosts = createStreamDataFromPosts(
-		data.posts as Parameters< typeof createStreamDataFromPosts >[ 0 ],
-		dateProperty
-	);
-	return { streamItems: fromPosts.streamItems, streamPosts: fromPosts.streamPosts };
 }
 
 const postKeyId = ( postKey: PostKey | null | undefined ): string =>
 	postKey ? keyToString( postKey ) ?? '' : '';
+
+interface StreamIdentity {
+	streamKey: string;
+	feedId: number | null;
+	localeSlug: string | null;
+	startDate: string | null;
+}
+
+export type StreamInfiniteQueryKey = readonly [
+	'read',
+	'stream',
+	'infinite',
+	string,
+	number | null,
+	string | null,
+	string | null,
+];
+
+/**
+ * Single source of truth for the `useInfiniteQuery` cache key. Exported so
+ * sibling hooks (e.g. `useStreamPendingPosts`) can read or mutate the same
+ * cache via `setQueryData` without re-deriving the tuple shape.
+ */
+export function getStreamInfiniteQueryKey( {
+	streamKey,
+	feedId,
+	localeSlug,
+	startDate,
+}: StreamIdentity ): StreamInfiniteQueryKey {
+	return [ 'read', 'stream', 'infinite', streamKey, feedId, localeSlug, startDate ] as const;
+}
 
 interface UseStreamPostsOptions {
 	streamKey: string;
@@ -146,26 +129,15 @@ export function useStreamPosts( {
 				ReadStreamResponse,
 				Error,
 				{ pageParams: PageHandle[]; pages: ReadStreamResponse[] },
-				readonly [
-					'read',
-					'stream',
-					'infinite',
-					string,
-					number | null,
-					string | null,
-					string | null,
-				],
+				StreamInfiniteQueryKey,
 				PageHandle
 			>( {
-				queryKey: [
-					'read',
-					'stream',
-					'infinite',
+				queryKey: getStreamInfiniteQueryKey( {
 					streamKey,
 					feedId,
 					localeSlug,
 					startDate,
-				] as const,
+				} ),
 				queryFn: ( { pageParam } ) => fetchReadStream( streamKey, buildPageParams( pageParam ) ),
 				initialPageParam: startDate ? { before: startDate } : null,
 				enabled,
@@ -227,7 +199,7 @@ export function useStreamPosts( {
 		}
 		const start = lastDispatchedRef.current.pageCount;
 		for ( let i = start; i < pages.length; i++ ) {
-			const { streamPosts } = normalizePage( pages[ i ], streamType );
+			const { streamPosts } = normalizeStreamPage( pages[ i ], streamType );
 			if ( streamPosts.length > 0 ) {
 				dispatch( receivePosts( streamPosts ) );
 			}
@@ -249,7 +221,7 @@ export function useStreamPosts( {
 		const pages = query.data?.pages ?? [];
 		const collected: PostKey[] = [];
 		for ( const page of pages ) {
-			const { streamItems } = normalizePage( page, streamType );
+			const { streamItems } = normalizeStreamPage( page, streamType );
 			for ( const item of streamItems ) {
 				collected.push( item );
 			}
@@ -277,59 +249,6 @@ export function useStreamPosts( {
 		query.refetch();
 	}, [ query ] );
 
-	// "X new posts" pill state. We do a one-off fetch of the first page on each
-	// poll tick (bypassing React Query cache) and compare against currently
-	// rendered keys. `consumePending` clears the counter and triggers a real
-	// refetch through the infinite query.
-	const [ pendingCount, setPendingCount ] = useState( 0 );
-	const itemsRef = useRef( items );
-	useEffect( () => {
-		itemsRef.current = items;
-	}, [ items ] );
-	useEffect( () => {
-		setPendingCount( 0 );
-	}, [ streamIdentity ] );
-
-	const checkForUpdates = useCallback( async () => {
-		try {
-			const initialPageParam: PageHandle = startDate ? { before: startDate } : null;
-			const params = buildStreamQueryParams( {
-				streamKey,
-				feedId,
-				pageHandle: initialPageParam,
-				localeSlug,
-				isPoll: true,
-				gap: null,
-				page: undefined,
-				perPage: undefined,
-			} ) as ReadStreamQueryParams;
-			const response = await fetchReadStream( streamKey, params );
-			const { streamItems } = normalizePage( response, streamType );
-			const seen = new Set< string >();
-			for ( const it of itemsRef.current ) {
-				const id = postKeyId( it );
-				if ( id ) {
-					seen.add( id );
-				}
-			}
-			let count = 0;
-			for ( const k of streamItems ) {
-				const id = postKeyId( k );
-				if ( id && ! seen.has( id ) ) {
-					count += 1;
-				}
-			}
-			setPendingCount( count );
-		} catch {
-			// Polling is best-effort; leave the previous count in place on failure.
-		}
-	}, [ streamKey, feedId, localeSlug, startDate, streamType ] );
-
-	const consumePending = useCallback( () => {
-		setPendingCount( 0 );
-		query.refetch();
-	}, [ query ] );
-
 	return {
 		items,
 		isLoading: query.isLoading,
@@ -342,8 +261,5 @@ export function useStreamPosts( {
 		fetchNextPage,
 		refetch,
 		removeItem,
-		pendingCount,
-		checkForUpdates,
-		consumePending,
 	};
 }

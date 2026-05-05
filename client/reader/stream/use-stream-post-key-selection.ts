@@ -2,12 +2,8 @@ import { getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { keysAreEqual } from 'calypso/reader/post-key';
-import {
-	createStreamDataFromCards,
-	createStreamDataFromPosts,
-	createStreamDataFromSites,
-} from 'calypso/state/reader/streams/normalize';
 import { combineXPosts } from 'calypso/state/reader/streams/utils';
+import { normalizeStreamPage } from './stream-normalization';
 import type { PostKey } from './use-stream-posts';
 import type { ReadStreamResponse } from '@automattic/api-core';
 
@@ -73,33 +69,6 @@ function getOffsetPostKey(
 
 type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'infinite', string ];
 
-function datePropertyForStream( streamType: string ): string {
-	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
-		return 'last_comment_date_gmt';
-	}
-	if ( streamType === 'likes' ) {
-		return 'date_liked';
-	}
-	return 'date';
-}
-
-function normalizeStreamItems( data: ReadStreamResponse, streamType: string ): PostKey[] {
-	const dateProperty = datePropertyForStream( streamType );
-	if ( data.cards ) {
-		return createStreamDataFromCards( data.cards, dateProperty ).streamItems as PostKey[];
-	}
-	if ( data.sites ) {
-		return createStreamDataFromSites(
-			data.sites as Parameters< typeof createStreamDataFromSites >[ 0 ],
-			dateProperty
-		).streamItems as PostKey[];
-	}
-	return createStreamDataFromPosts(
-		data.posts as Parameters< typeof createStreamDataFromPosts >[ 0 ],
-		dateProperty
-	).streamItems as PostKey[];
-}
-
 export function useStreamPostKeySelection( {
 	streamKey,
 	localeSlug = null,
@@ -149,7 +118,7 @@ export function useStreamPostKeySelection( {
 		}
 		const collected: PostKey[] = [];
 		for ( const page of pages ) {
-			collected.push( ...normalizeStreamItems( page, streamType ) );
+			collected.push( ...normalizeStreamPage( page, streamType ).streamItems );
 		}
 		return combineXPosts( collected ) as PostKey[];
 	}, [ queryClient, streamQueryKeyPrefix, streamType, localeSlug ] );

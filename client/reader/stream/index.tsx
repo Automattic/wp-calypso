@@ -11,7 +11,6 @@ import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { EVERY_MINUTE, useInterval } from 'calypso/lib/interval';
 import scrollTo from 'calypso/lib/scroll-to';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isLikeable } from 'calypso/reader/post/capabilities';
@@ -38,6 +37,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 import EmptyContent from './empty';
 import { StreamError } from './error';
+import { useStreamPendingPosts } from './use-stream-pending-posts';
 import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import { useStreamPosts, type PostKey } from './use-stream-posts';
 
@@ -203,17 +203,19 @@ export function Stream( props: StreamProps ) {
 			enabled: ! forcePlaceholders,
 		},
 	} );
-	const {
+	const { items, isLoading, isFetching, lastPage, error, fetchNextPage } = stream;
+
+	// Polling for new head-of-stream posts is opt-out by stream type and also
+	// suppressed while the consumer is forcing skeletons (subscribe modal).
+	const shouldPoll = ! NO_POLL_STREAM_TYPES.has( streamType ) && ! forcePlaceholders;
+	const { pendingCount, consumePending } = useStreamPendingPosts( {
+		streamKey,
+		feedId: selectedRecentFeedId ?? null,
+		localeSlug,
+		startDate: startDate ?? null,
+		shouldPoll,
 		items,
-		isLoading,
-		isFetching,
-		lastPage,
-		error,
-		fetchNextPage,
-		pendingCount,
-		checkForUpdates,
-		consumePending,
-	} = stream;
+	} );
 
 	const selection = useStreamPostKeySelection( {
 		streamKey,
@@ -525,12 +527,6 @@ export function Stream( props: StreamProps ) {
 	const tryAgain = useCallback( () => {
 		stream.refetch();
 	}, [ stream ] );
-
-	// Live poll for new posts at the head of the stream and surface the
-	// orange "X new posts" pill. Skipped for stream types where polling adds
-	// no value (search results, recommendation feeds, discover surfaces).
-	const shouldPoll = ! NO_POLL_STREAM_TYPES.has( streamType ) && ! forcePlaceholders;
-	useInterval( checkForUpdates, shouldPoll ? EVERY_MINUTE : null );
 
 	const handleShowUpdates = useCallback( () => {
 		consumePending();
