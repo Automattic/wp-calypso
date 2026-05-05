@@ -23,6 +23,25 @@ function newLocalId(): string {
 	return `img-${ Date.now() }-${ counter }`;
 }
 
+// Narrow `unknown` thrown values to AtmosphereError. `uploadBlob` already
+// classifies its rejections through `classifyAtmosphereError`, but a
+// transport-level failure (network drop, abort, JSON parse error) can
+// short-circuit before that classifier runs. Treat anything that doesn't
+// look like a classified error as `{ kind: 'unknown' }` so downstream
+// `error.kind` reads stay sound.
+function isAtmosphereError( e: unknown ): e is AtmosphereError {
+	return (
+		typeof e === 'object' &&
+		e !== null &&
+		'kind' in e &&
+		typeof ( e as { kind: unknown } ).kind === 'string'
+	);
+}
+
+function toAtmosphereError( err: unknown ): AtmosphereError {
+	return isAtmosphereError( err ) ? err : { kind: 'unknown', cause: err };
+}
+
 export interface UseImageUploadsOptions {
 	connectionId: number;
 	max: number;
@@ -33,9 +52,23 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 	const { mutateAsync: uploadBlob } = useMutation( uploadBlobMutation( queryClient ) );
 	const [ images, setImages ] = useState< ComposerImage[] >( [] );
 	const previewsRef = useRef< Set< string > >( new Set() );
+	// Synchronous slot count. `images.length` only reflects the count
+	// after the next render commits, so two concurrent `addFiles` calls
+	// would both capture the same `images.length` and admit more files
+	// than `max - images.length`. The ref is incremented under the cap
+	// check in `addFiles` (atomic reservation); decrement only happens if
+	// the user removes an image (Task 8), since failed entries still
+	// occupy a slot in the grid.
+	const slotCountRef = useRef( 0 );
 
 	const update = useCallback( ( id: string, next: ComposerImage ) => {
 		setImages( ( cur ) => cur.map( ( i ) => ( i.localId === id ? next : i ) ) );
+	}, [] );
+
+	const createPreview = useCallback( ( source: Blob ) => {
+		const url = URL.createObjectURL( source );
+		previewsRef.current.add( url );
+		return url;
 	}, [] );
 
 	const startOne = useCallback(
@@ -49,17 +82,16 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 				update( localId, {
 					kind: 'failed',
 					localId,
-					previewUrl: URL.createObjectURL( file ),
+					previewUrl: createPreview( file ),
 					alt: '',
 					aspectRatio: { width: 0, height: 0 },
 					sourceFile: file,
-					error: { kind: 'blob_decode_failed', message: 'decode failed' },
+					error: { kind: 'blob_decode_failed' },
 				} );
 				return;
 			}
 
-			const previewUrl = URL.createObjectURL( compressed.blob );
-			previewsRef.current.add( previewUrl );
+			const previewUrl = createPreview( compressed.blob );
 			const abort = new AbortController();
 			const aspectRatio = { width: compressed.width, height: compressed.height };
 			update( localId, {
@@ -92,20 +124,25 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 					alt: '',
 					aspectRatio,
 					sourceFile: file,
-					error: err as AtmosphereError,
+					error: toAtmosphereError( err ),
 				} );
 			}
 		},
-		[ opts.connectionId, uploadBlob, update ]
+		[ opts.connectionId, uploadBlob, update, createPreview ]
 	);
 
 	const addFiles = useCallback(
 		async ( files: File[] ) => {
-			const remainingSlots = opts.max - images.length;
+			// Reserve slots synchronously so back-to-back calls (mobile share
+			// sheet, double-tap) can't both observe the same count and admit
+			// more files than `max`. The ref is the source of truth between
+			// the cap check and React committing the new images.
+			const remainingSlots = opts.max - slotCountRef.current;
 			const accepted = files.slice( 0, Math.max( 0, remainingSlots ) );
+			slotCountRef.current += accepted.length;
 			await Promise.all( accepted.map( startOne ) );
 		},
-		[ images.length, opts.max, startOne ]
+		[ opts.max, startOne ]
 	);
 
 	useEffect(
