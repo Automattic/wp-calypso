@@ -1,16 +1,15 @@
 .image-studio-share-reel-action {
 	display: flex;
-	justify-content: center;
 
 	&__button {
-		// Small circular icon-only button, sized to match other compact
-		// affordances in Image Studio (e.g. the chat input arrow). Sits
-		// directly below the generated video preview.
-		min-width: 32px;
-		width: 32px;
+		// Pill-style text + icon button. Reads as "Share: [Instagram]".
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
 		height: 32px;
-		padding: 0;
-		border-radius: 50%;
+		padding: 0 12px;
+		border-radius: 16px;
+		font-size: 13px;
 		color: #f0f0f0;
 		background: rgba(255, 255, 255, 0.08);
 
@@ -22,11 +21,9 @@
 		&:disabled {
 			opacity: 0.6;
 		}
+	}
 
-		// @wordpress/components Button forces a min-width on icon buttons;
-		// override so the circular shape stays.
-		&.has-icon {
-			min-width: 32px !important;
-		}
+	&__label {
+		line-height: 1;
 	}
 }

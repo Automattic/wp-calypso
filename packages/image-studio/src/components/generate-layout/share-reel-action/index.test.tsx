@@ -63,9 +63,7 @@ describe( '<ShareReelAction />', () => {
 		} );
 
 		render( <ShareReelAction /> );
-		expect(
-			screen.getByRole( 'button', { name: /Share as Instagram Reel/i } )
-		).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /Share on Instagram/i } ) ).toBeInTheDocument();
 	} );
 
 	it( 'disables the button while a share is in flight', () => {
@@ -92,7 +90,7 @@ describe( '<ShareReelAction />', () => {
 		} );
 
 		render( <ShareReelAction /> );
-		fireEvent.click( screen.getByRole( 'button', { name: /Share as Instagram Reel/i } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: /Share on Instagram/i } ) );
 		expect( handleShare ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

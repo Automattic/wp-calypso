@@ -11,21 +11,26 @@ export function ShareReelAction(): JSX.Element | null {
 		return null;
 	}
 
-	const label = isSharing
-		? __( 'Sharing to Instagram…', __i18n_text_domain__ )
-		: __( 'Share as Instagram Reel', __i18n_text_domain__ );
+	const ariaLabel = isSharing
+		? __( 'Sharing on Instagram…', __i18n_text_domain__ )
+		: __( 'Share on Instagram', __i18n_text_domain__ );
+
+	const visibleText = isSharing
+		? __( 'Sharing…', __i18n_text_domain__ )
+		: __( 'Share:', __i18n_text_domain__ );
 
 	return (
 		<div className="image-studio-share-reel-action">
 			<Button
 				className="image-studio-share-reel-action__button"
-				icon={ <SocialLogo icon="instagram" size={ 18 } /> }
-				label={ label }
-				showTooltip
+				aria-label={ ariaLabel }
 				disabled={ isSharing }
 				isBusy={ isSharing }
 				onClick={ handleShare }
-			/>
+			>
+				<span className="image-studio-share-reel-action__label">{ visibleText }</span>
+				<SocialLogo icon="instagram" size={ 18 } />
+			</Button>
 		</div>
 	);
 }
