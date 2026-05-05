@@ -1,8 +1,11 @@
+import { isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component, type ReactNode } from 'react';
 import { connect } from 'react-redux';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -54,6 +57,7 @@ interface AutoRenewToggleState {
 	showAutoRenewDisablingDialog: boolean;
 	showPaymentMethodDialog: boolean;
 	isRequesting: boolean;
+	prefetchGiftingData: boolean;
 }
 
 class AutoRenewToggle extends Component<
@@ -65,6 +69,15 @@ class AutoRenewToggle extends Component<
 		showAutoRenewDisablingDialog: false,
 		showPaymentMethodDialog: false,
 		isRequesting: false,
+		prefetchGiftingData: false,
+	};
+
+	// Prefetch site settings/features on hover/focus so the gift checkbox in
+	// the disable dialog renders without a visible delay.
+	prefetchGiftingData = () => {
+		if ( ! this.state.prefetchGiftingData && isPlan( this.props.purchase ) ) {
+			this.setState( { prefetchGiftingData: true } );
+		}
 	};
 
 	componentDidUpdate() {
@@ -124,7 +137,7 @@ class AutoRenewToggle extends Component<
 		} );
 	};
 
-	toggleAutoRenew = () => {
+	toggleAutoRenew = ( afterSuccess?: () => void ) => {
 		const {
 			purchase: { id: purchaseId, productSlug },
 			currentUserId,
@@ -174,6 +187,10 @@ class AutoRenewToggle extends Component<
 						],
 					} );
 				}
+
+				// Run any post-success follow-up the caller passed in. Skipped on failure so we
+				// don't change the gift state when auto-renew didn't actually move.
+				afterSuccess?.();
 
 				return;
 			}
@@ -244,6 +261,8 @@ class AutoRenewToggle extends Component<
 					variant="link"
 					className="is-link"
 					onClick={ this.onToggleAutoRenew }
+					onMouseEnter={ this.prefetchGiftingData }
+					onFocus={ this.prefetchGiftingData }
 					disabled={ shouldDisable || ! this.shouldRender( purchase ) }
 				>
 					{ children }
@@ -251,17 +270,25 @@ class AutoRenewToggle extends Component<
 			);
 		} else {
 			toggle = (
-				<ToggleControl
-					checked={ this.getToggleUiStatus() }
-					disabled={ this.isUpdatingAutoRenew() || shouldDisable }
-					onChange={ this.onToggleAutoRenew }
-					label={ this.props.label ?? ( withTextStatus ? this.renderTextStatus() : undefined ) }
-				/>
+				<span onMouseEnter={ this.prefetchGiftingData } onFocus={ this.prefetchGiftingData }>
+					<ToggleControl
+						checked={ this.getToggleUiStatus() }
+						disabled={ this.isUpdatingAutoRenew() || shouldDisable }
+						onChange={ this.onToggleAutoRenew }
+						label={ this.props.label ?? ( withTextStatus ? this.renderTextStatus() : undefined ) }
+					/>
+				</span>
 			);
 		}
 
 		return (
 			<>
+				{ this.state.prefetchGiftingData && purchase.siteId ? (
+					<>
+						<QuerySiteFeatures siteIds={ [ purchase.siteId ] } />
+						<QuerySiteSettings siteId={ purchase.siteId } />
+					</>
+				) : null }
 				{ toggle }
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }

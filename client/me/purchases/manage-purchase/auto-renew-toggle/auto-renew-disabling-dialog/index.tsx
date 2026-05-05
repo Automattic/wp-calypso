@@ -3,18 +3,27 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isTitanMail,
+	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
 } from '@automattic/calypso-products';
-import { Button } from '@wordpress/components';
+import { Button, CheckboxControl } from '@wordpress/components';
 import { localize, type LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import { isAkismetHoldingSitePurchase } from 'calypso/me/purchases/utils';
+import { createNotice } from 'calypso/state/notices/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import type { Purchases } from '@automattic/data-stores';
+import type { NoticeStatus, NoticeText, NoticeOptions } from 'calypso/state/notices/types';
+import type { IAppState } from 'calypso/state/types';
 
 const DIALOG = {
 	GENERAL: 'general',
@@ -30,6 +39,11 @@ interface MomentProps {
 
 interface AutoRenewDisablingDialogConnectedProps {
 	isAtomicSite: boolean;
+	siteId: number;
+	canShowGiftingOptIn: boolean;
+	currentGiftingValue: boolean;
+	saveSiteSettings: ( siteId: number, settings: Record< string, unknown > ) => Promise< unknown >;
+	createNotice: ( status: NoticeStatus, text: NoticeText, options?: NoticeOptions ) => void;
 }
 
 interface AutoRenewDisablingDialogProps {
@@ -37,13 +51,17 @@ interface AutoRenewDisablingDialogProps {
 	planName: string;
 	siteDomain: string;
 	purchase: Purchases.Purchase;
-	onConfirm: () => void;
+	// `afterSuccess` is invoked by the parent's auto-renew thunk only when the
+	// disable call actually succeeds. Used to chain the gift-setting save.
+	onConfirm: ( afterSuccess?: () => void ) => void;
 	onClose: () => void;
 }
 
 interface AutoRenewDisablingDialogState {
 	dialogType: DialogType;
 	surveyHasShown: boolean;
+	giftingChecked: boolean;
+	userEditedGifting: boolean;
 }
 
 type AutoRenewDisablingDialogAllProps = AutoRenewDisablingDialogProps &
@@ -58,6 +76,56 @@ class AutoRenewDisablingDialog extends Component<
 	state: AutoRenewDisablingDialogState = {
 		dialogType: DIALOG.GENERAL,
 		surveyHasShown: false,
+		giftingChecked: this.props.currentGiftingValue,
+		userEditedGifting: false,
+	};
+
+	componentDidUpdate( prevProps: AutoRenewDisablingDialogAllProps ) {
+		// The visibility transition guard prevents infinite re-render loops.
+		if ( ! prevProps.isVisible && this.props.isVisible ) {
+			/* eslint-disable-next-line react/no-did-update-set-state */
+			this.setState( {
+				giftingChecked: this.props.currentGiftingValue,
+				userEditedGifting: false,
+			} );
+			return;
+		}
+		if (
+			this.props.isVisible &&
+			! this.state.userEditedGifting &&
+			prevProps.currentGiftingValue !== this.props.currentGiftingValue
+		) {
+			/* eslint-disable-next-line react/no-did-update-set-state */
+			this.setState( { giftingChecked: this.props.currentGiftingValue } );
+		}
+	}
+
+	commitGiftingChange = () => {
+		const { canShowGiftingOptIn, currentGiftingValue, siteId, translate } = this.props;
+		if ( ! canShowGiftingOptIn ) {
+			return;
+		}
+		if ( this.state.giftingChecked === currentGiftingValue ) {
+			return;
+		}
+		// The thunk catches its own rejection and returns the error, so detect
+		// failure by the absence of `updated` in the resolved body.
+		Promise.resolve(
+			this.props.saveSiteSettings( siteId, {
+				wpcom_gifting_subscription: this.state.giftingChecked,
+			} )
+		).then( ( result: unknown ) => {
+			const isSuccess =
+				!! result && typeof result === 'object' && 'updated' in ( result as object );
+			if ( ! isSuccess ) {
+				this.props.createNotice(
+					'is-error',
+					translate(
+						"We couldn't update your gift subscription preference. You can change it later in your site settings."
+					)
+				);
+			}
+		} );
 	};
 
 	getVariation() {
@@ -213,7 +281,7 @@ class AutoRenewDisablingDialog extends Component<
 	}
 
 	onClickAtomicFollowUpConfirm = () => {
-		this.props.onConfirm();
+		this.props.onConfirm( this.commitGiftingChange );
 		this.setState( {
 			dialogType: DIALOG.SURVEY,
 		} );
@@ -271,7 +339,7 @@ class AutoRenewDisablingDialog extends Component<
 			return;
 		}
 
-		this.props.onConfirm();
+		this.props.onConfirm( this.commitGiftingChange );
 
 		if ( this.state.surveyHasShown ) {
 			return this.closeAndCleanup();
@@ -281,6 +349,33 @@ class AutoRenewDisablingDialog extends Component<
 			dialogType: DIALOG.SURVEY,
 			surveyHasShown: true,
 		} );
+	};
+
+	renderGiftingOptIn = () => {
+		const { canShowGiftingOptIn, translate } = this.props;
+		const variation = this.getVariation();
+
+		// Surface the gift toggle on every disable so the user can confirm or
+		// change the gift-banner state in the same step.
+		if ( ! canShowGiftingOptIn || ( variation !== 'plan' && variation !== 'atomic' ) ) {
+			return null;
+		}
+
+		return (
+			<CheckboxControl
+				__nextHasNoMarginBottom
+				checked={ this.state.giftingChecked }
+				onChange={ ( checked: boolean ) =>
+					this.setState( { giftingChecked: checked, userEditedGifting: true } )
+				}
+				label={ translate( 'Allow site visitors to gift your plan and domain renewal costs' ) }
+				help={ translate( '{{a}}Learn more{{/a}}', {
+					components: {
+						a: <InlineSupportLink supportContext="gift-a-subscription" showIcon={ false } />,
+					},
+				} ) }
+			/>
+		);
 	};
 
 	renderGeneralDialog = () => {
@@ -298,6 +393,7 @@ class AutoRenewDisablingDialog extends Component<
 			>
 				<DialogContent>
 					<p>{ description }</p>
+					{ this.renderGiftingOptIn() }
 				</DialogContent>
 
 				<DialogFooter>
@@ -337,6 +433,18 @@ class AutoRenewDisablingDialog extends Component<
 	}
 }
 
-export default connect( ( state, { purchase }: AutoRenewDisablingDialogProps ) => ( {
-	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
-} ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );
+export default connect(
+	( state: IAppState, { purchase }: AutoRenewDisablingDialogProps ) => {
+		const siteId = purchase.siteId;
+		const settings = getSiteSettings( state, siteId );
+		const hasGiftingFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING );
+		const isStaging = isSiteWpcomStaging( state, siteId );
+		return {
+			isAtomicSite: isSiteAtomic( state, siteId ) ?? false,
+			siteId,
+			canShowGiftingOptIn: Boolean( siteId ) && hasGiftingFeature && ! isStaging,
+			currentGiftingValue: Boolean( settings?.wpcom_gifting_subscription ),
+		};
+	},
+	{ saveSiteSettings, createNotice }
+)( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );
