@@ -10,6 +10,7 @@ import {
 	SocialPostCard,
 	mapMastodonFeedItemToSocialPost,
 } from 'calypso/reader/social';
+import { TimelineComposePill, useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectMastodonError } from './error-projection';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
@@ -112,6 +113,22 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'reply',
+				root: { uri: post.uri },
+				parent: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const renderItem = useCallback(
 		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
@@ -126,12 +143,16 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			getThreadUrl,
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
+			onReplyClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
 	);
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
+			{ composer && (
+				<TimelineComposePill avatar={ connection.avatar } entryPoint="timeline_inline" />
+			) }
 			<SocialFeedList< SocialPost >
 				items={ items }
 				isPending={ isPending }
