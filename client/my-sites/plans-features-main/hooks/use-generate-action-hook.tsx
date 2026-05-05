@@ -118,7 +118,7 @@ export default function useGenerateActionHook( {
 	);
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [ loadingPlanSlug, setLoadingPlanSlug ] = useState< PlanSlug | null >( null );
 
 	// TODO: Remove this hook call and inline the logic into respective functions
 	const getActionCallback = useGenerateActionCallback( {
@@ -238,8 +238,8 @@ export default function useGenerateActionHook( {
 			isPlanExpired,
 			currentPlanBillingPeriod,
 			billingPeriod,
-			setIsLoading,
-			isLoading,
+			setLoadingPlanSlug,
+			loadingPlanSlug,
 			plansIntent,
 		} );
 		return {
@@ -438,8 +438,8 @@ function getLoggedInPlansAction( {
 	isPlanExpired,
 	currentPlanBillingPeriod,
 	billingPeriod,
-	isLoading,
-	setIsLoading,
+	loadingPlanSlug,
+	setLoadingPlanSlug,
 	plansIntent,
 }: {
 	getActionCallback: UseActionCallback;
@@ -449,8 +449,8 @@ function getLoggedInPlansAction( {
 	domainFromHomeUpsellFlow: string | null;
 	isPlanExpired: boolean;
 	canUserManageCurrentPlan: boolean | null;
-	isLoading: boolean;
-	setIsLoading: ( value: boolean ) => void;
+	loadingPlanSlug: PlanSlug | null;
+	setLoadingPlanSlug: ( slug: PlanSlug | null ) => void;
 	plansIntent?: PlansIntent | null;
 } & UseActionHookProps ): GridAction {
 	// Use plan type matching instead of exact slug matching for the 'plans-upgrade' intent.
@@ -468,6 +468,13 @@ function getLoggedInPlansAction( {
 		sitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY ||
 		sitePlanSlug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY;
 
+	let defaultStatus: GridAction[ 'primary' ][ 'status' ] = 'enabled';
+	if ( loadingPlanSlug === planSlug ) {
+		defaultStatus = 'blocked';
+	} else if ( loadingPlanSlug !== null ) {
+		defaultStatus = 'disabled';
+	}
+
 	const createLoggedInPlansAction = (
 		text: TranslateResult,
 		variant: GridAction[ 'primary' ][ 'variant' ] = 'primary',
@@ -480,18 +487,16 @@ function getLoggedInPlansAction( {
 				// This callback is utilizing the implict knowledge that we know the only true async
 				// action happening in the logged-in plans grid. Once `useGenerateActionHook` and `UseGenerateActionCallback` are merged
 				// as described by Automattic/martech#3170, we will be able to clean this up.
-				setIsLoading( true );
+				setLoadingPlanSlug( planSlug );
 				await getActionCallback( {
 					planSlug,
 					cartItemForPlan,
 					selectedStorageAddOn,
 					availableForPurchase,
 				} )();
-				setIsLoading( false );
 				return;
 			},
-			status:
-				status ?? ( ( isLoading ? 'blocked' : 'enabled' ) as GridAction[ 'primary' ][ 'status' ] ),
+			status: status ?? defaultStatus,
 			text,
 			ariaLabel,
 			variant,
@@ -531,6 +536,12 @@ function getLoggedInPlansAction( {
 
 	// Downgrade action if the plan is not available for purchase
 	if ( ! availableForPurchase ) {
+		if ( isSwitchPlan ) {
+			return createLoggedInPlansAction(
+				translate( 'Downgrade', { context: 'verb' } ),
+				'secondary'
+			);
+		}
 		if ( isEnabled( 'plans/self-service-downgrade' ) ) {
 			return {
 				primary: {
@@ -545,6 +556,17 @@ function getLoggedInPlansAction( {
 			'secondary',
 			undefined,
 			canUserManageCurrentPlan ? undefined : 'disabled'
+		);
+	}
+
+	if ( isSwitchPlan ) {
+		return createLoggedInPlansAction(
+			translate( 'Get %(plan)s', {
+				textOnly: true,
+				args: {
+					plan: getPlan( planSlug )?.getTitle() || '',
+				},
+			} )
 		);
 	}
 

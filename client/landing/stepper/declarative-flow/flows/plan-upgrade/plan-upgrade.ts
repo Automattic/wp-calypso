@@ -150,95 +150,119 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 									const planTitle = String( selectedPlanObj?.getTitle() ?? '' );
 									const isDashboard = cancelTo?.includes( '/me/billing/' );
 
-									// Pre-fetch the old purchase to extract refund options
-									// before the downgrade mutation changes them.
-									wpcom.req
-										.get( {
-											path: '/me/purchases',
-											apiVersion: '1.1',
-										} )
-										.then(
-											(
-												purchases: Array< {
+									// Downgrade: fetch old purchase for refund info, fire mutation,
+									// then redirect to the new plan's purchase settings.
+									( async () => {
+										try {
+											// eslint-disable-next-line no-console
+											console.warn( '[plan-downgrade] starting', {
+												purchaseId,
+												targetProductId,
+												planTitle,
+												siteId: site?.ID,
+											} );
+
+											const purchases: Array< {
+												ID: number;
+												product_id: number;
+												blog_id: number;
+												is_refundable: boolean;
+												refund_options: Array< {
+													to_product_id: number;
+													refund_amount: number;
+													refund_currency_symbol: string;
+												} > | null;
+											} > = await wpcom.req.get( {
+												path: '/me/purchases',
+												apiVersion: '1.1',
+											} );
+
+											const oldPurchase = purchases.find(
+												( p ) => p.ID === parseInt( purchaseId, 10 )
+											);
+											const matchingRefund =
+												oldPurchase?.is_refundable && Array.isArray( oldPurchase.refund_options )
+													? oldPurchase.refund_options.find(
+															( o ) => o.to_product_id === targetProductId
+													  )
+													: null;
+
+											// eslint-disable-next-line no-console
+											console.warn( '[plan-downgrade] old purchase', {
+												found: !! oldPurchase,
+												isRefundable: oldPurchase?.is_refundable,
+												matchingRefund,
+											} );
+
+											const mutationResponse = await cancelAndRefundPurchaseAsync(
+												parseInt( purchaseId, 10 ),
+												{
+													type: 'downgrade' as const,
+													to_product_id: targetProductId,
+												}
+											);
+
+											// eslint-disable-next-line no-console
+											console.warn( '[plan-downgrade] mutation response', mutationResponse );
+
+											// Try to find the new purchase (retry once after 2s if not found)
+											let newPurchase: {
+												ID: number;
+												product_id: number;
+												blog_id: number;
+											} | null = null;
+
+											for ( let attempt = 0; attempt < 2; attempt++ ) {
+												if ( attempt > 0 ) {
+													await new Promise( ( resolve ) => setTimeout( resolve, 2000 ) );
+												}
+												const freshPurchases: Array< {
 													ID: number;
 													product_id: number;
 													blog_id: number;
-													is_refundable: boolean;
-													refund_options: Array< {
-														to_product_id: number;
-														refund_amount: number;
-														refund_currency_symbol: string;
-													} > | null;
-												} >
-											) => {
-												const oldPurchase = purchases.find(
-													( p ) => p.ID === parseInt( purchaseId, 10 )
-												);
-												const matchingRefund =
-													oldPurchase?.is_refundable && Array.isArray( oldPurchase.refund_options )
-														? oldPurchase.refund_options.find(
-																( o ) => o.to_product_id === targetProductId
-														  )
-														: null;
+												} > = await wpcom.req.get( {
+													path: '/me/purchases',
+													apiVersion: '1.1',
+												} );
+												newPurchase =
+													freshPurchases.find(
+														( p ) => p.product_id === targetProductId && p.blog_id === site?.ID
+													) ?? null;
 
-												return cancelAndRefundPurchaseAsync( parseInt( purchaseId, 10 ), {
-													type: 'downgrade' as const,
-													to_product_id: targetProductId,
-												} ).then( () => matchingRefund );
+												// eslint-disable-next-line no-console
+												console.warn( `[plan-downgrade] attempt ${ attempt + 1 }`, {
+													freshCount: freshPurchases.length,
+													found: !! newPurchase,
+												} );
+
+												if ( newPurchase ) {
+													break;
+												}
 											}
-										)
-										.then(
-											(
-												matchingRefund:
-													| {
-															refund_amount: number;
-															refund_currency_symbol: string;
-													  }
-													| null
-													| undefined
-											) =>
-												wpcom.req
-													.get( {
-														path: '/me/purchases',
-														apiVersion: '1.1',
-													} )
-													.then(
-														(
-															freshPurchases: Array< {
-																ID: number;
-																product_id: number;
-																blog_id: number;
-															} >
-														) => {
-															const newPurchase = freshPurchases.find(
-																( p ) => p.product_id === targetProductId && p.blog_id === site?.ID
-															);
 
-															const params: Record< string, string > = {
-																downgraded: 'true',
-																plan: planTitle,
-															};
-															if ( matchingRefund && matchingRefund.refund_amount > 0 ) {
-																params.refund = String( matchingRefund.refund_amount );
-																params.currency = matchingRefund.refund_currency_symbol;
-															}
+											const params: Record< string, string > = {
+												downgraded: 'true',
+												plan: planTitle,
+											};
+											if ( matchingRefund && matchingRefund.refund_amount > 0 ) {
+												params.refund = String( matchingRefund.refund_amount );
+												params.currency = matchingRefund.refund_currency_symbol;
+											}
 
-															if ( newPurchase ) {
-																const basePath = isDashboard
-																	? dashboardLink( '/me/billing/purchases/' + newPurchase.ID )
-																	: `/me/purchases/${ siteSlug }/${ newPurchase.ID }`;
-																window.location.assign( addQueryArgs( basePath, params ) );
-															} else {
-																window.location.assign(
-																	addQueryArgs( fallbackDestination, params )
-																);
-															}
-														}
-													)
-										)
-										.catch( () => {
+											if ( newPurchase ) {
+												const basePath = isDashboard
+													? dashboardLink( '/me/billing/purchases/' + newPurchase.ID )
+													: `/me/purchases/${ siteSlug }/${ newPurchase.ID }`;
+												window.location.assign( addQueryArgs( basePath, params ) );
+											} else {
+												window.location.assign( addQueryArgs( fallbackDestination, params ) );
+											}
+										} catch ( error ) {
+											// eslint-disable-next-line no-console
+											console.warn( '[plan-downgrade] error:', error );
 											window.location.assign( fallbackDestination );
-										} );
+										}
+									} )();
 									return;
 								}
 							}
