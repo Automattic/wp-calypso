@@ -30,7 +30,7 @@ describe( 'ImageGrid', () => {
 			/>
 		);
 
-		expect( screen.getAllByRole( 'img', { hidden: true } ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'img' ) ).toHaveLength( 2 );
 		expect( screen.getByRole( 'button', { name: /add more images/i } ) ).toBeVisible();
 	} );
 

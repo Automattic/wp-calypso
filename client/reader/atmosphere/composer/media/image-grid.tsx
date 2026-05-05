@@ -4,8 +4,9 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { AltTextPopover } from './alt-text-popover';
+import { ACCEPTED_IMAGE_TYPES } from './constants';
+import { getMediaErrorMessage } from './error-copy';
 import type { ComposerImage } from './types';
-import type { AtmosphereError } from '@automattic/api-core';
 
 interface Props {
 	images: ComposerImage[];
@@ -52,7 +53,7 @@ export function ImageGrid( { images, max, onPickFiles, onRemove, onRetry, onSetA
 					<input
 						ref={ inputRef }
 						type="file"
-						accept="image/jpeg,image/png,image/webp"
+						accept={ ACCEPTED_IMAGE_TYPES }
 						multiple
 						hidden
 						onChange={ ( e ) => {
@@ -87,17 +88,11 @@ function Thumbnail( {
 
 	const previewUrl = 'previewUrl' in image ? image.previewUrl : '';
 	const alt = 'alt' in image ? image.alt : '';
+	const imgAlt = alt.length > 0 ? alt : ( translate( 'Attached image' ) as string );
 
 	return (
 		<div className={ clsx( 'atmosphere-composer__image', { 'is-failed': isFailed } ) }>
-			{ previewUrl && (
-				// `alt` may be empty until the user fills it in via the popover.
-				// Force `role="img"` so screen readers and tests can still locate
-				// the attached image; when `alt` is non-empty the role is
-				// already implicit.
-				// eslint-disable-next-line jsx-a11y/no-redundant-roles
-				<img src={ previewUrl } alt={ alt } role="img" />
-			) }
+			{ previewUrl && <img src={ previewUrl } alt={ imgAlt } /> }
 			{ isPending && <Spinner /> }
 			<button
 				type="button"
@@ -118,7 +113,7 @@ function Thumbnail( {
 			) }
 			{ isFailed && (
 				<div className="atmosphere-composer__image-error">
-					<span>{ errorMessage( image.error, translate ) }</span>
+					<span>{ getMediaErrorMessage( image.error, translate ) }</span>
 					<Button variant="link" onClick={ () => onRetry( image.localId ) }>
 						{ translate( 'Retry' ) }
 					</Button>
@@ -126,21 +121,4 @@ function Thumbnail( {
 			) }
 		</div>
 	);
-}
-
-function errorMessage( err: AtmosphereError, t: ReturnType< typeof useTranslate > ): string {
-	switch ( err.kind ) {
-		case 'blob_too_large':
-			return t( 'Image is too large.' ) as string;
-		case 'blob_unsupported_type':
-			return t( 'We can only post JPG, PNG, or WebP images.' ) as string;
-		case 'blob_decode_failed':
-			return t( 'We couldn’t read this image. Try a different file.' ) as string;
-		case 'rate_limited':
-			return t( 'You’re posting too quickly. Try again in a moment.' ) as string;
-		case 'upstream_unavailable':
-			return t( 'Bluesky is taking longer than usual. Please try again.' ) as string;
-		default:
-			return t( 'Something went wrong. Please try again.' ) as string;
-	}
 }
