@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
 const SAVE_FAILED = 'podcatcher_url_save_failed';
 
@@ -42,14 +43,20 @@ export const usePodcatcherUrl = (
 				throw new Error( SAVE_FAILED );
 			}
 			const trimmed = next.trim();
+			// `saveSiteSettings` doesn't throw on failure — it `return error;`,
+			// so the awaited value can be the response body OR an Error.
 			const result = ( await dispatch(
 				saveSiteSettings( siteId, {
 					podcasting_show_urls: { [ podcatcherId ]: trimmed },
 				} )
-			) ) as { updated?: { podcasting_show_urls?: unknown } } | null;
+			) ) as { updated?: { podcasting_show_urls?: unknown } } | Error | null;
+
+			if ( ! result || result instanceof Error ) {
+				throw new Error( SAVE_FAILED );
+			}
 
 			// A bare error response (network failure, auth, etc.) lacks `updated`.
-			if ( ! result?.updated || ! ( 'podcasting_show_urls' in result.updated ) ) {
+			if ( ! result.updated || ! ( 'podcasting_show_urls' in result.updated ) ) {
 				throw new Error( SAVE_FAILED );
 			}
 
@@ -74,13 +81,21 @@ export const usePodcatcherUrl = (
 	return [ url, save ];
 };
 
-// True if at least one podcatcher entry under `podcasting_show_urls` is a
-// non-empty string. Used to gate the first-save confetti so it only fires
-// on the user's true first save across all directories.
-export const useHasAnyStoredPodcatcherUrl = ( siteId: number | null | undefined ): boolean =>
+// Returns true if at least one podcatcher entry under `podcasting_show_urls`
+// is a non-empty string, false if we know there are none, or null if site
+// settings haven't hydrated yet. Used to gate the first-save confetti so it
+// only fires when we're sure this is the user's first save across all
+// directories — never on a not-yet-loaded fallback.
+export const useHasAnyStoredPodcatcherUrl = ( siteId: number | null | undefined ): boolean | null =>
 	useSelector( ( state ) => {
 		if ( ! siteId ) {
-			return false;
+			return null;
+		}
+		// `getSiteSettings` returns null until the settings request resolves;
+		// distinguishing that from "loaded with no URLs" is what avoids spurious
+		// confetti on a fast click before hydration.
+		if ( ! getSiteSettings( state, siteId ) ) {
+			return null;
 		}
 		const showUrls = getSiteSetting( state, siteId, 'podcasting_show_urls' );
 		if ( ! showUrls || typeof showUrls !== 'object' || Array.isArray( showUrls ) ) {

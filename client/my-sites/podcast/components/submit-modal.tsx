@@ -5,6 +5,7 @@ import {
 	Modal,
 	Notice,
 	TextControl,
+	VisuallyHidden,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -139,7 +140,9 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 		}
 		// Capture before the dispatch — hadAnyStoredUrl flips to true once the
 		// save lands, so without snapshotting we'd never qualify as a first save.
-		const isFirstEverSave = ! hadAnyStoredUrl;
+		// `null` (settings not yet hydrated) is preserved as null so we can skip
+		// confetti rather than guess.
+		const isFirstEverSave = hadAnyStoredUrl === null ? null : ! hadAnyStoredUrl;
 		setIsSaving( true );
 		setSaveError( null );
 		try {
@@ -151,7 +154,10 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 					is_replace: !! storedUrl,
 				} )
 			);
-			if ( isFirstEverSave ) {
+			// Only celebrate when we definitively know there were no prior URLs.
+			// `null` means site settings hadn't hydrated yet — skip confetti so a
+			// returning user on a fresh tab doesn't get a spurious celebration.
+			if ( isFirstEverSave === true ) {
 				onFirstSave?.();
 			}
 			onClose();
@@ -270,6 +276,7 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 									className="podcast__submit-step-saved-icon"
 									aria-hidden="true"
 								/>
+								<VisuallyHidden>{ translate( 'Saved:' ) }</VisuallyHidden>
 								<Text className="podcast__submit-step-saved-url" title={ storedUrl }>
 									{ storedUrl }
 								</Text>
@@ -277,6 +284,7 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 							<Button
 								variant="secondary"
 								__next40pxDefaultSize
+								aria-label={ translate( 'Replace %(service)s URL', serviceArgs ) as string }
 								onClick={ () => {
 									hasInitializedDraft.current = true;
 									setDraftUrl( storedUrl );
