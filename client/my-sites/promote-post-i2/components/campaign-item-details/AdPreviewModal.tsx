@@ -19,6 +19,9 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 	const closeModal = () => setOpen( false );
 
 	const [ previewSelected, setPreviewSelected ] = useState< Device >( 'mobile' );
+	const isV3Template = templateFormat === 'html5_v3';
+	const effectivePreviewSelected =
+		isV3Template && previewSelected === 'desktop' ? 'tablet' : previewSelected;
 
 	const MobileIcon = () => {
 		return (
@@ -113,7 +116,7 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 							isLoading={ isLoading }
 							htmlCode={ htmlCode || '' }
 							templateFormat={ templateFormat || '' }
-							width={ getPreviewWidth( previewSelected ) }
+							width={ getPreviewWidth( effectivePreviewSelected ) }
 						/>
 					</div>
 					<div className="ad-preview-modal__links">
@@ -121,7 +124,10 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 							onClick={ showMobilePreview }
 							color="inherit"
 							rel="noreferrer"
-							className={ clsx( 'link-preview', previewSelected === 'mobile' ? 'active' : '' ) }
+							className={ clsx(
+								'link-preview',
+								effectivePreviewSelected === 'mobile' ? 'active' : ''
+							) }
 						>
 							<MobileIcon />
 							<span>{ __( 'Mobile' ) }</span>
@@ -131,21 +137,29 @@ const AdPreviewModal: React.FC< Props > = ( { templateFormat, htmlCode, isLoadin
 							onClick={ showTabletPreview }
 							color="inherit"
 							rel="noreferrer"
-							className={ clsx( 'link-preview', previewSelected === 'tablet' ? 'active' : '' ) }
+							className={ clsx(
+								'link-preview',
+								effectivePreviewSelected === 'tablet' ? 'active' : ''
+							) }
 						>
 							<TabletIcon />
-							<span>{ __( 'Tablet' ) }</span>
+							<span>{ isV3Template ? __( 'Tablet/Desktop' ) : __( 'Tablet' ) }</span>
 						</button>
 
-						<button
-							onClick={ showDesktopPreview }
-							color="inherit"
-							rel="noreferrer"
-							className={ clsx( 'link-preview', previewSelected === 'desktop' ? 'active' : '' ) }
-						>
-							<DesktopIcon />
-							<span>{ __( 'Desktop' ) }</span>
-						</button>
+						{ ! isV3Template && (
+							<button
+								onClick={ showDesktopPreview }
+								color="inherit"
+								rel="noreferrer"
+								className={ clsx(
+									'link-preview',
+									effectivePreviewSelected === 'desktop' ? 'active' : ''
+								) }
+							>
+								<DesktopIcon />
+								<span>{ __( 'Desktop' ) }</span>
+							</button>
+						) }
 					</div>
 				</Modal>
 			) }
