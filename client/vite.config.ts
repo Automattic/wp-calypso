@@ -218,6 +218,38 @@ const browserConditionalRequiresPlugin: Plugin = {
 	},
 };
 
+const webpackCssLoaderImportsPlugin: Plugin = {
+	name: 'calypso-webpack-css-loader-imports',
+	enforce: 'pre',
+	async resolveId( id: string, importer: string | undefined ) {
+		if ( ! /^!!.*\.(css|scss|sass|less)$/.test( id ) ) {
+			return null;
+		}
+
+		const request = id.slice( id.lastIndexOf( '!' ) + 1 );
+		const resolved = await this.resolve( request, importer, { skipSelf: true } );
+		if ( ! resolved ) {
+			return null;
+		}
+
+		return `\0calypso-webpack-css-loader:${ encodeURIComponent( resolved.id ) }.js`;
+	},
+	load( id: string ) {
+		const prefix = '\0calypso-webpack-css-loader:';
+		if ( ! id.startsWith( prefix ) ) {
+			return null;
+		}
+
+		const stylesheetId = decodeURIComponent( id.slice( prefix.length, -'.js'.length ) );
+		return [
+			`import cssText from ${ JSON.stringify( `${ stylesheetId }?inline` ) };`,
+			`const css = [ [ ${ JSON.stringify( stylesheetId ) }, cssText ] ];`,
+			'css.toString = () => cssText;',
+			'export default css;',
+		].join( '\n' );
+	},
+};
+
 export default defineConfig(
 	(): UserConfig => ( {
 		// Project root — Vite serves files from here in dev mode.
@@ -345,6 +377,8 @@ export default defineConfig(
 			transformReactVirtualizedJsxPlugin,
 
 			browserConditionalRequiresPlugin,
+
+			webpackCssLoaderImportsPlugin,
 
 			// TypeScript interfaces and type aliases are erased by OXC at compile time,
 			// leaving no runtime export. When .js files import such names for JSDoc
