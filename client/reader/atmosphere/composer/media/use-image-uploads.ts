@@ -61,11 +61,40 @@ export interface UseImageUploadsOptions {
 	onTrack?: ( event: string, props: Record< string, unknown > ) => void;
 }
 
+export interface ClearAllOptions {
+	/**
+	 * Defer revocation of every attached preview URL by ~60s instead of
+	 * revoking synchronously. Lets the post-publish placeholder embed
+	 * (which references these URLs in cache) survive past the timeline /
+	 * author-feed staleTime. The cancel / discard path leaves this
+	 * `false` so URLs are reclaimed immediately.
+	 */
+	deferRevocation?: boolean;
+}
+
+interface DoRemoveOptions {
+	silent?: boolean;
+	deferRevocation?: boolean;
+}
+
+// How long preview blob URLs survive past `clearAll({ deferRevocation: true })`.
+// 60s comfortably outlasts the 30s timeline / author-feed staleTime, so any
+// cache entry that references a preview URL (e.g. the standalone post
+// placeholder's local embed) gets refetched and replaced with real CDN URLs
+// from the AppView before the local URL is revoked.
+const DEFERRED_REVOKE_MS = 60_000;
+
 export function useImageUploads( opts: UseImageUploadsOptions ) {
 	const queryClient = useQueryClient();
 	const { mutateAsync: uploadBlob } = useMutation( uploadBlobMutation( queryClient ) );
 	const [ images, setImages ] = useState< ComposerImage[] >( [] );
 	const previewsRef = useRef< Set< string > >( new Set() );
+	// Tracks pending deferred-revocation timers so the unmount effect can
+	// clear them. Without this, a hook unmounting before the 60s timer
+	// elapses leaves an orphan timer that holds the revoke closure (and
+	// the previewUrl string) until it fires; in tests this surfaces as a
+	// "worker has failed to exit gracefully" warning.
+	const pendingRevokeTimersRef = useRef< Set< ReturnType< typeof setTimeout > > >( new Set() );
 	// Stable refs for the analytics inputs so callbacks below don't
 	// re-create on every render. The provider re-creates `onTrack` only
 	// when its `dispatch` reference changes (effectively never), but
@@ -88,6 +117,21 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 	// fresh attempt) nets to zero capacity change automatically.
 	const slotCountRef = useRef( 0 );
 
+	// `imagesRef` mirrors the latest `images` state so callbacks below can
+	// inspect the current image without forcing the callback's identity to
+	// change on every render. Updated inline during render — the closure
+	// reads the snapshot at event time, which is the desired behavior.
+	const imagesRef = useRef< ComposerImage[] >( [] );
+	imagesRef.current = images;
+
+	// Synchronous mirror of which `localId`s the hook is actively tracking.
+	// `setImages` is React-async, so a post-await read of `imagesRef.current`
+	// can still see the pre-add state inside the same microtask chain. This
+	// set is mutated synchronously alongside every `setImages` call, so the
+	// post-await "still tracked?" guards in `startOne` (and `doRemove`'s
+	// abort path) observe the correct membership immediately.
+	const activeIdsRef = useRef< Set< string > >( new Set() );
+
 	const update = useCallback( ( id: string, next: ComposerImage ) => {
 		setImages( ( cur ) => cur.map( ( i ) => ( i.localId === id ? next : i ) ) );
 	}, [] );
@@ -102,11 +146,20 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 		async ( file: File, batch?: { bytesBefore: number; bytesAfter: number; uploaded: number } ) => {
 			const localId = newLocalId();
 			slotCountRef.current += 1;
+			activeIdsRef.current.add( localId );
 			setImages( ( cur ) => [ ...cur, { kind: 'compressing', localId, sourceFile: file } ] );
 			let compressed;
 			try {
 				compressed = await compressImage( file );
 			} catch ( err ) {
+				// Skip the failure write-back (and the tracks event) when the
+				// entry was removed mid-compress (composer closed, user clicked ×).
+				// `update` is a setImages-map no-op for missing ids, but the
+				// analytics event would still fire with `connection_id` / `mode`
+				// snapped from the now-defaulted refs.
+				if ( ! activeIdsRef.current.has( localId ) ) {
+					return;
+				}
 				update( localId, {
 					kind: 'failed',
 					localId,
@@ -121,6 +174,13 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 					mode: modeRef.current,
 					error_kind: 'blob_decode_failed',
 				} );
+				return;
+			}
+
+			// Compress succeeded; if the entry was removed in the meantime
+			// (close, ×, slot freed for a retry), bail without creating a
+			// stranded preview URL or transitioning state.
+			if ( ! activeIdsRef.current.has( localId ) ) {
 				return;
 			}
 
@@ -155,6 +215,13 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 					batch.uploaded += 1;
 				}
 			} catch ( err ) {
+				// Skip the failure write-back when the entry was removed
+				// mid-upload (× click aborts via `entry.abort.abort()`,
+				// `clearAll` drops the entry on close). Same reasoning as
+				// the compress-stage guard above.
+				if ( ! activeIdsRef.current.has( localId ) ) {
+					return;
+				}
 				const error = toAtmosphereError( err );
 				update( localId, {
 					kind: 'failed',
@@ -215,30 +282,39 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 		[ opts.max, startOne ]
 	);
 
-	// `imagesRef` mirrors the latest `images` state so callbacks below can
-	// inspect the current image without forcing the callback's identity to
-	// change on every render. The ref is updated in a layout effect (see
-	// below) so it is in sync before any user-driven event handler runs.
-	const imagesRef = useRef< ComposerImage[] >( images );
-	imagesRef.current = images;
-
-	// Internal removal worker. `silent: true` skips the
-	// `media_removed` Tracks event — used by `clearAll` (close cleanup
-	// is a system action, not a user click) and by `retryImage` (the
-	// user clicked Retry, not ×). Public `removeImage` always reports.
-	const doRemove = useCallback( ( id: string, silent: boolean ) => {
+	// Internal removal worker.
+	// - `silent: true` skips the `media_removed` Tracks event — used by
+	//   `clearAll` (close cleanup is a system action) and `retryImage`
+	//   (user clicked Retry, not ×). Public `removeImage` always reports.
+	// - `deferRevocation: true` keeps the entry's preview URL alive on a
+	//   60s timer instead of revoking immediately, so cache entries that
+	//   reference it (placeholder embed) remain renderable past the
+	//   timeline staleTime.
+	const doRemove = useCallback( ( id: string, options: DoRemoveOptions = {} ) => {
+		const { silent = false, deferRevocation = false } = options;
 		const entry = imagesRef.current.find( ( i ) => i.localId === id );
 		if ( ! entry ) {
 			return;
 		}
 		if ( entry.kind !== 'compressing' ) {
-			URL.revokeObjectURL( entry.previewUrl );
-			previewsRef.current.delete( entry.previewUrl );
+			if ( deferRevocation ) {
+				const url = entry.previewUrl;
+				const timerId: ReturnType< typeof setTimeout > = setTimeout( () => {
+					URL.revokeObjectURL( url );
+					previewsRef.current.delete( url );
+					pendingRevokeTimersRef.current.delete( timerId );
+				}, DEFERRED_REVOKE_MS );
+				pendingRevokeTimersRef.current.add( timerId );
+			} else {
+				URL.revokeObjectURL( entry.previewUrl );
+				previewsRef.current.delete( entry.previewUrl );
+			}
 		}
 		if ( entry.kind === 'uploading' ) {
 			entry.abort.abort();
 		}
 		slotCountRef.current = Math.max( 0, slotCountRef.current - 1 );
+		activeIdsRef.current.delete( id );
 		setImages( ( cur ) => cur.filter( ( i ) => i.localId !== id ) );
 		if ( ! silent ) {
 			onTrackRef.current?.( 'calypso_reader_atmosphere_compose_media_removed', {
@@ -251,20 +327,24 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 
 	const removeImage = useCallback(
 		( id: string ) => {
-			doRemove( id, false );
+			doRemove( id, { silent: false } );
 		},
 		[ doRemove ]
 	);
 
-	const clearAll = useCallback( () => {
-		// Snapshot the ids first — `doRemove` mutates the underlying state,
-		// and `imagesRef.current` reflects the latest commit, but iterating
-		// the live array while removing entries is a footgun. The ref array
-		// itself is stable inside this synchronous loop (state updates are
-		// batched), but a snapshot keeps the intent explicit.
-		const ids = imagesRef.current.map( ( i ) => i.localId );
-		ids.forEach( ( id ) => doRemove( id, true ) );
-	}, [ doRemove ] );
+	const clearAll = useCallback(
+		( options: ClearAllOptions = {} ) => {
+			// Snapshot the ids first — `doRemove` mutates the underlying state,
+			// and `imagesRef.current` reflects the latest commit, but iterating
+			// the live array while removing entries is a footgun. The ref array
+			// itself is stable inside this synchronous loop (state updates are
+			// batched), but a snapshot keeps the intent explicit.
+			const ids = imagesRef.current.map( ( i ) => i.localId );
+			const deferRevocation = options.deferRevocation ?? false;
+			ids.forEach( ( id ) => doRemove( id, { silent: true, deferRevocation } ) );
+		},
+		[ doRemove ]
+	);
 
 	const retryImage = useCallback(
 		async ( id: string ) => {
@@ -273,7 +353,7 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 				return;
 			}
 			const sourceFile = target.sourceFile;
-			doRemove( id, true );
+			doRemove( id, { silent: true } );
 			await startOne( sourceFile );
 		},
 		[ doRemove, startOne ]
@@ -315,6 +395,8 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 
 	useEffect(
 		() => () => {
+			pendingRevokeTimersRef.current.forEach( ( id ) => clearTimeout( id ) );
+			pendingRevokeTimersRef.current.clear();
 			previewsRef.current.forEach( ( url ) => URL.revokeObjectURL( url ) );
 			previewsRef.current.clear();
 		},

@@ -44,6 +44,7 @@ import {
 	useDeleteLikeMutation,
 	useDeletePostMutation,
 	useDeleteRepostMutation,
+	setAtmospherePostEmbed,
 	uploadBlobMutation,
 	useThreadQuery,
 	useTimelineInfiniteQuery,
@@ -3517,5 +3518,79 @@ describe( 'uploadBlobMutation', () => {
 
 		expect( value.blob.mimeType ).toBe( 'image/jpeg' );
 		expect( value.blob.$type ).toBe( 'blob' );
+	} );
+
+	describe( 'setAtmospherePostEmbed', () => {
+		const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kembed';
+		const CONNECTION_ID = 42;
+
+		function seedTimeline( client: QueryClient, items: AtmosphereFeedItem[] ) {
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [ { items, cursor: null } ],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( CONNECTION_ID ), data );
+		}
+
+		it( 'patches the embed onto every cached feed item whose uri matches', () => {
+			const client = new QueryClient();
+			const target = makeFeedItem( { uri: POST_URI, embed: null } );
+			const other = makeFeedItem( { uri: 'at://did:plc:other/app.bsky.feed.post/keep' } );
+			seedTimeline( client, [ target, other ] );
+
+			const localUrl = 'blob:test/abcdef';
+			setAtmospherePostEmbed( client, POST_URI, {
+				type: 'images',
+				images: [
+					{
+						thumb: localUrl,
+						fullsize: localUrl,
+						alt: 'a sunset',
+						aspect_ratio: { width: 16, height: 9 },
+					},
+				],
+			} );
+
+			const items =
+				client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					readerAtmosphereKeys.timeline( CONNECTION_ID )
+				)?.pages[ 0 ].items ?? [];
+
+			const patched = items.find( ( i ) => i.uri === POST_URI );
+			expect( patched?.embed ).toEqual( {
+				type: 'images',
+				images: [
+					{
+						thumb: localUrl,
+						fullsize: localUrl,
+						alt: 'a sunset',
+						aspect_ratio: { width: 16, height: 9 },
+					},
+				],
+			} );
+
+			// Sibling item is left untouched.
+			const untouched = items.find( ( i ) => i.uri !== POST_URI );
+			expect( untouched?.embed ).toBeNull();
+		} );
+
+		it( 'is a no-op when no cache entry matches postUri', () => {
+			const client = new QueryClient();
+			const other = makeFeedItem( { uri: 'at://did:plc:other/app.bsky.feed.post/keep' } );
+			seedTimeline( client, [ other ] );
+
+			expect( () =>
+				setAtmospherePostEmbed( client, POST_URI, {
+					type: 'images',
+					images: [],
+				} )
+			).not.toThrow();
+
+			const items =
+				client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					readerAtmosphereKeys.timeline( CONNECTION_ID )
+				)?.pages[ 0 ].items ?? [];
+			expect( items[ 0 ].embed ).toBeNull();
+		} );
 	} );
 } );

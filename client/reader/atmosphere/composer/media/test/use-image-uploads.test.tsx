@@ -472,6 +472,115 @@ describe( 'useImageUploads', () => {
 		).toHaveLength( 0 );
 	} );
 
+	it( 'clearAll({ deferRevocation: true }) defers preview URL revocation past staleTime', async () => {
+		// Post-publish path: the modal patches a local-preview embed onto the
+		// just-published feed item, then closes. URL revocation is deferred so
+		// the cached embed's `<img src=blob:...>` stays valid past the
+		// timeline's 30s staleTime, where the next refetch replaces it with a
+		// real CDN URL.
+		jest.useFakeTimers();
+		try {
+			jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+
+			const qc = new QueryClient();
+			const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
+				wrapper: wrap( qc ),
+			} );
+
+			const file = new File( [ 'a' ], 'a.png', { type: 'image/png' } );
+			await act( async () => {
+				await result.current.addFiles( [ file ] );
+			} );
+			await waitFor( () =>
+				expect( result.current.images.every( ( i ) => i.kind === 'uploaded' ) ).toBe( true )
+			);
+
+			( URL.revokeObjectURL as jest.Mock ).mockClear();
+			act( () => result.current.clearAll( { deferRevocation: true } ) );
+
+			// Immediate revocation MUST NOT happen — the placeholder embed in
+			// the timeline cache still references this URL.
+			expect( URL.revokeObjectURL ).not.toHaveBeenCalled();
+
+			// After the deferred timer fires (~60s later, longer than the 30s
+			// staleTime), the URL is finally revoked.
+			act( () => {
+				jest.advanceTimersByTime( 60_000 );
+			} );
+			expect( URL.revokeObjectURL ).toHaveBeenCalled();
+		} finally {
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'clearAll() (no defer) revokes preview URLs synchronously', async () => {
+		// Cancel / discard path keeps the legacy synchronous behavior so URLs
+		// are reclaimed the moment the user dismisses the composer without
+		// publishing.
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+
+		const qc = new QueryClient();
+		const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
+			wrapper: wrap( qc ),
+		} );
+
+		const file = new File( [ 'a' ], 'a.png', { type: 'image/png' } );
+		await act( async () => {
+			await result.current.addFiles( [ file ] );
+		} );
+		await waitFor( () =>
+			expect( result.current.images.every( ( i ) => i.kind === 'uploaded' ) ).toBe( true )
+		);
+
+		( URL.revokeObjectURL as jest.Mock ).mockClear();
+		act( () => result.current.clearAll() );
+		expect( URL.revokeObjectURL ).toHaveBeenCalled();
+	} );
+
+	it( 'skips _compose_media_upload_error_shown when an upload fails after the entry was removed', async () => {
+		// User opens composer, picks an image, closes the composer (or hits ×)
+		// while the upload is in flight. The transport-level failure
+		// (abort / network drop) should NOT fire an analytics event because
+		// the `connection_id` / `mode` refs have snapped to their defaults
+		// once the composer closed, and the user-perceived action was a
+		// remove, not an upload-failure.
+		let rejectUpload: ( e: unknown ) => void = () => {};
+		jest.spyOn( wpcom.req, 'post' ).mockImplementation(
+			() =>
+				new Promise( ( _resolve, reject ) => {
+					rejectUpload = reject;
+				} )
+		);
+
+		const onTrack = jest.fn();
+		const qc = new QueryClient();
+		const { result } = renderHook(
+			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
+			{ wrapper: wrap( qc ) }
+		);
+
+		const file = new File( [ 'a' ], 'a.png', { type: 'image/png' } );
+		await act( async () => {
+			void result.current.addFiles( [ file ] );
+		} );
+		await waitFor( () => expect( result.current.images[ 0 ]?.kind ).toBe( 'uploading' ) );
+
+		const id = result.current.images[ 0 ].localId;
+		act( () => result.current.removeImage( id ) );
+
+		await act( async () => {
+			rejectUpload( { kind: 'unknown', cause: new Error( 'aborted' ) } );
+			// Flush microtasks so the catch arm runs.
+			await Promise.resolve();
+		} );
+
+		expect( result.current.images ).toHaveLength( 0 );
+		const errorCalls = onTrack.mock.calls.filter(
+			( [ name ] ) => name === 'calypso_reader_atmosphere_compose_media_upload_error_shown'
+		);
+		expect( errorCalls ).toHaveLength( 0 );
+	} );
+
 	it( 'retryImage does not fire _compose_media_removed', async () => {
 		// `retryImage` internally drops the failed entry and re-enters the
 		// upload pipeline with the same source file. The user clicked Retry,

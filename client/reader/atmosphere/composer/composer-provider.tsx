@@ -58,10 +58,23 @@ export type ComposerMode =
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 
+export interface CloseComposerOptions {
+	/**
+	 * When `true`, defers revocation of every attached image's local
+	 * preview blob URL so cache entries that reference them (e.g. the
+	 * standalone-post placeholder embed patched in by the modal's
+	 * `onSuccess`) remain renderable past the timeline's staleTime.
+	 * The publish path passes this when ≥1 image was uploaded; the
+	 * cancel / discard path leaves it `false` (or omits it) so URLs
+	 * are reclaimed immediately.
+	 */
+	keepPreviewUrlsAlive?: boolean;
+}
+
 interface ComposerContextValue extends ImageUploads {
 	mode: ActiveMode | null;
 	openComposer: ( mode: ComposerMode ) => void;
-	closeComposer: () => void;
+	closeComposer: ( options?: CloseComposerOptions ) => void;
 }
 
 const ComposerContext = createContext< ComposerContextValue | null >( null );
@@ -96,7 +109,14 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 		[ connectionId ]
 	);
 
-	const closeComposer = useCallback( () => {
+	// Tracks whether the most recent close should keep preview URLs alive.
+	// Read inside the `mode → null` effect that calls `clearAll`. Stored on
+	// a ref because the effect can't take a parameter, and stuffing the flag
+	// into `mode` itself would couple it to the open-state model.
+	const keepPreviewUrlsAliveRef = useRef( false );
+
+	const closeComposer = useCallback( ( options?: CloseComposerOptions ) => {
+		keepPreviewUrlsAliveRef.current = options?.keepPreviewUrlsAlive ?? false;
 		setMode( null );
 	}, [] );
 
@@ -122,7 +142,12 @@ export function ComposerProvider( { connectionId, children }: Props ) {
 	// `connection_id` / `mode` labels would be garbage anyway.)
 	useEffect( () => {
 		if ( ! mode ) {
-			imageUploads.clearAll();
+			const deferRevocation = keepPreviewUrlsAliveRef.current;
+			// Reset before calling clearAll so a subsequent cancel/discard
+			// close (no flag) doesn't inherit a stale `true` from a prior
+			// successful publish.
+			keepPreviewUrlsAliveRef.current = false;
+			imageUploads.clearAll( { deferRevocation } );
 		}
 		// `imageUploads` is recreated each render — capturing it in deps would
 		// re-run the effect every render. The closure reads the snapshot at

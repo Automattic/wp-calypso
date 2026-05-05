@@ -1,5 +1,5 @@
 import './style.scss';
-import { createPostMutation } from '@automattic/api-queries';
+import { createPostMutation, setAtmospherePostEmbed } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -21,7 +21,12 @@ import { countGraphemes } from './grapheme-count';
 import { MAX_IMAGES } from './media/constants';
 import { ImageGrid } from './media/image-grid';
 import type { ComposerImage } from './media/types';
-import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
+import type {
+	AtmosphereEmbedImages,
+	AtmosphereError,
+	CreatePostParams,
+	CreatePostResult,
+} from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { ReactNode } from 'react';
 
@@ -181,6 +186,20 @@ export function ComposerModal() {
 		const params = buildParamsForMode( mode, text, images );
 		mutation.mutate( params, {
 			onSuccess: ( result ) => {
+				// Patch the just-published feed item with a local-preview-URL
+				// embed so the timeline / author-feed / thread caches show the
+				// user's just-attached images during the brief window before
+				// the next refetch replaces them with real CDN URLs from the
+				// AppView. The factory's `onSuccess` has already swapped the
+				// placeholder for an embed-less realItem; we layer the embed
+				// on top here. The composer-provider defers preview URL
+				// revocation past the 30s timeline staleTime so the local
+				// blob: URLs remain valid until the cache refetches.
+				const localEmbed = buildLocalImagesEmbed( images );
+				if ( localEmbed ) {
+					setAtmospherePostEmbed( queryClient, result.uri, localEmbed );
+				}
+
 				if ( mode.kind === 'reply' ) {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_published', {
@@ -209,10 +228,10 @@ export function ComposerModal() {
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
 					: undefined;
 				dispatch( successNotice( noticeText, options ) );
-				closeComposer();
+				closeComposer( { keepPreviewUrlsAlive: localEmbed !== null } );
 			},
 		} );
-	}, [ mode, mutation, text, images, canSubmit, closeComposer, dispatch, translate ] );
+	}, [ mode, mutation, text, images, canSubmit, closeComposer, dispatch, translate, queryClient ] );
 
 	if ( ! mode ) {
 		return null;
@@ -317,6 +336,36 @@ function placeholderForMode(
 		return t( 'Add a comment…' ) as string;
 	}
 	return t( 'What’s up?' ) as string;
+}
+
+/**
+ * Build an `AtmosphereEmbedImages` from the composer's uploaded images,
+ * using each image's local `previewUrl` as both `thumb` and `fullsize`.
+ * Returns `null` when nothing is uploaded so the caller can skip the
+ * cache patch entirely (no-op rather than emit an empty `images: []`
+ * embed, which the AppView never produces).
+ *
+ * The local URLs are short-lived: revocation is deferred by
+ * `useImageUploads`'s `clearAll` so they outlast the timeline / author
+ * feed staleTime; once the next refetch lands, the AppView's real CDN
+ * URLs replace this embed and the local URLs become unreferenced.
+ */
+function buildLocalImagesEmbed( images: ComposerImage[] ): AtmosphereEmbedImages | null {
+	const uploaded = images.filter(
+		( i ): i is Extract< ComposerImage, { kind: 'uploaded' } > => i.kind === 'uploaded'
+	);
+	if ( uploaded.length === 0 ) {
+		return null;
+	}
+	return {
+		type: 'images',
+		images: uploaded.map( ( i ) => ( {
+			thumb: i.previewUrl,
+			fullsize: i.previewUrl,
+			alt: i.alt,
+			aspect_ratio: i.aspectRatio,
+		} ) ),
+	};
 }
 
 function buildParamsForMode(

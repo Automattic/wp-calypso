@@ -47,6 +47,7 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereCreateFollowResponse,
+	AtmosphereEmbed,
 	AtmosphereError,
 	AtmosphereFeedItem,
 	AtmosphereScopedProfile,
@@ -615,6 +616,27 @@ function patchAtmospherePostCaches(
 		snapshots.push( { key, items: result.items } );
 	}
 	return { snapshots };
+}
+
+/**
+ * Patch the `embed` field of every cached `AtmosphereFeedItem` whose
+ * `uri` matches `postUri`, across all atmosphere queries (timeline,
+ * author-feed, thread, tag-feed). Used by the composer to inject a
+ * local-preview-URL embed onto the just-published placeholder so the
+ * timeline shows the user's just-attached images during the brief
+ * window before the next refetch replaces them with real CDN URLs from
+ * the AppView.
+ *
+ * No rollback is captured: this runs AFTER the mutation succeeds and is
+ * superseded by the next refetch. If no cache entry matches `postUri`
+ * (placeholder evicted, cache cold), the call is a no-op.
+ */
+export function setAtmospherePostEmbed(
+	queryClient: QueryClient,
+	postUri: string,
+	embed: AtmosphereEmbed
+): void {
+	patchAtmospherePostCaches( queryClient, postUri, ( item ) => ( { ...item, embed } ) );
 }
 
 function restoreFeedItems(
