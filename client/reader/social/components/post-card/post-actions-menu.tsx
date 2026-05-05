@@ -95,7 +95,7 @@ export function PostActionsMenu( { post, connectionId }: PostActionsMenuProps ) 
 		},
 	} );
 
-	const isOwner = analytics?.ownerDid && analytics.ownerDid === post.author.did;
+	const isOwner = Boolean( analytics?.ownerDid && analytics.ownerDid === post.author.did );
 	if ( ! isOwner ) {
 		return null;
 	}
@@ -113,7 +113,6 @@ export function PostActionsMenu( { post, connectionId }: PostActionsMenuProps ) 
 		mutation.mutate( {
 			rkey,
 			postUri: post.uri,
-			authorDid: post.author.did,
 			replyParentUri: post.reply_parent?.uri,
 		} );
 	};

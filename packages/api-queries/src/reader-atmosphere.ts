@@ -944,7 +944,6 @@ function restoreRemovalContext( queryClient: QueryClient, ctx: RemovalContext | 
 interface DeletePostMutationVars {
 	rkey: string;
 	postUri: string;
-	authorDid: string;
 	replyParentUri?: string;
 }
 

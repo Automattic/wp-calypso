@@ -2861,7 +2861,7 @@ describe( 'reader-atmosphere hooks', () => {
 			} );
 
 			act( () => {
-				result.current.mutate( { rkey: RKEY, postUri: POST_URI, authorDid: AUTHOR_DID } );
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
 			} );
 
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
@@ -2899,7 +2899,7 @@ describe( 'reader-atmosphere hooks', () => {
 			} );
 
 			act( () => {
-				result.current.mutate( { rkey: RKEY, postUri: POST_URI, authorDid: AUTHOR_DID } );
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
 			} );
 
 			await waitFor( () => expect( result.current.isError ).toBe( true ) );
@@ -2931,7 +2931,7 @@ describe( 'reader-atmosphere hooks', () => {
 			} );
 
 			act( () => {
-				result.current.mutate( { rkey: RKEY, postUri: POST_URI, authorDid: AUTHOR_DID } );
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
 			} );
 
 			await waitFor( () => expect( result.current.isError ).toBe( true ) );
@@ -2970,7 +2970,6 @@ describe( 'reader-atmosphere hooks', () => {
 				await result.current.mutateAsync( {
 					rkey: RKEY,
 					postUri: POST_URI,
-					authorDid: AUTHOR_DID,
 				} );
 			} );
 
@@ -3001,7 +3000,7 @@ describe( 'reader-atmosphere hooks', () => {
 			);
 
 			act( () => {
-				result.current.mutate( { rkey: RKEY, postUri: POST_URI, authorDid: AUTHOR_DID } );
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
 			} );
 
 			// Simulate the post-card unmounting as the optimistic removal lands.
@@ -3027,7 +3026,7 @@ describe( 'reader-atmosphere hooks', () => {
 			);
 
 			act( () => {
-				result.current.mutate( { rkey: RKEY, postUri: POST_URI, authorDid: AUTHOR_DID } );
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
 			} );
 
 			unmount();
@@ -3064,7 +3063,6 @@ describe( 'reader-atmosphere hooks', () => {
 				result.current.mutate( {
 					rkey: RKEY,
 					postUri: POST_URI,
-					authorDid: AUTHOR_DID,
 					replyParentUri: PARENT_URI,
 				} );
 			} );
@@ -3104,7 +3102,6 @@ describe( 'reader-atmosphere hooks', () => {
 				result.current.mutate( {
 					rkey: RKEY,
 					postUri: POST_URI,
-					authorDid: AUTHOR_DID,
 					replyParentUri: PARENT_URI,
 				} );
 			} );
@@ -3119,6 +3116,109 @@ describe( 'reader-atmosphere hooks', () => {
 			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( PARENT_URI );
 			expect( afterTimeline.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 5 );
 			expect( afterTimeline.pages[ 0 ].items[ 1 ].uri ).toBe( POST_URI );
+		} );
+
+		it( 'decrements parent counts on a different page than the deleted reply', async () => {
+			// Cross-page scenario: parent lives on page A, deleted reply lives on
+			// page B. The removal-snapshot path only touches page B (it's the only
+			// page that contains the deleted reply); page A relies on the
+			// `parentCounts` patch to decrement the parent's counts.replies.
+			const PARENT_URI = 'at://did:plc:other/app.bsky.feed.post/3kparent';
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 204 );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+			const parentPost = makeFeedItem( {
+				uri: PARENT_URI,
+				cid: 'cid-parent',
+				counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+			} );
+			const targetReply = makeTargetPost();
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [
+					{ items: [ parentPost ], cursor: 'NEXT' } as unknown as AtmosphereTimelinePage,
+					{ items: [ targetReply ], cursor: null } as unknown as AtmosphereTimelinePage,
+				],
+				pageParams: [ undefined, 'NEXT' ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( connectionId ), data );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( {
+					rkey: RKEY,
+					postUri: POST_URI,
+					replyParentUri: PARENT_URI,
+				} );
+			} );
+
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			// Page A: parent count decremented from 5 → 4
+			expect( afterTimeline.pages[ 0 ].items ).toHaveLength( 1 );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( PARENT_URI );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 4 );
+			// Page B: reply removed
+			expect( afterTimeline.pages[ 1 ].items ).toHaveLength( 0 );
+		} );
+
+		it( 'restores cross-page parent counts on error', async () => {
+			// Same cross-page shape as above, but the DELETE fails — the parent
+			// count on page A must roll back to its pre-mutation value via the
+			// `parentCounts` snapshot, since `prev` only captured page B.
+			const PARENT_URI = 'at://did:plc:other/app.bsky.feed.post/3kparent';
+			nock( BASE )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ RKEY }` )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+			const parentPost = makeFeedItem( {
+				uri: PARENT_URI,
+				cid: 'cid-parent',
+				counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+			} );
+			const targetReply = makeTargetPost();
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [
+					{ items: [ parentPost ], cursor: 'NEXT' } as unknown as AtmosphereTimelinePage,
+					{ items: [ targetReply ], cursor: null } as unknown as AtmosphereTimelinePage,
+				],
+				pageParams: [ undefined, 'NEXT' ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( connectionId ), data );
+
+			const { result } = renderHook( () => useDeletePostMutation( connectionId ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			act( () => {
+				result.current.mutate( {
+					rkey: RKEY,
+					postUri: POST_URI,
+					replyParentUri: PARENT_URI,
+				} );
+			} );
+
+			await waitFor( () => expect( result.current.isError ).toBe( true ) );
+
+			const afterTimeline = client.getQueryData(
+				readerAtmosphereKeys.timeline( connectionId )
+			) as InfiniteData< AtmosphereTimelinePage >;
+			// Page A: parent count restored to 5
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].uri ).toBe( PARENT_URI );
+			expect( afterTimeline.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 5 );
+			// Page B: reply restored
+			expect( afterTimeline.pages[ 1 ].items ).toHaveLength( 1 );
+			expect( afterTimeline.pages[ 1 ].items[ 0 ].uri ).toBe( POST_URI );
 		} );
 
 		it( 'tombstones a deleted post as a nested reply in the thread tree', async () => {
@@ -3167,7 +3267,7 @@ describe( 'reader-atmosphere hooks', () => {
 			} );
 
 			act( () => {
-				result.current.mutate( { rkey: RKEY, postUri: POST_URI, authorDid: AUTHOR_DID } );
+				result.current.mutate( { rkey: RKEY, postUri: POST_URI } );
 			} );
 
 			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );

@@ -74,8 +74,12 @@ export function SocialPostCard( {
 				reply_parent: post.reply_parent ? { uri: post.reply_parent.uri } : null,
 		  }
 		: null;
+	// `postActionsPost` is only set when `showPostActions` is true, which in turn
+	// requires `connectionId !== undefined`. The `connectionId !== undefined`
+	// re-check is what lets TypeScript narrow `connectionId` to `number` for the
+	// JSX prop — TS can't infer that from `postActionsPost !== null` alone.
 	const headerActions =
-		showPostActions && postActionsPost && connectionId !== undefined ? (
+		postActionsPost && connectionId !== undefined ? (
 			<PostActionsMenu post={ postActionsPost } connectionId={ connectionId } />
 		) : null;
 

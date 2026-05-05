@@ -48,4 +48,26 @@ describe( '<QuoteButton>', () => {
 		renderButton( {} );
 		expect( screen.queryByRole( 'button', { name: /quote/i } ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'click does not bubble to a parent listener', async () => {
+		const onParentClick = jest.fn();
+		const user = userEvent.setup();
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick: jest.fn(),
+					onQuoteClick: jest.fn(),
+				} }
+			>
+				<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>
+					<QuoteButton post={ POST as SocialPost } />
+				</div>
+			</SocialAnalyticsProvider>
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /quote, 4 quotes/i } ) );
+		expect( onParentClick ).not.toHaveBeenCalled();
+	} );
 } );
