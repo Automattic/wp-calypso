@@ -1,10 +1,10 @@
 import { Gridicon, Popover } from '@automattic/components';
+import Search from '@automattic/search';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import ReactDom from 'react-dom';
-import AsyncLoad from 'calypso/components/async-load';
 import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import UserItem from 'calypso/components/user';
@@ -15,9 +15,6 @@ import 'calypso/components/popover-menu/style.scss';
  * Module variables
  */
 const debug = debugModule( 'calypso:author-selector' );
-
-const loadSearch = () =>
-	import( /* webpackChunkName: "async-load-automattic-search" */ '@automattic/search' );
 
 class AuthorSwitcherShell extends Component {
 	static propTypes = {
@@ -66,8 +63,7 @@ class AuthorSwitcherShell extends Component {
 					ignoreContext={ this.props.ignoreContext }
 				>
 					{ ( this.props.search || users.length > 10 ) && (
-						<AsyncLoad
-							require={ loadSearch }
+						<Search
 							compact
 							onSearch={ this.props.updateSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
