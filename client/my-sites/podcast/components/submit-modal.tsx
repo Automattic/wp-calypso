@@ -1,28 +1,29 @@
 import {
 	Button,
 	ExternalLink,
+	Icon,
 	Modal,
+	Notice,
 	TextControl,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { external, link } from '@wordpress/icons';
+import { check, external, link } from '@wordpress/icons';
+import { prependHTTPS } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import {
-	hasCelebratedFirstSave,
-	markCelebratedFirstSave,
-	usePodcatcherUrl,
-} from '../hooks/use-podcatcher-url';
+import { useHasAnyStoredPodcatcherUrl, usePodcatcherUrl } from '../hooks/use-podcatcher-url';
 
 export type Podcatcher = {
 	id: string;
 	name: string;
 	submitUrl: string;
 	learnMoreUrl?: string;
+	showHosts: string[];
 };
 
 type Props = {
@@ -34,12 +35,48 @@ type Props = {
 
 const COPIED_FEEDBACK_MS = 2000;
 
+// Mirrors SHOW_URL_MAX_LENGTH in the wpcom backend.
+const SHOW_URL_MAX_LENGTH = 2048;
+
+// prependHTTPS adds the scheme for bare hosts but leaves an existing http://
+// alone, so upgrade it ourselves — the backend rejects non-https.
+const normalizeShowUrl = ( raw: string ): string =>
+	prependHTTPS( raw.trim() ).replace( /^http:\/\//i, 'https://' );
+
+// Mirrors the per-podcatcher allowlist + esc_url_raw + wp_http_validate_url
+// gauntlet the backend runs each save through. Empty input is rejected here so
+// the modal never silently deletes a stored entry by clearing the field.
+const isValidShowUrl = ( url: string, allowedHosts: string[] ): boolean => {
+	if ( url === '' ) {
+		return false;
+	}
+	if ( url.length > SHOW_URL_MAX_LENGTH ) {
+		return false;
+	}
+	let parsed: URL;
+	try {
+		parsed = new URL( url );
+	} catch {
+		return false;
+	}
+	if ( parsed.protocol !== 'https:' ) {
+		return false;
+	}
+	const host = parsed.hostname.toLowerCase().replace( /^www\./, '' );
+	return allowedHosts.includes( host );
+};
+
 const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const [ storedUrl, setStoredUrl ] = usePodcatcherUrl( siteId, podcatcher.id );
+	const hadAnyStoredUrl = useHasAnyStoredPodcatcherUrl( siteId );
 	const [ draftUrl, setDraftUrl ] = useState( storedUrl );
 	const [ hasCopied, setHasCopied ] = useState( false );
+	const [ isSaving, setIsSaving ] = useState( false );
+	const [ isEditing, setIsEditing ] = useState( false );
+	const [ saveError, setSaveError ] = useState< string | null >( null );
 	const copyTimeoutRef = useRef< ReturnType< typeof setTimeout > | null >( null );
 
 	useEffect(
@@ -51,41 +88,66 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 		[]
 	);
 
-	const handleCopy = () => {
+	const handleCopy = async () => {
 		if ( ! feedUrl || ! navigator.clipboard?.writeText ) {
 			return;
 		}
-		navigator.clipboard
-			.writeText( feedUrl )
-			.then( () => {
-				setHasCopied( true );
-				if ( copyTimeoutRef.current ) {
-					clearTimeout( copyTimeoutRef.current );
-				}
-				copyTimeoutRef.current = setTimeout( () => setHasCopied( false ), COPIED_FEEDBACK_MS );
-			} )
-			.catch( ( error ) => {
-				// eslint-disable-next-line no-console
-				console.warn( 'Podcast: failed to copy RSS feed URL to clipboard', error );
-			} );
-	};
-
-	const handleSave = ( event: FormEvent< HTMLFormElement > ) => {
-		event.preventDefault();
-		const trimmed = draftUrl.trim();
-		setStoredUrl( trimmed );
-		if ( trimmed && ! hasCelebratedFirstSave( siteId ) ) {
-			markCelebratedFirstSave( siteId );
-			onFirstSave?.();
+		try {
+			await navigator.clipboard.writeText( feedUrl );
+			setHasCopied( true );
+			if ( copyTimeoutRef.current ) {
+				clearTimeout( copyTimeoutRef.current );
+			}
+			copyTimeoutRef.current = setTimeout( () => setHasCopied( false ), COPIED_FEEDBACK_MS );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.warn( 'Podcast: failed to copy RSS feed URL to clipboard', error );
 		}
-		onClose();
 	};
-
-	const isUnchanged = draftUrl.trim() === storedUrl.trim();
 
 	const serviceArgs = {
 		args: { service: podcatcher.name },
 		comment: '%(service)s is a podcast directory name, e.g. "Spotify" or "Apple Podcasts".',
+	};
+
+	const invalidUrlError = translate( 'Enter a valid %(service)s URL.', serviceArgs ) as string;
+	const saveFailedError = translate(
+		'We couldn’t save your %(service)s URL. Please try again.',
+		serviceArgs
+	) as string;
+
+	const normalizedDraft = normalizeShowUrl( draftUrl );
+	const isUnchanged = normalizedDraft === storedUrl;
+
+	const handleSave = async ( event: FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
+		if ( ! isValidShowUrl( normalizedDraft, podcatcher.showHosts ) ) {
+			setSaveError( invalidUrlError );
+			return;
+		}
+		// Capture before the dispatch — hadAnyStoredUrl flips to true once the
+		// save lands, so without snapshotting we'd never qualify as a first save.
+		const isFirstEverSave = ! hadAnyStoredUrl;
+		setIsSaving( true );
+		setSaveError( null );
+		try {
+			await setStoredUrl( normalizedDraft );
+			dispatch(
+				recordTracksEvent( 'calypso_podcast_show_url_saved', {
+					directory: podcatcher.id,
+					is_first_save: isFirstEverSave,
+					is_replace: !! storedUrl,
+				} )
+			);
+			if ( isFirstEverSave ) {
+				onFirstSave?.();
+			}
+			onClose();
+		} catch {
+			setSaveError( saveFailedError );
+		} finally {
+			setIsSaving( false );
+		}
 	};
 
 	const step2Note =
@@ -182,31 +244,78 @@ const SubmitModal = ( { feedUrl, podcatcher, onClose, onFirstSave }: Props ) => 
 							serviceArgs
 						) }
 					</Text>
-					<form className="podcast__submit-step-form" onSubmit={ handleSave }>
+					{ storedUrl && ! isEditing ? (
 						<HStack spacing={ 2 } alignment="center" className="podcast__submit-step-row">
-							<div className="podcast__submit-step-field">
-								<TextControl
-									label={ translate( '%(service)s URL', serviceArgs ) as string }
-									hideLabelFromVision
-									value={ draftUrl }
-									onChange={ setDraftUrl }
-									placeholder="https://"
-									type="url"
-									__next40pxDefaultSize
-									__nextHasNoMarginBottom
-								/>
-							</div>
-							<Button
-								variant="primary"
-								__next40pxDefaultSize
-								type="submit"
-								disabled={ isUnchanged }
-								accessibleWhenDisabled
+							<HStack
+								spacing={ 2 }
+								alignment="center"
+								expanded={ false }
+								justify="flex-start"
+								className="podcast__submit-step-saved"
 							>
-								{ translate( 'Save' ) }
+								<Icon
+									icon={ check }
+									className="podcast__submit-step-saved-icon"
+									aria-hidden="true"
+								/>
+								<Text className="podcast__submit-step-saved-url" title={ storedUrl }>
+									{ storedUrl }
+								</Text>
+							</HStack>
+							<Button
+								variant="secondary"
+								__next40pxDefaultSize
+								onClick={ () => {
+									setDraftUrl( storedUrl );
+									setSaveError( null );
+									setIsEditing( true );
+								} }
+							>
+								{ translate( 'Replace' ) }
 							</Button>
 						</HStack>
-					</form>
+					) : (
+						<form className="podcast__submit-step-form" onSubmit={ handleSave }>
+							<HStack spacing={ 2 } alignment="center" className="podcast__submit-step-row">
+								<div className="podcast__submit-step-field">
+									<TextControl
+										label={ translate( '%(service)s URL', serviceArgs ) as string }
+										hideLabelFromVision
+										value={ draftUrl }
+										onChange={ ( value ) => {
+											setDraftUrl( value );
+											setSaveError( null );
+										} }
+										placeholder="https://"
+										type="text"
+										inputMode="url"
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+									/>
+								</div>
+								<Button
+									variant="primary"
+									__next40pxDefaultSize
+									type="submit"
+									disabled={ ! normalizedDraft || isUnchanged || isSaving }
+									isBusy={ isSaving }
+									accessibleWhenDisabled
+								>
+									{ translate( 'Save' ) }
+								</Button>
+							</HStack>
+							{ saveError && (
+								<Notice
+									status="error"
+									isDismissible
+									onRemove={ () => setSaveError( null ) }
+									className="podcast__submit-step-notice"
+								>
+									{ saveError }
+								</Notice>
+							) }
+						</form>
+					) }
 				</VStack>
 			</VStack>
 		</Modal>
