@@ -237,7 +237,7 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( built ).toContain( 'inner prompt body' );
 	} );
 
-	it( 'asks the loader for 5 dense two-axis suggestions (15-28 words) instead of 3 single-axis ones', () => {
+	it( 'asks the loader for 3 dense two-axis suggestions (15-28 words)', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
 				registerSuggestions: jest.fn(),
@@ -247,22 +247,17 @@ describe( 'useVideoClipSuggestions', () => {
 		);
 
 		const callArgs = mockUseAsyncSuggestionsLoader.mock.calls[ 0 ][ 0 ];
-		// New count + length envelope.
-		expect( callArgs.prompt ).toMatch( /5\s+dense/i );
+		expect( callArgs.prompt ).toMatch( /3\s+dense/i );
 		expect( callArgs.prompt ).toContain( '15-28 words' );
 		expect( callArgs.prompt ).not.toContain( '8-14 words' );
-		// Two-axis instruction.
 		expect( callArgs.prompt ).toMatch( /COMBINES TWO/i );
-		// Safety rails preserved.
 		expect( callArgs.prompt ).toMatch( /free of people/i );
 		expect( callArgs.prompt ).toContain( 'signage' );
 
-		// System prompt should reflect the new shape too.
 		const built = callArgs.buildSystemPrompt( 'inner prompt body', 'en' );
-		expect( built ).toMatch( /exactly\s+5\s+suggestions/i );
+		expect( built ).toMatch( /exactly\s+3\s+suggestions/i );
 		expect( built ).toContain( '15-28 word' );
 		expect( built ).not.toContain( '8-14 word' );
-		// Chip label budget unchanged.
 		expect( built ).toContain( '2-4 word' );
 	} );
 

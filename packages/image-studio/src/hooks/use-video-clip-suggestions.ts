@@ -49,7 +49,7 @@ export function postBodyToPlainText( raw: string ): string {
  */
 export function buildVideoClipSuggestionsPrompt( postBody: string ): string {
 	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
-	return `Below is the body of a WordPress post. Propose 5 dense directional prompts for an 8-second 9:16 vertical video clip that would complement the post.
+	return `Below is the body of a WordPress post. Propose 3 dense directional prompts for an 8-second 9:16 vertical video clip that would complement the post.
 
 Each prompt MUST be:
 - Grounded in the post's subject matter (a place, object, environment, mood, or texture mentioned in the post — not the post's literal headline).
@@ -71,7 +71,7 @@ function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ):
 
 ${ suggestionPrompt }
 
-Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). Return exactly 5 suggestions:
+Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). Return exactly 3 suggestions:
 {"suggestions":[{"label":"2-4 word chip","prompt":"15-28 word directional sentence combining two axes"}]}
 
 The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the dense one — 15-28 words, two axes combined.
