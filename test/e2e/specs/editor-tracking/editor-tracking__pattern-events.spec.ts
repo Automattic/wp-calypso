@@ -21,15 +21,17 @@ test.describe.fixme(
 		} ) => {
 			const accountName = getTestAccountByFeature( features );
 			let editorTracksEventManager: EditorTracksEventManager;
+			let siteSlug: string;
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
 				editorTracksEventManager = new EditorTracksEventManager( page );
 			} );
 
 			await test.step( 'When I start a new page', async () => {
-				await pageEditor.visit( 'page' );
+				await pageEditor.visit( 'page', { siteSlug } );
 				await pageEditor.waitUntilLoaded();
 			} );
 

@@ -2,8 +2,6 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, quote } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
-import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
-import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import { useSocialAnalytics } from './analytics-context';
 import { LikeButton } from './like-button';
 import { QuoteButton } from './quote-button';
@@ -94,41 +92,8 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 			className="social-post-card-counts"
 		>
 			{ renderRepliesNode() }
-			{ connectionId && post.cid ? (
-				<RepostButton
-					post={ {
-						uri: post.uri,
-						cid: post.cid,
-						counts: post.counts,
-						viewer: post.viewer,
-					} }
-					connectionId={ connectionId }
-					onQuote={ analytics?.onQuoteClick ? () => analytics.onQuoteClick?.( post ) : undefined }
-				/>
-			) : (
-				<span>
-					<ReaderRepostIcon iconSize={ ICON_SIZE } />
-					<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
-					{ counts.reposts }
-				</span>
-			) }
-			{ connectionId && post.cid ? (
-				<LikeButton
-					post={ {
-						uri: post.uri,
-						cid: post.cid,
-						counts: post.counts,
-						viewer: post.viewer,
-					} }
-					connectionId={ connectionId }
-				/>
-			) : (
-				<span>
-					<ReaderLikeIcon iconSize={ ICON_SIZE } liked={ false } />
-					<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
-					{ counts.likes }
-				</span>
-			) }
+			<RepostButton post={ post } />
+			<LikeButton post={ post } />
 			{ connectionId && post.cid && analytics?.onQuoteClick ? (
 				<QuoteButton post={ post } />
 			) : (

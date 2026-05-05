@@ -30,14 +30,16 @@ test.describe(
 			pageEditor,
 		} ) => {
 			let postURL: URL;
+			let siteSlug: string;
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
 			} );
 
 			await test.step( 'When I go to the new post page', async () => {
-				await pageEditor.visit( 'post' );
+				await pageEditor.visit( 'post', { siteSlug } );
 			} );
 
 			await test.step( 'When I enter page title', async () => {

@@ -10,6 +10,8 @@ import {
 	SocialPostCard,
 	mapAtmosphereFeedItemToSocialPost,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useOptionalComposer } from './composer';
 import { TimelineComposePill } from './composer/triggers/timeline-compose-pill';
@@ -20,6 +22,8 @@ import {
 	getThreadUrl as buildThreadUrl,
 	type ProfileRefInput,
 } from './route';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
+import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
@@ -193,34 +197,48 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		]
 	);
 
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
+	const useRepostAction = useMemo(
+		() => makeUseAtmosphereRepostAction( connection.id ),
+		[ connection.id ]
+	);
+
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			{ composer && (
-				<TimelineComposePill
-					connection={ connection }
-					avatar={ connectionDetails?.avatar }
-					entryPoint="timeline_inline"
-				/>
-			) }
-			<SocialFeedList< SocialPost >
-				items={ items }
-				isPending={ isPending }
-				isError={ isError }
-				error={ projectAtmosphereError( error ) }
-				hasNextPage={ Boolean( hasNextPage ) }
-				isFetchingNextPage={ isFetchingNextPage }
-				fetchNextPage={ fetchNextPage }
-				refetch={ handleRetry }
-				renderItem={ renderItem }
-				itemKey={ itemKey }
-				emptyTitle={ translate( "You're all caught up." ) }
-				emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
-				emptyActionLabel={ translate( 'Browse Bluesky' ) }
-				emptyActionURL="https://bsky.app"
-				protocolLabel="Bluesky"
-				protocolHomeURL="/reader/atmosphere"
-				protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
-			/>
+			<LikeProvider value={ useLikeAction }>
+				<RepostProvider value={ useRepostAction }>
+					{ composer && (
+						<TimelineComposePill
+							connection={ connection }
+							avatar={ connectionDetails?.avatar }
+							entryPoint="timeline_inline"
+						/>
+					) }
+					<SocialFeedList< SocialPost >
+						items={ items }
+						isPending={ isPending }
+						isError={ isError }
+						error={ projectAtmosphereError( error ) }
+						hasNextPage={ Boolean( hasNextPage ) }
+						isFetchingNextPage={ isFetchingNextPage }
+						fetchNextPage={ fetchNextPage }
+						refetch={ handleRetry }
+						renderItem={ renderItem }
+						itemKey={ itemKey }
+						emptyTitle={ translate( "You're all caught up." ) }
+						emptyLine={ translate( 'Follow some accounts on Bluesky to see posts here.' ) }
+						emptyActionLabel={ translate( 'Browse Bluesky' ) }
+						emptyActionURL="https://bsky.app"
+						protocolLabel="Bluesky"
+						protocolHomeURL="/reader/atmosphere"
+						protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+					/>
+				</RepostProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

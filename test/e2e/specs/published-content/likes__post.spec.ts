@@ -41,11 +41,13 @@ test.describe(
 		} );
 
 		test( 'As a user, I can like and unlike a post while authenticated', async ( { page } ) => {
+			let siteID: number;
+
 			await test.step( 'Authenticate and setup the test', async () => {
 				await postingUser.authenticate( page );
 				restAPIClient = new RestAPIClient( postingUser.credentials );
 				otherUserRestAPIClient = new RestAPIClient( otherUser.credentials );
-				const siteID = postingUser.credentials.testSites?.primary.id as number;
+				siteID = postingUser.credentials.testSites?.primary.id as number;
 
 				newPost = await restAPIClient.createPost( siteID, {
 					title: DataHelper.getRandomPhrase(),
@@ -68,6 +70,9 @@ test.describe(
 
 			await test.step( 'Like post', async () => {
 				await ElementHelper.reloadAndRetry( page, async () => {
+					// Reset like state via REST API before each attempt.
+					await restAPIClient.postLikeAction( 'unlike', siteID, newPost.ID );
+					await page.reload();
 					publishedPostPage = new PublishedPostPage( page );
 					await publishedPostPage.likePost();
 				} );

@@ -3,9 +3,13 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
+import { makeUseAtmosphereRepostAction } from 'calypso/reader/atmosphere/use-atmosphere-repost-action';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
+import { LikeProvider } from '../like-context';
 import { PostCardCounts } from '../post-card-counts';
+import { RepostProvider } from '../repost-context';
 import type { SocialPost } from '../../../types';
 
 const post: SocialPost = {
@@ -91,8 +95,13 @@ describe( 'PostCardCounts', () => {
 		expect( links ).toHaveLength( 1 ); // only replies
 	} );
 
-	it( 'renders likes as a toggle button when connectionId is supplied', () => {
-		renderWithProvider( wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) );
+	it( 'renders likes as a toggle button when connectionId and LikeProvider are supplied', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
+		renderWithProvider(
+			<LikeProvider value={ useAtmosphereLikeAction }>
+				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+			</LikeProvider>
+		);
 		const button = screen.getByRole( 'button', { name: /like/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 		expect( button ).toHaveTextContent( '9' );
@@ -125,8 +134,12 @@ describe( 'PostCardCounts', () => {
 		expect( link ).toHaveAttribute( 'href', '/threads/x' );
 	} );
 
-	it( 'renders reposts as a menu trigger when connectionId and cid are supplied', () => {
-		renderWithProvider( wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) );
+	it( 'renders reposts as a menu trigger when connectionId is supplied and a RepostProvider is mounted', () => {
+		renderWithProvider(
+			<RepostProvider value={ makeUseAtmosphereRepostAction( 7 ) }>
+				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+			</RepostProvider>
+		);
 		const button = screen.getByRole( 'button', { name: /repost, 2 reposts/i } );
 		expect( button ).toHaveAttribute( 'aria-haspopup', 'menu' );
 		expect( button ).toHaveTextContent( '2' );
@@ -137,7 +150,7 @@ describe( 'PostCardCounts', () => {
 		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
 	} );
 
-	it( 'renders reposts as a static span when post.cid is missing', () => {
+	it( 'renders reposts as a static span when no RepostProvider is mounted', () => {
 		const cidlessPost = { ...post, cid: '' };
 		renderWithProvider( wrap( <PostCardCounts post={ cidlessPost } connectionId={ 7 } /> ) );
 		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();

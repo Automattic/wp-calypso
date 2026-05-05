@@ -31,19 +31,21 @@ test.describe(
 			let publishedUrl: URL;
 			let pageTemplateToSelect: string;
 			let pageTemplateFirstTextContent: string;
+			let siteSlug: string;
 
 			await test.step( 'Given I am authenticated', async () => {
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
 			} );
 
 			await test.step( 'When I visit the Pages page', async () => {
 				pagesPage = new PagesPage( page );
-				await pagesPage.visit();
+				await pagesPage.visit( { siteSlug } );
 			} );
 
 			await test.step( 'When I start a new page', async () => {
-				await pagesPage!.addNewPage();
+				await pagesPage!.addNewPage( { siteSlug } );
 			} );
 
 			await test.step( 'When I select a page template', async () => {
