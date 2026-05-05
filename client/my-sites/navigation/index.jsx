@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
+import ManageSelectedSiteSidebar from 'calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
@@ -12,10 +13,6 @@ import { getSidebarType, SidebarType } from 'calypso/state/global-sidebar/select
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const loadManageSelectedSite = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-jetpack-cloud-sections-sidebar-navigation-manage-selected-site" */ 'calypso/jetpack-cloud/sections/sidebar-navigation/manage-selected-site'
-	);
 const loadSidebar = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-sidebar" */ 'calypso/my-sites/sidebar'
@@ -42,7 +39,7 @@ class MySitesNavigation extends Component {
 		let asyncSidebar = null;
 
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
-			asyncSidebar = <AsyncLoad require={ loadManageSelectedSite } { ...asyncProps } />;
+			asyncSidebar = <ManageSelectedSiteSidebar path={ this.props.path } />;
 		} else if ( this.props.isGlobalSidebarVisible ) {
 			return this.renderGlobalSidebar();
 		} else {
