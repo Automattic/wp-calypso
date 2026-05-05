@@ -44,6 +44,13 @@ describe( 'getToolErrorCategory', () => {
 		expect( getToolErrorCategory( 'auth_failed' )?.errorType ).toBe( 'not_configured' );
 	} );
 
+	it( 'maps video rate-limit hits to a warning', () => {
+		const cat = getToolErrorCategory( 'video_rate_limit_exceeded' );
+		expect( cat?.severity ).toBe( 'warning' );
+		expect( cat?.errorType ).toBe( 'rate_limited' );
+		expect( cat?.userMessage ).toMatch( /daily limit/i );
+	} );
+
 	it( 'maps timeout and generic generation failures', () => {
 		expect( getToolErrorCategory( 'polling_timeout' )?.errorType ).toBe( 'timeout' );
 		expect( getToolErrorCategory( 'operation_error' )?.errorType ).toBe( 'generation_failed' );

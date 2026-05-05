@@ -155,6 +155,7 @@ export type TrackedErrorType =
 	| 'unsupported_capability'
 	| 'not_configured'
 	| 'timeout'
+	| 'rate_limited'
 	| 'other';
 
 interface TrackImageStudioErrorOptions {

@@ -56,6 +56,16 @@ export function getToolErrorCategory( code: string ): ToolErrorCategory | null {
 				errorType: 'unsupported_capability',
 			};
 
+		case 'video_rate_limit_exceeded':
+			return {
+				userMessage: __(
+					'You’ve hit the daily limit for video generation on this site. Please try again tomorrow.',
+					__i18n_text_domain__
+				),
+				severity: 'warning',
+				errorType: 'rate_limited',
+			};
+
 		case 'video_utils_not_implemented':
 		case 'auth_failed':
 			return {
