@@ -73,6 +73,13 @@ const SITE_SPEED_URL = localizeUrl( wpcomLink( '/support/site-speed/' ) );
 const SITE_MIGRATION_URL = localizeUrl( wpcomLink( '/support/site-migration/' ) );
 const DOMAIN_GUIDE_URL = localizeUrl( wpcomLink( '/support/domains/' ) );
 
+const PERSONAL_PLAN_SLUGS = new Set( [
+	'personal-bundle',
+	'personal-bundle-monthly',
+	'personal-bundle-2y',
+	'personal-bundle-3y',
+] );
+
 const PRICE_MOTIVATED_REASONS = new Set( [
 	'tooExpensive',
 	'lackOfCustomization',
@@ -250,7 +257,7 @@ export default function SolutionsCardsUpsellStep( {
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase );
 
 	const hideChangePlan =
-		purchase.product_slug.includes( 'personal-bundle' ) &&
+		PERSONAL_PLAN_SLUGS.has( purchase.product_slug ) &&
 		PRICE_MOTIVATED_REASONS.has( cancellationReason );
 
 	const filteredSolutions = solutions?.filter( ( card ) => {

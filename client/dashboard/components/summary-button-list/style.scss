@@ -7,9 +7,11 @@
 
 	.dashboard-section-header__heading-row > :not(.dashboard-section-header__decoration) {
 		flex: 1;
-		flex-wrap: nowrap !important;
+		flex-wrap: nowrap;
 	}
 
+	// Overrides inline style={{ flex: '1 1 auto' }} set by SectionHeader on ButtonStack.
+	// !important is required because inline styles can only be overridden this way.
 	.dashboard-section-header__actions {
 		flex: 0 0 auto !important;
 	}

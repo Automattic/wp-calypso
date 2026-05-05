@@ -824,7 +824,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const downgradePlan = getPlan( monthlyProductSlug );
 
 		if ( ! downgradePlan ) {
-			this.props.errorNotice( this.props.translate( 'Cannot find a monthly plan to switch to.' ) );
+			this.props.errorNotice( this.props.translate( 'Failed to switch to monthly billing.' ) );
 			return;
 		}
 
