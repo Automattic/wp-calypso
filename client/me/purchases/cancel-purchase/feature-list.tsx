@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import moment from 'moment';
 import {
@@ -9,6 +8,7 @@ import {
 	getSingleItemRemoveCopy,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import { getOverrideCancellationFeatures } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-override-features';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases } from '@automattic/data-stores';
@@ -54,10 +54,7 @@ const CancelPurchaseFeatureList = ( {
 	// When the split-cancel-remove flag is on, use client-side feature overrides
 	// instead of the server-provided list. Falls back to API features when the
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
-	const overrideFeatures = isSplitEnabled
-		? getOverrideCancellationFeatures( adapted )
-		: null;
-		: null;
+	const overrideFeatures = isSplitEnabled ? getOverrideCancellationFeatures( adapted ) : null;
 
 	const items = getLossItems( overrideFeatures, cancellationFeatures, adapted );
 
