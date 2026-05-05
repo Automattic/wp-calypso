@@ -142,4 +142,32 @@ describe( 'PostCardCounts', () => {
 		renderWithProvider( wrap( <PostCardCounts post={ cidlessPost } connectionId={ 7 } /> ) );
 		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
 	} );
+
+	it( 'renders QuoteButton when analytics.onQuoteClick is bound and post has cid', () => {
+		const onQuoteClick = jest.fn();
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick: jest.fn(),
+					onQuoteClick,
+				} }
+			>
+				<PostCardCounts post={ post } connectionId={ 42 } />
+			</SocialAnalyticsProvider>
+		);
+		expect( screen.getByRole( 'button', { name: /quote, .* quote/i } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to static quotes count when onQuoteClick is not bound', () => {
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+			>
+				<PostCardCounts post={ post } connectionId={ 42 } />
+			</SocialAnalyticsProvider>
+		);
+		expect( screen.queryByRole( 'button', { name: /quote/i } ) ).not.toBeInTheDocument();
+	} );
 } );

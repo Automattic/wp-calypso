@@ -84,6 +84,7 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
@@ -221,6 +222,7 @@ export interface ManagePurchaseProps {
 }
 
 export interface ManagePurchaseConnectedProps {
+	isSplitCancelRemoveEnabled: boolean;
 	hasCustomPrimaryDomain?: boolean | null;
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
@@ -774,7 +776,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.isAutoRenewEnabled;
 
@@ -1025,7 +1027,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 		const { id } = purchase;
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
@@ -1662,7 +1664,7 @@ class ManagePurchase extends Component<
 						renewableSitePurchases={ renewableSitePurchases }
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
-						isProductOwner={ isProductOwner }
+						isProductOwner={ isProductOwner ?? false }
 						willAtomicSiteRevert={ willAtomicSiteRevert }
 						getAddNewPaymentMethodUrlFor={
 							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
@@ -1869,7 +1871,7 @@ const WrappedManagePurchase = (
 	);
 };
 
-export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
+const ConnectedManagePurchase = connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 
 	const purchaseAttachedTo =
@@ -1951,6 +1953,18 @@ function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 		),
 	};
 }
+
+function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	return (
+		<ConnectedManagePurchase
+			{ ...props }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+		/>
+	);
+}
+
+export default ManagePurchaseWithExperiment;
 
 function getCancelPurchaseNavText(
 	purchase: Purchase,

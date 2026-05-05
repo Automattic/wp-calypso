@@ -182,7 +182,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				streamKey,
 				page: view.page,
 				perPage: view.perPage,
-			} ) as UnknownAction
+			} )
 		);
 	}, [ dispatch, view, streamKey ] );
 

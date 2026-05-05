@@ -101,6 +101,14 @@ export class EditorSidebarBlockInserterComponent {
 						: selectors.patternResultItem( name )
 				)
 				.first();
+
+			// The pattern dialog does not load in-order. Grab the label of the match we found, then re-do the locator as an exact match.
+			if ( ! exactMatch ) {
+				const actualName = await locator.getAttribute( 'aria-label' );
+				locator = editorParent
+					.locator( selectors.patternExactResultItem( String( actualName ) ) )
+					.first();
+			}
 		} else {
 			const optionName = blockFallBackName
 				? new RegExp( `(${ name }|${ blockFallBackName })` )
