@@ -25,11 +25,11 @@ export type IdentityAttribute =
 
 export type ConditionField = IdentityAttribute | 'country' | 'language';
 
-export type ConditionOperatorObject = {
+export interface ConditionOperatorObject {
 	$eq?: string;
 	$in?: string[];
 	$exists?: boolean;
-};
+}
 
 export type Condition = {
 	[ field in ConditionField ]?: string | string[] | ConditionOperatorObject;
@@ -38,36 +38,36 @@ export type Condition = {
 	$or?: Condition[];
 };
 
-export type ExperimentVariation = {
+export interface ExperimentVariation {
 	name: string;
 	value: FeatureValue;
 	is_default: boolean;
 	experiment_variation_id: number;
 	range: Range;
-};
+}
 
-export type ForceRule = {
+export interface ForceRule {
 	type: 'force';
 	value: FeatureValue;
 	condition?: Condition | null;
-};
+}
 
-export type ExperimentRule = {
+export interface ExperimentRule {
 	type: 'experiment';
 	seed: string;
 	hash_attribute: IdentityAttribute;
-	variations: ExperimentVariation[];
+	variations?: ExperimentVariation[] | null;
 	experiment_id: number;
 	condition?: Condition | null;
-};
+}
 
 export type Rule = ForceRule | ExperimentRule;
 
-export type Feature = {
+export interface Feature {
 	value_type: ValueType;
 	default_value: FeatureValue;
 	rules: Rule[];
-};
+}
 
 export type Attributes = Partial< Record< ConditionField, string | null > >;
 
