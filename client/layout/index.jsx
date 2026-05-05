@@ -14,6 +14,7 @@ import QuerySiteAdminColor from 'calypso/components/data/query-site-admin-color'
 import QuerySiteAdminMenu from 'calypso/components/data/query-site-admin-menu';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySites from 'calypso/components/data/query-sites';
+import GlobalNotices from 'calypso/components/global-notices';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
@@ -105,10 +106,6 @@ const loadA8cForAgenciesStyle = () =>
 	);
 const loadJitm = () =>
 	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
-const loadGlobalNotices = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-	);
 const loadCommunityTranslator = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-community-translator" */ 'calypso/layout/community-translator'
@@ -408,7 +405,7 @@ class Layout extends Component {
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 						/>
 					) }
-					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+					<GlobalNotices id="notices" />
 					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
 						<>
 							<div id="secondary" className="layout__secondary" role="navigation">

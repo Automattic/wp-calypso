@@ -10,6 +10,7 @@ import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
+import GlobalNotices from 'calypso/components/global-notices';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
@@ -69,10 +70,6 @@ const loadJetpackCloudStyle = () =>
 const loadA8cForAgenciesStyle = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
-	);
-const loadGlobalNotices = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
 	);
 const loadSupportArticleDialog = () =>
 	import(
@@ -315,7 +312,7 @@ const LayoutLoggedOut = ( {
 					<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 				) }
 				<div id="content" className="layout__content">
-					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+					<GlobalNotices id="notices" />
 					<div id="primary" className="layout__primary">
 						{ primary }
 					</div>

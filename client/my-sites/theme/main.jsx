@@ -46,6 +46,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
+import GlobalNotices from 'calypso/components/global-notices';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -130,11 +131,6 @@ import './style.scss';
 
 const loadJitm = () =>
 	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
-const loadGlobalNotices = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-	);
-
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
 	'@wordpress/components'
@@ -1253,7 +1249,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+				<GlobalNotices id="notices" />
 				{
 					siteId && (
 						<QueryActiveTheme siteId={ siteId } />
