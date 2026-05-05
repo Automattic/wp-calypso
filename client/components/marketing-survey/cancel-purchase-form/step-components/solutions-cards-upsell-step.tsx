@@ -225,7 +225,12 @@ export default function SolutionsCardsUpsellStep( {
 		  } )
 		: baseRenewUrl;
 	const yearlySlug = getYearlyPlanByMonthly( purchase.productSlug );
-	const yearlyPlanUrl = yearlySlug ? `/checkout/${ site.slug }/${ yearlySlug }` : undefined;
+	const yearlyPlanUrl = yearlySlug
+		? addQueryArgs( `/checkout/${ site.slug }/${ yearlySlug }`, {
+				redirect_to: `/purchases/subscriptions/${ site.slug }`,
+				cancel_to: purchaseSettingsUrl,
+		  } )
+		: undefined;
 
 	const context: CardActionContext = {
 		site,
