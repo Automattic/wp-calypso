@@ -87,6 +87,7 @@ export * from './read-streams';
 export * from './read-tags';
 export * from './read-teams';
 export * from './read-thumbnails';
+export * from './reader-activitypub';
 export * from './reader-atmosphere';
 export * from './reader-mastodon';
 export * from './site';
