@@ -253,7 +253,7 @@ export default function OrchestratorChat( {
 		setInputValue( value );
 
 		const textarea = document.querySelector< HTMLTextAreaElement >(
-			'.agenttic .Textarea-module_textarea'
+			'.agenttic [data-slot="chat-input"] [data-slot="textarea"]
 		);
 		if ( textarea ) {
 			textarea.focus();
