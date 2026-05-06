@@ -91,13 +91,21 @@ function getVegaPrimaryChips() {
 /**
  * Post-spec-confirm landing URL for the treatment variation.
  *
- * The widget bundle ships with a hardcoded default that includes
- * `create_garden_site=1`, which the AI Site Builder flow uses as a signal to
- * provision a WooCommerce garden site. Vega treatment targets the standard
- * AI Builder flow, so we override the default with a non-garden path and let
- * the widget append the `spec_id` to the trailing `=`.
+ * Two overrides vs. the widget's default:
+ *
+ * 1. Drop `create_garden_site=1` — that flag is the AI Site Builder flow's
+ *    signal to provision a WooCommerce garden site, which Vega does not want.
+ * 2. Add `ai_agent=<treatment agent id>` — Big Sky JS reads this in the
+ *    editor to recognise that the build was triggered from the Vega flow
+ *    (vs. the standard site-spec flow or CIAB), so it can route the build
+ *    through the `input_format='spec_id'` workflow path that reloads the
+ *    full saved spec from the `big_sky_site_metadata` table. Without this
+ *    marker, Vega-only spec fields (siteGoals, keyFacts, primaryCallToAction)
+ *    are dropped by `prepare-site`'s full-overwrite of `big_sky_site_metadata`.
+ *
+ * The widget appends the `spec_id` to the trailing `=`.
  */
-const VEGA_BUILD_SITE_URL = '/setup/ai-site-builder/?spec_id=';
+const VEGA_BUILD_SITE_URL = `/setup/ai-site-builder/?ai_agent=${ VEGA_TREATMENT_AGENT_ID }&spec_id=`;
 
 /**
  * Returns the Calypso-side configuration for the Vega treatment variation.

@@ -78,8 +78,17 @@ describe( 'Vega site-spec', () => {
 
 		it( 'overrides the widget default build URL to avoid create_garden_site=1', () => {
 			const { buildSiteUrl } = getVegaSiteSpecConfig();
-			expect( buildSiteUrl ).toBe( '/setup/ai-site-builder/?spec_id=' );
 			expect( buildSiteUrl ).not.toMatch( /create_garden_site/ );
+		} );
+
+		it( 'tags the build URL with ai_agent so Big Sky JS can route Vega builds via spec_id', () => {
+			// The marker lets the editor recognise a Vega-originated trigger and
+			// switch to input_format=spec_id without affecting the standard or
+			// CIAB flows (which never set this param).
+			const { buildSiteUrl } = getVegaSiteSpecConfig();
+			expect( buildSiteUrl ).toBe(
+				`/setup/ai-site-builder/?ai_agent=${ VEGA_TREATMENT_AGENT_ID }&spec_id=`
+			);
 		} );
 
 		it( 'inherits non-overridden defaults (e.g. agent URL, tracking)', () => {
