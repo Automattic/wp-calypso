@@ -60,8 +60,9 @@ Each prompt MUST be:
   - Lighting / mood (golden hour, overcast, naturalistic key, contemplative, motion-rich, energetic, twilight ambient).
   - Texture / material detail (worn copper, weathered linen, polished oak, condensation on glass, matte ceramic).
   - Time-of-day (dawn, blue hour, late afternoon, deep dusk).
-- 15-28 words, no trailing punctuation.
-- Free of people, faces, hands, crowds, signage, on-screen text, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.
+- 20-40 words, no trailing punctuation.
+- Adult subjects are allowed when relevant — describe them generically (e.g. "an adult barista", "a hiker") with no named individuals, public figures, or recognizable likenesses. Never depict minors.
+- Free of crowds, on-screen text, signage, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.
 
 POST BODY:
 ${ trimmed }`;
@@ -73,9 +74,9 @@ function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ):
 ${ suggestionPrompt }
 
 Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). Return exactly 3 suggestions:
-{"suggestions":[{"label":"2-4 word chip","prompt":"15-28 word directional sentence combining two axes"}]}
+{"suggestions":[{"label":"2-4 word chip","prompt":"20-40 word directional sentence combining two axes"}]}
 
-The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the dense one — 15-28 words, two axes combined.
+The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the dense one — 20-40 words, two axes combined.
 
 Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
 

@@ -237,7 +237,7 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( built ).toContain( 'inner prompt body' );
 	} );
 
-	it( 'asks the loader for 3 dense two-axis suggestions (15-28 words)', () => {
+	it( 'asks the loader for 3 dense two-axis suggestions (20-40 words, adults allowed)', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
 				registerSuggestions: jest.fn(),
@@ -248,16 +248,17 @@ describe( 'useVideoClipSuggestions', () => {
 
 		const callArgs = mockUseAsyncSuggestionsLoader.mock.calls[ 0 ][ 0 ];
 		expect( callArgs.prompt ).toMatch( /3\s+dense/i );
-		expect( callArgs.prompt ).toContain( '15-28 words' );
-		expect( callArgs.prompt ).not.toContain( '8-14 words' );
+		expect( callArgs.prompt ).toContain( '20-40 words' );
+		expect( callArgs.prompt ).not.toContain( '15-28 words' );
 		expect( callArgs.prompt ).toMatch( /COMBINES TWO/i );
-		expect( callArgs.prompt ).toMatch( /free of people/i );
+		expect( callArgs.prompt ).toMatch( /adult subjects/i );
+		expect( callArgs.prompt ).toMatch( /never depict minors/i );
 		expect( callArgs.prompt ).toContain( 'signage' );
 
 		const built = callArgs.buildSystemPrompt( 'inner prompt body', 'en' );
 		expect( built ).toMatch( /exactly\s+3\s+suggestions/i );
-		expect( built ).toContain( '15-28 word' );
-		expect( built ).not.toContain( '8-14 word' );
+		expect( built ).toContain( '20-40 word' );
+		expect( built ).not.toContain( '15-28 word' );
 		expect( built ).toContain( '2-4 word' );
 	} );
 
