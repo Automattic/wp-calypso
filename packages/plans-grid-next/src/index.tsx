@@ -14,6 +14,13 @@ import usePlanFeaturesForGridPlans from './hooks/data-store/use-plan-features-fo
 import usePlansFromTypes from './hooks/data-store/use-plans-from-types';
 import useRestructuredPlanFeaturesForComparisonGrid from './hooks/data-store/use-restructured-plan-features-for-comparison-grid';
 import { useManageTooltipToggle } from './hooks/use-manage-tooltip-toggle';
+import {
+	getPlanPriceForDuration,
+	calculateDiscountPercentage,
+	fromPricingMetaForGridPlan,
+	fromVariantPriceData,
+} from './lib/plan-pricing-utils';
+import type { PlanPriceInfo, VariantPriceData } from './lib/plan-pricing-utils';
 
 /**
  * Types
@@ -46,3 +53,14 @@ export {
  * Constants
  */
 export { EFFECTIVE_TERMS_LIST };
+
+/**
+ * Plan pricing utilities
+ */
+export type { PlanPriceInfo, VariantPriceData };
+export {
+	getPlanPriceForDuration,
+	calculateDiscountPercentage,
+	fromPricingMetaForGridPlan,
+	fromVariantPriceData,
+};
