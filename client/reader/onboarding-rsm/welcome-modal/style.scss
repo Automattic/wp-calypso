@@ -1,6 +1,5 @@
 @import '@wordpress/base-styles/breakpoints';
 
-$actions-height: 64px;
 $entry-duration: 640ms;
 $entry-ease: cubic-bezier( 0.22, 1, 0.36, 1 );
 $entry-offset: 10px;
@@ -28,50 +27,12 @@ $entry-offset: 10px;
 }
 
 .reader-welcome-modal {
-	// Frame sizing is shared with the other onboarding-rsm modals; see
+	// Frame sizing, the WP modal flex layout, the VStack scroll region, and
+	// the footer are shared with the other onboarding-rsm modals; see
 	// `client/reader/onboarding-rsm/style.scss`.
 
-	// Make the WP modal content + its children-container a flex column with no
-	// scroll on itself, so the inner scrollable region and footer can stack as
-	// siblings. This keeps the scrollbar's track entirely above the footer (no
-	// overlap, no peek-through), regardless of OS scrollbar width.
-	.components-modal__content {
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		padding-inline: 0;
-		padding-block-end: 0;
-	}
-
-	.components-modal__children-container {
-		display: flex;
-		flex-direction: column;
-		flex: 1 1 auto;
-		min-height: 0;
-		overflow: hidden;
-	}
-
 	&__content {
-		flex: 1 1 auto;
-		min-height: 0; // critical for flex item to shrink and trigger overflow
-		overflow-y: auto;
 		padding: 20px 32px 64px;
-
-		// VStack applies `min-height: 0` to its direct children, which otherwise
-		// lets them collapse rather than overflow. Restore natural sizing so the
-		// scroll container can detect overflow and scroll instead.
-		> * {
-			flex-shrink: 0;
-		}
-	}
-
-	// VStack defaults `justify-content: center`, which centers overflowing
-	// children vertically — pushing the top portion (title/description) above
-	// the scroll viewport where it can't be reached. Force start alignment so
-	// content scrolls from the top. The doubled selector raises specificity
-	// above WP's emotion-injected single-class rule.
-	&__content#{&}__content {
-		justify-content: flex-start;
 	}
 
 	&__animate-in {
@@ -217,18 +178,6 @@ $entry-offset: 10px;
 		gap: 8px;
 		flex: 0 0 auto;
 		justify-content: flex-end;
-	}
-
-	.reader-onboarding-modal__footer {
-		// Footer is now a normal flex item below the scroll region, not an
-		// absolute overlay. Reset the global rule's absolute positioning and
-		// negative margins so it sits naturally at the bottom of the modal.
-		position: static;
-		flex: 0 0 auto;
-		width: auto;
-		margin-inline: 0;
-		padding-inline: 32px;
-		border-top: 0;
 	}
 }
 

@@ -15,28 +15,9 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 }
 
 .subscribe-modal {
-	// Frame sizing is shared with the other onboarding-rsm modals; see
+	// Frame sizing, the WP modal content/children-container flex column, and
+	// the footer are shared with the other onboarding-rsm modals; see
 	// `client/reader/onboarding-rsm/style.scss`.
-
-	// Make the WP modal content + its children-container a flex column with no
-	// scroll on itself, so the inner scrollable region and footer can stack as
-	// siblings. This keeps the scrollbar's track entirely above the footer (no
-	// overlap, no peek-through), regardless of OS scrollbar width.
-	.components-modal__content {
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		padding-inline: 0;
-		padding-block-end: 0;
-	}
-
-	.components-modal__children-container {
-		display: flex;
-		flex-direction: column;
-		flex: 1 1 auto;
-		min-height: 0;
-		overflow: hidden;
-	}
 
 	&__container {
 		display: flex;
@@ -48,16 +29,6 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		// The scrollbar lives inside the container (above the footer sibling)
 		// so it never overlaps or peeks past the footer.
 		overflow-y: auto;
-	}
-
-	.reader-onboarding-modal__footer {
-		// Footer is now a normal flex item below the scroll region, not an
-		// absolute overlay. Reset the global rule's absolute positioning and
-		// negative margins so it sits naturally at the bottom of the modal.
-		position: static;
-		flex: 0 0 auto;
-		width: auto;
-		margin-inline: 0;
 	}
 
 	&__title {
