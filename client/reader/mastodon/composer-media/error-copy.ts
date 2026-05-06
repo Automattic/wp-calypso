@@ -16,8 +16,6 @@ export function getMediaErrorMessage(
 			return translate( 'This image is over 8 MB. Choose a smaller file.' ) as string;
 		case 'unsupported_type':
 			return translate( "This format isn't supported. Try JPEG, PNG, GIF, or WebP." ) as string;
-		case 'decode_failed':
-			return translate( "We couldn't read this image. Try a different file." ) as string;
 		default:
 			reason satisfies never;
 			return translate( "We couldn't read this image. Try a different file." ) as string;
