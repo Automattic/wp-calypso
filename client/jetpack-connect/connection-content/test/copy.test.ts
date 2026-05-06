@@ -90,7 +90,7 @@ describe( 'login subtitles', () => {
 		],
 		[
 			'ALL_THREE',
-			'Your store is registered with WordPress.com — finish connecting your account to manage it from your Automattic for Agencies dashboard, use the Woo mobile app, access store analytics, and power Jetpack features.',
+			'Your store is registered with WordPress.com — finish connecting your account to manage it from Automattic for Agencies, use the Woo mobile app and store analytics, and power Jetpack features.',
 		],
 		[
 			'WOO_ONLY',
@@ -166,7 +166,7 @@ describe( 'auth subtitles', () => {
 		],
 		[
 			'ALL_THREE',
-			'Your store is registered with WordPress.com — connect this account to manage it from your Automattic for Agencies dashboard, use the Woo mobile app, access store analytics, and activate Jetpack.',
+			'Your store is registered with WordPress.com — connect this account to manage it from Automattic for Agencies, use the Woo mobile app and store analytics, and activate Jetpack.',
 		],
 		[
 			'WOO_ONLY',
@@ -242,7 +242,7 @@ describe( 'signup subtitles', () => {
 		],
 		[
 			'ALL_THREE',
-			"You'll use it to manage your store from Automattic for Agencies, log in to the Woo mobile app, view store analytics, and power Jetpack features.",
+			"You'll use it to manage your store from Automattic for Agencies, log in to the Woo mobile app and view store analytics, and power Jetpack features.",
 		],
 		[ 'WOO_ONLY', "You'll use it to log in to the Woo mobile app and view your store analytics." ],
 		[
