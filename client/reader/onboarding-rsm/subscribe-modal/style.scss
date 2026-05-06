@@ -325,6 +325,13 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 				}
 			}
 
+			// Compact cards default to `min-height: 100px` on details so stream layouts
+			// align with thumbnails; here it adds empty space below short titles/excerpts
+			// causing the block to no longer be vertically centered.
+			.reader-post-card__post-details {
+				min-height: auto;
+			}
+
 			// 8px gap between the title/meta heading row and the excerpt
 			// body. Resetting the excerpt margin overrides the global
 			// `margin-bottom: 10px` it ships with.
