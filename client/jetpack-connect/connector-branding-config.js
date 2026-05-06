@@ -1,6 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, chartBar, next, share } from '@wordpress/icons';
-import { getLogoForFamilies, getPresentFamilies, isStore } from './connection-content';
+import { getLogoForFamilies, getPresentFamilies } from './connection-content';
 
 const DEFAULT_PERMISSIONS = [
 	{
@@ -38,27 +38,26 @@ export function getConnectorLogoUrl( pluginSlugs = [] ) {
 }
 
 /**
- * Resolve branding (logo, title, subtitle, permissionsTitle, permissions) for the
- * connector flow based on the plugin slugs passed via the `plugins` query parameter.
+ * Resolve branding (logo, permissionsTitle, permissions) for the connector
+ * flow based on the plugin slugs passed via the `plugins` query parameter.
  *
- * The title adapts based on whether WooCommerce is among the plugins.
- * The logo is resolved via family-based prefix matching across all slugs.
+ * Title and subtitle are owned by `connection-content/copy.ts` (consumed via
+ * `getAuthCopy` / `getSignupCopy` / `getLoginCopy` on the auth, signup, and
+ * login surfaces). The logo is resolved via family-based prefix matching
+ * across all slugs.
+ *
+ * The remaining `permissions*` fields will be replaced by the new
+ * `FeaturesSection` ("Connection enables") in PR 4; this resolver will be
+ * fully retired once that lands.
  * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
- * @returns {{ logo: string, title: string, subtitle: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
+ * @returns {{ logo: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
  */
 export function getConnectorBranding( pluginSlugs = [] ) {
 	const families = getPresentFamilies( pluginSlugs );
-	const hasStore = isStore( pluginSlugs );
 	const logo = getLogoForFamilies( families );
-	const title = hasStore ? __( 'Connect your store' ) : __( 'Connect your site' );
-	const subtitle = hasStore
-		? __( 'Connect your store to unlock powerful features.' )
-		: __( 'Connect your site to unlock powerful features.' );
 
 	return {
 		logo,
-		title,
-		subtitle,
 		permissionsTitle: DEFAULT_PERMISSIONS_TITLE,
 		permissions: DEFAULT_PERMISSIONS,
 	};
