@@ -3,9 +3,11 @@ import { wpcom } from '../../wpcom-fetcher';
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	createMastodonFollow,
 	createMastodonLike,
 	createMastodonPost,
 	createMastodonRepost,
+	deleteMastodonFollow,
 	deleteMastodonLike,
 	deleteMastodonRepost,
 	getMastodonAuthorFeed,
@@ -690,5 +692,71 @@ describe( 'uploadMastodonMedia', () => {
 			kind: 'media_too_large',
 		} );
 		post.mockRestore();
+	} );
+} );
+
+describe( 'createMastodonFollow', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'POSTs /reader/mastodon/connections/:id/follows with account_id in the body and returns the viewer block', async () => {
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
+			.reply( 200, {
+				viewer: { following: true, followed_by: false, requested: false },
+			} );
+		const res = await createMastodonFollow( { connectionId: 7, accountId: '200' } );
+		expect( res.viewer ).toEqual( { following: true, followed_by: false, requested: false } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
+			.reply( 401, {
+				error: 'reader_mastodon_unauthenticated',
+				message: '',
+				statusCode: 401,
+				status: 401,
+			} );
+		await expect(
+			createMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+} );
+
+describe( 'deleteMastodonFollow', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'DELETEs /reader/mastodon/connections/:id/follows/:account_id and returns the viewer block', async () => {
+		const scope = nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/follows/200' )
+			.reply( 200, {
+				viewer: { following: false, followed_by: false, requested: false },
+			} );
+		const res = await deleteMastodonFollow( { connectionId: 7, accountId: '200' } );
+		expect( res.viewer ).toEqual( { following: false, followed_by: false, requested: false } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'URL-encodes the account id defensively', async () => {
+		const scope = nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/follows/200%2Ffoo' )
+			.reply( 200, {
+				viewer: { following: false, followed_by: false, requested: false },
+			} );
+		await deleteMastodonFollow( { connectionId: 7, accountId: '200/foo' } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE ).delete( '/wpcom/v2/reader/mastodon/connections/7/follows/200' ).reply( 401, {
+			error: 'reader_mastodon_unauthenticated',
+			message: '',
+			statusCode: 401,
+			status: 401,
+		} );
+		await expect(
+			deleteMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
 	} );
 } );

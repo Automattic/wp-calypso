@@ -10,10 +10,13 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonCreateFollowParams,
 	MastodonCreatePostParams,
 	MastodonCreatePostResult,
 	MastodonCreateRepostParams,
+	MastodonDeleteFollowParams,
 	MastodonDeleteRepostParams,
+	MastodonFollowResponse,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
 	MastodonTagFilter,
@@ -353,6 +356,38 @@ export async function uploadMastodonMedia(
 			apiNamespace: NAMESPACE,
 			formData,
 		} ) ) as MastodonMediaUploadResult;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function createMastodonFollow(
+	params: MastodonCreateFollowParams
+): Promise< MastodonFollowResponse > {
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ params.connectionId }/follows`,
+			apiNamespace: NAMESPACE,
+			body: { account_id: params.accountId },
+		} ) ) as MastodonFollowResponse;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function deleteMastodonFollow(
+	params: MastodonDeleteFollowParams
+): Promise< MastodonFollowResponse > {
+	try {
+		return ( await wpcom.req.post( {
+			method: 'DELETE',
+			// Encode the account id defensively — values are numeric strings
+			// today, but a malformed input shouldn't smuggle path segments.
+			path: `/reader/mastodon/connections/${ params.connectionId }/follows/${ encodeURIComponent(
+				params.accountId
+			) }`,
+			apiNamespace: NAMESPACE,
+		} ) ) as MastodonFollowResponse;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
