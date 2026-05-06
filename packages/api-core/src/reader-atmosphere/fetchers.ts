@@ -7,8 +7,22 @@ import type {
 	AtmosphereConnectionDetails,
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
+	AtmosphereCreateFollowResponse,
+	AtmosphereScopedProfile,
+	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
 	AtmosphereTimelinePage,
+	CreateLikeParams,
+	CreateLikeResult,
+	CreatePostParams,
+	CreatePostResult,
+	CreateRepostParams,
+	CreateRepostResult,
+	DeleteLikeParams,
+	DeletePostParams,
+	DeleteRepostParams,
+	UploadBlobParams,
+	UploadBlobResult,
 } from './types';
 
 const NAMESPACE = 'wpcom/v2';
@@ -111,6 +125,45 @@ export async function getThread( params: GetThreadParams ): Promise< AtmosphereT
 	}
 }
 
+export interface GetScopedThreadParams {
+	connectionId: number;
+	uri: string;
+	depth?: number;
+	parentHeight?: number;
+}
+
+/**
+ * Authed companion to `getThread`. Routes through the connection's PDS
+ * session so the Bluesky AppView can populate per-viewer fields
+ * (`viewer.like`, `viewer.repost`) on every post in the returned tree.
+ * The unauthenticated `getThread` is retained for SSR / embed callers
+ * that have no connection identity.
+ */
+export async function getScopedThread(
+	params: GetScopedThreadParams
+): Promise< AtmosphereThreadResponse > {
+	const { connectionId, uri, depth, parentHeight } = params;
+	const query: Record< string, string > = { uri };
+	// typeof guard preserves depth=0 (root only) and parentHeight=0 — valid backend values.
+	if ( typeof depth === 'number' ) {
+		query.depth = String( depth );
+	}
+	if ( typeof parentHeight === 'number' ) {
+		query.parentHeight = String( parentHeight );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/thread`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereThreadResponse;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
 export interface GetAuthorProfileParams {
 	actor: string;
 }
@@ -158,6 +211,278 @@ export async function getAuthorFeed(
 			},
 			query
 		) ) as AtmosphereAuthorFeedPage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetScopedAuthorFeedParams {
+	connectionId: number;
+	actor: string;
+	cursor?: string;
+	limit?: number;
+	filter?: AtmosphereAuthorFeedFilter;
+}
+
+/**
+ * Authed companion to `getAuthorFeed`. Routes through the connection's
+ * PDS session so the Bluesky AppView can populate per-viewer fields
+ * (`viewer.like`, `viewer.repost`) on every post in the returned page.
+ * The unauthenticated `getAuthorFeed` is retained for SSR / embed
+ * callers that have no connection identity.
+ */
+export async function getScopedAuthorFeed(
+	params: GetScopedAuthorFeedParams
+): Promise< AtmosphereAuthorFeedPage > {
+	const { connectionId, actor, cursor, limit, filter } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	if ( filter ) {
+		query.filter = filter;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/profile/${ encodeURIComponent(
+					actor
+				) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereAuthorFeedPage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetScopedProfileParams {
+	connectionId: number;
+	actor: string;
+}
+
+/**
+ * Authed companion to `getAuthorProfile`. Adds the caller-relative
+ * `viewer` subtree (see `AtmosphereProfileViewer`).
+ */
+export async function getScopedProfile(
+	params: GetScopedProfileParams
+): Promise< AtmosphereScopedProfile > {
+	const { connectionId, actor } = params;
+	try {
+		return ( await wpcom.req.get( {
+			path: `/reader/atmosphere/connections/${ connectionId }/profile/${ encodeURIComponent(
+				actor
+			) }`,
+			apiNamespace: NAMESPACE,
+		} ) ) as AtmosphereScopedProfile;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface CreateFollowParams {
+	connectionId: number;
+	subject_did: string;
+}
+
+/**
+ * Creates an `app.bsky.graph.follow` record on the caller's PDS so the
+ * connection identified by `connectionId` follows the actor identified
+ * by `subject_did`. The rkey-rationale lives on `AtmosphereFollowRecord`.
+ */
+export async function createFollow(
+	params: CreateFollowParams
+): Promise< AtmosphereCreateFollowResponse > {
+	const { connectionId, subject_did } = params;
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ connectionId }/follows`,
+			apiNamespace: NAMESPACE,
+			body: { subject_did },
+		} ) ) as AtmosphereCreateFollowResponse;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface DeleteFollowParams {
+	connectionId: number;
+	rkey: string;
+}
+
+/**
+ * Drops an `app.bsky.graph.follow` record from the caller's PDS. The
+ * matching DELETE is dispatched as `wpcom.req.post({ method: 'DELETE' })`
+ * because the wpcom client routes by `method`. The backend mirrors
+ * upstream `deleteRecord` semantics for missing rkeys, but this wrapper
+ * still classifies any non-2xx response as an `AtmosphereError`.
+ */
+export async function deleteFollow( params: DeleteFollowParams ): Promise< void > {
+	const { connectionId, rkey } = params;
+	try {
+		await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ connectionId }/follows/${ encodeURIComponent(
+				rkey
+			) }`,
+			apiNamespace: NAMESPACE,
+			method: 'DELETE',
+		} );
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function createLike( params: CreateLikeParams ): Promise< CreateLikeResult > {
+	try {
+		const res = ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ params.connectionId }/likes`,
+			apiNamespace: NAMESPACE,
+			body: {
+				post_uri: params.postUri,
+				post_cid: params.postCid,
+			},
+		} ) ) as { like: CreateLikeResult };
+		return res.like;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function uploadBlob( params: UploadBlobParams ): Promise< UploadBlobResult > {
+	const { connectionId, file } = params;
+	// `wpcom-xhr-request` expects each formData value to be either a primitive
+	// or a `{ fileContents, fileName }` envelope (it inspects `fileContents
+	// instanceof Blob` to decide whether to call `req.attach` vs `req.field`).
+	// Match the established pattern used by `client/post-editor/media-modal`
+	// so the transport produces a real multipart `file` part instead of a
+	// stringified Blob field.
+	const fileName = file instanceof File && file.name ? file.name : 'blob';
+	const formData: [ string, { fileContents: Blob; fileName: string } ][] = [
+		[ 'file', { fileContents: file, fileName } ],
+	];
+
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ connectionId }/blobs`,
+			apiNamespace: NAMESPACE,
+			formData,
+		} ) ) as UploadBlobResult;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function createPost( params: CreatePostParams ): Promise< CreatePostResult > {
+	const { connectionId, text, reply, quote, media } = params;
+	const body: Record< string, unknown > = { text };
+	if ( reply ) {
+		body.reply = reply;
+	}
+	if ( quote ) {
+		body.quote = quote;
+	}
+	if ( media ) {
+		body.media = media;
+	}
+	try {
+		const response = ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ connectionId }/posts`,
+			apiNamespace: NAMESPACE,
+			body,
+		} ) ) as { post: CreatePostResult };
+		return response.post;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function deleteLike( params: DeleteLikeParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/atmosphere/connections/${ params.connectionId }/likes/${ params.rkey }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function deletePost( params: DeletePostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/atmosphere/connections/${ params.connectionId }/posts/${ params.rkey }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAtmosphereTagFeedParams {
+	connectionId: number;
+	hashtag: string;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function createRepost( params: CreateRepostParams ): Promise< CreateRepostResult > {
+	try {
+		const res = ( await wpcom.req.post( {
+			path: `/reader/atmosphere/connections/${ params.connectionId }/reposts`,
+			apiNamespace: NAMESPACE,
+			body: {
+				post_uri: params.postUri,
+				post_cid: params.postCid,
+			},
+		} ) ) as { repost: CreateRepostResult };
+		return res.repost;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function deleteRepost( params: DeleteRepostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/atmosphere/connections/${ params.connectionId }/reposts/${ params.rkey }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export async function getAtmosphereTagFeed(
+	params: GetAtmosphereTagFeedParams
+): Promise< AtmosphereTagFeedPage > {
+	const { connectionId, hashtag, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				// Percent-encode the hashtag: HASHTAG_RE allows any Unicode
+				// letter/number/mark, which must be encoded for the URL path.
+				path: `/reader/atmosphere/connections/${ connectionId }/tag/${ encodeURIComponent(
+					hashtag
+				) }/feed`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereTagFeedPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

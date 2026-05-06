@@ -65,6 +65,14 @@ export function mapMastodonFeedItemToSocialPost(
 		},
 		embed: mapMedia( item.media ),
 	};
+
+	if ( item.viewer ) {
+		post.viewer = {
+			like: item.viewer.favourited ? 'favourited' : null,
+			repost: item.viewer.reblogged ? 'reblogged' : null,
+		};
+	}
+
 	// Mastodon distinguishes spoiler_text (whole-post CW gate) from
 	// sensitive (media blur). Set content_warning when either is present
 	// so the post-card can decide independently.
@@ -72,6 +80,17 @@ export function mapMastodonFeedItemToSocialPost(
 		post.content_warning = {
 			spoiler_text: item.spoiler_text,
 			sensitive: item.sensitive,
+		};
+	}
+	// Translate Mastodon's boolean viewer flags into the SocialPost
+	// viewer shape. `viewer.like` carries a sentinel string when liked
+	// (mirrors the atmosphere shape); `viewer.repost` carries 'reblogged'
+	// when the viewer has boosted the post. Both default to null when the
+	// upstream boolean is false or viewer is absent.
+	if ( item.viewer ) {
+		post.viewer = {
+			like: item.viewer.favourited ? 'favourited' : null,
+			repost: item.viewer.reblogged ? 'reblogged' : null,
 		};
 	}
 	return post;

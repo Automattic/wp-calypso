@@ -97,7 +97,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 			...group,
 			blogs: packBlogsById.get( group.id ) ?? [],
 		} ) )
-		// Hide the "Most Subscribed" placeholder while it has nothing to subscribe to.
+		// Hide the "Most Subscribed" pack while it has nothing to subscribe to.
 		.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 );
 
 	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>

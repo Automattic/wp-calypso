@@ -193,9 +193,10 @@ function SurveyContent( {
 				cancellationReason={ questionOneText }
 				closeDialog={ closeDialog }
 				currencyCode={ purchase.currency_code }
-				declineButtonText={ intent === 'remove' ? __( 'Remove my current plan' ) : undefined }
+				declineButtonText={ intent === 'remove' ? __( 'Continue removal' ) : __( 'No, thanks' ) }
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
+				intent={ intent ?? undefined }
 				onClickDowngrade={ downgradeClick }
 				onClickFreeMonthOffer={ freeMonthOfferClick }
 				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
@@ -295,6 +296,7 @@ function StepButtons( {
 	clickNext,
 	closeDialog,
 	disableButtons,
+	intent,
 	isSubmitting,
 	onSubmit,
 	solution,
@@ -310,29 +312,39 @@ function StepButtons( {
 
 	const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
-	// Check if ANY step in the flow is a warning/confirmation step
-	// If so, we should not show Skip button at all to avoid bypassing warnings
-	const hasWarningStep =
-		allSteps?.includes( ATOMIC_REVERT_STEP ) || allSteps?.includes( REMOVE_PLAN_STEP );
-
 	if ( surveyStep === UPSELL_STEP ) {
 		return null;
 	}
 
 	if ( ! isLastStep ) {
+		if ( intent === 'remove' ) {
+			return (
+				<ButtonStack justify="flex-start">
+					<Button
+						variant="primary"
+						isDestructive
+						disabled={ ! canGoNext || isCancelling }
+						onClick={ clickNext }
+					>
+						{ __( 'Continue removal' ) }
+					</Button>
+				</ButtonStack>
+			);
+		}
+
 		return (
 			<ButtonStack justify="flex-start">
 				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ clickNext }>
 					{ __( 'Continue' ) }
 				</Button>
-				{ ! hasWarningStep && (
+				{ intent === 'cancel' && (
 					<Button
 						variant="tertiary"
 						isBusy={ isCancelling }
 						disabled={ isCancelling }
 						onClick={ onSubmit }
 					>
-						{ __( 'Skip' ) }
+						{ __( 'No, thanks' ) }
 					</Button>
 				) }
 			</ButtonStack>
@@ -389,6 +401,31 @@ function StepButtons( {
 		);
 	}
 
+	if ( intent === 'remove' ) {
+		return (
+			<ButtonStack justify="flex-start">
+				<Button
+					isDestructive
+					disabled={ ! canGoNext }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant="primary"
+				>
+					{ __( 'Complete removal' ) }
+				</Button>
+				<Button
+					isDestructive
+					variant="tertiary"
+					isBusy={ isCancelling }
+					disabled={ isCancelling }
+					onClick={ onSubmit }
+				>
+					{ __( 'Skip and remove' ) }
+				</Button>
+			</ButtonStack>
+		);
+	}
+
 	const variant = surveyStep !== UPSELL_STEP ? 'primary' : 'secondary';
 
 	return (
@@ -399,16 +436,16 @@ function StepButtons( {
 				onClick={ onSubmit }
 				variant={ variant }
 			>
-				{ __( 'Continue' ) }
+				{ intent === 'cancel' ? __( 'Complete' ) : __( 'Continue' ) }
 			</Button>
-			{ ! canGoNext && ! hasWarningStep && (
+			{ intent === 'cancel' && (
 				<Button
 					variant="tertiary"
 					isBusy={ isCancelling }
 					disabled={ isCancelling }
 					onClick={ onSubmit }
 				>
-					{ __( 'Skip' ) }
+					{ __( 'No, thanks' ) }
 				</Button>
 			) }
 		</ButtonStack>

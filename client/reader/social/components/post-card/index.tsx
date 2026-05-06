@@ -4,6 +4,8 @@ import { Button, Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, type ReactNode } from 'react';
+import { useSocialAnalytics } from './analytics-context';
+import { PostActionsMenu } from './post-actions-menu';
 import { PostCardBody } from './post-card-body';
 import { PostCardCounts } from './post-card-counts';
 import { PostCardEmbed } from './post-card-embed';
@@ -19,6 +21,7 @@ interface SocialPostCardProps {
 	post: SocialPost;
 	variant?: SocialPostCardVariant;
 	expandedVideo?: boolean;
+	connectionId?: number;
 	// When true, the inline timestamp moves out of the header and renders as
 	// a standalone block between the embed and the counts row (matches
 	// bsky.app's single-post layout). Used by ThreadTree for the target post.
@@ -36,6 +39,7 @@ export function SocialPostCard( {
 	post,
 	variant = 'default',
 	expandedVideo,
+	connectionId,
 	prominentTimestamp,
 	cardLink,
 }: SocialPostCardProps ) {
@@ -51,6 +55,33 @@ export function SocialPostCard( {
 	// (no spoiler) gates only the media embed (handled inside PostCardEmbed
 	// via the `sensitive` prop) so the body still renders.
 	const cwGate = cw && cw.spoiler_text ? cw : null;
+
+	// Post-actions kebab: shown only for owned posts in non-compact surfaces.
+	// Compact variant is used inside quote embeds — never show the kebab there.
+	// connectionId must be present (ATmosphere only). ownerDid must match the
+	// post author's id (the DID, mapped from AtmosphereAuthor.did).
+	const analytics = useSocialAnalytics();
+	const showPostActions =
+		variant === 'default' &&
+		connectionId !== undefined &&
+		Boolean( analytics?.ownerDid ) &&
+		analytics?.ownerDid === post.author.id;
+	// SocialPost.author.id holds the DID (mapped from AtmosphereAuthor.did).
+	const postActionsPost = showPostActions
+		? {
+				uri: post.uri,
+				author: { did: post.author.id },
+				reply_parent: post.reply_parent ? { uri: post.reply_parent.uri } : null,
+		  }
+		: null;
+	// `postActionsPost` is only set when `showPostActions` is true, which in turn
+	// requires `connectionId !== undefined`. The `connectionId !== undefined`
+	// re-check is what lets TypeScript narrow `connectionId` to `number` for the
+	// JSX prop — TS can't infer that from `postActionsPost !== null` alone.
+	const headerActions =
+		postActionsPost && connectionId !== undefined ? (
+			<PostActionsMenu post={ postActionsPost } connectionId={ connectionId } />
+		) : null;
 
 	const bodyAndEmbed: ReactNode = (
 		<>
@@ -76,6 +107,7 @@ export function SocialPostCard( {
 					variant={ variant }
 					prominentTimestamp={ showProminentTimestamp }
 					timestampLink={ isCompact ? cardLink : undefined }
+					headerActions={ headerActions }
 				/>
 				{ cwGate ? (
 					<ContentWarningGate warning={ cwGate }>{ bodyAndEmbed }</ContentWarningGate>
@@ -83,7 +115,7 @@ export function SocialPostCard( {
 					bodyAndEmbed
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
-				{ ! isCompact && <PostCardCounts counts={ post.counts } postUri={ post.uri } /> }
+				{ ! isCompact && <PostCardCounts post={ post } connectionId={ connectionId } /> }
 			</CardBody>
 		</Card>
 	);

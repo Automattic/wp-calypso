@@ -37,8 +37,6 @@
 		"current-site/notice": true,
 		"dashboard/opt-in-banners": false,
 		"dashboard/v2": true,
-		"devdocs": true,
-		"devdocs/redirect-loggedout-homepage": true,
 		"global-styles/on-personal-plan": false,
 		"google-my-business": false,
 		"help": true,

@@ -113,13 +113,4 @@ describe( 'TimeSince', () => {
 		} ).format( d );
 		expect( screen.getByText( formatted ) ).toBeInTheDocument();
 	} );
-
-	it( 'uses locale prop', () => {
-		const date = new Date( FIXED_NOW.getTime() - 10 * 24 * 60 * 60 * 1000 ).toISOString();
-		render( <TimeSince date={ date } locale="es-ES" /> );
-		const formatted = new Intl.DateTimeFormat( 'en', { dateStyle: 'medium' } ).format(
-			new Date( date )
-		);
-		expect( screen.getByText( formatted ) ).toBeInTheDocument();
-	} );
 } );

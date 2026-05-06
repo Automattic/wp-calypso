@@ -77,8 +77,6 @@
 		"dev/preferences-helper": true,
 		"dev/react-query-devtools": true,
 		"dev/store-sandbox-helper": true,
-		"devdocs": true,
-		"devdocs/redirect-loggedout-homepage": true,
 		"dolly/telegram": true,
 		"domain-transfer-redesign": true,
 		"email-accounts/enabled": true,

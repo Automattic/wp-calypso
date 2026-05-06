@@ -1,4 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import OverviewSidebarGrowthAcceleratorCta from 'calypso/a8c-for-agencies/sections/overview/sidebar/growth-accelerator/cta';
@@ -235,7 +236,7 @@ export default function useOnboardingTourSections() {
 				title: translate( 'Migrations' ),
 				bannerImage: OnboardingTourBannerMigrations,
 				content: {
-					title: translate( 'Better hosting for your clients. Up to $10K for you.' ),
+					title: translate( 'Better hosting for your clients.' ),
 					descriptions: [
 						translate(
 							'Tired of subpar hosting? Migrate your sites to WordPress.com or Pressable and tap into WP Cloud—the only cloud platform built just for WordPress.'
@@ -273,7 +274,17 @@ export default function useOnboardingTourSections() {
 							"If you build sites using WooCommerce, you're leaving money on the table by not using WooPayments, Woo's fully-integrated payments solution."
 						),
 						translate(
-							"For any new client stores that you add WooPayments to, you'll earn a 5 BPS recurring commission on store sales."
+							'Earn recurring revenue share on client store sales when they use WooPayments. {{a}}Rates vary based on whether the store is new or pre-existing — see details{{/a}}.',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
+											children={ null }
+										/>
+									),
+								},
+							}
 						),
 						translate(
 							"We've made it easy for you to learn about WooPayments, copy and paste a pitch to send to your clients, and track your earnings from your referrals all in one place."

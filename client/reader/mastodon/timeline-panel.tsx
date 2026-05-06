@@ -1,4 +1,7 @@
-import { useMastodonTimelineInfiniteQuery } from '@automattic/api-queries';
+import {
+	useMastodonConnectionQuery,
+	useMastodonTimelineInfiniteQuery,
+} from '@automattic/api-queries';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,9 +13,14 @@ import {
 	SocialPostCard,
 	mapMastodonFeedItemToSocialPost,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { TimelineComposePill, useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectMastodonError } from './error-projection';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
+import { makeUseMastodonRepostAction } from './use-mastodon-repost-action';
 import type { MastodonConnection, MastodonFeedItem } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
@@ -112,9 +120,37 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	// Surfaces the real avatar on the compose pill — the list endpoint that
+	// supplied `connection` always returns null for `avatar`. Pass `null`
+	// when there is no composer upstream so the details query short-circuits
+	// and we don't warm the cache for shells that won't render the pill.
+	const { data: connectionDetails } = useMastodonConnectionQuery( composer ? connection.id : null );
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'reply',
+				root: { uri: post.uri },
+				parent: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
 	const renderItem = useCallback(
-		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
-		[]
+		( post: SocialPost ) => (
+			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
+		),
+		[ connection.id ]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
 
@@ -126,31 +162,47 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			getThreadUrl,
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
+			onReplyClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
+	);
+
+	const useRepostAction = useMemo(
+		() => makeUseMastodonRepostAction( connection.id ),
+		[ connection.id ]
 	);
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<SocialFeedList< SocialPost >
-				items={ items }
-				isPending={ isPending }
-				isError={ isError }
-				error={ projectMastodonError( error ) }
-				hasNextPage={ Boolean( hasNextPage ) }
-				isFetchingNextPage={ isFetchingNextPage }
-				fetchNextPage={ fetchNextPage }
-				refetch={ handleRetry }
-				renderItem={ renderItem }
-				itemKey={ itemKey }
-				emptyTitle={ translate( "You're all caught up." ) }
-				emptyLine={ translate( 'Follow some accounts on Mastodon to see posts here.' ) }
-				emptyActionLabel={ translate( 'Open your Mastodon instance' ) }
-				emptyActionURL={ `https://${ connection.instance }` }
-				protocolLabel="Mastodon"
-				protocolHomeURL="/reader/mastodon"
-				protocolHomeLabel={ translate( 'Back to Mastodon' ) }
-			/>
+			<LikeProvider value={ useLikeAction }>
+				<RepostProvider value={ useRepostAction }>
+					{ composer && (
+						<TimelineComposePill
+							avatar={ connectionDetails?.avatar ?? connection.avatar }
+							entryPoint="timeline_inline"
+						/>
+					) }
+					<SocialFeedList< SocialPost >
+						items={ items }
+						isPending={ isPending }
+						isError={ isError }
+						error={ projectMastodonError( error ) }
+						hasNextPage={ Boolean( hasNextPage ) }
+						isFetchingNextPage={ isFetchingNextPage }
+						fetchNextPage={ fetchNextPage }
+						refetch={ handleRetry }
+						renderItem={ renderItem }
+						itemKey={ itemKey }
+						emptyTitle={ translate( "You're all caught up." ) }
+						emptyLine={ translate( 'Follow some accounts on Mastodon to see posts here.' ) }
+						emptyActionLabel={ translate( 'Open your Mastodon instance' ) }
+						emptyActionURL={ `https://${ connection.instance }` }
+						protocolLabel="Mastodon"
+						protocolHomeURL="/reader/mastodon"
+						protocolHomeLabel={ translate( 'Back to Mastodon' ) }
+					/>
+				</RepostProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

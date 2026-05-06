@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
 import AsyncLoad from 'calypso/components/async-load';
 import { TIMELINE_TAB } from './helper';
-import { DID_RE, HANDLE_RE, RKEY_RE } from './route';
+import { DID_RE, HANDLE_RE, RKEY_RE, isValidHashtag } from './route';
 
 const loadAtmosphereLandingView = () =>
 	import(
@@ -23,6 +23,10 @@ const loadAtmosphereThreadView = () =>
 const loadAuthorProfileView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-atmosphere-author-profile-view" */ 'calypso/reader/atmosphere/author-profile-view'
+	);
+const loadAtmosphereTagFeedView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-atmosphere-tag-feed-view" */ 'calypso/reader/atmosphere/tag-feed-view'
 	);
 
 function ensureAtmosphereEnabled(): boolean {
@@ -129,6 +133,37 @@ export const atmosphereProfile = ( context: Context, next: () => void ) => {
 			placeholder={ null }
 			connectionId={ id }
 			actor={ actor }
+		/>
+	);
+	next();
+};
+
+export const atmosphereTagFeed = ( context: Context, next: () => void ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const hashtag = String( context.params.hashtag ?? '' )
+		.trim()
+		.toLowerCase()
+		.replace( /^#/, '' );
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const inputsValid = idValid && isValidHashtag( hashtag );
+
+	if ( ! inputsValid ) {
+		page.redirect( idValid ? `/reader/atmosphere/${ id }` : '/reader/atmosphere' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-atmosphere-tag-feed"
+			require={ loadAtmosphereTagFeedView }
+			placeholder={ null }
+			connectionId={ id }
+			hashtag={ hashtag }
 		/>
 	);
 	next();

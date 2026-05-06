@@ -12,10 +12,18 @@ const mockRegisterAbilityCategory = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
+const mockAddNotice = jest.fn();
+const mockTrackImageStudioImageGenerated = jest.fn();
 const mockDispatch = jest.fn( () => ( {
 	setCurrentVideoUrl: mockSetCurrentVideoUrl,
 	setCurrentAttachmentId: mockSetCurrentAttachmentId,
 	setCurrentDurationSeconds: mockSetCurrentDurationSeconds,
+	addNotice: mockAddNotice,
+} ) );
+
+jest.mock( '../utils/tracking', () => ( {
+	trackImageStudioImageGenerated: ( ...args: unknown[] ) =>
+		mockTrackImageStudioImageGenerated( ...args ),
 } ) );
 
 jest.mock(
@@ -235,5 +243,46 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 			callback( { url: 'https://files.wordpress.com/clip.mp4', attachmentId: -3 } )
 		).rejects.toThrow( /attachmentId/ );
 		expect( mockSetCurrentVideoUrl ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fires the image_studio_image_generated tracks event on success', async () => {
+		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+		await registerUpdateCanvasVideoAbility();
+
+		const callback = getRegisteredCallback();
+		await callback( {
+			url: 'https://files.wordpress.com/clip.mp4',
+			attachmentId: 99,
+		} );
+
+		expect( mockTrackImageStudioImageGenerated ).toHaveBeenCalledWith( {
+			mode: 'generate',
+			attachmentId: 99,
+			isAnnotated: false,
+		} );
+	} );
+
+	it( 'shows a success notice when the canvas swap completes', async () => {
+		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+		await registerUpdateCanvasVideoAbility();
+
+		const callback = getRegisteredCallback();
+		await callback( {
+			url: 'https://files.wordpress.com/clip.mp4',
+			attachmentId: 99,
+		} );
+
+		expect( mockAddNotice ).toHaveBeenCalledWith( 'Video saved to Media Library', 'success' );
+	} );
+
+	it( 'does not fire the success notice or tracking event when input is invalid', async () => {
+		const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+		await registerUpdateCanvasVideoAbility();
+
+		const callback = getRegisteredCallback();
+		await expect( callback( { url: '', attachmentId: 99 } ) ).rejects.toThrow();
+
+		expect( mockTrackImageStudioImageGenerated ).not.toHaveBeenCalled();
+		expect( mockAddNotice ).not.toHaveBeenCalled();
 	} );
 } );
