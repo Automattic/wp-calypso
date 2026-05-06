@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
+import { useFeatureValue } from 'calypso/lib/explat';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
@@ -71,6 +73,16 @@ const useSiteMenuItems = () => {
 
 	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 
+	const homeMenuVariant = useFeatureValue( 'wpcom_explat_v2_demo_v1', 'control' );
+	const applyHomeMenuVariant = ( items ) => {
+		if ( homeMenuVariant !== 'treatment' || ! Array.isArray( items ) ) {
+			return items;
+		}
+		return items.map( ( item ) =>
+			item?.slug === 'home' ? { ...item, title: translate( 'My Dashboard' ) } : item
+		);
+	};
+
 	if ( shouldShowGlobalSidebar ) {
 		return globalSidebarMenu( {
 			showP2s: showP2s,
@@ -115,7 +127,7 @@ const useSiteMenuItems = () => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	return applyHomeMenuVariant( menuItems ?? buildFallbackResponse( fallbackDataOverrides ) );
 };
 
 export default useSiteMenuItems;
