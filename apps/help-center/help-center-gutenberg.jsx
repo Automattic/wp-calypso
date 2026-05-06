@@ -270,12 +270,16 @@ registerPlugin( 'jetpack-help-center', {
 	render: () => <HelpCenterContentWithProvider />,
 } );
 
+// @alshakero, @ebuccelli, @omertestingios
+const BETA_TESTERS = [ 115118448, 128962475, 279870302 ];
+
 // Gate for proxied users with wpcom-smart-dictation=true flag.
 if (
+	canAccessWpcomApis() &&
 	typeof helpCenterData !== 'undefined' &&
 	helpCenterData.isProxied &&
-	canAccessWpcomApis() &&
-	helpCenterData.currentUser?.is_a11n
+	BETA_TESTERS.includes( helpCenterData.currentUser?.ID )
+	// helpCenterData.currentUser?.is_a11n
 ) {
 	import( './help-center-wpcom-transcription' );
 }
