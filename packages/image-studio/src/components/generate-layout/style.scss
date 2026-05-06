@@ -47,10 +47,6 @@
 		border-radius: 8px;
 	}
 
-	// Override .canvas-controls' absolute positioning (designed to hang under
-	// the image canvas). In normal flow it sits cleanly below the video and
-	// stays clickable — the absolute version was getting eaten by the video
-	// element's compositor layer / native controls hit area.
 	&__generated-video-controls {
 		flex: 0 0 auto;
 		width: min(360px, 100%);
