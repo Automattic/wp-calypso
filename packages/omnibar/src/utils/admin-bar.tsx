@@ -16,6 +16,7 @@ export function buildOmnibarNodesFromAdminBarNodes( adminBarNodes: AdminBarNode[
 		switch ( node.id ) {
 			case 'wp-logo':
 				omnibarNodes.home = omnibarNode;
+				omnibarNodes.home.title = undefined;
 				break;
 			case 'site-name':
 				omnibarNodes.site = omnibarNode;

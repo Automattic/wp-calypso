@@ -118,7 +118,10 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onConti
 		isOpen && (
 			<Modal onRequestClose={ onClose } size="medium" className="reader-welcome-modal">
 				<VStack spacing={ 8 } className="reader-welcome-modal__content">
-					<VStack spacing={ 1 } className="reader-welcome-modal__intro">
+					<VStack
+						spacing={ 1 }
+						className="reader-welcome-modal__intro reader-welcome-modal__animate-in reader-welcome-modal__animate-in--intro"
+					>
 						<h2 className="reader-welcome-modal__title">{ __( 'Your reading home base' ) }</h2>
 						<p className="reader-welcome-modal__subtitle">
 							<span>{ __( 'All your favorite blogs and newsletters in one focused feed.' ) }</span>
@@ -131,7 +134,7 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onConti
 						</p>
 					</VStack>
 
-					<div className="reader-welcome-modal__people-grid">
+					<div className="reader-welcome-modal__people-grid reader-welcome-modal__animate-in reader-welcome-modal__animate-in--people">
 						<div className="reader-welcome-modal__tile-row">
 							{ publications.map( ( publication ) => (
 								<div key={ publication.name } className="reader-welcome-modal__tile">
@@ -149,25 +152,25 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onConti
 							) ) }
 						</div>
 					</div>
-
-					<div className="reader-onboarding-modal__footer">
-						<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-							<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
-							<HStack
-								spacing={ 2 }
-								justify="right"
-								className="reader-onboarding-modal__footer-buttons reader-welcome-modal__footer-buttons"
-							>
-								<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
-									{ __( 'Do it later' ) }
-								</Button>
-								<Button __next40pxDefaultSize variant="primary" onClick={ onContinue }>
-									{ __( 'Pick your topics' ) }
-								</Button>
-							</HStack>
-						</HStack>
-					</div>
 				</VStack>
+
+				<div className="reader-onboarding-modal__footer">
+					<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+						<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
+						<HStack
+							spacing={ 2 }
+							justify="right"
+							className="reader-onboarding-modal__footer-buttons reader-welcome-modal__footer-buttons"
+						>
+							<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+								{ __( 'Do it later' ) }
+							</Button>
+							<Button __next40pxDefaultSize variant="primary" onClick={ onContinue }>
+								{ __( 'Pick your topics' ) }
+							</Button>
+						</HStack>
+					</HStack>
+				</div>
 			</Modal>
 		)
 	);

@@ -602,7 +602,7 @@ export function CouponCostOverride( {
 
 export function ProductsAndCostOverridesList( { responseCart }: { responseCart: ResponseCart } ) {
 	return (
-		<ProductsAndCostOverridesListWrapper>
+		<ProductsAndCostOverridesListWrapper className="wp-checkout-order-summary__products-list">
 			{ responseCart.products.map( ( product ) => (
 				<SingleProductAndCostOverridesList
 					product={ product }

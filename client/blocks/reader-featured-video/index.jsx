@@ -1,20 +1,22 @@
+import { POCKETCAST_DEFAULT_HEIGHT, POCKETCAST_DEFAULT_WIDTH } from '@automattic/api-core';
+import { readerThumbnailQuery } from '@automattic/api-queries';
 import { getUrlParts } from '@automattic/calypso-url';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
 import playIconImage from 'calypso/assets/images/reader/play-icon.webp';
+import readerPocketCastImage from 'calypso/assets/images/reader/reader-pocket-cast.svg';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
+import getEmbedMetadata from 'calypso/lib/get-video-id';
 import EmbedHelper from 'calypso/reader/embed-helper';
 import {
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
 	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
 } from 'calypso/state/reader/posts/sizes';
-import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
 import './style.scss';
 
 const noop = () => {};
@@ -150,7 +152,6 @@ class ReaderFeaturedVideo extends Component {
 		/* eslint-disable react/no-danger */
 		return (
 			<div className={ classNames }>
-				<QueryReaderThumbnail embedUrl={ this.props.videoEmbed.src } />
 				{ showEmbed && (
 					<div
 						ref={ this.setVideoEmbedRef }
@@ -179,26 +180,38 @@ const checkEmbedSizeDimensions = ( embed ) => {
 	return _embed;
 };
 
-const mapStateToProps = ( state, ownProps ) => {
-	// Check if width and height are set for the embed
-	const videoEmbed = checkEmbedSizeDimensions( ownProps.videoEmbed );
-	const thumbnailUrl = getThumbnailForIframe( state, videoEmbed.src );
+function ReaderFeaturedVideoWithQuery( props ) {
+	const videoEmbed = checkEmbedSizeDimensions( props.videoEmbed );
+	const { service, id } = ( videoEmbed?.src && getEmbedMetadata( videoEmbed.src ) ) || {};
+	const { data: fetchedThumbnailUrl, isSuccess } = useQuery( readerThumbnailQuery( service, id ) );
+
+	let thumbnailUrl = fetchedThumbnailUrl;
+	// Only apply the placeholder once the query has settled successfully, so the
+	// fallback image doesn't flash during the loading state.
+	if ( videoEmbed.type === 'pocketcasts' && isSuccess && ! thumbnailUrl ) {
+		thumbnailUrl = `${ readerPocketCastImage }?w=${ POCKETCAST_DEFAULT_WIDTH }&h=${ POCKETCAST_DEFAULT_HEIGHT }`;
+	}
+
 	let imageWidth = videoEmbed.width;
 	let imageHeight = videoEmbed.height;
-	if ( videoEmbed.type === 'pocketcasts' ) {
+	if ( videoEmbed.type === 'pocketcasts' && thumbnailUrl ) {
 		// Pocket cast thumbnail width and height are passed in the thumbnailUrl as w and h query params
 		const { searchParams } = getUrlParts( thumbnailUrl );
 		imageWidth = searchParams.get( 'w' );
 		imageHeight = searchParams.get( 'h' );
 	}
-	return {
-		videoEmbed: videoEmbed,
-		iframe: checkEmbedSizeDimensions( ownProps.iframe )?.outerHTML,
-		autoplayIframe: checkEmbedSizeDimensions( ownProps.autoplayIframe )?.outerHTML,
-		thumbnailUrl: thumbnailUrl,
-		imageWidth: imageWidth,
-		imageHeight: imageHeight,
-	};
-};
 
-export default connect( mapStateToProps )( localize( ReaderFeaturedVideo ) );
+	return (
+		<ReaderFeaturedVideo
+			{ ...props }
+			videoEmbed={ videoEmbed }
+			iframe={ checkEmbedSizeDimensions( props.iframe )?.outerHTML }
+			autoplayIframe={ checkEmbedSizeDimensions( props.autoplayIframe )?.outerHTML }
+			thumbnailUrl={ thumbnailUrl ?? undefined }
+			imageWidth={ imageWidth }
+			imageHeight={ imageHeight }
+		/>
+	);
+}
+
+export default localize( ReaderFeaturedVideoWithQuery );

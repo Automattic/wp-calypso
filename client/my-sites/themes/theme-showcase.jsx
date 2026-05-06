@@ -62,6 +62,9 @@ import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 import './theme-showcase.scss';
 
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
 	header: PropTypes.string,
@@ -517,9 +520,7 @@ class ThemeShowcase extends Component {
 		if ( config.isEnabled( 'jitms' ) && ! loggedOutComponent ) {
 			return (
 				<AsyncLoad
-					require={ () =>
-						import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' )
-					}
+					require={ loadJitm }
 					placeholder={ null }
 					messagePath="calypso:themes:showcase-website-design"
 				/>

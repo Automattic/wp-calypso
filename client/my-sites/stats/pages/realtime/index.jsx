@@ -21,6 +21,11 @@ import StatsModuleListing from '../shared/stats-module-listing';
 
 import './style.scss';
 
+const loadChart = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-pages-realtime-chart" */ 'calypso/my-sites/stats/pages/realtime/chart'
+	);
+
 // TODO: Update header per design review.
 // Each page has slightly different headers so staying simple
 // and requesting feedback first.
@@ -119,15 +124,7 @@ function StatsRealtime( { context } ) {
 			<PageViewTracker path="/stats/realtime/:site" title="Stats > Realtime" />
 			<div className="stats">
 				<StatsRealtimeHeader />
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-my-sites-stats-pages-realtime-chart" */ 'calypso/my-sites/stats/pages/realtime/chart'
-						)
-					}
-					siteId={ siteId }
-					placeholder={ PageLoading }
-				/>
+				<AsyncLoad require={ loadChart } siteId={ siteId } placeholder={ PageLoading } />
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }

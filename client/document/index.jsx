@@ -10,7 +10,6 @@ import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
 	AuthHelper,
-	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
@@ -43,8 +42,6 @@ class Document extends Component {
 			clientData,
 			commitChecksum,
 			commitSha,
-			devDocs,
-			devDocsURL,
 			entrypoint,
 			env,
 			featuresHelper,
@@ -222,7 +219,6 @@ class Document extends Component {
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
 						</EnvironmentBadge>
 					) }
 
@@ -245,8 +241,9 @@ class Document extends Component {
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
-						manifests.map( ( manifest ) => (
+						manifests.map( ( manifest, index ) => (
 							<script
+								key={ `manifest-${ index }` }
 								nonce={ inlineScriptNonce }
 								dangerouslySetInnerHTML={ {
 									__html: manifest,

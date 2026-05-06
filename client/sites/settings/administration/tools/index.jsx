@@ -25,6 +25,11 @@ import AdministrationToolCard from './card';
 import { requestRestore } from './restore-plan-software';
 import './style.scss';
 
+const loadLeaveSiteModal = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-leave-site-leave-site-modal" */ './leave-site/leave-site-modal'
+	);
+
 const MODAL_NAMES = {
 	LEAVE_SITE: 'LEAVE_SITE',
 };
@@ -189,11 +194,7 @@ class SiteTools extends Component {
 						/>
 						{ modalOpen[ MODAL_NAMES.LEAVE_SITE ] && (
 							<AsyncLoad
-								require={ () =>
-									import(
-										/* webpackChunkName: "async-load-calypso-sites-settings-administration-tools-leave-site-leave-site-modal" */ './leave-site/leave-site-modal'
-									)
-								}
+								require={ loadLeaveSiteModal }
 								placeholder={ null }
 								siteId={ siteId }
 								onClose={ this.handleCloseModal( MODAL_NAMES.LEAVE_SITE ) }

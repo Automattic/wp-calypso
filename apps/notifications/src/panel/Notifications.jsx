@@ -1,3 +1,4 @@
+import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { createContext, PureComponent } from 'react';
 import { Provider } from 'react-redux';
@@ -9,9 +10,10 @@ import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
 import { addListeners, removeListeners } from './state/create-listener-middleware';
 import Layout from './templates';
-const debug = require( 'debug' )( 'notifications:panel' );
 
 import './boot/stylesheets/style.scss';
+
+const debug = debugFactory( 'notifications:panel' );
 
 let client;
 

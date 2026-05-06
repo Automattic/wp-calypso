@@ -236,6 +236,58 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 	return Array.from( new Set( refundWindows ) ).filter( isValueTruthy );
 }
 
+export type RefundWindowSummary = {
+	days: number;
+	usePlanProductName: boolean;
+};
+
+/**
+ * Picks the headline refund-window day count to surface to the user, plus a
+ * flag indicating whether the headline copy should name the plan product.
+ *
+ * Returns null when no refund window applies (cart is non-refundable, contains
+ * only domains, or has no refund windows). When multiple windows exist, picks
+ * the longest plan window for renewal-only / monthly-bundle carts and the
+ * shortest window otherwise. The product-name flag captures the cases the
+ * sidebar copy uses to render "X-day money back guarantee for %(product)s";
+ * surfaces that don't show the product name (e.g. trust cards) can ignore it.
+ */
+export function getRefundWindowSummary( cart: ResponseCart ): RefundWindowSummary | null {
+	const refundPolicies = getRefundPolicies( cart );
+	const refundWindows = getRefundWindows( refundPolicies );
+
+	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
+		return null;
+	}
+
+	if ( refundWindows.length === 1 ) {
+		const usePlanProductName = refundPolicies.some(
+			( refundPolicy ) =>
+				refundPolicy === RefundPolicy.PlanBiennialBundle ||
+				refundPolicy === RefundPolicy.PlanYearlyBundle
+		);
+		return { days: refundWindows[ 0 ], usePlanProductName };
+	}
+
+	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.PlanMonthlyBundle
+	);
+	const allCartItemsArePlanOrDomainRenewals = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRenewal ||
+			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
+			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
+			refundPolicy === RefundPolicy.PlanBiennialRenewal
+	);
+	if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
+		return { days: Math.max( ...refundWindows ), usePlanProductName: true };
+	}
+
+	return { days: Math.min( ...refundWindows ), usePlanProductName: false };
+}
+
 function RefundPolicyItem( {
 	refundPolicy,
 	cart,

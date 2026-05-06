@@ -6,11 +6,12 @@ import {
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { Plans } from '@automattic/data-stores';
+import { HelpCenter, HelpCenterSelect, Plans } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	DOMAIN_FLOW,
 	isNewHostedSiteCreationFlow,
+	isOnboardingFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
 	Step,
@@ -53,6 +54,15 @@ import { getIntervalType } from './util';
 import type { OnboardSelect, SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
 import './unified-plans-step-styles.scss';
+
+const loadPlanFaq = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-plans-features-main-components-plan-faq" */ 'calypso/my-sites/plans-features-main/components/plan-faq'
+	);
+const loadStepWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-signup-step-wrapper" */ 'calypso/signup/step-wrapper'
+	);
 
 export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
@@ -193,6 +203,8 @@ export interface UnifiedPlansStepProps {
 	isStepperUpgradeFlow?: boolean;
 }
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 /**
  * This is a "unified" plans step component that is utilised by both Start (old framework) and Stepper (new framework).
  * It contains the latest logic/conditioning, properties, etc. that apply to the latest main iterations of the plans step.
@@ -248,6 +260,13 @@ function UnifiedPlansStep( {
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
+
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -423,6 +442,10 @@ function UnifiedPlansStep( {
 			return translate( 'Select a plan to launch your store' );
 		}
 
+		if ( intent === 'plans-woo-hosting-solutions' ) {
+			return translate( 'Pick a plan for your store' );
+		}
+
 		return translate( 'There’s a plan for you' );
 	};
 
@@ -495,6 +518,12 @@ function UnifiedPlansStep( {
 				return translate( 'Your free trial ends soon — select a plan to keep your online store.' );
 			}
 			return translate( 'Choose the plan that fits your business.' );
+		}
+
+		if ( intent === 'plans-woo-hosting-solutions' ) {
+			return translate(
+				'All plans come with WooCommerce. Pick the level of support and features you want.'
+			);
 		}
 
 		if ( useEmailOnboardingSubheader ) {
@@ -607,16 +636,7 @@ function UnifiedPlansStep( {
 						return null;
 					}
 
-					return (
-						<AsyncLoad
-							require={ () =>
-								import(
-									/* webpackChunkName: "async-load-calypso-my-sites-plans-features-main-components-plan-faq" */ 'calypso/my-sites/plans-features-main/components/plan-faq'
-								)
-							}
-							placeholder={ null }
-						/>
-					);
+					return <AsyncLoad require={ loadPlanFaq } placeholder={ null } />;
 				} }
 			/>
 		</div>
@@ -635,6 +655,13 @@ function UnifiedPlansStep( {
 							leftElement={
 								goBack ? (
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+								) : undefined
+							}
+							rightElement={
+								isOnboardingFlow( flowName ) ? (
+									<Step.LinkButton onClick={ toggleHelpCenter }>
+										{ translate( 'Need help?' ) }
+									</Step.LinkButton>
 								) : undefined
 							}
 						/>
@@ -697,11 +724,7 @@ function UnifiedPlansStep( {
 						/**
 						 * Common Start/Stepper props [START]
 						 */
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-signup-step-wrapper" */ 'calypso/signup/step-wrapper'
-							)
-						}
+						require={ loadStepWrapper }
 						flowName={ flowName }
 						stepName={ stepName }
 						stepContent={ stepContent }

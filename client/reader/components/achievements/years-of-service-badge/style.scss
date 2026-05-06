@@ -44,3 +44,49 @@
 	font-size: rem( 13px );
 	color: var( --studio-gray-40 );
 }
+
+a.years-of-service-badge {
+	color: inherit;
+	text-decoration: none;
+
+	.years-of-service-badge__circle {
+		position: relative;
+		overflow: hidden;
+		isolation: isolate;
+	}
+
+	.years-of-service-badge__circle::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			115deg,
+			transparent 35%,
+			rgba(255, 255, 255, 0.65) 50%,
+			transparent 65%
+		);
+		transform: translateX(-110%);
+		pointer-events: none;
+	}
+
+	&:hover .years-of-service-badge__circle::before,
+	&:focus-visible .years-of-service-badge__circle::before {
+		animation: years-of-service-badge-shine 700ms ease-out;
+	}
+}
+
+@keyframes years-of-service-badge-shine {
+	from {
+		transform: translateX(-110%);
+	}
+	to {
+		transform: translateX(110%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	a.years-of-service-badge:hover .years-of-service-badge__circle::before,
+	a.years-of-service-badge:focus-visible .years-of-service-badge__circle::before {
+		animation: none;
+	}
+}

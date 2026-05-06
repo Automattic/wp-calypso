@@ -84,6 +84,7 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
@@ -147,6 +148,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
+	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -195,6 +197,11 @@ import type { Theme } from 'calypso/types';
 
 import './style.scss';
 
+const loadProductPlanOverlapNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
+	);
+
 export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
@@ -215,6 +222,7 @@ export interface ManagePurchaseProps {
 }
 
 export interface ManagePurchaseConnectedProps {
+	isSplitCancelRemoveEnabled: boolean;
 	hasCustomPrimaryDomain?: boolean | null;
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
@@ -225,6 +233,7 @@ export interface ManagePurchaseConnectedProps {
 	isAtomicSite?: boolean | null;
 	isDomainOnlySite?: boolean | null;
 	isProductOwner?: boolean | null;
+	willAtomicSiteRevert?: boolean;
 	isPurchaseTheme?: boolean | null;
 	plan: FilteredPlan | false | undefined;
 	primaryDomain?: ResponseDomain | null;
@@ -767,7 +776,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.isAutoRenewEnabled;
 
@@ -1018,7 +1027,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 		const { id } = purchase;
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
@@ -1582,6 +1591,7 @@ class ManagePurchase extends Component<
 			getAddNewPaymentMethodUrlFor,
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
+			willAtomicSiteRevert,
 		} = this.props;
 
 		// If there is no purchase, query to load the purchases
@@ -1654,7 +1664,8 @@ class ManagePurchase extends Component<
 						renewableSitePurchases={ renewableSitePurchases }
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
-						isProductOwner={ isProductOwner }
+						isProductOwner={ isProductOwner ?? false }
+						willAtomicSiteRevert={ willAtomicSiteRevert }
 						getAddNewPaymentMethodUrlFor={
 							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
 						}
@@ -1793,11 +1804,7 @@ function PlanOverlapNotice( {
 		}
 		return (
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
-					)
-				}
+				require={ loadProductPlanOverlapNotices }
 				placeholder={ null }
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
@@ -1812,11 +1819,7 @@ function PlanOverlapNotice( {
 	}
 	return (
 		<AsyncLoad
-			require={ () =>
-				import(
-					/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
-				)
-			}
+			require={ loadProductPlanOverlapNotices }
 			placeholder={ null }
 			plans={ JETPACK_PLANS }
 			products={ JETPACK_PRODUCTS_LIST }
@@ -1868,7 +1871,7 @@ const WrappedManagePurchase = (
 	);
 };
 
-export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
+const ConnectedManagePurchase = connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 
 	const purchaseAttachedTo =
@@ -1916,6 +1919,9 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		isProductOwner,
+		willAtomicSiteRevert: purchase
+			? willAtomicSiteRevertAfterPurchaseDeactivation( state, purchase.id, [] )
+			: false,
 		isPurchaseTheme,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
 		primaryDomain: primaryDomain,
@@ -1947,6 +1953,18 @@ function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 		),
 	};
 }
+
+function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	return (
+		<ConnectedManagePurchase
+			{ ...props }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+		/>
+	);
+}
+
+export default ManagePurchaseWithExperiment;
 
 function getCancelPurchaseNavText(
 	purchase: Purchase,

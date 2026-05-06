@@ -39,6 +39,15 @@ import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
+const loadPurchaseModalWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-upsell-nudge-purchase-modal-wrapper" */ './purchase-modal-wrapper'
+	);
+const loadIsEligibleForOneClickCheckoutWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-checkout-purchase-modal-is-eligible-for-one-click-checkout-wrapper" */ 'calypso/my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper'
+	);
+
 const debug = debugFactory( 'calypso:upsell-nudge' );
 
 type ConnectedProps = {
@@ -231,11 +240,7 @@ export const UpsellNudge = ( {
 		<>
 			{ showPurchaseModal && (
 				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-blocks-upsell-nudge-purchase-modal-wrapper" */ './purchase-modal-wrapper'
-						)
-					}
+					require={ loadPurchaseModalWrapper }
 					plan={ upsellPlan }
 					siteSlug={ siteSlug }
 					setShowPurchaseModal={ setShowPurchaseModal }
@@ -326,11 +331,7 @@ export default function Wrapper( props: OwnProps ) {
 	if ( isOneClickCheckoutEnabled && plan ) {
 		return (
 			<AsyncLoad
-				require={ () =>
-					import(
-						/* webpackChunkName: "async-load-calypso-my-sites-checkout-purchase-modal-is-eligible-for-one-click-checkout-wrapper" */ 'calypso/my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper'
-					)
-				}
+				require={ loadIsEligibleForOneClickCheckoutWrapper }
 				component={ ConnectedUpsellNudge }
 				componentProps={ props }
 			/>

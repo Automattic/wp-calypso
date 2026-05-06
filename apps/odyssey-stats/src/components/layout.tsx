@@ -1,6 +1,11 @@
 import clsx from 'clsx';
 import AsyncLoad from 'calypso/components/async-load';
 
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+
 interface LayoutProps {
 	sectionGroup: string;
 	sectionName: string;
@@ -17,15 +22,7 @@ export default function Layout( { sectionGroup, sectionName, primary, secondary 
 	return (
 		<div className={ sectionClass }>
 			<div id="content" className="layout__content">
-				<AsyncLoad
-					require={ () =>
-						import(
-							/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-						)
-					}
-					placeholder={ null }
-					id="notices"
-				/>
+				<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 				<div id="secondary" className="layout__secondary" role="navigation">
 					{ secondary }
 				</div>

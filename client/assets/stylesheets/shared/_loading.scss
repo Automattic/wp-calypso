@@ -9,11 +9,6 @@
 	path {
 		fill: var(--color-neutral-10);
 	}
-
-	@include breakpoint-deprecated( ">960px" ) {
-		width: 100px;
-		height: 100px;
-	}
 }
 
 .wpcom__loading {

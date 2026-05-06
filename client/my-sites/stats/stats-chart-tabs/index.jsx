@@ -28,6 +28,11 @@ import { buildChartData, getQueryDate, transformChartDataToLineFormat } from './
 
 import './style.scss';
 
+const loadLineChart = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
+	);
+
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
 	gridicon: PropTypes.string,
@@ -240,11 +245,7 @@ class StatModuleChartTabs extends Component {
 					)
 				) : (
 					<AsyncLoad
-						require={ () =>
-							import(
-								/* webpackChunkName: "async-load-calypso-my-sites-stats-components-line-chart" */ 'calypso/my-sites/stats/components/line-chart'
-							)
-						}
+						require={ loadLineChart }
 						className="stats-chart-tabs__line-chart"
 						chartData={ lineChartData }
 						curveType="monotone" // can use smooth, linear, monotone

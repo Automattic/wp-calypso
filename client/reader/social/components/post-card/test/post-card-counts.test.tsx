@@ -2,19 +2,199 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
+import { makeUseAtmosphereRepostAction } from 'calypso/reader/atmosphere/use-atmosphere-repost-action';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { SocialAnalyticsProvider } from '../analytics-context';
+import { LikeProvider } from '../like-context';
 import { PostCardCounts } from '../post-card-counts';
+import { RepostProvider } from '../repost-context';
+import type { SocialPost } from '../../../types';
+
+const post: SocialPost = {
+	uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
+	cid: 'bafy-cid',
+	permalink: 'https://bsky.app/profile/alice.bsky.social/post/3kabc',
+	author: {
+		id: 'did:plc:abc',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		avatar: null,
+		profile_url: 'https://bsky.app/profile/alice.bsky.social',
+	},
+	created_at: '2026-04-27T10:00:00Z',
+	indexed_at: '2026-04-27T10:00:00Z',
+	text: 'hello',
+	html: '<p>hello</p>',
+	lang: [ 'en' ],
+	reply_parent: null,
+	reply_root: null,
+	reason: null,
+	embed: null,
+	counts: { replies: 5, reposts: 2, likes: 9, quotes: 1 },
+	viewer: { like: null, repost: null },
+};
+
+function wrap(
+	ui: React.ReactNode,
+	getThreadUrl?: ( uri: string ) => string | null,
+	onClick = jest.fn(),
+	onReplyClick?: ( post: SocialPost ) => void
+) {
+	return (
+		<SocialAnalyticsProvider
+			value={ {
+				source: 'atmosphere',
+				connectionId: 7,
+				onClick,
+				getThreadUrl,
+				onReplyClick,
+			} }
+		>
+			{ ui }
+		</SocialAnalyticsProvider>
+	);
+}
 
 describe( 'PostCardCounts', () => {
-	it( 'renders all four counts with screen-reader labels next to them', () => {
-		render( <PostCardCounts counts={ { replies: 1, reposts: 2, likes: 3, quotes: 4 } } /> );
-		expect( screen.getByText( /replies:/i ).parentElement ).toHaveTextContent( /replies:\s*1/i );
-		expect( screen.getByText( /reposts:/i ).parentElement ).toHaveTextContent( /reposts:\s*2/i );
-		expect( screen.getByText( /likes:/i ).parentElement ).toHaveTextContent( /likes:\s*3/i );
-		expect( screen.getByText( /quotes:/i ).parentElement ).toHaveTextContent( /quotes:\s*4/i );
+	it( 'renders all four counts as static spans when no resolver is set', () => {
+		render( wrap( <PostCardCounts post={ post } /> ) );
+		expect( screen.queryByRole( 'link' ) ).toBeNull();
 	} );
 
-	it( 'renders zeros without crashing', () => {
-		render( <PostCardCounts counts={ { replies: 0, reposts: 0, likes: 0, quotes: 0 } } /> );
-		expect( screen.getByText( /replies:/i ).parentElement ).toHaveTextContent( /replies:\s*0/i );
+	it( 'renders the replies count as a link when getThreadUrl returns a string', () => {
+		const getThreadUrl = () => '/reader/atmosphere/7/thread/did:plc:abc/3kabc';
+		render( wrap( <PostCardCounts post={ post } />, getThreadUrl ) );
+		const link = screen.getByRole( 'link', { name: /replies/i } );
+		expect( link ).toHaveAttribute( 'href', '/reader/atmosphere/7/thread/did:plc:abc/3kabc' );
+		expect( link ).toHaveTextContent( '5' );
+	} );
+
+	it( 'fires _replies_count_clicked when the replies link is clicked', async () => {
+		const onClick = jest.fn();
+		const getThreadUrl = () => '/reader/atmosphere/7/thread/did:plc:abc/3kabc';
+		render( wrap( <PostCardCounts post={ post } />, getThreadUrl, onClick ) );
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'link', { name: /replies/i } ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			expect.stringContaining( '_replies_count_clicked' ),
+			expect.objectContaining( {
+				connection_id: 7,
+				post_uri: 'at://did:plc:abc/app.bsky.feed.post/3kabc',
+				replies_count: 5,
+				destination: 'in_app_thread',
+			} )
+		);
+	} );
+
+	it( 'reposts/likes/quotes stay non-interactive even when getThreadUrl is set', () => {
+		const getThreadUrl = () => '/reader/atmosphere/7/thread/did:plc:abc/3kabc';
+		render( wrap( <PostCardCounts post={ post } />, getThreadUrl ) );
+		const links = screen.getAllByRole( 'link' );
+		expect( links ).toHaveLength( 1 ); // only replies
+	} );
+
+	it( 'renders likes as a toggle button when connectionId and LikeProvider are supplied', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
+		renderWithProvider(
+			<LikeProvider value={ useAtmosphereLikeAction }>
+				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+			</LikeProvider>
+		);
+		const button = screen.getByRole( 'button', { name: /like/i } );
+		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
+		expect( button ).toHaveTextContent( '9' );
+	} );
+
+	it( 'renders replies count as a button that calls onReplyClick when bound', async () => {
+		const onReplyClick = jest.fn();
+		const onClick = jest.fn();
+		const user = userEvent.setup();
+		render( wrap( <PostCardCounts post={ post } />, undefined, onClick, onReplyClick ) );
+		const button = screen.getByRole( 'button', { name: /reply/i } );
+		expect( button ).toHaveTextContent( '5' );
+		await user.click( button );
+		expect( onReplyClick ).toHaveBeenCalledWith( post );
+		expect( onClick ).toHaveBeenCalledWith(
+			expect.stringContaining( '_replies_count_clicked' ),
+			expect.objectContaining( {
+				connection_id: 7,
+				post_uri: post.uri,
+				replies_count: 5,
+				destination: 'composer',
+			} )
+		);
+	} );
+
+	it( 'renders the interactive reply button for posts without a cid (Mastodon shape)', async () => {
+		// Mastodon `SocialPost` instances never carry a `cid` (it's an
+		// AT-Proto strong-ref field). The reply gate must not require it,
+		// otherwise the composer entry point silently disappears on
+		// Mastodon — the very protocol that needs it.
+		const cidlessPost: SocialPost = { ...post, cid: undefined };
+		const onReplyClick = jest.fn();
+		const user = userEvent.setup();
+		render( wrap( <PostCardCounts post={ cidlessPost } />, undefined, jest.fn(), onReplyClick ) );
+		const button = screen.getByRole( 'button', { name: /reply/i } );
+		await user.click( button );
+		expect( onReplyClick ).toHaveBeenCalledWith( cidlessPost );
+	} );
+
+	it( 'falls back to a link when onReplyClick is not bound', () => {
+		const getThreadUrl = () => '/threads/x';
+		render( wrap( <PostCardCounts post={ post } />, getThreadUrl ) );
+		const link = screen.getByRole( 'link', { name: /replies/i } );
+		expect( link ).toHaveAttribute( 'href', '/threads/x' );
+	} );
+
+	it( 'renders reposts as a menu trigger when connectionId is supplied and a RepostProvider is mounted', () => {
+		renderWithProvider(
+			<RepostProvider value={ makeUseAtmosphereRepostAction( 7 ) }>
+				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+			</RepostProvider>
+		);
+		const button = screen.getByRole( 'button', { name: /repost, 2 reposts/i } );
+		expect( button ).toHaveAttribute( 'aria-haspopup', 'menu' );
+		expect( button ).toHaveTextContent( '2' );
+	} );
+
+	it( 'renders reposts as a static span when connectionId is missing', () => {
+		render( wrap( <PostCardCounts post={ post } /> ) );
+		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
+	} );
+
+	it( 'renders reposts as a static span when no RepostProvider is mounted', () => {
+		const cidlessPost = { ...post, cid: '' };
+		renderWithProvider( wrap( <PostCardCounts post={ cidlessPost } connectionId={ 7 } /> ) );
+		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
+	} );
+
+	it( 'renders QuoteButton when analytics.onQuoteClick is bound and post has cid', () => {
+		const onQuoteClick = jest.fn();
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick: jest.fn(),
+					onQuoteClick,
+				} }
+			>
+				<PostCardCounts post={ post } connectionId={ 42 } />
+			</SocialAnalyticsProvider>
+		);
+		expect( screen.getByRole( 'button', { name: /quote, .* quote/i } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to static quotes count when onQuoteClick is not bound', () => {
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+			>
+				<PostCardCounts post={ post } connectionId={ 42 } />
+			</SocialAnalyticsProvider>
+		);
+		expect( screen.queryByRole( 'button', { name: /quote/i } ) ).not.toBeInTheDocument();
 	} );
 } );

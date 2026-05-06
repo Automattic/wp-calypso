@@ -1,5 +1,6 @@
 import { useConnectionQuery } from '@automattic/api-queries';
-import { VerifyPanel } from './verify-panel';
+import { TimelineComposePill, useOptionalComposer } from 'calypso/reader/social/composer';
+import { AuthorProfilePanel } from './author-profile-panel';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
 interface ProfilePanelProps {
@@ -7,12 +8,24 @@ interface ProfilePanelProps {
 }
 
 export function ProfilePanel( { connection }: ProfilePanelProps ) {
-	const verify = useConnectionQuery( connection.id );
+	const composer = useOptionalComposer();
+	const { data } = useConnectionQuery( connection.id );
+
 	return (
-		<VerifyPanel
-			data={ verify.data ?? null }
-			error={ verify.error ?? null }
-			isLoading={ verify.isFetching }
-		/>
+		<>
+			{ composer && data && (
+				<TimelineComposePill
+					avatar={ data.avatar ?? connection.avatar }
+					entryPoint="profile_inline"
+				/>
+			) }
+			<AuthorProfilePanel
+				connection={ connection }
+				actor={ connection.handle }
+				subtabBasePath={ `/reader/atmosphere/${ connection.id }/profile` }
+			/>
+		</>
 	);
 }
+
+export default ProfilePanel;

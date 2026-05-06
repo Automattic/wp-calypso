@@ -54,6 +54,49 @@ Query factories (`queryOptions(...)`) do **not** need this — they don't intera
 
 Example: every list mutation in `packages/api-queries/src/read-lists.ts` follows this pattern.
 
+### Optimistic-mutation hardening checklist
+
+Lessons from the Reader social mutations (CM-625 likes / CM-660 boost
+/ CM-658 favorite). When you add a new optimistic mutation that
+patches React Query caches, walk this list:
+
+- **Scope the patcher to the right key namespace.** When wire IDs are
+  protocol-instance-local (Mastodon status_ids are local to a connection's
+  home instance), patching purely on `item.id === foo` across
+  `queryClient.getQueriesData({ queryKey: keysRoot.all })` will
+  cross-pollute. Filter the walk by `connectionId` (or whichever slot
+  scopes the cache key for your protocol). The same applies to
+  `cancelQueries` — pass a `predicate` rather than the broad root key.
+- **Wrap `cancelQueries` in `try`/`catch` inside `onMutate`.** TanStack
+  docs flag it as best-effort; if it rejects (rare — route-change
+  teardown races), `onMutate` resolves to `undefined` and the actual
+  mutationFn never runs. The optimistic patch + mutationFn must still
+  fire if the cancel fails.
+- **Add a `default:` arm to error-message switches.** TypeScript
+  exhaustiveness keeps `MastodonError['kind']` / `AtmosphereError['kind']`
+  switches complete today, but a future widening returns `undefined` →
+  `errorNotice( undefined )` shows an empty toast. Repeat the generic
+  copy in a `default:` arm.
+- **`encodeURIComponent` path-interpolated wire IDs.** Even when the
+  validator says today's IDs are URL-safe (numeric strings, etc.), the
+  validator can widen — and a malformed `post.uri` flowing through a
+  mapper bug shouldn't smuggle path segments. Cheap insurance.
+- **`logToLogstash` lives in the client adapter, not in
+  `packages/api-queries`.** The package can't import
+  `calypso/lib/logstash` (lint-restricted). The pipeline-level error
+  log belongs in the per-protocol adapter's `trackError` (or whatever
+  surfaces the user-visible error notice).
+- **Mock `calypso/lib/logstash` in tests that exercise error paths.**
+  Otherwise it fires real HTTPS requests to wpcom and nock will
+  complain about an unmocked request:
+  ```ts
+  jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+  ```
+- **Connection-scoped state, not global.** When connection identity
+  matters for action-correctness (writing via a user's connected
+  account), pass it explicitly down the panel → provider → button
+  chain. Don't reach into Redux for "the current connection".
+
 ### Stream keys
 
 Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, and `custom_recs_*`. These keys index state in `state.reader.streams`.
@@ -68,30 +111,87 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 
 ### Page entrypoints
 
-| Route                                | Entrypoint                                                                |
-| ------------------------------------ | ------------------------------------------------------------------------- |
-| `/reader`                            | `client/reader/following/main.tsx`                                        |
-| `/reader/feeds/:feed_id`             | `client/reader/feed-stream/`                                              |
-| `/reader/blogs/:blog_id`             | `client/reader/site-stream/`                                              |
-| `/reader/feeds/:feed/posts/:post`    | `client/reader/full-post/`                                                |
-| `/reader/blogs/:blog/posts/:post`    | `client/reader/full-post/`                                                |
-| `/reader/a8c`                        | `client/reader/a8c/main.jsx`                                              |
-| `/reader/p2`                         | `client/reader/p2/main.jsx`                                               |
-| `/reader/search`                     | `client/reader/search/`                                                   |
-| `/reader/notifications`              | `client/reader/notifications/`                                            |
-| `/reader/new`                        | `client/reader/new-subscription/`                                         |
-| `/reader/subscriptions`              | `client/reader/site-subscriptions-manager/`                               |
-| `/reader/subscriptions/comments`     | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
-| `/reader/subscriptions/pending`      | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
-| `/reader/subscriptions/:id`          | `client/reader/site-subscription/`                                        |
-| `/reader/site/subscription/:blog_id` | `client/reader/site-subscription/`                                        |
-| `/reader/conversations`              | `client/reader/conversations/`                                            |
-| `/reader/list/*`                     | `client/reader/list/`                                                     |
-| `/discover/*`                        | `client/reader/discover/`                                                 |
-| `/tag/:tag`                          | `client/reader/tag-stream/`                                               |
-| `/tags`                              | `client/reader/tags/`                                                     |
-| `/activities/likes`                  | `client/reader/liked-stream/`                                             |
-| `/reader/users/*`                    | `client/reader/user-profile/`                                             |
+| Route                                      | Entrypoint                                                                |
+| ------------------------------------------ | ------------------------------------------------------------------------- |
+| `/reader`                                  | `client/reader/following/main.tsx`                                        |
+| `/reader/feeds/:feed_id`                   | `client/reader/feed-stream/`                                              |
+| `/reader/blogs/:blog_id`                   | `client/reader/site-stream/`                                              |
+| `/reader/feeds/:feed/posts/:post`          | `client/reader/full-post/`                                                |
+| `/reader/blogs/:blog/posts/:post`          | `client/reader/full-post/`                                                |
+| `/reader/a8c`                              | `client/reader/a8c/main.jsx`                                              |
+| `/reader/p2`                               | `client/reader/p2/main.jsx`                                               |
+| `/reader/search`                           | `client/reader/search/`                                                   |
+| `/reader/notifications`                    | `client/reader/notifications/`                                            |
+| `/reader/new`                              | `client/reader/new-subscription/`                                         |
+| `/reader/subscriptions`                    | `client/reader/site-subscriptions-manager/`                               |
+| `/reader/subscriptions/comments`           | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
+| `/reader/subscriptions/pending`            | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
+| `/reader/subscriptions/:id`                | `client/reader/site-subscription/`                                        |
+| `/reader/site/subscription/:blog_id`       | `client/reader/site-subscription/`                                        |
+| `/reader/conversations`                    | `client/reader/conversations/`                                            |
+| `/reader/list/*`                           | `client/reader/list/`                                                     |
+| `/discover/*`                              | `client/reader/discover/`                                                 |
+| `/tag/:tag`                                | `client/reader/tag-stream/`                                               |
+| `/tags`                                    | `client/reader/tags/`                                                     |
+| `/activities/likes`                        | `client/reader/liked-stream/`                                             |
+| `/reader/users/*`                          | `client/reader/user-profile/`                                             |
+| `/reader/atmosphere`                       | `client/reader/atmosphere/atmosphere-landing-view.tsx`                    |
+| `/reader/atmosphere/connect`               | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
+| `/reader/atmosphere/:id`                   | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
+| `/reader/atmosphere/:id/:tab`              | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
+| `/reader/atmosphere/:id/thread/:did/:rkey` | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
+| `/reader/atmosphere/:id/profile/:actor`    | `client/reader/atmosphere/author-profile-view.tsx`                        |
+| `/reader/mastodon`                         | `client/reader/mastodon/mastodon-landing-view.tsx`                        |
+| `/reader/mastodon/connect`                 | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
+| `/reader/mastodon/oauth-callback`          | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |
+| `/reader/mastodon/:id`                     | `client/reader/mastodon/controller.tsx` (redirect handler)                |
+| `/reader/mastodon/:id/:tab`                | `client/reader/mastodon/mastodon-account-view.tsx`                        |
+| `/reader/mastodon/:id/thread/:status_id`   | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
+| `/reader/mastodon/:id/profile/:actor`      | `client/reader/mastodon/author-profile-view.tsx`                          |
+
+The likes/favorites count on `<SocialPostCard>` becomes an interactive
+`<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
+when the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
+the tree with a `<LikeProvider>` carrying a per-protocol adapter hook.
+ATmosphere panels (timeline / thread / tag-feed) wire
+`makeUseAtmosphereLikeAction(connection.id)`; Mastodon panels (timeline
+/ thread / tag-feed) wire `makeUseMastodonLikeAction(connection.id)`.
+Surfaces without a provider (quoted-post embeds, the shared
+`SocialAuthorProfilePanel` until it forwards `connectionId`, non-social
+cards) fall back to the static count.
+
+The reposts count likewise becomes an interactive `<RepostButton>` when
+the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
+the tree with `<RepostProvider>` carrying a per-protocol adapter hook.
+ATmosphere panels (timeline / thread / tag-feed) wire
+`makeUseAtmosphereRepostAction(connection.id)`; Mastodon panels (timeline
+/ thread / tag-feed) wire `makeUseMastodonRepostAction(connection.id)` and
+render the UK-spelled "Boost" label. Surfaces without a provider
+(quoted-post embeds, the shared `SocialAuthorProfilePanel` until it
+forwards `connectionId`, non-social cards) fall back to the static count.
+
+The reply / quote / standalone composer follows the same pattern with
+`<ComposerProvider connectionId={…} config={…}>` from
+`calypso/reader/social/composer`, plus per-protocol
+`composer-config.tsx` files that supply a
+`ComposerConfig<TError, TParams, TResult>`. Each protocol mounts the
+provider once per view (account, thread, author-profile) alongside
+`<ComposerModal />` and `<ComposeFab />`; panels that should render the
+inline `<TimelineComposePill />` opt in via `useOptionalComposer()`. The
+config carries the per-protocol limit, supported mode kinds (both
+protocols support `'reply'`, `'quote'`, and `'standalone'`),
+wire-shape `buildParams`, error-message map (with a
+mandatory `default:` arm using `err satisfies never;` — same lesson as
+the like / repost adapters), Tracks event names, success-notice copy,
+optional `logBadRequest` (lives in the per-protocol adapter so
+`packages/api-queries` doesn't need to import
+`calypso/lib/logstash`), and an optional `useMedia` slot for media
+attachments. The reply-button gate at `<PostCardCounts>` is
+`analytics.onReplyClick`-only — the per-panel `onReplyClick` handler is
+responsible for guarding on missing `post.cid` (or any protocol-specific
+preconditions) before calling `openComposer`. See
+`client/reader/social/AGENTS.md` § "Composer (slice 7)" for the full
+contract.
 
 ### SSR file variants
 

@@ -386,7 +386,7 @@ body.post-new-php.agents-manager-sidebar-container {
 		.editor-post-publish-panel {
 			top: $layout-spacing;
 			bottom: $layout-spacing;
-			right: $sidebar-width + $layout-spacing;
+			right: calc( $sidebar-width + $layout-spacing );
 			animation: none;
 			transform: translateX( 0 );
 		}
@@ -686,4 +686,32 @@ body.post-new-php.agents-manager-sidebar-container {
 			overflow: hidden;
 		}
 	}
+}
+
+// Docked split-screen: flip --am-sidebar-width to 50vw. `$sidebar-width`
+// resolves through this variable so every consumer picks it up.
+body.agents-manager-sidebar-container.is-split-screen {
+	--am-sidebar-width: 50vw;
+
+	// Drop agenttic-ui's hard-capped EmptyView widths so the empty state
+	// stretches with the sidebar. Attribute-prefix survives class hashing.
+	[class*="EmptyView-module_heading"],
+	[class*="EmptyView-module_help"],
+	[class*="EmptyView-module_suggestionsWrapper"] {
+		max-width: none;
+	}
+
+	// Stretch MessageActions so its flex line spans the bubble; otherwise on
+	// wide viewports the container shrinks to content and the Sources card
+	// never wraps. `flex: 0 0 100%` then makes the card a non-shrinking full
+	// row so the existing -32px overlay lands on the actions row reliably.
+	.MessageActions-module_container:has(.agents-manager-sources-display) {
+		inline-size: 100%;
+	}
+
+	.agents-manager-sources-display.card {
+		flex: 0 0 100%;
+		max-inline-size: 100%;
+	}
+
 }

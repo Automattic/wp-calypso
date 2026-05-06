@@ -21,7 +21,10 @@ import MenuItem from './menu-item';
 import type { AddNewSiteProps } from './types';
 import './style.scss';
 
-function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
+function AddNewSite( {
+	context = 'unknown',
+	aiSiteBuilderPath = '/setup/ai-site-builder',
+}: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const auth = useContext( AuthContext );
 	const user = auth?.user;
@@ -93,7 +96,7 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 							action: 'big-sky',
 						} );
 					} }
-					href={ addQueryArgs( wpcomLink( '/setup/ai-site-builder' ), {
+					href={ addQueryArgs( wpcomLink( aiSiteBuilderPath ), {
 						source: context,
 						ref: 'new-site-popover',
 					} ) }
