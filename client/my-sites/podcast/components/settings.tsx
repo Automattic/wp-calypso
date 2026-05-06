@@ -28,6 +28,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useHasPublishedEpisode } from '../hooks/use-has-published-episode';
+import { computeSubmissionIssues } from '../hooks/use-submission-issues';
 
 const TRACKED_FIELDS = [
 	'podcasting_category_id',
@@ -181,55 +183,12 @@ const PodcastingSettingsForm = ( {
 			: null
 	);
 
-	const submissionIssues = useMemo( () => {
-		const list: string[] = [];
-		if ( ! isPodcastingEnabled ) {
-			list.push( translate( 'Select a podcast category.' ) as string );
-		}
-		if ( ! ( fields.podcasting_title ?? '' ).trim() ) {
-			list.push( translate( 'Add a title.' ) as string );
-		}
-		if ( ! ( fields.podcasting_summary ?? '' ).trim() ) {
-			list.push( translate( 'Add a summary.' ) as string );
-		}
-		if ( ! ( fields.podcasting_talent_name ?? '' ).trim() ) {
-			list.push( translate( 'Add a host, artist, or producer name.' ) as string );
-		}
-		if ( ! ( fields.podcasting_email ?? '' ).trim() ) {
-			list.push( translate( 'Add an email address.' ) as string );
-		}
-		const primaryTopic = String( fields.podcasting_category_1 ?? '0' );
-		if ( primaryTopic === '0' || primaryTopic === '' ) {
-			list.push( translate( 'Choose a primary podcast topic.' ) as string );
-		}
-		if ( ! coverImageId ) {
-			list.push( translate( 'Add a cover image.' ) as string );
-		} else if ( coverImage ) {
-			const { width, height, mime_type: mimeType } = coverImage;
-			if ( mimeType && mimeType !== 'image/png' && mimeType !== 'image/jpeg' ) {
-				list.push( translate( 'Cover image must be a PNG or JPG.' ) as string );
-			}
-			if ( width && height && width !== height ) {
-				list.push( translate( 'Cover image must be square.' ) as string );
-			}
-			if ( width && ( width < 1400 || width > 3000 ) ) {
-				list.push(
-					translate( 'Cover image must be between 1400×1400 and 3000×3000 pixels.' ) as string
-				);
-			}
-		}
-		return list;
-	}, [
-		fields.podcasting_title,
-		fields.podcasting_summary,
-		fields.podcasting_talent_name,
-		fields.podcasting_email,
-		fields.podcasting_category_1,
-		coverImageId,
-		coverImage,
-		isPodcastingEnabled,
-		translate,
-	] );
+	const hasPublishedEpisode = useHasPublishedEpisode( siteId, podcastingCategoryId );
+
+	const submissionIssues = useMemo(
+		() => computeSubmissionIssues( fields, coverImage, hasPublishedEpisode, translate ),
+		[ fields, coverImage, hasPublishedEpisode, translate ]
+	);
 
 	const onDisablePodcasting = useCallback( () => {
 		if ( disabled || ! isPodcastingEnabled ) {

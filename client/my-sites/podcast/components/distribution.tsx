@@ -1,4 +1,4 @@
-import { ConfettiAnimation } from '@automattic/components';
+import { ConfettiAnimation, NoticeBanner } from '@automattic/components';
 import {
 	Button,
 	Card,
@@ -15,6 +15,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFeedUrl } from '../hooks/use-feed-url';
+import { useSubmissionIssues } from '../hooks/use-submission-issues';
 import {
 	LogoAmazon,
 	LogoApple,
@@ -96,18 +97,27 @@ const DIRECTORIES: Directory[] = [
 	},
 ];
 
-function Distribution() {
+type Props = {
+	onGoToSettings?: () => void;
+};
+
+function Distribution( { onGoToSettings }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const feedUrl = useFeedUrl();
+	const { issues, isPodcastingEnabled } = useSubmissionIssues();
 	const [ activeId, setActiveId ] = useState< string | null >( null );
 	const [ showConfetti, setShowConfetti ] = useState( false );
 	const activeDirectory = DIRECTORIES.find( ( d ) => d.id === activeId ) ?? null;
 	const prefersReducedMotion =
 		typeof window !== 'undefined' &&
 		window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	const hasIssues = issues.length > 0;
 
 	const openSubmitModal = ( directoryId: string ) => {
+		if ( hasIssues ) {
+			return;
+		}
 		dispatch(
 			recordTracksEvent( 'calypso_podcast_submit_modal_opened', {
 				directory: directoryId,
@@ -118,6 +128,45 @@ function Distribution() {
 
 	return (
 		<>
+			{ hasIssues && (
+				<div className="podcast__settings-readiness podcast__distribution">
+					<NoticeBanner
+						level="warning"
+						title={
+							isPodcastingEnabled
+								? ( translate( 'Almost ready to submit' ) as string )
+								: ( translate( 'Set up your podcast' ) as string )
+						}
+						hideCloseButton
+						actions={
+							onGoToSettings
+								? [
+										<Button
+											key="edit-settings"
+											variant="primary"
+											size="compact"
+											onClick={ onGoToSettings }
+										>
+											{ translate( 'Edit settings' ) }
+										</Button>,
+								  ]
+								: undefined
+						}
+					>
+						<p>
+							{ translate(
+								'Podcast apps like Apple Podcasts and Spotify need this information so they can list your show in their directories and show it to listeners. Add the following to your feed:'
+							) }
+						</p>
+						<ul className="podcast__settings-issues">
+							{ issues.map( ( issue ) => (
+								<li key={ issue }>{ issue }</li>
+							) ) }
+						</ul>
+					</NoticeBanner>
+				</div>
+			) }
+
 			<Card className="site-settings__card podcast__card podcast__distribution">
 				<CardBody>
 					<VStack spacing={ 8 }>
@@ -170,9 +219,22 @@ function Distribution() {
 											<Text weight={ 500 }>{ name }</Text>
 										</HStack>
 										<Button
-											variant="primary"
+											variant={ hasIssues ? 'secondary' : 'primary' }
 											size="compact"
 											onClick={ () => openSubmitModal( id ) }
+											disabled={ hasIssues }
+											accessibleWhenDisabled
+											aria-label={
+												hasIssues
+													? ( translate(
+															'Finish setting up your podcast before submitting to %(service)s.',
+															{
+																args: { service: name },
+																comment: '%(service)s is a podcast directory name, e.g. "Spotify".',
+															}
+													  ) as string )
+													: undefined
+											}
 										>
 											{ translate( 'Submit' ) }
 										</Button>
