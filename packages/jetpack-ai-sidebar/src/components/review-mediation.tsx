@@ -64,6 +64,7 @@ interface SuggestedEdit {
 	suggested_text: string;
 	rationale: string;
 	supported_by_reviewers: string[];
+	requires_manual?: boolean;
 }
 
 interface GuidelineViolation {
@@ -260,6 +261,10 @@ function hasRenderableGuidelineQuote( quote: string | null ): boolean {
 	return typeof quote === 'string' && quote.trim() !== '';
 }
 
+function isManualSuggestedEdit( edit: SuggestedEdit ): boolean {
+	return edit.requires_manual === true;
+}
+
 /**
  * Main component.
  * @param {ReviewMediationProps} props - Structured mediation output.
@@ -305,6 +310,11 @@ export default function ReviewMediation( {
 	const setSectionOpen = useCallback( ( key: SectionKey, opened: boolean ) => {
 		setOpenSections( ( prev ) => ( { ...prev, [ key ]: opened } ) );
 	}, [] );
+
+	const renderedGuidelineViolations = useMemo(
+		() => guideline_violations.filter( ( v ) => hasRenderableGuidelineQuote( v.guideline_quote ) ),
+		[ guideline_violations ]
+	);
 
 	const handleStatClick = useCallback(
 		( key: SectionKey ) => {
@@ -440,6 +450,9 @@ export default function ReviewMediation( {
 	// ---------- Suggested edit handlers ----------
 	const handleAcceptEdit = useCallback(
 		async ( edit: SuggestedEdit, editIndex: number ) => {
+			if ( isManualSuggestedEdit( edit ) ) {
+				return;
+			}
 			if ( edit.block_index === null ) {
 				setEditStatus( editIndex, 'failed' );
 				return;
@@ -551,6 +564,9 @@ export default function ReviewMediation( {
 			if ( status !== 'pending' && status !== 'failed' ) {
 				return acc;
 			}
+			if ( isManualSuggestedEdit( edit ) ) {
+				return acc;
+			}
 			return getBlockEditDisabledReason( edit.block_index, edit.current_text ) ? acc : acc + 1;
 		}, 0 );
 	}, [ suggested_edits, editStatuses, getBlockEditDisabledReason ] );
@@ -602,6 +618,9 @@ export default function ReviewMediation( {
 				continue;
 			}
 			const edit = suggested_edits[ i ];
+			if ( isManualSuggestedEdit( edit ) ) {
+				continue;
+			}
 			if ( getBlockEditDisabledReason( edit.block_index, edit.current_text ) ) {
 				continue;
 			}
@@ -658,7 +677,7 @@ export default function ReviewMediation( {
 		conflicts.length === 0 &&
 		implications.length === 0 &&
 		suggested_edits.length === 0 &&
-		guideline_violations.length === 0;
+		renderedGuidelineViolations.length === 0;
 
 	// Lookup helper — `reviewers_metadata` may be absent on older payloads.
 	const getReviewerMetadata = useCallback(
@@ -722,7 +741,7 @@ export default function ReviewMediation( {
 						</button>
 					</li>
 				) }
-				{ guideline_violations.length > 0 && (
+				{ renderedGuidelineViolations.length > 0 && (
 					<li>
 						<button
 							type="button"
@@ -731,9 +750,9 @@ export default function ReviewMediation( {
 							title={ __( 'Jump to guideline violations', 'jetpack' ) }
 						>
 							<span className="jetpack-ai-review-mediation__stat-count">
-								{ guideline_violations.length }
+								{ renderedGuidelineViolations.length }
 							</span>{ ' ' }
-							{ _n( 'violation', 'violations', guideline_violations.length, 'jetpack' ) }
+							{ _n( 'violation', 'violations', renderedGuidelineViolations.length, 'jetpack' ) }
 						</button>
 					</li>
 				) }
@@ -1040,14 +1059,18 @@ export default function ReviewMediation( {
 								>
 									{ suggested_edits.map( ( edit, i ) => {
 										const status = editStatuses[ i ] ?? 'pending';
+										const isManual = isManualSuggestedEdit( edit );
 										const isPostWide = edit.block_index === null;
-										const acceptTitle = getBlockEditDisabledReason(
-											edit.block_index,
-											edit.current_text
-										);
+										const acceptTitle = isManual
+											? __(
+													'Needs manual edit — review the suggestion and update the post manually.',
+													'jetpack'
+											  )
+											: getBlockEditDisabledReason( edit.block_index, edit.current_text );
 										const clickable = ! isPostWide;
 										const isCollapsed = status === 'accepted' || status === 'dismissed';
 										const acceptDisabled =
+											isManual ||
 											!! acceptTitle ||
 											status === 'applying' ||
 											status === 'accepted' ||
@@ -1121,7 +1144,9 @@ export default function ReviewMediation( {
 										}
 										return (
 											<article
-												className={ `jetpack-ai-review-mediation__card is-${ status }` }
+												className={ `jetpack-ai-review-mediation__card is-${ status }${
+													isManual ? ' is-manual' : ''
+												}` }
 												key={ `edit-${ i }` }
 											>
 												<p className="jetpack-ai-review-mediation__block-ref">
@@ -1136,10 +1161,19 @@ export default function ReviewMediation( {
 														<del>{ edit.current_text }</del>
 													</p>
 												) }
-												<p className="jetpack-ai-review-mediation__suggested">
-													<ins>{ edit.suggested_text }</ins>
+												<p
+													className={ `jetpack-ai-review-mediation__suggested${
+														isManual ? ' is-manual' : ''
+													}` }
+												>
+													{ isManual ? edit.suggested_text : <ins>{ edit.suggested_text }</ins> }
 												</p>
 												<p className="jetpack-ai-review-mediation__rationale">{ edit.rationale }</p>
+												{ isManual && (
+													<p className="jetpack-ai-review-mediation__status is-manual">
+														{ __( 'Needs manual edit.', 'jetpack' ) }
+													</p>
+												) }
 												{ status === 'failed' && (
 													<p className="jetpack-ai-review-mediation__status is-failed">
 														{ __(
@@ -1168,14 +1202,18 @@ export default function ReviewMediation( {
 														type="button"
 														className="jetpack-ai-review-mediation__action is-accept"
 														disabled={ acceptDisabled }
+														aria-label={
+															isManual ? __( 'Needs manual edit', 'jetpack' ) : undefined
+														}
 														title={ acceptTitle }
 														onClick={ () => handleAcceptEdit( edit, i ) }
 													>
 														{ /* `accepted`/`dismissed` are unreachable here — the
-														collapsed branch above renders for those */ }
+															collapsed branch above renders for those */ }
+														{ isManual && __( 'Needs manual edit', 'jetpack' ) }
 														{ status === 'applying' && __( 'Applying…', 'jetpack' ) }
-														{ status === 'failed' && __( 'Retry', 'jetpack' ) }
-														{ status === 'pending' && __( 'Accept', 'jetpack' ) }
+														{ ! isManual && status === 'failed' && __( 'Retry', 'jetpack' ) }
+														{ ! isManual && status === 'pending' && __( 'Accept', 'jetpack' ) }
 													</button>
 													<button
 														type="button"
@@ -1193,7 +1231,7 @@ export default function ReviewMediation( {
 							</div>
 						) }
 
-						{ guideline_violations.length > 0 && (
+						{ renderedGuidelineViolations.length > 0 && (
 							<div
 								ref={ ( el ) => {
 									sectionRefs.current.violations = el;
@@ -1201,14 +1239,14 @@ export default function ReviewMediation( {
 							>
 								<PanelBody
 									title={ `${ __( 'Guideline violations', 'jetpack' ) } (${
-										guideline_violations.length
+										renderedGuidelineViolations.length
 									})` }
 									className="jetpack-ai-review-mediation__violations"
 									opened={ openSections.violations }
 									onToggle={ ( next: boolean ) => setSectionOpen( 'violations', next ) }
 								>
 									<ul className="jetpack-ai-review-mediation__violations-list">
-										{ guideline_violations.map( ( v, i ) => (
+										{ renderedGuidelineViolations.map( ( v, i ) => (
 											<li key={ `violation-${ i }` }>
 												<p className="jetpack-ai-review-mediation__violation-issue">
 													<span

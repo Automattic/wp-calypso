@@ -210,6 +210,10 @@
 		&.is-failed {
 			color: #d63638;
 		}
+
+		&.is-manual {
+			color: #f0b849;
+		}
 	}
 
 	// ---------- Suggested edit cards ----------
@@ -304,6 +308,13 @@
 		text-decoration: none;
 		padding: 0 0.15rem;
 		border-radius: 2px;
+	}
+
+	&__suggested.is-manual {
+		border-left: 3px solid #f0b849;
+		background: rgba(240, 184, 73, 0.08);
+		padding: 0.5rem 0.75rem;
+		border-radius: 0 4px 4px 0;
 	}
 
 	// Quoted aside for `violating_text` (warning-tone left bar). Replaces an

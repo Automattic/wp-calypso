@@ -187,31 +187,35 @@ describe( 'ReviewMediation — smoke render', () => {
 		[ 'null', null ],
 		[ 'empty string', '' ],
 		[ 'whitespace-only', '   ' ],
-	] )( 'suppresses the guideline_quote blockquote when the value is %s', ( _label, quote ) => {
-		render(
-			<ReviewMediation
-				{ ...basePayload( {
-					guideline_violations: [
-						{
-							category: 'copy',
-							block_name: null,
-							guideline_quote: quote as string | null,
-							block_index: 1,
-							violating_text: 'was voted upon',
-							issue: 'Reviewer-asserted with no matching site clause.',
-						},
-					],
-				} ) }
-			/>
-		);
+	] )(
+		'filters guideline violations without a rendered guideline quote when the value is %s',
+		( _label, quote ) => {
+			render(
+				<ReviewMediation
+					{ ...basePayload( {
+						guideline_violations: [
+							{
+								category: 'copy',
+								block_name: null,
+								guideline_quote: quote as string | null,
+								block_index: 1,
+								violating_text: 'was voted upon',
+								issue: 'Reviewer-asserted with no matching site clause.',
+							},
+						],
+					} ) }
+				/>
+			);
 
-		// The issue line still renders.
-		expect(
-			screen.getByText( /Reviewer-asserted with no matching site clause/ )
-		).toBeInTheDocument();
-		// And no empty/whitespace blockquote leaks through.
-		expect( document.querySelector( '.jetpack-ai-review-mediation__guideline-anchor' ) ).toBeNull();
-	} );
+			expect(
+				screen.queryByText( /Reviewer-asserted with no matching site clause/ )
+			).not.toBeInTheDocument();
+			expect( screen.queryByText( /Guideline violations/ ) ).not.toBeInTheDocument();
+			expect(
+				document.querySelector( '.jetpack-ai-review-mediation__guideline-anchor' )
+			).toBeNull();
+		}
+	);
 } );
 
 describe( 'ReviewMediation — stats strip', () => {
@@ -448,6 +452,35 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		fireEvent.click( accept );
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders manual suggested edits without making them auto-applicable', () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: '',
+							suggested_text: 'Review the paragraph against the concern before publishing.',
+							rationale: 'Marcus raised this as a policy concern.',
+							supported_by_reviewers: [ 'Marcus' ],
+							requires_manual: true,
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText( 'Review the paragraph against the concern before publishing.' )
+		).toBeInTheDocument();
+		expect( screen.getByText( 'Marcus raised this as a policy concern.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Requested by:' ) ).toBeInTheDocument();
+
+		const manualButton = screen.getByRole( 'button', { name: 'Needs manual edit' } );
+		expect( manualButton ).toBeDisabled();
 		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
 	} );
 
