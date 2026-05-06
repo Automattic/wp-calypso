@@ -19,6 +19,7 @@ import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layo
 import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
+import { useFeatureValue } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
@@ -83,6 +84,9 @@ const HomeContent = ( {
 	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
 	const queryClient = useQueryClient();
 	const translate = useTranslate();
+	const homeVariant = useFeatureValue( 'wpcom_explat_v2_demo_v1', 'control' );
+	const homeTitle =
+		homeVariant === 'treatment' ? translate( 'My Dashboard' ) : translate( 'My Home' );
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
@@ -185,7 +189,7 @@ const HomeContent = ( {
 				compactBreadcrumb={ false }
 				navigationItems={ [] }
 				mobileItem={ null }
-				title={ translate( 'My Home' ) }
+				title={ homeTitle }
 				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
 			>
 				{ headerActions }

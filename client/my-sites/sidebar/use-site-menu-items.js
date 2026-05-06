@@ -83,39 +83,6 @@ const useSiteMenuItems = () => {
 		);
 	};
 
-	if ( shouldShowGlobalSidebar ) {
-		return globalSidebarMenu( {
-			showP2s: showP2s,
-			hasOptIn: dashboardOptIn,
-		} );
-	}
-
-	/**
-	 * When no site domain is provided, lets show only menu items that support all sites screens.
-	 */
-	if ( ! siteDomain || isAllDomainsView ) {
-		return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
-	}
-
-	/**
-	 * When we have a jetpack connected site & we cannot retrieve the dynamic menu from that site.
-	 */
-	if ( isJetpack && ! isAtomic && ! menuItems ) {
-		return jetpackMenu( { siteDomain, hasUnifiedImporter } );
-	}
-
-	/**
-	 * When we have a domain-only site & we cannot retrieve the dynamic menu from that site.
-	 */
-	if ( isDomainOnly && ! menuItems ) {
-		return domainOnlyFallbackMenu( { siteDomain } );
-	}
-
-	/**
-	 * Overrides for the static fallback data which will be displayed if/when there are
-	 * no menu items in the API response or the API response has yet to be cached in
-	 * browser storage APIs.
-	 */
 	const fallbackDataOverrides = {
 		siteDomain,
 		isAtomic,
@@ -127,7 +94,23 @@ const useSiteMenuItems = () => {
 		showSiteMonitoring: isAtomic,
 	};
 
-	return applyHomeMenuVariant( menuItems ?? buildFallbackResponse( fallbackDataOverrides ) );
+	const resolvedMenuItems = ( () => {
+		if ( shouldShowGlobalSidebar ) {
+			return globalSidebarMenu( { showP2s: showP2s, hasOptIn: dashboardOptIn } );
+		}
+		if ( ! siteDomain || isAllDomainsView ) {
+			return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
+		}
+		if ( isJetpack && ! isAtomic && ! menuItems ) {
+			return jetpackMenu( { siteDomain, hasUnifiedImporter } );
+		}
+		if ( isDomainOnly && ! menuItems ) {
+			return domainOnlyFallbackMenu( { siteDomain } );
+		}
+		return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
+	} )();
+
+	return applyHomeMenuVariant( resolvedMenuItems );
 };
 
 export default useSiteMenuItems;
