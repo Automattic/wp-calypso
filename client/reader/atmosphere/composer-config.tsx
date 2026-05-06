@@ -225,6 +225,7 @@ function errorMessageFor( err: AtmosphereError, t: Translate ): ReactNode {
 		case 'target_unavailable':
 			return t( 'This post is no longer available.' );
 		case 'invalid_handle':
+		case 'blob_decode_failed':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );
 		default:
