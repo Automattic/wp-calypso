@@ -1,8 +1,10 @@
 import { fetchReadStream, getStreamType } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { EVERY_MINUTE } from 'calypso/lib/interval';
 import { keyToString } from 'calypso/reader/post-key';
+import { useDispatch } from 'calypso/state';
+import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { normalizeStreamPage } from './stream-normalization';
 import { getStreamInfiniteQueryKey } from './use-stream-posts';
@@ -54,9 +56,11 @@ const postKeyId = ( postKey: PostKey | null | undefined ): string =>
 /**
  * Drives the "X new posts" pill. A separate `useQuery` polls the head of the
  * stream every minute (`refetchInterval`); the diff between the polled head
- * and the currently visible items is exposed as `pendingCount`. The infinite
- * query owned by `useStreamPosts` is left alone until the user explicitly
- * accepts the update via `consumePending`, which surgically swaps `pages[0]`.
+ * and the currently visible items is exposed as `pendingCount`. The polled
+ * payload carries full post bodies (see `getQueryStringForPoll`), and is
+ * dispatched into `state.reader.posts` on every tick so `<PostLifecycle>`
+ * resolves rich cards immediately when `consumePending` swaps the head into
+ * `pages[0]` of the infinite cache.
  */
 export function useStreamPendingPosts( {
 	streamKey,
@@ -67,6 +71,7 @@ export function useStreamPendingPosts( {
 	items,
 }: UseStreamPendingPostsOptions ): UseStreamPendingPostsResult {
 	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
 	const streamType = getStreamType( streamKey );
 
 	const pollQueryKey = useMemo< PollHeadQueryKey >(
@@ -111,6 +116,20 @@ export function useStreamPendingPosts( {
 		meta: { persist: false },
 	} );
 
+	// Hydrate Redux on every poll tick so the post bodies are ready before the
+	// user clicks "X new posts". Idempotent — `READER_POSTS_RECEIVE` overwrites
+	// by `global_ID`, and the rich poll shape matches what regular fetches
+	// return.
+	useEffect( () => {
+		if ( ! pollHead.data ) {
+			return;
+		}
+		const { streamPosts } = normalizeStreamPage( pollHead.data, streamType );
+		if ( streamPosts.length > 0 ) {
+			dispatch( receivePosts( streamPosts ) as never );
+		}
+	}, [ pollHead.data, streamType, dispatch ] );
+
 	const pendingCount = useMemo( () => {
 		const head = pollHead.data;
 		if ( ! head ) {
@@ -146,11 +165,10 @@ export function useStreamPendingPosts( {
 				prev ? { pageParams: prev.pageParams, pages: [ head, ...prev.pages.slice( 1 ) ] } : prev
 			);
 		}
-		// `resetQueries` (rather than `removeQueries`) flips the active
-		// observer's `data` back to `undefined`, so `pendingCount` drops to 0
-		// immediately on this render — without waiting for the consumer's
-		// `items` to repropagate from the merged infinite cache. It also
-		// triggers a refetch against the new baseline.
+		// `resetQueries` flips the active observer's data to undefined right
+		// away (so `pendingCount` falls to 0 in this render) and schedules a
+		// refetch against the new baseline — typically a no-op since the head
+		// we just promoted is what the next poll would have returned.
 		queryClient.resetQueries( { queryKey: pollQueryKey, exact: true } );
 	}, [ queryClient, pollQueryKey, infiniteQueryKey ] );
 
