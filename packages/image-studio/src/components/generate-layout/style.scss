@@ -47,17 +47,6 @@
 		border-radius: 8px;
 	}
 
-	&__generated-video-controls {
-		flex: 0 0 auto;
-		width: min(360px, 100%);
-
-		.canvas-controls {
-			position: static;
-			transform: none;
-			justify-content: center;
-		}
-	}
-
 	&__generate-layout {
 		color: #666;
 		text-align: center;
