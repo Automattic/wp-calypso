@@ -114,7 +114,7 @@ describe( 'MastodonTagFeedPage', () => {
 } );
 
 describe( 'follow types', () => {
-	it( 'MastodonViewerState carries following / followed_by / requested booleans', () => {
+	it( 'MastodonAuthorProfileViewer carries following / followed_by / requested booleans', () => {
 		const v: MastodonAuthorProfileViewer = {
 			following: false,
 			followed_by: true,
