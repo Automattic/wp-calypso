@@ -89,7 +89,8 @@ const subtractUtcDays = ( date: Date, days: number ) => {
 };
 
 export const isPodcastStatsMockEnabled = () => {
-	if ( process.env.NODE_ENV === 'production' || typeof window === 'undefined' ) {
+	// TEMP: production gate dropped for Calypso Live demo. Revert before merge.
+	if ( typeof window === 'undefined' ) {
 		return false;
 	}
 	const value = new URLSearchParams( window.location.search ).get( 'podcastStatsMock' );
