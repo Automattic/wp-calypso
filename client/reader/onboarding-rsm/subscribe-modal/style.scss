@@ -201,6 +201,15 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		.reader-update-notice {
 			display: none;
 		}
+
+		// Compact cards stack `.reader-post-card__post-options` above the featured
+		// image in `.reader-post-card__post-media`. We hide the ellipsis (and we are
+		// not on /discover so there is no follow button there), leaving an empty row
+		// — but the row still had the global compact rule `margin-bottom: 16px`,
+		// which pushed thumbnails down relative to the vertically-centered text.
+		.reader-post-card.card.is-compact .reader-post-card__post-options {
+			margin-bottom: 0;
+		}
 	}
 
 	&__preview-placeholder {
@@ -309,7 +318,29 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		.reader-post-card.card.is-compact {
 			margin-bottom: 0;
 			border-radius: 0;
-			padding: 14px 16px 12px;
+			padding: 14px 16px;
+
+			// Vertically center the title/meta/excerpt block against the
+			// featured image on the right.
+			.reader-post-card__post-content {
+				align-items: center;
+				margin-bottom: 0;
+			}
+
+			// 8px gap between the title/meta heading row and the excerpt
+			// body. Resetting the excerpt margin overrides the global
+			// `margin-bottom: 10px` it ships with.
+			.reader-post-card__post-heading {
+				margin-bottom: 8px;
+			}
+
+			.reader-excerpt,
+			.reader-excerpt__content {
+				margin: 0;
+				max-height: none;
+				font-size: 13px;
+				line-height: 20px;
+			}
 		}
 	}
 
