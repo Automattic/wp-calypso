@@ -271,6 +271,11 @@ registerPlugin( 'jetpack-help-center', {
 } );
 
 // Gate for proxied users with wpcom-smart-dictation=true flag.
-if ( helpCenterData.isProxied && canAccessWpcomApis() ) {
+if (
+	typeof helpCenterData !== 'undefined' &&
+	helpCenterData.isProxied &&
+	canAccessWpcomApis() &&
+	helpCenterData.currentUser?.is_a11n
+) {
 	import( './help-center-wpcom-transcription' );
 }
