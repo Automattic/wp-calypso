@@ -22,7 +22,12 @@ const SOCIAL_STORE = 'jetpack-social-plugin';
 const EDITOR_STORE = 'core/editor';
 const IG_SERVICE = 'instagram-business';
 
-type ReelShareReason = 'no-connection' | 'post-not-published' | 'no-video' | 'no-script-data';
+type ReelShareReason =
+	| 'no-connection'
+	| 'connection-disabled'
+	| 'post-not-published'
+	| 'no-video'
+	| 'no-script-data';
 
 interface Connection {
 	connection_id: string | number;
@@ -58,6 +63,7 @@ export function useReelShare(): UseReelShareReturn {
 		isPublished,
 		currentMeta,
 		hasInstagramConnection,
+		hasInstagramConnectionEnabled,
 		isSharing,
 	} = useSelect( ( select ) => {
 		const videoStore = select( videoStudioStore );
@@ -80,7 +86,7 @@ export function useReelShare(): UseReelShareReturn {
 		// click time — see the fresh* values below — to defeat useSelect's
 		// stale-subscription quirk for late-registered stores.
 		const connections = social?.getConnections?.() ?? [];
-		const enabledConnections = connections.filter( ( c ) => c.enabled !== false );
+		const igConnection = connections.find( ( c ) => c.service_name === IG_SERVICE );
 
 		return {
 			currentVideoUrl: videoStore.getCurrentVideoUrl?.() ?? null,
@@ -91,13 +97,14 @@ export function useReelShare(): UseReelShareReturn {
 			isPublished: editor?.isCurrentPostPublished?.() ?? false,
 			currentMeta:
 				( editor?.getEditedPostAttribute?.( 'meta' ) as Record< string, unknown > ) ?? {},
-			hasInstagramConnection: enabledConnections.some( ( c ) => c.service_name === IG_SERVICE ),
+			hasInstagramConnection: !! igConnection,
+			hasInstagramConnectionEnabled: !! igConnection && igConnection.enabled !== false,
 			isSharing: social?.isSharingCurrentPost?.() ?? false,
 		};
 	}, [] );
 
 	const { editPost } = useDispatch( EDITOR_STORE ) as {
-		editPost: ( edits: { meta: Record< string, unknown > } ) => Promise< void >;
+		editPost: ( edits: { meta: Record< string, unknown > } ) => void;
 	};
 	const { shareCurrentPost } = useDispatch( SOCIAL_STORE ) as {
 		shareCurrentPost: (
@@ -125,6 +132,8 @@ export function useReelShare(): UseReelShareReturn {
 		reason = 'no-script-data';
 	} else if ( ! hasInstagramConnection ) {
 		reason = 'no-connection';
+	} else if ( ! hasInstagramConnectionEnabled ) {
+		reason = 'connection-disabled';
 	} else if ( ! isPublished ) {
 		reason = 'post-not-published';
 	}
@@ -238,7 +247,7 @@ export function useReelShare(): UseReelShareReturn {
 			// Hardcoded `video/mp4` — Veo currently only outputs MP4. If a future
 			// style preset ever returns webm/mov, source the MIME from a
 			// video-studio selector and remove this assumption.
-			await editPost( {
+			editPost( {
 				meta: {
 					jetpack_social_options: {
 						...existingSocialOptions,

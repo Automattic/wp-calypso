@@ -15,6 +15,10 @@ import {
 	trackImageStudioReelShareInvalidState,
 	trackImageStudioReelShareDispatched,
 	trackImageStudioReelShareFailed,
+	trackImageStudioReelShareConnectionDisabled,
+	trackImageStudioGenericShareClicked,
+	trackImageStudioGenericShareCompleted,
+	trackImageStudioGenericShareFailed,
 } from './tracking';
 
 // Mock session
@@ -222,5 +226,86 @@ describe( 'reel share tracking helpers', () => {
 		const call = recordTracksEventMock.mock.calls[ 0 ];
 		expect( call[ 0 ] ).toBe( 'jetpack_big_sky_image_studio_reel_share_failed' );
 		expect( call[ 1 ] ).not.toHaveProperty( 'error_message' );
+	} );
+
+	it( 'fires reel_share_connection_disabled', () => {
+		trackImageStudioReelShareConnectionDisabled();
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_reel_share_connection_disabled',
+			expect.any( Object )
+		);
+	} );
+
+	it( 'preserves a duration_seconds value of 0', () => {
+		trackImageStudioReelShareClicked( { attachmentId: 1, durationSeconds: 0 } );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_reel_share_clicked',
+			expect.objectContaining( { duration_seconds: 0 } )
+		);
+	} );
+} );
+
+describe( 'generic share tracking helpers', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		selectMock.mockReturnValue( {
+			getEntryPoint: jest.fn( () => 'post_editor_feature_clip' ),
+		} );
+	} );
+
+	it( 'fires generic_share_clicked with method=web-share', () => {
+		trackImageStudioGenericShareClicked( { method: 'web-share' } );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_generic_share_clicked',
+			expect.objectContaining( { method: 'web-share' } )
+		);
+	} );
+
+	it( 'fires generic_share_clicked with method=web-share-unsupported', () => {
+		trackImageStudioGenericShareClicked( { method: 'web-share-unsupported' } );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_generic_share_clicked',
+			expect.objectContaining( { method: 'web-share-unsupported' } )
+		);
+	} );
+
+	it( 'fires generic_share_clicked with method=download', () => {
+		trackImageStudioGenericShareClicked( { method: 'download' } );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_generic_share_clicked',
+			expect.objectContaining( { method: 'download' } )
+		);
+	} );
+
+	it( 'fires generic_share_completed with the chosen method', () => {
+		trackImageStudioGenericShareCompleted( { method: 'web-share' } );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_generic_share_completed',
+			expect.objectContaining( { method: 'web-share' } )
+		);
+	} );
+
+	it( 'fires generic_share_failed with method only', () => {
+		trackImageStudioGenericShareFailed( { method: 'web-share-unsupported' } );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_generic_share_failed',
+			expect.objectContaining( { method: 'web-share-unsupported' } )
+		);
+	} );
+
+	it( 'fires generic_share_failed with method, message, and failureKind', () => {
+		trackImageStudioGenericShareFailed( {
+			method: 'download',
+			message: 'window.open returned null',
+			failureKind: 'open-blocked',
+		} );
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_generic_share_failed',
+			expect.objectContaining( {
+				method: 'download',
+				error_message: 'window.open returned null',
+				failure_kind: 'open-blocked',
+			} )
+		);
 	} );
 } );

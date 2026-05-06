@@ -553,7 +553,7 @@ export function trackImageStudioReelShareClicked( {
 	durationSeconds?: number | null;
 } ): void {
 	const properties: Record< string, string | number > = { attachment_id: attachmentId };
-	if ( durationSeconds ) {
+	if ( durationSeconds != null ) {
 		properties.duration_seconds = durationSeconds;
 	}
 	recordImageStudioEvent( 'image_studio_reel_share_clicked', properties );
@@ -608,9 +608,13 @@ export function trackImageStudioReelShareFailed( errorMessage?: string ): void {
 }
 
 /**
- * Tracks when the generic share button is clicked.
+ * Tracks when the generic share initiates a particular method. Fires once per
+ * attempted method, before the work runs — so a click that probes web-share,
+ * finds files unsupported, and falls back to download produces three events
+ * (one per method tried).
  * @param options        - Tracking options
- * @param options.method - 'web-share' (Web Share API) or 'download' (fallback)
+ * @param options.method - 'web-share' (Web Share API attempt), 'web-share-unsupported'
+ *                         (canShare rejected files), or 'download' (fallback / direct).
  */
 export function trackImageStudioGenericShareClicked( {
 	method,
@@ -623,12 +627,13 @@ export function trackImageStudioGenericShareClicked( {
 /**
  * Tracks when the generic share completed successfully.
  * @param options        - Tracking options
- * @param options.method - 'web-share' or 'download'
+ * @param options.method - 'web-share' or 'download' (the only methods that can complete;
+ *                         'web-share-unsupported' is a precondition failure, never a success).
  */
 export function trackImageStudioGenericShareCompleted( {
 	method,
 }: {
-	method: 'web-share' | 'web-share-unsupported' | 'download';
+	method: 'web-share' | 'download';
 } ): void {
 	recordImageStudioEvent( 'image_studio_generic_share_completed', { method } );
 }

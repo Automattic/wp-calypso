@@ -78,9 +78,16 @@ export function useGenericShare(): UseGenericShareReturn {
 
 		isSharingRef.current = true;
 		try {
+			// Fire the clicked event at the start of every method we attempt
+			// (web-share, web-share-unsupported, download), not after the work
+			// succeeds. Otherwise a fetch failure or canShare-rejects-files
+			// emits a `failed` event with no matching `clicked` and the funnel
+			// doesn't add up.
+			//
 			// Probe before fetching — saves a full MP4 download on browsers
 			// that expose navigator.share but reject files (most desktops).
 			if ( nav && canShareVideoFiles( nav, filename ) ) {
+				trackImageStudioGenericShareClicked( { method: 'web-share' } );
 				try {
 					const response = await fetch( currentVideoUrl );
 					if ( ! response.ok ) {
@@ -89,7 +96,6 @@ export function useGenericShare(): UseGenericShareReturn {
 					const blob = await response.blob();
 					const file = new File( [ blob ], filename, { type: 'video/mp4' } );
 
-					trackImageStudioGenericShareClicked( { method: 'web-share' } );
 					await nav.share?.( {
 						files: [ file ],
 						title: __( 'Generated video clip', __i18n_text_domain__ ),
@@ -114,6 +120,7 @@ export function useGenericShare(): UseGenericShareReturn {
 			} else if ( nav && typeof nav.share === 'function' ) {
 				// Web Share API exists but doesn't accept video files — record this
 				// case so we can see how often it happens vs. a clean download path.
+				trackImageStudioGenericShareClicked( { method: 'web-share-unsupported' } );
 				trackImageStudioGenericShareFailed( { method: 'web-share-unsupported' } );
 			}
 
