@@ -176,7 +176,7 @@
 						"range": [ 0, 0.5 ]
 					}
 				],
-				"expected": -1
+				"expected": null
 			},
 			{
 				"name": "outside_coverage",
@@ -186,7 +186,7 @@
 						"range": [ 0, 0.5 ]
 					}
 				],
-				"expected": -1
+				"expected": null
 			}
 		],
 		"condition": [
