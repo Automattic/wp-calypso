@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -222,14 +223,12 @@ export class Login extends Component {
 
 	getSupportLink() {
 		return (
-			<a
+			<ExternalLink
 				className="one-login__footer-link"
 				href="/support/category/manage-your-account/account-settings/"
-				target="_blank"
-				rel="noopener noreferrer"
 			>
 				{ this.props.translate( 'Support' ) }
-			</a>
+			</ExternalLink>
 		);
 	}
 
