@@ -14,9 +14,6 @@
 	padding: 0 16px;
 	margin-top: 4px;
 
-	// Hover/focus delight on the icon glyph — the @wordpress/components
-	// Button's default state already gives us a subtle bg highlight; we
-	// add an icon-specific brighten + scale on top.
 	&__button svg {
 		transition:
 			color 0.15s ease,

@@ -552,10 +552,7 @@ export function trackImageStudioReelShareClicked( {
 	attachmentId: number;
 	durationSeconds?: number | null;
 } ): void {
-	const properties: Record< string, string | number > = {
-		mode: 'generate',
-		attachment_id: attachmentId,
-	};
+	const properties: Record< string, string | number > = { attachment_id: attachmentId };
 	if ( durationSeconds ) {
 		properties.duration_seconds = durationSeconds;
 	}
@@ -633,7 +630,7 @@ export function trackImageStudioGenericShareCompleted( {
  * @param options             - Tracking options
  * @param options.method      - 'web-share', 'web-share-unsupported', or 'download'
  * @param options.message     - Optional error message
- * @param options.failureKind - Optional categorical reason: 'cors' | 'network' | 'http' | 'aborted' | 'open-blocked' | 'unknown'
+ * @param options.failureKind - Optional categorical reason: 'cors' | 'network' | 'http' | 'open-blocked' | 'unknown'
  */
 export function trackImageStudioGenericShareFailed( {
 	method,
@@ -642,7 +639,7 @@ export function trackImageStudioGenericShareFailed( {
 }: {
 	method: 'web-share' | 'web-share-unsupported' | 'download';
 	message?: string;
-	failureKind?: 'cors' | 'network' | 'http' | 'aborted' | 'open-blocked' | 'unknown';
+	failureKind?: 'cors' | 'network' | 'http' | 'open-blocked' | 'unknown';
 } ): void {
 	const properties: Record< string, string | number > = { method };
 	if ( message ) {

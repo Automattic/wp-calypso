@@ -23,7 +23,6 @@ let mockState: {
 	currentDurationSeconds: number | null;
 	entryPoint: string;
 	isAiProcessing: boolean;
-	currentPostId: number | null;
 	isCurrentPostPublished: boolean;
 	currentMeta: Record< string, unknown >;
 	connections: Connection[];
@@ -50,7 +49,6 @@ jest.mock( '@wordpress/data', () => {
 		}
 		if ( storeName === 'core/editor' ) {
 			return {
-				getCurrentPostId: () => mockState.currentPostId,
 				isCurrentPostPublished: () => mockState.isCurrentPostPublished,
 				getEditedPostAttribute: ( attr: string ) =>
 					attr === 'meta' ? mockState.currentMeta : undefined,
@@ -66,7 +64,7 @@ jest.mock( '@wordpress/data', () => {
 	};
 	return {
 		useSelect: jest.fn( ( selector ) => selector( select ) ),
-		select: jest.fn( select ),
+		select,
 		useDispatch: jest.fn( ( storeName: string ) => {
 			if ( storeName === 'core/editor' ) {
 				return { editPost: mockEditPost };
@@ -93,8 +91,6 @@ jest.mock( '@wordpress/element', () => {
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
-	sprintf: ( format: string, ...args: unknown[] ) =>
-		format.replace( /%s/g, () => String( args.shift() ) ),
 } ) );
 
 jest.mock( '../../store', () => ( {
@@ -151,7 +147,6 @@ describe( 'useReelShare', () => {
 			currentDurationSeconds: 12,
 			entryPoint: 'post_editor_feature_clip',
 			isAiProcessing: false,
-			currentPostId: 999,
 			isCurrentPostPublished: true,
 			currentMeta: { jetpack_social_options: { version: 2 } },
 			connections: [ igConnection, twitterConnection ],

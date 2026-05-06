@@ -20,13 +20,6 @@ interface NavigatorWithShare {
 	canShare?: ( data: { files?: File[] } ) => boolean;
 }
 
-function getNavigator(): NavigatorWithShare | null {
-	if ( typeof navigator === 'undefined' ) {
-		return null;
-	}
-	return navigator as unknown as NavigatorWithShare;
-}
-
 /**
  * Probe whether the platform's Web Share API can accept video files at all,
  * without paying for a full video fetch first. Builds a 0-byte File with the
@@ -99,7 +92,8 @@ export function useGenericShare(): UseGenericShareReturn {
 		}
 
 		const filename = `clip-${ currentAttachmentId ?? Date.now() }.mp4`;
-		const nav = getNavigator();
+		const nav: NavigatorWithShare | null =
+			typeof navigator === 'undefined' ? null : ( navigator as unknown as NavigatorWithShare );
 
 		isSharingRef.current = true;
 		try {

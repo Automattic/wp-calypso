@@ -20,28 +20,16 @@ jest.mock( '@wordpress/icons', () => ( {
 	share: 'share-icon',
 } ) );
 
-type ButtonMockProps = {
-	children?: unknown;
-	variant?: unknown;
-	isBusy?: unknown;
-	icon?: unknown;
-	label?: unknown;
-	showTooltip?: unknown;
-} & Record< string, unknown >;
-
 jest.mock( '@wordpress/components', () => ( {
-	Button: ( props: ButtonMockProps ) => {
-		const { children, variant, isBusy, icon, label, showTooltip, ...rest } = props;
+	Button: ( props: Record< string, unknown > ) => {
+		const { icon, label, variant, isBusy, showTooltip, ...rest } = props;
+		// Strip wp-Button-only props so the rest spread to <button> is clean.
 		void variant;
 		void isBusy;
 		void showTooltip;
 		return (
-			<button
-				aria-label={ typeof label === 'string' ? label : undefined }
-				{ ...( rest as Record< string, unknown > ) }
-			>
+			<button aria-label={ typeof label === 'string' ? label : undefined } { ...rest }>
 				{ icon as React.ReactNode }
-				{ children as React.ReactNode }
 			</button>
 		);
 	},

@@ -1,8 +1,11 @@
 import { select as freshSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as imageStudioStore, type ImageStudioActions } from '../../store';
-import { ImageStudioEntryPoint } from '../../store';
+import {
+	ImageStudioEntryPoint,
+	store as imageStudioStore,
+	type ImageStudioActions,
+} from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
 import { getConnectionsManagementUrl, getReelSharePostPath } from '../../utils/jetpack-script-data';
 import {
@@ -29,7 +32,8 @@ interface Connection {
 interface JetpackSocialOptions {
 	attached_media?: Array< { id: number; url: string; type: string } >;
 	media_source?: string;
-	version?: number;
+	// Index signature so unrelated keys (version, image_generator_settings, …)
+	// flow through the spread untouched.
 	[ key: string ]: unknown;
 }
 
@@ -39,15 +43,6 @@ interface UseReelShareReturn {
 	isVisible: boolean;
 	isSharing: boolean;
 	handleShare: () => Promise< void >;
-}
-
-function getConnectInstagramUrl(): string {
-	// Prefer the site-resolved URL Jetpack injects via script-data; that's a
-	// fully-formed URL pointing at the current site's marketing connections
-	// page. Fall back to the unscoped Calypso path only if Jetpack Social
-	// isn't loaded — in that case the user is probably on a site without
-	// Publicize anyway, so the path is best-effort.
-	return getConnectionsManagementUrl() ?? '/marketing/connections';
 }
 
 export function useReelShare(): UseReelShareReturn {
@@ -179,7 +174,6 @@ export function useReelShare(): UseReelShareReturn {
 		}
 
 		if ( ! sharePath ) {
-			// isVisible would be false in this case; defensive bail-out.
 			return;
 		}
 
@@ -194,7 +188,7 @@ export function useReelShare(): UseReelShareReturn {
 				[
 					{
 						label: __( 'Connect Instagram', __i18n_text_domain__ ),
-						url: getConnectInstagramUrl(),
+						url: getConnectionsManagementUrl() ?? '/marketing/connections',
 						openInNewTab: true,
 					},
 				]
