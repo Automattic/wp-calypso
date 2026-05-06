@@ -6,9 +6,7 @@ export type ExPlatRuntime = {
 	can_evaluate: boolean;
 	can_log_assignment: boolean;
 	can_create_assignment: boolean;
-	include_staging: boolean;
 	attributes: Record< string, string >;
-	ttl: number;
 };
 
 const FAIL_CLOSED_RUNTIME: ExPlatRuntime = {
@@ -17,9 +15,7 @@ const FAIL_CLOSED_RUNTIME: ExPlatRuntime = {
 	can_evaluate: false,
 	can_log_assignment: false,
 	can_create_assignment: false,
-	include_staging: false,
 	attributes: {},
-	ttl: 0,
 };
 
 const MISSING_BOOTSTRAP_RUNTIME: ExPlatRuntime = {
@@ -62,7 +58,7 @@ function normalizeRuntime( runtime: Partial< ExPlatRuntime > ): ExPlatRuntime {
 	return FAIL_CLOSED_RUNTIME;
 }
 
-export function getExPlatRuntime(): ExPlatRuntime {
+function readExPlatRuntime(): ExPlatRuntime {
 	if ( typeof window === 'undefined' ) {
 		return MISSING_BOOTSTRAP_RUNTIME;
 	}
@@ -78,4 +74,28 @@ export function getExPlatRuntime(): ExPlatRuntime {
 	}
 
 	return normalizeRuntime( runtime );
+}
+
+/**
+ * Returns a memoized reader keyed on the identity of `window.__EXPLAT_RUNTIME__`.
+ *
+ * The bootstrap object is set once at page load and treated as immutable for
+ * the page's lifetime; re-reading on every `getFeatureValue` call would
+ * allocate 2-3 spread objects per call in render hot paths.
+ */
+export function createExPlatRuntimeReader(): () => ExPlatRuntime {
+	let lastRaw: unknown = Symbol( 'unset' );
+	let lastResult: ExPlatRuntime = MISSING_BOOTSTRAP_RUNTIME;
+	return () => {
+		const raw =
+			typeof window === 'undefined'
+				? undefined
+				: ( window as unknown as Record< string, unknown > ).__EXPLAT_RUNTIME__;
+		if ( raw === lastRaw ) {
+			return lastResult;
+		}
+		lastRaw = raw;
+		lastResult = readExPlatRuntime();
+		return lastResult;
+	};
 }
