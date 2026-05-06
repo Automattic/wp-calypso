@@ -9,3 +9,5 @@ export {
 	hasFullJetpack,
 	getOverflowSlugs,
 } from './selectors';
+export type { SurfaceCopy } from './copy';
+export { getRegistrationAcknowledgement, getAuthCopy, getSignupCopy, getLoginCopy } from './copy';

@@ -18,17 +18,18 @@ export function BlikConfirmation( {
 	cancel,
 }: {
 	formattedTotal: string;
-	cancel: () => void;
+	cancel: ( wasExpired: boolean ) => void;
 } ) {
 	const translate = useTranslate();
 	const secondsRemaining = useCountdown( BLIK_AUTHORIZATION_TIMEOUT_SECONDS );
 	const isExpired = secondsRemaining <= 0;
+	const handleDismiss = () => cancel( isExpired );
 
 	return (
 		<Modal
 			title={ translate( 'Confirm your BLIK payment' ) as string }
 			className="blik-confirmation"
-			onRequestClose={ cancel }
+			onRequestClose={ handleDismiss }
 			shouldCloseOnClickOutside={ false }
 			isDismissible
 		>
@@ -71,8 +72,8 @@ export function BlikConfirmation( {
 			</BlikModalBody>
 
 			<BlikModalFooter>
-				<Button borderless onClick={ cancel }>
-					{ translate( 'Cancel payment' ) }
+				<Button borderless onClick={ handleDismiss }>
+					{ isExpired ? translate( 'Close' ) : translate( 'Cancel payment' ) }
 				</Button>
 			</BlikModalFooter>
 		</Modal>

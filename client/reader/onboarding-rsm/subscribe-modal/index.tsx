@@ -3,22 +3,25 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
-import { useDispatch, useStore } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
 	requestPage,
 	clearStream,
@@ -74,8 +77,13 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+	const selectedFeed = useSelector( ( state: object ) =>
+		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
+	);
+	const selectedFeedIconUrl =
+		( selectedFeed as { site_icon?: string; image?: string } | null )?.site_icon ??
+		( selectedFeed as { site_icon?: string; image?: string } | null )?.image;
 	const dispatch = useDispatch();
-	const store = useStore();
 	const currentLocale = getLocaleSlug();
 	const SITES_PER_PAGE = 6;
 	const queryClient = useQueryClient();
@@ -228,48 +236,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		[ selectedSite ]
 	);
 
-	const handleFollowToggle = useCallback(
-		async ( site: CardData, following: boolean ) => {
-			// Read fresh follow state from the store on each call to avoid stale closure issues
-			// inside the retry loop where the captured `follows` array won't reflect updates
-			// dispatched mid-loop.
-			const isFollowingSite = () => {
-				const currentFollows = getReaderFollows( store.getState() );
-				return currentFollows.some(
-					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
-				);
-			};
-
-			// Exit early if the follow state already matches what we want.
-			if ( following === isFollowingSite() ) {
-				return;
-			}
-
-			// Maximum number of retries
-			const MAX_RETRIES = 3;
-
-			for ( let attempt = 0; attempt < MAX_RETRIES; attempt++ ) {
-				// Update the subscriptions list behind the modal.
-				await dispatch( requestFollows() );
-
-				// Delay the next attempt.
-				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
-
-				if ( following === isFollowingSite() ) {
-					return;
-				}
-			}
-		},
-		[ store, dispatch ]
-	);
-
-	const formatUrl = ( url: string ): string => {
-		return url
-			.replace( /^(https?:\/\/)?(www\.)?/, '' ) // Remove protocol and www
-			.replace( /\/$/, '' ); // Remove trailing slash
-	};
-
 	const handleClose = useCallback( () => {
+		dispatch( requestFollows() );
 		dispatch( clearStream( { streamKey: 'following' } ) );
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		dispatch( requestPage( { streamKey: 'following' } as any ) );
@@ -299,7 +267,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		isOpen && (
 			<Modal
 				onRequestClose={ handleClose }
-				size="fill"
+				size="medium"
 				className={ clsx( 'subscribe-modal', {
 					'is-disabled': promptVerification,
 				} ) }
@@ -307,7 +275,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				<div className="subscribe-modal__container">
 					{ promptVerification && <SubscribeVerificationNudge /> }
 					<div className="subscribe-modal__content">
-						<div className="subscribe-modal__site-list-column">
+						<div className="subscribe-modal__intro">
 							<h2 className="subscribe-modal__title">
 								{ __( "Discover sites that you'll love" ) }
 							</h2>
@@ -316,62 +284,83 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 									'Preview sites by clicking below, then subscribe to any site that inspires you.'
 								) }
 							</p>
-							{ isLoading && <LoadingPlaceholder /> }
-							{ ! isLoading && combinedRecommendations.length === 0 && (
-								<p>{ __( 'No recommendations available at the moment.' ) }</p>
-							) }
-							{ ! isLoading && combinedRecommendations.length > 0 && (
-								<div className="subscribe-modal__recommended-sites">
-									{ displayedRecommendations.map( ( site: CardData ) => (
-										<ConnectedReaderSubscriptionListItem
-											key={ site.feed_ID }
-											feedId={ site.feed_ID }
-											siteId={ site.site_ID }
-											site={ site }
-											url={ site.site_URL }
-											showLastUpdatedDate={ false }
-											showNotificationSettings={ false }
-											showFollowedOnDate={ false }
-											followSource="reader-onboarding-modal"
-											disableSuggestedFollows
-											replaceStreamClickWithItemClick
-											onItemClick={ () => handleItemClick( site ) }
-											isSelected={ selectedSite?.feed_ID === site.feed_ID }
-											onFollowToggle={ ( following: boolean ) =>
-												handleFollowToggle( site, following )
-											}
-										/>
-									) ) }
-								</div>
-							) }
-							{ currentPage < maxPages && (
-								<Button
-									className="subscribe-modal__load-more-button"
-									onClick={ handleLoadMore }
-									variant="link"
-								>
-									{ __( 'Load more recommendations' ) }
-								</Button>
-							) }
 						</div>
-						<div className="subscribe-modal__preview-column">
-							<div className="subscribe-modal__preview-placeholder">
-								{ selectedSite && (
-									<>
-										<div className="subscribe-modal__preview-stream-header">
-											<h3>{ formatUrl( selectedSite.site_URL ) }</h3>
-										</div>
-										<div className="subscribe-modal__preview-stream-container">
-											<TypedStream
-												streamKey={ `feed:${ selectedSite.feed_ID }` }
-												className="is-site-stream subscribe-modal__preview-stream"
-												followSource="reader_subscribe_modal"
-												useCompactCards
-												trackScrollPage={ trackScrollPage.bind( null ) }
-											/>
-										</div>
-									</>
+						<div className="subscribe-modal__columns">
+							<div className="subscribe-modal__site-list-column">
+								{ isLoading && <LoadingPlaceholder /> }
+								{ ! isLoading && combinedRecommendations.length === 0 && (
+									<p>{ __( 'No recommendations available at the moment.' ) }</p>
 								) }
+								{ ! isLoading && combinedRecommendations.length > 0 && (
+									<div className="subscribe-modal__recommended-sites">
+										{ displayedRecommendations.map( ( site: CardData ) => (
+											<ConnectedReaderSubscriptionListItem
+												key={ site.feed_ID }
+												feedId={ site.feed_ID }
+												siteId={ site.site_ID }
+												site={ site }
+												url={ site.site_URL }
+												showLastUpdatedDate={ false }
+												showNotificationSettings={ false }
+												showFollowedOnDate={ false }
+												followSource="reader-onboarding-modal"
+												replaceStreamClickWithItemClick
+												onItemClick={ () => handleItemClick( site ) }
+												isSelected={ selectedSite?.feed_ID === site.feed_ID }
+											/>
+										) ) }
+									</div>
+								) }
+								{ currentPage < maxPages && (
+									<Button
+										className="subscribe-modal__load-more-button"
+										onClick={ handleLoadMore }
+										variant="link"
+									>
+										{ __( 'Load more recommendations' ) }
+									</Button>
+								) }
+							</div>
+							<div className="subscribe-modal__preview-column">
+								<div className="subscribe-modal__preview-placeholder">
+									{ selectedSite && (
+										<>
+											<div className="subscribe-modal__preview-stream-header">
+												<div className="subscribe-modal__preview-site">
+													<SiteIcon size={ 36 } iconUrl={ selectedFeedIconUrl } />
+													<span className="subscribe-modal__preview-site-title">
+														{ selectedSite.site_name }
+													</span>
+												</div>
+												<ReaderFollowButton
+													siteUrl={ selectedSite.site_URL }
+													feedId={ selectedSite.feed_ID }
+													siteId={ selectedSite.site_ID }
+													followSource="reader-onboarding-modal"
+													hasButtonStyle
+													followIcon={ <></> }
+													followingIcon={
+														<Icon
+															key="following"
+															className="reader-following-feed"
+															icon={ check }
+															size={ 18 }
+														/>
+													}
+												/>
+											</div>
+											<div className="subscribe-modal__preview-stream-container">
+												<TypedStream
+													streamKey={ `feed:${ selectedSite.feed_ID }` }
+													className="is-site-stream subscribe-modal__preview-stream no-padding"
+													followSource="reader_subscribe_modal"
+													useCompactCards
+													trackScrollPage={ trackScrollPage.bind( null ) }
+												/>
+											</div>
+										</>
+									) }
+								</div>
 							</div>
 						</div>
 						<div className="reader-onboarding-modal__footer">
@@ -382,17 +371,14 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 									justify="right"
 									className="reader-onboarding-modal__footer-buttons"
 								>
-									<Button __next40pxDefaultSize variant="tertiary" onClick={ handleClose }>
-										{ __( 'Cancel' ) }
-									</Button>
 									<Button
 										__next40pxDefaultSize
 										onClick={ handleContinue }
-										variant="primary"
+										variant="secondary"
 										disabled={ promptVerification }
 										accessibleWhenDisabled
 									>
-										{ __( 'Continue' ) }
+										{ __( 'Finish' ) }
 									</Button>
 								</HStack>
 							</HStack>

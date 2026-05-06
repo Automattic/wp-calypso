@@ -377,3 +377,35 @@ body.is-section-podcasting {
 	align-self: flex-start;
 	justify-content: flex-start;
 }
+
+.podcast__submit-step-notice {
+	margin-block: 8px 0;
+	margin-inline: 0;
+}
+
+.podcast__submit-step-saved {
+	flex: 1;
+	min-width: 0;
+	padding: 8px 12px;
+	background: var( --wpds-color-bg-surface, #fff );
+	border: 1px solid var( --wpds-color-border-neutral, #ddd );
+	border-radius: 4px;
+}
+
+.podcast__submit-step-saved-icon {
+	flex-shrink: 0;
+	color: var( --wpds-color-fg-content-success, #007a3d );
+
+	// Gutenberg's Icon paths use fill="currentColor"; force any stray fill="none"
+	// or hard-coded colors to inherit so the success token actually wins.
+	svg {
+		fill: currentColor;
+	}
+}
+
+.podcast__submit-step-saved-url {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
