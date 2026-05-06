@@ -9,7 +9,7 @@
 	flex-wrap: wrap;
 }
 
-.social-composer__media,
+.social-composer__media-item,
 .social-composer__media-add {
 	position: relative;
 	inline-size: 90px;
@@ -22,13 +22,13 @@
 	overflow: hidden;
 }
 
-.social-composer__media img {
+.social-composer__media-item img {
 	inline-size: 100%;
 	block-size: 100%;
 	object-fit: cover;
 }
 
-.social-composer__media.is-failed {
+.social-composer__media-item.is-failed {
 	outline: 2px solid var(--studio-red-50, #d63638);
 }
 

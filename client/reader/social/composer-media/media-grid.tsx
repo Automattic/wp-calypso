@@ -125,7 +125,7 @@ function Thumbnail< T extends MediaGridItem >( {
 	const errorNode = failed && errorMessage ? errorMessage( item ) : null;
 
 	return (
-		<div className={ clsx( 'social-composer__media', { 'is-failed': failed } ) }>
+		<div className={ clsx( 'social-composer__media-item', { 'is-failed': failed } ) }>
 			{ item.previewUrl && <img src={ item.previewUrl } alt={ imgAlt } /> }
 			{ pending && <Spinner /> }
 			<button
