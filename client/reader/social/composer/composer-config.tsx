@@ -14,9 +14,11 @@ import type { ReactNode } from 'react';
  *
  * The returned slot is opaque to the modal: per-protocol implementations cast
  * `params` and `result` to their concrete shapes inside `extendBuildParams` /
- * `onPublishSuccess`. Mastodon does not supply `useMedia` today (its backend
- * upload path lands in a follow-up); atmosphere wires it via
- * `useAtmosphereComposerMedia`.
+ * `onPublishSuccess`. Atmosphere wires it via `useAtmosphereComposerMedia`;
+ * Mastodon wires it via `useMastodonComposerMedia` (CM-676). The shared
+ * `<MediaGrid>` / `<AltTextPopover>` primitives live in
+ * `client/reader/social/composer-media/`; per-protocol shells supply upload
+ * state and predicates at the call site.
  */
 export interface ComposerMediaSlot {
 	/** True when at least one image entry exists (any kind). Used by the modal's discard guard. */
@@ -165,8 +167,8 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 * and `connectionId` for the upload endpoint). The hook MUST be a stable
 	 * reference across renders — it's invoked unconditionally inside the
 	 * provider so React's hook-ordering rules apply. Atmosphere supplies
-	 * `useAtmosphereComposerMedia`; Mastodon leaves this undefined until its
-	 * backend upload path ships.
+	 * `useAtmosphereComposerMedia`; Mastodon supplies
+	 * `useMastodonComposerMedia` (CM-676).
 	 */
 	useMedia?: ( ctx: { mode: ActiveMode | null; connectionId: number } ) => ComposerMediaSlot;
 }
