@@ -111,8 +111,6 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 		const siteSlug = query.get( 'siteSlug' );
 		const redirectTo = query.get( 'redirect_to' );
 		const purchaseId = query.get( 'purchaseId' );
-		const cancelTo = query.get( 'cancel_to' );
-
 		const site = useSelect(
 			( select ) => {
 				if ( ! siteSlug ) {
@@ -148,7 +146,6 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 								if ( targetProductId && purchaseId ) {
 									const fallbackDestination = redirectTo || dashboardLink( '/sites' );
 									const planTitle = String( selectedPlanObj?.getTitle() ?? '' );
-									const isDashboard = cancelTo?.includes( '/me/billing/' );
 
 									// Downgrade: fetch old purchase for refund info, fire mutation,
 									// then redirect to the new plan's purchase settings.
@@ -196,10 +193,14 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 											}
 
 											if ( response.new_subscription_id ) {
-												const basePath = isDashboard
-													? dashboardLink( '/me/billing/purchases/' + response.new_subscription_id )
-													: `/me/purchases/${ siteSlug }/${ response.new_subscription_id }`;
-												window.location.assign( addQueryArgs( basePath, params ) );
+												window.location.assign(
+													addQueryArgs(
+														dashboardLink(
+															'/me/billing/purchases/' + response.new_subscription_id
+														),
+														params
+													)
+												);
 											} else {
 												window.location.assign( addQueryArgs( fallbackDestination, params ) );
 											}
