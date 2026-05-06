@@ -10,12 +10,10 @@ import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
 	AuthHelper,
-	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
 	StoreSandboxHelper,
-	DarkModeHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -44,8 +42,6 @@ class Document extends Component {
 			clientData,
 			commitChecksum,
 			commitSha,
-			devDocs,
-			devDocsURL,
 			entrypoint,
 			env,
 			featuresHelper,
@@ -73,7 +69,6 @@ class Document extends Component {
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
-			darkModeHelper,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -215,7 +210,6 @@ class Document extends Component {
 					) }
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
-							{ darkModeHelper && <DarkModeHelper /> }
 							{ reactQueryDevtoolsHelper && <ReactQueryDevtoolsHelper /> }
 							{ accountSettingsHelper && <AccountSettingsHelper /> }
 							{ preferencesHelper && <PreferencesHelper /> }
@@ -225,7 +219,6 @@ class Document extends Component {
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
 						</EnvironmentBadge>
 					) }
 

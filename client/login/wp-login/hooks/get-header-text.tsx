@@ -1,5 +1,6 @@
 import { TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
+import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -100,10 +101,11 @@ export function getHeaderText( {
 
 	if ( isSocialFirst ) {
 		if ( isFromJetpackConnector ) {
-			const hasWoo = connectorPlugins?.some( ( slug: string ) => slug.startsWith( 'woocommerce' ) );
-			headerText = hasWoo
-				? translate( 'Log in to WordPress.com to connect your store' )
-				: translate( 'Log in to WordPress.com to connect your site' );
+			// In the unified connection flow the site is already registered by
+			// the time the user lands on the login page, so the H1 stays
+			// neutral. The shared resolver owns the contract — PR 3 may make
+			// the title plugin-dependent, so we already pass the plugin set.
+			headerText = getLoginCopy( connectorPlugins ).title;
 		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
 				args: { partner: partnerConfig.displayName },

@@ -25,10 +25,18 @@ export function mapAtmosphereFeedItemToSocialPost( item: AtmosphereFeedItem ): S
 			profile_url: BSKY_PROFILE_BASE + item.author.handle,
 		},
 		reply_parent: item.reply_parent
-			? { uri: item.reply_parent.uri, author: { handle: item.reply_parent.author.handle } }
+			? {
+					uri: item.reply_parent.uri,
+					cid: item.reply_parent.cid,
+					author: { handle: item.reply_parent.author.handle },
+			  }
 			: null,
 		reply_root: item.reply_root
-			? { uri: item.reply_root.uri, author: { handle: item.reply_root.author.handle } }
+			? {
+					uri: item.reply_root.uri,
+					cid: item.reply_root.cid,
+					author: { handle: item.reply_root.author.handle },
+			  }
 			: null,
 		reason: item.reason
 			? {

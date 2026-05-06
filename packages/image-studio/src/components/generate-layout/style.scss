@@ -18,8 +18,10 @@
 .image-studio-modal {
 	&__generate-layout--video {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: 12px;
 		width: 100%;
 		height: 100%;
 		min-height: 0;
@@ -27,11 +29,20 @@
 		padding: 16px;
 	}
 
-	&__generated-video {
+	&__generated-video-frame {
+		position: relative;
 		display: block;
 		max-width: 100%;
 		max-height: 100%;
+		min-height: 0;
+		flex: 0 1 auto;
 		aspect-ratio: 9 / 16;
+	}
+
+	&__generated-video {
+		display: block;
+		width: 100%;
+		height: 100%;
 		object-fit: contain;
 		background: #000;
 		border-radius: 8px;

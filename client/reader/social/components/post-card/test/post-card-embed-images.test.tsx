@@ -77,4 +77,18 @@ describe( 'PostCardEmbedImages', () => {
 		expect( screen.getByRole( 'button', { name: /view image 1 of 2/i } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: /view image 2 of 2/i } ) ).toBeVisible();
 	} );
+
+	it( 'surfaces the per-image alt text as the carousel footer caption', async () => {
+		const user = userEvent.setup();
+		render( <PostCardEmbedImages embed={ embed } /> );
+
+		// Open the carousel at index 1 — the second image's alt text
+		// should appear as the footer caption.
+		await user.click( screen.getAllByRole( 'button' )[ 1 ] );
+		expect( screen.getByText( 'second' ) ).toBeVisible();
+
+		// Stepping back to the first image swaps the caption.
+		await user.click( screen.getByRole( 'button', { name: /previous image/i } ) );
+		expect( screen.getByText( 'first' ) ).toBeVisible();
+	} );
 } );

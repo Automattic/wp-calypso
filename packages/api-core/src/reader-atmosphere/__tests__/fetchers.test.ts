@@ -1,18 +1,26 @@
 import nock from 'nock';
+import { wpcom } from '../../wpcom-fetcher';
 import {
 	createConnection,
 	createFollow,
 	createLike,
+	createPost,
+	createRepost,
 	deleteFollow,
 	deleteLike,
+	deletePost,
+	deleteRepost,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
 	getConnection,
 	getConnections,
+	getScopedAuthorFeed,
 	getScopedProfile,
+	getScopedThread,
 	getThread,
 	getTimeline,
+	uploadBlob,
 } from '../fetchers';
 import type {
 	AtmosphereAuthorFeedPage,
@@ -337,6 +345,77 @@ describe( 'atmosphere fetchers', () => {
 		} );
 	} );
 
+	describe( 'getScopedThread', () => {
+		const URI = 'at://did:plc:abc/app.bsky.feed.post/3kabc';
+		const payload: AtmosphereThreadResponse = {
+			thread: {
+				type: 'post',
+				post: makeFeedItem( {
+					uri: URI,
+					viewer: {
+						like: 'at://did:plc:viewer/app.bsky.feed.like/3klike',
+						repost: 'at://did:plc:viewer/app.bsky.feed.repost/3krepost',
+					},
+				} ),
+				parent: null,
+				replies: [],
+			},
+		};
+
+		it( 'GETs /reader/atmosphere/connections/:id/thread with uri and returns the typed response', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/thread' )
+				.query( { uri: URI } )
+				.reply( 200, payload );
+
+			const got = await getScopedThread( { connectionId: 42, uri: URI } );
+			expect( got ).toEqual( payload );
+		} );
+
+		it( 'forwards depth and parentHeight as query params when supplied', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/thread' )
+				.query( { uri: URI, depth: '6', parentHeight: '80' } )
+				.reply( 200, payload );
+
+			await getScopedThread( { connectionId: 42, uri: URI, depth: 6, parentHeight: 80 } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'classifies a 401 atmosphere_auth_required response', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/thread' )
+				.query( true )
+				.reply( 401, { error: 'atmosphere_auth_required' } );
+
+			await expect( getScopedThread( { connectionId: 42, uri: URI } ) ).rejects.toMatchObject( {
+				kind: 'auth_required',
+			} );
+		} );
+
+		it( 'classifies a 404 atmosphere_not_found response', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/thread' )
+				.query( true )
+				.reply( 404, { error: 'atmosphere_not_found' } );
+
+			await expect( getScopedThread( { connectionId: 42, uri: URI } ) ).rejects.toMatchObject( {
+				kind: 'not_found',
+			} );
+		} );
+
+		it( 'classifies a network error as unknown', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/thread' )
+				.query( true )
+				.replyWithError( 'boom' );
+
+			await expect( getScopedThread( { connectionId: 42, uri: URI } ) ).rejects.toMatchObject( {
+				kind: 'unknown',
+			} );
+		} );
+	} );
+
 	describe( 'getAuthorProfile', () => {
 		it( 'fetches the profile for a handle and decodes the response', async () => {
 			const payload: AtmosphereAuthorProfile = {
@@ -549,6 +628,82 @@ describe( 'atmosphere fetchers', () => {
 		} );
 	} );
 
+	describe( 'getScopedAuthorFeed', () => {
+		const PATH = '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed';
+		const payload: AtmosphereAuthorFeedPage = { items: [], cursor: 'next' };
+
+		it( 'GETs /reader/atmosphere/connections/:id/profile/:actor/feed and returns the page', async () => {
+			nock( BASE ).get( PATH ).reply( 200, payload );
+
+			const result = await getScopedAuthorFeed( { connectionId: 42, actor: 'alice.bsky.social' } );
+			expect( result ).toEqual( payload );
+		} );
+
+		it( 'forwards cursor and limit as query params', async () => {
+			const scope = nock( BASE )
+				.get( PATH )
+				.query( { cursor: 'abc', limit: '50' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getScopedAuthorFeed( {
+				connectionId: 42,
+				actor: 'alice.bsky.social',
+				cursor: 'abc',
+				limit: 50,
+			} );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'forwards filter as a query param when set', async () => {
+			const scope = nock( BASE )
+				.get( PATH )
+				.query( { filter: 'posts_with_replies' } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getScopedAuthorFeed( {
+				connectionId: 42,
+				actor: 'alice.bsky.social',
+				filter: 'posts_with_replies',
+			} );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'omits filter from the query string when undefined', async () => {
+			const scope = nock( BASE )
+				.get( PATH )
+				.query( ( q ) => ! ( 'filter' in q ) )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getScopedAuthorFeed( { connectionId: 42, actor: 'alice.bsky.social' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'percent-encodes the actor in the path', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/did%3Aplc%3Aabc123/feed' )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getScopedAuthorFeed( { connectionId: 42, actor: 'did:plc:abc123' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'classifies a 401 atmosphere_auth_required response', async () => {
+			nock( BASE ).get( PATH ).reply( 401, { error: 'atmosphere_auth_required' } );
+
+			await expect(
+				getScopedAuthorFeed( { connectionId: 42, actor: 'alice.bsky.social' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+
+		it( 'classifies a network error as unknown', async () => {
+			nock( BASE ).get( PATH ).replyWithError( 'boom' );
+
+			await expect(
+				getScopedAuthorFeed( { connectionId: 42, actor: 'alice.bsky.social' } )
+			).rejects.toMatchObject( { kind: 'unknown' } );
+		} );
+	} );
+
 	describe( 'createFollow', () => {
 		const followResponse = {
 			follow: {
@@ -728,6 +883,117 @@ describe( 'atmosphere fetchers', () => {
 		} );
 	} );
 
+	describe( 'createRepost', () => {
+		it( 'POSTs to /reposts and unwraps the repost envelope', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts', {
+					post_uri: 'at://did:plc:author/app.bsky.feed.post/3kabc',
+					post_cid: 'bafyreid27zk7',
+				} )
+				.reply( 200, {
+					repost: {
+						uri: 'at://did:plc:caller/app.bsky.feed.repost/3krkeyrkeyrke',
+						cid: 'bafyreig27zk7',
+						rkey: '3krkeyrkeyrke',
+					},
+				} );
+
+			const result = await createRepost( {
+				connectionId: 42,
+				postUri: 'at://did:plc:author/app.bsky.feed.post/3kabc',
+				postCid: 'bafyreid27zk7',
+			} );
+
+			expect( result ).toEqual( {
+				uri: 'at://did:plc:caller/app.bsky.feed.repost/3krkeyrkeyrke',
+				cid: 'bafyreig27zk7',
+				rkey: '3krkeyrkeyrke',
+			} );
+		} );
+
+		it( 'classifies 400 as bad_request', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 400, { error: 'atmosphere_bad_request', message: 'Invalid post reference.' } );
+
+			await expect(
+				createRepost( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
+			).rejects.toMatchObject( { kind: 'bad_request' } );
+		} );
+
+		it( 'classifies 401 as auth_required', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 401, { error: 'atmosphere_unauthenticated' } );
+
+			await expect(
+				createRepost( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+
+		it( 'classifies 429 as rate_limited', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+			await expect(
+				createRepost( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
+			).rejects.toMatchObject( { kind: 'rate_limited' } );
+		} );
+
+		it( 'classifies 502 as upstream_unavailable', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			await expect(
+				createRepost( { connectionId: 42, postUri: 'at://x', postCid: 'y' } )
+			).rejects.toMatchObject( { kind: 'upstream_unavailable' } );
+		} );
+	} );
+
+	describe( 'deleteRepost', () => {
+		it( 'DELETEs /reposts/{rkey} and resolves on 204', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 204 );
+
+			await expect(
+				deleteRepost( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).resolves.toBeUndefined();
+		} );
+
+		it( 'classifies 401 as auth_required', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 401, { error: 'atmosphere_unauthenticated' } );
+
+			await expect(
+				deleteRepost( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+
+		it( 'classifies 429 as rate_limited', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 429, { error: 'atmosphere_rate_limited' } );
+
+			await expect(
+				deleteRepost( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( { kind: 'rate_limited' } );
+		} );
+
+		it( 'classifies 502 as upstream_unavailable', async () => {
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
+				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
+
+			await expect(
+				deleteRepost( { connectionId: 42, rkey: '3krkeyrkeyrke' } )
+			).rejects.toMatchObject( { kind: 'upstream_unavailable' } );
+		} );
+	} );
+
 	describe( 'getAtmosphereTagFeed', () => {
 		it( 'GETs /reader/atmosphere/connections/:id/tag/<hashtag>/feed', async () => {
 			const scope = nock( BASE )
@@ -786,6 +1052,188 @@ describe( 'atmosphere fetchers', () => {
 			await expect(
 				getAtmosphereTagFeed( { connectionId: 7, hashtag: 'rust' } )
 			).rejects.toMatchObject( { kind: 'rate_limited' } );
+		} );
+	} );
+
+	describe( 'createPost', () => {
+		const connectionId = 42;
+
+		afterEach( () => nock.cleanAll() );
+
+		it( 'POSTs the request body and returns the parsed result', async () => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', {
+					text: 'hi there',
+					reply: {
+						root: { uri: 'at://r', cid: 'rcid' },
+						parent: { uri: 'at://p', cid: 'pcid' },
+					},
+				} )
+				.reply( 200, {
+					post: { uri: 'at://new', cid: 'newcid', rkey: 'abc' },
+				} );
+
+			const result = await createPost( {
+				connectionId,
+				text: 'hi there',
+				reply: {
+					root: { uri: 'at://r', cid: 'rcid' },
+					parent: { uri: 'at://p', cid: 'pcid' },
+				},
+			} );
+
+			expect( result ).toEqual( { uri: 'at://new', cid: 'newcid', rkey: 'abc' } );
+		} );
+
+		it( 'omits reply when posting standalone', async () => {
+			const scope = nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts', ( body ) => {
+					return body.text === 'standalone' && ! body.reply && ! body.quote;
+				} )
+				.reply( 200, { post: { uri: 'at://x', cid: 'xc', rkey: 'r' } } );
+
+			await createPost( { connectionId, text: 'standalone' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it.each( [
+			[ 400, 'atmosphere_bad_request', 'bad_request' ],
+			[ 400, 'atmosphere_text_too_long', 'text_too_long' ],
+			[ 401, 'atmosphere_auth_required', 'auth_required' ],
+			[ 401, 'atmosphere_unauthenticated', 'auth_required' ],
+			[ 403, 'atmosphere_reply_disabled', 'reply_disabled' ],
+			[ 403, 'atmosphere_quote_disabled', 'quote_disabled' ],
+			[ 404, 'atmosphere_not_found', 'not_found' ],
+			[ 404, 'atmosphere_target_unavailable', 'target_unavailable' ],
+			[ 429, 'atmosphere_rate_limited', 'rate_limited' ],
+			[ 502, 'atmosphere_upstream_unavailable', 'upstream_unavailable' ],
+		] )( 'classifies HTTP %i %s as kind %s', async ( status, error, kind ) => {
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/42/posts' )
+				.reply( status as number, { error } );
+
+			await expect( createPost( { connectionId, text: 'x' } ) ).rejects.toMatchObject( { kind } );
+		} );
+	} );
+
+	describe( 'uploadBlob', () => {
+		// Multipart uploads can't be exercised end-to-end through nock here:
+		// the wpcom transport hands its `formData` to superagent's Node
+		// adapter, which streams via `form-data` and rejects jsdom Blob/File
+		// instances with `source.on is not a function`. Spying on
+		// `wpcom.req.post` keeps the fetcher contract under test (path,
+		// namespace, formData shape, error classification) without taking on
+		// the transport's stream wiring.
+		afterEach( () => jest.restoreAllMocks() );
+
+		it( 'POSTs to /connections/{id}/blobs with a multipart file field', async () => {
+			const file = new Blob( [ new Uint8Array( [ 0xff, 0xd8, 0xff ] ) ], { type: 'image/jpeg' } );
+			const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+				blob: {
+					$type: 'blob',
+					ref: { $link: 'bafkrei' + 'a'.repeat( 50 ) },
+					mimeType: 'image/jpeg',
+					size: 3,
+				},
+			} );
+
+			const result = await uploadBlob( { connectionId: 42, file } );
+
+			expect( post ).toHaveBeenCalledTimes( 1 );
+			const callArg = post.mock.calls[ 0 ][ 0 ];
+			expect( callArg.path ).toBe( '/reader/atmosphere/connections/42/blobs' );
+			expect( callArg.apiNamespace ).toBe( 'wpcom/v2' );
+			expect( callArg.formData ).toHaveLength( 1 );
+			expect( callArg.formData[ 0 ][ 0 ] ).toBe( 'file' );
+			expect( result.blob.$type ).toBe( 'blob' );
+			expect( result.blob.mimeType ).toBe( 'image/jpeg' );
+			expect( result.blob.size ).toBe( 3 );
+		} );
+
+		it( 'classifies a 400 atmosphere_bad_request into a bad_request kind', async () => {
+			// The slice-8a backend collapses every /blobs rejection
+			// (oversize, unsupported MIME, undecodable bytes, …) into
+			// `atmosphere_bad_request` rather than a specific subtype. The
+			// classifier mirrors that shape.
+			jest.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
+				code: 'atmosphere_bad_request',
+				message: 'Image is too large.',
+				statusCode: 400,
+			} );
+
+			const file = new Blob( [ 'x' ], { type: 'image/jpeg' } );
+			await expect( uploadBlob( { connectionId: 42, file } ) ).rejects.toMatchObject( {
+				kind: 'bad_request',
+				message: 'Image is too large.',
+			} );
+		} );
+	} );
+
+	describe( 'createPost — media forwarding', () => {
+		it( 'forwards optional media body when provided', async () => {
+			let capturedBody: any = null;
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/9/posts', ( body ) => {
+					capturedBody = body;
+					return true;
+				} )
+				.reply( 200, {
+					post: {
+						uri: 'at://did:plc:x/app.bsky.feed.post/abc',
+						cid: 'bafkreiabc',
+						rkey: 'abc',
+					},
+				} );
+
+			await createPost( {
+				connectionId: 9,
+				text: '',
+				media: {
+					images: [
+						{
+							blob: {
+								$type: 'blob',
+								ref: { $link: 'bafkrei' + 'b'.repeat( 50 ) },
+								mimeType: 'image/jpeg',
+								size: 100,
+							},
+							alt: 'a sunset',
+							aspectRatio: { width: 2000, height: 1500 },
+						},
+					],
+				},
+			} );
+
+			expect( capturedBody.text ).toBe( '' );
+			expect( capturedBody.media.images[ 0 ].alt ).toBe( 'a sunset' );
+		} );
+	} );
+
+	describe( 'deletePost', () => {
+		const connectionId = 99;
+		const rkey = '3kabc';
+
+		it( 'issues DELETE to the connection-scoped post path with no body', async () => {
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ rkey }` )
+				.reply( 204 );
+
+			await expect( deletePost( { connectionId, rkey } ) ).resolves.toBeUndefined();
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it.each( [
+			[ 401, 'atmosphere_auth_required', 'auth_required' ],
+			[ 404, 'atmosphere_not_found', 'not_found' ],
+			[ 429, 'atmosphere_rate_limited', 'rate_limited' ],
+			[ 502, 'atmosphere_upstream_unavailable', 'upstream_unavailable' ],
+			[ 500, 'whatever', 'unknown' ],
+		] as const )( 'classifies %i (%s) responses as %s', async ( status, errorCode, kind ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.delete( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts/${ rkey }` )
+				.reply( status, { error: errorCode, message: 'no' } );
+
+			await expect( deletePost( { connectionId, rkey } ) ).rejects.toMatchObject( { kind } );
 		} );
 	} );
 } );

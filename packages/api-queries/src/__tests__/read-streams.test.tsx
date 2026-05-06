@@ -56,8 +56,97 @@ describe( 'readStreamQuery', () => {
 		expect( result.current.data?.date_range?.after ).toBe( '2026-01-01' );
 	} );
 
-	it( 'throws when called for an unmigrated streamType', () => {
-		const opts = readStreamQuery( 'site:1234', { number: 4 }, null );
-		expect( () => opts.queryFn!( {} as never ) ).toThrow( /unsupported streamType "site"/ );
+	it( 'fetches conversations posts from /read/conversations', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/conversations' )
+			.query( ( query ) => query.comments_per_post === '20' )
+			.reply( 200, {
+				posts: [
+					{
+						ID: 1,
+						site_ID: 100,
+						last_comment_date_gmt: '2026-04-30',
+						URL: 'https://example.com/a',
+					},
+				],
+				date_range: { after: '2026-04-30' },
+			} );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() =>
+				useQuery( readStreamQuery( 'conversations', { number: 4, comments_per_post: 20 }, null ) ),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data?.posts ).toHaveLength( 1 );
+	} );
+
+	it( 'fetches conversations-a8c posts with the a8c index filter', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/conversations' )
+			.query( ( query ) => query.index === 'a8c' && query.comments_per_post === '20' )
+			.reply( 200, { posts: [], date_range: { after: null } } );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() =>
+				useQuery(
+					readStreamQuery(
+						'conversations-a8c',
+						{ number: 4, comments_per_post: 20, index: 'a8c' },
+						null
+					)
+				),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'fetches liked posts from /read/liked', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/liked' )
+			.query( true )
+			.reply( 200, {
+				posts: [
+					{
+						ID: 30,
+						site_ID: 300,
+						date: '2026-01-01',
+						date_liked: '2026-04-10',
+						URL: 'https://example.com/liked',
+					},
+				],
+				date_range: { after: '2026-04-10' },
+			} );
+
+		const client = newClient();
+		const { result } = renderHook(
+			() =>
+				useQuery(
+					readStreamQuery(
+						'likes',
+						{ orderBy: 'date', meta: 'post,discover_original_post', number: 4, content_width: 675 },
+						null
+					)
+				),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data?.posts ).toHaveLength( 1 );
+		expect( result.current.data?.posts?.[ 0 ].date_liked ).toBe( '2026-04-10' );
+	} );
+
+	it( 'throws when called for an unsupported streamType', () => {
+		const opts = readStreamQuery( 'unknown_stream', { number: 4 }, null );
+		expect( () => opts.queryFn!( {} as never ) ).toThrow(
+			/unsupported streamType "unknown_stream"/
+		);
 	} );
 } );

@@ -76,6 +76,16 @@ export interface MastodonMediaAttachment {
 	aspect_ratio: { width: number; height: number } | null;
 }
 
+// Wire shape: Mastodon's status object includes per-viewer interaction
+// state. Both fields are booleans — favourited toggles via the likes
+// endpoint, reblogged via reposts. Optional during the backend rollout
+// window; consumers must treat missing viewer as
+// "not favourited / not reblogged".
+export interface MastodonFeedItemViewer {
+	favourited: boolean;
+	reblogged: boolean;
+}
+
 export interface MastodonFeedItem {
 	id: string;
 	url: string;
@@ -90,6 +100,7 @@ export interface MastodonFeedItem {
 	boost: MastodonBoost | null;
 	media: MastodonMediaAttachment[];
 	counts: MastodonCounts;
+	viewer?: MastodonFeedItemViewer;
 }
 
 export interface MastodonTimelinePage {
@@ -131,7 +142,7 @@ export interface MastodonThreadResponse {
 // Backend projects the home-instance Mastodon Account object. We surface
 // only the fields we render plus `raw` for forward-compat (matches the
 // existing MastodonConnectionDetails convention). `note` arrives sanitized
-// from the wire and is sanitized again client-side (defence-in-depth).
+// from the wire and is sanitized again client-side (defense-in-depth).
 // `id` is instance-local — same handle on a different home instance has a
 // different id; we still use it as the URL key when known because the
 // home-instance perspective is stable per connection. Webfinger handle
@@ -188,4 +199,74 @@ export interface MastodonTagFeedPage {
 	items: MastodonFeedItem[];
 	cursor: string | null;
 	tag?: MastodonTagInfo;
+}
+
+export interface MastodonCreateLikeParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonDeleteLikeParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonCreateRepostParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonDeleteRepostParams {
+	connectionId: number;
+	statusId: string;
+}
+
+/**
+ * Wire-pure shape passed to `createMastodonPost`. Every field here lands
+ * in the request body (or the path, in `connectionId`'s case). Do not
+ * widen this type with client-only metadata — see
+ * `MastodonCreatePostMutationParams` for fields the mutation layer needs
+ * but the wire does not.
+ */
+export interface MastodonCreatePostParams {
+	connectionId: number;
+	status: string;
+	in_reply_to_id?: string;
+	/**
+	 * Native Mastodon quote post (Mastodon 4.5+). Numeric status id of the
+	 * post being quoted. Older instances reject the call with HTTP 400
+	 * `reader_mastodon_bad_request` (mapped from upstream 422); the
+	 * `createMastodonPostMutation` falls back to text-based quoting in
+	 * that case (see `MastodonCreatePostMutationParams`). Do **not** also
+	 * append the URL to `status` — that would double-quote on instances
+	 * that support native quotes.
+	 */
+	quoted_status_id?: string;
+}
+
+/**
+ * Variables accepted by `createMastodonPostMutation`. Extends the wire
+ * shape with one client-only hint. Because this type is structurally
+ * assignable to `MastodonCreatePostParams`, the type system won't stop a
+ * future caller from forwarding the whole object into `createMastodonPost`
+ * and leaking the hint into the request body — the actual guard is the
+ * explicit destructure in `createMastodonPostWithQuoteFallback`
+ * (`const { quotedFallbackPermalink, ...wireParams } = params;`). Keep
+ * the split so the destructure point stays singular and obvious.
+ */
+export interface MastodonCreatePostMutationParams extends MastodonCreatePostParams {
+	/**
+	 * Client-only fallback hint. When a quote attempt fails with
+	 * `bad_request`, the mutation retries once with `quoted_status_id`
+	 * removed and this permalink appended to `status` (separated by a
+	 * blank line). Never sent to the server — destructured off in
+	 * `createMastodonPostWithQuoteFallback` before any wire call.
+	 */
+	quotedFallbackPermalink?: string;
+}
+
+export interface MastodonCreatePostResult {
+	id: string;
+	url: string;
+	in_reply_to_id: string | null;
 }

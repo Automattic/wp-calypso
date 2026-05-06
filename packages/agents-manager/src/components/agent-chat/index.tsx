@@ -18,11 +18,13 @@ import { AGENTS_MANAGER_STORE } from '../../stores';
 import { isReaderChatHost } from '../../utils/is-reader-chat-agent';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
 import ChatMessageSkeleton from '../chat-message-skeleton';
+import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
 import FeedbackInput from '../feedback-input';
 import { AI } from '../icons';
 import SelectedBlock from '../selected-block';
 import type { UseImageUploadResult } from '../../hooks/use-image-upload';
+import type { ExternalContextCard, ExternalContextCardAction } from '../../utils/external-context';
 import type { Message, NoticeConfig } from '@automattic/agenttic-ui/dist/types';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
@@ -83,6 +85,10 @@ interface Props {
 	onCancelFeedback?: () => void;
 	/** Alternative footer to render instead of the default footer. */
 	alternativeFooter?: React.ReactNode;
+	/** Called when a context card action button is clicked. */
+	onContextCardAction?: ( card: ExternalContextCard, action: ExternalContextCardAction ) => void;
+	/** Called when a context card's dismiss button is clicked. */
+	onContextCardDismiss?: ( card: ExternalContextCard ) => void;
 }
 
 const DEFAULT_ACCEPTED_IMAGE_TYPES = [
@@ -169,6 +175,8 @@ export default function AgentChat( {
 	onSubmitFeedbackText = () => Promise.resolve(),
 	onCancelFeedback = () => {},
 	alternativeFooter,
+	onContextCardAction,
+	onContextCardDismiss,
 }: Props ) {
 	const { setFloatingPosition } = useDispatch( AGENTS_MANAGER_STORE );
 	const conversationViewRef = useRef< HTMLDivElement >( null );
@@ -238,6 +246,9 @@ export default function AgentChat( {
 			<AgentUI.ConversationView ref={ conversationViewRef }>
 				<ChatHeader onClose={ onClose } options={ chatHeaderOptions } />
 				{ isLoadingConversation ? <ChatMessageSkeleton count={ 3 } /> : <AgentUI.Messages /> }
+				{ ( onContextCardAction || onContextCardDismiss ) && (
+					<ContextCards onAction={ onContextCardAction } onDismiss={ onContextCardDismiss } />
+				) }
 				{ showFeedbackInput && (
 					<FeedbackInput onSubmit={ onSubmitFeedbackText } onCancel={ onCancelFeedback } />
 				) }
