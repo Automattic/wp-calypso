@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { getProductCategory } from './get-confirmation-copy';
 import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { CancellationFeature } from '@automattic/api-core';
@@ -26,7 +26,7 @@ export function getOverrideCancellationFeatures(
 
 	switch ( category ) {
 		case 'plan':
-			return getWpcomPlanFeatures( slug );
+			return getWpcomPlanFeatures( purchase );
 		case 'domain':
 			return getDomainFeatures( purchase );
 		case 'email':
@@ -43,52 +43,81 @@ export function getOverrideCancellationFeatures(
 	}
 }
 
-function getWpcomPlanFeatures( slug: string ): CancellationFeature[] | null {
+function hasCustomDomain( domain: string ): boolean {
+	return (
+		!! domain && ! domain.endsWith( '.wordpress.com' ) && ! domain.endsWith( '.wpcomstaging.com' )
+	);
+}
+
+function getDomainFeature( domain: string ): string {
+	if ( hasCustomDomain( domain ) ) {
+		return sprintf(
+			/* translators: %(domain)s is the site's primary domain, e.g. "filippodt.com" */
+			__( '%(domain)s as your primary domain' ),
+			{ domain }
+		);
+	}
+	return __( 'Custom domain for your site' );
+}
+
+function getWpcomPlanFeatures( purchase: PurchaseForCopy ): CancellationFeature[] | null {
+	const slug = purchase.product_slug;
+	const isMonthly = slug.includes( '-monthly' );
+	const domainFeature = getDomainFeature( purchase.site_slug );
+
 	if ( slug.startsWith( 'personal-bundle' ) ) {
 		return features(
-			__( 'Custom domain for your site' ),
-			__( '6 GB of storage' ),
-			__( 'An ad-free experience for your visitors' ),
-			__( 'Plugins and themes to extend your site' ),
-			__( 'Customize fonts and colors' ),
-			__( 'Audio uploads' ),
-			__( 'Support from our team' )
+			...( [
+				domainFeature,
+				__( '6 GB of storage' ),
+				__( 'An ad-free experience for your visitors' ),
+				__( 'Plugins and themes to extend your site' ),
+				__( 'Customize fonts and colors' ),
+				__( 'Audio uploads' ),
+				! isMonthly && __( 'Support from our team' ),
+			].filter( Boolean ) as string[] )
 		);
 	}
 	if ( slug.startsWith( 'value_bundle' ) ) {
 		return features(
-			__( 'Custom domain for your site' ),
-			__( '13 GB of storage' ),
-			__( 'An ad-free experience for your visitors' ),
-			__( 'Plugins and themes to extend your site' ),
-			__( 'Advanced design tools and custom CSS' ),
-			__( 'Priority support' ),
-			__( 'Earn money from ads on your site' ),
-			__( 'Detailed visitor stats and insights' )
+			...( [
+				domainFeature,
+				__( '13 GB of storage' ),
+				__( 'An ad-free experience for your visitors' ),
+				__( 'Plugins and themes to extend your site' ),
+				__( 'Advanced design tools and custom CSS' ),
+				! isMonthly && __( 'Priority support' ),
+				__( 'Earn money from ads on your site' ),
+				__( 'Detailed visitor stats and insights' ),
+			].filter( Boolean ) as string[] )
 		);
 	}
 	if ( slug.startsWith( 'business-bundle' ) ) {
 		return features(
-			__( 'Custom domain for your site' ),
-			__( '50 GB of storage' ),
-			__( 'An ad-free experience for your visitors' ),
-			__( 'Plugins and themes to extend your site' ),
-			__( 'Priority 24/7 support' ),
-			__( 'Developer tools like SFTP, SSH, Git, and GitHub Deployments' ),
-			__( 'Staging sites to test changes safely' ),
-			__( 'Daily backups with one-click restore' )
+			...( [
+				domainFeature,
+				__( '50 GB of storage' ),
+				__( 'An ad-free experience for your visitors' ),
+				__( 'Plugins and themes to extend your site' ),
+				! isMonthly && __( 'Priority 24/7 support' ),
+				__( 'Developer tools like SFTP, SSH, Git, and GitHub Deployments' ),
+				__( 'Staging sites to test changes safely' ),
+				__( 'Daily backups with one-click restore' ),
+			].filter( Boolean ) as string[] )
 		);
 	}
 	if ( slug.startsWith( 'ecommerce-bundle' ) || slug.startsWith( 'ecommerce-trial' ) ) {
 		return features(
-			__( 'Custom domain for your site' ),
-			__( 'Plugins and themes to extend your site' ),
-			__( '50 GB of storage' ),
-			__( 'Payments in 60+ countries' ),
-			__( 'Sell and ship products worldwide' ),
-			__( 'Integrations with shipping carriers' ),
-			__( 'Marketing tools for your store' ),
-			__( 'Priority 24/7 support' )
+			...( [
+				domainFeature,
+				__( 'Plugins and themes to extend your site' ),
+				__( '50 GB of storage' ),
+				__( 'Payments in 60+ countries' ),
+				__( 'Sell and ship products worldwide' ),
+				__( 'Integrations with shipping carriers' ),
+				__( 'Marketing tools for your store' ),
+				! isMonthly && __( 'Priority 24/7 support' ),
+			].filter( Boolean ) as string[] )
 		);
 	}
 	return null;

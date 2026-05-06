@@ -27,6 +27,7 @@ function makePurchase( overrides: Partial< PurchaseForCopy > = {} ): PurchaseFor
 		expiry_date: '2027-04-16',
 		expiry_status: 'manual-renew',
 		domain: 'example.com',
+		site_slug: 'example.com',
 		...overrides,
 	} as PurchaseForCopy;
 }
@@ -41,16 +42,18 @@ describe( 'getOverrideCancellationFeatures', () => {
 			} );
 			const result = getOverrideCancellationFeatures( purchase );
 			expect( result ).toHaveLength( 7 );
-			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
+			expect( result![ 0 ].title ).toBe( 'example.com as your primary domain' );
 		} );
 
-		it( 'returns 7 features for personal-bundle-monthly', () => {
+		it( 'returns 6 features for personal-bundle-monthly (omits support)', () => {
 			const purchase = makePurchase( {
 				is_plan: true,
 				product_slug: 'personal-bundle-monthly',
 				product_name: 'WordPress.com Personal',
 			} );
-			expect( getOverrideCancellationFeatures( purchase ) ).toHaveLength( 7 );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 6 );
+			expect( result!.every( ( f ) => ! f.title.includes( 'Support' ) ) ).toBe( true );
 		} );
 
 		it( 'returns 8 features for value_bundle', () => {
@@ -61,7 +64,7 @@ describe( 'getOverrideCancellationFeatures', () => {
 			} );
 			const result = getOverrideCancellationFeatures( purchase );
 			expect( result ).toHaveLength( 8 );
-			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
+			expect( result![ 0 ].title ).toBe( 'example.com as your primary domain' );
 		} );
 
 		it( 'returns 8 features for business-bundle', () => {
@@ -72,7 +75,7 @@ describe( 'getOverrideCancellationFeatures', () => {
 			} );
 			const result = getOverrideCancellationFeatures( purchase );
 			expect( result ).toHaveLength( 8 );
-			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
+			expect( result![ 0 ].title ).toBe( 'example.com as your primary domain' );
 		} );
 
 		it( 'returns 8 features for ecommerce-bundle', () => {
@@ -83,16 +86,51 @@ describe( 'getOverrideCancellationFeatures', () => {
 			} );
 			const result = getOverrideCancellationFeatures( purchase );
 			expect( result ).toHaveLength( 8 );
-			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
+			expect( result![ 0 ].title ).toBe( 'example.com as your primary domain' );
 		} );
 
-		it( 'returns 8 features for ecommerce-trial-bundle-monthly', () => {
+		it( 'returns 7 features for ecommerce-trial-bundle-monthly (omits support)', () => {
 			const purchase = makePurchase( {
 				is_plan: true,
 				product_slug: 'ecommerce-trial-bundle-monthly',
 				product_name: 'WordPress.com eCommerce',
 			} );
-			expect( getOverrideCancellationFeatures( purchase ) ).toHaveLength( 8 );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 7 );
+			expect( result!.every( ( f ) => ! f.title.includes( 'support' ) ) ).toBe( true );
+		} );
+
+		it( 'shows custom domain name when site has a custom domain', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'business-bundle',
+				product_name: 'WordPress.com Business',
+				site_slug: 'filippodt.com',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result![ 0 ].title ).toBe( 'filippodt.com as your primary domain' );
+		} );
+
+		it( 'falls back to generic domain copy for wordpress.com subdomain', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'business-bundle',
+				product_name: 'WordPress.com Business',
+				site_slug: 'mysite.wordpress.com',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
+		} );
+
+		it( 'falls back to generic domain copy for wpcomstaging.com subdomain', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'business-bundle',
+				product_name: 'WordPress.com Business',
+				site_slug: 'mysite.wpcomstaging.com',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
 		} );
 
 		it( 'returns null for an unknown plan slug', () => {
