@@ -113,6 +113,7 @@ jest.mock( '../../stores/video-studio', () => ( {
 
 jest.mock( '../../utils/jetpack-script-data', () => ( {
 	getReelSharePostPath: jest.fn( () => mockReelSharePath ),
+	getJetpackAdminUrl: jest.fn( ( path: string ) => `https://example.com/blog/wp-admin/${ path }` ),
 } ) );
 
 jest.mock( '../../utils/tracking', () => ( {
@@ -285,7 +286,7 @@ describe( 'useReelShare', () => {
 				expect.arrayContaining( [
 					expect.objectContaining( {
 						label: expect.any( String ),
-						url: expect.stringMatching( /\/wp-admin\/admin\.php\?page=jetpack-social$/ ),
+						url: 'https://example.com/blog/wp-admin/admin.php?page=jetpack-social',
 					} ),
 				] ),
 				true

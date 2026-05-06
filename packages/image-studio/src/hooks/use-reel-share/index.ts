@@ -7,7 +7,7 @@ import {
 	type ImageStudioActions,
 } from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
-import { getReelSharePostPath } from '../../utils/jetpack-script-data';
+import { getJetpackAdminUrl, getReelSharePostPath } from '../../utils/jetpack-script-data';
 import {
 	trackImageStudioReelShareClicked,
 	trackImageStudioReelShareConnectionDisabled,
@@ -197,15 +197,7 @@ export function useReelShare(): UseReelShareReturn {
 				[
 					{
 						label: __( 'Connect Instagram', __i18n_text_domain__ ),
-						// Build the URL ourselves rather than reading
-						// `connectionsManagementPage` from Jetpack script-data: that
-						// global points at the legacy core Jetpack admin route
-						// (?page=jetpack#/sharing) which is empty on most setups.
-						// The dedicated Jetpack Social plugin page is the right
-						// destination, and we know it's reachable because
-						// `isVisible` already gated on Jetpack Social being loaded
-						// (`getReelSharePostPath` non-null).
-						url: `${ window.location.origin }/wp-admin/admin.php?page=jetpack-social`,
+						url: getJetpackAdminUrl( 'admin.php?page=jetpack-social' ),
 						openInNewTab: true,
 					},
 				],

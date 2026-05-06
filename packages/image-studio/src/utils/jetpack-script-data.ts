@@ -1,22 +1,19 @@
 /**
- * Helpers for reading the Jetpack Social script-data blob that Jetpack injects
- * on pages where Jetpack Social is loaded.
+ * Helpers for reading the Jetpack script-data blob that Jetpack injects on
+ * pages where Jetpack (and Jetpack Social) are loaded.
  *
  * Image Studio runs in its own bundle and intentionally avoids importing from
  * `@automattic/jetpack-script-data`. Encapsulating the window reads here keeps
  * the global dependency in one place and lets callers branch on `null` cleanly.
  */
 
-type JetpackSocialScriptData = {
-	api_paths?: { resharePost?: unknown };
+type JetpackScriptData = {
+	site?: { admin_url?: unknown };
+	social?: { api_paths?: { resharePost?: unknown } };
 };
 
-function getSocialScriptData(): JetpackSocialScriptData | undefined {
-	return (
-		window as unknown as {
-			JetpackScriptData?: { social?: JetpackSocialScriptData };
-		}
-	 ).JetpackScriptData?.social;
+function getJetpackScriptData(): JetpackScriptData | undefined {
+	return ( window as unknown as { JetpackScriptData?: JetpackScriptData } ).JetpackScriptData;
 }
 
 /**
@@ -25,6 +22,24 @@ function getSocialScriptData(): JetpackSocialScriptData | undefined {
  *          or `null` if Jetpack Social isn't available on this page.
  */
 export function getReelSharePostPath(): string | null {
-	const path = getSocialScriptData()?.api_paths?.resharePost;
+	const path = getJetpackScriptData()?.social?.api_paths?.resharePost;
 	return typeof path === 'string' && path.length > 0 ? path : null;
+}
+
+/**
+ * Build a Jetpack admin URL for a given page slug, honoring any subdirectory
+ * WordPress install path. Reads the path-aware `site.admin_url` Jetpack injects
+ * (e.g. `https://example.com/blog/wp-admin/` for installs under `/blog/`),
+ * mirroring Jetpack's own `getAdminUrl` helper. Falls back to
+ * `${origin}/wp-admin/` only if the global is missing — a rare edge case since
+ * the share button's visibility gate already requires Jetpack to be loaded.
+ * @param path - The admin page slug to append, e.g. `admin.php?page=jetpack-social`.
+ * @returns The full admin URL.
+ */
+export function getJetpackAdminUrl( path: string ): string {
+	const adminBase = getJetpackScriptData()?.site?.admin_url;
+	if ( typeof adminBase === 'string' && adminBase.length > 0 ) {
+		return `${ adminBase }${ path }`;
+	}
+	return `${ window.location.origin }/wp-admin/${ path }`;
 }
