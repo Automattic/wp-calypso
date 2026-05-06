@@ -2,7 +2,6 @@ import { followReadTagMutation, unfollowReadTagMutation } from '@automattic/api-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-	Modal,
 	Button,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -27,23 +26,22 @@ import type { CuratedBlog } from '../curated-blogs';
 import './style.scss';
 
 interface InterestsModalProps {
-	isOpen: boolean;
-	onClose: () => void;
 	onContinue: () => void;
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
 const MAX_INTEREST_TOPICS = 40;
 
-const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onContinue } ) => {
+// Renders the body of the "interests" step. The shared <Modal> wrapper is
+// provided by the parent (`ReaderOnboardingRsm`); this component is only
+// mounted while the step is active. X-out / escape are handled by the
+// wrapper's `onRequestClose`.
+const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
 	const followedTagsRef = useRef< string[] >( [] );
-	const interestTopics = useReaderInterestTags( { enabled: isOpen } ).slice(
-		0,
-		MAX_INTEREST_TOPICS
-	);
+	const interestTopics = useReaderInterestTags( { enabled: true } ).slice( 0, MAX_INTEREST_TOPICS );
 	const { data: followedTagsFromState } = useFollowedReaderTags();
 	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
@@ -55,8 +53,12 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
+	// Sync the user's already-followed tags from server once on mount. The
+	// component only mounts while the step is active, so the previous
+	// `isOpen`-gated reset effect is no longer needed — the ref is reset
+	// implicitly when the component unmounts after the user leaves the step.
 	useEffect( () => {
-		if ( ! isOpen || ! followedTagsFromState || hasSyncedFromServerRef.current ) {
+		if ( ! followedTagsFromState || hasSyncedFromServerRef.current ) {
 			return;
 		}
 		if ( inFlightTagOpsRef.current.size > 0 ) {
@@ -66,14 +68,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		followedTagsRef.current = syncedTags;
 		setFollowedTags( syncedTags );
 		hasSyncedFromServerRef.current = true;
-	}, [ isOpen, followedTagsFromState ] );
-
-	useEffect( () => {
-		if ( isOpen ) {
-			return;
-		}
-		hasSyncedFromServerRef.current = false;
-	}, [ isOpen ] );
+	}, [ followedTagsFromState ] );
 
 	useEffect( () => {
 		followedTagsRef.current = followedTags;
@@ -255,7 +250,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 	const handleContinue = () => {
 		if ( ! isContinueDisabled ) {
-			onClose();
 			onContinue();
 		}
 	};
@@ -270,108 +264,98 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 	};
 
 	return (
-		isOpen && (
-			<Modal onRequestClose={ onClose } size="large" className="interests-modal">
-				<VStack spacing={ 8 } className="interests-modal__content">
-					<VStack spacing={ 0 }>
-						<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
-						<p className="interests-modal__subtitle">
-							{ __(
-								'​​Stay up-to-date with your favorite blogs and discover new voices—all from one place.'
-							) }
-						</p>
-						<p className="interests-modal__subtitle">
-							{ fixMe( {
-								text: 'Pick a pack that describes your interest, or switch to individual topics.',
-								newCopy: __(
-									'Pick a pack that describes your interest, or switch to individual topics.'
-								),
-								oldCopy: __( 'Follow at least 3 topics to personalize your Reader feed.' ),
-							} ) }
-						</p>
-					</VStack>
-
-					{ packs.length > 0 && (
-						<div className="interests-modal__packs" role="list">
-							{ packs.map( ( pack ) => (
-								<div className="interests-modal__pack-item" role="listitem" key={ pack.id }>
-									<TopicGroupCard
-										title={ pack.title }
-										imageUrl={ pack.imageUrl }
-										description={ pack.description }
-										tags={ pack.tags }
-										blogs={ pack.blogs }
-										isSubscribed={ isPackSubscribed( pack ) }
-										isBusy={ processingPacks.has( pack.id ) }
-										onSubscribe={ () => void handlePackSubscribe( pack ) }
-									/>
-								</div>
-							) ) }
-						</div>
-					) }
-
-					{ interestTopics.length > 0 && (
-						<div className="interests-modal__topics-toggle-row">
-							<Button
-								variant="link"
-								onClick={ handleToggleTopics }
-								className="interests-modal__topics-toggle"
-								aria-expanded={ showAllTopics }
-							>
-								{ showAllTopics ? __( 'See less topics' ) : __( 'See more topics' ) }
-							</Button>
-						</div>
-					) }
-
-					{ showAllTopics && (
-						<div
-							className="interests-modal__topics-pills"
-							role="group"
-							aria-label={ __( 'Topics' ) }
-						>
-							{ interestTopics.map( ( topic ) => {
-								const checked = followedTags.includes( topic.tag );
-								return (
-									<button
-										key={ topic.tag }
-										type="button"
-										className={ clsx( 'interests-modal__topic-pill', {
-											'is-selected': checked,
-										} ) }
-										aria-pressed={ checked }
-										disabled={ processingTags.has( topic.tag ) }
-										onClick={ () => void handleTopicChange( ! checked, topic.tag ) }
-									>
-										{ topic.name }
-									</button>
-								);
-							} ) }
-						</div>
-					) }
+		<>
+			<VStack spacing={ 8 } className="interests-modal__content">
+				<VStack spacing={ 0 }>
+					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
+					<p className="interests-modal__subtitle">
+						{ __(
+							'​​Stay up-to-date with your favorite blogs and discover new voices—all from one place.'
+						) }
+					</p>
+					<p className="interests-modal__subtitle">
+						{ fixMe( {
+							text: 'Pick a pack that describes your interest, or switch to individual topics.',
+							newCopy: __(
+								'Pick a pack that describes your interest, or switch to individual topics.'
+							),
+							oldCopy: __( 'Follow at least 3 topics to personalize your Reader feed.' ),
+						} ) }
+					</p>
 				</VStack>
 
-				<div className="reader-onboarding-modal__footer">
-					<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-						<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
-						<HStack
-							spacing={ 2 }
-							justify="right"
-							className="reader-onboarding-modal__footer-buttons"
+				{ packs.length > 0 && (
+					<div className="interests-modal__packs" role="list">
+						{ packs.map( ( pack ) => (
+							<div className="interests-modal__pack-item" role="listitem" key={ pack.id }>
+								<TopicGroupCard
+									title={ pack.title }
+									imageUrl={ pack.imageUrl }
+									description={ pack.description }
+									tags={ pack.tags }
+									blogs={ pack.blogs }
+									isSubscribed={ isPackSubscribed( pack ) }
+									isBusy={ processingPacks.has( pack.id ) }
+									onSubscribe={ () => void handlePackSubscribe( pack ) }
+								/>
+							</div>
+						) ) }
+					</div>
+				) }
+
+				{ interestTopics.length > 0 && (
+					<div className="interests-modal__topics-toggle-row">
+						<Button
+							variant="link"
+							onClick={ handleToggleTopics }
+							className="interests-modal__topics-toggle"
+							aria-expanded={ showAllTopics }
 						>
-							<Button
-								__next40pxDefaultSize
-								onClick={ handleContinue }
-								variant="secondary"
-								disabled={ isContinueDisabled }
-								accessibleWhenDisabled
-							>
-								{ __( 'Continue' ) }
-							</Button>
-						</HStack>
+							{ showAllTopics ? __( 'See less topics' ) : __( 'See more topics' ) }
+						</Button>
+					</div>
+				) }
+
+				{ showAllTopics && (
+					<div className="interests-modal__topics-pills" role="group" aria-label={ __( 'Topics' ) }>
+						{ interestTopics.map( ( topic ) => {
+							const checked = followedTags.includes( topic.tag );
+							return (
+								<button
+									key={ topic.tag }
+									type="button"
+									className={ clsx( 'interests-modal__topic-pill', {
+										'is-selected': checked,
+									} ) }
+									aria-pressed={ checked }
+									disabled={ processingTags.has( topic.tag ) }
+									onClick={ () => void handleTopicChange( ! checked, topic.tag ) }
+								>
+									{ topic.name }
+								</button>
+							);
+						} ) }
+					</div>
+				) }
+			</VStack>
+
+			<div className="reader-onboarding-modal__footer">
+				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+					<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
+					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
+						<Button
+							__next40pxDefaultSize
+							onClick={ handleContinue }
+							variant="secondary"
+							disabled={ isContinueDisabled }
+							accessibleWhenDisabled
+						>
+							{ __( 'Continue' ) }
+						</Button>
 					</HStack>
-				</div>
-			</Modal>
-		)
+				</HStack>
+			</div>
+		</>
 	);
 };
 
