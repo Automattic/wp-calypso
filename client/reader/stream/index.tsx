@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { isDefaultLocale } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -57,7 +58,7 @@ const GUESSED_POST_HEIGHT = 600;
 export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
 
 const NO_POLL_STREAM_TYPES = new Set( [ 'search', 'custom_recs_posts_with_images', 'discover' ] );
-const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+const INPUT_TAGS = new Set< string >( [ 'INPUT', 'SELECT', 'TEXTAREA' ] );
 
 // Tracks how many "scroll loads" each stream has triggered, to feed into
 // `trackScrollPage`. Module-level so it survives unmounts (matching the
@@ -85,32 +86,26 @@ function findScrollContainer( element: Element | null ): Element | false {
 	return findScrollContainer( element.parentElement );
 }
 
-function useViewportWidth(): number {
-	const [ width, setWidth ] = useState( () =>
-		typeof window === 'undefined' ? 0 : window.innerWidth
-	);
+// Mirrors the legacy `withDimensions` HOC (`client/lib/with-dimensions`):
+// the wide-layout flip is driven by the wrapping element's measured width,
+// not the viewport. Embedded callers (customer-home card, subscribe-modal,
+// feed-preview) sit in containers narrower than the viewport.
+function useContainerWidth( ref: React.RefObject< HTMLElement | null > ): number {
+	const [ width, setWidth ] = useState( 0 );
 	useEffect( () => {
-		if ( typeof window === 'undefined' ) {
+		const node = ref.current;
+		if ( ! node || typeof ResizeObserver === 'undefined' ) {
 			return;
 		}
-		let frame: number | null = null;
-		const handle = () => {
-			if ( frame !== null ) {
-				return;
-			}
-			frame = window.requestAnimationFrame( () => {
-				frame = null;
-				setWidth( window.innerWidth );
-			} );
+		const measure = () => {
+			const next = node.getBoundingClientRect().width;
+			setWidth( ( prev ) => ( prev !== next ? next : prev ) );
 		};
-		window.addEventListener( 'resize', handle );
-		return () => {
-			window.removeEventListener( 'resize', handle );
-			if ( frame !== null ) {
-				window.cancelAnimationFrame( frame );
-			}
-		};
-	}, [] );
+		measure();
+		const observer = new ResizeObserver( measure );
+		observer.observe( node );
+		return () => observer.disconnect();
+	}, [ ref ] );
 	return width;
 }
 
@@ -159,7 +154,6 @@ export function Stream( props: StreamProps ) {
 		showFollowInHeader = false,
 		showSiteNameOnCards,
 		isDiscoverStream = false,
-		hideDefaultEmptyContentIfMissing,
 		restoreScroll = true,
 		forcePlaceholders = false,
 		fixedHeaderHeight,
@@ -198,11 +192,11 @@ export function Stream( props: StreamProps ) {
 	);
 	const streamType = getStreamType( streamKey );
 
-	// Width-measured wide-layout switch. The legacy stream used the wrapping
-	// div's actual width via `withDimensions`; window width is a close proxy
-	// since the stream takes the full viewport content area.
-	const viewportWidth = useViewportWidth();
-	const wideDisplay = viewportWidth > WIDE_DISPLAY_CUTOFF;
+	// Wide-layout flip is driven by the wrapping container's width — see
+	// `useContainerWidth` for why this isn't `window.innerWidth`.
+	const containerRef = useRef< HTMLDivElement | null >( null );
+	const containerWidth = useContainerWidth( containerRef );
+	const wideDisplay = containerWidth > WIDE_DISPLAY_CUTOFF;
 
 	const stream = useStreamPosts( {
 		streamKey,
@@ -224,15 +218,11 @@ export function Stream( props: StreamProps ) {
 	} );
 
 	const transformedItems = useMemo( () => {
-		let nextItems = items;
-		if ( recsStreamKey && recsStream.items.length > 0 ) {
-			nextItems = injectRecommendations(
-				nextItems,
-				recsStream.items,
-				getDistanceBetweenRecs( follows.length )
-			);
-		}
-		return injectPrompts( nextItems, getDistanceBetweenPrompts( follows.length ) );
+		const withRecs =
+			recsStreamKey && recsStream.items.length > 0
+				? injectRecommendations( items, recsStream.items, getDistanceBetweenRecs( follows.length ) )
+				: items;
+		return injectPrompts( withRecs, getDistanceBetweenPrompts( follows.length ) );
 	}, [ items, recsStreamKey, recsStream.items, follows.length ] ) as PostKey[];
 
 	// Polling for new head-of-stream posts is opt-out by stream type and also
@@ -276,18 +266,14 @@ export function Stream( props: StreamProps ) {
 	const wasSelectedByOpeningPostRef = useRef( false );
 	const [ selectedTab, setSelectedTab ] = useState< 'posts' | 'sites' >( 'posts' );
 
-	const isLoginPromptVisible = useCallback(
-		() => ! isLoggedIn && items.length > MAX_POSTS_FOR_LOGGED_OUT_USERS,
-		[ isLoggedIn, items.length ]
-	);
+	const isLoginPromptVisible = ! isLoggedIn && items.length > MAX_POSTS_FOR_LOGGED_OUT_USERS;
 
 	// Match the legacy stream lifecycle: each route into a stream resets
 	// expanded post cards and records a `viewStream` analytics action.
 	useEffect( () => {
 		dispatch( resetCardExpansions() );
 		dispatch( viewStream( streamKey, window.location.pathname ) as never );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ streamKey ] );
+	}, [ streamKey, dispatch ] );
 
 	// Manual scroll restoration so the page returns to where the user left off
 	// when navigating back, not the top. Restored on unmount so we don't leak
@@ -332,9 +318,9 @@ export function Stream( props: StreamProps ) {
 			}
 		};
 		window.addEventListener( 'popstate', handlePopstate );
-		let priorScrollRestoration: ScrollRestoration | undefined;
-		if ( 'scrollRestoration' in window.history ) {
-			priorScrollRestoration = window.history.scrollRestoration;
+		const priorScrollRestoration: ScrollRestoration | undefined =
+			'scrollRestoration' in window.history ? window.history.scrollRestoration : undefined;
+		if ( priorScrollRestoration !== undefined ) {
 			window.history.scrollRestoration = 'manual';
 		}
 		return () => {
@@ -466,14 +452,10 @@ export function Stream( props: StreamProps ) {
 		if ( ! visible || visible.length === 0 ) {
 			return;
 		}
-		let pickIndex = visible[ 0 ].index;
-		for ( const v of visible ) {
-			if ( v.bounds.top > 0 && ! items[ v.index ]?.isRecommendationBlock ) {
-				pickIndex = v.index;
-				break;
-			}
-		}
-		const target = items[ pickIndex ];
+		const pick =
+			visible.find( ( v ) => v.bounds.top > 0 && ! items[ v.index ]?.isRecommendationBlock ) ??
+			visible[ 0 ];
+		const target = items[ pick.index ];
 		if ( ! target ) {
 			return;
 		}
@@ -491,7 +473,7 @@ export function Stream( props: StreamProps ) {
 			}
 			const target = event.target as Element | Document | null;
 			if ( target instanceof Element ) {
-				if ( inputTags.includes( target.tagName ) || ( target as HTMLElement ).isContentEditable ) {
+				if ( INPUT_TAGS.has( target.tagName ) || ( target as HTMLElement ).isContentEditable ) {
 					return;
 				}
 			}
@@ -554,10 +536,6 @@ export function Stream( props: StreamProps ) {
 		setListContext( findScrollContainer( node ) );
 	}, [] );
 
-	const tryAgain = useCallback( () => {
-		stream.refetch();
-	}, [ stream ] );
-
 	const handleShowUpdates = useCallback( () => {
 		consumePending();
 		// `InfiniteList.scrollToTop` is implemented on the class component but
@@ -569,7 +547,7 @@ export function Stream( props: StreamProps ) {
 
 	const handleFetchNextPage = useCallback(
 		( options?: { triggeredByScroll?: boolean } ) => {
-			if ( isLoginPromptVisible() ) {
+			if ( isLoginPromptVisible ) {
 				return;
 			}
 			if ( options?.triggeredByScroll ) {
@@ -591,8 +569,6 @@ export function Stream( props: StreamProps ) {
 			return <PostPlaceholder key={ 'feed-post-placeholder-' + i } />;
 		} );
 	}, [ items.length, placeholderFactory ] );
-
-	const getPostRef = useCallback( ( postKey: PostKey ) => keyToString( postKey ), [] );
 
 	const renderAppPromo = useCallback(
 		( index: number ) => {
@@ -691,24 +667,20 @@ export function Stream( props: StreamProps ) {
 		]
 	);
 
-	let body: React.ReactNode;
-	let showingStream = false;
-	let baseClassNames = [ 'following', className ].filter( Boolean ).join( ' ' );
 	const sidebarContent = typeof streamSidebar === 'function' ? streamSidebar( wideDisplay ) : null;
-	let visibleItems = transformedItems;
-	let fetching = isFetching;
-
-	if ( forcePlaceholders ) {
-		visibleItems = [];
-		fetching = true;
-	}
-
+	const visibleItems = forcePlaceholders ? [] : transformedItems;
+	const fetching = forcePlaceholders || isFetching;
 	const hasNoPosts = ! isLoading && visibleItems.length === 0 && ! fetching && ! error;
+	const showingStream = ! error && ! hasNoPosts;
+	const hasSidebar = !! sidebarContent && streamType !== 'search';
+	const isTwoColumns = hasSidebar && wideDisplay;
+	const baseClassNames = clsx( 'following', className, isTwoColumns && 'is-two-columns' );
 
+	let body: React.ReactNode;
 	if ( error ) {
 		body = (
 			<StreamError
-				onTryAgain={ tryAgain }
+				onTryAgain={ () => stream.refetch() }
 				streamKey={ streamKey }
 				error={ {
 					message: ( error as { message?: string } )?.message ?? '',
@@ -716,21 +688,16 @@ export function Stream( props: StreamProps ) {
 			/>
 		);
 	} else if ( hasNoPosts ) {
-		const renderedEmpty = emptyContent();
-		const emptyBody = renderedEmpty ?? ( hideDefaultEmptyContentIfMissing ? null : null );
-		if ( wideDisplay && sidebarContent && streamType !== 'search' ) {
-			body = (
-				<div className="stream__two-column">
-					<div className="reader__content">{ emptyBody }</div>
-					<div className="stream__right-column">{ sidebarContent }</div>
-				</div>
-			);
-			baseClassNames = [ 'is-two-columns', baseClassNames ].filter( Boolean ).join( ' ' );
-		} else {
-			body = emptyBody;
-		}
+		const emptyBody = emptyContent() ?? null;
+		body = isTwoColumns ? (
+			<div className="stream__two-column">
+				<div className="reader__content">{ emptyBody }</div>
+				<div className="stream__right-column">{ sidebarContent }</div>
+			</div>
+		) : (
+			emptyBody
+		);
 	} else {
-		showingStream = true;
 		const streamList = (
 			<InfiniteList
 				ref={ handleListContextRef }
@@ -739,7 +706,7 @@ export function Stream( props: StreamProps ) {
 				fetchingNextPage={ fetching }
 				guessedItemHeight={ GUESSED_POST_HEIGHT }
 				fetchNextPage={ handleFetchNextPage }
-				getItemRef={ getPostRef }
+				getItemRef={ keyToString }
 				renderItem={ renderPost }
 				renderLoadingPlaceholders={ renderLoadingPlaceholders }
 				className="stream__list"
@@ -748,7 +715,7 @@ export function Stream( props: StreamProps ) {
 				restoreScroll={ restoreScroll }
 			/>
 		);
-		if ( ! sidebarContent || streamType === 'search' ) {
+		if ( ! hasSidebar ) {
 			body = (
 				<div className="reader__content">
 					{ streamHeader?.() }
@@ -765,7 +732,6 @@ export function Stream( props: StreamProps ) {
 					<div className="stream__right-column">{ sidebarContent }</div>
 				</div>
 			);
-			baseClassNames = [ 'is-two-columns', baseClassNames ].filter( Boolean ).join( ' ' );
 		} else {
 			// Narrow viewport with a sidebar: render Posts/Subscriptions tabs so
 			// the sidebar content stays reachable on phones and tablets.
@@ -824,22 +790,30 @@ export function Stream( props: StreamProps ) {
 			{ showingStream && visibleItems.length > 0 && intro?.() }
 			{ body }
 			{ showingStream && visibleItems.length > 0 && ! fetching && <ListEnd /> }
-			{ isLoginPromptVisible() && (
+			{ isLoginPromptVisible && (
 				<ReaderStreamLoginPrompt redirectPath={ window.location.pathname } />
 			) }
 		</>
 	);
 
-	const wrapperClassName = [ 'is-reader-page', baseClassNames ].filter( Boolean ).join( ' ' );
+	const wrapperClassName = clsx( 'is-reader-page', baseClassNames );
 
 	if ( isMain ) {
 		return (
-			<ReaderMain className={ wrapperClassName } wideLayout={ wideLayout }>
+			<ReaderMain
+				className={ wrapperClassName }
+				wideLayout={ wideLayout }
+				forwardRef={ containerRef }
+			>
 				{ inner }
 			</ReaderMain>
 		);
 	}
-	return <div className={ wrapperClassName }>{ inner }</div>;
+	return (
+		<div ref={ containerRef } className={ wrapperClassName }>
+			{ inner }
+		</div>
+	);
 }
 
 export default Stream;
