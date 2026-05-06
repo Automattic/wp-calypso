@@ -4217,7 +4217,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.2.0, @base-ui/react@npm:^1.4.0":
+"@base-ui/react@npm:1.4.1":
   version: 1.4.1
   resolution: "@base-ui/react@npm:1.4.1"
   dependencies:
@@ -4240,6 +4240,32 @@ __metadata:
     date-fns:
       optional: true
   checksum: 913361cd1e09f256d95bbd905287a10c34b2dab23482bf4ad5e595e4d72f5ea22e0b0b23657df6b548a938b248be3129c0bf1242c90753b59618a615c9e90ad5
+  languageName: node
+  linkType: hard
+
+"@base-ui/react@patch:@base-ui/react@npm%3A1.4.1#~/.yarn/patches/@base-ui-react-npm-1.4.1-fbb7347502.patch":
+  version: 1.4.1
+  resolution: "@base-ui/react@patch:@base-ui/react@npm%3A1.4.1#~/.yarn/patches/@base-ui-react-npm-1.4.1-fbb7347502.patch::version=1.4.1&hash=2be872"
+  dependencies:
+    "@babel/runtime": "npm:^7.29.2"
+    "@base-ui/utils": "npm:0.2.8"
+    "@floating-ui/react-dom": "npm:^2.1.8"
+    "@floating-ui/utils": "npm:^0.2.11"
+    use-sync-external-store: "npm:^1.6.0"
+  peerDependencies:
+    "@date-fns/tz": ^1.2.0
+    "@types/react": ^17 || ^18 || ^19
+    date-fns: ^4.0.0
+    react: ^17 || ^18 || ^19
+    react-dom: ^17 || ^18 || ^19
+  peerDependenciesMeta:
+    "@date-fns/tz":
+      optional: true
+    "@types/react":
+      optional: true
+    date-fns:
+      optional: true
+  checksum: b58800383b8df1274eae667581c1403449693c274ebe1a947aa9126792946a15b11e16435cf15533a5e329fd139836e0c8632b275c306c2666d5bb8eb196345b
   languageName: node
   linkType: hard
 
