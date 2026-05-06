@@ -3,6 +3,7 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -216,5 +217,210 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible() );
 		await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );
+	} );
+
+	describe( 'follow / unfollow button', () => {
+		const stubFeed = () =>
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020/feed' )
+				.query( { exclude_replies: 'true' } )
+				.reply( 200, { items: [], cursor: null } );
+
+		it( 'renders the Follow button when not following and not self', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						viewer: { following: false, followed_by: false, requested: false },
+						is_self: false,
+					} )
+				);
+			stubFeed();
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByRole( 'button', { name: /^Follow$/ } ) ).toBeVisible();
+		} );
+
+		it( 'renders the Following / Unfollow button when viewer.following is true', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						viewer: { following: true, followed_by: false, requested: false },
+						is_self: false,
+					} )
+				);
+			stubFeed();
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Unfollow @alice@mastodon.social' } )
+			).toBeVisible();
+		} );
+
+		it( 'renders the Requested button when viewer.requested is true (locked-account pending)', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						locked: true,
+						viewer: { following: false, followed_by: false, requested: true },
+						is_self: false,
+					} )
+				);
+			stubFeed();
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect(
+				await screen.findByRole( 'button', {
+					name: 'Cancel follow request to @alice@mastodon.social',
+				} )
+			).toBeVisible();
+		} );
+
+		it( 'renders Follow back when viewer.followed_by is true', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						viewer: { following: false, followed_by: true, requested: false },
+						is_self: false,
+					} )
+				);
+			stubFeed();
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			expect( await screen.findByRole( 'button', { name: /^Follow back$/ } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /^Follow$/ } ) ).toBeNull();
+		} );
+
+		it( 'hides the button when is_self is true', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						viewer: { following: false, followed_by: false, requested: false },
+						is_self: true,
+					} )
+				);
+			stubFeed();
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible()
+			);
+			expect( screen.queryByRole( 'button', { name: /^Follow$/ } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /^Follow back$/ } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /Unfollow/ } ) ).toBeNull();
+		} );
+
+		it( 'hides the button when viewer is undefined (forwards-compat for pre-deploy backends)', async () => {
+			// No `viewer` and no `is_self` — old backend shape.
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply( 200, makeProfile() );
+			stubFeed();
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible()
+			);
+			expect( screen.queryByRole( 'button', { name: /^Follow$/ } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /^Follow back$/ } ) ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: /Unfollow/ } ) ).toBeNull();
+		} );
+
+		it( 'POSTs to /follows on click and switches to the Following state', async () => {
+			const user = userEvent.setup();
+			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						viewer: { following: false, followed_by: false, requested: false },
+						is_self: false,
+					} )
+				);
+			stubFeed();
+			const followScope = nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '108020' } )
+				.reply( 200, { viewer: { following: true, followed_by: false, requested: false } } );
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			const followButton = await screen.findByRole( 'button', { name: /^Follow$/ } );
+			await user.click( followButton );
+
+			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
+			expect(
+				spy.mock.calls.some(
+					( [ event ] ) => event === 'calypso_reader_mastodon_profile_follow_clicked'
+				)
+			).toBe( true );
+			expect(
+				await screen.findByRole( 'button', { name: 'Unfollow @alice@mastodon.social' } )
+			).toBeVisible();
+		} );
 	} );
 } );
