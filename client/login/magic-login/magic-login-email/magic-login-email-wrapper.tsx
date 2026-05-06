@@ -47,7 +47,6 @@ export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapper
 							target="_blank"
 							rel="noreferrer noopener"
 							onClick={ () => logEvent( item.name ) }
-							__next40pxDefaultSize
 						>
 							<MagicLoginEmail.Icon icon={ item.name.toLocaleLowerCase() } />
 							<MagicLoginEmail.Content mailProviderName={ item.name } />
