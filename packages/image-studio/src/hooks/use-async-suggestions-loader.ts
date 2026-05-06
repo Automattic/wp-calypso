@@ -58,7 +58,7 @@ function buildDefaultImageSystemPrompt( suggestionPrompt: string, locale: string
 ${ suggestionPrompt }
 
 Output ONLY valid JSON matching this exact structure (no markdown, no explanation):
-{"suggestions":[{"label":"Short button text (3 words)","prompt":"Detailed image generation prompt (3-5 sentences)"}]}
+{"suggestions":[{"label":"Short button text (3-5 words)","prompt":"Detailed image generation prompt (1-3 sentences)"}]}
 
 Guidelines for each suggestion:
 - label: 3-5 word button text describing the image concept
