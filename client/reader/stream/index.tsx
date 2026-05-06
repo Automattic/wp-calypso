@@ -13,6 +13,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import scrollTo from 'calypso/lib/scroll-to';
+import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
@@ -86,29 +87,6 @@ function findScrollContainer( element: Element | null ): Element | false {
 	return findScrollContainer( element.parentElement );
 }
 
-// Mirrors the legacy `withDimensions` HOC (`client/lib/with-dimensions`):
-// the wide-layout flip is driven by the wrapping element's measured width,
-// not the viewport. Embedded callers (customer-home card, subscribe-modal,
-// feed-preview) sit in containers narrower than the viewport.
-function useContainerWidth( ref: React.RefObject< HTMLElement | null > ): number {
-	const [ width, setWidth ] = useState( 0 );
-	useEffect( () => {
-		const node = ref.current;
-		if ( ! node || typeof ResizeObserver === 'undefined' ) {
-			return;
-		}
-		const measure = () => {
-			const next = node.getBoundingClientRect().width;
-			setWidth( ( prev ) => ( prev !== next ? next : prev ) );
-		};
-		measure();
-		const observer = new ResizeObserver( measure );
-		observer.observe( node );
-		return () => observer.disconnect();
-	}, [ ref ] );
-	return width;
-}
-
 export interface StreamProps {
 	streamKey: string;
 	className?: string;
@@ -138,6 +116,8 @@ export interface StreamProps {
 	trackScrollPage: ( pageId: number ) => void;
 	onUpdatesShown?: () => void;
 	children?: React.ReactNode;
+	// Injected by `withDimensions` on the default export.
+	width?: number;
 }
 
 const defaultEmptyContent = () => <EmptyContent />;
@@ -170,6 +150,7 @@ export function Stream( props: StreamProps ) {
 		trackScrollPage,
 		onUpdatesShown,
 		children,
+		width = 0,
 	} = props;
 
 	const dispatch = useDispatch();
@@ -192,11 +173,11 @@ export function Stream( props: StreamProps ) {
 	);
 	const streamType = getStreamType( streamKey );
 
-	// Wide-layout flip is driven by the wrapping container's width — see
-	// `useContainerWidth` for why this isn't `window.innerWidth`.
-	const containerRef = useRef< HTMLDivElement | null >( null );
-	const containerWidth = useContainerWidth( containerRef );
-	const wideDisplay = containerWidth > WIDE_DISPLAY_CUTOFF;
+	// Wide-layout flip is driven by the wrapping container's width (injected
+	// by `withDimensions` on the default export), not the viewport — embedded
+	// callers (customer-home card, subscribe-modal, feed-preview) sit in
+	// containers narrower than the viewport.
+	const wideDisplay = width > WIDE_DISPLAY_CUTOFF;
 
 	const stream = useStreamPosts( {
 		streamKey,
@@ -800,20 +781,12 @@ export function Stream( props: StreamProps ) {
 
 	if ( isMain ) {
 		return (
-			<ReaderMain
-				className={ wrapperClassName }
-				wideLayout={ wideLayout }
-				forwardRef={ containerRef }
-			>
+			<ReaderMain className={ wrapperClassName } wideLayout={ wideLayout }>
 				{ inner }
 			</ReaderMain>
 		);
 	}
-	return (
-		<div ref={ containerRef } className={ wrapperClassName }>
-			{ inner }
-		</div>
-	);
+	return <div className={ wrapperClassName }>{ inner }</div>;
 }
 
-export default Stream;
+export default withDimensions( Stream );

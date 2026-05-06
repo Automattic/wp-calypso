@@ -62,18 +62,8 @@ jest.mock(
 jest.mock(
 	'calypso/reader/components/reader-main',
 	() =>
-		function ReaderMain( {
-			children,
-			forwardRef,
-		}: {
-			children: ReactNode;
-			forwardRef?: React.Ref< HTMLDivElement >;
-		} ) {
-			return (
-				<div ref={ forwardRef } data-testid="reader-main">
-					{ children }
-				</div>
-			);
+		function ReaderMain( { children }: { children: ReactNode } ) {
+			return <div data-testid="reader-main">{ children }</div>;
 		}
 );
 jest.mock( 'calypso/components/infinite-list', () => {
@@ -251,35 +241,18 @@ describe( 'Stream — render states', () => {
 	} );
 
 	it( 'renders stream sidebar in wide layout, including empty state', async () => {
-		// `<Stream>` flips to two-column layout based on the wrapping element's
-		// measured width (mirrors legacy `withDimensions`), so we stub
-		// `getBoundingClientRect` to report a wide container.
-		const original = Element.prototype.getBoundingClientRect;
-		Element.prototype.getBoundingClientRect = function () {
-			return {
-				width: 1200,
-				height: 0,
-				top: 0,
-				left: 0,
-				right: 1200,
-				bottom: 0,
-				x: 0,
-				y: 0,
-				toJSON: () => ( {} ),
-			} as DOMRect;
-		};
-		try {
-			mockLikesEndpoint( [] );
-			renderStream( {
-				wideLayout: true,
-				streamSidebar: () => <div data-testid="stream-sidebar">sidebar</div>,
-			} );
+		// The named `Stream` export takes `width` directly; the default export
+		// gets it injected via `withDimensions`. Pass it inline to flip into the
+		// two-column layout for this case.
+		mockLikesEndpoint( [] );
+		renderStream( {
+			wideLayout: true,
+			width: 1200,
+			streamSidebar: () => <div data-testid="stream-sidebar">sidebar</div>,
+		} );
 
-			await waitFor( () => expect( screen.getByText( "You're all caught up." ) ).toBeVisible() );
-			await waitFor( () => expect( screen.getByTestId( 'stream-sidebar' ) ).toBeVisible() );
-		} finally {
-			Element.prototype.getBoundingClientRect = original;
-		}
+		await waitFor( () => expect( screen.getByText( "You're all caught up." ) ).toBeVisible() );
+		expect( screen.getByTestId( 'stream-sidebar' ) ).toBeVisible();
 	} );
 
 	it( 'renders posts once the API responds', async () => {
