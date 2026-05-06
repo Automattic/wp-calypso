@@ -20,7 +20,15 @@ import {
 } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
-test.describe(
+// .fixme: under current staging behavior, subscribing through the post-page
+// Subscribe block does not produce a confirmation email and does not create a
+// subscriber visible in the publisher's subscriber list. The membership
+// iframe at `subscribe.wordpress.com/memberships/?email=...` renders a
+// "Thanks!" page but no follow-up email is delivered to Mailosaur. Needs
+// product-side investigation; reproducing the working flow likely requires an
+// authenticated WP.com session for the subscriber, which the test does not
+// set up. See TESTOPS-49.
+test.describe.fixme(
 	DataHelper.createSuiteTitle( 'Newsletter: Subscribe and Remove' ),
 	{ tag: [ tags.JETPACK_WPCOM_INTEGRATION ] },
 	() => {

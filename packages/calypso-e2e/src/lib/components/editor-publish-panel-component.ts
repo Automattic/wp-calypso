@@ -81,7 +81,10 @@ export class EditorPublishPanelComponent {
 	/* Pre-publish checklist*/
 
 	/**
-	 * Publish or schedule the article.
+	 * Publish or schedule the article. Also dismisses Jetpack Social's
+	 * "Confirm social sharing" prepublish dialog when present — some test sites
+	 * have a connected social account with the always-confirm preference
+	 * enabled, and the dialog otherwise covers the panel publish button.
 	 */
 	async publish(): Promise< void > {
 		const editorParent = await this.editor.parent();
@@ -97,6 +100,21 @@ export class EditorPublishPanelComponent {
 
 		if ( ! ( await publishButtonLocator.count() ) ) {
 			return;
+		}
+
+		// Dismiss Jetpack Social's "Confirm social sharing" prepublish dialog
+		// if it appears before the panel publish button is clickable. The
+		// modal element isn't always exposed as role="dialog", so match on
+		// the visible heading text.
+		const socialModalContinue = editorParent
+			.locator( ':has(> h1, > h2, > [class*="header"]):has-text("Confirm social sharing")' )
+			.getByRole( 'button', { name: 'Continue', exact: true } )
+			.first();
+		try {
+			await socialModalContinue.waitFor( { timeout: 2000 } );
+			await socialModalContinue.click();
+		} catch {
+			// Modal not present.
 		}
 
 		await publishButtonLocator.click();
