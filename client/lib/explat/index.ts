@@ -26,7 +26,56 @@ export const { loadExperimentAssignment, dangerouslyGetExperimentAssignment, get
 const exPlatClientReactHelpers = createExPlatClientReactHelpers( exPlatClient );
 export const { useExperiment, Experiment, ProvideExperimentData } = exPlatClientReactHelpers;
 
-async function logFeatureValueDiagnostics( flagKey: string, resolved: unknown ): Promise< void > {
+/**
+ * Look up a dev-only forced value for `flagKey` from URL or localStorage.
+ *
+ *  - Query param: `?explat_force_<flagKey>=<value>`
+ *  - localStorage: `localStorage.setItem('explat_force_<flagKey>', '<value>')`
+ *
+ * Returns `null` if no override is set. Values are returned as strings; if the
+ * caller's `defaultValue` is a boolean or number the override is coerced to
+ * match.
+ */
+function readForceOverride< T extends ExPlatSdk.FeatureValue >(
+	flagKey: string,
+	defaultValue: T
+): ExPlatSdk.WidenPrimitives< T > | null {
+	if ( typeof window === 'undefined' ) {
+		return null;
+	}
+	const key = `explat_force_${ flagKey }`;
+	let raw: string | null = null;
+	try {
+		const params = new URLSearchParams( window.location.search );
+		raw = params.get( key );
+	} catch {
+		// Ignore.
+	}
+	if ( raw === null ) {
+		try {
+			raw = window.localStorage.getItem( key );
+		} catch {
+			// Ignore.
+		}
+	}
+	if ( raw === null ) {
+		return null;
+	}
+	if ( typeof defaultValue === 'boolean' ) {
+		return ( raw === 'true' ) as ExPlatSdk.WidenPrimitives< T >;
+	}
+	if ( typeof defaultValue === 'number' ) {
+		const n = Number( raw );
+		return ( Number.isFinite( n ) ? n : defaultValue ) as ExPlatSdk.WidenPrimitives< T >;
+	}
+	return raw as ExPlatSdk.WidenPrimitives< T >;
+}
+
+async function logFeatureValueDiagnostics(
+	flagKey: string,
+	resolved: unknown,
+	forced: boolean
+): Promise< void > {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
@@ -56,7 +105,17 @@ async function logFeatureValueDiagnostics( flagKey: string, resolved: unknown ):
 		: null;
 
 	/* eslint-disable no-console */
-	console.groupCollapsed( `[ExPlat] ${ flagKey } → ${ JSON.stringify( resolved ) }` );
+	console.groupCollapsed(
+		`[ExPlat] ${ flagKey } → ${ JSON.stringify( resolved ) }${ forced ? ' (FORCED)' : '' }`
+	);
+	if ( forced ) {
+		console.log(
+			'%cforced via explat_force_' +
+				flagKey +
+				' (URL or localStorage) — eval below is what would have run',
+			'color: orange; font-weight: bold'
+		);
+	}
 	console.log( 'attributes', attributes );
 	console.log( 'localStorage overrides', overrides );
 	console.log( 'window.__EXPLAT_RUNTIME__', runtime );
@@ -89,12 +148,20 @@ export function useFeatureValue< T extends ExPlatSdk.FeatureValue >(
 	);
 	useEffect( () => {
 		let cancelled = false;
+		const forced = readForceOverride( flagKey, defaultValue );
+		if ( forced !== null ) {
+			setValue( forced );
+			void logFeatureValueDiagnostics( flagKey, forced, true );
+			return () => {
+				cancelled = true;
+			};
+		}
 		exPlatClient.getFeatureValue( flagKey, defaultValue ).then( ( resolved ) => {
 			if ( cancelled ) {
 				return;
 			}
 			setValue( resolved );
-			void logFeatureValueDiagnostics( flagKey, resolved );
+			void logFeatureValueDiagnostics( flagKey, resolved, false );
 		} );
 		return () => {
 			cancelled = true;
