@@ -35,6 +35,7 @@ function errorMessageForLike(
 		case 'quote_disabled':
 		case 'target_unavailable':
 		case 'unknown':
+		case 'blob_decode_failed':
 			return translate( 'Could not save your like. Please try again.' );
 		default:
 			// Defensive fallback if AtmosphereError widens before this

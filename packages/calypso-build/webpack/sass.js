@@ -1,5 +1,6 @@
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const MiniCSSRuntimeFullHashPlugin = require( './mini-css-runtime-full-hash' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
 
 /**
@@ -71,6 +72,7 @@ module.exports.plugins = ( { chunkFilename, filename } ) => [
 		// approach used by v1.
 		experimentalUseImportModule: false,
 	} ),
+	new MiniCSSRuntimeFullHashPlugin(),
 	new MiniCSSWithRTLPlugin(),
 	new WebpackRTLPlugin(),
 ];

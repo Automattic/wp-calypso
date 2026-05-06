@@ -407,12 +407,12 @@ exports[`JetpackSignup should render with the connector branding when from=jetpa
         <h1
           class="connect-screen-brand-header__title"
         >
-          Connect your store
+          Create your account
         </h1>
         <p
           class="connect-screen-brand-header__description"
         >
-          Connect your store to unlock powerful features.
+          You'll use it to unlock powerful features on your store.
         </p>
       </div>
       <div

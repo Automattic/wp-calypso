@@ -11,12 +11,14 @@ import {
 	mapMastodonThreadResponseToSocialThreadNode,
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
 import { ThreadHeader } from './thread-header';
 import { MastodonThreadTree } from './thread-tree';
 import { MastodonThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
 import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
+import { makeUseMastodonRepostAction } from './use-mastodon-repost-action';
 import type {
 	MastodonConnection,
 	MastodonError,
@@ -147,23 +149,30 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 		[ connection.id ]
 	);
 
+	const useRepostAction = useMemo(
+		() => makeUseMastodonRepostAction( connection.id ),
+		[ connection.id ]
+	);
+
 	return (
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider value={ analyticsValue }>
 				<LikeProvider value={ useLikeAction }>
-					{ renderBody( {
-						translate,
-						data,
-						instance: connection.instance,
-						connectionId: connection.id,
-						isPending,
-						isFetching,
-						isError,
-						error: error ?? null,
-						handleRetry,
-						targetUri: statusId,
-					} ) }
+					<RepostProvider value={ useRepostAction }>
+						{ renderBody( {
+							translate,
+							data,
+							instance: connection.instance,
+							connectionId: connection.id,
+							isPending,
+							isFetching,
+							isError,
+							error: error ?? null,
+							handleRetry,
+							targetUri: statusId,
+						} ) }
+					</RepostProvider>
 				</LikeProvider>
 			</SocialAnalyticsProvider>
 		</>

@@ -1,7 +1,16 @@
-.step-container-v2__back-button {
+.step-container-v2__back-button.components-button {
 	--wp-components-color-accent: var(--color-neutral-100);
 	--color-link: var(--color-neutral-100);
 	font-size: 0.875rem;
+	font-weight: 500;
 	line-height: 1;
-	text-decoration: none !important;
+	text-decoration: underline;
+	gap: 4px;
+	padding: 0 !important;
+	min-width: 0;
+	height: auto;
+
+	svg {
+		margin-inline-end: 0;
+	}
 }

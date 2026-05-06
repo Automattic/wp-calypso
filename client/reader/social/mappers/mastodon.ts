@@ -82,6 +82,17 @@ export function mapMastodonFeedItemToSocialPost(
 			sensitive: item.sensitive,
 		};
 	}
+	// Translate Mastodon's boolean viewer flags into the SocialPost
+	// viewer shape. `viewer.like` carries a sentinel string when liked
+	// (mirrors the atmosphere shape); `viewer.repost` carries 'reblogged'
+	// when the viewer has boosted the post. Both default to null when the
+	// upstream boolean is false or viewer is absent.
+	if ( item.viewer ) {
+		post.viewer = {
+			like: item.viewer.favourited ? 'favourited' : null,
+			repost: item.viewer.reblogged ? 'reblogged' : null,
+		};
+	}
 	return post;
 }
 

@@ -2,7 +2,9 @@ import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
 	createMastodonLike,
+	createMastodonRepost,
 	deleteMastodonLike,
+	deleteMastodonRepost,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
@@ -322,7 +324,8 @@ export function useMastodonTagFeedInfiniteQuery(
 }
 
 // ---------------------------------------------------------------------------
-// Optimistic favourite/unfavourite infrastructure (private to this file)
+// Optimistic favourite/unfavourite + boost/unboost infrastructure
+// (private to this file)
 // ---------------------------------------------------------------------------
 
 interface OptimisticContext {
@@ -459,7 +462,7 @@ function patchMastodonQueryData(
 // `connections` and `connection` keys don't hold posts so they're silently
 // no-op walked. Status IDs are instance-local — same numeric id on a
 // different connection is a different post — so the patch must be
-// connection-scoped or favourites on connection A leak into B's caches.
+// connection-scoped or favourites/boosts on connection A leak into B's caches.
 function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean {
 	return Array.isArray( key ) && key[ 3 ] === connectionId;
 }
@@ -487,10 +490,10 @@ function patchMastodonPostCaches(
 	return { snapshots };
 }
 
-// Cancel only this connection's in-flight Mastodon queries — favouriting
-// on connection A shouldn't kill connection B's pagination/thread loads.
-// Wrapped at call sites in try/catch: if cancelQueries rejects (rare —
-// teardown / route change), the optimistic patch should still apply and
+// Cancel only this connection's in-flight Mastodon queries — favouriting/
+// boosting on connection A shouldn't kill connection B's pagination/thread
+// loads. Wrapped at call sites in try/catch: if cancelQueries rejects (rare
+// — teardown / route change), the optimistic patch should still apply and
 // the mutation should still fire.
 function cancelMastodonQueriesForConnection( queryClient: QueryClient, connectionId: number ) {
 	return queryClient.cancelQueries( {
@@ -653,6 +656,56 @@ export function useDeleteMastodonLikeMutation( connectionId: number ) {
 				counts: {
 					...item.counts,
 					favourites: Math.max( 0, item.counts.favourites - 1 ),
+				},
+			} ) );
+		},
+		onError: ( _err, _vars, ctx ) => restoreMastodonPostSnapshots( queryClient, ctx ),
+	} );
+}
+
+export function useCreateMastodonRepostMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		mutationFn: ( { statusId } ) => createMastodonRepost( { connectionId, statusId } ),
+		onMutate: async ( { statusId } ) => {
+			try {
+				await cancelMastodonQueriesForConnection( queryClient, connectionId );
+			} catch {
+				// See useCreateMastodonLikeMutation for rationale.
+			}
+			return patchMastodonPostCaches( queryClient, connectionId, statusId, ( item ) => ( {
+				...item,
+				viewer: {
+					...( item.viewer ?? { favourited: false, reblogged: false } ),
+					reblogged: true,
+				},
+				counts: { ...item.counts, boosts: item.counts.boosts + 1 },
+			} ) );
+		},
+		onError: ( _err, _vars, ctx ) => restoreMastodonPostSnapshots( queryClient, ctx ),
+		// No onSuccess re-patch — boolean already correct from onMutate.
+	} );
+}
+
+export function useDeleteMastodonRepostMutation( connectionId: number ) {
+	const queryClient = useQueryClient();
+	return useMutation< void, MastodonError, { statusId: string }, OptimisticContext >( {
+		mutationFn: ( { statusId } ) => deleteMastodonRepost( { connectionId, statusId } ),
+		onMutate: async ( { statusId } ) => {
+			try {
+				await cancelMastodonQueriesForConnection( queryClient, connectionId );
+			} catch {
+				// See useCreateMastodonLikeMutation for rationale.
+			}
+			return patchMastodonPostCaches( queryClient, connectionId, statusId, ( item ) => ( {
+				...item,
+				viewer: {
+					...( item.viewer ?? { favourited: false, reblogged: false } ),
+					reblogged: false,
+				},
+				counts: {
+					...item.counts,
+					boosts: Math.max( 0, item.counts.boosts - 1 ),
 				},
 			} ) );
 		},

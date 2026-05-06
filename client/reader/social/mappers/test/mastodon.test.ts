@@ -116,6 +116,37 @@ describe( 'mapMastodonFeedItemToSocialPost', () => {
 		} );
 	} );
 
+	it( 'omits viewer when item.viewer is absent', () => {
+		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
+		expect( post.viewer ).toBeUndefined();
+	} );
+
+	it( 'sets viewer.repost to "reblogged" when viewer.reblogged is true', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{ ...FIXTURE, viewer: { favourited: false, reblogged: true } },
+			OPTS
+		);
+		expect( post.viewer?.repost ).toBe( 'reblogged' );
+		expect( post.viewer?.like ).toBeNull();
+	} );
+
+	it( 'sets viewer.like to "favourited" when viewer.favourited is true', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{ ...FIXTURE, viewer: { favourited: true, reblogged: false } },
+			OPTS
+		);
+		expect( post.viewer?.like ).toBe( 'favourited' );
+		expect( post.viewer?.repost ).toBeNull();
+	} );
+
+	it( 'sets viewer.repost to null when viewer.reblogged is false', () => {
+		const post = mapMastodonFeedItemToSocialPost(
+			{ ...FIXTURE, viewer: { favourited: false, reblogged: false } },
+			OPTS
+		);
+		expect( post.viewer?.repost ).toBeNull();
+	} );
+
 	it( 'returns null embed when media[] is empty', () => {
 		const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
 		expect( post.embed ).toBeNull();
