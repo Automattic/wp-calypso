@@ -2,18 +2,16 @@ import { createExPlatClient } from '../../create-explat-client';
 import { setBrowserContext } from '../test-common';
 import type { Config } from '../../types';
 
+// Canonical contract shape per 00-contracts.md § 6: rule-level `ranges`,
+// no inline `range` per variation. `loadFlagPayload` distributes ranges
+// onto variations to bridge the canonical payload to the SDK's reader.
 const experimentRule = {
 	type: 'experiment' as const,
 	seed: 'exp_a',
 	hash_attribute: 'wpcom_user_id' as const,
+	ranges: [ [ 0, 1 ] as [ number, number ] ],
 	variations: [
-		{
-			name: 'treatment',
-			value: true,
-			is_default: false,
-			experiment_variation_id: 9002,
-			range: [ 0, 1 ] as [ number, number ],
-		},
+		{ name: 'treatment', value: true, is_default: false, experiment_variation_id: 9002 },
 	],
 	experiment_id: 12345,
 };
