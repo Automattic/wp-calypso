@@ -11,7 +11,6 @@ export function SensitiveToggle( { sensitive, onChange }: Props ) {
 	return (
 		<ToggleControl
 			label={ translate( 'Mark media as sensitive' ) as string }
-			help={ translate( 'Hides the images behind a click-through warning.' ) as string }
 			checked={ sensitive }
 			onChange={ onChange }
 			__nextHasNoMarginBottom

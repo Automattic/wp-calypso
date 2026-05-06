@@ -20,9 +20,4 @@ describe( 'SensitiveToggle', () => {
 		render( <SensitiveToggle sensitive onChange={ jest.fn() } /> );
 		expect( screen.getByRole( 'checkbox', { name: /mark media as sensitive/i } ) ).toBeChecked();
 	} );
-
-	it( 'shows the help copy', () => {
-		render( <SensitiveToggle sensitive={ false } onChange={ jest.fn() } /> );
-		expect( screen.getByText( /click-through warning/i ) ).toBeVisible();
-	} );
 } );
