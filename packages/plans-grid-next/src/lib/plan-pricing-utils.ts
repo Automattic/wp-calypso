@@ -141,14 +141,14 @@ export function fromPricingMetaForGridPlan(
  *     derived by subtracting the non-intro months at the regular rate.
  */
 export interface VariantPriceData {
-	termIntervalInMonths: number;
-	/** Actual price charged for the full term (may embed an intro offer) */
-	priceInteger: number;
-	/** Full-term price at the regular (non-intro) rate */
-	priceBeforeDiscounts: number;
 	introductoryInterval: number;
 	/** 'month' | 'year' */
 	introductoryTerm: string;
+	/** Full-term price at the regular (non-intro) rate */
+	priceBeforeDiscounts: number;
+	/** Actual price charged for the full term (may embed an intro offer) */
+	priceInteger: number;
+	termIntervalInMonths: number;
 }
 
 /**
