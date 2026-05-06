@@ -1,9 +1,11 @@
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	createMastodonFollow,
 	createMastodonLike,
 	createMastodonPost,
 	createMastodonRepost,
+	deleteMastodonFollow,
 	deleteMastodonLike,
 	deleteMastodonRepost,
 	getMastodonAuthorFeed,
@@ -45,6 +47,7 @@ import type {
 	MastodonCreatePostResult,
 	MastodonError,
 	MastodonFeedItem,
+	MastodonFollowResponse,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
 	MastodonTagFilter,
@@ -928,4 +931,144 @@ export const createMastodonPostMutation = (
 export const uploadMastodonMediaMutation = () =>
 	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
 		mutationFn: uploadMastodonMedia,
+	} );
+
+export interface FollowMastodonActorVars {
+	connectionId: number;
+	/**
+	 * Cache-key actor (numeric id or webfinger handle) — same value the
+	 * scoped profile query is keyed on. Used to locate the cache entry to
+	 * patch.
+	 */
+	actor: string;
+	/** Numeric Mastodon account id used in the wire call. */
+	accountId: string;
+}
+
+export interface FollowMastodonMutationContext {
+	previous: MastodonAuthorProfile | undefined;
+}
+
+const mastodonAuthorProfileKey = ( vars: { connectionId: number; actor: string } ) =>
+	readerMastodonKeys.authorProfile( vars.connectionId, vars.actor );
+
+/**
+ * Mutation factory for following a Mastodon account. Optimistically
+ * marks the cached scoped-profile entry's viewer as following + clears
+ * any pending request flag. The real server-side state (which may be
+ * `requested: true` for locked accounts) is committed in `onSuccess`.
+ *
+ * Accepts the consumer's QueryClient because Calypso boots its own
+ * separate from the singleton in `@automattic/api-queries`. See
+ * `client/reader/AGENTS.md` for the rationale.
+ */
+export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		MastodonFollowResponse,
+		MastodonError,
+		FollowMastodonActorVars,
+		FollowMastodonMutationContext
+	>( {
+		mutationFn: ( vars ) =>
+			createMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
+		onMutate: async ( vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			try {
+				await queryClient.cancelQueries( { queryKey: key } );
+			} catch {
+				// Best-effort per TanStack docs; if cancel fails the optimistic
+				// patch + mutationFn must still run.
+			}
+			const previous = queryClient.getQueryData< MastodonAuthorProfile >( key );
+			queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old && old.viewer
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: true,
+								requested: false,
+							},
+					  }
+					: old
+			);
+			return { previous };
+		},
+		onError: ( _err, vars, context ) => {
+			if ( context?.previous ) {
+				queryClient.setQueryData( mastodonAuthorProfileKey( vars ), context.previous );
+			}
+		},
+		onSuccess: ( data, vars ) => {
+			queryClient.setQueryData< MastodonAuthorProfile >(
+				mastodonAuthorProfileKey( vars ),
+				( old ) =>
+					old
+						? {
+								...old,
+								viewer: data.viewer,
+						  }
+						: old
+			);
+		},
+	} );
+
+/**
+ * Mutation factory for unfollowing a Mastodon account. Also cancels a
+ * pending follow request (locked accounts) — Mastodon's unfollow
+ * endpoint covers both. Optimistically clears `viewer.following` and
+ * `viewer.requested`; rolls back on error.
+ *
+ * Accepts the consumer's QueryClient for the same reason as
+ * `followMastodonActorMutation`.
+ */
+export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		MastodonFollowResponse,
+		MastodonError,
+		FollowMastodonActorVars,
+		FollowMastodonMutationContext
+	>( {
+		mutationFn: ( vars ) =>
+			deleteMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
+		onMutate: async ( vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			try {
+				await queryClient.cancelQueries( { queryKey: key } );
+			} catch {
+				// Best-effort per TanStack docs; if cancel fails the optimistic
+				// patch + mutationFn must still run.
+			}
+			const previous = queryClient.getQueryData< MastodonAuthorProfile >( key );
+			queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old && old.viewer
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: false,
+								requested: false,
+							},
+					  }
+					: old
+			);
+			return { previous };
+		},
+		onError: ( _err, vars, context ) => {
+			if ( context?.previous ) {
+				queryClient.setQueryData( mastodonAuthorProfileKey( vars ), context.previous );
+			}
+		},
+		onSuccess: ( data, vars ) => {
+			queryClient.setQueryData< MastodonAuthorProfile >(
+				mastodonAuthorProfileKey( vars ),
+				( old ) =>
+					old
+						? {
+								...old,
+								viewer: data.viewer,
+						  }
+						: old
+			);
+		},
 	} );

@@ -7,6 +7,7 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 
 import {
 	readerMastodonKeys,
+	type MastodonAuthorProfile,
 	type MastodonFeedItem,
 	type MastodonThreadResponse,
 	type MastodonTimelinePage,
@@ -21,6 +22,8 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	createMastodonPostMutation,
+	followMastodonActorMutation,
+	unfollowMastodonActorMutation,
 	uploadMastodonMediaMutation,
 	useAuthorizeMastodonConnectionMutation,
 	useCompleteMastodonConnectionMutation,
@@ -1411,5 +1414,185 @@ describe( 'uploadMastodonMediaMutation', () => {
 		expect( typeof opts.mutationFn ).toBe( 'function' );
 		// mutationKey intentionally absent — composer-config types Omit it.
 		expect( ( opts as Record< string, unknown > ).mutationKey ).toBeUndefined();
+	} );
+} );
+
+describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
+	afterEach( () => nock.cleanAll() );
+
+	function makeProfile( overrides: Partial< MastodonAuthorProfile > = {} ): MastodonAuthorProfile {
+		return {
+			id: '200',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '',
+			counts: { followers: 10, following: 5, posts: 42 },
+			locked: false,
+			raw: {},
+			viewer: { following: false, followed_by: false, requested: false },
+			is_self: false,
+			...overrides,
+		};
+	}
+
+	describe( 'followMastodonActorMutation', () => {
+		it( 'optimistically sets viewer.following=true on follow', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 200, {
+					viewer: { following: true, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.following ).toBe( true );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+
+		it( 'commits requested: true from server response (locked account)', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile( { locked: true } ) );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: true },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.requested ).toBe( true );
+			expect( cached?.viewer?.following ).toBe( false );
+		} );
+
+		it( 'rolls back to previous viewer on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 502, { code: 'reader_mastodon_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId: 1,
+						actor: '200',
+						accountId: '200',
+					} );
+				} catch {
+					// expected
+				}
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.following ).toBe( false );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+	} );
+
+	describe( 'unfollowMastodonActorMutation', () => {
+		it( 'optimistically clears viewer.following and viewer.requested on unfollow', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData(
+				key,
+				makeProfile( {
+					locked: true,
+					viewer: { following: false, followed_by: false, requested: true },
+				} )
+			);
+
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/mastodon/connections/1/follows/200' )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( unfollowMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.following ).toBe( false );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+
+		it( 'rolls back to previous viewer on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData(
+				key,
+				makeProfile( {
+					viewer: { following: true, followed_by: false, requested: false },
+				} )
+			);
+
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/mastodon/connections/1/follows/200' )
+				.reply( 502, { code: 'reader_mastodon_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( unfollowMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId: 1,
+						actor: '200',
+						accountId: '200',
+					} );
+				} catch {
+					// expected
+				}
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.following ).toBe( true );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
 	} );
 } );
