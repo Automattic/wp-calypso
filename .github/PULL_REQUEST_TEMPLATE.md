@@ -40,6 +40,7 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] [Have you written new tests](https://github.com/Automattic/wp-calypso/blob/trunk/docs/testing/index.md) for your changes?
 - [ ] Have you tested the feature in Simple (P9HQHe-k8-p2), Atomic (P9HQHe-jW-p2), and self-hosted Jetpack sites (PCYsg-g6b-p2)?
 - [ ] Have you checked for TypeScript, React or other console errors?
+- [ ] For UI changes, have you tested the affected components in [dark mode](https://github.com/Automattic/wp-calypso/blob/trunk/docs/dark-mode.md)?
 - [ ] Have you tested accessibility for your changes? Ensure the feature remains usable with various user agents (e.g., browsers), interfaces (e.g., keyboard navigation), and assistive technologies (e.g., screen readers) (PCYsg-S3g-p2).
 - [ ] Have you used memoizing on expensive computations? More info in [Memoizing with create-selector](https://github.com/Automattic/wp-calypso/blob/trunk/packages/state-utils/src/create-selector/README.md) and [Using memoizing selectors](https://react-redux.js.org/api/hooks#using-memoizing-selectors) and [Our Approach to Data](https://github.com/Automattic/wp-calypso/blob/trunk/docs/our-approach-to-data.md)
 - [ ] Have we added the "[Status] String Freeze" label as soon as any new strings were ready for translation (p4TIVU-5Jq-p2)?
