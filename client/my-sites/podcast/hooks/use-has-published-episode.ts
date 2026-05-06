@@ -33,6 +33,9 @@ export const useHasPublishedEpisode = (
 		queryKey: [ 'podcast-has-published-episode', siteId, categoryId ],
 		queryFn: () => fetchHasPublishedEpisode( siteId as number, categoryId ),
 		enabled: !! siteId && !! categoryId,
+		// Dedupes the typical Settings → Distribution tab hop without making a
+		// just-published episode look stuck in the readiness banner for long.
+		staleTime: 30_000,
 	} );
 	return data;
 };

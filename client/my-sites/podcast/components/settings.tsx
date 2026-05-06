@@ -354,7 +354,7 @@ const PodcastingSettingsForm = ( {
 				{ siteId && coverImageId && <QueryMedia siteId={ siteId } mediaId={ coverImageId } /> }
 
 				{ submissionIssues.length > 0 && (
-					<div className="podcast__settings-readiness">
+					<div className="podcast__settings-readiness" role="status">
 						<NoticeBanner
 							level="warning"
 							title={

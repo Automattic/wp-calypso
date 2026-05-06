@@ -129,7 +129,7 @@ function Distribution( { onGoToSettings }: Props ) {
 	return (
 		<>
 			{ hasIssues && (
-				<div className="podcast__settings-readiness podcast__distribution">
+				<div className="podcast__settings-readiness podcast__distribution" role="status">
 					<NoticeBanner
 						level="warning"
 						title={

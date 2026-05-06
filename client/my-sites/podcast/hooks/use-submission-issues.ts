@@ -117,7 +117,6 @@ export function useSubmissionIssues(): {
 	return useMemo( () => {
 		const values: PodcastFieldValues = settings ?? {};
 		const issues = computeSubmissionIssues( values, coverImage, hasPublishedEpisode, translate );
-		const isPodcastingEnabled = Number( values.podcasting_category_id ?? 0 ) > 0;
-		return { issues, isPodcastingEnabled };
-	}, [ settings, coverImage, hasPublishedEpisode, translate ] );
+		return { issues, isPodcastingEnabled: podcastingCategoryId > 0 };
+	}, [ settings, coverImage, hasPublishedEpisode, translate, podcastingCategoryId ] );
 }
