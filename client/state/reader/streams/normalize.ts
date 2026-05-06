@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export const PER_FETCH = 7;
 export const INITIAL_FETCH = 4;
-export const PER_POLL = 40;
+export const PER_POLL = 10;
 export const PER_GAP = 40;
 
 export const QUERY_META = [ 'post', 'discover_original_post' ].join( ',' );

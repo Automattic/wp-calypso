@@ -902,7 +902,7 @@ describe( 'requestPage thunk', () => {
 			expect( dates ).toEqual( [ '2026-04-10', '2026-02-20' ] );
 		} );
 
-		it( 'sends `date_liked` in the poll fields query param', async () => {
+		it( 'requests the rich poll payload (no `fields` restriction)', async () => {
 			let captured;
 			nock( BASE )
 				.get( '/rest/v1.2/read/liked' )
@@ -915,8 +915,12 @@ describe( 'requestPage thunk', () => {
 			const { result } = runThunk( { streamKey: 'likes', isPoll: true } );
 			await result;
 
-			expect( captured.fields ).toBeDefined();
-			expect( captured.fields.split( ',' ) ).toContain( 'date_liked' );
+			// `getQueryStringForPoll` no longer restricts fields — the API
+			// returns `date_liked` (and other stream extras) by default. The
+			// response shape mirrors a regular page fetch so consumers can
+			// dispatch the head straight into `state.reader.posts`.
+			expect( captured.fields ).toBeUndefined();
+			expect( captured.meta ).toBe( 'post,discover_original_post' );
 		} );
 
 		it( 'does not send the selected Recent feed id in the poll query', async () => {
