@@ -495,7 +495,7 @@ function getLoggedInPlansAction( {
 						selectedStorageAddOn,
 						availableForPurchase,
 					} )();
-				} finally {
+				} catch {
 					setLoadingPlanSlug( null );
 				}
 				return;
