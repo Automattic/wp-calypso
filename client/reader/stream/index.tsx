@@ -14,6 +14,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
+import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
@@ -457,6 +458,12 @@ export function Stream( props: StreamProps ) {
 				if ( INPUT_TAGS.has( target.tagName ) || ( target as HTMLElement ).isContentEditable ) {
 					return;
 				}
+			}
+			// Quick-post editor mounts inside `iframe[name="editor-canvas"]`; its
+			// own contentEditable lives on a child of the iframe's document, so
+			// it never reaches the outer `event.target` check above.
+			if ( isEditorIframeFocused() ) {
+				return;
 			}
 			if ( event.metaKey || event.ctrlKey ) {
 				return;
