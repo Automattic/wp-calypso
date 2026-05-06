@@ -309,12 +309,48 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		.reader-post-card.card.is-compact {
 			margin-bottom: 0;
 			border-radius: 0;
-			padding: 14px 16px 12px;
+			padding: 14px 16px;
+
+			// Vertically center the text column against the thumbnail when the
+			// compact layout is a row (`flex-direction: row`). Do not apply
+			// `align-items: center` on `.reader-post-card__no-excerpt`: that variant
+			// uses a column stack and centering prevents horizontal stretch, which
+			// collapses featured-media width and hides full-width images that only
+			// have a fixed height + `object-fit: contain`.
+			.reader-post-card__post-content {
+				margin-bottom: 0;
+
+				&:not(.reader-post-card__no-excerpt) {
+					align-items: center;
+				}
+			}
+
+			// 8px gap between the title/meta heading row and the excerpt
+			// body. Resetting the excerpt margin overrides the global
+			// `margin-bottom: 10px` it ships with.
+			.reader-post-card__post-heading {
+				margin-bottom: 8px;
+			}
+
+			.reader-excerpt,
+			.reader-excerpt__content {
+				margin: 0;
+				max-height: none;
+				font-size: 13px;
+				line-height: 20px;
+			}
 		}
 	}
 
 	&__preview-stream {
 		pointer-events: none;
+	}
+
+	// Per-card follow + ellipsis live in `.reader-post-card__post-options`. On `/discover`,
+	// compact cards use `display: flex` there with competing specificity; chaining the modal
+	// frame (both classes exist on the WP modal frame) keeps this scoped and wins in cascade.
+	&.components-modal__frame &__preview-column .reader-post-card.card .reader-post-card__post-options {
+		display: none;
 	}
 
 	&.is-disabled {
