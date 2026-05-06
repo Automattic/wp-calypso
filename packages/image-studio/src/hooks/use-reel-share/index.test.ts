@@ -33,52 +33,54 @@ let mockState: {
 let mockReelSharePath: string | null;
 let mockConnectionsUrl: string | null;
 
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( ( selector ) => {
-		return selector( ( storeName: string ) => {
-			if ( storeName === 'video-studio' ) {
-				return {
-					getCurrentVideoUrl: () => mockState.currentVideoUrl,
-					getCurrentAttachmentId: () => mockState.currentAttachmentId,
-					getCurrentDurationSeconds: () => mockState.currentDurationSeconds,
-				};
-			}
-			if ( storeName === 'image-studio' ) {
-				return {
-					getEntryPoint: () => mockState.entryPoint,
-					getImageStudioAiProcessing: () => mockState.isAiProcessing,
-				};
-			}
-			if ( storeName === 'core/editor' ) {
-				return {
-					getCurrentPostId: () => mockState.currentPostId,
-					isCurrentPostPublished: () => mockState.isCurrentPostPublished,
-					getEditedPostAttribute: ( attr: string ) =>
-						attr === 'meta' ? mockState.currentMeta : undefined,
-				};
-			}
-			if ( storeName === 'jetpack-social-plugin' ) {
-				return {
-					getConnections: () => mockState.connections,
-					isSharingCurrentPost: () => mockState.isSharingCurrentPost,
-				};
-			}
-			return {};
-		} );
-	} ),
-	useDispatch: jest.fn( ( storeName: string ) => {
-		if ( storeName === 'core/editor' ) {
-			return { editPost: mockEditPost };
-		}
-		if ( storeName === 'jetpack-social-plugin' ) {
-			return { shareCurrentPost: mockShareCurrentPost };
+jest.mock( '@wordpress/data', () => {
+	const select = ( storeName: string ) => {
+		if ( storeName === 'video-studio' ) {
+			return {
+				getCurrentVideoUrl: () => mockState.currentVideoUrl,
+				getCurrentAttachmentId: () => mockState.currentAttachmentId,
+				getCurrentDurationSeconds: () => mockState.currentDurationSeconds,
+			};
 		}
 		if ( storeName === 'image-studio' ) {
-			return { addNotice: mockAddNotice };
+			return {
+				getEntryPoint: () => mockState.entryPoint,
+				getImageStudioAiProcessing: () => mockState.isAiProcessing,
+			};
+		}
+		if ( storeName === 'core/editor' ) {
+			return {
+				getCurrentPostId: () => mockState.currentPostId,
+				isCurrentPostPublished: () => mockState.isCurrentPostPublished,
+				getEditedPostAttribute: ( attr: string ) =>
+					attr === 'meta' ? mockState.currentMeta : undefined,
+			};
+		}
+		if ( storeName === 'jetpack-social-plugin' ) {
+			return {
+				getConnections: () => mockState.connections,
+				isSharingCurrentPost: () => mockState.isSharingCurrentPost,
+			};
 		}
 		return {};
-	} ),
-} ) );
+	};
+	return {
+		useSelect: jest.fn( ( selector ) => selector( select ) ),
+		select: jest.fn( select ),
+		useDispatch: jest.fn( ( storeName: string ) => {
+			if ( storeName === 'core/editor' ) {
+				return { editPost: mockEditPost };
+			}
+			if ( storeName === 'jetpack-social-plugin' ) {
+				return { shareCurrentPost: mockShareCurrentPost };
+			}
+			if ( storeName === 'image-studio' ) {
+				return { addNotice: mockAddNotice };
+			}
+			return {};
+		} ),
+	};
+} );
 
 jest.mock( '@wordpress/element', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -368,6 +370,46 @@ describe( 'useReelShare', () => {
 
 			expect( mockTrackFailed ).toHaveBeenCalledWith( 'boom' );
 			expect( mockTrackDispatched ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'click-time freshness', () => {
+		it( 'rechecks the IG connection at click time even if useSelect missed it', async () => {
+			// Render with no IG connection — simulates the wp-data subscription
+			// missing the social store at mount time.
+			mockState.connections = [];
+			const { result } = renderHook( () => useReelShare() );
+
+			// Now the social store hydrates with an IG connection. useSelect
+			// would normally not re-run if its initial subscription missed the
+			// store, but our handleShare reads via standalone select() at click.
+			mockState.connections = [ igConnection ];
+
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( mockTrackNotConnected ).not.toHaveBeenCalled();
+			expect( mockEditPost ).toHaveBeenCalled();
+			expect( mockShareCurrentPost ).toHaveBeenCalledWith(
+				expect.objectContaining( { skipped_connections: [] } ),
+				expect.any( Object )
+			);
+		} );
+
+		it( 'rechecks publication state at click time', async () => {
+			mockState.isCurrentPostPublished = true;
+			const { result } = renderHook( () => useReelShare() );
+
+			// Post moves to draft after the hook reads.
+			mockState.isCurrentPostPublished = false;
+
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( mockTrackNotPublished ).toHaveBeenCalledTimes( 1 );
+			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
 		} );
 	} );
 

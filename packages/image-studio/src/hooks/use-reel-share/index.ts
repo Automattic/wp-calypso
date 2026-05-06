@@ -1,4 +1,4 @@
-import { useDispatch, useSelect } from '@wordpress/data';
+import { select as freshSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore, type ImageStudioActions } from '../../store';
@@ -62,7 +62,6 @@ export function useReelShare(): UseReelShareReturn {
 		isPublished,
 		currentMeta,
 		hasInstagramConnection,
-		nonInstagramConnectionIds,
 		isSharing,
 	} = useSelect( ( select ) => {
 		const videoStore = select( videoStudioStore );
@@ -80,6 +79,10 @@ export function useReelShare(): UseReelShareReturn {
 			  }
 			| undefined;
 
+		// Render-time read for the advisory `canShare` / `reason` output.
+		// handleShare ignores these and re-reads via standalone select() at
+		// click time — see the fresh* values below — to defeat useSelect's
+		// stale-subscription quirk for late-registered stores.
 		const connections = social?.getConnections?.() ?? [];
 		const enabledConnections = connections.filter( ( c ) => c.enabled !== false );
 
@@ -93,9 +96,6 @@ export function useReelShare(): UseReelShareReturn {
 			currentMeta:
 				( editor?.getEditedPostAttribute?.( 'meta' ) as Record< string, unknown > ) ?? {},
 			hasInstagramConnection: enabledConnections.some( ( c ) => c.service_name === IG_SERVICE ),
-			nonInstagramConnectionIds: enabledConnections
-				.filter( ( c ) => c.service_name !== IG_SERVICE )
-				.map( ( c ) => String( c.connection_id ) ),
 			isSharing: social?.isSharingCurrentPost?.() ?? false,
 		};
 	}, [] );
@@ -146,10 +146,29 @@ export function useReelShare(): UseReelShareReturn {
 			durationSeconds: currentDurationSeconds,
 		} );
 
-		// Pre-checks read closure-captured values from the latest render.
-		// useSelect re-renders on store changes, so by click time these reflect
-		// the latest store state. Defensive against state shifting between
-		// render and click — the thunk also re-checks publication state itself.
+		// Re-read the social and editor stores fresh at click time. useSelect's
+		// subscription locks in at first run; if 'jetpack-social-plugin' wasn't
+		// registered yet when the component mounted, useSelect won't re-fire
+		// when the store registers later — leaving the closure with stale
+		// `hasInstagramConnection: false` even after IG hydrates. Standalone
+		// `select()` always reads the current registry state.
+		const freshSocial = freshSelect( SOCIAL_STORE ) as
+			| { getConnections: () => Connection[] }
+			| undefined;
+		const freshConnections = freshSocial?.getConnections?.() ?? [];
+		const freshEnabledConnections = freshConnections.filter( ( c ) => c.enabled !== false );
+		const freshHasInstagram = freshEnabledConnections.some(
+			( c ) => c.service_name === IG_SERVICE
+		);
+		const freshSkipped = freshEnabledConnections
+			.filter( ( c ) => c.service_name !== IG_SERVICE )
+			.map( ( c ) => String( c.connection_id ) );
+
+		const freshEditor = freshSelect( EDITOR_STORE ) as
+			| { isCurrentPostPublished: () => boolean }
+			| undefined;
+		const freshIsPublished = freshEditor?.isCurrentPostPublished?.() ?? false;
+
 		if ( ! currentVideoUrl || ! currentAttachmentId ) {
 			trackImageStudioReelShareInvalidState();
 			await addNotice(
@@ -164,7 +183,7 @@ export function useReelShare(): UseReelShareReturn {
 			return;
 		}
 
-		if ( ! hasInstagramConnection ) {
+		if ( ! freshHasInstagram ) {
 			trackImageStudioReelShareNotConnected();
 			await addNotice(
 				__(
@@ -183,7 +202,7 @@ export function useReelShare(): UseReelShareReturn {
 			return;
 		}
 
-		if ( ! isPublished ) {
+		if ( ! freshIsPublished ) {
 			trackImageStudioReelShareNotPublished();
 			await addNotice(
 				__( 'Publish this post first to share it as an Instagram Reel.', __i18n_text_domain__ ),
@@ -220,7 +239,7 @@ export function useReelShare(): UseReelShareReturn {
 			// the share fires; we depend on that ordering rather than awaiting a
 			// separate save round-trip ourselves.
 			const success = await shareCurrentPost(
-				{ message: '', skipped_connections: nonInstagramConnectionIds },
+				{ message: '', skipped_connections: freshSkipped },
 				{ savePost: true, apiPath: sharePath }
 			);
 
@@ -245,9 +264,6 @@ export function useReelShare(): UseReelShareReturn {
 		currentMeta,
 		currentVideoUrl,
 		editPost,
-		hasInstagramConnection,
-		isPublished,
-		nonInstagramConnectionIds,
 		sharePath,
 		shareCurrentPost,
 	] );
