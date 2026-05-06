@@ -1,4 +1,4 @@
-import { getAuthCopy, getLoginCopy, getRegistrationAcknowledgement, getSignupCopy } from '../copy';
+import { getAuthCopy, getLoginCopy, getSignupCopy } from '../copy';
 import type { SubtitleScenario } from '../scenarios';
 
 /**
@@ -27,32 +27,6 @@ const SCENARIO_SLUGS: Record< SubtitleScenario, readonly string[] > = {
 	JETPACK_MULTI: [ 'jetpack-backup', 'jetpack-protect' ],
 	OTHER_ONLY: [],
 };
-
-describe( 'getRegistrationAcknowledgement', () => {
-	test( 'uses store wording when any Woo-family plugin is active', () => {
-		expect( getRegistrationAcknowledgement( [ 'woocommerce' ] ) ).toBe(
-			'Your store is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'woocommerce-payments' ] ) ).toBe(
-			'Your store is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'jetpack', 'woocommerce' ] ) ).toBe(
-			'Your store is registered with WordPress.com.'
-		);
-	} );
-
-	test( 'uses site wording for non-Woo plugin sets', () => {
-		expect( getRegistrationAcknowledgement( [] ) ).toBe(
-			'Your site is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'jetpack' ] ) ).toBe(
-			'Your site is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'automattic-for-agencies-client' ] ) ).toBe(
-			'Your site is registered with WordPress.com.'
-		);
-	} );
-} );
 
 describe( 'titles', () => {
 	test( 'auth surface returns "Connect your account" for every plugin set', () => {
@@ -182,7 +156,7 @@ describe( 'auth subtitles', () => {
 		],
 		[
 			'JETPACK_FULL',
-			'Your site is registered with WordPress.com — connect this account to activate Jetpack with backups, security, and stats.',
+			'Your site is registered with WordPress.com — connect this account to activate Jetpack with backups, security, and growth tools.',
 		],
 		[
 			'JETPACK_BACKUP',

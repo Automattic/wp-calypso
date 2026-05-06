@@ -1,25 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { getSubtitleScenario, type SubtitleScenario } from './scenarios';
-import { isStore } from './selectors';
 
 export interface SurfaceCopy {
 	title: string;
 	subtitle: string;
-}
-
-/**
- * Acknowledge that the site (or store) has already been registered with
- * WordPress.com.
- *
- * Public for callers that need just the lead clause (e.g. site-only
- * intermediate states elsewhere in the connector flow). The login and auth
- * surface subtitles in PR 3 are fully pre-composed and don't compose this
- * helper at runtime — translators always see complete sentences.
- */
-export function getRegistrationAcknowledgement( pluginSlugs: readonly string[] = [] ): string {
-	return isStore( pluginSlugs )
-		? __( 'Your store is registered with WordPress.com.' )
-		: __( 'Your site is registered with WordPress.com.' );
 }
 
 /**
@@ -118,7 +102,7 @@ function getLoginSubtitles(): Record< SubtitleScenario, string > {
  */
 function getAuthSubtitles(): Record< SubtitleScenario, string > {
 	const jetpackFull = __(
-		'Your site is registered with WordPress.com — connect this account to activate Jetpack with backups, security, and stats.'
+		'Your site is registered with WordPress.com — connect this account to activate Jetpack with backups, security, and growth tools.'
 	);
 
 	return {
@@ -235,7 +219,7 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
  * Title + subtitle for the authorize page in the unified connection flow.
  *
  * The static `Connect your account` H1 is shipped from PR 2; the subtitle
- * now switches between 17 pre-composed sentences keyed by the active
+ * now switches between 16 pre-composed sentences keyed by the active
  * plugin set's family/composition. See `scenarios.ts` for the decision
  * order and `getAuthSubtitles` above for the full string table.
  */
