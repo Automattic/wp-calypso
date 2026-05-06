@@ -1,6 +1,16 @@
+import { __ } from '@wordpress/i18n';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from '../../../utils/purchase';
 import { getProductCategory } from './get-confirmation-copy';
 import type { PurchaseForCopy } from './get-confirmation-copy';
 import type { CancellationFeature } from '@automattic/api-core';
+
+function features( ...titles: string[] ): CancellationFeature[] {
+	return titles.map( ( title, idx ) => ( {
+		feature_id: `override-${ idx }`,
+		title,
+		description: '',
+	} ) );
+}
 
 /**
  * Client-side override for cancellation features. When the split-cancel-remove
@@ -40,13 +50,34 @@ function getWpcomPlanFeatures( slug: string ): CancellationFeature[] | null {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getDomainFeatures( purchase: PurchaseForCopy ): CancellationFeature[] | null {
-	return null;
+function getDomainFeatures( _purchase: PurchaseForCopy ): CancellationFeature[] | null {
+	return features(
+		__( 'Your claim to this domain (anyone can register it once it\u2019s released)' ),
+		__( 'Privacy protection on your contact info' ),
+		__( 'Free SSL certificate' ),
+		__( 'Email forwarding to your current inbox' ),
+		__( 'DNS management through your dashboard' )
+	);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getEmailFeatures( slug: string ): CancellationFeature[] | null {
-	return null;
+	if ( isGSuiteOrGoogleWorkspaceProductSlug( slug ) ) {
+		return features(
+			__( 'Your custom email address' ),
+			__( 'Gmail, Calendar, and Contacts' ),
+			__( 'Docs, Sheets, and Slides' ),
+			__( '30 GB of cloud storage in Drive' ),
+			__( 'Google Meet video calls' ),
+			__( 'Real-time collaboration on shared files' )
+		);
+	}
+	return features(
+		__( 'Your custom email address' ),
+		__( '30 GB of mailbox storage' ),
+		__( 'Email, calendar, and contacts' ),
+		__( 'Access on web and mobile' ),
+		__( '24/7 email support' )
+	);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
