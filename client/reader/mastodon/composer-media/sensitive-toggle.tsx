@@ -10,6 +10,7 @@ export function SensitiveToggle( { sensitive, onChange }: Props ) {
 	const translate = useTranslate();
 	return (
 		<ToggleControl
+			className="reader-mastodon-composer__sensitive-toggle"
 			label={ translate( 'Mark media as sensitive' ) as string }
 			checked={ sensitive }
 			onChange={ onChange }
