@@ -57,7 +57,7 @@ Example: every list mutation in `packages/api-queries/src/read-lists.ts` follows
 ### Optimistic-mutation hardening checklist
 
 Lessons from the Reader social mutations (CM-625 likes / CM-660 boost
-/ CM-658 favourite). When you add a new optimistic mutation that
+/ CM-658 favorite). When you add a new optimistic mutation that
 patches React Query caches, walk this list:
 
 - **Scope the patcher to the right key namespace.** When wire IDs are
@@ -149,7 +149,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/mastodon/:id/thread/:status_id`   | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
 | `/reader/mastodon/:id/profile/:actor`      | `client/reader/mastodon/author-profile-view.tsx`                          |
 
-The likes/favourites count on `<SocialPostCard>` becomes an interactive
+The likes/favorites count on `<SocialPostCard>` becomes an interactive
 `<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
 when the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
 the tree with a `<LikeProvider>` carrying a per-protocol adapter hook.

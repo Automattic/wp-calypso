@@ -253,19 +253,21 @@ As of slice 5, the card-link / quote / replies-count / reply-context surfaces al
 
 When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` and `getProfileUrl` from the analytics context before constructing any post- or profile-destination URL.
 
-### Like / Favourite interactions
+### Like / Favorite interactions
 
 Both protocols expose a per-viewer interaction state on each feed item.
 ATmosphere uses `viewer: { like: string | null; repost: string | null }` —
 the value is the user's like/repost record URI (or `PENDING_LIKE_URI`
 during the optimistic window). Mastodon uses
-`viewer: { favourited: boolean; reblogged: boolean }`. The field is
-optional during the backend rollout window on both protocols; consumers
-must treat a missing `viewer` as "not liked / not favourited".
+`viewer: { favourited: boolean; reblogged: boolean }` (the upstream
+Mastodon API field names are British-spelled and stay that way at the
+wire boundary). The field is optional during the backend rollout window
+on both protocols; consumers must treat a missing `viewer` as "not liked
+/ not favorited".
 
 The Mastodon mapper (`mappers/mastodon.ts`) projects the booleans onto the
 shared `SocialPost.viewer.{like,repost}` shape using a marker string
-(`'favourited'` / `'reblogged'`) for true and `null` for false. That keeps
+(`'favorited'` / `'reblogged'`) for true and `null` for false. That keeps
 `<LikeButton>` and consumers protocol-agnostic — every consumer reads
 `Boolean(post.viewer?.like)` and gets the right answer for both protocols.
 
@@ -293,9 +295,9 @@ Each protocol shell wires its own adapter hook factory:
   exports `makeUseMastodonLikeAction(connectionId)`. It calls
   `useCreateMastodonLikeMutation()` /
   `useDeleteMastodonLikeMutation()`, uses `post.uri` (the status_id)
-  for the delete call, and emits the UK-spelled labels "Favourite" /
-  "Favourite, %d favourite(s)". Tracks events: `_favourite_clicked`,
-  `_unfavourite_clicked`, `_favourite_error_shown`.
+  for the delete call, and emits the labels "Favorite" /
+  "Favorite, %d favorite(s)". Tracks events: `_favorite_clicked`,
+  `_unfavorite_clicked`, `_favorite_error_shown`.
 
 Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
@@ -370,7 +372,7 @@ plus thread-tree nodes recursively), then restore snapshots on error.
 The connection ID flows from the protocol panel:
 `Panel` → `<RepostProvider value={makeUse…RepostAction(id)}>` plus
 `<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<RepostButton>`.
-Mirrors the like / favourite flow.
+Mirrors the like / favorite flow.
 
 ## Boundaries (for new code)
 

@@ -87,25 +87,25 @@ describe( 'makeUseMastodonLikeAction', () => {
 
 	it( 'isLiked is false when viewer.like is null', () => {
 		renderLikeButton( makePost( { viewer: { like: null, repost: null } } ) );
-		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
+		const button = screen.getByRole( 'button', { name: /favorite, 7 favorites/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 	} );
 
 	it( 'isLiked is true when viewer.like is truthy', () => {
-		renderLikeButton( makePost( { viewer: { like: 'favourited', repost: null } } ) );
-		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
+		renderLikeButton( makePost( { viewer: { like: 'favorited', repost: null } } ) );
+		const button = screen.getByRole( 'button', { name: /favorite, 7 favorites/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
-	it( 'renders label "Favourite" and accessible label with formatted count', () => {
+	it( 'renders label "Favorite" and accessible label with formatted count', () => {
 		renderLikeButton();
 		// The button text is the count; the aria-label contains the accessible label.
-		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
+		const button = screen.getByRole( 'button', { name: /favorite, 7 favorites/i } );
 		expect( button ).toBeVisible();
 		expect( button ).toHaveTextContent( '7' );
 	} );
 
-	it( 'like() POSTs to the likes endpoint and fires _favourite_clicked Tracks', async () => {
+	it( 'like() POSTs to the likes endpoint and fires _favorite_clicked Tracks', async () => {
 		nock( BASE )
 			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
 				status_id: STATUS_ID,
@@ -114,34 +114,34 @@ describe( 'makeUseMastodonLikeAction', () => {
 
 		const user = userEvent.setup();
 		const { onClick } = renderLikeButton();
-		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /favorite, 7 favorites/i } ) );
 
 		expect( onClick ).toHaveBeenCalledWith(
-			'calypso_reader_mastodon_favourite_clicked',
+			'calypso_reader_mastodon_favorite_clicked',
 			expect.objectContaining( { connection_id: CONNECTION_ID, post_uri: STATUS_ID } )
 		);
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 
-	it( 'unlike() DELETEs from the likes endpoint and fires _unfavourite_clicked Tracks', async () => {
+	it( 'unlike() DELETEs from the likes endpoint and fires _unfavorite_clicked Tracks', async () => {
 		nock( BASE )
 			.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ STATUS_ID }` )
 			.reply( 200 );
 
 		const user = userEvent.setup();
 		const { onClick } = renderLikeButton(
-			makePost( { viewer: { like: 'favourited', repost: null } } )
+			makePost( { viewer: { like: 'favorited', repost: null } } )
 		);
-		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /favorite, 7 favorites/i } ) );
 
 		expect( onClick ).toHaveBeenCalledWith(
-			'calypso_reader_mastodon_unfavourite_clicked',
+			'calypso_reader_mastodon_unfavorite_clicked',
 			expect.objectContaining( { connection_id: CONNECTION_ID, post_uri: STATUS_ID } )
 		);
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 	} );
 
-	it( 'on like() error fires _favourite_error_shown Tracks with error_kind and direction', async () => {
+	it( 'on like() error fires _favorite_error_shown Tracks with error_kind and direction', async () => {
 		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
@@ -151,23 +151,23 @@ describe( 'makeUseMastodonLikeAction', () => {
 
 		const user = userEvent.setup();
 		const { onClick } = renderLikeButton();
-		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /favorite, 7 favorites/i } ) );
 
 		await waitFor( () =>
 			expect( onClick ).toHaveBeenCalledWith(
-				'calypso_reader_mastodon_favourite_error_shown',
+				'calypso_reader_mastodon_favorite_error_shown',
 				expect.objectContaining( {
 					error_kind: 'upstream_unavailable',
-					direction: 'favourite',
+					direction: 'favorite',
 				} )
 			)
 		);
 		expect( errorNoticeSpy ).toHaveBeenCalledWith(
-			'Could not save your favourite. Please try again.'
+			'Could not save your favorite. Please try again.'
 		);
 	} );
 
-	it( 'on unlike() auth error fires _favourite_error_shown Tracks with auth error copy', async () => {
+	it( 'on unlike() auth error fires _favorite_error_shown Tracks with auth error copy', async () => {
 		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ STATUS_ID }` )
@@ -175,21 +175,21 @@ describe( 'makeUseMastodonLikeAction', () => {
 
 		const user = userEvent.setup();
 		const { onClick } = renderLikeButton(
-			makePost( { viewer: { like: 'favourited', repost: null } } )
+			makePost( { viewer: { like: 'favorited', repost: null } } )
 		);
-		await user.click( screen.getByRole( 'button', { name: /favourite, 7 favourites/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /favorite, 7 favorites/i } ) );
 
 		await waitFor( () =>
 			expect( onClick ).toHaveBeenCalledWith(
-				'calypso_reader_mastodon_favourite_error_shown',
+				'calypso_reader_mastodon_favorite_error_shown',
 				expect.objectContaining( {
 					error_kind: 'auth_required',
-					direction: 'unfavourite',
+					direction: 'unfavorite',
 				} )
 			)
 		);
 		expect( errorNoticeSpy ).toHaveBeenCalledWith(
-			'Reconnect your Mastodon account to favourite posts.'
+			'Reconnect your Mastodon account to favorite posts.'
 		);
 	} );
 
@@ -197,7 +197,7 @@ describe( 'makeUseMastodonLikeAction', () => {
 		const post = makePost();
 		delete ( post as Partial< SocialPost > ).viewer;
 		renderLikeButton( post );
-		const button = screen.getByRole( 'button', { name: /favourite, 7 favourites/i } );
+		const button = screen.getByRole( 'button', { name: /favorite, 7 favorites/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
 	} );
 } );

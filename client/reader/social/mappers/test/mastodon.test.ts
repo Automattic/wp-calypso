@@ -130,12 +130,12 @@ describe( 'mapMastodonFeedItemToSocialPost', () => {
 		expect( post.viewer?.like ).toBeNull();
 	} );
 
-	it( 'sets viewer.like to "favourited" when viewer.favourited is true', () => {
+	it( 'sets viewer.like to "favorited" when viewer.favourited is true', () => {
 		const post = mapMastodonFeedItemToSocialPost(
 			{ ...FIXTURE, viewer: { favourited: true, reblogged: false } },
 			OPTS
 		);
-		expect( post.viewer?.like ).toBe( 'favourited' );
+		expect( post.viewer?.like ).toBe( 'favorited' );
 		expect( post.viewer?.repost ).toBeNull();
 	} );
 
@@ -248,12 +248,12 @@ describe( 'mapMastodonFeedItemToSocialPost', () => {
 	} );
 
 	describe( 'viewer translation', () => {
-		it( 'sets viewer.like to "favourited" when viewer.favourited is true', () => {
+		it( 'sets viewer.like to "favorited" when viewer.favourited is true', () => {
 			const post = mapMastodonFeedItemToSocialPost(
 				{ ...FIXTURE, viewer: { favourited: true, reblogged: false } },
 				OPTS
 			);
-			expect( post.viewer?.like ).toBe( 'favourited' );
+			expect( post.viewer?.like ).toBe( 'favorited' );
 		} );
 
 		it( 'sets viewer.like to null when viewer.favourited is false', () => {

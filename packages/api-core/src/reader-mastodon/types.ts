@@ -142,7 +142,7 @@ export interface MastodonThreadResponse {
 // Backend projects the home-instance Mastodon Account object. We surface
 // only the fields we render plus `raw` for forward-compat (matches the
 // existing MastodonConnectionDetails convention). `note` arrives sanitized
-// from the wire and is sanitized again client-side (defence-in-depth).
+// from the wire and is sanitized again client-side (defense-in-depth).
 // `id` is instance-local — same handle on a different home instance has a
 // different id; we still use it as the URL key when known because the
 // home-instance perspective is stable per connection. Webfinger handle
