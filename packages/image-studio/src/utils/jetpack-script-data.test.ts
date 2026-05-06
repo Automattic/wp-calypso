@@ -1,4 +1,4 @@
-import { getConnectionsManagementUrl, getReelSharePostPath } from './jetpack-script-data';
+import { getReelSharePostPath } from './jetpack-script-data';
 
 const originalScriptData = ( window as unknown as { JetpackScriptData?: unknown } )
 	.JetpackScriptData;
@@ -32,36 +32,5 @@ describe( 'getReelSharePostPath', () => {
 	it( 'returns null when the path is a non-string value', () => {
 		setScriptData( { social: { api_paths: { resharePost: 42 } } } );
 		expect( getReelSharePostPath() ).toBeNull();
-	} );
-} );
-
-describe( 'getConnectionsManagementUrl', () => {
-	it( 'returns null when window.JetpackScriptData is undefined', () => {
-		setScriptData( undefined );
-		expect( getConnectionsManagementUrl() ).toBeNull();
-	} );
-
-	it( 'returns null when social.urls.connectionsManagementPage is missing', () => {
-		setScriptData( { social: { urls: {} } } );
-		expect( getConnectionsManagementUrl() ).toBeNull();
-	} );
-
-	it( 'returns the connections management URL when present', () => {
-		setScriptData( {
-			social: {
-				urls: {
-					connectionsManagementPage:
-						'https://wordpress.com/marketing/connections/example.wordpress.com',
-				},
-			},
-		} );
-		expect( getConnectionsManagementUrl() ).toBe(
-			'https://wordpress.com/marketing/connections/example.wordpress.com'
-		);
-	} );
-
-	it( 'returns null when the URL is a non-string value', () => {
-		setScriptData( { social: { urls: { connectionsManagementPage: false } } } );
-		expect( getConnectionsManagementUrl() ).toBeNull();
 	} );
 } );

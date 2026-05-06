@@ -30,7 +30,6 @@ let mockState: {
 };
 
 let mockReelSharePath: string | null;
-let mockConnectionsUrl: string | null;
 
 jest.mock( '@wordpress/data', () => {
 	const select = ( storeName: string ) => {
@@ -113,7 +112,6 @@ jest.mock( '../../stores/video-studio', () => ( {
 
 jest.mock( '../../utils/jetpack-script-data', () => ( {
 	getReelSharePostPath: jest.fn( () => mockReelSharePath ),
-	getConnectionsManagementUrl: jest.fn( () => mockConnectionsUrl ),
 } ) );
 
 jest.mock( '../../utils/tracking', () => ( {
@@ -140,7 +138,6 @@ describe( 'useReelShare', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockReelSharePath = '/wpcom/v2/publicize/share-post/{postId}';
-		mockConnectionsUrl = 'https://wordpress.com/marketing/connections/example.wordpress.com';
 		mockState = {
 			currentVideoUrl: 'https://example.com/clip.mp4',
 			currentAttachmentId: 555,
@@ -285,25 +282,9 @@ describe( 'useReelShare', () => {
 				expect.arrayContaining( [
 					expect.objectContaining( {
 						label: expect.any( String ),
-						url: 'https://wordpress.com/marketing/connections/example.wordpress.com',
+						url: expect.stringMatching( /\/wp-admin\/admin\.php\?page=jetpack-social$/ ),
 					} ),
 				] )
-			);
-		} );
-
-		it( 'falls back to /marketing/connections when Jetpack does not expose a connections URL', async () => {
-			mockState.connections = [ twitterConnection ];
-			mockConnectionsUrl = null;
-			const { result } = renderHook( () => useReelShare() );
-
-			await act( async () => {
-				await result.current.handleShare();
-			} );
-
-			expect( mockAddNotice ).toHaveBeenCalledWith(
-				expect.stringMatching( /Connect Instagram/i ),
-				'warning',
-				expect.arrayContaining( [ expect.objectContaining( { url: '/marketing/connections' } ) ] )
 			);
 		} );
 
