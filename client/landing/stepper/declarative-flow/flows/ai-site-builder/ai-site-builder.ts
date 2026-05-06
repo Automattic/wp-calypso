@@ -155,12 +155,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							const source = queryParams.get( 'source' );
 							const specId = queryParams.get( 'spec_id' );
-							// Identifies which spec-confirm agent triggered the build (e.g. the
-							// Vega treatment uses `vega-site-spec`). Big Sky JS reads it from
-							// the editor URL to route Vega builds through the spec_id workflow
-							// path. Forwarded as-is so the standard and CIAB flows are unaffected
-							// (they don't set `ai_agent` and so don't get the param appended).
-							const aiAgent = queryParams.get( 'ai_agent' );
 
 							/**
 							 * Redirect behavior after site creation:
@@ -195,7 +189,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							let sourceParam = '';
 							let specIdParam = '';
-							let aiAgentParam = '';
 
 							const pendingActions = [
 								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
@@ -271,9 +264,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							if ( specId ) {
 								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
 							}
-							if ( aiAgent ) {
-								aiAgentParam = `&ai_agent=${ encodeURIComponent( aiAgent ) }`;
-							}
 							if ( triggerBackendBuild ) {
 								const ph = queryParams.get( '_ph' );
 								window.location.replace(
@@ -283,7 +273,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								);
 							} else {
 								window.location.replace(
-									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }${ aiAgentParam }`
+									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
 								);
 							}
 						} else if ( providedDependencies.isLaunched ) {
