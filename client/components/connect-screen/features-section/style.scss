@@ -1,0 +1,85 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.connect-screen-features-section {
+	width: 100%;
+	margin-bottom: 1.5rem;
+}
+
+.connect-screen-features-section__cards {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+
+	@media screen and ( min-width: $break-mobile ) {
+		// Two-up layout: only break to a single column when the user is on
+		// a narrow viewport. The connector form column is 520px wide, which
+		// gives roughly 240px per card before the gap — enough for a logo,
+		// one-line title, and 2-3 bullets.
+		.connect-screen-features-section.has-2-cards & {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+}
+
+.connect-screen-features-section__card {
+	box-sizing: border-box;
+	padding: 20px 16px;
+	border: 1px solid var( --color-border-subtle, #e0e0e0 );
+	border-radius: 4px;
+	background: var( --color-surface, #fff );
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.connect-screen-features-section__card-logo {
+	display: flex;
+	align-items: center;
+	min-height: 32px;
+
+	img,
+	svg {
+		max-height: 32px;
+		width: auto;
+	}
+}
+
+.connect-screen-features-section__card-title {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var( --color-text, #1e1e1e );
+}
+
+.connect-screen-features-section__card-bullets {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.connect-screen-features-section__card-bullet {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	font-size: 0.875rem;
+	line-height: 1.4;
+	color: var( --color-text, #1e1e1e );
+}
+
+.connect-screen-features-section__card-bullet-icon {
+	flex-shrink: 0;
+	margin-top: 1px;
+	fill: var( --studio-green-50, #008a20 );
+}
+
+.connect-screen-features-section__overflow {
+	margin: 16px 0 0;
+	font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
+	line-height: 1.5;
+	color: var( --color-text-subtle, #50575e );
+	text-align: center;
+}

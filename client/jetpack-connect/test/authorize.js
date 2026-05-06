@@ -140,6 +140,71 @@ describe( 'JetpackAuthorize', () => {
 			'src',
 			'jetpack-connect-woo.svg'
 		);
+
+		// Features section renders one card per top-priority family. With
+		// Woo + (full) Jetpack active, both family cards are featured and
+		// the "Also used by" overflow row stays empty.
+		expect( screen.getByRole( 'heading', { level: 3, name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { level: 3, name: 'Jetpack' } ) ).toBeInTheDocument();
+		expect(
+			container.querySelector( '.connect-screen-features-section__overflow' )
+		).not.toBeInTheDocument();
+		// Static FeaturesSection bullets land on the auth surface — sample
+		// one per card so the assertion stays sturdy without pinning every
+		// piece of copy.
+		expect(
+			screen.getByText( 'Run your store on the go with the Woo mobile app.' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByText( 'Real-time backups, security scanning, and downtime monitoring.' )
+		).toBeInTheDocument();
+	} );
+
+	test( 'features section overflow row surfaces the third-priority family', () => {
+		const { container } = renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
+				} }
+			/>
+		);
+
+		// A4A and Woo win the two card slots; Jetpack drops to overflow.
+		expect(
+			screen.getByRole( 'heading', { level: 3, name: 'Automattic for Agencies' } )
+		).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { level: 3, name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'heading', { level: 3, name: 'Jetpack' } )
+		).not.toBeInTheDocument();
+		expect(
+			container.querySelector( '.connect-screen-features-section__overflow' )
+		).toHaveTextContent( 'Also used by: Jetpack' );
+	} );
+
+	test( 'features section uses the per-plugin override for a single individual Jetpack plugin', () => {
+		renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'jetpack-boost' ],
+				} }
+			/>
+		);
+
+		// The single-plugin override puts the Boost card in the slot the
+		// generic Jetpack card would otherwise occupy.
+		expect(
+			screen.getByRole( 'heading', { level: 3, name: 'Jetpack Boost' } )
+		).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'heading', { level: 3, name: 'Jetpack' } )
+		).not.toBeInTheDocument();
 	} );
 
 	describe( 'isSso', () => {

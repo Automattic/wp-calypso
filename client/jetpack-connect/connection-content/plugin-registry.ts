@@ -7,14 +7,18 @@ import type { Family } from './families';
 /**
  * Registry entry for a known plugin participating in the unified connection flow.
  *
- * PR 1 keeps each entry minimal — just the family classification and a flag
- * for the full Jetpack plugin. Future PRs extend this with display name,
- * card title/description, and feature bullets, which is why the entry is
- * its own typed shape rather than a bare value.
+ * `displayName` is the human-readable plugin label used by the PR 4 features
+ * section (in card titles, "Also used by" overflow rows, and any future
+ * surface that needs to refer to a specific plugin by name). It is left as a
+ * plain string in this registry because the plugin name itself is a brand —
+ * translators don't translate "WooCommerce" or "Jetpack VaultPress Backup".
+ * Surrounding sentences that reference these names are translated in `copy.ts`
+ * and elsewhere.
  */
 export interface PluginEntry {
 	slug: string;
 	family: Family;
+	displayName: string;
 	/** True only for the full Jetpack plugin (not the individual sub-plugins). */
 	isFullJetpack?: boolean;
 }
@@ -27,20 +31,69 @@ export interface PluginEntry {
  * than relying on the entry being present here.
  */
 export const PLUGIN_REGISTRY: Record< string, PluginEntry > = {
-	jetpack: { slug: 'jetpack', family: 'jetpack', isFullJetpack: true },
-	'jetpack-backup': { slug: 'jetpack-backup', family: 'jetpack' },
-	'jetpack-protect': { slug: 'jetpack-protect', family: 'jetpack' },
-	'jetpack-boost': { slug: 'jetpack-boost', family: 'jetpack' },
-	'jetpack-search': { slug: 'jetpack-search', family: 'jetpack' },
-	'jetpack-social': { slug: 'jetpack-social', family: 'jetpack' },
-	'jetpack-videopress': { slug: 'jetpack-videopress', family: 'jetpack' },
-	woocommerce: { slug: 'woocommerce', family: 'woo' },
-	'woocommerce-payments': { slug: 'woocommerce-payments', family: 'woo' },
+	jetpack: {
+		slug: 'jetpack',
+		family: 'jetpack',
+		displayName: 'Jetpack',
+		isFullJetpack: true,
+	},
+	'jetpack-backup': {
+		slug: 'jetpack-backup',
+		family: 'jetpack',
+		displayName: 'Jetpack VaultPress Backup',
+	},
+	'jetpack-protect': {
+		slug: 'jetpack-protect',
+		family: 'jetpack',
+		displayName: 'Jetpack Protect',
+	},
+	'jetpack-boost': {
+		slug: 'jetpack-boost',
+		family: 'jetpack',
+		displayName: 'Jetpack Boost',
+	},
+	'jetpack-search': {
+		slug: 'jetpack-search',
+		family: 'jetpack',
+		displayName: 'Jetpack Search',
+	},
+	'jetpack-social': {
+		slug: 'jetpack-social',
+		family: 'jetpack',
+		displayName: 'Jetpack Social',
+	},
+	'jetpack-videopress': {
+		slug: 'jetpack-videopress',
+		family: 'jetpack',
+		displayName: 'Jetpack VideoPress',
+	},
+	woocommerce: {
+		slug: 'woocommerce',
+		family: 'woo',
+		displayName: 'WooCommerce',
+	},
+	'woocommerce-payments': {
+		slug: 'woocommerce-payments',
+		family: 'woo',
+		displayName: 'WooPayments',
+	},
 	'automattic-for-agencies-client': {
 		slug: 'automattic-for-agencies-client',
 		family: 'a4a',
+		displayName: 'Automattic for Agencies',
 	},
 };
+
+/**
+ * Friendly display name for a plugin slug.
+ *
+ * Falls back to the raw slug when the plugin isn't in the registry — unknown
+ * plugins never block the flow, they just keep their slug as the displayed
+ * label in the "Also used by" overflow row.
+ */
+export function getPluginDisplayName( slug: string ): string {
+	return PLUGIN_REGISTRY[ slug ]?.displayName ?? slug;
+}
 
 /**
  * Look up a plugin's registry entry by slug. Returns `undefined` for slugs

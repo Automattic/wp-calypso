@@ -46,9 +46,12 @@ export function getConnectorLogoUrl( pluginSlugs = [] ) {
  * login surfaces). The logo is resolved via family-based prefix matching
  * across all slugs.
  *
- * The remaining `permissions*` fields will be replaced by the new
- * `FeaturesSection` ("Connection enables") in PR 4; this resolver will be
- * fully retired once that lands.
+ * The connector authorize page no longer reads `permissions*` from this
+ * resolver — it renders the dynamic `<FeaturesSection />` instead. The
+ * remaining consumers are the legacy `isFromJetpackOnboarding` and
+ * `isFromMyJetpack` paths, which still render the static
+ * `<PermissionsList />`. Those `permissions*` fields will be removed in a
+ * follow-up PR once those paths migrate (or are retired).
  * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
  * @returns {{ logo: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
  */

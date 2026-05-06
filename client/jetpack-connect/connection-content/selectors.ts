@@ -1,6 +1,7 @@
 import { FAMILY_PRIORITY, getFamilyFromSlug } from './families';
 import { getPluginEntry } from './plugin-registry';
 import type { Family } from './families';
+import type { FeatureCardKey } from './family-features';
 
 /**
  * Return families present in the active plugin list, ordered by priority
@@ -47,11 +48,92 @@ export function hasFullJetpack( pluginSlugs: readonly string[] ): boolean {
  *
  * `featuredFamilies` is typically the result of `getTopFamilies(...)`. Any
  * plugin whose family isn't featured falls into the "Also used by" overflow
- * row that lands in PR 4.
+ * row in the features section.
  */
 export function getOverflowSlugs(
 	pluginSlugs: readonly string[],
 	featuredFamilies: readonly Family[]
 ): string[] {
 	return pluginSlugs.filter( ( slug ) => ! featuredFamilies.includes( getFamilyFromSlug( slug ) ) );
+}
+
+/**
+ * Result of `getFeatureSelection()` — the exact set of cards to render in
+ * the features section, plus the trailing "Also used by" overflow row.
+ */
+export interface FeatureSelection {
+	cardKeys: FeatureCardKey[];
+	overflowSlugs: string[];
+}
+
+/**
+ * Resolve the family-priority card key for a single family.
+ *
+ * The Jetpack family is special-cased: a single individual Jetpack plugin
+ * (without the full Jetpack plugin) earns a per-plugin card so the copy can
+ * be specific to that plugin. Two-or-more individual Jetpack plugins (or
+ * any unrecognised individual slug) collapse back to the generic
+ * `'jetpack'` family card. This mirrors the `JETPACK_MULTI` collapse rule
+ * in `scenarios.ts`.
+ */
+function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): FeatureCardKey {
+	if ( family !== 'jetpack' ) {
+		return family;
+	}
+
+	const jetpackSlugs = pluginSlugs.filter( ( slug ) => getFamilyFromSlug( slug ) === 'jetpack' );
+	const hasFull = jetpackSlugs.some( ( slug ) => getPluginEntry( slug )?.isFullJetpack === true );
+	if ( hasFull || jetpackSlugs.length !== 1 ) {
+		return 'jetpack';
+	}
+
+	switch ( jetpackSlugs[ 0 ] ) {
+		case 'jetpack-backup':
+			return 'jetpack-backup';
+		case 'jetpack-protect':
+			return 'jetpack-protect';
+		case 'jetpack-boost':
+			return 'jetpack-boost';
+		case 'jetpack-search':
+			return 'jetpack-search';
+		case 'jetpack-social':
+			return 'jetpack-social';
+		case 'jetpack-videopress':
+			return 'jetpack-videopress';
+		default:
+			return 'jetpack';
+	}
+}
+
+/**
+ * Pick the cards to feature plus the overflow slugs that fall outside the
+ * featured set, capped at `max` cards (default 2 to match the two-up
+ * layout).
+ *
+ * Decision order:
+ *  1. Take the highest-priority families with known copy (`a4a`, `woo`,
+ *     `jetpack`), capped at `max`.
+ *  2. Map each family to its card key, with per-plugin overrides for the
+ *     "single individual Jetpack plugin" case.
+ *  3. Overflow slugs are anything whose family isn't in the featured set
+ *     (including all unknown / `other`-family plugins), ordered as they
+ *     appeared in `pluginSlugs` so caller intent is preserved.
+ *
+ * The single `'other'` fallback card only renders when no known family is
+ * present at all (the empty-input or only-unknown-plugins edge case).
+ */
+export function getFeatureSelection( pluginSlugs: readonly string[], max = 2 ): FeatureSelection {
+	const knownFamilies = getPresentFamilies( pluginSlugs ).filter(
+		( family ) => family !== 'other'
+	);
+
+	if ( knownFamilies.length === 0 ) {
+		return { cardKeys: [ 'other' ], overflowSlugs: [] };
+	}
+
+	const featured = knownFamilies.slice( 0, max );
+	const cardKeys = featured.map( ( family ) => getFamilyCardKey( family, pluginSlugs ) );
+	const overflowSlugs = getOverflowSlugs( pluginSlugs, featured );
+
+	return { cardKeys, overflowSlugs };
 }

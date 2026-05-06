@@ -19,6 +19,7 @@ import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { ConsentText } from 'calypso/components/connect-screen/consent-text';
+import { FeaturesSection } from 'calypso/components/connect-screen/features-section';
 import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
@@ -84,6 +85,7 @@ import {
 	REMOTE_PATH_AUTH,
 } from './constants';
 import Disclaimer from './disclaimer';
+import { getConnectorFeatureCards } from './feature-cards';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -1051,11 +1053,30 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
+		if ( this.isFromJetpackConnector() ) {
+			const { cards, overflowItems } = getConnectorFeatureCards( authQuery.plugins );
+
+			return (
+				<>
+					<UserCard
+						user={ {
+							displayName: this.props.user.display_name,
+							email: this.props.user.email,
+							avatarUrl: this.props.user.avatar_URL,
+						} }
+						size="small"
+					/>
+
+					<FeaturesSection cards={ cards } overflowItems={ overflowItems } />
+					{ this.renderNotices() }
+					{ this.renderStateAction() }
+				</>
+			);
+		}
+
 		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
 			const branding = getConnectorBranding( authQuery.plugins );
-			const siteURL = this.isFromJetpackConnector()
-				? undefined
-				: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
+			const siteURL = decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
 			const permissionsTitle = branding.permissionsTitle( { siteURL } );
 
 			return (
