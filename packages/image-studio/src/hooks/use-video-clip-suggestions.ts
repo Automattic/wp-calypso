@@ -61,7 +61,7 @@ Each prompt MUST be:
   - Texture / material detail (worn copper, weathered linen, polished oak, condensation on glass, matte ceramic).
   - Time-of-day (dawn, blue hour, late afternoon, deep dusk).
 - 20-40 words, no trailing punctuation.
-- Adult subjects are allowed when relevant — describe them generically (e.g. "an adult barista", "a hiker") with no named individuals, public figures, or recognizable likenesses. Never depict minors.
+- People may appear — only adults, no children or minors. Describe them generically (e.g. "a barista", "a hiker") with no named individuals, public figures, or recognizable likenesses.
 - Free of crowds, on-screen text, signage, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.
 
 POST BODY:

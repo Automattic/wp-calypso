@@ -237,7 +237,7 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( built ).toContain( 'inner prompt body' );
 	} );
 
-	it( 'asks the loader for 3 dense two-axis suggestions (20-40 words, adults allowed)', () => {
+	it( 'asks the loader for 3 dense two-axis suggestions (20-40 words, people allowed)', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
 				registerSuggestions: jest.fn(),
@@ -251,8 +251,8 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( callArgs.prompt ).toContain( '20-40 words' );
 		expect( callArgs.prompt ).not.toContain( '15-28 words' );
 		expect( callArgs.prompt ).toMatch( /COMBINES TWO/i );
-		expect( callArgs.prompt ).toMatch( /adult subjects/i );
-		expect( callArgs.prompt ).toMatch( /never depict minors/i );
+		expect( callArgs.prompt ).toMatch( /only adults/i );
+		expect( callArgs.prompt ).toMatch( /no children or minors/i );
 		expect( callArgs.prompt ).toContain( 'signage' );
 
 		const built = callArgs.buildSystemPrompt( 'inner prompt body', 'en' );
