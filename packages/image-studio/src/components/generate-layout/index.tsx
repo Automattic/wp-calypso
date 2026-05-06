@@ -36,8 +36,10 @@ export const GenerateLayout = ( {
 						playsInline
 						preload="metadata"
 					/>
-					{ canvasControls }
 				</div>
+				{ canvasControls && (
+					<div className="image-studio-modal__generated-video-controls">{ canvasControls }</div>
+				) }
 			</div>
 		);
 	}

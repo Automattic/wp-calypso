@@ -18,20 +18,23 @@
 .image-studio-modal {
 	&__generate-layout--video {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: 12px;
 		width: 100%;
 		height: 100%;
 		min-height: 0;
 		margin: 0;
-		padding: 16px 16px 56px;
+		padding: 16px;
 	}
 
 	&__generated-video-frame {
 		position: relative;
 		display: block;
 		max-width: 100%;
-		max-height: 100%;
+		min-height: 0;
+		flex: 0 1 auto;
 		aspect-ratio: 9 / 16;
 	}
 
@@ -42,6 +45,21 @@
 		object-fit: contain;
 		background: #000;
 		border-radius: 8px;
+	}
+
+	// Override .canvas-controls' absolute positioning (designed to hang under
+	// the image canvas). In normal flow it sits cleanly below the video and
+	// stays clickable — the absolute version was getting eaten by the video
+	// element's compositor layer / native controls hit area.
+	&__generated-video-controls {
+		flex: 0 0 auto;
+		width: min(360px, 100%);
+
+		.canvas-controls {
+			position: static;
+			transform: none;
+			justify-content: center;
+		}
 	}
 
 	&__generate-layout {
