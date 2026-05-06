@@ -93,6 +93,7 @@ class ReaderStream extends Component {
 		selectedStreamName: PropTypes.string,
 		isLoggedIn: PropTypes.bool,
 		wideLayout: PropTypes.bool,
+		showBylineSecondarySiteLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -109,6 +110,7 @@ class ReaderStream extends Component {
 		useCompactCards: false,
 		isLoggedIn: false,
 		wideLayout: false,
+		showBylineSecondarySiteLink: true,
 	};
 
 	state = {
@@ -597,6 +599,7 @@ class ReaderStream extends Component {
 					blockedSites={ this.props.blockedSites }
 					streamKey={ streamKey }
 					recsStreamKey={ this.props.recsStreamKey }
+					showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
 					index={ index }
 					compact={ this.props.useCompactCards }
 					siteId={ primarySiteId }
