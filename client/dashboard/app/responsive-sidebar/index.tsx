@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import Sidebar from './sidebar';
+import { useSidebarScrollSync } from './use-sidebar-scroll-sync';
 
 import './style.scss';
 
@@ -16,6 +17,8 @@ export default function ResponsiveSidebar( {
 } ) {
 	const router = useRouter();
 	const isDesktop = useViewportMatch( 'medium' );
+
+	useSidebarScrollSync();
 
 	const handleOverlayClick = () => {
 		onClose();
