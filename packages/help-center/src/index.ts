@@ -9,3 +9,4 @@ export { default as Mail } from './icons/mail';
 export { useHelpSearchQuery } from './hooks/use-help-search-query';
 export { HelpCenterSupportGuides } from './components/help-center-support-guides';
 export { LiveAIAssistant } from './live-ai-assistant';
+export { MicIcon } from './live-ai-assistant/components/mic-icon';

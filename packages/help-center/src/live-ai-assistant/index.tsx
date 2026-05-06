@@ -2,8 +2,11 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close, Icon } from '@wordpress/icons';
+import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import introArtworkUrl from './assets/voice-control-gutenberg.mp4';
+import { MicIcon } from './components/mic-icon';
 import { DictationFileUpload, ImagePickerModal } from './image-picker-modal';
 import { useRealtimeSession } from './use-realtime-session';
 import type { RealtimeToolEvent, RealtimeTranscriptEntry } from './use-realtime-session';
@@ -39,34 +42,6 @@ function buildTimelineRows(
 	} );
 	return rows;
 }
-
-/**
- * Heroicons v2 solid microphone (MIT) — filled geometry reads clearly at 18–20px;
- * thick stroked outlines were visually merging into one blob.
- * @see https://github.com/tailwindlabs/heroicons
- */
-const MicIcon = ( { size = 18, muted = false }: { size?: number; muted?: boolean } ) => (
-	<svg
-		width={ size }
-		height={ size }
-		viewBox="0 0 24 24"
-		fill="currentColor"
-		xmlns="http://www.w3.org/2000/svg"
-		aria-hidden="true"
-	>
-		<path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z" />
-		<path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.751 6.751 0 0 1-6 6.709v2.291h3a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5h3v-2.291a6.751 6.751 0 0 1-6-6.709v-1.5A.75.75 0 0 1 6 10.5Z" />
-		{ muted && (
-			<path
-				d="M4 4l16 16"
-				fill="none"
-				stroke="currentColor"
-				strokeWidth="2"
-				strokeLinecap="round"
-			/>
-		) }
-	</svg>
-);
 
 const StopIcon = () => (
 	<svg
@@ -318,11 +293,24 @@ export function LiveAIAssistant( {
 							ref={ isSidebar ? sidebarBodyScrollRef : undefined }
 						>
 							{ status === 'idle' && timelineRows.length === 0 && (
-								<p className="live-ai-assistant__intro">
-									{ __(
-										'Tap Start dictation and speak naturally. Your words will be turned into blocks in the editor.'
-									) }
-								</p>
+								<div className="live-ai-assistant__intro">
+									<video
+										className="live-ai-assistant__intro-artwork"
+										src={ introArtworkUrl }
+										aria-hidden="true"
+										autoPlay
+										loop
+										muted
+										playsInline
+										preload="metadata"
+									/>
+									<h3>{ __( 'Sit back and dictate' ) }</h3>
+									<p>
+										{ __(
+											'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
+										) }
+									</p>
+								</div>
 							) }
 
 							{ error && (
@@ -370,37 +358,48 @@ export function LiveAIAssistant( {
 							) }
 						</div>
 
-						<div className="live-ai-assistant__controls">
-							<Button
-								variant="secondary"
-								className="live-ai-assistant__mute"
-								onClick={ toggleMute }
-								disabled={ ! isSessionActive }
-								aria-pressed={ isMuted }
-							>
-								<MicIcon muted={ isMuted } />
-								<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
-							</Button>
-							<Button
-								variant="primary"
-								className={ clsx( 'live-ai-assistant__call-button', {
-									'is-hangup': isSessionActive || isSessionBusy,
-								} ) }
-								onClick={ handleSessionToggle }
-								isBusy={ isSessionBusy }
-							>
-								{ isSessionActive || isSessionBusy ? (
-									<>
-										<StopIcon />
-										<span>{ __( 'Stop dictation' ) }</span>
-									</>
-								) : (
-									<>
-										<MicIcon />
-										<span>{ __( 'Start dictation' ) }</span>
-									</>
-								) }
-							</Button>
+						<div className="live-ai-assistant__footer">
+							<Notice.Root intent="info">
+								<Notice.Title>Beta feature</Notice.Title>
+								<Notice.Description>Only available for proxied a11ns</Notice.Description>
+								<Notice.Actions>
+									<Notice.ActionLink href="https://wp.me/phcsdm-3kj" openInNewTab>
+										Share feedback
+									</Notice.ActionLink>
+								</Notice.Actions>
+							</Notice.Root>
+							<div className="live-ai-assistant__controls">
+								<Button
+									variant="secondary"
+									className="live-ai-assistant__mute"
+									onClick={ toggleMute }
+									disabled={ ! isSessionActive }
+									aria-pressed={ isMuted }
+								>
+									<MicIcon muted={ isMuted } />
+									<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
+								</Button>
+								<Button
+									variant="primary"
+									className={ clsx( 'live-ai-assistant__call-button', {
+										'is-hangup': isSessionActive || isSessionBusy,
+									} ) }
+									onClick={ handleSessionToggle }
+									isBusy={ isSessionBusy }
+								>
+									{ isSessionActive || isSessionBusy ? (
+										<>
+											<StopIcon />
+											<span>{ __( 'Stop dictation' ) }</span>
+										</>
+									) : (
+										<>
+											<MicIcon />
+											<span>{ __( 'Start dictation' ) }</span>
+										</>
+									) }
+								</Button>
+							</div>
 						</div>
 					</div>
 				) }
