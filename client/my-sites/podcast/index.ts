@@ -40,14 +40,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	page(
-		'/settings/podcast/episode/:postId/:site_id',
-		siteSelection,
-		navigation,
-		siteSettings,
-		createPodcastEpisodeStats,
-		makeLayout,
-		clientRender
-	);
 }
