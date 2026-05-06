@@ -82,7 +82,7 @@ describe( 'getHeadingSubText', () => {
 		} );
 
 		expect( subtext?.primary ).toBe(
-			'Your store is registered with WordPress.com — finish connecting your account to link it to WooCommerce.com and power Jetpack features.'
+			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app, access your store analytics, and power Jetpack features.'
 		);
 		expect( subtext?.secondary ).toBeTruthy();
 	} );

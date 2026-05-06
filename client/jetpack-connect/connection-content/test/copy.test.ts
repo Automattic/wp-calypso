@@ -82,7 +82,7 @@ describe( 'login subtitles', () => {
 		],
 		[
 			'A4A_WOO',
-			'Your store is registered with WordPress.com — finish connecting your account to manage it from Automattic for Agencies and link it to WooCommerce.com.',
+			'Your store is registered with WordPress.com — finish connecting your account to manage it from Automattic for Agencies, use the Woo mobile app, and access store analytics.',
 		],
 		[
 			'A4A_JETPACK',
@@ -90,19 +90,19 @@ describe( 'login subtitles', () => {
 		],
 		[
 			'ALL_THREE',
-			'Your store is registered with WordPress.com — finish connecting your account to manage it from your Automattic for Agencies dashboard, link it to WooCommerce.com, and power Jetpack features.',
+			'Your store is registered with WordPress.com — finish connecting your account to manage it from your Automattic for Agencies dashboard, use the Woo mobile app, access store analytics, and power Jetpack features.',
 		],
 		[
 			'WOO_ONLY',
-			'Your store is registered with WordPress.com — finish connecting your account to link it to WooCommerce.com for marketplace access, extensions, and analytics.',
+			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app and access your store analytics.',
 		],
 		[
 			'WOO_AND_PAY',
-			'Your store is registered with WordPress.com — finish connecting your account to link it to WooCommerce.com and enable WooPayments for payment processing.',
+			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app, access your store analytics, and enable WooPayments for payment processing.',
 		],
 		[
 			'WOO_JETPACK',
-			'Your store is registered with WordPress.com — finish connecting your account to link it to WooCommerce.com and power Jetpack features.',
+			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app, access your store analytics, and power Jetpack features.',
 		],
 		[
 			'JETPACK_FULL',
@@ -158,7 +158,7 @@ describe( 'auth subtitles', () => {
 		],
 		[
 			'A4A_WOO',
-			'Your store is registered with WordPress.com — connect this account to manage it from Automattic for Agencies and link it to WooCommerce.com.',
+			'Your store is registered with WordPress.com — connect this account to manage it from Automattic for Agencies, use the Woo mobile app, and access store analytics.',
 		],
 		[
 			'A4A_JETPACK',
@@ -166,19 +166,19 @@ describe( 'auth subtitles', () => {
 		],
 		[
 			'ALL_THREE',
-			'Your store is registered with WordPress.com — connect this account to manage it from your Automattic for Agencies dashboard, link it to WooCommerce.com, and activate Jetpack.',
+			'Your store is registered with WordPress.com — connect this account to manage it from your Automattic for Agencies dashboard, use the Woo mobile app, access store analytics, and activate Jetpack.',
 		],
 		[
 			'WOO_ONLY',
-			'Your store is registered with WordPress.com — connect this account to link it to WooCommerce.com for marketplace access, analytics, and subscriptions.',
+			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app and access your store analytics.',
 		],
 		[
 			'WOO_AND_PAY',
-			'Your store is registered with WordPress.com — connect this account to link it to WooCommerce.com with WooPayments ready for payment processing.',
+			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and enable WooPayments for payment processing.',
 		],
 		[
 			'WOO_JETPACK',
-			'Your store is registered with WordPress.com — connect this account to link it to WooCommerce.com and activate Jetpack.',
+			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and activate Jetpack.',
 		],
 		[
 			'JETPACK_FULL',
@@ -234,7 +234,7 @@ describe( 'signup subtitles', () => {
 		],
 		[
 			'A4A_WOO',
-			"You'll use it to manage your store from Automattic for Agencies and link it to WooCommerce.com.",
+			"You'll use it to manage your store from Automattic for Agencies, log in to the Woo mobile app, and view store analytics.",
 		],
 		[
 			'A4A_JETPACK',
@@ -242,19 +242,16 @@ describe( 'signup subtitles', () => {
 		],
 		[
 			'ALL_THREE',
-			"You'll use it to manage your store from Automattic for Agencies, link it to WooCommerce.com, and power Jetpack features.",
+			"You'll use it to manage your store from Automattic for Agencies, log in to the Woo mobile app, view store analytics, and power Jetpack features.",
 		],
-		[
-			'WOO_ONLY',
-			"You'll use it to link your store to WooCommerce.com for marketplace access, extensions, and analytics.",
-		],
+		[ 'WOO_ONLY', "You'll use it to log in to the Woo mobile app and view your store analytics." ],
 		[
 			'WOO_AND_PAY',
-			"You'll use it to link your store to WooCommerce.com and enable WooPayments for payment processing.",
+			"You'll use it to log in to the Woo mobile app, view your store analytics, and enable WooPayments for payment processing.",
 		],
 		[
 			'WOO_JETPACK',
-			"You'll use it to link your store to WooCommerce.com and power Jetpack features.",
+			"You'll use it to log in to the Woo mobile app, view your store analytics, and power Jetpack features.",
 		],
 		[
 			'JETPACK_FULL',

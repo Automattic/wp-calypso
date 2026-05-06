@@ -131,7 +131,7 @@ describe( 'JetpackAuthorize', () => {
 		// benefit clause.
 		expect(
 			screen.getByText(
-				'Your store is registered with WordPress.com — connect this account to link it to WooCommerce.com and activate Jetpack.'
+				'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and activate Jetpack.'
 			)
 		).toBeInTheDocument();
 
