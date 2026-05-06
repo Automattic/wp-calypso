@@ -279,6 +279,53 @@ describe( '<ComposerModal>', () => {
 		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
 	} );
 
+	it( 'awaits a Promise returned by extendBuildParams before calling mutate', async () => {
+		const user = userEvent.setup();
+		let resolveExtend: ( v: unknown ) => void = () => {};
+		const extendPromise = new Promise( ( resolve ) => {
+			resolveExtend = resolve;
+		} );
+		const mutationFn = jest.fn( async ( params: TestParams ): Promise< TestResult > => {
+			void params;
+			return { uri: 'at://posted' };
+		} );
+
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			mutationFactory: () => mutationOptions< TestResult, TestError, TestParams >( { mutationFn } ),
+			useMedia: () => ( {
+				hasAny: false,
+				hasUploaded: true,
+				isAllUploaded: true,
+				isAnyPending: false,
+				renderGrid: () => null,
+				renderFooterTrigger: () => null,
+				extendBuildParams: () => extendPromise,
+				onPublishSuccess: () => undefined,
+				clear: () => undefined,
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		await user.type( screen.getByRole( 'textbox' ), 'hello' );
+		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
+
+		// The mutation is gated on the extendBuildParams Promise resolving.
+		expect( mutationFn ).not.toHaveBeenCalled();
+
+		await act( async () => {
+			resolveExtend( { connectionId: 7, text: 'hello', media_ids: [ 'a' ] } );
+			await extendPromise;
+		} );
+
+		await waitFor( () => expect( mutationFn ).toHaveBeenCalledTimes( 1 ) );
+		expect( mutationFn.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+			media_ids: [ 'a' ],
+		} );
+	} );
+
 	it( 'fires config.logBadRequest when an error of kind bad_request arrives', async () => {
 		const user = userEvent.setup();
 		const logBadRequest = jest.fn();

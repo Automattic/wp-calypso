@@ -93,7 +93,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 		mediaSlot.isAllUploaded &&
 		( ! empty || mediaSlot.hasUploaded );
 
-	const handleSubmit = useCallback( () => {
+	const handleSubmit = useCallback( async () => {
 		if ( ! mode || mutation.isPending ) {
 			return;
 		}
@@ -101,7 +101,11 @@ export function ComposerModal< TError, TParams, TResult >() {
 			return;
 		}
 		const baseParams = config.buildParams( mode, text );
-		const params = mediaSlot.extendBuildParams( baseParams ) as TParams;
+		// `extendBuildParams` may return synchronously (atmosphere) or as a
+		// Promise (mastodon, where staged media is uploaded at publish time).
+		// Awaiting in both cases keeps the call site uniform; sync returns
+		// resolve in a microtask without changing observable behaviour.
+		const params = ( await mediaSlot.extendBuildParams( baseParams ) ) as TParams;
 		mutation.mutate( params, {
 			onSuccess: ( result ) => {
 				mediaSlot.onPublishSuccess( queryClient, result );

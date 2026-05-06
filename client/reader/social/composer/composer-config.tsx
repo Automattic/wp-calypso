@@ -46,8 +46,13 @@ export interface ComposerMediaSlot {
 	 * mutation runs. The modal calls `config.buildParams(mode, text)` first,
 	 * then passes the result through this hook for the media-aware variant.
 	 * `unknown` keeps the slot opaque — per-protocol implementations cast.
+	 *
+	 * Returning a Promise lets a per-protocol slot defer wire work (e.g.
+	 * uploading staged media) until publish time. The modal awaits the
+	 * result before invoking the mutation. Atmosphere returns synchronously;
+	 * Mastodon returns a Promise that resolves with `media_ids` populated.
 	 */
-	extendBuildParams: ( params: unknown ) => unknown;
+	extendBuildParams: ( params: unknown ) => unknown | Promise< unknown >;
 	/**
 	 * Called from the modal's `onSuccess` after the wire write succeeds.
 	 * Atmosphere uses this to patch the just-published item's cache embed
