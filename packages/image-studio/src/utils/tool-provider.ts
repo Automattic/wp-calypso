@@ -67,7 +67,7 @@ const FEATURE_CLIP_TOOL_DEFINITION: Tool = {
 	id: COMPOSE_FEATURE_CLIP_TOOL_ID,
 	name: 'Compose Feature Clip',
 	description:
-		'Render a 9:16 vertical MP4 in the user\'s browser by stitching post images into a Ken-Burns sequence followed by a title card. Call this ONLY when the active style ends in "-photo" (i.e. informative-photo or promotional-photo). For "informative" or "promotional" styles, use wpcom__generate_video_for_studio instead. The brief input must follow the FeatureClipBrief schema; image scenes come from the user\'s post media. Returns { attachmentId, url, durationSeconds } once the MP4 has been uploaded to the media library.',
+		'REQUIRED whenever the user asks for a video, clip, reel, MP4, short, or motion content AND the value at clientContext.videoStudio.style is exactly "informative-photo" or "promotional-photo". Read clientContext.videoStudio.style on every video request: if that string ends in "-photo", you MUST call this tool and you MUST NOT call wpcom__generate_video_for_studio. Conversely, if clientContext.videoStudio.style is "informative" or "promotional" (no "-photo" suffix), do NOT call this tool — use wpcom__generate_video_for_studio. Past turns in this conversation do not override the current style; re-check clientContext.videoStudio.style for every new request. This tool renders a 9:16 vertical MP4 in the user\'s browser by stitching post images into a Ken-Burns sequence followed by a title card. The input must follow the FeatureClipBrief schema; image scenes come from the user\'s post media. Returns { attachmentId, url, durationSeconds } once the MP4 has been uploaded to the media library.',
 	input_schema: {
 		type: 'object',
 		properties: {
