@@ -1066,6 +1066,7 @@ export class JetpackAuthorize extends Component {
 						} }
 						size="small"
 					/>
+					{ this.renderUseDifferentAccountLink() }
 
 					<FeaturesSection
 						cards={ cards }
@@ -1093,6 +1094,7 @@ export class JetpackAuthorize extends Component {
 						} }
 						size="small"
 					/>
+					{ this.renderUseDifferentAccountLink() }
 
 					<PermissionsList title={ permissionsTitle } permissions={ branding.permissions } />
 					{ this.renderNotices() }
@@ -1194,6 +1196,45 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
+	/**
+	 * Render the "Use a different account" link that sits directly beneath
+	 * the user card on the unified connect-account surfaces. The link is
+	 * suppressed while the connection is in flight (or already succeeded)
+	 * so it doesn't offer a switch-account escape hatch mid-handshake —
+	 * matching the loading-state guard the action button uses below.
+	 */
+	renderUseDifferentAccountLink() {
+		const { authorizeSuccess } = this.props.authorizationData;
+
+		if ( this.props.isSiteBlocked ) {
+			return null;
+		}
+
+		const isLoading =
+			this.props.isFetchingAuthorizationSite ||
+			this.props.isRequestingSitePurchases ||
+			this.isAuthorizing() ||
+			this.retryingAuth ||
+			authorizeSuccess;
+
+		if ( isLoading ) {
+			return null;
+		}
+
+		const { from } = this.props.authQuery;
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
+		return (
+			<LoggedOutFormLinkItem
+				className="jetpack-connect__switch-account-link"
+				href={ loginURL }
+				onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
+			>
+				{ this.props.translate( 'Use a different account' ) }
+			</LoggedOutFormLinkItem>
+		);
+	}
+
 	renderStateAction( wooLoginURL ) {
 		const { authorizeSuccess } = this.props.authorizationData;
 
@@ -1253,23 +1294,20 @@ export class JetpackAuthorize extends Component {
 		);
 
 		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
-			const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+			// The "Use a different account" link is now rendered next to the
+			// user card by `renderUseDifferentAccountLink()`, and the
+			// disclaimer drops below the action button so the call-to-action
+			// reads as the next step rather than something gated behind the
+			// fine print.
 			return (
 				<>
-					<ConsentText>{ disclaimer }</ConsentText>
 					<ActionButtons
 						primaryLabel={ this.getButtonText() }
 						primaryLoading={ isLoading }
 						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
 						primaryOnClick={ this.handleSubmit }
 					/>
-					<LoggedOutFormLinkItem
-						style={ { textAlign: 'center' } }
-						href={ loginURL }
-						onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
-					>
-						{ this.props.translate( 'Use a different account' ) }
-					</LoggedOutFormLinkItem>
+					<ConsentText>{ disclaimer }</ConsentText>
 				</>
 			);
 		}
