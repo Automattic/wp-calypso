@@ -16,6 +16,24 @@
 	}
 }
 
+// Shared modal frame sizing for all reader-onboarding-rsm modals (welcome,
+// interests, subscribe). The modals share an overall size (980 × 740) but
+// shrink to the viewport in either dimension when the viewport is smaller,
+// so the modal itself never forces page-level scrolling.
+// `margin: auto` keeps WP's default centering working for both axes.
+.reader-welcome-modal,
+.interests-modal,
+.subscribe-modal {
+	&.components-modal__frame,
+	.components-modal__frame {
+		width: min( 980px, 100vw );
+		max-width: min( 980px, 100vw );
+		height: min( 740px, 100vh );
+		max-height: min( 740px, 100vh );
+		margin: auto;
+	}
+}
+
 $actions-height: 64px;
 
 .reader-onboarding-modal__footer {

@@ -4,18 +4,8 @@
 $actions-height: 64px;
 
 .interests-modal {
-	&.components-modal__frame,
-	.components-modal__frame {
-		width: min( 1024px, calc( 100vw - 64px ) );
-		max-width: min( 1024px, calc( 100vw - 64px ) );
-
-		@media ( max-width: $break-medium ) {
-			width: 100vw;
-			max-width: 100vw;
-			margin-left: 0;
-			margin-right: 0;
-		}
-	}
+	// Frame sizing is shared with the other onboarding-rsm modals; see
+	// `client/reader/onboarding-rsm/style.scss`.
 
 	// Make the WP modal content + its children-container a flex column with no
 	// scroll on itself, so the inner scrollable region and footer can stack as
