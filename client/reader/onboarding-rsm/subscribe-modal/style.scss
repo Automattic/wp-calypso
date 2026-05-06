@@ -327,7 +327,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 
 			// Compact cards default to `min-height: 100px` on details so stream layouts
 			// align with thumbnails; here it adds empty space below short titles/excerpts
-			// so the block no longer matches vertical centering against the image.
+			// causing the block to no longer be vertically centered.
 			.reader-post-card__post-details {
 				min-height: 0;
 			}
