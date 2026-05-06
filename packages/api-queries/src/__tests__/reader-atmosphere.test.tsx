@@ -22,6 +22,7 @@ import {
 } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { wpcom } from '../../../api-core/src/wpcom-fetcher';
 import {
 	atmosphereScopedProfileQuery,
 	buildPlaceholderStandalonePost,
@@ -43,6 +44,8 @@ import {
 	useDeleteLikeMutation,
 	useDeletePostMutation,
 	useDeleteRepostMutation,
+	setAtmospherePostEmbed,
+	uploadBlobMutation,
 	useThreadQuery,
 	useTimelineInfiniteQuery,
 } from '../reader-atmosphere';
@@ -3482,5 +3485,112 @@ describe( 'removePlaceholder', () => {
 		const next = removePlaceholder( data, pendingUri );
 
 		expect( next ).toBe( data );
+	} );
+} );
+
+describe( 'uploadBlobMutation', () => {
+	// Mirrors the api-core fetcher tests: nock can't be used here because
+	// superagent's Node adapter streams formData via `form-data`, which
+	// rejects jsdom Blob/File instances before any HTTP request goes out.
+	// Spying on `wpcom.req.post` keeps the factory contract under test
+	// (mutationFn wiring + result propagation) without taking on the
+	// transport's stream wiring.
+	afterEach( () => jest.restoreAllMocks() );
+
+	it( 'wires uploadBlob into mutationFn and returns the blob ref', async () => {
+		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			blob: {
+				$type: 'blob',
+				ref: { $link: 'bafkrei' + 'a'.repeat( 50 ) },
+				mimeType: 'image/jpeg',
+				size: 3,
+			},
+		} );
+
+		const file = new Blob( [ new Uint8Array( [ 0xff, 0xd8, 0xff ] ) ], { type: 'image/jpeg' } );
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+		const { result } = renderHook( () => useMutation( uploadBlobMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		const value = await result.current.mutateAsync( { connectionId: 7, file } );
+
+		expect( value.blob.mimeType ).toBe( 'image/jpeg' );
+		expect( value.blob.$type ).toBe( 'blob' );
+	} );
+
+	describe( 'setAtmospherePostEmbed', () => {
+		const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kembed';
+		const CONNECTION_ID = 42;
+
+		function seedTimeline( client: QueryClient, items: AtmosphereFeedItem[] ) {
+			const data: InfiniteData< AtmosphereTimelinePage > = {
+				pages: [ { items, cursor: null } ],
+				pageParams: [ undefined ],
+			};
+			client.setQueryData( readerAtmosphereKeys.timeline( CONNECTION_ID ), data );
+		}
+
+		it( 'patches the embed onto every cached feed item whose uri matches', () => {
+			const client = new QueryClient();
+			const target = makeFeedItem( { uri: POST_URI, embed: null } );
+			const other = makeFeedItem( { uri: 'at://did:plc:other/app.bsky.feed.post/keep' } );
+			seedTimeline( client, [ target, other ] );
+
+			const localUrl = 'blob:test/abcdef';
+			setAtmospherePostEmbed( client, POST_URI, {
+				type: 'images',
+				images: [
+					{
+						thumb: localUrl,
+						fullsize: localUrl,
+						alt: 'a sunset',
+						aspect_ratio: { width: 16, height: 9 },
+					},
+				],
+			} );
+
+			const items =
+				client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					readerAtmosphereKeys.timeline( CONNECTION_ID )
+				)?.pages[ 0 ].items ?? [];
+
+			const patched = items.find( ( i ) => i.uri === POST_URI );
+			expect( patched?.embed ).toEqual( {
+				type: 'images',
+				images: [
+					{
+						thumb: localUrl,
+						fullsize: localUrl,
+						alt: 'a sunset',
+						aspect_ratio: { width: 16, height: 9 },
+					},
+				],
+			} );
+
+			// Sibling item is left untouched.
+			const untouched = items.find( ( i ) => i.uri !== POST_URI );
+			expect( untouched?.embed ).toBeNull();
+		} );
+
+		it( 'is a no-op when no cache entry matches postUri', () => {
+			const client = new QueryClient();
+			const other = makeFeedItem( { uri: 'at://did:plc:other/app.bsky.feed.post/keep' } );
+			seedTimeline( client, [ other ] );
+
+			expect( () =>
+				setAtmospherePostEmbed( client, POST_URI, {
+					type: 'images',
+					images: [],
+				} )
+			).not.toThrow();
+
+			const items =
+				client.getQueryData< InfiniteData< AtmosphereTimelinePage > >(
+					readerAtmosphereKeys.timeline( CONNECTION_ID )
+				)?.pages[ 0 ].items ?? [];
+			expect( items[ 0 ].embed ).toBeNull();
+		} );
 	} );
 } );

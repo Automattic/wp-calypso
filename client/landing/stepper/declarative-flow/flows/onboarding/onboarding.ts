@@ -319,7 +319,17 @@ const onboarding: FlowV2< typeof initialize > = {
 					return;
 			}
 		};
-		return { submit };
+
+		const goBack = () => {
+			switch ( currentStepSlug ) {
+				case 'plans':
+					return navigate( 'domains' );
+				default:
+					return window.history.back();
+			}
+		};
+
+		return { submit, goBack };
 	},
 	useSideEffect( currentStepSlug ) {
 		const reduxDispatch = useReduxDispatch();
