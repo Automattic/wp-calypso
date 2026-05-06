@@ -91,6 +91,8 @@ export function useAsyncSuggestionsLoader(
 	const [ suggestions, setSuggestions ] = useState< Suggestion[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const abortControllerRef = useRef< AbortController | null >( null );
+	const fallbackSuggestionsRef = useRef( fallbackSuggestions );
+	fallbackSuggestionsRef.current = fallbackSuggestions;
 
 	const prompt = ( buildSystemPrompt ?? buildDefaultImageSystemPrompt )( suggestionPrompt, locale );
 
@@ -160,7 +162,7 @@ export function useAsyncSuggestionsLoader(
 
 				if ( ! isValidSuggestionsResponse( parsed ) ) {
 					window.console?.error?.( '[Image Studio] Invalid suggestions response:', response.text );
-					setSuggestions( fallbackSuggestions );
+					setSuggestions( fallbackSuggestionsRef.current );
 					return;
 				}
 
@@ -184,7 +186,7 @@ export function useAsyncSuggestionsLoader(
 				}
 
 				window.console?.warn?.( '[Image Studio] Failed to fetch suggestions:', error );
-				setSuggestions( fallbackSuggestions );
+				setSuggestions( fallbackSuggestionsRef.current );
 			} finally {
 				// Only clear loading state if this controller is still active
 				if ( abortControllerRef.current === abortController ) {
