@@ -5,6 +5,8 @@ import { ImageStudioMode } from '../types';
 import { getToolErrorCategory, isWpErrorShape } from '../utils/error-categories';
 import { trackImageStudioError } from '../utils/tracking';
 
+const SURFACED_ERROR_CAP = 200;
+
 interface AgentMessagePart {
 	type?: string;
 	data?: { result?: unknown };
@@ -109,6 +111,12 @@ export function useImageStudioAgentSync(
 					mode,
 					errorType: category.errorType,
 				} );
+				if ( surfacedErrorMessageIds.current.size >= SURFACED_ERROR_CAP ) {
+					const oldest = surfacedErrorMessageIds.current.values().next().value;
+					if ( oldest ) {
+						surfacedErrorMessageIds.current.delete( oldest );
+					}
+				}
 				surfacedErrorMessageIds.current.add( messageKey );
 				break;
 			}
