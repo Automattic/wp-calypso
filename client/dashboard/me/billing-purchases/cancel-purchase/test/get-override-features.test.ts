@@ -58,4 +58,97 @@ describe( 'getOverrideCancellationFeatures', () => {
 		} );
 		expect( getOverrideCancellationFeatures( purchase ) ).toBeNull();
 	} );
+
+	describe( 'marketplace and add-on products', () => {
+		it( 'returns 4 features for a marketplace plugin', () => {
+			const purchase = makePurchase( {
+				product_type: 'marketplace_plugin',
+				product_slug: 'some-marketplace-plugin',
+				product_name: 'SEO Plugin',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 4 );
+			expect( result![ 0 ].title ).toContain( 'plugin' );
+		} );
+
+		it( 'returns 4 features for a SaaS plugin', () => {
+			const purchase = makePurchase( {
+				product_type: 'saas_plugin',
+				product_slug: 'some-saas-plugin',
+				product_name: 'SaaS Plugin',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 4 );
+			expect( result![ 0 ].title ).toContain( 'plugin' );
+		} );
+
+		it( 'returns 4 features for a marketplace theme', () => {
+			const purchase = makePurchase( {
+				product_type: 'marketplace_theme',
+				product_slug: 'some-marketplace-theme',
+				product_name: 'Premium Theme',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 4 );
+			expect( result![ 0 ].title ).toContain( 'theme' );
+		} );
+
+		it( 'returns 4 features for the premium theme add-on (unlimited_themes)', () => {
+			const purchase = makePurchase( {
+				product_slug: 'unlimited_themes',
+				product_name: 'Premium Themes',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 4 );
+			expect( result![ 0 ].title ).toContain( 'premium theme' );
+		} );
+
+		it( 'returns 3 features for a storage add-on (50gb)', () => {
+			const purchase = makePurchase( {
+				product_slug: '50gb_space_upgrade',
+				product_name: '50 GB Storage',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 3 );
+			expect( result![ 0 ].title ).toContain( 'storage' );
+		} );
+
+		it( 'returns 3 features for a storage add-on (other tier)', () => {
+			const purchase = makePurchase( {
+				product_slug: '1gb_space_upgrade',
+				product_name: '1 GB Storage',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 3 );
+			expect( result![ 0 ].title ).toContain( 'storage' );
+		} );
+
+		it( 'returns 3 features for the tiered-volume storage add-on', () => {
+			const purchase = makePurchase( {
+				product_slug: 'wordpress_com_1gb_space_addon_yearly',
+				product_name: 'Storage Add-On Space Upgrade 50 GB',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 3 );
+			expect( result![ 0 ].title ).toContain( 'storage' );
+		} );
+
+		it( 'returns 3 features for the CSS add-on (custom-design)', () => {
+			const purchase = makePurchase( {
+				product_slug: 'custom-design',
+				product_name: 'Custom Design',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 3 );
+			expect( result![ 0 ].title ).toContain( 'CSS' );
+		} );
+
+		it( 'returns null for an unknown other product', () => {
+			const purchase = makePurchase( {
+				product_slug: 'unknown-addon',
+				product_name: 'Unknown Add-on',
+			} );
+			expect( getOverrideCancellationFeatures( purchase ) ).toBeNull();
+		} );
+	} );
 } );
