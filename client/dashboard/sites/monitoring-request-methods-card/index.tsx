@@ -1,5 +1,6 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { DataPointPercentage, PieChart, Legend } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';

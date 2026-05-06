@@ -1,4 +1,5 @@
 import { LineChart } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { GlyphCircle, GlyphSquare, GlyphTriangle } from '@visx/glyph';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
