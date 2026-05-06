@@ -54,7 +54,6 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		cancelled,
 		downgraded,
 		intent,
-		plan: downgradedPlan,
 		refund: downgradedRefund,
 		currency: downgradedCurrency,
 	} = purchaseSettingsRoute.useSearch();
@@ -150,16 +149,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	if ( showDowngradedNotice ) {
-		let downgradedMessage: string;
-		if ( downgradedPlan ) {
-			downgradedMessage = sprintf(
-				/* translators: %s is the name of the new plan the user switched to */
-				__( 'Your plan has been changed to %s.' ),
-				downgradedPlan
-			);
-		} else {
-			downgradedMessage = __( 'Your plan has been changed successfully.' );
-		}
+		let downgradedMessage = __( 'We\u2019ve switched your plan.' );
 		if ( downgradedRefund && downgradedCurrency ) {
 			downgradedMessage +=
 				' ' +

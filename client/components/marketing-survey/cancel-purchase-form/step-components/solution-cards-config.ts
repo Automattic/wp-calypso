@@ -58,7 +58,6 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		getHref: ( ctx ) => ctx.changePlanUrl,
 		onClick: ( ctx ) => {
 			page( ctx.changePlanUrl );
-			ctx.closeDialog();
 		},
 	},
 	{
@@ -146,7 +145,6 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		getHref: ( ctx ) => ctx.changePlanUrl,
 		onClick: ( ctx ) => {
 			page( ctx.changePlanUrl );
-			ctx.closeDialog();
 		},
 	},
 	{
@@ -156,7 +154,6 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 		getHref: ( ctx ) => `/plans/${ ctx.site.slug }`,
 		onClick: ( ctx ) => {
 			page( `/plans/${ ctx.site.slug }` );
-			ctx.closeDialog();
 		},
 	},
 	{

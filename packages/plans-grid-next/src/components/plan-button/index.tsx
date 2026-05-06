@@ -48,7 +48,10 @@ const PlanButton = ( {
 	return (
 		<Button
 			className={ className }
-			onClick={ onClick }
+			onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+				onClick();
+				( e.currentTarget as HTMLElement ).blur();
+			} }
 			busy={ busy }
 			borderless={ borderless }
 			disabled={ disabled }

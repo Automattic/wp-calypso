@@ -233,16 +233,9 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 		const { translate } = this.props;
-		const { downgradedPlan, downgradedRefund, downgradedCurrency } = this.state;
+		const { downgradedRefund, downgradedCurrency } = this.state;
 
-		let noticeText: string;
-		if ( downgradedPlan ) {
-			noticeText = translate( 'Your plan has been changed to %(plan)s.', {
-				args: { plan: downgradedPlan },
-			} ) as string;
-		} else {
-			noticeText = translate( 'Your plan has been changed successfully.' ) as string;
-		}
+		let noticeText = translate( 'We\u2019ve switched your plan.' ) as string;
 		if ( downgradedRefund && downgradedCurrency ) {
 			noticeText +=
 				' ' +

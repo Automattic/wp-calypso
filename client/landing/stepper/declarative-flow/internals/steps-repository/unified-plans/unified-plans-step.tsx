@@ -34,14 +34,17 @@ import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
+import { isRefundable } from 'calypso/lib/purchases';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
+import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import isDomainOnlySiteSelector from 'calypso/state/selectors/is-domain-only-site';
 import {
 	saveSignupStep as saveSignupStepAction,
@@ -387,6 +390,17 @@ function UnifiedPlansStep( {
 	const siteId = selectedSite?.ID ?? signupDependencies.siteId;
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
+	// For plans-switch subtitle: look up purchase refund eligibility and credits.
+	const purchaseIdParam =
+		typeof window !== 'undefined'
+			? new URLSearchParams( window.location.search ).get( 'purchaseId' )
+			: null;
+	const purchaseIdNum = purchaseIdParam ? parseInt( purchaseIdParam, 10 ) : 0;
+	const switchPlanPurchase = useSelector( ( state ) =>
+		purchaseIdNum ? getByPurchaseId( state, purchaseIdNum ) : undefined
+	);
+	const upgradeCreditsData = useUpgradeCreditsNoticeData( siteId, [] );
+
 	const handleRemovePaidDomain = useCallback( () => {
 		const domainItem = undefined;
 
@@ -556,6 +570,19 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-switch' ) {
+			const hasCredit = ( upgradeCreditsData?.credits ?? 0 ) > 0;
+			const hasRefund = Boolean( switchPlanPurchase && isRefundable( switchPlanPurchase ) );
+
+			if ( hasCredit && hasRefund ) {
+				return translate(
+					'Find a plan that fits where your site is heading. We\u2019ll apply your remaining credit at checkout, and refund the difference.'
+				);
+			}
+			if ( hasCredit ) {
+				return translate(
+					'Find a plan that fits where your site is heading. We\u2019ll apply your remaining credit at checkout.'
+				);
+			}
 			return translate( 'Find a plan that fits where your site is heading.' );
 		}
 
