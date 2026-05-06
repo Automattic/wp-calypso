@@ -84,8 +84,17 @@ export type Translate = ReturnType< typeof useTranslate >;
  * notice.
  */
 export interface ComposerConfig< TError, TParams, TResult > {
-	/** Maximum graphemes the composer will accept. */
-	limit: number;
+	/**
+	 * Maximum graphemes the composer will accept, as a hook so per-protocol
+	 * configs can read it from a query when the limit varies per connection.
+	 * Mastodon reads `max_characters` from the home instance's config and
+	 * falls back to 500; ATmosphere returns its static 300. Called on every
+	 * render of `<ComposerModal>` — including when no mode is active — so
+	 * `connectionId` can be `null`. Implementations should fall back to a
+	 * static default in that case (the value is unused while the modal is
+	 * closed). Keep cheap: cached query reads, not expensive computations.
+	 */
+	useLimit: ( connectionId: number | null ) => number;
 	/**
 	 * Mode kinds this protocol supports. Atmosphere supports all three;
 	 * Mastodon supports `'reply' | 'standalone'` (no native quote concept).

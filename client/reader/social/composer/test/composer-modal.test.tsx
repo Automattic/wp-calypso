@@ -159,7 +159,7 @@ describe( '<ComposerModal>', () => {
 		const user = userEvent.setup();
 		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
 			...testComposerConfig,
-			limit: 5,
+			useLimit: () => 5,
 		};
 		renderModal( tinyLimitConfig );
 

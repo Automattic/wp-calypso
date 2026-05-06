@@ -2,6 +2,11 @@ export const readerMastodonKeys = {
 	all: [ 'reader', 'mastodon' ] as const,
 	connections: () => [ ...readerMastodonKeys.all, 'connections' ] as const,
 	connection: ( id: number | null ) => [ ...readerMastodonKeys.all, 'connection', id ] as const,
+	// Per-connection instance config (max_characters, etc.). Long stale time —
+	// instance admins rarely change these values, and getting it wrong only
+	// affects the composer's char counter at the cap edge.
+	instanceConfig: ( id: number | null ) =>
+		[ ...readerMastodonKeys.all, 'instance-config', id ] as const,
 	timeline: ( connectionId: number ) =>
 		[ ...readerMastodonKeys.all, 'timeline', connectionId ] as const,
 	thread: ( connectionId: number, statusId: string ) =>

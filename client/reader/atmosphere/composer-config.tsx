@@ -7,14 +7,20 @@ import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@autom
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
 
+// AT-Proto's hard cap for `app.bsky.feed.post.text` is 300 graphemes;
+// the protocol doesn't vary by connection, so the hook just returns a
+// constant. Wrapping in `useLimit` matches the shared composer
+// contract — see `ComposerConfig.useLimit` in
+// `client/reader/social/composer/composer-config.tsx`.
 const LIMIT = 300;
+const useAtmosphereComposerLimit = (): number => LIMIT;
 
 export const atmosphereComposerConfig: ComposerConfig<
 	AtmosphereError,
 	CreatePostParams,
 	CreatePostResult
 > = {
-	limit: LIMIT,
+	useLimit: useAtmosphereComposerLimit,
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
 	mutationFactory: createPostMutation,
 	buildParams: ( mode, text ) => buildParamsForMode( mode, text ),

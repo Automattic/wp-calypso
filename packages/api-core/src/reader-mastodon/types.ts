@@ -222,6 +222,22 @@ export interface MastodonDeleteRepostParams {
 }
 
 /**
+ * Per-instance composer limits, projected by the wpcom backend from the
+ * home instance's `/api/v2/instance` (or v1) endpoint. Stock Mastodon
+ * defaults to `max_characters: 500`; instances commonly raise it (some
+ * self-hosted instances run 5000+). Older Mastodon / Pleroma /
+ * GoToSocial expose `max_toot_chars` instead — the backend collapses
+ * both to `max_characters`.
+ *
+ * Slice A (CM-677) only surfaces `max_characters`. `characters_reserved_per_url`
+ * is purely a server-side cap-counting detail and doesn't affect display,
+ * and `max_media_attachments` matters only once Mastodon image upload ships.
+ */
+export interface MastodonInstanceConfig {
+	max_characters: number;
+}
+
+/**
  * Wire-pure shape passed to `createMastodonPost`. Every field here lands
  * in the request body (or the path, in `connectionId`'s case). Do not
  * widen this type with client-only metadata — see
