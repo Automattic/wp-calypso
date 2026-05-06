@@ -677,10 +677,9 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 						);
 					}
 				} catch ( permErr ) {
-					// Re-throw our own "denied" error; ignore browser compat errors.
-					if ( permErr instanceof Error && permErr.message.includes( 'blocked' ) ) {
-						throw permErr;
-					}
+					throw new Error(
+						'Microphone access is blocked. Please allow microphone access in your browser settings and try again.'
+					);
 				}
 			}
 
