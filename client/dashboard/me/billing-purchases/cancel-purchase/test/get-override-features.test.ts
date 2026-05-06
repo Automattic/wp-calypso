@@ -32,13 +32,77 @@ function makePurchase( overrides: Partial< PurchaseForCopy > = {} ): PurchaseFor
 }
 
 describe( 'getOverrideCancellationFeatures', () => {
-	it( 'returns null for a plan purchase (no entries yet)', () => {
-		const purchase = makePurchase( {
-			is_plan: true,
-			product_slug: 'business-bundle',
-			product_name: 'WordPress.com Business',
+	describe( 'WordPress.com plans', () => {
+		it( 'returns 7 features for personal-bundle', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'personal-bundle',
+				product_name: 'WordPress.com Personal',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 7 );
+			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
 		} );
-		expect( getOverrideCancellationFeatures( purchase ) ).toBeNull();
+
+		it( 'returns 7 features for personal-bundle-monthly', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'personal-bundle-monthly',
+				product_name: 'WordPress.com Personal',
+			} );
+			expect( getOverrideCancellationFeatures( purchase ) ).toHaveLength( 7 );
+		} );
+
+		it( 'returns 8 features for value_bundle', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'value_bundle',
+				product_name: 'WordPress.com Premium',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 8 );
+			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
+		} );
+
+		it( 'returns 8 features for business-bundle', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'business-bundle',
+				product_name: 'WordPress.com Business',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 8 );
+			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
+		} );
+
+		it( 'returns 8 features for ecommerce-bundle', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'ecommerce-bundle',
+				product_name: 'WordPress.com eCommerce',
+			} );
+			const result = getOverrideCancellationFeatures( purchase );
+			expect( result ).toHaveLength( 8 );
+			expect( result![ 0 ].title ).toBe( 'Custom domain for your site' );
+		} );
+
+		it( 'returns 8 features for ecommerce-trial-bundle-monthly', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'ecommerce-trial-bundle-monthly',
+				product_name: 'WordPress.com eCommerce',
+			} );
+			expect( getOverrideCancellationFeatures( purchase ) ).toHaveLength( 8 );
+		} );
+
+		it( 'returns null for an unknown plan slug', () => {
+			const purchase = makePurchase( {
+				is_plan: true,
+				product_slug: 'unknown-plan-slug',
+				product_name: 'Unknown Plan',
+			} );
+			expect( getOverrideCancellationFeatures( purchase ) ).toBeNull();
+		} );
 	} );
 
 	it( 'returns null for a domain purchase', () => {
