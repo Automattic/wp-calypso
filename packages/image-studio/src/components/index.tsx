@@ -6,7 +6,7 @@ import {
 	__unstableMotion as motion,
 } from '@wordpress/components';
 import { useMediaQuery, withInstanceId } from '@wordpress/compose';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { select, useDispatch, useSelect } from '@wordpress/data';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAgentConfig } from '../hooks/use-agent-config';
@@ -77,10 +77,23 @@ function ImageStudioAgentChat( {
 
 	useEffect( () => {
 		return () => {
-			// When the component unmounts, abort any ongoing requests
-			// If the modal is opened and closed quickly, it may be unmounted before the agent initialization completes.
+			// On modal unmount, distinguish soft-close from hard-cancel:
+			//  - Soft-close (X / overlay click / ESC): leave the agent alone so
+			//    an in-flight feature-clip render can finish in the background;
+			//    the sidebar widget owns the progress UI from here on.
+			//  - Hard-cancel (user hit "Cancel" in the sidebar progress widget,
+			//    flipping videoStudio.isCancelling): abort the agent stream
+			//    immediately.
+			// We always abort on unmount during the early initialization window
+			// (before the agent has been registered) — that's the open-and-quick-
+			// close-while-loading case the original guard handled.
 			const agentManager = getAgentManager();
-			if ( agentManager.hasAgent( agentConfigProp.agentId ) ) {
+			if ( ! agentManager.hasAgent( agentConfigProp.agentId ) ) {
+				agentChatProps?.abortCurrentRequest?.();
+				return;
+			}
+			const isHardCancel = select( videoStudioStore ).getFeatureClipIsCancelling();
+			if ( isHardCancel ) {
 				agentChatProps?.abortCurrentRequest?.();
 			}
 		};

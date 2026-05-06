@@ -538,3 +538,42 @@ export function trackImageStudioImageDeletedPermanently( {
 	}
 	recordImageStudioEvent( 'image_studio_file_deleted_permanently', properties );
 }
+
+/**
+ * Tracks when the browser-rendered Feature Clip pipeline begins. Fired by
+ * the render host the moment a pendingRender is picked up.
+ */
+export function trackFeatureClipRenderStarted( {
+	style,
+	sceneCount,
+}: {
+	style: string;
+	sceneCount: number;
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_render_started', {
+		style,
+		scene_count: sceneCount,
+	} );
+}
+
+/**
+ * Tracks a successful Feature Clip render → upload round-trip.
+ */
+export function trackFeatureClipRenderCompleted( {
+	style,
+	wallClockMs,
+	outputSizeBytes,
+	attachmentId,
+}: {
+	style: string;
+	wallClockMs: number;
+	outputSizeBytes: number;
+	attachmentId: number;
+} ): void {
+	recordImageStudioEvent( 'image_studio_feature_clip_render_completed', {
+		style,
+		wall_clock_ms: Math.round( wallClockMs ),
+		output_size_bytes: outputSizeBytes,
+		attachment_id: attachmentId,
+	} );
+}

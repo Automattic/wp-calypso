@@ -2,6 +2,12 @@ import { Configuration, Preview, TimelineRoot } from '@editframe/react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
+import { ImageStudioMode } from '../types';
+import {
+	trackFeatureClipRenderCompleted,
+	trackFeatureClipRenderStarted,
+	trackImageStudioError,
+} from '../utils/tracking';
 import { COMPOSITION_ID, FeatureClipVideo } from './feature-clip-video';
 import { uploadFeatureClipBlob } from './upload-feature-clip';
 import type { FeatureClipBrief } from './types';
@@ -83,6 +89,13 @@ export function FeatureClipRenderHost() {
 
 		let cancelled = false;
 		const requestId = pendingRender.requestId;
+		const brief = pendingRender.brief;
+		const startedAt = performance.now();
+
+		trackFeatureClipRenderStarted( {
+			style: brief.style,
+			sceneCount: brief.scenes.length,
+		} );
 
 		const run = async () => {
 			try {
@@ -123,13 +136,22 @@ export function FeatureClipRenderHost() {
 					url: attachment.url,
 					durationSeconds: attachment.durationSeconds,
 				} );
+
+				trackFeatureClipRenderCompleted( {
+					style: brief.style,
+					wallClockMs: performance.now() - startedAt,
+					outputSizeBytes: blob.size,
+					attachmentId: attachment.id,
+				} );
 			} catch ( error ) {
 				if ( cancelled ) {
 					return;
 				}
-				failFeatureClipRender( {
-					requestId,
-					message: error instanceof Error ? error.message : 'Render failed.',
+				const message = error instanceof Error ? error.message : 'Render failed.';
+				failFeatureClipRender( { requestId, message } );
+				trackImageStudioError( {
+					mode: ImageStudioMode.Generate,
+					errorType: 'generation_failed',
 				} );
 			}
 		};
