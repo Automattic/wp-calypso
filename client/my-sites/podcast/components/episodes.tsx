@@ -213,6 +213,28 @@ const Episodes = () => {
 				type: 'integer' as const,
 				label: translate( 'Downloads' ) as string,
 				getValue: ( { item }: { item: Episode } ) => item.playsAll,
+				render: ( { item }: { item: Episode } ) => {
+					const statsUrl = `/podcasting/episode/${ item.id }${ siteSlug ? '/' + siteSlug : '' }`;
+					const onClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
+						if (
+							event.defaultPrevented ||
+							event.button !== 0 ||
+							event.metaKey ||
+							event.ctrlKey ||
+							event.shiftKey ||
+							event.altKey
+						) {
+							return;
+						}
+						event.preventDefault();
+						page( statsUrl );
+					};
+					return (
+						<a href={ statsUrl } onClick={ onClick }>
+							{ item.playsAll }
+						</a>
+					);
+				},
 				// Same as duration: live in the stats endpoint, not orderable server-side.
 				enableSorting: false,
 			},

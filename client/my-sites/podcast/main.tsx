@@ -17,12 +17,13 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import Distribution from './components/distribution';
 import Episodes from './components/episodes';
 import Settings from './components/settings';
+import Stats from './components/stats';
 import Welcome from './components/welcome';
 import useAccessGate from './hooks/use-access-gate';
 
 import './style.scss';
 
-const VALID_SECTIONS = [ 'episodes', 'distribution', 'settings' ] as const;
+const VALID_SECTIONS = [ 'episodes', 'distribution', 'settings', 'stats' ] as const;
 type PodcastSection = ( typeof VALID_SECTIONS )[ number ];
 
 type PodcastMainProps = {
@@ -96,8 +97,8 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 			return;
 		}
 		const path = window.location.pathname;
-		const isSectionUrl = /^\/podcasting\/(episodes|distribution|settings)(\/|$)/.test( path );
-		const isContentSectionUrl = /^\/podcasting\/(episodes|distribution)(\/|$)/.test( path );
+		const isSectionUrl = /^\/podcasting\/(episodes|distribution|settings|stats)(\/|$)/.test( path );
+		const isContentSectionUrl = /^\/podcasting\/(episodes|distribution|stats)(\/|$)/.test( path );
 		if ( showTabs && ! isSectionUrl ) {
 			window.history.replaceState( null, '', '/podcasting/episodes' + pathSuffix );
 		} else if ( ! showTabs && isContentSectionUrl ) {
@@ -131,6 +132,11 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 			name: 'settings' as const,
 			title: translate( 'Settings' ) as string,
 			path: '/podcasting/settings' + pathSuffix,
+		},
+		{
+			name: 'stats' as const,
+			title: translate( 'Stats' ) as string,
+			path: '/podcasting/stats' + pathSuffix,
 		},
 	];
 
@@ -188,6 +194,11 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 				<Tabs.Panel value="settings">
 					<div className="podcast__tab-content">
 						<Settings />
+					</div>
+				</Tabs.Panel>
+				<Tabs.Panel value="stats">
+					<div className="podcast__tab-content">
+						<Stats />
 					</div>
 				</Tabs.Panel>
 			</Tabs.Root>

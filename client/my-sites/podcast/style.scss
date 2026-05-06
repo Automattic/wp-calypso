@@ -1,5 +1,6 @@
 @import '@wordpress/dataviews/build-style/style.css';
 @import 'calypso/components/jetpack-page-layout/admin-ui-page';
+@import 'calypso/my-sites/stats/components/highlight-cards/style';
 
 body.is-section-podcasting {
 	@include admin-ui-page-layout;
@@ -37,6 +38,131 @@ body.is-section-podcasting {
 	font-size: 13px;
 	line-height: 1.4;
 	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+}
+
+.podcast-stats {
+	max-inline-size: 960px;
+}
+
+.podcast-stats__header {
+	gap: 16px;
+}
+
+.podcast-stats__header .podcast__section-header {
+	margin-block-end: 0;
+}
+
+.podcast-stats__period-control {
+	min-inline-size: 200px;
+}
+
+.podcast-stats-summary {
+	background: transparent;
+	box-shadow: none;
+}
+
+.podcast-stats-summary__list {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 180px, 100% ), 1fr ) );
+	gap: 16px;
+	overflow: visible;
+	padding: 0;
+}
+
+.podcast-stats-summary__list .podcast-stats-summary__tile {
+	margin: 0;
+	min-inline-size: 0;
+}
+
+.podcast-stats-summary__tile .components-card-body {
+	padding: 16px;
+}
+
+.podcast-stats-summary__tile .highlight-card-count {
+	font-size: 1.75rem;
+	line-height: 32px;
+}
+
+.podcast-stats-summary__tile .highlight-card-count-value {
+	overflow-wrap: anywhere;
+}
+
+.podcast-stats-summary__note {
+	margin-block-start: 6px;
+	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.podcast-stats__section-card {
+	border: 1px solid var( --wpds-color-stroke-base-tertiary, #dcdcde );
+	box-shadow: none;
+}
+
+.podcast-stats__section-title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+}
+
+.podcast-stats-chart__chart .chart {
+	min-block-size: 240px;
+}
+
+.podcast-stats-list,
+.podcast-stats-bars {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.podcast-stats-list__row {
+	gap: 16px;
+	padding-block: 12px;
+	border-block-end: 1px solid var( --wpds-color-stroke-base-tertiary, #dcdcde );
+
+	&:last-child {
+		border-block-end: 0;
+	}
+}
+
+.podcast-stats-list__rank {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	inline-size: 24px;
+	block-size: 24px;
+	border-radius: 50%;
+	background: var( --wpds-color-bg-surface-secondary, #f6f7f7 );
+	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.podcast-stats-list__link {
+	font-weight: 500;
+	overflow-wrap: anywhere;
+}
+
+.podcast-stats-bars__item {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.podcast-stats-bars__track {
+	overflow: hidden;
+	block-size: 8px;
+	border-radius: 4px;
+	background: var( --wpds-color-bg-surface-secondary, #f6f7f7 );
+}
+
+.podcast-stats-bars__bar {
+	block-size: 100%;
+	border-radius: inherit;
+	background: var( --wpds-color-accent, #3858e9 );
 }
 
 .podcast__directory-list {
@@ -111,7 +237,9 @@ body.is-section-podcasting {
 	gap: 4px;
 	border: 2px dashed var( --wpds-color-stroke-base-tertiary, #c3c4c7 );
 	background: var( --wpds-color-bg-surface-base-secondary, #f6f7f7 );
-	transition: border-color 0.15s ease, background-color 0.15s ease;
+	transition:
+		border-color 0.15s ease,
+		background-color 0.15s ease;
 
 	&::before {
 		content: '+';
@@ -128,7 +256,8 @@ body.is-section-podcasting {
 	}
 }
 
-.podcast__settings-cover .podcast-cover-image-setting__preview.is-blank
+.podcast__settings-cover
+	.podcast-cover-image-setting__preview.is-blank
 	.podcast-cover-image-setting__placeholder {
 	font-style: normal;
 	font-size: 12px;
@@ -246,8 +375,11 @@ body.is-section-podcasting {
 	align-items: center;
 	padding: 40px;
 	border-radius: 8px;
-	background:
-		radial-gradient( circle at 0% 0%, var( --studio-blue-0, #f0f6fc ) 0%, transparent 50% ),
+	background: radial-gradient(
+			circle at 0% 0%,
+			var( --studio-blue-0, #f0f6fc ) 0%,
+			transparent 50%
+		),
 		radial-gradient( circle at 100% 100%, var( --studio-purple-0, #fdf3fc ) 0%, transparent 50% ),
 		var( --wpds-color-bg-surface-base, #fff );
 
@@ -361,7 +493,7 @@ body.is-section-podcasting {
 }
 
 .podcast__submit-step-row {
-	@media (max-width: $break-small) {
+	@media ( max-width: $break-small ) {
 		flex-direction: column;
 		align-items: stretch;
 	}
