@@ -141,15 +141,23 @@ describe( 'JetpackAuthorize', () => {
 			'jetpack-connect-woo.svg'
 		);
 
-		// Features section renders one card per top-priority family. With
-		// Woo + (full) Jetpack active, both family cards are featured and
-		// the "Used by" overflow stack stays absent. Cards no longer render
-		// H3 titles — the brand name lives on each card's accessible label
-		// instead.
+		// Features section renders one card per top-priority family. Cards
+		// no longer render H3 titles — the brand name lives on each card's
+		// accessible label instead. The Used-by row repeats the visible
+		// plugins so users can tell which Jetpack plugin is part of the
+		// connection even though every Jetpack-family card shares the same
+		// brand mark.
 		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
+		expect( overflow ).toBeInTheDocument();
+		expect( overflow ).toHaveTextContent( 'Used by' );
+		expect( overflow ).toHaveTextContent( 'WooCommerce' );
+		expect( overflow ).toHaveTextContent( 'Jetpack' );
+		// The Jetpack card already carries the brand mark, so the Used-by
+		// stack drops the leading logo.
 		expect(
-			container.querySelector( '.connect-screen-features-section__overflow' )
+			overflow.querySelector( '.connect-screen-features-section__overflow-logo' )
 		).not.toBeInTheDocument();
 		// Static FeaturesSection bullets land on the auth surface — sample
 		// one per card so the assertion stays sturdy without pinning every
@@ -174,18 +182,23 @@ describe( 'JetpackAuthorize', () => {
 			/>
 		);
 
-		// A4A and Woo win the two card slots; Jetpack drops to overflow.
+		// A4A and Woo win the two card slots; Jetpack drops out of the
+		// featured pair but still appears in the Used-by row alongside
+		// the visible plugins.
 		expect(
 			screen.getByRole( 'article', { name: 'Automattic for Agencies' } )
 		).toBeInTheDocument();
 		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'article', { name: 'Jetpack' } ) ).not.toBeInTheDocument();
 
-		// Used-by stack renders a label, the Jetpack brand logo, and the
-		// plugin display name list as separate rows.
+		// Used-by stack lists every active plugin (including the visible
+		// pair) and surfaces the Jetpack brand mark only because no
+		// Jetpack card is on screen to carry it.
 		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
 		expect( overflow ).toBeInTheDocument();
 		expect( overflow ).toHaveTextContent( 'Used by' );
+		expect( overflow ).toHaveTextContent( 'Automattic for Agencies' );
+		expect( overflow ).toHaveTextContent( 'WooCommerce' );
 		expect( overflow ).toHaveTextContent( 'Jetpack' );
 		expect(
 			overflow.querySelector( '.connect-screen-features-section__overflow-logo' )

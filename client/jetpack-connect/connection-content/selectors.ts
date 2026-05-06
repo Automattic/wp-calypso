@@ -47,8 +47,9 @@ export function hasFullJetpack( pluginSlugs: readonly string[] ): boolean {
  * Active plugin slugs that aren't represented by a featured family card.
  *
  * `featuredFamilies` is typically the result of `getTopFamilies(...)`. Any
- * plugin whose family isn't featured falls into the "Also used by" overflow
- * row in the features section.
+ * plugin whose family isn't featured falls into this list. Currently
+ * exported as a building block; `getFeatureSelection()` uses a different,
+ * comprehensive Used-by list rather than this filtered view.
  */
 export function getOverflowSlugs(
 	pluginSlugs: readonly string[],
@@ -59,7 +60,9 @@ export function getOverflowSlugs(
 
 /**
  * Result of `getFeatureSelection()` — the exact set of cards to render in
- * the features section, plus the trailing "Also used by" overflow row.
+ * the features section, plus the trailing Used-by row that lists every
+ * active plugin (including the slugs the cards already represent) when
+ * more than one plugin is connected.
  */
 export interface FeatureSelection {
 	cardKeys: FeatureCardKey[];
@@ -106,18 +109,24 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
 }
 
 /**
- * Pick the cards to feature plus the overflow slugs that fall outside the
- * featured set, capped at `max` cards (default 2 to match the two-up
- * layout).
+ * Pick the cards to feature plus the comprehensive Used-by plugin list,
+ * capped at `max` cards (default 2 to match the two-up layout).
  *
  * Decision order:
  *  1. Take the highest-priority families with known copy (`a4a`, `woo`,
  *     `jetpack`), capped at `max`.
  *  2. Map each family to its card key, with per-plugin overrides for the
  *     "single individual Jetpack plugin" case.
- *  3. Overflow slugs are anything whose family isn't in the featured set
- *     (including all unknown / `other`-family plugins), ordered as they
- *     appeared in `pluginSlugs` so caller intent is preserved.
+ *  3. The Used-by row repeats every active plugin slug — including the
+ *     ones the cards already represent — whenever more than one plugin is
+ *     connected. Order mirrors the input so caller intent is preserved.
+ *     Single-plugin connections (or no plugins at all) skip the row
+ *     because there's nothing to disambiguate.
+ *
+ * The redundancy is deliberate: every Jetpack-family card shares the same
+ * brand mark (and the per-plugin variants share the wordmark), so the
+ * explicit list is the only place users can tell *which* Jetpack
+ * plugin(s) the connection actually covers.
  *
  * The single `'other'` fallback card only renders when no known family is
  * present at all (the empty-input or only-unknown-plugins edge case).
@@ -127,13 +136,14 @@ export function getFeatureSelection( pluginSlugs: readonly string[], max = 2 ): 
 		( family ) => family !== 'other'
 	);
 
+	const overflowSlugs = pluginSlugs.length > 1 ? [ ...pluginSlugs ] : [];
+
 	if ( knownFamilies.length === 0 ) {
-		return { cardKeys: [ 'other' ], overflowSlugs: [] };
+		return { cardKeys: [ 'other' ], overflowSlugs };
 	}
 
 	const featured = knownFamilies.slice( 0, max );
 	const cardKeys = featured.map( ( family ) => getFamilyCardKey( family, pluginSlugs ) );
-	const overflowSlugs = getOverflowSlugs( pluginSlugs, featured );
 
 	return { cardKeys, overflowSlugs };
 }

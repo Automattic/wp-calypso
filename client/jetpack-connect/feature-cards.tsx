@@ -67,13 +67,15 @@ export interface ConnectorFeatureCards {
  * Build the FeaturesSection props for the connector authorize page from the
  * `plugins` query parameter — picks at most two cards (per the family-priority
  * rules in `getFeatureSelection`) and resolves each one's logo, title, and
- * bullet copy. Overflow items are the friendly display names for any active
- * plugins whose family didn't earn a card slot.
+ * bullet copy. The Used-by row lists every active plugin's display name
+ * whenever more than one is connected (single-plugin connections skip it),
+ * giving users a textual fallback for the brand-shared Jetpack cards.
  *
- * When the Jetpack family overflows (the canonical case is the all-three-
- * families scenario where A4A and Woo take the two card slots), the section
- * surfaces the full Jetpack logo above the overflow plugin list so Jetpack
- * still gets a brand-mark presence even when it doesn't earn a card.
+ * Above the list, the section surfaces the full Jetpack logo when at least
+ * one Jetpack-family plugin is active *and* no Jetpack card is on screen —
+ * the canonical case is the all-three-families scenario where A4A and Woo
+ * take both card slots. When a Jetpack card is already featured its brand
+ * mark is on the card itself, so the leading overflow logo is omitted.
  */
 export function getConnectorFeatureCards(
 	pluginSlugs: readonly string[] = []
@@ -92,10 +94,12 @@ export function getConnectorFeatureCards(
 	} );
 
 	const overflowItems = overflowSlugs.map( ( slug ) => getPluginDisplayName( slug ) );
+	const hasFeaturedJetpackCard = cardKeys.some( ( key ) => getFamilyFromSlug( key ) === 'jetpack' );
 	const hasJetpackOverflow = overflowSlugs.some(
 		( slug ) => getFamilyFromSlug( slug ) === 'jetpack'
 	);
-	const overflowLogo = hasJetpackOverflow ? <JetpackLogo full size={ 24 } /> : undefined;
+	const overflowLogo =
+		! hasFeaturedJetpackCard && hasJetpackOverflow ? <JetpackLogo full size={ 24 } /> : undefined;
 
 	return { cards, overflowLogo, overflowItems };
 }
