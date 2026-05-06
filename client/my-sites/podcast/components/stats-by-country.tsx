@@ -1,12 +1,7 @@
+import { HorizontalBarList, HorizontalBarListItem, StatsCard } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import StatsListCountryFlag from 'calypso/my-sites/stats/stats-list/stats-list-country-flag';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { formatPodcastCountryName, formatPodcastPct } from './stats-summary-tiles';
 import type { PodcastStatsCountryRow } from '../hooks/use-show-stats-query';
@@ -19,45 +14,61 @@ type StatsByCountryProps = {
 export default function StatsByCountry( { rows = [], isLoading = false }: StatsByCountryProps ) {
 	const translate = useTranslate();
 	const unknownCountry = translate( 'Unknown' ) as string;
+	const data = rows.map( ( row ) => ( {
+		id: row.country || 'unknown',
+		label: formatPodcastCountryName( row.country, unknownCountry ),
+		value: row.plays,
+		pct: row.pct,
+		countryCode: row.country,
+	} ) );
+	const maxValue = data.length ? Math.max( ...data.map( ( item ) => item.value ) ) : 0;
+
+	const title = translate( 'By country' ) as string;
+	const metricLabel = translate( 'Downloads' ) as string;
+
+	if ( isLoading ) {
+		return (
+			<StatsCard
+				className="podcast-stats__section-card"
+				title={ title }
+				metricLabel={ metricLabel }
+			>
+				<StatsModulePlaceholder isLoading />
+			</StatsCard>
+		);
+	}
 
 	return (
-		<Card className="podcast-stats__section-card">
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<h3 className="podcast-stats__section-title">{ translate( 'By country' ) }</h3>
-					{ isLoading && <StatsModulePlaceholder isLoading /> }
-					{ ! isLoading && rows.length === 0 && (
-						<Text variant="muted">{ translate( 'No country data in this period.' ) }</Text>
-					) }
-					{ ! isLoading && rows.length > 0 && (
-						<VStack as="ul" spacing={ 3 } className="podcast-stats-bars">
-							{ rows.map( ( row ) => (
-								<li key={ row.country || 'unknown' } className="podcast-stats-bars__item">
-									<HStack alignment="center" justify="space-between">
-										<Text weight={ 500 }>
-											{ formatPodcastCountryName( row.country, unknownCountry ) }
-										</Text>
-										<Text variant="muted">
-											{ translate( '%(downloads)s downloads, %(pct)s', {
-												args: {
-													downloads: formatNumber( row.plays ),
-													pct: formatPodcastPct( row.pct ),
-												},
-											} ) }
-										</Text>
-									</HStack>
-									<div className="podcast-stats-bars__track" aria-hidden="true">
-										<div
-											className="podcast-stats-bars__bar"
-											style={ { inlineSize: `${ Math.min( Math.max( row.pct, 0 ), 100 ) }%` } }
-										/>
-									</div>
-								</li>
-							) ) }
-						</VStack>
-					) }
-				</VStack>
-			</CardBody>
-		</Card>
+		<StatsCard
+			className="podcast-stats__section-card"
+			title={ title }
+			metricLabel={ metricLabel }
+			isEmpty={ rows.length === 0 }
+			emptyMessage={ translate( 'No country data in this period.' ) }
+		>
+			<HorizontalBarList>
+				{ data.map( ( item ) => (
+					<HorizontalBarListItem
+						key={ item.id }
+						data={ item }
+						maxValue={ maxValue }
+						leftSideItem={
+							item.countryCode ? (
+								<StatsListCountryFlag countryCode={ item.countryCode } />
+							) : undefined
+						}
+						formatValue={ ( value, listItemData ) => {
+							const pct = ( listItemData as { pct?: number } )?.pct;
+							return translate( '%(downloads)s · %(pct)s', {
+								args: {
+									downloads: formatNumber( value ),
+									pct: formatPodcastPct( pct ?? 0 ),
+								},
+							} ) as string;
+						} }
+					/>
+				) ) }
+			</HorizontalBarList>
+		</StatsCard>
 	);
 }

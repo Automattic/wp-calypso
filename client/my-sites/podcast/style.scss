@@ -216,45 +216,6 @@ body.is-section-podcasting {
 	grid-column: 1 / -1;
 }
 
-.podcast-stats-bars {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.podcast-stats-bars__item {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.podcast-stats-bars__item .components-h-stack {
-	gap: 12px;
-	min-inline-size: 0;
-}
-
-.podcast-stats-bars__item .components-h-stack > * {
-	min-inline-size: 0;
-}
-
-.podcast-stats-bars__item .components-h-stack > :last-child {
-	flex: 0 0 auto;
-	text-align: end;
-}
-
-.podcast-stats-bars__track {
-	overflow: hidden;
-	block-size: 8px;
-	border-radius: 4px;
-	background: var( --wpds-color-bg-surface-secondary, #f6f7f7 );
-}
-
-.podcast-stats-bars__bar {
-	block-size: 100%;
-	border-radius: inherit;
-	background: var( --wpds-color-bg-status-success-strong, #008a20 );
-}
-
 @media ( max-width: 782px ) {
 	.podcast-stats__period-heading {
 		font-size: 32px;
