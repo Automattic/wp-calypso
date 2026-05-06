@@ -201,15 +201,6 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		.reader-update-notice {
 			display: none;
 		}
-
-		// Compact cards stack `.reader-post-card__post-options` above the featured
-		// image in `.reader-post-card__post-media`. We hide the ellipsis (and we are
-		// not on /discover so there is no follow button there), leaving an empty row
-		// — but the row still had the global compact rule `margin-bottom: 16px`,
-		// which pushed thumbnails down relative to the vertically-centered text.
-		.reader-post-card.card.is-compact .reader-post-card__post-options {
-			margin-bottom: 0;
-		}
 	}
 
 	&__preview-placeholder {
@@ -346,6 +337,13 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 
 	&__preview-stream {
 		pointer-events: none;
+	}
+
+		// Per-card follow + ellipsis live in `.reader-post-card__post-options`. On `/discover`,
+	// compact cards use `display: flex` there with competing specificity; chaining the modal
+	// frame (both classes exist on the WP modal frame) keeps this scoped and wins in cascade.
+	&.components-modal__frame &__preview-column .reader-post-card.card .reader-post-card__post-options {
+		display: none;
 	}
 
 	&.is-disabled {
