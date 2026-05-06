@@ -1,17 +1,10 @@
 import page from '@automattic/calypso-router';
+import { HorizontalBarList, HorizontalBarListItem, StatsCard } from '@automattic/components';
 import { formatNumber } from '@automattic/number-formatters';
-import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { getPodcastStatsMockQueryString } from '../hooks/use-show-stats-query';
 import type { PodcastStatsTopEpisode } from '../hooks/use-show-stats-query';
-import type { MouseEvent } from 'react';
 
 type StatsTopEpisodesProps = {
 	episodes?: PodcastStatsTopEpisode[];
@@ -25,68 +18,59 @@ export default function StatsTopEpisodes( {
 	isLoading = false,
 }: StatsTopEpisodesProps ) {
 	const translate = useTranslate();
+	const mockQuery = getPodcastStatsMockQueryString();
+
+	const data = episodes.map( ( episode ) => ( {
+		id: String( episode.post_id ),
+		label: episode.title || ( translate( '(Untitled)' ) as string ),
+		value: episode.plays,
+		page: `/podcasting/stats/episode/${ episode.post_id }${
+			siteSlug ? '/' + siteSlug : ''
+		}${ mockQuery }`,
+	} ) );
+
+	const maxValue = data.length ? Math.max( ...data.map( ( item ) => item.value ) ) : 0;
+
+	const title = translate( 'Top episodes' ) as string;
+	const metricLabel = translate( 'Downloads' ) as string;
+
+	if ( isLoading ) {
+		return (
+			<StatsCard
+				className="podcast-stats__section-card"
+				title={ title }
+				metricLabel={ metricLabel }
+			>
+				<StatsModulePlaceholder isLoading />
+			</StatsCard>
+		);
+	}
 
 	return (
-		<Card className="podcast-stats__section-card">
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<h3 className="podcast-stats__section-title">{ translate( 'Top episodes' ) }</h3>
-					{ isLoading && <StatsModulePlaceholder isLoading /> }
-					{ ! isLoading && episodes.length === 0 && (
-						<Text variant="muted">{ translate( 'No episode downloads in this period.' ) }</Text>
-					) }
-					{ ! isLoading && episodes.length > 0 && (
-						<VStack as="ol" spacing={ 0 } className="podcast-stats-list">
-							{ episodes.map( ( episode, index ) => {
-								const href = `/podcasting/stats/episode/${ episode.post_id }${
-									siteSlug ? '/' + siteSlug : ''
-								}${ getPodcastStatsMockQueryString() }`;
-								const onClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
-									if (
-										event.defaultPrevented ||
-										event.button !== 0 ||
-										event.metaKey ||
-										event.ctrlKey ||
-										event.shiftKey ||
-										event.altKey
-									) {
-										return;
-									}
-									event.preventDefault();
-									page( href );
-								};
-
-								return (
-									<HStack
-										as="li"
-										key={ episode.post_id }
-										alignment="center"
-										justify="space-between"
-										className="podcast-stats-list__row"
-									>
-										<HStack
-											alignment="center"
-											justify="flex-start"
-											spacing={ 3 }
-											className="podcast-stats-list__episode"
-										>
-											<span className="podcast-stats-list__rank">{ index + 1 }</span>
-											<a href={ href } onClick={ onClick } className="podcast-stats-list__link">
-												{ episode.title || translate( '(Untitled)' ) }
-											</a>
-										</HStack>
-										<Text weight={ 500 } className="podcast-stats-list__plays">
-											{ translate( '%(downloads)s downloads', {
-												args: { downloads: formatNumber( episode.plays ) },
-											} ) }
-										</Text>
-									</HStack>
-								);
-							} ) }
-						</VStack>
-					) }
-				</VStack>
-			</CardBody>
-		</Card>
+		<StatsCard
+			className="podcast-stats__section-card"
+			title={ title }
+			metricLabel={ metricLabel }
+			isEmpty={ episodes.length === 0 }
+			emptyMessage={ translate( 'No episode downloads in this period.' ) }
+		>
+			<HorizontalBarList>
+				{ data.map( ( item ) => (
+					<HorizontalBarListItem
+						key={ item.id }
+						data={ item }
+						maxValue={ maxValue }
+						onClick={ ( event, listItemData ) => {
+							const target = ( listItemData as { page?: string } )?.page;
+							if ( ! target ) {
+								return;
+							}
+							page( target );
+						} }
+						formatValue={ ( value ) => formatNumber( value ) }
+					/>
+				) ) }
+			</HorizontalBarList>
+		</StatsCard>
 	);
 }
