@@ -1365,9 +1365,8 @@ function CancelPurchaseInner() {
 		// Purchase Settings instead of re-showing the confirmation screen.
 		// Bypass when surveyShown is true — the post-mutation survey should
 		// still render within the same session.
-			isSplitCancelRemoveEnabled &&
-			intent === 'cancel' &&
-			! purchase.is_auto_renew_enabled;
+		const isAlreadyCancelledForSplitFlag =
+			isSplitCancelRemoveEnabled && intent === 'cancel' && ! purchase.is_auto_renew_enabled;
 
 		if ( isAlreadyCancelledForSplitFlag && ! state.surveyShown ) {
 			return false;
@@ -1417,7 +1416,14 @@ function CancelPurchaseInner() {
 		}
 
 		return true;
-	}, [ createErrorNotice, intent, isDataLoading, purchase, state.surveyShown ] );
+	}, [
+		createErrorNotice,
+		intent,
+		isDataLoading,
+		isSplitCancelRemoveEnabled,
+		purchase,
+		state.surveyShown,
+	] );
 
 	const didRunEffect = useRef< boolean >( false );
 
