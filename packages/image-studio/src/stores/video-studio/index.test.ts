@@ -37,6 +37,11 @@ describe( 'Video Studio Store', () => {
 				currentVideoUrl: null,
 				currentAttachmentId: null,
 				currentDurationSeconds: null,
+				progressPhase: 'idle',
+				pendingRender: null,
+				lastRenderResult: null,
+				lastRenderError: null,
+				isCancelling: false,
 			} );
 		} );
 	} );
@@ -141,6 +146,11 @@ describe( 'Video Studio Store', () => {
 				currentVideoUrl: 'https://example.com/clip.mp4',
 				currentAttachmentId: 7,
 				currentDurationSeconds: 5,
+				progressPhase: 'idle',
+				pendingRender: null,
+				lastRenderResult: null,
+				lastRenderError: null,
+				isCancelling: false,
 			} );
 		} );
 
@@ -149,6 +159,113 @@ describe( 'Video Studio Store', () => {
 			state = reducer( state, actions.setSelectedStyle( null ) );
 
 			expect( state.selectedStyle ).toBeNull();
+		} );
+	} );
+
+	describe( 'Feature-clip render lifecycle', () => {
+		const sampleBrief = {
+			style: 'informative-photo' as const,
+			scenes: [ { imageUrl: 'https://x/a.jpg', camera: 'zoom-in' as const } ],
+			titleCard: { copy: 'Hello' },
+		};
+
+		it( 'requestFeatureClipRender sets pending + clears prior result/error', () => {
+			let state = reducer( getInitialState(), {
+				type: 'COMPLETE_FEATURE_CLIP_RENDER',
+				payload: { requestId: 'old', attachmentId: 1, url: 'u', durationSeconds: 8 },
+			} as any );
+			state = reducer(
+				state,
+				actions.requestFeatureClipRender( { requestId: 'r1', brief: sampleBrief } )
+			);
+
+			expect( state.pendingRender ).toEqual( { requestId: 'r1', brief: sampleBrief } );
+			expect( state.progressPhase ).toBe( 'analyzing' );
+			expect( state.lastRenderResult ).toBeNull();
+			expect( state.lastRenderError ).toBeNull();
+			expect( state.isCancelling ).toBe( false );
+		} );
+
+		it( 'setFeatureClipProgressPhase advances the phase', () => {
+			let state = reducer(
+				getInitialState(),
+				actions.requestFeatureClipRender( { requestId: 'r1', brief: sampleBrief } )
+			);
+			state = reducer( state, actions.setFeatureClipProgressPhase( 'rendering' ) );
+			expect( state.progressPhase ).toBe( 'rendering' );
+		} );
+
+		it( 'completeFeatureClipRender clears pending, mirrors result into current* fields', () => {
+			let state = reducer(
+				getInitialState(),
+				actions.requestFeatureClipRender( { requestId: 'r1', brief: sampleBrief } )
+			);
+			state = reducer(
+				state,
+				actions.completeFeatureClipRender( {
+					requestId: 'r1',
+					attachmentId: 42,
+					url: 'https://example.com/clip.mp4',
+					durationSeconds: 8,
+				} )
+			);
+
+			expect( state.pendingRender ).toBeNull();
+			expect( state.progressPhase ).toBe( 'idle' );
+			expect( state.lastRenderResult?.attachmentId ).toBe( 42 );
+			expect( state.currentVideoUrl ).toBe( 'https://example.com/clip.mp4' );
+			expect( state.currentAttachmentId ).toBe( 42 );
+			expect( state.currentDurationSeconds ).toBe( 8 );
+		} );
+
+		it( 'failFeatureClipRender clears pending but does not touch current* fields', () => {
+			let state = reducer( getInitialState(), actions.setCurrentVideoUrl( 'prev' ) );
+			state = reducer( state, actions.setCurrentAttachmentId( 99 ) );
+			state = reducer(
+				state,
+				actions.requestFeatureClipRender( { requestId: 'r1', brief: sampleBrief } )
+			);
+			state = reducer(
+				state,
+				actions.failFeatureClipRender( { requestId: 'r1', message: 'render busted' } )
+			);
+
+			expect( state.pendingRender ).toBeNull();
+			expect( state.progressPhase ).toBe( 'idle' );
+			expect( state.lastRenderError?.message ).toBe( 'render busted' );
+			// Previous successful values must survive a later failure.
+			expect( state.currentVideoUrl ).toBe( 'prev' );
+			expect( state.currentAttachmentId ).toBe( 99 );
+		} );
+
+		it( 'setFeatureClipIsCancelling toggles the flag', () => {
+			let state = reducer( getInitialState(), actions.setFeatureClipIsCancelling( true ) );
+			expect( state.isCancelling ).toBe( true );
+			state = reducer( state, actions.setFeatureClipIsCancelling( false ) );
+			expect( state.isCancelling ).toBe( false );
+		} );
+
+		it( 'clearFeatureClipPending resets pending + phase + isCancelling without touching prior result', () => {
+			// Set up: a render is in flight AND a prior successful result exists.
+			let state = reducer(
+				getInitialState(),
+				actions.requestFeatureClipRender( { requestId: 'r1', brief: sampleBrief } )
+			);
+			state = reducer( state, actions.setFeatureClipIsCancelling( true ) );
+			// Smuggle a prior result via a direct action (mirrors what would be
+			// there if a render had completed earlier in the session).
+			state = {
+				...state,
+				lastRenderResult: { requestId: 'prior', attachmentId: 9, url: 'u', durationSeconds: 8 },
+			};
+			state = reducer( state, actions.clearFeatureClipPending() );
+
+			expect( state.pendingRender ).toBeNull();
+			expect( state.progressPhase ).toBe( 'idle' );
+			expect( state.isCancelling ).toBe( false );
+			// Prior result survives — clearFeatureClipPending only resets the
+			// in-flight slots, not historical results.
+			expect( state.lastRenderResult?.requestId ).toBe( 'prior' );
 		} );
 	} );
 
