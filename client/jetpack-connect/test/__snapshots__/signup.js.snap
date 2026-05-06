@@ -412,7 +412,7 @@ exports[`JetpackSignup should render with the connector branding when from=jetpa
         <p
           class="connect-screen-brand-header__description"
         >
-          You'll use it to unlock powerful features on your store.
+          You'll use it to link your store to WooCommerce.com and power Jetpack features.
         </p>
       </div>
       <div
