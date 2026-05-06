@@ -98,11 +98,7 @@ const DIRECTORIES: Directory[] = [
 	},
 ];
 
-type Props = {
-	onGoToSettings?: () => void;
-};
-
-function Distribution( { onGoToSettings }: Props ) {
+function Distribution( { onGoToSettings }: { onGoToSettings?: () => void } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const feedUrl = useFeedUrl();
