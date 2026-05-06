@@ -65,9 +65,6 @@ function getLoginSubtitles(): Record< SubtitleScenario, string > {
 		WOO_ONLY: __(
 			'Your store is registered with WordPress.com — finish connecting your account to link it to WooCommerce.com for marketplace access, extensions, and analytics.'
 		),
-		WOOPAY_ONLY: __(
-			'Your store is registered with WordPress.com — finish connecting your account to enable WooPayments for payment processing and account management.'
-		),
 		WOO_AND_PAY: __(
 			'Your store is registered with WordPress.com — finish connecting your account to link it to WooCommerce.com and enable WooPayments for payment processing.'
 		),
@@ -140,9 +137,6 @@ function getAuthSubtitles(): Record< SubtitleScenario, string > {
 		WOO_ONLY: __(
 			'Your store is registered with WordPress.com — connect this account to link it to WooCommerce.com for marketplace access, analytics, and subscriptions.'
 		),
-		WOOPAY_ONLY: __(
-			'Your store is registered with WordPress.com — connect this account to enable WooPayments to manage payments and your account.'
-		),
 		WOO_AND_PAY: __(
 			'Your store is registered with WordPress.com — connect this account to link it to WooCommerce.com with WooPayments ready for payment processing.'
 		),
@@ -214,9 +208,6 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
 		),
 		WOO_ONLY: __(
 			"You'll use it to link your store to WooCommerce.com for marketplace access, extensions, and analytics."
-		),
-		WOOPAY_ONLY: __(
-			"You'll use it to enable WooPayments for your store's payment processing and account management."
 		),
 		WOO_AND_PAY: __(
 			"You'll use it to link your store to WooCommerce.com and enable WooPayments for payment processing."

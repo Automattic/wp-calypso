@@ -42,10 +42,6 @@ describe( 'getSubtitleScenario', () => {
 			expect( getSubtitleScenario( [ 'woocommerce' ] ) ).toBe( 'WOO_ONLY' );
 		} );
 
-		test( 'returns WOOPAY_ONLY for woocommerce-payments alone', () => {
-			expect( getSubtitleScenario( [ 'woocommerce-payments' ] ) ).toBe( 'WOOPAY_ONLY' );
-		} );
-
 		test( 'returns WOO_AND_PAY when both core and payments are active', () => {
 			expect( getSubtitleScenario( [ 'woocommerce', 'woocommerce-payments' ] ) ).toBe(
 				'WOO_AND_PAY'
@@ -55,8 +51,16 @@ describe( 'getSubtitleScenario', () => {
 			);
 		} );
 
-		test( 'an unknown Woo-prefixed slug routes to WOO_ONLY (not WOOPAY)', () => {
+		test( 'an unknown Woo-prefixed slug routes to WOO_ONLY', () => {
 			expect( getSubtitleScenario( [ 'woocommerce-marketing' ] ) ).toBe( 'WOO_ONLY' );
+		} );
+
+		test( 'a malformed woocommerce-payments-only list defensively routes to WOO_ONLY', () => {
+			// WooPayments has a hard activation dependency on WooCommerce
+			// core, so this combination cannot occur in practice. The
+			// fall-through guarantees the flow still uses store-aware copy
+			// if the plugin list ever arrives malformed.
+			expect( getSubtitleScenario( [ 'woocommerce-payments' ] ) ).toBe( 'WOO_ONLY' );
 		} );
 	} );
 

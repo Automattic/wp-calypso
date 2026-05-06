@@ -15,7 +15,6 @@ const SCENARIO_SLUGS: Record< SubtitleScenario, readonly string[] > = {
 	A4A_JETPACK: [ 'automattic-for-agencies-client', 'jetpack-boost' ],
 	ALL_THREE: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
 	WOO_ONLY: [ 'woocommerce' ],
-	WOOPAY_ONLY: [ 'woocommerce-payments' ],
 	WOO_AND_PAY: [ 'woocommerce', 'woocommerce-payments' ],
 	WOO_JETPACK: [ 'woocommerce', 'jetpack' ],
 	JETPACK_FULL: [ 'jetpack' ],
@@ -98,10 +97,6 @@ describe( 'login subtitles', () => {
 			'Your store is registered with WordPress.com — finish connecting your account to link it to WooCommerce.com for marketplace access, extensions, and analytics.',
 		],
 		[
-			'WOOPAY_ONLY',
-			'Your store is registered with WordPress.com — finish connecting your account to enable WooPayments for payment processing and account management.',
-		],
-		[
 			'WOO_AND_PAY',
 			'Your store is registered with WordPress.com — finish connecting your account to link it to WooCommerce.com and enable WooPayments for payment processing.',
 		],
@@ -178,10 +173,6 @@ describe( 'auth subtitles', () => {
 			'Your store is registered with WordPress.com — connect this account to link it to WooCommerce.com for marketplace access, analytics, and subscriptions.',
 		],
 		[
-			'WOOPAY_ONLY',
-			'Your store is registered with WordPress.com — connect this account to enable WooPayments to manage payments and your account.',
-		],
-		[
 			'WOO_AND_PAY',
 			'Your store is registered with WordPress.com — connect this account to link it to WooCommerce.com with WooPayments ready for payment processing.',
 		],
@@ -256,10 +247,6 @@ describe( 'signup subtitles', () => {
 		[
 			'WOO_ONLY',
 			"You'll use it to link your store to WooCommerce.com for marketplace access, extensions, and analytics.",
-		],
-		[
-			'WOOPAY_ONLY',
-			"You'll use it to enable WooPayments for your store's payment processing and account management.",
 		],
 		[
 			'WOO_AND_PAY',

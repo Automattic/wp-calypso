@@ -12,9 +12,16 @@ import { getPluginEntry } from './plugin-registry';
  * PR 4. `OTHER_ONLY` is the fallback when no known family is present at
  * all (including the empty-plugin-list edge case).
  *
- * The 17 keys are the canonical scenario set the plan calls out, and each
- * surface's pre-composed subtitle table is keyed by exactly these values
- * — see `copy.ts`.
+ * Note: there is intentionally no `WOOPAY_ONLY` scenario. WooPayments has
+ * WooCommerce core as a hard activation dependency, so a Woo-family plugin
+ * set that contains `woocommerce-payments` always also contains
+ * `woocommerce` and routes through `WOO_AND_PAY`. A defensive fall-through
+ * handles the impossible-but-still-possible case where the plugin list
+ * arrives malformed (URL truncation, etc.) — see the Woo branch below.
+ *
+ * The 16 keys are the canonical scenario set, and each surface's
+ * pre-composed subtitle table is keyed by exactly these values — see
+ * `copy.ts`.
  */
 export type SubtitleScenario =
 	| 'A4A_ONLY'
@@ -22,7 +29,6 @@ export type SubtitleScenario =
 	| 'A4A_JETPACK'
 	| 'ALL_THREE'
 	| 'WOO_ONLY'
-	| 'WOOPAY_ONLY'
 	| 'WOO_AND_PAY'
 	| 'WOO_JETPACK'
 	| 'JETPACK_FULL'
@@ -67,7 +73,10 @@ function getJetpackSingleScenario( slug: string ): SubtitleScenario | null {
  *
  * 1. Multi-family combinations (A4A + Woo + Jetpack), in priority order.
  * 2. Single-family combinations:
- *    - Woo: distinguish WooCommerce-only / WooPayments-only / both.
+ *    - Woo: WooCommerce + WooPayments together routes to `WOO_AND_PAY`;
+ *      everything else (including a malformed `woocommerce-payments`-only
+ *      list, which the WooPayments dependency on WooCommerce core makes
+ *      impossible in practice) falls through to `WOO_ONLY`.
  *    - Jetpack: distinguish full Jetpack / a single individual plugin /
  *      two-or-more individuals (collapses to `JETPACK_MULTI`, which reuses
  *      the full-Jetpack copy by design — see the plan's "any 2+ individual
@@ -104,13 +113,8 @@ export function getSubtitleScenario( pluginSlugs: readonly string[] = [] ): Subt
 
 	if ( hasWoo ) {
 		const wooSlugs = pluginSlugs.filter( ( slug ) => getFamilyFromSlug( slug ) === 'woo' );
-		const hasCore = wooSlugs.includes( 'woocommerce' );
-		const hasPayments = wooSlugs.includes( 'woocommerce-payments' );
-		if ( hasCore && hasPayments ) {
+		if ( wooSlugs.includes( 'woocommerce' ) && wooSlugs.includes( 'woocommerce-payments' ) ) {
 			return 'WOO_AND_PAY';
-		}
-		if ( hasPayments && ! hasCore ) {
-			return 'WOOPAY_ONLY';
 		}
 		return 'WOO_ONLY';
 	}
