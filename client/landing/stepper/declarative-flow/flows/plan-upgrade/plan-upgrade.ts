@@ -324,26 +324,16 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 										} catch ( error ) {
 											// eslint-disable-next-line no-console
 											console.log( '[DOWNGRADE-TRACE] ERROR', { error } );
-											// Backend rejected the cancel-and-refund downgrade (e.g., 2Y/3Y → annual lower tier
-											// is not in WPCOM_Store::get_downgrade_paths(), or the purchase is past the refund
-											// window). Fall through to the standard checkout flow so the user can still complete
-											// the plan switch via credit/proration.
-											const checkoutUrl = `/checkout/${ encodeURIComponent(
-												siteSlug
-											) }/${ selectedPlan }`;
-											const currentPath = window.location.href.replace(
-												window.location.origin,
-												''
+											// Redirect back to the old plan's purchase settings with
+											// an error notice so the user can retry or contact support.
+											const errorUrl = isFromDashboard
+												? dashboardLink( '/me/billing/purchases/' + purchaseId )
+												: '/me/purchases/' + encodeURIComponent( siteSlug ) + '/' + purchaseId;
+											window.location.assign(
+												addQueryArgs( errorUrl, {
+													downgrade_failed: 'true',
+												} )
 											);
-											const finalUrl = addQueryArgs( checkoutUrl, {
-												redirect_to: redirectTo || dashboardLink( '/sites' ),
-												cancel_to: currentPath,
-											} );
-											// eslint-disable-next-line no-console
-											console.log( '[DOWNGRADE-TRACE] ERROR-fallback-to-checkout', {
-												url: finalUrl,
-											} );
-											window.location.assign( finalUrl );
 										}
 									} )();
 									return;

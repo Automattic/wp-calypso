@@ -15,6 +15,9 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { HelpCenter } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
 import moment from 'moment';
@@ -69,6 +72,29 @@ import './notices.scss';
 
 const eventProperties = ( warning: string ) => ( { warning, position: 'individual-purchase' } );
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
+/**
+ * Small functional component for the "contact support" link inside the
+ * downgrade-failed error notice. The parent is a class component that can't
+ * use hooks, so this wraps the HelpCenter dispatch.
+ */
+function DowngradeFailedSupportLink( { children }: { children?: React.ReactNode } ) {
+	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
+	return (
+		<Button
+			variant="link"
+			onClick={ () => {
+				setNewMessagingChat( {
+					initialMessage: 'Plan downgrade failed',
+				} );
+			} }
+		>
+			{ children }
+		</Button>
+	);
+}
+
 export interface PurchaseNoticeProps {
 	isSplitCancelRemoveEnabled?: boolean;
 	changePaymentMethodPath: string | false;
@@ -112,6 +138,7 @@ class PurchaseNotice extends Component<
 			showCancelledRedirectNotice: params?.get( 'cancelled' ) === 'true',
 			cancelledIntent: params?.get( 'intent' ) ?? null,
 			showDowngradedRedirectNotice: params?.get( 'downgraded' ) === 'true',
+			showDowngradeFailedNotice: params?.get( 'downgrade_failed' ) === 'true',
 			downgradedPlan: params?.get( 'plan' ) || '',
 			downgradedRefund: params?.get( 'refund' ) || '',
 			downgradedCurrency: params?.get( 'currency' ) || '',
@@ -136,6 +163,10 @@ class PurchaseNotice extends Component<
 			params.delete( 'currency' );
 			changed = true;
 		}
+		if ( params.get( 'downgrade_failed' ) === 'true' ) {
+			params.delete( 'downgrade_failed' );
+			changed = true;
+		}
 		if ( changed ) {
 			const newSearch = params.toString();
 			const newUrl =
@@ -150,6 +181,10 @@ class PurchaseNotice extends Component<
 
 	dismissDowngradedRedirectNotice = () => {
 		this.setState( { showDowngradedRedirectNotice: false } );
+	};
+
+	dismissDowngradeFailedNotice = () => {
+		this.setState( { showDowngradeFailedNotice: false } );
 	};
 
 	/**
@@ -254,6 +289,30 @@ class PurchaseNotice extends Component<
 				onDismissClick={ this.dismissDowngradedRedirectNotice }
 				status="is-success"
 				text={ noticeText }
+			/>
+		);
+	}
+
+	renderDowngradeFailedNotice() {
+		if ( ! this.state.showDowngradeFailedNotice ) {
+			return null;
+		}
+		const { translate } = this.props;
+
+		return (
+			<Notice
+				className="manage-purchase__purchase-expiring-notice"
+				showDismiss
+				onDismissClick={ this.dismissDowngradeFailedNotice }
+				status="is-error"
+				text={ translate(
+					'We couldn\u2019t switch your plan. Please try again, or {{contactLink}}contact support{{/contactLink}} if the issue continues.',
+					{
+						components: {
+							contactLink: <DowngradeFailedSupportLink />,
+						},
+					}
+				) }
 			/>
 		);
 	}
@@ -1437,6 +1496,11 @@ class PurchaseNotice extends Component<
 		const downgradedRedirectNotice = this.renderDowngradedRedirectNotice();
 		if ( downgradedRedirectNotice ) {
 			return downgradedRedirectNotice;
+		}
+
+		const downgradeFailedNotice = this.renderDowngradeFailedNotice();
+		if ( downgradeFailedNotice ) {
+			return downgradeFailedNotice;
 		}
 
 		if ( purchase.asyncPendingPaymentBlockIsSet ) {

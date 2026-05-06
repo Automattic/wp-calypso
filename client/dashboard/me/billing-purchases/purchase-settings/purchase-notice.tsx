@@ -15,6 +15,7 @@ import { differenceInCalendarDays } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import { useHelpCenter } from '../../../app/help-center';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
 import { getRelativeTimeString } from '../../../utils/datetime';
@@ -54,10 +55,12 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		cancelled,
 		downgraded,
 		intent,
+		downgrade_failed: downgradeFailed,
 		refund: downgradedRefund,
 		currency: downgradedCurrency,
 	} = purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
+	const { setNewMessagingChat } = useHelpCenter();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
 	// navigation falls through to the regular expiring notice.
@@ -92,6 +95,20 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} );
 		}
 	}, [ downgraded, navigate ] );
+	const [ showDowngradeFailedNotice, setShowDowngradeFailedNotice ] = useState(
+		Boolean( downgradeFailed )
+	);
+	useEffect( () => {
+		if ( downgradeFailed ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { downgrade_failed: _downgradeFailed, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ downgradeFailed, navigate ] );
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -145,6 +162,30 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 				intent={ cancelledIntent }
 				onClose={ () => setShowCancelledNotice( false ) }
 			/>
+		);
+	}
+
+	if ( showDowngradeFailedNotice ) {
+		return (
+			<Notice variant="error" onClose={ () => setShowDowngradeFailedNotice( false ) }>
+				{ createInterpolateElement(
+					__(
+						'We couldn\u2019t switch your plan. Please try again, or <button>contact support</button> if the issue continues.'
+					),
+					{
+						button: (
+							<Button
+								variant="link"
+								onClick={ () => {
+									setNewMessagingChat( {
+										initialMessage: 'Plan downgrade failed',
+									} );
+								} }
+							/>
+						),
+					}
+				) }
+			</Notice>
 		);
 	}
 
