@@ -323,7 +323,7 @@ async function fetchEphemeralKey( {
 		path: REALTIME_CLIENT_SECRETS_PATH,
 		method: 'POST',
 		apiNamespace: 'wpcom/v2',
-		query: {
+		headers: {
 			'X-WPCOM-AI-Feature': 'wpcom-dictation-tool',
 		},
 		body: {
