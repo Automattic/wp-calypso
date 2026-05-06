@@ -17,7 +17,7 @@ type ChooseVariationCase = {
 	name: string;
 	n: number;
 	variations: Array< { range: Range } >;
-	expected: number;
+	expected: number | null;
 };
 type ConditionCase = {
 	name: string;

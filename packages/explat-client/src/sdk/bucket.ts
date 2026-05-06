@@ -69,23 +69,24 @@ export function inRange( n: number, range: Range ): boolean {
 }
 
 /**
- * Index of the variation whose inline `range` contains `n`, or `-1` if none.
+ * Index of the variation whose inline `range` contains `n`, or `null` if none.
  *
  * Each variation carries an inline `range` tuple; this function walks the
  * variations directly rather than a parallel ranges array so any future
- * per-variation field is a one-place change. Callers treat `-1` as "user is
- * outside coverage" — fall through to the next rule, do not crash. The
- * `-1` sentinel matches the PHP runtime and the cross-runtime `cases.json`.
+ * per-variation field is a one-place change. Callers treat `null` as "user is
+ * outside coverage" — fall through to the next rule, do not crash. The PHP
+ * runtime returns the same `null` sentinel and the cross-runtime `cases.json`
+ * encodes it the same way, so the contract stays in lockstep.
  */
 export function chooseVariation(
 	n: number,
 	variations: Array< Pick< ExperimentVariation, 'range' > >
-): number {
+): number | null {
 	for ( let i = 0; i < variations.length; i++ ) {
 		const range = variations[ i ]?.range ?? [ 0, 0 ];
 		if ( inRange( n, range ) ) {
 			return i;
 		}
 	}
-	return -1;
+	return null;
 }
