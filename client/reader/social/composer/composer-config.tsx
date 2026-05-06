@@ -5,6 +5,68 @@ import type { useTranslate } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 
 /**
+ * Optional media-attachment slot exposed by per-protocol configs. The shared
+ * provider calls `useMedia` (when defined) at provider mount so the underlying
+ * upload state survives modal mount/unmount — the same lifetime that owns the
+ * deferred preview-URL revocation. The modal reads the returned slot to render
+ * the media UI, gate submission, extend the wire params, and patch the cache
+ * with a local-preview embed on publish success.
+ *
+ * The returned slot is opaque to the modal: per-protocol implementations cast
+ * `params` and `result` to their concrete shapes inside `extendBuildParams` /
+ * `onPublishSuccess`. Mastodon does not supply `useMedia` today (its backend
+ * upload path lands in a follow-up); atmosphere wires it via
+ * `useAtmosphereComposerMedia`.
+ */
+export interface ComposerMediaSlot {
+	/** True when at least one image entry exists (any kind). Used by the modal's discard guard. */
+	hasAny: boolean;
+	/** True when at least one image is in the `'uploaded'` state. Lets image-only posts submit. */
+	hasUploaded: boolean;
+	/** True when every image entry is `'uploaded'`. Submit is gated on this. */
+	isAllUploaded: boolean;
+	/** True when at least one image is still compressing or uploading. Submit is gated against this. */
+	isAnyPending: boolean;
+	/**
+	 * Renders the grid of attached items (e.g. atmosphere's `<ImageGrid>`).
+	 * Slotted under the textarea, above the error region. Returns `null`
+	 * when nothing should appear.
+	 */
+	renderGrid: () => ReactNode;
+	/**
+	 * Renders the media trigger button on the left side of the footer
+	 * (e.g. atmosphere's "Add image" picker). The slot owns the hidden
+	 * `<input type="file">` so the shared footer doesn't have to know
+	 * accepted file types or per-protocol upload limits. Returns `null`
+	 * when no trigger should appear.
+	 */
+	renderFooterTrigger: () => ReactNode;
+	/**
+	 * Merge wire-level media fields into the protocol's params before the
+	 * mutation runs. The modal calls `config.buildParams(mode, text)` first,
+	 * then passes the result through this hook for the media-aware variant.
+	 * `unknown` keeps the slot opaque — per-protocol implementations cast.
+	 */
+	extendBuildParams: ( params: unknown ) => unknown;
+	/**
+	 * Called from the modal's `onSuccess` after the wire write succeeds.
+	 * Atmosphere uses this to patch the just-published item's cache embed
+	 * with local preview URLs so the UI shows the user's images during the
+	 * brief window before the next refetch. `result` is opaque — the
+	 * implementation casts to its protocol's result shape.
+	 */
+	onPublishSuccess: ( queryClient: QueryClient, result: unknown ) => void;
+	/**
+	 * Drop all media state. Called by the provider when `mode` transitions
+	 * to `null`. `keepPreviewUrlsAlive` is true on the publish-success path
+	 * (atmosphere defers revocation by ~60s so cache entries that reference
+	 * local preview URLs outlast the timeline staleTime) and false on the
+	 * cancel/discard path (URLs reclaimed immediately).
+	 */
+	clear: ( options: { keepPreviewUrlsAlive: boolean } ) => void;
+}
+
+/**
  * The translate function from `useTranslate()` — has overloads for 1/2/3
  * args. Re-export so per-protocol configs can refer to the same shape
  * without each redeclaring it. Capturing it via `useTranslate` (a hook)
@@ -92,6 +154,16 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 * forget. Keep this out of the type if a protocol doesn't need it.
 	 */
 	logBadRequest?: ( mode: ActiveMode, error: TError ) => void;
+	/**
+	 * Optional media-slot hook. Called once at provider mount with the live
+	 * mode + connection id (the slot reads `mode.kind` for analytics labels,
+	 * and `connectionId` for the upload endpoint). The hook MUST be a stable
+	 * reference across renders — it's invoked unconditionally inside the
+	 * provider so React's hook-ordering rules apply. Atmosphere supplies
+	 * `useAtmosphereComposerMedia`; Mastodon leaves this undefined until its
+	 * backend upload path ships.
+	 */
+	useMedia?: ( ctx: { mode: ActiveMode | null; connectionId: number } ) => ComposerMediaSlot;
 }
 
 /**

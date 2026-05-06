@@ -1,23 +1,43 @@
 import { __experimentalHStack as HStack, Button, Spinner } from '@wordpress/components';
-import { Icon, image } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import type { ReactNode } from 'react';
 
 interface Props {
 	graphemeCount: number;
 	onSubmit: () => void;
 	isPending: boolean;
 	limit: number;
+	/**
+	 * Optional override for the Post button's disabled state. When provided,
+	 * fully replaces the footer's internal `isPending || tooLong || empty`
+	 * logic so the parent can extend it (e.g. gating on uploaded media).
+	 */
+	disabled?: boolean;
+	/**
+	 * Optional left-side content rendered before the character counter — e.g.
+	 * a per-protocol media trigger button supplied by `ComposerMediaSlot.
+	 * renderFooterTrigger`. Pass `null` (or omit) for protocols without a
+	 * media picker.
+	 */
+	footerStart?: ReactNode;
 }
 
 const WARN_THRESHOLD_REMAINING = 50;
 
-export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: Props ) {
+export function ComposerFooter( {
+	graphemeCount,
+	onSubmit,
+	isPending,
+	limit,
+	disabled: disabledProp,
+	footerStart,
+}: Props ) {
 	const translate = useTranslate();
 	const remaining = limit - graphemeCount;
 	const tooLong = remaining < 0;
 	const empty = graphemeCount === 0;
-	const disabled = isPending || tooLong || empty;
+	const disabled = disabledProp ?? ( isPending || tooLong || empty );
 
 	const countClass = clsx( 'social-composer__count', {
 		'is-warn': remaining > 0 && remaining <= WARN_THRESHOLD_REMAINING,
@@ -26,18 +46,7 @@ export function ComposerFooter( { graphemeCount, onSubmit, isPending, limit }: P
 
 	return (
 		<HStack className="social-composer__footer" justify="space-between" alignment="center">
-			<div className="social-composer__footer-left">
-				{ /* Slice 8 wires this up — image / video upload + alt-text + content warnings. */ }
-				<button
-					type="button"
-					className="social-composer__media"
-					aria-disabled="true"
-					tabIndex={ 0 }
-					aria-label={ translate( 'Add media' ) }
-				>
-					<Icon icon={ image } size={ 18 } />
-				</button>
-			</div>
+			<div className="social-composer__footer-left">{ footerStart ?? null }</div>
 			<HStack spacing={ 2 } className="social-composer__footer-right">
 				<span
 					id="social-composer-count"

@@ -21,7 +21,7 @@ import type { AppState } from 'calypso/types';
 export function ComposerModal< TError, TParams, TResult >() {
 	const translate = useTranslate();
 	const config = useComposerConfig< TError, TParams, TResult >();
-	const { mode, closeComposer } = useComposer();
+	const { mode, closeComposer, mediaSlot } = useComposer();
 	const queryClient = useQueryClient();
 	const mutation = useMutation( config.mutationFactory( queryClient ) );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -74,23 +74,37 @@ export function ComposerModal< TError, TParams, TResult >() {
 		if ( mutation.isPending ) {
 			return;
 		}
-		if ( text.trim().length > 0 ) {
+		if ( text.trim().length > 0 || mediaSlot.hasAny ) {
 			setConfirmDiscard( true );
 			return;
 		}
 		closeComposer();
-	}, [ mutation.isPending, text, closeComposer ] );
+	}, [ mutation.isPending, text, mediaSlot.hasAny, closeComposer ] );
+
+	const tooLong = graphemeCount > config.limit;
+	const empty = graphemeCount === 0;
+	// Image-only posts are allowed: when the user has at least one uploaded
+	// image, the empty-text gate doesn't block submission. Pending media (any
+	// image still compressing/uploading) blocks regardless.
+	const canSubmit =
+		! mutation.isPending &&
+		! tooLong &&
+		! mediaSlot.isAnyPending &&
+		mediaSlot.isAllUploaded &&
+		( ! empty || mediaSlot.hasUploaded );
 
 	const handleSubmit = useCallback( () => {
 		if ( ! mode || mutation.isPending ) {
 			return;
 		}
-		if ( graphemeCount === 0 || graphemeCount > config.limit ) {
+		if ( ! canSubmit ) {
 			return;
 		}
-		const params = config.buildParams( mode, text );
+		const baseParams = config.buildParams( mode, text );
+		const params = mediaSlot.extendBuildParams( baseParams ) as TParams;
 		mutation.mutate( params, {
 			onSuccess: ( result ) => {
+				mediaSlot.onPublishSuccess( queryClient, result );
 				const { event, props } = config.tracks.published( mode, result );
 				dispatch( recordReaderTracksEvent( event, props ) );
 				const { text: noticeText, threadUrl } = config.successNotice( mode, result, translate );
@@ -98,10 +112,21 @@ export function ComposerModal< TError, TParams, TResult >() {
 					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
 					: undefined;
 				dispatch( successNotice( noticeText, options ) );
-				closeComposer();
+				closeComposer( { keepPreviewUrlsAlive: mediaSlot.hasUploaded } );
 			},
 		} );
-	}, [ mode, mutation, text, graphemeCount, closeComposer, dispatch, translate, config ] );
+	}, [
+		mode,
+		mutation,
+		text,
+		canSubmit,
+		closeComposer,
+		dispatch,
+		translate,
+		config,
+		mediaSlot,
+		queryClient,
+	] );
 
 	if ( ! mode ) {
 		return null;
@@ -137,6 +162,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					}
 					aria-invalid={ errorMessage ? true : undefined }
 				/>
+				{ mediaSlot.renderGrid() }
 				{ errorMessage && (
 					<div id="social-composer-error" className="social-composer__error" role="alert">
 						{ errorMessage }
@@ -147,6 +173,8 @@ export function ComposerModal< TError, TParams, TResult >() {
 					onSubmit={ handleSubmit }
 					isPending={ mutation.isPending }
 					limit={ config.limit }
+					disabled={ ! canSubmit }
+					footerStart={ mediaSlot.renderFooterTrigger() }
 				/>
 			</Modal>
 			{ confirmDiscard && (

@@ -2,6 +2,7 @@ import { createPostMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl } from './route';
+import { useAtmosphereComposerMedia } from './use-atmosphere-composer-media';
 import type { AtmosphereError, CreatePostParams, CreatePostResult } from '@automattic/api-core';
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
@@ -135,6 +136,7 @@ export const atmosphereComposerConfig: ComposerConfig<
 			},
 		} );
 	},
+	useMedia: useAtmosphereComposerMedia,
 };
 
 function titleForMode( mode: ActiveMode, t: Translate ): string {

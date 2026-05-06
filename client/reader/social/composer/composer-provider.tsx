@@ -7,8 +7,35 @@ import {
 	useRef,
 	useState,
 } from 'react';
-import { ComposerConfigProvider, type ComposerConfig } from './composer-config';
+import {
+	ComposerConfigProvider,
+	type ComposerConfig,
+	type ComposerMediaSlot,
+} from './composer-config';
 import type { ReactNode } from 'react';
+
+/**
+ * Default `ComposerMediaSlot` returned when a config doesn't supply
+ * `useMedia`. All flags are `false`, render is a no-op, and the param /
+ * success hooks are pass-through identities. Calling this from the
+ * provider's `useMemo` keeps the context value referentially stable for
+ * configs without media support.
+ */
+const NOOP_MEDIA_SLOT: ComposerMediaSlot = {
+	hasAny: false,
+	hasUploaded: false,
+	isAllUploaded: true,
+	isAnyPending: false,
+	renderGrid: () => null,
+	renderFooterTrigger: () => null,
+	extendBuildParams: ( params ) => params,
+	onPublishSuccess: () => undefined,
+	clear: () => undefined,
+};
+
+function useNoopMedia(): ComposerMediaSlot {
+	return NOOP_MEDIA_SLOT;
+}
 
 /**
  * Generic strong-ref for the post being replied to / quoted. Atmosphere
@@ -64,10 +91,23 @@ export type ComposerMode =
 
 export type ActiveMode = ComposerMode & { connectionId: number };
 
+/**
+ * Options accepted by `closeComposer`. The deferred-revocation flag is the
+ * only knob today: success paths that patched cache entries with local
+ * preview URLs (atmosphere's `setAtmospherePostEmbed`) pass `true` so the
+ * URLs survive past the timeline / author-feed staleTime; cancel and
+ * discard paths leave it `false` so URLs are reclaimed immediately.
+ */
+export interface CloseComposerOptions {
+	keepPreviewUrlsAlive?: boolean;
+}
+
 interface ComposerContextValue {
 	mode: ActiveMode | null;
 	openComposer: ( mode: ComposerMode ) => void;
-	closeComposer: () => void;
+	closeComposer: ( options?: CloseComposerOptions ) => void;
+	/** Read by the modal to render media UI and gate submission. */
+	mediaSlot: ComposerMediaSlot;
 }
 
 const ComposerContext = createContext< ComposerContextValue | null >( null );
@@ -109,13 +149,46 @@ export function ComposerProvider< TError, TParams, TResult >( {
 		[ connectionId, config.supportedModes ]
 	);
 
-	const closeComposer = useCallback( () => {
+	// Tracks whether the most recent close should keep preview URLs alive.
+	// Read inside the `mode → null` effect that calls `mediaSlot.clear`.
+	// Stored on a ref because the effect can't take a parameter, and stuffing
+	// the flag into `mode` itself would couple it to the open-state model.
+	const keepPreviewUrlsAliveRef = useRef( false );
+
+	const closeComposer = useCallback( ( options?: CloseComposerOptions ) => {
+		keepPreviewUrlsAliveRef.current = options?.keepPreviewUrlsAlive ?? false;
 		setMode( null );
 	}, [] );
 
+	// `config.useMedia` is captured once at the start of the provider's life
+	// and called every render. Per the contract on `ComposerConfig.useMedia`,
+	// it must be a stable reference — atmosphere exports a module-level hook
+	// (`useAtmosphereComposerMedia`), and configs without media support fall
+	// through to `useNoopMedia`. The hook reads `mode` and `connectionId`
+	// each render so the underlying upload state machine (atmosphere's
+	// `useImageUploads`) sees live values for analytics + endpoint args.
+	const useMedia = config.useMedia ?? useNoopMedia;
+	const mediaSlot = useMedia( { mode, connectionId } );
+
+	// Reset media state when the composer closes (mode → null). `clear` is
+	// driven by the per-protocol slot — atmosphere's implementation calls
+	// `useImageUploads.clearAll` with deferred revocation when the publish
+	// path requested it.
+	useEffect( () => {
+		if ( ! mode ) {
+			const keepPreviewUrlsAlive = keepPreviewUrlsAliveRef.current;
+			keepPreviewUrlsAliveRef.current = false;
+			mediaSlot.clear( { keepPreviewUrlsAlive } );
+		}
+		// `mediaSlot` is recreated each render — capturing it in deps would
+		// re-run the effect every render. The closure reads the snapshot at
+		// effect time, which is the desired behavior.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ mode ] );
+
 	const value = useMemo(
-		() => ( { mode, openComposer, closeComposer } ),
-		[ mode, openComposer, closeComposer ]
+		() => ( { mode, openComposer, closeComposer, mediaSlot } ),
+		[ mode, openComposer, closeComposer, mediaSlot ]
 	);
 
 	return (

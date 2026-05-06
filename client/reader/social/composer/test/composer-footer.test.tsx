@@ -43,13 +43,37 @@ describe( '<ComposerFooter>', () => {
 		expect( screen.getByText( '-5' ) ).toHaveClass( 'is-over' );
 	} );
 
-	it( 'media button is aria-disabled and tab-reachable', () => {
+	it( 'renders no media trigger by default — the footerStart slot is empty', () => {
 		render(
 			<ComposerFooter graphemeCount={ 5 } onSubmit={ noop } isPending={ false } limit={ 300 } />
 		);
-		const media = screen.getByRole( 'button', { name: /add media/i } );
-		expect( media ).toHaveAttribute( 'aria-disabled', 'true' );
-		expect( media ).toHaveAttribute( 'tabindex', '0' );
+		expect( screen.queryByRole( 'button', { name: /add media/i } ) ).toBeNull();
+	} );
+
+	it( 'renders the supplied footerStart node into the footer', () => {
+		render(
+			<ComposerFooter
+				graphemeCount={ 5 }
+				onSubmit={ noop }
+				isPending={ false }
+				limit={ 300 }
+				footerStart={ <button type="button">Add media</button> }
+			/>
+		);
+		expect( screen.getByRole( 'button', { name: /add media/i } ) ).toBeVisible();
+	} );
+
+	it( 'honors the disabled prop override', () => {
+		render(
+			<ComposerFooter
+				graphemeCount={ 50 }
+				onSubmit={ noop }
+				isPending={ false }
+				limit={ 300 }
+				disabled
+			/>
+		);
+		expect( screen.getByRole( 'button', { name: /post/i } ) ).toBeDisabled();
 	} );
 
 	it( 'shows spinner state when pending', () => {
