@@ -1,0 +1,158 @@
+/**
+ * Composition rendering CSS for the EditFrame Feature Clip pipeline.
+ *
+ * EditFrame's renderer frames against the actual rendered DOM size of the
+ * root timegroup. So `.composition-root` MUST carry the real output
+ * dimensions (1080x1920 for 9:16 vertical). The visual scaling for the
+ * preview is handled by EditFrame's <Preview> component, NOT by a CSS
+ * transform on this root — a transform here would be captured into the
+ * MP4 and produce a tiny image in the corner.
+ */
+
+.image-studio-feature-clip.composition-root {
+	position: relative;
+	width: 1080px;
+	height: 1920px;
+	overflow: hidden;
+	background: #111923;
+	color: #fff;
+}
+
+.image-studio-feature-clip .timeline-sequence {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.image-studio-feature-clip .scene {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+/*
+ * Inset overflow gives Ken-Burns room to translate without exposing edges.
+ * The image renders 120px larger than its scene viewport on every side.
+ */
+.image-studio-feature-clip .scene-background-frame {
+	position: absolute;
+	inset: -120px;
+	z-index: 0;
+	overflow: hidden;
+	transform-origin: center;
+	will-change: transform;
+}
+
+.image-studio-feature-clip .scene-background {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	filter: saturate(0.98) contrast(1.05);
+}
+
+/* Ken-Burns variants — driven by --scene-progress (0..1) per frame. */
+.image-studio-feature-clip .camera-zoom-in {
+	transform: scale(calc(1 + (var(--scene-progress, 0) * 0.12)));
+}
+
+.image-studio-feature-clip .camera-zoom-out {
+	transform: scale(calc(1.18 - (var(--scene-progress, 0) * 0.12)));
+}
+
+.image-studio-feature-clip .camera-pan-left {
+	transform: translate3d(
+			calc(-12px + (var(--scene-progress, 0) * -68px)),
+			0,
+			0
+		)
+		scale(1.1);
+}
+
+.image-studio-feature-clip .camera-pan-right {
+	transform: translate3d(
+			calc(12px + (var(--scene-progress, 0) * 68px)),
+			0,
+			0
+		)
+		scale(1.1);
+}
+
+.image-studio-feature-clip .camera-static {
+	transform: scale(1.05);
+}
+
+/* Bottom-edge vignette so titles + captions stay legible. */
+.image-studio-feature-clip .scene-image-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background:
+		linear-gradient(
+			0deg,
+			rgba(8, 13, 20, 0.9),
+			rgba(8, 13, 20, 0.56) 38%,
+			rgba(8, 13, 20, 0.08) 72%
+		),
+		linear-gradient(180deg, rgba(8, 13, 20, 0.42), transparent 28%);
+}
+
+.image-studio-feature-clip .scene-caption {
+	position: absolute;
+	left: 72px;
+	right: 72px;
+	bottom: 120px;
+	z-index: 2;
+	font-size: 38px;
+	font-weight: 700;
+	line-height: 1.2;
+	color: #fff;
+	text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+	transform: translateY(calc(16px - (var(--scene-progress, 0) * 16px)));
+}
+
+/* Title-card scene */
+.image-studio-feature-clip .scene-title-card {
+	background:
+		radial-gradient(circle at 70% 24%, rgba(255, 255, 255, 0.18), transparent 32%),
+		linear-gradient(135deg, #1a1f2e 0%, #2c1f4a 100%);
+}
+
+.image-studio-feature-clip .scene-grid {
+	position: relative;
+	z-index: 3;
+	display: grid;
+	width: 100%;
+	height: 100%;
+	align-content: end;
+	padding: 170px 72px 150px;
+}
+
+.image-studio-feature-clip .scene-copy {
+	display: grid;
+	max-width: 936px;
+	gap: 26px;
+	min-width: 0;
+}
+
+.image-studio-feature-clip .scene-title {
+	display: block;
+	max-width: 936px;
+	color: #fff;
+	/* Absolute px against the 1080-wide canvas; vw units would resolve
+	   against the scaled preview viewport and come out flattened. */
+	font-size: 78px;
+	font-weight: 700;
+	line-height: 1.03;
+	letter-spacing: 0;
+	text-wrap: balance;
+	transform: translateY(calc(20px - (var(--scene-progress, 0) * 20px)));
+}
+
+.image-studio-feature-clip .scene-title span {
+	white-space: normal;
+}
