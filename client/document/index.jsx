@@ -10,7 +10,6 @@ import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
 	AuthHelper,
-	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
@@ -44,8 +43,6 @@ class Document extends Component {
 			clientData,
 			commitChecksum,
 			commitSha,
-			devDocs,
-			devDocsURL,
 			entrypoint,
 			env,
 			featuresHelper,
@@ -225,7 +222,6 @@ class Document extends Component {
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
 						</EnvironmentBadge>
 					) }
 

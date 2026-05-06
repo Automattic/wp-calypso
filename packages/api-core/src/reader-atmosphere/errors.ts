@@ -9,6 +9,15 @@ export type AtmosphereError =
 	| { kind: 'rate_limited'; retry_after?: number }
 	| { kind: 'upstream_unavailable' }
 	| { kind: 'bad_request'; message: string | null }
+	| { kind: 'text_too_long' }
+	| { kind: 'reply_disabled' }
+	| { kind: 'quote_disabled' }
+	| { kind: 'target_unavailable' }
+	// Set client-side from `compressImage` failures; the server never emits
+	// a matching wire code (the slice-8a backend collapses every blob/media
+	// rejection into `atmosphere_bad_request`, which lands as `bad_request`
+	// above).
+	| { kind: 'blob_decode_failed' }
 	| { kind: 'unknown'; cause: unknown };
 
 interface WpErrorLike {
@@ -65,6 +74,14 @@ export function classifyAtmosphereError( raw: unknown ): AtmosphereError {
 		case 'bad_request':
 		case 'atmosphere_bad_request':
 			return { kind: 'bad_request', message: raw.message ?? null };
+		case 'atmosphere_text_too_long':
+			return { kind: 'text_too_long' };
+		case 'atmosphere_reply_disabled':
+			return { kind: 'reply_disabled' };
+		case 'atmosphere_quote_disabled':
+			return { kind: 'quote_disabled' };
+		case 'atmosphere_target_unavailable':
+			return { kind: 'target_unavailable' };
 		default:
 			return { kind: 'unknown', cause: raw };
 	}

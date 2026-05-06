@@ -6,6 +6,13 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../../app/locale';
 import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
+import {
+	VALUES_CACHED,
+	VALUES_RENDERER,
+	VALUES_REQUEST_TYPE,
+	VALUES_SEVERITY,
+	VALUES_STATUS,
+} from './constants';
 import type { Field, Operator, DataViewRenderFieldProps } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -13,12 +20,6 @@ import './style.scss';
 type UseFieldsArgs =
 	| { logType: LogType; timezoneString: string; gmtOffset?: number }
 	| { logType: LogType; timezoneString?: undefined; gmtOffset: number };
-
-const VALUES_CACHED = [ 'false', 'true' ] as const;
-const VALUES_RENDERER = [ 'php', 'static' ] as const;
-const VALUES_REQUEST_TYPE = [ 'GET', 'HEAD', 'POST', 'PUT', 'DELETE' ] as const;
-const VALUES_SEVERITY = [ 'User', 'Warning', 'Deprecated', 'Fatal error' ] as const;
-const VALUES_STATUS = [ '200', '301', '302', '400', '401', '403', '404', '429', '500' ] as const;
 
 const getLabelCached = ( cached: string ) => {
 	switch ( cached ) {

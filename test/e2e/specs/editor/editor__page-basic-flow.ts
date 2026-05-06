@@ -36,6 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 	);
 
 	let page: Page;
+	let siteSlug: string;
 	let editorPage: EditorPage;
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
@@ -47,15 +48,16 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		siteSlug = testAccount.getSiteURL( { protocol: false } );
 	} );
 
 	it( 'Visit Pages page', async function () {
 		pagesPage = new PagesPage( page );
-		await pagesPage.visit();
+		await pagesPage.visit( { siteSlug } );
 	} );
 
 	it( 'Start a new page', async function () {
-		await pagesPage.addNewPage();
+		await pagesPage.addNewPage( { siteSlug } );
 	} );
 
 	it( 'Select page template', async function () {

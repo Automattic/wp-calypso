@@ -37,7 +37,7 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 -->
 
 - [ ] Has the general commit checklist been followed? (PCYsg-hS-p2)
-- [ ] [Have you written new tests](https://wpcalypso.wordpress.com/devdocs/docs/testing/index.md) for your changes?
+- [ ] [Have you written new tests](https://github.com/Automattic/wp-calypso/blob/trunk/docs/testing/index.md) for your changes?
 - [ ] Have you tested the feature in Simple (P9HQHe-k8-p2), Atomic (P9HQHe-jW-p2), and self-hosted Jetpack sites (PCYsg-g6b-p2)?
 - [ ] Have you checked for TypeScript, React or other console errors?
 - [ ] Have you tested accessibility for your changes? Ensure the feature remains usable with various user agents (e.g., browsers), interfaces (e.g., keyboard navigation), and assistive technologies (e.g., screen readers) (PCYsg-S3g-p2).

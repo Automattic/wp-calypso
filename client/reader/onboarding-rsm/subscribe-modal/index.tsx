@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
@@ -258,7 +257,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				streamKey: 'recent',
 				page: 1,
 				perPage: 10,
-			} ) as AnyAction
+			} )
 		);
 
 		handleClose();

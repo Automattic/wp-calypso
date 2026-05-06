@@ -6,11 +6,12 @@ import {
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { Plans } from '@automattic/data-stores';
+import { HelpCenter, HelpCenterSelect, Plans } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	DOMAIN_FLOW,
 	isNewHostedSiteCreationFlow,
+	isOnboardingFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
 	Step,
@@ -202,6 +203,8 @@ export interface UnifiedPlansStepProps {
 	isStepperUpgradeFlow?: boolean;
 }
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 /**
  * This is a "unified" plans step component that is utilised by both Start (old framework) and Stepper (new framework).
  * It contains the latest logic/conditioning, properties, etc. that apply to the latest main iterations of the plans step.
@@ -257,6 +260,13 @@ function UnifiedPlansStep( {
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
+
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -645,6 +655,13 @@ function UnifiedPlansStep( {
 							leftElement={
 								goBack ? (
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+								) : undefined
+							}
+							rightElement={
+								isOnboardingFlow( flowName ) ? (
+									<Step.LinkButton onClick={ toggleHelpCenter }>
+										{ translate( 'Need help?' ) }
+									</Step.LinkButton>
 								) : undefined
 							}
 						/>

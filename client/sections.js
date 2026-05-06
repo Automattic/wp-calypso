@@ -207,7 +207,7 @@ const sections = [
 	},
 	{
 		name: 'podcasting',
-		paths: [ '/podcasting' ],
+		paths: [ '/settings/podcast' ],
 		module: 'calypso/my-sites/podcast',
 		group: 'sites',
 	},
@@ -604,12 +604,6 @@ const sections = [
 		paths: [ '/migrate' ],
 		module: 'calypso/my-sites/migrate',
 		group: 'sites',
-	},
-	{
-		name: 'devdocs',
-		paths: [ '/devdocs' ],
-		module: 'calypso/devdocs',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'home',

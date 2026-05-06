@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from '@automattic/urls';
 import { Button, SelectControl, TextareaControl } from '@wordpress/components';
@@ -7,6 +6,7 @@ import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getName } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { useDispatch } from 'calypso/state';
@@ -48,6 +48,7 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const [ selectedReason, setSelectedReason ] = useState< string >( '' );
 	const [ message, setMessage ] = useState< string >( '' );
 
@@ -142,7 +143,6 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	const renderButtons = () => {
 		const { disableButtons, cancellationInProgress } = props;
 		const disabled = disableButtons || ! selectedReason;
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 		const isRemoveIntent = intent === 'remove';
 		const getCompleteLabel = () => {
 			if ( ! isSplitEnabled ) {

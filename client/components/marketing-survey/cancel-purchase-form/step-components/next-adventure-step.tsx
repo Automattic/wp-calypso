@@ -1,8 +1,8 @@
-import config from '@automattic/calypso-config';
 import { TextareaControl, TextControl, SelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { toSelectOption } from '../to-select-options';
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 export default function NextAdventureStep( props: Props ) {
 	const translate = useTranslate();
 	const { isPlan, isOnlyStep, intent, onValidationChange } = props;
-	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const isCancelPostMutation = isSplitEnabled && intent !== 'remove';
 	const [ text, setText ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );
