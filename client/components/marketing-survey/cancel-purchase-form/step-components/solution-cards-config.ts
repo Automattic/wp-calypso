@@ -11,10 +11,6 @@ const SITE_SPEED_URL = localizeUrl( 'https://wordpress.com/support/site-speed/' 
 const SITE_MIGRATION_URL = localizeUrl( 'https://wordpress.com/support/site-migration/' );
 const DOMAINS_SUPPORT_URL = localizeUrl( 'https://wordpress.com/support/domains/' );
 
-function getLiveChatUrlForPlans( site: SiteDetails, purchase: Purchase ): string {
-	return `/purchases/subscriptions/${ site.slug }/${ purchase.id }`;
-}
-
 export type CardActionContext = {
 	site: SiteDetails;
 	purchase: Purchase;
@@ -24,17 +20,20 @@ export type CardActionContext = {
 	cancellationReason: string;
 	onClickDowngrade?: ( upsell: string ) => void;
 	onSelectSwitchToMonthly?: () => void;
+	canConnectToZendeskMessaging: boolean;
+	setNavigateToRoute: ( route?: string ) => void;
+	setShowHelpCenter: ( show: boolean ) => void;
 	setNewMessagingChat: ( config: {
 		initialMessage: string;
-		section: string;
-		siteUrl: string;
-		siteId: number;
+		section?: string;
+		siteUrl?: string;
+		siteId?: number;
 	} ) => void;
 	setOpenOdieWithContext: ( config: {
 		initialMessage: string;
-		section: string;
-		siteUrl: string;
-		siteId: number;
+		section?: string;
+		siteUrl?: string;
+		siteId?: number;
 	} ) => void;
 };
 
@@ -82,18 +81,21 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	{
 		id: 'speak-with-support',
 		title: 'Speak with our support team',
-		subtitle: "We're here to answer any of your questions.",
+		subtitle: 'We\u2019re here to answer any of your questions.',
 		onClick: ( ctx ) => {
-			page( getLiveChatUrlForPlans( ctx.site, ctx.purchase ) );
-			ctx.setNewMessagingChat( {
-				initialMessage:
-					"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
-					ctx.cancellationReason,
-				section: 'pre-cancellation-upsell',
-				siteUrl: ctx.site.URL,
-				siteId: ctx.site.ID,
-			} );
-			ctx.closeDialog();
+			const initialMessage =
+				'User is contacting us from pre-cancellation form. Cancellation reason they\u2019ve given: ' +
+				ctx.cancellationReason;
+			if ( ctx.canConnectToZendeskMessaging ) {
+				ctx.setNewMessagingChat( {
+					initialMessage,
+					siteUrl: ctx.site.URL,
+					siteId: ctx.site.ID,
+				} );
+			} else {
+				ctx.setNavigateToRoute( '/odie' );
+				ctx.setShowHelpCenter( true );
+			}
 		},
 	},
 	{
@@ -189,4 +191,4 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	},
 ];
 
-export { BUILT_BY_URL, RENEW_COUPON, getLiveChatUrlForPlans };
+export { BUILT_BY_URL, RENEW_COUPON };
