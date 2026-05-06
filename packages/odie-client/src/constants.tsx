@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Context, Message, OdieAllowedBots, OdieAllBotSlugs } from './types';
@@ -242,7 +243,8 @@ const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | 
 
 export const getOdieInitialMessage = (
 	botNameSlug: OdieAllowedBots,
-	displayName: string
+	displayName: string,
+	query?: string
 ): Message => {
 	return {
 		content: `**${ sprintf(
@@ -254,9 +256,10 @@ export const getOdieInitialMessage = (
 		) }** \n\n ${ __(
 			"I'm your personal AI assistant. I can help with any questions about your site or account.",
 			__i18n_text_domain__
-		) } ${ __(
-			'Want to browse guides instead? [Browse guides](https://wordpress.com/support?s=)',
-			__i18n_text_domain__
+		) } \n\n${ sprintf(
+			/* translators: %s: URL to the WordPress.com support search page */
+			__( 'Want to browse guides instead? [Browse guides](%s).', __i18n_text_domain__ ),
+			`${ localizeUrl( 'https://wordpress.com/support' ) }?s=${ encodeURIComponent( query || '' ) }`
 		) }`,
 		role: 'bot',
 		type: 'introduction',

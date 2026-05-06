@@ -34,6 +34,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const isTestMode = isTestModeEnvironment();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const [ searchParams, setSearchParams ] = useSearchParams();
+	const queryFromParam = searchParams.get( 'query' ) || '';
+	const chatIdFromParam = searchParams.get( 'chatId' );
+	const queryForBrowseGuides = chatIdFromParam ? '' : queryFromParam;
 	const navigate = useNavigate();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
@@ -143,7 +146,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					<ChatMessage
 						message={ getOdieInitialMessage(
 							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
-							currentUser?.display_name
+							currentUser?.display_name,
+							queryForBrowseGuides
 						) }
 						key={ 0 }
 					/>

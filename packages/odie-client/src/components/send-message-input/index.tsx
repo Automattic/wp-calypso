@@ -160,15 +160,9 @@ export const OdieSendMessageButton = () => {
 		if ( initialQuery && ! isProcessing && chat.status !== 'loading' ) {
 			setInputValue( initialQuery );
 			setInitialQuery( '' );
-			sendMessageHandler();
+			sendMessageHandler( initialQuery );
 		}
-	}, [
-		initialQuery,
-		sendMessageHandler,
-		isProcessing,
-		isDisabled,
-		chat.status,
-	] );
+	}, [ initialQuery, sendMessageHandler, isProcessing, isDisabled, chat.status ] );
 
 	return (
 		<>
