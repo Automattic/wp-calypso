@@ -15,6 +15,7 @@ import useConversation from '../../hooks/use-conversation';
 import useCopyAction from '../../hooks/use-copy-action';
 import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
+import useRegisterCustomActions from '../../hooks/use-setup-custom-actions/use-register-custom-actions';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
 import { markSessionUsed } from '../../utils/agent-session';
@@ -275,20 +276,7 @@ export default function OrchestratorChat( {
 		[ inputValue, onSubmitWithImages ]
 	);
 
-	useEffect( () => {
-		window.__agentsManagerActions = window.__agentsManagerActions || ( {} as AgentsManagerActions );
-		window.__agentsManagerActions.setChatInput = setChatInput;
-		window.__agentsManagerActions.submitChatMessage = submitChatMessage;
-
-		return () => {
-			if ( window.__agentsManagerActions?.setChatInput === setChatInput ) {
-				delete window.__agentsManagerActions.setChatInput;
-			}
-			if ( window.__agentsManagerActions?.submitChatMessage === submitChatMessage ) {
-				delete window.__agentsManagerActions.submitChatMessage;
-			}
-		};
-	}, [ setChatInput, submitChatMessage ] );
+	useRegisterCustomActions( { setChatInput, submitChatMessage } );
 
 	const handleContextCardAction = useCallback(
 		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
