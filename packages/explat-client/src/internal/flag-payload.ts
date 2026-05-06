@@ -1,4 +1,4 @@
-import type { Feature } from '../sdk/types';
+import type { Feature, Range } from '../sdk/types';
 import type { Config } from '../types';
 
 export type FlagPayload = {
@@ -79,7 +79,40 @@ function parsePayload( raw: unknown, logError: Config[ 'logError' ] ): FlagPaylo
 	}
 	return {
 		schema_version: obj.schema_version,
-		flags: ( obj.flags as Record< string, Feature > ) ?? {},
+		flags: normalizeFlags( ( obj.flags as Record< string, Feature > ) ?? {} ),
 		ttl: typeof obj.ttl === 'number' ? obj.ttl : DEFAULT_TTL_SECONDS,
 	};
+}
+
+/**
+ * Bridge the canonical contract shape (`rule.ranges: [number,number][]` per
+ * `00-contracts.md` § 6) to the SDK's inline `variation.range` shape. The
+ * payload from the wpcom flag-compiler emits the canonical form; the SDK in
+ * `packages/explat-client/src/sdk` reads `variations[i].range`. Distribute
+ * `rule.ranges[i]` onto each variation here so callers don't notice the
+ * difference. Already-inline payloads (e.g. unit-test fixtures) pass through
+ * unchanged.
+ */
+function normalizeFlags( flags: Record< string, Feature > ): Record< string, Feature > {
+	const result: Record< string, Feature > = {};
+	for ( const [ key, feature ] of Object.entries( flags ) ) {
+		result[ key ] = { ...feature, rules: feature.rules?.map( normalizeRule ) ?? [] };
+	}
+	return result;
+}
+
+function normalizeRule( rule: unknown ): Feature[ 'rules' ][ number ] {
+	if ( ! rule || typeof rule !== 'object' || ( rule as { type: string } ).type !== 'experiment' ) {
+		return rule as Feature[ 'rules' ][ number ];
+	}
+	const r = rule as { ranges?: Range[]; variations?: Array< Record< string, unknown > > };
+	if ( ! Array.isArray( r.ranges ) || ! Array.isArray( r.variations ) ) {
+		return rule as Feature[ 'rules' ][ number ];
+	}
+	const variations = r.variations.map( ( variation, i ) =>
+		variation && typeof variation === 'object' && variation.range === undefined
+			? { ...variation, range: r.ranges![ i ] }
+			: variation
+	);
+	return { ...( rule as object ), variations } as unknown as Feature[ 'rules' ][ number ];
 }
