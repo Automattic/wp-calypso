@@ -173,9 +173,7 @@ const PluginDetailsHeader = ( {
 							{ translate( 'Active installations' ) }
 						</div>
 						<div className="plugin-details-header__info-value">
-							<span aria-hidden="true">
-								{ formatNumberCompact( plugin.active_installs ) }
-							</span>
+							<span aria-hidden="true">{ formatNumberCompact( plugin.active_installs ) }</span>
 							<ScreenReaderText>
 								{ formatNumberCompact( plugin.active_installs, {
 									numberFormatOptions: { compactDisplay: 'long' },
