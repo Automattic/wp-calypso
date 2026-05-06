@@ -823,22 +823,6 @@ $breakpoint-mobile: 660px;
 					display: inline-block;
 				}
 			}
-
-			.magic-login__emails-list {
-				li {
-					border-radius: 8px;
-					border: 2px solid var( --studio-gray-10 );
-				}
-
-				a {
-					color: var( --studio-gray-100 );
-					text-decoration: none;
-					font-size: 1rem;
-					font-style: normal;
-					font-weight: 500;
-					line-height: 24px;
-				}
-			}
 		}
 
 		.two-factor-authentication__verification-code-form-wrapper {
@@ -976,10 +960,6 @@ $breakpoint-mobile: 660px;
 				display: contents;
 				ul {
 					width: 100%;
-					li {
-						border-radius: 2px;
-						border: 1px solid #a7aaad;
-					}
 				}
 			}
 
@@ -1146,7 +1126,7 @@ $breakpoint-mobile: 660px;
 				}
 			}
 			.magic-login__emails-list {
-				ul li a p {
+				ul li .components-button p {
 					font-size: rem( 14px );
 				}
 			}

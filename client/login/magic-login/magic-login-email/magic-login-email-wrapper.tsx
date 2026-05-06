@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { extractDomainWithExtension } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { MagicLoginEmail } from '.';
 import './style.scss';
 
@@ -40,15 +41,17 @@ export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapper
 			<ul>
 				{ filteredDomains.map( ( item: MagicEmailDomainInfo, key: number ) => (
 					<li key={ key }>
-						<a
-							onClick={ () => logEvent( item.name ) }
-							target="_blank"
+						<Button
+							variant="secondary"
 							href={ item.url }
+							target="_blank"
 							rel="noreferrer noopener"
+							onClick={ () => logEvent( item.name ) }
+							__next40pxDefaultSize
 						>
 							<MagicLoginEmail.Icon icon={ item.name.toLocaleLowerCase() } />
 							<MagicLoginEmail.Content mailProviderName={ item.name } />
-						</a>
+						</Button>
 					</li>
 				) ) }
 			</ul>
