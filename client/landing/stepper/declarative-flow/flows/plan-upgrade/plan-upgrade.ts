@@ -1,4 +1,4 @@
-import { getPlan } from '@automattic/calypso-products';
+import { getPlan, getIntervalTypeForTerm } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { resolveSelect, useSelect } from '@wordpress/data';
@@ -77,6 +77,27 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 
 		const isSwitchPlan = query.get( 'switch_plan' ) === 'true';
 
+		// Resolve the user's current billing term so we can lock the grid to same-period plans.
+		const siteIdOrSlug = query.get( 'siteSlug' ) || query.get( 'siteId' );
+		const site = useSelect(
+			( select ) => {
+				if ( ! siteIdOrSlug ) {
+					return null;
+				}
+				return select( SITE_STORE ).getSite( siteIdOrSlug );
+			},
+			[ siteIdOrSlug ]
+		);
+		const currentTerm = Plans.useCurrentPlanTerm( { siteId: site?.ID } );
+		const currentIntervalType = currentTerm
+			? ( getIntervalTypeForTerm( currentTerm ) as
+					| 'monthly'
+					| 'yearly'
+					| '2yearly'
+					| '3yearly'
+					| null )
+			: null;
+
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				// Note that this step uses this flow name to select the `plans-upgrade` intent.
@@ -91,10 +112,17 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				selectedFeature,
 
 				// When switching plans from the cancel flow, hide Free and Enterprise tiers
+				// and lock the grid to the user's current billing period.
 				...( isSwitchPlan && {
 					hideFreePlan: true,
 					hideEnterprisePlan: true,
 				} ),
+				...( isSwitchPlan &&
+					currentIntervalType && {
+						hidePlanTypeSelector: true,
+						intervalType: currentIntervalType,
+						displayedIntervals: [ currentIntervalType ],
+					} ),
 
 				// Provide a custom back handler that goes to back_to or /sites
 				wrapperProps: {
@@ -148,11 +176,14 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 									const planTitle = String( selectedPlanObj?.getTitle() ?? '' );
 
 									// Downgrade: fetch old purchase for refund info, fire mutation,
-									// then redirect to the new plan's purchase settings.
+									// then fetch fresh purchases to find the new subscription and redirect.
 									( async () => {
 										try {
+											// Step 1: Fetch old purchase for refund info
 											const purchases: Array< {
-												ID: number;
+												ID: number | string;
+												blog_id: number;
+												product_id: number;
 												is_refundable: boolean;
 												refund_options: Array< {
 													to_product_id: number;
@@ -165,7 +196,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 											} );
 
 											const oldPurchase = purchases.find(
-												( p ) => p.ID === parseInt( purchaseId, 10 )
+												( p ) => String( p.ID ) === String( purchaseId )
 											);
 											const matchingRefund =
 												oldPurchase?.is_refundable && Array.isArray( oldPurchase.refund_options )
@@ -174,15 +205,30 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 													  )
 													: null;
 
-											const response: {
-												status: string;
-												message: string;
-												new_subscription_id?: number;
-											} = await cancelAndRefundPurchaseAsync( parseInt( purchaseId, 10 ), {
-												type: 'downgrade' as const,
-												to_product_id: targetProductId,
+											// eslint-disable-next-line no-console
+											console.log( '[DOWNGRADE-TRACE] 1/pre-mutation', {
+												purchaseId,
+												targetProductId,
+												siteId: site?.ID,
+												oldPurchaseFound: Boolean( oldPurchase ),
+												matchingRefund,
 											} );
 
+											// Step 2: Fire the downgrade mutation
+											const response = await cancelAndRefundPurchaseAsync(
+												parseInt( purchaseId, 10 ),
+												{
+													type: 'downgrade' as const,
+													to_product_id: targetProductId,
+												}
+											);
+
+											// eslint-disable-next-line no-console
+											console.log( '[DOWNGRADE-TRACE] 2/mutation-response', {
+												rawResponse: JSON.stringify( response ),
+											} );
+
+											// Step 3: Build success params
 											const params: Record< string, string > = {
 												downgraded: 'true',
 												plan: planTitle,
@@ -192,20 +238,112 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 												params.currency = matchingRefund.refund_currency_symbol;
 											}
 
-											if ( response.new_subscription_id ) {
-												window.location.assign(
-													addQueryArgs(
-														dashboardLink(
-															'/me/billing/purchases/' + response.new_subscription_id
-														),
+											// Step 4: Read the new subscription ID straight from the mutation response.
+											// The sandbox patch on `update/downgrade-return-subscription-id` (commit 880584429707)
+											// bubbles this through migrate_sub_for_downgrade → downgrade → request_cancel.
+											const newSubscriptionId = (
+												response as { new_subscription_id?: string | number }
+											 )?.new_subscription_id;
+
+											// eslint-disable-next-line no-console
+											console.log( '[DOWNGRADE-TRACE] 3/redirect-decision', {
+												newSubscriptionId,
+												hasNewSubscriptionId: Boolean( newSubscriptionId ),
+											} );
+
+											// Step 5: Detect originating surface and redirect accordingly.
+											// Legacy users must land on `/me/purchases/{siteSlug}/{id}`,
+											// dashboard users on `/me/billing/purchases/{id}`.
+											const isFromDashboard = redirectTo
+												? dashboardOrigins().some( ( origin ) => redirectTo.startsWith( origin ) )
+												: false;
+
+											if ( newSubscriptionId ) {
+												const surface = isFromDashboard ? 'dashboard' : 'legacy';
+
+												if ( ! isFromDashboard && siteSlug ) {
+													// Legacy: verify the new subscription is visible in the
+													// v1.2 endpoint before navigating, to avoid the
+													// manage-purchase page bouncing to /me/purchases (the list)
+													// when getByPurchaseId returns undefined.
+													for ( let attempt = 1; attempt <= 3; attempt++ ) {
+														const freshPurchases: Array< {
+															ID: number | string;
+														} > = await wpcom.req.get( {
+															path: '/me/purchases',
+															apiVersion: '1.2',
+														} );
+														const found = freshPurchases.some(
+															( p ) => String( p.ID ) === String( newSubscriptionId )
+														);
+														// eslint-disable-next-line no-console
+														console.log( '[DOWNGRADE-TRACE] 3a/legacy-verify', { attempt, found } );
+														if ( found ) {
+															break;
+														}
+														if ( attempt < 3 ) {
+															await new Promise( ( r ) => setTimeout( r, 500 ) );
+														}
+													}
+
+													const targetUrl = addQueryArgs(
+														'/me/purchases/' +
+															encodeURIComponent( siteSlug ) +
+															'/' +
+															String( newSubscriptionId ),
 														params
-													)
-												);
+													);
+													// eslint-disable-next-line no-console
+													console.log( '[DOWNGRADE-TRACE] 4/redirect', {
+														surface,
+														url: targetUrl,
+													} );
+													window.location.assign( targetUrl );
+												} else {
+													const targetUrl = addQueryArgs(
+														dashboardLink( '/me/billing/purchases/' + String( newSubscriptionId ) ),
+														params
+													);
+													// eslint-disable-next-line no-console
+													console.log( '[DOWNGRADE-TRACE] 4/redirect', {
+														surface,
+														url: targetUrl,
+													} );
+													window.location.assign( targetUrl );
+												}
 											} else {
-												window.location.assign( addQueryArgs( fallbackDestination, params ) );
+												// Fallback: API didn't return new_subscription_id (sandbox patch not deployed?)
+												const fallbackUrl = addQueryArgs( fallbackDestination, params );
+												// eslint-disable-next-line no-console
+												console.log( '[DOWNGRADE-TRACE] 4/redirect-fallback', {
+													reason: 'no new_subscription_id in mutation response',
+													url: fallbackUrl,
+												} );
+												window.location.assign( fallbackUrl );
 											}
-										} catch {
-											window.location.assign( fallbackDestination );
+										} catch ( error ) {
+											// eslint-disable-next-line no-console
+											console.log( '[DOWNGRADE-TRACE] ERROR', { error } );
+											// Backend rejected the cancel-and-refund downgrade (e.g., 2Y/3Y → annual lower tier
+											// is not in WPCOM_Store::get_downgrade_paths(), or the purchase is past the refund
+											// window). Fall through to the standard checkout flow so the user can still complete
+											// the plan switch via credit/proration.
+											const checkoutUrl = `/checkout/${ encodeURIComponent(
+												siteSlug
+											) }/${ selectedPlan }`;
+											const currentPath = window.location.href.replace(
+												window.location.origin,
+												''
+											);
+											const finalUrl = addQueryArgs( checkoutUrl, {
+												redirect_to: redirectTo || dashboardLink( '/sites' ),
+												cancel_to: currentPath,
+											} );
+											// eslint-disable-next-line no-console
+											console.log( '[DOWNGRADE-TRACE] ERROR-fallback-to-checkout', {
+												url: finalUrl,
+											} );
+											window.location.assign( finalUrl );
 										}
 									} )();
 									return;

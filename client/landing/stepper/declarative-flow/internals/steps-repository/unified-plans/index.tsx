@@ -99,9 +99,11 @@ const PlansStepAdaptor: StepType< {
 	accepts: {
 		hideEnterprisePlan?: boolean;
 		hideFreePlan?: boolean;
+		hidePlanTypeSelector?: boolean;
 		isInSignup?: boolean;
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
+		intervalType?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
 		wrapperProps?: {
 			hideBack?: boolean;
@@ -115,6 +117,8 @@ const PlansStepAdaptor: StepType< {
 		displayedIntervals,
 		hideEnterprisePlan: hideEnterprisePlanProp,
 		hideFreePlan: hideFreePlanProp,
+		hidePlanTypeSelector,
+		intervalType: intervalTypeFromFlow,
 		isInSignup,
 		isStepperUpgradeFlow,
 		selectedFeature,
@@ -223,6 +227,7 @@ const PlansStepAdaptor: StepType< {
 			{ ...getHidePlanPropsBasedOnThemeType( selectedThemeType || '' ) }
 			hideFreePlan={ hideFreePlanProp || hideFreePlan }
 			hideEnterprisePlan={ hideEnterprisePlanProp }
+			hidePlanTypeSelector={ hidePlanTypeSelector }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
 				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
@@ -252,7 +257,7 @@ const PlansStepAdaptor: StepType< {
 			intent={ plansIntent ?? undefined }
 			onIntentChange={ handleIntentChange }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
-			intervalType={ planInterval }
+			intervalType={ intervalTypeFromFlow ?? planInterval }
 			displayedIntervals={ displayedIntervals }
 			wrapperProps={ {
 				hideBack: wrapperProps?.hideBack ?? false,

@@ -71,6 +71,7 @@ export interface UnifiedPlansStepProps {
 	hidePremiumPlan?: boolean;
 	hideEnterprisePlan?: boolean;
 	hideEcommercePlan?: boolean;
+	hidePlanTypeSelector?: boolean;
 
 	flowName: string;
 	stepName: string;
@@ -219,6 +220,7 @@ function UnifiedPlansStep( {
 	hidePersonalPlan,
 	hidePremiumPlan,
 	hideEnterprisePlan,
+	hidePlanTypeSelector,
 	saveSignupStep: saveSignupStepFromProps,
 	submitSignupStep: submitSignupStepFromProps,
 	customerType: customerTypeFromProps,
@@ -664,6 +666,7 @@ function UnifiedPlansStep( {
 				intent={ intent }
 				flowName={ flowName }
 				isStepperUpgradeFlow={ isStepperUpgradeFlow }
+				hidePlanTypeSelector={ hidePlanTypeSelector }
 				hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 				hidePersonalPlan={ hidePersonalPlan }
 				hidePremiumPlan={ hidePremiumPlan }
