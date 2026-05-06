@@ -49,9 +49,16 @@ const ENTRYPOINTS: Record< string, string > = {
  */
 const sassPackageImporter = {
 	findFileUrl( url: string ): URL | null {
+		// Support webpack-style Sass imports without forcing source SCSS churn.
+		url = url.replace( /^~/, '' );
+
 		// Only intercept bare package specifiers; relative/absolute paths are fine.
 		if ( url.startsWith( '.' ) || url.startsWith( '/' ) || url.startsWith( 'file:' ) ) {
 			return null;
+		}
+
+		if ( url === 'calypso' || url.startsWith( 'calypso/' ) ) {
+			return findSassFile( path.join( __dirname, url.slice( 'calypso/'.length ) ) );
 		}
 
 		// Split into <pkgName> + <subpath>.
@@ -102,6 +109,30 @@ const sassPackageImporter = {
 		return null;
 	},
 };
+
+function findSassFile( basePath: string ): URL | null {
+	const baseName = path.basename( basePath );
+	const dirName = path.dirname( basePath );
+	const candidates = path.extname( basePath )
+		? [ basePath ]
+		: [
+				basePath + '.scss',
+				basePath + '.sass',
+				basePath + '.css',
+				path.join( dirName, '_' + baseName + '.scss' ),
+				path.join( dirName, '_' + baseName + '.sass' ),
+				path.join( basePath, '_index.scss' ),
+				path.join( basePath, 'index.scss' ),
+		  ];
+
+	for ( const candidate of candidates ) {
+		if ( fs.existsSync( candidate ) ) {
+			return pathToFileURL( fs.realpathSync( candidate ) );
+		}
+	}
+
+	return null;
+}
 
 // @automattic/react-virtualized currently publishes JSX in .js files.
 // Keep this scoped transform until the package ships parseable JS or .jsx files.
@@ -341,13 +372,9 @@ export default defineConfig(
 					// Suppress warnings from third-party SCSS dependencies.
 					quietDeps: true,
 
-					// Suppress Sass deprecation warnings that require code changes across
-					// 30+ first-party files — tracked for a dedicated SCSS modernisation PR:
-					//   global-builtin:  map-get/type-of/unquote/round without @use 'sass:...'
-					//   color-functions: darken() calls in login SCSS
-					//   slash-div:       "/" division in odie-client
-					//   import:          legacy @import syntax throughout the codebase
-					silenceDeprecations: [ 'import', 'global-builtin', 'color-functions', 'slash-div' ],
+					// Match the Webpack Sass upgrade path: keep the source CSS unchanged and
+					// suppress the mixed declaration warnings introduced by Sass 1.77.
+					silenceDeprecations: [ 'mixed-decls' ],
 				},
 			},
 			postcss: {

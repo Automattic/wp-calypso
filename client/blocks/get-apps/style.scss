@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 main.get-apps {
 	.get-apps__wrapper {
@@ -42,24 +42,24 @@ main.get-apps {
 	.get-apps__section-title {
 		font-size: $font-body;
 		font-weight: 500;
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		margin-bottom: $grid-unit-20;
 	}
 
 	.get-apps__card-title {
 		font-size: $font-body;
 		font-weight: 500;
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 	}
 
 	.get-apps__card-subtitle {
 		font-size: $font-body-small;
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		font-weight: 400;
 		margin-bottom: 0;
 	}
 
-	.components-card-body {
+	.components-card-body  {
 		padding: 24px;
 		height: 100%;
 		display: flex;
