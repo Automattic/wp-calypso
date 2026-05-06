@@ -1,5 +1,6 @@
 import './style.scss';
-import { createPostMutation } from '@automattic/api-queries';
+import { createPostMutation, setAtmospherePostEmbed } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button, __experimentalHStack as HStack } from '@wordpress/components';
@@ -8,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getThreadUrl } from '../route';
@@ -16,7 +18,15 @@ import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer, type ActiveMode } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
 import { countGraphemes } from './grapheme-count';
-import type { AtmosphereError, CreatePostParams } from '@automattic/api-core';
+import { MAX_IMAGES } from './media/constants';
+import { ImageGrid } from './media/image-grid';
+import type { ComposerImage } from './media/types';
+import type {
+	AtmosphereEmbedImages,
+	AtmosphereError,
+	CreatePostParams,
+	CreatePostResult,
+} from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { ReactNode } from 'react';
 
@@ -24,7 +34,17 @@ const LIMIT = 300;
 
 export function ComposerModal() {
 	const translate = useTranslate();
-	const { mode, closeComposer } = useComposer();
+	const {
+		mode,
+		closeComposer,
+		images,
+		addFiles,
+		removeImage,
+		retryImage,
+		setAlt,
+		isAllUploaded,
+		isAnyPending,
+	} = useComposer();
 	const queryClient = useQueryClient();
 	const mutation = useMutation( createPostMutation( queryClient ) );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -58,26 +78,77 @@ export function ComposerModal() {
 					root_uri: mode.root.uri,
 				} )
 			);
+			return;
 		}
-		// quote / standalone Tracks events are emitted by later slices.
+		if ( mode.kind === 'quote' ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_composer_opened', {
+					connection_id: mode.connectionId,
+					quoted_uri: mode.quote.uri,
+				} )
+			);
+			return;
+		}
+		if ( mode.kind === 'standalone' ) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_opened', {
+					connection_id: mode.connectionId,
+					entry_point: mode.entry_point,
+				} )
+			);
+		}
 	}, [ mode, dispatch ] );
 
 	// Tracks: error_shown with ref-tracked dedupe per error_kind transition.
 	useEffect( () => {
-		if ( ! mode || mode.kind !== 'reply' ) {
+		if ( ! mode ) {
 			return;
 		}
 		if ( mutation.isError && mutation.error ) {
 			const errorKind = mutation.error.kind;
 			if ( errorKind !== lastErrorKindRef.current ) {
 				lastErrorKindRef.current = errorKind;
-				dispatch(
-					recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
-						connection_id: mode.connectionId,
-						parent_uri: mode.parent.uri,
-						error_kind: errorKind,
-					} )
-				);
+				if ( errorKind === 'bad_request' ) {
+					// `bad_request` is the catch-all for non-classified server
+					// errors; log the raw response code so the error-copy
+					// classifier can be tuned with real production data.
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Atmosphere composer bad_request',
+						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+						extra: {
+							env: config( 'env_id' ),
+							type: 'reader_atmosphere_composer_bad_request',
+							mode: mode.kind,
+							error_message: mutation.error.message,
+						},
+					} );
+				}
+				if ( mode.kind === 'reply' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_error_shown', {
+							connection_id: mode.connectionId,
+							parent_uri: mode.parent.uri,
+							error_kind: errorKind,
+						} )
+					);
+				} else if ( mode.kind === 'quote' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_error_shown', {
+							connection_id: mode.connectionId,
+							quoted_uri: mode.quote.uri,
+							error_kind: errorKind,
+						} )
+					);
+				} else if ( mode.kind === 'standalone' ) {
+					// Standalone has no parent_uri, so it gets its own Tracks event.
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_error_shown', {
+							connection_id: mode.connectionId,
+							error_kind: errorKind,
+						} )
+					);
+				}
 			}
 		} else if ( ! mutation.isError ) {
 			lastErrorKindRef.current = null;
@@ -90,26 +161,45 @@ export function ComposerModal() {
 		if ( mutation.isPending ) {
 			return;
 		}
-		if ( text.trim().length > 0 ) {
+		if ( text.trim().length > 0 || images.length > 0 ) {
 			setConfirmDiscard( true );
 			return;
 		}
 		closeComposer();
-	}, [ mutation.isPending, text, closeComposer ] );
+	}, [ mutation.isPending, text, images.length, closeComposer ] );
+
+	const empty = graphemeCount === 0;
+	const tooLong = graphemeCount > LIMIT;
+	const hasImage = images.some( ( i ) => i.kind === 'uploaded' );
+	const canSubmit =
+		! mutation.isPending && ! tooLong && ! isAnyPending && isAllUploaded && ( ! empty || hasImage );
 
 	const handleSubmit = useCallback( () => {
 		if ( ! mode || mutation.isPending ) {
 			return;
 		}
 		// Guard against the Cmd/Ctrl+Enter shortcut bypassing the
-		// disabled Post button when the textarea is empty or over the
-		// limit. Mirrors the disabled logic in <ComposerFooter>.
-		if ( graphemeCount === 0 || graphemeCount > LIMIT ) {
+		// disabled Post button. Mirrors `canSubmit` above.
+		if ( ! canSubmit ) {
 			return;
 		}
-		const params = buildParamsForMode( mode, text );
+		const params = buildParamsForMode( mode, text, images );
 		mutation.mutate( params, {
-			onSuccess: () => {
+			onSuccess: ( result ) => {
+				// Patch the just-published feed item with a local-preview-URL
+				// embed so the timeline / author-feed / thread caches show the
+				// user's just-attached images during the brief window before
+				// the next refetch replaces them with real CDN URLs from the
+				// AppView. The factory's `onSuccess` has already swapped the
+				// placeholder for an embed-less realItem; we layer the embed
+				// on top here. The composer-provider defers preview URL
+				// revocation past the 30s timeline staleTime so the local
+				// blob: URLs remain valid until the cache refetches.
+				const localEmbed = buildLocalImagesEmbed( images );
+				if ( localEmbed ) {
+					setAtmospherePostEmbed( queryClient, result.uri, localEmbed );
+				}
+
 				if ( mode.kind === 'reply' ) {
 					dispatch(
 						recordReaderTracksEvent( 'calypso_reader_atmosphere_reply_published', {
@@ -118,16 +208,30 @@ export function ComposerModal() {
 							root_uri: mode.root.uri,
 						} )
 					);
-					const { text: noticeText, threadUrl } = successNoticeFor( mode, translate );
-					const options = threadUrl
-						? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
-						: undefined;
-					dispatch( successNotice( noticeText, options ) );
+				} else if ( mode.kind === 'quote' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_quote_published', {
+							connection_id: mode.connectionId,
+							quoted_uri: mode.quote.uri,
+							new_post_uri: result.uri,
+						} )
+					);
+				} else if ( mode.kind === 'standalone' ) {
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_atmosphere_compose_published', {
+							connection_id: mode.connectionId,
+						} )
+					);
 				}
-				closeComposer();
+				const { text: noticeText, threadUrl } = successNoticeFor( mode, result, translate );
+				const options = threadUrl
+					? { button: translate( 'View' ) as string, onClick: () => page( threadUrl ) }
+					: undefined;
+				dispatch( successNotice( noticeText, options ) );
+				closeComposer( { keepPreviewUrlsAlive: localEmbed !== null } );
 			},
 		} );
-	}, [ mode, mutation, text, graphemeCount, closeComposer, dispatch, translate ] );
+	}, [ mode, mutation, text, images, canSubmit, closeComposer, dispatch, translate, queryClient ] );
 
 	if ( ! mode ) {
 		return null;
@@ -172,6 +276,14 @@ export function ComposerModal() {
 					}
 					aria-invalid={ errorMessage ? true : undefined }
 				/>
+				<ImageGrid
+					images={ images }
+					max={ MAX_IMAGES }
+					onPickFiles={ addFiles }
+					onRemove={ removeImage }
+					onRetry={ retryImage }
+					onSetAlt={ setAlt }
+				/>
 				{ errorMessage && (
 					<div id="atmosphere-composer-error" className="atmosphere-composer__error" role="alert">
 						{ errorMessage }
@@ -182,6 +294,7 @@ export function ComposerModal() {
 					onSubmit={ handleSubmit }
 					isPending={ mutation.isPending }
 					limit={ LIMIT }
+					disabled={ ! canSubmit }
 				/>
 			</Modal>
 			{ confirmDiscard && (
@@ -222,15 +335,64 @@ function placeholderForMode(
 	if ( mode.kind === 'quote' ) {
 		return t( 'Add a comment…' ) as string;
 	}
-	return t( "What's up?" ) as string;
+	return t( 'What’s up?' ) as string;
 }
 
-function buildParamsForMode( mode: ActiveMode, text: string ): CreatePostParams {
+/**
+ * Build an `AtmosphereEmbedImages` from the composer's uploaded images,
+ * using each image's local `previewUrl` as both `thumb` and `fullsize`.
+ * Returns `null` when nothing is uploaded so the caller can skip the
+ * cache patch entirely (no-op rather than emit an empty `images: []`
+ * embed, which the AppView never produces).
+ *
+ * The local URLs are short-lived: revocation is deferred by
+ * `useImageUploads`'s `clearAll` so they outlast the timeline / author
+ * feed staleTime; once the next refetch lands, the AppView's real CDN
+ * URLs replace this embed and the local URLs become unreferenced.
+ */
+function buildLocalImagesEmbed( images: ComposerImage[] ): AtmosphereEmbedImages | null {
+	const uploaded = images.filter(
+		( i ): i is Extract< ComposerImage, { kind: 'uploaded' } > => i.kind === 'uploaded'
+	);
+	if ( uploaded.length === 0 ) {
+		return null;
+	}
+	return {
+		type: 'images',
+		images: uploaded.map( ( i ) => ( {
+			thumb: i.previewUrl,
+			fullsize: i.previewUrl,
+			alt: i.alt,
+			aspect_ratio: i.aspectRatio,
+		} ) ),
+	};
+}
+
+function buildParamsForMode(
+	mode: ActiveMode,
+	text: string,
+	images: ComposerImage[]
+): CreatePostParams {
+	const uploaded = images.filter(
+		( i ): i is Extract< ComposerImage, { kind: 'uploaded' } > => i.kind === 'uploaded'
+	);
+	const media =
+		uploaded.length > 0
+			? {
+					images: uploaded.map( ( i ) => ( {
+						blob: i.blob,
+						alt: i.alt,
+						aspectRatio: i.aspectRatio,
+					} ) ),
+			  }
+			: undefined;
+
 	if ( mode.kind === 'reply' ) {
 		return {
 			connectionId: mode.connectionId,
 			text,
 			reply: { root: mode.root, parent: mode.parent },
+			...( media ? { media } : {} ),
 		};
 	}
 	if ( mode.kind === 'quote' ) {
@@ -239,9 +401,14 @@ function buildParamsForMode( mode: ActiveMode, text: string ): CreatePostParams 
 			text,
 			quote: mode.quote,
 			...( mode.replyTo ? { reply: mode.replyTo } : {} ),
+			...( media ? { media } : {} ),
 		};
 	}
-	return { connectionId: mode.connectionId, text };
+	return {
+		connectionId: mode.connectionId,
+		text,
+		...( media ? { media } : {} ),
+	};
 }
 
 function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTranslate > ): ReactNode {
@@ -278,25 +445,48 @@ function errorMessageFor( err: AtmosphereError, t: ReturnType< typeof useTransla
 			return t( 'This Bluesky connection no longer exists.' );
 		case 'target_unavailable':
 			return t( 'This post is no longer available.' );
+		case 'blob_decode_failed':
+			// Set client-side when `compressImage` throws. Should only surface
+			// inline on a thumbnail (ImageGrid); if it ever bubbles to the
+			// modal-level error region, render generic copy.
+			return t( 'Something went wrong. Please try again.' );
 		case 'invalid_handle':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );
 		default:
-			return assertNever( err );
+			// Compile-time exhaustiveness: if `AtmosphereError['kind']` ever
+			// gains a new value, this fails to type-check.
+			err satisfies never;
+			// Runtime fallback: a backend-introduced kind shouldn't crash
+			// the modal — show generic copy instead.
+			return t( 'Something went wrong. Please try again.' );
 	}
 }
 
 function successNoticeFor(
-	mode: Extract< ActiveMode, { kind: 'reply' } >,
+	mode: ActiveMode,
+	result: CreatePostResult,
 	t: ReturnType< typeof useTranslate >
 ): { text: ReactNode; threadUrl: string | null } {
-	// quote / standalone success copy lands with their respective slices —
-	// gate the call site on `mode.kind` so TS catches missing cases when
-	// those modes are wired through `<ComposerModal>`.
-	return {
-		text: t( 'Your reply was posted.' ),
-		threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
-	};
+	if ( mode.kind === 'reply' ) {
+		return {
+			text: t( 'Your reply was posted.' ),
+			threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
+		};
+	}
+	if ( mode.kind === 'quote' ) {
+		return {
+			text: t( 'Your post was published.' ),
+			threadUrl: getThreadUrl( mode.connectionId, result.uri ),
+		};
+	}
+	if ( mode.kind === 'standalone' ) {
+		return {
+			text: t( 'Your post was published.' ),
+			threadUrl: getThreadUrl( mode.connectionId, result.uri ),
+		};
+	}
+	return assertNever( mode );
 }
 
 function assertNever( value: never ): never {

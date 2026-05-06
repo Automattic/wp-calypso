@@ -253,60 +253,124 @@ As of slice 5, the card-link / quote / replies-count / reply-context surfaces al
 
 When wiring a new card surface, route through `PostCardLink` rather than spreading `target="_blank"` anchors directly across subcomponents. Consult `getThreadUrl` and `getProfileUrl` from the analytics context before constructing any post- or profile-destination URL.
 
-### Like interactions
+### Like / Favourite interactions
 
-ATmosphere timeline payloads can include `viewer: { like, repost }` on each
-`AtmosphereFeedItem`. The field is optional during the backend rollout window,
-so consumers must use `post.viewer?.like ?? null` semantics and treat missing
-viewer data as "not liked".
+Both protocols expose a per-viewer interaction state on each feed item.
+ATmosphere uses `viewer: { like: string | null; repost: string | null }` —
+the value is the user's like/repost record URI (or `PENDING_LIKE_URI`
+during the optimistic window). Mastodon uses
+`viewer: { favourited: boolean; reblogged: boolean }`. The field is
+optional during the backend rollout window on both protocols; consumers
+must treat a missing `viewer` as "not liked / not favourited".
 
-`<LikeButton>` lives next to the post-card subcomponents and is rendered by
-`<PostCardCounts>` only when it receives both a `connectionId` and a post `cid`.
-Thread, author-feed, quoted-post, and non-ATmosphere card contexts fall back to
-the static likes count unless the host shell deliberately passes those props.
+The Mastodon mapper (`mappers/mastodon.ts`) projects the booleans onto the
+shared `SocialPost.viewer.{like,repost}` shape using a marker string
+(`'favourited'` / `'reblogged'`) for true and `null` for false. That keeps
+`<LikeButton>` and consumers protocol-agnostic — every consumer reads
+`Boolean(post.viewer?.like)` and gets the right answer for both protocols.
 
-The button uses `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
-`@automattic/api-queries`. Those hooks optimistically patch every cached
-timeline page containing the target post, then restore the snapshot on error.
-The create path temporarily stores `PENDING_LIKE_URI` in `viewer.like`; keep
-using `rkeyFromUri()` for unlike/delete flows because it returns `null` for that
-sentinel and prevents a DELETE with a fake rkey.
+`<LikeButton>` is presentational and protocol-agnostic. It calls
+`useLikeAction(post)` from `<LikeProvider>` (defined in
+`like-context.tsx`). When no provider is mounted (`action.supported ===
+false`), the button renders an inline static count (icon + count +
+screen-reader text) — **not** `null`, and **not** delegated back to
+`<PostCardCounts>` for a fallback. Keeping the fallback inside the
+button means a panel that passes `connectionId` to `<SocialPostCard>`
+without also mounting a `<LikeProvider>` shows a populated cell instead
+of an empty one. `<PostCardCounts>` therefore always renders
+`<LikeButton>` unconditionally.
 
-The connection ID flows from the protocol shell:
-`TimelinePanel` → `SocialPostCard` → `PostCardCounts` → `LikeButton`. Any future
-interactive count button that writes via a user's PDS should follow the same
-shape rather than reading connection identity from global state.
+Each protocol shell wires its own adapter hook factory:
 
-### Repost interactions
+- ATmosphere: `client/reader/atmosphere/use-atmosphere-like-action.ts`
+  exports `makeUseAtmosphereLikeAction(connectionId)`. It calls
+  `useCreateLikeMutation()` / `useDeleteLikeMutation()` from
+  `@automattic/api-queries`, uses `rkeyFromUri(viewer.like)` to derive the
+  delete key (returns `null` for `PENDING_LIKE_URI`, preventing a DELETE
+  with a fake rkey), and emits the labels "Like" / "Like, %d like(s)".
+  Tracks events: `_like_clicked`, `_unlike_clicked`, `_like_error_shown`.
+- Mastodon: `client/reader/mastodon/use-mastodon-like-action.ts`
+  exports `makeUseMastodonLikeAction(connectionId)`. It calls
+  `useCreateMastodonLikeMutation()` /
+  `useDeleteMastodonLikeMutation()`, uses `post.uri` (the status_id)
+  for the delete call, and emits the UK-spelled labels "Favourite" /
+  "Favourite, %d favourite(s)". Tracks events: `_favourite_clicked`,
+  `_unfavourite_clicked`, `_favourite_error_shown`.
 
-`<RepostButton>` lives next to `<LikeButton>` and is rendered by `<PostCardCounts>`
-under the same gating as `<LikeButton>` — only when the host shell passes both a
-`connectionId` and a post `cid`. Today only
-`client/reader/atmosphere/timeline-panel.tsx` opts in; thread, author-feed,
-quoted-post, and non-ATmosphere card contexts fall back to the static reposts
-count.
+Both mutation hooks optimistically patch every cached query under their
+protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
+plus thread-tree nodes recursively), then restore snapshots on error.
+
+The connection ID flows from the protocol panel:
+`Panel` → `<LikeProvider value={makeUse…LikeAction(id)}>` plus
+`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<LikeButton>`.
+Any future interactive count button (repost, follow, bookmark) should
+follow the same provider-injected adapter shape rather than reading
+connection identity from global state or hard-coding protocol logic into
+the shared button.
+
+### Repost / Boost interactions
+
+Both protocols expose a per-viewer repost state on each feed item.
+ATmosphere uses `viewer.repost: string | null` — the value is the
+user's repost record URI (or `PENDING_REPOST_URI` during the optimistic
+window). Mastodon uses `viewer.reblogged: boolean`. The Mastodon mapper
+projects the boolean onto the shared `SocialPost.viewer.repost` shape
+using the marker string `'reblogged'` so consumers can read
+`Boolean(post.viewer?.repost)` regardless of protocol.
+
+`<RepostButton>` is presentational and protocol-agnostic. Like
+`<LikeButton>`, it calls `useRepostAction(post)` from `<RepostProvider>`
+(defined in `repost-context.tsx`). When no provider is mounted, the
+button renders an inline static count — **not** `null`. Same rule as
+`<LikeButton>`: the fallback lives inside the button so panels that
+pass `connectionId` without also mounting a provider don't end up with
+empty cells.
 
 Two render branches by viewer state:
 
-- **Reposted** — plain `<button aria-pressed="true">`. Clicking it fires the
-  delete-repost mutation directly; no menu opens. Loses access to the Quote-post
-  menu item on a reposted post; that's a known follow-up.
-- **Not reposted** — `<Dropdown>` from `@wordpress/components` whose toggle is
-  the same shape of button (`aria-haspopup="menu"`). The menu has two
-  `<MenuItem>`s: "Repost" (enabled, fires the create-repost mutation) and
-  "Quote post" (disabled — wires up in slice 7d).
+- **Reposted / boosted** — plain `<button aria-pressed="true">`. Clicking
+  it fires the delete-mutation directly; no menu opens. Loses access to
+  the Quote-post menu item on a reposted post; that's a known follow-up.
+- **Not reposted** — `<Dropdown>` from `@wordpress/components` whose
+  toggle is the same shape of button (`aria-haspopup="menu"`). The menu
+  has two `<MenuItem>`s: the action item (label provided by the adapter
+  — "Repost" for ATmosphere, "Boost" for Mastodon) and "Quote post"
+  (disabled when `action.canQuote === false`). ATmosphere reports
+  `canQuote: true` when the panel has wired `onQuoteClick` on the
+  analytics context AND the post carries a `cid`; clicking the item
+  opens the same composer as the standalone `<QuoteButton>`. Mastodon
+  has no native quote concept and reports `canQuote: false` always.
 
-The button uses `useCreateRepostMutation()` / `useDeleteRepostMutation()` from
-`@automattic/api-queries`. Like the like mutations, those hooks reuse the
-generic `patchAtmospherePostCaches` helper to optimistically patch every cached
-atmosphere query containing the target post, then restore the snapshot on error.
-The create path temporarily stores `PENDING_REPOST_URI` in `viewer.repost`; keep
-using `rkeyFromUri()` for un-repost flows because it returns `null` for that
-sentinel and prevents a DELETE with a fake rkey.
+Each protocol shell wires its own adapter hook factory:
 
-The connection ID flows from the protocol shell:
-`TimelinePanel` → `SocialPostCard` → `PostCardCounts` → `RepostButton`. Same
-shape as the like button.
+- ATmosphere: `client/reader/atmosphere/use-atmosphere-repost-action.ts`
+  exports `makeUseAtmosphereRepostAction(connectionId)`. It calls
+  `useCreateRepostMutation()` / `useDeleteRepostMutation()` from
+  `@automattic/api-queries`, uses `rkeyFromUri(viewer.repost)` to derive
+  the delete key (returns `null` for `PENDING_REPOST_URI`, preventing a
+  DELETE with a fake rkey), guards the create on missing `post.cid`, and
+  emits the labels "Repost" / "Repost, %d repost(s)" / "Undo repost, %d
+  repost(s)". Tracks events: `_repost_clicked`, `_unrepost_clicked`,
+  `_quote_clicked`, `_repost_error_shown`. The `quote()` action delegates
+  to the analytics context's `onQuoteClick`, sharing the composer wiring
+  with the standalone `<QuoteButton>`.
+- Mastodon: `client/reader/mastodon/use-mastodon-repost-action.ts`
+  exports `makeUseMastodonRepostAction(connectionId)`. It calls
+  `useCreateMastodonRepostMutation()` / `useDeleteMastodonRepostMutation()`,
+  uses `post.uri` (the status_id) for the delete call, and emits the
+  UK-spelled labels "Boost" / "Boost, %d boost(s)" / "Undo boost, %d
+  boost(s)". Tracks events: `_boost_clicked`, `_unboost_clicked`,
+  `_boost_error_shown`.
+
+Both mutation hooks optimistically patch every cached query under their
+protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
+plus thread-tree nodes recursively), then restore snapshots on error.
+
+The connection ID flows from the protocol panel:
+`Panel` → `<RepostProvider value={makeUse…RepostAction(id)}>` plus
+`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<RepostButton>`.
+Mirrors the like / favourite flow.
 
 ## Boundaries (for new code)
 

@@ -76,6 +76,16 @@ export interface MastodonMediaAttachment {
 	aspect_ratio: { width: number; height: number } | null;
 }
 
+// Wire shape: Mastodon's status object includes per-viewer interaction
+// state. Both fields are booleans — favourited toggles via the likes
+// endpoint, reblogged via reposts. Optional during the backend rollout
+// window; consumers must treat missing viewer as
+// "not favourited / not reblogged".
+export interface MastodonFeedItemViewer {
+	favourited: boolean;
+	reblogged: boolean;
+}
+
 export interface MastodonFeedItem {
 	id: string;
 	url: string;
@@ -90,6 +100,7 @@ export interface MastodonFeedItem {
 	boost: MastodonBoost | null;
 	media: MastodonMediaAttachment[];
 	counts: MastodonCounts;
+	viewer?: MastodonFeedItemViewer;
 }
 
 export interface MastodonTimelinePage {
@@ -188,4 +199,24 @@ export interface MastodonTagFeedPage {
 	items: MastodonFeedItem[];
 	cursor: string | null;
 	tag?: MastodonTagInfo;
+}
+
+export interface MastodonCreateLikeParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonDeleteLikeParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonCreateRepostParams {
+	connectionId: number;
+	statusId: string;
+}
+
+export interface MastodonDeleteRepostParams {
+	connectionId: number;
+	statusId: string;
 }

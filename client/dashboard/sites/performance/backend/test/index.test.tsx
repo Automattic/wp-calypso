@@ -61,16 +61,18 @@ describe( '<SitePerformanceBackend>', () => {
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
 		expect( await screen.findByRole( 'button', { name: 'Enable' } ) ).toBeVisible();
-		expect( screen.queryByText( 'APM dashboards coming soon.' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders enabled placeholder + Disable when APM is already enabled', async () => {
+	test( 'renders the tabbed dashboard when APM is enabled', async () => {
 		mockSite( businessSite( true ) );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		expect( await screen.findByText( 'APM dashboards coming soon.' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Disable' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'tab', { name: 'Overview' } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: 'Requests' } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: 'Transactions' } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: 'Database' } ) ).toBeVisible();
+		expect( screen.getByRole( 'tab', { name: 'External requests' } ) ).toBeVisible();
 	} );
 
 	test( 'clicking Enable POSTs { active: true }', async () => {
@@ -80,19 +82,6 @@ describe( '<SitePerformanceBackend>', () => {
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Enable' } ) );
-
-		await waitFor( () => {
-			expect( scope.isDone() ).toBe( true );
-		} );
-	} );
-
-	test( 'clicking Disable POSTs { active: false }', async () => {
-		mockSite( businessSite( true ) );
-		const scope = mockApmToggle( false );
-
-		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Disable' } ) );
 
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );

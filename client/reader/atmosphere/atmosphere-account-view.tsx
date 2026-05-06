@@ -7,7 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { AtmosphereNavigation } from './atmosphere-navigation';
-import { ComposerModal, ComposerProvider } from './composer';
+import { ComposeFab, ComposerModal, ComposerProvider } from './composer';
 import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
 import { ProfilePanel } from './profile-panel';
 import { SettingsPanel } from './settings-panel';
@@ -65,6 +65,7 @@ export function AtmosphereAccountView( { connectionId, tab }: Props ) {
 					{ renderTab( tab, connection ) }
 				</VStack>
 			</ReaderMain>
+			<ComposeFab />
 			<ComposerModal />
 		</ComposerProvider>
 	);

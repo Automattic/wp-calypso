@@ -19,7 +19,7 @@
 	.components-surface.components-card {
 		background-color: var( --dashboard-surface__background-color );
 		color: var( --dashboard__text-color );
-		box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
+		box-shadow: 0 0 0 1px var( --dashboard-surface__border-color );
 	}
 
 	.components-surface.components-card.dashboard-notice {
@@ -495,14 +495,6 @@
 @mixin dashboard-dark-theme-dataviews {
 	--wp-dataviews-color-background: var( --dashboard-surface__background-color );
 
-	// Inset the wrapper by 1px on the sides/bottom so the card's 1px inset
-	// box-shadow border stays visible all around. Gutenberg's default sets
-	// `padding: 10px 0 0` on this element, which lets the wrapper paint over
-	// the card border on the left, right, and bottom.
-	.components-card__body:has( > .dataviews-wrapper ) {
-		padding: $grid-unit-10 1px 1px;
-	}
-
 	// Table
 	.dataviews-view-table {
 		// Match the upstream light-mode table default, where non-primary fields
@@ -742,6 +734,10 @@
 
 /* Plugins */
 @mixin dashboard-dark-theme-plugins {
+	.plugin-tabs-panel {
+		border-top-color: var( --dashboard-surface__border-color );
+	}
+
 	.plugin-switcher-item {
 		border-top-color: var( --dashboard-surface__border-color );
 
@@ -767,7 +763,7 @@
 			}
 		}
 
-		&.is-selected + & {
+		&.is-selected + .plugin-switcher-item {
 			border-top-color: var( --dashboard-item-selected__border-color );
 		}
 	}
@@ -825,7 +821,8 @@
 @mixin dashboard-dark-theme-site-logs-badges {
 	// Data table badges in the logs views don't declare a Badge intent, and
 	// override the colors locally, so we have to target them directly here.
-	:is( .site-logs-card, .site-logs-details-modal ) :is(
+	:is( .site-logs-card, .site-logs-details-modal )
+		:is(
 			.badge--POST,
 			.badge--deprecated,
 			.badge--GET,
@@ -840,11 +837,7 @@
 			var( --wp-components-color-background ) 90%,
 			var( --base-color )
 		);
-		color: color-mix(
-			in srgb,
-			var( --wp-components-color-foreground ) 50%,
-			var( --base-color )
-		);
+		color: color-mix( in srgb, var( --wp-components-color-foreground ) 50%, var( --base-color ) );
 
 		// `<Badge intent="default">` adds `.is-default`, which the Badge
 		// component pairs with an inset box-shadow in dark mode to stay
@@ -885,8 +878,7 @@
 			color: var( --dashboard__text-muted-color );
 		}
 
-		.dataforms-layouts-panel__field-trigger.is-disabled
-			.dataforms-layouts-panel__field-control {
+		.dataforms-layouts-panel__field-trigger.is-disabled .dataforms-layouts-panel__field-control {
 			color: var( --dashboard__text-muted-color );
 		}
 	}
@@ -902,6 +894,11 @@
 	@include dashboard-dark-theme-color-palette( 'studio-gray', $studio-gray );
 	@include dashboard-dark-theme-color-palette-alias( 'studio-neutral', 'studio-gray' );
 	@include dashboard-dark-theme-color-palette-alias( 'color-neutral', 'studio-gray' );
+}
+
+// useful to indicate to the browser that this stylesheet supports dark mode (for example Safari might style scrollbars differently)
+@mixin dashboard-color-scheme {
+	color-scheme: dark;
 }
 
 // :root variables overridden for dark theme
@@ -946,15 +943,10 @@
 	--dashboard-field__border-color: #949494;
 	--dashboard__text-muted-color: #bdbdbd;
 	--dashboard-subtle__color: #bdbdbd;
-	--dashboard-item-selected__background-color: color-mix(
-		in srgb,
-		var( --dashboard-surface__background-color ) 88%,
-		var( --wp-admin-theme-color )
-	);
-	--dashboard-item-selected-hover__background-color: color-mix(
-		in srgb,
-		var( --dashboard-surface__background-color ) 76%,
-		var( --wp-admin-theme-color )
+	--dashboard-item-selected__background-color: rgba( var( --wp-admin-theme-color--rgb ), 0.12 );
+	--dashboard-item-selected-hover__background-color: rgba(
+		var( --wp-admin-theme-color--rgb ),
+		0.24
 	);
 	--dashboard-item-selected__border-color: var( --wp-admin-theme-color );
 	--dashboard-warning__background-color: rgba( 212, 118, 8, 0.18 );
@@ -1005,6 +997,7 @@
 	--jp-gray-off: #2a2a2a;
 
 	@include dashboard-calypso-theme-properties;
+	@include dashboard-color-scheme;
 	@include dashboard-dark-theme-action-list;
 	@include dashboard-dark-theme-agenttic;
 	@include dashboard-dark-theme-breadcrumbs;

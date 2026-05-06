@@ -104,6 +104,139 @@ export function createStreamDataFromPosts(
 	return { streamItems, streamPosts };
 }
 
+interface RawSite {
+	feed_ID?: number;
+	URL?: string;
+	icon?: { ico?: string };
+	description?: string;
+	name?: string;
+	feed_URL?: string;
+	[ key: string ]: unknown;
+}
+
+interface RawCard {
+	type: string;
+	data: unknown;
+}
+
+export function createStreamSitesFromRecommendedSites( sites: RawSite[] | null | undefined ) {
+	if ( ! Array.isArray( sites ) ) {
+		return [];
+	}
+	return sites.map( ( site ) => ( {
+		feed_ID: site.feed_ID,
+		url: site.URL,
+		site_icon: site.icon?.ico,
+		site_description: site.description,
+		site_name: site.name,
+		feed_URL: site.feed_URL,
+		// `recommended-sites` reducer filters by `feedId`.
+		feedId: site.feed_ID,
+	} ) );
+}
+
+interface RawSiteWithPosts extends RawSite {
+	posts?: RawPost[];
+}
+
+function createStreamItemFromSiteAndPost(
+	site: RawSiteWithPosts,
+	post: RawPost,
+	dateProperty: string
+) {
+	return {
+		...keyForPost( post ),
+		date: post[ dateProperty ],
+		// Include comments for conversations.
+		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ),
+		url: post.URL,
+		site_icon: site.icon?.ico,
+		site_description: site.description,
+		site_name: site.name,
+		feed_URL: post.feed_URL,
+		feed_ID: post.feed_ID,
+		xPostMetadata: XPostHelper.getXPostMetadata( post ),
+	};
+}
+
+function createStreamItemFromSite( site: RawSiteWithPosts, dateProperty: string ) {
+	const post = site.posts?.[ 0 ] ?? null;
+	if ( ! post ) {
+		return null;
+	}
+	return createStreamItemFromSiteAndPost( site, post, dateProperty );
+}
+
+/**
+ * Split a `sites` payload (used by `custom_recs_sites_with_images`) into
+ * stream items and the underlying posts. Each site carries its top post
+ * under `posts[0]`; sites without a post are skipped. Mirrors the former
+ * legacy `createStreamDataFromSites` behavior.
+ */
+export function createStreamDataFromSites(
+	sites: RawSiteWithPosts[] | null | undefined,
+	dateProperty: string
+) {
+	const streamItems: ReturnType< typeof createStreamItemFromSiteAndPost >[] = [];
+	const streamPosts: RawPost[] = [];
+
+	if ( Array.isArray( sites ) ) {
+		sites.forEach( ( site ) => {
+			const streamItem = createStreamItemFromSite( site, dateProperty );
+			if ( streamItem !== null ) {
+				streamItems.push( streamItem );
+			}
+			const post = site.posts?.[ 0 ];
+			if ( post !== undefined ) {
+				streamPosts.push( post );
+			}
+		} );
+	}
+
+	return { streamItems, streamPosts };
+}
+
+interface CardBuckets {
+	cardPosts: RawPost[];
+	cardRecommendedSites: RawSite[];
+	newSites: RawSite[];
+}
+
+const EMPTY_BUCKETS: CardBuckets = { cardPosts: [], cardRecommendedSites: [], newSites: [] };
+
+/**
+ * Split a `cards` payload (used by `discover:recommended` and tag-specific
+ * `discover:<tag>` streams) into post stream items, recommended sites, and
+ * new sites. Mirrors the former legacy `createStreamDataFromCards` behavior.
+ */
+export function createStreamDataFromCards(
+	cards: RawCard[] | null | undefined,
+	dateProperty: string
+) {
+	const buckets = Array.isArray( cards )
+		? cards.reduce< CardBuckets >(
+				( acc, card ) => {
+					if ( card.type === 'post' ) {
+						return { ...acc, cardPosts: [ ...acc.cardPosts, card.data as RawPost ] };
+					}
+					if ( card.type === 'recommended_blogs' ) {
+						return { ...acc, cardRecommendedSites: ( card.data as RawSite[] ) ?? [] };
+					}
+					if ( card.type === 'new_sites' ) {
+						return { ...acc, newSites: ( card.data as RawSite[] ) ?? [] };
+					}
+					return acc;
+				},
+				{ cardPosts: [], cardRecommendedSites: [], newSites: [] }
+		  )
+		: EMPTY_BUCKETS;
+	return {
+		...createStreamDataFromPosts( buckets.cardPosts, dateProperty ),
+		streamSites: createStreamSitesFromRecommendedSites( buckets.cardRecommendedSites ),
+		streamNewSites: createStreamSitesFromRecommendedSites( buckets.newSites ),
+	};
+}
+
 interface PageHandleAction {
 	payload?: { pageHandle?: { offset?: number } };
 }
@@ -118,10 +251,8 @@ interface PageHandleData {
 /**
  * Extract the next-page handle from a stream response.
  *
- * Mirrors the legacy `get_page_handle` from
- * `client/state/data-layer/wpcom/read/streams/index.js`. Branch order matters:
- * the API uses different pagination conventions per endpoint family and the
- * legacy code preferred them in this order.
+ * Mirrors the former legacy `get_page_handle` behavior. Branch order matters:
+ * the API uses different pagination conventions per endpoint family.
  */
 export function extractPageHandle(
 	streamType: string,

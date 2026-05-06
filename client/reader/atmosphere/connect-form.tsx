@@ -88,18 +88,23 @@ function errorMessage(
 		// connect form (it doesn't post), but the AtmosphereError union
 		// covers the whole atmosphere surface, so list them explicitly to
 		// keep `assertNever` exhaustive without changing the user-visible
-		// copy on this screen.
+		// copy on this screen. The slice-8a `blob_decode_failed` kind is
+		// set client-side from `compressImage` failures and listed here
+		// for the same reason — it won't surface from the connect form.
 		case 'text_too_long':
 		case 'reply_disabled':
 		case 'quote_disabled':
 		case 'target_unavailable':
 		case 'unknown':
+		case 'blob_decode_failed':
 			return translate( 'Something went wrong.' );
 		default:
-			return assertNever( error );
+			// Defensive fallback if AtmosphereError widens before this
+			// switch is updated. TypeScript exhaustiveness keeps this
+			// branch unreachable today; without it, an empty-toast notice
+			// would render via `errorNotice( undefined )` for a kind we
+			// haven't classified yet. See `client/reader/AGENTS.md` —
+			// "Add a default: arm to error-message switches."
+			return translate( 'Something went wrong.' );
 	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled AtmosphereError kind: ${ JSON.stringify( value ) }` );
 }

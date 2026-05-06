@@ -190,11 +190,13 @@ function Welcome() {
 	// Forward into the Settings tab with the form pre-revealed; picking a
 	// category there writes podcasting_category_id and flips podcasting on.
 	const goToSettings = () => {
-		const path = siteSlug ? `/podcasting/settings/${ siteSlug }` : '/podcasting/settings';
+		const path = siteSlug
+			? `/settings/podcast/settings/${ siteSlug }`
+			: '/settings/podcast/settings';
 		page.show( path );
 	};
 
-	// Redirect through Calypso checkout, then back to /podcasting so the user can
+	// Redirect through Calypso checkout, then back to /settings/podcast so the user can
 	// click Enable on their now-eligible plan.
 	const goToCheckout = ( targetPlan: PlanSlug ) => {
 		dispatch(
@@ -203,7 +205,7 @@ function Welcome() {
 				current_tier: planTier,
 			} )
 		);
-		const returnTo = siteSlug ? `/podcasting/${ siteSlug }` : '/podcasting';
+		const returnTo = siteSlug ? `/settings/podcast/${ siteSlug }` : '/settings/podcast';
 		const path = siteSlug
 			? `/checkout/${ siteSlug }/${ targetPlan }?redirect_to=${ encodeURIComponent( returnTo ) }`
 			: `/checkout/${ targetPlan }`;

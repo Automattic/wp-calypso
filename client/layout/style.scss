@@ -62,6 +62,9 @@ body.is-focus-sites {
 	.is-section-checkout.has-no-sidebar & {
 		padding: 0;
 		margin: 0;
+		// Allow descendant `position: sticky` (order summary sidebar) to pin
+		// against the viewport. Global `overflow: hidden` above breaks sticky.
+		overflow: visible;
 	}
 	// Note that we have to use a 0,0,3,1 specificity selector to override the
 	// one in `client/my-sites/sidebar/style.scss` which has 0,0,3,0 in case it
