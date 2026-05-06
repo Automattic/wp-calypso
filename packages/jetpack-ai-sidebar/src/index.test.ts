@@ -577,36 +577,45 @@ describe( 'applyReviewEdit', () => {
 		warn.mockRestore();
 	} );
 
-	it( 'fails without replacing the block when currentText is ambiguous', async () => {
-		const { blockUpdates } = installWpDataMockWithBlockEditor( {
-			'550e8400-e29b-41d4-a716-446655440000': {
-				name: 'core/paragraph',
-				attributes: { content: 'vote now, then vote again after discussion.' },
-			},
-		} );
-		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+	it.each( [
+		[ 'separate matches', 'vote now, then vote again after discussion.', 'vote' ],
+		[ 'overlapping matches', 'banana', 'ana' ],
+	] )(
+		'fails without replacing the block when currentText has %s',
+		async ( _label, content, currentText ) => {
+			const { blockUpdates } = installWpDataMockWithBlockEditor( {
+				'550e8400-e29b-41d4-a716-446655440000': {
+					name: 'core/paragraph',
+					attributes: { content },
+				},
+			} );
+			useAbilitiesSetup( {
+				addMessage: () => undefined,
+				clearSuggestions: () => undefined,
+			} as any );
+			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
-		const promise = applyReviewEdit(
-			'550e8400-e29b-41d4-a716-446655440000',
-			'cast a ballot',
-			undefined,
-			'vote'
-		);
-		jest.advanceTimersByTime( 1000 );
-		const result = await promise;
+			const promise = applyReviewEdit(
+				'550e8400-e29b-41d4-a716-446655440000',
+				'cast a ballot',
+				undefined,
+				currentText
+			);
+			jest.advanceTimersByTime( 1000 );
+			const result = await promise;
 
-		expect( result ).toMatchObject( {
-			success: false,
-			error: 'currentText matches multiple spans in block content',
-		} );
-		expect( blockUpdates ).toEqual( [] );
-		expect( warn ).toHaveBeenCalledWith(
-			'[ReviewMediation] currentText matches multiple spans in block content',
-			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
-		);
-		warn.mockRestore();
-	} );
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'currentText matches multiple spans in block content',
+			} );
+			expect( blockUpdates ).toEqual( [] );
+			expect( warn ).toHaveBeenCalledWith(
+				'[ReviewMediation] currentText matches multiple spans in block content',
+				{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
+			);
+			warn.mockRestore();
+		}
+	);
 
 	it( 'fails safely on unsupported block types', async () => {
 		const { blockUpdates } = installWpDataMockWithBlockEditor( {

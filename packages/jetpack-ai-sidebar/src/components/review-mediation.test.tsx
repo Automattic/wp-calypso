@@ -446,9 +446,9 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			/>
 		);
 
-		const accept = screen.getByTitle( 'Needs manual edit — unsupported block type' );
+		expect( screen.getByText( 'Needs manual edit — unsupported block type' ) ).toBeInTheDocument();
+		const accept = screen.getByRole( 'button', { name: 'Accept' } );
 		expect( accept ).toBeDisabled();
-		expect( accept ).toHaveAttribute( 'title', 'Needs manual edit — unsupported block type' );
 		fireEvent.click( accept );
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
@@ -479,8 +479,9 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		expect( screen.getByText( 'Marcus raised this as a policy concern.' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Requested by:' ) ).toBeInTheDocument();
 
-		const manualButton = screen.getByRole( 'button', { name: 'Needs manual edit' } );
-		expect( manualButton ).toBeDisabled();
+		expect( screen.getByText( 'Needs manual edit.' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Needs manual edit' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Accept' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
 	} );
 
@@ -577,7 +578,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			/>
 		);
 
-		const accept = screen.getByTitle( 'Needs manual edit — source text changed' );
+		expect( screen.getByText( 'Needs manual edit — source text changed' ) ).toBeInTheDocument();
+		const accept = screen.getByRole( 'button', { name: 'Accept' } );
 		expect( accept ).toBeDisabled();
 		fireEvent.click( accept );
 
@@ -737,9 +739,9 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			/>
 		);
 
-		const acceptAi = screen.getByTitle( 'Needs manual edit — unsupported block type' );
+		expect( screen.getByText( 'Needs manual edit — unsupported block type' ) ).toBeInTheDocument();
+		const acceptAi = screen.getByRole( 'button', { name: 'Accept AI resolution' } );
 		expect( acceptAi ).toBeDisabled();
-		expect( acceptAi ).toHaveAttribute( 'title', 'Needs manual edit — unsupported block type' );
 		fireEvent.click( acceptAi );
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
@@ -772,7 +774,8 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			/>
 		);
 
-		const acceptAi = screen.getByTitle( 'Needs manual edit — no exact source text' );
+		expect( screen.getByText( 'Needs manual edit — no exact source text' ) ).toBeInTheDocument();
+		const acceptAi = screen.getByRole( 'button', { name: 'Accept AI resolution' } );
 		expect( acceptAi ).toBeDisabled();
 		fireEvent.click( acceptAi );
 
@@ -780,48 +783,57 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'disables conflict candidates when the source text appears more than once', () => {
-		mockBlocks = [
-			{
-				clientId: 'repeat',
-				name: 'core/paragraph',
-				attributes: { content: 'Use neutral language. Use neutral language.' },
-			},
-		];
+	it.each( [
+		[ 'separate matches', 'Use neutral language. Use neutral language.', 'Use neutral language.' ],
+		[ 'overlapping matches', 'banana', 'ana' ],
+	] )(
+		'disables conflict candidates when the source text has %s',
+		( _label, content, currentText ) => {
+			mockBlocks = [
+				{
+					clientId: 'repeat',
+					name: 'core/paragraph',
+					attributes: { content },
+				},
+			];
 
-		render(
-			<ReviewMediation
-				{ ...basePayload( {
-					conflicts: [
-						{
-							subject: 'Repeated source text',
-							positions: [],
-							guideline_anchor: null,
-							recommended_resolution: 'Use the AI wording.',
-							candidate_resolutions: [
-								{
-									source: 'ai',
-									reviewer_name: null,
-									label: 'AI resolution',
-									block_index: 0,
-									current_text: 'Use neutral language.',
-									text: 'Use clearer neutral language.',
-									rationale: '',
-								},
-							],
-						},
-					],
-				} ) }
-			/>
-		);
+			render(
+				<ReviewMediation
+					{ ...basePayload( {
+						conflicts: [
+							{
+								subject: 'Repeated source text',
+								positions: [],
+								guideline_anchor: null,
+								recommended_resolution: 'Use the AI wording.',
+								candidate_resolutions: [
+									{
+										source: 'ai',
+										reviewer_name: null,
+										label: 'AI resolution',
+										block_index: 0,
+										current_text: currentText,
+										text: 'Use clearer neutral language.',
+										rationale: '',
+									},
+								],
+							},
+						],
+					} ) }
+				/>
+			);
 
-		const acceptAi = screen.getByTitle( 'Needs manual edit — source text appears more than once' );
-		expect( acceptAi ).toBeDisabled();
-		fireEvent.click( acceptAi );
+			expect(
+				screen.getByText( 'Needs manual edit — source text appears more than once' )
+			).toBeInTheDocument();
+			const acceptAi = screen.getByRole( 'button', { name: 'Accept AI resolution' } );
+			expect( acceptAi ).toBeDisabled();
+			fireEvent.click( acceptAi );
 
-		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
-		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
-	} );
+			expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+			expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+		}
+	);
 } );
 
 describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {

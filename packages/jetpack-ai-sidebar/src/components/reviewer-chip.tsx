@@ -60,7 +60,7 @@ function getPillColours( name: string ): { background: string; border: string } 
  * @param           props.variant    Visual variant — 'inline' (default) or 'compact' for dense lists.
  * @returns React element.
  */
-/** Accept only `https://` avatar URLs; reject any other scheme to avoid `javascript:` / `data:` smuggling. */
+/** Avatar URLs are server-built from WordPress avatar APIs; keep only a scheme guard here. */
 function isSafeAvatarUrl( url: string | null | undefined ): url is string {
 	return typeof url === 'string' && /^https:\/\//i.test( url );
 }

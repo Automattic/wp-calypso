@@ -177,6 +177,9 @@ export function isSupportedEditBlockType( blockName?: string | null ): boolean {
 }
 
 function countOccurrences( source: string, needle: string ): number {
+	if ( needle === '' ) {
+		return 0;
+	}
 	let count = 0;
 	let startIndex = 0;
 	while ( true ) {
@@ -185,7 +188,7 @@ function countOccurrences( source: string, needle: string ): number {
 			return count;
 		}
 		count++;
-		startIndex = index + needle.length;
+		startIndex = index + 1;
 	}
 }
 

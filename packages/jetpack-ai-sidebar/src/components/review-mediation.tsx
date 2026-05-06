@@ -236,7 +236,7 @@ function countOccurrences( source: string, needle: string ): number {
 			return count;
 		}
 		count++;
-		pos = found + needle.length;
+		pos = found + 1;
 	}
 }
 
@@ -263,6 +263,32 @@ function hasRenderableGuidelineQuote( quote: string | null ): boolean {
 
 function isManualSuggestedEdit( edit: SuggestedEdit ): boolean {
 	return edit.requires_manual === true;
+}
+
+function getSuggestedEditApplyUnavailableReason(
+	isManual: boolean,
+	disabledReason?: string
+): string | undefined {
+	if ( isManual ) {
+		return __( 'Needs manual edit.', 'jetpack' );
+	}
+	if ( disabledReason ) {
+		return disabledReason;
+	}
+	return undefined;
+}
+
+function getConflictApplyUnavailableReason(
+	reasons: Array< string | undefined >
+): string | undefined {
+	const uniqueReasons = [ ...new Set( reasons.filter( Boolean ) as string[] ) ];
+	if ( uniqueReasons.length === 0 ) {
+		return undefined;
+	}
+	if ( uniqueReasons.length === 1 ) {
+		return uniqueReasons[ 0 ];
+	}
+	return __( 'Some resolutions need manual edit.', 'jetpack' );
 }
 
 /**
@@ -839,6 +865,15 @@ export default function ReviewMediation( {
 										const aiCandidateDisabledReason = aiCandidate
 											? getCandidateDisabledReason( aiCandidate )
 											: undefined;
+										const reviewerCandidateStates = reviewerCandidates.map( ( candidate ) => ( {
+											candidate,
+											disabledReason: getCandidateDisabledReason( candidate ),
+										} ) );
+										const applyUnavailableReason = getConflictApplyUnavailableReason( [
+											...reviewerCandidateStates.map( ( state ) => state.disabledReason ),
+											aiCandidateDisabledReason,
+										] );
+										const applyUnavailableReasonId = `review-mediation-conflict-${ i }-apply-reason`;
 										const isCollapsed = status === 'accepted' || status === 'dismissed';
 										if ( isCollapsed ) {
 											return (
@@ -959,17 +994,27 @@ export default function ReviewMediation( {
 													</div>
 												) }
 
+												{ applyUnavailableReason && (
+													<p
+														id={ applyUnavailableReasonId }
+														className="jetpack-ai-review-mediation__status is-manual"
+													>
+														{ applyUnavailableReason }
+													</p>
+												) }
+
 												{ hasAnyAction && (
 													<div className="jetpack-ai-review-mediation__actions">
-														{ reviewerCandidates.map( ( candidate, k ) => {
-															const disabledReason = getCandidateDisabledReason( candidate );
+														{ reviewerCandidateStates.map( ( { candidate, disabledReason }, k ) => {
 															return (
 																<button
 																	type="button"
 																	className="jetpack-ai-review-mediation__action is-reviewer"
 																	key={ `candidate-${ i }-${ k }` }
 																	disabled={ actionsDisabled || !! disabledReason }
-																	title={ disabledReason }
+																	aria-describedby={
+																		disabledReason ? applyUnavailableReasonId : undefined
+																	}
 																	onClick={ () => handleAcceptCandidate( i, candidate ) }
 																>
 																	{ sprintf(
@@ -985,7 +1030,9 @@ export default function ReviewMediation( {
 																type="button"
 																className="jetpack-ai-review-mediation__action is-accept"
 																disabled={ actionsDisabled || !! aiCandidateDisabledReason }
-																title={ aiCandidateDisabledReason }
+																aria-describedby={
+																	aiCandidateDisabledReason ? applyUnavailableReasonId : undefined
+																}
 																onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
 															>
 																{ getAiButtonLabel( status ) }
@@ -1061,17 +1108,18 @@ export default function ReviewMediation( {
 										const status = editStatuses[ i ] ?? 'pending';
 										const isManual = isManualSuggestedEdit( edit );
 										const isPostWide = edit.block_index === null;
-										const acceptTitle = isManual
-											? __(
-													'Needs manual edit — review the suggestion and update the post manually.',
-													'jetpack'
-											  )
+										const acceptDisabledReason = isManual
+											? undefined
 											: getBlockEditDisabledReason( edit.block_index, edit.current_text );
+										const applyUnavailableReason = getSuggestedEditApplyUnavailableReason(
+											isManual,
+											acceptDisabledReason
+										);
+										const applyUnavailableReasonId = `review-mediation-edit-${ i }-apply-reason`;
 										const clickable = ! isPostWide;
 										const isCollapsed = status === 'accepted' || status === 'dismissed';
 										const acceptDisabled =
-											isManual ||
-											!! acceptTitle ||
+											!! acceptDisabledReason ||
 											status === 'applying' ||
 											status === 'accepted' ||
 											status === 'dismissed' ||
@@ -1169,9 +1217,12 @@ export default function ReviewMediation( {
 													{ isManual ? edit.suggested_text : <ins>{ edit.suggested_text }</ins> }
 												</p>
 												<p className="jetpack-ai-review-mediation__rationale">{ edit.rationale }</p>
-												{ isManual && (
-													<p className="jetpack-ai-review-mediation__status is-manual">
-														{ __( 'Needs manual edit.', 'jetpack' ) }
+												{ applyUnavailableReason && (
+													<p
+														id={ applyUnavailableReasonId }
+														className="jetpack-ai-review-mediation__status is-manual"
+													>
+														{ applyUnavailableReason }
 													</p>
 												) }
 												{ status === 'failed' && (
@@ -1198,23 +1249,23 @@ export default function ReviewMediation( {
 													</p>
 												) }
 												<div className="jetpack-ai-review-mediation__actions">
-													<button
-														type="button"
-														className="jetpack-ai-review-mediation__action is-accept"
-														disabled={ acceptDisabled }
-														aria-label={
-															isManual ? __( 'Needs manual edit', 'jetpack' ) : undefined
-														}
-														title={ acceptTitle }
-														onClick={ () => handleAcceptEdit( edit, i ) }
-													>
-														{ /* `accepted`/`dismissed` are unreachable here — the
-															collapsed branch above renders for those */ }
-														{ isManual && __( 'Needs manual edit', 'jetpack' ) }
-														{ ! isManual && status === 'applying' && __( 'Applying…', 'jetpack' ) }
-														{ ! isManual && status === 'failed' && __( 'Retry', 'jetpack' ) }
-														{ ! isManual && status === 'pending' && __( 'Accept', 'jetpack' ) }
-													</button>
+													{ ! isManual && (
+														<button
+															type="button"
+															className="jetpack-ai-review-mediation__action is-accept"
+															disabled={ acceptDisabled }
+															aria-describedby={
+																acceptDisabledReason ? applyUnavailableReasonId : undefined
+															}
+															onClick={ () => handleAcceptEdit( edit, i ) }
+														>
+															{ /* `accepted`/`dismissed` are unreachable here — the
+																collapsed branch above renders for those */ }
+															{ status === 'applying' && __( 'Applying…', 'jetpack' ) }
+															{ status === 'failed' && __( 'Retry', 'jetpack' ) }
+															{ status === 'pending' && __( 'Accept', 'jetpack' ) }
+														</button>
+													) }
 													<button
 														type="button"
 														className="jetpack-ai-review-mediation__action is-dismiss"
