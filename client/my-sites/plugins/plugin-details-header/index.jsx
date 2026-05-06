@@ -1,4 +1,4 @@
-import { Badge, Button } from '@automattic/components';
+import { Badge, Button, ScreenReaderText } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -173,7 +173,14 @@ const PluginDetailsHeader = ( {
 							{ translate( 'Active installations' ) }
 						</div>
 						<div className="plugin-details-header__info-value">
-							{ formatNumberCompact( plugin.active_installs ) }
+							<span aria-hidden="true">
+								{ formatNumberCompact( plugin.active_installs ) }
+							</span>
+							<ScreenReaderText>
+								{ formatNumberCompact( plugin.active_installs, {
+									numberFormatOptions: { compactDisplay: 'long' },
+								} ) }
+							</ScreenReaderText>
 						</div>
 					</div>
 				) }
