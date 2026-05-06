@@ -8,21 +8,24 @@
  * than introducing a saturated hero card.
  */
 import { Button } from '@wordpress/components';
-import { dispatch } from '@wordpress/data';
+import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { ExperimentalBadge } from '../components/experimental-badge';
+import { FeatureClipRenderHost } from '../compositor/feature-clip-render-host';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioOpened } from '../utils/tracking';
+import { FeatureClipProgress } from './feature-clip-progress';
+import { FeatureClipResult } from './feature-clip-result';
 import './feature-clip-sidebar.scss';
 
 const PLUGIN_NAME = 'image-studio-feature-clip';
 const PANEL_NAME = 'image-studio-feature-clip-panel';
 
-function FeatureClipPanel(): JSX.Element {
+function FeatureClipPanelIdle(): JSX.Element {
 	const handleClick = async () => {
 		const { openImageStudio } = dispatch( imageStudioStore );
 		const { setCurrentVideoUrl, setCurrentAttachmentId, setCurrentDurationSeconds } = dispatch(
@@ -42,26 +45,8 @@ function FeatureClipPanel(): JSX.Element {
 		openImageStudio( undefined, undefined, ImageStudioEntryPoint.PostEditorFeatureClip );
 	};
 
-	const titleNode = (
-		<span className="image-studio-feature-clip-panel__title">
-			<span className="image-studio-feature-clip-panel__title-line">
-				{ __( 'Generate', __i18n_text_domain__ ) }
-			</span>
-			<span className="image-studio-feature-clip-panel__title-line">
-				{ __( 'Feature Clip', __i18n_text_domain__ ) }
-				<ExperimentalBadge variant="light" />
-			</span>
-		</span>
-	);
-
 	return (
-		<PluginDocumentSettingPanel
-			name={ PANEL_NAME }
-			// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
-			// the badge must live in the title row so it stays visible when the panel is collapsed.
-			title={ titleNode as unknown as string }
-			className="image-studio-feature-clip-panel"
-		>
+		<>
 			<p className="image-studio-feature-clip-panel__description">
 				{ __(
 					'Turn this post into a short vertical video. Powered by your site guidelines.',
@@ -76,7 +61,57 @@ function FeatureClipPanel(): JSX.Element {
 			>
 				{ __( 'Generate clip', __i18n_text_domain__ ) }
 			</Button>
-		</PluginDocumentSettingPanel>
+		</>
+	);
+}
+
+function FeatureClipPanel(): JSX.Element {
+	const pendingRender = useSelect(
+		( select ) => select( videoStudioStore ).getPendingFeatureClipRender(),
+		[]
+	);
+	const currentVideoUrl = useSelect(
+		( select ) => select( videoStudioStore ).getCurrentVideoUrl(),
+		[]
+	);
+
+	const titleNode = (
+		<span className="image-studio-feature-clip-panel__title">
+			<span className="image-studio-feature-clip-panel__title-line">
+				{ __( 'Generate', __i18n_text_domain__ ) }
+			</span>
+			<span className="image-studio-feature-clip-panel__title-line">
+				{ __( 'Feature Clip', __i18n_text_domain__ ) }
+				<ExperimentalBadge variant="light" withTooltip />
+			</span>
+		</span>
+	);
+
+	let body: JSX.Element;
+	if ( pendingRender ) {
+		body = <FeatureClipProgress />;
+	} else if ( currentVideoUrl ) {
+		body = <FeatureClipResult />;
+	} else {
+		body = <FeatureClipPanelIdle />;
+	}
+
+	return (
+		<>
+			<PluginDocumentSettingPanel
+				name={ PANEL_NAME }
+				// PluginDocumentSettingPanel.title is typed as string but renders any ReactNode at runtime;
+				// the badge must live in the title row so it stays visible when the panel is collapsed.
+				title={ titleNode as unknown as string }
+				className="image-studio-feature-clip-panel"
+			>
+				{ body }
+			</PluginDocumentSettingPanel>
+			{ /* Always-mounted render host: lives outside the Image Studio modal so
+			     a render survives a modal close. The host is a no-op until a
+			     pendingRender appears in the store. */ }
+			<FeatureClipRenderHost />
+		</>
 	);
 }
 

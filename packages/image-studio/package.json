@@ -60,6 +60,7 @@
 		"@wordpress/abilities": "^0.4.0",
 		"@wordpress/api-fetch": "^7.23.0",
 		"@wordpress/base-styles": "^5.23.0",
+		"@wordpress/blocks": "^15.23.0",
 		"@wordpress/components": "^30.9.0",
 		"@wordpress/compose": "^7.2.0",
 		"@wordpress/core-data": "^7.23.0",

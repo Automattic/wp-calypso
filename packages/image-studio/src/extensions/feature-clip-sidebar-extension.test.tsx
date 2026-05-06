@@ -38,10 +38,57 @@ jest.mock( '@wordpress/data', () => ( {
 				setCurrentVideoUrl: mockSetCurrentVideoUrl,
 				setCurrentAttachmentId: mockSetCurrentAttachmentId,
 				setCurrentDurationSeconds: mockSetCurrentDurationSeconds,
+				setFeatureClipIsCancelling: jest.fn(),
+				clearFeatureClipPending: jest.fn(),
 			};
 		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
+	useDispatch: () => ( {
+		setFeatureClipProgressPhase: jest.fn(),
+		completeFeatureClipRender: jest.fn(),
+		failFeatureClipRender: jest.fn(),
+		clearFeatureClipPending: jest.fn(),
+	} ),
+	useSelect: ( cb: ( s: ( name: string ) => unknown ) => unknown ) =>
+		cb( () => ( {
+			getPendingFeatureClipRender: () => null,
+			getCurrentVideoUrl: () => null,
+			getCurrentAttachmentId: () => null,
+			getCurrentDurationSeconds: () => null,
+			getFeatureClipProgressPhase: () => 'idle',
+			getFeatureClipIsCancelling: () => false,
+		} ) ),
+	subscribe: () => () => undefined,
+} ) );
+
+jest.mock(
+	'@editframe/react',
+	() => ( {
+		Configuration: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+		Preview: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+		TimelineRoot: () => null,
+	} ),
+	{ virtual: true }
+);
+
+jest.mock( '../compositor/feature-clip-render-host', () => ( {
+	FeatureClipRenderHost: () => <div data-testid="feature-clip-render-host" />,
+} ) );
+
+jest.mock( './feature-clip-progress', () => ( {
+	FeatureClipProgress: () => <div data-testid="feature-clip-progress" />,
+} ) );
+
+jest.mock( './feature-clip-result', () => ( {
+	FeatureClipResult: () => <div data-testid="feature-clip-result" />,
+} ) );
+
+jest.mock( '@wordpress/blocks', () => ( {
+	createBlock: jest.fn( ( name: string, attrs: Record< string, unknown > ) => ( {
+		name,
+		attributes: attrs,
+	} ) ),
 } ) );
 
 jest.mock( '@wordpress/editor', () => ( {
