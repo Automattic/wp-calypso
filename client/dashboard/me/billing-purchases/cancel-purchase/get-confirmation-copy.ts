@@ -24,6 +24,7 @@ export type PurchaseForCopy = {
 	expiry_status: string;
 	meta?: string;
 	domain: string;
+	site_slug: string;
 };
 
 /**
