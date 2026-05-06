@@ -45,6 +45,43 @@ interface AgentsManagerChatState {
 	floatingPosition: string;
 }
 
+type AgentsManagerExternalContextDelivery = 'next-message' | 'conversation';
+
+interface AgentsManagerExternalContextEntry {
+	id: string;
+	type?: string;
+	source?: string;
+	title?: string;
+	description?: string;
+	data?: unknown;
+	delivery?: AgentsManagerExternalContextDelivery;
+	createdAt?: string;
+}
+
+interface AgentsManagerExternalContextCardAction {
+	id?: string;
+	label: string;
+	prompt?: string;
+	type?: 'prefill' | 'submit';
+}
+
+interface AgentsManagerExternalContextCard {
+	id: string;
+	/**
+	 * IDs of context entries linked to this card. Dismissing the card or
+	 * consuming any linked entry cleans up both sides. A card may reference
+	 * multiple entries when its body aggregates data from several sources.
+	 */
+	contextEntryIds?: string[];
+	/**
+	 * Publisher-owned card body. AM renders this inside the card frame
+	 * and only adds the dismiss button and actions row.
+	 */
+	body: import('react').ReactNode;
+	actions?: AgentsManagerExternalContextCardAction[];
+	createdAt?: string;
+}
+
 /**
  * Public API shape exposed on `window.__agentsManagerActions`.
  */
@@ -56,6 +93,12 @@ interface AgentsManagerActions {
 	setChatEnabled: ( isEnabled: boolean ) => void;
 	setChatCompactMode: ( isCompact: boolean ) => void;
 	setChatDesktopMediaQuery: ( query: string ) => void;
+	setChatInput?: ( value: string ) => void;
+	submitChatMessage?: ( message?: string ) => Promise< void >;
+	setContextEntry: ( entry: AgentsManagerExternalContextEntry ) => void;
+	removeContextEntry: ( id: string ) => void;
+	setContextCard: ( card: AgentsManagerExternalContextCard ) => void;
+	removeContextCard: ( id: string ) => void;
 	chatNavigate: import('react-router-dom').NavigateFunction;
 	isCompactMode?: boolean;
 	isChatEnabled?: boolean;

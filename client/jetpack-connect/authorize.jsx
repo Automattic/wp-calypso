@@ -64,6 +64,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
+import { getAuthCopy } from './connection-content';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -1274,6 +1275,7 @@ export class JetpackAuthorize extends Component {
 		const connectorBranding = isFromJetpackConnector
 			? getConnectorBranding( this.props.authQuery.plugins )
 			: null;
+		const authCopy = isFromJetpackConnector ? getAuthCopy( this.props.authQuery.plugins ) : null;
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (
@@ -1319,12 +1321,12 @@ export class JetpackAuthorize extends Component {
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						{ isFromJetpackConnector && connectorBranding && (
+						{ isFromJetpackConnector && connectorBranding && authCopy && (
 							<BrandHeader
 								logo={ connectorBranding.logo }
 								logoAlt=""
-								title={ connectorBranding.title }
-								description={ connectorBranding.subtitle }
+								title={ authCopy.title }
+								description={ authCopy.subtitle }
 							/>
 						) }
 						{ ( isUnifiedConnection || isFromMyJetpack ) && ! isFromJetpackConnector && (
