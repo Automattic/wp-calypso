@@ -131,6 +131,16 @@ export const VIDEO_STYLE_OPTIONS = [
 		value: 'promotional',
 		preview: promotionalPreview,
 	},
+	{
+		label: __( 'Informative (from photos)', __i18n_text_domain__ ),
+		value: 'informative-photo',
+		preview: informativePreview,
+	},
+	{
+		label: __( 'Promotional (from photos)', __i18n_text_domain__ ),
+		value: 'promotional-photo',
+		preview: promotionalPreview,
+	},
 ];
 
 export function StylePicker( { disabled = false, mode, variant = 'image' }: StylePickerProps ) {

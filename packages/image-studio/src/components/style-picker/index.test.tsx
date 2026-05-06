@@ -434,10 +434,12 @@ describe( 'StylePicker', () => {
 			} );
 		} );
 
-		it( 'exports the two expected video style options', () => {
+		it( 'exports the four expected video style options (Veo + browser-rendered photo variants)', () => {
 			const expected = [
 				{ label: 'Informative', value: 'informative' },
 				{ label: 'Promotional', value: 'promotional' },
+				{ label: 'Informative (from photos)', value: 'informative-photo' },
+				{ label: 'Promotional (from photos)', value: 'promotional-photo' },
 			];
 
 			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( expected.length );
