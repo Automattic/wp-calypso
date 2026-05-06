@@ -1,3 +1,4 @@
+import { BarChart } from '@automattic/charts';
 import { formatNumber } from '@automattic/number-formatters';
 import {
 	Card,
@@ -7,7 +8,6 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import Chart from 'calypso/components/chart';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { formatPodcastDate } from './stats-summary-tiles';
 import type { PodcastStatsPeriod, PodcastStatsRange } from '../hooks/use-show-stats-query';
@@ -21,13 +21,9 @@ type StatsByDayChartProps = {
 	children?: ReactNode;
 };
 
-type ChartDatum = {
-	label: string;
+type DownloadDatum = {
+	dateString: string;
 	value: number;
-	tooltipData: Array< {
-		label: string;
-		value: string;
-	} >;
 };
 
 const formatAxisDate = ( date: string ) =>
@@ -45,18 +41,21 @@ export default function StatsByDayChart( {
 	children,
 }: StatsByDayChartProps ) {
 	const translate = useTranslate();
-	const chartData: ChartDatum[] = Object.entries( byDay )
+	const downloadsLabel = translate( 'Downloads' ) as string;
+
+	const chartData: DownloadDatum[] = Object.entries( byDay )
 		.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
 		.map( ( [ date, plays ] ) => ( {
-			label: formatAxisDate( date ),
+			dateString: date,
 			value: plays,
-			tooltipData: [
-				{
-					label: formatPodcastDate( date ),
-					value: formatNumber( plays ),
-				},
-			],
 		} ) );
+
+	const seriesData = [
+		{
+			label: downloadsLabel,
+			data: chartData,
+		},
+	];
 
 	const rangeLabel =
 		period === 'all' && range
@@ -75,7 +74,31 @@ export default function StatsByDayChart( {
 	} else {
 		chartContent = (
 			<div className="podcast-stats-chart__chart">
-				<Chart data={ chartData } minBarWidth={ 18 } />
+				<BarChart
+					data={ seriesData }
+					height={ 280 }
+					withTooltips
+					gridVisibility="y"
+					options={ {
+						axis: {
+							x: {
+								tickFormat: ( value ) => formatAxisDate( String( value ) ),
+							},
+						},
+					} }
+					renderTooltip={ ( tooltipProps ) => {
+						const datum = tooltipProps?.tooltipData?.nearestDatum?.datum;
+						if ( ! datum?.dateString ) {
+							return null;
+						}
+						return (
+							<VStack spacing={ 1 } className="podcast-stats-chart__tooltip">
+								<Text weight={ 600 }>{ formatPodcastDate( datum.dateString ) }</Text>
+								<Text>{ formatNumber( Number( datum.value ?? 0 ) ) }</Text>
+							</VStack>
+						);
+					} }
+				/>
 			</div>
 		);
 	}
@@ -91,12 +114,8 @@ export default function StatsByDayChart( {
 						className="podcast-stats-chart__header"
 					>
 						<div>
-							<h3 className="podcast-stats__section-title">{ translate( 'Downloads' ) }</h3>
+							<h3 className="podcast-stats__section-title">{ downloadsLabel }</h3>
 							{ rangeLabel && <Text variant="muted">{ rangeLabel }</Text> }
-						</div>
-						<div className="podcast-stats-chart__legend">
-							<span className="podcast-stats-chart__legend-swatch" aria-hidden="true" />
-							<span>{ translate( 'Downloads' ) }</span>
 						</div>
 					</HStack>
 					{ chartContent }

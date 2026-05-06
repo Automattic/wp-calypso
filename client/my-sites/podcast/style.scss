@@ -170,36 +170,12 @@ body.is-section-podcasting {
 	min-inline-size: 0;
 }
 
-.podcast-stats-chart__legend {
-	display: flex;
-	align-items: center;
-	flex: 0 0 auto;
-	gap: 8px;
-	margin-inline-end: 48px;
-	min-inline-size: max-content;
-	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
-	font-size: 14px;
-	white-space: nowrap;
-}
-
-.podcast-stats-chart__legend-swatch {
-	display: inline-block;
-	inline-size: 16px;
-	block-size: 16px;
-	border-radius: 4px;
-	background: var( --wpds-color-bg-status-success-strong, #008a20 );
-}
-
 .podcast-stats-chart__chart {
 	padding: 28px 32px 8px;
 }
 
-.podcast-stats-chart__chart .chart {
-	padding: 0;
-}
-
-.podcast-stats-chart__chart .chart__bar-section {
-	background-color: var( --wpds-color-bg-status-success-strong, #008a20 );
+.podcast-stats-chart__tooltip {
+	min-inline-size: 140px;
 }
 
 .podcast-stats-chart__summary {
