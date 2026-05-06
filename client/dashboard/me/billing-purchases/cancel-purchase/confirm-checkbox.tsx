@@ -82,12 +82,14 @@ export default function ConfirmCheckbox( {
 						label={ __( 'I understand that canceling means that I may lose this domain forever.' ) }
 						checked={ state.domainConfirmationConfirmed }
 						onChange={ onDomainConfirmationChange }
+						disabled={ state.isLoading }
 					/>
 				) }
 
 				<CheckboxControl
 					label={ planConfirmationLabel }
 					checked={ state.customerConfirmedUnderstanding }
+					disabled={ state.isLoading }
 					onChange={ ( checked ) => {
 						if ( atomicTransfer?.created_at ) {
 							onCustomerConfirmedUnderstandingChange( checked );

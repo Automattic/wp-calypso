@@ -5,14 +5,14 @@ import { siteSettings } from 'calypso/my-sites/site-settings/settings-controller
 import { createPodcast, createPodcastEpisodeStats } from './controller';
 
 export default function () {
-	page( '/podcasting', siteSelection, sites, makeLayout, clientRender );
-	page( '/podcasting/episodes', siteSelection, sites, makeLayout, clientRender );
-	page( '/podcasting/distribution', siteSelection, sites, makeLayout, clientRender );
-	page( '/podcasting/settings', siteSelection, sites, makeLayout, clientRender );
-	page( '/podcasting/stats', siteSelection, sites, makeLayout, clientRender );
+	page( '/settings/podcast', siteSelection, sites, makeLayout, clientRender );
+	page( '/settings/podcast/episodes', siteSelection, sites, makeLayout, clientRender );
+	page( '/settings/podcast/distribution', siteSelection, sites, makeLayout, clientRender );
+	page( '/settings/podcast/settings', siteSelection, sites, makeLayout, clientRender );
+	page( '/settings/podcast/stats', siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		'/podcasting/:site_id',
+		'/settings/podcast/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,
@@ -22,7 +22,7 @@ export default function () {
 	);
 
 	page(
-		'/podcasting/stats/episode/:postId/:site_id',
+		'/settings/podcast/stats/episode/:postId/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,
@@ -32,7 +32,7 @@ export default function () {
 	);
 
 	page(
-		'/podcasting/:section(episodes|distribution|settings|stats)/:site_id',
+		'/settings/podcast/:section(episodes|distribution|settings|stats)/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,
@@ -42,7 +42,7 @@ export default function () {
 	);
 
 	page(
-		'/podcasting/episode/:postId/:site_id',
+		'/settings/podcast/episode/:postId/:site_id',
 		siteSelection,
 		navigation,
 		siteSettings,

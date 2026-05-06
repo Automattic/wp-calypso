@@ -215,7 +215,7 @@ const Episodes = () => {
 				label: translate( 'Downloads' ) as string,
 				getValue: ( { item }: { item: Episode } ) => item.playsAll,
 				render: ( { item }: { item: Episode } ) => {
-					const statsUrl = `/podcasting/stats/episode/${ item.id }${
+					const statsUrl = `/settings/podcast/stats/episode/${ item.id }${
 						siteSlug ? '/' + siteSlug : ''
 					}${ getPodcastStatsMockQueryString() }`;
 					const onClick = ( event: MouseEvent< HTMLAnchorElement > ) => {

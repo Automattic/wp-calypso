@@ -94,22 +94,22 @@ export default function EpisodeStats( { postId }: EpisodeStatsProps ) {
 		{
 			name: 'episodes' as const,
 			title: translate( 'Episodes' ) as string,
-			path: '/podcasting/episodes' + pathSuffix + mockQueryString,
+			path: '/settings/podcast/episodes' + pathSuffix + mockQueryString,
 		},
 		{
 			name: 'distribution' as const,
 			title: translate( 'Distribution' ) as string,
-			path: '/podcasting/distribution' + pathSuffix + mockQueryString,
+			path: '/settings/podcast/distribution' + pathSuffix + mockQueryString,
 		},
 		{
 			name: 'settings' as const,
 			title: translate( 'Settings' ) as string,
-			path: '/podcasting/settings' + pathSuffix + mockQueryString,
+			path: '/settings/podcast/settings' + pathSuffix + mockQueryString,
 		},
 		{
 			name: 'stats' as const,
 			title: translate( 'Stats' ) as string,
-			path: '/podcasting/stats' + pathSuffix + mockQueryString,
+			path: '/settings/podcast/stats' + pathSuffix + mockQueryString,
 		},
 	];
 
@@ -120,7 +120,7 @@ export default function EpisodeStats( { postId }: EpisodeStatsProps ) {
 		}
 	};
 
-	const statsHref = '/podcasting/stats' + pathSuffix + mockQueryString;
+	const statsHref = '/settings/podcast/stats' + pathSuffix + mockQueryString;
 	const handleBackClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
 		if (
 			event.defaultPrevented ||

@@ -24,7 +24,7 @@ export default function StatsTopEpisodes( {
 		id: String( episode.post_id ),
 		label: episode.title || ( translate( '(Untitled)' ) as string ),
 		value: episode.plays,
-		page: `/podcasting/stats/episode/${ episode.post_id }${
+		page: `/settings/podcast/stats/episode/${ episode.post_id }${
 			siteSlug ? '/' + siteSlug : ''
 		}${ mockQuery }`,
 	} ) );

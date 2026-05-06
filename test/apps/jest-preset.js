@@ -6,7 +6,7 @@ module.exports = {
 	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
 	testEnvironment: 'jsdom',
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|sass|css)$)',
+		'node_modules[\\/\\\\](?!.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
 	],
 	setupFiles: [ 'jest-canvas-mock' ],
 	// This includes a lot of globals that don't exist, like fetch, matchMedia, etc.

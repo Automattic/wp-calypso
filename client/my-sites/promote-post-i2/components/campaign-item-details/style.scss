@@ -732,14 +732,16 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 	}
 
 	.campaign-item-details__preview-content.v02,
-	.campaign-item-details__preview-content.v03 {
+	.campaign-item-details__preview-content.v03,
+	.campaign-item-details__preview-content.v04 {
 		margin: 0 auto;
 		min-width: 300px;
 		width: 100%;
 	}
 
 	.campaign-item-details__preview-content.v02 iframe,
-	.campaign-item-details__preview-content.v03 iframe{
+	.campaign-item-details__preview-content.v03 iframe,
+	.campaign-item-details__preview-content.v04 iframe {
 		height: 200px;
 		width: 100%;
 	}

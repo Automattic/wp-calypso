@@ -24,6 +24,7 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
+import { useVideoClipSuggestions } from '../hooks/use-video-clip-suggestions';
 import {
 	ImageStudioEntryPoint,
 	type ImageStudioActions,
@@ -38,6 +39,7 @@ import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
+import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
@@ -98,15 +100,26 @@ function ImageStudioAgentChat( {
 		placeholder = __( 'Describe your image', __i18n_text_domain__ );
 	}
 
-	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
-		useImageStudioSuggestions( {
-			registerSuggestions: agentChatProps.registerSuggestions,
-			clearSuggestions: agentChatProps.clearSuggestions,
-			messages: displayMessages,
-			mode,
-			inputValue,
-			disabled: isVideoMode,
-		} );
+	const imageSuggestions = useImageStudioSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		mode,
+		inputValue,
+		disabled: isVideoMode,
+	} );
+
+	const videoSuggestions = useVideoClipSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		inputValue,
+		disabled: ! isVideoMode,
+	} );
+
+	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
+		? videoSuggestions
+		: imageSuggestions;
 
 	const handleSubmit = useCallback(
 		async ( message: string ) => {
@@ -187,7 +200,7 @@ function ImageStudioAgentChat( {
 				inputValue={ inputValue }
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
-				maxInputLength={ 1000 }
+				maxInputLength={ isVideoMode ? 2000 : 1000 }
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />
@@ -216,21 +229,14 @@ function ImageStudioAgentChat( {
 				<p className="image-studio-modal__media-library-disclaimer">
 					<em>
 						{ __(
-							'All generated videos will be automatically saved to your media library.',
+							'Outputs from this experimental feature may need editing before publishing.',
 							__i18n_text_domain__
 						) }
 					</em>
-					{ isVideoGeneratingPhase && (
-						<>
-							<br />
-							<em>
-								{ __(
-									"You can close this — we'll save it when it's ready.",
-									__i18n_text_domain__
-								) }
-							</em>
-						</>
-					) }
+					<br />
+					<em>
+						{ __( 'All generated videos are saved to your Media Library.', __i18n_text_domain__ ) }
+					</em>
 				</p>
 			) }
 		</>
@@ -554,6 +560,12 @@ const ImageStudioContent = withInstanceId(
 							hasPreviousImage={ hasPreviousImage }
 							hasNextImage={ hasNextImage }
 						/>
+
+						{ isVideoMode && (
+							<div className="image-studio-modal__experimental-tag">
+								<ExperimentalBadge variant="dark" />
+							</div>
+						) }
 
 						{ mode === ImageStudioMode.Edit ? (
 							<EditLayout

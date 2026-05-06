@@ -128,7 +128,7 @@ describe( 'MastodonTagFeedPanel', () => {
 		expect( screen.queryByRole( 'link', { name: /View on Mastodon/ } ) ).toBeNull();
 	} );
 
-	it( 'rejects non-https tag.url values (defence-in-depth)', async () => {
+	it( 'rejects non-https tag.url values (defense-in-depth)', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
 			.reply( 200, {

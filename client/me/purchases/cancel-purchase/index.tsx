@@ -11,7 +11,7 @@ import {
 	getMonthlyPlanByYearly,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
@@ -27,7 +27,6 @@ import BackupRetentionOptionOnCancelPurchase from 'calypso/components/backup-ret
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -195,6 +194,7 @@ export interface CancelPurchaseProps {
 	siteSlug: string;
 	intent?: 'cancel' | 'remove' | null;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
+	isPurchaseCancelFeaturesLoading?: boolean;
 }
 
 export type CancelPurchaseAllProps = CancelPurchaseProps &
@@ -847,8 +847,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		} ).secondary;
 
 		return (
-			<FormButton
-				isPrimary={ false }
+			<Button
+				borderless
 				href={ ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 					siteSlug,
 					this.props.purchaseId
@@ -856,7 +856,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				onClick={ this.onKeepSubscriptionClick }
 			>
 				{ label }
-			</FormButton>
+			</Button>
 		);
 	};
 
@@ -975,6 +975,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 							<label className="cancel-purchase__confirm-checkbox">
 								<FormCheckbox
 									checked={ this.state.customerConfirmedUnderstanding ?? false }
+									disabled={ this.state.isLoading }
 									onChange={ ( event: { target: { checked: boolean } } ) =>
 										this.onCustomerConfirmedUnderstandingChange( event.target.checked )
 									}
@@ -1061,7 +1062,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || this.props.isPurchaseCancelFeaturesLoading ) {
 			return (
 				<div>
 					<QueryUserPurchases />

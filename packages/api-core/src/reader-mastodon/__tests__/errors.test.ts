@@ -11,7 +11,7 @@ function wpErr( code: string, statusCode: number, message = '' ): unknown {
 
 // Mirror the actual shape that wpcom-proxy-request raises for a WP REST
 // envelope error: the WP error code lands on `.code`, not `.error`. The
-// classifier must recognise both to avoid silently falling through to
+// classifier must recognize both to avoid silently falling through to
 // `{ kind: 'unknown' }` for live upstream failures on non-401/429 paths
 // (401 and 429 are accidentally caught by the statusCode fallback).
 function wpProxyErr( code: string, statusCode: number, message = '' ): unknown {

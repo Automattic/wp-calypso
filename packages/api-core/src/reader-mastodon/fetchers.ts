@@ -1,6 +1,8 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	MastodonCreateLikeParams,
+	MastodonDeleteLikeParams,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
@@ -8,6 +10,10 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonCreatePostParams,
+	MastodonCreatePostResult,
+	MastodonCreateRepostParams,
+	MastodonDeleteRepostParams,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadResponse,
@@ -233,6 +239,83 @@ export async function getMastodonTagFeed(
 			},
 			query
 		) ) as MastodonTagFeedPage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function createMastodonLike( params: MastodonCreateLikeParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ params.connectionId }/likes`,
+			apiNamespace: NAMESPACE,
+			body: { status_id: params.statusId },
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function deleteMastodonLike( params: MastodonDeleteLikeParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			// Encode the status id defensively — values are numeric strings
+			// today, but a malformed `post.uri` flowing through (mapper bug,
+			// whitespace, slashes) shouldn't smuggle path segments.
+			path: `/reader/mastodon/connections/${ params.connectionId }/likes/${ encodeURIComponent(
+				params.statusId
+			) }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function createMastodonRepost( params: MastodonCreateRepostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ params.connectionId }/reposts`,
+			apiNamespace: NAMESPACE,
+			body: { status_id: params.statusId },
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function deleteMastodonRepost( params: MastodonDeleteRepostParams ): Promise< void > {
+	try {
+		await wpcom.req.post( {
+			method: 'DELETE',
+			path: `/reader/mastodon/connections/${ params.connectionId }/reposts/${ encodeURIComponent(
+				params.statusId
+			) }`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function createMastodonPost(
+	params: MastodonCreatePostParams
+): Promise< MastodonCreatePostResult > {
+	const { connectionId, status, in_reply_to_id, quoted_status_id } = params;
+	const body: Record< string, unknown > = { status };
+	if ( in_reply_to_id ) {
+		body.in_reply_to_id = in_reply_to_id;
+	}
+	if ( quoted_status_id ) {
+		body.quoted_status_id = quoted_status_id;
+	}
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ connectionId }/statuses`,
+			apiNamespace: NAMESPACE,
+			body,
+		} ) ) as MastodonCreatePostResult;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

@@ -379,7 +379,7 @@ function CancelPurchaseInner() {
 	// The route loader pre-fetches via `ensureQueryData`, so first paint is
 	// instant — `livePurchase` is defined on first render.
 	const { data: livePurchase, isPending: purchaseQueryIsPending } = useQuery(
-		purchaseQuery( parseInt( purchaseId ) )
+		purchaseQuery( parseInt( purchaseId, 10 ) )
 	);
 
 	// Mutations consumed by useCancelMutationOnConfirm
@@ -408,7 +408,9 @@ function CancelPurchaseInner() {
 		siteFeaturesQuery( purchase.blog_id )
 	);
 	const { data: plans } = useSuspenseQuery( plansQuery() );
-	const { data: purchaseCancelFeatures } = useQuery( purchaseCancelFeaturesQuery( purchaseId ) );
+	const { data: purchaseCancelFeatures } = useQuery(
+		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
+	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
 	const { data: hasBeenExtended } = useQuery( hasPurchaseBeenExtendedQuery( purchase.blog_id ) );
@@ -927,10 +929,7 @@ function CancelPurchaseInner() {
 		} ) );
 	};
 
-	const onCancellationStart = (
-		cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null,
-		customerConfirmedUnderstanding = false
-	) => {
+	const onCancellationStart = ( cancelIntent: CancelPurchaseState[ 'cancelIntent' ] = null ) => {
 		// When the eligibility notice is active and the user clicks the default cancel button
 		// (not the refund link), they're opting for an auto-renew cancellation — no refund, so
 		// no need to ask about the domain. Skip straight to the survey.
@@ -946,7 +945,6 @@ function CancelPurchaseInner() {
 			setState( ( state ) => ( {
 				...state,
 				cancelIntent,
-				customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				showDomainOptionsStep: true,
 			} ) );
@@ -964,7 +962,6 @@ function CancelPurchaseInner() {
 				setState( ( state ) => ( {
 					...state,
 					cancelIntent,
-					customerConfirmedUnderstanding,
 					siteId: purchase.blog_id,
 				} ) );
 				fireMutationFromConfirm( effectiveFlowType );
@@ -974,7 +971,6 @@ function CancelPurchaseInner() {
 				...state,
 				cancelIntent,
 				confirmationPassed: true,
-				customerConfirmedUnderstanding,
 				siteId: purchase.blog_id,
 				surveyShown: true,
 			} ) );
@@ -994,7 +990,6 @@ function CancelPurchaseInner() {
 		setState( ( state ) => ( {
 			...state,
 			domainConfirmationConfirmed: checked,
-			// customerConfirmedUnderstanding: checked,
 		} ) );
 
 		// Record tracks event for domain confirmation checkbox

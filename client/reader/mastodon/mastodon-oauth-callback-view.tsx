@@ -114,7 +114,7 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 			return null;
 		}
 		if ( providerError ) {
-			return translate( 'The authorization was cancelled or denied.' );
+			return translate( 'The authorization was canceled or denied.' );
 		}
 		if ( missingParams ) {
 			return translate( 'The authorization link is missing required information.' );
