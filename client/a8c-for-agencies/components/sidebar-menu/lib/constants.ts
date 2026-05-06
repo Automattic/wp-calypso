@@ -62,6 +62,7 @@ export const A4A_DEV_TOOLS_LINK = `${ A4A_RESOURCES_LINK }/dev-tools`;
 export const A4A_AI_MCP_LINK = `${ A4A_RESOURCES_LINK }/ai-mcp`;
 export const A4A_AI_MCP_AVAILABLE_TOOLS_LINK = `${ A4A_AI_MCP_LINK }/tools`;
 export const A4A_AI_MCP_CONNECT_LINK = `${ A4A_AI_MCP_LINK }/connect`;
+export const A4A_BENCHMARKS_LINK = `${ A4A_RESOURCES_LINK }/benchmarks`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';

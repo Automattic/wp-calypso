@@ -1,0 +1,59 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.benchmarks-overview .hosting-dashboard-layout__body-wrapper {
+	max-width: 700px;
+}
+
+.benchmarks-form {
+	padding-block-start: 16px;
+}
+
+.benchmarks-form__row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
+
+	@include breakpoint-deprecated("<660px") {
+		grid-template-columns: 1fr;
+	}
+
+	&:has(> .a4a-form__section-field:only-child) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.benchmarks-form__checkbox-group {
+	margin-block: 0;
+}
+
+.benchmarks-form__checkbox-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: 8px 16px;
+	margin-block-start: 8px;
+}
+
+.benchmarks-form__required-information {
+	@include body-medium;
+	color: var(--color-neutral-50);
+	margin-block-start: -32px;
+}
+
+.benchmarks-form__footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-block-start: -16px;
+
+	@include breakpoint-deprecated("<660px") {
+		flex-direction: column;
+	}
+}
+
+.benchmarks-form__already-submitted {
+	color: var(--color-neutral-60);
+	margin: 0;
+}
