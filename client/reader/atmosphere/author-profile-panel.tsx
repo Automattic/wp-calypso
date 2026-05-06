@@ -18,6 +18,7 @@ import {
 	SocialProfileCard,
 	SocialProfileHeaderSkeleton,
 	mapAtmosphereFeedItemToSocialPost,
+	socialPostFeedItemKey,
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
@@ -276,7 +277,7 @@ export function AuthorProfilePanel( {
 		),
 		[ connection.id ]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const stats: SocialProfileStat[] = profile.data
 		? [

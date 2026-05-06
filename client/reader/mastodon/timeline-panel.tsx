@@ -12,6 +12,7 @@ import {
 	SocialFeedList,
 	SocialPostCard,
 	mapMastodonFeedItemToSocialPost,
+	socialPostFeedItemKey,
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
@@ -165,7 +166,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		),
 		[ connection.id ]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const analyticsValue = useMemo(
 		() => ( {
