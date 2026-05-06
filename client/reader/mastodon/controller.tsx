@@ -52,10 +52,15 @@ export const mastodonConnect = ( context: Context, next: () => void ) => {
 	next();
 };
 
+// Intentionally not flag-gated. The Mastodon backend hardcodes the OAuth
+// redirect_uri to https://wordpress.com/reader/mastodon/oauth-callback, so the
+// instance always sends the user to production after they authorize — even if
+// they started the flow elsewhere. Production has reader/social=false, so
+// running ensureMastodonEnabled() here would bounce every callback to /reader
+// and the connection would never persist. This view is only reached by users
+// who actively started the connect flow, so it is safe to run even when the
+// rest of the Mastodon surface is hidden behind the flag.
 export const mastodonOauthCallback = ( context: Context, next: () => void ) => {
-	if ( ! ensureMastodonEnabled() ) {
-		return;
-	}
 	const query = context.query as { state?: string; code?: string; error?: string };
 	context.primary = (
 		<AsyncLoad require={ loadMastodonOauthCallbackView } placeholder={ null } query={ query } />
