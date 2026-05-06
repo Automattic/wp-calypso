@@ -314,9 +314,10 @@ export function LiveAIAssistant( {
 							) }
 
 							{ error && (
-								<div className="live-ai-assistant__error" role="alert">
-									{ error }
-								</div>
+								<Notice.Root intent="error">
+									<Notice.Title>{ __( 'Error' ) }</Notice.Title>
+									<Notice.Description>{ error }</Notice.Description>
+								</Notice.Root>
 							) }
 
 							{ timelineRows.length > 0 && (

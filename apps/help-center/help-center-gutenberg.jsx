@@ -270,19 +270,7 @@ registerPlugin( 'jetpack-help-center', {
 	render: () => <HelpCenterContentWithProvider />,
 } );
 
-// @alshakero, @ebuccelli, @omertestingios
-const BETA_TESTERS = [ 115118448, 128962475, 279870302 ];
-
 // Gate for proxied users with wpcom-smart-dictation=true flag.
-if ( helpCenterData.isProxied ) {
-	if ( ! canAccessWpcomApis() ) {
-		// In case someone tries to test on an Atomic site.
-		window.alert( 'The dictation tool is only available for simple sites.' );
-	}
-	if (
-		window.location.search.includes( 'wpcom-smart-dictation=true' ) ||
-		BETA_TESTERS.includes( helpCenterData?.currentUser?.ID )
-	) {
-		import( './help-center-wpcom-transcription' );
-	}
+if ( helpCenterData.isProxied && canAccessWpcomApis() ) {
+	import( './help-center-wpcom-transcription' );
 }

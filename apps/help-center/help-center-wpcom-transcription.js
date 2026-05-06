@@ -7,7 +7,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import './help-center.scss';
 
 const SMART_DICTATION_SIDEBAR_NAME = 'wpcom-smart-dictation';
-const MicrophoneIcon = () => <MicIcon size={ 20 } />;
+const MicrophoneIcon = () => <MicIcon animated size={ 20 } />;
 
 function JetpackSmartDictationPlugin() {
 	return (

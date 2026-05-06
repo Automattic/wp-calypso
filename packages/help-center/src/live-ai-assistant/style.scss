@@ -154,7 +154,6 @@
 }
 
 .live-ai-assistant__sidebar-status {
-	margin: 0 0 12px;
 	padding: 10px 12px;
 	font-size: 13px;
 	font-weight: 500;
@@ -342,7 +341,6 @@
 
 .live-ai-assistant__intro {
 	margin: 0;
-	color: #50575e;
 	font-size: 14px;
 	line-height: 1.5;
 
@@ -361,16 +359,6 @@
 	margin: 0 auto 14px;
 	border-radius: 8px;
 	pointer-events: none;
-}
-
-.live-ai-assistant__error {
-	padding: 10px 12px;
-	border-radius: 8px;
-	background: #fcf0f1;
-	color: #8a2424;
-	font-size: 13px;
-	line-height: 1.4;
-	border: 1px solid #f1c7cb;
 }
 
 .live-ai-assistant__transcript {
@@ -641,7 +629,6 @@
 	margin: 0 0 20px;
 	font-size: 14px;
 	line-height: 1.5;
-	color: #50575e;
 }
 
 .dictation-file-upload__actions {
