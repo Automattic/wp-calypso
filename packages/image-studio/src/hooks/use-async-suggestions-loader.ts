@@ -49,6 +49,7 @@ interface UseAsyncSuggestionsLoaderOptions {
 	cacheKey?: string | null;
 	enabled?: boolean;
 	buildSystemPrompt?: SystemPromptBuilder;
+	fallbackSuggestions?: Suggestion[];
 }
 
 function buildDefaultImageSystemPrompt( suggestionPrompt: string, locale: string ): string {
@@ -79,7 +80,13 @@ export function useAsyncSuggestionsLoader(
 	options: UseAsyncSuggestionsLoaderOptions
 ): UseAsyncSuggestionsLoaderReturn {
 	const locale = ( getLocaleData()?.[ '' ] as { lang?: string } | undefined )?.lang ?? 'en';
-	const { prompt: suggestionPrompt, cacheKey, enabled = true, buildSystemPrompt } = options;
+	const {
+		prompt: suggestionPrompt,
+		cacheKey,
+		enabled = true,
+		buildSystemPrompt,
+		fallbackSuggestions = DEFAULT_GENERATE_SUGGESTIONS,
+	} = options;
 
 	const [ suggestions, setSuggestions ] = useState< Suggestion[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -153,7 +160,7 @@ export function useAsyncSuggestionsLoader(
 
 				if ( ! isValidSuggestionsResponse( parsed ) ) {
 					window.console?.error?.( '[Image Studio] Invalid suggestions response:', response.text );
-					setSuggestions( DEFAULT_GENERATE_SUGGESTIONS );
+					setSuggestions( fallbackSuggestions );
 					return;
 				}
 
@@ -177,7 +184,7 @@ export function useAsyncSuggestionsLoader(
 				}
 
 				window.console?.warn?.( '[Image Studio] Failed to fetch suggestions:', error );
-				setSuggestions( DEFAULT_GENERATE_SUGGESTIONS );
+				setSuggestions( fallbackSuggestions );
 			} finally {
 				// Only clear loading state if this controller is still active
 				if ( abortControllerRef.current === abortController ) {

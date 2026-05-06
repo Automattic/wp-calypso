@@ -12,6 +12,7 @@ import { useAsyncSuggestionsLoader } from './use-async-suggestions-loader';
 import type { AgentMessage } from '../types/agenttic';
 
 const MAX_POST_BODY_CHARS = 2000;
+const EMPTY_SUGGESTIONS: Suggestion[] = [];
 
 /**
  * Strip HTML tags and Gutenberg block-delimiter comments out of a post-body
@@ -113,32 +114,38 @@ export function useVideoClipSuggestions( {
 }: UseVideoClipSuggestionsParams ): UseVideoClipSuggestionsReturn {
 	const lastTrackedSuggestionsRef = useRef< string >( '' );
 
-	const { postId, postBodyText } = useSelect( ( storeSelect ) => {
-		let currentPostId: string | number | null = null;
-		let rawContent = '';
-		try {
-			const editorSelect = storeSelect( editorStore ) as unknown as {
-				getCurrentPostId?: () => string | number | null;
-				getEditedPostContent?: () => string;
-				getEditedPostAttribute?: ( attr: string ) => unknown;
-			};
-			currentPostId = editorSelect?.getCurrentPostId?.() ?? null;
-			rawContent = editorSelect?.getEditedPostContent?.() ?? '';
-			if ( ! rawContent ) {
-				const attr = editorSelect?.getEditedPostAttribute?.( 'content' );
-				if ( typeof attr === 'string' ) {
-					rawContent = attr;
-				}
+	const { postId, postBodyText } = useSelect(
+		( storeSelect ) => {
+			if ( disabled ) {
+				return { postId: null, postBodyText: '' };
 			}
-		} catch {
-			currentPostId = null;
-			rawContent = '';
-		}
-		return {
-			postId: currentPostId,
-			postBodyText: postBodyToPlainText( rawContent ),
-		};
-	}, [] );
+			let currentPostId: string | number | null = null;
+			let rawContent = '';
+			try {
+				const editorSelect = storeSelect( editorStore ) as unknown as {
+					getCurrentPostId?: () => string | number | null;
+					getEditedPostContent?: () => string;
+					getEditedPostAttribute?: ( attr: string ) => unknown;
+				};
+				currentPostId = editorSelect?.getCurrentPostId?.() ?? null;
+				rawContent = editorSelect?.getEditedPostContent?.() ?? '';
+				if ( ! rawContent ) {
+					const attr = editorSelect?.getEditedPostAttribute?.( 'content' );
+					if ( typeof attr === 'string' ) {
+						rawContent = attr;
+					}
+				}
+			} catch {
+				currentPostId = null;
+				rawContent = '';
+			}
+			return {
+				postId: currentPostId,
+				postBodyText: postBodyToPlainText( rawContent ),
+			};
+		},
+		[ disabled ]
+	);
 
 	const enabled = ! disabled && postBodyText.length > 0;
 	const cacheKey = enabled && postId ? `video-clip-post-${ postId }` : null;
@@ -153,6 +160,7 @@ export function useVideoClipSuggestions( {
 		cacheKey,
 		enabled,
 		buildSystemPrompt: buildVideoClipSystemPrompt,
+		fallbackSuggestions: EMPTY_SUGGESTIONS,
 	} );
 
 	const hasMessages = Boolean( messages?.length );

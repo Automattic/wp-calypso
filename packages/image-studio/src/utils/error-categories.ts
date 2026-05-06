@@ -4,8 +4,9 @@
  * (via WP_Error → REST JSON `{ code, message, data }`); this is the single
  * source of truth for how each code surfaces in the UI.
  *
- * Codes not listed here fall through to a generic notice so we never
- * silently swallow a failure.
+ * Codes not listed here intentionally do not produce a notice — the agent's
+ * chat reply is left to convey the failure. Add a code here only when the
+ * server message is user-safe and the failure deserves its own notice.
  */
 import { __ } from '@wordpress/i18n';
 import type { TrackedErrorType } from './tracking';

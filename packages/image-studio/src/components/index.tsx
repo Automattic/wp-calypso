@@ -87,7 +87,7 @@ function ImageStudioAgentChat( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- We only want to run this effect on mount, and clear on unmount. Hence we must keep the dependencies empty.
 	}, [] );
 
-	useImageStudioAgentSync( agentChatProps );
+	useImageStudioAgentSync( agentChatProps, mode );
 
 	const displayMessages = useImageStudioMessageDisplay( agentChatProps?.messages );
 

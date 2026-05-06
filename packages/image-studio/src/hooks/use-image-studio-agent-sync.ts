@@ -30,10 +30,13 @@ interface AgentMessage {
  * @param agentChatProps.isProcessing
  * @param agentChatProps.messages
  */
-export function useImageStudioAgentSync( agentChatProps: {
-	isProcessing?: boolean;
-	messages?: Array< AgentMessage >;
-} ) {
+export function useImageStudioAgentSync(
+	agentChatProps: {
+		isProcessing?: boolean;
+		messages?: Array< AgentMessage >;
+	},
+	mode: ImageStudioMode = ImageStudioMode.Generate
+) {
 	const { isProcessing, messages } = agentChatProps || {};
 	const lastTrackedMessageId = useRef< string | null >( null );
 	const surfacedErrorMessageIds = useRef< Set< string > >( new Set() );
@@ -99,12 +102,12 @@ export function useImageStudioAgentSync( agentChatProps: {
 
 				addNotice( category.userMessage, category.severity );
 				trackImageStudioError( {
-					mode: ImageStudioMode.Generate,
+					mode,
 					errorType: category.errorType,
 				} );
 				surfacedErrorMessageIds.current.add( messageKey );
 				break;
 			}
 		}
-	}, [ messages, addNotice ] );
+	}, [ messages, addNotice, mode ] );
 }
