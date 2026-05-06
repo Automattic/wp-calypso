@@ -73,8 +73,8 @@ function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ):
 
 ${ suggestionPrompt }
 
-Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). Return exactly 3 suggestions:
-{"suggestions":[{"label":"2-4 word chip","prompt":"20-40 word directional sentence combining two axes"}]}
+Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). The "suggestions" array MUST contain exactly 3 items:
+{"suggestions":[{"label":"2-4 word chip A","prompt":"20-40 word directional sentence combining two axes"},{"label":"2-4 word chip B","prompt":"20-40 word directional sentence combining two axes"},{"label":"2-4 word chip C","prompt":"20-40 word directional sentence combining two axes"}]}
 
 The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the dense one — 20-40 words, two axes combined.
 

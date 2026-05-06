@@ -75,13 +75,17 @@ export function useImageStudioAgentSync(
 		}
 	}, [ messages, setLastAgentMessageId ] );
 
-	// Surface structured tool errors as notices
+	// Don't mark error-free messages as done — parts stream in across renders
+	// and a later chunk may add the error.
 	useEffect( () => {
 		if ( ! messages?.length ) {
 			return;
 		}
 
 		for ( const message of messages ) {
+			if ( message.role !== 'agent' ) {
+				continue;
+			}
 			const messageKey = message.id ?? message.messageId;
 			if ( ! messageKey || surfacedErrorMessageIds.current.has( messageKey ) ) {
 				continue;

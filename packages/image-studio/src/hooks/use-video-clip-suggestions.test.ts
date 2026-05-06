@@ -256,7 +256,7 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( callArgs.prompt ).toContain( 'signage' );
 
 		const built = callArgs.buildSystemPrompt( 'inner prompt body', 'en' );
-		expect( built ).toMatch( /exactly\s+3\s+suggestions/i );
+		expect( built ).toMatch( /exactly\s+3\s+items/i );
 		expect( built ).toContain( '20-40 word' );
 		expect( built ).not.toContain( '15-28 word' );
 		expect( built ).toContain( '2-4 word' );
