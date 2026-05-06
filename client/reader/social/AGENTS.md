@@ -2,13 +2,14 @@
 
 Shared UI primitives for Reader's third-party social-network surfaces: Bluesky / ATProto (shipping under the user-facing label "ATmosphere") today, Mastodon next, additional protocols later.
 
-This directory is a **components-only** package. It owns no routes, no controllers, no Redux state, and no top-level pages. The protocol-specific shells live next to it (e.g. `client/reader/atmosphere/`, future `client/reader/mastodon/`) and import from here.
+This directory hosts shared UI primitives and a small number of protocol-agnostic state containers (the composer provider). It owns no routes, no controllers, and no top-level pages. The protocol-specific shells live next to it (e.g. `client/reader/atmosphere/`, `client/reader/mastodon/`) and import from here.
 
 ## Scope
 
 In scope:
 
 - Presentational React components rendered by per-protocol shells (profile cards, feed lists, post cards, post-card subcomponents).
+- Protocol-agnostic state containers driven by per-protocol config (`composer/` — see "Composer" below).
 - Helpers tightly coupled to those components (HTML sanitisation, analytics context, link-pattern primitives).
 - Per-component styles (`style.scss` next to each component).
 - Tests for everything above.
@@ -59,6 +60,22 @@ client/reader/social/
       sanitize-post-html.ts     # DOMPurify allow-list helper
       style.scss
       test/
+
+  composer/                     # generic composer shell, driven by per-protocol ComposerConfig (slice 7)
+    index.ts                    # public barrel — only export from here
+    composer-provider.tsx       # ComposerProvider + ComposerMode union + useComposer / useOptionalComposer
+    composer-config.tsx         # ComposerConfig<TError, TParams, TResult> + ComposerMediaSlot + Translate re-export
+    composer-modal.tsx          # ComposerModal — generic modal driven by useComposerConfig()
+    composer-footer.tsx         # grapheme count + submit button + media-trigger slot
+    composer-pinned-context.tsx # parent / quote preview pinned at the top
+    composer-textarea.tsx       # autosizing textarea + submit-on-cmd-enter
+    grapheme-count.ts           # Intl.Segmenter-based grapheme count
+    test-config.ts              # testComposerConfig fixture for shell tests
+    triggers/
+      compose-fab.tsx           # ComposeFab — bottom-right floating button
+      timeline-compose-pill.tsx # TimelineComposePill — inline avatar + "What's on your mind?" pill
+    style.scss
+    test/
 ```
 
 The atmosphere thread surface (`ThreadTree`, `ThreadNode`, `ThreadTombstone`,
@@ -372,6 +389,91 @@ The connection ID flows from the protocol panel:
 `<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<RepostButton>`.
 Mirrors the like / favourite flow.
 
+### Composer (slice 7)
+
+The reply / quote / standalone composer is a generic shell driven by a
+per-protocol `ComposerConfig<TError, TParams, TResult>`. The shell lives
+under `composer/`; per-protocol configs live in `client/reader/<protocol>/composer-config.tsx`.
+
+Shell pieces:
+
+- `<ComposerProvider connectionId={…} config={…}>` owns the open/close
+  mode state, captures the trigger element so focus restores on close,
+  and (when the config supplies `useMedia`) hosts the media-attachment
+  state at provider lifetime — outlasting the modal's mount so deferred
+  blob-URL revocation can outlive the timeline staleTime.
+- `<ComposerModal />` renders the modal shell, runs the mutation, fires
+  the per-mode Tracks events, and routes the success notice. It reads
+  the active config via `useComposerConfig()`, never via a prop.
+- Triggers (`<ComposeFab />`, `<TimelineComposePill />`) call
+  `openComposer({ kind, … })` against the provider. Triggers do not know
+  the protocol — they call into the union and the provider's
+  `supportedModes` guard drops unsupported kinds (e.g. quote on
+  Mastodon) before they reach state.
+- `useOptionalComposer()` returns `null` outside a provider — panels
+  rendering reply buttons use this to gate the `onReplyClick` handler so
+  shells without a composer mounted (tests, embeds) still render.
+
+Per-protocol `ComposerConfig` supplies:
+
+- `limit` — graphemes the textarea will accept (300 for ATmosphere,
+  500 for Mastodon today).
+- `supportedModes` — `'reply' | 'quote' | 'standalone'` allow-list.
+  Unsupported kinds are silently dropped at `openComposer`.
+- `mutationFactory(queryClient)` — TanStack mutation options. Uses the
+  consumer's `QueryClient` per the `client/reader/AGENTS.md`
+  mutation-factory rule. The `TContext` slot is intentionally widened
+  to `any` so per-protocol factories carry their own onMutate snapshot
+  shape without leaking it into the generic config.
+- `buildParams(mode, text)` — protocol-specific wire shape (atmosphere's
+  `reply.root` / `reply.parent` strong-refs vs Mastodon's
+  `in_reply_to_id`).
+- `errorMessage(error, translate)` — per-error-kind copy. Returns
+  `ReactNode` so the reconnect URL embeds via `{{a}}` interpolation.
+  **Always include a `default:` arm with `err satisfies never;`** so a
+  future kind widening doesn't return `undefined` and render an empty
+  toast (this is the same lesson as the like/repost adapters).
+- `successNotice(mode, result, translate)` — text + optional in-app
+  thread URL for the "View" button on the success notice.
+- `tracks.{opened, published, errorShown}` — per-mode Tracks event
+  name + props. Names live in the config so a code search for
+  `calypso_reader_<protocol>_<mode>_*` finds them; do not lift this
+  into a shared helper.
+- `copy.{title, placeholder}` — per-mode strings.
+- `logBadRequest?` — fire-and-forget hook for the `bad_request` body
+  log. Lives in the per-protocol adapter so `calypso/lib/logstash`
+  doesn't have to be imported from `packages/api-queries` (which is
+  lint-restricted, same rule as the like/repost trackError logging).
+- `useMedia?` — optional hook supplying a `ComposerMediaSlot`
+  (`hasAny`/`hasUploaded`/`isAllUploaded`/`isAnyPending` flags +
+  `renderGrid`/`renderFooterTrigger` slots + `extendBuildParams` /
+  `onPublishSuccess` hooks). The hook MUST be a stable reference — it's
+  invoked unconditionally inside the provider so React's hook-ordering
+  rules apply. Atmosphere supplies `useAtmosphereComposerMedia`; Mastodon
+  leaves this undefined until its backend upload path ships.
+
+Reply-button gate at the post card: `<PostCardCounts>` always renders
+the reply trigger when `analytics.onReplyClick` is set — there is no
+secondary `post.cid` gate at the count cell. ATmosphere's `onReplyClick`
+implementation in the panel guards on `! post.cid` itself; Mastodon's
+posts never carry a `cid`, so a count-cell `&& post.cid` gate would
+have dark-shipped the reply button on every Mastodon card. Future
+protocols follow the atmosphere pattern: guard at the panel-level
+handler, not at the cell.
+
+Known dead field: `ComposerMode['reply'].root` is required by the
+discriminated union but unused on Mastodon (the wire only consumes
+`parent.uri` → `in_reply_to_id`). Mastodon panels currently set
+`root: { uri: post.uri }` to satisfy types; a follow-up will make
+`root` optional or per-protocol. Do not paste this dead field through
+to a third protocol — wait for the union refactor.
+
+The connection ID flows from the protocol shell:
+`AccountView` → `<ComposerProvider connectionId={id} config={…}>` →
+`<ComposerModal />` + `<ComposeFab />` (mounted as siblings of the
+view content). Inline pills (`<TimelineComposePill />`) live inside
+panels that opt into the composer via `useOptionalComposer()`.
+
 ## Boundaries (for new code)
 
 Inherits everything from `client/reader/AGENTS.md` and `client/AGENTS.md`. Highlights worth restating because they trip up new contributors:
@@ -412,6 +514,8 @@ When wiring up a second (Mastodon) or third social protocol, expect to:
 4. **Decide on the post card.** Either refactor `SocialPostCard` and the embed dispatcher to take a `SocialPost` shape with a Bluesky→`SocialPost` mapper and a Mastodon→`SocialPost` mapper, or fork into `BlueskyPostCard` / `MastodonPostCard` keeping shared subcomponents (`PostCardLink`, `PostCardCounts`, etc.). Pick after looking at concrete fixtures, not before.
 5. **Wire the analytics provider** in the protocol shell. Pass `source: '<protocol>'`, the connection id, and an `onClick` callback that dispatches `calypso_reader_<protocol>_*` Tracks events via `recordReaderTracksEvent`.
 6. **Re-use the empty / error vocabulary** in `feed-list-empty.tsx` if the new protocol's error classifier produces the same kinds (`auth_required`, `rate_limited`, `upstream_unavailable`, `not_found`, `unknown`). Extend the dispatch only if a new kind appears.
+7. **Wire the like / repost adapters** in the protocol shell: `make<Use…>LikeAction(connectionId)` + `make<Use…>RepostAction(connectionId)`, mounted via `<LikeProvider>` / `<RepostProvider>` on every panel that renders post cards. See "Like / Favourite interactions" and "Repost / Boost interactions" above.
+8. **Wire the composer** by exporting a `ComposerConfig<TError, TParams, TResult>` from `client/reader/<protocol>/composer-config.tsx` and mounting `<ComposerProvider connectionId={…} config={…}>` + `<ComposerModal />` + `<ComposeFab />` on every view (account, thread, author-profile). Inline pills (`<TimelineComposePill />`) live inside panels that opt into the composer via `useOptionalComposer()`. See "Composer (slice 7)" above.
 
 Future-extraction candidates flagged for later PRs (currently in `client/reader/atmosphere/`, expected to move shared-side once Mastodon needs them):
 
