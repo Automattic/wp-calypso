@@ -329,7 +329,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 			// align with thumbnails; here it adds empty space below short titles/excerpts
 			// causing the block to no longer be vertically centered.
 			.reader-post-card__post-details {
-				min-height: 0;
+				min-height: auto;
 			}
 
 			// 8px gap between the title/meta heading row and the excerpt
