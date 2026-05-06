@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { readerMastodonKeys } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
@@ -74,8 +75,9 @@ describe( 'mastodonComposerConfig', () => {
 			} );
 			// Pre-seed the instance config so the hook reads from the cache
 			// without firing nock — `gh ci` doesn't run nock, so seeding is
-			// the deterministic shape for this hook test.
-			queryClient.setQueryData( [ 'reader', 'mastodon', 'instance-config', 99 ], {
+			// the deterministic shape for this hook test. Use the key
+			// factory so the test follows shape changes automatically.
+			queryClient.setQueryData( readerMastodonKeys.instanceConfig( 99 ), {
 				max_characters: 4096,
 			} );
 			const { result } = renderHook( () => mastodonComposerConfig.useLimit( 99 ), {

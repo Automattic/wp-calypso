@@ -430,8 +430,16 @@ Shell pieces:
 
 Per-protocol `ComposerConfig` supplies:
 
-- `limit` — graphemes the textarea will accept (300 for ATmosphere,
-  500 for Mastodon today).
+- `useLimit(connectionId)` — hook returning the per-render grapheme cap.
+  ATmosphere returns its static 300 (Bluesky's cap is protocol-wide).
+  Mastodon reads `max_characters` from the home instance's config via
+  `useMastodonInstanceConfigQuery` and falls back to 500 (stock default)
+  while the query is pending or has errored. The hook is called
+  unconditionally from `<ComposerModal>` (rules of hooks) and accepts
+  `null` for the connection id — implementations must handle that case
+  (the value is unused while the modal is closed). See
+  `client/reader/mastodon/use-mastodon-composer-limit.ts` for the
+  Mastodon shape.
 - `supportedModes` — `'reply' | 'quote' | 'standalone'` allow-list.
   Unsupported kinds are silently dropped at `openComposer`.
 - `mutationFactory(queryClient)` — TanStack mutation options. Uses the
