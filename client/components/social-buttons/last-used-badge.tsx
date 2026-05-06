@@ -1,3 +1,4 @@
+import { Badge } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 
@@ -9,7 +10,9 @@ const LastUsedBadge = ( { children }: LastUsedBadgeProps ) => {
 	const translate = useTranslate();
 	return (
 		<span className="social-buttons__last-used">
-			<span className="social-buttons__last-used-pill">{ translate( 'Last used' ) }</span>
+			<Badge intent="informational" className="social-buttons__last-used-pill">
+				{ translate( 'Last used' ) }
+			</Badge>
 			{ children }
 		</span>
 	);

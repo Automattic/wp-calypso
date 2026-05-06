@@ -1,6 +1,12 @@
 /*rtl:ignore*/
 @import '@automattic/typography/styles/variables';
 
+// Load the WPDS design tokens so @wordpress/ui components (e.g. Badge) can
+// resolve their --wpds-* CSS variables. Without this, font-size, padding,
+// and radius rules in the Badge silently fall back to inherited/browser
+// defaults (e.g. 16px font instead of the WPDS-spec 12px).
+@import '@wordpress/theme/design-tokens.css';
+
 .social-buttons__button {
 	padding-inline: 18px;
 
@@ -31,26 +37,32 @@
 	display: block;
 	width: 100%;
 	overflow: visible;
+
+	// Retint the @wordpress/ui Badge (`intent="informational"`) to match the
+	// active admin theme color. We feed new values into the WPDS info-surface
+	// tokens at this scope only — the Badge's own CSS reads them and shifts,
+	// so we never override its class selectors directly.
+	--wpds-color-bg-surface-info: var( --wp-admin-theme-color, #3858e9 );
+	--wpds-color-fg-content-info: #fff;
 }
 
-// Mirrors @wordpress/components Badge styling (padding, radius, sizing,
-// typography), with a dark gray fill instead of the default light gray.
+// Float the @wordpress/ui Badge over the top-right corner of the matched
+// element.
+//
+// The Badge ships its rules inside `@layer wp-ui-components`, which Calypso's
+// unlayered typography/form resets beat in the cascade — so we re-apply the
+// same WPDS tokens at this unlayered class to restore the package defaults
+// (12px font, package padding/radius). Same pattern used on the podcast page,
+// see client/my-sites/podcast/style.scss.
 .social-buttons__last-used-pill {
 	position: absolute;
 	top: -10px;
 	right: -6px;
 	z-index: 1;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	height: 24px;
-	padding: 0 8px;
-	background-color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
-	color: #fff;
-	border-radius: 4px;
-	font-size: 12px;
-	font-weight: 400;
-	line-height: 20px;
+	font-size: var( --wpds-font-size-sm );
+	line-height: var( --wpds-font-line-height-xs );
+	padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
+	border-radius: var( --wpds-border-radius-lg );
 }
 
 // The matched element (button or input): accent border to match the floating

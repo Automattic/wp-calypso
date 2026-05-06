@@ -4,6 +4,33 @@
 
 $breakpoint-mobile: 782px; //Mobile size.
 
+// Inline "Last used" badge next to the email/username label, used when the
+// last-used method was `password`. Reuses the same approach as the social
+// pill: locally retint WPDS info-surface tokens to the admin theme color, and
+// re-apply the WPDS Badge spec at this unlayered class so Calypso's
+// unlayered typography reset doesn't collapse the package defaults.
+.login__form-userdata {
+	--wpds-color-bg-surface-info: var( --wp-admin-theme-color, #3858e9 );
+	--wpds-color-fg-content-info: #fff;
+}
+
+.login__form-last-used-badge {
+	margin-inline-start: 8px;
+	padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
+	border-radius: var( --wpds-border-radius-lg );
+	font-size: var( --wpds-font-size-sm );
+	line-height: var( --wpds-font-line-height-xs );
+	vertical-align: middle;
+}
+
+// Bump the label's margin-bottom from the shared 6px to 8px when the inline
+// "Last used" badge is shown — gives the badge breathing room above the input
+// without modifying the global `.form-label-core-styles` rule. Marker class
+// is only set when the badge ships, so default spacing is preserved otherwise.
+.form-label.has-last-used-badge {
+	margin-bottom: 8px;
+}
+
 form {
 	margin-left: auto;
 	margin-right: auto;

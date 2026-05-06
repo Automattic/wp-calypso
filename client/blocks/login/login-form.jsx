@@ -4,6 +4,7 @@ import { Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/comp
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import emailValidator from 'email-validator';
@@ -18,7 +19,6 @@ import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { LastUsedBadge } from 'calypso/components/social-buttons';
 import Notice from 'calypso/dashboard/components/notice';
 import {
 	getSignupUrl,
@@ -705,35 +705,37 @@ export class LoginForm extends Component {
 					<div className="login__form-userdata">
 						{ linkingSocialUser && renderSocialLinkingNotice() }
 
-						<FormLabel htmlFor="usernameOrEmail" hasCoreStylesNoCaps>
+						<FormLabel
+							htmlFor="usernameOrEmail"
+							hasCoreStylesNoCaps
+							className={ clsx( {
+								'has-last-used-badge': isLastUsedPassword,
+							} ) }
+						>
 							{ this.renderUsernameorEmailLabel() }
+							{ isLastUsedPassword && (
+								<Badge intent="informational" className="login__form-last-used-badge">
+									{ this.props.translate( 'Last used' ) }
+								</Badge>
+							) }
 						</FormLabel>
 
-						{ ( () => {
-							const usernameInput = (
-								<FormTextInput
-									autoCapitalize="off"
-									autoCorrect="off"
-									spellCheck="false"
-									autoComplete="username"
-									className={ clsx( {
-										'is-error': requestError && requestError.field === 'usernameOrEmail',
-									} ) }
-									onChange={ this.onChangeUsernameOrEmailField }
-									id="usernameOrEmail"
-									name="usernameOrEmail"
-									ref={ this.saveUsernameOrEmailRef }
-									value={ this.state.usernameOrEmail }
-									disabled={ isEmailOrUsernameInputDisabled }
-									hasCoreStyles
-								/>
-							);
-							return isLastUsedPassword ? (
-								<LastUsedBadge>{ usernameInput }</LastUsedBadge>
-							) : (
-								usernameInput
-							);
-						} )() }
+						<FormTextInput
+							autoCapitalize="off"
+							autoCorrect="off"
+							spellCheck="false"
+							autoComplete="username"
+							className={ clsx( {
+								'is-error': requestError && requestError.field === 'usernameOrEmail',
+							} ) }
+							onChange={ this.onChangeUsernameOrEmailField }
+							id="usernameOrEmail"
+							name="usernameOrEmail"
+							ref={ this.saveUsernameOrEmailRef }
+							value={ this.state.usernameOrEmail }
+							disabled={ isEmailOrUsernameInputDisabled }
+							hasCoreStyles
+						/>
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
 							<FormInputValidation isError text={ requestError.message }>
