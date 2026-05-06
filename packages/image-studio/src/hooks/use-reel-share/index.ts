@@ -239,7 +239,13 @@ export function useReelShare(): UseReelShareReturn {
 
 			if ( success ) {
 				trackImageStudioReelShareDispatched();
-				await addNotice( __( 'Shared to Instagram as a Reel.', __i18n_text_domain__ ), 'success' );
+				await addNotice(
+					__(
+						'Reel shared to Instagram. It may take a few minutes to appear on your account.',
+						__i18n_text_domain__
+					),
+					'success'
+				);
 			} else {
 				// shareCurrentPost already created a notice via @wordpress/notices;
 				// avoid a second one. Just record telemetry.

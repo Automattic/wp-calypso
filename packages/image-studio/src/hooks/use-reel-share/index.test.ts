@@ -261,7 +261,7 @@ describe( 'useReelShare', () => {
 				await result.current.handleShare();
 			} );
 			expect( mockAddNotice ).toHaveBeenCalledWith(
-				expect.stringMatching( /Shared to Instagram/i ),
+				expect.stringMatching( /Reel shared to Instagram/i ),
 				'success'
 			);
 		} );
