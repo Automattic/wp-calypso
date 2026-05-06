@@ -1,6 +1,6 @@
 import { Configuration, Preview, TimelineRoot } from '@editframe/react';
 import { dispatch as wpDispatch, useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useMemo, useState } from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore, type ImageStudioActions } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
@@ -29,6 +29,40 @@ const RENDER_OPTIONS = {
 
 interface RenderToVideoTimegroup extends HTMLElement {
 	renderToVideo: ( options: Record< string, unknown > ) => Promise< unknown >;
+}
+
+/**
+ * EditFrame's <EFImage> hard-codes a rewrite of any non-data: src to
+ * `${apiHost}/api/v1/assets/image?src=...` (its asset-proxy endpoint). We
+ * don't run an EditFrame backend, so that path 404s. The only short-circuit
+ * in EFImage is `src.startsWith("data:")`, so we prefetch each scene image
+ * here and inline it as a data URL.
+ */
+async function imageUrlToDataUrl( url: string ): Promise< string > {
+	const response = await fetch( url, { credentials: 'omit' } );
+	if ( ! response.ok ) {
+		throw new Error( `Failed to fetch scene image (${ response.status }): ${ url }` );
+	}
+	const blob = await response.blob();
+	return await new Promise< string >( ( resolve, reject ) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve( String( reader.result ) );
+		reader.onerror = () => reject( new Error( `FileReader failed for ${ url }` ) );
+		reader.readAsDataURL( blob );
+	} );
+}
+
+async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureClipBrief > {
+	const resolvedScenes = await Promise.all(
+		brief.scenes.map( async ( scene ) => {
+			if ( scene.imageUrl.startsWith( 'data:' ) ) {
+				return scene;
+			}
+			const dataUrl = await imageUrlToDataUrl( scene.imageUrl );
+			return { ...scene, imageUrl: dataUrl };
+		} )
+	);
+	return { ...brief, scenes: resolvedScenes };
 }
 
 /**
@@ -63,16 +97,64 @@ export function FeatureClipRenderHost() {
 	} = useDispatch( videoStudioStore ) as unknown as VideoStudioActions;
 
 	const [ mountedRequestId, setMountedRequestId ] = useState< string | null >( null );
+	const [ resolvedBrief, setResolvedBrief ] = useState< {
+		requestId: string;
+		brief: FeatureClipBrief;
+	} | null >( null );
 
-	// When a new pendingRender appears, mount the compositor with its brief.
+	// Track which requestId we've already kicked off a prefetch for. Using a
+	// ref (not deps) means dep instability from useDispatch / store re-renders
+	// doesn't restart prefetch mid-flight — and the catch path never gets
+	// stranded without dispatching failFeatureClipRender, which was hanging the
+	// orchestrator on "Tool calls without results."
+	const prefetchedRequestIdRef = useRef< string | null >( null );
+
+	// When a new pendingRender appears, prefetch its scene images into data URLs
+	// before mounting the compositor. EditFrame's EFImage rewrites non-data: src
+	// to a backend asset-proxy URL we don't host, so direct site URLs 404.
 	useEffect( () => {
-		if ( pendingRender && pendingRender.requestId !== mountedRequestId ) {
-			setMountedRequestId( pendingRender.requestId );
+		if ( ! pendingRender ) {
+			prefetchedRequestIdRef.current = null;
+			if ( mountedRequestId !== null ) {
+				setMountedRequestId( null );
+			}
+			if ( resolvedBrief !== null ) {
+				setResolvedBrief( null );
+			}
+			return;
 		}
-		if ( ! pendingRender && mountedRequestId !== null ) {
-			setMountedRequestId( null );
+
+		const requestId = pendingRender.requestId;
+		if ( prefetchedRequestIdRef.current === requestId ) {
+			return;
 		}
-	}, [ pendingRender, mountedRequestId ] );
+		prefetchedRequestIdRef.current = requestId;
+
+		const prefetchStartedAt = performance.now();
+		// eslint-disable-next-line no-console
+		console.log( '[FeatureClipRenderHost] phase:prefetching-images', {
+			requestId,
+			sceneCount: pendingRender.brief.scenes.length,
+		} );
+		( async () => {
+			try {
+				const resolved = await resolveBriefImages( pendingRender.brief );
+				// eslint-disable-next-line no-console
+				console.log( '[FeatureClipRenderHost] prefetch_complete', {
+					requestId,
+					prefetchMs: Math.round( performance.now() - prefetchStartedAt ),
+				} );
+				setResolvedBrief( { requestId, brief: resolved } );
+				setMountedRequestId( requestId );
+			} catch ( error ) {
+				const message = error instanceof Error ? error.message : 'Failed to load scene images.';
+				// eslint-disable-next-line no-console
+				console.error( '[FeatureClipRenderHost] prefetch_failed', { requestId, message } );
+				// ALWAYS dispatch — never leave the agent's awaitRenderResult hanging.
+				failFeatureClipRender( { requestId, message } );
+			}
+		} )();
+	}, [ pendingRender, resolvedBrief, mountedRequestId, failFeatureClipRender ] );
 
 	// Cancel handling: hard-cancel from the user → clear pending and stop.
 	useEffect( () => {
@@ -237,14 +319,14 @@ export function FeatureClipRenderHost() {
 
 	const apiHost = typeof window !== 'undefined' ? window.location.origin : '';
 	const briefForMount = useMemo< FeatureClipBrief | null >( () => {
-		if ( ! mountedRequestId || ! pendingRender ) {
+		if ( ! mountedRequestId || ! resolvedBrief ) {
 			return null;
 		}
-		if ( pendingRender.requestId !== mountedRequestId ) {
+		if ( resolvedBrief.requestId !== mountedRequestId ) {
 			return null;
 		}
-		return pendingRender.brief;
-	}, [ mountedRequestId, pendingRender ] );
+		return resolvedBrief.brief;
+	}, [ mountedRequestId, resolvedBrief ] );
 
 	if ( ! briefForMount ) {
 		return null;
