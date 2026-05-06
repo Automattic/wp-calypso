@@ -95,6 +95,16 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 					typeof rawDuration === 'number' && Number.isFinite( rawDuration ) && rawDuration > 0
 						? rawDuration
 						: null;
+				const styleHint = typeof input?.style === 'string' ? input.style : '';
+
+				// Backstop for the photo chain: compose-feature-clip already
+				// swaps the canvas inline, so any call here for a -photo style
+				// is the LLM fabricating values to skip the actual render.
+				if ( styleHint.endsWith( '-photo' ) ) {
+					throw new Error(
+						'update-canvas-video is for the Veo chain only. For -photo styles, call image-studio/compose-feature-clip instead — it renders and swaps the canvas in one step.'
+					);
+				}
 
 				if ( ! url ) {
 					throw new Error( 'url is required to update the canvas video.' );
