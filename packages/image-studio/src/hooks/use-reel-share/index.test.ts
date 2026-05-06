@@ -4,6 +4,7 @@ import { useReelShare } from './index';
 // Tracking spies
 const mockTrackClicked = jest.fn();
 const mockTrackNotConnected = jest.fn();
+const mockTrackConnectionDisabled = jest.fn();
 const mockTrackNotPublished = jest.fn();
 const mockTrackInvalidState = jest.fn();
 const mockTrackDispatched = jest.fn();
@@ -117,6 +118,7 @@ jest.mock( '../../utils/jetpack-script-data', () => ( {
 jest.mock( '../../utils/tracking', () => ( {
 	trackImageStudioReelShareClicked: ( ...args: unknown[] ) => mockTrackClicked( ...args ),
 	trackImageStudioReelShareNotConnected: () => mockTrackNotConnected(),
+	trackImageStudioReelShareConnectionDisabled: () => mockTrackConnectionDisabled(),
 	trackImageStudioReelShareNotPublished: () => mockTrackNotPublished(),
 	trackImageStudioReelShareInvalidState: () => mockTrackInvalidState(),
 	trackImageStudioReelShareDispatched: () => mockTrackDispatched(),
@@ -276,6 +278,7 @@ describe( 'useReelShare', () => {
 			expect( mockEditPost ).not.toHaveBeenCalled();
 			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
 			expect( mockTrackNotConnected ).toHaveBeenCalledTimes( 1 );
+			expect( mockTrackConnectionDisabled ).not.toHaveBeenCalled();
 			expect( mockAddNotice ).toHaveBeenCalledWith(
 				expect.stringMatching( /Connect Instagram/i ),
 				'warning',
@@ -285,6 +288,26 @@ describe( 'useReelShare', () => {
 						url: expect.stringMatching( /\/wp-admin\/admin\.php\?page=jetpack-social$/ ),
 					} ),
 				] ),
+				true
+			);
+		} );
+
+		it( 'shows an enable-in-sidebar notice when IG is connected but disabled for this post', async () => {
+			mockState.connections = [ { ...igConnection, enabled: false }, twitterConnection ];
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( mockEditPost ).not.toHaveBeenCalled();
+			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+			expect( mockTrackConnectionDisabled ).toHaveBeenCalledTimes( 1 );
+			expect( mockTrackNotConnected ).not.toHaveBeenCalled();
+			expect( mockAddNotice ).toHaveBeenCalledWith(
+				expect.stringMatching( /Instagram sharing is not enabled for this post/i ),
+				'warning',
+				undefined,
 				true
 			);
 		} );

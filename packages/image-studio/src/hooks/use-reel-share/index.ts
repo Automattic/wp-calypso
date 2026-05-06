@@ -10,6 +10,7 @@ import { store as videoStudioStore } from '../../stores/video-studio';
 import { getReelSharePostPath } from '../../utils/jetpack-script-data';
 import {
 	trackImageStudioReelShareClicked,
+	trackImageStudioReelShareConnectionDisabled,
 	trackImageStudioReelShareDispatched,
 	trackImageStudioReelShareFailed,
 	trackImageStudioReelShareInvalidState,
@@ -152,9 +153,8 @@ export function useReelShare(): UseReelShareReturn {
 			| undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
 		const freshEnabledConnections = freshConnections.filter( ( c ) => c.enabled !== false );
-		const freshHasInstagram = freshEnabledConnections.some(
-			( c ) => c.service_name === IG_SERVICE
-		);
+		const freshIgConnection = freshConnections.find( ( c ) => c.service_name === IG_SERVICE );
+		const freshIgIsEnabled = !! freshIgConnection && freshIgConnection.enabled !== false;
 		const freshSkipped = freshEnabledConnections
 			.filter( ( c ) => c.service_name !== IG_SERVICE )
 			.map( ( c ) => String( c.connection_id ) );
@@ -177,7 +177,7 @@ export function useReelShare(): UseReelShareReturn {
 			return;
 		}
 
-		if ( ! freshHasInstagram ) {
+		if ( ! freshIgConnection ) {
 			trackImageStudioReelShareNotConnected();
 			await addNotice(
 				__(
@@ -200,6 +200,20 @@ export function useReelShare(): UseReelShareReturn {
 						openInNewTab: true,
 					},
 				],
+				true
+			);
+			return;
+		}
+
+		if ( ! freshIgIsEnabled ) {
+			trackImageStudioReelShareConnectionDisabled();
+			await addNotice(
+				__(
+					'Instagram sharing is not enabled for this post. Enable it in the Jetpack Social sidebar to share this Reel.',
+					__i18n_text_domain__
+				),
+				'warning',
+				undefined,
 				true
 			);
 			return;

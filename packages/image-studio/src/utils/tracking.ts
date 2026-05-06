@@ -567,6 +567,14 @@ export function trackImageStudioReelShareNotConnected(): void {
 }
 
 /**
+ * Tracks when the Reel share is blocked because the IG connection exists but is
+ * toggled off for this post in the Jetpack Social sidebar.
+ */
+export function trackImageStudioReelShareConnectionDisabled(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_connection_disabled' );
+}
+
+/**
  * Tracks when the Reel share is blocked because the post isn't published yet.
  */
 export function trackImageStudioReelShareNotPublished(): void {
