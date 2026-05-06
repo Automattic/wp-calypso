@@ -218,7 +218,6 @@ class CancelPurchaseButton extends Component<
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }
 						cancellationInProgress={ isLoading }
-						onSwitchToMonthly={ this.props.onSwitchToMonthly }
 					/>
 				) }
 
