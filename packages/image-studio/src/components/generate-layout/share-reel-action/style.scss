@@ -14,12 +14,6 @@
 	padding: 0 16px;
 	margin-top: 4px;
 
-	&__label {
-		font-size: 13px;
-		color: #c4c4c4;
-		line-height: 1;
-	}
-
 	// Hover/focus delight on the icon glyph — the @wordpress/components
 	// Button's default state already gives us a subtle bg highlight; we
 	// add an icon-specific brighten + scale on top.

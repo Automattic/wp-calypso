@@ -18,17 +18,12 @@ export function ShareReelAction(): JSX.Element | null {
 		? __( 'Sharing on Instagram…', __i18n_text_domain__ )
 		: __( 'Share on Instagram', __i18n_text_domain__ );
 
-	const visibleText = reel.isSharing
-		? __( 'Sharing…', __i18n_text_domain__ )
-		: __( 'Share:', __i18n_text_domain__ );
-
 	return (
 		<div
 			className="image-studio-share-reel-action"
 			role="group"
 			aria-label={ __( 'Share generated video', __i18n_text_domain__ ) }
 		>
-			<span className="image-studio-share-reel-action__label">{ visibleText }</span>
 			{ generic.isVisible && (
 				<Button
 					className="image-studio-share-reel-action__button"
