@@ -112,7 +112,6 @@ export function createCreditCardMethod( {
 			/>
 		),
 		inactiveContent: <CreditCardSummary />,
-		getAriaLabel: ( __: ( text: string ) => string ) =>
-			hasExistingCardMethods ? __( 'New credit or debit card' ) : __( 'Credit or debit card' ),
+		getAriaLabel: ( __: ( text: string ) => string ) => __( 'Credit Card' ),
 	};
 }
