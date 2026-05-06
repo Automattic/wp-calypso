@@ -24,6 +24,7 @@ import {
 	trendingUp,
 	upload,
 } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -162,6 +163,7 @@ type SolutionsCardsUpsellStepProps = {
 	onDeclineUpsell: () => void;
 	onSwitchToMonthly?: () => void;
 	purchase: Purchase;
+	purchaseSettingsUrl?: string;
 	refundAmount?: string;
 	site: SiteDetails;
 };
@@ -178,6 +180,7 @@ export default function SolutionsCardsUpsellStep( {
 	onDeclineUpsell,
 	onSwitchToMonthly,
 	purchase,
+	purchaseSettingsUrl,
 	refundAmount,
 	site,
 }: SolutionsCardsUpsellStepProps ) {
@@ -207,7 +210,13 @@ export default function SolutionsCardsUpsellStep( {
 	}
 
 	const changePlanUrl = `/plans/${ site.slug }`;
-	const renewNowUrl = `/checkout/${ site.slug }/${ purchase.productSlug }?coupon=${ RENEW_COUPON }`;
+	const baseRenewUrl = `/checkout/${ site.slug }/${ purchase.productSlug }?coupon=${ RENEW_COUPON }`;
+	const renewNowUrl = purchaseSettingsUrl
+		? addQueryArgs( baseRenewUrl, {
+				redirect_to: purchaseSettingsUrl,
+				cancel_to: purchaseSettingsUrl,
+		  } )
+		: baseRenewUrl;
 
 	const context: CardActionContext = {
 		site,

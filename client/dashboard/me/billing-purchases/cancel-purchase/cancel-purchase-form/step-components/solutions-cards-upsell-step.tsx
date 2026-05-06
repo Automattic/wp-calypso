@@ -23,6 +23,7 @@ import {
 	trendingUp,
 	upload,
 } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import * as React from 'react';
 import { useHelpCenter } from '../../../../../app/help-center';
 import { ButtonStack } from '../../../../../components/button-stack';
@@ -294,8 +295,12 @@ export default function SolutionsCardsUpsellStep( {
 	}
 
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
-	const renewNowUrl = wpcomLink(
-		`/checkout/${ purchase.site_slug }/${ purchase.product_slug }?coupon=${ RENEW_COUPON }`
+	const purchaseSettingsUrl = dashboardLink( '/me/billing/purchases/' + purchase.ID );
+	const renewNowUrl = addQueryArgs(
+		wpcomLink(
+			`/checkout/${ purchase.site_slug }/${ purchase.product_slug }?coupon=${ RENEW_COUPON }`
+		),
+		{ redirect_to: purchaseSettingsUrl, cancel_to: purchaseSettingsUrl }
 	);
 	const subscriptionsUrl = wpcomLink(
 		`/purchases/subscriptions/${ purchase.site_slug }/${ purchase.ID }`

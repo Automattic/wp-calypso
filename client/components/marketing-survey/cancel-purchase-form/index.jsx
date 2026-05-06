@@ -83,6 +83,7 @@ class CancelPurchaseForm extends Component {
 		skipRemovePlanSurvey: PropTypes.bool,
 		cancellationInProgress: PropTypes.bool,
 		intent: PropTypes.string,
+		purchaseSettingsUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -421,6 +422,7 @@ class CancelPurchaseForm extends Component {
 						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
 						onSwitchToMonthly={ this.props.onSwitchToMonthly }
 						purchase={ purchase }
+						purchaseSettingsUrl={ this.props.purchaseSettingsUrl }
 						refundAmount={ this.getRefundAmount() }
 						site={ site }
 					/>
