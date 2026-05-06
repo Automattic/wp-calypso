@@ -3,9 +3,8 @@ import { useEffect, useRef } from '@wordpress/element';
 import { type ImageStudioActions, store as imageStudioStore } from '../store';
 
 interface AgentMessage {
-	id?: string;
-	messageId?: string;
-	role?: string;
+	id: string;
+	role: string;
 }
 
 /**
@@ -13,6 +12,9 @@ interface AgentMessage {
  *
  * - Updates AI processing status when agent is processing.
  * - Tracks the last agent message ID for feedback.
+ * @param agentChatProps
+ * @param agentChatProps.isProcessing
+ * @param agentChatProps.messages
  */
 export function useImageStudioAgentSync( agentChatProps: {
 	isProcessing?: boolean;
@@ -48,10 +50,9 @@ export function useImageStudioAgentSync( agentChatProps: {
 			}
 		}
 
-		const lastAgentMessageId = lastAgentMessage?.id ?? lastAgentMessage?.messageId;
-		if ( lastAgentMessageId && lastAgentMessageId !== lastTrackedMessageId.current ) {
-			lastTrackedMessageId.current = lastAgentMessageId;
-			setLastAgentMessageId( lastAgentMessageId );
+		if ( lastAgentMessage?.id && lastAgentMessage.id !== lastTrackedMessageId.current ) {
+			lastTrackedMessageId.current = lastAgentMessage.id;
+			setLastAgentMessageId( lastAgentMessage.id );
 		}
 	}, [ messages, setLastAgentMessageId ] );
 }
