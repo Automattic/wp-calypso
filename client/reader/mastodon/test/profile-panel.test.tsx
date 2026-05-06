@@ -177,4 +177,34 @@ describe( 'ProfilePanel', () => {
 		await waitFor( () => expect( screen.getByText( 'hello there' ) ).toBeVisible() );
 		expect( screen.queryByRole( 'button', { name: /what['’]s up/i } ) ).toBeNull();
 	} );
+
+	it( 'fires _profile_viewed once per (actor, connection) after profile.data resolves', async () => {
+		// `SocialAuthorProfilePanel` (rendered inside MastodonAuthorProfilePanel)
+		// dispatches `${prefix}profile_viewed` once when the profile query
+		// resolves. With the Mastodon prefix that's
+		// `calypso_reader_mastodon_profile_viewed` — this asserts the
+		// connected-user /profile surface fires it with the expected payload
+		// (connection_id, actor, actor_handle, actor_id, initial_filter), so
+		// dashboards can split "own profile vs. someone else's" via the actor
+		// field.
+		mockAuthorEndpoints();
+		mockConnectionDetails();
+
+		renderWithProvider( <ProfilePanel connection={ connection } />, {
+			queryClient: makeClient(),
+		} );
+
+		await waitFor( () =>
+			expect( readerAnalytics.recordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_mastodon_profile_viewed',
+				expect.objectContaining( {
+					connection_id: 101,
+					actor: '@alice@mastodon.social',
+					actor_handle: 'alice@mastodon.social',
+					actor_id: '101',
+					initial_filter: 'posts_no_replies',
+				} )
+			)
+		);
+	} );
 } );
