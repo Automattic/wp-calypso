@@ -105,8 +105,8 @@ const SiteSpec: StepType = function SiteSpec() {
 			...vegaConfig,
 			tracking: vegaConfig.tracking && {
 				...vegaConfig.tracking,
-				getOverrides: () => ( {
-					...vegaConfig.tracking?.getOverrides?.(),
+				getOverrides: ( event: string ) => ( {
+					...vegaConfig.tracking?.getOverrides?.( event ),
 					experiment_variation: 'treatment',
 				} ),
 			},
