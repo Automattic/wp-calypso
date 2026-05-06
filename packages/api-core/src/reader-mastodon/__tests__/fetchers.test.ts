@@ -482,6 +482,47 @@ describe( 'createMastodonPost', () => {
 		expect( scope.isDone() ).toBe( true );
 	} );
 
+	it( 'POSTs status + quoted_status_id when quoting', async () => {
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/statuses', {
+				status: 'commentary',
+				quoted_status_id: '116522382646486388',
+			} )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: null,
+			} );
+		const result = await createMastodonPost( {
+			connectionId: 7,
+			status: 'commentary',
+			quoted_status_id: '116522382646486388',
+		} );
+		expect( result.id ).toBe( '999' );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'strips the client-only quotedFallbackPermalink before sending', async () => {
+		// The body matcher below would fail if the fetcher leaked
+		// `quotedFallbackPermalink` into the wire payload.
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/statuses', ( body ) => {
+				return (
+					body.status === 'commentary' &&
+					body.quoted_status_id === '116522382646486388' &&
+					! ( 'quotedFallbackPermalink' in body )
+				);
+			} )
+			.reply( 200, { id: '999', url: 'https://mastodon.social/@me/999', in_reply_to_id: null } );
+		await createMastodonPost( {
+			connectionId: 7,
+			status: 'commentary',
+			quoted_status_id: '116522382646486388',
+			quotedFallbackPermalink: 'https://mastodon.social/@alice/116522382646486388',
+		} );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
 	it( 'classifies a 401 as auth_required', async () => {
 		nock( BASE )
 			.post( '/wpcom/v2/reader/mastodon/connections/7/statuses', { status: 'hello' } )

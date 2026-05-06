@@ -40,7 +40,7 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
-	MastodonCreatePostParams,
+	MastodonCreatePostMutationParams,
 	MastodonCreatePostResult,
 	MastodonError,
 	MastodonFeedItem,
@@ -721,6 +721,58 @@ interface CreatePostContext {
 	parentCountsContext?: OptimisticContext;
 }
 
+function isBadRequestError( err: unknown ): boolean {
+	return typeof err === 'object' && err !== null && 'kind' in err && err.kind === 'bad_request';
+}
+
+/**
+ * Calls `createMastodonPost` with the wire-shape params destructured off
+ * the mutation-params input. If a native quote attempt (`quoted_status_id`
+ * set) returns `bad_request`, retries once with `quoted_status_id` removed
+ * and `quotedFallbackPermalink` appended to `status` separated by a blank
+ * line. The fallback covers Mastodon < 4.5 (no native quote support,
+ * upstream returns 422 → `bad_request`) and instances that have quoting
+ * disabled.
+ *
+ * The retry is opt-in via `quotedFallbackPermalink` — when the panel didn't
+ * supply one (or there's no permalink to fall back to) the original
+ * `bad_request` is propagated unchanged.
+ *
+ * Trade-off: `bad_request` is the only signal we have today, but the
+ * backend returns it for *any* upstream 422 (malformed status, attachment
+ * errors, character-limit overflow, etc.). When a user's content is
+ * genuinely invalid, the retry sends the same body plus a permalink and
+ * usually fails again — surfacing the second-attempt error is the right
+ * UX (the user sees the current state). The narrower fix is for the
+ * backend to emit a quote-specific error code (e.g.
+ * `reader_mastodon_quote_unsupported`); switch to that when it ships.
+ */
+async function createMastodonPostWithQuoteFallback(
+	params: MastodonCreatePostMutationParams
+): Promise< MastodonCreatePostResult > {
+	const { quotedFallbackPermalink, ...wireParams } = params;
+	try {
+		return await createMastodonPost( wireParams );
+	} catch ( err ) {
+		if (
+			! isBadRequestError( err ) ||
+			! wireParams.quoted_status_id ||
+			! quotedFallbackPermalink
+		) {
+			throw err;
+		}
+		// Narrowed: `quotedFallbackPermalink` is `string` from here on.
+		const body = wireParams.status.trimEnd();
+		const fallbackStatus = body
+			? `${ body }\n\n${ quotedFallbackPermalink }`
+			: quotedFallbackPermalink;
+		// Strip `quoted_status_id` for the text-fallback retry; the rest of
+		// the wire shape (status, in_reply_to_id, connectionId) carries over.
+		const { quoted_status_id: _omit, ...rest } = wireParams;
+		return await createMastodonPost( { ...rest, status: fallbackStatus } );
+	}
+}
+
 /**
  * Wire-layer factory for creating a Mastodon status (reply or standalone post).
  *
@@ -741,10 +793,10 @@ export const createMastodonPostMutation = ( queryClient: QueryClient ) =>
 	mutationOptions<
 		MastodonCreatePostResult,
 		MastodonError,
-		MastodonCreatePostParams,
+		MastodonCreatePostMutationParams,
 		CreatePostContext
 	>( {
-		mutationFn: createMastodonPost,
+		mutationFn: createMastodonPostWithQuoteFallback,
 		onMutate: async ( vars ) => {
 			// cancelQueries is best-effort — TanStack docs flag it as such.
 			// If it rejects (rare; route-change teardown races) we want to

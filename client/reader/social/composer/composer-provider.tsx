@@ -60,6 +60,7 @@ export interface ComposerParentRef {
 export interface PreviewPost {
 	uri: string;
 	cid?: string;
+	permalink?: string;
 	text: string;
 	html: string;
 	author: {

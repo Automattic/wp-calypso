@@ -96,6 +96,13 @@ export interface SocialAuthorProfilePanelProps<
 	// back to the anchor's external href.
 	buildTagUrl?: ( tag: string ) => string | null;
 
+	// Composer action handlers forwarded to the analytics context so the
+	// reply / quote buttons on post-cards work from within the profile feed.
+	// Both are optional — surfaces without a mounted composer omit them and
+	// the buttons stay in their static (unsupported) state.
+	onReplyClick?: ( post: SocialPost ) => void;
+	onQuoteClick?: ( post: SocialPost ) => void;
+
 	// Empty / error vocabulary for the SocialFeedList. Wrappers compute
 	// these (e.g. Mastodon swaps in a locked-account variant when the
 	// profile is locked and the feed is empty).
@@ -140,6 +147,8 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 	buildProfileUrl,
 	buildThreadUrl,
 	buildTagUrl,
+	onReplyClick,
+	onQuoteClick,
 	emptyTitle,
 	emptyLine,
 	emptyActionLabel,
@@ -305,8 +314,19 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 			getThreadUrl: buildThreadUrl,
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
 		} ),
-		[ source, connectionId, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl ]
+		[
+			source,
+			connectionId,
+			onClickAnalytics,
+			buildThreadUrl,
+			buildProfileUrl,
+			buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
 	);
 
 	const renderHeader = () => {
