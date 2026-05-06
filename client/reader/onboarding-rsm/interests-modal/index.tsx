@@ -348,28 +348,28 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 							} ) }
 						</div>
 					) }
-
-					<div className="reader-onboarding-modal__footer">
-						<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-							<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
-							<HStack
-								spacing={ 2 }
-								justify="right"
-								className="reader-onboarding-modal__footer-buttons"
-							>
-								<Button
-									__next40pxDefaultSize
-									onClick={ handleContinue }
-									variant="secondary"
-									disabled={ isContinueDisabled }
-									accessibleWhenDisabled
-								>
-									{ __( 'Continue' ) }
-								</Button>
-							</HStack>
-						</HStack>
-					</div>
 				</VStack>
+
+				<div className="reader-onboarding-modal__footer">
+					<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+						<StepIndicator totalSteps={ 3 } currentStep={ 2 } />
+						<HStack
+							spacing={ 2 }
+							justify="right"
+							className="reader-onboarding-modal__footer-buttons"
+						>
+							<Button
+								__next40pxDefaultSize
+								onClick={ handleContinue }
+								variant="secondary"
+								disabled={ isContinueDisabled }
+								accessibleWhenDisabled
+							>
+								{ __( 'Continue' ) }
+							</Button>
+						</HStack>
+					</HStack>
+				</div>
 			</Modal>
 		)
 	);
