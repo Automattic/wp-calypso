@@ -141,26 +141,18 @@ interface TrackImageStudioImageGeneratedOptions {
 	isAnnotated: boolean;
 }
 
-export type TrackedErrorType =
-	| 'generation_failed'
-	| 'edit_failed'
-	| 'ability_failed'
-	| 'preparation_failed'
-	| 'draft_cleanup_failed'
-	| 'draft_cleanup_permission_denied'
-	| 'delete_permanently_failed'
-	| 'save_metadata_failed'
-	| 'safety_filter'
-	| 'copyright_filter'
-	| 'unsupported_capability'
-	| 'not_configured'
-	| 'timeout'
-	| 'rate_limited'
-	| 'other';
-
 interface TrackImageStudioErrorOptions {
 	mode: ImageStudioMode;
-	errorType: TrackedErrorType;
+	errorType:
+		| 'generation_failed'
+		| 'edit_failed'
+		| 'ability_failed'
+		| 'preparation_failed'
+		| 'draft_cleanup_failed'
+		| 'draft_cleanup_permission_denied'
+		| 'delete_permanently_failed'
+		| 'save_metadata_failed'
+		| 'other';
 	attachmentId?: number;
 }
 
