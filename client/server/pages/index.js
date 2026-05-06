@@ -169,6 +169,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
 	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
+	const explatHelper = config.isEnabled( 'dev/explat-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
@@ -199,6 +200,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		authHelper,
 		preferencesHelper,
 		storeSandboxHelper,
+		explatHelper,
 		featuresHelper,
 		store: reduxStore,
 		target: 'evergreen',

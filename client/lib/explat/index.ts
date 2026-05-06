@@ -27,6 +27,15 @@ const exPlatClientReactHelpers = createExPlatClientReactHelpers( exPlatClient );
 export const { useExperiment, Experiment, ProvideExperimentData } = exPlatClientReactHelpers;
 
 /**
+ * In-process handle to the SDK's dev surface. Used by the
+ * `client/lib/explat-helper` panel — gated to dev/staging via the
+ * `dev/explat-helper` config flag, so production user bundles never load it.
+ * For console use, prefer `window.__EXPLAT__`, which is installed by the
+ * package itself with its own gating.
+ */
+export const exPlatDevtools = exPlatClient.devtools;
+
+/**
  * Look up a dev-only forced value for `flagKey` from URL or localStorage.
  *
  *  - Query param: `?explat_force_<flagKey>=<value>`
@@ -132,12 +141,17 @@ async function logFeatureValueDiagnostics(
 /**
  * React hook wrapper around `getFeatureValue`. Returns the caller default
  * synchronously, then re-renders with the resolved value once the flag payload
- * loads. Subsequent calls share the package's cache, so this is cheap.
+ * loads.
  *
- * Logs diagnostics to the console after each resolution: attributes used,
- * localStorage overrides, runtime bootstrap, the compiled flag config, the
- * raw payload, and the SDK's `evalFeature` result (force/experiment match,
- * variation, hash value).
+ * Override resolution order on each render:
+ *   1. Explicit URL/localStorage force (`?explat_force_<key>=<value>` or
+ *      `localStorage.explat_force_<key>`) — short-circuits eval entirely.
+ *   2. SDK forced-features map (set by the dev panel / `window.__EXPLAT__`) —
+ *      consulted by `getFeatureValue`. Subscribed here so panel toggles
+ *      flip the UI live without reload.
+ *   3. Natural eval against the cached `/flags` payload.
+ *
+ * Logs diagnostics on every resolution.
  */
 export function useFeatureValue< T extends ExPlatSdk.FeatureValue >(
 	flagKey: string,
@@ -148,23 +162,30 @@ export function useFeatureValue< T extends ExPlatSdk.FeatureValue >(
 	);
 	useEffect( () => {
 		let cancelled = false;
-		const forced = readForceOverride( flagKey, defaultValue );
-		if ( forced !== null ) {
-			setValue( forced );
-			void logFeatureValueDiagnostics( flagKey, forced, true );
-			return () => {
-				cancelled = true;
-			};
-		}
-		exPlatClient.getFeatureValue( flagKey, defaultValue ).then( ( resolved ) => {
-			if ( cancelled ) {
+		const evaluate = () => {
+			const forced = readForceOverride( flagKey, defaultValue );
+			if ( forced !== null ) {
+				setValue( forced );
+				void logFeatureValueDiagnostics( flagKey, forced, true );
 				return;
 			}
-			setValue( resolved );
-			void logFeatureValueDiagnostics( flagKey, resolved, false );
+			exPlatClient.getFeatureValue( flagKey, defaultValue ).then( ( resolved ) => {
+				if ( cancelled ) {
+					return;
+				}
+				setValue( resolved );
+				void logFeatureValueDiagnostics( flagKey, resolved, false );
+			} );
+		};
+		evaluate();
+		const unsubscribe = exPlatClient.devtools.forcedFeatures.subscribe( ( event ) => {
+			if ( event.key === null || event.key === flagKey ) {
+				evaluate();
+			}
 		} );
 		return () => {
 			cancelled = true;
+			unsubscribe();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flagKey ] );

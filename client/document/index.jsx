@@ -10,6 +10,7 @@ import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
 	AuthHelper,
+	ExPlatHelper,
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
@@ -65,6 +66,7 @@ class Document extends Component {
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
+			explatHelper,
 			target,
 			user,
 			useTranslationChunks,
@@ -216,6 +218,7 @@ class Document extends Component {
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
 							{ storeSandboxHelper && <StoreSandboxHelper /> }
+							{ explatHelper && <ExPlatHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }

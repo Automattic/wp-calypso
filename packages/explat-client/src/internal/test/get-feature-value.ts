@@ -1,4 +1,6 @@
 import { createExPlatClient } from '../../create-explat-client';
+import { FORCED_FEATURES_STORAGE_KEY } from '../forced-features';
+import { polyfilledLocalStorage } from '../local-storage';
 import { setBrowserContext } from '../test-common';
 import type { Config } from '../../types';
 
@@ -349,5 +351,351 @@ describe( 'getFeatureValue', () => {
 			client.getFeatureValue( 'c', 'd' ),
 		] );
 		expect( config.fetchFlagPayload ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'getFeatureValue forced overrides', () => {
+	beforeEach( () => {
+		jest.restoreAllMocks();
+		setBrowserContext();
+		polyfilledLocalStorage.removeItem( FORCED_FEATURES_STORAGE_KEY );
+	} );
+
+	test( 'returns the forced value before fetching the flag payload', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client, config } = makeClient(
+			{ schema_version: 1, flags: {}, ttl: 7200 },
+			{ wpcom_user_id: '1' }
+		);
+		client.devtools.forcedFeatures.set( 'my_flag', 'forced_value' );
+		const v = await client.getFeatureValue( 'my_flag', 'control' );
+		expect( v ).toBe( 'forced_value' );
+		expect( config.fetchFlagPayload ).not.toHaveBeenCalled();
+	} );
+
+	test( 'allows forcing a value not present in any experiment definition', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( { schema_version: 1, flags: {}, ttl: 7200 } );
+		client.devtools.forcedFeatures.set( 'my_flag', 'never_defined_in_experiment' );
+		const v = await client.getFeatureValue( 'my_flag', 'control' );
+		expect( v ).toBe( 'never_defined_in_experiment' );
+	} );
+
+	test( 'does NOT POST a feature-assignment beacon for forced values', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client, config } = makeClient(
+			{ schema_version: 1, flags: {}, ttl: 7200 },
+			{ wpcom_user_id: '1' }
+		);
+		client.devtools.forcedFeatures.set( 'my_flag', 'treatment' );
+		await client.getFeatureValue( 'my_flag', 'control' );
+		expect( config.logFeatureAssignment ).not.toHaveBeenCalled();
+	} );
+
+	test( 'records an entry in the eval log with source="override"', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( { schema_version: 1, flags: {}, ttl: 7200 } );
+		client.devtools.forcedFeatures.set( 'my_flag', 'treatment' );
+		await client.getFeatureValue( 'my_flag', 'control' );
+		const entries = client.devtools.evalLog.entries();
+		expect( entries[ entries.length - 1 ] ).toMatchObject( {
+			flag_key: 'my_flag',
+			value: 'treatment',
+			source: 'override',
+		} );
+	} );
+
+	test( 'INVARIANT: no /assignments/log beacon ever fires when a forced override resolves the flag', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		// Payload contains a real experiment rule that *would* trigger the
+		// beacon if evaluation reached it. Override must short-circuit before
+		// the loader is even called — assertions verify both.
+		const payload = {
+			schema_version: 1,
+			ttl: 7200,
+			flags: {
+				my_flag: {
+					value_type: 'string' as const,
+					default_value: 'control',
+					rules: [
+						{
+							type: 'experiment' as const,
+							seed: 'my_flag.seed',
+							hash_attribute: 'wpcom_user_id' as const,
+							experiment_id: 12345,
+							variations: [
+								{
+									name: 'control',
+									value: 'control',
+									is_default: true,
+									experiment_variation_id: 1,
+									range: [ 0, 0.5 ] as [ number, number ],
+								},
+								{
+									name: 'treatment',
+									value: 'treatment',
+									is_default: false,
+									experiment_variation_id: 2,
+									range: [ 0.5, 1 ] as [ number, number ],
+								},
+							],
+						},
+					],
+				},
+			},
+		};
+		const { client, config } = makeClient( payload, { wpcom_user_id: '1' } );
+		client.devtools.forcedFeatures.set( 'my_flag', 'treatment' );
+		await client.getFeatureValue( 'my_flag', 'control' );
+		expect( config.logFeatureAssignment ).not.toHaveBeenCalled();
+		expect( config.fetchFlagPayload ).not.toHaveBeenCalled();
+	} );
+
+	test( 'clearing the override re-evaluates against the payload on the next call', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( { schema_version: 1, flags: {}, ttl: 7200 } );
+		client.devtools.forcedFeatures.set( 'my_flag', 'treatment' );
+		const v1 = await client.getFeatureValue( 'my_flag', 'control' );
+		expect( v1 ).toBe( 'treatment' );
+		client.devtools.forcedFeatures.clear( 'my_flag' );
+		const v2 = await client.getFeatureValue( 'my_flag', 'control' );
+		expect( v2 ).toBe( 'control' );
+	} );
+} );
+
+describe( 'devtools.getKnownFlags / getKnownVariations', () => {
+	beforeEach( () => {
+		jest.restoreAllMocks();
+		setBrowserContext();
+		polyfilledLocalStorage.removeItem( FORCED_FEATURES_STORAGE_KEY );
+	} );
+
+	const samplePayload = {
+		schema_version: 1,
+		ttl: 7200,
+		flags: {
+			a: {
+				value_type: 'string' as const,
+				default_value: 'control',
+				rules: [
+					{
+						type: 'experiment' as const,
+						seed: 'a.seed',
+						hash_attribute: 'wpcom_user_id' as const,
+						experiment_id: 1,
+						variations: [
+							{
+								name: 'control',
+								value: 'control',
+								is_default: true,
+								experiment_variation_id: 1,
+								range: [ 0, 0.5 ] as [ number, number ],
+							},
+							{
+								name: 'treatment',
+								value: 'treatment',
+								is_default: false,
+								experiment_variation_id: 2,
+								range: [ 0.5, 1 ] as [ number, number ],
+							},
+						],
+					},
+				],
+			},
+		},
+	};
+
+	test( 'getKnownFlags returns [] before any flag is evaluated', () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		expect( client.devtools.getKnownFlags() ).toEqual( [] );
+	} );
+
+	test( 'getKnownFlags returns flag keys from the cached payload after first eval', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		await client.getFeatureValue( 'a', 'control' );
+		expect( client.devtools.getKnownFlags() ).toEqual( [ 'a' ] );
+	} );
+
+	test( 'getKnownVariations returns the variation values defined for a flag', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		await client.getFeatureValue( 'a', 'control' );
+		expect( client.devtools.getKnownVariations( 'a' ) ).toEqual( [ 'control', 'treatment' ] );
+	} );
+
+	test( 'getKnownVariations returns [] for unknown flags', () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		expect( client.devtools.getKnownVariations( 'nope' ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'devtools.previewFeatureValue', () => {
+	beforeEach( () => {
+		jest.restoreAllMocks();
+		setBrowserContext();
+		polyfilledLocalStorage.removeItem( FORCED_FEATURES_STORAGE_KEY );
+	} );
+
+	const samplePayload = {
+		schema_version: 1,
+		ttl: 7200,
+		flags: {
+			a: {
+				value_type: 'string' as const,
+				default_value: 'control',
+				rules: [
+					{
+						type: 'experiment' as const,
+						seed: 'a.seed',
+						hash_attribute: 'wpcom_user_id' as const,
+						experiment_id: 1,
+						variations: [
+							{
+								name: 'control',
+								value: 'control',
+								is_default: true,
+								experiment_variation_id: 1,
+								range: [ 0, 0.5 ] as [ number, number ],
+							},
+							{
+								name: 'treatment',
+								value: 'treatment',
+								is_default: false,
+								experiment_variation_id: 2,
+								range: [ 0.5, 1 ] as [ number, number ],
+							},
+						],
+					},
+				],
+			},
+		},
+	};
+
+	test( 'returns the natural eval result, ignoring any forced override', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		client.devtools.forcedFeatures.set( 'a', 'totally_overridden' );
+		const result = await client.devtools.previewFeatureValue( 'a' );
+		expect( result?.source ).toBe( 'experiment' );
+		expect( result?.value ).toMatch( /^(control|treatment)$/ );
+	} );
+
+	test( 'does NOT fire a beacon', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client, config } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		await client.devtools.previewFeatureValue( 'a' );
+		expect( config.logFeatureAssignment ).not.toHaveBeenCalled();
+	} );
+
+	test( 'does NOT add to the eval log', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		await client.devtools.previewFeatureValue( 'a' );
+		expect( client.devtools.evalLog.entries() ).toEqual( [] );
+	} );
+
+	test( 'returns null when the flag is unknown', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		const result = await client.devtools.previewFeatureValue( 'nope' );
+		expect( result ).toBeNull();
+	} );
+
+	test( 'returns null when the runtime cannot evaluate', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'blocked',
+			can_evaluate: false,
+		} );
+		const { client } = makeClient( samplePayload, { wpcom_user_id: '1' } );
+		const result = await client.devtools.previewFeatureValue( 'a' );
+		expect( result ).toBeNull();
 	} );
 } );

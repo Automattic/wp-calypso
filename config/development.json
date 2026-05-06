@@ -76,6 +76,7 @@
 		"dev/features-helper": true,
 		"dev/preferences-helper": true,
 		"dev/react-query-devtools": true,
+		"dev/explat-helper": true,
 		"dev/store-sandbox-helper": true,
 		"dolly/telegram": true,
 		"domain-transfer-redesign": true,

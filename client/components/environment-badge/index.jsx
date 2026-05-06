@@ -28,6 +28,10 @@ export function StoreSandboxHelper() {
 	return <div className="environment is-store-sandbox" />;
 }
 
+export function ExPlatHelper() {
+	return <div className="environment is-explat" />;
+}
+
 export function Branch( { branchName, commitChecksum } ) {
 	return branchName === 'trunk' ? null : (
 		<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>

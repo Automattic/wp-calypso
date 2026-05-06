@@ -77,4 +77,13 @@ export default function loadDevHelpers( reduxStore ) {
 			).then( ( helper ) => helper.default( el ) );
 		}
 	}
+
+	if ( config.isEnabled( 'dev/explat-helper' ) ) {
+		const el = document.querySelector( '.environment.is-explat' );
+		if ( el ) {
+			import(
+				/* webpackChunkName: "async-load-calypso-lib-explat-helper" */ 'calypso/lib/explat-helper'
+			).then( ( helper ) => helper.default( el ) );
+		}
+	}
 }

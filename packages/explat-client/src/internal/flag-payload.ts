@@ -15,23 +15,34 @@ export type FlagPayloadCache = {
 const SCHEMA_VERSION_SUPPORTED = 1;
 const DEFAULT_TTL_SECONDS = 7200;
 
-/**
- * Lazy-load and cache the flag payload.
- *
- * Returns null on any failure (fetch error, unsupported schema_version,
- * malformed body) — callers fall back to the caller-provided default value.
- *
- * Concurrent calls before the first fetch resolves share a single in-flight
- * promise so we never dispatch N parallel `/flags` requests on cold cache.
- */
+export interface FlagPayloadLoader {
+	/**
+	 * Lazy-load and cache the flag payload.
+	 *
+	 * Returns null on any failure (fetch error, unsupported schema_version,
+	 * malformed body) — callers fall back to the caller-provided default value.
+	 *
+	 * Concurrent calls before the first fetch resolves share a single in-flight
+	 * promise so we never dispatch N parallel `/flags` requests on cold cache.
+	 */
+	load: () => Promise< FlagPayload | null >;
+	/**
+	 * Returns the currently cached payload without triggering a fetch.
+	 * Used by devtools helpers (`getKnownFlags`, `getKnownVariations`,
+	 * `getRawFeature`) that surface flag metadata for in-page UI without
+	 * paying a network round trip.
+	 */
+	getCached: () => FlagPayload | null;
+}
+
 export function createFlagPayloadLoader(
 	fetchPayload: () => Promise< unknown >,
 	logError: Config[ 'logError' ]
-): () => Promise< FlagPayload | null > {
+): FlagPayloadLoader {
 	let cache: FlagPayloadCache | null = null;
 	let inflight: Promise< FlagPayload | null > | null = null;
 
-	return async function loadFlagPayload(): Promise< FlagPayload | null > {
+	const load = async (): Promise< FlagPayload | null > => {
 		const now = Date.now();
 		if ( cache && cache.expiresAt > now ) {
 			return cache.payload;
@@ -63,6 +74,15 @@ export function createFlagPayloadLoader(
 		} )();
 		return inflight;
 	};
+
+	const getCached = (): FlagPayload | null => {
+		if ( cache && cache.expiresAt > Date.now() ) {
+			return cache.payload;
+		}
+		return null;
+	};
+
+	return { load, getCached };
 }
 
 function parsePayload( raw: unknown, logError: Config[ 'logError' ] ): FlagPayload | null {

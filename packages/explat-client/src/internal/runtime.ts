@@ -25,6 +25,17 @@ const MISSING_BOOTSTRAP_RUNTIME: ExPlatRuntime = {
 	can_evaluate: true,
 };
 
+/**
+ * In development the absence of `window.__EXPLAT_RUNTIME__` is the same
+ * situation as production a8c manual testing: the dev/staff is poking at
+ * flags but no real assignments should be recorded. Surface that semantically
+ * so the panel + logs read `manual_testing` instead of `blocked`.
+ */
+const DEV_MISSING_BOOTSTRAP_RUNTIME: ExPlatRuntime = {
+	...MISSING_BOOTSTRAP_RUNTIME,
+	mode: 'manual_testing',
+};
+
 function normalizeRuntime( runtime: Partial< ExPlatRuntime > ): ExPlatRuntime {
 	const normalized: ExPlatRuntime = {
 		...FAIL_CLOSED_RUNTIME,
@@ -58,14 +69,15 @@ function normalizeRuntime( runtime: Partial< ExPlatRuntime > ): ExPlatRuntime {
 	return FAIL_CLOSED_RUNTIME;
 }
 
-function readExPlatRuntime(): ExPlatRuntime {
+function readExPlatRuntime( isDevelopmentMode: boolean ): ExPlatRuntime {
+	const fallback = isDevelopmentMode ? DEV_MISSING_BOOTSTRAP_RUNTIME : MISSING_BOOTSTRAP_RUNTIME;
 	if ( typeof window === 'undefined' ) {
-		return MISSING_BOOTSTRAP_RUNTIME;
+		return fallback;
 	}
 
 	const raw = ( window as unknown as Record< string, unknown > ).__EXPLAT_RUNTIME__;
 	if ( typeof raw !== 'object' || raw === null ) {
-		return MISSING_BOOTSTRAP_RUNTIME;
+		return fallback;
 	}
 
 	const runtime = raw as Partial< ExPlatRuntime >;
@@ -83,9 +95,11 @@ function readExPlatRuntime(): ExPlatRuntime {
  * the page's lifetime; re-reading on every `getFeatureValue` call would
  * allocate 2-3 spread objects per call in render hot paths.
  */
-export function createExPlatRuntimeReader(): () => ExPlatRuntime {
+export function createExPlatRuntimeReader( isDevelopmentMode = false ): () => ExPlatRuntime {
 	let lastRaw: unknown = Symbol( 'unset' );
-	let lastResult: ExPlatRuntime = MISSING_BOOTSTRAP_RUNTIME;
+	let lastResult: ExPlatRuntime = isDevelopmentMode
+		? DEV_MISSING_BOOTSTRAP_RUNTIME
+		: MISSING_BOOTSTRAP_RUNTIME;
 	return () => {
 		const raw =
 			typeof window === 'undefined'
@@ -95,7 +109,7 @@ export function createExPlatRuntimeReader(): () => ExPlatRuntime {
 			return lastResult;
 		}
 		lastRaw = raw;
-		lastResult = readExPlatRuntime();
+		lastResult = readExPlatRuntime( isDevelopmentMode );
 		return lastResult;
 	};
 }

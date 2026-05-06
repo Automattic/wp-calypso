@@ -46,6 +46,7 @@
 		"cookie-banner": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
+		"dev/explat-helper": true,
 		"dev/store-sandbox-helper": true,
 		"jetpack/crm-downloads": true,
 		"oauth": true,

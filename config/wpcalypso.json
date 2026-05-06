@@ -48,6 +48,7 @@
 		"dev/account-settings-helper": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
+		"dev/explat-helper": true,
 		"dev/store-sandbox-helper": true,
 		"dolly/telegram": true,
 		"domain-transfer-redesign": true,
