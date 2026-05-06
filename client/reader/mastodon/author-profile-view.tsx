@@ -62,7 +62,13 @@ export function MastodonAuthorProfileView( { connectionId, actor }: Props ) {
 		<ComposerProvider connectionId={ connection.id } config={ mastodonComposerConfig }>
 			<ReaderMain className="mastodon-view">
 				<MastodonAuthorProfileTitle connectionId={ connection.id } actor={ actor } />
-				<MastodonAuthorProfilePanel connection={ connection } actor={ actor } />
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor={ actor }
+					subtabBasePath={ `/reader/mastodon/${ connection.id }/profile/${ encodeURIComponent(
+						actor
+					) }` }
+				/>
 			</ReaderMain>
 			<ComposeFab />
 			<ComposerModal />

@@ -82,9 +82,16 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			.query( { exclude_replies: 'true' } )
 			.reply( 200, { items: [], cursor: null } );
 
-		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
-			queryClient: makeQueryClient(),
-		} );
+		renderWithProvider(
+			<MastodonAuthorProfilePanel
+				connection={ connection }
+				actor="108020"
+				subtabBasePath="/reader/mastodon/7/profile/108020"
+			/>,
+			{
+				queryClient: makeQueryClient(),
+			}
+		);
 
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible() );
 		// Profile counts render through SocialProfileCard's stats list.
@@ -102,9 +109,16 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			.query( { exclude_replies: 'true' } )
 			.reply( 200, { items: [], cursor: null } );
 
-		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
-			queryClient: makeQueryClient(),
-		} );
+		renderWithProvider(
+			<MastodonAuthorProfilePanel
+				connection={ connection }
+				actor="108020"
+				subtabBasePath="/reader/mastodon/7/profile/108020"
+			/>,
+			{
+				queryClient: makeQueryClient(),
+			}
+		);
 
 		await waitFor( () => {
 			const viewedCalls = (
@@ -129,9 +143,16 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			.query( { exclude_replies: 'true' } )
 			.reply( 200, { items: [], cursor: null } );
 
-		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
-			queryClient: makeQueryClient(),
-		} );
+		renderWithProvider(
+			<MastodonAuthorProfilePanel
+				connection={ connection }
+				actor="108020"
+				subtabBasePath="/reader/mastodon/7/profile/108020"
+			/>,
+			{
+				queryClient: makeQueryClient(),
+			}
+		);
 
 		await waitFor( () => expect( screen.getByText( /posts are private/i ) ).toBeVisible() );
 	} );
@@ -148,9 +169,16 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			.query( { exclude_replies: 'true' } )
 			.reply( 404, { error: 'connection_not_found' } );
 
-		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
-			queryClient: makeQueryClient(),
-		} );
+		renderWithProvider(
+			<MastodonAuthorProfilePanel
+				connection={ connection }
+				actor="108020"
+				subtabBasePath="/reader/mastodon/7/profile/108020"
+			/>,
+			{
+				queryClient: makeQueryClient(),
+			}
+		);
 
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible() );
 		// Give the feed query a moment to settle into the error state.
@@ -175,9 +203,16 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			.query( { only_media: 'true' } )
 			.reply( 200, { items: [], cursor: null } );
 
-		renderWithProvider( <MastodonAuthorProfilePanel connection={ connection } actor="108020" />, {
-			queryClient: makeQueryClient(),
-		} );
+		renderWithProvider(
+			<MastodonAuthorProfilePanel
+				connection={ connection }
+				actor="108020"
+				subtabBasePath="/reader/mastodon/7/profile/108020"
+			/>,
+			{
+				queryClient: makeQueryClient(),
+			}
+		);
 
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: 'Alice' } ) ).toBeVisible() );
 		await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );

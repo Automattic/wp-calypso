@@ -23,7 +23,11 @@ export function ProfilePanel( { connection }: ProfilePanelProps ) {
 					entryPoint="profile_inline"
 				/>
 			) }
-			<MastodonAuthorProfilePanel connection={ connection } actor={ connection.handle } />
+			<MastodonAuthorProfilePanel
+				connection={ connection }
+				actor={ connection.handle }
+				subtabBasePath={ `/reader/mastodon/${ connection.id }/profile` }
+			/>
 		</>
 	);
 }

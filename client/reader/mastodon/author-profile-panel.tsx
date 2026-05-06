@@ -32,11 +32,17 @@ import type {
 interface MastodonAuthorProfilePanelProps {
 	connection: MastodonConnection;
 	actor: string;
+	// URL prefix for the inner filter-tab links — see
+	// `MastodonAuthorProfileTabs` for the contract. The connected-user
+	// /profile page passes its own path so the tabs stay within /profile;
+	// the third-party /profile/:actor route passes the actor-scoped path.
+	subtabBasePath: string;
 }
 
 export function MastodonAuthorProfilePanel( {
 	connection,
 	actor,
+	subtabBasePath,
 }: MastodonAuthorProfilePanelProps ) {
 	const translate = useTranslate();
 
@@ -84,12 +90,13 @@ export function MastodonAuthorProfilePanel( {
 					<MastodonAuthorProfileTabs
 						connectionId={ connection.id }
 						actor={ actor }
+						basePath={ subtabBasePath }
 						activeFilter={ filter }
 					/>
 				</>
 			);
 		},
-		[ connection.id, connection.instance, actor, filter, stats, translate ]
+		[ connection.id, connection.instance, actor, filter, stats, subtabBasePath, translate ]
 	);
 
 	const renderProfileError = useCallback(
