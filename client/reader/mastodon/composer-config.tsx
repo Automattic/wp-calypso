@@ -181,6 +181,10 @@ function errorMessageFor( err: MastodonError, t: Translate ): ReactNode {
 		case 'connection_not_found':
 		case 'not_found':
 			return t( 'This Mastodon connection no longer exists.' );
+		case 'media_too_large':
+		case 'media_unsupported_type':
+		case 'media_decode_failed':
+		case 'media_invalid':
 		case 'invalid_instance':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );
