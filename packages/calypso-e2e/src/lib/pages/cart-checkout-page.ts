@@ -312,8 +312,11 @@ export class CartCheckoutPage {
 	 */
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
 		// Click on the Credit or debit card input in order
-		// to expand the fields.
-		await this.page.getByRole( 'radio', { name: /credit or debit card/i } ).click();
+		// to expand the fields. The visible label wraps a hidden radio input
+		// (position: absolute; opacity: 0), so target the label itself rather
+		// than the input or descendant span. The :has-text predicate matches
+		// both "Credit or debit card" and "New credit or debit card".
+		await this.page.locator( 'label[for="card"]:has-text("credit or debit card")' ).click();
 
 		// Begin filling in the card details from
 		// top to bottom.
