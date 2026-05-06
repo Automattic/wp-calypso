@@ -21,7 +21,7 @@ export interface WpcomRequestParams {
 	signal?: AbortSignal;
 	apiNamespace?: string;
 	formData?: ( string | File )[][];
-	// Search for allowedRequestHeaders in OpenGrok to extend these.
+	// Search for allowedRequestHeaders to extend these.
 	headers?: {
 		'X-WPCOM-AI-Feature'?: string;
 		'X-Fingerprint'?: string;
