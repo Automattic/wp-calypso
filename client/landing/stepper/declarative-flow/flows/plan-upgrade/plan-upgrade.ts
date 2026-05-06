@@ -14,6 +14,7 @@ import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { isExternal } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
+import type { SiteSelect } from '@automattic/data-stores';
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS ];
 
@@ -84,7 +85,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				if ( ! siteIdOrSlug ) {
 					return null;
 				}
-				return select( SITE_STORE ).getSite( siteIdOrSlug );
+				return ( select( SITE_STORE ) as SiteSelect ).getSite( siteIdOrSlug );
 			},
 			[ siteIdOrSlug ]
 		);
@@ -144,7 +145,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 				if ( ! siteSlug ) {
 					return null;
 				}
-				return select( SITE_STORE ).getSite( siteSlug );
+				return ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug );
 			},
 			[ siteSlug ]
 		);
@@ -178,6 +179,9 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 									// Downgrade: fetch old purchase for refund info, fire mutation,
 									// then fetch fresh purchases to find the new subscription and redirect.
 									( async () => {
+										const isFromDashboard = redirectTo
+											? dashboardOrigins().some( ( origin ) => redirectTo.startsWith( origin ) )
+											: false;
 										try {
 											// Step 1: Fetch old purchase for refund info
 											const purchases: Array< {
@@ -251,13 +255,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 												hasNewSubscriptionId: Boolean( newSubscriptionId ),
 											} );
 
-											// Step 5: Detect originating surface and redirect accordingly.
-											// Legacy users must land on `/me/purchases/{siteSlug}/{id}`,
-											// dashboard users on `/me/billing/purchases/{id}`.
-											const isFromDashboard = redirectTo
-												? dashboardOrigins().some( ( origin ) => redirectTo.startsWith( origin ) )
-												: false;
-
+											// Step 5: Redirect to the appropriate surface.
 											if ( newSubscriptionId ) {
 												const surface = isFromDashboard ? 'dashboard' : 'legacy';
 

@@ -85,6 +85,7 @@ class CancelPurchaseForm extends Component {
 		intent: PropTypes.string,
 		purchaseSettingsUrl: PropTypes.string,
 		isSplitCancelRemoveEnabled: PropTypes.bool,
+		onSwitchToMonthly: PropTypes.func,
 	};
 
 	static defaultProps = {
