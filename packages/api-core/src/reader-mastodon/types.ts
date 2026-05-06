@@ -246,10 +246,13 @@ export interface MastodonCreatePostParams {
 
 /**
  * Variables accepted by `createMastodonPostMutation`. Extends the wire
- * shape with one client-only hint that the mutation strips before the
- * wire call. The split exists so the wire type cannot accidentally leak
- * the hint into the request body via a future spread refactor — the
- * fetcher's signature literally cannot accept it.
+ * shape with one client-only hint. Because this type is structurally
+ * assignable to `MastodonCreatePostParams`, the type system won't stop a
+ * future caller from forwarding the whole object into `createMastodonPost`
+ * and leaking the hint into the request body — the actual guard is the
+ * explicit destructure in `createMastodonPostWithQuoteFallback`
+ * (`const { quotedFallbackPermalink, ...wireParams } = params;`). Keep
+ * the split so the destructure point stays singular and obvious.
  */
 export interface MastodonCreatePostMutationParams extends MastodonCreatePostParams {
 	/**

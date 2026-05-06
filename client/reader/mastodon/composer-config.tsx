@@ -27,7 +27,47 @@ export const mastodonComposerConfig: ComposerConfig<
 	// instances. The retry lives in `createMastodonPostWithQuoteFallback`
 	// — see packages/api-queries/src/reader-mastodon.ts.
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
-	mutationFactory: createMastodonPostMutation,
+	mutationFactory: ( queryClient ) =>
+		createMastodonPostMutation( queryClient, {
+			// Observability hooks for the native → text-quoting downgrade.
+			// `packages/api-queries` can't import `calypso/lib/logstash`
+			// (lint-restricted), so the per-protocol adapter wires them in.
+			// `info` (not `debug`) because we want this counted in
+			// dashboards to size the backend follow-up for a
+			// quote-specific error code; `debug` is filtered by most
+			// pipelines. The user-typed `status` is intentionally NOT
+			// logged — we ship `connection_id` and the opaque
+			// `quoted_status_id` for spot-checking which instance is
+			// driving fallbacks.
+			onQuoteFallback: ( params ) => {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Mastodon composer: quote fallback triggered',
+					severity: 'info',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'reader_mastodon_quote_fallback',
+						connection_id: params.connectionId,
+						quoted_status_id: params.quoted_status_id,
+					},
+				} );
+			},
+			onQuoteFallbackFailed: ( params, originalError, retryError ) => {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Mastodon composer: quote fallback retry failed',
+					severity: 'warning',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'reader_mastodon_quote_fallback_failed',
+						connection_id: params.connectionId,
+						quoted_status_id: params.quoted_status_id,
+						original_error_kind: originalError.kind,
+						retry_error_kind: retryError.kind,
+					},
+				} );
+			},
+		} ),
 	buildParams: ( mode, text ) => buildParamsForMode( mode, text ),
 	errorMessage: ( error, translate ) => errorMessageFor( error, translate ),
 	successNotice: ( mode, result, translate ) => {

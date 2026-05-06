@@ -726,6 +726,35 @@ function isBadRequestError( err: unknown ): boolean {
 }
 
 /**
+ * Optional hooks the caller can supply for cross-cutting concerns the
+ * api-queries package can't reach itself (logstash imports are
+ * lint-restricted from this package; observability lives in the
+ * per-protocol adapter under `client/reader/mastodon/`).
+ */
+export interface CreateMastodonPostHooks {
+	/**
+	 * Fires once per mutation, immediately before the text-quoting retry
+	 * is issued. Use it to log the downgrade so we can tell whether users
+	 * are landing on Mastodon < 4.5 / quote-disabled instances. Receives
+	 * the (unstripped) mutation params; the implementation is responsible
+	 * for redacting any user-typed `status` content before logging.
+	 */
+	onQuoteFallback?: ( params: MastodonCreatePostMutationParams ) => void;
+	/**
+	 * Fires once per mutation when the text-quoting retry itself fails.
+	 * Receives the original `bad_request` and the retry's error so the
+	 * caller can dashboard "fallback fired but didn't help" — the signal
+	 * the bare `onQuoteFallback` counter can't surface. Same redaction
+	 * rules as `onQuoteFallback`.
+	 */
+	onQuoteFallbackFailed?: (
+		params: MastodonCreatePostMutationParams,
+		originalError: MastodonError,
+		retryError: MastodonError
+	) => void;
+}
+
+/**
  * Calls `createMastodonPost` with the wire-shape params destructured off
  * the mutation-params input. If a native quote attempt (`quoted_status_id`
  * set) returns `bad_request`, retries once with `quoted_status_id` removed
@@ -746,9 +775,12 @@ function isBadRequestError( err: unknown ): boolean {
  * UX (the user sees the current state). The narrower fix is for the
  * backend to emit a quote-specific error code (e.g.
  * `reader_mastodon_quote_unsupported`); switch to that when it ships.
+ * The `onQuoteFallback` hook lets the caller observe how often this path
+ * fires so we can size that follow-up.
  */
 async function createMastodonPostWithQuoteFallback(
-	params: MastodonCreatePostMutationParams
+	params: MastodonCreatePostMutationParams,
+	hooks?: CreateMastodonPostHooks
 ): Promise< MastodonCreatePostResult > {
 	const { quotedFallbackPermalink, ...wireParams } = params;
 	try {
@@ -762,6 +794,16 @@ async function createMastodonPostWithQuoteFallback(
 			throw err;
 		}
 		// Narrowed: `quotedFallbackPermalink` is `string` from here on.
+		try {
+			hooks?.onQuoteFallback?.( params );
+		} catch ( hookErr ) {
+			// Observability must never break the retry path, but a hook
+			// that throws every call would silently kill all our fallback
+			// metrics. Surface it to the dev console so a broken logger is
+			// visible during local work.
+			// eslint-disable-next-line no-console
+			console.error( 'onQuoteFallback hook threw', hookErr );
+		}
 		const body = wireParams.status.trimEnd();
 		const fallbackStatus = body
 			? `${ body }\n\n${ quotedFallbackPermalink }`
@@ -769,7 +811,21 @@ async function createMastodonPostWithQuoteFallback(
 		// Strip `quoted_status_id` for the text-fallback retry; the rest of
 		// the wire shape (status, in_reply_to_id, connectionId) carries over.
 		const { quoted_status_id: _omit, ...rest } = wireParams;
-		return await createMastodonPost( { ...rest, status: fallbackStatus } );
+		try {
+			return await createMastodonPost( { ...rest, status: fallbackStatus } );
+		} catch ( retryErr ) {
+			// The retry failed too. Surface the second-attempt error to the
+			// caller (the user sees the current state — that's the right
+			// UX), but emit the failure for telemetry first so we can size
+			// "fallback fired but didn't help" separately from the trigger.
+			try {
+				hooks?.onQuoteFallbackFailed?.( params, err as MastodonError, retryErr as MastodonError );
+			} catch ( hookErr ) {
+				// eslint-disable-next-line no-console
+				console.error( 'onQuoteFallbackFailed hook threw', hookErr );
+			}
+			throw retryErr;
+		}
 	}
 }
 
@@ -789,14 +845,17 @@ async function createMastodonPostWithQuoteFallback(
  * from the singleton in `@automattic/api-queries`. See
  * `client/reader/AGENTS.md` for the rationale.
  */
-export const createMastodonPostMutation = ( queryClient: QueryClient ) =>
+export const createMastodonPostMutation = (
+	queryClient: QueryClient,
+	hooks?: CreateMastodonPostHooks
+) =>
 	mutationOptions<
 		MastodonCreatePostResult,
 		MastodonError,
 		MastodonCreatePostMutationParams,
 		CreatePostContext
 	>( {
-		mutationFn: createMastodonPostWithQuoteFallback,
+		mutationFn: ( vars ) => createMastodonPostWithQuoteFallback( vars, hooks ),
 		onMutate: async ( vars ) => {
 			// cancelQueries is best-effort — TanStack docs flag it as such.
 			// If it rejects (rare; route-change teardown races) we want to
