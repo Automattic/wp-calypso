@@ -355,11 +355,20 @@ Two render branches by viewer state:
   toggle is the same shape of button (`aria-haspopup="menu"`). The menu
   has two `<MenuItem>`s: the action item (label provided by the adapter
   — "Repost" for ATmosphere, "Boost" for Mastodon) and "Quote post"
-  (disabled when `action.canQuote === false`). ATmosphere reports
-  `canQuote: true` when the panel has wired `onQuoteClick` on the
-  analytics context AND the post carries a `cid`; clicking the item
-  opens the same composer as the standalone `<QuoteButton>`. Mastodon
-  has no native quote concept and reports `canQuote: false` always.
+  (disabled when `action.canQuote === false`). ATmosphere sets
+  `canQuote: Boolean(analytics.onQuoteClick && post.cid)` — both
+  composer-presence and the AT-Proto strong-ref check are required;
+  clicking the item opens the same composer as the standalone
+  `<QuoteButton>`. Mastodon sets
+  `canQuote: Boolean(analytics.onQuoteClick)` — no `cid` requirement
+  since Mastodon's quote contract uses a numeric status id. Mastodon
+  4.5+ supports native quote posts via `quoted_status_id`;
+  `buildParams` for `kind: 'quote'` sets that field plus a
+  client-only `quotedFallbackPermalink` hint. The mutation wraps the
+  fetcher with a `bad_request` retry: when the upstream rejects the
+  quote (instance < 4.5 or quoting disabled, surfaced as 400) it omits
+  `quoted_status_id` and appends the permalink to `status` (separated
+  by a blank line) before retrying once.
 
 Each protocol shell wires its own adapter hook factory:
 
@@ -380,7 +389,10 @@ Each protocol shell wires its own adapter hook factory:
   uses `post.uri` (the status_id) for the delete call, and emits the
   UK-spelled labels "Boost" / "Boost, %d boost(s)" / "Undo boost, %d
   boost(s)". Tracks events: `_boost_clicked`, `_unboost_clicked`,
-  `_boost_error_shown`.
+  `_boost_error_shown`, `_quote_clicked`. `canQuote` is true when
+  `analytics.onQuoteClick` is set; the quote contract (native 4.5+
+  with `bad_request` text-fallback) is described in the `canQuote`
+  paragraph above and implemented in `createMastodonPostMutation`.
 
 Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages

@@ -123,6 +123,7 @@ const DomainSearchStep: StepType< {
 					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
 				isCiab,
+				isWooHostingSolutions,
 				flowName: flow,
 			} ),
 			priceRules: {
@@ -150,7 +151,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, isCiab, tldQuery, query ] );
+	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query ] );
 
 	const { submit } = navigation;
 

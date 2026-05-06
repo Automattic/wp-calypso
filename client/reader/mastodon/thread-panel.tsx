@@ -150,6 +150,19 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'mastodon' as const,
@@ -159,8 +172,17 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
 			onReplyClick,
+			onQuoteClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
+		[
+			connection.id,
+			onClickAnalytics,
+			getThreadUrl,
+			buildProfileUrl,
+			buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
 	);
 
 	const useLikeAction = useMemo(

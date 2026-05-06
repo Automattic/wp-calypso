@@ -28,10 +28,6 @@ export function StoreSandboxHelper() {
 	return <div className="environment is-store-sandbox" />;
 }
 
-export function DarkModeHelper() {
-	return <div className="environment is-dark-mode" />;
-}
-
 export function Branch( { branchName, commitChecksum } ) {
 	return branchName === 'trunk' ? null : (
 		<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>

@@ -4,7 +4,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl } from './route';
 import { useMastodonComposerMedia } from './use-mastodon-composer-media';
 import type {
-	MastodonCreatePostParams,
+	MastodonCreatePostMutationParams,
 	MastodonCreatePostResult,
 	MastodonError,
 } from '@automattic/api-core';
@@ -19,15 +19,56 @@ const LIMIT = 500;
 
 export const mastodonComposerConfig: ComposerConfig<
 	MastodonError,
-	MastodonCreatePostParams,
+	MastodonCreatePostMutationParams,
 	MastodonCreatePostResult
 > = {
 	limit: LIMIT,
-	// No quote concept on the wire; the menu item never appears on
-	// Mastodon-rendered RepostButtons, and the openComposer guard in the
-	// generic provider drops a `kind: 'quote'` call before it sets state.
-	supportedModes: [ 'reply', 'standalone' ],
-	mutationFactory: createMastodonPostMutation,
+	// Quote mode uses Mastodon 4.5+'s native `quoted_status_id` with a
+	// text-based fallback (permalink appended to status) for older
+	// instances. The retry lives in `createMastodonPostWithQuoteFallback`
+	// — see packages/api-queries/src/reader-mastodon.ts.
+	supportedModes: [ 'reply', 'quote', 'standalone' ],
+	mutationFactory: ( queryClient ) =>
+		createMastodonPostMutation( queryClient, {
+			// Observability hooks for the native → text-quoting downgrade.
+			// `packages/api-queries` can't import `calypso/lib/logstash`
+			// (lint-restricted), so the per-protocol adapter wires them in.
+			// `info` (not `debug`) because we want this counted in
+			// dashboards to size the backend follow-up for a
+			// quote-specific error code; `debug` is filtered by most
+			// pipelines. The user-typed `status` is intentionally NOT
+			// logged — we ship `connection_id` and the opaque
+			// `quoted_status_id` for spot-checking which instance is
+			// driving fallbacks.
+			onQuoteFallback: ( params ) => {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Mastodon composer: quote fallback triggered',
+					severity: 'info',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'reader_mastodon_quote_fallback',
+						connection_id: params.connectionId,
+						quoted_status_id: params.quoted_status_id,
+					},
+				} );
+			},
+			onQuoteFallbackFailed: ( params, originalError, retryError ) => {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Mastodon composer: quote fallback retry failed',
+					severity: 'warning',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'reader_mastodon_quote_fallback_failed',
+						connection_id: params.connectionId,
+						quoted_status_id: params.quoted_status_id,
+						original_error_kind: originalError.kind,
+						retry_error_kind: retryError.kind,
+					},
+				} );
+			},
+		} ),
 	buildParams: ( mode, text ) => buildParamsForMode( mode, text ),
 	errorMessage: ( error, translate ) => errorMessageFor( error, translate ),
 	successNotice: ( mode, result, translate ) => {
@@ -37,6 +78,7 @@ export const mastodonComposerConfig: ComposerConfig<
 				threadUrl: getThreadUrl( mode.connectionId, mode.parent.uri ),
 			};
 		}
+		// Quote and standalone both link to the new post's own thread.
 		return {
 			text: translate( 'Your post was published.' ),
 			threadUrl: getThreadUrl( mode.connectionId, result.id ),
@@ -50,8 +92,6 @@ export const mastodonComposerConfig: ComposerConfig<
 					props: { connection_id: mode.connectionId, parent_uri: mode.parent.uri },
 				};
 			}
-			// Quote mode is unsupported and openComposer rejects it before this
-			// point, but the discriminated union still requires a branch.
 			if ( mode.kind === 'quote' ) {
 				return {
 					event: 'calypso_reader_mastodon_quote_composer_opened',
@@ -135,6 +175,9 @@ function titleForMode( mode: ActiveMode, t: Translate ): string {
 	if ( mode.kind === 'reply' ) {
 		return t( 'Reply' ) as string;
 	}
+	if ( mode.kind === 'quote' ) {
+		return t( 'Quote post' ) as string;
+	}
 	return t( 'New post' ) as string;
 }
 
@@ -146,15 +189,32 @@ function placeholderForMode( mode: ActiveMode, t: Translate, handle: string | un
 				'Placeholder text in the reply composer; %(handle)s is the Mastodon handle of the user being replied to.',
 		} ) as string;
 	}
+	if ( mode.kind === 'quote' ) {
+		return t( 'Add a comment…' ) as string;
+	}
 	return t( 'What’s on your mind?' ) as string;
 }
 
-function buildParamsForMode( mode: ActiveMode, text: string ): MastodonCreatePostParams {
+function buildParamsForMode( mode: ActiveMode, text: string ): MastodonCreatePostMutationParams {
 	if ( mode.kind === 'reply' ) {
 		return {
 			connectionId: mode.connectionId,
 			status: text,
 			in_reply_to_id: mode.parent.uri,
+		};
+	}
+	if ( mode.kind === 'quote' ) {
+		// Mastodon 4.5+ native quote post: send `quoted_status_id` and let the
+		// upstream embed the quoted post. The mutation falls back to text-based
+		// quoting (append the permalink to status) when the upstream returns
+		// `bad_request` (instance < 4.5, or quoting disabled). Surface the
+		// permalink to the mutation via `quotedFallbackPermalink` so it can
+		// retry without us re-walking the composer state.
+		return {
+			connectionId: mode.connectionId,
+			status: text,
+			quoted_status_id: mode.quote.uri,
+			quotedFallbackPermalink: mode.previewPost.permalink,
 		};
 	}
 	return {

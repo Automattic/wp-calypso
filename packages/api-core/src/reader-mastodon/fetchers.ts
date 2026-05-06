@@ -304,10 +304,13 @@ export async function deleteMastodonRepost( params: MastodonDeleteRepostParams )
 export async function createMastodonPost(
 	params: MastodonCreatePostParams
 ): Promise< MastodonCreatePostResult > {
-	const { connectionId, status, in_reply_to_id, media_ids, sensitive } = params;
+	const { connectionId, status, in_reply_to_id, quoted_status_id, media_ids, sensitive } = params;
 	const body: Record< string, unknown > = { status };
 	if ( in_reply_to_id ) {
 		body.in_reply_to_id = in_reply_to_id;
+	}
+	if ( quoted_status_id ) {
+		body.quoted_status_id = quoted_status_id;
 	}
 	if ( media_ids && media_ids.length > 0 ) {
 		body.media_ids = media_ids;

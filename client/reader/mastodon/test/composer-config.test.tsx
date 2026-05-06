@@ -19,10 +19,26 @@ const replyMode: ActiveMode = {
 	parent: { uri: '108020' },
 	previewPost: {
 		uri: '108020',
+		permalink: 'https://mastodon.social/@alice/108020',
 		text: 'parent body',
 		html: '<p>parent body</p>',
 		author: { handle: 'alice', display_name: 'Alice' },
 	},
+};
+
+const quotePreview = {
+	uri: '109876543210',
+	permalink: 'https://mastodon.social/@alice/109876543210',
+	text: 'hello mastodon',
+	html: '<p>hello mastodon</p>',
+	author: { handle: 'alice@mastodon.social', display_name: 'Alice' },
+};
+
+const quoteMode: ActiveMode = {
+	kind: 'quote',
+	connectionId: 42,
+	quote: { uri: '109876543210' },
+	previewPost: quotePreview,
 };
 
 const standaloneMode: ActiveMode = {
@@ -33,8 +49,8 @@ const standaloneMode: ActiveMode = {
 
 describe( 'mastodonComposerConfig', () => {
 	describe( 'supportedModes', () => {
-		it( 'supports reply and standalone but not quote', () => {
-			expect( mastodonComposerConfig.supportedModes ).toEqual( [ 'reply', 'standalone' ] );
+		it( 'supports reply, quote, and standalone', () => {
+			expect( mastodonComposerConfig.supportedModes ).toEqual( [ 'reply', 'quote', 'standalone' ] );
 		} );
 	} );
 
@@ -61,6 +77,67 @@ describe( 'mastodonComposerConfig', () => {
 				status: 'a post',
 			} );
 			expect( params ).not.toHaveProperty( 'in_reply_to_id' );
+		} );
+
+		it( 'quote mode sets quoted_status_id and surfaces the permalink as a fallback hint', () => {
+			// Native Mastodon 4.5+ quote: send `quoted_status_id` on the wire
+			// and pass the permalink alongside as `quotedFallbackPermalink`.
+			// The mutation layer uses the fallback only on bad_request from
+			// older instances. Crucially, `status` is the user's text untouched
+			// — no permalink append at buildParams time.
+			expect( mastodonComposerConfig.buildParams( quoteMode, 'great point' ) ).toEqual( {
+				connectionId: 42,
+				status: 'great point',
+				quoted_status_id: '109876543210',
+				quotedFallbackPermalink: 'https://mastodon.social/@alice/109876543210',
+			} );
+		} );
+
+		it( 'quote mode submits an empty status when the user has not typed anything', () => {
+			// The user can publish a quote with no commentary; native quotes
+			// carry the embedded reference via `quoted_status_id` so an empty
+			// status is fine. The composer's own "empty body" UI gate is
+			// upstream of this.
+			expect( mastodonComposerConfig.buildParams( quoteMode, '' ) ).toEqual( {
+				connectionId: 42,
+				status: '',
+				quoted_status_id: '109876543210',
+				quotedFallbackPermalink: 'https://mastodon.social/@alice/109876543210',
+			} );
+		} );
+
+		it( 'quote mode passes through user text verbatim — no trim, no permalink append', () => {
+			// Trailing whitespace and the absence of the URL in `status` are
+			// intentional: the wire shape of a native quote does not include
+			// the permalink in the body. Trim happens only on the bad_request
+			// retry path (mutation layer).
+			expect( mastodonComposerConfig.buildParams( quoteMode, 'commentary   ' ) ).toEqual( {
+				connectionId: 42,
+				status: 'commentary   ',
+				quoted_status_id: '109876543210',
+				quotedFallbackPermalink: 'https://mastodon.social/@alice/109876543210',
+			} );
+		} );
+
+		it( 'quote mode emits an undefined fallback permalink when previewPost lacks one', () => {
+			// Belt-and-suspenders: panels always pass a SocialPost (which
+			// carries a permalink) but the structural PreviewPost type allows
+			// it to be missing. Surface that to the mutation as `undefined` so
+			// the fallback retry knows it has nothing to fall back to and
+			// re-throws the upstream bad_request rather than retrying with an
+			// empty trailer.
+			const mode: ActiveMode = {
+				kind: 'quote',
+				connectionId: 42,
+				quote: { uri: '109876543210' },
+				previewPost: { ...quotePreview, permalink: undefined },
+			};
+			expect( mastodonComposerConfig.buildParams( mode, 'commentary' ) ).toEqual( {
+				connectionId: 42,
+				status: 'commentary',
+				quoted_status_id: '109876543210',
+				quotedFallbackPermalink: undefined,
+			} );
 		} );
 	} );
 

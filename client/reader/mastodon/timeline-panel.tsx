@@ -141,6 +141,19 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const useLikeAction = useMemo(
 		() => makeUseMastodonLikeAction( connection.id ),
 		[ connection.id ]
@@ -163,8 +176,17 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
 			onReplyClick,
+			onQuoteClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
+		[
+			connection.id,
+			onClickAnalytics,
+			getThreadUrl,
+			buildProfileUrl,
+			buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
 	);
 
 	const useRepostAction = useMemo(

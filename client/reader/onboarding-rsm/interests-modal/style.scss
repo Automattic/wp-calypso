@@ -1,29 +1,13 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-$actions-height: 64px;
-
 .interests-modal {
-	&.components-modal__frame,
-	.components-modal__frame {
-		width: min( 1024px, calc( 100vw - 64px ) );
-		max-width: min( 1024px, calc( 100vw - 64px ) );
-
-		@media ( max-width: $break-medium ) {
-			width: 100vw;
-			max-width: 100vw;
-			margin-left: 0;
-			margin-right: 0;
-		}
-	}
+	// Frame sizing, the WP modal flex layout, the VStack scroll region, and
+	// the footer are shared with the other onboarding-rsm modals; see
+	// `client/reader/onboarding-rsm/style.scss`.
 
 	&__content {
-		// Since the actions container is positioned absolutely,
-		// this padding bottom ensures that the content wrapper will properly
-		// detect overflowing content and start showing scrollbars at the right
-		// moment. Without this padding, the content would render under the actions
-		// bar without causing the wrapper to show a scrollbar.
-		padding-bottom: $actions-height;
+		padding: 4px 32px 24px;
 	}
 
 	&__title {
