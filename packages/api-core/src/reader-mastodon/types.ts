@@ -168,7 +168,7 @@ export interface MastodonAuthorProfile {
 	 * which would mislead users into clicking Follow on accounts they
 	 * already follow.
 	 */
-	viewer?: MastodonViewerState;
+	viewer?: MastodonAuthorProfileViewer;
 	/**
 	 * `true` when the resolved actor matches the connection's own account.
 	 * Absent on backends that haven't deployed the projection yet. The
@@ -317,7 +317,7 @@ export interface MastodonMediaUploadResult {
  * this block means the backend hasn't deployed the viewer projection
  * yet, and consumers should treat that as "no follow UI available".
  */
-export interface MastodonViewerState {
+export interface MastodonAuthorProfileViewer {
 	/** Whether the caller follows the target. */
 	following: boolean;
 	/** Whether the target follows the caller. Drives the "Follow back" affordance. */
@@ -349,5 +349,5 @@ export interface MastodonDeleteFollowParams {
  * server-state updates use the same patcher.
  */
 export interface MastodonFollowResponse {
-	viewer: MastodonViewerState;
+	viewer: MastodonAuthorProfileViewer;
 }

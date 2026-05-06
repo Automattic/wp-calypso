@@ -14,7 +14,7 @@ import type {
 	MastodonTagFilter,
 	MastodonTagInfo,
 	MastodonTagFeedPage,
-	MastodonViewerState,
+	MastodonAuthorProfileViewer,
 } from '../types';
 
 describe( 'reader-mastodon types compile', () => {
@@ -115,7 +115,7 @@ describe( 'MastodonTagFeedPage', () => {
 
 describe( 'follow types', () => {
 	it( 'MastodonViewerState carries following / followed_by / requested booleans', () => {
-		const v: MastodonViewerState = {
+		const v: MastodonAuthorProfileViewer = {
 			following: false,
 			followed_by: true,
 			requested: false,
