@@ -1407,8 +1407,7 @@ describe( 'useCreateMastodonRepostMutation / useDeleteMastodonRepostMutation', (
 
 describe( 'uploadMastodonMediaMutation', () => {
 	it( 'returns mutationOptions wrapping uploadMastodonMedia', () => {
-		const qc = new QueryClient();
-		const opts = uploadMastodonMediaMutation( qc );
+		const opts = uploadMastodonMediaMutation();
 		expect( typeof opts.mutationFn ).toBe( 'function' );
 		// mutationKey intentionally absent — composer-config types Omit it.
 		expect( ( opts as Record< string, unknown > ).mutationKey ).toBeUndefined();

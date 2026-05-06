@@ -149,17 +149,20 @@ export function useMastodonComposerMedia( { connectionId }: Ctx ): ComposerMedia
 	);
 
 	const onPublishSuccess = useCallback( () => {
-		// No-op: Mastodon's POST /statuses response already carries real CDN
-		// URLs in `result.media`, so there's no local-preview window for the
-		// cache to patch over (unlike atmosphere, where the AppView lag means
-		// the just-published item has no embed for ~1-2s).
+		// No-op: Mastodon's POST /statuses returns final CDN URLs, so there's
+		// no preview-window cache to patch.
 	}, [] );
 
-	const clear = useCallback( () => {
-		// `keepPreviewUrlsAlive` is honoured for atmosphere, ignored here:
-		// see onPublishSuccess for rationale. Always revoke immediately.
-		clearAll();
-	}, [ clearAll ] );
+	const clear = useCallback(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		( _options: { keepPreviewUrlsAlive: boolean } ) => {
+			// Option intentionally unused: atmosphere needs to defer revocation
+			// past the AppView lag window; Mastodon's POST /statuses already
+			// returns final CDN URLs so we revoke immediately.
+			clearAll();
+		},
+		[ clearAll ]
+	);
 
 	return useMemo(
 		() => ( {

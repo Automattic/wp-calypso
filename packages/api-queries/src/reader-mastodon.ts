@@ -810,13 +810,11 @@ export const createMastodonPostMutation = ( queryClient: QueryClient ) =>
 
 /**
  * Wire-layer factory for uploading a single image to a Mastodon connection's
- * `POST /reader/mastodon/connections/{id}/media` endpoint. The mutation does
- * not interact with any query cache (media uploads don't read into list /
- * thread caches), so the factory accepts `QueryClient` only to keep the
- * call-site shape uniform with the other mastodon mutation factories.
+ * `POST /reader/mastodon/connections/{id}/media` endpoint. Media uploads do
+ * not read into list/thread caches, so this factory takes no `QueryClient`
+ * — unlike the like/repost/post mutations.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const uploadMastodonMediaMutation = ( _queryClient: QueryClient ) =>
+export const uploadMastodonMediaMutation = () =>
 	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
 		mutationFn: uploadMastodonMedia,
 	} );

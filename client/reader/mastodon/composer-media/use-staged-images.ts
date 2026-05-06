@@ -1,5 +1,5 @@
 import { uploadMastodonMediaMutation } from '@automattic/api-queries';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ACCEPTED_MIME_SET, MAX_BYTES_PER_IMAGE } from './constants';
 import type { ComposerImage } from './types';
@@ -13,14 +13,10 @@ export interface UseStagedImagesOptions {
 }
 
 export function useStagedImages( opts: UseStagedImagesOptions ) {
-	const queryClient = useQueryClient();
-	// Capture the mutation options once per QueryClient. The factory may be
-	// mocked in tests with `mockReturnValueOnce`, and we don't want to consume
-	// fresh options on every render (which would discard test-time overrides).
-	const mutationOptions = useMemo(
-		() => uploadMastodonMediaMutation( queryClient ),
-		[ queryClient ]
-	);
+	// Stable mutation options across renders — keeps `useMutation`'s
+	// referential identity so test-time `mockReturnValueOnce` overrides
+	// aren't consumed on re-render.
+	const mutationOptions = useMemo( () => uploadMastodonMediaMutation(), [] );
 	const { mutateAsync: uploadMedia } = useMutation( mutationOptions );
 
 	const [ images, setImages ] = useState< ComposerImage[] >( [] );
