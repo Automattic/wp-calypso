@@ -1211,7 +1211,7 @@ export default function ReviewMediation( {
 														{ /* `accepted`/`dismissed` are unreachable here — the
 															collapsed branch above renders for those */ }
 														{ isManual && __( 'Needs manual edit', 'jetpack' ) }
-														{ status === 'applying' && __( 'Applying…', 'jetpack' ) }
+														{ ! isManual && status === 'applying' && __( 'Applying…', 'jetpack' ) }
 														{ ! isManual && status === 'failed' && __( 'Retry', 'jetpack' ) }
 														{ ! isManual && status === 'pending' && __( 'Accept', 'jetpack' ) }
 													</button>
