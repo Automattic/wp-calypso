@@ -284,7 +284,8 @@ describe( 'useReelShare', () => {
 						label: expect.any( String ),
 						url: expect.stringMatching( /\/wp-admin\/admin\.php\?page=jetpack-social$/ ),
 					} ),
-				] )
+				] ),
+				true
 			);
 		} );
 
@@ -301,7 +302,9 @@ describe( 'useReelShare', () => {
 			expect( mockTrackNotPublished ).toHaveBeenCalledTimes( 1 );
 			expect( mockAddNotice ).toHaveBeenCalledWith(
 				expect.stringMatching( /Publish this post first/i ),
-				'warning'
+				'warning',
+				undefined,
+				true
 			);
 		} );
 

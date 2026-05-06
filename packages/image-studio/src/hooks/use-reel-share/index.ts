@@ -199,7 +199,8 @@ export function useReelShare(): UseReelShareReturn {
 						url: `${ window.location.origin }/wp-admin/admin.php?page=jetpack-social`,
 						openInNewTab: true,
 					},
-				]
+				],
+				true
 			);
 			return;
 		}
@@ -208,7 +209,9 @@ export function useReelShare(): UseReelShareReturn {
 			trackImageStudioReelShareNotPublished();
 			await addNotice(
 				__( 'Publish this post first to share it as an Instagram Reel.', __i18n_text_domain__ ),
-				'warning'
+				'warning',
+				undefined,
+				true
 			);
 			return;
 		}
