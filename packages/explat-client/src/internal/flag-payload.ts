@@ -1,4 +1,5 @@
 import type { Feature } from '../sdk/types';
+import type { Config } from '../types';
 
 export type FlagPayload = {
 	schema_version: number;
@@ -11,46 +12,60 @@ export type FlagPayloadCache = {
 	expiresAt: number;
 };
 
-export type LogError = ( error: Record< string, string > & { message: string } ) => void;
-
 const SCHEMA_VERSION_SUPPORTED = 1;
 const DEFAULT_TTL_SECONDS = 7200;
 
 /**
- * Lazy-load and cache the flag payload. Returns null on any failure (fetch
- * error, unsupported schema_version, malformed body) — callers fall back to
- * the caller-provided default value.
+ * Lazy-load and cache the flag payload.
+ *
+ * Returns null on any failure (fetch error, unsupported schema_version,
+ * malformed body) — callers fall back to the caller-provided default value.
+ *
+ * Concurrent calls before the first fetch resolves share a single in-flight
+ * promise so we never dispatch N parallel `/flags` requests on cold cache.
  */
-export async function loadFlagPayload(
+export function createFlagPayloadLoader(
 	fetchPayload: () => Promise< unknown >,
-	cache: { current: FlagPayloadCache | null },
-	logError: LogError
-): Promise< FlagPayload | null > {
-	const now = Date.now();
-	if ( cache.current && cache.current.expiresAt > now ) {
-		return cache.current.payload;
-	}
-	try {
-		const raw = await fetchPayload();
-		const payload = parsePayload( raw, logError );
-		if ( ! payload ) {
-			return null;
+	logError: Config[ 'logError' ]
+): () => Promise< FlagPayload | null > {
+	let cache: FlagPayloadCache | null = null;
+	let inflight: Promise< FlagPayload | null > | null = null;
+
+	return async function loadFlagPayload(): Promise< FlagPayload | null > {
+		const now = Date.now();
+		if ( cache && cache.expiresAt > now ) {
+			return cache.payload;
 		}
-		cache.current = {
-			payload,
-			expiresAt: now + payload.ttl * 1000,
-		};
-		return payload;
-	} catch ( e ) {
-		logError( {
-			message: ( e as Error ).message,
-			source: 'loadFlagPayload-fetchError',
-		} );
-		return null;
-	}
+		if ( inflight ) {
+			return inflight;
+		}
+		inflight = ( async () => {
+			try {
+				const raw = await fetchPayload();
+				const payload = parsePayload( raw, logError );
+				if ( ! payload ) {
+					return null;
+				}
+				cache = {
+					payload,
+					expiresAt: Date.now() + payload.ttl * 1000,
+				};
+				return payload;
+			} catch ( e ) {
+				logError( {
+					message: ( e as Error ).message,
+					source: 'loadFlagPayload-fetchError',
+				} );
+				return null;
+			} finally {
+				inflight = null;
+			}
+		} )();
+		return inflight;
+	};
 }
 
-function parsePayload( raw: unknown, logError: LogError ): FlagPayload | null {
+function parsePayload( raw: unknown, logError: Config[ 'logError' ] ): FlagPayload | null {
 	if ( typeof raw !== 'object' || raw === null ) {
 		return null;
 	}

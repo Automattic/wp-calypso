@@ -5,9 +5,9 @@ import {
 } from './internal/experiment-assignment-store';
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
-import { loadFlagPayload, type FlagPayloadCache } from './internal/flag-payload';
+import { createFlagPayloadLoader } from './internal/flag-payload';
 import * as Request from './internal/requests';
-import { getExPlatRuntime } from './internal/runtime';
+import { createExPlatRuntimeReader } from './internal/runtime';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
 import { evalFeature } from './sdk/evaluator';
@@ -122,7 +122,11 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		} catch ( e ) {}
 	};
 
-	const flagPayloadCache: { current: FlagPayloadCache | null } = { current: null };
+	const fetchFlagPayload = config.fetchFlagPayload;
+	const loadFlagPayload = fetchFlagPayload
+		? createFlagPayloadLoader( fetchFlagPayload, safeLogError )
+		: null;
+	const getExPlatRuntime = createExPlatRuntimeReader();
 
 	const fireFeatureAssignmentBeacon = async ( body: FeatureAssignmentBeacon ): Promise< void > => {
 		try {
@@ -265,7 +269,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		): Promise< WidenPrimitives< T > > => {
 			const fallback = defaultValue as unknown as WidenPrimitives< T >;
 			try {
-				if ( ! config.fetchFlagPayload || ! config.getAttributes ) {
+				if ( ! loadFlagPayload || ! config.getAttributes ) {
 					return fallback;
 				}
 
@@ -274,11 +278,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					return fallback;
 				}
 
-				const payload = await loadFlagPayload(
-					config.fetchFlagPayload,
-					flagPayloadCache,
-					safeLogError
-				);
+				const payload = await loadFlagPayload();
 				if ( ! payload ) {
 					return fallback;
 				}

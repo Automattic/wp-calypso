@@ -2,10 +2,6 @@ import { createExPlatClient } from '../../create-explat-client';
 import { setBrowserContext } from '../test-common';
 import type { Config } from '../../types';
 
-type MockedConfig = {
-	[ K in keyof Config ]: Config[ K ];
-};
-
 const experimentRule = {
 	type: 'experiment' as const,
 	seed: 'exp_a',
@@ -25,8 +21,8 @@ const experimentRule = {
 function makeClient(
 	payload: object | null,
 	attributes: Record< string, string > = {}
-): { client: ReturnType< typeof createExPlatClient >; config: MockedConfig } {
-	const config: MockedConfig = {
+): { client: ReturnType< typeof createExPlatClient >; config: Config } {
+	const config: Config = {
 		fetchExperimentAssignment: jest.fn(),
 		getAnonId: jest.fn().mockResolvedValue( attributes.anon_id ?? null ),
 		fetchFlagPayload: jest.fn().mockResolvedValue( payload ),
@@ -335,5 +331,25 @@ describe( 'getFeatureValue', () => {
 		( config.fetchFlagPayload as jest.Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
 		const value = await client.getFeatureValue( 'anything', 'fallback' );
 		expect( value ).toBe( 'fallback' );
+	} );
+
+	test( 'concurrent cold-cache calls share a single fetch', async () => {
+		setRuntime( {
+			schema_version: 1,
+			mode: 'normal',
+			can_evaluate: true,
+			can_log_assignment: true,
+			can_create_assignment: true,
+		} );
+		const { client, config } = makeClient(
+			{ schema_version: 1, flags: {}, ttl: 7200 },
+			{ wpcom_user_id: '1' }
+		);
+		await Promise.all( [
+			client.getFeatureValue( 'a', 'd' ),
+			client.getFeatureValue( 'b', 'd' ),
+			client.getFeatureValue( 'c', 'd' ),
+		] );
+		expect( config.fetchFlagPayload ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
