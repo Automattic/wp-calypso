@@ -240,8 +240,7 @@ export default function SolutionsCardsUpsellStep( {
 }: SolutionsCardsUpsellStepProps ) {
 	const [ showDowngradeStep, setShowDowngradeStep ] = React.useState( false );
 	const solutions = getSolutionsForReason( cancellationReason );
-	const { setNewMessagingChat, setNavigateToRoute, setShowHelpCenter, setOpenOdieWithContext } =
-		useHelpCenter();
+	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
 	const showSwitchToMonthly = isAnnualOrLongerPlan( purchase );
@@ -314,7 +313,7 @@ export default function SolutionsCardsUpsellStep( {
 				break;
 			case 'speak-with-support': {
 				const initialMessage =
-					'User is contacting us from pre-cancellation form. Cancellation reason they\u2019ve given: ' +
+					'User is contacting us from pre-cancellation form. Cancellation reason they’ve given: ' +
 					cancellationReason;
 				if ( canConnectToZendeskMessaging ) {
 					setNewMessagingChat( {
@@ -323,8 +322,11 @@ export default function SolutionsCardsUpsellStep( {
 						siteId: String( purchase.blog_id ),
 					} );
 				} else {
-					setNavigateToRoute( '/odie' );
-					setShowHelpCenter( true );
+					setOpenOdieWithContext( {
+						initialMessage,
+						siteUrl: purchase.site_slug,
+						siteId: String( purchase.blog_id ),
+					} );
 				}
 				break;
 			}

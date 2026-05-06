@@ -81,10 +81,10 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 	{
 		id: 'speak-with-support',
 		title: 'Speak with our support team',
-		subtitle: 'We\u2019re here to answer any of your questions.',
+		subtitle: 'We’re here to answer any of your questions.',
 		onClick: ( ctx ) => {
 			const initialMessage =
-				'User is contacting us from pre-cancellation form. Cancellation reason they\u2019ve given: ' +
+				'User is contacting us from pre-cancellation form. Cancellation reason they’ve given: ' +
 				ctx.cancellationReason;
 			if ( ctx.canConnectToZendeskMessaging ) {
 				ctx.setNewMessagingChat( {
@@ -93,8 +93,11 @@ export const SOLUTION_CARD_CONFIG: SolutionCardConfigEntry[] = [
 					siteId: ctx.site.ID,
 				} );
 			} else {
-				ctx.setNavigateToRoute( '/odie' );
-				ctx.setShowHelpCenter( true );
+				ctx.setOpenOdieWithContext( {
+					initialMessage,
+					siteUrl: ctx.site.URL,
+					siteId: ctx.site.ID,
+				} );
 			}
 		},
 	},

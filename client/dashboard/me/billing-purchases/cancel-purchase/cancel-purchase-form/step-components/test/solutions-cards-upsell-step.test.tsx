@@ -10,13 +10,14 @@ import type { Purchase } from '@automattic/api-core';
 const mockSetNewMessagingChat = jest.fn();
 const mockSetNavigateToRoute = jest.fn();
 const mockSetShowHelpCenter = jest.fn();
+const mockSetOpenOdieWithContext = jest.fn();
 
 jest.mock( '../../../../../../app/help-center', () => ( {
 	useHelpCenter: () => ( {
 		setNewMessagingChat: mockSetNewMessagingChat,
 		setNavigateToRoute: mockSetNavigateToRoute,
 		setShowHelpCenter: mockSetShowHelpCenter,
-		setOpenOdieWithContext: jest.fn(),
+		setOpenOdieWithContext: mockSetOpenOdieWithContext,
 	} ),
 } ) );
 
@@ -89,8 +90,14 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		} );
 		await user.click( supportCard );
 
-		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/odie' );
-		expect( mockSetShowHelpCenter ).toHaveBeenCalledWith( true );
+		expect( mockSetOpenOdieWithContext ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetOpenOdieWithContext ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				initialMessage: expect.stringContaining( 'Cancellation reason' ),
+				siteUrl: 'example.wordpress.com',
+				siteId: '456',
+			} )
+		);
 		expect( mockSetNewMessagingChat ).not.toHaveBeenCalled();
 		expect( closeDialog ).not.toHaveBeenCalled();
 	} );

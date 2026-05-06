@@ -126,8 +126,14 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 		} );
 		await user.click( supportCard );
 
-		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/odie' );
-		expect( mockSetShowHelpCenter ).toHaveBeenCalledWith( true );
+		expect( mockSetOpenOdieWithContext ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetOpenOdieWithContext ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				initialMessage: expect.stringContaining( 'Cancellation reason' ),
+				siteUrl: 'https://example.wordpress.com',
+				siteId: 456,
+			} )
+		);
 		expect( mockSetNewMessagingChat ).not.toHaveBeenCalled();
 		expect( closeDialog ).not.toHaveBeenCalled();
 	} );
