@@ -20,7 +20,7 @@ export function ComposeFab() {
 
 	return (
 		<Button
-			className={ clsx( 'atmosphere-compose-fab', { 'is-hidden': isHidden } ) }
+			className={ clsx( 'social-compose-fab', { 'is-hidden': isHidden } ) }
 			icon={ edit }
 			text={ translate( 'Compose' ) as string }
 			aria-hidden={ isHidden || undefined }

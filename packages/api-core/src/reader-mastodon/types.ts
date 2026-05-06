@@ -220,3 +220,15 @@ export interface MastodonDeleteRepostParams {
 	connectionId: number;
 	statusId: string;
 }
+
+export interface MastodonCreatePostParams {
+	connectionId: number;
+	status: string;
+	in_reply_to_id?: string;
+}
+
+export interface MastodonCreatePostResult {
+	id: string;
+	url: string;
+	in_reply_to_id: string | null;
+}

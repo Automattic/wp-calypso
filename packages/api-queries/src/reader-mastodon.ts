@@ -2,6 +2,7 @@ import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
 	createMastodonLike,
+	createMastodonPost,
 	createMastodonRepost,
 	deleteMastodonLike,
 	deleteMastodonRepost,
@@ -16,6 +17,7 @@ import {
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
+	mutationOptions,
 	queryOptions,
 	useInfiniteQuery,
 	useMutation,
@@ -38,6 +40,8 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonCreatePostParams,
+	MastodonCreatePostResult,
 	MastodonError,
 	MastodonFeedItem,
 	MastodonTagFilter,
@@ -324,7 +328,7 @@ export function useMastodonTagFeedInfiniteQuery(
 }
 
 // ---------------------------------------------------------------------------
-// Optimistic favorite/unfavorite + boost/unboost infrastructure
+// Optimistic favorite/unfavorite + boost/unboost + post-cache infrastructure
 // (private to this file)
 // ---------------------------------------------------------------------------
 
@@ -712,3 +716,91 @@ export function useDeleteMastodonRepostMutation( connectionId: number ) {
 		onError: ( _err, _vars, ctx ) => restoreMastodonPostSnapshots( queryClient, ctx ),
 	} );
 }
+
+interface CreatePostContext {
+	parentCountsContext?: OptimisticContext;
+}
+
+/**
+ * Wire-layer factory for creating a Mastodon status (reply or standalone post).
+ *
+ * Reply mode (`in_reply_to_id` set): bumps `counts.replies` on the parent post
+ * across every Mastodon cache (timeline / thread / profile-feed / tag-feed)
+ * via `patchMastodonPostCaches`, snapshotting each patched item so `onError`
+ * can restore atomically.
+ *
+ * Standalone mode (no `in_reply_to_id`): no cache patch yet — the modal still
+ * relies on the `onSuccess` invalidate to surface the new post. Standalone
+ * optimistic prepend wires up in slice 8.
+ *
+ * Accepts the consumer's QueryClient because Calypso boots its own separate
+ * from the singleton in `@automattic/api-queries`. See
+ * `client/reader/AGENTS.md` for the rationale.
+ */
+export const createMastodonPostMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		MastodonCreatePostResult,
+		MastodonError,
+		MastodonCreatePostParams,
+		CreatePostContext
+	>( {
+		mutationFn: createMastodonPost,
+		onMutate: async ( vars ) => {
+			// cancelQueries is best-effort — TanStack docs flag it as such.
+			// If it rejects (rare; route-change teardown races) we want to
+			// continue with the optimistic patch and the actual mutation
+			// rather than treat the whole call as failed before it starts.
+			try {
+				await cancelMastodonQueriesForConnection( queryClient, vars.connectionId );
+			} catch {
+				// Swallow; the optimistic patch below + mutationFn must
+				// still run. Snapshot rollback on real onError is unaffected.
+			}
+
+			const ctx: CreatePostContext = {};
+
+			if ( vars.in_reply_to_id ) {
+				// Reply mode: bump counts.replies on the parent post in every
+				// cached page where it appears. The snapshots returned by
+				// patchMastodonPostCaches feed restoreMastodonPostSnapshots in
+				// onError.
+				ctx.parentCountsContext = patchMastodonPostCaches(
+					queryClient,
+					vars.connectionId,
+					vars.in_reply_to_id,
+					( item ) => ( {
+						...item,
+						counts: { ...item.counts, replies: item.counts.replies + 1 },
+					} )
+				);
+				return ctx;
+			}
+
+			// Standalone optimistic prepend wires up in slice 8.
+			return ctx;
+		},
+		onError: ( _err, _vars, ctx ) => {
+			if ( ! ctx ) {
+				return;
+			}
+			restoreMastodonPostSnapshots( queryClient, ctx.parentCountsContext );
+		},
+		onSuccess: ( _result, vars ) => {
+			// Invalidate the timeline so the new post (top-level or reply)
+			// re-materialises from the server on next read.
+			queryClient.invalidateQueries( {
+				queryKey: readerMastodonKeys.timeline( vars.connectionId ),
+			} );
+			// Reply mode: also invalidate the parent's thread cache so the
+			// newly-created reply appears on the next thread read instead of
+			// waiting out the 30s staleTime. The optimistic patch in onMutate
+			// only bumped `counts.replies`; without this invalidate, replying
+			// from the thread surface looks broken until the user navigates
+			// away and back.
+			if ( vars.in_reply_to_id ) {
+				queryClient.invalidateQueries( {
+					queryKey: readerMastodonKeys.thread( vars.connectionId, vars.in_reply_to_id ),
+				} );
+			}
+		},
+	} );

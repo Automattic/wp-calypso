@@ -4,54 +4,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComposerFooter } from '../composer-footer';
-import { useComposer } from '../composer-provider';
-import type { ComposerImage } from '../media/types';
-
-jest.mock( '../composer-provider', () => ( {
-	useComposer: jest.fn(),
-} ) );
-
-const mockUseComposer = useComposer as jest.MockedFunction< typeof useComposer >;
-
-function makeUploadedImage( id: string ): ComposerImage {
-	return {
-		kind: 'uploaded',
-		localId: id,
-		previewUrl: `blob:${ id }`,
-		alt: '',
-		aspectRatio: { width: 100, height: 100 },
-		blob: { ref: { $link: id }, mimeType: 'image/jpeg', size: 100 } as never,
-	};
-}
 
 const noop = () => {};
 
-function setComposerState( overrides: Partial< ReturnType< typeof useComposer > > = {} ) {
-	mockUseComposer.mockReturnValue( {
-		mode: null,
-		openComposer: jest.fn(),
-		closeComposer: jest.fn(),
-		images: [],
-		addFiles: jest.fn(),
-		removeImage: jest.fn(),
-		clearAll: jest.fn(),
-		retryImage: jest.fn(),
-		setAlt: jest.fn(),
-		isAllUploaded: true,
-		isAnyPending: false,
-		...overrides,
-	} as ReturnType< typeof useComposer > );
-}
-
 describe( '<ComposerFooter>', () => {
-	beforeEach( () => {
-		setComposerState();
-	} );
-
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'shows the remaining count', () => {
 		render(
 			<ComposerFooter graphemeCount={ 100 } onSubmit={ noop } isPending={ false } limit={ 300 } />
@@ -87,32 +43,37 @@ describe( '<ComposerFooter>', () => {
 		expect( screen.getByText( '-5' ) ).toHaveClass( 'is-over' );
 	} );
 
-	it( 'media button is enabled and labeled "Add media" with no images', () => {
+	it( 'renders no media trigger by default — the footerStart slot is empty', () => {
 		render(
 			<ComposerFooter graphemeCount={ 5 } onSubmit={ noop } isPending={ false } limit={ 300 } />
 		);
-		const media = screen.getByRole( 'button', { name: 'Add media' } );
-		expect( media ).not.toHaveAttribute( 'aria-disabled' );
-		expect( media ).not.toBeDisabled();
+		expect( screen.queryByRole( 'button', { name: /add media/i } ) ).toBeNull();
 	} );
 
-	it( 'media button is aria-disabled and reads "Maximum 4 images" at 4 images', () => {
-		setComposerState( {
-			images: [
-				makeUploadedImage( 'a' ),
-				makeUploadedImage( 'b' ),
-				makeUploadedImage( 'c' ),
-				makeUploadedImage( 'd' ),
-			],
-		} );
+	it( 'renders the supplied footerStart node into the footer', () => {
 		render(
-			<ComposerFooter graphemeCount={ 5 } onSubmit={ noop } isPending={ false } limit={ 300 } />
+			<ComposerFooter
+				graphemeCount={ 5 }
+				onSubmit={ noop }
+				isPending={ false }
+				limit={ 300 }
+				footerStart={ <button type="button">Add media</button> }
+			/>
 		);
-		const media = screen.getByRole( 'button', { name: 'Maximum 4 images' } );
-		expect( media ).toHaveAttribute( 'aria-disabled', 'true' );
-		// We use aria-disabled (not the native HTML `disabled` attribute) so
-		// screen-reader users can still focus the button and hear the label.
-		expect( media ).not.toBeDisabled();
+		expect( screen.getByRole( 'button', { name: /add media/i } ) ).toBeVisible();
+	} );
+
+	it( 'honors the disabled prop override', () => {
+		render(
+			<ComposerFooter
+				graphemeCount={ 50 }
+				onSubmit={ noop }
+				isPending={ false }
+				limit={ 300 }
+				disabled
+			/>
+		);
+		expect( screen.getByRole( 'button', { name: /post/i } ) ).toBeDisabled();
 	} );
 
 	it( 'shows spinner state when pending', () => {

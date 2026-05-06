@@ -1,10 +1,7 @@
 import { __experimentalHStack as HStack, Button, Spinner } from '@wordpress/components';
-import { Icon, image } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
-import { useComposer } from './composer-provider';
-import { ACCEPTED_IMAGE_TYPES, MAX_IMAGES } from './media/constants';
+import type { ReactNode } from 'react';
 
 interface Props {
 	graphemeCount: number;
@@ -17,6 +14,13 @@ interface Props {
 	 * logic so the parent can extend it (e.g. gating on uploaded media).
 	 */
 	disabled?: boolean;
+	/**
+	 * Optional left-side content rendered before the character counter — e.g.
+	 * a per-protocol media trigger button supplied by `ComposerMediaSlot.
+	 * renderFooterTrigger`. Pass `null` (or omit) for protocols without a
+	 * media picker.
+	 */
+	footerStart?: ReactNode;
 }
 
 const WARN_THRESHOLD_REMAINING = 50;
@@ -27,64 +31,25 @@ export function ComposerFooter( {
 	isPending,
 	limit,
 	disabled: disabledProp,
+	footerStart,
 }: Props ) {
 	const translate = useTranslate();
-	const { images, addFiles } = useComposer();
-	const inputRef = useRef< HTMLInputElement >( null );
-	const atMax = images.length >= MAX_IMAGES;
 	const remaining = limit - graphemeCount;
 	const tooLong = remaining < 0;
 	const empty = graphemeCount === 0;
 	const disabled = disabledProp ?? ( isPending || tooLong || empty );
 
-	const countClass = clsx( 'atmosphere-composer__count', {
+	const countClass = clsx( 'social-composer__count', {
 		'is-warn': remaining > 0 && remaining <= WARN_THRESHOLD_REMAINING,
 		'is-over': remaining <= 0,
 	} );
 
 	return (
-		<HStack className="atmosphere-composer__footer" justify="space-between" alignment="center">
-			<div className="atmosphere-composer__footer-left">
-				<button
-					type="button"
-					className="atmosphere-composer__media"
-					aria-disabled={ atMax || undefined }
-					aria-label={
-						atMax
-							? ( translate( 'Maximum %(count)d images', {
-									args: { count: MAX_IMAGES },
-									comment:
-										'Tooltip on the composer "Add media" button when the user has reached the per-post image cap; %(count)d is the maximum number of images allowed on a single post.',
-							  } ) as string )
-							: ( translate( 'Add media' ) as string )
-					}
-					onClick={ () => {
-						if ( ! atMax ) {
-							inputRef.current?.click();
-						}
-					} }
-				>
-					<Icon icon={ image } size={ 18 } />
-				</button>
-				<input
-					ref={ inputRef }
-					type="file"
-					accept={ ACCEPTED_IMAGE_TYPES }
-					multiple
-					hidden
-					onChange={ ( e ) => {
-						const files = Array.from( e.target.files ?? [] );
-						if ( files.length > 0 ) {
-							addFiles( files );
-						}
-						// Reset so picking the same file again still triggers onChange.
-						e.target.value = '';
-					} }
-				/>
-			</div>
-			<HStack spacing={ 2 } className="atmosphere-composer__footer-right">
+		<HStack className="social-composer__footer" justify="space-between" alignment="center">
+			<div className="social-composer__footer-left">{ footerStart ?? null }</div>
+			<HStack spacing={ 2 } className="social-composer__footer-right">
 				<span
-					id="atmosphere-composer-count"
+					id="social-composer-count"
 					className={ countClass }
 					// Only announce when the user is near or past the limit so
 					// screen readers don't read out the count on every keystroke.

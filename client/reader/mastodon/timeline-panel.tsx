@@ -1,4 +1,7 @@
-import { useMastodonTimelineInfiniteQuery } from '@automattic/api-queries';
+import {
+	useMastodonConnectionQuery,
+	useMastodonTimelineInfiniteQuery,
+} from '@automattic/api-queries';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -12,6 +15,7 @@ import {
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { TimelineComposePill, useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectMastodonError } from './error-projection';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
@@ -116,6 +120,27 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id ]
 	);
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	// Surfaces the real avatar on the compose pill — the list endpoint that
+	// supplied `connection` always returns null for `avatar`. Pass `null`
+	// when there is no composer upstream so the details query short-circuits
+	// and we don't warm the cache for shells that won't render the pill.
+	const { data: connectionDetails } = useMastodonConnectionQuery( composer ? connection.id : null );
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'reply',
+				root: { uri: post.uri },
+				parent: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const useLikeAction = useMemo(
 		() => makeUseMastodonLikeAction( connection.id ),
 		[ connection.id ]
@@ -137,8 +162,9 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			getThreadUrl,
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
+			onReplyClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
+		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
 	);
 
 	const useRepostAction = useMemo(
@@ -150,6 +176,12 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		<SocialAnalyticsProvider value={ analyticsValue }>
 			<LikeProvider value={ useLikeAction }>
 				<RepostProvider value={ useRepostAction }>
+					{ composer && (
+						<TimelineComposePill
+							avatar={ connectionDetails?.avatar ?? connection.avatar }
+							entryPoint="timeline_inline"
+						/>
+					) }
 					<SocialFeedList< SocialPost >
 						items={ items }
 						isPending={ isPending }

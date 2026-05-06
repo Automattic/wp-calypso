@@ -3,6 +3,7 @@ import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
 	createMastodonLike,
+	createMastodonPost,
 	createMastodonRepost,
 	deleteMastodonLike,
 	deleteMastodonRepost,
@@ -445,5 +446,58 @@ describe( 'deleteMastodonRepost', () => {
 		await expect(
 			deleteMastodonRepost( { connectionId: 7, statusId: '108020' } )
 		).rejects.toMatchObject( { kind: 'connection_not_found' } );
+	} );
+} );
+
+describe( 'createMastodonPost', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'POSTs /reader/mastodon/connections/:id/statuses with status in the body', async () => {
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/statuses', { status: 'hello world' } )
+			.reply( 200, { id: '999', url: 'https://mastodon.social/@me/999', in_reply_to_id: null } );
+		const result = await createMastodonPost( { connectionId: 7, status: 'hello world' } );
+		expect( result.id ).toBe( '999' );
+		expect( result.in_reply_to_id ).toBeNull();
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'POSTs status + in_reply_to_id when replying', async () => {
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/statuses', {
+				status: 'a reply',
+				in_reply_to_id: '108020',
+			} )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: '108020',
+			} );
+		const result = await createMastodonPost( {
+			connectionId: 7,
+			status: 'a reply',
+			in_reply_to_id: '108020',
+		} );
+		expect( result.in_reply_to_id ).toBe( '108020' );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/statuses', { status: 'hello' } )
+			.reply( 401, { error: 'not_authenticated', message: '', statusCode: 401, status: 401 } );
+		await expect(
+			createMastodonPost( { connectionId: 7, status: 'hello' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+
+	it( 'classifies a 429 as rate_limited with retry_after', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/statuses', { status: 'hello' } )
+			.reply( 429, { error: 'mastodon_rate_limited', data: { retry_after: 30 } } );
+		await expect( createMastodonPost( { connectionId: 7, status: 'hello' } ) ).rejects.toEqual( {
+			kind: 'rate_limited',
+			retry_after: 30,
+		} );
 	} );
 } );

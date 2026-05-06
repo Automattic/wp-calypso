@@ -170,6 +170,28 @@ render the UK-spelled "Boost" label. Surfaces without a provider
 (quoted-post embeds, the shared `SocialAuthorProfilePanel` until it
 forwards `connectionId`, non-social cards) fall back to the static count.
 
+The reply / quote / standalone composer follows the same pattern with
+`<ComposerProvider connectionId={…} config={…}>` from
+`calypso/reader/social/composer`, plus per-protocol
+`composer-config.tsx` files that supply a
+`ComposerConfig<TError, TParams, TResult>`. Each protocol mounts the
+provider once per view (account, thread, author-profile) alongside
+`<ComposerModal />` and `<ComposeFab />`; panels that should render the
+inline `<TimelineComposePill />` opt in via `useOptionalComposer()`. The
+config carries the per-protocol limit, supported mode kinds (Mastodon
+omits `'quote'`), wire-shape `buildParams`, error-message map (with a
+mandatory `default:` arm using `err satisfies never;` — same lesson as
+the like / repost adapters), Tracks event names, success-notice copy,
+optional `logBadRequest` (lives in the per-protocol adapter so
+`packages/api-queries` doesn't need to import
+`calypso/lib/logstash`), and an optional `useMedia` slot for media
+attachments. The reply-button gate at `<PostCardCounts>` is
+`analytics.onReplyClick`-only — the per-panel `onReplyClick` handler is
+responsible for guarding on missing `post.cid` (or any protocol-specific
+preconditions) before calling `openComposer`. See
+`client/reader/social/AGENTS.md` § "Composer (slice 7)" for the full
+contract.
+
 ### SSR file variants
 
 Some routes have both `.node.js` (server) and `.web.js` (client) file variants for isomorphic rendering. Examples: `discover/index.node.js` / `discover/index.web.js`, `tags/index.node.js` / `tags/index.web.js`. The `.node.js` variant renders placeholder components for SSR, while `.web.js` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required.

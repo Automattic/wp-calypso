@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-// Keep in sync with `min-height` on `.atmosphere-composer__textarea` in
+// Keep in sync with `min-height` on `.social-composer__textarea` in
 // `style.scss`. Inline `style.height` set by the autogrow effect would
 // otherwise win over the stylesheet for empty / single-line content.
 const MIN_HEIGHT_PX = 80;
@@ -44,7 +44,7 @@ export function ComposerTextarea( {
 	return (
 		<textarea
 			ref={ ref }
-			className="atmosphere-composer__textarea"
+			className="social-composer__textarea"
 			value={ value }
 			placeholder={ placeholder }
 			disabled={ disabled }

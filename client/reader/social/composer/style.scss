@@ -1,4 +1,4 @@
-.atmosphere-compose-pill {
+.social-compose-pill {
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -27,7 +27,7 @@
 	}
 }
 
-.atmosphere-compose-pill__avatar {
+.social-compose-pill__avatar {
 	width: 32px;
 	height: 32px;
 	border-radius: 50%;
@@ -36,18 +36,18 @@
 	background: var(--studio-gray-5, #dcdcde);
 }
 
-.atmosphere-compose-pill__placeholder {
+.social-compose-pill__placeholder {
 	flex: 1;
 	color: var(--studio-gray-50, #646970);
 	font-size: 15px;
 }
 
-.atmosphere-compose-pill__icon {
+.social-compose-pill__icon {
 	color: var(--studio-gray-30, #8c8f94);
 	flex: 0 0 auto;
 }
 
-.atmosphere-compose-fab {
+.social-compose-fab {
 	position: fixed;
 	inset-block-end: 40px;
 	// Align the FAB's trailing edge with the right edge of the centered
@@ -64,7 +64,7 @@
 	min-height: 40px;
 	padding: 8px 16px;
 	gap: 6px;
-	// 6px matches `.atmosphere-compose-pill` and the rest of the
+	// 6px matches `.social-compose-pill` and the rest of the
 	// Reader's compose surfaces (search, stream input, `.quick-post`).
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
@@ -98,8 +98,8 @@
 	}
 }
 
-.atmosphere-composer {
-	.atmosphere-composer__pinned-context {
+.social-composer {
+	.social-composer__pinned-context {
 		padding: 8px 12px;
 		background: var(--studio-gray-0, #f6f7f7);
 		border-radius: 4px;
@@ -110,21 +110,21 @@
 		overflow-wrap: anywhere;
 	}
 
-	.atmosphere-composer__pinned-author {
+	.social-composer__pinned-author {
 		font-weight: 600;
 	}
 
-	.atmosphere-composer__pinned-handle {
+	.social-composer__pinned-handle {
 		color: var(--studio-gray-50, #646970);
 		margin-inline-start: 6px;
 		font-weight: 400;
 	}
 
-	.atmosphere-composer__pinned-snippet {
+	.social-composer__pinned-snippet {
 		margin-block: 4px 0;
 	}
 
-	.atmosphere-composer__textarea {
+	.social-composer__textarea {
 		width: 100%;
 		min-height: 80px;
 		resize: none;
@@ -135,17 +135,17 @@
 		background: transparent;
 	}
 
-	.atmosphere-composer__error {
+	.social-composer__error {
 		color: #b32d2e;
 		padding: 0 12px;
 		margin-block: 8px;
 	}
 
-	.atmosphere-composer__footer {
+	.social-composer__footer {
 		margin-block-start: 8px;
 	}
 
-	.atmosphere-composer__media {
+	.social-composer__media {
 		background: transparent;
 		border: none;
 		cursor: pointer;
@@ -193,7 +193,7 @@
 		}
 	}
 
-	.atmosphere-composer__count {
+	.social-composer__count {
 		color: var(--studio-gray-50, #646970);
 		font-variant-numeric: tabular-nums;
 
@@ -208,6 +208,11 @@
 	}
 }
 
+// Atmosphere image-attachment grid rendered inside the shared composer
+// modal via `ComposerMediaSlot.renderGrid`. The class names stay
+// `atmosphere-composer__*` because the component is atmosphere-specific
+// (`client/reader/atmosphere/composer-media/image-grid.tsx`); the shared
+// social-composer modal layout doesn't need to know about them.
 .atmosphere-composer__image-grid {
 	display: flex;
 	gap: 8px;
@@ -220,8 +225,8 @@
 	position: relative;
 	inline-size: 90px;
 	block-size: 90px;
-	// 6px matches the surrounding compose surfaces (`.atmosphere-compose-pill`,
-	// `.atmosphere-compose-fab`, `.quick-post`) instead of the design-system
+	// 6px matches the surrounding compose surfaces (`.social-compose-pill`,
+	// `.social-compose-fab`, `.quick-post`) instead of the design-system
 	// scale.
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
