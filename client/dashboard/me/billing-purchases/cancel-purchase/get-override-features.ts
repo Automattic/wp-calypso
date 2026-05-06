@@ -185,7 +185,7 @@ function getJetpackFeatures( slug: string ): CancellationFeature[] | null {
 			__( 'Priority support' )
 		);
 	}
-	// CRM: unclear if in purchases system (RSM-826) — fall through to null
+	// CRM: no override — fall through to null.
 	return null;
 }
 
