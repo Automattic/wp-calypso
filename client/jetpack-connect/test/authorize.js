@@ -143,9 +143,11 @@ describe( 'JetpackAuthorize', () => {
 
 		// Features section renders one card per top-priority family. With
 		// Woo + (full) Jetpack active, both family cards are featured and
-		// the "Also used by" overflow row stays empty.
-		expect( screen.getByRole( 'heading', { level: 3, name: 'WooCommerce' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { level: 3, name: 'Jetpack' } ) ).toBeInTheDocument();
+		// the "Used by" overflow stack stays absent. Cards no longer render
+		// H3 titles — the brand name lives on each card's accessible label
+		// instead.
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
 		expect(
 			container.querySelector( '.connect-screen-features-section__overflow' )
 		).not.toBeInTheDocument();
@@ -160,7 +162,7 @@ describe( 'JetpackAuthorize', () => {
 		).toBeInTheDocument();
 	} );
 
-	test( 'features section overflow row surfaces the third-priority family', () => {
+	test( 'features section surfaces the third-priority family in the Used-by stack with a Jetpack logo', () => {
 		const { container } = renderWithRedux(
 			<JetpackAuthorize
 				{ ...DEFAULT_PROPS }
@@ -174,15 +176,20 @@ describe( 'JetpackAuthorize', () => {
 
 		// A4A and Woo win the two card slots; Jetpack drops to overflow.
 		expect(
-			screen.getByRole( 'heading', { level: 3, name: 'Automattic for Agencies' } )
+			screen.getByRole( 'article', { name: 'Automattic for Agencies' } )
 		).toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { level: 3, name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'article', { name: 'Jetpack' } ) ).not.toBeInTheDocument();
+
+		// Used-by stack renders a label, the Jetpack brand logo, and the
+		// plugin display name list as separate rows.
+		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
+		expect( overflow ).toBeInTheDocument();
+		expect( overflow ).toHaveTextContent( 'Used by' );
+		expect( overflow ).toHaveTextContent( 'Jetpack' );
 		expect(
-			screen.queryByRole( 'heading', { level: 3, name: 'Jetpack' } )
-		).not.toBeInTheDocument();
-		expect(
-			container.querySelector( '.connect-screen-features-section__overflow' )
-		).toHaveTextContent( 'Also used by: Jetpack' );
+			overflow.querySelector( '.connect-screen-features-section__overflow-logo' )
+		).toBeInTheDocument();
 	} );
 
 	test( 'features section uses the per-plugin override for a single individual Jetpack plugin', () => {
@@ -197,14 +204,10 @@ describe( 'JetpackAuthorize', () => {
 			/>
 		);
 
-		// The single-plugin override puts the Boost card in the slot the
-		// generic Jetpack card would otherwise occupy.
-		expect(
-			screen.getByRole( 'heading', { level: 3, name: 'Jetpack Boost' } )
-		).toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'heading', { level: 3, name: 'Jetpack' } )
-		).not.toBeInTheDocument();
+		// The single-plugin override gives the card an accessible label that
+		// matches the Boost-specific copy, even though all Jetpack-family
+		// cards share the same Jetpack logo.
+		expect( screen.getByRole( 'article', { name: 'Jetpack Boost' } ) ).toBeInTheDocument();
 	} );
 
 	describe( 'isSso', () => {

@@ -1,8 +1,8 @@
-import { paths as productIconPaths } from '@automattic/components/src/product-icon/config';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
+	getFamilyFromSlug,
 	getFeatureCardData,
 	getFeatureSelection,
 	getPluginDisplayName,
@@ -14,17 +14,13 @@ import type { ReactNode } from 'react';
 /**
  * Render the brand-correct logo for a feature card key.
  *
- * The user-facing requirement is that each card uses the *full* brand mark
- * (not the lone-circle / single-letter variant) — so:
- *   - A4A: the "Automattic for Agencies" wordmark (`<A4ALogo fullA4A />`).
- *   - Woo: the full Woo color wordmark SVG.
- *   - Full Jetpack: the green-circle + "Jetpack" wordmark (`<JetpackLogo full />`).
- *   - Individual Jetpack plugins: their dedicated product icon (the
- *     official square brand asset for each plugin), with `jetpack-protect`
- *     reusing the `jetpack-scan` icon since Protect is the consumer-facing
- *     security/scan plugin and we don't ship a distinct asset for it.
- *   - `other`: no logo — the generic "Your active plugins" card title is
- *     the visual hook on its own.
+ * Per the design ask, every card uses a *full* brand mark (not a lone-circle
+ * variant). All Jetpack-family cards — the generic family card and every
+ * per-plugin override — share the single full Jetpack logo so the section
+ * stays visually consistent across plugin combinations; the bullet copy
+ * carries the per-plugin specifics. A4A and Woo each use their own full
+ * wordmark; the `other` fallback has no logo (the bullet copy is the
+ * visual hook on its own).
  */
 function getLogoForCardKey( key: FeatureCardKey ): ReactNode | string | undefined {
 	switch ( key ) {
@@ -33,19 +29,13 @@ function getLogoForCardKey( key: FeatureCardKey ): ReactNode | string | undefine
 		case 'woo':
 			return WooLogo;
 		case 'jetpack':
-			return <JetpackLogo full size={ 28 } />;
 		case 'jetpack-backup':
-			return productIconPaths[ 'jetpack-backup' ];
 		case 'jetpack-protect':
-			return productIconPaths[ 'jetpack-scan' ];
 		case 'jetpack-boost':
-			return productIconPaths[ 'jetpack-boost' ];
 		case 'jetpack-search':
-			return productIconPaths[ 'jetpack-search' ];
 		case 'jetpack-social':
-			return productIconPaths[ 'jetpack-social' ];
 		case 'jetpack-videopress':
-			return productIconPaths[ 'jetpack-videopress' ];
+			return <JetpackLogo full size={ 28 } />;
 		case 'other':
 		default:
 			return undefined;
@@ -69,6 +59,7 @@ function getLogoAltForCardKey( key: FeatureCardKey ): string {
 
 export interface ConnectorFeatureCards {
 	cards: FeatureCard[];
+	overflowLogo?: ReactNode;
 	overflowItems: string[];
 }
 
@@ -78,6 +69,11 @@ export interface ConnectorFeatureCards {
  * rules in `getFeatureSelection`) and resolves each one's logo, title, and
  * bullet copy. Overflow items are the friendly display names for any active
  * plugins whose family didn't earn a card slot.
+ *
+ * When the Jetpack family overflows (the canonical case is the all-three-
+ * families scenario where A4A and Woo take the two card slots), the section
+ * surfaces the full Jetpack logo above the overflow plugin list so Jetpack
+ * still gets a brand-mark presence even when it doesn't earn a card.
  */
 export function getConnectorFeatureCards(
 	pluginSlugs: readonly string[] = []
@@ -96,6 +92,10 @@ export function getConnectorFeatureCards(
 	} );
 
 	const overflowItems = overflowSlugs.map( ( slug ) => getPluginDisplayName( slug ) );
+	const hasJetpackOverflow = overflowSlugs.some(
+		( slug ) => getFamilyFromSlug( slug ) === 'jetpack'
+	);
+	const overflowLogo = hasJetpackOverflow ? <JetpackLogo full size={ 24 } /> : undefined;
 
-	return { cards, overflowItems };
+	return { cards, overflowLogo, overflowItems };
 }

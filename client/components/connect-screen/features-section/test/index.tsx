@@ -23,7 +23,7 @@ describe( 'FeaturesSection', () => {
 			logo: '/woo-logo.svg',
 			logoAlt: 'WooCommerce',
 			title: 'WooCommerce',
-			bullets: [ 'Run your store on the go', 'Real-time analytics', 'Cloud backups' ],
+			bullets: [ 'Run your store on the go', 'Real-time analytics', 'WooPayments' ],
 		},
 	];
 
@@ -32,12 +32,18 @@ describe( 'FeaturesSection', () => {
 		expect( container.firstChild ).toBeNull();
 	} );
 
-	test( 'renders one heading per card with the title text', () => {
-		render( <FeaturesSection cards={ baseCards } /> );
+	test( 'does not render H3 title text but exposes the title as the card aria-label', () => {
+		const { container } = render( <FeaturesSection cards={ baseCards } /> );
+
+		// No visible H3 title rendering — the card stays logo + bullets.
+		expect( container.querySelector( 'h3' ) ).toBeNull();
+		expect( screen.queryByText( 'WooCommerce' ) ).not.toBeInTheDocument();
+
+		// Title is still announced to assistive tech via aria-label.
 		expect(
-			screen.getByRole( 'heading', { name: 'Automattic for Agencies' } )
+			screen.getByRole( 'article', { name: 'Automattic for Agencies' } )
 		).toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders every bullet for every card', () => {
@@ -46,7 +52,7 @@ describe( 'FeaturesSection', () => {
 		expect( screen.getByText( 'Centralized billing' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Run your store on the go' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Real-time analytics' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Cloud backups' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'WooPayments' ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders a string logo as an img with the provided alt text', () => {
@@ -55,6 +61,22 @@ describe( 'FeaturesSection', () => {
 		expect( a4aLogo ).toBeInTheDocument();
 		expect( a4aLogo.tagName ).toBe( 'IMG' );
 		expect( a4aLogo.getAttribute( 'src' ) ).toBe( '/a4a-logo.svg' );
+	} );
+
+	test( 'falls back to the card title for img alt text when no explicit logoAlt is provided', () => {
+		render(
+			<FeaturesSection
+				cards={ [
+					{
+						id: 'jp',
+						logo: '/jetpack.svg',
+						title: 'Jetpack',
+						bullets: [ 'Backups' ],
+					},
+				] }
+			/>
+		);
+		expect( screen.getByAltText( 'Jetpack' ) ).toBeInTheDocument();
 	} );
 
 	test( 'renders a ReactNode logo inline', () => {
@@ -70,17 +92,46 @@ describe( 'FeaturesSection', () => {
 		expect( screen.getByTestId( 'custom-logo' ) ).toBeInTheDocument();
 	} );
 
-	test( 'renders the "Also used by" overflow row when items are provided', () => {
-		render(
+	test( 'renders the overflow stack with the new "Used by" label and a comma list', () => {
+		const { container } = render(
 			<FeaturesSection
 				cards={ baseCards }
 				overflowItems={ [ 'Jetpack Boost', 'Jetpack Search' ] }
 			/>
 		);
-		expect( screen.getByText( 'Also used by: Jetpack Boost, Jetpack Search' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Used by' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Jetpack Boost, Jetpack Search' ) ).toBeInTheDocument();
+		expect(
+			container.querySelector( '.connect-screen-features-section__overflow-logo' )
+		).toBeNull();
 	} );
 
-	test( 'omits the "Also used by" overflow row when items are absent or empty', () => {
+	test( 'renders the overflow logo above the plugin list when provided', () => {
+		const { container } = render(
+			<FeaturesSection
+				cards={ baseCards }
+				overflowLogo={ <span data-testid="overflow-logo">JP</span> }
+				overflowItems={ [ 'Jetpack VaultPress Backup' ] }
+			/>
+		);
+		expect( screen.getByText( 'Used by' ) ).toBeInTheDocument();
+		expect( screen.getByTestId( 'overflow-logo' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Jetpack VaultPress Backup' ) ).toBeInTheDocument();
+
+		// The logo wrapper sits between the label and the items in DOM order.
+		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
+		const children = Array.from( overflow?.children ?? [] );
+		expect( children.length ).toBe( 3 );
+		expect( children[ 0 ].classList ).toContain(
+			'connect-screen-features-section__overflow-label'
+		);
+		expect( children[ 1 ].classList ).toContain( 'connect-screen-features-section__overflow-logo' );
+		expect( children[ 2 ].classList ).toContain(
+			'connect-screen-features-section__overflow-items'
+		);
+	} );
+
+	test( 'omits the overflow stack when items are absent or empty', () => {
 		const { container, rerender } = render( <FeaturesSection cards={ baseCards } /> );
 		expect( container.querySelector( '.connect-screen-features-section__overflow' ) ).toBeNull();
 		rerender( <FeaturesSection cards={ baseCards } overflowItems={ [] } /> );

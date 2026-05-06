@@ -64,7 +64,7 @@ export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
 				bullets: [
 					__( 'Run your store on the go with the Woo mobile app.' ),
 					__( 'Real-time order alerts and store analytics.' ),
-					__( 'Secure cloud backups for your store data.' ),
+					__( 'Accept secure payments and process refunds with WooPayments.' ),
 				],
 			};
 
