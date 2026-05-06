@@ -313,10 +313,7 @@ export class CartCheckoutPage {
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
 		// Click on the Credit or debit card input in order
 		// to expand the fields.
-		const cardInputLocator = await this.page.waitForSelector(
-			'span:has-text("Credit or debit card")'
-		);
-		await cardInputLocator.click();
+		await this.page.getByRole( 'radio', { name: /credit or debit card/i } ).click();
 
 		// Begin filling in the card details from
 		// top to bottom.

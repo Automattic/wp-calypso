@@ -10,7 +10,7 @@ import { apiCloseAccount } from '../shared';
 test.describe(
 	'Setup Hundred Year Domain Flow',
 	{
-		tag: [ tags.CALYPSO_RELEASE ],
+		tag: [ tags.CALYPSO_PR, tags.CALYPSO_RELEASE ],
 	},
 	() => {
 		const accountsToCleanup: {
