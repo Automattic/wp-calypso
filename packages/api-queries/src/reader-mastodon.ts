@@ -791,5 +791,16 @@ export const createMastodonPostMutation = ( queryClient: QueryClient ) =>
 			queryClient.invalidateQueries( {
 				queryKey: readerMastodonKeys.timeline( vars.connectionId ),
 			} );
+			// Reply mode: also invalidate the parent's thread cache so the
+			// newly-created reply appears on the next thread read instead of
+			// waiting out the 30s staleTime. The optimistic patch in onMutate
+			// only bumped `counts.replies`; without this invalidate, replying
+			// from the thread surface looks broken until the user navigates
+			// away and back.
+			if ( vars.in_reply_to_id ) {
+				queryClient.invalidateQueries( {
+					queryKey: readerMastodonKeys.thread( vars.connectionId, vars.in_reply_to_id ),
+				} );
+			}
 		},
 	} );

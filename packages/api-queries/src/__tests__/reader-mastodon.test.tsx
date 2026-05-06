@@ -635,6 +635,80 @@ describe( 'createMastodonPostMutation', () => {
 			} )
 		).toBe( true );
 	} );
+
+	it( 'also invalidates the parent thread query on reply success', async () => {
+		// Without this invalidate, the optimistic counts.replies bump would
+		// stick but the newly-created reply would not appear in the thread
+		// view until the 30s staleTime elapses — replying from a thread
+		// surface looks broken to the user.
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: parentId,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( {
+				connectionId,
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} );
+		} );
+
+		expect(
+			invalidateSpy.mock.calls.some( ( [ filters ] ) => {
+				const queryKey = ( filters as { queryKey?: readonly unknown[] } )?.queryKey;
+				return (
+					Array.isArray( queryKey ) &&
+					JSON.stringify( queryKey ) ===
+						JSON.stringify( readerMastodonKeys.thread( connectionId, parentId ) )
+				);
+			} )
+		).toBe( true );
+	} );
+
+	it( 'does not invalidate any thread query on standalone success', async () => {
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: null,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( { connectionId, status: 'standalone' } );
+		} );
+
+		const threadKeyRoot = JSON.stringify(
+			readerMastodonKeys.thread( connectionId, '' ).slice( 0, -1 )
+		);
+		expect(
+			invalidateSpy.mock.calls.some( ( [ filters ] ) => {
+				const queryKey = ( filters as { queryKey?: readonly unknown[] } )?.queryKey;
+				if ( ! Array.isArray( queryKey ) ) {
+					return false;
+				}
+				return JSON.stringify( queryKey.slice( 0, -1 ) ) === threadKeyRoot;
+			} )
+		).toBe( false );
+	} );
 } );
 
 describe( 'useCreateMastodonLikeMutation / useDeleteMastodonLikeMutation', () => {
