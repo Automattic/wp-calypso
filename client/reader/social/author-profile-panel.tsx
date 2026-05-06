@@ -7,6 +7,7 @@ import { SocialFeedList } from './components/feed-list';
 import { SocialPostCard } from './components/post-card';
 import { SocialAnalyticsProvider } from './components/post-card/analytics-context';
 import { SocialProfileHeaderSkeleton } from './profile-header-skeleton';
+import { socialPostFeedItemKey } from './utils/social-post-feed-item-key';
 import type { SocialError, SocialPost } from './types';
 import type { AppState } from 'calypso/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -304,7 +305,7 @@ export function SocialAuthorProfilePanel< TProfile, TError extends ProtocolError
 		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
 		[]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const analyticsValue = useMemo(
 		() => ( {

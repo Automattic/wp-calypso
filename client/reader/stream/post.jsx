@@ -56,6 +56,7 @@ class ReaderPostCardAdapter extends Component {
 				fixedHeaderHeight={ this.props.fixedHeaderHeight }
 				streamKey={ this.props.streamKey }
 				commentsApiDisabled={ this.props.commentsApiDisabled }
+				showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
 			>
 				<div ref={ this.props.postRef }>
 					{ feedId && <QueryReaderFeed feedId={ feedId } /> }

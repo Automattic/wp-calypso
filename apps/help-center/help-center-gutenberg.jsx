@@ -9,10 +9,11 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, backup, page, video, rss } from '@wordpress/icons';
+import { backup, comment, page, rss, video } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { useRef } from 'react';
 import ReactDOM from 'react-dom';
+import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { useCanvasMode } from './hooks/use-canvas-mode';
 import { useMenuPanelExperiment } from './hooks/use-menu-panel-experiment';
 import { getEditorType } from './utils';
@@ -268,3 +269,17 @@ function HelpCenterContentWithProvider() {
 registerPlugin( 'jetpack-help-center', {
 	render: () => <HelpCenterContentWithProvider />,
 } );
+
+// @alshakero, @ebuccelli, @omertestingios
+const BETA_TESTERS = [ 115118448, 128962475, 279870302 ];
+
+// Gate for proxied users with wpcom-smart-dictation=true flag.
+if (
+	canAccessWpcomApis() &&
+	typeof helpCenterData !== 'undefined' &&
+	helpCenterData.isProxied &&
+	BETA_TESTERS.includes( helpCenterData.currentUser?.ID )
+	// helpCenterData.currentUser?.is_a11n
+) {
+	import( './help-center-wpcom-transcription' );
+}

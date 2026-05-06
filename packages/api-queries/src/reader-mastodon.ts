@@ -15,6 +15,7 @@ import {
 	getMastodonThread,
 	getMastodonTimeline,
 	readerMastodonKeys,
+	uploadMastodonMedia,
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
@@ -46,6 +47,8 @@ import type {
 	MastodonError,
 	MastodonFeedItem,
 	MastodonInstanceConfig,
+	MastodonMediaUploadParams,
+	MastodonMediaUploadResult,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadNode,
@@ -938,4 +941,15 @@ export const createMastodonPostMutation = (
 				} );
 			}
 		},
+	} );
+
+/**
+ * Wire-layer factory for uploading a single image to a Mastodon connection's
+ * `POST /reader/mastodon/connections/{id}/media` endpoint. Media uploads do
+ * not read into list/thread caches, so this factory takes no `QueryClient`
+ * — unlike the like/repost/post mutations.
+ */
+export const uploadMastodonMediaMutation = () =>
+	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
+		mutationFn: uploadMastodonMedia,
 	} );

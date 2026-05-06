@@ -47,6 +47,7 @@ interface StreamProps {
 	followSource?: string;
 	useCompactCards?: boolean;
 	wideLayout?: boolean;
+	showBylineSecondarySiteLink?: boolean;
 	trackScrollPage?: (
 		path: string,
 		title: string,
@@ -336,6 +337,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												className="is-site-stream subscribe-modal__preview-stream no-padding"
 												followSource="reader_subscribe_modal"
 												useCompactCards
+												showBylineSecondarySiteLink={ false }
 												trackScrollPage={ trackScrollPage.bind( null ) }
 											/>
 										</div>
