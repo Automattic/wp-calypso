@@ -829,7 +829,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 
 		this.setState( { isLoading: true } );
-		this.props.recordTracksEvent( 'calypso_purchases_downgrade_form_submit' );
+		this.props.recordTracksEvent( 'calypso_purchases_downgrade_form_submit', {} );
 
 		try {
 			await cancelAndRefundPurchaseAsync( purchase.id, {
