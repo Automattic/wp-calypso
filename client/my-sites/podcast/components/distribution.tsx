@@ -1,4 +1,4 @@
-import { ConfettiAnimation, NoticeBanner } from '@automattic/components';
+import { ConfettiAnimation } from '@automattic/components';
 import {
 	Button,
 	Card,
@@ -24,6 +24,7 @@ import {
 	LogoSpotify,
 	LogoYouTube,
 } from './logos';
+import ReadinessBanner from './readiness-banner';
 import SubmitModal from './submit-modal';
 import type { ComponentType } from 'react';
 
@@ -128,44 +129,12 @@ function Distribution( { onGoToSettings }: Props ) {
 
 	return (
 		<>
-			{ hasIssues && (
-				<div className="podcast__settings-readiness podcast__distribution" role="status">
-					<NoticeBanner
-						level="warning"
-						title={
-							isPodcastingEnabled
-								? ( translate( 'Almost ready to submit' ) as string )
-								: ( translate( 'Set up your podcast' ) as string )
-						}
-						hideCloseButton
-						actions={
-							onGoToSettings
-								? [
-										<Button
-											key="edit-settings"
-											variant="primary"
-											size="compact"
-											onClick={ onGoToSettings }
-										>
-											{ translate( 'Edit settings' ) }
-										</Button>,
-								  ]
-								: undefined
-						}
-					>
-						<p>
-							{ translate(
-								'Podcast apps like Apple Podcasts and Spotify need this information so they can list your show in their directories and show it to listeners. Add the following to your feed:'
-							) }
-						</p>
-						<ul className="podcast__settings-issues">
-							{ issues.map( ( issue ) => (
-								<li key={ issue }>{ issue }</li>
-							) ) }
-						</ul>
-					</NoticeBanner>
-				</div>
-			) }
+			<ReadinessBanner
+				issues={ issues }
+				isPodcastingEnabled={ isPodcastingEnabled }
+				onEditSettings={ onGoToSettings }
+				className="podcast__distribution"
+			/>
 
 			<Card className="site-settings__card podcast__card podcast__distribution">
 				<CardBody>

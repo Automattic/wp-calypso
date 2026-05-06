@@ -1,4 +1,3 @@
-import { NoticeBanner } from '@automattic/components';
 import {
 	BaseControl,
 	Button,
@@ -30,6 +29,7 @@ import { getTerms } from 'calypso/state/terms/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useHasPublishedEpisode } from '../hooks/use-has-published-episode';
 import { computeSubmissionIssues } from '../hooks/use-submission-issues';
+import ReadinessBanner from './readiness-banner';
 
 const TRACKED_FIELDS = [
 	'podcasting_category_id',
@@ -353,30 +353,7 @@ const PodcastingSettingsForm = ( {
 			<VStack spacing={ 4 } className="podcast__settings">
 				{ siteId && coverImageId && <QueryMedia siteId={ siteId } mediaId={ coverImageId } /> }
 
-				{ submissionIssues.length > 0 && (
-					<div className="podcast__settings-readiness" role="status">
-						<NoticeBanner
-							level="warning"
-							title={
-								isPodcastingEnabled
-									? ( translate( 'Almost ready to submit' ) as string )
-									: ( translate( 'Set up your podcast' ) as string )
-							}
-							hideCloseButton
-						>
-							<p>
-								{ translate(
-									'Podcast apps like Apple Podcasts and Spotify need this information so they can list your show in their directories and show it to listeners. Add the following to your feed:'
-								) }
-							</p>
-							<ul className="podcast__settings-issues">
-								{ submissionIssues.map( ( issue ) => (
-									<li key={ issue }>{ issue }</li>
-								) ) }
-							</ul>
-						</NoticeBanner>
-					</div>
-				) }
+				<ReadinessBanner issues={ submissionIssues } isPodcastingEnabled={ isPodcastingEnabled } />
 
 				<Card className="site-settings__card podcast__card">
 					<CardHeader>
