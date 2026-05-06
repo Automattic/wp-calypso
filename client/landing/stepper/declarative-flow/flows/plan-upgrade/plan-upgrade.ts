@@ -209,15 +209,6 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 													  )
 													: null;
 
-											// eslint-disable-next-line no-console
-											console.log( '[DOWNGRADE-TRACE] 1/pre-mutation', {
-												purchaseId,
-												targetProductId,
-												siteId: site?.ID,
-												oldPurchaseFound: Boolean( oldPurchase ),
-												matchingRefund,
-											} );
-
 											// Step 2: Fire the downgrade mutation
 											const response = await cancelAndRefundPurchaseAsync(
 												parseInt( purchaseId, 10 ),
@@ -226,11 +217,6 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 													to_product_id: targetProductId,
 												}
 											);
-
-											// eslint-disable-next-line no-console
-											console.log( '[DOWNGRADE-TRACE] 2/mutation-response', {
-												rawResponse: JSON.stringify( response ),
-											} );
 
 											// Step 3: Build success params
 											const params: Record< string, string > = {
@@ -249,16 +235,8 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 												response as { new_subscription_id?: string | number }
 											 )?.new_subscription_id;
 
-											// eslint-disable-next-line no-console
-											console.log( '[DOWNGRADE-TRACE] 3/redirect-decision', {
-												newSubscriptionId,
-												hasNewSubscriptionId: Boolean( newSubscriptionId ),
-											} );
-
 											// Step 5: Redirect to the appropriate surface.
 											if ( newSubscriptionId ) {
-												const surface = isFromDashboard ? 'dashboard' : 'legacy';
-
 												if ( ! isFromDashboard && siteSlug ) {
 													// Legacy: verify the new subscription is visible in the
 													// v1.2 endpoint before navigating, to avoid the
@@ -274,8 +252,7 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 														const found = freshPurchases.some(
 															( p ) => String( p.ID ) === String( newSubscriptionId )
 														);
-														// eslint-disable-next-line no-console
-														console.log( '[DOWNGRADE-TRACE] 3a/legacy-verify', { attempt, found } );
+
 														if ( found ) {
 															break;
 														}
@@ -291,37 +268,20 @@ const planUpgradeFlow: FlowV2< typeof initialize > = {
 															String( newSubscriptionId ),
 														params
 													);
-													// eslint-disable-next-line no-console
-													console.log( '[DOWNGRADE-TRACE] 4/redirect', {
-														surface,
-														url: targetUrl,
-													} );
 													window.location.assign( targetUrl );
 												} else {
 													const targetUrl = addQueryArgs(
 														dashboardLink( '/me/billing/purchases/' + String( newSubscriptionId ) ),
 														params
 													);
-													// eslint-disable-next-line no-console
-													console.log( '[DOWNGRADE-TRACE] 4/redirect', {
-														surface,
-														url: targetUrl,
-													} );
 													window.location.assign( targetUrl );
 												}
 											} else {
 												// Fallback: API didn't return new_subscription_id (sandbox patch not deployed?)
 												const fallbackUrl = addQueryArgs( fallbackDestination, params );
-												// eslint-disable-next-line no-console
-												console.log( '[DOWNGRADE-TRACE] 4/redirect-fallback', {
-													reason: 'no new_subscription_id in mutation response',
-													url: fallbackUrl,
-												} );
 												window.location.assign( fallbackUrl );
 											}
 										} catch ( error ) {
-											// eslint-disable-next-line no-console
-											console.log( '[DOWNGRADE-TRACE] ERROR', { error } );
 											// Redirect back to the old plan's purchase settings with
 											// an error notice so the user can retry or contact support.
 											const errorUrl = isFromDashboard

@@ -50,7 +50,9 @@ const PlanButton = ( {
 			className={ className }
 			onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 				onClick();
-				( e.currentTarget as HTMLElement ).blur();
+				if ( e.detail > 0 ) {
+					( e.currentTarget as HTMLElement ).blur();
+				}
 			} }
 			busy={ busy }
 			borderless={ borderless }

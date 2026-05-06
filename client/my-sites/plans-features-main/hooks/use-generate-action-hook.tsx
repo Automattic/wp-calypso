@@ -488,12 +488,16 @@ function getLoggedInPlansAction( {
 				// action happening in the logged-in plans grid. Once `useGenerateActionHook` and `UseGenerateActionCallback` are merged
 				// as described by Automattic/martech#3170, we will be able to clean this up.
 				setLoadingPlanSlug( planSlug );
-				await getActionCallback( {
-					planSlug,
-					cartItemForPlan,
-					selectedStorageAddOn,
-					availableForPurchase,
-				} )();
+				try {
+					await getActionCallback( {
+						planSlug,
+						cartItemForPlan,
+						selectedStorageAddOn,
+						availableForPurchase,
+					} )();
+				} finally {
+					setLoadingPlanSlug( null );
+				}
 				return;
 			},
 			status: status ?? defaultStatus,
