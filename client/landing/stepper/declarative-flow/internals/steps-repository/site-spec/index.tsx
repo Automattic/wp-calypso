@@ -113,44 +113,6 @@ const SiteSpec: StepType = function SiteSpec() {
 		};
 	}, [] );
 
-	// Vega spec-confirm handler: the widget's confirmed spec already contains
-	// siteGoals, keyFacts, and primaryCallToAction. Pass them explicitly to
-	// the build flow so the workflow receives them at trigger time rather than
-	// relying on a side-channel option read.
-	const handleVegaSpecConfirm = useCallback( ( specData: unknown ) => {
-		if ( isSubmittingRef.current ) {
-			return;
-		}
-
-		isSubmittingRef.current = true;
-
-		const data =
-			specData && typeof specData === 'object' ? ( specData as Record< string, unknown > ) : {};
-
-		const specId = typeof data.session_id === 'string' ? data.session_id : '';
-
-		let url = `/setup/ai-site-builder/?spec_id=${ encodeURIComponent( specId ) }`;
-
-		if ( data.siteGoals != null ) {
-			url += `&site_goals=${ encodeURIComponent( JSON.stringify( data.siteGoals ) ) }`;
-		}
-		if ( data.keyFacts != null ) {
-			url += `&key_facts=${ encodeURIComponent( JSON.stringify( data.keyFacts ) ) }`;
-		}
-		if ( data.primaryCallToAction != null ) {
-			url += `&primary_call_to_action=${ encodeURIComponent(
-				String( data.primaryCallToAction )
-			) }`;
-		}
-
-		const phSessionId = getPostHogSessionId();
-		if ( phSessionId ) {
-			url += `&_ph=${ encodeURIComponent( phSessionId ) }`;
-		}
-
-		window.location.href = url;
-	}, [] );
-
 	return (
 		<>
 			<DocumentHead title={ translate( 'Build Your Site with AI' ) } />
@@ -165,12 +127,7 @@ const SiteSpec: StepType = function SiteSpec() {
 					name={ VEGA_EXPERIMENT_NAME }
 					loadingExperience={ null }
 					defaultExperience={ <SiteSpecContainer /> }
-					treatmentExperience={
-						<SiteSpecContainer
-							siteSpecConfig={ treatmentConfig }
-							onSpecConfirm={ handleVegaSpecConfirm }
-						/>
-					}
+					treatmentExperience={ <SiteSpecContainer siteSpecConfig={ treatmentConfig } /> }
 				/>
 			) }
 		</>

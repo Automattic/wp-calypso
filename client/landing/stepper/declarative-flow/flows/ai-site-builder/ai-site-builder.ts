@@ -189,7 +189,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 
 							let sourceParam = '';
 							let specIdParam = '';
-							let vegaSpecParams = '';
 
 							const pendingActions = [
 								resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
@@ -265,24 +264,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 							if ( specId ) {
 								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
 							}
-
-							// Vega spec fields passed explicitly from the spec-confirm handler.
-							// Forward them to the editor so the build workflow has the confirmed
-							// values directly, without needing to re-read them from a side channel.
-							const siteGoals = queryParams.get( 'site_goals' );
-							const keyFacts = queryParams.get( 'key_facts' );
-							const primaryCallToAction = queryParams.get( 'primary_call_to_action' );
-							if ( siteGoals ) {
-								vegaSpecParams += `&site_goals=${ encodeURIComponent( siteGoals ) }`;
-							}
-							if ( keyFacts ) {
-								vegaSpecParams += `&key_facts=${ encodeURIComponent( keyFacts ) }`;
-							}
-							if ( primaryCallToAction ) {
-								vegaSpecParams += `&primary_call_to_action=${ encodeURIComponent(
-									primaryCallToAction
-								) }`;
-							}
 							if ( triggerBackendBuild ) {
 								const ph = queryParams.get( '_ph' );
 								window.location.replace(
@@ -292,7 +273,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								);
 							} else {
 								window.location.replace(
-									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }${ vegaSpecParams }`
+									`${ siteURL }/wp-admin/site-editor.php?canvas=edit&ai-step=spec&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }${ sourceParam }${ specIdParam }`
 								);
 							}
 						} else if ( providedDependencies.isLaunched ) {
