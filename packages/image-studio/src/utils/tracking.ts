@@ -630,7 +630,7 @@ export function trackImageStudioGenericShareCompleted( {
  * @param options             - Tracking options
  * @param options.method      - 'web-share', 'web-share-unsupported', or 'download'
  * @param options.message     - Optional error message
- * @param options.failureKind - Optional categorical reason: 'cors' | 'network' | 'http' | 'open-blocked' | 'unknown'
+ * @param options.failureKind - Optional categorical reason: 'http' | 'open-blocked'
  */
 export function trackImageStudioGenericShareFailed( {
 	method,
@@ -639,7 +639,7 @@ export function trackImageStudioGenericShareFailed( {
 }: {
 	method: 'web-share' | 'web-share-unsupported' | 'download';
 	message?: string;
-	failureKind?: 'cors' | 'network' | 'http' | 'open-blocked' | 'unknown';
+	failureKind?: 'http' | 'open-blocked';
 } ): void {
 	const properties: Record< string, string | number > = { method };
 	if ( message ) {

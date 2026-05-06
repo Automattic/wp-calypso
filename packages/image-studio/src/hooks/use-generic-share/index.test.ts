@@ -229,24 +229,20 @@ describe( 'useGenericShare', () => {
 
 			expect( global.fetch ).not.toHaveBeenCalled();
 			expect( mockShare ).not.toHaveBeenCalled();
-			expect( mockTrackFailed ).toHaveBeenCalledWith( {
-				method: 'web-share-unsupported',
-				failureKind: 'unknown',
-			} );
+			expect( mockTrackFailed ).toHaveBeenCalledWith( { method: 'web-share-unsupported' } );
 			expect( mockOpen ).toHaveBeenCalled();
 			expect( mockTrackCompleted ).toHaveBeenCalledWith( { method: 'download' } );
 		} );
 
-		it( 'classifies CORS-shaped fetch errors as kind=cors when falling through', async () => {
+		it( 'tags fetch errors with our explicit Fetch-failed status as kind=http', async () => {
 			const mockShare = jest.fn();
 			const mockCanShare = jest.fn().mockReturnValue( true );
 			setNavigatorShare( { share: mockShare, canShare: mockCanShare } );
 
-			global.fetch = jest
-				.fn()
-				.mockRejectedValue(
-					new TypeError( 'Failed to fetch (CORS preflight)' )
-				) as unknown as typeof fetch;
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: false,
+				status: 404,
+			} ) as unknown as typeof fetch;
 			window.open = jest.fn().mockReturnValue( {} ) as unknown as typeof window.open;
 
 			const { result } = renderHook( () => useGenericShare() );
@@ -255,7 +251,7 @@ describe( 'useGenericShare', () => {
 			} );
 
 			expect( mockTrackFailed ).toHaveBeenCalledWith(
-				expect.objectContaining( { method: 'web-share', failureKind: 'cors' } )
+				expect.objectContaining( { method: 'web-share', failureKind: 'http' } )
 			);
 		} );
 

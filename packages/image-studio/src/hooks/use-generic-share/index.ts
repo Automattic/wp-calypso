@@ -38,25 +38,6 @@ function canShareVideoFiles( nav: NavigatorWithShare, filename: string ): boolea
 	}
 }
 
-/**
- * Heuristic for distinguishing CORS failures from generic network failures.
- * `fetch` throws an opaque `TypeError` for both — there's no programmatic way
- * to tell them apart, but the message and `Response.type` give hints.
- */
-function classifyFetchError( err: unknown ): 'cors' | 'network' | 'http' | 'unknown' {
-	if ( err instanceof TypeError ) {
-		const msg = err.message.toLowerCase();
-		if ( msg.includes( 'cors' ) || msg.includes( 'opaque' ) ) {
-			return 'cors';
-		}
-		return 'network';
-	}
-	if ( err instanceof Error && err.message.startsWith( 'Fetch failed:' ) ) {
-		return 'http';
-	}
-	return 'unknown';
-}
-
 export function useGenericShare(): UseGenericShareReturn {
 	const { currentVideoUrl, currentAttachmentId, entryPoint, isAiProcessing } = useSelect(
 		( select ) => {
@@ -121,9 +102,11 @@ export function useGenericShare(): UseGenericShareReturn {
 						return;
 					}
 					const message = err instanceof Error ? err.message : '';
+					const failureKind =
+						err instanceof Error && err.message.startsWith( 'Fetch failed:' ) ? 'http' : undefined;
 					trackImageStudioGenericShareFailed( {
 						method: 'web-share',
-						failureKind: classifyFetchError( err ),
+						...( failureKind ? { failureKind } : {} ),
 						message,
 					} );
 					// Fall through to download.
@@ -131,10 +114,7 @@ export function useGenericShare(): UseGenericShareReturn {
 			} else if ( nav && typeof nav.share === 'function' ) {
 				// Web Share API exists but doesn't accept video files — record this
 				// case so we can see how often it happens vs. a clean download path.
-				trackImageStudioGenericShareFailed( {
-					method: 'web-share-unsupported',
-					failureKind: 'unknown',
-				} );
+				trackImageStudioGenericShareFailed( { method: 'web-share-unsupported' } );
 			}
 
 			// Fallback: open the MP4 URL in a new tab so the browser can save it.
