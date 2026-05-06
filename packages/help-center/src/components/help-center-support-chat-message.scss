@@ -61,7 +61,7 @@
 		.wordpress-logo {
 			border-radius: 50%;
 			padding: 10px;
-			background-color: #3858e9;
+			background-color: var(--wp-admin-theme-color, $help-center-blue);
 			margin:0;
 		}
 

@@ -27,10 +27,8 @@ import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
@@ -41,6 +39,7 @@ import {
 	selectPrevItem,
 	showUpdates,
 } from 'calypso/state/reader/streams/actions';
+import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
 import {
 	getStream,
 	getTransformedStreamItems,
@@ -180,9 +179,9 @@ class ReaderStream extends Component {
 		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
 		const node = ReactDom.findDOMNode( ref );
 
-		// if the post is found, focus the first anchor tag within it.
 		if ( node ) {
-			const firstLink = node.querySelector( 'a' );
+			// Skip anchors inside .user-avatar to avoid triggering hovercard.
+			const firstLink = node.querySelector( 'a:not(.user-avatar a)' );
 
 			if ( firstLink ) {
 				firstLink.focus();
@@ -846,7 +845,6 @@ export default connect(
 			error: stream.error,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
-			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
 			isLoggedIn,

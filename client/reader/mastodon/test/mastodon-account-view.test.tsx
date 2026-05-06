@@ -20,6 +20,10 @@ jest.mock(
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
+jest.mock( '../timeline-panel', () => ( {
+	TimelinePanel: () => <div>Mastodon timeline placeholder</div>,
+} ) );
+
 jest.mock( '@automattic/calypso-router', () => {
 	const replace = jest.fn();
 	const fn = jest.fn() as jest.Mock & { replace: jest.Mock };

@@ -1,7 +1,9 @@
 @import '@wordpress/base-styles/variables';
 
 $layout-spacing: 16px;
-$sidebar-width: 350px;
+// CSS custom-property wrapper so the split-screen toggle can override the
+// width at runtime. Fallback keeps existing consumers at 350px unchanged.
+$sidebar-width: var( --am-sidebar-width, 350px );
 $chat-header-height: 38px;
 $main-border-radius: 8px;
 $transition-duration: 0.2s;

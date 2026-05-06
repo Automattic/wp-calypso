@@ -728,6 +728,11 @@ describe( 'reader stats', () => {
 					expected: 'mastodon_settings',
 					description: 'mastodon settings for a specific connection',
 				},
+				{
+					url: '/reader/mastodon/7/tag/rust',
+					expected: 'mastodon_tag_feed',
+					description: 'mastodon tag feed for a specific connection',
+				},
 			] as const;
 
 			scenarios.map( ( scenario ) => {

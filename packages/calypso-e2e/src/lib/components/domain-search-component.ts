@@ -82,7 +82,7 @@ export class DomainSearchComponent {
 	 * Clicks on the button to use a domain I already own
 	 */
 	async clickUseADomainIAlreadyOwn(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'Use a domain I already own' } ).click();
+		await this.page.getByRole( 'button', { name: 'Use a domain I own' } ).click();
 	}
 
 	/**

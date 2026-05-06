@@ -24,6 +24,11 @@ import { OnThisDayPostField } from './on-this-day-post-field';
 import { OnThisDayPostSkeleton } from './on-this-day-post-skeleton';
 import type { AppState } from 'calypso/types';
 
+const loadReaderFullPost = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
+	);
+
 interface ReaderPost {
 	site_name: string;
 	postId: number;
@@ -192,7 +197,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 				streamKey,
 				page: view.page,
 				perPage: view.perPage,
-			} ) as UnknownAction
+			} )
 		);
 	}, [ dispatch, view, streamKey ] );
 
@@ -290,7 +295,7 @@ export const OnThisDay = ( { viewToggle, streamKey }: OnThisDayProps ) => {
 				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent view="on-this-day" /> }
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<AsyncLoad
-						require="calypso/blocks/reader-full-post"
+						require={ loadReaderFullPost }
 						feedId={ selectedItem.feedId }
 						blogId={ selectedItem.blogId }
 						postId={ selectedItem.postId }

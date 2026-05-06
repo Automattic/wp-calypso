@@ -3,11 +3,10 @@ import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
 import {
 	SummaryLine,
@@ -15,63 +14,64 @@ import {
 } from 'calypso/my-sites/checkout/src/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import type { PaymentMethod, PaymentMethodSubmitButtonProps } from '@automattic/composite-checkout';
-import type {
-	PaymentMethodStore,
-	StoreSelectors,
-	StoreSelectorsWithState,
-	StoreActions,
-	StoreState,
-} from '@automattic/wpcom-checkout';
-import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 
-type NounsInStore = 'customerName';
-type WeChatStore = PaymentMethodStore< NounsInStore >;
-
-const actions: StoreActions< NounsInStore > = {
-	changeCustomerName( payload ) {
-		return { type: 'CUSTOMER_NAME_SET', payload };
-	},
-};
-
-const selectors: StoreSelectorsWithState< NounsInStore > = {
-	getCustomerName( state ) {
-		return state.customerName || '';
-	},
-};
-
-export function createWeChatPaymentMethodStore(): WeChatStore {
-	debug( 'creating a new wechat payment method store' );
-	return registerStore( 'wechat', {
-		reducer(
-			state: StoreState< NounsInStore > = {
-				customerName: { value: '', isTouched: false },
-			},
-			action: AnyAction
-		) {
-			switch ( action.type ) {
-				case 'CUSTOMER_NAME_SET':
-					return { ...state, customerName: { value: action.payload, isTouched: true } };
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
+interface WeChatPaymentMethodStateShape {
+	customerName: string;
 }
 
-export function createWeChatMethod( { store }: { store: WeChatStore } ): PaymentMethod {
+type StateSubscriber = () => void;
+
+class WeChatPaymentMethodState {
+	data: WeChatPaymentMethodStateShape = {
+		customerName: '',
+	};
+
+	subscribers: StateSubscriber[] = [];
+
+	isTouched: boolean = false;
+
+	change = ( value: string ): void => {
+		this.data.customerName = value;
+		this.isTouched = true;
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
+}
+
+export function createWeChatMethod(): PaymentMethod {
+	const state = new WeChatPaymentMethodState();
+
 	return {
 		id: 'wechat',
 		hasRequiredFields: true,
 		paymentProcessorId: 'wechat',
 		label: <WeChatLabel />,
-		activeContent: <WeChatFields />,
-		submitButton: <WeChatPayButton store={ store } />,
-		inactiveContent: <WeChatSummary />,
+		activeContent: <WeChatFields state={ state } />,
+		submitButton: <WeChatPayButton state={ state } />,
+		inactiveContent: <WeChatSummary state={ state } />,
 		getAriaLabel: () => 'WeChat Pay',
 	};
+}
+
+function useSubscribeToEventEmitter( state: WeChatPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const WeChatFormWrapper = styled.div`
@@ -103,14 +103,9 @@ const WeChatField = styled( Field )`
 	}
 `;
 
-function WeChatFields() {
+function WeChatFields( { state }: { state: WeChatPaymentMethodState } ) {
 	const { __ } = useI18n();
-
-	const customerName = useSelect(
-		( select ) => ( select( 'wechat' ) as StoreSelectors< NounsInStore > ).getCustomerName(),
-		[]
-	);
-	const { changeCustomerName } = useDispatch( 'wechat' );
+	useSubscribeToEventEmitter( state );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
@@ -121,9 +116,9 @@ function WeChatFields() {
 				type="Text"
 				autoComplete="cc-name"
 				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
-				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length < 3 }
+				value={ state.data.customerName }
+				onChange={ state.change }
+				isError={ state.isTouched && state.data.customerName.length < 3 }
 				errorMessage={ __( 'Your name must contain at least 3 characters' ) }
 				disabled={ isDisabled }
 			/>
@@ -134,15 +129,11 @@ function WeChatFields() {
 function WeChatPayButton( {
 	disabled,
 	onClick,
-	store,
+	state,
 }: PaymentMethodSubmitButtonProps & {
-	store: WeChatStore;
+	state: WeChatPaymentMethodState;
 } ) {
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect(
-		( select ) => ( select( 'wechat' ) as StoreSelectors< NounsInStore > ).getCustomerName(),
-		[]
-	);
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
@@ -159,10 +150,10 @@ function WeChatPayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store ) ) {
+				if ( isFormValid( state ) ) {
 					debug( 'submitting wechat payment' );
 					onClick( {
-						name: customerName?.value,
+						name: state.data.customerName,
 					} );
 				}
 			} }
@@ -200,25 +191,20 @@ function ButtonContents( {
 	return <>{ __( 'Please wait…' ) }</>;
 }
 
-function WeChatSummary() {
-	const customerName = useSelect(
-		( select ) => ( select( 'wechat' ) as StoreSelectors< NounsInStore > ).getCustomerName(),
-		[]
-	);
+function WeChatSummary( { state }: { state: WeChatPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
+			<SummaryLine>{ state.data.customerName }</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
-function isFormValid( store: WeChatStore ): boolean {
-	const customerName = selectors.getCustomerName( store.getState() );
-
-	if ( ! customerName?.value.length || customerName?.value.length < 3 ) {
+function isFormValid( state: WeChatPaymentMethodState ): boolean {
+	if ( ! state.data.customerName.length || state.data.customerName.length < 3 ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( actions.changeCustomerName( '' ) );
+		state.change( '' );
 		return false;
 	}
 	return true;

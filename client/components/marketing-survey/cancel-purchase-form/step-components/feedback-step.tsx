@@ -167,7 +167,11 @@ export default function FeedbackStep( {
 		<div className="cancel-purchase-form__feedback">
 			<FormattedHeader
 				brandFont
-				headerText={ translate( 'Share your feedback' ) }
+				headerText={
+					intent === 'cancel'
+						? translate( 'Cancellation confirmed' )
+						: translate( 'Share your feedback' )
+				}
 				subHeaderText={ translate(
 					'Before you go, please answer a few quick questions to help us improve %(productName)s.',
 					{

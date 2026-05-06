@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { registerServerWorker } from 'calypso/lib/service-worker';
+import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import wpcom from 'calypso/lib/wp';
 import {
 	PUSH_NOTIFICATIONS_API_READY,
@@ -33,13 +34,9 @@ const serviceWorkerOptions = {
 
 export function init() {
 	return ( dispatch ) => {
-		// require `lib/user/support-user-interop` here so that unit tests don't
-		// fail because of lack of `window` global when importing this module
-		// from test (before a chance to mock things is possible)
 		// TODO: read the `isSupportSession` flag with a Redux selector instead. That requires
 		// reorganizing the `configureReduxStore` function so that the flag is set *before* this
 		// init function is called. That currently happens too late, in a promise resolution callback.
-		const { isSupportSession } = require( 'calypso/lib/user/support-user-interop' );
 		if ( isSupportSession() ) {
 			debug( 'Push Notifications are not supported when SU is active' );
 			dispatch( apiNotReady() );

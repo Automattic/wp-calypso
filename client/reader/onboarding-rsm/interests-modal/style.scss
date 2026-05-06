@@ -1,16 +1,13 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-$actions-height: 64px;
-
 .interests-modal {
+	// Frame sizing, the WP modal flex layout, the VStack scroll region, and
+	// the footer are shared with the other onboarding-rsm modals; see
+	// `client/reader/onboarding-rsm/style.scss`.
+
 	&__content {
-		// Since the actions container is positioned absolutely,
-		// this padding bottom ensures that the content wrapper will properly
-		// detect overflowing content and start showing scrollbars at the right
-		// moment. Without this padding, the content would render under the actions
-		// bar without causing the wrapper to show a scrollbar.
-		padding-bottom: $actions-height;
+		padding: 4px 32px 24px;
 	}
 
 	&__title {
@@ -29,21 +26,92 @@ $actions-height: 64px;
 		margin: 0;
 	}
 
-	&__section-header {
-		margin-bottom: 16px;
-	}
-
-	&__topics-list {
-		display: grid;
+	&__packs {
+		display: flex;
 		gap: 16px;
-		grid-template-columns: 1fr;
+		overflow-x: auto;
+		padding: 4px 4px 12px;
+		// Allow card shadows to show without being clipped while we scroll.
+		margin: 0 -4px;
+		scroll-snap-type: x mandatory;
+		scroll-padding-left: 4px;
 
-		@include break-small {
-			grid-template-columns: repeat( 2, 1fr );
+		// Subtle scrollbar styling.
+		scrollbar-width: thin;
+
+		&::-webkit-scrollbar {
+			height: 8px;
 		}
 
-		@include break-large {
-			grid-template-columns: repeat( 3, 1fr );
+		&::-webkit-scrollbar-thumb {
+			background-color: var( --color-neutral-10, #dcdcde );
+			border-radius: 4px;
+		}
+	}
+
+	&__pack-item {
+		display: flex;
+		flex: 0 0 auto;
+	}
+
+	&__topics-toggle-row {
+		display: flex;
+		justify-content: center;
+	}
+
+	&__topics-toggle.components-button {
+		font-weight: 500;
+	}
+
+	&__topics-pills {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 8px;
+		padding-inline: 60px;
+		margin-block-start: 4px;
+
+		@media ( max-width: $break-medium ) {
+			padding-inline: 12px;
+		}
+	}
+
+	&__topic-pill {
+		display: inline-flex;
+		align-items: center;
+		height: 32px;
+		padding: 0 16px;
+		border: 1px solid var( --color-border-subtle, #dcdcde );
+		// Half of the 32px pill height yields a fully-rounded shape.
+		border-radius: 16px;
+		background-color: var( --studio-gray-0, #f6f7f7 );
+		color: var( --color-text );
+		font-size: 0.875rem;
+		line-height: 1;
+		cursor: pointer;
+		transition:
+			background-color 120ms ease,
+			color 120ms ease,
+			border-color 120ms ease;
+
+		&:hover:not( :disabled ) {
+			border-color: var( --color-neutral-30, #a7aaad );
+		}
+
+		&:focus-visible {
+			outline: 2px solid var( --color-accent, #3858e9 );
+			outline-offset: 2px;
+		}
+
+		&.is-selected {
+			background-color: var( --studio-gray-90, #1e1e1e );
+			border-color: var( --studio-gray-90, #1e1e1e );
+			color: var( --studio-white, #fff );
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: progress;
 		}
 	}
 }

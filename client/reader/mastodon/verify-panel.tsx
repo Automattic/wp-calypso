@@ -68,6 +68,7 @@ function errorMessage(
 		case 'invalid_instance':
 			return translate( "We couldn't reach that Mastodon instance. Check the URL and try again." );
 		case 'auth_failed':
+		case 'auth_required':
 			return translate(
 				'Your Mastodon connection needs to be re-authorized. Disconnect and reconnect.'
 			);
@@ -77,6 +78,8 @@ function errorMessage(
 			return translate( 'The Mastodon instance is unreachable right now.' );
 		case 'connection_not_found':
 			return translate( 'That connection is no longer available.' );
+		case 'not_found':
+			return translate( 'That Mastodon resource is no longer available.' );
 		case 'bad_request':
 		case 'unknown':
 			return translate( 'Something went wrong.' );

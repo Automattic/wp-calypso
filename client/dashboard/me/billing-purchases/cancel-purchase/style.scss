@@ -14,6 +14,12 @@
 	font-size: 0.875rem;
 }
 
+// Suppress focus ring on mouse click; keyboard navigation still shows it via :focus-visible.
+// @wordpress/components Button uses :focus:not(:active) which doesn't distinguish mouse vs keyboard.
+.cancel-purchase__cancel-button.components-button.is-primary:focus:not(:focus-visible) {
+	box-shadow: none;
+}
+
 /* Vertically center the icon (decoration) in solutions cards */
 .cancel-purchase-form__solution-card.summary-button {
 	> * {
