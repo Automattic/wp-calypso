@@ -412,7 +412,7 @@ exports[`JetpackSignup should render with the connector branding when from=jetpa
         <p
           class="connect-screen-brand-header__description"
         >
-          You'll use it to unlock powerful features on your store.
+          You'll use it to log in to the Woo mobile app, view your store analytics, and power Jetpack features.
         </p>
       </div>
       <div

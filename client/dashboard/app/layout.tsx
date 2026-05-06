@@ -75,23 +75,25 @@ function AnalyticsProviderWithClient( {
 function Layout( { config }: { config: AppConfig } ) {
 	const router = useMemo( () => getRouter( config ), [ config ] );
 
-	const tree = (
-		<QueryClientProvider client={ queryClient }>
-			<AuthProvider>
-				<I18nProvider>
-					<AnalyticsProviderWithClient router={ router }>
-						<GlobalChartsProvider theme={ dashboardChartTheme }>
-							<RouterProvider router={ router } context={ { config } } />
-						</GlobalChartsProvider>
-					</AnalyticsProviderWithClient>
-				</I18nProvider>
-			</AuthProvider>
-		</QueryClientProvider>
-	);
-
 	return (
 		<AppProvider config={ config }>
-			{ config.supports.colorScheme ? <ColorSchemeProvider>{ tree }</ColorSchemeProvider> : tree }
+			<QueryClientProvider client={ queryClient }>
+				<AuthProvider>
+					<I18nProvider>
+						<AnalyticsProviderWithClient router={ router }>
+							<GlobalChartsProvider theme={ dashboardChartTheme }>
+								{ config.supports.colorScheme ? (
+									<ColorSchemeProvider>
+										<RouterProvider router={ router } context={ { config } } />
+									</ColorSchemeProvider>
+								) : (
+									<RouterProvider router={ router } context={ { config } } />
+								) }
+							</GlobalChartsProvider>
+						</AnalyticsProviderWithClient>
+					</I18nProvider>
+				</AuthProvider>
+			</QueryClientProvider>
 		</AppProvider>
 	);
 }

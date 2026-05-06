@@ -24,6 +24,7 @@ import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
 import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
+import { useVideoClipSuggestions } from '../hooks/use-video-clip-suggestions';
 import {
 	ImageStudioEntryPoint,
 	type ImageStudioActions,
@@ -99,15 +100,26 @@ function ImageStudioAgentChat( {
 		placeholder = __( 'Describe your image', __i18n_text_domain__ );
 	}
 
-	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
-		useImageStudioSuggestions( {
-			registerSuggestions: agentChatProps.registerSuggestions,
-			clearSuggestions: agentChatProps.clearSuggestions,
-			messages: displayMessages,
-			mode,
-			inputValue,
-			disabled: isVideoMode,
-		} );
+	const imageSuggestions = useImageStudioSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		mode,
+		inputValue,
+		disabled: isVideoMode,
+	} );
+
+	const videoSuggestions = useVideoClipSuggestions( {
+		registerSuggestions: agentChatProps.registerSuggestions,
+		clearSuggestions: agentChatProps.clearSuggestions,
+		messages: displayMessages,
+		inputValue,
+		disabled: ! isVideoMode,
+	} );
+
+	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
+		? videoSuggestions
+		: imageSuggestions;
 
 	const handleSubmit = useCallback(
 		async ( message: string ) => {
@@ -188,7 +200,7 @@ function ImageStudioAgentChat( {
 				inputValue={ inputValue }
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }
-				maxInputLength={ 1000 }
+				maxInputLength={ isVideoMode ? 2000 : 1000 }
 			>
 				<AgentUI.ConversationView showHeader={ false }>
 					<AgentUI.Messages />

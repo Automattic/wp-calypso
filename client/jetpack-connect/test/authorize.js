@@ -126,10 +126,13 @@ describe( 'JetpackAuthorize', () => {
 			'Connect your account'
 		);
 
-		// Subtitle (BrandHeader description) reflects the store wording when a
-		// Woo plugin is present in the active plugin list.
+		// Subtitle (BrandHeader description) reflects the WOO_JETPACK scenario
+		// — store wording (any Woo plugin present) plus the Woo+Jetpack
+		// benefit clause.
 		expect(
-			screen.getByText( 'Your store is registered with WordPress.com.' )
+			screen.getByText(
+				'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and activate Jetpack.'
+			)
 		).toBeInTheDocument();
 
 		// Composite Woo + Jetpack logo is rendered (vs. the Jetpack-only fallback).

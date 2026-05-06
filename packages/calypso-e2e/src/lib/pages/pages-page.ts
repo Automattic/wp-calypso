@@ -30,7 +30,15 @@ export class PagesPage {
 		const response = await this.page.goto( getCalypsoURL( 'pages' ) );
 
 		if ( siteSlug ) {
-			const siteLink = this.page.locator( `a:has-text("${ siteSlug }")` ).first();
+			// On single-site accounts, the server-side redirect already lands on /pages/<siteSlug>, so we
+			// can skip the selector click.
+			if ( new URL( this.page.url() ).pathname === `/pages/${ siteSlug }` ) {
+				return response;
+			}
+
+			const siteLink = this.page
+				.locator( `.site-selector__sites a:has-text("${ siteSlug }")` )
+				.first();
 			const appeared = await siteLink
 				.waitFor( { state: 'visible', timeout: 5000 } )
 				.then( () => true )

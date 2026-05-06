@@ -1,101 +1,278 @@
-import { getAuthCopy, getLoginCopy, getRegistrationAcknowledgement, getSignupCopy } from '../copy';
+import { getAuthCopy, getLoginCopy, getSignupCopy } from '../copy';
+import type { SubtitleScenario } from '../scenarios';
 
-describe( 'getRegistrationAcknowledgement', () => {
-	test( 'uses store wording when any Woo-family plugin is active', () => {
-		expect( getRegistrationAcknowledgement( [ 'woocommerce' ] ) ).toBe(
-			'Your store is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'woocommerce-payments' ] ) ).toBe(
-			'Your store is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'jetpack', 'woocommerce' ] ) ).toBe(
-			'Your store is registered with WordPress.com.'
-		);
+/**
+ * Representative slug set per scenario, used to drive every surface's
+ * subtitle assertions through `getAuthCopy` / `getLoginCopy` /
+ * `getSignupCopy`. The slug *combinations* are exercised separately in
+ * `scenarios.test.ts`; here we treat the scenario detection as a black box
+ * and verify that the right pre-composed string lands on the right
+ * surface.
+ */
+const SCENARIO_SLUGS: Record< SubtitleScenario, readonly string[] > = {
+	A4A_ONLY: [ 'automattic-for-agencies-client' ],
+	A4A_WOO: [ 'automattic-for-agencies-client', 'woocommerce' ],
+	A4A_JETPACK: [ 'automattic-for-agencies-client', 'jetpack-boost' ],
+	ALL_THREE: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
+	WOO_ONLY: [ 'woocommerce' ],
+	WOO_AND_PAY: [ 'woocommerce', 'woocommerce-payments' ],
+	WOO_JETPACK: [ 'woocommerce', 'jetpack' ],
+	JETPACK_FULL: [ 'jetpack' ],
+	JETPACK_BACKUP: [ 'jetpack-backup' ],
+	JETPACK_PROTECT: [ 'jetpack-protect' ],
+	JETPACK_BOOST: [ 'jetpack-boost' ],
+	JETPACK_SEARCH: [ 'jetpack-search' ],
+	JETPACK_SOCIAL: [ 'jetpack-social' ],
+	JETPACK_VIDEOPRESS: [ 'jetpack-videopress' ],
+	JETPACK_MULTI: [ 'jetpack-backup', 'jetpack-protect' ],
+	OTHER_ONLY: [],
+};
+
+describe( 'titles', () => {
+	test( 'auth surface returns "Connect your account" for every plugin set', () => {
+		for ( const slugs of Object.values( SCENARIO_SLUGS ) ) {
+			expect( getAuthCopy( slugs ).title ).toBe( 'Connect your account' );
+		}
 	} );
 
-	test( 'uses site wording for non-Woo plugin sets', () => {
-		expect( getRegistrationAcknowledgement( [] ) ).toBe(
-			'Your site is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'jetpack' ] ) ).toBe(
-			'Your site is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'automattic-for-agencies-client' ] ) ).toBe(
-			'Your site is registered with WordPress.com.'
-		);
-		expect( getRegistrationAcknowledgement( [ 'jetpack-boost', 'unknown' ] ) ).toBe(
-			'Your site is registered with WordPress.com.'
+	test( 'signup surface returns "Create your account" for every plugin set', () => {
+		for ( const slugs of Object.values( SCENARIO_SLUGS ) ) {
+			expect( getSignupCopy( slugs ).title ).toBe( 'Create your account' );
+		}
+	} );
+
+	test( 'login surface returns "Log in to WordPress.com" for every plugin set', () => {
+		for ( const slugs of Object.values( SCENARIO_SLUGS ) ) {
+			expect( getLoginCopy( slugs ).title ).toBe( 'Log in to WordPress.com' );
+		}
+	} );
+} );
+
+describe( 'login subtitles', () => {
+	test.each( [
+		[
+			'A4A_ONLY',
+			'Your site is registered with WordPress.com — finish connecting your account to manage it from your Automattic for Agencies dashboard.',
+		],
+		[
+			'A4A_WOO',
+			'Your store is registered with WordPress.com — finish connecting your account to manage it from Automattic for Agencies, use the Woo mobile app, and access store analytics.',
+		],
+		[
+			'A4A_JETPACK',
+			'Your site is registered with WordPress.com — finish connecting your account to manage it from Automattic for Agencies and power Jetpack features.',
+		],
+		[
+			'ALL_THREE',
+			'Your store is registered with WordPress.com — finish connecting your account to use the Automattic for Agencies dashboard, the Woo mobile app, and Jetpack.',
+		],
+		[
+			'WOO_ONLY',
+			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app and access your store analytics.',
+		],
+		[
+			'WOO_AND_PAY',
+			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app, access your store analytics, and enable WooPayments for payment processing.',
+		],
+		[
+			'WOO_JETPACK',
+			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app, access your store analytics, and power Jetpack features.',
+		],
+		[
+			'JETPACK_FULL',
+			'Your site is registered with WordPress.com — finish connecting your account to power Jetpack with backups, security, and growth tools.',
+		],
+		[
+			'JETPACK_BACKUP',
+			'Your site is registered with WordPress.com — finish connecting your account to enable real-time backups and one-click restore via Jetpack VaultPress Backup.',
+		],
+		[
+			'JETPACK_PROTECT',
+			"Your site is registered with WordPress.com — finish connecting your account to enable Jetpack Protect's security scanning and malware protection.",
+		],
+		[
+			'JETPACK_BOOST',
+			"Your site is registered with WordPress.com — finish connecting your account to enable Jetpack Boost's site performance optimization.",
+		],
+		[
+			'JETPACK_SEARCH',
+			"Your site is registered with WordPress.com — finish connecting your account to enable Jetpack Search's instant results.",
+		],
+		[
+			'JETPACK_SOCIAL',
+			"Your site is registered with WordPress.com — finish connecting your account to enable Jetpack Social's automated post sharing.",
+		],
+		[
+			'JETPACK_VIDEOPRESS',
+			"Your site is registered with WordPress.com — finish connecting your account to enable Jetpack VideoPress's ad-free video hosting.",
+		],
+		[
+			'OTHER_ONLY',
+			'Your site is registered with WordPress.com — finish connecting your account to power your active plugins.',
+		],
+	] satisfies Array< [ SubtitleScenario, string ] > )(
+		'%s renders the expected pre-composed sentence',
+		( scenario, expected ) => {
+			expect( getLoginCopy( SCENARIO_SLUGS[ scenario ] ).subtitle ).toBe( expected );
+		}
+	);
+
+	test( 'JETPACK_MULTI reuses the JETPACK_FULL subtitle by design', () => {
+		expect( getLoginCopy( SCENARIO_SLUGS.JETPACK_MULTI ).subtitle ).toBe(
+			getLoginCopy( SCENARIO_SLUGS.JETPACK_FULL ).subtitle
 		);
 	} );
 } );
 
-describe( 'getAuthCopy', () => {
-	test( 'returns the static "Connect your account" title regardless of plugins', () => {
-		expect( getAuthCopy( [] ).title ).toBe( 'Connect your account' );
-		expect( getAuthCopy( [ 'woocommerce' ] ).title ).toBe( 'Connect your account' );
-		expect( getAuthCopy( [ 'jetpack', 'automattic-for-agencies-client' ] ).title ).toBe(
-			'Connect your account'
-		);
-	} );
+describe( 'auth subtitles', () => {
+	test.each( [
+		[
+			'A4A_ONLY',
+			'Your site is registered with WordPress.com — connect this account to manage it from your Automattic for Agencies dashboard.',
+		],
+		[
+			'A4A_WOO',
+			'Your store is registered with WordPress.com — connect this account to manage it from Automattic for Agencies, use the Woo mobile app, and access store analytics.',
+		],
+		[
+			'A4A_JETPACK',
+			'Your site is registered with WordPress.com — connect this account to manage it from Automattic for Agencies and activate Jetpack.',
+		],
+		[
+			'ALL_THREE',
+			'Your store is registered with WordPress.com — connect this account to use the Automattic for Agencies dashboard, the Woo mobile app, and Jetpack.',
+		],
+		[
+			'WOO_ONLY',
+			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app and access your store analytics.',
+		],
+		[
+			'WOO_AND_PAY',
+			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and enable WooPayments for payment processing.',
+		],
+		[
+			'WOO_JETPACK',
+			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and activate Jetpack.',
+		],
+		[
+			'JETPACK_FULL',
+			'Your site is registered with WordPress.com — connect this account to activate Jetpack with backups, security, and growth tools.',
+		],
+		[
+			'JETPACK_BACKUP',
+			'Your site is registered with WordPress.com — connect this account to enable real-time backups and one-click restore via Jetpack VaultPress Backup.',
+		],
+		[
+			'JETPACK_PROTECT',
+			"Your site is registered with WordPress.com — connect this account to enable Jetpack Protect's security scanning and malware protection.",
+		],
+		[
+			'JETPACK_BOOST',
+			"Your site is registered with WordPress.com — connect this account to enable Jetpack Boost's site performance optimization.",
+		],
+		[
+			'JETPACK_SEARCH',
+			"Your site is registered with WordPress.com — connect this account to enable Jetpack Search's instant results.",
+		],
+		[
+			'JETPACK_SOCIAL',
+			"Your site is registered with WordPress.com — connect this account to enable Jetpack Social's automated post sharing.",
+		],
+		[
+			'JETPACK_VIDEOPRESS',
+			"Your site is registered with WordPress.com — connect this account to enable Jetpack VideoPress's ad-free video hosting.",
+		],
+		[
+			'OTHER_ONLY',
+			'Your site is registered with WordPress.com — connect this account to power your active plugins.',
+		],
+	] satisfies Array< [ SubtitleScenario, string ] > )(
+		'%s renders the expected pre-composed sentence',
+		( scenario, expected ) => {
+			expect( getAuthCopy( SCENARIO_SLUGS[ scenario ] ).subtitle ).toBe( expected );
+		}
+	);
 
-	test( 'subtitle reflects site/store branching', () => {
-		expect( getAuthCopy( [ 'jetpack' ] ).subtitle ).toBe(
-			'Your site is registered with WordPress.com.'
+	test( 'JETPACK_MULTI reuses the JETPACK_FULL subtitle by design', () => {
+		expect( getAuthCopy( SCENARIO_SLUGS.JETPACK_MULTI ).subtitle ).toBe(
+			getAuthCopy( SCENARIO_SLUGS.JETPACK_FULL ).subtitle
 		);
-		expect( getAuthCopy( [ 'woocommerce' ] ).subtitle ).toBe(
-			'Your store is registered with WordPress.com.'
-		);
-	} );
-
-	test( 'works with the default empty argument', () => {
-		expect( getAuthCopy() ).toEqual( {
-			title: 'Connect your account',
-			subtitle: 'Your site is registered with WordPress.com.',
-		} );
 	} );
 } );
 
-describe( 'getSignupCopy', () => {
-	test( 'returns the static "Create your account" title regardless of plugins', () => {
-		expect( getSignupCopy( [] ).title ).toBe( 'Create your account' );
-		expect( getSignupCopy( [ 'woocommerce' ] ).title ).toBe( 'Create your account' );
-		expect( getSignupCopy( [ 'jetpack', 'automattic-for-agencies-client' ] ).title ).toBe(
-			'Create your account'
-		);
-	} );
+describe( 'signup subtitles', () => {
+	test.each( [
+		[
+			'A4A_ONLY',
+			"You'll use it to manage your site from your Automattic for Agencies dashboard.",
+		],
+		[
+			'A4A_WOO',
+			"You'll use it to manage your store from Automattic for Agencies, log in to the Woo mobile app, and view store analytics.",
+		],
+		[
+			'A4A_JETPACK',
+			"You'll use it to manage your site from Automattic for Agencies and power Jetpack features.",
+		],
+		[
+			'ALL_THREE',
+			"You'll use it to access the Automattic for Agencies dashboard, the Woo mobile app, and Jetpack.",
+		],
+		[ 'WOO_ONLY', "You'll use it to log in to the Woo mobile app and view your store analytics." ],
+		[
+			'WOO_AND_PAY',
+			"You'll use it to log in to the Woo mobile app, view your store analytics, and enable WooPayments for payment processing.",
+		],
+		[
+			'WOO_JETPACK',
+			"You'll use it to log in to the Woo mobile app, view your store analytics, and power Jetpack features.",
+		],
+		[
+			'JETPACK_FULL',
+			"You'll use it to power Jetpack with backups, security, and growth tools on your site.",
+		],
+		[
+			'JETPACK_BACKUP',
+			"You'll use it to enable real-time backups and one-click restore for your site via Jetpack VaultPress Backup.",
+		],
+		[
+			'JETPACK_PROTECT',
+			"You'll use it to enable Jetpack Protect's security scanning and malware protection on your site.",
+		],
+		[ 'JETPACK_BOOST', "You'll use it to enable Jetpack Boost's site performance optimization." ],
+		[ 'JETPACK_SEARCH', "You'll use it to enable Jetpack Search's instant results on your site." ],
+		[ 'JETPACK_SOCIAL', "You'll use it to enable Jetpack Social's automated post sharing." ],
+		[
+			'JETPACK_VIDEOPRESS',
+			"You'll use it to enable Jetpack VideoPress's ad-free video hosting on your site.",
+		],
+		[ 'OTHER_ONLY', "You'll use it to power your active plugins." ],
+	] satisfies Array< [ SubtitleScenario, string ] > )(
+		'%s renders the expected pre-composed sentence',
+		( scenario, expected ) => {
+			expect( getSignupCopy( SCENARIO_SLUGS[ scenario ] ).subtitle ).toBe( expected );
+		}
+	);
 
-	test( 'subtitle reflects site/store branching with a forward-looking value-prop', () => {
-		expect( getSignupCopy( [ 'jetpack' ] ).subtitle ).toBe(
-			"You'll use it to unlock powerful features on your site."
+	test( 'JETPACK_MULTI reuses the JETPACK_FULL subtitle by design', () => {
+		expect( getSignupCopy( SCENARIO_SLUGS.JETPACK_MULTI ).subtitle ).toBe(
+			getSignupCopy( SCENARIO_SLUGS.JETPACK_FULL ).subtitle
 		);
-		expect( getSignupCopy( [ 'woocommerce' ] ).subtitle ).toBe(
-			"You'll use it to unlock powerful features on your store."
-		);
-	} );
-
-	test( 'works with the default empty argument', () => {
-		expect( getSignupCopy() ).toEqual( {
-			title: 'Create your account',
-			subtitle: "You'll use it to unlock powerful features on your site.",
-		} );
 	} );
 } );
 
-describe( 'getLoginCopy', () => {
-	test( 'returns the static "Log in to WordPress.com" title regardless of plugins', () => {
-		expect( getLoginCopy( [] ).title ).toBe( 'Log in to WordPress.com' );
-		expect( getLoginCopy( [ 'woocommerce' ] ).title ).toBe( 'Log in to WordPress.com' );
-		expect( getLoginCopy( [ 'jetpack', 'automattic-for-agencies-client' ] ).title ).toBe(
-			'Log in to WordPress.com'
-		);
-	} );
+describe( 'default arguments', () => {
+	test( 'every resolver tolerates an empty/missing plugin list and lands on OTHER_ONLY', () => {
+		const expectedAuth = getAuthCopy( [] );
+		const expectedLogin = getLoginCopy( [] );
+		const expectedSignup = getSignupCopy( [] );
 
-	test( 'subtitle reflects site/store branching', () => {
-		expect( getLoginCopy( [ 'jetpack' ] ).subtitle ).toBe(
-			'Your site is registered with WordPress.com.'
-		);
-		expect( getLoginCopy( [ 'woocommerce' ] ).subtitle ).toBe(
-			'Your store is registered with WordPress.com.'
-		);
+		expect( getAuthCopy() ).toEqual( expectedAuth );
+		expect( getLoginCopy() ).toEqual( expectedLogin );
+		expect( getSignupCopy() ).toEqual( expectedSignup );
+
+		expect( expectedAuth.subtitle ).toContain( 'power your active plugins' );
+		expect( expectedLogin.subtitle ).toContain( 'power your active plugins' );
+		expect( expectedSignup.subtitle ).toContain( 'power your active plugins' );
 	} );
 } );

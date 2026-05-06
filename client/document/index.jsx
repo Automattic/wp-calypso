@@ -14,7 +14,6 @@ import EnvironmentBadge, {
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
 	StoreSandboxHelper,
-	DarkModeHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -70,7 +69,6 @@ class Document extends Component {
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
-			darkModeHelper,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -212,7 +210,6 @@ class Document extends Component {
 					) }
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
-							{ darkModeHelper && <DarkModeHelper /> }
 							{ reactQueryDevtoolsHelper && <ReactQueryDevtoolsHelper /> }
 							{ accountSettingsHelper && <AccountSettingsHelper /> }
 							{ preferencesHelper && <PreferencesHelper /> }

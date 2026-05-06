@@ -193,7 +193,7 @@ export function MastodonTagFeedPanel( { connection, hashtag }: Props ) {
 			  } )
 			: null;
 
-	// Defence-in-depth on a third-party-supplied URL: only honour https URLs
+	// Defense-in-depth on a third-party-supplied URL: only honor https URLs
 	// even though the backend should only ever emit a Mastodon home-instance
 	// URL. Anything else (javascript:, http://, malformed) falls through to
 	// no link rather than reaching the DOM as an anchor href.

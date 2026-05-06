@@ -6,8 +6,9 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { AtmosphereNavigation } from './atmosphere-navigation';
-import { ComposeFab, ComposerModal, ComposerProvider } from './composer';
+import { atmosphereComposerConfig } from './composer-config';
 import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
 import { ProfilePanel } from './profile-panel';
 import { SettingsPanel } from './settings-panel';
@@ -56,7 +57,7 @@ export function AtmosphereAccountView( { connectionId, tab }: Props ) {
 	const title = connection.display_name || connection.handle;
 
 	return (
-		<ComposerProvider connectionId={ connection.id }>
+		<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
 			<ReaderMain className="atmosphere-view">
 				<DocumentHead title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: title } ) } />
 				<NavigationHeader title={ title } subtitle={ `@${ connection.handle }` } />

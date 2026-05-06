@@ -12,6 +12,7 @@ import {
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl as buildThreadUrl } from './route';
 import { ThreadHeader } from './thread-header';
@@ -24,6 +25,7 @@ import type {
 	MastodonError,
 	MastodonThreadResponse,
 } from '@automattic/api-core';
+import type { SocialPost } from 'calypso/reader/social';
 import type { AppState } from 'calypso/types';
 
 interface ThreadPanelProps {
@@ -132,6 +134,35 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 		[ connection.id ]
 	);
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'reply',
+				root: { uri: post.uri },
+				parent: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'mastodon' as const,
@@ -140,8 +171,18 @@ export function ThreadPanel( { connection, statusId }: ThreadPanelProps ) {
 			getThreadUrl,
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, buildProfileUrl, buildTagUrl ]
+		[
+			connection.id,
+			onClickAnalytics,
+			getThreadUrl,
+			buildProfileUrl,
+			buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
 	);
 
 	const useLikeAction = useMemo(

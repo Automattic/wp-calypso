@@ -1,6 +1,5 @@
 @import '@wordpress/base-styles/breakpoints';
 
-$actions-height: 64px;
 $entry-duration: 640ms;
 $entry-ease: cubic-bezier( 0.22, 1, 0.36, 1 );
 $entry-offset: 10px;
@@ -28,22 +27,12 @@ $entry-offset: 10px;
 }
 
 .reader-welcome-modal {
-	&.components-modal__frame,
-	.components-modal__frame {
-		width: min( 920px, calc( 100vw - 64px ) );
-		max-width: min( 920px, calc( 100vw - 64px ) );
-
-		@media ( max-width: $break-medium ) {
-			width: 100vw;
-			max-width: 100vw;
-			margin-left: 0;
-			margin-right: 0;
-		}
-	}
+	// Frame sizing, the WP modal flex layout, the VStack scroll region, and
+	// the footer are shared with the other onboarding-rsm modals; see
+	// `client/reader/onboarding-rsm/style.scss`.
 
 	&__content {
-		padding-top: 20px;
-		padding-bottom: calc( $actions-height + 64px );
+		padding: 20px 32px 64px;
 	}
 
 	&__animate-in {
@@ -189,10 +178,6 @@ $entry-offset: 10px;
 		gap: 8px;
 		flex: 0 0 auto;
 		justify-content: flex-end;
-	}
-
-	.reader-onboarding-modal__footer {
-		border-top: 0;
 	}
 }
 

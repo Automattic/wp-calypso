@@ -81,9 +81,10 @@ const getHeadingSubText = ( {
 
 	// Unified connection flow (jetpack-connector): a prominent, dotcom-styled
 	// subtitle sourced from the shared resolver sits between the H1 and the
-	// existing ToS line. PR 3 will extend the resolver with the family-driven
-	// benefit clause; the ToS keeps its established subtle styling
-	// underneath. Lostpassword keeps the standard reset-instructions copy.
+	// existing ToS line. The resolver returns the family-driven benefit
+	// clause for the active plugin set; the ToS keeps its established
+	// subtle styling underneath. Lostpassword keeps the standard
+	// reset-instructions copy.
 	if ( isFromJetpackConnector && 'lostpassword' !== action ) {
 		return {
 			primary: getLoginCopy( connectorPlugins ).subtitle,
