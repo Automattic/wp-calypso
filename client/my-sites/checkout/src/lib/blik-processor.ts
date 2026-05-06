@@ -113,10 +113,14 @@ export default async function blikProcessor(
 			displayModal( {
 				root,
 				formattedTotal,
-				cancel: () => {
+				cancel: ( wasExpired ) => {
 					safeDismissModal();
 					isModalActive = false;
-					explicitClosureMessage = translate( 'Payment cancelled.' );
+					explicitClosureMessage = wasExpired
+						? translate( 'BLIK code expired. Please try again.' )
+						: translate(
+								'Payment cancelled. If you have already approved the payment in your banking app, the payment may still go through. Please check your account before trying again.'
+						  );
 				},
 			} );
 
@@ -181,7 +185,7 @@ function displayModal( {
 }: {
 	root: Root;
 	formattedTotal: string;
-	cancel: () => void;
+	cancel: ( wasExpired: boolean ) => void;
 } ) {
 	root.render(
 		createElement( BlikConfirmation, {
