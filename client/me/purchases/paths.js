@@ -47,6 +47,15 @@ export function cancelPurchase( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel';
 }
 
+export function siteActionInterstitial( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
+	return managePurchase( siteName, purchaseId ) + '/site-level-actions';
+}
+
 export function downgradePurchase( siteName, purchaseId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {

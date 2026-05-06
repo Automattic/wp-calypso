@@ -1,0 +1,43 @@
+.site-level-actions__wrapper-card {
+	max-width: 720px;
+	padding: 32px;
+	padding-block-start: 12px;
+}
+
+.site-level-actions__description {
+	margin-block-end: 24px;
+}
+
+.site-level-actions__purchase-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.site-level-actions__purchase-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
+	padding-block: 12px;
+	border-block-end: 1px solid var(--color-border-subtle);
+
+	&:last-child {
+		border-block-end: none;
+	}
+}
+
+.site-level-actions__purchase-name {
+	flex: 1;
+	font-weight: 500;
+}
+
+.site-level-actions__purchase-price {
+	text-align: end;
+	color: var(--color-text-subtle);
+}
+
+.site-level-actions__continue-button {
+	margin-block-start: 24px;
+}

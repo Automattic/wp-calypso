@@ -165,7 +165,13 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
+import {
+	cancelPurchase,
+	downgradePurchase,
+	managePurchase,
+	purchasesRoot,
+	siteActionInterstitial,
+} from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -319,17 +325,23 @@ class ManagePurchase extends Component<
 	}
 
 	handleRenew = () => {
-		const { purchase, siteSlug, redirectTo } = this.props;
-		const options = redirectTo ? { redirectTo } : undefined;
-		const isSitelessRenewal =
-			purchase &&
-			( isAkismetHoldingSitePurchase( purchase ) ||
-				isMarketplaceHoldingSitePurchase( purchase ) ||
-				isA4AHoldingSitePurchase( purchase ) );
+		const { purchase, siteSlug, redirectTo, purchases, isSplitCancelRemoveEnabled } = this.props;
 
 		if ( ! purchase ) {
 			return;
 		}
+
+		// Route through site-level interstitial when the site has multiple purchases
+		if ( isSplitCancelRemoveEnabled && purchases && purchases.length > 1 ) {
+			page( siteActionInterstitial( siteSlug, purchase.id ) + '?action=renew' );
+			return;
+		}
+
+		const options = redirectTo ? { redirectTo } : undefined;
+		const isSitelessRenewal =
+			isAkismetHoldingSitePurchase( purchase ) ||
+			isMarketplaceHoldingSitePurchase( purchase ) ||
+			isA4AHoldingSitePurchase( purchase );
 
 		// If this renewal is for a siteless purchase, we'll drop the site slug
 		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
