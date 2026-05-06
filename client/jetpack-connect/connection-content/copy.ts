@@ -44,7 +44,7 @@ function getLoginSubtitles(): Record< SubtitleScenario, string > {
 			'Your site is registered with WordPress.com — finish connecting your account to manage it from Automattic for Agencies and power Jetpack features.'
 		),
 		ALL_THREE: __(
-			'Your store is registered with WordPress.com — finish connecting your account to use Automattic for Agencies dashboard, Woo mobile app, and Jetpack.'
+			'Your store is registered with WordPress.com — finish connecting your account to use the Automattic for Agencies dashboard, the Woo mobile app, and Jetpack.'
 		),
 		WOO_ONLY: __(
 			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app and access your store analytics.'
@@ -116,7 +116,7 @@ function getAuthSubtitles(): Record< SubtitleScenario, string > {
 			'Your site is registered with WordPress.com — connect this account to manage it from Automattic for Agencies and activate Jetpack.'
 		),
 		ALL_THREE: __(
-			'Your store is registered with WordPress.com — connect this account to use Automattic for Agencies dashboard, Woo mobile app, and Jetpack.'
+			'Your store is registered with WordPress.com — connect this account to use the Automattic for Agencies dashboard, the Woo mobile app, and Jetpack.'
 		),
 		WOO_ONLY: __(
 			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app and access your store analytics.'
@@ -188,7 +188,7 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
 			"You'll use it to manage your site from Automattic for Agencies and power Jetpack features."
 		),
 		ALL_THREE: __(
-			"You'll use it to access Automattic for Agencies dashboard, Woo mobile app, and Jetpack."
+			"You'll use it to access the Automattic for Agencies dashboard, the Woo mobile app, and Jetpack."
 		),
 		WOO_ONLY: __( "You'll use it to log in to the Woo mobile app and view your store analytics." ),
 		WOO_AND_PAY: __(
