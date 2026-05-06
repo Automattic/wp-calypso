@@ -4,23 +4,22 @@
 
 $breakpoint-mobile: 782px; //Mobile size.
 
-// Inline "Last used" badge next to the email/username label, used when the
-// last-used method was `password`. Reuses the same approach as the social
-// pill: locally retint WPDS info-surface tokens to the admin theme color, and
-// re-apply the WPDS Badge spec at this unlayered class so Calypso's
-// unlayered typography reset doesn't collapse the package defaults.
-.login__form-userdata {
-	--wpds-color-bg-surface-info: var( --wp-admin-theme-color, #3858e9 );
-	--wpds-color-fg-content-info: #fff;
-}
-
+// Inline "Last used" badge next to the email/username label (used when the
+// last-used method was `password`). Margin and vertical-align are the only
+// positional styles we own — colors come from the Badge's default
+// `intent="informational"` styling.
+//
+// The font-size / line-height / padding / radius repeats are a Calypso-
+// cascade workaround: the Badge sets them inside `@layer wp-ui-components`,
+// which Calypso's unlayered resets always beat. Same workaround as
+// `.social-buttons__last-used-pill` and `client/my-sites/podcast/style.scss`.
 .login__form-last-used-badge {
 	margin-inline-start: 8px;
-	padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
-	border-radius: var( --wpds-border-radius-lg );
+	vertical-align: middle;
 	font-size: var( --wpds-font-size-sm );
 	line-height: var( --wpds-font-line-height-xs );
-	vertical-align: middle;
+	padding: var( --wpds-dimension-padding-xs ) var( --wpds-dimension-padding-sm );
+	border-radius: var( --wpds-border-radius-lg );
 }
 
 // Bump the label's margin-bottom from the shared 6px to 8px when the inline
