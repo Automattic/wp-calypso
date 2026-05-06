@@ -75,7 +75,7 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'Save dictation as often as possible. DO NOT wait for the user to pause, finish a sentence, or stop speaking before writing to the editor. The instant you have any new transcribed text — even a partial clause, a few words, or a single phrase — commit it to the LAST trailing block(s) at the END of the post via update_block_attributes_tool (typically the bottom paragraph / last block stream), or insert a NEW block THERE if a structural cue requires it. Use get_editor_blocks_tool when unsure which clientId is truly last at the root. Treat each incoming chunk of speech as something to commit immediately so the user can always see their words materializing in the editor in near real-time.',
 		'Streaming writes: keep extending the current TRAILING block at the end of the article as the user keeps talking (not a mid-post block unless they explicitly asked you to write there). When you append, set attributes.content to the FULL accumulated content of that block (existing content + new words), not just the new words, so RichText stays consistent. If you accidentally duplicate a phrase, immediately fix it with another update_block_attributes_tool call rather than waiting.',
 		'Never buffer dictation internally hoping for a "complete" thought. There is no such thing as too-frequent a write. If in doubt, write now and refine later.',
-		'Structural cues: when the user says "new paragraph" / "next paragraph", start a fresh core/paragraph block appended at the END of the article (same placement default as inserts) unless they told you a specific spot. "Heading" / "heading two" / "subheading" → core/heading at the END unless they specified otherwise. "Bullet list" / "bulleted list" / "numbered list" → core/list (with ordered=true for numbered) containing core/list-item children, inserted at the END by default. "Quote" / "blockquote" → core/quote. "Horizontal line" / "divider" → core/separator. "Image of X" → core/image (leave url empty if none provided; the user can fill it in).',
+		'Structural cues: when the user says "new paragraph" / "next paragraph", start a fresh core/paragraph block appended at the END of the article (same placement default as inserts) unless they told you a specific spot. "Heading" / "heading two" / "subheading" → core/heading at the END unless they specified otherwise. "Bullet list" / "bulleted list" / "numbered list" → core/list (with ordered=true for numbered) containing core/list-item children, inserted at the END by default. "Quote" / "blockquote" → core/quote. "Horizontal line" / "divider" → core/separator. "Image of X" / "picture of X" / "draw / generate / create / make an image of X" → call generate_image_tool with a vivid English prompt describing X (the tool inserts a core/image at the end of the post and fills it with a freshly generated AI image, no URL needed).',
 		'Editing cues: "delete that" / "remove the last block" → remove the most recently inserted block (or the selected block). "Change this to a heading" → replace the selected/last paragraph with a heading carrying the same content. "Make this the title" → set the post title.',
 		'Punctuation: convert spoken cues like "comma", "period" / "full stop", "question mark", "exclamation mark", "colon", "semicolon", "open quote" / "close quote", "new line" into actual punctuation. Capitalize sentence beginnings and proper nouns.',
 		'Never greet proactively, never narrate what you are doing, never explain the tools, and never volunteer extra commentary. Focus on writing.',
@@ -222,7 +222,6 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 								{ statusContent }
 							</div>
 						) }
-
 						{ status === 'idle' && timelineRows.length === 0 && (
 							<div className="live-ai-assistant__intro">
 								<video
@@ -241,6 +240,49 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 										'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
 									) }
 								</p>
+							</div>
+						) }
+
+						{ error && (
+							<Notice.Root intent="error">
+								<Notice.Title>{ __( 'Error' ) }</Notice.Title>
+								<Notice.Description>{ error }</Notice.Description>
+							</Notice.Root>
+						) }
+
+						{ timelineRows.length > 0 && (
+							<div
+								className="live-ai-assistant__transcript"
+								ref={ ! isSidebar ? transcriptRef : undefined }
+							>
+								{ timelineRows.map( ( row ) =>
+									row.kind === 'message' ? (
+										<div
+											key={ row.entry.id }
+											className={ clsx( 'live-ai-assistant__message', `is-${ row.entry.role }` ) }
+										>
+											<span className="live-ai-assistant__message-role">
+												{ row.entry.role === 'user' ? __( 'You' ) : __( 'Assistant' ) }
+											</span>
+											<span className="live-ai-assistant__message-text">
+												{ row.entry.text || '…' }
+											</span>
+										</div>
+									) : (
+										<div
+										key={ `tool-${ row.evt.id }` }
+											className={ clsx( 'live-ai-assistant__transcript-tool', {
+												'is-error': row.evt.status === 'error',
+												'is-running': row.evt.status === 'running',
+											} ) }
+										>
+										<span className="live-ai-assistant__transcript-tool-dot" aria-hidden="true" />
+											<span className="live-ai-assistant__transcript-tool-label">
+												{ row.evt.label }
+											</span>
+										</div>
+									)
+								) }
 							</div>
 						) }
 
