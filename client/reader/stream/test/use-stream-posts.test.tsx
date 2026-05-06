@@ -5,10 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import initialReducer from 'calypso/state/reducer';
-import { useStreamPosts } from '../use-stream-posts';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import readerReducer from 'calypso/state/reader/reducer';
+import { getStreamInfiniteQueryKey, useStreamPosts } from '../use-stream-posts';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -19,7 +20,11 @@ afterEach( () => {
 } );
 
 function makeWrapper( queryClient: QueryClient ) {
-	const store = createStore( initialReducer, undefined, applyMiddleware( thunkMiddleware ) );
+	const store = createStore(
+		combineReducers( { reader: readerReducer } ),
+		undefined,
+		applyMiddleware( thunkMiddleware )
+	);
 	const Wrapper = ( { children }: { children: ReactNode } ) => (
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>{ children }</Provider>
@@ -35,6 +40,7 @@ function makeQueryClient() {
 interface ApiPost {
 	ID: number;
 	site_ID: number;
+	global_ID?: string;
 	URL?: string;
 	date_liked?: string;
 	xPostMetadata?: { blogId: number; postId: number };
@@ -44,6 +50,7 @@ function apiPost( id: number, overrides: Partial< ApiPost > = {} ): ApiPost {
 	return {
 		ID: id,
 		site_ID: 100,
+		global_ID: `global-${ id }`,
 		URL: `https://example.com/post-${ id }`,
 		date_liked: `2026-04-${ String( id ).padStart( 2, '0' ) }T00:00:00Z`,
 		...overrides,
@@ -326,5 +333,48 @@ describe( 'useStreamPosts — cache (stale-while-revalidate)', () => {
 		}
 
 		expect( nock.isDone() ).toBe( true );
+	} );
+} );
+
+describe( 'useStreamPosts — cache replacement', () => {
+	it( 'dispatches posts when the first cached page is replaced', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper, store } = makeWrapper( queryClient );
+		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
+			wrapper: Wrapper,
+		} );
+		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
+
+		act( () => {
+			queryClient.setQueryData(
+				getStreamInfiniteQueryKey( {
+					streamKey: 'likes',
+					feedId: null,
+					localeSlug: null,
+					startDate: null,
+				} ),
+				{
+					pageParams: [ null ],
+					pages: [
+						{
+							posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+							date_range: { after: null, before: null },
+						},
+					],
+				}
+			);
+		} );
+
+		await waitFor( () =>
+			expect( getPostByKey( store.getState(), postKey( 1 ) ) ).toMatchObject( { ID: 1 } )
+		);
 	} );
 } );

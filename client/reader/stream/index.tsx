@@ -19,12 +19,19 @@ import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
 import ReaderStreamLoginPrompt from 'calypso/reader/stream/login-prompt';
 import PostLifecycle from 'calypso/reader/stream/post-lifecycle';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
+import {
+	getDistanceBetweenPrompts,
+	getDistanceBetweenRecs,
+	injectPrompts,
+	injectRecommendations,
+} from 'calypso/reader/stream/utils';
 import { showSelectedPost as showSelectedPostUtil, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { INITIAL_FETCH, PER_FETCH } from 'calypso/state/reader/streams/normalize';
@@ -124,6 +131,7 @@ export interface StreamProps {
 	forcePlaceholders?: boolean;
 	fixedHeaderHeight?: number;
 	followSource?: string;
+	recsStreamKey?: string;
 	startDate?: string;
 	emptyContent?: () => React.ReactNode;
 	intro?: () => React.ReactNode;
@@ -156,6 +164,7 @@ export function Stream( props: StreamProps ) {
 		forcePlaceholders = false,
 		fixedHeaderHeight,
 		followSource,
+		recsStreamKey,
 		startDate,
 		emptyContent = defaultEmptyContent,
 		intro,
@@ -176,6 +185,7 @@ export function Stream( props: StreamProps ) {
 	const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const blockedSites = useSelector( getBlockedSites );
+	const follows = useSelector( getReaderFollows );
 	const primarySiteId = useSelector( getPrimarySiteId );
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const selectedRecentFeedId = useSelector( getSelectedRecentFeedId );
@@ -204,6 +214,26 @@ export function Stream( props: StreamProps ) {
 		},
 	} );
 	const { items, isLoading, isFetching, lastPage, error, fetchNextPage } = stream;
+
+	const recsStream = useStreamPosts( {
+		streamKey: recsStreamKey ?? 'custom_recs_posts_with_images',
+		localeSlug,
+		options: {
+			enabled: !! recsStreamKey && ! forcePlaceholders && items.length > 0,
+		},
+	} );
+
+	const transformedItems = useMemo( () => {
+		let nextItems = items;
+		if ( recsStreamKey && recsStream.items.length > 0 ) {
+			nextItems = injectRecommendations(
+				nextItems,
+				recsStream.items,
+				getDistanceBetweenRecs( follows.length )
+			);
+		}
+		return injectPrompts( nextItems, getDistanceBetweenPrompts( follows.length ) );
+	}, [ items, recsStreamKey, recsStream.items, follows.length ] ) as PostKey[];
 
 	// Polling for new head-of-stream posts is opt-out by stream type and also
 	// suppressed while the consumer is forcing skeletons (subscribe modal).
@@ -589,7 +619,7 @@ export function Stream( props: StreamProps ) {
 			const visibleKey = transformStreamItems ? transformStreamItems( postKey ) : postKey;
 			const isSelectedItem = !! ( selected && keysAreEqual( selected, visibleKey ) );
 			const itemKey = keyToString( visibleKey );
-			const handleClick = () => {
+			const handleClick = ( args: { comments?: boolean } = {} ) => {
 				if ( ! isSelectedItem ) {
 					selectItem( visibleKey );
 					wasSelectedByOpeningPostRef.current = true;
@@ -597,6 +627,7 @@ export function Stream( props: StreamProps ) {
 				dispatch(
 					showSelectedPostUtil( {
 						postKey: visibleKey as Parameters< typeof showSelectedPostUtil >[ 0 ][ 'postKey' ],
+						comments: args.comments,
 					} ) as never
 				);
 			};
@@ -664,7 +695,7 @@ export function Stream( props: StreamProps ) {
 	let showingStream = false;
 	let baseClassNames = [ 'following', className ].filter( Boolean ).join( ' ' );
 	const sidebarContent = typeof streamSidebar === 'function' ? streamSidebar( wideDisplay ) : null;
-	let visibleItems = items;
+	let visibleItems = transformedItems;
 	let fetching = isFetching;
 
 	if ( forcePlaceholders ) {

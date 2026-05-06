@@ -182,29 +182,29 @@ export function useStreamPosts( {
 
 	// Populate `state.reader.posts` so `<PostLifecycle>` and other consumers
 	// can resolve post bodies by key. Only dispatch newly-loaded pages.
-	const lastDispatchedRef = useRef< { streamKey: string; pageCount: number } >( {
+	const lastDispatchedRef = useRef< { streamKey: string; pages: ReadStreamResponse[] } >( {
 		streamKey,
-		pageCount: 0,
+		pages: [],
 	} );
 	useEffect( () => {
 		const pages = query.data?.pages;
 		if ( ! pages || pages.length === 0 ) {
 			return;
 		}
-		if (
-			lastDispatchedRef.current.streamKey !== streamKey ||
-			lastDispatchedRef.current.pageCount > pages.length
-		) {
-			lastDispatchedRef.current = { streamKey, pageCount: 0 };
+		if ( lastDispatchedRef.current.streamKey !== streamKey ) {
+			lastDispatchedRef.current = { streamKey, pages: [] };
 		}
-		const start = lastDispatchedRef.current.pageCount;
-		for ( let i = start; i < pages.length; i++ ) {
+		const previouslyDispatchedPages = lastDispatchedRef.current.pages;
+		for ( let i = 0; i < pages.length; i++ ) {
+			if ( previouslyDispatchedPages[ i ] === pages[ i ] ) {
+				continue;
+			}
 			const { streamPosts } = normalizeStreamPage( pages[ i ], streamType );
 			if ( streamPosts.length > 0 ) {
 				dispatch( receivePosts( streamPosts ) );
 			}
 		}
-		lastDispatchedRef.current = { streamKey, pageCount: pages.length };
+		lastDispatchedRef.current = { streamKey, pages };
 	}, [ streamKey, streamType, query.data, dispatch ] );
 
 	// Reset local per-instance state when the stream identity changes.

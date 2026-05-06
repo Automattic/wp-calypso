@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -18,6 +19,12 @@ jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
 		handleClick: ( args: Record< string, unknown > ) => void;
 	} > {
 		render() {
+			if ( 'isPromptBlock' in this.props.postKey ) {
+				return <div data-testid="prompt-block" />;
+			}
+			if ( 'isRecommendationBlock' in this.props.postKey ) {
+				return <div data-testid="recommendation-block" />;
+			}
 			return (
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events
 				<div
@@ -30,6 +37,16 @@ jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
 					<a href="#post" data-testid={ `post-${ this.props.postKey.postId }-link` }>
 						link
 					</a>
+					<button
+						type="button"
+						data-testid={ `post-${ this.props.postKey.postId }-comments` }
+						onClick={ ( event ) => {
+							event.stopPropagation();
+							this.props.handleClick( { comments: true } );
+						} }
+					>
+						comments
+					</button>
 				</div>
 			);
 		}
@@ -140,7 +157,10 @@ const baseState = {
 	currentUser: { id: 1, user: { ID: 1, primary_blog: null } },
 	readerUi: { sidebar: { selectedRecentSite: null } },
 	reader: {
+		feeds: { items: {} },
+		follows: { items: {} },
 		siteBlocks: { items: {} },
+		sites: { items: {} },
 		posts: { items: {} },
 	},
 	posts: { likes: {} },
@@ -249,6 +269,46 @@ describe( 'Stream — render states', () => {
 
 		await waitFor( () => expect( screen.getByTestId( 'post-10' ) ).toBeVisible() );
 		expect( screen.getByTestId( 'post-20' ) ).toBeVisible();
+	} );
+
+	it( 'passes comment click args through to full-post navigation', async () => {
+		mockLikesEndpoint( [ apiPost( 10 ) ] );
+		renderStream();
+
+		await waitFor( () => expect( screen.getByTestId( 'post-10' ) ).toBeVisible() );
+		fireEvent.click( screen.getByTestId( 'post-10-comments' ) );
+
+		await waitFor( () =>
+			expect( page ).toHaveBeenCalledWith( '/reader/blogs/100/posts/10#comments' )
+		);
+	} );
+
+	it( 'injects prompt blocks into long streams', async () => {
+		mockLikesEndpoint( Array.from( { length: 11 }, ( _, index ) => apiPost( index + 1 ) ) );
+		renderStream(
+			{},
+			{ reader: { ...baseState.reader, follows: { items: { 1: { feed_ID: 1 } } } } }
+		);
+
+		await waitFor( () => expect( screen.getByTestId( 'post-11' ) ).toBeVisible() );
+		expect( screen.getByTestId( 'prompt-block' ) ).toBeVisible();
+	} );
+
+	it( 'injects recommendation blocks when a recommendation stream is supplied', async () => {
+		mockLikesEndpoint( [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ), apiPost( 4 ), apiPost( 5 ) ] );
+		nock( BASE )
+			.get( '/rest/v1.2/read/recommendations/posts' )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 101 ), apiPost( 102 ) ],
+				date_range: { after: null, before: null },
+			} );
+		renderStream(
+			{ recsStreamKey: 'custom_recs_posts_with_images' },
+			{ reader: { ...baseState.reader, follows: { items: { 1: { feed_ID: 1 } } } } }
+		);
+
+		await waitFor( () => expect( screen.getByTestId( 'recommendation-block' ) ).toBeVisible() );
 	} );
 
 	it( 'renders the error state when the API fails', async () => {
