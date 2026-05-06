@@ -187,14 +187,6 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								? triggerBackendBuildParam !== '0' // Garden sites: default to /wp-admin/, opt-out with =0
 								: triggerBackendBuildParam === '1'; // Non-garden: default to site-editor, opt-in with =1
 
-							// Parse Vega spec fields early so they can be stored as a
-							// site option before the build starts. In the treatment path
-							// the PHP Vega ability never fires (Calypso owns onSpecConfirm),
-							// so Calypso must write big_sky_vega_spec_fields itself.
-							const siteGoals = queryParams.get( 'site_goals' );
-							const keyFacts = queryParams.get( 'key_facts' );
-							const primaryCallToAction = queryParams.get( 'primary_call_to_action' );
-
 							let sourceParam = '';
 							let specIdParam = '';
 							let vegaSpecParams = '';
@@ -274,49 +266,22 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 								specIdParam = `&spec_id=${ encodeURIComponent( specId ) }`;
 							}
 
-							// Vega spec fields: write them as a site option so PHP's
-							// prepare_site step can merge them into big_sky_site_metadata.
-							// In the Vega treatment path Calypso owns onSpecConfirm, so the
-							// PHP Vega ability never fires and we must do the write ourselves.
-							if ( siteGoals || keyFacts || primaryCallToAction ) {
-								try {
-									const vegaSpecFields: Record< string, unknown > = {};
-									if ( siteGoals ) {
-										try {
-											vegaSpecFields.siteGoals = JSON.parse( siteGoals );
-										} catch {
-											vegaSpecFields.siteGoals = siteGoals;
-										}
-									}
-									if ( keyFacts ) {
-										try {
-											vegaSpecFields.keyFacts = JSON.parse( keyFacts );
-										} catch {
-											vegaSpecFields.keyFacts = keyFacts;
-										}
-									}
-									if ( primaryCallToAction ) {
-										vegaSpecFields.primaryCallToAction = primaryCallToAction;
-									}
-									await wpcom.req.post(
-										{ path: `/sites/${ siteId }/settings`, apiVersion: '1.4' },
-										{},
-										{ big_sky_vega_spec_fields: JSON.stringify( vegaSpecFields ) }
-									);
-								} catch {
-									// Fail silently; the PHP Vega ability is the backstop.
-								}
-								if ( siteGoals ) {
-									vegaSpecParams += `&site_goals=${ encodeURIComponent( siteGoals ) }`;
-								}
-								if ( keyFacts ) {
-									vegaSpecParams += `&key_facts=${ encodeURIComponent( keyFacts ) }`;
-								}
-								if ( primaryCallToAction ) {
-									vegaSpecParams += `&primary_call_to_action=${ encodeURIComponent(
-										primaryCallToAction
-									) }`;
-								}
+							// Vega spec fields passed explicitly from the spec-confirm handler.
+							// Forward them to the editor so the build workflow has the confirmed
+							// values directly, without needing to re-read them from a side channel.
+							const siteGoals = queryParams.get( 'site_goals' );
+							const keyFacts = queryParams.get( 'key_facts' );
+							const primaryCallToAction = queryParams.get( 'primary_call_to_action' );
+							if ( siteGoals ) {
+								vegaSpecParams += `&site_goals=${ encodeURIComponent( siteGoals ) }`;
+							}
+							if ( keyFacts ) {
+								vegaSpecParams += `&key_facts=${ encodeURIComponent( keyFacts ) }`;
+							}
+							if ( primaryCallToAction ) {
+								vegaSpecParams += `&primary_call_to_action=${ encodeURIComponent(
+									primaryCallToAction
+								) }`;
 							}
 							if ( triggerBackendBuild ) {
 								const ph = queryParams.get( '_ph' );
