@@ -25,6 +25,10 @@ interface ComposeFeatureClipResult {
 
 interface ComposeFeatureClipInput {
 	brief?: FeatureClipBrief;
+	style?: FeatureClipBrief[ 'style' ];
+	scenes?: FeatureClipBrief[ 'scenes' ];
+	titleCard?: FeatureClipBrief[ 'titleCard' ];
+	audioBed?: FeatureClipBrief[ 'audioBed' ];
 }
 
 function validateBrief( raw: unknown ): FeatureClipBrief {
@@ -46,6 +50,22 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 		throw new Error( 'brief.titleCard.copy must be a string.' );
 	}
 	return candidate as unknown as FeatureClipBrief;
+}
+
+// Accept either { brief: {...} } (the documented shape) OR a flattened brief
+// passed at top level. GPT-5 reliably flattens the wrapper despite the schema
+// + tool description, so being liberal here is much cheaper than re-prompting.
+function extractBrief( input: ComposeFeatureClipInput | undefined ): FeatureClipBrief {
+	if ( input && typeof input === 'object' && input.brief !== undefined ) {
+		return validateBrief( input.brief );
+	}
+	if ( input && typeof input === 'object' && 'style' in input && 'scenes' in input ) {
+		const { style, scenes, titleCard, audioBed } = input;
+		return validateBrief( { style, scenes, titleCard, audioBed } );
+	}
+	throw new Error(
+		'brief must be an object — pass either { brief: <FeatureClipBrief> } or the brief fields at top level.'
+	);
 }
 
 function awaitRenderResult( requestId: string ): Promise< ComposeFeatureClipResult > {
@@ -116,13 +136,36 @@ export async function registerComposeFeatureClipAbility(): Promise< void > {
 					brief: {
 						type: 'object',
 						description:
-							'The FeatureClipBrief returned by wpcom/composite-clip-for-studio. Use it verbatim.',
+							'The FeatureClipBrief object returned verbatim by wpcom/composite-clip-for-studio. Pass the WHOLE result.brief as a single nested object — do NOT spread its keys (style, scenes, titleCard, audioBed) onto the top-level arguments.',
+						properties: {
+							style: {
+								type: 'string',
+								enum: [ 'informative-photo', 'promotional-photo' ],
+							},
+							scenes: {
+								type: 'array',
+								items: {
+									type: 'object',
+									properties: {
+										imageUrl: { type: 'string' },
+										camera: { type: 'string' },
+									},
+								},
+							},
+							titleCard: {
+								type: 'object',
+								properties: {
+									copy: { type: 'string' },
+								},
+							},
+							audioBed: { type: 'string' },
+						},
 					},
 				},
 				required: [ 'brief' ],
 			},
 			callback: async ( input: ComposeFeatureClipInput ) => {
-				const brief = validateBrief( input?.brief );
+				const brief = extractBrief( input );
 
 				const requestId =
 					typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'

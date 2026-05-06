@@ -6,7 +6,11 @@
 import * as oauthToken from '@automattic/oauth-token';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import { registerUpdateCanvasImageAbility, registerUpdateCanvasVideoAbility } from '../abilities';
+import {
+	registerComposeFeatureClipAbility,
+	registerUpdateCanvasImageAbility,
+	registerUpdateCanvasVideoAbility,
+} from '../abilities';
 import { contextProvider } from './client-context';
 import { createToolProvider } from './tool-provider';
 import type { AuthProvider, UseAgentChatConfig } from '@automattic/agenttic-client';
@@ -184,6 +188,7 @@ function createAuthProvider(): AuthProvider {
 export async function createDefaultAgentConfig( sessionId: string ): Promise< UseAgentChatConfig > {
 	await registerUpdateCanvasImageAbility();
 	await registerUpdateCanvasVideoAbility();
+	await registerComposeFeatureClipAbility();
 
 	return {
 		agentId: ORCHESTRATOR_AGENT_ID,
