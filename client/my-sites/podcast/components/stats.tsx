@@ -36,6 +36,22 @@ const getPeriodLabel = (
 	return translate( 'All time' ) as string;
 };
 
+const getPeriodHeading = (
+	value: PodcastStatsPeriod,
+	translate: ReturnType< typeof useTranslate >
+) => {
+	if ( value === '7d' ) {
+		return translate( 'Last 7 Days' ) as string;
+	}
+	if ( value === '30d' ) {
+		return translate( 'Last 30 Days' ) as string;
+	}
+	if ( value === '90d' ) {
+		return translate( 'Last 90 Days' ) as string;
+	}
+	return translate( 'All Time' ) as string;
+};
+
 export default function Stats() {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -104,9 +120,11 @@ export default function Stats() {
 		<VStack spacing={ 6 } className="podcast-stats">
 			<HStack alignment="flex-start" justify="space-between" wrap className="podcast-stats__header">
 				<header className="podcast__section-header">
-					<h2 className="podcast__section-heading">{ translate( 'Stats' ) }</h2>
+					<h2 className="podcast__section-heading podcast-stats__period-heading">
+						{ getPeriodHeading( period, translate ) }
+					</h2>
 					<p className="podcast__section-description">
-						{ translate( 'Track plays, top episodes, apps, and listener locations.' ) }
+						{ translate( 'Track downloads, top episodes, apps, and listener locations.' ) }
 					</p>
 				</header>
 				<div className="podcast-stats__period-control">{ periodPicker }</div>
@@ -125,33 +143,37 @@ export default function Stats() {
 			{ ! isStatsError && isEmpty && (
 				<DataViewsEmptyStateLayout
 					isBorderless
-					title={ translate( 'No plays yet.' ) as string }
+					title={ translate( 'No downloads yet.' ) as string }
 					description={ translate( 'Share your show to start collecting data.' ) as string }
 				/>
 			) }
 
 			{ ! isStatsError && ! isEmpty && (
 				<>
-					<StatsSummaryTiles
-						totalPlays={ stats?.total_plays }
-						byApp={ stats?.by_app }
-						byCountry={ stats?.by_country }
-						episodesPublished={ episodesData?.totalItems }
-						isLoading={ isLoading }
-					/>
 					<StatsByDayChart
 						byDay={ stats?.by_day }
 						range={ stats?.range }
 						period={ period }
 						isLoading={ isStatsLoading }
-					/>
-					<StatsTopEpisodes
-						episodes={ stats?.top_episodes }
-						siteSlug={ siteSlug }
-						isLoading={ isStatsLoading }
-					/>
-					<StatsByApp rows={ stats?.by_app } isLoading={ isStatsLoading } />
-					<StatsByCountry rows={ stats?.by_country } isLoading={ isStatsLoading } />
+					>
+						<StatsSummaryTiles
+							totalPlays={ stats?.total_plays }
+							byApp={ stats?.by_app }
+							byCountry={ stats?.by_country }
+							episodesPublished={ stats?.episodes_published ?? episodesData?.totalItems }
+							isLoading={ isLoading }
+							layout="chart"
+						/>
+					</StatsByDayChart>
+					<div className="podcast-stats__module-grid">
+						<StatsTopEpisodes
+							episodes={ stats?.top_episodes }
+							siteSlug={ siteSlug }
+							isLoading={ isStatsLoading }
+						/>
+						<StatsByApp rows={ stats?.by_app } isLoading={ isStatsLoading } />
+						<StatsByCountry rows={ stats?.by_country } isLoading={ isStatsLoading } />
+					</div>
 				</>
 			) }
 		</VStack>

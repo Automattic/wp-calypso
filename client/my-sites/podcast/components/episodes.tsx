@@ -13,6 +13,7 @@ import useEpisodesQuery, {
 	type EpisodesOrder,
 	type EpisodesOrderBy,
 } from '../hooks/use-episodes-query';
+import { getPodcastStatsMockQueryString } from '../hooks/use-show-stats-query';
 
 type Episode = {
 	id: number;
@@ -214,7 +215,9 @@ const Episodes = () => {
 				label: translate( 'Downloads' ) as string,
 				getValue: ( { item }: { item: Episode } ) => item.playsAll,
 				render: ( { item }: { item: Episode } ) => {
-					const statsUrl = `/podcasting/episode/${ item.id }${ siteSlug ? '/' + siteSlug : '' }`;
+					const statsUrl = `/podcasting/stats/episode/${ item.id }${
+						siteSlug ? '/' + siteSlug : ''
+					}${ getPodcastStatsMockQueryString() }`;
 					const onClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
 						if (
 							event.defaultPrevented ||

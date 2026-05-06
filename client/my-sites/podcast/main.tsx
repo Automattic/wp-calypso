@@ -20,6 +20,7 @@ import Settings from './components/settings';
 import Stats from './components/stats';
 import Welcome from './components/welcome';
 import useAccessGate from './hooks/use-access-gate';
+import { isPodcastStatsMockEnabled } from './hooks/use-show-stats-query';
 
 import './style.scss';
 
@@ -38,11 +39,12 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const accessGate = useAccessGate();
+	const isMockStatsDemo = isPodcastStatsMockEnabled() && section === 'stats';
 	// If podcasting_category_id is set, trust it (0 = user disabled). Only
 	// when the setting is missing do we fall back to a "Podcast" category
 	// heuristic so sites with episodes already flowing through that term
 	// land on Episodes by default.
-	const isSetUp = useSelector( ( state ) => {
+	const isSiteSetUp = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return false;
 		}
@@ -59,7 +61,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 	// setting has loaded (any value, including 0), or the terms list has
 	// loaded. Used to suppress a welcome → tabs flash on the bare
 	// /podcasting/[site] URL while data is still in flight.
-	const isSetupResolved = useSelector( ( state ) => {
+	const isSiteSetupResolved = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return true;
 		}
@@ -68,6 +70,8 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 		}
 		return Array.isArray( getTerms( state, siteId, 'category' ) );
 	} );
+	const isSetUp = isMockStatsDemo || isSiteSetUp;
+	const isSetupResolved = isMockStatsDemo || isSiteSetupResolved;
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
 
 	// Tabs only show when podcasting is actually set up. A deep link to

@@ -1,5 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { Card, CardBody } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import type {
 	PodcastStatsAppRow,
@@ -15,6 +16,7 @@ type StatsSummaryTilesProps = {
 	topDay?: PodcastStatsTopDay | null;
 	isLoading?: boolean;
 	variant?: 'show' | 'episode';
+	layout?: 'standalone' | 'chart';
 };
 
 const APP_LABELS: Record< string, string > = {
@@ -79,21 +81,34 @@ function SummaryTile( {
 	heading,
 	value,
 	note,
+	isSelected = false,
+	asCard = true,
 }: {
 	heading: string;
 	value: string;
 	note?: string;
+	isSelected?: boolean;
+	asCard?: boolean;
 } ) {
-	return (
-		<Card className="highlight-card podcast-stats-summary__tile">
-			<CardBody>
-				<div className="highlight-card-heading">{ heading }</div>
-				<div className="highlight-card-count">
-					<span className="highlight-card-count-value">{ value }</span>
-				</div>
-				{ note && <div className="podcast-stats-summary__note">{ note }</div> }
-			</CardBody>
+	const content = (
+		<>
+			<div className="highlight-card-heading">{ heading }</div>
+			<div className="highlight-card-count">
+				<span className="highlight-card-count-value">{ value }</span>
+			</div>
+			{ note && <div className="podcast-stats-summary__note">{ note }</div> }
+		</>
+	);
+	const className = clsx( 'highlight-card podcast-stats-summary__tile', {
+		'is-selected': isSelected,
+	} );
+
+	return asCard ? (
+		<Card className={ className }>
+			<CardBody>{ content }</CardBody>
 		</Card>
+	) : (
+		<div className={ className }>{ content }</div>
 	);
 }
 
@@ -110,6 +125,7 @@ export default function StatsSummaryTiles( {
 	topDay,
 	isLoading = false,
 	variant = 'show',
+	layout = 'standalone',
 }: StatsSummaryTilesProps ) {
 	const translate = useTranslate();
 	const topApp = byApp[ 0 ];
@@ -121,7 +137,7 @@ export default function StatsSummaryTiles( {
 		variant === 'episode'
 			? [
 					{
-						heading: translate( 'Total plays' ) as string,
+						heading: translate( 'Total downloads' ) as string,
 						value: loadingValue ?? formatNumber( totalPlays ?? 0 ),
 					},
 					{
@@ -147,15 +163,15 @@ export default function StatsSummaryTiles( {
 						value: loadingValue ?? ( topDay ? formatDate( topDay.date ) : EMPTY_VALUE ),
 						note:
 							! loadingValue && topDay
-								? ( translate( '%(plays)s plays', {
-										args: { plays: formatNumber( topDay.plays ) },
+								? ( translate( '%(downloads)s downloads', {
+										args: { downloads: formatNumber( topDay.plays ) },
 								  } ) as string )
 								: undefined,
 					},
 			  ]
 			: [
 					{
-						heading: translate( 'Total plays' ) as string,
+						heading: translate( 'Total downloads' ) as string,
 						value: loadingValue ?? formatNumber( totalPlays ?? 0 ),
 					},
 					{
@@ -183,14 +199,21 @@ export default function StatsSummaryTiles( {
 			  ];
 
 	return (
-		<section className="highlight-cards podcast-stats-summary">
+		<section
+			className={ clsx( 'podcast-stats-summary', {
+				'highlight-cards': layout === 'standalone',
+				'podcast-stats-summary--chart': layout === 'chart',
+			} ) }
+		>
 			<div className="highlight-cards-list podcast-stats-summary__list">
-				{ tiles.map( ( tile ) => (
+				{ tiles.map( ( tile, index ) => (
 					<SummaryTile
 						key={ tile.heading }
 						heading={ tile.heading }
 						value={ tile.value }
 						note={ tile.note }
+						isSelected={ index === 0 }
+						asCard={ layout === 'standalone' }
 					/>
 				) ) }
 			</div>

@@ -6,9 +6,13 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, type MouseEvent } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
@@ -17,6 +21,9 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import useAccessGate from '../hooks/use-access-gate';
 import useEpisodeDetailStatsQuery from '../hooks/use-episode-detail-stats-query';
+import useEpisodeTitleQuery from '../hooks/use-episode-title-query';
+import { getPodcastStatsMockQueryString } from '../hooks/use-show-stats-query';
+import StatsByApp from './stats-by-app';
 import StatsByCountry from './stats-by-country';
 import StatsByDayChart from './stats-by-day-chart';
 import StatsSummaryTiles from './stats-summary-tiles';
@@ -44,12 +51,30 @@ const getPeriodLabel = (
 	return translate( 'All time' ) as string;
 };
 
+const getPeriodHeading = (
+	value: PodcastStatsPeriod,
+	translate: ReturnType< typeof useTranslate >
+) => {
+	if ( value === '7d' ) {
+		return translate( 'Last 7 Days' ) as string;
+	}
+	if ( value === '30d' ) {
+		return translate( 'Last 30 Days' ) as string;
+	}
+	if ( value === '90d' ) {
+		return translate( 'Last 90 Days' ) as string;
+	}
+	return translate( 'All Time' ) as string;
+};
+
 export default function EpisodeStats( { postId }: EpisodeStatsProps ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const accessGate = useAccessGate();
 	const [ period, setPeriod ] = useState< PodcastStatsPeriod >( '30d' );
+	const pathSuffix = siteSlug ? '/' + siteSlug : '';
+	const mockQueryString = getPodcastStatsMockQueryString();
 
 	const periodOptions = useMemo(
 		() =>
@@ -61,8 +86,41 @@ export default function EpisodeStats( { postId }: EpisodeStatsProps ) {
 	);
 
 	const { data: stats, isLoading, isError } = useEpisodeDetailStatsQuery( siteId, postId, period );
+	const { data: episodeTitle } = useEpisodeTitleQuery( siteId, postId );
+	const episodeHeading =
+		episodeTitle || ( translate( 'Episode ID %(postId)d', { args: { postId } } ) as string );
 
-	const episodesHref = `/podcasting/episodes${ siteSlug ? '/' + siteSlug : '' }`;
+	const tabs = [
+		{
+			name: 'episodes' as const,
+			title: translate( 'Episodes' ) as string,
+			path: '/podcasting/episodes' + pathSuffix + mockQueryString,
+		},
+		{
+			name: 'distribution' as const,
+			title: translate( 'Distribution' ) as string,
+			path: '/podcasting/distribution' + pathSuffix + mockQueryString,
+		},
+		{
+			name: 'settings' as const,
+			title: translate( 'Settings' ) as string,
+			path: '/podcasting/settings' + pathSuffix + mockQueryString,
+		},
+		{
+			name: 'stats' as const,
+			title: translate( 'Stats' ) as string,
+			path: '/podcasting/stats' + pathSuffix + mockQueryString,
+		},
+	];
+
+	const handleTabSelect = ( tabId: string ) => {
+		const target = tabs.find( ( tab ) => tab.name === tabId );
+		if ( target ) {
+			page( target.path );
+		}
+	};
+
+	const statsHref = '/podcasting/stats' + pathSuffix + mockQueryString;
 	const handleBackClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
 		if (
 			event.defaultPrevented ||
@@ -75,7 +133,7 @@ export default function EpisodeStats( { postId }: EpisodeStatsProps ) {
 			return;
 		}
 		event.preventDefault();
-		page( episodesHref );
+		page( statsHref );
 	};
 
 	const isEmpty = ! isLoading && ! isError && stats?.total_plays === 0;
@@ -93,12 +151,19 @@ export default function EpisodeStats( { postId }: EpisodeStatsProps ) {
 					className="podcast-stats__header"
 				>
 					<header className="podcast__section-header">
-						<Button variant="tertiary" href={ episodesHref } onClick={ handleBackClick }>
-							{ translate( 'Back to episodes' ) }
+						<Button
+							variant="tertiary"
+							href={ statsHref }
+							onClick={ handleBackClick }
+							className="podcast-stats__back-link"
+						>
+							{ translate( 'Back to stats' ) }
 						</Button>
-						<h2 className="podcast__section-heading">{ translate( 'Episode stats' ) }</h2>
+						<h2 className="podcast__section-heading podcast-stats__period-heading podcast-stats__episode-heading">
+							{ episodeHeading }
+						</h2>
 						<p className="podcast__section-description">
-							{ translate( 'Post ID %(postId)d', { args: { postId } } ) }
+							{ getPeriodHeading( period, translate ) }
 						</p>
 					</header>
 					<div className="podcast-stats__period-control">
@@ -129,28 +194,35 @@ export default function EpisodeStats( { postId }: EpisodeStatsProps ) {
 				{ ! isError && isEmpty && (
 					<DataViewsEmptyStateLayout
 						isBorderless
-						title={ translate( 'No plays yet.' ) as string }
-						description={ translate( 'Share this episode to start collecting data.' ) as string }
+						title={ translate( 'No downloads yet.' ) as string }
+						description={
+							translate( 'Share this episode to start collecting downloads.' ) as string
+						}
 					/>
 				) }
 
 				{ ! isError && ! isEmpty && (
 					<>
-						<StatsSummaryTiles
-							totalPlays={ stats?.total_plays }
-							byApp={ stats?.by_app }
-							byCountry={ stats?.by_country }
-							topDay={ stats?.top_day }
-							isLoading={ isLoading }
-							variant="episode"
-						/>
 						<StatsByDayChart
 							byDay={ stats?.by_day }
 							range={ stats?.range }
 							period={ period }
 							isLoading={ isLoading }
-						/>
-						<StatsByCountry rows={ stats?.by_country } isLoading={ isLoading } />
+						>
+							<StatsSummaryTiles
+								totalPlays={ stats?.total_plays }
+								byApp={ stats?.by_app }
+								byCountry={ stats?.by_country }
+								topDay={ stats?.top_day }
+								isLoading={ isLoading }
+								variant="episode"
+								layout="chart"
+							/>
+						</StatsByDayChart>
+						<div className="podcast-stats__module-grid">
+							<StatsByApp rows={ stats?.by_app } isLoading={ isLoading } />
+							<StatsByCountry rows={ stats?.by_country } isLoading={ isLoading } />
+						</div>
 					</>
 				) }
 			</VStack>
@@ -159,14 +231,34 @@ export default function EpisodeStats( { postId }: EpisodeStatsProps ) {
 
 	return (
 		<Main fullWidthLayout className="podcast">
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+			{ siteId && <QueryTerms siteId={ siteId } taxonomy="category" /> }
 			<DocumentHead title={ translate( 'Episode stats' ) } />
 			<Page
 				hasPadding
 				showSidebarToggle={ false }
-				title={ <JetpackTitle title={ translate( 'Episode stats' ) } /> }
-				subTitle={ translate( 'Review plays and listener locations for this podcast episode.' ) }
+				title={ <JetpackTitle title={ translate( 'Podcast' ) } /> }
+				subTitle={ translate(
+					'Publish a podcast and reach your fans, anywhere they listen. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="podcasting" showIcon={ false } />,
+						},
+					}
+				) }
 			>
-				<div className="podcast__tab-content">{ pageContent }</div>
+				<Tabs.Root value="stats" onValueChange={ handleTabSelect }>
+					<div className="podcast__tabs-bar">
+						<Tabs.List className="podcast__tabs">
+							{ tabs.map( ( tab ) => (
+								<Tabs.Tab key={ tab.name } value={ tab.name }>
+									{ tab.title }
+								</Tabs.Tab>
+							) ) }
+						</Tabs.List>
+					</div>
+					<div className="podcast__tab-content">{ pageContent }</div>
+				</Tabs.Root>
 			</Page>
 			<JetpackFooter />
 		</Main>

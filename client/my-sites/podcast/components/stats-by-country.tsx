@@ -38,9 +38,9 @@ export default function StatsByCountry( { rows = [], isLoading = false }: StatsB
 											{ formatPodcastCountryName( row.country, unknownCountry ) }
 										</Text>
 										<Text variant="muted">
-											{ translate( '%(plays)s plays, %(pct)s', {
+											{ translate( '%(downloads)s downloads, %(pct)s', {
 												args: {
-													plays: formatNumber( row.plays ),
+													downloads: formatNumber( row.plays ),
 													pct: formatPodcastPct( row.pct ),
 												},
 											} ) }

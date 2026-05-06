@@ -22,6 +22,16 @@ export default function () {
 	);
 
 	page(
+		'/podcasting/stats/episode/:postId/:site_id',
+		siteSelection,
+		navigation,
+		siteSettings,
+		createPodcastEpisodeStats,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/podcasting/:section(episodes|distribution|settings|stats)/:site_id',
 		siteSelection,
 		navigation,

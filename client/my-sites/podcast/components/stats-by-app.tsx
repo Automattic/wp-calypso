@@ -35,9 +35,9 @@ export default function StatsByApp( { rows = [], isLoading = false }: StatsByApp
 									<HStack alignment="center" justify="space-between">
 										<Text weight={ 500 }>{ formatPodcastAppName( row.app ) }</Text>
 										<Text variant="muted">
-											{ translate( '%(plays)s plays, %(pct)s', {
+											{ translate( '%(downloads)s downloads, %(pct)s', {
 												args: {
-													plays: formatNumber( row.plays ),
+													downloads: formatNumber( row.plays ),
 													pct: formatPodcastPct( row.pct ),
 												},
 											} ) }

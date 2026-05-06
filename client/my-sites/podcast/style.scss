@@ -2,6 +2,8 @@
 @import 'calypso/components/jetpack-page-layout/admin-ui-page';
 @import 'calypso/my-sites/stats/components/highlight-cards/style';
 
+$podcast-stats-max-width: 1224px;
+
 body.is-section-podcasting {
 	@include admin-ui-page-layout;
 }
@@ -41,19 +43,42 @@ body.is-section-podcasting {
 }
 
 .podcast-stats {
-	max-inline-size: 960px;
+	inline-size: 100%;
+	max-inline-size: $podcast-stats-max-width;
+	margin-inline: auto;
 }
 
 .podcast-stats__header {
 	gap: 16px;
+	margin-block-end: 8px;
 }
 
 .podcast-stats__header .podcast__section-header {
 	margin-block-end: 0;
 }
 
+.podcast-stats__back-link {
+	align-self: flex-start;
+}
+
+.podcast-stats__period-heading {
+	font-size: 40px;
+	line-height: 1.1;
+}
+
+.podcast-stats__episode-heading {
+	max-inline-size: 760px;
+}
+
 .podcast-stats__period-control {
 	min-inline-size: 200px;
+}
+
+.podcast-stats__period-control .components-base-control__label {
+	font-size: 11px;
+	font-weight: 500;
+	letter-spacing: 0;
+	text-transform: uppercase;
 }
 
 .podcast-stats-summary {
@@ -74,29 +99,54 @@ body.is-section-podcasting {
 	min-inline-size: 0;
 }
 
+.podcast-stats-summary--chart .podcast-stats-summary__list {
+	grid-template-columns: repeat( 4, minmax( 0, 1fr ) );
+	gap: 20px;
+}
+
+.podcast-stats-summary--chart .podcast-stats-summary__tile {
+	padding: 18px 22px;
+	border-radius: 4px;
+	background: var( --wpds-color-bg-surface-secondary, #f6f7f7 );
+	border: 1px solid transparent;
+	box-sizing: border-box;
+
+	&.is-selected {
+		background: var( --wpds-color-bg-surface-base, #fff );
+		border-color: var( --wpds-color-stroke-status-success-strong, #008a20 );
+	}
+}
+
 .podcast-stats-summary__tile .components-card-body {
 	padding: 16px;
 }
 
 .podcast-stats-summary__tile .highlight-card-count {
-	font-size: 1.75rem;
-	line-height: 32px;
+	font-size: 32px;
+	font-weight: 400;
+	line-height: 40px;
 }
 
 .podcast-stats-summary__tile .highlight-card-count-value {
 	overflow-wrap: anywhere;
 }
 
+.podcast-stats-summary--chart .highlight-card-count-value {
+	font-family: inherit;
+}
+
 .podcast-stats-summary__note {
 	margin-block-start: 6px;
 	color: var( --wpds-color-fg-content-neutral-weak, #757575 );
-	font-size: 12px;
-	line-height: 1.4;
+	font-size: 14px;
+	line-height: 20px;
 }
 
 .podcast-stats__section-card {
 	border: 1px solid var( --wpds-color-stroke-base-tertiary, #dcdcde );
+	border-radius: 4px;
 	box-shadow: none;
+	overflow: hidden;
 }
 
 .podcast-stats__section-title {
@@ -107,8 +157,63 @@ body.is-section-podcasting {
 	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
 }
 
+.podcast-stats-chart__body.components-card-body {
+	padding: 0;
+}
+
+.podcast-stats-chart__header {
+	padding: 24px 32px;
+	border-block-end: 1px solid var( --wpds-color-stroke-base-tertiary, #dcdcde );
+}
+
+.podcast-stats-chart__header > * {
+	min-inline-size: 0;
+}
+
+.podcast-stats-chart__legend {
+	display: flex;
+	align-items: center;
+	flex: 0 0 auto;
+	gap: 8px;
+	margin-inline-end: 48px;
+	min-inline-size: max-content;
+	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+	font-size: 14px;
+	white-space: nowrap;
+}
+
+.podcast-stats-chart__legend-swatch {
+	display: inline-block;
+	inline-size: 16px;
+	block-size: 16px;
+	border-radius: 4px;
+	background: var( --wpds-color-bg-status-success-strong, #008a20 );
+}
+
+.podcast-stats-chart__chart {
+	padding: 28px 32px 8px;
+}
+
 .podcast-stats-chart__chart .chart {
-	min-block-size: 240px;
+	padding: 0;
+}
+
+.podcast-stats-chart__chart .chart__bar-section {
+	background-color: var( --wpds-color-bg-status-success-strong, #008a20 );
+}
+
+.podcast-stats-chart__summary {
+	padding: 20px 32px 32px;
+}
+
+.podcast-stats__module-grid {
+	display: grid;
+	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	gap: 24px;
+}
+
+.podcast-stats__module-grid > .podcast-stats__section-card:last-child:nth-child( odd ) {
+	grid-column: 1 / -1;
 }
 
 .podcast-stats-list,
@@ -142,14 +247,46 @@ body.is-section-podcasting {
 }
 
 .podcast-stats-list__link {
+	color: var( --wpds-color-fg-content-neutral, #1e1e1e );
 	font-weight: 500;
+	text-decoration: none;
 	overflow-wrap: anywhere;
+
+	&:hover,
+	&:focus {
+		color: var( --wpds-color-fg-content-neutral, #1e1e1e );
+		text-decoration: underline;
+	}
+}
+
+.podcast-stats-list__episode {
+	min-inline-size: 0;
+}
+
+.podcast-stats-list__plays {
+	flex: 0 0 auto;
+	max-inline-size: 120px;
+	text-align: end;
 }
 
 .podcast-stats-bars__item {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+}
+
+.podcast-stats-bars__item .components-h-stack {
+	gap: 12px;
+	min-inline-size: 0;
+}
+
+.podcast-stats-bars__item .components-h-stack > * {
+	min-inline-size: 0;
+}
+
+.podcast-stats-bars__item .components-h-stack > :last-child {
+	flex: 0 0 auto;
+	text-align: end;
 }
 
 .podcast-stats-bars__track {
@@ -162,7 +299,33 @@ body.is-section-podcasting {
 .podcast-stats-bars__bar {
 	block-size: 100%;
 	border-radius: inherit;
-	background: var( --wpds-color-accent, #3858e9 );
+	background: var( --wpds-color-bg-status-success-strong, #008a20 );
+}
+
+@media ( max-width: 782px ) {
+	.podcast-stats__period-heading {
+		font-size: 32px;
+	}
+
+	.podcast-stats-summary--chart .podcast-stats-summary__list,
+	.podcast-stats__module-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.podcast-stats-chart__header,
+	.podcast-stats-chart__summary {
+		padding-inline: 20px;
+	}
+
+	.podcast-stats-chart__chart {
+		padding-inline: 20px;
+	}
+}
+
+@media ( max-width: 480px ) {
+	.podcast-stats__period-control {
+		inline-size: 100%;
+	}
 }
 
 .podcast__directory-list {

@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import { getPodcastStatsMockQueryString } from '../hooks/use-show-stats-query';
 import type { PodcastStatsTopEpisode } from '../hooks/use-show-stats-query';
 import type { MouseEvent } from 'react';
 
@@ -32,14 +33,14 @@ export default function StatsTopEpisodes( {
 					<h3 className="podcast-stats__section-title">{ translate( 'Top episodes' ) }</h3>
 					{ isLoading && <StatsModulePlaceholder isLoading /> }
 					{ ! isLoading && episodes.length === 0 && (
-						<Text variant="muted">{ translate( 'No episode plays in this period.' ) }</Text>
+						<Text variant="muted">{ translate( 'No episode downloads in this period.' ) }</Text>
 					) }
 					{ ! isLoading && episodes.length > 0 && (
 						<VStack as="ol" spacing={ 0 } className="podcast-stats-list">
 							{ episodes.map( ( episode, index ) => {
-								const href = `/podcasting/episode/${ episode.post_id }${
+								const href = `/podcasting/stats/episode/${ episode.post_id }${
 									siteSlug ? '/' + siteSlug : ''
-								}`;
+								}${ getPodcastStatsMockQueryString() }`;
 								const onClick = ( event: MouseEvent< HTMLAnchorElement > ) => {
 									if (
 										event.defaultPrevented ||
@@ -63,15 +64,20 @@ export default function StatsTopEpisodes( {
 										justify="space-between"
 										className="podcast-stats-list__row"
 									>
-										<HStack alignment="center" justify="flex-start" spacing={ 3 }>
+										<HStack
+											alignment="center"
+											justify="flex-start"
+											spacing={ 3 }
+											className="podcast-stats-list__episode"
+										>
 											<span className="podcast-stats-list__rank">{ index + 1 }</span>
 											<a href={ href } onClick={ onClick } className="podcast-stats-list__link">
 												{ episode.title || translate( '(Untitled)' ) }
 											</a>
 										</HStack>
-										<Text weight={ 500 }>
-											{ translate( '%(plays)s plays', {
-												args: { plays: formatNumber( episode.plays ) },
+										<Text weight={ 500 } className="podcast-stats-list__plays">
+											{ translate( '%(downloads)s downloads', {
+												args: { downloads: formatNumber( episode.plays ) },
 											} ) }
 										</Text>
 									</HStack>
