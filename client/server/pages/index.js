@@ -173,7 +173,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
 	const featuresHelper = config.isEnabled( 'dev/features-helper' );
-	const darkModeHelper = config.isEnabled( 'dark-mode' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
 
@@ -201,7 +200,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		preferencesHelper,
 		storeSandboxHelper,
 		featuresHelper,
-		darkModeHelper,
 		store: reduxStore,
 		target: 'evergreen',
 		useTranslationChunks:

@@ -272,8 +272,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 					'is-disabled': promptVerification,
 				} ) }
 			>
+				{ promptVerification && <SubscribeVerificationNudge /> }
 				<div className="subscribe-modal__container">
-					{ promptVerification && <SubscribeVerificationNudge /> }
 					<div className="subscribe-modal__content">
 						<div className="subscribe-modal__intro">
 							<h2 className="subscribe-modal__title">
@@ -363,27 +363,27 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								</div>
 							</div>
 						</div>
-						<div className="reader-onboarding-modal__footer">
-							<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-								<StepIndicator totalSteps={ 3 } currentStep={ 3 } />
-								<HStack
-									spacing={ 2 }
-									justify="right"
-									className="reader-onboarding-modal__footer-buttons"
-								>
-									<Button
-										__next40pxDefaultSize
-										onClick={ handleContinue }
-										variant="secondary"
-										disabled={ promptVerification }
-										accessibleWhenDisabled
-									>
-										{ __( 'Finish' ) }
-									</Button>
-								</HStack>
-							</HStack>
-						</div>
 					</div>
+				</div>
+				<div className="reader-onboarding-modal__footer">
+					<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+						<StepIndicator totalSteps={ 3 } currentStep={ 3 } />
+						<HStack
+							spacing={ 2 }
+							justify="right"
+							className="reader-onboarding-modal__footer-buttons"
+						>
+							<Button
+								__next40pxDefaultSize
+								onClick={ handleContinue }
+								variant="secondary"
+								disabled={ promptVerification }
+								accessibleWhenDisabled
+							>
+								{ __( 'Finish' ) }
+							</Button>
+						</HStack>
+					</HStack>
 				</div>
 			</Modal>
 		)

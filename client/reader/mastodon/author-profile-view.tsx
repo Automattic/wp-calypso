@@ -8,7 +8,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { MastodonAuthorProfilePanel } from './author-profile-panel';
+import { mastodonComposerConfig } from './composer-config';
 
 interface Props {
 	connectionId: number;
@@ -57,10 +59,14 @@ export function MastodonAuthorProfileView( { connectionId, actor }: Props ) {
 	}
 
 	return (
-		<ReaderMain className="mastodon-view">
-			<MastodonAuthorProfileTitle connectionId={ connection.id } actor={ actor } />
-			<MastodonAuthorProfilePanel connection={ connection } actor={ actor } />
-		</ReaderMain>
+		<ComposerProvider connectionId={ connection.id } config={ mastodonComposerConfig }>
+			<ReaderMain className="mastodon-view">
+				<MastodonAuthorProfileTitle connectionId={ connection.id } actor={ actor } />
+				<MastodonAuthorProfilePanel connection={ connection } actor={ actor } />
+			</ReaderMain>
+			<ComposeFab />
+			<ComposerModal />
+		</ComposerProvider>
 	);
 }
 

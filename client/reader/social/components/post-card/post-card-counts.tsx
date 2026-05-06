@@ -43,14 +43,15 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 	);
 
 	const renderRepliesNode = () => {
-		// Mirror the like-button gating: only render the interactive
-		// reply button when we have both an `onReplyClick` handler AND
-		// a strong-ref `cid` to address the post (atmosphere posts
-		// without `cid` would silently no-op the click and emit a
-		// phantom `replies_count_clicked / destination=composer` Tracks
-		// event). Fall through to the in-app/external thread link or
-		// the static count otherwise.
-		if ( analytics?.onReplyClick && post.cid ) {
+		// Render the interactive reply button when an `onReplyClick`
+		// handler is bound by the per-protocol shell. The shell decides
+		// what addressing it needs from the post (atmosphere requires a
+		// strong-ref `cid` and bails internally; Mastodon only uses
+		// `post.uri` as the status_id). Don't gate on `post.cid` here —
+		// Mastodon posts never carry a `cid`, so an extra `cid` check
+		// would dark-ship the reply button on the very protocol that
+		// needs it.
+		if ( analytics?.onReplyClick ) {
 			const onReplyClick = analytics.onReplyClick;
 			return (
 				<button

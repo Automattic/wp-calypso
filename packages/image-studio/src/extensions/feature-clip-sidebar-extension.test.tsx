@@ -16,7 +16,6 @@ const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
 
 jest.mock( '@wordpress/components', () => ( {
-	Tooltip: ( { children }: { children: React.ReactNode; text: string } ) => <>{ children }</>,
 	Button: ( {
 		children,
 		onClick,

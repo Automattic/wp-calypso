@@ -898,6 +898,36 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const appearanceRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Appearance' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'appearance',
+	beforeLoad: async ( { context } ) => {
+		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
+		const optIn = preferences[ 'hosting-dashboard-opt-in' ];
+		const isDashboardEnrolled =
+			context.config.optIn &&
+			( optIn?.value === 'opt-in' ||
+				optIn?.value === 'forced-opt-in' ||
+				isEnabled( 'dashboard/forced-opt-in' ) );
+		if ( ! context.config.supports.colorScheme || ! isDashboardEnrolled ) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../me/appearance' ).then( ( d ) =>
+		createLazyRoute( 'appearance' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const languageRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1116,6 +1146,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
+	}
+	if ( config.supports.colorScheme && config.optIn ) {
+		preferencesChildren.push( appearanceRoute );
 	}
 	if ( isEnabled( 'mcp-settings' ) ) {
 		preferencesChildren.push(

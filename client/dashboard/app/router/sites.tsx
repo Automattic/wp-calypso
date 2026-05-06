@@ -1239,6 +1239,25 @@ export const siteSettingsCachingRoute = createRoute( {
 	)
 );
 
+export const siteSettingsApmRoute = createRoute( {
+	staticData: { requiresSiteTypeSupport: 'settingsServer' },
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Application Performance Monitoring' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteSettingsRoute,
+	path: 'apm',
+} ).lazy( () =>
+	import( '../../sites/settings-apm' ).then( ( d ) =>
+		createLazyRoute( 'site-settings-apm' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSettingsDefensiveModeRoute = createRoute( {
 	staticData: { requiresSiteTypeSupport: 'settingsSecurity' },
 	head: () => ( {
@@ -1841,6 +1860,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteSettingsPrimaryDataCenterRoute,
 		siteSettingsStaticFile404Route,
 		siteSettingsCachingRoute,
+		...( isEnabled( 'performance/apm' ) ? [ siteSettingsApmRoute ] : [] ),
 
 		// Security
 		siteSettingsWebApplicationFirewallRoute,

@@ -1,7 +1,6 @@
 import { useConnectionQuery } from '@automattic/api-queries';
+import { TimelineComposePill, useOptionalComposer } from 'calypso/reader/social/composer';
 import { AuthorProfilePanel } from './author-profile-panel';
-import { useOptionalComposer } from './composer';
-import { TimelineComposePill } from './composer/triggers/timeline-compose-pill';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
 interface ProfilePanelProps {
@@ -16,8 +15,7 @@ export function ProfilePanel( { connection }: ProfilePanelProps ) {
 		<>
 			{ composer && data && (
 				<TimelineComposePill
-					connection={ connection }
-					avatar={ data.avatar }
+					avatar={ data.avatar ?? connection.avatar }
 					entryPoint="profile_inline"
 				/>
 			) }

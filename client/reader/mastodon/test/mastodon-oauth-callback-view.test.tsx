@@ -139,7 +139,7 @@ describe( 'MastodonOauthCallbackView', () => {
 		renderWithProvider( <MastodonOauthCallbackView query={ { error: 'access_denied' } } />, {
 			queryClient: makeClient(),
 		} );
-		expect( screen.getByRole( 'alert' ) ).toHaveTextContent( /cancelled or denied/i );
+		expect( screen.getByRole( 'alert' ) ).toHaveTextContent( /canceled or denied/i );
 		expect( page.replace ).not.toHaveBeenCalled();
 	} );
 

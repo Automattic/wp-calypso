@@ -3,10 +3,9 @@
  *
  * Registers a PluginDocumentSettingPanel (from `@wordpress/editor`) in the
  * Gutenberg post editor with a short description + Generate clip button. The
- * panel header carries an "Experimental" badge with a tooltip explaining the
- * feature's status. Visual rhythm matches the surrounding sidebar panels
- * (Excerpt, Categories, Featured Image) rather than introducing a saturated
- * hero card.
+ * panel header carries an "Experimental" badge. Visual rhythm matches the
+ * surrounding sidebar panels (Excerpt, Categories, Featured Image) rather
+ * than introducing a saturated hero card.
  */
 import { Button } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
@@ -50,7 +49,7 @@ function FeatureClipPanel(): JSX.Element {
 			</span>
 			<span className="image-studio-feature-clip-panel__title-line">
 				{ __( 'Feature Clip', __i18n_text_domain__ ) }
-				<ExperimentalBadge variant="light" withTooltip />
+				<ExperimentalBadge variant="light" />
 			</span>
 		</span>
 	);

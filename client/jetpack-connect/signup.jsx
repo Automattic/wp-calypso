@@ -43,6 +43,7 @@ import {
 } from 'calypso/state/notices/actions';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import AuthFormHeader from './auth-form-header';
+import { getSignupCopy } from './connection-content';
 import { getConnectorBranding } from './connector-branding-config';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
@@ -321,6 +322,9 @@ export class JetpackSignup extends Component {
 		const connectorBranding = isFromJetpackConnector
 			? getConnectorBranding( this.props.authQuery.plugins )
 			: null;
+		const signupCopy = isFromJetpackConnector
+			? getSignupCopy( this.props.authQuery.plugins )
+			: null;
 
 		const isLogging = newUsername && bearerToken;
 		if ( isWooJPC && ( isCreatingAccount || isLogging ) ) {
@@ -351,12 +355,12 @@ export class JetpackSignup extends Component {
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
-					{ isFromJetpackConnector && connectorBranding ? (
+					{ isFromJetpackConnector && connectorBranding && signupCopy ? (
 						<BrandHeader
 							logo={ connectorBranding.logo }
 							logoAlt=""
-							title={ connectorBranding.title }
-							description={ connectorBranding.subtitle }
+							title={ signupCopy.title }
+							description={ signupCopy.subtitle }
 						/>
 					) : (
 						<AuthFormHeader

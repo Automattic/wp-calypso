@@ -14,34 +14,21 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 	}
 }
 
-$actions-height: 64px;
-
 .subscribe-modal {
-	&.components-modal__frame,
-	.components-modal__frame {
-		width: min( 1024px, calc( 100vw - 64px ) );
-		max-width: min( 1024px, calc( 100vw - 64px ) );
+	// Frame sizing, the WP modal content/children-container flex column, and
+	// the footer are shared with the other onboarding-rsm modals; see
+	// `client/reader/onboarding-rsm/style.scss`.
 
-		@media ( max-width: $break-medium ) {
-			width: 100vw;
-			max-width: 100vw;
-			margin-left: 0;
-			margin-right: 0;
-		}
-	}
-
-	// Remove WP modal's block/inline padding so the footer spans the full modal
-	// width and no gap appears below it at the frame bottom.
-	.components-modal__content {
-		padding-inline: 0;
-		padding-block-end: 0;
-	}
-
-	// The preview stream has z-index: 20 which would otherwise render above the
-	// absolute footer at small viewports. Raise the footer's z-index above it.
-	.reader-onboarding-modal__footer {
-		margin-inline: 0;
-		z-index: 25;
+	&__container {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		min-height: 0;
+		// At very tight viewports the inner content's `min-height` exceeds the
+		// available space; this scroll container then absorbs the overflow.
+		// The scrollbar lives inside the container (above the footer sibling)
+		// so it never overlaps or peeks past the footer.
+		overflow-y: auto;
 	}
 
 	&__title {
@@ -66,20 +53,14 @@ $actions-height: 64px;
 	}
 
 	&__content {
-		// padding-bottom reserves space for the absolutely-positioned footer so
-		// the scrollable columns never slip behind it.
-		padding-bottom: $actions-height;
-
 		display: flex;
 		flex-direction: column;
-		// max-height keeps content within the WP modal frame (max-height: 70vh)
-		// minus the WP modal header (~72px) and the WP content top padding (~4px).
-		// WP content's bottom padding is zeroed out above, so the formula is
-		// 70vh - 76px rather than the original 70vh - 100px.
-		// min-height ensures columns stay usable (~2 post-card heights); below
-		// ~709px the WP content wrapper scrolls and the absolute footer remains
-		// pinned at the frame bottom via its z-index: 25 over the stream.
-		max-height: calc( 70vh - 76px );
+		// Fill the scroll container at normal viewports so the columns get a
+		// full-height region to flex into. `min-height` keeps the columns
+		// usable (~2 post-card heights) at small viewports — when the parent
+		// scroll container is shorter than this, it scrolls to absorb the
+		// overflow rather than squashing the columns.
+		flex: 1 1 auto;
 		min-height: 420px;
 		overflow: hidden;
 	}

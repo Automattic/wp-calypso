@@ -8,9 +8,10 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ComposerModal, ComposerProvider } from '../composer';
+import { atmosphereComposerConfig } from '../composer-config';
 import { TimelinePanel } from '../timeline-panel';
 import type {
 	AtmosphereConnection,
@@ -707,7 +708,7 @@ describe( 'TimelinePanel — quote composer integration', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 				<ComposerModal />
 			</ComposerProvider>,
@@ -771,7 +772,7 @@ describe( 'TimelinePanel — reply composer integration', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 				<ComposerModal />
 			</ComposerProvider>,
@@ -870,7 +871,7 @@ describe( 'TimelinePanel — reply composer errors', () => {
 
 			const user = userEvent.setup();
 			renderWithProvider(
-				<ComposerProvider connectionId={ 42 }>
+				<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 					<TimelinePanel connection={ connection } />
 					<ComposerModal />
 				</ComposerProvider>,
@@ -916,7 +917,7 @@ describe( 'TimelinePanel — reply composer errors', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 				<ComposerModal />
 			</ComposerProvider>,
@@ -954,7 +955,7 @@ describe( 'TimelinePanel — compose pill', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 				<ComposerModal />
 			</ComposerProvider>,
@@ -986,7 +987,7 @@ describe( 'TimelinePanel — compose pill', () => {
 		} );
 
 		const { container } = renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 			</ComposerProvider>,
 			{ queryClient }
@@ -994,9 +995,7 @@ describe( 'TimelinePanel — compose pill', () => {
 
 		await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
 
-		const avatarImg = container.querySelector< HTMLImageElement >(
-			'.atmosphere-compose-pill__avatar'
-		);
+		const avatarImg = container.querySelector< HTMLImageElement >( '.social-compose-pill__avatar' );
 		expect( avatarImg?.tagName ).toBe( 'IMG' );
 		expect( avatarImg?.getAttribute( 'src' ) ).toBe( detailsAvatar );
 	} );
@@ -1048,7 +1047,7 @@ describe( 'TimelinePanel — reply composer optimistic + stickiness', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 				<ComposerModal />
 			</ComposerProvider>,
@@ -1102,7 +1101,7 @@ describe( 'TimelinePanel — reply composer optimistic + stickiness', () => {
 			return (
 				<>
 					<button onClick={ () => setId( 99 ) }>switch</button>
-					<ComposerProvider connectionId={ id }>
+					<ComposerProvider connectionId={ id } config={ atmosphereComposerConfig }>
 						<TimelinePanel connection={ activeConnection } />
 						<ComposerModal />
 					</ComposerProvider>

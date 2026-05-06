@@ -68,7 +68,7 @@ export function mapMastodonFeedItemToSocialPost(
 
 	if ( item.viewer ) {
 		post.viewer = {
-			like: item.viewer.favourited ? 'favourited' : null,
+			like: item.viewer.favourited ? 'favorited' : null,
 			repost: item.viewer.reblogged ? 'reblogged' : null,
 		};
 	}
@@ -89,7 +89,7 @@ export function mapMastodonFeedItemToSocialPost(
 	// upstream boolean is false or viewer is absent.
 	if ( item.viewer ) {
 		post.viewer = {
-			like: item.viewer.favourited ? 'favourited' : null,
+			like: item.viewer.favourited ? 'favorited' : null,
 			repost: item.viewer.reblogged ? 'reblogged' : null,
 		};
 	}

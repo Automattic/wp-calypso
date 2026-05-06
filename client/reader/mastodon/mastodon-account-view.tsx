@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
+import { mastodonComposerConfig } from './composer-config';
 import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
 import { MastodonNavigation } from './mastodon-navigation';
 import { ProfilePanel } from './profile-panel';
@@ -63,14 +65,18 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	const subtitle = connection.handle;
 
 	return (
-		<ReaderMain className="mastodon-view">
-			<DocumentHead title={ translate( '%s ‹ Mastodon ‹ Reader', { args: title } ) } />
-			<NavigationHeader title={ title } subtitle={ subtitle } />
-			<MastodonNavigation connectionId={ connection.id } selectedTab={ tab } />
-			<VStack spacing={ 4 } className="mastodon-view__body">
-				{ renderTab( tab, connection ) }
-			</VStack>
-		</ReaderMain>
+		<ComposerProvider connectionId={ connection.id } config={ mastodonComposerConfig }>
+			<ReaderMain className="mastodon-view">
+				<DocumentHead title={ translate( '%s ‹ Mastodon ‹ Reader', { args: title } ) } />
+				<NavigationHeader title={ title } subtitle={ subtitle } />
+				<MastodonNavigation connectionId={ connection.id } selectedTab={ tab } />
+				<VStack spacing={ 4 } className="mastodon-view__body">
+					{ renderTab( tab, connection ) }
+				</VStack>
+			</ReaderMain>
+			<ComposeFab />
+			<ComposerModal />
+		</ComposerProvider>
 	);
 }
 

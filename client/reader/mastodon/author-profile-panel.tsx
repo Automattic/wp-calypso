@@ -10,10 +10,12 @@ import {
 	SocialProfileCard,
 	mapMastodonAccountToSocialProfileCardProps,
 	mapMastodonFeedItemToSocialPost,
+	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { MastodonAuthorProfileTabs, useMastodonAuthorFeedFilter } from './author-profile-tabs';
 import { projectMastodonError } from './error-projection';
 import { errorMessage } from './profile-errors';
@@ -183,6 +185,36 @@ export function MastodonAuthorProfilePanel( {
 		[ connection.id ]
 	);
 
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'reply',
+				root: { uri: post.uri },
+				parent: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	return (
 		<LikeProvider value={ useLikeAction }>
 			<RepostProvider value={ useRepostAction }>
@@ -203,6 +235,8 @@ export function MastodonAuthorProfilePanel( {
 					buildProfileUrl={ buildProfileUrl }
 					buildThreadUrl={ buildThreadUrl }
 					buildTagUrl={ buildTagUrl }
+					onReplyClick={ onReplyClick }
+					onQuoteClick={ onQuoteClick }
 					emptyTitle={
 						isLockedEmpty
 							? String( translate( 'This account’s posts are private.' ) )
