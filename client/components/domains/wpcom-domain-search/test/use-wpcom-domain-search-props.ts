@@ -596,6 +596,71 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		expect( result.current.cart.hasItem( 'external-map.com' ) ).toBe( false );
 	} );
 
+	it( 'reports a domain as in the cart as soon as onAddItem is called, before the server sync resolves', async () => {
+		// Hold the sync open so the server response never arrives during the test.
+		const replaceProductsInCart = jest.fn(
+			() =>
+				new Promise< never >( () => {} ) as ReturnType< UseShoppingCart[ 'replaceProductsInCart' ] >
+		);
+
+		mockUseShoppingCart.mockReturnValue(
+			buildShoppingCart( {
+				responseCart: { products: [] },
+				replaceProductsInCart,
+			} )
+		);
+
+		const { result, rerender } = renderHookWithProvider( () =>
+			useWPCOMDomainSearchProps( defaultProps )
+		);
+
+		expect( result.current.cart.hasItem( 'my-domain.com' ) ).toBe( false );
+
+		void result.current.cart.onAddItem( {
+			domain_name: 'my-domain.com',
+			product_slug: 'domain',
+			supports_privacy: false,
+		} );
+
+		// State updates from onAddItem need a re-render to be observable.
+		rerender();
+
+		expect( replaceProductsInCart ).toHaveBeenCalled();
+		expect( result.current.cart.hasItem( 'my-domain.com' ) ).toBe( true );
+	} );
+
+	it( 'rolls back the optimistic hasItem flag when the cart sync rejects', async () => {
+		const replaceProductsInCart = jest.fn(
+			() =>
+				Promise.reject( new Error( 'sync failed' ) ) as ReturnType<
+					UseShoppingCart[ 'replaceProductsInCart' ]
+				>
+		);
+
+		mockUseShoppingCart.mockReturnValue(
+			buildShoppingCart( {
+				responseCart: { products: [] },
+				replaceProductsInCart,
+			} )
+		);
+
+		const { result, rerender } = renderHookWithProvider( () =>
+			useWPCOMDomainSearchProps( defaultProps )
+		);
+
+		await expect(
+			result.current.cart.onAddItem( {
+				domain_name: 'my-domain.com',
+				product_slug: 'domain',
+				supports_privacy: false,
+			} )
+		).rejects.toThrow( 'sync failed' );
+
+		rerender();
+
+		expect( result.current.cart.hasItem( 'my-domain.com' ) ).toBe( false );
+	} );
+
 	it( 'returns no items from the cart if flowAllowsMultipleDomainsInCart is false', () => {
 		mockUseShoppingCart.mockReturnValue(
 			buildShoppingCart( {

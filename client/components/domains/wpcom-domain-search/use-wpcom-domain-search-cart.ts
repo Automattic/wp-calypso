@@ -12,7 +12,7 @@ import {
 	type ResponseCartProduct,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
-import { ComponentProps, useMemo } from 'react';
+import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
 
 const wpcomCartToDomainSearchCart = (
 	domain: ResponseCartProduct,
@@ -66,6 +66,47 @@ export const useWPCOMDomainSearchCart = ( {
 }: UseWPCOMDomainSearchCartOptions ) => {
 	const { responseCart, replaceProductsInCart, removeProductFromCart } = useShoppingCart( cartKey );
 
+	// Tracks domains that have been clicked on but whose cart sync hasn't yet
+	// completed. Treating these as "in cart" lets the CTA flip from "Add" to
+	// "Continue" before the server roundtrip resolves; the entry is removed once
+	// the real cart catches up or the sync errors out.
+	const [ pendingAddedDomains, setPendingAddedDomains ] = useState< Set< string > >(
+		() => new Set()
+	);
+
+	const removePendingDomain = useCallback( ( domain: string ) => {
+		setPendingAddedDomains( ( prev ) => {
+			if ( ! prev.has( domain ) ) {
+				return prev;
+			}
+			const next = new Set( prev );
+			next.delete( domain );
+			return next;
+		} );
+	}, [] );
+
+	// Once the server-confirmed cart contains a domain we were tracking
+	// optimistically, drop the optimistic entry so the real cart is the source
+	// of truth.
+	useEffect( () => {
+		if ( pendingAddedDomains.size === 0 ) {
+			return;
+		}
+		const realDomainNames = new Set( responseCart.products.map( ( product ) => product.meta ) );
+		setPendingAddedDomains( ( prev ) => {
+			let next: Set< string > | undefined;
+			prev.forEach( ( domain ) => {
+				if ( realDomainNames.has( domain ) ) {
+					if ( ! next ) {
+						next = new Set( prev );
+					}
+					next.delete( domain );
+				}
+			} );
+			return next ?? prev;
+		} );
+	}, [ responseCart.products, pendingAddedDomains ] );
+
 	return useMemo( () => {
 		const domainItems = flowAllowsMultipleDomainsInCart
 			? responseCart.products.filter(
@@ -116,28 +157,44 @@ export const useWPCOMDomainSearchCart = ( {
 				wpcomCartToDomainSearchCart( domainItem, freeDomainName === domainItem.meta )
 			),
 			total,
-			hasItem: ( domain ) => !! domainItems.find( ( item ) => item.meta === domain ),
+			hasItem: ( domain ) =>
+				pendingAddedDomains.has( domain ) ||
+				!! domainItems.find( ( item ) => item.meta === domain ),
 			onAddItem: async ( { domain_name, product_slug, supports_privacy } ) => {
-				const cartItems = await replaceProductsInCart( [
-					beforeAddDomainToCart( {
-						product_slug,
-						meta: domain_name,
-						extra: {
-							...( supports_privacy && {
-								privacy_available: supports_privacy,
-								privacy: supports_privacy,
-							} ),
-							...( flowName && { flow_name: flowName } ),
-						},
-					} ),
-					...responseCart.products,
-				] );
+				setPendingAddedDomains( ( prev ) => {
+					if ( prev.has( domain_name ) ) {
+						return prev;
+					}
+					const next = new Set( prev );
+					next.add( domain_name );
+					return next;
+				} );
 
-				if ( ! flowAllowsMultipleDomainsInCart ) {
-					return onContinue( cartItems.products.filter( ( item ) => item.meta === domain_name ) );
+				try {
+					const cartItems = await replaceProductsInCart( [
+						beforeAddDomainToCart( {
+							product_slug,
+							meta: domain_name,
+							extra: {
+								...( supports_privacy && {
+									privacy_available: supports_privacy,
+									privacy: supports_privacy,
+								} ),
+								...( flowName && { flow_name: flowName } ),
+							},
+						} ),
+						...responseCart.products,
+					] );
+
+					if ( ! flowAllowsMultipleDomainsInCart ) {
+						return onContinue( cartItems.products.filter( ( item ) => item.meta === domain_name ) );
+					}
+
+					return cartItems;
+				} catch ( error ) {
+					removePendingDomain( domain_name );
+					throw error;
 				}
-
-				return cartItems;
 			},
 			onRemoveItem: ( uuid ) => removeProductFromCart( uuid ),
 		};
@@ -158,5 +215,7 @@ export const useWPCOMDomainSearchCart = ( {
 		flowAllowsMultipleDomainsInCart,
 		onContinue,
 		beforeAddDomainToCart,
+		pendingAddedDomains,
+		removePendingDomain,
 	] );
 };
