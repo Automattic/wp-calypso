@@ -152,25 +152,25 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onConti
 							) ) }
 						</div>
 					</div>
-
-					<div className="reader-onboarding-modal__footer">
-						<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-							<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
-							<HStack
-								spacing={ 2 }
-								justify="right"
-								className="reader-onboarding-modal__footer-buttons reader-welcome-modal__footer-buttons"
-							>
-								<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
-									{ __( 'Do it later' ) }
-								</Button>
-								<Button __next40pxDefaultSize variant="primary" onClick={ onContinue }>
-									{ __( 'Pick your topics' ) }
-								</Button>
-							</HStack>
-						</HStack>
-					</div>
 				</VStack>
+
+				<div className="reader-onboarding-modal__footer">
+					<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+						<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
+						<HStack
+							spacing={ 2 }
+							justify="right"
+							className="reader-onboarding-modal__footer-buttons reader-welcome-modal__footer-buttons"
+						>
+							<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+								{ __( 'Do it later' ) }
+							</Button>
+							<Button __next40pxDefaultSize variant="primary" onClick={ onContinue }>
+								{ __( 'Pick your topics' ) }
+							</Button>
+						</HStack>
+					</HStack>
+				</div>
 			</Modal>
 		)
 	);
