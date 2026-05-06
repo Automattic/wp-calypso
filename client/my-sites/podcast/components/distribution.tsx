@@ -102,7 +102,7 @@ function Distribution( { onGoToSettings }: { onGoToSettings?: () => void } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const feedUrl = useFeedUrl();
-	const { issues, isPodcastingEnabled } = useSubmissionIssues();
+	const { issues, isPodcastingEnabled, isLoading } = useSubmissionIssues();
 	const [ activeId, setActiveId ] = useState< string | null >( null );
 	const [ showConfetti, setShowConfetti ] = useState( false );
 	const activeDirectory = DIRECTORIES.find( ( d ) => d.id === activeId ) ?? null;
@@ -110,9 +110,10 @@ function Distribution( { onGoToSettings }: { onGoToSettings?: () => void } ) {
 		typeof window !== 'undefined' &&
 		window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 	const hasIssues = issues.length > 0;
+	const isSubmitBlocked = hasIssues || isLoading;
 
 	const openSubmitModal = ( directoryId: string ) => {
-		if ( hasIssues ) {
+		if ( isSubmitBlocked ) {
 			return;
 		}
 		dispatch(
@@ -184,15 +185,15 @@ function Distribution( { onGoToSettings }: { onGoToSettings?: () => void } ) {
 											<Text weight={ 500 }>{ name }</Text>
 										</HStack>
 										<Button
-											variant={ hasIssues ? 'secondary' : 'primary' }
+											variant={ isSubmitBlocked ? 'secondary' : 'primary' }
 											size="compact"
 											onClick={ () => openSubmitModal( id ) }
-											disabled={ hasIssues }
+											disabled={ isSubmitBlocked }
 											accessibleWhenDisabled
 											aria-label={
-												hasIssues
+												isSubmitBlocked
 													? ( translate(
-															'Finish setting up your podcast before submitting to %(service)s.',
+															'Submit to %(service)s (finish setting up your podcast first).',
 															{
 																args: { service: name },
 																comment: '%(service)s is a podcast directory name, e.g. "Spotify".',

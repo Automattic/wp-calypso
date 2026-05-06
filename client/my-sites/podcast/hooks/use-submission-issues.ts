@@ -88,10 +88,17 @@ type SavedPodcastSettings = PodcastFieldValues & Record< string, unknown >;
  *
  * Also requests the cover image media item so the dimension/mime checks have
  * data to work with, sparing callers from rendering their own QueryMedia.
+ * The Redux media middleware dedupes duplicate in-flight item requests, so it's
+ * safe even when another surface (Settings' QueryMedia) requests the same id.
+ *
+ * `isLoading` lets callers gate UI while saved settings or the episode-presence
+ * query haven't resolved — without it, an empty-but-loading state briefly looks
+ * like a clean feed and lets users click through gates that haven't computed.
  */
 export function useSubmissionIssues(): {
 	issues: string[];
 	isPodcastingEnabled: boolean;
+	isLoading: boolean;
 } {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -117,6 +124,9 @@ export function useSubmissionIssues(): {
 	return useMemo( () => {
 		const values: PodcastFieldValues = settings ?? {};
 		const issues = computeSubmissionIssues( values, coverImage, hasPublishedEpisode, translate );
-		return { issues, isPodcastingEnabled: podcastingCategoryId > 0 };
+		const isPodcastingEnabled = podcastingCategoryId > 0;
+		const isLoading =
+			settings === null || ( isPodcastingEnabled && hasPublishedEpisode === undefined );
+		return { issues, isPodcastingEnabled, isLoading };
 	}, [ settings, coverImage, hasPublishedEpisode, translate, podcastingCategoryId ] );
 }

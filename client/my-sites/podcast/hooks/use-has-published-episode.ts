@@ -27,11 +27,11 @@ const fetchHasPublishedEpisode = ( siteId: number, categoryId: number ): Promise
  */
 export const useHasPublishedEpisode = (
 	siteId: number | null | undefined,
-	categoryId: number
+	categoryId: number | null | undefined
 ): boolean | undefined => {
 	const { data } = useQuery< boolean >( {
 		queryKey: [ 'podcast-has-published-episode', siteId, categoryId ],
-		queryFn: () => fetchHasPublishedEpisode( siteId as number, categoryId ),
+		queryFn: () => fetchHasPublishedEpisode( siteId as number, categoryId as number ),
 		enabled: !! siteId && !! categoryId,
 		// Dedupes the typical Settings → Distribution tab hop without making a
 		// just-published episode look stuck in the readiness banner for long.
