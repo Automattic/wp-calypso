@@ -15,28 +15,6 @@ const MAX_POST_BODY_CHARS = 2000;
 const EMPTY_SUGGESTIONS: Suggestion[] = [];
 
 /**
- * Strip HTML tags and Gutenberg block-delimiter comments out of a post-body
- * string so the LLM sees plain text instead of markup soup.
- */
-export function postBodyToPlainText( raw: string ): string {
-	if ( ! raw ) {
-		return '';
-	}
-
-	return raw
-		.replace( /<!--[\s\S]*?-->/g, ' ' )
-		.replace( /&nbsp;/g, ' ' )
-		.replace( /&amp;/g, '&' )
-		.replace( /&lt;/g, '<' )
-		.replace( /&gt;/g, '>' )
-		.replace( /&quot;/g, '"' )
-		.replace( /&#039;/g, "'" )
-		.replace( /<\/?[^>]+>/g, ' ' )
-		.replace( /\s+/g, ' ' )
-		.trim();
-}
-
-/**
  * The post body is inlined verbatim because the suggestions endpoint does
  * not run server-side `[[client.gutenberg_page.simple_structure]]`
  * substitution — sending that placeholder leaves the LLM with no context
@@ -142,7 +120,7 @@ export function useVideoClipSuggestions( {
 			}
 			return {
 				postId: currentPostId,
-				postBodyText: postBodyToPlainText( rawContent ),
+				postBodyText: rawContent,
 			};
 		},
 		[ disabled ]
