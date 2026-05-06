@@ -88,4 +88,75 @@ describe( 'FollowButton', () => {
 		expect( onFollow ).not.toHaveBeenCalled();
 		expect( onUnfollow ).not.toHaveBeenCalled();
 	} );
+
+	describe( 'isRequested state', () => {
+		it( 'renders "Requested" label and "Cancel request" hover label when isRequested is true and isFollowing is false', () => {
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy={ false }
+					isRequested
+					actorHandle="alice@mastodon.social"
+					onFollow={ jest.fn() }
+					onUnfollow={ jest.fn() }
+				/>
+			);
+
+			expect( screen.getByText( 'Requested' ) ).toBeVisible();
+			expect( screen.getByText( 'Cancel request' ) ).toBeInTheDocument();
+			expect(
+				screen.getByRole( 'button', {
+					name: 'Cancel follow request to @alice@mastodon.social',
+				} )
+			).toBeVisible();
+		} );
+
+		it( 'falls back to a generic aria-label when actorHandle is not supplied', () => {
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy={ false }
+					isRequested
+					onFollow={ jest.fn() }
+					onUnfollow={ jest.fn() }
+				/>
+			);
+
+			expect( screen.getByRole( 'button', { name: 'Cancel follow request' } ) ).toBeVisible();
+		} );
+
+		it( 'invokes onUnfollow when the Requested button is clicked', async () => {
+			const user = userEvent.setup();
+			const onUnfollow = jest.fn();
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy={ false }
+					isRequested
+					onFollow={ jest.fn() }
+					onUnfollow={ onUnfollow }
+				/>
+			);
+
+			await user.click( screen.getByRole( 'button' ) );
+
+			expect( onUnfollow ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'isFollowing wins over isRequested when both are true (defensive precedence)', () => {
+			render(
+				<FollowButton
+					isFollowing
+					isFollowedBy={ false }
+					isRequested
+					actorHandle="alice@mastodon.social"
+					onFollow={ jest.fn() }
+					onUnfollow={ jest.fn() }
+				/>
+			);
+
+			expect( screen.getByText( 'Following' ) ).toBeVisible();
+			expect( screen.queryByText( 'Requested' ) ).not.toBeInTheDocument();
+		} );
+	} );
 } );
