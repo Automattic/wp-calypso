@@ -35,6 +35,13 @@ export function ComposerModal< TError, TParams, TResult >() {
 	// is already a classified protocol error (MastodonError / AtmosphereError
 	// shape — same shape mutationFn rejects with), so we reuse `TError` here.
 	const [ extendError, setExtendError ] = useState< TError | null >( null );
+	// True while `mediaSlot.extendBuildParams` is awaiting (e.g. Mastodon
+	// uploading staged media). `mutation.isPending` is still false during
+	// that window, so without this flag a second click could fire a parallel
+	// upload + duplicate `mutation.mutate`. We OR it into `canSubmit` /
+	// the early-return guard so the Post button stays disabled until the
+	// extend resolves.
+	const [ isExtending, setIsExtending ] = useState( false );
 	const lastErrorSignatureRef = useRef< string | null >( null );
 
 	useEffect( () => {
@@ -42,6 +49,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 			setText( '' );
 			setConfirmDiscard( false );
 			setExtendError( null );
+			setIsExtending( false );
 			mutation.reset();
 			lastErrorSignatureRef.current = null;
 		}
@@ -87,7 +95,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	const graphemeCount = useMemo( () => countGraphemes( text ), [ text ] );
 
 	const handleClose = useCallback( () => {
-		if ( mutation.isPending ) {
+		if ( mutation.isPending || isExtending ) {
 			return;
 		}
 		if ( text.trim().length > 0 || mediaSlot.hasAny ) {
@@ -95,22 +103,25 @@ export function ComposerModal< TError, TParams, TResult >() {
 			return;
 		}
 		closeComposer();
-	}, [ mutation.isPending, text, mediaSlot.hasAny, closeComposer ] );
+	}, [ mutation.isPending, isExtending, text, mediaSlot.hasAny, closeComposer ] );
 
 	const tooLong = graphemeCount > config.limit;
 	const empty = graphemeCount === 0;
 	// Image-only posts are allowed: when the user has at least one uploaded
 	// image, the empty-text gate doesn't block submission. Pending media (any
-	// image still compressing/uploading) blocks regardless.
+	// image still compressing/uploading) blocks regardless. `isExtending` covers
+	// the publish-time upload window for protocols that defer media uploads
+	// (Mastodon), keeping the Post button disabled while a click is in flight.
 	const canSubmit =
 		! mutation.isPending &&
+		! isExtending &&
 		! tooLong &&
 		! mediaSlot.isAnyPending &&
 		mediaSlot.isAllUploaded &&
 		( ! empty || mediaSlot.hasUploaded );
 
 	const handleSubmit = useCallback( async () => {
-		if ( ! mode || mutation.isPending ) {
+		if ( ! mode || mutation.isPending || isExtending ) {
 			return;
 		}
 		if ( ! canSubmit ) {
@@ -129,11 +140,14 @@ export function ComposerModal< TError, TParams, TResult >() {
 		// rendered error and the analytics-watching effect, so the UX is
 		// indistinguishable from a `mutation.error`.
 		let params: TParams;
+		setIsExtending( true );
 		try {
 			params = ( await mediaSlot.extendBuildParams( baseParams ) ) as TParams;
 		} catch ( error ) {
 			setExtendError( error as TError );
 			return;
+		} finally {
+			setIsExtending( false );
 		}
 		// A previous extend rejection shouldn't linger across a successful
 		// retry — clear it before invoking the mutation.
@@ -154,6 +168,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	}, [
 		mode,
 		mutation,
+		isExtending,
 		text,
 		canSubmit,
 		closeComposer,

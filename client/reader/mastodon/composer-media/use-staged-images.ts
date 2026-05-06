@@ -4,10 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ACCEPTED_MIME_SET, MAX_BYTES_PER_IMAGE } from './constants';
 import type { ComposerImage } from './types';
 
-let counter = 0;
 function newLocalId(): string {
-	counter += 1;
-	return `mast-img-${ Date.now() }-${ counter }`;
+	return `mast-img-${ crypto.randomUUID() }`;
 }
 
 export interface UseStagedImagesOptions {
@@ -151,8 +149,14 @@ export function useStagedImages( opts: UseStagedImagesOptions ) {
 	);
 
 	const hasAny = images.length > 0;
-	const hasUploaded = hasAny;
-	const isAllUploaded = hasAny;
+	// Mastodon uploads lazily at publish time, so a `staged` image counts
+	// as "ready to submit" the same way an `uploaded` image does on
+	// atmosphere. `hasUploaded` therefore mirrors "any submittable media",
+	// and `isAllUploaded` is `every(staged)` — vacuously true when empty
+	// (so text-only posts can submit) and false if any image failed
+	// validation (so a failed-only set blocks submission).
+	const hasUploaded = images.some( ( i ) => i.kind === 'staged' );
+	const isAllUploaded = images.every( ( i ) => i.kind === 'staged' );
 	const isAnyPending = false;
 
 	useEffect(

@@ -208,4 +208,38 @@ describe( 'useStagedImages', () => {
 		} );
 		expect( result.current.sensitive ).toBe( false );
 	} );
+
+	describe( 'submission flags', () => {
+		it( 'with no images: hasAny=false, isAllUploaded=true (vacuously), so text-only posts can submit', () => {
+			const qc = new QueryClient();
+			const { result } = renderHook( () => useStagedImages( { max: 4 } ), {
+				wrapper: wrap( qc ),
+			} );
+			expect( result.current.hasAny ).toBe( false );
+			expect( result.current.hasUploaded ).toBe( false );
+			expect( result.current.isAllUploaded ).toBe( true );
+			expect( result.current.isAnyPending ).toBe( false );
+		} );
+
+		it( 'with all staged images: hasUploaded=true, isAllUploaded=true (lazy upload, ready to submit)', () => {
+			const qc = new QueryClient();
+			const { result } = renderHook( () => useStagedImages( { max: 4 } ), {
+				wrapper: wrap( qc ),
+			} );
+			act( () => result.current.addFiles( [ makeFile( 'a.jpg', 'image/jpeg' ) ] ) );
+			expect( result.current.hasAny ).toBe( true );
+			expect( result.current.hasUploaded ).toBe( true );
+			expect( result.current.isAllUploaded ).toBe( true );
+		} );
+
+		it( 'with a failed image: isAllUploaded=false (blocks submission)', () => {
+			const qc = new QueryClient();
+			const { result } = renderHook( () => useStagedImages( { max: 4 } ), {
+				wrapper: wrap( qc ),
+			} );
+			act( () => result.current.addFiles( [ makeFile( 'a.heic', 'image/heic' ) ] ) );
+			expect( result.current.hasAny ).toBe( true );
+			expect( result.current.isAllUploaded ).toBe( false );
+		} );
+	} );
 } );
