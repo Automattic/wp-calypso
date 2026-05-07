@@ -1,3 +1,4 @@
+import { ProgressBar } from '@automattic/components';
 import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -11,6 +12,8 @@ interface AchievementCardProps {
 	image?: string;
 	locked?: boolean;
 	secret?: boolean;
+	progressCurrent?: number;
+	progressTarget?: number;
 }
 
 export default function AchievementCard( {
@@ -21,6 +24,8 @@ export default function AchievementCard( {
 	caption,
 	locked,
 	secret,
+	progressCurrent,
+	progressTarget,
 }: AchievementCardProps ) {
 	const showLockIcon = locked || secret;
 	const rootClass = clsx( 'achievement-card', {
@@ -44,6 +49,18 @@ export default function AchievementCard( {
 				</h3>
 				{ description && <p className="achievement-card__description">{ description }</p> }
 				{ caption && <p className="achievement-card__caption">{ caption }</p> }
+				{ progressTarget !== undefined && (
+					<div className="achievement-card__progress">
+						<ProgressBar
+							className="achievement-card__progress-bar"
+							value={ progressCurrent ?? 0 }
+							total={ progressTarget }
+						/>
+						<span className="achievement-card__progress-label">
+							{ `${ progressCurrent ?? 0 }/${ progressTarget }` }
+						</span>
+					</div>
+				) }
 			</div>
 		</div>
 	);
