@@ -177,16 +177,31 @@
 	display: block;
 }
 
+/*
+ * Bulletproof bottom-anchor for the text overlay on image scenes.
+ *
+ * Using `display: flex; justify-content: flex-end` was sometimes losing
+ * to other rules in the cascade, leaving text glued to the top. Switch
+ * to absolute positioning of the inner copy block — that can't be
+ * overridden by any flex/grid rule, and the Ken-Burns transforms (which
+ * sit on .scene-background-frame, a sibling) can't move the text.
+ *
+ * The grid container collapses to a non-flowing wrapper; .scene-copy is
+ * positioned 110px from the bottom, with horizontal safe-area padding.
+ */
 .image-studio-feature-clip .scene-text-overlay-frame--on-image .scene-grid {
-	/*
-	 * Flex bottom-anchor — grid's `align-content: end` was being overridden
-	 * by the default scene-grid rule in some renders, leaving text glued to
-	 * the top. Flex with justify-content: flex-end is unambiguous.
-	 */
-	display: flex !important;
-	flex-direction: column;
-	justify-content: flex-end;
-	padding: 0 72px 130px;
+	display: block !important;
+	padding: 0 !important;
+	height: 100%;
+	position: relative;
+}
+
+.image-studio-feature-clip .scene-text-overlay-frame--on-image .scene-copy {
+	position: absolute !important;
+	left: 72px;
+	right: 72px;
+	bottom: 110px;
+	max-width: none;
 	text-align: left;
 }
 
@@ -263,13 +278,19 @@
  * background-frame styling for the image itself.
  */
 .image-studio-feature-clip .scene-title-card--on-image .scene-grid {
-	display: flex !important;
-	flex-direction: column;
-	justify-content: flex-end;
-	padding: 0 72px 150px;
-	text-align: left;
+	display: block !important;
+	padding: 0 !important;
+	height: 100%;
 	position: relative;
 	z-index: 3;
+}
+
+.image-studio-feature-clip .scene-title-card--on-image .scene-copy {
+	position: absolute !important;
+	left: 72px;
+	right: 72px;
+	bottom: 130px;
+	max-width: none;
 }
 
 .image-studio-feature-clip .scene-title-card--on-image .scene-text-overlay-frame__scrim {
