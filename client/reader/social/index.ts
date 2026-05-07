@@ -4,6 +4,7 @@ export { SocialProfileCard } from './profile-card';
 export type { SocialProfileCardProps, SocialProfileStat } from './profile-card';
 
 export { ConnectionReauthGate } from './connection-reauth-gate';
+export { ConnectionReauthTag } from './connection-reauth-tag';
 
 export { FollowButton } from './follow-button';
 export type { FollowButtonProps } from './follow-button';
