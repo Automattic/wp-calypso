@@ -74,3 +74,49 @@
 .benchmarks-submission-modal .a4a-form__heading {
 	margin-block-end: 16px;
 }
+
+.benchmarks-peer-comparison-example {
+	margin-block-start: 32px;
+}
+
+.benchmarks-peer-comparison-example__title {
+	font-size: 1.25rem;
+	font-weight: 500;
+	margin-block: 0 8px;
+}
+
+.benchmarks-peer-comparison-example__insight {
+	color: var(--color-neutral-60);
+	margin-block: 0 16px;
+}
+
+.benchmarks-peer-comparison-example__legend {
+	list-style: none;
+	margin-block: 16px 0;
+	margin-inline: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 32px;
+	font-size: 0.875rem;
+	color: var(--color-neutral-70);
+}
+
+.benchmarks-peer-comparison-example__legend li {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.benchmarks-peer-comparison-example__legend strong {
+	margin-inline-start: 4px;
+	color: var(--color-neutral-90);
+	font-weight: 600;
+}
+
+.benchmarks-peer-comparison-example__legend-dot {
+	display: inline-block;
+	inline-size: 10px;
+	block-size: 10px;
+	border-radius: 50%;
+}
