@@ -16,7 +16,6 @@ import { PlanFeaturesItem } from '../item';
 import { PlanStorage } from '../shared/storage';
 import BillingTimeframes from './billing-timeframes';
 import EnterpriseFeatures from './enterprise-features';
-import MobileFreeDomain from './mobile-free-domain';
 import PlanFeaturesList from './plan-features-list';
 import PlanHeaders from './plan-headers';
 import PlanLogos from './plan-logos';
@@ -118,7 +117,7 @@ const MobileView = ( {
 	enableShowAllFeaturesButton,
 }: MobileViewProps ) => {
 	const translate = useTranslate();
-	const { featureGroupMap, intent } = usePlansGridContext();
+	const { featureGroupMap, hideFeatureGroupTitles, intent } = usePlansGridContext();
 	const featureGroups = useMemo(
 		() =>
 			Object.keys( featureGroupMap ).filter(
@@ -166,18 +165,25 @@ const MobileView = ( {
 				<div className={ planCardClasses } key={ `${ gridPlan.planSlug }-${ index }` }>
 					<PlanLogos renderedGridPlans={ [ gridPlan ] } isInSignup={ false } />
 					<PlanHeaders renderedGridPlans={ [ gridPlan ] } />
-					{ isNotFreePlan && isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
-					{ isNotFreePlan && (
+					{ isInSignup && <PlanTagline renderedGridPlans={ [ gridPlan ] } /> }
+					{ ( isNotFreePlan || isInSignup ) && (
 						<PlanPrices
 							renderedGridPlans={ [ gridPlan ] }
 							currentSitePlanSlug={ currentSitePlanSlug }
 						/>
 					) }
-					{ isNotFreePlan && <BillingTimeframes renderedGridPlans={ [ gridPlan ] } /> }
-					<MobileFreeDomain gridPlan={ gridPlan } paidDomainName={ paidDomainName } />
+					{ ( isNotFreePlan || isInSignup ) && (
+						<BillingTimeframes renderedGridPlans={ [ gridPlan ] } />
+					) }
+					<TopButtons
+						renderedGridPlans={ [ gridPlan ] }
+						isInSignup={ isInSignup }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						planActionOverrides={ planActionOverrides }
+					/>
 					{ storageFeatureGroup && ! isEnterprisePlan && (
 						<>
-							{ 'plans-wordpress-hosting' !== intent && (
+							{ ! hideFeatureGroupTitles && 'plans-wordpress-hosting' !== intent && (
 								<PlanFeaturesItem>
 									<h2
 										className={ clsx( 'plans-grid-next-features-grid__feature-group-title', {
@@ -201,12 +207,6 @@ const MobileView = ( {
 							</div>
 						</>
 					) }
-					<TopButtons
-						renderedGridPlans={ [ gridPlan ] }
-						isInSignup={ isInSignup }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						planActionOverrides={ planActionOverrides }
-					/>
 					{ enableShowAllFeaturesButton ? (
 						<CardContainer
 							header={ translate( 'Show all features' ) }

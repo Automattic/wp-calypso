@@ -41,6 +41,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	const [ status, setStatus ] = useState< RealtimeStatus >( 'idle' );
 	const [ error, setError ] = useState< string | null >( null );
 	const [ isMuted, setIsMuted ] = useState( false );
+	const [ localStream, setLocalStream ] = useState< MediaStream | null >( null );
 	const [ transcript, setTranscript ] = useState< RealtimeTranscriptEntry[] >( [] );
 	const [ toolEvents, setToolEvents ] = useState< RealtimeToolEvent[] >( [] );
 	const [ imagePickerState, setImagePickerState ] = useState<
@@ -112,6 +113,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 
 		localStreamRef.current?.getTracks().forEach( ( track ) => track.stop() );
 		localStreamRef.current = null;
+		setLocalStream( null );
 	}, [] );
 
 	useEffect( () => {
@@ -312,6 +314,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 			const localStream = await getUserMediaWithTimeout();
 			recordTracksEvent( 'calypso_smart_dictation_microphone_permission_granted' );
 			localStreamRef.current = localStream;
+			setLocalStream( localStream );
 
 			setStatus( 'connecting' );
 			const pc = new RTCPeerConnection();
@@ -511,6 +514,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		status,
 		error,
 		isMuted,
+		localStream,
 		transcript,
 		toolEvents,
 		imagePickerState,
