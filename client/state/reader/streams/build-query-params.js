@@ -163,21 +163,14 @@ export function buildStreamQueryParams( {
 			return getQueryStringForPoll( [], { ...commonQueryParams, number: 20 } );
 		}
 		if ( streamType === 'conversations' ) {
-			// Legacy `streamApis.conversations.pollQuery`. `comments_per_post`
-			// matches the non-poll path so the rich poll response carries
-			// per-post `comments[]` IDs — used by `useStreamPendingPosts` to
-			// surface new-comment activity in the badge.
-			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], {
-				...commonQueryParams,
-				comments_per_post: 20,
-			} );
+			// Legacy `streamApis.conversations.pollQuery`.
+			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], commonQueryParams );
 		}
 		if ( streamType === 'conversations-a8c' ) {
 			// Legacy `streamApis['conversations-a8c'].pollQuery`.
 			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], {
 				...commonQueryParams,
 				index: 'a8c',
-				comments_per_post: 20,
 			} );
 		}
 		if ( streamType === 'likes' ) {
