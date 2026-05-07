@@ -35,59 +35,99 @@ export const { useExperiment, Experiment, ProvideExperimentData } = exPlatClient
  */
 export const exPlatDevtools = exPlatClient.devtools;
 
+const EXTERNAL_FORCE_PREFIX = 'explat_force_';
+
 /**
- * Look up a dev-only forced value for `flagKey` from URL or localStorage.
+ * Coerce a raw string from URL/localStorage into a `FeatureValue`. The
+ * legacy reader in this file coerced based on the caller's `defaultValue`
+ * type at consumption time, but the SDK's forced-features map stores values
+ * once and serves all callers, so we have to pick a type at import time.
  *
- *  - Query param: `?explat_force_<flagKey>=<value>`
- *  - localStorage: `localStorage.setItem('explat_force_<flagKey>', '<value>')`
+ *   - `"true"` / `"false"` → boolean
+ *   - numeric string (`"0.5"`, `"-3"`) → number
+ *   - everything else → string
  *
- * Returns `null` if no override is set. Values are returned as strings; if the
- * caller's `defaultValue` is a boolean or number the override is coerced to
- * match.
+ * Edge case: a string flag whose intended forced value is literally `"true"`
+ * or a numeric string will be coerced. For those, set the value through the
+ * panel or `window.__EXPLAT__.setForcedFeatures(...)` instead.
  */
-function readForceOverride< T extends ExPlatSdk.FeatureValue >(
-	flagKey: string,
-	defaultValue: T
-): ExPlatSdk.WidenPrimitives< T > | null {
-	if ( typeof window === 'undefined' ) {
-		return null;
+function coerceForceValue( raw: string ): ExPlatSdk.FeatureValue {
+	if ( raw === 'true' ) {
+		return true;
 	}
-	const key = `explat_force_${ flagKey }`;
-	let raw: string | null = null;
+	if ( raw === 'false' ) {
+		return false;
+	}
+	if ( /^-?\d+(\.\d+)?$/.test( raw ) ) {
+		const n = Number( raw );
+		if ( Number.isFinite( n ) ) {
+			return n;
+		}
+	}
+	return raw;
+}
+
+/**
+ * Import dev-only forced values from URL params and per-flag localStorage
+ * keys into the SDK's `forcedFeatures` map. Runs once at module init.
+ *
+ * Sources (URL wins on conflict):
+ *   - localStorage: any `explat_force_<flagKey>` key — one-shot migration:
+ *     deleted after import so it can't fight a later panel "Reset to auto".
+ *   - URL: any `?explat_force_<flagKey>=<value>` param — re-applied on every
+ *     load. Drop the URL param to stop re-applying.
+ *
+ * After import the panel and `window.__EXPLAT__` are the source of truth.
+ */
+function importExternalForcedFeatures(): void {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+	const imports = new Map< string, string >();
+	const legacyKeys: string[] = [];
 	try {
-		const params = new URLSearchParams( window.location.search );
-		raw = params.get( key );
+		for ( let i = 0; i < window.localStorage.length; i++ ) {
+			const k = window.localStorage.key( i );
+			if ( k && k.startsWith( EXTERNAL_FORCE_PREFIX ) ) {
+				const v = window.localStorage.getItem( k );
+				if ( v !== null ) {
+					imports.set( k.slice( EXTERNAL_FORCE_PREFIX.length ), v );
+					legacyKeys.push( k );
+				}
+			}
+		}
 	} catch {
 		// Ignore.
 	}
-	if ( raw === null ) {
+	try {
+		const params = new URLSearchParams( window.location.search );
+		for ( const [ k, v ] of params ) {
+			if ( k.startsWith( EXTERNAL_FORCE_PREFIX ) ) {
+				imports.set( k.slice( EXTERNAL_FORCE_PREFIX.length ), v );
+			}
+		}
+	} catch {
+		// Ignore.
+	}
+	for ( const [ flagKey, raw ] of imports ) {
+		exPlatClient.devtools.forcedFeatures.set( flagKey, coerceForceValue( raw ) );
+	}
+	for ( const k of legacyKeys ) {
 		try {
-			raw = window.localStorage.getItem( key );
+			window.localStorage.removeItem( k );
 		} catch {
 			// Ignore.
 		}
 	}
-	if ( raw === null ) {
-		return null;
-	}
-	if ( typeof defaultValue === 'boolean' ) {
-		return ( raw === 'true' ) as ExPlatSdk.WidenPrimitives< T >;
-	}
-	if ( typeof defaultValue === 'number' ) {
-		const n = Number( raw );
-		return ( Number.isFinite( n ) ? n : defaultValue ) as ExPlatSdk.WidenPrimitives< T >;
-	}
-	return raw as ExPlatSdk.WidenPrimitives< T >;
 }
 
-async function logFeatureValueDiagnostics(
-	flagKey: string,
-	resolved: unknown,
-	forced: boolean
-): Promise< void > {
+importExternalForcedFeatures();
+
+async function logFeatureValueDiagnostics( flagKey: string, resolved: unknown ): Promise< void > {
 	if ( typeof window === 'undefined' ) {
 		return;
 	}
+	const forced = exPlatClient.devtools.forcedFeatures.has( flagKey );
 	const runtime = ( window as unknown as { __EXPLAT_RUNTIME__?: unknown } ).__EXPLAT_RUNTIME__;
 	const overrides = ( () => {
 		try {
@@ -119,9 +159,9 @@ async function logFeatureValueDiagnostics(
 	);
 	if ( forced ) {
 		console.log(
-			'%cforced via explat_force_' +
+			'%cforced via SDK forcedFeatures map (panel, window.__EXPLAT__, or imported from URL/localStorage explat_force_' +
 				flagKey +
-				' (URL or localStorage) — eval below is what would have run',
+				') — eval below is what would have run',
 			'color: orange; font-weight: bold'
 		);
 	}
@@ -141,17 +181,16 @@ async function logFeatureValueDiagnostics(
 /**
  * React hook wrapper around `getFeatureValue`. Returns the caller default
  * synchronously, then re-renders with the resolved value once the flag payload
- * loads.
+ * loads (or immediately if the flag is in the SDK's forced-features map).
  *
- * Override resolution order on each render:
- *   1. Explicit URL/localStorage force (`?explat_force_<key>=<value>` or
- *      `localStorage.explat_force_<key>`) — short-circuits eval entirely.
- *   2. SDK forced-features map (set by the dev panel / `window.__EXPLAT__`) —
- *      consulted by `getFeatureValue`. Subscribed here so panel toggles
- *      flip the UI live without reload.
- *   3. Natural eval against the cached `/flags` payload.
+ * Force precedence is delegated to the SDK: `getFeatureValue` checks
+ * `forcedFeatures` first, then falls back to natural eval against the cached
+ * `/flags` payload. URL params and `localStorage.explat_force_<key>` keys are
+ * imported into `forcedFeatures` once at module init by
+ * `importExternalForcedFeatures()`.
  *
- * Logs diagnostics on every resolution.
+ * Subscribed to `forcedFeatures` so panel toggles flip the UI live without
+ * reload. Logs diagnostics on every resolution.
  */
 export function useFeatureValue< T extends ExPlatSdk.FeatureValue >(
 	flagKey: string,
@@ -163,18 +202,12 @@ export function useFeatureValue< T extends ExPlatSdk.FeatureValue >(
 	useEffect( () => {
 		let cancelled = false;
 		const evaluate = () => {
-			const forced = readForceOverride( flagKey, defaultValue );
-			if ( forced !== null ) {
-				setValue( forced );
-				void logFeatureValueDiagnostics( flagKey, forced, true );
-				return;
-			}
 			exPlatClient.getFeatureValue( flagKey, defaultValue ).then( ( resolved ) => {
 				if ( cancelled ) {
 					return;
 				}
 				setValue( resolved );
-				void logFeatureValueDiagnostics( flagKey, resolved, false );
+				void logFeatureValueDiagnostics( flagKey, resolved );
 			} );
 		};
 		evaluate();

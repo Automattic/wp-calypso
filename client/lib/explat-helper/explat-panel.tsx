@@ -64,14 +64,41 @@ export default function ExPlatHelperPanel() {
 		exPlatDevtools.forcedFeatures.snapshot()
 	);
 	// Bumping this state value re-renders all flag rows so they re-call
-	// `previewFeatureValue` — used after "Reset all" / per-flag clear.
+	// `previewFeatureValue` — used after "Reset all" / per-flag clear, and
+	// after a successful Refresh fetch.
 	const [ refreshTick, setRefreshTick ] = useState( 0 );
+	const [ isRefreshing, setIsRefreshing ] = useState( false );
 
 	useEffect( () => {
 		return exPlatDevtools.forcedFeatures.subscribe( () => {
 			setForced( exPlatDevtools.forcedFeatures.snapshot() );
 		} );
 	}, [] );
+
+	// Prefetch the /flags payload on mount. Without this, the flag list stays
+	// empty until some component calls `getFeatureValue` — which on most pages
+	// never happens, so the panel sits on the empty-state message forever.
+	useEffect( () => {
+		let cancelled = false;
+		void exPlatDevtools.loadFlags().then( () => {
+			if ( ! cancelled ) {
+				setRefreshTick( ( t ) => t + 1 );
+			}
+		} );
+		return () => {
+			cancelled = true;
+		};
+	}, [] );
+
+	const onRefresh = async () => {
+		setIsRefreshing( true );
+		try {
+			await exPlatDevtools.loadFlags( { force: true } );
+		} finally {
+			setIsRefreshing( false );
+			setRefreshTick( ( t ) => t + 1 );
+		}
+	};
 
 	const displayFlags = useMemo( () => getDisplayFlags( forced ), [ forced, refreshTick ] );
 	const forcedCount = Object.keys( forced ).length;
@@ -148,8 +175,9 @@ export default function ExPlatHelperPanel() {
 				</div>
 				{ displayFlags.length === 0 ? (
 					<p className="explat-helper__empty">
-						No flags evaluated yet. Components using <code>useFeatureValue</code> will appear here
-						once they render.
+						{ isRefreshing
+							? 'Loading flags…'
+							: 'No flags found. Click Refresh to fetch /flags/calypso, or check the console for fetch errors.' }
 					</p>
 				) : (
 					<ul className="explat-helper__flag-list">
@@ -175,7 +203,9 @@ export default function ExPlatHelperPanel() {
 					<Button
 						variant="tertiary"
 						size="small"
-						onClick={ () => setRefreshTick( ( t ) => t + 1 ) }
+						onClick={ onRefresh }
+						isBusy={ isRefreshing }
+						disabled={ isRefreshing }
 					>
 						Refresh
 					</Button>

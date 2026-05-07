@@ -24,8 +24,12 @@ export interface FlagPayloadLoader {
 	 *
 	 * Concurrent calls before the first fetch resolves share a single in-flight
 	 * promise so we never dispatch N parallel `/flags` requests on cold cache.
+	 *
+	 * Pass `{ force: true }` to bypass the TTL cache and dispatch a fresh fetch
+	 * (used by the dev panel's Refresh button). An in-flight non-forced load is
+	 * still shared; a forced call always starts its own request.
 	 */
-	load: () => Promise< FlagPayload | null >;
+	load: ( options?: { force?: boolean } ) => Promise< FlagPayload | null >;
 	/**
 	 * Returns the currently cached payload without triggering a fetch.
 	 * Used by devtools helpers (`getKnownFlags`, `getKnownVariations`,
@@ -42,15 +46,16 @@ export function createFlagPayloadLoader(
 	let cache: FlagPayloadCache | null = null;
 	let inflight: Promise< FlagPayload | null > | null = null;
 
-	const load = async (): Promise< FlagPayload | null > => {
+	const load = async ( options?: { force?: boolean } ): Promise< FlagPayload | null > => {
+		const force = options?.force === true;
 		const now = Date.now();
-		if ( cache && cache.expiresAt > now ) {
+		if ( ! force && cache && cache.expiresAt > now ) {
 			return cache.payload;
 		}
-		if ( inflight ) {
+		if ( ! force && inflight ) {
 			return inflight;
 		}
-		inflight = ( async () => {
+		const fetchPromise: Promise< FlagPayload | null > = ( async () => {
 			try {
 				const raw = await fetchPayload();
 				const payload = parsePayload( raw, logError );
@@ -68,11 +73,22 @@ export function createFlagPayloadLoader(
 					source: 'loadFlagPayload-fetchError',
 				} );
 				return null;
-			} finally {
-				inflight = null;
 			}
 		} )();
-		return inflight;
+		// Forced refreshes don't park themselves in the shared inflight slot —
+		// concurrent non-forced callers shouldn't be forced to wait on a forced
+		// refetch, and a non-forced inflight should still be reusable.
+		if ( ! force ) {
+			inflight = fetchPromise;
+		}
+		// Clear the shared inflight slot once this fetch resolves, but only if
+		// it's still pointing at us (a forced refresh may have replaced it).
+		void fetchPromise.finally( () => {
+			if ( inflight === fetchPromise ) {
+				inflight = null;
+			}
+		} );
+		return fetchPromise;
 	};
 
 	const getCached = (): FlagPayload | null => {

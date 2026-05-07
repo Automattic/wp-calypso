@@ -36,6 +36,7 @@ export type DevtoolsSurface = {
 	getRawFeature: ( flagKey: string ) => unknown | null;
 	previewFeatureValue: ( flagKey: string ) => Promise< Result | null >;
 	getEvaluationAttributes: () => Promise< Attributes | null >;
+	loadFlags: ( options?: { force?: boolean } ) => Promise< string[] >;
 };
 
 /**
@@ -59,6 +60,7 @@ export type WindowExPlat = {
 	getRawFeature: ( flagKey: string ) => unknown | null;
 	previewFeatureValue: ( flagKey: string ) => Promise< Result | null >;
 	getEvaluationAttributes: () => Promise< Attributes | null >;
+	loadFlags: ( options?: { force?: boolean } ) => Promise< string[] >;
 	getLogs: () => EvalLogEntry[];
 	clearLogs: () => void;
 };
@@ -106,6 +108,7 @@ export function installDevtoolsWindow( params: {
 		getRawFeature: ( flagKey ) => params.devtools.getRawFeature( flagKey ),
 		previewFeatureValue: ( flagKey ) => params.devtools.previewFeatureValue( flagKey ),
 		getEvaluationAttributes: () => params.devtools.getEvaluationAttributes(),
+		loadFlags: ( options ) => params.devtools.loadFlags( options ),
 		getLogs: () => evalLog.entries(),
 		clearLogs: () => evalLog.clear(),
 	};

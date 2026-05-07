@@ -102,6 +102,17 @@ export interface ExPlatDevtools {
 	 * Useful for the "Copy JSON" affordance in the dev panel.
 	 */
 	getRawFeature: ( flagKey: string ) => unknown | null;
+	/**
+	 * Trigger a `/flags` fetch from the dev panel without going through
+	 * `getFeatureValue`. Resolves once the SDK's flag cache has been
+	 * populated (or with an empty list on failure / when the host did not
+	 * wire `fetchFlagPayload`). Pass `{ force: true }` to bypass the TTL
+	 * cache and re-fetch.
+	 *
+	 * Used by the dev panel to populate the flag list eagerly on mount and
+	 * to back the Refresh button.
+	 */
+	loadFlags: ( options?: { force?: boolean } ) => Promise< string[] >;
 }
 
 /**
@@ -264,6 +275,18 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		return payload ? Object.keys( payload.flags ) : [];
 	};
 
+	const loadFlags = async ( options?: { force?: boolean } ): Promise< string[] > => {
+		if ( ! flagPayloadLoader ) {
+			return [];
+		}
+		const runtime = getExPlatRuntime();
+		if ( ! runtime.can_evaluate ) {
+			return [];
+		}
+		const payload = await flagPayloadLoader.load( options );
+		return payload ? Object.keys( payload.flags ) : [];
+	};
+
 	/**
 	 * Natural evaluation path shared by `getFeatureValue` and `previewFeatureValue`.
 	 * Returns the eval result + the local attributes used (caller decides
@@ -420,6 +443,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 			getRawFeature,
 			previewFeatureValue,
 			getEvaluationAttributes,
+			loadFlags,
 		},
 		isDevelopmentMode: config.isDevelopmentMode,
 		getRuntimeMode: () => getExPlatRuntime().mode,
@@ -711,6 +735,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 			getRawFeature,
 			previewFeatureValue,
 			getEvaluationAttributes,
+			loadFlags,
 		},
 		config,
 	};
@@ -758,6 +783,7 @@ export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
 			getRawFeature: () => null,
 			previewFeatureValue: async () => null,
 			getEvaluationAttributes: async () => null,
+			loadFlags: async () => [],
 		},
 		config,
 	};
