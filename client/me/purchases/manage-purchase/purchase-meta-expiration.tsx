@@ -190,23 +190,34 @@ function PurchaseMetaExpiration( {
 			? translate( 'Paid until' )
 			: translate( 'Subscription Renewal' );
 
+		let splitAutoRenewContent;
+		if ( isAutorenewalEnabled && ! isRechargeable( purchase ) ) {
+			splitAutoRenewContent = (
+				<span className="manage-purchase__detail manage-purchase__auto-renew-text">
+					{ translate( 'Will not auto-renew because there is no payment method' ) }
+				</span>
+			);
+		} else {
+			splitAutoRenewContent = (
+				<AutoRenewToggle
+					planName={ site && ! isCancellableSitelessPurchase ? site.plan?.product_name_short : '' }
+					siteDomain={ site && ! isCancellableSitelessPurchase ? site.domain : '' }
+					siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
+					purchase={ purchase }
+					toggleSource="manage-purchase"
+					label={ translate( 'Enable auto-renew' ) }
+					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+				/>
+			);
+		}
+
 		return (
 			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ detailLabel }</em>
 				{ ! hideAutoRenew && ! isJetpackPurchaseUsingPrimaryCancellationFlow && (
 					<div className="manage-purchase__auto-renew">
 						{ isSplitEnabled && shouldRenderToggle ? (
-							<AutoRenewToggle
-								planName={
-									site && ! isCancellableSitelessPurchase ? site.plan?.product_name_short : ''
-								}
-								siteDomain={ site && ! isCancellableSitelessPurchase ? site.domain : '' }
-								siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
-								purchase={ purchase }
-								toggleSource="manage-purchase"
-								label={ translate( 'Enable auto-renew' ) }
-								getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
-							/>
+							splitAutoRenewContent
 						) : (
 							<span className="manage-purchase__detail manage-purchase__auto-renew-text">
 								{ subsRenewText }

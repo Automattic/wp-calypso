@@ -119,6 +119,8 @@ import {
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
 	canExplicitRenew,
+	isRechargeable,
+	isIncludedWithPlan,
 } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
@@ -783,14 +785,17 @@ class ManagePurchase extends Component<
 		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.isAutoRenewEnabled;
+		const willAutoRenew =
+			autoRenewOn && isRechargeable( purchase ) && ! isIncludedWithPlan( purchase );
 
 		// Visibility:
 		//   Off flag → mutually exclusive with Cancel (preserves today's behavior).
-		//   On flag  → Remove only when auto-renew is already off. The refund-eligible
-		//              case is surfaced inside the cancel flow via
+		//   On flag  → Remove only when the subscription won't actually auto-charge
+		//              (off, no payment method, or included-with-plan). The
+		//              refund-eligible case is surfaced inside the cancel flow via
 		//              RefundEligibilityNotice instead of a parallel Remove CTA.
 		if ( isSplitEnabled ) {
-			if ( autoRenewOn ) {
+			if ( willAutoRenew ) {
 				return null;
 			}
 		} else if ( canAutoRenewBeTurnedOff( purchase ) ) {
@@ -1042,7 +1047,12 @@ class ManagePurchase extends Component<
 		// button owns the auto-renew-off state. `canAutoRenewBeTurnedOff` returns
 		// true for refundable purchases even when auto-renew is already off, so
 		// the explicit `isAutoRenewEnabled` check is needed.
-		if ( isSplitEnabled && ! purchase.isAutoRenewEnabled ) {
+		if (
+			isSplitEnabled &&
+			( ! purchase.isAutoRenewEnabled ||
+				! isRechargeable( purchase ) ||
+				isIncludedWithPlan( purchase ) )
+		) {
 			return null;
 		}
 

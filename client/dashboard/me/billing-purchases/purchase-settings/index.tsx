@@ -296,23 +296,25 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	if ( isSplitEnabled ) {
 		const hasRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = purchase.is_auto_renew_enabled;
+		// willAutoRenew is true only when the subscription will genuinely
+		// auto-charge: auto-renew on AND a valid payment method AND the
+		// purchase isn't bundled with a parent plan. When any of these is
+		// false, the subscription won't renew — Remove is the right action.
+		const willAutoRenew =
+			autoRenewOn && purchase.is_rechargeable && ! isIncludedWithPlan( purchase );
 		// Domain transfer gate: non-refundable transfers can't be cancelled without
 		// support intervention (preserves legacy behavior on classic; adds it to
 		// dashboard). Remove button is unaffected — a completed transfer with
 		// auto-renew off can still be removed below.
 		const isTransferNonRefundable = isDomainTransfer( purchase ) && ! hasRefund;
-		// Visibility is driven purely by what the user controls:
-		// - Cancel: auto-renew is on (stopping it halts any upcoming retry too).
-		// - Remove: auto-renew is already off (cancelled subscriptions awaiting
-		//   removal, expired-grace, etc.).
+		// Visibility is driven by whether the purchase will actually auto-charge:
+		// - Cancel: will auto-renew (stopping it halts any upcoming charge).
+		// - Remove: won't auto-renew (off, no payment method, or included-with-plan).
 		// When a refund is available with auto-renew still on, the refund path is
 		// surfaced inside the cancel flow via RefundEligibilityNotice instead of
 		// a second CTA here.
-		// Verified against wpcom-billing backend — cancel / disable-auto-renew /
-		// delete endpoints all accept the call in pending-renewal state, so we
-		// don't need to special-case it.
-		const showCancel = autoRenewOn && ! isTransferNonRefundable;
-		const showRemove = ! autoRenewOn;
+		const showCancel = willAutoRenew && ! isTransferNonRefundable;
+		const showRemove = ! willAutoRenew;
 
 		if ( ! showCancel && ! showRemove ) {
 			return null;
@@ -754,6 +756,19 @@ function getFields( {
 								}
 							/>
 						</div>
+					);
+				}
+				if (
+					isSplitCancelRemoveEnabled &&
+					purchase.is_auto_renew_enabled &&
+					! purchase.is_rechargeable
+				) {
+					return (
+						<ActionList.ActionItem
+							title={ __( 'Subscription renewal' ) }
+							description={ typeof helpText === 'string' ? helpText : '' }
+							actions={ <></> }
+						/>
 					);
 				}
 				return (
