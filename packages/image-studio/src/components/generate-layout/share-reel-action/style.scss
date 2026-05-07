@@ -1,0 +1,28 @@
+.image-studio-share-reel-action {
+	// Sits just above the chat box (footer). Width-matched and centered to
+	// the same 600px column the .image-studio-footer uses, so the button's
+	// right edge aligns with the chat input's right edge — not the modal's
+	// far edge.
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+	flex: 0 0 auto;
+	width: 100%;
+	max-width: 600px;
+	align-self: center;
+	padding: 0 16px;
+	margin-top: 4px;
+
+	&__button svg {
+		transition:
+			color 0.15s ease,
+			transform 0.15s ease;
+	}
+
+	&__button:hover:not( :disabled ) svg,
+	&__button:focus-visible:not( :disabled ) svg {
+		color: #fff;
+		transform: scale(1.12);
+	}
+}

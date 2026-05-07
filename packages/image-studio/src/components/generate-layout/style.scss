@@ -19,23 +19,21 @@
 	&__generate-layout--video {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 12px;
 		width: 100%;
 		height: 100%;
 		min-height: 0;
 		margin: 0;
-		padding: 16px;
+		padding: 16px 16px 4px;
 	}
 
 	&__generated-video-frame {
 		position: relative;
 		display: block;
+		flex: 1 1 auto;
+		align-self: center;
 		max-width: 100%;
 		max-height: 100%;
 		min-height: 0;
-		flex: 0 1 auto;
 		aspect-ratio: 9 / 16;
 	}
 

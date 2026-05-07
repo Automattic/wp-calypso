@@ -23,6 +23,7 @@ import nock from 'nock';
 import {
 	createMastodonPostMutation,
 	followMastodonActorMutation,
+	mastodonAuthStatusQueryOptions,
 	unfollowMastodonActorMutation,
 	uploadMastodonMediaMutation,
 	useAuthorizeMastodonConnectionMutation,
@@ -31,6 +32,7 @@ import {
 	useCreateMastodonRepostMutation,
 	useDeleteMastodonLikeMutation,
 	useDeleteMastodonRepostMutation,
+	useMastodonAuthStatusQuery,
 	useMastodonAuthorFeedInfiniteQuery,
 	useMastodonAuthorProfileQuery,
 	useMastodonConnectionQuery,
@@ -1627,5 +1629,32 @@ describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
 			expect( cached?.viewer?.following ).toBe( true );
 			expect( cached?.viewer?.requested ).toBe( false );
 		} );
+	} );
+} );
+
+describe( 'useMastodonAuthStatusQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'returns needs_reauth from the auth-status endpoint', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 200, { needs_reauth: true } );
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const { result } = renderHook( () => useMastodonAuthStatusQuery( 42 ), {
+			wrapper: makeWrapper( client ),
+		} );
+		await waitFor( () => expect( result.current.data ).toEqual( { needs_reauth: true } ) );
+	} );
+
+	it( 'is disabled when connectionId is null', () => {
+		const client = new QueryClient();
+		const { result } = renderHook( () => useMastodonAuthStatusQuery( null ), {
+			wrapper: makeWrapper( client ),
+		} );
+		expect( result.current.fetchStatus ).toBe( 'idle' );
+	} );
+
+	it( 'mastodonAuthStatusQueryOptions(null) is disabled', () => {
+		expect( mastodonAuthStatusQueryOptions( null ).enabled ).toBe( false );
 	} );
 } );

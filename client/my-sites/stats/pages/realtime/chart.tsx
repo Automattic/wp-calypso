@@ -1,4 +1,5 @@
 import { LineChart } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import clsx from 'clsx';
 import moment from 'moment';
 import { useEffect, useState, useMemo } from 'react';

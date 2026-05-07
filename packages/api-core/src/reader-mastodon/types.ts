@@ -366,3 +366,7 @@ export interface MastodonDeleteFollowParams {
 export interface MastodonFollowResponse {
 	viewer: MastodonAuthorProfileViewer;
 }
+
+export interface MastodonAuthStatus {
+	needs_reauth: boolean;
+}
