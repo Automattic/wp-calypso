@@ -118,11 +118,11 @@ export function MastodonAuthorProfilePanel( {
 	const unfollowMutate = unfollowMut.mutate;
 
 	const showFollowError = useCallback(
-		( error: MastodonError, action: 'follow' | 'unfollow' ) => {
+		( error: MastodonError, action: 'follow' | 'unfollow', accountId: string ) => {
 			dispatch(
 				recordReaderTracksEvent( 'calypso_reader_mastodon_profile_follow_error', {
 					connection_id: connection.id,
-					account_id: profile.data?.id,
+					account_id: accountId,
 					action,
 					error_kind: error.kind,
 				} )
@@ -141,33 +141,37 @@ export function MastodonAuthorProfilePanel( {
 				extra: {
 					type: `reader_mastodon_${ action }_mutation_error`,
 					connection_id: connection.id,
-					account_id: profile.data?.id,
+					account_id: accountId,
 					error_kind: error.kind,
 				},
 			} );
 		},
-		[ connection.id, profile.data?.id, dispatch, translate ]
+		[ connection.id, dispatch, translate ]
 	);
 
 	const handleFollow = useCallback( () => {
 		if ( ! profile.data ) {
 			return;
 		}
+		// Capture at click time so error analytics survive a profile refetch /
+		// invalidation racing with the in-flight mutation.
+		const accountId = profile.data.id;
+		const locked = profile.data.locked;
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_mastodon_profile_follow_clicked', {
 				connection_id: connection.id,
-				account_id: profile.data.id,
+				account_id: accountId,
 				was_followed_by: profile.data.viewer?.followed_by ?? false,
-				was_locked: profile.data.locked,
+				was_locked: locked,
 			} )
 		);
 		followMutate(
-			{ connectionId: connection.id, actor, accountId: profile.data.id },
+			{ connectionId: connection.id, actor, accountId, locked },
 			{
 				onSuccess: () => {
 					dispatch( removeNotice( 'mastodon-follow-error' ) );
 				},
-				onError: ( error ) => showFollowError( error, 'follow' ),
+				onError: ( error ) => showFollowError( error, 'follow', accountId ),
 			}
 		);
 	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError ] );
@@ -176,20 +180,21 @@ export function MastodonAuthorProfilePanel( {
 		if ( ! profile.data ) {
 			return;
 		}
+		const accountId = profile.data.id;
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_mastodon_profile_unfollow_clicked', {
 				connection_id: connection.id,
-				account_id: profile.data.id,
+				account_id: accountId,
 				was_requested: profile.data.viewer?.requested ?? false,
 			} )
 		);
 		unfollowMutate(
-			{ connectionId: connection.id, actor, accountId: profile.data.id },
+			{ connectionId: connection.id, actor, accountId },
 			{
 				onSuccess: () => {
 					dispatch( removeNotice( 'mastodon-follow-error' ) );
 				},
-				onError: ( error ) => showFollowError( error, 'unfollow' ),
+				onError: ( error ) => showFollowError( error, 'unfollow', accountId ),
 			}
 		);
 	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError ] );

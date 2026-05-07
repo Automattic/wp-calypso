@@ -984,6 +984,16 @@ export interface FollowMastodonActorVars {
 	actor: string;
 	/** Numeric Mastodon account id used in the wire call. */
 	accountId: string;
+	/**
+	 * Whether the target account is locked. Drives the optimistic patch:
+	 * locked accounts transition to `requested: true` (pending approval),
+	 * unlocked accounts go straight to `following: true`. Without this
+	 * the button paints "Following / Unfollow" mid-flight and snaps to
+	 * "Requested" once the server response commits — a UX flip-flop and
+	 * a misleading mid-flight aria-label for AT users. Optional so callers
+	 * who don't yet have `locked` in scope still get the unlocked default.
+	 */
+	locked?: boolean;
 }
 
 export interface FollowMastodonMutationContext {
@@ -1027,14 +1037,18 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 				// patch + mutationFn must still run.
 			}
 			const previous = queryClient.getQueryData< MastodonAuthorProfile >( key );
+			// Locked accounts go to `requested: true` (pending approval); unlocked
+			// accounts transition straight to `following: true`. Falling back to
+			// `old.locked` keeps callers who don't yet thread `vars.locked` working.
+			const isLocked = vars.locked ?? previous?.locked ?? false;
 			queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
 				old && old.viewer
 					? {
 							...old,
 							viewer: {
 								...old.viewer,
-								following: true,
-								requested: false,
+								following: isLocked ? false : true,
+								requested: isLocked ? true : false,
 							},
 					  }
 					: old
@@ -1045,11 +1059,13 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 			const key = mastodonAuthorProfileKey( vars );
 			if ( context?.previous ) {
 				queryClient.setQueryData( key, context.previous );
-			} else {
-				// No snapshot to roll back to; refetch so the optimistic
-				// patch can't outlive the failure as a stale cache value.
-				queryClient.invalidateQueries( { queryKey: key } );
+				return;
 			}
+			// No snapshot to roll back to; refetch so the optimistic patch can't
+			// outlive the failure as a stale cache value. Returning the promise
+			// keeps the mutation in `pending` until the refetch settles, matching
+			// the atmosphere-slice pattern.
+			return queryClient.invalidateQueries( { queryKey: key } );
 		},
 		onSuccess: ( data, vars ) => {
 			const key = mastodonAuthorProfileKey( vars );
@@ -1066,7 +1082,7 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 				// (e.g. route change). Trigger a refetch so the
 				// authoritative server `viewer` (which carries
 				// `requested: true` for locked accounts) isn't lost.
-				queryClient.invalidateQueries( { queryKey: key } );
+				return queryClient.invalidateQueries( { queryKey: key } );
 			}
 		},
 	} );
@@ -1116,11 +1132,12 @@ export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
 			const key = mastodonAuthorProfileKey( vars );
 			if ( context?.previous ) {
 				queryClient.setQueryData( key, context.previous );
-			} else {
-				// No snapshot to roll back to; refetch so the optimistic
-				// patch can't outlive the failure as a stale cache value.
-				queryClient.invalidateQueries( { queryKey: key } );
+				return;
 			}
+			// No snapshot to roll back to; refetch so the optimistic patch can't
+			// outlive the failure as a stale cache value. Returning the promise
+			// keeps the mutation in `pending` until the refetch settles.
+			return queryClient.invalidateQueries( { queryKey: key } );
 		},
 		onSuccess: ( data, vars ) => {
 			const key = mastodonAuthorProfileKey( vars );
@@ -1137,7 +1154,7 @@ export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
 				// (e.g. route change). Trigger a refetch so the
 				// authoritative server `viewer` (which carries
 				// `requested: true` for locked accounts) isn't lost.
-				queryClient.invalidateQueries( { queryKey: key } );
+				return queryClient.invalidateQueries( { queryKey: key } );
 			}
 		},
 	} );

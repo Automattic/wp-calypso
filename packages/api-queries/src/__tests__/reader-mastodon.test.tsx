@@ -1468,6 +1468,87 @@ describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
 			expect( cached?.viewer?.requested ).toBe( false );
 		} );
 
+		it( 'optimistically sets viewer.requested=true (not following) on follow when vars.locked is true', async () => {
+			// Without the locked branch the patch would write `following: true`
+			// for the duration of the round-trip, then snap to `requested: true`
+			// on commit — a UX flip-flop and a misleading mid-flight aria-label.
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile( { locked: true } ) );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.delay( 50 )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: true },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let inFlight: Promise< unknown > | undefined;
+			act( () => {
+				inFlight = result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+					locked: true,
+				} );
+			} );
+
+			// Wait for onMutate to resolve before reading the cache — the
+			// optimistic patch lands synchronously after cancelQueries settles.
+			await waitFor( () => {
+				const mid = client.getQueryData< MastodonAuthorProfile >( key );
+				expect( mid?.viewer?.requested ).toBe( true );
+				expect( mid?.viewer?.following ).toBe( false );
+			} );
+
+			await act( async () => {
+				await inFlight;
+			} );
+		} );
+
+		it( 'falls back to old.locked when vars.locked is omitted', async () => {
+			// Backwards-compat: callers that haven't yet threaded `locked` into
+			// vars still get the right optimistic patch by reading the cached
+			// profile's `locked` flag.
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile( { locked: true } ) );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.delay( 50 )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: true },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let inFlight: Promise< unknown > | undefined;
+			act( () => {
+				inFlight = result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+			} );
+
+			await waitFor( () => {
+				const mid = client.getQueryData< MastodonAuthorProfile >( key );
+				expect( mid?.viewer?.requested ).toBe( true );
+				expect( mid?.viewer?.following ).toBe( false );
+			} );
+
+			await act( async () => {
+				await inFlight;
+			} );
+		} );
+
 		it( 'commits requested: true from server response (locked account)', async () => {
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 			const key = readerMastodonKeys.authorProfile( 1, '200' );
