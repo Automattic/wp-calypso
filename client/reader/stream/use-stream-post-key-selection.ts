@@ -15,15 +15,11 @@ interface UseStreamPostKeySelectionOptions {
 	streamKey: string;
 	localeSlug?: string | null;
 	/**
-	 * Explicit stream items to use for prev/next calculation.
-	 *
-	 * Current behavior requires callers to pass items (e.g. `<Stream>`).
-	 *
-	 * Planned behavior for full-post integration:
-	 * - make this optional
-	 * - when omitted, resolve items from in-memory React Query cache for
-	 *   `['read','stream','infinite', streamKey, localeSlug]`
-	 * - do not trigger network fetches from this hook
+	 * Explicit stream items to use for prev/next calculation. Live consumers
+	 * (`<Stream>`) pass the items they're rendering. When omitted, the hook
+	 * derives items from the in-memory React Query infinite-stream cache —
+	 * used by the full-post view to navigate prev/next without re-fetching.
+	 * No network calls are issued from this hook.
 	 */
 	items?: PostKey[];
 	currentPostKey?: PostKey | null;

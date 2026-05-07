@@ -121,8 +121,6 @@ export interface StreamProps {
 	width?: number;
 }
 
-const defaultEmptyContent = () => <EmptyContent />;
-
 export function Stream( props: StreamProps ) {
 	const {
 		streamKey: rawStreamKey,
@@ -135,13 +133,14 @@ export function Stream( props: StreamProps ) {
 		showFollowInHeader = false,
 		showSiteNameOnCards,
 		isDiscoverStream = false,
+		hideDefaultEmptyContentIfMissing,
 		restoreScroll = true,
 		forcePlaceholders = false,
 		fixedHeaderHeight,
 		followSource,
 		recsStreamKey,
 		startDate,
-		emptyContent = defaultEmptyContent,
+		emptyContent,
 		intro,
 		streamHeader,
 		sidebarTabTitle,
@@ -676,7 +675,18 @@ export function Stream( props: StreamProps ) {
 			/>
 		);
 	} else if ( hasNoPosts ) {
-		const emptyBody = emptyContent() ?? null;
+		// When the caller doesn't supply `emptyContent`, fall back to the
+		// default `<EmptyContent />` — unless `hideDefaultEmptyContentIfMissing`
+		// is set, which lets host shells (e.g. feed-preview) suppress the
+		// default empty UI entirely.
+		let emptyBody: React.ReactNode;
+		if ( emptyContent ) {
+			emptyBody = emptyContent();
+		} else if ( hideDefaultEmptyContentIfMissing ) {
+			emptyBody = null;
+		} else {
+			emptyBody = <EmptyContent />;
+		}
 		body = isTwoColumns ? (
 			<div className="stream__two-column">
 				<div className="reader__content">{ emptyBody }</div>
@@ -770,7 +780,7 @@ export function Stream( props: StreamProps ) {
 					{ translate( '%s new post', '%s new posts', {
 						args: [ String( pendingCount ) ],
 						count: pendingCount,
-						comment: '%s is the number of new posts. For example: "1" or "40+"',
+						comment: '%s is the number of new posts. For example: "1" or "10".',
 					} ) }
 				</button>
 			) }
