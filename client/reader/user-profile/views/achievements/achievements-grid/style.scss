@@ -68,6 +68,22 @@
 		}
 	}
 
+	.achievement-card__progress {
+		align-items: center;
+		display: flex;
+		gap: 8px;
+		margin-top: 8px;
+	}
+
+	.achievement-card__progress-bar {
+		flex: 1;
+	}
+
+	.achievement-card__progress-label {
+		color: var( --studio-gray-40 );
+		font-size: $font-body-extra-small;
+	}
+
 	.achievement-card__empty {
 		margin-top: 26px;
 		text-align: center;
