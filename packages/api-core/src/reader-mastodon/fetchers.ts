@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError } from './errors';
 import type {
+	MastodonAuthStatus,
 	MastodonCreateLikeParams,
 	MastodonDeleteLikeParams,
 	MastodonAuthorFeedFilter,
@@ -79,6 +80,17 @@ export async function getMastodonConnection( id: number ): Promise< MastodonConn
 			path: `/reader/mastodon/connections/${ id }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as MastodonConnectionDetails;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function getMastodonAuthStatus( id: number ): Promise< MastodonAuthStatus > {
+	try {
+		return ( await wpcom.req.get( {
+			path: `/reader/mastodon/connections/${ id }/auth-status`,
+			apiNamespace: NAMESPACE,
+		} ) ) as MastodonAuthStatus;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
