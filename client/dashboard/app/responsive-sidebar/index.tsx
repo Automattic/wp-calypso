@@ -43,7 +43,7 @@ export default function ResponsiveSidebar( {
 	}, [ isDesktop, router, onClose ] );
 
 	if ( isDesktop ) {
-		return <Sidebar />;
+		return <Sidebar scrollSyncEnabled />;
 	}
 
 	return (
