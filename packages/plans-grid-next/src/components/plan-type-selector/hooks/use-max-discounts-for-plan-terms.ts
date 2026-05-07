@@ -10,6 +10,11 @@ import {
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import {
+	calculateDiscountPercentage,
+	fromPricingMetaForGridPlan,
+	getPlanPriceForDuration,
+} from '../../../lib/plan-pricing-utils';
 
 /**
  * Calculate the maximum discount for each term for a given set of plans
@@ -41,7 +46,6 @@ export default function useMaxDiscountsForPlanTerms(
 			? currentLowestTerm
 			: term;
 	}, terms[ 0 ] );
-	const lowestTermInMonths = getBillingMonthsForTerm( lowestTerm );
 
 	const lowestTermPlanSlugs = allRelatedPlanSlugs.filter(
 		( planSlug ) => getPlan( planSlug )?.term === lowestTerm
@@ -60,37 +64,32 @@ export default function useMaxDiscountsForPlanTerms(
 	>;
 	termDefinitionsMapping.forEach( ( termMapping ) => {
 		if ( termMapping.term === lowestTerm ) {
-			return 0;
+			return;
 		}
 		const termDiscounts = lowestTermPlanSlugs.map( ( lowestTermPlanSlug ) => {
 			const lowestTermPlanPricing = plansPricing?.[ lowestTermPlanSlug ];
-			const lowestTermPlanCost = lowestTermPlanPricing?.originalPrice.full;
-			if ( ! lowestTermPlanCost ) {
+			const lowestTermInfo = lowestTermPlanPricing
+				? fromPricingMetaForGridPlan( lowestTermPlanPricing )
+				: null;
+			if ( ! lowestTermInfo ) {
 				return 0;
 			}
-			const lowestTermMonthlyCost = lowestTermPlanCost / lowestTermInMonths;
 
-			/**
-			 * Calculate the monthly cost of the term price
-			 */
 			const variantPlanSlug =
 				getPlanSlugForTermVariant( lowestTermPlanSlug, termMapping.term ) ?? '';
 			const variantPlanPricing = plansPricing?.[ variantPlanSlug ];
-			const isOnIntroOffer =
-				variantPlanPricing?.introOffer && ! variantPlanPricing.introOffer.isOfferComplete;
-			const variantTermPrice = isOnIntroOffer
-				? variantPlanPricing?.originalPrice?.full || 0
-				: variantPlanPricing?.discountedPrice?.full || variantPlanPricing?.originalPrice?.full || 0;
-			if ( ! variantTermPrice ) {
+			const variantInfo = variantPlanPricing
+				? fromPricingMetaForGridPlan( variantPlanPricing )
+				: null;
+			if ( ! variantInfo ) {
 				return 0;
 			}
-			const variantTermInMonths = getBillingMonthsForTerm(
-				URL_FRIENDLY_TERMS_MAPPING[ termMapping.urlFriendlyTerm ]
-			);
-			const variantTermMonthlyCost = variantTermPrice / variantTermInMonths;
 
-			return Math.floor(
-				( ( lowestTermMonthlyCost - variantTermMonthlyCost ) * 100 ) / lowestTermMonthlyCost
+			return (
+				calculateDiscountPercentage(
+					getPlanPriceForDuration( lowestTermInfo, variantInfo.termMonths ),
+					getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
+				) ?? 0
 			);
 		} );
 		termWiseMaxDiscount[ termMapping.urlFriendlyTerm ] = termDiscounts.length
