@@ -81,7 +81,7 @@ describe( 'useVideoClipSuggestions', () => {
 
 		expect( mockUseAsyncSuggestionsLoader ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				cacheKey: 'video-clip-post-42',
+				cacheKey: 'video-clip-post-42-cinematic',
 				enabled: true,
 			} )
 		);
