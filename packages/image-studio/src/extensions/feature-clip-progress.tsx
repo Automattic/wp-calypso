@@ -24,16 +24,17 @@ interface Step {
 
 function phaseToSteps( phase: FeatureClipProgressPhase ): Step[] {
 	const labels = [
-		__( 'Analyzing post', __i18n_text_domain__ ),
-		__( 'Composing scene', __i18n_text_domain__ ),
-		__( 'Rendering clip', __i18n_text_domain__ ),
+		__( 'Reading post images', __i18n_text_domain__ ),
+		__( 'Composing the clip', __i18n_text_domain__ ),
+		__( 'Rendering frames', __i18n_text_domain__ ),
+		__( 'Uploading to media library', __i18n_text_domain__ ),
 	];
 	const phaseToActiveIndex: Record< FeatureClipProgressPhase, number > = {
 		idle: 0,
 		analyzing: 0,
 		composing: 1,
 		rendering: 2,
-		uploading: 2,
+		uploading: 3,
 	};
 	const activeIndex = phaseToActiveIndex[ phase ] ?? 0;
 	const stateForIndex = ( index: number ): StepState => {

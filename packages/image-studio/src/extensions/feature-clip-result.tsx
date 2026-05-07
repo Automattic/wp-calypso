@@ -43,7 +43,7 @@ export function FeatureClipResult(): JSX.Element | null {
 		await insertBlocks( block );
 	};
 
-	const handleEdit = () => {
+	const handleRegenerate = () => {
 		const { openImageStudio } = dispatch( imageStudioStore );
 		openImageStudio( undefined, undefined, ImageStudioEntryPoint.PostEditorFeatureClip );
 	};
@@ -74,8 +74,13 @@ export function FeatureClipResult(): JSX.Element | null {
 				>
 					{ __( 'Insert into post', __i18n_text_domain__ ) }
 				</Button>
-				<Button variant="secondary" __next40pxDefaultSize onClick={ handleEdit }>
-					{ __( 'Edit', __i18n_text_domain__ ) }
+				<Button
+					variant="secondary"
+					__next40pxDefaultSize
+					className="image-studio-feature-clip-result__regenerate"
+					onClick={ handleRegenerate }
+				>
+					{ __( 'Regenerate', __i18n_text_domain__ ) }
 				</Button>
 			</div>
 		</div>
