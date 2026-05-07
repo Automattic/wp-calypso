@@ -334,6 +334,12 @@
 	// `color: inherit` at equal specificity. Chaining both classes here
 	// raises specificity (0,2,1 > 0,1,1) so we win cleanly without touching
 	// connect-screen styles used by Jetpack Connect / invite flows.
+	//
+	// Co-residency contract: this rule depends on both classes being applied
+	// to the same element. The current callsite is request-login-email-form's
+	// `<ConsentText className="magic-login__tos wp-login__one-login-layout-tos">`.
+	// If a future refactor drops one of those classes, this rule silently
+	// no-ops and the color regresses to the consent-text default (gray-70).
 	&.connect-screen-consent-text a {
 		color: var( --studio-gray-50, #646970 );
 
