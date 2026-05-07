@@ -1,11 +1,7 @@
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import {
-	getFeatureCardData,
-	getFeatureSelection,
-	getPluginDisplayName,
-} from './connection-content';
+import { getFeatureCardData, getFeatureSelection } from './connection-content';
 import type { FeatureCardKey } from './connection-content';
 import type { FeatureCard } from 'calypso/components/connect-screen/features-section';
 import type { ReactNode } from 'react';
@@ -63,7 +59,6 @@ function getLogoAltForCardKey( key: FeatureCardKey ): string {
 
 export interface ConnectorFeatureCards {
 	cards: FeatureCard[];
-	overflowItems: string[];
 }
 
 /**
@@ -71,19 +66,11 @@ export interface ConnectorFeatureCards {
  * the `plugins` query parameter — picks up to three cards (per the
  * family-priority rules in `getFeatureSelection`) and resolves each one's
  * logo, title, and bullet copy.
- *
- * The Connected-plugins row mirrors `getFeatureSelection`'s overflow
- * contract verbatim: it repeats every active plugin's display name —
- * including the slugs whose family already earns a card — whenever more
- * than one plugin is connected. The redundancy is deliberate, so users
- * can still tell which Jetpack plugin(s) the connection covers even
- * though every Jetpack-family card shares the same brand mark.
- * Single-plugin connections skip the row entirely.
  */
 export function getConnectorFeatureCards(
 	pluginSlugs: readonly string[] = []
 ): ConnectorFeatureCards {
-	const { cardKeys, overflowSlugs } = getFeatureSelection( pluginSlugs );
+	const { cardKeys } = getFeatureSelection( pluginSlugs );
 
 	const cards: FeatureCard[] = cardKeys.map( ( key ) => {
 		const data = getFeatureCardData( key );
@@ -96,7 +83,5 @@ export function getConnectorFeatureCards(
 		};
 	} );
 
-	const overflowItems = overflowSlugs.map( ( slug ) => getPluginDisplayName( slug ) );
-
-	return { cards, overflowItems };
+	return { cards };
 }

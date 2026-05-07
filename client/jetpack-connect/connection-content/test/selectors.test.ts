@@ -92,58 +92,42 @@ describe( 'hasFullJetpack', () => {
 
 describe( 'getFeatureSelection', () => {
 	test( 'returns the only-other fallback card when no plugins are active', () => {
-		expect( getFeatureSelection( [] ) ).toEqual( {
-			cardKeys: [ 'other' ],
-			overflowSlugs: [],
-		} );
+		expect( getFeatureSelection( [] ) ).toEqual( { cardKeys: [ 'other' ] } );
 	} );
 
-	test( 'lists every active slug in the Used-by row when more than one unknown plugin is connected', () => {
+	test( 'returns the only-other fallback card for unknown-only plugin sets', () => {
 		expect( getFeatureSelection( [ 'unknown-plugin', 'another-unknown' ] ) ).toEqual( {
 			cardKeys: [ 'other' ],
-			overflowSlugs: [ 'unknown-plugin', 'another-unknown' ],
 		} );
 	} );
 
-	test( 'features the highest-priority known family for single-plugin inputs and skips the Used-by row', () => {
+	test( 'features the highest-priority known family for single-plugin inputs', () => {
 		expect( getFeatureSelection( [ 'automattic-for-agencies-client' ] ) ).toEqual( {
 			cardKeys: [ 'a4a' ],
-			overflowSlugs: [],
 		} );
 	} );
 
-	test( 'repeats the visible plugins in the Used-by row whenever more than one is connected', () => {
-		// Same family → one card, two plugin names in Used-by so users can
-		// tell which Woo plugins are part of the connection.
+	test( 'collapses to a single family card when every active plugin is in that family', () => {
 		expect( getFeatureSelection( [ 'woocommerce', 'woocommerce-payments' ] ) ).toEqual( {
 			cardKeys: [ 'woo' ],
-			overflowSlugs: [ 'woocommerce', 'woocommerce-payments' ],
 		} );
+	} );
 
-		// Two different families → two cards, two plugin names. The
-		// redundancy is deliberate: titles are removed from cards, so the
-		// row is the only place the brand-shared Jetpack card gets a name.
+	test( 'features one card per top-priority family in priority order', () => {
 		expect( getFeatureSelection( [ 'woocommerce', 'jetpack' ] ) ).toEqual( {
 			cardKeys: [ 'woo', 'jetpack' ],
-			overflowSlugs: [ 'woocommerce', 'jetpack' ],
 		} );
 	} );
 
-	test( 'features all three known families when present and lists every active slug in the Used-by row', () => {
+	test( 'features all three known families when present', () => {
 		// Default max is 3: A4A on top (full-width in the layout), Woo and
-		// Jetpack share the row below. Used-by still repeats every active
-		// plugin (including the visible three) so individual Jetpack
-		// plugins are named even though every Jetpack-family card shares
-		// the same brand mark.
+		// Jetpack share the row below.
 		expect(
 			getFeatureSelection( [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ] )
-		).toEqual( {
-			cardKeys: [ 'a4a', 'woo', 'jetpack' ],
-			overflowSlugs: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
-		} );
+		).toEqual( { cardKeys: [ 'a4a', 'woo', 'jetpack' ] } );
 	} );
 
-	test( 'collapses multiple individual Jetpack plugins into the generic Jetpack card and lists each slug', () => {
+	test( 'collapses multiple individual Jetpack plugins into the generic Jetpack card', () => {
 		expect(
 			getFeatureSelection( [
 				'automattic-for-agencies-client',
@@ -151,125 +135,68 @@ describe( 'getFeatureSelection', () => {
 				'jetpack-boost',
 				'jetpack-search',
 			] )
-		).toEqual( {
-			cardKeys: [ 'a4a', 'woo', 'jetpack' ],
-			overflowSlugs: [
-				'automattic-for-agencies-client',
-				'woocommerce',
-				'jetpack-boost',
-				'jetpack-search',
-			],
-		} );
+		).toEqual( { cardKeys: [ 'a4a', 'woo', 'jetpack' ] } );
 	} );
 
 	test( 'respects the max argument', () => {
-		// Capping at 2 falls back to the previous "feature the top two
-		// families and list every active slug" behaviour, keeping Jetpack
-		// in the Used-by row because Jetpack is no longer featured.
 		expect(
 			getFeatureSelection( [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ], 2 )
-		).toEqual( {
-			cardKeys: [ 'a4a', 'woo' ],
-			overflowSlugs: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
-		} );
+		).toEqual( { cardKeys: [ 'a4a', 'woo' ] } );
 		expect( getFeatureSelection( [ 'automattic-for-agencies-client', 'woocommerce' ], 1 ) ).toEqual(
-			{
-				cardKeys: [ 'a4a' ],
-				overflowSlugs: [ 'automattic-for-agencies-client', 'woocommerce' ],
-			}
+			{ cardKeys: [ 'a4a' ] }
 		);
 	} );
 
-	test( 'lists unknown-family slugs in the Used-by row alongside the featured plugins', () => {
+	test( 'features the known family card and ignores unknown-family slugs', () => {
 		expect( getFeatureSelection( [ 'jetpack', 'unknown-plugin' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack' ],
-			overflowSlugs: [ 'jetpack', 'unknown-plugin' ],
 		} );
 	} );
 
 	test( 'collapses to the generic Jetpack card when the full Jetpack plugin is present', () => {
-		expect( getFeatureSelection( [ 'jetpack' ] ) ).toEqual( {
-			cardKeys: [ 'jetpack' ],
-			overflowSlugs: [],
-		} );
+		expect( getFeatureSelection( [ 'jetpack' ] ) ).toEqual( { cardKeys: [ 'jetpack' ] } );
 		expect( getFeatureSelection( [ 'jetpack', 'jetpack-boost' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack' ],
-			overflowSlugs: [ 'jetpack', 'jetpack-boost' ],
 		} );
 	} );
 
 	test( 'overrides the family card with the per-plugin card for a single individual Jetpack plugin', () => {
 		expect( getFeatureSelection( [ 'jetpack-backup' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack-backup' ],
-			overflowSlugs: [],
 		} );
 		expect( getFeatureSelection( [ 'jetpack-protect' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack-protect' ],
-			overflowSlugs: [],
 		} );
 		expect( getFeatureSelection( [ 'jetpack-boost' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack-boost' ],
-			overflowSlugs: [],
 		} );
 		expect( getFeatureSelection( [ 'jetpack-search' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack-search' ],
-			overflowSlugs: [],
 		} );
 		expect( getFeatureSelection( [ 'jetpack-social' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack-social' ],
-			overflowSlugs: [],
 		} );
 		expect( getFeatureSelection( [ 'jetpack-videopress' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack-videopress' ],
-			overflowSlugs: [],
 		} );
 	} );
 
 	test( 'falls back to the generic Jetpack card for a single but unrecognised individual Jetpack plugin', () => {
-		expect( getFeatureSelection( [ 'jetpack-newthing' ] ) ).toEqual( {
-			cardKeys: [ 'jetpack' ],
-			overflowSlugs: [],
-		} );
+		expect( getFeatureSelection( [ 'jetpack-newthing' ] ) ).toEqual( { cardKeys: [ 'jetpack' ] } );
 	} );
 
-	test( 'collapses to the generic Jetpack card for two-or-more individual Jetpack plugins and lists each slug', () => {
+	test( 'collapses to the generic Jetpack card for two-or-more individual Jetpack plugins', () => {
 		expect( getFeatureSelection( [ 'jetpack-backup', 'jetpack-boost' ] ) ).toEqual( {
 			cardKeys: [ 'jetpack' ],
-			overflowSlugs: [ 'jetpack-backup', 'jetpack-boost' ],
 		} );
 	} );
 
-	test( 'pairs a per-plugin Jetpack card with another family card and still names both slugs', () => {
+	test( 'pairs a per-plugin Jetpack card with another family card', () => {
 		expect( getFeatureSelection( [ 'woocommerce', 'jetpack-boost' ] ) ).toEqual( {
 			cardKeys: [ 'woo', 'jetpack-boost' ],
-			overflowSlugs: [ 'woocommerce', 'jetpack-boost' ],
 		} );
 		expect( getFeatureSelection( [ 'automattic-for-agencies-client', 'jetpack-search' ] ) ).toEqual(
-			{
-				cardKeys: [ 'a4a', 'jetpack-search' ],
-				overflowSlugs: [ 'automattic-for-agencies-client', 'jetpack-search' ],
-			}
+			{ cardKeys: [ 'a4a', 'jetpack-search' ] }
 		);
-	} );
-
-	test( 'preserves the input order when building the Used-by list', () => {
-		expect(
-			getFeatureSelection( [
-				'jetpack',
-				'automattic-for-agencies-client',
-				'woocommerce',
-				'unknown-a',
-				'unknown-b',
-			] )
-		).toEqual( {
-			cardKeys: [ 'a4a', 'woo', 'jetpack' ],
-			overflowSlugs: [
-				'jetpack',
-				'automattic-for-agencies-client',
-				'woocommerce',
-				'unknown-a',
-				'unknown-b',
-			],
-		} );
 	} );
 } );

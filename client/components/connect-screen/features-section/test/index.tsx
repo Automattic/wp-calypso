@@ -85,39 +85,6 @@ describe( 'FeaturesSection', () => {
 		expect( screen.getByTestId( 'custom-logo' ) ).toBeInTheDocument();
 	} );
 
-	test( 'renders the overflow stack with the "Connected plugins" label and a comma list', () => {
-		render(
-			<FeaturesSection
-				cards={ baseCards }
-				overflowItems={ [ 'Jetpack Boost', 'Jetpack Search' ] }
-			/>
-		);
-		expect( screen.getByText( 'Connected plugins' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Jetpack Boost, Jetpack Search' ) ).toBeInTheDocument();
-	} );
-
-	test( 'renders only the label and the items in the overflow stack — no leading logo', () => {
-		const { container } = render(
-			<FeaturesSection cards={ baseCards } overflowItems={ [ 'Jetpack VaultPress Backup' ] } />
-		);
-		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
-		const children = Array.from( overflow?.children ?? [] );
-		expect( children.length ).toBe( 2 );
-		expect( children[ 0 ].classList ).toContain(
-			'connect-screen-features-section__overflow-label'
-		);
-		expect( children[ 1 ].classList ).toContain(
-			'connect-screen-features-section__overflow-items'
-		);
-	} );
-
-	test( 'omits the overflow stack when items are absent or empty', () => {
-		const { container, rerender } = render( <FeaturesSection cards={ baseCards } /> );
-		expect( container.querySelector( '.connect-screen-features-section__overflow' ) ).toBeNull();
-		rerender( <FeaturesSection cards={ baseCards } overflowItems={ [] } /> );
-		expect( container.querySelector( '.connect-screen-features-section__overflow' ) ).toBeNull();
-	} );
-
 	test( 'tags the wrapper with the card-count modifier so the layout can switch breakpoints', () => {
 		const { container } = render( <FeaturesSection cards={ baseCards } /> );
 		expect(

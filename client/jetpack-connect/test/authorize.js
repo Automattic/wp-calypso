@@ -143,17 +143,9 @@ describe( 'JetpackAuthorize', () => {
 
 		// Features section renders one card per top-priority family. Cards
 		// no longer render H3 titles — the brand name lives on each card's
-		// accessible label instead. The Connected-plugins row repeats the
-		// visible plugins so users can tell which Jetpack plugin is part
-		// of the connection even though every Jetpack-family card shares
-		// the same brand mark.
+		// accessible label instead.
 		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
-		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
-		expect( overflow ).toBeInTheDocument();
-		expect( overflow ).toHaveTextContent( 'Connected plugins' );
-		expect( overflow ).toHaveTextContent( 'WooCommerce' );
-		expect( overflow ).toHaveTextContent( 'Jetpack' );
 		// Static FeaturesSection bullets land on the auth surface — sample
 		// one per card so the assertion stays sturdy without pinning every
 		// piece of copy.
@@ -190,17 +182,6 @@ describe( 'JetpackAuthorize', () => {
 		);
 		expect( cards.length ).toBe( 3 );
 		expect( cards[ 0 ] ).toHaveAttribute( 'aria-label', 'Automattic for Agencies' );
-
-		// Connected-plugins row repeats every active plugin — including
-		// the Jetpack-family slug — so individual Jetpack plugins stay
-		// disambiguated even though every Jetpack-family card shares the
-		// same brand mark.
-		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
-		expect( overflow ).toBeInTheDocument();
-		expect( overflow ).toHaveTextContent( 'Connected plugins' );
-		expect( overflow ).toHaveTextContent( 'Automattic for Agencies' );
-		expect( overflow ).toHaveTextContent( 'WooCommerce' );
-		expect( overflow ).toHaveTextContent( 'Jetpack' );
 	} );
 
 	test( 'features section uses the per-plugin override for a single individual Jetpack plugin', () => {

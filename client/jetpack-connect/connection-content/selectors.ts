@@ -57,14 +57,11 @@ export function hasFullJetpack( pluginSlugs: readonly string[] ): boolean {
 }
 
 /**
- * Result of `getFeatureSelection()` — the exact set of cards to render in
- * the features section, plus the trailing Used-by row that lists every
- * active plugin (including the slugs the cards already represent) when
- * more than one plugin is connected.
+ * Result of `getFeatureSelection()` — the exact set of cards to render
+ * in the features section, in priority order.
  */
 export interface FeatureSelection {
 	cardKeys: FeatureCardKey[];
-	overflowSlugs: string[];
 }
 
 /**
@@ -107,7 +104,7 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
 }
 
 /**
- * Pick the cards to feature plus the comprehensive Used-by plugin list,
+ * Pick the cards to feature in the connect-account features section,
  * capped at `max` cards (default `MAX_FEATURED_CARDS` so the function
  * stays aligned with the layout's card cap).
  *
@@ -116,16 +113,6 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
  *     `jetpack`), capped at `max`.
  *  2. Map each family to its card key, with per-plugin overrides for the
  *     "single individual Jetpack plugin" case.
- *  3. The Used-by row repeats every active plugin slug — including the
- *     ones the cards already represent — whenever more than one plugin is
- *     connected. Order mirrors the input so caller intent is preserved.
- *     Single-plugin connections (or no plugins at all) skip the row
- *     because there's nothing to disambiguate.
- *
- * The redundancy is deliberate: every Jetpack-family card shares the same
- * brand mark (and the per-plugin variants share the wordmark), so the
- * explicit list is the only place users can tell *which* Jetpack
- * plugin(s) the connection actually covers.
  *
  * The single `'other'` fallback card only renders when no known family is
  * present at all (the empty-input or only-unknown-plugins edge case).
@@ -138,14 +125,12 @@ export function getFeatureSelection(
 		( family ) => family !== 'other'
 	);
 
-	const overflowSlugs = pluginSlugs.length > 1 ? [ ...pluginSlugs ] : [];
-
 	if ( knownFamilies.length === 0 ) {
-		return { cardKeys: [ 'other' ], overflowSlugs };
+		return { cardKeys: [ 'other' ] };
 	}
 
 	const featured = knownFamilies.slice( 0, max );
 	const cardKeys = featured.map( ( family ) => getFamilyCardKey( family, pluginSlugs ) );
 
-	return { cardKeys, overflowSlugs };
+	return { cardKeys };
 }

@@ -1,5 +1,4 @@
 import { isValidElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
@@ -21,7 +20,6 @@ export interface FeatureCard {
 
 export interface FeaturesSectionProps {
 	cards: FeatureCard[];
-	overflowItems?: string[];
 	className?: string;
 }
 
@@ -55,21 +53,12 @@ function renderImage( logo: ReactNode | string, logoAlt = '', wrapperClass: stri
  *
  * Layout follows the card count: 1 card spans the column, 2 cards share a
  * two-up grid, and 3 cards stack the highest-priority card full-width on
- * top with the remaining two side-by-side underneath. Below the grid, the
- * optional `overflowItems` prop renders a "Connected plugins" line that
- * lists every active plugin so the brand-shared Jetpack cards keep a
- * textual disambiguation hook.
+ * top with the remaining two side-by-side underneath.
  */
-export function FeaturesSection( {
-	cards,
-	overflowItems,
-	className,
-}: FeaturesSectionProps ): JSX.Element | null {
+export function FeaturesSection( { cards, className }: FeaturesSectionProps ): JSX.Element | null {
 	if ( ! cards || cards.length === 0 ) {
 		return null;
 	}
-
-	const hasOverflow = overflowItems && overflowItems.length > 0;
 
 	return (
 		<div
@@ -108,16 +97,6 @@ export function FeaturesSection( {
 					</article>
 				) ) }
 			</div>
-			{ hasOverflow && (
-				<div className="connect-screen-features-section__overflow">
-					<p className="connect-screen-features-section__overflow-label">
-						{ __( 'Connected plugins' ) }
-					</p>
-					<p className="connect-screen-features-section__overflow-items">
-						{ overflowItems.join( ', ' ) }
-					</p>
-				</div>
-			) }
 		</div>
 	);
 }

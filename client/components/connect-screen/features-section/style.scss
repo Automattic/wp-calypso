@@ -2,7 +2,7 @@
 
 .connect-screen-features-section {
 	width: 100%;
-	margin-block-end: 1.5rem;
+	margin-block-end: 3rem;
 }
 
 .connect-screen-features-section__cards {
@@ -86,28 +86,4 @@
 	flex-shrink: 0;
 	margin-block-start: 1px;
 	fill: var( --color-success-50, #008a20 );
-}
-
-.connect-screen-features-section__overflow {
-	margin-block-start: 24px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 8px;
-	text-align: center;
-}
-
-.connect-screen-features-section__overflow-label {
-	margin: 0;
-	font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
-	font-weight: 500;
-	color: var( --color-text-subtle, #50575e );
-	line-height: 1.4;
-}
-
-.connect-screen-features-section__overflow-items {
-	margin: 0;
-	font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
-	color: var( --color-text-subtle, #50575e );
-	line-height: 1.5;
 }
