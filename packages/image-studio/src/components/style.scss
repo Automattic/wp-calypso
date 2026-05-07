@@ -579,20 +579,41 @@ body.js.is-image-studio-open {
 /*
  * While a Highlights clip is rendering (~60-90s), EditFrame's per-frame
  * DOM→SVG capture saturates the main thread. Any CSS animation that runs
- * on the main thread (which is most of them — anything affecting layout
- * or paint) stutters visibly. Suppress non-essential motion in the modal
- * for the render's duration; the agenttic ThinkingMessage's dots are
- * exempt because that's the user's only progress signal.
+ * on the main thread (anything affecting layout or paint) stutters
+ * visibly. Suppress non-essential motion in the modal for the render's
+ * duration. Exempt:
+ *   - The agenttic ThinkingMessage dots (user's progress signal).
+ *   - Anything matching `.loading-dots` (other dot indicators).
+ *   - The generate-layout subtree, whose central SVG runs the
+ *     "AI is working" rotate+scale animation. That uses transform only,
+ *     which the compositor can run off the main thread; will-change
+ *     below tells the browser to actually promote it to its own layer.
  *
- * Approach: zero out animation + transition durations on descendants.
- * `* :not(...)` is heavy specificity but bounded to the modal subtree.
+ * `:where()` flattens the inner selector so the suppression rule's
+ * specificity stays at one class + one universal — easy to override.
  */
 .image-studio-modal--rendering-feature-clip {
-	*:not([class*='thinking']):not([class*='Thinking']):not([class*='loading-dots']) {
+	*:not(
+		:where(
+			[class*='thinking'],
+			[class*='Thinking'],
+			[class*='loading-dots'],
+			.image-studio-modal__generate-layout,
+			.image-studio-modal__generate-layout *
+		)
+	) {
 		animation-duration: 0.001ms !important;
 		animation-delay: 0ms !important;
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.001ms !important;
 		transition-delay: 0ms !important;
+	}
+
+	/* Promote the generate-layout SVG to its own compositor layer so its
+	   rotate+scale animation stays smooth while EditFrame saturates the
+	   main thread. transform-based animations run off-thread on a
+	   dedicated layer. */
+	.image-studio-modal__generate-layout svg {
+		will-change: transform;
 	}
 }
