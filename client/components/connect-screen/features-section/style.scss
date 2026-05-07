@@ -2,7 +2,7 @@
 
 .connect-screen-features-section {
 	width: 100%;
-	margin-bottom: 1.5rem;
+	margin-block-end: 1.5rem;
 }
 
 .connect-screen-features-section__cards {
@@ -15,7 +15,7 @@
 		// viewports. The connector form column is 520px wide, which gives
 		// roughly 240px per card in the two-up grid — enough for a centered
 		// brand logo and 2-3 bullets.
-		.connect-screen-features-section.has-2-cards & {
+		.connect-screen-features-section.has-2-card & {
 			grid-template-columns: 1fr 1fr;
 		}
 
@@ -24,7 +24,7 @@
 		// — matches the two-card layout the no-A4A scenario already uses.
 		// The full-width card centers its bullets so the wider column reads
 		// as a deliberate hero block rather than a left-anchored list.
-		.connect-screen-features-section.has-3-cards & {
+		.connect-screen-features-section.has-3-card & {
 			grid-template-columns: 1fr 1fr;
 
 			.connect-screen-features-section__card:first-child {
@@ -84,12 +84,12 @@
 
 .connect-screen-features-section__card-bullet-icon {
 	flex-shrink: 0;
-	margin-top: 1px;
-	fill: var( --studio-green-50, #008a20 );
+	margin-block-start: 1px;
+	fill: var( --color-success-50, #008a20 );
 }
 
 .connect-screen-features-section__overflow {
-	margin: 24px 0 0;
+	margin-block-start: 24px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;

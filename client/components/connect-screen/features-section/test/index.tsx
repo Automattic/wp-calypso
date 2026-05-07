@@ -1,13 +1,6 @@
 /** @jest-environment jsdom */
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { FeaturesSection } from '../index';
-
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( s: string ) => s,
-	localize: ( Component: React.ComponentType ) => Component,
-	withRtl: ( Component: React.ComponentType ) => Component,
-} ) );
 
 describe( 'FeaturesSection', () => {
 	const baseCards = [
@@ -128,11 +121,11 @@ describe( 'FeaturesSection', () => {
 	test( 'tags the wrapper with the card-count modifier so the layout can switch breakpoints', () => {
 		const { container } = render( <FeaturesSection cards={ baseCards } /> );
 		expect(
-			container.querySelector( '.connect-screen-features-section.has-2-cards' )
+			container.querySelector( '.connect-screen-features-section.has-2-card' )
 		).toBeInTheDocument();
 		const single = render( <FeaturesSection cards={ [ baseCards[ 0 ] ] } /> );
 		expect(
-			single.container.querySelector( '.connect-screen-features-section.has-1-cards' )
+			single.container.querySelector( '.connect-screen-features-section.has-1-card' )
 		).toBeInTheDocument();
 		const triple = render(
 			<FeaturesSection
@@ -148,7 +141,7 @@ describe( 'FeaturesSection', () => {
 			/>
 		);
 		expect(
-			triple.container.querySelector( '.connect-screen-features-section.has-3-cards' )
+			triple.container.querySelector( '.connect-screen-features-section.has-3-card' )
 		).toBeInTheDocument();
 	} );
 } );

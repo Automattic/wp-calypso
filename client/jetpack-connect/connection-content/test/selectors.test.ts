@@ -1,6 +1,6 @@
 import {
+	MAX_FEATURED_CARDS,
 	getFeatureSelection,
-	getOverflowSlugs,
 	getPresentFamilies,
 	getTopFamilies,
 	hasFullJetpack,
@@ -28,19 +28,22 @@ describe( 'getPresentFamilies', () => {
 } );
 
 describe( 'getTopFamilies', () => {
-	test( 'returns at most two families by default', () => {
+	test( 'returns up to MAX_FEATURED_CARDS families by default', () => {
+		expect( MAX_FEATURED_CARDS ).toBe( 3 );
 		expect(
-			getTopFamilies( [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ] )
-		).toEqual( [ 'a4a', 'woo' ] );
+			getTopFamilies( [
+				'automattic-for-agencies-client',
+				'woocommerce',
+				'jetpack',
+				'unknown-plugin',
+			] )
+		).toEqual( [ 'a4a', 'woo', 'jetpack' ] );
 	} );
 
 	test( 'respects the max argument when provided', () => {
 		expect(
-			getTopFamilies(
-				[ 'automattic-for-agencies-client', 'woocommerce', 'jetpack', 'unknown-plugin' ],
-				3
-			)
-		).toEqual( [ 'a4a', 'woo', 'jetpack' ] );
+			getTopFamilies( [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ], 2 )
+		).toEqual( [ 'a4a', 'woo' ] );
 		expect( getTopFamilies( [ 'automattic-for-agencies-client', 'woocommerce' ], 1 ) ).toEqual( [
 			'a4a',
 		] );
@@ -84,33 +87,6 @@ describe( 'hasFullJetpack', () => {
 	test( 'is false for empty and unknown sets', () => {
 		expect( hasFullJetpack( [] ) ).toBe( false );
 		expect( hasFullJetpack( [ 'unknown', 'woocommerce' ] ) ).toBe( false );
-	} );
-} );
-
-describe( 'getOverflowSlugs', () => {
-	test( 'returns slugs whose family is not in the featured list', () => {
-		expect(
-			getOverflowSlugs(
-				[ 'automattic-for-agencies-client', 'woocommerce', 'jetpack', 'unknown-plugin' ],
-				[ 'a4a', 'woo' ]
-			)
-		).toEqual( [ 'jetpack', 'unknown-plugin' ] );
-	} );
-
-	test( 'returns all slugs when featured list is empty', () => {
-		expect( getOverflowSlugs( [ 'jetpack', 'woocommerce' ], [] ) ).toEqual( [
-			'jetpack',
-			'woocommerce',
-		] );
-	} );
-
-	test( 'returns no slugs when every family is featured', () => {
-		expect(
-			getOverflowSlugs(
-				[ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
-				[ 'a4a', 'woo', 'jetpack' ]
-			)
-		).toEqual( [] );
 	} );
 } );
 

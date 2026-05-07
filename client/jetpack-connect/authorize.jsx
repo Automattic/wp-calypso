@@ -1193,6 +1193,23 @@ export class JetpackAuthorize extends Component {
 	}
 
 	/**
+	 * True while the connection is mid-handshake (or already succeeded),
+	 * matching the gate used by both the action button and the
+	 * "Use a different account" link so the two render in the same
+	 * lifecycle window.
+	 */
+	get isInFlight() {
+		const { authorizeSuccess } = this.props.authorizationData;
+		return (
+			this.props.isFetchingAuthorizationSite ||
+			this.props.isRequestingSitePurchases ||
+			this.isAuthorizing() ||
+			this.retryingAuth ||
+			authorizeSuccess
+		);
+	}
+
+	/**
 	 * Render the "Use a different account" link that sits directly beneath
 	 * the user card on the unified connect-account surfaces. The link is
 	 * suppressed while the connection is in flight (or already succeeded)
@@ -1200,20 +1217,11 @@ export class JetpackAuthorize extends Component {
 	 * matching the loading-state guard the action button uses below.
 	 */
 	renderUseDifferentAccountLink() {
-		const { authorizeSuccess } = this.props.authorizationData;
-
 		if ( this.props.isSiteBlocked ) {
 			return null;
 		}
 
-		const isLoading =
-			this.props.isFetchingAuthorizationSite ||
-			this.props.isRequestingSitePurchases ||
-			this.isAuthorizing() ||
-			this.retryingAuth ||
-			authorizeSuccess;
-
-		if ( isLoading ) {
+		if ( this.isInFlight ) {
 			return null;
 		}
 
@@ -1232,18 +1240,11 @@ export class JetpackAuthorize extends Component {
 	}
 
 	renderStateAction( wooLoginURL ) {
-		const { authorizeSuccess } = this.props.authorizationData;
-
 		if ( this.props.isSiteBlocked ) {
 			return null;
 		}
 
-		const isLoading =
-			this.props.isFetchingAuthorizationSite ||
-			this.props.isRequestingSitePurchases ||
-			this.isAuthorizing() ||
-			this.retryingAuth ||
-			authorizeSuccess;
+		const isLoading = this.isInFlight;
 
 		if ( this.isWooJPC() ) {
 			return (

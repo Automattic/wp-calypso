@@ -4,6 +4,15 @@ import type { Family } from './families';
 import type { FeatureCardKey } from './family-features';
 
 /**
+ * Maximum number of brand-keyed cards the unified connect-account
+ * features section will surface at once. Mirrors the all-three-families
+ * stacked layout (A4A on top, Woo + Jetpack below) and is the single
+ * source of truth shared by the "top families" helper and the layout
+ * selector so a future layout change only needs one edit.
+ */
+export const MAX_FEATURED_CARDS = 3;
+
+/**
  * Return families present in the active plugin list, ordered by priority
  * (A4A → Woo → Jetpack → Other). Each family appears at most once.
  */
@@ -16,10 +25,14 @@ export function getPresentFamilies( pluginSlugs: readonly string[] ): Family[] {
 }
 
 /**
- * Return up to `max` highest-priority families present in the active plugin
- * list. Defaults to two to match the "Connection enables" two-up layout.
+ * Return up to `max` highest-priority families present in the active
+ * plugin list. Defaults to `MAX_FEATURED_CARDS` so the helper stays in
+ * sync with the layout's card cap.
  */
-export function getTopFamilies( pluginSlugs: readonly string[], max = 2 ): Family[] {
+export function getTopFamilies(
+	pluginSlugs: readonly string[],
+	max: number = MAX_FEATURED_CARDS
+): Family[] {
 	return getPresentFamilies( pluginSlugs ).slice( 0, max );
 }
 
@@ -41,21 +54,6 @@ export function isStore( pluginSlugs: readonly string[] ): boolean {
  */
 export function hasFullJetpack( pluginSlugs: readonly string[] ): boolean {
 	return pluginSlugs.some( ( slug ) => getPluginEntry( slug )?.isFullJetpack === true );
-}
-
-/**
- * Active plugin slugs that aren't represented by a featured family card.
- *
- * `featuredFamilies` is typically the result of `getTopFamilies(...)`. Any
- * plugin whose family isn't featured falls into this list. Currently
- * exported as a building block; `getFeatureSelection()` uses a different,
- * comprehensive Used-by list rather than this filtered view.
- */
-export function getOverflowSlugs(
-	pluginSlugs: readonly string[],
-	featuredFamilies: readonly Family[]
-): string[] {
-	return pluginSlugs.filter( ( slug ) => ! featuredFamilies.includes( getFamilyFromSlug( slug ) ) );
 }
 
 /**
@@ -110,8 +108,8 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
 
 /**
  * Pick the cards to feature plus the comprehensive Used-by plugin list,
- * capped at `max` cards (default 3 to cover the all-three-families
- * stacked layout).
+ * capped at `max` cards (default `MAX_FEATURED_CARDS` so the function
+ * stays aligned with the layout's card cap).
  *
  * Decision order:
  *  1. Take the highest-priority families with known copy (`a4a`, `woo`,
@@ -132,7 +130,10 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
  * The single `'other'` fallback card only renders when no known family is
  * present at all (the empty-input or only-unknown-plugins edge case).
  */
-export function getFeatureSelection( pluginSlugs: readonly string[], max = 3 ): FeatureSelection {
+export function getFeatureSelection(
+	pluginSlugs: readonly string[],
+	max: number = MAX_FEATURED_CARDS
+): FeatureSelection {
 	const knownFamilies = getPresentFamilies( pluginSlugs ).filter(
 		( family ) => family !== 'other'
 	);

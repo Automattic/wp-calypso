@@ -186,7 +186,7 @@ describe( 'JetpackAuthorize', () => {
 		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
 		const cards = container.querySelectorAll(
-			'.connect-screen-features-section.has-3-cards .connect-screen-features-section__card'
+			'.connect-screen-features-section.has-3-card .connect-screen-features-section__card'
 		);
 		expect( cards.length ).toBe( 3 );
 		expect( cards[ 0 ] ).toHaveAttribute( 'aria-label', 'Automattic for Agencies' );

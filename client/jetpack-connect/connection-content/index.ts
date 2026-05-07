@@ -9,11 +9,11 @@ export {
 } from './plugin-registry';
 export type { FeatureSelection } from './selectors';
 export {
+	MAX_FEATURED_CARDS,
 	getPresentFamilies,
 	getTopFamilies,
 	isStore,
 	hasFullJetpack,
-	getOverflowSlugs,
 	getFeatureSelection,
 } from './selectors';
 export type { SurfaceCopy } from './copy';

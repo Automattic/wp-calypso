@@ -75,7 +75,7 @@ export function FeaturesSection( {
 		<div
 			className={ clsx(
 				'connect-screen-features-section',
-				`has-${ cards.length }-cards`,
+				`has-${ cards.length }-card`,
 				className
 			) }
 		>
@@ -94,11 +94,13 @@ export function FeaturesSection( {
 						<ul className="connect-screen-features-section__card-bullets">
 							{ card.bullets.map( ( bullet, index ) => (
 								<li key={ index } className="connect-screen-features-section__card-bullet">
-									<Icon
-										icon={ check }
-										size={ 20 }
-										className="connect-screen-features-section__card-bullet-icon"
-									/>
+									<span aria-hidden="true">
+										<Icon
+											icon={ check }
+											size={ 20 }
+											className="connect-screen-features-section__card-bullet-icon"
+										/>
+									</span>
 									<span>{ bullet }</span>
 								</li>
 							) ) }

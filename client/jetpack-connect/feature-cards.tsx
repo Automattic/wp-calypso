@@ -67,17 +67,18 @@ export interface ConnectorFeatureCards {
 }
 
 /**
- * Build the FeaturesSection props for the connector authorize page from the
- * `plugins` query parameter — picks up to three cards (per the
+ * Build the FeaturesSection props for the connector authorize page from
+ * the `plugins` query parameter — picks up to three cards (per the
  * family-priority rules in `getFeatureSelection`) and resolves each one's
- * logo, title, and bullet copy. The Connected-plugins row lists every
- * active plugin's display name whenever more than one is connected,
- * giving users a textual fallback for the brand-shared Jetpack cards;
- * single-plugin connections skip the row.
+ * logo, title, and bullet copy.
  *
- * In the all-three-families layout the row drops Jetpack-family slugs:
- * each of the three cards carries a distinct brand mark, so the row is
- * left to disambiguate non-Jetpack extras and unknown plugins only.
+ * The Connected-plugins row mirrors `getFeatureSelection`'s overflow
+ * contract verbatim: it repeats every active plugin's display name —
+ * including the slugs whose family already earns a card — whenever more
+ * than one plugin is connected. The redundancy is deliberate, so users
+ * can still tell which Jetpack plugin(s) the connection covers even
+ * though every Jetpack-family card shares the same brand mark.
+ * Single-plugin connections skip the row entirely.
  */
 export function getConnectorFeatureCards(
 	pluginSlugs: readonly string[] = []
