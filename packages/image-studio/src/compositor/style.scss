@@ -41,6 +41,37 @@
 }
 
 /*
+ * Image group container — wraps a run of consecutive text scenes that share
+ * one image. The image mounts ONCE here (KB applies across the whole group's
+ * duration via --group-progress), and an inner sequence rotates the text.
+ * Layout stays absolute/inset:0 so the inner text-rotation fills the group.
+ */
+.image-studio-feature-clip .scene-image-group {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/*
+ * Inner text-rotation sequence inside an image group. Each item is itself
+ * a Timegroup with class .scene-text-rotation-item — they crossfade among
+ * each other while the image stays put. Items are absolutely positioned so
+ * the EditFrame sequence's own visibility toggling can show/hide them
+ * without layout reflow.
+ */
+.image-studio-feature-clip .scene-text-rotation {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+}
+
+.image-studio-feature-clip .scene-text-rotation-item {
+	position: absolute;
+	inset: 0;
+}
+
+/*
  * Inset overflow gives Ken-Burns room to translate without exposing edges.
  * The image renders 120px larger than its scene viewport on every side.
  */
@@ -62,18 +93,29 @@
 	filter: saturate(0.98) contrast(1.05);
 }
 
-/* Ken-Burns variants — driven by --scene-progress (0..1) per frame. */
+/*
+ * Ken-Burns variants — driven by --group-progress (0..1) per frame.
+ *
+ * Why --group-progress and not --scene-progress: when consecutive text scenes
+ * share the same image, we render them as one outer "image group" timegroup
+ * with an inner sequence rotating the text. The image element mounts once
+ * for the whole group's duration, and we want the KB transform to span THAT
+ * duration smoothly (no reset when the text rotates). The driver sets
+ * --group-progress on outer groups; for standalone scenes (text-only,
+ * title card) it mirrors --scene-progress to --group-progress so these same
+ * camera-* rules work in both contexts.
+ */
 .image-studio-feature-clip .camera-zoom-in {
-	transform: scale(calc(1 + (var(--scene-progress, 0) * 0.12)));
+	transform: scale(calc(1 + (var(--group-progress, 0) * 0.12)));
 }
 
 .image-studio-feature-clip .camera-zoom-out {
-	transform: scale(calc(1.18 - (var(--scene-progress, 0) * 0.12)));
+	transform: scale(calc(1.18 - (var(--group-progress, 0) * 0.12)));
 }
 
 .image-studio-feature-clip .camera-pan-left {
 	transform: translate3d(
-			calc(-12px + (var(--scene-progress, 0) * -68px)),
+			calc(-12px + (var(--group-progress, 0) * -68px)),
 			0,
 			0
 		)
@@ -82,7 +124,7 @@
 
 .image-studio-feature-clip .camera-pan-right {
 	transform: translate3d(
-			calc(12px + (var(--scene-progress, 0) * 68px)),
+			calc(12px + (var(--group-progress, 0) * 68px)),
 			0,
 			0
 		)

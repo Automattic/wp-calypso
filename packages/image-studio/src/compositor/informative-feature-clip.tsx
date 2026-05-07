@@ -1,5 +1,5 @@
 import { Image as EFImage, Timegroup } from '@editframe/react';
-import type { FeatureClipBrief } from './types';
+import type { FeatureClipBrief, FeatureClipCameraMove, FeatureClipScene } from './types';
 
 const INFORMATIVE_SCENE_DURATION_MS = 4000;
 // Cycled through text scenes so consecutive ones don't share a gradient.
@@ -11,6 +11,10 @@ const TEXT_ONLY_TITLE_CARD_DURATION_MS = 6000;
 // Longer crossfade between scenes so the captured frames blend more
 // gradually — short overlaps look like hard cuts in the rendered MP4.
 const TRANSITION_OVERLAP_MS = 700;
+// Crossfade between text overlays inside a single image-group. Shorter than
+// the top-level overlap because we DON'T want the image to be hidden during
+// the swap — only the text is changing.
+const TEXT_TRANSITION_OVERLAP_MS = 500;
 
 interface SyntheticAudioTimegroup extends HTMLElement {
 	renderAudio: ( fromMs: number, toMs: number, signal?: AbortSignal ) => Promise< AudioBuffer >;
@@ -97,64 +101,90 @@ export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipPro
 			} }
 		>
 			<Timegroup mode="sequence" overlapMs={ TRANSITION_OVERLAP_MS } className="timeline-sequence">
-				{ scenes.map( ( scene, index ) => {
-					const hasImage = !! scene.imageUrl;
-					const hasText = !! scene.text;
-					const sceneKey = `${ scene.imageUrl ?? 'text' }-${ index }`;
-					const accent = TEXT_SCENE_ACCENTS[ index % TEXT_SCENE_ACCENTS.length ];
-					const sceneClass = [
-						'scene',
-						hasImage ? 'scene-image' : `scene-text-overlay scene-text-overlay--${ accent }`,
-						hasText ? 'scene-has-text' : null,
-					]
-						.filter( Boolean )
-						.join( ' ' );
-					return (
-						<Timegroup
-							key={ sceneKey }
-							mode="fixed"
-							duration={ `${ INFORMATIVE_SCENE_DURATION_MS }ms` }
-							className={ sceneClass }
-						>
-							{ hasImage ? (
-								<>
-									<div className={ `scene-background-frame camera-${ scene.camera }` }>
-										<EFImage src={ scene.imageUrl as string } className="scene-background" />
-									</div>
-									<div className="scene-image-overlay" />
-								</>
-							) : null }
-							{ hasText ? (
-								<div
-									className={
-										hasImage
-											? 'scene-text-overlay-frame scene-text-overlay-frame--on-image'
-											: `scene-text-overlay-frame camera-${ scene.camera }`
-									}
-								>
-									{ hasImage ? (
-										<div className="scene-text-overlay-frame__scrim" aria-hidden />
-									) : null }
-									<div className="scene-grid">
-										<div className="scene-copy">
-											{ scene.eyebrow ? (
-												<span className="scene-text-overlay__eyebrow">{ scene.eyebrow }</span>
-											) : null }
-											{ /*
-												Plain span — NOT <Text split="word">. EditFrame's
-												frame-by-frame snapshot doesn't render JS/RAF
-												animations smoothly; only animations driven by the
-												per-frame `--scene-progress` CSS var capture cleanly.
-												Opacity + translate tween in CSS off that var.
-											*/ }
-											<span className="scene-text-overlay__body">{ scene.text as string }</span>
+				{ groupScenesByImage( scenes ).map( ( group, groupIdx ) => {
+					const groupKey = `${ group.imageUrl ?? 'text' }-group-${ groupIdx }`;
+					const accent = TEXT_SCENE_ACCENTS[ groupIdx % TEXT_SCENE_ACCENTS.length ];
+
+					if ( ! group.imageUrl ) {
+						// Text-only group: render its single scene the old way (no
+						// continuity to preserve since there's no image to keep mounted).
+						const scene = group.entries[ 0 ];
+						const hasText = !! scene.text;
+						const sceneClass = [
+							'scene',
+							`scene-text-overlay scene-text-overlay--${ accent }`,
+							hasText ? 'scene-has-text' : null,
+						]
+							.filter( Boolean )
+							.join( ' ' );
+						return (
+							<Timegroup
+								key={ groupKey }
+								mode="fixed"
+								duration={ `${ INFORMATIVE_SCENE_DURATION_MS }ms` }
+								className={ sceneClass }
+							>
+								{ hasText ? (
+									<div className={ `scene-text-overlay-frame camera-${ scene.camera }` }>
+										<div className="scene-grid">
+											<div className="scene-copy">
+												{ scene.eyebrow ? (
+													<span className="scene-text-overlay__eyebrow">{ scene.eyebrow }</span>
+												) : null }
+												<span className="scene-text-overlay__body">{ scene.text as string }</span>
+											</div>
 										</div>
 									</div>
-								</div>
-							) : null }
-							{ scene.caption && ! hasText ? (
-								<span className="scene-caption">{ scene.caption }</span>
-							) : null }
+								) : null }
+							</Timegroup>
+						);
+					}
+
+					// Image group: image element mounts ONCE, KB applies across the
+					// whole group's duration via --group-progress, and the inner
+					// sequence rotates text overlays. When two consecutive scenes
+					// share an image, the user sees one continuous KB pan with a
+					// smooth text crossfade in the middle — no image refresh.
+					const groupDurationMs =
+						group.entries.length * INFORMATIVE_SCENE_DURATION_MS -
+						( group.entries.length - 1 ) * TEXT_TRANSITION_OVERLAP_MS;
+					return (
+						<Timegroup
+							key={ groupKey }
+							mode="fixed"
+							duration={ `${ groupDurationMs }ms` }
+							className="scene scene-image scene-image-group"
+						>
+							<div className={ `scene-background-frame camera-${ group.camera }` }>
+								<EFImage src={ group.imageUrl } className="scene-background" />
+							</div>
+							<div className="scene-image-overlay" />
+							<Timegroup
+								mode="sequence"
+								overlapMs={ TEXT_TRANSITION_OVERLAP_MS }
+								className="scene-text-rotation"
+							>
+								{ group.entries.map( ( scene, textIdx ) => (
+									<Timegroup
+										key={ `${ groupKey }-text-${ textIdx }` }
+										mode="fixed"
+										duration={ `${ INFORMATIVE_SCENE_DURATION_MS }ms` }
+										className="scene scene-text-rotation-item"
+									>
+										<div className="scene-text-overlay-frame scene-text-overlay-frame--on-image">
+											<div className="scene-text-overlay-frame__scrim" aria-hidden />
+											<div className="scene-grid">
+												<div className="scene-copy">
+													{ scene.eyebrow ? (
+														<span className="scene-text-overlay__eyebrow">{ scene.eyebrow }</span>
+													) : null }
+													<span className="scene-text-overlay__body">{ scene.text as string }</span>
+												</div>
+											</div>
+										</div>
+									</Timegroup>
+								) ) }
+							</Timegroup>
 						</Timegroup>
 					);
 				} ) }
@@ -219,10 +249,34 @@ function installSceneProgressDriver( timegroup: FrameTaskTimegroup ) {
 }
 
 function updateSceneProgress( root: HTMLElement, currentTimeMs: number ) {
-	const scenes = Array.from(
+	// Outer image groups (and standalone non-grouped scenes): drive both
+	// --scene-progress (legacy) AND --group-progress (used by camera-* KB
+	// classes when the group spans multiple text overlays). Setting both means
+	// the same element is consistent whether the CSS reads one or the other.
+	const topScenes = Array.from(
 		root.querySelectorAll< HTMLElement >( '.timeline-sequence > .scene' )
 	);
-	scenes.forEach( ( scene ) => {
+	topScenes.forEach( ( scene ) => {
+		const startTimeMs = readNumberProperty( scene, 'startTimeMs', 0 );
+		const durationMs = readNumberProperty( scene, 'durationMs', 3000 );
+		const progress =
+			durationMs <= 0
+				? 1
+				: Math.max( 0, Math.min( 1, ( currentTimeMs - startTimeMs ) / durationMs ) );
+		const formatted = progress.toFixed( 5 );
+		scene.style.setProperty( '--scene-progress', formatted );
+		scene.style.setProperty( '--group-progress', formatted );
+	} );
+
+	// Inner text-rotation scenes (children of an image group): they need their
+	// own --scene-progress driving the text fade-in/out, independent of the
+	// outer group's --group-progress driving the image KB. CSS cascade is OK
+	// here — the inner element shadows --scene-progress for its own subtree
+	// while the outer's --group-progress remains visible to the image frame.
+	const innerScenes = Array.from(
+		root.querySelectorAll< HTMLElement >( '.scene-text-rotation > .scene-text-rotation-item' )
+	);
+	innerScenes.forEach( ( scene ) => {
 		const startTimeMs = readNumberProperty( scene, 'startTimeMs', 0 );
 		const durationMs = readNumberProperty( scene, 'durationMs', 3000 );
 		const progress =
@@ -231,6 +285,36 @@ function updateSceneProgress( root: HTMLElement, currentTimeMs: number ) {
 				: Math.max( 0, Math.min( 1, ( currentTimeMs - startTimeMs ) / durationMs ) );
 		scene.style.setProperty( '--scene-progress', progress.toFixed( 5 ) );
 	} );
+}
+
+interface SceneGroup {
+	imageUrl: string | null;
+	camera: FeatureClipCameraMove;
+	entries: FeatureClipScene[];
+}
+
+/**
+ * Group consecutive scenes that share the same imageUrl. Output groups
+ * are rendered as ONE outer Timegroup (image mounts once, KB spans the
+ * group's duration) with an inner sequence that rotates the text overlays.
+ *
+ * Scenes without an imageUrl form a singleton group (text-only background).
+ */
+function groupScenesByImage( scenes: FeatureClipScene[] ): SceneGroup[] {
+	const groups: SceneGroup[] = [];
+	for ( const scene of scenes ) {
+		const last = groups[ groups.length - 1 ];
+		if ( scene.imageUrl && last?.imageUrl === scene.imageUrl ) {
+			last.entries.push( scene );
+		} else {
+			groups.push( {
+				imageUrl: scene.imageUrl ?? null,
+				camera: scene.camera,
+				entries: [ scene ],
+			} );
+		}
+	}
+	return groups;
 }
 
 function readNumberProperty( element: HTMLElement, property: string, fallback: number ) {
