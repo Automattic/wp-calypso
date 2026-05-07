@@ -44,6 +44,7 @@ import {
 	commentAuthorAvatar,
 	layout,
 	info,
+	check,
 } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../../app/analytics';
@@ -95,6 +96,7 @@ import {
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
+import { getOverrideCancellationFeatures } from '../cancel-purchase/get-override-features';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -102,7 +104,7 @@ import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import { getCancelButtonCopy, getRemoveButtonCopy } from './get-cancel-remove-copy';
 import JetpackLicenseKeyCard from './jetpack-license-key-card';
 import { PurchaseNotice } from './purchase-notice';
-import type { User, Purchase, Site } from '@automattic/api-core';
+import type { User, Purchase, Site, CancellationFeature } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -623,8 +625,35 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 	);
 }
 
-function WPComResourceMeters( { purchase, site }: { purchase: Purchase; site: Site } ) {
-	if ( ! isDotcomPlan( purchase ) ) {
+function PurchaseFeatureItems( { features }: { features: CancellationFeature[] } ) {
+	return (
+		<VStack spacing={ 4 }>
+			<Text weight="bold">{ __( 'What you get' ) }</Text>
+			<VStack as="ul" spacing={ 1 } className="purchase-settings__feature-list">
+				{ features.map( ( feature ) => (
+					<HStack key={ feature.feature_id } as="li" justify="flex-start" spacing={ 3 }>
+						<Icon icon={ check } size={ 24 } className="purchase-settings__feature-icon" />
+						<Text>{ feature.title }</Text>
+					</HStack>
+				) ) }
+			</VStack>
+		</VStack>
+	);
+}
+
+function WPComResourceMeters( {
+	purchase,
+	site,
+	features,
+}: {
+	purchase: Purchase;
+	site?: Site;
+	features: CancellationFeature[] | null;
+} ) {
+	const showStorage = isDotcomPlan( purchase ) && Boolean( site );
+	const hasFeatures = features && features.length > 0;
+
+	if ( ! showStorage && ! hasFeatures ) {
 		return null;
 	}
 
@@ -632,8 +661,14 @@ function WPComResourceMeters( { purchase, site }: { purchase: Purchase; site: Si
 		<Card>
 			<CardBody>
 				<VStack spacing={ 4 }>
-					<SiteStorageStat site={ site } />
-					<SiteBandwidthStat site={ site } />
+					{ hasFeatures && <PurchaseFeatureItems features={ features } /> }
+					{ hasFeatures && showStorage && <hr className="purchase-settings__divider" /> }
+					{ showStorage && site && (
+						<>
+							<SiteStorageStat site={ site } />
+							<SiteBandwidthStat site={ site } />
+						</>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>
@@ -1167,13 +1202,25 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 	return null;
 }
 
-function PurchaseSecondSubtitle( { purchase, site }: { purchase: Purchase; site?: Site } ) {
+function PurchaseSecondSubtitle( {
+	purchase,
+	site,
+	features,
+}: {
+	purchase: Purchase;
+	site?: Site;
+	features: CancellationFeature[] | null;
+} ) {
 	if ( purchase.is_domain ) {
 		if ( site?.options?.is_domain_only ) {
 			return null;
 		}
 
 		if ( isCentennialPurchase( purchase ) ) {
+			return null;
+		}
+
+		if ( features && features.length > 0 ) {
 			return null;
 		}
 
@@ -1250,20 +1297,7 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
-	let title = subtitle;
-
-	if ( purchase.is_plan ) {
-		title = sprintf(
-			// translators: subtitle is the type of purchase (e.g. "Site plan"), site is the slug of the site the plan applies to.
-			__( '%(subtitle)s for %(site)s.' ),
-			{
-				subtitle,
-				site: purchase.site_slug,
-			}
-		);
-	}
-
-	return <MetadataItem title={ title } />;
+	return <MetadataItem title={ subtitle } />;
 }
 
 export default function PurchaseSettings() {
@@ -1302,6 +1336,8 @@ export default function PurchaseSettings() {
 	} )();
 
 	const isCentennial = isCentennialPurchase( purchase );
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
+	const features = isSplitEnabled ? getOverrideCancellationFeatures( purchase ) : null;
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
@@ -1343,7 +1379,7 @@ export default function PurchaseSettings() {
 						}
 					/>
 
-					<PurchaseSecondSubtitle purchase={ purchase } site={ site } />
+					<PurchaseSecondSubtitle purchase={ purchase } site={ site } features={ features } />
 
 					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
 						<DomainTransferInfo purchase={ purchase } />
@@ -1355,6 +1391,40 @@ export default function PurchaseSettings() {
 			<VStack spacing={ 6 }>
 				<PurchaseNotice purchase={ purchase } />
 				<Grid columns={ columns } gap={ spacing }>
+					{ site &&
+						( site.options?.is_domain_only &&
+						purchase.is_domain &&
+						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
+						domain?.can_transfer_to_other_site ? (
+							<OverviewCard
+								icon={ <Icon icon={ layout } /> }
+								title={ __( 'Attach to a site' ) }
+								heading={ __( 'No site attached' ) }
+								description={ __( 'Attach this domain name to an existing site.' ) }
+								link={ `/domains/${ purchase.meta }/transfer/other-site` }
+								intent="upsell"
+							/>
+						) : (
+							<OverviewCard
+								icon={ <SiteIcon site={ site } /> }
+								title={ __( 'Site' ) }
+								heading={ site.name }
+								description={ purchase.site_slug }
+								link={ `/sites/${ purchase.site_slug }` }
+							/>
+						) ) }
+					<OverviewCard
+						icon={ commentAuthorAvatar }
+						title={ __( 'Owner' ) }
+						heading={
+							String( user.ID ) === String( purchase.user_id )
+								? user.display_name
+								: __( 'Owned by a different user' )
+						}
+						description={
+							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
+						}
+					/>
 					{ isExpired( purchase ) ? (
 						<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
 					) : (
@@ -1407,40 +1477,6 @@ export default function PurchaseSettings() {
 						/>
 					) }
 					<PurchasePriceCard purchase={ purchase } />
-					{ site &&
-						( site.options?.is_domain_only &&
-						purchase.is_domain &&
-						purchase.product_slug !== DomainProductSlugs.TRANSFER_IN &&
-						domain?.can_transfer_to_other_site ? (
-							<OverviewCard
-								icon={ <Icon icon={ layout } /> }
-								title={ __( 'Attach to a site' ) }
-								heading={ __( 'No site attached' ) }
-								description={ __( 'Attach this domain name to an existing site.' ) }
-								link={ `/domains/${ purchase.meta }/transfer/other-site` }
-								intent="upsell"
-							/>
-						) : (
-							<OverviewCard
-								icon={ <SiteIcon site={ site } /> }
-								title={ __( 'Site' ) }
-								heading={ site.name }
-								description={ purchase.site_slug }
-								link={ `/sites/${ purchase.site_slug }` }
-							/>
-						) ) }
-					<OverviewCard
-						icon={ commentAuthorAvatar }
-						title={ __( 'Owner' ) }
-						heading={
-							String( user.ID ) === String( purchase.user_id )
-								? user.display_name
-								: __( 'Owned by a different user' )
-						}
-						description={
-							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
-						}
-					/>
 					{ purchase.is_jetpack_plan_or_product && (
 						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
 					) }
@@ -1448,8 +1484,9 @@ export default function PurchaseSettings() {
 						<AkismetApiKeyCard />
 					) }
 				</Grid>
-				{ site && purchase.subscription_status === 'active' && (
-					<WPComResourceMeters purchase={ purchase } site={ site } />
+				{ ( ( site && purchase.subscription_status === 'active' ) ||
+					( features && features.length > 0 ) ) && (
+					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
 				) }
 				{ isWpcomFlexSubscription( purchase ) && (
 					<BillingFlexUsageCard purchaseId={ purchase.ID } />
