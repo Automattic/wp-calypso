@@ -28,6 +28,8 @@ import useSubmitAgencyBenchmark from '../../hooks/use-submit-agency-benchmark';
 type Props = {
 	quarter: 1 | 2 | 3 | 4;
 	year: number;
+	hideHeader?: boolean;
+	onSubmitSuccess?: () => void;
 };
 
 type KpiState = Record< KpiField, string >;
@@ -41,7 +43,7 @@ const emptyKpiState = (): KpiState =>
 		return acc;
 	}, {} as KpiState );
 
-export default function BenchmarksForm( { quarter, year }: Props ) {
+export default function BenchmarksForm( { quarter, year, hideHeader, onSubmitSuccess }: Props ) {
 	const dispatch = useDispatch();
 	const kpiConfig = useMemo( () => getKpiFieldConfig(), [] );
 	const governanceOptions = useMemo( () => getGovernanceMaturityOptions(), [] );
@@ -87,6 +89,7 @@ export default function BenchmarksForm( { quarter, year }: Props ) {
 				)
 			);
 			dispatch( recordTracksEvent( 'calypso_a4a_benchmarks_submit_success' ) );
+			onSubmitSuccess?.();
 		},
 		onError: ( error ) => {
 			dispatch( errorNotice( error.message, { id: 'a4a-benchmark-submit-error' } ) );
@@ -201,12 +204,16 @@ export default function BenchmarksForm( { quarter, year }: Props ) {
 	return (
 		<Form
 			className="benchmarks-form"
-			title={ sprintf(
-				/* translators: %1$d: quarter number, %2$d: year. Example: Submit Q1 2026 numbers. */
-				__( 'Submit Q%1$d %2$d numbers' ),
-				quarter,
-				year
-			) }
+			title={
+				hideHeader
+					? undefined
+					: sprintf(
+							/* translators: %1$d: quarter number, %2$d: year. Example: Submit Q1 2026 numbers. */
+							__( 'Submit Q%1$d %2$d numbers' ),
+							quarter,
+							year
+					  )
+			}
 			description={ __( 'All fields are anonymized in peer benchmarks.' ) }
 		>
 			<FormSection title={ __( 'Business performance' ) }>

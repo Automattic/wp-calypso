@@ -57,3 +57,20 @@
 	color: var(--color-neutral-60);
 	margin: 0;
 }
+
+.benchmarks-submission-banner p {
+	margin-block: 0 16px;
+	max-inline-size: 640px;
+}
+
+.benchmarks-submission-modal.components-modal__frame {
+	max-inline-size: 720px;
+}
+
+.benchmarks-submission-modal .benchmarks-form {
+	padding-block-start: 0;
+}
+
+.benchmarks-submission-modal .a4a-form__heading {
+	margin-block-end: 16px;
+}
