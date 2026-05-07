@@ -148,7 +148,7 @@
 		}
 
 		h1 {
-			color: var( --studio-blue-50 );
+			color: var( --color-primary );
 			font-family: Recoleta, 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 			font-size: 2.75rem;
 			line-height: 1.15;
@@ -255,7 +255,7 @@
 			}
 
 			&:hover::before {
-				background-color: color-mix( in srgb, var( --studio-blue ) 10%, transparent );
+				background-color: var( --color-primary-5 );
 			}
 		}
 
@@ -362,9 +362,6 @@
 }
 
 .theme-showcase {
-	background-color: var( --color-main-background );
-	color: var( --color-text );
-
 	.navigation-header {
 		@media ( max-width: $break-small ) {
 			padding-bottom: 16px;
