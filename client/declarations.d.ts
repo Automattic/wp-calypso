@@ -3,6 +3,11 @@ declare module '*.scss' {
 	export default content;
 }
 
+declare module '*?no-inline' {
+	const url: string;
+	export default url;
+}
+
 declare module 'browser-filesaver' {
 	export function saveAs( data: Blob, filename: string, disableAutoBOM?: boolean ): void;
 }

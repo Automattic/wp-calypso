@@ -80,20 +80,6 @@ main.get-apps {
 		font-size: $font-body-extra-small;
 	}
 
-	.get-apps__platform-icon {
-		display: inline-block;
-		flex: 0 0 auto;
-		background-color: currentColor;
-		-webkit-mask-image: var( --get-apps-platform-icon );
-		mask-image: var( --get-apps-platform-icon );
-		-webkit-mask-position: center;
-		mask-position: center;
-		-webkit-mask-repeat: no-repeat;
-		mask-repeat: no-repeat;
-		-webkit-mask-size: contain;
-		mask-size: contain;
-	}
-
 	.get-apps__desktop-button-label {
 		display: flex;
 		flex-direction: row;

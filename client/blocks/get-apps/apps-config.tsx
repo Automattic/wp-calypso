@@ -1,11 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate, Substitution } from 'i18n-calypso';
-import Apple from 'calypso/assets/images/icons/apple-logo.svg';
-import DesktopAppLogo from 'calypso/assets/images/icons/desktop-app-logo.svg';
-import Linux from 'calypso/assets/images/icons/linux-logo.svg';
-import StudioAppLogo from 'calypso/assets/images/icons/studio-app-logo.svg';
-import Windows from 'calypso/assets/images/icons/windows-logo.svg';
+import Apple from 'calypso/assets/images/icons/apple-logo.svg?no-inline';
+import DesktopAppLogo from 'calypso/assets/images/icons/desktop-app-logo.svg?no-inline';
+import Linux from 'calypso/assets/images/icons/linux-logo.svg?no-inline';
+import StudioAppLogo from 'calypso/assets/images/icons/studio-app-logo.svg?no-inline';
+import Windows from 'calypso/assets/images/icons/windows-logo.svg?no-inline';
 
 export enum PlatformType {
 	MacSilicon = 'MacSilicon',
@@ -32,6 +32,7 @@ export interface PlatformConfig extends BasePlatformConfig {
 export interface DesktopAppConfig {
 	id: string;
 	logo: string;
+	logoName: string;
 	title: string;
 	subtitle: string;
 	link: Substitution;
@@ -106,6 +107,7 @@ export const createWordPressDesktopConfig = (
 	return {
 		id: 'wordpress',
 		logo: DesktopAppLogo,
+		logoName: 'desktop-app-logo',
 		title: translate( 'WordPress.com desktop app' ),
 		subtitle: translate(
 			'The full WordPress.com experience packaged as an app for your laptop or desktop.'
@@ -158,6 +160,7 @@ export const createWordPressStudioConfig = (
 	return {
 		id: 'wordpress-studio',
 		logo: StudioAppLogo,
+		logoName: 'studio-app-logo',
 		title: translate( 'WordPress Studio' ),
 		subtitle: translate(
 			'A fast, free way to develop locally with WordPress. Share your local sites with clients or colleagues and keep your local development process smooth and simple.'

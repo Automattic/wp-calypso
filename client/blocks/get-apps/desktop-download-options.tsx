@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
+import SVGIcon from 'calypso/components/svg-icon';
 import { PlatformConfig, type DesktopAppConfig } from './apps-config';
 
 type Props = {
@@ -11,24 +12,6 @@ type Props = {
 	platformDetectionFailed?: boolean;
 };
 
-const PlatformIcon: React.FC< { className?: string; icon: string; size?: number } > = ( {
-	className,
-	icon,
-	size = 16,
-} ) => (
-	<span
-		aria-hidden="true"
-		className={ [ 'get-apps__platform-icon', className ].filter( Boolean ).join( ' ' ) }
-		style={
-			{
-				'--get-apps-platform-icon': `url("${ icon }")`,
-				width: size,
-				height: size,
-			} as React.CSSProperties
-		}
-	/>
-);
-
 const AlsoAvailable: React.FC< { config: PlatformConfig } > = ( { config } ) => (
 	<a
 		href={ config.link }
@@ -36,7 +19,13 @@ const AlsoAvailable: React.FC< { config: PlatformConfig } > = ( { config } ) => 
 		className="get-apps__desktop-link"
 		aria-label={ config.buttonText }
 	>
-		<PlatformIcon icon={ config.icon } />
+		<SVGIcon
+			classes=""
+			aria-hidden="true"
+			name={ config.iconName }
+			size={ 16 }
+			icon={ config.icon }
+		/>
 		{ config.name }
 	</a>
 );
@@ -64,8 +53,11 @@ export const DesktopDownloadOptions: React.FC< Props > = ( {
 						onClick={ currentPlatformConfig.onClick }
 						href={ currentPlatformConfig.link }
 					>
-						<PlatformIcon
-							className="get-apps__desktop-button-icon"
+						<SVGIcon
+							classes="get-apps__desktop-button-icon"
+							aria-hidden="true"
+							name={ currentPlatformConfig.iconName }
+							size={ 16 }
 							icon={ currentPlatformConfig.icon }
 						/>
 						{ currentPlatformConfig.buttonText }
@@ -104,8 +96,11 @@ export const DesktopDownloadOptions: React.FC< Props > = ( {
 					}
 					icon={
 						currentPlatformConfig ? (
-							<PlatformIcon
-								className="get-apps__desktop-button-icon"
+							<SVGIcon
+								classes="get-apps__desktop-button-icon"
+								aria-hidden="true"
+								name={ currentPlatformConfig.iconName }
+								size={ 16 }
 								icon={ currentPlatformConfig.icon }
 							/>
 						) : undefined

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import JetpackAppLogo from 'calypso/assets/images/icons/jetpack-app-logo.svg';
+import JetpackAppLogo from 'calypso/assets/images/icons/jetpack-app-logo.svg?no-inline';
 import QrCode from 'calypso/blocks/app-promo/qr-code';
 import userAgent from 'calypso/lib/user-agent';
 import AppsBadge from './apps-badge';
@@ -13,6 +13,7 @@ const MobileDownloadCardTest = () => {
 	return (
 		<AppsCard
 			logo={ JetpackAppLogo }
+			logoName="jetpack-app-logo"
 			title={ translate( 'Jetpack mobile app for WordPress' ) }
 			subtitle={ translate( 'Create, design, manage, and grow your WordPress website.' ) }
 		>
