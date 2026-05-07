@@ -1,4 +1,4 @@
-import { Configuration, Preview, TimelineRoot } from '@editframe/react';
+import { Configuration, TimelineRoot } from '@editframe/react';
 import { dispatch as wpDispatch, useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -267,14 +267,21 @@ export function FeatureClipRenderHost() {
 				pointerEvents: 'none',
 			} }
 		>
+			{ /*
+				No <Preview> here on purpose — the offscreen render host
+				doesn't need live playback. Mounting <Preview> kicked off
+				EditFrame's continuous DOM-to-SVG snapshot loop
+				(captureTimelineToDataUri, ~once per frame), which was
+				generating an unbounded stream of data:image/svg+xml URIs
+				while a render was pending. renderToVideo() is a method
+				on the timegroup itself and works without Preview.
+			*/ }
 			<Configuration apiHost={ apiHost } signingURL="">
-				<Preview>
-					<TimelineRoot
-						key={ `mount-${ mountedRequestId }` }
-						id={ COMPOSITION_ID }
-						component={ TimelineComponent }
-					/>
-				</Preview>
+				<TimelineRoot
+					key={ `mount-${ mountedRequestId }` }
+					id={ COMPOSITION_ID }
+					component={ TimelineComponent }
+				/>
 			</Configuration>
 		</div>
 	);
