@@ -45,6 +45,8 @@ export function getOverrideCancellationFeatures(
 		case 'one-time':
 		case 'other':
 			return getAddonFeatures( slug );
+		default:
+			return null;
 	}
 }
 
