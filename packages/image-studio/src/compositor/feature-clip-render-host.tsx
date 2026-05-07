@@ -83,22 +83,26 @@ async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureCl
 			return { ...scene, imageUrl: dataUrl };
 		} )
 	);
-	const resolvedScenes: typeof brief.scenes = [];
-	settled.forEach( ( outcome, index ) => {
+	// Keep the scene's text overlay even when its image fetch fails — strip
+	// only the imageUrl so the composition falls back to a gradient-background
+	// text scene. Dropping the whole scene loses the text content; if every
+	// image fails the brief collapses to title-card-only and the user gets a
+	// 6 s clip instead of the intended ~20 s text-driven highlights.
+	const resolvedScenes = settled.map( ( outcome, index ) => {
 		if ( outcome.status === 'fulfilled' ) {
-			resolvedScenes.push( outcome.value );
-			return;
+			return outcome.value;
 		}
+		const original = brief.scenes[ index ];
 		// eslint-disable-next-line no-console
-		console.warn( '[FeatureClipRenderHost] dropping scene; image fetch failed', {
+		console.warn( '[FeatureClipRenderHost] image fetch failed; rendering scene as text-only', {
 			index,
-			imageUrl: brief.scenes[ index ]?.imageUrl,
+			imageUrl: original?.imageUrl,
 			reason: outcome.reason instanceof Error ? outcome.reason.message : String( outcome.reason ),
 		} );
+		const { imageUrl, ...rest } = original;
+		void imageUrl;
+		return rest;
 	} );
-	// Fallback to a text-only clip when every scene drops out (403 / CORS / no images).
-	// The composition handles scenes:[] by rendering the title card across the full
-	// duration with Ken-Burns motion.
 	return { ...brief, scenes: resolvedScenes };
 }
 
