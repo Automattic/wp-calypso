@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
 import AppPromo from 'calypso/blocks/app-promo';
+import DocumentHead from 'calypso/components/data/document-head';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -776,6 +777,9 @@ export function Stream( props: StreamProps ) {
 					className="reader-update-notice is-active"
 					onClick={ handleShowUpdates }
 				>
+					{ /* Mirrors the legacy `<UpdateNotice>` so the browser tab/title
+					     unread counter reflects pending stream updates. */ }
+					<DocumentHead unreadCount={ pendingCount } />
 					<Gridicon icon="arrow-up" size={ 18 } />
 					{ translate( '%s new post', '%s new posts', {
 						args: [ String( pendingCount ) ],
