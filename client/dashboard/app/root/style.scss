@@ -18,7 +18,7 @@
 	display: flex;
 	min-height: calc(100vh - var(--masterbar-height) );
 
-	&:has(.dashboard-responsive-sidebar__sidebar) {
+	&:has(> .dashboard-responsive-sidebar__sidebar) {
 		padding-inline-start: $sidebar-width;
 	}
 

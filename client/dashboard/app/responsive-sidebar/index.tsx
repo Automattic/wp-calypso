@@ -18,7 +18,7 @@ export default function ResponsiveSidebar( {
 	const router = useRouter();
 	const isDesktop = useViewportMatch( 'medium' );
 
-	useSidebarScrollSync();
+	useSidebarScrollSync( isDesktop );
 
 	const handleOverlayClick = () => {
 		onClose();

@@ -10,8 +10,11 @@ import { useEffect } from 'react';
  * which clamps the sidebar's bottom to the viewport bottom and removes the
  * jumps you'd get from toggling between fixed and absolute positioning.
  */
-export function useSidebarScrollSync() {
+export function useSidebarScrollSync( enabled: boolean = true ) {
 	useEffect( () => {
+		if ( ! enabled ) {
+			return;
+		}
 		let cachedSidebarHeight = 0;
 		let cachedMasterbarHeight = 0;
 		let scheduled = false;
@@ -93,6 +96,11 @@ export function useSidebarScrollSync() {
 			window.cancelAnimationFrame( initId );
 			window.removeEventListener( 'scroll', onScroll );
 			window.removeEventListener( 'resize', onResize );
+			const { sidebar, content } = getEls();
+			sidebar?.removeAttribute( 'style' );
+			if ( content ) {
+				content.style.minHeight = '';
+			}
 		};
-	}, [] );
+	}, [ enabled ] );
 }
