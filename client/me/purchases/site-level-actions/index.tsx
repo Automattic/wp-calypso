@@ -1,26 +1,41 @@
 import page from '@automattic/calypso-router';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getName, handleRenewMultiplePurchasesClick } from 'calypso/lib/purchases';
 import { cancelPurchase, managePurchase } from 'calypso/me/purchases/paths';
+import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import {
 	getByPurchaseId,
 	getSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import type { Purchase } from 'calypso/lib/purchases/types';
+
 import './style.scss';
 
 interface SiteActionInterstitialProps {
 	purchaseId: number;
 	siteSlug: string;
 	actionType: 'cancel' | 'remove' | 'renew';
+}
+
+function getVerb( actionType: string, translate: ReturnType< typeof useTranslate > ) {
+	if ( actionType === 'renew' ) {
+		return translate( 'renew' );
+	}
+	if ( actionType === 'cancel' ) {
+		return translate( 'cancel' );
+	}
+	return translate( 'remove' );
 }
 
 export default function SiteActionInterstitial( {
@@ -30,6 +45,7 @@ export default function SiteActionInterstitial( {
 }: SiteActionInterstitialProps ) {
 	const translate = useTranslate();
 	const dispatch = useReduxDispatch();
+	const moment = useLocalizedMoment();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
@@ -60,7 +76,67 @@ export default function SiteActionInterstitial( {
 		return null;
 	}
 
+	// Heading and section label only depend on actionType (from URL), safe before data loads
+	let heading: string;
+	let sectionLabel: string;
+
+	if ( actionType === 'renew' ) {
+		heading = translate( 'Renew subscriptions' ) as string;
+		sectionLabel = translate( 'Subscriptions' ) as string;
+	} else if ( actionType === 'cancel' ) {
+		heading = translate( 'Cancel subscriptions' ) as string;
+		sectionLabel = translate( 'Subscriptions' ) as string;
+	} else {
+		heading = translate( 'Remove upgrades' ) as string;
+		sectionLabel = translate( 'Upgrades' ) as string;
+	}
+
+	// Skeleton loading state while purchases load
+	if ( ! hasLoaded || ! purchase || ! purchases ) {
+		return (
+			<>
+				<QueryUserPurchases />
+				<div className="site-level-actions__back">
+					<HeaderCakeBack
+						icon="chevron-left"
+						href={ managePurchase( siteSlug, String( purchaseId ) ) }
+					/>
+				</div>
+				<FormattedHeader
+					className="site-level-actions__formatted-header"
+					headerText={ heading }
+					align="left"
+					brandFont
+				/>
+				<p className="site-level-actions__description">
+					<span className="site-level-actions__placeholder site-level-actions__placeholder--text" />
+				</p>
+				<div className="site-level-actions__inner-wrapper">
+					<div className="site-level-actions__left">
+						<Card className="site-level-actions__wrapper-card">
+							<h3 className="site-level-actions__section-title">{ sectionLabel }</h3>
+							<div className="site-level-actions__row">
+								<span className="site-level-actions__placeholder site-level-actions__placeholder--medium" />
+								<span className="site-level-actions__placeholder site-level-actions__placeholder--long" />
+							</div>
+							<div className="site-level-actions__row">
+								<span className="site-level-actions__placeholder site-level-actions__placeholder--medium" />
+								<span className="site-level-actions__placeholder site-level-actions__placeholder--long" />
+							</div>
+						</Card>
+					</div>
+					<div className="site-level-actions__right">
+						<PurchaseSiteHeader isPlaceholder />
+					</div>
+				</div>
+			</>
+		);
+	}
+
 	const handleToggle = ( id: number ) => {
+		if ( id === purchaseId ) {
+			return;
+		}
 		setSelectedIds( ( prev ) => {
 			const next = new Set( prev );
 			if ( next.has( id ) ) {
@@ -73,9 +149,6 @@ export default function SiteActionInterstitial( {
 	};
 
 	const handleContinue = () => {
-		if ( ! purchases ) {
-			return;
-		}
 		const selectedPurchases = purchases.filter( ( p ) => selectedIds.has( p.id ) );
 		if ( actionType === 'renew' ) {
 			dispatch( handleRenewMultiplePurchasesClick( selectedPurchases, siteSlug ) );
@@ -91,66 +164,101 @@ export default function SiteActionInterstitial( {
 		page( `${ baseUrl }?${ params.toString() }` );
 	};
 
-	let heading: string;
-	let description: string;
+	// Copy variables by action type
+	const isRemove = actionType === 'remove';
+	const siteName = purchase.domain ?? siteSlug;
+	const productName = getName( purchase );
+	const noun = isRemove ? translate( 'upgrades' ) : translate( 'subscriptions' );
+	const verb = getVerb( actionType, translate );
+
 	let buttonLabel: string;
+	let isDestructive = false;
 
 	if ( actionType === 'renew' ) {
-		heading = translate( 'Renew additional upgrades?' ) as string;
-		description = translate(
-			'Your site %(siteName)s has other upgrades. Select any you’d like to renew along with %(productName)s.',
-			{
-				args: {
-					siteName: purchase?.domain ?? siteSlug,
-					productName: purchase ? getName( purchase ) : '',
-				},
-			}
-		) as string;
 		buttonLabel = translate( 'Continue to checkout' ) as string;
 	} else if ( actionType === 'cancel' ) {
-		heading = translate( 'Review upgrades on %(siteName)s', {
-			args: { siteName: purchase?.domain ?? siteSlug },
-		} ) as string;
-		description = translate(
-			'You’re canceling %(productName)s. This site has other upgrades that may continue to renew. Select any you’d like to cancel too.',
-			{ args: { productName: purchase ? getName( purchase ) : '' } }
-		) as string;
-		buttonLabel = translate( 'Continue cancellation' ) as string;
+		buttonLabel = translate( 'Continue to cancel' ) as string;
+		isDestructive = true;
 	} else {
-		heading = translate( 'Review upgrades on %(siteName)s', {
-			args: { siteName: purchase?.domain ?? siteSlug },
-		} ) as string;
-		description = translate(
-			'You’re removing %(productName)s. This site has other upgrades you may no longer need. Select any you’d like to remove too.',
-			{ args: { productName: purchase ? getName( purchase ) : '' } }
-		) as string;
-		buttonLabel = translate( 'Continue removal' ) as string;
+		buttonLabel = translate( 'Continue to remove' ) as string;
+		isDestructive = true;
 	}
+
+	const description = translate(
+		'Your site %(siteName)s has other %(noun)s. Select any you\u2019d like to %(verb)s along with %(productName)s.',
+		{
+			args: { siteName, productName, noun, verb },
+		}
+	) as string;
+
+	const getRenewalText = ( p: Purchase ) => {
+		if ( isRemove ) {
+			return translate( 'Expires on %(date)s', {
+				args: { date: moment( p.expiryDate ).format( 'LL' ) },
+			} );
+		}
+		return translate( 'Renews at %(price)s on %(date)s', {
+			args: {
+				price: p.priceText,
+				date: moment( p.renewDate || p.expiryDate ).format( 'LL' ),
+			},
+		} );
+	};
 
 	return (
 		<>
 			<QueryUserPurchases />
-			<Card className="site-level-actions__wrapper-card">
-				<HeaderCakeBack href={ managePurchase( siteSlug, String( purchaseId ) ) } />
-				<FormattedHeader headerText={ heading } align="left" brandFont />
-				<p className="site-level-actions__description">{ description }</p>
-				<div className="site-level-actions__purchase-list">
-					{ ( purchases ?? [] ).map( ( p ) => (
-						<label key={ p.id } className="site-level-actions__purchase-item">
-							<FormCheckbox
-								checked={ selectedIds.has( p.id ) }
-								onChange={ () => handleToggle( p.id ) }
-								disabled={ p.id === purchaseId }
-							/>
-							<span className="site-level-actions__purchase-name">{ getName( p ) }</span>
-							<span className="site-level-actions__purchase-price">{ p.priceText }</span>
-						</label>
-					) ) }
+			<div className="site-level-actions__back">
+				<HeaderCakeBack
+					icon="chevron-left"
+					href={ managePurchase( siteSlug, String( purchaseId ) ) }
+				/>
+			</div>
+			<FormattedHeader
+				className="site-level-actions__formatted-header"
+				headerText={ heading }
+				align="left"
+				brandFont
+			/>
+			<p className="site-level-actions__description">{ description }</p>
+			<div className="site-level-actions__inner-wrapper">
+				<div className="site-level-actions__left">
+					<Card className="site-level-actions__wrapper-card">
+						<h3 className="site-level-actions__section-title">{ sectionLabel }</h3>
+						{ purchases.map( ( p ) => (
+							<div
+								key={ p.id }
+								className={ clsx( 'site-level-actions__row', {
+									'is-selected': selectedIds.has( p.id ),
+								} ) }
+							>
+								<FormLabel className="site-level-actions__label">
+									<FormInputCheckbox
+										className="site-level-actions__checkbox"
+										checked={ selectedIds.has( p.id ) }
+										onChange={ () => handleToggle( p.id ) }
+										disabled={ p.id === purchaseId }
+									/>
+									<span className="site-level-actions__name">{ getName( p ) }</span>
+								</FormLabel>
+								<span className="site-level-actions__renewal-info">{ getRenewalText( p ) }</span>
+							</div>
+						) ) }
+						<div className="site-level-actions__button-row">
+							<Button primary scary={ isDestructive } onClick={ handleContinue }>
+								{ buttonLabel }
+							</Button>
+						</div>
+					</Card>
 				</div>
-				<Button primary onClick={ handleContinue } className="site-level-actions__continue-button">
-					{ buttonLabel }
-				</Button>
-			</Card>
+				<div className="site-level-actions__right">
+					<PurchaseSiteHeader
+						siteId={ purchase.siteId }
+						name={ purchase.siteName }
+						purchase={ purchase }
+					/>
+				</div>
+			</div>
 		</>
 	);
 }

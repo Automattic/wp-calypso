@@ -138,9 +138,18 @@ export function cancelPurchase( context, next ) {
 export function siteActionInterstitial( context, next ) {
 	const actionType = context.query?.action ?? 'renew';
 
+	let pageTitle;
+	if ( actionType === 'cancel' ) {
+		pageTitle = i18n.translate( 'Cancel subscriptions' );
+	} else if ( actionType === 'remove' ) {
+		pageTitle = i18n.translate( 'Remove upgrades' );
+	} else {
+		pageTitle = i18n.translate( 'Renew subscriptions' );
+	}
+
 	const SiteActionInterstitialWrapper = () => {
 		return (
-			<PurchasesWrapper title={ i18n.translate( 'Review site upgrades' ) }>
+			<PurchasesWrapper title={ pageTitle }>
 				<Main wideLayout className="purchases__site-actions">
 					<SiteActionInterstitial
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }

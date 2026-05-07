@@ -1,43 +1,164 @@
-.site-level-actions__wrapper-card {
-	max-width: 720px;
-	padding: 32px;
-	padding-block-start: 12px;
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// Back link — match cancel-purchase spacing
+.site-level-actions__back .header-cake__back {
+	padding: 24px 0;
+	text-align: start;
+}
+
+// Title — match cancel-purchase spacing
+.site-level-actions__formatted-header.formatted-header {
+	margin: 16px 0 8px;
 }
 
 .site-level-actions__description {
 	margin-block-end: 24px;
+	font-size: $font-body-small;
 }
 
-.site-level-actions__purchase-list {
+// Two-column layout — match cancel-purchase grid (7fr content / 3fr site card)
+.site-level-actions__inner-wrapper {
 	display: flex;
-	flex-direction: column;
-	gap: 0;
+	flex-direction: column-reverse;
+	margin-block-end: 24px;
+
+	@include break-large {
+		display: grid;
+		grid-template-columns: 7fr 3fr;
+		gap: 32px;
+	}
 }
 
-.site-level-actions__purchase-item {
+// Hide site card on mobile — not needed at small widths
+.site-level-actions__right {
+	display: none;
+
+	@include break-large {
+		display: block;
+	}
+}
+
+.site-level-actions__right .purchases-site__header.card {
+	background: var(--studio-gray-0);
+	border-radius: 2px;
+}
+
+.site-level-actions__wrapper-card {
+	padding: 0;
+}
+
+// Section title — simple bold label inside the card
+.site-level-actions__section-title {
+	font-size: $font-body-small;
+	font-weight: 600;
+	color: var(--color-text);
+	margin: 0;
+	padding: 0 0 16px;
+	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+// Purchase row — checkbox + name on the left, renewal info on the right
+// On mobile: wraps so renewal info drops below, indented past the checkbox
+.site-level-actions__row {
 	display: flex;
-	flex-direction: row;
+	flex-wrap: wrap;
 	align-items: center;
-	gap: 12px;
-	cursor: pointer;
-	padding-block: 12px;
+	padding: 16px;
 	border-block-end: 1px solid var(--color-border-subtle);
 
-	&:last-child {
+	&.is-selected {
+		background-color: #f7f8fe;
+	}
+
+	&:last-of-type {
 		border-block-end: none;
 	}
 }
 
-.site-level-actions__purchase-name {
-	flex: 1;
-	font-weight: 500;
+.site-level-actions__label.form-label {
+	display: flex;
+	align-items: center;
+	flex: 1 1 100%;
+	gap: 8px;
+	margin-bottom: 0;
+	font-weight: normal;
+	cursor: pointer;
+
+	@include break-large {
+		flex: 1;
+	}
+
+	.site-level-actions__checkbox {
+		margin-inline-end: 12px;
+		margin: 0;
+	}
+
+	.site-level-actions__name {
+		font-size: $font-body;
+		margin-left: 0;
+		font-weight: 500;
+	}
 }
 
-.site-level-actions__purchase-price {
-	text-align: end;
+.site-level-actions__renewal-info {
+	font-size: $font-body-small;
 	color: var(--color-text-subtle);
+	margin-inline-start: 24px;
+	margin-block-start: 4px;
+
+	@include break-large {
+		white-space: nowrap;
+		margin-inline-start: 16px;
+		margin-block-start: 0;
+	}
 }
 
-.site-level-actions__continue-button {
-	margin-block-start: 24px;
+.site-level-actions__button-row {
+	padding: 24px 0 0;
+}
+
+// Skeleton loading placeholders
+.site-level-actions__placeholder {
+	display: block;
+	height: 14px;
+	background-color: var(--color-neutral-10);
+	border-radius: 2px;
+	animation: loading-pulse 1.6s ease-in-out infinite;
+}
+
+.site-level-actions__placeholder--short {
+	width: 100px;
+}
+
+.site-level-actions__placeholder--medium {
+	width: 100%;
+
+	@include break-large {
+		width: 160px;
+	}
+}
+
+.site-level-actions__placeholder--long {
+	width: 200px;
+	margin-block-start: 4px;
+
+	@include break-large {
+		margin-inline-start: auto;
+		margin-block-start: 0;
+	}
+}
+
+@keyframes loading-pulse {
+	0% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.5;
+	}
+
+	100% {
+		opacity: 1;
+	}
 }

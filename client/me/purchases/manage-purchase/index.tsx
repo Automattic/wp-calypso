@@ -165,13 +165,7 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import {
-	cancelPurchase,
-	downgradePurchase,
-	managePurchase,
-	purchasesRoot,
-	siteActionInterstitial,
-} from '../paths';
+import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -325,15 +319,9 @@ class ManagePurchase extends Component<
 	}
 
 	handleRenew = () => {
-		const { purchase, siteSlug, redirectTo, purchases, isSplitCancelRemoveEnabled } = this.props;
+		const { purchase, siteSlug, redirectTo } = this.props;
 
 		if ( ! purchase ) {
-			return;
-		}
-
-		// Route through site-level interstitial when the site has multiple purchases
-		if ( isSplitCancelRemoveEnabled && purchases && purchases.length > 1 ) {
-			page( siteActionInterstitial( siteSlug, purchase.id ) + '?action=renew' );
 			return;
 		}
 
