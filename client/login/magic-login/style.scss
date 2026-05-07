@@ -332,7 +332,7 @@
 	// The .connect-screen-consent-text class also rides on this element via
 	// <ConsentText>, and its `a { color: var(--studio-gray-70) }` rule beats
 	// `color: inherit` at equal specificity. Chaining both classes here
-	// raises specificity (0,3,1 > 0,2,1) so we win cleanly without touching
+	// raises specificity (0,2,1 > 0,1,1) so we win cleanly without touching
 	// connect-screen styles used by Jetpack Connect / invite flows.
 	&.connect-screen-consent-text a {
 		color: var( --studio-gray-50, #646970 );
