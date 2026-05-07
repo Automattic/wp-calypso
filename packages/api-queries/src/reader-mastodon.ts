@@ -6,6 +6,7 @@ import {
 	createMastodonRepost,
 	deleteMastodonLike,
 	deleteMastodonRepost,
+	getMastodonAuthStatus,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
@@ -35,6 +36,7 @@ import type {
 	GetMastodonAuthorFeedParams,
 	GetMastodonTagFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAuthStatus,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
@@ -114,6 +116,21 @@ export const mastodonConnectionQueryOptions = ( id: number | null ) =>
 
 export function useMastodonConnectionQuery( id: number | null ) {
 	return useQuery( mastodonConnectionQueryOptions( id ) );
+}
+
+export const mastodonAuthStatusQueryOptions = ( connectionId: number | null ) =>
+	queryOptions< MastodonAuthStatus, MastodonError >( {
+		queryKey: readerMastodonKeys.authStatus( connectionId ),
+		queryFn: () => getMastodonAuthStatus( connectionId as number ),
+		enabled: connectionId !== null && connectionId > 0,
+		// 60s matches the connections-list staleTime — auth-status is cheap (no
+		// upstream call) but we still want consumers like the connections-list
+		// reauth tag to dedupe rapid mounts.
+		staleTime: 60_000,
+	} );
+
+export function useMastodonAuthStatusQuery( connectionId: number | null ) {
+	return useQuery( mastodonAuthStatusQueryOptions( connectionId ) );
 }
 
 export const mastodonInstanceConfigQueryOptions = ( connectionId: number | null ) =>
