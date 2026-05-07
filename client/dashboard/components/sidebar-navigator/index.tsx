@@ -1,6 +1,6 @@
 import { useRouterState } from '@tanstack/react-router';
 import { usePrevious } from '@wordpress/compose';
-import { Children, isValidElement, useMemo } from 'react';
+import { Children, forwardRef, isValidElement, useMemo } from 'react';
 import { SidebarNavigatorContext } from './context';
 import SidebarNavigatorScreen from './sidebar-navigator-screen';
 import type { ScreenProps } from './sidebar-navigator-screen';
@@ -46,36 +46,42 @@ function findParentPath( routeId: string, screenPaths: string[] ): string | unde
  * </SidebarNavigator>
  * ```
  */
-function SidebarNavigator( { children }: { children: React.ReactNode } ) {
-	const matches = useRouterState( { select: ( s ) => s.matches } );
+const SidebarNavigator = forwardRef< HTMLDivElement, { children: React.ReactNode } >(
+	function SidebarNavigator( { children }, ref ) {
+		const matches = useRouterState( { select: ( s ) => s.matches } );
 
-	const screens = Children.toArray( children ).filter(
-		( child ): child is ReactElement< ScreenProps > =>
-			isValidElement( child ) && child.type === SidebarNavigatorScreen
-	);
+		const screens = Children.toArray( children ).filter(
+			( child ): child is ReactElement< ScreenProps > =>
+				isValidElement( child ) && child.type === SidebarNavigatorScreen
+		);
 
-	const screenPaths = screens.map( ( s ) => s.props.path );
+		const screenPaths = screens.map( ( s ) => s.props.path );
 
-	// Find the active path: first try exact match, then walk up to find parent.
-	const routeId = matches[ matches.length - 1 ]?.routeId;
-	const activePath =
-		screenPaths.find( ( sp ) => matches.some( ( m ) => m.routeId === sp ) ) ??
-		findParentPath( routeId, screenPaths );
+		// Find the active path: first try exact match, then walk up to find parent.
+		const routeId = matches[ matches.length - 1 ]?.routeId;
+		const activePath =
+			screenPaths.find( ( sp ) => matches.some( ( m ) => m.routeId === sp ) ) ??
+			findParentPath( routeId, screenPaths );
 
-	const previousPath = usePrevious( activePath );
-	const isBack =
-		previousPath !== undefined &&
-		activePath !== previousPath &&
-		activePath === findParentPath( previousPath, screenPaths );
+		const previousPath = usePrevious( activePath );
+		const isBack =
+			previousPath !== undefined &&
+			activePath !== previousPath &&
+			activePath === findParentPath( previousPath, screenPaths );
 
-	const contextValue = useMemo( () => ( { activePath, isBack } ), [ activePath, isBack ] );
+		const contextValue = useMemo( () => ( { activePath, isBack } ), [ activePath, isBack ] );
 
-	return (
-		<SidebarNavigatorContext.Provider value={ contextValue }>
-			<div className="dashboard-sidebar-navigator">{ children }</div>
-		</SidebarNavigatorContext.Provider>
-	);
-}
+		return (
+			<SidebarNavigatorContext.Provider value={ contextValue }>
+				<div ref={ ref } className="dashboard-sidebar-navigator">
+					{ children }
+				</div>
+			</SidebarNavigatorContext.Provider>
+		);
+	}
+) as React.ForwardRefExoticComponent<
+	{ children: React.ReactNode } & React.RefAttributes< HTMLDivElement >
+> & { Screen: typeof SidebarNavigatorScreen };
 
 SidebarNavigator.Screen = SidebarNavigatorScreen;
 

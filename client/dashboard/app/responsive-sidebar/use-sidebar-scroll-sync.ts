@@ -1,4 +1,11 @@
 import { useEffect } from 'react';
+import type { RefObject } from 'react';
+
+interface Options {
+	enabled: boolean;
+	sidebarRef: RefObject< HTMLElement | null >;
+	navigatorRef: RefObject< HTMLElement | null >;
+}
 
 /**
  * Mirrors v1's SidebarScrollSynchronizer (client/layout/utils.ts) — a tall
@@ -6,64 +13,62 @@ import { useEffect } from 'react';
  * the viewport bottom, then pin there.
  *
  * The sidebar is always `position: fixed`; this hook only adjusts `top`. As the
- * page scrolls, top is `max(viewport - sidebarHeight, masterbar - scrollY)`,
+ * page scrolls, top is `max(viewport - sidebarHeight, omnibar - scrollY)`,
  * which clamps the sidebar's bottom to the viewport bottom and removes the
  * jumps you'd get from toggling between fixed and absolute positioning.
  */
-export function useSidebarScrollSync( enabled: boolean = true ) {
+export function useSidebarScrollSync( { enabled, sidebarRef, navigatorRef }: Options ) {
 	useEffect( () => {
 		if ( ! enabled ) {
 			return;
 		}
 		let cachedSidebarHeight = 0;
-		let cachedMasterbarHeight = 0;
+		let cachedOmnibarHeight = 0;
 		let scheduled = false;
 
-		const getEls = () => ( {
-			sidebar: document.querySelector< HTMLElement >( '.dashboard-responsive-sidebar__sidebar' ),
-			content: document.querySelector< HTMLElement >( '.dashboard-root__content' ),
-			masterbar: document.querySelector< HTMLElement >( '#wpcom-omnibar' ),
-		} );
+		const getOmnibar = () => document.getElementById( 'wpcom-omnibar' );
 
 		const measure = () => {
-			const { sidebar, masterbar } = getEls();
-			if ( ! sidebar || ! masterbar ) {
+			const sidebar = sidebarRef.current;
+			const omnibar = getOmnibar();
+			if ( ! sidebar || ! omnibar ) {
 				return;
 			}
 			// Read scrollHeight without our inline `height` interfering.
 			const prevHeight = sidebar.style.height;
 			sidebar.style.height = '';
 			cachedSidebarHeight = sidebar.scrollHeight;
-			cachedMasterbarHeight = masterbar.getBoundingClientRect().height;
+			cachedOmnibarHeight = omnibar.getBoundingClientRect().height;
 			sidebar.style.height = prevHeight;
 		};
 
 		const apply = () => {
 			scheduled = false;
-			const { sidebar, content } = getEls();
-			if ( ! sidebar || ! content ) {
+			const sidebar = sidebarRef.current;
+			if ( ! sidebar ) {
 				return;
 			}
 
 			const sH = cachedSidebarHeight;
-			const mH = cachedMasterbarHeight;
+			const oH = cachedOmnibarHeight;
 			const wH = window.innerHeight;
+			const body = document.body;
 
-			if ( sH + mH <= wH ) {
+			if ( sH + oH <= wH ) {
 				// Sidebar fits in the viewport — let the CSS defaults apply.
 				sidebar.removeAttribute( 'style' );
-				content.style.minHeight = '';
+				body.style.minHeight = '';
 				return;
 			}
 
 			// Ensure the page can scroll far enough to reveal the entire sidebar.
-			const minBodyHeight = sH + mH;
-			if ( content.scrollHeight < minBodyHeight ) {
-				content.style.minHeight = `${ minBodyHeight }px`;
+			const minBodyHeight = sH + oH;
+			if ( body.scrollHeight < minBodyHeight ) {
+				body.style.minHeight = `${ minBodyHeight }px`;
 			}
 
-			const scrollY = -document.body.getBoundingClientRect().top;
-			const top = Math.max( wH - sH, mH - scrollY );
+			const scrollY = -body.getBoundingClientRect().top;
+			const top = Math.max( wH - sH, oH - scrollY );
 			sidebar.style.top = `${ top }px`;
 			sidebar.style.bottom = 'auto';
 			sidebar.style.height = `${ sH }px`;
@@ -84,7 +89,7 @@ export function useSidebarScrollSync( enabled: boolean = true ) {
 		//   observe the navigator rather than the sidebar itself because
 		//   when the sidebar overflows, this hook pins `style.height` on
 		//   the sidebar, so its box-size stops reflecting content changes.
-		// - the masterbar: its height changes at the responsive breakpoint.
+		// - the omnibar: its height changes at the responsive breakpoint.
 		// - documentElement: stands in for window resize.
 		const resizeObserver = new ResizeObserver( () => {
 			measure();
@@ -92,19 +97,16 @@ export function useSidebarScrollSync( enabled: boolean = true ) {
 		} );
 		resizeObserver.observe( document.documentElement );
 
-		// Initial measurement may need to wait for masterbar to mount.
+		// Initial measurement may need to wait for the omnibar to mount.
 		const initId = window.requestAnimationFrame( () => {
 			measure();
 			schedule();
-			const { masterbar } = getEls();
-			const navigator = document.querySelector< HTMLElement >(
-				'.dashboard-responsive-sidebar__sidebar .dashboard-sidebar-navigator'
-			);
-			if ( navigator ) {
-				resizeObserver.observe( navigator );
+			if ( navigatorRef.current ) {
+				resizeObserver.observe( navigatorRef.current );
 			}
-			if ( masterbar ) {
-				resizeObserver.observe( masterbar );
+			const omnibar = getOmnibar();
+			if ( omnibar ) {
+				resizeObserver.observe( omnibar );
 			}
 		} );
 
@@ -114,11 +116,8 @@ export function useSidebarScrollSync( enabled: boolean = true ) {
 			window.cancelAnimationFrame( initId );
 			window.removeEventListener( 'scroll', schedule );
 			resizeObserver.disconnect();
-			const { sidebar, content } = getEls();
-			sidebar?.removeAttribute( 'style' );
-			if ( content ) {
-				content.style.minHeight = '';
-			}
+			sidebarRef.current?.removeAttribute( 'style' );
+			document.body.style.minHeight = '';
 		};
-	}, [ enabled ] );
+	}, [ enabled, sidebarRef, navigatorRef ] );
 }
