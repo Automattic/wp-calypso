@@ -81,7 +81,7 @@ export interface UseSubscribeRecommendationsResult {
 }
 
 export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult {
-	const { data: followedTags } = useFollowedReaderTags();
+	const { data: followedTags, isLoading: tagsLoading } = useFollowedReaderTags();
 	const followedTagSlugs = useMemo(
 		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
 		[ followedTags ]
@@ -111,7 +111,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		return { feedIds, blogIds };
 	}, [ rawFollowingItems ] );
 
-	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
+	const { data: apiRecommendedSites = [], isLoading: apiLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
 		queryFn: () =>
 			wpcom.req.get(
@@ -141,6 +141,14 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		staleTime: Infinity,
 		enabled: followedTagSlugs.length > 0,
 	} );
+
+	// Treat the followed-tags query as part of "loading" so consumers (and the
+	// `combinedRecommendations` early-return below) don't briefly transition
+	// through the empty/no-recommendations state on initial mount: while tags
+	// are still in flight `followedTagSlugs` is `[]`, which disables the
+	// recommendations query (so `apiLoading` is `false`) and would otherwise
+	// flash the "No recommendations available" placeholder.
+	const isLoading = tagsLoading || apiLoading;
 
 	const combinedRecommendations = useMemo( () => {
 		if ( isLoading ) {
@@ -210,10 +218,12 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	);
 
 	const bridgedFeedIdsRef = useRef< Set< number > >( new Set() );
+	const failedFeedIdsRef = useRef< Set< number > >( new Set() );
 
 	// When followed tags change, allow feed bridge + React Query to write to Redux again.
 	useEffect( () => {
 		bridgedFeedIdsRef.current = new Set();
+		failedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
 
 	useEffect( () => {
@@ -229,6 +239,13 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				bridgedFeedIdsRef.current.add( feedId );
 				dispatch( receiveReaderFeedRequestSuccess( query.data ) );
 			} else if ( query.isError ) {
+				// Feeds reducer returns a fresh object on each `receiveReaderFeedRequestFailure`,
+				// so re-dispatching for the same feed id every time this effect runs causes
+				// avoidable Redux churn. Gate by feed id, mirroring `bridgedFeedIdsRef`.
+				if ( failedFeedIdsRef.current.has( feedId ) ) {
+					return;
+				}
+				failedFeedIdsRef.current.add( feedId );
 				dispatch( receiveReaderFeedRequestFailure( feedId, query.error ) );
 			}
 		} );
@@ -267,11 +284,24 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				continue;
 			}
 			const feed = readerFeedItems[ site.feed_ID ];
-			const reduxSite = readerSiteItems[ site.site_ID ];
-			if ( feed && ! feed.is_error && ( ! reduxSite || ! reduxSite.is_error ) ) {
-				pinnedFeedIdsRef.current.add( site.feed_ID );
-				newlyValidated.push( site );
+			if ( ! feed || feed.is_error ) {
+				continue;
 			}
+			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds like
+			// `design-milk.com`) have no associated WP.com site and never produce a
+			// `readerSiteItems` entry — pinning those on feed alone is correct.
+			// For cards with a real `site_ID`, wait until the site request lands so a
+			// late-arriving site error (e.g. 404/410) reliably excludes the card,
+			// rather than letting it stay pinned because the site hadn't loaded yet.
+			const requiresSite = site.site_ID > 0;
+			if ( requiresSite ) {
+				const reduxSite = readerSiteItems[ site.site_ID ];
+				if ( ! reduxSite || reduxSite.is_error ) {
+					continue;
+				}
+			}
+			pinnedFeedIdsRef.current.add( site.feed_ID );
+			newlyValidated.push( site );
 		}
 		if ( newlyValidated.length > 0 ) {
 			setPinnedSites( ( prev ) => [ ...prev, ...newlyValidated ] );
