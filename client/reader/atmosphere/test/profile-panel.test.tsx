@@ -5,12 +5,13 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { ComposerModal, ComposerProvider, useComposer } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ComposerModal, ComposerProvider, useComposer } from '../composer';
+import { atmosphereComposerConfig } from '../composer-config';
 import { ProfilePanel } from '../profile-panel';
-import type { ActiveMode } from '../composer';
 import type { AtmosphereConnection } from '@automattic/api-core';
+import type { ActiveMode } from 'calypso/reader/social/composer';
 
 const connection: AtmosphereConnection = {
 	id: 42,
@@ -228,7 +229,7 @@ describe( 'ProfilePanel — compose pill', () => {
 		const user = userEvent.setup();
 
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<ProfilePanel connection={ connection } />
 				<Spy onMode={ onMode } />
 				<ComposerModal />
@@ -272,7 +273,7 @@ describe( 'ProfilePanel — compose pill', () => {
 			.reply( 200, { items: [], cursor: null } );
 
 		const { container } = renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<ProfilePanel connection={ connection } />
 			</ComposerProvider>,
 			{ queryClient: makeQueryClient() }
@@ -281,9 +282,7 @@ describe( 'ProfilePanel — compose pill', () => {
 		// Wait for the pill to render after the connection details resolve.
 		await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
 
-		const avatarImg = container.querySelector< HTMLImageElement >(
-			'.atmosphere-compose-pill__avatar'
-		);
+		const avatarImg = container.querySelector< HTMLImageElement >( '.social-compose-pill__avatar' );
 		expect( avatarImg?.tagName ).toBe( 'IMG' );
 		expect( avatarImg?.getAttribute( 'src' ) ).toBe( detailsAvatar );
 	} );

@@ -14,7 +14,6 @@ import {
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
@@ -96,6 +95,7 @@ import {
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
+import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
@@ -142,7 +142,11 @@ function getWpcomPlanGridUrl( siteSlug: string | undefined ): string {
 	} );
 }
 
-function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
+function isAutoRenewToggleDisabled(
+	purchase: Purchase,
+	user: User,
+	isSplitCancelRemoveEnabled: boolean
+): boolean {
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return true;
 	}
@@ -150,14 +154,13 @@ function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
 		// Special case!
 		return false;
 	}
-	// Under the split-cancel-remove flag, keep the toggle active in both
+	// Under the split-cancel-remove experiment, keep the toggle active in both
 	// directions — matches legacy Calypso. The server's `can_disable_auto_renew`
 	// and `can_reenable_auto_renewal` go false during pending-renewal retries,
 	// but the actual disable/re-enable endpoints accept the call (verified in
-	// wpcom-billing backend trace). Off-flag we preserve trunk's behavior of
+	// wpcom-billing backend trace). Off-experiment we preserve trunk's behavior of
 	// trusting the server flags.
-	const splitCancelRemoveEnabled = isEnabled( 'purchases/split-cancel-remove' );
-	if ( ! splitCancelRemoveEnabled ) {
+	if ( ! isSplitCancelRemoveEnabled ) {
 		if ( purchase.is_auto_renew_enabled && ! purchase.can_disable_auto_renew ) {
 			return true;
 		}
@@ -271,7 +274,7 @@ function PurchaseActionMenu( { purchase }: { purchase: Purchase } ) {
 function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const locale = useLocale();
-	const isSplitEnabled = isEnabled( 'purchases/split-cancel-remove' );
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 
 	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
 	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
@@ -650,6 +653,7 @@ function getFields( {
 			label: __( 'Enable auto-renew' ),
 			Edit: ( { field, data: purchase, onChange } ) => {
 				const locale = useLocale();
+				const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 				const { getValue } = field;
 				const helpText = ( () => {
 					if (
@@ -726,7 +730,10 @@ function getFields( {
 								: field.label
 						}
 						checked={ getValue( { item: purchase } ) }
-						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
+						disabled={
+							isMutationPending ||
+							isAutoRenewToggleDisabled( purchase, user, isSplitCancelRemoveEnabled )
+						}
 						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
 						help={ helpText }
 					/>

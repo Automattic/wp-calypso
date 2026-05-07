@@ -2,6 +2,8 @@
 
 This document provides guidance on the technical use of color in Calypso. Please see our documentation on our [Brand Guide](https://dotcombrand.wordpress.com/colors/) for guidance related to general color usage.
 
+For Dashboard dark-mode implementation details, see [Dark Mode](dark-mode.md).
+
 ## CSS Custom Properties
 
 We use CSS custom properties for all color usage. Unless an edge case requires another solution, you should rely on [theme properties](https://github.com/Automattic/wp-calypso/blob/HEAD/packages/calypso-color-schemes/src/shared/color-schemes/_default.scss).

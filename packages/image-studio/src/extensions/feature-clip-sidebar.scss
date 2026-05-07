@@ -1,15 +1,25 @@
 .image-studio-feature-clip-panel {
-	&__description {
-		margin: 0 0 16px;
-		font-size: 13px;
-		line-height: 1.4;
+	&__title {
+		display: inline-flex;
+		flex-direction: column;
+		gap: 2px;
+		line-height: 1.25;
 	}
 
-	&__button {
+	&__title-line {
 		display: inline-flex;
 		align-items: center;
-		justify-content: center;
+		gap: 8px;
+	}
+
+	&__description {
+		margin: 0 0 12px;
+		font-size: 13px;
+		line-height: 1.5;
+	}
+
+	&__cta {
 		width: 100%;
-		border-radius: 2px;
+		justify-content: center;
 	}
 }

@@ -6,7 +6,6 @@ import {
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -35,6 +34,7 @@ import {
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
@@ -47,6 +47,7 @@ import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { refunded, upgraded, cancelled } = purchaseSettingsRoute.useSearch();
 	const navigate = purchaseSettingsRoute.useNavigate();
 	// Show the transient cancelled success notice once after a cancel redirects
@@ -110,7 +111,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	// Transient cancelled success notice — suppresses every other notice until
 	// dismissed, refreshed, or navigated-away-and-back. Gated on the
 	// `?cancelled=true` search param set by the cancel redirect.
-	if ( config.isEnabled( 'purchases/split-cancel-remove' ) && showCancelledNotice ) {
+	if ( isSplitCancelRemoveEnabled && showCancelledNotice ) {
 		return (
 			<PurchaseCancelledNotice
 				purchase={ purchase }

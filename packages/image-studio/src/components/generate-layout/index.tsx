@@ -1,5 +1,6 @@
 import { BigSkyIcon, cn } from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
+import { ShareReelAction } from './share-reel-action';
 import './style.scss';
 
 export const GenerateLayout = ( {
@@ -11,9 +12,6 @@ export const GenerateLayout = ( {
 	isAiProcessing: boolean;
 	videoUrl?: string | null;
 } ) => {
-	// Once a video URL is available we swap the placeholder for an HTML5 player
-	// pinned to a 9:16 frame (the only AR Veo produces today). VideoPress is the
-	// follow-up — see the comment in components/index.tsx where this is wired.
 	if ( videoUrl ) {
 		return (
 			<div
@@ -22,16 +20,19 @@ export const GenerateLayout = ( {
 					'is-prompt-sent': isPromptSent,
 				} ) }
 			>
-				<video
-					className="image-studio-modal__generated-video"
-					src={ videoUrl }
-					aria-label={ __( 'Generated feature clip preview', __i18n_text_domain__ ) }
-					controls
-					loop
-					muted
-					playsInline
-					preload="metadata"
-				/>
+				<div className="image-studio-modal__generated-video-frame">
+					<video
+						className="image-studio-modal__generated-video"
+						src={ videoUrl }
+						aria-label={ __( 'Generated feature clip preview', __i18n_text_domain__ ) }
+						controls
+						loop
+						muted
+						playsInline
+						preload="metadata"
+					/>
+				</div>
+				<ShareReelAction />
 			</div>
 		);
 	}

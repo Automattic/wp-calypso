@@ -6,26 +6,37 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { LikeButton } from '../like-button';
-import type { AtmosphereFeedItem } from '@automattic/api-core';
+import { LikeProvider } from '../like-context';
+import type { SocialPost } from '../../../types';
+
+// `logToLogstash` fires a real HTTPS request — mute it so the
+// rkey-missing path in the atmosphere unlike adapter doesn't trigger
+// an unmocked nock request.
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
 
 const BASE = 'https://public-api.wordpress.com';
 const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kabc';
 const POST_CID = 'bafy-cid';
 const LIKE_URI = 'at://did:plc:caller/app.bsky.feed.like/3krkeyrkeyrke';
 
-function makePost( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFeedItem {
+function makePost( overrides: Partial< SocialPost > = {} ): SocialPost {
 	return {
 		uri: POST_URI,
 		cid: POST_CID,
+		permalink: 'https://bsky.app/profile/alice.bsky.social/post/3kabc',
 		author: {
-			did: 'did:plc:author',
+			id: 'did:plc:author',
 			handle: 'alice.bsky.social',
 			display_name: 'Alice',
 			avatar: null,
+			profile_url: 'https://bsky.app/profile/alice.bsky.social',
 		},
 		created_at: '2026-04-30T12:00:00Z',
 		indexed_at: '2026-04-30T12:00:00Z',
@@ -38,7 +49,6 @@ function makePost( overrides: Partial< AtmosphereFeedItem > = {} ): AtmosphereFe
 		embed: null,
 		counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
 		viewer: { like: null, repost: null },
-		bluesky_url: 'https://bsky.app/profile/alice.bsky.social/post/3kabc',
 		...overrides,
 	};
 }
@@ -51,6 +61,7 @@ function renderLikeButton(
 	post = makePost(),
 	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
 ) {
+	const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 42 );
 	return {
 		onClick,
 		...renderWithProvider(
@@ -61,7 +72,9 @@ function renderLikeButton(
 					onClick,
 				} }
 			>
-				<LikeButton post={ post } connectionId={ 42 } />
+				<LikeProvider value={ useAtmosphereLikeAction }>
+					<LikeButton post={ post } />
+				</LikeProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		),
@@ -152,7 +165,7 @@ describe( '<LikeButton>', () => {
 
 		const user = userEvent.setup();
 		const post = makePost();
-		delete ( post as Partial< AtmosphereFeedItem > ).viewer;
+		delete ( post as Partial< SocialPost > ).viewer;
 		renderLikeButton( post );
 		const button = screen.getByRole( 'button', { name: /like, 5 likes/i } );
 		expect( button ).toHaveAttribute( 'aria-pressed', 'false' );
@@ -206,6 +219,7 @@ describe( '<LikeButton>', () => {
 	it( 'click does not bubble to parent listener', async () => {
 		const onParentClick = jest.fn();
 		const user = userEvent.setup();
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 42 );
 		renderWithProvider(
 			<SocialAnalyticsProvider
 				value={ {
@@ -214,12 +228,11 @@ describe( '<LikeButton>', () => {
 					onClick: jest.fn(),
 				} }
 			>
-				<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>
-					<LikeButton
-						post={ makePost( { viewer: { like: PENDING_LIKE_URI, repost: null } } ) }
-						connectionId={ 42 }
-					/>
-				</div>
+				<LikeProvider value={ useAtmosphereLikeAction }>
+					<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>
+						<LikeButton post={ makePost( { viewer: { like: PENDING_LIKE_URI, repost: null } } ) } />
+					</div>
+				</LikeProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
 		);

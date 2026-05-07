@@ -2,12 +2,9 @@ import { addQueryArgs } from '@wordpress/url';
 import { wpcom } from '../wpcom-fetcher';
 import type { ReadStreamQueryParams, ReadStreamResponse } from './types';
 
-// READ-485: streams migrated incrementally. Streams still served by the
-// legacy data-layer at `client/state/data-layer/wpcom/read/streams/index.js`:
-// `recommendations_posts`, `custom_recs_posts_with_images`,
-// `custom_recs_sites_with_images`. See the legacy `streamApis` map for their
-// canonical per-shape `path`, `apiVersion`, `apiNamespace`, and `query`
-// definitions to mirror when porting each one.
+// READ-485: streams migrated incrementally. Keep each fetcher aligned with
+// its legacy data-layer `path`, `apiVersion`, `apiNamespace`, and query shape
+// when moving a stream into React Query.
 export const fetchReadFollowing = (
 	params: ReadStreamQueryParams = {}
 ): Promise< ReadStreamResponse > =>
@@ -274,6 +271,39 @@ export const fetchReadConversations = (
 ): Promise< ReadStreamResponse > =>
 	wpcom.req.get( {
 		path: addQueryArgs( '/read/conversations', params ),
+		apiVersion: '1.2',
+		method: 'GET',
+	} );
+
+/**
+ * Fetch the `recommendations_posts` and `custom_recs_posts_with_images`
+ * streams — both hit `/read/recommendations/posts`. The differentiator is in
+ * the query params (algorithm vs. alg_prefix, plus `seed`), which the thunk
+ * in `client/state/reader/streams/actions.js` builds per stream type and
+ * passes through. Pagination is offset-based (see `extractPageHandle` in
+ * `client/state/reader/streams/normalize.ts`).
+ */
+export const fetchReadRecommendationsPosts = (
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/read/recommendations/posts', params ),
+		apiVersion: '1.2',
+		method: 'GET',
+	} );
+
+/**
+ * Fetch the `custom_recs_sites_with_images` stream —
+ * `/read/recommendations/sites`. Returns `{ sites: [...] }` (each site
+ * carrying its top post under `posts[0]`). Capped at 10 sites per request,
+ * which the thunk enforces via the poll-query branch in
+ * `buildStreamQueryParams`.
+ */
+export const fetchReadRecommendationsSites = (
+	params: ReadStreamQueryParams = {}
+): Promise< ReadStreamResponse > =>
+	wpcom.req.get( {
+		path: addQueryArgs( '/read/recommendations/sites', params ),
 		apiVersion: '1.2',
 		method: 'GET',
 	} );

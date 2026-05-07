@@ -104,6 +104,44 @@ describe( 'JetpackAuthorize', () => {
 		expect( container ).toMatchSnapshot();
 	} );
 
+	test( 'should render with the connector branding when from=jetpack-connector', () => {
+		const { container } = renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'jetpack', 'woocommerce' ],
+				} }
+			/>
+		);
+
+		// Connector visual treatment: wrapper class is applied to the main element.
+		expect(
+			container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+		).toBeInTheDocument();
+
+		// H1 carries the unified-flow account copy.
+		expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
+			'Connect your account'
+		);
+
+		// Subtitle (BrandHeader description) reflects the WOO_JETPACK scenario
+		// — store wording (any Woo plugin present) plus the Woo+Jetpack
+		// benefit clause.
+		expect(
+			screen.getByText(
+				'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and activate Jetpack.'
+			)
+		).toBeInTheDocument();
+
+		// Composite Woo + Jetpack logo is rendered (vs. the Jetpack-only fallback).
+		expect( container.querySelector( '.connect-screen-brand-header__logo-image' ) ).toHaveAttribute(
+			'src',
+			'jetpack-connect-woo.svg'
+		);
+	} );
+
 	describe( 'isSso', () => {
 		const isSso = new JetpackAuthorize().isSso;
 		const queryDataSiteId = 12349876;

@@ -3,19 +3,25 @@ import {
 	useMastodonAuthorProfileQuery,
 } from '@automattic/api-queries';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import {
 	SocialAuthorProfilePanel,
 	SocialProfileCard,
 	mapMastodonAccountToSocialProfileCardProps,
 	mapMastodonFeedItemToSocialPost,
+	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { MastodonAuthorProfileTabs, useMastodonAuthorFeedFilter } from './author-profile-tabs';
 import { projectMastodonError } from './error-projection';
 import { errorMessage } from './profile-errors';
 import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
+import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
+import { makeUseMastodonRepostAction } from './use-mastodon-repost-action';
 import type {
 	MastodonAuthorProfile,
 	MastodonConnection,
@@ -26,11 +32,17 @@ import type {
 interface MastodonAuthorProfilePanelProps {
 	connection: MastodonConnection;
 	actor: string;
+	// URL prefix for the inner filter-tab links — see
+	// `MastodonAuthorProfileTabs` for the contract. The connected-user
+	// /profile page passes its own path so the tabs stay within /profile;
+	// the third-party /profile/:actor route passes the actor-scoped path.
+	subtabBasePath: string;
 }
 
 export function MastodonAuthorProfilePanel( {
 	connection,
 	actor,
+	subtabBasePath,
 }: MastodonAuthorProfilePanelProps ) {
 	const translate = useTranslate();
 
@@ -78,12 +90,13 @@ export function MastodonAuthorProfilePanel( {
 					<MastodonAuthorProfileTabs
 						connectionId={ connection.id }
 						actor={ actor }
+						basePath={ subtabBasePath }
 						activeFilter={ filter }
 					/>
 				</>
 			);
 		},
-		[ connection.id, connection.instance, actor, filter, stats, translate ]
+		[ connection.id, connection.instance, actor, filter, stats, subtabBasePath, translate ]
 	);
 
 	const renderProfileError = useCallback(
@@ -169,47 +182,95 @@ export function MastodonAuthorProfilePanel( {
 		profile.data?.locked === true && items.length === 0 && ! feed.isPending && ! feed.isError;
 	const emptyHandle = profile.data?.acct ?? actor;
 
+	const useLikeAction = useMemo(
+		() => makeUseMastodonLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
+	const useRepostAction = useMemo(
+		() => makeUseMastodonRepostAction( connection.id ),
+		[ connection.id ]
+	);
+
+	const composer = useOptionalComposer();
+	const openComposer = composer?.openComposer;
+
+	const onReplyClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'reply',
+				root: { uri: post.uri },
+				parent: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	return (
-		<SocialAuthorProfilePanel< MastodonAuthorProfile, MastodonError, MastodonFeedItem >
-			connectionId={ connection.id }
-			actor={ actor }
-			timelineUrl={ getTimelineUrl( connection.id ) }
-			source="mastodon"
-			tracksProtocolPrefix="calypso_reader_mastodon_"
-			profile={ profile }
-			feed={ feed }
-			getProfileViewedProps={ getProfileViewedProps }
-			renderProfileBody={ renderProfileBody }
-			renderProfileError={ renderProfileError }
-			feedItemKey={ feedItemKey }
-			mapFeedItem={ mapFeedItem }
-			projectFeedError={ projectMastodonError }
-			buildProfileUrl={ buildProfileUrl }
-			buildThreadUrl={ buildThreadUrl }
-			buildTagUrl={ buildTagUrl }
-			emptyTitle={
-				isLockedEmpty
-					? String( translate( 'This account’s posts are private.' ) )
-					: String(
-							translate( '@%(handle)s hasn’t posted yet.', {
-								args: { handle: emptyHandle },
-							} )
-					  )
-			}
-			emptyLine={
-				isLockedEmpty
-					? String( translate( 'You need to follow this account on Mastodon to see their posts.' ) )
-					: String( translate( 'Their feed is empty.' ) )
-			}
-			emptyActionLabel={ String( translate( 'View on Mastodon' ) ) }
-			emptyActionURL={
-				profile.data ? `https://${ connection.instance }/@${ profile.data.acct }` : undefined
-			}
-			protocolLabel="Mastodon"
-			protocolHomeURL="/reader/mastodon"
-			protocolHomeLabel={ translate( 'Back to Mastodon' ) }
-			className="mastodon-author-profile"
-			feedDimension={ filter }
-		/>
+		<LikeProvider value={ useLikeAction }>
+			<RepostProvider value={ useRepostAction }>
+				<SocialAuthorProfilePanel< MastodonAuthorProfile, MastodonError, MastodonFeedItem >
+					connectionId={ connection.id }
+					actor={ actor }
+					timelineUrl={ getTimelineUrl( connection.id ) }
+					source="mastodon"
+					tracksProtocolPrefix="calypso_reader_mastodon_"
+					profile={ profile }
+					feed={ feed }
+					getProfileViewedProps={ getProfileViewedProps }
+					renderProfileBody={ renderProfileBody }
+					renderProfileError={ renderProfileError }
+					feedItemKey={ feedItemKey }
+					mapFeedItem={ mapFeedItem }
+					projectFeedError={ projectMastodonError }
+					buildProfileUrl={ buildProfileUrl }
+					buildThreadUrl={ buildThreadUrl }
+					buildTagUrl={ buildTagUrl }
+					onReplyClick={ onReplyClick }
+					onQuoteClick={ onQuoteClick }
+					emptyTitle={
+						isLockedEmpty
+							? String( translate( 'This account’s posts are private.' ) )
+							: String(
+									translate( '@%(handle)s hasn’t posted yet.', {
+										args: { handle: emptyHandle },
+									} )
+							  )
+					}
+					emptyLine={
+						isLockedEmpty
+							? String(
+									translate( 'You need to follow this account on Mastodon to see their posts.' )
+							  )
+							: String( translate( 'Their feed is empty.' ) )
+					}
+					emptyActionLabel={ String( translate( 'View on Mastodon' ) ) }
+					emptyActionURL={
+						profile.data ? `https://${ connection.instance }/@${ profile.data.acct }` : undefined
+					}
+					protocolLabel="Mastodon"
+					protocolHomeURL="/reader/mastodon"
+					protocolHomeLabel={ translate( 'Back to Mastodon' ) }
+					className="mastodon-author-profile"
+					feedDimension={ filter }
+				/>
+			</RepostProvider>
+		</LikeProvider>
 	);
 }

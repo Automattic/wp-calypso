@@ -7,8 +7,10 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import EmptyContent from 'calypso/components/empty-content';
 import { SocialAnalyticsProvider } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { useOptionalComposer } from './composer';
 import {
 	getProfileUrl as buildProfileUrl,
 	getTagFeedUrl as buildTagUrl,
@@ -19,6 +21,8 @@ import { ThreadHeader } from './thread-header';
 import { ThreadTree } from './thread-tree';
 import { ThreadTombstone } from './thread-tree/thread-tombstone';
 import { ThreadTreeSkeleton } from './thread-tree/thread-tree-skeleton';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
+import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type {
 	AtmosphereConnection,
 	AtmosphereError,
@@ -155,6 +159,22 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -164,25 +184,50 @@ export function ThreadPanel( { connection, did, rkey }: ThreadPanelProps ) {
 			getProfileUrl,
 			getTagUrl,
 			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl, onReplyClick ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			getThreadUrl,
+			getProfileUrl,
+			getTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
+	);
+
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
+	const useRepostAction = useMemo(
+		() => makeUseAtmosphereRepostAction( connection.id ),
+		[ connection.id ]
 	);
 
 	return (
 		<>
 			<ThreadHeader connection={ connection } onBackToTimeline={ handleBackToTimeline } />
 			<SocialAnalyticsProvider value={ analyticsValue }>
-				{ renderBody( {
-					translate,
-					data,
-					isPending,
-					isFetching,
-					isError,
-					error: error ?? null,
-					handleRetry,
-					targetUri,
-					connectionId: connection.id,
-				} ) }
+				<LikeProvider value={ useLikeAction }>
+					<RepostProvider value={ useRepostAction }>
+						{ renderBody( {
+							translate,
+							data,
+							isPending,
+							isFetching,
+							isError,
+							error: error ?? null,
+							handleRetry,
+							targetUri,
+							connectionId: connection.id,
+						} ) }
+					</RepostProvider>
+				</LikeProvider>
 			</SocialAnalyticsProvider>
 		</>
 	);
