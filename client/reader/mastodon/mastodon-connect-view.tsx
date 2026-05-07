@@ -19,14 +19,16 @@ function isSafeAuthorizeUrl( url: string ): boolean {
 	}
 }
 
+type StartError = 'unsafe_url' | 'state_persist_failed';
+
 export function MastodonConnectView() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const authorize = useAuthorizeMastodonConnectionMutation();
-	const [ unsafeUrl, setUnsafeUrl ] = useState( false );
+	const [ startError, setStartError ] = useState< StartError | null >( null );
 
 	const handleSubmit = ( { instance }: { instance: string } ) => {
-		setUnsafeUrl( false );
+		setStartError( null );
 		authorize.mutate(
 			{ instance },
 			{
@@ -36,7 +38,7 @@ export function MastodonConnectView() {
 						// ever return `https:`; anything else is a bug or tampering.
 						// Surface a user-visible error so the form doesn't appear
 						// to hang silently after Continue.
-						setUnsafeUrl( true );
+						setStartError( 'unsafe_url' );
 						dispatch(
 							recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_error', {
 								reason: 'unsafe_url',
@@ -49,7 +51,7 @@ export function MastodonConnectView() {
 						// the callback view can't validate `state` on return, so
 						// the redirect would always end at "expired link" after
 						// the user signed in on the IdP — surface the failure now.
-						setUnsafeUrl( true );
+						setStartError( 'state_persist_failed' );
 						dispatch(
 							recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_error', {
 								reason: 'state_persist_failed',
@@ -86,10 +88,17 @@ export function MastodonConnectView() {
 					error={ authorize.error ?? null }
 					onSubmit={ handleSubmit }
 				/>
-				{ unsafeUrl ? (
+				{ startError === 'unsafe_url' ? (
 					<p className="mastodon-error" role="alert">
 						{ translate(
 							'We couldn’t start the authorization safely. Please try again, or choose a different instance.'
+						) }
+					</p>
+				) : null }
+				{ startError === 'state_persist_failed' ? (
+					<p className="mastodon-error" role="alert">
+						{ translate(
+							'We couldn’t save the sign-in details in your browser. Make sure cookies and site storage are enabled, then try again.'
 						) }
 					</p>
 				) : null }
