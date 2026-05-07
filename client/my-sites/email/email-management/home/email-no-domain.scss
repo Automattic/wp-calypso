@@ -1,0 +1,124 @@
+@import "@automattic/typography/styles/variables";
+
+.email-no-domain__landing {
+	.card.email-no-domain__hero {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 24px;
+		margin-block-start: 24px;
+		padding: 42px;
+		border-radius: 4px;
+		background-color: var(--color-surface);
+	}
+
+	.email-no-domain__hero-info {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		flex: 1 1 360px;
+	}
+
+	.email-no-domain__hero-title {
+		display: block;
+		margin: 0;
+		color: var(--studio-gray-100);
+		font-family: $brand-serif;
+		font-size: $font-title-large;
+		line-height: 1.2;
+	}
+
+	.email-no-domain__hero-description {
+		margin-block: 16px 0;
+		max-width: 540px;
+		font-size: $font-body-small;
+		font-weight: 400;
+		text-wrap: pretty;
+	}
+
+	.email-no-domain__hero-buttons {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-block-start: 32px;
+	}
+
+	.email-no-domain__hero-image-wrapper {
+		display: none;
+		flex: 0 0 auto;
+
+		@media (min-width: 782px) {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+
+	.email-no-domain__hero-image {
+		width: 100%;
+		max-width: 320px;
+		height: auto;
+		object-fit: contain;
+	}
+
+	.email-no-domain__features-section {
+		margin-block-start: 3rem;
+		padding-block: 2.5rem 0;
+
+		.formatted-header {
+			margin-block-end: 2rem;
+			text-align: center;
+		}
+
+		// Reset the negative-margin hanging trick from base promo-section
+		// so the grid can size cleanly without horizontal overflow.
+		.promo-section__promos {
+			position: static;
+			inset-inline-start: auto;
+			width: 100%;
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+
+			@media (min-width: 660px) {
+				grid-template-columns: repeat(2, 1fr);
+			}
+
+			@media (min-width: 960px) {
+				grid-template-columns: repeat(3, 1fr);
+			}
+
+			// Override the default promo-card layout (which expects a figure
+			// pane on the side and uses space-between in the title) so our
+			// icon-in-title cards lay out as a normal vertical card.
+			.promo-card {
+				flex-direction: column;
+				margin: 0;
+				width: 100%;
+
+				.action-panel__title {
+					justify-content: flex-start;
+					align-items: center;
+					gap: 0.5rem;
+					font-size: 1rem;
+					font-weight: 500;
+
+					.gridicon {
+						flex-shrink: 0;
+						fill: var(--color-primary);
+					}
+				}
+
+				.action-panel__body {
+					flex-grow: 1;
+					width: 100%;
+					font-size: 0.875rem;
+					color: var(--color-text-subtle);
+				}
+			}
+		}
+	}
+}
