@@ -8,16 +8,22 @@
 	flex-direction: column;
 	flex-shrink: 0;
 	gap: $grid-unit-30;
-	position: sticky;
-	top: var(--masterbar-height, 0);
 	width: $sidebar-width;
-	min-height: calc( 100vh - var( --masterbar-height, 0 ) );
 	padding: 0;
 	border-inline-end: $border-width solid var( --dashboard-header__border-color );
 	box-sizing: border-box;
 	color: var( --dashboard-menu-item__color );
 	background-color: var( --dashboard-header__background-color );
-	overflow-y: auto;
+	overflow: hidden;
+}
+
+// Desktop: pin to viewport. On mobile, the parent .dashboard-responsive-sidebar
+// is the fixed-positioned wrapper, so the inner sidebar stays in flow.
+.dashboard-root__body > .dashboard-responsive-sidebar__sidebar {
+	position: fixed;
+	top: var(--masterbar-height, 0);
+	inset-inline-start: 0;
+	bottom: 0;
 }
 
 .dashboard-responsive-sidebar__sidebar:not( :has( > .dashboard-responsive-sidebar__logo ) ) {

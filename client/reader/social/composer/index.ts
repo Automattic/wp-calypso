@@ -10,3 +10,5 @@ export type {
 	ComposerParentRef,
 } from './composer-provider';
 export type { ComposerConfig, ComposerMediaSlot, Translate } from './composer-config';
+export { AltTextPopover, MediaGrid } from '../composer-media';
+export type { MediaGridItem } from '../composer-media';

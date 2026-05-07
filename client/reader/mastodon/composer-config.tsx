@@ -2,6 +2,8 @@ import { createMastodonPostMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl } from './route';
+import { useMastodonComposerLimit } from './use-mastodon-composer-limit';
+import { useMastodonComposerMedia } from './use-mastodon-composer-media';
 import type {
 	MastodonCreatePostMutationParams,
 	MastodonCreatePostResult,
@@ -10,18 +12,15 @@ import type {
 import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
 
-// Mastodon's per-instance limit defaults to 500. Instances can configure a
-// different value (advertised via the `instance.configuration.statuses.
-// max_characters` endpoint), but instance-aware limits ship in a follow-up;
-// 500 covers the vast majority of instances today including mastodon.social.
-const LIMIT = 500;
-
 export const mastodonComposerConfig: ComposerConfig<
 	MastodonError,
 	MastodonCreatePostMutationParams,
 	MastodonCreatePostResult
 > = {
-	limit: LIMIT,
+	// Per-instance — reads `max_characters` from the home instance's
+	// configuration via `useMastodonInstanceConfigQuery` and falls back to
+	// 500 (stock Mastodon default) when the query is pending or errors.
+	useLimit: useMastodonComposerLimit,
 	// Quote mode uses Mastodon 4.5+'s native `quoted_status_id` with a
 	// text-based fallback (permalink appended to status) for older
 	// instances. The retry lives in `createMastodonPostWithQuoteFallback`
@@ -167,6 +166,7 @@ export const mastodonComposerConfig: ComposerConfig<
 			},
 		} );
 	},
+	useMedia: useMastodonComposerMedia,
 };
 
 function titleForMode( mode: ActiveMode, t: Translate ): string {
@@ -241,6 +241,14 @@ function errorMessageFor( err: MastodonError, t: Translate ): ReactNode {
 		case 'connection_not_found':
 		case 'not_found':
 			return t( 'This Mastodon connection no longer exists.' );
+		case 'media_too_large':
+			return t( 'Image is too large. Try a smaller image (under 8 MB).' );
+		case 'media_unsupported_type':
+			return t( 'Image format isn’t supported. Try JPEG, PNG, GIF, or WebP.' );
+		case 'media_decode_failed':
+			return t( 'We couldn’t process this image. Try a different file.' );
+		case 'media_invalid':
+			return t( 'We couldn’t post this. Try a different image.' );
 		case 'invalid_instance':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );

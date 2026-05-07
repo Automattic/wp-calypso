@@ -1,0 +1,53 @@
+import {
+	formatTextToolDefinition,
+	getBlockToolDefinition,
+	getBlockTypeToolDefinition,
+	getBlockTypesToolDefinition,
+	getEditorBlocksToolDefinition,
+	getInserterItemsToolDefinition,
+	getSelectedBlockToolDefinition,
+	hasSelectedBlockToolDefinition,
+	insertBlockToolDefinition,
+	insertBlocksToolDefinition,
+	moveBlockToolDefinition,
+	removeBlockToolDefinition,
+	replaceBlockToolDefinition,
+	selectBlockToolDefinition,
+	updateBlockAttributesToolDefinition,
+} from '../tools/editor-blocks-tool';
+import {
+	getPostInfoToolDefinition,
+	publishPostToolDefinition,
+	redoToolDefinition,
+	savePostToolDefinition,
+	setPostTitleToolDefinition,
+	undoToolDefinition,
+} from '../tools/editor-post-tool';
+import { pickImageToolDefinition } from '../tools/image-picker-tool';
+import { verifyYoutubeUrlToolDefinition } from '../tools/youtube-oembed-tool';
+
+export const realtimeToolDefinitions = [
+	getEditorBlocksToolDefinition,
+	getSelectedBlockToolDefinition,
+	getInserterItemsToolDefinition,
+	hasSelectedBlockToolDefinition,
+	selectBlockToolDefinition,
+	getBlockTypesToolDefinition,
+	getBlockTypeToolDefinition,
+	insertBlockToolDefinition,
+	insertBlocksToolDefinition,
+	updateBlockAttributesToolDefinition,
+	replaceBlockToolDefinition,
+	removeBlockToolDefinition,
+	moveBlockToolDefinition,
+	getBlockToolDefinition,
+	formatTextToolDefinition,
+	setPostTitleToolDefinition,
+	savePostToolDefinition,
+	publishPostToolDefinition,
+	undoToolDefinition,
+	redoToolDefinition,
+	getPostInfoToolDefinition,
+	verifyYoutubeUrlToolDefinition,
+	pickImageToolDefinition,
+];

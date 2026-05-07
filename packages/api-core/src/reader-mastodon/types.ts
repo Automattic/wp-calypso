@@ -222,6 +222,22 @@ export interface MastodonDeleteRepostParams {
 }
 
 /**
+ * Per-instance composer limits, projected by the wpcom backend from the
+ * home instance's `/api/v2/instance` (or v1) endpoint. Stock Mastodon
+ * defaults to `max_characters: 500`; instances commonly raise it (some
+ * self-hosted instances run 5000+). Older Mastodon / Pleroma /
+ * GoToSocial expose `max_toot_chars` instead — the backend collapses
+ * both to `max_characters`.
+ *
+ * Slice A (CM-677) only surfaces `max_characters`. `characters_reserved_per_url`
+ * is purely a server-side cap-counting detail and doesn't affect display,
+ * and `max_media_attachments` matters only once Mastodon image upload ships.
+ */
+export interface MastodonInstanceConfig {
+	max_characters: number;
+}
+
+/**
  * Wire-pure shape passed to `createMastodonPost`. Every field here lands
  * in the request body (or the path, in `connectionId`'s case). Do not
  * widen this type with client-only metadata — see
@@ -242,6 +258,9 @@ export interface MastodonCreatePostParams {
 	 * that support native quotes.
 	 */
 	quoted_status_id?: string;
+	// Slice 8a: optional media attachments + sensitive flag.
+	media_ids?: string[];
+	sensitive?: boolean;
 }
 
 /**
@@ -269,4 +288,30 @@ export interface MastodonCreatePostResult {
 	id: string;
 	url: string;
 	in_reply_to_id: string | null;
+}
+
+// Slice 8a: image attachments via `POST /reader/mastodon/connections/{id}/media`.
+export interface MastodonMediaUploadParams {
+	connectionId: number;
+	file: File;
+	// Alt text passed through to the instance as the `description` form field.
+	// Mastodon does not let us update alt text after upload via the wpcom backend,
+	// so this is the only opportunity to set it.
+	description?: string;
+}
+
+export interface MastodonMediaUploadResult {
+	id: string;
+	type: 'image' | 'video' | 'gifv' | 'audio' | 'unknown';
+	// `null` when the instance returns 202 (still processing). Mastodon's
+	// `POST /api/v1/statuses` accepts media_ids whose backing media is still
+	// processing — it queues the status until processing completes — so callers
+	// pass the id through regardless.
+	url: string | null;
+	preview_url: string | null;
+	description: string;
+}
+
+export interface MastodonAuthStatus {
+	needs_reauth: boolean;
 }

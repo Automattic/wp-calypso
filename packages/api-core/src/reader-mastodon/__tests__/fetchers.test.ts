@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { wpcom } from '../../wpcom-fetcher';
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
@@ -7,12 +8,15 @@ import {
 	createMastodonRepost,
 	deleteMastodonLike,
 	deleteMastodonRepost,
+	getMastodonAuthStatus,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonInstanceConfig,
 	getMastodonTagFeed,
 	getMastodonTimeline,
+	uploadMastodonMedia,
 } from '../fetchers';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -94,6 +98,27 @@ describe( 'mastodon fetchers', () => {
 		expect( result.counts.posts ).toBe( 0 );
 	} );
 
+	it( 'getMastodonInstanceConfig GETs /reader/mastodon/connections/:id/instance-config', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/instance-config' )
+			.reply( 200, { max_characters: 4096 } );
+		const result = await getMastodonInstanceConfig( 42 );
+		expect( result.max_characters ).toBe( 4096 );
+	} );
+
+	it( 'getMastodonInstanceConfig classifies a 502 as upstream_unavailable', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/instance-config' )
+			.reply( 502, {
+				code: 'mastodon_upstream_unavailable',
+				message: '',
+				data: { status: 502 },
+			} );
+		await expect( getMastodonInstanceConfig( 42 ) ).rejects.toMatchObject( {
+			kind: 'upstream_unavailable',
+		} );
+	} );
+
 	it( 'getMastodonConnections classifies 401 as auth_required', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections' )
@@ -103,6 +128,39 @@ describe( 'mastodon fetchers', () => {
 				data: { status: 401 },
 			} );
 		await expect( getMastodonConnections() ).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+
+	it( 'getMastodonAuthStatus returns { needs_reauth } for the connection', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 200, { needs_reauth: true } );
+		const res = await getMastodonAuthStatus( 42 );
+		expect( res.needs_reauth ).toBe( true );
+	} );
+
+	it( 'getMastodonAuthStatus surfaces classified errors', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 401, { code: 'reader_mastodon_unauthenticated' } );
+		await expect( getMastodonAuthStatus( 42 ) ).rejects.toMatchObject( {
+			kind: 'auth_required',
+		} );
+	} );
+
+	it( 'getMastodonAuthStatus rejects responses missing needs_reauth', async () => {
+		// Without shape validation a response of `{}` types as `needs_reauth:
+		// undefined` and the gate's `!== true` check silently treats it as
+		// healthy — surface it as an unknown error instead so the gate falls
+		// through to children rather than locking users out incorrectly.
+		nock( BASE ).get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' ).reply( 200, {} );
+		await expect( getMastodonAuthStatus( 42 ) ).rejects.toMatchObject( { kind: 'unknown' } );
+	} );
+
+	it( 'getMastodonAuthStatus rejects responses with non-boolean needs_reauth', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 200, { needs_reauth: 'yes' } );
+		await expect( getMastodonAuthStatus( 42 ) ).rejects.toMatchObject( { kind: 'unknown' } );
 	} );
 } );
 
@@ -540,5 +598,153 @@ describe( 'createMastodonPost', () => {
 			kind: 'rate_limited',
 			retry_after: 30,
 		} );
+	} );
+
+	it( 'includes media_ids and sensitive when supplied', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'https://i.example/1',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( {
+			connectionId: 5,
+			status: 'with image',
+			media_ids: [ 'm1', 'm2' ],
+			sensitive: true,
+		} );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( {
+			status: 'with image',
+			media_ids: [ 'm1', 'm2' ],
+			sensitive: true,
+		} );
+		post.mockRestore();
+	} );
+
+	it( 'omits media_ids and sensitive when not supplied', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'u',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( { connectionId: 5, status: 'plain' } );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( { status: 'plain' } );
+		post.mockRestore();
+	} );
+
+	it( 'omits media_ids when an empty array is supplied', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'u',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( {
+			connectionId: 5,
+			status: 'plain',
+			media_ids: [],
+		} );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( { status: 'plain' } );
+		post.mockRestore();
+	} );
+} );
+
+describe( 'uploadMastodonMedia', () => {
+	// Multipart can't be exercised end-to-end through nock here: the wpcom
+	// transport hands its `formData` to superagent's Node adapter, which
+	// streams via `form-data` and rejects jsdom Blob/File instances with
+	// `source.on is not a function`. Spying on `wpcom.req.post` keeps the
+	// fetcher contract under test (path, namespace, formData envelope shape).
+	it( 'sends a multipart POST with file + description envelope', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '789',
+			type: 'image',
+			url: 'https://files.example/789.jpg',
+			preview_url: 'https://files.example/789-thumb.jpg',
+			description: 'a cat',
+		} );
+		const file = new File( [ 'xyz' ], 'cat.jpg', { type: 'image/jpeg' } );
+
+		const result = await uploadMastodonMedia( {
+			connectionId: 42,
+			file,
+			description: 'a cat',
+		} );
+
+		expect( post ).toHaveBeenCalledTimes( 1 );
+		const callArg = post.mock.calls[ 0 ][ 0 ];
+		expect( callArg.path ).toBe( '/reader/mastodon/connections/42/media' );
+		expect( callArg.apiNamespace ).toBe( 'wpcom/v2' );
+		expect( callArg.formData ).toEqual( [
+			[ 'file', { fileContents: file, fileName: 'cat.jpg' } ],
+			[ 'description', 'a cat' ],
+		] );
+		expect( result.id ).toBe( '789' );
+		post.mockRestore();
+	} );
+
+	it( 'omits description from formData when undefined', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			type: 'image',
+			url: null,
+			preview_url: null,
+			description: '',
+		} );
+		const file = new File( [ 'x' ], 'a.png', { type: 'image/png' } );
+		await uploadMastodonMedia( { connectionId: 7, file } );
+
+		expect( post.mock.calls[ 0 ][ 0 ].formData ).toEqual( [
+			[ 'file', { fileContents: file, fileName: 'a.png' } ],
+		] );
+		post.mockRestore();
+	} );
+
+	it( 'falls back to "blob" when file.name is empty', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			type: 'image',
+			url: 'u',
+			preview_url: 'p',
+			description: '',
+		} );
+		const blob = new Blob( [ 'x' ], { type: 'image/jpeg' } );
+		await uploadMastodonMedia( { connectionId: 7, file: blob as File } );
+		expect( post.mock.calls[ 0 ][ 0 ].formData[ 0 ][ 1 ] ).toEqual( {
+			fileContents: blob,
+			fileName: 'blob',
+		} );
+		post.mockRestore();
+	} );
+
+	it( 'surfaces 202-processing result with null url/preview_url', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '999',
+			type: 'image',
+			url: null,
+			preview_url: null,
+			description: '',
+		} );
+		const file = new File( [ 'x' ], 'p.jpg', { type: 'image/jpeg' } );
+		const r = await uploadMastodonMedia( { connectionId: 1, file } );
+		expect( r ).toEqual( {
+			id: '999',
+			type: 'image',
+			url: null,
+			preview_url: null,
+			description: '',
+		} );
+		post.mockRestore();
+	} );
+
+	it( 'classifies wpcom errors via classifyMastodonError', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
+			error: 'mastodon_media_too_large',
+			message: 'image too large',
+			statusCode: 400,
+		} );
+		const file = new File( [ 'x' ], 'a.jpg', { type: 'image/jpeg' } );
+		await expect( uploadMastodonMedia( { connectionId: 1, file } ) ).rejects.toMatchObject( {
+			kind: 'media_too_large',
+		} );
+		post.mockRestore();
 	} );
 } );

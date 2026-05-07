@@ -12,7 +12,7 @@ const shared = {
 		'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|@vgs[\\/\\\\].*|uuid[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|sass|css)$)',
+		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|@vgs[\\/\\\\].*|uuid[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
 	],
 	testEnvironmentOptions: {
 		url: 'https://example.com',

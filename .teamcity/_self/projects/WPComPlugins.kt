@@ -43,6 +43,7 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"help-center-release-build",
 					"agents-manager-release-build",
+					"wpcom-smart-dictation-build",
 				)
 			}
 			dataToKeep = everything()
@@ -125,6 +126,7 @@ object CalypsoApps: BuildType({
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
+		apps/wpcom-smart-dictation/dist => wpcom-smart-dictation.zip
 	""".trimIndent()
 
 	steps {

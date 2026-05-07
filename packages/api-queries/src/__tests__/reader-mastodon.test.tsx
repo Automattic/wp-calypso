@@ -21,12 +21,15 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	createMastodonPostMutation,
+	mastodonAuthStatusQueryOptions,
+	uploadMastodonMediaMutation,
 	useAuthorizeMastodonConnectionMutation,
 	useCompleteMastodonConnectionMutation,
 	useCreateMastodonLikeMutation,
 	useCreateMastodonRepostMutation,
 	useDeleteMastodonLikeMutation,
 	useDeleteMastodonRepostMutation,
+	useMastodonAuthStatusQuery,
 	useMastodonAuthorFeedInfiniteQuery,
 	useMastodonAuthorProfileQuery,
 	useMastodonConnectionQuery,
@@ -1401,5 +1404,41 @@ describe( 'useCreateMastodonRepostMutation / useDeleteMastodonRepostMutation', (
 			expect( settled?.pages[ 0 ].items[ 1 ].viewer?.reblogged ).toBe( false );
 			expect( settled?.pages[ 0 ].items[ 1 ].counts.boosts ).toBe( 2 );
 		} );
+	} );
+} );
+
+describe( 'uploadMastodonMediaMutation', () => {
+	it( 'returns mutationOptions wrapping uploadMastodonMedia', () => {
+		const opts = uploadMastodonMediaMutation();
+		expect( typeof opts.mutationFn ).toBe( 'function' );
+		// mutationKey intentionally absent — composer-config types Omit it.
+		expect( ( opts as Record< string, unknown > ).mutationKey ).toBeUndefined();
+	} );
+} );
+
+describe( 'useMastodonAuthStatusQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'returns needs_reauth from the auth-status endpoint', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 200, { needs_reauth: true } );
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const { result } = renderHook( () => useMastodonAuthStatusQuery( 42 ), {
+			wrapper: makeWrapper( client ),
+		} );
+		await waitFor( () => expect( result.current.data ).toEqual( { needs_reauth: true } ) );
+	} );
+
+	it( 'is disabled when connectionId is null', () => {
+		const client = new QueryClient();
+		const { result } = renderHook( () => useMastodonAuthStatusQuery( null ), {
+			wrapper: makeWrapper( client ),
+		} );
+		expect( result.current.fetchStatus ).toBe( 'idle' );
+	} );
+
+	it( 'mastodonAuthStatusQueryOptions(null) is disabled', () => {
+		expect( mastodonAuthStatusQueryOptions( null ).enabled ).toBe( false );
 	} );
 } );
