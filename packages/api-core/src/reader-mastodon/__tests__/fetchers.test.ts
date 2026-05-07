@@ -12,6 +12,7 @@ import {
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonInstanceConfig,
 	getMastodonTagFeed,
 	getMastodonTimeline,
 	uploadMastodonMedia,
@@ -94,6 +95,27 @@ describe( 'mastodon fetchers', () => {
 		expect( result.handle ).toBe( '@alice@mastodon.social' );
 		expect( result.instance ).toBe( 'mastodon.social' );
 		expect( result.counts.posts ).toBe( 0 );
+	} );
+
+	it( 'getMastodonInstanceConfig GETs /reader/mastodon/connections/:id/instance-config', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/instance-config' )
+			.reply( 200, { max_characters: 4096 } );
+		const result = await getMastodonInstanceConfig( 42 );
+		expect( result.max_characters ).toBe( 4096 );
+	} );
+
+	it( 'getMastodonInstanceConfig classifies a 502 as upstream_unavailable', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/instance-config' )
+			.reply( 502, {
+				code: 'mastodon_upstream_unavailable',
+				message: '',
+				data: { status: 502 },
+			} );
+		await expect( getMastodonInstanceConfig( 42 ) ).rejects.toMatchObject( {
+			kind: 'upstream_unavailable',
+		} );
 	} );
 
 	it( 'getMastodonConnections classifies 401 as auth_required', async () => {

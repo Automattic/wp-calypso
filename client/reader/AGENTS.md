@@ -178,8 +178,10 @@ The reply / quote / standalone composer follows the same pattern with
 provider once per view (account, thread, author-profile) alongside
 `<ComposerModal />` and `<ComposeFab />`; panels that should render the
 inline `<TimelineComposePill />` opt in via `useOptionalComposer()`. The
-config carries the per-protocol limit, supported mode kinds (both
-protocols support `'reply'`, `'quote'`, and `'standalone'`),
+config carries a `useLimit(connectionId)` hook (ATmosphere returns its
+static 300; Mastodon reads `max_characters` from the home instance via
+`useMastodonInstanceConfigQuery` and falls back to 500), supported mode
+kinds (both protocols support `'reply'`, `'quote'`, and `'standalone'`),
 wire-shape `buildParams`, error-message map (with a
 mandatory `default:` arm using `err satisfies never;` — same lesson as
 the like / repost adapters), Tracks event names, success-notice copy,

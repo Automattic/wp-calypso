@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -55,6 +56,12 @@ const StopIcon = () => (
 		<rect x="6" y="6" width="12" height="12" rx="2" />
 	</svg>
 );
+
+function recordPaneEvent( action: 'opened' | 'closed', layout: LiveAIAssistantProps[ 'layout' ] ) {
+	recordTracksEvent( `calypso_smart_dictation_pane_${ action }`, {
+		layout: layout ?? 'floating',
+	} );
+}
 
 interface LiveAIAssistantProps {
 	contextualInstructions?: string;
@@ -171,6 +178,23 @@ export function LiveAIAssistant( {
 
 	const transcriptRef = useRef< HTMLDivElement | null >( null );
 	const sidebarBodyScrollRef = useRef< HTMLDivElement | null >( null );
+	const wasPanelOpenRef = useRef( false );
+
+	useEffect( () => {
+		if ( showPanel !== wasPanelOpenRef.current ) {
+			recordPaneEvent( showPanel ? 'opened' : 'closed', layout );
+			wasPanelOpenRef.current = showPanel;
+		}
+	}, [ layout, showPanel ] );
+
+	useEffect( () => {
+		return () => {
+			if ( wasPanelOpenRef.current ) {
+				recordPaneEvent( 'closed', layout );
+			}
+		};
+	}, [ layout ] );
+
 	useEffect( () => {
 		const scrollEl = isSidebar ? sidebarBodyScrollRef.current : transcriptRef.current;
 		if ( scrollEl ) {

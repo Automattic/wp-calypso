@@ -10,6 +10,7 @@ import {
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonInstanceConfig,
 	getMastodonTagFeed,
 	getMastodonThread,
 	getMastodonTimeline,
@@ -45,6 +46,7 @@ import type {
 	MastodonCreatePostResult,
 	MastodonError,
 	MastodonFeedItem,
+	MastodonInstanceConfig,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
 	MastodonTagFilter,
@@ -112,6 +114,28 @@ export const mastodonConnectionQueryOptions = ( id: number | null ) =>
 
 export function useMastodonConnectionQuery( id: number | null ) {
 	return useQuery( mastodonConnectionQueryOptions( id ) );
+}
+
+export const mastodonInstanceConfigQueryOptions = ( connectionId: number | null ) =>
+	queryOptions< MastodonInstanceConfig, MastodonError >( {
+		queryKey: readerMastodonKeys.instanceConfig( connectionId ),
+		queryFn: () => getMastodonInstanceConfig( connectionId as number ),
+		enabled: connectionId !== null && connectionId > 0,
+		// Instance config rarely changes — admins set the char limit
+		// and largely leave it. Cache aggressively so the composer doesn't
+		// fire a request every time the user opens it.
+		staleTime: 60 * 60_000,
+		gcTime: 24 * 60 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+	} );
+
+export function useMastodonInstanceConfigQuery( connectionId: number | null ) {
+	return useQuery( mastodonInstanceConfigQueryOptions( connectionId ) );
 }
 
 export const mastodonTimelineInfiniteQuery = ( connectionId: number ) =>

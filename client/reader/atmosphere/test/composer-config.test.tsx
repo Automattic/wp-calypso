@@ -72,9 +72,10 @@ describe( 'atmosphereComposerConfig', () => {
 		} );
 	} );
 
-	describe( 'limit', () => {
-		it( 'is 300 (Bluesky character limit)', () => {
-			expect( atmosphereComposerConfig.limit ).toBe( 300 );
+	describe( 'useLimit', () => {
+		it( 'returns 300 (Bluesky character limit) regardless of connection', () => {
+			expect( atmosphereComposerConfig.useLimit( 1 ) ).toBe( 300 );
+			expect( atmosphereComposerConfig.useLimit( null ) ).toBe( 300 );
 		} );
 	} );
 
