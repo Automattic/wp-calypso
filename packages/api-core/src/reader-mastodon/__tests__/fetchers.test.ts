@@ -722,6 +722,15 @@ describe( 'createMastodonFollow', () => {
 			createMastodonFollow( { connectionId: 7, accountId: '200' } )
 		).rejects.toMatchObject( { kind: 'auth_required' } );
 	} );
+
+	it( 'rejects a malformed payload missing the viewer block', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
+			.reply( 200, {} );
+		await expect(
+			createMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: 'bad_request' } );
+	} );
 } );
 
 describe( 'deleteMastodonFollow', () => {

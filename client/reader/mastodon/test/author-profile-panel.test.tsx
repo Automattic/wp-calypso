@@ -5,6 +5,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import * as logstash from 'calypso/lib/logstash';
 import * as notices from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -478,6 +479,97 @@ describe( 'MastodonAuthorProfilePanel', () => {
 				expect.anything(),
 				expect.objectContaining( { id: 'mastodon-follow-error' } )
 			);
+			// Pipeline-level log so failures stay observable in dashboards
+			// even when no Tracks dashboard is consulted.
+			expect( logstash.logToLogstash ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					feature: 'calypso_client',
+					severity: 'error',
+					extra: expect.objectContaining( {
+						type: 'reader_mastodon_follow_mutation_error',
+						connection_id: 7,
+						account_id: '108020',
+						error_kind: 'upstream_unavailable',
+					} ),
+				} )
+			);
+		} );
+
+		it( 'shows the follow-specific not_found copy on a 404', async () => {
+			const user = userEvent.setup();
+			const noticeSpy = jest.spyOn( notices, 'errorNotice' );
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						viewer: { following: false, followed_by: false, requested: false },
+						is_self: false,
+					} )
+				);
+			stubFeed();
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '108020' } )
+				.reply( 404, { code: 'reader_mastodon_not_found' } );
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: /^Follow$/ } ) );
+
+			await waitFor( () =>
+				expect( noticeSpy ).toHaveBeenCalledWith(
+					'Couldn’t follow this account.',
+					expect.objectContaining( { id: 'mastodon-follow-error' } )
+				)
+			);
+		} );
+
+		it( 'clears the stale follow-error toast on a successful retry', async () => {
+			const user = userEvent.setup();
+			const removeSpy = jest.spyOn( notices, 'removeNotice' );
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						viewer: { following: false, followed_by: false, requested: false },
+						is_self: false,
+					} )
+				);
+			stubFeed();
+			// First click 502s; second click succeeds — the success path
+			// should fire `removeNotice('mastodon-follow-error')` so the
+			// stale error toast doesn't outlive the retry.
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '108020' } )
+				.reply( 502, { code: 'reader_mastodon_upstream_unavailable' } );
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '108020' } )
+				.reply( 200, { viewer: { following: true, followed_by: false, requested: false } } );
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: /^Follow$/ } ) );
+			// Wait for the panel to settle back to the Follow button after
+			// the optimistic patch rolls back, then click again.
+			await screen.findByRole( 'button', { name: /^Follow$/ } );
+			await user.click( screen.getByRole( 'button', { name: /^Follow$/ } ) );
+
+			await waitFor( () => expect( removeSpy ).toHaveBeenCalledWith( 'mastodon-follow-error' ) );
 		} );
 	} );
 } );

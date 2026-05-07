@@ -1001,21 +1001,32 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 			return { previous };
 		},
 		onError: ( _err, vars, context ) => {
+			const key = mastodonAuthorProfileKey( vars );
 			if ( context?.previous ) {
-				queryClient.setQueryData( mastodonAuthorProfileKey( vars ), context.previous );
+				queryClient.setQueryData( key, context.previous );
+			} else {
+				// No snapshot to roll back to; refetch so the optimistic
+				// patch can't outlive the failure as a stale cache value.
+				queryClient.invalidateQueries( { queryKey: key } );
 			}
 		},
 		onSuccess: ( data, vars ) => {
-			queryClient.setQueryData< MastodonAuthorProfile >(
-				mastodonAuthorProfileKey( vars ),
-				( old ) =>
-					old
-						? {
-								...old,
-								viewer: data.viewer,
-						  }
-						: old
+			const key = mastodonAuthorProfileKey( vars );
+			const updated = queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: data.viewer,
+					  }
+					: old
 			);
+			if ( ! updated ) {
+				// Cache entry was evicted between onMutate and onSuccess
+				// (e.g. route change). Trigger a refetch so the
+				// authoritative server `viewer` (which carries
+				// `requested: true` for locked accounts) isn't lost.
+				queryClient.invalidateQueries( { queryKey: key } );
+			}
 		},
 	} );
 
@@ -1061,20 +1072,31 @@ export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
 			return { previous };
 		},
 		onError: ( _err, vars, context ) => {
+			const key = mastodonAuthorProfileKey( vars );
 			if ( context?.previous ) {
-				queryClient.setQueryData( mastodonAuthorProfileKey( vars ), context.previous );
+				queryClient.setQueryData( key, context.previous );
+			} else {
+				// No snapshot to roll back to; refetch so the optimistic
+				// patch can't outlive the failure as a stale cache value.
+				queryClient.invalidateQueries( { queryKey: key } );
 			}
 		},
 		onSuccess: ( data, vars ) => {
-			queryClient.setQueryData< MastodonAuthorProfile >(
-				mastodonAuthorProfileKey( vars ),
-				( old ) =>
-					old
-						? {
-								...old,
-								viewer: data.viewer,
-						  }
-						: old
+			const key = mastodonAuthorProfileKey( vars );
+			const updated = queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: data.viewer,
+					  }
+					: old
 			);
+			if ( ! updated ) {
+				// Cache entry was evicted between onMutate and onSuccess
+				// (e.g. route change). Trigger a refetch so the
+				// authoritative server `viewer` (which carries
+				// `requested: true` for locked accounts) isn't lost.
+				queryClient.invalidateQueries( { queryKey: key } );
+			}
 		},
 	} );

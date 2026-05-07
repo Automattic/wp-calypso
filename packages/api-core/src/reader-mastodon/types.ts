@@ -161,12 +161,11 @@ export interface MastodonAuthorProfile {
 	locked: boolean;
 	raw: Record< string, unknown >;
 	/**
-	 * Caller-relative relationship state. Absent on backends that haven't
-	 * deployed the viewer projection yet — consumers must treat the
-	 * undefined case as "no follow UI available" rather than defaulting
-	 * to `{ following: false, followed_by: false, requested: false }`,
-	 * which would mislead users into clicking Follow on accounts they
-	 * already follow.
+	 * Relationship state from the connected account's perspective. Absent
+	 * on backends that haven't deployed the viewer projection yet —
+	 * consumers must treat undefined as "no follow UI available" rather
+	 * than synthesizing a default, which would mislead users into
+	 * clicking Follow on accounts they already follow.
 	 */
 	viewer?: MastodonAuthorProfileViewer;
 	/**
@@ -323,9 +322,9 @@ export interface MastodonAuthorProfileViewer {
 	/** Whether the target follows the caller. Drives the "Follow back" affordance. */
 	followed_by: boolean;
 	/**
-	 * Whether the caller has a pending follow request awaiting the target's
-	 * approval. Only meaningful for locked accounts; `false` for unlocked
-	 * accounts even when the underlying federation queue is in flight.
+	 * Whether the caller has a pending follow request. Set when following
+	 * a locked account; unlocked accounts transition straight to
+	 * `following: true`.
 	 */
 	requested: boolean;
 }
