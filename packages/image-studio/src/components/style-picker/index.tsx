@@ -18,8 +18,8 @@ import origamiPreview from '../../assets/origami.webp';
 import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
-import informativePreview from '../../assets/video/styles/informative.webp';
-import promotionalPreview from '../../assets/video/styles/promotional.webp';
+import videoCinematicPreview from '../../assets/video/styles/cinematic.webp';
+import videoHighlightsPreview from '../../assets/video/styles/highlights.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
@@ -130,12 +130,12 @@ export const VIDEO_STYLE_OPTIONS = [
 	{
 		label: __( 'Cinematic', __i18n_text_domain__ ),
 		value: 'cinematic',
-		preview: informativePreview,
+		preview: videoCinematicPreview,
 	},
 	{
 		label: __( 'Highlights', __i18n_text_domain__ ),
 		value: 'highlights',
-		preview: promotionalPreview,
+		preview: videoHighlightsPreview,
 	},
 ];
 
