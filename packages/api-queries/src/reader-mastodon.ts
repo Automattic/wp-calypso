@@ -949,8 +949,14 @@ export interface FollowMastodonMutationContext {
 	previous: MastodonAuthorProfile | undefined;
 }
 
+// Normalize the actor before keying so we hit the same cache entry as
+// useMastodonAuthorProfileQuery, which runs every actor through
+// normalizeActor() before building its key. Without this, webfinger
+// or mixed-case actor inputs (e.g. '@Alice@MASTODON.social') key to a
+// different entry than the one the query reads from — the optimistic
+// patch and rollback become silent no-ops.
 const mastodonAuthorProfileKey = ( vars: { connectionId: number; actor: string } ) =>
-	readerMastodonKeys.authorProfile( vars.connectionId, vars.actor );
+	readerMastodonKeys.authorProfile( vars.connectionId, normalizeActor( vars.actor ) );
 
 /**
  * Mutation factory for following a Mastodon account. Optimistically

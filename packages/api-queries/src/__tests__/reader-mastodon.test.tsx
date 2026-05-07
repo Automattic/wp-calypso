@@ -1523,6 +1523,39 @@ describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
 			expect( cached?.viewer?.following ).toBe( false );
 			expect( cached?.viewer?.requested ).toBe( false );
 		} );
+
+		it( 'normalizes the actor when keying the cache so webfinger handles still see the optimistic patch', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			// Seed under the NORMALIZED key — this is what the query layer
+			// (mastodonAuthorProfileQueryOptions) writes to.
+			const normalizedKey = readerMastodonKeys.authorProfile( 1, 'alice@mastodon.social' );
+			client.setQueryData( normalizedKey, makeProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 200, {
+					viewer: { following: true, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			// Drive the mutation with the UNNORMALIZED webfinger form — the
+			// panel can pass '@Alice@MASTODON.social' when the URL came
+			// from a federated mention link.
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '@Alice@MASTODON.social',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( normalizedKey );
+			expect( cached?.viewer?.following ).toBe( true );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
 	} );
 
 	describe( 'unfollowMastodonActorMutation', () => {
