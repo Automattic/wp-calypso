@@ -1,26 +1,23 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import wpcom from 'calypso/lib/wp';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
-import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
+import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
 
 import './style.scss';
@@ -28,18 +25,6 @@ import './style.scss';
 interface SubscribeModalProps {
 	promptVerification: boolean;
 	onClose: () => void;
-}
-
-interface CardData {
-	feed_ID: number;
-	site_ID: number;
-	site_URL: string;
-	site_name: string;
-}
-
-interface Card {
-	type: string;
-	data: CardData[];
 }
 
 interface StreamProps {
@@ -60,18 +45,22 @@ interface StreamProps {
 
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
+const SITES_PER_PAGE = 6;
+
 // Renders the body of the "discover" step. The shared <Modal> wrapper is
 // provided by the parent (`ReaderOnboardingRsm`); this component is only
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`, which also runs the same close-side-effects
 // (data refresh, analytics) that `handleClose` previously did inline.
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onClose } ) => {
-	const { data: followedTags } = useFollowedReaderTags();
-
-	const followedTagSlugs = useMemo(
-		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
-		[ followedTags ]
-	);
+	const {
+		combinedRecommendations,
+		recommendations,
+		isLoading,
+		isValidating,
+		hasNoRecommendations,
+		followedTagSlugs,
+	} = useSubscribeRecommendations();
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
@@ -81,196 +70,67 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const selectedFeedIconUrl =
 		( selectedFeed as { site_icon?: string; image?: string } | null )?.site_icon ??
 		( selectedFeed as { site_icon?: string; image?: string } | null )?.image;
-	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
-	const currentLocale = getLocaleSlug();
-	const SITES_PER_PAGE = 6;
 	const queryClient = useQueryClient();
 
-	// Snapshot of feed IDs the user was already following when the recommendations
-	// first loaded. Stored in a ref so that subscribing to a blog during this step
-	// does not cause it to disappear from the list.
-	const initialFollowedFeedIdsRef = useRef< Set< number > | null >( null );
+	const maxPages = Math.ceil( recommendations.length / SITES_PER_PAGE ) - 1;
 
-	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
-		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
-		queryFn: () =>
-			wpcom.req.get(
-				{
-					path: '/read/tags/cards',
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					tags: followedTagSlugs,
-					site_recs_per_card: 18,
-					tag_recs_per_card: 0,
-				}
-			),
-		refetchOnMount: 'always',
-		select: ( data: { cards: Card[] } ) => {
-			const recommendedBlogsCard = data.cards.find(
-				( card: Card ) => card.type === 'recommended_blogs'
-			);
+	const displayedRecommendations = useMemo(
+		() => recommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE ),
+		[ recommendations, currentPage ]
+	);
 
-			return recommendedBlogsCard
-				? recommendedBlogsCard.data.map( ( site: CardData & { URL?: string } ) => ( {
-						...site,
-						site_URL: site.URL || site.site_URL,
-				  } ) )
-				: [];
-		},
-		staleTime: Infinity,
-		enabled: followedTagSlugs.length > 0,
-	} );
-
-	const combinedRecommendations = useMemo( () => {
-		if ( isLoading ) {
-			return [];
-		}
-
-		// Lazily capture the set of already-followed feed IDs on the first run after
-		// loading completes. Subsequent runs caused by reduxFollows updating (i.e. the
-		// user subscribing during this step) find the ref already set and skip this
-		// block — so newly-subscribed blogs stay visible in the list.
-		if ( initialFollowedFeedIdsRef.current === null ) {
-			initialFollowedFeedIdsRef.current = new Set(
-				reduxFollows.filter( ( f ) => f.feed_ID != null ).map( ( f ) => f.feed_ID )
-			);
-		}
-		const initialFollowedFeedIds = initialFollowedFeedIdsRef.current;
-
-		const isEnglish = currentLocale?.startsWith( 'en' );
-
-		// Get list of curated recommendations only if the language is English.
-		const curatedRecommendations = isEnglish
-			? followedTagSlugs
-					.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
-					.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) )
-			: [];
-
-		// Get list of API recommended blogs.
-		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( {
-			...site,
-			weight: 1,
-			isCurated: false,
-		} ) );
-
-		// Combine all recommendations.
-		const allRecommendations = [ ...curatedRecommendations, ...apiRecommendations ];
-
-		// Increase "weight" for blogs that match multiple tags.
-		const blogWeights = allRecommendations.reduce< Record< number, number > >( ( acc, blog ) => {
-			acc[ blog.feed_ID ] = ( acc[ blog.feed_ID ] || 0 ) + blog.weight;
-			return acc;
-		}, {} );
-
-		// Remove duplicates, prioritizing curated blogs.
-		const uniqueRecommendations = Object.values(
-			allRecommendations.reduce<
-				Record< number, CardData & { weight: number; isCurated: boolean } >
-			>( ( acc, blog ) => {
-				if ( ! acc[ blog.feed_ID ] || blog.isCurated ) {
-					acc[ blog.feed_ID ] = { ...blog, weight: blogWeights[ blog.feed_ID ] };
-				}
-				return acc;
-			}, {} )
-		);
-
-		// Sort recommendations: curated first, then by "weight" (i.e. how many tags it matches).
-		const sortedRecommendations = uniqueRecommendations.sort( ( a, b ) => {
-			if ( a.isCurated !== b.isCurated ) {
-				return a.isCurated ? -1 : 1;
-			}
-			return b.weight - a.weight;
-		} );
-
-		// Remove blogs the user was already following when recommendations first loaded.
-		// Uses the snapshot (not live follows) so subscribing during this step doesn't
-		// cause a blog to vanish from the list.
-		const unsubscribedRecommendations = sortedRecommendations.filter(
-			( blog ) => ! initialFollowedFeedIds.has( blog.feed_ID )
-		);
-
-		// Limit to 18 recommendations.
-		return unsubscribedRecommendations.slice( 0, 18 );
-	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale, reduxFollows ] );
-
-	const maxPages = Math.ceil( combinedRecommendations.length / SITES_PER_PAGE ) - 1; // -1 because pages are 0-based.
-
-	const displayedRecommendations = useMemo( () => {
-		// Show all items up to the current page.
-		return combinedRecommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE );
-	}, [ combinedRecommendations, currentPage ] );
+	// Stable across renders when only unrelated Redux slices update (e.g. feed metadata
+	// bridging for other feeds). Prevents `requestPage` effects from storming the data layer.
+	const recommendationIdsKey = recommendations.map( ( s ) => s.feed_ID ).join( ',' );
+	const recommendationsRef = useRef( recommendations );
+	recommendationsRef.current = recommendations;
 
 	const handleLoadMore = useCallback( () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }clicked_load_more`, {
 			page: currentPage,
 		} );
-		// Only increment the page if we haven't reached the end.
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	// Prefetch the first blog's feed. Only fetch one because it happens every time a tag changes.
+	// Prefetch stream pages for validated recommendations (what the user can select).
 	useEffect( () => {
-		if ( combinedRecommendations.length > 0 ) {
-			dispatch(
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				requestPage( { streamKey: `feed:${ combinedRecommendations[ 0 ].feed_ID }` } as any )
-			);
+		const sites = recommendationsRef.current;
+		if ( sites.length === 0 ) {
+			return;
 		}
-	}, [ combinedRecommendations, dispatch ] );
+		dispatch(
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			requestPage( { streamKey: `feed:${ sites[ 0 ].feed_ID }` } as any )
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by id list, not array identity
+	}, [ recommendationIdsKey, dispatch ] );
 
-	// Prefetch all feed streams when the step is shown. The component only
-	// mounts while the step is active, so we no longer need an `isOpen` gate.
 	useEffect( () => {
-		if ( combinedRecommendations.length > 0 ) {
-			combinedRecommendations.forEach( ( site ) => {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
-			} );
+		const sites = recommendationsRef.current;
+		if ( sites.length === 0 ) {
+			return;
 		}
-	}, [ combinedRecommendations, dispatch ] );
+		sites.forEach( ( site ) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by id list, not array identity
+	}, [ recommendationIdsKey, dispatch ] );
 
-	// Reset the page, selected site, and follow snapshot when the followed tags change
-	// so that a fresh snapshot is taken the next time recommendations are built.
 	useEffect( () => {
 		setCurrentPage( 0 );
 		setSelectedSite( null );
-		initialFollowedFeedIdsRef.current = null;
 	}, [ followedTagSlugs ] );
 
-	// The Redux feeds store — used to check whether a feed's data has loaded.
-	// ConnectedReaderSubscriptionListItem renders a placeholder (not a real list item)
-	// when feed data is absent, so selecting a site whose feed hasn't loaded yet
-	// results in a preview for a site that appears missing from the left column.
-	// The Redux feeds store — used to check whether a feed's data has loaded.
-	// ConnectedReaderSubscriptionListItem renders a placeholder (not a real list item)
-	// when feed data is absent, so selecting a site whose feed hasn't loaded yet
-	// results in a preview for a site that appears missing from the left column.
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const readerFeedItems = useSelector(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( state: object ) => ( state as any ).reader?.feeds?.items ?? {}
-	);
-
-	// Select the first site whose feed data is already in Redux, so the list item
-	// renders as a real card (not a placeholder) immediately when selected.
-	// Re-runs whenever feeds load, so the selection happens as soon as any feed is ready.
 	useEffect( () => {
-		if ( selectedSite || displayedRecommendations.length === 0 ) {
-			return;
+		if ( ! selectedSite && recommendations.length > 0 ) {
+			setSelectedSite( recommendations[ 0 ] );
 		}
-		const firstLoaded = displayedRecommendations.find(
-			( site ) => readerFeedItems[ site.feed_ID ]
-		);
-		if ( firstLoaded ) {
-			setSelectedSite( firstLoaded );
-		}
-	}, [ displayedRecommendations, selectedSite, readerFeedItems ] );
+	}, [ recommendations, selectedSite ] );
 
 	const handleItemClick = useCallback(
 		( site: CardData ) => {
-			// Only reset scroll position if selecting a different site.
 			if ( site.feed_ID !== selectedSite?.feed_ID ) {
 				const previewContainer = document.querySelector(
 					'.subscribe-modal__preview-stream-container'
@@ -285,12 +145,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	);
 
 	const handleContinue = useCallback( () => {
-		// Invalidate the subscriptions count query to refresh the Recent stream.
 		queryClient.invalidateQueries( {
 			queryKey: [ 'read', 'subscriptions-count' ],
 		} );
 
-		// Refresh the Recent stream data.
 		dispatch(
 			requestPaginatedStream( {
 				streamKey: 'recent',
@@ -299,14 +157,17 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 			} )
 		);
 
-		// Following-stream refresh + analytics happen in the parent's close
-		// handler so that X-out / escape triggers the same side-effects.
 		onClose();
 	}, [ dispatch, onClose, queryClient ] );
 
 	return (
 		<>
 			{ promptVerification && <SubscribeVerificationNudge /> }
+			{ /* Site metadata is still loaded via the legacy data layer; feed metadata
+			     is fetched inside `useSubscribeRecommendations` with readFeedQuery. */ }
+			{ combinedRecommendations.map( ( site ) => (
+				<QueryReaderSite key={ `prefetch-site-${ site.feed_ID }` } siteId={ site.site_ID } />
+			) ) }
 			<div className="subscribe-modal__container">
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__intro">
@@ -319,11 +180,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 					</div>
 					<div className="subscribe-modal__columns">
 						<div className="subscribe-modal__site-list-column">
-							{ isLoading && <LoadingPlaceholder /> }
-							{ ! isLoading && combinedRecommendations.length === 0 && (
+							{ ( isLoading || isValidating ) && <LoadingPlaceholder /> }
+							{ hasNoRecommendations && (
 								<p>{ __( 'No recommendations available at the moment.' ) }</p>
 							) }
-							{ ! isLoading && combinedRecommendations.length > 0 && (
+							{ recommendations.length > 0 && (
 								<div className="subscribe-modal__recommended-sites">
 									{ displayedRecommendations.map( ( site: CardData ) => (
 										<ConnectedReaderSubscriptionListItem
