@@ -32,9 +32,14 @@ interface CachedJwt {
 	expire: number;
 }
 
-// `_currentSiteId` and `Jetpack_Editor_Initial_State` are declared globally in
-// `@automattic/data-stores/shared-types` and other Jetpack editor scripts;
-// don't redeclare here or TS will complain about modifier mismatches.
+declare global {
+	interface Window {
+		_currentSiteId?: number;
+		Jetpack_Editor_Initial_State?: {
+			wpcomBlogId: string;
+		};
+	}
+}
 
 function resolveSiteId(): string | null {
 	const fromWpcom = window._currentSiteId;

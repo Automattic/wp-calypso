@@ -222,6 +222,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 								{ statusContent }
 							</div>
 						) }
+
 						{ status === 'idle' && timelineRows.length === 0 && (
 							<div className="live-ai-assistant__intro">
 								<video
@@ -240,49 +241,6 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 										'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
 									) }
 								</p>
-							</div>
-						) }
-
-						{ error && (
-							<Notice.Root intent="error">
-								<Notice.Title>{ __( 'Error' ) }</Notice.Title>
-								<Notice.Description>{ error }</Notice.Description>
-							</Notice.Root>
-						) }
-
-						{ timelineRows.length > 0 && (
-							<div
-								className="live-ai-assistant__transcript"
-								ref={ ! isSidebar ? transcriptRef : undefined }
-							>
-								{ timelineRows.map( ( row ) =>
-									row.kind === 'message' ? (
-										<div
-											key={ row.entry.id }
-											className={ clsx( 'live-ai-assistant__message', `is-${ row.entry.role }` ) }
-										>
-											<span className="live-ai-assistant__message-role">
-												{ row.entry.role === 'user' ? __( 'You' ) : __( 'Assistant' ) }
-											</span>
-											<span className="live-ai-assistant__message-text">
-												{ row.entry.text || '…' }
-											</span>
-										</div>
-									) : (
-										<div
-										key={ `tool-${ row.evt.id }` }
-											className={ clsx( 'live-ai-assistant__transcript-tool', {
-												'is-error': row.evt.status === 'error',
-												'is-running': row.evt.status === 'running',
-											} ) }
-										>
-										<span className="live-ai-assistant__transcript-tool-dot" aria-hidden="true" />
-											<span className="live-ai-assistant__transcript-tool-label">
-												{ row.evt.label }
-											</span>
-										</div>
-									)
-								) }
 							</div>
 						) }
 
