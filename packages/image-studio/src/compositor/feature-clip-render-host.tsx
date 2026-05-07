@@ -58,6 +58,57 @@ async function imageUrlToDataUrl( url: string ): Promise< string > {
 	} );
 }
 
+/**
+ * Decode the brief's audio bed URL (typically a `data:audio/wav;base64,...`
+ * from the server-side Lyria call) into an AudioBuffer, and stash it on a
+ * window-level slot the compositor's installAudioBed() reads from. Failure
+ * is non-fatal — the slot is cleared and the synth fallback runs.
+ */
+async function prefetchAudioBed( audioBedUrl: string | undefined ): Promise< void > {
+	const slotted = window as unknown as {
+		__featureClipAudioBuffer?: AudioBuffer | null;
+	};
+	slotted.__featureClipAudioBuffer = null;
+	if ( ! audioBedUrl ) {
+		return;
+	}
+	try {
+		const response = await fetch( audioBedUrl );
+		if ( ! response.ok ) {
+			throw new Error( `Audio bed fetch returned ${ response.status }` );
+		}
+		const arrayBuffer = await response.arrayBuffer();
+		const AudioContextCtor =
+			( window as unknown as { AudioContext?: typeof AudioContext } ).AudioContext ??
+			(
+				window as unknown as {
+					webkitAudioContext?: typeof AudioContext;
+				}
+			 ).webkitAudioContext;
+		if ( ! AudioContextCtor ) {
+			throw new Error( 'AudioContext not available in this browser.' );
+		}
+		const ctx = new AudioContextCtor();
+		try {
+			const decoded = await ctx.decodeAudioData( arrayBuffer );
+			slotted.__featureClipAudioBuffer = decoded;
+			// eslint-disable-next-line no-console
+			console.log( '[FeatureClipRenderHost] audio_bed_decoded', {
+				durationSeconds: decoded.duration,
+				sampleRate: decoded.sampleRate,
+				channels: decoded.numberOfChannels,
+			} );
+		} finally {
+			void ctx.close?.();
+		}
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.warn( '[FeatureClipRenderHost] audio_bed_decode_failed', {
+			message: error instanceof Error ? error.message : String( error ),
+		} );
+	}
+}
+
 async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureClipBrief > {
 	if ( ! brief.scenes || brief.scenes.length === 0 ) {
 		return brief;
@@ -171,7 +222,13 @@ export function FeatureClipRenderHost() {
 		} );
 		( async () => {
 			try {
-				const resolved = await resolveBriefImages( pendingRender.brief );
+				const [ resolved ] = await Promise.all( [
+					resolveBriefImages( pendingRender.brief ),
+					// Decode Lyria audio in parallel with image prefetch. Failure
+					// here is non-fatal: we leave window's audio slot empty and
+					// the compositor falls back to the synth bed.
+					prefetchAudioBed( pendingRender.brief.audioBedUrl ),
+				] );
 				// eslint-disable-next-line no-console
 				console.log( '[FeatureClipRenderHost] prefetch_complete', {
 					requestId,
