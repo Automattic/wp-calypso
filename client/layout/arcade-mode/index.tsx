@@ -114,11 +114,6 @@ export function ArcadeModeProvider( { children }: { children: ReactNode } ) {
 export function KonamiListener() {
 	const { activate, deactivate, isActive } = useArcadeMode();
 	const bufferRef = useRef< string[] >( [] );
-	const isActiveRef = useRef( isActive );
-
-	useEffect( () => {
-		isActiveRef.current = isActive;
-	}, [ isActive ] );
 
 	useEffect( () => {
 		const handleKeyDown = ( event: KeyboardEvent ) => {
@@ -129,7 +124,7 @@ export function KonamiListener() {
 				return;
 			}
 
-			if ( isActiveRef.current ) {
+			if ( isActive ) {
 				if ( event.key === 'Escape' ) {
 					deactivate();
 				}
@@ -157,7 +152,7 @@ export function KonamiListener() {
 		return () => {
 			document.removeEventListener( 'keydown', handleKeyDown );
 		};
-	}, [ activate, deactivate ] );
+	}, [ activate, deactivate, isActive ] );
 
 	return null;
 }
