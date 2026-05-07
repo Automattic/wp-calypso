@@ -56,3 +56,10 @@
 		padding-top: 5px;
 	}
 }
+
+// Sits between the staged-media grid (which has its own
+// `margin-block-start: 12px`) and the composer footer (`margin-block-start:
+// 8px`); without this the toggle butts up against the thumbnails.
+.social-composer .reader-mastodon-composer__sensitive-toggle {
+	margin-block-start: 12px;
+}

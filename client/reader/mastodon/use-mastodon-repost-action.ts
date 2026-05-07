@@ -61,9 +61,10 @@ function errorMessageForBoost(
  * useCreateMastodonRepostMutation etc.), so it must only be called
  * inside a React component.
  *
- * Note: Mastodon has no native quote-post feature. `canQuote` is always
- * false and `quote()` is a no-op. Slice-7d may revisit if quote support
- * ships upstream.
+ * Mastodon has no native quote-post API; `quote()` implements it as a
+ * text post that appends the original's permalink (see `buildParamsForMode`
+ * in composer-config.tsx). `canQuote` is true when the composer is mounted
+ * upstream (signalled by `analytics.onQuoteClick` being set).
  */
 export function makeUseMastodonRepostAction( connectionId: number ): UseRepostActionFn {
 	return function useMastodonRepostAction( post: SocialPost ): RepostAction {
@@ -117,8 +118,17 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 			remove.mutate( { statusId: post.uri }, { onError: ( err ) => trackError( err, 'unboost' ) } );
 		};
 
+		const onQuoteClick = analytics?.onQuoteClick;
+
 		const quote = () => {
-			// Mastodon has no native quote-post — slice-7d follow-up if it ever ships.
+			if ( ! onQuoteClick ) {
+				return;
+			}
+			analytics?.onClick( `calypso_reader_${ analytics.source }_quote_clicked`, {
+				connection_id: connectionId,
+				post_uri: post.uri,
+			} );
+			onQuoteClick( post );
 		};
 
 		const accessibleLabel = ( count: number, reposted: boolean ) => {
@@ -144,7 +154,7 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 				action: translate( 'Boost' ),
 				accessibleLabel,
 			},
-			canQuote: false,
+			canQuote: Boolean( onQuoteClick ),
 			repost,
 			unrepost,
 			quote,

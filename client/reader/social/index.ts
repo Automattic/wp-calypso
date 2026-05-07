@@ -44,3 +44,4 @@ export {
 	mapMastodonFeedItemToSocialPost,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from './mappers/mastodon';
+export { socialPostFeedItemKey } from './utils/social-post-feed-item-key';

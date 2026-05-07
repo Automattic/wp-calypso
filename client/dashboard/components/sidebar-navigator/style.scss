@@ -3,6 +3,7 @@
 .dashboard-sidebar-navigator {
 	position: relative;
 	overflow: hidden;
+	flex-shrink: 0;
 }
 
 .dashboard-sidebar-navigator__screen {

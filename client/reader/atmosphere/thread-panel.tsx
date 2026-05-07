@@ -9,8 +9,8 @@ import EmptyContent from 'calypso/components/empty-content';
 import { SocialAnalyticsProvider } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { useOptionalComposer } from './composer';
 import {
 	getProfileUrl as buildProfileUrl,
 	getTagFeedUrl as buildTagUrl,

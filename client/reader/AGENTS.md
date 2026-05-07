@@ -57,7 +57,7 @@ Example: every list mutation in `packages/api-queries/src/read-lists.ts` follows
 ### Optimistic-mutation hardening checklist
 
 Lessons from the Reader social mutations (CM-625 likes / CM-660 boost
-/ CM-658 favourite). When you add a new optimistic mutation that
+/ CM-658 favorite). When you add a new optimistic mutation that
 patches React Query caches, walk this list:
 
 - **Scope the patcher to the right key namespace.** When wire IDs are
@@ -149,7 +149,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/mastodon/:id/thread/:status_id`   | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
 | `/reader/mastodon/:id/profile/:actor`      | `client/reader/mastodon/author-profile-view.tsx`                          |
 
-The likes/favourites count on `<SocialPostCard>` becomes an interactive
+The likes/favorites count on `<SocialPostCard>` becomes an interactive
 `<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
 when the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
 the tree with a `<LikeProvider>` carrying a per-protocol adapter hook.
@@ -169,6 +169,31 @@ ATmosphere panels (timeline / thread / tag-feed) wire
 render the UK-spelled "Boost" label. Surfaces without a provider
 (quoted-post embeds, the shared `SocialAuthorProfilePanel` until it
 forwards `connectionId`, non-social cards) fall back to the static count.
+
+The reply / quote / standalone composer follows the same pattern with
+`<ComposerProvider connectionId={…} config={…}>` from
+`calypso/reader/social/composer`, plus per-protocol
+`composer-config.tsx` files that supply a
+`ComposerConfig<TError, TParams, TResult>`. Each protocol mounts the
+provider once per view (account, thread, author-profile) alongside
+`<ComposerModal />` and `<ComposeFab />`; panels that should render the
+inline `<TimelineComposePill />` opt in via `useOptionalComposer()`. The
+config carries a `useLimit(connectionId)` hook (ATmosphere returns its
+static 300; Mastodon reads `max_characters` from the home instance via
+`useMastodonInstanceConfigQuery` and falls back to 500), supported mode
+kinds (both protocols support `'reply'`, `'quote'`, and `'standalone'`),
+wire-shape `buildParams`, error-message map (with a
+mandatory `default:` arm using `err satisfies never;` — same lesson as
+the like / repost adapters), Tracks event names, success-notice copy,
+optional `logBadRequest` (lives in the per-protocol adapter so
+`packages/api-queries` doesn't need to import
+`calypso/lib/logstash`), and an optional `useMedia` slot for media
+attachments. The reply-button gate at `<PostCardCounts>` is
+`analytics.onReplyClick`-only — the per-panel `onReplyClick` handler is
+responsible for guarding on missing `post.cid` (or any protocol-specific
+preconditions) before calling `openComposer`. See
+`client/reader/social/AGENTS.md` § "Composer (slice 7)" for the full
+contract.
 
 ### SSR file variants
 

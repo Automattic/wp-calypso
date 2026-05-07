@@ -49,6 +49,7 @@ class ReaderPostCard extends Component {
 		fixedHeaderHeight: PropTypes.number,
 		streamKey: PropTypes.string,
 		commentsApiDisabled: PropTypes.bool,
+		showBylineSecondarySiteLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,6 +58,7 @@ class ReaderPostCard extends Component {
 		handleClick: noop,
 		isSelected: false,
 		showSiteName: true,
+		showBylineSecondarySiteLink: true,
 	};
 
 	state = {
@@ -206,6 +208,7 @@ class ReaderPostCard extends Component {
 				showFollow
 				openSuggestedFollows={ this.openSuggestedFollowsModal }
 				compact={ compact }
+				showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
 			/>
 		);
 

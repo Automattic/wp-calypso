@@ -2,6 +2,7 @@ import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
 	createMastodonLike,
+	createMastodonPost,
 	createMastodonRepost,
 	deleteMastodonLike,
 	deleteMastodonRepost,
@@ -9,13 +10,16 @@ import {
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonInstanceConfig,
 	getMastodonTagFeed,
 	getMastodonThread,
 	getMastodonTimeline,
 	readerMastodonKeys,
+	uploadMastodonMedia,
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
+	mutationOptions,
 	queryOptions,
 	useInfiniteQuery,
 	useMutation,
@@ -38,8 +42,13 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonCreatePostMutationParams,
+	MastodonCreatePostResult,
 	MastodonError,
 	MastodonFeedItem,
+	MastodonInstanceConfig,
+	MastodonMediaUploadParams,
+	MastodonMediaUploadResult,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadNode,
@@ -105,6 +114,28 @@ export const mastodonConnectionQueryOptions = ( id: number | null ) =>
 
 export function useMastodonConnectionQuery( id: number | null ) {
 	return useQuery( mastodonConnectionQueryOptions( id ) );
+}
+
+export const mastodonInstanceConfigQueryOptions = ( connectionId: number | null ) =>
+	queryOptions< MastodonInstanceConfig, MastodonError >( {
+		queryKey: readerMastodonKeys.instanceConfig( connectionId ),
+		queryFn: () => getMastodonInstanceConfig( connectionId as number ),
+		enabled: connectionId !== null && connectionId > 0,
+		// Instance config rarely changes — admins set the char limit
+		// and largely leave it. Cache aggressively so the composer doesn't
+		// fire a request every time the user opens it.
+		staleTime: 60 * 60_000,
+		gcTime: 24 * 60 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+	} );
+
+export function useMastodonInstanceConfigQuery( connectionId: number | null ) {
+	return useQuery( mastodonInstanceConfigQueryOptions( connectionId ) );
 }
 
 export const mastodonTimelineInfiniteQuery = ( connectionId: number ) =>
@@ -324,7 +355,7 @@ export function useMastodonTagFeedInfiniteQuery(
 }
 
 // ---------------------------------------------------------------------------
-// Optimistic favourite/unfavourite + boost/unboost infrastructure
+// Optimistic favorite/unfavorite + boost/unboost + post-cache infrastructure
 // (private to this file)
 // ---------------------------------------------------------------------------
 
@@ -462,7 +493,7 @@ function patchMastodonQueryData(
 // `connections` and `connection` keys don't hold posts so they're silently
 // no-op walked. Status IDs are instance-local — same numeric id on a
 // different connection is a different post — so the patch must be
-// connection-scoped or favourites/boosts on connection A leak into B's caches.
+// connection-scoped or favorites/boosts on connection A leak into B's caches.
 function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean {
 	return Array.isArray( key ) && key[ 3 ] === connectionId;
 }
@@ -712,3 +743,213 @@ export function useDeleteMastodonRepostMutation( connectionId: number ) {
 		onError: ( _err, _vars, ctx ) => restoreMastodonPostSnapshots( queryClient, ctx ),
 	} );
 }
+
+interface CreatePostContext {
+	parentCountsContext?: OptimisticContext;
+}
+
+function isBadRequestError( err: unknown ): boolean {
+	return typeof err === 'object' && err !== null && 'kind' in err && err.kind === 'bad_request';
+}
+
+/**
+ * Optional hooks the caller can supply for cross-cutting concerns the
+ * api-queries package can't reach itself (logstash imports are
+ * lint-restricted from this package; observability lives in the
+ * per-protocol adapter under `client/reader/mastodon/`).
+ */
+export interface CreateMastodonPostHooks {
+	/**
+	 * Fires once per mutation, immediately before the text-quoting retry
+	 * is issued. Use it to log the downgrade so we can tell whether users
+	 * are landing on Mastodon < 4.5 / quote-disabled instances. Receives
+	 * the (unstripped) mutation params; the implementation is responsible
+	 * for redacting any user-typed `status` content before logging.
+	 */
+	onQuoteFallback?: ( params: MastodonCreatePostMutationParams ) => void;
+	/**
+	 * Fires once per mutation when the text-quoting retry itself fails.
+	 * Receives the original `bad_request` and the retry's error so the
+	 * caller can dashboard "fallback fired but didn't help" — the signal
+	 * the bare `onQuoteFallback` counter can't surface. Same redaction
+	 * rules as `onQuoteFallback`.
+	 */
+	onQuoteFallbackFailed?: (
+		params: MastodonCreatePostMutationParams,
+		originalError: MastodonError,
+		retryError: MastodonError
+	) => void;
+}
+
+/**
+ * Calls `createMastodonPost` with the wire-shape params destructured off
+ * the mutation-params input. If a native quote attempt (`quoted_status_id`
+ * set) returns `bad_request`, retries once with `quoted_status_id` removed
+ * and `quotedFallbackPermalink` appended to `status` separated by a blank
+ * line. The fallback covers Mastodon < 4.5 (no native quote support,
+ * upstream returns 422 → `bad_request`) and instances that have quoting
+ * disabled.
+ *
+ * The retry is opt-in via `quotedFallbackPermalink` — when the panel didn't
+ * supply one (or there's no permalink to fall back to) the original
+ * `bad_request` is propagated unchanged.
+ *
+ * Trade-off: `bad_request` is the only signal we have today, but the
+ * backend returns it for *any* upstream 422 (malformed status, attachment
+ * errors, character-limit overflow, etc.). When a user's content is
+ * genuinely invalid, the retry sends the same body plus a permalink and
+ * usually fails again — surfacing the second-attempt error is the right
+ * UX (the user sees the current state). The narrower fix is for the
+ * backend to emit a quote-specific error code (e.g.
+ * `reader_mastodon_quote_unsupported`); switch to that when it ships.
+ * The `onQuoteFallback` hook lets the caller observe how often this path
+ * fires so we can size that follow-up.
+ */
+async function createMastodonPostWithQuoteFallback(
+	params: MastodonCreatePostMutationParams,
+	hooks?: CreateMastodonPostHooks
+): Promise< MastodonCreatePostResult > {
+	const { quotedFallbackPermalink, ...wireParams } = params;
+	try {
+		return await createMastodonPost( wireParams );
+	} catch ( err ) {
+		if (
+			! isBadRequestError( err ) ||
+			! wireParams.quoted_status_id ||
+			! quotedFallbackPermalink
+		) {
+			throw err;
+		}
+		// Narrowed: `quotedFallbackPermalink` is `string` from here on.
+		try {
+			hooks?.onQuoteFallback?.( params );
+		} catch ( hookErr ) {
+			// Observability must never break the retry path, but a hook
+			// that throws every call would silently kill all our fallback
+			// metrics. Surface it to the dev console so a broken logger is
+			// visible during local work.
+			// eslint-disable-next-line no-console
+			console.error( 'onQuoteFallback hook threw', hookErr );
+		}
+		const body = wireParams.status.trimEnd();
+		const fallbackStatus = body
+			? `${ body }\n\n${ quotedFallbackPermalink }`
+			: quotedFallbackPermalink;
+		// Strip `quoted_status_id` for the text-fallback retry; the rest of
+		// the wire shape (status, in_reply_to_id, connectionId) carries over.
+		const { quoted_status_id: _omit, ...rest } = wireParams;
+		try {
+			return await createMastodonPost( { ...rest, status: fallbackStatus } );
+		} catch ( retryErr ) {
+			// The retry failed too. Surface the second-attempt error to the
+			// caller (the user sees the current state — that's the right
+			// UX), but emit the failure for telemetry first so we can size
+			// "fallback fired but didn't help" separately from the trigger.
+			try {
+				hooks?.onQuoteFallbackFailed?.( params, err as MastodonError, retryErr as MastodonError );
+			} catch ( hookErr ) {
+				// eslint-disable-next-line no-console
+				console.error( 'onQuoteFallbackFailed hook threw', hookErr );
+			}
+			throw retryErr;
+		}
+	}
+}
+
+/**
+ * Wire-layer factory for creating a Mastodon status (reply or standalone post).
+ *
+ * Reply mode (`in_reply_to_id` set): bumps `counts.replies` on the parent post
+ * across every Mastodon cache (timeline / thread / profile-feed / tag-feed)
+ * via `patchMastodonPostCaches`, snapshotting each patched item so `onError`
+ * can restore atomically.
+ *
+ * Standalone mode (no `in_reply_to_id`): no cache patch yet — the modal still
+ * relies on the `onSuccess` invalidate to surface the new post. Standalone
+ * optimistic prepend wires up in slice 8.
+ *
+ * Accepts the consumer's QueryClient because Calypso boots its own separate
+ * from the singleton in `@automattic/api-queries`. See
+ * `client/reader/AGENTS.md` for the rationale.
+ */
+export const createMastodonPostMutation = (
+	queryClient: QueryClient,
+	hooks?: CreateMastodonPostHooks
+) =>
+	mutationOptions<
+		MastodonCreatePostResult,
+		MastodonError,
+		MastodonCreatePostMutationParams,
+		CreatePostContext
+	>( {
+		mutationFn: ( vars ) => createMastodonPostWithQuoteFallback( vars, hooks ),
+		onMutate: async ( vars ) => {
+			// cancelQueries is best-effort — TanStack docs flag it as such.
+			// If it rejects (rare; route-change teardown races) we want to
+			// continue with the optimistic patch and the actual mutation
+			// rather than treat the whole call as failed before it starts.
+			try {
+				await cancelMastodonQueriesForConnection( queryClient, vars.connectionId );
+			} catch {
+				// Swallow; the optimistic patch below + mutationFn must
+				// still run. Snapshot rollback on real onError is unaffected.
+			}
+
+			const ctx: CreatePostContext = {};
+
+			if ( vars.in_reply_to_id ) {
+				// Reply mode: bump counts.replies on the parent post in every
+				// cached page where it appears. The snapshots returned by
+				// patchMastodonPostCaches feed restoreMastodonPostSnapshots in
+				// onError.
+				ctx.parentCountsContext = patchMastodonPostCaches(
+					queryClient,
+					vars.connectionId,
+					vars.in_reply_to_id,
+					( item ) => ( {
+						...item,
+						counts: { ...item.counts, replies: item.counts.replies + 1 },
+					} )
+				);
+				return ctx;
+			}
+
+			// Standalone optimistic prepend wires up in slice 8.
+			return ctx;
+		},
+		onError: ( _err, _vars, ctx ) => {
+			if ( ! ctx ) {
+				return;
+			}
+			restoreMastodonPostSnapshots( queryClient, ctx.parentCountsContext );
+		},
+		onSuccess: ( _result, vars ) => {
+			// Invalidate the timeline so the new post (top-level or reply)
+			// re-materialises from the server on next read.
+			queryClient.invalidateQueries( {
+				queryKey: readerMastodonKeys.timeline( vars.connectionId ),
+			} );
+			// Reply mode: also invalidate the parent's thread cache so the
+			// newly-created reply appears on the next thread read instead of
+			// waiting out the 30s staleTime. The optimistic patch in onMutate
+			// only bumped `counts.replies`; without this invalidate, replying
+			// from the thread surface looks broken until the user navigates
+			// away and back.
+			if ( vars.in_reply_to_id ) {
+				queryClient.invalidateQueries( {
+					queryKey: readerMastodonKeys.thread( vars.connectionId, vars.in_reply_to_id ),
+				} );
+			}
+		},
+	} );
+
+/**
+ * Wire-layer factory for uploading a single image to a Mastodon connection's
+ * `POST /reader/mastodon/connections/{id}/media` endpoint. Media uploads do
+ * not read into list/thread caches, so this factory takes no `QueryClient`
+ * — unlike the like/repost/post mutations.
+ */
+export const uploadMastodonMediaMutation = () =>
+	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
+		mutationFn: uploadMastodonMedia,
+	} );

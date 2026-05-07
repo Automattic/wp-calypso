@@ -1,5 +1,3 @@
-$omnibar-height: 32px;
-
 #wpcom-omnibar {
 	position: fixed;
 	top: 0;
@@ -8,7 +6,7 @@ $omnibar-height: 32px;
 }
 
 body:has( #wpcom-omnibar ) #wpcom {
-	padding-block-start: $omnibar-height;
+	padding-block-start: var(--omnibar-height);
 	height: auto;
-	min-height: calc( 100vh - #{$omnibar-height} );
+	min-height: calc( 100vh - var(--omnibar-height) );
 }

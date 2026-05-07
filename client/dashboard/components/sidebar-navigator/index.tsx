@@ -1,10 +1,14 @@
 import { useRouterState } from '@tanstack/react-router';
 import { usePrevious } from '@wordpress/compose';
-import { Children, isValidElement, useMemo } from 'react';
+import { Children, forwardRef, isValidElement, useMemo } from 'react';
 import { SidebarNavigatorContext } from './context';
 import SidebarNavigatorScreen from './sidebar-navigator-screen';
 import type { ScreenProps } from './sidebar-navigator-screen';
-import type { ReactElement } from 'react';
+import type { ForwardedRef, ReactElement } from 'react';
+
+interface SidebarNavigatorProps {
+	children: React.ReactNode;
+}
 
 import './style.scss';
 
@@ -46,7 +50,10 @@ function findParentPath( routeId: string, screenPaths: string[] ): string | unde
  * </SidebarNavigator>
  * ```
  */
-function SidebarNavigator( { children }: { children: React.ReactNode } ) {
+function UnforwardedSidebarNavigator(
+	{ children }: SidebarNavigatorProps,
+	ref: ForwardedRef< HTMLDivElement >
+) {
 	const matches = useRouterState( { select: ( s ) => s.matches } );
 
 	const screens = Children.toArray( children ).filter(
@@ -72,11 +79,15 @@ function SidebarNavigator( { children }: { children: React.ReactNode } ) {
 
 	return (
 		<SidebarNavigatorContext.Provider value={ contextValue }>
-			<div className="dashboard-sidebar-navigator">{ children }</div>
+			<div ref={ ref } className="dashboard-sidebar-navigator">
+				{ children }
+			</div>
 		</SidebarNavigatorContext.Provider>
 	);
 }
 
-SidebarNavigator.Screen = SidebarNavigatorScreen;
+const SidebarNavigator = Object.assign( forwardRef( UnforwardedSidebarNavigator ), {
+	Screen: SidebarNavigatorScreen,
+} );
 
 export default SidebarNavigator;

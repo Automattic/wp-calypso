@@ -7,9 +7,10 @@ import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { AuthorProfileHeader } from 'calypso/reader/social';
+import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfilePanel } from './author-profile-panel';
-import { ComposeFab, ComposerModal, ComposerProvider } from './composer';
+import { atmosphereComposerConfig } from './composer-config';
 import { getTimelineUrl } from './route';
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
@@ -75,7 +76,7 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 	) }`;
 
 	return (
-		<ComposerProvider connectionId={ connection.id }>
+		<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
 			<ReaderMain className="atmosphere-view">
 				<DocumentHead title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: actor } ) } />
 				<AuthorProfileHeader

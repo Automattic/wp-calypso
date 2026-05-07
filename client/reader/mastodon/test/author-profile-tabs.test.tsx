@@ -43,6 +43,7 @@ describe( 'MastodonAuthorProfileTabs', () => {
 			<MastodonAuthorProfileTabs
 				connectionId={ 7 }
 				actor="108020"
+				basePath="/reader/mastodon/7/profile/108020"
 				activeFilter="posts_no_replies"
 			/>
 		);
@@ -56,6 +57,7 @@ describe( 'MastodonAuthorProfileTabs', () => {
 			<MastodonAuthorProfileTabs
 				connectionId={ 7 }
 				actor="108020"
+				basePath="/reader/mastodon/7/profile/108020"
 				activeFilter="posts_no_replies"
 			/>
 		);

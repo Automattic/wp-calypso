@@ -74,6 +74,10 @@ function errorMessage(
 			return translate( 'That connection is no longer available.' );
 		case 'not_found':
 			return translate( 'That Mastodon resource is no longer available.' );
+		case 'media_too_large':
+		case 'media_unsupported_type':
+		case 'media_decode_failed':
+		case 'media_invalid':
 		case 'unknown':
 			return translate( 'Something went wrong.' );
 		default:

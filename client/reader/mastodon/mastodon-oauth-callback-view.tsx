@@ -114,7 +114,7 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 			return null;
 		}
 		if ( providerError ) {
-			return translate( 'The authorization was cancelled or denied.' );
+			return translate( 'The authorization was canceled or denied.' );
 		}
 		if ( missingParams ) {
 			return translate( 'The authorization link is missing required information.' );
@@ -172,6 +172,10 @@ function completeErrorMessage(
 			);
 		case 'not_found':
 			return translate( 'That Mastodon resource is no longer available.' );
+		case 'media_too_large':
+		case 'media_unsupported_type':
+		case 'media_decode_failed':
+		case 'media_invalid':
 		case 'invalid_instance':
 		case 'connection_not_found':
 		case 'unknown':
