@@ -281,5 +281,5 @@ if (
 	BETA_TESTERS.includes( helpCenterData.currentUser?.ID )
 	// helpCenterData.currentUser?.is_a11n
 ) {
-	import( './help-center-wpcom-transcription' );
+	import( './help-center-wpcom-dictation' );
 }
