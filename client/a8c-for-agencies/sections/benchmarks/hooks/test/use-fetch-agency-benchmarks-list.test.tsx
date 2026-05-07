@@ -49,10 +49,13 @@ describe( 'useFetchAgencyBenchmarksList', () => {
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( result.current.data ).toEqual( fakeList );
-		expect( mockedGet ).toHaveBeenCalledWith( {
-			apiNamespace: 'wpcom/v2',
-			path: '/agency/42/benchmarks',
-		} );
+		expect( mockedGet ).toHaveBeenCalledWith(
+			{
+				apiNamespace: 'wpcom/v2',
+				path: '/agency/42/benchmarks',
+			},
+			{ fake_data: true }
+		);
 	} );
 
 	it( 'is disabled when there is no active agency', () => {

@@ -33,13 +33,6 @@ function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 	return (
 		<>
 			<LayoutTop>
-				{ showBanner && (
-					<SubmissionBanner
-						quarter={ quarter }
-						year={ year }
-						onSubmitClick={ () => setIsModalOpen( true ) }
-					/>
-				) }
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
@@ -48,6 +41,13 @@ function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
+				{ showBanner && (
+					<SubmissionBanner
+						quarter={ quarter }
+						year={ year }
+						onSubmitClick={ () => setIsModalOpen( true ) }
+					/>
+				) }
 				{ showAlreadySubmitted && <AlreadySubmitted quarter={ quarter } year={ year } /> }
 				<BenchmarkStatsGrid />
 			</LayoutBody>

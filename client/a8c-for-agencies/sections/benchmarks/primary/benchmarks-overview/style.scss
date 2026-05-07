@@ -58,9 +58,18 @@
 	margin: 0;
 }
 
-.benchmarks-submission-banner p {
-	margin-block: 0 16px;
-	max-inline-size: 640px;
+.benchmarks-submission-prompt {
+	background-color: var(--color-warning-0);
+	border-color: var(--color-warning-5);
+	margin-block-start: 8px;
+
+	@include break-large {
+		align-items: center;
+
+		.step-section-item__button {
+			margin-block-start: 0;
+		}
+	}
 }
 
 .benchmarks-submission-modal.components-modal__frame {

@@ -1,8 +1,7 @@
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useEffect } from 'react';
-import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
+import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSubmissionDeadline from '../../lib/get-submission-deadline';
@@ -27,7 +26,7 @@ export default function SubmissionBanner( { quarter, year, onSubmitClick }: Prop
 		timeZone: 'UTC',
 	} ).format( deadline );
 
-	const title = sprintf(
+	const heading = sprintf(
 		/* translators: %1$d: quarter number, %2$d: year. Example: Q1 2026 benchmark submission is due. */
 		__( 'Q%1$d %2$d benchmark submission is due' ),
 		quarter,
@@ -48,16 +47,15 @@ export default function SubmissionBanner( { quarter, year, onSubmitClick }: Prop
 	};
 
 	return (
-		<LayoutBanner
-			className="benchmarks-submission-banner"
-			level="warning"
-			title={ title }
-			hideCloseButton
-		>
-			<p>{ description }</p>
-			<Button className="is-dark" onClick={ handleSubmitClick }>
-				{ __( 'Submit benchmark' ) }
-			</Button>
-		</LayoutBanner>
+		<StepSectionItem
+			className="benchmarks-submission-prompt"
+			heading={ heading }
+			description={ description }
+			buttonProps={ {
+				primary: true,
+				onClick: handleSubmitClick,
+				children: __( 'Submit benchmark' ),
+			} }
+		/>
 	);
 }
