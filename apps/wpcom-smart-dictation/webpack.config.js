@@ -47,6 +47,10 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 					if ( request === '@wordpress/react-i18n' ) {
 						return null;
 					}
+
+					if ( request === '@wordpress/ui' ) {
+						return null;
+					}
 				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
