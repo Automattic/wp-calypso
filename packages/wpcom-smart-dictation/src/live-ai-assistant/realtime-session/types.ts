@@ -19,7 +19,7 @@ export interface RealtimeTranscriptEntry {
 export interface RealtimeToolEvent {
 	id: string;
 	label: string;
-	status: 'done' | 'error';
+	status: 'running' | 'done' | 'error';
 	timestamp: number;
 }
 

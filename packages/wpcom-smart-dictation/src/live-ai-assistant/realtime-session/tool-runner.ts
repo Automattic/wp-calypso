@@ -49,6 +49,7 @@ import {
 	executeSetPostTitleTool,
 	executeUndoTool,
 } from '../tools/editor-post-tool';
+import { GENERATE_IMAGE_TOOL_NAME, executeGenerateImageTool } from '../tools/generate-image-tool';
 import { PICK_IMAGE_TOOL_NAME, executePickImageTool } from '../tools/image-picker-tool';
 import {
 	VERIFY_YOUTUBE_URL_TOOL_NAME,
@@ -98,6 +99,14 @@ export async function executeRealtimeToolCalls( {
 		recordTracksEvent( 'calypso_smart_dictation_tool_called', {
 			tool_name: call.name || 'unknown',
 		} );
+		if ( call.name === GENERATE_IMAGE_TOOL_NAME ) {
+			onToolEvent( {
+				id: call.call_id,
+				label: 'Generating image…',
+				status: 'running',
+				timestamp: Date.now(),
+			} );
+		}
 		try {
 			result = await executeRealtimeToolCall( call );
 		} catch ( err ) {
@@ -212,6 +221,9 @@ async function executeRealtimeToolCall( call: RealtimeFunctionCall ): Promise< u
 	}
 	if ( call.name === STOP_DICTATION_TOOL_NAME ) {
 		return executeStopDictationTool();
+	}
+	if ( call.name === GENERATE_IMAGE_TOOL_NAME ) {
+		return executeGenerateImageTool( call.arguments );
 	}
 	return { ok: false, error: `Unsupported tool: ${ call.name || 'unknown' }` };
 }

@@ -173,7 +173,20 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				event,
 				onToolEvent: ( toolEvent ) => {
 					setToolEvents( ( prev ) => {
-						const next = prev.concat( toolEvent );
+						const existingIdx = prev.findIndex( ( e ) => e.id === toolEvent.id );
+						let next: RealtimeToolEvent[];
+						if ( existingIdx >= 0 ) {
+							// Replace an in-flight ("running") event with its final
+							// done/error counterpart, preserving the original timestamp
+							// so the timeline order stays stable.
+							next = prev.slice();
+							next[ existingIdx ] = {
+								...toolEvent,
+								timestamp: prev[ existingIdx ].timestamp,
+							};
+						} else {
+							next = prev.concat( toolEvent );
+						}
 						return next.length > MAX_TOOL_EVENTS
 							? next.slice( next.length - MAX_TOOL_EVENTS )
 							: next;

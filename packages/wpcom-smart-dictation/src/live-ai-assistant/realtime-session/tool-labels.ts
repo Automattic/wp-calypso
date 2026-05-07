@@ -25,6 +25,7 @@ import {
 	SET_POST_TITLE_TOOL_NAME,
 	UNDO_TOOL_NAME,
 } from '../tools/editor-post-tool';
+import { GENERATE_IMAGE_TOOL_NAME } from '../tools/generate-image-tool';
 import { PICK_IMAGE_TOOL_NAME } from '../tools/image-picker-tool';
 import { VERIFY_YOUTUBE_URL_TOOL_NAME } from '../tools/youtube-oembed-tool';
 
@@ -146,6 +147,16 @@ export function describeToolCall(
 					? ( result as { title: string } ).title
 					: null;
 			return title ? `Verified YouTube URL: ${ title }` : 'Verified YouTube URL';
+		}
+		case GENERATE_IMAGE_TOOL_NAME: {
+			if ( ! ok ) {
+				const message =
+					isObjectResult && typeof ( result as { error?: unknown } ).error === 'string'
+						? ( result as { error: string } ).error
+						: 'Could not generate image';
+				return `Failed: ${ message }`;
+			}
+			return 'Generated image';
 		}
 		case PICK_IMAGE_TOOL_NAME: {
 			const action = typeof args.action === 'string' ? args.action : '';
