@@ -1,5 +1,10 @@
-import { Image as EFImage, Text, Timegroup } from '@editframe/react';
+import { Text, Timegroup } from '@editframe/react';
 import type { FeatureClipBrief } from './types';
+
+// EFImage rewrites every non-data: src to ${apiHost}/api/v1/assets/image?src=...,
+// which we don't host. Until we add that proxy endpoint, render scenes with a
+// plain <img crossOrigin="anonymous"> so we can validate the rest of the
+// pipeline. Image must be CORS-enabled (wpcomstaging uploads currently are).
 
 const INFORMATIVE_SCENE_DURATION_MS = 3000;
 const INFORMATIVE_TITLE_CARD_DURATION_MS = 3000;
@@ -62,7 +67,12 @@ export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipPro
 						className="scene scene-image"
 					>
 						<div className={ `scene-background-frame camera-${ scene.camera }` }>
-							<EFImage src={ scene.imageUrl } className="scene-background" />
+							<img
+								src={ scene.imageUrl }
+								crossOrigin="anonymous"
+								className="scene-background"
+								alt=""
+							/>
 						</div>
 						<div className="scene-image-overlay" />
 						{ scene.caption ? (
