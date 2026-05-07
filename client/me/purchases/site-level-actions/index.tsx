@@ -54,23 +54,43 @@ export default function SiteActionInterstitial( {
 	);
 	const hasLoaded = useSelector( hasLoadedUserPurchasesFromServer );
 
+	// For cancel, only show purchases with auto-renew on (cancel = disable
+	// auto-renew, so purchases already off have nothing to cancel).
+	const eligiblePurchases = purchases?.filter( ( p ) => {
+		if ( p.id === purchaseId ) {
+			return true;
+		}
+		if ( actionType === 'cancel' ) {
+			return p.isAutoRenewEnabled;
+		}
+		return true;
+	} );
+
 	const [ selectedIds, setSelectedIds ] = useState< Set< number > >(
 		() => new Set( [ purchaseId ] )
 	);
 
-	const shouldBypass = hasLoaded && ( ! isSplitEnabled || ! purchases || purchases.length <= 1 );
+	const shouldBypass =
+		hasLoaded && ( ! isSplitEnabled || ! eligiblePurchases || eligiblePurchases.length <= 1 );
 
-	// Redirect to normal renew flow when flag is off or site has only one purchase
+	// Redirect to the appropriate flow when the interstitial is bypassed
+	// (flag off, single eligible purchase, or no purchases).
 	useEffect( () => {
 		if ( ! shouldBypass ) {
 			return;
 		}
-		if ( purchase ) {
-			dispatch( handleRenewMultiplePurchasesClick( [ purchase ], siteSlug ) );
-		} else {
+		if ( ! purchase ) {
 			page( managePurchase( siteSlug, String( purchaseId ) ) );
+			return;
 		}
-	}, [ shouldBypass, purchase, dispatch, siteSlug, purchaseId ] );
+		if ( actionType === 'cancel' || actionType === 'remove' ) {
+			const intent = actionType;
+			const baseUrl = cancelPurchase( siteSlug, String( purchaseId ) );
+			page( `${ baseUrl }?intent=${ intent }` );
+		} else {
+			dispatch( handleRenewMultiplePurchasesClick( [ purchase ], siteSlug ) );
+		}
+	}, [ shouldBypass, purchase, dispatch, siteSlug, purchaseId, actionType ] );
 
 	if ( shouldBypass ) {
 		return null;
@@ -92,7 +112,7 @@ export default function SiteActionInterstitial( {
 	}
 
 	// Skeleton loading state while purchases load
-	if ( ! hasLoaded || ! purchase || ! purchases ) {
+	if ( ! hasLoaded || ! purchase || ! eligiblePurchases ) {
 		return (
 			<>
 				<QueryUserPurchases />
@@ -149,7 +169,7 @@ export default function SiteActionInterstitial( {
 	};
 
 	const handleContinue = () => {
-		const selectedPurchases = purchases.filter( ( p ) => selectedIds.has( p.id ) );
+		const selectedPurchases = eligiblePurchases.filter( ( p ) => selectedIds.has( p.id ) );
 		if ( actionType === 'renew' ) {
 			dispatch( handleRenewMultiplePurchasesClick( selectedPurchases, siteSlug ) );
 			return;
@@ -225,7 +245,7 @@ export default function SiteActionInterstitial( {
 				<div className="site-level-actions__left">
 					<Card className="site-level-actions__wrapper-card">
 						<h3 className="site-level-actions__section-title">{ sectionLabel }</h3>
-						{ purchases.map( ( p ) => (
+						{ eligiblePurchases.map( ( p ) => (
 							<div
 								key={ p.id }
 								className={ clsx( 'site-level-actions__row', {

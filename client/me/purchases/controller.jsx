@@ -1,7 +1,7 @@
 import { purchaseCancelFeaturesQuery, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -111,6 +111,9 @@ export function cancelPurchase( context, next ) {
 	// Start fetching cancel features immediately — the useQuery inside
 	// CancelPurchaseWrapper will reuse this in-flight promise.
 	queryClient.prefetchQuery( purchaseCancelFeaturesQuery( purchaseId ) );
+	additionalPurchaseIds.forEach( ( id ) =>
+		queryClient.prefetchQuery( purchaseCancelFeaturesQuery( id ) )
+	);
 
 	const CancelPurchaseWrapper = localize( () => {
 		// React Query owns the cancellation-features fetch: cancel-on-unmount,
@@ -120,6 +123,13 @@ export function cancelPurchase( context, next ) {
 		const { data: purchaseCancelFeatures, isLoading: isPurchaseCancelFeaturesLoading } = useQuery(
 			purchaseCancelFeaturesQuery( purchaseId )
 		);
+		const additionalFeaturesQueries = useQueries( {
+			queries: additionalPurchaseIds.map( ( id ) => purchaseCancelFeaturesQuery( id ) ),
+		} );
+		const additionalCancellationFeatures = additionalFeaturesQueries.flatMap(
+			( q ) => q.data?.features ?? []
+		);
+		const isAdditionalFeaturesLoading = additionalFeaturesQueries.some( ( q ) => q.isLoading );
 		return (
 			<PurchasesWrapper title={ pageTitle }>
 				<Main wideLayout className="purchases__cancel">
@@ -129,7 +139,10 @@ export function cancelPurchase( context, next ) {
 						intent={ intent }
 						additionalPurchaseIds={ additionalPurchaseIds }
 						purchaseCancelFeatures={ purchaseCancelFeatures }
-						isPurchaseCancelFeaturesLoading={ isPurchaseCancelFeaturesLoading }
+						isPurchaseCancelFeaturesLoading={
+							isPurchaseCancelFeaturesLoading || isAdditionalFeaturesLoading
+						}
+						additionalCancellationFeatures={ additionalCancellationFeatures }
 					/>
 				</Main>
 			</PurchasesWrapper>

@@ -80,7 +80,7 @@ import CancelPurchaseFeatureList from './feature-list';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
-import type { UpgradesCancelFeaturesResponse } from '@automattic/api-core';
+import type { CancellationFeature, UpgradesCancelFeaturesResponse } from '@automattic/api-core';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
@@ -194,6 +194,7 @@ export interface CancelPurchaseProps {
 	siteSlug: string;
 	intent?: 'cancel' | 'remove' | null;
 	additionalPurchaseIds?: number[];
+	additionalCancellationFeatures?: CancellationFeature[];
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 	isPurchaseCancelFeaturesLoading?: boolean;
 }
@@ -303,8 +304,17 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { includedDomainPurchase, purchase, isJetpack, isAkismet, isDomainRegistrationPurchase } =
 			this.props;
 
+		// When the split flag is on and a plan is bundled via the interstitial,
+		// treat a domain-registration primary purchase like a normal product so
+		// it goes through the plan survey instead of the domain dialog shortcut.
+		const planInBundle =
+			this.props.isSplitCancelRemoveEnabled &&
+			this.props.purchases?.find(
+				( p ) => this.props.additionalPurchaseIds?.includes( p.id ) && isPlan( p )
+			);
+
 		// For Jetpack/Akismet products and domain registrations, call onCancellationComplete to show the dialog
-		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
+		if ( isJetpack || isAkismet || ( isDomainRegistrationPurchase && ! planInBundle ) ) {
 			this.onCancellationComplete();
 			return;
 		}
@@ -658,9 +668,17 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	onCancellationComplete = () => {
 		const { isJetpack, isAkismet, isDomainRegistrationPurchase } = this.props;
 
+		// Same planInBundle check as onCancellationStart: when a plan is bundled
+		// via the interstitial, route a domain primary through the survey path.
+		const planInBundle =
+			this.props.isSplitCancelRemoveEnabled &&
+			this.props.purchases?.find(
+				( p ) => this.props.additionalPurchaseIds?.includes( p.id ) && isPlan( p )
+			);
+
 		// For Jetpack/Akismet products and domain registrations, show the button's own dialog
 		// For all other products, show the main component's survey
-		if ( isJetpack || isAkismet || isDomainRegistrationPurchase ) {
+		if ( isJetpack || isAkismet || ( isDomainRegistrationPurchase && ! planInBundle ) ) {
 			this.setState( {
 				showDialog: true,
 				isLoading: false,
@@ -753,6 +771,13 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			product_slug: purchase.productSlug,
 			purchase_id: purchase.id,
 		} );
+	};
+
+	getAdditionalPurchasesForCopy = () => {
+		return ( this.props.additionalPurchaseIds ?? [] )
+			.map( ( id ) => this.props.purchases?.find( ( p ) => p.id === id ) )
+			.filter( ( p ): p is Purchases.Purchase => Boolean( p ) )
+			.map( ( p ) => toPurchaseForCopy( p ) );
 	};
 
 	getActiveMarketplaceSubscriptions() {
@@ -900,6 +925,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const label = getButtonLabels( {
 			purchase: toPurchaseForCopy( purchase ),
 			intent: this.props.intent === 'remove' ? 'remove' : 'cancel',
+			additionalPurchases: this.getAdditionalPurchasesForCopy(),
 		} ).secondary;
 
 		return (
@@ -927,7 +953,20 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			translate,
 		} = this.props;
 		const { isSplitCancelRemoveEnabled } = this.props;
-		const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
+		const additionalPurchasesForCopy = this.getAdditionalPurchasesForCopy();
+		const primaryFeatures = purchaseCancelFeatures?.features ?? [];
+		const allFeatures = [
+			...primaryFeatures,
+			...( this.props.additionalCancellationFeatures ?? [] ),
+		];
+		const seen = new Set< string >();
+		const cancellationFeatures = allFeatures.filter( ( f ) => {
+			if ( seen.has( f.feature_id ) ) {
+				return false;
+			}
+			seen.add( f.feature_id );
+			return true;
+		} );
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
 		const checkboxLabel = getCheckboxLabel();
@@ -961,6 +1000,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					purchase={ purchase }
 					displayVariant={ displayVariant }
 					cancellationFeatures={ cancellationFeatures }
+					additionalPurchases={ additionalPurchasesForCopy }
 				/>
 
 				<AtomicRevertChanges
@@ -1136,6 +1176,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { siteName, siteId } = purchase;
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
+		const additionalPurchasesForCopy = this.getAdditionalPurchasesForCopy();
+
 		// Once the cancel mutation has resolved and the user is on the survey,
 		// the cancellation has already happened — reflect that in the heading.
 		const heading =
@@ -1144,6 +1186,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				: getCancellationHeading( {
 						purchase: toPurchaseForCopy( purchase ),
 						intent: displayVariant,
+						additionalPurchases: additionalPurchasesForCopy,
 				  } );
 
 		// When a plan has an included domain that can be cancelled together,
@@ -1157,16 +1200,23 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainHasRadioButtons || this.state.cancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
+		// Survey prioritization: if any additional purchase is a plan, show the
+		// plan survey even when the primary purchase is a domain registration.
+		const planInBundle = this.props.purchases?.find(
+			( p ) => this.props.additionalPurchaseIds?.includes( p.id ) && isPlan( p )
+		);
+		const shouldShowSurvey =
+			! isJetpack && ! isAkismet && ( ! isDomainRegistrationPurchase || planInBundle );
 		return (
 			<>
-				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
+				{ shouldShowSurvey && (
 					<CancelPurchaseForm
 						disableButtons={ this.state.isLoading }
-						purchase={ purchase }
+						purchase={ planInBundle ?? purchase }
 						isVisible={ this.state.surveyShown }
 						onClose={ () => this.setState( { surveyShown: false } ) }
 						onSurveyComplete={ this.onSurveyComplete }
-						flowType={ this.getCancelFlowType( purchase ) }
+						flowType={ this.getCancelFlowType( planInBundle ?? purchase ) }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
 						cancellationInProgress={ this.state.isLoading }
@@ -1212,6 +1262,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								purchase={ purchase }
 								displayVariant={ displayVariant }
 								intent={ intent ?? null }
+								additionalPurchases={ additionalPurchasesForCopy }
 							/>
 						) }
 

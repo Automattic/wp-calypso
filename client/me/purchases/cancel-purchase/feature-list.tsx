@@ -6,6 +6,7 @@ import {
 	getRemoveLossIntro,
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
+	type PurchaseForCopy,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { CancellationFeature } from '@automattic/api-core';
@@ -16,10 +17,12 @@ const CancelPurchaseFeatureList = ( {
 	purchase,
 	displayVariant,
 	cancellationFeatures,
+	additionalPurchases,
 }: {
 	purchase: Purchases.Purchase;
 	displayVariant: DisplayVariant;
 	cancellationFeatures: CancellationFeature[];
+	additionalPurchases?: PurchaseForCopy[];
 } ) => {
 	const adapted = toPurchaseForCopy( purchase );
 	// When the server returns no features, fall back to a per-product-type item.
@@ -38,8 +41,20 @@ const CancelPurchaseFeatureList = ( {
 	}
 
 	// Use non-breaking spaces in the formatted date so it never wraps mid-date.
-	const fullExpiryDate = purchase.expiryDate
-		? moment( purchase.expiryDate ).format( 'LL' ).replace( / /g, '\u00a0' )
+	// For multi-purchase bundles, use the earliest expiry across all purchases.
+	let effectiveExpiryDate: string | undefined = purchase.expiryDate;
+	if ( additionalPurchases?.length ) {
+		const allDates = [
+			purchase.expiryDate,
+			...additionalPurchases.map( ( p ) => p.expiry_date ),
+		].filter( Boolean ) as string[];
+		allDates.sort( ( a, b ) => new Date( a ).getTime() - new Date( b ).getTime() );
+		if ( allDates.length ) {
+			effectiveExpiryDate = allDates[ 0 ];
+		}
+	}
+	const fullExpiryDate = effectiveExpiryDate
+		? moment( effectiveExpiryDate ).format( 'LL' ).replace( / /g, '\u00a0' )
 		: '';
 
 	if ( items.length === 1 ) {
@@ -56,8 +71,8 @@ const CancelPurchaseFeatureList = ( {
 
 	const intro =
 		displayVariant === 'remove'
-			? getRemoveLossIntro( adapted )
-			: getCancelLossIntro( adapted, fullExpiryDate );
+			? getRemoveLossIntro( adapted, additionalPurchases )
+			: getCancelLossIntro( adapted, fullExpiryDate, additionalPurchases );
 
 	return (
 		<div className="cancel-purchase__features">

@@ -1100,7 +1100,9 @@ class ManagePurchase extends Component<
 				this.showWordAdsEligibilityWarningDialog( link );
 			}
 
-			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+			// Under the split flag, cancel = disable auto-renew. The plan stays
+			// active until expiry, so no immediate impact on domain forwarding.
+			if ( ! isSplitEnabled && this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
 				this.showNonPrimaryDomainWarningDialog( link );
 			}

@@ -158,7 +158,62 @@ export function formatTimeRemaining( expiryDate: string | Date, from: Date = new
 type ConfirmationCopyArgs = {
 	purchase: PurchaseForCopy;
 	intent: CancelIntent;
+	additionalPurchases?: PurchaseForCopy[];
 };
+
+function getCategoryDisplayNoun( category: ProductCategory ): string {
+	switch ( category ) {
+		case 'plan':
+			return __( 'plan' );
+		case 'domain':
+			return __( 'domain' );
+		case 'email':
+			return __( 'email' );
+		default:
+			return __( 'subscription' );
+	}
+}
+
+export function buildCategoriesNounPhrase( purchases: PurchaseForCopy[] ): string {
+	const categories = [ ...new Set( purchases.map( getProductCategory ) ) ];
+	const nouns = [ ...new Set( categories.map( getCategoryDisplayNoun ) ) ];
+	if ( nouns.length === 0 ) {
+		return '';
+	}
+	if ( nouns.length === 1 ) {
+		return nouns[ 0 ];
+	}
+	if ( nouns.length === 2 ) {
+		return sprintf(
+			/* translators: joins two category nouns, e.g. "plan and domain" */
+			__( '%1$s and %2$s' ),
+			nouns[ 0 ],
+			nouns[ 1 ]
+		);
+	}
+	const allButLast = nouns.slice( 0, -1 ).join( ', ' );
+	return sprintf(
+		/* translators: joins multiple category nouns with serial comma, e.g. "plan, domain, and email" */
+		__( '%1$s, and %2$s' ),
+		allButLast,
+		nouns[ nouns.length - 1 ]
+	);
+}
+
+function getEarliestExpiryDate( purchases: PurchaseForCopy[] ): string {
+	let earliest = '';
+	let earliestTime = Infinity;
+	for ( const p of purchases ) {
+		if ( p.expiry_date ) {
+			const time = new Date( p.expiry_date ).getTime();
+			if ( ! isNaN( time ) && time < earliestTime ) {
+				earliestTime = time;
+				earliest = p.expiry_date;
+			}
+		}
+	}
+	return earliest;
+}
 
 /**
  * Screen heading.
@@ -166,7 +221,17 @@ type ConfirmationCopyArgs = {
  * - Remove intent → product-type-aware ("Remove plan", "Remove domain",
  *   "Remove {productName}" for individual products).
  */
-export function getCancellationHeading( { purchase, intent }: ConfirmationCopyArgs ): string {
+export function getCancellationHeading( {
+	purchase,
+	intent,
+	additionalPurchases,
+}: ConfirmationCopyArgs ): string {
+	if ( additionalPurchases?.length ) {
+		if ( intent === 'cancel' ) {
+			return __( 'Cancel subscriptions' );
+		}
+		return __( 'Remove upgrades' );
+	}
 	if ( intent === 'cancel' ) {
 		return __( 'Cancel subscription' );
 	}
@@ -201,10 +266,33 @@ export function getCancellationHeading( { purchase, intent }: ConfirmationCopyAr
  * one-time purchases, and when we can't compute a duration (e.g. partner-
  * managed or already-expired purchases).
  */
-export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): string | null {
+export function getTopNoticeCopy( {
+	purchase,
+	intent,
+	additionalPurchases,
+}: ConfirmationCopyArgs ): string | null {
 	if ( intent !== 'cancel' ) {
 		return null;
 	}
+
+	if ( additionalPurchases?.length ) {
+		const allPurchases = [ purchase, ...additionalPurchases ];
+		const earliestExpiry = getEarliestExpiryDate( allPurchases );
+		if ( ! earliestExpiry ) {
+			return null;
+		}
+		const duration = formatTimeRemaining( earliestExpiry );
+		if ( ! duration ) {
+			return null;
+		}
+		const categories = buildCategoriesNounPhrase( allPurchases );
+		return sprintf(
+			/* translators: %(categories)s is a list like "plan and domain"; %(duration)s is time remaining */
+			__( 'Your %(categories)s features will be available for another %(duration)s.' ),
+			{ categories, duration }
+		);
+	}
+
 	if ( ! purchase.expiry_date ) {
 		return null;
 	}
@@ -249,7 +337,27 @@ export function getTopNoticeCopy( { purchase, intent }: ConfirmationCopyArgs ): 
  * Form: "Your {category} will expire on {date} and you’ll lose access to:"
  * Falls back to a date-less form when no expiry is available.
  */
-export function getCancelLossIntro( purchase: PurchaseForCopy, fullExpiryDate: string ): string {
+export function getCancelLossIntro(
+	purchase: PurchaseForCopy,
+	fullExpiryDate: string,
+	additionalPurchases?: PurchaseForCopy[]
+): string {
+	if ( additionalPurchases?.length ) {
+		const allPurchases = [ purchase, ...additionalPurchases ];
+		const categories = buildCategoriesNounPhrase( allPurchases );
+		if ( ! fullExpiryDate ) {
+			return sprintf(
+				/* translators: %(categories)s is a list like "domain and plan" */
+				__( 'Your %(categories)s will expire. Here\u2019s what you\u2019ll lose:' ),
+				{ categories }
+			);
+		}
+		return sprintf(
+			/* translators: %(date)s is the expiry date; %(categories)s is a list like "domain and plan" */
+			__( 'On %(date)s, your %(categories)s will expire. Here\u2019s what you\u2019ll lose:' ),
+			{ categories, date: fullExpiryDate }
+		);
+	}
 	const category = getProductCategory( purchase );
 	if ( ! fullExpiryDate ) {
 		return __( 'You’ll lose access to:' );
@@ -289,7 +397,19 @@ export function getCancelLossIntro( purchase: PurchaseForCopy, fullExpiryDate: s
  * of things being removed right now (vs. the Cancel variant, which frames it
  * as a future loss).
  */
-export function getRemoveLossIntro( purchase: PurchaseForCopy ): string {
+export function getRemoveLossIntro(
+	purchase: PurchaseForCopy,
+	additionalPurchases?: PurchaseForCopy[]
+): string {
+	if ( additionalPurchases?.length ) {
+		const allPurchases = [ purchase, ...additionalPurchases ];
+		const categories = buildCategoriesNounPhrase( allPurchases );
+		return sprintf(
+			/* translators: %(categories)s is a list like "plan and domain" */
+			__( 'Your %(categories)s will be removed immediately. Here\u2019s what you\u2019ll lose:' ),
+			{ categories }
+		);
+	}
 	const category = getProductCategory( purchase );
 	const productName = purchase.product_name;
 	switch ( category ) {
@@ -475,10 +595,26 @@ export function getCheckboxLabel(): string {
  * the terminal action. Secondary stays per-category so "Keep plan" / "Keep
  * domain" still match the surrounding copy.
  */
-export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
+export function getButtonLabels( {
+	purchase,
+	intent,
+	additionalPurchases,
+}: ConfirmationCopyArgs ): {
 	primary: string;
 	secondary: string;
 } {
+	if ( additionalPurchases?.length ) {
+		if ( intent === 'cancel' ) {
+			return {
+				primary: __( 'Cancel subscriptions' ),
+				secondary: __( 'Keep subscriptions' ),
+			};
+		}
+		return {
+			primary: __( 'Continue removal' ),
+			secondary: __( 'Keep subscriptions' ),
+		};
+	}
 	const category = getProductCategory( purchase );
 	if ( intent === 'remove' ) {
 		const primary = __( 'Continue removal' );
