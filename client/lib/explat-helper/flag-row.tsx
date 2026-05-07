@@ -39,30 +39,6 @@ function isMatchedRule( rule: RuleSummary, preview: ExPlatSdk.Result | null ): b
 	return false;
 }
 
-/**
- * When a flag is forced to a value, treat the rule whose variations contain
- * that value as the matched rule — even if the user wouldn't naturally
- * qualify for it. This mirrors what's actually rendering: forcing 'treatment'
- * effectively short-circuits eligibility + bucketing for that experiment.
- */
-function isForcedIntoRule(
-	rule: RuleSummary,
-	isForced: boolean,
-	forcedValue: FeatureValue | undefined
-): boolean {
-	if ( ! isForced || forcedValue === undefined ) {
-		return false;
-	}
-	const forcedJson = JSON.stringify( forcedValue );
-	if ( rule.type === 'experiment' ) {
-		return rule.variations.some( ( v ) => JSON.stringify( v.value ) === forcedJson );
-	}
-	if ( rule.type === 'force' ) {
-		return JSON.stringify( rule.value ) === forcedJson;
-	}
-	return false;
-}
-
 /** Whether the user qualifies for this rule's audience condition. `null` means we don't know yet (attributes still loading). */
 function ruleQualifies( rule: RuleSummary, attributes: Attributes | null ): boolean | null {
 	if ( attributes === null ) {
@@ -81,35 +57,7 @@ function ruleQualClass( qualifies: boolean | null ): string {
 	return qualifies ? ' is-qualifies' : ' is-no-qualify';
 }
 
-function RuleMarker( {
-	matched,
-	qualifies,
-	forced,
-}: {
-	matched: boolean;
-	qualifies: boolean | null;
-	forced: boolean;
-} ) {
-	if ( forced && qualifies === false ) {
-		return (
-			<span
-				className="explat-helper__rule-marker is-forced-ineligible"
-				title="Forced render, but you don't naturally qualify for this rule's condition"
-			>
-				▶✕
-			</span>
-		);
-	}
-	if ( forced ) {
-		return (
-			<span
-				className="explat-helper__rule-marker"
-				title="Forced into this rule — eligibility + bucketing bypassed by your override"
-			>
-				▶
-			</span>
-		);
-	}
+function RuleMarker( { matched, qualifies }: { matched: boolean; qualifies: boolean | null } ) {
 	if ( matched ) {
 		return (
 			<span className="explat-helper__rule-marker" title="Matched (resolved this flag)">
@@ -224,6 +172,10 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 		const raw = exPlatDevtools.getRawFeature( flagKey ) as RawFeature | null;
 		const rawRules: RawRule[] = Array.isArray( raw?.rules ) ? raw?.rules ?? [] : [];
 
+		// Walk the rules in order, mirroring `evalFeature`. As soon as one
+		// resolves naturally, every subsequent rule is `not_reached`. This makes
+		// it obvious in the console which rules the engine actually inspected.
+		let resolved = false;
 		const ruleTrace = flagInfoForLog.rules.map( ( rule ) => {
 			const conditionMatches =
 				rule.condition === null || rule.condition === undefined
@@ -237,16 +189,26 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 					( preview.source === 'force' &&
 						rule.type === 'force' &&
 						JSON.stringify( rule.value ) === JSON.stringify( preview.value ) ) );
-			const forcedInto = isForcedIntoRule( rule, isForced, forcedValue );
+
+			const processed = ! resolved;
 
 			if ( rule.type === 'force' ) {
+				let outcome: 'matched' | 'skipped_condition' | 'not_reached';
+				if ( ! processed ) {
+					outcome = 'not_reached';
+				} else if ( ! conditionMatches ) {
+					outcome = 'skipped_condition';
+				} else {
+					outcome = 'matched';
+					resolved = true;
+				}
 				return {
 					index: rule.index,
 					type: 'force' as const,
 					qualifies: conditionMatches,
-					matched: forcedInto || naturallyMatched,
-					naturally_matched: naturallyMatched,
-					forced_into: forcedInto,
+					matched: naturallyMatched,
+					processed,
+					engine_outcome: outcome,
 					condition: rule.condition,
 					value: rule.value,
 				};
@@ -271,13 +233,32 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 				range: ranges[ i ] ?? null,
 			} ) );
 
+			let outcome:
+				| 'matched'
+				| 'skipped_condition'
+				| 'skipped_no_hash_value'
+				| 'skipped_out_of_range'
+				| 'not_reached';
+			if ( ! processed ) {
+				outcome = 'not_reached';
+			} else if ( ! conditionMatches ) {
+				outcome = 'skipped_condition';
+			} else if ( ! canHash ) {
+				outcome = 'skipped_no_hash_value';
+			} else if ( chosenIndex < 0 ) {
+				outcome = 'skipped_out_of_range';
+			} else {
+				outcome = 'matched';
+				resolved = true;
+			}
+
 			return {
 				index: rule.index,
 				type: 'experiment' as const,
 				qualifies: conditionMatches,
-				matched: forcedInto || naturallyMatched,
-				naturally_matched: naturallyMatched,
-				forced_into: forcedInto,
+				matched: naturallyMatched,
+				processed,
+				engine_outcome: outcome,
 				condition: rule.condition,
 				experiment_id: rule.experimentId,
 				seed,
@@ -303,7 +284,8 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 			attributes,
 			rules: ruleTrace,
 			natural: {
-				matched_rule_index: ruleTrace.find( ( r ) => r.naturally_matched )?.index ?? null,
+				matched_rule_index:
+					ruleTrace.find( ( r ) => r.engine_outcome === 'matched' )?.index ?? null,
 				value: naturalValue,
 				source: naturalSource,
 			},
@@ -384,13 +366,12 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 					</summary>
 					<ol className="explat-helper__rules-list">
 						{ flagInfo.rules.map( ( rule ) => {
-							const forcedInto = isForcedIntoRule( rule, isForced, forcedValue );
-							// Forcing a variation determines which rule is being *rendered as*,
-							// but it does NOT mean the user qualifies for that rule's audience.
-							// Keep `qualifies` honest (attribute-based) so devs can see when
-							// they're forcing themselves into a rule whose condition doesn't
-							// actually match their attributes.
-							const matched = forcedInto || ( ! isForced && isMatchedRule( rule, preview ) );
+							// Highlight rules based on natural eval only. Forcing a value
+							// changes which value renders, but it doesn't mean the user
+							// qualifies for any particular rule's audience — so we don't
+							// promote a rule to "matched" just because it contains the
+							// forced variation value.
+							const matched = isMatchedRule( rule, preview );
 							const qualifies = ruleQualifies( rule, attributes );
 							const matchedClass = matched ? ' is-matched' : '';
 							return (
@@ -400,7 +381,7 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 										qualifies
 									) }` }
 								>
-									<RuleMarker matched={ matched } qualifies={ qualifies } forced={ forcedInto } />
+									<RuleMarker matched={ matched } qualifies={ qualifies } />
 									<span className="explat-helper__rule-index">#{ rule.index }</span>
 									{ rule.type === 'force' ? (
 										<>

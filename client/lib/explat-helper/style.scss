@@ -224,12 +224,6 @@
 	&.is-no-qualify {
 		color: var(--color-text-subtle);
 	}
-
-	&.is-forced-ineligible {
-		color: var(--color-warning-50, #b26200);
-		font-size: 9px;
-		letter-spacing: -1px;
-	}
 }
 
 .explat-helper__rule-index {
