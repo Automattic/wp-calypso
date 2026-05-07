@@ -50,6 +50,12 @@ export interface GenerateOptions {
 	aspectRatio?: AspectRatio;
 	style?: ImageStyle;
 	clientId?: string;
+	/**
+	 * Abort the in-flight request when the realtime session tears down. The OpenAI
+	 * call alone takes 30–60s, so without this an abandoned generation would still
+	 * land on the editor minutes after the user closed the dictation panel.
+	 */
+	signal?: AbortSignal;
 }
 
 export interface GenerateResult {
@@ -93,11 +99,18 @@ function buildStyledPrompt( prompt: string, style: ImageStyle ): string {
 	return `${ prompt } [style: ${ style }]`;
 }
 
+function throwIfAborted( signal: AbortSignal | undefined ): void {
+	if ( signal?.aborted ) {
+		throw new DOMException( 'Image generation aborted', 'AbortError' );
+	}
+}
+
 /**
  * Fully headless flow — no modal, no UI gestures.
  */
 export async function generateAndApplyHeadless( opts: GenerateOptions ): Promise< GenerateResult > {
-	const { prompt, aspectRatio = '1:1', style = 'none' } = opts;
+	const { prompt, aspectRatio = '1:1', style = 'none', signal } = opts;
+	throwIfAborted( signal );
 
 	const blockEditorSelect = select( 'core/block-editor' ) as unknown as BlockEditorSelectShape;
 	const clientId = opts.clientId ?? blockEditorSelect.getSelectedBlockClientId();
@@ -133,12 +146,17 @@ export async function generateAndApplyHeadless( opts: GenerateOptions ): Promise
 			method: 'POST',
 			token: jwt,
 			body: requestBody,
+			signal,
 		} );
 	} catch ( err ) {
+		if ( ( err as { name?: string } )?.name === 'AbortError' ) {
+			throw err;
+		}
 		throw new Error(
 			`jetpack-ai-image failed: ${ err instanceof Error ? err.message : String( err ) }`
 		);
 	}
+	throwIfAborted( signal );
 
 	const firstResult = genResponse?.data?.[ 0 ];
 	const remoteUrl = firstResult?.url;
@@ -158,7 +176,7 @@ export async function generateAndApplyHeadless( opts: GenerateOptions ): Promise
 		if ( b64 ) {
 			// gpt-image-1 only returns base64; upload the decoded bytes directly so
 			// the server doesn't need a fetchable URL.
-			const blob = await ( await fetch( `data:image/png;base64,${ b64 }` ) ).blob();
+			const blob = await ( await fetch( `data:image/png;base64,${ b64 }`, { signal } ) ).blob();
 			const file = new File( [ blob ], 'live-ai-image.png', { type: 'image/png' } );
 			mediaResponse = await wpcomRequest< MediaNewResponse >( {
 				path: `/sites/${ blogId }/media/new`,
@@ -168,6 +186,7 @@ export async function generateAndApplyHeadless( opts: GenerateOptions ): Promise
 					[ 'media[]', file ],
 					[ 'attrs[]', JSON.stringify( attrs ) ],
 				],
+				signal,
 			} );
 		} else {
 			// Server-side sideload: wpcom fetches the OpenAI URL itself, dodging the
@@ -180,13 +199,18 @@ export async function generateAndApplyHeadless( opts: GenerateOptions ): Promise
 					media_urls: [ remoteUrl ],
 					attrs: [ attrs ],
 				},
+				signal,
 			} );
 		}
 	} catch ( err ) {
+		if ( ( err as { name?: string } )?.name === 'AbortError' ) {
+			throw err;
+		}
 		throw new Error(
 			`Media sideload failed: ${ err instanceof Error ? err.message : String( err ) }`
 		);
 	}
+	throwIfAborted( signal );
 
 	const attachment = mediaResponse?.media?.[ 0 ];
 	if ( ! attachment?.ID || ! attachment?.URL ) {

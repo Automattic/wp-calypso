@@ -63,6 +63,12 @@ interface ExecuteRealtimeToolCallsArgs {
 	event: { response?: { output?: unknown[] } };
 	onToolEvent: ( event: RealtimeToolEvent ) => void;
 	sendFunctionCallOutput: ( callId: string, result: unknown ) => void;
+	/**
+	 * Aborted when the realtime session tears down. Long-running tools
+	 * (generate_image_tool, ~30–60s) forward this to their HTTP requests so
+	 * abandoned generations stop instead of finishing into a torn-down editor.
+	 */
+	signal?: AbortSignal;
 }
 
 interface ExecuteRealtimeToolCallsResult {
@@ -81,6 +87,7 @@ export async function executeRealtimeToolCalls( {
 	event,
 	onToolEvent,
 	sendFunctionCallOutput,
+	signal,
 }: ExecuteRealtimeToolCallsArgs ): Promise< ExecuteRealtimeToolCallsResult > {
 	const functionCalls = getFunctionCalls( event );
 
@@ -108,7 +115,7 @@ export async function executeRealtimeToolCalls( {
 			} );
 		}
 		try {
-			result = await executeRealtimeToolCall( call );
+			result = await executeRealtimeToolCall( call, signal );
 		} catch ( err ) {
 			result = {
 				ok: false,
@@ -149,7 +156,10 @@ function getFunctionCalls( event: { response?: { output?: unknown[] } } ): Realt
 	);
 }
 
-async function executeRealtimeToolCall( call: RealtimeFunctionCall ): Promise< unknown > {
+async function executeRealtimeToolCall(
+	call: RealtimeFunctionCall,
+	signal?: AbortSignal
+): Promise< unknown > {
 	if ( call.name === GET_EDITOR_BLOCKS_TOOL_NAME ) {
 		return executeGetEditorBlocksTool( call.arguments );
 	}
@@ -223,7 +233,7 @@ async function executeRealtimeToolCall( call: RealtimeFunctionCall ): Promise< u
 		return executeStopDictationTool();
 	}
 	if ( call.name === GENERATE_IMAGE_TOOL_NAME ) {
-		return executeGenerateImageTool( call.arguments );
+		return executeGenerateImageTool( call.arguments, signal );
 	}
 	return { ok: false, error: `Unsupported tool: ${ call.name || 'unknown' }` };
 }

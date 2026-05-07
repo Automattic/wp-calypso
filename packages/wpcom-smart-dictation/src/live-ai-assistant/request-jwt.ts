@@ -17,9 +17,10 @@ import wpcomRequest from 'wpcom-proxy-request';
 // Shared with @automattic/jetpack-ai-calypso so the cached token is reused
 // across features.
 const JWT_STORAGE_KEY = 'jetpack-ai-jwt';
-// Server-side expiry is 30 minutes (jetpack-openai-query.php), so cache for the
-// same window to avoid re-issuing on every generation.
-const JWT_CACHE_TTL_MS = 30 * 60 * 1000;
+// Server-side expiry is 30 minutes (jetpack-openai-query.php). Shave 5 minutes
+// off so a request using a near-expiry cached token still arrives at the
+// server with time to spare instead of racing the boundary into a 401.
+const JWT_CACHE_TTL_MS = 25 * 60 * 1000;
 
 interface JwtEndpointResponse {
 	token?: string;

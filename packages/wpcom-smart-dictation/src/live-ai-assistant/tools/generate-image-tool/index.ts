@@ -200,7 +200,7 @@ async function resolveTargetClientId( provided: string | undefined ): Promise< R
 	return { clientId: newBlock.clientId, inserted: true };
 }
 
-export async function executeGenerateImageTool( rawArgs: unknown ) {
+export async function executeGenerateImageTool( rawArgs: unknown, signal?: AbortSignal ) {
 	const parsed = parseArgs( rawArgs );
 	if ( 'error' in parsed ) {
 		return { ok: false, error: parsed.error };
@@ -227,6 +227,7 @@ export async function executeGenerateImageTool( rawArgs: unknown ) {
 			aspectRatio: parsed.aspectRatio,
 			style: parsed.style,
 			clientId,
+			signal,
 		} );
 		return {
 			ok: true,
@@ -240,7 +241,8 @@ export async function executeGenerateImageTool( rawArgs: unknown ) {
 		// Don't leave an empty placeholder block behind if we were the ones who
 		// added it. If the user already had a core/image selected, leave it alone —
 		// removing a block they were working on would be more surprising than the
-		// failure itself.
+		// failure itself. Same on abort: if the user closed the panel, an empty
+		// auto-inserted core/image is just litter.
 		if ( weInsertedTheBlock ) {
 			try {
 				const blockEditorDispatch = dispatch(
@@ -254,6 +256,7 @@ export async function executeGenerateImageTool( rawArgs: unknown ) {
 		return {
 			ok: false,
 			error: err instanceof Error ? err.message : String( err ),
+			aborted: ( err as { name?: string } )?.name === 'AbortError' ? true : undefined,
 		};
 	}
 }

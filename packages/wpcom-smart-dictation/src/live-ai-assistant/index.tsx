@@ -271,6 +271,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 											key={ `tool-${ row.evt.id }` }
 											className={ clsx( 'live-ai-assistant__transcript-tool', {
 												'is-error': row.evt.status === 'error',
+												'is-running': row.evt.status === 'running',
 											} ) }
 										>
 											<span className="live-ai-assistant__transcript-tool-dot" aria-hidden="true" />
