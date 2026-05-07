@@ -178,9 +178,15 @@
 }
 
 .image-studio-feature-clip .scene-text-overlay-frame--on-image .scene-grid {
-	align-content: end;
-	/* Lowered (was 150px) — overlay sits closer to the bottom edge. */
-	padding: 0 72px 110px;
+	/*
+	 * Flex bottom-anchor — grid's `align-content: end` was being overridden
+	 * by the default scene-grid rule in some renders, leaving text glued to
+	 * the top. Flex with justify-content: flex-end is unambiguous.
+	 */
+	display: flex !important;
+	flex-direction: column;
+	justify-content: flex-end;
+	padding: 0 72px 130px;
 	text-align: left;
 }
 
@@ -248,6 +254,37 @@
 	background:
 		radial-gradient(circle at 70% 24%, rgba(255, 255, 255, 0.18), transparent 32%),
 		linear-gradient(135deg, #1a1f2e 0%, #2c1f4a 100%);
+}
+
+/*
+ * Title card with an image backdrop (reused from one of the scene images).
+ * Same camera-zoom-in motion as text-only, but the title is bottom-anchored
+ * over the image with a darker scrim for legibility. Inherits .scene-image
+ * background-frame styling for the image itself.
+ */
+.image-studio-feature-clip .scene-title-card--on-image .scene-grid {
+	display: flex !important;
+	flex-direction: column;
+	justify-content: flex-end;
+	padding: 0 72px 150px;
+	text-align: left;
+	position: relative;
+	z-index: 3;
+}
+
+.image-studio-feature-clip .scene-title-card--on-image .scene-text-overlay-frame__scrim {
+	background: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 0.18) 0%,
+		rgba(0, 0, 0, 0) 30%,
+		rgba(0, 0, 0, 0.32) 65%,
+		rgba(0, 0, 0, 0.78) 100%
+	);
+	z-index: 2;
+}
+
+.image-studio-feature-clip .scene-title-card--on-image .scene-title {
+	text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
 }
 
 /*

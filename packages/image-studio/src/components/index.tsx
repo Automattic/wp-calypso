@@ -123,12 +123,17 @@ function ImageStudioAgentChat( {
 		disabled: isVideoMode,
 	} );
 
+	const videoStudioStyle = useSelect(
+		( s ) => s( videoStudioStore ).getSelectedStyle?.() ?? null,
+		[]
+	);
 	const videoSuggestions = useVideoClipSuggestions( {
 		registerSuggestions: agentChatProps.registerSuggestions,
 		clearSuggestions: agentChatProps.clearSuggestions,
 		messages: displayMessages,
 		inputValue,
 		disabled: ! isVideoMode,
+		style: videoStudioStyle,
 	} );
 
 	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode

@@ -159,21 +159,43 @@ export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipPro
 					);
 				} ) }
 
-				<Timegroup
-					mode="fixed"
-					duration={ `${ titleCardDurationMs }ms` }
-					className={
-						isTextOnly
-							? 'scene scene-title-card scene-title-card--text-only camera-zoom-in'
-							: 'scene scene-title-card'
+				{ ( () => {
+					// Reuse a scene image as the title card backdrop when available
+					// — keeps visual consistency through the closer instead of
+					// dropping to a bare gradient. Fall back to text-only gradient
+					// if no scene has an image (Highlights flow without images).
+					const titleCardImage = scenes.find( ( s ) => !! s.imageUrl )?.imageUrl ?? null;
+					let titleCardClass: string;
+					if ( isTextOnly ) {
+						titleCardClass = 'scene scene-title-card scene-title-card--text-only camera-zoom-in';
+					} else if ( titleCardImage ) {
+						titleCardClass = 'scene scene-title-card scene-title-card--on-image camera-zoom-in';
+					} else {
+						titleCardClass = 'scene scene-title-card';
 					}
-				>
-					<div className="scene-grid">
-						<div className="scene-copy">
-							<span className="scene-title">{ brief.titleCard.copy }</span>
-						</div>
-					</div>
-				</Timegroup>
+					return (
+						<Timegroup
+							mode="fixed"
+							duration={ `${ titleCardDurationMs }ms` }
+							className={ titleCardClass }
+						>
+							{ titleCardImage ? (
+								<>
+									<div className="scene-background-frame camera-zoom-in">
+										<EFImage src={ titleCardImage } className="scene-background" />
+									</div>
+									<div className="scene-image-overlay" />
+									<div className="scene-text-overlay-frame__scrim" aria-hidden />
+								</>
+							) : null }
+							<div className="scene-grid">
+								<div className="scene-copy">
+									<span className="scene-title">{ brief.titleCard.copy }</span>
+								</div>
+							</div>
+						</Timegroup>
+					);
+				} )() }
 			</Timegroup>
 		</Timegroup>
 	);
