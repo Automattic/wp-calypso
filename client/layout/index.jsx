@@ -357,10 +357,12 @@ class Layout extends Component {
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
+		const isCalypso = ! isJetpackCloud() && ! isA8CForAgencies();
+
 		return (
 			<ArcadeModeProvider>
 				<div className={ sectionClass }>
-					<KonamiListener />
+					{ isCalypso && <KonamiListener /> }
 					<HelpCenterLoader
 						sectionName={ this.props.sectionName }
 						loadHelpCenter={ loadHelpCenter }
