@@ -61,7 +61,13 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 		} );
 
 		it( 'Selects a Premium theme', async function () {
-			await page.locator( 'div.theme-card:has(div.theme-tier-badge--premium)' ).first().click();
+			// Theme cards load asynchronously after hydration in the modern showcase, so wait
+			// generously for the first premium card to appear before clicking.
+			const premiumCard = page
+				.locator( 'div.theme-card:has(div.theme-tier-badge--premium)' )
+				.first();
+			await premiumCard.waitFor( { state: 'visible', timeout: 30_000 } );
+			await premiumCard.click();
 		} );
 
 		it( 'Navigate to Signup page', async function () {
