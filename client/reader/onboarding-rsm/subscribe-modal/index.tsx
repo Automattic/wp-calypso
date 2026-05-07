@@ -11,6 +11,7 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import ReaderFollowButton from 'calypso/reader/follow-button';
+import { getFeedUrl } from 'calypso/reader/get-helpers';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
@@ -66,10 +67,16 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 	const selectedFeed = useSelector( ( state: object ) =>
 		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
-	);
-	const selectedFeedIconUrl =
-		( selectedFeed as { site_icon?: string; image?: string } | null )?.site_icon ??
-		( selectedFeed as { site_icon?: string; image?: string } | null )?.image;
+	) as { site_icon?: string; image?: string; feed_URL?: string; URL?: string } | null;
+	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
+	// Subscribing via the curated `site_URL` (often a bare hostname like `design-milk.com`)
+	// can fail with `invalid_feed` for non-WP.com sites because the WP.com follow API has to
+	// auto-discover a feed and not all sites resolve. The feed object — once metadata loads —
+	// gives us the canonical `feed_URL`, which is what the dedicated feed page subscribes with.
+	// Mirrors the `getFeedUrl({ feed, site })` derivation that the list-item path uses
+	// internally so both subscribe paths agree on the URL precedence.
+	const selectedFollowUrl =
+		getFeedUrl( { feed: selectedFeed ?? undefined } ) || selectedSite?.site_URL || '';
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
@@ -187,7 +194,14 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											feedId={ site.feed_ID }
 											siteId={ site.site_ID }
 											site={ site }
-											url={ site.site_URL }
+											// Intentionally not passing `url`: curated entries
+											// only carry a bare hostname (e.g. `design-milk.com`),
+											// and overriding the prop here would force the follow
+											// API to auto-discover a feed from that hostname,
+											// which fails for many non-WP.com sites with
+											// `invalid_feed`. Letting the list item fall back to
+											// `getFeedUrl({feed, site})` uses the canonical
+											// `feed_URL` from loaded feed metadata instead.
 											showLastUpdatedDate={ false }
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }
@@ -221,7 +235,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												</span>
 											</div>
 											<ReaderFollowButton
-												siteUrl={ selectedSite.site_URL }
+												siteUrl={ selectedFollowUrl }
 												feedId={ selectedSite.feed_ID }
 												siteId={ selectedSite.site_ID }
 												followSource="reader-onboarding-modal"
