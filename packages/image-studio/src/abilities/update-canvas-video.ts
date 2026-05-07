@@ -97,12 +97,12 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 						: null;
 				const styleHint = typeof input?.style === 'string' ? input.style : '';
 
-				// Backstop for the photo chain: compose-feature-clip already
-				// swaps the canvas inline, so any call here for a -photo style
-				// is the LLM fabricating values to skip the actual render.
-				if ( styleHint.endsWith( '-photo' ) ) {
+				// Backstop for the highlights chain: compose-feature-clip already
+				// swaps the canvas inline, so any call here for the highlights
+				// style is the LLM fabricating values to skip the actual render.
+				if ( styleHint === 'highlights' ) {
 					throw new Error(
-						'update-canvas-video is for the Veo chain only. For -photo styles, call image-studio/compose-feature-clip instead — it renders and swaps the canvas in one step.'
+						'update-canvas-video is for the cinematic (Veo) chain only. For the "highlights" style, call image-studio/compose-feature-clip instead — it renders and swaps the canvas in one step.'
 					);
 				}
 

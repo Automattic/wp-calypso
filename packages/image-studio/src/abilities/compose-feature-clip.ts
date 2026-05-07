@@ -36,8 +36,8 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 		throw new Error( 'brief must be an object.' );
 	}
 	const candidate = raw as Record< string, unknown >;
-	if ( candidate.style !== 'informative-photo' && candidate.style !== 'promotional-photo' ) {
-		throw new Error( 'brief.style must be "informative-photo" or "promotional-photo".' );
+	if ( candidate.style !== 'highlights' ) {
+		throw new Error( 'brief.style must be "highlights".' );
 	}
 	// Allow an empty scenes array — the renderer treats that as a text-only
 	// clip (single full-duration title card). The brief still must DECLARE

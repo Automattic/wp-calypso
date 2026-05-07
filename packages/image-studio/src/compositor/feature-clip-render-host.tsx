@@ -281,18 +281,6 @@ export function FeatureClipRenderHost() {
 				await videoActions.setCurrentAttachmentId( attachment.id );
 				await videoActions.setCurrentDurationSeconds( attachment.durationSeconds );
 
-				// Persist the attachment ID on the post so the sidebar can
-				// rehydrate after a reload — mirrors how the featured image is
-				// stored. editPost marks the post dirty; the user saves
-				// normally. The meta key matches `register_post_meta` on the
-				// wpcom side.
-				const editorActions = wpDispatch( 'core/editor' ) as
-					| { editPost?: ( edits: Record< string, unknown > ) => unknown }
-					| undefined;
-				editorActions?.editPost?.( {
-					meta: { image_studio_feature_clip_id: attachment.id },
-				} );
-
 				imageActions.addNotice(
 					__( 'Video saved to Media Library', __i18n_text_domain__ ),
 					'success'

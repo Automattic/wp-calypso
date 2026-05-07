@@ -9,6 +9,7 @@ import { useMediaQuery, withInstanceId } from '@wordpress/compose';
 import { select, useDispatch, useSelect } from '@wordpress/data';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { FeatureClipRenderHost } from '../compositor/feature-clip-render-host';
 import { useAgentConfig } from '../hooks/use-agent-config';
 import { useAnnotation } from '../hooks/use-annotation';
 import { useBeforeUnload } from '../hooks/use-beforeunload';
@@ -645,6 +646,13 @@ const ImageStudioContent = withInstanceId(
 					<div className="image-studio-modal__notices">
 						<ImageStudioNotice />
 					</div>
+					{ /*
+						Highlights renderer mounts inside the modal so the render is
+						tied to the modal's lifecycle — closing the modal unmounts
+						the host and aborts any in-flight render. No background
+						processing past modal close.
+					*/ }
+					<FeatureClipRenderHost />
 				</Modal>
 
 				{ isExiting && (

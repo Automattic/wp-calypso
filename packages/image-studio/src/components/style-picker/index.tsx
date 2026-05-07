@@ -120,25 +120,21 @@ export const STYLE_OPTIONS = [
 	},
 ];
 
+// Top-level video style choices, named for users (not video editors).
+//   Cinematic  → AI-generated single atmospheric shot. Veo path.
+//   Highlights → Browser-rendered walkthrough of the post's key points + images. EditFrame path.
+// Tone sub-styles (Informative / Promotional) are dormant — code paths still
+// exist but no UI surface picks them. Reintroduce when there's a real visual
+// differentiator behind the tones, alongside a "Type" dropdown.
 export const VIDEO_STYLE_OPTIONS = [
 	{
-		label: __( 'Informative', __i18n_text_domain__ ),
-		value: 'informative',
+		label: __( 'Cinematic', __i18n_text_domain__ ),
+		value: 'cinematic',
 		preview: informativePreview,
 	},
 	{
-		label: __( 'Promotional', __i18n_text_domain__ ),
-		value: 'promotional',
-		preview: promotionalPreview,
-	},
-	{
-		label: __( 'Informative (from photos)', __i18n_text_domain__ ),
-		value: 'informative-photo',
-		preview: informativePreview,
-	},
-	{
-		label: __( 'Promotional (from photos)', __i18n_text_domain__ ),
-		value: 'promotional-photo',
+		label: __( 'Highlights', __i18n_text_domain__ ),
+		value: 'highlights',
 		preview: promotionalPreview,
 	},
 ];

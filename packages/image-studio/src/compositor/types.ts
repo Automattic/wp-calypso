@@ -3,7 +3,10 @@
  * ability and consumed by the client-side EditFrame compositor. The renderer
  * is deterministic for a given brief.
  */
-export type FeatureClipStyle = 'informative-photo' | 'promotional-photo';
+// Top-level user-facing styles. The 'informative-photo' / 'promotional-photo'
+// values from the prior schema are dormant — code paths still exist for
+// when a Type dropdown reintroduces tone differentiation.
+export type FeatureClipStyle = 'cinematic' | 'highlights';
 
 export type FeatureClipCameraMove = 'zoom-in' | 'zoom-out' | 'pan-left' | 'pan-right' | 'static';
 
