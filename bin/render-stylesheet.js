@@ -59,18 +59,17 @@ const importer = {
 	},
 };
 
-sass
-	.compileAsync( args.in, {
+try {
+	const output = sass.compile( args.in, {
 		importers: [ importer ],
 		loadPaths: [ path.join( projectRoot, 'node_modules' ) ],
 		style: 'compressed',
 		silenceDeprecations: [ 'mixed-decls' ],
 		quietDeps: true,
-	} )
-	.then(
-		( output ) => fs.writeFileSync( args.out, output.css ),
-		( err ) => {
-			console.error( 'error', err );
-			process.exitCode = 1;
-		}
-	);
+	} );
+
+	fs.writeFileSync( args.out, output.css );
+} catch ( err ) {
+	console.error( 'error', err );
+	process.exitCode = 1;
+}
