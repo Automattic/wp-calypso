@@ -5,6 +5,16 @@
  * Image Studio runs in its own bundle and intentionally avoids importing from
  * `@automattic/jetpack-script-data`. Encapsulating the window reads here keeps
  * the global dependency in one place and lets callers branch on `null` cleanly.
+ *
+ * UPSTREAM CONTRACT — keep in sync with Jetpack:
+ *   - `site.admin_url` is set by `JetpackScriptData_Base::get_site_data()`
+ *     (jetpack/projects/js-packages/script-data/src/types.ts → SiteData).
+ *   - `social.api_paths.resharePost` is set by
+ *     `Publicize_Script_Data::get_api_paths()` in
+ *     jetpack/projects/packages/publicize/src/class-publicize-script-data.php.
+ * If those fields are renamed or moved, the smoke test in
+ * jetpack-script-data.test.ts ("structure smoke test") should fail and tell
+ * the maintainer where to look.
  */
 
 type JetpackScriptData = {

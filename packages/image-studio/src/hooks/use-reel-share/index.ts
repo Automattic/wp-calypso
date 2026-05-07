@@ -22,13 +22,6 @@ const SOCIAL_STORE = 'jetpack-social-plugin';
 const EDITOR_STORE = 'core/editor';
 const IG_SERVICE = 'instagram-business';
 
-type ReelShareReason =
-	| 'no-connection'
-	| 'connection-disabled'
-	| 'post-not-published'
-	| 'no-video'
-	| 'no-script-data';
-
 interface Connection {
 	connection_id: string | number;
 	service_name: string;
@@ -44,8 +37,6 @@ interface JetpackSocialOptions {
 }
 
 interface UseReelShareReturn {
-	canShare: boolean;
-	reason: ReelShareReason | null;
 	isVisible: boolean;
 	isSharing: boolean;
 	handleShare: () => Promise< void >;
@@ -60,33 +51,15 @@ export function useReelShare(): UseReelShareReturn {
 		currentDurationSeconds,
 		entryPoint,
 		isAiProcessing,
-		isPublished,
 		currentMeta,
-		hasInstagramConnection,
-		hasInstagramConnectionEnabled,
 		isSharing,
 	} = useSelect( ( select ) => {
 		const videoStore = select( videoStudioStore );
 		const studio = select( imageStudioStore );
 		const editor = select( EDITOR_STORE ) as
-			| {
-					isCurrentPostPublished: () => boolean;
-					getEditedPostAttribute: ( attr: string ) => unknown;
-			  }
+			| { getEditedPostAttribute: ( attr: string ) => unknown }
 			| undefined;
-		const social = select( SOCIAL_STORE ) as
-			| {
-					getConnections: () => Connection[];
-					isSharingCurrentPost: () => boolean;
-			  }
-			| undefined;
-
-		// Render-time read for the advisory `canShare` / `reason` output.
-		// handleShare ignores these and re-reads via standalone select() at
-		// click time — see the fresh* values below — to defeat useSelect's
-		// stale-subscription quirk for late-registered stores.
-		const connections = social?.getConnections?.() ?? [];
-		const igConnection = connections.find( ( c ) => c.service_name === IG_SERVICE );
+		const social = select( SOCIAL_STORE ) as { isSharingCurrentPost: () => boolean } | undefined;
 
 		return {
 			currentVideoUrl: videoStore.getCurrentVideoUrl?.() ?? null,
@@ -94,11 +67,8 @@ export function useReelShare(): UseReelShareReturn {
 			currentDurationSeconds: videoStore.getCurrentDurationSeconds?.() ?? null,
 			entryPoint: studio.getEntryPoint?.() ?? null,
 			isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
-			isPublished: editor?.isCurrentPostPublished?.() ?? false,
 			currentMeta:
 				( editor?.getEditedPostAttribute?.( 'meta' ) as Record< string, unknown > ) ?? {},
-			hasInstagramConnection: !! igConnection,
-			hasInstagramConnectionEnabled: !! igConnection && igConnection.enabled !== false,
 			isSharing: social?.isSharingCurrentPost?.() ?? false,
 		};
 	}, [] );
@@ -124,20 +94,6 @@ export function useReelShare(): UseReelShareReturn {
 		!! currentAttachmentId &&
 		!! sharePath &&
 		! isAiProcessing;
-
-	let reason: ReelShareReason | null = null;
-	if ( ! currentVideoUrl || ! currentAttachmentId ) {
-		reason = 'no-video';
-	} else if ( ! sharePath ) {
-		reason = 'no-script-data';
-	} else if ( ! hasInstagramConnection ) {
-		reason = 'no-connection';
-	} else if ( ! hasInstagramConnectionEnabled ) {
-		reason = 'connection-disabled';
-	} else if ( ! isPublished ) {
-		reason = 'post-not-published';
-	}
-	const canShare = reason === null;
 
 	const handleShare = useCallback( async () => {
 		// Synchronous double-click guard. `isSharing` from useSelect lags by a
@@ -295,8 +251,6 @@ export function useReelShare(): UseReelShareReturn {
 	] );
 
 	return {
-		canShare,
-		reason,
 		isVisible,
 		isSharing,
 		handleShare,

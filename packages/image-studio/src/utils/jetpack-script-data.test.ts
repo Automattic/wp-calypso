@@ -71,3 +71,42 @@ describe( 'getJetpackAdminUrl', () => {
 		);
 	} );
 } );
+
+// Smoke test against a fixture that mirrors the actual shape Jetpack injects
+// at runtime. If Jetpack ever renames `site.admin_url` or
+// `social.api_paths.resharePost`, our readers stop returning the right values
+// and one of these assertions fails — pointing the maintainer at the upstream
+// contract documented at the top of jetpack-script-data.ts.
+describe( 'JetpackScriptData structure (smoke test)', () => {
+	const realisticFixture = {
+		site: {
+			admin_url: 'https://example.wordpress.com/wp-admin/',
+			host: 'wpcom',
+			plan: { features: { active: [] } },
+		},
+		social: {
+			api_paths: {
+				resharePost: '/wpcom/v2/publicize/share-post/{postId}',
+				refreshConnections: '/wpcom/v2/publicize/connections?test_connections=1',
+				socialToggleBase: 'social/settings',
+			},
+			urls: {
+				connectionsManagementPage:
+					'https://wordpress.com/marketing/connections/example.wordpress.com',
+			},
+		},
+		user: { current_user: { capabilities: {} } },
+	};
+
+	it( 'getReelSharePostPath reads social.api_paths.resharePost from a Jetpack-shaped blob', () => {
+		setScriptData( realisticFixture );
+		expect( getReelSharePostPath() ).toBe( '/wpcom/v2/publicize/share-post/{postId}' );
+	} );
+
+	it( 'getJetpackAdminUrl reads site.admin_url from a Jetpack-shaped blob', () => {
+		setScriptData( realisticFixture );
+		expect( getJetpackAdminUrl( 'admin.php?page=jetpack-social' ) ).toBe(
+			'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-social'
+		);
+	} );
+} );

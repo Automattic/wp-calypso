@@ -194,35 +194,6 @@ describe( 'useReelShare', () => {
 		} );
 	} );
 
-	describe( 'canShare and reason', () => {
-		it( 'reports canShare=true when all preconditions pass', () => {
-			const { result } = renderHook( () => useReelShare() );
-			expect( result.current.canShare ).toBe( true );
-			expect( result.current.reason ).toBeNull();
-		} );
-
-		it( 'reports no-connection when no instagram-business connection exists', () => {
-			mockState.connections = [ twitterConnection ];
-			const { result } = renderHook( () => useReelShare() );
-			expect( result.current.canShare ).toBe( false );
-			expect( result.current.reason ).toBe( 'no-connection' );
-		} );
-
-		it( 'reports post-not-published when post is a draft', () => {
-			mockState.isCurrentPostPublished = false;
-			const { result } = renderHook( () => useReelShare() );
-			expect( result.current.canShare ).toBe( false );
-			expect( result.current.reason ).toBe( 'post-not-published' );
-		} );
-
-		it( 'reports no-video when attachment id is null', () => {
-			mockState.currentAttachmentId = null;
-			const { result } = renderHook( () => useReelShare() );
-			expect( result.current.canShare ).toBe( false );
-			expect( result.current.reason ).toBe( 'no-video' );
-		} );
-	} );
-
 	describe( 'handleShare — happy path', () => {
 		it( 'writes attached_media and media_source then dispatches shareCurrentPost with non-IG connections skipped', async () => {
 			const { result } = renderHook( () => useReelShare() );
