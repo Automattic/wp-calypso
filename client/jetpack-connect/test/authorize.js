@@ -191,14 +191,16 @@ describe( 'JetpackAuthorize', () => {
 		expect( cards.length ).toBe( 3 );
 		expect( cards[ 0 ] ).toHaveAttribute( 'aria-label', 'Automattic for Agencies' );
 
-		// Connected-plugins row drops Jetpack-family slugs because the
-		// Jetpack card already represents that family on screen.
+		// Connected-plugins row repeats every active plugin — including
+		// the Jetpack-family slug — so individual Jetpack plugins stay
+		// disambiguated even though every Jetpack-family card shares the
+		// same brand mark.
 		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
 		expect( overflow ).toBeInTheDocument();
 		expect( overflow ).toHaveTextContent( 'Connected plugins' );
 		expect( overflow ).toHaveTextContent( 'Automattic for Agencies' );
 		expect( overflow ).toHaveTextContent( 'WooCommerce' );
-		expect( overflow ).not.toHaveTextContent( 'Jetpack' );
+		expect( overflow ).toHaveTextContent( 'Jetpack' );
 	} );
 
 	test( 'features section uses the per-plugin override for a single individual Jetpack plugin', () => {

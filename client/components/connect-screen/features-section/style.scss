@@ -22,11 +22,17 @@
 		// Three cards stack the highest-priority family (A4A) full-width on
 		// top, with the remaining two (Woo + Jetpack) sharing the row below
 		// — matches the two-card layout the no-A4A scenario already uses.
+		// The full-width card centers its bullets so the wider column reads
+		// as a deliberate hero block rather than a left-anchored list.
 		.connect-screen-features-section.has-3-cards & {
 			grid-template-columns: 1fr 1fr;
 
 			.connect-screen-features-section__card:first-child {
 				grid-column: 1 / -1;
+
+				.connect-screen-features-section__card-bullet {
+					justify-content: center;
+				}
 			}
 		}
 	}
