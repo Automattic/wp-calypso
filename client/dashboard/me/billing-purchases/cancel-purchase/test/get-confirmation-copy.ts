@@ -10,6 +10,9 @@ import {
 	getCheckboxLabel,
 	getButtonLabels,
 	getFallbackLossItems,
+	buildCategoriesNounPhrase,
+	getCancelLossIntro,
+	getRemoveLossIntro,
 } from '../get-confirmation-copy';
 import type { Purchase } from '@automattic/api-core';
 
@@ -236,6 +239,144 @@ describe( 'getButtonLabels', () => {
 		expect(
 			getButtonLabels( { purchase: makePurchaseForCategory( 'email' ), intent: 'remove' } )
 		).toEqual( { primary: 'Continue removal', secondary: 'Keep email' } );
+	} );
+} );
+
+describe( 'buildCategoriesNounPhrase', () => {
+	test( 'single category', () => {
+		expect( buildCategoriesNounPhrase( [ makePurchaseForCategory( 'plan' ) ] ) ).toBe( 'plan' );
+	} );
+	test( 'two categories joined with "and"', () => {
+		expect(
+			buildCategoriesNounPhrase( [
+				makePurchaseForCategory( 'plan' ),
+				makePurchaseForCategory( 'domain' ),
+			] )
+		).toBe( 'plan and domain' );
+	} );
+	test( 'three categories use serial comma', () => {
+		expect(
+			buildCategoriesNounPhrase( [
+				makePurchaseForCategory( 'plan' ),
+				makePurchaseForCategory( 'domain' ),
+				makePurchaseForCategory( 'email' ),
+			] )
+		).toBe( 'plan, domain, and email' );
+	} );
+	test( 'deduplicates same category', () => {
+		expect(
+			buildCategoriesNounPhrase( [
+				makePurchaseForCategory( 'plan' ),
+				makePurchaseForCategory( 'plan' ),
+			] )
+		).toBe( 'plan' );
+	} );
+	test( 'empty array returns empty string', () => {
+		expect( buildCategoriesNounPhrase( [] ) ).toBe( '' );
+	} );
+} );
+
+describe( 'multi-purchase getCancellationHeading', () => {
+	const additional = [ makePurchaseForCategory( 'domain' ) ];
+	test( 'cancel intent pluralizes to "Cancel subscriptions"', () => {
+		expect(
+			getCancellationHeading( {
+				purchase: makePurchaseForCategory( 'plan' ),
+				intent: 'cancel',
+				additionalPurchases: additional,
+			} )
+		).toBe( 'Cancel subscriptions' );
+	} );
+	test( 'remove intent uses "Remove upgrades"', () => {
+		expect(
+			getCancellationHeading( {
+				purchase: makePurchaseForCategory( 'plan' ),
+				intent: 'remove',
+				additionalPurchases: additional,
+			} )
+		).toBe( 'Remove upgrades' );
+	} );
+} );
+
+describe( 'multi-purchase getTopNoticeCopy', () => {
+	test( 'returns category-aggregated notice for cancel intent', () => {
+		const plan = makePurchaseForCategory( 'plan', {
+			expiry_date: new Date( Date.now() + 30 * 24 * 60 * 60 * 1000 ).toISOString(),
+		} );
+		const domain = makePurchaseForCategory( 'domain', {
+			expiry_date: new Date( Date.now() + 60 * 24 * 60 * 60 * 1000 ).toISOString(),
+		} );
+		const copy = getTopNoticeCopy( {
+			purchase: plan,
+			intent: 'cancel',
+			additionalPurchases: [ domain ],
+		} );
+		expect( copy ).toMatch( /plan and domain/ );
+		expect( copy ).toMatch( /available for another/ );
+	} );
+	test( 'returns null when no purchases have expiry dates', () => {
+		const plan = makePurchaseForCategory( 'plan', { expiry_date: '' } );
+		const domain = makePurchaseForCategory( 'domain', { expiry_date: '' } );
+		expect(
+			getTopNoticeCopy( {
+				purchase: plan,
+				intent: 'cancel',
+				additionalPurchases: [ domain ],
+			} )
+		).toBeNull();
+	} );
+} );
+
+describe( 'multi-purchase getButtonLabels', () => {
+	const additional = [ makePurchaseForCategory( 'domain' ) ];
+	test( 'cancel intent pluralizes both buttons', () => {
+		expect(
+			getButtonLabels( {
+				purchase: makePurchaseForCategory( 'plan' ),
+				intent: 'cancel',
+				additionalPurchases: additional,
+			} )
+		).toEqual( {
+			primary: 'Cancel subscriptions',
+			secondary: 'Keep subscriptions',
+		} );
+	} );
+	test( 'remove intent uses "Continue removal" / "Keep subscriptions"', () => {
+		expect(
+			getButtonLabels( {
+				purchase: makePurchaseForCategory( 'plan' ),
+				intent: 'remove',
+				additionalPurchases: additional,
+			} )
+		).toEqual( {
+			primary: 'Continue removal',
+			secondary: 'Keep subscriptions',
+		} );
+	} );
+} );
+
+describe( 'multi-purchase loss intros', () => {
+	test( 'getCancelLossIntro includes category list and date', () => {
+		const plan = makePurchaseForCategory( 'plan' );
+		const domain = makePurchaseForCategory( 'domain' );
+		const intro = getCancelLossIntro( plan, 'January\u00a015,\u00a02027', [ domain ] );
+		expect( intro ).toMatch( /plan and domain/ );
+		expect( intro ).toMatch( /will expire/ );
+	} );
+	test( 'getCancelLossIntro without date uses dateless form', () => {
+		const plan = makePurchaseForCategory( 'plan' );
+		const domain = makePurchaseForCategory( 'domain' );
+		const intro = getCancelLossIntro( plan, '', [ domain ] );
+		expect( intro ).toMatch( /plan and domain/ );
+		expect( intro ).toMatch( /will expire/ );
+		expect( intro ).not.toMatch( /On / );
+	} );
+	test( 'getRemoveLossIntro includes category list', () => {
+		const plan = makePurchaseForCategory( 'plan' );
+		const domain = makePurchaseForCategory( 'domain' );
+		const intro = getRemoveLossIntro( plan, [ domain ] );
+		expect( intro ).toMatch( /plan and domain/ );
+		expect( intro ).toMatch( /removed immediately/ );
 	} );
 } );
 

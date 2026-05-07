@@ -286,7 +286,7 @@ export function PurchaseSiteLevelActions( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-	actionType: string;
+	actionType: 'cancel' | 'remove' | 'renew';
 } ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level interstitial load error' );
