@@ -433,7 +433,8 @@
 		"@wordpress/widgets": "4.23.0",
 		"@wordpress/wordcount": "4.23.0",
 		"@base-ui/react@npm:^1.2.0": "patch:@base-ui/react@npm%3A1.4.1#~/.yarn/patches/@base-ui-react-npm-1.4.1-fbb7347502.patch",
-		"@base-ui/react@npm:^1.4.0": "patch:@base-ui/react@npm%3A1.4.1#~/.yarn/patches/@base-ui-react-npm-1.4.1-fbb7347502.patch"
+		"@base-ui/react@npm:^1.4.0": "patch:@base-ui/react@npm%3A1.4.1#~/.yarn/patches/@base-ui-react-npm-1.4.1-fbb7347502.patch",
+		"@automattic/charts@npm:^1.3.0": "patch:@automattic/charts@npm%3A1.3.0#~/.yarn/patches/@automattic-charts-npm-1.3.0-e188dc5003.patch"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
