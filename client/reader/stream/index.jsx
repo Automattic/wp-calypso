@@ -14,7 +14,6 @@ import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
@@ -34,18 +33,12 @@ import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	clearStream,
-	requestPage,
 	selectItem,
 	selectNextItem,
 	selectPrevItem,
-	showUpdates,
 } from 'calypso/state/reader/streams/actions';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
-import {
-	getStream,
-	// getTransformedStreamItems,
-	// shouldRequestRecs,
-} from 'calypso/state/reader/streams/selectors';
+import { getStream } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -58,6 +51,7 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import { useStreamPendingPosts } from './use-stream-pending-posts';
 import { useStreamPosts } from './use-stream-posts';
 import {
 	getDistanceBetweenPrompts,
@@ -104,6 +98,9 @@ class ReaderStream extends Component {
 		followsCount: PropTypes.number,
 		streamPostsQuery: PropTypes.object,
 		recsStreamPostsQuery: PropTypes.object,
+		pendingCount: PropTypes.number,
+		consumePending: PropTypes.func,
+		isRefetching: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -169,16 +166,6 @@ class ReaderStream extends Component {
 			this.wasSelectedByOpeningPost = false;
 			this.focusSelectedPost( this.props.selectedPostKey );
 		}
-
-		// React Query migration: recommendation pages are fetched by `withStreamPosts`.
-		// if ( this.props.shouldRequestRecs ) {
-		// 	this.props.requestPage( {
-		// 		streamKey: this.props.recsStreamKey,
-		// 		feedId: this.props.selectedFeedId,
-		// 		pageHandle: this.props.recsStream.pageHandle,
-		// 		localeSlug: this.props.localeSlug,
-		// 	} );
-		// }
 	}
 	tryAgain = () => {
 		this.props.clearStream( { streamKey: this.props.streamKey } );
@@ -470,16 +457,6 @@ class ReaderStream extends Component {
 		}
 	};
 
-	poll = () => {
-		const { streamKey, localeSlug, selectedFeedId } = this.props;
-		this.props.requestPage( {
-			streamKey,
-			feedId: selectedFeedId,
-			isPoll: true,
-			localeSlug: localeSlug,
-		} );
-	};
-
 	getPageHandle = ( pageHandle, startDate ) => {
 		if ( pageHandle ) {
 			return pageHandle;
@@ -510,9 +487,8 @@ class ReaderStream extends Component {
 	};
 
 	showUpdates = () => {
-		const { streamKey } = this.props;
 		this.props.onUpdatesShown();
-		this.props.showUpdates( { streamKey } );
+		this.props.consumePending();
 		this.scrollFeedListToTop();
 	};
 
@@ -533,6 +509,19 @@ class ReaderStream extends Component {
 				return this.props.placeholderFactory( { key: 'feed-post-placeholder-' + i } );
 			}
 			return <PostPlaceholder key={ 'feed-post-placeholder-' + i } />;
+		} );
+	};
+
+	// Light-weight loading hint shown above the list while the user-triggered
+	// refetch (e.g. clicking the "X new posts" pill) is in flight. Two skeleton
+	// rows are enough to communicate "new posts are coming" without pushing the
+	// existing list too far down.
+	renderRefreshingPlaceholders = () => {
+		return times( 2, ( i ) => {
+			if ( this.props.placeholderFactory ) {
+				return this.props.placeholderFactory( { key: 'refresh-placeholder-' + i } );
+			}
+			return <PostPlaceholder key={ 'refresh-placeholder-' + i } />;
 		} );
 	};
 
@@ -688,22 +677,24 @@ class ReaderStream extends Component {
 		} else {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
-				<InfiniteList
-					key={ this.props.streamKey }
-					ref={ this.setListContext }
-					items={ items }
-					lastPage={ lastPage }
-					fetchingNextPage={ isRequesting }
-					guessedItemHeight={ GUESSED_POST_HEIGHT }
-					fetchNextPage={ this.fetchNextPage }
-					getItemRef={ this.getPostRef }
-					renderItem={ this.renderPost }
-					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
-					className="stream__list"
-					context={ this.state.listContext }
-					selectedItem={ selectedPostKey }
-					restoreScroll={ this.props.restoreScroll }
-				/>
+				<>
+					<InfiniteList
+						key={ this.props.streamKey }
+						ref={ this.setListContext }
+						items={ items }
+						lastPage={ lastPage }
+						fetchingNextPage={ isRequesting }
+						guessedItemHeight={ GUESSED_POST_HEIGHT }
+						fetchNextPage={ this.fetchNextPage }
+						getItemRef={ this.getPostRef }
+						renderItem={ this.renderPost }
+						renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+						className="stream__list"
+						context={ this.state.listContext }
+						selectedItem={ selectedPostKey }
+						restoreScroll={ this.props.restoreScroll }
+					/>
+				</>
 			);
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
@@ -769,10 +760,6 @@ class ReaderStream extends Component {
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		// Check array of streamTypes to see if we should poll for updates;
-		const shouldPoll = ! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes(
-			streamType
-		);
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 
@@ -790,8 +777,7 @@ class ReaderStream extends Component {
 		return (
 			<TopLevel className={ baseClassnames } wideLayout={ this.props.wideLayout }>
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
-				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
-				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
+				<UpdateNotice count={ this.props.pendingCount } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
@@ -856,15 +842,60 @@ const withStreamPosts = ( WrappedComponent ) =>
 			streamPostsQuery.items,
 		] );
 
+		const streamType = getStreamType( props.streamKey ?? '' );
+		const shouldPoll =
+			! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes( streamType ) &&
+			! props.forcePlaceholders;
+
+		const {
+			pendingCount,
+			hasPendingPosts,
+			reset: resetPending,
+		} = useStreamPendingPosts( {
+			streamKey: props.streamKey,
+			feedId: props.selectedFeedId,
+			localeSlug: props.localeSlug,
+			startDate: props.startDate,
+			shouldPoll,
+			items: streamPostsQuery.items,
+		} );
+
+		// Mark the infinite query stale (without refetching) the moment the
+		// poll spots new posts. The user's current scroll position stays put;
+		// the next time they navigate back to this stream the remount picks
+		// up the fresh data.
+		const { invalidate } = streamPostsQuery;
+		React.useEffect( () => {
+			if ( hasPendingPosts ) {
+				invalidate();
+			}
+		}, [ hasPendingPosts, invalidate ] );
+
+		// Click handler for `<UpdateNotice>`: refetch all loaded pages now and
+		// drop the polled head from cache so the pill clears immediately
+		// (instead of flickering until the next poll tick recomputes against
+		// the freshly refetched items).
+		const { refetch } = streamPostsQuery;
+		const consumePending = React.useCallback( () => {
+			refetch();
+			resetPending();
+		}, [ refetch, resetPending ] );
+
 		return (
 			<WrappedComponent
 				{ ...props }
 				items={ items }
 				lastPage={ streamPostsQuery.lastPage }
-				isRequesting={ streamPostsQuery.isLoading || streamPostsQuery.isFetchingNextPage }
+				isRequesting={
+					streamPostsQuery.isLoading ||
+					streamPostsQuery.isFetchingNextPage ||
+					streamPostsQuery.isRefetching
+				}
 				error={ streamPostsQuery.error }
 				streamPostsQuery={ streamPostsQuery }
 				recsStreamPostsQuery={ recsStreamPostsQuery }
+				pendingCount={ pendingCount }
+				consumePending={ consumePending }
 			/>
 		);
 	};
@@ -883,28 +914,11 @@ export default connect(
 
 		return {
 			blockedSites: getBlockedSites( state ),
-			// React Query migration: `withStreamPosts` now injects `items`.
-			// items: getTransformedStreamItems( state, {
-			// 	streamKey,
-			// 	recsStreamKey,
-			// } ),
 			notificationsOpen: isNotificationsOpen( state ),
-			// React Query migration: keep only while selection reads `stream.selected`.
-			stream,
 			streamKey,
-			// React Query migration: recommendations now come from a second `useStreamPosts` call.
-			// recsStream: getStream( state, recsStreamKey ),
 			selectedFeedId: getSelectedRecentFeedId( state ),
 			selectedPostKey: stream.selected,
 			selectedPost,
-			// React Query migration: `withStreamPosts` now injects `lastPage`.
-			// lastPage: stream.lastPage,
-			// React Query migration: `withStreamPosts` now injects `isRequesting`.
-			// isRequesting: stream.isRequesting,
-			// React Query migration: `withStreamPosts` now injects `error`.
-			// error: stream.error,
-			// React Query migration: recommendations fetch gating moved into the HOC.
-			// shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			followsCount: getReaderFollowsCount( state ),
 			primarySiteId: getPrimarySiteId( state ),
@@ -917,14 +931,10 @@ export default connect(
 		resetCardExpansions,
 		likePost,
 		unlikePost,
-		// React Query migration: replace page requests with `streamPostsQuery.fetchNextPage`.
-		requestPage,
 		selectItem,
 		selectNextItem,
 		selectPrevItem,
 		showSelectedPost,
-		// React Query migration: update-notice handling still depends on Redux pending items.
-		showUpdates,
 		viewStream,
 	}
 )( localize( withDimensions( withStreamPosts( ReaderStream ) ) ) );

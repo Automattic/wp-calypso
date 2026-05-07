@@ -7,8 +7,7 @@ import { useDispatch } from 'calypso/state';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
 import { normalizeStreamPage } from './stream-normalization';
-import { getStreamInfiniteQueryKey } from './use-stream-posts';
-import type { PageHandle, PostKey } from './use-stream-posts';
+import type { PostKey } from './use-stream-posts';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
 
 interface UseStreamPendingPostsOptions {
@@ -32,12 +31,14 @@ interface UseStreamPendingPostsOptions {
 export interface UseStreamPendingPostsResult {
 	/** Number of polled head items not yet present in `items`. */
 	pendingCount: number;
+	/** Sugar for `pendingCount > 0`. */
+	hasPendingPosts: boolean;
 	/**
-	 * Promote the polled head into the infinite cache (replacing `pages[0]`)
-	 * and clear the pending counter. The infinite query is left untouched
-	 * otherwise — no full refetch.
+	 * Drop the polled head from cache. Use after the consumer has acted on the
+	 * pending posts (e.g., refetched the infinite query) so the pill clears
+	 * immediately, instead of waiting for the next `refetchInterval` tick.
 	 */
-	consumePending: () => void;
+	reset: () => void;
 }
 
 type PollHeadQueryKey = readonly [
@@ -59,8 +60,12 @@ const postKeyId = ( postKey: PostKey | null | undefined ): string =>
  * and the currently visible items is exposed as `pendingCount`. The polled
  * payload carries full post bodies (see `getQueryStringForPoll`), and is
  * dispatched into `state.reader.posts` on every tick so `<PostLifecycle>`
- * resolves rich cards immediately when `consumePending` swaps the head into
- * `pages[0]` of the infinite cache.
+ * resolves rich cards immediately when the consumer triggers a refetch of the
+ * infinite query.
+ *
+ * The hook is purely informational. Reacting to a non-zero `hasPendingPosts`
+ * (passive invalidate, imperative refetch on click) is the consumer's job —
+ * see `withStreamPosts` in `client/reader/stream/index.jsx`.
  */
 export function useStreamPendingPosts( {
 	streamKey,
@@ -70,16 +75,12 @@ export function useStreamPendingPosts( {
 	shouldPoll = true,
 	items,
 }: UseStreamPendingPostsOptions ): UseStreamPendingPostsResult {
-	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const streamType = getStreamType( streamKey );
 
 	const pollQueryKey = useMemo< PollHeadQueryKey >(
 		() => [ 'read', 'stream', 'poll-head', streamKey, feedId, localeSlug, startDate ] as const,
-		[ streamKey, feedId, localeSlug, startDate ]
-	);
-	const infiniteQueryKey = useMemo(
-		() => getStreamInfiniteQueryKey( { streamKey, feedId, localeSlug, startDate } ),
 		[ streamKey, feedId, localeSlug, startDate ]
 	);
 
@@ -131,46 +132,21 @@ export function useStreamPendingPosts( {
 	}, [ pollHead.data, streamType, dispatch ] );
 
 	const pendingCount = useMemo( () => {
-		const head = pollHead.data;
-		if ( ! head ) {
-			return 0;
-		}
-		const { streamItems } = normalizeStreamPage( head, streamType );
-		if ( streamItems.length === 0 ) {
-			return 0;
-		}
-		const seen = new Set< string >();
-		for ( const it of items ) {
-			const id = postKeyId( it );
-			if ( id ) {
-				seen.add( id );
-			}
-		}
-		let count = 0;
-		for ( const k of streamItems ) {
-			const id = postKeyId( k );
-			if ( id && ! seen.has( id ) ) {
-				count += 1;
-			}
-		}
-		return count;
+		const streamItems = pollHead.data
+			? normalizeStreamPage( pollHead.data, streamType ).streamItems
+			: [];
+		const seen = new Set( items.map( postKeyId ) );
+		// Stop at the first polled-head item the user has already seen. Items
+		// past that boundary are older posts the user hasn't scrolled to (the
+		// poll fetches `PER_POLL` items > `INITIAL_FETCH`), not new content.
+		// Mirrors the legacy reducer's `lastUpdated` date pre-filter.
+		const firstSeen = streamItems.findIndex( ( k ) => seen.has( postKeyId( k ) ) );
+		return firstSeen === -1 ? streamItems.length : firstSeen;
 	}, [ pollHead.data, items, streamType ] );
 
-	const consumePending = useCallback( () => {
-		const head = queryClient.getQueryData< ReadStreamResponse >( pollQueryKey );
-		if ( head ) {
-			queryClient.setQueryData<
-				{ pageParams: PageHandle[]; pages: ReadStreamResponse[] } | undefined
-			>( infiniteQueryKey, ( prev ) =>
-				prev ? { pageParams: prev.pageParams, pages: [ head, ...prev.pages.slice( 1 ) ] } : prev
-			);
-		}
-		// `resetQueries` flips the active observer's data to undefined right
-		// away (so `pendingCount` falls to 0 in this render) and schedules a
-		// refetch against the new baseline — typically a no-op since the head
-		// we just promoted is what the next poll would have returned.
+	const reset = useCallback( () => {
 		queryClient.resetQueries( { queryKey: pollQueryKey, exact: true } );
-	}, [ queryClient, pollQueryKey, infiniteQueryKey ] );
+	}, [ queryClient, pollQueryKey ] );
 
-	return { pendingCount, consumePending };
+	return { pendingCount, hasPendingPosts: pendingCount > 0, reset };
 }

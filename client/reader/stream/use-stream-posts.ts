@@ -1,7 +1,11 @@
 import { fetchReadStream, getStreamType } from '@automattic/api-queries';
-import { infiniteQueryOptions, keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { keyToString } from 'calypso/reader/post-key';
+import {
+	infiniteQueryOptions,
+	keepPreviousData,
+	useInfiniteQuery,
+	useQueryClient,
+} from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'calypso/state';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { buildStreamQueryParams } from 'calypso/state/reader/streams/build-query-params';
@@ -27,6 +31,12 @@ export interface UseStreamPostsResult {
 	isFetching: boolean;
 	isFetchingNextPage: boolean;
 	/**
+	 * `true` while a manual `refetch()` (or any non-pagination background
+	 * refetch) is in flight. Lets the UI distinguish "user clicked the
+	 * update-notice pill" from regular scroll-driven pagination.
+	 */
+	isRefetching: boolean;
+	/**
 	 * `true` when the items currently exposed are the previous stream's data
 	 * being kept on screen (`placeholderData: keepPreviousData`) while a new
 	 * `streamKey` / `feedId` / `localeSlug` query is loading in the
@@ -38,10 +48,13 @@ export interface UseStreamPostsResult {
 	error: unknown;
 	fetchNextPage: () => void;
 	refetch: () => void;
+	/**
+	 * Mark the infinite query stale without refetching the active observer.
+	 * The current list stays on screen; the next time the query is mounted
+	 * (e.g., the user navigates away and back) it refetches because it's stale.
+	 */
+	invalidate: () => void;
 }
-
-const postKeyId = ( postKey: PostKey | null | undefined ): string =>
-	postKey ? keyToString( postKey ) ?? '' : '';
 
 interface StreamIdentity {
 	streamKey: string;
@@ -99,6 +112,7 @@ export function useStreamPosts( {
 	options,
 }: UseStreamPostsOptions ): UseStreamPostsResult {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	// `streamKey` is optional so consumers can mount the hook unconditionally
 	// (Hooks rules) even when the key is not yet known — e.g. a recommendation
 	// stream that only activates once a parent stream loads. When absent we
@@ -214,16 +228,23 @@ export function useStreamPosts( {
 		query.refetch();
 	}, [ query ] );
 
+	const queryKey = queryOptions.queryKey;
+	const invalidate = useCallback( () => {
+		queryClient.invalidateQueries( { queryKey, refetchType: 'none' } );
+	}, [ queryClient, queryKey ] );
+
 	return {
 		items,
 		isLoading: query.isLoading,
 		isFetching: query.isFetching,
 		isFetchingNextPage: query.isFetchingNextPage,
+		isRefetching: query.isRefetching,
 		isPlaceholderData: query.isPlaceholderData,
 		hasNextPage: !! query.hasNextPage,
 		lastPage: ! query.hasNextPage && ! query.isFetchingNextPage && query.isFetched,
 		error: query.error,
 		fetchNextPage,
 		refetch,
+		invalidate,
 	};
 }

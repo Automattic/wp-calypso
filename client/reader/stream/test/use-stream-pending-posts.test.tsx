@@ -9,8 +9,7 @@ import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
 import initialReducer from 'calypso/state/reducer';
 import { useStreamPendingPosts } from '../use-stream-pending-posts';
-import { getStreamInfiniteQueryKey, type PostKey } from '../use-stream-posts';
-import type { ReadStreamResponse } from '@automattic/api-core';
+import { type PostKey } from '../use-stream-posts';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -113,35 +112,70 @@ describe( 'useStreamPendingPosts', () => {
 		);
 
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
+		expect( result.current.hasPendingPosts ).toBe( true );
 	} );
 
-	it( 'consumePending swaps pages[0] in the infinite cache and zeros the count', async () => {
+	it( 'hasPendingPosts is false when there are no pending items', async () => {
+		// Polled head matches what is already visible — nothing pending.
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
+		const items = [ postKey( 2 ), postKey( 3 ) ];
+		const { result } = renderHook(
+			() => useStreamPendingPosts( { streamKey: 'likes', items, shouldPoll: true } ),
+			{ wrapper: Wrapper }
+		);
 
-		// Seed the infinite cache with the items the user is currently viewing.
-		const infiniteKey = getStreamInfiniteQueryKey( {
-			streamKey: 'likes',
-			feedId: null,
-			localeSlug: null,
-			startDate: null,
-		} );
-		const seededPage: ReadStreamResponse = {
-			posts: [ apiPost( 2 ), apiPost( 3 ) ],
-			date_range: { after: null, before: null },
-		} as ReadStreamResponse;
-		queryClient.setQueryData( infiniteKey, {
-			pageParams: [ null ],
-			pages: [ seededPage ],
-		} );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		expect( result.current.pendingCount ).toBe( 0 );
+		expect( result.current.hasPendingPosts ).toBe( false );
+	} );
 
-		// The poll picks up a new top post (1) and the existing ones (2, 3).
-		const polledHead = {
-			posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
-			date_range: { after: null, before: null },
-		};
-		nock( BASE ).get( LIKES_PATH ).query( true ).reply( 200, polledHead );
+	it( 'stops counting at the first item already in items (legacy date-based parity)', async () => {
+		// Polled head returns the user's most recent + older posts the user
+		// has not loaded yet. Naive set-diff would count those older entries as
+		// "pending"; the legacy reducer filtered them out via `lastUpdated`.
+		// `useStreamPendingPosts` mirrors that by stopping at the first overlap.
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
 
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		// User has only post 1 (the most recent) loaded — INITIAL_FETCH < PER_POLL.
+		const items = [ postKey( 1 ) ];
+		const { result } = renderHook(
+			() => useStreamPendingPosts( { streamKey: 'likes', items, shouldPoll: true } ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		// Posts 2 and 3 in the head are older — not pending.
+		expect( result.current.pendingCount ).toBe( 0 );
+	} );
+
+	it( 'reset() drops the polled head from cache', async () => {
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 1 ), apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
 		const items = [ postKey( 2 ), postKey( 3 ) ];
 		const { result } = renderHook(
 			() => useStreamPendingPosts( { streamKey: 'likes', items, shouldPoll: true } ),
@@ -150,20 +184,22 @@ describe( 'useStreamPendingPosts', () => {
 
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
 
+		// `resetQueries` re-fetches active observers; mock the second call.
+		nock( BASE )
+			.get( LIKES_PATH )
+			.query( true )
+			.reply( 200, {
+				posts: [ apiPost( 2 ), apiPost( 3 ) ],
+				date_range: { after: null, before: null },
+			} );
+
 		act( () => {
-			result.current.consumePending();
+			result.current.reset();
 		} );
 
+		// pendingCount snaps to 0 immediately after reset (data is undefined),
+		// and stays 0 once the follow-up fetch lands matching the visible items.
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
-
-		const merged = queryClient.getQueryData< {
-			pageParams: unknown[];
-			pages: ReadStreamResponse[];
-		} >( infiniteKey );
-		expect( merged?.pages ).toHaveLength( 1 );
-		expect( ( merged?.pages?.[ 0 ] as { posts: ApiPost[] } ).posts.map( ( p ) => p.ID ) ).toEqual( [
-			1, 2, 3,
-		] );
 	} );
 
 	it( 'rotates queryKey on streamKey change so polled head does not bleed across streams', async () => {
