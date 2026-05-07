@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { readerMastodonKeys } from '@automattic/api-core';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import { mastodonComposerConfig } from '../composer-config';
@@ -54,9 +56,36 @@ describe( 'mastodonComposerConfig', () => {
 		} );
 	} );
 
-	describe( 'limit', () => {
-		it( 'is 500 (default Mastodon per-instance limit)', () => {
-			expect( mastodonComposerConfig.limit ).toBe( 500 );
+	describe( 'useLimit', () => {
+		it( 'falls back to 500 (default Mastodon per-instance limit) when the instance config query has no data', () => {
+			const queryClient = new QueryClient( {
+				defaultOptions: { queries: { retry: false } },
+			} );
+			const { result } = renderHook( () => mastodonComposerConfig.useLimit( 99 ), {
+				wrapper: ( { children } ) => (
+					<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+				),
+			} );
+			expect( result.current ).toBe( 500 );
+		} );
+
+		it( 'reads max_characters from the instance config query when available', () => {
+			const queryClient = new QueryClient( {
+				defaultOptions: { queries: { retry: false } },
+			} );
+			// Pre-seed the instance config so the hook reads from the cache
+			// without firing nock — `gh ci` doesn't run nock, so seeding is
+			// the deterministic shape for this hook test. Use the key
+			// factory so the test follows shape changes automatically.
+			queryClient.setQueryData( readerMastodonKeys.instanceConfig( 99 ), {
+				max_characters: 4096,
+			} );
+			const { result } = renderHook( () => mastodonComposerConfig.useLimit( 99 ), {
+				wrapper: ( { children } ) => (
+					<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+				),
+			} );
+			expect( result.current ).toBe( 4096 );
 		} );
 	} );
 

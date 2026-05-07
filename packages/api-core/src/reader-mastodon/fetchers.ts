@@ -8,6 +8,7 @@ import type {
 	MastodonAuthorProfile,
 	MastodonAuthorizeResponse,
 	MastodonConnectionDetails,
+	MastodonInstanceConfig,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
 	MastodonCreateFollowParams,
@@ -81,6 +82,19 @@ export async function getMastodonConnection( id: number ): Promise< MastodonConn
 			path: `/reader/mastodon/connections/${ id }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as MastodonConnectionDetails;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function getMastodonInstanceConfig(
+	connectionId: number
+): Promise< MastodonInstanceConfig > {
+	try {
+		return ( await wpcom.req.get( {
+			path: `/reader/mastodon/connections/${ connectionId }/instance-config`,
+			apiNamespace: NAMESPACE,
+		} ) ) as MastodonInstanceConfig;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

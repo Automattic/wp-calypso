@@ -105,7 +105,12 @@ export function ComposerModal< TError, TParams, TResult >() {
 		closeComposer();
 	}, [ mutation.isPending, isExtending, text, mediaSlot.hasAny, closeComposer ] );
 
-	const tooLong = graphemeCount > config.limit;
+	// Per-protocol useLimit hook — Mastodon reads instance config and may
+	// vary per connection; ATmosphere returns a static 300. The hook is
+	// always called (rules of hooks). When `mode` is null the modal isn't
+	// rendering interactive content anyway, so the value is unused.
+	const limit = config.useLimit( mode?.connectionId ?? null );
+	const tooLong = graphemeCount > limit;
 	const empty = graphemeCount === 0;
 	// Image-only posts are allowed: when the user has at least one uploaded
 	// image, the empty-text gate doesn't block submission. Pending media (any
@@ -222,7 +227,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					graphemeCount={ graphemeCount }
 					onSubmit={ handleSubmit }
 					isPending={ mutation.isPending }
-					limit={ config.limit }
+					limit={ limit }
 					disabled={ ! canSubmit }
 					footerStart={ mediaSlot.renderFooterTrigger() }
 				/>
