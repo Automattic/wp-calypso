@@ -215,6 +215,7 @@ export interface ManagePurchaseProps {
 	getDowngradeUrlFor?: typeof getDowngradeUrlFor;
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
+	getSiteActionInterstitialUrlFor?: ( siteSlug: string, purchaseId: string | number ) => string;
 	isSiteLevel?: boolean;
 	purchaseListUrl?: string;
 	purchaseId: number;
@@ -822,7 +823,11 @@ class ManagePurchase extends Component<
 			// domain removes both land on the confirmation screen correctly.
 			let link: string;
 			if ( this.props.purchases && this.props.purchases.length > 1 ) {
-				link = siteActionInterstitial( this.props.siteSlug, purchase.id ) + '?action=remove';
+				link =
+					( this.props.getSiteActionInterstitialUrlFor ?? siteActionInterstitial )(
+						this.props.siteSlug,
+						purchase.id
+					) + '?action=remove';
 			} else {
 				const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
 					this.props.siteSlug,
@@ -1055,7 +1060,11 @@ class ManagePurchase extends Component<
 
 		let link: string;
 		if ( isSplitEnabled && this.props.purchases && this.props.purchases.length > 1 ) {
-			link = siteActionInterstitial( this.props.siteSlug, id ) + '?action=cancel';
+			link =
+				( this.props.getSiteActionInterstitialUrlFor ?? siteActionInterstitial )(
+					this.props.siteSlug,
+					id
+				) + '?action=cancel';
 		} else {
 			const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
 				this.props.siteSlug,

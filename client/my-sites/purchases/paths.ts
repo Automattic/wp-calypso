@@ -58,3 +58,9 @@ export const getCrmDownloadsUrlFor = (
 	targetSiteSlug: string,
 	targetPurchaseId: string | number
 ): string => `/purchases/crm-downloads/${ targetSiteSlug }/${ targetPurchaseId }`;
+
+export const getSiteActionInterstitialUrlFor = (
+	targetSiteSlug: string,
+	targetPurchaseId: string | number
+): string =>
+	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/site-level-actions`;

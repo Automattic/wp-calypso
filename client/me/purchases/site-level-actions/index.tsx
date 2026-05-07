@@ -26,6 +26,8 @@ interface SiteActionInterstitialProps {
 	purchaseId: number;
 	siteSlug: string;
 	actionType: 'cancel' | 'remove' | 'renew';
+	getManagePurchaseUrlFor?: ( siteSlug: string, purchaseId: string | number ) => string;
+	getCancelPurchaseUrlFor?: ( siteSlug: string, purchaseId: string | number ) => string;
 }
 
 function getVerb( actionType: string, translate: ReturnType< typeof useTranslate > ) {
@@ -42,7 +44,11 @@ export default function SiteActionInterstitial( {
 	purchaseId,
 	siteSlug,
 	actionType,
+	getManagePurchaseUrlFor,
+	getCancelPurchaseUrlFor,
 }: SiteActionInterstitialProps ) {
+	const managePurchaseUrl = getManagePurchaseUrlFor ?? managePurchase;
+	const cancelPurchaseUrl = getCancelPurchaseUrlFor ?? cancelPurchase;
 	const translate = useTranslate();
 	const dispatch = useReduxDispatch();
 	const moment = useLocalizedMoment();
@@ -86,17 +92,26 @@ export default function SiteActionInterstitial( {
 			return;
 		}
 		if ( ! purchase ) {
-			page( managePurchase( siteSlug, String( purchaseId ) ) );
+			page( managePurchaseUrl( siteSlug, String( purchaseId ) ) );
 			return;
 		}
 		if ( actionType === 'cancel' || actionType === 'remove' ) {
 			const intent = actionType;
-			const baseUrl = cancelPurchase( siteSlug, String( purchaseId ) );
+			const baseUrl = cancelPurchaseUrl( siteSlug, String( purchaseId ) );
 			page( `${ baseUrl }?intent=${ intent }` );
 		} else {
 			dispatch( handleRenewMultiplePurchasesClick( [ purchase ], siteSlug ) );
 		}
-	}, [ shouldBypass, purchase, dispatch, siteSlug, purchaseId, actionType ] );
+	}, [
+		shouldBypass,
+		purchase,
+		dispatch,
+		siteSlug,
+		purchaseId,
+		actionType,
+		managePurchaseUrl,
+		cancelPurchaseUrl,
+	] );
 
 	if ( shouldBypass ) {
 		return null;
@@ -125,7 +140,7 @@ export default function SiteActionInterstitial( {
 				<div className="site-level-actions__back">
 					<HeaderCakeBack
 						icon="chevron-left"
-						href={ managePurchase( siteSlug, String( purchaseId ) ) }
+						href={ managePurchaseUrl( siteSlug, String( purchaseId ) ) }
 					/>
 				</div>
 				<FormattedHeader
@@ -184,7 +199,7 @@ export default function SiteActionInterstitial( {
 		}
 		const intent = actionType;
 		const additionalIds = [ ...selectedIds ].filter( ( id ) => id !== purchaseId );
-		const baseUrl = cancelPurchase( siteSlug, String( purchaseId ) );
+		const baseUrl = cancelPurchaseUrl( siteSlug, String( purchaseId ) );
 		const params = new URLSearchParams( { intent } );
 		if ( additionalIds.length > 0 ) {
 			params.set( 'additionalPurchaseIds', additionalIds.join( ',' ) );
@@ -239,7 +254,7 @@ export default function SiteActionInterstitial( {
 			<div className="site-level-actions__back">
 				<HeaderCakeBack
 					icon="chevron-left"
-					href={ managePurchase( siteSlug, String( purchaseId ) ) }
+					href={ managePurchaseUrl( siteSlug, String( purchaseId ) ) }
 				/>
 			</div>
 			<FormattedHeader

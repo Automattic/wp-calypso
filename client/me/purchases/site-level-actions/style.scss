@@ -50,6 +50,31 @@
 	padding: 0;
 }
 
+// When the interstitial is wrapped in an outer card (site-level route),
+// neutralize the inner card and trim spacing so only the outer card's
+// padding applies.
+.site-level-actions__outer-card {
+	.site-level-actions__wrapper-card.card {
+		box-shadow: none;
+		background: transparent;
+		margin-block-end: 0;
+	}
+
+	.site-level-actions__section-title {
+		padding-block-start: 0;
+		padding-inline: 0;
+	}
+
+	.site-level-actions__inner-wrapper {
+		margin-block-end: 0;
+	}
+
+	.site-level-actions__button-row {
+		padding-block-end: 0;
+		padding-inline: 0;
+	}
+}
+
 // Section title — simple bold label inside the card
 .site-level-actions__section-title {
 	font-size: $font-body-small;

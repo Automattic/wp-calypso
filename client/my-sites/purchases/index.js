@@ -18,6 +18,7 @@ import {
 	paymentMethods,
 	addPaymentMethod,
 	planDowngrade,
+	siteLevelActions,
 	crmDownloads,
 } from './controller';
 
@@ -31,6 +32,14 @@ export default ( router ) => {
 	page( '/purchases/:site', ...commonHandlers, redirectToPurchases, makeLayout, clientRender );
 
 	page( '/purchases/subscriptions/:site', ...commonHandlers, purchases, makeLayout, clientRender );
+
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/site-level-actions',
+		...commonHandlers,
+		siteLevelActions,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/purchases/subscriptions/:site/:purchaseId',

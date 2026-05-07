@@ -9,6 +9,7 @@ import {
 	PurchaseCancelDomain,
 	PurchaseChangePaymentMethod,
 	PurchaseDowngrade,
+	PurchaseSiteLevelActions,
 } from 'calypso/my-sites/purchases/main';
 import {
 	PaymentMethods,
@@ -101,6 +102,17 @@ export const receiptView = ( context, next ) => {
 		<ReceiptView
 			receiptId={ parseInt( context.params.receiptId, 10 ) }
 			siteSlug={ context.params.site }
+		/>
+	);
+	next();
+};
+
+export const siteLevelActions = ( context, next ) => {
+	context.primary = (
+		<PurchaseSiteLevelActions
+			siteSlug={ context.params.site }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+			actionType={ context.query?.action ?? 'renew' }
 		/>
 	);
 	next();

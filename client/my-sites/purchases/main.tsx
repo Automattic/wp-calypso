@@ -1,3 +1,4 @@
+import { Card } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -15,6 +16,7 @@ import { Downgrade } from 'calypso/me/purchases/downgrade';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
+import SiteActionInterstitial from 'calypso/me/purchases/site-level-actions';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { useSelector } from 'calypso/state';
@@ -30,6 +32,7 @@ import {
 	getConfirmCancelDomainUrlFor,
 	getManagePurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
+	getSiteActionInterstitialUrlFor,
 } from './paths';
 import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
@@ -133,6 +136,7 @@ export function PurchaseDetails( {
 					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					getSiteActionInterstitialUrlFor={ getSiteActionInterstitialUrlFor }
 				/>
 			</CheckoutErrorBoundary>
 		</Main>
@@ -267,6 +271,42 @@ export function PurchaseCancelDomain( {
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				/>
+			</CheckoutErrorBoundary>
+		</Main>
+	);
+}
+
+export function PurchaseSiteLevelActions( {
+	purchaseId,
+	siteSlug,
+	actionType,
+}: {
+	purchaseId: number;
+	siteSlug: string;
+	actionType: string;
+} ) {
+	const translate = useTranslate();
+	const logPurchasesError = useLogPurchasesError( 'site level interstitial load error' );
+
+	return (
+		<Main wideLayout className="purchases__site-actions">
+			<DocumentHead title={ titles.sectionTitle } />
+			{ ! isJetpackCloud() && (
+				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+			) }
+			<CheckoutErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logPurchasesError }
+			>
+				<Card className="site-level-actions__outer-card">
+					<SiteActionInterstitial
+						purchaseId={ purchaseId }
+						siteSlug={ siteSlug }
+						actionType={ actionType }
+						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+						getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
+					/>
+				</Card>
 			</CheckoutErrorBoundary>
 		</Main>
 	);
