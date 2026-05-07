@@ -60,7 +60,6 @@ import {
 	masterbarIsVisible,
 } from 'calypso/state/ui/selectors';
 import AgentsManagerLoader from './agents-manager-loader';
-import { ArcadeModeProvider, KonamiListener } from './arcade-mode';
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
@@ -137,6 +136,10 @@ const loadLegalUpdatesBanner = () =>
 const loadGlobalNotifications = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-global-notifications" */ 'calypso/layout/global-notifications'
+	);
+const loadKonamiListener = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-arcade-mode" */ 'calypso/layout/arcade-mode'
 	);
 
 function SidebarScrollSynchronizer() {
@@ -359,9 +362,9 @@ class Layout extends Component {
 
 		const isCalypso = ! isJetpackCloud() && ! isA8CForAgencies();
 
-		const content = (
+		return (
 			<div className={ sectionClass }>
-				{ isCalypso && <KonamiListener /> }
+				{ isCalypso && <AsyncLoad require={ loadKonamiListener } placeholder={ null } /> }
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
@@ -451,8 +454,6 @@ class Layout extends Component {
 				{ this.renderCelebrateSiteLaunchModal() }
 			</div>
 		);
-
-		return isCalypso ? <ArcadeModeProvider>{ content }</ArcadeModeProvider> : content;
 	}
 }
 

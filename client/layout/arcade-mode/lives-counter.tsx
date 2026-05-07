@@ -1,7 +1,7 @@
-import { useArcadeMode } from './';
+import { useArcadeIsActive } from './store';
 
-export function ArcadeLivesCounter() {
-	const { isActive } = useArcadeMode();
+export default function ArcadeLivesCounter() {
+	const isActive = useArcadeIsActive();
 
 	if ( ! isActive ) {
 		return null;

@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import { render, act } from '@testing-library/react';
-import { ArcadeModeProvider, KonamiListener, matchesKonamiSequence } from '../';
+import KonamiListener, { matchesKonamiSequence } from '../';
+import { setArcadeIsActive } from '../store';
 
 const KONAMI_KEYS = [
 	'ArrowUp',
@@ -25,6 +26,9 @@ function dispatchKey( key: string, target: EventTarget = document ) {
 
 describe( 'arcade-mode', () => {
 	afterEach( () => {
+		act( () => {
+			setArcadeIsActive( false );
+		} );
 		document.body.classList.remove( 'is-arcade-mode' );
 		document.body.classList.remove( 'is-arcade-mode--just-activated' );
 		document.getElementById( 'arcade-mode-font' )?.remove();
@@ -76,11 +80,7 @@ describe( 'arcade-mode', () => {
 
 	describe( 'KonamiListener', () => {
 		it( 'adds the arcade body class after the Konami sequence', () => {
-			render(
-				<ArcadeModeProvider>
-					<KonamiListener />
-				</ArcadeModeProvider>
-			);
+			render( <KonamiListener /> );
 
 			act( () => {
 				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
@@ -90,11 +90,7 @@ describe( 'arcade-mode', () => {
 		} );
 
 		it( 'ignores key events from editable targets', () => {
-			render(
-				<ArcadeModeProvider>
-					<KonamiListener />
-				</ArcadeModeProvider>
-			);
+			render( <KonamiListener /> );
 
 			const input = document.createElement( 'input' );
 			document.body.appendChild( input );
@@ -108,11 +104,7 @@ describe( 'arcade-mode', () => {
 		} );
 
 		it( 'still activates after a mistyped key — buffer keeps the last 10 sequence keys', () => {
-			render(
-				<ArcadeModeProvider>
-					<KonamiListener />
-				</ArcadeModeProvider>
-			);
+			render( <KonamiListener /> );
 
 			act( () => {
 				dispatchKey( 'ArrowUp' );
@@ -124,11 +116,7 @@ describe( 'arcade-mode', () => {
 		} );
 
 		it( 'removes the arcade body class when Escape is pressed while active', () => {
-			render(
-				<ArcadeModeProvider>
-					<KonamiListener />
-				</ArcadeModeProvider>
-			);
+			render( <KonamiListener /> );
 
 			act( () => {
 				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
@@ -142,11 +130,7 @@ describe( 'arcade-mode', () => {
 		} );
 
 		it( 'ignores Escape pressed inside an editable element', () => {
-			render(
-				<ArcadeModeProvider>
-					<KonamiListener />
-				</ArcadeModeProvider>
-			);
+			render( <KonamiListener /> );
 
 			act( () => {
 				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
@@ -163,11 +147,7 @@ describe( 'arcade-mode', () => {
 		} );
 
 		it( 'allows re-activating after deactivation', () => {
-			render(
-				<ArcadeModeProvider>
-					<KonamiListener />
-				</ArcadeModeProvider>
-			);
+			render( <KonamiListener /> );
 
 			act( () => {
 				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
@@ -179,11 +159,7 @@ describe( 'arcade-mode', () => {
 		} );
 
 		it( 'does not activate when arrow keys are pressed in the wrong order', () => {
-			render(
-				<ArcadeModeProvider>
-					<KonamiListener />
-				</ArcadeModeProvider>
-			);
+			render( <KonamiListener /> );
 
 			act( () => {
 				[
