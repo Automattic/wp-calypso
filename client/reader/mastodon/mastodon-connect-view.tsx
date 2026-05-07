@@ -44,7 +44,19 @@ export function MastodonConnectView() {
 						);
 						return;
 					}
-					saveOauthState( { state, instance } );
+					if ( ! saveOauthState( { state, instance } ) ) {
+						// sessionStorage was unavailable. Without persisted state
+						// the callback view can't validate `state` on return, so
+						// the redirect would always end at "expired link" after
+						// the user signed in on the IdP — surface the failure now.
+						setUnsafeUrl( true );
+						dispatch(
+							recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_error', {
+								reason: 'state_persist_failed',
+							} )
+						);
+						return;
+					}
 					window.location.assign( authorize_url );
 				},
 				onError: ( error ) => {

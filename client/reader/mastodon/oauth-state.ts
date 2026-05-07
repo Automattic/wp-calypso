@@ -29,18 +29,21 @@ function getStorage(): Storage | null {
 	}
 }
 
-export function saveOauthState( value: StoredOauthState ): void {
+// Returns true when the value was persisted, false when sessionStorage was
+// unavailable (private-mode, quota exceeded, security policy, …). Callers
+// MUST check the return value before redirecting to the IdP — a `false` here
+// means the callback view won't be able to validate `state` on return, so the
+// reconnect can't safely proceed.
+export function saveOauthState( value: StoredOauthState ): boolean {
 	const storage = getStorage();
 	if ( ! storage ) {
-		return;
+		return false;
 	}
 	try {
 		storage.setItem( STORAGE_KEY, JSON.stringify( value ) );
+		return true;
 	} catch {
-		// sessionStorage can throw in private-mode or when the quota is
-		// exceeded. Save is best-effort; if it fails, the callback view
-		// will detect the missing stored state and surface a retry
-		// prompt rather than silently continuing.
+		return false;
 	}
 }
 

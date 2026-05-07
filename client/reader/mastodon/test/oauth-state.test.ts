@@ -91,17 +91,19 @@ describe( 'oauth-state', () => {
 	} );
 
 	describe( 'saveOauthState failure modes', () => {
-		it( 'swallows QuotaExceededError from setItem', () => {
+		it( 'returns false (and does not throw) when setItem throws', () => {
 			const spy = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 				throw new Error( 'QuotaExceededError' );
 			} );
 			try {
-				expect( () =>
-					saveOauthState( { state: 'abc', instance: 'mastodon.social' } )
-				).not.toThrow();
+				expect( saveOauthState( { state: 'abc', instance: 'mastodon.social' } ) ).toBe( false );
 			} finally {
 				spy.mockRestore();
 			}
+		} );
+
+		it( 'returns true on a successful save', () => {
+			expect( saveOauthState( { state: 'abc', instance: 'mastodon.social' } ) ).toBe( true );
 		} );
 	} );
 

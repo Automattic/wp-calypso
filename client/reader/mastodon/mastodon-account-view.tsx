@@ -135,8 +135,20 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		}
 	}, [ isPending, connection, tabValid ] );
 
+	// Tracks whether the component is still mounted so a slow authorize()
+	// resolution can't yank the user off a page they navigated to during
+	// the round trip. Also short-circuits double-clicks before
+	// authorize.isPending flips.
+	const mountedRef = useRef( true );
+	useEffect( () => {
+		mountedRef.current = true;
+		return () => {
+			mountedRef.current = false;
+		};
+	}, [] );
+
 	const handleReconnect = () => {
-		if ( ! connection ) {
+		if ( ! connection || authorize.isPending ) {
 			return;
 		}
 		dispatch(
@@ -151,6 +163,13 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 			{ instance: connection.instance },
 			{
 				onSuccess: ( { authorize_url, state } ) => {
+					if ( ! mountedRef.current ) {
+						// The user navigated away (or the connection list
+						// resolved to a different connection) while authorize
+						// was in flight. Don't yank them off whatever page they
+						// landed on.
+						return;
+					}
 					if ( ! isSafeAuthorizeUrl( authorize_url, connection.instance ) ) {
 						dispatch(
 							errorNotice(
@@ -165,12 +184,29 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 						);
 						return;
 					}
-					saveOauthState( {
+					const saved = saveOauthState( {
 						state,
 						instance: connection.instance,
 						returnPath,
 						reconnectingConnectionId: connection.id,
 					} );
+					if ( ! saved ) {
+						// sessionStorage was unavailable. The callback view
+						// validates `state` against the stored value, so without
+						// it the round-trip would always fail — refuse to redirect.
+						dispatch(
+							errorNotice(
+								translate( 'We couldn’t start the reconnect safely. Please try again.' ),
+								{ duration: 5000 }
+							)
+						);
+						dispatch(
+							recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_error', {
+								reason: 'state_persist_failed',
+							} )
+						);
+						return;
+					}
 					window.location.assign( authorize_url );
 				},
 				onError: ( error ) => {

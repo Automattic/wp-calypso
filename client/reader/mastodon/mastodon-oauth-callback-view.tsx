@@ -205,6 +205,7 @@ function completeErrorMessage(
 	error: MastodonError,
 	translate: ReturnType< typeof useTranslate >
 ): TranslateResult {
+	const generic = translate( 'Something went wrong finishing the connection. Please try again.' );
 	switch ( error.kind ) {
 		case 'auth_failed':
 			return translate( 'The Mastodon instance rejected the authorization. Try again.' );
@@ -227,14 +228,16 @@ function completeErrorMessage(
 		case 'invalid_instance':
 		case 'connection_not_found':
 		case 'unknown':
-			return translate( 'Something went wrong finishing the connection. Please try again.' );
+			return generic;
 		default:
-			return assertNever( error );
+			// Throwing from render after the OAuth handshake already
+			// completed server-side would blank the callback view at the
+			// worst possible moment. Fall back to the generic copy so a
+			// future MastodonError widening surfaces visibly without
+			// crashing.
+			error satisfies never;
+			return generic;
 	}
-}
-
-function assertNever( value: never ): never {
-	throw new Error( `Unhandled MastodonError kind: ${ JSON.stringify( value ) }` );
 }
 
 export default MastodonOauthCallbackView;

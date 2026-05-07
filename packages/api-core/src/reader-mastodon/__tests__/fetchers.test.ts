@@ -146,6 +146,22 @@ describe( 'mastodon fetchers', () => {
 			kind: 'auth_required',
 		} );
 	} );
+
+	it( 'getMastodonAuthStatus rejects responses missing needs_reauth', async () => {
+		// Without shape validation a response of `{}` types as `needs_reauth:
+		// undefined` and the gate's `!== true` check silently treats it as
+		// healthy — surface it as an unknown error instead so the gate falls
+		// through to children rather than locking users out incorrectly.
+		nock( BASE ).get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' ).reply( 200, {} );
+		await expect( getMastodonAuthStatus( 42 ) ).rejects.toMatchObject( { kind: 'unknown' } );
+	} );
+
+	it( 'getMastodonAuthStatus rejects responses with non-boolean needs_reauth', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 200, { needs_reauth: 'yes' } );
+		await expect( getMastodonAuthStatus( 42 ) ).rejects.toMatchObject( { kind: 'unknown' } );
+	} );
 } );
 
 describe( 'getMastodonTimeline', () => {
