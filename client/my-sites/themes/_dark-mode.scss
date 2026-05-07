@@ -1,0 +1,261 @@
+@import '../../dashboard/app/dark-theme';
+
+@mixin themes-dark-mode-root {
+	@include dashboard-dark-theme;
+
+	.layout__content,
+	.theme-showcase,
+	.theme-card {
+		background-color: var( --dashboard__background-color );
+		color: var( --dashboard__text-color );
+	}
+
+	.theme-collection__container,
+	.search-themes-card,
+	.search-themes-card .search,
+	.search-themes-card .search__input,
+	.search-themes-card .search__input:disabled,
+	.search-themes-card .search__icon-navigation,
+	.search-themes-card .search-themes-card__icon,
+	.search-themes-card .spinner,
+	.search-themes-card .keyed-suggestions {
+		background-color: var( --dashboard-surface__background-color );
+		color: var( --dashboard__text-color );
+	}
+
+	.search-themes-card .search,
+	.search-themes-card .keyed-suggestions,
+	.theme-card__image-container {
+		border-color: var( --dashboard-surface__border-color );
+	}
+
+	.theme-showcase__all-themes-title,
+	.theme-collection__title,
+	.theme-collection__see-all,
+	.theme-card__info-title {
+		color: var( --dashboard__text-color );
+	}
+
+	.theme-showcase__all-themes-description,
+	.theme-collection__description,
+	.theme-tier-badge__without-background.theme-tier-badge__content,
+	.theme-card__info-options,
+	.theme-card__info-description {
+		color: var( --dashboard__text-muted-color );
+	}
+
+	.theme__search-input,
+	.search-themes-card {
+		.components-input-base,
+		.components-input-control__container {
+			background: var( --dashboard-surface__background-color );
+			color: var( --dashboard__text-color );
+		}
+
+		.components-input-control__prefix {
+			color: var( --dashboard__text-muted-color );
+		}
+
+		.components-input-control__input {
+			background: var( --dashboard-surface__background-color );
+			color: var( --dashboard__text-color );
+
+			&::placeholder {
+				color: var( --dashboard__text-muted-color );
+			}
+		}
+
+		.components-input-control__backdrop {
+			border-color: var( --dashboard-field__border-color );
+			box-shadow: none;
+		}
+	}
+
+	.themes-toolbar-group.responsive-toolbar-group__dropdown,
+	.themes-toolbar-group.responsive-toolbar-group__swipe {
+		.components-toolbar .components-button {
+			background-color: transparent;
+			color: var( --dashboard__text-color );
+
+			&::before {
+				background-color: transparent;
+				box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
+			}
+
+			&.is-pressed,
+			&.is-selected {
+				color: var( --wp-admin-theme-color-darker-20 );
+			}
+
+			&.is-pressed::before,
+			&.is-selected::before {
+				background-color: var( --dashboard-item-selected__background-color );
+				box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-20 );
+			}
+
+			&:not( .is-pressed ):hover,
+			&:not( .is-pressed ):focus {
+				color: var( --wp-admin-theme-color-darker-20 );
+
+				&::before {
+					background-color: var( --dashboard-item-selected-hover__background-color );
+					box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-20 );
+				}
+			}
+		}
+
+		.responsive-toolbar-group__menu-item.components-button {
+			color: var( --dashboard__text-color );
+
+			&:hover,
+			&:focus,
+			&.is-selected {
+				background: var( --dashboard-item-selected-hover__background-color );
+				color: var( --wp-admin-theme-color-darker-20 );
+			}
+		}
+	}
+
+	.theme-site-selector-modal {
+		.components-modal__header {
+			border-bottom-color: var( --dashboard-surface__border-color );
+		}
+
+		.components-modal__header-heading,
+		.theme-site-selector-modal__content > p {
+			color: var( --dashboard__text-color );
+		}
+
+		.components-modal__header .components-button {
+			color: var( --dashboard__text-muted-color );
+
+			&:hover,
+			&:focus {
+				color: var( --dashboard__text-color );
+			}
+		}
+
+		.site-selector__sites {
+			background: var( --dashboard-surface__background-color );
+			border-top-color: var( --dashboard-surface__border-color );
+		}
+
+		.site-selector {
+			.site.is-highlighted,
+			.all-sites.is-highlighted,
+			&.is-hover-enabled .site:hover,
+			&.is-hover-enabled .all-sites:hover {
+				background-color: var( --dashboard-item-selected__background-color );
+			}
+
+			.site__title,
+			.site.is-highlighted .site__title,
+			&.is-hover-enabled .site:hover .site__title {
+				color: var( --dashboard__text-color );
+			}
+
+			.site__domain,
+			.site.is-highlighted .site__domain,
+			&.is-hover-enabled .site:hover .site__domain {
+				color: var( --dashboard__text-muted-color );
+			}
+
+			.site__badge.site__badge-private,
+			.site__badge.site__badge-coming-soon,
+			&.is-hover-enabled .site:hover .site__badge.site__badge-private,
+			&.is-hover-enabled .site:hover .site__badge.site__badge-coming-soon {
+				background-color: transparent;
+				border-color: color-mix( in srgb, currentColor 70%, transparent );
+				color: var( --dashboard__text-muted-color );
+			}
+		}
+	}
+
+	&.is-section-theme {
+		.layout__content,
+		.layout__primary > *,
+		.main.theme__sheet,
+		.theme__sheet .navigation-header {
+			background-color: var( --dashboard__background-color );
+			color: var( --dashboard__text-color );
+		}
+
+		.layout__primary > * {
+			border-color: var( --dashboard-surface__border-color );
+		}
+
+		.theme__sheet-features .card {
+			background-color: transparent;
+		}
+
+		.theme__sheet-features-list a,
+		.theme__sheet-content code {
+			background-color: var( --dashboard-surface__background-color );
+			border: 1px solid var( --dashboard-surface__border-color );
+			color: var( --dashboard__text-color );
+		}
+
+		.theme__sheet-features-list a:hover,
+		.theme__sheet-features-list a:focus {
+			background-color: var( --dashboard-item-selected-hover__background-color );
+			border-color: var( --color-link-dark );
+			color: var( --color-link-dark );
+		}
+
+		.theme__sheet-content p a,
+		.theme__sheet-content p a:visited {
+			color: var( --wp-admin-theme-color-darker-20 );
+		}
+
+		.theme__sheet-content p a:hover,
+		.theme__sheet-content p a:focus {
+			color: var( --wp-admin-theme-color-darker-10 );
+		}
+
+		.theme__sheet-web-preview,
+		.theme__sheet-screenshot {
+			background-color: var( --dashboard-surface__background-color );
+			box-shadow:
+				0 0 0 1px var( --dashboard-surface__border-color ),
+				0 12px 28px rgba( 0, 0, 0, 0.28 );
+		}
+
+		.theme-download-card__external-icon,
+		.theme-download-card__external-icon path {
+			fill: currentColor;
+		}
+
+		.theme-download-card .gridicon,
+		.theme__sheet-card-support .gridicon {
+			color: var( --dashboard__text-muted-color );
+			fill: currentColor;
+		}
+
+		.theme-download-card .button,
+		.theme__sheet-demo-button.button {
+			&,
+			&:visited,
+			&:hover,
+			&:focus {
+				background: transparent;
+				border-color: var( --dashboard-field__border-color );
+				color: var( --dashboard__text-color );
+			}
+		}
+
+		.theme__sheet-card-support .components-button.is-secondary {
+			background: transparent;
+			border-color: currentColor;
+			color: var( --wp-admin-theme-color-darker-20 );
+			box-shadow: inset 0 0 0 1px currentColor !important;
+
+			&:hover,
+			&:focus,
+			&:focus-visible {
+				background: var( --dashboard-item-selected__background-color );
+				border-color: currentColor;
+				box-shadow: inset 0 0 0 1px currentColor !important;
+			}
+		}
+	}
+}
