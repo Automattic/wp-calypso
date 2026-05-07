@@ -143,6 +143,27 @@ describe( 'FollowButton', () => {
 			expect( onUnfollow ).toHaveBeenCalledTimes( 1 );
 		} );
 
+		it( 'disables the Requested button while isPending and does not invoke onUnfollow', async () => {
+			const user = userEvent.setup();
+			const onUnfollow = jest.fn();
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy={ false }
+					isRequested
+					isPending
+					actorHandle="alice@mastodon.social"
+					onFollow={ jest.fn() }
+					onUnfollow={ onUnfollow }
+				/>
+			);
+
+			const button = screen.getByRole( 'button' );
+			expect( button ).toBeDisabled();
+			await user.click( button );
+			expect( onUnfollow ).not.toHaveBeenCalled();
+		} );
+
 		it( 'isFollowing wins over isRequested when both are true (defensive precedence)', () => {
 			render(
 				<FollowButton

@@ -1510,6 +1510,47 @@ describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
 			} );
 		} );
 
+		it( 'vars.locked wins over old.locked when both are defined', async () => {
+			// Edge case: cached profile says locked but the call site has fresher
+			// information (e.g. the target unlocked their account between the
+			// profile fetch and the click). vars.locked: false should drive the
+			// optimistic patch even though old.locked is true.
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile( { locked: true } ) );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.delay( 50 )
+				.reply( 200, {
+					viewer: { following: true, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let inFlight: Promise< unknown > | undefined;
+			act( () => {
+				inFlight = result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+					locked: false,
+				} );
+			} );
+
+			await waitFor( () => {
+				const mid = client.getQueryData< MastodonAuthorProfile >( key );
+				expect( mid?.viewer?.following ).toBe( true );
+				expect( mid?.viewer?.requested ).toBe( false );
+			} );
+
+			await act( async () => {
+				await inFlight;
+			} );
+		} );
+
 		it( 'falls back to old.locked when vars.locked is omitted', async () => {
 			// Backwards-compat: callers that haven't yet threaded `locked` into
 			// vars still get the right optimistic patch by reading the cached

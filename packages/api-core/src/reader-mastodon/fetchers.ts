@@ -408,10 +408,10 @@ function assertMastodonFollowResponse( raw: unknown ): asserts raw is MastodonFo
 	const reject = (): never => {
 		// Distinct message so a backend-shape regression is grep-able in
 		// Logstash / Sentry rather than indistinguishable from a real 400.
-		throw {
-			code: 'reader_mastodon_bad_request',
-			message: 'invalid follow response shape',
-		};
+		// Real Error so dev-tools rejection logs show a usable stack.
+		const err = new Error( 'invalid follow response shape' );
+		Object.assign( err, { code: 'reader_mastodon_bad_request' } );
+		throw err;
 	};
 	if ( typeof raw !== 'object' || raw === null ) {
 		reject();

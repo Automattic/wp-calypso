@@ -1078,10 +1078,11 @@ export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
 					: old
 			);
 			if ( ! updated ) {
-				// Cache entry was evicted between onMutate and onSuccess
-				// (e.g. route change). Trigger a refetch so the
-				// authoritative server `viewer` (which carries
-				// `requested: true` for locked accounts) isn't lost.
+				// `setQueryData` returns undefined when the cache entry was
+				// absent at update time (evicted mid-flight, or never
+				// populated). Refetch so the authoritative server `viewer`
+				// — which carries `requested: true` for locked accounts —
+				// isn't lost.
 				return queryClient.invalidateQueries( { queryKey: key } );
 			}
 		},
@@ -1150,10 +1151,11 @@ export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
 					: old
 			);
 			if ( ! updated ) {
-				// Cache entry was evicted between onMutate and onSuccess
-				// (e.g. route change). Trigger a refetch so the
-				// authoritative server `viewer` (which carries
-				// `requested: true` for locked accounts) isn't lost.
+				// `setQueryData` returns undefined when the cache entry was
+				// absent at update time (evicted mid-flight, or never
+				// populated). Refetch so the authoritative server `viewer`
+				// — which carries `requested: true` for locked accounts —
+				// isn't lost.
 				return queryClient.invalidateQueries( { queryKey: key } );
 			}
 		},

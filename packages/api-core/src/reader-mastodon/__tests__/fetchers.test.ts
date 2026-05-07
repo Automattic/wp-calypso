@@ -779,13 +779,52 @@ describe( 'createMastodonFollow', () => {
 		).rejects.toMatchObject( { kind: 'auth_required' } );
 	} );
 
-	it( 'rejects a malformed payload missing the viewer block', async () => {
+	it.each( [
+		[ '{} is rejected', {} ],
+		[ 'viewer: null is rejected', { viewer: null } ],
+		[ 'viewer: {} is rejected', { viewer: {} } ],
+		[ 'viewer missing requested is rejected', { viewer: { following: true, followed_by: false } } ],
+		[
+			'viewer with non-boolean fields is rejected',
+			{ viewer: { following: 'yes', followed_by: false, requested: false } },
+		],
+	] )( 'rejects a malformed payload (%s) as bad_request', async ( _label, body ) => {
 		nock( BASE )
 			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
-			.reply( 200, {} );
+			.reply( 200, body );
 		await expect(
 			createMastodonFollow( { connectionId: 7, accountId: '200' } )
 		).rejects.toMatchObject( { kind: 'bad_request' } );
+	} );
+
+	it.each( [
+		[
+			'404 with reader_mastodon_not_found',
+			{ status: 404, body: { code: 'reader_mastodon_not_found' } },
+			'not_found',
+		],
+		[
+			'429 surfaces as rate_limited',
+			{ status: 429, body: { statusCode: 429, status: 429 } },
+			'rate_limited',
+		],
+		[
+			'502 with reader_mastodon_upstream_unavailable',
+			{ status: 502, body: { code: 'reader_mastodon_upstream_unavailable' } },
+			'upstream_unavailable',
+		],
+		[
+			'400 with reader_mastodon_bad_request',
+			{ status: 400, body: { code: 'reader_mastodon_bad_request', message: 'no such id' } },
+			'bad_request',
+		],
+	] )( 'classifies %s correctly', async ( _label, fixture, expectedKind ) => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
+			.reply( fixture.status, fixture.body );
+		await expect(
+			createMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: expectedKind } );
 	} );
 } );
 
@@ -823,5 +862,30 @@ describe( 'deleteMastodonFollow', () => {
 		await expect(
 			deleteMastodonFollow( { connectionId: 7, accountId: '200' } )
 		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+
+	it.each( [
+		[
+			'404 with reader_mastodon_not_found',
+			{ status: 404, body: { code: 'reader_mastodon_not_found' } },
+			'not_found',
+		],
+		[
+			'429 surfaces as rate_limited',
+			{ status: 429, body: { statusCode: 429, status: 429 } },
+			'rate_limited',
+		],
+		[
+			'502 with reader_mastodon_upstream_unavailable',
+			{ status: 502, body: { code: 'reader_mastodon_upstream_unavailable' } },
+			'upstream_unavailable',
+		],
+	] )( 'classifies %s correctly', async ( _label, fixture, expectedKind ) => {
+		nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/follows/200' )
+			.reply( fixture.status, fixture.body );
+		await expect(
+			deleteMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: expectedKind } );
 	} );
 } );
