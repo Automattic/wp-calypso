@@ -496,11 +496,22 @@ const ImageStudioContent = withInstanceId(
 			? ImageStudioMode.Edit
 			: ImageStudioMode.Generate;
 
+		// While EditFrame is rendering frames for a Highlights clip, the
+		// main-thread DOM→SVG-data-URI loop saturates the CPU and any
+		// CSS animation/transition in the modal stutters. Tag the modal so
+		// SCSS can suppress non-essential motion for the render's duration
+		// (the thinking-dot indicator is the only signal we keep alive).
+		const isFeatureClipRendering = !! useSelect(
+			( s ) => s( videoStudioStore ).getPendingFeatureClipRender(),
+			[]
+		);
+
 		const modalClasses = cn(
 			'image-studio-modal',
 			{
 				'image-studio-modal--generate': mode === ImageStudioMode.Generate,
 				'image-studio-modal--edit': mode === ImageStudioMode.Edit,
+				'image-studio-modal--rendering-feature-clip': isFeatureClipRendering,
 			},
 			className
 		);

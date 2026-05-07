@@ -575,3 +575,24 @@ body.js.is-image-studio-open {
 .wrap .wpcom-media-library-action-buttons .big-sky-image-studio-link {
 	margin-left: 0;
 }
+
+/*
+ * While a Highlights clip is rendering (~60-90s), EditFrame's per-frame
+ * DOM→SVG capture saturates the main thread. Any CSS animation that runs
+ * on the main thread (which is most of them — anything affecting layout
+ * or paint) stutters visibly. Suppress non-essential motion in the modal
+ * for the render's duration; the agenttic ThinkingMessage's dots are
+ * exempt because that's the user's only progress signal.
+ *
+ * Approach: zero out animation + transition durations on descendants.
+ * `* :not(...)` is heavy specificity but bounded to the modal subtree.
+ */
+.image-studio-modal--rendering-feature-clip {
+	*:not([class*='thinking']):not([class*='Thinking']):not([class*='loading-dots']) {
+		animation-duration: 0.001ms !important;
+		animation-delay: 0ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		transition-delay: 0ms !important;
+	}
+}
