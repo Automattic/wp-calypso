@@ -217,12 +217,6 @@ export const societyBlogs: CuratedBlogsList = {
 			site_name: 'Pieces of History',
 		},
 		{
-			feed_ID: 158014293,
-			site_ID: 190492275,
-			site_URL: 'https://prologue.blogs.archives.gov/',
-			site_name: 'Pieces of History',
-		},
-		{
 			feed_ID: 9002220,
 			site_ID: 9563068,
 			site_URL: 'http://www.thehistoryblog.com/',
