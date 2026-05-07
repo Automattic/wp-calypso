@@ -1,16 +1,35 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import wp from 'calypso/lib/wp';
+import { logQrAppLoginError } from './log-error';
+import { KNOWN_STATUSES, TERMINAL_STATUSES } from './types';
 import type { Status } from './types';
 
 const POLL_INTERVAL_MS = 2000;
 
-const TERMINAL_STATUSES: Status[ 'status' ][] = [ 'consumed', 'expired', 'rejected' ];
+function isStatus( raw: unknown ): raw is Status {
+	if ( ! raw || typeof raw !== 'object' ) {
+		return false;
+	}
+	const status = ( raw as { status?: unknown } ).status;
+	return typeof status === 'string' && KNOWN_STATUSES.includes( status as Status[ 'status' ] );
+}
 
 export function useStatus( token: string | undefined, isVisible = true ) {
-	return useQuery< Status >( {
+	const result = useQuery< Status, Error >( {
 		queryKey: [ 'qr-code-app-login-status', token ],
-		queryFn: () =>
-			wp.req.get( { path: '/auth/qr-code-app/status', apiNamespace: 'wpcom/v2' }, { token } ),
+		queryFn: async () => {
+			const data = await wp.req.get(
+				{ path: '/auth/qr-code-app/status', apiNamespace: 'wpcom/v2' },
+				{ token }
+			);
+			if ( ! isStatus( data ) ) {
+				throw new Error(
+					`Unrecognized qr-code-app-login status payload: ${ JSON.stringify( data ) }`
+				);
+			}
+			return data;
+		},
 		enabled: !! token,
 		refetchInterval: ( query ) => {
 			if ( ! isVisible ) {
@@ -24,10 +43,18 @@ export function useStatus( token: string | undefined, isVisible = true ) {
 		},
 		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: 'always',
-		// Always treat status as fresh-only — never serve cached values.
 		staleTime: 0,
 		gcTime: 0,
 		refetchOnMount: 'always',
 		meta: { persist: false },
 	} );
+
+	const { error } = result;
+	useEffect( () => {
+		if ( error ) {
+			logQrAppLoginError( 'status', error );
+		}
+	}, [ error ] );
+
+	return result;
 }
