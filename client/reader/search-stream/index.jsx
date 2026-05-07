@@ -27,8 +27,8 @@ import {
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
+import { getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
 import ReaderPopularSitesSidebar from '../stream/reader-popular-sites-sidebar';
-import { useStreamPosts } from '../stream/use-stream-posts';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import SiteResults from './site-results';
@@ -269,27 +269,17 @@ const wrapWithMain = ( Component ) => ( props ) => (
 );
 /* eslint-enable */
 
-const ConnectedSearchStream = connect(
+export default connect(
 	( state, ownProps ) => ( {
 		readerAliasedFollowFeedUrl:
 			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
 		isLoggedIn: isUserLoggedIn( state ),
+		items: getTransformedStreamItems( state, {
+			streamKey: ownProps.streamKey,
+			recsStreamKey: ownProps.recsStreamKey,
+		} ),
 	} ),
 	{
 		recordReaderTracksEvent,
 	}
 )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
-
-// `<Stream>` (rendered inside `<PostResults>`) populates the React Query cache
-// for `streamKey`. Read the same cache here so `<ReaderPopularSitesSidebar>`
-// can show recommended sites — `state.reader.streams` is no longer hydrated
-// by the React Query path. `enabled: false` keeps this observer read-only.
-const SearchStreamWithItems = ( props ) => {
-	const { items } = useStreamPosts( {
-		streamKey: props.streamKey,
-		options: { enabled: false },
-	} );
-	return <ConnectedSearchStream { ...props } items={ items } />;
-};
-
-export default SearchStreamWithItems;

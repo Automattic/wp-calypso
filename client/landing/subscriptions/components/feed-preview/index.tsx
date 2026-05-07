@@ -93,6 +93,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 								className="no-padding"
 								streamKey={ `feed:${ feed?.feed_ID }` }
 								showFollowButton={ false }
+								showBack={ false }
 								trackScrollPage={ () => {} }
 								restoreScroll={ false }
 								useCompactCards
