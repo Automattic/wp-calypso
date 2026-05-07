@@ -3,13 +3,15 @@
 
 // Back link — match cancel-purchase spacing
 .site-level-actions__back .header-cake__back {
-	padding: 24px 0;
+	padding-block: 24px;
+	padding-inline: 0;
 	text-align: start;
 }
 
 // Title — match cancel-purchase spacing
 .site-level-actions__formatted-header.formatted-header {
-	margin: 16px 0 8px;
+	margin-block: 16px 8px;
+	margin-inline: 0;
 }
 
 .site-level-actions__description {
@@ -54,7 +56,8 @@
 	font-weight: 600;
 	color: var(--color-text);
 	margin: 0;
-	padding: 0 0 16px;
+	padding-block: 0 16px;
+	padding-inline: 0;
 	border-block-end: 1px solid var(--color-border-subtle);
 }
 
@@ -68,7 +71,7 @@
 	border-block-end: 1px solid var(--color-border-subtle);
 
 	&.is-selected {
-		background-color: #f7f8fe;
+		background-color: var(--studio-blue-5);
 	}
 
 	&:last-of-type {
@@ -81,7 +84,7 @@
 	align-items: center;
 	flex: 1 1 100%;
 	gap: 8px;
-	margin-bottom: 0;
+	margin-block-end: 0;
 	font-weight: normal;
 	cursor: pointer;
 
@@ -90,13 +93,12 @@
 	}
 
 	.site-level-actions__checkbox {
-		margin-inline-end: 12px;
 		margin: 0;
 	}
 
 	.site-level-actions__name {
 		font-size: $font-body;
-		margin-left: 0;
+		margin-inline-start: 0;
 		font-weight: 500;
 	}
 }
@@ -115,7 +117,7 @@
 }
 
 .site-level-actions__button-row {
-	padding: 24px 0 0;
+	padding-block-start: 24px;
 }
 
 // Skeleton loading placeholders
@@ -127,8 +129,8 @@
 	animation: loading-pulse 1.6s ease-in-out infinite;
 }
 
-.site-level-actions__placeholder--short {
-	width: 100px;
+.site-level-actions__placeholder--text {
+	width: 70%;
 }
 
 .site-level-actions__placeholder--medium {
