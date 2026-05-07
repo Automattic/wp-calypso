@@ -1558,6 +1558,73 @@ describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
 			expect( cached?.viewer?.following ).toBe( true );
 			expect( cached?.viewer?.requested ).toBe( false );
 		} );
+
+		it( 'invalidates the cache on error when there is no previous snapshot to roll back to', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			// No setQueryData seeding — context.previous will be undefined,
+			// so onError must fall back to invalidateQueries to avoid
+			// leaving an optimistic patch as a stale cache value.
+			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 502, { code: 'reader_mastodon_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId: 1,
+						actor: '200',
+						accountId: '200',
+					} );
+				} catch {
+					// expected
+				}
+			} );
+
+			expect( invalidateSpy ).toHaveBeenCalledWith( { queryKey: key } );
+			invalidateSpy.mockRestore();
+		} );
+
+		it( 'invalidates the cache on success when the entry was evicted between onMutate and onSuccess', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 200, {
+					viewer: { following: true, followed_by: false, requested: false },
+				} );
+
+			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			// Simulate a route change evicting the cached profile while
+			// the mutation is in flight; setQueryData on a missing entry
+			// returns undefined, so onSuccess must invalidate to refetch
+			// the authoritative server viewer.
+			await act( async () => {
+				const promise = result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+				client.removeQueries( { queryKey: key } );
+				await promise;
+			} );
+
+			expect( invalidateSpy ).toHaveBeenCalledWith( { queryKey: key } );
+			invalidateSpy.mockRestore();
+		} );
 	} );
 
 	describe( 'unfollowMastodonActorMutation', () => {
@@ -1628,6 +1695,38 @@ describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
 			const cached = client.getQueryData< MastodonAuthorProfile >( key );
 			expect( cached?.viewer?.following ).toBe( true );
 			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+
+		it( 'normalizes the actor when keying the cache so webfinger handles still see the optimistic patch', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const normalizedKey = readerMastodonKeys.authorProfile( 1, 'alice@mastodon.social' );
+			client.setQueryData(
+				normalizedKey,
+				makeProfile( {
+					viewer: { following: true, followed_by: false, requested: false },
+				} )
+			);
+
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/mastodon/connections/1/follows/200' )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( unfollowMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '@Alice@MASTODON.social',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( normalizedKey );
+			expect( cached?.viewer?.following ).toBe( false );
 		} );
 	} );
 } );

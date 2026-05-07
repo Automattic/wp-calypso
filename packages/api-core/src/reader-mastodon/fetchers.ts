@@ -405,13 +405,26 @@ export async function uploadMastodonMedia(
 // into the cache during the optimistic-update commit. Throws a wpcom-shaped
 // error so the outer `catch` classifier maps it consistently with wire errors.
 function assertMastodonFollowResponse( raw: unknown ): asserts raw is MastodonFollowResponse {
+	const reject = (): never => {
+		// Distinct message so a backend-shape regression is grep-able in
+		// Logstash / Sentry rather than indistinguishable from a real 400.
+		throw {
+			code: 'reader_mastodon_bad_request',
+			message: 'invalid follow response shape',
+		};
+	};
+	if ( typeof raw !== 'object' || raw === null ) {
+		reject();
+	}
+	const viewer = ( raw as { viewer?: unknown } ).viewer;
 	if (
-		typeof raw !== 'object' ||
-		raw === null ||
-		typeof ( raw as { viewer?: unknown } ).viewer !== 'object' ||
-		( raw as { viewer?: unknown } ).viewer === null
+		typeof viewer !== 'object' ||
+		viewer === null ||
+		typeof ( viewer as { following?: unknown } ).following !== 'boolean' ||
+		typeof ( viewer as { followed_by?: unknown } ).followed_by !== 'boolean' ||
+		typeof ( viewer as { requested?: unknown } ).requested !== 'boolean'
 	) {
-		throw { code: 'reader_mastodon_bad_request', message: '' };
+		reject();
 	}
 }
 

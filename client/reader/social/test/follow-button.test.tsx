@@ -158,5 +158,24 @@ describe( 'FollowButton', () => {
 			expect( screen.getByText( 'Following' ) ).toBeVisible();
 			expect( screen.queryByText( 'Requested' ) ).not.toBeInTheDocument();
 		} );
+
+		it( 'isRequested wins over isFollowedBy when both are true', () => {
+			// Locked-account viewer who is also followed by the target:
+			// the pending follow request must visually trump the
+			// "Follow back" affordance so the wire state is honoured.
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy
+					isRequested
+					actorHandle="alice@mastodon.social"
+					onFollow={ jest.fn() }
+					onUnfollow={ jest.fn() }
+				/>
+			);
+
+			expect( screen.getByText( 'Requested' ) ).toBeVisible();
+			expect( screen.queryByText( 'Follow back' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
