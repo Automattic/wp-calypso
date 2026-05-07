@@ -239,12 +239,34 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		initialFollowedFeedIdsRef.current = null;
 	}, [ followedTagSlugs ] );
 
-	// Select the first site by default when recommendations are loaded.
+	// The Redux feeds store — used to check whether a feed's data has loaded.
+	// ConnectedReaderSubscriptionListItem renders a placeholder (not a real list item)
+	// when feed data is absent, so selecting a site whose feed hasn't loaded yet
+	// results in a preview for a site that appears missing from the left column.
+	// The Redux feeds store — used to check whether a feed's data has loaded.
+	// ConnectedReaderSubscriptionListItem renders a placeholder (not a real list item)
+	// when feed data is absent, so selecting a site whose feed hasn't loaded yet
+	// results in a preview for a site that appears missing from the left column.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const readerFeedItems = useSelector(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		( state: object ) => ( state as any ).reader?.feeds?.items ?? {}
+	);
+
+	// Select the first site whose feed data is already in Redux, so the list item
+	// renders as a real card (not a placeholder) immediately when selected.
+	// Re-runs whenever feeds load, so the selection happens as soon as any feed is ready.
 	useEffect( () => {
-		if ( displayedRecommendations.length > 0 && ! selectedSite ) {
-			setSelectedSite( displayedRecommendations[ 0 ] );
+		if ( selectedSite || displayedRecommendations.length === 0 ) {
+			return;
 		}
-	}, [ displayedRecommendations, selectedSite ] );
+		const firstLoaded = displayedRecommendations.find(
+			( site ) => readerFeedItems[ site.feed_ID ]
+		);
+		if ( firstLoaded ) {
+			setSelectedSite( firstLoaded );
+		}
+	}, [ displayedRecommendations, selectedSite, readerFeedItems ] );
 
 	const handleItemClick = useCallback(
 		( site: CardData ) => {
