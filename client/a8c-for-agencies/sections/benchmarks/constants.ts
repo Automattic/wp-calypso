@@ -170,11 +170,40 @@ export type AgencyBenchmark = {
 	stakeholder_demand: StakeholderDemand;
 	ai_tools_used: AiTool[];
 	ai_use_cases: AiUseCase[];
+	computed: {
+		ai_maturity_score: number;
+	};
 	created_at: string;
 	updated_at: string;
 };
 
 export type AgencyBenchmarkSubmission = Omit<
 	AgencyBenchmark,
-	'id' | 'agency_id' | 'created_at' | 'updated_at'
+	'id' | 'agency_id' | 'computed' | 'created_at' | 'updated_at'
 >;
+
+export type AggregateMetricKey =
+	| 'gross_margin'
+	| 'billable_utilization'
+	| 'avg_project_size_usd'
+	| 'win_rate'
+	| 'retainer_mrr_usd'
+	| 'avg_time_to_close_days'
+	| 'client_retention'
+	| 'ai_maturity_score';
+
+export type MetricSummary = {
+	mean: number;
+	min: number;
+	p25: number;
+	median: number;
+	p75: number;
+	max: number;
+};
+
+export type BenchmarkAggregateRow = {
+	quarter: 1 | 2 | 3 | 4;
+	year: number;
+	sample_size: number;
+	metrics: Record< AggregateMetricKey, MetricSummary >;
+};

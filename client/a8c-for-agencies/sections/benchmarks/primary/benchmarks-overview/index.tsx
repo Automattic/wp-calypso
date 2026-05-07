@@ -11,7 +11,7 @@ import LayoutHeader, {
 import useFetchAgencyBenchmark from '../../hooks/use-fetch-agency-benchmark';
 import useFetchBenchmarksConfig from '../../hooks/use-fetch-benchmarks-config';
 import AlreadySubmitted from './already-submitted';
-import PeerComparisonExample from './peer-comparison-example';
+import BenchmarkStatsGrid from './stats-grid';
 import SubmissionBanner from './submission-banner';
 import SubmissionModal from './submission-modal';
 
@@ -49,7 +49,7 @@ function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 			</LayoutTop>
 			<LayoutBody>
 				{ showAlreadySubmitted && <AlreadySubmitted quarter={ quarter } year={ year } /> }
-				{ ! isLoading && <PeerComparisonExample /> }
+				<BenchmarkStatsGrid />
 			</LayoutBody>
 			{ isModalOpen && (
 				<SubmissionModal
