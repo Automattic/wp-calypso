@@ -340,6 +340,8 @@ class ThemeSheet extends Component {
 			return;
 		}
 
+		this.onBeforeOptionAction();
+
 		// Intercept activation so the user can preview the new theme and choose
 		// between a basic and a full setup. Skip the modal on Jetpack/Atomic
 		// sites where the full-setup path (theme-setup) doesn't apply, leaving
@@ -351,7 +353,6 @@ class ThemeSheet extends Component {
 			return;
 		}
 
-		this.onBeforeOptionAction();
 		this.props.defaultOption.action?.( this.props.themeId );
 	};
 
