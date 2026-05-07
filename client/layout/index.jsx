@@ -359,102 +359,100 @@ class Layout extends Component {
 
 		const isCalypso = ! isJetpackCloud() && ! isA8CForAgencies();
 
-		return (
-			<ArcadeModeProvider>
-				<div className={ sectionClass }>
-					{ isCalypso && <KonamiListener /> }
-					<HelpCenterLoader
-						sectionName={ this.props.sectionName }
-						loadHelpCenter={ loadHelpCenter }
-						currentRoute={ this.props.currentRoute }
-					/>
-					<AgentsManagerLoader
-						sectionName={ this.props.sectionName }
-						loadAgentsManager={ loadAgentsManager }
-					/>
-					{ ! shouldDisableSidebarScrollSynchronizer && (
-						<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+		const content = (
+			<div className={ sectionClass }>
+				{ isCalypso && <KonamiListener /> }
+				<HelpCenterLoader
+					sectionName={ this.props.sectionName }
+					loadHelpCenter={ loadHelpCenter }
+					currentRoute={ this.props.currentRoute }
+				/>
+				<AgentsManagerLoader
+					sectionName={ this.props.sectionName }
+					loadAgentsManager={ loadAgentsManager }
+				/>
+				{ ! shouldDisableSidebarScrollSynchronizer && (
+					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
+				) }
+				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
+				<BodySectionCssClass
+					layoutFocus={ this.props.currentLayoutFocus }
+					group={ this.props.sectionGroup }
+					section={ this.props.sectionName }
+					{ ...optionalBodyProps() }
+				/>
+				<DocumentHead />
+				{ this.props.shouldQueryAllSites ? (
+					<QuerySites allSites />
+				) : (
+					<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
+				) }
+				<QueryPreferences />
+				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
+				<QuerySiteAdminMenu siteId={ this.props.siteId } />
+				<QuerySiteAdminColor siteId={ this.props.siteId } />
+				<UserVerificationChecker />
+				{ config.isEnabled( 'layout/guided-tours' ) && (
+					<AsyncLoad require={ loadGuidedTours } placeholder={ null } />
+				) }
+				<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
+				<LayoutLoader />
+				{ isJetpackCloud() && <AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } /> }
+				{ isA8CForAgencies() && (
+					<>
+						<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
+						<QueryAgencies />
+					</>
+				) }
+				<div id="content" className="layout__content">
+					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
+						<AsyncLoad
+							require={ loadJitm }
+							placeholder={ null }
+							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
+						/>
 					) }
-					<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
-					<BodySectionCssClass
-						layoutFocus={ this.props.currentLayoutFocus }
-						group={ this.props.sectionGroup }
-						section={ this.props.sectionName }
-						{ ...optionalBodyProps() }
-					/>
-					<DocumentHead />
-					{ this.props.shouldQueryAllSites ? (
-						<QuerySites allSites />
-					) : (
-						<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
-					) }
-					<QueryPreferences />
-					<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
-					<QuerySiteAdminMenu siteId={ this.props.siteId } />
-					<QuerySiteAdminColor siteId={ this.props.siteId } />
-					<UserVerificationChecker />
-					{ config.isEnabled( 'layout/guided-tours' ) && (
-						<AsyncLoad require={ loadGuidedTours } placeholder={ null } />
-					) }
-					<div className="layout__header-section">{ this.renderMasterbar( loadHelpCenter ) }</div>
-					<LayoutLoader />
-					{ isJetpackCloud() && (
-						<AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } />
-					) }
-					{ isA8CForAgencies() && (
+					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
 						<>
-							<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
-							<QueryAgencies />
+							<div id="secondary" className="layout__secondary" role="navigation">
+								{ this.props.secondary }
+							</div>
+							{ this.props.beforePrimary }
+							<div id="primary" className="layout__primary">
+								{ this.props.primary }
+							</div>
 						</>
 					) }
-					<div id="content" className="layout__content">
-						{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
-							<AsyncLoad
-								require={ loadJitm }
-								placeholder={ null }
-								messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
-							/>
-						) }
-						<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
-						{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
-							<>
-								<div id="secondary" className="layout__secondary" role="navigation">
-									{ this.props.secondary }
-								</div>
-								{ this.props.beforePrimary }
-								<div id="primary" className="layout__primary">
-									{ this.props.primary }
-								</div>
-							</>
-						) }
-					</div>
-					<AsyncLoad require={ loadCommunityTranslator } placeholder={ null } />
-					{ 'development' === process.env.NODE_ENV && (
-						<>
-							<SympathyDevWarning />
-							<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />
-						</>
-					) }
-					{ config.isEnabled( 'layout/support-article-dialog' ) && (
-						<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
-					) }
-					{ config.isEnabled( 'cookie-banner' ) && (
-						<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
-					) }
-					{ config.isEnabled( 'layout/app-banner' ) && (
-						<AsyncLoad require={ loadAppBanner } placeholder={ null } />
-					) }
-					{ config.isEnabled( 'legal-updates-banner' ) && (
-						<AsyncLoad require={ loadLegalUpdatesBanner } placeholder={ null } />
-					) }
-
-					{ ! this.props.isMSDEnabledForReader && (
-						<AsyncLoad require={ loadGlobalNotifications } placeholder={ null } />
-					) }
-					{ this.renderCelebrateSiteLaunchModal() }
 				</div>
-			</ArcadeModeProvider>
+				<AsyncLoad require={ loadCommunityTranslator } placeholder={ null } />
+				{ 'development' === process.env.NODE_ENV && (
+					<>
+						<SympathyDevWarning />
+						<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />
+					</>
+				) }
+				{ config.isEnabled( 'layout/support-article-dialog' ) && (
+					<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
+				) }
+				{ config.isEnabled( 'cookie-banner' ) && (
+					<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+				) }
+				{ config.isEnabled( 'layout/app-banner' ) && (
+					<AsyncLoad require={ loadAppBanner } placeholder={ null } />
+				) }
+				{ config.isEnabled( 'legal-updates-banner' ) && (
+					<AsyncLoad require={ loadLegalUpdatesBanner } placeholder={ null } />
+				) }
+
+				{ ! this.props.isMSDEnabledForReader && (
+					<AsyncLoad require={ loadGlobalNotifications } placeholder={ null } />
+				) }
+				{ this.renderCelebrateSiteLaunchModal() }
+			</div>
 		);
+
+		return isCalypso ? <ArcadeModeProvider>{ content }</ArcadeModeProvider> : content;
 	}
 }
 
