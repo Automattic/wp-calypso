@@ -139,6 +139,52 @@ export function useStreamPendingPosts( {
 		if ( streamItems.length === 0 ) {
 			return 0;
 		}
+
+		// Conversations stream: count new *comments* on already-visible posts,
+		// matching the legacy `<UpdateNotice>` semantics where the badge
+		// surfaced thread activity, not new threads. A reply on an existing
+		// conversation has the same `postKey` as before, so the postKey diff
+		// below would miss it. Compare polled `comments[]` against the
+		// matching item's `comments[]` snapshot from the regular page fetch.
+		if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
+			const itemsByKey = new Map< string, PostKey >();
+			for ( const it of items ) {
+				const id = postKeyId( it );
+				if ( id ) {
+					itemsByKey.set( id, it );
+				}
+			}
+			let conversationCount = 0;
+			for ( const polled of streamItems ) {
+				const id = postKeyId( polled );
+				if ( ! id ) {
+					continue;
+				}
+				const polledComments = ( ( polled as { comments?: Array< number | string > } ).comments ??
+					[] ) as Array< number | string >;
+				const visible = itemsByKey.get( id );
+				if ( ! visible ) {
+					// Brand-new conversation — count one for the conversation
+					// itself or one per polled comment, whichever is greater.
+					conversationCount += Math.max( polledComments.length, 1 );
+					continue;
+				}
+				const seenComments = new Set(
+					(
+						( ( visible as { comments?: Array< number | string > } ).comments ?? [] ) as Array<
+							number | string
+						>
+					 ).map( String )
+				);
+				for ( const c of polledComments ) {
+					if ( ! seenComments.has( String( c ) ) ) {
+						conversationCount += 1;
+					}
+				}
+			}
+			return conversationCount;
+		}
+
 		const seen = new Set< string >();
 		for ( const it of items ) {
 			const id = postKeyId( it );

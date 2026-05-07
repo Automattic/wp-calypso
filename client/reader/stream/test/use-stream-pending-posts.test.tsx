@@ -199,4 +199,36 @@ describe( 'useStreamPendingPosts', () => {
 		rerender( { streamKey: 'following' } );
 		expect( result.current.pendingCount ).toBe( 0 );
 	} );
+
+	it( 'counts new comments per visible post for conversations streams', async () => {
+		// `/read/conversations` poll: same conversation post (10), but its
+		// comment list grew from [101, 102] to [101, 102, 103, 104].
+		nock( BASE )
+			.get( '/rest/v1.2/read/conversations' )
+			.query( true )
+			.reply( 200, {
+				posts: [
+					{
+						ID: 10,
+						site_ID: 100,
+						URL: 'https://example.com/p10',
+						date: '2026-04-10T00:00:00Z',
+						comments: [ { ID: 101 }, { ID: 102 }, { ID: 103 }, { ID: 104 } ],
+					},
+				],
+				date_range: { after: null, before: null },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		// `items` mirror what `<Stream>` passes — already-rendered list with
+		// the older comment snapshot. Two of the four polled comments are new.
+		const items = [ { ...postKey( 10 ), comments: [ 101, 102 ] } as PostKey ];
+		const { result } = renderHook(
+			() => useStreamPendingPosts( { streamKey: 'conversations', items, shouldPoll: true } ),
+			{ wrapper: Wrapper }
+		);
+
+		await waitFor( () => expect( result.current.pendingCount ).toBe( 2 ) );
+	} );
 } );
