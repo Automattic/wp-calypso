@@ -165,7 +165,13 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
+import {
+	cancelPurchase,
+	downgradePurchase,
+	managePurchase,
+	purchasesRoot,
+	siteActionInterstitial,
+} from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -814,11 +820,16 @@ class ManagePurchase extends Component<
 			// ?intent=remove. isDataValid on the cancel page now accepts any
 			// intent=remove purchase under the flag, so non-refundable and
 			// domain removes both land on the confirmation screen correctly.
-			const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
-				this.props.siteSlug,
-				purchase.id
-			);
-			const link = `${ baseLink }?intent=remove`;
+			let link: string;
+			if ( this.props.purchases && this.props.purchases.length > 1 ) {
+				link = siteActionInterstitial( this.props.siteSlug, purchase.id ) + '?action=remove';
+			} else {
+				const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
+					this.props.siteSlug,
+					purchase.id
+				);
+				link = `${ baseLink }?intent=remove`;
+			}
 			return (
 				<CompactCard href={ link } className="remove-purchase__card">
 					<Icon icon={ trash } className="card__icon" />
@@ -1042,13 +1053,16 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
-			this.props.siteSlug,
-			id
-		);
-		// Under flag, carry the user's intent through to the confirmation screen so
-		// it renders the matching variant (Cancel copy + disable-auto-renew mutation).
-		const link = isSplitEnabled ? `${ baseLink }?intent=cancel` : baseLink;
+		let link: string;
+		if ( isSplitEnabled && this.props.purchases && this.props.purchases.length > 1 ) {
+			link = siteActionInterstitial( this.props.siteSlug, id ) + '?action=cancel';
+		} else {
+			const baseLink = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )(
+				this.props.siteSlug,
+				id
+			);
+			link = isSplitEnabled ? `${ baseLink }?intent=cancel` : baseLink;
+		}
 		const canRefund = hasAmountAvailableToRefund( purchase );
 
 		if ( ! canRefund && isDomainTransfer( purchase ) ) {

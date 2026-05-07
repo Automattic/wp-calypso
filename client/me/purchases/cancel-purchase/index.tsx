@@ -193,6 +193,7 @@ export interface CancelPurchaseProps {
 	purchaseListUrl?: string;
 	siteSlug: string;
 	intent?: 'cancel' | 'remove' | null;
+	additionalPurchaseIds?: number[];
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 	isPurchaseCancelFeaturesLoading?: boolean;
 }
@@ -378,7 +379,16 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				if ( ! isAutoRenewIntent ) {
 					await this.handleMarketplaceSubscriptions( refundable );
 				}
-				this.props.successNotice( result.message, {
+				const additionalCount = await this.processAdditionalPurchases();
+				const totalCount = 1 + additionalCount;
+				const { translate } = this.props;
+				const noticeMessage =
+					totalCount > 1
+						? translate( '%(count)d subscriptions were successfully cancelled.', {
+								args: { count: totalCount },
+						  } )
+						: result.message;
+				this.props.successNotice( noticeMessage, {
 					displayOnNextPage: true,
 					duration: 10000,
 				} );
@@ -522,6 +532,38 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 	};
 
+	processAdditionalPurchases = async (): Promise< number > => {
+		const { additionalPurchaseIds, purchases, intent } = this.props;
+		if ( ! additionalPurchaseIds?.length || ! purchases ) {
+			return 0;
+		}
+
+		const additional = purchases.filter( ( p: Purchases.Purchase ) =>
+			additionalPurchaseIds.includes( p.id )
+		);
+
+		let count = 0;
+		for ( const p of additional ) {
+			try {
+				if ( intent === 'cancel' ) {
+					const result = await this.cancelPurchase( p );
+					if ( result.success ) {
+						count++;
+					}
+				} else {
+					const result = await this.submitCancelAndRefundPurchase( p );
+					if ( result.success ) {
+						count++;
+					}
+				}
+			} catch {
+				// Individual additional purchase failures are non-fatal — the primary
+				// already succeeded. The user can retry from the purchases list.
+			}
+		}
+		return count;
+	};
+
 	onSurveyComplete = async () => {
 		// Flag-on path: the mutation already fired at confirm-click via
 		// fireMutationFromConfirm. fireMutationFromConfirm intentionally
@@ -554,9 +596,23 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					? false
 					: hasAmountAvailableToRefund( this.props.purchase );
 				await this.handleMarketplaceSubscriptions( refundable );
+				const additionalCount = await this.processAdditionalPurchases();
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
-				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
+				const totalCount = 1 + additionalCount;
+				const { translate } = this.props;
+				const isRemove = isRemoveDeleteFlow || this.props.intent === 'remove';
+				let noticeMessage = result.message;
+				if ( totalCount > 1 ) {
+					noticeMessage = isRemove
+						? translate( '%(count)d upgrades were removed.', {
+								args: { count: totalCount },
+						  } )
+						: translate( '%(count)d subscriptions were successfully cancelled.', {
+								args: { count: totalCount },
+						  } );
+				}
+				this.props.successNotice( noticeMessage, { displayOnNextPage: true, duration: 10000 } );
 				if ( isRemoveDeleteFlow ) {
 					invokeSurvicateEvent( 'purchaseRemoved' );
 				} else if ( refundable ) {

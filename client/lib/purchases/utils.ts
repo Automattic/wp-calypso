@@ -16,6 +16,21 @@ export function getCancelIntentFromQuery( query: {
 	return raw === 'cancel' || raw === 'remove' ? raw : null;
 }
 
+export function getAdditionalPurchaseIdsFromQuery( query: {
+	additionalPurchaseIds?: string | string[] | null;
+} ): number[] {
+	const raw = Array.isArray( query.additionalPurchaseIds )
+		? query.additionalPurchaseIds[ 0 ]
+		: query.additionalPurchaseIds;
+	if ( ! raw ) {
+		return [];
+	}
+	return raw
+		.split( ',' )
+		.map( Number )
+		.filter( ( id ) => id > 0 && Number.isFinite( id ) );
+}
+
 export type DisplayVariant = 'cancel' | 'remove';
 
 /**
