@@ -64,6 +64,112 @@
 		object-fit: contain;
 	}
 
+	.email-no-domain__providers-section {
+		margin-block-start: 3rem;
+		padding-block: 2.5rem 0;
+
+		.formatted-header {
+			margin-block-end: 2rem;
+			text-align: center;
+		}
+	}
+
+	.card.email-no-domain__provider-card {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
+		padding: 32px;
+		margin-block-end: 16px;
+		background-color: var(--color-surface);
+
+		@media (min-width: 782px) {
+			grid-template-columns: 80px 1fr 1fr;
+			align-items: start;
+		}
+	}
+
+	.email-no-domain__provider-logo {
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+
+		.email-no-domain__provider-logo-icon {
+			width: 48px;
+			height: 48px;
+			fill: var(--color-primary);
+		}
+
+		.email-no-domain__provider-logo-image {
+			width: 48px;
+			height: 48px;
+			object-fit: contain;
+		}
+	}
+
+	.email-no-domain__provider-info {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.email-no-domain__provider-title {
+		margin: 0;
+		font-family: $brand-serif;
+		font-size: $font-title-small;
+		color: var(--studio-gray-100);
+		line-height: 1.2;
+	}
+
+	.email-no-domain__provider-description {
+		margin: 0;
+		font-size: $font-body-small;
+		color: var(--color-text-subtle);
+		text-wrap: pretty;
+	}
+
+	.email-no-domain__provider-features {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+
+			li {
+				position: relative;
+				padding-inline-start: 24px;
+				font-size: $font-body-small;
+				color: var(--color-text);
+
+				&::before {
+					content: "✓";
+					position: absolute;
+					inset-inline-start: 0;
+					color: var(--color-primary);
+					font-weight: 600;
+				}
+			}
+		}
+	}
+
+	.email-no-domain__provider-features-heading {
+		margin: 0;
+		font-size: $font-body-small;
+		font-weight: 500;
+		color: var(--color-text-subtle);
+	}
+
+	.email-no-domain__provider-footer-badge {
+		margin-block-start: 16px;
+		max-width: 120px;
+		height: auto;
+	}
+
 	.email-no-domain__features-section {
 		margin-block-start: 3rem;
 		padding-block: 2.5rem 0;

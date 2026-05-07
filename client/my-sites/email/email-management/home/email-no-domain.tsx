@@ -2,6 +2,8 @@ import { isFreePlan } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
+import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PromoSection, { type Props as PromoSectionProps } from 'calypso/components/promo-section';
@@ -175,6 +177,81 @@ const EmailNoDomain = ( {
 						align="center"
 					/>
 					<PromoSection { ...promos } />
+				</div>
+				<div className="email-no-domain__providers-section">
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Choose the email service that fits your needs' ) }
+						align="center"
+					/>
+					<Card className="email-no-domain__provider-card">
+						<div className="email-no-domain__provider-logo">
+							<Gridicon
+								className="email-no-domain__provider-logo-icon"
+								icon="my-sites"
+								aria-hidden="true"
+							/>
+						</div>
+						<div className="email-no-domain__provider-info">
+							<h3 className="email-no-domain__provider-title">
+								{ translate( 'Professional Email' ) }
+							</h3>
+							<p className="email-no-domain__provider-description">
+								{ translate(
+									'Integrated email solution with powerful features. Manage your email and more on any device.'
+								) }
+							</p>
+						</div>
+						<div className="email-no-domain__provider-features">
+							<h4 className="email-no-domain__provider-features-heading">
+								{ translate( "What's included:" ) }
+							</h4>
+							<ul>
+								<li>{ translate( 'Send and receive from your custom domain' ) }</li>
+								<li>{ translate( '30GB storage' ) }</li>
+								<li>{ translate( 'Email, calendars, and contacts' ) }</li>
+								<li>{ translate( '24/7 support via email' ) }</li>
+							</ul>
+							<img
+								className="email-no-domain__provider-footer-badge"
+								src={ poweredByTitanLogo }
+								alt={ translate( 'Powered by Titan', { textOnly: true } ) }
+							/>
+						</div>
+					</Card>
+					<Card className="email-no-domain__provider-card">
+						<div className="email-no-domain__provider-logo">
+							<img
+								className="email-no-domain__provider-logo-image"
+								src={ googleWorkspaceIcon }
+								alt=""
+								role="presentation"
+							/>
+						</div>
+						<div className="email-no-domain__provider-info">
+							<h3 className="email-no-domain__provider-title">
+								{ translate( 'Google Workspace' ) }
+							</h3>
+							<p className="email-no-domain__provider-description">
+								{ translate(
+									'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
+								) }
+							</p>
+						</div>
+						<div className="email-no-domain__provider-features">
+							<h4 className="email-no-domain__provider-features-heading">
+								{ translate( "What's included:" ) }
+							</h4>
+							<ul>
+								<li>{ translate( 'Send and receive from your custom domain' ) }</li>
+								<li>{ translate( '30GB storage' ) }</li>
+								<li>{ translate( 'Email, calendars, and contacts' ) }</li>
+								<li>{ translate( 'Video calls, docs, spreadsheets, and more' ) }</li>
+								<li>{ translate( 'Real-time collaboration' ) }</li>
+								<li>{ translate( '24/7 support via email' ) }</li>
+							</ul>
+						</div>
+					</Card>
 				</div>
 			</div>
 		);
