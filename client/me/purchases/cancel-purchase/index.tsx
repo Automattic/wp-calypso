@@ -327,14 +327,31 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const effectiveIntent = intent ?? this.state.cancelIntent;
 		const shouldSkipDomainOptions = shouldUseAutoRenewFlow && effectiveIntent !== 'refund';
 
+		// When the user came through the interstitial, the domain choice is
+		// already encoded in additionalPurchaseIds — skip the domain options
+		// step entirely and set cancelBundledDomain accordingly.
+		const cameFromInterstitial = this.props.isSplitCancelRemoveEnabled && this.props.intent;
+		if ( cameFromInterstitial && includedDomainPurchase ) {
+			const isDomainInBundle = this.props.additionalPurchaseIds?.includes(
+				includedDomainPurchase.id
+			);
+			this.setState( { cancelBundledDomain: !! isDomainInBundle } );
+		}
+
 		// Only show domain options as a separate step if radio buttons will be displayed
 		if (
-			! shouldSkipDomainOptions &&
-			includedDomainPurchase &&
-			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
+			cameFromInterstitial ||
+			shouldSkipDomainOptions ||
+			! includedDomainPurchase ||
+			! willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
 		) {
+			// No domain options step needed — proceed to mutation or survey.
+		} else {
 			this.setState( { showDomainOptionsStep: true } );
-		} else if ( this.shouldFireMutationOnConfirm() ) {
+			return;
+		}
+
+		if ( this.shouldFireMutationOnConfirm() ) {
 			// Cancel-intent flag-on: fire the mutation first; surveyShown
 			// flips to true inside fireMutationFromConfirm on success.
 			this.fireMutationFromConfirm();
@@ -1189,15 +1206,27 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						additionalPurchases: additionalPurchasesForCopy,
 				  } );
 
-		// When a plan has an included domain that can be cancelled together,
-		// show the higher (full) refund amount in the notice since the user
-		// can get this amount by choosing to cancel both.
-		const includedDomainHasRadioButtons =
-			this.props.includedDomainPurchase &&
-			willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, purchase );
+		// When the user came through the interstitial, the domain choice is
+		// encoded in additionalPurchaseIds — use it directly instead of the
+		// radio-button heuristic which always assumes "cancel both".
+		const cameFromInterstitial = this.props.isSplitCancelRemoveEnabled && this.props.intent;
+		let effectiveCancelBundledDomain: boolean;
+		if ( cameFromInterstitial ) {
+			const isDomainInBundle =
+				this.props.includedDomainPurchase &&
+				this.props.additionalPurchaseIds?.includes( this.props.includedDomainPurchase.id );
+			effectiveCancelBundledDomain = !! isDomainInBundle;
+		} else {
+			// Legacy flow: show the higher refund when radio buttons would appear.
+			const includedDomainHasRadioButtons =
+				this.props.includedDomainPurchase &&
+				willShowDomainOptionsRadioButtons( this.props.includedDomainPurchase, purchase );
+			effectiveCancelBundledDomain =
+				includedDomainHasRadioButtons || this.state.cancelBundledDomain;
+		}
 		const refundAmountString = this.renderRefundAmountString(
 			purchase,
-			includedDomainHasRadioButtons || this.state.cancelBundledDomain,
+			effectiveCancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
 		// Survey prioritization: if any additional purchase is a plan, show the

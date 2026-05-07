@@ -70,6 +70,12 @@ export default function SiteActionInterstitial( {
 		() => new Set( [ purchaseId ] )
 	);
 
+	// Defer the site card so the grid layout is applied before it appears —
+	// prevents a layout shift on cold page loads where CSS arrives after the
+	// initial paint.
+	const [ showSiteCard, setShowSiteCard ] = useState( false );
+	useEffect( () => setShowSiteCard( true ), [] );
+
 	const shouldBypass =
 		hasLoaded && ( ! isSplitEnabled || ! eligiblePurchases || eligiblePurchases.length <= 1 );
 
@@ -145,9 +151,11 @@ export default function SiteActionInterstitial( {
 							</div>
 						</Card>
 					</div>
-					<div className="site-level-actions__right">
-						<PurchaseSiteHeader isPlaceholder />
-					</div>
+					{ showSiteCard && (
+						<div className="site-level-actions__right">
+							<PurchaseSiteHeader isPlaceholder />
+						</div>
+					) }
 				</div>
 			</>
 		);
@@ -271,13 +279,15 @@ export default function SiteActionInterstitial( {
 						</div>
 					</Card>
 				</div>
-				<div className="site-level-actions__right">
-					<PurchaseSiteHeader
-						siteId={ purchase.siteId }
-						name={ purchase.siteName }
-						purchase={ purchase }
-					/>
-				</div>
+				{ showSiteCard && (
+					<div className="site-level-actions__right">
+						<PurchaseSiteHeader
+							siteId={ purchase.siteId }
+							name={ purchase.siteName }
+							purchase={ purchase }
+						/>
+					</div>
+				) }
 			</div>
 		</>
 	);
