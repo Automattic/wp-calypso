@@ -48,6 +48,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		import('../image-picker-modal').ImagePickerState
 	>( {
 		isOpen: false,
+		mode: 'grid',
 		images: [],
 		selectedNumber: null,
 		purpose: 'block',

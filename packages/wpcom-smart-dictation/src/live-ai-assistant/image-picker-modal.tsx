@@ -13,15 +13,24 @@ export interface ImagePickerItem {
 	height: number;
 }
 
+export type ImagePickerMode = 'menu' | 'grid';
+
 export interface ImagePickerState {
 	isOpen: boolean;
+	mode: ImagePickerMode;
 	images: ImagePickerItem[];
 	selectedNumber: number | null;
 	purpose: 'block' | 'featured_image';
 }
 
 export function createEmptyPickerState(): ImagePickerState {
-	return { isOpen: false, images: [], selectedNumber: null, purpose: 'block' };
+	return {
+		isOpen: false,
+		mode: 'grid',
+		images: [],
+		selectedNumber: null,
+		purpose: 'block',
+	};
 }
 
 interface ImagePickerModalProps {
@@ -29,7 +38,13 @@ interface ImagePickerModalProps {
 }
 
 export function ImagePickerModal( { state }: ImagePickerModalProps ) {
-	if ( ! state.isOpen || state.images.length === 0 ) {
+	if ( ! state.isOpen ) {
+		return null;
+	}
+	if ( state.mode === 'menu' ) {
+		return <ImagePickerMenu purpose={ state.purpose } />;
+	}
+	if ( state.images.length === 0 ) {
 		return null;
 	}
 
@@ -72,6 +87,107 @@ export function ImagePickerModal( { state }: ImagePickerModalProps ) {
 						</div>
 					);
 				} ) }
+			</div>
+		</div>
+	);
+}
+
+interface ImagePickerMenuProps {
+	purpose: 'block' | 'featured_image';
+}
+
+function closeMenuState() {
+	const w = window as unknown as { __dictationImagePicker?: ImagePickerState };
+	const state = w.__dictationImagePicker;
+	if ( state ) {
+		state.isOpen = false;
+		state.mode = 'grid';
+		state.images = [];
+		state.selectedNumber = null;
+		window.dispatchEvent( new CustomEvent( 'dictation-image-picker-update' ) );
+	}
+}
+
+function ImagePickerMenu( { purpose }: ImagePickerMenuProps ) {
+	const title = purpose === 'featured_image' ? __( 'Add a featured image' ) : __( 'Add an image' );
+
+	const handleUpload = useCallback( () => {
+		closeMenuState();
+		window.__dictationUploadPurpose = purpose;
+		window.dispatchEvent( new CustomEvent( 'dictation-file-upload' ) );
+	}, [ purpose ] );
+
+	const handleSelect = useCallback( () => {
+		const notify = window.sendToDictation;
+		if ( notify ) {
+			const purposeArg = purpose === 'featured_image' ? '"featured_image"' : '"block"';
+			void notify(
+				'[The user clicked "Select" in the image chooser. Silently call pick_image_tool ' +
+					`with action "open" and purpose ${ purposeArg } to show the media library grid. ` +
+					'Do not speak; just call the tool.]'
+			);
+		}
+	}, [ purpose ] );
+
+	const handleGenerate = useCallback( () => {
+		const notify = window.sendToDictation;
+		if ( notify ) {
+			void notify(
+				'[The user clicked "Generate" in the image chooser. Ask them briefly out loud what ' +
+					'they want you to generate (one short sentence, e.g. "Sure — what should I generate?"), ' +
+					'then call generate_image_tool with the description they provide.]'
+			);
+		}
+	}, [] );
+
+	return (
+		<div
+			className="dictation-image-picker dictation-image-picker--menu"
+			role="dialog"
+			aria-label={ title }
+		>
+			<div className="dictation-image-picker__header">
+				<span className="dictation-image-picker__title">{ title }</span>
+				<span className="dictation-image-picker__hint">
+					{ __( 'Say one of these out loud, or click to choose' ) }
+				</span>
+			</div>
+			<div className="dictation-image-picker__menu">
+				<button
+					type="button"
+					className="dictation-image-picker__menu-option"
+					onClick={ handleUpload }
+				>
+					<span className="dictation-image-picker__menu-icon" aria-hidden="true">
+						<UploadIcon />
+					</span>
+					<span className="dictation-image-picker__menu-label">{ __( 'Upload' ) }</span>
+					<span className="dictation-image-picker__menu-sub">{ __( 'from your computer' ) }</span>
+				</button>
+				<button
+					type="button"
+					className="dictation-image-picker__menu-option"
+					onClick={ handleSelect }
+				>
+					<span className="dictation-image-picker__menu-icon" aria-hidden="true">
+						<MediaLibraryIcon />
+					</span>
+					<span className="dictation-image-picker__menu-label">{ __( 'Select' ) }</span>
+					<span className="dictation-image-picker__menu-sub">
+						{ __( 'from your media library' ) }
+					</span>
+				</button>
+				<button
+					type="button"
+					className="dictation-image-picker__menu-option"
+					onClick={ handleGenerate }
+				>
+					<span className="dictation-image-picker__menu-icon" aria-hidden="true">
+						<GenerateIcon />
+					</span>
+					<span className="dictation-image-picker__menu-label">{ __( 'Generate' ) }</span>
+					<span className="dictation-image-picker__menu-sub">{ __( 'with AI' ) }</span>
+				</button>
 			</div>
 		</div>
 	);

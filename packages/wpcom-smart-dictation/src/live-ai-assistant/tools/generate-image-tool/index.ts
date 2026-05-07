@@ -142,6 +142,7 @@ function closeImagePickerIfOpen() {
 	const w = window as unknown as {
 		__dictationImagePicker?: {
 			isOpen: boolean;
+			mode: 'menu' | 'grid';
 			images: unknown[];
 			selectedNumber: number | null;
 			purpose: string;
@@ -152,6 +153,7 @@ function closeImagePickerIfOpen() {
 		return;
 	}
 	state.isOpen = false;
+	state.mode = 'grid';
 	state.images = [];
 	state.selectedNumber = null;
 	window.dispatchEvent( new CustomEvent( 'dictation-image-picker-update' ) );
