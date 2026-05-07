@@ -12,6 +12,10 @@
 		margin-bottom: 20px;
 		background: $studio-gray-0;
 
+		&:has(.subscription-management__notice-close) {
+			padding-inline-end: 56px;
+		}
+
 		&-icon {
 			height: 20px;
 		}
