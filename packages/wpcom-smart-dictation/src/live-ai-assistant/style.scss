@@ -21,7 +21,7 @@
  * Without overflowing hidden here, sticky footer hacks cannot work: the complementary area scrolls
  * so the mute/dictation bar scrolls away. Lock scroll to .live-ai-assistant__body only.
  */
-.interface-complementary-area[id^='jetpack-live-ai-assistant:'] {
+.interface-complementary-area[id^='wpcom-smart-dictation:'] {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
@@ -53,7 +53,7 @@
 
 /* Parent motion wrapper (@wordpress/interface) must shrink so inner height % / flex mins work */
 .interface-complementary-area__fill:has(
-		> .interface-complementary-area[id^='jetpack-live-ai-assistant:']
+		> .interface-complementary-area[id^='wpcom-smart-dictation:']
 	) {
 	box-sizing: border-box;
 	display: flex;
@@ -66,7 +66,7 @@
 }
 
 /*
- * Wrapper around LiveAIAssistant in PluginSidebar (see help-center-gutenberg.js).
+ * Wrapper around LiveAIAssistant in PluginSidebar (see wpcom-smart-dictation.jsx).
  * Fills complementary area height so inner flex/grid can constrain the scroll region.
  */
 .wpcom-smart-dictation-sidebar-root {

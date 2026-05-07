@@ -2539,6 +2539,63 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/wpcom-smart-dictation-app@workspace:apps/wpcom-smart-dictation":
+  version: 0.0.0-use.local
+  resolution: "@automattic/wpcom-smart-dictation-app@workspace:apps/wpcom-smart-dictation"
+  dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wpcom-smart-dictation": "workspace:^"
+    "@wordpress/components": "npm:^32.1.0"
+    "@wordpress/data": "npm:^10.23.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/editor": "npm:^14.23.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/plugins": "npm:^7.23.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
+    "@wordpress/ui": "npm:^0.9.0"
+    clsx: "npm:^2.1.1"
+    typescript: "npm:^5.8.3"
+    webpack: "npm:^5.99.8"
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    "@wordpress/element": ^6.23.0
+    postcss: "*"
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
+"@automattic/wpcom-smart-dictation@workspace:^, @automattic/wpcom-smart-dictation@workspace:packages/wpcom-smart-dictation":
+  version: 0.0.0-use.local
+  resolution: "@automattic/wpcom-smart-dictation@workspace:packages/wpcom-smart-dictation"
+  dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@wordpress/components": "npm:^32.1.0"
+    "@wordpress/data": "npm:^10.23.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/ui": "npm:^0.9.0"
+    clsx: "npm:^2.1.1"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    typescript: "npm:^5.8.3"
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    "@wordpress/element": ^6.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/wpcom-template-parts@workspace:^, @automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts":
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts"
