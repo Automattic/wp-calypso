@@ -10,4 +10,6 @@ export {
 	getOverflowSlugs,
 } from './selectors';
 export type { SurfaceCopy } from './copy';
-export { getRegistrationAcknowledgement, getAuthCopy, getSignupCopy, getLoginCopy } from './copy';
+export { getAuthCopy, getSignupCopy, getLoginCopy } from './copy';
+export type { SubtitleScenario } from './scenarios';
+export { getSubtitleScenario } from './scenarios';

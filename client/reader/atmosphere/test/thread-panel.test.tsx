@@ -6,9 +6,10 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ComposerModal, ComposerProvider } from '../composer';
+import { atmosphereComposerConfig } from '../composer-config';
 import { ThreadPanel } from '../thread-panel';
 import type { AtmosphereConnection, AtmosphereThreadResponse } from '@automattic/api-core';
 
@@ -497,7 +498,7 @@ describe( 'ThreadPanel — quote composer integration', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ connection.id }>
+			<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
 				<ThreadPanel connection={ connection } did={ DID } rkey={ RKEY } />
 				<ComposerModal />
 			</ComposerProvider>,

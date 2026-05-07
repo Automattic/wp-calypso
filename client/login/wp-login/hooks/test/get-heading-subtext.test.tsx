@@ -51,7 +51,7 @@ describe( 'getHeadingSubText', () => {
 		expect( screen.getByText( /WordPress.com is used to manage your account\./ ) ).toBeVisible();
 	} );
 
-	test( 'returns the registration acknowledgement (site) and keeps the ToS as secondary when from=jetpack-connector with no Woo plugins', () => {
+	test( 'returns the family-driven login subtitle (site noun) and keeps the ToS as secondary when from=jetpack-connector with a Jetpack-family plugin', () => {
 		const subtext = getHeadingSubText( {
 			isSocialFirst: true,
 			twoFactorAuthType: '',
@@ -61,7 +61,9 @@ describe( 'getHeadingSubText', () => {
 			connectorPlugins: [ 'jetpack' ],
 		} );
 
-		expect( subtext?.primary ).toBe( 'Your site is registered with WordPress.com.' );
+		expect( subtext?.primary ).toBe(
+			'Your site is registered with WordPress.com — finish connecting your account to power Jetpack with backups, security, and growth tools.'
+		);
 		expect( subtext?.secondary ).toBeTruthy();
 		render( <>{ subtext?.secondary }</> );
 		expect(
@@ -69,7 +71,7 @@ describe( 'getHeadingSubText', () => {
 		).toBeVisible();
 	} );
 
-	test( 'uses the store wording when from=jetpack-connector with a Woo plugin', () => {
+	test( 'uses the store wording and the Woo+Jetpack scenario when from=jetpack-connector with both families', () => {
 		const subtext = getHeadingSubText( {
 			isSocialFirst: true,
 			twoFactorAuthType: '',
@@ -79,7 +81,9 @@ describe( 'getHeadingSubText', () => {
 			connectorPlugins: [ 'woocommerce', 'jetpack' ],
 		} );
 
-		expect( subtext?.primary ).toBe( 'Your store is registered with WordPress.com.' );
+		expect( subtext?.primary ).toBe(
+			'Your store is registered with WordPress.com — finish connecting your account to use the Woo mobile app, access your store analytics, and power Jetpack features.'
+		);
 		expect( subtext?.secondary ).toBeTruthy();
 	} );
 

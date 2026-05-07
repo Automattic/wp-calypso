@@ -219,4 +219,69 @@ describe( 'makeUseMastodonRepostAction', () => {
 		const button = screen.getByRole( 'button', { name: /boost, 5 boosts/i } );
 		expect( button ).toBeVisible();
 	} );
+
+	it( '"Quote post" menu item is disabled when no onQuoteClick is wired', async () => {
+		const user = userEvent.setup();
+		renderRepostButton();
+		await user.click( screen.getByRole( 'button', { name: /boost, 5 boosts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
+		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	it( '"Quote post" menu item is enabled when onQuoteClick is provided', async () => {
+		const user = userEvent.setup();
+		const onQuoteClick = jest.fn();
+		const useMastodonRepostAction = makeUseMastodonRepostAction( CONNECTION_ID );
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'mastodon',
+					connectionId: CONNECTION_ID,
+					onClick: jest.fn(),
+					onQuoteClick,
+				} }
+			>
+				<RepostProvider value={ useMastodonRepostAction }>
+					<RepostButton post={ makePost() } />
+				</RepostProvider>
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /boost, 5 boosts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
+		expect( item ).not.toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	it( 'clicking "Quote post" calls onQuoteClick(post) and fires _quote_clicked Tracks', async () => {
+		const user = userEvent.setup();
+		const onQuoteClick = jest.fn();
+		const onClick = jest.fn();
+		const post = makePost();
+		const useMastodonRepostAction = makeUseMastodonRepostAction( CONNECTION_ID );
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'mastodon',
+					connectionId: CONNECTION_ID,
+					onClick,
+					onQuoteClick,
+				} }
+			>
+				<RepostProvider value={ useMastodonRepostAction }>
+					<RepostButton post={ post } />
+				</RepostProvider>
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		await user.click( screen.getByRole( 'button', { name: /boost, 5 boosts/i } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: /quote post/i } ) );
+
+		expect( onQuoteClick ).toHaveBeenCalledWith( post );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_mastodon_quote_clicked',
+			expect.objectContaining( { connection_id: CONNECTION_ID, post_uri: STATUS_ID } )
+		);
+	} );
 } );

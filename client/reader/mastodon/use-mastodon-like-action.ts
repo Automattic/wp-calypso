@@ -12,7 +12,7 @@ import type { LikeAction, UseLikeActionFn } from '../social/components/post-card
 import type { MastodonError } from '@automattic/api-core';
 import type { SocialPost } from 'calypso/reader/social';
 
-type LikeDirection = 'favourite' | 'unfavourite';
+type LikeDirection = 'favorite' | 'unfavorite';
 
 function errorMessageForLike(
 	error: MastodonError,
@@ -21,9 +21,9 @@ function errorMessageForLike(
 	switch ( error.kind ) {
 		case 'auth_required':
 		case 'auth_failed':
-			return translate( 'Reconnect your Mastodon account to favourite posts.' );
+			return translate( 'Reconnect your Mastodon account to favorite posts.' );
 		case 'rate_limited':
-			return translate( "You're favouriting posts too quickly. Try again in a moment." );
+			return translate( "You're favoriting posts too quickly. Try again in a moment." );
 		case 'connection_not_found':
 		case 'not_found':
 			return translate( 'This connection no longer exists.' );
@@ -31,14 +31,14 @@ function errorMessageForLike(
 		case 'bad_request':
 		case 'upstream_unavailable':
 		case 'unknown':
-			return translate( 'Could not save your favourite. Please try again.' );
+			return translate( 'Could not save your favorite. Please try again.' );
 		default:
 			// Defensive fallback if MastodonError widens before this switch
 			// is updated. TypeScript exhaustiveness keeps this branch
 			// unreachable today; without it, an empty-toast notice would
 			// render via `errorNotice( undefined )` for a kind we haven't
 			// classified yet.
-			return translate( 'Could not save your favourite. Please try again.' );
+			return translate( 'Could not save your favorite. Please try again.' );
 	}
 }
 
@@ -71,7 +71,7 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 
 		const trackError = ( mastodonError: MastodonError, direction: LikeDirection ) => {
 			dispatch( errorNotice( errorMessageForLike( mastodonError, translate ) ) );
-			analytics?.onClick( `calypso_reader_${ analytics.source }_favourite_error_shown`, {
+			analytics?.onClick( `calypso_reader_${ analytics.source }_favorite_error_shown`, {
 				connection_id: connectionId,
 				post_uri: post.uri,
 				error_kind: mastodonError.kind,
@@ -93,29 +93,29 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 		};
 
 		const like = () => {
-			analytics?.onClick( `calypso_reader_${ analytics.source }_favourite_clicked`, {
+			analytics?.onClick( `calypso_reader_${ analytics.source }_favorite_clicked`, {
 				connection_id: connectionId,
 				post_uri: post.uri,
 			} );
 			create.mutate(
 				{ statusId: post.uri },
-				{ onError: ( err ) => trackError( err, 'favourite' ) }
+				{ onError: ( err ) => trackError( err, 'favorite' ) }
 			);
 		};
 
 		const unlike = () => {
-			analytics?.onClick( `calypso_reader_${ analytics.source }_unfavourite_clicked`, {
+			analytics?.onClick( `calypso_reader_${ analytics.source }_unfavorite_clicked`, {
 				connection_id: connectionId,
 				post_uri: post.uri,
 			} );
 			remove.mutate(
 				{ statusId: post.uri },
-				{ onError: ( err ) => trackError( err, 'unfavourite' ) }
+				{ onError: ( err ) => trackError( err, 'unfavorite' ) }
 			);
 		};
 
 		const accessibleLabel = ( count: number ) =>
-			translate( 'Favourite, %(count)s favourite', 'Favourite, %(count)s favourites', {
+			translate( 'Favorite, %(count)s favorite', 'Favorite, %(count)s favorites', {
 				count,
 				args: { count: formatNumber( count ) },
 				textOnly: true,

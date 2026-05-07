@@ -1,4 +1,4 @@
-import { BusinessPlans, EcommercePlans, type Site } from '@automattic/api-core';
+import { type Site } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -8,6 +8,7 @@ import { Card, CardBody, CardHeader } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import UpsellCallout from '../../hosting-feature-gated-with-callout/upsell';
+import { hasBackendAccess } from '../backend-access';
 import { getBackendCalloutProps } from '../backend-callout';
 import Database from './database';
 import EnableApmCallout from './enable-apm-callout';
@@ -25,16 +26,6 @@ const TAB_PATHS: Record< ApmTab, string > = {
 	database: 'database',
 	'external-requests': 'external-requests',
 };
-
-function hasBackendAccess( productSlug: string | undefined ) {
-	if ( ! productSlug ) {
-		return false;
-	}
-	return (
-		( BusinessPlans as readonly string[] ).includes( productSlug ) ||
-		( EcommercePlans as readonly string[] ).includes( productSlug )
-	);
-}
 
 function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 	const router = useRouter();

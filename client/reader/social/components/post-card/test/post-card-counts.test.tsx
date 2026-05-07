@@ -127,6 +127,20 @@ describe( 'PostCardCounts', () => {
 		);
 	} );
 
+	it( 'renders the interactive reply button for posts without a cid (Mastodon shape)', async () => {
+		// Mastodon `SocialPost` instances never carry a `cid` (it's an
+		// AT-Proto strong-ref field). The reply gate must not require it,
+		// otherwise the composer entry point silently disappears on
+		// Mastodon — the very protocol that needs it.
+		const cidlessPost: SocialPost = { ...post, cid: undefined };
+		const onReplyClick = jest.fn();
+		const user = userEvent.setup();
+		render( wrap( <PostCardCounts post={ cidlessPost } />, undefined, jest.fn(), onReplyClick ) );
+		const button = screen.getByRole( 'button', { name: /reply/i } );
+		await user.click( button );
+		expect( onReplyClick ).toHaveBeenCalledWith( cidlessPost );
+	} );
+
 	it( 'falls back to a link when onReplyClick is not bound', () => {
 		const getThreadUrl = () => '/threads/x';
 		render( wrap( <PostCardCounts post={ post } />, getThreadUrl ) );

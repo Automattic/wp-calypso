@@ -195,7 +195,10 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		if ( sslDetails.certificate_provisioned || domain.wpcom_domain ) {
 			return <Badge intent="success">{ __( 'SSL active' ) }</Badge>;
 		}
-		return <Badge intent="warning">{ __( 'SSL pending' ) }</Badge>;
+		if ( domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending' ) {
+			return <Badge intent="warning">{ __( 'SSL Pending' ) }</Badge>;
+		}
+		return <Badge intent="error">{ __( 'SSL Disabled' ) }</Badge>;
 	};
 
 	return (
