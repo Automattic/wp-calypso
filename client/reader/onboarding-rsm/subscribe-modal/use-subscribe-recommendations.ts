@@ -269,9 +269,22 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	const [ pinnedSites, setPinnedSites ] = useState< CardData[] >( [] );
 	const pinnedFeedIdsRef = useRef< Set< number > >( new Set() );
 
+	/**
+	 * Feed IDs whose validation has reached a *terminal failure* state — feed
+	 * loaded with `is_error: true`, or site loaded with `is_error: true` for
+	 * cards that require a site. We hold these in component state (not just a
+	 * ref) so the derived `isValidating` / `hasNoRecommendations` flags below
+	 * react to validation completion. Without this, an "all candidates failed"
+	 * outcome would leave `pinnedSites` empty and `isValidating` stuck `true`
+	 * indefinitely, so the loading placeholder would never resolve into the
+	 * empty state.
+	 */
+	const [ rejectedFeedIds, setRejectedFeedIds ] = useState< Set< number > >( new Set() );
+
 	useEffect( () => {
 		setPinnedSites( [] );
 		pinnedFeedIdsRef.current = new Set();
+		setRejectedFeedIds( new Set() );
 	}, [ followedTagSlugs ] );
 
 	useEffect( () => {
@@ -279,12 +292,21 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			return;
 		}
 		const newlyValidated: CardData[] = [];
+		const newlyRejected: number[] = [];
 		for ( const site of combinedRecommendations ) {
 			if ( pinnedFeedIdsRef.current.has( site.feed_ID ) ) {
 				continue;
 			}
+			if ( rejectedFeedIds.has( site.feed_ID ) ) {
+				continue;
+			}
 			const feed = readerFeedItems[ site.feed_ID ];
-			if ( ! feed || feed.is_error ) {
+			if ( ! feed ) {
+				// Feed metadata hasn't loaded yet — keep waiting (could still pin or reject).
+				continue;
+			}
+			if ( feed.is_error ) {
+				newlyRejected.push( site.feed_ID );
 				continue;
 			}
 			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds like
@@ -296,7 +318,12 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			const requiresSite = site.site_ID > 0;
 			if ( requiresSite ) {
 				const reduxSite = readerSiteItems[ site.site_ID ];
-				if ( ! reduxSite || reduxSite.is_error ) {
+				if ( ! reduxSite ) {
+					// Site hasn't loaded yet — keep waiting.
+					continue;
+				}
+				if ( reduxSite.is_error ) {
+					newlyRejected.push( site.feed_ID );
 					continue;
 				}
 			}
@@ -306,15 +333,42 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		if ( newlyValidated.length > 0 ) {
 			setPinnedSites( ( prev ) => [ ...prev, ...newlyValidated ] );
 		}
-	}, [ combinedRecommendations, readerFeedItems, readerSiteItems ] );
+		if ( newlyRejected.length > 0 ) {
+			setRejectedFeedIds( ( prev ) => {
+				const next = new Set( prev );
+				for ( const id of newlyRejected ) {
+					next.add( id );
+				}
+				return next;
+			} );
+		}
+	}, [ combinedRecommendations, readerFeedItems, readerSiteItems, rejectedFeedIds ] );
 
 	const recommendations = pinnedSites;
 
-	const isValidating =
-		! isLoading && combinedRecommendations.length > 0 && pinnedSites.length === 0;
+	// Validation has settled for the current candidate set when every feed has
+	// either been pinned or rejected. We count `rejectedFeedIds` (state) plus
+	// `pinnedSites` (state) so this derivation stays reactive even when only
+	// rejections — and no pins — accumulate.
+	const allCandidatesSettled =
+		combinedRecommendations.length > 0 &&
+		pinnedSites.length + rejectedFeedIds.size >= combinedRecommendations.length;
 
+	const isValidating =
+		! isLoading &&
+		combinedRecommendations.length > 0 &&
+		pinnedSites.length === 0 &&
+		! allCandidatesSettled;
+
+	// Surface the empty state both when there were no candidates to begin with
+	// and when every candidate failed validation. Without the second branch,
+	// an all-errors outcome (e.g. feed/site requests all returning 404) would
+	// keep `isValidating` true forever and never let the UI fall through to the
+	// "No recommendations available" message.
 	const hasNoRecommendations =
-		! isLoading && combinedRecommendations.length === 0 && pinnedSites.length === 0;
+		! isLoading &&
+		pinnedSites.length === 0 &&
+		( combinedRecommendations.length === 0 || allCandidatesSettled );
 
 	return {
 		combinedRecommendations,

@@ -390,6 +390,104 @@ describe( 'useSubscribeRecommendations', () => {
 			);
 		} );
 
+		it( 'falls through to hasNoRecommendations when every candidate fails validation', async () => {
+			// All four candidates load with feed errors. Without the rejected-set
+			// tracking, `pinnedSites` would stay empty, `isValidating` would be
+			// stuck `true`, and the loading placeholder would render forever.
+			const state = buildReaderState( {
+				feeds: {
+					items: {
+						100: { feed_ID: 100, is_error: true },
+						101: { feed_ID: 101, is_error: true },
+						200: { feed_ID: 200, is_error: true },
+						201: { feed_ID: 201, is_error: true },
+					},
+				},
+			} );
+
+			const { result } = renderHook( state );
+
+			await waitFor( () => expect( result.current.hasNoRecommendations ).toBe( true ) );
+			expect( result.current.isValidating ).toBe( false );
+			expect( result.current.recommendations ).toEqual( [] );
+		} );
+
+		it( 'falls through to hasNoRecommendations when feed and site errors cover every candidate', async () => {
+			// Mixed terminal failures: site_ID === 0 candidates fail at the feed
+			// step, site_ID > 0 candidates fail at the site step. Either way the
+			// hook should treat all four as settled and surface the empty state.
+			const state = buildReaderState( {
+				feeds: {
+					items: {
+						100: { feed_ID: 100, is_error: true },
+						101: { feed_ID: 101 },
+						200: { feed_ID: 200, is_error: true },
+						201: { feed_ID: 201 },
+					},
+				},
+				sites: {
+					items: {
+						1001: { ID: 1001, is_error: true },
+						2001: { ID: 2001, is_error: true },
+					},
+				},
+			} );
+
+			const { result } = renderHook( state );
+
+			await waitFor( () => expect( result.current.hasNoRecommendations ).toBe( true ) );
+			expect( result.current.isValidating ).toBe( false );
+		} );
+
+		it( 'stays in isValidating while at least one candidate is still pending', async () => {
+			// Three feeds error, one is missing entirely (still pending). We
+			// should remain in the validating state rather than collapsing to
+			// the empty state prematurely.
+			const state = buildReaderState( {
+				feeds: {
+					items: {
+						100: { feed_ID: 100, is_error: true },
+						200: { feed_ID: 200, is_error: true },
+						201: { feed_ID: 201, is_error: true },
+						// 101 intentionally absent.
+					},
+				},
+			} );
+
+			const { result } = renderHook( state );
+
+			await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+			// Allow the rejection effect to flush.
+			await waitFor( () => expect( result.current.isValidating ).toBe( true ) );
+			expect( result.current.hasNoRecommendations ).toBe( false );
+		} );
+
+		it( 'shows the pinned subset (not the empty state) when some candidates pin and others fail', async () => {
+			// 100 pins (feed loaded, site_ID 0), the other three error out. We
+			// should expose the pin in `recommendations` and not flip into the
+			// empty state.
+			const state = buildReaderState( {
+				feeds: {
+					items: {
+						100: { feed_ID: 100 },
+						101: { feed_ID: 101, is_error: true },
+						200: { feed_ID: 200, is_error: true },
+						201: { feed_ID: 201, is_error: true },
+					},
+				},
+			} );
+
+			const { result } = renderHook( state );
+
+			await waitFor( () =>
+				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toEqual( [
+					100,
+				] )
+			);
+			expect( result.current.hasNoRecommendations ).toBe( false );
+			expect( result.current.isValidating ).toBe( false );
+		} );
+
 		it( 'keeps an already-pinned card visible after the user follows it', async () => {
 			// Pin order: feed 100 (site_ID 0) is pinned on feed alone.
 			const state = buildReaderState( {
