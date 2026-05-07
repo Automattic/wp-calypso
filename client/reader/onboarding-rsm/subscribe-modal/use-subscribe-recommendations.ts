@@ -1,6 +1,8 @@
 import { readFeedQuery } from '@automattic/api-queries';
+import { createSelector } from '@automattic/state-utils';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
+import { reject } from 'lodash';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
@@ -10,7 +12,41 @@ import {
 	receiveReaderFeedRequestFailure,
 	receiveReaderFeedRequestSuccess,
 } from 'calypso/state/reader/feeds/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import { ReaderFollowItem } from 'calypso/state/reader/follows/selectors/types';
+import { AppState } from 'calypso/types';
+
+const getReaderFollowingItemsRaw = createSelector(
+	( state: AppState ): ReaderFollowItem[] => {
+		const items = state.reader?.follows?.items;
+		if ( ! items ) {
+			return [];
+		}
+		const list = reject( Object.values( items ), 'error' ) as ( ReaderFollowItem | null )[];
+		return list.filter(
+			( item ): item is ReaderFollowItem => item != null && !! item.is_following
+		);
+	},
+	( state: AppState ) => [ state.reader?.follows?.items ]
+);
+
+/**
+ * Round-robin interleave of N lists: `[ a[0], b[0], c[0], a[1], b[1], c[1], ... ]`. Lists that
+ * run out are skipped without disturbing the rotation. Used to mix curated blogs across the
+ * user's followed tags so the first followed tag doesn't dominate the visible recommendations
+ * after the slice cap.
+ */
+function interleaveByTag< T >( perTagLists: T[][] ): T[] {
+	const result: T[] = [];
+	const maxLen = perTagLists.reduce( ( m, l ) => Math.max( m, l.length ), 0 );
+	for ( let i = 0; i < maxLen; i++ ) {
+		for ( const list of perTagLists ) {
+			if ( i < list.length ) {
+				result.push( list[ i ] );
+			}
+		}
+	}
+	return result;
+}
 
 export interface CardData {
 	feed_ID: number;
@@ -43,11 +79,29 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		[ followedTags ]
 	);
 
-	const reduxFollows = useSelector( getReaderFollows );
+	const rawFollowingItems = useSelector( getReaderFollowingItemsRaw );
 	const dispatch = useDispatch();
 	const currentLocale = getLocaleSlug();
 
-	const initialFollowedFeedIdsRef = useRef< Set< number > | null >( null );
+	/**
+	 * Set of feed_IDs and blog_IDs the user is currently following. Reactive: updates as the
+	 * paginated follows API fills in. Safe to use in the memo deps below because
+	 * `getReaderFollowingItemsRaw` only depends on `state.reader.follows.items`, not
+	 * `feeds.items`, so the feed bridge below can't cause a render storm via this selector.
+	 */
+	const followedIds = useMemo( () => {
+		const feedIds = new Set< number >();
+		const blogIds = new Set< number >();
+		for ( const f of rawFollowingItems ) {
+			if ( f.feed_ID != null ) {
+				feedIds.add( f.feed_ID );
+			}
+			if ( f.blog_ID != null && f.blog_ID !== 0 ) {
+				blogIds.add( f.blog_ID );
+			}
+		}
+		return { feedIds, blogIds };
+	}, [ rawFollowingItems ] );
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
@@ -85,26 +139,15 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			return [];
 		}
 
-		if ( initialFollowedFeedIdsRef.current === null ) {
-			initialFollowedFeedIdsRef.current = new Set(
-				reduxFollows.filter( ( f ) => f.feed_ID != null ).map( ( f ) => f.feed_ID )
-			);
-		}
-		const initialFollowedFeedIds = initialFollowedFeedIdsRef.current;
-
 		const isEnglish = currentLocale?.startsWith( 'en' );
 
 		const curatedRecommendations = isEnglish
-			? followedTagSlugs
-					.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
-					.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) )
+			? interleaveByTag( followedTagSlugs.map( ( tag ) => curatedBlogs[ tag ] || [] ) ).map(
+					( blog ) => ( { ...blog, weight: 1 } )
+			  )
 			: [];
 
-		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( {
-			...site,
-			weight: 1,
-			isCurated: false,
-		} ) );
+		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( { ...site, weight: 1 } ) );
 
 		const allRecommendations = [ ...curatedRecommendations, ...apiRecommendations ];
 
@@ -113,37 +156,35 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			return acc;
 		}, {} );
 
-		const uniqueRecommendations = Object.values(
-			allRecommendations.reduce<
-				Record< number, CardData & { weight: number; isCurated: boolean } >
-			>( ( acc, blog ) => {
-				if ( ! acc[ blog.feed_ID ] || blog.isCurated ) {
-					acc[ blog.feed_ID ] = { ...blog, weight: blogWeights[ blog.feed_ID ] };
-				}
-				return acc;
-			}, {} )
-		);
-
-		const sortedRecommendations = uniqueRecommendations.sort( ( a, b ) => {
-			if ( a.isCurated !== b.isCurated ) {
-				return a.isCurated ? -1 : 1;
+		// Dedup while preserving insertion order. We can't reduce into a `Record< number, … >`
+		// + `Object.values` here: integer-string object keys are iterated in numeric-ascending
+		// order per the JS spec, which reshuffles the round-robin work into feed_ID-sorted output.
+		// First-occurrence-wins is intentional — `allRecommendations` is `[ ...curated, ...api ]`,
+		// so the curated copy of any cross-source duplicate is kept.
+		const seenFeedIds = new Set< number >();
+		const uniqueRecommendations: ( CardData & { weight: number } )[] = [];
+		for ( const blog of allRecommendations ) {
+			if ( seenFeedIds.has( blog.feed_ID ) ) {
+				continue;
 			}
-			return b.weight - a.weight;
-		} );
+			seenFeedIds.add( blog.feed_ID );
+			uniqueRecommendations.push( { ...blog, weight: blogWeights[ blog.feed_ID ] } );
+		}
+
+		// Sort by weight descending. `weight` sums every appearance of a given `feed_ID` across
+		// curated tag lists and the API response, so weight > 1 marks blogs endorsed by multiple
+		// sources (curated + API, or multiple curated tag lists) and surfaces them first.
+		// Stable sort preserves the round-robin interleave for the weight-1 majority below them,
+		// and leaves the curated-then-API insertion order intact within each weight bucket.
+		const sortedRecommendations = uniqueRecommendations.sort( ( a, b ) => b.weight - a.weight );
 
 		const unsubscribedRecommendations = sortedRecommendations.filter(
-			( blog ) => ! initialFollowedFeedIds.has( blog.feed_ID )
+			( blog ) =>
+				! followedIds.feedIds.has( blog.feed_ID ) && ! followedIds.blogIds.has( blog.site_ID )
 		);
 
 		return unsubscribedRecommendations.slice( 0, 18 );
-		// Intentionally omit `reduxFollows` from deps: `getReaderFollows` is memoized on
-		// `state.reader.feeds.items`, so every `receiveReaderFeedRequestSuccess` from the
-		// feed bridge below would invalidate this memo, produce a new `combinedRecommendations`
-		// array, reset `useQueries`, and cause a render/dispatch storm that freezes the tab.
-		// The already-followed snapshot is captured once via `initialFollowedFeedIdsRef` while
-		// `reduxFollows` is read from the latest render when that ref is null.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale ] );
+	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale, followedIds ] );
 
 	// Fetch feed metadata via React Query and bridge into Redux (replaces deprecated QueryReaderFeed).
 	const feedQueries = useQueries( {
@@ -196,45 +237,48 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		( state: object ) => ( state as any ).reader?.sites?.items ?? {}
 	);
 
-	const [ pinnedFeedIds, setPinnedFeedIds ] = useState< Set< number > >( () => new Set() );
+	/**
+	 * Cards captured (in encounter order) once their feed/site metadata has loaded successfully.
+	 * Once a card is in this buffer it stays — so when the user follows a card inside the modal
+	 * and `combinedRecommendations` excludes it, the rendered card remains visible (with its
+	 * "Subscribed" state) instead of vanishing.
+	 */
+	const [ pinnedSites, setPinnedSites ] = useState< CardData[] >( [] );
+	const pinnedFeedIdsRef = useRef< Set< number > >( new Set() );
 
-	// Must run before the pin accumulation effect so followed-tag changes clear pins first.
 	useEffect( () => {
-		setPinnedFeedIds( new Set() );
-		initialFollowedFeedIdsRef.current = null;
+		setPinnedSites( [] );
+		pinnedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
 
 	useEffect( () => {
 		if ( combinedRecommendations.length === 0 ) {
 			return;
 		}
-		setPinnedFeedIds( ( prev ) => {
-			let changed = false;
-			const next = new Set( prev );
-			for ( const site of combinedRecommendations ) {
-				if ( next.has( site.feed_ID ) ) {
-					continue;
-				}
-				const feed = readerFeedItems[ site.feed_ID ];
-				const reduxSite = readerSiteItems[ site.site_ID ];
-				if ( feed && ! feed.is_error && ( ! reduxSite || ! reduxSite.is_error ) ) {
-					next.add( site.feed_ID );
-					changed = true;
-				}
+		const newlyValidated: CardData[] = [];
+		for ( const site of combinedRecommendations ) {
+			if ( pinnedFeedIdsRef.current.has( site.feed_ID ) ) {
+				continue;
 			}
-			return changed ? next : prev;
-		} );
+			const feed = readerFeedItems[ site.feed_ID ];
+			const reduxSite = readerSiteItems[ site.site_ID ];
+			if ( feed && ! feed.is_error && ( ! reduxSite || ! reduxSite.is_error ) ) {
+				pinnedFeedIdsRef.current.add( site.feed_ID );
+				newlyValidated.push( site );
+			}
+		}
+		if ( newlyValidated.length > 0 ) {
+			setPinnedSites( ( prev ) => [ ...prev, ...newlyValidated ] );
+		}
 	}, [ combinedRecommendations, readerFeedItems, readerSiteItems ] );
 
-	const recommendations = useMemo(
-		() => combinedRecommendations.filter( ( site ) => pinnedFeedIds.has( site.feed_ID ) ),
-		[ combinedRecommendations, pinnedFeedIds ]
-	);
+	const recommendations = pinnedSites;
 
 	const isValidating =
-		! isLoading && combinedRecommendations.length > 0 && recommendations.length === 0;
+		! isLoading && combinedRecommendations.length > 0 && pinnedSites.length === 0;
 
-	const hasNoRecommendations = ! isLoading && combinedRecommendations.length === 0;
+	const hasNoRecommendations =
+		! isLoading && combinedRecommendations.length === 0 && pinnedSites.length === 0;
 
 	return {
 		combinedRecommendations,
