@@ -2,18 +2,28 @@ import { type Site } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { TabPanel } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	privateApis,
+} from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Card, CardBody, CardHeader } from '../../../components/card';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { Card } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import UpsellCallout from '../../hosting-feature-gated-with-callout/upsell';
 import { hasBackendAccess } from '../backend-access';
 import { getBackendCalloutProps } from '../backend-callout';
+import { VIEWPORT_BREAKPOINTS } from '../constants';
 import PerformanceTabs from '../performance-tabs';
+import BackendStatusNotice from './backend-status';
+import BackendTabs from './backend-tabs';
 import Database from './database';
 import EnableApmCallout from './enable-apm-callout';
 import ExternalRequests from './external-requests';
+import { siteApmOverviewQuery } from './mock-data';
 import Overview from './overview';
 import Requests from './requests';
 import Transactions from './transactions';
@@ -28,17 +38,18 @@ const TAB_PATHS: Record< ApmTab, string > = {
 	'external-requests': 'external-requests',
 };
 
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+const { Tabs } = unlock( privateApis );
+
 function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 	const router = useRouter();
 	const siteSlug = site.slug;
-
-	const tabs = [
-		{ name: 'overview' as const, title: __( 'Overview' ) },
-		{ name: 'requests' as const, title: __( 'Requests' ) },
-		{ name: 'transactions' as const, title: __( 'Transactions' ) },
-		{ name: 'database' as const, title: __( 'Database' ) },
-		{ name: 'external-requests' as const, title: __( 'External requests' ) },
-	];
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
+	const { data } = useSuspenseQuery( siteApmOverviewQuery( site.ID ) );
 
 	const handleTabChange = ( name: string ) => {
 		const next = name as ApmTab;
@@ -69,19 +80,29 @@ function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 	};
 
 	return (
-		<Card>
-			<CardHeader style={ { paddingBottom: 0 } }>
-				<TabPanel
-					activeClass="is-active"
-					tabs={ tabs }
-					initialTabName={ tab }
-					onSelect={ handleTabChange }
-				>
-					{ () => null }
-				</TabPanel>
-			</CardHeader>
-			<CardBody>{ renderTab() }</CardBody>
-		</Card>
+		<VStack spacing={ 6 }>
+			<BackendStatusNotice avgResponseMs={ data.summary.avg_response_ms } />
+			<Tabs
+				orientation={ isDesktop ? 'vertical' : 'horizontal' }
+				selectedTabId={ tab }
+				onSelect={ handleTabChange }
+			>
+				<HStack wrap={ ! isDesktop } alignment="flex-start" justify="flex-start" spacing={ 6 }>
+					<Card
+						style={ {
+							flex: '0 0 auto',
+							width: isDesktop ? 280 : '100%',
+							alignSelf: 'flex-start',
+						} }
+					>
+						<BackendTabs compact={ ! isDesktop } summary={ data.summary } />
+					</Card>
+					<div style={ { flex: '1 1 auto', minWidth: 0, width: '100%' } }>
+						<Tabs.TabPanel tabId={ tab }>{ renderTab() }</Tabs.TabPanel>
+					</div>
+				</HStack>
+			</Tabs>
+		</VStack>
 	);
 }
 
