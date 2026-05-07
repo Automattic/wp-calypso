@@ -14,6 +14,8 @@ const args = yargs
 	.option( 'out', { describe: 'Output file' } )
 	.demandOption( [ 'in', 'out' ] ).argv;
 
+const projectRoot = path.resolve( __dirname, '..' );
+
 // create a webpack-style resolver that finds SCSS files. Inspired by `sass-loader` resolver.
 const resolver = resolve.create.sync( {
 	conditionNames: [ 'sass', 'style' ],
@@ -24,40 +26,43 @@ const resolver = resolve.create.sync( {
 	preferRelative: true,
 } );
 
-// Handles bare-module (`@scope/pkg`, `pkg/path`), project-root-relative (`client/foo/bar`)
-// and `~`-prefixed imports by resolving via webpack's enhanced-resolve from the project root.
-const tryResolve = ( request ) => {
+// Resolve relative to the project root.
+// Convert missing file exceptions into return values so the importer can fallback.
+const rootResolver = ( tailPath ) => {
 	try {
-		return resolver( process.cwd(), request );
+		return resolver( projectRoot, tailPath );
 	} catch {
-		return null;
+		return false;
 	}
 };
 
 // `dart-sass` custom importer
 const importer = {
 	findFileUrl( url ) {
-		// Sass handles `./` and `../` imports itself, so we skip those.
-		if ( url.startsWith( '.' ) ) {
-			return null;
-		}
 		// Strip the leading tilde.
 		url = url.replace( /^~/, '' );
+
 		// Sass treats `foo/bar` and `foo/_bar` as equivalent (partials), but
 		// enhanced-resolve doesn't. Try the literal name first, then the
 		// underscore-prefixed partial form.
 		const dir = path.dirname( url );
 		const base = path.basename( url );
 		const result =
-			tryResolve( url ) || tryResolve( dir === '.' ? `_${ base }` : `${ dir }/_${ base }` );
-		return result ? pathToFileURL( result ) : null;
+			rootResolver( url ) || rootResolver( dir === '.' ? `_${ base }` : `${ dir }/_${ base }` );
+
+		if ( result ) {
+			return pathToFileURL( result );
+		}
+
+		// If we can't resolve the module, let further importers resolve the original URL.
+		return null;
 	},
 };
 
 sass
 	.compileAsync( args.in, {
 		importers: [ importer ],
-		loadPaths: [ 'node_modules' ],
+		loadPaths: [ path.join( projectRoot, 'node_modules' ) ],
 		style: 'compressed',
 		silenceDeprecations: [ 'mixed-decls' ],
 		quietDeps: true,
