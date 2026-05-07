@@ -197,7 +197,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 				className="live-ai-assistant__status-blobs"
 				stream={ localStream }
 				isActive={ ! isMuted }
-				size={ 44 }
+				size={ 64 }
 			/>
 			<span className="screen-reader-text">{ __( 'Listening' ) }</span>
 		</>
@@ -218,7 +218,10 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 				>
 					<div className="live-ai-assistant__body" ref={ bodyScrollRef }>
 						{ showSubtitle && (
-							<div className="live-ai-assistant__subtitle" aria-live="polite">
+							<div
+								className={ clsx( 'live-ai-assistant__subtitle', { isActive: isSessionActive } ) }
+								aria-live="polite"
+							>
 								{ statusContent }
 							</div>
 						) }
