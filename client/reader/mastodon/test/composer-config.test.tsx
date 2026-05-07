@@ -169,6 +169,24 @@ describe( 'mastodonComposerConfig', () => {
 			expect( link ).not.toBeNull();
 			expect( link?.getAttribute( 'href' ) ).toBe( '/reader/mastodon/connect' );
 		} );
+
+		it.each( [
+			[ 'media_too_large', 'Image is too large. Try a smaller image (under 8 MB).' ],
+			[ 'media_unsupported_type', 'Image format isn’t supported. Try JPEG, PNG, GIF, or WebP.' ],
+			[ 'media_decode_failed', 'We couldn’t process this image. Try a different file.' ],
+			[ 'media_invalid', 'We couldn’t post this. Try a different image.' ],
+		] as const )( 'returns expected copy for kind=%s', ( kind, expected ) => {
+			const t = getTranslate();
+			const node = mastodonComposerConfig.errorMessage( { kind } as MastodonError, t );
+			const { container } = render( <span>{ node }</span> );
+			expect( container.textContent ).toBe( expected );
+		} );
+	} );
+
+	describe( 'useMedia', () => {
+		it( 'wires useMedia to useMastodonComposerMedia', () => {
+			expect( mastodonComposerConfig.useMedia ).toBeDefined();
+		} );
 	} );
 
 	describe( 'successNotice', () => {

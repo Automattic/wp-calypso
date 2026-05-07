@@ -184,7 +184,7 @@ const PodcastMain = ( { section }: PodcastMainProps ) => {
 				</Tabs.Panel>
 				<Tabs.Panel value="distribution">
 					<div className="podcast__tab-content">
-						<Distribution />
+						<Distribution onGoToSettings={ () => handleSelect( 'settings' ) } />
 					</div>
 				</Tabs.Panel>
 				<Tabs.Panel value="settings">

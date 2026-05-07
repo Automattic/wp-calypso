@@ -279,6 +279,109 @@ describe( '<ComposerModal>', () => {
 		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
 	} );
 
+	it( 'awaits a Promise returned by extendBuildParams before calling mutate', async () => {
+		const user = userEvent.setup();
+		let resolveExtend: ( v: unknown ) => void = () => {};
+		const extendPromise = new Promise( ( resolve ) => {
+			resolveExtend = resolve;
+		} );
+		const mutationFn = jest.fn( async ( params: TestParams ): Promise< TestResult > => {
+			void params;
+			return { uri: 'at://posted' };
+		} );
+
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			mutationFactory: () => mutationOptions< TestResult, TestError, TestParams >( { mutationFn } ),
+			useMedia: () => ( {
+				hasAny: false,
+				hasUploaded: true,
+				isAllUploaded: true,
+				isAnyPending: false,
+				renderGrid: () => null,
+				renderFooterTrigger: () => null,
+				extendBuildParams: () => extendPromise,
+				onPublishSuccess: () => undefined,
+				clear: () => undefined,
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		await user.type( screen.getByRole( 'textbox' ), 'hello' );
+		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
+
+		// The mutation is gated on the extendBuildParams Promise resolving.
+		expect( mutationFn ).not.toHaveBeenCalled();
+
+		await act( async () => {
+			resolveExtend( { connectionId: 7, text: 'hello', media_ids: [ 'a' ] } );
+			await extendPromise;
+		} );
+
+		await waitFor( () => expect( mutationFn ).toHaveBeenCalledTimes( 1 ) );
+		expect( mutationFn.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+			media_ids: [ 'a' ],
+		} );
+	} );
+
+	it( 'surfaces an extendBuildParams rejection as a composer error: errorMessage shown, tracks.errorShown fired, mutation.mutate not called', async () => {
+		const user = userEvent.setup();
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const errorMessageSpy = jest.fn( ( error: TestError ) => `error: ${ error.kind }` );
+
+		const mutationFn = jest.fn( async ( params: TestParams ): Promise< TestResult > => {
+			void params;
+			return { uri: 'at://posted' };
+		} );
+		const rejection: TestError = { kind: 'media_too_large' };
+
+		const config: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			mutationFactory: () => mutationOptions< TestResult, TestError, TestParams >( { mutationFn } ),
+			errorMessage: errorMessageSpy,
+			useMedia: () => ( {
+				hasAny: true,
+				hasUploaded: true,
+				isAllUploaded: true,
+				isAnyPending: false,
+				renderGrid: () => null,
+				renderFooterTrigger: () => null,
+				extendBuildParams: () => Promise.reject( rejection ),
+				onPublishSuccess: () => undefined,
+				clear: () => undefined,
+			} ),
+		};
+
+		renderModal( config );
+		act( () => openFn?.( standaloneMode ) );
+
+		await user.type( screen.getByRole( 'textbox' ), 'hello' );
+		await user.click( screen.getByRole( 'button', { name: /post/i } ) );
+
+		// User-facing error notice rendered with the rejection.
+		await screen.findByText( 'error: media_too_large' );
+
+		// errorMessage callback received the same rejection object.
+		expect( errorMessageSpy ).toHaveBeenCalledWith( rejection, expect.anything() );
+
+		// errorShown analytics fired with the rejection's kind.
+		await waitFor( () =>
+			expect( recordSpy ).toHaveBeenCalledWith(
+				'test_composer_error_standalone',
+				expect.objectContaining( { connection_id: 7, error_kind: 'media_too_large' } )
+			)
+		);
+
+		// Crucially, the mutation was never run — the rejection short-circuits
+		// the post-mutation path.
+		expect( mutationFn ).not.toHaveBeenCalled();
+
+		// Modal stays open after the error.
+		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+	} );
+
 	it( 'fires config.logBadRequest when an error of kind bad_request arrives', async () => {
 		const user = userEvent.setup();
 		const logBadRequest = jest.fn();

@@ -2,6 +2,7 @@ import { createMastodonPostMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl } from './route';
+import { useMastodonComposerMedia } from './use-mastodon-composer-media';
 import type {
 	MastodonCreatePostMutationParams,
 	MastodonCreatePostResult,
@@ -167,6 +168,7 @@ export const mastodonComposerConfig: ComposerConfig<
 			},
 		} );
 	},
+	useMedia: useMastodonComposerMedia,
 };
 
 function titleForMode( mode: ActiveMode, t: Translate ): string {
@@ -241,6 +243,14 @@ function errorMessageFor( err: MastodonError, t: Translate ): ReactNode {
 		case 'connection_not_found':
 		case 'not_found':
 			return t( 'This Mastodon connection no longer exists.' );
+		case 'media_too_large':
+			return t( 'Image is too large. Try a smaller image (under 8 MB).' );
+		case 'media_unsupported_type':
+			return t( 'Image format isn’t supported. Try JPEG, PNG, GIF, or WebP.' );
+		case 'media_decode_failed':
+			return t( 'We couldn’t process this image. Try a different file.' );
+		case 'media_invalid':
+			return t( 'We couldn’t post this. Try a different image.' );
 		case 'invalid_instance':
 		case 'unknown':
 			return t( 'Something went wrong. Please try again.' );

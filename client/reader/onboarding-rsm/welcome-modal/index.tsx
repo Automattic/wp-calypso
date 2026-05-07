@@ -1,5 +1,4 @@
 import {
-	Modal,
 	Button,
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -11,7 +10,6 @@ import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import './style.scss';
 
 interface WelcomeModalProps {
-	isOpen: boolean;
 	onClose: () => void;
 	onContinue: () => void;
 }
@@ -113,66 +111,65 @@ const renderTileImage = ( item: WelcomeTileItem ) => {
 	);
 };
 
-const WelcomeModal: React.FC< WelcomeModalProps > = ( { isOpen, onClose, onContinue } ) => {
+// Renders the body of the "welcome" step. The shared <Modal> wrapper is
+// provided by the parent (`ReaderOnboardingRsm`) so transitions between
+// steps don't unmount/remount the modal frame.
+const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue } ) => {
 	return (
-		isOpen && (
-			<Modal onRequestClose={ onClose } size="medium" className="reader-welcome-modal">
-				<VStack spacing={ 8 } className="reader-welcome-modal__content">
-					<VStack
-						spacing={ 1 }
-						className="reader-welcome-modal__intro reader-welcome-modal__animate-in reader-welcome-modal__animate-in--intro"
-					>
-						<h2 className="reader-welcome-modal__title">{ __( 'Your reading home base' ) }</h2>
-						<p className="reader-welcome-modal__subtitle">
-							<span>{ __( 'All your favorite blogs and newsletters in one focused feed.' ) }</span>
-							<br />
-							<span>
-								{ __(
-									"Discover writers you'll love, no pop-ups, no clutter, just great writing."
-								) }
-							</span>
-						</p>
-					</VStack>
-
-					<div className="reader-welcome-modal__people-grid reader-welcome-modal__animate-in reader-welcome-modal__animate-in--people">
-						<div className="reader-welcome-modal__tile-row">
-							{ publications.map( ( publication ) => (
-								<div key={ publication.name } className="reader-welcome-modal__tile">
-									{ renderTileImage( publication ) }
-									<span className="reader-welcome-modal__tile-label">{ publication.name }</span>
-								</div>
-							) ) }
-						</div>
-						<div className="reader-welcome-modal__tile-row">
-							{ bloggers.map( ( blogger ) => (
-								<div key={ blogger.name } className="reader-welcome-modal__tile">
-									{ renderTileImage( blogger ) }
-									<span className="reader-welcome-modal__tile-label">{ blogger.name }</span>
-								</div>
-							) ) }
-						</div>
-					</div>
+		<>
+			<VStack spacing={ 8 } className="reader-welcome-modal__content">
+				<VStack
+					spacing={ 1 }
+					className="reader-welcome-modal__intro reader-welcome-modal__animate-in reader-welcome-modal__animate-in--intro"
+				>
+					<h2 className="reader-welcome-modal__title">{ __( 'Your reading home base' ) }</h2>
+					<p className="reader-welcome-modal__subtitle">
+						<span>{ __( 'All your favorite blogs and newsletters in one focused feed.' ) }</span>
+						<br />
+						<span>
+							{ __( "Discover writers you'll love, no pop-ups, no clutter, just great writing." ) }
+						</span>
+					</p>
 				</VStack>
 
-				<div className="reader-onboarding-modal__footer">
-					<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
-						<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
-						<HStack
-							spacing={ 2 }
-							justify="right"
-							className="reader-onboarding-modal__footer-buttons reader-welcome-modal__footer-buttons"
-						>
-							<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
-								{ __( 'Do it later' ) }
-							</Button>
-							<Button __next40pxDefaultSize variant="primary" onClick={ onContinue }>
-								{ __( 'Pick your topics' ) }
-							</Button>
-						</HStack>
-					</HStack>
+				<div className="reader-welcome-modal__people-grid reader-welcome-modal__animate-in reader-welcome-modal__animate-in--people">
+					<div className="reader-welcome-modal__tile-row">
+						{ publications.map( ( publication ) => (
+							<div key={ publication.name } className="reader-welcome-modal__tile">
+								{ renderTileImage( publication ) }
+								<span className="reader-welcome-modal__tile-label">{ publication.name }</span>
+							</div>
+						) ) }
+					</div>
+					<div className="reader-welcome-modal__tile-row">
+						{ bloggers.map( ( blogger ) => (
+							<div key={ blogger.name } className="reader-welcome-modal__tile">
+								{ renderTileImage( blogger ) }
+								<span className="reader-welcome-modal__tile-label">{ blogger.name }</span>
+							</div>
+						) ) }
+					</div>
 				</div>
-			</Modal>
-		)
+			</VStack>
+
+			<div className="reader-onboarding-modal__footer">
+				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+					<StepIndicator totalSteps={ 3 } currentStep={ 1 } />
+					<HStack
+						spacing={ 2 }
+						justify="right"
+						className="reader-onboarding-modal__footer-buttons reader-welcome-modal__footer-buttons"
+					>
+						<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+							{ __( 'Do it later' ) }
+						</Button>
+						<Button __next40pxDefaultSize variant="primary" onClick={ onContinue }>
+							{ __( 'Pick your topics' ) }
+						</Button>
+					</HStack>
+				</HStack>
+			</div>
+		</>
 	);
 };
 

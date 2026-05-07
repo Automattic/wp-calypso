@@ -14,6 +14,8 @@ import type {
 	MastodonCreatePostResult,
 	MastodonCreateRepostParams,
 	MastodonDeleteRepostParams,
+	MastodonMediaUploadParams,
+	MastodonMediaUploadResult,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadResponse,
@@ -302,7 +304,7 @@ export async function deleteMastodonRepost( params: MastodonDeleteRepostParams )
 export async function createMastodonPost(
 	params: MastodonCreatePostParams
 ): Promise< MastodonCreatePostResult > {
-	const { connectionId, status, in_reply_to_id, quoted_status_id } = params;
+	const { connectionId, status, in_reply_to_id, quoted_status_id, media_ids, sensitive } = params;
 	const body: Record< string, unknown > = { status };
 	if ( in_reply_to_id ) {
 		body.in_reply_to_id = in_reply_to_id;
@@ -310,12 +312,47 @@ export async function createMastodonPost(
 	if ( quoted_status_id ) {
 		body.quoted_status_id = quoted_status_id;
 	}
+	if ( media_ids && media_ids.length > 0 ) {
+		body.media_ids = media_ids;
+	}
+	if ( sensitive !== undefined ) {
+		body.sensitive = sensitive;
+	}
 	try {
 		return ( await wpcom.req.post( {
 			path: `/reader/mastodon/connections/${ connectionId }/statuses`,
 			apiNamespace: NAMESPACE,
 			body,
 		} ) ) as MastodonCreatePostResult;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function uploadMastodonMedia(
+	params: MastodonMediaUploadParams
+): Promise< MastodonMediaUploadResult > {
+	const { connectionId, file, description } = params;
+	// `wpcom-xhr-request` expects each formData value to be either a primitive
+	// or a `{ fileContents, fileName }` envelope (it inspects `fileContents
+	// instanceof Blob` to decide whether to call `req.attach` vs `req.field`).
+	// Match the established pattern used by atmosphere's `uploadBlob` so the
+	// transport produces a real multipart `file` part instead of a stringified
+	// Blob field.
+	const fileName = file instanceof File && file.name ? file.name : 'blob';
+	const formData: Array<
+		[ string, string ] | [ string, { fileContents: Blob; fileName: string } ]
+	> = [ [ 'file', { fileContents: file, fileName } ] ];
+	if ( description !== undefined ) {
+		formData.push( [ 'description', description ] );
+	}
+
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ connectionId }/media`,
+			apiNamespace: NAMESPACE,
+			formData,
+		} ) ) as MastodonMediaUploadResult;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

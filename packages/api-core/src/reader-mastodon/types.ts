@@ -242,6 +242,9 @@ export interface MastodonCreatePostParams {
 	 * that support native quotes.
 	 */
 	quoted_status_id?: string;
+	// Slice 8a: optional media attachments + sensitive flag.
+	media_ids?: string[];
+	sensitive?: boolean;
 }
 
 /**
@@ -269,4 +272,26 @@ export interface MastodonCreatePostResult {
 	id: string;
 	url: string;
 	in_reply_to_id: string | null;
+}
+
+// Slice 8a: image attachments via `POST /reader/mastodon/connections/{id}/media`.
+export interface MastodonMediaUploadParams {
+	connectionId: number;
+	file: File;
+	// Alt text passed through to the instance as the `description` form field.
+	// Mastodon does not let us update alt text after upload via the wpcom backend,
+	// so this is the only opportunity to set it.
+	description?: string;
+}
+
+export interface MastodonMediaUploadResult {
+	id: string;
+	type: 'image' | 'video' | 'gifv' | 'audio' | 'unknown';
+	// `null` when the instance returns 202 (still processing). Mastodon's
+	// `POST /api/v1/statuses` accepts media_ids whose backing media is still
+	// processing — it queues the status until processing completes — so callers
+	// pass the id through regardless.
+	url: string | null;
+	preview_url: string | null;
+	description: string;
 }

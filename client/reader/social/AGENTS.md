@@ -464,7 +464,12 @@ Per-protocol `ComposerConfig` supplies:
   `onPublishSuccess` hooks). The hook MUST be a stable reference — it's
   invoked unconditionally inside the provider so React's hook-ordering
   rules apply. Atmosphere supplies `useAtmosphereComposerMedia`; Mastodon
-  leaves this undefined until its backend upload path ships.
+  supplies `useMastodonComposerMedia` (CM-676). The shared `<MediaGrid>`
+  and `<AltTextPopover>` live in `client/reader/social/composer-media/`;
+  per-protocol shells (`client/reader/<protocol>/composer-media/`) own
+  upload/state and pass predicates to the shared grid at the call site.
+  Atmosphere's protocol-local `image-grid.tsx` was removed in CM-676 in
+  favor of the shared predicate-based `<MediaGrid>`.
 
 Reply-button gate at the post card: `<PostCardCounts>` always renders
 the reply trigger when `analytics.onReplyClick` is set — there is no

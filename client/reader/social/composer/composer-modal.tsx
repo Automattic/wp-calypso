@@ -28,12 +28,28 @@ export function ComposerModal< TError, TParams, TResult >() {
 
 	const [ text, setText ] = useState( '' );
 	const [ confirmDiscard, setConfirmDiscard ] = useState( false );
+	// Holds rejections from `mediaSlot.extendBuildParams`. These are
+	// pre-mutation failures (e.g. a media upload rejecting) that need to
+	// surface through the same `errorMessage` + `tracks.errorShown` path as
+	// post-mutation failures. The slot's contract is that an async rejection
+	// is already a classified protocol error (MastodonError / AtmosphereError
+	// shape — same shape mutationFn rejects with), so we reuse `TError` here.
+	const [ extendError, setExtendError ] = useState< TError | null >( null );
+	// True while `mediaSlot.extendBuildParams` is awaiting (e.g. Mastodon
+	// uploading staged media). `mutation.isPending` is still false during
+	// that window, so without this flag a second click could fire a parallel
+	// upload + duplicate `mutation.mutate`. We OR it into `canSubmit` /
+	// the early-return guard so the Post button stays disabled until the
+	// extend resolves.
+	const [ isExtending, setIsExtending ] = useState( false );
 	const lastErrorSignatureRef = useRef< string | null >( null );
 
 	useEffect( () => {
 		if ( ! mode ) {
 			setText( '' );
 			setConfirmDiscard( false );
+			setExtendError( null );
+			setIsExtending( false );
 			mutation.reset();
 			lastErrorSignatureRef.current = null;
 		}
@@ -49,29 +65,37 @@ export function ComposerModal< TError, TParams, TResult >() {
 		dispatch( recordReaderTracksEvent( event, props ) );
 	}, [ mode, dispatch, config.tracks ] );
 
+	// Merge mutation errors with pre-mutation `extendBuildParams` rejections so
+	// both paths render through `config.errorMessage` and fire `errorShown`.
+	// `extendError` takes precedence on the (rare) chance both are non-null
+	// — a stale mutation error from a previous submit shouldn't mask a fresh
+	// extend rejection. Either way the dedup signature changes and the new
+	// event fires.
+	const displayError: TError | null = extendError ?? mutation.error ?? null;
+
 	useEffect( () => {
 		if ( ! mode ) {
 			return;
 		}
-		if ( mutation.isError && mutation.error ) {
+		if ( displayError ) {
 			// Dedup on a JSON signature so distinct kinds-with-payload
 			// (e.g. rate_limited/30 vs rate_limited/60) refire the event.
-			const signature = JSON.stringify( mutation.error );
+			const signature = JSON.stringify( displayError );
 			if ( signature !== lastErrorSignatureRef.current ) {
 				lastErrorSignatureRef.current = signature;
-				config.logBadRequest?.( mode, mutation.error );
-				const { event, props } = config.tracks.errorShown( mode, mutation.error );
+				config.logBadRequest?.( mode, displayError );
+				const { event, props } = config.tracks.errorShown( mode, displayError );
 				dispatch( recordReaderTracksEvent( event, props ) );
 			}
-		} else if ( ! mutation.isError ) {
+		} else {
 			lastErrorSignatureRef.current = null;
 		}
-	}, [ mutation.isError, mutation.error, mode, dispatch, config ] );
+	}, [ displayError, mode, dispatch, config ] );
 
 	const graphemeCount = useMemo( () => countGraphemes( text ), [ text ] );
 
 	const handleClose = useCallback( () => {
-		if ( mutation.isPending ) {
+		if ( mutation.isPending || isExtending ) {
 			return;
 		}
 		if ( text.trim().length > 0 || mediaSlot.hasAny ) {
@@ -79,29 +103,55 @@ export function ComposerModal< TError, TParams, TResult >() {
 			return;
 		}
 		closeComposer();
-	}, [ mutation.isPending, text, mediaSlot.hasAny, closeComposer ] );
+	}, [ mutation.isPending, isExtending, text, mediaSlot.hasAny, closeComposer ] );
 
 	const tooLong = graphemeCount > config.limit;
 	const empty = graphemeCount === 0;
 	// Image-only posts are allowed: when the user has at least one uploaded
 	// image, the empty-text gate doesn't block submission. Pending media (any
-	// image still compressing/uploading) blocks regardless.
+	// image still compressing/uploading) blocks regardless. `isExtending` covers
+	// the publish-time upload window for protocols that defer media uploads
+	// (Mastodon), keeping the Post button disabled while a click is in flight.
 	const canSubmit =
 		! mutation.isPending &&
+		! isExtending &&
 		! tooLong &&
 		! mediaSlot.isAnyPending &&
 		mediaSlot.isAllUploaded &&
 		( ! empty || mediaSlot.hasUploaded );
 
-	const handleSubmit = useCallback( () => {
-		if ( ! mode || mutation.isPending ) {
+	const handleSubmit = useCallback( async () => {
+		if ( ! mode || mutation.isPending || isExtending ) {
 			return;
 		}
 		if ( ! canSubmit ) {
 			return;
 		}
 		const baseParams = config.buildParams( mode, text );
-		const params = mediaSlot.extendBuildParams( baseParams ) as TParams;
+		// `extendBuildParams` may return synchronously (atmosphere) or as a
+		// Promise (mastodon, where staged media is uploaded at publish time).
+		// Awaiting in both cases keeps the call site uniform; sync returns
+		// resolve in a microtask without changing observable behaviour.
+		// A rejection here (e.g. a Mastodon media upload failing with a
+		// classified `MastodonError`) must surface through the same path as a
+		// post-mutation error: `config.errorMessage` rendered in the visible
+		// error region + `tracks.errorShown` fired. We funnel the rejection
+		// into local `extendError` state which `displayError` ORs into the
+		// rendered error and the analytics-watching effect, so the UX is
+		// indistinguishable from a `mutation.error`.
+		let params: TParams;
+		setIsExtending( true );
+		try {
+			params = ( await mediaSlot.extendBuildParams( baseParams ) ) as TParams;
+		} catch ( error ) {
+			setExtendError( error as TError );
+			return;
+		} finally {
+			setIsExtending( false );
+		}
+		// A previous extend rejection shouldn't linger across a successful
+		// retry — clear it before invoking the mutation.
+		setExtendError( null );
 		mutation.mutate( params, {
 			onSuccess: ( result ) => {
 				mediaSlot.onPublishSuccess( queryClient, result );
@@ -118,6 +168,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	}, [
 		mode,
 		mutation,
+		isExtending,
 		text,
 		canSubmit,
 		closeComposer,
@@ -137,8 +188,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 
 	const title = config.copy.title( mode, translate );
 	const placeholder = config.copy.placeholder( mode, translate, handle );
-	const errorMessage =
-		mutation.isError && mutation.error ? config.errorMessage( mutation.error, translate ) : null;
+	const errorMessage = displayError ? config.errorMessage( displayError, translate ) : null;
 
 	return (
 		<>

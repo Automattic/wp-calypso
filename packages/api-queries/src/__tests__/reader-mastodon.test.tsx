@@ -21,6 +21,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
 	createMastodonPostMutation,
+	uploadMastodonMediaMutation,
 	useAuthorizeMastodonConnectionMutation,
 	useCompleteMastodonConnectionMutation,
 	useCreateMastodonLikeMutation,
@@ -1401,5 +1402,14 @@ describe( 'useCreateMastodonRepostMutation / useDeleteMastodonRepostMutation', (
 			expect( settled?.pages[ 0 ].items[ 1 ].viewer?.reblogged ).toBe( false );
 			expect( settled?.pages[ 0 ].items[ 1 ].counts.boosts ).toBe( 2 );
 		} );
+	} );
+} );
+
+describe( 'uploadMastodonMediaMutation', () => {
+	it( 'returns mutationOptions wrapping uploadMastodonMedia', () => {
+		const opts = uploadMastodonMediaMutation();
+		expect( typeof opts.mutationFn ).toBe( 'function' );
+		// mutationKey intentionally absent — composer-config types Omit it.
+		expect( ( opts as Record< string, unknown > ).mutationKey ).toBeUndefined();
 	} );
 } );
