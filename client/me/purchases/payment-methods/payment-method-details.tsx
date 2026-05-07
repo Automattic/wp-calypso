@@ -18,6 +18,7 @@ interface Props {
 	selected?: boolean;
 	isExpired?: boolean;
 	razorpayVpa?: string;
+	retired?: boolean;
 }
 
 const PaymentMethodDetails: FunctionComponent< Props > = ( {
@@ -30,6 +31,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	paymentPartner,
 	isExpired,
 	razorpayVpa,
+	retired,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -50,9 +52,11 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 			<div className="payment-method-details__details">
 				{ razorpayVpa && <span className="payment-method-details__vpa">{ razorpayVpa }</span> }
 				<span className="payment-method-details__name">{ name }</span>
-				<span className="payment-method-details__number">
-					<PaymentMethodSummary type={ type } digits={ lastDigits } email={ email } />
-				</span>
+				{ ! retired && (
+					<span className="payment-method-details__number">
+						<PaymentMethodSummary type={ type } digits={ lastDigits } email={ email } />
+					</span>
+				) }
 
 				{ displayExpirationDate && (
 					<span className="payment-method-details__expiration-date">

@@ -1,3 +1,4 @@
+import { getRazorpayVpa } from '@automattic/api-core';
 import { CompactCard } from '@automattic/components';
 import { isCreditCard } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
@@ -29,7 +30,8 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Store
 					name={ paymentMethod.name }
 					expiry={ paymentMethod.expiry }
 					isExpired={ paymentMethod.is_expired }
-					razorpayVpa={ 'razorpay_vpa' in paymentMethod ? paymentMethod.razorpay_vpa : undefined }
+					razorpayVpa={ getRazorpayVpa( paymentMethod ) }
+					retired={ 'retired' in paymentMethod && paymentMethod.retired }
 				/>
 				{ isCreditCard( paymentMethod ) && <PaymentMethodBackupToggle card={ paymentMethod } /> }
 				<TaxInfoArea

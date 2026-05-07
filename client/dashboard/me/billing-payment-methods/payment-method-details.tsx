@@ -1,3 +1,4 @@
+import { getRazorpayVpa } from '@automattic/api-core';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../components/text';
@@ -21,11 +22,26 @@ export function PaymentMethodDetails( { paymentMethod }: { paymentMethod: Stored
 		);
 	}
 
-	if ( paymentMethod.payment_partner === 'razorpay' && 'razorpay_vpa' in paymentMethod ) {
+	const razorpayVpa = getRazorpayVpa( paymentMethod );
+	if ( razorpayVpa ) {
 		return (
 			<HStack>
 				<Text>{ __( 'Unified Payments Interface (UPI)' ) }</Text>
-				<Text>{ paymentMethod.razorpay_vpa }</Text>
+				<Text>{ razorpayVpa }</Text>
+			</HStack>
+		);
+	}
+
+	// Generic catchall for retired rows whose partner doesn't match a
+	// dedicated branch above. After back-end retirement, the partner-specific
+	// top-level fields are gone (replaced by `display_meta`), so the prior
+	// branches (card / paypal / razorpay) wouldn't match. Falling through to
+	// `null` would render a blank cell in the payment-methods list. Showing
+	// the user's saved name keeps the row identifiable.
+	if ( 'retired' in paymentMethod && paymentMethod.retired ) {
+		return (
+			<HStack>
+				<Text>{ paymentMethod.name || __( 'Saved payment method' ) }</Text>
 			</HStack>
 		);
 	}
