@@ -28,16 +28,6 @@ interface SiteActionInterstitialProps {
 	actionType: 'cancel' | 'remove' | 'renew';
 }
 
-function getVerb( actionType: string, translate: ReturnType< typeof useTranslate > ) {
-	if ( actionType === 'renew' ) {
-		return translate( 'renew' );
-	}
-	if ( actionType === 'cancel' ) {
-		return translate( 'cancel' );
-	}
-	return translate( 'remove' );
-}
-
 export default function SiteActionInterstitial( {
 	purchaseId,
 	siteSlug,
@@ -168,8 +158,6 @@ export default function SiteActionInterstitial( {
 	const isRemove = actionType === 'remove';
 	const siteName = purchase.domain ?? siteSlug;
 	const productName = getName( purchase );
-	const noun = isRemove ? translate( 'upgrades' ) : translate( 'subscriptions' );
-	const verb = getVerb( actionType, translate );
 
 	let buttonLabel: string;
 	let isDestructive = false;
@@ -184,12 +172,23 @@ export default function SiteActionInterstitial( {
 		isDestructive = true;
 	}
 
-	const description = translate(
-		'Your site %(siteName)s has other %(noun)s. Select any you\u2019d like to %(verb)s along with %(productName)s.',
-		{
-			args: { siteName, productName, noun, verb },
-		}
-	) as string;
+	let description: string;
+	if ( actionType === 'renew' ) {
+		description = translate(
+			'Your site %(siteName)s has other subscriptions. Select any you\u2019d like to renew along with %(productName)s.',
+			{ args: { siteName, productName } }
+		) as string;
+	} else if ( actionType === 'cancel' ) {
+		description = translate(
+			'Your site %(siteName)s has other subscriptions. Select any you\u2019d like to cancel along with %(productName)s.',
+			{ args: { siteName, productName } }
+		) as string;
+	} else {
+		description = translate(
+			'Your site %(siteName)s has other upgrades. Select any you\u2019d like to remove along with %(productName)s.',
+			{ args: { siteName, productName } }
+		) as string;
+	}
 
 	const getRenewalText = ( p: Purchase ) => {
 		if ( isRemove ) {
