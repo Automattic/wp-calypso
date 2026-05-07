@@ -82,7 +82,7 @@ function FeatureClipPanel(): JSX.Element {
 			</span>
 			<span className="image-studio-feature-clip-panel__title-line">
 				{ __( 'Feature Clip', __i18n_text_domain__ ) }
-				<ExperimentalBadge variant="light" withTooltip />
+				<ExperimentalBadge variant="light" />
 			</span>
 		</span>
 	);
