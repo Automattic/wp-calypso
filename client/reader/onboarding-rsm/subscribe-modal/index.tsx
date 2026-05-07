@@ -86,6 +86,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const recommendationsRef = useRef( recommendations );
 	recommendationsRef.current = recommendations;
 
+	// Tracks which feeds we've already kicked off a stream prefetch for. `requestPage` forces a
+	// network fetch (staleTime=0 in the thunk), so re-dispatching it for the same feed every time
+	// `recommendations` grows would N×-amplify requests as cards trickle in from validation.
+	const prefetchedFeedIdsRef = useRef< Set< number > >( new Set() );
+
 	const handleLoadMore = useCallback( () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }clicked_load_more`, {
 			page: currentPage,
@@ -93,34 +98,24 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	// Prefetch stream pages for validated recommendations (what the user can select).
+	// Prefetch a stream page for every newly-validated recommendation, exactly once per feed.
 	useEffect( () => {
 		const sites = recommendationsRef.current;
-		if ( sites.length === 0 ) {
-			return;
-		}
-		dispatch(
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			requestPage( { streamKey: `feed:${ sites[ 0 ].feed_ID }` } as any )
-		);
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by id list, not array identity
-	}, [ recommendationIdsKey, dispatch ] );
-
-	useEffect( () => {
-		const sites = recommendationsRef.current;
-		if ( sites.length === 0 ) {
-			return;
-		}
-		sites.forEach( ( site ) => {
+		for ( const site of sites ) {
+			if ( prefetchedFeedIdsRef.current.has( site.feed_ID ) ) {
+				continue;
+			}
+			prefetchedFeedIdsRef.current.add( site.feed_ID );
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
-		} );
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by id list, not array identity
 	}, [ recommendationIdsKey, dispatch ] );
 
 	useEffect( () => {
 		setCurrentPage( 0 );
 		setSelectedSite( null );
+		prefetchedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
 
 	useEffect( () => {

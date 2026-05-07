@@ -15,6 +15,14 @@ import {
 import { ReaderFollowItem } from 'calypso/state/reader/follows/selectors/types';
 import { AppState } from 'calypso/types';
 
+/**
+ * Narrow shape of `state.reader.feeds.items` and `state.reader.sites.items` used in this hook.
+ * The reader feeds/sites slices are JS modules with no exported TS types, and `AppState` is a
+ * permissive `any` alias in this codebase, so we declare exactly the fields we read here. This
+ * keeps the validation gate honest if the underlying shape ever changes.
+ */
+type ReaderItemMap = Record< number, { is_error?: boolean } | undefined >;
+
 const getReaderFollowingItemsRaw = createSelector(
 	( state: AppState ): ReaderFollowItem[] => {
 		const items = state.reader?.follows?.items;
@@ -229,12 +237,10 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	}, [ combinedRecommendations, dispatch, feedQueriesStateKey ] );
 
 	const readerFeedItems = useSelector(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( state: object ) => ( state as any ).reader?.feeds?.items ?? {}
+		( state: AppState ): ReaderItemMap => state.reader?.feeds?.items ?? {}
 	);
 	const readerSiteItems = useSelector(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( state: object ) => ( state as any ).reader?.sites?.items ?? {}
+		( state: AppState ): ReaderItemMap => state.reader?.sites?.items ?? {}
 	);
 
 	/**
