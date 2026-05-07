@@ -1416,11 +1416,11 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
-	const darkModeEnabled = isLoggedIn && ! props.isSiteRoute;
+	const colorSchemeEnabled = ! props.isSiteRoute;
 
 	const themeSheet = (
 		<>
-			{ darkModeEnabled && <BodySectionCssClass bodyClass={ [ 'is-themes-dark-mode' ] } /> }
+			{ colorSchemeEnabled && <BodySectionCssClass bodyClass={ [ 'is-themes-dark-mode' ] } /> }
 			<ConnectedThemeSheet
 				{ ...props }
 				themeTier={ themeTier }
@@ -1436,7 +1436,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		</>
 	);
 
-	if ( darkModeEnabled ) {
+	if ( colorSchemeEnabled ) {
 		return <ThemesColorSchemeProvider>{ themeSheet }</ThemesColorSchemeProvider>;
 	}
 

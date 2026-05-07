@@ -1,261 +1,146 @@
 @import '../../dashboard/app/dark-theme';
 
-@mixin themes-dark-mode-root {
+@mixin themes-dark-mode-color-scheme {
 	@include dashboard-dark-theme;
+	@include dashboard-dark-theme-color-palette-alias( 'color-primary', 'studio-blue' );
+	@include dashboard-dark-theme-color-palette-alias( 'color-accent', 'studio-wordpress-blue' );
+	@include dashboard-dark-theme-color-palette-alias( 'theme-highlight-color', 'color-accent' );
+	@include dashboard-dark-theme-color-palette(
+		'color-success',
+		var( --dashboard__foreground-color-success )
+	);
+	@include dashboard-dark-theme-color-palette(
+		'color-warning',
+		var( --dashboard__foreground-color-warning )
+	);
+	@include dashboard-dark-theme-color-palette(
+		'color-error',
+		var( --dashboard__foreground-color-error )
+	);
 
-	.layout__content,
-	.theme-showcase,
-	.theme-card {
-		background-color: var( --dashboard__background-color );
-		color: var( --dashboard__text-color );
-	}
+	--color-primary-dark: var( --color-primary-70 );
+	--color-primary-light: var( --color-primary-30 );
+	--color-accent-dark: var( --color-accent-70 );
+	--color-accent-light: var( --color-accent-30 );
+	--color-neutral-10: var( --dashboard__text-muted-color );
+	--color-neutral-dark: var( --color-neutral-70 );
+	--color-neutral-light: var( --dashboard__text-muted-color );
+	--color-neutral-70: var( --dashboard__text-color );
+	--color-success-dark: var( --color-success-70 );
+	--color-success-light: var( --color-success-30 );
+	--color-warning-dark: var( --color-warning-70 );
+	--color-warning-light: var( --color-warning-30 );
+	--color-error-dark: var( --color-error-70 );
+	--color-error-light: var( --color-error-30 );
+	--color-main-background: var( --dashboard__background-color );
+	--color-surface: var( --dashboard-surface__background-color );
+	--color-surface-backdrop: var( --dashboard__background-color );
+	--color-text: var( --dashboard__text-color );
+	--color-text-subtle: var( --dashboard__text-muted-color );
+	--color-text-inverted: var( --wp-components-color-accent-inverted );
+	--color-border: var( --dashboard-surface__border-color );
+	--color-border-subtle: var( --dashboard-surface__border-color );
+	--color-border-shadow: var( --dashboard-surface__border-color );
+	--color-border-inverted: var( --wp-components-color-accent-inverted );
+	--color-border-secondary: var( --dashboard-surface__border-color );
+	--color-link: var( --wp-admin-theme-color-darker-20 );
+	--color-link-dark: var( --wp-admin-theme-color-darker-10 );
+	--color-link-light: var( --wp-admin-theme-color );
+	--color-print: var( --dashboard-item-selected__background-color );
+	--theme-text-color: var( --dashboard__text-color );
+	--theme-base-color: var( --dashboard__background-color );
+	--theme-submenu-text-color: var( --dashboard__text-muted-color );
+	--theme-submenu-background-color: var( --dashboard-surface__background-color );
+	--theme-icon-color: var( --dashboard__text-muted-color );
+	--theme-notification-color: var( --wp-admin-theme-color );
+	--color-masterbar-background: var( --theme-base-color );
+	--color-masterbar-border: var( --dashboard-surface__border-color );
+	--color-masterbar-text: var( --theme-text-color );
+	--color-masterbar-submenu-text: var( --theme-submenu-text-color );
+	--color-masterbar-icon: var( --theme-icon-color );
+	--color-masterbar-highlight: var( --theme-text-color );
+	--color-masterbar-unread-dot-background: var( --theme-notification-color );
+	--color-masterbar-item-hover-background: var( --theme-submenu-background-color );
+	--color-masterbar-item-active-background: var( --dashboard-item-selected__background-color );
+	--color-masterbar-submenu-hover-text: var( --theme-text-color );
+	--color-masterbar-item-new-editor-background: var( --color-neutral-50 );
+	--color-masterbar-item-new-editor-hover-background: var( --color-neutral-60 );
+	--color-masterbar-toggle-drafts-editor-background: var( --color-neutral-60 );
+	--color-masterbar-toggle-drafts-editor-hover-background: var( --color-neutral-40 );
+	--color-masterbar-toggle-drafts-editor-border: var( --color-neutral-10 );
+	--color-checkout-masterbar-background: var( --theme-base-color );
+	--color-checkout-masterbar-text: var( --theme-text-color );
+	--color-checkout-masterbar-item-hover-background: var( --theme-submenu-background-color );
+	--color-checkout-masterbar-item-active-background: var(
+		--dashboard-item-selected__background-color
+	);
+	--color-sidebar-background: var( --theme-base-color );
+	--color-sidebar-border: var( --dashboard-surface__border-color );
+	--color-sidebar-text: var( --theme-text-color );
+	--color-sidebar-text-alternative: var( --dashboard__text-muted-color );
+	--color-sidebar-gridicon-fill: var( --dashboard__text-muted-color );
+	--color-sidebar-gridicon-hover-fill: var( --wp-admin-theme-color-darker-20 );
+	--color-sidebar-gridicon-selected-fill: var( --theme-text-color );
+	--color-sidebar-notice-background: var( --dashboard-surface__background-color );
+	--color-sidebar-menu-selected-background: var( --dashboard-item-selected__background-color );
+	--color-sidebar-menu-selected-text: var( --theme-text-color );
+	--color-sidebar-menu-hover-background: var( --dashboard-item-selected-hover__background-color );
+	--color-sidebar-menu-hover-text: var( --theme-text-color );
+	--color-sidebar-submenu-background: var( --theme-submenu-background-color );
+	--color-sidebar-submenu-text: var( --theme-submenu-text-color );
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: var( --wp-admin-theme-color-darker-20 );
+	--color-sidebar-submenu-selected-background: transparent;
+	--color-sidebar-submenu-selected-text: var( --theme-text-color );
+	--color-sidebar-submenu-selected-hover-text: var( --color-sidebar-submenu-hover-text );
+	--color-navredesign-sidebar-submenu-text: var( --color-sidebar-submenu-text );
+	--color-navredesign-sidebar-menu-selected-text: var( --theme-text-color );
+	--color-navredesign-sidebar-submenu-selected-text: var( --theme-text-color );
+	--color-navredesign-sidebar-submenu-hover-text: var( --wp-admin-theme-color-darker-20 );
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(
+		--color-sidebar-submenu-hover-text
+	);
+	--color-wp-admin-button-background: var( --wp-admin-theme-color );
+	--color-wp-admin-button-border: var( --wp-admin-theme-color-darker-20 );
+}
 
-	.theme-collection__container,
-	.search-themes-card,
-	.search-themes-card .search,
-	.search-themes-card .search__input,
-	.search-themes-card .search__input:disabled,
-	.search-themes-card .search__icon-navigation,
-	.search-themes-card .search-themes-card__icon,
-	.search-themes-card .spinner,
-	.search-themes-card .keyed-suggestions {
-		background-color: var( --dashboard-surface__background-color );
-		color: var( --dashboard__text-color );
-	}
+@mixin themes-dark-mode-root {
+	@include themes-dark-mode-color-scheme;
 
-	.search-themes-card .search,
-	.search-themes-card .keyed-suggestions,
-	.theme-card__image-container {
-		border-color: var( --dashboard-surface__border-color );
-	}
+	#wpnc-panel .color-scheme.is-global {
+		@include themes-dark-mode-color-scheme;
 
-	.theme-showcase__all-themes-title,
-	.theme-collection__title,
-	.theme-collection__see-all,
-	.theme-card__info-title {
-		color: var( --dashboard__text-color );
-	}
+		--color-primary: var( --wp-admin-theme-color-darker-20 );
+		--color-secondary: var( --wp-admin-theme-color-darker-20 );
+		--color-neutral-40: var( --dashboard__text-muted-color );
 
-	.theme-showcase__all-themes-description,
-	.theme-collection__description,
-	.theme-tier-badge__without-background.theme-tier-badge__content,
-	.theme-card__info-options,
-	.theme-card__info-description {
-		color: var( --dashboard__text-muted-color );
-	}
-
-	.theme__search-input,
-	.search-themes-card {
-		.components-input-base,
-		.components-input-control__container {
-			background: var( --dashboard-surface__background-color );
-			color: var( --dashboard__text-color );
-		}
-
-		.components-input-control__prefix {
-			color: var( --dashboard__text-muted-color );
-		}
-
-		.components-input-control__input {
-			background: var( --dashboard-surface__background-color );
-			color: var( --dashboard__text-color );
-
-			&::placeholder {
-				color: var( --dashboard__text-muted-color );
-			}
-		}
-
-		.components-input-control__backdrop {
-			border-color: var( --dashboard-field__border-color );
-			box-shadow: none;
-		}
-	}
-
-	.themes-toolbar-group.responsive-toolbar-group__dropdown,
-	.themes-toolbar-group.responsive-toolbar-group__swipe {
-		.components-toolbar .components-button {
-			background-color: transparent;
-			color: var( --dashboard__text-color );
-
-			&::before {
-				background-color: transparent;
-				box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
-			}
-
-			&.is-pressed,
-			&.is-selected {
-				color: var( --wp-admin-theme-color-darker-20 );
-			}
-
-			&.is-pressed::before,
-			&.is-selected::before {
-				background-color: var( --dashboard-item-selected__background-color );
-				box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-20 );
-			}
-
-			&:not( .is-pressed ):hover,
-			&:not( .is-pressed ):focus {
-				color: var( --wp-admin-theme-color-darker-20 );
-
-				&::before {
-					background-color: var( --dashboard-item-selected-hover__background-color );
-					box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-20 );
-				}
-			}
-		}
-
-		.responsive-toolbar-group__menu-item.components-button {
-			color: var( --dashboard__text-color );
-
-			&:hover,
-			&:focus,
-			&.is-selected {
-				background: var( --dashboard-item-selected-hover__background-color );
-				color: var( --wp-admin-theme-color-darker-20 );
-			}
-		}
-	}
-
-	.theme-site-selector-modal {
-		.components-modal__header {
-			border-bottom-color: var( --dashboard-surface__border-color );
-		}
-
-		.components-modal__header-heading,
-		.theme-site-selector-modal__content > p {
-			color: var( --dashboard__text-color );
-		}
-
-		.components-modal__header .components-button {
-			color: var( --dashboard__text-muted-color );
-
-			&:hover,
-			&:focus {
-				color: var( --dashboard__text-color );
-			}
-		}
-
-		.site-selector__sites {
-			background: var( --dashboard-surface__background-color );
-			border-top-color: var( --dashboard-surface__border-color );
-		}
-
-		.site-selector {
-			.site.is-highlighted,
-			.all-sites.is-highlighted,
-			&.is-hover-enabled .site:hover,
-			&.is-hover-enabled .all-sites:hover {
-				background-color: var( --dashboard-item-selected__background-color );
-			}
-
-			.site__title,
-			.site.is-highlighted .site__title,
-			&.is-hover-enabled .site:hover .site__title {
-				color: var( --dashboard__text-color );
-			}
-
-			.site__domain,
-			.site.is-highlighted .site__domain,
-			&.is-hover-enabled .site:hover .site__domain {
-				color: var( --dashboard__text-muted-color );
-			}
-
-			.site__badge.site__badge-private,
-			.site__badge.site__badge-coming-soon,
-			&.is-hover-enabled .site:hover .site__badge.site__badge-private,
-			&.is-hover-enabled .site:hover .site__badge.site__badge-coming-soon {
-				background-color: transparent;
-				border-color: color-mix( in srgb, currentColor 70%, transparent );
-				color: var( --dashboard__text-muted-color );
-			}
+		.wpnc__store_order .wpnc__image {
+			filter: invert( 1 );
 		}
 	}
 
-	&.is-section-theme {
-		.layout__content,
-		.layout__primary > *,
-		.main.theme__sheet,
-		.theme__sheet .navigation-header {
-			background-color: var( --dashboard__background-color );
-			color: var( --dashboard__text-color );
-		}
+	.community-translator.is-incompatible {
+		--color-neutral-20: var( --dashboard__text-muted-color );
+	}
 
-		.layout__primary > * {
-			border-color: var( --dashboard-surface__border-color );
-		}
+	.navigation-header .breadcrumbs {
+		--studio-gray-50: var( --dashboard__text-muted-color );
+		--studio-gray-80: var( --dashboard__text-color );
+		--studio-gray-100: var( --dashboard__text-color );
+	}
 
-		.theme__sheet-features .card {
-			background-color: transparent;
-		}
+	.global-styles-variations__header {
+		--studio-gray-50: var( --dashboard__text-muted-color );
+		--studio-gray-100: var( --dashboard__text-color );
+		--color-neutral-60: var( --dashboard__text-muted-color );
 
-		.theme__sheet-features-list a,
-		.theme__sheet-content code {
-			background-color: var( --dashboard-surface__background-color );
-			border: 1px solid var( --dashboard-surface__border-color );
-			color: var( --dashboard__text-color );
+		.premium-badge {
+			--studio-black: var( --dashboard-surface__background-color );
+			--studio-white: var( --dashboard__text-color );
 		}
+	}
 
-		.theme__sheet-features-list a:hover,
-		.theme__sheet-features-list a:focus {
-			background-color: var( --dashboard-item-selected-hover__background-color );
-			border-color: var( --color-link-dark );
-			color: var( --color-link-dark );
-		}
-
-		.theme__sheet-content p a,
-		.theme__sheet-content p a:visited {
-			color: var( --wp-admin-theme-color-darker-20 );
-		}
-
-		.theme__sheet-content p a:hover,
-		.theme__sheet-content p a:focus {
-			color: var( --wp-admin-theme-color-darker-10 );
-		}
-
-		.theme__sheet-web-preview,
-		.theme__sheet-screenshot {
-			background-color: var( --dashboard-surface__background-color );
-			box-shadow:
-				0 0 0 1px var( --dashboard-surface__border-color ),
-				0 12px 28px rgba( 0, 0, 0, 0.28 );
-		}
-
-		.theme-download-card__external-icon,
-		.theme-download-card__external-icon path {
-			fill: currentColor;
-		}
-
-		.theme-download-card .gridicon,
-		.theme__sheet-card-support .gridicon {
-			color: var( --dashboard__text-muted-color );
-			fill: currentColor;
-		}
-
-		.theme-download-card .button,
-		.theme__sheet-demo-button.button {
-			&,
-			&:visited,
-			&:hover,
-			&:focus {
-				background: transparent;
-				border-color: var( --dashboard-field__border-color );
-				color: var( --dashboard__text-color );
-			}
-		}
-
-		.theme__sheet-card-support .components-button.is-secondary {
-			background: transparent;
-			border-color: currentColor;
-			color: var( --wp-admin-theme-color-darker-20 );
-			box-shadow: inset 0 0 0 1px currentColor !important;
-
-			&:hover,
-			&:focus,
-			&:focus-visible {
-				background: var( --dashboard-item-selected__background-color );
-				border-color: currentColor;
-				box-shadow: inset 0 0 0 1px currentColor !important;
-			}
-		}
+	.themes.is-logged-out {
+		--color-surface-backdrop: var( --studio-blue-5 );
 	}
 }

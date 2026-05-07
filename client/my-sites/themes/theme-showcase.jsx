@@ -722,10 +722,10 @@ class ThemeShowcase extends Component {
 		const showThemeErrors =
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
-		const darkModeEnabled = isLoggedIn && ! this.props.isSiteRoute;
+		const colorSchemeEnabled = ! this.props.isSiteRoute;
 		const showcase = (
 			<div className={ classnames }>
-				{ darkModeEnabled && <BodySectionCssClass bodyClass={ [ 'is-themes-dark-mode' ] } /> }
+				{ colorSchemeEnabled && <BodySectionCssClass bodyClass={ [ 'is-themes-dark-mode' ] } /> }
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
@@ -878,7 +878,7 @@ class ThemeShowcase extends Component {
 			</div>
 		);
 
-		if ( darkModeEnabled ) {
+		if ( colorSchemeEnabled ) {
 			return <ThemesColorSchemeProvider>{ showcase }</ThemesColorSchemeProvider>;
 		}
 
