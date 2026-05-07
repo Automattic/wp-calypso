@@ -130,7 +130,11 @@ describe( 'Purchase Management Buttons', () => {
 			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
 
-		const store = createMockReduxStoreForPurchase( { ...purchase, is_auto_renew_enabled: true } );
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			is_auto_renew_enabled: true,
+			is_rechargeable: true,
+		} );
 
 		render(
 			<QueryClientProvider client={ queryClient }>
