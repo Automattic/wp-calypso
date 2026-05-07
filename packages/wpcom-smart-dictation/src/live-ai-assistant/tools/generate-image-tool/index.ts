@@ -132,6 +132,31 @@ function parseArgs( rawArgs: unknown ): ParsedArgs | { error: string } {
 	}
 }
 
+/**
+ * If the user opened the image picker before asking us to generate, dismiss it
+ * so the running indicator and (eventually) the inserted block aren't obscured
+ * by the modal grid. The picker stores its state on `window.__dictationImagePicker`
+ * and listens for the `dictation-image-picker-update` event to re-render.
+ */
+function closeImagePickerIfOpen() {
+	const w = window as unknown as {
+		__dictationImagePicker?: {
+			isOpen: boolean;
+			images: unknown[];
+			selectedNumber: number | null;
+			purpose: string;
+		};
+	};
+	const state = w.__dictationImagePicker;
+	if ( ! state || ! state.isOpen ) {
+		return;
+	}
+	state.isOpen = false;
+	state.images = [];
+	state.selectedNumber = null;
+	window.dispatchEvent( new CustomEvent( 'dictation-image-picker-update' ) );
+}
+
 interface ResolvedTarget {
 	clientId: string;
 	/** True when we inserted a fresh block ourselves; the caller may want to clean it up on failure. */
@@ -178,6 +203,8 @@ export async function executeGenerateImageTool( rawArgs: unknown ) {
 	if ( 'error' in parsed ) {
 		return { ok: false, error: parsed.error };
 	}
+
+	closeImagePickerIfOpen();
 
 	let clientId: string;
 	let weInsertedTheBlock = false;

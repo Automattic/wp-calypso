@@ -245,9 +245,12 @@ export async function executePickImageTool( rawArgs: unknown ) {
 					'A grid of numbered images is now visible to the user. ' +
 					'Tell them to say a number (1–' +
 					images.length +
-					') to pick one, or say "upload" to upload a new image from their computer. ' +
+					') to pick one, "upload" to upload a new image from their computer, ' +
+					'or "generate" / "draw" / "make me an image of …" to create one with AI. ' +
 					'When they say a number, call this tool again with action "select" and that number. ' +
-					'When they say "upload", call this tool with action "upload".',
+					'When they say "upload", call this tool with action "upload". ' +
+					'When they ask to generate / draw / make / create an image, call generate_image_tool ' +
+					'with a vivid English prompt — that tool closes the picker automatically.',
 			};
 		} catch ( err ) {
 			return {

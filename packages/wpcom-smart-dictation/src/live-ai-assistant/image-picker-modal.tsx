@@ -42,7 +42,7 @@ export function ImagePickerModal( { state }: ImagePickerModalProps ) {
 						: __( 'Pick an image — say a number' ) }
 				</span>
 				<span className="dictation-image-picker__hint">
-					{ __( 'or say "upload" to add a new image' ) }
+					{ __( 'or say "upload" to add your own, or "generate" to create a new one' ) }
 				</span>
 			</div>
 			<div className="dictation-image-picker__grid">
