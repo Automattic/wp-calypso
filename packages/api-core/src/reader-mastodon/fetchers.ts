@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
-import { classifyMastodonError } from './errors';
+import { classifyMastodonError, type MastodonError } from './errors';
 import type {
+	MastodonAuthStatus,
 	MastodonCreateLikeParams,
 	MastodonDeleteLikeParams,
 	MastodonAuthorFeedFilter,
@@ -82,6 +83,30 @@ export async function getMastodonConnection( id: number ): Promise< MastodonConn
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
+}
+
+export async function getMastodonAuthStatus( id: number ): Promise< MastodonAuthStatus > {
+	let raw: unknown;
+	try {
+		raw = await wpcom.req.get( {
+			path: `/reader/mastodon/connections/${ id }/auth-status`,
+			apiNamespace: NAMESPACE,
+		} );
+	} catch ( err ) {
+		throw classifyMastodonError( err );
+	}
+	// Validate the wire shape rather than blindly casting. A backend response
+	// where `needs_reauth` is missing / non-boolean would otherwise type as
+	// `MastodonAuthStatus` with `needs_reauth: undefined`, and the gate's
+	// `!== true` check would silently treat it as healthy.
+	if (
+		typeof raw !== 'object' ||
+		raw === null ||
+		typeof ( raw as { needs_reauth?: unknown } ).needs_reauth !== 'boolean'
+	) {
+		throw { kind: 'unknown', cause: raw } satisfies MastodonError;
+	}
+	return raw as MastodonAuthStatus;
 }
 
 export async function getMastodonInstanceConfig(

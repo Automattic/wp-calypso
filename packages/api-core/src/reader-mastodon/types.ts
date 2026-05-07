@@ -311,3 +311,7 @@ export interface MastodonMediaUploadResult {
 	preview_url: string | null;
 	description: string;
 }
+
+export interface MastodonAuthStatus {
+	needs_reauth: boolean;
+}

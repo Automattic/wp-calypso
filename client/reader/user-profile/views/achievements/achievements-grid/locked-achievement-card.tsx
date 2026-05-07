@@ -7,5 +7,13 @@ export default function LockedAchievementCard( { entry }: { entry: LockedAchieve
 		return <SecretAchievementCard locked />;
 	}
 
-	return <AchievementCard locked title={ entry.name } description={ entry.description } />;
+	return (
+		<AchievementCard
+			locked
+			title={ entry.name }
+			description={ entry.description }
+			progressCurrent={ entry.progress }
+			progressTarget={ entry.target }
+		/>
+	);
 }

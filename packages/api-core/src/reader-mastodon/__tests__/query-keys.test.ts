@@ -80,3 +80,23 @@ describe( 'readerMastodonKeys.tagFeed', () => {
 		] );
 	} );
 } );
+
+describe( 'readerMastodonKeys.authStatus', () => {
+	it( 'authStatus key includes the connection id', () => {
+		expect( readerMastodonKeys.authStatus( 42 ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'auth-status',
+			42,
+		] );
+	} );
+
+	it( 'authStatus key with null id keeps the slot for cache parity', () => {
+		expect( readerMastodonKeys.authStatus( null ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'auth-status',
+			null,
+		] );
+	} );
+} );
