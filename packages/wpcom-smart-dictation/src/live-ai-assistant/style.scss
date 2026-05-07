@@ -393,6 +393,16 @@
 		border-color 0.15s ease,
 		transform 0.15s ease;
 	background: #1e1e1e;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+
+	&:hover:not( .is-selected ),
+	&:focus-visible {
+		border-color: rgba( 56, 88, 233, 0.6 );
+		transform: scale( 1.02 );
+		outline: none;
+	}
 
 	&.is-selected {
 		border-color: #3858e9;

@@ -65,11 +65,16 @@ export function ImagePickerModal( { state }: ImagePickerModalProps ) {
 					const num = i + 1;
 					const isSelected = state.selectedNumber === num;
 					return (
-						<div
+						<button
+							type="button"
 							key={ img.id }
 							className={ clsx( 'dictation-image-picker__cell', {
 								'is-selected': isSelected,
 							} ) }
+							onClick={ () => handleGridCellClick( num ) }
+							aria-label={
+								img.alt || img.title ? `${ img.alt || img.title } (${ num })` : `Image ${ num }`
+							}
 						>
 							<img
 								src={ img.thumbnail }
@@ -84,12 +89,22 @@ export function ImagePickerModal( { state }: ImagePickerModalProps ) {
 							>
 								{ num }
 							</span>
-						</div>
+						</button>
 					);
 				} ) }
 			</div>
 		</div>
 	);
+}
+
+function handleGridCellClick( number: number ) {
+	const notify = window.sendToDictation;
+	if ( notify ) {
+		void notify(
+			`[The user clicked image ${ number } in the picker. Silently call pick_image_tool with ` +
+				`action "select" and number ${ number }. Do not speak; just call the tool.]`
+		);
+	}
 }
 
 interface ImagePickerMenuProps {
@@ -107,6 +122,53 @@ function closeMenuState() {
 		window.dispatchEvent( new CustomEvent( 'dictation-image-picker-update' ) );
 	}
 }
+
+const UploadIcon = () => (
+	<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<path
+			d="M12 4v11m0-11l-4 4m4-4l4 4M5 17v2a2 2 0 002 2h10a2 2 0 002-2v-2"
+			stroke="currentColor"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
+const MediaLibraryIcon = () => (
+	<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<rect x="3.5" y="5.5" width="17" height="13" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+		<circle cx="9" cy="10.5" r="1.5" fill="currentColor" />
+		<path
+			d="M4 17l4.5-4.5 3 3 4-4L20 17"
+			stroke="currentColor"
+			strokeWidth="1.6"
+			strokeLinejoin="round"
+			fill="none"
+		/>
+	</svg>
+);
+
+const GenerateIcon = () => (
+	<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<path
+			d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"
+			stroke="currentColor"
+			strokeWidth="1.4"
+			strokeLinejoin="round"
+			fill="currentColor"
+			fillOpacity="0.15"
+		/>
+		<path
+			d="M18.5 15l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8z"
+			stroke="currentColor"
+			strokeWidth="1.4"
+			strokeLinejoin="round"
+			fill="currentColor"
+			fillOpacity="0.15"
+		/>
+	</svg>
+);
 
 function ImagePickerMenu( { purpose }: ImagePickerMenuProps ) {
 	const title = purpose === 'featured_image' ? __( 'Add a featured image' ) : __( 'Add an image' );
