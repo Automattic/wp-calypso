@@ -7,7 +7,7 @@ import page from '@automattic/calypso-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
@@ -15,6 +15,7 @@ import { ConnectionReauthGate } from 'calypso/reader/social';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { buildMastodonReconnectUrl } from './build-mastodon-reconnect-url';
 import { mastodonComposerConfig } from './composer-config';
 import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
@@ -60,6 +61,35 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	// error invalidates auth-status so the gate refetches and re-renders.
 	useMastodonAuthStatusInvalidator( connection?.id ?? 0 );
 
+	// Top-level read of auth-status so this component can fire the
+	// gate-shown Tracks event. The gate also calls
+	// `useMastodonAuthStatusForGate` (same query under the hood); React
+	// Query dedupes by key, so this is one fetch — not two.
+	const authStatus = useMastodonAuthStatusQuery( connection?.id ?? 0 );
+
+	const gateShownConnectionId = useRef< number | null >( null );
+	useEffect( () => {
+		if ( ! connection ) {
+			return;
+		}
+		if (
+			authStatus.data?.needs_reauth === true &&
+			gateShownConnectionId.current !== connection.id
+		) {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_reauth_gate_shown', {
+					provider: 'mastodon',
+					connection_id: connection.id,
+					trigger: 'auth-status',
+				} )
+			);
+			gateShownConnectionId.current = connection.id;
+		}
+		// connection.id is the load-bearing identity here; we don't want
+		// to refire on connection-object identity churn from React Query.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ connection?.id, authStatus.data?.needs_reauth, dispatch ] );
+
 	useEffect( () => {
 		if ( isPending ) {
 			return;
@@ -86,6 +116,12 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		dispatch(
 			successNotice( translate( '%s reconnected', { args: connection.handle } ), {
 				duration: 5000,
+			} )
+		);
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_reauth_completed', {
+				provider: 'mastodon',
+				connection_id: connection.id,
 			} )
 		);
 		params.delete( 'reconnected' );
@@ -134,6 +170,14 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 							{ strong: <strong /> }
 						) }
 						buttonLabel={ translate( 'Reconnect on %s', { args: connection.instance } ) as string }
+						onReconnectClick={ () =>
+							dispatch(
+								recordReaderTracksEvent( 'calypso_reader_reauth_button_clicked', {
+									provider: 'mastodon',
+									connection_id: connection.id,
+								} )
+							)
+						}
 					>
 						{ renderTab( tab, connection ) }
 					</ConnectionReauthGate>

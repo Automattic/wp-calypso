@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ConnectionReauthGate } from '../connection-reauth-gate';
 
 describe( 'ConnectionReauthGate', () => {
@@ -70,5 +71,23 @@ describe( 'ConnectionReauthGate', () => {
 			</ConnectionReauthGate>
 		);
 		expect( useAuthStatus ).toHaveBeenCalledWith( 42 );
+	} );
+
+	it( 'calls onReconnectClick when the reconnect link is activated (mousedown)', async () => {
+		const user = userEvent.setup();
+		const onReconnectClick = jest.fn();
+		const useAuthStatus = () => ( { needsReauth: true, isLoading: false } );
+		render(
+			<ConnectionReauthGate
+				{ ...baseProps }
+				useAuthStatus={ useAuthStatus }
+				onReconnectClick={ onReconnectClick }
+			>
+				<div>Timeline content</div>
+			</ConnectionReauthGate>
+		);
+		const link = screen.getByRole( 'link', { name: 'Reconnect on a8c.social' } );
+		await user.click( link );
+		expect( onReconnectClick ).toHaveBeenCalled();
 	} );
 } );

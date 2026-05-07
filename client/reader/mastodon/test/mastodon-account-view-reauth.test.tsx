@@ -3,6 +3,7 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import * as noticeActions from 'calypso/state/notices/actions';
 import * as readerAnalytics from 'calypso/state/reader/analytics/actions';
@@ -84,11 +85,12 @@ describe( 'MastodonAccountView reauth gate', () => {
 		delete global.IntersectionObserver;
 	} );
 
+	let trackSpy: jest.SpyInstance;
 	beforeEach( () => {
 		// recordReaderTracksEvent is a thunk that reads state.reader.follows;
 		// the test store doesn't seed that slice. Replace with a no-op so
 		// dispatch() doesn't throw.
-		jest
+		trackSpy = jest
 			.spyOn( readerAnalytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 	} );
@@ -180,6 +182,75 @@ describe( 'MastodonAccountView reauth gate', () => {
 
 		successSpy.mockRestore();
 		replaceStateSpy.mockRestore();
+		// Reset URL for subsequent tests.
+		originalReplaceState( null, '', '/' );
+	} );
+
+	it( 'fires calypso_reader_reauth_gate_shown when the gate appears', async () => {
+		mockConnections();
+		mockConnectionDetails();
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );
+
+		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+
+		await screen.findByRole( 'heading', { name: /reconnect to update permissions/i } );
+
+		await waitFor( () => {
+			expect( trackSpy ).toHaveBeenCalledWith(
+				'calypso_reader_reauth_gate_shown',
+				expect.objectContaining( {
+					provider: 'mastodon',
+					connection_id: 42,
+					trigger: 'auth-status',
+				} )
+			);
+		} );
+	} );
+
+	it( 'fires calypso_reader_reauth_button_clicked when the reconnect link is activated', async () => {
+		const user = userEvent.setup();
+		mockConnections();
+		mockConnectionDetails();
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );
+
+		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+
+		const link = await screen.findByRole( 'link', { name: /reconnect on a8c\.social/i } );
+		await user.click( link );
+
+		expect( trackSpy ).toHaveBeenCalledWith(
+			'calypso_reader_reauth_button_clicked',
+			expect.objectContaining( { provider: 'mastodon', connection_id: 42 } )
+		);
+	} );
+
+	it( 'fires calypso_reader_reauth_completed when ?reconnected matches the connection', async () => {
+		mockConnections();
+		mockConnectionDetails();
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: false } );
+
+		const originalReplaceState = window.history.replaceState.bind( window.history );
+		window.history.replaceState( null, '', '/reader/mastodon/42/timeline?reconnected=42' );
+
+		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+
+		await waitFor( () =>
+			expect( screen.getByText( 'Mastodon timeline placeholder' ) ).toBeVisible()
+		);
+
+		await waitFor( () => {
+			expect( trackSpy ).toHaveBeenCalledWith(
+				'calypso_reader_reauth_completed',
+				expect.objectContaining( { provider: 'mastodon', connection_id: 42 } )
+			);
+		} );
+
 		// Reset URL for subsequent tests.
 		originalReplaceState( null, '', '/' );
 	} );
