@@ -57,6 +57,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
 import { hasTranslation } from '@wordpress/i18n';
 import {
+	check,
 	column,
 	download,
 	Icon,
@@ -84,6 +85,7 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { getOverrideCancellationFeatures } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-override-features';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	getCancelButtonCopy,
@@ -120,6 +122,7 @@ import {
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
+import { toPurchaseForCopy } from 'calypso/me/purchases/cancel-purchase/to-purchase-for-copy';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
@@ -201,6 +204,28 @@ const loadProductPlanOverlapNotices = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
 	);
+
+function PurchaseFeatureList( { purchase }: { purchase: Purchase } ) {
+	const adapted = toPurchaseForCopy( purchase );
+	const features = getOverrideCancellationFeatures( adapted );
+
+	if ( ! features || features.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<div className="manage-purchase__feature-list">
+			<ul className="manage-purchase__feature-list-items">
+				{ features.map( ( feature ) => (
+					<li key={ feature.feature_id }>
+						<Icon icon={ check } size={ 24 } className="manage-purchase__feature-icon" />
+						<span>{ feature.title }</span>
+					</li>
+				) ) }
+			</ul>
+		</div>
+	);
+}
 
 export interface ManagePurchaseProps {
 	cardTitle?: string;
@@ -1292,7 +1317,7 @@ class ManagePurchase extends Component<
 	}
 
 	renderPurchaseDescription() {
-		const { purchase, site, translate } = this.props;
+		const { purchase, site, translate, isSplitCancelRemoveEnabled } = this.props;
 
 		if ( ! purchase ) {
 			return null;
@@ -1300,6 +1325,19 @@ class ManagePurchase extends Component<
 
 		if ( isMarketplaceHoldingSitePurchase( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
 			return null;
+		}
+
+		// When the split flag is on, show the feature list instead of the description
+		if ( isSplitCancelRemoveEnabled ) {
+			const adapted = toPurchaseForCopy( purchase );
+			const features = getOverrideCancellationFeatures( adapted );
+			if ( features && features.length > 0 ) {
+				return (
+					<div className="manage-purchase__content">
+						<PurchaseFeatureList purchase={ purchase } />
+					</div>
+				);
+			}
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
