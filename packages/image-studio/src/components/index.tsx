@@ -41,6 +41,7 @@ import { CanvasControls } from './canvas-controls';
 import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
 import { ExperimentalBadge } from './experimental-badge';
+import { useFeatureClipThinkingLabel } from './feature-clip-thinking';
 import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
@@ -196,6 +197,11 @@ function ImageStudioAgentChat( {
 	// Stop is meaningless once the video job is in flight server-side; only the SSE stream would abort.
 	const isStopDisabled = isFinalizingPhase || isAnnotationSaving || isVideoGeneratingPhase;
 
+	// While a Highlights render is in flight, swap the default "Thinking…" copy
+	// for a phase-aware label (and a percentage during the rendering phase).
+	// Returns null when no render is pending — the agent's default copy wins.
+	const featureClipThinkingLabel = useFeatureClipThinkingLabel();
+
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
 			<ThinkingMessage content={ __( 'Generating suggestions…', __i18n_text_domain__ ) } />
@@ -215,7 +221,7 @@ function ImageStudioAgentChat( {
 				onSubmit={ handleSubmit }
 				onStop={ agentChatProps.abortCurrentRequest }
 				isProcessing={ isProcessing }
-				thinkingMessage={ agentChatProps.progressMessage ?? undefined }
+				thinkingMessage={ featureClipThinkingLabel ?? agentChatProps.progressMessage ?? undefined }
 				inputValue={ inputValue }
 				onInputChange={ setInputValue }
 				onSuggestionClick={ handleSuggestionClick }

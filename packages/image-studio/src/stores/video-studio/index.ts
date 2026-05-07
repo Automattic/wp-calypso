@@ -62,6 +62,10 @@ export interface VideoStudioState {
 	lastRenderResult: FeatureClipRenderResult | null;
 	lastRenderError: FeatureClipRenderError | null;
 	isCancelling: boolean;
+	// Fractional progress (0–1) of the current EditFrame render pass. Only
+	// meaningful while `progressPhase === 'rendering'`. Null at all other
+	// times (and reset to null when the render lifecycle ends).
+	renderProgress: number | null;
 }
 
 type SetSelectedStyleAction = { type: 'SET_SELECTED_STYLE'; payload: string | null };
@@ -92,6 +96,10 @@ type FailFeatureClipRenderAction = {
 };
 type SetIsCancellingAction = { type: 'SET_FEATURE_CLIP_IS_CANCELLING'; payload: boolean };
 type ClearFeatureClipPendingAction = { type: 'CLEAR_FEATURE_CLIP_PENDING' };
+type SetRenderProgressAction = {
+	type: 'SET_FEATURE_CLIP_RENDER_PROGRESS';
+	payload: number | null;
+};
 
 type VideoStudioAction =
 	| SetSelectedStyleAction
@@ -103,7 +111,8 @@ type VideoStudioAction =
 	| CompleteFeatureClipRenderAction
 	| FailFeatureClipRenderAction
 	| SetIsCancellingAction
-	| ClearFeatureClipPendingAction;
+	| ClearFeatureClipPendingAction
+	| SetRenderProgressAction;
 
 const initialState: VideoStudioState = {
 	selectedStyle: null,
@@ -116,6 +125,7 @@ const initialState: VideoStudioState = {
 	lastRenderResult: null,
 	lastRenderError: null,
 	isCancelling: false,
+	renderProgress: null,
 };
 
 const reducer = (
@@ -140,6 +150,7 @@ const reducer = (
 				lastRenderResult: null,
 				lastRenderError: null,
 				isCancelling: false,
+				renderProgress: null,
 			};
 
 		case 'SET_FEATURE_CLIP_PROGRESS_PHASE':
@@ -154,6 +165,7 @@ const reducer = (
 				currentVideoUrl: action.payload.url,
 				currentAttachmentId: action.payload.attachmentId,
 				currentDurationSeconds: action.payload.durationSeconds,
+				renderProgress: null,
 			};
 
 		case 'FAIL_FEATURE_CLIP_RENDER':
@@ -162,6 +174,7 @@ const reducer = (
 				pendingRender: null,
 				progressPhase: 'idle',
 				lastRenderError: action.payload,
+				renderProgress: null,
 			};
 
 		case 'SET_FEATURE_CLIP_IS_CANCELLING':
@@ -173,7 +186,11 @@ const reducer = (
 				pendingRender: null,
 				progressPhase: 'idle',
 				isCancelling: false,
+				renderProgress: null,
 			};
+
+		case 'SET_FEATURE_CLIP_RENDER_PROGRESS':
+			return { ...state, renderProgress: action.payload };
 
 		default:
 			return state;
@@ -203,6 +220,7 @@ export interface VideoStudioActions {
 	) => Promise< FailFeatureClipRenderAction >;
 	setFeatureClipIsCancelling: ( isCancelling: boolean ) => Promise< SetIsCancellingAction >;
 	clearFeatureClipPending: () => Promise< ClearFeatureClipPendingAction >;
+	setFeatureClipRenderProgress: ( progress: number | null ) => Promise< SetRenderProgressAction >;
 }
 
 const actions = {
@@ -236,6 +254,9 @@ const actions = {
 	clearFeatureClipPending(): ClearFeatureClipPendingAction {
 		return { type: 'CLEAR_FEATURE_CLIP_PENDING' };
 	},
+	setFeatureClipRenderProgress( progress: number | null ): SetRenderProgressAction {
+		return { type: 'SET_FEATURE_CLIP_RENDER_PROGRESS', payload: progress };
+	},
 };
 
 export interface VideoStudioSelectors {
@@ -248,6 +269,7 @@ export interface VideoStudioSelectors {
 	getLastFeatureClipRenderResult: ( state: VideoStudioState ) => FeatureClipRenderResult | null;
 	getLastFeatureClipRenderError: ( state: VideoStudioState ) => FeatureClipRenderError | null;
 	getFeatureClipIsCancelling: ( state: VideoStudioState ) => boolean;
+	getFeatureClipRenderProgress: ( state: VideoStudioState ) => number | null;
 }
 
 const selectors = {
@@ -277,6 +299,9 @@ const selectors = {
 	},
 	getFeatureClipIsCancelling( state: VideoStudioState ): boolean {
 		return state.isCancelling;
+	},
+	getFeatureClipRenderProgress( state: VideoStudioState ): number | null {
+		return state.renderProgress;
 	},
 };
 

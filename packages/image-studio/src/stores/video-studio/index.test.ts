@@ -42,6 +42,7 @@ describe( 'Video Studio Store', () => {
 				lastRenderResult: null,
 				lastRenderError: null,
 				isCancelling: false,
+				renderProgress: null,
 			} );
 		} );
 	} );
@@ -151,6 +152,7 @@ describe( 'Video Studio Store', () => {
 				lastRenderResult: null,
 				lastRenderError: null,
 				isCancelling: false,
+				renderProgress: null,
 			} );
 		} );
 

@@ -27,6 +27,12 @@ const RENDER_OPTIONS = {
 	streaming: false,
 };
 
+// Throttle EditFrame's per-frame onProgress callback before it lands in the
+// store. At 30fps a 6s clip fires 180 actions otherwise — fine for Redux but
+// noisy for subscribers. Dispatch at most once per 100ms OR per 5% jump.
+const PROGRESS_DISPATCH_MIN_INTERVAL_MS = 100;
+const PROGRESS_DISPATCH_MIN_DELTA = 0.05;
+
 interface RenderToVideoTimegroup extends HTMLElement {
 	renderToVideo: ( options: Record< string, unknown > ) => Promise< unknown >;
 }
@@ -114,6 +120,7 @@ export function FeatureClipRenderHost() {
 
 	const {
 		setFeatureClipProgressPhase,
+		setFeatureClipRenderProgress,
 		completeFeatureClipRender,
 		failFeatureClipRender,
 		clearFeatureClipPending,
@@ -246,7 +253,40 @@ export function FeatureClipRenderHost() {
 				setFeatureClipProgressPhase( 'rendering' );
 				const renderStartedAt = performance.now();
 				log( 'phase:rendering' );
-				const result = await timegroup.renderToVideo( RENDER_OPTIONS );
+
+				// Throttled bridge from EditFrame's per-frame onProgress to the
+				// store. Closed over `cancelled` so we stop dispatching once the
+				// effect tears down.
+				let lastDispatchAt = 0;
+				let lastDispatchedProgress = -1;
+				const handleRenderProgress = ( payload: { progress?: number } ) => {
+					if ( cancelled ) {
+						return;
+					}
+					const progress = typeof payload?.progress === 'number' ? payload.progress : null;
+					if ( progress === null ) {
+						return;
+					}
+					const now = performance.now();
+					const elapsed = now - lastDispatchAt;
+					const delta = Math.abs( progress - lastDispatchedProgress );
+					const isTerminal = progress >= 1;
+					if (
+						! isTerminal &&
+						elapsed < PROGRESS_DISPATCH_MIN_INTERVAL_MS &&
+						delta < PROGRESS_DISPATCH_MIN_DELTA
+					) {
+						return;
+					}
+					lastDispatchAt = now;
+					lastDispatchedProgress = progress;
+					setFeatureClipRenderProgress( progress );
+				};
+
+				const result = await timegroup.renderToVideo( {
+					...RENDER_OPTIONS,
+					onProgress: handleRenderProgress,
+				} );
 				if ( cancelled ) {
 					return;
 				}
@@ -340,6 +380,7 @@ export function FeatureClipRenderHost() {
 		mountedRequestId,
 		isCancelling,
 		setFeatureClipProgressPhase,
+		setFeatureClipRenderProgress,
 		completeFeatureClipRender,
 		failFeatureClipRender,
 	] );
