@@ -233,13 +233,13 @@
 	margin: 0;
 	padding: 0;
 	transform: translateX( -4px );
+}
 
-	li {
-		display: flex;
-		align-items: flex-start;
-		gap: 12px;
-		padding-block: 2px;
-	}
+.manage-purchase__feature-list-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding-block: 2px;
 }
 
 .manage-purchase__feature-icon {

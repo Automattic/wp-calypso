@@ -205,28 +205,6 @@ const loadProductPlanOverlapNotices = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-product-plan-overlap-notices" */ 'calypso/blocks/product-plan-overlap-notices'
 	);
 
-function PurchaseFeatureList( { purchase }: { purchase: Purchase } ) {
-	const adapted = toPurchaseForCopy( purchase );
-	const features = getOverrideCancellationFeatures( adapted );
-
-	if ( ! features || features.length === 0 ) {
-		return null;
-	}
-
-	return (
-		<div className="manage-purchase__feature-list">
-			<ul className="manage-purchase__feature-list-items">
-				{ features.map( ( feature ) => (
-					<li key={ feature.feature_id }>
-						<Icon icon={ check } size={ 24 } className="manage-purchase__feature-icon" />
-						<span>{ feature.title }</span>
-					</li>
-				) ) }
-			</ul>
-		</div>
-	);
-}
-
 export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
@@ -1334,7 +1312,14 @@ class ManagePurchase extends Component<
 			if ( features && features.length > 0 ) {
 				return (
 					<div className="manage-purchase__content">
-						<PurchaseFeatureList purchase={ purchase } />
+						<ul className="manage-purchase__feature-list-items">
+							{ features.map( ( feature ) => (
+								<li key={ feature.feature_id } className="manage-purchase__feature-list-item">
+									<Icon icon={ check } size={ 24 } className="manage-purchase__feature-icon" />
+									<span>{ feature.title }</span>
+								</li>
+							) ) }
+						</ul>
 					</div>
 				);
 			}
