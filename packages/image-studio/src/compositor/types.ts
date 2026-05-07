@@ -30,15 +30,4 @@ export interface FeatureClipBrief {
 	scenes: FeatureClipScene[];
 	titleCard: { copy: string };
 	audioBed?: FeatureClipAudioBed;
-	/**
-	 * Optional fully-qualified audio source for the clip's bed.
-	 *
-	 * Currently emitted by the server-side compose-video ability as a
-	 * `data:audio/wav;base64,...` URL containing Lyria-generated audio. When
-	 * present, the renderer fetches + decodes it and feeds the AudioBuffer to
-	 * EditFrame's audio bed slot. When absent (Lyria failed, gated off, or
-	 * the brief was assembled without audio), the synth fallback in
-	 * informative-feature-clip.tsx::installAudioBed runs instead.
-	 */
-	audioBedUrl?: string;
 }

@@ -31,9 +31,9 @@ interface FeatureClipThinkingState {
 	/**
 	 * The currently-selected video style. Used to show a Highlights-specific
 	 * label during the *pre-render* window (server-side compose-video tool call
-	 * incl. LLM summarization + Lyria audio gen, typically 15–30s). Without
-	 * this, the user just sees "Thinking…" while the bulk of the work happens
-	 * server-side before any phase fires.
+	 * incl. LLM summarization, typically 5–10s). Without this, the user just
+	 * sees "Thinking…" while the bulk of the work happens server-side before
+	 * any phase fires.
 	 */
 	selectedStyle: string | null;
 }
@@ -51,12 +51,11 @@ export function buildFeatureClipThinkingLabel( {
 }: FeatureClipThinkingState ): string | null {
 	if ( ! hasPending ) {
 		// Pre-render window (server tool call in flight + the brief flowing back
-		// through the agent). The Lyria call dominates this window; we don't
-		// have a frontend signal for its precise start/end, so one label covers
-		// the whole compose-video step. Once requestFeatureClipRender fires on
-		// the client side, the phase-specific labels below take over.
+		// through the agent). One label covers the whole compose-video step;
+		// once requestFeatureClipRender fires on the client side, the phase-
+		// specific labels below take over.
 		if ( selectedStyle === 'highlights' ) {
-			return __( 'Composing your highlights and soundtrack…', __i18n_text_domain__ );
+			return __( 'Composing your highlights…', __i18n_text_domain__ );
 		}
 		return null;
 	}

@@ -426,32 +426,6 @@ function installAudioBed(
 		const sampleRate = 48_000;
 		const length = Math.max( 1, Math.ceil( ( ( toMs - fromMs ) / 1000 ) * sampleRate ) );
 
-		// If the render-host decoded a Lyria audio bed into the global slot,
-		// slice it for the requested time range and return that. Falls
-		// through to the synth pad below when the slot is empty (no
-		// Lyria URL in the brief, decode failed, or audio gen disabled).
-		// Defensive try/catch: if the buffer is technically valid but
-		// sliceAudioBuffer chokes on a corrupted edge case, we don't want
-		// to take down the whole MP4 render — drop to synth instead.
-		const lyriaBuffer = ( window as unknown as { __featureClipAudioBuffer?: AudioBuffer | null } )
-			.__featureClipAudioBuffer;
-		if ( lyriaBuffer ) {
-			try {
-				return sliceAudioBuffer( lyriaBuffer, fromMs, toMs, sampleRate );
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.warn( '[FeatureClip] sliceAudioBuffer failed; falling back to synth', {
-					message: error instanceof Error ? error.message : String( error ),
-				} );
-				// Clear the slot so subsequent renderAudio calls don't re-try
-				// the same broken buffer per-frame.
-				(
-					window as unknown as { __featureClipAudioBuffer?: AudioBuffer | null }
-				 ).__featureClipAudioBuffer = null;
-				// Fall through to synth.
-			}
-		}
-
 		const context = new OfflineAudioContext( 2, length, sampleRate );
 		const buffer = context.createBuffer( 2, length, sampleRate );
 
@@ -490,13 +464,8 @@ function installAudioBed(
 				if ( slotPlays ) {
 					const noteIdx = Math.floor( slotRandom( slot * 31 + 7 ) * profile.melodyScale.length );
 					const noteFreq = profile.melodyScale[ noteIdx ];
-					// Bell-like: fast attack, exponential decay.
 					const env = slotPhase < 0.05 ? slotPhase / 0.05 : Math.exp( -( slotPhase - 0.05 ) * 4.5 );
-					melody =
-						( Math.sin( 2 * Math.PI * noteFreq * t ) * 0.7 +
-							Math.sin( 2 * Math.PI * noteFreq * 2 * t ) * 0.25 ) *
-						env *
-						profile.melodyAmp;
+					melody = Math.sin( 2 * Math.PI * noteFreq * t ) * env * profile.melodyAmp;
 				}
 
 				// Kick: 8-step pattern, pattern rotates every 4 bars (32 steps).
@@ -517,58 +486,4 @@ function installAudioBed(
 
 		return buffer;
 	};
-}
-
-/**
- * Cut a [fromMs, toMs] slice out of a longer Lyria-decoded AudioBuffer and
- * return it as a new AudioBuffer matching the renderer's expected sample rate
- * and channel count (stereo). When the requested range exceeds the source's
- * duration (e.g. Lyria returned 28s but the clip is 32s) we loop with a
- * 200ms equal-power crossfade so the seam isn't audible.
- */
-function sliceAudioBuffer(
-	source: AudioBuffer,
-	fromMs: number,
-	toMs: number,
-	targetSampleRate: number
-): AudioBuffer {
-	const targetDurationS = Math.max( 0, ( toMs - fromMs ) / 1000 );
-	const targetLength = Math.max( 1, Math.ceil( targetDurationS * targetSampleRate ) );
-	const ctx = new OfflineAudioContext( 2, targetLength, targetSampleRate );
-	const out = ctx.createBuffer( 2, targetLength, targetSampleRate );
-
-	const sourceLen = source.length;
-	const sourceRate = source.sampleRate;
-	const xfadeSamples = Math.min(
-		Math.floor( 0.2 * targetSampleRate ),
-		Math.floor( sourceLen / 4 )
-	);
-
-	for ( let outCh = 0; outCh < 2; outCh++ ) {
-		const sourceCh = source.numberOfChannels > outCh ? outCh : 0;
-		const sourceData = source.getChannelData( sourceCh );
-		const outData = out.getChannelData( outCh );
-
-		for ( let i = 0; i < targetLength; i++ ) {
-			// Map output sample index → source-time → source sample index,
-			// accounting for sample-rate mismatch between Lyria's output and
-			// the encoder's target.
-			const tInOutS = fromMs / 1000 + i / targetSampleRate;
-			const sourceSampleF = tInOutS * sourceRate;
-			const wrappedF = sourceLen > 0 ? sourceSampleF % sourceLen : 0;
-			const idx = Math.floor( wrappedF );
-			let value = sourceData[ idx ] ?? 0;
-
-			// Equal-power crossfade across the wrap boundary.
-			if ( xfadeSamples > 0 && wrappedF < xfadeSamples ) {
-				const fadeT = wrappedF / xfadeSamples;
-				const tail = sourceData[ ( idx - xfadeSamples + sourceLen ) % sourceLen ] ?? 0;
-				value =
-					tail * Math.cos( ( fadeT * Math.PI ) / 2 ) + value * Math.sin( ( fadeT * Math.PI ) / 2 );
-			}
-			outData[ i ] = value;
-		}
-	}
-
-	return out;
 }

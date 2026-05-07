@@ -29,7 +29,6 @@ interface BrowserRenderCanvasVideoInput {
 	scenes?: FeatureClipBrief[ 'scenes' ];
 	titleCard?: FeatureClipBrief[ 'titleCard' ];
 	audioBed?: FeatureClipBrief[ 'audioBed' ];
-	audioBedUrl?: FeatureClipBrief[ 'audioBedUrl' ];
 }
 
 function validateBrief( raw: unknown ): FeatureClipBrief {
@@ -64,8 +63,8 @@ function extractBrief( input: BrowserRenderCanvasVideoInput | undefined ): Featu
 		return validateBrief( input.brief );
 	}
 	if ( input && typeof input === 'object' && 'style' in input && 'scenes' in input ) {
-		const { style, scenes, titleCard, audioBed, audioBedUrl } = input;
-		return validateBrief( { style, scenes, titleCard, audioBed, audioBedUrl } );
+		const { style, scenes, titleCard, audioBed } = input;
+		return validateBrief( { style, scenes, titleCard, audioBed } );
 	}
 	throw new Error(
 		'brief must be an object — pass either { brief: <FeatureClipBrief> } or the brief fields at top level.'
@@ -140,7 +139,7 @@ export async function registerBrowserRenderCanvasVideoAbility(): Promise< void >
 					brief: {
 						type: 'object',
 						description:
-							'The FeatureClipBrief object returned verbatim by wpcom/compose-video-for-studio. Pass the WHOLE result.brief as a single nested object — do NOT spread its keys onto the top-level arguments. ALL fields from the server result must be preserved, including audioBedUrl when present (the renderer fetches that URL for the audio bed).',
+							'The FeatureClipBrief object returned verbatim by wpcom/compose-video-for-studio. Pass the WHOLE result.brief as a single nested object — do NOT spread its keys onto the top-level arguments.',
 						properties: {
 							style: {
 								type: 'string',
@@ -165,11 +164,6 @@ export async function registerBrowserRenderCanvasVideoAbility(): Promise< void >
 								},
 							},
 							audioBed: { type: 'string' },
-							audioBedUrl: {
-								type: 'string',
-								description:
-									'URL the frontend fetches for the audio bed (Lyria-generated WAV/MP3). Pass through verbatim from the server result; the renderer fetches and decodes it before render starts.',
-							},
 						},
 					},
 				},
