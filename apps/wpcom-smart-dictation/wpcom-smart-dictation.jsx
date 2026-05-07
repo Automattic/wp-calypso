@@ -20,7 +20,7 @@ function WpcomSmartDictationPlugin() {
 				icon={ MicrophoneIcon }
 			>
 				<div className="wpcom-smart-dictation-sidebar-root">
-					<LiveAIAssistant layout="sidebar" />
+					<LiveAIAssistant />
 				</div>
 			</PluginSidebar>
 		</>
