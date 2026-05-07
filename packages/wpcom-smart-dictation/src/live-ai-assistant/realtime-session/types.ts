@@ -38,6 +38,7 @@ export interface UseRealtimeSessionResult {
 	status: RealtimeStatus;
 	error: string | null;
 	isMuted: boolean;
+	localStream: MediaStream | null;
 	transcript: RealtimeTranscriptEntry[];
 	toolEvents: RealtimeToolEvent[];
 	imagePickerState: import('../image-picker-modal').ImagePickerState;

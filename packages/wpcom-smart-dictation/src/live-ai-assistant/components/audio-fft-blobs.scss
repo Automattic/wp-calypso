@@ -1,0 +1,107 @@
+.audio-fft-blobs {
+	--audio-fft-blob-1: #fff;
+	--audio-fft-blob-2: #3858e9;
+	--audio-fft-blob-3: #4ab866;
+	--audio-fft-blob-4: #3858e9;
+	--fft-band-1: 0;
+	--fft-band-2: 0;
+	--fft-band-3: 0;
+	--fft-band-4: 0;
+
+	position: relative;
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	isolation: isolate;
+
+	svg {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+		overflow: visible;
+	}
+}
+
+.audio-fft-blobs__blob {
+	transform-origin: 50% 50%;
+	animation: audio-fft-blobs-rotate 15s infinite alternate ease-in-out;
+	opacity: 0.38;
+
+	path {
+		transform-box: fill-box;
+		transform-origin: center;
+		transition:
+			opacity 120ms linear,
+			transform 120ms linear;
+	}
+}
+
+.audio-fft-blobs__blob--alt {
+	animation-direction: alternate-reverse;
+	opacity: 0.24;
+}
+
+.audio-fft-blobs__blob-1 {
+	path {
+		fill: var( --audio-fft-blob-1 );
+		filter: blur( 16px );
+		transform: scale( calc( 0.72 + var( --fft-band-1 ) * 0.38 ) );
+		opacity: calc( 0.54 + var( --fft-band-1 ) * 0.36 );
+	}
+}
+
+.audio-fft-blobs__blob-2 {
+	animation-duration: 18s;
+	animation-direction: alternate-reverse;
+
+	path {
+		fill: var( --audio-fft-blob-2 );
+		filter: blur( 12px );
+		transform: scale( calc( 0.68 + var( --fft-band-2 ) * 0.44 ) );
+		opacity: calc( 0.52 + var( --fft-band-2 ) * 0.38 );
+	}
+
+	&.audio-fft-blobs__blob--alt {
+		animation-direction: alternate;
+	}
+}
+
+.audio-fft-blobs__blob-3 {
+	animation-duration: 23s;
+
+	path {
+		fill: var( --audio-fft-blob-3 );
+		filter: blur( 8px );
+		transform: scale( calc( 0.64 + var( --fft-band-3 ) * 0.48 ) );
+		opacity: calc( 0.5 + var( --fft-band-3 ) * 0.4 );
+	}
+}
+
+.audio-fft-blobs__blob-4 {
+	animation-duration: 31s;
+	animation-direction: alternate-reverse;
+	opacity: 0.82;
+
+	path {
+		fill: var( --audio-fft-blob-4 );
+		filter: blur( 56px );
+		transform: scale( calc( 0.38 + var( --fft-band-4 ) * 0.34 ) );
+		opacity: calc( 0.62 + var( --fft-band-4 ) * 0.28 );
+	}
+
+	&.audio-fft-blobs__blob--alt {
+		animation-direction: alternate;
+		opacity: 0.64;
+	}
+}
+
+@keyframes audio-fft-blobs-rotate {
+	from {
+		transform: rotate( 0deg );
+	}
+
+	to {
+		transform: rotate( 360deg );
+	}
+}

@@ -2,11 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { close, Icon } from '@wordpress/icons';
 import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import introArtworkUrl from './assets/voice-control-gutenberg.mp4';
+import AudioFftBlobs from './components/audio-fft-blobs';
 import { MicIcon } from './components/mic-icon';
 import { DictationFileUpload, ImagePickerModal } from './image-picker-modal';
 import { useRealtimeSession } from './use-realtime-session';
@@ -57,21 +57,12 @@ const StopIcon = () => (
 	</svg>
 );
 
-function recordPaneEvent( action: 'opened' | 'closed', layout: LiveAIAssistantProps[ 'layout' ] ) {
-	recordTracksEvent( `calypso_smart_dictation_pane_${ action }`, {
-		layout: layout ?? 'floating',
-	} );
+function recordPaneEvent( action: 'opened' | 'closed' ) {
+	recordTracksEvent( `calypso_smart_dictation_pane_${ action }` );
 }
 
 interface LiveAIAssistantProps {
 	contextualInstructions?: string;
-	/**
-	 * Icon shown on the floating action button when the panel is closed.
-	 * Defaults to a microphone icon. Only used when `layout` is `floating`.
-	 */
-	fabIcon?: React.ReactNode;
-	/** `floating`: FAB + anchored panel (default). `sidebar`: fills an editor PluginSidebar. */
-	layout?: 'floating' | 'sidebar';
 }
 
 function buildInstructions( locale: string, extra?: string ): string {
@@ -145,14 +136,7 @@ function getStatusLabel( status: ReturnType< typeof useRealtimeSession >[ 'statu
 	}
 }
 
-export function LiveAIAssistant( {
-	contextualInstructions,
-	fabIcon,
-	layout = 'floating',
-}: LiveAIAssistantProps ) {
-	const isSidebar = layout === 'sidebar';
-	const [ isFloatingPanelOpen, setFloatingPanelOpen ] = useState( false );
-	const showPanel = isSidebar ? true : isFloatingPanelOpen;
+export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProps ) {
 	const locale = useLocale();
 	const instructions = useMemo(
 		() => buildInstructions( locale, contextualInstructions ),
@@ -163,6 +147,7 @@ export function LiveAIAssistant( {
 		status,
 		error,
 		isMuted,
+		localStream,
 		transcript,
 		toolEvents,
 		imagePickerState,
@@ -176,31 +161,20 @@ export function LiveAIAssistant( {
 		[ transcript, toolEvents ]
 	);
 
-	const transcriptRef = useRef< HTMLDivElement | null >( null );
-	const sidebarBodyScrollRef = useRef< HTMLDivElement | null >( null );
-	const wasPanelOpenRef = useRef( false );
+	const bodyScrollRef = useRef< HTMLDivElement | null >( null );
 
 	useEffect( () => {
-		if ( showPanel !== wasPanelOpenRef.current ) {
-			recordPaneEvent( showPanel ? 'opened' : 'closed', layout );
-			wasPanelOpenRef.current = showPanel;
-		}
-	}, [ layout, showPanel ] );
-
-	useEffect( () => {
+		recordPaneEvent( 'opened' );
 		return () => {
-			if ( wasPanelOpenRef.current ) {
-				recordPaneEvent( 'closed', layout );
-			}
+			recordPaneEvent( 'closed' );
 		};
-	}, [ layout ] );
+	}, [] );
 
 	useEffect( () => {
-		const scrollEl = isSidebar ? sidebarBodyScrollRef.current : transcriptRef.current;
-		if ( scrollEl ) {
-			scrollEl.scrollTop = scrollEl.scrollHeight;
+		if ( bodyScrollRef.current ) {
+			bodyScrollRef.current.scrollTop = bodyScrollRef.current.scrollHeight;
 		}
-	}, [ transcript, toolEvents, isSidebar ] );
+	}, [ transcript, toolEvents ] );
 
 	const isSessionActive = status === 'active';
 	const isSessionBusy =
@@ -209,19 +183,6 @@ export function LiveAIAssistant( {
 		status === 'connecting' ||
 		status === 'ending';
 
-	const handleToggleFloatingPanel = () => {
-		if ( isSidebar ) {
-			return;
-		}
-		setFloatingPanelOpen( ( prev ) => {
-			const next = ! prev;
-			if ( ! next && ( isSessionActive || isSessionBusy ) ) {
-				stop();
-			}
-			return next;
-		} );
-	};
-
 	const handleSessionToggle = () => {
 		if ( isSessionActive || isSessionBusy ) {
 			stop();
@@ -229,205 +190,143 @@ export function LiveAIAssistant( {
 			start();
 		}
 	};
-
-	const handleCloseFloatingPanel = () => {
-		if ( isSessionActive || isSessionBusy ) {
-			stop();
-		}
-		if ( ! isSidebar ) {
-			setFloatingPanelOpen( false );
-		}
-	};
+	const statusContent = isSessionActive ? (
+		<>
+			<AudioFftBlobs
+				className="live-ai-assistant__status-blobs"
+				stream={ localStream }
+				isActive={ ! isMuted }
+				size={ 44 }
+			/>
+			<span className="screen-reader-text">{ __( 'Listening' ) }</span>
+		</>
+	) : (
+		getStatusLabel( status )
+	);
+	const showSubtitle =
+		isSessionActive || isSessionBusy || timelineRows.length > 0 || status === 'error';
 
 	return (
 		<>
-			{ ! isSidebar && (
-				<Button
-					type="button"
-					className={ clsx( 'live-ai-assistant__fab', {
+			<div className="live-ai-assistant">
+				<div
+					className={ clsx( 'live-ai-assistant__panel', {
 						'is-active': isSessionActive,
-						'is-open': isFloatingPanelOpen,
 					} ) }
-					onClick={ handleToggleFloatingPanel }
-					aria-label={
-						isFloatingPanelOpen
-							? __( 'Hide dictation assistant' )
-							: __( 'Open dictation assistant' )
-					}
-					aria-expanded={ isFloatingPanelOpen }
+					aria-label={ __( 'WP.com Smart Dictation' ) }
 				>
-					{ isFloatingPanelOpen ? (
-						<Icon icon={ close } size={ 22 } />
-					) : (
-						fabIcon ?? <MicIcon size={ 20 } />
-					) }
-					{ isSessionActive && (
-						<span className="live-ai-assistant__fab-pulse" aria-hidden="true" />
-					) }
-				</Button>
-			) }
-			<div className={ clsx( 'live-ai-assistant', isSidebar && 'live-ai-assistant--sidebar' ) }>
-				{ showPanel && (
-					<div
-						className={ clsx( 'live-ai-assistant__panel', {
-							'is-active': isSessionActive,
-						} ) }
-						role={ isSidebar ? undefined : 'dialog' }
-						aria-label={ __( 'WP.com Smart Dictation' ) }
-						{ ...( ! isSidebar ? { ariaModal: true } : {} ) }
-					>
-						{ ! isSidebar ? (
-							<div className="live-ai-assistant__header">
-								<div className="live-ai-assistant__header-info">
-									<div
-										className={ clsx( 'live-ai-assistant__avatar', {
-											'is-active': isSessionActive,
-										} ) }
-										aria-hidden="true"
-									>
-										<MicIcon size={ 20 } />
-									</div>
-									<div className="live-ai-assistant__header-text">
-										<div className="live-ai-assistant__title">
-											{ __( 'WP.com Smart Dictation' ) }
-										</div>
-										<div className="live-ai-assistant__subtitle">{ getStatusLabel( status ) }</div>
-									</div>
-								</div>
-								<Button
-									className="live-ai-assistant__close"
-									icon={ close }
-									label={ __( 'Close' ) }
-									onClick={ handleCloseFloatingPanel }
-								/>
-							</div>
-						) : (
-							<div
-								className={ clsx( 'live-ai-assistant__sidebar-status', {
-									'is-session-active': isSessionActive || isSessionBusy,
-								} ) }
-								aria-live="polite"
-							>
-								{ getStatusLabel( status ) }
+					<div className="live-ai-assistant__body" ref={ bodyScrollRef }>
+						{ showSubtitle && (
+							<div className="live-ai-assistant__subtitle" aria-live="polite">
+								{ statusContent }
 							</div>
 						) }
 
-						<div
-							className="live-ai-assistant__body"
-							ref={ isSidebar ? sidebarBodyScrollRef : undefined }
-						>
-							{ status === 'idle' && timelineRows.length === 0 && (
-								<div className="live-ai-assistant__intro">
-									<video
-										className="live-ai-assistant__intro-artwork"
-										src={ introArtworkUrl }
-										aria-hidden="true"
-										autoPlay
-										loop
-										muted
-										playsInline
-										preload="metadata"
-									/>
-									<h3>{ __( 'Sit back and dictate' ) }</h3>
-									<p>
-										{ __(
-											'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
-										) }
-									</p>
-								</div>
-							) }
-
-							{ error && (
-								<Notice.Root intent="error">
-									<Notice.Title>{ __( 'Error' ) }</Notice.Title>
-									<Notice.Description>{ error }</Notice.Description>
-								</Notice.Root>
-							) }
-
-							{ timelineRows.length > 0 && (
-								<div
-									className="live-ai-assistant__transcript"
-									ref={ ! isSidebar ? transcriptRef : undefined }
-								>
-									{ timelineRows.map( ( row ) =>
-										row.kind === 'message' ? (
-											<div
-												key={ row.entry.id }
-												className={ clsx( 'live-ai-assistant__message', `is-${ row.entry.role }` ) }
-											>
-												<span className="live-ai-assistant__message-role">
-													{ row.entry.role === 'user' ? __( 'You' ) : __( 'Assistant' ) }
-												</span>
-												<span className="live-ai-assistant__message-text">
-													{ row.entry.text || '…' }
-												</span>
-											</div>
-										) : (
-											<div
-												key={ `tool-${ row.evt.id }` }
-												className={ clsx( 'live-ai-assistant__transcript-tool', {
-													'is-error': row.evt.status === 'error',
-												} ) }
-											>
-												<span
-													className="live-ai-assistant__transcript-tool-dot"
-													aria-hidden="true"
-												/>
-												<span className="live-ai-assistant__transcript-tool-label">
-													{ row.evt.label }
-												</span>
-											</div>
-										)
+						{ status === 'idle' && timelineRows.length === 0 && (
+							<div className="live-ai-assistant__intro">
+								<video
+									className="live-ai-assistant__intro-artwork"
+									src={ introArtworkUrl }
+									aria-hidden="true"
+									autoPlay
+									loop
+									muted
+									playsInline
+									preload="metadata"
+								/>
+								<h3>{ __( 'Sit back and dictate' ) }</h3>
+								<p>
+									{ __(
+										'Tap Start dictation and speak naturally. This is more than a dictation tool: it gives you full voice control of the editor. Format text, insert pictures, manipulate any available block, and even save the post.'
 									) }
-								</div>
-							) }
-						</div>
-
-						<div className="live-ai-assistant__footer">
-							<Notice.Root intent="info">
-								<Notice.Title>Beta feature</Notice.Title>
-								<Notice.Description>Only available for proxied a11ns</Notice.Description>
-								<Notice.Actions>
-									<Notice.ActionLink href="https://wp.me/phcsdm-3kj" openInNewTab>
-										Share feedback
-									</Notice.ActionLink>
-								</Notice.Actions>
-							</Notice.Root>
-							<div className="live-ai-assistant__controls">
-								<Button
-									variant="secondary"
-									className="live-ai-assistant__mute"
-									onClick={ toggleMute }
-									disabled={ ! isSessionActive }
-									aria-pressed={ isMuted }
-								>
-									<MicIcon muted={ isMuted } />
-									<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
-								</Button>
-								<Button
-									variant="primary"
-									className={ clsx( 'live-ai-assistant__call-button', {
-										'is-hangup': isSessionActive || isSessionBusy,
-									} ) }
-									onClick={ handleSessionToggle }
-									isBusy={ isSessionBusy }
-								>
-									{ isSessionActive || isSessionBusy ? (
-										<>
-											<StopIcon />
-											<span>{ __( 'Stop dictation' ) }</span>
-										</>
-									) : (
-										<>
-											<MicIcon />
-											<span>{ __( 'Start dictation' ) }</span>
-										</>
-									) }
-								</Button>
+								</p>
 							</div>
+						) }
+
+						{ error && (
+							<Notice.Root intent="error">
+								<Notice.Title>{ __( 'Error' ) }</Notice.Title>
+								<Notice.Description>{ error }</Notice.Description>
+							</Notice.Root>
+						) }
+
+						{ timelineRows.length > 0 && (
+							<div className="live-ai-assistant__transcript">
+								{ timelineRows.map( ( row ) =>
+									row.kind === 'message' ? (
+										<div
+											key={ row.entry.id }
+											className={ clsx( 'live-ai-assistant__message', `is-${ row.entry.role }` ) }
+										>
+											<span className="live-ai-assistant__message-role">
+												{ row.entry.role === 'user' ? __( 'You' ) : __( 'Assistant' ) }
+											</span>
+											<span className="live-ai-assistant__message-text">
+												{ row.entry.text || '…' }
+											</span>
+										</div>
+									) : (
+										<div
+											key={ `tool-${ row.evt.id }` }
+											className={ clsx( 'live-ai-assistant__transcript-tool', {
+												'is-error': row.evt.status === 'error',
+											} ) }
+										>
+											<span className="live-ai-assistant__transcript-tool-dot" aria-hidden="true" />
+											<span className="live-ai-assistant__transcript-tool-label">
+												{ row.evt.label }
+											</span>
+										</div>
+									)
+								) }
+							</div>
+						) }
+					</div>
+
+					<div className="live-ai-assistant__footer">
+						<Notice.Root intent="info">
+							<Notice.Title>Beta feature</Notice.Title>
+							<Notice.Description>Only available for proxied a11ns</Notice.Description>
+							<Notice.Actions>
+								<Notice.ActionLink href="https://wp.me/phcsdm-3kj" openInNewTab>
+									Share feedback
+								</Notice.ActionLink>
+							</Notice.Actions>
+						</Notice.Root>
+						<div className="live-ai-assistant__controls">
+							<Button
+								variant="secondary"
+								className="live-ai-assistant__mute"
+								onClick={ toggleMute }
+								disabled={ ! isSessionActive }
+								aria-pressed={ isMuted }
+							>
+								<MicIcon muted={ isMuted } />
+								<span>{ isMuted ? __( 'Unmute' ) : __( 'Mute' ) }</span>
+							</Button>
+							<Button
+								variant="primary"
+								className={ clsx( 'live-ai-assistant__call-button', {
+									'is-hangup': isSessionActive || isSessionBusy,
+								} ) }
+								onClick={ handleSessionToggle }
+								isBusy={ isSessionBusy }
+							>
+								{ isSessionActive || isSessionBusy ? (
+									<>
+										<StopIcon />
+										<span>{ __( 'Stop dictation' ) }</span>
+									</>
+								) : (
+									<>
+										<MicIcon />
+										<span>{ __( 'Start dictation' ) }</span>
+									</>
+								) }
+							</Button>
 						</div>
 					</div>
-				) }
+				</div>
 			</div>
 			<ImagePickerModal state={ imagePickerState } />
 			<DictationFileUpload />
