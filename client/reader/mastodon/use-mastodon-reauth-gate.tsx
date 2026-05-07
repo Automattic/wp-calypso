@@ -5,6 +5,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useEffect, useRef } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { ConnectionReauthGate } from 'calypso/reader/social';
 import { useDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -37,6 +38,20 @@ function isSafeAuthorizeUrl( url: string, instance: string ): boolean {
 		// reauthorize against, so any other host is by definition wrong.
 		return parsed.host.toLowerCase() === instance.toLowerCase();
 	} catch {
+		// `new URL()` only throws on un-parseable input — that points at a
+		// wpcom-side regression returning gibberish rather than the deliberate
+		// http/wrong-host rejections above. Log to logstash so we can find it
+		// in dashboards; the caller still surfaces the user-visible notice via
+		// the `unsafe_url` errorNotice.
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Reader Mastodon authorize_url failed to parse',
+			severity: 'error',
+			extra: {
+				type: 'reader_mastodon_authorize_url_parse_error',
+				instance,
+			},
+		} );
 		return false;
 	}
 }
@@ -58,7 +73,7 @@ interface MastodonReauthGateProps {
  * query invalidates auth-status and re-renders.
  *
  * Consumers that render the composer (FAB / modal) should also read
- * `useMastodonReauthGateState(connection)` to hide composer affordances
+ * `useMastodonReauthGateState(connection.id)` to hide composer affordances
  * while needs_reauth is true; the FAB sits outside the gate, so without
  * an explicit guard it would float over the reauth prompt.
  */
@@ -190,7 +205,16 @@ function useMastodonReauthHandler( connection: MastodonConnection ) {
 						// The user navigated away (or the connection list
 						// resolved to a different connection) while authorize
 						// was in flight. Don't yank them off whatever page they
-						// landed on.
+						// landed on. Emit a Tracks event so this branch is
+						// distinguishable from a hung mutation in dashboards
+						// when users report "I clicked reconnect, nothing
+						// happened".
+						dispatch(
+							recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_aborted', {
+								reason: 'unmounted',
+								connection_id: connection.id,
+							} )
+						);
 						return;
 					}
 					if ( ! isSafeAuthorizeUrl( authorize_url, connection.instance ) ) {

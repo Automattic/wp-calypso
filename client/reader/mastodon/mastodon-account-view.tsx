@@ -38,10 +38,10 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	// sidebar row share this fetch — no extra request.
 	const details = useMastodonConnectionQuery( connection?.id ?? null );
 
-	// The compose FAB and modal sit outside <ConnectionReauthGate> (the gate
-	// only wraps the tab body), so without an explicit guard they'd float
-	// over the reauth prompt. Hide both while the connection needs reauth —
-	// any post submitted via that path would fail with auth_required anyway.
+	// The compose FAB and modal sit outside <ConnectionReauthGate>, so without
+	// an explicit guard they'd float over the reauth prompt. Hide both while
+	// the connection needs reauth — any post submitted via that path would
+	// fail with auth_required anyway.
 	const { needsReauth } = useMastodonReauthGateState( connection?.id ?? null );
 
 	useEffect( () => {
