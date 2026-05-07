@@ -10,7 +10,6 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import useFetchAgencyBenchmark from '../../hooks/use-fetch-agency-benchmark';
 import useFetchBenchmarksConfig from '../../hooks/use-fetch-benchmarks-config';
-import AlreadySubmitted from './already-submitted';
 import BenchmarkStatsGrid from './stats-grid';
 import SubmissionBanner from './submission-banner';
 import SubmissionModal from './submission-modal';
@@ -28,7 +27,6 @@ function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 	const { data: existingSubmission, isLoading } = useFetchAgencyBenchmark( quarter, year );
 
 	const showBanner = ! isLoading && ! existingSubmission;
-	const showAlreadySubmitted = ! isLoading && existingSubmission;
 
 	return (
 		<>
@@ -48,7 +46,6 @@ function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 						onSubmitClick={ () => setIsModalOpen( true ) }
 					/>
 				) }
-				{ showAlreadySubmitted && <AlreadySubmitted quarter={ quarter } year={ year } /> }
 				<BenchmarkStatsGrid />
 			</LayoutBody>
 			{ isModalOpen && (
