@@ -28,19 +28,36 @@ interface FeatureClipThinkingState {
 	hasPending: boolean;
 	phase: FeatureClipProgressPhase;
 	renderProgress: number | null;
+	/**
+	 * The currently-selected video style. Used to show a Highlights-specific
+	 * label during the *pre-render* window (server-side compose-video tool call
+	 * incl. LLM summarization + Lyria audio gen, typically 15–30s). Without
+	 * this, the user just sees "Thinking…" while the bulk of the work happens
+	 * server-side before any phase fires.
+	 */
+	selectedStyle: string | null;
 }
 
 /**
- * Map a phase + render-progress pair to the user-facing label. Returns null
- * when there's no Highlights render in flight, signalling the caller should
- * fall back to the default agent thinking copy.
+ * Map state → user-facing label. Returns null when neither a pending render
+ * nor an active Highlights flow exists, signalling the caller should fall
+ * back to the default agent thinking copy ("Thinking…").
  */
 export function buildFeatureClipThinkingLabel( {
 	hasPending,
 	phase,
 	renderProgress,
+	selectedStyle,
 }: FeatureClipThinkingState ): string | null {
 	if ( ! hasPending ) {
+		// Pre-render window (server tool call in flight + the brief flowing back
+		// through the agent). The Lyria call dominates this window; we don't
+		// have a frontend signal for its precise start/end, so one label covers
+		// the whole compose-video step. Once requestFeatureClipRender fires on
+		// the client side, the phase-specific labels below take over.
+		if ( selectedStyle === 'highlights' ) {
+			return __( 'Composing your highlights and soundtrack…', __i18n_text_domain__ );
+		}
 		return null;
 	}
 	switch ( phase ) {
@@ -65,19 +82,26 @@ export function buildFeatureClipThinkingLabel( {
 
 /**
  * Hook returning the override label for the AgentUI thinking indicator
- * during a Highlights render, or `null` when the agent's default copy
+ * during a Highlights flow (both the pre-render server tool call and the
+ * client-side render phases), or `null` when the agent's default copy
  * ("Thinking…") should win.
  */
 export function useFeatureClipThinkingLabel(): string | null {
 	return useSelect( ( select ) => {
-		const store = select( videoStudioStore );
+		const store = select( videoStudioStore ) as ReturnType<
+			typeof select< typeof videoStudioStore >
+		> & {
+			getSelectedStyle?: () => string | null;
+		};
 		const pending = store.getPendingFeatureClipRender();
 		const phase = store.getFeatureClipProgressPhase();
 		const renderProgress = store.getFeatureClipRenderProgress();
+		const selectedStyle = store.getSelectedStyle?.() ?? null;
 		return buildFeatureClipThinkingLabel( {
 			hasPending: !! pending,
 			phase,
 			renderProgress,
+			selectedStyle,
 		} );
 	}, [] );
 }
