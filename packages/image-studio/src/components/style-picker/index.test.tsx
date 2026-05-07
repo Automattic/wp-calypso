@@ -434,12 +434,10 @@ describe( 'StylePicker', () => {
 			} );
 		} );
 
-		it( 'exports the four expected video style options (Veo + browser-rendered photo variants)', () => {
+		it( 'exports the two expected video style options (Veo cinematic + browser-rendered highlights)', () => {
 			const expected = [
-				{ label: 'Informative', value: 'informative' },
-				{ label: 'Promotional', value: 'promotional' },
-				{ label: 'Informative (from photos)', value: 'informative-photo' },
-				{ label: 'Promotional (from photos)', value: 'promotional-photo' },
+				{ label: 'Cinematic', value: 'cinematic' },
+				{ label: 'Highlights', value: 'highlights' },
 			];
 
 			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( expected.length );
@@ -456,7 +454,7 @@ describe( 'StylePicker', () => {
 			await user.click( screen.getByTestId( 'toolbar-button' ) );
 
 			const dropdown = screen.getByTestId( 'dropdown-content' );
-			[ 'Informative', 'Promotional' ].forEach( ( label ) => {
+			[ 'Cinematic', 'Highlights' ].forEach( ( label ) => {
 				expect( dropdown ).toHaveTextContent( label );
 			} );
 			// Image-only options should not appear in the video dropdown.

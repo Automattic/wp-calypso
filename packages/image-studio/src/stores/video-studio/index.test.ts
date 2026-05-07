@@ -49,11 +49,11 @@ describe( 'Video Studio Store', () => {
 
 	describe( 'Actions', () => {
 		it( 'setSelectedStyle creates action with payload', () => {
-			const action = actions.setSelectedStyle( 'informative' );
+			const action = actions.setSelectedStyle( 'cinematic' );
 
 			expect( action ).toEqual( {
 				type: 'SET_SELECTED_STYLE',
-				payload: 'informative',
+				payload: 'cinematic',
 			} );
 		} );
 
@@ -94,9 +94,9 @@ describe( 'Video Studio Store', () => {
 
 	describe( 'Reducer', () => {
 		it( 'SET_SELECTED_STYLE updates selectedStyle', () => {
-			const state = reducer( getInitialState(), actions.setSelectedStyle( 'promotional' ) );
+			const state = reducer( getInitialState(), actions.setSelectedStyle( 'highlights' ) );
 
-			expect( state.selectedStyle ).toBe( 'promotional' );
+			expect( state.selectedStyle ).toBe( 'highlights' );
 			// Other slices untouched
 			expect( state.currentVideoUrl ).toBeNull();
 		} );
@@ -137,13 +137,13 @@ describe( 'Video Studio Store', () => {
 		} );
 
 		it( 'preserves existing slices when updating one slice', () => {
-			let state = reducer( getInitialState(), actions.setSelectedStyle( 'informative' ) );
+			let state = reducer( getInitialState(), actions.setSelectedStyle( 'cinematic' ) );
 			state = reducer( state, actions.setCurrentVideoUrl( 'https://example.com/clip.mp4' ) );
 			state = reducer( state, actions.setCurrentAttachmentId( 7 ) );
 			state = reducer( state, actions.setCurrentDurationSeconds( 5 ) );
 
 			expect( state ).toEqual( {
-				selectedStyle: 'informative',
+				selectedStyle: 'cinematic',
 				currentVideoUrl: 'https://example.com/clip.mp4',
 				currentAttachmentId: 7,
 				currentDurationSeconds: 5,
@@ -157,7 +157,7 @@ describe( 'Video Studio Store', () => {
 		} );
 
 		it( 'allows clearing values back to null', () => {
-			let state = reducer( getInitialState(), actions.setSelectedStyle( 'informative' ) );
+			let state = reducer( getInitialState(), actions.setSelectedStyle( 'cinematic' ) );
 			state = reducer( state, actions.setSelectedStyle( null ) );
 
 			expect( state.selectedStyle ).toBeNull();
@@ -166,7 +166,7 @@ describe( 'Video Studio Store', () => {
 
 	describe( 'Feature-clip render lifecycle', () => {
 		const sampleBrief = {
-			style: 'informative-photo' as const,
+			style: 'highlights' as const,
 			scenes: [ { imageUrl: 'https://x/a.jpg', camera: 'zoom-in' as const } ],
 			titleCard: { copy: 'Hello' },
 		};
@@ -273,8 +273,8 @@ describe( 'Video Studio Store', () => {
 
 	describe( 'Selectors', () => {
 		it( 'getSelectedStyle returns the selected style', () => {
-			const state: VideoStudioState = { ...getInitialState(), selectedStyle: 'informative' };
-			expect( selectors.getSelectedStyle( state ) ).toBe( 'informative' );
+			const state: VideoStudioState = { ...getInitialState(), selectedStyle: 'cinematic' };
+			expect( selectors.getSelectedStyle( state ) ).toBe( 'cinematic' );
 		} );
 
 		it( 'getCurrentVideoUrl returns the current video URL', () => {

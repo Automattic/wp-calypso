@@ -6,6 +6,7 @@ import { select, useDispatch, useSelect } from '@wordpress/data';
 import { createRoot, useCallback, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import ImageStudio from './components';
+import { FeatureClipRenderHost } from './compositor/feature-clip-render-host';
 import { registerBlockEditorFilters } from './extensions';
 import { useDraftCleanup } from './hooks/use-draft-cleanup';
 import { useImageFileNavigation } from './hooks/use-image-file-navigation';
@@ -455,29 +456,34 @@ function ImageStudioIntegration(): JSX.Element | null {
 		[ handleSave, cleanupOnExit, invalidateResolution, attachmentId ]
 	);
 
-	// Don't render modal until we have image data
-	if ( ! isOpen ) {
-		return null;
-	}
-
+	// FeatureClipRenderHost mounts here (always, regardless of `isOpen`) so
+	// the off-screen render survives the user closing the Image Studio modal
+	// — matching the cinematic (Veo) flow where renders run to completion in
+	// the background. Mounting it inside the modal would unmount the host
+	// (and abort the render) the moment the modal closed.
 	return (
-		<ImageStudio
-			image={ image?.url ?? '' }
-			onSave={ handleSave }
-			onDiscard={ handleDiscard }
-			onExit={ handleExit }
-			onClassicMediaEditorNavigation={
-				capabilities.classicMediaEditor ? handleClassicMediaEditorNavigation : undefined
-			}
-			onNavigatePrevious={ isMediaLibraryContext ? handleNavigatePrevious : undefined }
-			onNavigateNext={ isMediaLibraryContext ? handleNavigateNext : undefined }
-			hasPreviousImage={ hasPreviousImage && ! hasUnsavedChanges }
-			hasNextImage={ hasNextImage && ! hasUnsavedChanges }
-			config={ {
-				attachmentId: attachmentId ?? undefined,
-				imageData: image ?? undefined,
-			} }
-		/>
+		<>
+			<FeatureClipRenderHost />
+			{ isOpen && (
+				<ImageStudio
+					image={ image?.url ?? '' }
+					onSave={ handleSave }
+					onDiscard={ handleDiscard }
+					onExit={ handleExit }
+					onClassicMediaEditorNavigation={
+						capabilities.classicMediaEditor ? handleClassicMediaEditorNavigation : undefined
+					}
+					onNavigatePrevious={ isMediaLibraryContext ? handleNavigatePrevious : undefined }
+					onNavigateNext={ isMediaLibraryContext ? handleNavigateNext : undefined }
+					hasPreviousImage={ hasPreviousImage && ! hasUnsavedChanges }
+					hasNextImage={ hasNextImage && ! hasUnsavedChanges }
+					config={ {
+						attachmentId: attachmentId ?? undefined,
+						imageData: image ?? undefined,
+					} }
+				/>
+			) }
+		</>
 	);
 }
 

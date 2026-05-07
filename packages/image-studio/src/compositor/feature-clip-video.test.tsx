@@ -42,7 +42,7 @@ import { FeatureClipVideo } from './feature-clip-video';
 import type { FeatureClipBrief } from './types';
 
 const baseBrief: FeatureClipBrief = {
-	style: 'informative-photo',
+	style: 'highlights',
 	scenes: [
 		{ imageUrl: 'https://example.com/a.jpg', camera: 'zoom-in', caption: 'Morning light' },
 		{ imageUrl: 'https://example.com/b.jpg', camera: 'pan-right' },
@@ -51,13 +51,8 @@ const baseBrief: FeatureClipBrief = {
 };
 
 describe( 'FeatureClipVideo dispatcher', () => {
-	it( 'renders the informative variant for informative-photo style', () => {
+	it( 'renders the highlights variant', () => {
 		expect( () => render( <FeatureClipVideo brief={ baseBrief } /> ) ).not.toThrow();
-	} );
-
-	it( 'renders the promotional variant for promotional-photo style', () => {
-		const promo: FeatureClipBrief = { ...baseBrief, style: 'promotional-photo' };
-		expect( () => render( <FeatureClipVideo brief={ promo } /> ) ).not.toThrow();
 	} );
 
 	it( 'tolerates an empty scene list', () => {

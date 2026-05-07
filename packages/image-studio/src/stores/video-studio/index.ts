@@ -45,8 +45,7 @@ export interface FeatureClipRenderError {
 }
 
 export interface VideoStudioState {
-	// Selected style preset for video generation (e.g. informative, promotional,
-	// informative-photo, promotional-photo).
+	// Selected style preset for video generation (e.g. cinematic, highlights).
 	selectedStyle: string | null;
 	// URL of the most recently generated video clip — populated when a render
 	// (Veo or browser-rendered) returns a successful upload.

@@ -1,11 +1,11 @@
 /**
- * Shape of the brief returned by the server-side `wpcom/generate-feature-clip-brief`
+ * Shape of the brief returned by the server-side `wpcom/compose-video-for-studio`
  * ability and consumed by the client-side EditFrame compositor. The renderer
  * is deterministic for a given brief.
+ *
+ * Only `highlights` actually lands a brief on this renderer — `cinematic`
+ * routes through Veo (server-side) and never produces a FeatureClipBrief.
  */
-// Top-level user-facing styles. The 'informative-photo' / 'promotional-photo'
-// values from the prior schema are dormant — code paths still exist for
-// when a Type dropdown reintroduces tone differentiation.
 export type FeatureClipStyle = 'cinematic' | 'highlights';
 
 export type FeatureClipCameraMove = 'zoom-in' | 'zoom-out' | 'pan-left' | 'pan-right' | 'static';
