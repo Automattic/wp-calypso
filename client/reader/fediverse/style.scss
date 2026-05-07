@@ -68,3 +68,42 @@
 .fediverse-landing__add {
 	text-align: center;
 }
+
+.fediverse-profile__avatar {
+	inline-size: 64px;
+	block-size: 64px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.fediverse-profile__avatar.is-placeholder {
+	background-color: var(--color-neutral-5);
+}
+
+.fediverse-profile__meta {
+	flex: 1;
+	min-inline-size: 0;
+}
+
+.fediverse-profile__name {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--color-text);
+}
+
+.fediverse-profile__handle {
+	color: var(--color-text-subtle);
+	font-size: 0.875rem;
+}
+
+.fediverse-profile__host {
+	color: var(--color-text-subtle);
+	font-size: 0.75rem;
+	text-decoration: none;
+}
+
+.fediverse-profile__host:hover {
+	text-decoration: underline;
+}

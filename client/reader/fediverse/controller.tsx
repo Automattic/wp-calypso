@@ -11,6 +11,10 @@ const loadFediverseAccountView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-fediverse-account-view" */ 'calypso/reader/fediverse/fediverse-account-view'
 	);
+const loadFediverseAuthorProfileView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-fediverse-author-profile-view" */ 'calypso/reader/fediverse/author-profile-view'
+	);
 
 function ensureFediverseEnabled(): boolean {
 	if ( ! isEnabled( 'reader/social' ) ) {
@@ -52,6 +56,31 @@ export const fediverseAccount = ( context: Context, next: () => void ) => {
 			placeholder={ null }
 			connectionId={ id }
 			tab={ tab }
+		/>
+	);
+	next();
+};
+
+export const fediverseAuthorProfile = ( context: Context, next: () => void ) => {
+	if ( ! ensureFediverseEnabled() ) {
+		return;
+	}
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' ).trim();
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	if ( ! idValid || ! actor ) {
+		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/fediverse' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-fediverse-author-profile"
+			require={ loadFediverseAuthorProfileView }
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
 		/>
 	);
 	next();

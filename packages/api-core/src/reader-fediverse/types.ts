@@ -43,3 +43,176 @@ export interface FediverseConnection {
 export interface FediverseConnectionsResponse {
 	connections: FediverseConnection[];
 }
+
+/**
+ * Profile counts surfaced on the author-profile endpoint. Followers /
+ * following come from the AP `followers` / `following` collections;
+ * `posts` is the lifetime count of public posts/notes the actor has
+ * authored.
+ */
+export interface FediverseProfileCounts {
+	followers: number;
+	following: number;
+	posts: number;
+}
+
+/**
+ * A federated actor projected onto a Mastodon-compatible Account block
+ * by the backend so the shared `<SocialPostCard>` and friends consume
+ * a uniform shape across protocols.
+ *
+ * `acct` is the bare username for local actors (e.g. `alice`) and the
+ * fully-qualified webfinger handle for remote ones (e.g.
+ * `alice@remote.example`); the connection's host is needed to render
+ * local accounts as `@alice@<host>`.
+ */
+export interface FediverseTimelineAccount {
+	id: string;
+	username: string;
+	acct: string;
+	display_name: string;
+	avatar: string | null;
+}
+
+/**
+ * Marker for an `Announce` activity that re-shares another actor's note.
+ * Mirrors `MastodonBoost` so the post-card "boosted by" preface is
+ * protocol-agnostic.
+ */
+export interface FediverseBoost {
+	type: 'boost';
+	by: FediverseTimelineAccount;
+}
+
+export interface FediverseCounts {
+	replies: number;
+	boosts: number;
+	favourites: number;
+}
+
+/**
+ * Single attachment in the flat `media` array. The `type` discriminator
+ * preserves AP attachment kinds; `unknown` is a forward-compat fallback
+ * for future kinds (e.g. polls, when modeled as attachments).
+ */
+export interface FediverseMediaAttachment {
+	type: 'image' | 'video' | 'gifv' | 'audio' | 'unknown';
+	url: string;
+	preview_url: string | null;
+	alt: string;
+	aspect_ratio: { width: number; height: number } | null;
+}
+
+/**
+ * Per-viewer interaction state. `favourited` corresponds to the AP
+ * `Like` activity; `reblogged` to `Announce`. Optional during the
+ * backend rollout window — consumers must treat a missing viewer as
+ * "not favourited / not reblogged".
+ */
+export interface FediverseFeedItemViewer {
+	favourited: boolean;
+	reblogged: boolean;
+}
+
+/**
+ * A single status-shaped feed item. Backend projects AP `Note` /
+ * `Article` activities into this Mastodon-compatible shape so the
+ * frontend can render it through the same shared `<SocialPostCard>`
+ * subtree as Mastodon.
+ *
+ * `id` is the Keyring-scoped identifier the rest of the protocol
+ * surface routes through (replies, favourites, etc.). `url` is the
+ * canonical permalink on the source site.
+ */
+export interface FediverseFeedItem {
+	id: string;
+	url: string;
+	created_at: string;
+	account: FediverseTimelineAccount;
+	content: string;
+	spoiler_text: string;
+	sensitive: boolean;
+	language: string | null;
+	in_reply_to_id: string | null;
+	in_reply_to_account_id: string | null;
+	boost: FediverseBoost | null;
+	media: FediverseMediaAttachment[];
+	counts: FediverseCounts;
+	viewer?: FediverseFeedItemViewer;
+}
+
+export interface FediverseTimelinePage {
+	items: FediverseFeedItem[];
+	cursor: string | null;
+}
+
+/**
+ * Caller-relative relationship state on the author-profile endpoint.
+ * `following` and `followed_by` are reciprocal flags — viewer follows
+ * the actor, actor follows viewer. `requested` is true when a follow
+ * request is pending (locked accounts).
+ */
+export interface FediverseAuthorProfileViewer {
+	following: boolean;
+	followed_by: boolean;
+	requested: boolean;
+}
+
+/**
+ * Wire shape from `GET /reader/fediverse/connections/<id>/profile/<actor>`.
+ * Mirrors `MastodonAuthorProfile` so the shared `SocialAuthorProfilePanel`
+ * can render the same header band across protocols.
+ *
+ * `note` is server-sanitised AP `summary` HTML (re-sanitised client-side
+ * as defence-in-depth via the same DOMPurify allow-list as Mastodon).
+ * `header` is the AP actor `image` (banner). `acct` and `handle` carry
+ * the same fully-qualified webfinger value (e.g. `@alice@example.com`)
+ * — the leading `@` is included by the backend; the post-card prefixes
+ * its own `@` at render time, so the mapper strips the leading `@`
+ * before populating `SocialPost.author.handle`.
+ *
+ * `is_self` is true when the profile being fetched is the connected
+ * caller's own actor — useful for distinguishing "your own profile"
+ * vs "someone else's profile" without comparing webfinger strings.
+ */
+export interface FediverseAuthorProfile {
+	/** Canonical AP actor URL, e.g. `https://example.com/users/alice`. */
+	id: string;
+	/** Bare local username, e.g. `alice`. */
+	username: string;
+	/** Fully-qualified webfinger handle with leading `@`, e.g. `@alice@example.com`. */
+	acct: string;
+	/** Same value as `acct`. Either is fine to read; the post-card uses `handle`. */
+	handle: string;
+	/** Host portion of the webfinger handle, e.g. `example.com`. */
+	instance: string;
+	display_name: string;
+	note: string;
+	avatar: string | null;
+	header: string | null;
+	/** Web URL of the actor's profile, e.g. `https://example.com/@alice`. */
+	url: string;
+	/** True for AP actors that gate their content behind a follow approval. */
+	locked: boolean;
+	counts: FediverseProfileCounts;
+	viewer: FediverseAuthorProfileViewer;
+	/** True when this actor is the connected caller's own self. */
+	is_self: boolean;
+}
+
+/**
+ * Wire envelope from the author-profile endpoint. The backend wraps the
+ * profile object in a single-key `profile` field so the response can
+ * grow side-band fields (lookup metadata, fetch timestamps, etc.)
+ * without breaking the shape.
+ */
+export interface FediverseAuthorProfileResponse {
+	profile: FediverseAuthorProfile;
+}
+
+/**
+ * Author-feed pages share the timeline page shape — alias rather than
+ * duplicate so a future field on `FediverseTimelinePage` propagates
+ * here too. Mirrors `MastodonAuthorFeedPage`.
+ */
+export type FediverseAuthorFeedPage = FediverseTimelinePage;

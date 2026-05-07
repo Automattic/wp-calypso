@@ -44,4 +44,9 @@ export {
 	mapMastodonFeedItemToSocialPost,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from './mappers/mastodon';
+export {
+	mapFediverseAuthorProfileToSocialProfileCardProps,
+	mapFediverseConnectionToSocialProfileCardProps,
+	mapFediverseFeedItemToSocialPost,
+} from './mappers/fediverse';
 export { socialPostFeedItemKey } from './utils/social-post-feed-item-key';
