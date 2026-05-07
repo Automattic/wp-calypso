@@ -6,6 +6,7 @@ import { useState, useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
+import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useVgsFormSubmit } from '../../hooks/use-vgs-form-submit';
@@ -18,6 +19,10 @@ import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:credit-card' );
+
+interface SubmitButtonColorResponse {
+	color: string;
+}
 
 export default function CreditCardPayButton( {
 	disabled,
@@ -57,6 +62,23 @@ export default function CreditCardPayButton( {
 	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
 	const elements = useElements();
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
+
+	const [ buttonColor, setButtonColor ] = useState< string | undefined >( undefined );
+	useEffect( () => {
+		wp.req
+			.get( {
+				path: '/submit-button-color',
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( response: SubmitButtonColorResponse ) => {
+				if ( response?.color ) {
+					setButtonColor( response.color );
+				}
+			} )
+			.catch( () => {
+				// Silently ignore errors; button renders with default styling.
+			} );
+	}, [] );
 
 	const [ displayFieldsError, setDisplayFieldsError ] = useState( '' );
 	const reduxDispatch = useDispatch();
@@ -182,6 +204,7 @@ export default function CreditCardPayButton( {
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
+			style={ buttonColor ? { backgroundColor: buttonColor } : undefined }
 		>
 			{ submitButtonContent }
 		</Button>
