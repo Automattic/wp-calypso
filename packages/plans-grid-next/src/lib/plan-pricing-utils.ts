@@ -114,7 +114,12 @@ export function fromPricingMetaForGridPlan(
 	return {
 		termMonths,
 		regularPricePerMonth: meta.originalPrice.monthly,
-		discountedPricePerMonth: meta.discountedPrice.monthly ?? undefined,
+		// The API sometimes sets discountedPrice.monthly to the intro offer price rather than
+		// a genuine site-level discount (e.g. currency conversion, proration credit). When an
+		// intro offer is active the intro structure already captures the discounted period, so
+		// using discountedPrice here would contaminate the post-intro "regular" rate used by
+		// getPlanPriceForDuration — producing incorrect totals for the non-intro months.
+		discountedPricePerMonth: isIntroActive ? undefined : meta.discountedPrice.monthly ?? undefined,
 		introOffer: meta.introOffer
 			? {
 					pricePerMonth: meta.introOffer.rawPrice.monthly,
