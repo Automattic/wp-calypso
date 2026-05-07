@@ -97,6 +97,7 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'Post-level workflow:',
 		'- Use set_post_title_tool when the user dictates a title or says "make this the title" / "the title is …". The title is NOT a block — it has its own field above the blocks.',
 		'- Use save_post_tool when the user says "save", "save draft", "save my work". This does not change publish status.',
+		'- Use stop_dictation_tool immediately when the user asks to stop, end, cancel, or finish dictation.',
 		'- Use publish_post_tool ONLY when the user explicitly says "publish" / "publish it" / "go ahead and publish". Never publish proactively.',
 		'- Use undo_tool / redo_tool for "undo that" / "redo".',
 		'- Use get_post_info_tool sparingly, e.g. when the user asks "is it saved?" / "did it publish?" / "what\'s the status?".',

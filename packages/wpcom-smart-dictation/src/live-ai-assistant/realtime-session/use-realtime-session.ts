@@ -169,7 +169,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				return;
 			}
 
-			const didExecuteTools = await executeRealtimeToolCalls( {
+			const { didSendOutput, shouldStopDictation } = await executeRealtimeToolCalls( {
 				event,
 				onToolEvent: ( toolEvent ) => {
 					setToolEvents( ( prev ) => {
@@ -193,11 +193,19 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				},
 			} );
 
-			if ( didExecuteTools ) {
+			if ( shouldStopDictation ) {
+				recordSessionEnded( 'voice_stop' );
+				setStatus( 'ending' );
+				cleanup();
+				setStatus( 'idle' );
+				return;
+			}
+
+			if ( didSendOutput ) {
 				safeCreateResponse();
 			}
 		},
-		[ safeCreateResponse ]
+		[ cleanup, recordSessionEnded, safeCreateResponse ]
 	);
 
 	const handleServerEvent = useCallback(

@@ -1,3 +1,4 @@
+import { stopDictationToolDefinition } from '../tools/dictation-control-tool';
 import {
 	formatTextToolDefinition,
 	getBlockToolDefinition,
@@ -50,4 +51,5 @@ export const realtimeToolDefinitions = [
 	getPostInfoToolDefinition,
 	verifyYoutubeUrlToolDefinition,
 	pickImageToolDefinition,
+	stopDictationToolDefinition,
 ];

@@ -1,3 +1,4 @@
+import { STOP_DICTATION_TOOL_NAME } from '../tools/dictation-control-tool';
 import {
 	FORMAT_TEXT_TOOL_NAME,
 	GET_BLOCK_TOOL_NAME,
@@ -128,6 +129,8 @@ export function describeToolCall(
 			return `${ errorPrefix }Set post title`;
 		case SAVE_POST_TOOL_NAME:
 			return `${ errorPrefix }Saved draft`;
+		case STOP_DICTATION_TOOL_NAME:
+			return `${ errorPrefix }Stopped dictation`;
 		case PUBLISH_POST_TOOL_NAME:
 			return `${ errorPrefix }Published post`;
 		case UNDO_TOOL_NAME:

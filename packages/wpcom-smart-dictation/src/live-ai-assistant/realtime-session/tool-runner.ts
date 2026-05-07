@@ -1,5 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
+	STOP_DICTATION_TOOL_NAME,
+	executeStopDictationTool,
+} from '../tools/dictation-control-tool';
+import {
 	FORMAT_TEXT_TOOL_NAME,
 	GET_BLOCK_TOOL_NAME,
 	GET_BLOCK_TYPE_TOOL_NAME,
@@ -60,6 +64,11 @@ interface ExecuteRealtimeToolCallsArgs {
 	sendFunctionCallOutput: ( callId: string, result: unknown ) => void;
 }
 
+interface ExecuteRealtimeToolCallsResult {
+	didSendOutput: boolean;
+	shouldStopDictation: boolean;
+}
+
 interface RealtimeFunctionCall {
 	type: string;
 	name?: string;
@@ -71,14 +80,15 @@ export async function executeRealtimeToolCalls( {
 	event,
 	onToolEvent,
 	sendFunctionCallOutput,
-}: ExecuteRealtimeToolCallsArgs ): Promise< boolean > {
+}: ExecuteRealtimeToolCallsArgs ): Promise< ExecuteRealtimeToolCallsResult > {
 	const functionCalls = getFunctionCalls( event );
 
 	if ( ! functionCalls.length ) {
-		return false;
+		return { didSendOutput: false, shouldStopDictation: false };
 	}
 
 	let didSendOutput = false;
+	let shouldStopDictation = false;
 	for ( const call of functionCalls ) {
 		if ( ! call.call_id ) {
 			continue;
@@ -116,9 +126,10 @@ export async function executeRealtimeToolCalls( {
 
 		sendFunctionCallOutput( call.call_id, result );
 		didSendOutput = true;
+		shouldStopDictation = shouldStopDictation || call.name === STOP_DICTATION_TOOL_NAME;
 	}
 
-	return didSendOutput;
+	return { didSendOutput, shouldStopDictation };
 }
 
 function getFunctionCalls( event: { response?: { output?: unknown[] } } ): RealtimeFunctionCall[] {
@@ -198,6 +209,9 @@ async function executeRealtimeToolCall( call: RealtimeFunctionCall ): Promise< u
 	}
 	if ( call.name === PICK_IMAGE_TOOL_NAME ) {
 		return executePickImageTool( call.arguments );
+	}
+	if ( call.name === STOP_DICTATION_TOOL_NAME ) {
+		return executeStopDictationTool();
 	}
 	return { ok: false, error: `Unsupported tool: ${ call.name || 'unknown' }` };
 }
