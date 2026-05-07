@@ -5,7 +5,7 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { getLocaleSlug } from 'i18n-calypso';
-import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
@@ -19,6 +19,7 @@ import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import SubscribeVerificationNudge from './verificationNudge';
 
@@ -80,10 +81,16 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const selectedFeedIconUrl =
 		( selectedFeed as { site_icon?: string; image?: string } | null )?.site_icon ??
 		( selectedFeed as { site_icon?: string; image?: string } | null )?.image;
+	const reduxFollows = useSelector( getReaderFollows );
 	const dispatch = useDispatch();
 	const currentLocale = getLocaleSlug();
 	const SITES_PER_PAGE = 6;
 	const queryClient = useQueryClient();
+
+	// Snapshot of feed IDs the user was already following when the recommendations
+	// first loaded. Stored in a ref so that subscribing to a blog during this step
+	// does not cause it to disappear from the list.
+	const initialFollowedFeedIdsRef = useRef< Set< number > | null >( null );
 
 	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
@@ -120,6 +127,18 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		if ( isLoading ) {
 			return [];
 		}
+
+		// Lazily capture the set of already-followed feed IDs on the first run after
+		// loading completes. Subsequent runs caused by reduxFollows updating (i.e. the
+		// user subscribing during this step) find the ref already set and skip this
+		// block — so newly-subscribed blogs stay visible in the list.
+		if ( initialFollowedFeedIdsRef.current === null ) {
+			initialFollowedFeedIdsRef.current = new Set(
+				reduxFollows.filter( ( f ) => f.feed_ID != null ).map( ( f ) => f.feed_ID )
+			);
+		}
+		const initialFollowedFeedIds = initialFollowedFeedIdsRef.current;
+
 		const isEnglish = currentLocale?.startsWith( 'en' );
 
 		// Get list of curated recommendations only if the language is English.
@@ -165,9 +184,16 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 			return b.weight - a.weight;
 		} );
 
+		// Remove blogs the user was already following when recommendations first loaded.
+		// Uses the snapshot (not live follows) so subscribing during this step doesn't
+		// cause a blog to vanish from the list.
+		const unsubscribedRecommendations = sortedRecommendations.filter(
+			( blog ) => ! initialFollowedFeedIds.has( blog.feed_ID )
+		);
+
 		// Limit to 18 recommendations.
-		return sortedRecommendations.slice( 0, 18 );
-	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale ] );
+		return unsubscribedRecommendations.slice( 0, 18 );
+	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale, reduxFollows ] );
 
 	const maxPages = Math.ceil( combinedRecommendations.length / SITES_PER_PAGE ) - 1; // -1 because pages are 0-based.
 
@@ -205,10 +231,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		}
 	}, [ combinedRecommendations, dispatch ] );
 
-	// Reset the page and selected site when the followed tags change.
+	// Reset the page, selected site, and follow snapshot when the followed tags change
+	// so that a fresh snapshot is taken the next time recommendations are built.
 	useEffect( () => {
 		setCurrentPage( 0 );
 		setSelectedSite( null );
+		initialFollowedFeedIdsRef.current = null;
 	}, [ followedTagSlugs ] );
 
 	// Select the first site by default when recommendations are loaded.
