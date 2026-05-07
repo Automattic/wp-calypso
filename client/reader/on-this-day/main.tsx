@@ -69,11 +69,7 @@ function OnThisDayStream() {
 			{ currentView === 'recent' ? (
 				<OnThisDay viewToggle={ <ViewToggle /> } streamKey={ onThisDayStreamKey } />
 			) : (
-				<ReaderStream
-					streamKey={ onThisDayStreamKey }
-					trackScrollPage={ () => {} }
-					className="following"
-				>
+				<ReaderStream streamKey={ onThisDayStreamKey } trackScrollPage className="following">
 					<NavigationHeader
 						title={ translate( 'On This Day' ) }
 						subtitle={ translate( 'Posts from this day in previous years.' ) }

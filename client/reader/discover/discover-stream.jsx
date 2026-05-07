@@ -55,6 +55,7 @@ const DiscoverStream = ( props ) => {
 			sidebarTabTitle={
 				selectedTab === RECOMMENDED_TAB ? translate( 'Sites' ) : translate( 'Related' )
 			}
+			selectedStreamName={ selectedTab }
 			useCompactCards
 		>
 			<DiscoverHeaderAndNavigation { ...headerAndNavigationProps } />

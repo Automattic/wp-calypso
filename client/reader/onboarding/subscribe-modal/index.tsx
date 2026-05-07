@@ -50,7 +50,13 @@ interface StreamProps {
 	followSource?: string;
 	useCompactCards?: boolean;
 	wideLayout?: boolean;
-	trackScrollPage?: ( pageNum: number ) => void;
+	trackScrollPage?: (
+		path: string,
+		title: string,
+		category: string,
+		readerView: string,
+		pageNum: number
+	) => void;
 }
 
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
