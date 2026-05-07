@@ -1,21 +1,32 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { getPreference } from 'calypso/state/preferences/selectors';
-
-const PREFERENCE_KEY = 'hosting-dashboard-color-scheme';
-const DEFAULT_COLOR_SCHEME = 'light';
-
-function isColorScheme( value ) {
-	return value === 'light' || value === 'dark' || value === 'system';
-}
+import { DEFAULT_SCHEME, PREFERENCE_KEY, isColorScheme } from 'calypso/dashboard/app/color-scheme';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
 export default function ThemesColorSchemeProvider( { children } ) {
+	const isReady = useSelector( hasReceivedRemotePreferences );
 	const savedColorScheme = useSelector( ( state ) => getPreference( state, PREFERENCE_KEY ) );
-	const colorScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_COLOR_SCHEME;
+	const colorScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_SCHEME;
 
 	useEffect( () => {
+		if ( ! isReady ) {
+			return;
+		}
 		document.documentElement.dataset.theme = colorScheme;
-	}, [ colorScheme ] );
+	}, [ colorScheme, isReady ] );
 
 	return children;
+}
+
+export function withThemesColorScheme( children, { isSiteRoute, isLoggedIn } ) {
+	if ( isSiteRoute || ! isLoggedIn ) {
+		return children;
+	}
+	return (
+		<ThemesColorSchemeProvider>
+			<BodySectionCssClass bodyClass={ [ 'is-themes-dark-mode' ] } />
+			{ children }
+		</ThemesColorSchemeProvider>
+	);
 }

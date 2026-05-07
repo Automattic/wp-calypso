@@ -18,12 +18,11 @@ import { SearchThemes } from 'calypso/components/search-themes';
 import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import ThemesColorSchemeProvider from 'calypso/my-sites/themes/color-scheme-provider';
+import { withThemesColorScheme } from 'calypso/my-sites/themes/color-scheme-provider';
 import FilterBarModern from 'calypso/my-sites/themes/filter-bar-modern';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -722,10 +721,8 @@ class ThemeShowcase extends Component {
 		const showThemeErrors =
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
-		const colorSchemeEnabled = ! this.props.isSiteRoute;
 		const showcase = (
 			<div className={ classnames }>
-				{ colorSchemeEnabled && <BodySectionCssClass bodyClass={ [ 'is-themes-dark-mode' ] } /> }
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
@@ -878,11 +875,10 @@ class ThemeShowcase extends Component {
 			</div>
 		);
 
-		if ( colorSchemeEnabled ) {
-			return <ThemesColorSchemeProvider>{ showcase }</ThemesColorSchemeProvider>;
-		}
-
-		return showcase;
+		return withThemesColorScheme( showcase, {
+			isSiteRoute: this.props.isSiteRoute,
+			isLoggedIn,
+		} );
 	}
 }
 

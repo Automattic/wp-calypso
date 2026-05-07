@@ -55,12 +55,11 @@ import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
-import ThemesColorSchemeProvider from 'calypso/my-sites/themes/color-scheme-provider';
+import { withThemesColorScheme } from 'calypso/my-sites/themes/color-scheme-provider';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -1416,31 +1415,21 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
-	const colorSchemeEnabled = ! props.isSiteRoute;
-
-	const themeSheet = (
-		<>
-			{ colorSchemeEnabled && <BodySectionCssClass bodyClass={ [ 'is-themes-dark-mode' ] } /> }
-			<ConnectedThemeSheet
-				{ ...props }
-				themeTier={ themeTier }
-				isThemeAllowed={ isThemeAllowed }
-				demo_uri={ demoUrl }
-				siteId={ siteId }
-				defaultOption={ defaultOption }
-				secondaryOption={ secondaryOption }
-				source="showcase-sheet"
-				activeThemeId={ activeThemeId }
-				siteIntent={ siteIntent }
-			/>
-		</>
+	return withThemesColorScheme(
+		<ConnectedThemeSheet
+			{ ...props }
+			themeTier={ themeTier }
+			isThemeAllowed={ isThemeAllowed }
+			demo_uri={ demoUrl }
+			siteId={ siteId }
+			defaultOption={ defaultOption }
+			secondaryOption={ secondaryOption }
+			source="showcase-sheet"
+			activeThemeId={ activeThemeId }
+			siteIntent={ siteIntent }
+		/>,
+		{ isSiteRoute: props.isSiteRoute, isLoggedIn: props.isLoggedIn }
 	);
-
-	if ( colorSchemeEnabled ) {
-		return <ThemesColorSchemeProvider>{ themeSheet }</ThemesColorSchemeProvider>;
-	}
-
-	return themeSheet;
 };
 
 export default connect(

@@ -139,12 +139,4 @@
 			--studio-white: var( --dashboard__text-color );
 		}
 	}
-
-	.themes.is-logged-out {
-		--color-surface-backdrop: var( --studio-blue-5 );
-
-		.themes__header-logged-out {
-			--color-primary: var( --wp-admin-theme-color-darker-20 );
-		}
-	}
 }
