@@ -1,9 +1,11 @@
 import {
+	mastodonAuthStatusQueryOptions,
 	useMastodonAuthStatusQuery,
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -34,16 +36,17 @@ interface Props {
 }
 
 // Adapter that maps `useMastodonAuthStatusQuery`'s shape to the gate's
-// `useAuthStatus` contract. Keep this as a named function (not an inline
-// arrow) — react-hooks/rules-of-hooks flags inline hooks-as-props.
+// `useAuthStatus` contract. Must be named with a `use` prefix so the
+// rules-of-hooks linter recognises it when passed as a hook prop.
 function useMastodonAuthStatusForGate( connectionId: number ) {
 	const r = useMastodonAuthStatusQuery( connectionId );
-	return { needsReauth: r.data?.needs_reauth, isLoading: r.isPending };
+	return { needsReauth: r.data?.needs_reauth };
 }
 
 export function MastodonAccountView( { connectionId, tab }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const { data, isPending } = useMastodonConnectionsQuery();
 
 	const connections = data?.connections ?? [];
@@ -57,15 +60,15 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	// sidebar row share this fetch — no extra request.
 	const details = useMastodonConnectionQuery( connection?.id ?? null );
 
-	// Subscribe to the mastodon query/mutation caches; any auth_required
-	// error invalidates auth-status so the gate refetches and re-renders.
-	useMastodonAuthStatusInvalidator( connection?.id ?? 0 );
+	// Subscribe to the mastodon query cache; any auth_required error
+	// invalidates auth-status so the gate refetches and re-renders.
+	useMastodonAuthStatusInvalidator( connection?.id ?? null );
 
 	// Top-level read of auth-status so this component can fire the
-	// gate-shown Tracks event. The gate also calls
-	// `useMastodonAuthStatusForGate` (same query under the hood); React
-	// Query dedupes by key, so this is one fetch — not two.
-	const authStatus = useMastodonAuthStatusQuery( connection?.id ?? 0 );
+	// gate-shown Tracks event. The gate's adapter calls
+	// `useMastodonAuthStatusQuery` against the same key, so React Query
+	// dedupes — one fetch.
+	const authStatus = useMastodonAuthStatusQuery( connection?.id ?? null );
 
 	const gateShownConnectionId = useRef< number | null >( null );
 	useEffect( () => {
@@ -113,10 +116,23 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		if ( params.get( 'reconnected' ) !== String( connection.id ) ) {
 			return;
 		}
-		dispatch(
-			successNotice( translate( '%s reconnected', { args: connection.handle } ), {
-				duration: 5000,
+		// Optimistically prime auth-status to `needs_reauth: false` so the gate
+		// doesn't flash on top of the just-reconnected content while the next
+		// auth-status fetch is in flight. The next refetch will reconcile.
+		// Updater form preserves any future `MastodonAuthStatus` fields TS would
+		// otherwise let us silently drop with a literal-object replacement.
+		queryClient.setQueryData(
+			mastodonAuthStatusQueryOptions( connection.id ).queryKey,
+			( prev ) => ( {
+				...( prev ?? {} ),
+				needs_reauth: false,
 			} )
+		);
+		dispatch(
+			successNotice(
+				translate( '%(handle)s reconnected', { args: { handle: connection.handle } } ),
+				{ duration: 5000 }
+			)
 		);
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_reauth_completed', {
@@ -129,7 +145,7 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		const next = `${ window.location.pathname }${ search ? '?' + search : '' }`;
 		window.history.replaceState( null, '', next );
 		// connection.id is the load-bearing identity here; ignore translate /
-		// dispatch / handle churn so the toast fires exactly once per landing.
+		// dispatch / handle / queryClient churn so the toast fires exactly once per landing.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ connection?.id ] );
 
@@ -164,12 +180,16 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 						headline={ translate( 'Reconnect to update permissions' ) as string }
 						body={ createInterpolateElement(
 							translate(
-								'Your <strong>%s</strong> connection needs to be refreshed to keep working with new Reader features.',
-								{ args: connection.handle }
+								'Your <strong>%(handle)s</strong> connection needs to be refreshed to keep working with new Reader features.',
+								{ args: { handle: connection.handle } }
 							) as string,
 							{ strong: <strong /> }
 						) }
-						buttonLabel={ translate( 'Reconnect on %s', { args: connection.instance } ) as string }
+						buttonLabel={
+							translate( 'Reconnect on %(instance)s', {
+								args: { instance: connection.instance },
+							} ) as string
+						}
 						onReconnectClick={ () =>
 							dispatch(
 								recordReaderTracksEvent( 'calypso_reader_reauth_button_clicked', {

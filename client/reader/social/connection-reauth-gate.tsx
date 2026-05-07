@@ -1,15 +1,12 @@
 import './connection-reauth-gate.scss';
 
 import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
+import { Icon, update } from '@wordpress/icons';
 import { ReactNode } from 'react';
-import type React from 'react';
 
 interface ConnectionReauthGateProps {
 	connectionId: number;
-	useAuthStatus: ( connectionId: number ) => {
-		needsReauth?: boolean;
-		isLoading: boolean;
-	};
+	useAuthStatus: ( connectionId: number ) => { needsReauth?: boolean };
 	reconnectUrl: string;
 	headline: string;
 	body: ReactNode;
@@ -44,20 +41,11 @@ export function ConnectionReauthGate( {
 				<CardBody>
 					<VStack spacing={ 3 } alignment="center">
 						<div className="connection-reauth-gate__icon" aria-hidden="true">
-							🔄
+							<Icon icon={ update } size={ 32 } />
 						</div>
 						<h2 className="connection-reauth-gate__headline">{ headline }</h2>
 						<p className="connection-reauth-gate__body">{ body }</p>
-						<Button
-							variant="primary"
-							href={ reconnectUrl }
-							onMouseDown={ onReconnectClick }
-							onKeyDown={ ( e: React.KeyboardEvent< HTMLElement > ) => {
-								if ( e.key === 'Enter' || e.key === ' ' ) {
-									onReconnectClick?.();
-								}
-							} }
-						>
+						<Button variant="primary" href={ reconnectUrl } onClick={ onReconnectClick }>
 							{ buttonLabel }
 						</Button>
 					</VStack>

@@ -15,7 +15,7 @@ describe( 'ConnectionReauthGate', () => {
 	};
 
 	it( 'renders children when needsReauth is false', () => {
-		const useAuthStatus = () => ( { needsReauth: false, isLoading: false } );
+		const useAuthStatus = () => ( { needsReauth: false } );
 		render(
 			<ConnectionReauthGate { ...baseProps } useAuthStatus={ useAuthStatus }>
 				<div>Timeline content</div>
@@ -26,7 +26,7 @@ describe( 'ConnectionReauthGate', () => {
 	} );
 
 	it( 'renders the overlay when needsReauth is true', () => {
-		const useAuthStatus = () => ( { needsReauth: true, isLoading: false } );
+		const useAuthStatus = () => ( { needsReauth: true } );
 		render(
 			<ConnectionReauthGate { ...baseProps } useAuthStatus={ useAuthStatus }>
 				<div>Timeline content</div>
@@ -43,18 +43,8 @@ describe( 'ConnectionReauthGate', () => {
 		expect( link ).toHaveAttribute( 'href', 'https://example.test/reconnect/42' );
 	} );
 
-	it( 'renders children optimistically when needsReauth is undefined and not loading', () => {
-		const useAuthStatus = () => ( { needsReauth: undefined, isLoading: false } );
-		render(
-			<ConnectionReauthGate { ...baseProps } useAuthStatus={ useAuthStatus }>
-				<div>Timeline content</div>
-			</ConnectionReauthGate>
-		);
-		expect( screen.getByText( 'Timeline content' ) ).toBeVisible();
-	} );
-
-	it( 'renders children optimistically while loading', () => {
-		const useAuthStatus = () => ( { needsReauth: undefined, isLoading: true } );
+	it( 'renders children optimistically when needsReauth is undefined (loading or error)', () => {
+		const useAuthStatus = () => ( { needsReauth: undefined } );
 		render(
 			<ConnectionReauthGate { ...baseProps } useAuthStatus={ useAuthStatus }>
 				<div>Timeline content</div>
@@ -64,7 +54,7 @@ describe( 'ConnectionReauthGate', () => {
 	} );
 
 	it( 'passes the connectionId to useAuthStatus', () => {
-		const useAuthStatus = jest.fn().mockReturnValue( { needsReauth: false, isLoading: false } );
+		const useAuthStatus = jest.fn().mockReturnValue( { needsReauth: false } );
 		render(
 			<ConnectionReauthGate { ...baseProps } useAuthStatus={ useAuthStatus }>
 				<div>Timeline content</div>
@@ -76,7 +66,7 @@ describe( 'ConnectionReauthGate', () => {
 	it( 'calls onReconnectClick when the reconnect link is activated (mousedown)', async () => {
 		const user = userEvent.setup();
 		const onReconnectClick = jest.fn();
-		const useAuthStatus = () => ( { needsReauth: true, isLoading: false } );
+		const useAuthStatus = () => ( { needsReauth: true } );
 		render(
 			<ConnectionReauthGate
 				{ ...baseProps }

@@ -2,10 +2,7 @@ import './connection-reauth-tag.scss';
 
 interface ConnectionReauthTagProps {
 	connectionId: number;
-	useAuthStatus: ( connectionId: number ) => {
-		needsReauth?: boolean;
-		isLoading: boolean;
-	};
+	useAuthStatus: ( connectionId: number ) => { needsReauth?: boolean };
 	label: string;
 }
 

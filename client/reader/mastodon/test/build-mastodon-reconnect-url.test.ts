@@ -27,4 +27,28 @@ describe( 'buildMastodonReconnectUrl', () => {
 		expect( redirectParsed.searchParams.get( 'tab' ) ).toBe( 'posts' );
 		expect( redirectParsed.searchParams.get( 'reconnected' ) ).toBe( '42' );
 	} );
+
+	it.each( [
+		[ 'protocol-relative external host', '//evil.example/foo' ],
+		[ 'absolute https URL', 'https://evil.example/foo' ],
+		[ 'empty string', '' ],
+		[ 'non-leading-slash path', 'reader/mastodon/42' ],
+	] )( 'rejects unsafe returnPath: %s', ( _label, hostile ) => {
+		const url = buildMastodonReconnectUrl( 42, hostile );
+		const parsed = new URL( url );
+		const redirect = parsed.searchParams.get( 'redirect_to' );
+		const redirectParsed = new URL( redirect as string, 'https://wordpress.com' );
+		expect( redirectParsed.origin ).toBe( 'https://wordpress.com' );
+		expect( redirectParsed.pathname ).toBe( '/reader' );
+		expect( redirectParsed.searchParams.get( 'reconnected' ) ).toBe( '42' );
+	} );
+
+	it.each( [
+		[ 'NaN', NaN ],
+		[ 'zero', 0 ],
+		[ 'negative', -1 ],
+		[ 'fractional', 1.5 ],
+	] )( 'throws on invalid connectionId: %s', ( _label, bad ) => {
+		expect( () => buildMastodonReconnectUrl( bad, '/reader' ) ).toThrow( /positive integer/ );
+	} );
 } );

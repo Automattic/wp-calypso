@@ -254,4 +254,40 @@ describe( 'MastodonAccountView reauth gate', () => {
 		// Reset URL for subsequent tests.
 		originalReplaceState( null, '', '/' );
 	} );
+
+	it( 'does not fire reauth_completed or strip the URL when ?reconnected does not match', async () => {
+		mockConnections();
+		mockConnectionDetails();
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: false } );
+
+		const successSpy = jest.spyOn( noticeActions, 'successNotice' );
+		const originalReplaceState = window.history.replaceState.bind( window.history );
+		const replaceStateSpy = jest
+			.spyOn( window.history, 'replaceState' )
+			.mockImplementation( originalReplaceState );
+
+		// Mismatching id — viewing connection 42 but URL says reconnected=99.
+		window.history.replaceState( null, '', '/reader/mastodon/42/timeline?reconnected=99' );
+
+		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+
+		await waitFor( () =>
+			expect( screen.getByText( 'Mastodon timeline placeholder' ) ).toBeVisible()
+		);
+
+		expect( successSpy ).not.toHaveBeenCalled();
+		expect( trackSpy ).not.toHaveBeenCalledWith(
+			'calypso_reader_reauth_completed',
+			expect.anything()
+		);
+		// The marker should still be on the URL — we don't strip a marker we
+		// didn't act on.
+		expect( window.location.search ).toContain( 'reconnected=99' );
+
+		successSpy.mockRestore();
+		replaceStateSpy.mockRestore();
+		originalReplaceState( null, '', '/' );
+	} );
 } );

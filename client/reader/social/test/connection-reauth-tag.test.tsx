@@ -6,7 +6,7 @@ import { ConnectionReauthTag } from '../connection-reauth-tag';
 
 describe( 'ConnectionReauthTag', () => {
 	it( 'renders the tag when needsReauth is true', () => {
-		const useAuthStatus = () => ( { needsReauth: true, isLoading: false } );
+		const useAuthStatus = () => ( { needsReauth: true } );
 		render(
 			<ConnectionReauthTag
 				connectionId={ 42 }
@@ -18,7 +18,7 @@ describe( 'ConnectionReauthTag', () => {
 	} );
 
 	it( 'renders nothing when needsReauth is false', () => {
-		const useAuthStatus = () => ( { needsReauth: false, isLoading: false } );
+		const useAuthStatus = () => ( { needsReauth: false } );
 		const { container } = render(
 			<ConnectionReauthTag
 				connectionId={ 42 }
@@ -30,7 +30,7 @@ describe( 'ConnectionReauthTag', () => {
 	} );
 
 	it( 'renders nothing when needsReauth is undefined', () => {
-		const useAuthStatus = () => ( { needsReauth: undefined, isLoading: false } );
+		const useAuthStatus = () => ( { needsReauth: undefined } );
 		const { container } = render(
 			<ConnectionReauthTag
 				connectionId={ 42 }
@@ -42,7 +42,7 @@ describe( 'ConnectionReauthTag', () => {
 	} );
 
 	it( 'passes the connectionId to useAuthStatus', () => {
-		const useAuthStatus = jest.fn().mockReturnValue( { needsReauth: false, isLoading: false } );
+		const useAuthStatus = jest.fn().mockReturnValue( { needsReauth: false } );
 		render(
 			<ConnectionReauthTag
 				connectionId={ 42 }
