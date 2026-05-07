@@ -1,11 +1,10 @@
 import {
-	mastodonAuthStatusQueryOptions,
+	useAuthorizeMastodonConnectionMutation,
 	useMastodonAuthStatusQuery,
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -16,12 +15,12 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { ConnectionReauthGate } from 'calypso/reader/social';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { useDispatch } from 'calypso/state';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { buildMastodonReconnectUrl } from './build-mastodon-reconnect-url';
 import { mastodonComposerConfig } from './composer-config';
 import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
 import { MastodonNavigation } from './mastodon-navigation';
+import { isSafeReturnPath, saveOauthState } from './oauth-state';
 import { ProfilePanel } from './profile-panel';
 import { SettingsPanel } from './settings-panel';
 import { TimelinePanel } from './timeline-panel';
@@ -43,10 +42,22 @@ function useMastodonAuthStatusForGate( connectionId: number ) {
 	return { needsReauth: r.data?.needs_reauth };
 }
 
+// Defence in depth — `authorize()` should only ever return an `https:`
+// authorize URL on the user's instance, but a hostile or buggy upstream
+// could theoretically return something else. Refuse to navigate anywhere
+// that isn't `https:`.
+function isSafeAuthorizeUrl( url: string ): boolean {
+	try {
+		const parsed = new URL( url );
+		return parsed.protocol === 'https:';
+	} catch {
+		return false;
+	}
+}
+
 export function MastodonAccountView( { connectionId, tab }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
 	const { data, isPending } = useMastodonConnectionsQuery();
 
 	const connections = data?.connections ?? [];
@@ -69,6 +80,8 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	// `useMastodonAuthStatusQuery` against the same key, so React Query
 	// dedupes — one fetch.
 	const authStatus = useMastodonAuthStatusQuery( connection?.id ?? null );
+
+	const authorize = useAuthorizeMastodonConnectionMutation();
 
 	const gateShownConnectionId = useRef< number | null >( null );
 	useEffect( () => {
@@ -106,48 +119,60 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		}
 	}, [ isPending, connection, tabValid ] );
 
-	// On landing back from the OAuth reconnect flow, fire a success notice
-	// and strip ?reconnected={id} from the URL so a refresh doesn't re-fire.
-	useEffect( () => {
+	const handleReconnect = () => {
 		if ( ! connection ) {
 			return;
 		}
-		const params = new URLSearchParams( window.location.search );
-		if ( params.get( 'reconnected' ) !== String( connection.id ) ) {
-			return;
-		}
-		// Optimistically prime auth-status to `needs_reauth: false` so the gate
-		// doesn't flash on top of the just-reconnected content while the next
-		// auth-status fetch is in flight. The next refetch will reconcile.
-		// Updater form preserves any future `MastodonAuthStatus` fields TS would
-		// otherwise let us silently drop with a literal-object replacement.
-		queryClient.setQueryData(
-			mastodonAuthStatusQueryOptions( connection.id ).queryKey,
-			( prev ) => ( {
-				...( prev ?? {} ),
-				needs_reauth: false,
-			} )
-		);
 		dispatch(
-			successNotice(
-				translate( '%(handle)s reconnected', { args: { handle: connection.handle } } ),
-				{ duration: 5000 }
-			)
-		);
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_reauth_completed', {
+			recordReaderTracksEvent( 'calypso_reader_reauth_button_clicked', {
 				provider: 'mastodon',
 				connection_id: connection.id,
 			} )
 		);
-		params.delete( 'reconnected' );
-		const search = params.toString();
-		const next = `${ window.location.pathname }${ search ? '?' + search : '' }`;
-		window.history.replaceState( null, '', next );
-		// connection.id is the load-bearing identity here; ignore translate /
-		// dispatch / handle / queryClient churn so the toast fires exactly once per landing.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ connection?.id ] );
+		const rawReturnPath = window.location.pathname + window.location.search;
+		const returnPath = isSafeReturnPath( rawReturnPath ) ? rawReturnPath : undefined;
+		authorize.mutate(
+			{ instance: connection.instance },
+			{
+				onSuccess: ( { authorize_url, state } ) => {
+					if ( ! isSafeAuthorizeUrl( authorize_url ) ) {
+						dispatch(
+							errorNotice(
+								translate( 'We couldn’t start the reconnect safely. Please try again.' ),
+								{ duration: 5000 }
+							)
+						);
+						dispatch(
+							recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_error', {
+								reason: 'unsafe_url',
+							} )
+						);
+						return;
+					}
+					saveOauthState( {
+						state,
+						instance: connection.instance,
+						returnPath,
+						reconnectingConnectionId: connection.id,
+					} );
+					window.location.assign( authorize_url );
+				},
+				onError: ( error ) => {
+					dispatch(
+						errorNotice( translate( 'Could not start the reconnect. Please try again.' ), {
+							duration: 5000,
+						} )
+					);
+					dispatch(
+						recordReaderTracksEvent( 'calypso_reader_mastodon_authorize_error', {
+							reason: 'authorize_failed',
+							error_kind: error.kind,
+						} )
+					);
+				},
+			}
+		);
+	};
 
 	if ( ! connection || ! tabValid ) {
 		return (
@@ -173,10 +198,8 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 					<ConnectionReauthGate
 						connectionId={ connection.id }
 						useAuthStatus={ useMastodonAuthStatusForGate }
-						reconnectUrl={ buildMastodonReconnectUrl(
-							connection.id,
-							window.location.pathname + window.location.search
-						) }
+						onReconnect={ handleReconnect }
+						isReconnecting={ authorize.isPending }
 						headline={ translate( 'Reconnect to update permissions' ) as string }
 						body={ createInterpolateElement(
 							translate(
@@ -189,14 +212,6 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 							translate( 'Reconnect on %(instance)s', {
 								args: { instance: connection.instance },
 							} ) as string
-						}
-						onReconnectClick={ () =>
-							dispatch(
-								recordReaderTracksEvent( 'calypso_reader_reauth_button_clicked', {
-									provider: 'mastodon',
-									connection_id: connection.id,
-								} )
-							)
 						}
 					>
 						{ renderTab( tab, connection ) }

@@ -8,10 +8,10 @@ import { ConnectionReauthGate } from '../connection-reauth-gate';
 describe( 'ConnectionReauthGate', () => {
 	const baseProps = {
 		connectionId: 42,
-		reconnectUrl: 'https://example.test/reconnect/42',
 		headline: 'Reconnect to update permissions',
 		body: 'Your @jeherve@a8c.social connection needs to be refreshed.',
 		buttonLabel: 'Reconnect on a8c.social',
+		onReconnect: () => {},
 	};
 
 	it( 'renders children when needsReauth is false', () => {
@@ -22,7 +22,7 @@ describe( 'ConnectionReauthGate', () => {
 			</ConnectionReauthGate>
 		);
 		expect( screen.getByText( 'Timeline content' ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: /reconnect/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /reconnect/i } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the overlay when needsReauth is true', () => {
@@ -39,8 +39,7 @@ describe( 'ConnectionReauthGate', () => {
 		expect(
 			screen.getByText( 'Your @jeherve@a8c.social connection needs to be refreshed.' )
 		).toBeVisible();
-		const link = screen.getByRole( 'link', { name: 'Reconnect on a8c.social' } );
-		expect( link ).toHaveAttribute( 'href', 'https://example.test/reconnect/42' );
+		expect( screen.getByRole( 'button', { name: 'Reconnect on a8c.social' } ) ).toBeVisible();
 	} );
 
 	it( 'renders children optimistically when needsReauth is undefined (loading or error)', () => {
@@ -63,21 +62,41 @@ describe( 'ConnectionReauthGate', () => {
 		expect( useAuthStatus ).toHaveBeenCalledWith( 42 );
 	} );
 
-	it( 'calls onReconnectClick when the reconnect link is activated (mousedown)', async () => {
+	it( 'calls onReconnect when the reconnect button is clicked', async () => {
 		const user = userEvent.setup();
-		const onReconnectClick = jest.fn();
+		const onReconnect = jest.fn();
 		const useAuthStatus = () => ( { needsReauth: true } );
 		render(
 			<ConnectionReauthGate
 				{ ...baseProps }
 				useAuthStatus={ useAuthStatus }
-				onReconnectClick={ onReconnectClick }
+				onReconnect={ onReconnect }
 			>
 				<div>Timeline content</div>
 			</ConnectionReauthGate>
 		);
-		const link = screen.getByRole( 'link', { name: 'Reconnect on a8c.social' } );
-		await user.click( link );
-		expect( onReconnectClick ).toHaveBeenCalled();
+		const button = screen.getByRole( 'button', { name: 'Reconnect on a8c.social' } );
+		await user.click( button );
+		expect( onReconnect ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'disables the button while isReconnecting and suppresses additional onReconnect calls', async () => {
+		const user = userEvent.setup();
+		const onReconnect = jest.fn();
+		const useAuthStatus = () => ( { needsReauth: true } );
+		render(
+			<ConnectionReauthGate
+				{ ...baseProps }
+				useAuthStatus={ useAuthStatus }
+				onReconnect={ onReconnect }
+				isReconnecting
+			>
+				<div>Timeline content</div>
+			</ConnectionReauthGate>
+		);
+		const button = screen.getByRole( 'button', { name: 'Reconnect on a8c.social' } );
+		expect( button ).toBeDisabled();
+		await user.click( button );
+		expect( onReconnect ).not.toHaveBeenCalled();
 	} );
 } );

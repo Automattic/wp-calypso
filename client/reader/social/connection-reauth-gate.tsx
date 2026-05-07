@@ -7,23 +7,27 @@ import { ReactNode } from 'react';
 interface ConnectionReauthGateProps {
 	connectionId: number;
 	useAuthStatus: ( connectionId: number ) => { needsReauth?: boolean };
-	reconnectUrl: string;
 	headline: string;
 	body: ReactNode;
 	buttonLabel: string;
 	children: ReactNode;
-	onReconnectClick?: () => void;
+	onReconnect: () => void;
+	// True while the consumer is starting the OAuth handshake (the authorize
+	// mutation is in flight). The button shows a spinner and stays disabled so
+	// a second click can't fire a redundant authorize() while the first is
+	// still resolving the redirect URL.
+	isReconnecting?: boolean;
 }
 
 export function ConnectionReauthGate( {
 	connectionId,
 	useAuthStatus,
-	reconnectUrl,
 	headline,
 	body,
 	buttonLabel,
 	children,
-	onReconnectClick,
+	onReconnect,
+	isReconnecting,
 }: ConnectionReauthGateProps ) {
 	const { needsReauth } = useAuthStatus( connectionId );
 
@@ -45,7 +49,12 @@ export function ConnectionReauthGate( {
 						</div>
 						<h2 className="connection-reauth-gate__headline">{ headline }</h2>
 						<p className="connection-reauth-gate__body">{ body }</p>
-						<Button variant="primary" href={ reconnectUrl } onClick={ onReconnectClick }>
+						<Button
+							variant="primary"
+							onClick={ onReconnect }
+							isBusy={ isReconnecting }
+							disabled={ isReconnecting }
+						>
 							{ buttonLabel }
 						</Button>
 					</VStack>

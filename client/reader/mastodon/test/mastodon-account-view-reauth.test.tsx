@@ -72,6 +72,9 @@ function mockConnectionDetails() {
 }
 
 describe( 'MastodonAccountView reauth gate', () => {
+	let assignMock: jest.Mock;
+	let originalLocation: Location;
+
 	beforeAll( () => {
 		global.IntersectionObserver = class IntersectionObserver {
 			observe() {}
@@ -93,11 +96,32 @@ describe( 'MastodonAccountView reauth gate', () => {
 		trackSpy = jest
 			.spyOn( readerAnalytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+
+		// Stub window.location so the reconnect button's window.location.assign()
+		// doesn't tear the JSDOM page down mid-test.
+		originalLocation = window.location;
+		assignMock = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: {
+				...originalLocation,
+				pathname: '/reader/mastodon/42/timeline',
+				search: '',
+				assign: assignMock,
+			},
+		} );
+		window.sessionStorage.clear();
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
 		jest.restoreAllMocks();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: originalLocation,
+		} );
 	} );
 
 	it( 'renders the gate overlay when auth-status reports needs_reauth: true', async () => {
@@ -113,12 +137,7 @@ describe( 'MastodonAccountView reauth gate', () => {
 			name: /reconnect to update permissions/i,
 		} );
 		expect( heading ).toBeVisible();
-
-		const link = await screen.findByRole( 'link', { name: /reconnect on a8c\.social/i } );
-		expect( link ).toHaveAttribute(
-			'href',
-			expect.stringContaining( '/reader/mastodon/connections/42/reconnect' )
-		);
+		expect( screen.getByRole( 'button', { name: /reconnect on a8c\.social/i } ) ).toBeVisible();
 
 		// Gated content must not render the timeline placeholder.
 		expect( screen.queryByText( 'Mastodon timeline placeholder' ) ).not.toBeInTheDocument();
@@ -139,51 +158,6 @@ describe( 'MastodonAccountView reauth gate', () => {
 		expect(
 			screen.queryByRole( 'heading', { name: /reconnect to update permissions/i } )
 		).not.toBeInTheDocument();
-	} );
-
-	it( 'fires a success notice and strips ?reconnected= when landing back from OAuth', async () => {
-		mockConnections();
-		mockConnectionDetails();
-		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: false } );
-
-		const successSpy = jest.spyOn( noticeActions, 'successNotice' );
-		const originalReplaceState = window.history.replaceState.bind( window.history );
-		const replaceStateSpy = jest
-			.spyOn( window.history, 'replaceState' )
-			.mockImplementation( originalReplaceState );
-
-		// Simulate the OAuth return: ?reconnected={connectionId} on the URL.
-		window.history.replaceState( null, '', '/reader/mastodon/42/timeline?reconnected=42' );
-
-		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
-			queryClient: makeClient(),
-		} );
-
-		// Wait for the timeline to render (gate confirmed not_reauth).
-		await waitFor( () =>
-			expect( screen.getByText( 'Mastodon timeline placeholder' ) ).toBeVisible()
-		);
-
-		// successNotice should have been dispatched with the handle.
-		await waitFor( () => {
-			expect( successSpy ).toHaveBeenCalled();
-		} );
-		const noticeText = successSpy.mock.calls[ 0 ][ 0 ];
-		expect( String( noticeText ) ).toMatch( /@jeherve@a8c\.social reconnected/ );
-
-		// The hook should have stripped `?reconnected=42` via history.replaceState.
-		await waitFor( () => {
-			const lastCall = replaceStateSpy.mock.calls.findLast(
-				( args ) => typeof args[ 2 ] === 'string' && ! args[ 2 ].includes( 'reconnected' )
-			);
-			expect( lastCall ).toBeDefined();
-			expect( lastCall?.[ 2 ] ).toBe( '/reader/mastodon/42/timeline' );
-		} );
-
-		successSpy.mockRestore();
-		replaceStateSpy.mockRestore();
-		// Reset URL for subsequent tests.
-		originalReplaceState( null, '', '/' );
 	} );
 
 	it( 'fires calypso_reader_reauth_gate_shown when the gate appears', async () => {
@@ -209,85 +183,99 @@ describe( 'MastodonAccountView reauth gate', () => {
 		} );
 	} );
 
-	it( 'fires calypso_reader_reauth_button_clicked when the reconnect link is activated', async () => {
+	it( 'kicks off the authorize mutation, stores oauth-state with reconnect hints, and navigates to the authorize URL on click', async () => {
 		const user = userEvent.setup();
 		mockConnections();
 		mockConnectionDetails();
 		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );
+		nock( BASE ).post( listUrl, { step: 'authorize', instance: 'a8c.social' } ).reply( 200, {
+			authorize_url: 'https://a8c.social/oauth/authorize?client_id=x&state=abc',
+			state: 'abc',
+		} );
 
 		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
 			queryClient: makeClient(),
 		} );
 
-		const link = await screen.findByRole( 'link', { name: /reconnect on a8c\.social/i } );
-		await user.click( link );
+		const button = await screen.findByRole( 'button', { name: /reconnect on a8c\.social/i } );
+		await user.click( button );
 
+		await waitFor( () =>
+			expect( assignMock ).toHaveBeenCalledWith(
+				'https://a8c.social/oauth/authorize?client_id=x&state=abc'
+			)
+		);
 		expect( trackSpy ).toHaveBeenCalledWith(
 			'calypso_reader_reauth_button_clicked',
 			expect.objectContaining( { provider: 'mastodon', connection_id: 42 } )
 		);
+
+		const stored = JSON.parse(
+			window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ?? ''
+		);
+		expect( stored ).toEqual( {
+			state: 'abc',
+			instance: 'a8c.social',
+			returnPath: '/reader/mastodon/42/timeline',
+			reconnectingConnectionId: 42,
+		} );
 	} );
 
-	it( 'fires calypso_reader_reauth_completed when ?reconnected matches the connection', async () => {
+	it( 'refuses to follow a non-https authorize_url, surfaces an error notice, and leaves storage empty', async () => {
+		const user = userEvent.setup();
+		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
+
 		mockConnections();
 		mockConnectionDetails();
-		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: false } );
-
-		const originalReplaceState = window.history.replaceState.bind( window.history );
-		window.history.replaceState( null, '', '/reader/mastodon/42/timeline?reconnected=42' );
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );
+		nock( BASE ).post( listUrl, { step: 'authorize', instance: 'a8c.social' } ).reply( 200, {
+			authorize_url: 'http://a8c.social/oauth/authorize',
+			state: 'abc',
+		} );
 
 		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
 			queryClient: makeClient(),
 		} );
 
-		await waitFor( () =>
-			expect( screen.getByText( 'Mastodon timeline placeholder' ) ).toBeVisible()
+		const button = await screen.findByRole( 'button', { name: /reconnect on a8c\.social/i } );
+		await user.click( button );
+
+		await waitFor( () => expect( errorSpy ).toHaveBeenCalled() );
+		expect( assignMock ).not.toHaveBeenCalled();
+		expect( window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ).toBeNull();
+		expect( trackSpy ).toHaveBeenCalledWith(
+			'calypso_reader_mastodon_authorize_error',
+			expect.objectContaining( { reason: 'unsafe_url' } )
 		);
 
-		await waitFor( () => {
-			expect( trackSpy ).toHaveBeenCalledWith(
-				'calypso_reader_reauth_completed',
-				expect.objectContaining( { provider: 'mastodon', connection_id: 42 } )
-			);
-		} );
-
-		// Reset URL for subsequent tests.
-		originalReplaceState( null, '', '/' );
+		errorSpy.mockRestore();
 	} );
 
-	it( 'does not fire reauth_completed or strip the URL when ?reconnected does not match', async () => {
+	it( 'surfaces an error notice when the authorize endpoint fails', async () => {
+		const user = userEvent.setup();
+		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
+
 		mockConnections();
 		mockConnectionDetails();
-		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: false } );
-
-		const successSpy = jest.spyOn( noticeActions, 'successNotice' );
-		const originalReplaceState = window.history.replaceState.bind( window.history );
-		const replaceStateSpy = jest
-			.spyOn( window.history, 'replaceState' )
-			.mockImplementation( originalReplaceState );
-
-		// Mismatching id — viewing connection 42 but URL says reconnected=99.
-		window.history.replaceState( null, '', '/reader/mastodon/42/timeline?reconnected=99' );
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );
+		nock( BASE )
+			.post( listUrl, { step: 'authorize', instance: 'a8c.social' } )
+			.reply( 429, { error: 'rate_limited', message: 'slow down' } );
 
 		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
 			queryClient: makeClient(),
 		} );
 
-		await waitFor( () =>
-			expect( screen.getByText( 'Mastodon timeline placeholder' ) ).toBeVisible()
+		const button = await screen.findByRole( 'button', { name: /reconnect on a8c\.social/i } );
+		await user.click( button );
+
+		await waitFor( () => expect( errorSpy ).toHaveBeenCalled() );
+		expect( assignMock ).not.toHaveBeenCalled();
+		expect( trackSpy ).toHaveBeenCalledWith(
+			'calypso_reader_mastodon_authorize_error',
+			expect.objectContaining( { reason: 'authorize_failed' } )
 		);
 
-		expect( successSpy ).not.toHaveBeenCalled();
-		expect( trackSpy ).not.toHaveBeenCalledWith(
-			'calypso_reader_reauth_completed',
-			expect.anything()
-		);
-		// The marker should still be on the URL — we don't strip a marker we
-		// didn't act on.
-		expect( window.location.search ).toContain( 'reconnected=99' );
-
-		successSpy.mockRestore();
-		replaceStateSpy.mockRestore();
-		originalReplaceState( null, '', '/' );
+		errorSpy.mockRestore();
 	} );
 } );

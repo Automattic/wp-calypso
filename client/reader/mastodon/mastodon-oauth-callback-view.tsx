@@ -1,5 +1,9 @@
-import { useCompleteMastodonConnectionMutation } from '@automattic/api-queries';
+import {
+	mastodonAuthStatusQueryOptions,
+	useCompleteMastodonConnectionMutation,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useEffect, useMemo, useRef } from 'react';
@@ -7,8 +11,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useDispatch } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { clearOauthState, readOauthState } from './oauth-state';
+import { clearOauthState, isSafeReturnPath, readOauthState } from './oauth-state';
 import type { MastodonError } from '@automattic/api-core';
 
 interface Props {
@@ -18,6 +23,7 @@ interface Props {
 export function MastodonOauthCallbackView( { query }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const complete = useCompleteMastodonConnectionMutation();
 	// Run exactly once per mount. StrictMode double-invoke in dev would
 	// otherwise fire two complete requests and the server would reject the
@@ -55,12 +61,53 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 			return;
 		}
 		startedRef.current = true;
+		const reconnectingId = stored.reconnectingConnectionId;
+		const returnPath = stored.returnPath;
 		complete.mutate(
 			{ state, code },
 			{
 				onSuccess: ( { connection } ) => {
 					clearOauthState();
-					page.replace( `/reader/mastodon/${ connection.id }/timeline` );
+					// Reconnect path: same connection id we shipped into authorize()
+					// is the one Keyring upserted on (provider, external_id, user_id),
+					// so the backend echoes back the same id. Prime auth-status to
+					// `needs_reauth: false` so the gate doesn't flash on top of the
+					// just-reconnected content while the next auth-status fetch is
+					// in flight, fire the success notice, and emit the completion
+					// Tracks event before navigating.
+					const isReconnect = reconnectingId === connection.id;
+					if ( isReconnect ) {
+						queryClient.setQueryData(
+							mastodonAuthStatusQueryOptions( connection.id ).queryKey,
+							( prev ) => ( {
+								...( prev ?? {} ),
+								needs_reauth: false,
+							} )
+						);
+						dispatch(
+							successNotice(
+								translate( '%(handle)s reconnected', {
+									args: { handle: connection.handle },
+								} ),
+								{ duration: 5000 }
+							)
+						);
+						dispatch(
+							recordReaderTracksEvent( 'calypso_reader_reauth_completed', {
+								provider: 'mastodon',
+								connection_id: connection.id,
+							} )
+						);
+					}
+					// Honor the stored return path on reconnect; defence-in-depth
+					// safety check matches the write-time guard in the account view.
+					// On fresh connect (or unsafe / missing returnPath) fall back to
+					// the timeline for the just-created connection.
+					const target =
+						isReconnect && returnPath && isSafeReturnPath( returnPath )
+							? returnPath
+							: `/reader/mastodon/${ connection.id }/timeline`;
+					page.replace( target );
 				},
 				onError: ( error ) => {
 					clearOauthState();
@@ -73,7 +120,7 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 				},
 			}
 		);
-	}, [ providerError, code, state, stored, complete, dispatch ] );
+	}, [ providerError, code, state, stored, complete, dispatch, queryClient, translate ] );
 
 	const missingParams = ! providerError && ( ! code || ! state );
 	const stateMismatch =
