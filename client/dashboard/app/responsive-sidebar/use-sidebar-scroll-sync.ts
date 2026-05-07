@@ -77,25 +77,43 @@ export function useSidebarScrollSync( enabled: boolean = true ) {
 			window.requestAnimationFrame( apply );
 		};
 
-		const onScroll = schedule;
-		const onResize = () => {
+		// One observer for everything that could invalidate our cached
+		// measurements:
+		// - the inner navigator: SidebarNavigator swaps screens between
+		//   routes and each screen has a different content height. We
+		//   observe the navigator rather than the sidebar itself because
+		//   when the sidebar overflows, this hook pins `style.height` on
+		//   the sidebar, so its box-size stops reflecting content changes.
+		// - the masterbar: its height changes at the responsive breakpoint.
+		// - documentElement: stands in for window resize.
+		const resizeObserver = new ResizeObserver( () => {
 			measure();
 			schedule();
-		};
+		} );
+		resizeObserver.observe( document.documentElement );
 
 		// Initial measurement may need to wait for masterbar to mount.
 		const initId = window.requestAnimationFrame( () => {
 			measure();
 			schedule();
+			const { masterbar } = getEls();
+			const navigator = document.querySelector< HTMLElement >(
+				'.dashboard-responsive-sidebar__sidebar .dashboard-sidebar-navigator'
+			);
+			if ( navigator ) {
+				resizeObserver.observe( navigator );
+			}
+			if ( masterbar ) {
+				resizeObserver.observe( masterbar );
+			}
 		} );
 
-		window.addEventListener( 'scroll', onScroll, { passive: true } );
-		window.addEventListener( 'resize', onResize );
+		window.addEventListener( 'scroll', schedule, { passive: true } );
 
 		return () => {
 			window.cancelAnimationFrame( initId );
-			window.removeEventListener( 'scroll', onScroll );
-			window.removeEventListener( 'resize', onResize );
+			window.removeEventListener( 'scroll', schedule );
+			resizeObserver.disconnect();
 			const { sidebar, content } = getEls();
 			sidebar?.removeAttribute( 'style' );
 			if ( content ) {
