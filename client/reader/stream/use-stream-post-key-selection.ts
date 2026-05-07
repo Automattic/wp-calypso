@@ -14,6 +14,8 @@ const SELECTED_POST_GC_TIME = 30 * 60 * 1000;
 interface UseStreamPostKeySelectionOptions {
 	streamKey: string;
 	localeSlug?: string | null;
+	feedId?: number | null;
+	startDate?: string | null;
 	/**
 	 * Explicit stream items to use for prev/next calculation. Live consumers
 	 * (`<Stream>`) pass the items they're rendering. When omitted, the hook
@@ -68,6 +70,8 @@ type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'infinite', str
 export function useStreamPostKeySelection( {
 	streamKey,
 	localeSlug = null,
+	feedId = null,
+	startDate = null,
 	items: explicitItems,
 	currentPostKey: controlledCurrentPostKey = null,
 }: UseStreamPostKeySelectionOptions ): UseStreamPostKeySelectionResult {
@@ -97,27 +101,75 @@ export function useStreamPostKeySelection( {
 		const cachedEntries = queryClient.getQueriesData< { pages: ReadStreamResponse[] } >( {
 			queryKey: streamQueryKeyPrefix,
 		} );
+		if ( cachedEntries.length === 0 ) {
+			return [] as PostKey[];
+		}
+
+		const normalizedFeedId = feedId ?? null;
 		const normalizedLocaleSlug = localeSlug ?? null;
+		const normalizedStartDate = startDate ?? null;
+
+		// Infinite stream keys are:
+		// ['read','stream','infinite', streamKey, feedId, localeSlug, startDate]
+		const itemsForEntry = ( entry: ( typeof cachedEntries )[ number ] | undefined ): PostKey[] => {
+			const pages = entry?.[ 1 ]?.pages ?? [];
+			if ( ! pages.length ) {
+				return [];
+			}
+			const collected: PostKey[] = [];
+			for ( const page of pages ) {
+				collected.push( ...normalizeStreamPage( page, streamType ).streamItems );
+			}
+			return combineXPosts( collected ) as PostKey[];
+		};
+
+		// Prefer the entry whose full identity matches the request — covers the
+		// case where multiple variants of the same `streamKey` are cached
+		// (different `feedId` / `localeSlug` / `startDate`).
+		const exactEntry = cachedEntries.find( ( [ queryKey ] ) => {
+			if ( ! Array.isArray( queryKey ) ) {
+				return false;
+			}
+			return (
+				( queryKey[ 4 ] ?? null ) === normalizedFeedId &&
+				( queryKey[ 5 ] ?? null ) === normalizedLocaleSlug &&
+				( queryKey[ 6 ] ?? null ) === normalizedStartDate
+			);
+		} );
+		if ( exactEntry ) {
+			return itemsForEntry( exactEntry );
+		}
+
+		// No exact match — pick the cache entry that contains the current post
+		// key, so prev/next is computed from the list the user is actually
+		// navigating. Used by the full-post view, which knows the streamKey
+		// but not the variant the user came from.
+		if ( controlledCurrentPostKey ) {
+			for ( const entry of cachedEntries ) {
+				const items = itemsForEntry( entry );
+				if ( findPostKeyIndex( items, controlledCurrentPostKey ) >= 0 ) {
+					return items;
+				}
+			}
+		}
+
+		// Fallback: locale match, then first entry.
 		const localeMatchedEntry = cachedEntries.find( ( [ queryKey ] ) => {
 			if ( ! Array.isArray( queryKey ) ) {
 				return false;
 			}
-			// Infinite stream keys are:
-			// ['read','stream','infinite', streamKey, feedId, localeSlug, startDate]
-			const cachedLocaleSlug = queryKey[ 5 ] ?? null;
-			return cachedLocaleSlug === normalizedLocaleSlug;
+			return ( queryKey[ 5 ] ?? null ) === normalizedLocaleSlug;
 		} );
-		const matchingEntry = localeMatchedEntry ?? cachedEntries[ 0 ] ?? null;
-		const pages = matchingEntry?.[ 1 ]?.pages ?? [];
-		if ( ! pages.length ) {
-			return [] as PostKey[];
-		}
-		const collected: PostKey[] = [];
-		for ( const page of pages ) {
-			collected.push( ...normalizeStreamPage( page, streamType ).streamItems );
-		}
-		return combineXPosts( collected ) as PostKey[];
-	}, [ queryClient, streamQueryKeyPrefix, streamType, localeSlug ] );
+		return itemsForEntry( localeMatchedEntry ?? cachedEntries[ 0 ] );
+	}, [
+		queryClient,
+		streamQueryKeyPrefix,
+		streamType,
+		feedId,
+		localeSlug,
+		startDate,
+		controlledCurrentPostKey,
+	] );
 
 	const items = explicitItems ?? cachedItems;
 

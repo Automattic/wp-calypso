@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
@@ -62,6 +63,7 @@ import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 } from 'calypso/state/reader/viewing/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
@@ -998,6 +1000,10 @@ const ConnectedFullPostView = connect(
 const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {
 		const currentStreamKey = useSelector( getCurrentStream );
+		const rawLocale = useSelector( getCurrentLocaleSlug );
+		// Mirror `<Stream>`'s normalization so we look up the correct cached
+		// stream variant — non-default locales carry the slug in the key.
+		const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
 		const currentPostKey = pickBy( {
 			feedId: props.feedId ? +props.feedId : undefined,
 			blogId: props.blogId ? +props.blogId : undefined,
@@ -1005,7 +1011,7 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 		} );
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
-			localeSlug: null,
+			localeSlug,
 			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 		const previousPost = useSelector( ( state ) =>

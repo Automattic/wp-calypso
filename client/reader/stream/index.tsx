@@ -221,7 +221,9 @@ export function Stream( props: StreamProps ) {
 
 	const selection = useStreamPostKeySelection( {
 		streamKey,
+		feedId: selectedRecentFeedId ?? null,
 		localeSlug,
+		startDate: startDate ?? null,
 		items,
 	} );
 	const {
