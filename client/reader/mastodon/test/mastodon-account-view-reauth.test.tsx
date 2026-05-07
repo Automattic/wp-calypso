@@ -221,6 +221,36 @@ describe( 'MastodonAccountView reauth gate', () => {
 		} );
 	} );
 
+	it( 'refuses to follow an authorize_url whose host does not match the connection instance', async () => {
+		const user = userEvent.setup();
+		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
+
+		mockConnections();
+		mockConnectionDetails();
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );
+		nock( BASE ).post( listUrl, { step: 'authorize', instance: 'a8c.social' } ).reply( 200, {
+			authorize_url: 'https://evil.example/oauth/authorize?client_id=x&state=abc',
+			state: 'abc',
+		} );
+
+		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+
+		const button = await screen.findByRole( 'button', { name: /reconnect on a8c\.social/i } );
+		await user.click( button );
+
+		await waitFor( () => expect( errorSpy ).toHaveBeenCalled() );
+		expect( assignMock ).not.toHaveBeenCalled();
+		expect( window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ).toBeNull();
+		expect( trackSpy ).toHaveBeenCalledWith(
+			'calypso_reader_mastodon_authorize_error',
+			expect.objectContaining( { reason: 'unsafe_url' } )
+		);
+
+		errorSpy.mockRestore();
+	} );
+
 	it( 'refuses to follow a non-https authorize_url, surfaces an error notice, and leaves storage empty', async () => {
 		const user = userEvent.setup();
 		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );

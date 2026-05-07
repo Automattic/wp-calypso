@@ -40,7 +40,7 @@ export function ConnectionReauthGate( {
 	}
 
 	return (
-		<div className="connection-reauth-gate" role="alert" aria-live="polite">
+		<div className="connection-reauth-gate" role="status" aria-live="polite">
 			<Card className="connection-reauth-gate__card">
 				<CardBody>
 					<VStack spacing={ 3 } alignment="center">

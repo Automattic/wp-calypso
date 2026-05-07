@@ -45,11 +45,18 @@ function useMastodonAuthStatusForGate( connectionId: number ) {
 // Defence in depth — `authorize()` should only ever return an `https:`
 // authorize URL on the user's instance, but a hostile or buggy upstream
 // could theoretically return something else. Refuse to navigate anywhere
-// that isn't `https:`.
-function isSafeAuthorizeUrl( url: string ): boolean {
+// that isn't `https:` on the same host the user opted to reconnect to.
+function isSafeAuthorizeUrl( url: string, instance: string ): boolean {
 	try {
 		const parsed = new URL( url );
-		return parsed.protocol === 'https:';
+		if ( parsed.protocol !== 'https:' ) {
+			return false;
+		}
+		// Pinning to the connection's instance means a hostile upstream can't
+		// redirect a reconnect attempt off to an attacker-controlled host. The
+		// connection's instance is the host the user explicitly chose to
+		// reauthorize against, so any other host is by definition wrong.
+		return parsed.host.toLowerCase() === instance.toLowerCase();
 	} catch {
 		return false;
 	}
@@ -100,6 +107,15 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 				} )
 			);
 			gateShownConnectionId.current = connection.id;
+		} else if ( authStatus.data?.needs_reauth === false ) {
+			// Reset the dedupe guard once the connection is healthy again so
+			// a later token expiry in the same session re-fires the
+			// `gate_shown` event. Without this reset the second
+			// needs_reauth=true edge would be silently swallowed and Tracks
+			// would under-count repeat reauth prompts.
+			if ( gateShownConnectionId.current === connection.id ) {
+				gateShownConnectionId.current = null;
+			}
 		}
 		// connection.id is the load-bearing identity here; we don't want
 		// to refire on connection-object identity churn from React Query.
@@ -135,7 +151,7 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 			{ instance: connection.instance },
 			{
 				onSuccess: ( { authorize_url, state } ) => {
-					if ( ! isSafeAuthorizeUrl( authorize_url ) ) {
+					if ( ! isSafeAuthorizeUrl( authorize_url, connection.instance ) ) {
 						dispatch(
 							errorNotice(
 								translate( 'We couldn’t start the reconnect safely. Please try again.' ),

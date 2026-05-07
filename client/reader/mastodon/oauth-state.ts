@@ -107,6 +107,20 @@ export function clearOauthState(): void {
 // (caller-side, before save) and read time (defence in depth) so a
 // hand-edited storage value can't smuggle an external URL through to
 // navigation.
+//
+// Also reject backslash-prefixed (`/\evil.example`, which some browsers
+// normalise to `//evil.example`) and any path containing whitespace.
+// Legitimate Reader paths URL-encode whitespace and control bytes; raw
+// bytes only appear when something has tampered with the stored value.
 export function isSafeReturnPath( path: string ): boolean {
-	return path.startsWith( '/' ) && ! path.startsWith( '//' );
+	if ( ! path.startsWith( '/' ) ) {
+		return false;
+	}
+	if ( path.startsWith( '//' ) || path.startsWith( '/\\' ) ) {
+		return false;
+	}
+	if ( /\s/.test( path ) ) {
+		return false;
+	}
+	return true;
 }

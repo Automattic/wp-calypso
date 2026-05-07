@@ -77,13 +77,14 @@ export function MastodonOauthCallbackView( { query }: Props ) {
 					// Tracks event before navigating.
 					const isReconnect = reconnectingId === connection.id;
 					if ( isReconnect ) {
-						queryClient.setQueryData(
-							mastodonAuthStatusQueryOptions( connection.id ).queryKey,
-							( prev ) => ( {
-								...( prev ?? {} ),
-								needs_reauth: false,
-							} )
-						);
+						// Construct the full MastodonAuthStatus shape rather than
+						// spreading prev. The cache is usually cold here (we just
+						// came back from the IdP) and a future field added to
+						// MastodonAuthStatus should fail compilation rather than
+						// silently producing a partially-populated cache entry.
+						queryClient.setQueryData( mastodonAuthStatusQueryOptions( connection.id ).queryKey, {
+							needs_reauth: false,
+						} );
 						dispatch(
 							successNotice(
 								translate( '%(handle)s reconnected', {

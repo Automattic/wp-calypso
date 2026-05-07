@@ -171,6 +171,15 @@ describe( 'oauth-state', () => {
 			[ 'https://evil.example/foo', false ],
 			[ 'reader/mastodon/42', false ],
 			[ '', false ],
+			// Backslash-prefixed paths normalise to `//evil` in some browsers,
+			// so they have to be rejected at the safety check too.
+			[ '/\\evil.example/foo', false ],
+			// Whitespace and control bytes never appear in legitimate Reader
+			// paths (they are URL-encoded if present); raw bytes only show up
+			// when the storage value has been tampered with.
+			[ '/reader\nevil', false ],
+			[ '/reader evil', false ],
+			[ '/reader\tevil', false ],
 		] )( '%s → %s', ( path, expected ) => {
 			expect( isSafeReturnPath( path ) ).toBe( expected );
 		} );
