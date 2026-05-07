@@ -796,4 +796,11 @@ export function Stream( props: StreamProps ) {
 	return <div className={ wrapperClassName }>{ inner }</div>;
 }
 
-export default withDimensions( Stream );
+// `withDimensions` is a legacy untyped HOC (`client/lib/with-dimensions/index.jsx`)
+// — its inferred return type is `Object`, which makes the default export
+// unusable as JSX in `.tsx` consumers. Cast to a permissive `ComponentType`
+// so callers compile (matching the loose typing they had pre-HOC). Required
+// props (`streamKey`, `trackScrollPage`) are still enforced through the
+// named `Stream` export and the underlying function-component contract.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default withDimensions( Stream ) as React.ComponentType< any >;
