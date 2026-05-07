@@ -9,10 +9,17 @@
  * MP4 and produce a tiny image in the corner.
  */
 
+/*
+ * !important on display/width/height because the Lit `:host { display:block }`
+ * + custom-element upgrade timing was causing `offsetWidth/Height` to read
+ * 0 when EditFrame's renderer first measured the host. Forcing these via an
+ * external rule with !important wins regardless of the upgrade order.
+ */
 .image-studio-feature-clip.composition-root {
-	position: relative;
-	width: 1080px;
-	height: 1920px;
+	display: block !important;
+	position: relative !important;
+	width: 1080px !important;
+	height: 1920px !important;
 	overflow: hidden;
 	background: #111923;
 	color: #fff;
@@ -115,11 +122,168 @@
 	transform: translateY(calc(16px - (var(--scene-progress, 0) * 16px)));
 }
 
+/*
+ * Text-overlay scenes — used when the LLM-summarized brief includes text-only
+ * key-point scenes (no source imageUrl). Multi-radial gradient per accent
+ * variant + Ken-Burns motion (driven by the existing camera-* classes).
+ */
+.image-studio-feature-clip .scene-text-overlay {
+	color: #fff;
+	overflow: hidden;
+}
+
+.image-studio-feature-clip .scene-text-overlay--indigo {
+	background:
+		radial-gradient(circle at 30% 80%, rgba(140, 90, 220, 0.32), transparent 38%),
+		radial-gradient(circle at 75% 22%, rgba(80, 150, 255, 0.28), transparent 40%),
+		linear-gradient(155deg, #0e1320 0%, #1a1f3a 50%, #2c1f4a 100%);
+}
+
+.image-studio-feature-clip .scene-text-overlay--teal {
+	background:
+		radial-gradient(circle at 25% 75%, rgba(40, 200, 180, 0.28), transparent 36%),
+		radial-gradient(circle at 80% 20%, rgba(70, 180, 230, 0.26), transparent 42%),
+		linear-gradient(165deg, #0d1f24 0%, #133a3e 50%, #1a4f55 100%);
+}
+
+.image-studio-feature-clip .scene-text-overlay--amber {
+	background:
+		radial-gradient(circle at 30% 75%, rgba(255, 170, 80, 0.26), transparent 38%),
+		radial-gradient(circle at 75% 25%, rgba(220, 110, 90, 0.28), transparent 40%),
+		linear-gradient(160deg, #1a1410 0%, #2e1f1a 50%, #3a261c 100%);
+}
+
+.image-studio-feature-clip .scene-text-overlay--rose {
+	background:
+		radial-gradient(circle at 25% 78%, rgba(220, 110, 160, 0.30), transparent 38%),
+		radial-gradient(circle at 78% 24%, rgba(140, 90, 220, 0.26), transparent 40%),
+		linear-gradient(160deg, #1c1018 0%, #341a2c 50%, #4a2244 100%);
+}
+
+.image-studio-feature-clip .scene-text-overlay .scene-grid {
+	align-content: center;
+	justify-content: center;
+}
+
+/*
+ * Text overlay sitting ON TOP of an image scene (combined image + text scenes
+ * from the LLM-summarized brief). The scrim ensures legibility regardless of
+ * the underlying image's brightness; text anchors to the bottom third.
+ */
+.image-studio-feature-clip .scene-text-overlay-frame {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	display: block;
+}
+
+.image-studio-feature-clip .scene-text-overlay-frame--on-image .scene-grid {
+	align-content: end;
+	/* Lowered (was 150px) — overlay sits closer to the bottom edge. */
+	padding: 0 72px 110px;
+	text-align: left;
+}
+
+.image-studio-feature-clip .scene-text-overlay-frame__scrim {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 0) 0%,
+		rgba(0, 0, 0, 0) 38%,
+		rgba(0, 0, 0, 0.45) 70%,
+		rgba(0, 0, 0, 0.78) 100%
+	);
+	pointer-events: none;
+}
+
+.image-studio-feature-clip .scene-has-text .scene-text-overlay__body {
+	text-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+.image-studio-feature-clip .scene-text-overlay__body {
+	display: block;
+	max-width: 936px;
+	font-size: 84px;
+	font-weight: 700;
+	line-height: 1.07;
+	letter-spacing: -0.005em;
+	text-wrap: balance;
+	/*
+	 * Frame-deterministic fade-in + lift. Driven off --scene-progress
+	 * (updated per-frame by installSceneProgressDriver). EditFrame's
+	 * frame-by-frame DOM snapshot only captures animations smoothly when
+	 * they're driven by this var — CSS transitions or RAF-driven motion
+	 * read as stepped in the rendered MP4.
+	 *
+	 * scene-progress 0..1 maps to:
+	 *   0.00..0.18 → fade in + lift (most motion happens early)
+	 *   0.18..0.85 → settled
+	 *   0.85..1.00 → subtle fade out (so crossfades into next scene
+	 *                start from a softer state)
+	 */
+	opacity: clamp(0, calc(min(var(--scene-progress, 1) * 5.5, 1) * (1 - max(0, (var(--scene-progress, 1) - 0.85) * 6.66))), 1);
+	transform: translateY(
+		calc((1 - min(var(--scene-progress, 1) * 5.5, 1)) * 22px)
+	);
+}
+
+.image-studio-feature-clip .scene-text-overlay__eyebrow {
+	display: block;
+	margin-bottom: 24px;
+	font-size: 32px;
+	font-weight: 600;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: rgba(255, 255, 255, 0.78);
+	/* Eyebrow leads the body slightly — finishes its lift by progress 0.12. */
+	opacity: clamp(0, calc(min(var(--scene-progress, 1) * 8, 1) * (1 - max(0, (var(--scene-progress, 1) - 0.85) * 6.66))), 1);
+	transform: translateY(
+		calc((1 - min(var(--scene-progress, 1) * 8, 1)) * 14px)
+	);
+}
+
 /* Title-card scene */
 .image-studio-feature-clip .scene-title-card {
 	background:
 		radial-gradient(circle at 70% 24%, rgba(255, 255, 255, 0.18), transparent 32%),
 		linear-gradient(135deg, #1a1f2e 0%, #2c1f4a 100%);
+}
+
+/*
+ * Text-only fallback: when no usable images were discovered (or all 403'd),
+ * the renderer drops to a single full-duration title card. Center the text
+ * vertically and let the gradient drift slightly so the clip has motion
+ * matching the rest of the format.
+ */
+.image-studio-feature-clip .scene-title-card--text-only {
+	background:
+		radial-gradient(circle at 30% 80%, rgba(140, 90, 220, 0.32), transparent 38%),
+		radial-gradient(circle at 75% 22%, rgba(80, 150, 255, 0.28), transparent 40%),
+		linear-gradient(155deg, #0e1320 0%, #1a1f3a 50%, #2c1f4a 100%);
+	background-size:
+		120% 120%,
+		120% 120%,
+		100% 100%;
+	background-position:
+		calc(30% - var(--scene-progress, 0) * 6%) calc(80% + var(--scene-progress, 0) * 4%),
+		calc(75% + var(--scene-progress, 0) * 4%) calc(22% - var(--scene-progress, 0) * 3%),
+		0 0;
+}
+
+.image-studio-feature-clip .scene-title-card--text-only .scene-grid {
+	align-content: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.image-studio-feature-clip .scene-title-card--text-only .scene-copy {
+	justify-self: center;
+}
+
+.image-studio-feature-clip .scene-title-card--text-only .scene-title {
+	font-size: 102px;
+	text-align: center;
 }
 
 .image-studio-feature-clip .scene-grid {
@@ -150,7 +314,11 @@
 	line-height: 1.03;
 	letter-spacing: 0;
 	text-wrap: balance;
-	transform: translateY(calc(20px - (var(--scene-progress, 0) * 20px)));
+	/* Same frame-deterministic fade-in/lift as scene-text-overlay__body. */
+	opacity: clamp(0, calc(min(var(--scene-progress, 1) * 5.5, 1) * (1 - max(0, (var(--scene-progress, 1) - 0.85) * 6.66))), 1);
+	transform: translateY(
+		calc((1 - min(var(--scene-progress, 1) * 5.5, 1)) * 22px)
+	);
 }
 
 .image-studio-feature-clip .scene-title span {

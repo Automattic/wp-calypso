@@ -1,6 +1,6 @@
 import { Configuration, TimelineRoot } from '@editframe/react';
 import { dispatch as wpDispatch, useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useMemo, useState } from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore, type ImageStudioActions } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
@@ -29,6 +29,63 @@ const RENDER_OPTIONS = {
 
 interface RenderToVideoTimegroup extends HTMLElement {
 	renderToVideo: ( options: Record< string, unknown > ) => Promise< unknown >;
+}
+
+/**
+ * EditFrame's <EFImage> hard-codes a rewrite of any non-data: src to
+ * `${apiHost}/api/v1/assets/image?src=...` (its asset-proxy endpoint). We
+ * don't run an EditFrame backend, so that path 404s. The only short-circuit
+ * in EFImage is `src.startsWith("data:")`, so we prefetch each scene image
+ * here and inline it as a data URL.
+ */
+async function imageUrlToDataUrl( url: string ): Promise< string > {
+	const response = await fetch( url, { credentials: 'omit' } );
+	if ( ! response.ok ) {
+		throw new Error( `Failed to fetch scene image (${ response.status }): ${ url }` );
+	}
+	const blob = await response.blob();
+	return await new Promise< string >( ( resolve, reject ) => {
+		const reader = new FileReader();
+		reader.onload = () => resolve( String( reader.result ) );
+		reader.onerror = () => reject( new Error( `FileReader failed for ${ url }` ) );
+		reader.readAsDataURL( blob );
+	} );
+}
+
+async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureClipBrief > {
+	if ( ! brief.scenes || brief.scenes.length === 0 ) {
+		return brief;
+	}
+	const settled = await Promise.allSettled(
+		brief.scenes.map( async ( scene ) => {
+			// Text-overlay scenes don't carry an imageUrl — pass through unchanged.
+			if ( ! scene.imageUrl ) {
+				return scene;
+			}
+			if ( scene.imageUrl.startsWith( 'data:' ) ) {
+				return scene;
+			}
+			const dataUrl = await imageUrlToDataUrl( scene.imageUrl );
+			return { ...scene, imageUrl: dataUrl };
+		} )
+	);
+	const resolvedScenes: typeof brief.scenes = [];
+	settled.forEach( ( outcome, index ) => {
+		if ( outcome.status === 'fulfilled' ) {
+			resolvedScenes.push( outcome.value );
+			return;
+		}
+		// eslint-disable-next-line no-console
+		console.warn( '[FeatureClipRenderHost] dropping scene; image fetch failed', {
+			index,
+			imageUrl: brief.scenes[ index ]?.imageUrl,
+			reason: outcome.reason instanceof Error ? outcome.reason.message : String( outcome.reason ),
+		} );
+	} );
+	// Fallback to a text-only clip when every scene drops out (403 / CORS / no images).
+	// The composition handles scenes:[] by rendering the title card across the full
+	// duration with Ken-Burns motion.
+	return { ...brief, scenes: resolvedScenes };
 }
 
 /**
@@ -63,16 +120,67 @@ export function FeatureClipRenderHost() {
 	} = useDispatch( videoStudioStore ) as unknown as VideoStudioActions;
 
 	const [ mountedRequestId, setMountedRequestId ] = useState< string | null >( null );
+	const [ resolvedBrief, setResolvedBrief ] = useState< {
+		requestId: string;
+		brief: FeatureClipBrief;
+	} | null >( null );
 
-	// When a new pendingRender appears, mount the compositor with its brief.
+	// Track which requestId we've already kicked off a prefetch for. Using a
+	// ref (not deps) means dep instability from useDispatch / store re-renders
+	// doesn't restart prefetch mid-flight — and the catch path never gets
+	// stranded without dispatching failFeatureClipRender, which was hanging the
+	// orchestrator on "Tool calls without results."
+	const prefetchedRequestIdRef = useRef< string | null >( null );
+
+	// When a new pendingRender appears, prefetch its scene images into data URLs
+	// before mounting the compositor. EditFrame's EFImage rewrites non-data: src
+	// to a backend asset-proxy URL we don't host, so direct site URLs 404.
 	useEffect( () => {
-		if ( pendingRender && pendingRender.requestId !== mountedRequestId ) {
-			setMountedRequestId( pendingRender.requestId );
+		if ( ! pendingRender ) {
+			prefetchedRequestIdRef.current = null;
+			if ( mountedRequestId !== null ) {
+				setMountedRequestId( null );
+			}
+			if ( resolvedBrief !== null ) {
+				setResolvedBrief( null );
+			}
+			return;
 		}
-		if ( ! pendingRender && mountedRequestId !== null ) {
-			setMountedRequestId( null );
+
+		const requestId = pendingRender.requestId;
+		if ( prefetchedRequestIdRef.current === requestId ) {
+			return;
 		}
-	}, [ pendingRender, mountedRequestId ] );
+		prefetchedRequestIdRef.current = requestId;
+
+		const prefetchStartedAt = performance.now();
+		// Surface this phase to the sidebar progress panel so the user sees
+		// "Reading post images" during the prefetch (it can take seconds).
+		setFeatureClipProgressPhase( 'analyzing' );
+		// eslint-disable-next-line no-console
+		console.log( '[FeatureClipRenderHost] phase:prefetching-images', {
+			requestId,
+			sceneCount: pendingRender.brief.scenes.length,
+		} );
+		( async () => {
+			try {
+				const resolved = await resolveBriefImages( pendingRender.brief );
+				// eslint-disable-next-line no-console
+				console.log( '[FeatureClipRenderHost] prefetch_complete', {
+					requestId,
+					prefetchMs: Math.round( performance.now() - prefetchStartedAt ),
+				} );
+				setResolvedBrief( { requestId, brief: resolved } );
+				setMountedRequestId( requestId );
+			} catch ( error ) {
+				const message = error instanceof Error ? error.message : 'Failed to load scene images.';
+				// eslint-disable-next-line no-console
+				console.error( '[FeatureClipRenderHost] prefetch_failed', { requestId, message } );
+				// ALWAYS dispatch — never leave the agent's awaitRenderResult hanging.
+				failFeatureClipRender( { requestId, message } );
+			}
+		} )();
+	}, [ pendingRender, resolvedBrief, mountedRequestId, failFeatureClipRender ] );
 
 	// Cancel handling: hard-cancel from the user → clear pending and stop.
 	useEffect( () => {
@@ -172,6 +280,19 @@ export function FeatureClipRenderHost() {
 				await videoActions.setCurrentVideoUrl( attachment.url );
 				await videoActions.setCurrentAttachmentId( attachment.id );
 				await videoActions.setCurrentDurationSeconds( attachment.durationSeconds );
+
+				// Persist the attachment ID on the post so the sidebar can
+				// rehydrate after a reload — mirrors how the featured image is
+				// stored. editPost marks the post dirty; the user saves
+				// normally. The meta key matches `register_post_meta` on the
+				// wpcom side.
+				const editorActions = wpDispatch( 'core/editor' ) as
+					| { editPost?: ( edits: Record< string, unknown > ) => unknown }
+					| undefined;
+				editorActions?.editPost?.( {
+					meta: { image_studio_feature_clip_id: attachment.id },
+				} );
+
 				imageActions.addNotice(
 					__( 'Video saved to Media Library', __i18n_text_domain__ ),
 					'success'
@@ -237,14 +358,14 @@ export function FeatureClipRenderHost() {
 
 	const apiHost = typeof window !== 'undefined' ? window.location.origin : '';
 	const briefForMount = useMemo< FeatureClipBrief | null >( () => {
-		if ( ! mountedRequestId || ! pendingRender ) {
+		if ( ! mountedRequestId || ! resolvedBrief ) {
 			return null;
 		}
-		if ( pendingRender.requestId !== mountedRequestId ) {
+		if ( resolvedBrief.requestId !== mountedRequestId ) {
 			return null;
 		}
-		return pendingRender.brief;
-	}, [ mountedRequestId, pendingRender ] );
+		return resolvedBrief.brief;
+	}, [ mountedRequestId, resolvedBrief ] );
 
 	if ( ! briefForMount ) {
 		return null;
@@ -259,12 +380,27 @@ export function FeatureClipRenderHost() {
 		<div
 			aria-hidden
 			style={ {
+				// Mount in normal-ish layout (not extreme-offscreen). The POC
+				// renders the timegroup inside a regular block flow, which is
+				// why offsetWidth/offsetHeight resolves correctly there. Our
+				// previous `left/top: -99999` caused the browser to skip layout
+				// for the host (offsetWidth/Height read 0), and EditFrame fell
+				// back to the wrong dimensions. Pinning the wrapper to (0, 0),
+				// transparent, behind everything, with pointer-events disabled,
+				// matches POC behavior visually-invisible-but-laid-out.
 				position: 'fixed',
-				left: -99999,
-				top: -99999,
+				top: 0,
+				left: 0,
 				width: 1080,
 				height: 1920,
+				opacity: 0,
 				pointerEvents: 'none',
+				zIndex: -1,
+				// Don't allow this offscreen host to scroll the editor.
+				overflow: 'hidden',
+				// Layout/paint isolation for the editor's surrounding sidebar.
+				// NOT `size` — that collapses descendant intrinsic sizing.
+				contain: 'layout paint',
 			} }
 		>
 			{ /*

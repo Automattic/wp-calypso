@@ -39,8 +39,11 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 	if ( candidate.style !== 'informative-photo' && candidate.style !== 'promotional-photo' ) {
 		throw new Error( 'brief.style must be "informative-photo" or "promotional-photo".' );
 	}
-	if ( ! Array.isArray( candidate.scenes ) || candidate.scenes.length === 0 ) {
-		throw new Error( 'brief.scenes must be a non-empty array.' );
+	// Allow an empty scenes array — the renderer treats that as a text-only
+	// clip (single full-duration title card). The brief still must DECLARE
+	// scenes, just with zero entries when no images are usable.
+	if ( ! Array.isArray( candidate.scenes ) ) {
+		throw new Error( 'brief.scenes must be an array.' );
 	}
 	if (
 		! candidate.titleCard ||
