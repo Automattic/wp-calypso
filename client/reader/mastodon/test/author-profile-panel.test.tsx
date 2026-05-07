@@ -5,6 +5,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import * as notices from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MastodonAuthorProfilePanel } from '../author-profile-panel';
@@ -421,6 +422,56 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			expect(
 				await screen.findByRole( 'button', { name: 'Unfollow @alice@mastodon.social' } )
 			).toBeVisible();
+		} );
+
+		it( 'fires _follow_error and an errorNotice toast on a 502 follow response', async () => {
+			const user = userEvent.setup();
+			const tracksSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const noticeSpy = jest.spyOn( notices, 'errorNotice' );
+			nock( BASE )
+				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
+				.reply(
+					200,
+					makeProfile( {
+						viewer: { following: false, followed_by: false, requested: false },
+						is_self: false,
+					} )
+				);
+			stubFeed();
+			const followScope = nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '108020' } )
+				.reply( 502, { code: 'reader_mastodon_upstream_unavailable' } );
+
+			renderWithProvider(
+				<MastodonAuthorProfilePanel
+					connection={ connection }
+					actor="108020"
+					subtabBasePath="/reader/mastodon/7/profile/108020"
+				/>,
+				{ queryClient: makeQueryClient() }
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: /^Follow$/ } ) );
+
+			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
+			// _follow_error is the analytics signal Mastodon uses to track upstream
+			// failure rates by error_kind; the toast itself isn't rendered because
+			// renderWithProvider doesn't mount the global notice list — assert on
+			// the action creator dispatch instead.
+			await waitFor( () =>
+				expect(
+					tracksSpy.mock.calls.some(
+						( [ event, props ] ) =>
+							event === 'calypso_reader_mastodon_profile_follow_error' &&
+							( props as Record< string, unknown > )?.error_kind === 'upstream_unavailable' &&
+							( props as Record< string, unknown > )?.action === 'follow'
+					)
+				).toBe( true )
+			);
+			expect( noticeSpy ).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining( { id: 'mastodon-follow-error' } )
+			);
 		} );
 	} );
 } );

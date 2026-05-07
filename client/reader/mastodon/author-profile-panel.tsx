@@ -21,6 +21,7 @@ import {
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { useOptionalComposer } from 'calypso/reader/social/composer';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { MastodonAuthorProfileTabs, useMastodonAuthorFeedFilter } from './author-profile-tabs';
 import { projectMastodonError } from './error-projection';
@@ -37,6 +38,27 @@ import type {
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
+
+/**
+ * Per-action follow / unfollow error copy. Most error kinds share the
+ * profile-load copy because they're rooted in the same backend issue
+ * (auth, rate-limit, transport), so we delegate to the shared
+ * `errorMessage`. The exception is `not_found`: the shared copy is
+ * profile-load-shaped and would mislead the user when an actor
+ * disappears between profile load and the follow click.
+ */
+function followErrorMessage(
+	error: MastodonError,
+	action: 'follow' | 'unfollow',
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult {
+	if ( error.kind === 'not_found' ) {
+		return action === 'follow'
+			? translate( 'Couldn’t follow this account.' )
+			: translate( 'Couldn’t unfollow this account.' );
+	}
+	return errorMessage( error, translate );
+}
 
 interface MastodonAuthorProfilePanelProps {
 	connection: MastodonConnection;
@@ -94,7 +116,7 @@ export function MastodonAuthorProfilePanel( {
 	const followMutate = followMut.mutate;
 	const unfollowMutate = unfollowMut.mutate;
 
-	const trackFollowError = useCallback(
+	const showFollowError = useCallback(
 		( error: MastodonError, action: 'follow' | 'unfollow' ) => {
 			dispatch(
 				recordReaderTracksEvent( 'calypso_reader_mastodon_profile_follow_error', {
@@ -104,8 +126,13 @@ export function MastodonAuthorProfilePanel( {
 					error_kind: error.kind,
 				} )
 			);
+			dispatch(
+				errorNotice( followErrorMessage( error, action, translate ), {
+					id: 'mastodon-follow-error',
+				} )
+			);
 		},
-		[ connection.id, profile.data?.id, dispatch ]
+		[ connection.id, profile.data?.id, dispatch, translate ]
 	);
 
 	const handleFollow = useCallback( () => {
@@ -123,10 +150,13 @@ export function MastodonAuthorProfilePanel( {
 		followMutate(
 			{ connectionId: connection.id, actor, accountId: profile.data.id },
 			{
-				onError: ( error ) => trackFollowError( error, 'follow' ),
+				onSuccess: () => {
+					dispatch( removeNotice( 'mastodon-follow-error' ) );
+				},
+				onError: ( error ) => showFollowError( error, 'follow' ),
 			}
 		);
-	}, [ profile.data, connection.id, actor, dispatch, followMutate, trackFollowError ] );
+	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError ] );
 
 	const handleUnfollow = useCallback( () => {
 		if ( ! profile.data ) {
@@ -142,10 +172,13 @@ export function MastodonAuthorProfilePanel( {
 		unfollowMutate(
 			{ connectionId: connection.id, actor, accountId: profile.data.id },
 			{
-				onError: ( error ) => trackFollowError( error, 'unfollow' ),
+				onSuccess: () => {
+					dispatch( removeNotice( 'mastodon-follow-error' ) );
+				},
+				onError: ( error ) => showFollowError( error, 'unfollow' ),
 			}
 		);
-	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, trackFollowError ] );
+	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError ] );
 
 	const renderProfileBody = useCallback(
 		( profileData: MastodonAuthorProfile ) => {
