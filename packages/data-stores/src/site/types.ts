@@ -125,6 +125,7 @@ export interface SiteDetails {
 	capabilities?: SiteDetailsCapabilities;
 	description: string;
 	domain: string;
+	feed_ID?: number;
 	icon?: { ico: string; img: string; media_id: number };
 	is_a8c?: boolean;
 	is_coming_soon?: boolean;
@@ -262,7 +263,6 @@ export interface SiteDetailsOptions {
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
-	is_summer_special_2025?: boolean;
 	is_domain_only?: boolean;
 	is_mapped_domain?: boolean;
 	is_pending_plan?: boolean;

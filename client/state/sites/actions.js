@@ -201,6 +201,11 @@ export function requestSite( siteFragment ) {
 					 * endpoint returns accurate data.
 					 */
 					if ( hasSiteTransferredToAtomic && hasMismatchingCapabilities ) {
+						// Update Redux state with the site data before retrying,
+						// so the UI can see the latest state (e.g. isJetpack
+						// flipping to true). Capabilities will self-correct on
+						// subsequent requests once they propagate on the server.
+						dispatch( receiveSite( omit( site, '_headers' ) ) );
 						return new Promise( ( resolve ) => {
 							setTimeout( () => resolve( dispatch( requestSite( siteFragment ) ) ), 2000 );
 						} );

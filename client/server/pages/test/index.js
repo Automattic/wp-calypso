@@ -411,11 +411,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.lang ).toEqual( 'en' );
 	} );
 
-	it( 'sets hideWooHostedLogo to false for non-Woo Hosted routes', async () => {
-		const { request } = await app.run();
-		expect( request.context.hideWooHostedLogo ).toEqual( false );
-	} );
-
 	if ( entry ) {
 		it( 'sets the entrypoint', async () => {
 			const { request } = await app.run();
@@ -445,11 +440,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		app.withConfigEnabled( { 'dev/features-helper': false } );
 		const { request } = await app.run();
 		expect( request.context.featuresHelper ).toEqual( false );
-	} );
-
-	it( 'sets devDocsUrl', async () => {
-		const { request } = await app.run();
-		expect( request.context.devDocsURL ).toEqual( '/devdocs' );
 	} );
 
 	it( 'sets redux store', async () => {
@@ -494,31 +484,13 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.useTranslationChunks ).toEqual( true );
 	} );
 
-	it( 'sets hideWooHostedLogo for Woo Hosted setup URLs', async () => {
+	it( 'sets dashboard according to the request hostname', async () => {
 		const { request } = await app.run( {
 			request: {
-				url: '/setup/woo-hosted-plans/plans?siteSlug=unabashedly-instant-starlight.commerce-garden.com&dashboard=ciab&sessionId=Z0',
+				hostname: 'my.woo.localhost',
 			},
 		} );
-		expect( request.context.hideWooHostedLogo ).toEqual( true );
-	} );
-
-	it( 'sets hideWooHostedLogo for Woo Hosted checkout URLs', async () => {
-		const { request } = await app.run( {
-			request: {
-				url: '/checkout/unabashedly-instant-starlight.commerce-garden.com?redirect_to=https%3A%2F%2Fmy.wordpress.com%2Fciab%2Fsites&cancel_to=%2Fsetup%2Fwoo-hosted-plans%2Fplans%3FsiteSlug%3Dunabashedly-instant-starlight.commerce-garden.com%26dashboard%3Dciab%26sessionId%3DZ0',
-			},
-		} );
-		expect( request.context.hideWooHostedLogo ).toEqual( true );
-	} );
-
-	it( 'sets hideWooHostedLogo for Woo Hosted checkout plan URLs', async () => {
-		const { request } = await app.run( {
-			request: {
-				url: '/checkout/almost-inspiring-winner.commerce-garden.com/woo_hosted_basic_plan_yearly?redirect_to=%2F',
-			},
-		} );
-		expect( request.context.hideWooHostedLogo ).toEqual( true );
+		expect( request.context.dashboard ).toEqual( 'ciab' );
 	} );
 
 	it( 'sets the client ip', async () => {
@@ -579,11 +551,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'wpcalypso' );
-		} );
-
-		it( 'sets devDocs', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.devDocs ).toEqual( true );
 		} );
 
 		it( 'sets the feedback url', async () => {
@@ -683,11 +650,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'dev' );
-		} );
-
-		it( 'sets devDocs', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.devDocs ).toEqual( true );
 		} );
 
 		it( 'sets the feedback url', async () => {

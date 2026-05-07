@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { GlyphDiamond, GlyphCircle } from '@visx/glyph';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { Text } from '../../components/text';
 import {

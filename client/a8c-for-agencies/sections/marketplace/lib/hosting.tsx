@@ -52,6 +52,16 @@ export function isPressableHostingProduct( keyOrSlug: string ) {
 }
 
 /**
+ * Check if a product slug corresponds to a Pressable addon product.
+ *
+ * @param product_slug string - The product slug to check.
+ * @returns boolean - True if it's a Pressable addon product, false otherwise.
+ */
+export function isPressableAddonProduct( product_slug: string ) {
+	return product_slug.startsWith( 'pressable-addon' );
+}
+
+/**
  * Determine if current slug is a WPCOM hosting product.
  * @param {string} keyOrSlug - Product slug
  * @returns {boolean} - True if WPCOM hosting product, false if not

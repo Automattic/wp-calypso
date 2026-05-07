@@ -122,10 +122,12 @@ export class CartCheckoutPage {
 		if ( expectedDescription ) {
 			return this.page
 				.locator( selectors.cartItem( expectedCartItemName ), { hasText: expectedDescription } )
-				.waitFor( { state: 'visible' } );
+				.waitFor( { state: 'visible', timeout: 30 * 1000 } );
 		}
 
-		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
+		await this.page
+			.locator( selectors.cartItem( expectedCartItemName ) )
+			.waitFor( { state: 'visible', timeout: 30 * 1000 } );
 	}
 
 	/**
@@ -144,8 +146,8 @@ export class CartCheckoutPage {
 	 * Validates that the cart contains the expected number of items.
 	 */
 	async validateCartItemsCount( totalItems: number ): Promise< void > {
-		await this.page.waitForSelector( selectors.cartItems );
 		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		await cartItemsLocator.first().waitFor( { state: 'visible', timeout: 30 * 1000 } );
 		const itemsCount = await cartItemsLocator.count();
 		if ( itemsCount !== totalItems ) {
 			throw new Error( `Expected ${ totalItems } items in cart, but found ${ itemsCount }` );
@@ -158,8 +160,9 @@ export class CartCheckoutPage {
 	 * @returns {string} Content of the payment button.
 	 */
 	async getPaymentButtonText(): Promise< string > {
-		const elementHandle = await this.page.waitForSelector( selectors.paymentButton );
-		return await elementHandle.innerText();
+		const paymentButtonLocator = this.page.locator( selectors.paymentButton );
+		await paymentButtonLocator.waitFor( { state: 'visible', timeout: 30 * 1000 } );
+		return await paymentButtonLocator.innerText();
 	}
 
 	/**
@@ -242,6 +245,12 @@ export class CartCheckoutPage {
 	 * @param {RegistrarDetails} registrarDetails Domain registrar details.
 	 */
 	async enterDomainRegistrarDetails( registrarDetails: RegistrarDetails ): Promise< void > {
+		// The registrar form appears after a checkout page navigation. Wait for it
+		// to be visible with a generous timeout before filling to avoid timing out
+		// while the page is still loading.
+		await this.page
+			.locator( selectors.firstNameInput )
+			.waitFor( { state: 'visible', timeout: 30_000 } );
 		await this.page.fill( selectors.firstNameInput, registrarDetails.firstName );
 		await this.page.fill( selectors.lastNameInput, registrarDetails.lastName );
 		await this.page.selectOption( selectors.phoneSelect, registrarDetails.countryCode );
@@ -249,6 +258,7 @@ export class CartCheckoutPage {
 		await this.page.selectOption( selectors.countrySelect, registrarDetails.countryCode );
 		await this.page.fill( selectors.addressInput, registrarDetails.address );
 		await this.page.fill( selectors.cityInput, registrarDetails.city );
+		await this.page.waitForSelector( selectors.stateSelect );
 		await this.page.selectOption( selectors.stateSelect, registrarDetails.stateCode );
 		await this.page.fill( selectors.postalCodeInput, registrarDetails.postalCode );
 		await this.page.click( selectors.submitRegistrarInformationButton );
@@ -301,10 +311,15 @@ export class CartCheckoutPage {
 	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
 	 */
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
-		// Click on the Credit or debit card input in order
-		// to expand the fields.
-		const cardInputLocator = this.page.locator( 'span:has-text("Credit or debit card")' );
-		await cardInputLocator.click();
+		// Select the Credit or debit card payment method to expand the fields.
+		// On mobile the sticky Pay CTA and the auto-selected Google Pay tile sit
+		// over the card label, so a real click can't reach it. Wait for the
+		// labelled, enabled card option to appear, then dispatch the click on
+		// its underlying radio input.
+		await this.page
+			.locator( 'label[for="card"]:has-text("credit or debit card"):not([disabled])' )
+			.waitFor( { state: 'attached', timeout: 10 * 1000 } );
+		await this.page.locator( 'input#card[type="radio"]' ).dispatchEvent( 'click' );
 
 		// Begin filling in the card details from
 		// top to bottom.

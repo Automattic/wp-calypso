@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
+import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -289,12 +289,12 @@ function onClickInstallPlugin( {
 		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		if ( upgradeAndInstall ) {
-			// We also need to add a business plan to the cart.
+			// Redirect to plans page to let user choose a plan, then checkout with plan + plugin
+			const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 			return page(
-				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
-					selectedSite?.plan,
-					billingPeriod
-				) },${ product_slug }`
+				`/plans/${ selectedSite.slug }?plan=personal-bundle&plugin=${ encodeURIComponent(
+					product_slug
+				) }&redirect_to=${ encodeURIComponent( installPluginURL ) }`
 			);
 		}
 
@@ -310,12 +310,11 @@ function onClickInstallPlugin( {
 	// After buying a plan we need to redirect to the plugin install page.
 	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {
-		// We also need to add a business plan to the cart.
+		// Redirect to plans page to let user choose a plan, then redirect to plugin install
 		return page(
-			`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
-				selectedSite?.plan,
-				billingPeriod
-			) }?redirect_to=${ installPluginURL }#step2`
+			`/plans/${ selectedSite.slug }?plan=personal-bundle&redirect_to=${ encodeURIComponent(
+				installPluginURL
+			) }`
 		);
 	}
 

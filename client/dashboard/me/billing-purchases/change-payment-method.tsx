@@ -8,6 +8,7 @@ import {
 } from '@automattic/api-queries';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -28,6 +29,7 @@ import './style.scss';
 
 function ChangePaymentMethod() {
 	const { purchaseId } = changePaymentMethodRoute.useParams();
+	const { redirect_to } = changePaymentMethodRoute.useSearch();
 	const navigate = useNavigate();
 
 	const numericId = parseInt( purchaseId );
@@ -37,12 +39,19 @@ function ChangePaymentMethod() {
 	const { data: purchase } = useSuspenseQuery( purchaseQuery( numericId ) );
 
 	const { isLoading: isLoadingStoredCards } = useQuery(
-		userPaymentMethodsQuery( { type: 'card' } )
+		userPaymentMethodsQuery( {
+			type: 'card',
+		} )
+	);
+	const { isLoading: isLoadingPayPal } = useQuery(
+		userPaymentMethodsQuery( {
+			type: 'vault-token',
+		} )
 	);
 	const { isStripeLoading } = useStripe();
 
 	const paymentMethods = useCreateAssignablePaymentMethods( purchase );
-	const isDataLoading = isLoadingStoredCards || isStripeLoading;
+	const isDataLoading = isLoadingStoredCards || isLoadingPayPal || isStripeLoading;
 
 	useEffect( () => {
 		if ( ! isDataLoading && ! purchase ) {
@@ -56,6 +65,14 @@ function ChangePaymentMethod() {
 	}
 
 	const successCallback = () => {
+		if (
+			redirect_to &&
+			purchase.domain &&
+			isAllowedRedirectUrl( redirect_to, [ purchase.domain ] )
+		) {
+			window.location.href = redirect_to;
+			return;
+		}
 		navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 	};
 

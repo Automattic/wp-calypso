@@ -7,13 +7,14 @@ import ReferralCommissions from './commissions';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
 import ReferralDetailsReferrals from './referrals';
-import type { Referral, ReferralPurchase } from '../types';
+import type { Referral, ReferralCommissionPayoutResponse, ReferralPurchase } from '../types';
 import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './style.scss';
 
 interface Props {
 	referral: Referral;
+	referralCommissionPayout?: ReferralCommissionPayoutResponse | undefined;
 	closeSitePreviewPane: () => void;
 }
 
@@ -21,7 +22,11 @@ const REFERRALS_ID = 'referrals';
 const REFERRAL_PURCHASES_ID = 'referral-purchases';
 const REFERRAL_COMMISSIONS_ID = 'referral-commissions';
 
-export default function ReferralDetails( { referral, closeSitePreviewPane }: Props ) {
+export default function ReferralDetails( {
+	referral,
+	referralCommissionPayout,
+	closeSitePreviewPane,
+}: Props ) {
 	const translate = useTranslate();
 
 	const [ selectedReferralTab, setSelectedReferralTab ] = useState( REFERRALS_ID );
@@ -106,10 +111,21 @@ export default function ReferralDetails( { referral, closeSitePreviewPane }: Pro
 				true,
 				selectedReferralTab,
 				setSelectedReferralTab,
-				<ReferralCommissions referral={ referral } />
+				<ReferralCommissions
+					referral={ referral }
+					referralCommissionPayout={ referralCommissionPayout }
+				/>
 			),
 		],
-		[ translate, selectedReferralTab, isDesktop, sortedReferrals, purchases, referral ]
+		[
+			translate,
+			selectedReferralTab,
+			isDesktop,
+			sortedReferrals,
+			purchases,
+			referral,
+			referralCommissionPayout,
+		]
 	);
 
 	return (

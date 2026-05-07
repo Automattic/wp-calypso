@@ -1,4 +1,6 @@
+import { receiptQuery } from '@automattic/api-queries';
 import {
+	domainProductSlugs,
 	isCredits,
 	isDelayedDomainTransfer,
 	isDomainProduct,
@@ -17,15 +19,20 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import { css, Global } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, ComponentProps, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
+import QueryPreferences from 'calypso/components/data/query-preferences';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HappinessSupport from 'calypso/components/happiness-support';
+import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { debug, TRACKING_IDS } from 'calypso/lib/analytics/ad-tracking/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mayWeTrackByTracker } from 'calypso/lib/analytics/tracker-buckets';
@@ -33,6 +40,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isExternal } from 'calypso/lib/url';
 import {
 	domainManagementList,
+	domainManagementRoot,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
 import { GoogleWorkspaceSetUpThankYou } from 'calypso/my-sites/email/google-workspace-set-up-thank-you';
@@ -45,12 +53,14 @@ import {
 	getCurrentUserDate,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import {
 	isRequesting as isRequestingSitePlugins,
 	getPlugins as getInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -68,13 +78,14 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { logStashEvent } from '../src/lib/analytics';
 import CheckoutThankYouHeader from './header';
+import HundredYearThankYou from './hundred-year-thank-you';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
 import DomainBulkTransferThankYou from './redesign-v2/pages/domain-bulk-transfer';
-import DomainOnlyThankYou from './redesign-v2/pages/domain-only';
+import DomainOnly from './redesign-v2/pages/domain-only';
 import GenericThankYou from './redesign-v2/pages/generic';
 import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
-import { PlaceholderThankYou } from './redesign-v2/pages/placeholder';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import TransferPending from './transfer-pending';
@@ -85,6 +96,7 @@ import {
 	isOnlyDomainPurchases,
 	isSearch,
 	isTitanWithoutMailboxes,
+	getDomainPurchaseTypeAndPredicate,
 } from './utils';
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
@@ -110,6 +122,7 @@ export interface CheckoutThankYouProps {
 	upgradeIntent: string;
 	redirectTo?: string;
 	displayMode?: string;
+	checkoutType?: string;
 }
 
 export interface CheckoutThankYouConnectedProps {
@@ -132,6 +145,8 @@ export interface CheckoutThankYouConnectedProps {
 	site: SiteDetails | null | undefined;
 	siteDomains: ResponseDomain[] | null | undefined;
 	isGravatarDomain: boolean;
+	hasReceivedRemotePreferences: boolean;
+	hasDashboardOptIn: boolean;
 	fetchAtomicTransfer: ( siteId: number ) => void;
 	fetchSitePlugins: ( siteId: number ) => void;
 	fetchReceipt: ( receiptId: number ) => void;
@@ -371,6 +386,7 @@ export class CheckoutThankYou extends Component<
 		}
 
 		return (
+			this.props.hasReceivedRemotePreferences &&
 			( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) &&
 			this.props.receipt.hasLoadedFromServer &&
 			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer ) &&
@@ -513,6 +529,15 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
+	renderLoading = () => {
+		return (
+			<>
+				{ this.getMasterBar() }
+				<Loading />
+			</>
+		);
+	};
+
 	render() {
 		const { translate, email, selectedFeature } = this.props;
 		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
@@ -524,11 +549,14 @@ export class CheckoutThankYou extends Component<
 		if ( ! this.isDataLoaded() ) {
 			return (
 				<>
-					{ this.getMasterBar() }
-					<PlaceholderThankYou />
+					<QueryPreferences />
+					{ this.renderLoading() }
 				</>
 			);
 		}
+
+		const [ , predicate ] = getDomainPurchaseTypeAndPredicate( purchases );
+		const domainPurchases = purchases.filter( predicate );
 
 		if ( ! this.isGenericReceipt() ) {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
@@ -551,6 +579,10 @@ export class CheckoutThankYou extends Component<
 			);
 		}
 
+		const hundredYearDomainPurchase = domainPurchases.find(
+			( purchase ) => purchase.isHundredYearDomain
+		);
+
 		/** REFACTORED REDESIGN */
 		if ( isRefactoredForThankYouV2( this.props ) ) {
 			let pageContent = null;
@@ -567,12 +599,62 @@ export class CheckoutThankYou extends Component<
 						currency={ this.props.receipt.data?.currency ?? 'USD' }
 					/>
 				);
-			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
+			} else if ( this.props.receipt.data && hundredYearDomainPurchase ) {
 				pageContent = (
-					<DomainOnlyThankYou
-						purchases={ purchases }
-						receipt={ this.props.receipt.data }
-						isGravatarDomain={ !! this.props.receipt.data?.isGravatarDomain }
+					<>
+						<Global
+							styles={ css`
+								main.checkout-thank-you {
+									&.is-redesign-v2 {
+										&.main {
+											max-width: unset;
+										}
+
+										.masterbar {
+											transition: none;
+										}
+									}
+								}
+
+								body.is-section-checkout,
+								body.is-section-checkout .layout__content,
+								body.is-section-checkout-thank-you,
+								body.is-section-checkout-thank-you .layout__content {
+									background: linear-gradient(
+										233deg,
+										#06101c 2.17%,
+										#050c16 41.26%,
+										#02080f 88.44%
+									);
+								}
+							` }
+						/>
+						<HundredYearThankYou
+							siteId={ hundredYearDomainPurchase.blogId }
+							receiptId={ this.props.receiptId }
+							productSlug={ domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION }
+						/>
+					</>
+				);
+			} else if (
+				this.props.receipt.data &&
+				isOnlyDomainPurchases( purchases ) &&
+				this.props.domainOnlySiteFlow
+			) {
+				if ( domainPurchases.length > 1 ) {
+					const domainsUrl = this.props.hasDashboardOptIn
+						? dashboardLink( '/domains' )
+						: domainManagementRoot();
+
+					window.location.replace( domainsUrl );
+
+					return this.renderLoading();
+				}
+
+				pageContent = (
+					<DomainOnly
+						domainPurchase={ domainPurchases[ 0 ] }
+						currency={ this.props.receipt.data.currency }
 					/>
 				);
 			} else if ( purchases.length === 1 && isPlan( purchases[ 0 ] ) ) {
@@ -581,6 +663,7 @@ export class CheckoutThankYou extends Component<
 						primaryPurchase={ purchases[ 0 ] }
 						isEmailVerified={ this.props.isEmailVerified }
 						transferComplete={ this.props.transferComplete }
+						checkoutType={ this.props.checkoutType }
 					/>
 				);
 			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
@@ -698,7 +781,7 @@ function isWooCommercePluginInstalled( sitePlugins: { slug: string }[] ) {
 	return sitePlugins.length > 0 && sitePlugins.some( ( item ) => item.slug === 'woocommerce' );
 }
 
-export default connect(
+const ConnectedCheckoutThankYou = connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
 		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
@@ -739,6 +822,8 @@ export default connect(
 			site: siteId ? getSite( state, siteId ) : null,
 			siteDomains: siteId ? getDomainsBySiteId( state, siteId ) : null,
 			isGravatarDomain: hasGravatarDomainQueryParam( state ),
+			hasReceivedRemotePreferences: hasReceivedRemotePreferences( state ),
+			hasDashboardOptIn: hasDashboardOptIn( state ),
 		};
 	},
 	{
@@ -753,3 +838,42 @@ export default connect(
 		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
+
+function CheckoutThankYouWithReceipt( props: ComponentProps< typeof ConnectedCheckoutThankYou > ) {
+	const {
+		data: receipt,
+		isLoading,
+		isError,
+		error,
+	} = useQuery( {
+		...receiptQuery( props.receiptId ),
+		enabled: !! props.receiptId,
+	} );
+
+	useEffect( () => {
+		if ( isError && error ) {
+			logStashEvent(
+				'checkout thank you receipt fetch error',
+				{
+					type: 'checkout_thank_you_receipt',
+					message: ( error as Error )?.message ?? String( error ),
+					tags: [ 'checkout-thank-you' ],
+				},
+				'warning'
+			);
+		}
+	}, [ isError, error ] );
+
+	if ( isLoading ) {
+		return <Loading />;
+	}
+
+	return (
+		<ConnectedCheckoutThankYou
+			{ ...props }
+			checkoutType={ receipt?.checkout_type ?? props.checkoutType }
+		/>
+	);
+}
+
+export default CheckoutThankYouWithReceipt;

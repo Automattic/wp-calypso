@@ -16,7 +16,7 @@ export type SiteTypeFeatureSupports = {
 	settingsGeneralRedirect?: boolean;
 	settingsServer?: boolean;
 	settingsSecurity?: boolean;
-	settingsExperimental?: boolean;
+	settingsGeneralDotcomSiteVisibility?: boolean;
 };
 
 /**
@@ -61,9 +61,9 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 			settingsGeneral: true,
 			settingsGeneralAITools: false,
 			settingsGeneralRedirect: true,
+			settingsGeneralDotcomSiteVisibility: false,
 			settingsServer: false,
 			settingsSecurity: false,
-			settingsExperimental: false,
 		};
 	}
 
@@ -80,9 +80,9 @@ export function getSiteTypeFeatureSupports( site: Site ): SiteTypeFeatureSupport
 		settingsGeneral: true,
 		settingsGeneralAITools: true,
 		settingsGeneralRedirect: true,
+		settingsGeneralDotcomSiteVisibility: true,
 		settingsServer: true,
 		settingsSecurity: true,
-		settingsExperimental: true,
 	};
 }
 

@@ -19,7 +19,7 @@ import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { isLikeable } from 'calypso/reader/post/capabilities';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import { MAX_POSTS_FOR_LOGGED_OUT_USERS } from 'calypso/reader/reader.const';
 import ReaderStreamLoginPrompt from 'calypso/reader/stream/login-prompt';
@@ -27,10 +27,8 @@ import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
@@ -41,6 +39,7 @@ import {
 	selectPrevItem,
 	showUpdates,
 } from 'calypso/state/reader/streams/actions';
+import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
 import {
 	getStream,
 	getTransformedStreamItems,
@@ -79,7 +78,8 @@ class ReaderStream extends Component {
 		onUpdatesShown: PropTypes.func,
 		placeholderFactory: PropTypes.func,
 		recsStreamKey: PropTypes.string,
-		showDefaultEmptyContentIfMissing: PropTypes.bool,
+		restoreScroll: PropTypes.bool,
+		hideDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
@@ -92,6 +92,8 @@ class ReaderStream extends Component {
 		fixedHeaderHeight: PropTypes.number,
 		selectedStreamName: PropTypes.string,
 		isLoggedIn: PropTypes.bool,
+		wideLayout: PropTypes.bool,
+		showBylineSecondarySiteLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -101,12 +103,14 @@ class ReaderStream extends Component {
 		isDiscoverStream: false,
 		isMain: true,
 		onUpdatesShown: noop,
-		showDefaultEmptyContentIfMissing: true,
+		restoreScroll: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
 		suppressSiteNameLink: false,
 		useCompactCards: false,
 		isLoggedIn: false,
+		wideLayout: false,
+		showBylineSecondarySiteLink: true,
 	};
 
 	state = {
@@ -177,9 +181,9 @@ class ReaderStream extends Component {
 		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
 		const node = ReactDom.findDOMNode( ref );
 
-		// if the post is found, focus the first anchor tag within it.
 		if ( node ) {
-			const firstLink = node.querySelector( 'a' );
+			// Skip anchors inside .user-avatar to avoid triggering hovercard.
+			const firstLink = node.querySelector( 'a:not(.user-avatar a)' );
 
 			if ( firstLink ) {
 				firstLink.focus();
@@ -188,7 +192,11 @@ class ReaderStream extends Component {
 	};
 
 	_popstate = () => {
-		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
+		if (
+			this.props.selectedPostKey &&
+			window.history.scrollRestoration !== 'manual' &&
+			this.props.restoreScroll
+		) {
 			this.scrollToSelectedPost( false );
 		}
 	};
@@ -239,8 +247,10 @@ class ReaderStream extends Component {
 				this.overlayRef.current.classList.add( 'stream__init-overlay-enabled' );
 			}
 			this.mountTimeout = setTimeout( () => {
-				this.scrollToSelectedPost( false );
-				this.focusSelectedPost( this.props.selectedPostKey );
+				if ( this.props.restoreScroll ) {
+					this.scrollToSelectedPost( false );
+					this.focusSelectedPost( this.props.selectedPostKey );
+				}
 				if ( this.overlayRef.current ) {
 					this.overlayRef.current.classList.remove( 'stream__init-overlay-enabled' );
 				}
@@ -305,35 +315,32 @@ class ReaderStream extends Component {
 			return;
 		}
 
-		switch ( event.keyCode ) {
-			// Move selection down - j
-			case 74: {
+		switch ( event.key ) {
+			// Move selection down.
+			case 'ArrowRight':
+			case 'j': {
 				return this.selectNextItem();
 			}
 
-			// Move selection up - k
-			case 75: {
+			// Move selection up.
+			case 'ArrowLeft':
+			case 'k': {
 				return this.selectPrevItem();
 			}
 
-			// Open selection - Enter
-			case 13: {
+			// Open selection.
+			case 'Enter': {
 				return this.handleOpenSelection();
 			}
 
-			// Open selection in a new tab - v
-			case 86: {
+			// Open selection in a new tab.
+			case 'v': {
 				return this.handleOpenSelectionNewTab();
 			}
 
-			// Like selection - l
-			case 76: {
+			// Like selection.
+			case 'l': {
 				return this.toggleLikeOnSelectedPost();
-			}
-
-			// Go to top - .
-			case 190: {
-				return this.goToTop();
 			}
 		}
 	};
@@ -362,7 +369,7 @@ class ReaderStream extends Component {
 			return;
 		}
 
-		if ( shouldShowLikes( selectedPost ) ) {
+		if ( isLikeable( selectedPost ) ) {
 			this.toggleLikeAction();
 		}
 	};
@@ -377,13 +384,6 @@ class ReaderStream extends Component {
 		const toggler = likedPost ? this.props.unlikePost : this.props.likePost;
 		toggler( selectedPost.site_ID, selectedPost.ID, { source: 'reader' } );
 	}
-
-	goToTop = () => {
-		const { streamKey, updateCount } = this.props;
-		if ( updateCount > 0 ) {
-			this.props.showUpdates( { streamKey } );
-		}
-	};
 
 	getVisibleItemIndexes() {
 		return (
@@ -599,6 +599,7 @@ class ReaderStream extends Component {
 					blockedSites={ this.props.blockedSites }
 					streamKey={ streamKey }
 					recsStreamKey={ this.props.recsStreamKey }
+					showBylineSecondarySiteLink={ this.props.showBylineSecondarySiteLink }
 					index={ index }
 					compact={ this.props.useCompactCards }
 					siteId={ primarySiteId }
@@ -659,12 +660,29 @@ class ReaderStream extends Component {
 		// TODO: `following` probably shouldn't be added as a class to every stream, but style selectors need
 		// to be updated before we can remove it.
 		let baseClassnames = clsx( 'following', this.props.className );
+		const SidebarContent =
+			typeof this.props.streamSidebar === 'function'
+				? this.props.streamSidebar( wideDisplay )
+				: null;
 
-		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
-			body = this.props.emptyContent?.();
-			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
-				body = <EmptyContent />;
+			let emptyBody = this.props.emptyContent?.();
+			if ( ! emptyBody && ! this.props.hideDefaultEmptyContentIfMissing ) {
+				emptyBody = <EmptyContent />;
+			}
+
+			// In wide display with a sidebar, render the two-column layout so the sidebar
+			// (with follow button, subscriber count, tags) remains visible for empty feeds.
+			if ( wideDisplay && SidebarContent && streamType !== 'search' ) {
+				body = (
+					<div className="stream__two-column">
+						<div className="reader__content">{ emptyBody }</div>
+						<div className="stream__right-column">{ SidebarContent }</div>
+					</div>
+				);
+				baseClassnames = clsx( 'is-two-columns', baseClassnames );
+			} else {
+				body = emptyBody;
 			}
 			showingStream = false;
 		} else {
@@ -683,13 +701,12 @@ class ReaderStream extends Component {
 					className="stream__list"
 					context={ this.state.listContext }
 					selectedItem={ selectedPostKey }
+					restoreScroll={ this.props.restoreScroll }
 				/>
 			);
 
-			const sidebarContentFn = this.props.streamSidebar;
-
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
-			if ( ! sidebarContentFn || streamType === 'search' ) {
+			if ( ! SidebarContent || streamType === 'search' ) {
 				body = (
 					<div className="reader__content">
 						{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
@@ -704,10 +721,10 @@ class ReaderStream extends Component {
 							{ isReaderCouncilStream && <CustomerCouncilBanner translate={ translate } /> }
 							{ bodyContent }
 						</div>
-						<div className="stream__right-column">{ sidebarContentFn?.() }</div>
+						<div className="stream__right-column">{ SidebarContent }</div>
 					</div>
 				);
-				baseClassnames = clsx( 'reader-two-column', baseClassnames );
+				baseClassnames = clsx( 'is-two-columns', baseClassnames );
 			} else {
 				body = (
 					<>
@@ -742,7 +759,7 @@ class ReaderStream extends Component {
 								<div className="reader__content">{ bodyContent }</div>
 							) }
 							{ this.state.selectedTab === 'sites' && (
-								<div className="stream__right-column">{ sidebarContentFn?.() }</div>
+								<div className="stream__right-column">{ SidebarContent }</div>
 							) }
 						</div>
 					</>
@@ -763,13 +780,14 @@ class ReaderStream extends Component {
 				<StreamError
 					onTryAgain={ this.tryAgain }
 					streamKey={ streamKey }
+					error={ this.props.error }
 					context={ this.state.selectedTab }
 				/>
 			);
 		}
 
 		return (
-			<TopLevel className={ baseClassnames }>
+			<TopLevel className={ baseClassnames } wideLayout={ this.props.wideLayout }>
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
@@ -830,7 +848,6 @@ export default connect(
 			error: stream.error,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
-			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
 			isLoggedIn,

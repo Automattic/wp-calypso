@@ -30,7 +30,8 @@ const MetadataItem = ( { children, title }: MetadataItemProps ) => {
 		<HStack
 			className="dashboard-metadata-list-item"
 			spacing={ 1 }
-			style={ { width: 'auto', flexShrink: 0 } }
+			expanded={ false }
+			style={ { flexShrink: 0 } }
 		>
 			{ title && <Text variant="muted">{ title }</Text> }
 			{ children && <div className="dashboard-metadata-list-item-children">{ children }</div> }

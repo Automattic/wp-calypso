@@ -1,8 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import videoThumbnail2x from 'calypso/assets/images/jetpack/getting-started-backup-video-thumbnail-2x.png';
-import videoThumbnail from 'calypso/assets/images/jetpack/getting-started-backup-video-thumbnail.png';
+import videoThumbnail2x from 'calypso/assets/images/jetpack/getting-started-backup-video-thumbnail-2x.webp';
+import videoThumbnail from 'calypso/assets/images/jetpack/getting-started-backup-video-thumbnail.webp';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import './style.scss';
 import { GETTING_STARTED_WITH_JETPACK_BACKUP_VIDEO_URL } from './consts';

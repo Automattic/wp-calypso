@@ -1,13 +1,17 @@
 /**
  * Agent Configuration Utilities
  *
- * Shared utilities for creating agent configurations used by both
- * the full Agents Manager UI and headless mode.
+ * Shared utilities for creating agent configurations and reading
+ * agent overrides from URL parameters. Used by both the full
+ * Agents Manager UI and headless mode.
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
-import { SESSION_STORAGE_KEY } from './agent-session';
+import { getSessionStorageKey } from './agent-session';
+import { canConnectToZendesk } from './can-connect-to-zendesk';
+import { getExternalContextEntries } from './external-context';
+import { isReaderChatAgent } from './is-reader-chat-agent';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
 
@@ -18,16 +22,15 @@ export interface CreateAgentConfigOptions {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	environment?: 'calypso' | 'wp-admin';
+	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
+	agentId?: string;
+	/** Override the agent version (e.g., from query string). Passed via constructorArguments. */
+	version?: string;
 }
 
 /**
- * Resolve context entries by calling `getData()` closures.
- *
- * Takes context entries with optional `getData()` closures and resolves them
- * by calling `getData()` to populate the `data` field. The `getData` function
- * is removed from the resolved entries.
- *
- * This allows fetching live data as needed.
+ * Resolve context entries by calling their `getData()` closures
+ * to populate the `data` field.
  */
 export function resolveContextEntries( entries: ContextEntry[] ): ContextEntry[] {
 	return entries.map( ( entry ) => {
@@ -76,24 +79,58 @@ function wrapToolProvider( toolProvider: ToolProvider ): UseAgentChatConfig[ 'to
 	};
 }
 
+async function canAccessZendeskForAgent( agentId?: string ): Promise< boolean > {
+	if ( isReaderChatAgent( agentId ) ) {
+		return false;
+	}
+
+	return canConnectToZendesk();
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
-function createWrappedContextProvider(
-	contextProvider: ContextProvider
-): UseAgentChatConfig[ 'contextProvider' ] {
+async function createWrappedContextProvider(
+	contextProvider: ContextProvider,
+	siteId?: number,
+	agentId?: string,
+	version?: string
+): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
 			const pluginContext = contextProvider.getClientContext();
 
-			if ( pluginContext.contextEntries?.length ) {
-				return {
-					...pluginContext,
-					contextEntries: resolveContextEntries( pluginContext.contextEntries ),
+			let resolvedContext = pluginContext.contextEntries?.length
+				? {
+						...pluginContext,
+						contextEntries: resolveContextEntries( pluginContext.contextEntries ),
+				  }
+				: pluginContext;
+
+			const externalEntries = getExternalContextEntries();
+			if ( externalEntries.length ) {
+				resolvedContext = {
+					...resolvedContext,
+					contextEntries: [
+						...( resolvedContext.contextEntries || [] ),
+						...resolveContextEntries( externalEntries ),
+					],
 				};
 			}
 
-			return pluginContext;
+			return {
+				...resolvedContext,
+				can_access_zendesk: canAccessZendesk,
+				currentScreen: resolvedContext.currentScreen || {
+					url: window.location.href,
+				},
+				...( siteId && ! resolvedContext.selectedSiteId && { selectedSiteId: siteId } ),
+				constructorArguments: {
+					...( resolvedContext.constructorArguments || {} ),
+					...( version && { version } ),
+				},
+			};
 		},
 	};
 }
@@ -101,17 +138,48 @@ function createWrappedContextProvider(
 /**
  * Create a default context provider for environments without a plugin context.
  */
-function createDefaultContextProvider(
+async function createDefaultContextProvider(
 	currentRoute: string | undefined,
-	environment: string
-): UseAgentChatConfig[ 'contextProvider' ] {
+	environment: string,
+	siteId?: number,
+	agentId?: string,
+	version?: string
+): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
-		getClientContext: () => ( {
-			url: window.location.href,
-			pathname: currentRoute || window.location.pathname,
-			search: window.location.search,
-			environment,
-		} ),
+		getClientContext: () => {
+			// Hosts that don't have a plugin context (e.g. reader-chat on a
+			// blog frontend) can still surface page metadata by assigning it
+			// to `window.agentsManagerData`. Pick up `currentPost`, `siteName`,
+			// and `siteUrl` here so the orchestrator knows which post the
+			// reader is viewing without every host wiring its own provider.
+			const hostData = isReaderChatAgent( agentId )
+				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
+						.agentsManagerData ?? {}
+				: {};
+
+			const externalEntries = getExternalContextEntries();
+			const contextEntries = externalEntries.length
+				? resolveContextEntries( externalEntries )
+				: undefined;
+
+			return {
+				url: window.location.href,
+				pathname: currentRoute || window.location.pathname,
+				search: window.location.search,
+				can_access_zendesk: canAccessZendesk,
+				environment,
+				// Match Odie's context shape so the server can read current_screen.url
+				currentScreen: { url: window.location.href },
+				...( siteId && { selectedSiteId: siteId } ),
+				...( hostData.currentPost ? { currentPost: hostData.currentPost } : {} ),
+				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
+				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
+				...( contextEntries ? { contextEntries } : {} ),
+				// TODO: Remove once agenttic-client supports top-level constructorArguments
+				...( version && { constructorArguments: { version } } ),
+			};
+		},
 	};
 }
 
@@ -121,7 +189,9 @@ function createDefaultContextProvider(
  * Used by both the full Agents Manager UI and headless mode to ensure
  * consistent configuration.
  */
-export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgentChatConfig {
+export async function createAgentConfig(
+	options: CreateAgentConfigOptions
+): Promise< UseAgentChatConfig > {
 	const {
 		sessionId,
 		siteId,
@@ -129,13 +199,15 @@ export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgent
 		toolProvider,
 		contextProvider,
 		environment = 'calypso',
+		agentId = ORCHESTRATOR_AGENT_ID,
+		version,
 	} = options;
 
 	const config: UseAgentChatConfig = {
-		agentId: ORCHESTRATOR_AGENT_ID,
+		agentId,
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
-		sessionIdStorageKey: SESSION_STORAGE_KEY,
+		sessionIdStorageKey: getSessionStorageKey( agentId ),
 		authProvider: createCalypsoAuthProvider( siteId ),
 		enableStreaming: true,
 	};
@@ -145,9 +217,20 @@ export function createAgentConfig( options: CreateAgentConfigOptions ): UseAgent
 	}
 
 	if ( contextProvider ) {
-		config.contextProvider = createWrappedContextProvider( contextProvider );
+		config.contextProvider = await createWrappedContextProvider(
+			contextProvider,
+			siteId,
+			agentId,
+			version
+		);
 	} else {
-		config.contextProvider = createDefaultContextProvider( currentRoute, environment );
+		config.contextProvider = await createDefaultContextProvider(
+			currentRoute,
+			environment,
+			siteId,
+			agentId,
+			version
+		);
 	}
 
 	return config;

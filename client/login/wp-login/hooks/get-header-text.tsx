@@ -1,5 +1,6 @@
 import { TranslateResult, fixMe } from 'i18n-calypso';
 import { capitalize } from 'lodash';
+import { getLoginCopy } from 'calypso/jetpack-connect/connection-content';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -9,7 +10,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import type { CiabPartnerConfig } from 'calypso/lib/partner-branding';
+import type { PartnerConfig } from 'calypso/lib/partner-branding';
 
 interface Props {
 	twoFactorAuthType: string | null;
@@ -29,7 +30,9 @@ interface Props {
 	isFromAkismet?: boolean;
 	isFromPassport?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
-	ciabConfig?: CiabPartnerConfig | null;
+	isFromJetpackConnector?: boolean;
+	connectorPlugins?: string[];
+	partnerConfig?: PartnerConfig | null;
 	isGravPoweredClient?: boolean;
 	isUserLoggedIn?: boolean;
 }
@@ -72,7 +75,9 @@ export function getHeaderText( {
 	isFromAkismet,
 	isFromPassport,
 	isFromAutomatticForAgenciesPlugin,
-	ciabConfig,
+	isFromJetpackConnector,
+	connectorPlugins,
+	partnerConfig,
 	isGravPoweredClient,
 	currentQuery,
 	translate,
@@ -95,10 +100,15 @@ export function getHeaderText( {
 	let headerText = translate( 'Log in to your account' );
 
 	if ( isSocialFirst ) {
-		// CIAB partners have custom headers without "with WordPress.com"
-		if ( ciabConfig ) {
+		if ( isFromJetpackConnector ) {
+			// In the unified connection flow the site is already registered by
+			// the time the user lands on the login page, so the H1 stays
+			// neutral. The shared resolver owns the contract — PR 3 may make
+			// the title plugin-dependent, so we already pass the plugin set.
+			headerText = getLoginCopy( connectorPlugins ).title;
+		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {
-				args: { partner: ciabConfig.displayName },
+				args: { partner: partnerConfig.displayName },
 			} );
 		} else {
 			let clientName = oauth2Client?.name;

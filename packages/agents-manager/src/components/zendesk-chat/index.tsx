@@ -1,11 +1,13 @@
 import { type MarkdownComponents, type MarkdownExtensions } from '@automattic/agenttic-ui';
 import { useManagedZendeskChat } from '@automattic/zendesk-client';
+import { useEffect } from '@wordpress/element';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
+import ConcludedConversationFooter from '../concluded-conversation-footer';
 import type { Message } from '@automattic/agenttic-ui/dist/types';
 import './style.scss';
 
-interface ZendeskChatProps {
+interface Props {
 	/** Chat header menu options. */
 	chatHeaderOptions: ChatHeaderOptions;
 	/** Indicates if the chat is docked in the sidebar. */
@@ -20,9 +22,11 @@ interface ZendeskChatProps {
 	markdownComponents?: MarkdownComponents;
 	/** Custom markdown extensions. */
 	markdownExtensions?: MarkdownExtensions;
+	/** Called when the has-messages state changes. */
+	onHasMessagesChange: ( hasMessages: boolean ) => void;
 }
 
-export function ZendeskChat( {
+export default function ZendeskChat( {
 	chatHeaderOptions,
 	isDocked,
 	isOpen,
@@ -30,9 +34,25 @@ export function ZendeskChat( {
 	onExpand,
 	markdownComponents = {},
 	markdownExtensions = {},
-}: ZendeskChatProps ) {
-	const { agentticMessages, onSubmit, isLoadingConversation, isProcessing, onTypingStatusChange } =
-		useManagedZendeskChat();
+	onHasMessagesChange,
+}: Props ) {
+	const {
+		agentticMessages,
+		onSubmit,
+		isLoadingConversation,
+		isProcessing,
+		onTypingStatusChange,
+		imageUpload,
+		supportedImageTypes,
+		notice,
+		hasInteractionEnded,
+	} = useManagedZendeskChat();
+
+	// Notify parent when has-messages state changes
+	const hasMessages = agentticMessages.length > 0;
+	useEffect( () => {
+		onHasMessagesChange( hasMessages );
+	}, [ hasMessages, onHasMessagesChange ] );
 
 	return (
 		<AgentChat
@@ -46,11 +66,15 @@ export function ZendeskChat( {
 			onAbort={ () => {} }
 			isOpen={ isOpen }
 			onClose={ onClose }
+			notice={ notice }
 			onExpand={ onExpand }
 			chatHeaderOptions={ chatHeaderOptions }
 			markdownComponents={ markdownComponents }
 			markdownExtensions={ markdownExtensions }
 			onTypingStatusChange={ onTypingStatusChange }
+			imageUpload={ imageUpload }
+			acceptedImageFileTypes={ supportedImageTypes }
+			alternativeFooter={ hasInteractionEnded ? <ConcludedConversationFooter /> : undefined }
 		/>
 	);
 }

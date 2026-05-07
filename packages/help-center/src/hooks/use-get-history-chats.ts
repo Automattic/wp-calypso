@@ -10,6 +10,7 @@ import {
 	getLastMessage,
 	getZendeskConversations,
 } from '../components/utils';
+import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import { useGetSupportInteractions } from './use-get-support-interactions';
 import type {
@@ -130,6 +131,8 @@ const splitConversationsByRecency = (
 export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const [ recentConversations, setRecentConversations ] = useState< Conversations >( [] );
 	const [ archivedConversations, setArchivedConversations ] = useState< Conversations >( [] );
+	const { newInteractionsBotSlug } = useHelpCenterContext();
+	const featureConfig = useFeatureConfig();
 
 	const { isChatLoaded, loggedOutSession } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -146,12 +149,35 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		loggedOutSession ? loggedOutSession.botSlug : undefined
 	);
 
+	const chatEnabled = featureConfig.chat.enabled;
+
 	const { data: otherSupportInteractions, isLoading: isLoadingOtherSupportInteractions } =
-		useGetSupportInteractions( 'zendesk' );
+		useGetSupportInteractions( 'zendesk', chatEnabled );
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
-		useGetSupportInteractions( 'odie' );
+		useGetSupportInteractions( 'odie', chatEnabled );
+
+	// When filtering by bot slug is enabled (e.g. CIAB context), only show
+	// conversations matching the current bot slug.
+	const filteredOdieSupportInteractions = useMemo( () => {
+		if ( ! featureConfig.chat.filterByBotSlug ) {
+			return odieSupportInteractions;
+		}
+		return odieSupportInteractions?.filter(
+			( interaction ) => interaction.bot_slug === newInteractionsBotSlug
+		);
+	}, [ featureConfig.chat.filterByBotSlug, newInteractionsBotSlug, odieSupportInteractions ] );
+
+	const filteredOtherSupportInteractions = useMemo( () => {
+		if ( ! featureConfig.chat.filterByBotSlug ) {
+			return otherSupportInteractions;
+		}
+		return otherSupportInteractions?.filter(
+			( interaction ) => interaction.bot_slug === newInteractionsBotSlug
+		);
+	}, [ featureConfig.chat.filterByBotSlug, newInteractionsBotSlug, otherSupportInteractions ] );
+
 	const { data: odieConversations, isLoading: isLoadingOdieConversations } =
-		useGetOdieConversations( odieSupportInteractions );
+		useGetOdieConversations( filteredOdieSupportInteractions, chatEnabled );
 
 	const isLoadingInteractions =
 		isLoadingOtherSupportInteractions ||
@@ -159,12 +185,15 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		isLoadingOdieConversations;
 
 	const supportInteractions: SupportInteraction[] = useMemo(
-		() => [ ...( odieSupportInteractions || [] ), ...( otherSupportInteractions || [] ) ],
-		[ odieSupportInteractions, otherSupportInteractions ]
+		() => [
+			...( filteredOdieSupportInteractions || [] ),
+			...( filteredOtherSupportInteractions || [] ),
+		],
+		[ filteredOdieSupportInteractions, filteredOtherSupportInteractions ]
 	);
 
 	useEffect( () => {
-		if ( isLoadingInteractions ) {
+		if ( ! chatEnabled || isLoadingInteractions ) {
 			return;
 		}
 
@@ -175,7 +204,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 			...filterAndUpdateConversationsWithStatus( zendeskConversations, supportInteractions ),
 			...getAndUpdateOdieConversationsWithSupportInteractions(
 				odieConversations,
-				odieSupportInteractions || []
+				filteredOdieSupportInteractions || []
 			),
 			...( loggedOutSession && loggedOutChat.data
 				? [
@@ -194,12 +223,13 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 		setRecentConversations( recent );
 		setArchivedConversations( archived );
 	}, [
+		chatEnabled,
 		isChatLoaded,
 		isLoadingInteractions,
 		loggedOutSession,
 		loggedOutChat.data,
-		odieSupportInteractions,
-		otherSupportInteractions,
+		filteredOdieSupportInteractions,
+		filteredOtherSupportInteractions,
 		odieConversations,
 		supportInteractions,
 	] );

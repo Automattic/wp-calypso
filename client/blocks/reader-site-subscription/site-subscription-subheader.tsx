@@ -4,8 +4,6 @@ import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
-import { getFeedUrl } from 'calypso/reader/route';
 
 type SiteSubscriptionSubheaderProps = {
 	blogId: number;
@@ -45,7 +43,7 @@ const SiteSubscriptionSubheader = ( {
 
 	if ( subscriberCount > 0 ) {
 		subheaderItems.push(
-			<div key={ `subscriber-count-${ subscriberCount }` }>
+			<div key={ `blog-${ blogId ?? 0 }-feed-${ feedId ?? 0 }-count-${ subscriberCount }` }>
 				{ translate( '%s subscriber', '%s subscribers', {
 					count: subscriberCount,
 					args: [ formatNumber( subscriberCount ) ],
@@ -63,23 +61,6 @@ const SiteSubscriptionSubheader = ( {
 			</ExternalLink>
 		);
 	}
-
-	const recordViewFeedButtonClicked = useRecordViewFeedButtonClicked();
-
-	subheaderItems.push(
-		<a
-			href={ getFeedUrl( feedId ) }
-			onClick={ () => {
-				recordViewFeedButtonClicked( {
-					blogId: blogId ? String( blogId ) : null,
-					feedId: String( feedId ),
-					source: 'subscription-feed-link',
-				} );
-			} }
-		>
-			{ translate( 'Reader' ) }
-		</a>
-	);
 
 	return (
 		<HStack className="site-subscription-header" alignment="center" spacing={ 1 }>

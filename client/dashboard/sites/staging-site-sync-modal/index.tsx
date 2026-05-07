@@ -18,9 +18,10 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
-import { createInterpolateElement, useState, useCallback, useMemo } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { useState, useCallback, useMemo } from 'react';
 import useRewindableActivityLogQuery from '../../../data/activity-log/use-rewindable-activity-log-query';
 import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../lib/jetpack/backup-utils';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';

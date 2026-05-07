@@ -3,32 +3,121 @@ import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import { AgentticMessage, ZendeskMessage } from './types';
 
-const IS_TEST_MODE_ENVIRONMENT = true;
-const IS_PRODUCTION_ENVIRONMENT = false;
-const PRODUCTION_ENVIRONMENTS = [
-	'desktop',
-	'production',
-	'wpcalypso',
-	'jetpack-cloud-production',
-	'a8c-for-agencies-production',
-	'dashboard-production',
-];
+export const SUPPORTED_IMAGE_TYPES = [ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ];
+export const MAX_ATTACHMENTS = 5;
+
+export function isSupportedImageType( type: string ) {
+	return SUPPORTED_IMAGE_TYPES.includes( type );
+}
+
+let smoochContainer: HTMLDivElement | null = null;
+
+export function getSmoochContainer(): HTMLDivElement | null {
+	if ( typeof document === 'undefined' ) {
+		return null;
+	}
+
+	const existing = document.querySelector< HTMLDivElement >( '.smooch-container' );
+	if ( existing ) {
+		smoochContainer = existing;
+	} else if ( ! smoochContainer ) {
+		smoochContainer = document.createElement( 'div' );
+		smoochContainer.className = 'smooch-container';
+	}
+
+	// Keep the container hidden since we're using embedded mode.
+	smoochContainer.style.display = 'none';
+	smoochContainer.style.position = 'absolute';
+	smoochContainer.style.top = '0';
+	smoochContainer.style.left = '0';
+	smoochContainer.style.width = '100%';
+	smoochContainer.style.height = '100%';
+	smoochContainer.style.zIndex = '1000';
+
+	if ( ! document.body.contains( smoochContainer ) ) {
+		document.body.appendChild( smoochContainer );
+	}
+
+	return smoochContainer;
+}
+
+export const playNotificationSound = () => {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+
+	// @ts-expect-error expected because of fallback webkitAudioContext
+	const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+	if ( ! AudioContextClass ) {
+		return;
+	}
+
+	try {
+		const audioContext = new AudioContextClass();
+		const duration = 0.7;
+		const oscillator = audioContext.createOscillator();
+		const gainNode = audioContext.createGain();
+
+		// Configure oscillator
+		oscillator.type = 'sine';
+		oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
+
+		// Configure gain for a smoother fade-out
+		gainNode.gain.setValueAtTime( 0.3, audioContext.currentTime );
+		gainNode.gain.exponentialRampToValueAtTime( 0.001, audioContext.currentTime + duration );
+
+		// Connect & start
+		oscillator.connect( gainNode );
+		gainNode.connect( audioContext.destination );
+		oscillator.start();
+		oscillator.stop( audioContext.currentTime + duration );
+	} catch {
+		// Audio playback is not available in this environment
+	}
+};
 
 export const isTestModeEnvironment = () => {
-	const currentEnvironment = config( 'env_id' ) as string;
+	// `env_id` may not be set in all environments (e.g., Gutenberg plugin context).
+	// `config()` throws in development and returns `undefined` in production when the key is missing.
+	let envId: string | undefined;
+	try {
+		envId = config( 'env_id' );
+	} catch ( error ) {
+		// `env_id` not configured in this environment; fall through to `env` check below
+		// eslint-disable-next-line no-console
+		console.warn( '[isTestModeEnvironment] failed to read `env_id` from config', error );
+	}
 
 	// During SU sessions, we want to always target prod. See HAL-154.
 	if ( isInSupportSession() ) {
-		return IS_PRODUCTION_ENVIRONMENT;
+		return false;
 	}
 
-	// If the environment is set to production, we return the production environment.
-	if ( PRODUCTION_ENVIRONMENTS.includes( currentEnvironment ) ) {
-		return IS_PRODUCTION_ENVIRONMENT;
+	// In the Calypso SPA context, env_id follows the config file convention and ends with
+	// 'development', 'horizon', or 'stage' (e.g. 'dashboard-stage', 'jetpack-cloud-horizon').
+	// In the widgets.wp.com bundle context (apps/help-center, apps/agents-manager), config.js
+	// sets env_id to 'staging' for proxied/dev users. Both map to test mode.
+	const testEnvironmentSuffixes = [ 'development', 'horizon', 'stage', 'staging' ];
+	const isTestEnvironment = testEnvironmentSuffixes.some(
+		( suffix ) => envId === suffix || envId?.endsWith( `-${ suffix }` )
+	);
+
+	if ( isTestEnvironment ) {
+		return true;
 	}
 
-	// If the environment is not set to production, we return the test mode environment.
-	return IS_TEST_MODE_ENVIRONMENT;
+	// If env is production and it's not a test environment, treat it as production
+	let env: string | undefined;
+	try {
+		env = config( 'env' );
+	} catch ( error ) {
+		// `env` not configured in this environment
+		// eslint-disable-next-line no-console
+		console.warn( '[isTestModeEnvironment] failed to read `env` from config', error );
+	}
+
+	// If `env` is not configured, default to production to avoid routing customers to staging.
+	return env !== undefined && env !== 'production';
 };
 
 export const getBadRatingReasons = () => {

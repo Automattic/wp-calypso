@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
@@ -42,6 +43,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { CANCEL_FLOW_TYPE } from './constants';
 import enrichedSurveyData from './enriched-survey-data';
+import { getSolutionsForReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import nextStep from './next-step';
@@ -54,6 +56,7 @@ import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
 import NextAdventureStep from './step-components/next-adventure-step';
+import SolutionsCardsUpsellStep from './step-components/solutions-cards-upsell-step';
 import UpsellStep from './step-components/upsell-step';
 import {
 	ATOMIC_REVERT_STEP,
@@ -79,6 +82,7 @@ class CancelPurchaseForm extends Component {
 		linkedPurchases: PropTypes.array,
 		skipRemovePlanSurvey: PropTypes.bool,
 		cancellationInProgress: PropTypes.bool,
+		intent: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -193,18 +197,21 @@ class CancelPurchaseForm extends Component {
 			this.recordClickRadioEvent( 'radio_1_2', value );
 		}
 
+		const upsellFromType = getUpsellType( value, {
+			productSlug: purchase?.productSlug || '',
+			canRefund: !! parseFloat( this.getRefundAmount() ),
+			canDowngrade: !! downgradeClick,
+			canOfferFreeMonth:
+				!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
+		} );
+		const hasSolutionsCards =
+			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+			( getSolutionsForReason( value )?.length ?? 0 ) > 0;
 		const newState = {
 			...this.state,
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
-			upsell:
-				getUpsellType( value, {
-					productSlug: purchase?.productSlug || '',
-					canRefund: !! parseFloat( this.getRefundAmount() ),
-					canDowngrade: !! downgradeClick,
-					canOfferFreeMonth:
-						!! freeMonthOfferClick && ! purchaseIsAlreadyExtended && ! isRefundable( purchase ),
-				} ) || '',
+			upsell: upsellFromType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
 		};
 		this.setState( newState );
 	};
@@ -371,6 +378,7 @@ class CancelPurchaseForm extends Component {
 			site,
 			hasBackupsFeature,
 			flowType,
+			intent,
 		} = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
 		const { productName } = purchase;
@@ -384,6 +392,7 @@ class CancelPurchaseForm extends Component {
 					onChangeCancellationReason={ this.onRadioOneChange }
 					onChangeCancellationReasonDetails={ this.onTextOneChange }
 					onChangeImportFeedback={ this.onImportRadioChange }
+					intent={ intent }
 				/>
 			);
 		}
@@ -391,6 +400,31 @@ class CancelPurchaseForm extends Component {
 		if ( surveyStep === UPSELL_STEP ) {
 			const allSteps = this.getAllSurveySteps();
 			const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+
+			const solutions = getSolutionsForReason( this.state.questionOneText || '' );
+			const useSolutionsCards =
+				config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) &&
+				solutions &&
+				solutions.length > 0;
+
+			// When flag is on and we have solution cards for this reason, show them
+			// instead of the legacy education or single-upsell step.
+			if ( useSolutionsCards ) {
+				return (
+					<SolutionsCardsUpsellStep
+						cancellationReason={ this.state.questionOneText }
+						cancelBundledDomain={ this.props.cancelBundledDomain }
+						closeDialog={ this.closeDialog }
+						downgradePlanPrice={ this.props.downgradePlanToMonthlyPrice }
+						includedDomainPurchase={ this.props.includedDomainPurchase }
+						onClickDowngrade={ this.downgradeClick }
+						onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
+						purchase={ purchase }
+						refundAmount={ this.getRefundAmount() }
+						site={ site }
+					/>
+				);
+			}
 
 			if ( upsell.startsWith( 'education:' ) ) {
 				return (
@@ -411,6 +445,10 @@ class CancelPurchaseForm extends Component {
 					site={ site }
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
+					intent={ intent }
+					declineButtonText={
+						intent === 'remove' ? translate( 'Continue removal' ) : translate( 'No, thanks' )
+					}
 					downgradePlanPrice={
 						'downgrade-personal' === this.state.upsell
 							? this.props.downgradePlanToPersonalPrice
@@ -428,9 +466,12 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
+			const allSteps = this.getAllSurveySteps();
 			return (
 				<NextAdventureStep
 					isPlan={ isPlan( purchase ) }
+					isOnlyStep={ allSteps.length === 1 }
+					intent={ intent }
 					adventureOptions={ this.state.questionTwoOrder }
 					onSelectNextAdventure={ this.onRadioTwoChange }
 					onChangeNextAdventureDetails={ this.onTextTwoChange }
@@ -565,7 +606,7 @@ class CancelPurchaseForm extends Component {
 	}
 
 	renderStepButtons = () => {
-		const { translate, disableButtons, purchase } = this.props;
+		const { translate, disableButtons, purchase, intent } = this.props;
 		const { isSubmitting, surveyStep, solution } = this.state;
 		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
@@ -578,14 +619,27 @@ class CancelPurchaseForm extends Component {
 
 		if ( ! isLastStep ) {
 			return (
-				<GutenbergButton
-					isPrimary
-					isDefault
-					disabled={ ! this.canGoNext() }
-					onClick={ this.clickNext }
-				>
-					{ translate( 'Continue' ) }
-				</GutenbergButton>
+				<>
+					<GutenbergButton
+						isPrimary
+						isDefault
+						isDestructive={ intent === 'remove' }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.clickNext }
+					>
+						{ intent === 'remove' ? translate( 'Continue removal' ) : translate( 'Continue' ) }
+					</GutenbergButton>
+					{ intent === 'cancel' && (
+						<GutenbergButton
+							isTertiary
+							isBusy={ isCancelling }
+							disabled={ isCancelling }
+							onClick={ this.onSubmit }
+						>
+							{ translate( 'No, thanks' ) }
+						</GutenbergButton>
+					) }
+				</>
 			);
 		}
 
@@ -615,17 +669,55 @@ class CancelPurchaseForm extends Component {
 			);
 		}
 
+		if ( intent === 'remove' ) {
+			return (
+				<>
+					<GutenbergButton
+						isPrimary
+						isDefault
+						isDestructive
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.onSubmit }
+					>
+						{ translate( 'Complete removal' ) }
+					</GutenbergButton>
+					<GutenbergButton
+						isDestructive
+						variant="tertiary"
+						isBusy={ isCancelling }
+						disabled={ isCancelling }
+						onClick={ this.onSubmit }
+					>
+						{ translate( 'Skip and remove' ) }
+					</GutenbergButton>
+				</>
+			);
+		}
+
 		return (
-			<GutenbergButton
-				isPrimary={ surveyStep !== UPSELL_STEP }
-				isSecondary={ surveyStep === UPSELL_STEP }
-				isDefault={ surveyStep !== UPSELL_STEP }
-				isBusy={ isCancelling }
-				disabled={ ! this.canGoNext() }
-				onClick={ this.onSubmit }
-			>
-				{ translate( 'Submit' ) }
-			</GutenbergButton>
+			<>
+				<GutenbergButton
+					isPrimary={ surveyStep !== UPSELL_STEP }
+					isSecondary={ surveyStep === UPSELL_STEP }
+					isDefault={ surveyStep !== UPSELL_STEP }
+					isBusy={ isCancelling }
+					disabled={ ! this.canGoNext() }
+					onClick={ this.onSubmit }
+				>
+					{ intent === 'cancel' ? translate( 'Complete' ) : translate( 'Submit' ) }
+				</GutenbergButton>
+				{ intent === 'cancel' && (
+					<GutenbergButton
+						isTertiary
+						isBusy={ isCancelling }
+						disabled={ isCancelling }
+						onClick={ this.onSubmit }
+					>
+						{ translate( 'No, thanks' ) }
+					</GutenbergButton>
+				) }
+			</>
 		);
 	};
 
@@ -677,13 +769,23 @@ class CancelPurchaseForm extends Component {
 	}
 
 	getHeaderTitle() {
-		const { flowType, purchase, translate } = this.props;
+		const { flowType, intent, purchase, translate } = this.props;
 
-		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+		if ( intent === 'remove' || flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			if ( isPlan( purchase ) ) {
 				return translate( 'Remove plan' );
 			}
 			return translate( 'Remove product' );
+		}
+
+		if ( flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+			if ( isPlan( purchase ) ) {
+				return translate( 'Cancel plan' );
+			}
+			if ( isSubscription( purchase ) ) {
+				return translate( 'Cancel subscription' );
+			}
+			return translate( 'Cancel product' );
 		}
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {

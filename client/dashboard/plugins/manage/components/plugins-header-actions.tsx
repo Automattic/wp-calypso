@@ -19,23 +19,21 @@ export const PluginsHeaderActions = ( {
 }: PluginsHeaderActionsProps ) => {
 	const hasUpdates = updateCount > 0;
 
-	if ( hasUpdates ) {
-		return (
-			<Button variant="tertiary" size="compact" onClick={ onFilterUpdates }>
-				<Text>
-					{ sprintf(
-						// translators: %d is the number of plugins with an update available.
-						__( 'Updates available (%d)' ),
-						updateCount
-					) }
-				</Text>
-			</Button>
-		);
-	}
+	const renderText = () => {
+		if ( hasUpdates ) {
+			return sprintf(
+				// translators: %d is the number of plugins with an update available.
+				__( 'Updates available (%d)' ),
+				updateCount
+			);
+		}
+
+		return isSitesWithThisPluginView ? __( 'Plugin up to date' ) : __( 'Plugins up to date' );
+	};
 
 	return (
-		<Text>
-			{ isSitesWithThisPluginView ? __( 'Plugin up to date' ) : __( 'Plugins up to date' ) }
-		</Text>
+		<Button variant="tertiary" size="compact" disabled={ ! hasUpdates } onClick={ onFilterUpdates }>
+			<Text>{ renderText() }</Text>
+		</Button>
 	);
 };

@@ -395,6 +395,7 @@ export default class WebPreviewContent extends Component {
 					isSticky={ this.props.isStickyToolbar }
 					themeId={ themeId }
 					previewSource={ themeOptions?.previewSource }
+					dispatchLivePreview={ themeOptions?.dispatchLivePreview }
 				/>
 				{ this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic && (
 					<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />

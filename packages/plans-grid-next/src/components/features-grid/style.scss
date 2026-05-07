@@ -9,6 +9,11 @@
 	background-color: var(--color-surface);
 	justify-content: flex-start;
 	font-weight: 400;
+
+	&.is-woo-hosted-basic-plan {
+		align-items: center;
+		gap: 12px;
+	}
 }
 
 .plan-features-2023-grid__header-logo {
@@ -205,6 +210,18 @@
 	letter-spacing: 0;
 }
 
+.plan-features-2023-grid__header-badge {
+	background-color: var(--studio-blue-5);
+	color: var(--studio-blue-50);
+	border-radius: 3px;
+	display: inline-block;
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	line-height: 20px;
+	padding: 0 8px;
+	white-space: nowrap;
+}
+
 .plan-features-2023-grid__header-tagline {
 	font-size: $font-body;
 	line-height: 24px;
@@ -356,6 +373,12 @@
 	flex: 1 0 0;
 	width: 100%;
 
+	.plan-features-2023-grid__ai-website-builder-break {
+		@media ( max-width: 480px ) {
+			display: none;
+		}
+	}
+
 	.plan-features-2023-grid__item-title {
 		color: var(--studio-gray-80);
 		font-size: $font-body-small;
@@ -373,42 +396,9 @@
 		}
 
 		// Experiment variants: domain included text gets green color
-		// Applies to variants with "Everything in X, plus:" features (not var1d or control)
+		// Applies to variants with "Everything in X, plus:" features (not focused long-list or control)
 		&.is-domain-included-highlight {
 			color: var(--studio-green-60);
-		}
-
-		// var1d experiment: differentiator feature styling
-		// Features below "Everything in X, plus:" get distinctive underline treatment
-		&.is-differentiator-feature {
-			display: flex;
-			align-items: flex-start;
-			color: var(--studio-gray-90);
-			font-size: $font-body-extra-small;
-			font-weight: 400;
-			line-height: 16px;
-
-			// Make the tooltip hover area a flex container so text doesn't wrap under icon
-			.plans-2023-tooltip__hover-area-container {
-				display: flex;
-				align-items: flex-start;
-			}
-
-			// Text content wrapper to keep badge inline with text
-			.plan-features-2023-grid__item-text-content {
-				flex: 1;
-			}
-
-			// Apply underline styling only to the text, not the icon
-			> span {
-				text-decoration-line: underline;
-				text-decoration-style: dotted;
-				text-decoration-skip-ink: none;
-				text-decoration-color: #00ba37;
-				text-decoration-thickness: 9%;
-				text-underline-offset: auto;
-				text-underline-position: from-font;
-			}
 		}
 
 		@include plans-grid-medium-large {
@@ -433,30 +423,7 @@
 	}
 }
 
-// var1d experiment: 26px margin after header features ("Included in plan:" / "Everything in X, plus:")
-.plan-features-2023-grid__table-item .is-header-feature {
-	.plan-features-2023-grid__item {
-		padding-block-end: 26px;
-	}
-}
-
-// var1d experiment: 17px vertical margin between differentiator features
-.plan-features-2023-grid__table-item .is-differentiator-feature {
-	.plan-features-2023-grid__item {
-		padding-block-end: 17px;
-	}
-
-	&.is-last-feature .plan-features-2023-grid__item {
-		padding-block-end: 0;
-	}
-}
-
-// var1d experiment: 24px bottom margin after last feature
-.plan-features-2023-grid__table-item .is-var1d-last-feature {
-	margin-block-end: 24px;
-}
-
-// Other experiment variants (var1, var3, var4, var5): 37px bottom margin after last feature
+// Pricing differentiators experiment (non-control): extra bottom margin after last feature in column
 .plan-features-2023-grid__table-item .is-experiment-last-feature {
 	margin-block-end: 37px;
 }
@@ -474,6 +441,10 @@
 .plan-features-2023-grid__item {
 	padding: 0 20px 12px;
 	text-align: left;
+
+	.is-plan-differentiators-experiment & {
+		padding-inline-end: 12px;
+	}
 
 	&.plan-features-2023-grid__item-available {
 		display: flex;
@@ -560,9 +531,9 @@
 		border-right: none;
 		background-color: transparent;
 
-		// The extra `:is(td)` is needed so this rule is at the same specificity as the rule
-		// which originally added the border-left, which uses an `:is` selector.
-		&:first-of-type:is(td) {
+		// Match both `td` and `th` so the first header cell has its border-left removed too;
+		// the `:is()` keeps the specificity aligned with the rule that adds the border-left above.
+		&:first-of-type:is(td, th) {
 			border-left: none;
 		}
 

@@ -76,7 +76,6 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC !== true )(
 				{ tab: 'Sharing' },
 				{ tab: 'Discussion' },
 				{ tab: 'Traffic' },
-				{ tab: 'Newsletter' },
 			] )( 'Click on $tab tab in the Settings view', async function ( { tab } ) {
 				await jetpackDashboardPage.clickTab( { view: 'Settings', tab: tab as SettingsTabs } );
 			} );

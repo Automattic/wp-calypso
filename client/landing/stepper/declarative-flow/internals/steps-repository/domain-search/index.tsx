@@ -12,6 +12,7 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -21,6 +22,8 @@ import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/
 import FormattedHeader from 'calypso/components/formatted-header';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -33,7 +36,7 @@ import {
 	domainMapping,
 } from 'calypso/my-sites/domains/paths';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
@@ -43,6 +46,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import type { Step as StepType } from '../../types';
 import type { FreeDomainSuggestion } from '@automattic/api-core';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const HUNDRED_YEAR_DOMAIN_TLDS = [ 'com', 'net', 'org', 'blog' ];
@@ -73,18 +77,32 @@ const DomainSearchStep: StepType< {
 	submits: UseMyDomain | StepSubmission;
 } > = function DomainSearchStep( { navigation, flow } ) {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const queryParams = useQuery();
-	const initialQuery = queryParams.get( 'new' ) ?? '';
+	const queryParamNew = queryParams.get( 'new' ) ?? '';
 	const tldQuery = queryParams.get( 'tld' );
 	const source = queryParams.get( 'source' );
 	const backTo = queryParams.get( 'back_to' ) ?? '';
 	const sourceSlug = queryParams.get( 'sourceSlug' );
 	const dashboard = queryParams.get( 'dashboard' );
 	const { __ } = useI18n();
+
+	const isCiab = dashboard === 'ciab';
+	const isWooHostingSolutions = queryParams.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+
+	const storedSiteTitle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		[]
+	);
+
+	// For CIAB sites, prefer the site title over the slug for domain suggestions
+	// since the slug is often randomly generated.
+	const siteTitle = isCiab && site?.name?.trim() ? site.name.trim() : '';
+	const initialQuery = queryParamNew || siteTitle || storedSiteTitle;
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
@@ -104,14 +122,20 @@ const DomainSearchStep: StepType< {
 				isSignup:
 					! isDomainAndPlanFlow( flow ) && ! isCopySiteFlow( flow ) && ! isDomainFlow( flow ),
 				isDomainOnly: isDomainFlow( flow ),
+				isCiab,
+				isWooHostingSolutions,
 				flowName: flow,
 			} ),
 			priceRules: {
 				hidePrice: isHundredYearPlanFlow( flow ),
 				oneTimePrice: isHundredYearDomainFlow( flow ),
 			},
-			includeDotBlogSubdomain: isNewsletterFlow( flow ),
 			skippable:
+				! isHundredYearPlanFlow( flow ) &&
+				! isHundredYearDomainFlow( flow ) &&
+				! isDomainFlow( flow ) &&
+				! isDomainAndPlanFlow( flow ),
+			includeDotBlogSubdomain:
 				! isHundredYearPlanFlow( flow ) &&
 				! isHundredYearDomainFlow( flow ) &&
 				! isDomainFlow( flow ) &&
@@ -127,7 +151,7 @@ const DomainSearchStep: StepType< {
 				! isHundredYearPlanFlow( flow ) &&
 				( isHundredYearDomainFlow( flow ) ? !! query : true ),
 		};
-	}, [ flow, tldQuery, query ] );
+	}, [ flow, isCiab, isWooHostingSolutions, tldQuery, query ] );
 
 	const { submit } = navigation;
 
@@ -238,6 +262,9 @@ const DomainSearchStep: StepType< {
 	// except if we're in a site context or in the 100-year plan or domain flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
 		if ( isDomainFlow( flow ) ) {
+			if ( isCiab ) {
+				return !! site && siteHasPaidPlan( site );
+			}
 			return ! site || ! siteHasPaidPlan( site );
 		}
 
@@ -246,7 +273,7 @@ const DomainSearchStep: StepType< {
 		}
 
 		return true;
-	}, [ flow, site, sourceSlug ] );
+	}, [ flow, isCiab, site, sourceSlug ] );
 
 	const slots = useMemo( () => {
 		return {
@@ -255,19 +282,23 @@ const DomainSearchStep: StepType< {
 					return null;
 				}
 
-				return <FreeDomainForAYearPromo />;
+				return <FreeDomainForAYearPromo isCiab={ isCiab } />;
 			},
 			BeforeFullCartItems: () => {
 				if ( ! isFirstDomainFreeForFirstYear ) {
 					return null;
 				}
 
-				return <FreeDomainForAYearPromo textOnly />;
+				return <FreeDomainForAYearPromo textOnly isCiab={ isCiab } />;
 			},
 		};
-	}, [ isFirstDomainFreeForFirstYear ] );
+	}, [ isFirstDomainFreeForFirstYear, isCiab ] );
 
 	const headerText = useMemo( () => {
+		if ( isWooHostingSolutions ) {
+			return __( 'Name your store' );
+		}
+
 		if ( isNewsletterFlow( flow ) ) {
 			return __( 'Your domain. Your identity.' );
 		}
@@ -276,10 +307,18 @@ const DomainSearchStep: StepType< {
 			return __( 'Find the perfect domain' );
 		}
 
+		if ( isCiab ) {
+			return __( 'Make your store unforgettable' );
+		}
+
 		return __( 'Claim your space on the web' );
-	}, [ flow, __ ] );
+	}, [ flow, isCiab, isWooHostingSolutions, __ ] );
 
 	const subHeaderText = useMemo( () => {
+		if ( isWooHostingSolutions ) {
+			return __( 'Find a .com, .shop, or .store that customers will remember.' );
+		}
+
 		if ( isNewsletterFlow( flow ) ) {
 			return __( 'Make your newsletter stand out with a custom domain.' );
 		}
@@ -291,8 +330,12 @@ const DomainSearchStep: StepType< {
 			return __( 'Secure your 100-Year domain and start building your legacy.' );
 		}
 
+		if ( isCiab ) {
+			return __( 'Choose a site address that puts your brand front and center.' );
+		}
+
 		return __( 'Make it yours with a .com, .blog, or one of 350+ domain options.' );
-	}, [ flow, __ ] );
+	}, [ flow, isCiab, isWooHostingSolutions, __ ] );
 
 	const domainSearchElement = (
 		<WPCOMDomainSearch
@@ -310,7 +353,7 @@ const DomainSearchStep: StepType< {
 			events={ events }
 			flowAllowsMultipleDomainsInCart={
 				isOnboardingFlow( flow ) ||
-				isDomainFlow( flow ) ||
+				( isDomainFlow( flow ) && ! isCiab ) ||
 				isNewHostedSiteCreationFlow( flow ) ||
 				isDomainAndPlanFlow( flow )
 			}
@@ -360,19 +403,22 @@ const DomainSearchStep: StepType< {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backDestination = `/settings/general/${ siteSlug }`;
 				backLabelText = __( 'Back to General Settings' );
-			} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
-				backDestination = navigation.goBack;
-				backLabelText = __( 'Back' );
 			} else {
-				backDestination = defaultBackUrl;
-				backLabelText = sitesBackLabelText;
-
 				const isSafeBackTo =
 					isRelativeUrl( backTo ) ||
 					dashboardOrigins().some( ( origin ) => backTo?.startsWith( origin ) );
 
 				if ( isSafeBackTo ) {
 					backDestination = backTo;
+					backLabelText = __( 'Back' );
+				} else if ( ! isOnboardingFlow( flow ) && navigation.goBack ) {
+					backDestination = navigation.goBack;
+					backLabelText = __( 'Back' );
+				} else {
+					if ( ! isLoggedIn || ! userSiteCount ) {
+						return;
+					}
+					backDestination = defaultBackUrl;
 					backLabelText = __( 'Back' );
 				}
 			}
@@ -396,7 +442,7 @@ const DomainSearchStep: StepType< {
 				<>
 					{ config.allowsUsingOwnDomain && (
 						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
-							{ __( 'Use a domain I already own' ) }
+							{ __( 'Use a domain I own' ) }
 						</Step.LinkButton>
 					) }
 				</>
@@ -455,7 +501,7 @@ const DomainSearchStep: StepType< {
 				onClick={ () => events.onExternalDomainClick( query ) }
 				variant="link"
 			>
-				<span>{ __( 'Use a domain I already own' ) }</span>
+				<span>{ __( 'Use a domain I own' ) }</span>
 			</Button>
 		);
 	};

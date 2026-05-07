@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useSelector } from 'react-redux';
 import HostingDashboardOptInBanner from 'calypso/my-sites/hosting-dashboard-opt-in-banner';
@@ -11,7 +12,7 @@ export function useDashboardOptInBanner() {
 	return {
 		id,
 		shouldShow() {
-			return ! isDesktop && dashboardEnabled;
+			return isEnabled( 'dashboard/opt-in-banners' ) && ! isDesktop && dashboardEnabled;
 		},
 		render() {
 			return <HostingDashboardOptInBanner isMobile />;

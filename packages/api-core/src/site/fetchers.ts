@@ -1,6 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
 import type { Site } from './types';
 
+export interface FetchSiteOptions {
+	force?: 'wpcom';
+}
+
 export const SITE_FIELDS = [
 	'ID',
 	'slug',
@@ -36,20 +40,22 @@ export const SITE_FIELDS = [
 	'garden_name',
 	'garden_partner',
 	'garden_is_provisioned',
+	'big_sky_enabled',
 ];
 
 export const JOINED_SITE_FIELDS = SITE_FIELDS.join( ',' );
 
 export const SITE_OPTIONS = [
 	'admin_url',
+	'apm_enabled',
 	'created_at',
 	'unmapped_url',
 	'is_difm_lite_in_progress',
 	'is_gating_business_q1',
-	'is_summer_special_2025',
 	'is_domain_only',
 	'is_redirect',
 	'is_wpforteams_site',
+	'jetpack_recovery_mode_status',
 	'migration_source_site_domain',
 	'p2_hub_blog_id',
 	'site_creation_flow',
@@ -62,9 +68,12 @@ export const SITE_OPTIONS = [
 
 export const JOINED_SITE_OPTIONS = SITE_OPTIONS.join( ',' );
 
-export async function fetchSite( siteIdOrSlug: number | string ): Promise< Site > {
+export async function fetchSite(
+	siteIdOrSlug: number | string,
+	options: FetchSiteOptions = {}
+): Promise< Site > {
 	return await wpcom.req.get(
 		{ path: `/sites/${ siteIdOrSlug }` },
-		{ fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
+		{ ...options, fields: JOINED_SITE_FIELDS, options: JOINED_SITE_OPTIONS }
 	);
 }

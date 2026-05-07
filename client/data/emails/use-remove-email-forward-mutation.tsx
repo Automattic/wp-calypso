@@ -8,11 +8,18 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import type { EmailAccountEmail, AlterDestinationParams, Mailbox } from './types';
+import type {
+	AlterDestinationParams,
+	DomainsQueryData,
+	EmailAccountEmail,
+	EmailAccountsQueryData,
+	Mailbox,
+} from './types';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
 type Context = {
-	[ key: string ]: any;
+	emailAccountsQueryData: EmailAccountsQueryData | undefined;
+	domainsQueryData: DomainsQueryData | undefined;
 };
 
 const MUTATION_KEY = 'removeEmailForward';
@@ -26,7 +33,7 @@ const MUTATION_KEY = 'removeEmailForward';
 export default function useRemoveEmailForwardMutation(
 	domainName: string,
 	mutationOptions: Omit<
-		UseMutationOptions< any, unknown, AlterDestinationParams, Context >,
+		UseMutationOptions< Mailbox, unknown, AlterDestinationParams, Context >,
 		'mutationFn'
 	> = {}
 ) {
@@ -58,12 +65,13 @@ export default function useRemoveEmailForwardMutation(
 		await queryClient.cancelQueries( { queryKey: emailAccountsQueryKey } );
 		await queryClient.cancelQueries( { queryKey: domainsQueryKey } );
 
-		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailAccountsQueryKey );
+		const previousEmailAccountsQueryData =
+			queryClient.getQueryData< EmailAccountsQueryData >( emailAccountsQueryKey );
 
 		const emailForwards = previousEmailAccountsQueryData?.accounts?.[ 0 ]?.emails;
 
 		// Optimistically remove email forward from `useGetEmailAccountsQuery` data
-		if ( emailForwards ) {
+		if ( previousEmailAccountsQueryData && emailForwards ) {
 			queryClient.setQueryData( emailAccountsQueryKey, {
 				...previousEmailAccountsQueryData,
 				accounts: [
@@ -81,7 +89,8 @@ export default function useRemoveEmailForwardMutation(
 			} );
 		}
 
-		const previousDomainsQueryData = queryClient.getQueryData< any >( domainsQueryKey );
+		const previousDomainsQueryData =
+			queryClient.getQueryData< DomainsQueryData >( domainsQueryKey );
 
 		// Optimistically decrement `email_forwards_count` in `useGetDomainsQuery` data
 		if ( previousDomainsQueryData ) {
@@ -106,8 +115,8 @@ export default function useRemoveEmailForwardMutation(
 		}
 
 		return {
-			[ JSON.stringify( emailAccountsQueryKey ) ]: previousEmailAccountsQueryData,
-			[ JSON.stringify( domainsQueryKey ) ]: previousDomainsQueryData,
+			emailAccountsQueryData: previousEmailAccountsQueryData,
+			domainsQueryData: previousDomainsQueryData,
 		};
 	};
 
@@ -115,12 +124,8 @@ export default function useRemoveEmailForwardMutation(
 		suppliedOnError?.( error, emailForward, context );
 
 		if ( context ) {
-			queryClient.setQueryData(
-				emailAccountsQueryKey,
-				context[ JSON.stringify( emailAccountsQueryKey ) ]
-			);
-
-			queryClient.setQueryData( domainsQueryKey, context[ JSON.stringify( domainsQueryKey ) ] );
+			queryClient.setQueryData( emailAccountsQueryKey, context.emailAccountsQueryData );
+			queryClient.setQueryData( domainsQueryKey, context.domainsQueryData );
 		}
 
 		const emailAddress = getEmailAddress( emailForward );

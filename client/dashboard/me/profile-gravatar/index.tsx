@@ -11,10 +11,10 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
-import { createInterpolateElement, useMemo } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { isValidUrl } from '../../../lib/importer/url-validation';
 import { NavigationBlocker } from '../../app/navigation-blocker';
 import { Card, CardBody } from '../../components/card';

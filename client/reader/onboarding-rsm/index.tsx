@@ -1,0 +1,295 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
+import { CircularProgressBar } from '@automattic/components';
+import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
+import { Modal } from '@wordpress/components';
+import clsx from 'clsx';
+import { translate } from 'i18n-calypso';
+import React, { useState, useEffect } from 'react';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
+import {
+	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
+	READER_ONBOARDING_PREFERENCE_KEY,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding-rsm/constants';
+import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
+import SubscribeModal from 'calypso/reader/onboarding-rsm/subscribe-modal';
+import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
+import { useDispatch, useSelector } from 'calypso/state';
+import {
+	getCurrentUserDate,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
+import { requestGravatarDetails } from 'calypso/state/gravatar-status/actions';
+import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
+import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
+import { useSiteSubscriptions } from '../following/use-site-subscriptions';
+import './style.scss';
+
+// All onboarding steps share a single <Modal> frame so transitions between
+// them feel seamless (no close/open animation between steps). The active
+// step's body is rendered as the only child of the shared modal; the
+// per-step CSS class on the modal frame keeps existing styles working.
+type Step = 'welcome' | 'interests' | 'discover';
+
+const STEP_FRAME_CLASS: Record< Step, string > = {
+	welcome: 'reader-welcome-modal',
+	interests: 'interests-modal',
+	discover: 'subscribe-modal',
+};
+
+const ReaderOnboardingRsm = ( {
+	onRender,
+	isSuppressed = false,
+}: {
+	onRender?: ( shown: boolean ) => void;
+	isSuppressed?: boolean;
+} ) => {
+	const dispatch = useDispatch();
+	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
+	const [ hasCompletedWelcomeStep, setHasCompletedWelcomeStep ] = useState( false );
+
+	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
+	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
+	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
+
+	const { data: followedTags } = useFollowedReaderTags();
+	const follows = useSelector( getReaderFollows );
+	const profileCompleted = useSelector( hasCompletedReaderProfile );
+	const hasUserGravatar = useSelector( hasGravatar );
+	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
+
+	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
+		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
+	);
+	const hasSeenOnboarding: boolean | null = useSelector( ( state ) =>
+		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
+	);
+
+	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
+	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
+
+	// If the user has completed the onboarding, save the preference and track the event.
+	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+	}
+
+	const meetsEligibility =
+		preferencesLoaded &&
+		! hasCompletedOnboarding &&
+		userRegistrationDate !== null &&
+		new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' );
+
+	const forceShow = ! isLoading && ! hasNonSelfSubscriptions;
+
+	const shouldShowOnboarding =
+		forceShow || isEnabled( 'reader/force-onboarding' ) || !! meetsEligibility;
+
+	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
+
+	// Side-effects that run when a given step is closed (whether via the X /
+	// escape, or via the "continue" button transitioning to the next step).
+	// Centralised so the same effects fire on either path.
+	const performStepCloseSideEffects = ( step: Step ) => {
+		if ( step === 'welcome' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
+			if ( ! hasSeenOnboarding ) {
+				dispatch( savePreference( READER_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
+			}
+		} else if ( step === 'interests' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
+		} else if ( step === 'discover' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
+			// Refresh the Following stream after the user might have followed
+			// new sites in the discover step.
+			dispatch( requestFollows() );
+			dispatch( clearStream( { streamKey: 'following' } ) );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			dispatch( requestPage( { streamKey: 'following' } as any ) );
+		}
+	};
+
+	const recordStepOpen = ( step: Step ) => {
+		if ( step === 'welcome' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_open` );
+		} else if ( step === 'interests' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
+		} else if ( step === 'discover' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_open` );
+		}
+	};
+
+	const openStep = ( step: Step ) => {
+		recordStepOpen( step );
+		setCurrentStep( step );
+	};
+
+	const handleStepClose = () => {
+		if ( currentStep ) {
+			performStepCloseSideEffects( currentStep );
+		}
+		setCurrentStep( null );
+	};
+
+	const handleWelcomeContinue = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_continue` );
+		setHasCompletedWelcomeStep( true );
+		performStepCloseSideEffects( 'welcome' );
+		recordStepOpen( 'interests' );
+		setCurrentStep( 'interests' );
+	};
+
+	const handleInterestsContinue = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_continue` );
+		performStepCloseSideEffects( 'interests' );
+		recordStepOpen( 'discover' );
+		setCurrentStep( 'discover' );
+	};
+
+	const itemClickHandler = ( task: Task ) => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }task_click`, {
+			task: task.id,
+		} );
+		task?.actionDispatch?.();
+	};
+
+	const navToAccountProfile = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_account_profile` );
+		page( '/me?ref=reader-onboarding' );
+	};
+
+	// Track if user viewed Reader Onboarding.
+	useEffect( () => {
+		if ( shouldRenderOnboarding ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }viewed` );
+		}
+	}, [ shouldRenderOnboarding, dispatch ] );
+
+	// Auto-open the welcome step if onboarding should render and it has never been opened before.
+	useEffect( () => {
+		if ( shouldRenderOnboarding && preferencesLoaded && ! hasSeenOnboarding ) {
+			openStep( 'welcome' );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
+
+	// Reopen subscription onboarding page if prompted by query param.
+	useEffect( () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		const shouldReloadOnboarding = urlParams.has( 'reloadSubscriptionOnboarding' );
+
+		if ( shouldReloadOnboarding ) {
+			openStep( 'discover' );
+			urlParams.delete( 'reloadSubscriptionOnboarding' );
+			page.redirect(
+				`${ window.location.pathname }${ urlParams.toString() ? '?' + urlParams.toString() : '' }`
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	// Fetch gravatar info when component mounts
+	useEffect( () => {
+		dispatch( requestGravatarDetails() );
+	}, [ dispatch ] );
+
+	// Notify the parent component if onboarding will render.
+	// Use useEffect to avoid calling setState during render (React anti-pattern).
+	useEffect( () => {
+		onRender?.( shouldShowOnboarding );
+	}, [ onRender, shouldShowOnboarding ] );
+
+	if ( ! shouldRenderOnboarding ) {
+		return null;
+	}
+
+	const tasks: Task[] = [
+		{
+			id: 'welcome',
+			title: translate( 'Welcome to Reader' ),
+			actionDispatch: () => openStep( 'welcome' ),
+			completed: hasCompletedWelcomeStep,
+			disabled: false,
+		},
+		{
+			id: 'select-interests',
+			title: translate( 'Select some of your interests' ),
+			actionDispatch: () => openStep( 'interests' ),
+			completed: hasFollowedTags,
+			disabled: ! hasCompletedWelcomeStep,
+		},
+		{
+			id: 'discover-sites',
+			title: translate( "Discover and subscribe to sites you'll love" ),
+			actionDispatch: () => openStep( 'discover' ),
+			completed: hasFollowedSites,
+			disabled: ! hasFollowedSites && ! hasFollowedTags,
+		},
+		{
+			id: 'account-profile',
+			title: hasUserGravatar
+				? translate( 'Fill out your profile' )
+				: translate( 'Add your avatar and fill out your profile' ),
+			actionDispatch: navToAccountProfile,
+			completed: profileCompleted,
+			disabled: ! profileCompleted && ( ! hasFollowedTags || ! hasFollowedSites ),
+		},
+	];
+
+	return (
+		<>
+			<div className="reader-onboarding">
+				<div className="reader-onboarding__intro-column">
+					<CircularProgressBar
+						size={ 40 }
+						enableDesktopScaling
+						numberOfSteps={ tasks.length }
+						currentStep={ tasks.filter( ( task ) => task.completed ).length }
+					/>
+					<h2>{ translate( 'Your personal reading adventure' ) }</h2>
+					<p>{ translate( 'Tailor your feed, connect with your favorite topics.' ) }</p>
+				</div>
+				<div className="reader-onboarding__steps-column">
+					<Checklist>
+						{ tasks.map( ( task ) => (
+							<ChecklistItem
+								task={ task }
+								key={ task.id }
+								onClick={ () => itemClickHandler( task ) }
+							/>
+						) ) }
+					</Checklist>
+				</div>
+			</div>
+
+			{ currentStep && (
+				<Modal
+					onRequestClose={ handleStepClose }
+					size="medium"
+					className={ clsx( 'reader-onboarding-rsm-modal', STEP_FRAME_CLASS[ currentStep ], {
+						'is-disabled': currentStep === 'discover' && promptVerification,
+					} ) }
+				>
+					{ currentStep === 'welcome' && (
+						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />
+					) }
+					{ currentStep === 'interests' && (
+						<InterestsModal onContinue={ handleInterestsContinue } />
+					) }
+					{ currentStep === 'discover' && (
+						<SubscribeModal onClose={ handleStepClose } promptVerification={ promptVerification } />
+					) }
+				</Modal>
+			) }
+		</>
+	);
+};
+
+export default ReaderOnboardingRsm;

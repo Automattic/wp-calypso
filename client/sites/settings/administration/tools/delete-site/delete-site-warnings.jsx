@@ -2,9 +2,14 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
-import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 
-function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
+function DeleteSiteWarnings( {
+	siteSlug,
+	p2HubP2Count,
+	isAtomicRemovalInProgress,
+	isTrialSite = false,
+} ) {
 	const translate = useTranslate();
 
 	const getButtons = () => {
@@ -20,14 +25,14 @@ function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialS
 			);
 		} else if ( isTrialSite ) {
 			return (
-				<Button primary href={ purchasesRoot }>
+				<Button primary href={ getPurchaseListUrlFor( siteSlug ) }>
 					{ translate( 'Cancel trial', { context: 'button label' } ) }
 				</Button>
 			);
 		}
 
 		return (
-			<Button primary href={ purchasesRoot }>
+			<Button primary href={ getPurchaseListUrlFor( siteSlug ) }>
 				{ translate( 'Manage purchases', { context: 'button label' } ) }
 			</Button>
 		);
@@ -76,6 +81,7 @@ function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialS
 }
 
 DeleteSiteWarnings.propTypes = {
+	siteSlug: PropTypes.string.isRequired,
 	p2HubP2Count: PropTypes.number,
 	isAtomicRemovalInProgress: PropTypes.bool,
 	isTrialSite: PropTypes.bool,

@@ -1,6 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gravatar } from '@automattic/components';
-import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -140,14 +138,10 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 	const dropdownRef = useRef( null );
 	useOutsideClickCallback( dropdownRef, onCloseMenu );
 
-	const withHelpCenter = isEnabled( 'a4a-help-center' );
-
 	return (
 		<nav
 			ref={ dropdownRef }
-			className={ clsx( 'a4a-sidebar__profile-dropdown', `is-align-menu-${ dropdownPosition }`, {
-				'with-help-center': withHelpCenter,
-			} ) }
+			className={ clsx( 'a4a-sidebar__profile-dropdown', `is-align-menu-${ dropdownPosition }` ) }
 			aria-label={
 				translate( 'User menu', {
 					comment: 'Label used to differentiate navigation landmarks in screen readers',
@@ -167,18 +161,9 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 					size={ 32 }
 					alt={ translate( 'My Profile', { textOnly: true } ) }
 				/>
-
-				{ ! withHelpCenter && (
-					<div className="a4a-sidebar__profile-dropdown-button-label">
-						<span className="a4a-sidebar__profile-dropdown-button-label-text">
-							{ user?.display_name }
-						</span>
-						<Icon icon={ chevronDown } />
-					</div>
-				) }
 			</Button>
 
-			{ withHelpCenter && <SidebarHelpCenter /> }
+			<SidebarHelpCenter />
 			<DropdownMenu isExpanded={ isMenuExpanded } setMenuExpanded={ setMenuExpanded } />
 		</nav>
 	);

@@ -23,7 +23,7 @@
 		"teamcity:build-app": "yarn run build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/blaze-dashboard/v1",
 		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build",
-		"translate": "rm -rf dist/strings && mkdir -p dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/blaze-dashboard-strings.pot' && build-app-languages --stringsFilePath='./dist/blaze-dashboard-strings.pot'"
+		"translate": "rm -rf dist/strings && mkdir -p dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --jobs 4 --output './dist/blaze-dashboard-strings.pot' && build-app-languages --stringsFilePath='./dist/blaze-dashboard-strings.pot'"
 	},
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
@@ -33,7 +33,7 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.0.1",
+		"@automattic/number-formatters": "^1.1.0",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/components": "^30.9.0",
 		"@wordpress/data": "^10.23.0",
@@ -54,7 +54,6 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
-		"@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^",
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",

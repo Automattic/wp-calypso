@@ -19,10 +19,10 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
-import { createInterpolateElement, useMemo } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import InlineSupportLink from '../../components/inline-support-link';

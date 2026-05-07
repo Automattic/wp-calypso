@@ -1,13 +1,18 @@
 import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { DirectoryApplicationType } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
+import {
+	AgencyLeadMatchingProfile,
+	AgencyLeadMatchingSyncState,
+	DirectoryApplicationType,
+	LeadMatchingDetails,
+} from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import type { AgencyTier } from 'calypso/a8c-for-agencies/sections/agency-tier/types';
 
 export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
-	data?: any;
+	data?: unknown;
 }
 
 // Define interfaces for Titan Email data
@@ -91,11 +96,18 @@ export interface Agency {
 		allowed: boolean;
 		directories: DirectoryApplicationType[];
 	};
+	lead_matching?: {
+		allowed?: boolean;
+		draft?: LeadMatchingDetails | null;
+		profile?: AgencyLeadMatchingProfile | null;
+		sync?: AgencyLeadMatchingSyncState;
+	};
 	user: {
 		role: 'a4a_administrator' | 'a4a_manager';
 		capabilities: string[];
 	};
 	can_issue_licenses: boolean;
+	referrals_logo?: string | null;
 	notifications:
 		| [
 				{

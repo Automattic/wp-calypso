@@ -19,7 +19,6 @@ import {
 	NOTICE_CELEBRATE_SITE_COPY,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	NOTICE_HOME_LIMITED_TIME_OFFER_COUPON,
-	NOTICE_READER_FIRST_POSTS,
 	NOTICE_SITE_LAUNCH_SELLER_UPSELL,
 	NOTICE_STAGING_SITE,
 	SECTION_BLOGGING_PROMPT,
@@ -33,7 +32,6 @@ import {
 	TASK_FIVERR,
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
-	TASK_GOOGLE_DOMAIN_OWNERS,
 	TASK_MARKETPLACE,
 	TASK_PROMOTE_POST,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
@@ -70,7 +68,6 @@ import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
-import ReaderFirstPosts from 'calypso/my-sites/customer-home/cards/notices/reader-first-posts';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
 import Affiliates from 'calypso/my-sites/customer-home/cards/tasks/affiliates';
@@ -79,7 +76,6 @@ import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upse
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
-import GoogleDomainOwners from 'calypso/my-sites/customer-home/cards/tasks/google-domain-owners';
 import JanuaryBump from 'calypso/my-sites/customer-home/cards/tasks/january-bump';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import NoticeHomeLimitedTimeOfferCoupon from 'calypso/my-sites/customer-home/cards/tasks/notice-home-limited-time-offer-coupon';
@@ -119,7 +115,6 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ TASK_FIVERR ]: Fiverr,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
-	[ TASK_GOOGLE_DOMAIN_OWNERS ]: GoogleDomainOwners,
 	[ TASK_MARKETPLACE ]: Marketplace,
 	[ TASK_PROMOTE_POST ]: PromotePost,
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
@@ -151,7 +146,6 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ LAUNCHPAD_LEGACY_SITE_SETUP ]: LaunchpadSiteSetup,
 	[ LAUNCHPAD_INTENT_NEWSLETTER_GOAL ]: LaunchpadIntentNewsletterGoal,
 	[ LAUNCHPAD_POST_MIGRATION ]: LaunchpadPostMigration,
-	[ NOTICE_READER_FIRST_POSTS ]: ReaderFirstPosts,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ SECTION_BLOGANUARY_BLOGGING_PROMPT ]: BloggingPrompt,
 	[ SECTION_LEARN_GROW ]: LearnGrow,

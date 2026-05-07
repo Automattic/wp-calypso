@@ -16,6 +16,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
+import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 import './style.scss';
 
 interface QueryArgs {
@@ -47,10 +48,9 @@ interface SignupFormSocialFirst {
 	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
-	isExperimentVariant?: boolean;
-	isEmailVariation?: boolean;
-	isMessagingVariation?: boolean;
-	isSliderVariation?: boolean;
+	isEmailFirstVariant?: boolean;
+	allowedSocialServices?: SignupAllowedService[];
+	customTosElement?: JSX.Element;
 }
 
 const options = {
@@ -90,10 +90,9 @@ const SignupFormSocialFirst = ( {
 	passDataToNextStep,
 	backButtonInFooter = true,
 	emailLabelText,
-	isExperimentVariant,
-	isEmailVariation,
-	isMessagingVariation,
-	isSliderVariation,
+	isEmailFirstVariant,
+	allowedSocialServices,
+	customTosElement,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState< Screen >( userEmail ? 'email' : 'initial' );
 	const { __ } = useI18n();
@@ -102,6 +101,11 @@ const SignupFormSocialFirst = ( {
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
 
 	const renderTermsOfService = () => {
+		// Custom ToS element takes priority (from partner branding)
+		if ( customTosElement ) {
+			return <p className="signup-form-social-first__tos-link">{ customTosElement }</p>;
+		}
+
 		let tosText;
 
 		if ( isWoo ) {
@@ -116,8 +120,6 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
-		} else if ( isMessagingVariation ) {
-			tosText = __( 'Sign up for free to start creating your site.' );
 		} else {
 			tosText = createInterpolateElement(
 				__(
@@ -130,7 +132,7 @@ const SignupFormSocialFirst = ( {
 		return (
 			<p
 				className={ clsx( 'signup-form-social-first__tos-link', {
-					'is-left-aligned': isExperimentVariant,
+					'is-left-aligned': isEmailFirstVariant,
 				} ) }
 			>
 				{ tosText }
@@ -139,7 +141,7 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		return isMessagingVariation ? null : (
+		return (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
 					__(
@@ -160,7 +162,7 @@ const SignupFormSocialFirst = ( {
 	};
 
 	let emailLoginComponent = null;
-	if ( isEmailVariation ) {
+	if ( isEmailFirstVariant ) {
 		emailLoginComponent = (
 			<>
 				<div className="signup-form-social-first-email">
@@ -212,11 +214,14 @@ const SignupFormSocialFirst = ( {
 					disableTosText
 					compact
 					isSocialFirst={ isSocialFirst }
-					shouldShowEmailButton={ ! isEmailVariation }
+					shouldShowEmailButton={ ! isEmailFirstVariant }
+					allowedSocialServices={ allowedSocialServices }
 				/>
-				{ isSliderVariation && (
+				{ isEmailFirstVariant && (
 					<p className="signup-form-social-first__login-link">
-						Have an account? <Step.LinkButton href={ logInUrl }>{ __( 'Log in' ) }</Step.LinkButton>
+						{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
+							link: <Step.LinkButton href={ logInUrl } />,
+						} ) }
 					</p>
 				) }
 			</div>

@@ -1,4 +1,4 @@
-import { userReceiptsQuery } from '@automattic/api-queries';
+import { countryListQuery, userReceiptsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { billingHistoryRoute } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
@@ -25,6 +26,7 @@ const emptyReceipts: Receipt[] = [];
 
 export default function BillingHistory() {
 	const { data: receipts = emptyReceipts, isLoading } = useQuery( userReceiptsQuery() );
+	const { data: countryList = [] } = useQuery( countryListQuery() );
 
 	const searchParams = billingHistoryRoute.useSearch();
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
@@ -47,7 +49,7 @@ export default function BillingHistory() {
 		}
 	} );
 
-	const fields = getFields( receipts );
+	const fields = useMemo( () => getFields( receipts, countryList ), [ receipts, countryList ] );
 
 	const { data: filteredReceipts, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( receipts, view, fields );
@@ -72,6 +74,7 @@ export default function BillingHistory() {
 		>
 			<div ref={ ref }>
 				<DataViewsCard>
+					{ ! isLoading && <PerformanceTrackerStop /> }
 					<DataViews
 						data={ filteredReceipts }
 						fields={ fields }

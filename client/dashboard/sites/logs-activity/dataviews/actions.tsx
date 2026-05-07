@@ -1,8 +1,8 @@
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
-import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
+import { useMemo } from 'react';
 import { Activity } from '../../..//components/logs-activity/types';
 import { useAnalytics } from '../../../app/analytics';
 import { siteBackupDetailRoute } from '../../../app/router/sites';
@@ -22,6 +22,13 @@ export function useActivityActions( {
 	const { recordTracksEvent } = useAnalytics();
 
 	return useMemo( () => {
+		// Inaccessible Jetpack sites can't open the backup detail route (it
+		// doesn't opt into availableToInaccessibleJetpackSites), so hide the
+		// action rather than route the user into a dead end.
+		if ( site.__inaccessible_jetpack_error ) {
+			return [];
+		}
+
 		const backupAction: Action< Activity > = {
 			id: 'backup',
 			isPrimary: true,

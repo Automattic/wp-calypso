@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import QRCode from 'qrcode.react';
 import './style.scss';
-import iconWoo from './images/icon-woo.png';
-import qrCodeWoo from './images/qr-code-woo.png';
-import storeBadgeApple from './images/store-apple.png';
-import storeBadgeGoogle from './images/store-google.png';
+import iconWoo from './images/icon-woo.webp';
+import qrCodeWoo from './images/qr-code-woo.webp';
+import storeBadgeApple from './images/store-apple.webp';
+import storeBadgeGoogle from './images/store-google.webp';
 import { WordPressJetpackSVG } from './svg-icons';
 
 // Slugs as used by Jetpack Redirects.
@@ -75,7 +75,7 @@ export function AppPromoCard( { className, isWoo, clickHandler }: AppPromoCardPr
 				  );
 		}
 		// Using useTranslate() with interpolation to set up the linked message.
-		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
+		// https://github.com/Automattic/wp-calypso/blob/trunk/packages/i18n-calypso/README.md
 		if ( isWoo ) {
 			return translate(
 				'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',

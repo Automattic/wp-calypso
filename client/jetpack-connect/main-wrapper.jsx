@@ -1,3 +1,4 @@
+import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { chevronLeftSmall } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -5,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import WooIconSmall from 'calypso/assets/images/woocommerce/woo_icon_small.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import Main from 'calypso/components/main';
@@ -15,6 +17,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
 		isWooJPC: PropTypes.bool,
+		isJetpackConnector: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		partnerSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -27,6 +30,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	static defaultProps = {
 		isWide: false,
 		isWooJPC: false,
+		isJetpackConnector: false,
 		wooDnaConfig: null,
 		useCompactLogo: false,
 	};
@@ -35,6 +39,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 		const {
 			isWide,
 			isWooJPC,
+			isJetpackConnector,
 			isFromAutomatticForAgenciesPlugin,
 			className,
 			children,
@@ -49,11 +54,19 @@ export class JetpackConnectMainWrapper extends PureComponent {
 			'is-wide': isWide,
 			'is-woocommerce': isWooJPC,
 			'is-woocommerce-core-profiler-flow': isWooJPC,
+			'is-jetpack-connector-flow': isJetpackConnector,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
 
 		const darkColorScheme = false;
+		const wooTopBarLogo = (
+			<img
+				src={ WooIconSmall }
+				alt={ translate( 'WooCommerce' ) }
+				className="jetpack-connect__woo-topbar-icon"
+			/>
+		);
 
 		return (
 			<Main className={ clsx( className, wrapperClassName ) }>
@@ -90,13 +103,18 @@ export class JetpackConnectMainWrapper extends PureComponent {
 					title={ pageTitle || translate( 'Jetpack Connect' ) }
 					skipTitleFormatting={ Boolean( pageTitle ) }
 				/>
-				{ ! useCompactLogo && ! isWooJPC && (
+				{ ! useCompactLogo && ! isWooJPC && ! isJetpackConnector && (
 					<div className="jetpack-connect__main-logo">
 						<JetpackHeader
 							partnerSlug={ partnerSlug }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 							darkColorScheme={ darkColorScheme }
 						/>
+					</div>
+				) }
+				{ ! useCompactLogo && isWooJPC && (
+					<div className="jetpack-connect__woo-topbar">
+						<Step.TopBar compactLogo="always" logo={ wooTopBarLogo } />
 					</div>
 				) }
 				{ children }

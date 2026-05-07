@@ -1,9 +1,10 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../button-stack';
 import { Notice } from '../notice';
 
@@ -61,9 +62,8 @@ function checkEligible( welcomeNoticeDismissedAt: string | null ) {
 	return Date.now() >= lastDismissedDate.getTime() + RESHOW_AFTER_MS;
 }
 
-export default function OptInSurvey() {
-	const { recordTracksEvent } = useAnalytics();
-	const [ isDismissed, setIsDismissed ] = useState( false );
+export function useShouldShowOptInSurvey() {
+	const { optIn } = useAppContext();
 
 	const { data: dashboardOptIn } = useSuspenseQuery(
 		userPreferenceQuery( 'hosting-dashboard-opt-in' )
@@ -80,7 +80,22 @@ export default function OptInSurvey() {
 		)
 	);
 
-	if ( ! isEligible || isDismissed ) {
+	return optIn && isEligible;
+}
+
+export default function OptInSurvey() {
+	const shouldShow = useShouldShowOptInSurvey();
+	const { recordTracksEvent } = useAnalytics();
+	const [ isDismissed, setIsDismissed ] = useState( false );
+
+	const { data: dashboardOptIn } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-opt-in' )
+	);
+	const { data: welcomeNoticeDismissedAt } = useSuspenseQuery(
+		userPreferenceQuery( 'hosting-dashboard-welcome-notice-dismissed' )
+	);
+
+	if ( ! shouldShow || isDismissed ) {
 		return null;
 	}
 

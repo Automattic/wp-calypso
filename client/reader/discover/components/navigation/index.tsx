@@ -1,19 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import { translate, TranslateResult } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import {
-	FIRST_POSTS_TAB,
-	LATEST_TAB,
-	ADD_NEW_TAB,
-	REDDIT_TAB,
-	RECOMMENDED_TAB,
-} from 'calypso/reader/discover/helper';
+import { LATEST_TAB, RECOMMENDED_TAB } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { useDispatch, useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { FRESHLY_PRESSED_TAB } from '../../helper';
 import './style.scss';
@@ -31,7 +23,6 @@ interface Props {
 const DiscoverNavigation = ( { selectedTab }: Props ) => {
 	const currentLocale = useLocale();
 	const dispatch = useDispatch();
-	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const recordTabClick = ( tab: string ) => {
 		recordAction( 'click_discover_tab' );
@@ -43,40 +34,21 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		return addLocaleToPathLocaleInFront( path, currentLocale );
 	};
 
-	const FRESHLY_PRESSED_OPTION = isEnabled( 'reader/discover/freshly-pressed' )
-		? {
-				slug: FRESHLY_PRESSED_TAB,
-				title: translate( 'Freshly Pressed' ),
-				path: '/discover',
-		  }
-		: null;
-
 	const baseTabs: Tab[] = [
-		...( FRESHLY_PRESSED_OPTION ? [ FRESHLY_PRESSED_OPTION ] : [] ),
+		{
+			slug: FRESHLY_PRESSED_TAB,
+			title: translate( 'Freshly Pressed' ),
+			path: '/discover',
+		},
 		{
 			slug: RECOMMENDED_TAB,
 			title: translate( 'Recommended' ),
-			path: isEnabled( 'reader/discover/freshly-pressed' ) ? '/discover/recommended' : '/discover',
-		},
-		{
-			slug: ADD_NEW_TAB,
-			title: translate( 'Add new' ),
-			path: '/discover/add-new',
-		},
-		{
-			slug: FIRST_POSTS_TAB,
-			title: translate( 'First posts' ),
-			path: '/discover/firstposts',
+			path: '/discover/recommended',
 		},
 		{
 			slug: 'tags',
 			title: translate( 'Tags' ),
 			path: '/discover/tags?selectedTag=dailyprompt',
-		},
-		{
-			slug: REDDIT_TAB,
-			title: translate( 'Reddit' ),
-			path: '/discover/reddit',
 		},
 		{
 			slug: LATEST_TAB,
@@ -87,13 +59,8 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		},
 	];
 
-	// Only show the "Add new" and "Reddit" tabs if the user is logged in.
-	const filteredTabs = baseTabs.filter(
-		( tab ) => ( tab.slug !== ADD_NEW_TAB && tab.slug !== REDDIT_TAB ) || isLoggedIn
-	);
-
 	// Add localization to paths if needed.
-	const tabs = filteredTabs.map( ( tab ) => ( {
+	const tabs = baseTabs.map( ( tab ) => ( {
 		...tab,
 		path: getLocalizedPath( tab.path ),
 	} ) );
@@ -104,6 +71,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 		<SectionNav
 			className="discover-navigation"
 			selectedText={ selectedTabData?.title }
+			variation="minimal"
 			enforceTabsView
 		>
 			<NavTabs hasHorizontalScroll>

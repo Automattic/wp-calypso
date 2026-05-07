@@ -1,13 +1,18 @@
+import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
+import './style.scss';
+import { readSubscribedListsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { useQuery } from '@tanstack/react-query';
+import { Icon, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import closest from 'component-closest';
-import i18n, { localize, useTranslate } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import QueryReaderLists from 'calypso/components/data/query-reader-lists';
-import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { Component, useMemo } from 'react';
+import { connect, useSelector } from 'react-redux';
+import { withReaderOrganizations } from 'calypso/components/data/with-reader-organizations';
+import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -19,14 +24,13 @@ import ReaderConversationsIcon from 'calypso/reader/components/icons/conversatio
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
+import ReaderSavedIcon from 'calypso/reader/components/icons/saved-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { isReaderMSDEnabled } from 'calypso/state/reader-ui/selectors';
 import {
 	toggleReaderSidebarLists,
@@ -38,29 +42,16 @@ import {
 	isFollowingOpen,
 	isTagsOpen,
 } from 'calypso/state/reader-ui/sidebar/selectors';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
+import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
+import ReaderSidebarAtmosphere from './reader-sidebar-atmosphere';
 import ReaderSidebarLists from './reader-sidebar-lists';
+import ReaderSidebarMastodon from './reader-sidebar-mastodon';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
-import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
-import './style.scss';
-
-//TODO: Remove this component once the new reader MSD is enabled for all users
-const DeprecatedReaderSidebarHeader = () => {
-	const translate = useTranslate();
-	return (
-		<div className="sidebar-header">
-			<div>
-				<h3>{ translate( 'Reader' ) }</h3>
-				<p>{ translate( 'Keep up with your interests.' ) }</p>
-			</div>
-		</div>
-	);
-};
 
 const TrackingKeys = {
 	conversations: {
@@ -92,6 +83,11 @@ const TrackingKeys = {
 		action: 'clicked_reader_sidebar_manage_subscriptions',
 		gaEvent: 'Clicked Reader Sidebar Manage Subscriptions',
 		tracksEvent: 'calypso_reader_sidebar_manage_subscriptions_clicked',
+	},
+	saved: {
+		action: 'clicked_reader_sidebar_saved',
+		gaEvent: 'Clicked Reader Sidebar Saved',
+		tracksEvent: 'calypso_reader_sidebar_saved_clicked',
 	},
 };
 
@@ -153,8 +149,7 @@ export class ReaderSidebar extends Component {
 		} );
 	};
 
-	handleSidebarMenuClick = ( key ) => ( event, path ) => {
-		const handler = TrackingKeys[ key ];
+	handleSidebarMenuClick = ( handler ) => ( event, path ) => {
 		if ( handler ) {
 			recordAction( handler.action );
 			recordGaEvent( handler.gaEvent );
@@ -168,13 +163,8 @@ export class ReaderSidebar extends Component {
 
 		return (
 			<div className="sidebar-menu-container">
-				{ ! this.props.isMSDEnabled && <DeprecatedReaderSidebarHeader /> }
-				{ this.props.isMSDEnabled && <AppTitle /> }
+				<AppTitle />
 				<SidebarMenu>
-					<QueryReaderLists />
-					<QueryReaderTeams />
-					<QueryReaderOrganizations />
-
 					<li className="sidebar-streams__following">
 						<ReaderSidebarRecent
 							onClick={ this.props.toggleFollowingVisibility }
@@ -202,6 +192,13 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
+					{ isEnabled( 'reader/social' ) && (
+						<>
+							<ReaderSidebarAtmosphere path={ path } />
+							<ReaderSidebarMastodon path={ path } />
+						</>
+					) }
+
 					<SidebarItem
 						label={ translate( 'Likes' ) }
 						onNavigate={ this.handleSidebarMenuClick( TrackingKeys.likeActivity ) }
@@ -211,6 +208,18 @@ export class ReaderSidebar extends Component {
 							'sidebar-activity__likes': true,
 						} ) }
 					/>
+
+					{ isEnabled( 'reader/saved-posts' ) && (
+						<SidebarItem
+							label={ translate( 'Saved' ) }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.saved ) }
+							customIcon={ <ReaderSavedIcon viewBox="0 0 24 24" /> }
+							link="/read/saved"
+							className={ ReaderSidebarHelper.itemLinkClass( '/read/saved', path, {
+								'sidebar-streams__saved': true,
+							} ) }
+						/>
+					) }
 
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
@@ -265,6 +274,13 @@ export class ReaderSidebar extends Component {
 					<SidebarSeparator />
 
 					<SidebarItem
+						label={ translate( 'New Subscription' ) }
+						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_add_new_clicked' ) }
+						customIcon={ <Icon className="sidebar__menu-icon" icon={ plus } viewBox="2 0 24 24" /> }
+						link="/reader/new"
+					/>
+
+					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
 							'sidebar-streams__manage-subscriptions': true,
 						} ) }
@@ -292,33 +308,50 @@ export class ReaderSidebar extends Component {
 				onClick={ this.handleClick }
 				siteTitle={ i18n.translate( 'Reader' ) }
 			>
-				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
+				<ReaderSidebarNudges />
 			</GlobalSidebar>
 		);
 	}
 }
 
-export default withCurrentRoute(
-	connect(
-		( state ) => {
-			return {
-				isListsOpen: isListsOpen( state ),
-				isFollowingOpen: isFollowingOpen( state ),
-				isTagsOpen: isTagsOpen( state ),
-				subscribedLists: getSubscribedLists( state ),
-				teams: getReaderTeams( state ),
-				organizations: getReaderOrganizations( state ),
-				isMSDEnabled: isReaderMSDEnabled( state ),
-			};
-		},
-		{
-			recordReaderTracksEvent,
-			recordTracksEvent,
-			setNextLayoutFocus,
-			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleFollowingVisibility: toggleReaderSidebarFollowing,
-			toggleTagsVisibility: toggleReaderSidebarTags,
-		}
-	)( localize( ReaderSidebar ) )
+function withSubscribedLists( WrappedComponent ) {
+	return function WithSubscribedLists( props ) {
+		const { data } = useQuery( readSubscribedListsQuery() );
+		const collator = useSelector( getCurrentIntlCollator );
+		const subscribedLists = useMemo( () => {
+			if ( ! data?.lists ) {
+				return [];
+			}
+			return [ ...data.lists ].sort( ( a, b ) => collator.compare( a.title, b.title ) );
+		}, [ data, collator ] );
+		return <WrappedComponent { ...props } subscribedLists={ subscribedLists } />;
+	};
+}
+
+export default withSubscribedLists(
+	withCurrentRoute(
+		withReaderOrganizations(
+			withReaderTeams(
+				connect(
+					( state ) => {
+						return {
+							isListsOpen: isListsOpen( state ),
+							isFollowingOpen: isFollowingOpen( state ),
+							isTagsOpen: isTagsOpen( state ),
+							isMSDEnabled: isReaderMSDEnabled( state ),
+						};
+					},
+					{
+						recordReaderTracksEvent,
+						recordTracksEvent,
+						setNextLayoutFocus,
+						toggleListsVisibility: toggleReaderSidebarLists,
+						toggleFollowingVisibility: toggleReaderSidebarFollowing,
+						toggleTagsVisibility: toggleReaderSidebarTags,
+					}
+				)( localize( ReaderSidebar ) )
+			)
+		)
+	)
 );

@@ -131,10 +131,13 @@ export const usePersistedHistory = () => {
 		action: history.action,
 		location: history.location,
 	} );
-	const persistedHistory = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getHelpCenterRouterHistory(),
-		[]
-	);
+	const { persistedHistory, navigateToRoute } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			persistedHistory: store.getHelpCenterRouterHistory(),
+			navigateToRoute: store.getNavigateToRoute(),
+		};
+	}, [] );
 
 	// Track if we've already restored history to prevent infinite loop.
 	// The loop happens because: navigation -> notifyListeners -> setHelpCenterRouterHistory
@@ -147,6 +150,15 @@ export const usePersistedHistory = () => {
 
 	useEffect( () => {
 		if ( hasRestoredHistory.current ) {
+			return;
+		}
+
+		// Skip restoring persisted history when there's a pending navigation route
+		// (e.g., from a "Learn more" link calling setShowSupportDoc). The navigateToRoute
+		// will handle navigation in HelpCenterContent, and restoring old history here
+		// would show the wrong article.
+		if ( navigateToRoute?.route ) {
+			hasRestoredHistory.current = true;
 			return;
 		}
 
@@ -164,7 +176,7 @@ export const usePersistedHistory = () => {
 				location: history.location,
 			} );
 		}
-	}, [ persistedHistory ] );
+	}, [ persistedHistory, navigateToRoute ] );
 
 	return { history, state };
 };

@@ -1,3 +1,4 @@
+import './style.scss';
 import { WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
@@ -6,7 +7,7 @@ import { useState, useEffect, useCallback, useMemo, useLayoutEffect, useRef } fr
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostIcon } from 'calypso/reader/get-helpers';
@@ -24,7 +25,10 @@ import RecentPostSkeleton from './recent-post-skeleton';
 import type { PostItem, ReaderPost } from './types';
 import type { AppState } from 'calypso/types';
 
-import './style.scss';
+const loadReaderFullPost = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-reader-full-post" */ 'calypso/blocks/reader-full-post'
+	);
 
 interface RecentProps {
 	viewToggle?: React.ReactNode;
@@ -56,7 +60,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		type: 'list',
 		search: '',
 		fields: [],
-		perPage: 10,
+		perPage: 15,
 		page: 1,
 		titleField: 'post',
 		mediaField: 'icon',
@@ -131,7 +135,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					}
 					const post = getPostFromItem( item );
 					const iconUrl = getPostIcon( post );
-					return iconUrl ? <ReaderAvatar siteIcon={ iconUrl } iconSize={ 24 } /> : null;
+					return iconUrl ? <SiteIcon iconUrl={ iconUrl } size={ 24 } /> : null;
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -178,7 +182,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				streamKey,
 				page: view.page,
 				perPage: view.perPage,
-			} ) as UnknownAction
+			} )
 		);
 	}, [ dispatch, view, streamKey ] );
 
@@ -248,6 +252,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				</div>
 				<aside className="recent-feed__list-column-content">
 					<DataViews< ReaderPost | PaddingItem >
+						config={ { perPageSizes: [ 15, 30, 50, 100 ] } }
 						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
 						}
@@ -289,7 +294,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<>
 						<AsyncLoad
-							require="calypso/blocks/reader-full-post"
+							require={ loadReaderFullPost }
 							feedId={ selectedItem.feedId }
 							postId={ selectedItem.postId }
 							onClose={ () => {

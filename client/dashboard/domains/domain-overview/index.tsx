@@ -13,9 +13,11 @@ import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
+import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import SnackbarBackButton, {
 	getSnackbarBackButtonText,
 } from '../../components/snackbar-back-button';
@@ -32,6 +34,7 @@ export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+
 	const { data: purchase } = useSuspenseQuery(
 		purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
 	);
@@ -129,6 +132,7 @@ export default function DomainOverview() {
 				{ domain.is_pending_icann_verification && (
 					<IcannSuspensionNotice domainName={ domain.domain } />
 				) }
+				<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
 						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />
@@ -145,6 +149,7 @@ export default function DomainOverview() {
 			{ snackbarBackButtonText && (
 				<SnackbarBackButton>{ snackbarBackButtonText }</SnackbarBackButton>
 			) }
+			<PerformanceTrackerStop />
 		</>
 	);
 }

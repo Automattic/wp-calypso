@@ -89,3 +89,38 @@ function isValidPayPalData( data: unknown ): data is PayPalSubmitData {
 	const payPalData = data as PayPalSubmitData;
 	return payPalData.countryCode !== undefined;
 }
+
+export async function assignExistingPayPalPPCPProcessor(
+	purchase: Purchase | undefined,
+	submitData: unknown,
+	assignPaymentMethod: AssignPaymentMethodMutation
+): Promise< PaymentProcessorResponse > {
+	try {
+		if ( ! isValidExistingPayPalPPCPData( submitData ) ) {
+			throw new Error( 'PayPal data is missing stored details id' );
+		}
+		const { storedDetailsId } = submitData;
+		if ( ! purchase ) {
+			throw new Error( 'Cannot assign existing PayPal payment method without a purchase' );
+		}
+		const data = await assignPaymentMethod( {
+			subscriptionId: String( purchase.ID ),
+			storedDetailsId,
+		} );
+		return makeSuccessResponse( data );
+	} catch ( error ) {
+		return makeErrorResponse( ( error as Error ).message );
+	}
+}
+
+function isValidExistingPayPalPPCPData( data: unknown ): data is ExistingPayPalPPCPSubmitData {
+	const existingPayPalData = data as ExistingPayPalPPCPSubmitData;
+	return !! existingPayPalData.storedDetailsId;
+}
+
+interface ExistingPayPalPPCPSubmitData {
+	storedDetailsId: string;
+	email: string;
+	paymentMethodToken: string;
+	paymentPartnerProcessorId: string;
+}

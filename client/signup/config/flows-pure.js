@@ -23,7 +23,6 @@ export function generateFlows( {
 	getEmailSignupFlowDestination = noop,
 	getWithThemeDestination = noop,
 	getWithPluginDestination = noop,
-	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
@@ -305,9 +304,11 @@ export function generateFlows( {
 			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
 			destination: getLaunchDestination,
 			description: 'A flow to launch a private site.',
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
+			optionalDependenciesInQuery: [ 'back_to' ],
 			hideProgressIndicator: true,
 			lastModified: '2019-11-22',
+			excludeFromManageSiteFlows: true,
 			get pageTitle() {
 				return translate( 'Launch your site' );
 			},
@@ -365,28 +366,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
-		},
-		{
-			name: 'setup-site',
-			steps: [
-				'intent',
-				'site-options',
-				'starting-point',
-				'courses',
-				'store-options',
-				'store-features',
-			],
-			destination: getDestinationFromIntent,
-			description:
-				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2024-01-08',
-			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
-			optionalDependenciesInQuery: [ 'siteId' ],
-			get pageTitle() {
-				return translate( 'Set up your site' );
-			},
-			enableBranchSteps: true,
-			hideProgressIndicator: true,
 		},
 		{
 			name: DIFM_FLOW,

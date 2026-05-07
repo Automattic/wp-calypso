@@ -6,14 +6,18 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { Icon, Button, __experimentalText as Text } from '@wordpress/components';
+import {
+	Icon,
+	Button,
+	__experimentalText as Text,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { scheduled, trash, copy } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { scheduled, trash, copy, people, calendar } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import cronstrue from 'cronstrue';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useLocale } from '../../app/locale';
@@ -23,15 +27,63 @@ import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import TimeSince, { useTimeSince } from '../../components/time-since';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { parseScheduleValue, PREDEFINED_SCHEDULES } from './schedule-field';
+import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
+import { formatScheduleLabel, formatScheduleDescription } from './schedules';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
-function getScheduleLabel( schedule: string ): string {
-	const scheduleType = parseScheduleValue( schedule );
-	return PREDEFINED_SCHEDULES.find( ( s ) => s.value === scheduleType )?.label ?? '';
+const metaIconStyle = { color: 'var(--color-text-subtle, #646970)', flexShrink: 0 } as const;
+
+function CrontabCreatedInfo( { item }: { item: Crontab } ) {
+	const timeSince = useTimeSince( item.created_at ?? '' );
+
+	if ( ! item.created_by && ! item.created_at ) {
+		return null;
+	}
+
+	return (
+		<HStack spacing={ 3 } alignment="left" expanded={ false }>
+			{ item.created_by && (
+				<HStack
+					role="img"
+					aria-label={ sprintf(
+						/* translators: %s: username */
+						__( 'Created by %s' ),
+						item.created_by
+					) }
+					spacing={ 1 }
+					alignment="left"
+					expanded={ false }
+				>
+					<Icon icon={ people } size={ 18 } style={ metaIconStyle } aria-hidden />
+					<Text variant="muted" size={ 12 } aria-hidden>
+						{ item.created_by }
+					</Text>
+				</HStack>
+			) }
+			{ item.created_at && (
+				<HStack
+					role="img"
+					aria-label={ sprintf(
+						/* translators: %s: relative time, e.g. "3d ago" */
+						__( 'Created %s' ),
+						timeSince
+					) }
+					spacing={ 1 }
+					alignment="left"
+					expanded={ false }
+				>
+					<Icon icon={ calendar } size={ 18 } style={ metaIconStyle } aria-hidden />
+					<Text variant="muted" size={ 12 } aria-hidden>
+						<TimeSince timestamp={ item.created_at } />
+					</Text>
+				</HStack>
+			) }
+		</HStack>
+	);
 }
 
 const DEFAULT_VIEW: View = {
@@ -40,6 +92,8 @@ const DEFAULT_VIEW: View = {
 	page: 1,
 	fields: [ 'command' ],
 	titleField: 'schedule',
+	descriptionField: 'created_info',
+	showDescription: true,
 };
 
 export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
@@ -95,24 +149,28 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 			id: 'schedule',
 			label: __( 'Schedule' ),
 			getValue: ( { item }: { item: Crontab } ) => {
-				const label = getScheduleLabel( item.schedule );
-				const cronDescription = cronstrue.toString( item.schedule, {
-					verbose: true,
-					locale,
-				} );
-				return `${ label } ${ cronDescription } ${ item.schedule }`;
+				const requestedSchedule = parseRequestedScheduleForBackwardCompatibility(
+					item.requested_schedule
+				);
+
+				const label = formatScheduleLabel( requestedSchedule );
+				const description = formatScheduleDescription( requestedSchedule, item.schedule, locale );
+
+				return `${ label } ${ description } ${ item.schedule }`;
 			},
 			render: ( { item }: { item: Crontab } ) => {
-				const cronDescription = cronstrue.toString( item.schedule, {
-					verbose: true,
-					locale,
-				} );
+				const requestedSchedule = parseRequestedScheduleForBackwardCompatibility(
+					item.requested_schedule
+				);
+
+				const label = formatScheduleLabel( requestedSchedule );
+				const description = formatScheduleDescription( requestedSchedule, item.schedule, locale );
 
 				return (
 					<div>
-						<Text>{ getScheduleLabel( item.schedule ) }</Text>{ ' ' }
+						<Text>{ label }</Text>{ ' ' }
 						<Text variant="muted" size={ 12 }>
-							({ cronDescription })
+							({ description })
 						</Text>
 					</div>
 				);
@@ -138,6 +196,12 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 				</code>
 			),
 			enableGlobalSearch: true,
+		},
+		{
+			id: 'created_info',
+			label: __( 'Added by' ),
+			getValue: ( { item }: { item: Crontab } ) => item.created_by ?? '',
+			render: ( { item }: { item: Crontab } ) => <CrontabCreatedInfo item={ item } />,
 		},
 	];
 

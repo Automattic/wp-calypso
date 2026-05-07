@@ -155,6 +155,17 @@ describe( 'LostPasswordForm', () => {
 		expect( screen.queryByRole( 'alert' ) ).toBeNull();
 	} );
 
+	test( 'renders the "Need more help?" link below the submit button', () => {
+		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
+
+		const btn = screen.getByRole( 'button', { name: /Reset my password/i } );
+		const helpLink = screen.getByRole( 'link', { name: /Need more help/i } );
+
+		// eslint-disable-next-line no-bitwise
+		const isFollowing = btn.compareDocumentPosition( helpLink ) & Node.DOCUMENT_POSITION_FOLLOWING;
+		expect( isFollowing ).toBeTruthy();
+	} );
+
 	test( 'handles error messages coming from /wp-login.php?action=lostpassword', async () => {
 		const mockHTMLResponse = `
 			<body id="error-page">

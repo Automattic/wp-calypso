@@ -1,8 +1,9 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { Button, ExternalLink } from '@wordpress/components';
-import { createInterpolateElement, useState, useEffect } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState, useEffect } from 'react';
 import { useFormattedTime } from '../../components/formatted-time';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';

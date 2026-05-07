@@ -9,13 +9,13 @@ import {
 	lockOutline,
 	plus,
 	store,
-	trendingUp,
 	thumbsUp,
 	update,
 } from '@wordpress/icons';
 import clsx from 'clsx';
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
+import trophyGridicon from '../note-icon/trophy-gridicon';
 import type { Note } from '../types';
 import type { Field } from '@wordpress/dataviews';
 import type { JSX } from 'react';
@@ -30,7 +30,7 @@ const iconMap: { [ key in string ]: JSX.Element } = {
 	'\uf806': chartBar, // stats
 	'\uf805': update, // reblog
 	'\uf408': thumbsUp, // star
-	'\uf804': trendingUp, // trophy
+	'\uf804': trophyGridicon, // trophy
 	'\uf467': comment, // reply
 	'\uf414': caution, // warning
 	'\uf418': check,

@@ -20,6 +20,7 @@ import {
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
 	getWordPressHostingFeaturesGroupedForFeaturesGrid,
 	isWooHostedPlan,
+	isWooHostedFreePlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -33,7 +34,6 @@ import {
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
 	usePlanBillingPeriod,
-	useSummerSpecialStatus,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -48,7 +48,7 @@ import {
 } from '@wordpress/element';
 import { hasQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize, useTranslate, type TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
@@ -106,6 +106,7 @@ const PlanComparisonHeader = styled.h1`
 	}
 `;
 export interface PlansFeaturesMainProps {
+	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	siteId?: number | null;
 	intent?: PlansIntent | null;
 	isInSiteDashboard?: boolean;
@@ -117,6 +118,8 @@ export interface PlansFeaturesMainProps {
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string;
 	onUpgradeClick?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
+	redirectTo?: string;
+	pluginSlug?: string;
 	redirectToAddDomainFlow?: boolean;
 	hidePlanTypeSelector?: boolean;
 	paidDomainName?: string;
@@ -200,6 +203,8 @@ const PlansFeaturesMain = ( {
 	isDomainTransfer,
 	onUpgradeClick,
 	hidePlanTypeSelector,
+	redirectTo,
+	pluginSlug,
 	redirectToAddDomainFlow,
 	siteId,
 	selectedPlan,
@@ -207,6 +212,7 @@ const PlansFeaturesMain = ( {
 	selectedFeature,
 	plansWithScroll,
 	discountEndDate,
+	highlightLabelOverrides,
 	hideFreePlan,
 	hidePersonalPlan,
 	hidePremiumPlan,
@@ -239,6 +245,9 @@ const PlansFeaturesMain = ( {
 	// eslint-disable-next-line
 	const [ lastClickedPlan, setLastClickedPlan ] = useState< string | null >( null );
 	const [ showPlansComparisonGrid, setShowPlansComparisonGrid ] = useState( false );
+	const [ comparisonGridVisiblePlansCount, setComparisonGridVisiblePlansCount ] = useState<
+		number | null
+	>( null );
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 
@@ -304,7 +313,12 @@ const PlansFeaturesMain = ( {
 	// Users can only select interval types that are equal to or longer than their current plan's interval
 	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
 	const currentPlanTerm =
-		isStepperUpgradeFlow && sitePlanSlug ? getPlan( sitePlanSlug )?.term : null;
+		isStepperUpgradeFlow &&
+		sitePlanSlug &&
+		! isFreePlan( sitePlanSlug ) &&
+		! isWooHostedFreePlan( sitePlanSlug )
+			? getPlan( sitePlanSlug )?.term
+			: null;
 	const compatibleIntervalType = useMemo(
 		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
 		[ currentPlanTerm, intervalType ]
@@ -382,15 +396,10 @@ const PlansFeaturesMain = ( {
 	);
 
 	const {
-		isLoading: isLoadingDifferentiatorsExperiment,
 		showDifferentiatorHeader,
-		variant: differentiatorsVariant,
-		useVar1Features,
-		useVar3Features,
-		useVar4Features,
-		useVar5Features,
-		isVar1dVariant,
-		isVar4Variant,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { flowName, isInSignup, siteId } );
 
@@ -432,7 +441,9 @@ const PlansFeaturesMain = ( {
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 		enableCategorisedFeatures: showSimplifiedFeatures,
 		reflectStorageSelectionInPlanPrices: true,
-		isGatingBusinessQ1: !! differentiatorsVariant,
+		isGatingBusinessQ1: isExperimentVariant,
+		redirectTo,
+		pluginSlug,
 	} );
 
 	const isDomainOnlySite = useSelector( ( state: IAppState ) =>
@@ -455,6 +466,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
+		highlightLabelOverrides,
 		intent: shouldForceDefaultPlansBasedOnIntent( intent ) ? defaultWpcomPlansIntent : intent,
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -468,12 +480,10 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useLongSetFeatures: useVar4Features,
-		useLongSetStackedFeatures: useVar3Features,
-		useShortSetStackedFeatures: useVar1Features,
-		useVar5Features,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
-		isVar1dVariant,
 	} );
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
@@ -482,6 +492,7 @@ const PlansFeaturesMain = ( {
 		coupon,
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
+		highlightLabelOverrides,
 		hiddenPlans,
 		hideCurrentPlan: isInSiteDashboard,
 		intent,
@@ -497,12 +508,10 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useLongSetFeatures: useVar4Features,
-		useLongSetStackedFeatures: useVar3Features,
-		useShortSetStackedFeatures: useVar1Features,
-		useVar5Features,
+		useVar42NoAiFeatures,
+		showPricingDifferentiationFeaturePills,
+		useFocusedNewCopyTaglines,
 		isExperimentVariant,
-		isVar1dVariant,
 	} );
 
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
@@ -708,6 +717,18 @@ const PlansFeaturesMain = ( {
 		'is-hidden': ! showPlansComparisonGrid,
 	} );
 
+	// Match comparison grid width constants: feature column 450px + 290px per plan column
+	const comparisonGridContainerStyle = useMemo( () => {
+		if (
+			comparisonGridVisiblePlansCount !== null &&
+			comparisonGridVisiblePlansCount >= 1 &&
+			comparisonGridVisiblePlansCount <= 3
+		) {
+			return { maxWidth: 450 + 290 * comparisonGridVisiblePlansCount };
+		}
+		return undefined;
+	}, [ comparisonGridVisiblePlansCount ] );
+
 	const isLoadingGridPlans = Boolean(
 		! intent ||
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
@@ -718,8 +739,7 @@ const PlansFeaturesMain = ( {
 	const isPlansGridReady =
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
-		! isRenewalPricingExperimentLoading &&
-		! isLoadingDifferentiatorsExperiment;
+		! isRenewalPricingExperimentLoading;
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
@@ -748,9 +768,6 @@ const PlansFeaturesMain = ( {
 		);
 	}, [ gridPlansForComparisonGrid ] );
 
-	// Get summer special status
-	const isSummerSpecial = useSummerSpecialStatus( { isInSignup, siteId } );
-
 	// Determine feature groups for comparison grid
 	let featureGroupMapForComparisonGrid;
 	if ( hasWooHostedFeatures ) {
@@ -770,21 +787,17 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if ( useVar3Features || useVar4Features || useVar1Features || useVar5Features ) {
-		// Experiment: stacked variants should render a single, ordered list (no grouping),
+	} else if ( useVar42NoAiFeatures ) {
+		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
-		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid( { isSummerSpecial } );
+		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
 		featureGroupMapForFeaturesGrid = Object.fromEntries(
 			Object.entries( featureGroups ).reverse()
 		);
 	} else if ( showSimplifiedFeatures ) {
-		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial,
-		} );
+		featureGroupMapForFeaturesGrid = getSimplifiedPlanFeaturesGroupedForFeaturesGrid();
 	} else {
-		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid( {
-			isSummerSpecial,
-		} );
+		featureGroupMapForFeaturesGrid = getPlanFeaturesGroupedForFeaturesGrid();
 	}
 
 	const getComparisonGridToggleLabel = () => {
@@ -915,6 +928,15 @@ const PlansFeaturesMain = ( {
 								coupon={ coupon }
 							/>
 						) }
+						{ intent === 'plans-woo-hosting-solutions' && (
+							<p className="plans-features-main__money-back-guarantee">
+								{ translate( 'Every plan is backed by our %(days)d-day money-back guarantee.', {
+									args: {
+										days: compatibleIntervalType === 'monthly' ? 7 : 14,
+									},
+								} ) }
+							</p>
+						) }
 						<div
 							className={ clsx( 'plans-features-main__group', 'is-wpcom', 'is-2023-pricing-grid', {
 								'is-scrollable': plansWithScroll,
@@ -968,8 +990,6 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
-										isVar1dVariant={ isVar1dVariant }
-										isVar4Variant={ isVar4Variant }
 										isExperimentVariant={ isExperimentVariant }
 									/>
 								) }
@@ -984,6 +1004,7 @@ const PlansFeaturesMain = ( {
 										<div
 											ref={ plansComparisonGridRef }
 											className={ comparisonGridContainerClasses }
+											style={ comparisonGridContainerStyle }
 										>
 											<PlanComparisonHeader className="wp-brand-font">
 												{ translate( 'Compare our plans and find yours' ) }
@@ -1012,6 +1033,7 @@ const PlansFeaturesMain = ( {
 													isInAdmin={ ! isInSignup }
 													isInSiteDashboard={ isInSiteDashboard }
 													isInSignup={ isInSignup }
+													onVisiblePlansCountChange={ setComparisonGridVisiblePlansCount }
 													onStorageAddOnClick={ handleStorageAddOnClick }
 													planTypeSelectorProps={
 														! hidePlanSelector

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -5,19 +6,19 @@ import { intlFormat } from 'date-fns';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
 import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../../utils/purchase';
+import { getSolutionsForReason } from '../get-solutions-for-reason';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
-import JetpackCancellationOfferAcceptedStep from './step-components/jetpack-cancellation-offer-accepted-step';
 import JetpackCancellationOfferStep from './step-components/jetpack-cancellation-offer-step';
 import NextAdventureStep from './step-components/next-adventure-step';
+import SolutionsCardsUpsellStep from './step-components/solutions-cards-upsell-step';
 import UpsellStep from './step-components/upsell-step';
 import {
 	ATOMIC_REVERT_STEP,
 	CANCELLATION_OFFER_STEP,
 	FEEDBACK_STEP,
 	NEXT_ADVENTURE_STEP,
-	OFFER_ACCEPTED_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './steps';
@@ -36,6 +37,7 @@ interface CancelPurchaseFormProps {
 	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	cancelBundledDomain?: boolean;
 	cancellationInProgress?: boolean;
+	intent?: 'cancel' | 'remove' | null;
 	cancellationOffer?: Pick<
 		CancellationOffer,
 		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'
@@ -63,7 +65,7 @@ interface CancelPurchaseFormProps {
 	offerApplyError?: Error | null;
 	offerDiscountBasedFromPurchasePrice: number;
 	onClickAcceptForCancellationOffer?: () => void;
-	onGetCancellationOffer: () => void;
+	onGetCancellationOffer: ( newPurchaseId?: string ) => void;
 	onImportRadioChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onNextAdventureValidationChange?: ( isValid: boolean ) => void;
 	onRadioOneChange: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
@@ -131,6 +133,7 @@ function SurveyContent( {
 	cancellationInProgress,
 	includedDomainPurchase,
 	isAkismet,
+	intent,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	if ( surveyStep === FEEDBACK_STEP ) {
@@ -138,6 +141,7 @@ function SurveyContent( {
 			<FeedbackStep
 				cancellationReasonCodes={ questionOneOrder }
 				isImport={ isImport ?? false }
+				intent={ intent ?? undefined }
 				onChangeCancellationReason={ onRadioOneChange }
 				onChangeCancellationReasonDetails={ onTextOneChange }
 				onChangeImportFeedback={ onImportRadioChange }
@@ -149,6 +153,27 @@ function SurveyContent( {
 
 	if ( surveyStep === UPSELL_STEP ) {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
+
+		const solutions = getSolutionsForReason( questionOneText ?? '' );
+		const useSolutionsCards =
+			config.isEnabled( 'cancel-flow/solutions-cards-upsell' ) && solutions && solutions.length > 0;
+
+		if ( useSolutionsCards ) {
+			return (
+				<SolutionsCardsUpsellStep
+					cancellationInProgress={ cancellationInProgress }
+					cancellationReason={ questionOneText }
+					cancelBundledDomain={ cancelBundledDomain }
+					closeDialog={ closeDialog }
+					downgradePlan={ downgradePlan }
+					includedDomainPurchase={ includedDomainPurchase }
+					onClickDowngrade={ downgradeClick }
+					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
+					purchase={ purchase }
+					refundAmount={ refundAmount }
+				/>
+			);
+		}
 
 		if ( upsell?.startsWith( 'education:' ) ) {
 			return (
@@ -168,8 +193,10 @@ function SurveyContent( {
 				cancellationReason={ questionOneText }
 				closeDialog={ closeDialog }
 				currencyCode={ purchase.currency_code }
+				declineButtonText={ intent === 'remove' ? __( 'Continue removal' ) : __( 'No, thanks' ) }
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
+				intent={ intent ?? undefined }
 				onClickDowngrade={ downgradeClick }
 				onClickFreeMonthOffer={ freeMonthOfferClick }
 				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
@@ -261,18 +288,6 @@ function SurveyContent( {
 		);
 	}
 
-	// Step 4: Offer Accepted
-	if ( surveyStep === OFFER_ACCEPTED_STEP ) {
-		// Show after an offer discount has been accepted
-		return (
-			<JetpackCancellationOfferAcceptedStep
-				isAkismet={ isAkismet }
-				percentDiscount={ offerDiscountBasedFromPurchasePrice }
-				productName={ productName }
-			/>
-		);
-	}
-
 	return null;
 }
 
@@ -281,14 +296,15 @@ function StepButtons( {
 	clickNext,
 	closeDialog,
 	disableButtons,
-	isApplyingOffer,
+	intent,
 	isSubmitting,
-	offerApplyError,
-	onClickAcceptForCancellationOffer,
 	onSubmit,
 	solution,
 	surveyStep,
 	allSteps,
+	onClickAcceptForCancellationOffer,
+	isApplyingOffer,
+	offerApplyError,
 }: {
 	canGoNext: boolean;
 } & CancelPurchaseFormProps ) {
@@ -296,24 +312,39 @@ function StepButtons( {
 
 	const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
-	// Check if ANY step in the flow is a warning/confirmation step
-	// If so, we should not show Skip button at all to avoid bypassing warnings
-	const hasWarningStep =
-		allSteps?.includes( ATOMIC_REVERT_STEP ) || allSteps?.includes( REMOVE_PLAN_STEP );
-
 	if ( surveyStep === UPSELL_STEP ) {
 		return null;
 	}
 
 	if ( ! isLastStep ) {
+		if ( intent === 'remove' ) {
+			return (
+				<ButtonStack justify="flex-start">
+					<Button
+						variant="primary"
+						isDestructive
+						disabled={ ! canGoNext || isCancelling }
+						onClick={ clickNext }
+					>
+						{ __( 'Continue removal' ) }
+					</Button>
+				</ButtonStack>
+			);
+		}
+
 		return (
 			<ButtonStack justify="flex-start">
-				<Button variant="primary" disabled={ ! canGoNext } onClick={ clickNext }>
+				<Button variant="primary" disabled={ ! canGoNext || isCancelling } onClick={ clickNext }>
 					{ __( 'Continue' ) }
 				</Button>
-				{ ! hasWarningStep && (
-					<Button variant="tertiary" onClick={ onSubmit }>
-						{ __( 'Skip' ) }
+				{ intent === 'cancel' && (
+					<Button
+						variant="tertiary"
+						isBusy={ isCancelling }
+						disabled={ isCancelling }
+						onClick={ onSubmit }
+					>
+						{ __( 'No, thanks' ) }
 					</Button>
 				) }
 			</ButtonStack>
@@ -348,14 +379,6 @@ function StepButtons( {
 		return (
 			<ButtonStack justify="flex-start">
 				<Button
-					disabled={ ! canGoNext || disableButtons }
-					isBusy={ isCancelling }
-					onClick={ onSubmit }
-					variant="primary"
-				>
-					{ __( 'No, thanks' ) }
-				</Button>
-				<Button
 					className="jetpack-cancellation-offer__accept-cta"
 					disabled={ isApplyingOffer || Boolean( offerApplyError ) }
 					isBusy={ isApplyingOffer ?? false }
@@ -364,7 +387,40 @@ function StepButtons( {
 					} }
 					variant="primary"
 				>
-					{ isApplyingOffer ? __( 'Getting Discount' ) : __( 'Get discount' ) }
+					{ isApplyingOffer ? __( 'Getting discount' ) : __( 'Get discount' ) }
+				</Button>
+				<Button
+					disabled={ ! canGoNext || disableButtons }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant="secondary"
+				>
+					{ __( 'No, thanks' ) }
+				</Button>
+			</ButtonStack>
+		);
+	}
+
+	if ( intent === 'remove' ) {
+		return (
+			<ButtonStack justify="flex-start">
+				<Button
+					isDestructive
+					disabled={ ! canGoNext }
+					isBusy={ isCancelling }
+					onClick={ onSubmit }
+					variant="primary"
+				>
+					{ __( 'Complete removal' ) }
+				</Button>
+				<Button
+					isDestructive
+					variant="tertiary"
+					isBusy={ isCancelling }
+					disabled={ isCancelling }
+					onClick={ onSubmit }
+				>
+					{ __( 'Skip and remove' ) }
 				</Button>
 			</ButtonStack>
 		);
@@ -380,11 +436,16 @@ function StepButtons( {
 				onClick={ onSubmit }
 				variant={ variant }
 			>
-				{ __( 'Submit' ) }
+				{ intent === 'cancel' ? __( 'Complete' ) : __( 'Continue' ) }
 			</Button>
-			{ ! canGoNext && ! isCancelling && ! hasWarningStep && (
-				<Button variant="tertiary" onClick={ onSubmit }>
-					{ __( 'Skip' ) }
+			{ intent === 'cancel' && (
+				<Button
+					variant="tertiary"
+					isBusy={ isCancelling }
+					disabled={ isCancelling }
+					onClick={ onSubmit }
+				>
+					{ __( 'No, thanks' ) }
 				</Button>
 			) }
 		</ButtonStack>
@@ -442,18 +503,22 @@ function canGoToNextStep( {
 }
 
 function getSurveyTitle( surveyStep: string ) {
+	if ( surveyStep === CANCELLATION_OFFER_STEP ) {
+		return '';
+	}
 	if ( surveyStep === UPSELL_STEP ) {
-		return __( 'Here is an idea' );
+		return '';
 	}
 
 	return __( 'Before you go, please answer a few quick questions to help us improve.' );
 }
 
 export default function CancelPurchaseForm( props: CancelPurchaseFormProps ) {
+	const title = getSurveyTitle( props.surveyStep ?? '' );
 	return (
 		props.isVisible && (
 			<VStack spacing={ 6 }>
-				<SectionHeader title={ getSurveyTitle( props.surveyStep ?? '' ) } level={ 3 } />
+				{ title && <SectionHeader title={ title } level={ 3 } /> }
 				<SurveyContent { ...props } />
 				<StepButtons { ...props } canGoNext={ canGoToNextStep( props ) } />
 			</VStack>

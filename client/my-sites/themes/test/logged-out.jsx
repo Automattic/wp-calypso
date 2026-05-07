@@ -21,9 +21,11 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/components/data/query-themes', () =>
-	require( 'calypso/components/empty-component' )
-);
+jest.mock( 'calypso/components/data/query-themes', () => ( {
+	__esModule: true,
+	default: require( 'calypso/components/empty-component' ).default,
+	useQueryThemes: jest.fn(),
+} ) );
 
 window.IntersectionObserver = jest.fn( () => ( {
 	observe: jest.fn(),
@@ -34,6 +36,8 @@ window.IntersectionObserver = jest.fn( () => ( {
 	takeRecords: jest.fn(),
 	unobserve: jest.fn(),
 } ) );
+
+Element.prototype.scrollBy = jest.fn();
 
 const themes = [
 	{
@@ -91,12 +95,12 @@ const themes = [
 	},
 ];
 
-const TestComponent = ( { store } ) => {
+const TestComponent = ( { store, ...props } ) => {
 	const queryClient = new QueryClient();
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
-				<LoggedOutShowcase />
+				<LoggedOutShowcase { ...props } />
 			</QueryClientProvider>
 		</ReduxProvider>
 	);
@@ -114,10 +118,11 @@ describe( 'logged-out', () => {
 				themes.length
 			)
 		);
-		render( <TestComponent store={ store } /> );
+
+		render( <TestComponent store={ store } category="recommended" /> );
 
 		await waitFor( () => {
-			expect( screen.getByText( 'No themes match your search' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No themes found' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -152,10 +157,10 @@ describe( 'logged-out', () => {
 			query: { ...DEFAULT_THEME_QUERY, collection: 'recommended' },
 			error: 'Error',
 		} );
-		render( <TestComponent store={ store } /> );
+		render( <TestComponent store={ store } category="recommended" /> );
 
 		await waitFor( () => {
-			expect( screen.queryByText( 'No themes match your search' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No themes found' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

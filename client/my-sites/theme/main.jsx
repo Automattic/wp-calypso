@@ -83,6 +83,7 @@ import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plan
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	installTheme,
+	livePreview,
 	setThemePreviewOptions,
 	themeStartActivationSync as themeStartActivationSyncAction,
 } from 'calypso/state/themes/actions';
@@ -126,6 +127,13 @@ import ThemeStyleVariations from './theme-style-variations';
 import ThemeSupportTab from './theme-support-tab';
 
 import './style.scss';
+
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
 
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -306,7 +314,10 @@ class ThemeSheet extends Component {
 			this.props.themeId,
 			this.props.defaultOption,
 			this.props.secondaryOption,
-			{ styleVariation: this.getSelectedStyleVariation() }
+			{
+				dispatchLivePreview: this.dispatchLivePreview,
+				styleVariation: this.getSelectedStyleVariation(),
+			}
 		);
 	};
 
@@ -402,6 +413,7 @@ class ThemeSheet extends Component {
 			this.props.defaultOption,
 			this.props.secondaryOption,
 			{
+				dispatchLivePreview: this.dispatchLivePreview.bind( this ),
 				styleVariation: this.getSelectedStyleVariation(),
 				previewSource: previewSource,
 			}
@@ -606,7 +618,7 @@ class ThemeSheet extends Component {
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
 					<AsyncLoad
-						require="calypso/blocks/jitm"
+						require={ loadJitm }
 						placeholder={ null }
 						messagePath="calypso:theme:admin_notices"
 					/>
@@ -977,12 +989,22 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	dispatchLivePreview() {
+		const { siteId, themeId } = this.props;
+
+		this.props.livePreview( siteId, themeId, 'detail' );
+	}
+
 	handleEditorWebPreview = async () => {
 		const { isAtomic, siteEditorUrl, siteId, themeInstallId } = this.props;
 
 		this.setState( { isRedirectingToEditorWebPreview: true } );
 
 		this.props.recordTracksEvent( 'calypso_theme_sheet_editor_preview_click' );
+
+		this.onBeforeOptionAction();
+
+		this.dispatchLivePreview();
 
 		// For atomic sites, we need to install theme before navigating to site editor
 		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
@@ -1231,7 +1253,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
+				<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 				{
 					siteId && (
 						<QueryActiveTheme siteId={ siteId } />
@@ -1522,6 +1544,7 @@ export default connect(
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
+		livePreview,
 	}
 )(
 	withCompleteLaunchpadTasksWithNotice(

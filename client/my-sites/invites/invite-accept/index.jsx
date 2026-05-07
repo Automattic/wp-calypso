@@ -43,10 +43,37 @@ class InviteAccept extends Component {
 			logged_in: !! this.props.user,
 		} );
 
-		// The site ID and invite key are required, so only fetch if set
-		if ( this.props.siteId && this.props.inviteKey ) {
+		// Use prefetched data if available, otherwise fetch
+		if ( this.props.prefetchedInvite ) {
+			this.handlePrefetchedInvite();
+		} else if ( this.props.siteId && this.props.inviteKey ) {
 			this.fetchInvite();
 		}
+	}
+
+	handlePrefetchedInvite() {
+		const { prefetchedInvite, inviteKey, activationKey, authKey } = this.props;
+		const invite = {
+			...normalizeInvite( prefetchedInvite ),
+			activationKey,
+			authKey,
+			inviteKey,
+		};
+
+		if ( invite?.site?.is_wpforteams_site ) {
+			this.props.hideMasterbar();
+
+			recordTracksEvent( 'calypso_p2_invite_accept_load_page', {
+				site_id: invite?.site?.ID,
+				invited_by: invite?.inviter?.ID,
+				invite_date: invite?.date,
+				role: invite?.role,
+				from_marketing_campaign: !! invite?.site?.p2_signup_campaign,
+				campaign_name: invite?.site?.p2_signup_campaign || null,
+			} );
+		}
+
+		this.handleFetchInvite( false, invite );
 	}
 
 	componentWillUnmount() {

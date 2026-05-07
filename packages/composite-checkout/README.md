@@ -145,10 +145,12 @@ This component's props are:
 - `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`.
 - `isCompleteCallback: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Note that this is not called for the last step!
+- `skipValidationOnSubmit?: boolean`. If true, this step will not be validated when the submit button is clicked. Defaults to false. This is useful for steps like the payment method step that have their own validation logic and should not block form submission. The [PaymentMethodStep](#PaymentMethodStep) has this set to true by default.
 - `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
 - `canEditStep?: boolean`. If false, the step will never show an "Edit" button. Defaults to true.
 - `editButtonText?: string`. Used in place of "Edit" on the edit step button.
+- `editButtonElement?: React.ReactNode`. Used in place of the "Edit" button contents on the edit step button (overrides `editButtonText`).
 - `nextStepButtonText?: string`. Used in place of "Continue" on the next step button.
 - `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
 - `validatingButtonAriaLabel:? string`. Used for the `aria-label` attribute on the next step button when `isCompleteCallback` returns an unresolved Promise.
@@ -167,6 +169,7 @@ This component's props are:
 - `errorMessage?: string`. The error message to display in the React error boundary if there is an error thrown by any component in this step.
 - `onError?: (error: Error) => void`. A callback to be called from the React error boundary if there is an error thrown by any component in this step.
 - `editButtonText?: string`. The text to display instead of "Edit" for the edit step button.
+- `editButtonElement?: React.ReactNode`. Used in place of the "Edit" button contents on the edit step button (overrides `editButtonText`).
 - `editButtonAriaLabel?: string`. The text to display for `aria-label` instead of "Edit" for the edit step button.
 - `nextStepButtonText?: string`. Like `editButtonText` but for the "Continue" button.
 - `nextStepButtonAriaLabel?: string`. Like `editButtonAriaLabel` but for the "Continue" button.
@@ -192,6 +195,7 @@ Available props:
 - `loadingContent?: ReactNode`. A component that will be displayed while checkout is loading. The default is [LoadingContent](#LoadingContent).
 - `loadingHeader?: ReactNode`. A component that will be displayed above the main content while checkout is loading.
 - `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
+- `scrollToStepOnForwardNavigation?: boolean`. When `true`, the newly active step will be scrolled into view whenever the user moves forward through the checkout steps. This is useful on mobile to correct the viewport position after the previous step's content collapses and causes the layout to shift. Defaults to `false`.
 - `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
 
 ### FormStatus

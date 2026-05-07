@@ -13,6 +13,7 @@ type InviteType = {
 		domain: string;
 		admin_url: string;
 		is_vip: boolean;
+		is_garden_site?: boolean;
 	};
 	role: string;
 };
@@ -129,6 +130,26 @@ export function acceptedNotice(
 				{ displayOnNextPage, isPersistent },
 			];
 
+		case 'shop_manager':
+			return [
+				<div>
+					<h3 className="invites__title">
+						{ i18n.translate( "You're now a Shop Manager of: {{site/}}", {
+							components: { site },
+						} ) }
+					</h3>
+					<p>
+						{ i18n.translate(
+							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
+							{
+								components: { a: <a href="http://learn.wordpress.com" /> },
+							}
+						) }
+					</p>
+				</div>,
+				{ displayOnNextPage, isPersistent },
+			];
+
 		case 'subscriber':
 			return [
 				i18n.translate( "You're now a Subscriber of: {{site/}}", {
@@ -173,7 +194,7 @@ export function getRedirectAfterAccept( invite: InviteType, hasDashboardOptIn: b
 		return isMissingLogmein ? redirect : destination;
 	};
 
-	if ( invite.site.is_vip ) {
+	if ( invite.site.is_vip || invite.site.is_garden_site ) {
 		switch ( invite.role ) {
 			case 'viewer':
 			case 'follower':

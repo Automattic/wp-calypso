@@ -9,6 +9,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/business-info' ),
 	},
 
+	BLUEPRINT: {
+		slug: 'blueprint',
+		asyncComponent: () => import( './steps-repository/blueprint' ),
+	},
+
 	AUTOMATED_COPY_SITE: {
 		slug: 'automated-copy',
 		asyncComponent: () => import( './steps-repository/automated-copy-site' ),

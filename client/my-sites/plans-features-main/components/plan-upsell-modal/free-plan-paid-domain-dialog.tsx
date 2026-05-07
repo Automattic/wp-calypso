@@ -14,7 +14,8 @@ import {
 	DomainName,
 } from './components';
 import PaidDomainSuggestedPlanSection from './components/paid-domain-suggested-plan-section';
-import { DomainPlanDialogProps, MODAL_VIEW_EVENT_NAME } from '.';
+import { DomainPlanDialogProps, MODAL_CTA_CLICK_EVENT_NAME, MODAL_VIEW_EVENT_NAME } from '.';
+import type { PlanSlug } from '@automattic/calypso-products';
 
 export function FreePlanPaidDomainDialog( {
 	paidDomainName,
@@ -31,7 +32,19 @@ export function FreePlanPaidDomainDialog( {
 		} );
 	}, [] );
 
+	function handlePlanSelected( planSlug: PlanSlug ) {
+		recordTracksEvent( MODAL_CTA_CLICK_EVENT_NAME, {
+			dialog_type: 'custom_domain_and_free_plan',
+			plan_slug: planSlug,
+		} );
+		onPlanSelected( planSlug );
+	}
+
 	function handleFreePlanClick() {
+		recordTracksEvent( MODAL_CTA_CLICK_EVENT_NAME, {
+			dialog_type: 'custom_domain_and_free_plan',
+			plan_slug: 'free',
+		} );
 		setIsBusy( true );
 		onFreePlanSelected( true );
 	}
@@ -64,7 +77,7 @@ export function FreePlanPaidDomainDialog( {
 					<PaidDomainSuggestedPlanSection
 						paidDomainName={ paidDomainName }
 						isBusy={ isBusy }
-						onPlanSelected={ onPlanSelected }
+						onPlanSelected={ handlePlanSelected }
 					/>
 				</RowWithBorder>
 				<Row>

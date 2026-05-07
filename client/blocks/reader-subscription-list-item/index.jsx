@@ -1,13 +1,15 @@
+import './style.scss';
 import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
 import { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { resemblesUrl } from 'calypso/lib/url';
 import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
@@ -22,8 +24,8 @@ import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
+import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
-import './style.scss';
 
 function ReaderSubscriptionListItem( {
 	moment,
@@ -47,17 +49,15 @@ function ReaderSubscriptionListItem( {
 	onFollowToggle,
 	replaceStreamClickWithItemClick,
 } ) {
-	const siteTitle = getSiteName( { feed, site } );
-	const siteAuthor = site && site.owner;
+	let siteTitle = getSiteName( { feed, site } );
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
 	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
-	const streamUrl = getStreamUrl( feedId, siteId );
+	let streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
-	const siteUrl = getSiteUrl( { feed, site } );
+	let siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
-	const preferGravatar = ! isMultiAuthor;
 	const hasSiteError = site?.is_error || feed?.is_error;
 
 	const recordEvent = useCallback(
@@ -108,13 +108,13 @@ function ReaderSubscriptionListItem( {
 		}
 	};
 
-	const avatarClicked = ( event, streamLink ) => {
+	const avatarClicked = ( event ) => {
 		recordAvatarClick();
 		if ( ! isLoggedIn ) {
 			event.preventDefault();
 			registerLastActionRequiresLoginProp( {
 				type: 'sidebar-link',
-				redirectTo: streamLink,
+				redirectTo: streamUrl,
 			} );
 		}
 	};
@@ -123,12 +123,30 @@ function ReaderSubscriptionListItem( {
 		onItemClick();
 	};
 
+	const isPotentialFeedUrl = ( urlToVerify ) => {
+		if ( ! resemblesUrl( urlToVerify ) ) {
+			return false;
+		}
+
+		try {
+			const parsedUrl = new URL( urlToVerify );
+			return commonExtensions.some( ( ext ) => parsedUrl.toString().includes( ext ) );
+		} catch {
+			return false;
+		}
+	};
+
 	if ( hasSiteError ) {
 		return null;
 	}
 
-	if ( ! site && ! feed ) {
+	const isFeedUrl = isPotentialFeedUrl( feedUrl );
+	if ( ! site && ! feed && ! isFeedUrl ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
+	} else if ( isFeedUrl ) {
+		siteTitle ||= formatUrlForDisplay( feedUrl );
+		siteUrl ||= feedUrl;
+		streamUrl ||= feedUrl;
 	}
 
 	return (
@@ -143,16 +161,11 @@ function ReaderSubscriptionListItem( {
 			aria-pressed={ isSelected }
 		>
 			<div className="reader-subscription-list-item__avatar">
-				<ReaderAvatar
-					siteIcon={ siteIcon }
-					feedIcon={ feedIcon }
-					author={ siteAuthor }
-					preferBlavatar={ isMultiAuthor }
-					preferGravatar={ preferGravatar }
-					siteUrl={ streamUrl }
-					isCompact
-					onClick={ ( event ) => avatarClicked( event, streamUrl ) }
-					iconSize={ 32 }
+				<SiteIcon
+					iconUrl={ feedIcon || siteIcon }
+					href={ streamUrl }
+					size={ 32 }
+					onClick={ avatarClicked }
 				/>
 			</div>
 			<div className="reader-subscription-list-item__byline">

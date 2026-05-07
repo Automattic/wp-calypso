@@ -16,6 +16,7 @@ import {
 	EditorWelcomeGuideComponent,
 	EditorBlockToolbarComponent,
 	EditorPopoverMenuComponent,
+	SiteSelectComponent,
 	BlockToolbarButtonIdentifier,
 	CookieBannerComponent,
 	EditorToolbarSettingsButton,
@@ -60,6 +61,7 @@ export class EditorPage {
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 	private cookieBannerComponent: CookieBannerComponent;
+	private siteSelectComponent: SiteSelectComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -89,6 +91,14 @@ export class EditorPage {
 		);
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
+		this.siteSelectComponent = new SiteSelectComponent( page );
+
+		// Automatically dismiss the Real-Time Collaboration notice modal whenever
+		// it appears and blocks an action. Using addLocatorHandler ensures it is
+		// caught regardless of when during the test it pops up.
+		this.page.addLocatorHandler( this.page.locator( '.rtc-notice-modal' ), async () => {
+			await this.page.locator( '.rtc-notice-modal' ).getByRole( 'button' ).first().click();
+		} );
 	}
 
 	//#region Generic and Shell Methods
@@ -105,7 +115,15 @@ export class EditorPage {
 	): Promise< Response | null > {
 		const request = await this.page.goto( getCalypsoURL( `${ type }/${ siteSlug }` ), {
 			timeout: 30 * 1000,
+			waitUntil: 'domcontentloaded',
 		} );
+
+		// Multi-site users can land on the "Select a site to start writing" interstitial
+		// before Calypso routes to the editor.
+		if ( siteSlug && ( await this.siteSelectComponent.isSiteSelectorVisible() ) ) {
+			await this.siteSelectComponent.selectSite( siteSlug, false );
+		}
+
 		await this.waitUntilLoaded();
 
 		return request;
@@ -148,7 +166,25 @@ export class EditorPage {
 	 * @param {number} timeout Timeout for waiting for the final requests.
 	 */
 	private async waitForEditorLoadedRequests( timeout: number = 60 * 1000 ): Promise< void > {
-		await this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } );
+		const isEditorUrl = ( url: URL ): boolean =>
+			/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/page(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/post\.php$)|(^\/wp-admin\/post-new\.php$)|(^\/wp-admin\/post\.php$)/.test(
+				url.pathname
+			);
+
+		// In some environments the route is already settled by the time we start waiting.
+		if ( isEditorUrl( new URL( this.page.url() ) ) ) {
+			return;
+		}
+
+		await this.page.waitForFunction(
+			( regexSource ) => {
+				const editorPathRegex = new RegExp( regexSource );
+				return editorPathRegex.test( window.location.pathname );
+			},
+			/(^\/post(?:\/[^/?#]+)?\/?$)|(^\/page(?:\/[^/?#]+)?\/?$)|(^\/post-new\.php$)|(^\/post\.php$)|(^\/wp-admin\/post-new\.php$)|(^\/wp-admin\/post\.php$)/
+				.source,
+			{ timeout }
+		);
 	}
 
 	/**
@@ -708,13 +744,21 @@ export class EditorPage {
 	}
 
 	/**
-	 * Enters SEO details on the Editor sidebar.
+	 * Enters SEO details on the document sidebar.
+	 *
+	 * The SEO fields are located in the main document sidebar under the
+	 * Post/Page tab, not the Jetpack sidebar.
 	 *
 	 * @param param0 Keyed object parameter.
 	 * @param {string} param0.title SEO title.
 	 * @param {string} param0.description SEO description.
 	 */
 	async enterSEODetails( { title, description }: { title: string; description: string } ) {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'SEO' );
 		await this.editorSettingsSidebarComponent.enterText( title, { label: 'SEO TITLE' } );
 		await this.editorSettingsSidebarComponent.enterText( description, {
 			label: 'SEO DESCRIPTION',
@@ -778,8 +822,25 @@ export class EditorPage {
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
 
-		// Trigger a secondary/confirmation click if needed
-		actionsArray.push( this.editorPublishPanelComponent.publish() );
+		// Trigger a secondary/confirmation click if needed.
+		// When multiple entities need saving (e.g., a post + a synced jetpack_form),
+		// Gutenberg shows a multi-entity save panel instead of the normal publish panel.
+		// Race both so whichever panel appears first gets handled immediately.
+		actionsArray.push(
+			( async () => {
+				// Try the normal publish panel first (returns gracefully after 5s if not found).
+				await this.editorPublishPanelComponent.publish();
+				// If the normal panel wasn't found, try the multi-entity save panel
+				// (shown when a post + synced jetpack_form both need saving).
+				const editorParent = await this.editor.parent();
+				const saveButton = editorParent.locator(
+					'.entities-saved-states__panel button:has-text("Save")'
+				);
+				if ( await saveButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
+					await saveButton.click();
+				}
+			} )()
+		);
 
 		// Resolve the promises.
 		const [ response ] = await Promise.all( [

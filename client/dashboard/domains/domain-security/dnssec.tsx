@@ -97,14 +97,14 @@ export default function DnsSec( { domainName, domain }: DnsSecProps ) {
 										<DnsSecRecordTextarea
 											key={ `dnskey-${ index }` }
 											value={ dnskey }
-											label="DNSKEY Record"
+											label={ __( 'DNSKEY record' ) }
 										/>
 									) ) }
 									{ domain.dnssec_records?.ds_data?.map( ( dsRecord, index ) => (
 										<DnsSecRecordTextarea
 											key={ `ds-${ index }` }
 											value={ dsRecord }
-											label="Delegation Signer (DS) record"
+											label={ __( 'Delegation Signer (DS) record' ) }
 										/>
 									) ) }
 								</VStack>

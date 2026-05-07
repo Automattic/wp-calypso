@@ -1,16 +1,41 @@
+export type McpAbilityAnnotations = {
+	readonly?: boolean;
+	destructive?: boolean;
+	openWorldHint?: boolean;
+	idempotent?: boolean;
+	placeholder_images?: boolean;
+	defaults?: Record< string, unknown >;
+	recommended_context?: Array< {
+		tool: string;
+		operation: string;
+		optional?: boolean;
+	} >;
+};
+
 export type McpAbility = {
 	name: string;
 	title: string;
 	description: string;
 	category: string;
+	category_label?: string;
 	type: string;
 	enabled: boolean;
+	/** When false, hide this tool from account settings UIs. */
+	visible?: boolean;
+	annotations?: McpAbilityAnnotations;
+};
+
+export type McpSiteOverride = {
+	blog_id: number;
+	account_tools_enabled?: boolean;
+	site_level_enabled?: boolean;
+	abilities?: Record< string, unknown >;
 };
 
 export type McpAbilities = {
 	account?: Record< string, McpAbility >;
-	site?: Record< string, McpAbility >; // Default values for all sites
-	sites?: Record< string, Record< string, number > >; // Custom overrides per site (0/1 values only)
+	site?: Record< string, McpAbility >; // Site-scoped ability defaults
+	sites?: McpSiteOverride[]; // Array of site-specific overrides
 };
 
 export interface UserSettings {
@@ -53,6 +78,8 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+	/** When true, account-level AI assistant features are enabled (requires API support). */
+	ai_assistant?: boolean | null;
 
 	// Username change related fields
 	email_verified?: boolean;

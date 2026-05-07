@@ -8,6 +8,7 @@ import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-pl
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
+import MissingPaymentSettingsNotice from 'calypso/a8c-for-agencies/sections/referrals/common/missing-payment-settings-notice';
 import { useFetchTestConnections } from 'calypso/a8c-for-agencies/sections/sites/hooks/use-fetch-test-connection';
 import {
 	LicenseFilter,
@@ -23,7 +24,6 @@ import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
 import useFetchWooPaymentsData from '../../hooks/use-fetch-woopayments-data';
-import MissingPaymentSettingsNotice from '../../missing-payment-settings-notice';
 import WooPaymentsDashboardEmptyState from './empty-state';
 import type { Site } from '../../../sites/types';
 import type { SitesWithWooPaymentsState, SitesWithWooPaymentsPlugins } from '../../types';
@@ -149,7 +149,9 @@ const WooPaymentsDashboard = () => {
 				} }
 			>
 				<LayoutTop isFullWidth={ isFullWidth }>
-					{ !! allSitesWithWooPayments.length && <MissingPaymentSettingsNotice /> }
+					{ !! allSitesWithWooPayments.length && (
+						<MissingPaymentSettingsNotice commissionType="woopayments" />
+					) }
 					<LayoutHeader>
 						<Title>{ title }</Title>
 						<Actions>

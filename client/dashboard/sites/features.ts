@@ -1,4 +1,5 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
+import { isEnabled } from '@automattic/calypso-config';
 import { isDashboardBackport } from '../utils/is-dashboard-backport';
 import { hasHostingFeature, hasPlanFeature } from '../utils/site-features';
 import { isSiteMigrationInProgress } from '../utils/site-status';
@@ -38,15 +39,39 @@ export function canViewHundredYearPlanSettings( site: Site ) {
 	);
 }
 
-export function canViewSiteVisibilitySettings( site: Site ) {
-	// Site Visibility is a Jetpack feature; Flex sites don't have Jetpack by default.
-	return ! site.is_wpcom_flex;
-}
-
 // Settings -> Server
 
-export function canViewWordPressSettings( site: Site ) {
+export function canSwitchWordPressVersion( site: Site ) {
+	if ( isEnabled( 'dashboard/wp-beta-program' ) ) {
+		// Atomic-only API.
+		return (
+			( site.is_wpcom_atomic || site.is_wpcom_flex ) &&
+			hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE )
+		);
+	}
 	return site.is_wpcom_staging_site;
+}
+
+/**
+ * Atomic/Flex sites without self-serve backups can't switch the WordPress
+ * version manually, but if they were auto-enrolled in the beta program we
+ * still want to give them a one-way path back to the stable release.
+ *
+ * Pass the site's current `versionTag` to render the opt-out UI conditionally;
+ * pass the literal `'beta'` to check whether a site could be in the opt-out
+ * state at all (useful for gating data fetches before the version is known).
+ */
+export function canOptOutOfWordPressBeta( site: Site, versionTag: string | undefined ) {
+	if ( ! isEnabled( 'dashboard/wp-beta-program' ) ) {
+		return false;
+	}
+	if ( ! site.is_wpcom_atomic && ! site.is_wpcom_flex ) {
+		return false;
+	}
+	if ( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ) {
+		return false;
+	}
+	return versionTag === 'beta';
 }
 
 // Settings -> Actions & danger zone
@@ -69,8 +94,12 @@ export function canLeaveSite( site: Site ) {
 	);
 }
 
+export function canDisconnectSite( site: Site ) {
+	return !! site.capabilities?.manage_options && isSelfHostedJetpackConnected( site );
+}
+
 export function canResetSite( site: Site ) {
-	return ! site.is_wpcom_staging_site && ! isCommerceGarden( site );
+	return ! isCommerceGarden( site );
 }
 
 export function canRestoreSite( site: Site ) {

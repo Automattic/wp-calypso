@@ -13,8 +13,7 @@ import {
 	getRelativeTimeString,
 } from '../../utils/datetime';
 import {
-	isTemporarySitePurchase,
-	isA4ATemporarySitePurchase,
+	isA4ABillingDragonPurchase,
 	isRecentMonthlyPurchase,
 	isRenewing,
 	isExpiring,
@@ -25,6 +24,7 @@ import {
 	creditCardHasAlreadyExpired,
 	creditCardExpiresBeforeSubscription,
 	isInExpirationGracePeriod,
+	isCentennialPurchase,
 } from '../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -42,10 +42,10 @@ function FormattedExpiryDate( { locale, purchase }: { locale: string; purchase: 
 
 export function PurchaseExpiryStatus( {
 	purchase,
-	isDisconnectedSite,
+	isSiteMissing,
 }: {
 	purchase: Purchase;
-	isDisconnectedSite?: boolean;
+	isSiteMissing?: boolean;
 } ) {
 	const locale = useLocale();
 	const { setShowHelpCenter } = useHelpCenter();
@@ -66,7 +66,7 @@ export function PurchaseExpiryStatus( {
 		taxName,
 	] );
 
-	if ( purchase.partner_name ) {
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
 		// translators: partnerName is the name of the partner service who manages this product
 		return sprintf( __( 'Managed by %(partnerName)s' ), {
 			partnerName: purchase.partner_name,
@@ -74,8 +74,8 @@ export function PurchaseExpiryStatus( {
 	}
 
 	if (
-		isDisconnectedSite &&
-		isTemporarySitePurchase( purchase ) &&
+		isSiteMissing &&
+		purchase.is_attached_to_holding_site &&
 		purchase.product_type === 'jetpack'
 	) {
 		return (
@@ -89,18 +89,23 @@ export function PurchaseExpiryStatus( {
 		);
 	}
 
-	const isA4APurchase = isA4ATemporarySitePurchase( purchase );
+	const isA4ABDPurchase = isA4ABillingDragonPurchase( purchase );
 	const temporarySitePurchaseProductTypes = [ 'saas_plugin', 'jetpack', 'akismet' ];
 	const isKnownTemporarySiteProductType =
-		isTemporarySitePurchase( purchase ) &&
+		purchase.is_attached_to_holding_site &&
 		temporarySitePurchaseProductTypes.includes( purchase.product_type );
 	const isJetpack = purchase.is_jetpack_plan_or_product;
 
-	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
+	if ( isSiteMissing && ! isA4ABDPurchase && ! isKnownTemporarySiteProductType && isJetpack ) {
 		return <span>{ __( 'Disconnected from WordPress.com' ) }</span>;
 	}
 
-	if ( isDisconnectedSite && ! isA4APurchase && ! isKnownTemporarySiteProductType ) {
+	if (
+		isSiteMissing &&
+		! isA4ABDPurchase &&
+		! isKnownTemporarySiteProductType &&
+		! purchase.is_domain
+	) {
 		return (
 			<span>
 				{ createInterpolateElement(
@@ -129,6 +134,21 @@ export function PurchaseExpiryStatus( {
 			),
 			{
 				managePurchase: <a href={ purchase.iap_purchase_management_link } />,
+			}
+		);
+	}
+
+	const isCentennial = isCentennialPurchase( purchase );
+
+	if ( isCentennial ) {
+		if ( isIncludedWithPlan( purchase ) ) {
+			return __( 'Included with plan' );
+		}
+		return createInterpolateElement(
+			// translators: date is a formatted expiry date
+			__( 'Paid until <date />' ),
+			{
+				date: <FormattedExpiryDate locale={ locale } purchase={ purchase } />,
 			}
 		);
 	}

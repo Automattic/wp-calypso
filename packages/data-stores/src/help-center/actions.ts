@@ -8,6 +8,14 @@ import { STORE_KEY } from './constants';
 import { persistPreference } from './utils';
 import type { HelpCenterOptions, HelpCenterShowOptions } from './types';
 
+declare global {
+	interface Window {
+		_sva?: {
+			closeSurvey?: () => void;
+		};
+	}
+}
+
 export function setHelpCenterRouterHistory(
 	history: { entries: Location[]; index: number } | null
 ) {
@@ -197,6 +205,13 @@ export const setShowHelpCenter = function* (
 		yield setHelpCenterOptions( options );
 	}
 
+	// Close any Survicate survey that may already be visible.
+	// This covers the case where Survicate loads before the Help Center store
+	// is registered, so invokeSurvicateEvent's store-based guard can't catch it.
+	if ( typeof window !== 'undefined' ) {
+		window._sva?.closeSurvey?.();
+	}
+
 	return showHelpCenter( true );
 };
 
@@ -250,6 +265,31 @@ export const setNewMessagingChat = function* ( {
 
 export const setNavigateToOdie = function* () {
 	yield setNavigateToRoute( '/odie' );
+	yield setShowHelpCenter( true );
+};
+
+/**
+ * Open the Help Center on the Odie (AI) assistant with optional context.
+ * Does not add provider=zendesk, so the user stays in the AI chat instead of human support.
+ */
+export const setOpenOdieWithContext = function* ( {
+	initialMessage,
+	section,
+	siteUrl,
+	siteId,
+}: {
+	initialMessage: string;
+	section?: string;
+	siteUrl?: string;
+	siteId?: string | number;
+} ) {
+	const url = addQueryArgs( '/odie', {
+		userFieldMessage: initialMessage,
+		section,
+		siteUrl,
+		siteId: siteId != null ? String( siteId ) : undefined,
+	} );
+	yield setNavigateToRoute( url );
 	yield setShowHelpCenter( true );
 };
 

@@ -28,10 +28,10 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSiteFormattedUrl } from '../../utils/site-url';
+import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
-import { isSitePlanTrial, isSitePlanWooHosted } from '../plans';
+import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
 import { JetpackLogo } from './jetpack-logo';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
@@ -65,13 +65,22 @@ export const titleFieldTextOverflowStyles = {
 	whiteSpace: 'nowrap',
 } as const;
 
-export function SiteLink( { site, ...props }: ComponentProps< typeof Link > & { site: Site } ) {
+export function SiteLink( {
+	site,
+	expanded,
+	...props
+}: ComponentProps< typeof Link > & { site: Site; expanded?: boolean } ) {
 	return (
 		<Link
 			{ ...props }
 			to={ getSiteManagementUrl( site ) }
 			disabled={ site.is_deleted }
-			style={ { width: 'auto', minWidth: 'unset', textDecoration: 'none', ...props.style } }
+			style={ {
+				width: expanded ? '100%' : 'auto',
+				minWidth: 'unset',
+				textDecoration: 'none',
+				...props.style,
+			} }
 		/>
 	);
 }
@@ -91,6 +100,8 @@ export function NameRenderer( {
 } ) {
 	const renderBadge = () => {
 		switch ( badge ) {
+			case 'redirect':
+				return <Badge>{ __( 'Redirect' ) }</Badge>;
 			case 'staging':
 				return <Badge>{ __( 'Staging' ) }</Badge>;
 			case 'trial':
@@ -131,7 +142,7 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 		<ExternalLink
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
-			href={ getSiteFormattedUrl( site ) }
+			href={ site.URL }
 		>
 			{ value }
 		</ExternalLink>
@@ -220,7 +231,7 @@ export function EngagementStat( { value }: { value: number | null } ) {
 
 export function LastBackup( { site }: { site?: Site } ) {
 	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
-	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS );
+	const isEligible = site && hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE );
 
 	const {
 		data: lastBackup,
@@ -340,12 +351,9 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; source: string } ) {
+function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isTrial = isSitePlanTrial( site );
-	const upgradeLink = isSitePlanWooHosted( site )
-		? wpcomLink( `/setup/woo-hosted-plans/${ site.slug }` )
-		: wpcomLink( `/plans/${ site.slug }` );
 
 	return (
 		<>
@@ -356,7 +364,7 @@ function PlanRenewNag( { site, source }: { site: Pick< Site, 'slug' | 'plan' >; 
 			<ExternalLink
 				href={
 					isTrial
-						? upgradeLink
+						? getSitePlanUpgradeUrl( site )
 						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
 				}
 				onClick={ () => {
@@ -400,7 +408,7 @@ export function Plan( {
 	isOwner,
 	value,
 }: {
-	nag: { isExpired: false } | { isExpired: true; site: Pick< Site, 'slug' | 'plan' > };
+	nag: { isExpired: false } | { isExpired: true; site: Site };
 	isSelfHostedJetpackConnected: boolean;
 	isJetpack: boolean;
 	isOwner?: boolean;

@@ -5,9 +5,9 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { startOfMonth, subMonths } from 'date-fns';
+import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
 import { DateInputs } from './date-inputs';

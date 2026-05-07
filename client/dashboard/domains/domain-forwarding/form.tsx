@@ -8,8 +8,8 @@ import {
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
-import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState, useMemo } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
@@ -115,11 +115,11 @@ export default function DomainForwardingForm( {
 				Edit: 'select',
 				elements: [
 					{
-						label: 'Subdomain',
+						label: __( 'Subdomain' ),
 						value: '',
 					},
 					{
-						label: 'Domain',
+						label: __( 'Domain' ),
 						value: 'root',
 					},
 				],
@@ -132,7 +132,7 @@ export default function DomainForwardingForm( {
 				label: __( 'Source URL' ),
 				help: __( 'Enter the subdomain (e.g., "blog")' ),
 				type: 'text' as const,
-				Edit: ( { field, data, onChange } ) => {
+				Edit: ( { field, data, onChange, markWhenOptional } ) => {
 					const { id, getValue } = field;
 					const isDisabled = data.sourceType !== '';
 					const suffix = isDisabled ? '' : `.${ domainName }`;
@@ -142,6 +142,7 @@ export default function DomainForwardingForm( {
 					return (
 						<SuffixInputControl
 							required={ !! field.isValid?.required }
+							markWhenOptional={ markWhenOptional }
 							label={ field.label }
 							placeholder={ field.placeholder }
 							disabled={ isDisabled }

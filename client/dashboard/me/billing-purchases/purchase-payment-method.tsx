@@ -2,7 +2,12 @@ import { useNavigate, Link } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf, _x } from '@wordpress/i18n';
 import { changePaymentMethodRoute } from '../../app/router/me';
-import { isExpired, isRenewing, isAkismetFreeProduct } from '../../utils/purchase';
+import {
+	isExpired,
+	isRenewing,
+	isAkismetFreeProduct,
+	isA4ABillingDragonPurchase,
+} from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
 import type { Purchase } from '@automattic/api-core';
 
@@ -10,11 +15,11 @@ import './style.scss';
 
 export function PurchasePaymentMethod( {
 	purchase,
-	isDisconnectedSite,
+	isSiteMissing,
 	showUpdateButton,
 }: {
 	purchase: Purchase;
-	isDisconnectedSite?: boolean;
+	isSiteMissing?: boolean;
 	showUpdateButton?: boolean;
 } ) {
 	const navigate = useNavigate();
@@ -32,9 +37,9 @@ export function PurchasePaymentMethod( {
 
 	if (
 		isExpired( purchase ) ||
-		purchase.partner_name ||
+		( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) ||
 		isAkismetFreeProduct( purchase ) ||
-		isDisconnectedSite
+		( isSiteMissing && ! purchase.is_domain && ! isA4ABillingDragonPurchase( purchase ) )
 	) {
 		return null;
 	}
@@ -83,7 +88,7 @@ export function PurchasePaymentMethod( {
 							} );
 						} }
 					>
-						{ __( 'Update' ) }
+						{ _x( 'Update', 'Change the payment method used for this purchase' ) }
 					</Button>
 				) }
 			</HStack>
@@ -110,7 +115,7 @@ export function PurchasePaymentMethod( {
 							} );
 						} }
 					>
-						{ __( 'Update' ) }
+						{ _x( 'Update', 'Change the payment method used for this purchase' ) }
 					</Button>
 				) }
 			</HStack>

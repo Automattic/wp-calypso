@@ -1,13 +1,15 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { Page } from '@wordpress/admin-ui';
 import { useTranslate } from 'i18n-calypso';
 import { capitalize, find } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
+import JetpackTitle from 'calypso/components/jetpack-title';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
@@ -15,7 +17,6 @@ import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import WordAdsHighlightsSection from 'calypso/my-sites/stats/wordads/highlights-section';
 import { useSelector } from 'calypso/state';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AdsWrapper from './ads/wrapper';
@@ -45,15 +46,15 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
 	const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 	const paidSubscriptionId = query?.paid_susbcription;
-	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, site?.ID ) );
-	const isJetpackNotAtomic = isJetpack && ! isAtomicSite;
+
+	const isJetpackPlatform = isJetpackCloud();
 
 	const layoutTitles = {
 		'ads-earnings': translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 		'ads-settings': translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		'ads-payments': translate( '%(wordads)s Payments', { args: { wordads: adsProgramName } } ),
 		payments: translate( 'Payment Settings' ),
-		'paid-subscriptions': translate( 'Active Paid Subscriptions' ),
+		'paid-subscriptions': translate( 'Paid Subscribers' ),
 		'refer-a-friend': translate( 'Refer-a-Friend Program' ),
 	};
 
@@ -66,7 +67,7 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 				id: 'earn',
 			},
 			{
-				title: translate( 'Active Paid Subscriptions' ),
+				title: translate( 'Paid Subscribers' ),
 				path: earnPath + '/paid-subscriptions' + pathSuffix,
 				id: 'paid-subscriptions',
 			},
@@ -189,10 +190,10 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 
 	const getEarnSectionNav = () => {
 		return (
-			<div id="earn-navigation">
+			<div className="earn-navigation">
 				<SectionNav
 					selectedText={ getEarnSelectedText() }
-					variation={ ! isJetpackCloud() ? 'minimal' : '' }
+					variation={ ! isJetpackPlatform ? 'minimal' : '' }
 				>
 					<NavTabs>
 						{ getEarnTabs().map( ( tabItem ) => {
@@ -238,10 +239,20 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 		);
 	};
 
-	const atomicLearnMoreLink = localizeUrl( 'https://wordpress.com/support/monetize-your-site/' );
-	const jetpackLearnMoreLink = localizeUrl( 'https://jetpack.com/support/monetize-your-site/' );
+	const showPageHeader = ! isSinglePaidSubscriptionSection( section );
+
+	const content = (
+		<>
+			{ showPageHeader && getEarnSectionNav() }
+			<div className="earn-content">
+				{ isAdSection( section ) && getAdsHeader() }
+				{ getComponent( section ) }
+			</div>
+		</>
+	);
+
 	return (
-		<Main wideLayout className="earn">
+		<Main fullWidthLayout className="earn">
 			<PageViewTracker
 				path={ section ? `${ earnPath }/${ section }/:site` : `${ earnPath }/:site` }
 				title={ `${ adsProgramName } ${ capitalize( section ) }` }
@@ -249,33 +260,31 @@ const EarningsMain = ( { section, query, path }: EarningsMainProps ) => {
 			<DocumentHead
 				title={ layoutTitles[ section as keyof typeof layoutTitles ] ?? translate( 'Monetize' ) }
 			/>
-			{ ! isSinglePaidSubscriptionSection( section ) && (
-				<>
-					<NavigationHeader
-						navigationItems={ [] }
-						title={ translate( 'Monetize' ) }
-						subtitle={ translate(
-							'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: isJetpackCloud() ? (
-										<a
-											href={ isJetpackNotAtomic ? jetpackLearnMoreLink : atomicLearnMoreLink }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									) : (
-										<InlineSupportLink supportContext="earn" showIcon={ false } />
-									),
-								},
-							}
-						) }
-					/>
-					{ getEarnSectionNav() }
-				</>
-			) }
-			{ isAdSection( section ) && getAdsHeader() }
-			{ getComponent( section ) }
+			{ isJetpackPlatform && <SidebarNavigation /> }
+			<Page
+				hasPadding
+				showSidebarToggle={ false }
+				title={
+					showPageHeader && ! isJetpackPlatform ? (
+						<JetpackTitle title={ translate( 'Monetize' ) } />
+					) : undefined
+				}
+				subTitle={
+					showPageHeader && ! isJetpackPlatform
+						? translate(
+								'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
+									},
+								}
+						  )
+						: undefined
+				}
+			>
+				{ content }
+			</Page>
+			{ ! isJetpackPlatform && <JetpackFooter /> }
 		</Main>
 	);
 };

@@ -65,6 +65,7 @@ function RepositoriesList() {
 				return (
 					<TriggerDeploymentModalForm
 						deployments={ deployments }
+						isStagingSite={ site.is_wpcom_staging_site }
 						repositoryId={ items[ 0 ].id.toString() }
 						onClose={ closeModal }
 					/>

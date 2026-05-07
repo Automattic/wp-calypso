@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
-import { when } from 'jest-when';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -129,7 +127,7 @@ describe( 'reader stats', () => {
 			const result = buildReaderTracksEventProps( { custom: 'prop' }, '/discover' );
 
 			expect( result ).toEqual( {
-				ui_algo: 'discover_recommended',
+				ui_algo: 'freshly-pressed',
 				custom: 'prop',
 			} );
 		} );
@@ -167,7 +165,7 @@ describe( 'reader stats', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'test_event',
 				expect.objectContaining( {
-					ui_algo: 'discover_recommended',
+					ui_algo: 'freshly-pressed',
 					prop: 'value',
 				} )
 			);
@@ -660,6 +658,81 @@ describe( 'reader stats', () => {
 					expected: 'conversations_a8c',
 					description: 'reader conversations a8c page',
 				},
+				{
+					url: '/reader/users/matt/recommended-blogs',
+					expected: 'user_profile_recommended_blogs',
+					description: 'user profile recommended blogs',
+				},
+				{
+					url: '/reader/users/matt/lists',
+					expected: 'user_profile_lists',
+					description: 'user profile lists',
+				},
+				{
+					url: '/reader/users/matt',
+					expected: 'user_profile_posts',
+					description: 'user profile posts',
+				},
+				{
+					url: '/reader/users/matt/sites',
+					expected: 'user_profile_sites',
+					description: 'user profile sites tab',
+				},
+				{
+					url: '/reader/atmosphere',
+					expected: 'atmosphere_landing',
+					description: 'atmosphere landing page',
+				},
+				{
+					url: '/reader/atmosphere/connect',
+					expected: 'atmosphere_connect',
+					description: 'atmosphere connect page',
+				},
+				{
+					url: '/reader/atmosphere/7/timeline',
+					expected: 'atmosphere_timeline',
+					description: 'atmosphere timeline for a specific connection',
+				},
+				{
+					url: '/reader/atmosphere/7/profile',
+					expected: 'atmosphere_profile',
+					description: 'atmosphere profile for a specific connection',
+				},
+				{
+					url: '/reader/atmosphere/7/settings',
+					expected: 'atmosphere_settings',
+					description: 'atmosphere settings for a specific connection',
+				},
+				{
+					url: '/reader/mastodon',
+					expected: 'mastodon_landing',
+					description: 'mastodon landing page',
+				},
+				{
+					url: '/reader/mastodon/connect',
+					expected: 'mastodon_connect',
+					description: 'mastodon connect page',
+				},
+				{
+					url: '/reader/mastodon/7/timeline',
+					expected: 'mastodon_timeline',
+					description: 'mastodon timeline for a specific connection',
+				},
+				{
+					url: '/reader/mastodon/7/profile',
+					expected: 'mastodon_profile',
+					description: 'mastodon profile for a specific connection',
+				},
+				{
+					url: '/reader/mastodon/7/settings',
+					expected: 'mastodon_settings',
+					description: 'mastodon settings for a specific connection',
+				},
+				{
+					url: '/reader/mastodon/7/tag/rust',
+					expected: 'mastodon_tag_feed',
+					description: 'mastodon tag feed for a specific connection',
+				},
 			] as const;
 
 			scenarios.map( ( scenario ) => {
@@ -673,20 +746,14 @@ describe( 'reader stats', () => {
 			const scenarios = [
 				{
 					url: '/discover',
-					expected: 'discover_recommended',
-					description: 'discover recommended page',
+					expected: 'freshly-pressed',
+					description: 'freshly pressed page',
 					searchParams: {},
 				},
 				{
 					url: '/discover/add-new',
 					expected: 'discover_addnew',
 					description: 'discover add new page',
-					searchParams: {},
-				},
-				{
-					url: '/discover/firstposts',
-					expected: 'discover_firstposts',
-					description: 'discover first posts page',
 					searchParams: {},
 				},
 				{
@@ -730,16 +797,8 @@ describe( 'reader stats', () => {
 				}
 			);
 
-			it( 'returns freshly-pressed when the feature flag is on and there is no subpath', () => {
-				when( isEnabled ).calledWith( 'reader/discover/freshly-pressed' ).mockReturnValue( true );
-
+			it( 'returns freshly-pressed when there is no subpath', () => {
 				expect( getLocation( '/discover' ) ).toBe( 'freshly-pressed' );
-			} );
-
-			it( 'returns recommended when the feature flag is off and there is no subpath', () => {
-				when( isEnabled ).calledWith( 'reader/discover/freshly-pressed' ).mockReturnValue( false );
-
-				expect( getLocation( '/discover' ) ).toBe( 'discover_recommended' );
 			} );
 
 			it( 'supports the /discover/recommended subpath', () => {

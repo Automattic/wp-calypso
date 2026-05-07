@@ -78,6 +78,8 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures,
 	reflectStorageSelectionInPlanPrices,
 	isGatingBusinessQ1,
+	redirectTo,
+	pluginSlug,
 }: {
 	siteId?: number | null;
 	cartHandler?: ( cartItems?: MinimalRequestCartProduct[] | null ) => void;
@@ -92,10 +94,12 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures?: boolean;
 	reflectStorageSelectionInPlanPrices?: boolean;
 	/**
-	 * When true, adds `is_gating_business_q1` to the plan cart item extra data.
-	 * Used for the pricing differentiation experiment (calypso_pricing_differentiation_202601_v1).
+	 * When true, adds `is_gating_business_q1` to the plan cart item extra data
+	 * for the rolled-out pricing differentiation cohort.
 	 */
 	isGatingBusinessQ1?: boolean;
+	redirectTo?: string;
+	pluginSlug?: string;
 } ): UseAction {
 	const translate = useTranslate();
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -127,6 +131,8 @@ export default function useGenerateActionHook( {
 		siteId,
 		coupon,
 		isGatingBusinessQ1,
+		redirectTo,
+		pluginSlug,
 	} );
 
 	const useActionHook = ( {

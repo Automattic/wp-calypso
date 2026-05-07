@@ -1,4 +1,7 @@
-import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_SCAN_SELF_SERVE,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
 	Icon,
@@ -62,7 +65,9 @@ const useMenuItems = ( {
 	const hasBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
 	);
-	const hasScan = useSelector( ( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) );
+	const hasScan = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
+	);
 
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 

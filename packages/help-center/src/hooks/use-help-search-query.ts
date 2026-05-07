@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { buildQueryString } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import type { HelpCenterRequiredInformation } from '../contexts/HelpCenterContext';
+import type { HelpCenterProduct } from '../feature-config';
 import type { SearchResult } from '../types';
 
 interface APIFetchOptions {
@@ -15,7 +15,7 @@ const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
 	sectionName: string,
-	source: HelpCenterRequiredInformation[ 'source' ]
+	source: HelpCenterProduct
 ): Promise< SearchResult[] > => {
 	let searchResultResponse: SearchResult[] = [];
 
@@ -51,12 +51,12 @@ export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
 	sectionName = '',
-	source: HelpCenterRequiredInformation[ 'source' ] = '',
+	product: HelpCenterProduct = 'wpcom',
 	queryOptions: Record< string, unknown > = {}
 ) => {
 	return useQuery( {
-		queryKey: [ 'help-center-search', search, locale, sectionName, source ],
-		queryFn: () => fetchArticlesAPI( search, locale, sectionName, source ),
+		queryKey: [ 'help-center-search', search, locale, sectionName, product ],
+		queryFn: () => fetchArticlesAPI( search, locale, sectionName, product ),
 		refetchOnWindowFocus: false,
 		...queryOptions,
 	} );

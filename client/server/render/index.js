@@ -28,6 +28,39 @@ import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-
 import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
+
+/**
+ * Returns per-request clientData customized for the request hostname.
+ * Overrides hostname when the request arrives on an allowed alternate
+ * hostname, and applies any hostname-specific overrides (features, OAuth
+ * client, login/logout URLs, etc.) from hostname_overrides config.
+ */
+export function customizeClientDataForRequest( req, baseClientData ) {
+	const reqHostname = req.hostname;
+	let clientData = baseClientData;
+
+	const hostnameAllowlist = config( 'hostname_allowlist' );
+	if (
+		Array.isArray( hostnameAllowlist ) &&
+		hostnameAllowlist.includes( reqHostname ) &&
+		reqHostname !== config( 'hostname' )
+	) {
+		clientData = { ...clientData, hostname: reqHostname };
+	}
+
+	const hostnameOverrides = config( 'hostname_overrides' );
+	if ( typeof hostnameOverrides === 'object' && hostnameOverrides[ reqHostname ] ) {
+		const { features: overrideFeatures, ...overrideData } = hostnameOverrides[ reqHostname ];
+		clientData = {
+			...clientData,
+			...overrideData,
+			features: { ...clientData.features, ...overrideFeatures },
+		};
+	}
+
+	return clientData;
+}
+
 const HOUR_IN_MS = 3600000;
 export const markupCache = new Lru( {
 	max: 3000,
@@ -281,7 +314,7 @@ export function serverRender( req, res ) {
 		}
 	}
 	performanceMark( req.context, 'final render', true );
-	context.clientData = config.clientData;
+	context.clientData = customizeClientDataForRequest( req, config.clientData );
 
 	attachBuildTimestamp( context );
 

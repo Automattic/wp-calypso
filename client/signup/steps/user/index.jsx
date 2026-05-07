@@ -24,6 +24,7 @@ import {
 	isVIPOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { getPartnerAllowedSocialServices } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import LoginContextProvider, { useLoginContext } from 'calypso/login/login-context';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -558,6 +559,9 @@ export class UserStep extends Component {
 				socialServiceResponse = hashObject;
 			}
 		}
+
+		const allowedSocialServices = getPartnerAllowedSocialServices( this.props.oauth2Client );
+
 		return (
 			<>
 				<SignupForm
@@ -583,6 +587,7 @@ export class UserStep extends Component {
 					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ this.props.translate( 'Your email' ) }
 					disableTosText={ ! isGravatarOAuth2Client( oauth2Client ) }
+					allowedSocialServices={ allowedSocialServices }
 				/>
 				{ ! isGravatarOAuth2Client( oauth2Client ) && (
 					<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />

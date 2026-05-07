@@ -3,8 +3,9 @@ import {
 	DomainConnectionSetupMode,
 	DomainMappingStatus,
 } from '@automattic/api-core';
-import { createElement, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { createElement } from 'react';
 import { isSubdomain } from '../../utils/domain';
 import {
 	StepType,

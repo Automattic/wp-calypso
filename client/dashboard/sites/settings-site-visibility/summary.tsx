@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { seen } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { canViewSiteVisibilitySettings } from '../features';
+import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
@@ -13,7 +13,7 @@ export default function SiteVisibilitySettingsSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	if ( ! canViewSiteVisibilitySettings( site ) ) {
+	if ( ! siteTypeSupportsFeature( site, 'settingsGeneralDotcomSiteVisibility' ) ) {
 		return null;
 	}
 

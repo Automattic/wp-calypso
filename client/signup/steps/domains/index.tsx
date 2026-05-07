@@ -9,7 +9,7 @@ import {
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
@@ -19,6 +19,7 @@ import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { isMonthlyOrFreeFlow } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { useExperiment } from 'calypso/lib/explat';
 import {
 	domainMapping,
 	domainAddNew,
@@ -71,6 +72,12 @@ const DomainSearchUI = (
 	const isDomainOnlyFlow = flowName === 'domain';
 	const isOnboardingWithEmailFlow = flowName === 'onboarding-with-email';
 
+	const [ , experimentAssignment ] = useExperiment(
+		'calypso_signup_domain_only_checkout_simplification_v1',
+		{ isEligible: isDomainOnlyFlow }
+	);
+	const isTreatment = experimentAssignment?.variationName === 'treatment';
+
 	const site = useSelector( getSelectedSite );
 
 	const siteSlug = queryObject.siteSlug;
@@ -80,6 +87,8 @@ const DomainSearchUI = (
 
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteUrl = site?.URL ? site.URL : siteSlug ? `https://${ siteSlug }` : undefined;
+	const currentSiteUrlHostname =
+		currentSiteUrl && isURL( currentSiteUrl ) ? new URL( currentSiteUrl ).hostname : undefined;
 	// eslint-disable-next-line no-nested-ternary
 	const currentSiteId = site?.ID ? site.ID : siteId ? parseInt( siteId, 10 ) : undefined;
 
@@ -168,14 +177,14 @@ const DomainSearchUI = (
 						stepSectionName: '',
 						domainItem,
 						isPurchasingItem: true,
-						siteUrl: domainItem.meta,
+						siteUrl: currentSiteUrlHostname ?? domainItem.meta,
 						domainCart,
 					},
 					{
 						...baseSubmitProvidedDependencies,
 						signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.CUSTOM,
 						domainItem,
-						siteUrl: domainItem.meta,
+						siteUrl: currentSiteUrlHostname ?? domainItem.meta,
 						domainCart,
 					}
 				);
@@ -196,11 +205,35 @@ const DomainSearchUI = (
 						{ stepName: 'site-picker', wasSkipped: true },
 						{ themeSlugWithRepo: 'pub/twentysixteen' }
 					);
+				} else if ( isTreatment && isDomainOnlyFlow ) {
+					// Experiment: skip the 'Choose how to use your domain' step for domain-only purchases.
+					submitSignupStep(
+						{
+							stepName: 'site-or-domain',
+							domainItem,
+							designType: 'domain',
+							siteSlug: domainItem.meta,
+							siteUrl: domainItem.meta,
+							isPurchasingItem: true,
+							domainCart,
+						},
+						{ designType: 'domain', domainItem, siteUrl: domainItem.meta, domainCart }
+					);
+					submitSignupStep(
+						{ stepName: 'site-picker', wasSkipped: true, domainCart },
+						{ themeSlugWithRepo: 'pub/twentysixteen' }
+					);
+					submitSignupStep(
+						{ stepName: 'plans-site-selected', wasSkipped: true },
+						{ cartItems: null }
+					);
 				}
 
 				goToNextStep();
 			},
 			onSkip( suggestion?: FreeDomainSuggestion ) {
+				const siteUrl = suggestion?.domain_name ?? currentSiteUrlHostname;
+
 				submitSignupStep(
 					{
 						...baseSubmitStepProps,
@@ -208,7 +241,7 @@ const DomainSearchUI = (
 						domainItem: undefined,
 						isPurchasingItem: false,
 						domainCart: [],
-						siteUrl: suggestion?.domain_name.replace( '.wordpress.com', '' ),
+						siteUrl: siteUrl?.replace( '.wordpress.com', '' ),
 					},
 					{
 						...baseSubmitProvidedDependencies,
@@ -216,7 +249,7 @@ const DomainSearchUI = (
 							? SIGNUP_DOMAIN_ORIGIN.FREE
 							: SIGNUP_DOMAIN_ORIGIN.CHOOSE_LATER,
 						domainCart: [],
-						siteUrl: suggestion?.domain_name,
+						siteUrl,
 					}
 				);
 
@@ -233,9 +266,11 @@ const DomainSearchUI = (
 		goToNextStep,
 		locale,
 		isDomainOnlyFlow,
+		isTreatment,
 		baseSubmitStepProps,
 		baseSubmitProvidedDependencies,
 		dashboard,
+		currentSiteUrlHostname,
 	] );
 
 	const allowedTldParam = queryObject.tld;
@@ -379,7 +414,13 @@ const DomainSearchUI = (
 	// For /start flows, we want to show the free domain for a year discount for all flows
 	// except if we're in a site context, in the free or monthly plan flows or in the domain-only flow
 	const isFirstDomainFreeForFirstYear = useMemo( () => {
-		if ( siteSlug || siteId || isMonthlyOrFreeFlow( flowName ) || isDomainOnlyFlow ) {
+		if (
+			siteSlug ||
+			siteId ||
+			isMonthlyOrFreeFlow( flowName ) ||
+			isDomainOnlyFlow ||
+			isDomainForGravatarFlow( flowName )
+		) {
 			return false;
 		}
 		return true;

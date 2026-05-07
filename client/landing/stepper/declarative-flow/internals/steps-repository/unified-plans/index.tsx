@@ -17,6 +17,7 @@ import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -66,6 +67,9 @@ function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.has( 'playground' ) ) {
 				return playgroundPlansIntent( search.get( 'playground' )! );
 			}
+			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
+				return 'plans-woo-hosting-solutions';
+			}
 			if ( search.has( 'intent' ) ) {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
@@ -94,7 +98,6 @@ const PlansStepAdaptor: StepType< {
 		isStepperUpgradeFlow?: boolean;
 		selectedFeature?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
-		hideLogo?: boolean;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -103,14 +106,8 @@ const PlansStepAdaptor: StepType< {
 		};
 	};
 } > = ( props ) => {
-	const {
-		displayedIntervals,
-		hideLogo,
-		isInSignup,
-		isStepperUpgradeFlow,
-		selectedFeature,
-		wrapperProps,
-	} = props;
+	const { displayedIntervals, isInSignup, isStepperUpgradeFlow, selectedFeature, wrapperProps } =
+		props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -244,7 +241,6 @@ const PlansStepAdaptor: StepType< {
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			displayedIntervals={ displayedIntervals }
-			hideLogo={ hideLogo }
 			wrapperProps={ {
 				hideBack: wrapperProps?.hideBack ?? false,
 				goBack: wrapperProps?.goBack ?? props.navigation.goBack,

@@ -1,8 +1,8 @@
 import { domainDnsMutation, domainDnsQuery, domainQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useCallback, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useCallback, useEffect } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute } from '../../app/router/domains';
 import { PageHeader } from '../../components/page-header';

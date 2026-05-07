@@ -63,6 +63,7 @@ export default function QuickPost(): JSX.Element | null {
 	const siteAdminUrl = useSelector( ( state ) =>
 		siteId ? getSiteAdminUrl( state, siteId ) : null
 	);
+
 	const {
 		mutate: save,
 		isPending: isSaving,
@@ -117,7 +118,7 @@ export default function QuickPost(): JSX.Element | null {
 							{
 								button: translate( 'View Post.' ),
 								onClick: () => {
-									window.open( data.URL, '_blank' );
+									window.open( data.URL, '_blank', 'noopener,noreferrer' );
 								},
 							}
 						)
@@ -192,14 +193,15 @@ export default function QuickPost(): JSX.Element | null {
 			<div className="verbum-editor-wrapper">
 				<Editor
 					key={ editorKey }
+					focusOnMount={ false }
 					initialContent={ postContent }
 					onChange={ setPostContent }
 					isRTL={ isLocaleRtl( locale ) ?? false }
 					isDarkMode={ false }
 					customStyles={ `
-					div.is-root-container.block-editor-block-list__layout {
-						padding-bottom: 20px;
-					}
+						div.is-root-container.block-editor-block-list__layout {
+							padding-bottom: 20px;
+						}
 					` }
 				/>
 			</div>
