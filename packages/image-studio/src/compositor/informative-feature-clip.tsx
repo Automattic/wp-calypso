@@ -430,10 +430,26 @@ function installAudioBed(
 		// slice it for the requested time range and return that. Falls
 		// through to the synth pad below when the slot is empty (no
 		// Lyria URL in the brief, decode failed, or audio gen disabled).
+		// Defensive try/catch: if the buffer is technically valid but
+		// sliceAudioBuffer chokes on a corrupted edge case, we don't want
+		// to take down the whole MP4 render — drop to synth instead.
 		const lyriaBuffer = ( window as unknown as { __featureClipAudioBuffer?: AudioBuffer | null } )
 			.__featureClipAudioBuffer;
 		if ( lyriaBuffer ) {
-			return sliceAudioBuffer( lyriaBuffer, fromMs, toMs, sampleRate );
+			try {
+				return sliceAudioBuffer( lyriaBuffer, fromMs, toMs, sampleRate );
+			} catch ( error ) {
+				// eslint-disable-next-line no-console
+				console.warn( '[FeatureClip] sliceAudioBuffer failed; falling back to synth', {
+					message: error instanceof Error ? error.message : String( error ),
+				} );
+				// Clear the slot so subsequent renderAudio calls don't re-try
+				// the same broken buffer per-frame.
+				(
+					window as unknown as { __featureClipAudioBuffer?: AudioBuffer | null }
+				 ).__featureClipAudioBuffer = null;
+				// Fall through to synth.
+			}
 		}
 
 		const context = new OfflineAudioContext( 2, length, sampleRate );
