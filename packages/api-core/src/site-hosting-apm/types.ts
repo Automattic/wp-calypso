@@ -4,6 +4,7 @@ export interface ApmTimePoint {
 	wp_core: number;
 	plugins: number;
 	external: number;
+	throughput: number;
 }
 
 export interface ApmSlowRequest {

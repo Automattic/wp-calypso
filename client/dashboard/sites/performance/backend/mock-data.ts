@@ -87,6 +87,7 @@ function fetchApmOverview( siteId: number ): Promise< ApmOverview > {
 		wp_core: Math.round( 50 + random() * 120 ),
 		plugins: Math.round( 60 + random() * 260 ),
 		external: Math.round( 20 + random() * 180 ),
+		throughput: Math.round( 200 + random() * 1800 ),
 	} ) );
 
 	return Promise.resolve( {
