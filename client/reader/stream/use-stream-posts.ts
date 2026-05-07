@@ -219,24 +219,10 @@ export function useStreamPosts( {
 
 	const items: PostKey[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];
-		// Dedupe by post key as we walk the pages. Pages can overlap when
-		// `useStreamPendingPosts.consumePending` swaps `pages[0]` with the
-		// rich poll head: the polled head includes the latest N posts, but
-		// `pages[1+]` still hold the originally-paginated tail starting from
-		// the old `pages[0]`'s page-handle, so the polled posts can also
-		// appear deeper in the list.
 		const collected: PostKey[] = [];
-		const seen = new Set< string >();
 		for ( const page of pages ) {
 			const { streamItems } = normalizeStreamPage( page, streamType );
 			for ( const item of streamItems ) {
-				const id = postKeyId( item );
-				if ( id && seen.has( id ) ) {
-					continue;
-				}
-				if ( id ) {
-					seen.add( id );
-				}
 				collected.push( item );
 			}
 		}
