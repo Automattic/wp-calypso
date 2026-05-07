@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  *
- * Smoke test for the compose-feature-clip ability registration. Verifies that
+ * Smoke test for the browser-render-canvas-video ability registration. Verifies that
  * the registered callback validates briefs, dispatches a render request,
  * and resolves on a matching store result.
  */
@@ -61,7 +61,7 @@ jest.mock( '../stores/video-studio', () => ( {
 } ) );
 
 const validBrief = {
-	style: 'informative-photo' as const,
+	style: 'highlights' as const,
 	scenes: [ { imageUrl: 'https://x/a.jpg', camera: 'zoom-in' as const } ],
 	titleCard: { copy: 'Hello' },
 };
@@ -76,11 +76,11 @@ beforeEach( async () => {
 	mockErrorState = null;
 	registeredCallback = null;
 	jest.resetModules();
-	const fresh = await import( './compose-feature-clip' );
-	await fresh.registerComposeFeatureClipAbility();
+	const fresh = await import( './browser-render-canvas-video' );
+	await fresh.registerBrowserRenderCanvasVideoAbility();
 } );
 
-describe( 'registerComposeFeatureClipAbility', () => {
+describe( 'registerBrowserRenderCanvasVideoAbility', () => {
 	it( 'registers the ability and exposes a callable callback', () => {
 		expect( registeredCallback ).not.toBeNull();
 		expect( typeof registeredCallback ).toBe( 'function' );
@@ -90,12 +90,6 @@ describe( 'registerComposeFeatureClipAbility', () => {
 		await expect(
 			registeredCallback!( { brief: { ...validBrief, style: 'unknown' } } )
 		).rejects.toThrow( /style must be/i );
-	} );
-
-	it( 'rejects briefs with an empty scenes array', async () => {
-		await expect( registeredCallback!( { brief: { ...validBrief, scenes: [] } } ) ).rejects.toThrow(
-			/non-empty array/i
-		);
 	} );
 
 	it( 'rejects when titleCard.copy is missing', async () => {

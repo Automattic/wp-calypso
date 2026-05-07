@@ -2,7 +2,7 @@
  * Compose Feature Clip Ability
  *
  * WordPress Ability for the photo-driven Feature Clip flow. The agent loop
- * calls this after `wpcom/composite-clip-for-studio` returns a successful
+ * calls this after `wpcom/compose-video-for-studio` returns a successful
  * `brief`. The callback dispatches the brief to the FeatureClipRenderHost
  * (via videoStudioStore.pendingRender) and awaits the matching result from
  * the host, mirroring how update-canvas-video swaps the canvas after Veo.
@@ -13,17 +13,17 @@ import { dispatch, select, subscribe } from '@wordpress/data';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import type { FeatureClipBrief } from '../compositor/types';
 
-const ABILITY_NAME = 'image-studio/compose-feature-clip';
+const ABILITY_NAME = 'image-studio/browser-render-canvas-video';
 
 let isRegistered = false;
 
-interface ComposeFeatureClipResult {
+interface BrowserRenderCanvasVideoResult {
 	attachmentId: number;
 	url: string;
 	durationSeconds: number;
 }
 
-interface ComposeFeatureClipInput {
+interface BrowserRenderCanvasVideoInput {
 	brief?: FeatureClipBrief;
 	style?: FeatureClipBrief[ 'style' ];
 	scenes?: FeatureClipBrief[ 'scenes' ];
@@ -58,7 +58,7 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 // Accept either { brief: {...} } (the documented shape) OR a flattened brief
 // passed at top level. GPT-5 reliably flattens the wrapper despite the schema
 // + tool description, so being liberal here is much cheaper than re-prompting.
-function extractBrief( input: ComposeFeatureClipInput | undefined ): FeatureClipBrief {
+function extractBrief( input: BrowserRenderCanvasVideoInput | undefined ): FeatureClipBrief {
 	if ( input && typeof input === 'object' && input.brief !== undefined ) {
 		return validateBrief( input.brief );
 	}
@@ -71,7 +71,7 @@ function extractBrief( input: ComposeFeatureClipInput | undefined ): FeatureClip
 	);
 }
 
-function awaitRenderResult( requestId: string ): Promise< ComposeFeatureClipResult > {
+function awaitRenderResult( requestId: string ): Promise< BrowserRenderCanvasVideoResult > {
 	return new Promise( ( resolve, reject ) => {
 		const checkOnce = () => {
 			const result = select( videoStudioStore ).getLastFeatureClipRenderResult();
@@ -119,9 +119,9 @@ function awaitRenderResult( requestId: string ): Promise< ComposeFeatureClipResu
 }
 
 /**
- * Register the compose-feature-clip ability with the WordPress Abilities API.
+ * Register the browser-render-canvas-video ability with the WordPress Abilities API.
  */
-export async function registerComposeFeatureClipAbility(): Promise< void > {
+export async function registerBrowserRenderCanvasVideoAbility(): Promise< void > {
 	if ( isRegistered ) {
 		return;
 	}
@@ -132,14 +132,14 @@ export async function registerComposeFeatureClipAbility(): Promise< void > {
 			label: 'Compose Feature Clip',
 			category: 'image-studio',
 			description:
-				"Render a 9:16 vertical MP4 in the user's browser by stitching post images into a Ken-Burns sequence followed by a title card. Call this immediately after wpcom/composite-clip-for-studio returns a successful `brief` — pass that brief verbatim. Returns { attachmentId, url, durationSeconds } once the MP4 has been uploaded to the media library.",
+				"Render a 9:16 vertical MP4 in the user's browser by stitching post images into a Ken-Burns sequence followed by a title card. Call this immediately after wpcom/compose-video-for-studio returns a successful `brief` — pass that brief verbatim. Returns { attachmentId, url, durationSeconds } once the MP4 has been uploaded to the media library.",
 			input_schema: {
 				type: 'object',
 				properties: {
 					brief: {
 						type: 'object',
 						description:
-							'The FeatureClipBrief object returned verbatim by wpcom/composite-clip-for-studio. Pass the WHOLE result.brief as a single nested object — do NOT spread its keys (style, scenes, titleCard, audioBed) onto the top-level arguments.',
+							'The FeatureClipBrief object returned verbatim by wpcom/compose-video-for-studio. Pass the WHOLE result.brief as a single nested object — do NOT spread its keys (style, scenes, titleCard, audioBed) onto the top-level arguments.',
 						properties: {
 							style: {
 								type: 'string',
@@ -167,7 +167,7 @@ export async function registerComposeFeatureClipAbility(): Promise< void > {
 				},
 				required: [ 'brief' ],
 			},
-			callback: async ( input: ComposeFeatureClipInput ) => {
+			callback: async ( input: BrowserRenderCanvasVideoInput ) => {
 				const brief = extractBrief( input );
 
 				const requestId =

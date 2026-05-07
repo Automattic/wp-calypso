@@ -7,7 +7,7 @@ import * as oauthToken from '@automattic/oauth-token';
 import apiFetch from '@wordpress/api-fetch';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import {
-	registerComposeFeatureClipAbility,
+	registerBrowserRenderCanvasVideoAbility,
 	registerUpdateCanvasImageAbility,
 	registerUpdateCanvasVideoAbility,
 } from '../abilities';
@@ -188,7 +188,7 @@ function createAuthProvider(): AuthProvider {
 export async function createDefaultAgentConfig( sessionId: string ): Promise< UseAgentChatConfig > {
 	await registerUpdateCanvasImageAbility();
 	await registerUpdateCanvasVideoAbility();
-	await registerComposeFeatureClipAbility();
+	await registerBrowserRenderCanvasVideoAbility();
 
 	return {
 		agentId: ORCHESTRATOR_AGENT_ID,

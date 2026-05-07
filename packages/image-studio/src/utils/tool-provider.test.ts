@@ -3,7 +3,7 @@
  */
 import { getAbilities, executeAbility } from '@wordpress/abilities';
 import {
-	registerComposeFeatureClipAbility,
+	registerBrowserRenderCanvasVideoAbility,
 	registerUpdateCanvasImageAbility,
 	registerUpdateCanvasVideoAbility,
 } from '../abilities';
@@ -25,7 +25,7 @@ jest.mock( '@wordpress/abilities', () => ( {
 jest.mock( '../abilities', () => ( {
 	registerUpdateCanvasImageAbility: jest.fn(),
 	registerUpdateCanvasVideoAbility: jest.fn(),
-	registerComposeFeatureClipAbility: jest.fn(),
+	registerBrowserRenderCanvasVideoAbility: jest.fn(),
 } ) );
 
 // Mock console methods
@@ -48,7 +48,7 @@ describe( 'Tool Provider', () => {
 				'image-studio/update-canvas-image',
 				'image-studio/update-canvas-video',
 				'image-studio/render-images',
-				'image-studio/compose-feature-clip',
+				'image-studio/browser-render-canvas-video',
 			] );
 		} );
 	} );
@@ -59,7 +59,7 @@ describe( 'Tool Provider', () => {
 
 			expect( registerUpdateCanvasImageAbility ).toHaveBeenCalledTimes( 1 );
 			expect( registerUpdateCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
-			expect( registerComposeFeatureClipAbility ).toHaveBeenCalledTimes( 1 );
+			expect( registerBrowserRenderCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
 			expect( consoleLogSpy ).toHaveBeenCalledWith( '[Image Studio] Abilities registered' );
 
 			// Call again - should not register again
@@ -68,7 +68,7 @@ describe( 'Tool Provider', () => {
 
 			expect( registerUpdateCanvasImageAbility ).toHaveBeenCalledTimes( 1 );
 			expect( registerUpdateCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
-			expect( registerComposeFeatureClipAbility ).toHaveBeenCalledTimes( 1 );
+			expect( registerBrowserRenderCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 

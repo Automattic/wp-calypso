@@ -8,7 +8,7 @@
  */
 import { getAbilities, executeAbility } from '@wordpress/abilities';
 import {
-	registerComposeFeatureClipAbility,
+	registerBrowserRenderCanvasVideoAbility,
 	registerUpdateCanvasImageAbility,
 	registerUpdateCanvasVideoAbility,
 } from '../abilities';
@@ -18,7 +18,7 @@ export const ALLOWED_ABILITIES = [
 	'image-studio/update-canvas-image',
 	'image-studio/update-canvas-video',
 	'image-studio/render-images',
-	'image-studio/compose-feature-clip',
+	'image-studio/browser-render-canvas-video',
 ];
 
 let isInitialized = false;
@@ -30,7 +30,7 @@ export async function initializeAbilities(): Promise< void > {
 
 	await registerUpdateCanvasImageAbility();
 	await registerUpdateCanvasVideoAbility();
-	await registerComposeFeatureClipAbility();
+	await registerBrowserRenderCanvasVideoAbility();
 	isInitialized = true;
 
 	window.console?.log?.( '[Image Studio] Abilities registered' );
