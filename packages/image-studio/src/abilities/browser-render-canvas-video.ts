@@ -176,7 +176,34 @@ export async function registerBrowserRenderCanvasVideoAbility(): Promise< void >
 				required: [ 'brief' ],
 			},
 			callback: async ( input: BrowserRenderCanvasVideoInput ) => {
+				// One-shot diagnostic: shows what the LLM actually passed for
+				// this tool call. Critical for debugging audio bed loss — if
+				// `inputKeys` is missing `brief` or the brief is missing
+				// `audioBedUrl`, we know whether the LLM dropped it or
+				// extractBrief stripped it.
+				const inputKeys = input && typeof input === 'object' ? Object.keys( input ) : [];
+				const briefKeys =
+					input?.brief && typeof input.brief === 'object'
+						? Object.keys( input.brief )
+						: 'no-brief-key';
+				// eslint-disable-next-line no-console
+				console.log( '[browser-render-canvas-video] callback input', {
+					inputKeys,
+					briefKeys,
+					hasAudioBedUrl: !! input?.brief?.audioBedUrl || !! input?.audioBedUrl,
+					audioBedUrlPrefix: ( input?.brief?.audioBedUrl ?? input?.audioBedUrl ?? '' ).slice(
+						0,
+						80
+					),
+				} );
+
 				const brief = extractBrief( input );
+				// eslint-disable-next-line no-console
+				console.log( '[browser-render-canvas-video] extracted brief', {
+					briefKeys: Object.keys( brief as unknown as Record< string, unknown > ),
+					hasAudioBedUrl: !! brief.audioBedUrl,
+					audioBedUrlPrefix: ( brief.audioBedUrl ?? '' ).slice( 0, 80 ),
+				} );
 
 				const requestId =
 					typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'

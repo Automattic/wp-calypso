@@ -16,9 +16,17 @@ import { uploadFeatureClipBlob } from './upload-feature-clip';
 import type { FeatureClipBrief } from './types';
 
 const RENDER_OPTIONS = {
-	fps: 30,
+	// 24fps instead of 30fps — short-form vertical content reads fine at film
+	// rate, and cutting fps by 20% drops per-frame render work (DOM→SVG
+	// snapshot, image decode, canvas draw) by the same amount. Helps the
+	// modal's CSS animations stay smooth during render by easing main-thread
+	// saturation.
+	fps: 24,
 	codec: 'avc' as const,
-	bitrate: 7_000_000,
+	// 2.5 Mbps is more than sufficient for 9:16 1080×1920 short-form content
+	// (Instagram Reels are encoded around this rate). 7 Mbps was creating
+	// 16 MB outputs that took ~33s to upload to the media library.
+	bitrate: 2_500_000,
 	includeAudio: true,
 	audioBitrate: 160_000,
 	contentReadyMode: 'blocking' as const,
@@ -70,14 +78,29 @@ async function prefetchAudioBed( audioBedUrl: string | undefined ): Promise< voi
 	};
 	slotted.__featureClipAudioBuffer = null;
 	if ( ! audioBedUrl ) {
+		// eslint-disable-next-line no-console
+		console.warn( '[FeatureClipRenderHost] no audioBedUrl in brief — synth fallback will run' );
 		return;
 	}
+	// eslint-disable-next-line no-console
+	console.log( '[FeatureClipRenderHost] audio_bed_fetch_start', {
+		urlPrefix: audioBedUrl.slice( 0, 80 ),
+		isDataUrl: audioBedUrl.startsWith( 'data:' ),
+	} );
 	try {
+		const fetchStart = performance.now();
 		const response = await fetch( audioBedUrl );
+		const fetchMs = Math.round( performance.now() - fetchStart );
 		if ( ! response.ok ) {
 			throw new Error( `Audio bed fetch returned ${ response.status }` );
 		}
 		const arrayBuffer = await response.arrayBuffer();
+		// eslint-disable-next-line no-console
+		console.log( '[FeatureClipRenderHost] audio_bed_fetched', {
+			fetchMs,
+			bytes: arrayBuffer.byteLength,
+			contentType: response.headers.get( 'content-type' ),
+		} );
 		const AudioContextCtor =
 			( window as unknown as { AudioContext?: typeof AudioContext } ).AudioContext ??
 			(
@@ -90,10 +113,12 @@ async function prefetchAudioBed( audioBedUrl: string | undefined ): Promise< voi
 		}
 		const ctx = new AudioContextCtor();
 		try {
+			const decodeStart = performance.now();
 			const decoded = await ctx.decodeAudioData( arrayBuffer );
 			slotted.__featureClipAudioBuffer = decoded;
 			// eslint-disable-next-line no-console
 			console.log( '[FeatureClipRenderHost] audio_bed_decoded', {
+				decodeMs: Math.round( performance.now() - decodeStart ),
 				durationSeconds: decoded.duration,
 				sampleRate: decoded.sampleRate,
 				channels: decoded.numberOfChannels,
@@ -105,6 +130,7 @@ async function prefetchAudioBed( audioBedUrl: string | undefined ): Promise< voi
 		// eslint-disable-next-line no-console
 		console.warn( '[FeatureClipRenderHost] audio_bed_decode_failed', {
 			message: error instanceof Error ? error.message : String( error ),
+			urlPrefix: audioBedUrl.slice( 0, 80 ),
 		} );
 	}
 }

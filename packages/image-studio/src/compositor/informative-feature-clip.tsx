@@ -420,6 +420,7 @@ function installAudioBed(
 	mood: 'contemplative' | 'energetic'
 ) {
 	const profile = MOOD_PROFILES[ mood ];
+	let firstRenderAudioLogged = false;
 
 	timegroup.renderAudio = async ( fromMs, toMs, signal ) => {
 		signal?.throwIfAborted();
@@ -435,6 +436,15 @@ function installAudioBed(
 		// to take down the whole MP4 render — drop to synth instead.
 		const lyriaBuffer = ( window as unknown as { __featureClipAudioBuffer?: AudioBuffer | null } )
 			.__featureClipAudioBuffer;
+		if ( ! firstRenderAudioLogged ) {
+			firstRenderAudioLogged = true;
+			// eslint-disable-next-line no-console
+			console.log( '[FeatureClip] first renderAudio call', {
+				usingLyria: !! lyriaBuffer,
+				lyriaDurationS: lyriaBuffer?.duration ?? null,
+				mood,
+			} );
+		}
 		if ( lyriaBuffer ) {
 			try {
 				return sliceAudioBuffer( lyriaBuffer, fromMs, toMs, sampleRate );
@@ -490,13 +500,8 @@ function installAudioBed(
 				if ( slotPlays ) {
 					const noteIdx = Math.floor( slotRandom( slot * 31 + 7 ) * profile.melodyScale.length );
 					const noteFreq = profile.melodyScale[ noteIdx ];
-					// Bell-like: fast attack, exponential decay.
 					const env = slotPhase < 0.05 ? slotPhase / 0.05 : Math.exp( -( slotPhase - 0.05 ) * 4.5 );
-					melody =
-						( Math.sin( 2 * Math.PI * noteFreq * t ) * 0.7 +
-							Math.sin( 2 * Math.PI * noteFreq * 2 * t ) * 0.25 ) *
-						env *
-						profile.melodyAmp;
+					melody = Math.sin( 2 * Math.PI * noteFreq * t ) * env * profile.melodyAmp;
 				}
 
 				// Kick: 8-step pattern, pattern rotates every 4 bars (32 steps).
