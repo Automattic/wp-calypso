@@ -161,34 +161,24 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 		};
 	}, [ flagKey, isForced ] );
 
-	// Compute per-rule trace (qualification + experiment hash/score/bucket)
-	// and log it to console so devs can see exactly *why* the engine returned
-	// what it did.
-	const flagInfoForLog = exPlatDevtools.getFlagInfo( flagKey );
+	const flagInfo = exPlatDevtools.getFlagInfo( flagKey );
+
+	// Walk rules in order, mirroring `evalFeature`, and log per-rule
+	// qualification + experiment hash/score/bucket so devs can see exactly
+	// *why* the engine returned what it did. As soon as one rule resolves
+	// naturally, every subsequent rule is `not_reached`.
 	useEffect( () => {
-		if ( ! flagInfoForLog || ! attributes ) {
+		if ( ! flagInfo || ! attributes ) {
 			return;
 		}
 		const raw = exPlatDevtools.getRawFeature( flagKey ) as RawFeature | null;
 		const rawRules: RawRule[] = Array.isArray( raw?.rules ) ? raw?.rules ?? [] : [];
 
-		// Walk the rules in order, mirroring `evalFeature`. As soon as one
-		// resolves naturally, every subsequent rule is `not_reached`. This makes
-		// it obvious in the console which rules the engine actually inspected.
 		let resolved = false;
-		const ruleTrace = flagInfoForLog.rules.map( ( rule ) => {
-			const conditionMatches =
-				rule.condition === null || rule.condition === undefined
-					? true
-					: ExPlatSdk.evalCondition( attributes, rule.condition as ExPlatSdk.Condition );
-			const naturallyMatched =
-				preview !== null &&
-				( ( preview.source === 'experiment' &&
-					rule.type === 'experiment' &&
-					rule.experimentId === preview.experiment_id ) ||
-					( preview.source === 'force' &&
-						rule.type === 'force' &&
-						JSON.stringify( rule.value ) === JSON.stringify( preview.value ) ) );
+		const ruleTrace = flagInfo.rules.map( ( rule ) => {
+			// `attributes` is non-null here (early-return above), so this is `boolean`.
+			const conditionMatches = ruleQualifies( rule, attributes ) as boolean;
+			const naturallyMatched = isMatchedRule( rule, preview );
 
 			const processed = ! resolved;
 
@@ -276,7 +266,7 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 			};
 		} );
 
-		const naturalValue = preview?.value ?? flagInfoForLog.defaultValue;
+		const naturalValue = preview?.value ?? flagInfo.defaultValue;
 		const naturalSource = preview?.source ?? 'default';
 		// eslint-disable-next-line no-console
 		console.log( `[ExPlat] ${ flagKey } rule trace`, {
@@ -298,9 +288,8 @@ export default function FlagRow( { flagKey, forcedValue, isForced }: Props ) {
 				source: isForced ? 'override' : naturalSource,
 			},
 		} );
-	}, [ flagKey, preview, attributes, flagInfoForLog, isForced, forcedValue ] );
+	}, [ flagKey, preview, attributes, flagInfo, isForced, forcedValue ] );
 
-	const flagInfo = exPlatDevtools.getFlagInfo( flagKey );
 	const previewValue = preview?.value;
 
 	// Build radio options:

@@ -1,5 +1,5 @@
-import { installDevtoolsWindow } from './internal/devtools-window';
-import { createEvalLog, type EvalLog } from './internal/eval-log';
+import { installDevtoolsWindow, type DevtoolsSurface } from './internal/devtools-window';
+import { createEvalLog } from './internal/eval-log';
 import {
 	retrieveExperimentAssignment,
 	storeExperimentAssignment,
@@ -8,7 +8,7 @@ import {
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
 import { createFlagPayloadLoader } from './internal/flag-payload';
-import { createForcedFeatures, type ForcedFeatures } from './internal/forced-features';
+import { createForcedFeatures } from './internal/forced-features';
 import * as Request from './internal/requests';
 import { createExPlatRuntimeReader } from './internal/runtime';
 import * as Timing from './internal/timing';
@@ -23,97 +23,7 @@ import type { ExperimentAssignment, Config, FeatureAssignmentBeacon } from './ty
  */
 const EVAL_LOG_CAPACITY = 200;
 
-export interface ExPlatDevtools {
-	forcedFeatures: ForcedFeatures;
-	evalLog: EvalLog;
-	/**
-	 * Flag keys present in the most recently fetched payload. Empty array
-	 * before the first successful fetch.
-	 */
-	getKnownFlags: () => string[];
-	/**
-	 * Variation values defined for `flagKey` in the most recently fetched
-	 * payload. Empty array if the flag is unknown or no payload is cached.
-	 * Phase 1 dropdowns can use this to *suggest* values; the override store
-	 * itself accepts any `FeatureValue`.
-	 */
-	getKnownVariations: ( flagKey: string ) => FeatureValue[];
-	/**
-	 * Richer per-flag metadata for UI surfaces: experiment IDs, variation
-	 * names, hash attribute, default value. Pulled from the cached payload —
-	 * empty/null fields when no payload is cached or the flag is unknown.
-	 */
-	getFlagInfo: ( flagKey: string ) => {
-		experimentId: number | null;
-		hashAttribute: string | null;
-		defaultValue: FeatureValue | null;
-		variations: Array< { name: string; value: FeatureValue; isDefault: boolean } >;
-		/**
-		 * Raw rules in payload order. The panel surfaces this so devs can see
-		 * exactly which rule resolved their value (one is highlighted as the
-		 * match) and what condition each rule has.
-		 */
-		rules: Array<
-			| {
-					index: number;
-					type: 'force';
-					value: FeatureValue;
-					condition: unknown | null;
-			  }
-			| {
-					index: number;
-					type: 'experiment';
-					experimentId: number;
-					hashAttribute: string;
-					condition: unknown | null;
-					variations: Array< { name: string; value: FeatureValue } >;
-			  }
-		>;
-	} | null;
-	/**
-	 * Evaluate `flagKey` against the live `/flags` payload as if no forced
-	 * override existed and as if the call were a render-time dry run:
-	 *  - skips the forced-features map,
-	 *  - never fires `/assignments/log`,
-	 *  - never appends to the eval log.
-	 *
-	 * Returns the {@link Result} (with `source: 'experiment' | 'force' | 'default'`),
-	 * or `null` when evaluation isn't possible (no payload, runtime blocks
-	 * evaluation, fetch hasn't happened yet, flag unknown). The dev panel
-	 * uses this to display "the variation you'd land in if you weren't
-	 * forcing one."
-	 */
-	previewFeatureValue: ( flagKey: string ) => Promise< Result | null >;
-	/**
-	 * Returns the full attribute map that would be passed to `evalFeature`,
-	 * merging host-supplied local attributes with the server's
-	 * `__EXPLAT_RUNTIME__.attributes`. Surfaced for the dev panel to compute
-	 * "do I qualify for this rule's condition?" via `ExPlatSdk.evalCondition`
-	 * without re-routing through the full `getFeatureValue` path.
-	 *
-	 * Returns `null` when the host didn't wire `getAttributes` or evaluation
-	 * isn't possible (runtime blocks).
-	 */
-	getEvaluationAttributes: () => Promise< Attributes | null >;
-	/**
-	 * Raw `Feature` entry from the cached `/flags` payload — the exact shape
-	 * the eval engine sees, with `value_type`, `default_value`, and `rules`.
-	 * Returns `null` when no payload is cached or the flag isn't present.
-	 * Useful for the "Copy JSON" affordance in the dev panel.
-	 */
-	getRawFeature: ( flagKey: string ) => unknown | null;
-	/**
-	 * Trigger a `/flags` fetch from the dev panel without going through
-	 * `getFeatureValue`. Resolves once the SDK's flag cache has been
-	 * populated (or with an empty list on failure / when the host did not
-	 * wire `fetchFlagPayload`). Pass `{ force: true }` to bypass the TTL
-	 * cache and re-fetch.
-	 *
-	 * Used by the dev panel to populate the flag list eagerly on mount and
-	 * to back the Refresh button.
-	 */
-	loadFlags: ( options?: { force?: boolean } ) => Promise< string[] >;
-}
+export type ExPlatDevtools = DevtoolsSurface;
 
 /**
  * The number of milliseconds before we abandon fetching an experiment
@@ -433,18 +343,20 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		}
 	};
 
+	const devtools: DevtoolsSurface = {
+		forcedFeatures,
+		evalLog,
+		getKnownFlags,
+		getKnownVariations,
+		getFlagInfo,
+		getRawFeature,
+		previewFeatureValue,
+		getEvaluationAttributes,
+		loadFlags,
+	};
+
 	installDevtoolsWindow( {
-		devtools: {
-			forcedFeatures,
-			evalLog,
-			getKnownFlags,
-			getKnownVariations,
-			getFlagInfo,
-			getRawFeature,
-			previewFeatureValue,
-			getEvaluationAttributes,
-			loadFlags,
-		},
+		devtools,
 		isDevelopmentMode: config.isDevelopmentMode,
 		getRuntimeMode: () => getExPlatRuntime().mode,
 	} );
@@ -635,10 +547,6 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				}
 
 				const { result, localAttributes } = evaluated;
-				const mergedAttributes = {
-					...localAttributes,
-					...runtime.attributes,
-				};
 
 				evalLog.record( {
 					flag_key: flagKey,
@@ -648,29 +556,30 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					attributes: localAttributes,
 				} );
 
-				const baseLogPayload = {
-					flag_key: flagKey,
-					default_value: defaultValue,
-					resolved_value: result.value,
-					source: result.source,
-					attributes: mergedAttributes,
-					local_attributes: localAttributes,
-					runtime_mode: runtime.mode,
-					runtime_attributes: runtime.attributes,
-				};
-
-				if ( result.source === 'experiment' ) {
-					debug( `${ flagKey } → experiment`, {
-						...baseLogPayload,
-						experiment_id: result.experiment_id,
-						experiment_variation_id: result.experiment_variation_id,
-						hash_attribute: result.hash_attribute,
-						hash_value: result.hash_value,
-					} );
-				} else if ( result.source === 'force' ) {
-					debug( `${ flagKey } → force rule`, baseLogPayload );
-				} else {
-					debug( `${ flagKey } → default`, baseLogPayload );
+				if ( debugEnabled() ) {
+					const baseLogPayload = {
+						flag_key: flagKey,
+						default_value: defaultValue,
+						resolved_value: result.value,
+						source: result.source,
+						attributes: { ...localAttributes, ...runtime.attributes },
+						local_attributes: localAttributes,
+						runtime_mode: runtime.mode,
+						runtime_attributes: runtime.attributes,
+					};
+					if ( result.source === 'experiment' ) {
+						debug( `${ flagKey } → experiment`, {
+							...baseLogPayload,
+							experiment_id: result.experiment_id,
+							experiment_variation_id: result.experiment_variation_id,
+							hash_attribute: result.hash_attribute,
+							hash_value: result.hash_value,
+						} );
+					} else if ( result.source === 'force' ) {
+						debug( `${ flagKey } → force rule`, baseLogPayload );
+					} else {
+						debug( `${ flagKey } → default`, baseLogPayload );
+					}
 				}
 
 				if (
@@ -726,17 +635,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return createFallbackExperimentAssignment( experimentName );
 			}
 		},
-		devtools: {
-			forcedFeatures,
-			evalLog,
-			getKnownFlags,
-			getKnownVariations,
-			getFlagInfo,
-			getRawFeature,
-			previewFeatureValue,
-			getEvaluationAttributes,
-			loadFlags,
-		},
+		devtools,
 		config,
 	};
 }

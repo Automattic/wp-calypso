@@ -27,15 +27,62 @@ export type FlagInfo = {
 	rules: FlagInfoRule[];
 };
 
+/**
+ * Dev / manual-testing surface exposed on the client as `client.devtools`
+ * and (when gated allows) on `window.__EXPLAT__`. Always present on the
+ * client object regardless of mode.
+ */
 export type DevtoolsSurface = {
+	/** Set/clear overrides applied before any fetch/eval. */
 	forcedFeatures: ForcedFeatures;
+	/** Last N evaluations of `getFeatureValue`. */
 	evalLog: EvalLog;
+	/**
+	 * Flag keys present in the most recently fetched payload. Empty array
+	 * before the first successful fetch.
+	 */
 	getKnownFlags: () => string[];
+	/**
+	 * Variation values defined for `flagKey` in the most recently fetched
+	 * payload. Empty array if the flag is unknown or no payload is cached.
+	 * Phase 1 dropdowns can use this to *suggest* values; the override store
+	 * itself accepts any `FeatureValue`.
+	 */
 	getKnownVariations: ( flagKey: string ) => FeatureValue[];
+	/**
+	 * Richer per-flag metadata for UI surfaces: experiment IDs, variation
+	 * names, hash attribute, default value. Pulled from the cached payload —
+	 * empty/null fields when no payload is cached or the flag is unknown.
+	 */
 	getFlagInfo: ( flagKey: string ) => FlagInfo | null;
+	/**
+	 * Raw `Feature` entry from the cached `/flags` payload — the exact shape
+	 * the eval engine sees, with `value_type`, `default_value`, and `rules`.
+	 * Returns `null` when no payload is cached or the flag isn't present.
+	 */
 	getRawFeature: ( flagKey: string ) => unknown | null;
+	/**
+	 * Evaluate `flagKey` against the live `/flags` payload as if no forced
+	 * override existed and as if the call were a render-time dry run:
+	 * skips the forced-features map, never fires `/assignments/log`, never
+	 * appends to the eval log. Returns `null` when evaluation isn't possible
+	 * (no payload, runtime blocks evaluation, fetch hasn't happened yet,
+	 * flag unknown).
+	 */
 	previewFeatureValue: ( flagKey: string ) => Promise< Result | null >;
+	/**
+	 * Returns the full attribute map that would be passed to `evalFeature`,
+	 * merging host-supplied local attributes with the server's
+	 * `__EXPLAT_RUNTIME__.attributes`. Returns `null` when the host didn't
+	 * wire `getAttributes` or evaluation isn't possible (runtime blocks).
+	 */
 	getEvaluationAttributes: () => Promise< Attributes | null >;
+	/**
+	 * Trigger a `/flags` fetch without going through `getFeatureValue`.
+	 * Resolves once the SDK's flag cache has been populated (or with an
+	 * empty list on failure / when the host did not wire `fetchFlagPayload`).
+	 * Pass `{ force: true }` to bypass the TTL cache and re-fetch.
+	 */
 	loadFlags: ( options?: { force?: boolean } ) => Promise< string[] >;
 };
 

@@ -71,6 +71,9 @@ export function createForcedFeatures(): ForcedFeatures {
 		get: ( flagKey ) => ( flagKey in overrides ? overrides[ flagKey ] : undefined ),
 		has: ( flagKey ) => flagKey in overrides,
 		set: ( flagKey, value ) => {
+			if ( flagKey in overrides && overrides[ flagKey ] === value ) {
+				return;
+			}
 			overrides[ flagKey ] = value;
 			writePersisted( overrides );
 			notify( { key: flagKey } );

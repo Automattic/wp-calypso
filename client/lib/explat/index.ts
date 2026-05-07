@@ -27,29 +27,24 @@ const exPlatClientReactHelpers = createExPlatClientReactHelpers( exPlatClient );
 export const { useExperiment, Experiment, ProvideExperimentData } = exPlatClientReactHelpers;
 
 /**
- * In-process handle to the SDK's dev surface. Used by the
- * `client/lib/explat-helper` panel — gated to dev/staging via the
- * `dev/explat-helper` config flag, so production user bundles never load it.
- * For console use, prefer `window.__EXPLAT__`, which is installed by the
- * package itself with its own gating.
+ * In-process handle to the SDK's dev surface. The `client/lib/explat-helper`
+ * panel is gated to dev/staging via the `dev/explat-helper` config flag, so
+ * production user bundles never load it. For console use, prefer the
+ * package-installed `window.__EXPLAT__` (gated separately).
  */
 export const exPlatDevtools = exPlatClient.devtools;
 
 const EXTERNAL_FORCE_PREFIX = 'explat_force_';
 
 /**
- * Coerce a raw string from URL/localStorage into a `FeatureValue`. The
- * legacy reader in this file coerced based on the caller's `defaultValue`
- * type at consumption time, but the SDK's forced-features map stores values
- * once and serves all callers, so we have to pick a type at import time.
+ * Coerce a raw string from URL/localStorage into a `FeatureValue`. Unlike
+ * the per-call legacy reader that coerced based on the caller's
+ * `defaultValue`, the SDK's forced-features map stores values once and
+ * serves all callers — so we pick a type at import time.
  *
- *   - `"true"` / `"false"` → boolean
- *   - numeric string (`"0.5"`, `"-3"`) → number
- *   - everything else → string
- *
- * Edge case: a string flag whose intended forced value is literally `"true"`
- * or a numeric string will be coerced. For those, set the value through the
- * panel or `window.__EXPLAT__.setForcedFeatures(...)` instead.
+ * Edge case: a string flag whose intended forced value is literally
+ * `"true"` or a numeric string gets coerced. For those, set the value
+ * through the panel or `window.__EXPLAT__.setForcedFeatures(...)` instead.
  */
 function coerceForceValue( raw: string ): ExPlatSdk.FeatureValue {
 	if ( raw === 'true' ) {
