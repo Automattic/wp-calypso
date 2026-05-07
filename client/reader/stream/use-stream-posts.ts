@@ -38,7 +38,6 @@ export interface UseStreamPostsResult {
 	error: unknown;
 	fetchNextPage: () => void;
 	refetch: () => void;
-	removeItem: ( postKey: PostKey ) => void;
 }
 
 const postKeyId = ( postKey: PostKey | null | undefined ): string =>
@@ -76,7 +75,7 @@ export function getStreamInfiniteQueryKey( {
 }
 
 interface UseStreamPostsOptions {
-	streamKey: string;
+	streamKey?: string | null;
 	feedId?: number | null;
 	localeSlug?: string | null;
 	startDate?: string | null;
@@ -100,18 +99,18 @@ export function useStreamPosts( {
 	options,
 }: UseStreamPostsOptions ): UseStreamPostsResult {
 	const dispatch = useDispatch();
-	const streamType = getStreamType( streamKey );
-	const enabled = options?.enabled ?? true;
-
-	const [ removedIds, setRemovedIds ] = useState< Set< string > >( () => new Set() );
-	const streamIdentity = `${ streamKey }|${ feedId ?? '' }|${ localeSlug ?? '' }|${
-		startDate ?? ''
-	}`;
-
+	// `streamKey` is optional so consumers can mount the hook unconditionally
+	// (Hooks rules) even when the key is not yet known — e.g. a recommendation
+	// stream that only activates once a parent stream loads. When absent we
+	// short-circuit `enabled` so the query never fires; the placeholder empty
+	// string in `queryKey` / `streamType` is never observed.
+	const resolvedStreamKey = streamKey ?? '';
+	const streamType = resolvedStreamKey ? getStreamType( resolvedStreamKey ) : '';
+	const enabled = ( options?.enabled ?? true ) && !! streamKey;
 	const buildPageParams = useCallback(
 		( pageHandle: PageHandle ): ReadStreamQueryParams =>
 			buildStreamQueryParams( {
-				streamKey,
+				streamKey: resolvedStreamKey,
 				feedId,
 				pageHandle,
 				localeSlug,
@@ -120,7 +119,7 @@ export function useStreamPosts( {
 				page: undefined,
 				perPage: undefined,
 			} ) as ReadStreamQueryParams,
-		[ streamKey, feedId, localeSlug ]
+		[ resolvedStreamKey, feedId, localeSlug ]
 	);
 
 	const queryOptions = useMemo(
@@ -133,12 +132,13 @@ export function useStreamPosts( {
 				PageHandle
 			>( {
 				queryKey: getStreamInfiniteQueryKey( {
-					streamKey,
+					streamKey: resolvedStreamKey,
 					feedId,
 					localeSlug,
 					startDate,
 				} ),
-				queryFn: ( { pageParam } ) => fetchReadStream( streamKey, buildPageParams( pageParam ) ),
+				queryFn: ( { pageParam } ) =>
+					fetchReadStream( resolvedStreamKey, buildPageParams( pageParam ) ),
 				initialPageParam: startDate ? { before: startDate } : null,
 				enabled,
 				getNextPageParam: ( lastPage, _allPages, lastPageParam ) => {
@@ -175,47 +175,23 @@ export function useStreamPosts( {
 				placeholderData: keepPreviousData,
 				refetchOnWindowFocus: false,
 			} ),
-		[ streamKey, feedId, localeSlug, startDate, enabled, streamType, buildPageParams ]
+		[ resolvedStreamKey, feedId, localeSlug, startDate, enabled, streamType, buildPageParams ]
 	);
 
 	const query = useInfiniteQuery( queryOptions );
 
-	// Populate `state.reader.posts` so `<PostLifecycle>` and other consumers
-	// can resolve post bodies by key. Only dispatch newly-loaded pages.
-	const lastDispatchedRef = useRef< { streamKey: string; pages: ReadStreamResponse[] } >( {
-		streamKey,
-		pages: [],
-	} );
 	useEffect( () => {
 		const pages = query.data?.pages;
-		if ( ! pages || pages.length === 0 ) {
+		if ( ! pages ) {
 			return;
 		}
-		if ( lastDispatchedRef.current.streamKey !== streamKey ) {
-			lastDispatchedRef.current = { streamKey, pages: [] };
-		}
-		const previouslyDispatchedPages = lastDispatchedRef.current.pages;
 		for ( let i = 0; i < pages.length; i++ ) {
-			if ( previouslyDispatchedPages[ i ] === pages[ i ] ) {
-				continue;
-			}
 			const { streamPosts } = normalizeStreamPage( pages[ i ], streamType );
 			if ( streamPosts.length > 0 ) {
 				dispatch( receivePosts( streamPosts ) );
 			}
 		}
-		lastDispatchedRef.current = { streamKey, pages };
-	}, [ streamKey, streamType, query.data, dispatch ] );
-
-	// Reset local per-instance state when the stream identity changes.
-	const previousStreamIdentityRef = useRef( streamIdentity );
-	useEffect( () => {
-		if ( previousStreamIdentityRef.current === streamIdentity ) {
-			return;
-		}
-		previousStreamIdentityRef.current = streamIdentity;
-		setRemovedIds( new Set() );
-	}, [ streamIdentity ] );
+	}, [ resolvedStreamKey, streamType, query.data, dispatch ] );
 
 	const items: PostKey[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];
@@ -227,19 +203,8 @@ export function useStreamPosts( {
 			}
 		}
 		const combined = combineXPosts( collected ) as PostKey[];
-		if ( removedIds.size === 0 ) {
-			return combined;
-		}
-		return combined.filter( ( item ) => ! removedIds.has( postKeyId( item ) ) );
-	}, [ query.data, streamType, removedIds ] );
-
-	const removeItem = useCallback( ( postKey: PostKey ) => {
-		setRemovedIds( ( previous ) => {
-			const next = new Set( previous );
-			next.add( postKeyId( postKey ) );
-			return next;
-		} );
-	}, [] );
+		return combined;
+	}, [ query.data, streamType ] );
 
 	const fetchNextPage = useCallback( () => {
 		query.fetchNextPage();
@@ -260,6 +225,5 @@ export function useStreamPosts( {
 		error: query.error,
 		fetchNextPage,
 		refetch,
-		removeItem,
 	};
 }

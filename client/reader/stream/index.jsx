@@ -29,6 +29,7 @@ import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
@@ -42,8 +43,8 @@ import {
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
 import {
 	getStream,
-	getTransformedStreamItems,
-	shouldRequestRecs,
+	// getTransformedStreamItems,
+	// shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -57,7 +58,13 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-
+import { useStreamPosts } from './use-stream-posts';
+import {
+	getDistanceBetweenPrompts,
+	getDistanceBetweenRecs,
+	injectPrompts,
+	injectRecommendations,
+} from './utils';
 // minimal size for the two-column layout to show without cut off
 // 64 is padding, 8 is margin
 export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
@@ -94,6 +101,9 @@ class ReaderStream extends Component {
 		isLoggedIn: PropTypes.bool,
 		wideLayout: PropTypes.bool,
 		showBylineSecondarySiteLink: PropTypes.bool,
+		followsCount: PropTypes.number,
+		streamPostsQuery: PropTypes.object,
+		recsStreamPostsQuery: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -144,11 +154,9 @@ class ReaderStream extends Component {
 		if ( selectedFeedId !== this.props.selectedFeedId ) {
 			this.scrollFeedListToTop();
 			this.props.clearStream( { streamKey } );
-			this.fetchNextPage( {}, { ...this.props, stream: null } ); // Stream as null to start fresh pagination.
 		} else if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
 			this.props.viewStream( streamKey, window.location.pathname );
-			this.fetchNextPage( {} );
 		}
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
@@ -162,18 +170,19 @@ class ReaderStream extends Component {
 			this.focusSelectedPost( this.props.selectedPostKey );
 		}
 
-		if ( this.props.shouldRequestRecs ) {
-			this.props.requestPage( {
-				streamKey: this.props.recsStreamKey,
-				feedId: this.props.selectedFeedId,
-				pageHandle: this.props.recsStream.pageHandle,
-				localeSlug: this.props.localeSlug,
-			} );
-		}
+		// React Query migration: recommendation pages are fetched by `withStreamPosts`.
+		// if ( this.props.shouldRequestRecs ) {
+		// 	this.props.requestPage( {
+		// 		streamKey: this.props.recsStreamKey,
+		// 		feedId: this.props.selectedFeedId,
+		// 		pageHandle: this.props.recsStream.pageHandle,
+		// 		localeSlug: this.props.localeSlug,
+		// 	} );
+		// }
 	}
 	tryAgain = () => {
 		this.props.clearStream( { streamKey: this.props.streamKey } );
-		this.fetchNextPage( {} );
+		this.props.streamPostsQuery.refetch();
 	};
 
 	focusSelectedPost = ( selectedPostKey ) => {
@@ -232,7 +241,6 @@ class ReaderStream extends Component {
 		const { streamKey } = this.props;
 		this.props.resetCardExpansions();
 		this.props.viewStream( streamKey, window.location.pathname );
-		this.fetchNextPage( {} );
 		this.isMounted = true;
 
 		window.addEventListener( 'popstate', this._popstate );
@@ -395,10 +403,7 @@ class ReaderStream extends Component {
 	selectNextItem = () => {
 		// note that we grab the items directly from the stream because we don't want the transformed
 		// one with combined cards
-		const {
-			streamKey,
-			stream: { items },
-		} = this.props;
+		const { streamKey, items } = this.props;
 
 		// This should already be false but this is a safety.
 		this.wasSelectedByOpeningPost = false;
@@ -452,11 +457,7 @@ class ReaderStream extends Component {
 	selectPrevItem = () => {
 		// note that we grab the items directly from the stream because we don't want the transformed
 		// one with combined cards
-		const {
-			streamKey,
-			selectedPostKey,
-			stream: { items },
-		} = this.props;
+		const { streamKey, selectedPostKey, items } = this.props;
 
 		// This should already be false but this is a safety.
 		this.wasSelectedByOpeningPost = false;
@@ -493,15 +494,14 @@ class ReaderStream extends Component {
 			return;
 		}
 
-		const { streamKey, stream, startDate, localeSlug, selectedFeedId } = props;
+		const { streamKey, streamPostsQuery } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
 
 			props.trackScrollPage( pageId );
 		}
-		const pageHandle = stream ? this.getPageHandle( stream.pageHandle, startDate ) : null;
-		props.requestPage( { feedId: selectedFeedId, streamKey, pageHandle, localeSlug } );
+		streamPostsQuery.fetchNextPage();
 	};
 
 	isLoginPromptVisible = () => {
@@ -689,6 +689,7 @@ class ReaderStream extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
 				<InfiniteList
+					key={ this.props.streamKey }
 					ref={ this.setListContext }
 					items={ items }
 					lastPage={ lastPage }
@@ -818,8 +819,58 @@ function getStreamKey( state, streamKey ) {
 	return streamKey;
 }
 
+const withStreamPosts = ( WrappedComponent ) =>
+	function StreamPostsContainer( props ) {
+		const streamPostsQuery = useStreamPosts( {
+			streamKey: props.streamKey,
+			feedId: props.selectedFeedId,
+			localeSlug: props.localeSlug,
+			startDate: props.startDate,
+			options: {
+				enabled: ! props.forcePlaceholders,
+			},
+		} );
+
+		const recsStreamPostsQuery = useStreamPosts( {
+			streamKey: props.recsStreamKey,
+			localeSlug: props.localeSlug,
+			options: {
+				enabled: ! props.forcePlaceholders && streamPostsQuery.items.length > 0,
+			},
+		} );
+		const items = React.useMemo( () => {
+			const withRecommendations =
+				props.recsStreamKey && recsStreamPostsQuery.items.length > 0
+					? injectRecommendations(
+							streamPostsQuery.items,
+							recsStreamPostsQuery.items,
+							getDistanceBetweenRecs( props.followsCount )
+					  )
+					: streamPostsQuery.items;
+
+			return injectPrompts( withRecommendations, getDistanceBetweenPrompts( props.followsCount ) );
+		}, [
+			props.followsCount,
+			props.recsStreamKey,
+			recsStreamPostsQuery.items,
+			streamPostsQuery.items,
+		] );
+
+		return (
+			<WrappedComponent
+				{ ...props }
+				items={ items }
+				lastPage={ streamPostsQuery.lastPage }
+				isRequesting={ streamPostsQuery.isLoading || streamPostsQuery.isFetchingNextPage }
+				error={ streamPostsQuery.error }
+				streamPostsQuery={ streamPostsQuery }
+				recsStreamPostsQuery={ recsStreamPostsQuery }
+			/>
+		);
+	};
+
 export default connect(
-	( state, { streamKey: tempStreamKey, recsStreamKey } ) => {
+	( state, { streamKey: tempStreamKey } ) => {
 		const streamKey = getStreamKey( state, tempStreamKey );
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
@@ -832,22 +883,30 @@ export default connect(
 
 		return {
 			blockedSites: getBlockedSites( state ),
-			items: getTransformedStreamItems( state, {
-				streamKey,
-				recsStreamKey,
-			} ),
+			// React Query migration: `withStreamPosts` now injects `items`.
+			// items: getTransformedStreamItems( state, {
+			// 	streamKey,
+			// 	recsStreamKey,
+			// } ),
 			notificationsOpen: isNotificationsOpen( state ),
+			// React Query migration: keep only while selection reads `stream.selected`.
 			stream,
 			streamKey,
-			recsStream: getStream( state, recsStreamKey ),
+			// React Query migration: recommendations now come from a second `useStreamPosts` call.
+			// recsStream: getStream( state, recsStreamKey ),
 			selectedFeedId: getSelectedRecentFeedId( state ),
 			selectedPostKey: stream.selected,
 			selectedPost,
-			lastPage: stream.lastPage,
-			isRequesting: stream.isRequesting,
-			error: stream.error,
-			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
+			// React Query migration: `withStreamPosts` now injects `lastPage`.
+			// lastPage: stream.lastPage,
+			// React Query migration: `withStreamPosts` now injects `isRequesting`.
+			// isRequesting: stream.isRequesting,
+			// React Query migration: `withStreamPosts` now injects `error`.
+			// error: stream.error,
+			// React Query migration: recommendations fetch gating moved into the HOC.
+			// shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
+			followsCount: getReaderFollowsCount( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
 			isLoggedIn,
@@ -858,12 +917,14 @@ export default connect(
 		resetCardExpansions,
 		likePost,
 		unlikePost,
+		// React Query migration: replace page requests with `streamPostsQuery.fetchNextPage`.
 		requestPage,
 		selectItem,
 		selectNextItem,
 		selectPrevItem,
 		showSelectedPost,
+		// React Query migration: update-notice handling still depends on Redux pending items.
 		showUpdates,
 		viewStream,
 	}
-)( localize( withDimensions( ReaderStream ) ) );
+)( localize( withDimensions( withStreamPosts( ReaderStream ) ) ) );

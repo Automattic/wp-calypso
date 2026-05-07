@@ -171,69 +171,6 @@ describe( 'useStreamPosts — fetching', () => {
 	} );
 } );
 
-describe( 'useStreamPosts — removeItem', () => {
-	it( 'filters the post out of the items list', async () => {
-		nock( BASE )
-			.get( LIKES_PATH )
-			.query( true )
-			.reply( 200, {
-				posts: [ apiPost( 1 ), apiPost( 2 ) ],
-				date_range: { after: null, before: null },
-			} );
-
-		const queryClient = makeQueryClient();
-		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useStreamPosts( { streamKey: 'likes' } ), {
-			wrapper: Wrapper,
-		} );
-		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
-
-		act( () => {
-			result.current.removeItem( result.current.items[ 0 ] );
-		} );
-
-		expect( result.current.items ).toHaveLength( 1 );
-		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 2 ) );
-	} );
-} );
-
-describe( 'useStreamPosts — streamKey change', () => {
-	it( 'resets removed state when the streamKey changes', async () => {
-		nock( BASE )
-			.get( LIKES_PATH )
-			.query( true )
-			.reply( 200, {
-				posts: [ apiPost( 1 ), apiPost( 2 ) ],
-				date_range: { after: null, before: null },
-			} );
-		nock( BASE )
-			.get( '/rest/v1.2/read/following' )
-			.query( true )
-			.reply( 200, {
-				posts: [ apiPost( 99 ) ],
-				date_range: { after: null, before: null },
-			} );
-
-		const queryClient = makeQueryClient();
-		const { Wrapper } = makeWrapper( queryClient );
-		const { result, rerender } = renderHook(
-			( { streamKey }: { streamKey: string } ) => useStreamPosts( { streamKey } ),
-			{ wrapper: Wrapper, initialProps: { streamKey: 'likes' } }
-		);
-
-		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
-		act( () => {
-			result.current.removeItem( result.current.items[ 1 ] );
-		} );
-		expect( result.current.items ).toHaveLength( 1 );
-
-		rerender( { streamKey: 'following' } );
-
-		await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 99 ) ) );
-		expect( result.current.items ).toHaveLength( 1 );
-	} );
-} );
-
 describe( 'useStreamPosts — keepPreviousData', () => {
 	it( 'keeps the previous stream items on screen while the new query loads', async () => {
 		nock( BASE )

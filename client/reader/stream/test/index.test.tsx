@@ -8,7 +8,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
-import { Stream } from '../index';
+import Stream from '../index';
 import type { ReactNode } from 'react';
 
 jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
@@ -66,28 +66,30 @@ jest.mock(
 			return <div data-testid="reader-main">{ children }</div>;
 		}
 );
+jest.mock( 'calypso/lib/with-dimensions', () => ( Component: React.ComponentType ) => Component );
 jest.mock( 'calypso/components/infinite-list', () => {
 	const ReactLib = require( 'react' );
-	return ReactLib.forwardRef( function InfiniteList(
-		props: {
-			items: Array< { postId: number } >;
-			fetchingNextPage?: boolean;
-			renderItem: ( postKey: { postId: number }, idx: number ) => ReactNode;
-			renderLoadingPlaceholders?: () => ReactNode;
-		},
-		_ref: unknown
-	) {
-		void _ref;
-		const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders } = props;
-		const showPlaceholders = items.length === 0 && fetchingNextPage;
-		return (
-			<div data-testid="infinite-list">
-				{ showPlaceholders
-					? renderLoadingPlaceholders?.()
-					: items.map( ( item, idx ) => <div key={ idx }>{ renderItem( item, idx ) }</div> ) }
-			</div>
-		);
-	} );
+	return class InfiniteList extends ReactLib.Component< {
+		items: Array< { postId: number } >;
+		fetchingNextPage?: boolean;
+		renderItem: ( postKey: { postId: number }, idx: number ) => ReactNode;
+		renderLoadingPlaceholders?: () => ReactNode;
+	} > {
+		scrollToTop = jest.fn();
+		getVisibleItemIndexes = jest.fn( () => [] );
+
+		render() {
+			const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders } = this.props;
+			const showPlaceholders = items.length === 0 && fetchingNextPage;
+			return (
+				<div data-testid="infinite-list" style={ { overflowY: 'auto' } }>
+					{ showPlaceholders
+						? renderLoadingPlaceholders?.()
+						: items.map( ( item, idx ) => <div key={ idx }>{ renderItem( item, idx ) }</div> ) }
+				</div>
+			);
+		}
+	};
 } );
 jest.mock( '@automattic/calypso-router', () => {
 	const replace = jest.fn();
@@ -154,6 +156,7 @@ function makeQueryClient() {
 
 const baseState = {
 	ui: { language: { localeSlug: 'en' }, isNotificationsOpen: false },
+	documentHead: { unreadCount: 0 },
 	currentUser: { id: 1, user: { ID: 1, primary_blog: null } },
 	readerUi: { sidebar: { selectedRecentSite: null } },
 	reader: {
@@ -162,9 +165,22 @@ const baseState = {
 		siteBlocks: { items: {} },
 		sites: { items: {} },
 		posts: { items: {} },
+		streams: {},
 	},
 	posts: { likes: {} },
 };
+
+const followedFeedState = {
+	itemsCount: 1,
+	items: { 1: { feed_ID: 1, is_following: true } },
+};
+
+function samePostKey(
+	a: { blogId?: number; feedId?: number; postId?: number } | null,
+	b: { blogId?: number; feedId?: number; postId?: number } | null
+) {
+	return !! a && !! b && a.postId === b.postId && a.blogId === b.blogId && a.feedId === b.feedId;
+}
 
 function renderStream(
 	extraProps: Record< string, unknown > = {},
@@ -173,7 +189,54 @@ function renderStream(
 ) {
 	const seedState = { ...baseState, ...initialStateOverride };
 	const store = createStore(
-		( state = seedState ) => state,
+		( state = seedState, action: { type?: string; payload?: Record< string, unknown > } ) => {
+			const streamKey = ( action.payload?.streamKey as string ) || 'likes';
+			if (
+				! [
+					'READER_STREAMS_SELECT_ITEM',
+					'READER_STREAMS_SELECT_NEXT_ITEM',
+					'READER_STREAMS_SELECT_PREV_ITEM',
+				].includes( action.type ?? '' )
+			) {
+				return state;
+			}
+
+			const streams = state.reader.streams;
+			const stream = streams[ streamKey ] || {
+				items: [],
+				pendingItems: { lastUpdated: null, items: [] },
+				selected: null,
+				lastPage: false,
+				isRequesting: false,
+			};
+			const items =
+				( action.payload.items as Array< {
+					blogId?: number;
+					feedId?: number;
+					postId?: number;
+				} > ) || [];
+			const selectedIndex = items.findIndex( ( item ) => samePostKey( item, stream.selected ) );
+			let selected = stream.selected;
+			if ( action.type === 'READER_STREAMS_SELECT_ITEM' ) {
+				selected = action.payload.postKey;
+			} else if ( action.type === 'READER_STREAMS_SELECT_NEXT_ITEM' ) {
+				selected =
+					selectedIndex === items.length - 1 ? stream.selected : items[ selectedIndex + 1 ];
+			} else if ( selectedIndex !== 0 ) {
+				selected = items[ selectedIndex - 1 ];
+			}
+
+			return {
+				...state,
+				reader: {
+					...state.reader,
+					streams: {
+						...streams,
+						[ streamKey ]: { ...stream, selected },
+					},
+				},
+			};
+		},
 		seedState,
 		applyMiddleware( thunkMiddleware )
 	);
@@ -277,10 +340,7 @@ describe( 'Stream — render states', () => {
 
 	it( 'injects prompt blocks into long streams', async () => {
 		mockLikesEndpoint( Array.from( { length: 11 }, ( _, index ) => apiPost( index + 1 ) ) );
-		renderStream(
-			{},
-			{ reader: { ...baseState.reader, follows: { items: { 1: { feed_ID: 1 } } } } }
-		);
+		renderStream( {}, { reader: { ...baseState.reader, follows: followedFeedState } } );
 
 		await waitFor( () => expect( screen.getByTestId( 'post-11' ) ).toBeVisible() );
 		expect( screen.getByTestId( 'prompt-block' ) ).toBeVisible();
@@ -297,7 +357,7 @@ describe( 'Stream — render states', () => {
 			} );
 		renderStream(
 			{ recsStreamKey: 'custom_recs_posts_with_images' },
-			{ reader: { ...baseState.reader, follows: { items: { 1: { feed_ID: 1 } } } } }
+			{ reader: { ...baseState.reader, follows: followedFeedState } }
 		);
 
 		await waitFor( () => expect( screen.getByTestId( 'recommendation-block' ) ).toBeVisible() );
