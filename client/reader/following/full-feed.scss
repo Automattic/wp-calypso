@@ -1,0 +1,178 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.full-feed {
+	.full-feed__header {
+		margin: 0 auto;
+		max-width: 760px;
+		padding-inline: 16px;
+	}
+}
+
+.full-feed__header-actions {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	justify-content: flex-end;
+
+	.components-base-control,
+	.components-toggle-control {
+		margin-bottom: 0;
+	}
+}
+
+.full-feed__content {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	margin: 0 auto;
+	max-width: 760px;
+	padding: 0 16px 48px;
+	width: 100%;
+
+	@include break-small {
+		padding-inline: 24px;
+	}
+}
+
+.full-feed-post {
+	.components-card {
+		border-color: var( --color-neutral-10 );
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.04 );
+	}
+
+	.components-card__body {
+		padding: 24px;
+	}
+}
+
+.full-feed-post__header {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.full-feed-post__title {
+	font-size: 1.75rem;
+	font-weight: 500;
+	line-height: 1.25;
+	margin: 0;
+
+	a {
+		color: var( --color-text );
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var( --color-link );
+			text-decoration: underline;
+		}
+	}
+}
+
+.full-feed-post__meta {
+	color: var( --color-neutral-60 );
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 0.875rem;
+	gap: 4px 12px;
+	line-height: 1.5;
+
+	span,
+	a {
+		color: inherit;
+	}
+}
+
+.full-feed-post__content {
+	position: relative;
+
+	&.is-collapsed {
+		max-height: 900px;
+		overflow: hidden;
+	}
+
+	&.is-clickable {
+		cursor: pointer;
+	}
+}
+
+.full-feed-post__fade {
+	background: linear-gradient( to bottom, rgba( 255, 255, 255, 0 ), var( --color-surface ) 78% );
+	bottom: 0;
+	height: 96px;
+	left: 0;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+}
+
+.full-feed-post__expand-actions {
+	display: flex;
+	justify-content: center;
+}
+
+.full-feed-post__engagement {
+	border-top: 1px solid var( --color-neutral-5 );
+	display: flex;
+	justify-content: center;
+	padding-top: 16px;
+
+	.reader-post-actions {
+		justify-content: center;
+		padding: 0;
+	}
+}
+
+.full-feed-post__floating-collapse {
+	bottom: 24px;
+	display: flex;
+	justify-content: center;
+	left: 50%;
+	pointer-events: none;
+	position: fixed;
+	transform: translateX( -50% );
+	width: min( 100% - 32px, 760px );
+	z-index: 20;
+
+	.components-button.is-secondary {
+		background: var( --color-surface );
+		border-color: var( --color-neutral-20 );
+		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.16 );
+		max-width: min( 100%, 420px );
+		pointer-events: auto;
+
+		&:hover,
+		&:focus,
+		&:active {
+			background: var( --color-surface );
+			border-color: var( --color-neutral-40 );
+		}
+	}
+}
+
+.full-feed-post__floating-collapse-label {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.full-feed__loading,
+.full-feed__error,
+.full-feed__pagination {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	padding: 16px;
+}
+
+.full-feed__error {
+	background: var( --color-surface );
+	border-radius: 4px;
+	border: 1px solid var( --color-error-10 );
+	flex-direction: column;
+	gap: 12px;
+}

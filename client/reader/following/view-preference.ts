@@ -1,21 +1,22 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 
 export const READER_FOLLOWING_VIEW_PREFERENCE = 'reader_following_view';
-export type ReaderFollowingView = 'recent' | 'stream';
+export type ReaderFollowingView = 'recent' | 'stream' | 'full-feed';
 export const DEFAULT_VIEW: ReaderFollowingView = 'stream';
 
 export const useFollowingView = () => {
 	const dispatch = useDispatch();
+	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const currentView: ReaderFollowingView = useSelector(
 		( state ) => getPreference( state, READER_FOLLOWING_VIEW_PREFERENCE ) ?? DEFAULT_VIEW
 	);
 
 	const setView = ( view: ReaderFollowingView ) => {
 		dispatch( savePreference( READER_FOLLOWING_VIEW_PREFERENCE, view ) );
-		recordTracksEvent( 'calypso_reader_following_view_toggle', {
+		recordReaderTracksEvent( 'calypso_reader_following_view_toggle', {
 			view: view,
 		} );
 	};

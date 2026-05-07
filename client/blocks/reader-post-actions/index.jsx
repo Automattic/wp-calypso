@@ -28,6 +28,7 @@ const ReaderPostActions = ( {
 	className,
 	fullPost,
 	commentsApiDisabled = false,
+	showFreshlyPressed = true,
 } ) => {
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
@@ -37,7 +38,7 @@ const ReaderPostActions = ( {
 	const listClassnames = clsx( 'reader-post-actions', className );
 	const { data } = useQuery( readTeamsQuery() );
 	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
-	const shouldShowFreshlyPressed = fullPost && isAutomattician && showShare;
+	const shouldShowFreshlyPressed = showFreshlyPressed && fullPost && isAutomattician && showShare;
 
 	return (
 		<ul className={ listClassnames }>
@@ -112,6 +113,7 @@ ReaderPostActions.propTypes = {
 	iconSize: PropTypes.number,
 	fullPost: PropTypes.bool,
 	commentsApiDisabled: PropTypes.bool,
+	showFreshlyPressed: PropTypes.bool,
 };
 
 export default ReaderPostActions;

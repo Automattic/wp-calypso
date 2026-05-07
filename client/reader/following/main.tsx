@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
+import { FullFeed } from './full-feed';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
@@ -64,37 +65,44 @@ function FollowingStream( { ...props } ) {
 		dispatch( selectSidebarRecentSite( { feedId: Number( props.feedId ) || null } ) );
 	}, [ props.feedId, dispatch ] );
 
+	let followingContent;
+	if ( currentView === 'recent' ) {
+		followingContent = <Recent viewToggle={ <ViewToggle /> } />;
+	} else if ( currentView === 'full-feed' ) {
+		followingContent = <FullFeed { ...props } viewToggle={ <ViewToggle /> } />;
+	} else {
+		followingContent = (
+			<ReaderStream { ...props } className="following">
+				<BloganuaryHeader />
+				<NavigationHeader
+					title={ translate( 'Recent' ) }
+					subtitle={ fixMe( {
+						text: 'Latest from your subscriptions.',
+						newCopy: translate( 'Latest from your subscriptions.' ),
+						oldCopy: translate( 'Fresh content from blogs you follow.' ),
+					} ) }
+					className={ clsx( 'following-stream-header' ) }
+				>
+					<ViewToggle />
+				</NavigationHeader>
+				{ hasSites && (
+					<Card className="following-stream__quick-post-card">
+						<CardBody>
+							<AsyncLoad require={ loadQuickPost } placeholder={ <QuickPostSkeleton /> } />
+						</CardBody>
+					</Card>
+				) }
+				<ReaderOnboardingGate
+					onRender={ handleReaderOnboardingRender }
+					isSuppressed={ suppressReaderOnboarding }
+				/>
+			</ReaderStream>
+		);
+	}
+
 	return (
 		<>
-			{ currentView === 'recent' ? (
-				<Recent viewToggle={ <ViewToggle /> } />
-			) : (
-				<ReaderStream { ...props } className="following">
-					<BloganuaryHeader />
-					<NavigationHeader
-						title={ translate( 'Recent' ) }
-						subtitle={ fixMe( {
-							text: 'Latest from your subscriptions.',
-							newCopy: translate( 'Latest from your subscriptions.' ),
-							oldCopy: translate( 'Fresh content from blogs you follow.' ),
-						} ) }
-						className={ clsx( 'following-stream-header' ) }
-					>
-						<ViewToggle />
-					</NavigationHeader>
-					{ hasSites && (
-						<Card className="following-stream__quick-post-card">
-							<CardBody>
-								<AsyncLoad require={ loadQuickPost } placeholder={ <QuickPostSkeleton /> } />
-							</CardBody>
-						</Card>
-					) }
-					<ReaderOnboardingGate
-						onRender={ handleReaderOnboardingRender }
-						isSuppressed={ suppressReaderOnboarding }
-					/>
-				</ReaderStream>
-			) }
+			{ followingContent }
 			<ResurrectedWelcomeModalGate onVisibilityChange={ setIsResurrectedModalVisible } />
 			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</>
