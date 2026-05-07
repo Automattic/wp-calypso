@@ -120,10 +120,6 @@
 	}
 }
 
-.plans-grid-next-features-grid__mobile-plan-card-no-foldable-container {
-	margin-top: 24px;
-}
-
 .plan-features-2023-grid__mobile-view {
 	display: flex;
 	flex-direction: column;
@@ -135,9 +131,8 @@
 	.plans-grid-next-features-grid__mobile-plan-card {
 		background-color: var(--studio-white);
 		border: 1px solid #e0e0e0;
-		/* stylelint-disable-next-line */
-		border-radius: 5px;
-		padding: 38px 0 20px 0;
+		border-radius: 4px;
+		padding: 20px 0 20px 0;
 
 		/*
 		 * TODO: Remove/refactor this once we have a better way to handle.
@@ -159,10 +154,42 @@
 				padding-top: 0;
 			}
 		}
+
+		.plan-features-2023-grid__header,
+		.plan-features-2023-grid__header-logo,
+		.plans-grid-next-header-price,
+		.plan-features-2023-grid__header-tagline,
+		.plan-features-2023-grid__header-billing-info,
+		.plan-features-2023-grid__table-item.is-top-buttons,
+		.plan-features-2023-grid__item {
+			padding-inline: 16px;
+		}
+	}
+
+	.plans-grid-next-storage-feature-label__volume {
+		font-size: 14px;
+		font-weight: 500;
 	}
 
 	.plan-features-2023-grid__highlighted-feature .plan-features-2023-grid__item {
-		padding-bottom: 24px;
+		padding-top: 16px;
+	}
+
+	.plan-features-2023-grid__header-title {
+		line-height: normal;
+	}
+
+	.plan-features-2023-grid__table-item .is-experiment-last-feature {
+		margin-block-end: 0;
+	}
+
+	.plan-features-2023-grid__header {
+		padding-block-end: 0;
+	}
+
+	.plan-features-2023-grid__header-tagline {
+		font-size: 14px;
+		padding: 0 20px 16px 20px
 	}
 }
 
@@ -171,7 +198,7 @@
 	color: var(--color-text-subtle);
 	table-layout: fixed;
 	border: 1px solid #e0e0e0;
-	border-radius: 5px; /* stylelint-disable-line */
+	border-radius: 4px;
 	background-color: #fff;
 	margin: 0 auto;
 	border-spacing: 0;
@@ -292,8 +319,7 @@
 	max-width: 100%;
 	margin-bottom: 64px;
 	border: 1px solid #e0e0e0;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 5px;
+	border-radius: 4px;
 	display: flex;
 	justify-content: space-between;
 
@@ -526,6 +552,10 @@
 	// creates a barrier between parent/child elements
 	// the alternative (oveflow: auto) would break the sticky behavior on the headers
 	padding: 1px;
+
+	&.is-small {
+		padding: 0;
+	}
 
 	.plan-features-2023-grid__table-item {
 		border-right: none;

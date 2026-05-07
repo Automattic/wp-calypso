@@ -813,12 +813,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/charts@npm:^0.46.1":
-  version: 0.46.1
-  resolution: "@automattic/charts@npm:0.46.1"
+"@automattic/charts@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@automattic/charts@npm:1.3.0"
   dependencies:
-    "@automattic/number-formatters": "npm:^1.0.14"
-    "@babel/runtime": "npm:7.28.4"
+    "@automattic/number-formatters": "npm:^1.1.7"
+    "@babel/runtime": "npm:7.29.2"
     "@react-spring/web": "npm:9.7.5"
     "@visx/annotation": "npm:^3.12.0"
     "@visx/axis": "npm:^3.12.0"
@@ -834,54 +834,23 @@ __metadata:
     "@visx/shape": "npm:^3.12.0"
     "@visx/text": "npm:^3.12.0"
     "@visx/tooltip": "npm:^3.12.0"
+    "@visx/vendor": "npm:^3.12.0"
     "@visx/xychart": "npm:^3.12.0"
     "@wordpress/i18n": "npm:^6.0.0"
+    "@wordpress/icons": "npm:^12.0.0"
+    "@wordpress/theme": "npm:0.11.0"
+    "@wordpress/ui": "npm:0.11.0"
     clsx: "npm:2.1.1"
     date-fns: "npm:^4.1.0"
     deepmerge: "npm:4.3.1"
+    dompurify: "npm:^3.3.3"
     fast-deep-equal: "npm:3.1.3"
-    gridicons: "npm:3.4.2"
+    react-google-charts: "npm:^5.2.1"
     tslib: "npm:2.8.1"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 0c986843d1ce366fe6bd0556f097ed278b39f6bdd1bd5e70ac665aac4ef4c3b5a5823f4ba9ecab6c277fe0e4ba5a6e6179664e05d933eb517fa91d24000f66bd
-  languageName: node
-  linkType: hard
-
-"@automattic/charts@npm:^0.50.0":
-  version: 0.50.2
-  resolution: "@automattic/charts@npm:0.50.2"
-  dependencies:
-    "@automattic/number-formatters": "npm:^1.0.15"
-    "@babel/runtime": "npm:7.28.4"
-    "@react-spring/web": "npm:9.7.5"
-    "@visx/annotation": "npm:^3.12.0"
-    "@visx/axis": "npm:^3.12.0"
-    "@visx/curve": "npm:^3.12.0"
-    "@visx/event": "npm:^3.12.0"
-    "@visx/gradient": "npm:^3.12.0"
-    "@visx/grid": "npm:^3.12.0"
-    "@visx/group": "npm:^3.12.0"
-    "@visx/legend": "npm:^3.12.0"
-    "@visx/pattern": "npm:^3.12.0"
-    "@visx/responsive": "npm:^3.12.0"
-    "@visx/scale": "npm:^3.12.0"
-    "@visx/shape": "npm:^3.12.0"
-    "@visx/text": "npm:^3.12.0"
-    "@visx/tooltip": "npm:^3.12.0"
-    "@visx/xychart": "npm:^3.12.0"
-    "@wordpress/i18n": "npm:^6.0.0"
-    clsx: "npm:2.1.1"
-    date-fns: "npm:^4.1.0"
-    deepmerge: "npm:4.3.1"
-    fast-deep-equal: "npm:3.1.3"
-    gridicons: "npm:3.4.2"
-    tslib: "npm:2.8.1"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0
-    react-dom: ^17.0.0 || ^18.0.0
-  checksum: e0bdce896e10910973c422eb9626e86375731abd53223f06f77daa717da30fb04457d5ed71d54d51c323a037518c722d947d8b50b869cc65a3bcd4c0c690d76d
+  checksum: 3723844a0ae9ae0c395f05e05e645a342ed25e3da395ce6d2610fa9be4f8f9e5aa27c73529050e4cb5b5bb373ecbc7d8acde72361cfe9133f7ba9b66acda4cbb
   languageName: node
   linkType: hard
 
@@ -1749,14 +1718,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.0.14, @automattic/number-formatters@npm:^1.0.15, @automattic/number-formatters@npm:^1.1.0, @automattic/number-formatters@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@automattic/number-formatters@npm:1.1.2"
+"@automattic/number-formatters@npm:^1.1.0, @automattic/number-formatters@npm:^1.1.2, @automattic/number-formatters@npm:^1.1.7":
+  version: 1.1.7
+  resolution: "@automattic/number-formatters@npm:1.1.7"
   dependencies:
     "@wordpress/date": "npm:^5.19.0"
     debug: "npm:^4.4.0"
     tslib: "npm:^2.5.0"
-  checksum: bd83f99d1d53a81ccc9879c7062f66b6c9e1b1b0103ae5943189fd546fcb20d1a27d20f2d55f20c80164b64cf0bee5dbc72e533123e9b3f873b4e3670a6d67da
+  checksum: b93ea434c8b1e10cb54c6f4229fc344168f83fefa7693ef595dd2a679b51792532411703f52e88a126fd12f2ac52350e3ae4d8351e60b732eabf1da46414335d
   languageName: node
   linkType: hard
 
@@ -4258,13 +4227,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.28.4":
-  version: 7.28.4
-  resolution: "@babel/runtime@npm:7.28.4"
-  checksum: 792ce7af9750fb9b93879cc9d1db175701c4689da890e6ced242ea0207c9da411ccf16dc04e689cc01158b28d7898c40d75598f4559109f761c12ce01e959bf7
-  languageName: node
-  linkType: hard
-
 "@babel/runtime@npm:7.28.6":
   version: 7.28.6
   resolution: "@babel/runtime@npm:7.28.6"
@@ -4272,7 +4234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.28.6, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:7.29.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.27.1, @babel/runtime@npm:^7.29.2, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
   version: 7.29.2
   resolution: "@babel/runtime@npm:7.29.2"
   checksum: 30b80a0140d16467792e1bbeb06f655b0dab70407da38dfac7fedae9c859f9ae9d846ef14ad77bd3814c064295fe9b1bc551f1541ea14646ae9f22b71a8bc17a
@@ -4315,32 +4277,63 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.2.0":
-  version: 1.3.0
-  resolution: "@base-ui/react@npm:1.3.0"
+"@base-ui/react@npm:1.4.1":
+  version: 1.4.1
+  resolution: "@base-ui/react@npm:1.4.1"
   dependencies:
-    "@babel/runtime": "npm:^7.28.6"
-    "@base-ui/utils": "npm:0.2.6"
+    "@babel/runtime": "npm:^7.29.2"
+    "@base-ui/utils": "npm:0.2.8"
     "@floating-ui/react-dom": "npm:^2.1.8"
     "@floating-ui/utils": "npm:^0.2.11"
-    tabbable: "npm:^6.4.0"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
+    "@date-fns/tz": ^1.2.0
     "@types/react": ^17 || ^18 || ^19
+    date-fns: ^4.0.0
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
   peerDependenciesMeta:
+    "@date-fns/tz":
+      optional: true
     "@types/react":
       optional: true
-  checksum: 36c9d2d77a82b41cb3783be39340aa0713bbe102fb18213f8f3e2c4f1295beb8359dd97067248bea34925f4a40eab281ddc42f05009179db1d5a7a99e4bfecdc
+    date-fns:
+      optional: true
+  checksum: 913361cd1e09f256d95bbd905287a10c34b2dab23482bf4ad5e595e4d72f5ea22e0b0b23657df6b548a938b248be3129c0bf1242c90753b59618a615c9e90ad5
   languageName: node
   linkType: hard
 
-"@base-ui/utils@npm:0.2.6":
-  version: 0.2.6
-  resolution: "@base-ui/utils@npm:0.2.6"
+"@base-ui/react@patch:@base-ui/react@npm%3A1.4.1#~/.yarn/patches/@base-ui-react-npm-1.4.1-fbb7347502.patch":
+  version: 1.4.1
+  resolution: "@base-ui/react@patch:@base-ui/react@npm%3A1.4.1#~/.yarn/patches/@base-ui-react-npm-1.4.1-fbb7347502.patch::version=1.4.1&hash=2be872"
   dependencies:
-    "@babel/runtime": "npm:^7.28.6"
+    "@babel/runtime": "npm:^7.29.2"
+    "@base-ui/utils": "npm:0.2.8"
+    "@floating-ui/react-dom": "npm:^2.1.8"
+    "@floating-ui/utils": "npm:^0.2.11"
+    use-sync-external-store: "npm:^1.6.0"
+  peerDependencies:
+    "@date-fns/tz": ^1.2.0
+    "@types/react": ^17 || ^18 || ^19
+    date-fns: ^4.0.0
+    react: ^17 || ^18 || ^19
+    react-dom: ^17 || ^18 || ^19
+  peerDependenciesMeta:
+    "@date-fns/tz":
+      optional: true
+    "@types/react":
+      optional: true
+    date-fns:
+      optional: true
+  checksum: b58800383b8df1274eae667581c1403449693c274ebe1a947aa9126792946a15b11e16435cf15533a5e329fd139836e0c8632b275c306c2666d5bb8eb196345b
+  languageName: node
+  linkType: hard
+
+"@base-ui/utils@npm:0.2.8":
+  version: 0.2.8
+  resolution: "@base-ui/utils@npm:0.2.8"
+  dependencies:
+    "@babel/runtime": "npm:^7.29.2"
     "@floating-ui/utils": "npm:^0.2.11"
     reselect: "npm:^5.1.1"
     use-sync-external-store: "npm:^1.6.0"
@@ -4351,7 +4344,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 5611442ac37066774277cd3360d16ebc3f599dc7b8efdfdfbf5b66b6d2eb6e87a18c0f9922b061818850e781d9bbc70aa5fc4ffb1dfd7fb234eefc401e070090
+  checksum: 762ff2251875c08b9e506824d7b45299baef895944d28f633a34c088cd5d6f121ee29267d2afb79527180044d232e56591c4109b2fcab7ac926d7e490c5b2b29
   languageName: node
   linkType: hard
 
@@ -11594,6 +11587,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/theme@npm:0.11.0, @wordpress/theme@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@wordpress/theme@npm:0.11.0"
+  dependencies:
+    "@wordpress/element": "npm:^6.44.0"
+    "@wordpress/private-apis": "npm:^1.44.0"
+    colorjs.io: "npm:^0.6.0"
+    memize: "npm:^2.1.0"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+    stylelint: ^16.8.2
+  peerDependenciesMeta:
+    stylelint:
+      optional: true
+  checksum: dc73ccb449b32d47ec78561fe939801c488a39a3b54b8a74c65d57022fbcab8a6182548bf45dbaff7b6aa6083479564e08a4b8e18941200ee60fb35802bda95a
+  languageName: node
+  linkType: hard
+
 "@wordpress/theme@npm:0.8.0, @wordpress/theme@npm:^0.8.0":
   version: 0.8.0
   resolution: "@wordpress/theme@npm:0.8.0"
@@ -11638,6 +11650,29 @@ __metadata:
   dependencies:
     "@babel/runtime": "npm:7.25.7"
   checksum: e2a8f53b871f9fa0774dab021c7fec1e35040d15d744bd49c61b67867d8863046c93200a3387355d519c0016ffb4d5d989c7c70688062302ae8857c09a6ea5ac
+  languageName: node
+  linkType: hard
+
+"@wordpress/ui@npm:0.11.0":
+  version: 0.11.0
+  resolution: "@wordpress/ui@npm:0.11.0"
+  dependencies:
+    "@base-ui/react": "npm:^1.4.0"
+    "@wordpress/a11y": "npm:^4.44.0"
+    "@wordpress/compose": "npm:^7.44.0"
+    "@wordpress/element": "npm:^6.44.0"
+    "@wordpress/i18n": "npm:^6.17.0"
+    "@wordpress/icons": "npm:^12.2.0"
+    "@wordpress/keycodes": "npm:^4.44.0"
+    "@wordpress/primitives": "npm:^4.44.0"
+    "@wordpress/private-apis": "npm:^1.44.0"
+    "@wordpress/theme": "npm:^0.11.0"
+    clsx: "npm:^2.1.1"
+    tabbable: "npm:^6.4.0"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 2e4d5d11b1fd3658f1a5e9894b2c1d21339eed1cdb3348caf54a64b3a442fb6d6595e0622c263b244b913db3d00a5d6bb52c0d1a4c4d815413c2dd7c9ed33816
   languageName: node
   linkType: hard
 
@@ -13500,7 +13535,7 @@ __metadata:
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/charts": "npm:^0.46.1"
+    "@automattic/charts": "npm:^1.3.0"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
@@ -16334,15 +16369,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.2.6, dompurify@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "dompurify@npm:3.3.1"
+"dompurify@npm:^3.2.6, dompurify@npm:^3.3.1, dompurify@npm:^3.3.3":
+  version: 3.4.2
+  resolution: "dompurify@npm:3.4.2"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: fa0a8c55a436ba0d54389195e3d2337e311f56de709a2fc9efc98dbbc7746fa53bb4b74b6ac043b77a279a8f2ebd8685f0ebaa6e58c9e32e92051d529bc0baf8
+  checksum: 23ab3ab079480a49e1426c4ee7279e393913fa7f2193c4142a5be54d4163dbdd969558675876c6b8bbcbf2ad5d1bc3e00bf902acf142fff12e50274a65ae95b3
   languageName: node
   linkType: hard
 
@@ -33353,7 +33388,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^0.50.0"
+    "@automattic/charts": "npm:^1.3.0"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
