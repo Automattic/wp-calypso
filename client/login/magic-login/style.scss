@@ -326,6 +326,23 @@
 			white-space: pre;
 		}
 	}
+
+	// Match the centralized Login TOS treatment (--studio-gray-50, the same
+	// color .wp-login__one-login-layout-tos provides to the Login screen).
+	// The .connect-screen-consent-text class also rides on this element via
+	// <ConsentText>, and its `a { color: var(--studio-gray-70) }` rule beats
+	// `color: inherit` at equal specificity. Chaining both classes here
+	// raises specificity (0,3,1 > 0,2,1) so we win cleanly without touching
+	// connect-screen styles used by Jetpack Connect / invite flows.
+	&.connect-screen-consent-text a {
+		color: var( --studio-gray-50, #646970 );
+
+		&:hover,
+		&:focus,
+		&:focus-visible {
+			color: var( --studio-gray-50, #646970 );
+		}
+	}
 }
 
 .magic-login__a4a-logo {
