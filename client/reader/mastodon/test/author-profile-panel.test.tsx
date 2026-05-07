@@ -13,6 +13,12 @@ import type { MastodonAuthorProfile, MastodonConnection } from '@automattic/api-
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
+// `logToLogstash` fires a real HTTPS request — mute it so the
+// follow-error path doesn't trigger an unmocked-request alarm in nock.
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
+
 // NavTabs (rendered via MastodonAuthorProfileTabs inside the panel) uses
 // IntersectionObserver, which jsdom doesn't provide.
 beforeAll( () => {

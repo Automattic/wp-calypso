@@ -9,6 +9,7 @@ import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
+import { logToLogstash } from 'calypso/lib/logstash';
 import {
 	FollowButton,
 	SocialAuthorProfilePanel,
@@ -131,6 +132,19 @@ export function MastodonAuthorProfilePanel( {
 					id: 'mastodon-follow-error',
 				} )
 			);
+			// Pipeline-level log so failures stay observable in dashboards
+			// even when no Tracks dashboard is consulted.
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: `Reader Mastodon ${ action } mutation failed`,
+				severity: 'error',
+				extra: {
+					type: `reader_mastodon_${ action }_mutation_error`,
+					connection_id: connection.id,
+					account_id: profile.data?.id,
+					error_kind: error.kind,
+				},
+			} );
 		},
 		[ connection.id, profile.data?.id, dispatch, translate ]
 	);
