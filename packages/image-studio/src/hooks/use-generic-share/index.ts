@@ -1,5 +1,5 @@
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useRef } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore, type ImageStudioActions } from '../../store';
 import { ImageStudioEntryPoint } from '../../store';
@@ -12,6 +12,7 @@ import {
 
 interface UseGenericShareReturn {
 	isVisible: boolean;
+	isSharing: boolean;
 	handleShare: () => Promise< void >;
 }
 
@@ -56,7 +57,10 @@ export function useGenericShare(): UseGenericShareReturn {
 	const { addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
 	// Synchronous double-click guard — same rationale as in useReelShare.
+	// Kept alongside `isSharing` state because state updates lag a render and
+	// can't reliably block a fast second click on their own.
 	const isSharingRef = useRef( false );
+	const [ isSharing, setIsSharing ] = useState( false );
 
 	const isVisible =
 		entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip &&
@@ -77,6 +81,7 @@ export function useGenericShare(): UseGenericShareReturn {
 			typeof navigator === 'undefined' ? null : ( navigator as unknown as NavigatorWithShare );
 
 		isSharingRef.current = true;
+		setIsSharing( true );
 		try {
 			// Fire the clicked event at the start of every method we attempt
 			// (web-share, web-share-unsupported, download), not after the work
@@ -145,11 +150,13 @@ export function useGenericShare(): UseGenericShareReturn {
 			);
 		} finally {
 			isSharingRef.current = false;
+			setIsSharing( false );
 		}
 	}, [ addNotice, currentAttachmentId, currentVideoUrl ] );
 
 	return {
 		isVisible,
+		isSharing,
 		handleShare,
 	};
 }

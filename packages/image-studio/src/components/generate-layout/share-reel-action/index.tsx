@@ -30,6 +30,8 @@ export function ShareReelAction(): JSX.Element | null {
 					icon={ share }
 					label={ __( 'Share to other apps', __i18n_text_domain__ ) }
 					showTooltip
+					disabled={ generic.isSharing }
+					isBusy={ generic.isSharing }
 					onClick={ generic.handleShare }
 				/>
 			) }
