@@ -11,12 +11,23 @@
 	gap: 24px;
 
 	@media screen and ( min-width: $break-mobile ) {
-		// Two-up layout: only break to a single column when the user is on
-		// a narrow viewport. The connector form column is 520px wide, which
-		// gives roughly 240px per card before the gap — enough for a centered
+		// Layout breaks: only switch off the single-column stack on wider
+		// viewports. The connector form column is 520px wide, which gives
+		// roughly 240px per card in the two-up grid — enough for a centered
 		// brand logo and 2-3 bullets.
 		.connect-screen-features-section.has-2-cards & {
 			grid-template-columns: 1fr 1fr;
+		}
+
+		// Three cards stack the highest-priority family (A4A) full-width on
+		// top, with the remaining two (Woo + Jetpack) sharing the row below
+		// — matches the two-card layout the no-A4A scenario already uses.
+		.connect-screen-features-section.has-3-cards & {
+			grid-template-columns: 1fr 1fr;
+
+			.connect-screen-features-section__card:first-child {
+				grid-column: 1 / -1;
+			}
 		}
 	}
 }
@@ -35,10 +46,15 @@
 	align-items: center;
 	min-height: 32px;
 
+	// Force a uniform 32px visual height across every brand mark,
+	// regardless of the source SVG's intrinsic aspect ratio. Without this,
+	// shorter wordmarks (notably Woo) render visibly smaller next to the
+	// inline-SVG marks that set their own size.
 	img,
 	svg {
-		max-height: 32px;
+		height: 32px;
 		width: auto;
+		max-width: 100%;
 	}
 }
 
@@ -81,19 +97,6 @@
 	font-weight: 500;
 	color: var( --color-text-subtle, #50575e );
 	line-height: 1.4;
-}
-
-.connect-screen-features-section__overflow-logo {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	min-height: 24px;
-
-	img,
-	svg {
-		max-height: 24px;
-		width: auto;
-	}
 }
 
 .connect-screen-features-section__overflow-items {

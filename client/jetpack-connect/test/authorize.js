@@ -143,22 +143,17 @@ describe( 'JetpackAuthorize', () => {
 
 		// Features section renders one card per top-priority family. Cards
 		// no longer render H3 titles — the brand name lives on each card's
-		// accessible label instead. The Used-by row repeats the visible
-		// plugins so users can tell which Jetpack plugin is part of the
-		// connection even though every Jetpack-family card shares the same
-		// brand mark.
+		// accessible label instead. The Connected-plugins row repeats the
+		// visible plugins so users can tell which Jetpack plugin is part
+		// of the connection even though every Jetpack-family card shares
+		// the same brand mark.
 		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
 		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
 		expect( overflow ).toBeInTheDocument();
-		expect( overflow ).toHaveTextContent( 'Used by' );
+		expect( overflow ).toHaveTextContent( 'Connected plugins' );
 		expect( overflow ).toHaveTextContent( 'WooCommerce' );
 		expect( overflow ).toHaveTextContent( 'Jetpack' );
-		// The Jetpack card already carries the brand mark, so the Used-by
-		// stack drops the leading logo.
-		expect(
-			overflow.querySelector( '.connect-screen-features-section__overflow-logo' )
-		).not.toBeInTheDocument();
 		// Static FeaturesSection bullets land on the auth surface — sample
 		// one per card so the assertion stays sturdy without pinning every
 		// piece of copy.
@@ -170,7 +165,7 @@ describe( 'JetpackAuthorize', () => {
 		).toBeInTheDocument();
 	} );
 
-	test( 'features section surfaces the third-priority family in the Used-by stack with a Jetpack logo', () => {
+	test( 'features section stacks A4A on top with Woo + Jetpack underneath when all three families are present', () => {
 		const { container } = renderWithRedux(
 			<JetpackAuthorize
 				{ ...DEFAULT_PROPS }
@@ -182,27 +177,28 @@ describe( 'JetpackAuthorize', () => {
 			/>
 		);
 
-		// A4A and Woo win the two card slots; Jetpack drops out of the
-		// featured pair but still appears in the Used-by row alongside
-		// the visible plugins.
+		// All three families now earn a featured card. A4A is rendered
+		// first so the layout can stack it full-width on top, with Woo
+		// and Jetpack sharing the row below.
 		expect(
 			screen.getByRole( 'article', { name: 'Automattic for Agencies' } )
 		).toBeInTheDocument();
 		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'article', { name: 'Jetpack' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+		const cards = container.querySelectorAll(
+			'.connect-screen-features-section.has-3-cards .connect-screen-features-section__card'
+		);
+		expect( cards.length ).toBe( 3 );
+		expect( cards[ 0 ] ).toHaveAttribute( 'aria-label', 'Automattic for Agencies' );
 
-		// Used-by stack lists every active plugin (including the visible
-		// pair) and surfaces the Jetpack brand mark only because no
-		// Jetpack card is on screen to carry it.
+		// Connected-plugins row drops Jetpack-family slugs because the
+		// Jetpack card already represents that family on screen.
 		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
 		expect( overflow ).toBeInTheDocument();
-		expect( overflow ).toHaveTextContent( 'Used by' );
+		expect( overflow ).toHaveTextContent( 'Connected plugins' );
 		expect( overflow ).toHaveTextContent( 'Automattic for Agencies' );
 		expect( overflow ).toHaveTextContent( 'WooCommerce' );
-		expect( overflow ).toHaveTextContent( 'Jetpack' );
-		expect(
-			overflow.querySelector( '.connect-screen-features-section__overflow-logo' )
-		).toBeInTheDocument();
+		expect( overflow ).not.toHaveTextContent( 'Jetpack' );
 	} );
 
 	test( 'features section uses the per-plugin override for a single individual Jetpack plugin', () => {

@@ -1054,7 +1054,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isFromJetpackConnector() ) {
-			const { cards, overflowLogo, overflowItems } = getConnectorFeatureCards( authQuery.plugins );
+			const { cards, overflowItems } = getConnectorFeatureCards( authQuery.plugins );
 
 			return (
 				<>
@@ -1068,11 +1068,7 @@ export class JetpackAuthorize extends Component {
 					/>
 					{ this.renderUseDifferentAccountLink() }
 
-					<FeaturesSection
-						cards={ cards }
-						overflowLogo={ overflowLogo }
-						overflowItems={ overflowItems }
-					/>
+					<FeaturesSection cards={ cards } overflowItems={ overflowItems } />
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</>

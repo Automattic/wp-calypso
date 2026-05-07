@@ -2,7 +2,6 @@ import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
-	getFamilyFromSlug,
 	getFeatureCardData,
 	getFeatureSelection,
 	getPluginDisplayName,
@@ -21,11 +20,16 @@ import type { ReactNode } from 'react';
  * carries the per-plugin specifics. A4A and Woo each use their own full
  * wordmark; the `other` fallback has no logo (the bullet copy is the
  * visual hook on its own).
+ *
+ * `size={ 32 }` aligns the inline SVG marks with the CSS-enforced
+ * `height: 32px` on `<img>` logos in `features-section/style.scss`, so
+ * every card's brand mark renders at the same visual height regardless
+ * of source.
  */
 function getLogoForCardKey( key: FeatureCardKey ): ReactNode | string | undefined {
 	switch ( key ) {
 		case 'a4a':
-			return <A4ALogo fullA4A size={ 28 } />;
+			return <A4ALogo fullA4A size={ 32 } />;
 		case 'woo':
 			return WooLogo;
 		case 'jetpack':
@@ -35,7 +39,7 @@ function getLogoForCardKey( key: FeatureCardKey ): ReactNode | string | undefine
 		case 'jetpack-search':
 		case 'jetpack-social':
 		case 'jetpack-videopress':
-			return <JetpackLogo full size={ 28 } />;
+			return <JetpackLogo full size={ 32 } />;
 		case 'other':
 		default:
 			return undefined;
@@ -59,23 +63,21 @@ function getLogoAltForCardKey( key: FeatureCardKey ): string {
 
 export interface ConnectorFeatureCards {
 	cards: FeatureCard[];
-	overflowLogo?: ReactNode;
 	overflowItems: string[];
 }
 
 /**
  * Build the FeaturesSection props for the connector authorize page from the
- * `plugins` query parameter — picks at most two cards (per the family-priority
- * rules in `getFeatureSelection`) and resolves each one's logo, title, and
- * bullet copy. The Used-by row lists every active plugin's display name
- * whenever more than one is connected (single-plugin connections skip it),
- * giving users a textual fallback for the brand-shared Jetpack cards.
+ * `plugins` query parameter — picks up to three cards (per the
+ * family-priority rules in `getFeatureSelection`) and resolves each one's
+ * logo, title, and bullet copy. The Connected-plugins row lists every
+ * active plugin's display name whenever more than one is connected,
+ * giving users a textual fallback for the brand-shared Jetpack cards;
+ * single-plugin connections skip the row.
  *
- * Above the list, the section surfaces the full Jetpack logo when at least
- * one Jetpack-family plugin is active *and* no Jetpack card is on screen —
- * the canonical case is the all-three-families scenario where A4A and Woo
- * take both card slots. When a Jetpack card is already featured its brand
- * mark is on the card itself, so the leading overflow logo is omitted.
+ * In the all-three-families layout the row drops Jetpack-family slugs:
+ * each of the three cards carries a distinct brand mark, so the row is
+ * left to disambiguate non-Jetpack extras and unknown plugins only.
  */
 export function getConnectorFeatureCards(
 	pluginSlugs: readonly string[] = []
@@ -94,12 +96,6 @@ export function getConnectorFeatureCards(
 	} );
 
 	const overflowItems = overflowSlugs.map( ( slug ) => getPluginDisplayName( slug ) );
-	const hasFeaturedJetpackCard = cardKeys.some( ( key ) => getFamilyFromSlug( key ) === 'jetpack' );
-	const hasJetpackOverflow = overflowSlugs.some(
-		( slug ) => getFamilyFromSlug( slug ) === 'jetpack'
-	);
-	const overflowLogo =
-		! hasFeaturedJetpackCard && hasJetpackOverflow ? <JetpackLogo full size={ 24 } /> : undefined;
 
-	return { cards, overflowLogo, overflowItems };
+	return { cards, overflowItems };
 }

@@ -153,20 +153,44 @@ describe( 'getFeatureSelection', () => {
 		} );
 	} );
 
-	test( 'caps featured cards at two and includes every active slug in the Used-by row', () => {
+	test( 'features all three known families when present and drops Jetpack-family slugs from the Used-by row', () => {
+		// Default max is 3: A4A on top (full-width in the layout), Woo and
+		// Jetpack share the row below. The Used-by row exists for the two
+		// non-Jetpack featured plugins; Jetpack is omitted because the
+		// dedicated Jetpack card already represents it.
 		expect(
 			getFeatureSelection( [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ] )
 		).toEqual( {
-			cardKeys: [ 'a4a', 'woo' ],
-			overflowSlugs: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
+			cardKeys: [ 'a4a', 'woo', 'jetpack' ],
+			overflowSlugs: [ 'automattic-for-agencies-client', 'woocommerce' ],
+		} );
+	} );
+
+	test( 'drops every Jetpack-family slug from the Used-by row in the all-three layout', () => {
+		// Multiple individual Jetpack plugins still collapse to the generic
+		// `'jetpack'` card; none of the Jetpack-family slugs leak into the
+		// Used-by row because each family carries its own card.
+		expect(
+			getFeatureSelection( [
+				'automattic-for-agencies-client',
+				'woocommerce',
+				'jetpack-boost',
+				'jetpack-search',
+			] )
+		).toEqual( {
+			cardKeys: [ 'a4a', 'woo', 'jetpack' ],
+			overflowSlugs: [ 'automattic-for-agencies-client', 'woocommerce' ],
 		} );
 	} );
 
 	test( 'respects the max argument', () => {
+		// Capping at 2 falls back to the previous "feature the top two
+		// families and list every active slug" behaviour, keeping Jetpack
+		// in the Used-by row because Jetpack is no longer featured.
 		expect(
-			getFeatureSelection( [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ], 3 )
+			getFeatureSelection( [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ], 2 )
 		).toEqual( {
-			cardKeys: [ 'a4a', 'woo', 'jetpack' ],
+			cardKeys: [ 'a4a', 'woo' ],
 			overflowSlugs: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
 		} );
 		expect( getFeatureSelection( [ 'automattic-for-agencies-client', 'woocommerce' ], 1 ) ).toEqual(
@@ -250,6 +274,9 @@ describe( 'getFeatureSelection', () => {
 	} );
 
 	test( 'preserves the input order when building the Used-by list', () => {
+		// In the all-three layout (a4a + woo + jetpack), Jetpack-family
+		// slugs drop out of Used-by; the remaining slugs keep their input
+		// order so the surface still mirrors caller intent.
 		expect(
 			getFeatureSelection( [
 				'jetpack',
@@ -259,14 +286,8 @@ describe( 'getFeatureSelection', () => {
 				'unknown-b',
 			] )
 		).toEqual( {
-			cardKeys: [ 'a4a', 'woo' ],
-			overflowSlugs: [
-				'jetpack',
-				'automattic-for-agencies-client',
-				'woocommerce',
-				'unknown-a',
-				'unknown-b',
-			],
+			cardKeys: [ 'a4a', 'woo', 'jetpack' ],
+			overflowSlugs: [ 'automattic-for-agencies-client', 'woocommerce', 'unknown-a', 'unknown-b' ],
 		} );
 	} );
 } );

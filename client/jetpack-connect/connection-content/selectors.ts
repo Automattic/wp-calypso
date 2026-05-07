@@ -110,7 +110,8 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
 
 /**
  * Pick the cards to feature plus the comprehensive Used-by plugin list,
- * capped at `max` cards (default 2 to match the two-up layout).
+ * capped at `max` cards (default 3 to cover the all-three-families
+ * stacked layout).
  *
  * Decision order:
  *  1. Take the highest-priority families with known copy (`a4a`, `woo`,
@@ -122,28 +123,38 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
  *     connected. Order mirrors the input so caller intent is preserved.
  *     Single-plugin connections (or no plugins at all) skip the row
  *     because there's nothing to disambiguate.
+ *  4. When all three known families earn featured cards (the stacked
+ *     layout), Jetpack-family slugs drop out of the Used-by row: each of
+ *     the three families now has its own card with a distinct brand mark,
+ *     so the disambiguation Used-by exists for shrinks to non-Jetpack
+ *     extras and unknown plugins.
  *
- * The redundancy is deliberate: every Jetpack-family card shares the same
- * brand mark (and the per-plugin variants share the wordmark), so the
- * explicit list is the only place users can tell *which* Jetpack
- * plugin(s) the connection actually covers.
+ * Outside the all-three case, the redundancy is deliberate: every
+ * Jetpack-family card shares the same brand mark (and the per-plugin
+ * variants share the wordmark), so the explicit list is the only place
+ * users can tell *which* Jetpack plugin(s) the connection actually covers.
  *
  * The single `'other'` fallback card only renders when no known family is
  * present at all (the empty-input or only-unknown-plugins edge case).
  */
-export function getFeatureSelection( pluginSlugs: readonly string[], max = 2 ): FeatureSelection {
+export function getFeatureSelection( pluginSlugs: readonly string[], max = 3 ): FeatureSelection {
 	const knownFamilies = getPresentFamilies( pluginSlugs ).filter(
 		( family ) => family !== 'other'
 	);
 
-	const overflowSlugs = pluginSlugs.length > 1 ? [ ...pluginSlugs ] : [];
-
 	if ( knownFamilies.length === 0 ) {
+		const overflowSlugs = pluginSlugs.length > 1 ? [ ...pluginSlugs ] : [];
 		return { cardKeys: [ 'other' ], overflowSlugs };
 	}
 
 	const featured = knownFamilies.slice( 0, max );
 	const cardKeys = featured.map( ( family ) => getFamilyCardKey( family, pluginSlugs ) );
+
+	const isAllThreeStacked = featured.length === 3;
+	let overflowSlugs: string[] = pluginSlugs.length > 1 ? [ ...pluginSlugs ] : [];
+	if ( isAllThreeStacked ) {
+		overflowSlugs = overflowSlugs.filter( ( slug ) => getFamilyFromSlug( slug ) !== 'jetpack' );
+	}
 
 	return { cardKeys, overflowSlugs };
 }

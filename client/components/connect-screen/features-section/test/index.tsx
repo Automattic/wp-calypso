@@ -92,41 +92,28 @@ describe( 'FeaturesSection', () => {
 		expect( screen.getByTestId( 'custom-logo' ) ).toBeInTheDocument();
 	} );
 
-	test( 'renders the overflow stack with the new "Used by" label and a comma list', () => {
-		const { container } = render(
+	test( 'renders the overflow stack with the "Connected plugins" label and a comma list', () => {
+		render(
 			<FeaturesSection
 				cards={ baseCards }
 				overflowItems={ [ 'Jetpack Boost', 'Jetpack Search' ] }
 			/>
 		);
-		expect( screen.getByText( 'Used by' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Connected plugins' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Jetpack Boost, Jetpack Search' ) ).toBeInTheDocument();
-		expect(
-			container.querySelector( '.connect-screen-features-section__overflow-logo' )
-		).toBeNull();
 	} );
 
-	test( 'renders the overflow logo above the plugin list when provided', () => {
+	test( 'renders only the label and the items in the overflow stack — no leading logo', () => {
 		const { container } = render(
-			<FeaturesSection
-				cards={ baseCards }
-				overflowLogo={ <span data-testid="overflow-logo">JP</span> }
-				overflowItems={ [ 'Jetpack VaultPress Backup' ] }
-			/>
+			<FeaturesSection cards={ baseCards } overflowItems={ [ 'Jetpack VaultPress Backup' ] } />
 		);
-		expect( screen.getByText( 'Used by' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'overflow-logo' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Jetpack VaultPress Backup' ) ).toBeInTheDocument();
-
-		// The logo wrapper sits between the label and the items in DOM order.
 		const overflow = container.querySelector( '.connect-screen-features-section__overflow' );
 		const children = Array.from( overflow?.children ?? [] );
-		expect( children.length ).toBe( 3 );
+		expect( children.length ).toBe( 2 );
 		expect( children[ 0 ].classList ).toContain(
 			'connect-screen-features-section__overflow-label'
 		);
-		expect( children[ 1 ].classList ).toContain( 'connect-screen-features-section__overflow-logo' );
-		expect( children[ 2 ].classList ).toContain(
+		expect( children[ 1 ].classList ).toContain(
 			'connect-screen-features-section__overflow-items'
 		);
 	} );
@@ -146,6 +133,22 @@ describe( 'FeaturesSection', () => {
 		const single = render( <FeaturesSection cards={ [ baseCards[ 0 ] ] } /> );
 		expect(
 			single.container.querySelector( '.connect-screen-features-section.has-1-cards' )
+		).toBeInTheDocument();
+		const triple = render(
+			<FeaturesSection
+				cards={ [
+					...baseCards,
+					{
+						id: 'jetpack',
+						logo: '/jetpack-logo.svg',
+						title: 'Jetpack',
+						bullets: [ 'Real-time backups' ],
+					},
+				] }
+			/>
+		);
+		expect(
+			triple.container.querySelector( '.connect-screen-features-section.has-3-cards' )
 		).toBeInTheDocument();
 	} );
 } );

@@ -80,7 +80,7 @@ export function useDisclaimerText( props ) {
 				}
 		  )
 		: translate(
-				'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between %(companyName)s and %(siteName)s.',
+				'By connecting your account, you agree to {{detailsLink}}share details{{/detailsLink}} between %(companyName)s and %(siteName)s.',
 				{
 					components: {
 						detailsLink,

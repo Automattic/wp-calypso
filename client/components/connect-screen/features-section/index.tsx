@@ -21,12 +21,6 @@ export interface FeatureCard {
 
 export interface FeaturesSectionProps {
 	cards: FeatureCard[];
-	/**
-	 * Optional logo rendered above the overflow plugin list. Used by the
-	 * connector flow's all-three-families scenario to surface the Jetpack
-	 * brand mark even when Jetpack doesn't earn one of the two card slots.
-	 */
-	overflowLogo?: ReactNode;
 	overflowItems?: string[];
 	className?: string;
 }
@@ -52,21 +46,22 @@ function renderImage( logo: ReactNode | string, logoAlt = '', wrapperClass: stri
 }
 
 /**
- * Two-up feature blocks used by the unified Jetpack connection flow to show
- * the user *what they'll actually get* once they finish connecting. Each
- * block is a brand-keyed summary (A4A / Woo / Jetpack / individual Jetpack
- * plugin) with a centered logo and a small bullet list — visually flat (no
- * card chrome) so the cards read as part of the surrounding column rather
- * than as separate boxes.
+ * Brand-keyed feature blocks used by the unified Jetpack connection flow
+ * to show the user *what they'll actually get* once they finish connecting.
+ * Each block is a brand-keyed summary (A4A / Woo / Jetpack / individual
+ * Jetpack plugin) with a centered logo and a small bullet list — visually
+ * flat (no card chrome) so the cards read as part of the surrounding
+ * column rather than as separate boxes.
  *
- * The optional `overflowLogo` + `overflowItems` props render a "Used by"
- * stack underneath the cards: a label, an optional brand logo, and the
- * comma-separated plugin display names. Used to surface additional active
- * plugins that didn't earn one of the card slots.
+ * Layout follows the card count: 1 card spans the column, 2 cards share a
+ * two-up grid, and 3 cards stack the highest-priority card full-width on
+ * top with the remaining two side-by-side underneath. Below the grid, the
+ * optional `overflowItems` prop renders a "Connected plugins" line that
+ * lists every active plugin so the brand-shared Jetpack cards keep a
+ * textual disambiguation hook.
  */
 export function FeaturesSection( {
 	cards,
-	overflowLogo,
 	overflowItems,
 	className,
 }: FeaturesSectionProps ): JSX.Element | null {
@@ -113,8 +108,9 @@ export function FeaturesSection( {
 			</div>
 			{ hasOverflow && (
 				<div className="connect-screen-features-section__overflow">
-					<p className="connect-screen-features-section__overflow-label">{ __( 'Used by' ) }</p>
-					{ renderImage( overflowLogo, '', 'connect-screen-features-section__overflow-logo' ) }
+					<p className="connect-screen-features-section__overflow-label">
+						{ __( 'Connected plugins' ) }
+					</p>
 					<p className="connect-screen-features-section__overflow-items">
 						{ overflowItems.join( ', ' ) }
 					</p>
