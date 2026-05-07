@@ -1,4 +1,4 @@
-import type { Quarter } from './get-most-recent-past-quarter';
+import type { Quarter } from '../constants';
 
 // Deadline = last day of the month following the quarter end (Q1→Apr 30, Q2→Jul 31, Q3→Oct 31, Q4→Jan 31 next year).
 // Day 0 of the month after the deadline month yields the last day of the deadline month;

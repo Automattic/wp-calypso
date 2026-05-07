@@ -1,5 +1,14 @@
 import { __ } from '@wordpress/i18n';
 
+export type Quarter = { quarter: 1 | 2 | 3 | 4; year: number };
+
+export type BenchmarksConfig = {
+	submission_window: {
+		earliest: Quarter;
+		latest: Quarter;
+	};
+};
+
 export const KPI_FIELDS = [
 	'gross_margin',
 	'billable_utilization',
