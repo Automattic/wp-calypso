@@ -29,6 +29,20 @@ export class LoggedOutHomePage {
 	}
 
 	/**
+	 * Navigates to the logged-out themes showcase page.
+	 * returns {Promise<void>}
+	 */
+	async exploreThemes(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForURL( /\/themes(?:[/?#].*)?$/, {
+				timeout: 30 * 1000,
+				waitUntil: 'domcontentloaded',
+			} ),
+			this.exploreThemesLink.click( { timeout: 30 * 1000 } ),
+		] );
+	}
+
+	/**
 	 * Sets the store cookie for the specified currency.
 	 * @param currency
 	 */
