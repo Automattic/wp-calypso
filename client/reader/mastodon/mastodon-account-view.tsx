@@ -240,6 +240,12 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	const title = details.data?.display_name || connection.display_name || connection.handle;
 	const subtitle = connection.handle;
 
+	// The compose FAB and modal sit outside <ConnectionReauthGate> (the gate
+	// only wraps the tab body), so without an explicit guard they'd float
+	// over the reauth prompt. Hide both while the connection needs reauth —
+	// any post submitted via that path would fail with auth_required anyway.
+	const hideComposer = authStatus.data?.needs_reauth === true;
+
 	return (
 		<ComposerProvider connectionId={ connection.id } config={ mastodonComposerConfig }>
 			<ReaderMain className="mastodon-view">
@@ -270,8 +276,12 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 					</ConnectionReauthGate>
 				</VStack>
 			</ReaderMain>
-			<ComposeFab />
-			<ComposerModal />
+			{ ! hideComposer && (
+				<>
+					<ComposeFab />
+					<ComposerModal />
+				</>
+			) }
 		</ComposerProvider>
 	);
 }

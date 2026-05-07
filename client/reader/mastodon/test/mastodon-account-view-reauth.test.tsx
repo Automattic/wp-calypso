@@ -158,6 +158,24 @@ describe( 'MastodonAccountView reauth gate', () => {
 		expect(
 			screen.queryByRole( 'heading', { name: /reconnect to update permissions/i } )
 		).not.toBeInTheDocument();
+		// Composer FAB should remain visible on a healthy connection.
+		expect( screen.getByRole( 'button', { name: /^compose$/i } ) ).toBeVisible();
+	} );
+
+	it( 'hides the compose FAB while the reauth gate is showing', async () => {
+		mockConnections();
+		mockConnectionDetails();
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );
+
+		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+
+		// The gate has rendered.
+		await screen.findByRole( 'heading', { name: /reconnect to update permissions/i } );
+		// The compose FAB sits outside the gate but should also be hidden so a
+		// user can't kick off a post that would fail with auth_required.
+		expect( screen.queryByRole( 'button', { name: /^compose$/i } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'fires calypso_reader_reauth_gate_shown when the gate appears', async () => {
