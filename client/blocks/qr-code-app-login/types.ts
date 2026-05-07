@@ -1,7 +1,8 @@
 export interface Token {
 	token: string;
 	encrypted: string;
-	expires: number;
+	/** Token expiry as a Unix timestamp in seconds. */
+	expiresAt: number;
 }
 
 export interface StatusPending {
@@ -10,7 +11,7 @@ export interface StatusPending {
 
 export interface StatusScanned {
 	status: 'scanned';
-	numbers: number[];
+	numbers: readonly [ number, number, number ];
 	device: string;
 }
 
@@ -37,3 +38,22 @@ export type Status =
 	| StatusConsumed
 	| StatusExpired
 	| StatusRejected;
+
+export const KNOWN_STATUSES: ReadonlyArray< Status[ 'status' ] > = [
+	'pending',
+	'scanned',
+	'approved',
+	'consumed',
+	'expired',
+	'rejected',
+];
+
+export const TERMINAL_STATUSES: ReadonlyArray< Status[ 'status' ] > = [
+	'consumed',
+	'expired',
+	'rejected',
+];
+
+export interface ApiError extends Error {
+	code?: string;
+}
