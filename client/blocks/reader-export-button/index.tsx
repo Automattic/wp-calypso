@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { download } from '@wordpress/icons';
+import { saveAs } from 'browser-filesaver';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef, useCallback, ComponentPropsWithoutRef } from 'react';
 import {
@@ -61,13 +62,12 @@ const ReaderExportButton = ( {
 			);
 		};
 
-		const onApiResponse = async ( data?: ExportResponse ) => {
+		const onApiResponse = ( data?: ExportResponse ) => {
 			if ( ! data?.success ) {
 				showErrorNotice();
 				return;
 			}
 
-			const { saveAs } = await import( 'browser-filesaver' );
 			const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } );
 			saveAs( blob, filename );
 
@@ -81,7 +81,7 @@ const ReaderExportButton = ( {
 				exportType === READER_EXPORT_TYPE_LIST
 					? await wp.req.get( `/read/lists/${ listId }/export`, { apiNamespace: 'wpcom/v2' } )
 					: await wp.req.get( '/read/following/mine/export', { apiVersion: '1.2' } );
-			await onApiResponse( data );
+			onApiResponse( data );
 		} catch ( error ) {
 			showErrorNotice();
 		}

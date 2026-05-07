@@ -11,6 +11,7 @@ import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useSelector } from 'calypso/state';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
@@ -253,9 +254,7 @@ export const HardBlockingNotice = ( {
 export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
 	const hasEnTranslation = useHasEnTranslation();
 
-	const billingPeriod = useSelector(
-		( state ) => state?.marketplace?.billingInterval.interval ?? IntervalLength.MONTHLY
-	);
+	const billingPeriod = useSelector( getBillingInterval );
 	const holdMessages = getHoldMessages( {
 		context,
 		translate,

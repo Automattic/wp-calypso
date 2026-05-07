@@ -15,22 +15,20 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-function getAllDataCenterOptions() {
-	return [
-		{
-			value: '',
-			get label(): string {
-				return translate( 'Optimal data center' );
-			},
+const AllDataCenterOptions = [
+	{
+		value: '',
+		get label(): string {
+			return translate( 'Optimal data center' );
 		},
-		...Object.entries( getDataCenterOptions() ).map( ( [ key, value ] ) => ( {
-			value: key,
-			get label(): string {
-				return value as string;
-			},
-		} ) ),
-	];
-}
+	},
+	...Object.entries( getDataCenterOptions() ).map( ( [ key, value ] ) => ( {
+		value: key,
+		get label(): string {
+			return value as string;
+		},
+	} ) ),
+];
 
 const Form = styled.div( {
 	maxWidth: '564px',
@@ -123,7 +121,7 @@ const DataCenterPicker = ( {
 										}
 								  )
 						}
-						options={ getAllDataCenterOptions().map( ( option ) => ( {
+						options={ AllDataCenterOptions.map( ( option ) => ( {
 							label: option.label,
 							value: option.value,
 						} ) ) }

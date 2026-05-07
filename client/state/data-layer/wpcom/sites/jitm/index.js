@@ -13,23 +13,21 @@ import schema from './schema.json';
 
 const noop = () => {};
 // Clean this up when we release a major version of Odyssey Stats e.g. v1.1.
-const isRunningInLegacyJetpackSite = () =>
+const isRunningInLegacyJetpackSite =
 	config.isEnabled( 'is_running_in_jetpack_site' ) &&
 	! getEnvStatsFeatureSupportChecksMemoized( config( 'intial_state' ), config( 'blog_id' ) )
 		.supportsWpcomV3Jitm;
-
-const getJitmSchema = () =>
-	! isRunningInLegacyJetpackSite()
-		? schema
-		: {
-				$schema: 'http://json-schema.org/draft-04/schema#',
-				properties: {
-					data: {
-						type: 'array',
-						items: schema.items,
-					},
+const jitmSchema = ! isRunningInLegacyJetpackSite
+	? schema
+	: {
+			$schema: 'http://json-schema.org/draft-04/schema#',
+			properties: {
+				data: {
+					type: 'array',
+					items: schema.items,
 				},
-		  };
+			},
+	  };
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
@@ -46,7 +44,7 @@ const unescapeDecimalEntities = ( str ) =>
  */
 export const transformApiRequest = ( jitms ) => {
 	// Different shape of data between Calypso and Jetpack.
-	if ( isRunningInLegacyJetpackSite() && jitms && jitms.data ) {
+	if ( isRunningInLegacyJetpackSite && jitms && jitms.data ) {
 		jitms = jitms.data;
 	}
 	return jitms.map( ( jitm ) => ( {
@@ -177,36 +175,21 @@ const doJetpackDismissJITM = ( action ) =>
 		action
 	);
 
-const fetchJITM = ( action ) =>
-	isRunningInLegacyJetpackSite() ? doJetpackFetchJITM( action ) : doFetchJITM( action );
+registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
+	[ JITM_FETCH ]: [
+		dispatchRequest( {
+			fetch: ! isRunningInLegacyJetpackSite ? doFetchJITM : doJetpackFetchJITM,
+			onSuccess: receiveJITM,
+			onError: failedJITM,
+			fromApi: makeJsonSchemaParser( jitmSchema, transformApiRequest ),
+		} ),
+	],
 
-const dismissJITM = ( action ) =>
-	isRunningInLegacyJetpackSite() ? doJetpackDismissJITM( action ) : doDismissJITM( action );
-
-const parseJITM = ( data ) => makeJsonSchemaParser( getJitmSchema(), transformApiRequest )( data );
-
-const lazyDispatchRequest =
-	( options ) =>
-	( ...args ) =>
-		dispatchRequest( options )( ...args );
-
-if ( typeof window !== 'undefined' ) {
-	registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
-		[ JITM_FETCH ]: [
-			lazyDispatchRequest( {
-				fetch: fetchJITM,
-				onSuccess: receiveJITM,
-				onError: failedJITM,
-				fromApi: parseJITM,
-			} ),
-		],
-
-		[ JITM_DISMISS ]: [
-			lazyDispatchRequest( {
-				fetch: dismissJITM,
-				onSuccess: noop,
-				onError: noop,
-			} ),
-		],
-	} );
-}
+	[ JITM_DISMISS ]: [
+		dispatchRequest( {
+			fetch: ! isRunningInLegacyJetpackSite ? doDismissJITM : doJetpackDismissJITM,
+			onSuccess: noop,
+			onError: noop,
+		} ),
+	],
+} );

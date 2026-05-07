@@ -10,8 +10,7 @@ import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/com
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
 import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
-import * as React from '@wordpress/element';
-import { useState, useCallback } from '@wordpress/element';
+import React, { useState, useCallback } from '@wordpress/element';
 import { rawShortcut } from '@wordpress/keycodes';
 import clsx from 'clsx';
 import { safeParse } from '../utils';

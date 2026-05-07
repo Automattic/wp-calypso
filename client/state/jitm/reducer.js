@@ -21,29 +21,12 @@ export const isFetching = ( _, { type } ) => {
 	return false;
 };
 
-let reducer;
+const sitePathJITM = keyedReducer( 'keyedPath', storeJITM );
+const isFetchingJITM = keyedReducer( 'keyedPath', isFetching );
 
-const getReducer = () => {
-	if ( reducer ) {
-		return reducer;
-	}
+const combinedReducer = combineReducers( {
+	sitePathJITM,
+	isFetchingJITM,
+} );
 
-	const sitePathJITM = keyedReducer( 'keyedPath', storeJITM );
-	const isFetchingJITM = keyedReducer( 'keyedPath', isFetching );
-
-	const combinedReducer = combineReducers( {
-		sitePathJITM,
-		isFetchingJITM,
-	} );
-
-	reducer = withStorageKey( 'jitm', combinedReducer );
-	return reducer;
-};
-
-const jitmReducer = ( state, action ) => getReducer()( state, action );
-
-jitmReducer.storageKey = 'jitm';
-jitmReducer.serialize = ( state ) => getReducer().serialize?.( state );
-jitmReducer.deserialize = ( persisted ) => getReducer().deserialize?.( persisted );
-
-export default jitmReducer;
+export default withStorageKey( 'jitm', combinedReducer );

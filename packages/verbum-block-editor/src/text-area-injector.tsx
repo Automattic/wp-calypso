@@ -1,5 +1,4 @@
-import * as React from '@wordpress/element';
-import { createRoot } from '@wordpress/element';
+import React, { createRoot } from '@wordpress/element';
 import { EmbedRequestParams, addApiMiddleware } from './api';
 import { Editor } from './editor';
 import { loadBlocksWithCustomizations } from './load-blocks';

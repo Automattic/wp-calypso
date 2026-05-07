@@ -1,11 +1,10 @@
-import warning from '@wordpress/warning';
+import warn from '@wordpress/warning';
 import deterministicStringify from 'fast-json-stable-stringify';
 import { get, merge } from 'lodash';
 import { keyedReducer } from 'calypso/state/utils';
 
 const noop = () => {};
 const identity = ( data ) => data;
-const warn = warning.default ?? warning;
 
 /**
  * Returns response data from an HTTP request success action if available

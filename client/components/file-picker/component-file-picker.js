@@ -8,27 +8,12 @@ import * as event from 'component-event';
  * Input template
  */
 
-let form;
-let input;
-
-function getFileInput() {
-	if ( input ) {
-		return input;
-	}
-
-	if ( typeof document === 'undefined' ) {
-		return null;
-	}
-
-	form = document.createElement( 'form' );
-	form.style.margin = '0px';
-	form.innerHTML =
-		'<input type="file" style="top: -1000px; position: absolute" aria-hidden="true" tabindex="-1">';
-	document.body.appendChild( form );
-	input = form.childNodes[ 0 ];
-
-	return input;
-}
+const form = document.createElement( 'form' );
+form.style.margin = '0px';
+form.innerHTML =
+	'<input type="file" style="top: -1000px; position: absolute" aria-hidden="true" tabindex="-1">';
+document.body.appendChild( form );
+const input = form.childNodes[ 0 ];
 
 /**
  * Already bound
@@ -48,38 +33,33 @@ export default function FilePicker( opts, fn ) {
 	}
 	opts = opts || {};
 
-	const fileInput = getFileInput();
-	if ( ! fileInput ) {
-		return;
-	}
-
 	// multiple files support
-	fileInput.multiple = !! opts.multiple;
+	input.multiple = !! opts.multiple;
 
 	// directory support
-	fileInput.webkitdirectory = fileInput.mozdirectory = fileInput.directory = !! opts.directory;
+	input.webkitdirectory = input.mozdirectory = input.directory = !! opts.directory;
 
 	// accepted file types support
 	if ( null == opts.accept ) {
-		delete fileInput.accept;
+		delete input.accept;
 	} else if ( opts.accept.join ) {
 		// got an array
-		fileInput.accept = opts.accept.join( ',' );
+		input.accept = opts.accept.join( ',' );
 	} else if ( opts.accept ) {
 		// got a regular string
-		fileInput.accept = opts.accept;
+		input.accept = opts.accept;
 	}
 
 	// listen to change event (unbind old one if already listening)
 	if ( bound ) {
-		event.unbind( fileInput, 'change', bound );
+		event.unbind( input, 'change', bound );
 	}
-	event.bind( fileInput, 'change', onchange );
+	event.bind( input, 'change', onchange );
 	bound = onchange;
 
 	function onchange( e ) {
-		fn( fileInput.files, e, fileInput );
-		event.unbind( fileInput, 'change', onchange );
+		fn( input.files, e, input );
+		event.unbind( input, 'change', onchange );
 		bound = false;
 	}
 
@@ -87,5 +67,5 @@ export default function FilePicker( opts, fn ) {
 	form.reset();
 
 	// trigger input dialog
-	fileInput.click();
+	input.click();
 }
