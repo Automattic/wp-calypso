@@ -249,6 +249,34 @@ const browserConditionalRequiresPlugin: Plugin = {
 	},
 };
 
+// `client/components/date-picker` depends on react-day-picker v7 (CJS, default
+// export) declared in client/package.json, while other consumers (packages/ui)
+// use v9 (named exports only) hoisted to the workspace root. Webpack picks the
+// nearest node_modules per importer; Vite's optimizer keeps one entry per bare
+// specifier and would otherwise serve v9 to everyone, dropping the v7 default
+// export.
+//
+// Trick: the resolver re-resolves to a synthetic bare specifier
+// `react-day-picker-v7` (aliased below to v7's CJS `main`, and force-included
+// in optimizeDeps). Vite's optimizer then keeps two separate pre-bundled
+// entries — one per specifier. Pointing at v7's CJS `main` (build/index.js)
+// rather than its `browser` UMD bundle is essential: the optimizer converts
+// CJS→ESM, but serves UMD raw, which exposes no `default` export.
+const REACT_DAY_PICKER_V7 = path.join( __dirname, 'node_modules/react-day-picker/build/index.js' );
+const reactDayPickerV7Plugin: Plugin = {
+	name: 'calypso-react-day-picker-v7',
+	enforce: 'pre',
+	async resolveId( id: string, importer: string | undefined ) {
+		if ( id !== 'react-day-picker' ) {
+			return null;
+		}
+		if ( ! importer?.includes( '/client/components/date-picker/' ) ) {
+			return null;
+		}
+		return this.resolve( 'react-day-picker-v7', importer, { skipSelf: true } );
+	},
+};
+
 const webpackCssLoaderImportsPlugin: Plugin = {
 	name: 'calypso-webpack-css-loader-imports',
 	enforce: 'pre',
@@ -341,6 +369,9 @@ export default defineConfig(
 				// react-day-picker/locale only re-exports date-fns/locale. Rolldown's
 				// dep optimizer currently loses named exports from that re-export shim.
 				{ find: 'react-day-picker/locale', replacement: 'date-fns/locale' },
+
+				// Synthetic specifier for v7 (see reactDayPickerV7Plugin above).
+				{ find: 'react-day-picker-v7', replacement: REACT_DAY_PICKER_V7 },
 			],
 		},
 
@@ -397,6 +428,8 @@ export default defineConfig(
 
 			browserConditionalRequiresPlugin,
 
+			reactDayPickerV7Plugin,
+
 			webpackCssLoaderImportsPlugin,
 
 			// TypeScript interfaces and type aliases are erased by OXC at compile time,
@@ -434,8 +467,11 @@ export default defineConfig(
 		publicDir: false,
 
 		optimizeDeps: {
+			// Force pre-bundling for the v7 alias — deep node_modules paths
+			// aren't auto-discovered by the dep scanner.
+			include: [ 'react-day-picker-v7' ],
 			rolldownOptions: {
-				plugins: [ transformReactVirtualizedJsxPlugin ],
+				plugins: [ transformReactVirtualizedJsxPlugin, reactDayPickerV7Plugin ],
 			},
 		},
 
