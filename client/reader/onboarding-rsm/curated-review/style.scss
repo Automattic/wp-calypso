@@ -77,6 +77,11 @@
 		&.is-auto-flagged:not( .is-marked-broken ) {
 			border-color: var( --color-warning, #dba617 );
 		}
+
+		&.is-has-icon-forced-false:not( .is-broken ) {
+			border-color: var( --color-warning, #dba617 );
+			background: var( --color-warning-surface, rgba( 219, 166, 23, 0.06 ) );
+		}
 	}
 
 	&__row-icon {
@@ -125,10 +130,19 @@
 		background: var( --color-error, #d63638 );
 		color: #fff;
 		border-radius: 3px;
+
+		&.is-warning {
+			background: var( --color-warning, #dba617 );
+		}
 	}
 
-	.is-auto-flagged:not( .is-marked-broken ) &__row-flag {
+	.is-auto-flagged:not( .is-marked-broken ) &__row-flag:not( .is-warning ) {
 		background: var( --color-warning, #dba617 );
+	}
+
+	&__hint {
+		color: var( --color-text-subtle, #555 );
+		font-size: 12px;
 	}
 
 	&__row-fields {

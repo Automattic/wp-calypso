@@ -7,12 +7,15 @@ import { industryBlogs } from '../curated-blogs/industry';
 import { lifestyleBlogs } from '../curated-blogs/lifestyle';
 import { societyBlogs } from '../curated-blogs/society';
 import { technologyBlogs } from '../curated-blogs/technology';
-import { CuratedRow } from './curated-row';
+import { CuratedRow, type DetectedRow } from './curated-row';
 import { serializeCurated, type CuratedRowMetadata } from './serialize-curated';
-import { useBrokenState } from './use-broken-state';
+import { usePersistedFeedIdSet } from './use-persisted-feed-ids';
 import type { CuratedBlog, CuratedBlogsList } from '../curated-blogs';
 
 import './style.scss';
+
+const STORAGE_KEY_BROKEN = 'reader/curated-review/broken-feed-ids';
+const STORAGE_KEY_HAS_ICON_FALSE = 'reader/curated-review/has-icon-false-feed-ids';
 
 interface CuratedFile {
 	/** Filename under `curated-blogs/`, sans extension. */
@@ -54,7 +57,8 @@ const CuratedReviewPage: React.FC = () => {
 	const [ showOnlyBroken, setShowOnlyBroken ] = useState( false );
 	const [ showOnlyUnmarked, setShowOnlyUnmarked ] = useState( false );
 
-	const { brokenFeedIds, toggleBroken, clearAll } = useBrokenState();
+	const broken = usePersistedFeedIdSet( STORAGE_KEY_BROKEN );
+	const hasIconFalse = usePersistedFeedIdSet( STORAGE_KEY_HAS_ICON_FALSE );
 
 	// Parallel feed lookups; React Query batches and dedupes naturally.
 	const feedQueries = useQueries( {
@@ -63,14 +67,14 @@ const CuratedReviewPage: React.FC = () => {
 		} ) ),
 	} );
 
-	// Resolved metadata per row (indexed alongside flatRows / feedQueries).
-	const rowMetadata = useMemo( () => {
+	// Detected (API-derived) per-row data, indexed alongside flatRows / feedQueries.
+	const detectedRows = useMemo( () => {
 		return flatRows.map( ( row, index ) => {
 			const query = feedQueries[ index ];
 			const feed = query.data;
 			if ( ! feed ) {
 				return {
-					metadata: null as CuratedRowMetadata | null,
+					detected: null as DetectedRow | null,
 					iconUrl: null as string | null,
 					autoFlaggedBroken: query.isError,
 				};
@@ -79,7 +83,7 @@ const CuratedReviewPage: React.FC = () => {
 			const hasIcon = Boolean( feed.image );
 			const autoFlaggedBroken = ! feed.feed_URL && ! feed.URL;
 			return {
-				metadata: { feedUrl, hasIcon } as CuratedRowMetadata,
+				detected: { feedUrl, hasIcon } as DetectedRow,
 				iconUrl: hasIcon ? feed.image : null,
 				autoFlaggedBroken,
 			};
@@ -87,27 +91,26 @@ const CuratedReviewPage: React.FC = () => {
 	}, [ flatRows, feedQueries ] );
 
 	const totalRows = flatRows.length;
-	const resolvedRows = rowMetadata.filter( ( m ) => m.metadata !== null ).length;
+	const resolvedRows = detectedRows.filter( ( m ) => m.detected !== null ).length;
 	const erroredRows = feedQueries.filter( ( q ) => q.isError ).length;
-	const brokenCount = brokenFeedIds.size;
 
 	const visibleIndices = useMemo( () => {
 		const indices: number[] = [];
 		for ( let i = 0; i < flatRows.length; i++ ) {
 			const row = flatRows[ i ];
-			const meta = rowMetadata[ i ];
-			const isMarked = brokenFeedIds.has( row.entry.feed_ID );
-			const isBroken = isMarked || meta.autoFlaggedBroken;
+			const meta = detectedRows[ i ];
+			const isMarkedBroken = broken.feedIds.has( row.entry.feed_ID );
+			const isBroken = isMarkedBroken || meta.autoFlaggedBroken;
 			if ( showOnlyBroken && ! isBroken ) {
 				continue;
 			}
-			if ( showOnlyUnmarked && isMarked ) {
+			if ( showOnlyUnmarked && isMarkedBroken ) {
 				continue;
 			}
 			indices.push( i );
 		}
 		return indices;
-	}, [ flatRows, rowMetadata, brokenFeedIds, showOnlyBroken, showOnlyUnmarked ] );
+	}, [ flatRows, detectedRows, broken.feedIds, showOnlyBroken, showOnlyUnmarked ] );
 
 	// Build the per-file metadata lookup once; the serializer asks for it
 	// entry-by-entry. Falls back to a passthrough for any rows whose feed
@@ -116,15 +119,23 @@ const CuratedReviewPage: React.FC = () => {
 	const metadataByFeedId = useMemo( () => {
 		const map = new Map< number, CuratedRowMetadata >();
 		flatRows.forEach( ( row, index ) => {
-			const meta = rowMetadata[ index ].metadata;
-			if ( ! meta ) {
+			const detected = detectedRows[ index ].detected;
+			if ( ! detected ) {
 				return;
 			}
-			const isMarked = brokenFeedIds.has( row.entry.feed_ID );
-			map.set( row.entry.feed_ID, isMarked ? { ...meta, isBroken: true } : meta );
+			const isMarkedBroken = broken.feedIds.has( row.entry.feed_ID );
+			const isHasIconForcedFalse = hasIconFalse.feedIds.has( row.entry.feed_ID );
+			const meta: CuratedRowMetadata = {
+				feedUrl: detected.feedUrl,
+				hasIcon: detected.hasIcon && ! isHasIconForcedFalse,
+			};
+			if ( isMarkedBroken ) {
+				meta.isBroken = true;
+			}
+			map.set( row.entry.feed_ID, meta );
 		} );
 		return map;
-	}, [ flatRows, rowMetadata, brokenFeedIds ] );
+	}, [ flatRows, detectedRows, broken.feedIds, hasIconFalse.feedIds ] );
 
 	const serializeFile = useCallback(
 		( file: CuratedFile ): { source: string; missing: number } => {
@@ -144,13 +155,13 @@ const CuratedReviewPage: React.FC = () => {
 					return {
 						feedUrl: entry.site_URL,
 						hasIcon: false,
-						isBroken: brokenFeedIds.has( entry.feed_ID ) ? true : undefined,
+						isBroken: broken.feedIds.has( entry.feed_ID ) ? true : undefined,
 					};
 				},
 			} );
 			return { source, missing };
 		},
-		[ metadataByFeedId, brokenFeedIds ]
+		[ metadataByFeedId, broken.feedIds ]
 	);
 
 	const copyFile = useCallback(
@@ -190,7 +201,10 @@ const CuratedReviewPage: React.FC = () => {
 						<div className="curated-review__progress-error">{ erroredRows } errored</div>
 					) }
 					<div>
-						<strong>{ brokenCount }</strong> marked broken
+						<strong>{ broken.feedIds.size }</strong> marked broken
+					</div>
+					<div>
+						<strong>{ hasIconFalse.feedIds.size }</strong> hasIcon forced false
 					</div>
 				</div>
 
@@ -210,11 +224,22 @@ const CuratedReviewPage: React.FC = () => {
 						isDestructive
 						onClick={ () => {
 							if ( window.confirm( 'Clear all marked-broken state?' ) ) {
-								clearAll();
+								broken.clear();
 							}
 						} }
 					>
 						Clear all marked-broken
+					</Button>
+					<Button
+						variant="link"
+						isDestructive
+						onClick={ () => {
+							if ( window.confirm( 'Clear all hasIcon=false overrides?' ) ) {
+								hasIconFalse.clear();
+							}
+						} }
+					>
+						Clear all hasIcon-false
 					</Button>
 				</div>
 
@@ -230,20 +255,22 @@ const CuratedReviewPage: React.FC = () => {
 			<main className="curated-review__list">
 				{ visibleIndices.map( ( index ) => {
 					const row = flatRows[ index ];
-					const meta = rowMetadata[ index ];
+					const meta = detectedRows[ index ];
 					const query = feedQueries[ index ];
 					return (
 						<CuratedRow
 							key={ row.entry.feed_ID }
 							tag={ row.tag }
 							entry={ row.entry }
-							metadata={ meta.metadata }
+							detected={ meta.detected }
 							iconUrl={ meta.iconUrl }
 							isLoading={ query.isLoading || query.isFetching }
 							queryError={ query.error as Error | null }
-							isMarkedBroken={ brokenFeedIds.has( row.entry.feed_ID ) }
+							isMarkedBroken={ broken.feedIds.has( row.entry.feed_ID ) }
 							autoFlaggedBroken={ meta.autoFlaggedBroken }
-							onToggleBroken={ () => toggleBroken( row.entry.feed_ID ) }
+							onToggleBroken={ () => broken.toggle( row.entry.feed_ID ) }
+							isHasIconForcedFalse={ hasIconFalse.feedIds.has( row.entry.feed_ID ) }
+							onToggleHasIconFalse={ () => hasIconFalse.toggle( row.entry.feed_ID ) }
 						/>
 					);
 				} ) }

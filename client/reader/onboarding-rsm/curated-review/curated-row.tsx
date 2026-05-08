@@ -3,18 +3,28 @@ import clsx from 'clsx';
 import React from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import type { CuratedBlog } from '../curated-blogs';
-import type { CuratedRowMetadata } from './serialize-curated';
+
+export interface DetectedRow {
+	/** Resolved canonical feed URL (from `feed.feed_URL || feed.URL || entry.site_URL`). */
+	feedUrl: string;
+	/** Auto-detected `Boolean(feed.image)`. */
+	hasIcon: boolean;
+}
 
 interface CuratedRowProps {
 	tag: string;
 	entry: CuratedBlog;
-	metadata: CuratedRowMetadata | null; // null = feed query still pending
-	iconUrl: string | null; // resolved feed.image, if any
+	/** API-derived row data; null while the feed query is pending. */
+	detected: DetectedRow | null;
+	/** Resolved feed icon URL, regardless of whether `hasIcon` is being forced false. */
+	iconUrl: string | null;
 	isLoading: boolean;
 	queryError: Error | null;
 	isMarkedBroken: boolean;
 	autoFlaggedBroken: boolean;
 	onToggleBroken: () => void;
+	isHasIconForcedFalse: boolean;
+	onToggleHasIconFalse: () => void;
 }
 
 const ICON_SIZE = 36;
@@ -29,26 +39,48 @@ const KeyValue: React.FC< { label: string; children: React.ReactNode } > = ( {
 	</div>
 );
 
-function formatHasIcon( metadata: CuratedRowMetadata | null ): string {
-	if ( ! metadata ) {
+function renderHasIconValue(
+	detected: DetectedRow | null,
+	isForcedFalse: boolean
+): React.ReactNode {
+	if ( ! detected ) {
 		return '—';
 	}
-	return metadata.hasIcon ? 'true' : 'false';
+	if ( isForcedFalse ) {
+		// Detected value still rendered for context — the operator can compare
+		// what the API claimed against the icon they see in the preview column
+		// to decide whether the override was warranted.
+		return (
+			<>
+				<strong>false</strong>{ ' ' }
+				<span className="curated-review__hint">
+					(forced; detected: { detected.hasIcon ? 'true' : 'false' })
+				</span>
+			</>
+		);
+	}
+	return detected.hasIcon ? 'true' : 'false';
 }
 
 export const CuratedRow: React.FC< CuratedRowProps > = ( {
 	tag,
 	entry,
-	metadata,
+	detected,
 	iconUrl,
 	isLoading,
 	queryError,
 	isMarkedBroken,
 	autoFlaggedBroken,
 	onToggleBroken,
+	isHasIconForcedFalse,
+	onToggleHasIconFalse,
 } ) => {
 	const effectivelyBroken = isMarkedBroken || autoFlaggedBroken;
-	const feedUrl = metadata?.feedUrl;
+	// Only render the "Force hasIcon false" affordance when it would actually
+	// matter (detected = true) — or when it's already on, so the operator can
+	// unforce it. Hiding it for detected=false rows keeps the action column
+	// from looking inconsistent.
+	const showHasIconToggle = isHasIconForcedFalse || detected?.hasIcon === true;
 
 	return (
 		<article
@@ -57,7 +89,8 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 				'is-broken': effectivelyBroken,
 				'is-marked-broken': isMarkedBroken,
 				'is-auto-flagged': autoFlaggedBroken && ! isMarkedBroken,
-				'has-icon': metadata?.hasIcon,
+				'has-icon': detected?.hasIcon && ! isHasIconForcedFalse,
+				'is-has-icon-forced-false': isHasIconForcedFalse,
 			} ) }
 		>
 			<div className="curated-review__row-icon">
@@ -72,6 +105,9 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 							{ isMarkedBroken ? 'broken' : 'auto-flagged' }
 						</span>
 					) }
+					{ isHasIconForcedFalse && (
+						<span className="curated-review__row-flag is-warning">hasIcon forced false</span>
+					) }
 				</header>
 
 				<div className="curated-review__row-fields">
@@ -83,17 +119,19 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 						</a>
 					</KeyValue>
 					<KeyValue label="feedUrl">
-						{ isLoading && ! metadata && <em>Loading…</em> }
-						{ ! isLoading && feedUrl && (
-							<a href={ feedUrl } target="_blank" rel="noreferrer noopener">
-								{ feedUrl }
+						{ isLoading && ! detected && <em>Loading…</em> }
+						{ ! isLoading && detected?.feedUrl && (
+							<a href={ detected.feedUrl } target="_blank" rel="noreferrer noopener">
+								{ detected.feedUrl }
 							</a>
 						) }
 						{ queryError && (
 							<em className="curated-review__error">error: { queryError.message }</em>
 						) }
 					</KeyValue>
-					<KeyValue label="hasIcon">{ formatHasIcon( metadata ) }</KeyValue>
+					<KeyValue label="hasIcon">
+						{ renderHasIconValue( detected, isHasIconForcedFalse ) }
+					</KeyValue>
 					{ effectivelyBroken && (
 						<KeyValue label="isBroken">
 							<strong>true</strong>
@@ -105,10 +143,19 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 				<Button
 					variant={ isMarkedBroken ? 'secondary' : 'tertiary' }
 					onClick={ onToggleBroken }
-					disabled={ isLoading && ! metadata }
+					disabled={ isLoading && ! detected }
 				>
 					{ isMarkedBroken ? 'Unmark broken' : 'Mark broken' }
 				</Button>
+				{ showHasIconToggle && (
+					<Button
+						variant={ isHasIconForcedFalse ? 'secondary' : 'tertiary' }
+						onClick={ onToggleHasIconFalse }
+						disabled={ isLoading && ! detected }
+					>
+						{ isHasIconForcedFalse ? 'Use detected hasIcon' : 'Force hasIcon: false' }
+					</Button>
+				) }
 			</div>
 		</article>
 	);
