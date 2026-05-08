@@ -49,15 +49,19 @@ describe( 'SocialLoginForm', () => {
 		expect( screen.queryByText( /Continue with Google/i ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'replaces last used social button with UsernameOrEmailButton in social-first mode', () => {
-		render(
+	test( 'wraps the last used social button with the Last used badge in social-first mode', () => {
+		const { container } = render(
 			<SocialLoginForm { ...defaultProps } isSocialFirst lastUsedAuthenticationMethod="google" />
 		);
 
-		// Google button should be replaced with "Continue with email"
-		expect( screen.getByText( /Continue with email/i ) ).toBeInTheDocument();
-		// Google button itself should not be present since it's replaced
-		expect( screen.queryByText( /Continue with Google/i ) ).not.toBeInTheDocument();
+		const google = screen.getByText( /Continue with Google/i );
+		expect( google ).toBeInTheDocument();
+
+		const wrapper = container.querySelector( '.social-buttons__last-used' );
+		expect( wrapper ).toContainElement( google.closest( 'button' ) );
+
+		// No fallback UsernameOrEmailButton when the last used service is rendered.
+		expect( screen.queryByText( /Continue with email/i ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders UsernameOrEmailButton when lastUsedAuthenticationMethod is not in allowedSocialServices', () => {
@@ -95,8 +99,8 @@ describe( 'SocialLoginForm', () => {
 		expect( screen.queryByText( /Continue with email/i ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'does not duplicate UsernameOrEmailButton when lastUsedAuthenticationMethod is in allowedSocialServices', () => {
-		render(
+	test( 'wraps the last used button and skips the fallback when the last used service is in allowedSocialServices', () => {
+		const { container } = render(
 			<SocialLoginForm
 				{ ...defaultProps }
 				isSocialFirst
@@ -105,11 +109,16 @@ describe( 'SocialLoginForm', () => {
 			/>
 		);
 
-		// PayPal is in the allowed list AND is the lastUsedAuthenticationMethod,
-		// so it should be replaced by UsernameOrEmailButton (only one)
-		const emailButtons = screen.getAllByText( /Continue with email/i );
-		expect( emailButtons ).toHaveLength( 1 );
-		// Google should still be present
+		const paypal = screen.getByText( /Continue with PayPal/i );
+		expect( paypal ).toBeInTheDocument();
+
+		const wrapper = container.querySelector( '.social-buttons__last-used' );
+		expect( wrapper ).toContainElement( paypal.closest( 'button' ) );
+
+		// Google still renders, unbadged.
 		expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
+
+		// No fallback UsernameOrEmailButton — last used service is in the allowed list.
+		expect( screen.queryByText( /Continue with email/i ) ).not.toBeInTheDocument();
 	} );
 } );

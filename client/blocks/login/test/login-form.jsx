@@ -66,27 +66,24 @@ describe( 'LoginForm', () => {
 	test( 'shows the last used authentication method when `isSocialFirst` is true', async () => {
 		cookie.parse.mockImplementationOnce( () => ( { last_used_authentication_method: 'google' } ) );
 
-		render( <LoginForm isSocialFirst /> );
+		const { container } = render( <LoginForm isSocialFirst /> );
 
-		const previous = screen.getByText( /Previously used/i );
-		expect( previous ).toBeInTheDocument();
+		const badge = screen.getByText( /Last used/i );
+		expect( badge ).toBeInTheDocument();
 
 		const google = screen.getByText( /Continue with Google/i );
 		expect( google ).toBeInTheDocument();
+
+		const wrapper = container.querySelector( '.social-buttons__last-used' );
+		expect( wrapper ).toContainElement( google.closest( 'button' ) );
 	} );
 
-	test( 'resets the last used authentication method to using password when social account is linking', async () => {
+	test( 'shows the password form alongside the last used badge when social account is linking', async () => {
 		cookie.parse.mockImplementationOnce( () => ( { last_used_authentication_method: 'google' } ) );
 
 		render( <LoginForm isSocialFirst />, {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
-
-		const previous = screen.queryByText( /Previously used/i );
-		expect( previous ).not.toBeInTheDocument();
-
-		const google = screen.queryByText( /Continue with Google/i );
-		expect( google ).not.toBeInTheDocument();
 
 		const username = screen.getByLabelText( /username/i );
 		expect( username ).toBeInTheDocument();
