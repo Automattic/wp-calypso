@@ -161,6 +161,7 @@ export async function registerBrowserRenderCanvasVideoAbility(): Promise< void >
 								type: 'object',
 								properties: {
 									copy: { type: 'string' },
+									cta: { type: 'string' },
 								},
 							},
 							audioBed: { type: 'string' },

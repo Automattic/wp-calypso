@@ -23,6 +23,14 @@
 	overflow: hidden;
 	background: #111923;
 	color: #fff;
+
+	// Smoothstep ease-in-out applied to --group-progress (the per-frame
+	// 0..1 driver). Used by camera-* rules below so KB starts and ends
+	// gently instead of moving at constant velocity. Formula: t² × (3 − 2t).
+	--kb-eased: calc(
+		var(--group-progress, 0) * var(--group-progress, 0) *
+		(3 - 2 * var(--group-progress, 0))
+	);
 }
 
 .image-studio-feature-clip .timeline-sequence {
@@ -106,33 +114,23 @@
  * camera-* rules work in both contexts.
  */
 .image-studio-feature-clip .camera-zoom-in {
-	transform: scale(calc(1 + (var(--group-progress, 0) * 0.12)));
+	transform: scale(calc(1 + (var(--kb-eased, 0) * 0.06)));
 }
 
 .image-studio-feature-clip .camera-zoom-out {
-	transform: scale(calc(1.18 - (var(--group-progress, 0) * 0.12)));
+	transform: scale(calc(1.06 - (var(--kb-eased, 0) * 0.06)));
 }
 
 .image-studio-feature-clip .camera-pan-left {
-	transform: translate3d(
-			calc(-12px + (var(--group-progress, 0) * -68px)),
-			0,
-			0
-		)
-		scale(1.1);
+	transform: translate3d(calc(var(--kb-eased, 0) * -42px), 0, 0) scale(1.06);
 }
 
 .image-studio-feature-clip .camera-pan-right {
-	transform: translate3d(
-			calc(12px + (var(--group-progress, 0) * 68px)),
-			0,
-			0
-		)
-		scale(1.1);
+	transform: translate3d(calc(var(--kb-eased, 0) * 42px), 0, 0) scale(1.06);
 }
 
 .image-studio-feature-clip .camera-static {
-	transform: scale(1.05);
+	transform: scale(1.03);
 }
 
 /* Bottom-edge vignette so text overlays stay legible. */
@@ -365,6 +363,8 @@
 
 .image-studio-feature-clip .scene-title-card--text-only .scene-copy {
 	justify-self: center;
+	/* Center the CTA pill too so it doesn't dangle under a centered title. */
+	justify-items: center;
 }
 
 .image-studio-feature-clip .scene-title-card--text-only .scene-title {
@@ -410,3 +410,50 @@
 .image-studio-feature-clip .scene-title span {
 	white-space: normal;
 }
+
+/*
+ * CTA pill on the title card ("Read more →"). Visual hook at the very end
+ * of the clip, mirroring the call-to-action that closes the cinematic Veo
+ * variant. Animates in delayed (mid-card) so the title reads first, the
+ * CTA lands second; both fade out together at the very end.
+ */
+.image-studio-feature-clip .scene-cta {
+	display: inline-flex;
+	align-items: center;
+	margin-top: 12px;
+	padding: 18px 32px;
+	background-color: rgba(255, 255, 255, 0.14);
+	backdrop-filter: blur(10px);
+	border: 1.5px solid rgba(255, 255, 255, 0.45);
+	/* stylelint-disable-next-line scales/radii -- pill shape needs to outpace
+	   the design-system radii scale (max 24px); this is the canonical full-
+	   pill radius used elsewhere when a token doesn't fit. */
+	border-radius: 999px;
+	color: #fff;
+	font-size: 36px;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	width: max-content;
+	text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+
+	/* Delayed fade-in: 0..1 over progress 0.30 → 0.55, then fade-out at
+	   0.85 → 1 (matching the title card's tail-fade). */
+	opacity: clamp(
+		0,
+		calc(
+			min(max(0, (var(--scene-progress, 1) - 0.3)) * 4, 1) *
+			(1 - max(0, (var(--scene-progress, 1) - 0.85) * 6.66))
+		),
+		1
+	);
+	transform: translateY(
+		calc((1 - min(max(0, (var(--scene-progress, 1) - 0.3)) * 4, 1)) * 18px)
+	);
+}
+
+.image-studio-feature-clip .scene-cta::after {
+	content: "→";
+	margin-left: 14px;
+	font-weight: 500;
+}
+

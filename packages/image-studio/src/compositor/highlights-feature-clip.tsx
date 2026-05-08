@@ -4,13 +4,17 @@ import type { FeatureClipBrief, FeatureClipCameraMove, FeatureClipScene } from '
 const HIGHLIGHTS_SCENE_DURATION_MS = 4000;
 // Cycled through text scenes so consecutive ones don't share a gradient.
 const TEXT_SCENE_ACCENTS = [ 'indigo', 'teal', 'amber', 'rose' ] as const;
-const HIGHLIGHTS_TITLE_CARD_DURATION_MS = 3000;
+// Title card runs longer than scenes so the closing "Read more" CTA gets a
+// beat to land — the pill animates in mid-card and needs time on screen.
+const HIGHLIGHTS_TITLE_CARD_DURATION_MS = 3500;
 // Text-only fallback (no usable scene images): single, longer title card so the
 // clip still feels intentional rather than ending after 3 s.
 const TEXT_ONLY_TITLE_CARD_DURATION_MS = 6000;
-// Longer crossfade between scenes so the captured frames blend more
-// gradually — short overlaps look like hard cuts in the rendered MP4.
-const TRANSITION_OVERLAP_MS = 700;
+// Longer crossfade between top-level Timegroups for a softer seam — short
+// overlaps look like hard cuts in the rendered MP4. Total clip length is
+// recomputed against this in the duration calc, so bumping this just trades
+// a slightly longer fade for the same total scene budget.
+const TRANSITION_OVERLAP_MS = 900;
 // Crossfade between text overlays inside a single image-group. Shorter than
 // the top-level overlap because we DON'T want the image to be hidden during
 // the swap — only the text is changing.
@@ -221,6 +225,9 @@ export function HighlightsFeatureClip( { id, brief }: HighlightsFeatureClipProps
 							<div className="scene-grid">
 								<div className="scene-copy">
 									<span className="scene-title">{ brief.titleCard.copy }</span>
+									{ brief.titleCard.cta ? (
+										<span className="scene-cta">{ brief.titleCard.cta }</span>
+									) : null }
 								</div>
 							</div>
 						</Timegroup>
