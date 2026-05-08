@@ -2,7 +2,7 @@
 	.upcoming-renewals-dialog__site-label,
 	.upcoming-renewals-dialog__product-subtitle {
 		color: var( --dashboard__text-muted-color, #757575 );
-	}
+		color: var( --dashboard__text-muted-color );
 
 	.dataviews-view-table thead {
 		display: none;
