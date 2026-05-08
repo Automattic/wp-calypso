@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Gridicon, EmbedContainer } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
@@ -9,30 +9,24 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
-import ReaderFullPostFeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
-import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
-import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
-import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
@@ -69,7 +63,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostActionBar from './action-bar';
-import ContentProcessor from './content-processor';
+import { ReaderFullPostContentShell } from './content-shell';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ReaderFullPostNavigation from './post-navigation';
@@ -96,7 +90,6 @@ export class FullPostView extends Component {
 	hasScrolledToCommentAnchor = false;
 	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
-	postContentWrapper = createRef();
 	mountedPath;
 
 	state = {
@@ -129,10 +122,6 @@ export class FullPostView extends Component {
 
 		// Ensure we check comments API availability for this post
 		this.checkCommentsApiAvailability();
-
-		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
-		this.stopResize =
-			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
 
 		document.querySelector( 'body' ).classList.add( 'is-reader-full-post' );
 
@@ -197,8 +186,6 @@ export class FullPostView extends Component {
 
 	componentWillUnmount() {
 		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
-		// Remove WPiFrameResize listener.
-		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
 		document.querySelector( 'body' ).classList.remove( 'is-reader-full-post' );
 		this.trackReadingTime();
@@ -824,26 +811,13 @@ export class FullPostView extends Component {
 								/>
 							) }
 
-							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
-							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
-							{ post.use_excerpt ? (
-								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
-							) : (
-								<EmbedContainer>
-									<AutoDirection>
-										<div
-											ref={ this.postContentWrapper }
-											className="reader-full-post__story-content-container"
-										>
-											<ContentProcessor content={ post.content } />
-										</div>
-									</AutoDirection>
-								</EmbedContainer>
-							) }
-
-							{ post.use_excerpt && <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> }
+							<ReaderFullPostContentShell
+								post={ post }
+								siteName={ siteName }
+								maxWidth={ contentWidth }
+								isActive={ ! isLoading }
+							/>
 
 							<ReaderPostActions
 								post={ post }

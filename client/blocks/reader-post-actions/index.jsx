@@ -28,6 +28,8 @@ const ReaderPostActions = ( {
 	className,
 	fullPost,
 	commentsApiDisabled = false,
+	likeContext,
+	markLikedPostSeen,
 	showFreshlyPressed = true,
 } ) => {
 	const hasSites = !! useSelector( getPrimarySiteId );
@@ -36,9 +38,10 @@ const ReaderPostActions = ( {
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
 	const listClassnames = clsx( 'reader-post-actions', className );
-	const { data } = useQuery( readTeamsQuery() );
+	const shouldQueryTeams = showFreshlyPressed && fullPost && showShare;
+	const { data } = useQuery( { ...readTeamsQuery(), enabled: shouldQueryTeams } );
 	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
-	const shouldShowFreshlyPressed = showFreshlyPressed && fullPost && isAutomattician && showShare;
+	const shouldShowFreshlyPressed = shouldQueryTeams && isAutomattician;
 
 	return (
 		<ul className={ listClassnames }>
@@ -89,6 +92,8 @@ const ReaderPostActions = ( {
 						post={ post }
 						site={ site }
 						fullPost={ fullPost }
+						likeContext={ likeContext }
+						markLikedPostSeen={ markLikedPostSeen }
 						tagName="button"
 						forceCounter
 						iconSize={ iconSize }
@@ -113,6 +118,8 @@ ReaderPostActions.propTypes = {
 	iconSize: PropTypes.number,
 	fullPost: PropTypes.bool,
 	commentsApiDisabled: PropTypes.bool,
+	likeContext: PropTypes.string,
+	markLikedPostSeen: PropTypes.bool,
 	showFreshlyPressed: PropTypes.bool,
 };
 

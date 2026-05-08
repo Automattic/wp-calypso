@@ -15,7 +15,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
 import { FullFeed } from './full-feed';
-import { useFollowingView } from './view-preference';
+import { type ReaderFollowingView, useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
 
@@ -27,6 +27,8 @@ const loadTrackResurrections = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
 	);
+
+const followingViewToggleViews: ReaderFollowingView[] = [ 'recent', 'full-feed', 'stream' ];
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
@@ -58,6 +60,7 @@ function FollowingStream( { ...props } ) {
 
 	const suppressReaderOnboarding =
 		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
+	const followingViewToggle = <ViewToggle views={ followingViewToggleViews } />;
 
 	// Set the selected feed based on route param.
 	useEffect( () => {
@@ -67,9 +70,9 @@ function FollowingStream( { ...props } ) {
 
 	let followingContent;
 	if ( currentView === 'recent' ) {
-		followingContent = <Recent viewToggle={ <ViewToggle /> } />;
+		followingContent = <Recent viewToggle={ followingViewToggle } />;
 	} else if ( currentView === 'full-feed' ) {
-		followingContent = <FullFeed { ...props } viewToggle={ <ViewToggle /> } />;
+		followingContent = <FullFeed { ...props } viewToggle={ followingViewToggle } />;
 	} else {
 		followingContent = (
 			<ReaderStream { ...props } className="following">
@@ -83,7 +86,7 @@ function FollowingStream( { ...props } ) {
 					} ) }
 					className={ clsx( 'following-stream-header' ) }
 				>
-					<ViewToggle />
+					{ followingViewToggle }
 				</NavigationHeader>
 				{ hasSites && (
 					<Card className="following-stream__quick-post-card">

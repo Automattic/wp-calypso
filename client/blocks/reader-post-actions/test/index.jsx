@@ -2,18 +2,20 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import ReaderPostActions from '../index';
 
+const mockLikeButton = jest.fn( () => <div data-testid="like-button" /> );
+
 // Mock the components that are complex to test
 jest.mock( 'calypso/blocks/comment-button', () => () => <div data-testid="comment-button" /> );
 jest.mock( 'calypso/blocks/reader-share', () => () => <div data-testid="share-button" /> );
-jest.mock( 'calypso/reader/like-button', () => () => <div data-testid="like-button" /> );
+jest.mock( 'calypso/reader/like-button', () => ( props ) => mockLikeButton( props ) );
 jest.mock( 'calypso/blocks/reader-freshly-pressed-button', () => ( {
-	ReaderFreshlyPressedButton: () => <div data-testid="freshly-pressed-button" />,
+	ReaderFreshlyPressedButton: () => <button>Suggest: Freshly Pressed</button>,
 } ) );
 
 // Simple mock store
@@ -45,6 +47,7 @@ describe( 'ReaderPostActions', () => {
 	} );
 
 	beforeEach( () => {
+		mockLikeButton.mockClear();
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.2/read/teams' )
@@ -60,7 +63,7 @@ describe( 'ReaderPostActions', () => {
 			const store = createMockStore();
 			const props = { ...defaultProps, commentsApiDisabled: true };
 
-			const { queryByTestId } = render(
+			render(
 				<QueryClientProvider client={ createQueryClient() }>
 					<Provider store={ store }>
 						<ReaderPostActions { ...props } />
@@ -68,7 +71,7 @@ describe( 'ReaderPostActions', () => {
 				</QueryClientProvider>
 			);
 
-			expect( queryByTestId( 'comment-button' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTestId( 'comment-button' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -101,6 +104,73 @@ describe( 'ReaderPostActions', () => {
 			);
 
 			expect( queryByTestId( 'comment-button' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'full-feed action options', () => {
+		it( 'passes explicit like context and mark-seen behavior through to LikeButton', () => {
+			const store = createMockStore();
+
+			render(
+				<QueryClientProvider client={ createQueryClient() }>
+					<Provider store={ store }>
+						<ReaderPostActions
+							{ ...defaultProps }
+							likeContext="full-feed"
+							markLikedPostSeen={ false }
+						/>
+					</Provider>
+				</QueryClientProvider>
+			);
+
+			expect( mockLikeButton ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					likeContext: 'full-feed',
+					markLikedPostSeen: false,
+				} )
+			);
+		} );
+
+		it( 'can suppress Freshly Pressed for full-post-style actions', async () => {
+			nock.cleanAll();
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.2/read/teams' )
+				.reply( 200, { teams: [ { slug: 'a8c' } ] } );
+			const store = createMockStore();
+
+			render(
+				<QueryClientProvider client={ createQueryClient() }>
+					<Provider store={ store }>
+						<ReaderPostActions { ...defaultProps } fullPost showFreshlyPressed={ false } />
+					</Provider>
+				</QueryClientProvider>
+			);
+
+			await waitFor( () => {
+				expect(
+					screen.queryByRole( 'button', { name: 'Suggest: Freshly Pressed' } )
+				).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'shows Freshly Pressed by default for eligible full posts', async () => {
+			nock.cleanAll();
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.2/read/teams' )
+				.reply( 200, { teams: [ { slug: 'a8c' } ] } );
+			const store = createMockStore();
+
+			render(
+				<QueryClientProvider client={ createQueryClient() }>
+					<Provider store={ store }>
+						<ReaderPostActions { ...defaultProps } fullPost />
+					</Provider>
+				</QueryClientProvider>
+			);
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Suggest: Freshly Pressed' } )
+			).toBeVisible();
 		} );
 	} );
 } );

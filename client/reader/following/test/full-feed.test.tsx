@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createStore } from 'redux';
+import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
 import { getStream, getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -26,6 +28,10 @@ jest.mock( 'calypso/reader/components/reader-main', () => ( {
 			{ children }
 		</main>
 	),
+} ) );
+
+jest.mock( 'calypso/reader/reader-performance-tracker', () => ( {
+	ReaderPerformanceTrackerStop: () => <span data-testid="reader-performance-stop" />,
 } ) );
 
 jest.mock( 'calypso/components/bloganuary-header', () => ( {
@@ -53,6 +59,20 @@ jest.mock( 'calypso/reader/stream/empty', () => ( {
 	default: () => <p>No posts</p>,
 } ) );
 
+jest.mock( 'calypso/reader/stream/post-unavailable', () => ( {
+	__esModule: true,
+	default: ( { post }: { post: { title: string } } ) => (
+		<article aria-label={ `${ post.title } unavailable` }>Unavailable</article>
+	),
+} ) );
+
+jest.mock( 'calypso/blocks/reader-post-card/blocked', () => ( {
+	__esModule: true,
+	default: ( { post }: { post: { title: string } } ) => (
+		<article aria-label={ `${ post.title } blocked` }>Blocked</article>
+	),
+} ) );
+
 jest.mock( '../full-feed-post', () => ( {
 	FullFeedPost: ( { post }: { post: { title: string } } ) => (
 		<article aria-label={ post.title }>{ post.title }</article>
@@ -77,8 +97,30 @@ const mockPostWithSeenFlag = {
 	title: 'Post with seen flag',
 };
 
+const mockBlockedPost = {
+	ID: 147,
+	feed_ID: 123,
+	feed_item_ID: 147,
+	global_ID: 'blocked-post',
+	is_external: false,
+	site_ID: 999,
+	title: 'Blocked post',
+};
+
+const mockErrorPost = {
+	ID: 258,
+	feed_ID: 123,
+	feed_item_ID: 258,
+	global_ID: 'error-post',
+	is_error: true,
+	title: 'Error post',
+};
+
 const mockRecordReaderTracksEvent = jest.fn();
-let mockPostsByPostId: Record< number, typeof mockFirstPost | typeof mockPostWithSeenFlag > = {};
+let mockPostsByPostId: Record<
+	number,
+	typeof mockFirstPost | typeof mockPostWithSeenFlag | typeof mockBlockedPost | typeof mockErrorPost
+> = {};
 
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: jest.fn( () => mockRecordReaderTracksEvent ),
@@ -95,6 +137,10 @@ jest.mock( 'calypso/state/reader/posts/selectors', () => ( {
 
 jest.mock( 'calypso/state/reader-ui/sidebar/selectors', () => ( {
 	getSelectedRecentFeedId: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/reader/site-blocks/selectors', () => ( {
+	getBlockedSites: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/selectors/get-current-locale-slug', () => ( {
@@ -123,8 +169,10 @@ const populatedStream = {
 	pageHandle: { page_handle: 'next-page' },
 };
 
-const renderFullFeed = () =>
-	renderWithProvider( <FullFeed streamKey="following" viewToggle={ <button>Toggle</button> } /> );
+const renderFullFeed = ( props: Partial< React.ComponentProps< typeof FullFeed > > = {} ) =>
+	renderWithProvider(
+		<FullFeed streamKey="following" viewToggle={ <button>Toggle</button> } { ...props } />
+	);
 
 describe( 'FullFeed', () => {
 	beforeEach( () => {
@@ -133,9 +181,12 @@ describe( 'FullFeed', () => {
 		mockPostsByPostId = {
 			456: mockFirstPost,
 			789: mockPostWithSeenFlag,
+			147: mockBlockedPost,
+			258: mockErrorPost,
 		};
 		( getSelectedRecentFeedId as jest.Mock ).mockReturnValue( null );
 		( getCurrentLocaleSlug as jest.Mock ).mockReturnValue( 'en' );
+		( getBlockedSites as jest.Mock ).mockReturnValue( [] );
 		( getStream as jest.Mock ).mockReturnValue( populatedStream );
 		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [
 			{ isGap: true, postId: 1 },
@@ -150,6 +201,7 @@ describe( 'FullFeed', () => {
 		expect( screen.getByRole( 'heading', { name: 'Full feed' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Toggle' } ) ).toBeVisible();
 		expect( screen.getByRole( 'article', { name: 'First post' } ) ).toBeVisible();
+		expect( screen.getByTestId( 'reader-performance-stop' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'No posts' ) ).not.toBeInTheDocument();
 		expect( viewStream ).toHaveBeenCalledWith( 'following', expect.any( String ) );
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith( 'calypso_reader_full_feed_viewed', {
@@ -174,6 +226,19 @@ describe( 'FullFeed', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	it( 'uses the stream lifecycle blocked and unavailable states', () => {
+		( getBlockedSites as jest.Mock ).mockReturnValue( [ 999 ] );
+		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [
+			{ feedId: 123, postId: 147 },
+			{ feedId: 123, postId: 258 },
+		] );
+
+		renderFullFeed();
+
+		expect( screen.getByRole( 'article', { name: 'Blocked post blocked' } ) ).toBeVisible();
+		expect( screen.getByRole( 'article', { name: 'Error post unavailable' } ) ).toBeVisible();
+	} );
+
 	it( 'requests the first page when the stream is empty', () => {
 		( getStream as jest.Mock ).mockReturnValue( {
 			error: null,
@@ -191,6 +256,65 @@ describe( 'FullFeed', () => {
 			expect.objectContaining( {
 				feedId: null,
 				pageHandle: null,
+				streamKey: 'following',
+			} )
+		);
+	} );
+
+	it( 'uses the start date as the first page cursor', () => {
+		( getStream as jest.Mock ).mockReturnValue( {
+			error: null,
+			isRequesting: false,
+			items: [],
+			lastPage: false,
+			pageHandle: undefined,
+		} );
+		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [] );
+
+		renderFullFeed( { startDate: '2026-04-17' } );
+
+		expect( requestPage ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				pageHandle: { before: '2026-04-17' },
+				streamKey: 'following',
+			} )
+		);
+	} );
+
+	it( 'lets the error retry request a page even while stale request state is set', async () => {
+		const user = userEvent.setup();
+		( getStream as jest.Mock ).mockReturnValue( {
+			error: new Error( 'network failed' ),
+			isRequesting: true,
+			items: [],
+			lastPage: false,
+			pageHandle: { page_handle: 'retry-page' },
+		} );
+		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [] );
+
+		renderFullFeed();
+
+		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+		expect( requestPage ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				pageHandle: { page_handle: 'retry-page' },
+				streamKey: 'following',
+			} )
+		);
+	} );
+
+	it( 'guards duplicate page requests before request state updates', async () => {
+		const user = userEvent.setup();
+
+		renderFullFeed();
+
+		await user.dblClick( screen.getByRole( 'button', { name: 'Load more' } ) );
+
+		expect( requestPage ).toHaveBeenCalledTimes( 1 );
+		expect( requestPage ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				pageHandle: { page_handle: 'next-page' },
 				streamKey: 'following',
 			} )
 		);

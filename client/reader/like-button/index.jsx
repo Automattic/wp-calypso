@@ -52,18 +52,20 @@ class ReaderLikeButton extends Component {
 
 	recordLikeToggle = ( liked ) => {
 		const post = this.props.post || this.props.postByKey;
+		const context = this.props.likeContext || ( this.props.fullPost ? 'full-post' : 'card' );
+		const pathnameOverride =
+			this.props.pathnameOverride || ( this.props.fullPost ? this.props.previousPath : undefined );
+		const shouldMarkPostSeen = this.props.markLikedPostSeen !== false && ! this.props.fullPost;
 
 		recordAction( liked ? 'liked_post' : 'unliked_post' );
 		recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
 		recordTrackForPost(
 			liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked',
 			post,
-			{ context: this.props.fullPost ? 'full-post' : 'card' },
-			{
-				...( this.props.fullPost ? { pathnameOverride: this.props.previousPath } : {} ),
-			}
+			{ context },
+			pathnameOverride ? { pathnameOverride } : {}
 		);
-		if ( liked && ! this.props.fullPost && ! post._seen ) {
+		if ( liked && shouldMarkPostSeen && ! post._seen ) {
 			this.props.markPostSeen( post, this.props.site );
 		}
 	};

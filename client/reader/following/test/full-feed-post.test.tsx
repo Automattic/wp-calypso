@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore } from 'redux';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -15,11 +15,9 @@ jest.mock( 'calypso/blocks/reader-post-actions', () => ( {
 	default: jest.fn( () => <div aria-label="Reader post actions">Reader post actions</div> ),
 } ) );
 
-jest.mock( 'calypso/blocks/reader-full-post/content-processor', () => ( {
+jest.mock( 'calypso/blocks/reader-full-post/wp-iframe-resize', () => ( {
 	__esModule: true,
-	default: ( { content }: { content?: string } ) => (
-		<section aria-label="Post content">{ content }</section>
-	),
+	default: jest.fn( () => jest.fn() ),
 } ) );
 
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
@@ -49,6 +47,8 @@ const post = {
 let contentScrollHeight = 1200;
 let scrollIntoViewMock: jest.Mock;
 const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
+const originalRequestAnimationFrame = window.requestAnimationFrame;
+const originalCancelAnimationFrame = window.cancelAnimationFrame;
 
 const renderPost = ( postProps = post, commentsState = { apiDisabled: {} } ) => {
 	const store = createStore( ( state = { comments: commentsState } ) => state );
@@ -71,6 +71,11 @@ describe( 'FullFeedPost', () => {
 			configurable: true,
 			value: scrollIntoViewMock,
 		} );
+		window.requestAnimationFrame = ( ( callback: FrameRequestCallback ) => {
+			callback( 0 );
+			return 0;
+		} ) as typeof window.requestAnimationFrame;
+		window.cancelAnimationFrame = jest.fn();
 		jest.spyOn( HTMLElement.prototype, 'scrollHeight', 'get' ).mockImplementation( () => {
 			return contentScrollHeight;
 		} );
@@ -90,6 +95,8 @@ describe( 'FullFeedPost', () => {
 				value: undefined,
 			} );
 		}
+		window.requestAnimationFrame = originalRequestAnimationFrame;
+		window.cancelAnimationFrame = originalCancelAnimationFrame;
 	} );
 
 	it( 'renders full post content in a collapsed preview that can expand and collapse', async () => {
@@ -99,13 +106,14 @@ describe( 'FullFeedPost', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'Example post' } ) ).toBeVisible();
 		expect( screen.getByRole( 'region', { name: 'Post content' } ) ).toHaveTextContent(
-			'<p>Full post body</p>'
+			'Full post body'
 		);
 		expect( screen.getByLabelText( 'Reader post actions' ) ).toBeVisible();
 		expect( ReaderPostActions ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				commentsApiDisabled: false,
-				fullPost: true,
+				likeContext: 'full-feed',
+				markLikedPostSeen: false,
 				onCommentClick: expect.any( Function ),
 				post,
 				showFreshlyPressed: false,
@@ -113,22 +121,24 @@ describe( 'FullFeedPost', () => {
 			expect.any( Object )
 		);
 
-		await user.click( await screen.findByRole( 'button', { name: 'Read more' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Read more: Example post' } ) );
 
-		expect( screen.getAllByRole( 'button', { name: 'Collapse' } )[ 0 ] ).toBeVisible();
+		expect(
+			screen.getAllByRole( 'button', { name: 'Collapse: Example post' } )[ 0 ]
+		).toBeVisible();
 		expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_full_feed_post_expanded',
 			expect.objectContaining( {
 				feed_id: 123,
 				feed_item_id: 789,
-				post_id: 456,
-			} ),
-			expect.objectContaining( { post } )
+			} )
 		);
 
-		await user.click( screen.getAllByRole( 'button', { name: 'Collapse' } )[ 0 ] );
+		await user.click( screen.getAllByRole( 'button', { name: 'Collapse: Example post' } )[ 0 ] );
 
-		expect( await screen.findByRole( 'button', { name: 'Read more' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'button', { name: 'Read more: Example post' } )
+		).toBeVisible();
 	} );
 
 	it( 'opens the full post comments when the comment action is clicked', () => {
@@ -143,11 +153,31 @@ describe( 'FullFeedPost', () => {
 			expect.objectContaining( {
 				feed_id: 123,
 				feed_item_id: 789,
-				post_id: 456,
-			} ),
-			expect.objectContaining( { post } )
+			} )
 		);
 		expect( showFullPost ).toHaveBeenCalledWith( { post, comments: true } );
+	} );
+
+	it( 'opens feed-post comments with a feed item id fallback', () => {
+		const feedPostWithoutFeedItemId = {
+			...post,
+			ID: 999,
+			feed_item_ID: undefined,
+		};
+
+		renderPost( feedPostWithoutFeedItemId );
+
+		const { onCommentClick } = ( ReaderPostActions as jest.Mock ).mock.calls[ 0 ][ 0 ];
+
+		onCommentClick();
+
+		expect( showFullPost ).toHaveBeenCalledWith( {
+			comments: true,
+			post: expect.objectContaining( {
+				...feedPostWithoutFeedItemId,
+				feed_item_ID: 999,
+			} ),
+		} );
 	} );
 
 	it( 'keeps the comment action hidden when comments API is disabled for an internal post', () => {
@@ -175,7 +205,9 @@ describe( 'FullFeedPost', () => {
 		renderPost();
 
 		await waitFor( () => {
-			expect( screen.queryByRole( 'button', { name: 'Read more' } ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'button', { name: 'Read more: Example post' } )
+			).not.toBeInTheDocument();
 		} );
 		expect( screen.getByLabelText( 'Reader post actions' ) ).toBeVisible();
 	} );
@@ -185,7 +217,9 @@ describe( 'FullFeedPost', () => {
 
 		renderPost();
 
-		expect( await screen.findByRole( 'button', { name: 'Read more' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'button', { name: 'Read more: Example post' } )
+		).toBeVisible();
 	} );
 
 	it( 'expands when the collapsed content preview is clicked', async () => {
@@ -195,15 +229,13 @@ describe( 'FullFeedPost', () => {
 
 		await user.click( screen.getByRole( 'region', { name: 'Post content' } ) );
 
-		expect( screen.getByRole( 'button', { name: 'Collapse' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Collapse: Example post' } ) ).toBeVisible();
 		expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_full_feed_post_expanded',
 			expect.objectContaining( {
 				feed_id: 123,
 				feed_item_id: 789,
-				post_id: 456,
-			} ),
-			expect.objectContaining( { post } )
+			} )
 		);
 	} );
 
@@ -213,7 +245,7 @@ describe( 'FullFeedPost', () => {
 		renderPost();
 
 		const article = screen.getByRole( 'article' );
-		const content = document.querySelector( '.full-feed-post__content' );
+		const content = screen.getByRole( 'region', { name: 'Post content' } );
 		jest.spyOn( article, 'getBoundingClientRect' ).mockReturnValue( {
 			bottom: 900,
 			height: 1200,
@@ -237,11 +269,19 @@ describe( 'FullFeedPost', () => {
 			toJSON: jest.fn(),
 		} );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Read more' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Read more: Example post' } ) );
 
-		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: 'Collapse: Example post' } ) ).toBeVisible();
+		const floatingCollapse = await waitFor( () => {
+			const element = document.body.querySelector( '.full-feed-post__floating-collapse' );
+			expect( element ).toBeInTheDocument();
+			return element as HTMLElement;
 		} );
+		expect(
+			within( floatingCollapse ).getByRole( 'button', { name: 'Collapse: Example post' } )
+		).toBeVisible();
+		expect( article ).not.toContainElement(
+			within( floatingCollapse ).getByRole( 'button', { name: 'Collapse: Example post' } )
+		);
 	} );
 
 	it( 'scrolls back to read more after collapsing with the floating collapse button', async () => {
@@ -250,7 +290,7 @@ describe( 'FullFeedPost', () => {
 		renderPost();
 
 		const article = screen.getByRole( 'article' );
-		const content = document.querySelector( '.full-feed-post__content' );
+		const content = screen.getByRole( 'region', { name: 'Post content' } );
 		jest.spyOn( article, 'getBoundingClientRect' ).mockReturnValue( {
 			bottom: 900,
 			height: 1200,
@@ -274,10 +314,17 @@ describe( 'FullFeedPost', () => {
 			toJSON: jest.fn(),
 		} );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Read more' } ) );
-		await user.click( await screen.findByRole( 'button', { name: 'Collapse: Example post' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Read more: Example post' } ) );
+		const floatingCollapse = await waitFor( () => {
+			const element = document.body.querySelector( '.full-feed-post__floating-collapse' );
+			expect( element ).toBeInTheDocument();
+			return element as HTMLElement;
+		} );
+		await user.click(
+			within( floatingCollapse ).getByRole( 'button', { name: 'Collapse: Example post' } )
+		);
 
-		const readMoreButton = await screen.findByRole( 'button', { name: 'Read more' } );
+		const readMoreButton = await screen.findByRole( 'button', { name: 'Read more: Example post' } );
 
 		expect( readMoreButton ).toBeVisible();
 		expect( scrollIntoViewMock ).toHaveBeenCalledWith( {
@@ -293,8 +340,10 @@ describe( 'FullFeedPost', () => {
 		renderPost();
 
 		const article = screen.getByRole( 'article' );
-		const content = document.querySelector( '.full-feed-post__content' );
-		const expandActions = document.querySelector( '.full-feed-post__expand-actions' );
+		const content = screen.getByRole( 'region', { name: 'Post content' } );
+		const expandActions = screen.getByRole( 'group', {
+			name: 'Post expansion controls',
+		} );
 		jest.spyOn( article, 'getBoundingClientRect' ).mockReturnValue( {
 			bottom: 900,
 			height: 1200,
@@ -329,14 +378,12 @@ describe( 'FullFeedPost', () => {
 			toJSON: jest.fn(),
 		} );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Read more' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Read more: Example post' } ) );
 
 		await waitFor( () => {
-			expect(
-				screen.queryByRole( 'button', { name: 'Collapse: Example post' } )
-			).not.toBeInTheDocument();
+			expect( document.body.querySelector( '.full-feed-post__floating-collapse' ) ).toBeNull();
 		} );
-		expect( screen.getByRole( 'button', { name: 'Collapse' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Collapse: Example post' } ) ).toBeVisible();
 	} );
 
 	it( 'hides the floating collapse button after scrolling past the content area', async () => {
@@ -345,7 +392,7 @@ describe( 'FullFeedPost', () => {
 		renderPost();
 
 		const article = screen.getByRole( 'article' );
-		const content = document.querySelector( '.full-feed-post__content' );
+		const content = screen.getByRole( 'region', { name: 'Post content' } );
 		jest.spyOn( article, 'getBoundingClientRect' ).mockReturnValue( {
 			bottom: 900,
 			height: 1200,
@@ -371,10 +418,14 @@ describe( 'FullFeedPost', () => {
 				toJSON: jest.fn(),
 			} );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Read more' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Read more: Example post' } ) );
 
 		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: 'Collapse: Example post' } ) ).toBeVisible();
+			const floatingCollapse = document.body.querySelector(
+				'.full-feed-post__floating-collapse'
+			) as HTMLElement | null;
+
+			expect( floatingCollapse ).toBeVisible();
 		} );
 
 		contentRectMock.mockReturnValue( {
@@ -388,13 +439,13 @@ describe( 'FullFeedPost', () => {
 			y: -1180,
 			toJSON: jest.fn(),
 		} );
-		fireEvent.scroll( document );
+		act( () => {
+			window.dispatchEvent( new Event( 'scroll' ) );
+		} );
 
 		await waitFor( () => {
-			expect(
-				screen.queryByRole( 'button', { name: 'Collapse: Example post' } )
-			).not.toBeInTheDocument();
+			expect( document.body.querySelector( '.full-feed-post__floating-collapse' ) ).toBeNull();
 		} );
-		expect( screen.getByRole( 'button', { name: 'Collapse' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Collapse: Example post' } ) ).toBeVisible();
 	} );
 } );

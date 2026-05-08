@@ -17,7 +17,7 @@
 
 	.components-base-control,
 	.components-toggle-control {
-		margin-bottom: 0;
+		margin-block-end: 0;
 	}
 }
 
@@ -28,7 +28,8 @@
 	gap: 24px;
 	margin: 0 auto;
 	max-width: 760px;
-	padding: 0 16px 48px;
+	padding-block: 0 48px;
+	padding-inline: 16px;
 	width: 100%;
 
 	@include break-small {
@@ -37,6 +38,9 @@
 }
 
 .full-feed-post {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 1200px;
+
 	.components-card {
 		border-color: var( --color-neutral-10 );
 		border-radius: 4px;
@@ -90,23 +94,29 @@
 	position: relative;
 
 	&.is-collapsed {
-		max-height: 900px;
+		max-height: var( --full-feed-post-preview-height, 900px );
 		overflow: hidden;
 	}
 
 	&.is-clickable {
 		cursor: pointer;
 	}
+
+	&.is-content-inactive {
+		min-height: var(
+			--full-feed-post-inactive-height,
+			var( --full-feed-post-preview-height, 900px )
+		);
+	}
 }
 
 .full-feed-post__fade {
 	background: linear-gradient( to bottom, rgba( 255, 255, 255, 0 ), var( --color-surface ) 78% );
-	bottom: 0;
+	inset-block-end: 0;
 	height: 96px;
-	left: 0;
+	inset-inline: 0;
 	pointer-events: none;
 	position: absolute;
-	right: 0;
 }
 
 .full-feed-post__expand-actions {
@@ -115,10 +125,10 @@
 }
 
 .full-feed-post__engagement {
-	border-top: 1px solid var( --color-neutral-5 );
+	border-block-start: 1px solid var( --color-neutral-5 );
 	display: flex;
 	justify-content: center;
-	padding-top: 16px;
+	padding-block-start: 16px;
 
 	.reader-post-actions {
 		justify-content: center;
@@ -127,10 +137,10 @@
 }
 
 .full-feed-post__floating-collapse {
-	bottom: 24px;
+	inset-block-end: 24px;
 	display: flex;
 	justify-content: center;
-	left: 50%;
+	inset-inline-start: 50%;
 	pointer-events: none;
 	position: fixed;
 	transform: translateX( -50% );

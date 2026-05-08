@@ -1,11 +1,18 @@
 import { Button, Tooltip } from '@wordpress/components';
 import { drawerLeft, postContent, postList } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { ReaderFollowingView, useFollowingView } from './view-preference';
+import { type ReaderFollowingView, useFollowingView } from './view-preference';
 
-export default function ViewToggle() {
+const DEFAULT_VISIBLE_VIEWS: ReaderFollowingView[] = [ 'recent', 'stream' ];
+
+interface ViewToggleProps {
+	views?: ReaderFollowingView[];
+}
+
+export default function ViewToggle( { views = DEFAULT_VISIBLE_VIEWS }: ViewToggleProps ) {
 	const { currentView, setView } = useFollowingView();
 	const translate = useTranslate();
+	const pressedView = views.includes( currentView ) ? currentView : 'stream';
 	const viewOptions: Array< {
 		view: ReaderFollowingView;
 		icon: JSX.Element;
@@ -29,19 +36,21 @@ export default function ViewToggle() {
 	];
 
 	return (
-		<div className="following__view-toggle">
-			{ viewOptions.map( ( { view, icon, label } ) => {
-				return (
-					<Tooltip key={ view } text={ label }>
-						<Button
-							icon={ icon }
-							isPressed={ currentView === view }
-							onClick={ () => setView( view ) }
-							label={ label }
-						/>
-					</Tooltip>
-				);
-			} ) }
+		<div className="following__view-toggle" role="group" aria-label={ translate( 'Reader view' ) }>
+			{ viewOptions
+				.filter( ( { view } ) => views.includes( view ) )
+				.map( ( { view, icon, label } ) => {
+					return (
+						<Tooltip key={ view } text={ label }>
+							<Button
+								icon={ icon }
+								isPressed={ pressedView === view }
+								onClick={ () => setView( view ) }
+								label={ label }
+							/>
+						</Tooltip>
+					);
+				} ) }
 		</div>
 	);
 }
