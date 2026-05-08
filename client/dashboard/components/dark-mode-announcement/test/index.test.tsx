@@ -82,7 +82,6 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	nock.cleanAll();
 	mockIsEnabled.mockReturnValue( false );
 	document.documentElement.removeAttribute( 'data-theme' );
 } );
@@ -94,7 +93,7 @@ test( 'renders for an enrolled user without a saved color scheme', async () => {
 
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
-	).toBeInTheDocument();
+	).toBeVisible();
 	expect(
 		screen.getByText( /change your choice \(or set it to match your system\)/i )
 	).toBeVisible();
@@ -115,7 +114,7 @@ test( 'renders after the user has selected light mode', async () => {
 
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
-	).toBeInTheDocument();
+	).toBeVisible();
 } );
 
 test( 'switches to dark mode from the notice and can revert back', async () => {
@@ -152,7 +151,8 @@ test( 'renders after the user has selected system mode', async () => {
 
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
-	).toBeInTheDocument();
+	).toBeVisible();
+	expect( screen.getByRole( 'button', { name: 'Try dark mode' } ) ).toBeVisible();
 } );
 
 test( 'renders a revert action when dark mode is already active', async () => {
@@ -190,7 +190,7 @@ test( 'renders when the saved color scheme is invalid', async () => {
 
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
-	).toBeInTheDocument();
+	).toBeVisible();
 	expect( document.documentElement.dataset.theme ).toBe( 'light' );
 } );
 
@@ -204,7 +204,7 @@ test( 'renders for a forced opted-in user without a saved color scheme', async (
 
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
-	).toBeInTheDocument();
+	).toBeVisible();
 } );
 
 test( 'renders when the forced opt-in flag enrolls the user', async () => {
@@ -219,7 +219,7 @@ test( 'renders when the forced opt-in flag enrolls the user', async () => {
 
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
-	).toBeInTheDocument();
+	).toBeVisible();
 } );
 
 test( 'does not render when the announcement was already dismissed', async () => {
