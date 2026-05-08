@@ -38,7 +38,7 @@ import {
 	NEWSLETTER_PAGE,
 } from 'calypso/signup/difm/constants';
 import addCustomPageSvg from 'calypso/signup/difm/images/page-descriptions/add-custom-page.svg';
-import { nextInstanceId, type PageInstance } from 'calypso/signup/difm/page-instances';
+import { newInstanceId, type PageInstance } from 'calypso/signup/difm/page-instances';
 import {
 	BBE_ONBOARDING_PAGE_PICKER_STEP,
 	BBE_STORE_ONBOARDING_PAGE_PICKER_STEP,
@@ -276,7 +276,7 @@ function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePag
 				return prev.filter( ( instance ) => instance.type !== pageId );
 			}
 
-			return [ ...prev, { id: pageId, type: pageId } ];
+			return [ ...prev, { id: newInstanceId(), type: pageId } ];
 		} );
 	};
 
@@ -285,10 +285,7 @@ function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePag
 	};
 
 	const handleAddCustomPage = () => {
-		setInstances( ( prev ) => {
-			const id = nextInstanceId( CUSTOM_PAGE, prev );
-			return [ ...prev, { id, type: CUSTOM_PAGE } ];
-		} );
+		setInstances( ( prev ) => [ ...prev, { id: newInstanceId(), type: CUSTOM_PAGE } ] );
 	};
 
 	const context = isStoreFlow
@@ -586,7 +583,7 @@ function DIFMPagePicker( props: StepProps ) {
 				? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
 				: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
 		) satisfies PageId[];
-		return initialTypes.map( ( type ): PageInstance => ( { id: type, type } ) );
+		return initialTypes.map( ( type ): PageInstance => ( { id: newInstanceId(), type } ) );
 	} );
 	const selectedPages = pageInstances.map( ( instance ) => instance.type );
 

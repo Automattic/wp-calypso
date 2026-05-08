@@ -1,7 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { TextAreaField, ContactInformation } from 'calypso/signup/accordion-form/form-components';
-import { getPageTypeFromPageDataId } from 'calypso/signup/difm/page-instances';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -19,12 +18,9 @@ export function ContactPageDetails( {
 }: PageDetailsParams< ContactPageData > ) {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
-	const description = useTranslatedPageDescriptions(
-		getPageTypeFromPageDataId( page.id ),
-		context
-	);
+	const description = useTranslatedPageDescriptions( page.type, context );
 	const { onFieldChanged } = useChangeHandlers( {
-		pageId: String( page.id ),
+		pageId: page.id,
 		onChangeField,
 	} );
 

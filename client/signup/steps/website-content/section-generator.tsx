@@ -77,14 +77,11 @@ const generateSiteInformationSection = (
 	};
 };
 
-const isCustomPageId = ( pageId: string ) =>
-	pageId === CUSTOM_PAGE || String( pageId ).startsWith( CUSTOM_PAGE + '_' );
-
-const resolveDisplayedComponent = ( pageId: string ) => {
-	if ( isCustomPageId( pageId ) ) {
+const resolveDisplayedComponent = ( pageType: PageId ) => {
+	if ( pageType === CUSTOM_PAGE ) {
 		return CustomPageDetails;
 	}
-	switch ( pageId ) {
+	switch ( pageType ) {
 		case CONTACT_PAGE:
 			return ContactPageDetails;
 		default:
@@ -112,12 +109,12 @@ const generateWebsiteContentSections = (
 		const fieldNumber = elapsedSections + index + 1;
 		let pageTitle = page.title;
 
-		if ( ! pageTitle && isCustomPageId( page.id ) ) {
+		if ( ! pageTitle && page.type === CUSTOM_PAGE ) {
 			pageTitle = translate( 'Custom Page' );
 		}
 
-		const DisplayedPageComponent = resolveDisplayedComponent( page.id );
-		const isOptionalPage = !! OPTIONAL_PAGES[ page.id as PageId ] || isCustomPageId( page.id );
+		const DisplayedPageComponent = resolveDisplayedComponent( page.type );
+		const isOptionalPage = !! OPTIONAL_PAGES[ page.type ] || page.type === CUSTOM_PAGE;
 
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
