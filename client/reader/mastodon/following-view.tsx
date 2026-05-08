@@ -32,6 +32,16 @@ interface Props {
 	actor: string;
 }
 
+// Pre-rollout fallback for `note_text`. The server projects the plain-text
+// bio alongside `note`; until every backend in rotation emits it, strip
+// the FEP-b2b8 allowlisted HTML on the client. Mastodon's `note` only
+// carries safe block/inline tags (no scripts, no styles, no event
+// attributes) so a tag-only regex strip is sufficient for the row's
+// plain-text rendering. Remove this helper once `note_text` is universal.
+function rowBiography( account: MastodonAccountSummary ): string {
+	return account.note_text ?? account.note.replace( /<[^>]+>/g, '' ).trim();
+}
+
 export function FollowingView( { connectionId, actor }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -134,7 +144,7 @@ export function FollowingView( { connectionId, actor }: Props ) {
 			avatarUrl: item.avatar,
 			displayName: item.display_name || item.handle,
 			handle: item.handle,
-			biography: item.note,
+			biography: rowBiography( item ),
 			profileHref,
 			isSelf,
 			followState: isSelf

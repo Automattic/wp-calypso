@@ -143,6 +143,13 @@ export interface MastodonThreadResponse {
 // only the fields we render plus `raw` for forward-compat (matches the
 // existing MastodonConnectionDetails convention). `note` arrives sanitized
 // from the wire and is sanitized again client-side (defense-in-depth).
+// `note_text` is the plain-text projection (HTML stripped server-side); use
+// it for compact surfaces (list rows, tooltips) where rendering structured
+// HTML would be visual noise. Mirrors the AtmosphereAuthorProfile pairing
+// of `description` (text) + `description_html` (rendered HTML) so the two
+// providers expose a symmetric bio shape to consumers. Optional during the
+// backend rollout window — fall back to stripping `note` client-side until
+// every server in rotation projects the field.
 // `id` is instance-local — same handle on a different home instance has a
 // different id; we still use it as the URL key when known because the
 // home-instance perspective is stable per connection. Webfinger handle
@@ -157,6 +164,7 @@ export interface MastodonAuthorProfile {
 	avatar: string | null;
 	header: string | null;
 	note: string;
+	note_text?: string;
 	counts: MastodonProfileCounts;
 	locked: boolean;
 	raw: Record< string, unknown >;
@@ -376,7 +384,15 @@ export interface MastodonAuthStatus {
  * endpoints. Mirrors the fields the wpcom backend's row normaliser projects:
  * profile-card surface fields plus per-viewer relationship state. `note` is
  * sanitised server-side through the FEP-b2b8 allow-list (same subset as
- * status `content`).
+ * status `content`); `note_text` is the plain-text projection (HTML stripped
+ * server-side) so the row can render in compact form without un-rendering
+ * the HTML on the client. Mirrors AtmosphereProfileSummary's choice to
+ * expose a plain-text `description` field for list rows (Atmosphere's
+ * `description_html` companion lives on the full profile only).
+ *
+ * `note_text` is optional during the backend rollout window — consumers
+ * must fall back to stripping `note` client-side until every server in
+ * rotation projects the field.
  */
 export interface MastodonAccountSummary {
 	id: string;
@@ -386,6 +402,7 @@ export interface MastodonAccountSummary {
 	handle: string;
 	display_name: string;
 	note: string;
+	note_text?: string;
 	avatar: string | null;
 	locked: boolean;
 	viewer: MastodonAuthorProfileViewer;
