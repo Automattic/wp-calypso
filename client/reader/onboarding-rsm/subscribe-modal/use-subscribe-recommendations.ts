@@ -229,12 +229,6 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	const bridgedFeedIdsRef = useRef< Set< number > >( new Set() );
 	const failedFeedIdsRef = useRef< Set< number > >( new Set() );
 
-	// When followed tags change, allow feed bridge + React Query to write to Redux again.
-	useEffect( () => {
-		bridgedFeedIdsRef.current = new Set();
-		failedFeedIdsRef.current = new Set();
-	}, [ followedTagSlugs ] );
-
 	useEffect( () => {
 		feedQueries.forEach( ( query, index ) => {
 			const feedId = combinedRecommendations[ index ]?.feed_ID;
@@ -276,7 +270,6 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	 * "Subscribed" state) instead of vanishing.
 	 */
 	const [ pinnedSites, setPinnedSites ] = useState< CardData[] >( [] );
-	const pinnedFeedIdsRef = useRef< Set< number > >( new Set() );
 
 	/**
 	 * Feed IDs whose validation has reached a *terminal failure* state — feed
@@ -308,9 +301,13 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		}
 	}, [] );
 
+	// Reset every session-scoped tracker in lockstep when the candidate set
+	// fundamentally changes (followed tags swap). Anything that should "start
+	// over" for a fresh tag selection belongs here.
 	useEffect( () => {
+		bridgedFeedIdsRef.current = new Set();
+		failedFeedIdsRef.current = new Set();
 		setPinnedSites( [] );
-		pinnedFeedIdsRef.current = new Set();
 		setRejectedFeedIds( new Set() );
 		sessionFollowedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
@@ -329,7 +326,6 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				const followedByFeed = site.feed_ID > 0 && followedIds.feedIds.has( site.feed_ID );
 				const followedBySite = site.site_ID > 0 && followedIds.blogIds.has( site.site_ID );
 				if ( followedByFeed || followedBySite ) {
-					pinnedFeedIdsRef.current.delete( site.feed_ID );
 					pruned = true;
 					return false;
 				}
@@ -345,8 +341,13 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		}
 		const newlyValidated: CardData[] = [];
 		const newlyRejected: number[] = [];
+		// Local dedup set — seeded from pinned state and mutated as we add to
+		// `newlyValidated` so a duplicate within the same loop iteration is
+		// only pinned once. Cheap to rebuild each run (≤18 entries) and avoids
+		// the dual source of truth a parallel `useRef< Set >` would create.
+		const alreadyPinned = new Set( pinnedSites.map( ( s ) => s.feed_ID ) );
 		for ( const site of combinedRecommendations ) {
-			if ( pinnedFeedIdsRef.current.has( site.feed_ID ) ) {
+			if ( alreadyPinned.has( site.feed_ID ) ) {
 				continue;
 			}
 			if ( rejectedFeedIds.has( site.feed_ID ) ) {
@@ -379,7 +380,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 					continue;
 				}
 			}
-			pinnedFeedIdsRef.current.add( site.feed_ID );
+			alreadyPinned.add( site.feed_ID );
 			newlyValidated.push( site );
 		}
 		if ( newlyValidated.length > 0 ) {
@@ -394,7 +395,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				return next;
 			} );
 		}
-	}, [ combinedRecommendations, readerFeedItems, readerSiteItems, rejectedFeedIds ] );
+	}, [ combinedRecommendations, readerFeedItems, readerSiteItems, rejectedFeedIds, pinnedSites ] );
 
 	const recommendations = pinnedSites;
 
