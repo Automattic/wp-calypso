@@ -296,10 +296,8 @@ export default function SiteLevelActions() {
 									label={ getTitleForListDisplay( item ) }
 									help={ getRenewalDescription( item, action, locale ) }
 									checked={ isChecked }
+									disabled={ isPrimary }
 									onChange={ ( checked ) => {
-										if ( isPrimary ) {
-											return;
-										}
 										setSelection( ( prev ) =>
 											checked ? [ ...prev, id ] : prev.filter( ( s ) => s !== id )
 										);
