@@ -54,7 +54,6 @@ export class LoggedOutThemesPage {
 			waitUntil: 'domcontentloaded',
 		} );
 		await this.viewFilter.waitFor( { state: 'visible', timeout: 30 * 1000 } );
-		await this.firstThemeCard.waitFor( { state: 'visible', timeout: 30 * 1000 } );
 	}
 
 	/**
