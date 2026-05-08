@@ -109,6 +109,10 @@ interface ComposerContextValue {
 	closeComposer: ( options?: CloseComposerOptions ) => void;
 	/** Read by the modal to render media UI and gate submission. */
 	mediaSlot: ComposerMediaSlot;
+	/** Sticky-once flag: true after the user has crossed the per-protocol char limit at least once during the current modal session. Reset on each modal open. */
+	hasBeenOverLimit: boolean;
+	/** Set `hasBeenOverLimit` to true. Idempotent. */
+	markOverLimit: () => void;
 }
 
 const ComposerContext = createContext< ComposerContextValue | null >( null );
@@ -125,6 +129,7 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	children,
 }: Props< TError, TParams, TResult > ) {
 	const [ mode, setMode ] = useState< ActiveMode | null >( null );
+	const [ hasBeenOverLimit, setHasBeenOverLimit ] = useState( false );
 	const triggerRef = useRef< HTMLElement | null >( null );
 	const wasOpenRef = useRef( false );
 
@@ -161,6 +166,16 @@ export function ComposerProvider< TError, TParams, TResult >( {
 		setMode( null );
 	}, [] );
 
+	const markOverLimit = useCallback( () => {
+		setHasBeenOverLimit( true );
+	}, [] );
+
+	useEffect( () => {
+		if ( mode ) {
+			setHasBeenOverLimit( false );
+		}
+	}, [ mode ] );
+
 	// `config.useMedia` is captured once at the start of the provider's life
 	// and called every render. Per the contract on `ComposerConfig.useMedia`,
 	// it must be a stable reference — atmosphere exports a module-level hook
@@ -188,8 +203,15 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	}, [ mode ] );
 
 	const value = useMemo(
-		() => ( { mode, openComposer, closeComposer, mediaSlot } ),
-		[ mode, openComposer, closeComposer, mediaSlot ]
+		() => ( {
+			mode,
+			openComposer,
+			closeComposer,
+			mediaSlot,
+			hasBeenOverLimit,
+			markOverLimit,
+		} ),
+		[ mode, openComposer, closeComposer, mediaSlot, hasBeenOverLimit, markOverLimit ]
 	);
 
 	return (
