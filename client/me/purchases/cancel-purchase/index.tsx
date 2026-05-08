@@ -150,6 +150,7 @@ export interface CancelPurchaseState {
 	showDomainOptionsStep: boolean;
 	showDialog: boolean;
 	cancelIntent: 'refund' | 'autorenew' | null;
+	fireMutationWasRefund: boolean;
 }
 
 export interface CancelPurchaseActions {
@@ -216,6 +217,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// Cancellation state moved from button component
 		showDialog: false,
 		cancelIntent: null,
+		fireMutationWasRefund: false,
 	};
 
 	onCustomerConfirmedUnderstandingChange = ( checked: boolean ) => {
@@ -378,12 +380,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				if ( ! isAutoRenewIntent ) {
 					await this.handleMarketplaceSubscriptions( refundable );
 				}
-				this.props.successNotice( result.message, {
-					displayOnNextPage: true,
-					duration: 10000,
-				} );
+				if ( refundable ) {
+					this.props.successNotice( result.message, {
+						displayOnNextPage: true,
+						duration: 10000,
+					} );
+				}
 				invokeSurvicateEvent( refundable ? 'purchaseRefunded' : 'purchaseCancelled' );
-				this.setState( { surveyShown: true, isLoading: false } );
+				this.setState( { surveyShown: true, isLoading: false, fireMutationWasRefund: refundable } );
 			} else {
 				this.props.errorNotice( result.error );
 				this.setState( { isLoading: false } );
@@ -536,7 +540,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.purchaseId
 			);
 			const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
-			page.redirect( managePurchaseUrl ?? backupRedirect );
+			const redirectUrl = managePurchaseUrl ?? backupRedirect;
+			page.redirect(
+				this.state.fireMutationWasRefund ? redirectUrl : redirectUrl + '?cancelled=true'
+			);
 			return;
 		}
 
@@ -556,7 +563,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				await this.handleMarketplaceSubscriptions( refundable );
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
-				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
 				if ( isRemoveDeleteFlow ) {
 					invokeSurvicateEvent( 'purchaseRemoved' );
 				} else if ( refundable ) {
@@ -568,13 +574,21 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				// would 404. Redirect straight to the purchases list instead.
 				const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
 				if ( isRemoveDeleteFlow ) {
+					this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
 					page.redirect( backupRedirect );
-				} else {
+				} else if ( refundable ) {
+					this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
 					const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 						this.props.siteSlug,
 						this.props.purchaseId
 					);
 					page.redirect( managePurchaseUrl ?? backupRedirect );
+				} else {
+					const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+						this.props.siteSlug,
+						this.props.purchaseId
+					);
+					page.redirect( ( managePurchaseUrl ?? backupRedirect ) + '?cancelled=true' );
 				}
 			} else {
 				this.props.errorNotice( result.error );

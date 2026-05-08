@@ -131,7 +131,7 @@ describe( 'JetpackAuthorize', () => {
 		// benefit clause.
 		expect(
 			screen.getByText(
-				'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and activate Jetpack.'
+				'Your store is registered with WordPress.com — connecting your account gives it secure access to features from WooCommerce and Jetpack.'
 			)
 		).toBeInTheDocument();
 
@@ -140,6 +140,66 @@ describe( 'JetpackAuthorize', () => {
 			'src',
 			'jetpack-connect-woo.svg'
 		);
+
+		// Features section renders one card per top-priority family. Cards
+		// no longer render H3 titles — the brand name lives on each card's
+		// accessible label instead.
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+		// Static FeaturesSection bullets land on the auth surface — sample
+		// one per card so the assertion stays sturdy without pinning every
+		// piece of copy.
+		expect(
+			screen.getByText( 'Run your store on the go with the Woo mobile app.' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByText( 'Real-time backups, security scanning, and downtime monitoring.' )
+		).toBeInTheDocument();
+	} );
+
+	test( 'features section stacks A4A on top with Woo + Jetpack underneath when all three families are present', () => {
+		const { container } = renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
+				} }
+			/>
+		);
+
+		// All three families now earn a featured card. A4A is rendered
+		// first so the layout can stack it full-width on top, with Woo
+		// and Jetpack sharing the row below.
+		expect(
+			screen.getByRole( 'article', { name: 'Automattic for Agencies' } )
+		).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+		const cards = container.querySelectorAll(
+			'.connect-screen-features-section.has-3-card .connect-screen-features-section__card'
+		);
+		expect( cards.length ).toBe( 3 );
+		expect( cards[ 0 ] ).toHaveAttribute( 'aria-label', 'Automattic for Agencies' );
+	} );
+
+	test( 'features section uses the per-plugin override for a single individual Jetpack plugin', () => {
+		renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'jetpack-boost' ],
+				} }
+			/>
+		);
+
+		// The single-plugin override gives the card an accessible label that
+		// matches the Boost-specific copy, even though all Jetpack-family
+		// cards share the same Jetpack logo.
+		expect( screen.getByRole( 'article', { name: 'Jetpack Boost' } ) ).toBeInTheDocument();
 	} );
 
 	describe( 'isSso', () => {

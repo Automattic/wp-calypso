@@ -26,6 +26,9 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
+					<p className="mastodon-connect-form__instruction">
+						{ translate( 'Enter your server’s address — we’ll hand you off to sign in there.' ) }
+					</p>
 					<TextControl
 						label={ translate( 'Instance' ) }
 						value={ instance }

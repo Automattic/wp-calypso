@@ -103,6 +103,26 @@ describe( 'MastodonConnectView', () => {
 		expect( window.sessionStorage.getItem( 'reader.mastodon.oauthState' ) ).toBeNull();
 	} );
 
+	it( 'renders the connect title with the Mastodon icon, the unified subtitle, and the instance instructions above the input', () => {
+		renderWithProvider( <MastodonConnectView /> );
+		expect( screen.getByRole( 'heading', { name: /Connect a Mastodon account/i } ) ).toBeVisible();
+		expect( screen.getByTestId( 'mastodon-section-logo' ) ).toBeVisible();
+		expect( screen.getByText( /Bring your Mastodon account into the Reader\./i ) ).toBeVisible();
+		const instruction = screen.getByText(
+			/Enter your server.{1,3}s address.*we.{1,3}ll hand you off to sign in there\./i
+		);
+		expect( instruction ).toBeVisible();
+		const input = screen.getByLabelText( /Instance/ );
+		const form = instruction.closest( 'form' );
+		expect( form ).not.toBeNull();
+		// Both elements must live inside the same <form>, with the
+		// instruction preceding the input in document order.
+		expect( input.closest( 'form' ) ).toBe( form );
+		expect(
+			instruction.compareDocumentPosition( input ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
+
 	it( 'does not redirect when the authorize mutation errors', async () => {
 		const user = userEvent.setup();
 		nock( 'https://public-api.wordpress.com' )
