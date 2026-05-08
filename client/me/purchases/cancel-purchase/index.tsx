@@ -63,7 +63,11 @@ import { isDataLoading } from 'calypso/me/purchases/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { clearPurchases, removePurchaseFromState } from 'calypso/state/purchases/actions';
+import {
+	clearPurchases,
+	removePurchaseFromState,
+	restorePurchaseToState,
+} from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
 	getSitePurchases,
@@ -162,7 +166,8 @@ export interface CancelPurchaseActions {
 	) => void;
 	clearPurchases: () => void;
 	refreshSitePlans: ( siteId: string | number ) => void;
-	removePurchaseFromState: ( purchaseId: string | number ) => void;
+	removePurchaseFromState: ( purchaseId: string | number ) => Purchases.RawPurchase | null;
+	restorePurchaseToState: ( purchase: Purchases.RawPurchase ) => void;
 	successNotice: (
 		message: string | ReactNode,
 		properties: {
@@ -572,21 +577,28 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 			// Delay everything for tactile feedback (button stays busy for 1.5s)
 			setTimeout( () => {
-				// 1. Strip purchase from Redux store (preserves loaded flags — no refetch cascade)
-				this.props.removePurchaseFromState( purchaseId );
+				// 1. Strip purchase from Redux store (preserves loaded flags — no refetch cascade).
+				//    Capture the raw form so we can restore it if the mutation fails.
+				const rawPurchase = this.props.removePurchaseFromState( purchaseId );
 
-				// 2. Navigate with notice params
+				// 2. Navigate with notice params (removedId enables the list to dismiss
+				//    the success notice if the background mutation rolls back.)
 				invokeSurvicateEvent( 'purchaseRemoved' );
 				const params = new URLSearchParams();
 				params.set( 'removed', productNoun );
+				params.set( 'removedId', String( purchase.id ) );
 				if ( isAtomic ) {
 					params.set( 'removedDomain', purchase.domain );
 				}
 				page.redirect( `${ backupRedirect }?${ params.toString() }` );
 
-				// 3. Fire mutation in background
+				// 3. Fire mutation in background. On failure, restore the purchase to
+				//    Redux — the list watches getUserPurchases for reappearance and
+				//    self-dismisses its notice.
 				removePurchaseRequest( purchase.id ).catch( () => {
-					window.dispatchEvent( new CustomEvent( 'purchase-remove-failed' ) );
+					if ( rawPurchase ) {
+						this.props.restorePurchaseToState( rawPurchase );
+					}
 					this.props.errorNotice(
 						translate( 'There was a problem removing your purchase. Please try again.' )
 					);
@@ -1258,6 +1270,7 @@ const ConnectedCancelPurchase = connect(
 		clearPurchases,
 		refreshSitePlans,
 		removePurchaseFromState,
+		restorePurchaseToState,
 		successNotice,
 		errorNotice,
 	}
