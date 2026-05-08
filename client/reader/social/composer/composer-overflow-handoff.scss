@@ -30,6 +30,13 @@
 		max-height: 180px;
 	}
 
+	// The combobox keeps focus after a selection, so the text caret keeps
+	// blinking in the value display. Hide the caret while the dropdown is
+	// closed — typing to filter reopens the dropdown and brings it back.
+	.components-combobox-control__input[aria-expanded='false'] {
+		caret-color: transparent;
+	}
+
 	// Invert the check icon when the row is highlighted so it stays
 	// readable against the theme primary background.
 	.is-selected .social-composer__overflow-handoff-check path {
