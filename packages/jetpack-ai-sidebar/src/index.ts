@@ -31,11 +31,16 @@ import {
 	getModuleCheckpointApi,
 	startBlockShimmer,
 } from './utils/block-actions';
+import { generateRunId, setPendingRunId } from './utils/run-id';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
+import {
+	trackReviewMediationSuggestionClick,
+	trackReviewMediationSuggestionRendered,
+} from './utils/tracking';
 import type { ComponentType } from 'react';
 
 // Re-export block-action helpers as part of the package's public surface.
@@ -44,6 +49,14 @@ export { applyReviewEdit, findBlockElement, findBlockListLayout };
 // ---------- Module state ----------
 
 let clearSuggestionsFn: ( () => void ) | null = null;
+
+/** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
+let suggestionRenderedFiredOnce = false;
+
+function getCurrentPostId(): number | undefined {
+	const pid = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.();
+	return typeof pid === 'number' ? pid : undefined;
+}
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -80,7 +93,17 @@ function isReviewMediatorAvailable(
 }
 
 function getReviewMediatorSuggestions( currentPostType?: string ) {
-	return isReviewMediatorAvailable( currentPostType ) ? [ MEDIATE_REVIEW_SUGGESTION ] : [];
+	if ( ! isReviewMediatorAvailable( currentPostType ) ) {
+		return [];
+	}
+	if ( ! suggestionRenderedFiredOnce ) {
+		suggestionRenderedFiredOnce = true;
+		trackReviewMediationSuggestionRendered( {
+			postId: getCurrentPostId(),
+			postType: currentPostType ?? getCurrentEditorPostType(),
+		} );
+	}
+	return [ MEDIATE_REVIEW_SUGGESTION ];
 }
 
 function getPostLevelSuggestions( currentPostType?: string ) {
@@ -547,6 +570,14 @@ export function useSuggestions(): {
 				typeof value === 'string' &&
 				value === MEDIATE_REVIEW_SUGGESTION.prompt
 			) {
+				const runId = generateRunId();
+				setPendingRunId( runId );
+				trackReviewMediationSuggestionClick( {
+					runId,
+					trigger: 'suggestion',
+					postId: getCurrentPostId(),
+					postType: getCurrentEditorPostType(),
+				} );
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
 				} catch {
