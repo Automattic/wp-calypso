@@ -1,3 +1,4 @@
+import { ReadFeedSearchSort } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { CompactCard } from '@automattic/components';
 import {
@@ -22,15 +23,11 @@ import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import { recordAction } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import {
-	SORT_BY_RELEVANCE,
-	SORT_BY_LAST_UPDATED,
-} from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
 import { ReaderPopularSitesSidebarContainer } from '../stream/reader-popular-sites-sidebar';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
-import SiteResults from './site-results';
+import SiteResultsContainer from './site-results-container';
 import Suggestion from './suggestion';
 import SuggestionProvider from './suggestion-provider';
 import './style.scss';
@@ -40,7 +37,8 @@ const WIDE_DISPLAY_CUTOFF = 660;
 const updateQueryArg = ( params ) =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
-const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+const pickSort = ( sort ) =>
+	sort === 'date' ? ReadFeedSearchSort.LastUpdated : ReadFeedSearchSort.Relevance;
 
 class SearchStream extends React.Component {
 	static propTypes = {
@@ -219,7 +217,7 @@ class SearchStream extends React.Component {
 						</div>
 						<div className="search-stream__site-results">
 							{ query && (
-								<SiteResults
+								<SiteResultsContainer
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
@@ -240,7 +238,7 @@ class SearchStream extends React.Component {
 							<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
 						) ) ||
 							( query && (
-								<SiteResults
+								<SiteResultsContainer
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
