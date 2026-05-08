@@ -14,12 +14,42 @@ const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
 const mockAddNotice = jest.fn();
 const mockTrackImageStudioImageGenerated = jest.fn();
-const mockDispatch = jest.fn( () => ( {
-	setCurrentVideoUrl: mockSetCurrentVideoUrl,
-	setCurrentAttachmentId: mockSetCurrentAttachmentId,
-	setCurrentDurationSeconds: mockSetCurrentDurationSeconds,
-	addNotice: mockAddNotice,
-} ) );
+const mockReceiveEntityRecords = jest.fn();
+const mockApiFetch = jest.fn();
+
+let mockCurrentPostId: number | null = null;
+let mockCurrentPostType = 'post';
+
+const mockDispatch = jest.fn( ( store?: string ) => {
+	if ( store === 'core' ) {
+		return { receiveEntityRecords: mockReceiveEntityRecords };
+	}
+	return {
+		setCurrentVideoUrl: mockSetCurrentVideoUrl,
+		setCurrentAttachmentId: mockSetCurrentAttachmentId,
+		setCurrentDurationSeconds: mockSetCurrentDurationSeconds,
+		addNotice: mockAddNotice,
+	};
+} );
+
+const mockSelect = jest.fn( ( store?: string ) => {
+	if ( store === 'core/editor' ) {
+		return {
+			getCurrentPostId: () => mockCurrentPostId,
+			getCurrentPostType: () => mockCurrentPostType,
+		};
+	}
+	return null;
+} );
+
+jest.mock(
+	'@wordpress/api-fetch',
+	() => ( {
+		__esModule: true,
+		default: ( ...args: unknown[] ) => mockApiFetch( ...args ),
+	} ),
+	{ virtual: true }
+);
 
 jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioImageGenerated: ( ...args: unknown[] ) =>
@@ -42,7 +72,7 @@ jest.mock( '@wordpress/data', () => ( {
 		...config,
 	} ) ),
 	register: jest.fn(),
-	select: jest.fn( () => null ),
+	select: ( ...args: unknown[] ) => mockSelect( ...args ),
 } ) );
 
 type AbilityCallback = ( input: unknown ) => Promise< unknown >;
@@ -62,6 +92,12 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		jest.clearAllMocks();
 		mockRegisterAbilityCategory.mockResolvedValue( undefined );
 		mockRegisterAbility.mockResolvedValue( undefined );
+		mockApiFetch.mockResolvedValue( {
+			id: 1,
+			meta: { _jetpack_feature_clip_id: 42 },
+		} );
+		mockCurrentPostId = null;
+		mockCurrentPostType = 'post';
 		// Reset module-level isRegistered guard between tests.
 		jest.resetModules();
 
@@ -284,5 +320,71 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 
 		expect( mockTrackImageStudioImageGenerated ).not.toHaveBeenCalled();
 		expect( mockAddNotice ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'feature clip post-meta persistence', () => {
+		it( 'persists the attachment ID against the current post via core REST', async () => {
+			mockCurrentPostId = 7;
+			mockCurrentPostType = 'post';
+			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+			await registerUpdateCanvasVideoAbility();
+
+			const callback = getRegisteredCallback();
+			await callback( {
+				url: 'https://files.wordpress.com/clip.mp4',
+				attachmentId: 42,
+			} );
+
+			expect( mockApiFetch ).toHaveBeenCalledWith( {
+				path: '/wp/v2/posts/7',
+				method: 'POST',
+				data: { meta: { _jetpack_feature_clip_id: 42 } },
+			} );
+			expect( mockReceiveEntityRecords ).toHaveBeenCalledWith(
+				'postType',
+				'post',
+				expect.arrayContaining( [
+					expect.objectContaining( { meta: { _jetpack_feature_clip_id: 42 } } ),
+				] )
+			);
+		} );
+
+		it( 'skips the meta write when there is no current post', async () => {
+			mockCurrentPostId = null;
+			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+			await registerUpdateCanvasVideoAbility();
+
+			const callback = getRegisteredCallback();
+			await callback( {
+				url: 'https://files.wordpress.com/clip.mp4',
+				attachmentId: 42,
+			} );
+
+			expect( mockApiFetch ).not.toHaveBeenCalled();
+			expect( mockReceiveEntityRecords ).not.toHaveBeenCalled();
+		} );
+
+		it( 'never throws when the meta write fails — the canvas still swaps', async () => {
+			mockCurrentPostId = 7;
+			mockApiFetch.mockRejectedValueOnce( new Error( 'network down' ) );
+			const consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+			await registerUpdateCanvasVideoAbility();
+
+			const callback = getRegisteredCallback();
+			await expect(
+				callback( {
+					url: 'https://files.wordpress.com/clip.mp4',
+					attachmentId: 42,
+				} )
+			).resolves.toEqual( { ok: true } );
+
+			expect( mockReceiveEntityRecords ).not.toHaveBeenCalled();
+			expect( mockSetCurrentVideoUrl ).toHaveBeenCalledWith(
+				'https://files.wordpress.com/clip.mp4'
+			);
+			consoleWarnSpy.mockRestore();
+		} );
 	} );
 } );

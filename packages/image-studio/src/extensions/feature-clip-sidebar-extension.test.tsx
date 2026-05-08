@@ -15,20 +15,35 @@ const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
 
+let mockMeta: Record< string, unknown > = {};
+let mockMedia: Record< string, unknown > | null = null;
+let mockReelVisible = false;
+let mockGenericVisible = false;
+const mockReelHandleShare = jest.fn();
+const mockGenericHandleShare = jest.fn();
+
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,
 		onClick,
 		className,
+		label,
+		icon,
 	}: {
-		children: React.ReactNode;
+		children?: React.ReactNode;
 		onClick?: () => void;
 		className?: string;
+		label?: string;
+		icon?: React.ReactNode;
 	} ) => (
-		<button className={ className } onClick={ onClick }>
-			{ children }
+		<button className={ className } aria-label={ label } onClick={ onClick }>
+			{ children ?? icon }
 		</button>
 	),
+} ) );
+
+jest.mock( '@wordpress/core-data', () => ( {
+	useEntityProp: () => [ mockMeta, jest.fn() ],
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
@@ -42,6 +57,17 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
+	useSelect: ( selector: ( s: ( name: string ) => unknown ) => unknown ) => {
+		return selector( ( name: string ) => {
+			if ( name === 'core/editor' ) {
+				return { getCurrentPostType: () => 'post' };
+			}
+			if ( name === 'core' ) {
+				return { getMedia: () => mockMedia };
+			}
+			return undefined;
+		} );
+	},
 } ) );
 
 jest.mock( '@wordpress/editor', () => ( {
@@ -58,8 +84,32 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
+jest.mock( '@wordpress/icons', () => ( {
+	share: 'share-icon',
+} ) );
+
 jest.mock( '@wordpress/plugins', () => ( {
 	registerPlugin: ( name: string, settings: unknown ) => mockRegisterPlugin( name, settings ),
+} ) );
+
+jest.mock( 'social-logos', () => ( {
+	SocialLogo: ( { icon }: { icon: string } ) => <span data-testid={ `social-${ icon }` } />,
+} ) );
+
+jest.mock( '../hooks/use-reel-share', () => ( {
+	useReelShare: () => ( {
+		isVisible: mockReelVisible,
+		isSharing: false,
+		handleShare: mockReelHandleShare,
+	} ),
+} ) );
+
+jest.mock( '../hooks/use-generic-share', () => ( {
+	useGenericShare: () => ( {
+		isVisible: mockGenericVisible,
+		isSharing: false,
+		handleShare: mockGenericHandleShare,
+	} ),
 } ) );
 
 jest.mock( '../store', () => ( {
@@ -86,6 +136,12 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
+		mockReelHandleShare.mockClear();
+		mockGenericHandleShare.mockClear();
+		mockMeta = {};
+		mockMedia = null;
+		mockReelVisible = false;
+		mockGenericVisible = false;
 		( window as Record< string, unknown > ).imageStudioData = { isDevMode: true };
 		jest.resetModules();
 	} );
@@ -121,27 +177,115 @@ describe( 'feature-clip-sidebar-extension', () => {
 		expect( mockRegisterPlugin.mock.calls[ 0 ][ 0 ] ).toBe( 'image-studio-feature-clip' );
 	} );
 
-	it( 'opens Image Studio with the post-editor entry point on click', async () => {
-		const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-		render( <FeatureClipPanel /> );
+	describe( 'empty state (no clip linked)', () => {
+		it( 'renders the Generate clip CTA when meta is empty', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Regenerate clip' } ) ).not.toBeInTheDocument();
+		} );
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Generate clip' } ) );
+		it( 'renders the empty state when meta has an id but the attachment is gone', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null; // attachment deleted
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+		} );
 
-		// handleClick awaits the video-studio reset before opening the modal,
-		// so flush microtasks before asserting on the post-await calls.
-		await Promise.resolve();
-		await Promise.resolve();
+		it( 'opens Image Studio with the post-editor entry point on click', async () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
 
-		expect( mockSetCurrentVideoUrl ).toHaveBeenCalledWith( null );
-		expect( mockSetCurrentAttachmentId ).toHaveBeenCalledWith( null );
-		expect( mockSetCurrentDurationSeconds ).toHaveBeenCalledWith( null );
-		expect( mockTrackOpened ).toHaveBeenCalledWith(
-			expect.objectContaining( { entryPoint: 'post_editor_feature_clip' } )
-		);
-		expect( mockOpenImageStudio ).toHaveBeenCalledWith(
-			undefined,
-			undefined,
-			'post_editor_feature_clip'
-		);
+			fireEvent.click( screen.getByRole( 'button', { name: 'Generate clip' } ) );
+
+			await Promise.resolve();
+			await Promise.resolve();
+
+			expect( mockSetCurrentVideoUrl ).toHaveBeenCalledWith( null );
+			expect( mockSetCurrentAttachmentId ).toHaveBeenCalledWith( null );
+			expect( mockSetCurrentDurationSeconds ).toHaveBeenCalledWith( null );
+			expect( mockTrackOpened ).toHaveBeenCalledWith(
+				expect.objectContaining( { entryPoint: 'post_editor_feature_clip' } )
+			);
+			expect( mockOpenImageStudio ).toHaveBeenCalledWith(
+				undefined,
+				undefined,
+				'post_editor_feature_clip'
+			);
+		} );
+	} );
+
+	describe( 'preview state (clip linked)', () => {
+		const setupClip = () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = {
+				id: 42,
+				source_url: 'https://files.wordpress.com/clip.mp4',
+				media_details: { length: 8 },
+			};
+		};
+
+		it( 'renders the video preview and Regenerate button', () => {
+			setupClip();
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { container } = render( <FeatureClipPanel /> );
+
+			const video = container.querySelector( 'video' );
+			expect( video ).not.toBeNull();
+			expect( video?.getAttribute( 'src' ) ).toBe( 'https://files.wordpress.com/clip.mp4' );
+			expect( screen.getByRole( 'button', { name: 'Regenerate clip' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows share buttons only when their hooks report isVisible', () => {
+			setupClip();
+			mockReelVisible = false;
+			mockGenericVisible = false;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			const { rerender } = render( <FeatureClipPanel /> );
+			expect(
+				screen.queryByRole( 'button', { name: /Share on Instagram/i } )
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'button', { name: /Share to other apps/i } )
+			).not.toBeInTheDocument();
+
+			mockReelVisible = true;
+			mockGenericVisible = true;
+			rerender( <FeatureClipPanel /> );
+			expect( screen.getByRole( 'button', { name: /Share on Instagram/i } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /Share to other apps/i } ) ).toBeInTheDocument();
+		} );
+
+		it( 'invokes handleShare on share button clicks', () => {
+			setupClip();
+			mockReelVisible = true;
+			mockGenericVisible = true;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: /Share on Instagram/i } ) );
+			expect( mockReelHandleShare ).toHaveBeenCalledTimes( 1 );
+
+			fireEvent.click( screen.getByRole( 'button', { name: /Share to other apps/i } ) );
+			expect( mockGenericHandleShare ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'opens Image Studio on Regenerate click', async () => {
+			setupClip();
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Regenerate clip' } ) );
+			await Promise.resolve();
+			await Promise.resolve();
+
+			expect( mockOpenImageStudio ).toHaveBeenCalledWith(
+				undefined,
+				undefined,
+				'post_editor_feature_clip'
+			);
+		} );
 	} );
 } );

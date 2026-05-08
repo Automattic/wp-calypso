@@ -42,13 +42,27 @@ interface UseReelShareReturn {
 	handleShare: () => Promise< void >;
 }
 
-export function useReelShare(): UseReelShareReturn {
+/**
+ * Identity of the clip that should be shared. Pass this from a surface that
+ * sources the clip from somewhere other than the in-memory video-studio store
+ * (e.g. the post-editor sidebar, which reads the meta-bound clip). When
+ * omitted, the hook falls back to whatever the modal session most recently
+ * set on the video-studio store.
+ */
+export interface ShareClipIdentity {
+	url: string | null;
+	attachmentId: number | null;
+	durationSeconds: number | null;
+}
+
+export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 	const sharePath = getReelSharePostPath();
+	const hasOverride = clip !== undefined;
 
 	const {
-		currentVideoUrl,
-		currentAttachmentId,
-		currentDurationSeconds,
+		storeUrl,
+		storeAttachmentId,
+		storeDuration,
 		entryPoint,
 		isAiProcessing,
 		currentMeta,
@@ -62,9 +76,9 @@ export function useReelShare(): UseReelShareReturn {
 		const social = select( SOCIAL_STORE ) as { isSharingCurrentPost: () => boolean } | undefined;
 
 		return {
-			currentVideoUrl: videoStore.getCurrentVideoUrl?.() ?? null,
-			currentAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
-			currentDurationSeconds: videoStore.getCurrentDurationSeconds?.() ?? null,
+			storeUrl: videoStore.getCurrentVideoUrl?.() ?? null,
+			storeAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
+			storeDuration: videoStore.getCurrentDurationSeconds?.() ?? null,
 			entryPoint: studio.getEntryPoint?.() ?? null,
 			isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
 			currentMeta:
@@ -72,6 +86,10 @@ export function useReelShare(): UseReelShareReturn {
 			isSharing: social?.isSharingCurrentPost?.() ?? false,
 		};
 	}, [] );
+
+	const currentVideoUrl = hasOverride ? clip.url : storeUrl;
+	const currentAttachmentId = hasOverride ? clip.attachmentId : storeAttachmentId;
+	const currentDurationSeconds = hasOverride ? clip.durationSeconds : storeDuration;
 
 	const { editPost } = useDispatch( EDITOR_STORE ) as {
 		editPost: ( edits: { meta: Record< string, unknown > } ) => void;
@@ -88,8 +106,12 @@ export function useReelShare(): UseReelShareReturn {
 	// the first dispatch by a render, so we can't rely on `disabled` alone.
 	const isSharingRef = useRef( false );
 
+	// When the caller supplies an explicit clip (e.g. the sidebar reading meta),
+	// it has already asserted the video context — the entryPoint guard is only
+	// meaningful for the in-modal call site that reads the live store.
+	const isVideoContext = hasOverride || entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 	const isVisible =
-		entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip &&
+		isVideoContext &&
 		!! currentVideoUrl &&
 		!! currentAttachmentId &&
 		!! sharePath &&

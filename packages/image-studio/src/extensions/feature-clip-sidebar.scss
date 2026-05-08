@@ -22,4 +22,31 @@
 		width: 100%;
 		justify-content: center;
 	}
+
+	&__preview-frame {
+		position: relative;
+		display: block;
+		width: 100%;
+		aspect-ratio: 9 / 16;
+		max-height: 360px;
+		margin: 0 auto 8px;
+		background: #000;
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	&__preview-video {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
+	&__share-row {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 6px;
+		margin-bottom: 8px;
+	}
 }

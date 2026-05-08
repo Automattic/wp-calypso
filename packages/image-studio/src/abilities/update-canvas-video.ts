@@ -8,12 +8,50 @@
  */
 
 import { registerAbility } from '@wordpress/abilities';
-import { dispatch } from '@wordpress/data';
+import apiFetch from '@wordpress/api-fetch';
+import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore, type ImageStudioActions } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioImageGenerated } from '../utils/tracking';
+
+const FEATURE_CLIP_META_KEY = '_jetpack_feature_clip_id';
+
+/**
+ * Persist the generated video clip's attachment ID against the current post
+ * via the standard core REST `posts` endpoint. The meta is registered by the
+ * Jetpack Image Studio extension with `show_in_rest`. Failures are logged but
+ * never block the canvas swap — the in-memory video-studio store still
+ * reflects the freshly generated clip even if the meta write loses the race.
+ */
+async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
+	const editor = select( 'core/editor' ) as
+		| { getCurrentPostId: () => number | null; getCurrentPostType: () => string | null }
+		| undefined;
+
+	const postId = editor?.getCurrentPostId?.() ?? null;
+	const postType = editor?.getCurrentPostType?.() ?? 'post';
+
+	if ( ! postId ) {
+		return;
+	}
+
+	try {
+		const response = ( await apiFetch( {
+			path: `/wp/v2/${ postType }s/${ postId }`,
+			method: 'POST',
+			data: { meta: { [ FEATURE_CLIP_META_KEY ]: attachmentId } },
+		} ) ) as Record< string, unknown >;
+
+		(
+			dispatch( 'core' ) as { receiveEntityRecords: ( ...args: unknown[] ) => void }
+		 )?.receiveEntityRecords?.( 'postType', postType, [ response ] );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.warn( '[Image Studio] Failed to persist feature clip meta:', error );
+	}
+}
 
 const ABILITY_NAME = 'image-studio/update-canvas-video';
 
@@ -117,6 +155,10 @@ export async function registerUpdateCanvasVideoAbility(): Promise< void > {
 				await setCurrentVideoUrl( url );
 				await setCurrentAttachmentId( attachmentId );
 				await setCurrentDurationSeconds( durationSeconds );
+
+				// Persist the clip → post linkage. Best-effort; the in-memory
+				// store reflects the new clip regardless of REST outcome.
+				await persistFeatureClipMeta( attachmentId );
 
 				trackImageStudioImageGenerated( {
 					mode: ImageStudioMode.Generate,

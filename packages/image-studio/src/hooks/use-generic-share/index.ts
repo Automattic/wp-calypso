@@ -16,6 +16,16 @@ interface UseGenericShareReturn {
 	handleShare: () => Promise< void >;
 }
 
+/**
+ * See `useReelShare`'s `ShareClipIdentity` — same purpose. Caller can pass an
+ * explicit clip identity to source from somewhere other than the in-memory
+ * video-studio store; omitting falls back to the store.
+ */
+export interface ShareClipIdentity {
+	url: string | null;
+	attachmentId: number | null;
+}
+
 interface NavigatorWithShare {
 	share?: ( data: { files?: File[]; title?: string; text?: string } ) => Promise< void >;
 	canShare?: ( data: { files?: File[] } ) => boolean;
@@ -39,20 +49,22 @@ function canShareVideoFiles( nav: NavigatorWithShare, filename: string ): boolea
 	}
 }
 
-export function useGenericShare(): UseGenericShareReturn {
-	const { currentVideoUrl, currentAttachmentId, entryPoint, isAiProcessing } = useSelect(
-		( select ) => {
-			const videoStore = select( videoStudioStore );
-			const studio = select( imageStudioStore );
-			return {
-				currentVideoUrl: videoStore.getCurrentVideoUrl?.() ?? null,
-				currentAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
-				entryPoint: studio.getEntryPoint?.() ?? null,
-				isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
-			};
-		},
-		[]
-	);
+export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareReturn {
+	const hasOverride = clip !== undefined;
+
+	const { storeUrl, storeAttachmentId, entryPoint, isAiProcessing } = useSelect( ( select ) => {
+		const videoStore = select( videoStudioStore );
+		const studio = select( imageStudioStore );
+		return {
+			storeUrl: videoStore.getCurrentVideoUrl?.() ?? null,
+			storeAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
+			entryPoint: studio.getEntryPoint?.() ?? null,
+			isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
+		};
+	}, [] );
+
+	const currentVideoUrl = hasOverride ? clip.url : storeUrl;
+	const currentAttachmentId = hasOverride ? clip.attachmentId : storeAttachmentId;
 
 	const { addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
@@ -62,11 +74,12 @@ export function useGenericShare(): UseGenericShareReturn {
 	const isSharingRef = useRef( false );
 	const [ isSharing, setIsSharing ] = useState( false );
 
+	// When the caller supplies an explicit clip, it has already asserted the
+	// video context — the entryPoint guard is only meaningful for the in-modal
+	// call site that reads the live store.
+	const isVideoContext = hasOverride || entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 	const isVisible =
-		entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip &&
-		!! currentVideoUrl &&
-		!! currentAttachmentId &&
-		! isAiProcessing;
+		isVideoContext && !! currentVideoUrl && !! currentAttachmentId && ! isAiProcessing;
 
 	const handleShare = useCallback( async () => {
 		if ( isSharingRef.current ) {
