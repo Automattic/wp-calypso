@@ -472,7 +472,7 @@ function patchActorListsForSubject(
 						return {
 							...item,
 							viewer: {
-								followed_by: item.viewer.followed_by,
+								...item.viewer,
 								...patch,
 							},
 						};

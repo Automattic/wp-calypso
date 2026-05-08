@@ -141,6 +141,8 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/atmosphere/:id/:tab`              | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
 | `/reader/atmosphere/:id/thread/:did/:rkey` | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
 | `/reader/atmosphere/:id/profile/:actor`    | `client/reader/atmosphere/author-profile-view.tsx`                        |
+| `/reader/atmosphere/:id/profile/:actor/followers` | `client/reader/atmosphere/followers-view.tsx`                      |
+| `/reader/atmosphere/:id/profile/:actor/following` | `client/reader/atmosphere/following-view.tsx`                      |
 | `/reader/mastodon`                         | `client/reader/mastodon/mastodon-landing-view.tsx`                        |
 | `/reader/mastodon/connect`                 | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
 | `/reader/mastodon/oauth-callback`          | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |

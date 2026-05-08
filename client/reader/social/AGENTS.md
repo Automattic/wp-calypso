@@ -27,6 +27,8 @@ Out of scope (lives elsewhere):
 client/reader/social/
   index.ts                      # public barrel — only export from here
   profile-card.tsx              # SocialProfileCard (used by every protocol's profile/verify view)
+  account-row.tsx               # SocialAccountRow — one row in an account list (avatar / name / handle / bio / follow button)
+  account-list.tsx              # SocialAccountList<T> — generic wrapper around SocialFeedList<T> rendering each item via SocialAccountRow
   author-profile-header.tsx     # AuthorProfileHeader — back-button shim for the profile route (slice 6)
   author-profile-panel.tsx      # SocialAuthorProfilePanel — generic author-profile surface, both protocols wrap (slice 6)
   profile-header-skeleton.tsx   # SocialProfileHeaderSkeleton — layout-stable placeholder used by the panel (slice 6)
@@ -107,6 +109,8 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 - `SocialAuthorProfilePanel` (slice 6) — generic author-profile surface that owns the layout (back-button + profile header + feed list), the `profile_viewed` / `profile_error_shown` / `profile_retry_clicked` / `profile_back_to_timeline_clicked` Tracks events with ref-based dedupe, and the `SocialAnalyticsProvider` value. Per-protocol wrappers inject already-fetched query results, mappers, error projectors, URL builders, and copy. Atmosphere's wrapper is `client/reader/atmosphere/author-profile-panel.tsx`; Mastodon's is `client/reader/mastodon/author-profile-panel.tsx`. Both shrink to ~150 lines of config.
 - `SocialProfileHeaderSkeleton` (slice 6) — layout-stable placeholder used as the default `renderProfileLoading` slot of `SocialAuthorProfilePanel`. Mirrors `SocialProfileCard`'s sizing so the surface doesn't shift when profile data resolves.
 - `AuthorProfileHeader` — back-button shim taking `timelineUrl: string`. Both protocols use it directly via the shared panel.
+- `SocialAccountRow` — one row in an account list (avatar / name / handle / bio / follow button), with optional Follows you badge and self-row mode. Card-link overlay pattern: the whole row is a click target via a `::after` overlay on the timestamp-style anchor; the follow button sits above the overlay via `position: relative; z-index: 1` so it stays individually clickable. Caller maps the protocol shape to row props.
+- `SocialAccountList<T>` — thin generic wrapper around `SocialFeedList<T>` that renders each item via `<SocialAccountRow {...renderItem(item)} />`. Caller provides the `renderItem` mapper from protocol shape to `SocialAccountRow` props; the list shell, sentinel-based pagination, skeleton, and error variants are inherited unchanged.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
