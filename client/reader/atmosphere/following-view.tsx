@@ -7,8 +7,10 @@ import {
 import page from '@automattic/calypso-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import {
 	AuthorProfileHeader,
@@ -16,9 +18,11 @@ import {
 	type SocialAccountListProps,
 	type SocialAccountRowProps,
 } from 'calypso/reader/social';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { projectAtmosphereError } from './error-projection';
+import { followErrorMessage } from './profile-errors';
 import { DID_RE, getBlueskyProfileUrl, getProfileUrl } from './route';
-import type { AtmosphereScopedProfileSummary } from '@automattic/api-core';
+import type { AtmosphereError, AtmosphereScopedProfileSummary } from '@automattic/api-core';
 
 interface Props {
 	connectionId: number;
@@ -27,6 +31,7 @@ interface Props {
 
 export function FollowingView( { connectionId, actor }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const {
 		data: connectionsData,
@@ -48,6 +53,16 @@ export function FollowingView( { connectionId, actor }: Props ) {
 	}, [ connectionsPending, connectionsError, connection ] );
 
 	const followsQuery = useAtmosphereActorFollowsInfiniteQuery( { connectionId, actor } );
+	const {
+		data: followsData,
+		isPending: followsIsPending,
+		isError: followsIsError,
+		error: followsError,
+		hasNextPage: followsHasNextPage,
+		isFetchingNextPage: followsIsFetchingNextPage,
+		fetchNextPage: followsFetchNextPage,
+		refetch: followsRefetch,
+	} = followsQuery;
 
 	// Project the AtmosphereError union onto SocialError before handing the
 	// query to SocialAccountList. Atmosphere has variants (auth_failed,
@@ -55,37 +70,50 @@ export function FollowingView( { connectionId, actor }: Props ) {
 	// SocialError used by SocialFeedList's empty-state vocabulary.
 	const query: SocialAccountListProps< AtmosphereScopedProfileSummary >[ 'query' ] = useMemo(
 		() => ( {
-			data: followsQuery.data,
-			isPending: followsQuery.isPending,
-			isError: followsQuery.isError,
-			error: projectAtmosphereError( followsQuery.error ),
-			hasNextPage: followsQuery.hasNextPage,
-			isFetchingNextPage: followsQuery.isFetchingNextPage,
-			// SocialAccountList narrows these to `() => void` at the call site,
-			// so the precise return-type generics on the upstream query don't
-			// matter. Cast through `unknown` because the SocialError vs
-			// AtmosphereError mismatch in the return shapes can't otherwise
-			// be reconciled without leaking AtmosphereError into the shared
-			// type.
-			fetchNextPage:
-				followsQuery.fetchNextPage as unknown as SocialAccountListProps< AtmosphereScopedProfileSummary >[ 'query' ][ 'fetchNextPage' ],
-			refetch:
-				followsQuery.refetch as unknown as SocialAccountListProps< AtmosphereScopedProfileSummary >[ 'query' ][ 'refetch' ],
+			data: followsData,
+			isPending: followsIsPending,
+			isError: followsIsError,
+			error: projectAtmosphereError( followsError ),
+			hasNextPage: followsHasNextPage,
+			isFetchingNextPage: followsIsFetchingNextPage,
+			fetchNextPage: () => {
+				followsFetchNextPage();
+			},
+			refetch: () => {
+				followsRefetch();
+			},
 		} ),
 		[
-			followsQuery.data,
-			followsQuery.isPending,
-			followsQuery.isError,
-			followsQuery.error,
-			followsQuery.hasNextPage,
-			followsQuery.isFetchingNextPage,
-			followsQuery.fetchNextPage,
-			followsQuery.refetch,
+			followsData,
+			followsIsPending,
+			followsIsError,
+			followsError,
+			followsHasNextPage,
+			followsIsFetchingNextPage,
+			followsFetchNextPage,
+			followsRefetch,
 		]
 	);
 
 	const followMutation = useMutation( followAtmosphereActorMutation( queryClient ) );
 	const unfollowMutation = useMutation( unfollowAtmosphereActorMutation( queryClient ) );
+
+	// Surface follow / unfollow failures via the same notice id that
+	// AuthorProfilePanel uses, so a stale toast from one panel is
+	// dismissed when the user retries from another.
+	const showFollowError = useCallback(
+		( error: AtmosphereError, action: 'follow' | 'unfollow' ) => {
+			dispatch(
+				errorNotice( followErrorMessage( error, action, translate ), {
+					id: 'atmosphere-follow-error',
+				} )
+			);
+		},
+		[ dispatch, translate ]
+	);
+	const dismissFollowError = useCallback( () => {
+		dispatch( removeNotice( 'atmosphere-follow-error' ) );
+	}, [ dispatch ] );
 
 	const ownerDid = connection?.did ?? null;
 
@@ -113,21 +141,41 @@ export function FollowingView( { connectionId, actor }: Props ) {
 						isFollowedBy: item.viewer.followed_by,
 						isPending: isPendingFollow,
 						onFollow: () =>
-							followMutation.mutate( {
-								connectionId,
-								actor: item.handle,
-								subjectDid: item.did,
-							} ),
+							followMutation.mutate(
+								{
+									connectionId,
+									actor: item.handle,
+									subjectDid: item.did,
+								},
+								{
+									onSuccess: dismissFollowError,
+									onError: ( error ) => showFollowError( error, 'follow' ),
+								}
+							),
 						onUnfollow: () => {
-							if ( ! item.viewer.following_rkey ) {
+							// Bail if there's no real rkey yet, or if the row is in the
+							// optimistic-pending window. Without this guard, clicking
+							// unfollow during the pending window would issue a DELETE
+							// against the literal sentinel `'pending'` rkey.
+							if (
+								! item.viewer.following_rkey ||
+								item.viewer.following_rkey === 'pending' ||
+								isPendingFollow
+							) {
 								return;
 							}
-							unfollowMutation.mutate( {
-								connectionId,
-								actor: item.handle,
-								rkey: item.viewer.following_rkey,
-								subjectDid: item.did,
-							} );
+							unfollowMutation.mutate(
+								{
+									connectionId,
+									actor: item.handle,
+									rkey: item.viewer.following_rkey,
+									subjectDid: item.did,
+								},
+								{
+									onSuccess: dismissFollowError,
+									onError: ( error ) => showFollowError( error, 'unfollow' ),
+								}
+							);
 						},
 				  },
 		};
@@ -135,6 +183,21 @@ export function FollowingView( { connectionId, actor }: Props ) {
 
 	const profileRef = DID_RE.test( actor ) ? { did: actor } : { handle: actor };
 	const profileHref = getProfileUrl( connectionId, profileRef );
+
+	if ( connectionsError ) {
+		// Connections fetch failed: don't pretend the page works. Without
+		// this, `connection` stays null and the view renders an empty page
+		// with no explanation while the redirect effect bails on the same
+		// flag.
+		return (
+			<ReaderMain className="atmosphere-view">
+				<EmptyContent
+					title={ String( translate( 'Couldn’t load your ATmosphere connection' ) ) }
+					line={ String( translate( 'Something went wrong.' ) ) }
+				/>
+			</ReaderMain>
+		);
+	}
 
 	if ( ! connection ) {
 		return null;
