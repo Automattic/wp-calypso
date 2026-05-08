@@ -2,7 +2,15 @@ import './composer-overflow-handoff.scss';
 
 import { sitesQuery, userSettingsQuery } from '@automattic/api-queries';
 import { useMutation, useQuery, type UseMutationResult } from '@tanstack/react-query';
-import { Button, ComboboxControl } from '@wordpress/components';
+import {
+	Button,
+	ComboboxControl,
+	Icon,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import { check } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -43,6 +51,47 @@ function SingleSiteHandoff( { site, text }: { site: Site; text: string } ) {
 	);
 }
 
+function SiteIconThumb( { site }: { site: Site } ) {
+	const ico = site.icon?.img || site.icon?.ico;
+	const src = useMemo( () => {
+		if ( ! ico ) {
+			return undefined;
+		}
+		try {
+			const url = new URL( ico );
+			url.searchParams.set( 'w', '64' );
+			url.searchParams.set( 's', '64' );
+			return url.toString();
+		} catch {
+			return ico;
+		}
+	}, [ ico ] );
+
+	if ( src ) {
+		return (
+			<img
+				className="social-composer__overflow-handoff-site-icon"
+				src={ src }
+				alt=""
+				width={ 32 }
+				height={ 32 }
+				loading="lazy"
+			/>
+		);
+	}
+
+	const fallbackInitial = ( site.name || site.URL || '?' ).charAt( 0 );
+	return (
+		<div className="social-composer__overflow-handoff-site-letter" aria-hidden="true">
+			<span>{ fallbackInitial }</span>
+		</div>
+	);
+}
+
+function getSiteDisplayUrl( site: Site ) {
+	return ( site.URL || '' ).replace( /^https?:\/\//, '' );
+}
+
 function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } ) {
 	const translate = useTranslate();
 	// Gate the picker render on `userSettings` having settled so the
@@ -69,9 +118,41 @@ function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } 
 			sites.map( ( s ) => ( {
 				value: String( s.ID ),
 				label: s.name || s.URL,
+				site: s,
 			} ) ),
 		[ sites ]
 	);
+
+	const renderItem = ( { item }: { item: { value: string; label: string; site?: Site } } ) => {
+		const site = item.site ?? sites.find( ( s ) => String( s.ID ) === item.value );
+		if ( ! site ) {
+			return null;
+		}
+		const isSelected = item.value === String( displayedSiteId );
+		return (
+			<HStack
+				className="social-composer__overflow-handoff-option"
+				spacing={ 3 }
+				alignment="left"
+				justify="space-between"
+			>
+				<HStack spacing={ 3 } alignment="left" justify="left">
+					<SiteIconThumb site={ site } />
+					<VStack spacing={ 0 }>
+						<Text as="div" weight={ 500 } size={ 14 } lineHeight={ 1.5 } color="inherit">
+							{ item.label }
+						</Text>
+						<Text as="div" size={ 12 } weight={ 300 } lineHeight={ 1.2 } color="inherit">
+							{ getSiteDisplayUrl( site ) }
+						</Text>
+					</VStack>
+				</HStack>
+				{ isSelected && (
+					<Icon icon={ check } size={ 24 } className="social-composer__overflow-handoff-check" />
+				) }
+			</HStack>
+		);
+	};
 
 	if ( settingsPending ) {
 		return null;
@@ -83,6 +164,7 @@ function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } 
 				<ComboboxControl
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom
+					className="social-composer__overflow-handoff-combobox"
 					label={ translate( 'Choose a site' ) as string }
 					value={ String( displayedSiteId ) }
 					onChange={ ( newValue ) => {
@@ -92,6 +174,7 @@ function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } 
 					} }
 					options={ options }
 					allowReset={ false }
+					__experimentalRenderItem={ renderItem }
 				/>
 			</fieldset>
 			<MoveToEditorButton
