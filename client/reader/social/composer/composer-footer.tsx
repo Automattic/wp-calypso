@@ -75,13 +75,15 @@ export function ComposerFooter( {
 					variant="primary"
 					disabled={ disabled }
 					onClick={ onSubmit }
-					// Visible "Post" label is the accessible name in the idle
-					// state; while pending the visible text is replaced by a
-					// presentation-only spinner, so the button needs an
-					// explicit accessible name.
+					// Visible label is the accessible name in the idle and
+					// over-limit states; while pending the visible text is
+					// replaced by a presentation-only spinner, so the button
+					// needs an explicit accessible name.
 					aria-label={ isPending ? translate( 'Posting…' ) : undefined }
 				>
-					{ isPending ? <Spinner /> : translate( 'Post' ) }
+					{ isPending && <Spinner /> }
+					{ ! isPending && tooLong && translate( 'Better as a blog post' ) }
+					{ ! isPending && ! tooLong && translate( 'Post' ) }
 				</Button>
 			</HStack>
 		</HStack>

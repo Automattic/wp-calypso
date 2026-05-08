@@ -29,6 +29,14 @@ describe( '<ComposerFooter>', () => {
 		expect( screen.getByRole( 'button', { name: /post/i } ) ).toBeDisabled();
 	} );
 
+	it( 'swaps the Post label to nudge toward the editor when over the limit', () => {
+		render(
+			<ComposerFooter graphemeCount={ 301 } onSubmit={ noop } isPending={ false } limit={ 300 } />
+		);
+		expect( screen.getByRole( 'button', { name: /better as a blog post/i } ) ).toBeDisabled();
+		expect( screen.queryByRole( 'button', { name: /^post$/i } ) ).toBeNull();
+	} );
+
 	it( 'shows amber count under 50 remaining', () => {
 		render(
 			<ComposerFooter graphemeCount={ 260 } onSubmit={ noop } isPending={ false } limit={ 300 } />
