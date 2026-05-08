@@ -1191,17 +1191,27 @@ function CancelPurchaseInner() {
 				to: purchasesRoute.to,
 				search: {
 					removed: productNoun,
+					removedId: purchase.ID,
 					...( purchase.will_atomic_revert_after_removal
 						? { removedDomain: purchase.domain }
 						: {} ),
 				},
 			} );
 
-			// 4. Fire mutation in background
+			// 4. Fire mutation in background. On failure, restore the purchase to
+			//    the cache — the list watches userPurchasesQuery for reappearance
+			//    and self-dismisses its notice. The cache guard's re-strip happens
+			//    synchronously inside the QueryCache notify callback, so the list's
+			//    useEffect never observes transient successes-path reappearances.
 			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
-				// Mutation failed — stop guarding and roll back the optimistic strip
 				cleanupGuard();
-				window.dispatchEvent( new CustomEvent( 'purchase-remove-failed' ) );
+				queryClient.setQueryData(
+					userPurchasesQuery().queryKey,
+					( old: Purchase[] | undefined ) => {
+						const list = old ?? [];
+						return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
+					}
+				);
 				createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
 					type: 'snackbar',
 				} );
