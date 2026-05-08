@@ -82,6 +82,14 @@
 	color: var( --color-text, #1e1e1e );
 }
 
+// A solo card has no siblings to anchor its alignment against, so center
+// the bullets in the column the same way the full-width A4A hero does in
+// the 3-card layout. Applies at every viewport — there's no row context
+// to preserve on mobile here.
+.connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullet {
+	justify-content: center;
+}
+
 .connect-screen-features-section__card-bullet-icon {
 	flex-shrink: 0;
 	margin-block-start: 1px;
