@@ -146,6 +146,9 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 				  } );
 		};
 
+		const statRowNoun = ( count: number ) =>
+			translate( 'boost', 'boosts', { count, textOnly: true } );
+
 		return {
 			supported: true,
 			isReposted,
@@ -153,6 +156,7 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 			label: {
 				action: translate( 'Boost' ),
 				accessibleLabel,
+				statRowNoun,
 			},
 			canQuote: Boolean( onQuoteClick ),
 			repost,

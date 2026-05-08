@@ -213,6 +213,9 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 				  } );
 		};
 
+		const statRowNoun = ( count: number ) =>
+			translate( 'repost', 'reposts', { count, textOnly: true } );
+
 		return {
 			supported: true,
 			isReposted,
@@ -220,6 +223,7 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 			label: {
 				action: translate( 'Repost' ),
 				accessibleLabel,
+				statRowNoun,
 			},
 			canQuote,
 			repost,

@@ -13,6 +13,8 @@ export interface LikeAction {
 	label: {
 		/** Accessible label with count — e.g. "Like, 5 likes". */
 		accessibleLabel: ( count: number ) => TranslateResult;
+		/** Stat-row noun, plural-aware — e.g. "like" / "likes" / "favorite" / "favorites". */
+		statRowNoun: ( count: number ) => TranslateResult;
 	};
 	like: () => void;
 	unlike: () => void;
@@ -30,6 +32,7 @@ const nullLikeActionFn: UseLikeActionFn = () => ( {
 	isPending: false,
 	label: {
 		accessibleLabel: () => '',
+		statRowNoun: () => '',
 	},
 	like: () => {},
 	unlike: () => {},

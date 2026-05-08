@@ -121,11 +121,14 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 				textOnly: true,
 			} );
 
+		const statRowNoun = ( count: number ) =>
+			translate( 'favorite', 'favorites', { count, textOnly: true } );
+
 		return {
 			supported: true,
 			isLiked,
 			isPending,
-			label: { accessibleLabel },
+			label: { accessibleLabel, statRowNoun },
 			like,
 			unlike,
 		};

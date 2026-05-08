@@ -19,6 +19,8 @@ export interface RepostAction {
 		 * "Repost, %d repost(s)" or "Undo repost, %d repost(s)" form.
 		 */
 		accessibleLabel: ( count: number, isReposted: boolean ) => TranslateResult;
+		/** Stat-row noun, plural-aware — e.g. "repost" / "reposts" / "boost" / "boosts". */
+		statRowNoun: ( count: number ) => TranslateResult;
 	};
 	/** Whether the Quote post action is available (slice-7d follow-up). */
 	canQuote: boolean;
@@ -41,6 +43,7 @@ const nullRepostActionFn: UseRepostActionFn = () => ( {
 	label: {
 		action: '',
 		accessibleLabel: () => '',
+		statRowNoun: () => '',
 	},
 	canQuote: false,
 	repost: () => {},

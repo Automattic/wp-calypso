@@ -164,11 +164,14 @@ export function makeUseAtmosphereLikeAction( connectionId: number ): UseLikeActi
 				textOnly: true,
 			} );
 
+		const statRowNoun = ( count: number ) =>
+			translate( 'like', 'likes', { count, textOnly: true } );
+
 		return {
 			supported: true,
 			isLiked,
 			isPending,
-			label: { accessibleLabel },
+			label: { accessibleLabel, statRowNoun },
 			like,
 			unlike,
 		};
