@@ -433,12 +433,17 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: CancelIntent } => {
-		return search.intent === 'cancel' ||
+	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+		return {
+			...( search.intent === 'cancel' ||
 			search.intent === 'remove' ||
 			search.intent === 'auto-renew'
-			? { intent: search.intent }
-			: {};
+				? { intent: search.intent }
+				: {} ),
+			...( typeof search.additionalPurchaseIds === 'string'
+				? { additionalPurchaseIds: search.additionalPurchaseIds }
+				: {} ),
+		};
 	},
 	loaderDeps: ( { search } ) => ( { intent: search.intent } ),
 	loader: async ( { parentMatchPromise, deps: { intent } } ) => {
@@ -463,6 +468,39 @@ export const cancelPurchaseRoute = createRoute( {
 		createLazyRoute( 'cancel-purchase' )( {
 			component: d.default,
 		} )
+	)
+);
+
+export const siteActionsRoute = createRoute( {
+	head: ( { loaderData }: { loaderData?: { action?: string } } ) => {
+		const titles: Record< string, string > = {
+			renew: __( 'Renew subscriptions' ),
+			cancel: __( 'Cancel subscriptions' ),
+			remove: __( 'Remove upgrades' ),
+			'auto-renew': __( 'Turn off auto-renew' ),
+		};
+		return { meta: [ { title: titles[ loaderData?.action ?? '' ] ?? __( 'Site actions' ) } ] };
+	},
+	getParentRoute: () => purchaseSettingsRoute,
+	path: 'site-actions',
+	validateSearch: ( search ): { action?: 'renew' | 'cancel' | 'remove' | 'auto-renew' } => {
+		const valid = [ 'renew', 'cancel', 'remove', 'auto-renew' ];
+		return valid.includes( search.action as string )
+			? { action: search.action as 'renew' | 'cancel' | 'remove' | 'auto-renew' }
+			: {};
+	},
+	loaderDeps: ( { search } ) => ( { action: search.action } ),
+	loader: async ( { parentMatchPromise, deps: { action } } ) => {
+		const parentMatch = await parentMatchPromise;
+		const purchase = parentMatch.loaderData?.purchase;
+		if ( purchase ) {
+			queryClient.prefetchQuery( userPurchasesQuery() );
+		}
+		return { action };
+	},
+} ).lazy( () =>
+	import( '../../me/billing-purchases/site-level-actions' ).then( ( d ) =>
+		createLazyRoute( 'site-level-actions' )( { component: d.default } )
 	)
 );
 
@@ -1221,6 +1259,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 					purchaseSettingsIndexRoute,
 					changePaymentMethodRoute,
 					cancelPurchaseRoute,
+					siteActionsRoute,
 				] ),
 			] ),
 			paymentMethodsRoute.addChildren( [ paymentMethodsIndexRoute, addPaymentMethodRoute ] ),
