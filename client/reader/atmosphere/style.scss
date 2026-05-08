@@ -23,3 +23,13 @@
 		padding-top: 5px;
 	}
 }
+
+.atmosphere-view__section-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.atmosphere-view__section-title svg {
+	flex-shrink: 0;
+}
