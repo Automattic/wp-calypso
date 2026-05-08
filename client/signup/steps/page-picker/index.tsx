@@ -38,7 +38,7 @@ import {
 	NEWSLETTER_PAGE,
 } from 'calypso/signup/difm/constants';
 import addCustomPageSvg from 'calypso/signup/difm/images/page-descriptions/add-custom-page.svg';
-import { nextInstanceId, type PageInstance } from 'calypso/signup/difm/page-instances';
+import { newInstanceId, type PageInstance } from 'calypso/signup/difm/page-instances';
 import {
 	BBE_ONBOARDING_PAGE_PICKER_STEP,
 	BBE_STORE_ONBOARDING_PAGE_PICKER_STEP,
@@ -276,7 +276,7 @@ function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePag
 				return prev.filter( ( instance ) => instance.type !== pageId );
 			}
 
-			return [ ...prev, { id: pageId, type: pageId } ];
+			return [ ...prev, { id: newInstanceId(), type: pageId } ];
 		} );
 	};
 
@@ -285,10 +285,7 @@ function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePag
 	};
 
 	const handleAddCustomPage = () => {
-		setInstances( ( prev ) => {
-			const id = nextInstanceId( CUSTOM_PAGE, prev );
-			return [ ...prev, { id, type: CUSTOM_PAGE } ];
-		} );
+		setInstances( ( prev ) => [ ...prev, { id: newInstanceId(), type: CUSTOM_PAGE } ] );
 	};
 
 	const context = isStoreFlow
@@ -458,176 +455,6 @@ function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePag
 	);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function PageSelector( {
-	selectedPages,
-	setSelectedPages,
-	isStoreFlow,
-}: {
-	selectedPages: string[];
-	setSelectedPages: ( pages: string[] ) => void;
-	isStoreFlow: boolean;
-} ) {
-	const onPageClick = ( pageId: string ) => {
-		const isPageSelected = selectedPages.includes( pageId );
-		// The home page cannot be touched and is always included
-		if ( ! [ HOME_PAGE, SHOP_PAGE ].includes( pageId ) ) {
-			if ( isPageSelected ) {
-				// Unselect selected page
-				setSelectedPages( selectedPages.filter( ( page ) => page !== pageId ) );
-			} else {
-				setSelectedPages( [ ...selectedPages, pageId ] );
-			}
-		}
-	};
-
-	const context = isStoreFlow
-		? BBE_STORE_ONBOARDING_PAGE_PICKER_STEP
-		: BBE_ONBOARDING_PAGE_PICKER_STEP;
-
-	return (
-		<PageGrid>
-			<PageCell
-				context={ context }
-				required
-				pageId={ HOME_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			{ isStoreFlow && (
-				<PageCell
-					context={ context }
-					required
-					pageId={ SHOP_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) }
-			<PageCell
-				context={ context }
-				popular
-				pageId={ ABOUT_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
-				context={ context }
-				popular
-				pageId={ CONTACT_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-
-			<PageCell
-				context={ context }
-				popular
-				pageId={ BLOG_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-
-			<PageCell
-				context={ context }
-				pageId={ PHOTO_GALLERY_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			{ isStoreFlow ? (
-				<PageCell
-					context={ context }
-					popular
-					pageId={ FAQ_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) : (
-				<PageCell
-					context={ context }
-					popular
-					pageId={ SERVICES_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) }
-			<PageCell
-				context={ context }
-				pageId={ VIDEO_GALLERY_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			{ ! isStoreFlow && (
-				<PageCell
-					context={ context }
-					popular
-					pageId={ PRICING_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) }
-			<PageCell
-				context={ context }
-				pageId={ PORTFOLIO_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			{ isStoreFlow ? (
-				<PageCell
-					context={ context }
-					pageId={ SERVICES_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) : (
-				<PageCell
-					context={ context }
-					popular
-					pageId={ FAQ_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) }
-			<PageCell
-				context={ context }
-				popular={ isStoreFlow }
-				pageId={ TESTIMONIALS_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
-				context={ context }
-				pageId={ TEAM_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
-				context={ context }
-				pageId={ EVENTS_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
-				context={ context }
-				pageId={ DONATE_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
-				context={ context }
-				pageId={ NEWSLETTER_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
-				popular
-				context={ context }
-				pageId={ CUSTOM_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-		</PageGrid>
-	);
-}
-
 interface StepProps {
 	stepSectionName: string | null;
 	stepName: string;
@@ -756,7 +583,7 @@ function DIFMPagePicker( props: StepProps ) {
 				? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
 				: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
 		) satisfies PageId[];
-		return initialTypes.map( ( type ): PageInstance => ( { id: type, type } ) );
+		return initialTypes.map( ( type ): PageInstance => ( { id: newInstanceId(), type } ) );
 	} );
 	const selectedPages = pageInstances.map( ( instance ) => instance.type );
 

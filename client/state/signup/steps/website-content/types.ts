@@ -11,11 +11,12 @@ export type Media = {
 	uploadID?: string;
 };
 
-/** One selected page instance (id may be type or type_n for multi-add). */
+/** One selected page instance, identified by an opaque UUID `id` and its canonical `type`. */
 export type SelectedPageInstance = { id: string; type: PageId; title?: string };
 
 export type PageData = {
-	id: PageId | string; // string allows instance ids (e.g. SERVICES_PAGE_2, CUSTOM_PAGE_2)
+	id: string; // opaque instance id (UUID)
+	type: PageId; // canonical page type
 	title: string;
 	content: string;
 	useFillerContent: boolean;
@@ -27,6 +28,13 @@ export interface ContactPageData extends PageData {
 	displayPhone?: string;
 	displayAddress?: string;
 }
+
+/** Server-returned page payload. Lacks `type` — the frontend reconstructs it from the instance/title. */
+export type ServerPageData = Omit< PageData, 'type' > & {
+	displayEmail?: string;
+	displayPhone?: string;
+	displayAddress?: string;
+};
 
 export type WebsiteContent = {
 	pages: Array< PageData >;
@@ -88,7 +96,7 @@ export type WebsiteContentServerState = {
 	selectedPageInstances?: SelectedPageInstance[];
 	isWebsiteContentSubmitted: boolean;
 	isStoreFlow: boolean;
-	pages: Array< PageData & ContactPageData >;
+	pages: Array< ServerPageData >;
 	siteLogoUrl: string;
 	genericFeedback: string;
 	searchTerms: string;

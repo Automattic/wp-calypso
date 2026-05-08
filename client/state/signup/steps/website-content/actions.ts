@@ -4,6 +4,7 @@ import {
 	PageId,
 	CUSTOM_PAGE,
 } from 'calypso/signup/difm/constants';
+import { newInstanceId } from 'calypso/signup/difm/page-instances';
 import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
 	SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_COMPLETED,
@@ -25,7 +26,7 @@ import type { TranslateResult } from 'i18n-calypso';
 import 'calypso/state/signup/init';
 
 export type MediaUploadedData = {
-	pageId: string; // PageId or instance id (e.g. CUSTOM_PAGE_2)
+	pageId: string; // opaque PageData instance id
 	mediaIndex: number;
 	media: Partial< Media >;
 };
@@ -213,6 +214,7 @@ export function initializeWebsiteContentForm(
 			const pageId = instance.type;
 			return {
 				id: instance.id,
+				type: pageId,
 				title: getInitialTitle( {
 					pageId,
 					savedTitle: savedContent?.title ?? instance.title,
@@ -261,7 +263,8 @@ export function initializeWebsiteContentForm(
 		usedIndexById[ pageId ] = usedIndex + 1;
 
 		return {
-			id: pageId,
+			id: newInstanceId(),
+			type: pageId,
 			title: getInitialTitle( {
 				pageId,
 				savedTitle: savedContent?.title,

@@ -31,11 +31,10 @@ export function CustomPageDetails( {
 }: PageDetailsParams< PageData > ) {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
-	// Use CUSTOM_PAGE type for description (page.id may be instance id e.g. CUSTOM_PAGE_2)
 	const description = useTranslatedPageDescriptions( CUSTOM_PAGE, context );
 
 	const { onCheckboxChanged, onFieldChanged } = useChangeHandlers( {
-		pageId: String( page.id ),
+		pageId: page.id,
 		onChangeField,
 	} );
 
