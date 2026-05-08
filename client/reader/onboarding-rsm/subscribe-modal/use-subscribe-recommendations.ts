@@ -61,7 +61,11 @@ export interface CardData {
 	site_ID: number;
 	site_URL: string;
 	site_name: string;
-	/** Canonical feed URL (from curated backfill or `/read/tags/cards` + read/feed). */
+	/**
+	 * URL used for follow / stream preview: normally the RSS or feed endpoint from the curated
+	 * list, `/read/tags/cards`, or `readFeedQuery`. `combinedRecommendations` may still set this
+	 * to `site_URL` when no feed URL is available yet or the feed request never supplies one.
+	 */
 	feed_URL: string;
 }
 

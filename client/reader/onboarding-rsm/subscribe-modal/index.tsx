@@ -83,9 +83,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
 	) as { site_icon?: string; image?: string; feed_URL?: string; URL?: string } | null;
 	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
-	// Canonical feed URL from curated backfill + `/read/tags/cards` (see
-	// `useSubscribeRecommendations`); avoids subscribing via `site_URL`, which
-	// fails for many non-WP.com feeds (`invalid_feed`).
+	// From `CardData.feed_URL` (see `useSubscribeRecommendations`). That value usually prefers a
+	// real feed URL (curated backfill, cards payload, `readFeedQuery`) over subscribing by site
+	// alone, but the hook can still fall back to `site_URL` when no feed URL is resolved—so this
+	// is best-effort, not a guarantee that the string is always an RSS endpoint.
 	const selectedFollowUrl = selectedSite?.feed_URL ?? '';
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
