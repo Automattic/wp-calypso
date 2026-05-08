@@ -461,6 +461,22 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	text-align: center;
 }
 
+// "Already have a WordPress.com account? Log in" link rendered between the
+// brand header and the signup form on the unified connection signup surface
+// (jetpack-connector and jetpack-onboarding). Centered and visually
+// distinct so returning users can pivot before scanning past the social
+// signup section. The signup form keeps primary visual weight; this link
+// is a clearly available secondary action.
+.jetpack-connect__signup-existing-account {
+	margin: 0 0 1.5rem;
+	text-align: center;
+	font-size: 0.875rem;
+
+	a {
+		font-weight: 500;
+	}
+}
+
 .jetpack-connect__benefits {
 	padding: 32px 0;
 

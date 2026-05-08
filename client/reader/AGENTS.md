@@ -103,7 +103,7 @@ Stream types are identified by unique keys. Examples of stream keys include `fol
 
 ### Post keys
 
-Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId, postId}` (external feed posts). Special variants include `{isGap, from, to}` for temporal gaps in the stream, `{isRecommendationBlock, index}` for recommendation blocks, and `{isPromptBlock, index}` for blogging prompts.
+Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId, postId}` (external feed posts). Special variants include `{isRecommendationBlock, index}` for recommendation blocks and `{isPromptBlock, index}` for blogging prompts.
 
 ### Post cards
 
