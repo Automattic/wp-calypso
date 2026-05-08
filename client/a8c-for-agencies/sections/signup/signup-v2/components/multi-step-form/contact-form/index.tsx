@@ -194,9 +194,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 	}, [ dispatch ] );
 
 	const handleBypass = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked' )
-		);
+		dispatch( recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked' ) );
 		setShowDuplicateModal( false );
 		onContinue( {
 			...formData,
