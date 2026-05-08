@@ -548,7 +548,7 @@ describe( 'useSubscribeRecommendations', () => {
 			expect( result.current.hasNoRecommendations ).toBe( false );
 		} );
 
-		it( 'keeps an already-pinned card visible after the user follows it', async () => {
+		it( 'keeps a session-followed pinned card visible after the follows slice catches up', async () => {
 			// Pin order: feed 100 (site_ID 0) is pinned on feed alone.
 			const state = buildReaderState( {
 				feeds: { items: { 100: { feed_ID: 100 } } },
@@ -562,9 +562,15 @@ describe( 'useSubscribeRecommendations', () => {
 				)
 			);
 
-			// Simulate following feed 100 from inside the modal: the follows slice
-			// updates, the hook recomputes `combinedRecommendations` (which now
-			// excludes 100), but the pinned buffer should keep the card rendered.
+			// Simulate the user clicking subscribe inside the modal: the follow
+			// button's `onFollowToggle( isFollowing: true )` would call this.
+			act( () => {
+				result.current.markSessionFollow( 100 );
+			} );
+
+			// And the follows slice updates as a result. `combinedRecommendations`
+			// recomputes to exclude 100, but because 100 was followed in-session
+			// the pinned buffer keeps the card rendered with its "Subscribed" state.
 			act( () => {
 				store.dispatch( {
 					type: SET_FOLLOWS,
@@ -584,6 +590,81 @@ describe( 'useSubscribeRecommendations', () => {
 				).not.toContain( 100 )
 			);
 			expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain( 100 );
+		} );
+
+		it( 'prunes a pinned card once paginated follows reveal it was already subscribed', async () => {
+			// Regression: without pruning, a feed pinned before its already-followed
+			// status is known would persist as a "recommendation" with a misleading
+			// "Subscribed" badge — which directly contradicts the PR's goal of not
+			// recommending blogs the user already follows.
+			const state = buildReaderState( {
+				feeds: { items: { 100: { feed_ID: 100 } } },
+			} );
+
+			const { result, store } = renderHook( state );
+
+			await waitFor( () =>
+				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
+					100
+				)
+			);
+
+			// Paginated follows arrive with feed 100 in them — but the user did
+			// NOT follow it inside the modal, so it should be pruned.
+			act( () => {
+				store.dispatch( {
+					type: SET_FOLLOWS,
+					payload: {
+						'https://food1.example': {
+							feed_ID: 100,
+							blog_ID: null,
+							is_following: true,
+						},
+					},
+				} );
+			} );
+
+			await waitFor( () =>
+				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).not.toContain(
+					100
+				)
+			);
+		} );
+
+		it( 'prunes a pinned card when paginated follows reveal a matching blog_ID', async () => {
+			// Same regression as above but discovered via blog_ID/site_ID match
+			// rather than feed_ID. Feed 101 has site_ID 1001 in our fixtures.
+			const state = buildReaderState( {
+				feeds: { items: { 101: { feed_ID: 101 } } },
+				sites: { items: { 1001: { ID: 1001 } } },
+			} );
+
+			const { result, store } = renderHook( state );
+
+			await waitFor( () =>
+				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).toContain(
+					101
+				)
+			);
+
+			act( () => {
+				store.dispatch( {
+					type: SET_FOLLOWS,
+					payload: {
+						'https://food2.example': {
+							feed_ID: null,
+							blog_ID: 1001,
+							is_following: true,
+						},
+					},
+				} );
+			} );
+
+			await waitFor( () =>
+				expect( result.current.recommendations.map( ( s: CardData ) => s.feed_ID ) ).not.toContain(
+					101
+				)
+			);
 		} );
 	} );
 } );

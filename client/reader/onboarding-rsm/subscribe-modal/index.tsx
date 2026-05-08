@@ -62,7 +62,21 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		isValidating,
 		hasNoRecommendations,
 		followedTagSlugs,
+		markSessionFollow,
 	} = useSubscribeRecommendations();
+
+	// Notify the hook when the user follows a feed inside the modal so a
+	// pinned card stays visible (showing "Subscribed") even after the follows
+	// slice excludes it, while pinned cards that turn out to be pre-existing
+	// follows can still be pruned in the background.
+	const handleFollowToggle = useCallback(
+		( feedId: number, isFollowing: boolean ) => {
+			if ( isFollowing ) {
+				markSessionFollow( feedId );
+			}
+		},
+		[ markSessionFollow ]
+	);
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
@@ -227,6 +241,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											followSource="reader-onboarding-modal"
 											replaceStreamClickWithItemClick
 											onItemClick={ () => handleItemClick( site ) }
+											onFollowToggle={ ( isFollowing: boolean ) =>
+												handleFollowToggle( site.feed_ID, isFollowing )
+											}
 											isSelected={ selectedSite?.feed_ID === site.feed_ID }
 										/>
 									) ) }
@@ -259,6 +276,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												siteId={ selectedSite.site_ID }
 												followSource="reader-onboarding-modal"
 												hasButtonStyle
+												onFollowToggle={ ( isFollowing: boolean ) =>
+													handleFollowToggle( selectedSite.feed_ID, isFollowing )
+												}
 												followIcon={ <></> }
 												followingIcon={
 													<Icon

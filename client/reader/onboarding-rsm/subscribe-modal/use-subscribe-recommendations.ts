@@ -3,7 +3,7 @@ import { createSelector } from '@automattic/state-utils';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import { reject } from 'lodash';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
@@ -78,6 +78,15 @@ export interface UseSubscribeRecommendationsResult {
 	isValidating: boolean;
 	hasNoRecommendations: boolean;
 	followedTagSlugs: string[];
+	/**
+	 * Record that the user followed a feed *during this modal session*. Pinned
+	 * cards whose feed_ID was marked here are kept visible (showing their
+	 * "Subscribed" state) even after the follows slice catches up; pinned cards
+	 * that turn out to have already been followed before the modal opened are
+	 * pruned instead. Wire this into the `onFollowToggle` of any follow button
+	 * the modal renders.
+	 */
+	markSessionFollow: ( feedId: number ) => void;
 }
 
 export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult {
@@ -281,11 +290,54 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	 */
 	const [ rejectedFeedIds, setRejectedFeedIds ] = useState< Set< number > >( new Set() );
 
+	/**
+	 * Feed IDs the user explicitly followed inside this modal session. Tracked
+	 * via the `markSessionFollow` callback wired into each follow button. Used
+	 * by the prune effect below to distinguish in-session follows (keep the
+	 * pinned card visible) from follows that turn out to have *already*
+	 * existed before the modal opened but only became known once paginated
+	 * `state.reader.follows.items` pages caught up (prune the pinned card —
+	 * the PR's stated goal is to not show previously-subscribed blogs as
+	 * recommendations).
+	 */
+	const sessionFollowedFeedIdsRef = useRef< Set< number > >( new Set() );
+
+	const markSessionFollow = useCallback( ( feedId: number ) => {
+		if ( feedId ) {
+			sessionFollowedFeedIdsRef.current.add( feedId );
+		}
+	}, [] );
+
 	useEffect( () => {
 		setPinnedSites( [] );
 		pinnedFeedIdsRef.current = new Set();
 		setRejectedFeedIds( new Set() );
+		sessionFollowedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
+
+	// Prune pinned cards once the follows slice reveals they were already
+	// subscribed before this modal session — unless the user followed them in
+	// this session (which is the "keep visible after follow" UX). Runs whenever
+	// `followedIds` changes (e.g. a paginated follows page lands).
+	useEffect( () => {
+		setPinnedSites( ( prev ) => {
+			let pruned = false;
+			const next = prev.filter( ( site ) => {
+				if ( sessionFollowedFeedIdsRef.current.has( site.feed_ID ) ) {
+					return true;
+				}
+				const followedByFeed = site.feed_ID > 0 && followedIds.feedIds.has( site.feed_ID );
+				const followedBySite = site.site_ID > 0 && followedIds.blogIds.has( site.site_ID );
+				if ( followedByFeed || followedBySite ) {
+					pinnedFeedIdsRef.current.delete( site.feed_ID );
+					pruned = true;
+					return false;
+				}
+				return true;
+			} );
+			return pruned ? next : prev;
+		} );
+	}, [ followedIds ] );
 
 	useEffect( () => {
 		if ( combinedRecommendations.length === 0 ) {
@@ -391,5 +443,6 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		isValidating,
 		hasNoRecommendations,
 		followedTagSlugs,
+		markSessionFollow,
 	};
 }
