@@ -78,6 +78,10 @@ async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureCl
 	if ( ! brief.scenes || brief.scenes.length === 0 ) {
 		return brief;
 	}
+	// Same imageUrl across consecutive scenes is the supported grouping signal —
+	// fetch + base64-inline each unique URL exactly once and let scenes share
+	// the resulting data URL.
+	const inFlight = new Map< string, Promise< string > >();
 	const settled = await Promise.allSettled(
 		brief.scenes.map( async ( scene ) => {
 			// Text-overlay scenes don't carry an imageUrl — pass through unchanged.
@@ -87,7 +91,12 @@ async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureCl
 			if ( scene.imageUrl.startsWith( 'data:' ) ) {
 				return scene;
 			}
-			const dataUrl = await imageUrlToDataUrl( scene.imageUrl );
+			let pending = inFlight.get( scene.imageUrl );
+			if ( ! pending ) {
+				pending = imageUrlToDataUrl( scene.imageUrl );
+				inFlight.set( scene.imageUrl, pending );
+			}
+			const dataUrl = await pending;
 			return { ...scene, imageUrl: dataUrl };
 		} )
 	);
