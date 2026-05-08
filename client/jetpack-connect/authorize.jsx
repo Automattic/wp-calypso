@@ -516,7 +516,7 @@ export class JetpackAuthorize extends Component {
 
 	isFromJetpackOnboarding( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-onboarding' );
+		return from === 'jetpack-onboarding';
 	}
 
 	isFromJetpackConnector( props = this.props ) {

@@ -17,11 +17,10 @@ export interface SurfaceCopy {
  * a real sentence (not a fragment) and can reorder clauses as the target
  * language requires.
  *
- * Two scenarios reuse another scenario's string by design (per the plan's
- * "simplest solution" rule):
+ * Two scenarios reuse another scenario's string by design:
  *  - `JETPACK_MULTI` reuses `JETPACK_FULL`: when multiple individual
  *    Jetpack plugins are active without the full plugin, the precise
- *    plugin mix is delivered in the Features section (PR 4); the subtitle
+ *    plugin mix is delivered in the features section; the subtitle
  *    stays at the family-level summary.
  *  - The deep-individual Jetpack scenarios (Backup / Protect / Boost /
  *    Search / Social / VideoPress) each get their own dedicated copy
@@ -222,10 +221,10 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
 /**
  * Title + subtitle for the authorize page in the unified connection flow.
  *
- * The static `Connect your account` H1 is shipped from PR 2; the subtitle
- * now switches between 16 pre-composed sentences keyed by the active
- * plugin set's family/composition. See `scenarios.ts` for the decision
- * order and `getAuthSubtitles` above for the full string table.
+ * The H1 is the static `Connect your account`. The subtitle switches
+ * between 16 pre-composed sentences keyed by the active plugin set's
+ * family/composition. See `scenarios.ts` for the decision order and
+ * `getAuthSubtitles` above for the full string table.
  */
 export function getAuthCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
 	return {
@@ -237,8 +236,8 @@ export function getAuthCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy 
 /**
  * Title + subtitle for the signup page in the unified connection flow.
  *
- * Static H1 (`Create your account`) shipped from PR 2; subtitle now uses
- * the family-driven value-prop strings from `getSignupSubtitles`.
+ * The H1 is the static `Create your account`. The subtitle is a
+ * family-driven value-prop string from `getSignupSubtitles`.
  */
 export function getSignupCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
 	return {
@@ -250,8 +249,8 @@ export function getSignupCopy( pluginSlugs: readonly string[] = [] ): SurfaceCop
 /**
  * Title + subtitle for the login page in the unified connection flow.
  *
- * Static H1 (`Log in to WordPress.com`) shipped from PR 2; subtitle now
- * carries the family-driven benefit clause from `getLoginSubtitles`. The
+ * The H1 is the static `Log in to WordPress.com`. The subtitle carries
+ * the family-driven benefit clause from `getLoginSubtitles`. The
  * Terms-of-Service line keeps its existing studio-gray-50 secondary slot
  * (rendered separately by `get-heading-subtext.tsx`).
  */

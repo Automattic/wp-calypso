@@ -413,6 +413,16 @@ describe( 'JetpackAuthorize', () => {
 			expect( isFromJetpackOnboarding( props ) ).toBe( true );
 		} );
 
+		test( 'does not match jetpack-onboarding prefix variants', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-onboarding-v2',
+				},
+			};
+
+			expect( isFromJetpackOnboarding( props ) ).toBe( false );
+		} );
+
 		test( 'is not from jetpack onboarding', () => {
 			const props = {
 				authQuery: {

@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
 import loginReducer from 'calypso/state/login/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
@@ -107,6 +108,81 @@ describe( 'JetpackSignup', () => {
 		);
 
 		expect( container ).toMatchSnapshot();
+	} );
+
+	// Connector-flow plugin-combination coverage. Each scenario asserts the
+	// existing-account escape hatch and the correct featured cards land on
+	// the signup surface so the parity with the auth surface is locked in.
+	test( 'connector flow + Woo-only plugins render the existing-account link and a Woo card', () => {
+		render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'woocommerce' ],
+				} }
+			/>
+		);
+
+		expect( screen.getByText( /Already have a WordPress.com account\?/ ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'article', { name: 'Jetpack' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'connector flow + Jetpack-only plugins render the existing-account link and a Jetpack card', () => {
+		render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'jetpack' ],
+				} }
+			/>
+		);
+
+		expect( screen.getByText( /Already have a WordPress.com account\?/ ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'article', { name: 'WooCommerce' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'connector flow + A4A + Woo render both feature cards (no Jetpack card)', () => {
+		render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'automattic-for-agencies-client', 'woocommerce' ],
+				} }
+			/>
+		);
+
+		expect( screen.getByText( /Already have a WordPress.com account\?/ ) ).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'article', { name: 'Automattic for Agencies' } )
+		).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'article', { name: 'Jetpack' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'non-connector flow does not render the existing-account link or features section', () => {
+		const { container } = render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'banner-44-slide-1-dashboard',
+					plugins: [ 'woocommerce' ],
+				} }
+			/>
+		);
+
+		expect(
+			screen.queryByText( /Already have a WordPress.com account\?/ )
+		).not.toBeInTheDocument();
+		expect( container.querySelector( '.connect-screen-features-section' ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'isFromJetpackConnector', () => {

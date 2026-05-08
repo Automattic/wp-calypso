@@ -7,13 +7,12 @@ import type { Family } from './families';
 /**
  * Registry entry for a known plugin participating in the unified connection flow.
  *
- * `displayName` is the human-readable plugin label used by the PR 4 features
- * section (in card titles, "Also used by" overflow rows, and any future
- * surface that needs to refer to a specific plugin by name). It is left as a
- * plain string in this registry because the plugin name itself is a brand —
- * translators don't translate "WooCommerce" or "Jetpack VaultPress Backup".
- * Surrounding sentences that reference these names are translated in `copy.ts`
- * and elsewhere.
+ * `displayName` is the human-readable plugin label used by any surface that
+ * needs to refer to a specific plugin by name. It is left as a plain string
+ * in this registry because the plugin name itself is a brand — translators
+ * don't translate "WooCommerce" or "Jetpack VaultPress Backup". Surrounding
+ * sentences that reference these names are translated in `copy.ts` and
+ * elsewhere.
  */
 export interface PluginEntry {
 	slug: string;
@@ -88,8 +87,8 @@ export const PLUGIN_REGISTRY: Record< string, PluginEntry > = {
  * Friendly display name for a plugin slug.
  *
  * Falls back to the raw slug when the plugin isn't in the registry — unknown
- * plugins never block the flow, they just keep their slug as the displayed
- * label in the "Also used by" overflow row.
+ * plugins never block the flow, they keep their slug as the displayed label
+ * for any caller that surfaces them by name.
  */
 export function getPluginDisplayName( slug: string ): string {
 	return PLUGIN_REGISTRY[ slug ]?.displayName ?? slug;
