@@ -1,13 +1,16 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import { useSocialAnalytics } from './analytics-context';
 import { LikeButton } from './like-button';
+import { useLikeAction } from './like-context';
 import { RepostButton } from './repost-button';
+import { useRepostAction } from './repost-context';
 import type { SocialPost } from '../../types';
 
-const ICON_SIZE = 16;
+const ICON_SIZE = 18;
 
 interface PostCardCountsProps {
 	post: SocialPost;
@@ -22,6 +25,27 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 	const postUri = post.uri;
 	const inAppUrl = analytics?.getThreadUrl?.( postUri ) ?? null;
 	const hideCount = Boolean( prominentTimestamp );
+
+	const likeAction = useLikeAction( post );
+	const repostAction = useRepostAction( post );
+
+	// totalReposts (reposts + quotes) is used only to decide whether the stats
+	// row should appear at all. Each stat item uses its own native count.
+	const totalReposts = counts.reposts + counts.quotes;
+
+	const repostsNoun = repostAction.supported
+		? repostAction.label.statRowNoun( counts.reposts )
+		: translate( 'repost', 'reposts', { count: counts.reposts, textOnly: true } );
+	const likesNoun = likeAction.supported
+		? likeAction.label.statRowNoun( counts.likes )
+		: translate( 'like', 'likes', { count: counts.likes, textOnly: true } );
+	const quotesNoun = translate( 'quote', 'quotes', { count: counts.quotes, textOnly: true } );
+
+	const showStatsRow = Boolean( prominentTimestamp ) && totalReposts + counts.likes > 0;
+
+	const formattedReposts = formatNumber( counts.reposts );
+	const formattedQuotes = formatNumber( counts.quotes );
+	const formattedLikes = formatNumber( counts.likes );
 
 	const fireRepliesClicked = ( destination: 'in_app_thread' | 'bsky_app' | 'composer' ) => {
 		if ( ! analytics ) {
@@ -87,17 +111,38 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 	};
 
 	return (
-		<HStack
-			alignment="center"
-			spacing={ 4 }
-			justify="flex-start"
-			className={ clsx( 'social-post-card-counts', {
-				'social-post-card-counts--prominent-timestamp': prominentTimestamp,
-			} ) }
-		>
-			{ renderRepliesNode() }
-			<RepostButton post={ post } hideCount={ hideCount } />
-			<LikeButton post={ post } hideCount={ hideCount } />
-		</HStack>
+		<>
+			{ showStatsRow && (
+				<div className="social-post-card-stats">
+					{ counts.reposts > 0 && (
+						<span className="social-post-card-stats__item">
+							<strong>{ formattedReposts }</strong> { String( repostsNoun ) }
+						</span>
+					) }
+					{ counts.quotes > 0 && (
+						<span className="social-post-card-stats__item">
+							<strong>{ formattedQuotes }</strong> { String( quotesNoun ) }
+						</span>
+					) }
+					{ counts.likes > 0 && (
+						<span className="social-post-card-stats__item">
+							<strong>{ formattedLikes }</strong> { String( likesNoun ) }
+						</span>
+					) }
+				</div>
+			) }
+			<HStack
+				alignment="center"
+				spacing={ 4 }
+				justify="flex-start"
+				className={ clsx( 'social-post-card-counts', {
+					'social-post-card-counts--prominent-timestamp': prominentTimestamp,
+				} ) }
+			>
+				{ renderRepliesNode() }
+				<RepostButton post={ post } hideCount={ hideCount } />
+				<LikeButton post={ post } hideCount={ hideCount } />
+			</HStack>
+		</>
 	);
 }

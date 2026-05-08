@@ -5,6 +5,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
 import { makeUseAtmosphereRepostAction } from 'calypso/reader/atmosphere/use-atmosphere-repost-action';
+import { makeUseMastodonLikeAction } from 'calypso/reader/mastodon/use-mastodon-like-action';
+import { makeUseMastodonRepostAction } from 'calypso/reader/mastodon/use-mastodon-repost-action';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { LikeProvider } from '../like-context';
@@ -203,5 +205,94 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 		// Replies digit (5 in the fixture) is also hidden — the only count
 		// rendered directly by `<PostCardCounts>` rather than via a child button.
 		expect( screen.queryByText( '5' ) ).toBeNull();
+	} );
+
+	it( 'renders a stats row above the action row with reposts, quotes, likes (atmosphere copy)', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
+		const useAtmosphereRepostAction = makeUseAtmosphereRepostAction( 7 );
+		const { container } = renderWithProvider(
+			<RepostProvider value={ useAtmosphereRepostAction }>
+				<LikeProvider value={ useAtmosphereLikeAction }>
+					{ wrap( <PostCardCounts post={ post } connectionId={ 7 } prominentTimestamp /> ) }
+				</LikeProvider>
+			</RepostProvider>
+		);
+		const stats = container.querySelector( '.social-post-card-stats' );
+		expect( stats ).not.toBeNull();
+		// fixture has reposts:2 quotes:1 likes:9
+		expect( stats ).toHaveTextContent( '2 reposts' );
+		expect( stats ).toHaveTextContent( '1 quote' );
+		expect( stats ).toHaveTextContent( '9 likes' );
+	} );
+
+	it( 'hides individual zero-count stat items', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
+		const useAtmosphereRepostAction = makeUseAtmosphereRepostAction( 7 );
+		const zeroQuotePost: SocialPost = {
+			...post,
+			counts: { replies: 5, reposts: 2, likes: 9, quotes: 0 },
+		};
+		const { container } = renderWithProvider(
+			<RepostProvider value={ useAtmosphereRepostAction }>
+				<LikeProvider value={ useAtmosphereLikeAction }>
+					{ wrap(
+						<PostCardCounts post={ zeroQuotePost } connectionId={ 7 } prominentTimestamp />
+					) }
+				</LikeProvider>
+			</RepostProvider>
+		);
+		const stats = container.querySelector( '.social-post-card-stats' );
+		expect( stats ).not.toBeNull();
+		expect( stats ).toHaveTextContent( '2 reposts' );
+		expect( stats ).not.toHaveTextContent( /quote/ );
+		expect( stats ).toHaveTextContent( '9 likes' );
+	} );
+
+	it( 'omits the entire stats row when reposts + quotes + likes are all zero', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
+		const useAtmosphereRepostAction = makeUseAtmosphereRepostAction( 7 );
+		const allZeroPost: SocialPost = {
+			...post,
+			counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
+		};
+		const { container } = renderWithProvider(
+			<RepostProvider value={ useAtmosphereRepostAction }>
+				<LikeProvider value={ useAtmosphereLikeAction }>
+					{ wrap( <PostCardCounts post={ allZeroPost } connectionId={ 7 } prominentTimestamp /> ) }
+				</LikeProvider>
+			</RepostProvider>
+		);
+		expect( container.querySelector( '.social-post-card-stats' ) ).toBeNull();
+	} );
+
+	it( 'uses Mastodon-flavoured copy in the stats row when the mastodon adapters are mounted', () => {
+		const { container } = renderWithProvider(
+			<RepostProvider value={ makeUseMastodonRepostAction( 7 ) }>
+				<LikeProvider value={ makeUseMastodonLikeAction( 7 ) }>
+					<SocialAnalyticsProvider
+						value={ { source: 'mastodon', connectionId: 7, onClick: jest.fn() } }
+					>
+						<PostCardCounts post={ post } connectionId={ 7 } prominentTimestamp />
+					</SocialAnalyticsProvider>
+				</LikeProvider>
+			</RepostProvider>
+		);
+		const stats = container.querySelector( '.social-post-card-stats' );
+		expect( stats ).not.toBeNull();
+		expect( stats ).toHaveTextContent( '2 boosts' );
+		expect( stats ).toHaveTextContent( '9 favorites' );
+	} );
+
+	it( 'does not render a stats row when prominentTimestamp is false', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
+		const useAtmosphereRepostAction = makeUseAtmosphereRepostAction( 7 );
+		const { container } = renderWithProvider(
+			<RepostProvider value={ useAtmosphereRepostAction }>
+				<LikeProvider value={ useAtmosphereLikeAction }>
+					{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+				</LikeProvider>
+			</RepostProvider>
+		);
+		expect( container.querySelector( '.social-post-card-stats' ) ).toBeNull();
 	} );
 } );
