@@ -1,7 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { SocialAnalyticsProvider } from '../analytics-context';
 import { SocialPostCard } from '../index';
 import type { SocialPost } from '../../../types';
 
@@ -215,5 +218,87 @@ describe( 'SocialPostCard compact + cardLink', () => {
 	it( 'renders the compact card without a card-link anchor when cardLink is omitted', () => {
 		render( <SocialPostCard post={ compactPost } variant="compact" /> );
 		expect( screen.queryByRole( 'link' ) ).toBeNull();
+	} );
+} );
+
+// Fixture for owner-gating tests. author.id holds the DID (mapped from
+// AtmosphereAuthor.did by mapAtmosphereFeedItemToSocialPost).
+const ownPost: SocialPost = {
+	uri: 'at://did:plc:caller/app.bsky.feed.post/3krkey',
+	cid: 'bafy-cid',
+	permalink: 'https://bsky.app/profile/caller.bsky.social/post/3krkey',
+	author: {
+		id: 'did:plc:caller',
+		handle: 'caller.bsky.social',
+		display_name: 'Caller',
+		avatar: null,
+		profile_url: 'https://bsky.app/profile/caller.bsky.social',
+	},
+	created_at: '2026-04-30T12:00:00Z',
+	indexed_at: '2026-04-30T12:00:00Z',
+	text: 'hi',
+	html: '<p>hi</p>',
+	lang: [ 'en' ],
+	reply_parent: null,
+	reply_root: null,
+	reason: null,
+	embed: null,
+	counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+};
+
+function makeQueryClient() {
+	return new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+}
+
+describe( 'SocialPostCard post-actions kebab', () => {
+	it( 'renders the post-actions kebab when ownerDid matches the post author', () => {
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick: jest.fn(),
+					ownerDid: 'did:plc:caller',
+				} }
+			>
+				<SocialPostCard post={ ownPost } connectionId={ 42 } variant="default" />
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+		expect( screen.getByRole( 'button', { name: /post actions/i } ) ).toBeVisible();
+	} );
+
+	it( 'omits the post-actions kebab when the variant is compact (quote-embed context)', () => {
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick: jest.fn(),
+					ownerDid: 'did:plc:caller',
+				} }
+			>
+				<SocialPostCard post={ ownPost } connectionId={ 42 } variant="compact" />
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+		expect( screen.queryByRole( 'button', { name: /post actions/i } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'omits the post-actions kebab when ownerDid does not match the post author', () => {
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick: jest.fn(),
+					ownerDid: 'did:plc:someoneelse',
+				} }
+			>
+				<SocialPostCard post={ ownPost } connectionId={ 42 } variant="default" />
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+		expect( screen.queryByRole( 'button', { name: /post actions/i } ) ).not.toBeInTheDocument();
 	} );
 } );

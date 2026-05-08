@@ -2,10 +2,9 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, quote } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
-import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
-import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import { useSocialAnalytics } from './analytics-context';
 import { LikeButton } from './like-button';
+import { QuoteButton } from './quote-button';
 import { RepostButton } from './repost-button';
 import type { SocialPost } from '../../types';
 
@@ -44,14 +43,15 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 	);
 
 	const renderRepliesNode = () => {
-		// Mirror the like-button gating: only render the interactive
-		// reply button when we have both an `onReplyClick` handler AND
-		// a strong-ref `cid` to address the post (atmosphere posts
-		// without `cid` would silently no-op the click and emit a
-		// phantom `replies_count_clicked / destination=composer` Tracks
-		// event). Fall through to the in-app/external thread link or
-		// the static count otherwise.
-		if ( analytics?.onReplyClick && post.cid ) {
+		// Render the interactive reply button when an `onReplyClick`
+		// handler is bound by the per-protocol shell. The shell decides
+		// what addressing it needs from the post (atmosphere requires a
+		// strong-ref `cid` and bails internally; Mastodon only uses
+		// `post.uri` as the status_id). Don't gate on `post.cid` here —
+		// Mastodon posts never carry a `cid`, so an extra `cid` check
+		// would dark-ship the reply button on the very protocol that
+		// needs it.
+		if ( analytics?.onReplyClick ) {
 			const onReplyClick = analytics.onReplyClick;
 			return (
 				<button
@@ -93,45 +93,17 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 			className="social-post-card-counts"
 		>
 			{ renderRepliesNode() }
-			{ connectionId && post.cid ? (
-				<RepostButton
-					post={ {
-						uri: post.uri,
-						cid: post.cid,
-						counts: post.counts,
-						viewer: post.viewer,
-					} }
-					connectionId={ connectionId }
-				/>
+			<RepostButton post={ post } />
+			<LikeButton post={ post } />
+			{ connectionId && post.cid && analytics?.onQuoteClick ? (
+				<QuoteButton post={ post } />
 			) : (
 				<span>
-					<ReaderRepostIcon iconSize={ ICON_SIZE } />
-					<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
-					{ counts.reposts }
+					<Icon icon={ quote } size={ ICON_SIZE } />
+					<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>
+					{ counts.quotes }
 				</span>
 			) }
-			{ connectionId && post.cid ? (
-				<LikeButton
-					post={ {
-						uri: post.uri,
-						cid: post.cid,
-						counts: post.counts,
-						viewer: post.viewer,
-					} }
-					connectionId={ connectionId }
-				/>
-			) : (
-				<span>
-					<ReaderLikeIcon iconSize={ ICON_SIZE } liked={ false } />
-					<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
-					{ counts.likes }
-				</span>
-			) }
-			<span>
-				<Icon icon={ quote } size={ ICON_SIZE } />
-				<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>
-				{ counts.quotes }
-			</span>
 		</HStack>
 	);
 }

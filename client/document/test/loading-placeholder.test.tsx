@@ -54,7 +54,6 @@ const baseProps: DocumentProps = {
 	user: null,
 	useTranslationChunks: false,
 	showStepContainerV2Loader: true,
-	darkModeHelper: false,
 };
 
 describe( 'Document LoadingPlaceholder', () => {
@@ -70,11 +69,5 @@ describe( 'Document LoadingPlaceholder', () => {
 		const html = renderToStaticMarkup( <Document { ...baseProps } sectionName="stepper" /> );
 
 		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
-	} );
-
-	it( 'renders the dark mode helper placeholder when enabled', () => {
-		const html = renderToStaticMarkup( <Document { ...baseProps } badge="dev" darkModeHelper /> );
-
-		expect( html ).toContain( 'environment is-dark-mode' );
 	} );
 } );

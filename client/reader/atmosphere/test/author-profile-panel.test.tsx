@@ -1,15 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+import { readerAtmosphereKeys } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfilePanel } from '../author-profile-panel';
+import { atmosphereComposerConfig } from '../composer-config';
 import type { AtmosphereScopedProfile, AtmosphereConnection } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
@@ -95,7 +98,11 @@ describe( 'AuthorProfilePanel', () => {
 			.reply( 200, { items: [ feedItem ], cursor: null } );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -109,6 +116,28 @@ describe( 'AuthorProfilePanel', () => {
 		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
 	} );
 
+	it( 'does not render the back-to-timeline button (it is owned by the parent view)', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
+			.reply( 200, profilePayload );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
+			.query( true )
+			.reply( 200, { items: [], cursor: null } );
+
+		renderWithProvider(
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		await screen.findByRole( 'heading', { level: 2, name: 'Alice' } );
+		expect( screen.queryByRole( 'button', { name: /back/i } ) ).toBeNull();
+	} );
+
 	it( 'fires profile_viewed on mount', async () => {
 		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
 		nock( 'https://public-api.wordpress.com' )
@@ -120,7 +149,11 @@ describe( 'AuthorProfilePanel', () => {
 			.reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -144,9 +177,16 @@ describe( 'AuthorProfilePanel', () => {
 			.query( true )
 			.reply( 404, { error: 'atmosphere_not_found' } );
 
-		renderWithProvider( <AuthorProfilePanel connection={ connection } actor="missing" />, {
-			queryClient: makeQueryClient(),
-		} );
+		renderWithProvider(
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="missing"
+				subtabBasePath="/reader/atmosphere/42/profile/missing"
+			/>,
+			{
+				queryClient: makeQueryClient(),
+			}
+		);
 
 		expect( await screen.findByText( /Profile not found/i ) ).toBeVisible();
 	} );
@@ -165,7 +205,11 @@ describe( 'AuthorProfilePanel', () => {
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -187,34 +231,6 @@ describe( 'AuthorProfilePanel', () => {
 		await user.click( retries[ 0 ] );
 
 		expect( await screen.findByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
-	} );
-
-	it( 'navigates to the connection timeline when the back button is clicked', async () => {
-		const user = userEvent.setup();
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
-			.reply( 200, profilePayload );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/feed' )
-			.query( true )
-			.reply( 200, { items: [], cursor: null } );
-
-		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
-			{ queryClient: makeQueryClient() }
-		);
-
-		const back = await screen.findByRole( 'button', { name: /back/i } );
-		await user.click( back );
-		expect( page ).toHaveBeenCalledWith( '/reader/atmosphere/42/timeline' );
-		expect( spy ).toHaveBeenCalledWith(
-			'calypso_reader_atmosphere_profile_back_to_timeline_clicked',
-			expect.objectContaining( {
-				connection_id: 42,
-				actor: 'alice.bsky.social',
-			} )
-		);
 	} );
 
 	it( 'paginates when sentinel comes into view', async () => {
@@ -241,7 +257,11 @@ describe( 'AuthorProfilePanel', () => {
 			} );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -263,7 +283,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 200, { items: [ feedItem ], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 			await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );
@@ -285,7 +309,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 			await waitFor( () => expect( feedScope.isDone() ).toBe( true ) );
@@ -303,7 +331,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -330,7 +362,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -358,7 +394,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 429, { error: 'atmosphere_rate_limited' } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -400,7 +440,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -425,7 +469,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -459,7 +507,11 @@ describe( 'AuthorProfilePanel', () => {
 				} );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -492,7 +544,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -516,7 +572,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -552,7 +612,11 @@ describe( 'AuthorProfilePanel', () => {
 				.reply( 200, { items: [], cursor: null } );
 
 			renderWithProvider(
-				<AuthorProfilePanel connection={ connection } actor="viewer.bsky.social" />,
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="viewer.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/viewer.bsky.social"
+				/>,
 				{ queryClient: makeQueryClient() }
 			);
 
@@ -561,6 +625,46 @@ describe( 'AuthorProfilePanel', () => {
 			expect( screen.queryByRole( 'button', { name: /follow back/i } ) ).toBeNull();
 			expect( screen.queryByRole( 'button', { name: /unfollow/i } ) ).toBeNull();
 		} );
+	} );
+
+	it( "shows the post-actions kebab on the user's own posts in their author feed", async () => {
+		const ownFeedItem = {
+			...feedItem,
+			author: {
+				did: connection.did,
+				handle: connection.handle,
+				display_name: connection.display_name,
+				avatar: null,
+			},
+		};
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.scopedProfile( connection.id, connection.handle ),
+			{
+				...profilePayload,
+				did: connection.did,
+				handle: connection.handle,
+				display_name: connection.display_name,
+			}
+		);
+		queryClient.setQueryData(
+			[ ...readerAtmosphereKeys.scopedAuthorFeed( connection.id, connection.handle ) ],
+			{
+				pages: [ { items: [ ownFeedItem ], cursor: null } ],
+				pageParams: [ undefined ],
+			}
+		);
+
+		renderWithProvider(
+			<AuthorProfilePanel
+				connection={ connection }
+				actor={ connection.handle }
+				subtabBasePath={ `/reader/atmosphere/${ connection.id }/profile/${ connection.handle }` }
+			/>,
+			{ queryClient }
+		);
+
+		expect( await screen.findByRole( 'button', { name: /post actions/i } ) ).toBeVisible();
 	} );
 
 	it( 'dedupes feed items by uri across pages (Bluesky returns repeats)', async () => {
@@ -590,7 +694,11 @@ describe( 'AuthorProfilePanel', () => {
 			} );
 
 		renderWithProvider(
-			<AuthorProfilePanel connection={ connection } actor="alice.bsky.social" />,
+			<AuthorProfilePanel
+				connection={ connection }
+				actor="alice.bsky.social"
+				subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+			/>,
 			{ queryClient: makeQueryClient() }
 		);
 
@@ -599,5 +707,56 @@ describe( 'AuthorProfilePanel', () => {
 		expect( await screen.findByText( 'unique' ) ).toBeVisible();
 		// Duplicate URI from page 2 was dropped — only the page-1 occurrence renders.
 		expect( screen.queryByText( 'hello (duplicate)' ) ).toBeNull();
+	} );
+} );
+
+describe( 'AuthorProfilePanel — quote composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		( page as unknown as jest.Mock ).mockReset();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+		window.history.replaceState( {}, '', '/' );
+	} );
+
+	it( 'opens the composer in quote mode from the author feed', async () => {
+		const quotableFeedItem = {
+			...feedItem,
+			cid: 'pcid',
+			counts: { replies: 0, reposts: 0, likes: 0, quotes: 3 },
+		};
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData(
+			readerAtmosphereKeys.scopedProfile( connection.id, 'alice.bsky.social' ),
+			profilePayload
+		);
+		queryClient.setQueryData(
+			[ ...readerAtmosphereKeys.scopedAuthorFeed( connection.id, 'alice.bsky.social' ) ],
+			{
+				pages: [ { items: [ quotableFeedItem ], cursor: null } ],
+				pageParams: [ undefined ],
+			}
+		);
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
+				<AuthorProfilePanel
+					connection={ connection }
+					actor="alice.bsky.social"
+					subtabBasePath="/reader/atmosphere/42/profile/alice.bsky.social"
+				/>
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await user.click( await screen.findByRole( 'button', { name: /quote, 3 quotes/i } ) );
+		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
 	} );
 } );

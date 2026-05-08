@@ -16,6 +16,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginSubmitButton from 'calypso/blocks/login/login-submit-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -114,6 +115,12 @@ export class LoginForm extends Component {
 		emailSuggestionError: false,
 		password: '',
 		lastUsedAuthenticationMethod: this.getLastUsedAuthenticationMethod(),
+		isBlackboxSubmitBlocked:
+			config.isEnabled( 'blackbox-login' ) && !! config( 'blackbox_api_key' ),
+	};
+
+	handleBlackboxSubmitBlockedChange = ( isBlocked ) => {
+		this.setState( { isBlackboxSubmitBlocked: isBlocked } );
 	};
 
 	componentDidMount() {
@@ -645,7 +652,7 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const isEmailOrUsernameInputDisabled =
 			isFormDisabled || this.isPasswordView() || isGravatarFixedAccountLogin;
-		const isSubmitButtonDisabled = isFormDisabled;
+		const isSubmitButtonDisabled = isFormDisabled || this.state.isBlackboxSubmitBlocked;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const signupUrl = this.getSignupUrl();
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
@@ -840,6 +847,8 @@ export class LoginForm extends Component {
 					{ isGravPoweredClient && <p className="login__form-terms">{ renderTerms() }</p> }
 
 					{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
+
+					<BlackboxChallenge onSubmitBlockedChange={ this.handleBlackboxSubmitBlockedChange } />
 
 					<div className="login__form-action">
 						<LoginSubmitButton

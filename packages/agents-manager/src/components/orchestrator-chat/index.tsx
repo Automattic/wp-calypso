@@ -19,6 +19,13 @@ import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
 import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
+import {
+	consumeNextMessageExternalContextEntries,
+	removeExternalContextCard,
+	removeExternalContextEntry,
+	type ExternalContextCard,
+	type ExternalContextCardAction,
+} from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentChat from '../agent-chat';
@@ -223,6 +230,7 @@ export default function OrchestratorChat( {
 				// No images, just send normally
 				await onSubmit( message );
 			}
+			consumeNextMessageExternalContextEntries();
 			if ( isReaderChat ) {
 				markSessionUsed( agentConfig?.agentId );
 			}
@@ -236,6 +244,80 @@ export default function OrchestratorChat( {
 			uploadImagesToWordPress,
 		]
 	);
+
+	const setChatInput = useCallback( ( value: string ) => {
+		if ( typeof value !== 'string' ) {
+			return;
+		}
+
+		setInputValue( value );
+
+		const textarea = document.querySelector< HTMLTextAreaElement >(
+			'.agenttic [data-slot="chat-input"] [data-slot="textarea"]'
+		);
+		if ( textarea ) {
+			textarea.focus();
+			textarea.setSelectionRange( value.length, value.length );
+		}
+	}, [] );
+
+	const submitChatMessage = useCallback(
+		async ( message?: string ) => {
+			const submittedMessage = typeof message === 'string' ? message : inputValue;
+
+			if ( ! submittedMessage.trim() ) {
+				return;
+			}
+
+			await onSubmitWithImages( submittedMessage );
+			setInputValue( '' );
+		},
+		[ inputValue, onSubmitWithImages ]
+	);
+
+	useEffect( () => {
+		window.__agentsManagerActions = window.__agentsManagerActions || ( {} as AgentsManagerActions );
+		window.__agentsManagerActions.setChatInput = setChatInput;
+		window.__agentsManagerActions.submitChatMessage = submitChatMessage;
+
+		return () => {
+			if ( window.__agentsManagerActions?.setChatInput === setChatInput ) {
+				delete window.__agentsManagerActions.setChatInput;
+			}
+			if ( window.__agentsManagerActions?.submitChatMessage === submitChatMessage ) {
+				delete window.__agentsManagerActions.submitChatMessage;
+			}
+		};
+	}, [ setChatInput, submitChatMessage ] );
+
+	const handleContextCardAction = useCallback(
+		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
+			if ( ! action.prompt ) {
+				return;
+			}
+
+			// Remove the card immediately so the user gets instant collapse feedback.
+			// For 'submit' actions the linked context entry stays until the request
+			// is sent — `consumeNextMessageExternalContextEntries` runs after the
+			// awaited submit and clears it then.
+			removeExternalContextCard( card.id );
+
+			if ( action.type === 'submit' ) {
+				void submitChatMessage( action.prompt );
+				return;
+			}
+
+			setChatInput( action.prompt );
+		},
+		[ setChatInput, submitChatMessage ]
+	);
+
+	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {
+		removeExternalContextCard( card.id );
+		card.contextEntryIds?.forEach( ( entryId ) => {
+			removeExternalContextEntry( entryId );
+		} );
+	}, [] );
 
 	// Handle navigation continuation if hook is provided
 	// This allows to resume conversations after full page navigation
@@ -395,6 +477,8 @@ export default function OrchestratorChat( {
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }
+			onContextCardAction={ handleContextCardAction }
+			onContextCardDismiss={ dismissContextCard }
 		/>
 	);
 }
