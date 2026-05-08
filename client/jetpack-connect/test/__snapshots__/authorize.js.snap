@@ -134,7 +134,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             <p
               class="jetpack-connect__tos-link"
             >
-              By connecting your account, you agree to 
+              By connecting your site, you agree to 
               <a
                 class="jetpack-connect__sso-actions-modal-link"
                 href="https://jetpack.com/support/what-data-does-jetpack-sync/"
