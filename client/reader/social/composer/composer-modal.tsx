@@ -229,7 +229,6 @@ export function ComposerModal< TError, TParams, TResult >() {
 						{ errorMessage }
 					</div>
 				) }
-				<ComposerOverflowHandoff text={ text } />
 				<ComposerFooter
 					graphemeCount={ graphemeCount }
 					onSubmit={ handleSubmit }
@@ -238,6 +237,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					disabled={ ! canSubmit }
 					footerStart={ mediaSlot.renderFooterTrigger() }
 				/>
+				<ComposerOverflowHandoff text={ text } />
 			</Modal>
 			{ confirmDiscard && (
 				<DiscardConfirm
