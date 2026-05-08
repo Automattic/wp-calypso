@@ -206,6 +206,25 @@ describe( '<RepostButton>', () => {
 		expect( button ).toHaveTextContent( '7' );
 	} );
 
+	it( 'static render branch (no RepostProvider) shows the summed count', () => {
+		const socialPost = mapAtmosphereFeedItemToSocialPost(
+			makePost( { counts: { replies: 0, reposts: 4, likes: 0, quotes: 3 } } )
+		);
+		// Render without `<RepostProvider>` so `action.supported === false` and
+		// the static fallback `<span class="...--static">` branch renders.
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+			>
+				<RepostButton post={ socialPost } />
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+		// Static fallback renders a <span>, not a button — no role: button query.
+		expect( screen.queryByRole( 'button' ) ).toBeNull();
+		expect( screen.getByText( '7' ) ).toBeVisible();
+	} );
+
 	it( 'renders the singular aria-label when reposts === 1', () => {
 		renderRepostButton( makePost( { counts: { replies: 0, reposts: 1, likes: 0, quotes: 0 } } ) );
 		expect( screen.getByRole( 'button', { name: /^repost, 1 repost$/i } ) ).toBeVisible();
