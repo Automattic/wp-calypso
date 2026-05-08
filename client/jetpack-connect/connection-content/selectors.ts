@@ -49,8 +49,8 @@ export function isStore( pluginSlugs: readonly string[] ): boolean {
 /**
  * Return true when the full Jetpack plugin is among the active plugins.
  *
- * Used by later PRs to choose between the "full Jetpack" copy variants and
- * the individual-plugin variants.
+ * Used to choose between the "full Jetpack" copy variants and the
+ * individual-plugin variants when the Jetpack family is active.
  */
 export function hasFullJetpack( pluginSlugs: readonly string[] ): boolean {
 	return pluginSlugs.some( ( slug ) => getPluginEntry( slug )?.isFullJetpack === true );

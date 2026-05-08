@@ -45,17 +45,28 @@ describe( 'AtmosphereConnectView', () => {
 			} );
 
 		renderWithProvider( <AtmosphereConnectView /> );
-		await user.type( screen.getByLabelText( /Handle/ ), 'alice.bsky.social' );
+		await user.type( screen.getByLabelText( /Bluesky username/ ), 'alice.bsky.social' );
 		await user.type( screen.getByLabelText( /App password/ ), 'pass-word-xxx-xxx' );
 		await user.click( screen.getByRole( 'button', { name: /Connect/ } ) );
 
 		await waitFor( () => expect( page ).toHaveBeenCalledWith( '/reader/atmosphere/99/timeline' ) );
 	} );
 
-	it( 'renders the connect title with the Bluesky icon and the explanatory subtitle', () => {
+	it( 'renders the connect title with the Bluesky icon, the unified subtitle, and the prose intro above the username input', () => {
 		renderWithProvider( <AtmosphereConnectView /> );
 		expect( screen.getByRole( 'heading', { name: /Connect a Bluesky account/i } ) ).toBeVisible();
 		expect( screen.getByTestId( 'atmosphere-section-logo' ) ).toBeVisible();
 		expect( screen.getByText( /Bring your Bluesky account into the Reader\./i ) ).toBeVisible();
+		const intro = screen.getByText( /your Bluesky timeline appears alongside your blog feeds/i );
+		expect( intro ).toBeVisible();
+		const input = screen.getByLabelText( /Bluesky username/ );
+		const form = intro.closest( 'form' );
+		expect( form ).not.toBeNull();
+		// Both elements must live inside the same <form>, with the
+		// intro preceding the input in document order.
+		expect( input.closest( 'form' ) ).toBe( form );
+		expect(
+			intro.compareDocumentPosition( input ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
 	} );
 } );

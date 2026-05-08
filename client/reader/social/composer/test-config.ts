@@ -23,6 +23,7 @@ interface TestResult {
  */
 export const testComposerConfig: ComposerConfig< TestError, TestParams, TestResult > = {
 	useLimit: () => 300,
+	protocolLabel: 'TestProtocol',
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
 	mutationFactory: () =>
 		mutationOptions< TestResult, TestError, TestParams >( {

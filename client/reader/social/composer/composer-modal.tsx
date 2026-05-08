@@ -12,6 +12,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useComposerConfig } from './composer-config';
 import { ComposerFooter } from './composer-footer';
+import { ComposerOverflowHandoff } from './composer-overflow-handoff';
 import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
@@ -21,7 +22,7 @@ import type { AppState } from 'calypso/types';
 export function ComposerModal< TError, TParams, TResult >() {
 	const translate = useTranslate();
 	const config = useComposerConfig< TError, TParams, TResult >();
-	const { mode, closeComposer, mediaSlot } = useComposer();
+	const { mode, closeComposer, mediaSlot, markOverLimit } = useComposer();
 	const queryClient = useQueryClient();
 	const mutation = useMutation( config.mutationFactory( queryClient ) );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -111,6 +112,11 @@ export function ComposerModal< TError, TParams, TResult >() {
 	// rendering interactive content anyway, so the value is unused.
 	const limit = config.useLimit( mode?.connectionId ?? null );
 	const tooLong = graphemeCount > limit;
+	useEffect( () => {
+		if ( tooLong ) {
+			markOverLimit();
+		}
+	}, [ tooLong, markOverLimit ] );
 	const empty = graphemeCount === 0;
 	// Image-only posts are allowed: when the user has at least one uploaded
 	// image, the empty-text gate doesn't block submission. Pending media (any
@@ -231,6 +237,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					disabled={ ! canSubmit }
 					footerStart={ mediaSlot.renderFooterTrigger() }
 				/>
+				<ComposerOverflowHandoff text={ text } />
 			</Modal>
 			{ confirmDiscard && (
 				<DiscardConfirm

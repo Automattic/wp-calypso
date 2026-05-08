@@ -5,7 +5,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export const PER_FETCH = 7;
 export const INITIAL_FETCH = 4;
-export const PER_POLL = 40;
+export const PER_POLL = 10;
 export const PER_GAP = 40;
 
 export const QUERY_META = [ 'post', 'discover_original_post' ].join( ',' );
@@ -29,15 +29,27 @@ export const getQueryString = ( extras: Record< string, unknown > = {} ) => ( {
 	content_width: 675,
 } );
 
+// Polling shape mirrors `getQueryString` (full post payload) so consumers can
+// dispatch the head straight into `state.reader.posts` and render rich cards
+// without a per-card `<QueryReaderPost>` waterfall on consumePending. The
+// first argument is kept for call-site compatibility with the legacy
+// stream-type-specific extras (`date_liked`, `last_comment_date_gmt`, etc.) —
+// the API now returns those fields by default since we no longer restrict the
+// response with `fields`.
 export const getQueryStringForPoll = (
-	extraFields: string[] = [],
+	// First arg kept for call-site compatibility with the legacy signature
+	// (`buildStreamQueryParams` still threads stream-type extras like
+	// `date_liked`/`last_comment_date_gmt` through here). The API now returns
+	// those fields by default since the response is no longer restricted via
+	// `fields`, so the array is effectively a no-op.
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	_extraFields: string[] = [],
 	extraQueryParams: Record< string, unknown > = {}
-) => ( {
-	orderBy: 'date',
-	number: PER_POLL,
-	fields: [ ...SITE_LIMITER_FIELDS, ...extraFields ].join( ',' ),
-	...extraQueryParams,
-} );
+) =>
+	getQueryString( {
+		number: PER_POLL,
+		...extraQueryParams,
+	} );
 
 const analyticsAlgoMap = new Map< string, string >();
 
