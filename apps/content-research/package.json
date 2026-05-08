@@ -33,8 +33,8 @@
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/dom-ready": "^4.29.0",
 		"@wordpress/editor": "^14.23.0",
-		"@wordpress/hooks": "^4.23.0",
 		"@wordpress/element": "^6.23.0",
+		"@wordpress/hooks": "^4.23.0",
 		"@wordpress/i18n": "^5.23.0",
 		"@wordpress/icons": "^10.23.0",
 		"@wordpress/plugins": "^7.23.0"
