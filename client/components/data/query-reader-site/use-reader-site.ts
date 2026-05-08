@@ -33,6 +33,7 @@ export function useReaderSite( siteId: number | string | undefined ): UseReaderS
 		if ( ! query.isSuccess || typeof id !== 'number' || ! Number.isFinite( id ) ) {
 			return;
 		}
+		// `query.data` has already passed through adaptReadSite, which strips subscription.
 		const raw = queryClient.getQueryData< ReadSiteResponse >( [ 'read', 'sites', id ] );
 		if ( ! raw ) {
 			return;
