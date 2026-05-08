@@ -2,7 +2,7 @@
 
 .connect-screen-features-section {
 	width: 100%;
-	margin-block-end: 3rem;
+	margin-block-end: 2rem;
 }
 
 .connect-screen-features-section__cards {
@@ -54,6 +54,11 @@
 	justify-content: center;
 	align-items: center;
 	min-height: 32px;
+
+	// Adds breathing room below the brand mark on top of the card's own
+	// 12px flex `gap`, so the logo doesn't sit too close to the first
+	// bullet.
+	margin-block-end: 0.5rem;
 
 	// Force a uniform 32px visual height across every brand mark,
 	// regardless of the source SVG's intrinsic aspect ratio. Without this,

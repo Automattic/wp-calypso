@@ -451,13 +451,13 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 // "Use a different account" link rendered directly beneath the user card
 // on the unified connect-account surfaces (jetpack-connector and unified-
 // onboarding). Centered under the card with a muted gray treatment so it
-// reads as a secondary action; the small top margin nudges it away from
-// the card and the larger bottom margin separates it from the
-// FeaturesSection / PermissionsList that follows.
+// reads as a secondary action; the top margin nudges it away from the
+// card and the larger bottom margin separates it from the FeaturesSection
+// / PermissionsList that follows.
 .jetpack-connect__switch-account-link.logged-out-form__link-item {
 	color: var( --studio-gray-50, #646970 );
 	padding: 0;
-	margin: 0.5rem 0 2rem;
+	margin: 1rem 0 2rem;
 	text-align: center;
 }
 
