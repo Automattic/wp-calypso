@@ -65,9 +65,33 @@ export interface CardData {
 	feed_URL: string;
 }
 
+/**
+ * Row shape from `/read/tags/cards` `recommended_blogs` card `data` before normalization.
+ * `feed_URL` is often omitted until enriched via `readFeedQuery` in `combinedRecommendations`.
+ */
+export type RecommendedBlogsApiSite = {
+	feed_ID: number;
+	site_ID: number;
+	site_URL: string;
+	site_name: string;
+	feed_URL?: string;
+	/** Site URL alias sometimes returned by the API instead of `site_URL`. */
+	URL?: string;
+};
+
+function mapRecommendedBlogPayloadToCardData( site: RecommendedBlogsApiSite ): CardData {
+	return {
+		feed_ID: site.feed_ID,
+		site_ID: site.site_ID,
+		site_URL: site.URL || site.site_URL,
+		site_name: site.site_name,
+		feed_URL: site.feed_URL ?? '',
+	};
+}
+
 interface Card {
 	type: string;
-	data: CardData[];
+	data: RecommendedBlogsApiSite[];
 }
 
 export interface UseSubscribeRecommendationsResult {
@@ -143,11 +167,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			);
 
 			return recommendedBlogsCard
-				? recommendedBlogsCard.data.map( ( site: CardData & { URL?: string } ) => ( {
-						...site,
-						site_URL: site.URL || site.site_URL,
-						feed_URL: site.feed_URL ?? '',
-				  } ) )
+				? recommendedBlogsCard.data.map( mapRecommendedBlogPayloadToCardData )
 				: [];
 		},
 		staleTime: Infinity,
