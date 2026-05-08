@@ -97,7 +97,14 @@ function AccountListHeader( {
 }
 
 export function SocialAccountList< T >( props: SocialAccountListProps< T > ) {
-	const items = props.query.data?.pages.flatMap( ( page ) => page.items ) ?? [];
+	// Skip pages whose `items` is missing or malformed (e.g. a backend that
+	// returns the upstream array directly instead of `{ items, cursor }`),
+	// and drop falsy entries so a row with `null`/`undefined` slipping
+	// through doesn't crash `renderItem`.
+	const items =
+		props.query.data?.pages.flatMap( ( page ) =>
+			Array.isArray( page?.items ) ? page.items.filter( ( item ): item is T => item != null ) : []
+		) ?? [];
 
 	return (
 		<>

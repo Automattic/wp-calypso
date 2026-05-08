@@ -72,6 +72,34 @@ describe( 'SocialAccountList', () => {
 		expect( screen.getByText( 'No one yet' ) ).toBeVisible();
 	} );
 
+	it( 'skips pages whose items field is missing or malformed', () => {
+		// Regression: a backend that returns the raw upstream array instead
+		// of `{ items, cursor }` (or returns `items: undefined`/`null`) used
+		// to flatMap into `[ undefined ]`, which then crashed renderItem
+		// with "Cannot read properties of undefined".
+		const query = buildQuery( {
+			data: {
+				pages: [
+					// Malformed page: no `items` array.
+					{} as unknown as { items: FakeItem[]; cursor: string | null },
+					// Page with a falsy entry mixed in.
+					{
+						items: [
+							null as unknown as FakeItem,
+							{ id: '1', name: 'Alice' },
+							undefined as unknown as FakeItem,
+						],
+						cursor: null,
+					},
+				],
+			},
+		} );
+
+		render( <SocialAccountList< FakeItem > query={ query } { ...baseProps } /> );
+
+		expect( screen.getByText( 'Alice' ) ).toBeVisible();
+	} );
+
 	describe( 'header', () => {
 		it( 'omits the header when no header prop is passed', () => {
 			const query = buildQuery( {} );
