@@ -854,17 +854,7 @@ function PurchasePriceCard( { purchase }: { purchase: Purchase } ) {
 		);
 	}
 	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
-		return (
-			<OverviewCard
-				icon={ currencyDollar }
-				title={
-					// translators: partnerName is the name of a business partner through which this product was sold
-					sprintf( __( 'Please contact %(partnerName)s for details' ), {
-						partnerName: purchase.partner_name,
-					} )
-				}
-			/>
-		);
+		return null;
 	}
 	if ( purchase.is_trial_plan ) {
 		return (
@@ -1297,6 +1287,18 @@ function PurchaseSubtitle( { purchase }: { purchase: Purchase } ) {
 		return null;
 	}
 
+	if ( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) {
+		return (
+			<MetadataItem
+				title={ sprintf(
+					// translators: subtitle is the type of purchase (e.g. "Host Managed Plan"), partnerName is the name of the business partner
+					__( '%(subtitle)s. Please contact %(partnerName)s for details.' ),
+					{ subtitle, partnerName: purchase.partner_name }
+				) }
+			/>
+		);
+	}
+
 	return <MetadataItem title={ subtitle } />;
 }
 
@@ -1342,6 +1344,7 @@ export default function PurchaseSettings() {
 		enabled: isSplitEnabled,
 	} );
 	const features = isSplitEnabled ? cancelFeaturesResponse?.features ?? null : null;
+	const hasExpiryInfo = ! purchase.partner_name || isA4ABillingDragonPurchase( purchase );
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
@@ -1429,57 +1432,58 @@ export default function PurchaseSettings() {
 							String( user.ID ) === String( purchase.user_id ) ? user.email : undefined
 						}
 					/>
-					{ isExpired( purchase ) ? (
-						<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
-					) : (
-						<OverviewCard
-							icon={ calendar }
-							title={ expiryDateTitle }
-							heading={ ( () => {
-								if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
-									return __( 'Never expires' );
-								}
-								if ( isInExpirationGracePeriod( purchase ) ) {
+					{ hasExpiryInfo &&
+						( isExpired( purchase ) ? (
+							<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
+						) : (
+							<OverviewCard
+								icon={ calendar }
+								title={ expiryDateTitle }
+								heading={ ( () => {
+									if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
+										return __( 'Never expires' );
+									}
+									if ( isInExpirationGracePeriod( purchase ) ) {
+										return formattedExpiry;
+									}
+									if ( willRenew ) {
+										return formattedRenewal;
+									}
+									if ( purchase.subscription_status !== 'active' ) {
+										return __( 'Inactive' );
+									}
 									return formattedExpiry;
-								}
-								if ( willRenew ) {
-									return formattedRenewal;
-								}
-								if ( purchase.subscription_status !== 'active' ) {
-									return __( 'Inactive' );
-								}
-								return formattedExpiry;
-							} )() }
-							description={ ( () => {
-								if ( isCentennial ) {
-									return undefined;
-								}
-								if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
-									return __( 'Pending renewal' );
-								}
-								if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
-									return __( 'Auto-renew is enabled' );
-								}
-								if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
-									return (
-										<Link
-											to={ purchaseSettingsRoute.fullPath }
-											params={ { purchaseId: purchase.attached_to_purchase_id } }
-										>
-											{ __( 'Renews with plan' ) }
-										</Link>
-									);
-								}
-								if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
-									return undefined;
-								}
-								if ( purchase.is_auto_renew_enabled ) {
-									return __( 'Will not auto-renew because there is no payment method' );
-								}
-								return __( 'Auto-renew is disabled' );
-							} )() }
-						/>
-					) }
+								} )() }
+								description={ ( () => {
+									if ( isCentennial ) {
+										return undefined;
+									}
+									if ( purchase.is_auto_renew_enabled && isInExpirationGracePeriod( purchase ) ) {
+										return __( 'Pending renewal' );
+									}
+									if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
+										return __( 'Auto-renew is enabled' );
+									}
+									if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
+										return (
+											<Link
+												to={ purchaseSettingsRoute.fullPath }
+												params={ { purchaseId: purchase.attached_to_purchase_id } }
+											>
+												{ __( 'Renews with plan' ) }
+											</Link>
+										);
+									}
+									if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
+										return undefined;
+									}
+									if ( purchase.is_auto_renew_enabled ) {
+										return __( 'Will not auto-renew because there is no payment method' );
+									}
+									return __( 'Auto-renew is disabled' );
+								} )() }
+							/>
+						) ) }
 					<PurchasePriceCard purchase={ purchase } />
 					{ purchase.is_jetpack_plan_or_product && (
 						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
