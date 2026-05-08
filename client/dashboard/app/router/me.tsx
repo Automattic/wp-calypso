@@ -242,6 +242,7 @@ export const purchasesIndexRoute = createRoute( {
 		site?: number;
 		removed?: string;
 		removedDomain?: string;
+		removedId?: number;
 	} => {
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
@@ -249,6 +250,7 @@ export const purchasesIndexRoute = createRoute( {
 			site: typeof search.site === 'number' ? search.site : undefined,
 			removed: typeof search.removed === 'string' ? search.removed : undefined,
 			removedDomain: typeof search.removedDomain === 'string' ? search.removedDomain : undefined,
+			removedId: typeof search.removedId === 'number' ? search.removedId : undefined,
 		};
 	},
 } ).lazy( () =>
