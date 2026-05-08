@@ -38,7 +38,7 @@ const dashboardConfig = {
 	optIn: true,
 	supports: {
 		...APP_CONTEXT_DEFAULT_CONFIG.supports,
-		colorScheme: true,
+		darkMode: true,
 	},
 };
 

@@ -27,9 +27,7 @@ export function useShouldShowDarkModeAnnouncement() {
 		dashboardOptIn?.value === 'forced-opt-in' ||
 		isEnabled( 'dashboard/forced-opt-in' );
 
-	return (
-		config.optIn && config.supports.colorScheme && isDashboardEnrolled && ! isDismissedPersisted
-	);
+	return config.optIn && config.supports.darkMode && isDashboardEnrolled && ! isDismissedPersisted;
 }
 
 function DarkModeAnnouncementContent( { tracksContext }: { tracksContext: string } ) {
