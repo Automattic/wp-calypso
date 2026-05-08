@@ -1003,10 +1003,12 @@ __metadata:
     "@automattic/content-research": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/components": "npm:^32.1.0"
+    "@wordpress/compose": "npm:^7.23.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
     "@wordpress/dom-ready": "npm:^4.29.0"
     "@wordpress/editor": "npm:^14.23.0"
     "@wordpress/element": "npm:^6.23.0"
+    "@wordpress/hooks": "npm:^4.23.0"
     "@wordpress/i18n": "npm:^5.23.0"
     "@wordpress/icons": "npm:^10.23.0"
     "@wordpress/plugins": "npm:^7.23.0"
@@ -1037,6 +1039,7 @@ __metadata:
     "@wordpress/url": "npm:^4.23.0"
     clsx: "npm:^2.1.1"
     typescript: "npm:^5.8.3"
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^10.23.0
     "@wordpress/element": ^6.23.0
