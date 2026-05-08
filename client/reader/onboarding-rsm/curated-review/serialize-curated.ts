@@ -1,7 +1,7 @@
 import type { CuratedBlog, CuratedBlogsList } from '../curated-blogs';
 
 export interface CuratedRowMetadata {
-	/** Always present — falls back through `feed.feed_URL || feed.URL || entry.site_URL`. */
+	/** Canonical `feed.feed_URL` from the API. No fallbacks — see README. */
 	feedUrl: string;
 	/** `true` iff the resolved feed had a non-empty `image`. */
 	hasIcon: boolean;
