@@ -64,6 +64,7 @@ import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import { useRsmBetterCheckoutExperiment } from 'calypso/my-sites/checkout/src/hooks/use-rsm-better-checkout-experiment';
+import { useSubmitButtonColor } from 'calypso/my-sites/checkout/src/hooks/use-submit-button-color';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import {
@@ -348,14 +349,24 @@ function CheckoutSidebarNudge( {
 // button — no hidden main-column button, no querySelector click proxy.
 function PortaledCheckoutFormSubmit( {
 	validateForm,
+	submitButtonColor,
 }: {
 	validateForm?: () => Promise< boolean >;
+	submitButtonColor?: string | null;
 } ) {
 	const { slotEl } = useSubmitButtonSlot();
 	if ( ! slotEl ) {
 		return null;
 	}
-	return createPortal( <CheckoutFormSubmit validateForm={ validateForm } />, slotEl );
+	return createPortal(
+		<div
+			className="checkout-submit-button-color-wrapper"
+			style={ submitButtonColor ? { backgroundColor: submitButtonColor } : undefined }
+		>
+			<CheckoutFormSubmit validateForm={ validateForm } />
+		</div>,
+		slotEl
+	);
 }
 
 export default function CheckoutMainContent( {
@@ -550,6 +561,7 @@ export default function CheckoutMainContent( {
 
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const isRsmBetterCheckout = useRsmBetterCheckoutExperiment();
+	const submitButtonColor = useSubmitButtonColor();
 	const originalPriceForHeader = responseCart.products.reduce(
 		( sum, product ) => sum + product.item_original_subtotal_integer,
 		0
@@ -970,19 +982,29 @@ export default function CheckoutMainContent( {
 						isLargeViewport={ isRsmBetterCheckout && isLargeViewport }
 					/>
 					{ isRsmBetterCheckout && isLargeViewport ? (
-						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
-					) : (
-						<CheckoutFormSubmit
+						<PortaledCheckoutFormSubmit
 							validateForm={ validateForm }
-							submitButtonHeader={ <SubmitButtonHeader /> }
-							submitButtonFooter={
-								hasCartJetpackProductsOnly ? (
-									<JetpackCheckoutSeals />
-								) : (
-									<CheckoutMoneyBackGuarantee cart={ responseCart } />
-								)
-							}
+							submitButtonColor={ submitButtonColor }
 						/>
+					) : (
+						<div
+							className="checkout-submit-button-color-wrapper"
+							style={
+								submitButtonColor ? { backgroundColor: submitButtonColor } : undefined
+							}
+						>
+							<CheckoutFormSubmit
+								validateForm={ validateForm }
+								submitButtonHeader={ <SubmitButtonHeader /> }
+								submitButtonFooter={
+									hasCartJetpackProductsOnly ? (
+										<JetpackCheckoutSeals />
+									) : (
+										<CheckoutMoneyBackGuarantee cart={ responseCart } />
+									)
+								}
+							/>
+						</div>
 					) }
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
