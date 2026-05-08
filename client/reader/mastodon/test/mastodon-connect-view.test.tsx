@@ -113,6 +113,11 @@ describe( 'MastodonConnectView', () => {
 		);
 		expect( instruction ).toBeVisible();
 		const input = screen.getByLabelText( /Instance/ );
+		const form = instruction.closest( 'form' );
+		expect( form ).not.toBeNull();
+		// Both elements must live inside the same <form>, with the
+		// instruction preceding the input in document order.
+		expect( input.closest( 'form' ) ).toBe( form );
 		expect(
 			instruction.compareDocumentPosition( input ) & Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();

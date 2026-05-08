@@ -20,7 +20,9 @@ jest.mock(
 		}
 );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+jest.mock( 'calypso/components/data/document-head', () => ( { title }: { title: string } ) => (
+	<div data-testid="document-head-title">{ title }</div>
+) );
 
 jest.mock( '../timeline-panel', () => ( {
 	TimelinePanel: () => <div>Mastodon timeline placeholder</div>,
@@ -177,6 +179,7 @@ describe( 'MastodonAccountView', () => {
 		// should remain "Mastodon" and the subtitle should keep showing the
 		// handle without relying on the details endpoint.
 		mockConnections( null );
+		mockConnectionDetails( 7 );
 		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
 			queryClient: makeClient(),
 		} );
@@ -186,6 +189,22 @@ describe( 'MastodonAccountView', () => {
 				/Catch up with the latest from the people you follow on Mastodon with @alice@mastodon\.social/
 			)
 		).toBeVisible();
+	} );
+
+	it( 'pulls the document title from the details endpoint when the list omits display_name', async () => {
+		// Mastodon's list endpoint returns display_name: null. Without the
+		// details fallback, the browser tab and bookmarks would silently
+		// downgrade to the raw webfinger handle.
+		mockConnections( null );
+		mockConnectionDetails( 7, 'Alice the Brave' );
+		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+		await waitFor( () =>
+			expect( screen.getByTestId( 'document-head-title' ) ).toHaveTextContent(
+				'Alice the Brave ‹ Mastodon ‹ Reader'
+			)
+		);
 	} );
 
 	it( 'renders the profile tab when asked', async () => {
