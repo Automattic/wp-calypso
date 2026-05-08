@@ -6,7 +6,6 @@ import nock from 'nock';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
-	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_ERROR,
 	READER_POSTS_RECEIVE,
 	READER_RECOMMENDED_SITES_RECEIVE,
@@ -135,20 +134,6 @@ describe( 'requestPage thunk', () => {
 				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
 			expect( receivePageAction.payload.pageHandle ).toEqual( { before: '2026-01-01' } );
 			expect( receivePageAction.payload.streamItems ).toHaveLength( 1 );
-		} );
-
-		it( 'dispatches only receiveUpdates when isPoll is true', async () => {
-			nock( BASE ).get( '/rest/v1.2/read/following' ).query( true ).reply( 200, followingResponse );
-
-			const { dispatch, result } = runThunk( { streamKey: 'following', isPoll: true } );
-			await result;
-
-			const types = dispatch.mock.calls
-				.map( ( c ) => c[ 0 ] )
-				.filter( ( a ) => a && typeof a === 'object' && a.type )
-				.map( ( a ) => a.type );
-			expect( types ).toContain( READER_STREAMS_UPDATES_RECEIVE );
-			expect( types ).not.toContain( READER_STREAMS_PAGE_RECEIVE );
 		} );
 
 		it( 'dispatches receiveStreamError on a failed fetch', async () => {

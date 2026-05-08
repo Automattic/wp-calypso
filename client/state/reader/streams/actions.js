@@ -6,10 +6,6 @@ import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
 	READER_STREAMS_PAGINATED_REQUEST,
-	READER_STREAMS_SELECT_ITEM,
-	READER_STREAMS_SELECT_NEXT_ITEM,
-	READER_STREAMS_SELECT_PREV_ITEM,
-	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_CLEAR,
 	READER_STREAMS_REMOVE_ITEM,
 	READER_STREAMS_ERROR,
@@ -145,19 +141,13 @@ async function dispatchMigratedStreamRequest( dispatch, params ) {
 	const newPageHandle = extractPageHandle( streamType, { payload: { pageHandle } }, data );
 
 	// Dispatch in the same order as the legacy `handlePage`:
-	// analytics → receivePosts → receiveRecommendedSites → receivePage
-	// (or receiveUpdates for polls).
+	// analytics → receivePosts → receiveRecommendedSites → receivePage.
 	const analyticsActions = analyticsForStream( {
 		streamKey,
 		algorithm: data.algorithm,
 		items: streamPosts,
 	} );
 	analyticsActions.forEach( ( a ) => dispatch( a ) );
-
-	if ( isPoll ) {
-		dispatch( receiveUpdates( { streamKey, streamItems, query: queryParams } ) );
-		return;
-	}
 
 	if ( streamPosts.length > 0 ) {
 		dispatch( receivePosts( streamPosts ) );
@@ -249,47 +239,11 @@ export function receivePage( {
 	};
 }
 
-export function receiveUpdates( { streamKey, streamItems } ) {
-	return {
-		type: READER_STREAMS_UPDATES_RECEIVE,
-		payload: { streamKey, streamItems },
-	};
-}
-
-export function selectItem( { streamKey, postKey } ) {
-	return {
-		type: READER_STREAMS_SELECT_ITEM,
-		payload: { streamKey, postKey },
-	};
-}
-
-export function selectNextItem( { streamKey, items } ) {
-	return {
-		type: READER_STREAMS_SELECT_NEXT_ITEM,
-		payload: { streamKey, items },
-	};
-}
-
-export function selectPrevItem( { streamKey, items } ) {
-	return {
-		type: READER_STREAMS_SELECT_PREV_ITEM,
-		payload: { streamKey, items },
-	};
-}
-
 export function removeItemFromStream( { streamKey, postKey } ) {
 	return {
 		type: READER_STREAMS_REMOVE_ITEM,
 		payload: { streamKey, postKey },
 	};
-}
-
-export function fillGap( { streamKey, gap } ) {
-	return requestPage( {
-		streamKey,
-		pageHandle: { before: gap.to.toISOString(), after: gap.from.toISOString() },
-		gap,
-	} );
 }
 
 export function clearStream( { streamKey } ) {
