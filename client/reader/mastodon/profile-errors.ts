@@ -17,9 +17,20 @@ export function followErrorMessage(
 	translate: ReturnType< typeof useTranslate >
 ): TranslateResult {
 	if ( error.kind === 'not_found' ) {
-		return action === 'follow'
-			? translate( 'Couldn’t follow this account.' )
-			: translate( 'Couldn’t unfollow this account.' );
+		switch ( action ) {
+			case 'follow':
+				return translate( 'Couldn’t follow this account.' );
+			case 'unfollow':
+				return translate( 'Couldn’t unfollow this account.' );
+			default: {
+				// Exhaustiveness guard: a future action variant landing in
+				// production before this switch is updated would otherwise
+				// silently fall through to the shared `errorMessage` copy.
+				const _exhaustive: never = action;
+				void _exhaustive;
+				return errorMessage( error, translate );
+			}
+		}
 	}
 	return errorMessage( error, translate );
 }
