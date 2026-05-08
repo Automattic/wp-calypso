@@ -45,4 +45,44 @@ describe( 'AchievementCard', () => {
 		expect( root ).not.toBeNull();
 		expect( container.querySelector( '.achievement-card__icon--lock svg' ) ).not.toBeNull();
 	} );
+
+	test( 'renders a progress bar and progress/target label when progressTarget is set', () => {
+		const { container } = render(
+			<AchievementCard
+				locked
+				title="Daily streak"
+				description="Publish for 30 days."
+				progressCurrent={ 100 }
+				progressTarget={ 300 }
+			/>
+		);
+
+		expect( container.querySelector( '.achievement-card__progress' ) ).not.toBeNull();
+		const bar = screen.getByRole( 'progressbar' );
+		expect( bar ).toHaveAttribute( 'aria-valuenow', '100' );
+		expect( bar ).toHaveAttribute( 'aria-valuemax', '300' );
+		expect( screen.getByText( '100/300' ) ).toBeVisible();
+	} );
+
+	test( 'treats missing progressCurrent as 0', () => {
+		render(
+			<AchievementCard
+				locked
+				title="Daily streak"
+				description="Publish for 30 days."
+				progressTarget={ 300 }
+			/>
+		);
+
+		const bar = screen.getByRole( 'progressbar' );
+		expect( bar ).toHaveAttribute( 'aria-valuenow', '0' );
+		expect( screen.getByText( '0/300' ) ).toBeVisible();
+	} );
+
+	test( 'omits the progress bar when progressTarget is not set', () => {
+		const { container } = render( <AchievementCard locked title="Locked" description="Hidden." /> );
+
+		expect( container.querySelector( '.achievement-card__progress' ) ).toBeNull();
+		expect( screen.queryByRole( 'progressbar' ) ).toBeNull();
+	} );
 } );

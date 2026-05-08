@@ -226,6 +226,20 @@
 		color: #b32d2e;
 		font-style: normal;
 	}
+
+	&.is-running {
+		color: #3858e9;
+		font-style: normal;
+
+		.live-ai-assistant__transcript-tool-dot {
+			animation: live-ai-assistant-tool-dot-pulse 1.2s ease-in-out infinite;
+			opacity: 1;
+		}
+
+		.live-ai-assistant__transcript-tool-label {
+			animation: live-ai-assistant-tool-label-pulse 1.6s ease-in-out infinite;
+		}
+	}
 }
 
 .live-ai-assistant__transcript-tool-dot {
@@ -250,6 +264,28 @@
 	to {
 		opacity: 1;
 		transform: translateY( 0 );
+	}
+}
+
+@keyframes live-ai-assistant-tool-dot-pulse {
+	0%,
+	100% {
+		transform: scale( 1 );
+		opacity: 0.4;
+	}
+	50% {
+		transform: scale( 1.6 );
+		opacity: 1;
+	}
+}
+
+@keyframes live-ai-assistant-tool-label-pulse {
+	0%,
+	100% {
+		opacity: 0.7;
+	}
+	50% {
+		opacity: 1;
 	}
 }
 
@@ -357,6 +393,16 @@
 		border-color 0.15s ease,
 		transform 0.15s ease;
 	background: #1e1e1e;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+
+	&:hover:not( .is-selected ),
+	&:focus-visible {
+		border-color: rgba( 56, 88, 233, 0.6 );
+		transform: scale( 1.02 );
+		outline: none;
+	}
 
 	&.is-selected {
 		border-color: #3858e9;
@@ -392,6 +438,69 @@
 	&.is-selected {
 		background: #3858e9;
 	}
+}
+
+.dictation-image-picker__menu {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 12px;
+	max-width: 540px;
+	width: 90vw;
+}
+
+.dictation-image-picker__menu-option {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 24px 12px;
+	border-radius: 8px;
+	background: rgba( 30, 30, 30, 0.85 );
+	border: 1px solid rgba( 255, 255, 255, 0.1 );
+	color: #fff;
+	text-align: center;
+	min-height: 140px;
+	font: inherit;
+	cursor: pointer;
+	transition:
+		background 0.15s ease,
+		border-color 0.15s ease,
+		transform 0.15s ease;
+
+	&:hover,
+	&:focus-visible {
+		background: rgba( 56, 88, 233, 0.18 );
+		border-color: rgba( 56, 88, 233, 0.6 );
+		transform: translateY( -1px );
+		outline: none;
+	}
+
+	&:active {
+		transform: translateY( 0 );
+	}
+}
+
+.dictation-image-picker__menu-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: rgba( 255, 255, 255, 0.08 );
+	color: #fff;
+	margin-bottom: 4px;
+}
+
+.dictation-image-picker__menu-label {
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.dictation-image-picker__menu-sub {
+	font-size: 12px;
+	color: rgba( 255, 255, 255, 0.6 );
 }
 
 /* ── Dictation file upload (user-gesture gate for OS picker) ── */
