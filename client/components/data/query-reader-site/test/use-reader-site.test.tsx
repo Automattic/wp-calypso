@@ -78,7 +78,7 @@ describe( 'useReaderSite', () => {
 			ID: number;
 			subscription?: { delivery_methods?: unknown };
 		};
-		// The dispatched payload must be the **raw** API response so the follows
+		// The dispatched payload must be the raw API response so the follows
 		// reducer can read `subscription.delivery_methods` (which adaptReadSite strips).
 		expect( payload.ID ).toBe( 200 );
 		expect( payload.subscription?.delivery_methods ).toEqual( {

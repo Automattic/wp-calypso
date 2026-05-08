@@ -80,14 +80,16 @@ class ReaderPostOptionsMenu extends Component {
 	}
 }
 
-const getPostSiteId = ( { post } ) =>
-	post && ! post.is_external && post.site_ID ? +post.site_ID : undefined;
-
 export default compose(
 	withReaderTeams,
-	( Component ) => withReaderSite( Component, getPostSiteId ),
-	connect( ( state, { post: { feed_ID: feedId } = {} } ) =>
-		feedId > 0 ? { feed: getFeed( state, feedId ) } : {}
+	withReaderSite,
+	connect(
+		( state, { post: { feed_ID: feedId, is_external: isExternal, site_ID: siteId } = {} } ) =>
+			Object.assign(
+				{},
+				feedId > 0 && { feed: getFeed( state, feedId ) },
+				! isExternal && siteId > 0 && { siteId: +siteId }
+			)
 	),
 	localize
 )( ReaderPostOptionsMenu );

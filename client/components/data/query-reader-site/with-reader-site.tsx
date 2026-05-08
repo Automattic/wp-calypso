@@ -3,27 +3,20 @@ import type { ComponentType } from 'react';
 
 export type WithReaderSiteProps = Pick< UseReaderSiteResult, 'site' | 'siteError' >;
 
-type SiteId = number | string | undefined;
-type ReaderSiteIdProp = { siteId?: SiteId };
-type GetSiteId< P > = ( props: P ) => SiteId;
+type ReaderSiteIdProp = { siteId?: number | string };
 
 /**
  * Higher-order component that injects `site` and `siteError` props from
- * `useReaderSite( siteId )`. Replaces the legacy `<QueryReaderSite>` data
- * component for both class and function consumers.
- *
- * By default the HOC reads `siteId` from the wrapped component's props. Pass
- * a `getSiteId` selector to derive it from another prop (e.g. `props.post?.site_ID`).
+ * `useReaderSite( props.siteId )`. Replaces the legacy `<QueryReaderSite>`
+ * data component for class consumers. Components whose `siteId` is derived
+ * from another prop should compute it in a thin local wrapper before
+ * passing it down.
  */
 export function withReaderSite< P extends WithReaderSiteProps >(
-	WrappedComponent: ComponentType< P >,
-	getSiteId?: GetSiteId< Omit< P, keyof WithReaderSiteProps > >
+	WrappedComponent: ComponentType< P >
 ): ComponentType< Omit< P, keyof WithReaderSiteProps > & ReaderSiteIdProp > {
 	const Wrapper = ( props: Omit< P, keyof WithReaderSiteProps > & ReaderSiteIdProp ) => {
-		const siteId = getSiteId
-			? getSiteId( props as Omit< P, keyof WithReaderSiteProps > )
-			: props.siteId;
-		const { site, siteError } = useReaderSite( siteId );
+		const { site, siteError } = useReaderSite( props.siteId );
 		const merged = { ...props, site, siteError } as unknown as P;
 		return <WrappedComponent { ...merged } />;
 	};

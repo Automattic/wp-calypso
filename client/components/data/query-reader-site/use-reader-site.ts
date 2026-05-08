@@ -1,6 +1,6 @@
 import { readSiteQuery } from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { READER_SITE_RECEIVE } from 'calypso/state/reader/action-types';
 import type { ReadSiteResponse } from '@automattic/api-core';
@@ -20,18 +20,12 @@ export interface UseReaderSiteResult {
 /**
  * React-Query backed accessor for a Reader site (`/read/sites/{siteId}`).
  *
- * Also dispatches `READER_SITE_RECEIVE` (with the **raw** API payload) when
- * the query resolves so the legacy `state.reader.follows` and
- * `state.reader.siteBlocks` reducers can stay in sync. The dispatch fires
- * once per payload via a ref guard. The legacy cross-slice listeners read
- * `subscription.delivery_methods` which `adaptReadSite` strips, so the dispatch
- * pulls the pre-`select` payload from the cache rather than the hook's `site`.
+ * Also dispatches `READER_SITE_RECEIVE` with the raw API payload when the
+ * query resolves so legacy follows and site-blocks reducers can stay in sync.
  */
 export function useReaderSite( siteId: number | string | undefined ): UseReaderSiteResult {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
-	const lastDispatched = useRef< unknown >( undefined );
-
 	const query = useQuery( readSiteQuery( siteId ) );
 	const id = typeof siteId === 'string' ? Number( siteId ) : siteId;
 
@@ -40,10 +34,9 @@ export function useReaderSite( siteId: number | string | undefined ): UseReaderS
 			return;
 		}
 		const raw = queryClient.getQueryData< ReadSiteResponse >( [ 'read', 'sites', id ] );
-		if ( ! raw || raw === lastDispatched.current ) {
+		if ( ! raw ) {
 			return;
 		}
-		lastDispatched.current = raw;
 		dispatch( { type: READER_SITE_RECEIVE, payload: raw } );
 	}, [ query.isSuccess, query.dataUpdatedAt, id, queryClient, dispatch ] );
 

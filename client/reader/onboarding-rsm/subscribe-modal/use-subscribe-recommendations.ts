@@ -1,4 +1,4 @@
-import { readFeedQuery } from '@automattic/api-queries';
+import { readFeedQuery, readSiteQuery } from '@automattic/api-queries';
 import { createSelector } from '@automattic/state-utils';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -17,8 +17,8 @@ import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 import { AppState } from 'calypso/types';
 
 /**
- * Narrow shape of `state.reader.feeds.items` and `state.reader.sites.items` used in this hook.
- * The reader feeds/sites slices are JS modules with no exported TS types, and `AppState` is a
+ * Narrow shape of `state.reader.feeds.items` used in this hook.
+ * The reader feeds slice is a JS module with no exported TS types, and `AppState` is a
  * permissive `any` alias in this codebase, so we declare exactly the fields we read here. This
  * keeps the validation gate honest if the underlying shape ever changes.
  */
@@ -374,9 +374,38 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	const readerFeedItems = useSelector(
 		( state: AppState ): ReaderItemMap => state.reader?.feeds?.items ?? {}
 	);
-	const readerSiteItems = useSelector(
-		( state: AppState ): ReaderItemMap => state.reader?.sites?.items ?? {}
+
+	// Site validation: now sourced from React Query (the legacy
+	// `state.reader.sites` slice was removed in READ-386). One query per
+	// recommendation that carries a real `site_ID`. We surface only the
+	// pieces the validation gate below needs.
+	const siteIdsForValidation = useMemo(
+		() => combinedRecommendations.filter( ( s ) => s.site_ID > 0 ).map( ( s ) => s.site_ID ),
+		[ combinedRecommendations ]
 	);
+	const siteQueries = useQueries( {
+		queries: siteIdsForValidation.map( ( siteId ) => ( { ...readSiteQuery( siteId ) } ) ),
+	} );
+	const siteValidationBySiteId = useMemo( () => {
+		const map: Record< number, 'pending' | 'success' | 'error' > = {};
+		siteIdsForValidation.forEach( ( siteId, idx ) => {
+			const q = siteQueries[ idx ];
+			if ( ! q ) {
+				return;
+			}
+			if ( q.isSuccess ) {
+				map[ siteId ] = 'success';
+			} else if ( q.isError ) {
+				map[ siteId ] = 'error';
+			} else {
+				map[ siteId ] = 'pending';
+			}
+		} );
+		return map;
+		// `siteQueries` is rebuilt each render but its statuses drive validation;
+		// stringify status keys to keep the memo stable when nothing changed.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ siteIdsForValidation, siteQueries.map( ( q ) => `${ q.status }` ).join( '|' ) ] );
 
 	/**
 	 * Cards captured (in encounter order) once their feed/site metadata has loaded successfully.
@@ -481,19 +510,20 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				newlyRejected.push( site.feed_ID );
 				continue;
 			}
-			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds) have no associated
-			// WP.com site and never produce a `readerSiteItems` entry — pinning those on feed alone
-			// is correct. For cards with a real `site_ID`, wait until the site request lands so a
-			// late-arriving site error (e.g. 404/410) reliably excludes the card, rather than
-			// letting it stay pinned because the site hadn't loaded yet.
+			// Cards with `site_ID === 0` (typical for non-WP.com curated feeds like
+			// `design-milk.com`) have no associated WP.com site and never produce a
+			// site query — pinning those on feed alone is correct.
+			// For cards with a real `site_ID`, wait until the site request lands so a
+			// late-arriving site error (e.g. 404/410) reliably excludes the card,
+			// rather than letting it stay pinned because the site hadn't loaded yet.
 			const requiresSite = site.site_ID > 0;
 			if ( requiresSite ) {
-				const reduxSite = readerSiteItems[ site.site_ID ];
-				if ( ! reduxSite ) {
+				const status = siteValidationBySiteId[ site.site_ID ];
+				if ( ! status || status === 'pending' ) {
 					// Site hasn't loaded yet — keep waiting.
 					continue;
 				}
-				if ( reduxSite.is_error ) {
+				if ( status === 'error' ) {
 					newlyRejected.push( site.feed_ID );
 					continue;
 				}
@@ -517,7 +547,13 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				return next;
 			} );
 		}
-	}, [ combinedRecommendations, readerFeedItems, readerSiteItems, rejectedFeedIds ] );
+	}, [
+		combinedRecommendations,
+		readerFeedItems,
+		siteValidationBySiteId,
+		rejectedFeedIds,
+		pinnedSites,
+	] );
 
 	const recommendations = pinnedSites;
 
