@@ -30,7 +30,13 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
 import { projectAtmosphereError } from './error-projection';
 import { errorMessage } from './profile-errors';
-import { getProfileUrl, getTagFeedUrl, getThreadUrl } from './route';
+import {
+	getFollowersUrl,
+	getFollowingUrl,
+	getProfileUrl,
+	getTagFeedUrl,
+	getThreadUrl,
+} from './route';
 import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
 import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type {
@@ -287,6 +293,11 @@ export function AuthorProfilePanel( {
 					label: translate( 'follower', 'followers', {
 						count: profile.data.counts.followers,
 					} ),
+					href:
+						getFollowersUrl( connection.id, {
+							handle: profile.data.handle,
+							did: profile.data.did,
+						} ) ?? undefined,
 				},
 				{
 					key: 'follows',
@@ -294,6 +305,11 @@ export function AuthorProfilePanel( {
 					label: translate( 'following', {
 						context: 'profile stats: count of accounts followed',
 					} ),
+					href:
+						getFollowingUrl( connection.id, {
+							handle: profile.data.handle,
+							did: profile.data.did,
+						} ) ?? undefined,
 				},
 				{
 					key: 'posts',
