@@ -7,6 +7,9 @@ steps:
   # again here would just duplicate the work.
   - label: ":desktop_computer: Desktop yarn install"
     branches: "!ainfra-*"
+    notify:
+      - github_commit_status:
+          context: Desktop / yarn install
     agents:
       queue: mac
     env:
@@ -29,6 +32,9 @@ steps:
   # Gate it on `ainfra-*` branches until the port is stabilized.
   - label: ":desktop_computer: Build desktop (mac, unsigned)"
     branches: ainfra-*
+    notify:
+      - github_commit_status:
+          context: Desktop / Build (mac, unsigned)
     agents:
       queue: mac
     env:
@@ -41,6 +47,9 @@ steps:
 
   - label: ":desktop_computer: Build desktop (linux, unsigned)"
     branches: ainfra-*
+    notify:
+      - github_commit_status:
+          context: Desktop / Build (linux, unsigned)
     agents:
       queue: default
     plugins:
