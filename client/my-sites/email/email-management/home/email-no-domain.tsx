@@ -2,6 +2,7 @@ import { isFreePlan } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
+import emailWebsiteIllustration from 'calypso/assets/images/email-providers/email-website-illustration.svg';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -170,14 +171,6 @@ const EmailNoDomain = ( {
 					</div>
 					{ trackImpression( 'plan' ) }
 				</Card>
-				<div className="email-no-domain__features-section">
-					<FormattedHeader
-						brandFont
-						headerText={ translate( 'Everything you need to communicate like a pro' ) }
-						align="center"
-					/>
-					<PromoSection { ...promos } />
-				</div>
 				<div className="email-no-domain__providers-section">
 					<FormattedHeader
 						brandFont
@@ -253,6 +246,42 @@ const EmailNoDomain = ( {
 						</div>
 					</Card>
 				</div>
+				<div className="email-no-domain__features-section">
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Everything you need to communicate like a pro' ) }
+						align="center"
+					/>
+					<PromoSection { ...promos } />
+				</div>
+				<Card className="email-no-domain__final-cta">
+					<div className="email-no-domain__final-cta-info">
+						<h2 className="email-no-domain__final-cta-title">
+							{ translate( 'Your domain. Your email. Your website.' ) }
+						</h2>
+						<p className="email-no-domain__final-cta-subline">
+							{ translate(
+								'Upgrade your plan to bring it all together — a custom domain, Professional Email, and your WordPress.com site, ready to grow with you.'
+							) }
+						</p>
+						<Button
+							primary
+							className="email-no-domain__final-cta-button"
+							href={ `/plans/${ selectedSite.slug }` }
+							onClick={ trackEventForPlan }
+						>
+							{ translate( 'Upgrade today' ) }
+						</Button>
+					</div>
+					<div className="email-no-domain__final-cta-image-wrapper">
+						<img
+							className="email-no-domain__final-cta-image"
+							src={ emailWebsiteIllustration }
+							alt=""
+							role="presentation"
+						/>
+					</div>
+				</Card>
 			</div>
 		);
 	}

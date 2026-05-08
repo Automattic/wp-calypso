@@ -170,6 +170,61 @@
 		height: auto;
 	}
 
+	.card.email-no-domain__final-cta {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 24px;
+		align-items: center;
+		justify-content: space-between;
+		margin-block-start: 3rem;
+		padding: 32px;
+		border-radius: 4px;
+	}
+
+	.email-no-domain__final-cta-info {
+		flex: 1 1 320px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.email-no-domain__final-cta-title {
+		margin: 0;
+		font-size: $font-title-medium;
+		font-weight: 500;
+		line-height: 1.25;
+		color: var(--studio-gray-100);
+		text-wrap: pretty;
+	}
+
+	.email-no-domain__final-cta-subline {
+		margin-block: 12px 20px;
+		max-width: 480px;
+		font-size: $font-body-small;
+		line-height: 1.5;
+		color: var(--color-text-subtle);
+		text-wrap: pretty;
+	}
+
+	.email-no-domain__final-cta-image-wrapper {
+		display: none;
+		flex: 0 0 auto;
+
+		@media (min-width: 782px) {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+
+	.email-no-domain__final-cta-image {
+		width: 100%;
+		max-width: 240px;
+		height: auto;
+		object-fit: contain;
+	}
+
 	.email-no-domain__features-section {
 		margin-block-start: 3rem;
 		padding-block: 2.5rem 0;
