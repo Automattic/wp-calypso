@@ -221,8 +221,8 @@ a.social-post-card-header__timestamp::after {
 	border-block: 1px solid var( --studio-gray-5 );
 }
 
-.social-post-card-timestamp + .social-post-card-counts:not(.social-post-card-counts--prominent-timestamp),
-.social-post-card-stats + .social-post-card-counts:not(.social-post-card-counts--prominent-timestamp) {
+.social-post-card-timestamp + .social-post-card-counts,
+.social-post-card-stats + .social-post-card-counts {
 	margin-block-start: 8px;
 }
 
@@ -230,7 +230,6 @@ a.social-post-card-header__timestamp::after {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 16px;
-	margin-block-start: 8px;
 	margin-inline: -16px;
 	padding-block: 8px;
 	padding-inline: 16px;
@@ -326,15 +325,6 @@ a.social-post-card-header__timestamp::after {
 		flex-shrink: 0;
 		fill: currentColor;
 	}
-}
-
-// When a stats row is directly above, its border-block-end provides the
-// hairline and the action row should sit flush under it; suppress the
-// default 8px gap. Without a stats row, the timestamp's own
-// border-block-end is the only separator above, so the default 8px gap
-// is preserved to keep the icons from sitting flush against it.
-.social-post-card-stats + .social-post-card-counts--prominent-timestamp {
-	margin-block-start: 0;
 }
 
 .social-post-card-embed-images {
