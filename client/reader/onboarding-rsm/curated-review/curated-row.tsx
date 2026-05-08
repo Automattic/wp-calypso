@@ -141,6 +141,14 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 			</div>
 			<div className="curated-review__row-actions">
 				<Button
+					variant="tertiary"
+					href={ `/reader/feeds/${ entry.feed_ID }` }
+					target="_blank"
+					rel="noreferrer noopener"
+				>
+					View in Reader
+				</Button>
+				<Button
 					variant={ isMarkedBroken ? 'secondary' : 'tertiary' }
 					onClick={ onToggleBroken }
 					disabled={ isLoading && ! detected }
