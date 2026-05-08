@@ -50,9 +50,7 @@ test.describe(
 				await flowLOHPThemeSignup.loggedOutHomePage.exploreThemesLink.click();
 
 				await flowLOHPThemeSignup.loggedOutThemesPage.filterBy( 'Free' );
-				await flowLOHPThemeSignup.loggedOutThemesPage.firstThemeCard.click();
-
-				themeSlug = await flowLOHPThemeSignup.visitCalypsoGetStartedLinkForTheme();
+				themeSlug = await flowLOHPThemeSignup.loggedOutThemesPage.selectThemeForSignup();
 			} );
 
 			await test.step( 'Then I see the "Create your account" page', async function () {
