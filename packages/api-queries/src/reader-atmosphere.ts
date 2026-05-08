@@ -418,6 +418,73 @@ const scopedProfileKey = ( vars: { connectionId: number; actor: string } ) =>
 		actor: vars.actor,
 	} ).queryKey;
 
+type ActorListInfiniteData = InfiniteData< AtmosphereScopedProfilesPage >;
+
+/**
+ * The viewer's `following` / `following_rkey` form a discriminated union
+ * (both null = not following, both string = following). Modeling the patch
+ * as a union — rather than two independent `string | null` fields — keeps
+ * the discriminant intact when we spread it into the cached row's viewer.
+ *
+ * `'pending'` is the optimistic-state sentinel used by the follow flow
+ * (matches `<FollowButton>`'s gating on `mutation.isPending`).
+ */
+type ActorListViewerPatch =
+	| { following: null; following_rkey: null }
+	| { following: string; following_rkey: string };
+
+/**
+ * Walk all open actor-followers / actor-follows infinite caches and patch
+ * the viewer state for any row whose DID matches `subjectDid`. This keeps
+ * follow / unfollow buttons embedded in followers / following list views
+ * in sync with the scoped-profile cache that the mutation already updates.
+ *
+ * Uses `setQueriesData` (plural, prefix matcher) rather than
+ * `setQueryData` (exact key) so the patch applies across every open list
+ * regardless of the `actor` slot in the cache key.
+ */
+function patchActorListsForSubject(
+	queryClient: QueryClient,
+	subjectDid: string,
+	patch: ActorListViewerPatch
+): void {
+	const matchKeys = [
+		[ ...readerAtmosphereKeys.all, 'actor-followers' ] as const,
+		[ ...readerAtmosphereKeys.all, 'actor-follows' ] as const,
+	];
+
+	for ( const prefix of matchKeys ) {
+		queryClient.setQueriesData< ActorListInfiniteData >(
+			{ queryKey: prefix as unknown as QueryKey },
+			( old ) => {
+				if ( ! old ) {
+					return old;
+				}
+				let mutated = false;
+				const pages = old.pages.map( ( page ) => {
+					let pageMutated = false;
+					const items = page.items.map( ( item ) => {
+						if ( item.did !== subjectDid ) {
+							return item;
+						}
+						pageMutated = true;
+						mutated = true;
+						return {
+							...item,
+							viewer: {
+								followed_by: item.viewer.followed_by,
+								...patch,
+							},
+						};
+					} );
+					return pageMutated ? { ...page, items } : page;
+				} );
+				return mutated ? { ...old, pages } : old;
+			}
+		);
+	}
+}
+
 /**
  * Mutation factory for creating an `app.bsky.graph.follow` record.
  * Optimistically marks the cached scoped-profile entry as following
@@ -456,12 +523,20 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
+			patchActorListsForSubject( queryClient, vars.subjectDid, {
+				following: 'pending',
+				following_rkey: 'pending',
+			} );
 			return { previous };
 		},
 		onError: ( _err, vars, context ) => {
 			if ( context?.previous ) {
 				queryClient.setQueryData( scopedProfileKey( vars ), context.previous );
 			}
+			patchActorListsForSubject( queryClient, vars.subjectDid, {
+				following: null,
+				following_rkey: null,
+			} );
 		},
 		onSuccess: ( data, vars ) => {
 			queryClient.setQueryData< AtmosphereScopedProfile >( scopedProfileKey( vars ), ( old ) =>
@@ -476,6 +551,10 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
+			patchActorListsForSubject( queryClient, vars.subjectDid, {
+				following: data.follow.uri,
+				following_rkey: data.follow.rkey,
+			} );
 		},
 	} );
 
@@ -483,6 +562,7 @@ export interface UnfollowAtmosphereActorVars {
 	connectionId: number;
 	actor: string;
 	rkey: string;
+	subjectDid: string;
 }
 
 /**
@@ -521,11 +601,26 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
+			patchActorListsForSubject( queryClient, vars.subjectDid, {
+				following: null,
+				following_rkey: null,
+			} );
 			return { previous };
 		},
 		onError: ( _err, vars, context ) => {
 			if ( context?.previous ) {
 				queryClient.setQueryData( scopedProfileKey( vars ), context.previous );
+				const previousViewer = context.previous.viewer;
+				patchActorListsForSubject(
+					queryClient,
+					vars.subjectDid,
+					previousViewer.following === null
+						? { following: null, following_rkey: null }
+						: {
+								following: previousViewer.following,
+								following_rkey: previousViewer.following_rkey,
+						  }
+				);
 			}
 		},
 	} );

@@ -450,7 +450,7 @@ export function AuthorProfilePanel( {
 			} )
 		);
 		unfollowMutate(
-			{ connectionId: connection.id, actor, rkey },
+			{ connectionId: connection.id, actor, rkey, subjectDid: profile.data.did },
 			{
 				onSuccess: () => {
 					dispatch( removeNotice( 'atmosphere-follow-error' ) );
