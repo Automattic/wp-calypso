@@ -4,14 +4,13 @@ export interface EngagementData {
 }
 
 export interface ResearchResult {
-	source: 'reddit' | 'hn' | 'reader' | 'googlenews';
+	source: 'hn' | 'reader' | 'googlenews';
 	title: string;
 	url: string;
 	excerpt?: string;
 	engagement?: EngagementData;
 	author?: string;
 	timestamp?: string;
-	subreddit?: string;
 }
 
 export interface ResearchMeta {
@@ -31,4 +30,4 @@ export interface ResearchSummary {
 	suggested_angles: string[];
 }
 
-export type SourceFilter = 'all' | 'reddit' | 'hn' | 'reader' | 'googlenews';
+export type SourceFilter = 'all' | 'hn' | 'polymarket' | 'reader' | 'googlenews';

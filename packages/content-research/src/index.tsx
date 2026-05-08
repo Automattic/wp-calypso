@@ -6,7 +6,11 @@ import SearchInput from './components/search-input';
 import SourceFilterTabs from './components/source-filter';
 import { useContentResearch } from './data/use-content-research';
 import { useResearchSummary } from './data/use-research-summary';
-import { trackContentResearchOpen, trackContentResearchSearch } from './utils/tracking';
+import {
+	trackContentResearchOpen,
+	trackContentResearchSearch,
+	trackContentResearchSummarize,
+} from './utils/tracking';
 import type { ResearchResult, SourceFilter } from './types';
 
 export { isContentResearchEnabled } from './utils/feature-flag';
@@ -53,6 +57,7 @@ export default function ContentResearchSidebar() {
 				? results.filter( ( result ) => selectedUrls.has( result.url ) )
 				: results;
 
+		trackContentResearchSummarize( topic, selected.length );
 		setSummaryResults( selected );
 		setSummaryTrigger( ( prev ) => prev + 1 );
 		setIsSummaryDismissed( false );
@@ -85,9 +90,9 @@ export default function ContentResearchSidebar() {
 						<>
 							<SourceFilterTabs activeFilter={ activeFilter } onFilterChange={ setActiveFilter } />
 							<div className="content-research-sidebar__results">
-								{ filteredResults.map( ( result, index ) => (
+								{ filteredResults.map( ( result ) => (
 									<ResultCard
-										key={ `${ result.source }-${ index }` }
+										key={ result.url }
 										result={ result }
 										isSelected={ selectedUrls.has( result.url ) }
 										onToggleSelect={ () => toggleSelection( result.url ) }
@@ -97,12 +102,11 @@ export default function ContentResearchSidebar() {
 						</>
 					) }
 					<AiSummary
-						topic={ topic }
 						summary={ summary }
 						isLoading={ isSummaryLoading }
 						onSummarize={ handleSummarize }
 						onClose={ () => setIsSummaryDismissed( true ) }
-						resultCount={ summaryResults.length }
+						hasResults={ data.results.length > 0 }
 						selectedCount={ selectedUrls.size }
 						isExpanded={ isSummaryVisible }
 					/>
