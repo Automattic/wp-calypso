@@ -4,6 +4,25 @@
 
 import { attachDragDrop, positionForElement } from '../drag-drop';
 
+/**
+ * jsdom 24+ implements PointerEvent natively but older versions don't ship
+ * it on the global. Synthesize one using the Event constructor + property
+ * patches so the drag-drop hook (which only reads `clientX`, `clientY`,
+ * `target`, `key`) sees the values it needs. Using a generic Event with
+ * type='pointerdown' guarantees the listener fires.
+ */
+function makePointerDown(): Event {
+	if ( typeof PointerEvent !== 'undefined' ) {
+		return new PointerEvent( 'pointerdown', { bubbles: true, clientX: 0, clientY: 0 } );
+	}
+	const ev = new Event( 'pointerdown', { bubbles: true } );
+	Object.defineProperties( ev, {
+		clientX: { value: 0 },
+		clientY: { value: 0 },
+	} );
+	return ev;
+}
+
 function makeReassignableLi( id: string, group: string | null = null ): HTMLLIElement {
 	const li = document.createElement( 'li' );
 	li.setAttribute( 'data-wp-admin-sidebar-item-id', id );
@@ -92,7 +111,7 @@ describe( 'attachDragDrop', () => {
 		li.classList.add( 'sidebar__menu-item-parent' );
 		document.body.appendChild( li );
 		detach = attachDragDrop( controller );
-		const ev = new PointerEvent( 'pointerdown', { bubbles: true, clientX: 0, clientY: 0 } );
+		const ev = makePointerDown();
 		li.dispatchEvent( ev );
 		expect( controller.beginDrag ).not.toHaveBeenCalled();
 	} );
@@ -103,7 +122,7 @@ describe( 'attachDragDrop', () => {
 		detach = attachDragDrop( controller );
 		// jsdom's PointerEvent doesn't always set target accurately; dispatch
 		// directly on the li so closest() resolves it.
-		const ev = new PointerEvent( 'pointerdown', { bubbles: true, clientX: 0, clientY: 0 } );
+		const ev = makePointerDown();
 		li.dispatchEvent( ev );
 		expect( controller.beginDrag ).toHaveBeenCalledTimes( 1 );
 		expect( controller.beginDrag ).toHaveBeenCalledWith(
