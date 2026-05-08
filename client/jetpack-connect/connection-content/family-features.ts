@@ -84,7 +84,7 @@ export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
 				bullets: [
 					__( 'Real-time, off-site backups for every change you make.' ),
 					__( 'One-click restore from any device, even if your site is down.' ),
-					__( 'A 10-year activity log to track every action on your site.' ),
+					__( 'An activity log of every change, so you can see exactly what to restore.' ),
 				],
 			};
 
