@@ -42,6 +42,10 @@ export interface LockedAchievement {
 	badge_prefix: string;
 	is_secret: false;
 	date_created: string;
+	/** Current progress toward `target`. Present alongside `target` for incremental achievements. */
+	progress?: number;
+	/** Goal value for incremental achievements. Presence triggers progress UI. */
+	target?: number;
 }
 
 /**

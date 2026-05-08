@@ -1,3 +1,4 @@
+import { stopDictationToolDefinition } from '../tools/dictation-control-tool';
 import {
 	formatTextToolDefinition,
 	getBlockToolDefinition,
@@ -23,6 +24,7 @@ import {
 	setPostTitleToolDefinition,
 	undoToolDefinition,
 } from '../tools/editor-post-tool';
+import { generateImageToolDefinition } from '../tools/generate-image-tool';
 import { pickImageToolDefinition } from '../tools/image-picker-tool';
 import { verifyYoutubeUrlToolDefinition } from '../tools/youtube-oembed-tool';
 
@@ -50,4 +52,6 @@ export const realtimeToolDefinitions = [
 	getPostInfoToolDefinition,
 	verifyYoutubeUrlToolDefinition,
 	pickImageToolDefinition,
+	stopDictationToolDefinition,
+	generateImageToolDefinition,
 ];
