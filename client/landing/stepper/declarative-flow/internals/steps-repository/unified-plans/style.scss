@@ -41,7 +41,7 @@
 	// to look like a link instead of a default borderless button. The legacy
 	// <PlansPageSubheader> applied equivalent styles to the same button via its
 	// styled <Subheader>; those don't carry over to Step.Heading's <p>.
-	.step-container-v2__heading p button.is-borderless {
+	.plans-features-main__free-plan-cta {
 		padding: 0;
 		color: inherit;
 		font-size: inherit;
