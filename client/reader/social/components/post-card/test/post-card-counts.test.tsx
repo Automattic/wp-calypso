@@ -58,7 +58,7 @@ function wrap(
 }
 
 describe( 'PostCardCounts', () => {
-	it( 'renders all four counts as static spans when no resolver is set', () => {
+	it( 'renders all three counts as static spans when no resolver is set', () => {
 		render( wrap( <PostCardCounts post={ post } /> ) );
 		expect( screen.queryByRole( 'link' ) ).toBeNull();
 	} );
@@ -88,7 +88,7 @@ describe( 'PostCardCounts', () => {
 		);
 	} );
 
-	it( 'reposts/likes/quotes stay non-interactive even when getThreadUrl is set', () => {
+	it( 'reposts/likes stay non-interactive even when getThreadUrl is set', () => {
 		const getThreadUrl = () => '/reader/atmosphere/7/thread/did:plc:abc/3kabc';
 		render( wrap( <PostCardCounts post={ post } />, getThreadUrl ) );
 		const links = screen.getAllByRole( 'link' );
@@ -170,31 +170,15 @@ describe( 'PostCardCounts', () => {
 		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
 	} );
 
-	it( 'renders QuoteButton when analytics.onQuoteClick is bound and post has cid', () => {
+	it( 'does not render a quote button or quote count even when onQuoteClick is wired', () => {
 		const onQuoteClick = jest.fn();
 		renderWithProvider(
 			<SocialAnalyticsProvider
-				value={ {
-					source: 'atmosphere',
-					connectionId: 42,
-					onClick: jest.fn(),
-					onQuoteClick,
-				} }
+				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn(), onQuoteClick } }
 			>
 				<PostCardCounts post={ post } connectionId={ 42 } />
 			</SocialAnalyticsProvider>
 		);
-		expect( screen.getByRole( 'button', { name: /quote, .* quote/i } ) ).toBeVisible();
-	} );
-
-	it( 'falls back to static quotes count when onQuoteClick is not bound', () => {
-		renderWithProvider(
-			<SocialAnalyticsProvider
-				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
-			>
-				<PostCardCounts post={ post } connectionId={ 42 } />
-			</SocialAnalyticsProvider>
-		);
-		expect( screen.queryByRole( 'button', { name: /quote/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /quote/i } ) ).toBeNull();
 	} );
 } );

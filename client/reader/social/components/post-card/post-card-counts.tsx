@@ -1,10 +1,8 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { Icon, quote } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import { useSocialAnalytics } from './analytics-context';
 import { LikeButton } from './like-button';
-import { QuoteButton } from './quote-button';
 import { RepostButton } from './repost-button';
 import type { SocialPost } from '../../types';
 
@@ -15,7 +13,7 @@ interface PostCardCountsProps {
 	connectionId?: number;
 }
 
-export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
+export function PostCardCounts( { post }: PostCardCountsProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const counts = post.counts;
@@ -95,15 +93,6 @@ export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 			{ renderRepliesNode() }
 			<RepostButton post={ post } />
 			<LikeButton post={ post } />
-			{ connectionId && post.cid && analytics?.onQuoteClick ? (
-				<QuoteButton post={ post } />
-			) : (
-				<span>
-					<Icon icon={ quote } size={ ICON_SIZE } />
-					<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>
-					{ counts.quotes }
-				</span>
-			) }
 		</HStack>
 	);
 }
