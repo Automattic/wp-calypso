@@ -509,7 +509,15 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 			createFollow( { connectionId: vars.connectionId, subject_did: vars.subjectDid } ),
 		onMutate: async ( vars ) => {
 			const key = scopedProfileKey( vars );
-			await queryClient.cancelQueries( { queryKey: key } );
+			await Promise.all( [
+				queryClient.cancelQueries( { queryKey: key } ),
+				queryClient.cancelQueries( {
+					queryKey: [ ...readerAtmosphereKeys.all, 'actor-followers' ],
+				} ),
+				queryClient.cancelQueries( {
+					queryKey: [ ...readerAtmosphereKeys.all, 'actor-follows' ],
+				} ),
+			] );
 			const previous = queryClient.getQueryData< AtmosphereScopedProfile >( key );
 			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
 				old
@@ -587,7 +595,15 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 		mutationFn: ( vars ) => deleteFollow( { connectionId: vars.connectionId, rkey: vars.rkey } ),
 		onMutate: async ( vars ) => {
 			const key = scopedProfileKey( vars );
-			await queryClient.cancelQueries( { queryKey: key } );
+			await Promise.all( [
+				queryClient.cancelQueries( { queryKey: key } ),
+				queryClient.cancelQueries( {
+					queryKey: [ ...readerAtmosphereKeys.all, 'actor-followers' ],
+				} ),
+				queryClient.cancelQueries( {
+					queryKey: [ ...readerAtmosphereKeys.all, 'actor-follows' ],
+				} ),
+			] );
 			const previous = queryClient.getQueryData< AtmosphereScopedProfile >( key );
 			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
 				old
