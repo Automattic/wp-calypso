@@ -498,10 +498,12 @@ const ImageStudioContent = withInstanceId(
 			: ImageStudioMode.Generate;
 
 		// While EditFrame is rendering frames for a Highlights clip, the
-		// main-thread DOM→SVG-data-URI loop saturates the CPU and any
-		// CSS animation/transition in the modal stutters. Tag the modal so
-		// SCSS can suppress non-essential motion for the render's duration
-		// (the thinking-dot indicator is the only signal we keep alive).
+		// main-thread DOM→SVG-data-URI loop saturates the CPU and any CSS
+		// animation/transition in the modal stutters. Tag the modal so SCSS
+		// can freeze every animation in it (including the thinking-message
+		// shimmer) for the render's duration — frozen-mid-animation reads
+		// as a deliberate paused state and is far better UX than visible
+		// jitter. See style.scss for the matching rule + rationale.
 		const isFeatureClipRendering = !! useSelect(
 			( s ) => s( videoStudioStore ).getPendingFeatureClipRender(),
 			[]
