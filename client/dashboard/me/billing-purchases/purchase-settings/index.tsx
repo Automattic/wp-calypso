@@ -709,16 +709,6 @@ function getFields( {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 						} );
 					}
-					if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
-						return (
-							<Link
-								to={ purchaseSettingsRoute.fullPath }
-								params={ { purchaseId: purchase.attached_to_purchase_id } }
-							>
-								{ __( 'Renews with plan' ) }
-							</Link>
-						);
-					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
 						const date = formatDate( new Date( purchase.expiry_date ), locale, {
 							dateStyle: 'long',
