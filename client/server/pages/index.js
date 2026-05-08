@@ -767,6 +767,9 @@ function setUpCSP( req, res, next ) {
 		],
 		'connect-src': [
 			"'self'",
+			// Vite HMR WebSocket (dev only). Vite picks a port (24678 by default)
+			// and the same hostname as the request, e.g. ws://calypso.localhost:24678.
+			...( req.context.app.isDevelopmentEnv ? [ 'ws://localhost:*', 'ws://*.localhost:*' ] : [] ),
 			'https://*.wordpress.com/',
 			'wss://*.wordpress.com', // WebSocket connections (realtime API, notifications)
 			'https://*.wp.com',
