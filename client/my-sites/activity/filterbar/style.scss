@@ -179,9 +179,9 @@
 }
 
 .type-selector__activity-types-selection-placeholder {
-	@include placeholder();
 	height: 24px;
 	margin: 16px 0;
+	@include placeholder();
 }
 
 .filterbar__date-range-selection-info,

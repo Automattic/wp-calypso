@@ -903,10 +903,10 @@ main.akismet-checkout-thank-you {
 		}
 
 		&.loading {
-			@include placeholder( --color-neutral-20 );
 			padding: 0.5rem;
 			margin: 0 16px;
 			width: 200px;
+			@include placeholder( --color-neutral-20 );
 		}
 	}
 

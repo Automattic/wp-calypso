@@ -76,10 +76,14 @@ $breakpoint-mobile: 660px;
 // In this case we want the separator to be vertical
 .layout:not(.is-grav-powered-client) .is-social-first {
 	.auth-form__separator {
-		width: calc(100% - 32px);
-		margin: 20px 0;
-
 		@include horizontal-separator;
+
+		// stylelint-disable-next-line no-duplicate-selectors
+		& {
+			// override horizontal-separator's width without triggering the mixed-decls warning that reordering would cause.
+			width: calc(100% - 32px);
+			margin: 20px 0;
+		}
 
 		@include break-medium {
 			@include vertical-separator;

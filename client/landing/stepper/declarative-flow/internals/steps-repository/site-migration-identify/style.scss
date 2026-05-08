@@ -75,8 +75,8 @@
 }
 
 .import__capture-wrapper {
-	@include onboarding-block-margin;
 	margin-bottom: 60px;
+	@include onboarding-block-margin;
 
 	@media (min-width: $break-small) {
 		margin-bottom: 0;

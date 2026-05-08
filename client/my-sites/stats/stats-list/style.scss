@@ -361,8 +361,6 @@ ul.module-content-list-item-actions {
 	// ### this should be fixed but refraining since we're going to use
 	// the popover and select UI patterns more closely in the future
 	&.collapsed {
-		@include dropdown-menu;
-
 		background: var( --color-neutral-0 );
 		display: none;
 		z-index: z-index( 'root', 'ul.module-content-list-item-actions.collapsed' );
@@ -370,6 +368,7 @@ ul.module-content-list-item-actions {
 		top: 30px;
 		right: auto;
 		left: -172px; // module-content-list-item-right is relative, so this is min-width 220px - action width 48px = 172
+		@include dropdown-menu;
 
 		.module-content-list-item-right.is-expanded & {
 			display: inline-block;
@@ -399,8 +398,6 @@ ul.module-content-list-item-actions {
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		@include dropdown-menu;
-
 		background: var( --color-neutral-0 );
 		display: none;
 		z-index: z-index( 'root', 'ul.module-content-list-item-actions' );
@@ -408,6 +405,7 @@ ul.module-content-list-item-actions {
 		top: 46px;
 		right: auto;
 		left: -172px; // module-content-list-item-right is relative, so this is min-width 220px - action width 48px = 172
+		@include dropdown-menu;
 
 		.module-content-list-item-right.is-expanded & {
 			display: inline-block;
@@ -479,13 +477,12 @@ ul.module-content-list-item-action-submenu {
 	margin: 0;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		@include dropdown-menu;
-
 		display: none;
 		z-index: z-index( 'root', 'ul.module-content-list-item-action-submenu' );
 		margin: 0;
 		top: 32px;
 		right: -20px;
+		@include dropdown-menu;
 
 		.module-content-list-item-action.hidden-action.is-expanded & {
 			display: inline-block;

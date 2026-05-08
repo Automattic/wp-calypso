@@ -3,8 +3,8 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .import-or-migrate {
-	@include onboarding-block-margin;
 	max-width: 502px;
+	@include onboarding-block-margin;
 
 	@media ( min-width: $break-mobile ) {
 		margin-left: auto;

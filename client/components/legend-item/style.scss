@@ -40,8 +40,8 @@
 .legend-item__placeholder-title-name,
 .legend-item__placeholder-title-circle,
 .legend-item__placeholder-detail {
-	@include placeholder();
 	border: 2px solid var(--color-border-inverted);
+	@include placeholder();
 
 	&::after {
 		content: "";

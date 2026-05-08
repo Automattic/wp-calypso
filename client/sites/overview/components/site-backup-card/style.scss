@@ -8,9 +8,9 @@
 	}
 
 	&__placeholder {
-		@include placeholder();
 		height: 24px;
 		margin-bottom: 16px;
+		@include placeholder();
 
 		&.is-large {
 			height: 48px;

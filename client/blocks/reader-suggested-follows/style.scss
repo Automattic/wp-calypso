@@ -158,10 +158,16 @@
 		padding-bottom: 20px;
 
 		.is-placeholder {
-			background-color: var(--color-neutral-0);
-			height: 60px;
-			border-radius: 6px;
 			@include placeholder();
+
+			// stylelint-disable-next-line no-duplicate-selectors
+			& {
+				// override the placeholder mixin's `background` shorthand without
+				// triggering the mixed-decls warning that reordering would cause.
+				background-color: var(--color-neutral-0);
+				height: 60px;
+				border-radius: 6px;
+			}
 		}
 
 		.is-placeholder.placeholder-title {

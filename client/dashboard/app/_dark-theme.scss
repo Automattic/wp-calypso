@@ -998,19 +998,19 @@
 
 	@include dashboard-calypso-theme-properties;
 	@include dashboard-color-scheme;
+	@include dashboard-dark-theme-palettes;
+	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-action-list;
 	@include dashboard-dark-theme-agenttic;
 	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-callout;
 	@include dashboard-dark-theme-card;
-	@include dashboard-dark-theme-dataviews;
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
 	@include dashboard-dark-theme-modal;
 	@include dashboard-dark-theme-muted-text;
-	@include dashboard-dark-theme-palettes;
 	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-popover;

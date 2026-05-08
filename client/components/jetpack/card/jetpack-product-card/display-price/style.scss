@@ -215,8 +215,8 @@
 
 	&.is-placeholder {
 		.plan-price {
-			@include placeholder( --color-neutral-10 );
 			transform: scaleY(0.6);
+			@include placeholder( --color-neutral-10 );
 		}
 		.plan-price::before {
 			border-color: transparent;

@@ -187,7 +187,16 @@ async function compareTargets( baseDir, headDir ) {
 			console.error( `             ${ path.join( diffOutputDirectory, 'head' ) }` );
 			console.error( `  Pretty files: ${ path.join( diffOutputDirectory, 'pretty/base' ) }` );
 			console.error( `                ${ path.join( diffOutputDirectory, 'pretty/head' ) }` );
-			console.error( `  Pretty diff: ${ path.join( diffOutputDirectory, 'pretty.diff' ) }` );
+			console.error(
+				`  Pretty sorted: ${ path.join( diffOutputDirectory, 'pretty-sorted/base' ) }`
+			);
+			console.error(
+				`                 ${ path.join( diffOutputDirectory, 'pretty-sorted/head' ) }`
+			);
+			console.error( `  Pretty diff:        ${ path.join( diffOutputDirectory, 'pretty.diff' ) }` );
+			console.error(
+				`  Pretty-sorted diff: ${ path.join( diffOutputDirectory, 'pretty-sorted.diff' ) }`
+			);
 		}
 
 		return failures.length;
@@ -247,10 +256,14 @@ async function writeDiffOutput( outputDir, baseDir, headDir, failures ) {
 	const headOutputDir = path.join( absoluteOutputDir, 'head' );
 	const prettyBaseOutputDir = path.join( absoluteOutputDir, 'pretty/base' );
 	const prettyHeadOutputDir = path.join( absoluteOutputDir, 'pretty/head' );
+	const prettySortedBaseOutputDir = path.join( absoluteOutputDir, 'pretty-sorted/base' );
+	const prettySortedHeadOutputDir = path.join( absoluteOutputDir, 'pretty-sorted/head' );
 	fs.mkdirSync( baseOutputDir, { recursive: true } );
 	fs.mkdirSync( headOutputDir, { recursive: true } );
 	fs.mkdirSync( prettyBaseOutputDir, { recursive: true } );
 	fs.mkdirSync( prettyHeadOutputDir, { recursive: true } );
+	fs.mkdirSync( prettySortedBaseOutputDir, { recursive: true } );
+	fs.mkdirSync( prettySortedHeadOutputDir, { recursive: true } );
 
 	const manifest = {
 		base: baseRef,
@@ -261,20 +274,31 @@ async function writeDiffOutput( outputDir, baseDir, headDir, failures ) {
 
 	for ( const failure of failures ) {
 		const outputFile = path.join( failure.target, failure.file );
-		const baseFormatError = await copyFailureFile(
+		const baseResult = await copyFailureFile(
 			baseDir,
 			path.join( baseOutputDir, outputFile ),
 			path.join( prettyBaseOutputDir, outputFile ),
+			path.join( prettySortedBaseOutputDir, outputFile ),
 			failure,
 			'base'
 		);
-		const headFormatError = await copyFailureFile(
+		const headResult = await copyFailureFile(
 			headDir,
 			path.join( headOutputDir, outputFile ),
 			path.join( prettyHeadOutputDir, outputFile ),
+			path.join( prettySortedHeadOutputDir, outputFile ),
 			failure,
 			'head'
 		);
+
+		const formatErrors = {
+			...( baseResult.formatError ? { base: baseResult.formatError } : {} ),
+			...( headResult.formatError ? { head: headResult.formatError } : {} ),
+		};
+		const sortErrors = {
+			...( baseResult.sortError ? { base: baseResult.sortError } : {} ),
+			...( headResult.sortError ? { head: headResult.sortError } : {} ),
+		};
 
 		manifest.failures.push( {
 			target: failure.target,
@@ -282,14 +306,8 @@ async function writeDiffOutput( outputDir, baseDir, headDir, failures ) {
 			baseExists: failure.baseExists,
 			headExists: failure.headExists,
 			message: failure.message,
-			...( baseFormatError || headFormatError
-				? {
-						prettyFormatErrors: {
-							...( baseFormatError ? { base: baseFormatError } : {} ),
-							...( headFormatError ? { head: headFormatError } : {} ),
-						},
-				  }
-				: {} ),
+			...( Object.keys( formatErrors ).length ? { prettyFormatErrors: formatErrors } : {} ),
+			...( Object.keys( sortErrors ).length ? { prettySortErrors: sortErrors } : {} ),
 		} );
 	}
 
@@ -304,6 +322,11 @@ async function writeDiffOutput( outputDir, baseDir, headDir, failures ) {
 		prettyHeadOutputDir,
 		path.join( absoluteOutputDir, 'pretty.diff' )
 	);
+	runDiffCommand(
+		prettySortedBaseOutputDir,
+		prettySortedHeadOutputDir,
+		path.join( absoluteOutputDir, 'pretty-sorted.diff' )
+	);
 
 	return absoluteOutputDir;
 }
@@ -316,9 +339,16 @@ function prepareDiffOutputDirectory( directory ) {
 	fs.mkdirSync( directory, { recursive: true } );
 }
 
-async function copyFailureFile( sourceRoot, destination, prettyDestination, failure, side ) {
+async function copyFailureFile(
+	sourceRoot,
+	destination,
+	prettyDestination,
+	prettySortedDestination,
+	failure,
+	side
+) {
 	if ( ! failure[ `${ side }Exists` ] ) {
-		return '';
+		return { formatError: '', sortError: '' };
 	}
 
 	const sourceFile = path.join( sourceRoot, failure.file );
@@ -327,15 +357,30 @@ async function copyFailureFile( sourceRoot, destination, prettyDestination, fail
 
 	const sourceCss = fs.readFileSync( sourceFile, 'utf8' );
 	let prettyCss = sourceCss;
+	let formatError = '';
 
 	try {
 		prettyCss = await formatCss( sourceCss );
 	} catch ( error ) {
 		prettyCss = sourceCss;
-		return writePrettyFile( prettyDestination, prettyCss, error.message );
+		formatError = error.message;
 	}
 
-	return writePrettyFile( prettyDestination, prettyCss );
+	writePrettyFile( prettyDestination, prettyCss );
+
+	let sortedCss = prettyCss;
+	let sortError = '';
+
+	try {
+		sortedCss = sortCssDeclarations( prettyCss );
+	} catch ( error ) {
+		sortedCss = prettyCss;
+		sortError = error.message;
+	}
+
+	writePrettyFile( prettySortedDestination, sortedCss );
+
+	return { formatError, sortError };
 }
 
 async function formatCss( css ) {
@@ -347,11 +392,67 @@ async function formatCss( css ) {
 	} );
 }
 
-function writePrettyFile( destination, css, formatError = '' ) {
+function writePrettyFile( destination, css ) {
 	fs.mkdirSync( path.dirname( destination ), { recursive: true } );
 	fs.writeFileSync( destination, css );
+}
 
-	return formatError;
+function sortCssDeclarations( css ) {
+	const postcss = require( 'postcss' );
+	const root = postcss.parse( css );
+
+	root.walk( ( node ) => {
+		if ( ( node.type === 'rule' || node.type === 'atrule' ) && Array.isArray( node.nodes ) ) {
+			sortDeclRuns( node.nodes );
+		}
+	} );
+
+	return root.toString();
+}
+
+function sortDeclRuns( nodes ) {
+	let runStart = -1;
+
+	for ( let i = 0; i <= nodes.length; i++ ) {
+		const node = nodes[ i ];
+		const isDecl = node && node.type === 'decl';
+
+		if ( isDecl ) {
+			if ( runStart === -1 ) {
+				runStart = i;
+			}
+			continue;
+		}
+
+		if ( runStart !== -1 ) {
+			sortRun( nodes, runStart, i );
+			runStart = -1;
+		}
+	}
+}
+
+function sortRun( nodes, start, end ) {
+	if ( end - start < 2 ) {
+		return;
+	}
+
+	const run = nodes.slice( start, end );
+	run.sort( ( a, b ) => declGroupKey( a.prop ).localeCompare( declGroupKey( b.prop ) ) );
+
+	for ( let i = 0; i < run.length; i++ ) {
+		nodes[ start + i ] = run[ i ];
+	}
+}
+
+function declGroupKey( prop ) {
+	if ( prop.startsWith( '--' ) ) {
+		return prop;
+	}
+
+	const vendorMatch = prop.match( /^-[a-z]+-(.+)$/ );
+	const stripped = vendorMatch ? vendorMatch[ 1 ] : prop;
+
+	return stripped.split( '-' )[ 0 ];
 }
 
 function runDiffCommand( baseOutputDir, headOutputDir, diffFile ) {
@@ -398,9 +499,18 @@ This directory contains only CSS files that failed the byte-equivalence check.
 - \`head/\`: generated CSS from ${ headRef }
 - \`pretty/base/\`: Prettier-formatted generated CSS from ${ baseRef }
 - \`pretty/head/\`: Prettier-formatted generated CSS from ${ headRef }
+- \`pretty-sorted/base/\`: Prettier-formatted CSS from ${ baseRef } with declarations
+  inside each rule body stable-sorted by shorthand-family group key (property
+  name up to the first hyphen, vendor prefixes stripped). An empty
+  \`pretty-sorted.diff\` means every reorder between base and head preserves the
+  cascade — duplicate properties and shorthand/longhand pairs stay in source
+  order within each family.
+- \`pretty-sorted/head/\`: same treatment for ${ headRef }.
 - \`manifest.json\`: metadata for each mismatch
 - \`all.diff\`: unified diff for all copied mismatches
 - \`pretty.diff\`: unified diff for all formatted mismatches
+- \`pretty-sorted.diff\`: unified diff after declaration sort. Use this to
+  confirm cascade equivalence when raw bytes differ.
 
 Open \`pretty/base/\` and \`pretty/head/\` in a directory diff viewer for human review.
 Use \`base/\`, \`head/\`, and \`all.diff\` when you need the exact generated bytes.

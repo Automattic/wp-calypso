@@ -61,11 +61,17 @@
 	margin-bottom: 5px;
 
 	&.is-placeholder {
-		background-color: var(--color-success-5);
-		margin-left: auto;
-		margin-right: auto;
-		width: 35%;
 		@include placeholder();
+
+		// stylelint-disable-next-line no-duplicate-selectors
+		& {
+			// override the placeholder mixin's `background` shorthand without
+			// triggering the mixed-decls warning that reordering would cause.
+			background-color: var(--color-success-5);
+			margin-left: auto;
+			margin-right: auto;
+			width: 35%;
+		}
 	}
 }
 

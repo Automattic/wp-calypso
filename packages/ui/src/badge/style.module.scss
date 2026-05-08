@@ -12,8 +12,6 @@ $badge-colors: (
 );
 
 .badge {
-	@include mixins.reset;
-
 	background-color: color-mix(in srgb, colors.$white 90%, var(--base-color));
 	color: color-mix(in srgb, colors.$black 50%, var(--base-color));
 
@@ -27,6 +25,7 @@ $badge-colors: (
 	display: inline-flex;
 	align-items: center;
 	gap: 2px;
+	@include mixins.reset;
 
 	&:where(.is-default) {
 		background-color: theme.$components-color-gray-100;

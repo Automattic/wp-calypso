@@ -928,8 +928,14 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 }
 
 .jetpack-connect__sso-placeholder {
-	background-color: transparent;
 	@include placeholder( --color-neutral-10 );
+
+	// stylelint-disable-next-line no-duplicate-selectors
+	& {
+		// override the placeholder mixin's `background` shorthand without
+		// triggering the mixed-decls warning that reordering would cause.
+		background-color: transparent;
+	}
 }
 
 .jetpack-connect__sso-placeholder a {

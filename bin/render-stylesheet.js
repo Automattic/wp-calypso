@@ -64,7 +64,6 @@ try {
 		importers: [ importer ],
 		loadPaths: [ path.join( projectRoot, 'node_modules' ) ],
 		style: 'compressed',
-		silenceDeprecations: [ 'mixed-decls' ],
 		quietDeps: true,
 	} );
 

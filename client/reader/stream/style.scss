@@ -838,12 +838,12 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 			width: 90px;
 
 			&.is-placeholder {
-				@include placeholder();
 				display: inline-block;
 				width: 48px;
 				height: 1em;
 				border-radius: 2px;
 				vertical-align: middle;
+				@include placeholder();
 			}
 		}
 

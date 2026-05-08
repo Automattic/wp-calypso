@@ -42,7 +42,6 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 				sassOptions: ( loaderContext ) => ( {
 					loadPaths: includePaths,
 					quietDeps: true,
-					silenceDeprecations: [ 'mixed-decls' ],
 					...( loaderContext.resourcePath.endsWith( '.css' ) ? { syntax: 'scss' } : {} ),
 				} ),
 			},

@@ -16,8 +16,8 @@
 }
 
 .site-blocks__list-item-placeholder-text {
-	@include placeholder();
 	padding-right: 150px;
+	@include placeholder();
 }
 
 .site-blocks__remove-button {

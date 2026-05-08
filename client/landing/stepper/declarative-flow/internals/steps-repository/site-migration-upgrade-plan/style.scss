@@ -9,9 +9,8 @@
 }
 
 :root .site-migration-upgrade-plan {
-	@include onboarding-block-margin;
-
 	padding-bottom: 5rem;
+	@include onboarding-block-margin;
 
 	@media ( min-width: 1040px ) {
 		padding-bottom: 3rem;

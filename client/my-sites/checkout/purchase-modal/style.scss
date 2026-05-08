@@ -120,8 +120,8 @@ $left-margin: 36px;
 	}
 
 	&.is-placeholder {
-		@include placeholder();
 		width: 20em;
+		@include placeholder();
 	}
 }
 
@@ -130,9 +130,9 @@ $left-margin: 36px;
 	font-size: $font-body-small;
 
 	&.is-placeholder {
-		@include placeholder();
 		margin-top: 2px;
 		width: 15em;
+		@include placeholder();
 	}
 }
 
@@ -220,13 +220,13 @@ $left-margin: 36px;
 
 	&.is-placeholder {
 		> dt {
-			@include placeholder();
 			width: 8em;
+			@include placeholder();
 		}
 
 		> dd {
-			@include placeholder();
 			width: 5em;
+			@include placeholder();
 		}
 	}
 }
@@ -255,8 +255,8 @@ $left-margin: 36px;
 	}
 
 	&.is-placeholder {
-		@include placeholder();
 		height: 2rem;
+		@include placeholder();
 	}
 }
 

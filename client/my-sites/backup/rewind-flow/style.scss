@@ -51,15 +51,15 @@
 }
 
 .rewind-flow__icon-placeholder {
-	@include placeholder( --color-neutral-light );
 	height: 48px;
 	width: 48px;
+	@include placeholder( --color-neutral-light );
 }
 
 .rewind-flow__title-placeholder {
-	@include placeholder( --color-neutral-light );
 	font-size: $font-title-small;
 	font-weight: 600;
+	@include placeholder( --color-neutral-light );
 }
 
 .rewind-flow__rewind-config-editor {

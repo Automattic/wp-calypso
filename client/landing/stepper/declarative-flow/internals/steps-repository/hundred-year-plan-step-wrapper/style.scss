@@ -31,8 +31,8 @@
 			}
 
 			.is-price-loading {
-				@include onboarding-placeholder;
 				width: 100px;
+				@include onboarding-placeholder;
 			}
 		}
 
@@ -48,8 +48,8 @@
 
 			.hundred-year-plan-step-wrapper__info-column-container {
 				.is-price-loading {
-					@include onboarding-placeholder;
 					width: 100px;
+					@include onboarding-placeholder;
 				}
 			}
 		}

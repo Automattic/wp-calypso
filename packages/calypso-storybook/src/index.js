@@ -89,7 +89,6 @@ module.exports = function storybookDefaultConfig( {
 								api: 'modern',
 								sassOptions: {
 									quietDeps: true,
-									silenceDeprecations: [ 'mixed-decls' ],
 								},
 							},
 						},

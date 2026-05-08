@@ -135,8 +135,8 @@
 	.downgrade__feature,
 	.downgrade__settings-link,
 	.downgrade__confirm-buttons div{
-		@include placeholder( --color-neutral-10 );
 		display: block;
+		@include placeholder( --color-neutral-10 );
 	}
 
 	.downgrade__plan-icon {

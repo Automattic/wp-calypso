@@ -616,8 +616,8 @@
 }
 
 .sharing-buttons__fieldset-group {
-	@include clear-fix;
 	margin: 0 -3%;
+	@include clear-fix;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0;

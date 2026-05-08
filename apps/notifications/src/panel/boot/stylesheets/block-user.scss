@@ -2,6 +2,7 @@ div.wpnc__user {
 	@extend %container;
 
 	text-align: left;
+	padding: ($wpnc__padding-large - $wpnc__user-margin-adjustment) $wpnc__padding-medium $wpnc__padding-small;
 
 	img {
 		height: $wpnc__icon-size-detail;
@@ -15,8 +16,6 @@ div.wpnc__user {
 		font-size: 0.85em;
 		margin: 0;
 	}
-
-	padding: ($wpnc__padding-large - $wpnc__user-margin-adjustment) $wpnc__padding-medium $wpnc__padding-small;
 
 	.follow-link {
 		margin-top: -0.1em;

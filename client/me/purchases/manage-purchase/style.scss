@@ -63,9 +63,8 @@
 		.manage-purchase__settings-link,
 		.manage-purchase__detail-label,
 		.manage-purchase__detail {
-			@include placeholder( --color-neutral-10 );
-
 			display: block;
+			@include placeholder( --color-neutral-10 );
 		}
 
 		.manage-purchase__plan-icon {
@@ -487,10 +486,10 @@
 	}
 
 	&.loading {
-		@include placeholder( --color-neutral-20 );
 		padding: 0.5rem;
 		margin: 0 16px;
 		width: 200px;
+		@include placeholder( --color-neutral-20 );
 	}
 }
 

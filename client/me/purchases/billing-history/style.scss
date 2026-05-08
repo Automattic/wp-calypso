@@ -245,8 +245,8 @@ li.billing-history__receipt-item-discount--different-term {
 
 		.billing-history__placeholder-image,
 		.billing-history__placeholder-title {
-			@include placeholder();
 			height: 65px;
+			@include placeholder();
 		}
 
 		.billing-history__placeholder-image {
@@ -265,8 +265,8 @@ li.billing-history__receipt-item-discount--different-term {
 		padding: 0 40px 10px;
 
 		.billing-history__placeholder-link {
-			@include placeholder();
 			margin-bottom: 12px;
+			@include placeholder();
 
 			&:last-child {
 				margin-bottom: 0;

@@ -448,10 +448,10 @@ body.connect-domain-setup__body-white {
 }
 
 button.action_buttons__button.action-buttons__back.connect-domain-step__go-back {
+	margin: 16px 0 16px 16px;
+	text-decoration: none;
+
 	@include breakpoint-deprecated( ">660px" ) {
 		margin: 0 0 18px;
 	}
-
-	margin: 16px 0 16px 16px;
-	text-decoration: none;
 }

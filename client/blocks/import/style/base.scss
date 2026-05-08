@@ -190,11 +190,11 @@
 
 // Layout
 .import-layout {
-	@include onboarding-block-margin;
-	@include onboarding-heading-padding;
 	display: flex;
 	flex-direction: column;
 	gap: 0 20px;
+	@include onboarding-block-margin;
+	@include onboarding-heading-padding;
 
 	@include break-small {
 		flex-direction: row;

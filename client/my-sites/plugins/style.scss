@@ -256,10 +256,6 @@ $layout-padding-top: 54px;
 $calypso-header-height: 31px;
 .plugin-details__layout {
 	padding-top: $layout-padding-top;
-	&:not( .is-logged-in ) {
-		padding-top: calc( $layout-padding-top - $calypso-header-height );
-	}
-
 	@include display-grid;
 	grid-template-columns: minmax( 380px, auto ) minmax( auto, 395px );
 	grid-column-gap: 60px;
@@ -267,6 +263,10 @@ $calypso-header-height: 31px;
 		'header actions'
 		'content actions';
 	grid-auto-rows: auto 1fr;
+
+	&:not( .is-logged-in ) {
+		padding-top: calc( $layout-padding-top - $calypso-header-height );
+	}
 
 	@include breakpoint-deprecated( '<960px' ) {
 		grid-template-areas:
