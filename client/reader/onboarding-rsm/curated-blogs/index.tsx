@@ -17,13 +17,12 @@ export type CuratedBlog = {
 	site_ID: number;
 	site_URL: string;
 	site_name: string;
-	// Optional during the curated-review backfill. Tightened to required for
-	// `feedUrl` and `hasIcon` once every entry has been reviewed and pasted
-	// back via the curated-review tool. `isBroken` stays sparse — only emitted
-	// when `true`.
+	// Optional during the curated-review backfill. Tightened to required once
+	// every entry has been reviewed and pasted back via the curated-review
+	// tool. (Entries the operator marks as broken are simply omitted from the
+	// regenerated source, so there's no `isBroken` field to track here.)
 	feedUrl?: string;
 	hasIcon?: boolean;
-	isBroken?: boolean;
 };
 
 export type CuratedBlogsList = Record< string, CuratedBlog[] >;

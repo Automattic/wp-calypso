@@ -100,10 +100,11 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 				<header className="curated-review__row-header">
 					<h3 className="curated-review__row-title">{ entry.site_name }</h3>
 					<span className="curated-review__row-tag">{ tag }</span>
-					{ effectivelyBroken && (
-						<span className="curated-review__row-flag">
-							{ isMarkedBroken ? 'broken' : 'auto-flagged' }
-						</span>
+					{ isMarkedBroken && (
+						<span className="curated-review__row-flag">broken — omitted on export</span>
+					) }
+					{ ! isMarkedBroken && autoFlaggedBroken && (
+						<span className="curated-review__row-flag is-warning">auto-flagged</span>
 					) }
 					{ isHasIconForcedFalse && (
 						<span className="curated-review__row-flag is-warning">hasIcon forced false</span>
@@ -132,11 +133,6 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 					<KeyValue label="hasIcon">
 						{ renderHasIconValue( detected, isHasIconForcedFalse ) }
 					</KeyValue>
-					{ effectivelyBroken && (
-						<KeyValue label="isBroken">
-							<strong>true</strong>
-						</KeyValue>
-					) }
 				</div>
 			</div>
 			<div className="curated-review__row-actions">

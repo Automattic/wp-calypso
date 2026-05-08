@@ -57,7 +57,37 @@ describe( 'serializeCurated', () => {
 		expect( out.match( /hasIcon: false,/g ) ).toHaveLength( 2 );
 	} );
 
-	it( 'omits isBroken when not true', () => {
+	it( 'omits entries when getMetadata returns null', () => {
+		const out = serializeCurated( {
+			variableName: 'bar',
+			tagMap: {
+				food: [ entry( { feed_ID: 1 } ), entry( { feed_ID: 2 } ), entry( { feed_ID: 3 } ) ],
+			},
+			getMetadata: ( e ) => ( e.feed_ID === 2 ? null : metadata() ),
+		} );
+
+		const ids = [ ...out.matchAll( /feed_ID: (\d+),/g ) ].map( ( m ) => Number( m[ 1 ] ) );
+		expect( ids ).toEqual( [ 1, 3 ] );
+	} );
+
+	it( 'drops tags whose entries are all omitted', () => {
+		const out = serializeCurated( {
+			variableName: 'bar',
+			tagMap: {
+				food: [ entry( { feed_ID: 1 } ), entry( { feed_ID: 2 } ) ],
+				health: [ entry( { feed_ID: 3 } ) ],
+				sports: [ entry( { feed_ID: 4 } ), entry( { feed_ID: 5 } ) ],
+			},
+			// Mark every entry under "health" broken; "sports" partially.
+			getMetadata: ( e ) => ( e.feed_ID === 3 || e.feed_ID === 4 ? null : metadata() ),
+		} );
+
+		expect( out ).toContain( '\tfood: [' );
+		expect( out ).toContain( '\tsports: [' );
+		expect( out ).not.toContain( 'health' );
+	} );
+
+	it( 'never emits an `isBroken` field', () => {
 		const out = serializeCurated( {
 			variableName: 'bar',
 			tagMap: { food: [ entry( { feed_ID: 1 } ) ] },
@@ -65,18 +95,6 @@ describe( 'serializeCurated', () => {
 		} );
 
 		expect( out ).not.toContain( 'isBroken' );
-	} );
-
-	it( 'emits isBroken: true when set', () => {
-		const out = serializeCurated( {
-			variableName: 'bar',
-			tagMap: {
-				food: [ entry( { feed_ID: 1 } ), entry( { feed_ID: 2 } ) ],
-			},
-			getMetadata: ( e ) => metadata( e.feed_ID === 1 ? { isBroken: true } : undefined ),
-		} );
-
-		expect( out.match( /isBroken: true,/g ) ).toHaveLength( 1 );
 	} );
 
 	it( 'uses double quotes for strings containing apostrophes', () => {
@@ -117,29 +135,51 @@ describe( 'serializeCurated', () => {
 		expect( out ).not.toContain( "'health':" );
 	} );
 
-	it( 'produces source that round-trips through eval-style parsing', () => {
-		// Sanity check: the emitted body is valid TypeScript syntax. We can't
-		// run a TS parser here cheaply, but we can verify a few structural
-		// invariants that prettier/eslint would otherwise catch.
+	it( 'produces structurally balanced source for partial-omission cases', () => {
 		const out = serializeCurated( {
 			variableName: 'fooBlogs',
 			tagMap: {
-				food: [ entry( { feed_ID: 1, site_name: "Bob's Diner" } ), entry( { feed_ID: 2 } ) ],
+				food: [
+					entry( { feed_ID: 1, site_name: "Bob's Diner" } ),
+					entry( { feed_ID: 2 } ),
+					entry( { feed_ID: 3 } ),
+				],
 			},
 			getMetadata: ( e ) =>
-				metadata( {
-					feedUrl: `https://example-${ e.feed_ID }.test/feed/`,
-					hasIcon: e.feed_ID === 1,
-					isBroken: e.feed_ID === 2 ? true : undefined,
-				} ),
+				e.feed_ID === 2
+					? null
+					: metadata( {
+							feedUrl: `https://example-${ e.feed_ID }.test/feed/`,
+							hasIcon: e.feed_ID === 1,
+					  } ),
 		} );
 
-		// One opening + closing brace per outer object, matching trailing commas.
+		// Braces / brackets balance.
 		expect( ( out.match( /\{/g ) || [] ).length ).toBe( ( out.match( /\}/g ) || [] ).length );
-		// One opening + closing bracket per tag array.
 		expect( ( out.match( /\[/g ) || [] ).length ).toBe( ( out.match( /\]/g ) || [] ).length );
-		// Trailing comma after every entry's closing brace.
+		// Two surviving entries — feed_ID 2 was omitted.
 		const entryClosers = out.match( /^\t\t\},$/gm );
 		expect( entryClosers ).toHaveLength( 2 );
+	} );
+
+	it( 'produces an empty body when every entry is omitted', () => {
+		const out = serializeCurated( {
+			variableName: 'fooBlogs',
+			tagMap: {
+				food: [ entry( { feed_ID: 1 } ), entry( { feed_ID: 2 } ) ],
+				health: [ entry( { feed_ID: 3 } ) ],
+			},
+			getMetadata: () => null,
+		} );
+
+		expect( out ).toBe(
+			[
+				"import { CuratedBlogsList } from './index';",
+				'',
+				'export const fooBlogs: CuratedBlogsList = {',
+				'};',
+				'',
+			].join( '\n' )
+		);
 	} );
 } );

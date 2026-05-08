@@ -5,8 +5,6 @@ export interface CuratedRowMetadata {
 	feedUrl: string;
 	/** `true` iff the resolved feed had a non-empty `image`. */
 	hasIcon: boolean;
-	/** Only emitted when `true` (auto-flagged on feed error / missing feed_URL, or user-toggled). */
-	isBroken?: boolean;
 }
 
 export interface SerializeOptions {
@@ -14,8 +12,13 @@ export interface SerializeOptions {
 	variableName: string;
 	/** Tag → entries map, in source order. */
 	tagMap: CuratedBlogsList;
-	/** Returns the resolved per-row metadata for a curated entry. */
-	getMetadata: ( entry: CuratedBlog ) => CuratedRowMetadata;
+	/**
+	 * Returns the resolved per-row metadata for a curated entry, or `null` to
+	 * omit the entry from the serialized output entirely (e.g. operator-marked
+	 * broken). Tags whose entries are all omitted are also dropped from the
+	 * output.
+	 */
+	getMetadata: ( entry: CuratedBlog ) => CuratedRowMetadata | null;
 }
 
 /**
@@ -25,17 +28,29 @@ export interface SerializeOptions {
  * matching the existing files), so a `prettier --write` after paste-back
  * should produce zero whitespace diff.
  *
- * Every emitted entry includes `feedUrl` and `hasIcon`. `isBroken` is only
- * emitted when `true`. Field order matches the original source.
+ * Every emitted entry includes `feedUrl` and `hasIcon`. Entries where
+ * `getMetadata` returns `null` are omitted; tags that end up empty as a
+ * result are dropped entirely.
  */
 export function serializeCurated( {
 	variableName,
 	tagMap,
 	getMetadata,
 }: SerializeOptions ): string {
-	const tagBlocks = Object.entries( tagMap ).map( ( [ tag, entries ] ) =>
-		serializeTag( tag, entries, getMetadata )
-	);
+	const tagBlocks: string[] = [];
+	for ( const [ tag, entries ] of Object.entries( tagMap ) ) {
+		const resolved: { entry: CuratedBlog; metadata: CuratedRowMetadata }[] = [];
+		for ( const entry of entries ) {
+			const metadata = getMetadata( entry );
+			if ( metadata !== null ) {
+				resolved.push( { entry, metadata } );
+			}
+		}
+		if ( resolved.length === 0 ) {
+			continue;
+		}
+		tagBlocks.push( serializeTag( tag, resolved ) );
+	}
 
 	return [
 		"import { CuratedBlogsList } from './index';",
@@ -49,10 +64,9 @@ export function serializeCurated( {
 
 function serializeTag(
 	tag: string,
-	entries: CuratedBlog[],
-	getMetadata: ( entry: CuratedBlog ) => CuratedRowMetadata
+	resolved: { entry: CuratedBlog; metadata: CuratedRowMetadata }[]
 ): string {
-	const entryBlocks = entries.map( ( entry ) => serializeEntry( entry, getMetadata( entry ) ) );
+	const entryBlocks = resolved.map( ( { entry, metadata } ) => serializeEntry( entry, metadata ) );
 	return [ `\t${ formatKey( tag ) }: [`, ...entryBlocks, '\t],' ].join( '\n' );
 }
 
@@ -65,9 +79,6 @@ function serializeEntry( entry: CuratedBlog, metadata: CuratedRowMetadata ): str
 		`\t\t\tfeedUrl: ${ formatString( metadata.feedUrl ) },`,
 		`\t\t\thasIcon: ${ metadata.hasIcon ? 'true' : 'false' },`,
 	];
-	if ( metadata.isBroken === true ) {
-		lines.push( '\t\t\tisBroken: true,' );
-	}
 	return [ '\t\t{', ...lines, '\t\t},' ].join( '\n' );
 }
 

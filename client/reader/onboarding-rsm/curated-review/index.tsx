@@ -151,9 +151,8 @@ const CuratedReviewPage: React.FC = () => {
 	}, [ visibleIndices, flatRows ] );
 
 	// Build the per-file metadata lookup once; the serializer asks for it
-	// entry-by-entry. Falls back to a passthrough for any rows whose feed
-	// query hasn't resolved yet (we still want a serialized snapshot to
-	// be paste-able mid-review).
+	// entry-by-entry. Marked-broken entries are intentionally absent — the
+	// serializer treats those as omitted from the export.
 	const metadataByFeedId = useMemo( () => {
 		const map = new Map< number, CuratedRowMetadata >();
 		flatRows.forEach( ( row, index ) => {
@@ -161,19 +160,14 @@ const CuratedReviewPage: React.FC = () => {
 			if ( ! detected ) {
 				return;
 			}
-			const isMarkedBroken = broken.feedIds.has( row.entry.feed_ID );
 			const isHasIconForcedFalse = hasIconFalse.feedIds.has( row.entry.feed_ID );
-			const meta: CuratedRowMetadata = {
+			map.set( row.entry.feed_ID, {
 				feedUrl: detected.feedUrl,
 				hasIcon: detected.hasIcon && ! isHasIconForcedFalse,
-			};
-			if ( isMarkedBroken ) {
-				meta.isBroken = true;
-			}
-			map.set( row.entry.feed_ID, meta );
+			} );
 		} );
 		return map;
-	}, [ flatRows, detectedRows, broken.feedIds, hasIconFalse.feedIds ] );
+	}, [ flatRows, detectedRows, hasIconFalse.feedIds ] );
 
 	const serializeFile = useCallback(
 		( file: CuratedFile ): { source: string; missing: number } => {
@@ -182,6 +176,10 @@ const CuratedReviewPage: React.FC = () => {
 				variableName: file.variableName,
 				tagMap: file.tagMap,
 				getMetadata: ( entry ) => {
+					if ( broken.feedIds.has( entry.feed_ID ) ) {
+						// Operator-marked broken — drop from output.
+						return null;
+					}
 					const cached = metadataByFeedId.get( entry.feed_ID );
 					if ( cached ) {
 						return cached;
@@ -190,11 +188,7 @@ const CuratedReviewPage: React.FC = () => {
 					// Best-effort fallback so the output is still valid TS even
 					// when a feed query is in-flight or errored. Operator should
 					// re-copy after all queries settle.
-					return {
-						feedUrl: entry.site_URL,
-						hasIcon: false,
-						isBroken: broken.feedIds.has( entry.feed_ID ) ? true : undefined,
-					};
+					return { feedUrl: entry.site_URL, hasIcon: false };
 				},
 			} );
 			return { source, missing };
@@ -227,8 +221,9 @@ const CuratedReviewPage: React.FC = () => {
 			<header className="curated-review__header">
 				<h1>Curated blog review</h1>
 				<p className="curated-review__subtitle">
-					Backfill <code>feedUrl</code> / <code>hasIcon</code> and flag broken curated entries. This
-					page is dev-only and gated behind the <code>reader/curated-review</code> flag.
+					Backfill <code>feedUrl</code> / <code>hasIcon</code> on curated entries. Entries marked
+					broken are <strong>omitted</strong> from the regenerated source. Dev-only and gated behind
+					the <code>reader/curated-review</code> flag.
 				</p>
 
 				<div className="curated-review__progress">
@@ -239,7 +234,7 @@ const CuratedReviewPage: React.FC = () => {
 						<div className="curated-review__progress-error">{ erroredRows } errored</div>
 					) }
 					<div>
-						<strong>{ broken.feedIds.size }</strong> marked broken
+						<strong>{ broken.feedIds.size }</strong> marked broken (omitted on export)
 					</div>
 					<div>
 						<strong>{ hasIconFalse.feedIds.size }</strong> hasIcon forced false
