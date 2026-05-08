@@ -182,3 +182,23 @@ describe( 'PostCardCounts', () => {
 		expect( screen.queryByRole( 'button', { name: /quote/i } ) ).toBeNull();
 	} );
 } );
+
+describe( 'PostCardCounts prominentTimestamp variant', () => {
+	it( 'renders the three buttons icon-only when prominentTimestamp is true', () => {
+		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
+		const useAtmosphereRepostAction = makeUseAtmosphereRepostAction( 7 );
+		renderWithProvider(
+			<RepostProvider value={ useAtmosphereRepostAction }>
+				<LikeProvider value={ useAtmosphereLikeAction }>
+					{ wrap( <PostCardCounts post={ post } connectionId={ 7 } prominentTimestamp /> ) }
+				</LikeProvider>
+			</RepostProvider>
+		);
+		// aria-label still carries the count: 9 likes for the fixture
+		const likeButton = screen.getByRole( 'button', { name: /like, 9 likes/i } );
+		expect( likeButton ).not.toHaveTextContent( '9' );
+		// repost button: 2 reposts + 1 quote = 3 in aria-label, hidden in text
+		const repostButton = screen.getByRole( 'button', { name: /repost, 3 reposts/i } );
+		expect( repostButton ).not.toHaveTextContent( '3' );
+	} );
+} );

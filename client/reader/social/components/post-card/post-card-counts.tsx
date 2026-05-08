@@ -1,4 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import { useSocialAnalytics } from './analytics-context';
@@ -11,14 +12,16 @@ const ICON_SIZE = 16;
 interface PostCardCountsProps {
 	post: SocialPost;
 	connectionId?: number;
+	prominentTimestamp?: boolean;
 }
 
-export function PostCardCounts( { post }: PostCardCountsProps ) {
+export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
 	const counts = post.counts;
 	const postUri = post.uri;
 	const inAppUrl = analytics?.getThreadUrl?.( postUri ) ?? null;
+	const hideCount = Boolean( prominentTimestamp );
 
 	const fireRepliesClicked = ( destination: 'in_app_thread' | 'bsky_app' | 'composer' ) => {
 		if ( ! analytics ) {
@@ -36,7 +39,7 @@ export function PostCardCounts( { post }: PostCardCountsProps ) {
 		<>
 			<ReaderCommentIcon iconSize={ ICON_SIZE } />
 			<span className="screen-reader-text">{ translate( 'Replies:' ) } </span>
-			{ counts.replies }
+			{ ! hideCount && counts.replies }
 		</>
 	);
 
@@ -88,11 +91,13 @@ export function PostCardCounts( { post }: PostCardCountsProps ) {
 			alignment="center"
 			spacing={ 4 }
 			justify="flex-start"
-			className="social-post-card-counts"
+			className={ clsx( 'social-post-card-counts', {
+				'social-post-card-counts--prominent-timestamp': prominentTimestamp,
+			} ) }
 		>
 			{ renderRepliesNode() }
-			<RepostButton post={ post } />
-			<LikeButton post={ post } />
+			<RepostButton post={ post } hideCount={ hideCount } />
+			<LikeButton post={ post } hideCount={ hideCount } />
 		</HStack>
 	);
 }
