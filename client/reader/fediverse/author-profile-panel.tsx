@@ -3,7 +3,7 @@ import {
 	useFediverseAuthorProfileQuery,
 } from '@automattic/api-queries';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import {
 	SocialAuthorProfilePanel,
@@ -50,29 +50,33 @@ export function FediverseAuthorProfilePanel( {
 	// to the webfinger's host when the URL fails to parse.
 	const host = hostFromUrl( connection.url ) ?? connection.webfinger.split( '@' ).pop() ?? '';
 
-	const stats: SocialProfileStat[] = profile.data
-		? [
-				{
-					key: 'followers',
-					count: profile.data.counts.followers,
-					label: translate( 'follower', 'followers', {
-						count: profile.data.counts.followers,
-					} ),
-				},
-				{
-					key: 'follows',
-					count: profile.data.counts.following,
-					label: translate( 'following', {
-						context: 'profile stats: count of accounts followed',
-					} ),
-				},
-				{
-					key: 'posts',
-					count: profile.data.counts.posts,
-					label: translate( 'post', 'posts', { count: profile.data.counts.posts } ),
-				},
-		  ]
-		: [];
+	const stats: SocialProfileStat[] = useMemo(
+		() =>
+			profile.data
+				? [
+						{
+							key: 'followers',
+							count: profile.data.counts.followers,
+							label: translate( 'follower', 'followers', {
+								count: profile.data.counts.followers,
+							} ),
+						},
+						{
+							key: 'follows',
+							count: profile.data.counts.following,
+							label: translate( 'following', {
+								context: 'profile stats: count of accounts followed',
+							} ),
+						},
+						{
+							key: 'posts',
+							count: profile.data.counts.posts,
+							label: translate( 'post', 'posts', { count: profile.data.counts.posts } ),
+						},
+				  ]
+				: [],
+		[ profile.data, translate ]
+	);
 
 	const renderProfileBody = useCallback(
 		( profileData: FediverseAuthorProfile ) => {
@@ -94,10 +98,8 @@ export function FediverseAuthorProfilePanel( {
 		( error: FediverseError, retry: () => void ) => {
 			const noRetry = new Set< FediverseError[ 'kind' ] >( [
 				'auth_required',
-				'auth_failed',
 				'not_found',
 				'connection_not_found',
-				'bad_request',
 			] );
 			const showRetry = ! noRetry.has( error.kind );
 			const titleByKind: Partial< Record< FediverseError[ 'kind' ], TranslateResult > > = {
@@ -121,7 +123,9 @@ export function FediverseAuthorProfilePanel( {
 	const getProfileViewedProps = useCallback(
 		( profileData: FediverseAuthorProfile ) => ( {
 			actor_id: profileData.id,
-			actor_handle: profileData.acct,
+			// Wire `acct` carries a leading `@`; Tracks dashboards expect the
+			// bare `user@host` shape used by the atmosphere/Mastodon adapters.
+			actor_handle: stripLeadingAt( profileData.acct ),
 		} ),
 		[]
 	);
@@ -151,7 +155,9 @@ export function FediverseAuthorProfilePanel( {
 	// permalink href.
 	const buildThreadUrl = useCallback( () => null, [] );
 
-	const emptyHandle = profile.data?.acct ?? actor;
+	// `profile.data.acct` carries a leading `@`; the empty-title format
+	// `'@%(handle)s …'` already prepends `@`, so strip to avoid `@@user@host`.
+	const emptyHandle = stripLeadingAt( profile.data?.acct ?? actor );
 
 	return (
 		<SocialAuthorProfilePanel< FediverseAuthorProfile, FediverseError, FediverseFeedItem >
@@ -182,4 +188,13 @@ export function FediverseAuthorProfilePanel( {
 			className="fediverse-author-profile"
 		/>
 	);
+}
+
+// Wire `acct` / `webfinger` values are emitted with a leading `@`
+// (e.g. `@alice@example.com`). Surfaces that prefix their own `@` —
+// the post-card header, the empty-title format string, Tracks event
+// props that match the bare `user@host` shape used by the
+// atmosphere/Mastodon adapters — need it stripped first.
+function stripLeadingAt( handle: string ): string {
+	return handle.startsWith( '@' ) ? handle.slice( 1 ) : handle;
 }

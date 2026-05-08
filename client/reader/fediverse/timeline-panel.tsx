@@ -107,10 +107,12 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 	);
 
 	const renderItem = useCallback(
-		( post: SocialPost ) => (
-			<SocialPostCard post={ post } connectionId={ connection.id } variant="default" />
-		),
-		[ connection.id ]
+		// `connectionId` is intentionally not forwarded yet — like / repost
+		// providers aren't mounted on this surface, so passing it would only
+		// trigger the static-cell fallback path. Re-introduce the prop when
+		// the Fediverse like / repost adapters land.
+		( post: SocialPost ) => <SocialPostCard post={ post } variant="default" />,
+		[]
 	);
 	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
@@ -137,15 +139,17 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				refetch={ handleRetry }
 				renderItem={ renderItem }
 				itemKey={ itemKey }
-				emptyTitle={ translate( "You're all caught up." ) }
-				emptyLine={ translate( 'Follow some accounts to see their posts here.' ) }
-				emptyActionLabel={ translate( 'Open %(blog)s', {
-					args: { blog: connection.name || connection.url },
-				} ) }
+				emptyTitle={ String( translate( "You're all caught up." ) ) }
+				emptyLine={ String( translate( 'Follow some accounts to see their posts here.' ) ) }
+				emptyActionLabel={ String(
+					translate( 'Open %(blog)s', {
+						args: { blog: connection.name || connection.url },
+					} )
+				) }
 				emptyActionURL={ connection.url }
 				protocolLabel="Fediverse"
 				protocolHomeURL="/reader/fediverse"
-				protocolHomeLabel={ translate( 'Back to Fediverse' ) }
+				protocolHomeLabel={ String( translate( 'Back to Fediverse' ) ) }
 			/>
 		</SocialAnalyticsProvider>
 	);

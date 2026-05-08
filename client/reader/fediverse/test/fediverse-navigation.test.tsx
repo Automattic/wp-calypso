@@ -7,6 +7,20 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FediverseNavigation } from '../fediverse-navigation';
 
 describe( 'FediverseNavigation', () => {
+	// NavTabs uses IntersectionObserver which jsdom does not provide.
+	beforeAll( () => {
+		global.IntersectionObserver = class IntersectionObserver {
+			observe() {}
+			unobserve() {}
+			disconnect() {}
+		} as unknown as typeof global.IntersectionObserver;
+	} );
+
+	afterAll( () => {
+		// @ts-expect-error -- cleaning up the stub
+		delete global.IntersectionObserver;
+	} );
+
 	beforeEach( () => {
 		// recordReaderTracksEvent is a thunk reading state.reader.follows.
 		jest
@@ -30,8 +44,14 @@ describe( 'FediverseNavigation', () => {
 	it( 'marks the selected tab as the active item', () => {
 		renderWithProvider( <FediverseNavigation connectionId={ 7 } selectedTab="profile" /> );
 
-		const profile = screen.getByRole( 'menuitem', { name: 'Profile' } );
-		// Calypso's NavItem applies `is-selected` to the active item.
-		expect( profile.className ).toMatch( /is-selected/ );
+		// Calypso's NavItem stamps `aria-current="true"` on the active tab.
+		expect( screen.getByRole( 'menuitem', { name: 'Profile' } ) ).toHaveAttribute(
+			'aria-current',
+			'true'
+		);
+		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toHaveAttribute(
+			'aria-current',
+			'false'
+		);
 	} );
 } );

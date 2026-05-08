@@ -14,5 +14,11 @@ interface Props {
  * than just a slim verification card.
  */
 export function ProfilePanel( { connection }: Props ) {
-	return <FediverseAuthorProfilePanel connection={ connection } actor={ connection.webfinger } />;
+	// `webfinger` is emitted with a leading `@` (e.g. `@alice@example.com`).
+	// Strip it before forwarding so the panel's empty-title format (which
+	// prefixes its own `@`) and Tracks props don't end up with `@@user@host`.
+	const actor = connection.webfinger.startsWith( '@' )
+		? connection.webfinger.slice( 1 )
+		: connection.webfinger;
+	return <FediverseAuthorProfilePanel connection={ connection } actor={ actor } />;
 }

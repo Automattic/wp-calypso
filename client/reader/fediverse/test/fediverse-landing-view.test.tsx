@@ -6,6 +6,20 @@ import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FediverseLandingView } from '../fediverse-landing-view';
+import type React from 'react';
+
+// `ReaderMain` mounts `<sync-reader-follows>`, which selects from a Redux
+// branch the test store doesn't seed. Stub out to a passthrough so the
+// landing view renders standalone.
+jest.mock(
+	'calypso/reader/components/reader-main',
+	() =>
+		function ReaderMain( { children }: { children: React.ReactNode } ) {
+			return <div>{ children }</div>;
+		}
+);
+
+jest.mock( 'calypso/components/data/document-head', () => () => null );
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -18,57 +32,54 @@ function makeClient() {
 describe( 'FediverseLandingView', () => {
 	afterEach( () => nock.cleanAll() );
 
-	it( 'renders the empty-state prompt when the user has no connections', async () => {
+	it( 'renders the empty-state prompt when the user has no AP-enabled blogs', async () => {
 		nock( BASE ).get( '/wpcom/v2/reader/fediverse/connections' ).reply( 200, { connections: [] } );
 
 		renderWithProvider( <FediverseLandingView />, { queryClient: makeClient() } );
 
-		await waitFor( () =>
-			expect( screen.getByText( 'Connect your first Fediverse account' ) ).toBeVisible()
-		);
-		const action = screen.getByRole( 'link', { name: 'Connect a site' } );
-		expect( action ).toHaveAttribute( 'href', '/reader/fediverse/connect' );
+		await waitFor( () => expect( screen.getByText( 'No Fediverse accounts yet' ) ).toBeVisible() );
+		// Empty-state has no "connect" CTA — connections are pre-minted
+		// server-side per CM-684, so there's no user-driven OAuth flow.
+		expect( screen.queryByRole( 'link', { name: /connect/i } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders an account card per connection with a link to its timeline tab', async () => {
+	it( 'renders an account card per connection with an Open link to its timeline', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/fediverse/connections' )
 			.reply( 200, {
 				connections: [
 					{
 						id: 7,
-						handle: 'alice@example.com',
-						site_host: 'example.com',
-						actor_url: 'https://example.com/@alice',
-						display_name: 'Alice',
-						avatar: null,
+						blog_id: 700,
+						url: 'https://example.com',
+						name: 'Alice',
+						icon: '',
+						webfinger: '@alice@example.com',
 					},
 					{
 						id: 8,
-						handle: 'bob@blog.test',
-						site_host: 'blog.test',
-						actor_url: 'https://blog.test/author/bob',
-						display_name: null,
-						avatar: 'https://blog.test/avatar.png',
+						blog_id: 800,
+						url: 'https://blog.test',
+						name: '',
+						icon: 'https://blog.test/avatar.png',
+						webfinger: '@bob@blog.test',
 					},
 				],
 			} );
 
 		renderWithProvider( <FediverseLandingView />, { queryClient: makeClient() } );
 
-		// First account uses display_name; the Open link points at the
-		// timeline tab for that connection's id.
+		// First account uses `name`; the Open link points at the timeline
+		// tab for that connection's id.
 		await waitFor( () => expect( screen.getByText( 'Alice' ) ).toBeVisible() );
 		const openLinks = screen.getAllByRole( 'link', { name: 'Open' } );
 		expect( openLinks[ 0 ] ).toHaveAttribute( 'href', '/reader/fediverse/7/timeline' );
 		expect( openLinks[ 1 ] ).toHaveAttribute( 'href', '/reader/fediverse/8/timeline' );
 
-		// The second account falls back to handle when display_name is null.
-		expect( screen.getByText( 'bob@blog.test' ) ).toBeVisible();
-
-		// "Connect another account" link points at the connect flow.
-		const addLink = screen.getByRole( 'link', { name: 'Connect another account' } );
-		expect( addLink ).toHaveAttribute( 'href', '/reader/fediverse/connect' );
+		// Second account: empty `name` falls back to `webfinger` for the
+		// display label, so the handle string appears in both the name
+		// and handle slots — at least one must be visible.
+		expect( screen.getAllByText( '@bob@blog.test' ).length ).toBeGreaterThan( 0 );
 	} );
 
 	it( 'renders an error state with a Try again button when the connections query fails', async () => {

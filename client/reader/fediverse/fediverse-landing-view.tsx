@@ -14,6 +14,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { TIMELINE_TAB } from './helper';
+import { hostFromUrl } from './route';
 import type { FediverseConnection } from '@automattic/api-core';
 
 export function FediverseLandingView() {
@@ -110,17 +111,6 @@ function AccountCard( { connection }: { connection: FediverseConnection } ) {
 			</CardBody>
 		</Card>
 	);
-}
-
-// `connection.url` is the blog URL (and the actor URL for blog actors).
-// Render just the host as a third meta line. Returns null on parse
-// failure so we just hide the line instead of throwing.
-function hostFromUrl( url: string ): string | null {
-	try {
-		return new URL( url ).host;
-	} catch {
-		return null;
-	}
 }
 
 export default FediverseLandingView;

@@ -68,20 +68,15 @@ export async function getFediverseTimeline(
 	if ( limit ) {
 		query.limit = String( limit );
 	}
-	const path = `/reader/fediverse/connections/${ connectionId }/timeline`;
-	// eslint-disable-next-line no-console
-	console.log( '[fediverse] GET', path, query );
 	try {
-		const response = ( await wpcom.req.get(
-			{ path, apiNamespace: NAMESPACE },
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/fediverse/connections/${ connectionId }/timeline`,
+				apiNamespace: NAMESPACE,
+			},
 			query
 		) ) as FediverseTimelinePage;
-		// eslint-disable-next-line no-console
-		console.log( '[fediverse] GET', path, '→', response );
-		return response;
 	} catch ( raw ) {
-		// eslint-disable-next-line no-console
-		console.warn( '[fediverse] GET', path, '✗', raw );
 		throw classifyFediverseError( raw );
 	}
 }
@@ -107,22 +102,16 @@ export async function getFediverseAuthorProfile(
 	const path = `/reader/fediverse/connections/${ connectionId }/profile/${ encodeURIComponent(
 		actor
 	) }`;
-	// eslint-disable-next-line no-console
-	console.log( '[fediverse] GET', path );
 	try {
 		const response = ( await wpcom.req.get( {
 			path,
 			apiNamespace: NAMESPACE,
 		} ) ) as FediverseAuthorProfileResponse;
-		// eslint-disable-next-line no-console
-		console.log( '[fediverse] GET', path, '→', response );
 		// Backend wraps the profile in a `profile` envelope so it can grow
 		// side-band fields without breaking the shape; unwrap here so the
 		// query layer keeps `FediverseAuthorProfile` as the public type.
 		return response.profile;
 	} catch ( raw ) {
-		// eslint-disable-next-line no-console
-		console.warn( '[fediverse] GET', path, '✗', raw );
 		throw classifyFediverseError( raw );
 	}
 }
@@ -154,19 +143,12 @@ export async function getFediverseAuthorFeed(
 	const path = `/reader/fediverse/connections/${ connectionId }/profile/${ encodeURIComponent(
 		actor
 	) }/timeline`;
-	// eslint-disable-next-line no-console
-	console.log( '[fediverse] GET', path, query );
 	try {
-		const response = ( await wpcom.req.get(
+		return ( await wpcom.req.get(
 			{ path, apiNamespace: NAMESPACE },
 			query
 		) ) as FediverseAuthorFeedPage;
-		// eslint-disable-next-line no-console
-		console.log( '[fediverse] GET', path, '→', response );
-		return response;
 	} catch ( raw ) {
-		// eslint-disable-next-line no-console
-		console.warn( '[fediverse] GET', path, '✗', raw );
 		throw classifyFediverseError( raw );
 	}
 }
