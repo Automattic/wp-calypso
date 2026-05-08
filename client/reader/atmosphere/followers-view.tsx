@@ -17,7 +17,7 @@ import {
 	type SocialAccountRowProps,
 } from 'calypso/reader/social';
 import { projectAtmosphereError } from './error-projection';
-import { getProfileUrl } from './route';
+import { DID_RE, getBlueskyProfileUrl, getProfileUrl } from './route';
 import type { AtmosphereScopedProfileSummary } from '@automattic/api-core';
 
 interface Props {
@@ -102,7 +102,9 @@ export function FollowersView( { connectionId, actor }: Props ) {
 			displayName: item.display_name ?? item.handle,
 			handle: item.handle,
 			biography: item.description,
-			profileHref: getProfileUrl( connectionId, { handle: item.handle, did: item.did } ) ?? '',
+			profileHref:
+				getProfileUrl( connectionId, { handle: item.handle, did: item.did } ) ??
+				getBlueskyProfileUrl( item.handle ),
 			isSelf,
 			followState: isSelf
 				? undefined
@@ -131,7 +133,8 @@ export function FollowersView( { connectionId, actor }: Props ) {
 		};
 	};
 
-	const profileHref = getProfileUrl( connectionId, { handle: actor, did: actor } );
+	const profileRef = DID_RE.test( actor ) ? { did: actor } : { handle: actor };
+	const profileHref = getProfileUrl( connectionId, profileRef );
 
 	if ( ! connection ) {
 		return null;
