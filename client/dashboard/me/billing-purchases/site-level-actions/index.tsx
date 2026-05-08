@@ -133,7 +133,15 @@ export default function SiteLevelActions() {
 	const { data: allPurchases, isLoading } = useQuery( userPurchasesQuery() );
 
 	const eligiblePurchases = allPurchases
-		? getEligiblePurchases( allPurchases, purchase, action )
+		? getEligiblePurchases( allPurchases, purchase, action ).sort( ( a, b ) => {
+				if ( a.ID === purchase.ID ) {
+					return -1;
+				}
+				if ( b.ID === purchase.ID ) {
+					return 1;
+				}
+				return 0;
+		  } )
 		: [];
 
 	const [ selection, setSelection ] = useState< string[] >( [ String( purchase.ID ) ] );
@@ -182,11 +190,10 @@ export default function SiteLevelActions() {
 	};
 
 	const handleContinue = () => {
-		const selectedPurchases = eligiblePurchases.filter( ( p ) =>
-			selection.includes( String( p.ID ) )
-		);
-
 		if ( action === 'renew' ) {
+			const selectedPurchases = eligiblePurchases.filter( ( p ) =>
+				selection.includes( String( p.ID ) )
+			);
 			window.location.href = getRenewUrlForPurchases( selectedPurchases );
 			return;
 		}
@@ -219,6 +226,9 @@ export default function SiteLevelActions() {
 			id: 'renewal-info',
 			label: __( 'Renewal' ),
 			type: 'text',
+			getValue: ( { item } ) => {
+				return item.renew_date ?? item.expiry_date ?? '';
+			},
 			render: ( { item } ) => {
 				if ( action === 'remove' ) {
 					if ( ! item.expiry_date ) {
@@ -330,7 +340,9 @@ export default function SiteLevelActions() {
 							type: 'table',
 							perPage: 100,
 							titleField: 'product',
-							fields: [ 'renewal-info' ],
+							descriptionField: 'renewal-info',
+							showDescription: true,
+							fields: [],
 						} }
 						onChangeView={ () => {} }
 						defaultLayouts={ { table: {} } }
@@ -342,6 +354,13 @@ export default function SiteLevelActions() {
 						} }
 						selection={ selection }
 						onChangeSelection={ handleSelectionChange }
+						isItemClickable={ ( item ) => item.ID !== purchase.ID }
+						onClickItem={ ( item ) => {
+							const id = String( item.ID );
+							setSelection( ( prev ) =>
+								prev.includes( id ) ? prev.filter( ( s ) => s !== id ) : [ ...prev, id ]
+							);
+						} }
 						search={ false }
 					/>
 					<div className="site-level-actions__button-row">

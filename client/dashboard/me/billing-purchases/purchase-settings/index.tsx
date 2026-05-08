@@ -10,7 +10,6 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	userPurchaseSetAutoRenewQuery,
-	userPurchasesQuery,
 	siteDifmWebsiteContentQuery,
 	siteJetpackKeysQuery,
 	reinstallMarketplacePluginsQuery,
@@ -59,7 +58,6 @@ import {
 	cancelPurchaseRoute,
 	changePaymentMethodRoute,
 	purchaseSettingsRoute,
-	siteActionsRoute,
 } from '../../../app/router/me';
 import { getCurrentDashboard } from '../../../app/routing';
 import { ActionList } from '../../../components/action-list';
@@ -498,13 +496,9 @@ function ReSubscribeActionButton( { purchase }: { purchase: Purchase } ) {
 
 function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const navigate = useNavigate();
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const { recordTracksEvent } = useAnalytics();
-	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
-	const { data: allPurchases = [] } = useQuery( userPurchasesQuery() );
-	const sitePurchases = allPurchases.filter( ( p ) => p.blog_id === purchase.blog_id );
 
 	if ( ! canBeRenewed ) {
 		return null;
@@ -522,15 +516,7 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 						recordTracksEvent( 'calypso_purchases_renew_now_click', {
 							product_slug: purchase.product_slug,
 						} );
-						if ( isSplitEnabled && sitePurchases.length > 1 ) {
-							navigate( {
-								to: siteActionsRoute.fullPath,
-								params: { purchaseId: purchase.ID },
-								search: { action: 'renew' },
-							} );
-						} else {
-							renewPurchase( purchase );
-						}
+						renewPurchase( purchase );
 					} }
 				>
 					{ _x(
