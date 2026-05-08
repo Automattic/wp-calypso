@@ -175,68 +175,17 @@ const followedFeedState = {
 	items: { 1: { feed_ID: 1, is_following: true } },
 };
 
-function samePostKey(
-	a: { blogId?: number; feedId?: number; postId?: number } | null,
-	b: { blogId?: number; feedId?: number; postId?: number } | null
-) {
-	return !! a && !! b && a.postId === b.postId && a.blogId === b.blogId && a.feedId === b.feedId;
-}
-
 function renderStream(
 	extraProps: Record< string, unknown > = {},
 	initialStateOverride = {},
 	queryClient = makeQueryClient()
 ) {
 	const seedState = { ...baseState, ...initialStateOverride };
+	// `<Stream>` keeps post selection in the React Query cache (see
+	// `useStreamPostKeySelection`); only thunks like `likePost` need to dispatch
+	// against the store, so a passthrough reducer is enough.
 	const store = createStore(
-		( state = seedState, action: { type?: string; payload?: Record< string, unknown > } ) => {
-			const streamKey = ( action.payload?.streamKey as string ) || 'likes';
-			if (
-				! [
-					'READER_STREAMS_SELECT_ITEM',
-					'READER_STREAMS_SELECT_NEXT_ITEM',
-					'READER_STREAMS_SELECT_PREV_ITEM',
-				].includes( action.type ?? '' )
-			) {
-				return state;
-			}
-
-			const streams = state.reader.streams;
-			const stream = streams[ streamKey ] || {
-				items: [],
-				pendingItems: { lastUpdated: null, items: [] },
-				selected: null,
-				lastPage: false,
-				isRequesting: false,
-			};
-			const items =
-				( action.payload.items as Array< {
-					blogId?: number;
-					feedId?: number;
-					postId?: number;
-				} > ) || [];
-			const selectedIndex = items.findIndex( ( item ) => samePostKey( item, stream.selected ) );
-			let selected = stream.selected;
-			if ( action.type === 'READER_STREAMS_SELECT_ITEM' ) {
-				selected = action.payload.postKey;
-			} else if ( action.type === 'READER_STREAMS_SELECT_NEXT_ITEM' ) {
-				selected =
-					selectedIndex === items.length - 1 ? stream.selected : items[ selectedIndex + 1 ];
-			} else if ( selectedIndex !== 0 ) {
-				selected = items[ selectedIndex - 1 ];
-			}
-
-			return {
-				...state,
-				reader: {
-					...state.reader,
-					streams: {
-						...streams,
-						[ streamKey ]: { ...stream, selected },
-					},
-				},
-			};
-		},
+		( state = seedState ) => state,
 		seedState,
 		applyMiddleware( thunkMiddleware )
 	);
