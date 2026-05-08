@@ -6,6 +6,11 @@ import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import SiteResults from './site-results';
 
+// The dedup walks an array containing entries from two sources with slightly
+// different shapes — the React Query results (`ReadFeedItem`) and the canonical
+// feed objects from `state.reader.feeds.items` (a looser shape populated by
+// other Reader queries). `ReaderFeed` is the loose intersection consumed by
+// `siteRowRenderer` downstream.
 interface ReaderFeed {
 	feed_ID?: string | number;
 	feed_URL?: string;
@@ -40,7 +45,7 @@ export default function SiteResultsContainer( {
 
 	const dedupedFeeds = useMemo( () => {
 		const allFeeds: ReaderFeed[] =
-			data?.pages.flatMap( ( page ) => ( page.feeds ?? [] ) as ReaderFeed[] ) ?? [];
+			data?.pages.flatMap( ( page ) => ( page.feeds ?? [] ) as unknown as ReaderFeed[] ) ?? [];
 		if ( allFeeds.length === 0 ) {
 			return undefined;
 		}
