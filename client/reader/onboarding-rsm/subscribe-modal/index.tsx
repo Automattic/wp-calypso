@@ -17,6 +17,7 @@ import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
@@ -68,15 +69,27 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const selectedFeed = useSelector( ( state: object ) =>
 		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
 	) as { site_icon?: string; image?: string; feed_URL?: string; URL?: string } | null;
+	// Pull the WP.com Reader site record once `<QueryReaderSite>` has populated
+	// the entry. Curated entries with `site_ID: 0` never produce one. For
+	// WP.com sites the record exposes the canonical `feed_URL` which
+	// `getFeedUrl` prefers over the feed object's own URL.
+	const selectedReduxSite = useSelector( ( state: object ) =>
+		selectedSite && selectedSite.site_ID > 0 ? getSite( state, selectedSite.site_ID ) : null
+	) as { feed_URL?: string } | null;
 	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
 	// Subscribing via the curated `site_URL` (often a bare hostname like `design-milk.com`)
 	// can fail with `invalid_feed` for non-WP.com sites because the WP.com follow API has to
-	// auto-discover a feed and not all sites resolve. The feed object — once metadata loads —
-	// gives us the canonical `feed_URL`, which is what the dedicated feed page subscribes with.
-	// Mirrors the `getFeedUrl({ feed, site })` derivation that the list-item path uses
-	// internally so both subscribe paths agree on the URL precedence.
+	// auto-discover a feed and not all sites resolve. Mirror the
+	// `getFeedUrl({ feed, site })` derivation that the list-item path uses internally
+	// (precedence: `site.feed_URL` → `feed.feed_URL || feed.URL` → bare `site_URL`)
+	// so both subscribe paths agree on the URL the follow API ends up with.
 	const selectedFollowUrl =
-		getFeedUrl( { feed: selectedFeed ?? undefined } ) || selectedSite?.site_URL || '';
+		getFeedUrl( {
+			feed: selectedFeed ?? undefined,
+			site: selectedReduxSite ?? undefined,
+		} ) ||
+		selectedSite?.site_URL ||
+		'';
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
