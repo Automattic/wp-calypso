@@ -97,6 +97,38 @@ describe( 'serializeCurated', () => {
 		expect( out ).not.toContain( 'isBroken' );
 	} );
 
+	it( 'escapes backslashes, newlines, tabs, and control chars safely', () => {
+		const out = serializeCurated( {
+			variableName: 'bar',
+			tagMap: {
+				food: [
+					entry( {
+						feed_ID: 1,
+						site_name: 'a\\b\nc\td\u0001e',
+						site_URL: 'https://example.test/path/with\\backslash/',
+					} ),
+				],
+			},
+			getMetadata: () => metadata( { feedUrl: 'https://example.test/feed/\nfoo' } ),
+		} );
+
+		// JSON.stringify-based escaping should produce a runnable TS literal —
+		// no embedded raw newline / tab in the source, and backslashes doubled.
+		expect( out ).toContain( "site_name: 'a\\\\b\\nc\\td\\u0001e'" );
+		expect( out ).toContain( "site_URL: 'https://example.test/path/with\\\\backslash/'" );
+		expect( out ).toContain( "feedUrl: 'https://example.test/feed/\\nfoo'" );
+
+		// Sanity check: round-trip via JSON.parse on the emitted single-quoted
+		// strings. We can't run TS here, but we can verify that the escape
+		// content matches what the source author intended by re-parsing each
+		// emitted literal as JSON (after swapping wrapping quotes).
+		const matches = [ ...out.matchAll( /(?:site_name|site_URL|feedUrl): '([^']*)',/g ) ];
+		expect( matches.length ).toBeGreaterThan( 0 );
+		for ( const [ , inner ] of matches ) {
+			expect( () => JSON.parse( `"${ inner }"` ) ).not.toThrow();
+		}
+	} );
+
 	it( 'uses double quotes for strings containing apostrophes', () => {
 		const out = serializeCurated( {
 			variableName: 'bar',

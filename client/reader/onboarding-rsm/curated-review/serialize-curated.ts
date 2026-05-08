@@ -90,13 +90,20 @@ function formatKey( key: string ): string {
 }
 
 function formatString( value: string ): string {
-	const hasSingle = value.includes( "'" );
-	const hasDouble = value.includes( '"' );
-	if ( hasSingle && ! hasDouble ) {
-		return `"${ value }"`;
+	// Delegate escaping (backslashes, control chars, embedded quotes, etc.) to
+	// JSON.stringify, which always returns a properly-escaped double-quoted
+	// string. We then optionally re-skin to single quotes to match the existing
+	// curated source style (Calypso's prettier default), so a paste-back
+	// produces zero whitespace diff.
+	const doubleQuoted = JSON.stringify( value );
+	if ( value.includes( "'" ) ) {
+		// Apostrophe in value — keep the double-quoted form so we don't have to
+		// escape it with `\'`. Mirrors prettier's `avoidEscape: true` choice.
+		return doubleQuoted;
 	}
-	if ( hasSingle && hasDouble ) {
-		return `'${ value.replace( /\\/g, '\\\\' ).replace( /'/g, "\\'" ) }'`;
-	}
-	return `'${ value }'`;
+	// No apostrophe — convert to single-quoted form. JSON-escapes inside the
+	// string only use `\"` for double quotes (which are now superfluous); undo
+	// those, leaving every other escape (`\\`, `\n`, `\t`, `\uXXXX`, …)
+	// untouched.
+	return `'${ doubleQuoted.slice( 1, -1 ).replace( /\\"/g, '"' ) }'`;
 }
