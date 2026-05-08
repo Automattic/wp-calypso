@@ -135,7 +135,7 @@
 	transform: scale(1.05);
 }
 
-/* Bottom-edge vignette so titles + captions stay legible. */
+/* Bottom-edge vignette so text overlays stay legible. */
 .image-studio-feature-clip .scene-image-overlay {
 	position: absolute;
 	inset: 0;
@@ -148,20 +148,6 @@
 			rgba(8, 13, 20, 0.08) 72%
 		),
 		linear-gradient(180deg, rgba(8, 13, 20, 0.42), transparent 28%);
-}
-
-.image-studio-feature-clip .scene-caption {
-	position: absolute;
-	left: 72px;
-	right: 72px;
-	bottom: 120px;
-	z-index: 2;
-	font-size: 38px;
-	font-weight: 700;
-	line-height: 1.2;
-	color: #fff;
-	text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
-	transform: translateY(calc(16px - (var(--scene-progress, 0) * 16px)));
 }
 
 /*

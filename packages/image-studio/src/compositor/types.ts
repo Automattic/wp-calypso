@@ -17,7 +17,6 @@ export interface FeatureClipScene {
 	// are valid when the post has no usable images, or when the brief mixes
 	// text-overlay scenes between image scenes.
 	imageUrl?: string;
-	caption?: string;
 	// Text overlay shown on a gradient background when no imageUrl is present.
 	text?: string;
 	// Optional small label above the text (e.g. "Step 1", "Key insight").

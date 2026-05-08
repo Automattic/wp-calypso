@@ -44,7 +44,7 @@ import type { FeatureClipBrief } from './types';
 const baseBrief: FeatureClipBrief = {
 	style: 'highlights',
 	scenes: [
-		{ imageUrl: 'https://example.com/a.jpg', camera: 'zoom-in', caption: 'Morning light' },
+		{ imageUrl: 'https://example.com/a.jpg', camera: 'zoom-in' },
 		{ imageUrl: 'https://example.com/b.jpg', camera: 'pan-right' },
 	],
 	titleCard: { copy: 'A short story' },
