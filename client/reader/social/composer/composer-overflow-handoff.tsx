@@ -23,8 +23,17 @@ interface OverflowFormData {
 	selectedSiteId: number;
 }
 
+type SaveDraftMutate = ReturnType<
+	typeof useMutation<
+		{ ID: number; site_ID: number; URL: string },
+		Error,
+		{ siteId: number; content: string }
+	>
+>[ 'mutate' ];
+
 function SingleSiteHandoff( { site, text }: { site: Site; text: string } ) {
 	const translate = useTranslate();
+	const { mutate, isPending } = useMutation( saveDraftMutation() );
 	return (
 		<>
 			<p>
@@ -32,42 +41,23 @@ function SingleSiteHandoff( { site, text }: { site: Site; text: string } ) {
 					args: { siteName: site.name },
 				} ) }
 			</p>
-			<MoveToEditorButton site={ site } text={ text } />
+			<MoveToEditorButton site={ site } text={ text } mutate={ mutate } isPending={ isPending } />
 		</>
 	);
 }
 
-function MultiSiteHandoff( { sites, text }: { sites: Site[]; text: string } ) {
-	const { data: userSettings, isPending } = useQuery( userSettingsQuery() );
+function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } ) {
+	const { data: userSettings } = useQuery( userSettingsQuery() );
 
-	if ( isPending ) {
-		return null;
-	}
+	const [ userSelection, setUserSelection ] = useState< number | null >( null );
 
-	return (
-		<MultiSiteHandoffForm
-			sites={ sites }
-			text={ text }
-			primarySiteId={ userSettings?.primary_site_ID }
-		/>
-	);
-}
+	const displayedSiteId =
+		userSelection ??
+		( userSettings?.primary_site_ID && sites.some( ( s ) => s.ID === userSettings.primary_site_ID )
+			? userSettings.primary_site_ID
+			: sites[ 0 ].ID );
 
-function MultiSiteHandoffForm( {
-	sites,
-	text,
-	primarySiteId,
-}: {
-	sites: Site[];
-	text: string;
-	primarySiteId?: number;
-} ) {
-	const defaultSiteId =
-		primarySiteId && sites.some( ( s ) => s.ID === primarySiteId ) ? primarySiteId : sites[ 0 ].ID;
-
-	const [ formData, setFormData ] = useState< OverflowFormData >( {
-		selectedSiteId: defaultSiteId,
-	} );
+	const selectedSite = sites.find( ( s ) => s.ID === displayedSiteId ) ?? sites[ 0 ];
 
 	const { mutate, isPending } = useMutation( saveDraftMutation() );
 
@@ -103,19 +93,23 @@ function MultiSiteHandoffForm( {
 		fields: [ 'selectedSiteId' ],
 	};
 
-	const selectedSite = sites.find( ( s ) => s.ID === formData.selectedSiteId ) ?? sites[ 0 ];
+	const formData: OverflowFormData = { selectedSiteId: displayedSiteId };
 
 	return (
 		<>
-			<fieldset disabled={ isPending } style={ { border: 0, padding: 0, margin: 0 } }>
+			<fieldset disabled={ isPending }>
 				<DataForm< OverflowFormData >
 					data={ formData }
 					fields={ fields }
 					form={ form }
-					onChange={ ( edits ) => setFormData( ( d ) => ( { ...d, ...edits } ) ) }
+					onChange={ ( edits ) => {
+						if ( edits.selectedSiteId !== undefined ) {
+							setUserSelection( edits.selectedSiteId );
+						}
+					} }
 				/>
 			</fieldset>
-			<MoveToEditorButtonExternalState
+			<MoveToEditorButton
 				site={ selectedSite }
 				text={ text }
 				mutate={ mutate }
@@ -125,7 +119,7 @@ function MultiSiteHandoffForm( {
 	);
 }
 
-function MoveToEditorButtonExternalState( {
+function MoveToEditorButton( {
 	site,
 	text,
 	mutate,
@@ -133,65 +127,11 @@ function MoveToEditorButtonExternalState( {
 }: {
 	site: Site;
 	text: string;
-	mutate: ReturnType<
-		typeof useMutation<
-			{ ID: number; site_ID: number; URL: string },
-			Error,
-			{ siteId: number; content: string }
-		>
-	>[ 'mutate' ];
+	mutate: SaveDraftMutate;
 	isPending: boolean;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const handleClick = () => {
-		mutate(
-			{ siteId: site.ID, content: text },
-			{
-				onSuccess: ( data ) => {
-					const adminUrl = site.options?.admin_url;
-					if ( ! adminUrl ) {
-						dispatch(
-							errorNotice( translate( "Couldn't open the editor. Try a different site." ) )
-						);
-						return;
-					}
-					window.location.assign(
-						addQueryArgs( `${ adminUrl }post.php`, {
-							post: data.ID,
-							action: 'edit',
-						} )
-					);
-				},
-				onError: () => {
-					dispatch(
-						errorNotice(
-							translate( "Couldn't save your draft. Try again or pick a different site." )
-						)
-					);
-				},
-			}
-		);
-	};
-
-	return (
-		<Button
-			variant="primary"
-			__next40pxDefaultSize
-			onClick={ handleClick }
-			isBusy={ isPending }
-			disabled={ isPending }
-		>
-			{ translate( 'Move to editor' ) }
-		</Button>
-	);
-}
-
-function MoveToEditorButton( { site, text }: { site: Site; text: string } ) {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const { mutate, isPending } = useMutation( saveDraftMutation() );
 
 	const handleClick = () => {
 		mutate(
@@ -267,7 +207,7 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 			{ sites.length === 1 ? (
 				<SingleSiteHandoff site={ sites[ 0 ] } text={ text } />
 			) : (
-				<MultiSiteHandoff sites={ sites } text={ text } />
+				<MultiSiteHandoffForm sites={ sites } text={ text } />
 			) }
 		</section>
 	);

@@ -159,7 +159,7 @@ describe( 'ComposerOverflowHandoff — multi-site picker', () => {
 		const combobox = await screen.findByRole( 'combobox' );
 		expect( combobox ).toBeVisible();
 		// `Blog B` is the primary site, so it should be the default value.
-		expect( ( combobox as HTMLInputElement ).value ).toContain( 'Blog B' );
+		await waitFor( () => expect( ( combobox as HTMLInputElement ).value ).toContain( 'Blog B' ) );
 	} );
 } );
 
@@ -263,8 +263,7 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
 		await user.click( button );
 
-		// Wait for the request to settle.
-		await new Promise( ( r ) => setTimeout( r, 100 ) );
+		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		expect( assignSpy ).not.toHaveBeenCalled();
 	} );
 } );
