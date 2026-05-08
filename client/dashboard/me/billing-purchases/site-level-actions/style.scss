@@ -1,34 +1,4 @@
-.site-level-actions__section-title {
-	font-size: 0.875rem;
-	font-weight: 600;
-	margin: 0;
-	padding-block: 16px;
-	padding-inline: 16px;
-}
-
-.site-level-actions__button-row {
-	padding-block: 24px 16px;
-	padding-inline: 16px;
-}
-
 .site-level-actions__description {
 	margin-block-end: 0;
 	font-size: 0.875rem;
-}
-
-// The table layout doesn't expose props for these. Hide column header, actions
-// column (needed only for selection checkboxes), toolbar, and footer.
-.site-level-actions .dataviews-view-table thead,
-.site-level-actions .dataviews-view-table__actions-column,
-.site-level-actions .dataviews-view-table__col-actions,
-.site-level-actions .dataviews__view-actions,
-.site-level-actions .dataviews-footer {
-	display: none;
-}
-
-// Style the renewal info rendered via descriptionField — muted and smaller to
-// differentiate from the product name.
-.site-level-actions .dataviews-view-table__primary-column-content > :last-child:not(.dataviews-title-field) {
-	color: var(--color-text-subtle);
-	font-size: 0.75rem;
 }

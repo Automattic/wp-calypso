@@ -4,13 +4,14 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
+	CheckboxControl,
 	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import {
@@ -18,15 +19,14 @@ import {
 	purchaseSettingsRoute,
 	siteActionsRoute,
 } from '../../../app/router/me';
-import { Card, CardBody } from '../../../components/card';
-import { DataViews } from '../../../components/dataviews';
+import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { SectionHeader } from '../../../components/section-header';
 import { formatDate } from '../../../utils/datetime';
 import { getRenewUrlForPurchases, getTitleForListDisplay } from '../../../utils/purchase';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import type { Purchase } from '@automattic/api-core';
-import type { Field, Action } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -57,7 +57,7 @@ function getDescription(
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
 				__(
-					'Your site %1$s has other subscriptions. Select any you’d like to renew along with %2$s.'
+					'Your site %1$s has other subscriptions. Select any you\u2019d like to renew along with %2$s.'
 				),
 				siteName,
 				productName
@@ -66,7 +66,7 @@ function getDescription(
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
 				__(
-					'Your site %1$s has other subscriptions. Select any you’d like to cancel along with %2$s.'
+					'Your site %1$s has other subscriptions. Select any you\u2019d like to cancel along with %2$s.'
 				),
 				siteName,
 				productName
@@ -74,7 +74,9 @@ function getDescription(
 		case 'remove':
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
-				__( 'Your site %1$s has other upgrades. Select any you’d like to remove along with %2$s.' ),
+				__(
+					'Your site %1$s has other upgrades. Select any you\u2019d like to remove along with %2$s.'
+				),
 				siteName,
 				productName
 			);
@@ -82,7 +84,7 @@ function getDescription(
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
 				__(
-					'Your site %1$s has other subscriptions. Select any you’d like to turn off auto-renew for along with %2$s.'
+					'Your site %1$s has other subscriptions. Select any you\u2019d like to turn off auto-renew for along with %2$s.'
 				),
 				siteName,
 				productName
@@ -119,6 +121,39 @@ function getEligiblePurchases(
 
 	// Remove and renew: show all site purchases
 	return sitePurchases;
+}
+
+function getRenewalDescription(
+	item: Purchase,
+	action: SiteAction | undefined,
+	locale: string
+): string {
+	if ( action === 'remove' ) {
+		if ( ! item.expiry_date ) {
+			return '';
+		}
+		return sprintf(
+			/* translators: %s: formatted date */
+			__( 'Expires on %s' ),
+			formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
+		);
+	}
+	const price = formatCurrency( item.price_integer, item.currency_code, {
+		isSmallestUnit: true,
+	} );
+	const renewOrExpiryDate = item.renew_date ?? item.expiry_date;
+	if ( ! renewOrExpiryDate ) {
+		return '';
+	}
+	const date = formatDate( new Date( renewOrExpiryDate ), locale, {
+		dateStyle: 'long',
+	} );
+	return sprintf(
+		/* translators: %1$s: formatted price, %2$s: formatted date */
+		__( 'Renews at %1$s on %2$s' ),
+		price,
+		date
+	);
 }
 
 export default function SiteLevelActions() {
@@ -179,14 +214,6 @@ export default function SiteLevelActions() {
 		);
 	}
 
-	const handleSelectionChange = ( newSelection: string[] ) => {
-		const primaryId = String( purchase.ID );
-		if ( ! newSelection.includes( primaryId ) ) {
-			newSelection = [ ...newSelection, primaryId ];
-		}
-		setSelection( newSelection );
-	};
-
 	const handleContinue = () => {
 		if ( action === 'renew' ) {
 			const selectedPurchases = eligiblePurchases.filter( ( p ) =>
@@ -209,76 +236,6 @@ export default function SiteLevelActions() {
 
 	const siteName = purchase.site_slug ?? purchase.domain;
 	const productName = purchase.product_name;
-
-	const fields: Field< Purchase >[] = [
-		{
-			id: 'product',
-			label: __( 'Product' ),
-			type: 'text',
-			getValue: ( { item } ) => getTitleForListDisplay( item ),
-			render: ( { item } ) => <>{ getTitleForListDisplay( item ) }</>,
-			enableGlobalSearch: false,
-			enableHiding: false,
-		},
-		{
-			id: 'renewal-info',
-			label: __( 'Renewal' ),
-			type: 'text',
-			getValue: ( { item } ) => {
-				return item.renew_date ?? item.expiry_date ?? '';
-			},
-			render: ( { item } ) => {
-				if ( action === 'remove' ) {
-					if ( ! item.expiry_date ) {
-						return null;
-					}
-					return (
-						<span>
-							{ sprintf(
-								/* translators: %s: formatted date */
-								__( 'Expires on %s' ),
-								formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
-							) }
-						</span>
-					);
-				}
-				const price = formatCurrency( item.price_integer, item.currency_code, {
-					isSmallestUnit: true,
-				} );
-				const renewOrExpiryDate = item.renew_date ?? item.expiry_date;
-				if ( ! renewOrExpiryDate ) {
-					return null;
-				}
-				const date = formatDate( new Date( renewOrExpiryDate ), locale, {
-					dateStyle: 'long',
-				} );
-				return (
-					<span>
-						{ sprintf(
-							/* translators: %1$s: formatted price, %2$s: formatted date */
-							__( 'Renews at %1$s on %2$s' ),
-							price,
-							date
-						) }
-					</span>
-				);
-			},
-			enableGlobalSearch: false,
-			enableHiding: false,
-		},
-	];
-
-	// A bulk action is needed to enable selection checkboxes in DataViews
-	const actions: Action< Purchase >[] = [
-		{
-			id: 'continue',
-			label: __( 'Continue' ),
-			supportsBulk: true,
-			callback: () => {
-				// No-op — the real continue logic is on the button below
-			},
-		},
-	];
 
 	const continueButton = ( () => {
 		switch ( action ) {
@@ -329,41 +286,37 @@ export default function SiteLevelActions() {
 			}
 		>
 			<Card className="site-level-actions">
+				<CardHeader>
+					<SectionHeader title={ getSectionTitle( action ) } level={ 3 } />
+				</CardHeader>
+				{ eligiblePurchases.map( ( item, index ) => {
+					const id = String( item.ID );
+					const isPrimary = item.ID === purchase.ID;
+					const isChecked = selection.includes( id );
+					return (
+						<Fragment key={ id }>
+							{ index > 0 && <CardDivider /> }
+							<CardBody>
+								<CheckboxControl
+									__nextHasNoMarginBottom
+									label={ getTitleForListDisplay( item ) }
+									help={ getRenewalDescription( item, action, locale ) }
+									checked={ isChecked }
+									onChange={ ( checked ) => {
+										if ( isPrimary ) {
+											return;
+										}
+										setSelection( ( prev ) =>
+											checked ? [ ...prev, id ] : prev.filter( ( s ) => s !== id )
+										);
+									} }
+								/>
+							</CardBody>
+						</Fragment>
+					);
+				} ) }
 				<CardBody>
-					<h3 className="site-level-actions__section-title">{ getSectionTitle( action ) }</h3>
-					<DataViews< Purchase >
-						data={ eligiblePurchases }
-						fields={ fields }
-						view={ {
-							type: 'table',
-							perPage: 100,
-							titleField: 'product',
-							descriptionField: 'renewal-info',
-							showDescription: true,
-							fields: [],
-						} }
-						onChangeView={ () => {} }
-						defaultLayouts={ { table: {} } }
-						actions={ actions }
-						getItemId={ ( item: Purchase ) => String( item.ID ) }
-						paginationInfo={ {
-							totalItems: eligiblePurchases.length,
-							totalPages: 1,
-						} }
-						selection={ selection }
-						onChangeSelection={ handleSelectionChange }
-						isItemClickable={ ( item ) => item.ID !== purchase.ID }
-						onClickItem={ ( item ) => {
-							const id = String( item.ID );
-							setSelection( ( prev ) =>
-								prev.includes( id ) ? prev.filter( ( s ) => s !== id ) : [ ...prev, id ]
-							);
-						} }
-						search={ false }
-					/>
-					<div className="site-level-actions__button-row">
-						<HStack justify="flex-start">{ continueButton }</HStack>
-					</div>
+					<HStack justify="flex-start">{ continueButton }</HStack>
 				</CardBody>
 			</Card>
 		</PageLayout>
