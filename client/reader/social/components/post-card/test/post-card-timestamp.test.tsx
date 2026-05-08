@@ -1,7 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardTimestamp } from '../post-card-timestamp';
 
 describe( 'PostCardTimestamp', () => {
@@ -42,5 +44,77 @@ describe( 'PostCardTimestamp', () => {
 			<PostCardTimestamp post={ { created_at: 'not a date', indexed_at: '' } } />
 		);
 		expect( container.querySelector( 'time' ) ).toBeNull();
+	} );
+
+	it( 'renders a bare <time> (no anchor) when permalink is missing', () => {
+		const { container } = render(
+			<PostCardTimestamp post={ { created_at: '2026-04-28T15:17:50Z', indexed_at: '' } } />
+		);
+		expect( container.querySelector( 'a' ) ).toBeNull();
+	} );
+
+	it( 'wraps the <time> in an external anchor when permalink is provided', () => {
+		render(
+			<PostCardTimestamp
+				post={ {
+					created_at: '2026-04-28T15:17:50Z',
+					indexed_at: '',
+					permalink: 'https://bsky.app/profile/example/post/abc',
+				} }
+			/>
+		);
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/example/post/abc' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+		expect( link.querySelector( 'time' ) ).not.toBeNull();
+	} );
+
+	it( 'fires the external-post-clicked Tracks event on click', async () => {
+		const user = userEvent.setup();
+		const onClick = jest.fn();
+		render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 42,
+					onClick,
+				} }
+			>
+				<PostCardTimestamp
+					post={ {
+						created_at: '2026-04-28T15:17:50Z',
+						indexed_at: '',
+						permalink: 'https://bsky.app/profile/example/post/abc',
+						uri: 'at://did:plc:example/app.bsky.feed.post/abc',
+					} }
+				/>
+			</SocialAnalyticsProvider>
+		);
+		// Prevent jsdom from following the href on click.
+		await user.click( screen.getByRole( 'link' ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_external_post_clicked',
+			expect.objectContaining( {
+				connection_id: 42,
+				post_uri: 'at://did:plc:example/app.bsky.feed.post/abc',
+			} )
+		);
+	} );
+
+	it( 'still renders the link without analytics provider mounted', () => {
+		render(
+			<PostCardTimestamp
+				post={ {
+					created_at: '2026-04-28T15:17:50Z',
+					indexed_at: '',
+					permalink: 'https://example.social/@user/123',
+				} }
+			/>
+		);
+		expect( screen.getByRole( 'link' ) ).toHaveAttribute(
+			'href',
+			'https://example.social/@user/123'
+		);
 	} );
 } );
