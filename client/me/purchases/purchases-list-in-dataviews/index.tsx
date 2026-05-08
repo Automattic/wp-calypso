@@ -97,7 +97,7 @@ const PurchasesListDataView: React.FC<
 } ) => {
 	const translate = useTranslate();
 
-	// Read ?removed and ?removedDomain from URL on mount, then strip params.
+	// Read ?removed, ?removedDomain, and ?removedId from URL on mount, then strip params.
 	const [ removedNoticeData ] = useState( () => {
 		if ( typeof window === 'undefined' ) {
 			return null;
@@ -108,22 +108,30 @@ const PurchasesListDataView: React.FC<
 			return null;
 		}
 		const removedDomain = params.get( 'removedDomain' );
+		const removedIdStr = params.get( 'removedId' );
+		const purchaseId = removedIdStr ? Number( removedIdStr ) : null;
 		params.delete( 'removed' );
 		params.delete( 'removedDomain' );
+		params.delete( 'removedId' );
 		const newSearch = params.toString();
 		const newUrl =
 			window.location.pathname + ( newSearch ? '?' + newSearch : '' ) + window.location.hash;
 		window.history.replaceState( window.history.state, '', newUrl );
-		return { productNoun: removed, atomicDomain: removedDomain };
+		return { productNoun: removed, atomicDomain: removedDomain, purchaseId };
 	} );
 	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
 
-	// Dismiss the success notice if the background mutation fails.
+	// Dismiss the success notice when the background mutation rolls back —
+	// detected by the captured purchase reappearing in the user's purchase list.
+	// `purchases` is camelCase via getUserPurchases → createPurchasesArray.
 	useEffect( () => {
-		const dismiss = () => setShowRemovedNotice( false );
-		window.addEventListener( 'purchase-remove-failed', dismiss );
-		return () => window.removeEventListener( 'purchase-remove-failed', dismiss );
-	}, [] );
+		if ( ! removedNoticeData?.purchaseId ) {
+			return;
+		}
+		if ( purchases?.some( ( p ) => String( p.id ) === String( removedNoticeData.purchaseId ) ) ) {
+			setShowRemovedNotice( false );
+		}
+	}, [ purchases, removedNoticeData ] );
 
 	const {
 		data: transferredOwnershipPurchases = [],
