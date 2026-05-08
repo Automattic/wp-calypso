@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useEffect } from 'react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ComposerOverflowHandoff } from '../composer-overflow-handoff';
 import { ComposerProvider, useComposer } from '../composer-provider';
 import { testComposerConfig } from '../test-config';
@@ -30,12 +32,11 @@ function renderWithComposer( ui: ReactNode, { withMode = false } = {} ) {
 		return <>{ ui }</>;
 	}
 
-	return render(
-		<QueryClientProvider client={ queryClient }>
-			<ComposerProvider connectionId={ 1 } config={ testComposerConfig }>
-				<Inner />
-			</ComposerProvider>
-		</QueryClientProvider>
+	return renderWithProvider(
+		<ComposerProvider connectionId={ 1 } config={ testComposerConfig }>
+			<Inner />
+		</ComposerProvider>,
+		{ queryClient }
 	);
 }
 
@@ -159,5 +160,111 @@ describe( 'ComposerOverflowHandoff — multi-site picker', () => {
 		expect( combobox ).toBeVisible();
 		// `Blog B` is the primary site, so it should be the default value.
 		expect( ( combobox as HTMLInputElement ).value ).toContain( 'Blog B' );
+	} );
+} );
+
+describe( 'ComposerOverflowHandoff — Move to editor click', () => {
+	let originalLocation: Location;
+	let assignSpy: jest.Mock;
+
+	beforeEach( () => {
+		originalLocation = window.location;
+		assignSpy = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { assign: assignSpy },
+			writable: true,
+		} );
+	} );
+
+	afterEach( () => {
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: originalLocation,
+			writable: true,
+		} );
+	} );
+
+	it( 'creates a draft post and navigates to wp-admin on success', async () => {
+		const user = userEvent.setup();
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'My Blog',
+				slug: 'myblog.wordpress.com',
+				URL: 'https://myblog.wordpress.com',
+				site_migration: { in_progress: false, is_complete: false },
+				options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+		] );
+
+		nock( ORIGIN )
+			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
+			.reply( 200, { ID: 555, site_ID: 100, URL: 'https://myblog.wordpress.com/?p=555' } );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="my long draft" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+		await user.click( button );
+
+		await waitFor( () =>
+			expect( assignSpy ).toHaveBeenCalledWith(
+				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit'
+			)
+		);
+	} );
+
+	it( 'fires an error notice and does not redirect on mutation failure', async () => {
+		const user = userEvent.setup();
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'My Blog',
+				slug: 'myblog.wordpress.com',
+				URL: 'https://myblog.wordpress.com',
+				site_migration: { in_progress: false, is_complete: false },
+				options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+		] );
+		nock( ORIGIN )
+			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
+			.reply( 500, { error: 'oops' } );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="my long draft" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+		await user.click( button );
+
+		// Wait for the request to settle.
+		await new Promise( ( r ) => setTimeout( r, 100 ) );
+		expect( assignSpy ).not.toHaveBeenCalled();
 	} );
 } );

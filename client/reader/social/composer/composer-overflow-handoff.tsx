@@ -1,14 +1,18 @@
 import './composer-overflow-handoff.scss';
 
 import { sitesQuery, userSettingsQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { DataForm, type Field } from '@wordpress/dataviews';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PreferencesLoginSiteDropdown from 'calypso/dashboard/me/preferences-primary-site/site-dropdown';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { useComposerConfig } from './composer-config';
 import { useComposer } from './composer-provider';
+import { saveDraftMutation } from './use-save-draft-mutation';
 import type { Site } from '@automattic/api-core';
 
 interface ComposerOverflowHandoffProps {
@@ -111,11 +115,47 @@ function MultiSiteHandoffForm( {
 
 function MoveToEditorButton( { site, text }: { site: Site; text: string } ) {
 	const translate = useTranslate();
-	// Wired up to the mutation + redirect in task 9.
-	void site;
-	void text;
+	const dispatch = useDispatch();
+	const { mutate, isPending } = useMutation( saveDraftMutation() );
+
+	const handleClick = () => {
+		mutate(
+			{ siteId: site.ID, content: text },
+			{
+				onSuccess: ( data ) => {
+					const adminUrl = site.options?.admin_url;
+					if ( ! adminUrl ) {
+						dispatch(
+							errorNotice( translate( "Couldn't open the editor. Try a different site." ) )
+						);
+						return;
+					}
+					window.location.assign(
+						addQueryArgs( `${ adminUrl }post.php`, {
+							post: data.ID,
+							action: 'edit',
+						} )
+					);
+				},
+				onError: () => {
+					dispatch(
+						errorNotice(
+							translate( "Couldn't save your draft. Try again or pick a different site." )
+						)
+					);
+				},
+			}
+		);
+	};
+
 	return (
-		<Button variant="primary" __next40pxDefaultSize>
+		<Button
+			variant="primary"
+			__next40pxDefaultSize
+			onClick={ handleClick }
+			isBusy={ isPending }
+			disabled={ isPending }
+		>
 			{ translate( 'Move to editor' ) }
 		</Button>
 	);
