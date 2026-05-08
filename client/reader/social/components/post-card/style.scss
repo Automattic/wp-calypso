@@ -218,11 +218,29 @@ a.social-post-card-header__timestamp::after {
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
 	border-block: 1px solid var( --studio-gray-5 );
+}
 
-	+ .social-post-card-counts {
-		// Reuse the timestamp's bottom border as the counts row's top separator (no extra gap).
-		margin-block-start: 8px;
-	}
+.social-post-card-timestamp + .social-post-card-counts,
+.social-post-card-stats + .social-post-card-counts {
+	margin-block-start: 8px;
+}
+
+.social-post-card-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-block-start: 8px;
+	margin-inline: -16px;
+	padding-block: 8px;
+	padding-inline: 16px;
+	font-size: 0.875rem;
+	color: var( --studio-gray-50 );
+	border-block-end: 1px solid var( --studio-gray-5 );
+}
+
+.social-post-card-stats__item strong {
+	color: var( --studio-gray-100 );
+	font-weight: 600;
 }
 
 .social-post-card-counts {
@@ -236,7 +254,9 @@ a.social-post-card-header__timestamp::after {
 	.social-post-card-counts__reply-button {
 		display: inline-flex;
 		align-items: center;
-		gap: 4px;
+		gap: 6px;
+		padding: 4px 6px;
+		border-radius: 8px;
 	}
 
 	.social-post-card-counts__link {
@@ -246,13 +266,13 @@ a.social-post-card-header__timestamp::after {
 		&:hover,
 		&:focus-visible {
 			color: var( --studio-blue-50 );
+			background: var( --studio-gray-0 );
 		}
 	}
 
 	.social-post-card-counts__reply-button {
 		background: transparent;
 		border: 0;
-		padding: 0;
 		cursor: pointer;
 		color: inherit;
 		font: inherit;
@@ -260,6 +280,7 @@ a.social-post-card-header__timestamp::after {
 		&:hover,
 		&:focus-visible {
 			color: var( --studio-blue-50 );
+			background: var( --studio-gray-0 );
 		}
 	}
 
@@ -267,6 +288,13 @@ a.social-post-card-header__timestamp::after {
 		flex-shrink: 0;
 		fill: currentColor;
 	}
+}
+
+.social-post-card-counts--prominent-timestamp {
+	// The stats row directly above provides separation via its
+	// border-block-end; suppress the default 8px gap so the action row sits
+	// directly under the hairline.
+	margin-top: 0;
 }
 
 .social-post-card-embed-images {
