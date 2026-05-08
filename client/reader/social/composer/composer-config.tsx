@@ -106,6 +106,14 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 */
 	useLimit: ( connectionId: number | null ) => number;
 	/**
+	 * Short display label for the protocol (e.g. "Bluesky", "Mastodon").
+	 * Surfaced in user-visible copy that mentions the social network by
+	 * name — currently only the overflow-handoff section in
+	 * `<ComposerOverflowHandoff />`. Not localized: these are brand
+	 * names that don't translate.
+	 */
+	protocolLabel: string;
+	/**
 	 * Mode kinds this protocol supports. Atmosphere supports all three;
 	 * Mastodon supports `'reply' | 'standalone'` (no native quote concept).
 	 * The modal renders nothing when an unsupported mode is opened.

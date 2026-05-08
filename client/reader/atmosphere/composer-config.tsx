@@ -21,6 +21,7 @@ export const atmosphereComposerConfig: ComposerConfig<
 	CreatePostResult
 > = {
 	useLimit: useAtmosphereComposerLimit,
+	protocolLabel: 'Bluesky',
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
 	mutationFactory: createPostMutation,
 	buildParams: ( mode, text ) => buildParamsForMode( mode, text ),

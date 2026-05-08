@@ -21,6 +21,7 @@ export const mastodonComposerConfig: ComposerConfig<
 	// configuration via `useMastodonInstanceConfigQuery` and falls back to
 	// 500 (stock Mastodon default) when the query is pending or errors.
 	useLimit: useMastodonComposerLimit,
+	protocolLabel: 'Mastodon',
 	// Quote mode uses Mastodon 4.5+'s native `quoted_status_id` with a
 	// text-based fallback (permalink appended to status) for older
 	// instances. The retry lives in `createMastodonPostWithQuoteFallback`
