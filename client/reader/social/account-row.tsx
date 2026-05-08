@@ -1,7 +1,6 @@
 import './account-row.scss';
 
 import { useTranslate } from 'i18n-calypso';
-import { MouseEvent } from 'react';
 import { FollowButton } from './follow-button';
 
 export interface SocialAccountRowFollowState {
@@ -23,23 +22,28 @@ export interface SocialAccountRowProps {
 	followState?: SocialAccountRowFollowState;
 }
 
+/**
+ * Card-link layout: the row is a <div>; a single <a> wraps the display
+ * name and renders a covering ::after overlay so the whole row is the
+ * profile click target. Inner interactive elements (the follow button)
+ * sit above the overlay via position: relative; z-index: 1, so each
+ * control remains a single, non-nested, focusable element. Mirrors the
+ * pattern used by PostCardLink in client/reader/social/components/post-card/.
+ */
 export function SocialAccountRow( props: SocialAccountRowProps ) {
 	const translate = useTranslate();
 	const { avatarUrl, displayName, handle, biography, profileHref, isSelf, followState } = props;
 
-	const handleFollowAreaClick = ( event: MouseEvent< HTMLDivElement > ) => {
-		event.preventDefault();
-		event.stopPropagation();
-	};
-
 	return (
-		<a className="social-account-row" href={ profileHref }>
+		<div className="social-account-row">
 			<div className="social-account-row__avatar">
 				{ avatarUrl ? <img src={ avatarUrl } alt={ displayName } /> : null }
 			</div>
 			<div className="social-account-row__main">
 				<div className="social-account-row__identity">
-					<span className="social-account-row__display-name">{ displayName }</span>
+					<a className="social-account-row__display-name" href={ profileHref }>
+						{ displayName }
+					</a>
 					<span className="social-account-row__handle">@{ handle }</span>
 					{ followState?.isFollowedBy && (
 						<span className="social-account-row__followed-by-badge">
@@ -50,12 +54,7 @@ export function SocialAccountRow( props: SocialAccountRowProps ) {
 				{ biography ? <div className="social-account-row__bio">{ biography }</div> : null }
 			</div>
 			{ ! isSelf && followState && (
-				<div
-					className="social-account-row__follow"
-					onClick={ handleFollowAreaClick }
-					onKeyDown={ ( e ) => e.stopPropagation() }
-					role="presentation"
-				>
+				<div className="social-account-row__follow">
 					<FollowButton
 						isFollowing={ followState.isFollowing }
 						isFollowedBy={ followState.isFollowedBy }
@@ -67,6 +66,6 @@ export function SocialAccountRow( props: SocialAccountRowProps ) {
 					/>
 				</div>
 			) }
-		</a>
+		</div>
 	);
 }

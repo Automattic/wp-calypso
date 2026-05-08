@@ -70,4 +70,86 @@ describe( 'SocialAccountRow', () => {
 		render( <SocialAccountRow { ...baseProps } biography="" /> );
 		expect( screen.queryByText( 'designer' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'calls onUnfollow when the follow button is clicked while following', async () => {
+		const user = userEvent.setup();
+		const onFollow = jest.fn();
+		const onUnfollow = jest.fn();
+		render(
+			<SocialAccountRow
+				{ ...baseProps }
+				followState={ {
+					isFollowing: true,
+					isFollowedBy: false,
+					onFollow,
+					onUnfollow,
+				} }
+			/>
+		);
+		await user.click( screen.getByRole( 'button', { name: /^Unfollow @alice\.bsky\.social$/i } ) );
+		expect( onUnfollow ).toHaveBeenCalledTimes( 1 );
+		expect( onFollow ).not.toHaveBeenCalled();
+	} );
+
+	it( 'shows "Follow back" when the target follows the viewer', () => {
+		render(
+			<SocialAccountRow
+				{ ...baseProps }
+				followState={ {
+					isFollowing: false,
+					isFollowedBy: true,
+					onFollow: jest.fn(),
+					onUnfollow: jest.fn(),
+				} }
+			/>
+		);
+		expect( screen.getByRole( 'button', { name: /^Follow back$/i } ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not nest the follow button inside the profile link', async () => {
+		const user = userEvent.setup();
+		const onFollow = jest.fn();
+		render(
+			<SocialAccountRow
+				{ ...baseProps }
+				followState={ {
+					isFollowing: false,
+					isFollowedBy: false,
+					onFollow,
+					onUnfollow: jest.fn(),
+				} }
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: /Alice/i } );
+		const button = screen.getByRole( 'button', { name: /^Follow$/i } );
+
+		// The follow button must not be a descendant of the profile anchor —
+		// nested interactive content is invalid HTML and produces an
+		// implementation-defined keyboard / AT story.
+		expect( link.contains( button ) ).toBe( false );
+
+		// Clicking the button does not bubble to the anchor (they are siblings),
+		// so a click on the follow button cannot trigger profile navigation.
+		const linkClick = jest.fn();
+		link.addEventListener( 'click', linkClick );
+		await user.click( button );
+		expect( onFollow ).toHaveBeenCalledTimes( 1 );
+		expect( linkClick ).not.toHaveBeenCalled();
+	} );
+
+	it( 'forwards the handle to the follow button accessible name', () => {
+		render(
+			<SocialAccountRow
+				{ ...baseProps }
+				followState={ {
+					isFollowing: true,
+					isFollowedBy: false,
+					onFollow: jest.fn(),
+					onUnfollow: jest.fn(),
+				} }
+			/>
+		);
+		const button = screen.getByRole( 'button', { name: /alice\.bsky\.social/i } );
+		expect( button ).toHaveAttribute( 'aria-label', 'Unfollow @alice.bsky.social' );
+	} );
 } );

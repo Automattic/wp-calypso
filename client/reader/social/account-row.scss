@@ -1,9 +1,9 @@
 .social-account-row {
+	position: relative;
 	display: flex;
 	gap: 0.75rem;
 	padding: 0.75rem 1rem;
 	color: inherit;
-	text-decoration: none;
 	border-block-end: 1px solid var( --studio-gray-5, #f0f0f0 );
 
 	&:hover {
@@ -38,8 +38,25 @@
 	flex-wrap: wrap;
 }
 
-.social-account-row__display-name {
+// Single real anchor in the row. Its ::after pseudo-element covers the
+// whole row so any click on the row (outside other interactive elements)
+// navigates to the profile. Inner interactive elements (the follow button)
+// sit above this overlay via position: relative; z-index: 1.
+a.social-account-row__display-name {
 	font-weight: 600;
+	color: inherit;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+	}
 }
 
 .social-account-row__handle {
@@ -65,4 +82,6 @@
 .social-account-row__follow {
 	flex: 0 0 auto;
 	align-self: center;
+	position: relative;
+	z-index: 1;
 }
