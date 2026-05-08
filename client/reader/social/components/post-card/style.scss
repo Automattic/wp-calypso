@@ -233,6 +233,11 @@ a.social-post-card-header__timestamp::after {
 	color: inherit;
 	text-decoration: none;
 
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+
 	.social-post-card-timestamp::after {
 		content: "↗";
 		display: inline-block;

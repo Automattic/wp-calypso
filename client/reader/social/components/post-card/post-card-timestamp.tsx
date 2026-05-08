@@ -6,8 +6,8 @@ interface PostCardTimestampProps {
 	post: {
 		created_at: string;
 		indexed_at: string | null;
-		permalink?: string | null;
-		uri?: string;
+		permalink: string;
+		uri: string;
 	};
 }
 
@@ -65,7 +65,8 @@ export function PostCardTimestamp( { post }: PostCardTimestampProps ) {
 		// in-app-thread-or-fallback `_post_clicked` event.
 		analytics.onClick( `calypso_reader_${ analytics.source }_timeline_external_post_clicked`, {
 			connection_id: analytics.connectionId,
-			post_uri: post.uri ?? null,
+			post_uri: post.uri,
+			destination: 'external',
 		} );
 	};
 
@@ -75,6 +76,13 @@ export function PostCardTimestamp( { post }: PostCardTimestampProps ) {
 			href={ post.permalink }
 			target="_blank"
 			rel="noopener noreferrer"
+			aria-label={
+				translate( '%(timestamp)s — view original post (opens in a new tab)', {
+					args: { timestamp: formatted },
+					comment:
+						'Accessible name for the prominent timestamp link on a single social post; "%(timestamp)s" is e.g. "3:17 PM · Apr 28, 2026".',
+				} ) as string
+			}
 			onClick={ handleClick }
 		>
 			{ time }
