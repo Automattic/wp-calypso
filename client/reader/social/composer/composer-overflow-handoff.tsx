@@ -128,12 +128,11 @@ function MoveToEditorButton( {
 					// avoids leaving an orphan draft if the field is missing.
 					const adminUrl =
 						site.options?.admin_url ?? `${ site.URL.replace( /\/$/, '' ) }/wp-admin/`;
-					window.location.assign(
-						addQueryArgs( `${ adminUrl }post.php`, {
-							post: data.ID,
-							action: 'edit',
-						} )
-					);
+					const editorUrl = addQueryArgs( `${ adminUrl }post.php`, {
+						post: data.ID,
+						action: 'edit',
+					} );
+					window.open( editorUrl, '_blank', 'noopener,noreferrer' );
 				},
 				onError: ( error ) => {
 					dispatch(

@@ -198,28 +198,17 @@ describe( 'ComposerOverflowHandoff — multi-site picker', () => {
 } );
 
 describe( 'ComposerOverflowHandoff — Move to editor click', () => {
-	let originalLocation: Location;
-	let assignSpy: jest.Mock;
+	let openSpy: jest.SpyInstance;
 
 	beforeEach( () => {
-		originalLocation = window.location;
-		assignSpy = jest.fn();
-		Object.defineProperty( window, 'location', {
-			configurable: true,
-			value: { assign: assignSpy },
-			writable: true,
-		} );
+		openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 	} );
 
 	afterEach( () => {
-		Object.defineProperty( window, 'location', {
-			configurable: true,
-			value: originalLocation,
-			writable: true,
-		} );
+		openSpy.mockRestore();
 	} );
 
-	it( 'creates a draft post and navigates to wp-admin on success', async () => {
+	it( 'creates a draft post and opens wp-admin in a new tab on success', async () => {
 		const user = userEvent.setup();
 		mockSitesQuery( [
 			{
@@ -256,8 +245,10 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		await user.click( button );
 
 		await waitFor( () =>
-			expect( assignSpy ).toHaveBeenCalledWith(
-				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit'
+			expect( openSpy ).toHaveBeenCalledWith(
+				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
+				'_blank',
+				'noopener,noreferrer'
 			)
 		);
 	} );
@@ -298,7 +289,7 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		await user.click( button );
 
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		expect( assignSpy ).not.toHaveBeenCalled();
+		expect( openSpy ).not.toHaveBeenCalled();
 	} );
 } );
 
@@ -337,11 +328,7 @@ describe( 'ComposerOverflowHandoff — picker disabled during mutation', () => {
 			return null;
 		}
 
-		const originalLocation = window.location;
-		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
-			writable: true,
-		} );
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		try {
 			renderWithComposer(
@@ -360,10 +347,7 @@ describe( 'ComposerOverflowHandoff — picker disabled during mutation', () => {
 
 			expect( combobox ).toBeDisabled();
 		} finally {
-			Object.defineProperty( window, 'location', {
-				value: originalLocation,
-				writable: true,
-			} );
+			openSpy.mockRestore();
 		}
 	} );
 } );
