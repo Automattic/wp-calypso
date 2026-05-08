@@ -6,10 +6,10 @@ import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { READER_UNFOLLOW } from 'calypso/state/reader/action-types';
 import { getFeedByFeedUrl } from 'calypso/state/reader/feeds/selectors';
 import { follow } from 'calypso/state/reader/follows/actions';
-import { getSiteByFeedUrl } from 'calypso/state/reader/sites/selectors';
 
 export const requestUnfollow = ( action ) =>
 	http( {
@@ -38,9 +38,22 @@ export const fromApi = ( data ) => {
 
 export const receiveUnfollow = ( action ) => bypassDataLayer( action );
 
+const findSiteByFeedUrl = ( queryClient, feedUrl ) => {
+	if ( ! queryClient ) {
+		return undefined;
+	}
+	const entries = queryClient.getQueriesData( { queryKey: [ 'read', 'sites' ] } );
+	for ( const [ , data ] of entries ) {
+		if ( data && data.feed_URL === feedUrl ) {
+			return data;
+		}
+	}
+	return undefined;
+};
+
 export const unfollowError = ( action ) => ( dispatch, getState ) => {
 	const feedUrl = action.payload.feedUrl;
-	const site = getSiteByFeedUrl( getState(), feedUrl );
+	const site = findSiteByFeedUrl( getCalypsoQueryClient(), feedUrl );
 	const feed = getFeedByFeedUrl( getState(), feedUrl );
 	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
 

@@ -4,7 +4,7 @@ import {
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_UNBLOCK,
-	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { items, currentPage, lastPage, inflightPages } from '../reducer';
 
@@ -41,7 +41,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {
-				type: READER_SITE_REQUEST_SUCCESS,
+				type: READER_SITE_RECEIVE,
 				payload: { ID: 123, is_blocked: true },
 			} );
 
@@ -52,7 +52,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( { 123: true } );
 
 			const state = items( original, {
-				type: READER_SITE_REQUEST_SUCCESS,
+				type: READER_SITE_RECEIVE,
 				payload: { ID: 123, is_blocked: false },
 			} );
 
@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {
-				type: READER_SITE_REQUEST_SUCCESS,
+				type: READER_SITE_RECEIVE,
 				payload: { ID: 123, is_blocked: false },
 			} );
 

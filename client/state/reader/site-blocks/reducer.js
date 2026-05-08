@@ -3,7 +3,7 @@ import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_BLOCKS_REQUEST,
-	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_RECEIVE,
 	READER_SITE_UNBLOCK,
 } from 'calypso/state/reader/action-types';
 import { combineReducers } from 'calypso/state/utils';
@@ -19,7 +19,7 @@ export const items = ( state = {}, action ) => {
 		case READER_SITE_UNBLOCK: {
 			return omit( state, action.payload.siteId );
 		}
-		case READER_SITE_REQUEST_SUCCESS: {
+		case READER_SITE_RECEIVE: {
 			if ( ! action.payload.is_blocked ) {
 				if ( ! state[ action.payload.ID ] ) {
 					return state;
