@@ -61,6 +61,8 @@ export interface CardData {
 	site_ID: number;
 	site_URL: string;
 	site_name: string;
+	/** Canonical feed URL (from curated backfill or `/read/tags/cards` + read/feed). */
+	feed_URL: string;
 }
 
 interface Card {
@@ -144,6 +146,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				? recommendedBlogsCard.data.map( ( site: CardData & { URL?: string } ) => ( {
 						...site,
 						site_URL: site.URL || site.site_URL,
+						feed_URL: site.feed_URL ?? '',
 				  } ) )
 				: [];
 		},
@@ -159,7 +162,9 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	// flash the "No recommendations available" placeholder.
 	const isLoading = tagsLoading || apiLoading;
 
-	const combinedRecommendations = useMemo( () => {
+	// Candidate list before enriching `feed_URL` from `readFeedQuery` results
+	// (the `/read/tags/cards` payload sometimes omits `feed_URL` on API rows).
+	const baseCombinedRecommendations = useMemo( () => {
 		if ( isLoading ) {
 			return [];
 		}
@@ -213,10 +218,24 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 
 	// Fetch feed metadata via React Query and bridge into Redux (replaces deprecated QueryReaderFeed).
 	const feedQueries = useQueries( {
-		queries: combinedRecommendations.map( ( site ) => ( {
+		queries: baseCombinedRecommendations.map( ( site ) => ( {
 			...readFeedQuery( site.feed_ID ),
 		} ) ),
 	} );
+
+	const combinedRecommendations = useMemo( () => {
+		return baseCombinedRecommendations.map( ( site, index ) => {
+			const query = feedQueries[ index ];
+			const fromFeed =
+				query?.isSuccess && query.data && typeof query.data.feed_URL === 'string'
+					? query.data.feed_URL
+					: '';
+			return {
+				...site,
+				feed_URL: site.feed_URL || fromFeed || site.site_URL,
+			};
+		} );
+	}, [ baseCombinedRecommendations, feedQueries ] );
 
 	const feedQueriesStateKey = useMemo(
 		() =>
@@ -231,7 +250,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 
 	useEffect( () => {
 		feedQueries.forEach( ( query, index ) => {
-			const feedId = combinedRecommendations[ index ]?.feed_ID;
+			const feedId = baseCombinedRecommendations[ index ]?.feed_ID;
 			if ( feedId == null ) {
 				return;
 			}
@@ -254,7 +273,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		} );
 		// feedQueries is read from the latest render; feedQueriesStateKey bumps when any query status changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ combinedRecommendations, dispatch, feedQueriesStateKey ] );
+	}, [ baseCombinedRecommendations, dispatch, feedQueriesStateKey ] );
 
 	const readerFeedItems = useSelector(
 		( state: AppState ): ReaderItemMap => state.reader?.feeds?.items ?? {}

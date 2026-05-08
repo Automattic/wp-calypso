@@ -11,6 +11,8 @@ const makeBlogs = ( prefix: string, count: number ) =>
 		site_ID: 1000 + parseInt( `${ prefix }${ i + 1 }`, 10 ),
 		site_URL: `https://${ prefix }-${ i + 1 }.example`,
 		site_name: `${ prefix }-${ i + 1 }`,
+		feed_URL: `https://${ prefix }-${ i + 1 }.example/feed`,
+		has_icon: true,
 	} ) );
 
 const fixture: CuratedBlogsList = {

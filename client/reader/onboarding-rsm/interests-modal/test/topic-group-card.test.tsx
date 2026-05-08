@@ -27,11 +27,46 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 } ) );
 
 const blogs: CuratedBlog[] = [
-	{ feed_ID: 1, site_ID: 11, site_URL: 'https://a.example', site_name: 'A' },
-	{ feed_ID: 2, site_ID: 12, site_URL: 'https://b.example', site_name: 'B' },
-	{ feed_ID: 3, site_ID: 13, site_URL: 'https://c.example', site_name: 'C' },
-	{ feed_ID: 4, site_ID: 14, site_URL: 'https://d.example', site_name: 'D' },
-	{ feed_ID: 5, site_ID: 15, site_URL: 'https://e.example', site_name: 'E' },
+	{
+		feed_ID: 1,
+		site_ID: 11,
+		site_URL: 'https://a.example',
+		site_name: 'A',
+		feed_URL: 'https://a.example/feed',
+		has_icon: true,
+	},
+	{
+		feed_ID: 2,
+		site_ID: 12,
+		site_URL: 'https://b.example',
+		site_name: 'B',
+		feed_URL: 'https://b.example/feed',
+		has_icon: true,
+	},
+	{
+		feed_ID: 3,
+		site_ID: 13,
+		site_URL: 'https://c.example',
+		site_name: 'C',
+		feed_URL: 'https://c.example/feed',
+		has_icon: true,
+	},
+	{
+		feed_ID: 4,
+		site_ID: 14,
+		site_URL: 'https://d.example',
+		site_name: 'D',
+		feed_URL: 'https://d.example/feed',
+		has_icon: true,
+	},
+	{
+		feed_ID: 5,
+		site_ID: 15,
+		site_URL: 'https://e.example',
+		site_name: 'E',
+		feed_URL: 'https://e.example/feed',
+		has_icon: true,
+	},
 ];
 
 const defaultProps = {

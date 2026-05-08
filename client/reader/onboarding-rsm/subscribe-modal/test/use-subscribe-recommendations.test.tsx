@@ -30,12 +30,36 @@ jest.mock( 'i18n-calypso', () => {
 jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 	curatedBlogs: {
 		food: [
-			{ feed_ID: 100, site_ID: 0, site_URL: 'https://food1.example', site_name: 'Food 1' },
-			{ feed_ID: 101, site_ID: 1001, site_URL: 'https://food2.example', site_name: 'Food 2' },
+			{
+				feed_ID: 100,
+				site_ID: 0,
+				site_URL: 'https://food1.example',
+				site_name: 'Food 1',
+				feed_URL: 'https://food1.example/feed',
+			},
+			{
+				feed_ID: 101,
+				site_ID: 1001,
+				site_URL: 'https://food2.example',
+				site_name: 'Food 2',
+				feed_URL: 'https://food2.example/feed',
+			},
 		],
 		drinks: [
-			{ feed_ID: 200, site_ID: 0, site_URL: 'https://drinks1.example', site_name: 'Drinks 1' },
-			{ feed_ID: 201, site_ID: 2001, site_URL: 'https://drinks2.example', site_name: 'Drinks 2' },
+			{
+				feed_ID: 200,
+				site_ID: 0,
+				site_URL: 'https://drinks1.example',
+				site_name: 'Drinks 1',
+				feed_URL: 'https://drinks1.example/feed',
+			},
+			{
+				feed_ID: 201,
+				site_ID: 2001,
+				site_URL: 'https://drinks2.example',
+				site_name: 'Drinks 2',
+				feed_URL: 'https://drinks2.example/feed',
+			},
 		],
 	},
 } ) );
@@ -195,6 +219,7 @@ describe( 'useSubscribeRecommendations', () => {
 						site_ID: 9999,
 						site_URL: 'https://api.example',
 						site_name: 'API only',
+						feed_URL: 'https://api.example/feed',
 					},
 				] )
 			);
@@ -218,12 +243,14 @@ describe( 'useSubscribeRecommendations', () => {
 						site_ID: 0,
 						site_URL: 'https://food1.example',
 						site_name: 'Food 1 (api copy)',
+						feed_URL: 'https://food1.example/feed',
 					},
 					{
 						feed_ID: 999,
 						site_ID: 9999,
 						site_URL: 'https://api.example',
 						site_name: 'API only',
+						feed_URL: 'https://api.example/feed',
 					},
 				] )
 			);
@@ -245,6 +272,7 @@ describe( 'useSubscribeRecommendations', () => {
 						site_ID: 0,
 						site_URL: 'https://drinks1-api.example',
 						site_name: 'Drinks 1 (api copy)',
+						feed_URL: 'https://drinks1-api.example/feed',
 					},
 				] )
 			);
