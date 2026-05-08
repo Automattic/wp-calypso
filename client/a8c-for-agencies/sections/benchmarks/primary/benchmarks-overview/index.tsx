@@ -12,6 +12,7 @@ import useFetchAgencyBenchmark from '../../hooks/use-fetch-agency-benchmark';
 import useFetchAgencyBenchmarksList from '../../hooks/use-fetch-agency-benchmarks-list';
 import useFetchBenchmarksConfig from '../../hooks/use-fetch-benchmarks-config';
 import BenchmarksEmptyState from './empty-state';
+import HowToReadCard from './how-to-read-card';
 import BenchmarkStatsGrid from './stats-grid';
 import SubmissionBanner from './submission-banner';
 import SubmissionModal from './submission-modal';
@@ -63,6 +64,7 @@ function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 								onSubmitClick={ () => setIsModalOpen( true ) }
 							/>
 						) }
+						<HowToReadCard />
 						<BenchmarkStatsGrid />
 					</>
 				) }
