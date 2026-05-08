@@ -75,7 +75,7 @@ test( 'renders for an enrolled user without a saved color scheme', async () => {
 	} );
 
 	expect(
-		await screen.findByText( /Dark mode is now available in the Hosting Dashboard/i )
+		await screen.findByText( /Dark mode support is now available in the dashboard/i )
 	).toBeInTheDocument();
 	expect( screen.getByRole( 'link', { name: 'Appearance settings' } ) ).toHaveAttribute(
 		'href',
@@ -91,7 +91,7 @@ test( 'renders after the user has selected light mode', async () => {
 	} );
 
 	expect(
-		await screen.findByText( /Dark mode is now available in the Hosting Dashboard/i )
+		await screen.findByText( /Dark mode support is now available in the dashboard/i )
 	).toBeInTheDocument();
 } );
 
@@ -102,7 +102,7 @@ test( 'renders after the user has selected system mode', async () => {
 	} );
 
 	expect(
-		await screen.findByText( /Dark mode is now available in the Hosting Dashboard/i )
+		await screen.findByText( /Dark mode support is now available in the dashboard/i )
 	).toBeInTheDocument();
 } );
 
@@ -113,7 +113,7 @@ test( 'renders when the saved color scheme is invalid', async () => {
 	} );
 
 	expect(
-		await screen.findByText( /Dark mode is now available in the Hosting Dashboard/i )
+		await screen.findByText( /Dark mode support is now available in the dashboard/i )
 	).toBeInTheDocument();
 	expect( document.documentElement.dataset.theme ).toBe( 'light' );
 } );
@@ -127,7 +127,7 @@ test( 'renders for a forced opted-in user without a saved color scheme', async (
 	} );
 
 	expect(
-		await screen.findByText( /Dark mode is now available in the Hosting Dashboard/i )
+		await screen.findByText( /Dark mode support is now available in the dashboard/i )
 	).toBeInTheDocument();
 } );
 
@@ -142,7 +142,7 @@ test( 'renders when the forced opt-in flag enrolls the user', async () => {
 	} );
 
 	expect(
-		await screen.findByText( /Dark mode is now available in the Hosting Dashboard/i )
+		await screen.findByText( /Dark mode support is now available in the dashboard/i )
 	).toBeInTheDocument();
 } );
 
@@ -154,7 +154,7 @@ test( 'does not render when the announcement was already dismissed', async () =>
 
 	await waitFor( () => {
 		expect(
-			screen.queryByText( /Dark mode is now available in the Hosting Dashboard/i )
+			screen.queryByText( /Dark mode support is now available in the dashboard/i )
 		).not.toBeInTheDocument();
 	} );
 } );
@@ -169,7 +169,7 @@ test( 'does not render when the user is not enrolled in the Hosting Dashboard', 
 
 	await waitFor( () => {
 		expect(
-			screen.queryByText( /Dark mode is now available in the Hosting Dashboard/i )
+			screen.queryByText( /Dark mode support is now available in the dashboard/i )
 		).not.toBeInTheDocument();
 	} );
 } );
@@ -203,7 +203,7 @@ test( 'dismisses without saving a color-scheme preference', async () => {
 			queryClient.getQueryData< Record< string, unknown > >( rawUserPreferencesQuery().queryKey )
 		).toHaveProperty( DISMISSED_PREFERENCE );
 		expect(
-			screen.queryByText( /Dark mode is now available in the Hosting Dashboard/i )
+			screen.queryByText( /Dark mode support is now available in the dashboard/i )
 		).not.toBeInTheDocument();
 	} );
 } );

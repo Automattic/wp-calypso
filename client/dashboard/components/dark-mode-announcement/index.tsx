@@ -53,7 +53,7 @@ function DarkModeAnnouncementContent( { tracksContext }: { tracksContext: string
 			/>
 			{ createInterpolateElement(
 				__(
-					'Dark mode is now available in the Hosting Dashboard. Test it from <appearanceLink>Appearance settings</appearanceLink>.'
+					'Dark mode support is now available in the dashboard. You can change the current appearance style from the <appearanceLink>Appearance settings</appearanceLink>.'
 				),
 				{
 					appearanceLink: (
