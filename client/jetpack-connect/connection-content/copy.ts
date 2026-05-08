@@ -85,70 +85,74 @@ function getLoginSubtitles(): Record< SubtitleScenario, string > {
  * Pre-composed authorize-surface subtitles, one per scenario.
  *
  * Template (internal, not exposed to translators):
- *   `Your {site|store} is registered with WordPress.com — connect this
- *    account to {benefit}.`
+ *   `Your {site|store} is registered with WordPress.com — connecting your
+ *    account gives it secure access to features from {plugin names}.`
  *
- * The auth page lives one step after the login page in the user journey,
- * so the verb shifts from "finish connecting" to the more immediate
- * "connect this account" — the user is one click away from approving.
- * Otherwise the subtitle structure mirrors the login table; same scenario
- * reuse rules (`JETPACK_MULTI` shares `JETPACK_FULL`).
+ * The auth page is the only surface that also renders the dynamic
+ * `<FeaturesSection />` underneath the subtitle. Listing what each plugin
+ * does in the subtitle would just restate the cards — instead the subtitle
+ * answers the implicit "but my site is already registered, isn't that
+ * enough?" question by naming the active plugins and framing connection
+ * as the secure-access bridge between them and the user's WordPress.com
+ * account. The cards then explain *what* those features are.
  *
- * The plan originally proposed a `for {Site Name}` tail with a `%s`
- * placeholder. Dropped for PR 3: long site names break the BrandHeader
- * column at narrow widths, the site context is already established by
- * the URL, and a placeholder per string would add translator overhead
- * we don't yet need. Easy to add back if it turns out to matter.
+ * Login and signup surfaces don't render cards, so their subtitle tables
+ * (`getLoginSubtitles`, `getSignupSubtitles`) keep the richer
+ * benefit-list framing — that's where the value-prop has to land.
+ *
+ * Same scenario-reuse rules as the other tables: `JETPACK_MULTI` shares
+ * `JETPACK_FULL`'s string (the precise plugin mix is delivered in the
+ * Features section instead).
  */
 function getAuthSubtitles(): Record< SubtitleScenario, string > {
 	const jetpackFull = __(
-		'Your site is registered with WordPress.com — connect this account to activate Jetpack with backups, security, and growth tools.'
+		'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack.'
 	);
 
 	return {
 		A4A_ONLY: __(
-			'Your site is registered with WordPress.com — connect this account to manage it from your Automattic for Agencies dashboard.'
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Automattic for Agencies.'
 		),
 		A4A_WOO: __(
-			'Your store is registered with WordPress.com — connect this account to manage it from Automattic for Agencies, use the Woo mobile app, and access store analytics.'
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from Automattic for Agencies and WooCommerce.'
 		),
 		A4A_JETPACK: __(
-			'Your site is registered with WordPress.com — connect this account to manage it from Automattic for Agencies and activate Jetpack.'
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Automattic for Agencies and Jetpack.'
 		),
 		ALL_THREE: __(
-			'Your store is registered with WordPress.com — connect this account to use the Automattic for Agencies dashboard, the Woo mobile app, and Jetpack.'
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from Automattic for Agencies, WooCommerce, and Jetpack.'
 		),
 		WOO_ONLY: __(
-			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app and access your store analytics.'
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from WooCommerce.'
 		),
 		WOO_AND_PAY: __(
-			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and enable WooPayments for payment processing.'
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from WooCommerce and WooPayments.'
 		),
 		WOO_JETPACK: __(
-			'Your store is registered with WordPress.com — connect this account to use the Woo mobile app, access your store analytics, and activate Jetpack.'
+			'Your store is registered with WordPress.com — connecting your account gives it secure access to features from WooCommerce and Jetpack.'
 		),
 		JETPACK_FULL: jetpackFull,
 		JETPACK_BACKUP: __(
-			'Your site is registered with WordPress.com — connect this account to enable real-time backups and one-click restore via Jetpack VaultPress Backup.'
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack VaultPress Backup.'
 		),
 		JETPACK_PROTECT: __(
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack Protect's security scanning and malware protection."
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack Protect.'
 		),
 		JETPACK_BOOST: __(
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack Boost's site performance optimization."
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack Boost.'
 		),
 		JETPACK_SEARCH: __(
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack Search's instant results."
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack Search.'
 		),
 		JETPACK_SOCIAL: __(
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack Social's automated post sharing."
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack Social.'
 		),
 		JETPACK_VIDEOPRESS: __(
-			"Your site is registered with WordPress.com — connect this account to enable Jetpack VideoPress's ad-free video hosting."
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack VideoPress.'
 		),
 		JETPACK_MULTI: jetpackFull,
 		OTHER_ONLY: __(
-			'Your site is registered with WordPress.com — connect this account to power your active plugins.'
+			'Your site is registered with WordPress.com — connecting your account gives it secure access to the features your active plugins need.'
 		),
 	};
 }
