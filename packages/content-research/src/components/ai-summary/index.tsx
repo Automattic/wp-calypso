@@ -2,7 +2,6 @@ import { Button, Icon, Spinner } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { arrowLeft, chevronDown, chevronUp } from '@wordpress/icons';
-import { trackContentResearchSummarize } from '../../utils/tracking';
 import type { ResearchSummary } from '../../types';
 
 const PROGRESS_STEPS = [
@@ -63,32 +62,25 @@ function CollapsibleSection( {
 }
 
 interface AiSummaryProps {
-	topic: string;
 	summary?: ResearchSummary;
 	isLoading: boolean;
 	onSummarize: () => void;
 	onClose: () => void;
-	resultCount: number;
+	hasResults: boolean;
 	selectedCount: number;
 	isExpanded: boolean;
 }
 
 export default function AiSummary( {
-	topic,
 	summary,
 	isLoading,
 	onSummarize,
 	onClose,
-	resultCount,
+	hasResults,
 	selectedCount,
 	isExpanded,
 }: AiSummaryProps ) {
 	const progressMessage = useProgressMessage( isLoading );
-
-	const handleSummarize = () => {
-		trackContentResearchSummarize( topic, resultCount );
-		onSummarize();
-	};
 
 	if ( ( ! summary && ! isLoading ) || ! isExpanded ) {
 		const label =
@@ -101,7 +93,7 @@ export default function AiSummary( {
 				: __( 'Summarize', 'content-research' );
 		return (
 			<div className="content-research-ai-summary">
-				<Button variant="secondary" onClick={ handleSummarize } disabled={ selectedCount === 0 }>
+				<Button variant="secondary" onClick={ onSummarize } disabled={ ! hasResults }>
 					{ label }
 				</Button>
 			</div>

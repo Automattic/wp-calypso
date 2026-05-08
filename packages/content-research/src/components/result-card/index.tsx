@@ -1,6 +1,6 @@
 import { CheckboxControl, ExternalLink } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { trackContentResearchResultClick } from '../../utils/tracking';
 import type { ResearchResult } from '../../types';
 
@@ -18,6 +18,8 @@ function getSourceAbbreviation( source: string ): string {
 			return 'WP';
 		case 'googlenews':
 			return 'GN';
+		case 'polymarket':
+			return 'PM';
 		default:
 			return source.slice( 0, 2 ).toUpperCase();
 	}
@@ -31,6 +33,8 @@ function getSourceLabel( source: string ): string {
 			return 'WordPress.com';
 		case 'googlenews':
 			return 'Google News';
+		case 'polymarket':
+			return 'Polymarket';
 		default:
 			return source;
 	}
@@ -56,18 +60,29 @@ function formatTimestamp( timestamp?: string ): string {
 	}
 
 	const date = new Date( timestamp );
-	const now = new Date();
-	const diffMs = now.getTime() - date.getTime();
+	if ( isNaN( date.getTime() ) ) {
+		return '';
+	}
+
+	const diffMs = Date.now() - date.getTime();
 	const diffHours = Math.floor( diffMs / ( 1000 * 60 * 60 ) );
 
 	if ( diffHours < 1 ) {
 		return __( 'just now', 'content-research' );
 	}
 	if ( diffHours < 24 ) {
-		return `${ diffHours }h ago`;
+		return sprintf(
+			/* translators: %d: number of hours */
+			_n( '%dh ago', '%dh ago', diffHours, 'content-research' ),
+			diffHours
+		);
 	}
 	const diffDays = Math.floor( diffHours / 24 );
-	return `${ diffDays }d ago`;
+	return sprintf(
+		/* translators: %d: number of days */
+		_n( '%dd ago', '%dd ago', diffDays, 'content-research' ),
+		diffDays
+	);
 }
 
 export default function ResultCard( { result, isSelected, onToggleSelect }: ResultCardProps ) {

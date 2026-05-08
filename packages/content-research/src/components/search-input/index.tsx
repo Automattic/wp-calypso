@@ -32,11 +32,6 @@ export default function SearchInput( { onSearch, isLoading }: SearchInputProps )
 				value={ value }
 				onChange={ setValue }
 				placeholder={ __( 'Enter a topic to research…', 'content-research' ) }
-				onKeyDown={ ( event: React.KeyboardEvent ) => {
-					if ( event.key === 'Enter' ) {
-						handleSubmit();
-					}
-				} }
 			/>
 			<Button
 				variant="primary"
