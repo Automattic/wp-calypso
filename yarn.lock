@@ -1432,7 +1432,6 @@ __metadata:
     "@wordpress/abilities": "npm:^0.4.0"
     "@wordpress/api-fetch": "npm:^7.23.0"
     "@wordpress/base-styles": "npm:^5.23.0"
-    "@wordpress/blocks": "npm:^15.23.0"
     "@wordpress/components": "npm:^30.9.0"
     "@wordpress/compose": "npm:^7.2.0"
     "@wordpress/core-data": "npm:^7.23.0"

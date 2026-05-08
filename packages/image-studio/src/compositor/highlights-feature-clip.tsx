@@ -46,11 +46,28 @@ export function HighlightsFeatureClip( { id, brief }: HighlightsFeatureClipProps
 	const titleCardDurationMs = isTextOnly
 		? TEXT_ONLY_TITLE_CARD_DURATION_MS
 		: HIGHLIGHTS_TITLE_CARD_DURATION_MS;
+
+	// totalMs must match the natural duration of the rendered tree:
+	// - Sum each group's duration (entries × scene duration, minus inner
+	//   text-rotation overlaps for multi-entry groups).
+	// - Add the title card.
+	// - Subtract one TRANSITION_OVERLAP_MS per gap between top-level items
+	//   (groups.length gaps: between adjacent groups + between the last
+	//   group and the title card).
+	// Computing this from `scenes.length` instead of `groups.length`
+	// underestimates totalMs when consecutive scenes share an image and
+	// truncates the title card at the end of the clip.
+	const groups = groupScenesByImage( scenes );
+	const groupTotalMs = groups.reduce(
+		( sum, group ) =>
+			sum +
+			group.entries.length * HIGHLIGHTS_SCENE_DURATION_MS -
+			Math.max( 0, group.entries.length - 1 ) * TEXT_TRANSITION_OVERLAP_MS,
+		0
+	);
 	const totalMs = isTextOnly
 		? titleCardDurationMs
-		: scenes.length * HIGHLIGHTS_SCENE_DURATION_MS +
-		  titleCardDurationMs -
-		  scenes.length * TRANSITION_OVERLAP_MS;
+		: groupTotalMs + titleCardDurationMs - groups.length * TRANSITION_OVERLAP_MS;
 
 	const audioBed = brief.audioBed ?? 'silent';
 
@@ -81,28 +98,10 @@ export function HighlightsFeatureClip( { id, brief }: HighlightsFeatureClipProps
 					installAudioBed( element as SyntheticAudioTimegroup, audioBed );
 				}
 				installSceneProgressDriver( element as FrameTaskTimegroup );
-
-				const rect = element.getBoundingClientRect();
-				const computed = typeof window !== 'undefined' ? window.getComputedStyle( element ) : null;
-				// eslint-disable-next-line no-console
-				console.log( '[HighlightsFeatureClip] composition-root measured:', {
-					offsetWidth: element.offsetWidth,
-					offsetHeight: element.offsetHeight,
-					rectWidth: rect.width,
-					rectHeight: rect.height,
-					computedDisplay: computed?.display,
-					computedWidth: computed?.width,
-					computedHeight: computed?.height,
-					parentDisplay:
-						element.parentElement &&
-						typeof window !== 'undefined' &&
-						window.getComputedStyle( element.parentElement ).display,
-					isConnected: element.isConnected,
-				} );
 			} }
 		>
 			<Timegroup mode="sequence" overlapMs={ TRANSITION_OVERLAP_MS } className="timeline-sequence">
-				{ groupScenesByImage( scenes ).map( ( group, groupIdx ) => {
+				{ groups.map( ( group, groupIdx ) => {
 					const groupKey = `${ group.imageUrl ?? 'text' }-group-${ groupIdx }`;
 					const accent = TEXT_SCENE_ACCENTS[ groupIdx % TEXT_SCENE_ACCENTS.length ];
 

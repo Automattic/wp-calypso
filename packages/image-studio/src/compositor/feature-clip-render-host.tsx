@@ -172,23 +172,12 @@ export function FeatureClipRenderHost() {
 		}
 		prefetchedRequestIdRef.current = requestId;
 
-		const prefetchStartedAt = performance.now();
 		// Surface this phase to the sidebar progress panel so the user sees
 		// "Reading post images" during the prefetch (it can take seconds).
 		setFeatureClipProgressPhase( 'analyzing' );
-		// eslint-disable-next-line no-console
-		console.log( '[FeatureClipRenderHost] phase:prefetching-images', {
-			requestId,
-			sceneCount: pendingRender.brief.scenes.length,
-		} );
 		( async () => {
 			try {
 				const resolved = await resolveBriefImages( pendingRender.brief );
-				// eslint-disable-next-line no-console
-				console.log( '[FeatureClipRenderHost] prefetch_complete', {
-					requestId,
-					prefetchMs: Math.round( performance.now() - prefetchStartedAt ),
-				} );
 				setResolvedBrief( { requestId, brief: resolved } );
 				setMountedRequestId( requestId );
 			} catch ( error ) {
@@ -222,21 +211,6 @@ export function FeatureClipRenderHost() {
 		const brief = pendingRender.brief;
 		const startedAt = performance.now();
 
-		const log = ( phase: string, extra?: Record< string, unknown > ) => {
-			const sinceStart = Math.round( performance.now() - startedAt );
-			// eslint-disable-next-line no-console
-			console.log( `[FeatureClipRenderHost] ${ phase } +${ sinceStart }ms`, {
-				requestId,
-				...( extra ?? {} ),
-			} );
-		};
-
-		log( 'render_request_received', {
-			style: brief.style,
-			sceneCount: brief.scenes.length,
-			titleCard: brief.titleCard?.copy,
-		} );
-
 		trackFeatureClipRenderStarted( {
 			style: brief.style,
 			sceneCount: brief.scenes.length,
@@ -245,7 +219,6 @@ export function FeatureClipRenderHost() {
 		const run = async () => {
 			try {
 				setFeatureClipProgressPhase( 'composing' );
-				log( 'phase:composing' );
 				// Wait two animation frames so EditFrame mounts the timegroup
 				// before we ask it to render.
 				await new Promise< void >( ( resolve ) =>
@@ -263,8 +236,6 @@ export function FeatureClipRenderHost() {
 				}
 
 				setFeatureClipProgressPhase( 'rendering' );
-				const renderStartedAt = performance.now();
-				log( 'phase:rendering' );
 
 				// Throttled bridge from EditFrame's per-frame onProgress to the
 				// store. Closed over `cancelled` so we stop dispatching once the
@@ -302,24 +273,14 @@ export function FeatureClipRenderHost() {
 				if ( cancelled ) {
 					return;
 				}
-				const renderMs = Math.round( performance.now() - renderStartedAt );
 
 				const blob = renderResultToBlob( result );
-				log( 'render_complete', { renderMs, outputBytes: blob.size } );
 
 				setFeatureClipProgressPhase( 'uploading' );
-				const uploadStartedAt = performance.now();
-				log( 'phase:uploading' );
 				const attachment = await uploadFeatureClipBlob( blob );
 				if ( cancelled ) {
 					return;
 				}
-				const uploadMs = Math.round( performance.now() - uploadStartedAt );
-				log( 'upload_complete', {
-					uploadMs,
-					attachmentId: attachment.id,
-					durationSeconds: attachment.durationSeconds,
-				} );
 
 				// Swap the canvas inline. The orchestrator does NOT call
 				// image-studio/update-canvas-video for the photo path — that tool
@@ -343,15 +304,6 @@ export function FeatureClipRenderHost() {
 					isAnnotated: false,
 				} );
 
-				const totalMs = Math.round( performance.now() - startedAt );
-				log( 'render_done_total', {
-					totalMs,
-					renderMs,
-					uploadMs,
-					outputBytes: blob.size,
-					attachmentId: attachment.id,
-				} );
-
 				completeFeatureClipRender( {
 					requestId,
 					attachmentId: attachment.id,
@@ -370,7 +322,9 @@ export function FeatureClipRenderHost() {
 					return;
 				}
 				const message = error instanceof Error ? error.message : 'Render failed.';
-				log( 'render_failed', {
+				// eslint-disable-next-line no-console
+				console.error( '[FeatureClipRenderHost] render_failed', {
+					requestId,
 					message,
 					totalMs: Math.round( performance.now() - startedAt ),
 				} );
