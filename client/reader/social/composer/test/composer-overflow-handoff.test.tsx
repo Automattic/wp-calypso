@@ -268,3 +268,69 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		expect( assignSpy ).not.toHaveBeenCalled();
 	} );
 } );
+
+describe( 'ComposerOverflowHandoff — picker disabled during mutation', () => {
+	it( 'disables the combobox while the draft is saving', async () => {
+		const user = userEvent.setup();
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'A',
+				slug: 'a.wordpress.com',
+				URL: 'https://a.wordpress.com',
+				site_migration: { in_progress: false, is_complete: false },
+				options: { admin_url: 'https://a.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+			{
+				ID: 200,
+				name: 'B',
+				slug: 'b.wordpress.com',
+				URL: 'https://b.wordpress.com',
+				site_migration: { in_progress: false, is_complete: false },
+				options: { admin_url: 'https://b.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+		] );
+		nock( ORIGIN )
+			.get( /\/rest\/v1\.\d+\/me\/settings/ )
+			.reply( 200, { primary_site_ID: 100 } );
+		nock( ORIGIN )
+			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
+			.delay( 200 )
+			.reply( 200, { ID: 9, site_ID: 100, URL: 'https://a.wordpress.com/?p=9' } );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		const originalLocation = window.location;
+		Object.defineProperty( window, 'location', {
+			value: { ...originalLocation, assign: jest.fn() },
+			writable: true,
+		} );
+
+		try {
+			renderWithComposer(
+				<>
+					<Probe />
+					<ComposerOverflowHandoff text="hi" />
+				</>,
+				{ withMode: true }
+			);
+
+			act( () => composer!.markOverLimit() );
+
+			const combobox = await screen.findByRole( 'combobox' );
+			const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+			await user.click( button );
+
+			expect( combobox ).toBeDisabled();
+		} finally {
+			Object.defineProperty( window, 'location', {
+				value: originalLocation,
+				writable: true,
+			} );
+		}
+	} );
+} );

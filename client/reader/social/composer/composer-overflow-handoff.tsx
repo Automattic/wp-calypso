@@ -6,7 +6,7 @@ import { Button } from '@wordpress/components';
 import { DataForm, type Field } from '@wordpress/dataviews';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PreferencesLoginSiteDropdown from 'calypso/dashboard/me/preferences-primary-site/site-dropdown';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -69,29 +69,34 @@ function MultiSiteHandoffForm( {
 		selectedSiteId: defaultSiteId,
 	} );
 
-	const fields: Field< OverflowFormData >[] = [
-		{
-			id: 'selectedSiteId',
-			label: '',
-			Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-				const { id, getValue } = field;
-				const value = getValue( { item: data } )?.toString( 10 ) ?? '';
-				return (
-					<PreferencesLoginSiteDropdown
-						sites={ sites }
-						value={ value }
-						onChange={ ( newValue ) => {
-							if ( newValue ) {
-								onChange( { [ id ]: parseInt( newValue, 10 ) } );
-							}
-						} }
-						label=""
-						hideLabelFromVision={ hideLabelFromVision }
-					/>
-				);
+	const { mutate, isPending } = useMutation( saveDraftMutation() );
+
+	const fields = useMemo< Field< OverflowFormData >[] >(
+		() => [
+			{
+				id: 'selectedSiteId',
+				label: '',
+				Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+					const { id, getValue } = field;
+					const value = getValue( { item: data } )?.toString( 10 ) ?? '';
+					return (
+						<PreferencesLoginSiteDropdown
+							sites={ sites }
+							value={ value }
+							onChange={ ( newValue ) => {
+								if ( newValue ) {
+									onChange( { [ id ]: parseInt( newValue, 10 ) } );
+								}
+							} }
+							label=""
+							hideLabelFromVision={ hideLabelFromVision }
+						/>
+					);
+				},
 			},
-		},
-	];
+		],
+		[ sites ]
+	);
 
 	const form = {
 		layout: { type: 'regular' as const },
@@ -102,14 +107,84 @@ function MultiSiteHandoffForm( {
 
 	return (
 		<>
-			<DataForm< OverflowFormData >
-				data={ formData }
-				fields={ fields }
-				form={ form }
-				onChange={ ( edits ) => setFormData( ( d ) => ( { ...d, ...edits } ) ) }
+			<fieldset disabled={ isPending } style={ { border: 0, padding: 0, margin: 0 } }>
+				<DataForm< OverflowFormData >
+					data={ formData }
+					fields={ fields }
+					form={ form }
+					onChange={ ( edits ) => setFormData( ( d ) => ( { ...d, ...edits } ) ) }
+				/>
+			</fieldset>
+			<MoveToEditorButtonExternalState
+				site={ selectedSite }
+				text={ text }
+				mutate={ mutate }
+				isPending={ isPending }
 			/>
-			<MoveToEditorButton site={ selectedSite } text={ text } />
 		</>
+	);
+}
+
+function MoveToEditorButtonExternalState( {
+	site,
+	text,
+	mutate,
+	isPending,
+}: {
+	site: Site;
+	text: string;
+	mutate: ReturnType<
+		typeof useMutation<
+			{ ID: number; site_ID: number; URL: string },
+			Error,
+			{ siteId: number; content: string }
+		>
+	>[ 'mutate' ];
+	isPending: boolean;
+} ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const handleClick = () => {
+		mutate(
+			{ siteId: site.ID, content: text },
+			{
+				onSuccess: ( data ) => {
+					const adminUrl = site.options?.admin_url;
+					if ( ! adminUrl ) {
+						dispatch(
+							errorNotice( translate( "Couldn't open the editor. Try a different site." ) )
+						);
+						return;
+					}
+					window.location.assign(
+						addQueryArgs( `${ adminUrl }post.php`, {
+							post: data.ID,
+							action: 'edit',
+						} )
+					);
+				},
+				onError: () => {
+					dispatch(
+						errorNotice(
+							translate( "Couldn't save your draft. Try again or pick a different site." )
+						)
+					);
+				},
+			}
+		);
+	};
+
+	return (
+		<Button
+			variant="primary"
+			__next40pxDefaultSize
+			onClick={ handleClick }
+			isBusy={ isPending }
+			disabled={ isPending }
+		>
+			{ translate( 'Move to editor' ) }
+		</Button>
 	);
 }
 
