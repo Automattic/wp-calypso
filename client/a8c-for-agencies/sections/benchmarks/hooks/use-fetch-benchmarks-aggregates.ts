@@ -15,14 +15,10 @@ export default function useFetchBenchmarksAggregates() {
 	return useQuery< BenchmarkAggregateRow[] >( {
 		queryKey: getFetchBenchmarksAggregatesQueryKey( agencyId ),
 		queryFn: () =>
-			wpcom.req.get(
-				{
-					apiNamespace: 'wpcom/v2',
-					path: `/agency/${ agencyId }/benchmarks/aggregates`,
-				},
-				// TODO: remove `fake_data` once real peer data is flowing through the aggregates endpoint.
-				{ fake_data: true }
-			),
+			wpcom.req.get( {
+				apiNamespace: 'wpcom/v2',
+				path: `/agency/${ agencyId }/benchmarks/aggregates`,
+			} ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 	} );

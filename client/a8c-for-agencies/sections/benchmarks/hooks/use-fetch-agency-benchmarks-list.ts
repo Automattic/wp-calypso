@@ -15,14 +15,10 @@ export default function useFetchAgencyBenchmarksList() {
 	return useQuery< AgencyBenchmark[] >( {
 		queryKey: getFetchAgencyBenchmarksListQueryKey( agencyId ),
 		queryFn: () =>
-			wpcom.req.get(
-				{
-					apiNamespace: 'wpcom/v2',
-					path: `/agency/${ agencyId }/benchmarks`,
-				},
-				// TODO: remove `fake_data` once real submission data is flowing through the list endpoint.
-				{ fake_data: true }
-			),
+			wpcom.req.get( {
+				apiNamespace: 'wpcom/v2',
+				path: `/agency/${ agencyId }/benchmarks`,
+			} ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 	} );

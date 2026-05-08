@@ -55,13 +55,10 @@ describe( 'useFetchBenchmarksAggregates', () => {
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( result.current.data ).toEqual( fakeAggregates );
-		expect( mockedGet ).toHaveBeenCalledWith(
-			{
-				apiNamespace: 'wpcom/v2',
-				path: '/agency/42/benchmarks/aggregates',
-			},
-			{ fake_data: true }
-		);
+		expect( mockedGet ).toHaveBeenCalledWith( {
+			apiNamespace: 'wpcom/v2',
+			path: '/agency/42/benchmarks/aggregates',
+		} );
 	} );
 
 	it( 'is disabled when there is no active agency', () => {
