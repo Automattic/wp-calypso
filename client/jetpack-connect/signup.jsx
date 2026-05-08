@@ -17,7 +17,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
-import { FeaturesSection } from 'calypso/components/connect-screen/features-section';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -43,7 +42,6 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import AuthFormHeader from './auth-form-header';
 import { getSignupCopy } from './connection-content';
 import { getConnectorBranding } from './connector-branding-config';
-import { getConnectorFeatureCards } from './feature-cards';
 import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
@@ -386,12 +384,6 @@ export class JetpackSignup extends Component {
 						submitting={ isCreatingAccount }
 						suggestedUsername=""
 					/>
-
-					{ isFromJetpackConnector && (
-						<FeaturesSection
-							cards={ getConnectorFeatureCards( this.props.authQuery.plugins ).cards }
-						/>
-					) }
 
 					{ this.renderLoginUser() }
 					{ this.renderLocaleSuggestions() }
