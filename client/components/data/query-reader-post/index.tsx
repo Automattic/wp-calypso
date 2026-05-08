@@ -37,11 +37,23 @@ const buildErrorPost = ( postKey: Partial< ReadPostKey >, error: unknown ) => {
 export default function QueryReaderPost( { postKey }: QueryReaderPostProps ) {
 	const dispatch = useDispatch();
 
-	// Skip the network call when the post is already populated in Redux (e.g. by
-	// a stream response). Mirrors the legacy `! post || post._state === 'minimal'`
-	// guard and keeps the bridge cheap for consumers that mount it unconditionally.
+	// Skip the network call when the post is already populated in Redux with
+	// renderable content (e.g. by a stream response that included excerpts).
+	// Stream items dispatched through `receivePosts` no longer carry the legacy
+	// `_state: 'minimal'` flag, so detect "needs full fetch" by the absence of
+	// any renderable body field — otherwise the full-post view would render a
+	// stream-card-shaped post forever.
 	const cachedPost = useSelector( ( state ) => getPostByKey( state, postKey ) );
-	const shouldFetch = ! cachedPost || cachedPost._state === 'minimal';
+	const hasRenderablePostContent = !! (
+		cachedPost?.content ||
+		cachedPost?.excerpt ||
+		cachedPost?.better_excerpt ||
+		cachedPost?.use_excerpt
+	);
+	const shouldFetch =
+		! cachedPost ||
+		cachedPost._state === 'minimal' ||
+		( ! cachedPost.is_error && ! hasRenderablePostContent );
 
 	const queryOptions = readerPostQuery( postKey, readerContentWidth() );
 	const { data, isError, error } = useQuery( {
