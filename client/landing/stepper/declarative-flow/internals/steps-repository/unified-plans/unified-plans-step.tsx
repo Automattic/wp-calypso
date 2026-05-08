@@ -311,7 +311,7 @@ function UnifiedPlansStep( {
 
 	const siteUrl = onboardingStoreSiteUrl ?? signupDependencies.siteUrl;
 
-	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
+	const isPaidTheme = Boolean( selectedThemeType && selectedThemeType !== FREE_THEME );
 
 	const effectiveSubmitSignupStep = useMemo(
 		() =>
@@ -682,7 +682,6 @@ function UnifiedPlansStep( {
 			<>
 				<MarketingMessage path="signup/plans" />
 				<Step.WideLayout
-					headingColumnWidth={ 6 }
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
