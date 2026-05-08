@@ -4,6 +4,7 @@ import {
 } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import { createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -146,8 +147,12 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 				  } );
 		};
 
-		const statRowNoun = ( count: number ) =>
-			translate( 'boost', 'boosts', { count, textOnly: true } );
+		const statRowText = ( count: number ) =>
+			translate( '{{strong}}%(count)s{{/strong}} boost', '{{strong}}%(count)s{{/strong}} boosts', {
+				count,
+				args: { count: formatNumber( count ) },
+				components: { strong: createElement( 'strong' ) },
+			} );
 
 		return {
 			supported: true,
@@ -156,7 +161,7 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 			label: {
 				action: translate( 'Boost' ),
 				accessibleLabel,
-				statRowNoun,
+				statRowText,
 			},
 			canQuote: Boolean( onQuoteClick ),
 			repost,

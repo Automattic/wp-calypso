@@ -32,23 +32,47 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 	// row should appear at all. Each stat item uses its own native count.
 	const totalReposts = counts.reposts + counts.quotes;
 
-	const repostsNoun = repostAction.supported
-		? repostAction.label.statRowNoun( counts.reposts )
-		: translate( 'repost', 'reposts', { count: counts.reposts, textOnly: true } );
-	const likesNoun = likeAction.supported
-		? likeAction.label.statRowNoun( counts.likes )
-		: translate( 'like', 'likes', { count: counts.likes, textOnly: true } );
-	// Quotes have no per-protocol adapter slot today: ATmosphere is the only
-	// protocol that exposes `counts.quotes`, so the generic copy never reaches
-	// a non-atmosphere surface. Add a `statRowQuoteNoun` slot the day a second
-	// protocol grows native quotes.
-	const quotesNoun = translate( 'quote', 'quotes', { count: counts.quotes, textOnly: true } );
+	// Generic "{{strong}}%(count)s{{/strong}} <noun>" form used by both the
+	// no-adapter fallback and the quotes stat (which has no per-protocol slot —
+	// ATmosphere is the only protocol that exposes `counts.quotes` today).
+	// Add a `statRowQuoteText` adapter slot the day a second protocol grows
+	// native quotes.
+	const fallbackRepostsText = translate(
+		'{{strong}}%(count)s{{/strong}} repost',
+		'{{strong}}%(count)s{{/strong}} reposts',
+		{
+			count: counts.reposts,
+			args: { count: formatNumber( counts.reposts ) },
+			components: { strong: <strong /> },
+		}
+	);
+	const fallbackLikesText = translate(
+		'{{strong}}%(count)s{{/strong}} like',
+		'{{strong}}%(count)s{{/strong}} likes',
+		{
+			count: counts.likes,
+			args: { count: formatNumber( counts.likes ) },
+			components: { strong: <strong /> },
+		}
+	);
+	const quotesText = translate(
+		'{{strong}}%(count)s{{/strong}} quote',
+		'{{strong}}%(count)s{{/strong}} quotes',
+		{
+			count: counts.quotes,
+			args: { count: formatNumber( counts.quotes ) },
+			components: { strong: <strong /> },
+		}
+	);
+
+	const repostsText = repostAction.supported
+		? repostAction.label.statRowText( counts.reposts )
+		: fallbackRepostsText;
+	const likesText = likeAction.supported
+		? likeAction.label.statRowText( counts.likes )
+		: fallbackLikesText;
 
 	const showStatsRow = hideCount && totalReposts + counts.likes > 0;
-
-	const formattedReposts = formatNumber( counts.reposts );
-	const formattedQuotes = formatNumber( counts.quotes );
-	const formattedLikes = formatNumber( counts.likes );
 
 	const fireRepliesClicked = ( destination: 'in_app_thread' | 'bsky_app' | 'composer' ) => {
 		if ( ! analytics ) {
@@ -118,22 +142,26 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 			{ showStatsRow && (
 				<div
 					role="list"
-					aria-label={ translate( 'Post stats' ) }
+					aria-label={ translate( 'Post stats', {
+						comment:
+							'Accessible label for the engagement-summary list (reposts/quotes/likes) above a focused post.',
+						textOnly: true,
+					} ) }
 					className="social-post-card-stats"
 				>
 					{ counts.reposts > 0 && (
 						<span role="listitem" className="social-post-card-stats__item">
-							<strong>{ formattedReposts }</strong> { repostsNoun }
+							{ repostsText }
 						</span>
 					) }
 					{ counts.quotes > 0 && (
 						<span role="listitem" className="social-post-card-stats__item">
-							<strong>{ formattedQuotes }</strong> { quotesNoun }
+							{ quotesText }
 						</span>
 					) }
 					{ counts.likes > 0 && (
 						<span role="listitem" className="social-post-card-stats__item">
-							<strong>{ formattedLikes }</strong> { likesNoun }
+							{ likesText }
 						</span>
 					) }
 				</div>

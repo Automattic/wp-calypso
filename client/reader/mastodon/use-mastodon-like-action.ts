@@ -4,6 +4,7 @@ import {
 } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import { createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -121,14 +122,22 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 				textOnly: true,
 			} );
 
-		const statRowNoun = ( count: number ) =>
-			translate( 'favorite', 'favorites', { count, textOnly: true } );
+		const statRowText = ( count: number ) =>
+			translate(
+				'{{strong}}%(count)s{{/strong}} favorite',
+				'{{strong}}%(count)s{{/strong}} favorites',
+				{
+					count,
+					args: { count: formatNumber( count ) },
+					components: { strong: createElement( 'strong' ) },
+				}
+			);
 
 		return {
 			supported: true,
 			isLiked,
 			isPending,
-			label: { accessibleLabel, statRowNoun },
+			label: { accessibleLabel, statRowText },
 			like,
 			unlike,
 		};

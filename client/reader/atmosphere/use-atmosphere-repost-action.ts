@@ -2,6 +2,7 @@ import { PENDING_REPOST_URI } from '@automattic/api-core';
 import { useCreateRepostMutation, useDeleteRepostMutation } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import { createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
@@ -213,8 +214,16 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 				  } );
 		};
 
-		const statRowNoun = ( count: number ) =>
-			translate( 'repost', 'reposts', { count, textOnly: true } );
+		const statRowText = ( count: number ) =>
+			translate(
+				'{{strong}}%(count)s{{/strong}} repost',
+				'{{strong}}%(count)s{{/strong}} reposts',
+				{
+					count,
+					args: { count: formatNumber( count ) },
+					components: { strong: createElement( 'strong' ) },
+				}
+			);
 
 		return {
 			supported: true,
@@ -223,7 +232,7 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 			label: {
 				action: translate( 'Repost' ),
 				accessibleLabel,
-				statRowNoun,
+				statRowText,
 			},
 			canQuote,
 			repost,
