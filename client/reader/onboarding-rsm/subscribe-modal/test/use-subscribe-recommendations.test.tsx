@@ -488,6 +488,66 @@ describe( 'useSubscribeRecommendations', () => {
 			expect( result.current.isValidating ).toBe( false );
 		} );
 
+		it( 'does not prematurely settle when stale rejections drop out of the candidate set', async () => {
+			// Regression test for an over-eager `allCandidatesSettled`:
+			//   1. Mount with feed errors for 100 and 200; 101 and 201 are still
+			//      pending (no Redux feed entry yet). All four are candidates.
+			//   2. Paginated follows arrive marking 100, 101, and 200 as already
+			//      followed, so `combinedRecommendations` shrinks to just [201].
+			//
+			// A naive `pinned + rejected >= length` count would flip
+			// `allCandidatesSettled` true here (rejectedFeedIds.size === 2 >=
+			// combinedRecommendations.length === 1), incorrectly surfacing the
+			// empty state while feed 201 is still genuinely pending.
+			const state = buildReaderState( {
+				feeds: {
+					items: {
+						100: { feed_ID: 100, is_error: true },
+						200: { feed_ID: 200, is_error: true },
+						// 101 and 201 intentionally absent — still pending.
+					},
+				},
+			} );
+
+			const { result, store } = renderHook( state );
+
+			await waitFor( () => expect( result.current.isValidating ).toBe( true ) );
+
+			act( () => {
+				store.dispatch( {
+					type: SET_FOLLOWS,
+					payload: {
+						'https://food1.example': {
+							feed_ID: 100,
+							blog_ID: null,
+							is_following: true,
+						},
+						'https://food2.example': {
+							feed_ID: 101,
+							blog_ID: null,
+							is_following: true,
+						},
+						'https://drinks1.example': {
+							feed_ID: 200,
+							blog_ID: null,
+							is_following: true,
+						},
+					},
+				} );
+			} );
+
+			await waitFor( () =>
+				expect(
+					result.current.combinedRecommendations.map( ( s: CardData ) => s.feed_ID )
+				).toEqual( [ 201 ] )
+			);
+
+			// 201 is still genuinely pending — not pinned, not rejected — so we
+			// must remain in the validating state, not collapse to empty.
+			expect( result.current.isValidating ).toBe( true );
+			expect( result.current.hasNoRecommendations ).toBe( false );
+		} );
+
 		it( 'keeps an already-pinned card visible after the user follows it', async () => {
 			// Pin order: feed 100 (site_ID 0) is pinned on feed alone.
 			const state = buildReaderState( {

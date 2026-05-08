@@ -346,13 +346,27 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 
 	const recommendations = pinnedSites;
 
-	// Validation has settled for the current candidate set when every feed has
-	// either been pinned or rejected. We count `rejectedFeedIds` (state) plus
-	// `pinnedSites` (state) so this derivation stays reactive even when only
-	// rejections — and no pins — accumulate.
-	const allCandidatesSettled =
-		combinedRecommendations.length > 0 &&
-		pinnedSites.length + rejectedFeedIds.size >= combinedRecommendations.length;
+	// Validation has settled for the *current* candidate set when every feed in
+	// `combinedRecommendations` is either in `pinnedSites` or `rejectedFeedIds`.
+	// We deliberately intersect rather than count totals: `combinedRecommendations`
+	// shrinks reactively as paginated follows arrive (already-followed feeds get
+	// filtered out via `followedIds`), and a raw `pinned + rejected >= length`
+	// comparison can overshoot once enough previously-rejected feeds drop out of
+	// the candidate set, prematurely flipping `hasNoRecommendations` on while
+	// genuinely pending candidates remain. Iterating the candidate list also keeps
+	// the derivation cheap — we early-out on the first unsettled feed.
+	const allCandidatesSettled = useMemo( () => {
+		if ( combinedRecommendations.length === 0 ) {
+			return false;
+		}
+		const pinnedFeedIdSet = new Set( pinnedSites.map( ( s ) => s.feed_ID ) );
+		for ( const site of combinedRecommendations ) {
+			if ( ! pinnedFeedIdSet.has( site.feed_ID ) && ! rejectedFeedIds.has( site.feed_ID ) ) {
+				return false;
+			}
+		}
+		return true;
+	}, [ combinedRecommendations, pinnedSites, rejectedFeedIds ] );
 
 	const isValidating =
 		! isLoading &&
