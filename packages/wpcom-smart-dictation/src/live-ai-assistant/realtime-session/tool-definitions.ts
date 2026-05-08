@@ -1,4 +1,7 @@
-import { stopDictationToolDefinition } from '../tools/dictation-control-tool';
+import {
+	cancelImageGenerationToolDefinition,
+	stopDictationToolDefinition,
+} from '../tools/dictation-control-tool';
 import {
 	formatTextToolDefinition,
 	getBlockToolDefinition,
@@ -54,4 +57,5 @@ export const realtimeToolDefinitions = [
 	pickImageToolDefinition,
 	stopDictationToolDefinition,
 	generateImageToolDefinition,
+	cancelImageGenerationToolDefinition,
 ];

@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
+	CANCEL_IMAGE_GENERATION_TOOL_NAME,
 	STOP_DICTATION_TOOL_NAME,
+	executeCancelImageGenerationTool,
 	executeStopDictationTool,
 } from '../tools/dictation-control-tool';
 import {
@@ -231,6 +233,9 @@ async function executeRealtimeToolCall(
 	}
 	if ( call.name === STOP_DICTATION_TOOL_NAME ) {
 		return executeStopDictationTool();
+	}
+	if ( call.name === CANCEL_IMAGE_GENERATION_TOOL_NAME ) {
+		return executeCancelImageGenerationTool();
 	}
 	if ( call.name === GENERATE_IMAGE_TOOL_NAME ) {
 		return executeGenerateImageTool( call.arguments, signal );
