@@ -290,10 +290,12 @@ a.social-post-card-header__timestamp::after {
 	}
 }
 
-.social-post-card-counts--prominent-timestamp {
-	// The stats row directly above provides separation via its
-	// border-block-end; suppress the default 8px gap so the action row sits
-	// directly under the hairline.
+// When a stats row is directly above, its border-block-end provides the
+// hairline and the action row should sit flush under it; suppress the
+// default 8px gap. Without a stats row, the timestamp's own
+// border-block-end is the only separator above, so the default 8px gap
+// is preserved to keep the icons from sitting flush against it.
+.social-post-card-stats + .social-post-card-counts--prominent-timestamp {
 	margin-block-start: 0;
 }
 
