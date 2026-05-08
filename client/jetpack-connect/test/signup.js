@@ -93,4 +93,111 @@ describe( 'JetpackSignup', () => {
 
 		expect( container ).toMatchSnapshot();
 	} );
+
+	test( 'should render with the connector branding when from=jetpack-connector', () => {
+		const { container } = render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'jetpack', 'woocommerce' ],
+				} }
+			/>
+		);
+
+		expect( container ).toMatchSnapshot();
+	} );
+
+	describe( 'isFromJetpackConnector', () => {
+		const isFromJetpackConnector = new JetpackSignup().isFromJetpackConnector;
+
+		test( 'is from jetpack connector', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-connector',
+				},
+			};
+
+			expect( isFromJetpackConnector( props ) ).toBe( true );
+		} );
+
+		test( 'does not match jetpack-connector prefix variants', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-connector-v2',
+				},
+			};
+
+			expect( isFromJetpackConnector( props ) ).toBe( false );
+		} );
+
+		test( 'is not from jetpack connector', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-onboarding',
+				},
+			};
+
+			expect( isFromJetpackConnector( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isFromJetpackOnboarding', () => {
+		const isFromJetpackOnboarding = new JetpackSignup().isFromJetpackOnboarding;
+
+		test( 'is from jetpack onboarding', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-onboarding',
+				},
+			};
+
+			expect( isFromJetpackOnboarding( props ) ).toBe( true );
+		} );
+
+		test( 'is not from jetpack onboarding', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-connector',
+				},
+			};
+
+			expect( isFromJetpackOnboarding( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isUnifiedConnectionFlow', () => {
+		const instance = new JetpackSignup();
+
+		test( 'returns true for jetpack-onboarding', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-onboarding',
+				},
+			};
+
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
+		} );
+
+		test( 'returns true for jetpack-connector', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-connector',
+				},
+			};
+
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
+		} );
+
+		test( 'returns false for other flows', () => {
+			const props = {
+				authQuery: {
+					from: 'woocommerce-onboarding',
+				},
+			};
+
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( false );
+		} );
+	} );
 } );

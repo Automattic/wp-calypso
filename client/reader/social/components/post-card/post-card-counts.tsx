@@ -2,24 +2,27 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, quote } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
-import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
-import ReaderRepostIcon from 'calypso/reader/components/icons/repost';
 import { useSocialAnalytics } from './analytics-context';
-import type { SocialCounts } from '../../types';
+import { LikeButton } from './like-button';
+import { QuoteButton } from './quote-button';
+import { RepostButton } from './repost-button';
+import type { SocialPost } from '../../types';
 
 const ICON_SIZE = 16;
 
 interface PostCardCountsProps {
-	counts: SocialCounts;
-	postUri: string;
+	post: SocialPost;
+	connectionId?: number;
 }
 
-export function PostCardCounts( { counts, postUri }: PostCardCountsProps ) {
+export function PostCardCounts( { post, connectionId }: PostCardCountsProps ) {
 	const translate = useTranslate();
 	const analytics = useSocialAnalytics();
+	const counts = post.counts;
+	const postUri = post.uri;
 	const inAppUrl = analytics?.getThreadUrl?.( postUri ) ?? null;
 
-	const fireRepliesClicked = () => {
+	const fireRepliesClicked = ( destination: 'in_app_thread' | 'bsky_app' | 'composer' ) => {
 		if ( ! analytics ) {
 			return;
 		}
@@ -27,7 +30,7 @@ export function PostCardCounts( { counts, postUri }: PostCardCountsProps ) {
 			connection_id: analytics.connectionId,
 			post_uri: postUri,
 			replies_count: counts.replies,
-			destination: inAppUrl ? 'in_app_thread' : 'bsky_app',
+			destination,
 		} );
 	};
 
@@ -39,6 +42,49 @@ export function PostCardCounts( { counts, postUri }: PostCardCountsProps ) {
 		</>
 	);
 
+	const renderRepliesNode = () => {
+		// Render the interactive reply button when an `onReplyClick`
+		// handler is bound by the per-protocol shell. The shell decides
+		// what addressing it needs from the post (atmosphere requires a
+		// strong-ref `cid` and bails internally; Mastodon only uses
+		// `post.uri` as the status_id). Don't gate on `post.cid` here —
+		// Mastodon posts never carry a `cid`, so an extra `cid` check
+		// would dark-ship the reply button on the very protocol that
+		// needs it.
+		if ( analytics?.onReplyClick ) {
+			const onReplyClick = analytics.onReplyClick;
+			return (
+				<button
+					type="button"
+					className="social-post-card-counts__reply-button"
+					onClick={ () => {
+						onReplyClick( post );
+						fireRepliesClicked( 'composer' );
+					} }
+					aria-label={ translate( 'Reply, %(count)d reply', 'Reply, %(count)d replies', {
+						count: counts.replies,
+						args: { count: counts.replies },
+						textOnly: true,
+					} ) }
+				>
+					{ repliesContent }
+				</button>
+			);
+		}
+		if ( inAppUrl ) {
+			return (
+				<a
+					className="social-post-card-counts__link"
+					href={ inAppUrl }
+					onClick={ () => fireRepliesClicked( 'in_app_thread' ) }
+				>
+					{ repliesContent }
+				</a>
+			);
+		}
+		return <span>{ repliesContent }</span>;
+	};
+
 	return (
 		<HStack
 			alignment="center"
@@ -46,32 +92,18 @@ export function PostCardCounts( { counts, postUri }: PostCardCountsProps ) {
 			justify="flex-start"
 			className="social-post-card-counts"
 		>
-			{ inAppUrl ? (
-				<a
-					className="social-post-card-counts__link"
-					href={ inAppUrl }
-					onClick={ fireRepliesClicked }
-				>
-					{ repliesContent }
-				</a>
+			{ renderRepliesNode() }
+			<RepostButton post={ post } />
+			<LikeButton post={ post } />
+			{ connectionId && post.cid && analytics?.onQuoteClick ? (
+				<QuoteButton post={ post } />
 			) : (
-				<span>{ repliesContent }</span>
+				<span>
+					<Icon icon={ quote } size={ ICON_SIZE } />
+					<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>
+					{ counts.quotes }
+				</span>
 			) }
-			<span>
-				<ReaderRepostIcon iconSize={ ICON_SIZE } />
-				<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
-				{ counts.reposts }
-			</span>
-			<span>
-				<ReaderLikeIcon iconSize={ ICON_SIZE } liked={ false } />
-				<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
-				{ counts.likes }
-			</span>
-			<span>
-				<Icon icon={ quote } size={ ICON_SIZE } />
-				<span className="screen-reader-text">{ translate( 'Quotes:' ) } </span>
-				{ counts.quotes }
-			</span>
 		</HStack>
 	);
 }

@@ -93,6 +93,8 @@ const webpackCacheBuildDependencies = [
 	require.resolve( '../build-tools/webpack/sections-loader' ),
 	// Workspace config helper modules used to build rules/plugins
 	require.resolve( '@automattic/calypso-build/webpack/file-loader' ),
+	require.resolve( '@automattic/calypso-build/webpack/mini-css-runtime-full-hash' ),
+	require.resolve( '@automattic/calypso-build/webpack/mini-css-with-rtl' ),
 	require.resolve( '@automattic/calypso-build/webpack/minify' ),
 	require.resolve( '@automattic/calypso-build/webpack/sass' ),
 	require.resolve( '@automattic/calypso-build/webpack/transpile' ),
@@ -448,7 +450,7 @@ const webpackConfig = {
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
 				overlay: false,
-				exclude: [ /node_modules/, /devdocs/ ],
+				exclude: [ /node_modules/ ],
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],

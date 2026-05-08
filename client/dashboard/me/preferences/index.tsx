@@ -5,6 +5,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import PreferencesAiMcp from '../preferences-ai-mcp';
+import PreferencesAppearance from '../preferences-appearance';
 import PreferencesBlockedSites from '../preferences-blocked-sites';
 import PreferencesDefaults from '../preferences-defaults';
 import PreferencesLanguage from '../preferences-language';
@@ -26,6 +27,7 @@ export default function Preferences() {
 		>
 			<SummaryButtonList>
 				{ optIn ? <PreferencesNewHostingDashboard /> : null }
+				{ isEnabled( 'dark-mode' ) ? <PreferencesAppearance /> : null }
 				{ isEnabled( 'mcp-settings' ) ? <PreferencesAiMcp /> : null }
 				<PreferencesLanguage />
 				<PreferencesDefaults />

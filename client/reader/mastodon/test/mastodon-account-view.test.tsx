@@ -5,9 +5,11 @@ import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import * as readerAnalytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { PROFILE_TAB, TIMELINE_TAB } from '../helper';
 import { MastodonAccountView } from '../mastodon-account-view';
+import type { MastodonAuthorProfile } from '@automattic/api-core';
 import type React from 'react';
 
 jest.mock(
@@ -68,6 +70,32 @@ function mockConnectionDetails( id: number, displayName: string = 'Alice' ) {
 		} );
 }
 
+// `connection.handle` is `@alice@mastodon.social`; the query options
+// normalize that to `alice@mastodon.social` (strip leading @, lowercase),
+// then the fetcher URL-encodes it.
+const ENCODED_ACTOR = 'alice%40mastodon.social';
+
+function mockAuthorEndpoints( id: number, profile: Partial< MastodonAuthorProfile > = {} ): void {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `${ listUrl }/${ id }/profile/${ ENCODED_ACTOR }` )
+		.reply( 200, {
+			id: String( id ),
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '',
+			counts: { followers: 0, following: 0, posts: 0 },
+			locked: false,
+			raw: {},
+			...profile,
+		} );
+	nock( 'https://public-api.wordpress.com' )
+		.get( `${ listUrl }/${ id }/profile/${ ENCODED_ACTOR }/feed` )
+		.query( true )
+		.reply( 200, { items: [], cursor: null } );
+}
+
 describe( 'MastodonAccountView', () => {
 	// NavTabs (used by MastodonNavigation) relies on IntersectionObserver,
 	// which jsdom does not provide.
@@ -87,8 +115,18 @@ describe( 'MastodonAccountView', () => {
 	beforeEach( () => {
 		( page as unknown as jest.Mock ).mockClear();
 		( page.replace as jest.Mock ).mockClear();
+		// recordReaderTracksEvent is a thunk that reads state.reader.follows;
+		// the test store doesn't seed that slice. Replace with a no-op so
+		// dispatch() doesn't throw when MastodonAuthorProfilePanel fires
+		// `_profile_viewed` after the profile query resolves.
+		jest
+			.spyOn( readerAnalytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 	} );
-	afterEach( () => nock.cleanAll() );
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
 
 	it( 'renders the timeline tab for a valid connection', async () => {
 		mockConnections();
@@ -144,6 +182,9 @@ describe( 'MastodonAccountView', () => {
 	it( 'renders the profile tab when asked', async () => {
 		mockConnections();
 		mockConnectionDetails( 7 );
+		// ProfilePanel now renders MastodonAuthorProfilePanel for the
+		// connected user, which fetches the author profile + feed.
+		mockAuthorEndpoints( 7 );
 		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ PROFILE_TAB } />, {
 			queryClient: makeClient(),
 		} );

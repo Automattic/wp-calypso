@@ -1,3 +1,5 @@
+import { isValidHashtag } from '@automattic/api-core';
+
 export const POST_NSID = 'app.bsky.feed.post';
 const DID_WEB_HOST = '[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+';
 const DID_BODY = `(?:plc:[a-z2-7]{24}|web:${ DID_WEB_HOST })`;
@@ -63,4 +65,26 @@ export function getProfileUrl( connectionId: number, ref: ProfileRefInput ): str
 		return `/reader/atmosphere/${ connectionId }/profile/${ encodeURIComponent( did ) }`;
 	}
 	return null;
+}
+
+// Hashtag validator lives in @automattic/api-core so both the route layer
+// and the query factory in api-queries share a single regex — preventing
+// drift between the controller's validation and the query's `enabled` gate.
+export { HASHTAG_RE, isValidHashtag } from '@automattic/api-core';
+
+/**
+ * Build the in-app Bluesky tag-feed URL. Lowercases the input, strips a
+ * leading `#`, validates the canonical form, and percent-encodes the
+ * path segment. Returns `null` for any rejection so callers can fall
+ * back to the external bsky.app link.
+ */
+export function getTagFeedUrl( connectionId: number, hashtag: string ): string | null {
+	if ( ! Number.isFinite( connectionId ) || connectionId <= 0 ) {
+		return null;
+	}
+	const canonical = hashtag.trim().toLowerCase().replace( /^#/, '' );
+	if ( ! isValidHashtag( canonical ) ) {
+		return null;
+	}
+	return `/reader/atmosphere/${ connectionId }/tag/${ encodeURIComponent( canonical ) }`;
 }

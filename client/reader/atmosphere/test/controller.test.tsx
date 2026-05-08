@@ -14,7 +14,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 } ) );
 
 import page from '@automattic/calypso-router';
-import { atmosphereProfile, atmosphereThread } from '../controller';
+import { atmosphereProfile, atmosphereTagFeed, atmosphereThread } from '../controller';
 
 const validDid = 'did:plc:abc234567defghi234567jkl';
 const validRkey = '3kabcdefghijk';
@@ -137,6 +137,65 @@ describe( 'atmosphereProfile', () => {
 		config.isEnabled.mockReturnValueOnce( false );
 		const ctx = makeProfileContext( { id: '42', actor: 'alice.bsky.social' } );
 		atmosphereProfile( ctx, mockNext );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'atmosphereTagFeed', () => {
+	function makeTagContext( params: Record< string, string > ) {
+		return { params, primary: null } as unknown as Parameters< typeof atmosphereTagFeed >[ 0 ];
+	}
+
+	it( 'mounts the AsyncLoad shell on a valid id + hashtag', () => {
+		const ctx = makeTagContext( { id: '42', hashtag: 'rust' } );
+		atmosphereTagFeed( ctx, mockNext );
+		expect( ctx.primary ).toBeTruthy();
+		expect( mockNext ).toHaveBeenCalled();
+	} );
+
+	it( 'lowercases the hashtag before passing it to the view', () => {
+		const ctx = makeTagContext( { id: '42', hashtag: 'Rust' } );
+		atmosphereTagFeed( ctx, mockNext );
+		const primary = ctx.primary as unknown as { props: { hashtag: string } };
+		expect( primary.props.hashtag ).toBe( 'rust' );
+	} );
+
+	it( 'strips a leading # before passing it to the view', () => {
+		const ctx = makeTagContext( { id: '42', hashtag: '#rust' } );
+		atmosphereTagFeed( ctx, mockNext );
+		const primary = ctx.primary as unknown as { props: { hashtag: string } };
+		expect( primary.props.hashtag ).toBe( 'rust' );
+	} );
+
+	it( 'accepts a Unicode hashtag', () => {
+		const ctx = makeTagContext( { id: '42', hashtag: '日本語' } );
+		atmosphereTagFeed( ctx, mockNext );
+		expect( ctx.primary ).toBeTruthy();
+		expect( mockNext ).toHaveBeenCalled();
+	} );
+
+	it( 'redirects to the connection root on an invalid hashtag', () => {
+		const ctx = makeTagContext( { id: '42', hashtag: 'tag-with-hyphen' } );
+		atmosphereTagFeed( ctx, mockNext );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/atmosphere/42' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
+
+	it( 'redirects to /reader/atmosphere on a non-numeric id', () => {
+		const ctx = makeTagContext( { id: 'NaN', hashtag: 'rust' } );
+		atmosphereTagFeed( ctx, mockNext );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/atmosphere' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
+
+	it( 'redirects to /reader when the feature flag is off', () => {
+		const config = jest.requireMock( '@automattic/calypso-config' ) as {
+			isEnabled: jest.Mock;
+		};
+		config.isEnabled.mockReturnValueOnce( false );
+		const ctx = makeTagContext( { id: '42', hashtag: 'rust' } );
+		atmosphereTagFeed( ctx, mockNext );
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );

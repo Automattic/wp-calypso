@@ -48,6 +48,7 @@ import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
+import blikProcessor from '../lib/blik-processor';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -597,6 +598,8 @@ export default function CheckoutMain( {
 					translate,
 					sitelessCheckoutType === 'a4a'
 				),
+			'stripe-blik': ( transactionData: unknown ) =>
+				blikProcessor( transactionData, dataForProcessor, translate ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>

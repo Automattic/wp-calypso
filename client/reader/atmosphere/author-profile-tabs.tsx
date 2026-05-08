@@ -36,23 +36,28 @@ export function useAuthorProfileFilter(): AtmosphereAuthorFeedFilter {
 interface AuthorProfileTabsProps {
 	connectionId: number;
 	actor: string;
+	basePath: string;
 	activeFilter: AtmosphereAuthorFeedFilter;
 }
 
-function buildPath( connectionId: number, actor: string, slug: string ): string {
-	const base = `/reader/atmosphere/${ connectionId }/profile/${ encodeURIComponent( actor ) }`;
+function buildPath( basePath: string, slug: string ): string {
 	if ( typeof window === 'undefined' ) {
-		return `${ base }?tab=${ slug }`;
+		return `${ basePath }?tab=${ slug }`;
 	}
 	// Preserve any other query params and the fragment (e.g. ?from=timeline,
 	// or #scroll-anchor) the user may have on the URL when switching tabs.
 	const params = new URLSearchParams( window.location.search );
 	params.set( 'tab', slug );
 	const hash = window.location.hash;
-	return `${ base }?${ params.toString() }${ hash }`;
+	return `${ basePath }?${ params.toString() }${ hash }`;
 }
 
-export function AuthorProfileTabs( { connectionId, actor, activeFilter }: AuthorProfileTabsProps ) {
+export function AuthorProfileTabs( {
+	connectionId,
+	actor,
+	basePath,
+	activeFilter,
+}: AuthorProfileTabsProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -61,20 +66,20 @@ export function AuthorProfileTabs( { connectionId, actor, activeFilter }: Author
 			{
 				slug: 'posts',
 				title: translate( 'Posts' ) as TranslateResult,
-				path: buildPath( connectionId, actor, 'posts' ),
+				path: buildPath( basePath, 'posts' ),
 			},
 			{
 				slug: 'replies',
 				title: translate( 'Replies' ) as TranslateResult,
-				path: buildPath( connectionId, actor, 'replies' ),
+				path: buildPath( basePath, 'replies' ),
 			},
 			{
 				slug: 'media',
 				title: translate( 'Media' ) as TranslateResult,
-				path: buildPath( connectionId, actor, 'media' ),
+				path: buildPath( basePath, 'media' ),
 			},
 		],
-		[ connectionId, actor, translate ]
+		[ basePath, translate ]
 	);
 
 	const activeSlug = FILTER_TO_SLUG[ activeFilter ] ?? DEFAULT_SLUG;

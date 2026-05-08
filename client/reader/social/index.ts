@@ -3,6 +3,12 @@ import './style.scss';
 export { SocialProfileCard } from './profile-card';
 export type { SocialProfileCardProps, SocialProfileStat } from './profile-card';
 
+export { ConnectionReauthGate } from './connection-reauth-gate';
+export { ConnectionReauthTag } from './connection-reauth-tag';
+
+export { FollowButton } from './follow-button';
+export type { FollowButtonProps } from './follow-button';
+
 export { SocialPostCard } from './components/post-card';
 export { SocialFeedList } from './components/feed-list';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
@@ -35,8 +41,10 @@ export { SocialAuthorProfilePanel } from './author-profile-panel';
 export type { SocialAuthorProfilePanelProps } from './author-profile-panel';
 export { SocialProfileHeaderSkeleton } from './profile-header-skeleton';
 export { mapAtmosphereFeedItemToSocialPost } from './mappers/atmosphere';
+export { sanitizePostHtml } from './components/post-card/sanitize-post-html';
 export {
 	mapMastodonAccountToSocialProfileCardProps,
 	mapMastodonFeedItemToSocialPost,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from './mappers/mastodon';
+export { socialPostFeedItemKey } from './utils/social-post-feed-item-key';

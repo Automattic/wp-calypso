@@ -1,0 +1,238 @@
+import { ExternalLink } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import type { ReactNode } from 'react';
+
+export const A4A_MCP_URL = 'https://public-api.wordpress.com/wpcom/v2/a4a-mcp/v1';
+
+export interface AgentConfig {
+	id: string;
+	label: string;
+	quickSetupDescription?: string;
+	quickSetup?: ReactNode[];
+	installAction?: {
+		label: string;
+		deepLink: string;
+	};
+	manualSetupFile?: string;
+	manualSetupLanguage: 'json' | 'toml';
+	manualSetupSnippet: string;
+	docsUrl: string;
+	docsLabel: string;
+}
+
+const cursorInstallDeepLink = `cursor://anysphere.cursor-deeplink/mcp/install?name=a4a-mcp&config=${ encodeURIComponent(
+	btoa( JSON.stringify( { command: `npx -y mcp-remote ${ A4A_MCP_URL }` } ) )
+) }`;
+
+export const AGENT_CONFIGS: AgentConfig[] = [
+	{
+		id: 'claude-code',
+		label: 'Claude Code',
+		quickSetupDescription: __(
+			'Claude Code uses a different config format with type: “http”. Use the CLI or copy the configuration below.'
+		),
+		quickSetup: [
+			createInterpolateElement(
+				__(
+					'Install Claude Code: run <code>npm install -g @anthropic-ai/claude-code</code> or see <a>the setup guide</a>.'
+				),
+				{
+					code: <code />,
+					a: (
+						<ExternalLink
+							href="https://docs.anthropic.com/en/docs/claude-code/setup"
+							children={ __( 'the setup guide' ) }
+						/>
+					),
+				}
+			),
+			createInterpolateElement(
+				sprintf(
+					/* translators: %s: A4A MCP server URL, kept inside <code> */
+					__( 'Run in your terminal: <code>claude mcp add --transport http a4a-mcp %s</code>' ),
+					A4A_MCP_URL
+				),
+				{ code: <code /> }
+			),
+			createInterpolateElement(
+				__(
+					'Or copy the configuration below into your project’s <code>.mcp.json</code> or your global <code>~/.claude.json</code> file.'
+				),
+				{ code: <code /> }
+			),
+			createInterpolateElement(
+				__(
+					'Run <code>claude</code> in your terminal, select <code>/mcp</code>, then select <code>a4a-mcp</code> and authenticate. Your browser opens to complete the OAuth flow.'
+				),
+				{ code: <code /> }
+			),
+		],
+		manualSetupFile: '~/.claude.json',
+		manualSetupLanguage: 'json',
+		manualSetupSnippet: JSON.stringify(
+			{
+				mcpServers: {
+					'a4a-mcp': {
+						type: 'http',
+						url: A4A_MCP_URL,
+					},
+				},
+			},
+			null,
+			2
+		),
+		docsUrl: 'https://code.claude.com/docs/en/mcp',
+		docsLabel: __( 'Claude Code documentation' ),
+	},
+	{
+		id: 'claude-desktop',
+		label: 'Claude Desktop',
+		quickSetup: [
+			__( 'Install Node 20 or later (required by mcp-remote).' ),
+			__(
+				'Open Claude Desktop → Settings → Developer, then click “Edit Config” under Local MCP servers.'
+			),
+			createInterpolateElement(
+				__(
+					'Add the configuration below to <code>claude_desktop_config.json</code> (typically at <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>).'
+				),
+				{ code: <code /> }
+			),
+			__( 'Restart Claude Desktop.' ),
+			__(
+				'If you haven’t authenticated yet, Claude Desktop will prompt you in your browser as soon as it reopens.'
+			),
+		],
+		manualSetupFile: 'claude_desktop_config.json',
+		manualSetupLanguage: 'json',
+		manualSetupSnippet: JSON.stringify(
+			{
+				mcpServers: {
+					'a4a-mcp': {
+						command: 'npx',
+						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+					},
+				},
+			},
+			null,
+			2
+		),
+		docsUrl: 'https://modelcontextprotocol.io/quickstart/user',
+		docsLabel: __( 'Claude Desktop documentation' ),
+	},
+	{
+		id: 'cursor',
+		label: 'Cursor',
+		installAction: {
+			label: __( 'Install in Cursor' ),
+			deepLink: cursorInstallDeepLink,
+		},
+		quickSetup: [
+			__( 'Install Node 20 or later (required by mcp-remote).' ),
+			createInterpolateElement( __( 'Open <code>~/.cursor/mcp.json</code> in your editor.' ), {
+				code: <code />,
+			} ),
+			createInterpolateElement( __( 'Add the block below under <code>mcpServers</code>.' ), {
+				code: <code />,
+			} ),
+			__( 'Fully quit Cursor (Cmd+Q) and relaunch.' ),
+			__(
+				'If you haven’t authenticated yet, Cursor will prompt you in your browser as soon as it reopens.'
+			),
+		],
+		manualSetupFile: '~/.cursor/mcp.json',
+		manualSetupLanguage: 'json',
+		manualSetupSnippet: JSON.stringify(
+			{
+				mcpServers: {
+					'a4a-mcp': {
+						command: 'npx',
+						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+					},
+				},
+			},
+			null,
+			2
+		),
+		docsUrl: 'https://cursor.com/docs/mcp',
+		docsLabel: __( 'Cursor documentation' ),
+	},
+	{
+		id: 'codex',
+		label: 'Codex',
+		quickSetup: [
+			createInterpolateElement( __( 'Open <code>~/.codex/config.toml</code> in your editor.' ), {
+				code: <code />,
+			} ),
+			__( 'Append the block below to the file.' ),
+			__( 'Restart Codex.' ),
+			__( 'Go to Codex → MCP servers → Authenticate.' ),
+		],
+		manualSetupFile: '~/.codex/config.toml',
+		manualSetupLanguage: 'toml',
+		manualSetupSnippet: [
+			'[mcp_servers.a4a-mcp]',
+			`url = "${ A4A_MCP_URL }"`,
+			`oauth_resource = "${ A4A_MCP_URL }"`,
+		].join( '\n' ),
+		docsUrl: 'https://github.com/openai/codex',
+		docsLabel: __( 'Codex documentation' ),
+	},
+	{
+		id: 'vscode',
+		label: 'VS Code',
+		quickSetup: [
+			__( 'Install Node 20 or later (required by mcp-remote).' ),
+			createInterpolateElement(
+				__(
+					'Open <code>~/Library/Application Support/Code/User/mcp.json</code> (create if missing).'
+				),
+				{ code: <code /> }
+			),
+			createInterpolateElement( __( 'Add the block below under <code>servers</code>.' ), {
+				code: <code />,
+			} ),
+			__( 'Restart VS Code.' ),
+			__(
+				'If you haven’t authenticated yet, VS Code will prompt you in your browser as soon as it reopens.'
+			),
+		],
+		manualSetupFile: '~/Library/Application Support/Code/User/mcp.json',
+		manualSetupLanguage: 'json',
+		manualSetupSnippet: JSON.stringify(
+			{
+				servers: {
+					'a4a-mcp': {
+						command: 'npx',
+						args: [ '-y', 'mcp-remote', A4A_MCP_URL ],
+					},
+				},
+			},
+			null,
+			2
+		),
+		docsUrl: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
+		docsLabel: __( 'VS Code MCP documentation' ),
+	},
+	{
+		id: 'other',
+		label: __( 'Other MCP client' ),
+		manualSetupLanguage: 'json',
+		manualSetupSnippet: JSON.stringify(
+			{
+				mcpServers: {
+					'a4a-mcp': {
+						url: A4A_MCP_URL,
+					},
+				},
+			},
+			null,
+			2
+		),
+		docsUrl: 'https://modelcontextprotocol.io/docs/develop/connect-local-servers',
+		docsLabel: __( 'MCP documentation' ),
+	},
+];
+
+export const DEFAULT_AGENT_ID = 'claude-code';

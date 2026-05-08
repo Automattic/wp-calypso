@@ -445,8 +445,9 @@ class CancelPurchaseForm extends Component {
 					site={ site }
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
+					intent={ intent }
 					declineButtonText={
-						intent === 'remove' ? translate( 'Remove my current plan' ) : undefined
+						intent === 'remove' ? translate( 'Continue removal' ) : translate( 'No, thanks' )
 					}
 					downgradePlanPrice={
 						'downgrade-personal' === this.state.upsell
@@ -605,7 +606,7 @@ class CancelPurchaseForm extends Component {
 	}
 
 	renderStepButtons = () => {
-		const { translate, disableButtons, purchase } = this.props;
+		const { translate, disableButtons, purchase, intent } = this.props;
 		const { isSubmitting, surveyStep, solution } = this.state;
 		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
@@ -618,14 +619,27 @@ class CancelPurchaseForm extends Component {
 
 		if ( ! isLastStep ) {
 			return (
-				<GutenbergButton
-					isPrimary
-					isDefault
-					disabled={ ! this.canGoNext() }
-					onClick={ this.clickNext }
-				>
-					{ translate( 'Continue' ) }
-				</GutenbergButton>
+				<>
+					<GutenbergButton
+						isPrimary
+						isDefault
+						isDestructive={ intent === 'remove' }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.clickNext }
+					>
+						{ intent === 'remove' ? translate( 'Continue removal' ) : translate( 'Continue' ) }
+					</GutenbergButton>
+					{ intent === 'cancel' && (
+						<GutenbergButton
+							isTertiary
+							isBusy={ isCancelling }
+							disabled={ isCancelling }
+							onClick={ this.onSubmit }
+						>
+							{ translate( 'No, thanks' ) }
+						</GutenbergButton>
+					) }
+				</>
 			);
 		}
 
@@ -655,17 +669,55 @@ class CancelPurchaseForm extends Component {
 			);
 		}
 
+		if ( intent === 'remove' ) {
+			return (
+				<>
+					<GutenbergButton
+						isPrimary
+						isDefault
+						isDestructive
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.onSubmit }
+					>
+						{ translate( 'Complete removal' ) }
+					</GutenbergButton>
+					<GutenbergButton
+						isDestructive
+						variant="tertiary"
+						isBusy={ isCancelling }
+						disabled={ isCancelling }
+						onClick={ this.onSubmit }
+					>
+						{ translate( 'Skip and remove' ) }
+					</GutenbergButton>
+				</>
+			);
+		}
+
 		return (
-			<GutenbergButton
-				isPrimary={ surveyStep !== UPSELL_STEP }
-				isSecondary={ surveyStep === UPSELL_STEP }
-				isDefault={ surveyStep !== UPSELL_STEP }
-				isBusy={ isCancelling }
-				disabled={ ! this.canGoNext() }
-				onClick={ this.onSubmit }
-			>
-				{ translate( 'Submit' ) }
-			</GutenbergButton>
+			<>
+				<GutenbergButton
+					isPrimary={ surveyStep !== UPSELL_STEP }
+					isSecondary={ surveyStep === UPSELL_STEP }
+					isDefault={ surveyStep !== UPSELL_STEP }
+					isBusy={ isCancelling }
+					disabled={ ! this.canGoNext() }
+					onClick={ this.onSubmit }
+				>
+					{ intent === 'cancel' ? translate( 'Complete' ) : translate( 'Submit' ) }
+				</GutenbergButton>
+				{ intent === 'cancel' && (
+					<GutenbergButton
+						isTertiary
+						isBusy={ isCancelling }
+						disabled={ isCancelling }
+						onClick={ this.onSubmit }
+					>
+						{ translate( 'No, thanks' ) }
+					</GutenbergButton>
+				) }
+			</>
 		);
 	};
 
