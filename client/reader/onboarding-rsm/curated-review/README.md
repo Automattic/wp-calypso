@@ -35,16 +35,16 @@ filled in.
 
 ## Enabling and accessing it
 
-The tool is gated behind the `reader/curated-review` feature flag:
+The tool is gated behind the `reader/curated-review` feature flag, which
+is **only declared in `config/development.json`** (set to `true`). It is
+deliberately absent from every other config — `wpcalypso.json`,
+`stage.json`, `production.json`, etc. — because this is a one-shot
+backfill tool that should never reach a non-local build. The route below
+is therefore only reachable from a local Calypso dev server.
 
-- `development.json` and `wpcalypso.json` — `true`
-- All other configs — `false`
-
-Visit [`/reader/dev/curated-review`][1] in any environment that has the
-flag enabled. The `dev/` prefix in the route is intentional: it makes
-clear at a glance that this is not a user-facing surface.
-
-[1]: http://calypso.localhost:3000/reader/dev/curated-review
+Visit [`/reader/dev/curated-review`][1]. The `dev/` prefix in the route
+is intentional: it makes clear at a glance that this is not a
+user-facing surface.
 
 ## The data model
 
@@ -104,13 +104,19 @@ header.
   operator clicked `Mark broken`. These entries are dropped from the
   serialized output, and tags whose entries are all dropped are
   dropped too.
-- **Auto-flagged** (yellow `auto-flagged` chip). The API returned
-  feed metadata, but `feed.feed_URL` was missing — meaning the API
-  itself doesn't believe this feed has a canonical URL. Auto-flagged
-  rows are **not** automatically omitted; the operator still has to
-  click `Mark broken` to omit them. (Sometimes auto-flagged rows are
-  recoverable — a transient API hiccup, or a feed that has a working
-  `feed.URL` but no `feed_URL`. The operator decides.)
+- **Auto-flagged** (yellow `auto-flagged` chip). The tool couldn't
+  resolve a canonical feed URL. Triggered when either:
+
+  1. The `read/feed/<id>` query errored (network / 404 / etc.), or
+  2. The query succeeded but the response had no `feed.feed_URL`,
+     meaning the API itself doesn't believe this feed has a canonical
+     URL.
+
+  Auto-flagged rows are **not** automatically omitted from export;
+  the operator still has to click `Mark broken` to omit them.
+  (Sometimes auto-flagged rows are recoverable — a transient API
+  hiccup, or a feed that has a working `feed.URL` but no `feed_URL`.
+  The operator decides.)
 
 A row can be both at once (auto-flagged AND marked broken). In that
 case the manual mark takes precedence visually (red chip wins) and
@@ -161,11 +167,13 @@ fires queries for every row.
 Each query option spreads:
 
 ```ts
-{
-  ...readFeedQuery( row.entry.feed_ID ),
-  meta: { persist: false },
-  retry: false,
-}
+useQueries( {
+	queries: queryableRows.map( ( row ) => ( {
+		...readFeedQuery( row.entry.feed_ID ),
+		meta: { persist: false },
+		retry: false,
+	} ) ),
+} );
 ```
 
 - `meta: { persist: false }` keeps these out of Calypso's persisted
@@ -232,10 +240,13 @@ Once every curated file has been reviewed and pasted back:
    of falling back to per-card `read/feed/<id>` lookups.
 3. Delete this entire directory (`curated-review/`) including the
    tests.
-4. Delete the `reader/curated-review` flag from every `config/*.json`.
+4. Delete the `reader/curated-review` flag from `config/development.json`
+   (it's the only config that declares it).
 5. Drop the `curatedReview` controller in `client/reader/controller.jsx`
    and the route registration in `client/reader/index.ts`.
 
 The `update/reader-onboarding-rsm-curated-blogs-list` PR
 ([#110600](https://github.com/Automattic/wp-calypso/pull/110600))
 introduced the tool; the cleanup PR should reference it for context.
+
+[1]: http://calypso.localhost:3000/reader/dev/curated-review

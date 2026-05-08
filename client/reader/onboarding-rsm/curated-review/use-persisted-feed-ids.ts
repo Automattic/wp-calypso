@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 function loadFromStorage( storageKey: string ): Set< number > {
 	if ( typeof window === 'undefined' ) {
@@ -44,11 +44,27 @@ export interface PersistedFeedIdSet {
  * multi-session review pass can resume where it left off. The curated-review
  * tool uses this for two parallel state slices — "marked broken" and
  * "force hasIcon to false" — keyed on different storage keys.
+ *
+ * `storageKey` is normally a stable constant. If a caller _does_ swap it at
+ * runtime, we reload state from the new key on the next render rather than
+ * silently writing the previous in-memory Set under it.
  */
 export function usePersistedFeedIdSet( storageKey: string ): PersistedFeedIdSet {
 	const [ feedIds, setFeedIds ] = useState< Set< number > >( () => loadFromStorage( storageKey ) );
+	// Tracks the key the current `feedIds` was loaded from. When the caller
+	// swaps `storageKey`, the next effect tick reloads from the new key
+	// instead of persisting stale state under it.
+	const lastSeenKeyRef = useRef( storageKey );
 
 	useEffect( () => {
+		if ( lastSeenKeyRef.current !== storageKey ) {
+			lastSeenKeyRef.current = storageKey;
+			setFeedIds( loadFromStorage( storageKey ) );
+			// Defer persist to the next render — the freshly-loaded set will
+			// be the one we save (and persisting now would clobber the new
+			// key's stored value with the previous key's in-memory Set).
+			return;
+		}
 		persistToStorage( storageKey, feedIds );
 	}, [ storageKey, feedIds ] );
 
