@@ -22,15 +22,13 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 	const [ appPassword, setAppPassword ] = useState( '' );
 	const canSubmit = handle.trim().length > 0 && appPassword.length > 0 && ! isSubmitting;
 
-	const appPasswordHelp = (
-		<>
-			{ translate(
-				'Use a Bluesky app password rather than your main password, so you can revoke access anytime.'
-			) }{ ' ' }
-			<ExternalLink href="https://bsky.app/settings/app-passwords">
-				{ translate( 'How do I get an app password?' ) }
-			</ExternalLink>
-		</>
+	const appPasswordHelp = translate(
+		'Use a Bluesky app password rather than your main password, so you can revoke access anytime. {{a}}How do I get an app password?{{/a}}',
+		{
+			components: {
+				a: <ExternalLink children={ null } href="https://bsky.app/settings/app-passwords" />,
+			},
+		}
 	);
 
 	const handleSubmit = ( event: FormEvent< HTMLFormElement > ) => {
