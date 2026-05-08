@@ -153,7 +153,7 @@ export async function getFediverseAuthorFeed(
 	}
 	const path = `/reader/fediverse/connections/${ connectionId }/profile/${ encodeURIComponent(
 		actor
-	) }/feed`;
+	) }/timeline`;
 	// eslint-disable-next-line no-console
 	console.log( '[fediverse] GET', path, query );
 	try {
