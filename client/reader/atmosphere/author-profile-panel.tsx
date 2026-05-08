@@ -29,7 +29,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
 import { projectAtmosphereError } from './error-projection';
-import { errorMessage } from './profile-errors';
+import { errorMessage, followErrorMessage } from './profile-errors';
 import {
 	getFollowersUrl,
 	getFollowingUrl,
@@ -49,26 +49,6 @@ import type {
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
-
-/**
- * Action-aware copy for follow / unfollow failure toasts. Most kinds are
- * semantically identical to a profile-load failure (auth, rate limit,
- * upstream), so we delegate to the shared `errorMessage`. The exception is
- * `not_found`: the shared copy is profile-load-shaped and would mislead the
- * user when an actor disappears between profile load and the follow click.
- */
-function followErrorMessage(
-	error: AtmosphereError,
-	action: 'follow' | 'unfollow',
-	translate: ReturnType< typeof useTranslate >
-): TranslateResult {
-	if ( error.kind === 'not_found' ) {
-		return action === 'follow'
-			? translate( 'Couldn’t follow this account.' )
-			: translate( 'Couldn’t unfollow this account.' );
-	}
-	return errorMessage( error, translate );
-}
 
 function buildEmptyTitle(
 	filter: AtmosphereAuthorFeedFilter,
