@@ -132,7 +132,7 @@ function getRenewalDescription(
 		}
 		return sprintf(
 			/* translators: %s: formatted date */
-			__( 'Expires on %s' ),
+			__( 'Expires on %s.' ),
 			formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } )
 		);
 	}
@@ -148,7 +148,7 @@ function getRenewalDescription(
 	} );
 	return sprintf(
 		/* translators: %1$s: formatted price, %2$s: formatted date */
-		__( 'Renews at %1$s on %2$s' ),
+		__( 'Renews at %1$s on %2$s.' ),
 		price,
 		date
 	);
