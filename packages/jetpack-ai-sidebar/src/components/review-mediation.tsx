@@ -846,12 +846,13 @@ export default function ReviewMediation( {
 										const candidates = conflict.candidate_resolutions ?? [];
 										const getCandidateDisabledReason = ( candidate: CandidateResolution ) =>
 											getBlockEditDisabledReason( candidate.block_index, candidate.current_text );
-										const candidateStates = candidates
-											.filter( ( c ) => c.block_index !== null )
-											.map( ( candidate ) => ( {
-												candidate,
-												disabledReason: getCandidateDisabledReason( candidate ),
-											} ) );
+										const candidateStates = candidates.map( ( candidate ) => ( {
+											candidate,
+											disabledReason: getCandidateDisabledReason( candidate ),
+										} ) );
+										const blockCandidateStates = candidateStates.filter(
+											( state ) => state.candidate.block_index !== null
+										);
 										const reviewerCandidateStates = candidateStates.filter(
 											( state ) => state.candidate.source === 'reviewer' && ! state.disabledReason
 										);
@@ -863,8 +864,8 @@ export default function ReviewMediation( {
 										// target, fall back to the first candidate with a block. A disabled
 										// candidate is still useful here because the header only needs context.
 										const headerCandidateState =
-											candidateStates.find( ( state ) => state.candidate.source === 'ai' ) ??
-											candidateStates[ 0 ];
+											blockCandidateStates.find( ( state ) => state.candidate.source === 'ai' ) ??
+											blockCandidateStates[ 0 ];
 										const headerBlockIndex = headerCandidateState?.candidate.block_index ?? null;
 										const actionsDisabled =
 											status === 'applying' ||

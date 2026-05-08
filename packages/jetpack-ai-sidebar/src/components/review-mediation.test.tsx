@@ -749,6 +749,43 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'renders post-wide conflict candidates as manual guidance without accept buttons', () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					conflicts: [
+						{
+							subject: 'Article-wide framing',
+							positions: [],
+							guideline_anchor: null,
+							recommended_resolution: 'Review the article framing manually.',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: null,
+									current_text: '',
+									text: 'Review the article framing manually.',
+									rationale: '',
+								},
+							],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect( screen.getByText( 'Needs manual edit — no single block target' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders conflict candidates without exact source text as manual guidance', () => {
 		render(
 			<ReviewMediation
