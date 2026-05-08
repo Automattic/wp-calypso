@@ -1,10 +1,11 @@
-import { useMastodonConnectionQuery, useMastodonConnectionsQuery } from '@automattic/api-queries';
+import { useMastodonConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { mastodonComposerConfig } from './composer-config';
@@ -30,13 +31,6 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	const connections = data?.connections ?? [];
 	const connection = connections.find( ( c ) => c.id === connectionId ) ?? null;
 	const tabValid = VALID_TABS.has( tab );
-
-	// The list endpoint omits display_name for Mastodon connections (it comes
-	// back null), so the header would otherwise fall back to the raw handle
-	// for the title and duplicate it as the subtitle. The details endpoint has
-	// the display name; React Query dedupes by key, so ProfilePanel and the
-	// sidebar row share this fetch — no extra request.
-	const details = useMastodonConnectionQuery( connection?.id ?? null );
 
 	// The compose FAB and modal sit outside <ConnectionReauthGate>, so without
 	// an explicit guard they'd float over the reauth prompt. Hide both while
@@ -68,13 +62,28 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		);
 	}
 
-	const title = details.data?.display_name || connection.display_name || connection.handle;
-	const subtitle = connection.handle;
+	const documentTitle = connection.display_name || connection.handle;
+	const handle = connection.handle;
+	const subtitle = handle
+		? translate(
+				'Catch up with the latest from the people you follow on Mastodon with @%(handle)s',
+				{ args: { handle } }
+		  )
+		: translate( 'Catch up with the latest from the people you follow on Mastodon.' );
+
+	const title = (
+		<span className="mastodon-view__section-title">
+			<span data-testid="mastodon-section-logo" aria-hidden="true">
+				<ReaderMastodonIcon />
+			</span>
+			<span>Mastodon</span>
+		</span>
+	);
 
 	return (
 		<ComposerProvider connectionId={ connection.id } config={ mastodonComposerConfig }>
 			<ReaderMain className="mastodon-view">
-				<DocumentHead title={ translate( '%s ‹ Mastodon ‹ Reader', { args: title } ) } />
+				<DocumentHead title={ translate( '%s ‹ Mastodon ‹ Reader', { args: documentTitle } ) } />
 				<NavigationHeader title={ title } subtitle={ subtitle } />
 				<MastodonNavigation connectionId={ connection.id } selectedTab={ tab } />
 				<VStack spacing={ 4 } className="mastodon-view__body">

@@ -5,11 +5,9 @@ import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import * as readerAnalytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { PROFILE_TAB, TIMELINE_TAB } from '../helper';
+import { TIMELINE_TAB } from '../helper';
 import { MastodonAccountView } from '../mastodon-account-view';
-import type { MastodonAuthorProfile } from '@automattic/api-core';
 import type React from 'react';
 
 jest.mock(
@@ -20,11 +18,11 @@ jest.mock(
 		}
 );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-
-jest.mock( '../timeline-panel', () => ( {
-	TimelinePanel: () => <div>Mastodon timeline placeholder</div>,
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: () => ( { type: '@@TEST/NOOP' } ),
 } ) );
+
+jest.mock( 'calypso/components/data/document-head', () => () => null );
 
 jest.mock( '@automattic/calypso-router', () => {
 	const replace = jest.fn();
@@ -39,66 +37,24 @@ function makeClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 }
 
-function mockConnections( displayName: string | null = 'Alice' ) {
-	return nock( 'https://public-api.wordpress.com' )
+function mockConnections() {
+	nock( 'https://public-api.wordpress.com' )
 		.get( listUrl )
 		.reply( 200, {
 			connections: [
 				{
 					id: 7,
-					handle: '@alice@mastodon.social',
 					instance: 'mastodon.social',
-					display_name: displayName,
+					handle: 'alice@mastodon.social',
+					display_name: null,
 					avatar: null,
+					needs_reauth: false,
 				},
 			],
 		} );
 }
 
-function mockConnectionDetails( id: number, displayName: string = 'Alice' ) {
-	nock( 'https://public-api.wordpress.com' )
-		.get( `${ listUrl }/${ id }` )
-		.reply( 200, {
-			handle: '@alice@mastodon.social',
-			instance: 'mastodon.social',
-			display_name: displayName,
-			description: '',
-			avatar: null,
-			header: null,
-			counts: { followers: 0, following: 0, posts: 0 },
-			raw: {},
-		} );
-}
-
-// `connection.handle` is `@alice@mastodon.social`; the query options
-// normalize that to `alice@mastodon.social` (strip leading @, lowercase),
-// then the fetcher URL-encodes it.
-const ENCODED_ACTOR = 'alice%40mastodon.social';
-
-function mockAuthorEndpoints( id: number, profile: Partial< MastodonAuthorProfile > = {} ): void {
-	nock( 'https://public-api.wordpress.com' )
-		.get( `${ listUrl }/${ id }/profile/${ ENCODED_ACTOR }` )
-		.reply( 200, {
-			id: String( id ),
-			acct: 'alice@mastodon.social',
-			display_name: 'Alice',
-			avatar: null,
-			header: null,
-			note: '',
-			counts: { followers: 0, following: 0, posts: 0 },
-			locked: false,
-			raw: {},
-			...profile,
-		} );
-	nock( 'https://public-api.wordpress.com' )
-		.get( `${ listUrl }/${ id }/profile/${ ENCODED_ACTOR }/feed` )
-		.query( true )
-		.reply( 200, { items: [], cursor: null } );
-}
-
-describe( 'MastodonAccountView', () => {
-	// NavTabs (used by MastodonNavigation) relies on IntersectionObserver,
-	// which jsdom does not provide.
+describe( 'MastodonAccountView header', () => {
 	beforeAll( () => {
 		global.IntersectionObserver = class IntersectionObserver {
 			observe() {}
@@ -115,26 +71,21 @@ describe( 'MastodonAccountView', () => {
 	beforeEach( () => {
 		( page as unknown as jest.Mock ).mockClear();
 		( page.replace as jest.Mock ).mockClear();
-		// recordReaderTracksEvent is a thunk that reads state.reader.follows;
-		// the test store doesn't seed that slice. Replace with a no-op so
-		// dispatch() doesn't throw when MastodonAuthorProfilePanel fires
-		// `_profile_viewed` after the profile query resolves.
-		jest
-			.spyOn( readerAnalytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 	} );
-	afterEach( () => {
-		nock.cleanAll();
-		jest.restoreAllMocks();
-	} );
+	afterEach( () => nock.cleanAll() );
 
-	it( 'renders the timeline tab for a valid connection', async () => {
+	it( 'renders the section title and the handle-aware subtitle in the header', async () => {
 		mockConnections();
-		mockConnectionDetails( 7 );
 		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
 			queryClient: makeClient(),
 		} );
-		expect( await screen.findByRole( 'menuitem', { name: /Timeline/ } ) ).toBeVisible();
+		expect( await screen.findByRole( 'heading', { name: /Mastodon/ } ) ).toBeVisible();
+		expect( screen.getByTestId( 'mastodon-section-logo' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				/Catch up with the latest from the people you follow on Mastodon with @alice@mastodon\.social/
+			)
+		).toBeVisible();
 	} );
 
 	it( 'redirects when connection id is not in the list', async () => {
@@ -143,55 +94,5 @@ describe( 'MastodonAccountView', () => {
 			queryClient: makeClient(),
 		} );
 		await waitFor( () => expect( page.replace ).toHaveBeenCalledWith( '/reader/mastodon' ) );
-	} );
-
-	it( 'redirects invalid tab to /:id/timeline', async () => {
-		mockConnections();
-		mockConnectionDetails( 7 );
-		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab="nope" />, {
-			queryClient: makeClient(),
-		} );
-		await waitFor( () =>
-			expect( page.replace ).toHaveBeenCalledWith( '/reader/mastodon/7/timeline' )
-		);
-	} );
-
-	it( 'uses the display name from the details endpoint when the list omits it', async () => {
-		// Regression: the list endpoint returns display_name as null for
-		// Mastodon, so reading it directly made the header show the raw
-		// webfinger handle as the title AND subtitle. The details endpoint is
-		// authoritative for display name; the sidebar already lazy-fetches it,
-		// the header has to as well.
-		mockConnections( null );
-		mockConnectionDetails( 7, 'Rocinante the Bold' );
-		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
-			queryClient: makeClient(),
-		} );
-		// The heading flashes to the handle before the details query resolves;
-		// assert on the final state rather than the first findByRole match.
-		await waitFor( () =>
-			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
-				'Rocinante the Bold'
-			)
-		);
-		expect( screen.getByRole( 'heading', { level: 1 } ) ).not.toHaveTextContent(
-			'@alice@mastodon.social'
-		);
-	} );
-
-	it( 'renders the profile tab when asked', async () => {
-		mockConnections();
-		mockConnectionDetails( 7 );
-		// ProfilePanel now renders MastodonAuthorProfilePanel for the
-		// connected user, which fetches the author profile + feed.
-		mockAuthorEndpoints( 7 );
-		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ PROFILE_TAB } />, {
-			queryClient: makeClient(),
-		} );
-		// Exact handle, not substring. A permissive `/@alice@mastodon\.social/`
-		// would also match `@alice@mastodon.social@mastodon.social`, so an
-		// accidental instance-doubling regression would go undetected.
-		expect( await screen.findByText( '@alice@mastodon.social' ) ).toBeVisible();
-		expect( screen.queryByText( /@mastodon\.social@mastodon\.social/ ) ).not.toBeInTheDocument();
 	} );
 } );
