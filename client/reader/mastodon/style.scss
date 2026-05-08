@@ -63,3 +63,13 @@
 .social-composer .reader-mastodon-composer__sensitive-toggle {
 	margin-block-start: 12px;
 }
+
+.mastodon-view__section-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.mastodon-view__section-title svg {
+	flex-shrink: 0;
+}
