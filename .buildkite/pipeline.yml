@@ -1,15 +1,22 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
+---
+
+agents:
+  queue: mac
+env:
+  IMAGE_ID: xcode-26.4.1
+
 steps:
+  # Skip on `ainfra-*` branches: the gated build step below already
+  # runs `yarn install` as part of its build script, so running it
+  # again here would just duplicate the work.
   - label: ":desktop_computer: Desktop yarn install"
-    agents:
-      queue: mac
+    branches: "!ainfra-*"
     plugins:
       - automattic/nvm#0.6.0
     env:
-      CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
-      IMAGE_ID: xcode-26.4.1
-      # Skip Corepack's Yarn download prompt.
       COREPACK_ENABLE_DOWNLOAD_PROMPT: 0
     command: |
       set -euo pipefail
@@ -17,3 +24,15 @@ steps:
       cd desktop
       corepack enable
       yarn install --immutable --inline-builds
+
+  # The desktop build is resource-intensive and this repo runs many
+  # builds; we don't want to pay for it on every commit, especially
+  # while the CircleCI -> Buildkite port is still in development.
+  # Gate it on `ainfra-*` branches until the port is stabilized.
+  - label: ":desktop_computer: Build desktop (mac, unsigned)"
+    branches: ainfra-*
+    plugins:
+      - automattic/nvm#0.6.0
+    command: .buildkite/commands/build-desktop-mac.sh
+    artifact_paths:
+      - desktop/release/*

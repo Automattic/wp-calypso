@@ -13,6 +13,7 @@ import { MastodonNavigation } from './mastodon-navigation';
 import { ProfilePanel } from './profile-panel';
 import { SettingsPanel } from './settings-panel';
 import { TimelinePanel } from './timeline-panel';
+import { MastodonReauthGate, useMastodonReauthGateState } from './use-mastodon-reauth-gate';
 import type { MastodonConnection } from '@automattic/api-core';
 
 const VALID_TABS = new Set( [ TIMELINE_TAB, PROFILE_TAB, SETTINGS_TAB ] );
@@ -36,6 +37,12 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	// the display name; React Query dedupes by key, so ProfilePanel and the
 	// sidebar row share this fetch — no extra request.
 	const details = useMastodonConnectionQuery( connection?.id ?? null );
+
+	// The compose FAB and modal sit outside <ConnectionReauthGate>, so without
+	// an explicit guard they'd float over the reauth prompt. Hide both while
+	// the connection needs reauth — any post submitted via that path would
+	// fail with auth_required anyway.
+	const { needsReauth } = useMastodonReauthGateState( connection?.id ?? null );
 
 	useEffect( () => {
 		if ( isPending ) {
@@ -71,11 +78,17 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 				<NavigationHeader title={ title } subtitle={ subtitle } />
 				<MastodonNavigation connectionId={ connection.id } selectedTab={ tab } />
 				<VStack spacing={ 4 } className="mastodon-view__body">
-					{ renderTab( tab, connection ) }
+					<MastodonReauthGate connection={ connection }>
+						{ renderTab( tab, connection ) }
+					</MastodonReauthGate>
 				</VStack>
 			</ReaderMain>
-			<ComposeFab />
-			<ComposerModal />
+			{ ! needsReauth && (
+				<>
+					<ComposeFab />
+					<ComposerModal />
+				</>
+			) }
 		</ComposerProvider>
 	);
 }

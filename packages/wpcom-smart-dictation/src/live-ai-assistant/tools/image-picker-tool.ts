@@ -7,24 +7,26 @@ export const pickImageToolDefinition = {
 	type: 'function',
 	name: PICK_IMAGE_TOOL_NAME,
 	description:
-		'Open an image picker for the user to choose an image by saying a number (1–9). ' +
-		'Use action "open" to show the picker with 9 recent media library images. ' +
+		'Open an image picker for the user to choose how to add an image. ' +
+		'Use action "menu" when the user generically asks to add / insert an image / picture / photo ' +
+		'without saying which source — this shows them three voice options (Upload, Select, Generate). ' +
+		'Use action "open" to fetch and show 9 recent media library images for selection by number ' +
+		'(use this when the user explicitly asks to pick from their library or after they say "select" from the menu). ' +
 		'The user then says a number. Use action "select" with that number to confirm — ' +
 		'this AUTOMATICALLY inserts a core/image block (purpose "block") or sets the featured image (purpose "featured_image"). ' +
 		'Do NOT call insert_block_tool or any other tool after "select" — the image is already inserted/set. ' +
 		'Use action "close" to dismiss without selecting. ' +
 		'Use action "upload" when the user wants to upload a new image from their computer — ' +
 		'a prompt appears where they tap "Choose image file" once (required by browsers); then ' +
-		'the image is uploaded and inserted automatically. ' +
-		'When the user asks to insert an image, add a photo, set the featured image, or change an image, call this tool with action "open" first.',
+		'the image is uploaded and inserted automatically.',
 	parameters: {
 		type: 'object',
 		properties: {
 			action: {
 				type: 'string',
-				enum: [ 'open', 'select', 'close', 'upload' ],
+				enum: [ 'menu', 'open', 'select', 'close', 'upload' ],
 				description:
-					'"open" = fetch images and show picker grid. "select" = pick image by number. "close" = dismiss picker. "upload" = show upload prompt (user taps once to open files).',
+					'"menu" = show the three-option chooser (Upload / Select / Generate). "open" = fetch images and show picker grid. "select" = pick image by number. "close" = dismiss picker. "upload" = show upload prompt (user taps once to open files).',
 			},
 			number: {
 				type: 'number',
@@ -58,6 +60,7 @@ function getPickerState(): ImagePickerState {
 	if ( ! window.__dictationImagePicker ) {
 		window.__dictationImagePicker = {
 			isOpen: false,
+			mode: 'grid',
 			images: [],
 			selectedNumber: null,
 			purpose: 'block',
@@ -218,6 +221,30 @@ export async function executePickImageTool( rawArgs: unknown ) {
 	const action = args.action as string;
 	const purpose = ( args.purpose as string ) === 'featured_image' ? 'featured_image' : 'block';
 
+	if ( action === 'menu' ) {
+		updatePickerState( {
+			isOpen: true,
+			mode: 'menu',
+			images: [],
+			selectedNumber: null,
+			purpose: purpose as 'block' | 'featured_image',
+		} );
+		return {
+			ok: true,
+			action: 'menu_opened',
+			purpose,
+			instruction:
+				'A three-option chooser is now visible to the user (Upload, Select, Generate). ' +
+				'Tell them out loud they can say "upload" to upload from their computer, ' +
+				'"select" to pick from their media library, or "generate" + a description to create one with AI. ' +
+				'When they say "upload", call this tool with action "upload". ' +
+				'When they say "select" / "library" / "from my media", call this tool with action "open". ' +
+				'When they say "generate" + a description (or just "generate" — then ask briefly what to generate), ' +
+				'call generate_image_tool with a vivid English prompt. ' +
+				'When they say "cancel" / "never mind", call this tool with action "close".',
+		};
+	}
+
 	if ( action === 'open' ) {
 		try {
 			const images = await fetchMediaImages( args.search as string | undefined );
@@ -226,6 +253,7 @@ export async function executePickImageTool( rawArgs: unknown ) {
 			}
 			updatePickerState( {
 				isOpen: true,
+				mode: 'grid',
 				images,
 				selectedNumber: null,
 				purpose: purpose as 'block' | 'featured_image',
@@ -245,9 +273,12 @@ export async function executePickImageTool( rawArgs: unknown ) {
 					'A grid of numbered images is now visible to the user. ' +
 					'Tell them to say a number (1–' +
 					images.length +
-					') to pick one, or say "upload" to upload a new image from their computer. ' +
+					') to pick one, "upload" to upload a new image from their computer, ' +
+					'or "generate" / "draw" / "make me an image of …" to create one with AI. ' +
 					'When they say a number, call this tool again with action "select" and that number. ' +
-					'When they say "upload", call this tool with action "upload".',
+					'When they say "upload", call this tool with action "upload". ' +
+					'When they ask to generate / draw / make / create an image, call generate_image_tool ' +
+					'with a vivid English prompt — that tool closes the picker automatically.',
 			};
 		} catch ( err ) {
 			return {
@@ -287,7 +318,7 @@ export async function executePickImageTool( rawArgs: unknown ) {
 			result = await insertImageBlock( img );
 		}
 
-		updatePickerState( { isOpen: false, images: [], selectedNumber: null } );
+		updatePickerState( { isOpen: false, mode: 'grid', images: [], selectedNumber: null } );
 
 		return {
 			...result,
@@ -297,13 +328,13 @@ export async function executePickImageTool( rawArgs: unknown ) {
 	}
 
 	if ( action === 'close' ) {
-		updatePickerState( { isOpen: false, images: [], selectedNumber: null } );
+		updatePickerState( { isOpen: false, mode: 'grid', images: [], selectedNumber: null } );
 		return { ok: true, action: 'closed' };
 	}
 
 	if ( action === 'upload' ) {
 		// Close the grid if it was open.
-		updatePickerState( { isOpen: false, images: [], selectedNumber: null } );
+		updatePickerState( { isOpen: false, mode: 'grid', images: [], selectedNumber: null } );
 
 		window.__dictationUploadPurpose = purpose;
 		window.dispatchEvent( new CustomEvent( 'dictation-file-upload' ) );
