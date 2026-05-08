@@ -1,6 +1,7 @@
 import { readerMastodonKeys } from '@automattic/api-core';
 import {
 	followMastodonActorMutation,
+	normalizeMastodonActor,
 	unfollowMastodonActorMutation,
 	useMastodonActorFollowingInfiniteQuery,
 	useMastodonAuthorProfileQuery,
@@ -113,7 +114,7 @@ export function FollowingView( { connectionId, actor }: Props ) {
 
 	const invalidateActorList = useCallback( () => {
 		queryClient.invalidateQueries( {
-			queryKey: readerMastodonKeys.actorFollowing( connectionId, actor ),
+			queryKey: readerMastodonKeys.actorFollowing( connectionId, normalizeMastodonActor( actor ) ),
 		} );
 	}, [ queryClient, connectionId, actor ] );
 

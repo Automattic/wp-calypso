@@ -235,14 +235,14 @@ export function useMastodonThreadQuery( connectionId: number, statusId: string )
 // entry rather than two. (Numeric ids and `@user@instance` route segments
 // can't always be reduced to the same key without a backend round-trip; we
 // dedupe what we can.)
-function normalizeActor( actor: string ): string {
+export function normalizeMastodonActor( actor: string ): string {
 	const trimmed = actor.trim();
 	const stripped = trimmed.startsWith( '@' ) ? trimmed.slice( 1 ) : trimmed;
 	return stripped.toLowerCase();
 }
 
 export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: string ) => {
-	const normalized = normalizeActor( actor );
+	const normalized = normalizeMastodonActor( actor );
 	return queryOptions< MastodonAuthorProfile, MastodonError >( {
 		queryKey: readerMastodonKeys.authorProfile( connectionId, normalized ),
 		queryFn: () => getMastodonAuthorProfile( { connectionId, actor: normalized } ),
@@ -273,7 +273,7 @@ export const mastodonAuthorFeedInfiniteQuery = (
 	actor: string,
 	filter?: MastodonAuthorFeedFilter
 ) => {
-	const normalizedActor = normalizeActor( actor );
+	const normalizedActor = normalizeMastodonActor( actor );
 	// `posts_with_replies` is the wire default (no filter param); collapse
 	// to undefined so callers that pass it share the slice-6 cache key with
 	// no-filter callers. `posts_no_replies` and `posts_with_media` survive
@@ -331,7 +331,7 @@ export interface MastodonActorPageQueryParams {
 }
 
 export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
-	const normalizedActor = normalizeActor( params.actor );
+	const normalizedActor = normalizeMastodonActor( params.actor );
 	return infiniteQueryOptions<
 		MastodonAccountSummariesPage,
 		MastodonError,
@@ -373,7 +373,7 @@ export function useMastodonActorFollowersInfiniteQuery( params: MastodonActorPag
 }
 
 export const mastodonActorFollowingInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
-	const normalizedActor = normalizeActor( params.actor );
+	const normalizedActor = normalizeMastodonActor( params.actor );
 	return infiniteQueryOptions<
 		MastodonAccountSummariesPage,
 		MastodonError,
@@ -1092,12 +1092,12 @@ export interface FollowMastodonMutationContext {
 
 // Normalize the actor before keying so we hit the same cache entry as
 // useMastodonAuthorProfileQuery, which runs every actor through
-// normalizeActor() before building its key. Without this, webfinger
+// normalizeMastodonActor() before building its key. Without this, webfinger
 // or mixed-case actor inputs (e.g. '@Alice@MASTODON.social') key to a
 // different entry than the one the query reads from — the optimistic
 // patch and rollback become silent no-ops.
 const mastodonAuthorProfileKey = ( vars: { connectionId: number; actor: string } ) =>
-	readerMastodonKeys.authorProfile( vars.connectionId, normalizeActor( vars.actor ) );
+	readerMastodonKeys.authorProfile( vars.connectionId, normalizeMastodonActor( vars.actor ) );
 
 /**
  * Mutation factory for following a Mastodon account. Optimistically

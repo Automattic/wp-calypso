@@ -1,6 +1,7 @@
 import { readerMastodonKeys } from '@automattic/api-core';
 import {
 	followMastodonActorMutation,
+	normalizeMastodonActor,
 	unfollowMastodonActorMutation,
 	useMastodonActorFollowersInfiniteQuery,
 	useMastodonAuthorProfileQuery,
@@ -121,7 +122,7 @@ export function FollowersView( { connectionId, actor }: Props ) {
 	// patches the scoped-profile cache (which this view doesn't read).
 	const invalidateActorList = useCallback( () => {
 		queryClient.invalidateQueries( {
-			queryKey: readerMastodonKeys.actorFollowers( connectionId, actor ),
+			queryKey: readerMastodonKeys.actorFollowers( connectionId, normalizeMastodonActor( actor ) ),
 		} );
 	}, [ queryClient, connectionId, actor ] );
 
