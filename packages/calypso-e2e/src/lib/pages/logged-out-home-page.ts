@@ -38,7 +38,7 @@ export class LoggedOutHomePage {
 				timeout: 30 * 1000,
 				waitUntil: 'domcontentloaded',
 			} ),
-			this.exploreThemesLink.click( { timeout: 30 * 1000 } ),
+			this.exploreThemesLink.click(),
 		] );
 	}
 

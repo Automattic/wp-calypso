@@ -1,5 +1,28 @@
-import { Locator, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
+import type { Locator, Page } from 'playwright';
+
+/**
+ * Resolves a logged-out theme "Get started" href against the current test target.
+ *
+ * @param {string} getStartedRoute The route or URL from the theme CTA.
+ * @param {string} currentUrl The current page URL used to resolve relative hrefs.
+ * @returns {Object} The Calypso URL and selected theme slug.
+ */
+export function getCalypsoGetStartedUrlFromHref(
+	getStartedRoute: string,
+	currentUrl: string
+): { themeSlug: string; url: string } {
+	const getStartedRouteUrl = new URL( getStartedRoute, currentUrl );
+	const url = getCalypsoURL(
+		`${ getStartedRouteUrl.pathname }${ getStartedRouteUrl.search }${ getStartedRouteUrl.hash }`
+	);
+	const themeSlug = new URL( url ).searchParams.get( 'theme' );
+	if ( ! themeSlug ) {
+		throw new Error( 'Theme slug not found' );
+	}
+
+	return { themeSlug, url };
+}
 
 /**
  * Represents the logged-out themes showcase page.
@@ -41,8 +64,8 @@ export class LoggedOutThemesPage {
 	 */
 	async filterBy( filter: string ): Promise< void > {
 		await this.waitUntilLoaded();
-		await this.viewFilter.scrollIntoViewIfNeeded( { timeout: 30 * 1000 } );
-		await this.viewFilter.click( { timeout: 30 * 1000 } );
+		await this.viewFilter.scrollIntoViewIfNeeded();
+		await this.viewFilter.click();
 		const filterSlug = filter.toLowerCase();
 		const filterUrlPattern =
 			filterSlug === 'all'
@@ -54,9 +77,7 @@ export class LoggedOutThemesPage {
 				timeout: 30 * 1000,
 				waitUntil: 'domcontentloaded',
 			} ),
-			this.page.getByRole( 'option', { name: filter, exact: true } ).click( {
-				timeout: 30 * 1000,
-			} ),
+			this.page.getByRole( 'option', { name: filter, exact: true } ).click(),
 		] );
 		await this.viewFilter.filter( { hasText: filter } ).waitFor( {
 			state: 'visible',
@@ -78,14 +99,12 @@ export class LoggedOutThemesPage {
 			throw new Error( 'First theme Get started URL not found' );
 		}
 
-		const getStartedRouteUrl = new URL( getStartedRoute, this.page.url() );
-		const getStartedUrl = getCalypsoURL(
-			`${ getStartedRouteUrl.pathname }${ getStartedRouteUrl.search }${ getStartedRouteUrl.hash }`
+		await this.firstThemeGetStartedLink.click( { trial: true } );
+
+		const { themeSlug, url: getStartedUrl } = getCalypsoGetStartedUrlFromHref(
+			getStartedRoute,
+			this.page.url()
 		);
-		const themeSlug = new URL( getStartedUrl ).searchParams.get( 'theme' );
-		if ( ! themeSlug ) {
-			throw new Error( 'Theme slug not found' );
-		}
 
 		await this.page.goto( getStartedUrl, {
 			timeout: 30 * 1000,
