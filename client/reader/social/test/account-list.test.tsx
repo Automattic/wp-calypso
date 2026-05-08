@@ -11,10 +11,10 @@ interface FakeItem {
 }
 
 const buildQuery = (
-	overrides: Partial< Parameters< typeof SocialAccountList >[ 0 ][ 'query' ] >
+	overrides: Partial< Parameters< typeof SocialAccountList< FakeItem > >[ 0 ][ 'query' ] >
 ) =>
 	( {
-		data: { pages: [ { items: [], cursor: null } ], pageParams: [ undefined ] },
+		data: { pages: [ { items: [], cursor: null } ] },
 		isPending: false,
 		isError: false,
 		error: null,
@@ -23,7 +23,7 @@ const buildQuery = (
 		fetchNextPage: jest.fn(),
 		refetch: jest.fn(),
 		...overrides,
-	} ) as any;
+	} ) as Parameters< typeof SocialAccountList< FakeItem > >[ 0 ][ 'query' ];
 
 describe( 'SocialAccountList', () => {
 	beforeEach( () => {
