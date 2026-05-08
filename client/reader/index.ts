@@ -13,6 +13,7 @@ import {
 import { RedirectRouteList, setupRedirectRoutes } from 'calypso/utils';
 import {
 	blogListing,
+	curatedReview,
 	feedDiscovery,
 	feedListing,
 	feedLookup,
@@ -271,6 +272,20 @@ export default async function (): Promise< void > {
 		makeLayout,
 		clientRender
 	);
+
+	// Dev-only curated-blog review tool (one-shot — used to backfill `feedUrl`
+	// and `hasIcon` on the curated lists, then will be removed).
+	if ( config.isEnabled( 'reader/curated-review' ) ) {
+		page(
+			'/reader/dev/curated-review',
+			redirectLoggedOut,
+			sidebar,
+			setBeforePrimary,
+			curatedReview,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	setupReaderRedirects();
 }

@@ -145,6 +145,17 @@ export function loadNewSubscriptionPage( context, next ) {
 	next();
 }
 
+const loadCuratedReview = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-onboarding-rsm-curated-review" */ 'calypso/reader/onboarding-rsm/curated-review'
+	);
+
+export function curatedReview( context, next ) {
+	context.primary = <AsyncLoad require={ loadCuratedReview } placeholder={ null } />;
+	trackPageLoad( '/reader/dev/curated-review', 'Reader > Curated review', 'reader-curated-review' );
+	next();
+}
+
 export function feedDiscovery( context, next ) {
 	if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
 		const url = context.params.feed_id;
