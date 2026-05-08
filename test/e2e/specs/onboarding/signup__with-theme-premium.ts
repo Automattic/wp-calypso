@@ -16,8 +16,8 @@ import {
 	MeSidebarComponent,
 	NoticeComponent,
 	PurchasesPage,
+	ThemesDetailPage,
 	ThemesPage,
-	LoggedOutThemesPage,
 	cancelAtomicPurchaseFlow,
 	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
@@ -60,10 +60,18 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			await themesPage.visitShowcase();
 		} );
 
-		it( 'Selects a Premium theme and starts signup', async function () {
-			themeSlug = await new LoggedOutThemesPage( page ).selectThemeForSignup( {
-				tier: 'premium',
-			} );
+		it( 'Selects a Premium theme', async function () {
+			await page.locator( 'div.theme-card:has(div.theme-tier-badge--premium)' ).first().click();
+		} );
+
+		it( 'Navigate to Signup page', async function () {
+			const themeDetailsPage = new ThemesDetailPage( page );
+
+			const pageMatch = new URL( page.url() ).pathname.match( 'theme/(.*)/?' );
+
+			themeSlug = pageMatch?.[ 1 ] || null;
+
+			await themeDetailsPage.pickThisDesign();
 		} );
 
 		it( 'Sign up as new user', async function () {

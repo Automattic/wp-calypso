@@ -6,7 +6,7 @@ import DIFMBanner from '../banners-modern/difm-banner';
 import PlanUpgradeBanner from '../banners-modern/plan-upgrade-banner';
 import ThemeSection from './theme-section';
 
-export const FAVORITES_QUERY: ThemesQuery = {
+const FAVORITES_QUERY: ThemesQuery = {
 	collection: 'recommended',
 	number: 6,
 	tier: '',
@@ -15,7 +15,7 @@ export const FAVORITES_QUERY: ThemesQuery = {
 	page: 1,
 };
 
-export const FRESH_QUERY: ThemesQuery = {
+const FRESH_QUERY: ThemesQuery = {
 	number: 6,
 	tier: '',
 	filter: '',
@@ -24,7 +24,7 @@ export const FRESH_QUERY: ThemesQuery = {
 	sort: 'date',
 };
 
-export const PARTNER_QUERY: ThemesQuery = {
+const PARTNER_QUERY: ThemesQuery = {
 	collection: 'recommended',
 	number: 6,
 	tier: 'marketplace',

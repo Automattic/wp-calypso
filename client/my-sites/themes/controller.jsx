@@ -1,22 +1,14 @@
-import { isEnabled } from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
 import wpcom from 'calypso/lib/wp';
 import performanceMark from 'calypso/server/lib/performance-mark';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
 import { requestThemes } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import LoggedOutComponent from './logged-out';
-import {
-	FAVORITES_QUERY,
-	FRESH_QUERY,
-	PARTNER_QUERY,
-} from './sections-modern/recommended-sections';
-import { buildThemesSelectionQuery } from './themes-selection';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -87,57 +79,6 @@ export function fetchThemeData( context, next ) {
 	context.store
 		.dispatch( requestThemes( siteId, query, context.lang ) )
 		.then( next )
-		.catch( next );
-}
-
-// SSR pre-fetch for the modern logged-out showcase. Without this, cards only appear
-// after the client-side fetch resolves; the legacy fetchThemeData uses a different
-// query shape than what the modern components read, so its result is unused here.
-export function fetchModernShowcaseData( context, next ) {
-	if ( context.cachedMarkup ) {
-		debug( 'Skipping modern showcase data fetch (cached markup)' );
-		return next();
-	}
-
-	if (
-		! context.isServerSide ||
-		! isEnabled( 'themes/showcase-modern' ) ||
-		isUserLoggedIn( context.store.getState() )
-	) {
-		return next();
-	}
-
-	performanceMark( context, 'fetchModernShowcaseData' );
-
-	const { category, tier, filter, vertical, view } = context.params;
-	const search = context.query.s;
-	const isShowcaseRoot = ! category && ! tier && ! filter && ! vertical && ! view && ! search;
-
-	const queries = isShowcaseRoot
-		? [ FAVORITES_QUERY, FRESH_QUERY, PARTNER_QUERY ]
-		: [
-				buildThemesSelectionQuery( {
-					search: search || '',
-					page: 1,
-					tier: tier || '',
-					filter: filter || '',
-					vertical: vertical || '',
-					tabFilter: category || 'recommended',
-				} ),
-		  ];
-
-	return Promise.all(
-		queries.map( ( query ) =>
-			context.store.dispatch( requestThemes( 'wpcom', query, context.lang ) )
-		)
-	)
-		.then( () => {
-			logServerEvent( 'themes', {
-				name: `ssr.modern_showcase_fetch.${ isShowcaseRoot ? 'root' : 'tier' }`,
-				type: 'counting',
-			} );
-			next();
-		} )
 		.catch( next );
 }
 

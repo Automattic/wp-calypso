@@ -315,32 +315,6 @@ function bindGetThemeTierForTheme( state ) {
 	return ( themeId ) => getThemeTierForTheme( state, themeId );
 }
 
-// Exported so SSR pre-fetch dispatches the exact query shape <ThemesSelection> reads,
-// avoiding cache-key drift between server fetch and client selector. number: 2000 for
-// non-paginating Jetpack endpoints.
-export function buildThemesSelectionQuery( {
-	search = '',
-	page = 1,
-	tier = '',
-	filter = '',
-	vertical = '',
-	hiddenFilters = [],
-	tabFilter,
-	sourceSiteId = 'wpcom',
-	premiumThemesEnabled = true,
-} = {} ) {
-	const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 100;
-	return {
-		search,
-		page,
-		tier: premiumThemesEnabled ? tier : 'free',
-		filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
-		number,
-		...( tabFilter === 'recommended' && { collection: 'recommended' } ),
-		...( tabFilter === 'all' && { sort: 'date' } ),
-	};
-}
-
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -359,17 +333,20 @@ export const ConnectedThemesSelection = connect(
 			sourceSiteId = siteId ? siteId : 'wpcom';
 		}
 
-		const query = buildThemesSelectionQuery( {
+		// number calculation is just a hack for Jetpack sites. Jetpack themes endpoint does not paginate the
+		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
+		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
+		// Jetpack themes endpoint.
+		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 100;
+		const query = {
 			search,
 			page,
-			tier,
-			filter,
-			vertical,
-			hiddenFilters,
-			tabFilter,
-			sourceSiteId,
-			premiumThemesEnabled,
-		} );
+			tier: premiumThemesEnabled ? tier : 'free',
+			filter: compact( [ filter, vertical ] ).concat( hiddenFilters ).join( ',' ),
+			number,
+			...( tabFilter === 'recommended' && { collection: 'recommended' } ),
+			...( tabFilter === 'all' && { sort: 'date' } ),
+		};
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query );
 
