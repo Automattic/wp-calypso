@@ -20,10 +20,10 @@ import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/si
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import wpcom from 'calypso/lib/wp';
 import { ButtonStack } from 'calypso/dashboard/components/button-stack';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { preventWidows } from 'calypso/lib/formatting';
+import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -143,10 +143,9 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			// independently based on the owner's email domain.
 			if ( isDeniedNonUniqueDomain( agencyUrl ) ) {
 				dispatch(
-					recordTracksEvent(
-						'calypso_a4a_agency_signup_form_non_unique_domain_skipped',
-						{ agencyUrl }
-					)
+					recordTracksEvent( 'calypso_a4a_agency_signup_form_non_unique_domain_skipped', {
+						agencyUrl,
+					} )
 				);
 				setIsProceeding( false );
 				onContinue( formData );
@@ -182,9 +181,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 	const closeDuplicateModal = useCallback( () => {
 		setShowDuplicateModal( false );
 		dispatch(
-			recordTracksEvent(
-				'calypso_a4a_agency_signup_form_duplicate_agency_warning_cancel_clicked'
-			)
+			recordTracksEvent( 'calypso_a4a_agency_signup_form_duplicate_agency_warning_cancel_clicked' )
 		);
 	}, [ dispatch ] );
 
@@ -192,17 +189,13 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		setShowDuplicateModal( false );
 		setShowSupportForm( true );
 		dispatch(
-			recordTracksEvent(
-				'calypso_a4a_agency_signup_form_duplicate_agency_warning_support_clicked'
-			)
+			recordTracksEvent( 'calypso_a4a_agency_signup_form_duplicate_agency_warning_support_clicked' )
 		);
 	}, [ dispatch ] );
 
 	const handleBypass = useCallback( () => {
 		dispatch(
-			recordTracksEvent(
-				'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked'
-			)
+			recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_bypass_clicked' )
 		);
 		setShowDuplicateModal( false );
 		onContinue( {
@@ -216,10 +209,9 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 		( checked: boolean ) => {
 			setSkipHubspot( checked );
 			dispatch(
-				recordTracksEvent(
-					'calypso_a4a_agency_signup_form_internal_flags_skip_hubspot_toggled',
-					{ checked }
-				)
+				recordTracksEvent( 'calypso_a4a_agency_signup_form_internal_flags_skip_hubspot_toggled', {
+					checked,
+				} )
 			);
 		},
 		[ dispatch ]
@@ -236,6 +228,20 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			},
 		}
 	);
+
+	const getInternalFlagsReason = () => {
+		if ( signupContext?.is_proxied && signupContext?.is_automattician ) {
+			return translate(
+				"You're seeing these options because you're proxied AND logged into an A11n-owned WordPress.com account."
+			);
+		}
+		if ( signupContext?.is_proxied ) {
+			return translate( "You're seeing these options because you're proxied." );
+		}
+		return translate(
+			"You're seeing these options because you're logged into an A11n-owned WordPress.com account."
+		);
+	};
 
 	return (
 		<Form
@@ -397,7 +403,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 					<VStack spacing={ 8 }>
 						<Text>
 							{ translate(
-								'To get access, ask your agency owner to {{link}}invite you as a team member{{/link}}. If you\'re not sure who that is or need help, contact support.',
+								"To get access, ask your agency owner to {{link}}invite you as a team member{{/link}}. If you're not sure who that is or need help, contact support.",
 								{
 									components: {
 										link: (
@@ -418,19 +424,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 									<strong>{ translate( 'Internal Flags' ) }</strong>
 								</Text>
 								<Text className="signup-contact-form__internal-flags-reason">
-									<em>
-										{ signupContext?.is_proxied && signupContext?.is_automattician
-											? translate(
-													"You're seeing these options because you're proxied AND logged into an A11n-owned WordPress.com account."
-											  )
-											: signupContext?.is_proxied
-											? translate(
-													"You're seeing these options because you're proxied."
-											  )
-											: translate(
-													"You're seeing these options because you're logged into an A11n-owned WordPress.com account."
-											  ) }
-									</em>
+									<em>{ getInternalFlagsReason() }</em>
 								</Text>
 								<CheckboxControl
 									__nextHasNoMarginBottom
