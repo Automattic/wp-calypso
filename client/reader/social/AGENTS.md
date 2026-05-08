@@ -50,7 +50,7 @@ client/reader/social/
       analytics-context.tsx     # SocialAnalyticsProvider + useSocialAnalytics
       post-card-header.tsx      # avatar + name/handle + timestamp + repost reason + reply context
       post-card-body.tsx        # sanitized post.html injected as HTML
-      post-card-counts.tsx      # replies / reposts / likes / quotes row
+      post-card-counts.tsx      # replies / reposts / likes row + stats row on the focused thread root
       post-card-link.tsx        # card-link accessibility pattern (one real <a> + ::after overlay)
       post-card-embed.tsx       # dispatcher on embed.type
       post-card-embed-images.tsx
@@ -324,13 +324,14 @@ Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
-The connection ID flows from the protocol panel:
-`Panel` → `<LikeProvider value={makeUse…LikeAction(id)}>` plus
-`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<LikeButton>`.
-Any future interactive count button (repost, follow, bookmark) should
-follow the same provider-injected adapter shape rather than reading
-connection identity from global state or hard-coding protocol logic into
-the shared button.
+The connection ID is captured by the adapter factory at panel mount time
+(`makeUse…LikeAction(connection.id)`) and lives inside the closure passed
+to `<LikeProvider value={…}>`. `<PostCardCounts>` does not need to know
+about it; `<LikeButton>` reads its action straight from the provider via
+`useLikeAction(post)`. Any future interactive count button (repost,
+follow, bookmark) should follow the same provider-injected adapter
+shape rather than reading connection identity from global state or
+hard-coding protocol logic into the shared button.
 
 ### Repost / Boost interactions
 
@@ -362,8 +363,7 @@ Two render branches by viewer state:
   (disabled when `action.canQuote === false`). ATmosphere sets
   `canQuote: Boolean(analytics.onQuoteClick && post.cid)` — both
   composer-presence and the AT-Proto strong-ref check are required;
-  clicking the item opens the same composer as the standalone
-  `<QuoteButton>`. Mastodon sets
+  the item opens the quote composer via `analytics.onQuoteClick`. Mastodon sets
   `canQuote: Boolean(analytics.onQuoteClick)` — no `cid` requirement
   since Mastodon's quote contract uses a numeric status id. Mastodon
   4.5+ supports native quote posts via `quoted_status_id`;
@@ -385,8 +385,9 @@ Each protocol shell wires its own adapter hook factory:
   emits the labels "Repost" / "Repost, %d repost(s)" / "Undo repost, %d
   repost(s)". Tracks events: `_repost_clicked`, `_unrepost_clicked`,
   `_quote_clicked`, `_repost_error_shown`. The `quote()` action delegates
-  to the analytics context's `onQuoteClick`, sharing the composer wiring
-  with the standalone `<QuoteButton>`.
+  to the analytics context's `onQuoteClick`, opening the composer in
+  quote mode (the only surface for quote actions after the standalone
+  QuoteButton was retired).
 - Mastodon: `client/reader/mastodon/use-mastodon-repost-action.ts`
   exports `makeUseMastodonRepostAction(connectionId)`. It calls
   `useCreateMastodonRepostMutation()` / `useDeleteMastodonRepostMutation()`,
@@ -402,10 +403,10 @@ Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
-The connection ID flows from the protocol panel:
-`Panel` → `<RepostProvider value={makeUse…RepostAction(id)}>` plus
-`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<RepostButton>`.
-Mirrors the like / favorite flow.
+The connection ID is captured by the adapter factory
+(`makeUse…RepostAction(connection.id)`) and lives inside the closure passed
+to `<RepostProvider value={…}>`; `<RepostButton>` reads its action via
+`useRepostAction(post)`. Mirrors the like / favorite flow.
 
 ### Composer (slice 7)
 

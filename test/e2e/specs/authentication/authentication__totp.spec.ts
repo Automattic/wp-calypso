@@ -108,13 +108,14 @@ test.describe(
 				await pageLogin.submitVerificationCode( code );
 			} );
 
-			await test.step( 'Then I am see the my dashboard page on WooCommerce.com', async function () {
-				await expect
-					.poll( async () => page.url() )
-					.toBe( `${ environment.WOO_BASE_URL }/my-dashboard/` );
+			await test.step( 'Then I see the WooCommerce.com dashboard page', async function () {
+				await expect( page ).toHaveURL( `${ environment.WOO_BASE_URL }/my-dashboard/` );
 
-				// The Log Out link is only visible to authenticated users.
-				await expect( page.getByRole( 'link', { name: /log ?out/i } ) ).toBeVisible();
+				// These dashboard headings are only visible after a successful WooCommerce.com login.
+				await expect( page.getByRole( 'heading', { name: 'My account' } ) ).toBeVisible();
+				await expect(
+					page.getByRole( 'heading', { name: 'Welcome to the world of WooCommerce!' } )
+				).toBeVisible();
 			} );
 		} );
 	}

@@ -48,9 +48,8 @@ export interface SocialAnalyticsContextValue {
 	onReplyClick?: ( post: SocialPost ) => void;
 	/**
 	 * Slice 7d: open the quote composer for a post. When bound,
-	 * `<PostCardCounts>` renders the quotes count as a button and
-	 * `<RepostButton>`'s "Quote post" menu item becomes active. Per-protocol
-	 * shells without a quote concept (Mastodon) leave it unset.
+	 * `<RepostButton>`'s "Quote post" menu item becomes active.
+	 * Per-protocol shells without a quote concept leave it unset.
 	 */
 	onQuoteClick?: ( post: SocialPost ) => void;
 	/**

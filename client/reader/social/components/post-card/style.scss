@@ -7,6 +7,7 @@
 	.social-post-card-header__reply-context-link,
 	.social-post-card-counts__link,
 	.social-post-card-counts__reply-button,
+	.social-post-card-timestamp-link,
 	.social-post-card-body a,
 	a.social-post-card-embed-external,
 	.social-post-card-embed-quote-link,
@@ -218,11 +219,61 @@ a.social-post-card-header__timestamp::after {
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
 	border-block: 1px solid var( --studio-gray-5 );
+}
 
-	+ .social-post-card-counts {
-		// Reuse the timestamp's bottom border as the counts row's top separator (no extra gap).
-		margin-block-start: 8px;
+.social-post-card-timestamp + .social-post-card-counts,
+.social-post-card-stats + .social-post-card-counts {
+	margin-block-start: 8px;
+}
+
+.social-post-card-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-inline: -16px;
+	padding-block: 8px;
+	padding-inline: 16px;
+	font-size: 0.875rem;
+	color: var( --studio-gray-50 );
+	border-block-end: 1px solid var( --studio-gray-5 );
+}
+
+.social-post-card-stats__item strong {
+	color: var( --studio-gray-100 );
+	font-weight: 600;
+}
+
+// Wrapper anchor when a permalink is available; matches the hover-reveal
+// arrow used by the Reader full-post header title link.
+.social-post-card-timestamp-link {
+	display: block;
+	color: inherit;
+	text-decoration: none;
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
 	}
+
+	.social-post-card-timestamp::after {
+		content: "↗";
+		display: inline-block;
+		color: var( --studio-gray-30 );
+		font-size: 0.85em;
+		margin-inline-start: 6px;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
+
+	&:hover .social-post-card-timestamp::after,
+	&:focus-visible .social-post-card-timestamp::after {
+		opacity: 1;
+	}
+}
+
+// Counts row sits under the link wrapper now too; preserve the no-extra-gap rule.
+.social-post-card-timestamp-link + .social-post-card-counts {
+	margin-block-start: 8px;
 }
 
 .social-post-card-counts {
@@ -231,12 +282,18 @@ a.social-post-card-header__timestamp::after {
 	color: var( --studio-gray-50 );
 	gap: 16px;
 
-	span,
+	// Scope to direct-child spans so the cell padding doesn't leak into the
+	// count-wrapping spans inside <LikeButton> / <RepostButton>, which would
+	// otherwise stack 6px of padding on top of the flex gap and push the
+	// numbers further from their icons than the replies cell.
+	> span,
 	.social-post-card-counts__link,
 	.social-post-card-counts__reply-button {
 		display: inline-flex;
 		align-items: center;
-		gap: 4px;
+		gap: 6px;
+		padding: 4px 6px;
+		border-radius: 8px;
 	}
 
 	.social-post-card-counts__link {
@@ -246,13 +303,13 @@ a.social-post-card-header__timestamp::after {
 		&:hover,
 		&:focus-visible {
 			color: var( --studio-blue-50 );
+			background: var( --studio-gray-0 );
 		}
 	}
 
 	.social-post-card-counts__reply-button {
 		background: transparent;
 		border: 0;
-		padding: 0;
 		cursor: pointer;
 		color: inherit;
 		font: inherit;
@@ -260,6 +317,7 @@ a.social-post-card-header__timestamp::after {
 		&:hover,
 		&:focus-visible {
 			color: var( --studio-blue-50 );
+			background: var( --studio-gray-0 );
 		}
 	}
 
