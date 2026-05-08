@@ -32,6 +32,7 @@ const optInPreference = {
 	updated_at: '2026-05-08T00:00:00.000Z',
 };
 const mockIsEnabled = jest.mocked( isEnabled );
+const mockUpdatePreference = jest.fn();
 const dashboardConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,
 	optIn: true,
@@ -56,11 +57,28 @@ const renderAnnouncement = ( preferences: Record< string, unknown > ) => {
 	);
 };
 
+function mockUpdateColorScheme( colorScheme: 'light' | 'dark' | 'system' ) {
+	return nock( API_BASE )
+		.post( PREFERENCES_PATH, ( body ) => {
+			mockUpdatePreference( body );
+			expect( body.calypso_preferences ).toMatchObject( {
+				[ COLOR_SCHEME_PREFERENCE ]: colorScheme,
+			} );
+			return true;
+		} )
+		.reply( 200, {
+			calypso_preferences: {
+				[ COLOR_SCHEME_PREFERENCE ]: colorScheme,
+			},
+		} );
+}
+
 beforeEach( () => {
 	queryClient.clear();
 	queryClient.setDefaultOptions( {
 		queries: { retry: false },
 	} );
+	mockUpdatePreference.mockClear();
 } );
 
 afterEach( () => {
@@ -77,6 +95,11 @@ test( 'renders for an enrolled user without a saved color scheme', async () => {
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
 	).toBeInTheDocument();
+	expect(
+		screen.getByText( /change your choice \(or set it to match your system\)/i )
+	).toBeVisible();
+	expect( screen.getByRole( 'button', { name: 'Try dark mode' } ) ).toBeVisible();
+	expect( screen.getByRole( 'button', { name: 'Dismiss dark mode announcement' } ) ).toBeVisible();
 	expect( screen.getByRole( 'link', { name: 'Appearance settings' } ) ).toHaveAttribute(
 		'href',
 		'/me/preferences/appearance'
@@ -95,6 +118,32 @@ test( 'renders after the user has selected light mode', async () => {
 	).toBeInTheDocument();
 } );
 
+test( 'switches to dark mode from the notice and can revert back', async () => {
+	const user = userEvent.setup();
+	mockUpdateColorScheme( 'dark' );
+	mockUpdateColorScheme( 'light' );
+
+	renderAnnouncement( {
+		'hosting-dashboard-opt-in': optInPreference,
+		[ COLOR_SCHEME_PREFERENCE ]: 'light',
+	} );
+
+	await user.click( await screen.findByRole( 'button', { name: 'Try dark mode' } ) );
+
+	await waitFor( () => {
+		expect( document.documentElement.dataset.theme ).toBe( 'dark' );
+		expect( screen.getByRole( 'button', { name: 'Go back to light mode' } ) ).toBeVisible();
+	} );
+
+	await user.click( screen.getByRole( 'button', { name: 'Go back to light mode' } ) );
+
+	await waitFor( () => {
+		expect( document.documentElement.dataset.theme ).toBe( 'light' );
+		expect( screen.getByRole( 'button', { name: 'Try dark mode' } ) ).toBeVisible();
+		expect( mockUpdatePreference ).toHaveBeenCalledTimes( 2 );
+	} );
+} );
+
 test( 'renders after the user has selected system mode', async () => {
 	renderAnnouncement( {
 		'hosting-dashboard-opt-in': optInPreference,
@@ -104,6 +153,33 @@ test( 'renders after the user has selected system mode', async () => {
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
 	).toBeInTheDocument();
+} );
+
+test( 'renders a revert action when dark mode is already active', async () => {
+	renderAnnouncement( {
+		'hosting-dashboard-opt-in': optInPreference,
+		[ COLOR_SCHEME_PREFERENCE ]: 'dark',
+	} );
+
+	expect( await screen.findByRole( 'button', { name: 'Go back to light mode' } ) ).toBeVisible();
+} );
+
+test( 'goes back to light mode from a previously active dark mode', async () => {
+	const user = userEvent.setup();
+	mockUpdateColorScheme( 'light' );
+
+	renderAnnouncement( {
+		'hosting-dashboard-opt-in': optInPreference,
+		[ COLOR_SCHEME_PREFERENCE ]: 'dark',
+	} );
+
+	await user.click( await screen.findByRole( 'button', { name: 'Go back to light mode' } ) );
+
+	await waitFor( () => {
+		expect( document.documentElement.dataset.theme ).toBe( 'light' );
+		expect( screen.getByRole( 'button', { name: 'Try dark mode' } ) ).toBeVisible();
+		expect( mockUpdatePreference ).toHaveBeenCalledTimes( 1 );
+	} );
 } );
 
 test( 'renders when the saved color scheme is invalid', async () => {
@@ -176,7 +252,6 @@ test( 'does not render when the user is not enrolled in the Hosting Dashboard', 
 
 test( 'dismisses without saving a color-scheme preference', async () => {
 	const user = userEvent.setup();
-	const mockUpdatePreference = jest.fn();
 	nock( API_BASE )
 		.post( PREFERENCES_PATH, ( body ) => {
 			mockUpdatePreference( body );
@@ -194,7 +269,9 @@ test( 'dismisses without saving a color-scheme preference', async () => {
 		'hosting-dashboard-opt-in': optInPreference,
 	} );
 
-	await user.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
+	await user.click(
+		await screen.findByRole( 'button', { name: 'Dismiss dark mode announcement' } )
+	);
 
 	await waitFor( () => {
 		expect( mockUpdatePreference ).toHaveBeenCalledTimes( 1 );
