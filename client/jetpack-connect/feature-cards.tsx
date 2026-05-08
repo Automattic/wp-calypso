@@ -42,21 +42,6 @@ function getLogoForCardKey( key: FeatureCardKey ): ReactNode | string | undefine
 	}
 }
 
-/**
- * Friendly alt text for the card logo.
- *
- * Card titles already render the plugin name as visible text, so this stays
- * empty by default ("decorative" image semantics) for everything except the
- * generic Jetpack family logo, which doesn't have its own visible title-row
- * brand mark beyond the wordmark itself.
- */
-function getLogoAltForCardKey( key: FeatureCardKey ): string {
-	if ( key === 'jetpack' ) {
-		return 'Jetpack';
-	}
-	return '';
-}
-
 export interface ConnectorFeatureCards {
 	cards: FeatureCard[];
 }
@@ -72,12 +57,18 @@ export function getConnectorFeatureCards(
 ): ConnectorFeatureCards {
 	const { cardKeys } = getFeatureSelection( pluginSlugs );
 
+	// `logoAlt` is intentionally omitted: every Jetpack-family card and A4A
+	// pass a React-element logo whose `alt` is rendered by the SVG's own
+	// `<title>` and dropped by `FeaturesSection`'s `renderImage()` helper,
+	// so the prop wouldn't reach the DOM. The Woo card's `<img>` falls back
+	// to `card.title` ("WooCommerce") via the `card.logoAlt || card.title`
+	// chain in the component, which is exactly the value an explicit
+	// override would have supplied.
 	const cards: FeatureCard[] = cardKeys.map( ( key ) => {
 		const data = getFeatureCardData( key );
 		return {
 			id: key,
 			logo: getLogoForCardKey( key ),
-			logoAlt: getLogoAltForCardKey( key ),
 			title: data.title,
 			bullets: data.bullets,
 		};
