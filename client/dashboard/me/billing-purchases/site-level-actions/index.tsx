@@ -57,7 +57,7 @@ function getDescription(
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
 				__(
-					'Your site %1$s has other subscriptions. Select any you\u2019d like to renew along with %2$s.'
+					'Your site %1$s has other subscriptions. Select any you’d like to renew along with %2$s.'
 				),
 				siteName,
 				productName
@@ -66,7 +66,7 @@ function getDescription(
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
 				__(
-					'Your site %1$s has other subscriptions. Select any you\u2019d like to cancel along with %2$s.'
+					'Your site %1$s has other subscriptions. Select any you’d like to cancel along with %2$s.'
 				),
 				siteName,
 				productName
@@ -74,9 +74,7 @@ function getDescription(
 		case 'remove':
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
-				__(
-					'Your site %1$s has other upgrades. Select any you\u2019d like to remove along with %2$s.'
-				),
+				__( 'Your site %1$s has other upgrades. Select any you’d like to remove along with %2$s.' ),
 				siteName,
 				productName
 			);
@@ -84,7 +82,7 @@ function getDescription(
 			return sprintf(
 				/* translators: %1$s: site name, %2$s: product name */
 				__(
-					'Your site %1$s has other subscriptions. Select any you\u2019d like to turn off auto-renew for along with %2$s.'
+					'Your site %1$s has other subscriptions. Select any you’d like to turn off auto-renew for along with %2$s.'
 				),
 				siteName,
 				productName

@@ -499,7 +499,6 @@ function RenewActionButton( { purchase }: { purchase: Purchase } ) {
 	const canBeRenewed =
 		purchase.can_explicit_renew && String( user.ID ) === String( purchase.user_id );
 	const { recordTracksEvent } = useAnalytics();
-
 	if ( ! canBeRenewed ) {
 		return null;
 	}
