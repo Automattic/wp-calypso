@@ -71,16 +71,36 @@ const CuratedReviewPage: React.FC = () => {
 	const broken = usePersistedFeedIdSet( STORAGE_KEY_BROKEN );
 	const hasIconFalse = usePersistedFeedIdSet( STORAGE_KEY_HAS_ICON_FALSE );
 
+	// Only fetch feeds for the file the operator is actively reviewing — with
+	// hundreds of curated entries spread across five files, fetching all of
+	// them up-front blows up the React Query cache and triggers a wave of
+	// unnecessary requests when the operator only intends to walk one file at
+	// a time. When `All files` is selected we still fetch everything so the
+	// "Copy <file>.tsx" buttons all work without a second pass.
+	const queryableRows = useMemo( () => {
+		if ( selectedFileSlug === ALL_FILES_SENTINEL ) {
+			return flatRows;
+		}
+		return flatRows.filter( ( row ) => row.fileSlug === selectedFileSlug );
+	}, [ flatRows, selectedFileSlug ] );
+
 	// Parallel feed lookups; React Query batches and dedupes naturally.
+	// `meta.persist: false` keeps these out of the persisted query-state
+	// localStorage entry (this is a dev-only bulk tool — we don't want
+	// hundreds of feed responses leaking into every Calypso page load), and
+	// `retry: false` avoids retry storms on permanently-broken feeds.
 	const feedQueries = useQueries( {
-		queries: flatRows.map( ( row ) => ( {
+		queries: queryableRows.map( ( row ) => ( {
 			...readFeedQuery( row.entry.feed_ID ),
+			meta: { persist: false },
+			retry: false,
 		} ) ),
 	} );
 
-	// Detected (API-derived) per-row data, indexed alongside flatRows / feedQueries.
+	// Detected (API-derived) per-row data, indexed alongside `queryableRows`
+	// / `feedQueries`. Rows outside the current scope simply have no entry.
 	const detectedRows = useMemo( () => {
-		return flatRows.map( ( row, index ) => {
+		return queryableRows.map( ( row, index ) => {
 			const query = feedQueries[ index ];
 			const feed = query.data;
 			if ( ! feed ) {
@@ -90,29 +110,39 @@ const CuratedReviewPage: React.FC = () => {
 					autoFlaggedBroken: query.isError,
 				};
 			}
-			const feedUrl = feed.feed_URL || feed.URL || row.entry.site_URL;
+			// Use the canonical `feed_URL` only. If the API doesn't return one
+			// for a curated entry, that's a real signal the entry is dead /
+			// misconfigured — auto-flag and let the operator decide whether to
+			// mark it broken (which omits it from export) or update the data.
+			// We deliberately don't fall back to `feed.URL` (which is just the
+			// site URL) or `entry.site_URL`, because either would silently
+			// bake non-feed URLs into the curated source.
+			const feedUrl = feed.feed_URL;
+			if ( ! feedUrl ) {
+				return {
+					detected: null as DetectedRow | null,
+					iconUrl: null as string | null,
+					autoFlaggedBroken: true,
+				};
+			}
 			const hasIcon = Boolean( feed.image );
-			const autoFlaggedBroken = ! feed.feed_URL && ! feed.URL;
 			return {
 				detected: { feedUrl, hasIcon } as DetectedRow,
 				iconUrl: hasIcon ? feed.image : null,
-				autoFlaggedBroken,
+				autoFlaggedBroken: false,
 			};
 		} );
-	}, [ flatRows, feedQueries ] );
+	}, [ queryableRows, feedQueries ] );
 
-	const totalRows = flatRows.length;
+	const queryableTotal = queryableRows.length;
 	const resolvedRows = detectedRows.filter( ( m ) => m.detected !== null ).length;
 	const erroredRows = feedQueries.filter( ( q ) => q.isError ).length;
 
 	const visibleIndices = useMemo( () => {
 		const indices: number[] = [];
-		for ( let i = 0; i < flatRows.length; i++ ) {
-			const row = flatRows[ i ];
+		for ( let i = 0; i < queryableRows.length; i++ ) {
+			const row = queryableRows[ i ];
 			const meta = detectedRows[ i ];
-			if ( selectedFileSlug !== ALL_FILES_SENTINEL && row.fileSlug !== selectedFileSlug ) {
-				continue;
-			}
 			const isMarkedBroken = broken.feedIds.has( row.entry.feed_ID );
 			const isBroken = isMarkedBroken || meta.autoFlaggedBroken;
 			if ( showOnlyBroken && ! isBroken ) {
@@ -124,22 +154,15 @@ const CuratedReviewPage: React.FC = () => {
 			indices.push( i );
 		}
 		return indices;
-	}, [
-		flatRows,
-		detectedRows,
-		broken.feedIds,
-		selectedFileSlug,
-		showOnlyBroken,
-		showOnlyUnmarked,
-	] );
+	}, [ queryableRows, detectedRows, broken.feedIds, showOnlyBroken, showOnlyUnmarked ] );
 
 	// Group consecutive visible rows by file so we can render section
 	// headings between them when "all files" is active. Order is preserved
-	// from `flatRows`, which itself follows the FILES array order.
+	// from `queryableRows`, which itself follows the FILES array order.
 	const visibleGroups = useMemo( () => {
 		const groups: { fileSlug: string; indices: number[] }[] = [];
 		for ( const index of visibleIndices ) {
-			const fileSlug = flatRows[ index ].fileSlug;
+			const fileSlug = queryableRows[ index ].fileSlug;
 			const last = groups[ groups.length - 1 ];
 			if ( last && last.fileSlug === fileSlug ) {
 				last.indices.push( index );
@@ -148,14 +171,16 @@ const CuratedReviewPage: React.FC = () => {
 			}
 		}
 		return groups;
-	}, [ visibleIndices, flatRows ] );
+	}, [ visibleIndices, queryableRows ] );
 
-	// Build the per-file metadata lookup once; the serializer asks for it
+	// Build the per-file metadata lookup; the serializer asks for it
 	// entry-by-entry. Marked-broken entries are intentionally absent — the
-	// serializer treats those as omitted from the export.
+	// serializer treats those as omitted from the export. Rows whose feed
+	// queries haven't resolved (or aren't in the current scope) are also
+	// absent, and the serializer skips those rather than fabricating data.
 	const metadataByFeedId = useMemo( () => {
 		const map = new Map< number, CuratedRowMetadata >();
-		flatRows.forEach( ( row, index ) => {
+		queryableRows.forEach( ( row, index ) => {
 			const detected = detectedRows[ index ].detected;
 			if ( ! detected ) {
 				return;
@@ -167,7 +192,7 @@ const CuratedReviewPage: React.FC = () => {
 			} );
 		} );
 		return map;
-	}, [ flatRows, detectedRows, hasIconFalse.feedIds ] );
+	}, [ queryableRows, detectedRows, hasIconFalse.feedIds ] );
 
 	const serializeFile = useCallback(
 		( file: CuratedFile ): { source: string; missing: number } => {
@@ -184,11 +209,14 @@ const CuratedReviewPage: React.FC = () => {
 					if ( cached ) {
 						return cached;
 					}
+					// No detected metadata — could be in-flight, errored, or
+					// outside the current file scope. We don't fabricate a
+					// fallback (we'd have nothing trustworthy to put in
+					// `feedUrl`); skip the entry instead and surface the
+					// `missing` count so the operator can re-copy after the
+					// queries settle / they switch back to that file.
 					missing++;
-					// Best-effort fallback so the output is still valid TS even
-					// when a feed query is in-flight or errored. Operator should
-					// re-copy after all queries settle.
-					return { feedUrl: entry.site_URL, hasIcon: false };
+					return null;
 				},
 			} );
 			return { source, missing };
@@ -203,8 +231,9 @@ const CuratedReviewPage: React.FC = () => {
 				await navigator.clipboard.writeText( source );
 				if ( missing > 0 ) {
 					alert(
-						`Copied ${ file.slug }.tsx — but ${ missing } row(s) had no resolved feed data; ` +
-							'wait for those to load and copy again.'
+						`Copied ${ file.slug }.tsx — but ${ missing } row(s) had no resolved feed data ` +
+							'and were skipped. Wait for queries to settle (or switch to ' +
+							"'All files' / this file) and copy again."
 					);
 				} else {
 					alert( `Copied ${ file.slug }.tsx (all rows resolved).` );
@@ -215,6 +244,17 @@ const CuratedReviewPage: React.FC = () => {
 		},
 		[ serializeFile ]
 	);
+
+	// Files whose top-level "Copy <file>.tsx" button is shown in the header.
+	// When filtering to a single file we only fetched that file's feeds, so
+	// only that button has all the data it needs to produce a complete
+	// export — the others would skip every row.
+	const copyableFiles = useMemo( () => {
+		if ( selectedFileSlug === ALL_FILES_SENTINEL ) {
+			return FILES;
+		}
+		return FILES.filter( ( file ) => file.slug === selectedFileSlug );
+	}, [ selectedFileSlug ] );
 
 	return (
 		<div className="curated-review">
@@ -228,7 +268,10 @@ const CuratedReviewPage: React.FC = () => {
 
 				<div className="curated-review__progress">
 					<div>
-						<strong>{ resolvedRows }</strong> / { totalRows } resolved
+						<strong>{ resolvedRows }</strong> / { queryableTotal } resolved
+						{ selectedFileSlug !== ALL_FILES_SENTINEL && (
+							<span className="curated-review__hint"> (in { selectedFileSlug })</span>
+						) }
 					</div>
 					{ erroredRows > 0 && (
 						<div className="curated-review__progress-error">{ erroredRows } errored</div>
@@ -248,7 +291,7 @@ const CuratedReviewPage: React.FC = () => {
 						value={ selectedFileSlug }
 						onChange={ setSelectedFileSlug }
 						options={ [
-							{ label: `All files (${ totalRows })`, value: ALL_FILES_SENTINEL },
+							{ label: `All files (${ flatRows.length })`, value: ALL_FILES_SENTINEL },
 							...FILES.map( ( file ) => ( {
 								label: `${ file.slug } (${ fileRowCounts.get( file.slug ) ?? 0 })`,
 								value: file.slug,
@@ -290,7 +333,7 @@ const CuratedReviewPage: React.FC = () => {
 				</div>
 
 				<div className="curated-review__copy-buttons">
-					{ FILES.map( ( file ) => (
+					{ copyableFiles.map( ( file ) => (
 						<Button key={ file.slug } variant="primary" onClick={ () => copyFile( file ) }>
 							Copy { file.slug }.tsx
 						</Button>
@@ -318,7 +361,7 @@ const CuratedReviewPage: React.FC = () => {
 								</header>
 							) }
 							{ group.indices.map( ( index ) => {
-								const row = flatRows[ index ];
+								const row = queryableRows[ index ];
 								const meta = detectedRows[ index ];
 								const query = feedQueries[ index ];
 								return (

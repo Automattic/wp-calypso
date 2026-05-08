@@ -2,10 +2,11 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import React from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import { addSchemeIfMissing } from 'calypso/lib/url';
 import type { CuratedBlog } from '../curated-blogs';
 
 export interface DetectedRow {
-	/** Resolved canonical feed URL (from `feed.feed_URL || feed.URL || entry.site_URL`). */
+	/** Resolved canonical feed URL (always `feed.feed_URL` from the API). */
 	feedUrl: string;
 	/** Auto-detected `Boolean(feed.image)`. */
 	hasIcon: boolean;
@@ -115,14 +116,30 @@ export const CuratedRow: React.FC< CuratedRowProps > = ( {
 					<KeyValue label="feed_ID">{ entry.feed_ID }</KeyValue>
 					<KeyValue label="site_ID">{ entry.site_ID }</KeyValue>
 					<KeyValue label="site_URL">
-						<a href={ entry.site_URL } target="_blank" rel="noreferrer noopener">
+						{ /*
+						   Many curated `site_URL` values are stored without a scheme
+						   (e.g. `example.com`); without a scheme the browser would
+						   treat the href as a relative URL. We add `https` only on
+						   the rendered link — the displayed text and the underlying
+						   curated data stay byte-identical so a paste-back from the
+						   serializer doesn't churn `site_URL` values.
+						*/ }
+						<a
+							href={ addSchemeIfMissing( entry.site_URL, 'https' ) }
+							target="_blank"
+							rel="noreferrer noopener"
+						>
 							{ entry.site_URL }
 						</a>
 					</KeyValue>
 					<KeyValue label="feedUrl">
 						{ isLoading && ! detected && <em>Loading…</em> }
 						{ ! isLoading && detected?.feedUrl && (
-							<a href={ detected.feedUrl } target="_blank" rel="noreferrer noopener">
+							<a
+								href={ addSchemeIfMissing( detected.feedUrl, 'https' ) }
+								target="_blank"
+								rel="noreferrer noopener"
+							>
 								{ detected.feedUrl }
 							</a>
 						) }
