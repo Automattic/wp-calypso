@@ -71,6 +71,7 @@ export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) 
 	trackRemovedPurchase( purchaseId );
 	const state = getState();
 	const currentData = state.purchases.data ?? [];
+	const captured = currentData.find( ( p ) => String( p.ID ) === String( purchaseId ) ) ?? null;
 	const siteId = getSelectedSiteId( state );
 	dispatch( {
 		type: PURCHASE_REMOVE_COMPLETED,
@@ -79,6 +80,23 @@ export const removePurchaseFromState = ( purchaseId ) => ( dispatch, getState ) 
 	if ( siteId ) {
 		dispatch( requestAdminMenu( siteId ) );
 	}
+	return captured;
+};
+
+/**
+ * Reverses a previous removePurchaseFromState by re-adding the purchase to
+ * Redux state and clearing it from recentlyRemovedPurchaseIds so a subsequent
+ * fetch result is not filtered out. Idempotent.
+ */
+export const restorePurchaseToState = ( purchase ) => ( dispatch, getState ) => {
+	recentlyRemovedPurchaseIds.delete( String( purchase.ID ) );
+	const state = getState();
+	const currentData = state.purchases.data ?? [];
+	const exists = currentData.some( ( p ) => String( p.ID ) === String( purchase.ID ) );
+	dispatch( {
+		type: PURCHASE_REMOVE_COMPLETED,
+		purchases: exists ? currentData : [ ...currentData, purchase ],
+	} );
 };
 
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
