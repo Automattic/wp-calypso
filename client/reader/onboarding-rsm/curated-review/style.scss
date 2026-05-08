@@ -45,7 +45,38 @@
 	&__list {
 		display: flex;
 		flex-direction: column;
+		gap: 24px;
+	}
+
+	&__file-group {
+		display: flex;
+		flex-direction: column;
 		gap: 12px;
+	}
+
+	&__file-group-header {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding-block: 8px;
+		border-block-end: 2px solid var( --color-border-subtle, #ddd );
+		position: sticky;
+		inset-block-start: 0;
+		background: var( --color-surface, #fff );
+		z-index: 1;
+	}
+
+	&__file-group-title {
+		font-family: var( --font-code, monospace );
+		font-size: 18px;
+		font-weight: 600;
+		margin: 0;
+		flex: 1 1 auto;
+	}
+
+	&__file-group-count {
+		color: var( --color-text-subtle, #555 );
+		font-size: 13px;
 	}
 
 	&__empty {

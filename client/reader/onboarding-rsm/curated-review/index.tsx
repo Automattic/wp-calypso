@@ -1,6 +1,6 @@
 import { readFeedQuery } from '@automattic/api-queries';
 import { useQueries } from '@tanstack/react-query';
-import { Button, ToggleControl } from '@wordpress/components';
+import { Button, SelectControl, ToggleControl } from '@wordpress/components';
 import React, { useCallback, useMemo, useState } from 'react';
 import { creativeArtsBlogs } from '../curated-blogs/creative-arts';
 import { industryBlogs } from '../curated-blogs/industry';
@@ -51,9 +51,20 @@ function flatten( files: CuratedFile[] ): FlatRow[] {
 	return rows;
 }
 
+const ALL_FILES_SENTINEL = 'all';
+
 const CuratedReviewPage: React.FC = () => {
 	const flatRows = useMemo( () => flatten( FILES ), [] );
 
+	const fileRowCounts = useMemo( () => {
+		const counts = new Map< string, number >();
+		for ( const row of flatRows ) {
+			counts.set( row.fileSlug, ( counts.get( row.fileSlug ) ?? 0 ) + 1 );
+		}
+		return counts;
+	}, [ flatRows ] );
+
+	const [ selectedFileSlug, setSelectedFileSlug ] = useState< string >( ALL_FILES_SENTINEL );
 	const [ showOnlyBroken, setShowOnlyBroken ] = useState( false );
 	const [ showOnlyUnmarked, setShowOnlyUnmarked ] = useState( false );
 
@@ -99,6 +110,9 @@ const CuratedReviewPage: React.FC = () => {
 		for ( let i = 0; i < flatRows.length; i++ ) {
 			const row = flatRows[ i ];
 			const meta = detectedRows[ i ];
+			if ( selectedFileSlug !== ALL_FILES_SENTINEL && row.fileSlug !== selectedFileSlug ) {
+				continue;
+			}
 			const isMarkedBroken = broken.feedIds.has( row.entry.feed_ID );
 			const isBroken = isMarkedBroken || meta.autoFlaggedBroken;
 			if ( showOnlyBroken && ! isBroken ) {
@@ -110,7 +124,31 @@ const CuratedReviewPage: React.FC = () => {
 			indices.push( i );
 		}
 		return indices;
-	}, [ flatRows, detectedRows, broken.feedIds, showOnlyBroken, showOnlyUnmarked ] );
+	}, [
+		flatRows,
+		detectedRows,
+		broken.feedIds,
+		selectedFileSlug,
+		showOnlyBroken,
+		showOnlyUnmarked,
+	] );
+
+	// Group consecutive visible rows by file so we can render section
+	// headings between them when "all files" is active. Order is preserved
+	// from `flatRows`, which itself follows the FILES array order.
+	const visibleGroups = useMemo( () => {
+		const groups: { fileSlug: string; indices: number[] }[] = [];
+		for ( const index of visibleIndices ) {
+			const fileSlug = flatRows[ index ].fileSlug;
+			const last = groups[ groups.length - 1 ];
+			if ( last && last.fileSlug === fileSlug ) {
+				last.indices.push( index );
+			} else {
+				groups.push( { fileSlug, indices: [ index ] } );
+			}
+		}
+		return groups;
+	}, [ visibleIndices, flatRows ] );
 
 	// Build the per-file metadata lookup once; the serializer asks for it
 	// entry-by-entry. Falls back to a passthrough for any rows whose feed
@@ -209,6 +247,19 @@ const CuratedReviewPage: React.FC = () => {
 				</div>
 
 				<div className="curated-review__filters">
+					<SelectControl
+						__nextHasNoMarginBottom
+						label="File"
+						value={ selectedFileSlug }
+						onChange={ setSelectedFileSlug }
+						options={ [
+							{ label: `All files (${ totalRows })`, value: ALL_FILES_SENTINEL },
+							...FILES.map( ( file ) => ( {
+								label: `${ file.slug } (${ fileRowCounts.get( file.slug ) ?? 0 })`,
+								value: file.slug,
+							} ) ),
+						] }
+					/>
 					<ToggleControl
 						label="Show only broken / auto-flagged"
 						checked={ showOnlyBroken }
@@ -253,28 +304,49 @@ const CuratedReviewPage: React.FC = () => {
 			</header>
 
 			<main className="curated-review__list">
-				{ visibleIndices.map( ( index ) => {
-					const row = flatRows[ index ];
-					const meta = detectedRows[ index ];
-					const query = feedQueries[ index ];
+				{ visibleGroups.map( ( group ) => {
+					const file = FILES.find( ( f ) => f.slug === group.fileSlug );
 					return (
-						<CuratedRow
-							key={ row.entry.feed_ID }
-							tag={ row.tag }
-							entry={ row.entry }
-							detected={ meta.detected }
-							iconUrl={ meta.iconUrl }
-							isLoading={ query.isLoading || query.isFetching }
-							queryError={ query.error as Error | null }
-							isMarkedBroken={ broken.feedIds.has( row.entry.feed_ID ) }
-							autoFlaggedBroken={ meta.autoFlaggedBroken }
-							onToggleBroken={ () => broken.toggle( row.entry.feed_ID ) }
-							isHasIconForcedFalse={ hasIconFalse.feedIds.has( row.entry.feed_ID ) }
-							onToggleHasIconFalse={ () => hasIconFalse.toggle( row.entry.feed_ID ) }
-						/>
+						<section key={ group.fileSlug } className="curated-review__file-group">
+							{ selectedFileSlug === ALL_FILES_SENTINEL && (
+								<header className="curated-review__file-group-header">
+									<h2 className="curated-review__file-group-title">{ group.fileSlug }.tsx</h2>
+									<span className="curated-review__file-group-count">
+										{ group.indices.length } shown / { fileRowCounts.get( group.fileSlug ) ?? 0 }{ ' ' }
+										total
+									</span>
+									{ file && (
+										<Button variant="secondary" onClick={ () => copyFile( file ) }>
+											Copy { file.slug }.tsx
+										</Button>
+									) }
+								</header>
+							) }
+							{ group.indices.map( ( index ) => {
+								const row = flatRows[ index ];
+								const meta = detectedRows[ index ];
+								const query = feedQueries[ index ];
+								return (
+									<CuratedRow
+										key={ row.entry.feed_ID }
+										tag={ row.tag }
+										entry={ row.entry }
+										detected={ meta.detected }
+										iconUrl={ meta.iconUrl }
+										isLoading={ query.isLoading || query.isFetching }
+										queryError={ query.error as Error | null }
+										isMarkedBroken={ broken.feedIds.has( row.entry.feed_ID ) }
+										autoFlaggedBroken={ meta.autoFlaggedBroken }
+										onToggleBroken={ () => broken.toggle( row.entry.feed_ID ) }
+										isHasIconForcedFalse={ hasIconFalse.feedIds.has( row.entry.feed_ID ) }
+										onToggleHasIconFalse={ () => hasIconFalse.toggle( row.entry.feed_ID ) }
+									/>
+								);
+							} ) }
+						</section>
 					);
 				} ) }
-				{ visibleIndices.length === 0 && (
+				{ visibleGroups.length === 0 && (
 					<p className="curated-review__empty">No rows match the current filters.</p>
 				) }
 			</main>
