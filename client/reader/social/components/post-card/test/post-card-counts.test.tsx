@@ -280,6 +280,7 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 		const stats = container.querySelector( '.social-post-card-stats' );
 		expect( stats ).not.toBeNull();
 		expect( stats ).toHaveTextContent( '2 boosts' );
+		expect( stats ).toHaveTextContent( '1 quote' );
 		expect( stats ).toHaveTextContent( '9 favorites' );
 	} );
 
