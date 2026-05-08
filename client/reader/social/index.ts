@@ -12,6 +12,9 @@ export type { FollowButtonProps } from './follow-button';
 export { SocialAccountRow } from './account-row';
 export type { SocialAccountRowProps, SocialAccountRowFollowState } from './account-row';
 
+export { SocialAccountList } from './account-list';
+export type { SocialAccountListProps } from './account-list';
+
 export { SocialPostCard } from './components/post-card';
 export { SocialFeedList } from './components/feed-list';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
