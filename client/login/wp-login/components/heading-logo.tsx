@@ -1,6 +1,6 @@
 import A4APlusWpComLogo from 'calypso/a8c-for-agencies/components/a4a-plus-wpcom-logo';
 import blazeProLogo from 'calypso/assets/images/blaze/blaze-pro-logo.webp';
-import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg?no-inline';
 import akismetLogo from 'calypso/assets/images/icons/akismet-logo.svg';
 import crowdsignalLogo from 'calypso/assets/images/icons/crowdsignal.svg';
 import gravatarLogo from 'calypso/assets/images/icons/gravatar.svg';

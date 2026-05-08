@@ -82,13 +82,6 @@ export default defineConfig( {
 				find: /^fast-deep-equal\/es6(\/index\.js)?$/,
 				replacement: require.resolve( 'fast-deep-equal/es6/index.js' ),
 			},
-
-			// Replace prop-types with a no-op stub. Validators are dev-only
-			// console.warns that are never needed during SSR.  Using a real file
-			// (rather than a virtual module) lets rolldown place it in its own
-			// shared chunk so non-entry chunks can import it without going through
-			// server.mjs and hitting the circular-dep undefined-binding problem.
-			{ find: 'prop-types', replacement: path.join( __dirname, 'server/stubs/prop-types.mjs' ) },
 		],
 	},
 
@@ -352,7 +345,7 @@ export default defineConfig( {
 								const from =
 									line.match( /from "([^"]+)"/ )?.[ 1 ] ?? line.match( /"([^"]+)"/ )?.[ 1 ] ?? '';
 								if ( from.startsWith( './' ) ) {
-									if ( /chunk\.[^/]+\.mjs$/.test( from ) || from === './prop-types.mjs' ) {
+									if ( /chunk\.[^/]+\.mjs$/.test( from ) ) {
 										stubs.push( line );
 									} else {
 										chunkImports.push( line );
@@ -505,6 +498,7 @@ export default defineConfig( {
 			'he',
 			'html-to-react',
 			'http-proxy-middleware',
+			'prop-types',
 			'qs',
 			'dom-helpers',
 			'qrcode.react',
@@ -531,10 +525,6 @@ export default defineConfig( {
 		rolldownOptions: {
 			input: {
 				server: path.join( __dirname, 'server/index.js' ),
-				// A standalone entry so rolldown gives prop-types its own chunk file.
-				// Non-entry chunks then import PT directly from this file rather than
-				// from server.mjs, breaking the circular-dep undefined-binding problem.
-				'prop-types': path.join( __dirname, 'server/stubs/prop-types.mjs' ),
 			},
 
 			output: {

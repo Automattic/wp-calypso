@@ -11,11 +11,11 @@ import { useAnalytics } from '../../app/analytics';
 import SVGIcon from '../../components/svg-icon';
 import { Text } from '../../components/text';
 import AppsCard from './apps-card';
-import Apple from './images/apple-logo.svg';
+import Apple from './images/apple-logo.svg?no-inline';
 import WordPressDesktopAppLogo from './images/desktop-app-logo.svg';
-import Linux from './images/linux-logo.svg';
+import Linux from './images/linux-logo.svg?no-inline';
 import WordPressStudioLogo from './images/studio-app-logo.svg';
-import Windows from './images/windows-logo.svg';
+import Windows from './images/windows-logo.svg?no-inline';
 
 enum PlatformType {
 	MacIntel = 'MacIntel',

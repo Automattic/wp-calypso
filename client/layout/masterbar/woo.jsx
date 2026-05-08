@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement, Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
-import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg?no-inline';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
 import './woo.scss';

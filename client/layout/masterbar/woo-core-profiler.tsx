@@ -4,7 +4,7 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { isWebUri } from 'valid-url';
-import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg?no-inline';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
 import './woo.scss';

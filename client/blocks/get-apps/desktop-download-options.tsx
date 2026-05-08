@@ -95,15 +95,13 @@ export const DesktopDownloadOptions: React.FC< Props > = ( {
 							: currentPlatformConfig.buttonText
 					}
 					icon={
-						currentPlatformConfig ? (
-							<SVGIcon
-								classes="get-apps__desktop-button-icon"
-								aria-hidden="true"
-								name={ currentPlatformConfig.iconName }
-								size={ 16 }
-								icon={ currentPlatformConfig.icon }
-							/>
-						) : undefined
+						<SVGIcon
+							classes="get-apps__desktop-button-icon"
+							aria-hidden="true"
+							name={ currentPlatformConfig?.iconName ?? '' }
+							size={ 16 }
+							icon={ currentPlatformConfig?.icon ?? '' }
+						/>
 					}
 					onClick={ currentPlatformConfig?.onClick }
 					href={ currentPlatformConfig?.link }

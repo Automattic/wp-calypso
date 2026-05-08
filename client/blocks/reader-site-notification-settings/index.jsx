@@ -7,7 +7,7 @@ import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import Settings from 'calypso/assets/images/icons/settings.svg';
+import Settings from 'calypso/assets/images/icons/settings.svg?no-inline';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormSelect from 'calypso/components/forms/form-select';
 import SVGIcon from 'calypso/components/svg-icon';

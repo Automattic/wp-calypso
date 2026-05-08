@@ -1,10 +1,10 @@
-import { Url } from 'url';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/url';
 import wp from 'calypso/lib/wp';
 import { getMyPostCounts } from 'calypso/state/posts/counts/selectors';
 import { SiteId } from 'calypso/types';
+import type { Url } from 'url';
 
 export interface BloggingPrompt {
 	id: number;

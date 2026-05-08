@@ -325,15 +325,7 @@ export default defineConfig(
 				},
 
 				// Browser polyfills for Node built-ins used in the codebase.
-				{
-					find: /^fs$/,
-					replacement: path.join( __dirname, 'server/stubs/browser-fs.cjs' ),
-				},
 				{ find: 'path', replacement: 'path-browserify' },
-				{
-					find: /^url$/,
-					replacement: path.join( __dirname, 'server/stubs/browser-url.cjs' ),
-				},
 				{ find: 'util', replacement: findPackage( 'util/' ) },
 
 				// PostCSS marks source-map-js as browser:false, but Gutenberg's
