@@ -169,18 +169,9 @@ export const domainRoute = createRoute( {
 
 		if ( isContactVerificationSubRoute ) {
 			checkDomainContactVerificationPermissions( domain );
-		}
-
-		if ( isForwardingSubRoute ) {
+		if ( isForwardingSubRoute || isSecuritySubRoute || isGlueRecordsSubRoute ) {
 			checkDomainNotPendingRegistration( domain );
 		}
-
-		if ( isSecuritySubRoute ) {
-			checkDomainNotPendingRegistration( domain );
-		}
-
-		if ( isGlueRecordsSubRoute ) {
-			checkDomainNotPendingRegistration( domain );
 		}
 
 		return domain;
