@@ -409,3 +409,50 @@ describe( '<ComposerModal>', () => {
 		);
 	} );
 } );
+
+describe( '<ComposerModal> — markOverLimit', () => {
+	beforeEach( () => {
+		openFn = null;
+		closeFn = null;
+
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		jest.spyOn( noticeActions, 'successNotice' );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'sets hasBeenOverLimit on the context once the user types past the limit', async () => {
+		const user = userEvent.setup();
+		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useLimit: () => 5,
+		};
+
+		const probe: { current: ReturnType< typeof useComposer > | null } = { current: null };
+		function Probe() {
+			probe.current = useComposer();
+			return null;
+		}
+
+		const queryClient = makeQueryClient();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 7 } config={ tinyLimitConfig }>
+				<Probe />
+				<Capture />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		act( () => openFn?.( standaloneMode ) );
+		expect( probe.current?.hasBeenOverLimit ).toBe( false );
+
+		await user.type( screen.getByRole( 'textbox' ), 'this is over the limit' );
+
+		expect( probe.current?.hasBeenOverLimit ).toBe( true );
+	} );
+} );
