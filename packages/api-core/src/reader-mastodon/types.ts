@@ -394,7 +394,12 @@ export interface MastodonAccountSummary {
 	id: string;
 	username: string;
 	acct: string;
-	/** `@user@instance` — synthesised server-side from `acct` + connection's home instance. */
+	/**
+	 * Bare webfinger handle (`user@instance`) synthesised server-side from
+	 * `acct` + connection's home instance. Mirrors the ATmosphere row
+	 * convention where `handle` is bare (`alice.bsky.social`); the display
+	 * layer (`SocialAccountRow`) renders the `@` prefix once.
+	 */
 	handle: string;
 	display_name: string;
 	note: string;
