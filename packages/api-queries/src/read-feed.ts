@@ -17,8 +17,16 @@ interface Options {
 	sort?: ReadFeedSearchSort;
 }
 
+// Mirrors the legacy `requestFeedSearch` action's `query.substring(0, 500)`
+// guard so an over-long query can't blow up the GET URL on the wire.
+const FEED_SEARCH_MAX_QUERY_LENGTH = 500;
+
+const truncateQuery = ( query?: string ): string | undefined =>
+	query == null ? query : query.slice( 0, FEED_SEARCH_MAX_QUERY_LENGTH );
+
 export const readFeedSearchQuery = ( options: Options ) => {
-	const { query, excludeFollowed, sort } = options;
+	const { excludeFollowed, sort } = options;
+	const query = truncateQuery( options.query );
 	return queryOptions( {
 		queryKey: [ 'read', 'feeds', 'search', query, excludeFollowed, sort ],
 		queryFn: () => fetchReadFeedSearch( { query, excludeFollowed, sort } ),
@@ -32,7 +40,8 @@ export const readFeedSearchQuery = ( options: Options ) => {
 const FEED_SEARCH_MAX_RESULTS = 200;
 
 export const readFeedSearchInfiniteQuery = ( options: Options ) => {
-	const { query, excludeFollowed, sort } = options;
+	const { excludeFollowed, sort } = options;
+	const query = truncateQuery( options.query );
 	return infiniteQueryOptions( {
 		queryKey: [ 'read', 'feeds', 'search', 'infinite', query, excludeFollowed, sort ],
 		queryFn: ( { pageParam }: { pageParam: number } ) =>
