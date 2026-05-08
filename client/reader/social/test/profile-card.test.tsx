@@ -305,6 +305,23 @@ describe( 'SocialProfileCard', () => {
 		expect( link?.hasAttribute( 'data-tracking' ) ).toBe( false );
 		expect( link?.hasAttribute( 'data-evil' ) ).toBe( false );
 	} );
+
+	it( 'renders a stat as a link when href is provided', () => {
+		render(
+			<SocialProfileCard
+				avatar="https://example.test/avatar.jpg"
+				bio="hi"
+				statsLabel="Profile stats"
+				stats={ [
+					{ key: 'followers', count: 10, label: 'followers', href: '/profile/me/followers' },
+					{ key: 'following', count: 5, label: 'following' },
+				] }
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: /10 followers/i } );
+		expect( link ).toHaveAttribute( 'href', '/profile/me/followers' );
+		expect( screen.queryByRole( 'link', { name: /5 following/i } ) ).not.toBeInTheDocument();
+	} );
 } );
 
 describe( 'SocialProfileCard — bio mention click routing', () => {

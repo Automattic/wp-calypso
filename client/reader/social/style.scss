@@ -89,6 +89,15 @@
 	gap: 0.25rem;
 }
 
+.social-profile-card__stat-link {
+	color: inherit;
+	text-decoration: none;
+
+	&:hover .social-profile-card__stat-count {
+		text-decoration: underline;
+	}
+}
+
 .social-profile-card__stat-count {
 	font-weight: 600;
 }

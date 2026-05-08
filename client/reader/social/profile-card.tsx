@@ -10,6 +10,7 @@ export interface SocialProfileStat {
 	key: string;
 	count: number;
 	label: TranslateResult;
+	href?: string;
 }
 
 export interface SocialProfileCardProps {
@@ -195,14 +196,27 @@ export function SocialProfileCard( {
 			{ handle ? <p className="social-profile-card__handle">@{ handle }</p> : null }
 			{ bioNode }
 			<ul className="social-profile-card__stats" aria-label={ statsLabel }>
-				{ stats.map( ( stat ) => (
-					<li key={ stat.key } className="social-profile-card__stat">
-						<span className="social-profile-card__stat-count">
-							{ formatNumberCompact( stat.count ) }
-						</span>{ ' ' }
-						<span className="social-profile-card__stat-label">{ stat.label }</span>
-					</li>
-				) ) }
+				{ stats.map( ( stat ) => {
+					const inner = (
+						<>
+							<span className="social-profile-card__stat-count">
+								{ formatNumberCompact( stat.count ) }
+							</span>{ ' ' }
+							<span className="social-profile-card__stat-label">{ stat.label }</span>
+						</>
+					);
+					return (
+						<li key={ stat.key } className="social-profile-card__stat">
+							{ stat.href ? (
+								<a className="social-profile-card__stat-link" href={ stat.href }>
+									{ inner }
+								</a>
+							) : (
+								inner
+							) }
+						</li>
+					);
+				} ) }
 			</ul>
 		</div>
 	);
