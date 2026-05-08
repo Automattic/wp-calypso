@@ -1,8 +1,17 @@
-// ConfirmDialog sets the z-index so high that the Popover used by DataViews
-// actions does not show up so we have to set this lower.
-// @see https://github.com/wordpress/gutenberg/issues/71463
-div.components-modal__screen-overlay.upcoming-renewals-dialog {
-	z-index: 500;
+.upcoming-renewals-dialog .components-modal__frame {
+	.upcoming-renewals-dialog__site-label,
+	.upcoming-renewals-dialog__product-subtitle {
+		color: var( --dashboard__text-muted-color, #757575 );
+	}
+
+	.dataviews-view-table thead {
+		display: none;
+	}
+
+	.dataviews-view-table__col-actions,
+	.dataviews-view-table__actions-column {
+		display: none;
+	}
 }
 
 .purchase-settings__toggle-control {

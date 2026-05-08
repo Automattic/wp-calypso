@@ -1,16 +1,13 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalConfirmDialog as ConfirmDialog,
-	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useEffect, useMemo } from 'react';
-import { purchaseSettingsRoute } from '../../../app/router/me';
 import { getRelativeTimeString } from '../../../utils/datetime';
 import {
 	getSubtitleForDisplay,
@@ -27,7 +24,6 @@ interface Props {
 	onClose: () => void;
 	onConfirm: ( purchases: Purchase[] ) => void;
 	submitButtonText?: string;
-	hideManagePurchaseLinks?: boolean;
 }
 
 function ExpiresText( { purchase }: { purchase: Purchase } ) {
@@ -64,7 +60,7 @@ function getPurchaseFields(): Field< Purchase >[] {
 				return (
 					<VStack spacing={ 1 }>
 						<Text>{ item.is_domain ? item.meta ?? '' : item.product_name }</Text>
-						<Text variant="muted">
+						<Text variant="muted" className="upcoming-renewals-dialog__product-subtitle">
 							{ purchaseTypeText ? `${ purchaseTypeText }: ` : '' }
 							<span>{ purchaseTypeText && <ExpiresText purchase={ item } /> }</span>
 						</Text>
@@ -97,9 +93,7 @@ export function UpcomingRenewalsDialog( {
 	onClose,
 	onConfirm,
 	submitButtonText,
-	hideManagePurchaseLinks,
 }: Props ) {
-	const navigate = useNavigate();
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
 			[ ...purchases ].sort( ( a, b ) => {
@@ -115,8 +109,15 @@ export function UpcomingRenewalsDialog( {
 		perPage: 100,
 		page: 1,
 		fields: [ 'product_name', 'amount' ],
-		layout: {},
+		layout: {
+			styles: {
+				product_name: { width: '100%' },
+				amount: { width: '1%', align: 'end' },
+			},
+		},
 	} );
+
+	const fields = useMemo( () => getPurchaseFields(), [] );
 
 	const [ selection, setSelection ] = useState< string[] >(
 		purchases.map( ( purchase ) => purchase.ID.toString() )
@@ -126,10 +127,8 @@ export function UpcomingRenewalsDialog( {
 		setSelection( purchases.map( ( purchase ) => purchase.ID.toString() ) );
 	}, [ purchases ] );
 
-	const fields = useMemo( () => getPurchaseFields(), [] );
-
-	const actions = useMemo( (): Action< Purchase >[] => {
-		const actionsList: Action< Purchase >[] = [
+	const actions = useMemo(
+		(): Action< Purchase >[] => [
 			{
 				id: 'select-for-renewal',
 				label: __( 'Select for renewal' ),
@@ -140,22 +139,9 @@ export function UpcomingRenewalsDialog( {
 					// The actual renewal logic is handled by the dialog's confirm button.
 				},
 			},
-		];
-
-		if ( ! hideManagePurchaseLinks ) {
-			actionsList.push( {
-				id: 'manage-purchase',
-				label: __( 'Manage purchase' ),
-				supportsBulk: false,
-				callback: ( [ item ] ) => {
-					onClose();
-					navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: item.ID } } );
-				},
-			} );
-		}
-
-		return actionsList;
-	}, [ hideManagePurchaseLinks, onClose, navigate ] );
+		],
+		[]
+	);
 
 	const handleConfirm = () => {
 		const selectedPurchaseIds = selection.map( Number );
@@ -168,37 +154,41 @@ export function UpcomingRenewalsDialog( {
 	return (
 		<ConfirmDialog
 			overlayClassName="upcoming-renewals-dialog"
-			size="large"
+			size="medium"
 			confirmButtonText={ submitButtonText ?? __( 'Renew now' ) }
 			onConfirm={ handleConfirm }
 			onCancel={ onClose }
 		>
-			<VStack>
-				<Heading>{ __( 'Upcoming renewals' ) }</Heading>
-				<Text variant="muted">
-					{
-						// translators: siteName is the URL of the site
-						sprintf( __( 'Site: %(siteName)s' ), { siteName: siteDomain } )
-					}
-				</Text>
+			<VStack spacing={ 4 }>
+				<VStack>
+					<Heading>{ __( 'Upcoming renewals' ) }</Heading>
+					<Text variant="muted" className="upcoming-renewals-dialog__site-label">
+						{
+							// translators: siteName is the URL of the site
+							sprintf( __( 'Site: %(siteName)s' ), { siteName: siteDomain } )
+						}
+					</Text>
+				</VStack>
+				<DataViews
+					data={ purchasesSortByRecentExpiryDate }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					selection={ selection }
+					onChangeSelection={ setSelection }
+					actions={ actions }
+					getItemId={ ( item ) => item.ID.toString() }
+					isLoading={ false }
+					paginationInfo={ {
+						totalItems: purchasesSortByRecentExpiryDate.length,
+						totalPages: 1,
+					} }
+					defaultLayouts={ { table: {} } }
+					search={ false }
+				>
+					<DataViews.Layout />
+				</DataViews>
 			</VStack>
-			<Divider margin={ 3 } />
-			<DataViews
-				data={ purchasesSortByRecentExpiryDate }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				selection={ selection }
-				onChangeSelection={ setSelection }
-				actions={ actions }
-				getItemId={ ( item ) => item.ID.toString() }
-				isLoading={ false }
-				paginationInfo={ {
-					totalItems: purchasesSortByRecentExpiryDate.length,
-					totalPages: 1,
-				} }
-				defaultLayouts={ { table: {} } }
-			/>
 		</ConfirmDialog>
 	);
 }
