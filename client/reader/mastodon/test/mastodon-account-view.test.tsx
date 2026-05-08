@@ -171,6 +171,23 @@ describe( 'MastodonAccountView', () => {
 		).toBeVisible();
 	} );
 
+	it( 'still renders the section title when display_name is null on the list endpoint', async () => {
+		// The list endpoint can omit display_name for Mastodon connections.
+		// The section header is anchored on section identity, so the title
+		// should remain "Mastodon" and the subtitle should keep showing the
+		// handle without relying on the details endpoint.
+		mockConnections( null );
+		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+		expect( await screen.findByRole( 'heading', { name: /Mastodon/ } ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				/Catch up with the latest from the people you follow on Mastodon with @alice@mastodon\.social/
+			)
+		).toBeVisible();
+	} );
+
 	it( 'renders the profile tab when asked', async () => {
 		mockConnections();
 		mockConnectionDetails( 7 );

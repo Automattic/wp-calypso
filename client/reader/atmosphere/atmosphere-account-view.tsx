@@ -8,6 +8,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
+import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { AtmosphereNavigation } from './atmosphere-navigation';
 import { atmosphereComposerConfig } from './composer-config';
 import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
@@ -56,7 +57,7 @@ export function AtmosphereAccountView( { connectionId, tab }: Props ) {
 	}
 
 	const documentTitle = connection.display_name || connection.handle;
-	const handle = connection.handle.replace( /^@/, '' );
+	const handle = normalizeHandle( connection.handle );
 	const subtitle = handle
 		? translate(
 				'Catch up with the latest from the people you follow on Bluesky with @%(handle)s',

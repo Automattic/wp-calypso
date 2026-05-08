@@ -1,4 +1,4 @@
-import { useMastodonConnectionsQuery } from '@automattic/api-queries';
+import { useMastodonConnectionQuery, useMastodonConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +8,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
+import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { mastodonComposerConfig } from './composer-config';
 import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
 import { MastodonNavigation } from './mastodon-navigation';
@@ -31,6 +32,13 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	const connections = data?.connections ?? [];
 	const connection = connections.find( ( c ) => c.id === connectionId ) ?? null;
 	const tabValid = VALID_TABS.has( tab );
+
+	// The list endpoint omits display_name for Mastodon connections (it
+	// comes back null), so the browser tab title would otherwise fall
+	// back to the raw handle. The details endpoint has the display name;
+	// React Query dedupes by key, so ProfilePanel and the sidebar row
+	// share this fetch — no extra request.
+	const details = useMastodonConnectionQuery( connection?.id ?? null );
 
 	// The compose FAB and modal sit outside <ConnectionReauthGate>, so without
 	// an explicit guard they'd float over the reauth prompt. Hide both while
@@ -62,8 +70,8 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		);
 	}
 
-	const documentTitle = connection.display_name || connection.handle;
-	const handle = connection.handle.replace( /^@/, '' );
+	const documentTitle = details.data?.display_name || connection.display_name || connection.handle;
+	const handle = normalizeHandle( connection.handle );
 	const subtitle = handle
 		? translate(
 				'Catch up with the latest from the people you follow on Mastodon with @%(handle)s',
