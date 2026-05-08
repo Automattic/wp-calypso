@@ -36,6 +36,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 				site_URL: 'https://food1.example',
 				site_name: 'Food 1',
 				feed_URL: 'https://food1.example/feed',
+				has_icon: true,
 			},
 			{
 				feed_ID: 101,
@@ -43,6 +44,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 				site_URL: 'https://food2.example',
 				site_name: 'Food 2',
 				feed_URL: 'https://food2.example/feed',
+				has_icon: true,
 			},
 		],
 		drinks: [
@@ -52,6 +54,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 				site_URL: 'https://drinks1.example',
 				site_name: 'Drinks 1',
 				feed_URL: 'https://drinks1.example/feed',
+				has_icon: true,
 			},
 			{
 				feed_ID: 201,
@@ -59,6 +62,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 				site_URL: 'https://drinks2.example',
 				site_name: 'Drinks 2',
 				feed_URL: 'https://drinks2.example/feed',
+				has_icon: false,
 			},
 		],
 	},
