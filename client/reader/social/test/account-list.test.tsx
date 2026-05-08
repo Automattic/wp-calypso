@@ -42,7 +42,6 @@ describe( 'SocialAccountList', () => {
 						cursor: null,
 					},
 				],
-				pageParams: [ undefined ],
 			},
 		} );
 
