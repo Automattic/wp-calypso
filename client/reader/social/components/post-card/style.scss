@@ -294,7 +294,7 @@ a.social-post-card-header__timestamp::after {
 	// The stats row directly above provides separation via its
 	// border-block-end; suppress the default 8px gap so the action row sits
 	// directly under the hairline.
-	margin-top: 0;
+	margin-block-start: 0;
 }
 
 .social-post-card-embed-images {
