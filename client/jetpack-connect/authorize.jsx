@@ -19,6 +19,7 @@ import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { ConsentText } from 'calypso/components/connect-screen/consent-text';
+import { FeaturesSection } from 'calypso/components/connect-screen/features-section';
 import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
@@ -84,6 +85,7 @@ import {
 	REMOTE_PATH_AUTH,
 } from './constants';
 import Disclaimer from './disclaimer';
+import { getConnectorFeatureCards } from './feature-cards';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -1051,11 +1053,31 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
+		if ( this.isFromJetpackConnector() ) {
+			const { cards } = getConnectorFeatureCards( authQuery.plugins );
+
+			return (
+				<>
+					<UserCard
+						user={ {
+							displayName: this.props.user.display_name,
+							email: this.props.user.email,
+							avatarUrl: this.props.user.avatar_URL,
+						} }
+						size="small"
+					/>
+					{ this.renderUseDifferentAccountLink() }
+
+					<FeaturesSection cards={ cards } />
+					{ this.renderNotices() }
+					{ this.renderStateAction() }
+				</>
+			);
+		}
+
 		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
 			const branding = getConnectorBranding( authQuery.plugins );
-			const siteURL = this.isFromJetpackConnector()
-				? undefined
-				: decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
+			const siteURL = decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
 			const permissionsTitle = branding.permissionsTitle( { siteURL } );
 
 			return (
@@ -1068,6 +1090,7 @@ export class JetpackAuthorize extends Component {
 						} }
 						size="small"
 					/>
+					{ this.renderUseDifferentAccountLink() }
 
 					<PermissionsList title={ permissionsTitle } permissions={ branding.permissions } />
 					{ this.renderNotices() }
@@ -1169,19 +1192,59 @@ export class JetpackAuthorize extends Component {
 		);
 	}
 
-	renderStateAction( wooLoginURL ) {
+	/**
+	 * True while the connection is mid-handshake (or already succeeded),
+	 * matching the gate used by both the action button and the
+	 * "Use a different account" link so the two render in the same
+	 * lifecycle window.
+	 */
+	get isInFlight() {
 		const { authorizeSuccess } = this.props.authorizationData;
-
-		if ( this.props.isSiteBlocked ) {
-			return null;
-		}
-
-		const isLoading =
+		return (
 			this.props.isFetchingAuthorizationSite ||
 			this.props.isRequestingSitePurchases ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
-			authorizeSuccess;
+			authorizeSuccess
+		);
+	}
+
+	/**
+	 * Render the "Use a different account" link that sits directly beneath
+	 * the user card on the unified connect-account surfaces. The link is
+	 * suppressed while the connection is in flight (or already succeeded)
+	 * so it doesn't offer a switch-account escape hatch mid-handshake —
+	 * matching the loading-state guard the action button uses below.
+	 */
+	renderUseDifferentAccountLink() {
+		if ( this.props.isSiteBlocked ) {
+			return null;
+		}
+
+		if ( this.isInFlight ) {
+			return null;
+		}
+
+		const { from } = this.props.authQuery;
+		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+
+		return (
+			<LoggedOutFormLinkItem
+				className="jetpack-connect__switch-account-link"
+				href={ loginURL }
+				onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
+			>
+				{ this.props.translate( 'Use a different account' ) }
+			</LoggedOutFormLinkItem>
+		);
+	}
+
+	renderStateAction( wooLoginURL ) {
+		if ( this.props.isSiteBlocked ) {
+			return null;
+		}
+
+		const isLoading = this.isInFlight;
 
 		if ( this.isWooJPC() ) {
 			return (
@@ -1228,23 +1291,20 @@ export class JetpackAuthorize extends Component {
 		);
 
 		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
-			const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
+			// The "Use a different account" link is now rendered next to the
+			// user card by `renderUseDifferentAccountLink()`, and the
+			// disclaimer drops below the action button so the call-to-action
+			// reads as the next step rather than something gated behind the
+			// fine print.
 			return (
 				<>
-					<ConsentText>{ disclaimer }</ConsentText>
 					<ActionButtons
 						primaryLabel={ this.getButtonText() }
 						primaryLoading={ isLoading }
 						primaryDisabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
 						primaryOnClick={ this.handleSubmit }
 					/>
-					<LoggedOutFormLinkItem
-						style={ { textAlign: 'center' } }
-						href={ loginURL }
-						onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
-					>
-						{ this.props.translate( 'Use a different account' ) }
-					</LoggedOutFormLinkItem>
+					<ConsentText>{ disclaimer }</ConsentText>
 				</>
 			);
 		}

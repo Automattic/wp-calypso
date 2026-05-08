@@ -51,4 +51,11 @@ describe( 'AtmosphereConnectView', () => {
 
 		await waitFor( () => expect( page ).toHaveBeenCalledWith( '/reader/atmosphere/99/timeline' ) );
 	} );
+
+	it( 'renders the connect title with the Bluesky icon and the explanatory subtitle', () => {
+		renderWithProvider( <AtmosphereConnectView /> );
+		expect( screen.getByRole( 'heading', { name: /Connect a Bluesky account/i } ) ).toBeVisible();
+		expect( screen.getByTestId( 'atmosphere-section-logo' ) ).toBeVisible();
+		expect( screen.getByText( /Bring your Bluesky account into the Reader\./i ) ).toBeVisible();
+	} );
 } );

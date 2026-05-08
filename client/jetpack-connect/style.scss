@@ -287,6 +287,18 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	}
 }
 
+// Scoped to the unified connect-account surfaces: the disclaimer drops
+// directly under the Connect button without the shared 1.5rem top margin,
+// so the call-to-action and its fine print read as one block. Other
+// `ConsentText` consumers (Woo JPC, magic-login, accept-invite, login
+// page wrapper) keep the default top margin.
+.jetpack-connect__authorize-form-wrapper--onboarding,
+.jetpack-connect__authorize-form-wrapper--connector {
+	.connect-screen-consent-text {
+		margin: 0;
+	}
+}
+
 .jetpack-connect__authorize-form-wrapper--connector {
 	max-width: 520px;
 	margin: 5vh auto 0;
@@ -332,7 +344,8 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	.connect-screen-permissions-list__title,
 	.connect-screen-permissions-list__item,
 	.connect-screen-user-card__name,
-	.connect-screen-user-card__details {
+	.connect-screen-user-card__details,
+	.connect-screen-features-section__card-bullet {
 		font-family: $sans;
 	}
 
@@ -350,10 +363,6 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	input:focus {
 		border-color: var( --color-accent );
 		box-shadow: 0 0 0 2px var( --color-accent-light );
-	}
-
-	.jetpack-connect__switch-account-link {
-		color: var( --color-accent );
 	}
 
 	.connect-screen-action-buttons__tertiary.components-button.is-link {
@@ -439,11 +448,17 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	}
 }
 
-.jetpack-connect__switch-account-link {
-	@include body-medium;
-	margin: 12px 0 0;
+// "Use a different account" link rendered directly beneath the user card
+// on the unified connect-account surfaces (jetpack-connector and unified-
+// onboarding). Centered under the card with a muted gray treatment so it
+// reads as a secondary action; the top margin nudges it away from the
+// card and the larger bottom margin separates it from the FeaturesSection
+// / PermissionsList that follows.
+.jetpack-connect__switch-account-link.logged-out-form__link-item {
+	color: var( --studio-gray-50, #646970 );
 	padding: 0;
-	color: var( --studio-green-60 );
+	margin: 1rem 0 2rem;
+	text-align: center;
 }
 
 .jetpack-connect__benefits {
