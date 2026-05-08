@@ -21,6 +21,7 @@ export const mastodonComposerConfig: ComposerConfig<
 	// configuration via `useMastodonInstanceConfigQuery` and falls back to
 	// 500 (stock Mastodon default) when the query is pending or errors.
 	useLimit: useMastodonComposerLimit,
+	protocolLabel: 'Mastodon',
 	// Quote mode uses Mastodon 4.5+'s native `quoted_status_id` with a
 	// text-based fallback (permalink appended to status) for older
 	// instances. The retry lives in `createMastodonPostWithQuoteFallback`
@@ -145,6 +146,16 @@ export const mastodonComposerConfig: ComposerConfig<
 				props: { connection_id: mode.connectionId, error_kind: error.kind },
 			};
 		},
+	},
+	overflowHandoff: {
+		shown: ( mode ) => ( {
+			event: 'calypso_reader_mastodon_overflow_handoff_shown',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind },
+		} ),
+		editorOpened: ( mode, { siteId } ) => ( {
+			event: 'calypso_reader_mastodon_overflow_handoff_editor_opened',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind, site_id: siteId },
+		} ),
 	},
 	copy: {
 		title: ( mode, translate ) => titleForMode( mode, translate ),

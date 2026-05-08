@@ -4,6 +4,7 @@
 import { QueryClient, mutationOptions } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import * as noticeActions from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -16,6 +17,7 @@ import {
 } from '../composer-provider';
 import { testComposerConfig } from '../test-config';
 import type { ComposerConfig } from '../composer-config';
+import type { Site } from '@automattic/api-core';
 
 interface TestError {
 	kind: string;
@@ -407,5 +409,148 @@ describe( '<ComposerModal>', () => {
 			expect.objectContaining( { kind: 'standalone', connectionId: 7 } ),
 			error
 		);
+	} );
+} );
+
+describe( '<ComposerModal> — markOverLimit', () => {
+	beforeEach( () => {
+		openFn = null;
+		closeFn = null;
+
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		jest.spyOn( noticeActions, 'successNotice' );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'sets hasBeenOverLimit on the context once the user types past the limit', async () => {
+		const user = userEvent.setup();
+		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useLimit: () => 5,
+		};
+
+		const probe: { current: ReturnType< typeof useComposer > | null } = { current: null };
+		function Probe() {
+			probe.current = useComposer();
+			return null;
+		}
+
+		const queryClient = makeQueryClient();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 7 } config={ tinyLimitConfig }>
+				<Probe />
+				<Capture />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		act( () => openFn?.( standaloneMode ) );
+		expect( probe.current?.hasBeenOverLimit ).toBe( false );
+
+		await user.type( screen.getByRole( 'textbox' ), 'this is over the limit' );
+
+		expect( probe.current?.hasBeenOverLimit ).toBe( true );
+	} );
+} );
+
+const ORIGIN = 'https://public-api.wordpress.com';
+
+afterEach( () => nock.cleanAll() );
+
+describe( '<ComposerModal> — overflow handoff visibility', () => {
+	beforeEach( () => {
+		// Re-establish spies for the new describe block (Jest doesn't share `beforeEach` across siblings).
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		jest.spyOn( noticeActions, 'successNotice' );
+		openFn = null;
+		closeFn = null;
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'shows the overflow section after typing past the limit and keeps it visible after trimming back under', async () => {
+		const user = userEvent.setup();
+		nock( ORIGIN )
+			.get( /\/rest\/v1\.\d+\/me\/sites/ )
+			.reply( 200, {
+				sites: [
+					{
+						ID: 100,
+						name: 'My Blog',
+						slug: 'myblog.wordpress.com',
+						URL: 'https://myblog.wordpress.com',
+						site_migration: { in_progress: false, is_complete: false },
+						options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+					} as Partial< Site >,
+				],
+			} );
+
+		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useLimit: () => 5,
+		};
+		renderModal( tinyLimitConfig );
+
+		act( () => openFn?.( standaloneMode ) );
+
+		const textarea = screen.getByRole( 'textbox' );
+		await user.type( textarea, 'this is way past the test fixture five-character limit' );
+
+		expect(
+			await screen.findByRole( 'region', { name: /Publish on your own site/i } )
+		).toBeVisible();
+
+		await user.clear( textarea );
+		await user.type( textarea, 'ok' );
+
+		expect( screen.getByRole( 'region', { name: /Publish on your own site/i } ) ).toBeVisible();
+	} );
+
+	it( 'hides the overflow section after the modal closes and reopens (flag resets)', async () => {
+		const user = userEvent.setup();
+		nock( ORIGIN )
+			.get( /\/rest\/v1\.\d+\/me\/sites/ )
+			.reply( 200, { sites: [] } );
+
+		const tinyLimitConfig: ComposerConfig< TestError, TestParams, TestResult > = {
+			...testComposerConfig,
+			useLimit: () => 5,
+		};
+
+		const probe: { current: ReturnType< typeof useComposer > | null } = { current: null };
+		function Probe() {
+			probe.current = useComposer();
+			return null;
+		}
+
+		const queryClient = makeQueryClient();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 7 } config={ tinyLimitConfig }>
+				<Probe />
+				<Capture />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		act( () => openFn?.( standaloneMode ) );
+		const textarea = screen.getByRole( 'textbox' );
+		await user.type( textarea, 'overflow xyz xyz' );
+		expect( probe.current!.hasBeenOverLimit ).toBe( true );
+
+		act( () => closeFn?.() );
+		act( () => openFn?.( standaloneMode ) );
+
+		expect( probe.current!.hasBeenOverLimit ).toBe( false );
 	} );
 } );

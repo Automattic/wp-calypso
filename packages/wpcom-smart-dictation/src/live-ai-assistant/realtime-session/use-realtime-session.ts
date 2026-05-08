@@ -8,6 +8,7 @@ import {
 	OPENAI_REALTIME_URL,
 	PROGRAMMATIC_SEND_TIMEOUT_MS,
 } from './constants';
+import { createConversationItemTimestamps } from './conversation-item-timestamps';
 import { getErrorMessage, getErrorName } from './errors';
 import { realtimeToolDefinitions } from './tool-definitions';
 import { executeRealtimeToolCalls } from './tool-runner';
@@ -80,6 +81,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 	const activeResponseRef = useRef( false );
 	// Set when safeCreateResponse() is called while activeResponseRef is true.
 	const pendingResponseCreateRef = useRef( false );
+	const itemTimestampsRef = useRef( createConversationItemTimestamps() );
 
 	const recordSessionEnded = useCallback( ( reason: string ) => {
 		if ( ! hasTrackedSessionStartRef.current || ! sessionStartedAtRef.current ) {
@@ -99,6 +101,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		activeResponseRef.current = false;
 		pendingResponseCreateRef.current = false;
 		programmaticSendQueueRef.current = Promise.resolve();
+		itemTimestampsRef.current.reset();
 
 		try {
 			sessionAbortControllerRef.current?.abort();
@@ -237,14 +240,26 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				return;
 			}
 			const evt = event as { type?: string; [ key: string ]: unknown };
+			const itemTimestamps = itemTimestampsRef.current;
 
 			switch ( evt.type ) {
+				case 'conversation.item.added':
+				case 'conversation.item.created': {
+					const itemId = getEventItemId( evt );
+					if ( itemId ) {
+						itemTimestamps.record( itemId );
+					}
+					break;
+				}
 				case 'conversation.item.input_audio_transcription.delta':
 				case 'conversation.item.input_audio_transcription.completed': {
 					const itemId = ( evt.item_id as string ) || 'user-latest';
 					const delta = ( evt.delta as string ) || ( evt.transcript as string ) || '';
 					const isFinal = evt.type.endsWith( 'completed' );
-					setTranscript( ( prev ) => upsertEntry( prev, itemId, 'user', delta, isFinal ) );
+					const timestamp = itemTimestamps.lookup( itemId );
+					setTranscript( ( prev ) =>
+						upsertEntry( prev, itemId, 'user', delta, isFinal, timestamp )
+					);
 					break;
 				}
 				case 'response.text.delta':
@@ -255,7 +270,7 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 				case 'response.output_text.done':
 				case 'response.audio_transcript.done':
 				case 'response.output_audio_transcript.done': {
-					const itemId = assistantTurnEntryId( evt );
+					const entryId = assistantTurnEntryId( evt );
 					const isDone =
 						evt.type === 'response.text.done' ||
 						evt.type === 'response.output_text.done' ||
@@ -271,7 +286,10 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 					} else if ( typeof evt.delta === 'string' ) {
 						delta = evt.delta;
 					}
-					setTranscript( ( prev ) => upsertEntry( prev, itemId, 'assistant', delta, isDone ) );
+					const timestamp = itemTimestamps.lookup( entryId );
+					setTranscript( ( prev ) =>
+						upsertEntry( prev, entryId, 'assistant', delta, isDone, timestamp )
+					);
 					break;
 				}
 				case 'response.created': {
@@ -556,6 +574,17 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 		sendText,
 		sendEvent,
 	};
+}
+
+function getEventItemId( evt: Record< string, unknown > ): string | undefined {
+	const item = evt.item;
+	if ( item && typeof item === 'object' && 'id' in item ) {
+		const id = ( item as { id?: unknown } ).id;
+		if ( typeof id === 'string' ) {
+			return id;
+		}
+	}
+	return undefined;
 }
 
 async function assertMicrophonePermission(): Promise< void > {

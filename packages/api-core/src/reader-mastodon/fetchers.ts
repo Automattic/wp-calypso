@@ -12,10 +12,13 @@ import type {
 	MastodonInstanceConfig,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonCreateFollowParams,
 	MastodonCreatePostParams,
 	MastodonCreatePostResult,
 	MastodonCreateRepostParams,
+	MastodonDeleteFollowParams,
 	MastodonDeleteRepostParams,
+	MastodonFollowResponse,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
 	MastodonTagFilter,
@@ -392,6 +395,70 @@ export async function uploadMastodonMedia(
 			apiNamespace: NAMESPACE,
 			formData,
 		} ) ) as MastodonMediaUploadResult;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+// Cheap shape guard so a backend regression to `{}` or a `relationship`-shaped
+// payload fails at the boundary instead of silently writing `viewer: undefined`
+// into the cache during the optimistic-update commit. Throws a wpcom-shaped
+// error so the outer `catch` classifier maps it consistently with wire errors.
+function assertMastodonFollowResponse( raw: unknown ): asserts raw is MastodonFollowResponse {
+	const reject = (): never => {
+		// Distinct message so a backend-shape regression is grep-able in
+		// Logstash / Sentry rather than indistinguishable from a real 400.
+		// Real Error so dev-tools rejection logs show a usable stack.
+		const err = new Error( 'invalid follow response shape' );
+		Object.assign( err, { code: 'reader_mastodon_bad_request' } );
+		throw err;
+	};
+	if ( typeof raw !== 'object' || raw === null ) {
+		reject();
+	}
+	const viewer = ( raw as { viewer?: unknown } ).viewer;
+	if (
+		typeof viewer !== 'object' ||
+		viewer === null ||
+		typeof ( viewer as { following?: unknown } ).following !== 'boolean' ||
+		typeof ( viewer as { followed_by?: unknown } ).followed_by !== 'boolean' ||
+		typeof ( viewer as { requested?: unknown } ).requested !== 'boolean'
+	) {
+		reject();
+	}
+}
+
+export async function createMastodonFollow(
+	params: MastodonCreateFollowParams
+): Promise< MastodonFollowResponse > {
+	try {
+		const raw = await wpcom.req.post( {
+			path: `/reader/mastodon/connections/${ params.connectionId }/follows`,
+			apiNamespace: NAMESPACE,
+			body: { account_id: params.accountId },
+		} );
+		assertMastodonFollowResponse( raw );
+		return raw;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export async function deleteMastodonFollow(
+	params: MastodonDeleteFollowParams
+): Promise< MastodonFollowResponse > {
+	try {
+		const raw = await wpcom.req.post( {
+			method: 'DELETE',
+			// Encode the account id defensively — values are numeric strings
+			// today, but a malformed input shouldn't smuggle path segments.
+			path: `/reader/mastodon/connections/${ params.connectionId }/follows/${ encodeURIComponent(
+				params.accountId
+			) }`,
+			apiNamespace: NAMESPACE,
+		} );
+		assertMastodonFollowResponse( raw );
+		return raw;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

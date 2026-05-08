@@ -126,6 +126,23 @@ describe( 'AtmosphereAccountView', () => {
 		renderWithProvider( <AtmosphereAccountView connectionId={ 7 } tab={ PROFILE_TAB } />, {
 			queryClient: makeClient(),
 		} );
-		expect( await screen.findByText( /a\.bsky\.social/ ) ).toBeVisible();
+		const matches = await screen.findAllByText( /a\.bsky\.social/ );
+		expect( matches.length ).toBeGreaterThan( 0 );
+		matches.forEach( ( match ) => expect( match ).toBeVisible() );
+	} );
+
+	it( 'renders the section title and the handle-aware subtitle in the header', async () => {
+		mockConnections();
+		mockConnectionDetails( 7 );
+		renderWithProvider( <AtmosphereAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+		expect( await screen.findByRole( 'heading', { name: /ATmosphere/ } ) ).toBeVisible();
+		expect( screen.getByTestId( 'atmosphere-section-logo' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				/Catch up with the latest from the people you follow on Bluesky with @a\.bsky\.social/
+			)
+		).toBeVisible();
 	} );
 } );

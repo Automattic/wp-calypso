@@ -45,6 +45,7 @@ jest.mock( '@wordpress/element', () => {
 	return {
 		useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
 		useRef: React.useRef,
+		useState: React.useState,
 	};
 } );
 
@@ -304,6 +305,113 @@ describe( 'useGenericShare', () => {
 
 			expect( mockShare ).toHaveBeenCalledTimes( 1 );
 			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'isSharing', () => {
+		it( 'starts false', () => {
+			const { result } = renderHook( () => useGenericShare() );
+			expect( result.current.isSharing ).toBe( false );
+		} );
+
+		it( 'is true while the Web Share path is in flight and false after success', async () => {
+			let resolveShare: () => void = () => {};
+			const sharePromise = new Promise< void >( ( resolve ) => {
+				resolveShare = resolve;
+			} );
+			const mockShare = jest.fn().mockReturnValue( sharePromise );
+			const mockCanShare = jest.fn().mockReturnValue( true );
+			setNavigatorShare( { share: mockShare, canShare: mockCanShare } );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				status: 200,
+				blob: () => Promise.resolve( new Blob( [ 'v' ], { type: 'video/mp4' } ) ),
+			} ) as unknown as typeof fetch;
+
+			const { result } = renderHook( () => useGenericShare() );
+
+			let firstClick: Promise< void > = Promise.resolve();
+			await act( async () => {
+				firstClick = result.current.handleShare();
+				// Let the fetch + blob microtasks flush so we observe the in-flight state
+				// before navigator.share resolves.
+				await Promise.resolve();
+				await Promise.resolve();
+			} );
+			expect( result.current.isSharing ).toBe( true );
+
+			await act( async () => {
+				resolveShare();
+				await firstClick;
+			} );
+			expect( result.current.isSharing ).toBe( false );
+		} );
+
+		it( 'resets to false after the user cancels the share sheet (AbortError)', async () => {
+			const abortError = new DOMException( 'cancel', 'AbortError' );
+			const mockShare = jest.fn().mockRejectedValue( abortError );
+			const mockCanShare = jest.fn().mockReturnValue( true );
+			setNavigatorShare( { share: mockShare, canShare: mockCanShare } );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				status: 200,
+				blob: () => Promise.resolve( new Blob( [ 'v' ], { type: 'video/mp4' } ) ),
+			} ) as unknown as typeof fetch;
+
+			const { result } = renderHook( () => useGenericShare() );
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( result.current.isSharing ).toBe( false );
+		} );
+
+		it( 'resets to false after a fetch failure falls through to the download fallback', async () => {
+			const mockShare = jest.fn();
+			const mockCanShare = jest.fn().mockReturnValue( true );
+			setNavigatorShare( { share: mockShare, canShare: mockCanShare } );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: false,
+				status: 500,
+			} ) as unknown as typeof fetch;
+			window.open = jest.fn().mockReturnValue( {} ) as unknown as typeof window.open;
+
+			const { result } = renderHook( () => useGenericShare() );
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( result.current.isSharing ).toBe( false );
+		} );
+
+		it( 'resets to false after the web-share-unsupported fallback runs', async () => {
+			const mockShare = jest.fn();
+			const mockCanShare = jest.fn().mockReturnValue( false );
+			setNavigatorShare( { share: mockShare, canShare: mockCanShare } );
+
+			window.open = jest.fn().mockReturnValue( {} ) as unknown as typeof window.open;
+
+			const { result } = renderHook( () => useGenericShare() );
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( result.current.isSharing ).toBe( false );
+		} );
+
+		it( 'resets to false after window.open is blocked', async () => {
+			setNavigatorShare( { share: undefined, canShare: undefined } );
+			window.open = jest.fn().mockReturnValue( null ) as unknown as typeof window.open;
+
+			const { result } = renderHook( () => useGenericShare() );
+			await act( async () => {
+				await result.current.handleShare();
+			} );
+
+			expect( result.current.isSharing ).toBe( false );
 		} );
 	} );
 } );

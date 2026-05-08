@@ -1,9 +1,11 @@
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	createMastodonFollow,
 	createMastodonLike,
 	createMastodonPost,
 	createMastodonRepost,
+	deleteMastodonFollow,
 	deleteMastodonLike,
 	deleteMastodonRepost,
 	getMastodonAuthStatus,
@@ -48,6 +50,7 @@ import type {
 	MastodonCreatePostResult,
 	MastodonError,
 	MastodonFeedItem,
+	MastodonFollowResponse,
 	MastodonInstanceConfig,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
@@ -969,4 +972,191 @@ export const createMastodonPostMutation = (
 export const uploadMastodonMediaMutation = () =>
 	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
 		mutationFn: uploadMastodonMedia,
+	} );
+
+export interface FollowMastodonActorVars {
+	connectionId: number;
+	/**
+	 * Cache-key actor (numeric id or webfinger handle) — same value the
+	 * scoped profile query is keyed on. Used to locate the cache entry to
+	 * patch.
+	 */
+	actor: string;
+	/** Numeric Mastodon account id used in the wire call. */
+	accountId: string;
+	/**
+	 * Whether the target account is locked. Drives the optimistic patch:
+	 * locked accounts transition to `requested: true` (pending approval),
+	 * unlocked accounts go straight to `following: true`. Without this
+	 * the button paints "Following / Unfollow" mid-flight and snaps to
+	 * "Requested" once the server response commits — a UX flip-flop and
+	 * a misleading mid-flight aria-label for AT users. Optional so callers
+	 * who don't yet have `locked` in scope still get the unlocked default.
+	 */
+	locked?: boolean;
+}
+
+export interface FollowMastodonMutationContext {
+	previous: MastodonAuthorProfile | undefined;
+}
+
+// Normalize the actor before keying so we hit the same cache entry as
+// useMastodonAuthorProfileQuery, which runs every actor through
+// normalizeActor() before building its key. Without this, webfinger
+// or mixed-case actor inputs (e.g. '@Alice@MASTODON.social') key to a
+// different entry than the one the query reads from — the optimistic
+// patch and rollback become silent no-ops.
+const mastodonAuthorProfileKey = ( vars: { connectionId: number; actor: string } ) =>
+	readerMastodonKeys.authorProfile( vars.connectionId, normalizeActor( vars.actor ) );
+
+/**
+ * Mutation factory for following a Mastodon account. Optimistically
+ * marks the cached scoped-profile entry's viewer as following + clears
+ * any pending request flag. The real server-side state (which may be
+ * `requested: true` for locked accounts) is committed in `onSuccess`.
+ *
+ * Accepts the consumer's QueryClient because Calypso boots its own
+ * separate from the singleton in `@automattic/api-queries`. See
+ * `client/reader/AGENTS.md` for the rationale.
+ */
+export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		MastodonFollowResponse,
+		MastodonError,
+		FollowMastodonActorVars,
+		FollowMastodonMutationContext
+	>( {
+		mutationFn: ( vars ) =>
+			createMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
+		onMutate: async ( vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			try {
+				await queryClient.cancelQueries( { queryKey: key } );
+			} catch {
+				// Best-effort per TanStack docs; if cancel fails the optimistic
+				// patch + mutationFn must still run.
+			}
+			const previous = queryClient.getQueryData< MastodonAuthorProfile >( key );
+			// Locked accounts go to `requested: true` (pending approval); unlocked
+			// accounts transition straight to `following: true`. Falling back to
+			// `old.locked` keeps callers who don't yet thread `vars.locked` working.
+			const isLocked = vars.locked ?? previous?.locked ?? false;
+			queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old && old.viewer
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: isLocked ? false : true,
+								requested: isLocked ? true : false,
+							},
+					  }
+					: old
+			);
+			return { previous };
+		},
+		onError: ( _err, vars, context ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			if ( context?.previous ) {
+				queryClient.setQueryData( key, context.previous );
+				return;
+			}
+			// No snapshot to roll back to; refetch so the optimistic patch can't
+			// outlive the failure as a stale cache value. Returning the promise
+			// keeps the mutation in `pending` until the refetch settles, matching
+			// the atmosphere-slice pattern.
+			return queryClient.invalidateQueries( { queryKey: key } );
+		},
+		onSuccess: ( data, vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			const updated = queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: data.viewer,
+					  }
+					: old
+			);
+			if ( ! updated ) {
+				// `setQueryData` returns undefined when the cache entry was
+				// absent at update time (evicted mid-flight, or never
+				// populated). Refetch so the authoritative server `viewer`
+				// — which carries `requested: true` for locked accounts —
+				// isn't lost.
+				return queryClient.invalidateQueries( { queryKey: key } );
+			}
+		},
+	} );
+
+/**
+ * Mutation factory for unfollowing a Mastodon account. Also cancels a
+ * pending follow request (locked accounts) — Mastodon's unfollow
+ * endpoint covers both. Optimistically clears `viewer.following` and
+ * `viewer.requested`; rolls back on error.
+ *
+ * Accepts the consumer's QueryClient for the same reason as
+ * `followMastodonActorMutation`.
+ */
+export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		MastodonFollowResponse,
+		MastodonError,
+		FollowMastodonActorVars,
+		FollowMastodonMutationContext
+	>( {
+		mutationFn: ( vars ) =>
+			deleteMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
+		onMutate: async ( vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			try {
+				await queryClient.cancelQueries( { queryKey: key } );
+			} catch {
+				// Best-effort per TanStack docs; if cancel fails the optimistic
+				// patch + mutationFn must still run.
+			}
+			const previous = queryClient.getQueryData< MastodonAuthorProfile >( key );
+			queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old && old.viewer
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: false,
+								requested: false,
+							},
+					  }
+					: old
+			);
+			return { previous };
+		},
+		onError: ( _err, vars, context ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			if ( context?.previous ) {
+				queryClient.setQueryData( key, context.previous );
+				return;
+			}
+			// No snapshot to roll back to; refetch so the optimistic patch can't
+			// outlive the failure as a stale cache value. Returning the promise
+			// keeps the mutation in `pending` until the refetch settles.
+			return queryClient.invalidateQueries( { queryKey: key } );
+		},
+		onSuccess: ( data, vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			const updated = queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: data.viewer,
+					  }
+					: old
+			);
+			if ( ! updated ) {
+				// `setQueryData` returns undefined when the cache entry was
+				// absent at update time (evicted mid-flight, or never
+				// populated). Refetch so the authoritative server `viewer`
+				// — which carries `requested: true` for locked accounts —
+				// isn't lost.
+				return queryClient.invalidateQueries( { queryKey: key } );
+			}
+		},
 	} );

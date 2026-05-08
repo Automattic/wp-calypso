@@ -160,6 +160,20 @@ export interface MastodonAuthorProfile {
 	counts: MastodonProfileCounts;
 	locked: boolean;
 	raw: Record< string, unknown >;
+	/**
+	 * Relationship state from the connected account's perspective. Absent
+	 * on backends that haven't deployed the viewer projection yet —
+	 * consumers must treat undefined as "no follow UI available" rather
+	 * than synthesizing a default, which would mislead users into
+	 * clicking Follow on accounts they already follow.
+	 */
+	viewer?: MastodonAuthorProfileViewer;
+	/**
+	 * `true` when the resolved actor matches the connection's own account.
+	 * Absent on backends that haven't deployed the projection yet. The
+	 * panel hides the follow button on `is_self === true`.
+	 */
+	is_self?: boolean;
 }
 
 // Author-feed pages share the timeline page shape; alias rather than
@@ -310,6 +324,47 @@ export interface MastodonMediaUploadResult {
 	url: string | null;
 	preview_url: string | null;
 	description: string;
+}
+
+/**
+ * Caller-relative relationship state on the scoped Mastodon profile
+ * endpoint. Optional during the backend rollout window — the absence of
+ * this block means the backend hasn't deployed the viewer projection
+ * yet, and consumers should treat that as "no follow UI available".
+ */
+export interface MastodonAuthorProfileViewer {
+	/** Whether the caller follows the target. */
+	following: boolean;
+	/** Whether the target follows the caller. Drives the "Follow back" affordance. */
+	followed_by: boolean;
+	/**
+	 * Whether the caller has a pending follow request. Set when following
+	 * a locked account; unlocked accounts transition straight to
+	 * `following: true`.
+	 */
+	requested: boolean;
+}
+
+export interface MastodonCreateFollowParams {
+	connectionId: number;
+	/** Numeric Mastodon account id. Webfinger handles must be resolved first. */
+	accountId: string;
+}
+
+export interface MastodonDeleteFollowParams {
+	connectionId: number;
+	/** Numeric Mastodon account id. */
+	accountId: string;
+}
+
+/**
+ * Response shape returned by both the create-follow and delete-follow
+ * endpoints. The wpcom backend projects the upstream Mastodon
+ * `Relationship` object into a uniform `viewer` block so optimistic +
+ * server-state updates use the same patcher.
+ */
+export interface MastodonFollowResponse {
+	viewer: MastodonAuthorProfileViewer;
 }
 
 export interface MastodonAuthStatus {

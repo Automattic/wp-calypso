@@ -265,7 +265,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 
 	return (
 		<>
-			<VStack spacing={ 8 } className="interests-modal__content">
+			<VStack spacing={ 5 } className="interests-modal__content">
 				<VStack spacing={ 0 }>
 					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
 					<p className="interests-modal__subtitle">

@@ -1,25 +1,26 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { getLocaleSlug } from 'i18n-calypso';
-import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, ComponentType, useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
-import wpcom from 'calypso/lib/wp';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import ReaderFollowButton from 'calypso/reader/follow-button';
+import { getFeedUrl } from 'calypso/reader/get-helpers';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
-import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
+import { nextSelectedSite } from './selection';
+import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
 
 import './style.scss';
@@ -27,18 +28,6 @@ import './style.scss';
 interface SubscribeModalProps {
 	promptVerification: boolean;
 	onClose: () => void;
-}
-
-interface CardData {
-	feed_ID: number;
-	site_ID: number;
-	site_URL: string;
-	site_name: string;
-}
-
-interface Card {
-	type: string;
-	data: CardData[];
 }
 
 interface StreamProps {
@@ -59,168 +48,125 @@ interface StreamProps {
 
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
+const SITES_PER_PAGE = 6;
+
 // Renders the body of the "discover" step. The shared <Modal> wrapper is
 // provided by the parent (`ReaderOnboardingRsm`); this component is only
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`, which also runs the same close-side-effects
 // (data refresh, analytics) that `handleClose` previously did inline.
 const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onClose } ) => {
-	const { data: followedTags } = useFollowedReaderTags();
+	const {
+		combinedRecommendations,
+		recommendations,
+		isLoading,
+		isValidating,
+		hasNoRecommendations,
+		followedTagSlugs,
+		markSessionFollow,
+	} = useSubscribeRecommendations();
 
-	const followedTagSlugs = useMemo(
-		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
-		[ followedTags ]
+	// Notify the hook when the user follows a feed inside the modal so a
+	// pinned card stays visible (showing "Subscribed") even after the follows
+	// slice excludes it, while pinned cards that turn out to be pre-existing
+	// follows can still be pruned in the background.
+	const handleFollowToggle = useCallback(
+		( feedId: number, isFollowing: boolean ) => {
+			if ( isFollowing ) {
+				markSessionFollow( feedId );
+			}
+		},
+		[ markSessionFollow ]
 	);
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
 	const selectedFeed = useSelector( ( state: object ) =>
 		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
-	);
-	const selectedFeedIconUrl =
-		( selectedFeed as { site_icon?: string; image?: string } | null )?.site_icon ??
-		( selectedFeed as { site_icon?: string; image?: string } | null )?.image;
+	) as { site_icon?: string; image?: string; feed_URL?: string; URL?: string } | null;
+	// Pull the WP.com Reader site record once `<QueryReaderSite>` has populated
+	// the entry. Curated entries with `site_ID: 0` never produce one. For
+	// WP.com sites the record exposes the canonical `feed_URL` which
+	// `getFeedUrl` prefers over the feed object's own URL.
+	const selectedReduxSite = useSelector( ( state: object ) =>
+		selectedSite && selectedSite.site_ID > 0 ? getSite( state, selectedSite.site_ID ) : null
+	) as { feed_URL?: string } | null;
+	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
+	// Subscribing via the curated `site_URL` (often a bare hostname like `design-milk.com`)
+	// can fail with `invalid_feed` for non-WP.com sites because the WP.com follow API has to
+	// auto-discover a feed and not all sites resolve. Mirror the
+	// `getFeedUrl({ feed, site })` derivation that the list-item path uses internally
+	// (precedence: `site.feed_URL` → `feed.feed_URL || feed.URL` → bare `site_URL`)
+	// so both subscribe paths agree on the URL the follow API ends up with.
+	const selectedFollowUrl =
+		getFeedUrl( {
+			feed: selectedFeed ?? undefined,
+			site: selectedReduxSite ?? undefined,
+		} ) ||
+		selectedSite?.site_URL ||
+		'';
 	const dispatch = useDispatch();
-	const currentLocale = getLocaleSlug();
-	const SITES_PER_PAGE = 6;
 	const queryClient = useQueryClient();
 
-	const { data: apiRecommendedSites = [], isLoading } = useQuery( {
-		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
-		queryFn: () =>
-			wpcom.req.get(
-				{
-					path: '/read/tags/cards',
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					tags: followedTagSlugs,
-					site_recs_per_card: 18,
-					tag_recs_per_card: 0,
-				}
-			),
-		refetchOnMount: 'always',
-		select: ( data: { cards: Card[] } ) => {
-			const recommendedBlogsCard = data.cards.find(
-				( card: Card ) => card.type === 'recommended_blogs'
-			);
+	const maxPages = Math.ceil( recommendations.length / SITES_PER_PAGE ) - 1;
 
-			return recommendedBlogsCard
-				? recommendedBlogsCard.data.map( ( site: CardData & { URL?: string } ) => ( {
-						...site,
-						site_URL: site.URL || site.site_URL,
-				  } ) )
-				: [];
-		},
-		staleTime: Infinity,
-		enabled: followedTagSlugs.length > 0,
-	} );
+	const displayedRecommendations = useMemo(
+		() => recommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE ),
+		[ recommendations, currentPage ]
+	);
 
-	const combinedRecommendations = useMemo( () => {
-		if ( isLoading ) {
-			return [];
-		}
-		const isEnglish = currentLocale?.startsWith( 'en' );
+	// Stable across renders when only unrelated Redux slices update (e.g. feed metadata
+	// bridging for other feeds). Prevents `requestPage` effects from storming the data layer.
+	const recommendationIdsKey = recommendations.map( ( s ) => s.feed_ID ).join( ',' );
+	const recommendationsRef = useRef( recommendations );
+	recommendationsRef.current = recommendations;
 
-		// Get list of curated recommendations only if the language is English.
-		const curatedRecommendations = isEnglish
-			? followedTagSlugs
-					.flatMap( ( tag ) => curatedBlogs[ tag ] || [] )
-					.map( ( blog ) => ( { ...blog, weight: 1, isCurated: true } ) )
-			: [];
-
-		// Get list of API recommended blogs.
-		const apiRecommendations = apiRecommendedSites.map( ( site ) => ( {
-			...site,
-			weight: 1,
-			isCurated: false,
-		} ) );
-
-		// Combine all recommendations.
-		const allRecommendations = [ ...curatedRecommendations, ...apiRecommendations ];
-
-		// Increase "weight" for blogs that match multiple tags.
-		const blogWeights = allRecommendations.reduce< Record< number, number > >( ( acc, blog ) => {
-			acc[ blog.feed_ID ] = ( acc[ blog.feed_ID ] || 0 ) + blog.weight;
-			return acc;
-		}, {} );
-
-		// Remove duplicates, prioritizing curated blogs.
-		const uniqueRecommendations = Object.values(
-			allRecommendations.reduce<
-				Record< number, CardData & { weight: number; isCurated: boolean } >
-			>( ( acc, blog ) => {
-				if ( ! acc[ blog.feed_ID ] || blog.isCurated ) {
-					acc[ blog.feed_ID ] = { ...blog, weight: blogWeights[ blog.feed_ID ] };
-				}
-				return acc;
-			}, {} )
-		);
-
-		// Sort recommendations: curated first, then by "weight" (i.e. how many tags it matches).
-		const sortedRecommendations = uniqueRecommendations.sort( ( a, b ) => {
-			if ( a.isCurated !== b.isCurated ) {
-				return a.isCurated ? -1 : 1;
-			}
-			return b.weight - a.weight;
-		} );
-
-		// Limit to 18 recommendations.
-		return sortedRecommendations.slice( 0, 18 );
-	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale ] );
-
-	const maxPages = Math.ceil( combinedRecommendations.length / SITES_PER_PAGE ) - 1; // -1 because pages are 0-based.
-
-	const displayedRecommendations = useMemo( () => {
-		// Show all items up to the current page.
-		return combinedRecommendations.slice( 0, ( currentPage + 1 ) * SITES_PER_PAGE );
-	}, [ combinedRecommendations, currentPage ] );
+	// Tracks which feeds we've already kicked off a stream prefetch for. `requestPage` forces a
+	// network fetch (staleTime=0 in the thunk), so re-dispatching it for the same feed every time
+	// `recommendations` grows would N×-amplify requests as cards trickle in from validation.
+	const prefetchedFeedIdsRef = useRef< Set< number > >( new Set() );
 
 	const handleLoadMore = useCallback( () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }clicked_load_more`, {
 			page: currentPage,
 		} );
-		// Only increment the page if we haven't reached the end.
 		setCurrentPage( ( prevPage ) => ( prevPage < maxPages ? prevPage + 1 : prevPage ) );
 	}, [ maxPages, currentPage ] );
 
-	// Prefetch the first blog's feed. Only fetch one because it happens every time a tag changes.
+	// Prefetch a stream page for every newly-validated recommendation, exactly once per feed.
 	useEffect( () => {
-		if ( combinedRecommendations.length > 0 ) {
-			dispatch(
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				requestPage( { streamKey: `feed:${ combinedRecommendations[ 0 ].feed_ID }` } as any )
-			);
+		const sites = recommendationsRef.current;
+		for ( const site of sites ) {
+			if ( prefetchedFeedIdsRef.current.has( site.feed_ID ) ) {
+				continue;
+			}
+			prefetchedFeedIdsRef.current.add( site.feed_ID );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
 		}
-	}, [ combinedRecommendations, dispatch ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- keyed by id list, not array identity
+	}, [ recommendationIdsKey, dispatch ] );
 
-	// Prefetch all feed streams when the step is shown. The component only
-	// mounts while the step is active, so we no longer need an `isOpen` gate.
-	useEffect( () => {
-		if ( combinedRecommendations.length > 0 ) {
-			combinedRecommendations.forEach( ( site ) => {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
-			} );
-		}
-	}, [ combinedRecommendations, dispatch ] );
-
-	// Reset the page and selected site when the followed tags change.
 	useEffect( () => {
 		setCurrentPage( 0 );
 		setSelectedSite( null );
+		prefetchedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
 
-	// Select the first site by default when recommendations are loaded.
+	// Keep the preview-column selection in sync with the visible list — see
+	// `nextSelectedSite` for the case breakdown. Notably, this handles a
+	// pinned card being pruned from `recommendations` after paginated follows
+	// reveal it was already subscribed: without repointing the preview column
+	// would keep rendering a stream for a site that's no longer in the list.
 	useEffect( () => {
-		if ( displayedRecommendations.length > 0 && ! selectedSite ) {
-			setSelectedSite( displayedRecommendations[ 0 ] );
+		const next = nextSelectedSite( selectedSite, recommendations );
+		if ( next !== undefined ) {
+			setSelectedSite( next );
 		}
-	}, [ displayedRecommendations, selectedSite ] );
+	}, [ recommendations, selectedSite ] );
 
 	const handleItemClick = useCallback(
 		( site: CardData ) => {
-			// Only reset scroll position if selecting a different site.
 			if ( site.feed_ID !== selectedSite?.feed_ID ) {
 				const previewContainer = document.querySelector(
 					'.subscribe-modal__preview-stream-container'
@@ -235,12 +181,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	);
 
 	const handleContinue = useCallback( () => {
-		// Invalidate the subscriptions count query to refresh the Recent stream.
 		queryClient.invalidateQueries( {
 			queryKey: [ 'read', 'subscriptions-count' ],
 		} );
 
-		// Refresh the Recent stream data.
 		dispatch(
 			requestPaginatedStream( {
 				streamKey: 'recent',
@@ -249,14 +193,23 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 			} )
 		);
 
-		// Following-stream refresh + analytics happen in the parent's close
-		// handler so that X-out / escape triggers the same side-effects.
 		onClose();
 	}, [ dispatch, onClose, queryClient ] );
 
 	return (
 		<>
 			{ promptVerification && <SubscribeVerificationNudge /> }
+			{ /* Site metadata is still loaded via the legacy data layer; feed metadata
+			     is fetched inside `useSubscribeRecommendations` with readFeedQuery.
+			     Curated entries for non-WP.com feeds carry `site_ID: 0` and have
+			     no associated WP.com site to prefetch — `QueryReaderSite` would
+			     short-circuit on the falsy ID, but each instance still mounts a
+			     Redux subscription and effect, so skip them up front. */ }
+			{ combinedRecommendations
+				.filter( ( site ) => site.site_ID > 0 )
+				.map( ( site ) => (
+					<QueryReaderSite key={ `prefetch-site-${ site.feed_ID }` } siteId={ site.site_ID } />
+				) ) }
 			<div className="subscribe-modal__container">
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__intro">
@@ -269,11 +222,11 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 					</div>
 					<div className="subscribe-modal__columns">
 						<div className="subscribe-modal__site-list-column">
-							{ isLoading && <LoadingPlaceholder /> }
-							{ ! isLoading && combinedRecommendations.length === 0 && (
+							{ ( isLoading || isValidating ) && <LoadingPlaceholder /> }
+							{ hasNoRecommendations && (
 								<p>{ __( 'No recommendations available at the moment.' ) }</p>
 							) }
-							{ ! isLoading && combinedRecommendations.length > 0 && (
+							{ recommendations.length > 0 && (
 								<div className="subscribe-modal__recommended-sites">
 									{ displayedRecommendations.map( ( site: CardData ) => (
 										<ConnectedReaderSubscriptionListItem
@@ -281,13 +234,23 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											feedId={ site.feed_ID }
 											siteId={ site.site_ID }
 											site={ site }
-											url={ site.site_URL }
+											// Intentionally not passing `url`: curated entries
+											// only carry a bare hostname (e.g. `design-milk.com`),
+											// and overriding the prop here would force the follow
+											// API to auto-discover a feed from that hostname,
+											// which fails for many non-WP.com sites with
+											// `invalid_feed`. Letting the list item fall back to
+											// `getFeedUrl({feed, site})` uses the canonical
+											// `feed_URL` from loaded feed metadata instead.
 											showLastUpdatedDate={ false }
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }
 											followSource="reader-onboarding-modal"
 											replaceStreamClickWithItemClick
 											onItemClick={ () => handleItemClick( site ) }
+											onFollowToggle={ ( isFollowing: boolean ) =>
+												handleFollowToggle( site.feed_ID, isFollowing )
+											}
 											isSelected={ selectedSite?.feed_ID === site.feed_ID }
 										/>
 									) ) }
@@ -315,11 +278,14 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 												</span>
 											</div>
 											<ReaderFollowButton
-												siteUrl={ selectedSite.site_URL }
+												siteUrl={ selectedFollowUrl }
 												feedId={ selectedSite.feed_ID }
 												siteId={ selectedSite.site_ID }
 												followSource="reader-onboarding-modal"
 												hasButtonStyle
+												onFollowToggle={ ( isFollowing: boolean ) =>
+													handleFollowToggle( selectedSite.feed_ID, isFollowing )
+												}
 												followIcon={ <></> }
 												followingIcon={
 													<Icon

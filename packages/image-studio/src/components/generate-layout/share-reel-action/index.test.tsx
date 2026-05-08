@@ -51,6 +51,7 @@ const visibleReel = {
 
 const visibleGeneric = {
 	isVisible: true,
+	isSharing: false,
 	handleShare: jest.fn(),
 };
 
@@ -100,6 +101,13 @@ describe( '<ShareReelAction />', () => {
 
 		render( <ShareReelAction /> );
 		expect( screen.getByRole( 'button', { name: /Sharing on Instagram/i } ) ).toBeDisabled();
+	} );
+
+	it( 'disables the generic button while a generic share is in flight', () => {
+		mockUseGenericShare.mockReturnValue( { ...visibleGeneric, isSharing: true } );
+
+		render( <ShareReelAction /> );
+		expect( screen.getByRole( 'button', { name: /Sharing to other apps/i } ) ).toBeDisabled();
 	} );
 
 	it( 'invokes handleShare on IG click', () => {

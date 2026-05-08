@@ -488,11 +488,21 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
-			return null; // Use PlansFeaturesMain subheader for hosting
+			return translate(
+				'All the security, flexibility, and control you need — without the overhead.'
+			);
 		}
 
 		if ( intent === 'plans-website-builder' ) {
-			return null; // Use PlansFeaturesMain subheader for website-builder
+			if ( deemphasizeFreePlan ) {
+				return translate(
+					'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter. Or {{link}}start with our free plan{{/link}}.',
+					{ components: { link: freePlanButton } }
+				);
+			}
+			return translate(
+				'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
+			);
 		}
 
 		if ( intent === 'plans-woo-hosted' ) {
@@ -533,8 +543,22 @@ function UnifiedPlansStep( {
 			);
 		}
 
+		// In stepper-v2, <PlansPageSubheader>'s deemphasize branch is suppressed,
+		// so surface its "Unlock a powerful bundle…" copy here as Step.Heading subText
+		// to keep the free-plan CTA visible.
+		if ( useStepContainerV2 && deemphasizeFreePlan ) {
+			return translate(
+				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
+				{ components: { link: freePlanButton } }
+			);
+		}
+
 		if ( deemphasizeFreePlanFromProps ) {
 			return null;
+		}
+
+		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
+			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
 	};
 
@@ -649,6 +673,7 @@ function UnifiedPlansStep( {
 			<>
 				<MarketingMessage path="signup/plans" />
 				<Step.WideLayout
+					headingColumnWidth={ 6 }
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
