@@ -3,7 +3,6 @@
  */
 
 import { ReaderUser, UserSitesResponse } from '@automattic/api-core';
-import { isEnabled } from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -32,16 +31,11 @@ jest.mock(
 		)
 );
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
-
+const mockUseAchievementsVisibility = jest.fn();
 jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility', () => ( {
 	__esModule: true,
-	default: () => ( { isOwnProfile: true, isVisible: true, isLoading: false } ),
+	default: () => mockUseAchievementsVisibility(),
 } ) );
-
-const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 describe( 'UserProfileHeader', () => {
 	const defaultUser: ReaderUser = {
@@ -60,6 +54,11 @@ describe( 'UserProfileHeader', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockUseAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			isVisible: true,
+			isLoading: false,
+		} );
 		nock.disableNetConnect();
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -144,7 +143,11 @@ describe( 'UserProfileHeader', () => {
 	} );
 
 	test( 'should render navigation tabs with Posts, Sites, Lists, and Recommended Blogs options', () => {
-		mockIsEnabled.mockReturnValue( false );
+		mockUseAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			isVisible: false,
+			isLoading: false,
+		} );
 		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const navItems = screen.getAllByRole( 'menuitem' );
@@ -157,8 +160,7 @@ describe( 'UserProfileHeader', () => {
 		expect( screen.queryByRole( 'menuitem', { name: 'Achievements' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should render Achievements tab when reader/achievements flag is enabled', () => {
-		mockIsEnabled.mockImplementation( ( flag ) => flag === 'reader/achievements' );
+	test( 'should render Achievements tab when achievements visibility hook reports it is visible', () => {
 		renderWithClient( <UserProfileHeader user={ defaultUser } view="posts" /> );
 
 		const navItems = screen.getAllByRole( 'menuitem' );

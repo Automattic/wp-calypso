@@ -33,6 +33,10 @@
 		padding: 0;
 	}
 
+	.is-last-feature .plan-features-2023-grid__item {
+		padding-bottom: 0;
+	}
+
 	// This is temporary until we make the plans step more consistent according to the designs.
 	@media ( max-width: calc($break-small - 1px) ) {
 		.plans-features-main .plans-features-main__subheader {
@@ -52,6 +56,14 @@
 
 		.plans-features-main__plan-type-selector-layout {
 			margin: 0;
+		}
+
+		.is-plan-type-selector-visible .plans-features-main__features-grid {
+			margin-top: 16px;
+		}
+
+		.is-last-feature.has-min-height {
+			min-height: 0;
 		}
 	}
 }

@@ -538,3 +538,128 @@ export function trackImageStudioImageDeletedPermanently( {
 	}
 	recordImageStudioEvent( 'image_studio_file_deleted_permanently', properties );
 }
+
+/**
+ * Tracks when the Reel share button is clicked, before any pre-checks run.
+ * @param options                  - Tracking options
+ * @param options.attachmentId     - The video attachment ID
+ * @param options.durationSeconds  - Optional duration of the clip in seconds
+ */
+export function trackImageStudioReelShareClicked( {
+	attachmentId,
+	durationSeconds,
+}: {
+	attachmentId: number;
+	durationSeconds?: number | null;
+} ): void {
+	const properties: Record< string, string | number > = { attachment_id: attachmentId };
+	if ( durationSeconds != null ) {
+		properties.duration_seconds = durationSeconds;
+	}
+	recordImageStudioEvent( 'image_studio_reel_share_clicked', properties );
+}
+
+/**
+ * Tracks when the Reel share is blocked by a missing Instagram Business connection.
+ */
+export function trackImageStudioReelShareNotConnected(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_not_connected' );
+}
+
+/**
+ * Tracks when the Reel share is blocked because the IG connection exists but is
+ * toggled off for this post in the Jetpack Social sidebar.
+ */
+export function trackImageStudioReelShareConnectionDisabled(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_connection_disabled' );
+}
+
+/**
+ * Tracks when the Reel share is blocked because the post isn't published yet.
+ */
+export function trackImageStudioReelShareNotPublished(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_post_not_published' );
+}
+
+/**
+ * Tracks when the Reel share is blocked by missing video state (defensive).
+ */
+export function trackImageStudioReelShareInvalidState(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_invalid_state' );
+}
+
+/**
+ * Tracks when shareCurrentPost successfully dispatched the IG submission.
+ */
+export function trackImageStudioReelShareDispatched(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_dispatched' );
+}
+
+/**
+ * Tracks when shareCurrentPost returned false or threw.
+ * @param errorMessage - Optional error description from the thunk/exception.
+ */
+export function trackImageStudioReelShareFailed( errorMessage?: string ): void {
+	const properties: Record< string, string | number > = {};
+	if ( errorMessage ) {
+		properties.error_message = errorMessage;
+	}
+	recordImageStudioEvent( 'image_studio_reel_share_failed', properties );
+}
+
+/**
+ * Tracks when the generic share initiates a particular method. Fires once per
+ * attempted method, before the work runs — so a click that probes web-share,
+ * finds files unsupported, and falls back to download produces three events
+ * (one per method tried).
+ * @param options        - Tracking options
+ * @param options.method - 'web-share' (Web Share API attempt), 'web-share-unsupported'
+ *                         (canShare rejected files), or 'download' (fallback / direct).
+ */
+export function trackImageStudioGenericShareClicked( {
+	method,
+}: {
+	method: 'web-share' | 'web-share-unsupported' | 'download';
+} ): void {
+	recordImageStudioEvent( 'image_studio_generic_share_clicked', { method } );
+}
+
+/**
+ * Tracks when the generic share completed successfully.
+ * @param options        - Tracking options
+ * @param options.method - 'web-share' or 'download' (the only methods that can complete;
+ *                         'web-share-unsupported' is a precondition failure, never a success).
+ */
+export function trackImageStudioGenericShareCompleted( {
+	method,
+}: {
+	method: 'web-share' | 'download';
+} ): void {
+	recordImageStudioEvent( 'image_studio_generic_share_completed', { method } );
+}
+
+/**
+ * Tracks when the generic share failed.
+ * @param options             - Tracking options
+ * @param options.method      - 'web-share', 'web-share-unsupported', or 'download'
+ * @param options.message     - Optional error message
+ * @param options.failureKind - Optional categorical reason: 'http' | 'open-blocked'
+ */
+export function trackImageStudioGenericShareFailed( {
+	method,
+	message,
+	failureKind,
+}: {
+	method: 'web-share' | 'web-share-unsupported' | 'download';
+	message?: string;
+	failureKind?: 'http' | 'open-blocked';
+} ): void {
+	const properties: Record< string, string | number > = { method };
+	if ( message ) {
+		properties.error_message = message;
+	}
+	if ( failureKind ) {
+		properties.failure_kind = failureKind;
+	}
+	recordImageStudioEvent( 'image_studio_generic_share_failed', properties );
+}

@@ -1,15 +1,14 @@
 /* global __i18n_text_domain__ */
 import './config';
-import { LiveAIAssistant, MicIcon } from '@automattic/help-center';
+import { LiveAIAssistant, MicIcon } from '@automattic/wpcom-smart-dictation';
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
-import './help-center.scss';
 
 const SMART_DICTATION_SIDEBAR_NAME = 'wpcom-smart-dictation';
 const MicrophoneIcon = () => <MicIcon animated size={ 20 } />;
 
-function JetpackSmartDictationPlugin() {
+function WpcomSmartDictationPlugin() {
 	return (
 		<>
 			<PluginSidebarMoreMenuItem target={ SMART_DICTATION_SIDEBAR_NAME } icon={ MicrophoneIcon }>
@@ -21,14 +20,14 @@ function JetpackSmartDictationPlugin() {
 				icon={ MicrophoneIcon }
 			>
 				<div className="wpcom-smart-dictation-sidebar-root">
-					<LiveAIAssistant layout="sidebar" />
+					<LiveAIAssistant />
 				</div>
 			</PluginSidebar>
 		</>
 	);
 }
 
-registerPlugin( 'jetpack-live-ai-assistant', {
+registerPlugin( 'wpcom-smart-dictation', {
 	icon: MicrophoneIcon,
-	render: () => <JetpackSmartDictationPlugin />,
+	render: () => <WpcomSmartDictationPlugin />,
 } );

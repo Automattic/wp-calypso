@@ -1,11 +1,17 @@
 import {
+	followMastodonActorMutation,
+	unfollowMastodonActorMutation,
 	useMastodonAuthorFeedInfiniteQuery,
 	useMastodonAuthorProfileQuery,
 } from '@automattic/api-queries';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
+import { logToLogstash } from 'calypso/lib/logstash';
 import {
+	FollowButton,
 	SocialAuthorProfilePanel,
 	SocialProfileCard,
 	mapMastodonAccountToSocialProfileCardProps,
@@ -16,6 +22,8 @@ import {
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
 import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { useOptionalComposer } from 'calypso/reader/social/composer';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { MastodonAuthorProfileTabs, useMastodonAuthorFeedFilter } from './author-profile-tabs';
 import { projectMastodonError } from './error-projection';
 import { errorMessage } from './profile-errors';
@@ -28,6 +36,30 @@ import type {
 	MastodonError,
 	MastodonFeedItem,
 } from '@automattic/api-core';
+import type { AppState } from 'calypso/types';
+import type { UnknownAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+
+/**
+ * Per-action follow / unfollow error copy. Most error kinds share the
+ * profile-load copy because they're rooted in the same backend issue
+ * (auth, rate-limit, transport), so we delegate to the shared
+ * `errorMessage`. The exception is `not_found`: the shared copy is
+ * profile-load-shaped and would mislead the user when an actor
+ * disappears between profile load and the follow click.
+ */
+function followErrorMessage(
+	error: MastodonError,
+	action: 'follow' | 'unfollow',
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult {
+	if ( error.kind === 'not_found' ) {
+		return action === 'follow'
+			? translate( 'Couldn’t follow this account.' )
+			: translate( 'Couldn’t unfollow this account.' );
+	}
+	return errorMessage( error, translate );
+}
 
 interface MastodonAuthorProfilePanelProps {
 	connection: MastodonConnection;
@@ -45,10 +77,14 @@ export function MastodonAuthorProfilePanel( {
 	subtabBasePath,
 }: MastodonAuthorProfilePanelProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 
 	const filter = useMastodonAuthorFeedFilter();
 
+	const queryClient = useQueryClient();
 	const profile = useMastodonAuthorProfileQuery( connection.id, actor );
+	const followMut = useMutation( followMastodonActorMutation( queryClient ) );
+	const unfollowMut = useMutation( unfollowMastodonActorMutation( queryClient ) );
 	const feed = useMastodonAuthorFeedInfiniteQuery( connection.id, actor, filter );
 
 	const stats: SocialProfileStat[] = profile.data
@@ -75,17 +111,125 @@ export function MastodonAuthorProfilePanel( {
 		  ]
 		: [];
 
+	// `.mutate` is the only stable handle on the useMutation result; depending
+	// on the result object would re-create handleFollow / handleUnfollow on
+	// every render.
+	const followMutate = followMut.mutate;
+	const unfollowMutate = unfollowMut.mutate;
+
+	const showFollowError = useCallback(
+		( error: MastodonError, action: 'follow' | 'unfollow', accountId: string ) => {
+			dispatch(
+				recordReaderTracksEvent( 'calypso_reader_mastodon_profile_follow_error', {
+					connection_id: connection.id,
+					account_id: accountId,
+					action,
+					error_kind: error.kind,
+				} )
+			);
+			dispatch(
+				errorNotice( followErrorMessage( error, action, translate ), {
+					id: 'mastodon-follow-error',
+				} )
+			);
+			// Pipeline-level log so failures stay observable in dashboards
+			// even when no Tracks dashboard is consulted.
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: `Reader Mastodon ${ action } mutation failed`,
+				severity: 'error',
+				extra: {
+					type: `reader_mastodon_${ action }_mutation_error`,
+					connection_id: connection.id,
+					account_id: accountId,
+					error_kind: error.kind,
+				},
+			} );
+		},
+		[ connection.id, dispatch, translate ]
+	);
+
+	const handleFollow = useCallback( () => {
+		if ( ! profile.data ) {
+			return;
+		}
+		// Capture at click time so error analytics survive a profile refetch /
+		// invalidation racing with the in-flight mutation.
+		const accountId = profile.data.id;
+		const locked = profile.data.locked;
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_mastodon_profile_follow_clicked', {
+				connection_id: connection.id,
+				account_id: accountId,
+				was_followed_by: profile.data.viewer?.followed_by ?? false,
+				was_locked: locked,
+			} )
+		);
+		followMutate(
+			{ connectionId: connection.id, actor, accountId, locked },
+			{
+				onSuccess: () => {
+					dispatch( removeNotice( 'mastodon-follow-error' ) );
+				},
+				onError: ( error ) => showFollowError( error, 'follow', accountId ),
+			}
+		);
+	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError ] );
+
+	const handleUnfollow = useCallback( () => {
+		if ( ! profile.data ) {
+			return;
+		}
+		const accountId = profile.data.id;
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_mastodon_profile_unfollow_clicked', {
+				connection_id: connection.id,
+				account_id: accountId,
+				was_requested: profile.data.viewer?.requested ?? false,
+			} )
+		);
+		unfollowMutate(
+			{ connectionId: connection.id, actor, accountId },
+			{
+				onSuccess: () => {
+					dispatch( removeNotice( 'mastodon-follow-error' ) );
+				},
+				onError: ( error ) => showFollowError( error, 'unfollow', accountId ),
+			}
+		);
+	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError ] );
+
 	const renderProfileBody = useCallback(
 		( profileData: MastodonAuthorProfile ) => {
 			const cardProps = mapMastodonAccountToSocialProfileCardProps( profileData, {
 				instance: connection.instance,
 			} );
+
+			// Forwards-compat gate: only render the button when the backend
+			// has projected the viewer block. Pre-deploy backends omit
+			// `viewer` entirely and we hide the button rather than guess at
+			// follow state. `is_self` hides the button on the viewer's own
+			// profile.
+			const followButton =
+				profileData.viewer && ! profileData.is_self ? (
+					<FollowButton
+						isFollowing={ profileData.viewer.following }
+						isFollowedBy={ profileData.viewer.followed_by }
+						isRequested={ profileData.viewer.requested }
+						isPending={ followMut.isPending || unfollowMut.isPending }
+						actorHandle={ profileData.acct }
+						onFollow={ handleFollow }
+						onUnfollow={ handleUnfollow }
+					/>
+				) : null;
+
 			return (
 				<>
 					<SocialProfileCard
 						{ ...cardProps }
 						stats={ stats }
 						statsLabel={ String( translate( 'Profile stats' ) ) }
+						headerActions={ followButton }
 					/>
 					<MastodonAuthorProfileTabs
 						connectionId={ connection.id }
@@ -96,7 +240,19 @@ export function MastodonAuthorProfilePanel( {
 				</>
 			);
 		},
-		[ connection.id, connection.instance, actor, filter, stats, subtabBasePath, translate ]
+		[
+			connection.id,
+			connection.instance,
+			actor,
+			filter,
+			stats,
+			subtabBasePath,
+			translate,
+			followMut.isPending,
+			unfollowMut.isPending,
+			handleFollow,
+			handleUnfollow,
+		]
 	);
 
 	const renderProfileError = useCallback(
