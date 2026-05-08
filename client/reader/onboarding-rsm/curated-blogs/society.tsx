@@ -256,7 +256,7 @@ export const societyBlogs: CuratedBlogsList = {
 			feed_ID: 111739841,
 			site_ID: 181957101,
 			site_URL: 'https://livinglondonhistory.com/',
-			site_name: 'History Facts',
+			site_name: 'Living London History',
 			feed_URL: 'http://livinglondonhistory.com/feed',
 			has_icon: true,
 		},
