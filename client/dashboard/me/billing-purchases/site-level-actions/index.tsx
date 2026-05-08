@@ -28,8 +28,6 @@ import { getRenewUrlForPurchases, getTitleForListDisplay } from '../../../utils/
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import type { Purchase } from '@automattic/api-core';
 
-import './style.scss';
-
 type SiteAction = 'renew' | 'cancel' | 'remove' | 'auto-renew';
 
 function getTitle( action?: SiteAction ): string {
@@ -276,11 +274,7 @@ export default function SiteLevelActions() {
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 4 } /> }
 						title={ getTitle( action ) }
-						description={
-							<Text className="site-level-actions__description">
-								{ getDescription( action, siteName, productName ) }
-							</Text>
-						}
+						description={ <Text>{ getDescription( action, siteName, productName ) }</Text> }
 					/>
 				</VStack>
 			}
