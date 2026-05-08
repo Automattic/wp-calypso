@@ -19,6 +19,7 @@ import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
+import { nextSelectedSite } from './selection';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
 
@@ -152,32 +153,15 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		prefetchedFeedIdsRef.current = new Set();
 	}, [ followedTagSlugs ] );
 
-	// Keep the preview-column selection in sync with the visible list:
-	//   1. Auto-select the first card once recommendations land.
-	//   2. Repoint to `recommendations[ 0 ]` if the currently-selected card is
-	//      pruned from the list (e.g. the prune-on-already-followed effect in
-	//      `useSubscribeRecommendations` removes a pinned card after paginated
-	//      follows reveal it was already subscribed). Without this the preview
-	//      column would keep rendering a stream for a site that's no longer in
-	//      the list.
-	//   3. Clear the selection when recommendations becomes empty so the
-	//      preview column unmounts cleanly alongside the empty-state UI.
+	// Keep the preview-column selection in sync with the visible list — see
+	// `nextSelectedSite` for the case breakdown. Notably, this handles a
+	// pinned card being pruned from `recommendations` after paginated follows
+	// reveal it was already subscribed: without repointing the preview column
+	// would keep rendering a stream for a site that's no longer in the list.
 	useEffect( () => {
-		if ( recommendations.length === 0 ) {
-			if ( selectedSite ) {
-				setSelectedSite( null );
-			}
-			return;
-		}
-		if ( ! selectedSite ) {
-			setSelectedSite( recommendations[ 0 ] );
-			return;
-		}
-		const selectedSiteStillExists = recommendations.some(
-			( recommendation ) => recommendation.feed_ID === selectedSite.feed_ID
-		);
-		if ( ! selectedSiteStillExists ) {
-			setSelectedSite( recommendations[ 0 ] );
+		const next = nextSelectedSite( selectedSite, recommendations );
+		if ( next !== undefined ) {
+			setSelectedSite( next );
 		}
 	}, [ recommendations, selectedSite ] );
 
