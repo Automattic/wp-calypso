@@ -65,9 +65,12 @@ export function getProfileUrl(
 		return null;
 	}
 	let canonical: string;
-	if ( options.instance && ! trimmed.includes( '@' ) ) {
+	if ( options.instance && ! trimmed.includes( '@' ) && ! STATUS_ID_RE.test( trimmed ) ) {
 		// Bare local handle (no `@`): qualify with the connection's instance
-		// so the URL carries the cross-instance webfinger form.
+		// so the URL carries the cross-instance webfinger form. Skip numeric
+		// account ids — they're already a valid actor shape and qualifying
+		// them produces a fake webfinger handle (`@<id>@<instance>`) that
+		// the backend's `/accounts/lookup?acct=` resolver can't resolve.
 		canonical = `@${ trimmed }@${ options.instance }`;
 	} else {
 		canonical = trimmed;

@@ -87,6 +87,15 @@ describe( 'getProfileUrl', () => {
 		);
 	} );
 
+	it( 'does not qualify a numeric account id even when instance is provided', () => {
+		// A numeric id is already a valid actor shape; qualifying it would
+		// synthesize a fake `@<id>@<instance>` handle that the backend's
+		// webfinger resolver can't look up.
+		expect( getProfileUrl( 7, '108020', { instance: 'mastodon.social' } ) ).toBe(
+			'/reader/mastodon/7/profile/108020'
+		);
+	} );
+
 	it( 'passes through an unqualified webfinger handle (no leading @)', () => {
 		expect( getProfileUrl( 7, 'alice@mastodon.social' ) ).toBe(
 			'/reader/mastodon/7/profile/alice%40mastodon.social'
@@ -107,6 +116,12 @@ describe( 'getFollowersUrl', () => {
 		);
 	} );
 
+	it( 'preserves a numeric account id when an instance is provided', () => {
+		expect( getFollowersUrl( 7, '108020', { instance: 'mastodon.social' } ) ).toBe(
+			'/reader/mastodon/7/profile/108020/followers'
+		);
+	} );
+
 	it( 'returns null when the actor fails validation', () => {
 		expect( getFollowersUrl( 7, '../../bad' ) ).toBeNull();
 	} );
@@ -116,6 +131,12 @@ describe( 'getFollowingUrl', () => {
 	it( 'appends /following to the profile URL', () => {
 		expect( getFollowingUrl( 7, '@alice@mastodon.social' ) ).toBe(
 			'/reader/mastodon/7/profile/%40alice%40mastodon.social/following'
+		);
+	} );
+
+	it( 'preserves a numeric account id when an instance is provided', () => {
+		expect( getFollowingUrl( 7, '108020', { instance: 'mastodon.social' } ) ).toBe(
+			'/reader/mastodon/7/profile/108020/following'
 		);
 	} );
 
