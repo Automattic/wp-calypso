@@ -7,14 +7,13 @@ import { forEach, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -197,29 +196,31 @@ class CrossPost extends PureComponent {
 					{ post.author && this.getDescription( post.author.first_name ) }
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } /> }
-				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			</Card>
 		);
 	}
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default connect( ( state, ownProps ) => {
+const ConnectedCrossPost = connect( ( state, ownProps ) => {
 	const { feedId, blogId } = ownProps.postKey;
-	let feed;
-	let site;
-	if ( feedId ) {
-		feed = getFeed( state, feedId );
-		site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;
-	} else {
-		site = getSite( state, blogId );
-		feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
-	}
 	return {
 		currentRoute: getCurrentRoute( state ),
 		isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
 		hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
-		feed,
-		site,
 	};
 } )( localize( CrossPost ) );
+
+function CrossPostContainer( props ) {
+	const { feedId, blogId } = props.postKey || {};
+	const feedFromKey = useSelector( ( state ) => ( feedId ? getFeed( state, feedId ) : undefined ) );
+	const siteId = blogId || feedFromKey?.blog_ID;
+	const { site } = useReaderSite( siteId );
+	const resolvedFeedId = feedId || site?.feed_ID;
+	const feedFromSite = useSelector( ( state ) =>
+		! feedFromKey && resolvedFeedId ? getFeed( state, resolvedFeedId ) : undefined
+	);
+	return <ConnectedCrossPost { ...props } site={ site } feed={ feedFromKey || feedFromSite } />;
+}
+
+export default CrossPostContainer;

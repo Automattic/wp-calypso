@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -12,15 +12,15 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import ReaderSidebarHelper from '../../sidebar/helper';
 
 const ReaderListFollowingItem = ( props ) => {
-	const { site, path, isUnseen, feed, follow, siteId } = props;
+	const { path, isUnseen, feed, follow, siteId } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { site } = useReaderSite( siteId );
 	const siteIcon = site ? site.site_icon ?? get( site, 'icon.img' ) : null;
 	let feedIcon = get( follow, 'site_icon' );
 
@@ -67,7 +67,6 @@ const ReaderListFollowingItem = ( props ) => {
 				onClick={ ( event ) => handleSidebarClick( event, streamLink ) }
 			>
 				<span className="reader-sidebar-site_siteicon">
-					{ ! siteIcon && ! feedIcon && ! site && <QueryReaderSite siteId={ siteId } /> }
 					{ ! siteIcon && ! feedIcon && ! feed && follow.feed_ID && (
 						<QueryReaderFeed feedId={ follow.feed_ID } />
 					) }
@@ -101,7 +100,6 @@ export default connect(
 
 		return {
 			feed: getFeed( state, feedId ),
-			site: getSite( state, siteId ),
 			siteId: siteId,
 		};
 	},

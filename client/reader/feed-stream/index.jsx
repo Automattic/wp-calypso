@@ -3,7 +3,7 @@ import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
 import { useSiteTags } from 'calypso/data/site-tags/use-site-tags';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import FeedError from 'calypso/reader/feed-error';
@@ -16,7 +16,6 @@ import { getAllPostCount } from 'calypso/state/posts/counts/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import EmptyContent from './empty';
 
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
@@ -36,7 +35,7 @@ const FeedStream = ( props ) => {
 	const postCount = useSelector(
 		( state ) => siteId && getAllPostCount( state, siteId, 'post', 'publish' )
 	);
-	const site = useSelector( ( state ) => siteId && getSite( state, siteId ) );
+	const { site, siteError } = useReaderSite( siteId );
 
 	if ( feed ) {
 		// Add site icon to feed object so have icon for external feeds
@@ -51,7 +50,7 @@ const FeedStream = ( props ) => {
 		return <SiteBlocked title={ title } siteId={ siteId } />;
 	}
 
-	if ( ( feed && feed.is_error ) || ( site && site.is_error ) ) {
+	if ( ( feed && feed.is_error ) || siteError ) {
 		return <FeedError sidebarTitle={ title } />;
 	}
 
@@ -90,7 +89,6 @@ const FeedStream = ( props ) => {
 			<ReaderFeedHeader feed={ feed } site={ site } streamKey={ props.streamKey } />
 			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
 			{ ! feed && <QueryReaderFeed feedId={ feedId } /> }
-			{ siteId && <QueryReaderSite siteId={ siteId } /> }
 		</Stream>
 	);
 };

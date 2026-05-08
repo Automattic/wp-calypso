@@ -20,7 +20,7 @@ import AutoDirection from 'calypso/components/auto-direction';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withPostLikes } from 'calypso/components/data/post-likes';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { withReaderSite } from 'calypso/components/data/query-reader-site/with-reader-site';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -56,7 +56,6 @@ import {
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -742,9 +741,6 @@ export class FullPostView extends Component {
 						/>
 					) }
 					{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-					{ post && ! post.is_external && post.site_ID && (
-						<QueryReaderSite siteId={ +post.site_ID } />
-					) }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
 						// We will always prevent the back button here from triggering a route
@@ -914,7 +910,7 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	const post = ownProps.post || { _state: 'pending' };
 	const currentPath = state.route.path.current;
 
-	const { site_ID: siteId, is_external: isExternal } = post;
+	const { site_ID: siteId } = post;
 
 	const props = {
 		siteId,
@@ -928,9 +924,6 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 		previousRoute: getPreviousRoute( state ),
 	};
 
-	if ( ! isExternal && siteId ) {
-		props.site = getSite( state, siteId );
-	}
 	if ( feedId ) {
 		const feed = getFeed( state, feedId );
 
@@ -947,6 +940,9 @@ export const mapStateToFullPostProps = ( state, ownProps ) => {
 	return props;
 };
 
+const getPostSiteId = ( { post } ) =>
+	post && ! post.is_external && post.site_ID ? +post.site_ID : undefined;
+
 const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	disableAppBanner,
 	enableAppBanner,
@@ -957,7 +953,7 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 	showSelectedPost,
-} )( withPostLikes( withPostLikeActions( FullPostView ) ) );
+} )( withReaderSite( withPostLikes( withPostLikeActions( FullPostView ) ), getPostSiteId ) );
 
 export const withFullPostNavigation = ( WrappedComponent ) =>
 	function FullPostNavigationContainer( props ) {

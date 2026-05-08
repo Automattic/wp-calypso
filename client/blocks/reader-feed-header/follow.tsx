@@ -15,7 +15,6 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { hasReaderFollowOrganization, isFollowing } from 'calypso/state/reader/follows/selectors';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -66,28 +65,15 @@ export default function ReaderFeedHeaderFollow( props: ReaderFeedHeaderFollowPro
 		subscriptionId,
 		blogOwner,
 	} = useSelector( ( state: AppState ) => {
-		let _siteId = siteId ?? 0;
-		let _feedId = feed?.feed_ID ?? 0;
-		let _feed: ReaderFeed | undefined = _feedId ? getFeed( state, _feedId ) : undefined;
-		let _site: ReaderSite | undefined = _siteId ? getSite( state, _siteId ) : undefined;
-
-		if ( _feed && ! _siteId ) {
-			_siteId = _feed.blog_ID || 0;
-			_site = _siteId ? getSite( state, _siteId ) : undefined;
-		}
-
-		if ( _site && ! _feedId ) {
-			_feedId = _site.feed_ID || 0;
-			_feed = _feedId ? getFeed( state, _feedId ) : undefined;
-		}
-
+		const _siteId = siteId ?? feed?.blog_ID ?? 0;
+		const _feedId = feed?.feed_ID ?? site?.feed_ID ?? 0;
 		return {
-			following: _feed && isFollowing( state, { feedUrl: _feed.feed_URL } ),
+			following: feed && isFollowing( state, { feedUrl: feed.feed_URL } ),
 			hasOrganization: hasReaderFollowOrganization( state, _feedId, _siteId ),
 			isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 			isWPForTeamsItem: isSiteWPForTeams( state, _siteId ) || isFeedWPForTeams( state, _feedId ),
-			subscriptionId: _feed?.subscription_id,
-			blogOwner: _feed?.blog_owner,
+			subscriptionId: feed?.subscription_id,
+			blogOwner: feed?.blog_owner,
 		};
 	}, shallowEqual );
 

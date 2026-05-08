@@ -5,10 +5,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { withReaderSite } from 'calypso/components/data/query-reader-site/with-reader-site';
 import { withReaderTeams } from 'calypso/components/data/with-reader-teams';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import ReaderPostEllipsisMenu from './reader-post-ellipsis-menu';
 import './style.scss';
 
@@ -59,9 +58,6 @@ class ReaderPostOptionsMenu extends Component {
 		return (
 			<span className={ classes }>
 				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-				{ ! site && post && ! post.is_external && post.site_ID && (
-					<QueryReaderSite siteId={ +post.site_ID } />
-				) }
 				<ReaderPostEllipsisMenu
 					site={ site }
 					teams={ teams }
@@ -84,15 +80,14 @@ class ReaderPostOptionsMenu extends Component {
 	}
 }
 
+const getPostSiteId = ( { post } ) =>
+	post && ! post.is_external && post.site_ID ? +post.site_ID : undefined;
+
 export default compose(
 	withReaderTeams,
-	connect( ( state, { post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
-		const siteId = is_external ? null : site_ID;
-		return Object.assign(
-			{},
-			feedId > 0 && { feed: getFeed( state, feedId ) },
-			siteId > 0 && { site: getSite( state, siteId ) }
-		);
-	} ),
+	( Component ) => withReaderSite( Component, getPostSiteId ),
+	connect( ( state, { post: { feed_ID: feedId } = {} } ) =>
+		feedId > 0 ? { feed: getFeed( state, feedId ) } : {}
+	),
 	localize
 )( ReaderPostOptionsMenu );

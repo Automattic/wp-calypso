@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
 import { usePost } from 'calypso/reader/data/post';
 import Placeholders from './placeholders';
 
@@ -52,6 +52,7 @@ const DialogContent = ( { postId, blogId, articleUrl } ) => {
 	const { data: post, isLoading } = usePost( postKey );
 	const isArticleLoading = isLoading || ! postKey;
 	const siteId = post?.site_ID;
+	useReaderSite( siteId );
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
@@ -73,7 +74,6 @@ const DialogContent = ( { postId, blogId, articleUrl } ) => {
 
 	return (
 		<>
-			{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			<article className="support-article-dialog__story">
 				<SupportArticleHeader post={ post } isLoading={ isArticleLoading } />
 				{

@@ -1,10 +1,7 @@
-import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { useReaderSite } from 'calypso/components/data/query-reader-site/use-reader-site';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 
 /**
  * A HoC function that will take in reader identifiers siteId or feedId and
@@ -17,44 +14,42 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
  * @returns {Object} wrapped component that hands down feed/site to its child
  */
 const connectSite = ( Component ) => {
-	class connectSiteFetcher extends PureComponent {
-		static propTypes = {
-			feed: PropTypes.object,
-			site: PropTypes.object,
-		};
-
-		render() {
-			return (
-				<>
-					{ !! this.props.feedId && <QueryReaderFeed feedId={ this.props.feedId } /> }
-					{ !! this.props.siteId && <QueryReaderSite siteId={ this.props.siteId } /> }
-					<Component { ...this.props } />
-				</>
-			);
-		}
-	}
-
-	return connect( ( state, ownProps ) => {
+	function ConnectSiteFetcher( ownProps ) {
 		let { feedId, siteId } = ownProps;
-		let feed = feedId ? getFeed( state, feedId ) : undefined;
-		let site = siteId ? getSite( state, siteId ) : undefined;
+		const feedFromProps = useSelector( ( state ) =>
+			feedId ? getFeed( state, feedId ) : undefined
+		);
 
-		if ( feed && ! siteId ) {
-			siteId = feed.blog_ID !== 0 ? feed.blog_ID : undefined;
-			site = siteId ? getSite( state, feed.blog_ID ) : undefined;
-		}
-		if ( site && ! feedId ) {
-			feedId = site.feed_ID;
-			feed = feedId ? getFeed( state, site.feed_ID ) : undefined;
+		// If the consumer only provided feedId, resolve siteId from the feed.
+		if ( feedFromProps && ! siteId ) {
+			siteId = feedFromProps.blog_ID !== 0 ? feedFromProps.blog_ID : undefined;
 		}
 
-		return {
-			feed,
-			site,
-			siteId,
-			feedId,
-		};
-	} )( connectSiteFetcher );
+		const { site } = useReaderSite( siteId );
+
+		// If the consumer only provided siteId, resolve feedId from the site.
+		const resolvedFeedId = feedId || site?.feed_ID;
+		const resolvedFeed = useSelector( ( state ) =>
+			resolvedFeedId ? getFeed( state, resolvedFeedId ) : undefined
+		);
+
+		return (
+			<>
+				{ !! resolvedFeedId && <QueryReaderFeed feedId={ resolvedFeedId } /> }
+				<Component
+					{ ...ownProps }
+					feed={ resolvedFeed }
+					site={ site }
+					siteId={ siteId }
+					feedId={ resolvedFeedId }
+				/>
+			</>
+		);
+	}
+	ConnectSiteFetcher.displayName = `connectSite(${
+		Component.displayName || Component.name || 'Component'
+	})`;
+	return ConnectSiteFetcher;
 };
 
 export default connectSite;
