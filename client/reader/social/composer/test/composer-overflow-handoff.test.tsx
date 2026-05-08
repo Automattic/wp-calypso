@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { ComposerOverflowHandoff } from '../composer-overflow-handoff';
 import { ComposerProvider, useComposer } from '../composer-provider';
@@ -34,8 +34,6 @@ function renderWithComposer( ui: ReactNode, { withMode = false } = {} ) {
 	);
 }
 
-// Used by tests added in later tasks of the overflow-handoff series.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function mockSitesQuery( sites: Partial< Site >[] ) {
 	nock( ORIGIN )
 		.get( /\/rest\/v1\.\d+\/me\/sites/ )
@@ -47,6 +45,32 @@ afterEach( () => nock.cleanAll() );
 describe( 'ComposerOverflowHandoff — gate', () => {
 	it( 'renders nothing when hasBeenOverLimit is false', () => {
 		renderWithComposer( <ComposerOverflowHandoff text="hello" /> );
+		expect( screen.queryByRole( 'region', { name: /publish on your own site/i } ) ).toBeNull();
+	} );
+} );
+
+describe( 'ComposerOverflowHandoff — null branches', () => {
+	it( 'renders nothing when sites query resolves to []', async () => {
+		mockSitesQuery( [] );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="hi" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		// Wait a tick for the query to resolve, then assert nothing rendered.
+		await new Promise( ( r ) => setTimeout( r, 0 ) );
 		expect( screen.queryByRole( 'region', { name: /publish on your own site/i } ) ).toBeNull();
 	} );
 } );
