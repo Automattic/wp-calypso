@@ -35,7 +35,17 @@ interface StylePickerProps {
 	variant?: StylePickerVariant;
 }
 
-export const STYLE_OPTIONS = [
+interface StyleOption {
+	label: string;
+	value: string;
+	preview: string;
+	// One-line explainer rendered under the label. Video styles use this
+	// to differentiate Cinematic (Veo prompt-driven) from Highlights
+	// (browser-rendered recap from post images). Image styles omit it.
+	description?: string;
+}
+
+export const STYLE_OPTIONS: StyleOption[] = [
 	{ label: __( 'None', __i18n_text_domain__ ), value: 'none', preview: nonePreview },
 	{
 		label: __( 'Vivid', __i18n_text_domain__ ),
@@ -123,16 +133,21 @@ export const STYLE_OPTIONS = [
 // Top-level video style choices, named for users (not video editors).
 //   Cinematic  → AI-generated single atmospheric shot. Veo path.
 //   Highlights → Browser-rendered walkthrough of the post's key points + images. EditFrame path.
-export const VIDEO_STYLE_OPTIONS = [
+export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 	{
 		label: __( 'Cinematic', __i18n_text_domain__ ),
 		value: 'cinematic',
 		preview: videoCinematicPreview,
+		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
 	},
 	{
 		label: __( 'Highlights', __i18n_text_domain__ ),
 		value: 'highlights',
 		preview: videoHighlightsPreview,
+		description: __(
+			"Build a 20-second recap clip using your post's images and key points.",
+			__i18n_text_domain__
+		),
 	},
 ];
 
@@ -182,7 +197,11 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 			className="image-studio-input-toolbar-item"
 			disabled={ disabled }
 		>
-			<div className="image-studio-input-toolbar-dialog-grid">
+			<div
+				className={ cn( 'image-studio-input-toolbar-dialog-grid', {
+					'image-studio-input-toolbar-dialog-grid--video': isVideo,
+				} ) }
+			>
 				{ options.map( ( option ) => (
 					<button
 						key={ option.value }
@@ -200,9 +219,19 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 							/>
 						</span>
 						<span className="image-studio-input-toolbar-card__label">{ option.label }</span>
+						{ option.description ? (
+							<span className="image-studio-input-toolbar-card__description">
+								{ option.description }
+							</span>
+						) : null }
 					</button>
 				) ) }
 			</div>
+			{ isVideo ? (
+				<p className="image-studio-input-toolbar-dialog-footnote">
+					{ __( 'All clips export as 9:16 vertical MP4 files.', __i18n_text_domain__ ) }
+				</p>
+			) : null }
 		</AgentUI.InputToolbar>
 	);
 }

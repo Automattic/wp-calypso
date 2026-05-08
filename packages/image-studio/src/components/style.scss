@@ -486,6 +486,23 @@ body.js.is-image-studio-open {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 	gap: 12px;
+
+	// Video variant has only two options and a description per card —
+	// give each card more room so the description doesn't wrap to four
+	// lines in a narrow column.
+	&--video {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+// Footnote under the video style grid (e.g. "All clips export as
+// 9:16 vertical MP4 files.").
+.image-studio-input-toolbar-dialog-footnote {
+	margin: 12px 0 0;
+	font-size: $text-xs;
+	line-height: 1.4;
+	color: #b0b0b0;
+	text-align: center;
 }
 
 .image-studio-input-toolbar-card {
@@ -569,6 +586,21 @@ body.js.is-image-studio-open {
 
 	&.is-selected &__label {
 		color: #fff;
+	}
+
+	// One-line explainer below the label (currently only the video styles
+	// use this — image styles are self-explanatory by their names).
+	&__description {
+		font-size: $text-xs;
+		line-height: 1.4;
+		text-align: center;
+		color: #b0b0b0;
+		max-width: 100%;
+		word-wrap: break-word;
+	}
+
+	&.is-selected &__description {
+		color: #d0d0d0;
 	}
 }
 
