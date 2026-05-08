@@ -207,12 +207,22 @@ export function FeatureClipRenderHost() {
 		} )();
 	}, [ pendingRender, resolvedBrief, mountedRequestId, failFeatureClipRender ] );
 
-	// Cancel handling: hard-cancel from the user → clear pending and stop.
+	// Cancel handling: hard-cancel from the user → record a terminal failure
+	// for this requestId, then clear pending. Without the fail dispatch,
+	// awaitRenderResult( requestId ) would never resolve and the agent tool
+	// call would hang forever — clearFeatureClipPending alone produces no
+	// matching lastRenderResult/lastRenderError. The render-loop's own
+	// `cancelled` flag short-circuits its catch block, so there's no
+	// double-dispatch of failFeatureClipRender for the same requestId.
 	useEffect( () => {
 		if ( isCancelling && pendingRender ) {
+			failFeatureClipRender( {
+				requestId: pendingRender.requestId,
+				message: 'Cancelled by user.',
+			} );
 			clearFeatureClipPending();
 		}
-	}, [ isCancelling, pendingRender, clearFeatureClipPending ] );
+	}, [ isCancelling, pendingRender, failFeatureClipRender, clearFeatureClipPending ] );
 
 	// Drive the render after the compositor mounts.
 	useEffect( () => {
