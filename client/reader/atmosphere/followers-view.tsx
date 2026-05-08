@@ -231,7 +231,7 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				header={ {
 					displayName: profileQuery.data?.display_name ?? null,
 					handle: profileQuery.data?.handle ?? actor,
-					count: profileQuery.data?.counts.followers ?? null,
+					count: profileQuery.data?.counts?.followers ?? null,
 					mode: 'followers',
 					isPending: profileQuery.isPending,
 				} }
