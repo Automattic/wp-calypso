@@ -66,12 +66,25 @@ function isReviewMediatorEnabled(): boolean {
 	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.reviewMediatorEnabled;
 }
 
-function getReviewMediatorSuggestions() {
-	return isReviewMediatorEnabled() ? [ MEDIATE_REVIEW_SUGGESTION ] : [];
+function getCurrentEditorPostType(): string | undefined {
+	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();
+	return typeof postType === 'string' ? postType : undefined;
 }
 
-function getPostLevelSuggestions() {
-	return [ OPTIMIZE_TITLE_SUGGESTION, ...getReviewMediatorSuggestions() ];
+function isReviewMediatorAvailable(
+	// Default arguments run at call time, so callers can omit this when they
+	// want the current editor state read live.
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	return isReviewMediatorEnabled() && currentPostType === 'post';
+}
+
+function getReviewMediatorSuggestions( currentPostType?: string ) {
+	return isReviewMediatorAvailable( currentPostType ) ? [ MEDIATE_REVIEW_SUGGESTION ] : [];
+}
+
+function getPostLevelSuggestions( currentPostType?: string ) {
+	return [ OPTIMIZE_TITLE_SUGGESTION, ...getReviewMediatorSuggestions( currentPostType ) ];
 }
 
 // ---------- Show-component ability ----------
@@ -103,8 +116,8 @@ const SHOW_COMPONENT_ABILITY: any = {
 
 /**
  * Handle `big_sky__show_component` by returning an agentMessage envelope
- * (Big Sky unified-experience pattern), then snapshot the post title via
- * the checkpoint API so AM's Undo can restore it.
+ * (Big Sky unified-experience pattern). Title picker opts into AM's
+ * message-level Undo because the checkpoint API snapshots the post title.
  * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
  * @returns {Object} Result containing the `agentMessage` to re-emit.
  */
@@ -123,28 +136,32 @@ function handleShowComponent( input: any ): any {
 		};
 	}
 
-	// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
-	// it matches the identifier AM reads from the rendered message.
-	const checkpointId: string =
-		input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
-	const checkpointApi = getModuleCheckpointApi();
-	if ( checkpointApi && ! checkpointApi.hasCheckpoint( checkpointId ) ) {
-		try {
-			checkpointApi.setCheckpoint( checkpointId );
-		} catch {
-			// Non-fatal — Undo just won't attach if the snapshot fails.
+	const data: Record< string, unknown > = {
+		type,
+		props: props ?? {},
+		isCurrent: true,
+		hideZoomAction: true,
+	};
+
+	if ( type === 'title-picker' ) {
+		// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
+		// it matches the identifier AM reads from the rendered message.
+		const checkpointId: string =
+			input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
+		const checkpointApi = getModuleCheckpointApi();
+		if ( checkpointApi && ! checkpointApi.hasCheckpoint( checkpointId ) ) {
+			try {
+				checkpointApi.setCheckpoint( checkpointId );
+			} catch {
+				// Non-fatal — Undo just won't attach if the snapshot fails.
+			}
 		}
+		data.calypsoCheckpointId = checkpointId;
 	}
 
 	const agentMessage = JSON.stringify( {
 		tool_id: SHOW_COMPONENT_TOOL_ID,
-		data: {
-			type,
-			props: props ?? {},
-			calypsoCheckpointId: checkpointId,
-			isCurrent: true,
-			hideZoomAction: true,
-		},
+		data,
 	} );
 
 	return {
@@ -323,8 +340,12 @@ export const contextProvider = {
 		let currentPageContent: any[] = [];
 		let selectedBlockClientId = '';
 		let selectedBlockContent = '';
+		let currentPostType: string | undefined;
 
 		if ( wpData ) {
+			const editor = wpData.select( 'core/editor' );
+			currentPostType = editor?.getCurrentPostType?.();
+
 			const blockEditor = wpData.select( 'core/block-editor' );
 			if ( blockEditor ) {
 				const blocks = blockEditor.getBlocks?.() ?? [];
@@ -346,6 +367,10 @@ export const contextProvider = {
 			search: window.location.search,
 			environment: 'gutenberg',
 			titleSuggestionCount: 3,
+			currentScreen: {
+				url: window.location.href,
+				...( currentPostType && { postType: currentPostType } ),
+			},
 			currentPageContent,
 			selectedBlockClientId,
 			contextEntries: [
@@ -518,7 +543,7 @@ export function useSuggestions(): {
 			// to 50vw on the mediation suggestion only (matched by prompt).
 			const value = ( event as CustomEvent ).detail?.value;
 			if (
-				isReviewMediatorEnabled() &&
+				isReviewMediatorAvailable() &&
 				typeof value === 'string' &&
 				value === MEDIATE_REVIEW_SUGGESTION.prompt
 			) {
@@ -536,26 +561,31 @@ export function useSuggestions(): {
 		};
 	}, [] );
 
-	const selectedBlock = useSelect(
-		( select ) =>
-			( select( 'core/block-editor' ) as { getSelectedBlock: () => any } ).getSelectedBlock(),
-		[]
-	);
+	const editorContext = useSelect( ( select ) => {
+		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock: () => any };
+		const editor = select( 'core/editor' ) as { getCurrentPostType?: () => string | undefined };
+		return {
+			selectedBlock: blockEditor.getSelectedBlock(),
+			postType: editor.getCurrentPostType?.(),
+		};
+	}, [] );
 
 	// Re-show suggestions when block selection changes (unless conversation is active)
 	useEffect( () => {
 		setHidden( false );
-	}, [ selectedBlock?.clientId ] );
+	}, [ editorContext.selectedBlock?.clientId ] );
 
 	if ( hidden ) {
 		return { suggestions: [] };
 	}
 
-	if ( ! selectedBlock ) {
-		return { suggestions: getPostLevelSuggestions() };
+	if ( ! editorContext.selectedBlock ) {
+		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
 	}
 
-	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
+	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) =>
+		s.condition( editorContext.selectedBlock )
+	);
 	return {
 		suggestions: applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
 	};

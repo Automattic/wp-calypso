@@ -844,35 +844,43 @@ export default function ReviewMediation( {
 									{ conflicts.map( ( conflict, i ) => {
 										const status = conflictStatuses[ i ] ?? 'pending';
 										const candidates = conflict.candidate_resolutions ?? [];
-										const reviewerCandidates = candidates.filter(
-											( c ) => c.source === 'reviewer' && c.block_index !== null
-										);
-										const aiCandidate = candidates.find(
-											( c ) => c.source === 'ai' && c.block_index !== null
-										);
 										const getCandidateDisabledReason = ( candidate: CandidateResolution ) =>
 											getBlockEditDisabledReason( candidate.block_index, candidate.current_text );
+										const candidateStates = candidates
+											.filter( ( c ) => c.block_index !== null )
+											.map( ( candidate ) => ( {
+												candidate,
+												disabledReason: getCandidateDisabledReason( candidate ),
+											} ) );
+										const reviewerCandidateStates = candidateStates.filter(
+											( state ) => state.candidate.source === 'reviewer' && ! state.disabledReason
+										);
+										const aiCandidateState = candidateStates.find(
+											( state ) => state.candidate.source === 'ai' && ! state.disabledReason
+										);
+										const aiCandidate = aiCandidateState?.candidate;
 										// Block reference for the card header — prefer the AI candidate's
-										// target, fall back to the first reviewer candidate with a block.
-										const headerBlockIndex =
-											aiCandidate?.block_index ?? reviewerCandidates[ 0 ]?.block_index ?? null;
-										const hasAnyAction = reviewerCandidates.length > 0 || !! aiCandidate;
+										// target, fall back to the first candidate with a block. A disabled
+										// candidate is still useful here because the header only needs context.
+										const headerCandidateState =
+											candidateStates.find( ( state ) => state.candidate.source === 'ai' ) ??
+											candidateStates[ 0 ];
+										const headerBlockIndex = headerCandidateState?.candidate.block_index ?? null;
 										const actionsDisabled =
 											status === 'applying' ||
 											status === 'accepted' ||
 											status === 'dismissed' ||
 											bulkRunning;
-										const aiCandidateDisabledReason = aiCandidate
-											? getCandidateDisabledReason( aiCandidate )
-											: undefined;
-										const reviewerCandidateStates = reviewerCandidates.map( ( candidate ) => ( {
-											candidate,
-											disabledReason: getCandidateDisabledReason( candidate ),
-										} ) );
-										const applyUnavailableReason = getConflictApplyUnavailableReason( [
-											...reviewerCandidateStates.map( ( state ) => state.disabledReason ),
-											aiCandidateDisabledReason,
-										] );
+										const hasActionableCandidate =
+											reviewerCandidateStates.length > 0 || !! aiCandidate;
+										// When some candidates are unavailable but at least one is actionable,
+										// keep the card focused on the available action; the prose still carries
+										// the full conflict guidance.
+										const applyUnavailableReason = hasActionableCandidate
+											? undefined
+											: getConflictApplyUnavailableReason(
+													candidateStates.map( ( state ) => state.disabledReason )
+											  ) || __( 'Needs manual edit.', 'jetpack' );
 										const applyUnavailableReasonId = `review-mediation-conflict-${ i }-apply-reason`;
 										const isCollapsed = status === 'accepted' || status === 'dismissed';
 										if ( isCollapsed ) {
@@ -1003,53 +1011,45 @@ export default function ReviewMediation( {
 													</p>
 												) }
 
-												{ hasAnyAction && (
-													<div className="jetpack-ai-review-mediation__actions">
-														{ reviewerCandidateStates.map( ( { candidate, disabledReason }, k ) => {
-															return (
-																<button
-																	type="button"
-																	className="jetpack-ai-review-mediation__action is-reviewer"
-																	key={ `candidate-${ i }-${ k }` }
-																	disabled={ actionsDisabled || !! disabledReason }
-																	aria-describedby={
-																		disabledReason ? applyUnavailableReasonId : undefined
-																	}
-																	onClick={ () => handleAcceptCandidate( i, candidate ) }
-																>
-																	{ sprintf(
-																		/* translators: %s is a short label, e.g. "Marcus's wording" */
-																		__( 'Accept %s', 'jetpack' ),
-																		candidate.label
-																	) }
-																</button>
-															);
-														} ) }
-														{ aiCandidate && (
+												<div className="jetpack-ai-review-mediation__actions">
+													{ reviewerCandidateStates.map( ( { candidate }, k ) => {
+														return (
 															<button
 																type="button"
-																className="jetpack-ai-review-mediation__action is-accept"
-																disabled={ actionsDisabled || !! aiCandidateDisabledReason }
-																aria-describedby={
-																	aiCandidateDisabledReason ? applyUnavailableReasonId : undefined
-																}
-																onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
+																className="jetpack-ai-review-mediation__action is-reviewer"
+																key={ `candidate-${ i }-${ k }` }
+																disabled={ actionsDisabled }
+																onClick={ () => handleAcceptCandidate( i, candidate ) }
 															>
-																{ getAiButtonLabel( status ) }
+																{ sprintf(
+																	/* translators: %s is a short label, e.g. "Marcus's wording" */
+																	__( 'Accept %s', 'jetpack' ),
+																	candidate.label
+																) }
 															</button>
-														) }
+														);
+													} ) }
+													{ aiCandidate && (
 														<button
 															type="button"
-															className="jetpack-ai-review-mediation__action is-dismiss"
+															className="jetpack-ai-review-mediation__action is-accept"
 															disabled={ actionsDisabled }
-															onClick={ () => handleDismissConflict( i ) }
+															onClick={ () => handleAcceptCandidate( i, aiCandidate ) }
 														>
-															{ /* status can never be 'dismissed' here — the
-															collapsed branch above renders for that case */ }
-															{ __( 'Dismiss', 'jetpack' ) }
+															{ getAiButtonLabel( status ) }
 														</button>
-													</div>
-												) }
+													) }
+													<button
+														type="button"
+														className="jetpack-ai-review-mediation__action is-dismiss"
+														disabled={ actionsDisabled }
+														onClick={ () => handleDismissConflict( i ) }
+													>
+														{ /* status can never be 'dismissed' here — the
+														collapsed branch above renders for that case */ }
+														{ __( 'Dismiss', 'jetpack' ) }
+													</button>
+												</div>
 											</article>
 										);
 									} ) }

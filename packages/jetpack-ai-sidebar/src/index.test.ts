@@ -18,6 +18,7 @@ import {
 	findBlockListLayout,
 	getChatComponent,
 	getEmptyViewSuggestions,
+	contextProvider,
 	toolProvider,
 	useAbilitiesSetup,
 	useCheckpoint,
@@ -26,6 +27,7 @@ import {
 
 const mockSetIsSplitScreen = jest.fn();
 let mockSelectedBlock: any = null;
+let mockCurrentPostType: string | undefined = 'post';
 
 jest.mock( '@wordpress/components', () => {
 	const React = require( 'react' );
@@ -47,10 +49,20 @@ jest.mock( '@wordpress/data', () => ( {
 		selectBlock: jest.fn(),
 	} ),
 	useSelect: ( fn: any ) =>
-		fn( () => ( {
-			getSelectedBlock: () => mockSelectedBlock,
-			getBlocks: () => [],
-		} ) ),
+		fn( ( store: string ) => {
+			if ( store === 'core/block-editor' ) {
+				return {
+					getSelectedBlock: () => mockSelectedBlock,
+					getBlocks: () => [],
+				};
+			}
+			if ( store === 'core/editor' ) {
+				return {
+					getCurrentPostType: () => mockCurrentPostType,
+				};
+			}
+			return {};
+		} ),
 } ) );
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
@@ -85,6 +97,27 @@ function installWpDataMock( initialTitle: string ) {
 	return state;
 }
 
+function installPostTypeMock( postType?: string ) {
+	( window as any ).wp = {
+		data: {
+			select: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => postType,
+					};
+				}
+				if ( store === 'core/block-editor' ) {
+					return {
+						getSelectedBlock: () => mockSelectedBlock,
+						getBlocks: () => [],
+					};
+				}
+				return undefined;
+			},
+		},
+	};
+}
+
 function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: any[] ) => void } ) {
 	const { suggestions } = useSuggestions();
 	React.useEffect( () => {
@@ -112,6 +145,7 @@ describe( 'getChatComponent', () => {
 describe( 'getEmptyViewSuggestions', () => {
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
 	} );
 
 	it( 'hides Review Mediator by default', () => {
@@ -122,21 +156,44 @@ describe( 'getEmptyViewSuggestions', () => {
 
 	it( 'shows Review Mediator when enabled by agentsManagerData', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'Mediate review notes' );
+	} );
+
+	it( 'hides Review Mediator on page editors', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock( 'page' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Mediate review notes' );
+	} );
+
+	it( 'hides Review Mediator until the post type is known', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock();
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Mediate review notes' );
 	} );
 } );
 
 describe( 'useSuggestions', () => {
 	beforeEach( () => {
 		mockSelectedBlock = null;
+		mockCurrentPostType = 'post';
 		mockSetIsSplitScreen.mockReset();
 		delete ( globalThis as any ).agentsManagerData;
 	} );
 
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
 	} );
 
 	it( 'does not append Review Mediator to block-specific suggestions', () => {
@@ -155,6 +212,7 @@ describe( 'useSuggestions', () => {
 
 	it( 'opens split-screen when the Review Mediator suggestion is clicked', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
 			( suggestion ) => suggestion.id === 'mediate-review-notes'
 		)?.prompt;
@@ -170,6 +228,42 @@ describe( 'useSuggestions', () => {
 		} );
 
 		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'does not open split-screen when Review Mediator is unavailable', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		mockCurrentPostType = 'page';
+		installPostTypeMock( 'page' );
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: {
+						value:
+							'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+					},
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'contextProvider', () => {
+	afterEach( () => {
+		delete ( window as any ).wp;
+	} );
+
+	it( 'includes the current post type in client context', () => {
+		installPostTypeMock( 'post' );
+
+		expect( contextProvider.getClientContext().currentScreen ).toMatchObject( {
+			url: window.location.href,
+			postType: 'post',
+		} );
 	} );
 } );
 
@@ -243,6 +337,26 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.type ).toBe( 'title-picker' );
 			expect( parsed.data.props ).toEqual( { titles } );
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
+			expect( parsed.data.isCurrent ).toBe( true );
+			expect( parsed.data.hideZoomAction ).toBe( true );
+		} );
+
+		it( 'does not attach a title checkpoint to review-mediation components', async () => {
+			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+				type: 'review-mediation',
+				props: {
+					summary: 'Summary.',
+					conflicts: [],
+					implications: [],
+					suggested_edits: [],
+					guideline_violations: [],
+				},
+				toolCallId: 'call_review_mediation_123',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'review-mediation' );
+			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
 		} );

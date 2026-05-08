@@ -708,7 +708,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'disables candidate buttons for unsupported block targets', () => {
+	it( 'renders unsupported conflict candidates as manual guidance without accept buttons', () => {
 		mockBlocks = [
 			...blocks,
 			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },
@@ -740,15 +740,16 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		);
 
 		expect( screen.getByText( 'Needs manual edit — unsupported block type' ) ).toBeInTheDocument();
-		const acceptAi = screen.getByRole( 'button', { name: 'Accept AI resolution' } );
-		expect( acceptAi ).toBeDisabled();
-		fireEvent.click( acceptAi );
+		expect(
+			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'disables conflict candidates without exact source text', () => {
+	it( 'renders conflict candidates without exact source text as manual guidance', () => {
 		render(
 			<ReviewMediation
 				{ ...basePayload( {
@@ -775,9 +776,10 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		);
 
 		expect( screen.getByText( 'Needs manual edit — no exact source text' ) ).toBeInTheDocument();
-		const acceptAi = screen.getByRole( 'button', { name: 'Accept AI resolution' } );
-		expect( acceptAi ).toBeDisabled();
-		fireEvent.click( acceptAi );
+		expect(
+			screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
+		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 		expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
@@ -787,7 +789,7 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 		[ 'separate matches', 'Use neutral language. Use neutral language.', 'Use neutral language.' ],
 		[ 'overlapping matches', 'banana', 'ana' ],
 	] )(
-		'disables conflict candidates when the source text has %s',
+		'renders conflict candidates as manual guidance when the source text has %s',
 		( _label, content, currentText ) => {
 			mockBlocks = [
 				{
@@ -826,9 +828,10 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			expect(
 				screen.getByText( 'Needs manual edit — source text appears more than once' )
 			).toBeInTheDocument();
-			const acceptAi = screen.getByRole( 'button', { name: 'Accept AI resolution' } );
-			expect( acceptAi ).toBeDisabled();
-			fireEvent.click( acceptAi );
+			expect(
+				screen.queryByRole( 'button', { name: 'Accept AI resolution' } )
+			).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Dismiss' } ) ).toBeInTheDocument();
 
 			expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
 			expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
