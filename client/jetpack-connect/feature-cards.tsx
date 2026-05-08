@@ -1,7 +1,7 @@
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
+import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { getFeatureCardData, getFeatureSelection } from './connection-content';
-import WooLogo from './woo-logo-compact.svg';
 import type { FeatureCardKey } from './connection-content';
 import type { FeatureCard } from 'calypso/components/connect-screen/features-section';
 import type { ReactNode } from 'react';
@@ -21,15 +21,6 @@ import type { ReactNode } from 'react';
  * `height: 32px` on `<img>` logos in `features-section/style.scss`, so
  * every card's brand mark renders at the same visual height regardless
  * of source.
- *
- * The Woo wordmark uses a connector-local `woo-logo-compact.svg` rather
- * than the shared `assets/images/icons/Woo_logo_color.svg`. The shared
- * asset has ~18% empty space top and bottom inside its `0 0 60 24`
- * viewBox — fine where it ships today (login pages, masterbar, etc.),
- * but in this section the CSS-enforced 32px height shrinks the visible
- * glyph to ~20px so the Woo logo reads smaller than the Jetpack and A4A
- * marks beside it. The local copy crops the viewBox to the path bounds
- * so the rendered glyph fills the 32px height like the others.
  */
 function getLogoForCardKey( key: FeatureCardKey ): ReactNode | string | undefined {
 	switch ( key ) {
