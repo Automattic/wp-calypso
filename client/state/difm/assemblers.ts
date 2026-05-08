@@ -93,8 +93,10 @@ export function buildDIFMWebsiteContentRequestDTO(
 	} = websiteContent;
 	const pagesDTO = pages
 		.map( ( page ) => {
+			// `type` is client-only metadata; server pages schema rejects unknown props.
+			const { type: _type, ...rest } = page;
 			return {
-				...page,
+				...rest,
 				media: page.media.filter( ( mediaItem ) => !! mediaItem.url ),
 			};
 		} )
