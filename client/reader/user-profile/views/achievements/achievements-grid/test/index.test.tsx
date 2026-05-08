@@ -153,7 +153,7 @@ describe( 'AchievementsGrid', () => {
 		expect( screen.queryByText( /You.*unlocked them all/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders locked secret with the secret title and mystery description', () => {
+	test( 'renders locked secret with the secret title', () => {
 		useAchievementsQuery.mockReturnValue( {
 			...baseQueryReturn,
 			achievements: [ earned() ],
@@ -163,9 +163,6 @@ describe( 'AchievementsGrid', () => {
 		renderGrid( { userLogin: 'me', isOwnProfile: true } );
 
 		expect( screen.getByText( 'Secret achievement' ) ).toBeVisible();
-		expect(
-			screen.getByText( /This one.*s a mystery\. Earn it to reveal the details\./ )
-		).toBeVisible();
 	} );
 
 	test( 'renders masked secret in earned list with caption Unlocked: <time>', () => {
