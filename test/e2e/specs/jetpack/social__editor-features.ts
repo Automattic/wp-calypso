@@ -300,7 +300,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 						name: 'Link preview',
 					} );
 
-					const templatebutton = popoverGroup.getByRole( 'menuitem', {
+					const templatebutton = popoverGroup.getByRole( 'menuitemradio', {
 						name: 'Social image template',
 					} );
 

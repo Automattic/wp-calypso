@@ -28,7 +28,8 @@ export interface ProductListItem {
 	introductory_offer?: ProductIntroductoryOffer;
 	price_tier_list: PriceTierEntry[];
 	price_tier_usage_quantity: null | number;
-	price_tier_slug: string;
+	/** @deprecated use price_tier_usage_quantity instead */
+	price_tier_slug?: string;
 	sale_coupon?: {
 		discount?: number;
 		allowed_for_domain_transfers?: boolean;

@@ -42,7 +42,7 @@ const getStatusIcon = ( status: GithubWorkflowValidationItem[ 'status' ] | 'load
 	}
 
 	const isSuccess = status === 'success';
-	const fill = isSuccess ? '#008a20' : '#d63638';
+	const fill = isSuccess ? 'var( --studio-green-50, #008a20 )' : 'var( --studio-red-50, #d63638 )';
 
 	return <Icon icon={ isSuccess ? check : closeSmall } style={ { fill } } size={ 20 } />;
 };

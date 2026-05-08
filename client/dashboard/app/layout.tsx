@@ -5,6 +5,7 @@ import {
 	recordTracksEvent,
 	recordTracksPageViewWithPageParams,
 } from '@automattic/calypso-analytics';
+import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
@@ -12,6 +13,7 @@ import { useMemo, useEffect } from 'react';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
+import { dashboardChartTheme } from './chart-theme';
 import { ColorSchemeProvider } from './color-scheme';
 import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
@@ -73,21 +75,25 @@ function AnalyticsProviderWithClient( {
 function Layout( { config }: { config: AppConfig } ) {
 	const router = useMemo( () => getRouter( config ), [ config ] );
 
-	const tree = (
-		<QueryClientProvider client={ queryClient }>
-			<AuthProvider>
-				<I18nProvider>
-					<AnalyticsProviderWithClient router={ router }>
-						<RouterProvider router={ router } context={ { config } } />
-					</AnalyticsProviderWithClient>
-				</I18nProvider>
-			</AuthProvider>
-		</QueryClientProvider>
-	);
-
 	return (
 		<AppProvider config={ config }>
-			{ config.supports.colorScheme ? <ColorSchemeProvider>{ tree }</ColorSchemeProvider> : tree }
+			<QueryClientProvider client={ queryClient }>
+				<AuthProvider>
+					<I18nProvider>
+						<AnalyticsProviderWithClient router={ router }>
+							<GlobalChartsProvider theme={ dashboardChartTheme }>
+								{ config.supports.colorScheme ? (
+									<ColorSchemeProvider>
+										<RouterProvider router={ router } context={ { config } } />
+									</ColorSchemeProvider>
+								) : (
+									<RouterProvider router={ router } context={ { config } } />
+								) }
+							</GlobalChartsProvider>
+						</AnalyticsProviderWithClient>
+					</I18nProvider>
+				</AuthProvider>
+			</QueryClientProvider>
 		</AppProvider>
 	);
 }

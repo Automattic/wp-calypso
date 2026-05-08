@@ -123,4 +123,29 @@ describe( 'index', () => {
 			} );
 		} );
 	} );
+
+	describe( 'template resolution', () => {
+		test( 'resolves {{key}} from top-level config values', () => {
+			const config = createConfig( {
+				port: 4321,
+				wpcom_url: 'http://calypso.localhost:{{port}}',
+			} );
+			expect( config( 'wpcom_url' ) ).toBe( 'http://calypso.localhost:4321' );
+		} );
+
+		test( 'resolves templates in nested objects', () => {
+			const config = createConfig( {
+				port: 3000,
+				overrides: { logout_url: 'http://my.woo.localhost:{{port}}' },
+			} );
+			expect( config( 'overrides' ).logout_url ).toBe( 'http://my.woo.localhost:3000' );
+		} );
+
+		test( 'leaves unrecognized templates unchanged', () => {
+			const config = createConfig( {
+				url: 'http://localhost:{{unknown}}',
+			} );
+			expect( config( 'url' ) ).toBe( 'http://localhost:{{unknown}}' );
+		} );
+	} );
 } );

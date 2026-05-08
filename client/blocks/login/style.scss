@@ -181,14 +181,13 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 }
 
-// Ensure inline support links beside the form inputs inherit the subheader styling
-// without needing bespoke classes on the JSX.
-.login__form-userdata .components-external-link {
+.login__form-help .components-external-link {
 	color: var(--studio-gray-50, #646970);
 	font-weight: 400;
 	font-size: $font-body-small;
 	text-align: center;
 	display: block;
+	margin-block-start: 16px;
 
 	&:visited,
 	&:hover,

@@ -22,10 +22,12 @@ class PostByline extends Component {
 		showFollow: PropTypes.bool,
 		compact: PropTypes.bool,
 		openSuggestedFollows: PropTypes.func,
+		showBylineSecondarySiteLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		showAvatar: true,
+		showBylineSecondarySiteLink: true,
 	};
 
 	constructor( props ) {
@@ -97,8 +99,17 @@ class PostByline extends Component {
 	};
 
 	render() {
-		const { post, site, feed, showSiteName, showAvatar, teams, compact, openSuggestedFollows } =
-			this.props;
+		const {
+			post,
+			site,
+			feed,
+			showSiteName,
+			showAvatar,
+			teams,
+			compact,
+			openSuggestedFollows,
+			showBylineSecondarySiteLink,
+		} = this.props;
 		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 		const siteId = get( site, 'ID' );
@@ -113,6 +124,7 @@ class PostByline extends Component {
 		// Use the siteName if not showing it elsewhere, otherwise use the slug.
 		const bylineSiteName = ! showSiteName ? siteName : siteSlug;
 		const showDate = post.date && post.URL;
+		const showSecondarySiteLink = showBylineSecondarySiteLink && bylineSiteName;
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -134,7 +146,7 @@ class PostByline extends Component {
 						</div>
 					) }
 					<div className="reader-post-card__author-and-timestamp">
-						{ ( shouldDisplayAuthor || bylineSiteName || showDate ) && (
+						{ ( shouldDisplayAuthor || showSecondarySiteLink || showDate ) && (
 							<span className="reader-post-card__byline-secondary" ref={ this.secondaryBylineRef }>
 								{ shouldDisplayAuthor && (
 									<>
@@ -146,14 +158,14 @@ class PostByline extends Component {
 										>
 											{ post.author.name }
 										</ReaderAuthorLink>
-										{ ( bylineSiteName || showDate ) && (
+										{ ( showSecondarySiteLink || showDate ) && (
 											<span className="reader-post-card__byline-secondary-bullet-wrapper">
 												<span className="reader-post-card__byline-secondary-bullet">·</span>
 											</span>
 										) }
 									</>
 								) }
-								{ bylineSiteName && (
+								{ showSecondarySiteLink && (
 									<>
 										<a
 											className="reader-post-card__byline-secondary-item"

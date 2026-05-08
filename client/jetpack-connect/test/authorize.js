@@ -104,6 +104,104 @@ describe( 'JetpackAuthorize', () => {
 		expect( container ).toMatchSnapshot();
 	} );
 
+	test( 'should render with the connector branding when from=jetpack-connector', () => {
+		const { container } = renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'jetpack', 'woocommerce' ],
+				} }
+			/>
+		);
+
+		// Connector visual treatment: wrapper class is applied to the main element.
+		expect(
+			container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+		).toBeInTheDocument();
+
+		// H1 carries the unified-flow account copy.
+		expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
+			'Connect your account'
+		);
+
+		// Subtitle (BrandHeader description) reflects the WOO_JETPACK scenario
+		// — store wording (any Woo plugin present) plus the Woo+Jetpack
+		// benefit clause.
+		expect(
+			screen.getByText(
+				'Your store is registered with WordPress.com — connecting your account gives it secure access to features from WooCommerce and Jetpack.'
+			)
+		).toBeInTheDocument();
+
+		// Composite Woo + Jetpack logo is rendered (vs. the Jetpack-only fallback).
+		expect( container.querySelector( '.connect-screen-brand-header__logo-image' ) ).toHaveAttribute(
+			'src',
+			'jetpack-connect-woo.svg'
+		);
+
+		// Features section renders one card per top-priority family. Cards
+		// no longer render H3 titles — the brand name lives on each card's
+		// accessible label instead.
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+		// Static FeaturesSection bullets land on the auth surface — sample
+		// one per card so the assertion stays sturdy without pinning every
+		// piece of copy.
+		expect(
+			screen.getByText( 'Run your store on the go with the Woo mobile app.' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByText( 'Real-time backups, security scanning, and downtime monitoring.' )
+		).toBeInTheDocument();
+	} );
+
+	test( 'features section stacks A4A on top with Woo + Jetpack underneath when all three families are present', () => {
+		const { container } = renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
+				} }
+			/>
+		);
+
+		// All three families now earn a featured card. A4A is rendered
+		// first so the layout can stack it full-width on top, with Woo
+		// and Jetpack sharing the row below.
+		expect(
+			screen.getByRole( 'article', { name: 'Automattic for Agencies' } )
+		).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'WooCommerce' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+		const cards = container.querySelectorAll(
+			'.connect-screen-features-section.has-3-card .connect-screen-features-section__card'
+		);
+		expect( cards.length ).toBe( 3 );
+		expect( cards[ 0 ] ).toHaveAttribute( 'aria-label', 'Automattic for Agencies' );
+	} );
+
+	test( 'features section uses the per-plugin override for a single individual Jetpack plugin', () => {
+		renderWithRedux(
+			<JetpackAuthorize
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'jetpack-boost' ],
+				} }
+			/>
+		);
+
+		// The single-plugin override gives the card an accessible label that
+		// matches the Boost-specific copy, even though all Jetpack-family
+		// cards share the same Jetpack logo.
+		expect( screen.getByRole( 'article', { name: 'Jetpack Boost' } ) ).toBeInTheDocument();
+	} );
+
 	describe( 'isSso', () => {
 		const isSso = new JetpackAuthorize().isSso;
 		const queryDataSiteId = 12349876;
@@ -315,6 +413,16 @@ describe( 'JetpackAuthorize', () => {
 			expect( isFromJetpackOnboarding( props ) ).toBe( true );
 		} );
 
+		test( 'does not match jetpack-onboarding prefix variants', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-onboarding-v2',
+				},
+			};
+
+			expect( isFromJetpackOnboarding( props ) ).toBe( false );
+		} );
+
 		test( 'is not from jetpack onboarding', () => {
 			const props = {
 				authQuery: {
@@ -323,6 +431,74 @@ describe( 'JetpackAuthorize', () => {
 			};
 
 			expect( isFromJetpackOnboarding( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isFromJetpackConnector', () => {
+		const isFromJetpackConnector = new JetpackAuthorize().isFromJetpackConnector;
+
+		test( 'is from jetpack connector', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-connector',
+				},
+			};
+
+			expect( isFromJetpackConnector( props ) ).toBe( true );
+		} );
+
+		test( 'does not match jetpack-connector prefix variants', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-connector-v2',
+				},
+			};
+
+			expect( isFromJetpackConnector( props ) ).toBe( false );
+		} );
+
+		test( 'is not from jetpack connector', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-onboarding',
+				},
+			};
+
+			expect( isFromJetpackConnector( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isUnifiedConnectionFlow', () => {
+		const instance = new JetpackAuthorize();
+
+		test( 'returns true for jetpack-onboarding', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-onboarding',
+				},
+			};
+
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
+		} );
+
+		test( 'returns true for jetpack-connector', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-connector',
+				},
+			};
+
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( true );
+		} );
+
+		test( 'returns false for other flows', () => {
+			const props = {
+				authQuery: {
+					from: 'woocommerce-onboarding',
+				},
+			};
+
+			expect( instance.isUnifiedConnectionFlow( props ) ).toBe( false );
 		} );
 	} );
 

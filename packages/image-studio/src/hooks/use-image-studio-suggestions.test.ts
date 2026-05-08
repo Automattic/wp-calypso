@@ -8,6 +8,7 @@ interface UseImageStudioSuggestionsParams {
 	messages?: any[];
 	mode?: ImageStudioMode;
 	inputValue?: string;
+	disabled?: boolean;
 }
 
 let mockSelectorState: {
@@ -372,6 +373,29 @@ describe( 'useImageStudioSuggestions', () => {
 			expect( result.current ).toHaveProperty( 'isLoadingSuggestions' );
 			expect( result.current ).toHaveProperty( 'abortSuggestionsLoading' );
 			expect( typeof result.current.abortSuggestionsLoading ).toBe( 'function' );
+		} );
+	} );
+
+	describe( 'disabled', () => {
+		it( 'does not register, clear, or track suggestions when disabled', () => {
+			const { result } = renderHook( () =>
+				useImageStudioSuggestions( createHookParams( { disabled: true } ) )
+			);
+
+			expect( mockRegisterSuggestions ).not.toHaveBeenCalled();
+			expect( mockClearSuggestions ).not.toHaveBeenCalled();
+			expect( mockTrackImageStudioSuggestionsRendered ).not.toHaveBeenCalled();
+
+			expect( result.current.isLoadingSuggestions ).toBe( false );
+			expect( typeof result.current.handleSuggestionClick ).toBe( 'function' );
+			expect( typeof result.current.abortSuggestionsLoading ).toBe( 'function' );
+
+			// No-op handlers: invoking them must not produce tracking events.
+			result.current.handleSuggestionClick(
+				{ id: 'whatever', label: 'whatever', prompt: 'whatever' },
+				[]
+			);
+			expect( mockTrackImageStudioSuggestionClick ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

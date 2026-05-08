@@ -72,6 +72,7 @@ export interface ReceiptItem {
 	variation_slug: string;
 	months_per_renewal_interval: number;
 	wpcom_product_slug: string;
+	store_subscription_id?: number | null;
 	cost_overrides: ReceiptItemCostOverride[];
 	volume: number;
 	credits_used: number | null;

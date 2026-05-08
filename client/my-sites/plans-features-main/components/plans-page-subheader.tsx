@@ -277,7 +277,7 @@ const PlansPageSubheader = ( {
 		}
 
 		// Website Builder intent: use the new copy
-		if ( intent === 'plans-website-builder' ) {
+		if ( ! isUsingStepContainerV2 && intent === 'plans-website-builder' ) {
 			if ( deemphasizeFreePlan && offeringFreePlan ) {
 				return (
 					<Subheader { ...subheaderCommonProps }>
@@ -299,7 +299,7 @@ const PlansPageSubheader = ( {
 		}
 
 		// WordPress Hosting intent: use hosting-specific copy
-		if ( intent === 'plans-wordpress-hosting' ) {
+		if ( ! isUsingStepContainerV2 && intent === 'plans-wordpress-hosting' ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate(
@@ -308,7 +308,15 @@ const PlansPageSubheader = ( {
 				</Subheader>
 			);
 		}
-		if ( deemphasizeFreePlan && offeringFreePlan ) {
+
+		// Woo hosting solutions intent: subhead is rendered upstream by the
+		// stepper plans step, so suppress this onboarding fallback to avoid
+		// stacking two subheads.
+		if ( intent === 'plans-woo-hosting-solutions' ) {
+			return null;
+		}
+
+		if ( ! isUsingStepContainerV2 && deemphasizeFreePlan && offeringFreePlan ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate(
@@ -327,7 +335,7 @@ const PlansPageSubheader = ( {
 			return <PlanBenefitHeader />;
 		}
 
-		if ( isOnboarding || intent === 'plans-upgrade' ) {
+		if ( ! isUsingStepContainerV2 && ( isOnboarding || intent === 'plans-upgrade' ) ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }

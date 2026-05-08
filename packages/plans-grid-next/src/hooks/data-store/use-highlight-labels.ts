@@ -1,5 +1,6 @@
 import {
 	isBusinessPlan,
+	isEcommercePlan,
 	isPremiumPlan,
 	isPersonalPlan,
 	planLevelsMatch,
@@ -74,6 +75,10 @@ const useHighlightLabels = ( {
 				}
 			} else if ( 'plans-affiliate' === intent && isBusinessPlan( planSlug ) ) {
 				label = translate( 'Popular' );
+			} else if ( 'plans-woo-hosting-solutions' === intent ) {
+				if ( isEcommercePlan( planSlug ) ) {
+					label = translate( 'Best value' );
+				}
 			} else if ( isBusinessPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {
 				label = translate( 'Best value' );
 			} else if ( isPopularPlan( planSlug ) && ! selectedPlan && ! isVisualSplitIntent ) {

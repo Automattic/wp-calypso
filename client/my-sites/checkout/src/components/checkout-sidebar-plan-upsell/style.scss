@@ -7,6 +7,16 @@
 	padding: 24px;
 }
 
+@media (min-width: 961px) {
+	.card.promo-card.checkout-sidebar-plan-upsell {
+		background: #fff;
+		border-radius: 3px;
+		box-shadow:
+			0 3px 1px rgba(0, 0, 0, 0.04),
+			0 3px 8px rgba(0, 0, 0, 0.12);
+	}
+}
+
 .promo-card.checkout-sidebar-plan-upsell .action-panel__title {
 	color: var(--studio-wordpress-blue-50);
 	display: block;

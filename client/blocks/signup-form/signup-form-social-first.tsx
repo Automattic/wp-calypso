@@ -1,10 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { FormDivider } from 'calypso/blocks/authentication';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -46,6 +48,7 @@ interface SignupFormSocialFirst {
 	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
+	isEmailFirstVariant?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -87,6 +90,7 @@ const SignupFormSocialFirst = ( {
 	passDataToNextStep,
 	backButtonInFooter = true,
 	emailLabelText,
+	isEmailFirstVariant,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -125,7 +129,15 @@ const SignupFormSocialFirst = ( {
 			);
 		}
 
-		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
+		return (
+			<p
+				className={ clsx( 'signup-form-social-first__tos-link', {
+					'is-left-aligned': isEmailFirstVariant,
+				} ) }
+			>
+				{ tosText }
+			</p>
+		);
 	};
 
 	const renderEmailStepTermsOfService = () => {
@@ -149,11 +161,51 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
+	let emailLoginComponent = null;
+	if ( isEmailFirstVariant ) {
+		emailLoginComponent = (
+			<>
+				<div className="signup-form-social-first-email">
+					<PasswordlessSignupForm
+						stepName={ stepName }
+						flowName={ flowName }
+						goToNextStep={ goToNextStep }
+						logInUrl={ logInUrl }
+						queryArgs={ queryArgs }
+						labelText={ emailLabelText ?? __( 'Your email' ) }
+						submitButtonLabel={ __( 'Continue' ) }
+						userEmail={ userEmail }
+						passDataToNextStep={ passDataToNextStep }
+						onCreateAccountError={ ( error: { error: string }, email: string ) => {
+							if ( isExistingAccountError( error.error ) ) {
+								window.location.assign(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+											redirect_to: queryArgs?.redirect_to,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
+						onCreateAccountSuccess={ onCreateAccountSuccess }
+						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
+						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
+					/>
+				</div>
+				<FormDivider isHorizontal />
+			</>
+		);
+	}
+
 	return (
 		<div className="signup-form signup-form-social-first">
 			<div className={ getVisibilityClassName( 'initial' ) }>
 				{ notice }
 				{ renderTermsOfService() }
+				{ emailLoginComponent }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -162,9 +214,16 @@ const SignupFormSocialFirst = ( {
 					disableTosText
 					compact
 					isSocialFirst={ isSocialFirst }
-					shouldShowEmailButton
+					shouldShowEmailButton={ ! isEmailFirstVariant }
 					allowedSocialServices={ allowedSocialServices }
 				/>
+				{ isEmailFirstVariant && (
+					<p className="signup-form-social-first__login-link">
+						{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
+							link: <Step.LinkButton href={ logInUrl } />,
+						} ) }
+					</p>
+				) }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">

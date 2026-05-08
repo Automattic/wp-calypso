@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	hasPaymentMethod,
@@ -72,6 +73,7 @@ function PurchaseMetaExpiration( {
 	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
 		( domain: ResponseDomain ) => domain.domain === purchase.meta
 	);
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 
 	if (
 		! purchase ||
@@ -86,7 +88,6 @@ function PurchaseMetaExpiration( {
 		( JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
 			! isRenewable( purchase ) ) ||
 		is100Year( purchase );
-	const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
 
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;

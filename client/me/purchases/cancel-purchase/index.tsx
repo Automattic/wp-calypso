@@ -1,9 +1,8 @@
-import config from '@automattic/calypso-config';
+import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isPlan,
-	isWpComPlan,
 	hasMarketplaceProduct,
 	isJetpackPlan,
 	isJetpackProduct,
@@ -12,19 +11,22 @@ import {
 	getMonthlyPlanByYearly,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { invokeSurvicateEvent } from '@automattic/survicate';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
+import { Button as GutenbergButton } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
-import { Component } from 'react';
+import { Component, useCallback } from 'react';
 import { connect } from 'react-redux';
 import BackupRetentionOptionOnCancelPurchase from 'calypso/components/backup-retention-management/retention-option-on-cancel-purchase';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -35,8 +37,8 @@ import {
 	getCheckboxLabel,
 	getButtonLabels,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { useExperiment } from 'calypso/lib/explat';
 import {
 	getName,
 	hasAmountAvailableToRefund,
@@ -50,7 +52,7 @@ import {
 	cancelAndRefundPurchase,
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
-import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
+import { getMutationFlowType, getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
@@ -81,9 +83,57 @@ import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { UpgradesCancelFeaturesResponse } from '@automattic/api-core';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
-import type { ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
+
+function ContactSupportButton( {
+	purchase,
+	displayVariant,
+	children,
+	...props
+}: {
+	purchase: { siteId: number; siteUrl: string; productName: string };
+	displayVariant: 'cancel' | 'remove';
+	children?: ReactNode;
+} & ButtonHTMLAttributes< HTMLButtonElement > ) {
+	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
+
+	const handleClick = useCallback( () => {
+		if ( canConnectToZendeskMessaging ) {
+			setNewMessagingChat( {
+				initialMessage:
+					displayVariant === 'remove'
+						? `I have questions about removing my ${ purchase.productName }. Can I speak with a human?`
+						: `I have questions about canceling my ${ purchase.productName }. Can I speak with a human?`,
+				siteUrl: purchase.siteUrl,
+				siteId: String( purchase.siteId ),
+			} );
+		} else {
+			setNavigateToRoute( '/odie' );
+			setShowHelpCenter( true );
+		}
+	}, [
+		canConnectToZendeskMessaging,
+		displayVariant,
+		purchase.productName,
+		purchase.siteUrl,
+		purchase.siteId,
+		setNewMessagingChat,
+		setNavigateToRoute,
+		setShowHelpCenter,
+	] );
+
+	return (
+		<GutenbergButton variant="link" onClick={ handleClick } { ...props }>
+			{ children }
+		</GutenbergButton>
+	);
+}
 
 interface MomentProps {
 	moment: typeof moment;
@@ -100,6 +150,7 @@ export interface CancelPurchaseState {
 	showDomainOptionsStep: boolean;
 	showDialog: boolean;
 	cancelIntent: 'refund' | 'autorenew' | null;
+	fireMutationWasRefund: boolean;
 }
 
 export interface CancelPurchaseActions {
@@ -126,7 +177,7 @@ export interface CancelPurchaseConnectedProps {
 	isHundredYearDomain: boolean | undefined;
 	isJetpack: boolean;
 	isJetpackPurchase: boolean;
-	isRefundEligibilityNoticeEnabled: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 	productsList: Record< string, { product_type: string; billing_product_slug: string } >;
 	purchase: Purchases.Purchase;
 	purchases: Purchases.Purchase[];
@@ -144,6 +195,7 @@ export interface CancelPurchaseProps {
 	siteSlug: string;
 	intent?: 'cancel' | 'remove' | null;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
+	isPurchaseCancelFeaturesLoading?: boolean;
 }
 
 export type CancelPurchaseAllProps = CancelPurchaseProps &
@@ -165,6 +217,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// Cancellation state moved from button component
 		showDialog: false,
 		cancelIntent: null,
+		fireMutationWasRefund: false,
 	};
 
 	onCustomerConfirmedUnderstandingChange = ( checked: boolean ) => {
@@ -213,7 +266,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// canAutoRenewBeTurnedOff so the page doesn't redirect away.
 		if (
 			! isValidForCancellation &&
-			config.isEnabled( 'purchases/split-cancel-remove' ) &&
+			props.isSplitCancelRemoveEnabled &&
 			props.intent === 'remove'
 		) {
 			return true;
@@ -261,7 +314,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			this.setState( { cancelIntent: intent } );
 		}
 
-		const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow( purchase );
+		const shouldUseAutoRenewFlow = this.shouldUseAutoRenewFlow();
 		const effectiveIntent = intent ?? this.state.cancelIntent;
 		const shouldSkipDomainOptions = shouldUseAutoRenewFlow && effectiveIntent !== 'refund';
 
@@ -272,8 +325,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			willShowDomainOptionsRadioButtons( includedDomainPurchase, purchase )
 		) {
 			this.setState( { showDomainOptionsStep: true } );
+		} else if ( this.shouldFireMutationOnConfirm() ) {
+			// Cancel-intent flag-on: fire the mutation first; surveyShown
+			// flips to true inside fireMutationFromConfirm on success.
+			this.fireMutationFromConfirm();
 		} else {
-			// For direct cancellations (no domain options step), show survey directly
 			this.setState( { surveyShown: true } );
 		}
 	};
@@ -282,12 +338,65 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		cancelBundledDomain: boolean;
 		confirmCancelBundledDomain: boolean;
 	} ) => {
+		// Persist domain options first so fireMutationFromConfirm can read
+		// cancelBundledDomain when constructing the cancelAndRefund payload.
 		this.setState( {
 			showDomainOptionsStep: false,
-			surveyShown: true,
 			cancelBundledDomain: domainOptions.cancelBundledDomain,
 			confirmCancelBundledDomain: domainOptions.confirmCancelBundledDomain,
 		} );
+		if ( this.shouldFireMutationOnConfirm() ) {
+			this.fireMutationFromConfirm();
+		} else {
+			this.setState( { surveyShown: true } );
+		}
+	};
+
+	// Fire-on-confirm applies to the URL-intent Cancel path only — the user
+	// clicked "Cancel" on Purchase Settings and we want their cancellation to
+	// settle before the survey appears (so the heading reads "Cancellation
+	// confirmed"). Remove (and the no-intent legacy deep link) defer the
+	// mutation to onSurveyComplete, matching trunk's submit-handlers.
+	shouldFireMutationOnConfirm = (): boolean =>
+		this.props.isSplitCancelRemoveEnabled && this.props.intent === 'cancel';
+
+	// Fire the cancel mutation when the user confirms, then advance to the
+	// survey. The success notice is queued with displayOnNextPage so it shows
+	// on the destination (manage-purchase) screen after the user submits or
+	// skips the survey. refreshSitePlans / clearPurchases stay on the
+	// survey-submit path — calling them now would flip
+	// hasLoadedUserPurchasesFromServer and render the loading placeholder
+	// over the survey.
+	fireMutationFromConfirm = async () => {
+		this.setState( { isLoading: true } );
+		try {
+			const flowType = this.getCancelFlowType( this.props.purchase );
+			const isAutoRenewIntent = flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+			const result = isAutoRenewIntent
+				? await this.cancelPurchase( this.props.purchase )
+				: await this.cancelAndRefund( this.props.purchase );
+			if ( result.success ) {
+				const refundable = ! isAutoRenewIntent && hasAmountAvailableToRefund( this.props.purchase );
+				if ( ! isAutoRenewIntent ) {
+					await this.handleMarketplaceSubscriptions( refundable );
+				}
+				if ( refundable ) {
+					this.props.successNotice( result.message, {
+						displayOnNextPage: true,
+						duration: 10000,
+					} );
+				}
+				invokeSurvicateEvent( refundable ? 'purchaseRefunded' : 'purchaseCancelled' );
+				this.setState( { surveyShown: true, isLoading: false, fireMutationWasRefund: refundable } );
+			} else {
+				this.props.errorNotice( result.error );
+				this.setState( { isLoading: false } );
+				// Stay on the confirmation page so the user can retry.
+			}
+		} catch ( error ) {
+			this.props.errorNotice( ( error as Error ).message );
+			this.setState( { isLoading: false } );
+		}
 	};
 
 	cancelPurchase = async ( purchase: Purchases.Purchase ) => {
@@ -343,7 +452,58 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		}
 	};
 
+	removePurchase = async ( purchase: Purchases.Purchase ) => {
+		const { translate } = this.props;
+		try {
+			await removePurchaseRequest( purchase.id );
+			return {
+				success: true,
+				message: translate( '%(purchaseName)s was removed from your account.', {
+					args: { purchaseName: getName( purchase ) },
+				} ),
+			};
+		} catch ( error ) {
+			return {
+				success: false,
+				error:
+					( error as Error ).message ??
+					translate(
+						'There was a problem removing %(purchaseName)s. Please try again later or contact support.',
+						{ args: { purchaseName: getName( purchase ) } }
+					),
+			};
+		}
+	};
+
+	/**
+	 * Returns true when the user clicked Remove on Purchase Settings AND the
+	 * purchase is non-refundable. In that case the legacy flow should call
+	 * DELETE rather than disable-auto-renew (the previous fallthrough). Gated
+	 * by the split cancel/remove experiment because it changes
+	 * user-visible post-action state (different endpoint, deleted row vs.
+	 * expiring row).
+	 *
+	 * Refundable purchases continue to flow through `cancelAndRefund` so the
+	 * user still receives their refund — `getMutationFlowType` returns
+	 * `CANCEL_WITH_REFUND` in that case.
+	 */
+	isLegacyRemoveDeleteFlow = ( purchase: Purchases.Purchase ) => {
+		if ( ! this.props.isSplitCancelRemoveEnabled ) {
+			return false;
+		}
+		if ( this.props.intent !== 'remove' ) {
+			return false;
+		}
+		if ( hasAmountAvailableToRefund( purchase ) ) {
+			return false;
+		}
+		return getMutationFlowType( 'remove', purchase ) === CANCEL_FLOW_TYPE.REMOVE;
+	};
+
 	submitCancelAndRefundPurchase = async ( purchase: Purchases.Purchase ) => {
+		if ( this.isLegacyRemoveDeleteFlow( purchase ) ) {
+			return await this.removePurchase( purchase );
+		}
 		const refundable = hasAmountAvailableToRefund( purchase );
 		if ( refundable ) {
 			return await this.cancelAndRefund( purchase );
@@ -367,11 +527,32 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	onSurveyComplete = async () => {
+		// Flag-on path: the mutation already fired at confirm-click via
+		// fireMutationFromConfirm. fireMutationFromConfirm intentionally
+		// skipped clearPurchases / refreshSitePlans so they wouldn't flip
+		// isDataLoading mid-survey; we run them here, immediately before
+		// the redirect, so the destination page picks up fresh server data.
+		if ( this.shouldFireMutationOnConfirm() ) {
+			this.props.refreshSitePlans( this.props.purchase.siteId );
+			this.props.clearPurchases();
+			const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+				this.props.siteSlug,
+				this.props.purchaseId
+			);
+			const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
+			const redirectUrl = managePurchaseUrl ?? backupRedirect;
+			page.redirect(
+				this.state.fireMutationWasRefund ? redirectUrl : redirectUrl + '?cancelled=true'
+			);
+			return;
+		}
+
 		// Set loading state to show busy button
 		this.setState( { isLoading: true } );
 
 		try {
 			const isAutoRenewIntent = this.state.cancelIntent === 'autorenew';
+			const isRemoveDeleteFlow = this.isLegacyRemoveDeleteFlow( this.props.purchase );
 			const result = isAutoRenewIntent
 				? await this.cancelPurchase( this.props.purchase )
 				: await this.submitCancelAndRefundPurchase( this.props.purchase );
@@ -382,18 +563,33 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				await this.handleMarketplaceSubscriptions( refundable );
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
-				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
-				if ( refundable ) {
+				if ( isRemoveDeleteFlow ) {
+					invokeSurvicateEvent( 'purchaseRemoved' );
+				} else if ( refundable ) {
 					invokeSurvicateEvent( 'purchaseRefunded' );
 				} else {
 					invokeSurvicateEvent( 'purchaseCancelled' );
 				}
-				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
-					this.props.siteSlug,
-					this.props.purchaseId
-				);
+				// After DELETE the purchase row no longer exists, so manage-purchase
+				// would 404. Redirect straight to the purchases list instead.
 				const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
-				page.redirect( managePurchaseUrl ?? backupRedirect );
+				if ( isRemoveDeleteFlow ) {
+					this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
+					page.redirect( backupRedirect );
+				} else if ( refundable ) {
+					this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
+					const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+						this.props.siteSlug,
+						this.props.purchaseId
+					);
+					page.redirect( managePurchaseUrl ?? backupRedirect );
+				} else {
+					const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+						this.props.siteSlug,
+						this.props.purchaseId
+					);
+					page.redirect( ( managePurchaseUrl ?? backupRedirect ) + '?cancelled=true' );
+				}
 			} else {
 				this.props.errorNotice( result.error );
 			}
@@ -550,19 +746,10 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		return null;
 	};
 
-	shouldUseAutoRenewFlow = ( purchase: Purchases.Purchase ) => {
-		// When the user clicked Cancel on Purchase Settings, always take the
-		// auto-renew flow (disable auto-renew, keep features until expiry) —
-		// regardless of the experiment assignment.
-		if ( this.props.intent === 'cancel' ) {
-			return true;
-		}
-		return Boolean(
-			this.props.isRefundEligibilityNoticeEnabled &&
-				hasAmountAvailableToRefund( purchase ) &&
-				isPlan( purchase ) &&
-				isWpComPlan( purchase?.productSlug )
-		);
+	shouldUseAutoRenewFlow = () => {
+		// The Cancel split-button always carries intent=cancel, which routes to
+		// auto-renew cancellation (disable auto-renew, keep features until expiry).
+		return this.props.intent === 'cancel';
 	};
 
 	getCancelFlowType = ( purchase: Purchases.Purchase ) => {
@@ -579,7 +766,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				: CANCEL_FLOW_TYPE.REMOVE;
 		}
 
-		if ( ! this.shouldUseAutoRenewFlow( purchase ) ) {
+		if ( ! this.shouldUseAutoRenewFlow() ) {
 			return getPurchaseCancellationFlowType( purchase );
 		}
 
@@ -607,18 +794,20 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const needsAtomicRevertConfirmation =
 			this.props.atomicTransfer?.created_at && ! isRefundable( purchase );
 
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const { isSplitCancelRemoveEnabled } = this.props;
 
 		const isDisabled =
 			( this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain ) ||
-			( ! isSplitEnabled &&
+			( ! isSplitCancelRemoveEnabled &&
 				needsAtomicRevertConfirmation &&
 				! this.state.atomicRevertConfirmed &&
 				isPlan( purchase ) ) ||
-			( ! isSplitEnabled &&
+			( ! isSplitCancelRemoveEnabled &&
 				isDomainRegistrationPurchase &&
 				! this.state.domainConfirmationConfirmed ) ||
-			( isSplitEnabled && ! this.state.surveyShown && ! this.state.customerConfirmedUnderstanding );
+			( isSplitCancelRemoveEnabled &&
+				! this.state.surveyShown &&
+				! this.state.customerConfirmedUnderstanding );
 
 		// cancelIntentOverride drives the CancelPurchaseButton's label + mutation
 		// choice. URL intent is authoritative when present:
@@ -642,7 +831,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			displayVariant: this.props.intent === 'remove' ? ( 'remove' as const ) : undefined,
 			cancelIntentOverride:
 				urlIntentOverride ??
-				( this.shouldUseAutoRenewFlow( purchase ) ? ( 'autorenew' as const ) : undefined ),
+				( this.shouldUseAutoRenewFlow() ? ( 'autorenew' as const ) : undefined ),
 			activeSubscriptions: this.getActiveMarketplaceSubscriptions(),
 			onCancellationStart: this.onCancellationStart,
 			onCancellationComplete: this.onCancellationComplete,
@@ -672,8 +861,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		} ).secondary;
 
 		return (
-			<FormButton
-				isPrimary={ false }
+			<Button
+				borderless
 				href={ ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 					siteSlug,
 					this.props.purchaseId
@@ -681,7 +870,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				onClick={ this.onKeepSubscriptionClick }
 			>
 				{ label }
-			</FormButton>
+			</Button>
 		);
 	};
 
@@ -695,7 +884,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			purchaseCancelFeatures,
 			translate,
 		} = this.props;
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const { isSplitCancelRemoveEnabled } = this.props;
 		const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
@@ -737,7 +926,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					purchase={ purchase }
 					onConfirmationChange={ this.onAtomicRevertConfirmationChange }
 					needsAtomicRevertConfirmation={ Boolean(
-						! isSplitEnabled &&
+						! isSplitCancelRemoveEnabled &&
 							isPlan( purchase ) &&
 							atomicTransfer?.created_at &&
 							! isRefundable( purchase )
@@ -756,7 +945,16 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 					<p className="cancel-purchase__support-text">
 						{ translate( 'Our support team is here for you. {{a}}Contact us{{/a}}', {
 							components: {
-								a: (
+								a: isSplitCancelRemoveEnabled ? (
+									<ContactSupportButton
+										purchase={ {
+											siteId: purchase.siteId,
+											siteUrl: purchase.siteSlug ?? purchase.domain,
+											productName: purchase.productName,
+										} }
+										displayVariant={ displayVariant }
+									/>
+								) : (
 									<a
 										href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
 										target="_blank"
@@ -771,7 +969,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 				{ ! this.state.surveyShown && (
 					<div className="cancel-purchase__confirm-section">
-						{ isDomainRegistrationPurchase && ! isSplitEnabled && (
+						{ isDomainRegistrationPurchase && ! isSplitCancelRemoveEnabled && (
 							<div className="cancel-purchase__domain-confirmation">
 								<FormCheckbox
 									checked={ this.state.domainConfirmationConfirmed }
@@ -787,10 +985,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 								</span>
 							</div>
 						) }
-						{ isSplitEnabled && (
+						{ isSplitCancelRemoveEnabled && (
 							<label className="cancel-purchase__confirm-checkbox">
 								<FormCheckbox
 									checked={ this.state.customerConfirmedUnderstanding ?? false }
+									disabled={ this.state.isLoading }
 									onChange={ ( event: { target: { checked: boolean } } ) =>
 										this.onCustomerConfirmedUnderstandingChange( event.target.checked )
 									}
@@ -877,7 +1076,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || this.props.isPurchaseCancelFeaturesLoading ) {
 			return (
 				<div>
 					<QueryUserPurchases />
@@ -895,10 +1094,15 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { siteName, siteId } = purchase;
 
 		const displayVariant: 'cancel' | 'remove' = intent === 'remove' ? 'remove' : 'cancel';
-		const heading = getCancellationHeading( {
-			purchase: toPurchaseForCopy( purchase ),
-			intent: displayVariant,
-		} );
+		// Once the cancel mutation has resolved and the user is on the survey,
+		// the cancellation has already happened — reflect that in the heading.
+		const heading =
+			this.state.surveyShown && displayVariant === 'cancel'
+				? this.props.translate( 'Cancellation confirmed' )
+				: getCancellationHeading( {
+						purchase: toPurchaseForCopy( purchase ),
+						intent: displayVariant,
+				  } );
 
 		// When a plan has an included domain that can be cancelled together,
 		// show the higher (full) refund amount in the notice since the user
@@ -911,14 +1115,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainHasRadioButtons || this.state.cancelBundledDomain,
 			this.props.includedDomainPurchase
 		);
-		// Promo banner (with "Remove plan and claim refund" CTA) is suppressed
-		// when URL intent is set — the user has already expressed intent at the
-		// button click, so a redundant CTA would be noise.
-		const shouldShowRefundEligibilityNotice =
-			! intent && Boolean( refundAmountString ) && this.shouldUseAutoRenewFlow( purchase );
-
-		const cancelButtonProps = this.getCancelPurchaseButtonProps();
-
 		return (
 			<>
 				{ ! isJetpack && ! isAkismet && ! isDomainRegistrationPurchase && (
@@ -968,15 +1164,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 							purchase={ purchase }
 						/>
 					) }
-					{ ! this.state.showDomainOptionsStep &&
-						refundAmountString &&
-						! intent &&
-						shouldShowRefundEligibilityNotice && (
-							<RefundEligibilityNotice
-								refundAmount={ refundAmountString }
-								cancelButtonProps={ cancelButtonProps }
-							/>
-						) }
 					{ ! this.state.showDomainOptionsStep &&
 						( ! refundAmountString || intent === 'cancel' ) && (
 							<TimeRemainingNotice
@@ -1038,15 +1225,11 @@ const ConnectedCancelPurchase = connect(
 )( localize( withLocalizedMoment( CancelPurchase ) ) );
 
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
-	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
-		'calypso_split_cancel_refund_20260316'
-	);
-	const isRefundEligibilityNoticeEnabled =
-		! isLoadingExperiment && experimentAssignment?.variationName === 'treatment';
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	return (
 		<ConnectedCancelPurchase
 			{ ...props }
-			isRefundEligibilityNoticeEnabled={ isRefundEligibilityNoticeEnabled }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
 		/>
 	);
 }

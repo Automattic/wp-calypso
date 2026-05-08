@@ -11,6 +11,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import SVGIcon from 'calypso/components/svg-icon';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
+import { getConnectorLogoUrl } from 'calypso/jetpack-connect/connector-branding-config';
 import {
 	isCrowdsignalOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -30,9 +31,11 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 interface Props {
 	isJetpack?: boolean;
+	isFromJetpackConnector?: boolean;
+	connectorPlugins?: string[];
 }
 
-const HeadingLogo = ( { isJetpack }: Props ) => {
+const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isAkismet = useSelector( getIsAkismet );
@@ -68,6 +71,15 @@ const HeadingLogo = ( { isJetpack }: Props ) => {
 				width="128"
 				height="40"
 				viewBox="0 0 60 24"
+			/>
+		);
+	} else if ( isFromJetpackConnector ) {
+		const connectorLogo = getConnectorLogoUrl( connectorPlugins );
+		logo = (
+			<img
+				src={ connectorLogo }
+				alt="Jetpack Connection logo"
+				className="wp-login__connector-logo"
 			/>
 		);
 	} else if ( isJetpack ) {

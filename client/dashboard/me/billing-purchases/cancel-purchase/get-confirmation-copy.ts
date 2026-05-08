@@ -469,6 +469,11 @@ export function getCheckboxLabel(): string {
 
 /**
  * Primary and secondary button labels.
+ *
+ * Remove intent: primary is always "Continue removal" — the actual deletion
+ * runs after the survey, so the confirmation button signals continuation, not
+ * the terminal action. Secondary stays per-category so "Keep plan" / "Keep
+ * domain" still match the surrounding copy.
  */
 export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 	primary: string;
@@ -476,23 +481,21 @@ export function getButtonLabels( { purchase, intent }: ConfirmationCopyArgs ): {
 } {
 	const category = getProductCategory( purchase );
 	if ( intent === 'remove' ) {
+		const primary = __( 'Continue removal' );
 		switch ( category ) {
 			case 'plan':
-				return { primary: __( 'Remove plan' ), secondary: __( 'Keep plan' ) };
+				return { primary, secondary: __( 'Keep plan' ) };
 			case 'domain':
-				return { primary: __( 'Remove domain' ), secondary: __( 'Keep domain' ) };
+				return { primary, secondary: __( 'Keep domain' ) };
 			case 'email':
-				return { primary: __( 'Remove email' ), secondary: __( 'Keep email' ) };
+				return { primary, secondary: __( 'Keep email' ) };
 			case 'marketplace':
 				if ( purchase.product_type === 'marketplace_theme' ) {
-					return { primary: __( 'Remove theme' ), secondary: __( 'Keep theme' ) };
+					return { primary, secondary: __( 'Keep theme' ) };
 				}
-				return { primary: __( 'Remove plugin' ), secondary: __( 'Keep plugin' ) };
+				return { primary, secondary: __( 'Keep plugin' ) };
 			default:
-				return {
-					primary: __( 'Remove subscription' ),
-					secondary: __( 'Keep subscription' ),
-				};
+				return { primary, secondary: __( 'Keep subscription' ) };
 		}
 	}
 	// Cancel intent: always "Cancel subscription" / "Keep subscription" to match

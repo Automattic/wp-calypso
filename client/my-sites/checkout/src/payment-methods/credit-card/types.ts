@@ -1,6 +1,13 @@
-import type { StoreState } from '@automattic/wpcom-checkout';
 import type { StoreDescriptor } from '@wordpress/data';
 import type { AnyAction as Action } from 'redux';
+
+export interface StoreStateValue {
+	value: string;
+	isTouched: boolean;
+	errors?: string[];
+}
+
+export type StoreState< N extends string > = Record< N, StoreStateValue >;
 
 export type CardSubscriber = (
 	callback: () => void,
@@ -13,7 +20,7 @@ export interface CardStore< S, A extends Action = Action > {
 	dispatch( action: A ): A;
 }
 
-export type CardFieldState = StoreState< string >;
+export type CardFieldState = Record< string, StoreStateValue >;
 
 export type CardDataCompleteState = Record< CardElementType, boolean >;
 

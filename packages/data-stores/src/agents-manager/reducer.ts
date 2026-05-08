@@ -68,6 +68,19 @@ const floatingPosition: Reducer< 'left' | 'right', AgentsManagerAction > = (
 	return state;
 };
 
+export const isSplitScreen: Reducer< boolean, AgentsManagerAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'AGENTS_MANAGER_SET_SPLIT_SCREEN':
+			return action.isSplitScreen;
+		// Split-screen only makes sense while docked. Reset on undock so an
+		// out-of-band `setIsDocked(false)` (e.g. from `window.__agentsManagerActions`)
+		// can't leave a stale `true` that re-applies on the next dock.
+		case 'AGENTS_MANAGER_SET_DOCKED':
+			return action.isDocked ? state : false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	isOpen,
 	isDocked,
@@ -76,6 +89,7 @@ const reducer = combineReducers( {
 	isLoading,
 	hasLoaded,
 	floatingPosition,
+	isSplitScreen,
 } );
 
 export type State = ReturnType< typeof reducer >;
