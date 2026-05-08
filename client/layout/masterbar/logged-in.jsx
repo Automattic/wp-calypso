@@ -83,10 +83,6 @@ const loadMasterbarHelpCenter = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
 	);
-const loadArcadeLivesCounter = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-arcade-mode-lives-counter" */ '../arcade-mode/lives-counter'
-	);
 
 class MasterbarLoggedIn extends Component {
 	static propTypes = {
@@ -866,7 +862,6 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
 					{ this.renderNotifications() }
-					<AsyncLoad require={ loadArcadeLivesCounter } placeholder={ null } />
 					{ this.renderProfileMenu() }
 				</div>
 			</Masterbar>

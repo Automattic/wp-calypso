@@ -1,9 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { render, act } from '@testing-library/react';
-import KonamiListener, { matchesKonamiSequence } from '../';
-import { setArcadeIsActive } from '../store';
+import { activateArcadeMode } from '../activate';
+import { installKonamiListener } from '../detect';
+
+jest.mock( '../activate', () => ( {
+	activateArcadeMode: jest.fn(),
+} ) );
+
+const realActivate = jest.requireActual< typeof import('../activate') >( '../activate' );
 
 const KONAMI_KEYS = [
 	'ArrowUp',
@@ -24,159 +29,105 @@ function dispatchKey( key: string, target: EventTarget = document ) {
 	target.dispatchEvent( event );
 }
 
-describe( 'arcade-mode', () => {
+async function flushImport() {
+	// installKonamiListener triggers a dynamic import on match — wait for the
+	// resulting microtasks to settle so the mock is observed.
+	await Promise.resolve();
+	await Promise.resolve();
+}
+
+describe( 'installKonamiListener', () => {
+	let uninstall: () => void;
+
+	beforeEach( () => {
+		( activateArcadeMode as jest.Mock ).mockClear();
+		uninstall = installKonamiListener();
+	} );
+
 	afterEach( () => {
-		act( () => {
-			setArcadeIsActive( false );
-		} );
-		document.body.classList.remove( 'is-arcade-mode' );
-		document.body.classList.remove( 'is-arcade-mode--just-activated' );
+		uninstall();
+	} );
+
+	it( 'invokes activateArcadeMode after the Konami sequence', async () => {
+		KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
+		await flushImport();
+		expect( activateArcadeMode ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'ignores key events from editable targets', async () => {
+		const input = document.createElement( 'input' );
+		document.body.appendChild( input );
+		KONAMI_KEYS.forEach( ( key ) => dispatchKey( key, input ) );
+		await flushImport();
+		expect( activateArcadeMode ).not.toHaveBeenCalled();
+		input.remove();
+	} );
+
+	it( 'still activates after a mistyped key — buffer keeps the last 10 sequence keys', async () => {
+		dispatchKey( 'ArrowUp' );
+		dispatchKey( 'ArrowDown' ); // wrong second key
+		KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
+		await flushImport();
+		expect( activateArcadeMode ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not activate when arrow keys are pressed in the wrong order', async () => {
+		[
+			'ArrowDown',
+			'ArrowUp',
+			'ArrowUp',
+			'ArrowDown',
+			'ArrowLeft',
+			'ArrowRight',
+			'ArrowLeft',
+			'ArrowRight',
+			'b',
+			'a',
+		].forEach( ( key ) => dispatchKey( key ) );
+		await flushImport();
+		expect( activateArcadeMode ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'activateArcadeMode', () => {
+	afterEach( () => {
+		// Send Escape to deactivate, then sweep any leftovers from a failed test.
+		dispatchKey( 'Escape' );
+		document.body.classList.remove( 'is-arcade-mode', 'is-arcade-mode--just-activated' );
 		document.getElementById( 'arcade-mode-font' )?.remove();
+		document.getElementById( 'arcade-mode-lives' )?.remove();
 	} );
 
-	describe( 'matchesKonamiSequence', () => {
-		it( 'returns false for an empty buffer', () => {
-			expect( matchesKonamiSequence( [] ) ).toBe( false );
-		} );
-
-		it( 'returns false for a partial sequence', () => {
-			expect( matchesKonamiSequence( [ 'arrowup', 'arrowup' ] ) ).toBe( false );
-		} );
-
-		it( 'returns true for the exact sequence', () => {
-			expect(
-				matchesKonamiSequence( [
-					'arrowup',
-					'arrowup',
-					'arrowdown',
-					'arrowdown',
-					'arrowleft',
-					'arrowright',
-					'arrowleft',
-					'arrowright',
-					'b',
-					'a',
-				] )
-			).toBe( true );
-		} );
-
-		it( 'returns false for a wrong sequence', () => {
-			expect(
-				matchesKonamiSequence( [
-					'arrowup',
-					'arrowup',
-					'arrowdown',
-					'arrowdown',
-					'arrowleft',
-					'arrowright',
-					'arrowleft',
-					'arrowright',
-					'a',
-					'b',
-				] )
-			).toBe( false );
-		} );
+	it( 'adds the arcade body class', () => {
+		realActivate.activateArcadeMode();
+		expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
 	} );
 
-	describe( 'KonamiListener', () => {
-		it( 'adds the arcade body class after the Konami sequence', () => {
-			render( <KonamiListener /> );
+	it( 'removes the arcade body class when Escape is pressed', () => {
+		realActivate.activateArcadeMode();
+		dispatchKey( 'Escape' );
+		expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( false );
+	} );
 
-			act( () => {
-				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
-			} );
+	it( 'ignores Escape pressed inside an editable element', () => {
+		realActivate.activateArcadeMode();
+		const input = document.createElement( 'input' );
+		document.body.appendChild( input );
+		dispatchKey( 'Escape', input );
+		expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
+		input.remove();
+	} );
 
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
-		} );
+	it( 'is idempotent — calling again while active does not re-add side effects', () => {
+		realActivate.activateArcadeMode();
+		realActivate.activateArcadeMode();
+		expect( document.querySelectorAll( '#arcade-mode-font' ) ).toHaveLength( 1 );
+	} );
 
-		it( 'ignores key events from editable targets', () => {
-			render( <KonamiListener /> );
-
-			const input = document.createElement( 'input' );
-			document.body.appendChild( input );
-
-			act( () => {
-				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key, input ) );
-			} );
-
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( false );
-			input.remove();
-		} );
-
-		it( 'still activates after a mistyped key — buffer keeps the last 10 sequence keys', () => {
-			render( <KonamiListener /> );
-
-			act( () => {
-				dispatchKey( 'ArrowUp' );
-				dispatchKey( 'ArrowDown' ); // wrong second key
-				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
-			} );
-
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
-		} );
-
-		it( 'removes the arcade body class when Escape is pressed while active', () => {
-			render( <KonamiListener /> );
-
-			act( () => {
-				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
-			} );
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
-
-			act( () => {
-				dispatchKey( 'Escape' );
-			} );
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( false );
-		} );
-
-		it( 'ignores Escape pressed inside an editable element', () => {
-			render( <KonamiListener /> );
-
-			act( () => {
-				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
-			} );
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
-
-			const input = document.createElement( 'input' );
-			document.body.appendChild( input );
-			act( () => {
-				dispatchKey( 'Escape', input );
-			} );
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
-			input.remove();
-		} );
-
-		it( 'allows re-activating after deactivation', () => {
-			render( <KonamiListener /> );
-
-			act( () => {
-				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
-				dispatchKey( 'Escape' );
-				KONAMI_KEYS.forEach( ( key ) => dispatchKey( key ) );
-			} );
-
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
-		} );
-
-		it( 'does not activate when arrow keys are pressed in the wrong order', () => {
-			render( <KonamiListener /> );
-
-			act( () => {
-				[
-					'ArrowDown',
-					'ArrowUp',
-					'ArrowUp',
-					'ArrowDown',
-					'ArrowLeft',
-					'ArrowRight',
-					'ArrowLeft',
-					'ArrowRight',
-					'b',
-					'a',
-				].forEach( ( key ) => dispatchKey( key ) );
-			} );
-
-			expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( false );
-		} );
+	it( 'allows re-activation after Escape', () => {
+		realActivate.activateArcadeMode();
+		dispatchKey( 'Escape' );
+		realActivate.activateArcadeMode();
+		expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
 	} );
 } );

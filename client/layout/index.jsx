@@ -19,6 +19,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
+import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -137,10 +138,6 @@ const loadGlobalNotifications = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-global-notifications" */ 'calypso/layout/global-notifications'
 	);
-const loadKonamiListener = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-arcade-mode" */ 'calypso/layout/arcade-mode'
-	);
 
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
@@ -229,6 +226,10 @@ class Layout extends Component {
 		// Load Survicate survey on all pages when the user is logged in
 		if ( this.props.isLoggedIn ) {
 			this.props.dispatch( loadTrackingTool( 'Survicate' ) );
+		}
+
+		if ( ! isJetpackCloud() && ! isA8CForAgencies() ) {
+			installKonamiListener();
 		}
 	}
 
@@ -360,11 +361,8 @@ class Layout extends Component {
 		const shouldDisableSidebarScrollSynchronizer =
 			this.props.isGlobalSidebarVisible || this.props.isGlobalSidebarCollapsed;
 
-		const isCalypso = ! isJetpackCloud() && ! isA8CForAgencies();
-
 		return (
 			<div className={ sectionClass }>
-				{ isCalypso && <AsyncLoad require={ loadKonamiListener } placeholder={ null } /> }
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
