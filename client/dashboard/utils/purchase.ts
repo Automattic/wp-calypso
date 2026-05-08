@@ -683,24 +683,6 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
- * Returns true if the refund eligibility notice should be shown for the given purchase.
- *
- * The notice is shown for refundable WordPress.com plans when the experiment is enabled.
- * When shown, the notice replaces the standard refund flow with an auto-renew cancellation
- * flow, offering the refund as an explicit opt-in action instead.
- * @param purchase  - the purchase to check
- * @param isEnabled - whether the user is assigned to the treatment variation of the
- *                    calypso_split_cancel_refund experiment. Use the
- *                    `useShowRefundEligibilityNotice` hook to determine this in React components.
- */
-export function shouldShowRefundEligibilityNotice(
-	purchase: Purchase,
-	isEnabled: boolean
-): boolean {
-	return isEnabled && hasAmountAvailableToRefund( purchase ) && isDotcomPlan( purchase );
-}
-
-/**
  * Returns the purchase cancellation flow.
  */
 export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlowType {
@@ -721,6 +703,60 @@ export function getPurchaseCancellationFlowType( purchase: Purchase ): CancelFlo
 	}
 
 	// If the subscription is not refundable and auto-renew is off subscription should be removed immediately.
+	return CANCEL_FLOW_TYPE.REMOVE;
+}
+
+/**
+ * Cancel intent sourced from the Purchase Settings button the user clicked.
+ * `cancel` = clicked "Cancel subscription"; `remove` = clicked "Remove subscription / Remove {product}".
+ * Absent means flag-off, old deep link, or flow-type heuristic fallback.
+ */
+export type CancelIntent = 'cancel' | 'remove';
+
+export function getCancelIntentFromSearch( search: { intent?: unknown } ): CancelIntent | null {
+	return search.intent === 'cancel' || search.intent === 'remove' ? search.intent : null;
+}
+
+export type DisplayVariant = 'cancel' | 'remove';
+
+/**
+ * Derives which screen variant to show from intent, with a flow-type fallback when intent is absent.
+ */
+export function getDisplayVariant(
+	intent: CancelIntent | null,
+	flowType: CancelFlowType
+): DisplayVariant {
+	if ( intent === 'remove' ) {
+		return 'remove';
+	}
+	if ( intent === 'cancel' ) {
+		return 'cancel';
+	}
+	return flowType === CANCEL_FLOW_TYPE.REMOVE ? 'remove' : 'cancel';
+}
+
+/**
+ * Derives which backend mutation to run from intent + purchase state.
+ * Falls back to getPurchaseCancellationFlowType when intent is absent or the intent/state combo is invalid.
+ */
+export function getMutationFlowType(
+	intent: CancelIntent | null,
+	purchase: Purchase
+): CancelFlowType {
+	if ( ! intent ) {
+		return getPurchaseCancellationFlowType( purchase );
+	}
+
+	if ( intent === 'cancel' ) {
+		if ( purchase.is_auto_renew_enabled ) {
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+		return getPurchaseCancellationFlowType( purchase );
+	}
+
+	if ( purchase.is_auto_renew_enabled && hasAmountAvailableToRefund( purchase ) ) {
+		return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+	}
 	return CANCEL_FLOW_TYPE.REMOVE;
 }
 

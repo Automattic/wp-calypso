@@ -33,6 +33,7 @@ describe( 'Editor: Advanced Post Flow', function () {
 
 	let page: Page;
 	let testAccount: TestAccount;
+	let siteSlug: string;
 	let editorPage: EditorPage;
 	let postsPage: PostsPage;
 	let paragraphBlock: ParagraphBlock;
@@ -43,13 +44,14 @@ describe( 'Editor: Advanced Post Flow', function () {
 
 		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		siteSlug = testAccount.getSiteURL( { protocol: false } );
 	} );
 
 	describe( 'Publish post', function () {
 		it( 'Start a new post from the Posts page', async function () {
 			postsPage = new PostsPage( page );
-			await postsPage.visit();
-			await postsPage.newPost();
+			await postsPage.visit( { siteSlug } );
+			await postsPage.newPost( { siteSlug } );
 		} );
 
 		it( 'Enter post title', async function () {
@@ -98,7 +100,7 @@ describe( 'Editor: Advanced Post Flow', function () {
 			// an iframe when the post is opened from the
 			// PostsPage.
 			// See: https://github.com/Automattic/wp-calypso/issues/74925
-			await postsPage.visit();
+			await postsPage.visit( { siteSlug } );
 			await postsPage.clickPost( postTitle );
 			editorPage = new EditorPage( page );
 		} );
@@ -146,7 +148,7 @@ describe( 'Editor: Advanced Post Flow', function () {
 	describe( 'Revert post to draft', function () {
 		it( 'Re-open the published post from the Posts page', async function () {
 			// See: https://github.com/Automattic/wp-calypso/issues/74925
-			await postsPage.visit();
+			await postsPage.visit( { siteSlug } );
 			await postsPage.clickPost( postTitle );
 			editorPage = new EditorPage( page );
 		} );
@@ -172,7 +174,7 @@ describe( 'Editor: Advanced Post Flow', function () {
 
 	describe( 'Trash post', function () {
 		beforeAll( async function () {
-			await postsPage.visit();
+			await postsPage.visit( { siteSlug } );
 		} );
 
 		it( 'Trash post', async function () {

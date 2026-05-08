@@ -5,9 +5,11 @@
  */
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
-import { store as imageStudioStore } from '../store';
-import type { ImageStudioEntryPoint } from '../store';
+import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
+import { store as videoStudioStore } from '../stores/video-studio';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
+
+const POST_TITLE_MAX_LENGTH = 200;
 
 export interface ImageStudioMetadata {
 	id?: number;
@@ -29,6 +31,16 @@ export interface ImageStudioData {
 	blockType: string | null;
 }
 
+export interface VideoStudioData {
+	isOpen: boolean;
+	id: number | null;
+	style?: string;
+	title?: string;
+	metadata: ImageStudioMetadata;
+	entryPoint: ImageStudioEntryPoint | null;
+	blockType: string | null;
+}
+
 export interface PageContentBlock {
 	name: string;
 	type?: 'header' | 'content' | 'footer';
@@ -41,8 +53,9 @@ export interface ImageStudioClientContext extends Record< string, unknown > {
 	url: string;
 	pathname: string;
 	search: string;
-	environment: 'wp-admin' | 'image-studio';
+	environment: 'wp-admin' | 'image-studio' | 'video-studio';
 	imageStudio?: ImageStudioData;
+	videoStudio?: VideoStudioData;
 	currentPageContent?: PageContentBlock[];
 	constructorArguments?: {
 		skip_storage?: boolean;
@@ -180,23 +193,42 @@ function getCurrentPageContent(): PageContentBlock[] | null {
 	}
 }
 
+interface DetectedEntity {
+	imageStudio?: ImageStudioData;
+	videoStudio?: VideoStudioData;
+	isOpen: boolean;
+	isVideo: boolean;
+}
+
 /**
- * Detect and extract image entity context when Image Studio is open.
+ * Detect and extract studio entity context when Image Studio is open.
  *
- * Note: We intentionally do NOT send the URL in context to prevent agent retry loops.
- * The backend fetches the current URL from the clientId (attachmentId) via
- * resolve_image_studio_url().
+ * When the entry point is the post-editor "Generate Feature Clip" panel, we emit a
+ * `videoStudio` payload (with `style`); otherwise we emit `imageStudio`
+ * (with `style` + `aspect_ratio`). The two are mutually exclusive.
+ *
+ * Note on URLs in this payload:
+ *  - We do NOT add a top-level `url` field on the `imageStudio` / `videoStudio`
+ *    entity. The backend resolves the attachment's canonical URL from the
+ *    clientId (attachmentId) via `resolve_image_studio_url()` to avoid agent
+ *    retry loops on stale/transient URLs.
+ *  - `metadata.url` is populated from `attachment.source_url` strictly as
+ *    descriptive context for the agent (e.g. for prompt grounding); it is not
+ *    used by the backend to fetch the asset.
+ *  - The top-level `url` / `pathname` / `search` fields emitted by
+ *    `getClientContext()` describe the editor page location, not the
+ *    attachment, and are unrelated to the retry-loop concern above.
  */
-function detectImageEntity(): ImageStudioData | null {
+function detectImageEntity(): DetectedEntity | null {
 	try {
 		const storeSelect = select( imageStudioStore );
 		if ( ! storeSelect ) {
 			return null;
 		}
 
-		const attachmentId = storeSelect.getImageStudioAttachmentId?.();
+		const imageAttachmentId = storeSelect.getImageStudioAttachmentId?.();
 		const isOpen = storeSelect.getIsImageStudioOpen?.() || false;
-		const selectedStyle = storeSelect.getSelectedStyle?.() || null;
+		const imageSelectedStyle = storeSelect.getSelectedStyle?.() || null;
 		const selectedAspectRatio = storeSelect.getSelectedAspectRatio?.() || null;
 
 		// Entrypoint for image studio context
@@ -204,21 +236,17 @@ function detectImageEntity(): ImageStudioData | null {
 
 		const blockType = storeSelect.getBlockType?.() || null;
 
-		const imageStudio: ImageStudioData = {
-			isOpen,
-			id: attachmentId,
-			entryPoint, // 'editor_block' | 'media_library' | etc.
-			blockType, // 'core/image' | etc.
-			metadata: {},
-		};
+		const isVideo = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 
-		if ( selectedStyle && selectedStyle !== 'none' ) {
-			imageStudio.style = selectedStyle;
-		}
+		// Video-mode style lives in the dedicated video-studio store.
+		const videoStudioSelect = select( videoStudioStore );
+		const videoSelectedStyle = videoStudioSelect?.getSelectedStyle?.() ?? null;
 
-		if ( selectedAspectRatio ) {
-			imageStudio.aspect_ratio = selectedAspectRatio;
-		}
+		// In video mode, the generated clip's attachment id is written to the
+		// video-studio store by `update-canvas-video`; the image-studio store's
+		// id stays null for the PostEditorFeatureClip entry point.
+		const videoAttachmentId = videoStudioSelect?.getCurrentAttachmentId?.() ?? null;
+		const attachmentId = isVideo ? videoAttachmentId : imageAttachmentId;
 
 		// Try to get attachment metadata from core store
 		// TODO: remove cast when @wordpress/core-data exports store types
@@ -227,19 +255,67 @@ function detectImageEntity(): ImageStudioData | null {
 			? coreSelect.getEntityRecord?.( 'postType', 'attachment', attachmentId )
 			: null;
 
-		if ( attachment ) {
-			imageStudio.metadata = {
-				id: attachment.id,
-				url: attachment.source_url,
-				title: getRenderedText( attachment.title ),
-				alt: attachment.alt_text,
-				width: attachment.media_details?.width,
-				height: attachment.media_details?.height,
-				description: getRenderedText( attachment.description ),
+		const metadata: ImageStudioMetadata = attachment
+			? {
+					id: attachment.id,
+					url: attachment.source_url,
+					title: getRenderedText( attachment.title ),
+					alt: attachment.alt_text,
+					width: attachment.media_details?.width,
+					height: attachment.media_details?.height,
+					description: getRenderedText( attachment.description ),
+			  }
+			: {};
+
+		if ( isVideo ) {
+			const videoStudio: VideoStudioData = {
+				isOpen,
+				id: attachmentId,
+				entryPoint,
+				blockType,
+				metadata,
 			};
+
+			if ( videoSelectedStyle && videoSelectedStyle !== 'none' ) {
+				videoStudio.style = videoSelectedStyle;
+			}
+
+			// Pull the current post title fresh from core/editor so the wpcom side
+			// can render text-overlay frames; the store may not be registered in
+			// non-editor contexts (e.g. tests, uploads.php), so treat it as optional.
+			const editorSelect = select( 'core/editor' ) as unknown as {
+				getEditedPostAttribute?: ( name: string ) => unknown;
+			};
+			const postTitle =
+				typeof editorSelect?.getEditedPostAttribute === 'function'
+					? ( editorSelect.getEditedPostAttribute( 'title' ) as string | undefined )
+					: undefined;
+			const trimmedTitle = typeof postTitle === 'string' ? postTitle.trim() : '';
+
+			if ( trimmedTitle ) {
+				videoStudio.title = trimmedTitle.slice( 0, POST_TITLE_MAX_LENGTH );
+			}
+
+			return { videoStudio, isOpen, isVideo: true };
 		}
 
-		return imageStudio;
+		const imageStudio: ImageStudioData = {
+			isOpen,
+			id: attachmentId,
+			entryPoint, // 'editor_block' | 'media_library' | etc.
+			blockType, // 'core/image' | etc.
+			metadata,
+		};
+
+		if ( imageSelectedStyle && imageSelectedStyle !== 'none' ) {
+			imageStudio.style = imageSelectedStyle;
+		}
+
+		if ( selectedAspectRatio ) {
+			imageStudio.aspect_ratio = selectedAspectRatio;
+		}
+
+		return { imageStudio, isOpen, isVideo: false };
 	} catch ( error ) {
 		window.console?.warn?.( '[Image Studio] Error detecting image entity:', error );
 		return null;
@@ -247,17 +323,24 @@ function detectImageEntity(): ImageStudioData | null {
 }
 
 export function getClientContext(): ImageStudioClientContext {
-	const imageStudio = detectImageEntity();
+	const detected = detectImageEntity();
+
+	let environment: ImageStudioClientContext[ 'environment' ] = 'wp-admin';
+	if ( detected?.isOpen ) {
+		environment = detected.isVideo ? 'video-studio' : 'image-studio';
+	}
 
 	const context: ImageStudioClientContext = {
 		url: window.location.href,
 		pathname: window.location.pathname,
 		search: window.location.search,
-		environment: imageStudio?.isOpen ? 'image-studio' : 'wp-admin',
+		environment,
 	};
 
-	if ( imageStudio ) {
-		context.imageStudio = imageStudio;
+	if ( detected?.videoStudio ) {
+		context.videoStudio = detected.videoStudio;
+	} else if ( detected?.imageStudio ) {
+		context.imageStudio = detected.imageStudio;
 	}
 
 	const currentPageContent = getCurrentPageContent();

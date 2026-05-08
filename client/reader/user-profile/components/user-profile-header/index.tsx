@@ -1,5 +1,4 @@
 import './style.scss';
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -9,6 +8,8 @@ import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
+import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserTopSites from '../top-sites';
 import type { ReaderUser } from '@automattic/api-core';
@@ -20,6 +21,7 @@ interface UserProfileHeaderProps {
 
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
+	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
 	const bioRef = useRef< HTMLParagraphElement >( null );
@@ -58,7 +60,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			path: `${ userProfileUrl }/recommended-blogs`,
 			selected: view === 'recommended-blogs',
 		},
-		...( isEnabled( 'reader/achievements' )
+		...( showAchievements
 			? [
 					{
 						label: translate( 'Achievements' ),
@@ -73,7 +75,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 		<>
 			<header className="user-profile-header">
 				<div className="user-profile-header__user-info">
-					<UserAvatar user={ user } size={ 56 } />
+					<UserAvatar user={ user } size={ 56 } hideHovercard />
 					<div className="user-profile-header__names">
 						<h1>
 							{ user.display_name }
@@ -93,6 +95,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									/>
 								</a>
 							) }
+							<AuthorAchievementBadges authorLogin={ user.user_login } size="medium" />
 						</h1>
 						<p>
 							<span dir="ltr">@{ user.user_login }</span>
@@ -125,7 +128,9 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</AutoDirection>
 				) }
 
-				<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
+				{ user.ID && user.user_login && (
+					<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
+				) }
 			</header>
 			<SectionNav enforceTabsView variation="minimal">
 				<NavTabs>

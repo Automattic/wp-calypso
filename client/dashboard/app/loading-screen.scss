@@ -1,11 +1,21 @@
 @import './pulse';
+@import './responsive-sidebar/variables';
+@import '@wordpress/base-styles/mixins';
 
 .wpcom-site__logo {
-	position: absolute;
-	top: 50%;
+	position: fixed;
+	top: calc(50% + var(--masterbar-height, 0px) / 2);
 	inset-inline-start: 50%;
 	transform: translate(-50%, -50%);
 	margin: 0;
-	fill: $gray-900;
+	fill: $gray-400;
+	color: $gray-400;
 	animation: pulse 1.5s ease-in-out infinite;
+}
+
+// On desktop, account for the sidebar width when centering the logo.
+@include break-medium() {
+	.dashboard-root__layout:has(.dashboard-responsive-sidebar__sidebar) .wpcom-site__logo {
+		inset-inline-start: calc(50% + #{$sidebar-width * 0.5});
+	}
 }

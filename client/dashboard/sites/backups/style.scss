@@ -23,7 +23,7 @@
 
 	.file-card {
 		.components-button.is-secondary {
-			background: #fff;
+			background: var( --dashboard-surface__background-color, #fff );
 		}
 	}
 	.file-card__preview-sensitive {
@@ -42,7 +42,7 @@
 	}
 
 	.file-card__preview pre {
-		--color-surface: #fff;
+		--color-surface: var( --dashboard-surface__background-color, #fff );
 		padding: 1.6em;
 	}
 }

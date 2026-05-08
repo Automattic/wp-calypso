@@ -43,6 +43,7 @@ export const authorizeQueryDataSchema = {
 		allow_site_connection: { type: 'string' }, // '1' if true
 		installed_ext_success: { type: 'string' }, // '1' if true
 		plugin_name: { type: 'string' },
+		plugins: { type: 'string' },
 		color_scheme: { type: 'string' },
 	},
 };

@@ -1,35 +1,31 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Modal, Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
+import { Icon, check } from '@wordpress/icons';
 import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { AnyAction } from 'redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
+import { SiteIcon } from 'calypso/blocks/site-icon';
+import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding-rsm/curated-blogs';
+import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
-import { useDispatch, useStore } from 'calypso/state';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { requestFollows } from 'calypso/state/reader/follows/actions';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import {
-	requestPage,
-	clearStream,
-	requestPaginatedStream,
-} from 'calypso/state/reader/streams/actions';
-import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { useDispatch } from 'calypso/state';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import SubscribeVerificationNudge from './verificationNudge';
 
 import './style.scss';
 
 interface SubscribeModalProps {
-	isOpen: boolean;
+	promptVerification: boolean;
 	onClose: () => void;
 }
 
@@ -51,6 +47,7 @@ interface StreamProps {
 	followSource?: string;
 	useCompactCards?: boolean;
 	wideLayout?: boolean;
+	showBylineSecondarySiteLink?: boolean;
 	trackScrollPage?: (
 		path: string,
 		title: string,
@@ -62,19 +59,28 @@ interface StreamProps {
 
 const TypedStream: ComponentType< StreamProps > = Stream as ComponentType< StreamProps >;
 
-const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) => {
-	const followedTags = useSelector( getReaderFollowedTags );
+// Renders the body of the "discover" step. The shared <Modal> wrapper is
+// provided by the parent (`ReaderOnboardingRsm`); this component is only
+// mounted while the step is active. X-out / escape are handled by the
+// wrapper's `onRequestClose`, which also runs the same close-side-effects
+// (data refresh, analytics) that `handleClose` previously did inline.
+const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onClose } ) => {
+	const { data: followedTags } = useFollowedReaderTags();
 
-	const followedTagSlugs = useMemo( () => {
-		return ( followedTags || [] ).map( ( tag ) => tag.slug );
-	}, [ followedTags ] );
-
-	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
+	const followedTagSlugs = useMemo(
+		() => followedTags?.map( ( tag ) => tag.slug ) ?? [],
+		[ followedTags ]
+	);
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
+	const selectedFeed = useSelector( ( state: object ) =>
+		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
+	);
+	const selectedFeedIconUrl =
+		( selectedFeed as { site_icon?: string; image?: string } | null )?.site_icon ??
+		( selectedFeed as { site_icon?: string; image?: string } | null )?.image;
 	const dispatch = useDispatch();
-	const store = useStore();
 	const currentLocale = getLocaleSlug();
 	const SITES_PER_PAGE = 6;
 	const queryClient = useQueryClient();
@@ -188,15 +194,16 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		}
 	}, [ combinedRecommendations, dispatch ] );
 
-	// Prefetch all feed streams when the modal is opened.
+	// Prefetch all feed streams when the step is shown. The component only
+	// mounts while the step is active, so we no longer need an `isOpen` gate.
 	useEffect( () => {
-		if ( isOpen && combinedRecommendations.length > 0 ) {
+		if ( combinedRecommendations.length > 0 ) {
 			combinedRecommendations.forEach( ( site ) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				dispatch( requestPage( { streamKey: `feed:${ site.feed_ID }` } as any ) );
 			} );
 		}
-	}, [ isOpen, combinedRecommendations, dispatch ] );
+	}, [ combinedRecommendations, dispatch ] );
 
 	// Reset the page and selected site when the followed tags change.
 	useEffect( () => {
@@ -227,55 +234,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		[ selectedSite ]
 	);
 
-	const handleFollowToggle = useCallback(
-		async ( site: CardData, following: boolean ) => {
-			// Read fresh follow state from the store on each call to avoid stale closure issues
-			// inside the retry loop where the captured `follows` array won't reflect updates
-			// dispatched mid-loop.
-			const isFollowingSite = () => {
-				const currentFollows = getReaderFollows( store.getState() );
-				return currentFollows.some(
-					( follow ) => follow.feed_ID === site.feed_ID || follow.blog_ID === site.site_ID
-				);
-			};
-
-			// Exit early if the follow state already matches what we want.
-			if ( following === isFollowingSite() ) {
-				return;
-			}
-
-			// Maximum number of retries
-			const MAX_RETRIES = 3;
-
-			for ( let attempt = 0; attempt < MAX_RETRIES; attempt++ ) {
-				// Update the subscriptions list behind the modal.
-				await dispatch( requestFollows() );
-
-				// Delay the next attempt.
-				await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
-
-				if ( following === isFollowingSite() ) {
-					return;
-				}
-			}
-		},
-		[ store, dispatch ]
-	);
-
-	const formatUrl = ( url: string ): string => {
-		return url
-			.replace( /^(https?:\/\/)?(www\.)?/, '' ) // Remove protocol and www
-			.replace( /\/$/, '' ); // Remove trailing slash
-	};
-
-	const handleClose = useCallback( () => {
-		dispatch( clearStream( { streamKey: 'following' } ) );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		dispatch( requestPage( { streamKey: 'following' } as any ) );
-
-		onClose();
-	}, [ dispatch, onClose ] );
-
 	const handleContinue = useCallback( () => {
 		// Invalidate the subscriptions count query to refresh the Recent stream.
 		queryClient.invalidateQueries( {
@@ -288,33 +246,29 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				streamKey: 'recent',
 				page: 1,
 				perPage: 10,
-			} ) as AnyAction
+			} )
 		);
 
-		handleClose();
-	}, [ dispatch, handleClose, queryClient ] );
+		// Following-stream refresh + analytics happen in the parent's close
+		// handler so that X-out / escape triggers the same side-effects.
+		onClose();
+	}, [ dispatch, onClose, queryClient ] );
 
 	return (
-		isOpen && (
-			<Modal
-				onRequestClose={ handleClose }
-				size="fill"
-				className={ clsx( 'subscribe-modal', {
-					'is-disabled': promptVerification,
-				} ) }
-			>
-				<div className="subscribe-modal__container">
-					{ promptVerification && <SubscribeVerificationNudge /> }
-					<div className="subscribe-modal__content">
+		<>
+			{ promptVerification && <SubscribeVerificationNudge /> }
+			<div className="subscribe-modal__container">
+				<div className="subscribe-modal__content">
+					<div className="subscribe-modal__intro">
+						<h2 className="subscribe-modal__title">{ __( "Discover sites that you'll love" ) }</h2>
+						<p className="subscribe-modal__description">
+							{ __(
+								'Preview sites by clicking below, then subscribe to any site that inspires you.'
+							) }
+						</p>
+					</div>
+					<div className="subscribe-modal__columns">
 						<div className="subscribe-modal__site-list-column">
-							<h2 className="subscribe-modal__title">
-								{ __( "Discover sites that you'll love" ) }
-							</h2>
-							<p className="subscribe-modal__description">
-								{ __(
-									'Preview sites by clicking below, then subscribe to any site that inspires you.'
-								) }
-							</p>
 							{ isLoading && <LoadingPlaceholder /> }
 							{ ! isLoading && combinedRecommendations.length === 0 && (
 								<p>{ __( 'No recommendations available at the moment.' ) }</p>
@@ -332,13 +286,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }
 											followSource="reader-onboarding-modal"
-											disableSuggestedFollows
 											replaceStreamClickWithItemClick
 											onItemClick={ () => handleItemClick( site ) }
 											isSelected={ selectedSite?.feed_ID === site.feed_ID }
-											onFollowToggle={ ( following: boolean ) =>
-												handleFollowToggle( site, following )
-											}
 										/>
 									) ) }
 								</div>
@@ -358,14 +308,36 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								{ selectedSite && (
 									<>
 										<div className="subscribe-modal__preview-stream-header">
-											<h3>{ formatUrl( selectedSite.site_URL ) }</h3>
+											<div className="subscribe-modal__preview-site">
+												<SiteIcon size={ 36 } iconUrl={ selectedFeedIconUrl } />
+												<span className="subscribe-modal__preview-site-title">
+													{ selectedSite.site_name }
+												</span>
+											</div>
+											<ReaderFollowButton
+												siteUrl={ selectedSite.site_URL }
+												feedId={ selectedSite.feed_ID }
+												siteId={ selectedSite.site_ID }
+												followSource="reader-onboarding-modal"
+												hasButtonStyle
+												followIcon={ <></> }
+												followingIcon={
+													<Icon
+														key="following"
+														className="reader-following-feed"
+														icon={ check }
+														size={ 18 }
+													/>
+												}
+											/>
 										</div>
 										<div className="subscribe-modal__preview-stream-container">
 											<TypedStream
 												streamKey={ `feed:${ selectedSite.feed_ID }` }
-												className="is-site-stream subscribe-modal__preview-stream"
+												className="is-site-stream subscribe-modal__preview-stream no-padding"
 												followSource="reader_subscribe_modal"
 												useCompactCards
+												showBylineSecondarySiteLink={ false }
 												trackScrollPage={ trackScrollPage.bind( null ) }
 											/>
 										</div>
@@ -373,26 +345,26 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 								) }
 							</div>
 						</div>
-						<div className="reader-onboarding-modal__footer">
-							<HStack justify="right" className="reader-onboarding-modal__footer-actions">
-								<Button __next40pxDefaultSize variant="tertiary" onClick={ handleClose }>
-									{ __( 'Cancel' ) }
-								</Button>
-								<Button
-									__next40pxDefaultSize
-									onClick={ handleContinue }
-									variant="primary"
-									disabled={ promptVerification }
-									accessibleWhenDisabled
-								>
-									{ __( 'Continue' ) }
-								</Button>
-							</HStack>
-						</div>
 					</div>
 				</div>
-			</Modal>
-		)
+			</div>
+			<div className="reader-onboarding-modal__footer">
+				<HStack justify="space-between" className="reader-onboarding-modal__footer-actions">
+					<StepIndicator totalSteps={ 3 } currentStep={ 3 } />
+					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
+						<Button
+							__next40pxDefaultSize
+							onClick={ handleContinue }
+							variant="secondary"
+							disabled={ promptVerification }
+							accessibleWhenDisabled
+						>
+							{ __( 'Finish' ) }
+						</Button>
+					</HStack>
+				</HStack>
+			</div>
+		</>
 	);
 };
 

@@ -240,6 +240,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 					site={ site }
 					feature={ HostingFeatures.BIG_SKY }
 					upsellId="ai-tools"
+					upsellPlanRequirement="any"
 					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
 					upsellDescription={ __(
 						'Get AI-powered assistance to help you build, edit, and redesign your site with ease.'
@@ -270,7 +271,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						</VStack>
 					</CardBody>
 					{ ! isEnabled && (
-						<CardFooter style={ { background: '#FAFAFA' } }>
+						<CardFooter className="ai-tools-settings__features-footer">
 							<VStack as="ul" spacing={ 1 } style={ { padding: 0, margin: 0 } }>
 								{ features.map( ( feature, i ) => (
 									<HStack key={ i } as="li" justify="flex-start" spacing={ 3 }>

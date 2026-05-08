@@ -1,4 +1,5 @@
 import { Railcar } from '@automattic/calypso-analytics';
+import { cloneElement } from 'react';
 import { useSelector } from 'react-redux';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
@@ -14,6 +15,8 @@ interface ReaderFollowButtonProps {
 	className?: string;
 	feedId?: number;
 	followSource?: string;
+	followIcon?: JSX.Element;
+	followingIcon?: JSX.Element;
 	hasButtonStyle?: boolean;
 	iconSize?: number;
 	isButtonOnly?: boolean;
@@ -46,8 +49,16 @@ export default function ReaderFollowButton( props: ReaderFollowButtonProps ): JS
 		}
 	}
 
-	const followingIcon = ReaderFollowingFeedIcon( { iconSize: iconSize || 20 } );
-	const followIcon = ReaderFollowFeedIcon( { iconSize: iconSize || 20 } );
+	// FollowButton renders icons as an array child; React requires keys on array
+	// items so we attach them here.
+	const followingIcon = cloneElement(
+		props.followingIcon ?? ReaderFollowingFeedIcon( { iconSize: iconSize || 20 } ),
+		{ key: 'reader-following-icon' }
+	);
+	const followIcon = cloneElement(
+		props.followIcon ?? ReaderFollowFeedIcon( { iconSize: iconSize || 20 } ),
+		{ key: 'reader-follow-icon' }
+	);
 
 	return (
 		<FollowButtonContainer

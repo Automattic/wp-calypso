@@ -12,11 +12,13 @@ module.exports = {
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	transform: {
 		'\\.(?:[jt]sx?|mjs)$': [ 'babel-jest', { rootMode: 'upward' } ],
-		'\\.(gif|jpg|jpeg|png|svg|webp|scss|sass|css)$': require.resolve( './src/asset-transform.js' ),
+		'\\.(gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$': require.resolve(
+			'./src/asset-transform.js'
+		),
 	},
 	testPathIgnorePatterns: [ ...defaults.testPathIgnorePatterns, '/dist/' ],
 	transformIgnorePatterns: [
-		'node_modules/(?!gridicons|components|swiper|@fnando)(?!.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|sass|css)$)',
+		'node_modules/(?!gridicons|components|swiper|@fnando)(?!.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
 	],
 	verbose: false,
 	snapshotFormat: {

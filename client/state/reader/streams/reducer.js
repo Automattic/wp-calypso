@@ -1,14 +1,8 @@
-import moment from 'moment';
 import { keysAreEqual } from 'calypso/reader/post-key';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
 	READER_STREAMS_PAGINATED_REQUEST,
-	READER_STREAMS_SELECT_ITEM,
-	READER_STREAMS_UPDATES_RECEIVE,
-	READER_STREAMS_SELECT_NEXT_ITEM,
-	READER_STREAMS_SELECT_PREV_ITEM,
-	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
 	READER_STREAMS_CLEAR,
 	READER_STREAMS_REMOVE_ITEM,
@@ -17,25 +11,11 @@ import {
 import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
 
-const takeWhile = ( array, predicate ) => {
-	const [ x, ...xs ] = array;
-
-	if ( array.length > 0 && predicate( x ) ) {
-		return [ x, ...takeWhile( xs, predicate ) ];
-	}
-	return [];
-};
-
-const takeRightWhile = ( array, predicate ) => {
-	return takeWhile( [ ...array ].reverse(), predicate );
-};
-
 /*
  * Contains a list of post-keys representing the items of a stream.
  */
 export const items = ( state = [], action ) => {
 	let streamItems;
-	let gap;
 	let newState;
 	let newXPosts;
 	let perPage;
@@ -44,7 +24,6 @@ export const items = ( state = [], action ) => {
 
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
-			gap = action.payload.gap;
 			streamItems = action.payload.streamItems;
 			perPage = action.payload.perPage;
 			page = action.payload.page;
@@ -84,31 +63,6 @@ export const items = ( state = [], action ) => {
 				return combineXPosts( updatedState );
 			}
 
-			if ( gap ) {
-				const beforeGap = takeWhile( state, ( postKey ) => ! keysAreEqual( postKey, gap ) );
-				const afterGap = takeRightWhile( state, ( postKey ) => ! keysAreEqual( postKey, gap ) );
-
-				// after query param is inclusive, so we need to drop duplicate post
-				if ( keysAreEqual( streamItems[ streamItems.length - 1 ], afterGap[ 0 ] ) ) {
-					streamItems.pop();
-				}
-
-				// gap was empty
-				if ( streamItems.length === 0 ) {
-					return [ ...beforeGap, ...afterGap ];
-				}
-
-				// create a new gap if we still need one
-				let nextGap = [];
-				const from = gap.from;
-				const to = moment( streamItems[ streamItems.length - 1 ]?.date );
-				if ( ! from.isSame( to ) ) {
-					nextGap = [ { isGap: true, from, to } ];
-				}
-
-				return combineXPosts( [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ] );
-			}
-
 			// add the `streamItems` to state, but only ones that aren't already there
 			newState = streamItems.reduce( ( accuState, streamItem ) => {
 				const isNew = ! accuState.some( ( accuItem ) => keysAreEqual( accuItem, streamItem ) );
@@ -124,8 +78,6 @@ export const items = ( state = [], action ) => {
 
 			// Filter out duplicate x-posts
 			return combineXPosts( newState );
-		case READER_STREAMS_SHOW_UPDATES:
-			return combineXPosts( [ ...action.payload.items, ...state ] );
 		case READER_DISMISS_POST: {
 			const postKey = action.payload.postKey;
 			const indexToRemove = state.findIndex( ( item ) => keysAreEqual( item, postKey ) );
@@ -144,100 +96,6 @@ export const items = ( state = [], action ) => {
 		}
 		case READER_STREAMS_CLEAR:
 			return [];
-	}
-	return state;
-};
-
-export const PENDING_ITEMS_DEFAULT = { lastUpdated: null, items: [] };
-/*
- * Contains new items in the stream that we've learned about since initial render
- * but don't want to display just yet.
- * This is the data backing the orange "${number} new posts" pill.
- */
-export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
-	let streamItems;
-	let maxDate;
-	let minDate;
-	let newItems;
-	let newXPosts;
-	switch ( action.type ) {
-		case READER_STREAMS_PAGE_RECEIVE:
-			streamItems = action.payload.streamItems;
-			if ( streamItems.length === 0 ) {
-				return state;
-			}
-
-			maxDate = moment( streamItems[ 0 ].date );
-
-			if ( state.lastUpdated && maxDate.isSameOrBefore( state.lastUpdated ) ) {
-				return state;
-			}
-
-			return { ...state, lastUpdated: maxDate };
-		case READER_STREAMS_UPDATES_RECEIVE:
-			streamItems = action.payload.streamItems;
-			if ( streamItems.length === 0 ) {
-				return state;
-			}
-
-			maxDate = moment( streamItems[ 0 ].date );
-			minDate = moment( streamItems[ streamItems.length - 1 ].date );
-
-			// only retain posts that are newer than ones we already have
-			if ( state.lastUpdated ) {
-				streamItems = streamItems.filter( ( item ) =>
-					moment( item.date ).isAfter( state.lastUpdated )
-				);
-			}
-
-			if ( streamItems.length === 0 ) {
-				return state;
-			}
-
-			newItems = [ ...streamItems ];
-
-			// Find any x-posts and filter out duplicates
-			newXPosts = newItems.filter( ( postKey ) => postKey.xPostMetadata );
-
-			if ( newXPosts ) {
-				newItems = combineXPosts( newItems );
-			}
-
-			// there is a gap if the oldest item in the poll is newer than last update time
-			if ( state.lastUpdated && minDate.isAfter( state.lastUpdated ) ) {
-				newItems.push( {
-					isGap: true,
-					from: state.lastUpdated,
-					to: minDate,
-				} );
-			}
-
-			return { lastUpdated: maxDate, items: newItems };
-		case READER_STREAMS_SHOW_UPDATES:
-			return { ...state, items: [] };
-		case READER_STREAMS_CLEAR:
-			return PENDING_ITEMS_DEFAULT;
-	}
-	return state;
-};
-
-/*
- * Contains which postKey is currently selected.
- * This is relevant for keyboard navigation
- */
-export const selected = ( state = null, action ) => {
-	switch ( action.type ) {
-		case READER_STREAMS_SELECT_ITEM: {
-			return action.payload.postKey;
-		}
-		case READER_STREAMS_SELECT_NEXT_ITEM: {
-			const idx = action.payload.items?.findIndex( ( item ) => keysAreEqual( item, state ) ) ?? -1;
-			return idx === action.payload.items.length - 1 ? state : action.payload.items[ idx + 1 ];
-		}
-		case READER_STREAMS_SELECT_PREV_ITEM: {
-			const idx = action.payload.items?.findIndex( ( item ) => keysAreEqual( item, state ) ) ?? -1;
-			return idx === 0 ? state : action.payload.items[ idx - 1 ];
-		}
 	}
 	return state;
 };
@@ -319,8 +177,6 @@ export const error = ( state = null, action ) => {
 
 const streamReducer = combineReducers( {
 	items,
-	pendingItems,
-	selected,
 	lastPage,
 	isRequesting,
 	pageHandle,

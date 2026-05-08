@@ -206,6 +206,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'podcasting',
+		paths: [ '/settings/podcast' ],
+		module: 'calypso/my-sites/podcast',
+		group: 'sites',
+	},
+	{
 		name: 'settings-security',
 		paths: [ '/settings/security' ],
 		module: 'calypso/my-sites/site-settings/settings-security',
@@ -497,12 +503,6 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/reader/list' ],
-		module: 'calypso/reader/list',
-		group: 'reader',
-	},
-	{
-		name: 'reader',
 		paths: [ '/reader/conversations' ],
 		module: 'calypso/reader/conversations',
 		group: 'reader',
@@ -514,6 +514,36 @@ const sections = [
 		module: 'calypso/reader/notifications',
 		group: 'reader',
 		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [
+			'/reader/atmosphere',
+			'/reader/atmosphere/connect',
+			'/reader/atmosphere/:id',
+			'/reader/atmosphere/:id/:tab',
+			'/reader/atmosphere/:id/thread/:did/:rkey',
+			'/reader/atmosphere/:id/profile/:actor',
+		],
+		module: 'calypso/reader/atmosphere',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
+		name: 'reader',
+		paths: [
+			'/reader/mastodon',
+			'/reader/mastodon/connect',
+			'/reader/mastodon/oauth-callback',
+			'/reader/mastodon/:id',
+			'/reader/mastodon/:id/:tab',
+			'/reader/mastodon/:id/thread/:status_id',
+			'/reader/mastodon/:id/profile/:actor',
+			'/reader/mastodon/:id/tag/:hashtag',
+		],
+		module: 'calypso/reader/mastodon',
+		group: 'reader',
+		enableLoggedOut: false,
 	},
 	{
 		name: 'reader',
@@ -574,12 +604,6 @@ const sections = [
 		paths: [ '/migrate' ],
 		module: 'calypso/my-sites/migrate',
 		group: 'sites',
-	},
-	{
-		name: 'devdocs',
-		paths: [ '/devdocs' ],
-		module: 'calypso/devdocs',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'home',

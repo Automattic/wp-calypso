@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, type ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -29,6 +29,7 @@ export interface AutoRenewToggleProps {
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	paymentMethodUrl?: string;
 	showLink?: boolean;
+	label?: ReactNode;
 	productSlug?: string;
 	siteSlug?: string | null;
 	children?: React.ReactNode;
@@ -254,7 +255,7 @@ class AutoRenewToggle extends Component<
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() || shouldDisable }
 					onChange={ this.onToggleAutoRenew }
-					label={ withTextStatus && this.renderTextStatus() }
+					label={ this.props.label ?? ( withTextStatus ? this.renderTextStatus() : undefined ) }
 				/>
 			);
 		}

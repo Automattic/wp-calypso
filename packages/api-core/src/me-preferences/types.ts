@@ -19,6 +19,7 @@ export interface ReaderLandingPage extends LandingPagePreference {
 
 export interface UserPreferences {
 	recentSites?: number[];
+	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 	'hosting-dashboard-opt-in-welcome-modal-dismissed'?: string; // Timestamp when the user dismissed the modal
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
@@ -31,4 +32,6 @@ export interface UserPreferences {
 	'sites-landing-page'?: SitesLandingPage;
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
+	'achievements-visibility'?: 'public' | 'private';
+	'achievements-global-notifications'?: 'enabled' | 'disabled';
 }

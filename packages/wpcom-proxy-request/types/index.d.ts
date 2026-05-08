@@ -21,6 +21,12 @@ export interface WpcomRequestParams {
 	signal?: AbortSignal;
 	apiNamespace?: string;
 	formData?: ( string | File )[][];
+	// Search for allowedRequestHeaders to extend these.
+	headers?: {
+		'X-WPCOM-AI-Feature'?: string;
+		'X-Fingerprint'?: string;
+		Accept?: string;
+	};
 }
 
 export function reloadProxy(): void;
