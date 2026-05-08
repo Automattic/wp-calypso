@@ -9,6 +9,7 @@ import {
 	SocialFeedList,
 	SocialPostCard,
 	mapAtmosphereFeedItemToSocialPost,
+	socialPostFeedItemKey,
 	type SocialPost,
 } from 'calypso/reader/social';
 import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
@@ -145,7 +146,7 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 		),
 		[ connection.id ]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const analyticsValue = useMemo(
 		() => ( {

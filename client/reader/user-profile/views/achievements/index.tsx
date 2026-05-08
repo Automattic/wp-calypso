@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
@@ -18,10 +17,6 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 	const translate = useTranslate();
 	const { isOwnProfile, isVisible, isLoading } = useAchievementsVisibility( user.user_login );
 	const { yearsOfService } = useAchievementsQuery( isVisible ? user.user_login : undefined );
-
-	if ( ! isEnabled( 'reader/achievements' ) ) {
-		return null;
-	}
 
 	if ( isLoading ) {
 		return (

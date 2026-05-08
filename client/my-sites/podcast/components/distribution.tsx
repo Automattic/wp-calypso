@@ -15,6 +15,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFeedUrl } from '../hooks/use-feed-url';
+import { useSubmissionIssues } from '../hooks/use-submission-issues';
 import {
 	LogoAmazon,
 	LogoApple,
@@ -23,6 +24,7 @@ import {
 	LogoSpotify,
 	LogoYouTube,
 } from './logos';
+import ReadinessBanner from './readiness-banner';
 import SubmitModal from './submit-modal';
 import type { ComponentType } from 'react';
 
@@ -96,18 +98,24 @@ const DIRECTORIES: Directory[] = [
 	},
 ];
 
-function Distribution() {
+function Distribution( { onGoToSettings }: { onGoToSettings?: () => void } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const feedUrl = useFeedUrl();
+	const { issues, isPodcastingEnabled, isLoading } = useSubmissionIssues();
 	const [ activeId, setActiveId ] = useState< string | null >( null );
 	const [ showConfetti, setShowConfetti ] = useState( false );
 	const activeDirectory = DIRECTORIES.find( ( d ) => d.id === activeId ) ?? null;
 	const prefersReducedMotion =
 		typeof window !== 'undefined' &&
 		window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+	const hasIssues = issues.length > 0;
+	const isSubmitBlocked = hasIssues || isLoading;
 
 	const openSubmitModal = ( directoryId: string ) => {
+		if ( isSubmitBlocked ) {
+			return;
+		}
 		dispatch(
 			recordTracksEvent( 'calypso_podcast_submit_modal_opened', {
 				directory: directoryId,
@@ -118,6 +126,13 @@ function Distribution() {
 
 	return (
 		<>
+			<ReadinessBanner
+				issues={ issues }
+				isPodcastingEnabled={ isPodcastingEnabled }
+				onEditSettings={ onGoToSettings }
+				className="podcast__distribution"
+			/>
+
 			<Card className="site-settings__card podcast__card podcast__distribution">
 				<CardBody>
 					<VStack spacing={ 8 }>
@@ -170,9 +185,22 @@ function Distribution() {
 											<Text weight={ 500 }>{ name }</Text>
 										</HStack>
 										<Button
-											variant="primary"
+											variant={ isSubmitBlocked ? 'secondary' : 'primary' }
 											size="compact"
 											onClick={ () => openSubmitModal( id ) }
+											disabled={ isSubmitBlocked }
+											accessibleWhenDisabled
+											aria-label={
+												isSubmitBlocked
+													? ( translate(
+															'Submit to %(service)s (finish setting up your podcast first).',
+															{
+																args: { service: name },
+																comment: '%(service)s is a podcast directory name, e.g. "Spotify".',
+															}
+													  ) as string )
+													: undefined
+											}
 										>
 											{ translate( 'Submit' ) }
 										</Button>

@@ -22,7 +22,7 @@ interface TestResult {
  * their own config or override `mutationFactory`.
  */
 export const testComposerConfig: ComposerConfig< TestError, TestParams, TestResult > = {
-	limit: 300,
+	useLimit: () => 300,
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
 	mutationFactory: () =>
 		mutationOptions< TestResult, TestError, TestParams >( {

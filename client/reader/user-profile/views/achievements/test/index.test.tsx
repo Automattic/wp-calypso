@@ -1,14 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
 import UserAchievements from '../index';
 import type { ReaderUser } from '@automattic/api-core';
-
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
 
 jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility' );
 
@@ -33,8 +28,6 @@ jest.mock( 'calypso/reader/components/achievements/years-of-service-badge', () =
 		<div data-testid="years-of-service-badge">{ yearsOfService }</div>
 	),
 } ) );
-
-const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const useAchievementsVisibility =
@@ -61,25 +54,11 @@ describe( 'UserAchievements', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockAchievementsGridProps.mockClear();
-		mockIsEnabled.mockReturnValue( true );
 		useAchievementsQuery.mockReturnValue( {
 			yearsOfService: undefined,
 			lockedAchievements: [],
 			isLoading: false,
 		} );
-	} );
-
-	test( 'should render nothing when feature flag is disabled', () => {
-		mockIsEnabled.mockReturnValue( false );
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: true,
-			isVisible: true,
-			isLoading: false,
-		} );
-
-		const { container } = render( <UserAchievements user={ defaultUser } /> );
-
-		expect( container.innerHTML ).toBe( '' );
 	} );
 
 	test( 'should render nothing when achievements are not visible', () => {

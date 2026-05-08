@@ -6,14 +6,17 @@ import {
 	createMastodonRepost,
 	deleteMastodonLike,
 	deleteMastodonRepost,
+	getMastodonAuthStatus,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
 	getMastodonConnections,
+	getMastodonInstanceConfig,
 	getMastodonTagFeed,
 	getMastodonThread,
 	getMastodonTimeline,
 	readerMastodonKeys,
+	uploadMastodonMedia,
 } from '@automattic/api-core';
 import {
 	infiniteQueryOptions,
@@ -33,6 +36,7 @@ import type {
 	GetMastodonAuthorFeedParams,
 	GetMastodonTagFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAuthStatus,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
 	MastodonAuthorProfile,
@@ -44,6 +48,9 @@ import type {
 	MastodonCreatePostResult,
 	MastodonError,
 	MastodonFeedItem,
+	MastodonInstanceConfig,
+	MastodonMediaUploadParams,
+	MastodonMediaUploadResult,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadNode,
@@ -109,6 +116,43 @@ export const mastodonConnectionQueryOptions = ( id: number | null ) =>
 
 export function useMastodonConnectionQuery( id: number | null ) {
 	return useQuery( mastodonConnectionQueryOptions( id ) );
+}
+
+export const mastodonAuthStatusQueryOptions = ( connectionId: number | null ) =>
+	queryOptions< MastodonAuthStatus, MastodonError >( {
+		queryKey: readerMastodonKeys.authStatus( connectionId ),
+		queryFn: () => getMastodonAuthStatus( connectionId as number ),
+		enabled: connectionId !== null && connectionId > 0,
+		// 60s matches the connections-list staleTime — auth-status is cheap (no
+		// upstream call) but we still want consumers like the connections-list
+		// reauth tag to dedupe rapid mounts.
+		staleTime: 60_000,
+	} );
+
+export function useMastodonAuthStatusQuery( connectionId: number | null ) {
+	return useQuery( mastodonAuthStatusQueryOptions( connectionId ) );
+}
+
+export const mastodonInstanceConfigQueryOptions = ( connectionId: number | null ) =>
+	queryOptions< MastodonInstanceConfig, MastodonError >( {
+		queryKey: readerMastodonKeys.instanceConfig( connectionId ),
+		queryFn: () => getMastodonInstanceConfig( connectionId as number ),
+		enabled: connectionId !== null && connectionId > 0,
+		// Instance config rarely changes — admins set the char limit
+		// and largely leave it. Cache aggressively so the composer doesn't
+		// fire a request every time the user opens it.
+		staleTime: 60 * 60_000,
+		gcTime: 24 * 60 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+	} );
+
+export function useMastodonInstanceConfigQuery( connectionId: number | null ) {
+	return useQuery( mastodonInstanceConfigQueryOptions( connectionId ) );
 }
 
 export const mastodonTimelineInfiniteQuery = ( connectionId: number ) =>
@@ -914,4 +958,15 @@ export const createMastodonPostMutation = (
 				} );
 			}
 		},
+	} );
+
+/**
+ * Wire-layer factory for uploading a single image to a Mastodon connection's
+ * `POST /reader/mastodon/connections/{id}/media` endpoint. Media uploads do
+ * not read into list/thread caches, so this factory takes no `QueryClient`
+ * — unlike the like/repost/post mutations.
+ */
+export const uploadMastodonMediaMutation = () =>
+	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
+		mutationFn: uploadMastodonMedia,
 	} );

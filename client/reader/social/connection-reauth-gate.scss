@@ -1,0 +1,29 @@
+.connection-reauth-gate {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-block-size: 320px;
+	padding-block: 32px;
+	padding-inline: 24px;
+}
+
+.connection-reauth-gate__card {
+	max-inline-size: 480px;
+	inline-size: 100%;
+	text-align: center;
+}
+
+.connection-reauth-gate__icon {
+	font-size: 32px;
+	margin-block-end: 8px;
+}
+
+.connection-reauth-gate__headline {
+	margin-block-end: 8px;
+	font-weight: 600;
+}
+
+.connection-reauth-gate__body {
+	color: var( --color-text-subtle );
+	margin-block-end: 16px;
+}
