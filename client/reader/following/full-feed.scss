@@ -1,10 +1,15 @@
 @import '@wordpress/base-styles/breakpoints';
 
+body.is-reader-page .full-feed.main,
+body.is-section-reader .full-feed.main {
+	max-width: 924px;
+}
+
 .full-feed {
 	.full-feed__header {
 		margin: 0 auto;
-		max-width: 760px;
 		padding-inline: 16px;
+		width: 100%;
 	}
 }
 
@@ -27,7 +32,6 @@
 	flex-direction: column;
 	gap: 24px;
 	margin: 0 auto;
-	max-width: 760px;
 	padding-block: 0 48px;
 	padding-inline: 16px;
 	width: 100%;
@@ -93,6 +97,11 @@
 .full-feed-post__content {
 	position: relative;
 
+	.reader-full-post__featured-image {
+		margin-inline: auto;
+		max-width: 450px;
+	}
+
 	&.is-collapsed {
 		max-height: var( --full-feed-post-preview-height, 900px );
 		overflow: hidden;
@@ -144,7 +153,7 @@
 	pointer-events: none;
 	position: fixed;
 	transform: translateX( -50% );
-	width: min( 100% - 32px, 760px );
+	width: min( 100% - 32px, 924px );
 	z-index: 20;
 
 	.components-button.is-secondary {

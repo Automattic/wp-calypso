@@ -222,6 +222,36 @@ describe( 'FullFeedPost', () => {
 		).toBeVisible();
 	} );
 
+	it( 'does not count the featured image against the collapsed text preview height', async () => {
+		contentScrollHeight = 1200;
+		jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockImplementation( function (
+			this: HTMLElement
+		) {
+			return {
+				bottom: 400,
+				height: this.classList.contains( 'reader-full-post__featured-image' ) ? 400 : 0,
+				left: 0,
+				right: 0,
+				top: 0,
+				width: 0,
+				x: 0,
+				y: 0,
+				toJSON: jest.fn(),
+			};
+		} );
+
+		renderPost( {
+			...post,
+			featured_image: 'https://example.com/image.jpg',
+		} );
+
+		await waitFor( () => {
+			expect(
+				screen.queryByRole( 'button', { name: 'Read more: Example post' } )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
 	it( 'expands when the collapsed content preview is clicked', async () => {
 		const user = userEvent.setup();
 

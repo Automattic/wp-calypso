@@ -18,6 +18,7 @@ const FLOATING_COLLAPSE_MAX_VIEWPORT_INSET = 96;
 const FLOATING_COLLAPSE_VIEWPORT_INSET_RATIO = 0.08;
 const FLOATING_COLLAPSE_TITLE_LENGTH = 36;
 const CONTENT_OBSERVER_ROOT_MARGIN = '1200px 0px';
+const FULL_FEED_CONTENT_WIDTH = 924;
 
 type ReaderFullFeedPost = Partial< TrackPostData > & {
 	author?: {
@@ -89,6 +90,26 @@ function getPostForFullPostNavigation( post: ReaderFullFeedPost ) {
 	return post;
 }
 
+function getFullFeedContentWidth() {
+	const contentWidth = readerContentWidth();
+
+	return typeof contentWidth === 'number'
+		? Math.max( contentWidth, FULL_FEED_CONTENT_WIDTH )
+		: contentWidth;
+}
+
+function getElementBlockSize( element: Element | null ) {
+	if ( ! ( element instanceof HTMLElement ) ) {
+		return 0;
+	}
+
+	const styles = window.getComputedStyle( element );
+	const marginBlockStart = parseFloat( styles.marginBlockStart || styles.marginTop ) || 0;
+	const marginBlockEnd = parseFloat( styles.marginBlockEnd || styles.marginBottom ) || 0;
+
+	return element.getBoundingClientRect().height + marginBlockStart + marginBlockEnd;
+}
+
 export type { ReaderFullFeedPost };
 
 interface FullFeedPostProps {
@@ -149,8 +170,14 @@ export function FullFeedPost( {
 		}
 
 		const measuredContentHeight = contentElement.scrollHeight;
-		const nextIsExpandable = measuredContentHeight > COLLAPSED_CONTENT_HEIGHT;
-		setInactiveContentHeight( Math.min( measuredContentHeight, COLLAPSED_CONTENT_HEIGHT ) );
+		const featuredImageHeight = getElementBlockSize(
+			contentElement.querySelector( '.reader-full-post__featured-image' )
+		);
+		const measuredTextContentHeight = Math.max( 0, measuredContentHeight - featuredImageHeight );
+		const collapsedContentHeight = COLLAPSED_CONTENT_HEIGHT + featuredImageHeight;
+		const nextIsExpandable = measuredTextContentHeight > COLLAPSED_CONTENT_HEIGHT;
+
+		setInactiveContentHeight( Math.min( measuredContentHeight, collapsedContentHeight ) );
 		setIsExpandable( nextIsExpandable );
 
 		if ( ! nextIsExpandable ) {
@@ -430,14 +457,14 @@ export function FullFeedPost( {
 								aria-hidden={ isContentActive ? undefined : true }
 								style={
 									{
-										'--full-feed-post-preview-height': `${ COLLAPSED_CONTENT_HEIGHT }px`,
+										'--full-feed-post-preview-height': `${ inactiveContentHeight }px`,
 										'--full-feed-post-inactive-height': `${ inactiveContentHeight }px`,
 									} as CSSProperties
 								}
 							>
 								<ReaderFullPostContentShell
 									isActive={ isContentActive }
-									maxWidth={ readerContentWidth() }
+									maxWidth={ getFullFeedContentWidth() }
 									post={ post }
 									siteName={ post.site_name }
 								/>

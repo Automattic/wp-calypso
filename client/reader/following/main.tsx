@@ -1,3 +1,4 @@
+import config, { isEnabled } from '@automattic/calypso-config';
 import { Card, CardBody } from '@wordpress/components';
 import clsx from 'clsx';
 import { fixMe, translate } from 'i18n-calypso';
@@ -29,6 +30,7 @@ const loadTrackResurrections = () =>
 	);
 
 const followingViewToggleViews: ReaderFollowingView[] = [ 'recent', 'full-feed', 'stream' ];
+const defaultViewToggleViews: ReaderFollowingView[] = [ 'recent', 'stream' ];
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
@@ -60,7 +62,10 @@ function FollowingStream( { ...props } ) {
 
 	const suppressReaderOnboarding =
 		readerOnboardingShouldShow && ( isResurrectedModalVisible || shouldDelayReaderOnboarding );
-	const followingViewToggle = <ViewToggle views={ followingViewToggleViews } />;
+	const isFullFeedEnabled = config( 'env' ) === 'development' && isEnabled( 'reader/full-feed' );
+	const followingViewToggle = (
+		<ViewToggle views={ isFullFeedEnabled ? followingViewToggleViews : defaultViewToggleViews } />
+	);
 
 	// Set the selected feed based on route param.
 	useEffect( () => {
@@ -71,7 +76,7 @@ function FollowingStream( { ...props } ) {
 	let followingContent;
 	if ( currentView === 'recent' ) {
 		followingContent = <Recent viewToggle={ followingViewToggle } />;
-	} else if ( currentView === 'full-feed' ) {
+	} else if ( currentView === 'full-feed' && isFullFeedEnabled ) {
 		followingContent = <FullFeed { ...props } viewToggle={ followingViewToggle } />;
 	} else {
 		followingContent = (
