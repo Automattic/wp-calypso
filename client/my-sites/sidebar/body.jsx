@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
@@ -12,9 +13,12 @@ import {
 } from 'calypso/state/ui/selectors';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
+import MySitesSidebarUnifiedSidebarGroup from './sidebar-group';
 import useSiteMenuItems from './use-site-menu-items';
+import groupMenuItems from './utils/group-menu-items';
 import { isItemSelected } from './utils';
 import 'calypso/state/admin-menu/init';
+import 'calypso/state/admin-sidebar/expand-state/init';
 
 import './style.scss';
 
@@ -39,53 +43,73 @@ export const MySitesSidebarUnifiedBody = ( {
 	// since WP Admin is considered a separate area from Calypso on those sites.
 	const shouldOpenExternalLinksInCurrentTab = ! isJetpack || isSiteAtomic;
 
+	// Phase 1 redesign: partition the flat menu into top-level items + group
+	// sections. `groups[]` is sourced from the schema-extended /wpcom/v2/admin-menu
+	// response (Phase 1 task 1.1, Jetpack PR #48632). Until that endpoint ships,
+	// `groups` stays undefined and `groupMenuItems` returns every item in
+	// `ungroupedItems` — behaviour identical to the legacy flat shape.
+	const groups = undefined;
+	const { ungroupedItems, groupedSections } = useMemo(
+		() => groupMenuItems( menuItems ?? [], groups ),
+		[ menuItems, groups ]
+	);
+
+	const renderItem = ( item, i ) => {
+		const isSelected = isItemSelected( item, path, site, isP2Site );
+
+		if ( 'current-site' === item?.type ) {
+			return (
+				<Site
+					key={ item.type }
+					site={ site }
+					href={ item?.url }
+					isSelected={ isSelected }
+					onSelect={ () => onMenuItemClick( item?.url ) }
+				/>
+			);
+		}
+		if ( 'separator' === item?.type ) {
+			return <SidebarSeparator key={ `sep-${ i }` } />;
+		}
+
+		if ( item?.children?.length ) {
+			return (
+				<MySitesSidebarUnifiedMenu
+					key={ item.slug }
+					path={ path }
+					link={ item.url }
+					selected={ isSelected }
+					sidebarCollapsed={ sidebarIsCollapsed }
+					shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+					isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
+					{ ...item }
+				/>
+			);
+		}
+
+		return (
+			<MySitesSidebarUnifiedItem
+				key={ item.slug }
+				selected={ isSelected }
+				shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+				showTooltip={ !! isGlobalSidebarCollapsed }
+				trackClickEvent={ onMenuItemClick }
+				{ ...item }
+			/>
+		);
+	};
+
 	return (
 		<>
-			{ menuItems &&
-				menuItems.map( ( item, i ) => {
-					const isSelected = isItemSelected( item, path, site, isP2Site );
-
-					if ( 'current-site' === item?.type ) {
-						return (
-							<Site
-								key={ item.type }
-								site={ site }
-								href={ item?.url }
-								isSelected={ isSelected }
-								onSelect={ () => onMenuItemClick( item?.url ) }
-							/>
-						);
-					}
-					if ( 'separator' === item?.type ) {
-						return <SidebarSeparator key={ i } />;
-					}
-
-					if ( item?.children?.length ) {
-						return (
-							<MySitesSidebarUnifiedMenu
-								key={ item.slug }
-								path={ path }
-								link={ item.url }
-								selected={ isSelected }
-								sidebarCollapsed={ sidebarIsCollapsed }
-								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-								isUnifiedSiteSidebarVisible={ isUnifiedSiteSidebarVisible }
-								{ ...item }
-							/>
-						);
-					}
-
-					return (
-						<MySitesSidebarUnifiedItem
-							key={ item.slug }
-							selected={ isSelected }
-							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
-							showTooltip={ !! isGlobalSidebarCollapsed }
-							trackClickEvent={ onMenuItemClick }
-							{ ...item }
-						/>
-					);
-				} ) }
+			{ ungroupedItems.map( ( item, i ) => renderItem( item, i ) ) }
+			{ groupedSections.map( ( section ) => (
+				<MySitesSidebarUnifiedSidebarGroup
+					key={ section.group.id }
+					group={ section.group }
+				>
+					{ section.items.map( ( item, i ) => renderItem( item, i ) ) }
+				</MySitesSidebarUnifiedSidebarGroup>
+			) ) }
 			{ children }
 		</>
 	);
