@@ -148,26 +148,31 @@ export async function* parseSSEStream(
 						event.method === 'message/delta' &&
 						event.params?.delta
 					) {
-						const delta = event.params.delta;
+						const delta = event.params.delta as StreamDelta;
 
 						try {
-							if ( delta.deltaType === 'content' ) {
+							let processed = false;
+							if ( isToolCallStreamDelta( delta ) ) {
+								accumulator.processToolCallDelta( delta );
+								processed = true;
+							} else if ( delta.deltaType === 'content' ) {
 								accumulator.processContentDelta(
 									delta.content
 								);
+								processed = true;
+							}
 
+							if ( processed ) {
 								if ( ! currentTaskId && event.params.id ) {
 									currentTaskId = event.params.id;
 								}
-
 								if ( currentTaskId ) {
-									const currentMessage =
-										accumulator.getCurrentMessage();
 									yield {
 										id: currentTaskId,
 										status: {
 											state: 'working',
-											message: currentMessage,
+											message:
+												accumulator.getCurrentMessage(),
 										},
 										final: false,
 										text: accumulator.getTextContent(),
@@ -278,7 +283,50 @@ export async function streamToTask(
 }
 
 /**
- * Delta message types from the server
+ * Delta message types emitted by the server in `message/delta` events.
+ */
+export interface ContentStreamDelta {
+	type?: 'delta';
+	deltaType: 'content';
+	content: string;
+}
+
+export interface ToolNameStreamDelta {
+	type?: 'delta';
+	deltaType: 'tool_name';
+	content: string;
+	toolCallId: string;
+	toolCallName?: string;
+	toolCallIndex?: number;
+}
+
+export interface ToolArgumentStreamDelta {
+	type?: 'delta';
+	deltaType: 'tool_argument';
+	content: string;
+	toolCallId: string;
+	toolCallName?: string;
+	toolCallIndex?: number;
+}
+
+export type ToolCallStreamDelta = ToolNameStreamDelta | ToolArgumentStreamDelta;
+
+export type StreamDelta =
+	| ContentStreamDelta
+	| ToolNameStreamDelta
+	| ToolArgumentStreamDelta;
+
+function isToolCallStreamDelta(
+	delta: StreamDelta
+): delta is ToolCallStreamDelta {
+	return (
+		delta.deltaType === 'tool_argument' || delta.deltaType === 'tool_name'
+	);
+}
+
+/**
+ * Legacy accumulator delta types. These predate the current server wire shape,
+ * which uses `deltaType` rather than `type`.
  */
 export interface ContentDelta {
 	type: 'content';
@@ -308,7 +356,7 @@ export type DeltaMessage = ContentDelta | ToolNameDelta | ToolArgumentDelta;
 export class DeltaAccumulator {
 	private textContent: string = '';
 	private toolCalls: Map<
-		number,
+		number | string,
 		{
 			toolCallId: string;
 			toolName: string;
@@ -322,6 +370,37 @@ export class DeltaAccumulator {
 	 */
 	public processContentDelta( content: string ): void {
 		this.textContent += content;
+	}
+
+	/**
+	 * Process the server's live tool-call delta format.
+	 * @param delta - The tool delta emitted by the streaming endpoint
+	 */
+	public processToolCallDelta( delta: ToolCallStreamDelta ): void {
+		// Key by toolCallId only. The wire protocol guarantees toolCallId on
+		// every tool_argument/tool_name delta, so it's a stable identifier
+		// across all deltas for one call. Mixing in toolCallIndex risks
+		// double-keying the same call if the server omits the index on some
+		// deltas (would key once by number, once by string).
+		const key = delta.toolCallId;
+
+		if ( ! this.toolCalls.has( key ) ) {
+			this.toolCalls.set( key, {
+				toolCallId: delta.toolCallId,
+				toolName: '',
+				argumentFragments: [],
+			} );
+		}
+
+		const toolCall = this.toolCalls.get( key )!;
+		if ( delta.toolCallName ) {
+			toolCall.toolName = delta.toolCallName;
+		} else if ( delta.deltaType === 'tool_name' ) {
+			toolCall.toolName += delta.content;
+		}
+		if ( delta.deltaType === 'tool_argument' && delta.content.length > 0 ) {
+			toolCall.argumentFragments.push( delta.content );
+		}
 	}
 
 	/**

@@ -78,7 +78,11 @@ export interface ToolCallDataPart extends DataPart {
 	data: {
 		toolCallId: string;
 		toolId: string;
-		arguments: Record< string, unknown >;
+		/**
+		 * Parsed tool call arguments, or `{ _raw: string }` while the
+		 * arguments JSON is still streaming and hasn't closed yet.
+		 */
+		arguments: Record< string, unknown > | { _raw: string };
 	};
 }
 
