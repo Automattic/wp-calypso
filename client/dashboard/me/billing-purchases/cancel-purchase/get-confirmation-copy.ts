@@ -195,12 +195,22 @@ export function buildCategoriesNounPhrase( purchases: PurchaseForCopy[] ): strin
 			nouns[ 1 ]
 		);
 	}
-	const allButLast = nouns.slice( 0, -1 ).join( ', ' );
+	if ( nouns.length === 3 ) {
+		return sprintf(
+			/* translators: joins three category nouns, e.g. "plan, domain, and email" */
+			__( '%1$s, %2$s, and %3$s' ),
+			nouns[ 0 ],
+			nouns[ 1 ],
+			nouns[ 2 ]
+		);
+	}
 	return sprintf(
-		/* translators: joins multiple category nouns with serial comma, e.g. "plan, domain, and email" */
-		__( '%1$s, and %2$s' ),
-		allButLast,
-		nouns[ nouns.length - 1 ]
+		/* translators: joins four category nouns, e.g. "plan, domain, email, and subscription" */
+		__( '%1$s, %2$s, %3$s, and %4$s' ),
+		nouns[ 0 ],
+		nouns[ 1 ],
+		nouns[ 2 ],
+		nouns[ 3 ]
 	);
 }
 
@@ -352,13 +362,13 @@ export function getCancelLossIntro(
 		if ( ! fullExpiryDate ) {
 			return sprintf(
 				/* translators: %(categories)s is a list like "domain and plan" */
-				__( 'Your %(categories)s will expire. Here\u2019s what you\u2019ll lose:' ),
+				__( 'Your %(categories)s will expire. Here’s what you’ll lose:' ),
 				{ categories }
 			);
 		}
 		return sprintf(
 			/* translators: %(date)s is the expiry date; %(categories)s is a list like "domain and plan" */
-			__( 'On %(date)s, your %(categories)s will expire. Here\u2019s what you\u2019ll lose:' ),
+			__( 'On %(date)s, your %(categories)s will expire. Here’s what you’ll lose:' ),
 			{ categories, date: fullExpiryDate }
 		);
 	}
@@ -410,7 +420,7 @@ export function getRemoveLossIntro(
 		const categories = buildCategoriesNounPhrase( allPurchases );
 		return sprintf(
 			/* translators: %(categories)s is a list like "plan and domain" */
-			__( 'Your %(categories)s will be removed immediately. Here\u2019s what you\u2019ll lose:' ),
+			__( 'Your %(categories)s will be removed immediately. Here’s what you’ll lose:' ),
 			{ categories }
 		);
 	}

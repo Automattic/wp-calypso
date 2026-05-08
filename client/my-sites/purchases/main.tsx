@@ -303,7 +303,7 @@ export function PurchaseSiteLevelActions( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-	actionType: 'cancel' | 'remove' | 'renew';
+	actionType: 'cancel' | 'remove' | 'renew' | 'auto-renew';
 } ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level interstitial load error' );
