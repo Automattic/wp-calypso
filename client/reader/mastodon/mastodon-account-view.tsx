@@ -63,7 +63,7 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	}
 
 	const documentTitle = connection.display_name || connection.handle;
-	const handle = connection.handle;
+	const handle = connection.handle.replace( /^@/, '' );
 	const subtitle = handle
 		? translate(
 				'Catch up with the latest from the people you follow on Mastodon with @%(handle)s',
