@@ -1,4 +1,4 @@
-import { InformativeFeatureClip } from './informative-feature-clip';
+import { HighlightsFeatureClip } from './highlights-feature-clip';
 import type { FeatureClipBrief } from './types';
 import './style.scss';
 
@@ -14,7 +14,7 @@ interface FeatureClipVideoProps {
  * ('cinematic' goes through Veo, not EditFrame).
  */
 export function FeatureClipVideo( { id = COMPOSITION_ID, brief }: FeatureClipVideoProps ) {
-	return <InformativeFeatureClip id={ id } brief={ brief } />;
+	return <HighlightsFeatureClip id={ id } brief={ brief } />;
 }
 
 export type { FeatureClipBrief } from './types';

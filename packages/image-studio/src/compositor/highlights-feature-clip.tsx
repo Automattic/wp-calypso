@@ -1,10 +1,10 @@
 import { Image as EFImage, Timegroup } from '@editframe/react';
 import type { FeatureClipBrief, FeatureClipCameraMove, FeatureClipScene } from './types';
 
-const INFORMATIVE_SCENE_DURATION_MS = 4000;
+const HIGHLIGHTS_SCENE_DURATION_MS = 4000;
 // Cycled through text scenes so consecutive ones don't share a gradient.
 const TEXT_SCENE_ACCENTS = [ 'indigo', 'teal', 'amber', 'rose' ] as const;
-const INFORMATIVE_TITLE_CARD_DURATION_MS = 3000;
+const HIGHLIGHTS_TITLE_CARD_DURATION_MS = 3000;
 // Text-only fallback (no usable scene images): single, longer title card so the
 // clip still feels intentional rather than ending after 3 s.
 const TEXT_ONLY_TITLE_CARD_DURATION_MS = 6000;
@@ -29,25 +29,26 @@ interface FrameTaskTimegroup extends SyntheticAudioTimegroup {
 	__sceneProgressInstalled?: boolean;
 }
 
-interface InformativeFeatureClipProps {
+interface HighlightsFeatureClipProps {
 	id: string;
 	brief: FeatureClipBrief;
 }
 
 /**
- * Informative renderer: slow pacing, longer-held shots, restrained
- * typography. Ken-Burns is subtle. Suitable for news, explainers, recipes,
- * profiles. Audio bed defaults to contemplative when present.
+ * Highlights renderer: slow pacing, longer-held shots, restrained
+ * typography. Ken-Burns is subtle. Browser-rendered (EditFrame) walkthrough
+ * of the post's key points + images. Audio bed defaults to contemplative
+ * when present.
  */
-export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipProps ) {
+export function HighlightsFeatureClip( { id, brief }: HighlightsFeatureClipProps ) {
 	const scenes = brief.scenes;
 	const isTextOnly = scenes.length === 0;
 	const titleCardDurationMs = isTextOnly
 		? TEXT_ONLY_TITLE_CARD_DURATION_MS
-		: INFORMATIVE_TITLE_CARD_DURATION_MS;
+		: HIGHLIGHTS_TITLE_CARD_DURATION_MS;
 	const totalMs = isTextOnly
 		? titleCardDurationMs
-		: scenes.length * INFORMATIVE_SCENE_DURATION_MS +
+		: scenes.length * HIGHLIGHTS_SCENE_DURATION_MS +
 		  titleCardDurationMs -
 		  scenes.length * TRANSITION_OVERLAP_MS;
 
@@ -58,7 +59,7 @@ export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipPro
 			id={ id }
 			mode="fixed"
 			duration={ `${ Math.max( totalMs, 1000 ) }ms` }
-			className="image-studio-feature-clip image-studio-feature-clip--informative composition-root"
+			className="image-studio-feature-clip image-studio-feature-clip--highlights composition-root"
 			ref={ ( element: HTMLElement | null ) => {
 				if ( ! element ) {
 					return;
@@ -84,7 +85,7 @@ export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipPro
 				const rect = element.getBoundingClientRect();
 				const computed = typeof window !== 'undefined' ? window.getComputedStyle( element ) : null;
 				// eslint-disable-next-line no-console
-				console.log( '[InformativeFeatureClip] composition-root measured:', {
+				console.log( '[HighlightsFeatureClip] composition-root measured:', {
 					offsetWidth: element.offsetWidth,
 					offsetHeight: element.offsetHeight,
 					rectWidth: rect.width,
@@ -121,7 +122,7 @@ export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipPro
 							<Timegroup
 								key={ groupKey }
 								mode="fixed"
-								duration={ `${ INFORMATIVE_SCENE_DURATION_MS }ms` }
+								duration={ `${ HIGHLIGHTS_SCENE_DURATION_MS }ms` }
 								className={ sceneClass }
 							>
 								{ hasText ? (
@@ -146,7 +147,7 @@ export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipPro
 					// share an image, the user sees one continuous KB pan with a
 					// smooth text crossfade in the middle — no image refresh.
 					const groupDurationMs =
-						group.entries.length * INFORMATIVE_SCENE_DURATION_MS -
+						group.entries.length * HIGHLIGHTS_SCENE_DURATION_MS -
 						( group.entries.length - 1 ) * TEXT_TRANSITION_OVERLAP_MS;
 					return (
 						<Timegroup
@@ -168,7 +169,7 @@ export function InformativeFeatureClip( { id, brief }: InformativeFeatureClipPro
 									<Timegroup
 										key={ `${ groupKey }-text-${ textIdx }` }
 										mode="fixed"
-										duration={ `${ INFORMATIVE_SCENE_DURATION_MS }ms` }
+										duration={ `${ HIGHLIGHTS_SCENE_DURATION_MS }ms` }
 										className="scene scene-text-rotation-item"
 									>
 										<div className="scene-text-overlay-frame scene-text-overlay-frame--on-image">
