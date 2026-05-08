@@ -23,7 +23,10 @@
 		// top, with the remaining two (Woo + Jetpack) sharing the row below
 		// — matches the two-card layout the no-A4A scenario already uses.
 		// The full-width card centers its bullets so the wider column reads
-		// as a deliberate hero block rather than a left-anchored list.
+		// as a deliberate hero block rather than a left-anchored list. See
+		// the bullet-text override below for why the text span also needs
+		// a `max-width` cap and `text-align: center` to keep the centering
+		// readable when bullets wrap.
 		.connect-screen-features-section.has-3-card & {
 			grid-template-columns: 1fr 1fr;
 
@@ -88,6 +91,33 @@
 // to preserve on mobile here.
 .connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullet {
 	justify-content: center;
+}
+
+// `justify-content: center` on the bullet row only has visible effect
+// when the row contents are narrower than the row. As soon as a bullet
+// wraps, the text span swells to fill the remaining row width and the
+// centering collapses — the bullet looks left-anchored. Capping the
+// text span at a comfortable reading width keeps the icon + text unit
+// narrow enough to leave slack for the row-level centering to work,
+// and `text-align: center` then centers each wrapped line within the
+// span itself. The cap is generous enough that almost every English
+// bullet still fits on one line; longer translated copy will wrap into
+// a tidy centered block instead of stranding to the left.
+//
+// Applied to the same surfaces that opt into row-level centering above:
+// every card in `has-1-card`, and the full-width A4A hero in
+// `has-3-card`. The shared positional `> span:last-child` selector
+// targets the bullet's text wrapper (the icon wrapper carries
+// `aria-hidden`, the text wrapper is the second/last span).
+.connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullet > span:last-child,
+.connect-screen-features-section.has-3-card .connect-screen-features-section__card:first-child .connect-screen-features-section__card-bullet > span:last-child {
+	// `ch` is the right unit semantically (character-count cap, not a
+	// font-size derivative) but is off the project's allowed list — the
+	// existing `28ch` / `30ch` / `55ch` overrides elsewhere in the
+	// codebase follow the same per-line escape hatch.
+	// stylelint-disable-next-line unit-allowed-list
+	max-width: 38ch;
+	text-align: center;
 }
 
 .connect-screen-features-section__card-bullet-icon {
