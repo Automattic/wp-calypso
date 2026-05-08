@@ -6,6 +6,8 @@ import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
 // after configure(), avoiding a brief enabled submit button while the widget initializes.
 const BLACKBOX_CONFIGURE_SETTLE_TIMEOUT_MS = 500;
 const BLACKBOX_FAIL_OPEN_TIMEOUT_MS = 5000;
+// Blackbox must not create a permanent login dead end if a challenge never settles.
+const BLACKBOX_SUBMIT_BLOCK_TIMEOUT_MS = 5000;
 
 // Tracks whether configure() has been called at least once across mounts.
 // On remount (e.g. back from 2FA), we call reset() to start a fresh session
@@ -24,6 +26,26 @@ export function useBlackbox( { containerRef } ) {
 	const [ isChallengeActive, setIsChallengeActive ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( isEnabled );
 	const [ hasChallengeContent, setHasChallengeContent ] = useState( false );
+	const [ hasFailedOpen, setHasFailedOpen ] = useState( false );
+
+	useEffect( () => {
+		if ( ! isEnabled || hasFailedOpen ) {
+			return;
+		}
+
+		if ( ! isLoading && ! isChallengeActive && ! hasChallengeContent ) {
+			return;
+		}
+
+		const failOpenTimeout = setTimeout( () => {
+			setHasFailedOpen( true );
+			setIsLoading( false );
+			setIsChallengeActive( false );
+			setHasChallengeContent( false );
+		}, BLACKBOX_SUBMIT_BLOCK_TIMEOUT_MS );
+
+		return () => clearTimeout( failOpenTimeout );
+	}, [ isEnabled, hasFailedOpen, isLoading, isChallengeActive, hasChallengeContent ] );
 
 	useEffect( () => {
 		const container = containerRef.current;
@@ -133,5 +155,9 @@ export function useBlackbox( { containerRef } ) {
 		};
 	}, [ containerRef, isEnabled ] );
 
-	return { isChallengeActive, isLoading, hasChallengeContent };
+	return {
+		isChallengeActive: ! hasFailedOpen && isChallengeActive,
+		isLoading: ! hasFailedOpen && isLoading,
+		hasChallengeContent: ! hasFailedOpen && hasChallengeContent,
+	};
 }

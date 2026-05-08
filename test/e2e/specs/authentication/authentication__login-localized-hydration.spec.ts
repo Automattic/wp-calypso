@@ -18,6 +18,7 @@ test.describe(
 				name: /email address|username/i,
 			} );
 			await expect( usernameInput ).toBeEnabled( { timeout: 15_000 } );
+			await usernameInput.fill( 'e2e@example.com' );
 
 			const continueButton = page.getByRole( 'button', { name: /^continue$/i } );
 			await expect( continueButton ).toBeEnabled( { timeout: 15_000 } );
@@ -36,6 +37,7 @@ test.describe(
 				name: /e-mailadres|gebruikersnaam/i,
 			} );
 			await expect( usernameInput ).toBeEnabled( { timeout: 15_000 } );
+			await usernameInput.fill( 'e2e@example.com' );
 
 			const continueButton = page.getByRole( 'button', { name: /^doorgaan$/i } );
 			await expect( continueButton ).toBeEnabled( { timeout: 15_000 } );

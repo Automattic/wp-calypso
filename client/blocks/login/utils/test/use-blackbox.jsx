@@ -104,6 +104,24 @@ describe( 'useBlackbox', () => {
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
 	} );
 
+	test( 'fails open when a started challenge never completes', async () => {
+		let callbacks;
+		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
+			callbacks = config;
+		} );
+
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => callbacks.onChallengeStart() );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/active/empty' );
+
+		act( () => jest.advanceTimersByTime( 5000 ) );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+	} );
+
 	test( 'tracks challenge container content as a blocking signal', async () => {
 		let callbacks;
 		window.Blackbox.configure.mockImplementationOnce( ( config ) => {
@@ -124,6 +142,25 @@ describe( 'useBlackbox', () => {
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/content' );
 
 		act( () => callbacks.onChallengeComplete() );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
+	} );
+
+	test( 'fails open when challenge content remains without completion', async () => {
+		window.Blackbox.configure.mockImplementationOnce( () => {} );
+
+		render( <TestComponent /> );
+
+		await act( async () => {} );
+		act( () => jest.advanceTimersByTime( 500 ) );
+
+		await act( async () => {
+			screen.getByTestId( 'blackbox-container' ).appendChild( document.createElement( 'iframe' ) );
+		} );
+
+		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/content' );
+
+		act( () => jest.advanceTimersByTime( 5000 ) );
 
 		expect( screen.getByTestId( 'blackbox-state' ) ).toHaveTextContent( 'ready/inactive/empty' );
 	} );
