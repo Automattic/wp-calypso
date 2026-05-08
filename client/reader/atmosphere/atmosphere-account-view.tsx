@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { AtmosphereNavigation } from './atmosphere-navigation';
@@ -54,13 +55,29 @@ export function AtmosphereAccountView( { connectionId, tab }: Props ) {
 		);
 	}
 
-	const title = connection.display_name || connection.handle;
+	const documentTitle = connection.display_name || connection.handle;
+	const handle = connection.handle;
+	const subtitle = handle
+		? translate(
+				'Catch up with the latest from the people you follow on Bluesky with @%(handle)s',
+				{ args: { handle } }
+		  )
+		: translate( 'Catch up with the latest from the people you follow on Bluesky.' );
+
+	const title = (
+		<span className="atmosphere-view__section-title">
+			<span data-testid="atmosphere-section-logo" aria-hidden="true">
+				<ReaderBlueskyIcon />
+			</span>
+			<span>ATmosphere</span>
+		</span>
+	);
 
 	return (
 		<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
 			<ReaderMain className="atmosphere-view">
-				<DocumentHead title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: title } ) } />
-				<NavigationHeader title={ title } subtitle={ `@${ connection.handle }` } />
+				<DocumentHead title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: documentTitle } ) } />
+				<NavigationHeader title={ title } subtitle={ subtitle } />
 				<AtmosphereNavigation connectionId={ connection.id } selectedTab={ tab } />
 				<VStack spacing={ 4 } className="atmosphere-view__body">
 					{ renderTab( tab, connection ) }
