@@ -27,8 +27,7 @@ import {
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
-import { getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
-import ReaderPopularSitesSidebar from '../stream/reader-popular-sites-sidebar';
+import { ReaderPopularSitesSidebarContainer } from '../stream/reader-popular-sites-sidebar';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import SiteResults from './site-results';
@@ -227,8 +226,8 @@ class SearchStream extends React.Component {
 								/>
 							) }
 							{ ! query && (
-								<ReaderPopularSitesSidebar
-									items={ this.props.items }
+								<ReaderPopularSitesSidebarContainer
+									streamKey={ this.props.streamKey }
 									followSource={ READER_SEARCH_POPULAR_SITES }
 								/>
 							) }
@@ -247,8 +246,8 @@ class SearchStream extends React.Component {
 									onReceiveSearchResults={ this.setSearchFeeds }
 								/>
 							) ) || (
-								<ReaderPopularSitesSidebar
-									items={ this.props.items }
+								<ReaderPopularSitesSidebarContainer
+									streamKey={ this.props.streamKey }
 									followSource={ READER_SEARCH_POPULAR_SITES }
 								/>
 							) }
@@ -274,10 +273,6 @@ export default connect(
 		readerAliasedFollowFeedUrl:
 			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
 		isLoggedIn: isUserLoggedIn( state ),
-		items: getTransformedStreamItems( state, {
-			streamKey: ownProps.streamKey,
-			recsStreamKey: ownProps.recsStreamKey,
-		} ),
 	} ),
 	{
 		recordReaderTracksEvent,
