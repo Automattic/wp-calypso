@@ -119,6 +119,44 @@ describe( 'useStreamPosts — fetching', () => {
 		expect( nock.isDone() ).toBe( true );
 	} );
 
+	it( 'stops paginating when a page returns no posts even if `meta.next_page` is set', async () => {
+		const CONVERSATIONS_PATH = '/rest/v1.2/read/conversations';
+		nock( BASE )
+			.get( CONVERSATIONS_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => ! ( 'page_handle' in q ) )
+			.reply( 200, {
+				posts: [ apiPost( 1 ) ],
+				meta: { next_page: 'algorithm=read:comments:recent/1&last_post_id=1' },
+			} );
+
+		nock( BASE )
+			.get( CONVERSATIONS_PATH )
+			.query( ( q: Record< string, string | string[] | undefined > ) => 'page_handle' in q )
+			.reply( 200, {
+				posts: [],
+				// Conversations keeps echoing a cursor past the end of the stream;
+				// without the empty-page guard the infinite query would loop here.
+				meta: { next_page: 'algorithm=read:comments:recent/1' },
+			} );
+
+		const queryClient = makeQueryClient();
+		const { Wrapper } = makeWrapper( queryClient );
+		const { result } = renderHook( () => useStreamPosts( { streamKey: 'conversations' } ), {
+			wrapper: Wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.items ).toHaveLength( 1 ) );
+
+		act( () => {
+			result.current.fetchNextPage();
+		} );
+
+		await waitFor( () => expect( result.current.lastPage ).toBe( true ) );
+		expect( result.current.hasNextPage ).toBe( false );
+		expect( result.current.items ).toHaveLength( 1 );
+		expect( nock.isDone() ).toBe( true );
+	} );
+
 	it( 'reports an error when the fetch fails', async () => {
 		nock( BASE ).get( LIKES_PATH ).query( true ).reply( 500, { error: 'kaboom' } );
 

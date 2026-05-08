@@ -156,6 +156,16 @@ export function useStreamPosts( {
 				initialPageParam: startDate ? { before: startDate } : null,
 				enabled,
 				getNextPageParam: ( lastPage, _allPages, lastPageParam ) => {
+					// Stop paginating once a page comes back empty even if the API
+					// still returns a `next_page` cursor — conversations (and a few
+					// other endpoints) keep echoing a cursor past the end of the
+					// stream, which would otherwise loop the same page forever.
+					// Mirrors the legacy `lastPage` reducer:
+					// `streamItems.length === 0 || ! pageHandle`.
+					const { streamItems } = normalizeStreamPage( lastPage, streamType );
+					if ( streamItems.length === 0 ) {
+						return undefined;
+					}
 					// `extractPageHandle` only consults `payload.pageHandle.offset` for
 					// the recommendations family; for cursor / date streams the rest of
 					// the union is harmless extra fields.
