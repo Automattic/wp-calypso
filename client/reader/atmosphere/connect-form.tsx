@@ -78,6 +78,7 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 								{ errorMessage( error, translate ) }
 							</p>
 						) : null }
+						{ /* Wrap so the button stays intrinsic-sized inside VStack (which stretches children by default). */ }
 						<div>
 							<Button
 								variant="primary"
@@ -113,6 +114,13 @@ function errorMessage(
 		case 'connection_not_found':
 		case 'not_found':
 		case 'bad_request':
+		// The slice 7c POST /posts wire codes shouldn't surface from the
+		// connect form (it doesn't post), but the AtmosphereError union
+		// covers the whole atmosphere surface, so list them explicitly to
+		// keep the switch exhaustive without changing the user-visible
+		// copy on this screen. The slice-8a `blob_decode_failed` kind is
+		// set client-side from `compressImage` failures and listed here
+		// for the same reason — it won't surface from the connect form.
 		case 'text_too_long':
 		case 'reply_disabled':
 		case 'quote_disabled':
@@ -121,6 +129,12 @@ function errorMessage(
 		case 'blob_decode_failed':
 			return translate( 'Something went wrong.' );
 		default:
+			// Defensive fallback if AtmosphereError widens before this
+			// switch is updated. TypeScript exhaustiveness keeps this
+			// branch unreachable today; without it, an empty-toast notice
+			// would render via `errorNotice( undefined )` for a kind we
+			// haven't classified yet. See `client/reader/AGENTS.md` —
+			// "Add a default: arm to error-message switches."
 			return translate( 'Something went wrong.' );
 	}
 }
