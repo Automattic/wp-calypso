@@ -1,9 +1,46 @@
+/**
+ * Schema for the cached `/wpcom/v2/admin-menu` response.
+ *
+ * The redesign (DES-575 / `WordPress/wp-admin-sidebar` v0.1.4) adds two
+ * optional per-item fields (`group_id`, `signal`) and a top-level `groups[]`
+ * array. The new per-item fields are accepted here in lock-step with the
+ * Jetpack endpoint PR (Phase 1 task 1.1) so that `withSchemaValidation` in
+ * `reducer.js` does not silently drop a payload that carries them. Existing
+ * consumers that ignore these fields see no change in behaviour.
+ *
+ * The top-level `groups[]` array travels through the data layer as a sibling
+ * to `menu[]` and is normalised on the way into the reducer (see
+ * `state/data-layer/wpcom/sites/admin-menu`). The cache here keeps only the
+ * flat `menu[]` array per the existing contract; `groups[]` is folded into
+ * each item via the redesigned selector pipeline.
+ *
+ * See `client/state/admin-menu/types.ts` for the typed shape.
+ */
+
+const signalPropsSchema = {
+	type: 'object',
+	properties: {
+		count: { type: [ 'integer', 'null' ] },
+		numeric_badge: { type: [ 'integer', 'null' ] },
+		badge: { type: [ 'string', 'null' ] },
+		inline_text: { type: [ 'string', 'null' ] },
+		inline_icon: { type: [ 'string', 'null' ] },
+		attention: { type: 'boolean' },
+	},
+};
+
 const commonItemPropsSchema = {
 	slug: { type: 'string' },
 	title: { type: 'string' },
 	type: { type: 'string' },
 	url: { type: 'string' },
 	badge: { type: 'string' },
+	// Optional: the group this item belongs to. `null` / missing = top-level.
+	group_id: { type: [ 'string', 'null' ] },
+	// Optional: attention / count / badge data. `null` = item produced no signal.
+	signal: {
+		oneOf: [ signalPropsSchema, { type: 'null' } ],
+	},
 };
 
 const menuItemsSite = {
