@@ -1,10 +1,5 @@
 import { fetchReadStream, getStreamType } from '@automattic/api-queries';
-import {
-	infiniteQueryOptions,
-	keepPreviousData,
-	useInfiniteQuery,
-	useQueryClient,
-} from '@tanstack/react-query';
+import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'calypso/state';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
@@ -36,13 +31,6 @@ export interface UseStreamPostsResult {
 	 * update-notice pill" from regular scroll-driven pagination.
 	 */
 	isRefetching: boolean;
-	/**
-	 * `true` when the items currently exposed are the previous stream's data
-	 * being kept on screen (`placeholderData: keepPreviousData`) while a new
-	 * `streamKey` / `feedId` / `localeSlug` query is loading in the
-	 * background. Consumers can render a subtle "refreshing" treatment.
-	 */
-	isPlaceholderData: boolean;
 	hasNextPage: boolean;
 	lastPage: boolean;
 	error: unknown;
@@ -190,13 +178,6 @@ export function useStreamPosts( {
 				// pages to localStorage. After a page reload, the very first paint
 				// rehydrates already-fetched streams from storage instead of
 				// showing a skeleton.
-				//
-				// When the queryKey changes (streamKey / feedId / localeSlug),
-				// keep showing the previous stream's pages until the new query
-				// resolves. The user sees their familiar list with a brief stale
-				// indicator instead of a skeleton swap. `query.isPlaceholderData`
-				// flips while the previous data is being shown.
-				placeholderData: keepPreviousData,
 				refetchOnWindowFocus: false,
 			} ),
 		[ resolvedStreamKey, feedId, localeSlug, startDate, enabled, streamType, buildPageParams ]
@@ -249,7 +230,6 @@ export function useStreamPosts( {
 		isFetching: query.isFetching,
 		isFetchingNextPage: query.isFetchingNextPage,
 		isRefetching: query.isRefetching,
-		isPlaceholderData: query.isPlaceholderData,
 		hasNextPage: !! query.hasNextPage,
 		lastPage: ! query.hasNextPage && ! query.isFetchingNextPage && query.isFetched,
 		error: query.error,

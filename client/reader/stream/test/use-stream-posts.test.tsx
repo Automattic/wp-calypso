@@ -209,8 +209,8 @@ describe( 'useStreamPosts — fetching', () => {
 	} );
 } );
 
-describe( 'useStreamPosts — keepPreviousData', () => {
-	it( 'keeps the previous stream items on screen while the new query loads', async () => {
+describe( 'useStreamPosts — stream switch', () => {
+	it( 'clears items and flips isLoading when the streamKey changes', async () => {
 		nock( BASE )
 			.get( LIKES_PATH )
 			.query( true )
@@ -234,15 +234,13 @@ describe( 'useStreamPosts — keepPreviousData', () => {
 			{ wrapper: Wrapper, initialProps: { streamKey: 'likes' } }
 		);
 		await waitFor( () => expect( result.current.items ).toHaveLength( 2 ) );
-		expect( result.current.isPlaceholderData ).toBe( false );
 
 		rerender( { streamKey: 'following' } );
-		expect( result.current.items ).toHaveLength( 2 );
-		expect( result.current.items[ 0 ] ).toMatchObject( postKey( 1 ) );
-		expect( result.current.isPlaceholderData ).toBe( true );
+		expect( result.current.items ).toHaveLength( 0 );
+		expect( result.current.isLoading ).toBe( true );
 
 		await waitFor( () => expect( result.current.items[ 0 ] ).toMatchObject( postKey( 99 ) ) );
-		expect( result.current.isPlaceholderData ).toBe( false );
+		expect( result.current.isLoading ).toBe( false );
 		expect( result.current.items ).toHaveLength( 1 );
 	} );
 } );
