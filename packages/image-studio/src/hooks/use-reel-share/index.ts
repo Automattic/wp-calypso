@@ -100,7 +100,46 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			config: { apiPath: string; savePost?: boolean }
 		) => Promise< boolean >;
 	};
-	const { addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { addNotice: addModalNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { createNotice: createCoreNotice } = useDispatch( 'core/notices' ) as {
+		createNotice?: (
+			status: string,
+			message: string,
+			options?: { isDismissible?: boolean; actions?: Array< { label: string; url?: string } > }
+		) => Promise< void >;
+	};
+
+	/**
+	 * Route notices to the surface that's actually visible right now. The
+	 * imageStudioStore notice list only renders inside the open Image Studio
+	 * modal; from the sidebar the modal isn't on screen, so notices need to
+	 * land on the editor's `core/notices` snackbar instead. We use the
+	 * presence of the clip override as the heuristic — only the sidebar
+	 * supplies one today.
+	 */
+	const showNotice = async (
+		message: string,
+		type: 'success' | 'warning' | 'error',
+		actions?: Array< { label: string; url: string; openInNewTab?: boolean } >,
+		isDismissible?: boolean
+	) => {
+		if ( hasOverride ) {
+			await createCoreNotice?.( type, message, {
+				isDismissible: !! isDismissible,
+				actions: actions?.map( ( a ) => ( { label: a.label, url: a.url } ) ),
+			} );
+			return;
+		}
+		// Forward only the args that were supplied so call sites that don't
+		// pass actions/isDismissible aren't surprised by trailing undefineds.
+		if ( isDismissible !== undefined ) {
+			await addModalNotice( message, type, actions, isDismissible );
+		} else if ( actions !== undefined ) {
+			await addModalNotice( message, type, actions );
+		} else {
+			await addModalNotice( message, type );
+		}
+	};
 
 	// Synchronous guard against double-clicks — `isSharing` from useSelect lags
 	// the first dispatch by a render, so we can't rely on `disabled` alone.
@@ -153,7 +192,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 
 		if ( ! currentVideoUrl || ! currentAttachmentId ) {
 			trackImageStudioReelShareInvalidState();
-			await addNotice(
+			await showNotice(
 				__( 'Generate a video first to share it as a Reel.', __i18n_text_domain__ ),
 				'error'
 			);
@@ -166,7 +205,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 
 		if ( ! freshIgConnection ) {
 			trackImageStudioReelShareNotConnected();
-			await addNotice(
+			await showNotice(
 				__(
 					'Connect Instagram in your site marketing settings to share Reels.',
 					__i18n_text_domain__
@@ -186,7 +225,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 
 		if ( ! freshIgIsEnabled ) {
 			trackImageStudioReelShareConnectionDisabled();
-			await addNotice(
+			await showNotice(
 				__(
 					'Instagram sharing is not enabled for this post. Enable it in the Jetpack Social sidebar to share this Reel.',
 					__i18n_text_domain__
@@ -200,7 +239,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 
 		if ( ! freshIsPublished ) {
 			trackImageStudioReelShareNotPublished();
-			await addNotice(
+			await showNotice(
 				__( 'Publish this post first to share it as an Instagram Reel.', __i18n_text_domain__ ),
 				'warning',
 				undefined,
@@ -243,7 +282,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 
 			if ( success ) {
 				trackImageStudioReelShareDispatched();
-				await addNotice(
+				await showNotice(
 					__(
 						'Reel shared to Instagram. It may take a few minutes to appear on your account.',
 						__i18n_text_domain__
@@ -262,7 +301,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			isSharingRef.current = false;
 		}
 	}, [
-		addNotice,
+		showNotice,
 		currentAttachmentId,
 		currentDurationSeconds,
 		currentMeta,
