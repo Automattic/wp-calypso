@@ -42,11 +42,20 @@
 		border-radius: inherit;
 	}
 
-	&__share-row {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 6px;
+	&__share-cta {
+		width: 100%;
+		justify-content: center;
 		margin-bottom: 8px;
+	}
+
+	&__bottom-actions {
+		display: flex;
+		align-items: stretch;
+		gap: 8px;
+	}
+
+	&__bottom-action {
+		flex: 1 1 0;
+		justify-content: center;
 	}
 }

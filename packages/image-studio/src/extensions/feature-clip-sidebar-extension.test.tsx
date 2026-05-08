@@ -14,6 +14,11 @@ const mockTrackOpened = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
+const mockInsertBlocks = jest.fn();
+const mockCreateBlock = jest.fn( ( name: string, attributes: Record< string, unknown > ) => ( {
+	name,
+	attributes,
+} ) );
 
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
@@ -46,6 +51,11 @@ jest.mock( '@wordpress/core-data', () => ( {
 	useEntityProp: () => [ mockMeta, jest.fn() ],
 } ) );
 
+jest.mock( '@wordpress/blocks', () => ( {
+	createBlock: ( name: string, attributes: Record< string, unknown > ) =>
+		mockCreateBlock( name, attributes ),
+} ) );
+
 jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn( ( store: string ) => {
 		if ( store === 'video-studio' ) {
@@ -54,6 +64,9 @@ jest.mock( '@wordpress/data', () => ( {
 				setCurrentAttachmentId: mockSetCurrentAttachmentId,
 				setCurrentDurationSeconds: mockSetCurrentDurationSeconds,
 			};
+		}
+		if ( store === 'core/block-editor' ) {
+			return { insertBlocks: mockInsertBlocks };
 		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
@@ -138,6 +151,8 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockSetCurrentDurationSeconds.mockClear();
 		mockReelHandleShare.mockClear();
 		mockGenericHandleShare.mockClear();
+		mockInsertBlocks.mockClear();
+		mockCreateBlock.mockClear();
 		mockMeta = {};
 		mockMedia = null;
 		mockReelVisible = false;
@@ -226,7 +241,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 			};
 		};
 
-		it( 'renders the video preview and Regenerate button', () => {
+		it( 'renders the video preview and bottom action buttons', () => {
 			setupClip();
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			const { container } = render( <FeatureClipPanel /> );
@@ -234,28 +249,31 @@ describe( 'feature-clip-sidebar-extension', () => {
 			const video = container.querySelector( 'video' );
 			expect( video ).not.toBeNull();
 			expect( video?.getAttribute( 'src' ) ).toBe( 'https://files.wordpress.com/clip.mp4' );
-			expect( screen.getByRole( 'button', { name: 'Regenerate clip' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Add to post' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Regenerate' } ) ).toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'shows share buttons only when their hooks report isVisible', () => {
+		it( 'hides share buttons when neither hook reports isVisible', () => {
 			setupClip();
 			mockReelVisible = false;
 			mockGenericVisible = false;
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			const { rerender } = render( <FeatureClipPanel /> );
+			render( <FeatureClipPanel /> );
 			expect(
 				screen.queryByRole( 'button', { name: /Share on Instagram/i } )
 			).not.toBeInTheDocument();
-			expect(
-				screen.queryByRole( 'button', { name: /Share to other apps/i } )
-			).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: /^Share$/i } ) ).not.toBeInTheDocument();
+		} );
 
+		it( 'shows both share buttons when both hooks report isVisible', () => {
+			setupClip();
 			mockReelVisible = true;
 			mockGenericVisible = true;
-			rerender( <FeatureClipPanel /> );
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
 			expect( screen.getByRole( 'button', { name: /Share on Instagram/i } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: /Share to other apps/i } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /^Share$/i } ) ).toBeInTheDocument();
 		} );
 
 		it( 'invokes handleShare on share button clicks', () => {
@@ -268,7 +286,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: /Share on Instagram/i } ) );
 			expect( mockReelHandleShare ).toHaveBeenCalledTimes( 1 );
 
-			fireEvent.click( screen.getByRole( 'button', { name: /Share to other apps/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /^Share$/i } ) );
 			expect( mockGenericHandleShare ).toHaveBeenCalledTimes( 1 );
 		} );
 
@@ -277,7 +295,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Regenerate clip' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Regenerate' } ) );
 			await Promise.resolve();
 			await Promise.resolve();
 
@@ -286,6 +304,20 @@ describe( 'feature-clip-sidebar-extension', () => {
 				undefined,
 				'post_editor_feature_clip'
 			);
+		} );
+
+		it( 'inserts a core/video block when Add to post is clicked', () => {
+			setupClip();
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Add to post' } ) );
+
+			expect( mockCreateBlock ).toHaveBeenCalledWith( 'core/video', {
+				id: 42,
+				src: 'https://files.wordpress.com/clip.mp4',
+			} );
+			expect( mockInsertBlocks ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

@@ -8,6 +8,7 @@
  * extension), shows a small video preview, a share row mirroring the modal,
  * and a Regenerate button.
  */
+import { createBlock } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
@@ -76,8 +77,15 @@ function FeatureClipPreview( {
 		: __( 'Share on Instagram', __i18n_text_domain__ );
 
 	const genericLabel = generic.isSharing
-		? __( 'Sharing to other apps…', __i18n_text_domain__ )
-		: __( 'Share to other apps', __i18n_text_domain__ );
+		? __( 'Sharing…', __i18n_text_domain__ )
+		: __( 'Share', __i18n_text_domain__ );
+
+	const handleAddToPost = () => {
+		const { insertBlocks } = dispatch( 'core/block-editor' ) as {
+			insertBlocks?: ( blocks: unknown ) => void;
+		};
+		insertBlocks?.( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+	};
 
 	return (
 		<>
@@ -93,46 +101,50 @@ function FeatureClipPreview( {
 					preload="metadata"
 				/>
 			</div>
-			{ ( reel.isVisible || generic.isVisible ) && (
-				<div
-					className="image-studio-feature-clip-panel__share-row"
-					role="group"
-					aria-label={ __( 'Share feature clip', __i18n_text_domain__ ) }
+			{ reel.isVisible && (
+				<Button
+					variant="primary"
+					icon={ <SocialLogo icon="instagram" size={ 18 } /> }
+					className="image-studio-feature-clip-panel__share-cta"
+					__next40pxDefaultSize
+					disabled={ reel.isSharing }
+					isBusy={ reel.isSharing }
+					onClick={ reel.handleShare }
 				>
-					{ generic.isVisible && (
-						<Button
-							variant="secondary"
-							icon={ share }
-							className="image-studio-feature-clip-panel__share-button"
-							label={ genericLabel }
-							showTooltip
-							disabled={ generic.isSharing }
-							isBusy={ generic.isSharing }
-							onClick={ generic.handleShare }
-						/>
-					) }
-					{ reel.isVisible && (
-						<Button
-							variant="secondary"
-							icon={ <SocialLogo icon="instagram" size={ 18 } /> }
-							className="image-studio-feature-clip-panel__share-button"
-							label={ reelLabel }
-							showTooltip
-							disabled={ reel.isSharing }
-							isBusy={ reel.isSharing }
-							onClick={ reel.handleShare }
-						/>
-					) }
-				</div>
+					{ reelLabel }
+				</Button>
 			) }
-			<Button
-				variant="secondary"
-				className="image-studio-feature-clip-panel__cta"
-				__next40pxDefaultSize
-				onClick={ openImageStudioForFeatureClip }
-			>
-				{ __( 'Regenerate clip', __i18n_text_domain__ ) }
-			</Button>
+			{ generic.isVisible && (
+				<Button
+					variant={ reel.isVisible ? 'secondary' : 'primary' }
+					icon={ share }
+					className="image-studio-feature-clip-panel__share-cta"
+					__next40pxDefaultSize
+					disabled={ generic.isSharing }
+					isBusy={ generic.isSharing }
+					onClick={ generic.handleShare }
+				>
+					{ genericLabel }
+				</Button>
+			) }
+			<div className="image-studio-feature-clip-panel__bottom-actions">
+				<Button
+					variant="secondary"
+					className="image-studio-feature-clip-panel__bottom-action"
+					__next40pxDefaultSize
+					onClick={ handleAddToPost }
+				>
+					{ __( 'Add to post', __i18n_text_domain__ ) }
+				</Button>
+				<Button
+					variant="secondary"
+					className="image-studio-feature-clip-panel__bottom-action"
+					__next40pxDefaultSize
+					onClick={ openImageStudioForFeatureClip }
+				>
+					{ __( 'Regenerate', __i18n_text_domain__ ) }
+				</Button>
+			</div>
 		</>
 	);
 }
