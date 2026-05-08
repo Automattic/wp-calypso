@@ -227,11 +227,6 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 					</button>
 				) ) }
 			</div>
-			{ isVideo ? (
-				<p className="image-studio-input-toolbar-dialog-footnote">
-					{ __( 'All clips export as 9:16 vertical MP4 files.', __i18n_text_domain__ ) }
-				</p>
-			) : null }
 		</AgentUI.InputToolbar>
 	);
 }

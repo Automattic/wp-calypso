@@ -495,16 +495,6 @@ body.js.is-image-studio-open {
 	}
 }
 
-// Footnote under the video style grid (e.g. "All clips export as
-// 9:16 vertical MP4 files.").
-.image-studio-input-toolbar-dialog-footnote {
-	margin: 12px 0 0;
-	font-size: $text-xs;
-	line-height: 1.4;
-	color: #b0b0b0;
-	text-align: center;
-}
-
 .image-studio-input-toolbar-card {
 	display: flex;
 	flex-direction: column;

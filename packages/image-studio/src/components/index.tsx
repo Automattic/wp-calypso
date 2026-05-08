@@ -261,6 +261,8 @@ function ImageStudioAgentChat( {
 					<em>
 						{ __( 'All generated videos are saved to your Media Library.', __i18n_text_domain__ ) }
 					</em>
+					<br />
+					<em>{ __( 'All clips export as 9:16 vertical MP4 files.', __i18n_text_domain__ ) }</em>
 				</p>
 			) }
 		</>
