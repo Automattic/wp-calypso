@@ -1,12 +1,12 @@
 import { mutationOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-interface SaveDraftMutationVariables {
+export interface SaveDraftMutationVariables {
 	siteId: number;
 	content: string;
 }
 
-interface SaveDraftMutationResult {
+export interface SaveDraftMutationResult {
 	ID: number;
 	site_ID: number;
 	URL: string;

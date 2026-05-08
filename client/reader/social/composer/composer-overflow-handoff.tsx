@@ -1,34 +1,31 @@
 import './composer-overflow-handoff.scss';
 
 import { sitesQuery, userSettingsQuery } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
-import { DataForm, type Field } from '@wordpress/dataviews';
+import { useMutation, useQuery, type UseMutationResult } from '@tanstack/react-query';
+import { Button, ComboboxControl } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import PreferencesLoginSiteDropdown from 'calypso/dashboard/me/preferences-primary-site/site-dropdown';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useComposerConfig } from './composer-config';
 import { useComposer } from './composer-provider';
-import { saveDraftMutation } from './use-save-draft-mutation';
+import {
+	saveDraftMutation,
+	type SaveDraftMutationResult,
+	type SaveDraftMutationVariables,
+} from './use-save-draft-mutation';
 import type { Site } from '@automattic/api-core';
 
 interface ComposerOverflowHandoffProps {
 	text: string;
 }
 
-interface OverflowFormData {
-	selectedSiteId: number;
-}
-
-type SaveDraftMutate = ReturnType<
-	typeof useMutation<
-		{ ID: number; site_ID: number; URL: string },
-		Error,
-		{ siteId: number; content: string }
-	>
+type SaveDraftMutate = UseMutationResult<
+	SaveDraftMutationResult,
+	Error,
+	SaveDraftMutationVariables
 >[ 'mutate' ];
 
 function SingleSiteHandoff( { site, text }: { site: Site; text: string } ) {
@@ -47,66 +44,54 @@ function SingleSiteHandoff( { site, text }: { site: Site; text: string } ) {
 }
 
 function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } ) {
-	const { data: userSettings } = useQuery( userSettingsQuery() );
+	const translate = useTranslate();
+	// Gate the picker render on `userSettings` having settled so the
+	// pre-selected value doesn't flip from sites[0] to the primary site
+	// once the query resolves (visible flicker if the user types past the
+	// limit before the settings query is in cache).
+	const { data: userSettings, isPending: settingsPending } = useQuery( userSettingsQuery() );
 
 	const [ userSelection, setUserSelection ] = useState< number | null >( null );
 
-	const displayedSiteId =
-		userSelection ??
-		( userSettings?.primary_site_ID && sites.some( ( s ) => s.ID === userSettings.primary_site_ID )
+	const initialSiteId =
+		userSettings?.primary_site_ID && sites.some( ( s ) => s.ID === userSettings.primary_site_ID )
 			? userSettings.primary_site_ID
-			: sites[ 0 ].ID );
+			: sites[ 0 ].ID;
+
+	const displayedSiteId = userSelection ?? initialSiteId;
 
 	const selectedSite = sites.find( ( s ) => s.ID === displayedSiteId ) ?? sites[ 0 ];
 
 	const { mutate, isPending } = useMutation( saveDraftMutation() );
 
-	const fields = useMemo< Field< OverflowFormData >[] >(
-		() => [
-			{
-				id: 'selectedSiteId',
-				label: '',
-				Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-					const { id, getValue } = field;
-					const value = getValue( { item: data } )?.toString( 10 ) ?? '';
-					return (
-						<PreferencesLoginSiteDropdown
-							sites={ sites }
-							value={ value }
-							onChange={ ( newValue ) => {
-								if ( newValue ) {
-									onChange( { [ id ]: parseInt( newValue, 10 ) } );
-								}
-							} }
-							label=""
-							hideLabelFromVision={ hideLabelFromVision }
-						/>
-					);
-				},
-			},
-		],
+	const options = useMemo(
+		() =>
+			sites.map( ( s ) => ( {
+				value: String( s.ID ),
+				label: s.name || s.URL,
+			} ) ),
 		[ sites ]
 	);
 
-	const form = {
-		layout: { type: 'regular' as const },
-		fields: [ 'selectedSiteId' ],
-	};
-
-	const formData: OverflowFormData = { selectedSiteId: displayedSiteId };
+	if ( settingsPending ) {
+		return null;
+	}
 
 	return (
 		<>
 			<fieldset disabled={ isPending }>
-				<DataForm< OverflowFormData >
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits ) => {
-						if ( edits.selectedSiteId !== undefined ) {
-							setUserSelection( edits.selectedSiteId );
+				<ComboboxControl
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
+					label={ translate( 'Choose a site' ) as string }
+					value={ String( displayedSiteId ) }
+					onChange={ ( newValue ) => {
+						if ( newValue ) {
+							setUserSelection( parseInt( newValue, 10 ) );
 						}
 					} }
+					options={ options }
+					allowReset={ false }
 				/>
 			</fieldset>
 			<MoveToEditorButton
@@ -138,13 +123,11 @@ function MoveToEditorButton( {
 			{ siteId: site.ID, content: text },
 			{
 				onSuccess: ( data ) => {
-					const adminUrl = site.options?.admin_url;
-					if ( ! adminUrl ) {
-						dispatch(
-							errorNotice( translate( "Couldn't open the editor. Try a different site." ) )
-						);
-						return;
-					}
+					// `admin_url` is documented to be set on every WP.com site
+					// returned by /me/sites; falling back to a derived path
+					// avoids leaving an orphan draft if the field is missing.
+					const adminUrl =
+						site.options?.admin_url ?? `${ site.URL.replace( /\/$/, '' ) }/wp-admin/`;
 					window.location.assign(
 						addQueryArgs( `${ adminUrl }post.php`, {
 							post: data.ID,
@@ -152,12 +135,22 @@ function MoveToEditorButton( {
 						} )
 					);
 				},
-				onError: () => {
+				onError: ( error ) => {
 					dispatch(
 						errorNotice(
 							translate( "Couldn't save your draft. Try again or pick a different site." )
 						)
 					);
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Reader social composer overflow handoff: save draft failed',
+						severity: 'error',
+						extra: {
+							type: 'reader_social_composer_overflow_handoff_save_draft_error',
+							site_id: site.ID,
+							error_message: error?.message,
+						},
+					} );
 				},
 			}
 		);

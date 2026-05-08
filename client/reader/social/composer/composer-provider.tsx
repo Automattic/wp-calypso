@@ -109,9 +109,14 @@ interface ComposerContextValue {
 	closeComposer: ( options?: CloseComposerOptions ) => void;
 	/** Read by the modal to render media UI and gate submission. */
 	mediaSlot: ComposerMediaSlot;
-	/** Sticky-once flag: true after the user has crossed the per-protocol char limit at least once during the current modal session. Reset on each modal open. */
+	/**
+	 * Sticky-once flag: true after the user has crossed the per-protocol
+	 * char limit at least once during the current modal session. Reset on
+	 * each modal open. Stays true once tripped so the overflow-handoff UI
+	 * doesn't disappear when the user trims back under the limit, which
+	 * would otherwise hide the escape hatch they're working toward.
+	 */
 	hasBeenOverLimit: boolean;
-	/** Set `hasBeenOverLimit` to true. Idempotent. */
 	markOverLimit: () => void;
 }
 
@@ -150,6 +155,7 @@ export function ComposerProvider< TError, TParams, TResult >( {
 				return;
 			}
 			triggerRef.current = document.activeElement as HTMLElement | null;
+			setHasBeenOverLimit( false );
 			setMode( { ...next, connectionId } );
 		},
 		[ connectionId, config.supportedModes ]
@@ -169,12 +175,6 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	const markOverLimit = useCallback( () => {
 		setHasBeenOverLimit( true );
 	}, [] );
-
-	useEffect( () => {
-		if ( mode ) {
-			setHasBeenOverLimit( false );
-		}
-	}, [ mode ] );
 
 	// `config.useMedia` is captured once at the start of the provider's life
 	// and called every render. Per the contract on `ComposerConfig.useMedia`,

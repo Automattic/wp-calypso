@@ -13,6 +13,8 @@ import { testComposerConfig } from '../test-config';
 import type { Site } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
+jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+
 const ORIGIN = 'https://public-api.wordpress.com';
 
 function renderWithComposer( ui: ReactNode, { withMode = false } = {} ) {
@@ -78,6 +80,38 @@ describe( 'ComposerOverflowHandoff — null branches', () => {
 		// Wait a tick for the query to resolve, then assert nothing rendered.
 		await new Promise( ( r ) => setTimeout( r, 0 ) );
 		expect( screen.queryByRole( 'region', { name: /publish on your own site/i } ) ).toBeNull();
+	} );
+} );
+
+describe( 'ComposerOverflowHandoff — protocol label in copy', () => {
+	it( 'interpolates config.protocolLabel into the section description', async () => {
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'My Blog',
+				slug: 'myblog.wordpress.com',
+				URL: 'https://myblog.wordpress.com',
+				options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+		] );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="hi" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		expect( await screen.findByText( /Too long for TestProtocol\?/i ) ).toBeVisible();
 	} );
 } );
 

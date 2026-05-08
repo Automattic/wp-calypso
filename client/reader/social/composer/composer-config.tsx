@@ -108,9 +108,7 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	/**
 	 * Short display label for the protocol (e.g. "Bluesky", "Mastodon").
 	 * Surfaced in user-visible copy that mentions the social network by
-	 * name — currently only the overflow-handoff section in
-	 * `<ComposerOverflowHandoff />`. Not localized: these are brand
-	 * names that don't translate.
+	 * name. Not localized — brand names don't translate.
 	 */
 	protocolLabel: string;
 	/**
