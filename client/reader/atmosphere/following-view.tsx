@@ -2,6 +2,7 @@ import {
 	followAtmosphereActorMutation,
 	unfollowAtmosphereActorMutation,
 	useAtmosphereActorFollowsInfiniteQuery,
+	useAtmosphereScopedProfileQuery,
 	useConnectionsQuery,
 } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
@@ -52,6 +53,7 @@ export function FollowingView( { connectionId, actor }: Props ) {
 		}
 	}, [ connectionsPending, connectionsError, connection ] );
 
+	const profileQuery = useAtmosphereScopedProfileQuery( { connectionId, actor } );
 	const followsQuery = useAtmosphereActorFollowsInfiniteQuery( { connectionId, actor } );
 	const {
 		data: followsData,
@@ -226,6 +228,13 @@ export function FollowingView( { connectionId, actor }: Props ) {
 				protocolLabel="ATmosphere"
 				protocolHomeURL="https://bsky.app"
 				protocolHomeLabel="Bluesky"
+				header={ {
+					displayName: profileQuery.data?.display_name ?? null,
+					handle: profileQuery.data?.handle ?? actor,
+					count: profileQuery.data?.counts.follows ?? null,
+					mode: 'following',
+					isPending: profileQuery.isPending,
+				} }
 			/>
 		</ReaderMain>
 	);
