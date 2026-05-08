@@ -15,11 +15,16 @@ describe( 'SocialAccountRow', () => {
 	};
 
 	it( 'renders avatar, display name, handle, and bio', () => {
-		render( <SocialAccountRow { ...baseProps } /> );
+		const { container } = render( <SocialAccountRow { ...baseProps } /> );
 		expect( screen.getByText( 'Alice' ) ).toBeInTheDocument();
 		expect( screen.getByText( '@alice.bsky.social' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'designer' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'img' ) ).toHaveAttribute( 'src', 'https://cdn.test/avatar.jpg' );
+		// Avatar uses alt="" (decorative) — the display name is rendered
+		// alongside it — so we can't query by role="img". Look up the
+		// image directly to assert the src.
+		const avatar = container.querySelector( 'img' );
+		expect( avatar ).toHaveAttribute( 'src', 'https://cdn.test/avatar.jpg' );
+		expect( avatar ).toHaveAttribute( 'alt', '' );
 	} );
 
 	it( 'renders the row as a link to the profile', () => {

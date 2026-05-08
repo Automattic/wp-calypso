@@ -37,7 +37,10 @@ export function SocialAccountRow( props: SocialAccountRowProps ) {
 	return (
 		<div className="social-account-row">
 			<div className="social-account-row__avatar">
-				{ avatarUrl ? <img src={ avatarUrl } alt={ displayName } /> : null }
+				{ /* The display name is rendered as a sibling text node; mark the
+				   avatar decorative so screen readers don't double-announce it.
+				   Mirrors the SocialProfileCard pattern at profile-card.tsx. */ }
+				{ avatarUrl ? <img src={ avatarUrl } alt="" /> : null }
 			</div>
 			<div className="social-account-row__main">
 				<div className="social-account-row__identity">
