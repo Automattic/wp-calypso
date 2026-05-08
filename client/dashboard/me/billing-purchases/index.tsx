@@ -31,11 +31,13 @@ import { PurchaseRemovedNotice } from './purchase-removed-notice';
 
 export default function PurchasesList() {
 	const currentSearchParams = purchasesRoute.useSearch();
-	const { removed, removedDomain } = purchasesIndexRoute.useSearch();
+	const { removed, removedDomain, removedId } = purchasesIndexRoute.useSearch();
 	// Capture notice data on first render — useSearch() may lose the values
 	// after replaceState strips the URL params.
 	const [ removedNoticeData ] = useState( () =>
-		removed ? { productNoun: removed, atomicDomain: removedDomain } : null
+		removed
+			? { productNoun: removed, atomicDomain: removedDomain, purchaseId: removedId ?? null }
+			: null
 	);
 	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
 
@@ -46,16 +48,10 @@ export default function PurchasesList() {
 			const url = new URL( window.location.href );
 			url.searchParams.delete( 'removed' );
 			url.searchParams.delete( 'removedDomain' );
+			url.searchParams.delete( 'removedId' );
 			window.history.replaceState( window.history.state, '', url.toString() );
 		}
 	}, [ removed ] );
-
-	// Dismiss the success notice if the background mutation fails.
-	useEffect( () => {
-		const dismiss = () => setShowRemovedNotice( false );
-		window.addEventListener( 'purchase-remove-failed', dismiss );
-		return () => window.removeEventListener( 'purchase-remove-failed', dismiss );
-	}, [] );
 
 	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
@@ -63,6 +59,20 @@ export default function PurchasesList() {
 	);
 	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
 	const isLoading = isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites;
+
+	// Dismiss the success notice when the background mutation rolls back —
+	// detected by the captured purchase reappearing in the userPurchasesQuery
+	// cache. The cancel page's 15s cache guard re-strips transient stale
+	// refetches synchronously inside the QueryCache notify callback, so this
+	// effect never observes transient success-path reappearances.
+	useEffect( () => {
+		if ( ! removedNoticeData?.purchaseId ) {
+			return;
+		}
+		if ( purchases.some( ( p ) => p.ID === removedNoticeData.purchaseId ) ) {
+			setShowRemovedNotice( false );
+		}
+	}, [ purchases, removedNoticeData ] );
 
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {
