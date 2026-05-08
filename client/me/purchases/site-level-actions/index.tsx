@@ -268,25 +268,35 @@ export default function SiteActionInterstitial( {
 				<div className="site-level-actions__left">
 					<Card className="site-level-actions__wrapper-card">
 						<h3 className="site-level-actions__section-title">{ sectionLabel }</h3>
-						{ eligiblePurchases.map( ( p ) => (
-							<div
-								key={ p.id }
-								className={ clsx( 'site-level-actions__row', {
-									'is-selected': selectedIds.has( p.id ),
-								} ) }
-							>
-								<FormLabel className="site-level-actions__label">
-									<FormInputCheckbox
-										className="site-level-actions__checkbox"
-										checked={ selectedIds.has( p.id ) }
-										onChange={ () => handleToggle( p.id ) }
-										disabled={ p.id === purchaseId }
-									/>
-									<span className="site-level-actions__name">{ getName( p ) }</span>
-								</FormLabel>
-								<span className="site-level-actions__renewal-info">{ getRenewalText( p ) }</span>
-							</div>
-						) ) }
+						{ [ ...eligiblePurchases ]
+							.sort( ( a, b ) => {
+								if ( a.id === purchaseId ) {
+									return -1;
+								}
+								if ( b.id === purchaseId ) {
+									return 1;
+								}
+								return 0;
+							} )
+							.map( ( p ) => (
+								<div
+									key={ p.id }
+									className={ clsx( 'site-level-actions__row', {
+										'is-selected': selectedIds.has( p.id ),
+									} ) }
+								>
+									<FormLabel className="site-level-actions__label">
+										<FormInputCheckbox
+											className="site-level-actions__checkbox"
+											checked={ selectedIds.has( p.id ) }
+											onChange={ () => handleToggle( p.id ) }
+											disabled={ p.id === purchaseId }
+										/>
+										<span className="site-level-actions__name">{ getName( p ) }</span>
+									</FormLabel>
+									<span className="site-level-actions__renewal-info">{ getRenewalText( p ) }</span>
+								</div>
+							) ) }
 						<div className="site-level-actions__button-row">
 							<Button primary scary={ isDestructive } onClick={ handleContinue }>
 								{ buttonLabel }

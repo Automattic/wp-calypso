@@ -62,7 +62,11 @@ export function getProductCategory( purchase: PurchaseForCopy ): ProductCategory
 	if ( purchase.is_plan ) {
 		return 'plan';
 	}
-	if ( purchase.is_domain_registration ) {
+	if (
+		purchase.is_domain_registration ||
+		purchase.product_slug === 'domain_map' ||
+		purchase.product_slug === 'domain_transfer'
+	) {
 		return 'domain';
 	}
 	if (
@@ -612,7 +616,7 @@ export function getButtonLabels( {
 		}
 		return {
 			primary: __( 'Continue removal' ),
-			secondary: __( 'Keep subscriptions' ),
+			secondary: __( 'Keep upgrades' ),
 		};
 	}
 	const category = getProductCategory( purchase );

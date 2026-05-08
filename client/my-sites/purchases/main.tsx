@@ -1,5 +1,7 @@
+import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import { Card } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -156,6 +158,16 @@ export function PurchaseCancel( {
 } ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
+	const { data: purchaseCancelFeatures, isLoading: isPurchaseCancelFeaturesLoading } = useQuery(
+		purchaseCancelFeaturesQuery( purchaseId )
+	);
+	const additionalFeaturesQueries = useQueries( {
+		queries: ( additionalPurchaseIds ?? [] ).map( ( id ) => purchaseCancelFeaturesQuery( id ) ),
+	} );
+	const additionalCancellationFeatures = additionalFeaturesQueries.flatMap(
+		( q ) => q.data?.features ?? []
+	);
+	const isAdditionalFeaturesLoading = additionalFeaturesQueries.some( ( q ) => q.isLoading );
 
 	return (
 		<Main wideLayout className="purchases">
@@ -173,6 +185,11 @@ export function PurchaseCancel( {
 					siteSlug={ siteSlug }
 					intent={ intent }
 					additionalPurchaseIds={ additionalPurchaseIds }
+					purchaseCancelFeatures={ purchaseCancelFeatures }
+					isPurchaseCancelFeaturesLoading={
+						isPurchaseCancelFeaturesLoading || isAdditionalFeaturesLoading
+					}
+					additionalCancellationFeatures={ additionalCancellationFeatures }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }

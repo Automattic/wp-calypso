@@ -341,7 +341,7 @@ describe( 'multi-purchase getButtonLabels', () => {
 			secondary: 'Keep subscriptions',
 		} );
 	} );
-	test( 'remove intent uses "Continue removal" / "Keep subscriptions"', () => {
+	test( 'remove intent uses "Continue removal" / "Keep upgrades"', () => {
 		expect(
 			getButtonLabels( {
 				purchase: makePurchaseForCategory( 'plan' ),
@@ -350,7 +350,7 @@ describe( 'multi-purchase getButtonLabels', () => {
 			} )
 		).toEqual( {
 			primary: 'Continue removal',
-			secondary: 'Keep subscriptions',
+			secondary: 'Keep upgrades',
 		} );
 	} );
 } );
