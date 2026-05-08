@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/variables";
 
 .purchase-settings__action-item-standalone {
-	margin: -$grid-unit-20 0;
+	margin-block: -$grid-unit-20;
 }
 
 .purchase-settings__toggle-control {
