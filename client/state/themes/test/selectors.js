@@ -294,6 +294,44 @@ describe( 'themes selectors', () => {
 			expect( theme.retired ).toBe( false );
 		} );
 
+		test( 'when wpcom record is retired and the site has the symlinked wpcom-managed copy (theme_uri starts with https://wordpress.com/theme/), still returns the wpcom record so the retired notice is preserved', () => {
+			const retiredWpcomTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				stylesheet: 'premium/colliding-slug',
+				retired: true,
+			};
+			// wpcomsh rewrites theme_uri to https://wordpress.com/theme/<slug> for symlinked themes.
+			const symlinkedSiteTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				theme_uri: 'https://wordpress.com/theme/colliding-slug',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { 'colliding-slug': retiredWpcomTheme },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { 'colliding-slug': symlinkedSiteTheme },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'colliding-slug'
+			);
+
+			// wpcom canonical record returned unchanged — retired notice still fires
+			expect( theme ).toEqual( retiredWpcomTheme );
+			expect( theme.retired ).toBe( true );
+		} );
+
 		test( 'when wpcom record is retired but the site has no installed theme with the same slug, still returns the wpcom record', () => {
 			const retiredWpcomPinboard = {
 				id: 'pinboard',
