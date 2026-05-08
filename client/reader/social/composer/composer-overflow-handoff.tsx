@@ -13,10 +13,13 @@ import {
 import { check } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { UnknownAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useComposerConfig } from './composer-config';
 import { useComposer } from './composer-provider';
 import {
@@ -24,7 +27,9 @@ import {
 	type SaveDraftMutationResult,
 	type SaveDraftMutationVariables,
 } from './use-save-draft-mutation';
+import type { ActiveMode } from './composer-provider';
 import type { Site } from '@automattic/api-core';
+import type { AppState } from 'calypso/types';
 
 interface ComposerOverflowHandoffProps {
 	text: string;
@@ -199,9 +204,18 @@ function MoveToEditorButton( {
 	isPending: boolean;
 } ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
+	const { mode } = useComposer();
+	const config = useComposerConfig();
 
 	const handleClick = () => {
+		// Fire on click intent (mirrors Quick Post's
+		// `calypso_reader_quick_post_full_editor_opened`) so the event
+		// captures the user's choice even when the draft save fails.
+		if ( mode && config.overflowHandoff ) {
+			const { event, props } = config.overflowHandoff.editorOpened( mode, { siteId: site.ID } );
+			dispatch( recordReaderTracksEvent( event, props ) );
+		}
 		mutate(
 			{ siteId: site.ID, content: text },
 			{
@@ -251,9 +265,32 @@ function MoveToEditorButton( {
 	);
 }
 
+/**
+ * Fires the `overflowHandoff.shown` Tracks event once when this component
+ * mounts. Lives as a sibling of the rendered handoff so it only mounts when
+ * the section actually appears (i.e. past the `hasBeenOverLimit` and
+ * non-empty-sites guards). Sticky-once across trim-back-under-limit because
+ * `hasBeenOverLimit` itself stays true; resets when the modal closes since
+ * the parent re-mounts the handoff on the next open.
+ */
+function OverflowHandoffShownEffect( { mode }: { mode: ActiveMode | null } ) {
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
+	const config = useComposerConfig();
+	useEffect( () => {
+		if ( ! mode || ! config.overflowHandoff ) {
+			return;
+		}
+		const { event, props } = config.overflowHandoff.shown( mode );
+		dispatch( recordReaderTracksEvent( event, props ) );
+		// Fire once on mount; subsequent re-renders aren't a new "shown".
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+	return null;
+}
+
 export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps ) {
 	const translate = useTranslate();
-	const { hasBeenOverLimit } = useComposer();
+	const { hasBeenOverLimit, mode } = useComposer();
 	const config = useComposerConfig();
 
 	const { data: sites } = useQuery( {
@@ -274,6 +311,7 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 			className="social-composer__overflow-handoff"
 			aria-label={ translate( 'Publish on your own site' ) as string }
 		>
+			<OverflowHandoffShownEffect mode={ mode } />
 			<p>
 				{ translate( 'Too long for %(protocol)s? Publish it on your own site instead.', {
 					args: { protocol: config.protocolLabel },

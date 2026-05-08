@@ -147,6 +147,16 @@ export const mastodonComposerConfig: ComposerConfig<
 			};
 		},
 	},
+	overflowHandoff: {
+		shown: ( mode ) => ( {
+			event: 'calypso_reader_mastodon_overflow_handoff_shown',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind },
+		} ),
+		editorOpened: ( mode, { siteId } ) => ( {
+			event: 'calypso_reader_mastodon_overflow_handoff_editor_opened',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind, site_id: siteId },
+		} ),
+	},
 	copy: {
 		title: ( mode, translate ) => titleForMode( mode, translate ),
 		placeholder: ( mode, translate, handle ) => placeholderForMode( mode, translate, handle ),

@@ -6,10 +6,12 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useEffect } from 'react';
+import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ComposerOverflowHandoff } from '../composer-overflow-handoff';
 import { ComposerProvider, useComposer } from '../composer-provider';
 import { testComposerConfig } from '../test-config';
+import type { ComposerConfig } from '../composer-config';
 import type { Site } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -17,7 +19,17 @@ jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
 
 const ORIGIN = 'https://public-api.wordpress.com';
 
-function renderWithComposer( ui: ReactNode, { withMode = false } = {} ) {
+function renderWithComposer(
+	ui: ReactNode,
+	{
+		withMode = false,
+		config = testComposerConfig,
+	}: {
+		withMode?: boolean;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		config?: ComposerConfig< any, any, any >;
+	} = {}
+) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false } },
 	} );
@@ -35,7 +47,7 @@ function renderWithComposer( ui: ReactNode, { withMode = false } = {} ) {
 	}
 
 	return renderWithProvider(
-		<ComposerProvider connectionId={ 1 } config={ testComposerConfig }>
+		<ComposerProvider connectionId={ 1 } config={ config }>
 			<Inner />
 		</ComposerProvider>,
 		{ queryClient }
@@ -290,6 +302,123 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		expect( openSpy ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'ComposerOverflowHandoff — Tracks events', () => {
+	const trackingConfig: typeof testComposerConfig = {
+		...testComposerConfig,
+		overflowHandoff: {
+			shown: ( mode ) => ( {
+				event: 'test_composer_overflow_handoff_shown',
+				props: { connection_id: mode.connectionId, mode_kind: mode.kind },
+			} ),
+			editorOpened: ( mode, { siteId } ) => ( {
+				event: 'test_composer_overflow_handoff_editor_opened',
+				props: { connection_id: mode.connectionId, mode_kind: mode.kind, site_id: siteId },
+			} ),
+		},
+	};
+
+	let recordSpy: jest.SpyInstance;
+
+	beforeEach( () => {
+		recordSpy = jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		recordSpy.mockRestore();
+	} );
+
+	it( 'fires overflowHandoff.shown once when the section first renders', async () => {
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'My Blog',
+				slug: 'myblog.wordpress.com',
+				URL: 'https://myblog.wordpress.com',
+				options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+		] );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="hi" />
+			</>,
+			{ withMode: true, config: trackingConfig }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		await screen.findByRole( 'button', { name: /Move to editor/i } );
+
+		const shownCalls = recordSpy.mock.calls.filter(
+			( call ) => call[ 0 ] === 'test_composer_overflow_handoff_shown'
+		);
+		expect( shownCalls ).toHaveLength( 1 );
+		expect( shownCalls[ 0 ][ 1 ] ).toEqual( { connection_id: 1, mode_kind: 'standalone' } );
+	} );
+
+	it( 'fires overflowHandoff.editorOpened with the chosen site_id on Move to editor click', async () => {
+		const user = userEvent.setup();
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		try {
+			mockSitesQuery( [
+				{
+					ID: 100,
+					name: 'My Blog',
+					slug: 'myblog.wordpress.com',
+					URL: 'https://myblog.wordpress.com',
+					site_migration: { in_progress: false, is_complete: false },
+					options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+				} as Partial< Site >,
+			] );
+
+			nock( ORIGIN )
+				.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
+				.reply( 200, { ID: 555, site_ID: 100, URL: 'https://myblog.wordpress.com/?p=555' } );
+
+			let composer: ReturnType< typeof useComposer > | null = null;
+			const Probe = () => {
+				composer = useComposer();
+				return null;
+			};
+
+			renderWithComposer(
+				<>
+					<Probe />
+					<ComposerOverflowHandoff text="my long draft" />
+				</>,
+				{ withMode: true, config: trackingConfig }
+			);
+
+			act( () => composer!.markOverLimit() );
+
+			const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+			await user.click( button );
+
+			const openedCalls = recordSpy.mock.calls.filter(
+				( call ) => call[ 0 ] === 'test_composer_overflow_handoff_editor_opened'
+			);
+			expect( openedCalls ).toHaveLength( 1 );
+			expect( openedCalls[ 0 ][ 1 ] ).toEqual( {
+				connection_id: 1,
+				mode_kind: 'standalone',
+				site_id: 100,
+			} );
+		} finally {
+			openSpy.mockRestore();
+		}
 	} );
 } );
 

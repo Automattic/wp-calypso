@@ -461,6 +461,17 @@ Per-protocol `ComposerConfig` supplies:
   name + props. Names live in the config so a code search for
   `calypso_reader_<protocol>_<mode>_*` finds them; do not lift this
   into a shared helper.
+- `overflowHandoff.{shown, editorOpened}` — optional Tracks events
+  for the in-modal "Publish on your own site" escape hatch. `shown`
+  fires once per modal session when the handoff section first renders
+  (i.e. after the user crosses the limit AND the sites query resolves
+  with ≥1 site). `editorOpened` fires on Move-to-editor click with
+  `{ siteId }` — analogous to Reader's Quick Post
+  `calypso_reader_quick_post_full_editor_opened`. Configs that omit
+  this field don't emit overflow-handoff Tracks events. Atmosphere
+  and Mastodon both wire it as `calypso_reader_<protocol>_overflow_handoff_{shown,editor_opened}`
+  with `connection_id` + `mode_kind` props (plus `site_id` on the
+  click event).
 - `copy.{title, placeholder}` — per-mode strings.
 - `logBadRequest?` — fire-and-forget hook for the `bad_request` body
   log. Lives in the per-protocol adapter so `calypso/lib/logstash`
