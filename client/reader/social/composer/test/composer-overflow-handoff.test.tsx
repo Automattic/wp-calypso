@@ -113,3 +113,51 @@ describe( 'ComposerOverflowHandoff — single site', () => {
 		expect( screen.queryByRole( 'combobox' ) ).toBeNull();
 	} );
 } );
+
+describe( 'ComposerOverflowHandoff — multi-site picker', () => {
+	it( "renders a combobox with the user's sites and pre-selects the primary site", async () => {
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'Blog A',
+				slug: 'a.wordpress.com',
+				URL: 'https://a.wordpress.com',
+				options: { admin_url: 'https://a.wordpress.com/wp-admin/' },
+				site_migration: { in_progress: false, is_complete: false },
+			} as Partial< Site >,
+			{
+				ID: 200,
+				name: 'Blog B',
+				slug: 'b.wordpress.com',
+				URL: 'https://b.wordpress.com',
+				options: { admin_url: 'https://b.wordpress.com/wp-admin/' },
+				site_migration: { in_progress: false, is_complete: false },
+			} as Partial< Site >,
+		] );
+
+		nock( ORIGIN )
+			.get( /\/rest\/v1\.\d+\/me\/settings/ )
+			.reply( 200, { primary_site_ID: 200 } );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="hi" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		const combobox = await screen.findByRole( 'combobox' );
+		expect( combobox ).toBeVisible();
+		// `Blog B` is the primary site, so it should be the default value.
+		expect( ( combobox as HTMLInputElement ).value ).toContain( 'Blog B' );
+	} );
+} );
