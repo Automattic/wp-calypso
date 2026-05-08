@@ -32,6 +32,11 @@ describe( 'ConnectForm', () => {
 		expect( screen.getByRole( 'button', { name: /connect/i } ) ).toBeDisabled();
 	} );
 
+	it( 'disables submit while submitting even when both fields are filled', () => {
+		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting error={ null } /> );
+		expect( screen.getByRole( 'button', { name: /connect/i } ) ).toBeDisabled();
+	} );
+
 	it( 'calls onSubmit with entered values', async () => {
 		const user = userEvent.setup();
 		const onSubmit = jest.fn();

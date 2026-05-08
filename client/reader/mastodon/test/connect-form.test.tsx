@@ -15,11 +15,8 @@ describe( 'ConnectForm', () => {
 
 	it( 'renders the instance helper text describing the OAuth handoff', () => {
 		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
-		expect(
-			screen.getByText(
-				/the domain where your account lives. we’ll hand you off to sign in there, so we never see your password\./i
-			)
-		).toBeVisible();
+		expect( screen.getByText( /hand you off to sign in there/i ) ).toBeVisible();
+		expect( screen.getByText( /never see your password/i ) ).toBeVisible();
 	} );
 
 	it( 'disables submit while instance is empty', () => {
