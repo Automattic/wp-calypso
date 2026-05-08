@@ -1,0 +1,16 @@
+.social-composer__overflow-handoff {
+	margin-block-start: 16px;
+	padding-block: 16px;
+	border-block-start: 1px solid var(--color-border-subtle);
+	animation: social-composer-overflow-handoff-fade-in 150ms ease-in;
+}
+
+@keyframes social-composer-overflow-handoff-fade-in {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
