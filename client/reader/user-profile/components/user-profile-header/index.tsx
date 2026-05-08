@@ -1,5 +1,4 @@
 import './style.scss';
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -61,7 +60,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			path: `${ userProfileUrl }/recommended-blogs`,
 			selected: view === 'recommended-blogs',
 		},
-		...( isEnabled( 'reader/achievements' ) && showAchievements
+		...( showAchievements
 			? [
 					{
 						label: translate( 'Achievements' ),

@@ -6,11 +6,15 @@ import type {
 	MastodonConnectionDetails,
 	MastodonConnectionsResponse,
 	MastodonCreateConnectionResponse,
+	MastodonCreateFollowParams,
+	MastodonDeleteFollowParams,
 	MastodonFeedItem,
+	MastodonFollowResponse,
 	MastodonProfileCounts,
 	MastodonTagFilter,
 	MastodonTagInfo,
 	MastodonTagFeedPage,
+	MastodonAuthorProfileViewer,
 } from '../types';
 
 describe( 'reader-mastodon types compile', () => {
@@ -106,5 +110,50 @@ describe( 'MastodonTagFeedPage', () => {
 		expect( page.tag?.name ).toBe( 'rust' );
 		const minimal: MastodonTagFeedPage = { items: [], cursor: null };
 		expect( minimal.tag ).toBeUndefined();
+	} );
+} );
+
+describe( 'follow types', () => {
+	it( 'MastodonAuthorProfileViewer carries following / followed_by / requested booleans', () => {
+		const v: MastodonAuthorProfileViewer = {
+			following: false,
+			followed_by: true,
+			requested: false,
+		};
+		expect( v.following ).toBe( false );
+		expect( v.followed_by ).toBe( true );
+		expect( v.requested ).toBe( false );
+	} );
+
+	it( 'MastodonAuthorProfile exposes viewer + is_self optionals', () => {
+		const p: MastodonAuthorProfile = {
+			id: '200',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '',
+			counts: { followers: 0, following: 0, posts: 0 },
+			locked: false,
+			raw: {},
+			viewer: { following: false, followed_by: false, requested: false },
+			is_self: false,
+		};
+		expect( p.viewer?.following ).toBe( false );
+		expect( p.is_self ).toBe( false );
+	} );
+
+	it( 'MastodonCreateFollowParams + DeleteFollowParams shape', () => {
+		const c: MastodonCreateFollowParams = { connectionId: 1, accountId: '200' };
+		const d: MastodonDeleteFollowParams = { connectionId: 1, accountId: '200' };
+		expect( c.accountId ).toBe( '200' );
+		expect( d.accountId ).toBe( '200' );
+	} );
+
+	it( 'MastodonFollowResponse carries a viewer block', () => {
+		const r: MastodonFollowResponse = {
+			viewer: { following: true, followed_by: false, requested: false },
+		};
+		expect( r.viewer.following ).toBe( true );
 	} );
 } );

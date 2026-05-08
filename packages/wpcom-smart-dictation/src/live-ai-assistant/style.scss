@@ -1,17 +1,19 @@
 .live-ai-assistant {
-	position: fixed;
-	inset-block-end: 24px;
-	inset-inline-start: 24px;
-	z-index: 9999;
+	position: static;
+	inset: auto;
+	z-index: auto;
+	pointer-events: auto;
+	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
-	gap: 16px;
-	pointer-events: none;
-
-	> * {
-		pointer-events: auto;
-	}
+	align-items: stretch;
+	align-self: stretch;
+	flex: 1 1 0%;
+	min-height: 0;
+	min-width: 0;
+	width: 100%;
+	height: 100%;
+	max-height: 100%;
 }
 
 /*
@@ -21,7 +23,7 @@
  * Without overflowing hidden here, sticky footer hacks cannot work: the complementary area scrolls
  * so the mute/dictation bar scrolls away. Lock scroll to .live-ai-assistant__body only.
  */
-.interface-complementary-area[id^='jetpack-live-ai-assistant:'] {
+.interface-complementary-area[id^='wpcom-smart-dictation:'] {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
@@ -53,7 +55,7 @@
 
 /* Parent motion wrapper (@wordpress/interface) must shrink so inner height % / flex mins work */
 .interface-complementary-area__fill:has(
-		> .interface-complementary-area[id^='jetpack-live-ai-assistant:']
+		> .interface-complementary-area[id^='wpcom-smart-dictation:']
 	) {
 	box-sizing: border-box;
 	display: flex;
@@ -66,7 +68,7 @@
 }
 
 /*
- * Wrapper around LiveAIAssistant in PluginSidebar (see help-center-gutenberg.js).
+ * Wrapper around LiveAIAssistant in PluginSidebar (see wpcom-smart-dictation.jsx).
  * Fills complementary area height so inner flex/grid can constrain the scroll region.
  */
 .wpcom-smart-dictation-sidebar-root {
@@ -88,252 +90,56 @@
 	height: 100%;
 }
 
-/* Normal flow / editor sidebar embed (native PluginSidebar) */
-.live-ai-assistant--sidebar {
-	position: static;
-	inset: auto;
-	z-index: auto;
-	pointer-events: auto;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	align-self: stretch;
+.live-ai-assistant__panel {
 	flex: 1 1 0%;
 	min-height: 0;
 	min-width: 0;
 	width: 100%;
 	height: 100%;
-	max-height: 100%;
-
-	.live-ai-assistant__panel {
-		flex: 1 1 0%;
-		min-height: 0;
-		min-width: 0;
-		width: 100%;
-		height: 100%;
-		max-width: none;
-		max-height: none;
-		border-radius: 0;
-		box-shadow: none;
-		display: grid;
-		grid-template-rows: auto minmax( 0, 1fr ) auto;
-		grid-template-columns: minmax( 0, 1fr );
-		overflow: hidden;
-		animation: none;
-	}
-
-	.live-ai-assistant__body {
-		min-height: 0;
-		max-height: none;
-		flex: unset;
-		overflow-x: hidden;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
-	}
-
-	.live-ai-assistant__transcript {
-		flex: 0 1 auto;
-		max-height: none;
-		overflow-y: visible;
-	}
-
-	.live-ai-assistant__footer {
-		background: #fff;
-		padding: calc( 16px + env( safe-area-inset-bottom, 0 ) );
-		box-shadow: 0 -8px 20px rgba( 0, 0, 0, 0.06 );
-	}
-
-	.live-ai-assistant__controls {
-		flex-shrink: 0;
-		align-self: stretch;
-		position: sticky;
-		bottom: 0;
-		z-index: 2;
-	}
-}
-
-.live-ai-assistant__sidebar-status {
-	padding: 10px 12px;
-	font-size: 13px;
-	font-weight: 500;
-	line-height: 1.35;
-	color: #1e1e1e;
-	background: linear-gradient( 135deg, rgba( 17, 122, 201, 0.12 ), rgba( 56, 88, 233, 0.1 ) );
-
-	&.is-session-active {
-		background: linear-gradient( 135deg, rgba( 0, 163, 42, 0.15 ), rgba( 0, 138, 32, 0.1 ) );
-	}
-}
-
-.live-ai-assistant__fab {
-	appearance: none;
-	border: none;
-	cursor: pointer;
-	width: 60px;
-	height: 60px;
-	border-radius: 50%;
-	background: linear-gradient( 135deg, #117ac9, #3858e9 );
-	color: #fff;
-	box-shadow:
-		0 12px 24px rgba( 17, 122, 201, 0.35 ),
-		0 2px 6px rgba( 0, 0, 0, 0.12 );
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-	transition:
-		transform 0.18s ease,
-		box-shadow 0.18s ease,
-		background 0.18s ease;
-
-	&:hover {
-		transform: translateY( -2px );
-		box-shadow:
-			0 16px 28px rgba( 17, 122, 201, 0.4 ),
-			0 4px 8px rgba( 0, 0, 0, 0.15 );
-	}
-
-	&:focus-visible {
-		outline: 3px solid #fff;
-		outline-offset: 3px;
-		box-shadow: 0 0 0 5px #3858e9;
-	}
-
-	&.is-open {
-		background: #1e1e1e;
-		box-shadow: 0 8px 20px rgba( 0, 0, 0, 0.3 );
-	}
-
-	&.is-active {
-		background: linear-gradient( 135deg, #00a32a, #008a20 );
-		box-shadow:
-			0 12px 24px rgba( 0, 163, 42, 0.4 ),
-			0 2px 6px rgba( 0, 0, 0, 0.12 );
-	}
-}
-
-.live-ai-assistant__fab-pulse {
-	position: absolute;
-	inset: 0;
-	border-radius: 50%;
-	border: 2px solid rgba( 0, 163, 42, 0.8 );
-	animation: live-ai-assistant-pulse 1.6s ease-out infinite;
-	pointer-events: none;
-}
-
-@keyframes live-ai-assistant-pulse {
-	0% {
-		transform: scale( 1 );
-		opacity: 0.9;
-	}
-	100% {
-		transform: scale( 1.5 );
-		opacity: 0;
-	}
-}
-
-.live-ai-assistant__panel {
-	width: min( 360px, calc( 100vw - 32px ) );
-	max-height: min( 560px, calc( 100vh - 120px ) );
+	max-width: none;
+	max-height: none;
 	background: #fff;
-	border-radius: 16px;
-	box-shadow:
-		0 20px 40px rgba( 0, 0, 0, 0.18 ),
-		0 4px 12px rgba( 0, 0, 0, 0.08 );
-	display: flex;
-	flex-direction: column;
+	border-radius: 0;
+	box-shadow: none;
+	display: grid;
+	grid-template-rows: minmax( 0, 1fr ) auto;
+	grid-template-columns: minmax( 0, 1fr );
 	overflow: hidden;
-	animation: live-ai-assistant-slide-up 0.22s ease-out;
-}
-
-@keyframes live-ai-assistant-slide-up {
-	from {
-		opacity: 0;
-		transform: translateY( 12px );
-	}
-	to {
-		opacity: 1;
-		transform: translateY( 0 );
-	}
-}
-
-.live-ai-assistant__header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	padding: 16px;
-	background: linear-gradient( 135deg, #117ac9, #3858e9 );
-	color: #fff;
-
-	.live-ai-assistant__panel.is-active & {
-		background: linear-gradient( 135deg, #00a32a, #008a20 );
-	}
-}
-
-.live-ai-assistant__header-info {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	min-width: 0;
-}
-
-.live-ai-assistant__avatar {
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	background: rgba( 255, 255, 255, 0.2 );
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-
-	&.is-active {
-		animation: live-ai-assistant-breath 2s ease-in-out infinite;
-	}
-}
-
-@keyframes live-ai-assistant-breath {
-	0%,
-	100% {
-		box-shadow: 0 0 0 0 rgba( 255, 255, 255, 0.4 );
-	}
-	50% {
-		box-shadow: 0 0 0 8px rgba( 255, 255, 255, 0 );
-	}
-}
-
-.live-ai-assistant__header-text {
-	min-width: 0;
-}
-
-.live-ai-assistant__title {
-	font-weight: 600;
-	font-size: 15px;
-	line-height: 1.2;
 }
 
 .live-ai-assistant__subtitle {
-	font-size: 13px;
-	opacity: 0.9;
-	margin-block-start: 2px;
-}
-
-.live-ai-assistant__close.components-button {
-	color: #fff;
-
-	&:hover:not( :disabled ) {
-		color: #fff;
-		background: rgba( 255, 255, 255, 0.15 );
+	inset-block-start: -16px;
+	margin-inline-start: -16px;
+	position: sticky;
+	z-index: 3;
+	width: calc( 100% + 32px );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	box-sizing: border-box;
+	background: #fff;
+	&.isActive {
+		backdrop-filter: blur( 2px ) saturate( 150% );
+		// Gradual blur
+		mask: linear-gradient(#000, #000, transparent);
+		background: linear-gradient(
+			180deg,
+			rgba( 255, 255, 255, 0.6 ) 0%,
+			rgba( 255, 255, 255, 0.61 ) 44%,
+			rgba( 255, 255, 255, 0 ) 100%
+		);
 	}
 }
 
 .live-ai-assistant__body {
-	flex: 1;
-	min-height: 120px;
+	position: relative;
+	min-height: 0;
+	max-height: none;
 	padding: 16px;
+	overflow-x: hidden;
 	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
@@ -362,12 +168,12 @@
 }
 
 .live-ai-assistant__transcript {
-	flex: 1;
+	flex: 0 1 auto;
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	max-height: 340px;
-	overflow-y: auto;
+	max-height: none;
+	overflow-y: visible;
 }
 
 .live-ai-assistant__message {
@@ -425,6 +231,20 @@
 		color: #b32d2e;
 		font-style: normal;
 	}
+
+	&.is-running {
+		color: #3858e9;
+		font-style: normal;
+
+		.live-ai-assistant__transcript-tool-dot {
+			animation: live-ai-assistant-tool-dot-pulse 1.2s ease-in-out infinite;
+			opacity: 1;
+		}
+
+		.live-ai-assistant__transcript-tool-label {
+			animation: live-ai-assistant-tool-label-pulse 1.6s ease-in-out infinite;
+		}
+	}
 }
 
 .live-ai-assistant__transcript-tool-dot {
@@ -452,8 +272,41 @@
 	}
 }
 
+@keyframes live-ai-assistant-tool-dot-pulse {
+	0%,
+	100% {
+		transform: scale( 1 );
+		opacity: 0.4;
+	}
+	50% {
+		transform: scale( 1.6 );
+		opacity: 1;
+	}
+}
+
+@keyframes live-ai-assistant-tool-label-pulse {
+	0%,
+	100% {
+		opacity: 0.7;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+.live-ai-assistant__footer {
+	background: #fff;
+	padding: calc( 16px + env( safe-area-inset-bottom, 0 ) );
+	box-shadow: 0 -8px 20px rgba( 0, 0, 0, 0.06 );
+}
+
 .live-ai-assistant__controls {
 	display: flex;
+	flex-shrink: 0;
+	align-self: stretch;
+	position: sticky;
+	bottom: 0;
+	z-index: 2;
 	gap: 8px;
 	padding: 12px 0;
 	border-block-start: 1px solid #f0f0f0;
@@ -545,6 +398,16 @@
 		border-color 0.15s ease,
 		transform 0.15s ease;
 	background: #1e1e1e;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+
+	&:hover:not( .is-selected ),
+	&:focus-visible {
+		border-color: rgba( 56, 88, 233, 0.6 );
+		transform: scale( 1.02 );
+		outline: none;
+	}
 
 	&.is-selected {
 		border-color: #3858e9;
@@ -580,6 +443,69 @@
 	&.is-selected {
 		background: #3858e9;
 	}
+}
+
+.dictation-image-picker__menu {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: 12px;
+	max-width: 540px;
+	width: 90vw;
+}
+
+.dictation-image-picker__menu-option {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 24px 12px;
+	border-radius: 8px;
+	background: rgba( 30, 30, 30, 0.85 );
+	border: 1px solid rgba( 255, 255, 255, 0.1 );
+	color: #fff;
+	text-align: center;
+	min-height: 140px;
+	font: inherit;
+	cursor: pointer;
+	transition:
+		background 0.15s ease,
+		border-color 0.15s ease,
+		transform 0.15s ease;
+
+	&:hover,
+	&:focus-visible {
+		background: rgba( 56, 88, 233, 0.18 );
+		border-color: rgba( 56, 88, 233, 0.6 );
+		transform: translateY( -1px );
+		outline: none;
+	}
+
+	&:active {
+		transform: translateY( 0 );
+	}
+}
+
+.dictation-image-picker__menu-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: rgba( 255, 255, 255, 0.08 );
+	color: #fff;
+	margin-bottom: 4px;
+}
+
+.dictation-image-picker__menu-label {
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.dictation-image-picker__menu-sub {
+	font-size: 12px;
+	color: rgba( 255, 255, 255, 0.6 );
 }
 
 /* ── Dictation file upload (user-gesture gate for OS picker) ── */
