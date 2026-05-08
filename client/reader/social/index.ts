@@ -9,6 +9,9 @@ export { ConnectionReauthTag } from './connection-reauth-tag';
 export { FollowButton } from './follow-button';
 export type { FollowButtonProps } from './follow-button';
 
+export { SocialAccountRow } from './account-row';
+export type { SocialAccountRowProps, SocialAccountRowFollowState } from './account-row';
+
 export { SocialPostCard } from './components/post-card';
 export { SocialFeedList } from './components/feed-list';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
