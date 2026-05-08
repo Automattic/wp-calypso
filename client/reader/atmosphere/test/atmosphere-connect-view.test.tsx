@@ -45,7 +45,7 @@ describe( 'AtmosphereConnectView', () => {
 			} );
 
 		renderWithProvider( <AtmosphereConnectView /> );
-		await user.type( screen.getByLabelText( /Handle/ ), 'alice.bsky.social' );
+		await user.type( screen.getByLabelText( /Bluesky username/ ), 'alice.bsky.social' );
 		await user.type( screen.getByLabelText( /App password/ ), 'pass-word-xxx-xxx' );
 		await user.click( screen.getByRole( 'button', { name: /Connect/ } ) );
 
