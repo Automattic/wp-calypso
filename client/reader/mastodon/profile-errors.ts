@@ -1,6 +1,29 @@
 import type { MastodonError } from '@automattic/api-core';
 import type { useTranslate, TranslateResult } from 'i18n-calypso';
 
+/**
+ * Per-action follow / unfollow error copy. Most error kinds share the
+ * profile-load copy because they're rooted in the same backend issue
+ * (auth, rate-limit, transport), so we delegate to the shared
+ * `errorMessage`. The exception is `not_found`: the shared copy is
+ * profile-load-shaped ("We couldn't find that profile.") and would
+ * mislead the user when an actor disappears between profile load and
+ * the follow click. Shared between the author-profile panel and the
+ * followers / following list views.
+ */
+export function followErrorMessage(
+	error: MastodonError,
+	action: 'follow' | 'unfollow',
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult {
+	if ( error.kind === 'not_found' ) {
+		return action === 'follow'
+			? translate( 'Couldn’t follow this account.' )
+			: translate( 'Couldn’t unfollow this account.' );
+	}
+	return errorMessage( error, translate );
+}
+
 // Map a MastodonError to user-facing localised copy for the profile surface.
 // Surface-specific copy diverges from timeline-panel intentionally
 // (e.g., "profile" wording instead of "feed").

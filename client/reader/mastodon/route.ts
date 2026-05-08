@@ -78,6 +78,24 @@ export function getProfileUrl(
 	return `/reader/mastodon/${ connectionId }/profile/${ encodeURIComponent( canonical ) }`;
 }
 
+export function getFollowersUrl(
+	connectionId: number,
+	actor: string,
+	options: GetProfileUrlOptions = {}
+): string | null {
+	const base = getProfileUrl( connectionId, actor, options );
+	return base ? `${ base }/followers` : null;
+}
+
+export function getFollowingUrl(
+	connectionId: number,
+	actor: string,
+	options: GetProfileUrlOptions = {}
+): string | null {
+	const base = getProfileUrl( connectionId, actor, options );
+	return base ? `${ base }/following` : null;
+}
+
 // Mastodon hashtags in canonical form: lowercase ASCII + underscore,
 // 1-128 chars. The protocol allows a wider Unicode set per joinmastodon.org;
 // restrict to the safe ASCII subset for now and revisit if non-ASCII tags

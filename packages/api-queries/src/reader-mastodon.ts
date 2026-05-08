@@ -8,6 +8,8 @@ import {
 	deleteMastodonFollow,
 	deleteMastodonLike,
 	deleteMastodonRepost,
+	getMastodonActorFollowers,
+	getMastodonActorFollowing,
 	getMastodonAuthStatus,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
@@ -38,6 +40,7 @@ import type {
 	GetMastodonAuthorFeedParams,
 	GetMastodonTagFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAccountSummariesPage,
 	MastodonAuthStatus,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
@@ -320,6 +323,93 @@ export function useMastodonAuthorFeedInfiniteQuery(
 	filter?: MastodonAuthorFeedFilter
 ) {
 	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor, filter ) );
+}
+
+export interface MastodonActorPageQueryParams {
+	connectionId: number;
+	actor: string;
+}
+
+export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
+	const normalizedActor = normalizeActor( params.actor );
+	return infiniteQueryOptions<
+		MastodonAccountSummariesPage,
+		MastodonError,
+		InfiniteData< MastodonAccountSummariesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.actorFollowers( params.connectionId, normalizedActor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonActorFollowers( {
+				connectionId: params.connectionId,
+				actor: normalizedActor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		// `|| undefined` (not `??`): an empty-string cursor terminates pagination,
+		// matching the slice-6 author-feed hardening.
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonActorFollowersInfiniteQuery( params: MastodonActorPageQueryParams ) {
+	return useInfiniteQuery( mastodonActorFollowersInfiniteQuery( params ) );
+}
+
+export const mastodonActorFollowingInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
+	const normalizedActor = normalizeActor( params.actor );
+	return infiniteQueryOptions<
+		MastodonAccountSummariesPage,
+		MastodonError,
+		InfiniteData< MastodonAccountSummariesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.actorFollowing( params.connectionId, normalizedActor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonActorFollowing( {
+				connectionId: params.connectionId,
+				actor: normalizedActor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonActorFollowingInfiniteQuery( params: MastodonActorPageQueryParams ) {
+	return useInfiniteQuery( mastodonActorFollowingInfiniteQuery( params ) );
 }
 
 export const mastodonTagFeedInfiniteQuery = (

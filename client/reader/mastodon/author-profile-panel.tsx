@@ -26,8 +26,15 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { MastodonAuthorProfileTabs, useMastodonAuthorFeedFilter } from './author-profile-tabs';
 import { projectMastodonError } from './error-projection';
-import { errorMessage } from './profile-errors';
-import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
+import { errorMessage, followErrorMessage } from './profile-errors';
+import {
+	getFollowersUrl,
+	getFollowingUrl,
+	getProfileUrl,
+	getTagFeedUrl,
+	getThreadUrl,
+	getTimelineUrl,
+} from './route';
 import { makeUseMastodonLikeAction } from './use-mastodon-like-action';
 import { makeUseMastodonRepostAction } from './use-mastodon-repost-action';
 import type {
@@ -39,27 +46,6 @@ import type {
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
-
-/**
- * Per-action follow / unfollow error copy. Most error kinds share the
- * profile-load copy because they're rooted in the same backend issue
- * (auth, rate-limit, transport), so we delegate to the shared
- * `errorMessage`. The exception is `not_found`: the shared copy is
- * profile-load-shaped and would mislead the user when an actor
- * disappears between profile load and the follow click.
- */
-function followErrorMessage(
-	error: MastodonError,
-	action: 'follow' | 'unfollow',
-	translate: ReturnType< typeof useTranslate >
-): TranslateResult {
-	if ( error.kind === 'not_found' ) {
-		return action === 'follow'
-			? translate( 'Couldn’t follow this account.' )
-			: translate( 'Couldn’t unfollow this account.' );
-	}
-	return errorMessage( error, translate );
-}
 
 interface MastodonAuthorProfilePanelProps {
 	connection: MastodonConnection;
@@ -95,6 +81,8 @@ export function MastodonAuthorProfilePanel( {
 					label: translate( 'follower', 'followers', {
 						count: profile.data.counts.followers,
 					} ),
+					href:
+						getFollowersUrl( connection.id, actor, { instance: connection.instance } ) ?? undefined,
 				},
 				{
 					key: 'follows',
@@ -102,6 +90,8 @@ export function MastodonAuthorProfilePanel( {
 					label: translate( 'following', {
 						context: 'profile stats: count of accounts followed',
 					} ),
+					href:
+						getFollowingUrl( connection.id, actor, { instance: connection.instance } ) ?? undefined,
 				},
 				{
 					key: 'posts',

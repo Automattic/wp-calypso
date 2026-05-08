@@ -150,6 +150,8 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/mastodon/:id/:tab`                       | `client/reader/mastodon/mastodon-account-view.tsx`                        |
 | `/reader/mastodon/:id/thread/:status_id`          | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
 | `/reader/mastodon/:id/profile/:actor`             | `client/reader/mastodon/author-profile-view.tsx`                          |
+| `/reader/mastodon/:id/profile/:actor/followers`   | `client/reader/mastodon/followers-view.tsx`                               |
+| `/reader/mastodon/:id/profile/:actor/following`   | `client/reader/mastodon/following-view.tsx`                               |
 
 The likes/favorites count on `<SocialPostCard>` becomes an interactive
 `<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)

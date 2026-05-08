@@ -370,3 +370,30 @@ export interface MastodonFollowResponse {
 export interface MastodonAuthStatus {
 	needs_reauth: boolean;
 }
+
+/**
+ * Slim Mastodon Account shape returned by the followers / following list
+ * endpoints. Mirrors the fields the wpcom backend's row normaliser projects:
+ * profile-card surface fields plus per-viewer relationship state. `note` is
+ * sanitised server-side through the FEP-b2b8 allow-list (same subset as
+ * status `content`).
+ */
+export interface MastodonAccountSummary {
+	id: string;
+	username: string;
+	acct: string;
+	/** `@user@instance` — synthesised server-side from `acct` + connection's home instance. */
+	handle: string;
+	display_name: string;
+	note: string;
+	avatar: string | null;
+	locked: boolean;
+	viewer: MastodonAuthorProfileViewer;
+	/** `true` when the row matches the connection's own account id; the server skips the relationships call for this row. */
+	is_self: boolean;
+}
+
+export interface MastodonAccountSummariesPage {
+	items: MastodonAccountSummary[];
+	cursor: string | null;
+}

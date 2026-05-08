@@ -1,4 +1,6 @@
 import {
+	getFollowersUrl,
+	getFollowingUrl,
 	getProfileUrl,
 	getThreadUrl,
 	getTimelineUrl,
@@ -89,6 +91,36 @@ describe( 'getProfileUrl', () => {
 		expect( getProfileUrl( 7, 'alice@mastodon.social' ) ).toBe(
 			'/reader/mastodon/7/profile/alice%40mastodon.social'
 		);
+	} );
+} );
+
+describe( 'getFollowersUrl', () => {
+	it( 'appends /followers to the profile URL', () => {
+		expect( getFollowersUrl( 7, '@alice@mastodon.social' ) ).toBe(
+			'/reader/mastodon/7/profile/%40alice%40mastodon.social/followers'
+		);
+	} );
+
+	it( 'qualifies a bare local handle with the connection instance', () => {
+		expect( getFollowersUrl( 7, 'alice', { instance: 'mastodon.social' } ) ).toBe(
+			'/reader/mastodon/7/profile/%40alice%40mastodon.social/followers'
+		);
+	} );
+
+	it( 'returns null when the actor fails validation', () => {
+		expect( getFollowersUrl( 7, '../../bad' ) ).toBeNull();
+	} );
+} );
+
+describe( 'getFollowingUrl', () => {
+	it( 'appends /following to the profile URL', () => {
+		expect( getFollowingUrl( 7, '@alice@mastodon.social' ) ).toBe(
+			'/reader/mastodon/7/profile/%40alice%40mastodon.social/following'
+		);
+	} );
+
+	it( 'returns null when the connectionId is invalid', () => {
+		expect( getFollowingUrl( 0, 'alice@mastodon.social' ) ).toBeNull();
 	} );
 } );
 
