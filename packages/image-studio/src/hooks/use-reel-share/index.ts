@@ -105,7 +105,11 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		createNotice?: (
 			status: string,
 			message: string,
-			options?: { isDismissible?: boolean; actions?: Array< { label: string; url?: string } > }
+			options?: {
+				type?: 'default' | 'snackbar';
+				isDismissible?: boolean;
+				actions?: Array< { label: string; url?: string } >;
+			}
 		) => Promise< void >;
 	};
 
@@ -125,6 +129,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 	) => {
 		if ( hasOverride ) {
 			await createCoreNotice?.( type, message, {
+				type: 'snackbar',
 				isDismissible: !! isDismissible,
 				actions: actions?.map( ( a ) => ( { label: a.label, url: a.url } ) ),
 			} );

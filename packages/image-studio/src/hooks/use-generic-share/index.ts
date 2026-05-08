@@ -71,7 +71,7 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 		createNotice?: (
 			status: string,
 			message: string,
-			options?: { isDismissible?: boolean }
+			options?: { type?: 'default' | 'snackbar'; isDismissible?: boolean }
 		) => Promise< void >;
 	};
 
@@ -81,7 +81,10 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 	 */
 	const showNotice = async ( message: string, type: 'success' | 'warning' | 'error' ) => {
 		if ( hasOverride ) {
-			await createCoreNotice?.( type, message, { isDismissible: true } );
+			await createCoreNotice?.( type, message, {
+				type: 'snackbar',
+				isDismissible: true,
+			} );
 			return;
 		}
 		await addModalNotice( message, type );
