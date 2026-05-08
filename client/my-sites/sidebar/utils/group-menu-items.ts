@@ -125,12 +125,14 @@ export function groupMenuItems(
 		}
 		groupedSections.push( {
 			// Synthesise a minimal AdminMenuGroup for items lacking metadata.
-			// `default_expanded` defaults to `true` (matches v0.1.4); aggregate
-			// `signal` defaults to no-attention.
+			// `default_expanded` defaults to `false` (matches the public plugin's
+			// expand-collapse priority chain — stored state wins, else
+			// auto-expand-on-current-URL, else collapsed); aggregate `signal`
+			// defaults to no-attention.
 			group: {
 				id: groupId,
 				label: groupId,
-				default_expanded: true,
+				default_expanded: false,
 				signal: { attention: false, count: 0 },
 			},
 			items,

@@ -55,7 +55,8 @@ describe( 'groupMenuItems()', () => {
 		const pluginsSection = groupedSections[ 0 ];
 		expect( pluginsSection.group.id ).toBe( 'plugins' );
 		expect( pluginsSection.group.label ).toBe( 'My Plugins' );
-		expect( pluginsSection.group.default_expanded ).toBe( true );
+		// `default_expanded: false` matches the contract.
+		expect( pluginsSection.group.default_expanded ).toBe( false );
 		expect( pluginsSection.items.map( ( item ) => item.slug ) ).toEqual( [
 			'yoast-seo',
 			'woocommerce',

@@ -19,7 +19,8 @@ const renderInProvider = ( ui, state = {} ) => {
 const pluginsGroup = {
 	id: 'plugins',
 	label: 'My Plugins',
-	default_expanded: true,
+	// `default_expanded: false` mirrors the schema contract.
+	default_expanded: false,
 	signal: { attention: true, count: 3 },
 };
 

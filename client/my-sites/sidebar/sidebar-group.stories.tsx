@@ -120,7 +120,10 @@ export const ExpandedWithMixedChildren: Story = {
 		group: {
 			id: 'plugins',
 			label: 'My Plugins',
-			default_expanded: true,
+			// `default_expanded: false` matches the contract; `expanded: true`
+			// here is the per-story override (this story shows the expanded
+			// state regardless of the default).
+			default_expanded: false,
 			signal: { attention: true, count: 3 },
 		},
 		expanded: true,
@@ -138,7 +141,7 @@ export const ExpandedWithNoChildren: Story = {
 		group: {
 			id: 'plugins',
 			label: 'My Plugins',
-			default_expanded: true,
+			default_expanded: false,
 			signal: { attention: false, count: 0 },
 		},
 		expanded: true,
