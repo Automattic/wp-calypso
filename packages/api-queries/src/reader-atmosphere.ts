@@ -8,6 +8,8 @@ import {
 	deleteLike,
 	deletePost,
 	deleteRepost,
+	getAtmosphereActorFollowers,
+	getAtmosphereActorFollows,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -51,6 +53,7 @@ import type {
 	AtmosphereError,
 	AtmosphereFeedItem,
 	AtmosphereScopedProfile,
+	AtmosphereScopedProfilesPage,
 	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
 	AtmosphereThreadNode,
@@ -340,6 +343,63 @@ export function useAtmosphereScopedAuthorFeedInfiniteQuery(
 	params: AtmosphereScopedAuthorFeedInfiniteQueryParams
 ) {
 	return useInfiniteQuery( atmosphereScopedAuthorFeedInfiniteQuery( params ) );
+}
+
+export interface AtmosphereActorPageQueryParams {
+	connectionId: number;
+	actor: string;
+}
+
+export const atmosphereActorFollowersInfiniteQuery = ( params: AtmosphereActorPageQueryParams ) =>
+	infiniteQueryOptions<
+		AtmosphereScopedProfilesPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereScopedProfilesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.actorFollowers( params.connectionId, params.actor ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereActorFollowers( {
+				connectionId: params.connectionId,
+				actor: params.actor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && params.actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export function useAtmosphereActorFollowersInfiniteQuery( params: AtmosphereActorPageQueryParams ) {
+	return useInfiniteQuery( atmosphereActorFollowersInfiniteQuery( params ) );
+}
+
+export const atmosphereActorFollowsInfiniteQuery = ( params: AtmosphereActorPageQueryParams ) =>
+	infiniteQueryOptions<
+		AtmosphereScopedProfilesPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereScopedProfilesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.actorFollows( params.connectionId, params.actor ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereActorFollows( {
+				connectionId: params.connectionId,
+				actor: params.actor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && params.actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export function useAtmosphereActorFollowsInfiniteQuery( params: AtmosphereActorPageQueryParams ) {
+	return useInfiniteQuery( atmosphereActorFollowsInfiniteQuery( params ) );
 }
 
 export interface FollowAtmosphereActorVars {
