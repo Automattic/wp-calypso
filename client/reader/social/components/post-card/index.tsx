@@ -115,7 +115,13 @@ export function SocialPostCard( {
 					bodyAndEmbed
 				) }
 				{ showProminentTimestamp && <PostCardTimestamp post={ post } /> }
-				{ ! isCompact && <PostCardCounts post={ post } connectionId={ connectionId } /> }
+				{ ! isCompact && (
+					<PostCardCounts
+						post={ post }
+						connectionId={ connectionId }
+						prominentTimestamp={ showProminentTimestamp }
+					/>
+				) }
 			</CardBody>
 		</Card>
 	);
