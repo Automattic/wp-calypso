@@ -13,7 +13,7 @@ describe( 'ConnectForm', () => {
 		).toBeVisible();
 	} );
 
-	it( 'renders the rewritten instance helper text', () => {
+	it( 'renders the instance helper text describing the OAuth handoff', () => {
 		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
 		expect(
 			screen.getByText(
