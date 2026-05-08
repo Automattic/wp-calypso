@@ -16,7 +16,9 @@ interface UserAchievementsProps {
 const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const { isOwnProfile, isVisible, isLoading } = useAchievementsVisibility( user.user_login );
-	const { yearsOfService } = useAchievementsQuery( isVisible ? user.user_login : undefined );
+	const { yearsOfService } = useAchievementsQuery( isVisible ? user.user_login : undefined, {
+		refetchOnMount: 'always',
+	} );
 
 	if ( isLoading ) {
 		return (
