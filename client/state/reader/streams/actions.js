@@ -6,7 +6,6 @@ import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
 	READER_STREAMS_PAGINATED_REQUEST,
-	READER_STREAMS_SHOW_UPDATES,
 	READER_STREAMS_SELECT_ITEM,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
@@ -17,7 +16,6 @@ import {
 } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
-import { getStream } from 'calypso/state/reader/streams/selectors';
 import { buildStreamQueryParams } from './build-query-params';
 import {
 	PER_FETCH,
@@ -250,16 +248,6 @@ export function receivePage( {
 		},
 	};
 }
-
-export const showUpdates =
-	( { streamKey } ) =>
-	( dispatch, getState ) => {
-		const items = getStream( getState(), streamKey ).pendingItems.items;
-		return dispatch( {
-			type: READER_STREAMS_SHOW_UPDATES,
-			payload: { streamKey, items },
-		} );
-	};
 
 export function receiveUpdates( { streamKey, streamItems } ) {
 	return {
