@@ -12,6 +12,8 @@ import {
 	getSelectedSiteId,
 	getSelectedSite,
 } from 'calypso/state/ui/selectors';
+import { CustomizeProvider } from './customize';
+import { CustomizeFooter } from './customize/footer';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import MySitesSidebarUnifiedSidebarGroup from './sidebar-group';
@@ -20,6 +22,7 @@ import { isItemSelected } from './utils';
 import groupMenuItems from './utils/group-menu-items';
 import 'calypso/state/admin-menu/init';
 import 'calypso/state/admin-sidebar/expand-state/init';
+import 'calypso/state/admin-sidebar/layout/init';
 
 import './style.scss';
 
@@ -99,7 +102,7 @@ export const MySitesSidebarUnifiedBody = ( {
 	};
 
 	return (
-		<>
+		<CustomizeProvider>
 			{ ungroupedItems.map( ( item, i ) => renderItem( item, i ) ) }
 			{ groupedSections.map( ( section ) => (
 				<MySitesSidebarUnifiedSidebarGroup
@@ -110,7 +113,8 @@ export const MySitesSidebarUnifiedBody = ( {
 				</MySitesSidebarUnifiedSidebarGroup>
 			) ) }
 			{ children }
-		</>
+			<CustomizeFooter />
+		</CustomizeProvider>
 	);
 };
 

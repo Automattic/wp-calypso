@@ -52,6 +52,12 @@ export default function SidebarItem( props ) {
 			data-tip-target={ props.tipTarget }
 			data-tooltip={ props.tooltip }
 			data-post-type={ props.postType }
+			// Optional pass-through for the wp-admin-sidebar redesign so the
+			// customize mode's drag-drop can find reassignable rows by id
+			// (Phase 2 task 2.2). Undefined for items without an itemId so
+			// the attribute is omitted entirely on legacy callers — keeps
+			// existing snapshots stable.
+			data-wp-admin-sidebar-item-id={ props.wpAdminSidebarItemId }
 		>
 			<a
 				className="sidebar__menu-link"
@@ -120,4 +126,9 @@ SidebarItem.propTypes = {
 	sidebarIsCollapsed: PropTypes.bool,
 	inlineIcon: PropTypes.string,
 	labelSuffix: PropTypes.node,
+	// Compound itemId for the wp-admin-sidebar redesign:
+	// `<sourceKind>:<ref>:<parent>:<slug>`.
+	// Optional. Drives the `data-wp-admin-sidebar-item-id` attribute the customize
+	// mode's drag-drop hook reads to find reassignable rows.
+	wpAdminSidebarItemId: PropTypes.string,
 };

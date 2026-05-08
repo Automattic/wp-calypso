@@ -1,0 +1,206 @@
+// Customize-mode styles for the redesigned admin sidebar.
+//
+// Calypso-side counterpart to `WordPress/wp-admin-sidebar` v0.1.4
+// `src/customizer/customizer.css`. Scoped under `body.is-admin-sidebar-customize-mode`
+// so it only applies during the mode; the body class is toggled on enter/exit
+// by the customize orchestrator.
+//
+// Identical-behaviour anchors:
+// - Row 17 / 19 (drag-time hover suppression + ghost dimensions).
+// - Row 18 (full-width drop indicator).
+// - Row 20 (inert non-reassignable rows during customize).
+// - Row 21 (submenu collapse + flyout suppression — Calypso doesn't
+//   render wp-admin's `.wp-submenu`, so this is mostly a no-op for
+//   non-reassignable rows).
+// - Row 22 (Collapse Menu / Calypso "fold sidebar" disabled-but-visible).
+// - Row 23 (footer dock + Save/Cancel buttons).
+//
+// @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/customizer.css
+
+body.is-admin-sidebar-customize-mode {
+	// Reassignable plugin items: grab cursor across the whole row.
+	.sidebar li[data-wp-admin-sidebar-item-id] {
+		cursor: grab;
+		position: relative;
+
+		&:active,
+		.sidebar__menu-link:active {
+			cursor: grabbing;
+		}
+	}
+
+	// Inert non-reassignable, non-group rows during customize (Phase 2 row 20).
+	// The inner anchor gets `pointer-events: none` so click navigation is
+	// blocked. The LI itself stays interactive enough for `elementsFromPoint`
+	// hit-testing to land on it (drag-drop needs that).
+	.sidebar li.sidebar__menu-item-parent:not([data-wp-admin-sidebar-item-id]):not(.wp-admin-sidebar-group) {
+		.sidebar__menu-link {
+			pointer-events: none;
+		}
+		// Suppress hover paint on inert rows so they read as "look but
+		// don't touch" during customize. We override what visibly differs
+		// from the static state — color, box-shadow (left-edge stripe),
+		// background-color — together, since cascading rules need all three
+		// to fully suppress (the public plugin learned this the hard way; see
+		// upstream PR #48).
+		&:hover .sidebar__menu-link {
+			background-color: var(--color-sidebar-background);
+			color: var(--color-sidebar-text);
+			box-shadow: none;
+		}
+	}
+
+	// Drag-time hover suppression on every reassignable + non-reassignable
+	// row, while the body has `is-admin-sidebar-dragging` (Phase 2 row 19).
+	// Goal: rows the cursor passes over look identical to their non-hovered
+	// state; the drop indicator is the only visual signal.
+	&.is-admin-sidebar-dragging {
+		.sidebar li.sidebar__menu-item-parent:hover .sidebar__menu-link,
+		.sidebar li.sidebar__menu-item-parent.hovered .sidebar__menu-link {
+			background-color: transparent;
+			color: var(--color-sidebar-text);
+			box-shadow: none;
+		}
+		// Suppress flyout submenu open state during drag (mirrors the public
+		// plugin's `.opensub` strip in `customizer.js`). Calypso surfaces
+		// flyouts via `.hovered`; clear the visual effect during drag.
+		.sidebar .sidebar__menu.is-togglable.hovered .sidebar__expandable-content {
+			display: none !important;
+		}
+	}
+
+	// Disable Calypso's "Collapse menu" (or equivalent fold-sidebar control)
+	// during customize. Calypso's surfaces vary by route; the broad
+	// `.collapse-sidebar__toggle` selector covers the per-site sidebar.
+	// (Phase 2 row 22.)
+	.collapse-sidebar__toggle {
+		opacity: 0.4;
+		pointer-events: none;
+
+		.sidebar__menu-link {
+			cursor: not-allowed;
+		}
+	}
+}
+
+// Source row fades while the ghost follows the cursor (Phase 2 row 17 visual).
+.sidebar li[data-wp-admin-sidebar-item-id].is-admin-sidebar-source-dragging {
+	opacity: 0.3;
+}
+
+// Floating ghost — width/height set inline by createGhost() from the source
+// row's bounding rect (Phase 2 row 17). Mirrors the public plugin's
+// `.wp-admin-sidebar-drag-ghost` styling.
+.admin-sidebar-drag-ghost {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 100000;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	padding: 0;
+	background: var(--color-sidebar-menu-hover-background, #2c3439);
+	color: var(--color-sidebar-text, #f0f0f1);
+	border-radius: 4px;
+	opacity: 0.95;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+	a {
+		flex: 1 1 auto;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 12px 6px 0;
+		background: transparent;
+		color: inherit;
+		text-decoration: none;
+		pointer-events: none;
+	}
+}
+
+// Drop indicator (Phase 2 row 18). Full-width row insertion at the slot
+// under the cursor; the indicator is the only visual signal during drag.
+li.admin-sidebar-drop-indicator {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	height: 2px;
+	width: 100%;
+	background: var(--color-accent, #3858e9);
+	pointer-events: none;
+}
+
+// Customize-mode footer (Phase 2 row 23). Docked at the bottom of the
+// sidebar surface with Save/Cancel stacked.
+.admin-sidebar-customize-footer {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 8px 12px;
+	background: var(--color-sidebar-background);
+	border-top: 1px solid rgba(240, 240, 241, 0.1);
+	box-shadow: 0 -8px 12px -8px rgba(0, 0, 0, 0.5);
+	margin-top: auto;
+
+	&__cancel,
+	&__save {
+		flex: 0 0 auto;
+		padding: 6px 12px;
+		border-radius: 3px;
+		font-size: 13px;
+		cursor: pointer;
+	}
+
+	&__cancel {
+		background: transparent;
+		border: 1px solid var(--color-accent, #3858e9);
+		color: var(--color-accent, #3858e9);
+	}
+
+	&__save {
+		background: var(--color-accent, #3858e9);
+		border: 1px solid var(--color-accent, #3858e9);
+		color: #fff;
+
+		&[disabled] {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+	}
+
+	&__error {
+		font-size: 12px;
+		color: var(--color-error, #d63638);
+	}
+}
+
+// Drag handle (grip). Rendered inside reassignable items during customize
+// mode by the `<MySitesSidebarUnifiedItem>` adapter (Phase 2 row 17 visual).
+.admin-sidebar-item__grip {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 34px;
+	color: inherit;
+	cursor: grab;
+	font-size: 14px;
+	line-height: 1;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-accent, #3858e9);
+		outline-offset: -2px;
+	}
+}
+
+// Live region (visually hidden, screen-reader-only). Mirrors the public
+// plugin's announcement helper.
+.admin-sidebar-customize-live-region {
+	position: absolute;
+	left: -10000px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}

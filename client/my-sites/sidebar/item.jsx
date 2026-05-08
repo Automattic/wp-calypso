@@ -49,6 +49,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	forceChevronIcon = false,
 	trackClickEvent,
 	signal,
+	itemId,
 } ) => {
 	const reduxDispatch = useDispatch();
 
@@ -77,6 +78,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }
 			forceChevronIcon={ forceChevronIcon }
+			wpAdminSidebarItemId={ itemId }
 			className={ clsx(
 				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
 				className
@@ -112,6 +114,10 @@ MySitesSidebarUnifiedItem.propTypes = {
 		inline_icon: PropTypes.string,
 		attention: PropTypes.bool,
 	} ),
+	// Compound itemId from the redesigned endpoint — drives the
+	// `data-wp-admin-sidebar-item-id` attribute the customize mode's
+	// drag-drop reads. Optional; legacy items without it pass through unchanged.
+	itemId: PropTypes.string,
 };
 
 export default memo( MySitesSidebarUnifiedItem );
