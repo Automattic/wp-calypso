@@ -64,6 +64,12 @@ import type { RealtimeToolEvent } from './types';
 interface ExecuteRealtimeToolCallsArgs {
 	event: { response?: { output?: unknown[] } };
 	onToolEvent: ( event: RealtimeToolEvent ) => void;
+	/**
+	 * Drop any running entry with this id. Used when a tool call resolves into a
+	 * "no log entry needed" state (e.g. user-cancelled image generation) and we'd
+	 * otherwise leave the "Generating image…" indicator up forever.
+	 */
+	onToolEventRemove: ( id: string ) => void;
 	sendFunctionCallOutput: ( callId: string, result: unknown ) => void;
 	/**
 	 * Aborted when the realtime session tears down. Long-running tools
@@ -88,6 +94,7 @@ interface RealtimeFunctionCall {
 export async function executeRealtimeToolCalls( {
 	event,
 	onToolEvent,
+	onToolEventRemove,
 	sendFunctionCallOutput,
 	signal,
 }: ExecuteRealtimeToolCallsArgs ): Promise< ExecuteRealtimeToolCallsResult > {
@@ -140,6 +147,10 @@ export async function executeRealtimeToolCalls( {
 				status: getToolCallResultOk( result ) ? 'done' : 'error',
 				timestamp: Date.now(),
 			} );
+		} else if ( call.call_id ) {
+			// No final label means the entry should disappear (e.g. cancelled
+			// image generation). Drop any running placeholder we put up earlier.
+			onToolEventRemove( call.call_id );
 		}
 
 		sendFunctionCallOutput( call.call_id, result );
