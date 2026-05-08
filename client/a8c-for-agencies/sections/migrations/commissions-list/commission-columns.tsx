@@ -58,8 +58,8 @@ export const ReviewStatusColumn = ( {
 				};
 			case 'pending':
 				return {
-					statusText: translate( 'Pending' ),
-					statusType: 'warning',
+					statusText: translate( 'Ineligible' ),
+					statusType: 'info',
 				};
 			default:
 				// Unknown status - don't show a badge
