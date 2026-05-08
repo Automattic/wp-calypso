@@ -8,6 +8,7 @@ import {
 	createMastodonRepost,
 	deleteMastodonLike,
 	deleteMastodonRepost,
+	getMastodonAuthStatus,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
 	getMastodonConnection,
@@ -127,6 +128,39 @@ describe( 'mastodon fetchers', () => {
 				data: { status: 401 },
 			} );
 		await expect( getMastodonConnections() ).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+
+	it( 'getMastodonAuthStatus returns { needs_reauth } for the connection', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 200, { needs_reauth: true } );
+		const res = await getMastodonAuthStatus( 42 );
+		expect( res.needs_reauth ).toBe( true );
+	} );
+
+	it( 'getMastodonAuthStatus surfaces classified errors', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 401, { code: 'reader_mastodon_unauthenticated' } );
+		await expect( getMastodonAuthStatus( 42 ) ).rejects.toMatchObject( {
+			kind: 'auth_required',
+		} );
+	} );
+
+	it( 'getMastodonAuthStatus rejects responses missing needs_reauth', async () => {
+		// Without shape validation a response of `{}` types as `needs_reauth:
+		// undefined` and the gate's `!== true` check silently treats it as
+		// healthy — surface it as an unknown error instead so the gate falls
+		// through to children rather than locking users out incorrectly.
+		nock( BASE ).get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' ).reply( 200, {} );
+		await expect( getMastodonAuthStatus( 42 ) ).rejects.toMatchObject( { kind: 'unknown' } );
+	} );
+
+	it( 'getMastodonAuthStatus rejects responses with non-boolean needs_reauth', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 200, { needs_reauth: 'yes' } );
+		await expect( getMastodonAuthStatus( 42 ) ).rejects.toMatchObject( { kind: 'unknown' } );
 	} );
 } );
 

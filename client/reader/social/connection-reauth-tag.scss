@@ -1,0 +1,11 @@
+.connection-reauth-tag {
+	display: inline-block;
+	margin-inline-start: 8px;
+	padding-block: 1px;
+	padding-inline: 8px;
+	border-radius: 16px;
+	border: 1px solid var( --color-warning, var( --color-border-subtle ) );
+	color: var( --color-warning-80, var( --color-text ) );
+	font-size: 11px;
+	line-height: 1.4;
+}
