@@ -22,7 +22,7 @@ export const societyBlogs: CuratedBlogsList = {
 			feed_ID: 78449659,
 			site_ID: 102727187,
 			site_URL: 'http://www.shakeuplearning.com/',
-			site_name: 'Educators Technology',
+			site_name: 'Shake Up Learning',
 			feed_URL: 'http://shakeuplearning.com/feed',
 			has_icon: true,
 		},
