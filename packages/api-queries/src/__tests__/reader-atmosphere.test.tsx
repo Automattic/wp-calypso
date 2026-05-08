@@ -1087,6 +1087,109 @@ describe( 'reader-atmosphere hooks', () => {
 				expect( after?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBe( '3krkeyrkeyrke' );
 			} );
 
+			it( 'follow does not patch rows on a different connection', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const OTHER_CONNECTION_ID = 99;
+				const ourFollowersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				const otherFollowersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: OTHER_CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData( ourFollowersKey, makeFollowersPage() );
+				client.setQueryData( otherFollowersKey, makeFollowersPage() );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows` )
+					.reply( 201, {
+						follow: {
+							uri: 'at://did:plc:caller/app.bsky.graph.follow/newrkey123456',
+							cid: 'cid',
+							rkey: 'newrkey123456',
+						},
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( followAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					await result.current.mutateAsync( {
+						connectionId: CONNECTION_ID,
+						actor: 'alice.bsky.social',
+						subjectDid: SUBJECT_DID,
+					} );
+				} );
+
+				const ours =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( ourFollowersKey );
+				const other =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( otherFollowersKey );
+				expect( ours?.pages[ 0 ].items[ 0 ].viewer.following ).toBe(
+					'at://did:plc:caller/app.bsky.graph.follow/newrkey123456'
+				);
+				// The other connection's cached row must not be touched: viewer.following
+				// is per-caller, so leaking the URI between connections would falsely
+				// flip the Follow button on a connection that has not actually followed.
+				expect( other?.pages[ 0 ].items[ 0 ].viewer.following ).toBeNull();
+				expect( other?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBeNull();
+			} );
+
+			it( 'unfollow rolls back row patches even with no scoped-profile cache loaded', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const followersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData(
+					followersKey,
+					makeFollowersPage( {
+						following: 'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke',
+						following_rkey: '3krkeyrkeyrke',
+					} )
+				);
+				// Note: scoped-profile cache is intentionally NOT seeded — this is the
+				// realistic followers/following view path where the user opens a list
+				// without also having visited the target's profile page.
+
+				nock( BASE )
+					.delete(
+						`/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows/3krkeyrkeyrke`
+					)
+					.reply( 502, {
+						code: 'atmosphere_upstream_unavailable',
+						message: 'Bluesky unreachable.',
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( unfollowAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					try {
+						await result.current.mutateAsync( {
+							connectionId: CONNECTION_ID,
+							actor: 'alice.bsky.social',
+							rkey: '3krkeyrkeyrke',
+							subjectDid: SUBJECT_DID,
+						} );
+					} catch {
+						// expected
+					}
+				} );
+
+				const after =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( followersKey );
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following ).toBe(
+					'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke'
+				);
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBe( '3krkeyrkeyrke' );
+			} );
+
 			it( 'follow does not patch rows whose DID does not match the subject', async () => {
 				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 				const followersKey = atmosphereActorFollowersInfiniteQuery( {
