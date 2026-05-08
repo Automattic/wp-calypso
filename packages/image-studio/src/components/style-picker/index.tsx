@@ -24,6 +24,7 @@ import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
 import { ImageStudioMode } from '../../types';
+import { getFeatureClipCapabilities } from '../../utils/feature-clip-capabilities';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
 import { BrushIcon } from '../icons/BrushIcon';
 
@@ -43,6 +44,12 @@ interface StyleOption {
 	// to differentiate Cinematic (Veo prompt-driven) from Highlights
 	// (browser-rendered recap from post images). Image styles omit it.
 	description?: string;
+	// Hard-disabled in the picker (e.g. browser lacks the WebCodecs APIs
+	// the Highlights flow requires). The card still renders so users see
+	// the option exists; click is a no-op and `disabledReason` shows in
+	// the tooltip.
+	disabled?: boolean;
+	disabledReason?: string;
 }
 
 export const STYLE_OPTIONS: StyleOption[] = [
@@ -131,25 +138,33 @@ export const STYLE_OPTIONS: StyleOption[] = [
 ];
 
 // Top-level video style choices, named for users (not video editors).
-//   Cinematic  → AI-generated single atmospheric shot. Veo path.
-//   Highlights → Browser-rendered walkthrough of the post's key points + images. EditFrame path.
-export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
-	{
-		label: __( 'Cinematic', __i18n_text_domain__ ),
-		value: 'cinematic',
-		preview: videoCinematicPreview,
-		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
-	},
-	{
-		label: __( 'Highlights', __i18n_text_domain__ ),
-		value: 'highlights',
-		preview: videoHighlightsPreview,
-		description: __(
-			"Build a 20-second recap clip using your post's images and key points.",
-			__i18n_text_domain__
-		),
-	},
-];
+//   Cinematic  → AI-generated single atmospheric shot. Veo path (server).
+//   Highlights → Browser-rendered walkthrough of the post's key points +
+//                images. EditFrame path; gated on WebCodecs support so
+//                we render the Highlights card disabled (with tooltip)
+//                on browsers that can't run the encoder.
+export const VIDEO_STYLE_OPTIONS: StyleOption[] = ( () => {
+	const capabilities = getFeatureClipCapabilities();
+	return [
+		{
+			label: __( 'Cinematic', __i18n_text_domain__ ),
+			value: 'cinematic',
+			preview: videoCinematicPreview,
+			description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
+		},
+		{
+			label: __( 'Highlights', __i18n_text_domain__ ),
+			value: 'highlights',
+			preview: videoHighlightsPreview,
+			description: __(
+				"Build a 20-second recap clip using your post's images and key points.",
+				__i18n_text_domain__
+			),
+			disabled: ! capabilities.isSupported,
+			disabledReason: capabilities.reason,
+		},
+	];
+} )();
 
 export function StylePicker( { disabled = false, mode, variant = 'image' }: StylePickerProps ) {
 	const isVideo = variant === 'video';
@@ -206,10 +221,18 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 					<button
 						key={ option.value }
 						type="button"
+						disabled={ option.disabled }
+						title={ option.disabled ? option.disabledReason : undefined }
 						className={ cn( 'image-studio-input-toolbar-card', {
 							'is-selected': selectedStyle === option.value,
+							'is-disabled': option.disabled,
 						} ) }
-						onClick={ () => handleStyleSelect( option.value ) }
+						onClick={ () => {
+							if ( option.disabled ) {
+								return;
+							}
+							handleStyleSelect( option.value );
+						} }
 					>
 						<span className="image-studio-input-toolbar-card__image-wrapper">
 							<img

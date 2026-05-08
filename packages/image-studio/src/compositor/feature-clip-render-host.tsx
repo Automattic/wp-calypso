@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore, type ImageStudioActions } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
+import { getFeatureClipCapabilities } from '../utils/feature-clip-capabilities';
 import {
 	trackFeatureClipRenderCompleted,
 	trackFeatureClipRenderStarted,
@@ -188,6 +189,20 @@ export function FeatureClipRenderHost() {
 			return;
 		}
 		prefetchedRequestIdRef.current = requestId;
+
+		// Defensive capability gate: the picker disables Highlights when
+		// the browser lacks WebCodecs / OfflineAudioContext, but an agent
+		// could still dispatch a render request directly (manual tool
+		// call, weird state). Fail fast with the user-readable reason
+		// instead of letting EditFrame throw partway through the encoder.
+		const capabilities = getFeatureClipCapabilities();
+		if ( ! capabilities.isSupported ) {
+			failFeatureClipRender( {
+				requestId,
+				message: capabilities.reason ?? "Your browser doesn't support in-browser video rendering.",
+			} );
+			return;
+		}
 
 		// Surface this phase to the sidebar progress panel so the user sees
 		// "Reading post images" during the prefetch (it can take seconds).
