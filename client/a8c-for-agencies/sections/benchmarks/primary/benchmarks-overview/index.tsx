@@ -13,6 +13,7 @@ import useFetchAgencyBenchmarksList from '../../hooks/use-fetch-agency-benchmark
 import useFetchBenchmarksConfig from '../../hooks/use-fetch-benchmarks-config';
 import BenchmarksEmptyState from './empty-state';
 import HowToReadCard from './how-to-read-card';
+import PeerComparisonCard from './peer-comparison-card';
 import BenchmarkStatsGrid from './stats-grid';
 import SubmissionBanner from './submission-banner';
 import SubmissionModal from './submission-modal';
@@ -66,6 +67,13 @@ function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 						) }
 						<HowToReadCard />
 						<BenchmarkStatsGrid />
+						{ existingSubmission && (
+							<PeerComparisonCard
+								quarter={ quarter }
+								year={ year }
+								ownSubmission={ existingSubmission }
+							/>
+						) }
 					</>
 				) }
 			</LayoutBody>

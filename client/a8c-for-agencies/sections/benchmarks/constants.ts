@@ -207,3 +207,15 @@ export type BenchmarkAggregateRow = {
 	sample_size: number;
 	metrics: Record< AggregateMetricKey, MetricSummary >;
 };
+
+export type PeerBenchmarkRow = {
+	label: string;
+	metrics: Record< AggregateMetricKey, number >;
+};
+
+export type BenchmarkPeers = {
+	quarter: 1 | 2 | 3 | 4;
+	year: number;
+	sample_size: number;
+	peers: PeerBenchmarkRow[];
+};
