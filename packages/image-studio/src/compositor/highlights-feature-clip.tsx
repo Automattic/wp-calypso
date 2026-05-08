@@ -311,7 +311,9 @@ function groupScenesByImage( scenes: FeatureClipScene[] ): SceneGroup[] {
 	const groups: SceneGroup[] = [];
 	for ( const scene of scenes ) {
 		const last = groups[ groups.length - 1 ];
-		if ( scene.imageUrl && last?.imageUrl === scene.imageUrl ) {
+		// Also require a matching camera move: a deliberate camera change on the
+		// same image is a new motion intent, not a continuation of one KB pan.
+		if ( scene.imageUrl && last?.imageUrl === scene.imageUrl && last.camera === scene.camera ) {
 			last.entries.push( scene );
 		} else {
 			groups.push( {
