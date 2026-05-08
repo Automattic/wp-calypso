@@ -12,7 +12,7 @@ import Stream from '../index';
 import type { ReactNode } from 'react';
 
 jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
-	const ReactLib = require( 'react' );
+	const ReactLib = require( 'react' ) as typeof import('react');
 	return class PostLifecycle extends ReactLib.Component< {
 		postKey: { postId: number };
 		isSelected: boolean;
@@ -68,7 +68,7 @@ jest.mock(
 );
 jest.mock( 'calypso/lib/with-dimensions', () => ( Component: React.ComponentType ) => Component );
 jest.mock( 'calypso/components/infinite-list', () => {
-	const ReactLib = require( 'react' );
+	const ReactLib = require( 'react' ) as typeof import('react');
 	return class InfiniteList extends ReactLib.Component< {
 		items: Array< { postId: number } >;
 		fetchingNextPage?: boolean;
