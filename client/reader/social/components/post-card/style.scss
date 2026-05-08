@@ -283,7 +283,11 @@ a.social-post-card-header__timestamp::after {
 	color: var( --studio-gray-50 );
 	gap: 16px;
 
-	span,
+	// Scope to direct-child spans so the cell padding doesn't leak into the
+	// count-wrapping spans inside <LikeButton> / <RepostButton>, which would
+	// otherwise stack 6px of padding on top of the flex gap and push the
+	// numbers further from their icons than the replies cell.
+	> span,
 	.social-post-card-counts__link,
 	.social-post-card-counts__reply-button {
 		display: inline-flex;
