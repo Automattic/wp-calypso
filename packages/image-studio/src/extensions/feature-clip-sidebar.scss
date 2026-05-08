@@ -44,7 +44,14 @@
 
 	&__share-cta {
 		width: 100%;
+		// WP's Button defaults to a left-justified inline-flex row even when
+		// width is forced to 100%. Specify center alignment + a small gap so
+		// the icon + label cluster sits visually centered in the full-width
+		// pill and tracks the bottom-action row beneath it.
+		display: flex;
 		justify-content: center;
+		align-items: center;
+		gap: 8px;
 		margin-bottom: 8px;
 	}
 

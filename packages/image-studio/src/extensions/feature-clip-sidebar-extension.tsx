@@ -101,22 +101,9 @@ function FeatureClipPreview( {
 					preload="metadata"
 				/>
 			</div>
-			{ reel.isVisible && (
-				<Button
-					variant="primary"
-					icon={ <SocialLogo icon="instagram" size={ 18 } /> }
-					className="image-studio-feature-clip-panel__share-cta"
-					__next40pxDefaultSize
-					disabled={ reel.isSharing }
-					isBusy={ reel.isSharing }
-					onClick={ reel.handleShare }
-				>
-					{ reelLabel }
-				</Button>
-			) }
 			{ generic.isVisible && (
 				<Button
-					variant={ reel.isVisible ? 'secondary' : 'primary' }
+					variant="primary"
 					icon={ share }
 					className="image-studio-feature-clip-panel__share-cta"
 					__next40pxDefaultSize
@@ -125,6 +112,19 @@ function FeatureClipPreview( {
 					onClick={ generic.handleShare }
 				>
 					{ genericLabel }
+				</Button>
+			) }
+			{ reel.isVisible && (
+				<Button
+					variant={ generic.isVisible ? 'secondary' : 'primary' }
+					icon={ <SocialLogo icon="instagram" size={ 18 } /> }
+					className="image-studio-feature-clip-panel__share-cta"
+					__next40pxDefaultSize
+					disabled={ reel.isSharing }
+					isBusy={ reel.isSharing }
+					onClick={ reel.handleShare }
+				>
+					{ reelLabel }
 				</Button>
 			) }
 			<div className="image-studio-feature-clip-panel__bottom-actions">
