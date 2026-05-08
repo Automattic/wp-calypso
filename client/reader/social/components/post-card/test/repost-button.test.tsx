@@ -59,7 +59,11 @@ function makeQueryClient() {
 
 function renderRepostButton(
 	post = makePost(),
-	{ onClick = jest.fn(), onQuoteClick }: { onClick?: jest.Mock; onQuoteClick?: jest.Mock } = {}
+	{
+		onClick = jest.fn(),
+		onQuoteClick,
+		hideCount,
+	}: { onClick?: jest.Mock; onQuoteClick?: jest.Mock; hideCount?: boolean } = {}
 ) {
 	const useRepostAction = makeUseAtmosphereRepostAction( 42 );
 	const socialPost = mapAtmosphereFeedItemToSocialPost( post );
@@ -76,7 +80,7 @@ function renderRepostButton(
 				} }
 			>
 				<RepostProvider value={ useRepostAction }>
-					<RepostButton post={ socialPost } />
+					<RepostButton post={ socialPost } hideCount={ hideCount } />
 				</RepostProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
@@ -88,6 +92,12 @@ describe( '<RepostButton>', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.restoreAllMocks();
+	} );
+
+	it( 'omits the visible count when hideCount is true but keeps the aria-label count', () => {
+		renderRepostButton( makePost(), { hideCount: true } );
+		const button = screen.getByRole( 'button', { name: /repost, 4 reposts/i } );
+		expect( button ).not.toHaveTextContent( '4' );
 	} );
 
 	it( 'renders a menu trigger when not reposted', () => {
