@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import { getCalypsoGetStartedUrlFromHref } from './logged-out-themes-page';
+import { getCalypsoGetStartedUrlFromHref } from '../../../lib/pages/logged-out-themes-page';
 
 describe( 'LoggedOutThemesPage', function () {
 	describe( 'getCalypsoGetStartedUrlFromHref', function () {

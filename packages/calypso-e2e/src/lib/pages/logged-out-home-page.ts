@@ -33,13 +33,11 @@ export class LoggedOutHomePage {
 	 * returns {Promise<void>}
 	 */
 	async exploreThemes(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForURL( /\/themes(?:[/?#].*)?$/, {
-				timeout: 30 * 1000,
-				waitUntil: 'domcontentloaded',
-			} ),
-			this.exploreThemesLink.click(),
-		] );
+		await this.exploreThemesLink.click();
+		await this.page.waitForURL( /\/themes(?:[/?#].*)?$/, {
+			timeout: 30 * 1000,
+			waitUntil: 'domcontentloaded',
+		} );
 	}
 
 	/**
