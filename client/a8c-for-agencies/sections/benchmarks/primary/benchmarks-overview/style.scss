@@ -53,6 +53,35 @@
 	}
 }
 
+.benchmarks-empty-state {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	max-inline-size: 900px;
+	margin-inline: auto;
+	padding-block-start: 48px;
+}
+
+.benchmarks-empty-state__heading {
+	@include heading-2x-large;
+	margin-block-end: 8px;
+}
+
+.benchmarks-empty-state__description {
+	@include body-large;
+	color: var(--color-neutral-70);
+}
+
+.benchmarks-empty-state .step-section-item {
+	@include break-large {
+		align-items: center;
+
+		.step-section-item__button {
+			margin-block-start: 0;
+		}
+	}
+}
+
 .benchmarks-submission-prompt {
 	background-color: var(--color-warning-0);
 	border-color: var(--color-warning-5);

@@ -9,7 +9,9 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/hosting-dashboard/header';
 import useFetchAgencyBenchmark from '../../hooks/use-fetch-agency-benchmark';
+import useFetchAgencyBenchmarksList from '../../hooks/use-fetch-agency-benchmarks-list';
 import useFetchBenchmarksConfig from '../../hooks/use-fetch-benchmarks-config';
+import BenchmarksEmptyState from './empty-state';
 import BenchmarkStatsGrid from './stats-grid';
 import SubmissionBanner from './submission-banner';
 import SubmissionModal from './submission-modal';
@@ -24,9 +26,20 @@ type ContentProps = {
 
 function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
-	const { data: existingSubmission, isLoading } = useFetchAgencyBenchmark( quarter, year );
+	const { data: existingSubmission, isLoading: isLatestLoading } = useFetchAgencyBenchmark(
+		quarter,
+		year
+	);
+	const { data: submissions, isLoading: isListLoading } = useFetchAgencyBenchmarksList();
 
-	const showBanner = ! isLoading && ! existingSubmission;
+	const hasNoSubmissions = ! isListLoading && submissions?.length === 0;
+	// Banner is a "you missed a quarter" nudge; only meaningful for agencies that have submitted at least once before.
+	const showBanner =
+		! isLatestLoading &&
+		! isListLoading &&
+		!! submissions &&
+		submissions.length > 0 &&
+		! existingSubmission;
 
 	return (
 		<>
@@ -39,14 +52,20 @@ function BenchmarksOverviewContent( { quarter, year, title }: ContentProps ) {
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				{ showBanner && (
-					<SubmissionBanner
-						quarter={ quarter }
-						year={ year }
-						onSubmitClick={ () => setIsModalOpen( true ) }
-					/>
+				{ hasNoSubmissions ? (
+					<BenchmarksEmptyState onSubmitClick={ () => setIsModalOpen( true ) } />
+				) : (
+					<>
+						{ showBanner && (
+							<SubmissionBanner
+								quarter={ quarter }
+								year={ year }
+								onSubmitClick={ () => setIsModalOpen( true ) }
+							/>
+						) }
+						<BenchmarkStatsGrid />
+					</>
 				) }
-				<BenchmarkStatsGrid />
 			</LayoutBody>
 			{ isModalOpen && (
 				<SubmissionModal
