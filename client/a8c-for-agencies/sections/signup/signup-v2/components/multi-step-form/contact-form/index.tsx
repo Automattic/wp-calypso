@@ -137,18 +137,19 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 
 			const agencyUrl = formData.agencyUrl ?? '';
 
+			// Non-unique domains (gmail.com, facebook.com, etc.) can't produce
+			// meaningful duplicate-agency matches, so skip the duplicate check
+			// entirely and let the signup proceed.  Risk review still fires
+			// independently based on the owner's email domain.
 			if ( isDeniedNonUniqueDomain( agencyUrl ) ) {
 				dispatch(
 					recordTracksEvent(
-						'calypso_a4a_agency_signup_form_non_unique_domain_validation_shown'
+						'calypso_a4a_agency_signup_form_non_unique_domain_skipped',
+						{ agencyUrl }
 					)
 				);
-				updateValidationError( {
-					agencyUrl: translate(
-						"This doesn't look like an agency website. Please enter your agency's actual business URL."
-					),
-				} );
 				setIsProceeding( false );
+				onContinue( formData );
 				return;
 			}
 
