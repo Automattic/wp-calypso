@@ -253,6 +253,99 @@ describe( 'themes selectors', () => {
 
 			expect( theme ).toEqual( jetpackTheme );
 		} );
+
+		test( 'when wpcom record is retired and the site has its own installed theme with the same slug, merges site fields over wpcom and clears retired', () => {
+			const retiredWpcomTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				stylesheet: 'premium/colliding-slug',
+				retired: true,
+			};
+			const thirdPartyTheme = {
+				id: 'colliding-slug',
+				name: 'Third-Party Theme',
+				author: 'Third-Party Author',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { 'colliding-slug': retiredWpcomTheme },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { 'colliding-slug': thirdPartyTheme },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'colliding-slug'
+			);
+
+			// Site fields win for display
+			expect( theme.name ).toBe( 'Third-Party Theme' );
+			expect( theme.author ).toBe( 'Third-Party Author' );
+			// wpcom-shape fields preserved so downstream consumers don't NPE
+			expect( theme.stylesheet ).toBe( 'premium/colliding-slug' );
+			// Retired notice must not fire for an installed third-party theme
+			expect( theme.retired ).toBe( false );
+		} );
+
+		test( 'when wpcom record is retired but the site has no installed theme with the same slug, still returns the wpcom record', () => {
+			const retiredWpcomPinboard = {
+				id: 'pinboard',
+				name: 'Pinboard',
+				author: 'Automattic',
+				retired: true,
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { pinboard: retiredWpcomPinboard },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'pinboard'
+			);
+
+			expect( theme ).toEqual( retiredWpcomPinboard );
+		} );
+
+		test( 'when wpcom record is not retired, returns the wpcom record even if the site has its own copy', () => {
+			const wpcomTwentySixteen = { ...twentysixteen };
+			const sideloadedTwentySixteen = {
+				id: 'twentysixteen',
+				name: 'Twenty Sixteen (local)',
+				author: 'unrelated',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen: wpcomTwentySixteen },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { twentysixteen: sideloadedTwentySixteen },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'twentysixteen'
+			);
+
+			expect( theme ).toEqual( wpcomTwentySixteen );
+		} );
 	} );
 
 	describe( '#getThemesRequestError()', () => {

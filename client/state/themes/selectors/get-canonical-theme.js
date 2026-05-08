@@ -46,6 +46,23 @@ export function getCanonicalTheme( state, siteId, themeId ) {
 		searchOrder = [ siteId, 'wpcom', 'wporg' ];
 	}
 
+	// When the wpcom record for this slug is retired and the site has its own installed
+	// theme with the same slug, the installed theme is an unrelated third-party theme
+	// whose slug coincides with a retired wpcom premium theme. Merge so display fields
+	// (name, author, description, screenshot, version) come from the site's installed
+	// copy, while wpcom-shape fields (stylesheet, taxonomies, etc.) are preserved for
+	// downstream consumers that assume them. The retired flag is cleared so the
+	// retired-theme notice doesn't fire for an installed third-party theme.
+	const wpcomTheme = getTheme( state, 'wpcom', themeId );
+	const siteTheme = siteId ? getTheme( state, siteId, themeId ) : null;
+	if ( wpcomTheme?.retired && siteTheme ) {
+		return {
+			...wpcomTheme,
+			...siteTheme,
+			retired: false,
+		};
+	}
+
 	const source = find( searchOrder, ( s ) => getTheme( state, s, themeId ) );
 	return getTheme( state, source, themeId );
 }
