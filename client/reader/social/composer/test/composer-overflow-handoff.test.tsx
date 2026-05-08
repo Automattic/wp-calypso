@@ -6,6 +6,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useEffect } from 'react';
+import * as notices from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ComposerOverflowHandoff } from '../composer-overflow-handoff';
@@ -207,6 +208,54 @@ describe( 'ComposerOverflowHandoff — multi-site picker', () => {
 		// `Blog B` is the primary site, so it should be the default value.
 		await waitFor( () => expect( ( combobox as HTMLInputElement ).value ).toContain( 'Blog B' ) );
 	} );
+
+	it( 'falls back to sites[0] when primary_site_ID is set but missing from the sites list', async () => {
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'Blog A',
+				slug: 'a.wordpress.com',
+				URL: 'https://a.wordpress.com',
+				options: { admin_url: 'https://a.wordpress.com/wp-admin/' },
+				site_migration: { in_progress: false, is_complete: false },
+			} as Partial< Site >,
+			{
+				ID: 200,
+				name: 'Blog B',
+				slug: 'b.wordpress.com',
+				URL: 'https://b.wordpress.com',
+				options: { admin_url: 'https://b.wordpress.com/wp-admin/' },
+				site_migration: { in_progress: false, is_complete: false },
+			} as Partial< Site >,
+		] );
+
+		// `primary_site_ID` is set to a site that's NOT in the visible
+		// list (e.g. user's primary site is excluded by the `sitesQuery`
+		// filter). The picker must fall back to `sites[0]` rather than
+		// pre-selecting a non-existent site.
+		nock( ORIGIN )
+			.get( /\/rest\/v1\.\d+\/me\/settings/ )
+			.reply( 200, { primary_site_ID: 999 } );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="hi" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		const combobox = await screen.findByRole( 'combobox' );
+		await waitFor( () => expect( ( combobox as HTMLInputElement ).value ).toContain( 'Blog A' ) );
+	} );
 } );
 
 describe( 'ComposerOverflowHandoff — Move to editor click', () => {
@@ -256,6 +305,113 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
 		await user.click( button );
 
+		await waitFor( () =>
+			expect( openSpy ).toHaveBeenCalledWith(
+				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
+				'_blank',
+				'noopener,noreferrer'
+			)
+		);
+	} );
+
+	it( 'dispatches a fallback success notice with an Open-in-editor button when window.open is blocked', async () => {
+		const user = userEvent.setup();
+		const successNoticeSpy = jest.spyOn( notices, 'successNotice' );
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'My Blog',
+				slug: 'myblog.wordpress.com',
+				URL: 'https://myblog.wordpress.com',
+				site_migration: { in_progress: false, is_complete: false },
+				options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+		] );
+		nock( ORIGIN )
+			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
+			.reply( 200, { ID: 555, site_ID: 100, URL: 'https://myblog.wordpress.com/?p=555' } );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="my long draft" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+		await user.click( button );
+
+		// `openSpy` is mocked to return null (popup-blocker case). The
+		// fallback path dispatches a success notice with an "Open in editor"
+		// button whose onClick retries window.open from a fresh gesture.
+		await waitFor( () =>
+			expect( successNoticeSpy ).toHaveBeenCalledWith(
+				expect.stringMatching( /draft saved/i ),
+				expect.objectContaining( {
+					button: expect.stringMatching( /open in editor/i ),
+					onClick: expect.any( Function ),
+				} )
+			)
+		);
+		const noticeOptions = successNoticeSpy.mock.calls[ 0 ][ 1 ] as {
+			onClick: () => void;
+		};
+		noticeOptions.onClick();
+		expect( openSpy ).toHaveBeenLastCalledWith(
+			'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
+			'_blank',
+			'noopener,noreferrer'
+		);
+		successNoticeSpy.mockRestore();
+	} );
+
+	it( 'derives the editor URL from site.URL when admin_url is missing', async () => {
+		const user = userEvent.setup();
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'My Blog',
+				slug: 'myblog.wordpress.com',
+				URL: 'https://myblog.wordpress.com/',
+				site_migration: { in_progress: false, is_complete: false },
+				options: undefined,
+			} as Partial< Site >,
+		] );
+		nock( ORIGIN )
+			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
+			.reply( 200, { ID: 555 } );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="my long draft" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markOverLimit() );
+
+		const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+		await user.click( button );
+
+		// `site.URL` carries a trailing slash; the fallback strips it
+		// before appending `/wp-admin/post.php` so we don't end up with
+		// `//wp-admin/`.
 		await waitFor( () =>
 			expect( openSpy ).toHaveBeenCalledWith(
 				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
@@ -416,6 +572,57 @@ describe( 'ComposerOverflowHandoff — Tracks events', () => {
 				mode_kind: 'standalone',
 				site_id: 100,
 			} );
+		} finally {
+			openSpy.mockRestore();
+		}
+	} );
+
+	it( 'does not fire overflowHandoff Tracks events when the config omits the section', async () => {
+		const user = userEvent.setup();
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		try {
+			mockSitesQuery( [
+				{
+					ID: 100,
+					name: 'My Blog',
+					slug: 'myblog.wordpress.com',
+					URL: 'https://myblog.wordpress.com',
+					site_migration: { in_progress: false, is_complete: false },
+					options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+				} as Partial< Site >,
+			] );
+			nock( ORIGIN )
+				.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
+				.reply( 200, { ID: 555 } );
+
+			let composer: ReturnType< typeof useComposer > | null = null;
+			const Probe = () => {
+				composer = useComposer();
+				return null;
+			};
+
+			// `testComposerConfig` (the default) has no `overflowHandoff`
+			// field — protocols opt in by setting it. Confirm the
+			// section + click path stay silent in that case.
+			renderWithComposer(
+				<>
+					<Probe />
+					<ComposerOverflowHandoff text="my long draft" />
+				</>,
+				{ withMode: true }
+			);
+
+			act( () => composer!.markOverLimit() );
+
+			const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+			await user.click( button );
+			await waitFor( () => expect( openSpy ).toHaveBeenCalled() );
+
+			const handoffCalls = recordSpy.mock.calls.filter( ( call ) =>
+				String( call[ 0 ] ).includes( 'overflow_handoff' )
+			);
+			expect( handoffCalls ).toHaveLength( 0 );
 		} finally {
 			openSpy.mockRestore();
 		}

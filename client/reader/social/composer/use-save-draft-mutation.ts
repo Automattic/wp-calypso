@@ -8,8 +8,6 @@ export interface SaveDraftMutationVariables {
 
 export interface SaveDraftMutationResult {
 	ID: number;
-	site_ID: number;
-	URL: string;
 }
 
 export function saveDraftMutation() {

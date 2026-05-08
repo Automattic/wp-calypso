@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux';
 import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useComposerConfig } from './composer-config';
 import { useComposer } from './composer-provider';
@@ -94,7 +94,7 @@ function SiteIconThumb( { site }: { site: Site } ) {
 }
 
 function getSiteDisplayUrl( site: Site ) {
-	return ( site.URL || '' ).replace( /^https?:\/\//, '' );
+	return ( site.URL || '' ).replace( /^https?:\/\//, '' ).replace( /\/$/, '' );
 }
 
 function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } ) {
@@ -107,15 +107,6 @@ function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } 
 
 	const [ userSelection, setUserSelection ] = useState< number | null >( null );
 
-	const initialSiteId =
-		userSettings?.primary_site_ID && sites.some( ( s ) => s.ID === userSettings.primary_site_ID )
-			? userSettings.primary_site_ID
-			: sites[ 0 ].ID;
-
-	const displayedSiteId = userSelection ?? initialSiteId;
-
-	const selectedSite = sites.find( ( s ) => s.ID === displayedSiteId ) ?? sites[ 0 ];
-
 	const { mutate, isPending } = useMutation( saveDraftMutation() );
 
 	const options = useMemo(
@@ -127,6 +118,22 @@ function MultiSiteHandoffForm( { sites, text }: { sites: Site[]; text: string } 
 			} ) ),
 		[ sites ]
 	);
+
+	// Caller gates on a non-empty sites array, but TypeScript can't see
+	// through that. Hooks above run unconditionally; this guard sits
+	// below them and above the first `sites[0]` access.
+	if ( sites.length === 0 ) {
+		return null;
+	}
+
+	const initialSiteId =
+		userSettings?.primary_site_ID && sites.some( ( s ) => s.ID === userSettings.primary_site_ID )
+			? userSettings.primary_site_ID
+			: sites[ 0 ].ID;
+
+	const displayedSiteId = userSelection ?? initialSiteId;
+
+	const selectedSite = sites.find( ( s ) => s.ID === displayedSiteId ) ?? sites[ 0 ];
 
 	const renderItem = ( { item }: { item: { value: string; label: string; site?: Site } } ) => {
 		const site = item.site ?? sites.find( ( s ) => String( s.ID ) === item.value );
@@ -220,16 +227,30 @@ function MoveToEditorButton( {
 			{ siteId: site.ID, content: text },
 			{
 				onSuccess: ( data ) => {
-					// `admin_url` is documented to be set on every WP.com site
-					// returned by /me/sites; falling back to a derived path
-					// avoids leaving an orphan draft if the field is missing.
+					// Fall back to a derived `/wp-admin/` path so a missing
+					// `admin_url` doesn't orphan the just-saved draft.
 					const adminUrl =
 						site.options?.admin_url ?? `${ site.URL.replace( /\/$/, '' ) }/wp-admin/`;
 					const editorUrl = addQueryArgs( `${ adminUrl }post.php`, {
 						post: data.ID,
 						action: 'edit',
 					} );
-					window.open( editorUrl, '_blank', 'noopener,noreferrer' );
+					// `window.open` from a post-mutation callback can be
+					// suppressed by popup blockers (transient user activation
+					// expires while the request is in flight). When that
+					// happens, surface the editor link in a success notice so
+					// the user can complete the handoff via a fresh click.
+					const newWindow = window.open( editorUrl, '_blank', 'noopener,noreferrer' );
+					if ( ! newWindow ) {
+						dispatch(
+							successNotice( translate( 'Draft saved.' ), {
+								button: translate( 'Open in editor' ),
+								onClick: () => {
+									window.open( editorUrl, '_blank', 'noopener,noreferrer' );
+								},
+							} )
+						);
+					}
 				},
 				onError: ( error ) => {
 					dispatch(
@@ -244,7 +265,7 @@ function MoveToEditorButton( {
 						extra: {
 							type: 'reader_social_composer_overflow_handoff_save_draft_error',
 							site_id: site.ID,
-							error_message: error?.message,
+							error_message: error.message,
 						},
 					} );
 				},
@@ -265,14 +286,9 @@ function MoveToEditorButton( {
 	);
 }
 
-/**
- * Fires the `overflowHandoff.shown` Tracks event once when this component
- * mounts. Lives as a sibling of the rendered handoff so it only mounts when
- * the section actually appears (i.e. past the `hasBeenOverLimit` and
- * non-empty-sites guards). Sticky-once across trim-back-under-limit because
- * `hasBeenOverLimit` itself stays true; resets when the modal closes since
- * the parent re-mounts the handoff on the next open.
- */
+// Sibling component rather than a parent-component effect: mounting is the
+// gate, so we get one fire per modal session without re-implementing the
+// `hasBeenOverLimit` + non-empty-sites preconditions in a dependency array.
 function OverflowHandoffShownEffect( { mode }: { mode: ActiveMode | null } ) {
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const config = useComposerConfig();
@@ -315,6 +331,8 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 			<p>
 				{ translate( 'Too long for %(protocol)s? Publish it on your own site instead.', {
 					args: { protocol: config.protocolLabel },
+					comment:
+						'%(protocol)s is a brand name (e.g. "Bluesky", "Mastodon") and should not be translated.',
 				} ) }
 			</p>
 			{ sites.length === 1 ? (
