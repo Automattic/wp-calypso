@@ -18,7 +18,8 @@ const ICON_SIZE = 18;
 export function RepostButton( { post, hideCount }: RepostButtonProps ) {
 	const translate = useTranslate();
 	const action = useRepostAction( post );
-	const formattedReposts = formatNumber( post.counts.reposts );
+	const totalReposts = post.counts.reposts + post.counts.quotes;
+	const formattedReposts = formatNumber( totalReposts );
 
 	// No <RepostProvider> mounted (or the adapter declined to support the
 	// post) — render a static count so the cell isn't empty. Mirrors the
@@ -39,7 +40,7 @@ export function RepostButton( { post, hideCount }: RepostButtonProps ) {
 	}
 
 	const { isReposted, isPending } = action;
-	const accessibleLabel = String( action.label.accessibleLabel( post.counts.reposts, isReposted ) );
+	const accessibleLabel = String( action.label.accessibleLabel( totalReposts, isReposted ) );
 
 	if ( isReposted ) {
 		return (

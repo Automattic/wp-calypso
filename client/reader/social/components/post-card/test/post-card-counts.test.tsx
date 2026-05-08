@@ -154,9 +154,9 @@ describe( 'PostCardCounts', () => {
 				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
 			</RepostProvider>
 		);
-		const button = screen.getByRole( 'button', { name: /repost, 2 reposts/i } );
+		const button = screen.getByRole( 'button', { name: /repost, 3 reposts/i } );
 		expect( button ).toHaveAttribute( 'aria-haspopup', 'menu' );
-		expect( button ).toHaveTextContent( '2' );
+		expect( button ).toHaveTextContent( '3' );
 	} );
 
 	it( 'renders reposts as a static span when connectionId is missing', () => {

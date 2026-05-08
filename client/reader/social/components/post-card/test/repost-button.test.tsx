@@ -200,6 +200,12 @@ describe( '<RepostButton>', () => {
 		);
 	} );
 
+	it( 'sums reposts + quotes in the visible count and the aria-label', () => {
+		renderRepostButton( makePost( { counts: { replies: 0, reposts: 4, likes: 0, quotes: 3 } } ) );
+		const button = screen.getByRole( 'button', { name: /repost, 7 reposts/i } );
+		expect( button ).toHaveTextContent( '7' );
+	} );
+
 	it( 'renders the singular aria-label when reposts === 1', () => {
 		renderRepostButton( makePost( { counts: { replies: 0, reposts: 1, likes: 0, quotes: 0 } } ) );
 		expect( screen.getByRole( 'button', { name: /^repost, 1 repost$/i } ) ).toBeVisible();
