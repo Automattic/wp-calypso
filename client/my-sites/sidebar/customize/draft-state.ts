@@ -7,7 +7,6 @@
  * so React's `useState`/`useReducer` reference equality picks up changes.
  *
  * Identical-behaviour anchor: Phase 2 row 26 (working delta lifecycle).
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/draft-state.js
  */
 

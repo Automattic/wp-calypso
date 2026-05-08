@@ -18,18 +18,17 @@
  * Calypso DOM contract (matches what `<MySitesSidebarUnifiedSidebarGroup>`
  * and `<MySitesSidebarUnifiedItem>` render):
  *
- *   - Reassignable LI: any `<li>` carrying `data-wp-admin-sidebar-item-id`.
- *     Has the class `is-admin-sidebar-reassignable` during customize mode.
- *   - Group container LI: `<li class="wp-admin-sidebar-group" data-group="..."
- *     data-expanded="...">` — children live in the inner
- *     `<ul class="wp-admin-sidebar-group__children">`.
- *   - Top-level container: the sidebar `<ul>` itself.
+ * - Reassignable LI: any `<li>` carrying `data-wp-admin-sidebar-item-id`.
+ * Has the class `is-admin-sidebar-reassignable` during customize mode.
+ * - Group container LI: `<li class="wp-admin-sidebar-group" data-group="..."
+ * data-expanded="...">` — children live in the inner
+ * `<ul class="wp-admin-sidebar-group__children">`.
+ * - Top-level container: the sidebar `<ul>` itself.
  *
  * Slot computation respects `pointer-events: none` on inert anchors, which
  * is critical: `document.elementsFromPoint` correctly returns the parent LI
  * when the inner anchor is non-interactive (Calypso customize-mode CSS
  * scopes `pointer-events: none` to non-reassignable inner content).
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/drag-drop.js
  */
 

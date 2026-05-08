@@ -7,7 +7,6 @@
  * behaviour.
  *
  * Identical-behaviour anchor: Phase 2 row 23 (footer Save/Cancel).
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/customizer.js#renderFooter
  */
 

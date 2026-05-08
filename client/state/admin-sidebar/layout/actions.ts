@@ -12,7 +12,6 @@
  * The actual REST POST flow (Save in customize mode) is wired in
  * `client/my-sites/sidebar/customize/save-flow.js`; this slice just
  * receives the persisted delta on success.
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/draft-state.js
  * @see WordPress/wp-admin-sidebar v0.1.4 src/class-sidebar-rest.php
  */

@@ -10,7 +10,6 @@
  *
  * Identical-behaviour anchor: Phase 2 row 27 (a11y polish — keyboard
  * reorder + live regions).
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/keyboard-reorder.js
  */
 

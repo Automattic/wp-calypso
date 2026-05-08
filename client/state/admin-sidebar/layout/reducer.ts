@@ -5,15 +5,14 @@
  * Mirrors the public plugin's saved-delta lifecycle (`Sidebar_Rest::handle_get`
  * + `handle_post` and the in-flight `customizer/draft-state.js`):
  *
- *   - Bootstrapped on customize-mode entry (GET `/wpcom/v2/wp-admin-sidebar/layout`).
- *   - Replaced atomically on Save (POST `/wpcom/v2/wp-admin-sidebar/layout`).
- *   - Read by the renderer to apply overrides over the baseline menu.
+ * - Bootstrapped on customize-mode entry (GET `/wpcom/v2/wp-admin-sidebar/layout`).
+ * - Replaced atomically on Save (POST `/wpcom/v2/wp-admin-sidebar/layout`).
+ * - Read by the renderer to apply overrides over the baseline menu.
  *
  * Persistence is unified with the rest of Calypso's per-user state via
  * `withPersistence` and the `adminSidebar` storage key (re-used across
  * `expand-state` and this `layout` slice). Server-side persistence already
  * lives at the REST endpoint; this slice is the local mirror.
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/class-sidebar-rest.php
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/draft-state.js
  */

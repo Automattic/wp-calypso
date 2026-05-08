@@ -5,7 +5,6 @@
  * and accepts: `{ version, updated_at, overrides: [{ itemId, position }] }`.
  * `Position` carries either a `top_level` slot or an `in_group` slot keyed
  * by `group_id`.
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/class-sidebar-rest.php
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/draft-state.js
  */

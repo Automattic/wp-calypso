@@ -9,7 +9,6 @@
  * The actual REST call uses Calypso's `wpcom-proxy-request` so the request
  * routes through the centralized public-api dispatcher (matching how the
  * existing admin-menu fetch works in the repo).
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/customizer.js#save
  * @see WordPress/wp-admin-sidebar v0.1.4 src/class-sidebar-rest.php
  */

@@ -8,7 +8,6 @@
  *
  * Mirrors `Sidebar_Rest::validate_delta()` and `cloneDelta()` in the public
  * plugin's `customizer/draft-state.js` v0.1.4.
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/class-sidebar-rest.php
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/draft-state.js
  */

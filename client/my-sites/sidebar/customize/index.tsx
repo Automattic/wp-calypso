@@ -8,24 +8,23 @@
  * 1:1, only the runtime differs:
  *
  * - Body-class toggle (`is-admin-sidebar-customize-mode`) for CSS-scoped
- *   overrides. Mirrors `body.wp-admin-sidebar-mode-customize` (Phase 2 row 16).
+ * overrides. Mirrors `body.wp-admin-sidebar-mode-customize` (Phase 2 row 16).
  * - Snapshot-and-restore on Cancel: the saved delta is the snapshot in
- *   Calypso (the React tree re-renders against the saved delta when the
- *   user cancels). Mirrors `captureLayoutSnapshot` / `restoreLayoutSnapshot`
- *   (Phase 2 row 25).
+ * Calypso (the React tree re-renders against the saved delta when the
+ * user cancels). Mirrors `captureLayoutSnapshot` / `restoreLayoutSnapshot`
+ * (Phase 2 row 25).
  * - Working-delta state is the source of truth while customize is active.
- *   The renderer applies it to the menu via `applyLayoutDelta()`. The
- *   selector merge in `use-site-menu-items.js` swaps from `savedDelta` to
- *   `workingDelta` when `isCustomizing` is true.
+ * The renderer applies it to the menu via `applyLayoutDelta()`. The
+ * selector merge in `use-site-menu-items.js` swaps from `savedDelta` to
+ * `workingDelta` when `isCustomizing` is true.
  * - beforeunload prompt while dirty (Phase 2 row 24).
  * - Save POST publishes the persisted delta back to the layout state slice;
- *   the next render swaps over to it cleanly (Phase 2 row 26).
+ * the next render swaps over to it cleanly (Phase 2 row 26).
  * - Cancel-after-dirty confirm dialog (Phase 2 row 25).
  *
  * Component consumers reach the orchestrator via `useCustomizeContext()`,
  * which exposes the working delta, dispatch helpers, and refs into the
  * sidebar root (drag-drop attaches its pointer listeners on that root).
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/customizer.js
  */
 

@@ -7,26 +7,25 @@
  * Semantics (matching the public plugin):
  *
  * - Each override moves the matching item to the position specified.
- *   `top_level` overrides set `group_id = null`. `in_group` overrides set
- *   `group_id = position.group_id`.
+ * `top_level` overrides set `group_id = null`. `in_group` overrides set
+ * `group_id = position.group_id`.
  *
  * - Overrides apply in array order: later overrides land amongst the
- *   already-applied earlier siblings.
+ * already-applied earlier siblings.
  *
  * - Stale overrides (itemIds that don't exist in the current menu — typically
- *   a deactivated plugin) are silently skipped. The storage record stays
- *   untouched so the position re-applies on reactivation. See plan
- *   03-contracts.md § 3 (stale-item preservation).
+ * a deactivated plugin) are silently skipped. The storage record stays
+ * untouched so the position re-applies on reactivation. See plan
+ * 03-contracts.md § 3 (stale-item preservation).
  *
  * - Index is clamped against the destination bucket's length so out-of-range
- *   indices land at the end rather than no-op.
+ * indices land at the end rather than no-op.
  *
  * - Items without an `itemId` field can't be matched and are left in place
- *   (the redesigned endpoint emits `itemId` for every item; legacy items
- *   that haven't been classified yet pass through unmodified).
+ * (the redesigned endpoint emits `itemId` for every item; legacy items
+ * that haven't been classified yet pass through unmodified).
  *
  * The output is a fresh array; the input is not mutated.
- *
  * @see WordPress/wp-admin-sidebar v0.1.4 src/browse-rail/grouping.js#applyLayoutDelta
  * @see WordPress/wp-admin-sidebar v0.1.4 src/customizer/draft-state.js
  */
