@@ -53,7 +53,15 @@ interface RenderToVideoTimegroup extends HTMLElement {
  * here and inline it as a data URL.
  */
 async function imageUrlToDataUrl( url: string ): Promise< string > {
-	const response = await fetch( url, { credentials: 'omit' } );
+	// Send cookies for same-origin (private-site media needs auth) but omit
+	// for cross-origin (avoids a CORS preflight that the asset host wouldn't
+	// satisfy with credentials anyway).
+	const isSameOrigin =
+		typeof window !== 'undefined' &&
+		new URL( url, window.location.href ).origin === window.location.origin;
+	const response = await fetch( url, {
+		credentials: isSameOrigin ? 'same-origin' : 'omit',
+	} );
 	if ( ! response.ok ) {
 		throw new Error( `Failed to fetch scene image (${ response.status }): ${ url }` );
 	}
