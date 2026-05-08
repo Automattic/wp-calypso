@@ -30,6 +30,7 @@ export interface AutoRenewToggleProps {
 	paymentMethodUrl?: string;
 	showLink?: boolean;
 	label?: ReactNode;
+	onToggleOff?: () => void;
 	productSlug?: string;
 	siteSlug?: string | null;
 	children?: React.ReactNode;
@@ -196,6 +197,10 @@ class AutoRenewToggle extends Component<
 		const { isEnabled } = this.props;
 
 		if ( isEnabled ) {
+			if ( this.props.onToggleOff ) {
+				this.props.onToggleOff();
+				return;
+			}
 			this.setState( {
 				showAutoRenewDisablingDialog: true,
 			} );

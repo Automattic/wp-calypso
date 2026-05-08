@@ -25,7 +25,7 @@ import './style.scss';
 interface SiteActionInterstitialProps {
 	purchaseId: number;
 	siteSlug: string;
-	actionType: 'cancel' | 'remove' | 'renew';
+	actionType: 'cancel' | 'remove' | 'renew' | 'auto-renew';
 	getManagePurchaseUrlFor?: ( siteSlug: string, purchaseId: string | number ) => string;
 	getCancelPurchaseUrlFor?: ( siteSlug: string, purchaseId: string | number ) => string;
 }
@@ -34,7 +34,7 @@ function getVerb( actionType: string, translate: ReturnType< typeof useTranslate
 	if ( actionType === 'renew' ) {
 		return translate( 'renew' );
 	}
-	if ( actionType === 'cancel' ) {
+	if ( actionType === 'cancel' || actionType === 'auto-renew' ) {
 		return translate( 'cancel' );
 	}
 	return translate( 'remove' );
@@ -66,7 +66,7 @@ export default function SiteActionInterstitial( {
 		if ( p.id === purchaseId ) {
 			return true;
 		}
-		if ( actionType === 'cancel' ) {
+		if ( actionType === 'cancel' || actionType === 'auto-renew' ) {
 			return p.isAutoRenewEnabled;
 		}
 		return true;
@@ -95,10 +95,11 @@ export default function SiteActionInterstitial( {
 			page( managePurchaseUrl( siteSlug, String( purchaseId ) ) );
 			return;
 		}
-		if ( actionType === 'cancel' || actionType === 'remove' ) {
-			const intent = actionType;
+		if ( actionType === 'cancel' || actionType === 'remove' || actionType === 'auto-renew' ) {
+			const intent = actionType === 'auto-renew' ? 'cancel' : actionType;
+			const source = actionType === 'auto-renew' ? '&source=auto-renew-toggle' : '';
 			const baseUrl = cancelPurchaseUrl( siteSlug, String( purchaseId ) );
-			page( `${ baseUrl }?intent=${ intent }` );
+			page( `${ baseUrl }?intent=${ intent }${ source }` );
 		} else {
 			dispatch( handleRenewMultiplePurchasesClick( [ purchase ], siteSlug ) );
 		}
@@ -123,6 +124,9 @@ export default function SiteActionInterstitial( {
 
 	if ( actionType === 'renew' ) {
 		heading = translate( 'Renew subscriptions' ) as string;
+		sectionLabel = translate( 'Subscriptions' ) as string;
+	} else if ( actionType === 'auto-renew' ) {
+		heading = translate( 'Turn off auto-renew' ) as string;
 		sectionLabel = translate( 'Subscriptions' ) as string;
 	} else if ( actionType === 'cancel' ) {
 		heading = translate( 'Cancel subscriptions' ) as string;
@@ -197,10 +201,13 @@ export default function SiteActionInterstitial( {
 			dispatch( handleRenewMultiplePurchasesClick( selectedPurchases, siteSlug ) );
 			return;
 		}
-		const intent = actionType;
+		const intent = actionType === 'auto-renew' ? 'cancel' : actionType;
 		const additionalIds = [ ...selectedIds ].filter( ( id ) => id !== purchaseId );
 		const baseUrl = cancelPurchaseUrl( siteSlug, String( purchaseId ) );
 		const params = new URLSearchParams( { intent } );
+		if ( actionType === 'auto-renew' ) {
+			params.set( 'source', 'auto-renew-toggle' );
+		}
 		if ( additionalIds.length > 0 ) {
 			params.set( 'additionalPurchaseIds', additionalIds.join( ',' ) );
 		}
@@ -219,6 +226,9 @@ export default function SiteActionInterstitial( {
 
 	if ( actionType === 'renew' ) {
 		buttonLabel = translate( 'Continue to checkout' ) as string;
+	} else if ( actionType === 'auto-renew' ) {
+		buttonLabel = translate( 'Turn off auto-renew' ) as string;
+		isDestructive = true;
 	} else if ( actionType === 'cancel' ) {
 		buttonLabel = translate( 'Continue to cancel' ) as string;
 		isDestructive = true;
@@ -227,12 +237,22 @@ export default function SiteActionInterstitial( {
 		isDestructive = true;
 	}
 
-	const description = translate(
-		'Your site %(siteName)s has other %(noun)s. Select any you\u2019d like to %(verb)s along with %(productName)s.',
-		{
-			args: { siteName, productName, noun, verb },
-		}
-	) as string;
+	let description: string;
+	if ( actionType === 'auto-renew' ) {
+		description = translate(
+			'Your site %(siteName)s has other subscriptions set to auto-renew. Select any you\u2019d like to turn off along with %(productName)s.',
+			{
+				args: { siteName, productName },
+			}
+		) as string;
+	} else {
+		description = translate(
+			'Your site %(siteName)s has other %(noun)s. Select any you\u2019d like to %(verb)s along with %(productName)s.',
+			{
+				args: { siteName, productName, noun, verb },
+			}
+		) as string;
+	}
 
 	const getRenewalText = ( p: Purchase ) => {
 		if ( isRemove ) {

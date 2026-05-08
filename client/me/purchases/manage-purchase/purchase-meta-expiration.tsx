@@ -46,6 +46,7 @@ interface ExpirationProps {
 	siteSlug?: string;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	onToggleAutoRenewOff?: () => void;
 	renderRenewsOrExpiresOn: RenderRenewsOrExpiresOn;
 	renderRenewsOrExpiresOnLabel: RenderRenewsOrExpiresOnLabel;
 }
@@ -56,6 +57,7 @@ function PurchaseMetaExpiration( {
 	siteSlug,
 	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor,
+	onToggleAutoRenewOff,
 	renderRenewsOrExpiresOn,
 	renderRenewsOrExpiresOnLabel,
 }: ExpirationProps ) {
@@ -205,6 +207,7 @@ function PurchaseMetaExpiration( {
 								purchase={ purchase }
 								toggleSource="manage-purchase"
 								label={ translate( 'Enable auto-renew' ) }
+								onToggleOff={ onToggleAutoRenewOff }
 								getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 							/>
 						) : (

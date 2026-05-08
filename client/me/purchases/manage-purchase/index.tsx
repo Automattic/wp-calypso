@@ -342,6 +342,24 @@ class ManagePurchase extends Component<
 		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
 	};
 
+	handleAutoRenewToggleOff = () => {
+		const { purchase, siteSlug, purchases } = this.props;
+		if ( ! purchase ) {
+			return;
+		}
+
+		if ( purchases && purchases.length > 1 ) {
+			const url = ( this.props.getSiteActionInterstitialUrlFor ?? siteActionInterstitial )(
+				siteSlug,
+				purchase.id
+			);
+			page( url + '?action=auto-renew' );
+		} else {
+			const url = ( this.props.getCancelPurchaseUrlFor ?? cancelPurchase )( siteSlug, purchase.id );
+			page( url + '?intent=cancel&source=auto-renew-toggle' );
+		}
+	};
+
 	handleRenewMonthly = () => {
 		const { relatedMonthlyPlanSlug, siteSlug, redirectTo } = this.props;
 		// Track the Renew Monthly submit.
@@ -1559,6 +1577,9 @@ class ManagePurchase extends Component<
 								getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
 							}
 							isA4ABillingDragonPurchase={ isA4ABillingDragonPurchase( purchase ) }
+							onToggleAutoRenewOff={
+								this.props.isSplitCancelRemoveEnabled ? this.handleAutoRenewToggleOff : undefined
+							}
 						/>
 					) }
 				</Card>

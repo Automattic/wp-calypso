@@ -54,6 +54,7 @@ export interface PurchaseMetaProps {
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 	isA4ABillingDragonPurchase?: boolean;
+	onToggleAutoRenewOff?: () => void;
 }
 
 export default function PurchaseMeta( {
@@ -63,6 +64,7 @@ export default function PurchaseMeta( {
 	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
 	isA4ABillingDragonPurchase = false,
+	onToggleAutoRenewOff,
 }: PurchaseMetaProps ) {
 	const translate = useTranslate();
 
@@ -146,6 +148,7 @@ export default function PurchaseMeta( {
 					siteSlug={ siteSlug }
 					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					onToggleAutoRenewOff={ onToggleAutoRenewOff }
 					renderRenewsOrExpiresOn={ renderRenewsOrExpiresOn }
 					renderRenewsOrExpiresOnLabel={ renderRenewsOrExpiresOnLabel }
 				/>
