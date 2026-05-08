@@ -166,10 +166,16 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		<>
 			{ promptVerification && <SubscribeVerificationNudge /> }
 			{ /* Site metadata is still loaded via the legacy data layer; feed metadata
-			     is fetched inside `useSubscribeRecommendations` with readFeedQuery. */ }
-			{ combinedRecommendations.map( ( site ) => (
-				<QueryReaderSite key={ `prefetch-site-${ site.feed_ID }` } siteId={ site.site_ID } />
-			) ) }
+			     is fetched inside `useSubscribeRecommendations` with readFeedQuery.
+			     Curated entries for non-WP.com feeds carry `site_ID: 0` and have
+			     no associated WP.com site to prefetch — `QueryReaderSite` would
+			     short-circuit on the falsy ID, but each instance still mounts a
+			     Redux subscription and effect, so skip them up front. */ }
+			{ combinedRecommendations
+				.filter( ( site ) => site.site_ID > 0 )
+				.map( ( site ) => (
+					<QueryReaderSite key={ `prefetch-site-${ site.feed_ID }` } siteId={ site.site_ID } />
+				) ) }
 			<div className="subscribe-modal__container">
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__intro">
