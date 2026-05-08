@@ -12,6 +12,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useComposerConfig } from './composer-config';
 import { ComposerFooter } from './composer-footer';
+import { ComposerOverflowHandoff } from './composer-overflow-handoff';
 import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
@@ -228,6 +229,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 						{ errorMessage }
 					</div>
 				) }
+				<ComposerOverflowHandoff text={ text } />
 				<ComposerFooter
 					graphemeCount={ graphemeCount }
 					onSubmit={ handleSubmit }
