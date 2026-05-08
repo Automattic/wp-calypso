@@ -612,6 +612,11 @@ export class LoginForm extends Component {
 
 	getLastUsedAuthenticationMethod() {
 		if ( typeof document !== 'undefined' && this.props.currentQuery?.username_only !== 'true' ) {
+			// Dev-only override: ?last_used=<method> for testing where the
+			// cookie can't be set naturally (e.g. Calypso Live, OAuth fails).
+			if ( config( 'env_id' ) !== 'production' && this.props.currentQuery?.last_used ) {
+				return this.props.currentQuery.last_used;
+			}
 			const cookies = cookie.parse( document.cookie );
 			return cookies.last_used_authentication_method ?? '';
 		}
