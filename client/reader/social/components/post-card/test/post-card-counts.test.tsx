@@ -184,7 +184,7 @@ describe( 'PostCardCounts', () => {
 } );
 
 describe( 'PostCardCounts prominentTimestamp variant', () => {
-	it( 'renders the three buttons icon-only when prominentTimestamp is true', () => {
+	it( 'hides all three count digits when prominentTimestamp is true', () => {
 		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
 		const useAtmosphereRepostAction = makeUseAtmosphereRepostAction( 7 );
 		renderWithProvider(
@@ -200,5 +200,8 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 		// repost button: 2 reposts + 1 quote = 3 in aria-label, hidden in text
 		const repostButton = screen.getByRole( 'button', { name: /repost, 3 reposts/i } );
 		expect( repostButton ).not.toHaveTextContent( '3' );
+		// Replies digit (5 in the fixture) is also hidden — the only count
+		// rendered directly by `<PostCardCounts>` rather than via a child button.
+		expect( screen.queryByText( '5' ) ).toBeNull();
 	} );
 } );
