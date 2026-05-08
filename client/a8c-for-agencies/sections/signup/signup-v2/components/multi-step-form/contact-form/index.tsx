@@ -176,7 +176,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				setIsProceeding( false );
 			}
 		},
-		[ validate, formData, dataToContinue, onContinue, dispatch, updateValidationError, translate ]
+		[ validate, formData, dataToContinue, onContinue, dispatch ]
 	);
 
 	const closeDuplicateModal = useCallback( () => {
