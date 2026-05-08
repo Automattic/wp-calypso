@@ -389,10 +389,6 @@ export interface MastodonAuthStatus {
  * the HTML on the client. Mirrors AtmosphereProfileSummary's choice to
  * expose a plain-text `description` field for list rows (Atmosphere's
  * `description_html` companion lives on the full profile only).
- *
- * `note_text` is optional during the backend rollout window — consumers
- * must fall back to stripping `note` client-side until every server in
- * rotation projects the field.
  */
 export interface MastodonAccountSummary {
 	id: string;
@@ -402,7 +398,7 @@ export interface MastodonAccountSummary {
 	handle: string;
 	display_name: string;
 	note: string;
-	note_text?: string;
+	note_text: string;
 	avatar: string | null;
 	locked: boolean;
 	viewer: MastodonAuthorProfileViewer;
