@@ -97,11 +97,11 @@ describe( 'PostCardCounts', () => {
 		expect( links ).toHaveLength( 1 ); // only replies
 	} );
 
-	it( 'renders likes as a toggle button when connectionId and LikeProvider are supplied', () => {
+	it( 'renders likes as a toggle button when a LikeProvider is mounted', () => {
 		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
 		renderWithProvider(
 			<LikeProvider value={ useAtmosphereLikeAction }>
-				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+				{ wrap( <PostCardCounts post={ post } /> ) }
 			</LikeProvider>
 		);
 		const button = screen.getByRole( 'button', { name: /like/i } );
@@ -150,10 +150,10 @@ describe( 'PostCardCounts', () => {
 		expect( link ).toHaveAttribute( 'href', '/threads/x' );
 	} );
 
-	it( 'renders reposts as a menu trigger when connectionId is supplied and a RepostProvider is mounted', () => {
+	it( 'renders reposts as a menu trigger when a RepostProvider is mounted', () => {
 		renderWithProvider(
 			<RepostProvider value={ makeUseAtmosphereRepostAction( 7 ) }>
-				{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+				{ wrap( <PostCardCounts post={ post } /> ) }
 			</RepostProvider>
 		);
 		const button = screen.getByRole( 'button', { name: /repost, 3 reposts/i } );
@@ -161,14 +161,8 @@ describe( 'PostCardCounts', () => {
 		expect( button ).toHaveTextContent( '3' );
 	} );
 
-	it( 'renders reposts as a static span when connectionId is missing', () => {
-		render( wrap( <PostCardCounts post={ post } /> ) );
-		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
-	} );
-
 	it( 'renders reposts as a static span when no RepostProvider is mounted', () => {
-		const cidlessPost = { ...post, cid: '' };
-		renderWithProvider( wrap( <PostCardCounts post={ cidlessPost } connectionId={ 7 } /> ) );
+		render( wrap( <PostCardCounts post={ post } /> ) );
 		expect( screen.queryByRole( 'button', { name: /repost/i } ) ).toBeNull();
 	} );
 
@@ -178,7 +172,7 @@ describe( 'PostCardCounts', () => {
 			<SocialAnalyticsProvider
 				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn(), onQuoteClick } }
 			>
-				<PostCardCounts post={ post } connectionId={ 42 } />
+				<PostCardCounts post={ post } />
 			</SocialAnalyticsProvider>
 		);
 		expect( screen.queryByRole( 'button', { name: /quote/i } ) ).toBeNull();
@@ -192,7 +186,7 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 		renderWithProvider(
 			<RepostProvider value={ useAtmosphereRepostAction }>
 				<LikeProvider value={ useAtmosphereLikeAction }>
-					{ wrap( <PostCardCounts post={ post } connectionId={ 7 } prominentTimestamp /> ) }
+					{ wrap( <PostCardCounts post={ post } prominentTimestamp /> ) }
 				</LikeProvider>
 			</RepostProvider>
 		);
@@ -210,15 +204,14 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 	it( 'renders a stats row above the action row with reposts, quotes, likes (atmosphere copy)', () => {
 		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
 		const useAtmosphereRepostAction = makeUseAtmosphereRepostAction( 7 );
-		const { container } = renderWithProvider(
+		renderWithProvider(
 			<RepostProvider value={ useAtmosphereRepostAction }>
 				<LikeProvider value={ useAtmosphereLikeAction }>
-					{ wrap( <PostCardCounts post={ post } connectionId={ 7 } prominentTimestamp /> ) }
+					{ wrap( <PostCardCounts post={ post } prominentTimestamp /> ) }
 				</LikeProvider>
 			</RepostProvider>
 		);
-		const stats = container.querySelector( '.social-post-card-stats' );
-		expect( stats ).not.toBeNull();
+		const stats = screen.getByRole( 'list', { name: /post stats/i } );
 		// fixture has reposts:2 quotes:1 likes:9
 		expect( stats ).toHaveTextContent( '2 reposts' );
 		expect( stats ).toHaveTextContent( '1 quote' );
@@ -232,17 +225,14 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 			...post,
 			counts: { replies: 5, reposts: 2, likes: 9, quotes: 0 },
 		};
-		const { container } = renderWithProvider(
+		renderWithProvider(
 			<RepostProvider value={ useAtmosphereRepostAction }>
 				<LikeProvider value={ useAtmosphereLikeAction }>
-					{ wrap(
-						<PostCardCounts post={ zeroQuotePost } connectionId={ 7 } prominentTimestamp />
-					) }
+					{ wrap( <PostCardCounts post={ zeroQuotePost } prominentTimestamp /> ) }
 				</LikeProvider>
 			</RepostProvider>
 		);
-		const stats = container.querySelector( '.social-post-card-stats' );
-		expect( stats ).not.toBeNull();
+		const stats = screen.getByRole( 'list', { name: /post stats/i } );
 		expect( stats ).toHaveTextContent( '2 reposts' );
 		expect( stats ).not.toHaveTextContent( /quote/ );
 		expect( stats ).toHaveTextContent( '9 likes' );
@@ -255,30 +245,29 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 			...post,
 			counts: { replies: 5, reposts: 0, likes: 0, quotes: 0 },
 		};
-		const { container } = renderWithProvider(
+		renderWithProvider(
 			<RepostProvider value={ useAtmosphereRepostAction }>
 				<LikeProvider value={ useAtmosphereLikeAction }>
-					{ wrap( <PostCardCounts post={ allZeroPost } connectionId={ 7 } prominentTimestamp /> ) }
+					{ wrap( <PostCardCounts post={ allZeroPost } prominentTimestamp /> ) }
 				</LikeProvider>
 			</RepostProvider>
 		);
-		expect( container.querySelector( '.social-post-card-stats' ) ).toBeNull();
+		expect( screen.queryByRole( 'list', { name: /post stats/i } ) ).toBeNull();
 	} );
 
 	it( 'uses Mastodon-flavoured copy in the stats row when the mastodon adapters are mounted', () => {
-		const { container } = renderWithProvider(
+		renderWithProvider(
 			<RepostProvider value={ makeUseMastodonRepostAction( 7 ) }>
 				<LikeProvider value={ makeUseMastodonLikeAction( 7 ) }>
 					<SocialAnalyticsProvider
 						value={ { source: 'mastodon', connectionId: 7, onClick: jest.fn() } }
 					>
-						<PostCardCounts post={ post } connectionId={ 7 } prominentTimestamp />
+						<PostCardCounts post={ post } prominentTimestamp />
 					</SocialAnalyticsProvider>
 				</LikeProvider>
 			</RepostProvider>
 		);
-		const stats = container.querySelector( '.social-post-card-stats' );
-		expect( stats ).not.toBeNull();
+		const stats = screen.getByRole( 'list', { name: /post stats/i } );
 		expect( stats ).toHaveTextContent( '2 boosts' );
 		expect( stats ).toHaveTextContent( '1 quote' );
 		expect( stats ).toHaveTextContent( '9 favorites' );
@@ -287,13 +276,13 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 	it( 'does not render a stats row when prominentTimestamp is false', () => {
 		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 7 );
 		const useAtmosphereRepostAction = makeUseAtmosphereRepostAction( 7 );
-		const { container } = renderWithProvider(
+		renderWithProvider(
 			<RepostProvider value={ useAtmosphereRepostAction }>
 				<LikeProvider value={ useAtmosphereLikeAction }>
-					{ wrap( <PostCardCounts post={ post } connectionId={ 7 } /> ) }
+					{ wrap( <PostCardCounts post={ post } /> ) }
 				</LikeProvider>
 			</RepostProvider>
 		);
-		expect( container.querySelector( '.social-post-card-stats' ) ).toBeNull();
+		expect( screen.queryByRole( 'list', { name: /post stats/i } ) ).toBeNull();
 	} );
 } );

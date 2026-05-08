@@ -220,8 +220,8 @@ a.social-post-card-header__timestamp::after {
 	border-block: 1px solid var( --studio-gray-5 );
 }
 
-.social-post-card-timestamp + .social-post-card-counts,
-.social-post-card-stats + .social-post-card-counts {
+.social-post-card-timestamp + .social-post-card-counts:not(.social-post-card-counts--prominent-timestamp),
+.social-post-card-stats + .social-post-card-counts:not(.social-post-card-counts--prominent-timestamp) {
 	margin-block-start: 8px;
 }
 

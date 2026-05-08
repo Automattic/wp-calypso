@@ -320,13 +320,14 @@ Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
-The connection ID flows from the protocol panel:
-`Panel` → `<LikeProvider value={makeUse…LikeAction(id)}>` plus
-`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<LikeButton>`.
-Any future interactive count button (repost, follow, bookmark) should
-follow the same provider-injected adapter shape rather than reading
-connection identity from global state or hard-coding protocol logic into
-the shared button.
+The connection ID is captured by the adapter factory at panel mount time
+(`makeUse…LikeAction(connection.id)`) and lives inside the closure passed
+to `<LikeProvider value={…}>`. `<PostCardCounts>` does not need to know
+about it; `<LikeButton>` reads its action straight from the provider via
+`useLikeAction(post)`. Any future interactive count button (repost,
+follow, bookmark) should follow the same provider-injected adapter
+shape rather than reading connection identity from global state or
+hard-coding protocol logic into the shared button.
 
 ### Repost / Boost interactions
 
@@ -398,10 +399,10 @@ Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
-The connection ID flows from the protocol panel:
-`Panel` → `<RepostProvider value={makeUse…RepostAction(id)}>` plus
-`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<RepostButton>`.
-Mirrors the like / favorite flow.
+The connection ID is captured by the adapter factory
+(`makeUse…RepostAction(connection.id)`) and lives inside the closure passed
+to `<RepostProvider value={…}>`; `<RepostButton>` reads its action via
+`useRepostAction(post)`. Mirrors the like / favorite flow.
 
 ### Composer (slice 7)
 

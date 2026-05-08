@@ -151,24 +151,22 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 
 The likes/favorites count on `<SocialPostCard>` becomes an interactive
 `<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
-when the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
-the tree with a `<LikeProvider>` carrying a per-protocol adapter hook.
-ATmosphere panels (timeline / thread / tag-feed) wire
-`makeUseAtmosphereLikeAction(connection.id)`; Mastodon panels (timeline
+when the host shell wraps the tree with a `<LikeProvider>` carrying a
+per-protocol adapter hook. ATmosphere panels (timeline / thread / tag-feed)
+wire `makeUseAtmosphereLikeAction(connection.id)`; Mastodon panels (timeline
 / thread / tag-feed) wire `makeUseMastodonLikeAction(connection.id)`.
 Surfaces without a provider (quoted-post embeds, the shared
-`SocialAuthorProfilePanel` until it forwards `connectionId`, non-social
+`SocialAuthorProfilePanel` until it forwards a provider, non-social
 cards) fall back to the static count.
 
 The reposts count likewise becomes an interactive `<RepostButton>` when
-the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
-the tree with `<RepostProvider>` carrying a per-protocol adapter hook.
-ATmosphere panels (timeline / thread / tag-feed) wire
-`makeUseAtmosphereRepostAction(connection.id)`; Mastodon panels (timeline
+the host shell wraps the tree with `<RepostProvider>` carrying a
+per-protocol adapter hook. ATmosphere panels (timeline / thread / tag-feed)
+wire `makeUseAtmosphereRepostAction(connection.id)`; Mastodon panels (timeline
 / thread / tag-feed) wire `makeUseMastodonRepostAction(connection.id)` and
 render the UK-spelled "Boost" label. Surfaces without a provider
 (quoted-post embeds, the shared `SocialAuthorProfilePanel` until it
-forwards `connectionId`, non-social cards) fall back to the static count.
+forwards a provider, non-social cards) fall back to the static count.
 
 The reply / quote / standalone composer follows the same pattern with
 `<ComposerProvider connectionId={…} config={…}>` from

@@ -14,7 +14,6 @@ const ICON_SIZE = 18;
 
 interface PostCardCountsProps {
 	post: SocialPost;
-	connectionId?: number;
 	prominentTimestamp?: boolean;
 }
 
@@ -39,9 +38,13 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 	const likesNoun = likeAction.supported
 		? likeAction.label.statRowNoun( counts.likes )
 		: translate( 'like', 'likes', { count: counts.likes, textOnly: true } );
+	// Quotes have no per-protocol adapter slot today: ATmosphere is the only
+	// protocol that exposes `counts.quotes`, so the generic copy never reaches
+	// a non-atmosphere surface. Add a `statRowQuoteNoun` slot the day a second
+	// protocol grows native quotes.
 	const quotesNoun = translate( 'quote', 'quotes', { count: counts.quotes, textOnly: true } );
 
-	const showStatsRow = Boolean( prominentTimestamp ) && totalReposts + counts.likes > 0;
+	const showStatsRow = hideCount && totalReposts + counts.likes > 0;
 
 	const formattedReposts = formatNumber( counts.reposts );
 	const formattedQuotes = formatNumber( counts.quotes );
@@ -113,20 +116,24 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 	return (
 		<>
 			{ showStatsRow && (
-				<div className="social-post-card-stats">
+				<div
+					role="list"
+					aria-label={ translate( 'Post stats' ) }
+					className="social-post-card-stats"
+				>
 					{ counts.reposts > 0 && (
-						<span className="social-post-card-stats__item">
-							<strong>{ formattedReposts }</strong> { String( repostsNoun ) }
+						<span role="listitem" className="social-post-card-stats__item">
+							<strong>{ formattedReposts }</strong> { repostsNoun }
 						</span>
 					) }
 					{ counts.quotes > 0 && (
-						<span className="social-post-card-stats__item">
-							<strong>{ formattedQuotes }</strong> { String( quotesNoun ) }
+						<span role="listitem" className="social-post-card-stats__item">
+							<strong>{ formattedQuotes }</strong> { quotesNoun }
 						</span>
 					) }
 					{ counts.likes > 0 && (
-						<span className="social-post-card-stats__item">
-							<strong>{ formattedLikes }</strong> { String( likesNoun ) }
+						<span role="listitem" className="social-post-card-stats__item">
+							<strong>{ formattedLikes }</strong> { likesNoun }
 						</span>
 					) }
 				</div>
