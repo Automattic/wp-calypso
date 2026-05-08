@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -6,6 +7,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendSmsCode } from 'calypso/state/login/actions';
@@ -63,6 +65,12 @@ class TwoFactorActions extends Component {
 		this.props.switchTwoFactorAuthType( 'webauthn' );
 	};
 
+	handleSwitchToAnotherMethod = ( event ) => {
+		event.preventDefault();
+		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_from_webauthn_fallback_click' );
+		page( login( {} ) );
+	};
+
 	render() {
 		const {
 			isAuthenticatorSupported,
@@ -86,6 +94,22 @@ class TwoFactorActions extends Component {
 			! isSecurityKeyAvailable &&
 			! isBackupCodeAvailable
 		) {
+			// Passkey ceremonies can fail with no recoverable state; always offer an exit.
+			if ( twoFactorAuthType === 'webauthn' ) {
+				return (
+					<Card className="two-factor-authentication__actions">
+						<Button
+							variant="secondary"
+							className="a8c-components-wp-button"
+							data-e2e-link="2fa-other-method-link"
+							onClick={ this.handleSwitchToAnotherMethod }
+							__next40pxDefaultSize
+						>
+							{ translate( 'Sign in another way' ) }
+						</Button>
+					</Card>
+				);
+			}
 			return null;
 		}
 
