@@ -6,6 +6,22 @@ import userEvent from '@testing-library/user-event';
 import { ConnectForm } from '../connect-form';
 
 describe( 'ConnectForm', () => {
+	it( 'renders the prose intro describing what the user gets', () => {
+		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		expect(
+			screen.getByText( /your Mastodon timeline appears alongside your blog feeds/i )
+		).toBeVisible();
+	} );
+
+	it( 'renders the rewritten instance helper text', () => {
+		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		expect(
+			screen.getByText(
+				/the domain where your account lives. we’ll hand you off to sign in there, so we never see your password\./i
+			)
+		).toBeVisible();
+	} );
+
 	it( 'disables submit while instance is empty', () => {
 		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
 		expect( screen.getByRole( 'button', { name: /continue/i } ) ).toBeDisabled();
