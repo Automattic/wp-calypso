@@ -35,6 +35,13 @@ export interface SocialProfileCardProps {
 	statsLabel: string;
 	/** Slot for buttons / links in the header band (rich layout only). */
 	headerActions?: ReactNode;
+	/**
+	 * External URL pointing to the profile on the third-party service
+	 * (e.g. bsky.app for ATmosphere, the home-instance URL for Mastodon).
+	 * When set, the display name renders inside an external anchor with a
+	 * hover-reveal arrow affordance, mirroring the post timestamp link.
+	 */
+	displayNameLink?: string;
 }
 
 // Mastodon bios include paragraphs, line breaks, and anchors (including rel="me"
@@ -76,6 +83,7 @@ export function SocialProfileCard( {
 	stats,
 	statsLabel,
 	headerActions,
+	displayNameLink,
 }: SocialProfileCardProps ) {
 	const analytics = useSocialAnalytics();
 
@@ -191,7 +199,37 @@ export function SocialProfileCard( {
 				) : null }
 			</div>
 			{ headingText ? (
-				<h2 className="social-profile-card__display-name">{ headingText }</h2>
+				<h2 className="social-profile-card__display-name">
+					{ displayNameLink ? (
+						<a
+							className="social-profile-card__display-name-link"
+							href={ displayNameLink }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								if ( ! analytics ) {
+									return;
+								}
+								// Sibling to the prominent timestamp's
+								// `_external_post_clicked` (see post-card-timestamp.tsx).
+								// Emitted directly under `_profile_` so the panel-level
+								// `_timeline_*` → `_profile_*` rewrite leaves it alone.
+								analytics.onClick(
+									`calypso_reader_${ analytics.source }_profile_external_clicked`,
+									{
+										connection_id: analytics.connectionId,
+										destination: 'external',
+										actor_handle: handle ?? null,
+									}
+								);
+							} }
+						>
+							{ headingText }
+						</a>
+					) : (
+						headingText
+					) }
+				</h2>
 			) : null }
 			{ handle ? <p className="social-profile-card__handle">@{ handle }</p> : null }
 			{ bioNode }

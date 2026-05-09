@@ -505,6 +505,76 @@ describe( 'SocialProfileCard — rich variant', () => {
 		expect( screen.getByText( 'Plain bio.' ) ).toBeVisible();
 	} );
 
+	it( 'wraps the display name in an external link when displayNameLink is set', () => {
+		render(
+			<SocialProfileCard
+				displayName="Alice"
+				handle="alice.bsky.social"
+				displayNameLink="https://bsky.app/profile/alice.bsky.social"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'Alice' } );
+		expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/alice.bsky.social' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+		// The heading's accessible name remains the bare display name so
+		// existing heading-by-name lookups continue to work.
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+	} );
+
+	it( 'falls back to the handle inside the link when displayName is missing', () => {
+		render(
+			<SocialProfileCard
+				handle="alice.bsky.social"
+				displayNameLink="https://bsky.app/profile/alice.bsky.social"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const link = screen.getByRole( 'link', { name: 'alice.bsky.social' } );
+		expect( link ).toBeVisible();
+	} );
+
+	it( 'renders the display name as plain text when no displayNameLink is provided', () => {
+		render(
+			<SocialProfileCard
+				displayName="Alice"
+				handle="alice.bsky.social"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		expect( screen.queryByRole( 'link', { name: 'Alice' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+	} );
+
+	it( 'fires the profile_external_clicked Tracks event when the link is clicked', async () => {
+		const user = userEvent.setup();
+		const onClick = jest.fn();
+		render(
+			<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 7, onClick } }>
+				<SocialProfileCard
+					displayName="Alice"
+					handle="alice.bsky.social"
+					displayNameLink="https://bsky.app/profile/alice.bsky.social"
+					stats={ [] }
+					statsLabel="Profile stats"
+				/>
+			</SocialAnalyticsProvider>
+		);
+		await user.click( screen.getByRole( 'link', { name: 'Alice' } ) );
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_profile_external_clicked',
+			expect.objectContaining( {
+				connection_id: 7,
+				destination: 'external',
+				actor_handle: 'alice.bsky.social',
+			} )
+		);
+	} );
+
 	it( 'hides the banner image on load failure', () => {
 		const { container } = render(
 			<SocialProfileCard

@@ -118,7 +118,10 @@ function qualifyAcct( acct: string, instance: string ): string {
 export function mapMastodonAccountToSocialProfileCardProps(
 	profile: MastodonAuthorProfile,
 	options: MapMastodonOptions
-): Pick< SocialProfileCardProps, 'avatar' | 'banner' | 'displayName' | 'handle' | 'bioHtml' > {
+): Pick<
+	SocialProfileCardProps,
+	'avatar' | 'banner' | 'displayName' | 'handle' | 'bioHtml' | 'displayNameLink'
+> {
 	return {
 		avatar: profile.avatar,
 		banner: profile.header,
@@ -126,6 +129,7 @@ export function mapMastodonAccountToSocialProfileCardProps(
 		displayName: profile.display_name ? profile.display_name : undefined,
 		handle: qualifyAcct( profile.acct, options.instance ),
 		bioHtml: profile.note,
+		displayNameLink: profileUrl( profile.acct, options.instance ),
 	};
 }
 
