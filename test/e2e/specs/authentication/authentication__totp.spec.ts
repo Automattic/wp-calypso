@@ -1,6 +1,8 @@
 import { DataHelper, TOTPClient } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
+const WOO_LOGIN_TIMEOUT = 30_000;
+
 test.describe(
 	'Authentication: Time-based One Time Passcode (TOTP)',
 	{ tag: [ tags.AUTHENTICATION ] },
@@ -80,13 +82,18 @@ test.describe(
 			} );
 
 			await test.step( 'And I choose to log in', async function () {
-				await page.getByRole( 'link', { name: 'Log in' } ).click();
+				const loginLink = page.getByRole( 'link', { name: 'Log in', exact: true } );
+				await expect( loginLink ).toBeVisible( { timeout: WOO_LOGIN_TIMEOUT } );
+				await loginLink.click();
+				await expect( page ).toHaveURL( /wordpress\.com\/log-in/, {
+					timeout: WOO_LOGIN_TIMEOUT,
+				} );
 			} );
 
 			await test.step( 'Then I see the WordPress.com log in page', async function () {
 				await expect(
 					page.getByRole( 'heading', { name: 'Log in to Woo with WordPress.com' } )
-				).toBeVisible();
+				).toBeVisible( { timeout: WOO_LOGIN_TIMEOUT } );
 			} );
 
 			await test.step( 'When I enter my username', async function () {
