@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { SocialEmbedVideo } from '../../types';
 
 interface PostCardEmbedVideoProps {
@@ -12,22 +12,43 @@ const HLS_MIME = 'application/vnd.apple.mpegurl';
 export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps ) {
 	const translate = useTranslate();
 	const videoRef = useRef< HTMLVideoElement >( null );
+	// Tracks user-initiated expansion: clicking the thumbnail in a
+	// non-target thread node should expand the player inline, not navigate
+	// via the card-link overlay. We also use this to autoplay only on
+	// click — prop-driven expansion (the thread root) keeps its existing
+	// "render player but wait for the user to hit play" behaviour.
+	const [ userExpanded, setUserExpanded ] = useState( false );
+	const shouldAutoPlayRef = useRef( false );
+	const isExpanded = expanded || userExpanded;
+
 	const aspectRatioCss = embed.aspect_ratio
 		? `${ embed.aspect_ratio.width } / ${ embed.aspect_ratio.height }`
 		: undefined;
 	const containerStyle = aspectRatioCss ? { aspectRatio: aspectRatioCss } : undefined;
 
 	useEffect( () => {
-		if ( ! expanded ) {
+		if ( ! isExpanded ) {
 			return;
 		}
 		const video = videoRef.current;
 		if ( ! video ) {
 			return;
 		}
+		const playIfRequested = () => {
+			if ( shouldAutoPlayRef.current ) {
+				shouldAutoPlayRef.current = false;
+				// Browsers permit play() inside the user-gesture window
+				// opened by the click that flipped userExpanded; if the
+				// promise is rejected (e.g. autoplay policy on a
+				// detached connection) the user can still hit the
+				// native controls.
+				video.play().catch( () => {} );
+			}
+		};
 		// Safari + iOS WebKit play HLS natively; setting src is enough.
 		if ( video.canPlayType( HLS_MIME ) ) {
 			video.src = embed.playlist;
+			playIfRequested();
 			return () => {
 				// Switching threads while audio plays would otherwise leave
 				// the previous track buffered for a frame.
@@ -53,17 +74,18 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 			hls = instance;
 			instance.loadSource( embed.playlist );
 			instance.attachMedia( video );
+			playIfRequested();
 		} )();
 		return () => {
 			cancelled = true;
 			hls?.destroy();
 			video.pause();
 		};
-	}, [ expanded, embed.playlist ] );
+	}, [ isExpanded, embed.playlist ] );
 
 	const accessibleLabel = embed.alt || String( translate( 'Bluesky video' ) );
 
-	if ( expanded ) {
+	if ( isExpanded ) {
 		return (
 			<div className="social-post-card-embed-video" style={ containerStyle }>
 				{ /* eslint-disable-next-line jsx-a11y/media-has-caption -- Bluesky's video upload flow does not produce captions. */ }
@@ -80,8 +102,25 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 		);
 	}
 
+	const playLabel = String(
+		translate( 'Play video: %(label)s', {
+			args: { label: accessibleLabel },
+			comment:
+				'Accessible label for the play button overlaid on a Bluesky/Mastodon video thumbnail; %(label)s is the video alt text or a generic fallback.',
+		} )
+	);
+
 	return (
-		<div className="social-post-card-embed-video" style={ containerStyle }>
+		<button
+			type="button"
+			className="social-post-card-embed-video social-post-card-embed-video--thumbnail"
+			style={ containerStyle }
+			aria-label={ playLabel }
+			onClick={ () => {
+				shouldAutoPlayRef.current = true;
+				setUserExpanded( true );
+			} }
+		>
 			<img
 				className="social-post-card-embed-video__thumbnail"
 				src={ embed.thumbnail }
@@ -95,6 +134,6 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 			<span className="social-post-card-embed-video__play" aria-hidden="true">
 				▶
 			</span>
-		</div>
+		</button>
 	);
 }

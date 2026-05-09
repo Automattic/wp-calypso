@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { PostCardEmbedVideo } from '../post-card-embed-video';
 import type { AtmosphereEmbedVideo } from '@automattic/api-core';
 
@@ -66,5 +67,23 @@ describe( 'PostCardEmbedVideo', () => {
 		const { container } = render( <PostCardEmbedVideo embed={ embed } expanded /> );
 		const wrapper = container.querySelector< HTMLDivElement >( '.social-post-card-embed-video' );
 		expect( wrapper?.style.aspectRatio ).toBe( '16 / 9' );
+	} );
+
+	it( 'renders the thumbnail as a button so clicks expand the player inline', () => {
+		render( <PostCardEmbedVideo embed={ embed } /> );
+		const button = screen.getByRole( 'button', { name: /play video/i } );
+		expect( button ).toBeVisible();
+	} );
+
+	it( 'replaces the thumbnail with a video element when the user clicks play', async () => {
+		const user = userEvent.setup();
+		render( <PostCardEmbedVideo embed={ embed } /> );
+
+		expect( screen.queryByLabelText( 'Cute cat' ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: /play video/i } ) );
+
+		const video = screen.getByLabelText( 'Cute cat' );
+		expect( video.tagName ).toBe( 'VIDEO' );
 	} );
 } );

@@ -12,6 +12,7 @@
 	a.social-post-card-embed-external,
 	.social-post-card-embed-quote-link,
 	button.social-post-card-embed-images__item,
+	button.social-post-card-embed-video--thumbnail,
 	.social-post-card-embed-audio,
 	.social-post-card-embed-gifv,
 	.social-post-card-content-warning .components-button,
@@ -408,6 +409,27 @@ a.social-post-card-header__timestamp::after {
 	border-radius: 8px;
 	margin-top: 8px;
 	background: var( --studio-gray-90 );
+}
+
+// Reset native button chrome so the thumbnail-as-play-button matches the
+// flush card styling. The button still has the inner-anchor z-index lift
+// on `.social-post-card-link` so it intercepts clicks above the
+// timestamp ::after overlay.
+button.social-post-card-embed-video--thumbnail {
+	display: block;
+	padding: 0;
+	border: 0;
+	background: var( --studio-gray-90 );
+	cursor: pointer;
+	width: 100%;
+	color: inherit;
+	font: inherit;
+	text-align: inherit;
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
 }
 
 .social-post-card-embed-video__thumbnail {

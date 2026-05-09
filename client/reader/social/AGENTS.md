@@ -239,8 +239,11 @@ the timeline). When `expanded={true}`, the component renders a native
 
 The thumbnail is used as the `<video poster>` so users see a frame before
 hitting play. `<SocialPostCard>` forwards `expandedVideo` only for the
-highlighted root node inside `<ThreadTree>` — replies and parents stay
-thumbnail-only.
+highlighted root node inside `<ThreadTree>` — replies and parents render
+as thumbnail buttons by default. Clicking a thumbnail flips the embed to
+the player inline (no navigation) and autoplays inside the click's
+user-gesture window, so video posts deeper in a thread don't require a
+detour through the post detail view to play.
 
 This mirrors what bsky.app's own web app and other modern Bluesky clients do.
 The static `embed.bsky.app` widget was an earlier attempt but doesn't include
