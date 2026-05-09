@@ -39,16 +39,27 @@ interface Props {
 // in the loaded posts. Bluesky's AppView matches hashtags
 // case-insensitively, so the URL we route through is canonical
 // lowercase — this only affects the heading display.
-function findHashtagDisplay( items: readonly { text?: string }[], hashtag: string ): string | null {
+//
+// The leading `(?:^|[^\p{L}\p{N}\p{M}_#])` boundary keeps URL fragments
+// like `https://example.com/#MLB` from being mistaken for a hashtag.
+// The capture's length must equal `hashtag.length` so the regex's
+// 1-64 cap can't silently truncate a longer (still-matching-prefix)
+// tag in body text.
+const HASHTAG_DISPLAY_RE = /(?:^|[^\p{L}\p{N}\p{M}_#])#([\p{L}\p{N}\p{M}_]{1,64})/gu;
+
+function findHashtagDisplay(
+	items: readonly AtmosphereFeedItem[],
+	hashtag: string
+): string | null {
 	const lower = hashtag.toLowerCase();
-	const re = /#([\p{L}\p{N}\p{M}_]{1,64})/gu;
 	for ( const item of items ) {
 		if ( ! item?.text ) {
 			continue;
 		}
-		for ( const match of item.text.matchAll( re ) ) {
-			if ( match[ 1 ].toLowerCase() === lower ) {
-				return match[ 1 ];
+		for ( const match of item.text.matchAll( HASHTAG_DISPLAY_RE ) ) {
+			const candidate = match[ 1 ];
+			if ( candidate.length === hashtag.length && candidate.toLowerCase() === lower ) {
+				return candidate;
 			}
 		}
 	}
@@ -192,10 +203,14 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 
 	const tagInfo = feed.data?.pages[ 0 ]?.tag;
 
+	// Only scan the first page: the heading shouldn't change as the user
+	// paginates further, and re-walking every item on each fetched page
+	// would be wasteful (and lets later pages flip the casing
+	// non-deterministically based on indexing order).
+	const firstPageItems = feed.data?.pages[ 0 ]?.items;
 	const headingHashtag = useMemo( () => {
-		const allItems = feed.data?.pages.flatMap( ( pageData ) => pageData.items ?? [] ) ?? [];
-		return findHashtagDisplay( allItems, hashtag ) ?? hashtag;
-	}, [ feed.data, hashtag ] );
+		return findHashtagDisplay( firstPageItems ?? [], hashtag ) ?? hashtag;
+	}, [ firstPageItems, hashtag ] );
 	// Backend emits `count: null` when the AppView's `hitsTotal` is absent
 	// (see `tag-feed-page` normaliser); use a loose check so we hide the
 	// count line for both a missing field and an explicit null.

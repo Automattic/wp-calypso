@@ -111,6 +111,26 @@ describe( 'TagFeedPanel', () => {
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#mlb' } ) ).toBeVisible() );
 	} );
 
+	it( 'ignores hashtag-shaped URL fragments when picking up casing', async () => {
+		const itemWithFragmentLink = {
+			...feedItem,
+			text: 'See https://example.com/#MLB for details',
+		};
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/tag/mlb/feed' )
+			.reply( 200, {
+				items: [ itemWithFragmentLink ],
+				cursor: null,
+				tag: { name: 'mlb' },
+			} );
+
+		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="mlb" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#mlb' } ) ).toBeVisible() );
+	} );
+
 	it( 'renders the count line when count is set', async () => {
 		nock( BASE )
 			.get( PATH )
