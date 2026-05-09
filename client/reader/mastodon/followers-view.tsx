@@ -136,7 +136,11 @@ export function FollowersView( { connectionId, actor }: Props ) {
 
 		const profileHref =
 			getProfileUrl( connectionId, item.handle ) ??
-			( connection ? `https://${ connection.instance }/@${ item.acct }` : '#' );
+			( connection
+				? `https://${ encodeURIComponent( connection.instance ) }/@${ encodeURIComponent(
+						item.acct
+				  ) }`
+				: '#' );
 
 		return {
 			avatarUrl: item.avatar,
