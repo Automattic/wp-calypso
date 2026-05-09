@@ -99,6 +99,34 @@ describe( 'TagFeedPanel', () => {
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#MLB' } ) ).toBeVisible() );
 	} );
 
+	it( 'prefers a mixed-case match over a lowercase one regardless of post order', async () => {
+		const lowercaseFirst = {
+			...feedItem,
+			uri: 'at://did:plc:abc/app.bsky.feed.post/aaaaaaaaaaaaa',
+			text: 'morning #mlb thoughts',
+			html: '<p>morning #mlb thoughts</p>',
+		};
+		const mixedCaseSecond = {
+			...feedItem,
+			uri: 'at://did:plc:abc/app.bsky.feed.post/bbbbbbbbbbbbb',
+			text: 'Big day for #MLB fans!',
+			html: '<p>Big day for #MLB fans!</p>',
+		};
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/tag/mlb/feed' )
+			.reply( 200, {
+				items: [ lowercaseFirst, mixedCaseSecond ],
+				cursor: null,
+				tag: { name: 'mlb' },
+			} );
+
+		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="mlb" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#MLB' } ) ).toBeVisible() );
+	} );
+
 	it( 'falls back to the URL hashtag when no post matches', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/tag/mlb/feed' )
@@ -115,6 +143,7 @@ describe( 'TagFeedPanel', () => {
 		const itemWithFragmentLink = {
 			...feedItem,
 			text: 'See https://example.com/#MLB for details',
+			html: '<p>See https://example.com/#MLB for details</p>',
 		};
 		nock( BASE )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/tag/mlb/feed' )
@@ -127,8 +156,14 @@ describe( 'TagFeedPanel', () => {
 		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="mlb" />, {
 			queryClient: makeQueryClient(),
 		} );
+		mockAllIsIntersecting( false );
 
-		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#mlb' } ) ).toBeVisible() );
+		// Wait for the post body to render so we know the query resolved —
+		// otherwise the heading assertion would pass against the initial
+		// pre-data render where the fallback already shows `#mlb`.
+		expect( await screen.findByText( /See https:/ ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: '#mlb' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'heading', { name: '#MLB' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the count line when count is set', async () => {

@@ -35,18 +35,28 @@ interface Props {
 	hashtag: string;
 }
 
-// Pull the original casing of `hashtag` from the first matching `#tag`
-// in the loaded posts. Bluesky's AppView matches hashtags
-// case-insensitively, so the URL we route through is canonical
-// lowercase — this only affects the heading display.
+// Pull the original casing of `hashtag` from a matching `#tag` in the
+// loaded posts. Bluesky's AppView matches hashtags case-insensitively,
+// so the URL we route through is canonical lowercase — this only
+// affects the heading display.
 //
-// The leading `(?:^|[^\p{L}\p{N}\p{M}_#])` boundary keeps URL fragments
-// like `https://example.com/#MLB` from being mistaken for a hashtag.
-// The capture's length must equal `hashtag.length` so the regex's
-// 1-64 cap can't silently truncate a longer (still-matching-prefix)
-// tag in body text.
-const HASHTAG_DISPLAY_RE = /(?:^|[^\p{L}\p{N}\p{M}_#])#([\p{L}\p{N}\p{M}_]{1,64})/gu;
+// Require whitespace or start-of-string before `#`, matching Bluesky's
+// own facet-detection rule. This excludes URL fragments (`/#MLB`) and
+// other punctuation-prefixed `#` sequences so they can't be mistaken
+// for a hashtag. The capture's length must equal `hashtag.length` so
+// the regex's 1-64 cap can't silently truncate a longer
+// (still-matching-prefix) tag in body text.
+//
+// `toLowerCase()` is locale-invariant ASCII-leaning. Non-ASCII
+// hashtags whose server canonicalization differs from V8's default
+// case fold (Turkish dotted/dotless I, German `ß`, etc.) will fall
+// back to the URL's lowercase form rather than misrender.
+const HASHTAG_DISPLAY_RE = /(?:^|\s)#([\p{L}\p{N}\p{M}_]{1,64})/gu;
 
+// Prefer any mixed-case match over a lowercase-only match, so the
+// heading stays stable across refetches that may reorder posts. If
+// only lowercase matches exist, return null and let the caller fall
+// back to the canonical URL hashtag.
 function findHashtagDisplay(
 	items: readonly AtmosphereFeedItem[],
 	hashtag: string
@@ -58,7 +68,13 @@ function findHashtagDisplay(
 		}
 		for ( const match of item.text.matchAll( HASHTAG_DISPLAY_RE ) ) {
 			const candidate = match[ 1 ];
-			if ( candidate.length === hashtag.length && candidate.toLowerCase() === lower ) {
+			if ( candidate.length !== hashtag.length ) {
+				continue;
+			}
+			if ( candidate.toLowerCase() !== lower ) {
+				continue;
+			}
+			if ( candidate !== lower ) {
 				return candidate;
 			}
 		}
