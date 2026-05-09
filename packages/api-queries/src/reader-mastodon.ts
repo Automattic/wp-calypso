@@ -608,6 +608,22 @@ function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean 
 	return Array.isArray( key ) && key[ 3 ] === connectionId;
 }
 
+// Slot-2 names for Mastodon cache keys that hold MastodonFeedItem rows.
+// Keep in lockstep with `readerMastodonKeys` in `@automattic/api-core` —
+// other shapes (`actor-followers` / `actor-following` / `profile`) also
+// have `pages[].items` but the items are MastodonAccountSummary, and
+// Mastodon snowflake IDs are allocated per-table (account 12345 and
+// status 12345 routinely coexist), so walking those caches with a
+// status-id patch would corrupt the wrong row.
+const POST_BEARING_KEY_KINDS = new Set( [ 'timeline', 'thread', 'profile-feed', 'tag-feed' ] );
+
+function isPostBearingMastodonKey( key: unknown, connectionId: number ): boolean {
+	if ( ! Array.isArray( key ) || key[ 3 ] !== connectionId ) {
+		return false;
+	}
+	return typeof key[ 2 ] === 'string' && POST_BEARING_KEY_KINDS.has( key[ 2 ] );
+}
+
 function patchMastodonPostCaches(
 	queryClient: QueryClient,
 	connectionId: number,
@@ -618,7 +634,7 @@ function patchMastodonPostCaches(
 	for ( const [ key, data ] of queryClient.getQueriesData( {
 		queryKey: readerMastodonKeys.all,
 	} ) ) {
-		if ( ! isQueryKeyForConnection( key, connectionId ) ) {
+		if ( ! isPostBearingMastodonKey( key, connectionId ) ) {
 			continue;
 		}
 		const result = patchMastodonQueryData( data, statusId, patch );
