@@ -545,6 +545,53 @@ describe( 'SocialProfileCard — bio hashtag click routing', () => {
 		await user.keyboard( '[/MetaLeft]' );
 		expect( pageMock ).not.toHaveBeenCalled();
 	} );
+
+	it( 'is a no-op for hashtag clicks when no analytics provider is in scope (slim layout)', async () => {
+		const user = userEvent.setup();
+		const { getByText } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/hashtag/wordpress"' +
+					' data-tag="wordpress">#WordPress</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		await user.click( getByText( '#WordPress' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'data-id takes precedence when both attributes are on the same anchor', async () => {
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
+		);
+		const getTagUrl = jest.fn( () => '/reader/atmosphere/7/tag/wrong' );
+		const { getByText } = render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 7,
+					onClick,
+					getProfileUrl,
+					getTagUrl,
+				} }
+			>
+				<SocialProfileCard
+					bioHtml={
+						'<p><a href="https://bsky.app/profile/alice.bsky.social"' +
+						' data-id="alice.bsky.social" data-tag="wordpress">@alice</a></p>'
+					}
+					statsLabel="Profile stats"
+					stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+				/>
+			</SocialAnalyticsProvider>
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/profile/alice.bsky.social' );
+		expect( getTagUrl ).not.toHaveBeenCalled();
+	} );
 } );
 
 describe( 'SocialProfileCard — rich variant', () => {
