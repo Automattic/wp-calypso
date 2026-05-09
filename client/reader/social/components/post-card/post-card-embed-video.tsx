@@ -38,10 +38,11 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 			if ( shouldAutoPlayRef.current ) {
 				shouldAutoPlayRef.current = false;
 				// Browsers permit play() inside the user-gesture window
-				// opened by the click that flipped userExpanded; if the
-				// promise is rejected (e.g. autoplay policy on a
-				// detached connection) the user can still hit the
-				// native controls.
+				// opened by the click that flipped userExpanded. If the
+				// promise rejects (autoplay policy revoked across an
+				// async boundary on stricter mobile engines, source not
+				// yet attached, etc.) the native controls remain
+				// available as the user-visible recovery path.
 				video.play().catch( () => {} );
 			}
 		};

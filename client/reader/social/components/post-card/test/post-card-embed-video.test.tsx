@@ -3,6 +3,7 @@
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import Hls from 'hls.js';
 import { PostCardEmbedVideo } from '../post-card-embed-video';
 import type { AtmosphereEmbedVideo } from '@automattic/api-core';
 
@@ -13,10 +14,12 @@ const mockHls = {
 };
 
 jest.mock( 'hls.js', () => {
-	const Hls = jest.fn().mockImplementation( () => mockHls );
-	( Hls as unknown as { isSupported: () => boolean } ).isSupported = () => true;
-	return { __esModule: true, default: Hls };
+	const HlsCtor = jest.fn().mockImplementation( () => mockHls );
+	( HlsCtor as unknown as { isSupported: () => boolean } ).isSupported = () => true;
+	return { __esModule: true, default: HlsCtor };
 } );
+
+const HlsMock = Hls as unknown as jest.Mock;
 
 const embed: AtmosphereEmbedVideo = {
 	type: 'video',
@@ -36,6 +39,10 @@ describe( 'PostCardEmbedVideo', () => {
 		originalPlay = window.HTMLMediaElement.prototype.play;
 		playMock = jest.fn< Promise< void >, [] >().mockResolvedValue( undefined );
 		window.HTMLMediaElement.prototype.play = playMock;
+		HlsMock.mockClear();
+		mockHls.loadSource.mockClear();
+		mockHls.attachMedia.mockClear();
+		mockHls.destroy.mockClear();
 	} );
 	afterEach( () => {
 		window.HTMLMediaElement.prototype.play = originalPlay;
@@ -127,9 +134,6 @@ describe( 'PostCardEmbedVideo', () => {
 	} );
 
 	it( 'autoplays after attachMedia on the hls.js branch when the thumbnail is clicked', async () => {
-		mockHls.loadSource.mockClear();
-		mockHls.attachMedia.mockClear();
-		mockHls.destroy.mockClear();
 		const user = userEvent.setup();
 		const originalCanPlayType = window.HTMLMediaElement.prototype.canPlayType;
 		// Force the non-Safari branch so the dynamic hls.js import path runs.
