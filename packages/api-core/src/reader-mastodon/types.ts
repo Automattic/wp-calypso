@@ -142,14 +142,10 @@ export interface MastodonThreadResponse {
 // Backend projects the home-instance Mastodon Account object. We surface
 // only the fields we render plus `raw` for forward-compat (matches the
 // existing MastodonConnectionDetails convention). `note` arrives sanitized
-// from the wire and is sanitized again client-side (defense-in-depth).
-// `note_text` is the plain-text projection (HTML stripped server-side); use
-// it for compact surfaces (list rows, tooltips) where rendering structured
-// HTML would be visual noise. Mirrors the AtmosphereAuthorProfile pairing
-// of `description` (text) + `description_html` (rendered HTML) so the two
-// providers expose a symmetric bio shape to consumers. Optional during the
-// backend rollout window — fall back to stripping `note` client-side until
-// every server in rotation projects the field.
+// from the wire and is sanitized again client-side (defense-in-depth);
+// `SocialProfileCard` consumes it through its `bioHtml` slot. The full
+// profile shape does NOT carry a plain-text bio — the row variant
+// (`MastodonAccountSummary`) projects `note_text` for compact surfaces.
 // `id` is instance-local — same handle on a different home instance has a
 // different id; we still use it as the URL key when known because the
 // home-instance perspective is stable per connection. Webfinger handle
@@ -164,7 +160,6 @@ export interface MastodonAuthorProfile {
 	avatar: string | null;
 	header: string | null;
 	note: string;
-	note_text?: string;
 	counts: MastodonProfileCounts;
 	locked: boolean;
 	raw: Record< string, unknown >;
