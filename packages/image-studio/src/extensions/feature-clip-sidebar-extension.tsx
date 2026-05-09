@@ -24,11 +24,11 @@ import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioOpened } from '../utils/tracking';
+import { FEATURE_CLIP_META_KEY } from './feature-clip-meta';
 import './feature-clip-sidebar.scss';
 
 const PLUGIN_NAME = 'image-studio-feature-clip';
 const PANEL_NAME = 'image-studio-feature-clip-panel';
-const FEATURE_CLIP_META_KEY = '_jetpack_feature_clip_id';
 
 interface MediaRecord {
 	id: number;
@@ -188,8 +188,14 @@ function FeatureClipPanel(): JSX.Element {
 	// EntityProvider context, which isn't set up for sidebar surfaces in every
 	// editor — meta would silently come back undefined and the panel would
 	// stay stuck in the empty state even after a successful generation.
-	const entityPropResult = useEntityProp( 'postType', postType, 'meta', postId ?? undefined );
-	const meta = ( entityPropResult as unknown as [ Record< string, unknown > | undefined ] )[ 0 ];
+	// `useEntityProp`'s upstream signature is loosely typed as
+	// `[ any, Function, any ]`, so cast the destructured tuple shape we use
+	// rather than reaching through `unknown` and indexing.
+	const [ meta ] = useEntityProp( 'postType', postType, 'meta', postId ?? undefined ) as [
+		Record< string, unknown > | undefined,
+		( value: Record< string, unknown > ) => void,
+		unknown,
+	];
 
 	const featureClipId = ( () => {
 		const raw = meta?.[ FEATURE_CLIP_META_KEY ];
@@ -297,11 +303,4 @@ export function registerFeatureClipSidebar(): void {
 	pluginRegistered = true;
 }
 
-export {
-	FeatureClipPanel,
-	FeatureClipPreview,
-	FeatureClipEmptyState,
-	PLUGIN_NAME,
-	PANEL_NAME,
-	FEATURE_CLIP_META_KEY,
-};
+export { FeatureClipPanel, FeatureClipPreview, FeatureClipEmptyState, PLUGIN_NAME, PANEL_NAME };

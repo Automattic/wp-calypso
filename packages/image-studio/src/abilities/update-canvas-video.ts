@@ -11,12 +11,11 @@ import { registerAbility } from '@wordpress/abilities';
 import apiFetch from '@wordpress/api-fetch';
 import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { FEATURE_CLIP_META_KEY } from '../extensions/feature-clip-meta';
 import { store as imageStudioStore, type ImageStudioActions } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
 import { trackImageStudioImageGenerated } from '../utils/tracking';
-
-const FEATURE_CLIP_META_KEY = '_jetpack_feature_clip_id';
 
 /**
  * Persist the generated video clip's attachment ID against the current post

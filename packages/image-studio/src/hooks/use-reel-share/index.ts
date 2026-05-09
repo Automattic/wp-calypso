@@ -17,6 +17,7 @@ import {
 	trackImageStudioReelShareNotConnected,
 	trackImageStudioReelShareNotPublished,
 } from '../../utils/tracking';
+import type { ShareClipIdentity } from '../share-types';
 
 const SOCIAL_STORE = 'jetpack-social-plugin';
 const EDITOR_STORE = 'core/editor';
@@ -40,19 +41,6 @@ interface UseReelShareReturn {
 	isVisible: boolean;
 	isSharing: boolean;
 	handleShare: () => Promise< void >;
-}
-
-/**
- * Identity of the clip that should be shared. Pass this from a surface that
- * sources the clip from somewhere other than the in-memory video-studio store
- * (e.g. the post-editor sidebar, which reads the meta-bound clip). When
- * omitted, the hook falls back to whatever the modal session most recently
- * set on the video-studio store.
- */
-export interface ShareClipIdentity {
-	url: string | null;
-	attachmentId: number | null;
-	durationSeconds: number | null;
 }
 
 export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
@@ -89,7 +77,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 
 	const currentVideoUrl = hasOverride ? clip.url : storeUrl;
 	const currentAttachmentId = hasOverride ? clip.attachmentId : storeAttachmentId;
-	const currentDurationSeconds = hasOverride ? clip.durationSeconds : storeDuration;
+	const currentDurationSeconds = hasOverride ? clip.durationSeconds ?? null : storeDuration;
 
 	const { editPost } = useDispatch( EDITOR_STORE ) as {
 		editPost: ( edits: { meta: Record< string, unknown > } ) => void;
@@ -108,7 +96,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			options?: {
 				type?: 'default' | 'snackbar';
 				isDismissible?: boolean;
-				actions?: Array< { label: string; url?: string } >;
+				actions?: Array< { label: string; url?: string; onClick?: () => void } >;
 			}
 		) => Promise< void >;
 	};
@@ -130,8 +118,19 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		if ( hasOverride ) {
 			await createCoreNotice?.( type, message, {
 				type: 'snackbar',
-				isDismissible: !! isDismissible,
-				actions: actions?.map( ( a ) => ( { label: a.label, url: a.url } ) ),
+				// Match imageStudioStore.addNotice's default (dismissible) when
+				// the caller doesn't say otherwise — coercing undefined to false
+				// would silently lose the user's ability to dismiss.
+				isDismissible: isDismissible ?? true,
+				// Honour `openInNewTab` by routing through an onClick that opens
+				// in a new tab, instead of the default same-tab navigation a
+				// bare `url` action triggers. Same-tab navigation away from the
+				// editor would discard any unsaved post edits.
+				actions: actions?.map( ( a ) =>
+					a.openInNewTab
+						? { label: a.label, onClick: () => window.open( a.url, '_blank', 'noopener' ) }
+						: { label: a.label, url: a.url }
+				),
 			} );
 			return;
 		}

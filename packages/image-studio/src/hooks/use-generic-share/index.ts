@@ -9,21 +9,12 @@ import {
 	trackImageStudioGenericShareCompleted,
 	trackImageStudioGenericShareFailed,
 } from '../../utils/tracking';
+import type { ShareClipIdentity } from '../share-types';
 
 interface UseGenericShareReturn {
 	isVisible: boolean;
 	isSharing: boolean;
 	handleShare: () => Promise< void >;
-}
-
-/**
- * See `useReelShare`'s `ShareClipIdentity` — same purpose. Caller can pass an
- * explicit clip identity to source from somewhere other than the in-memory
- * video-studio store; omitting falls back to the store.
- */
-export interface ShareClipIdentity {
-	url: string | null;
-	attachmentId: number | null;
 }
 
 interface NavigatorWithShare {
