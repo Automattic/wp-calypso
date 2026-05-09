@@ -37,9 +37,26 @@ async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
 		return;
 	}
 
+	// Look up the post type's actual REST base. Naive `${postType}s` breaks
+	// for custom post types whose REST base isn't a simple "+s" (e.g. an
+	// already-plural slug like `news`, or an explicit `rest_base` override).
+	// `getEntityRecord( 'root', 'postType', name )` is populated by the editor
+	// the moment the post loads, so this is a synchronous read in practice.
+	const core = select( 'core' ) as
+		| {
+				getEntityRecord: (
+					kind: string,
+					name: string,
+					id: string
+				) => { rest_base?: string } | undefined;
+		  }
+		| undefined;
+	const restBase = core?.getEntityRecord?.( 'root', 'postType', postType )?.rest_base;
+	const path = restBase ? `/wp/v2/${ restBase }/${ postId }` : `/wp/v2/${ postType }s/${ postId }`;
+
 	try {
 		const response = ( await apiFetch( {
-			path: `/wp/v2/${ postType }s/${ postId }`,
+			path,
 			method: 'POST',
 			data: { meta: { [ FEATURE_CLIP_META_KEY ]: attachmentId } },
 		} ) ) as Record< string, unknown >;

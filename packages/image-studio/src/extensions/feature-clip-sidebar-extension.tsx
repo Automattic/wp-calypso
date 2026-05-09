@@ -171,15 +171,24 @@ function FeatureClipEmptyState(): JSX.Element {
 }
 
 function FeatureClipPanel(): JSX.Element {
-	const postType = useSelect(
-		( select ) =>
-			(
-				select( 'core/editor' ) as { getCurrentPostType: () => string | null } | undefined
-			 )?.getCurrentPostType?.() ?? 'post',
-		[]
-	);
+	const { postType, postId } = useSelect( ( select ) => {
+		const editor = select( 'core/editor' ) as
+			| {
+					getCurrentPostType: () => string | null;
+					getCurrentPostId: () => number | null;
+			  }
+			| undefined;
+		return {
+			postType: editor?.getCurrentPostType?.() ?? 'post',
+			postId: editor?.getCurrentPostId?.() ?? null,
+		};
+	}, [] );
 
-	const entityPropResult = useEntityProp( 'postType', postType, 'meta' );
+	// Pass the post ID explicitly. Without it `useEntityProp` falls back to
+	// EntityProvider context, which isn't set up for sidebar surfaces in every
+	// editor — meta would silently come back undefined and the panel would
+	// stay stuck in the empty state even after a successful generation.
+	const entityPropResult = useEntityProp( 'postType', postType, 'meta', postId ?? undefined );
 	const meta = ( entityPropResult as unknown as [ Record< string, unknown > | undefined ] )[ 0 ];
 
 	const featureClipId = ( () => {
@@ -188,15 +197,27 @@ function FeatureClipPanel(): JSX.Element {
 		return Number.isFinite( n ) && n > 0 ? n : null;
 	} )();
 
-	const attachment = useSelect(
+	const { attachment, hasResolvedAttachment } = useSelect(
 		( select ) => {
 			if ( ! featureClipId ) {
-				return null;
+				return { attachment: null, hasResolvedAttachment: true };
 			}
 			const core = select( 'core' ) as
-				| { getMedia: ( id: number ) => MediaRecord | undefined }
+				| {
+						getMedia: ( id: number ) => MediaRecord | undefined;
+						hasFinishedResolution: ( name: string, args: unknown[] ) => boolean;
+				  }
 				| undefined;
-			return core?.getMedia?.( featureClipId ) ?? null;
+			return {
+				attachment: core?.getMedia?.( featureClipId ) ?? null,
+				// `getMedia` resolves async on first read. Until resolution
+				// finishes the result is `undefined`, which would otherwise
+				// flicker the panel into the empty CTA on reload before the
+				// preview appears. Defer the empty-state fallback until we
+				// know the lookup is genuinely done.
+				hasResolvedAttachment:
+					core?.hasFinishedResolution?.( 'getMedia', [ featureClipId ] ) ?? false,
+			};
 		},
 		[ featureClipId ]
 	);
@@ -214,6 +235,9 @@ function FeatureClipPanel(): JSX.Element {
 	const durationSeconds =
 		typeof attachment?.media_details?.length === 'number' ? attachment.media_details.length : null;
 	const hasUsableClip = !! featureClipId && !! videoUrl;
+	// Hold the panel body blank while the clip's attachment is resolving, so
+	// reload doesn't briefly flash the empty CTA before the preview appears.
+	const isResolvingAttachment = !! featureClipId && ! hasResolvedAttachment;
 
 	return (
 		<PluginDocumentSettingPanel
@@ -223,15 +247,21 @@ function FeatureClipPanel(): JSX.Element {
 			title={ titleNode as unknown as string }
 			className="image-studio-feature-clip-panel"
 		>
-			{ hasUsableClip ? (
-				<FeatureClipPreview
-					videoUrl={ videoUrl }
-					attachmentId={ featureClipId }
-					durationSeconds={ durationSeconds }
-				/>
-			) : (
-				<FeatureClipEmptyState />
-			) }
+			{ ( () => {
+				if ( hasUsableClip ) {
+					return (
+						<FeatureClipPreview
+							videoUrl={ videoUrl }
+							attachmentId={ featureClipId }
+							durationSeconds={ durationSeconds }
+						/>
+					);
+				}
+				if ( isResolvingAttachment ) {
+					return null;
+				}
+				return <FeatureClipEmptyState />;
+			} )() }
 		</PluginDocumentSettingPanel>
 	);
 }

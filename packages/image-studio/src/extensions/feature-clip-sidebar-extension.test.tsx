@@ -22,6 +22,7 @@ const mockCreateBlock = jest.fn( ( name: string, attributes: Record< string, unk
 
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
+let mockHasResolvedMedia = true;
 let mockReelVisible = false;
 let mockGenericVisible = false;
 const mockReelHandleShare = jest.fn();
@@ -73,10 +74,13 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( selector: ( s: ( name: string ) => unknown ) => unknown ) => {
 		return selector( ( name: string ) => {
 			if ( name === 'core/editor' ) {
-				return { getCurrentPostType: () => 'post' };
+				return { getCurrentPostType: () => 'post', getCurrentPostId: () => 7 };
 			}
 			if ( name === 'core' ) {
-				return { getMedia: () => mockMedia };
+				return {
+					getMedia: () => mockMedia,
+					hasFinishedResolution: () => mockHasResolvedMedia,
+				};
 			}
 			return undefined;
 		} );
@@ -155,6 +159,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockCreateBlock.mockClear();
 		mockMeta = {};
 		mockMedia = null;
+		mockHasResolvedMedia = true;
 		mockReelVisible = false;
 		mockGenericVisible = false;
 		( window as Record< string, unknown > ).imageStudioData = { isDevMode: true };
@@ -203,9 +208,20 @@ describe( 'feature-clip-sidebar-extension', () => {
 		it( 'renders the empty state when meta has an id but the attachment is gone', () => {
 			mockMeta = { _jetpack_feature_clip_id: 42 };
 			mockMedia = null; // attachment deleted
+			mockHasResolvedMedia = true; // resolution finished, attachment confirmed gone
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
 			expect( screen.getByRole( 'button', { name: 'Generate clip' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'holds the panel body blank while the attachment is still resolving', () => {
+			mockMeta = { _jetpack_feature_clip_id: 42 };
+			mockMedia = null;
+			mockHasResolvedMedia = false; // first render — getMedia hasn't completed
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Regenerate' } ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'opens Image Studio with the post-editor entry point on click', async () => {

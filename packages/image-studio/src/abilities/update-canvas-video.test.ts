@@ -19,6 +19,7 @@ const mockApiFetch = jest.fn();
 
 let mockCurrentPostId: number | null = null;
 let mockCurrentPostType = 'post';
+let mockRestBase: string | undefined = 'posts';
 
 const mockDispatch = jest.fn( ( store?: string ) => {
 	if ( store === 'core' ) {
@@ -37,6 +38,12 @@ const mockSelect = jest.fn( ( store?: string ) => {
 		return {
 			getCurrentPostId: () => mockCurrentPostId,
 			getCurrentPostType: () => mockCurrentPostType,
+		};
+	}
+	if ( store === 'core' ) {
+		return {
+			getEntityRecord: () =>
+				mockRestBase === undefined ? undefined : { rest_base: mockRestBase },
 		};
 	}
 	return null;
@@ -98,6 +105,7 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		} );
 		mockCurrentPostId = null;
 		mockCurrentPostType = 'post';
+		mockRestBase = 'posts';
 		// Reset module-level isRegistered guard between tests.
 		jest.resetModules();
 
@@ -385,6 +393,36 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 				'https://files.wordpress.com/clip.mp4'
 			);
 			consoleWarnSpy.mockRestore();
+		} );
+
+		it( "uses the post type's rest_base for the REST path when it diverges from the slug", async () => {
+			mockCurrentPostId = 7;
+			mockCurrentPostType = 'news'; // CPT whose slug doesn't pluralize cleanly
+			mockRestBase = 'news'; // already-plural rest_base
+			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+			await registerUpdateCanvasVideoAbility();
+
+			const callback = getRegisteredCallback();
+			await callback( { url: 'https://files.wordpress.com/clip.mp4', attachmentId: 42 } );
+
+			expect( mockApiFetch ).toHaveBeenCalledWith(
+				expect.objectContaining( { path: '/wp/v2/news/7' } )
+			);
+		} );
+
+		it( 'falls back to slug + "s" if rest_base lookup is unavailable', async () => {
+			mockCurrentPostId = 7;
+			mockCurrentPostType = 'post';
+			mockRestBase = undefined;
+			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+			await registerUpdateCanvasVideoAbility();
+
+			const callback = getRegisteredCallback();
+			await callback( { url: 'https://files.wordpress.com/clip.mp4', attachmentId: 42 } );
+
+			expect( mockApiFetch ).toHaveBeenCalledWith(
+				expect.objectContaining( { path: '/wp/v2/posts/7' } )
+			);
 		} );
 	} );
 } );
