@@ -6,96 +6,77 @@ import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-
 
 const TRACKS_PREFIX = 'jetpack';
 
-function recordTracksEvent(
-	eventName: string,
-	properties: Record< string, string | number | boolean > = {}
-): void {
-	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, properties );
+type TrackProperties = Record< string, string | number | boolean >;
+
+type WindowWithAgentsManagerActions = Window & {
+	__agentsManagerActions?: {
+		getSessionId?: () => unknown;
+	};
+};
+
+function getSessionId(): string | undefined {
+	if ( typeof window === 'undefined' ) {
+		return undefined;
+	}
+
+	const agentsManagerActions = ( window as WindowWithAgentsManagerActions ).__agentsManagerActions;
+	const sessionId = agentsManagerActions?.getSessionId?.();
+	return typeof sessionId === 'string' && sessionId !== '' ? sessionId : undefined;
 }
 
-interface TrackReviewMediationSuggestionRenderedOptions {
-	postId?: number;
-	postType?: string;
+function recordTracksEvent( eventName: string, properties: TrackProperties = {} ): void {
+	const sessionId = getSessionId();
+	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, {
+		...properties,
+		...( sessionId ? { sessionid: sessionId } : {} ),
+	} );
 }
 
 interface TrackReviewMediationSuggestionClickOptions {
-	runId: string;
-	trigger: 'suggestion' | 'typed_prompt';
-	postId?: number;
-	postType?: string;
+	clientRunId: string;
 }
 
 interface TrackReviewMediationResultRenderedOptions {
 	outcome: 'success' | 'cache_hit' | 'empty_notes';
-	cacheHit: boolean;
 	conflictCount: number;
+	implicationCount: number;
 	suggestedEditCount: number;
-	autoSuggestedEditCount: number;
-	manualSuggestedEditCount: number;
 	guidelineViolationCount: number;
-	postId?: number;
-	runId?: string;
+	clientRunId: string;
 }
 
 interface TrackReviewMediationItemActionOptions {
-	action: 'accept' | 'undo' | 'dismiss' | 'bulk_accept' | 'focus';
-	target: 'edit' | 'conflict';
-	postId?: number;
-	runId?: string;
-	blockIndex?: number | null;
+	action: 'accept' | 'undo' | 'dismiss' | 'bulk_accept';
+	target: 'edit' | 'conflict' | 'mixed';
+	outcome: 'success' | 'failed' | 'partial_failed';
+	clientRunId?: string;
+	itemCount?: number;
 }
 
 interface TrackReviewMediationErrorOptions {
 	errorPhase: 'load' | 'render' | 'apply' | 'undo' | 'network';
 	errorType: string;
-	postId?: number;
-	runId?: string;
+	clientRunId?: string;
 }
 
 /**
  * Tracks the empty-view "Mediate review notes" suggestion appearing.
- * @param options          - Tracking options
- * @param options.postId   - (optional) Post ID
- * @param options.postType - (optional) Post type
  */
-export function trackReviewMediationSuggestionRendered( {
-	postId,
-	postType,
-}: TrackReviewMediationSuggestionRenderedOptions ): void {
-	const properties: Record< string, string | number | boolean > = {};
-	if ( postId !== undefined ) {
-		properties.post_id = postId;
-	}
-	if ( postType !== undefined ) {
-		properties.post_type = postType;
-	}
-	recordTracksEvent( 'ai_review_mediation_suggestion_rendered', properties );
+export function trackReviewMediationSuggestionRendered(): void {
+	recordTracksEvent( 'ai_review_mediation_suggestion_rendered' );
 }
 
 /**
  * Tracks a user clicking the "Mediate review notes" suggestion.
- * @param options          - Tracking options
- * @param options.runId    - Run id generated at click time, threaded through downstream events
- * @param options.trigger  - Whether the run was triggered via the suggestion chip or a typed prompt
- * @param options.postId   - (optional) Post ID
- * @param options.postType - (optional) Post type
+ * @param options             - Tracking options
+ * @param options.clientRunId - Client-side join id generated at click time
  */
 export function trackReviewMediationSuggestionClick( {
-	runId,
-	trigger,
-	postId,
-	postType,
+	clientRunId,
 }: TrackReviewMediationSuggestionClickOptions ): void {
-	const properties: Record< string, string | number | boolean > = {
-		run_id: runId,
-		trigger,
+	const properties: TrackProperties = {
+		client_run_id: clientRunId,
 	};
-	if ( postId !== undefined ) {
-		properties.post_id = postId;
-	}
-	if ( postType !== undefined ) {
-		properties.post_type = postType;
-	}
 	recordTracksEvent( 'ai_review_mediation_suggestion_click', properties );
 }
 
@@ -103,99 +84,79 @@ export function trackReviewMediationSuggestionClick( {
  * Tracks the mediation card mounting and becoming visible to the user.
  * @param options                          - Tracking options
  * @param options.outcome                  - High-level outcome: success, cache_hit, or empty_notes
- * @param options.cacheHit                 - Whether the server short-circuited via the state-hash cache
  * @param options.conflictCount            - Number of conflict items in the payload
+ * @param options.implicationCount         - Number of implication items in the payload
  * @param options.suggestedEditCount       - Total number of suggested edits
- * @param options.autoSuggestedEditCount   - Suggested edits eligible for one-click apply
- * @param options.manualSuggestedEditCount - Suggested edits requiring manual application
  * @param options.guidelineViolationCount  - Number of guideline violations in the payload
- * @param options.postId                   - (optional) Post ID
- * @param options.runId                    - (optional) Run id threaded from the click event
+ * @param options.clientRunId              - Client-side join id for this mediation card
  */
 export function trackReviewMediationResultRendered( {
 	outcome,
-	cacheHit,
 	conflictCount,
+	implicationCount,
 	suggestedEditCount,
-	autoSuggestedEditCount,
-	manualSuggestedEditCount,
 	guidelineViolationCount,
-	postId,
-	runId,
+	clientRunId,
 }: TrackReviewMediationResultRenderedOptions ): void {
-	const properties: Record< string, string | number | boolean > = {
+	const properties: TrackProperties = {
 		outcome,
-		cache_hit: cacheHit,
 		conflict_count: conflictCount,
+		implication_count: implicationCount,
 		suggested_edit_count: suggestedEditCount,
-		auto_suggested_edit_count: autoSuggestedEditCount,
-		manual_suggested_edit_count: manualSuggestedEditCount,
 		guideline_violation_count: guidelineViolationCount,
+		client_run_id: clientRunId,
 	};
-	if ( postId !== undefined ) {
-		properties.post_id = postId;
-	}
-	if ( runId !== undefined ) {
-		properties.run_id = runId;
-	}
 	recordTracksEvent( 'ai_review_mediation_result_rendered', properties );
 }
 
 /**
- * Tracks a user action on a mediation row (accept, undo, dismiss, bulk-accept, focus).
- * @param options            - Tracking options
- * @param options.action     - Action verb
- * @param options.target     - Whether the row is a suggested edit or a conflict candidate
- * @param options.postId     - (optional) Post ID
- * @param options.runId      - (optional) Run id from the originating click
- * @param options.blockIndex - (optional) Block index for the row's target block
+ * Tracks a user action on a mediation row.
+ * @param options                - Tracking options
+ * @param options.action         - Action verb
+ * @param options.target         - Suggested edit, conflict, or mixed bulk action
+ * @param options.outcome        - Whether the action completed successfully
+ * @param options.clientRunId    - (optional) Client-side join id
+ * @param options.itemCount      - (optional) Number of items attempted
  */
 export function trackReviewMediationItemAction( {
 	action,
 	target,
-	postId,
-	runId,
-	blockIndex,
+	outcome,
+	clientRunId,
+	itemCount,
 }: TrackReviewMediationItemActionOptions ): void {
-	const properties: Record< string, string | number | boolean > = {
+	const properties: TrackProperties = {
 		action,
 		target,
+		outcome,
 	};
-	if ( postId !== undefined ) {
-		properties.post_id = postId;
+	if ( clientRunId !== undefined ) {
+		properties.client_run_id = clientRunId;
 	}
-	if ( runId !== undefined ) {
-		properties.run_id = runId;
-	}
-	if ( blockIndex !== undefined && blockIndex !== null ) {
-		properties.block_index = blockIndex;
+	if ( itemCount !== undefined ) {
+		properties.item_count = itemCount;
 	}
 	recordTracksEvent( 'ai_review_mediation_item_action', properties );
 }
 
 /**
  * Tracks a Review Mediation failure (load, render, apply, undo, or network).
- * @param options            - Tracking options
- * @param options.errorPhase - Which step failed
- * @param options.errorType  - A short error code or message tag
- * @param options.postId     - (optional) Post ID
- * @param options.runId      - (optional) Run id when the failure is tied to a specific invocation
+ * @param options             - Tracking options
+ * @param options.errorPhase  - Which step failed
+ * @param options.errorType   - A short error code or message tag
+ * @param options.clientRunId - (optional) Client-side join id
  */
 export function trackReviewMediationError( {
 	errorPhase,
 	errorType,
-	postId,
-	runId,
+	clientRunId,
 }: TrackReviewMediationErrorOptions ): void {
-	const properties: Record< string, string | number | boolean > = {
+	const properties: TrackProperties = {
 		error_phase: errorPhase,
 		error_type: errorType,
 	};
-	if ( postId !== undefined ) {
-		properties.post_id = postId;
-	}
-	if ( runId !== undefined ) {
-		properties.run_id = runId;
+	if ( clientRunId !== undefined ) {
+		properties.client_run_id = clientRunId;
 	}
 	recordTracksEvent( 'ai_review_mediation_error', properties );
 }
