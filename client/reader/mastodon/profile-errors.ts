@@ -23,12 +23,16 @@ export function followErrorMessage(
 			case 'unfollow':
 				return translate( 'Couldn’t unfollow this account.' );
 			default: {
-				// Exhaustiveness guard: a future action variant landing in
-				// production before this switch is updated would otherwise
-				// silently fall through to the shared `errorMessage` copy.
+				// Compile-time exhaustiveness guard plus a soft runtime
+				// fallback. A future action variant landing in production
+				// before this switch is updated would otherwise surface the
+				// profile-load `not_found` copy ("We couldn’t find that
+				// profile."), which misleads on a follow-shaped click.
 				const _exhaustive: never = action;
 				void _exhaustive;
-				return errorMessage( error, translate );
+				// eslint-disable-next-line no-console
+				console.warn( '[reader-mastodon] unhandled follow action in followErrorMessage()', action );
+				return translate( 'Couldn’t update this account.' );
 			}
 		}
 	}
