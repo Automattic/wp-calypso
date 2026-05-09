@@ -171,6 +171,27 @@ export function SocialProfileCard( {
 
 	const headingText = displayName || handle;
 
+	// Defence-in-depth: `displayNameLink` is typed `string` but originates from
+	// a remote service (wpcom for Bluesky; the home Mastodon instance, which
+	// federates `acct` from arbitrary remote servers). Only render the anchor
+	// when the value parses as an http(s) URL — otherwise fall back to plain
+	// heading text so a malformed payload can't produce a same-origin or
+	// `data:`/`javascript:` navigation.
+	const safeDisplayNameLink = useMemo( () => {
+		if ( ! displayNameLink ) {
+			return undefined;
+		}
+		try {
+			const parsed = new URL( displayNameLink );
+			if ( parsed.protocol !== 'https:' && parsed.protocol !== 'http:' ) {
+				return undefined;
+			}
+			return parsed.toString();
+		} catch {
+			return undefined;
+		}
+	}, [ displayNameLink ] );
+
 	return (
 		<div className="social-profile-card">
 			{ banner ? (
@@ -200,10 +221,10 @@ export function SocialProfileCard( {
 			</div>
 			{ headingText ? (
 				<h2 className="social-profile-card__display-name">
-					{ displayNameLink ? (
+					{ safeDisplayNameLink ? (
 						<a
 							className="social-profile-card__display-name-link"
-							href={ displayNameLink }
+							href={ safeDisplayNameLink }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ () => {

@@ -318,4 +318,19 @@ describe( 'mapMastodonAccountToSocialProfileCardProps', () => {
 		);
 		expect( props.displayNameLink ).toBe( 'https://infosec.exchange/@carol' );
 	} );
+
+	it.each( [
+		[ 'empty acct', '' ],
+		[ 'trailing-@ acct', 'alice@' ],
+		[ 'leading-@ acct', '@alice' ],
+		[ 'double-@ acct (userinfo trick)', 'alice@@two.example' ],
+		[ 'single-label remote host', 'alice@localhost' ],
+		[ 'remote host with userinfo separator', 'alice@evil@host.example' ],
+	] )( 'returns undefined displayNameLink for malformed %s', ( _label, acct ) => {
+		const props = mapMastodonAccountToSocialProfileCardProps(
+			{ ...PROFILE, acct },
+			{ instance: 'mastodon.social' }
+		);
+		expect( props.displayNameLink ).toBeUndefined();
+	} );
 } );

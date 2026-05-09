@@ -575,6 +575,26 @@ describe( 'SocialProfileCard — rich variant', () => {
 		);
 	} );
 
+	it.each( [
+		[ 'javascript: URL', 'javascript:alert(1)' ],
+		[ 'data: URL', 'data:text/html,<script>alert(1)</script>' ],
+		[ 'protocol-relative URL', '//evil.example/profile' ],
+		[ 'whitespace-only string', '   ' ],
+		[ 'malformed URL', 'not a url' ],
+	] )( 'renders plain heading text when displayNameLink is a %s', ( _label, value ) => {
+		render(
+			<SocialProfileCard
+				displayName="Alice"
+				handle="alice.bsky.social"
+				displayNameLink={ value }
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		expect( screen.queryByRole( 'link', { name: 'Alice' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
+	} );
+
 	it( 'hides the banner image on load failure', () => {
 		const { container } = render(
 			<SocialProfileCard
