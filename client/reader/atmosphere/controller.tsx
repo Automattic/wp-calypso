@@ -206,9 +206,11 @@ export const atmosphereTagFeed = ( context: Context, next: () => void ) => {
 	}
 
 	const id = Number( context.params.id );
+	// Preserve the URL's casing so the heading mirrors the tag the user
+	// clicked. Bluesky's AppView matches hashtags case-insensitively, so
+	// `/tag/MLB` and `/tag/mlb` resolve to the same content.
 	const hashtag = String( context.params.hashtag ?? '' )
 		.trim()
-		.toLowerCase()
 		.replace( /^#/, '' );
 
 	const idValid = Number.isFinite( id ) && id > 0;

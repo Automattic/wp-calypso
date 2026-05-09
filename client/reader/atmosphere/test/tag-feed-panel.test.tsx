@@ -78,6 +78,18 @@ describe( 'TagFeedPanel', () => {
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#rust' } ) ).toBeVisible() );
 	} );
 
+	it( 'preserves the hashtag casing in the heading', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/tag/MLB/feed' )
+			.reply( 200, { items: [], cursor: null, tag: { name: 'MLB' } } );
+
+		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="MLB" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#MLB' } ) ).toBeVisible() );
+	} );
+
 	it( 'renders the count line when count is set', async () => {
 		nock( BASE )
 			.get( PATH )
