@@ -150,9 +150,8 @@ describe( 'getTagFeedUrl', () => {
 		expect( getTagFeedUrl( 7, 'rust' ) ).toBe( '/reader/atmosphere/7/tag/rust' );
 	} );
 
-	it( 'preserves the input casing and percent-encodes Unicode tags', () => {
-		expect( getTagFeedUrl( 7, 'Rust' ) ).toBe( '/reader/atmosphere/7/tag/Rust' );
-		expect( getTagFeedUrl( 7, 'MLB' ) ).toBe( '/reader/atmosphere/7/tag/MLB' );
+	it( 'lowercases and percent-encodes Unicode tags', () => {
+		expect( getTagFeedUrl( 7, 'Rust' ) ).toBe( '/reader/atmosphere/7/tag/rust' );
 		expect( getTagFeedUrl( 7, '日本語' ) ).toBe(
 			'/reader/atmosphere/7/tag/' + encodeURIComponent( '日本語' )
 		);

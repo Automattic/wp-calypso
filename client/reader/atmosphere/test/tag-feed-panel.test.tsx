@@ -78,16 +78,37 @@ describe( 'TagFeedPanel', () => {
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#rust' } ) ).toBeVisible() );
 	} );
 
-	it( 'preserves the hashtag casing in the heading', async () => {
+	it( "derives the heading's casing from a matching tag in the feed posts", async () => {
+		const itemWithMixedCaseTag = {
+			...feedItem,
+			text: 'Big day for #MLB fans!',
+		};
 		nock( BASE )
-			.get( '/wpcom/v2/reader/atmosphere/connections/42/tag/MLB/feed' )
-			.reply( 200, { items: [], cursor: null, tag: { name: 'MLB' } } );
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/tag/mlb/feed' )
+			.reply( 200, {
+				items: [ itemWithMixedCaseTag ],
+				cursor: null,
+				tag: { name: 'mlb' },
+			} );
 
-		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="MLB" />, {
+		// The controller hands us the canonical lowercase hashtag.
+		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="mlb" />, {
 			queryClient: makeQueryClient(),
 		} );
 
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#MLB' } ) ).toBeVisible() );
+	} );
+
+	it( 'falls back to the URL hashtag when no post matches', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/42/tag/mlb/feed' )
+			.reply( 200, { items: [], cursor: null, tag: { name: 'mlb' } } );
+
+		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="mlb" />, {
+			queryClient: makeQueryClient(),
+		} );
+
+		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#mlb' } ) ).toBeVisible() );
 	} );
 
 	it( 'renders the count line when count is set', async () => {

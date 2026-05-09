@@ -83,18 +83,16 @@ export function getFollowingUrl( connectionId: number, ref: ProfileRefInput ): s
 export { HASHTAG_RE, isValidHashtag } from '@automattic/api-core';
 
 /**
- * Build the in-app Bluesky tag-feed URL. Strips a leading `#`, validates,
- * and percent-encodes the path segment. Preserves the input's original
- * casing so the destination heading mirrors the tag the user clicked
- * (Bluesky's AppView matches hashtags case-insensitively, so `/tag/MLB`
- * and `/tag/mlb` resolve to the same content). Returns `null` for any
- * rejection so callers can fall back to the external bsky.app link.
+ * Build the in-app Bluesky tag-feed URL. Lowercases the input, strips a
+ * leading `#`, validates the canonical form, and percent-encodes the
+ * path segment. Returns `null` for any rejection so callers can fall
+ * back to the external bsky.app link.
  */
 export function getTagFeedUrl( connectionId: number, hashtag: string ): string | null {
 	if ( ! Number.isFinite( connectionId ) || connectionId <= 0 ) {
 		return null;
 	}
-	const canonical = hashtag.trim().replace( /^#/, '' );
+	const canonical = hashtag.trim().toLowerCase().replace( /^#/, '' );
 	if ( ! isValidHashtag( canonical ) ) {
 		return null;
 	}

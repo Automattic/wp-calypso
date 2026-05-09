@@ -35,6 +35,26 @@ interface Props {
 	hashtag: string;
 }
 
+// Pull the original casing of `hashtag` from the first matching `#tag`
+// in the loaded posts. Bluesky's AppView matches hashtags
+// case-insensitively, so the URL we route through is canonical
+// lowercase — this only affects the heading display.
+function findHashtagDisplay( items: readonly { text?: string }[], hashtag: string ): string | null {
+	const lower = hashtag.toLowerCase();
+	const re = /#([\p{L}\p{N}\p{M}_]{1,64})/gu;
+	for ( const item of items ) {
+		if ( ! item?.text ) {
+			continue;
+		}
+		for ( const match of item.text.matchAll( re ) ) {
+			if ( match[ 1 ].toLowerCase() === lower ) {
+				return match[ 1 ];
+			}
+		}
+	}
+	return null;
+}
+
 export function TagFeedPanel( { connection, hashtag }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -171,6 +191,11 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 	);
 
 	const tagInfo = feed.data?.pages[ 0 ]?.tag;
+
+	const headingHashtag = useMemo( () => {
+		const allItems = feed.data?.pages.flatMap( ( pageData ) => pageData.items ?? [] ) ?? [];
+		return findHashtagDisplay( allItems, hashtag ) ?? hashtag;
+	}, [ feed.data, hashtag ] );
 	// Backend emits `count: null` when the AppView's `hitsTotal` is absent
 	// (see `tag-feed-page` normaliser); use a loose check so we hide the
 	// count line for both a missing field and an explicit null.
@@ -192,7 +217,7 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 							onBackToTimeline={ handleBackToTimeline }
 						/>
 						<div className="atmosphere-tag-feed__header">
-							<h1 className="atmosphere-tag-feed__heading">{ `#${ hashtag }` }</h1>
+							<h1 className="atmosphere-tag-feed__heading">{ `#${ headingHashtag }` }</h1>
 							{ countLine ? <p className="atmosphere-tag-feed__count">{ countLine }</p> : null }
 						</div>
 						<SocialFeedList< SocialPost >

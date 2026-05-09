@@ -154,11 +154,11 @@ describe( 'atmosphereTagFeed', () => {
 		expect( mockNext ).toHaveBeenCalled();
 	} );
 
-	it( 'preserves the hashtag casing before passing it to the view', () => {
-		const ctx = makeTagContext( { id: '42', hashtag: 'MLB' } );
+	it( 'lowercases the hashtag before passing it to the view', () => {
+		const ctx = makeTagContext( { id: '42', hashtag: 'Rust' } );
 		atmosphereTagFeed( ctx, mockNext );
 		const primary = ctx.primary as unknown as { props: { hashtag: string } };
-		expect( primary.props.hashtag ).toBe( 'MLB' );
+		expect( primary.props.hashtag ).toBe( 'rust' );
 	} );
 
 	it( 'strips a leading # before passing it to the view', () => {
