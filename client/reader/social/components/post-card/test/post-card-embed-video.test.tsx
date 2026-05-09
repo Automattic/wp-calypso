@@ -1,10 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PostCardEmbedVideo } from '../post-card-embed-video';
 import type { AtmosphereEmbedVideo } from '@automattic/api-core';
+
+const mockHls = {
+	loadSource: jest.fn(),
+	attachMedia: jest.fn(),
+	destroy: jest.fn(),
+};
+
+jest.mock( 'hls.js', () => {
+	const Hls = jest.fn().mockImplementation( () => mockHls );
+	( Hls as unknown as { isSupported: () => boolean } ).isSupported = () => true;
+	return { __esModule: true, default: Hls };
+} );
 
 const embed: AtmosphereEmbedVideo = {
 	type: 'video',
@@ -15,6 +27,20 @@ const embed: AtmosphereEmbedVideo = {
 };
 
 describe( 'PostCardEmbedVideo', () => {
+	// JSDOM's HTMLMediaElement.play returns undefined; the spec says it
+	// returns a Promise. Stub a resolved promise so production code's
+	// `video.play().catch(...)` doesn't crash in the default test path.
+	let originalPlay: typeof window.HTMLMediaElement.prototype.play;
+	let playMock: jest.Mock< Promise< void >, [] >;
+	beforeEach( () => {
+		originalPlay = window.HTMLMediaElement.prototype.play;
+		playMock = jest.fn< Promise< void >, [] >().mockResolvedValue( undefined );
+		window.HTMLMediaElement.prototype.play = playMock;
+	} );
+	afterEach( () => {
+		window.HTMLMediaElement.prototype.play = originalPlay;
+	} );
+
 	it( 'renders a thumbnail in the default (non-expanded) mode', () => {
 		render( <PostCardEmbedVideo embed={ embed } /> );
 		const img = screen.getByRole( 'img', { name: 'Cute cat' } );
@@ -85,5 +111,55 @@ describe( 'PostCardEmbedVideo', () => {
 
 		const video = screen.getByLabelText( 'Cute cat' );
 		expect( video.tagName ).toBe( 'VIDEO' );
+	} );
+
+	it( 'does not autoplay when expanded via the prop (thread root)', () => {
+		const originalCanPlayType = window.HTMLMediaElement.prototype.canPlayType;
+		window.HTMLMediaElement.prototype.canPlayType = function ( type: string ) {
+			return type === 'application/vnd.apple.mpegurl' ? 'maybe' : '';
+		};
+		try {
+			render( <PostCardEmbedVideo embed={ embed } expanded /> );
+			expect( playMock ).not.toHaveBeenCalled();
+		} finally {
+			window.HTMLMediaElement.prototype.canPlayType = originalCanPlayType;
+		}
+	} );
+
+	it( 'autoplays after attachMedia on the hls.js branch when the thumbnail is clicked', async () => {
+		mockHls.loadSource.mockClear();
+		mockHls.attachMedia.mockClear();
+		mockHls.destroy.mockClear();
+		const user = userEvent.setup();
+		const originalCanPlayType = window.HTMLMediaElement.prototype.canPlayType;
+		// Force the non-Safari branch so the dynamic hls.js import path runs.
+		window.HTMLMediaElement.prototype.canPlayType = () => '';
+		try {
+			render( <PostCardEmbedVideo embed={ embed } /> );
+			await user.click( screen.getByRole( 'button', { name: /play video/i } ) );
+			await waitFor( () => expect( mockHls.attachMedia ).toHaveBeenCalledTimes( 1 ) );
+			await waitFor( () => expect( playMock ).toHaveBeenCalledTimes( 1 ) );
+			expect( mockHls.loadSource ).toHaveBeenCalledWith( embed.playlist );
+		} finally {
+			window.HTMLMediaElement.prototype.canPlayType = originalCanPlayType;
+		}
+	} );
+
+	it( 'requests playback inside the user-gesture window when the thumbnail is clicked', async () => {
+		const user = userEvent.setup();
+		const originalCanPlayType = window.HTMLMediaElement.prototype.canPlayType;
+		// Take the native-HLS branch so play() is invoked synchronously
+		// inside the same effect tick that flips the embed open, mirroring
+		// the user-gesture window the production code relies on.
+		window.HTMLMediaElement.prototype.canPlayType = function ( type: string ) {
+			return type === 'application/vnd.apple.mpegurl' ? 'maybe' : '';
+		};
+		try {
+			render( <PostCardEmbedVideo embed={ embed } /> );
+			await user.click( screen.getByRole( 'button', { name: /play video/i } ) );
+			expect( playMock ).toHaveBeenCalledTimes( 1 );
+		} finally {
+			window.HTMLMediaElement.prototype.canPlayType = originalCanPlayType;
+		}
 	} );
 } );

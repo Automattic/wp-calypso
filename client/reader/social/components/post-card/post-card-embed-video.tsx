@@ -55,6 +55,10 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 				video.pause();
 				video.removeAttribute( 'src' );
 				video.load();
+				// Drop any unconsumed autoplay intent so a later effect run
+				// (e.g. embed.playlist changing in-place) doesn't autoplay
+				// without a fresh user gesture.
+				shouldAutoPlayRef.current = false;
 			};
 		}
 		// Other browsers: lazy-load hls.js (kept out of the timeline chunk).
@@ -80,6 +84,7 @@ export function PostCardEmbedVideo( { embed, expanded }: PostCardEmbedVideoProps
 			cancelled = true;
 			hls?.destroy();
 			video.pause();
+			shouldAutoPlayRef.current = false;
 		};
 	}, [ isExpanded, embed.playlist ] );
 
