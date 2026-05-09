@@ -35,6 +35,7 @@ type SignupContext = {
 	is_automattician: boolean;
 	is_proxied: boolean;
 	is_staging: boolean;
+	non_unique_domains: string[];
 };
 
 function useSignupContext(): SignupContext | null {
@@ -80,6 +81,10 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 	const signupContext = useSignupContext();
 	const showInternalFlags =
 		signupContext?.is_automattician === true || signupContext?.is_proxied === true;
+	const nonUniqueDomains = useMemo(
+		() => new Set( signupContext?.non_unique_domains ?? [] ),
+		[ signupContext?.non_unique_domains ]
+	);
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
 		firstName: initialFormData.firstName || '',
@@ -141,7 +146,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 			// meaningful duplicate-agency matches, so skip the duplicate check
 			// entirely and let the signup proceed.  Risk review still fires
 			// independently based on the owner's email domain.
-			if ( isDeniedNonUniqueDomain( agencyUrl ) ) {
+			if ( isDeniedNonUniqueDomain( agencyUrl, nonUniqueDomains ) ) {
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_agency_signup_form_non_unique_domain_skipped', {
 						agencyUrl,
@@ -175,7 +180,7 @@ const SignupContactForm = ( { onContinue, initialFormData, withEmail = false }: 
 				setIsProceeding( false );
 			}
 		},
-		[ validate, formData, dataToContinue, onContinue, dispatch ]
+		[ validate, formData, dataToContinue, onContinue, dispatch, nonUniqueDomains ]
 	);
 
 	const closeDuplicateModal = useCallback( () => {
