@@ -31,7 +31,7 @@ import {
 	getModuleCheckpointApi,
 	startBlockShimmer,
 } from './utils/block-actions';
-import { generateRunId, setPendingRunId } from './utils/run-id';
+import { generateClientRunId, setPendingClientRunId } from './utils/run-id';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
@@ -52,11 +52,6 @@ let clearSuggestionsFn: ( () => void ) | null = null;
 
 /** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
 let suggestionRenderedFiredOnce = false;
-
-function getCurrentPostId(): number | undefined {
-	const pid = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.();
-	return typeof pid === 'number' ? pid : undefined;
-}
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -98,10 +93,7 @@ function getReviewMediatorSuggestions( currentPostType?: string ) {
 	}
 	if ( ! suggestionRenderedFiredOnce ) {
 		suggestionRenderedFiredOnce = true;
-		trackReviewMediationSuggestionRendered( {
-			postId: getCurrentPostId(),
-			postType: currentPostType ?? getCurrentEditorPostType(),
-		} );
+		trackReviewMediationSuggestionRendered();
 	}
 	return [ MEDIATE_REVIEW_SUGGESTION ];
 }
@@ -570,13 +562,10 @@ export function useSuggestions(): {
 				typeof value === 'string' &&
 				value === MEDIATE_REVIEW_SUGGESTION.prompt
 			) {
-				const runId = generateRunId();
-				setPendingRunId( runId );
+				const clientRunId = generateClientRunId();
+				setPendingClientRunId( clientRunId );
 				trackReviewMediationSuggestionClick( {
-					runId,
-					trigger: 'suggestion',
-					postId: getCurrentPostId(),
-					postType: getCurrentEditorPostType(),
+					clientRunId,
 				} );
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
