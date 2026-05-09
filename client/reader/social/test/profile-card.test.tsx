@@ -458,6 +458,95 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 	} );
 } );
 
+describe( 'SocialProfileCard — bio hashtag click routing', () => {
+	const onClick = jest.fn();
+
+	function renderInsideProvider( bioHtml: string, getTagUrl: ( tag: string ) => string | null ) {
+		return render(
+			<SocialAnalyticsProvider
+				value={ {
+					source: 'atmosphere',
+					connectionId: 7,
+					onClick,
+					getTagUrl,
+				} }
+			>
+				<SocialProfileCard
+					bioHtml={ bioHtml }
+					statsLabel="Profile stats"
+					stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+				/>
+			</SocialAnalyticsProvider>
+		);
+	}
+
+	beforeEach( () => {
+		pageMock.mockClear();
+		onClick.mockClear();
+	} );
+
+	it( 'preserves data-tag on hashtag anchors in the bio (sanitiser allow-list)', () => {
+		// Regression: BIO_SANITIZE_CONFIG must allow `data-tag` so the click
+		// handler can route hashtag clicks in-app. Without it, DOMPurify strips
+		// the attribute and the click falls through to the bsky.app href.
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://bsky.app/hashtag/wordpress"' +
+					' data-tag="wordpress">#WordPress</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-tag', 'wordpress' );
+	} );
+
+	it( 'routes the click in-app when data-tag resolves to an in-app URL', async () => {
+		const user = userEvent.setup();
+		const getTagUrl = jest.fn( ( tag: string ) => `/reader/atmosphere/7/tag/${ tag }` );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/hashtag/wordpress"' +
+				' data-tag="wordpress">#WordPress</a></p>',
+			getTagUrl
+		);
+		await user.click( getByText( '#WordPress' ) );
+		expect( getTagUrl ).toHaveBeenCalledWith( 'wordpress' );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/atmosphere/7/tag/wordpress' );
+	} );
+
+	it( 'fires *_tag_unresolved Tracks when data-tag is present but resolver returns null', async () => {
+		const user = userEvent.setup();
+		const getTagUrl = jest.fn( () => null );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/hashtag/wordpress"' +
+				' data-tag="wordpress">#WordPress</a></p>',
+			getTagUrl
+		);
+		await user.click( getByText( '#WordPress' ) );
+		expect( pageMock ).not.toHaveBeenCalled();
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_timeline_tag_unresolved',
+			expect.objectContaining( { connection_id: 7, data_tag: 'wordpress' } )
+		);
+	} );
+
+	it( 'passes through modifier-clicks on hashtag anchors so users can open in a new tab', async () => {
+		const user = userEvent.setup();
+		const getTagUrl = jest.fn( ( tag: string ) => `/reader/atmosphere/7/tag/${ tag }` );
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://bsky.app/hashtag/wordpress"' +
+				' data-tag="wordpress">#WordPress</a></p>',
+			getTagUrl
+		);
+		await user.keyboard( '[MetaLeft>]' );
+		await user.click( getByText( '#WordPress' ) );
+		await user.keyboard( '[/MetaLeft]' );
+		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+} );
+
 describe( 'SocialProfileCard — rich variant', () => {
 	it( 'renders banner, display name, handle, bio and stats together', () => {
 		render(
