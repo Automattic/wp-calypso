@@ -103,13 +103,6 @@ export default function buildFallbackResponse( {
 				},
 				{
 					parent: 'upgrades',
-					slug: 'Emails',
-					title: translate( 'Emails' ),
-					type: 'submenu-item',
-					url: `/email/${ siteDomain }`,
-				},
-				{
-					parent: 'upgrades',
 					slug: 'Purchases',
 					title: translate( 'Purchases' ),
 					type: 'submenu-item',
@@ -293,6 +286,22 @@ export default function buildFallbackResponse( {
 			title: translate( 'Comments' ),
 			type: 'menu-item',
 			url: `/comments/all/${ siteDomain }`,
+			children: [
+				{
+					parent: 'edit-comments.php',
+					slug: 'edit-comments-php',
+					title: translate( 'All Comments' ),
+					type: 'submenu-item',
+					url: `/comments/all/${ siteDomain }`,
+				},
+				{
+					parent: 'edit-comments.php',
+					slug: 'Emails',
+					title: translate( 'Emails' ),
+					type: 'submenu-item',
+					url: `/email/${ siteDomain }`,
+				},
+			],
 		},
 		{
 			icon: 'dashicons-feedback',
