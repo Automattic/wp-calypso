@@ -23,6 +23,15 @@ import { trackImageStudioImageGenerated } from '../utils/tracking';
  * Jetpack Image Studio extension with `show_in_rest`. Failures are logged but
  * never block the canvas swap — the in-memory video-studio store still
  * reflects the freshly generated clip even if the meta write loses the race.
+ *
+ * NOTE: deliberately uses raw `apiFetch` rather than the cleaner
+ * `dispatch( 'core' ).saveEntityRecord( 'postType', ... )`. saveEntityRecord
+ * routes through `core.isSavingEntityRecord( 'postType', post.type, post.id )`,
+ * which `core/editor.isSavingPost` selects on. Calling it after every video
+ * generation would briefly flip the toolbar "Saving…" pill and disable the
+ * Publish button, even though the user didn't initiate a save. The meta write
+ * is background bookkeeping and shouldn't disturb the editor's idle state, so
+ * we POST the field directly and call `receiveEntityRecords` ourselves.
  */
 async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
 	const editor = select( 'core/editor' ) as
