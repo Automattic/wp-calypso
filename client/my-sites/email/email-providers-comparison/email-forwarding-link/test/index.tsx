@@ -2,9 +2,15 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { getSelectedDomain } from 'calypso/lib/domains';
+import { getCurrentUserCannotAddEmailReason, getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import {
+	EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED,
+	EMAIL_WARNING_CODE_GRAVATAR_DOMAIN,
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+} from 'calypso/lib/emails/email-provider-constants';
 import EmailForwardingLink from '../index';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
@@ -25,6 +31,9 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/domains', () => ( {
+	getCurrentUserCannotAddEmailReason: jest.fn(
+		( domain: ResponseDomain | undefined ) => domain?.currentUserCannotAddEmailReason ?? null
+	),
 	getSelectedDomain: jest.fn(),
 } ) );
 
@@ -38,21 +47,45 @@ jest.mock( 'calypso/my-sites/email/paths', () => ( {
 
 const promoMatcher = /Looking for a free email solution/i;
 
+const regularDomain = {
+	isGravatarDomain: false,
+	currentUserCanAddEmail: true,
+	currentUserCannotAddEmailReason: null,
+} as ResponseDomain;
+
 describe( 'EmailForwardingLink', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		( hasEmailForwards as jest.Mock ).mockReturnValue( false );
+		( getCurrentUserCannotAddEmailReason as jest.Mock ).mockImplementation(
+			( domain: ResponseDomain | undefined ) => domain?.currentUserCannotAddEmailReason ?? null
+		);
 	} );
 
 	it( 'renders the email forwarding promo for a regular domain without forwards', () => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue( { isGravatarDomain: false } );
+		( getSelectedDomain as jest.Mock ).mockReturnValue( regularDomain );
 
 		render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
 		expect( screen.getByText( promoMatcher ) ).toBeVisible();
 	} );
 
-	// Regression: DOMENG-453 — Gravatar domains cannot use free email forwarding.
+	it( 'renders the email forwarding promo for a non-owner who cannot purchase paid email', () => {
+		( getSelectedDomain as jest.Mock ).mockReturnValue( {
+			...regularDomain,
+			currentUserCanAddEmail: false,
+			currentUserCannotAddEmailReason: {
+				code: EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+				message: 'Only the domain owner can purchase email.',
+			},
+		} );
+
+		render( <EmailForwardingLink selectedDomainName="example.com" /> );
+
+		expect( screen.getByText( promoMatcher ) ).toBeVisible();
+	} );
+
+	// Regression: DOMENG-453 - Gravatar domains cannot use free email forwarding.
 	it( 'renders nothing for a Gravatar domain', () => {
 		( getSelectedDomain as jest.Mock ).mockReturnValue( { isGravatarDomain: true } );
 
@@ -71,11 +104,30 @@ describe( 'EmailForwardingLink', () => {
 	} );
 
 	it( 'renders nothing when the domain already has email forwards', () => {
-		( getSelectedDomain as jest.Mock ).mockReturnValue( { isGravatarDomain: false } );
+		( getSelectedDomain as jest.Mock ).mockReturnValue( regularDomain );
 		( hasEmailForwards as jest.Mock ).mockReturnValue( true );
 
 		render( <EmailForwardingLink selectedDomainName="example.com" /> );
 
 		expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
 	} );
+
+	it.each( [ EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED, EMAIL_WARNING_CODE_GRAVATAR_DOMAIN ] )(
+		'renders nothing when add-forwarding is blocked by %s',
+		( code ) => {
+			( getSelectedDomain as jest.Mock ).mockReturnValue( {
+				...regularDomain,
+				currentUserCanAddEmail: false,
+				currentUserCannotAddEmailReason: {
+					code,
+					message: 'Email forwarding is unavailable for this domain.',
+				},
+			} );
+
+			const { container } = render( <EmailForwardingLink selectedDomainName="example.com" /> );
+
+			expect( screen.queryByText( promoMatcher ) ).not.toBeInTheDocument();
+			expect( container ).toBeEmptyDOMElement();
+		}
+	);
 } );
