@@ -62,14 +62,6 @@ export default class PostSchedule extends Component {
 		};
 	}
 
-	getLocaleUtils() {
-		return {
-			formatMonthTitle: function () {
-				return;
-			},
-		};
-	}
-
 	events() {
 		return this.props.events.concat( this.getEventsFromPosts( this.props.posts ) );
 	}
@@ -218,7 +210,7 @@ export default class PostSchedule extends Component {
 
 				<DatePicker
 					events={ this.events() }
-					localeUtils={ this.getLocaleUtils() }
+					formatMonthTitle={ () => undefined }
 					disabledDays={ this.props.disabledDays }
 					showOutsideDays={ this.props.showOutsideDays }
 					modifiers={ this.props.modifiers }

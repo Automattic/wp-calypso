@@ -1,27 +1,19 @@
-const noop = () => {};
+import { useEffect, useRef } from 'react';
 
-const handleDayMouseEnter =
-	( date, modifiers, onMouseEnter = noop ) =>
-	( event ) => {
-		onMouseEnter( date, modifiers, event );
-	};
+const DatePickerDayButton = ( { day, modifiers, ...buttonProps } ) => {
+	const ref = useRef( null );
 
-const handleDayMouseLeave =
-	( date, modifiers, onMouseLeave = noop ) =>
-	( event ) => {
-		onMouseLeave( date, modifiers, event );
-	};
+	useEffect( () => {
+		if ( modifiers.focused ) {
+			ref.current?.focus();
+		}
+	}, [ modifiers.focused ] );
 
-const DatePickerDay = ( { date, modifiers, onMouseEnter, onMouseLeave } ) => {
 	return (
-		<div
-			className="date-picker__day"
-			onMouseEnter={ handleDayMouseEnter( date, modifiers, onMouseEnter ) }
-			onMouseLeave={ handleDayMouseLeave( date, modifiers, onMouseLeave ) }
-		>
-			{ date.getDate() }
-		</div>
+		<button ref={ ref } { ...buttonProps }>
+			<div className="date-picker__day">{ day.date.getDate() }</div>
+		</button>
 	);
 };
 
-export default DatePickerDay;
+export default DatePickerDayButton;

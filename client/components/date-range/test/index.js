@@ -283,13 +283,13 @@ describe( 'DateRange', () => {
 			// Dates before `10-03-2018`
 			someDisabledDatesStrings.forEach( ( dateString ) => {
 				const el = screen.getByLabelText( dateString );
-				expect( el ).toHaveAttribute( 'aria-disabled', 'true' );
+				expect( el ).toBeDisabled();
 			} );
 
 			// Dates on/after `10-03-2018`
 			someEnabledDatesStrings.forEach( ( dateString ) => {
 				const el = screen.getByLabelText( dateString );
-				expect( el ).toHaveAttribute( 'aria-disabled', 'false' );
+				expect( el ).not.toBeDisabled();
 			} );
 		} );
 
@@ -315,13 +315,13 @@ describe( 'DateRange', () => {
 			// Dates on/before `10-03-2018`
 			someEnabledDatesStrings.forEach( ( dateString ) => {
 				const el = screen.getByLabelText( dateString );
-				expect( el ).toHaveAttribute( 'aria-disabled', 'false' );
+				expect( el ).not.toBeDisabled();
 			} );
 
 			// Dates after `10-03-2018`
 			someDisabledDatesStrings.forEach( ( dateString ) => {
 				const el = screen.getByLabelText( dateString );
-				expect( el ).toHaveAttribute( 'aria-disabled', 'true' );
+				expect( el ).toBeDisabled();
 			} );
 		} );
 
@@ -403,7 +403,10 @@ describe( 'DateRange', () => {
 
 			const startDateEl = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
 
-			expect( startDateEl ).toHaveAttribute( 'aria-selected', 'true' );
+			expect( startDateEl.closest( '[role="gridcell"]' ) ).toHaveAttribute(
+				'aria-selected',
+				'true'
+			);
 		} );
 
 		test( 'should update end date selection on end date input blur', async () => {
@@ -417,7 +420,7 @@ describe( 'DateRange', () => {
 
 			const endDateEl = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
 
-			expect( endDateEl ).toHaveAttribute( 'aria-selected', 'true' );
+			expect( endDateEl.closest( '[role="gridcell"]' ) ).toHaveAttribute( 'aria-selected', 'true' );
 		} );
 
 		test( 'should not update date selection on input change', async () => {
@@ -429,7 +432,7 @@ describe( 'DateRange', () => {
 
 			const el = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
 
-			expect( el ).toHaveAttribute( 'aria-selected', 'false' );
+			expect( el.closest( '[role="gridcell"]' ) ).not.toHaveAttribute( 'aria-selected' );
 		} );
 
 		test( 'should not update start/end dates if input date is invalid', async () => {
@@ -462,8 +465,11 @@ describe( 'DateRange', () => {
 			const startDateEl = screen.getByLabelText( 'Wed, May 30, 2018 12:00 PM' );
 			const endDateEl = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
 
-			expect( startDateEl ).toHaveAttribute( 'aria-selected', 'true' );
-			expect( endDateEl ).toHaveAttribute( 'aria-selected', 'true' );
+			expect( startDateEl.closest( '[role="gridcell"]' ) ).toHaveAttribute(
+				'aria-selected',
+				'true'
+			);
+			expect( endDateEl.closest( '[role="gridcell"]' ) ).toHaveAttribute( 'aria-selected', 'true' );
 		} );
 
 		test( 'should not update start date if input date is outside firstSelectableDate', async () => {
@@ -487,7 +493,9 @@ describe( 'DateRange', () => {
 
 			const supposedStartDateEl = screen.getByLabelText( badDateLabelString );
 
-			expect( supposedStartDateEl ).toHaveAttribute( 'aria-selected', 'false' );
+			expect( supposedStartDateEl.closest( '[role="gridcell"]' ) ).not.toHaveAttribute(
+				'aria-selected'
+			);
 		} );
 
 		test( 'should not update end date if input date is outside firstSelectableDate', async () => {
@@ -511,7 +519,9 @@ describe( 'DateRange', () => {
 
 			const supposedStartDateEl = screen.getByLabelText( badDateLabelString );
 
-			expect( supposedStartDateEl ).toHaveAttribute( 'aria-selected', 'false' );
+			expect( supposedStartDateEl.closest( '[role="gridcell"]' ) ).not.toHaveAttribute(
+				'aria-selected'
+			);
 		} );
 
 		test( 'should not update start date if input date is outside lastSelectableDate', async () => {
@@ -535,7 +545,9 @@ describe( 'DateRange', () => {
 
 			const supposedStartDateEl = screen.getByLabelText( badDateLabelString );
 
-			expect( supposedStartDateEl ).toHaveAttribute( 'aria-selected', 'false' );
+			expect( supposedStartDateEl.closest( '[role="gridcell"]' ) ).not.toHaveAttribute(
+				'aria-selected'
+			);
 		} );
 	} );
 
@@ -560,7 +572,9 @@ describe( 'DateRange', () => {
 
 		const supposedStartDateEl = screen.getByLabelText( badDateLabelString );
 
-		expect( supposedStartDateEl ).toHaveAttribute( 'aria-selected', 'false' );
+		expect( supposedStartDateEl.closest( '[role="gridcell"]' ) ).not.toHaveAttribute(
+			'aria-selected'
+		);
 	} );
 
 	describe( 'Actions and Information UI', () => {
@@ -607,7 +621,10 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Please select the first day' );
+			const info = screen
+				.getAllByRole( 'status' )
+				.find( ( el ) => el.textContent.includes( 'Please select' ) );
+			expect( info ).toHaveTextContent( 'Please select the first day' );
 		} );
 
 		test( 'Should display prompt to select last date when no end date selected', async () => {
@@ -619,7 +636,10 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Please select the last day' );
+			const info = screen
+				.getAllByRole( 'status' )
+				.find( ( el ) => el.textContent.includes( 'Please select' ) );
+			expect( info ).toHaveTextContent( 'Please select the last day' );
 		} );
 
 		test( 'Should display reset button when both dates are selected', async () => {
@@ -669,28 +689,24 @@ describe( 'DateRange', () => {
 			// Blurs out of `toInputEl`
 			await userEvent.tab();
 
-			expect( screen.getByLabelText( 'Fri, Apr 13, 2018 12:00 PM' ) ).toHaveAttribute(
-				'aria-selected',
-				'true'
-			);
-			expect( screen.getByLabelText( 'Sun, May 13, 2018 12:00 PM' ) ).toHaveAttribute(
-				'aria-selected',
-				'true'
-			);
+			expect(
+				screen.getByLabelText( 'Fri, Apr 13, 2018 12:00 PM' ).closest( '[role="gridcell"]' )
+			).toHaveAttribute( 'aria-selected', 'true' );
+			expect(
+				screen.getByLabelText( 'Sun, May 13, 2018 12:00 PM' ).closest( '[role="gridcell"]' )
+			).toHaveAttribute( 'aria-selected', 'true' );
 
 			const resetBtn = screen.getByLabelText( 'Reset selected dates' );
 			await userEvent.click( resetBtn );
 
 			expect( fromInputEl ).toHaveValue( '04/28/2018' );
 			expect( toInputEl ).toHaveValue( '05/28/2018' );
-			expect( screen.getByLabelText( 'Sat, Apr 28, 2018 12:00 PM' ) ).toHaveAttribute(
-				'aria-selected',
-				'true'
-			);
-			expect( screen.getByLabelText( 'Mon, May 28, 2018 12:00 PM' ) ).toHaveAttribute(
-				'aria-selected',
-				'true'
-			);
+			expect(
+				screen.getByLabelText( 'Sat, Apr 28, 2018 12:00 PM' ).closest( '[role="gridcell"]' )
+			).toHaveAttribute( 'aria-selected', 'true' );
+			expect(
+				screen.getByLabelText( 'Mon, May 28, 2018 12:00 PM' ).closest( '[role="gridcell"]' )
+			).toHaveAttribute( 'aria-selected', 'true' );
 		} );
 	} );
 

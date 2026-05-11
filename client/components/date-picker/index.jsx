@@ -1,16 +1,95 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { merge, map, filter, get, debounce } from 'lodash';
+import { map, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import DayPicker from 'react-day-picker';
+import { DayPicker } from 'react-day-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import DayItem from './day';
-import DatePickerNavBar from './nav-bar';
+import DatePickerDay from './day';
+import { DatePickerNavBar, DatePickerChevron } from './nav-bar';
 
 import './style.scss';
 
 const noop = () => {};
+
+// react-day-picker v9 emits `rdp-*` classes by default. We override every entry
+// back to the v7-era `DayPicker-*` names this wrapper's SCSS (and consumer
+// SCSS) still targets, so the visual styling is preserved without rewriting
+// every selector.
+const CLASS_NAMES = {
+	root: 'DayPicker',
+	months: 'DayPicker-Months',
+	month: 'DayPicker-Month-Wrapper',
+	month_grid: 'DayPicker-Month',
+	month_caption: 'DayPicker-Caption',
+	caption_label: 'DayPicker-CaptionLabel',
+	weekdays: 'DayPicker-Weekdays',
+	weekday: 'DayPicker-Weekday',
+	weeks: 'DayPicker-Body',
+	week: 'DayPicker-Week',
+	day: 'DayPicker-Day',
+	day_button: 'DayPicker-DayButton',
+	nav: 'DayPicker-NavBar',
+	button_previous: 'DayPicker-NavButton DayPicker-NavButton--prev',
+	button_next: 'DayPicker-NavButton DayPicker-NavButton--next',
+	chevron: 'DayPicker-Chevron',
+	today: 'DayPicker-Day--today',
+	outside: 'DayPicker-Day--outside',
+	disabled: 'DayPicker-Day--disabled',
+	hidden: 'DayPicker-Day--hidden',
+	selected: 'DayPicker-Day--selected',
+};
+
+// Same remap for matched modifiers: v9's default is `rdp-day_<name>`; we map
+// every modifier this wrapper adds (and the ones consumers pass through) back
+// to the v7-era `DayPicker-Day--<name>` names the SCSS expects.
+const MODIFIERS_CLASS_NAMES = {
+	'past-days': 'DayPicker-Day--past-days',
+	sunday: 'DayPicker-Day--sunday',
+	'is-selected': 'DayPicker-Day--is-selected',
+	events: 'DayPicker-Day--events',
+	start: 'DayPicker-Day--start',
+	end: 'DayPicker-Day--end',
+	range: 'DayPicker-Day--range',
+	'range-start': 'DayPicker-Day--range-start',
+	'range-end': 'DayPicker-Day--range-end',
+};
+
+function determineSelectionModeFromProps( selectedDay, selectedDays ) {
+	const isPlainDateRange = ( value ) =>
+		!! value &&
+		typeof value === 'object' &&
+		! ( value instanceof Date ) &&
+		( 'from' in value || 'to' in value );
+
+	if ( selectedDays instanceof Date ) {
+		return { mode: 'single', selected: selectedDays };
+	}
+	if ( isPlainDateRange( selectedDays ) ) {
+		return { mode: 'range', selected: selectedDays };
+	}
+	if ( Array.isArray( selectedDays ) ) {
+		const range = selectedDays.find( isPlainDateRange );
+		if ( range ) {
+			return { mode: 'range', selected: range };
+		}
+		return { mode: 'multiple', selected: selectedDays.filter( ( d ) => d instanceof Date ) };
+	}
+	if ( selectedDay instanceof Date ) {
+		return { mode: 'single', selected: selectedDay };
+	}
+	return { mode: 'single', selected: undefined };
+}
+
+// Safe because react-day-picker always hands us `nextMonth` as first-of-month
+// (it normalises via `dateLib.startOfMonth` before pagination — see
+// `helpers/getNextMonth.js`). Day-1 exists in every month, so `setMonth(n + 1)`
+// can't overflow into the following month the way it would for, say, Jan 31.
+function addMonths( date, n ) {
+	const result = new Date( date );
+	result.setMonth( result.getMonth() + n );
+	return result;
+}
 
 class DatePicker extends PureComponent {
 	static propTypes = {
@@ -26,19 +105,8 @@ class DatePicker extends PureComponent {
 				to: PropTypes.instanceOf( Date ),
 			} ),
 			PropTypes.array,
-			PropTypes.func,
 		] ),
 		disabledDays: PropTypes.array,
-		locale: PropTypes.string,
-		localeUtils: PropTypes.shape( {
-			// http://react-day-picker.js.org/api/LocaleUtils
-			formatDay: PropTypes.func,
-			formatMonthTitle: PropTypes.func,
-			formatWeekdayLong: PropTypes.func,
-			formatWeekdayShort: PropTypes.func,
-			getFirstDayOfWeek: PropTypes.func,
-			getMonths: PropTypes.func,
-		} ),
 		modifiers: PropTypes.object,
 		moment: PropTypes.func.isRequired,
 		selectedDay: PropTypes.object,
@@ -49,28 +117,18 @@ class DatePicker extends PureComponent {
 		onDayMouseLeave: PropTypes.func,
 		toMonth: PropTypes.object,
 		fromMonth: PropTypes.object,
-		onDayTouchStart: PropTypes.func,
-		onDayTouchEnd: PropTypes.func,
-		onDayTouchMove: PropTypes.func,
 		rootClassNames: PropTypes.object,
 		useArrowNavigation: PropTypes.bool,
+		formatMonthTitle: PropTypes.func,
 	};
 
 	static defaultProps = {
 		showOutsideDays: true,
-		calendarViewDate: new Date(),
-		calendarInitialDate: new Date(),
 		modifiers: {},
-		fromMonth: null,
-		locale: 'en',
-		selectedDay: null,
 		onMonthChange: noop,
 		onSelectDay: noop,
 		onDayMouseEnter: noop,
 		onDayMouseLeave: noop,
-		onDayTouchStart: noop,
-		onDayTouchEnd: noop,
-		onDayTouchMove: noop,
 		rootClassNames: {},
 		useArrowNavigation: false,
 	};
@@ -106,152 +164,149 @@ class DatePicker extends PureComponent {
 		return eventsInDay;
 	}
 
-	getLocaleUtils() {
-		const { moment, localeUtils } = this.props;
-		const localeData = moment().localeData();
-		const firstDayOfWeek = localeData.firstDayOfWeek();
-		const weekdaysMin = moment.weekdaysMin();
-		const weekdays = moment.weekdays();
-		const utils = {
-			formatDay: function ( date ) {
-				return moment( date ).format( 'llll' );
-			},
-
-			formatMonthTitle: function ( date ) {
-				return moment( date ).format( 'MMMM YYYY' );
-			},
-
-			formatWeekdayShort: function ( day ) {
-				return get( weekdaysMin, day, ' ' )[ 0 ];
-			},
-
-			formatWeekdayLong: function ( day ) {
-				return weekdays[ day ];
-			},
-
-			getFirstDayOfWeek: function () {
-				return firstDayOfWeek;
-			},
-
-			formatMonthShort: function ( month ) {
-				return moment( month.toISOString() ).format( 'MMM' );
-			},
-		};
-
-		return merge( {}, utils, localeUtils );
-	}
-
-	/**
-	 * Handler for the click/touch events on the calendar
-	 * Debounced to avoid multiple calls to this method
-	 * being fired for due to touch/click both being
-	 * called on touch devices.
-	 *
-	 * See https://github.com/Automattic/wp-calypso/pull/29938/
-	 */
-	setCalendarDay = debounce(
-		( day, modifiers ) => {
-			const momentDay = this.props.moment( day );
-
-			if ( modifiers.disabled ) {
-				return null;
-			}
-
-			const dateMods = {
-				year: momentDay.year(),
-				month: momentDay.month(),
-				date: momentDay.date(),
-			};
-
-			const date = ( this.props.timeReference || momentDay ).set( dateMods );
-
-			this.props.onSelectDay( date, dateMods, modifiers );
-		},
-		500,
-		{
-			leading: true, // invoke call immediately
-			trailing: false, // debounce any subsequent calls
-		}
-	);
-
 	getDateInstance( v ) {
 		return this.props.moment( v ).toDate();
 	}
 
-	renderDay = ( date, modifiers ) => (
-		<DayItem
-			date={ date }
-			modifiers={ modifiers }
-			onMouseEnter={ this.handleDayMouseEnter }
-			onMouseLeave={ this.handleDayMouseLeave }
-		/>
-	);
-
-	handleDayMouseEnter = ( date, modifiers, event ) => {
-		const eventsByDay = this.filterEventsByDay( date );
-		this.props.onDayMouseEnter( date, modifiers, event, eventsByDay );
+	handleDayClick = ( day, dayModifiers ) => {
+		if ( dayModifiers.disabled ) {
+			return;
+		}
+		const { moment, timeReference, onSelectDay } = this.props;
+		const dateMods = {
+			year: day.getFullYear(),
+			month: day.getMonth(),
+			date: day.getDate(),
+		};
+		const momentDay = moment( day );
+		const result = ( timeReference || momentDay ).set( dateMods );
+		onSelectDay( result, dateMods, dayModifiers );
 	};
 
-	handleDayMouseLeave = ( date, modifiers, event ) => {
-		const eventsByDay = this.filterEventsByDay( date );
-		this.props.onDayMouseLeave( date, modifiers, event, eventsByDay );
+	handleDayMouseEnter = ( day, dayModifiers, event ) => {
+		this.props.onDayMouseEnter( day, dayModifiers, event, this.filterEventsByDay( day ) );
 	};
 
-	handleDayTouchMove = ( date, modifiers, event ) => {
-		const eventsByDay = this.filterEventsByDay( date );
-		this.props.onDayTouchMove( date, modifiers, event, eventsByDay );
+	handleDayMouseLeave = ( day, dayModifiers, event ) => {
+		this.props.onDayMouseLeave( day, dayModifiers, event, this.filterEventsByDay( day ) );
+	};
+
+	formatCaption = ( date ) => {
+		if ( typeof this.props.formatMonthTitle === 'function' ) {
+			const result = this.props.formatMonthTitle( date );
+			return result == null ? '' : result;
+		}
+		return this.props.moment( date ).format( 'MMMM YYYY' );
+	};
+
+	// v9 dates land at midnight; v7's internal grid used noon (avoids DST
+	// surprises in the moment `llll` format). Pin to noon so the rendered
+	// aria-label matches v7's output exactly: e.g. "Thu, Oct 4, 2018 12:00 PM".
+	formatLabelDayButton = ( date ) => {
+		const noon = new Date( date );
+		noon.setHours( 12, 0, 0, 0 );
+		return this.props.moment( noon ).format( 'llll' );
+	};
+
+	renderNav = ( navProps ) => {
+		// v7 advertised the *last* visible month as `nextMonth` (so multi-month
+		// pickers said "Next month (December 2018)" when showing Oct+Nov). v9
+		// always reports the immediate next month. Re-shift it so existing aria
+		// labels are preserved.
+		const numberOfMonths = this.props.numberOfMonths || 1;
+		const nextMonth =
+			navProps.nextMonth && numberOfMonths > 1
+				? addMonths( navProps.nextMonth, numberOfMonths - 1 )
+				: navProps.nextMonth;
+
+		return (
+			<DatePickerNavBar
+				{ ...navProps }
+				nextMonth={ nextMonth }
+				formatMonthTitle={ this.formatCaption }
+			/>
+		);
 	};
 
 	render() {
-		const modifiers = {
-			...this.props.modifiers,
-			'past-days': { before: new Date() },
-			sunday: { daysOfWeek: [ 0 ] },
-		};
+		const {
+			calendarViewDate,
+			calendarInitialDate,
+			showOutsideDays,
+			numberOfMonths,
+			events,
+			selectedDays,
+			disabledDays,
+			modifiers: extraModifiers,
+			selectedDay,
+			onMonthChange,
+			toMonth,
+			fromMonth,
+			rootClassNames,
+			useArrowNavigation,
+		} = this.props;
 
-		if ( this.props.selectedDay ) {
-			modifiers[ 'is-selected' ] = this.getDateInstance( this.props.selectedDay );
+		const { mode, selected } = determineSelectionModeFromProps( selectedDay, selectedDays );
+
+		const modifiers = {
+			...extraModifiers,
+			'past-days': { before: new Date() },
+			sunday: { dayOfWeek: [ 0 ] },
+		};
+		if ( selectedDay ) {
+			modifiers[ 'is-selected' ] = this.getDateInstance( selectedDay );
 		}
 
-		if ( this.props.events && this.props.events.length ) {
+		if ( events && events.length ) {
 			modifiers.events = map(
-				filter( this.props.events, ( event ) => event.date ),
+				filter( events, ( event ) => event.date ),
 				( event ) => this.getDateInstance( event.date )
 			);
 		}
 
-		const numMonths = this.props.numberOfMonths || 1;
+		const numMonths = numberOfMonths || 1;
 		const rangeSelected = modifiers.start && modifiers.end;
-
-		const rootClassNames = clsx( {
+		const className = clsx( {
 			'date-picker': true,
 			'date-picker--no-range-selected': ! rangeSelected,
 			'date-picker--range-selected': rangeSelected,
 			[ `date-picker--${ numMonths }up` ]: true,
-			...this.props.rootClassNames,
+			...rootClassNames,
 		} );
+
+		const components = {
+			DayButton: DatePickerDay,
+		};
+		if ( useArrowNavigation ) {
+			components.Chevron = DatePickerChevron;
+		} else {
+			components.Nav = this.renderNav;
+		}
 
 		return (
 			<DayPicker
 				modifiers={ modifiers }
-				className={ rootClassNames }
-				disabledDays={ this.props.disabledDays }
-				initialMonth={ this.props.calendarInitialDate }
-				month={ this.props.calendarViewDate }
-				fromMonth={ this.props.fromMonth }
-				toMonth={ this.props.toMonth }
-				onDayClick={ this.setCalendarDay }
-				onDayTouchStart={ this.setCalendarDay }
-				onDayTouchEnd={ this.setCalendarDay }
-				onDayTouchMove={ this.handleDayTouchMove }
-				renderDay={ this.renderDay }
-				locale={ this.props.locale }
-				localeUtils={ this.getLocaleUtils() }
-				onMonthChange={ this.props.onMonthChange }
-				showOutsideDays={ this.props.showOutsideDays }
-				navbarElement={ <DatePickerNavBar useArrowNavigation={ this.props.useArrowNavigation } /> }
-				selectedDays={ this.props.selectedDays }
-				numberOfMonths={ this.props.numberOfMonths }
+				modifiersClassNames={ MODIFIERS_CLASS_NAMES }
+				className={ className }
+				classNames={ CLASS_NAMES }
+				disabled={ disabledDays }
+				defaultMonth={ calendarInitialDate || undefined }
+				month={ calendarViewDate || undefined }
+				startMonth={ fromMonth || undefined }
+				endMonth={ toMonth || undefined }
+				onDayClick={ this.handleDayClick }
+				components={ components }
+				formatters={ { formatCaption: this.formatCaption } }
+				labels={ { labelDayButton: this.formatLabelDayButton } }
+				onMonthChange={ onMonthChange }
+				showOutsideDays={ showOutsideDays }
+				mode={ mode }
+				required={ false }
+				selected={ selected }
+				onSelect={ noop }
+				numberOfMonths={ numberOfMonths }
+				onDayMouseEnter={ this.handleDayMouseEnter }
+				onDayMouseLeave={ this.handleDayMouseLeave }
 			/>
 		);
 	}

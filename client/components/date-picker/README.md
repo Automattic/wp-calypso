@@ -34,7 +34,7 @@ export default class extends Component {
 
 		return (
 			<DatePicker
-				initialMonth={ new Date( '2015-07-01' ) }
+				calendarInitialDate={ new Date( '2015-07-01' ) }
 				events={ events }
 				onSelectDay={ this.onSelectDay }
 				selectedDay={ this.state.date }
@@ -50,23 +50,26 @@ export default class extends Component {
 
 ### Props
 
-`initialMonth` - **optional** Date object that defines the month of the calendar. Default is `now`.
+`calendarInitialDate` - **optional** Date object that defines the month of the calendar at first render. Default is `now`.
 
-`selectedDay` - **optional** Moment instance to select the current day.
+`calendarViewDate` - **optional** Controlled month being displayed. Use with `onMonthChange`.
 
-`timeReference` - **optional** Moment instance used to adjust the time when a day
-is selected.
+`selectedDay` - **optional** Date object to select the current day.
 
-`events` - **optional** Array of events.
+`timeReference` - **optional** Moment instance used to adjust the time when a day is selected.
 
-`className` - **optional** Add a custom class property.
+`events` - **optional** Array of events. Each event needs a `date` property; optional `title`, `id`, `icon`, `socialIcon`, `socialIconColor` are used by the events tooltip.
 
 `onSelectDay` - **optional** Called when day is selected by user.
 
 `onMonthChange` - **optional** Called when month is changed by user.
 
-`locale` - **optional** String representing the current locale slug (eg: `en`). Note that the default component `export`ed is already wrapped in the `localize` HOC which automatically sets this prop for you. Previously this prop was an object of utility overides. This has been moved to a dedicated `localUtils` prop (see below).
+`disabledDays` - **optional** Array of [react-day-picker v9 matchers](https://daypicker.dev/api/type-aliases/Matcher).
 
-`localeUtils` - **optional** Object of [locale utility _overides_](http://react-day-picker.js.org/api/LocaleUtils) which are merged with the default utilities passed into the `react-day-picker` library. Previously this prop was named `locale`, but was moved to its own dedicated prop for API consistency with the React Day Picker library.
+`modifiers` - **optional** Custom day modifiers, mapped through `modifiersClassNames` to `DayPicker-Day--<name>` classes.
+
+`useArrowNavigation` - **optional** Render WordPress chevron arrows in the nav bar instead of month-name labels.
+
+`formatMonthTitle` - **optional** Override the calendar caption format. Receives a `Date`, returns a string. Pass `() => ''` to hide the caption (used by `post-schedule`, which renders its own header).
 
 ---

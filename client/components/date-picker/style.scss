@@ -141,11 +141,6 @@ $date-picker_nav_button_size: 20px;
 .DayPicker-Weekdays {
 	margin-top: 10px;
 	border-top: 1px solid var(--color-neutral-5);
-	display: table-header-group;
-}
-
-.DayPicker-WeekdaysRow {
-	display: table-row;
 }
 
 .DayPicker-Weekday {
@@ -196,6 +191,24 @@ $date-picker_nav_button_size: 20px;
 
 .DayPicker--interactionDisabled .DayPicker-Day {
 	cursor: default;
+}
+
+// react-day-picker v9 wraps the day cell content in a <button>. Strip its
+// browser-default chrome so the inner .date-picker__day circle renders clean.
+.DayPicker-DayButton {
+	display: block;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+
+	&:disabled {
+		cursor: default;
+	}
 }
 
 // base styles of the cell child element

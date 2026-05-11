@@ -13852,7 +13852,7 @@ __metadata:
     qrcode.react: "npm:^3.1.0"
     qs: "npm:^6.9.1"
     react: "npm:^18.3.1"
-    react-day-picker: "npm:^7.4.10"
+    react-day-picker: "npm:^9.7.0"
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
     react-markdown: "npm:^8.0.7"
@@ -27195,17 +27195,6 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: 48eb73cf71e10841c2a61b6b06ab81da9fffa9876134c239bfdebcf348ce2a47e56b146338e35dfb03512c85966bfc9a53844fc56bc50154e71f8daee59ff6f0
-  languageName: node
-  linkType: hard
-
-"react-day-picker@npm:^7.4.10":
-  version: 7.4.10
-  resolution: "react-day-picker@npm:7.4.10"
-  dependencies:
-    prop-types: "npm:^15.6.2"
-  peerDependencies:
-    react: ~0.13.x || ~0.14.x || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 547cb211fb63121837bc5bf989d5ff51938d87328a495ca7a2b089454ac09e2193ff48f25858a2d75d080c1cd597165ff5506d2505a4acec31bc11dd8250e879
   languageName: node
   linkType: hard
 
