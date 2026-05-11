@@ -7,7 +7,6 @@ interface APIFetchOptions {
 	global: boolean;
 	path: string;
 	method: string;
-	data: Record< string, unknown >;
 }
 
 export function useContentResearch( topic: string ) {
@@ -18,15 +17,14 @@ export function useContentResearch( topic: string ) {
 				return wpcomRequest< ResearchResponse >( {
 					path: '/content-research/search',
 					apiNamespace: 'wpcom/v2',
-					method: 'POST',
-					body: { topic },
+					method: 'GET',
+					query: new URLSearchParams( { topic } ).toString(),
 				} );
 			}
 			return apiFetch< ResearchResponse >( {
 				global: true,
-				path: '/content-research/search',
-				method: 'POST',
-				data: { topic },
+				path: `/content-research/search?${ new URLSearchParams( { topic } ).toString() }`,
+				method: 'GET',
 			} as APIFetchOptions );
 		},
 		enabled: !! topic,
