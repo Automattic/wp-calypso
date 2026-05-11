@@ -589,8 +589,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
-			eps: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
 			'stripe-upi': ( transactionData: unknown ) =>
 				upiProcessor(
 					transactionData,

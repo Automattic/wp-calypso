@@ -331,7 +331,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'card'
 	| 'ebanx'
 	| 'netbanking'
-	| 'eps'
 	| 'ideal'
 	| 'p24'
 	// NOTE: we cannot use the key `paypal` because composite-checkout

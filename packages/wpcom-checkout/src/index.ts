@@ -15,7 +15,6 @@ export * from './payment-methods/blik';
 export * from './payment-methods/ideal';
 export * from './payment-methods/sofort';
 export * from './payment-methods/p24';
-export * from './payment-methods/eps';
 export * from './payment-methods/alipay';
 export * from './payment-methods/razorpay';
 export * from './payment-methods/stripe-upi';

@@ -10,7 +10,6 @@ export function paymentMethodName( method: string ): string {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
 		card: translate( 'Credit or debit card' ),
-		eps: 'EPS',
 		ideal: 'iDEAL',
 		netbanking: 'Net Banking',
 		paypal: 'PayPal',

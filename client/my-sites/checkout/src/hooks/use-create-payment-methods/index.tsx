@@ -6,7 +6,6 @@ import {
 	createBancontactMethod,
 	createBlikMethod,
 	createP24Method,
-	createEpsMethod,
 	createIdealMethod,
 	createSofortMethod,
 	createAlipayMethod,
@@ -279,25 +278,6 @@ function useCreateSofort( {
 	);
 }
 
-function useCreateEps( {
-	isStripeLoading,
-	stripeLoadingError,
-}: {
-	isStripeLoading: boolean;
-	stripeLoadingError: StripeLoadingError;
-} ): PaymentMethod | null {
-	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	return useMemo(
-		() =>
-			shouldLoad
-				? createEpsMethod( {
-						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
-				: null,
-		[ shouldLoad ]
-	);
-}
-
 function useCreateNetbanking(): PaymentMethod {
 	return useMemo(
 		() =>
@@ -483,11 +463,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
-	const epsMethod = useCreateEps( {
-		isStripeLoading,
-		stripeLoadingError,
-	} );
-
 	const netbankingMethod = useCreateNetbanking();
 
 	const sofortMethod = useCreateSofort( {
@@ -590,7 +565,6 @@ export default function useCreatePaymentMethods( {
 		pixAutomaticoMethod,
 		alipayMethod,
 		p24Method,
-		epsMethod,
 		wechatMethod,
 		bancontactMethod,
 		razorpayMethod,
@@ -616,7 +590,6 @@ export default function useCreatePaymentMethods( {
 			pixAutomaticoMethod,
 			alipayMethod,
 			p24Method,
-			epsMethod,
 			wechatMethod,
 			bancontactMethod,
 			razorpayMethod,
