@@ -9,6 +9,7 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 
 const RENEWAL_PRICING_EXPERIMENT_V2_EN_USD = 'wpcom_renewal_pricing_increase_v2_usd_202604_v1';
+const RENEWAL_PRICING_EXPERIMENT_V2_NON_USD = 'wpcom_renewal_pricing_increase_v2_non_usd_202604_v1';
 
 function useIsEligibleForV1EnUSDExperiment( flowName?: string | null ): [ boolean, string | null ] {
 	const REGISTRATION_DATE_CUTOFF = new Date( '2026-03-31T11:00:00Z' );
@@ -82,8 +83,15 @@ export function useRenewalPricingExperiment(
 			isEligible: isEligibleForExperiment( flowName ),
 		}
 	);
-	const isLoadingExperiment = isLoadingV1 || isLoadingV2EnUsd;
-	const variationName = v2EnUsdAssignment?.variationName ?? v1Variation;
+	const [ isLoadingV2NonUsd, v2NonUsdAssignment ] = useExperiment(
+		RENEWAL_PRICING_EXPERIMENT_V2_NON_USD,
+		{
+			isEligible: isEligibleForExperiment( flowName ),
+		}
+	);
+	const isLoadingExperiment = isLoadingV1 || isLoadingV2EnUsd || isLoadingV2NonUsd;
+	const variationName =
+		v2NonUsdAssignment?.variationName ?? v2EnUsdAssignment?.variationName ?? v1Variation;
 	return [ isLoadingExperiment, isLoadingExperiment ? null : variationName ];
 }
 
