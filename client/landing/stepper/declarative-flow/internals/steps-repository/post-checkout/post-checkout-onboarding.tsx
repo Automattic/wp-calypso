@@ -200,6 +200,7 @@ const PostCheckoutOnboarding: StepType< {
 
 		setPendingAction( async () => {
 			const providedDependencies = {
+				siteId: site.ID,
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,

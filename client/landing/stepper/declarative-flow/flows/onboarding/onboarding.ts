@@ -314,9 +314,17 @@ const onboarding: FlowV2< typeof initialize > = {
 							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
 							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
 						) {
-							return navigate( 'setup-your-site-ai' );
+							return navigate(
+								addQueryArgs( 'setup-your-site-ai', {
+									siteId: providedDependencies.siteId,
+								} ) as typeof currentStepSlug
+							);
 						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
-							return navigate( 'setup-your-site-ai' );
+							return navigate(
+								addQueryArgs( 'setup-your-site-ai', {
+									siteId: providedDependencies.siteId,
+								} ) as typeof currentStepSlug
+							);
 						} else {
 							// replace the location to delete processing step from history.
 							window.location.replace( destination );
