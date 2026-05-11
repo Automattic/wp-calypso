@@ -1,5 +1,5 @@
 import { select as freshSelect, useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useRef } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	ImageStudioEntryPoint,
@@ -9,6 +9,7 @@ import {
 import { store as videoStudioStore } from '../../stores/video-studio';
 import { getJetpackAdminUrl, getReelSharePostPath } from '../../utils/jetpack-script-data';
 import {
+	trackImageStudioReelShareCancelled,
 	trackImageStudioReelShareClicked,
 	trackImageStudioReelShareConnectionDisabled,
 	trackImageStudioReelShareDispatched,
@@ -27,6 +28,8 @@ interface Connection {
 	connection_id: string | number;
 	service_name: string;
 	enabled?: boolean;
+	display_name?: string;
+	external_handle?: string;
 }
 
 interface JetpackSocialOptions {
@@ -37,10 +40,19 @@ interface JetpackSocialOptions {
 	[ key: string ]: unknown;
 }
 
+interface PendingShare {
+	skipped: string[];
+	igDisplayName: string | null;
+}
+
 interface UseReelShareReturn {
 	isVisible: boolean;
 	isSharing: boolean;
-	handleShare: () => Promise< void >;
+	isConfirming: boolean;
+	igDisplayName: string | null;
+	requestShare: () => Promise< void >;
+	confirmShare: () => Promise< void >;
+	cancelShare: () => void;
 }
 
 export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
@@ -149,6 +161,8 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 	// the first dispatch by a render, so we can't rely on `disabled` alone.
 	const isSharingRef = useRef( false );
 
+	const [ pendingShare, setPendingShare ] = useState< PendingShare | null >( null );
+
 	// When the caller supplies an explicit clip (e.g. the sidebar reading meta),
 	// it has already asserted the video context — the entryPoint guard is only
 	// meaningful for the in-modal call site that reads the live store.
@@ -160,13 +174,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		!! sharePath &&
 		! isAiProcessing;
 
-	const handleShare = useCallback( async () => {
-		// Synchronous double-click guard. `isSharing` from useSelect lags by a
-		// render so it can't reliably block a fast second click on its own.
-		if ( isSharingRef.current ) {
-			return;
-		}
-
+	const requestShare = useCallback( async () => {
 		trackImageStudioReelShareClicked( {
 			attachmentId: currentAttachmentId ?? 0,
 			durationSeconds: currentDurationSeconds,
@@ -252,6 +260,34 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			return;
 		}
 
+		const resolvedHandle =
+			freshIgConnection.display_name || freshIgConnection.external_handle || null;
+
+		setPendingShare( { skipped: freshSkipped, igDisplayName: resolvedHandle } );
+	}, [ currentAttachmentId, currentDurationSeconds, currentVideoUrl, sharePath, showNotice ] );
+
+	const confirmShare = useCallback( async () => {
+		// Synchronous double-click guard. `isSharing` from useSelect lags by a
+		// render so it can't reliably block a fast second click on its own.
+		if ( isSharingRef.current ) {
+			return;
+		}
+
+		if ( ! pendingShare ) {
+			return;
+		}
+
+		if ( ! currentVideoUrl || ! currentAttachmentId || ! sharePath ) {
+			// requestShare gated these already; if we somehow lost state between
+			// open and confirm, fall back to closing the dialog rather than
+			// dispatching a half-formed share.
+			setPendingShare( null );
+			return;
+		}
+
+		const { skipped } = pendingShare;
+		setPendingShare( null );
+
 		const existingSocialOptions =
 			( currentMeta.jetpack_social_options as JetpackSocialOptions | undefined ) ?? {};
 
@@ -280,7 +316,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			// the share fires; we depend on that ordering rather than awaiting a
 			// separate save round-trip ourselves.
 			const success = await shareCurrentPost(
-				{ message: '', skipped_connections: freshSkipped },
+				{ message: '', skipped_connections: skipped },
 				{ savePost: true, apiPath: sharePath }
 			);
 
@@ -305,9 +341,9 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			isSharingRef.current = false;
 		}
 	}, [
+		pendingShare,
 		showNotice,
 		currentAttachmentId,
-		currentDurationSeconds,
 		currentMeta,
 		currentVideoUrl,
 		editPost,
@@ -315,9 +351,20 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		shareCurrentPost,
 	] );
 
+	const cancelShare = useCallback( () => {
+		if ( pendingShare ) {
+			trackImageStudioReelShareCancelled();
+		}
+		setPendingShare( null );
+	}, [ pendingShare ] );
+
 	return {
 		isVisible,
 		isSharing,
-		handleShare,
+		isConfirming: pendingShare !== null,
+		igDisplayName: pendingShare?.igDisplayName ?? null,
+		requestShare,
+		confirmShare,
+		cancelShare,
 	};
 }

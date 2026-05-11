@@ -13,6 +13,7 @@ import {
 	trackImageStudioReelShareNotConnected,
 	trackImageStudioReelShareNotPublished,
 	trackImageStudioReelShareInvalidState,
+	trackImageStudioReelShareCancelled,
 	trackImageStudioReelShareDispatched,
 	trackImageStudioReelShareFailed,
 	trackImageStudioReelShareConnectionDisabled,
@@ -209,6 +210,14 @@ describe( 'reel share tracking helpers', () => {
 		trackImageStudioReelShareDispatched();
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
 			'jetpack_big_sky_image_studio_reel_share_dispatched',
+			expect.any( Object )
+		);
+	} );
+
+	it( 'fires reel_share_cancelled', () => {
+		trackImageStudioReelShareCancelled();
+		expect( recordTracksEventMock ).toHaveBeenCalledWith(
+			'jetpack_big_sky_image_studio_reel_share_cancelled',
 			expect.any( Object )
 		);
 	} );
