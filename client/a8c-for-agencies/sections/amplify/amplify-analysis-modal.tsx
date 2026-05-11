@@ -3,6 +3,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Icon, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 type AnalysisType = 'human' | 'ai' | 'full';
 
@@ -184,6 +186,7 @@ function ProgressAnalysis( {
 }
 
 export default function AmplifyAnalysisModal( { site, onClose }: Props ) {
+	const dispatch = useDispatch();
 	const [ stage, setStage ] = useState< 'choose' | 'progress' >( 'choose' );
 	const [ selectedType, setSelectedType ] = useState< AnalysisType | null >( null );
 
@@ -199,21 +202,24 @@ export default function AmplifyAnalysisModal( { site, onClose }: Props ) {
 		return null;
 	}
 
+	const handleSelectType = ( type: AnalysisType ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_amplify_analysis_start', {
+				analysis_type: type,
+				site_url: site,
+			} )
+		);
+		setSelectedType( type );
+		setStage( 'progress' );
+	};
+
 	return (
 		<Modal
 			title={ stage === 'choose' ? __( 'Choose your analysis' ) : __( 'Analysis in progress' ) }
 			onRequestClose={ onClose }
 			className="amplify-analysis-modal"
 		>
-			{ stage === 'choose' && (
-				<ChooseAnalysis
-					site={ site }
-					onSelect={ ( type ) => {
-						setSelectedType( type );
-						setStage( 'progress' );
-					} }
-				/>
-			) }
+			{ stage === 'choose' && <ChooseAnalysis site={ site } onSelect={ handleSelectType } /> }
 			{ stage === 'progress' && selectedType && (
 				<ProgressAnalysis site={ site } type={ selectedType } onDismiss={ onClose } />
 			) }

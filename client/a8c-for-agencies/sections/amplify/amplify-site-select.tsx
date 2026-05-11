@@ -2,61 +2,58 @@ import { Button, Dropdown, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useMemo, useState } from 'react';
-import useFetchActiveSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-active-sites';
+import { useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AmplifyAnalysisModal from './amplify-analysis-modal';
-
-type Site = {
-	id: number;
-	url: string;
-	features?: {
-		wpcom_atomic?: {
-			state?: string;
-		};
-	};
-};
+import useConnectedSites from './hooks/use-connected-sites';
 
 const RECENT_LIMIT = 10;
 
 export default function AmplifySiteSelect() {
-	const { data, isLoading } = useFetchActiveSites( { autoRefresh: false } );
+	const dispatch = useDispatch();
 	const [ selectedUrl, setSelectedUrl ] = useState< string | null >( null );
 	const [ search, setSearch ] = useState( '' );
 	const [ analysisFlowSite, setAnalysisFlowSite ] = useState< string | null >( null );
 
-	const allSites: Site[] = useMemo( () => {
-		const list = Array.isArray( data ) ? ( data as Site[] ) : [];
-		return list
-			.filter( ( site ) => {
-				if ( ! site.url ) {
-					return false;
-				}
-				const state = site.features?.wpcom_atomic?.state;
-				return state === undefined || state === 'active';
-			} )
-			.sort( ( a, b ) => b.id - a.id );
-	}, [ data ] );
+	const { sites, isLoading, hasAnyConnectedSites } = useConnectedSites( {
+		search,
+		limit: RECENT_LIMIT,
+	} );
 
-	const visibleSites = useMemo( () => {
-		const query = search.trim().toLowerCase();
-		return query
-			? allSites.filter( ( site ) => site.url.toLowerCase().includes( query ) )
-			: allSites.slice( 0, RECENT_LIMIT );
-	}, [ allSites, search ] );
-
-	const hasSites = allSites.length > 0;
-	const isDisabled = isLoading || ! hasSites;
+	const isDisabled = isLoading || ! hasAnyConnectedSites;
 
 	let toggleText: string;
 	if ( selectedUrl ) {
 		toggleText = selectedUrl;
 	} else if ( isLoading ) {
 		toggleText = __( 'Loading sites…' );
-	} else if ( ! hasSites ) {
+	} else if ( ! hasAnyConnectedSites ) {
 		toggleText = __( 'No connected sites yet' );
 	} else {
 		toggleText = __( 'Search or select a site' );
 	}
+
+	const handleSelectSite = ( url: string ) => {
+		setSelectedUrl( url );
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_amplify_site_select', {
+				site_url: url,
+			} )
+		);
+	};
+
+	const handleAmplifyClick = () => {
+		if ( ! selectedUrl ) {
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_amplify_audit_open', {
+				site_url: selectedUrl,
+			} )
+		);
+		setAnalysisFlowSite( selectedUrl );
+	};
 
 	return (
 		<div className="amplify-landing-selector">
@@ -106,11 +103,11 @@ export default function AmplifySiteSelect() {
 									placeholder={ __( 'Search connected sites' ) }
 								/>
 							</div>
-							{ visibleSites.length === 0 ? (
+							{ sites.length === 0 ? (
 								<p className="amplify-landing-site-dropdown-empty">{ __( 'No matches' ) }</p>
 							) : (
 								<ul className="amplify-landing-site-dropdown-list" role="listbox">
-									{ visibleSites.map( ( site ) => {
+									{ sites.map( ( site ) => {
 										const isSelected = site.url === selectedUrl;
 										return (
 											<li key={ site.id }>
@@ -122,7 +119,7 @@ export default function AmplifySiteSelect() {
 														'is-selected': isSelected,
 													} ) }
 													onClick={ () => {
-														setSelectedUrl( site.url );
+														handleSelectSite( site.url );
 														onClose();
 													} }
 												>
@@ -141,11 +138,7 @@ export default function AmplifySiteSelect() {
 				__next40pxDefaultSize
 				variant="primary"
 				disabled={ ! selectedUrl }
-				onClick={ () => {
-					if ( selectedUrl ) {
-						setAnalysisFlowSite( selectedUrl );
-					}
-				} }
+				onClick={ handleAmplifyClick }
 			>
 				{ __( 'Amplify it' ) }
 			</Button>

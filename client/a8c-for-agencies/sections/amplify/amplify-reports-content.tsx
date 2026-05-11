@@ -10,6 +10,8 @@ import {
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
 
@@ -62,6 +64,7 @@ function formatTimestamp( iso: string ): string {
 }
 
 export default function AmplifyReportsContent() {
+	const dispatch = useDispatch();
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		type: DATAVIEWS_TABLE,
@@ -73,6 +76,16 @@ export default function AmplifyReportsContent() {
 			human: __( 'Human' ),
 			ai: __( 'AI' ),
 			full: __( 'Full' ),
+		};
+
+		const handleDownload = ( item: Report ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_amplify_report_download', {
+					report_id: item.id,
+					site_url: item.site,
+					analysis_type: item.analysisType,
+				} )
+			);
 		};
 
 		return [
@@ -112,15 +125,13 @@ export default function AmplifyReportsContent() {
 				id: 'download',
 				label: __( 'Download' ),
 				getValue: () => '',
-				render: (): ReactNode => (
+				render: ( { item }: { item: Report } ): ReactNode => (
 					<Button
 						variant="secondary"
 						size="compact"
 						icon={ download }
 						iconSize={ 16 }
-						onClick={ () => {
-							/* Wired in a follow-up. */
-						} }
+						onClick={ () => handleDownload( item ) }
 					>
 						{ __( 'Download PDF' ) }
 					</Button>
@@ -129,7 +140,7 @@ export default function AmplifyReportsContent() {
 				enableSorting: false,
 			},
 		];
-	}, [] );
+	}, [ dispatch ] );
 
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
 		return filterSortAndPaginate( REPORTS, dataViewsState, fields );

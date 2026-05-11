@@ -1,6 +1,9 @@
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 type Mode = 'human' | 'ai';
 
@@ -43,7 +46,21 @@ function thresholdLabel( score: number ): string {
 }
 
 export default function AmplifyScoreCard() {
+	const dispatch = useDispatch();
 	const [ mode, setMode ] = useState< Mode >( 'human' );
+
+	const handleModeChange = ( nextMode: Mode ) => {
+		if ( nextMode === mode ) {
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_amplify_mode_toggle', {
+				mode: nextMode,
+				surface: 'score_card',
+			} )
+		);
+		setMode( nextMode );
+	};
 
 	const modes: Record< Mode, ModeData > = {
 		human: {
@@ -92,28 +109,26 @@ export default function AmplifyScoreCard() {
 			</div>
 
 			<div className="amplify-landing-mode-toggle" role="tablist" aria-label={ __( 'Score mode' ) }>
-				<button
-					type="button"
+				<Button
 					role="tab"
 					aria-selected={ mode === 'human' }
 					className={ clsx( 'amplify-landing-mode-btn', {
 						'is-active': mode === 'human',
 					} ) }
-					onClick={ () => setMode( 'human' ) }
+					onClick={ () => handleModeChange( 'human' ) }
 				>
 					{ __( 'Human-centric analysis' ) }
-				</button>
-				<button
-					type="button"
+				</Button>
+				<Button
 					role="tab"
 					aria-selected={ mode === 'ai' }
 					className={ clsx( 'amplify-landing-mode-btn', {
 						'is-active': mode === 'ai',
 					} ) }
-					onClick={ () => setMode( 'ai' ) }
+					onClick={ () => handleModeChange( 'ai' ) }
 				>
 					{ __( 'AI analysis' ) }
-				</button>
+				</Button>
 			</div>
 
 			<div className="amplify-landing-score-main">
