@@ -18,7 +18,6 @@ interface Props {
 	onCwToggle: ( enabled: boolean ) => void;
 	summary: string;
 	onSummaryChange: ( value: string ) => void;
-	disabled?: boolean;
 }
 
 /**
@@ -42,7 +41,6 @@ export function FediverseComposerControls( {
 	onCwToggle,
 	summary,
 	onSummaryChange,
-	disabled,
 }: Props ) {
 	const translate = useTranslate();
 	const visibilityId = useId();
@@ -58,11 +56,7 @@ export function FediverseComposerControls( {
 	);
 
 	return (
-		<VStack
-			spacing={ 4 }
-			className="fediverse-composer-controls"
-			aria-disabled={ disabled || undefined }
-		>
+		<VStack spacing={ 4 } className="fediverse-composer-controls">
 			<BaseControl
 				__nextHasNoMarginBottom
 				id={ visibilityId }
@@ -89,7 +83,6 @@ export function FediverseComposerControls( {
 				label={ String( translate( 'Add content warning' ) ) }
 				checked={ cwEnabled }
 				onChange={ onCwToggle }
-				disabled={ disabled }
 			/>
 
 			{ cwEnabled && (
@@ -102,7 +95,6 @@ export function FediverseComposerControls( {
 					value={ summary }
 					onChange={ onSummaryChange }
 					maxLength={ SUMMARY_MAX_LENGTH }
-					disabled={ disabled }
 					help={ String(
 						translate(
 							'Shown above the post; readers can choose to expand. %(count)d of %(max)d characters used.',
