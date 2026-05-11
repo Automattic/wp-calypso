@@ -22,7 +22,7 @@ export interface SiteHandoffProps {
 	sites: Site[];
 	content: string;
 	buttonLabel: string;
-	tracks: {
+	tracks?: {
 		editorOpened: ( siteId: number ) => { event: string; props: object };
 		errorShown: ( siteId: number, errorKind: string ) => { event: string; props: object };
 	};

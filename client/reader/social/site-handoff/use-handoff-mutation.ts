@@ -16,7 +16,7 @@ import type { Site } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
 export interface UseHandoffMutationOptions {
-	tracks: {
+	tracks?: {
 		editorOpened: ( siteId: number ) => { event: string; props: object };
 		errorShown: ( siteId: number, errorKind: string ) => { event: string; props: object };
 	};
@@ -42,8 +42,10 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 	const { mutate, isPending } = useMutation( saveDraftMutation() );
 
 	const submit = ( { site, content }: { site: Site; content: string } ) => {
-		const { event, props } = options.tracks.editorOpened( site.ID );
-		dispatch( recordReaderTracksEvent( event, props ) );
+		if ( options.tracks?.editorOpened ) {
+			const { event, props } = options.tracks.editorOpened( site.ID );
+			dispatch( recordReaderTracksEvent( event, props ) );
+		}
 
 		mutate( { siteId: site.ID, content } satisfies SaveDraftMutationVariables, {
 			onSuccess: ( data: SaveDraftMutationResult ) => {
@@ -67,11 +69,13 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 					)
 				);
 				const errorKind = error.name || 'unknown';
-				const { event: errEvent, props: errProps } = options.tracks.errorShown(
-					site.ID,
-					errorKind
-				);
-				dispatch( recordReaderTracksEvent( errEvent, errProps ) );
+				if ( options.tracks?.errorShown ) {
+					const { event: errEvent, props: errProps } = options.tracks.errorShown(
+						site.ID,
+						errorKind
+					);
+					dispatch( recordReaderTracksEvent( errEvent, errProps ) );
+				}
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'Reader social site handoff: save draft failed',
