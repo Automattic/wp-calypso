@@ -27,13 +27,10 @@ function isSafeUrl( url: string ): boolean {
 
 export function SocialNotificationItem( { notification }: Props ) {
 	const translate = useTranslate();
-	const { actor, target, target_url, canonical_type, protocol_type, is_read, created_at } =
-		notification;
+	const { actor, target, target_url, canonical_type, is_read, created_at } = notification;
 	const actorName = actor.display_name || actor.handle;
-	const phrase = actionPhrase( canonical_type, protocol_type, translate );
-	const ariaLabel = translate( '%(actor)s %(phrase)s', {
-		args: { actor: actorName, phrase: String( phrase ) },
-	} ) as string;
+	const phrase = actionPhrase( canonical_type, translate );
+	const ariaLabel = actionAriaLabel( canonical_type, actorName, translate );
 
 	const safe = isSafeUrl( target_url );
 	const className = clsx( 'social-notification-item', { 'is-unread': ! is_read } );
@@ -89,7 +86,6 @@ export function SocialNotificationItem( { notification }: Props ) {
 
 function actionPhrase(
 	canonical: AtmosphereNotificationCanonicalType,
-	protocolType: string,
 	translate: ReturnType< typeof useTranslate >
 ): string {
 	switch ( canonical ) {
@@ -107,7 +103,30 @@ function actionPhrase(
 			return translate( 'quoted your post' ) as string;
 		case 'other':
 		default:
-			// e.g. 'starterpack-joined' -> 'starterpack joined'.
-			return protocolType.replace( /[-_]/g, ' ' );
+			return translate( 'interacted with you' ) as string;
+	}
+}
+
+function actionAriaLabel(
+	canonical: AtmosphereNotificationCanonicalType,
+	actor: string,
+	translate: ReturnType< typeof useTranslate >
+): string {
+	switch ( canonical ) {
+		case 'like':
+			return translate( '%(actor)s liked your post', { args: { actor } } ) as string;
+		case 'repost':
+			return translate( '%(actor)s reposted your post', { args: { actor } } ) as string;
+		case 'follow':
+			return translate( '%(actor)s followed you', { args: { actor } } ) as string;
+		case 'mention':
+			return translate( '%(actor)s mentioned you', { args: { actor } } ) as string;
+		case 'reply':
+			return translate( '%(actor)s replied to your post', { args: { actor } } ) as string;
+		case 'quote':
+			return translate( '%(actor)s quoted your post', { args: { actor } } ) as string;
+		case 'other':
+		default:
+			return translate( '%(actor)s interacted with you', { args: { actor } } ) as string;
 	}
 }

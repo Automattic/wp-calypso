@@ -7,8 +7,8 @@ import type { AtmosphereNotification } from '@automattic/api-core';
 
 interface Props {
 	items: AtmosphereNotification[];
-	seenAt: string | null;
 	isLoading: boolean;
+	isLoadingMore?: boolean;
 	isError: boolean;
 	hasMore: boolean;
 	onLoadMore: () => void;
@@ -17,6 +17,7 @@ interface Props {
 export function SocialNotificationsList( {
 	items,
 	isLoading,
+	isLoadingMore = false,
 	isError,
 	hasMore,
 	onLoadMore,
@@ -51,7 +52,12 @@ export function SocialNotificationsList( {
 			) ) }
 			{ hasMore && (
 				<div className="social-notifications-list__footer">
-					<Button variant="secondary" onClick={ onLoadMore }>
+					<Button
+						variant="secondary"
+						onClick={ onLoadMore }
+						disabled={ isLoadingMore }
+						isBusy={ isLoadingMore }
+					>
 						{ translate( 'Load more' ) as string }
 					</Button>
 				</div>

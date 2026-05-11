@@ -62,7 +62,7 @@ describe( 'SocialNotificationItem', () => {
 		expect( screen.getByText( copy ) ).toBeVisible();
 	} );
 
-	it( 'renders an unknown canonical_type via a generic template using protocol_type', () => {
+	it( 'renders an unknown canonical_type with a generic translated phrase', () => {
 		renderWithProvider(
 			<SocialNotificationItem
 				notification={ makeItem( {
@@ -72,7 +72,14 @@ describe( 'SocialNotificationItem', () => {
 				} ) }
 			/>
 		);
-		expect( screen.getByText( /starterpack joined/i ) ).toBeVisible();
+		expect( screen.getByText( /interacted with you/i ) ).toBeVisible();
+		// The raw protocol_type must not leak through to the UI.
+		expect( screen.queryByText( /starterpack/i ) ).toBeNull();
+	} );
+
+	it( 'announces a per-action aria label on the link', () => {
+		renderWithProvider( <SocialNotificationItem notification={ makeItem() } /> );
+		expect( screen.getByRole( 'link' ) ).toHaveAccessibleName( /jane liked your post/i );
 	} );
 
 	it( 'links the row to target_url with target=_blank', () => {

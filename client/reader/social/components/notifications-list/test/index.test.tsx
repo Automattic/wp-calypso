@@ -26,7 +26,6 @@ const baseItem: AtmosphereNotification = {
 
 const baseProps = {
 	items: [ baseItem ],
-	seenAt: null,
 	isLoading: false,
 	isError: false,
 	hasMore: false,
@@ -67,5 +66,10 @@ describe( 'SocialNotificationsList', () => {
 	it( 'does not render Load more when hasMore is false', () => {
 		renderWithProvider( <SocialNotificationsList { ...baseProps } hasMore={ false } /> );
 		expect( screen.queryByRole( 'button', { name: /load more/i } ) ).toBeNull();
+	} );
+
+	it( 'disables Load more while fetching the next page', () => {
+		renderWithProvider( <SocialNotificationsList { ...baseProps } hasMore isLoadingMore /> );
+		expect( screen.getByRole( 'button', { name: /load more/i } ) ).toBeDisabled();
 	} );
 } );
