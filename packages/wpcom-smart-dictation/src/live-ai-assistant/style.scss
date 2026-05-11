@@ -113,18 +113,23 @@
 	position: sticky;
 	z-index: 3;
 	width: calc( 100% + 32px );
-	backdrop-filter: blur( 2px ) saturate( 150% );
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	padding: 10px;
 	box-sizing: border-box;
-	background: linear-gradient(
-		180deg,
-		rgba( 255, 255, 255, 0.6 ) 0%,
-		rgba( 255, 255, 255, 0.61 ) 44%,
-		rgba( 255, 255, 255, 0 ) 100%
-	);
+	background: #fff;
+	&.isActive {
+		backdrop-filter: blur( 2px ) saturate( 150% );
+		// Gradual blur
+		mask: linear-gradient(#000, #000, transparent);
+		background: linear-gradient(
+			180deg,
+			rgba( 255, 255, 255, 0.6 ) 0%,
+			rgba( 255, 255, 255, 0.61 ) 44%,
+			rgba( 255, 255, 255, 0 ) 100%
+		);
+	}
 }
 
 .live-ai-assistant__body {

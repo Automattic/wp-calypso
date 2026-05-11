@@ -1,20 +1,24 @@
+import { ReadFeedSearchSort } from '@automattic/api-core';
+import { readFeedSearchQuery } from '@automattic/api-queries';
 import { Card, Spinner } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import SearchInput from 'calypso/components/search';
-import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
-import { getReaderFeedsForQuery } from 'calypso/state/reader/feed-searches/selectors';
 import ListItem from './list-item';
 
 export default function ItemAdder( props ) {
 	const translate = useTranslate();
 	const [ query, updateQuery ] = useState( '' );
-	const feedResults = useSelector( ( state ) =>
-		getReaderFeedsForQuery( state, { query, excludeFollowed: false, sort: SORT_BY_RELEVANCE } )
+	const { data, isFetching } = useQuery(
+		readFeedSearchQuery( {
+			query,
+			excludeFollowed: false,
+			sort: ReadFeedSearchSort.Relevance,
+		} )
 	);
+	const feedResults = data?.feeds;
 
 	return (
 		<div className="list-manage__item-adder" id="reader-list-item-adder">
@@ -32,12 +36,7 @@ export default function ItemAdder( props ) {
 				/>
 			</Card>
 
-			{ ! feedResults && query && (
-				<>
-					<QueryReaderFeedsSearch excludeFollowed={ false } query={ query } />
-					<Spinner />
-				</>
-			) }
+			{ isFetching && query && <Spinner /> }
 
 			<SyncReaderFollows />
 

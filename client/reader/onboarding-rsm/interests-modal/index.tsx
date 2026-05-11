@@ -237,7 +237,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 				}
 				// Best effort only: site-specific failures are handled by existing
 				// follow data-layer notices and should not block pack completion.
-				dispatch( follow( blog.site_URL, followData, null ) );
+				dispatch( follow( blog.feed_URL, followData, null ) );
 			}
 		} finally {
 			setProcessingPacks( ( current ) => {
@@ -265,7 +265,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 
 	return (
 		<>
-			<VStack spacing={ 8 } className="interests-modal__content">
+			<VStack spacing={ 5 } className="interests-modal__content">
 				<VStack spacing={ 0 }>
 					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
 					<p className="interests-modal__subtitle">

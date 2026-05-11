@@ -10,6 +10,7 @@ import PageLayout from '../../../components/page-layout';
 import UpsellCallout from '../../hosting-feature-gated-with-callout/upsell';
 import { hasBackendAccess } from '../backend-access';
 import { getBackendCalloutProps } from '../backend-callout';
+import PerformanceTabs from '../performance-tabs';
 import Database from './database';
 import EnableApmCallout from './enable-apm-callout';
 import ExternalRequests from './external-requests';
@@ -106,6 +107,9 @@ export default function SitePerformanceBackend( {
 	};
 
 	return (
-		<PageLayout header={ <PageHeader title={ __( 'Backend' ) } /> }>{ renderContent() }</PageLayout>
+		<PageLayout header={ <PageHeader title={ __( 'Backend' ) } /> }>
+			<PerformanceTabs siteSlug={ siteSlug } activeTab="backend" />
+			{ renderContent() }
+		</PageLayout>
 	);
 }

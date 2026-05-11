@@ -92,6 +92,7 @@ export interface Domain extends DomainSummary {
 	points_to_wpcom: boolean;
 	pending_registration: boolean;
 	pending_registration_at_registry: boolean;
+	pending_registration_at_registry_url: string;
 	pending_transfer: boolean;
 	whois_update_unmodifiable_fields: string[];
 	renewable_until: string;

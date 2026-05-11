@@ -22,6 +22,16 @@ const pickRandom = < T >( items: T[], count: number, random: () => number ): T[]
 };
 
 /**
+ * After random selection, move `has_icon` blogs to the front so the topic card
+ * can show real avatars in its first slots without biasing which feeds join the pack.
+ */
+const orderPackWithIconsFirst = ( pack: CuratedBlog[] ): CuratedBlog[] => {
+	const withIcon = pack.filter( ( b ) => b.has_icon );
+	const withoutIcon = pack.filter( ( b ) => ! b.has_icon );
+	return [ ...withIcon, ...withoutIcon ];
+};
+
+/**
  * Distribute a fixed number of "slots" across N tags as evenly as possible.
  * Tags listed earlier in the input array receive the larger share when the
  * count does not divide evenly.
@@ -50,8 +60,11 @@ const distributeSlots = ( tagCount: number, count: number ): number[] => {
  * - Blogs are de-duplicated by `feed_ID` across tags. If duplicates are
  *   dropped, additional blogs are pulled from any tag with remaining capacity
  *   so the final list size still approaches `count`.
- * - Selection within each tag is random; the `random` option allows tests to
- *   inject a deterministic generator.
+ * - Selection within each tag is random (no `has_icon` bias); the `random`
+ *   option allows tests to inject a deterministic generator.
+ * - The returned pack is ordered with `has_icon` blogs first so the interests
+ *   card can show icon-backed avatars in its first slots without excluding
+ *   non-icon feeds from packs.
  */
 export const getPackBlogs = (
 	tags: string[],
@@ -129,5 +142,5 @@ export const getPackBlogs = (
 		}
 	}
 
-	return picked;
+	return orderPackWithIconsFirst( picked );
 };

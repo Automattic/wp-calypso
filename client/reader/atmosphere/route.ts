@@ -67,6 +67,16 @@ export function getProfileUrl( connectionId: number, ref: ProfileRefInput ): str
 	return null;
 }
 
+export function getFollowersUrl( connectionId: number, ref: ProfileRefInput ): string | null {
+	const base = getProfileUrl( connectionId, ref );
+	return base ? `${ base }/followers` : null;
+}
+
+export function getFollowingUrl( connectionId: number, ref: ProfileRefInput ): string | null {
+	const base = getProfileUrl( connectionId, ref );
+	return base ? `${ base }/following` : null;
+}
+
 // Hashtag validator lives in @automattic/api-core so both the route layer
 // and the query factory in api-queries share a single regex — preventing
 // drift between the controller's validation and the query's `enabled` gate.

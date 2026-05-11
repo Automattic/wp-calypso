@@ -88,4 +88,115 @@ describe( 'FollowButton', () => {
 		expect( onFollow ).not.toHaveBeenCalled();
 		expect( onUnfollow ).not.toHaveBeenCalled();
 	} );
+
+	describe( 'isRequested state', () => {
+		it( 'renders "Requested" label and "Cancel request" hover label when isRequested is true and isFollowing is false', () => {
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy={ false }
+					isRequested
+					actorHandle="alice@mastodon.social"
+					onFollow={ jest.fn() }
+					onUnfollow={ jest.fn() }
+				/>
+			);
+
+			expect( screen.getByText( 'Requested' ) ).toBeVisible();
+			expect( screen.getByText( 'Cancel request' ) ).toBeInTheDocument();
+			expect(
+				screen.getByRole( 'button', {
+					name: 'Cancel follow request to @alice@mastodon.social',
+				} )
+			).toBeVisible();
+		} );
+
+		it( 'falls back to a generic aria-label when actorHandle is not supplied', () => {
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy={ false }
+					isRequested
+					onFollow={ jest.fn() }
+					onUnfollow={ jest.fn() }
+				/>
+			);
+
+			expect( screen.getByRole( 'button', { name: 'Cancel follow request' } ) ).toBeVisible();
+		} );
+
+		it( 'invokes onUnfollow when the Requested button is clicked', async () => {
+			const user = userEvent.setup();
+			const onUnfollow = jest.fn();
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy={ false }
+					isRequested
+					onFollow={ jest.fn() }
+					onUnfollow={ onUnfollow }
+				/>
+			);
+
+			await user.click( screen.getByRole( 'button' ) );
+
+			expect( onUnfollow ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'disables the Requested button while isPending and does not invoke onUnfollow', async () => {
+			const user = userEvent.setup();
+			const onUnfollow = jest.fn();
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy={ false }
+					isRequested
+					isPending
+					actorHandle="alice@mastodon.social"
+					onFollow={ jest.fn() }
+					onUnfollow={ onUnfollow }
+				/>
+			);
+
+			const button = screen.getByRole( 'button' );
+			expect( button ).toBeDisabled();
+			await user.click( button );
+			expect( onUnfollow ).not.toHaveBeenCalled();
+		} );
+
+		it( 'isFollowing wins over isRequested when both are true (defensive precedence)', () => {
+			render(
+				<FollowButton
+					isFollowing
+					isFollowedBy={ false }
+					isRequested
+					actorHandle="alice@mastodon.social"
+					onFollow={ jest.fn() }
+					onUnfollow={ jest.fn() }
+				/>
+			);
+
+			expect( screen.getByText( 'Following' ) ).toBeVisible();
+			expect( screen.queryByText( 'Requested' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'isRequested wins over isFollowedBy when both are true', () => {
+			// Locked-account viewer who is also followed by the target:
+			// the pending follow request must visually trump the
+			// "Follow back" affordance so the wire state is honoured.
+			render(
+				<FollowButton
+					isFollowing={ false }
+					isFollowedBy
+					isRequested
+					actorHandle="alice@mastodon.social"
+					onFollow={ jest.fn() }
+					onUnfollow={ jest.fn() }
+				/>
+			);
+
+			expect( screen.getByText( 'Requested' ) ).toBeVisible();
+			expect( screen.queryByText( 'Follow back' ) ).not.toBeInTheDocument();
+		} );
+	} );
 } );
