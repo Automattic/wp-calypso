@@ -148,10 +148,12 @@ export const isPaymentAgreement = (
 export const isUpiMethod = ( method: StoredPaymentMethod ): method is StoredPaymentMethodRazorpay =>
 	UPI_PARTNERS.includes( method.payment_partner );
 
+export const isRetiredPaymentMethod = (
+	method: StoredPaymentMethod
+): method is RetiredStoredPaymentMethod => 'retired' in method && method.retired === true;
+
 export const isCreditCard = ( method: StoredPaymentMethod ): method is StoredPaymentMethodCard =>
-	! ( 'retired' in method && method.retired ) &&
-	! isPaymentAgreement( method ) &&
-	! isUpiMethod( method );
+	! isRetiredPaymentMethod( method ) && ! isPaymentAgreement( method ) && ! isUpiMethod( method );
 
 interface ImagePathsMap {
 	[ key: string ]: string;

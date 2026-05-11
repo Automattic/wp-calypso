@@ -1,10 +1,32 @@
-import { getRazorpayVpa } from '@automattic/api-core';
+import { isRetiredPaymentMethod } from '@automattic/api-core';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../components/text';
 import type { StoredPaymentMethod } from '@automattic/api-core';
 
 export function PaymentMethodDetails( { paymentMethod }: { paymentMethod: StoredPaymentMethod } ) {
+	// Retired rows lose their partner-specific top-level fields; the back-end
+	// emits `display_meta.label` + `display_meta.detail` so any retired
+	// partner renders uniformly without per-partner front-end code. Saved
+	// `name` is the final fallback if both are absent.
+	if ( isRetiredPaymentMethod( paymentMethod ) ) {
+		const label = paymentMethod.display_meta?.label;
+		const detail = paymentMethod.display_meta?.detail;
+		if ( label || detail ) {
+			return (
+				<HStack>
+					{ label && <Text>{ label }</Text> }
+					{ detail && <Text>{ detail }</Text> }
+				</HStack>
+			);
+		}
+		return (
+			<HStack>
+				<Text>{ paymentMethod.name || __( 'Saved payment method' ) }</Text>
+			</HStack>
+		);
+	}
+
 	if ( 'card_type' in paymentMethod && paymentMethod.card_type ) {
 		return (
 			<HStack justify="flex-start">
@@ -22,26 +44,11 @@ export function PaymentMethodDetails( { paymentMethod }: { paymentMethod: Stored
 		);
 	}
 
-	const razorpayVpa = getRazorpayVpa( paymentMethod );
-	if ( razorpayVpa ) {
+	if ( paymentMethod.payment_partner === 'razorpay' && 'razorpay_vpa' in paymentMethod ) {
 		return (
 			<HStack>
 				<Text>{ __( 'Unified Payments Interface (UPI)' ) }</Text>
-				<Text>{ razorpayVpa }</Text>
-			</HStack>
-		);
-	}
-
-	// Generic catchall for retired rows whose partner doesn't match a
-	// dedicated branch above. After back-end retirement, the partner-specific
-	// top-level fields are gone (replaced by `display_meta`), so the prior
-	// branches (card / paypal / razorpay) wouldn't match. Falling through to
-	// `null` would render a blank cell in the payment-methods list. Showing
-	// the user's saved name keeps the row identifiable.
-	if ( 'retired' in paymentMethod && paymentMethod.retired ) {
-		return (
-			<HStack>
-				<Text>{ paymentMethod.name || __( 'Saved payment method' ) }</Text>
+				<Text>{ paymentMethod.razorpay_vpa }</Text>
 			</HStack>
 		);
 	}

@@ -45,29 +45,34 @@ describe( '<PaymentMethodDetails>', () => {
 		expect( screen.getByText( 'user@okaxis' ) ).toBeVisible();
 	} );
 
-	test( 'renders UPI label and VPA from display_meta for a retired Razorpay payment method', () => {
-		// Regression fixture: after wpcom Razorpay PR 2 swaps the engine class
-		// for Retired_Stored_Payment_Method, the row arrives with `retired: true`
-		// and `razorpay_vpa` nested under `display_meta`. The display site must
-		// render the same UI as for live rows.
+	test( 'renders display_meta label and detail for a retired payment method', () => {
+		// Once wpcom emits a retired row, `display_meta.label` + `display_meta.detail`
+		// carry the rendered strings. Any retired partner uses the same code path.
 		const method = {
 			payment_partner: 'razorpay',
 			retired: true,
-			display_meta: { razorpay_vpa: 'user@okaxis' },
+			display_meta: { label: 'UPI Payment Method', detail: 'user@okaxis' },
 		} as unknown as StoredPaymentMethod;
 
 		render( <PaymentMethodDetails paymentMethod={ method } /> );
 
-		expect( screen.getByText( 'Unified Payments Interface (UPI)' ) ).toBeVisible();
+		expect( screen.getByText( 'UPI Payment Method' ) ).toBeVisible();
 		expect( screen.getByText( 'user@okaxis' ) ).toBeVisible();
 	} );
 
-	test( 'renders the saved name for a retired non-Razorpay payment method', () => {
-		// Generic retire-tolerance: any partner can be retired in the future,
-		// after which its rows arrive without partner-specific top-level
-		// fields. Without this catchall, the dashboard would render a blank
-		// cell. The user's saved `name` (always present on the base) keeps
-		// the row identifiable.
+	test( 'renders only display_meta label when detail is absent', () => {
+		const method = {
+			payment_partner: 'ebanx',
+			retired: true,
+			display_meta: { label: 'Retired processor' },
+		} as unknown as StoredPaymentMethod;
+
+		render( <PaymentMethodDetails paymentMethod={ method } /> );
+
+		expect( screen.getByText( 'Retired processor' ) ).toBeVisible();
+	} );
+
+	test( 'falls back to saved name for a retired method with no display_meta strings', () => {
 		const method = {
 			payment_partner: 'ebanx',
 			retired: true,
@@ -80,7 +85,7 @@ describe( '<PaymentMethodDetails>', () => {
 		expect( screen.getByText( 'My Brazilian card' ) ).toBeVisible();
 	} );
 
-	test( 'falls back to a generic label when a retired method has no saved name', () => {
+	test( 'falls back to a generic label when a retired method has neither display_meta nor name', () => {
 		const method = {
 			payment_partner: 'ebanx',
 			retired: true,

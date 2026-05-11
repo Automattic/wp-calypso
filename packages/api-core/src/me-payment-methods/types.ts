@@ -87,6 +87,10 @@ export interface RetiredStoredPaymentMethod extends StoredPaymentMethodBase {
 	display_meta: Record< string, string >;
 }
 
+export const isRetiredPaymentMethod = (
+	method: StoredPaymentMethod
+): method is RetiredStoredPaymentMethod => 'retired' in method && method.retired === true;
+
 export interface StoredPaymentMethodTaxLocation {
 	country_code?: string;
 	postal_code?: string;
