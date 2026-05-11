@@ -80,7 +80,9 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		padding: 20px 24px 0;
 		gap: 16px;
 
-		@media ( max-width: 1199px ) {
+		// Below ~700px viewport the modal itself starts clamping to 100vw
+		// and both columns no longer have usable room; collapse to list-only.
+		@media ( max-width: 699px ) {
 			padding-inline: 0;
 		}
 	}
@@ -92,7 +94,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		max-width: 300px;
 		padding-inline-end: 32px;
 
-		@media ( max-width: 1199px ) {
+		@media ( max-width: 699px ) {
 			flex: 1;
 			max-width: 700px;
 			padding-inline: 20px;
@@ -121,7 +123,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 				background-color: color-mix( in srgb, var( --color-accent ) 8%, #fff );
 				border-color: color-mix( in srgb, var( --color-accent ) 25%, #fff );
 
-				@media ( min-width: 1200px ) {
+				@media ( min-width: 700px ) {
 					&::after {
 						content: '';
 						position: absolute;
@@ -191,7 +193,10 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		flex-direction: column;
 		overflow: hidden;
 
-		@media ( min-width: 1200px ) {
+		// The modal is fixed at 980px wide (clamped to 100vw below that).
+		// Show the preview column whenever the viewport is wide enough to
+		// fit the modal at a reasonable size — roughly 700px+.
+		@media ( min-width: 700px ) {
 			display: flex;
 		}
 

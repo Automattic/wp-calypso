@@ -524,6 +524,8 @@ const sections = [
 			'/reader/atmosphere/:id/:tab',
 			'/reader/atmosphere/:id/thread/:did/:rkey',
 			'/reader/atmosphere/:id/profile/:actor',
+			'/reader/atmosphere/:id/profile/:actor/followers',
+			'/reader/atmosphere/:id/profile/:actor/following',
 		],
 		module: 'calypso/reader/atmosphere',
 		group: 'reader',

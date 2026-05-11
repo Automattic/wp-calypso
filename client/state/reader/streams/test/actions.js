@@ -6,7 +6,6 @@ import nock from 'nock';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
-	READER_STREAMS_UPDATES_RECEIVE,
 	READER_STREAMS_ERROR,
 	READER_POSTS_RECEIVE,
 	READER_RECOMMENDED_SITES_RECEIVE,
@@ -135,20 +134,6 @@ describe( 'requestPage thunk', () => {
 				.find( ( a ) => a && a.type === READER_STREAMS_PAGE_RECEIVE );
 			expect( receivePageAction.payload.pageHandle ).toEqual( { before: '2026-01-01' } );
 			expect( receivePageAction.payload.streamItems ).toHaveLength( 1 );
-		} );
-
-		it( 'dispatches only receiveUpdates when isPoll is true', async () => {
-			nock( BASE ).get( '/rest/v1.2/read/following' ).query( true ).reply( 200, followingResponse );
-
-			const { dispatch, result } = runThunk( { streamKey: 'following', isPoll: true } );
-			await result;
-
-			const types = dispatch.mock.calls
-				.map( ( c ) => c[ 0 ] )
-				.filter( ( a ) => a && typeof a === 'object' && a.type )
-				.map( ( a ) => a.type );
-			expect( types ).toContain( READER_STREAMS_UPDATES_RECEIVE );
-			expect( types ).not.toContain( READER_STREAMS_PAGE_RECEIVE );
 		} );
 
 		it( 'dispatches receiveStreamError on a failed fetch', async () => {
@@ -902,7 +887,7 @@ describe( 'requestPage thunk', () => {
 			expect( dates ).toEqual( [ '2026-04-10', '2026-02-20' ] );
 		} );
 
-		it( 'sends `date_liked` in the poll fields query param', async () => {
+		it( 'requests the rich poll payload (no `fields` restriction)', async () => {
 			let captured;
 			nock( BASE )
 				.get( '/rest/v1.2/read/liked' )
@@ -915,8 +900,12 @@ describe( 'requestPage thunk', () => {
 			const { result } = runThunk( { streamKey: 'likes', isPoll: true } );
 			await result;
 
-			expect( captured.fields ).toBeDefined();
-			expect( captured.fields.split( ',' ) ).toContain( 'date_liked' );
+			// `getQueryStringForPoll` no longer restricts fields — the API
+			// returns `date_liked` (and other stream extras) by default. The
+			// response shape mirrors a regular page fetch so consumers can
+			// dispatch the head straight into `state.reader.posts`.
+			expect( captured.fields ).toBeUndefined();
+			expect( captured.meta ).toBe( 'post,discover_original_post' );
 		} );
 
 		it( 'does not send the selected Recent feed id in the poll query', async () => {

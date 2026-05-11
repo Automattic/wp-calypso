@@ -17,6 +17,8 @@ export type CuratedBlog = {
 	site_ID: number;
 	site_URL: string;
 	site_name: string;
+	feed_URL: string;
+	has_icon: boolean;
 };
 
 export type CuratedBlogsList = Record< string, CuratedBlog[] >;

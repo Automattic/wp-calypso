@@ -258,7 +258,7 @@ test.describe(
 						await section.getByRole( 'button', { name: 'Select' } ).click();
 
 						const popoverGroup = page.getByRole( 'group', { name: 'Link preview' } );
-						const templatebutton = popoverGroup.getByRole( 'menuitem', {
+						const templatebutton = popoverGroup.getByRole( 'menuitemradio', {
 							name: 'Social image template',
 						} );
 
