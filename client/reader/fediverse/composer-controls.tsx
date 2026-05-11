@@ -1,6 +1,5 @@
 import {
 	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
 	BaseControl,
 	RadioControl,
 	TextControl,
@@ -19,20 +18,22 @@ interface Props {
 	onCwToggle: ( enabled: boolean ) => void;
 	summary: string;
 	onSummaryChange: ( value: string ) => void;
-	sensitive: boolean;
-	onSensitiveToggle: ( value: boolean ) => void;
 	disabled?: boolean;
 }
 
 /**
- * The three protocol-specific controls slotted between the composer
- * textarea and the footer for Fediverse:
+ * The protocol-specific controls slotted between the composer textarea
+ * and the footer for Fediverse:
  *  1. Visibility radio (public / unlisted / followers — `direct` is
  *     intentionally omitted, not yet supported backend-side per CM-704).
  *  2. Content-warning toggle + 100-char `summary` input (revealed when
  *     the toggle is on; maps to the AP `summary` field).
- *  3. Sensitive flag (AP `sensitive` boolean; media-blur gate, exposed
- *     now so the composer shape stays stable when media support lands).
+ *
+ * AP `sensitive` flag (media-blur gate) was removed from the surface
+ * while slice 2 has no media support — there's nothing for the flag to
+ * gate. Re-introduce it alongside the media slot in a follow-up slice;
+ * the wire type still carries `sensitive?: boolean` so the round-trip
+ * stays stable.
  */
 export function FediverseComposerControls( {
 	visibility,
@@ -41,8 +42,6 @@ export function FediverseComposerControls( {
 	onCwToggle,
 	summary,
 	onSummaryChange,
-	sensitive,
-	onSensitiveToggle,
 	disabled,
 }: Props ) {
 	const translate = useTranslate();
@@ -85,22 +84,13 @@ export function FediverseComposerControls( {
 				/>
 			</BaseControl>
 
-			<HStack justify="flex-start" spacing={ 4 } wrap>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					label={ String( translate( 'Add content warning' ) ) }
-					checked={ cwEnabled }
-					onChange={ onCwToggle }
-					disabled={ disabled }
-				/>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					label={ String( translate( 'Mark media as sensitive' ) ) }
-					checked={ sensitive }
-					onChange={ onSensitiveToggle }
-					disabled={ disabled }
-				/>
-			</HStack>
+			<ToggleControl
+				__nextHasNoMarginBottom
+				label={ String( translate( 'Add content warning' ) ) }
+				checked={ cwEnabled }
+				onChange={ onCwToggle }
+				disabled={ disabled }
+			/>
 
 			{ cwEnabled && (
 				<TextControl

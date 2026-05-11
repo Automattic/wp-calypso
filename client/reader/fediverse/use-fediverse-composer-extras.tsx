@@ -79,7 +79,6 @@ export function useFediverseComposerExtras( ctx: {
 	const [ visibility, setVisibility ] = useState< FediverseVisibility >( blogDefault );
 	const [ cwEnabled, setCwEnabled ] = useState( false );
 	const [ summary, setSummary ] = useState( '' );
-	const [ sensitive, setSensitive ] = useState( false );
 	// One Idempotency-Key per modal session — stays stable across user-initiated
 	// retries after a network error so the backend's de-dupe table can suppress
 	// the duplicate publish. Rotates only when the modal closes (`clear`).
@@ -116,11 +115,9 @@ export function useFediverseComposerExtras( ctx: {
 				} }
 				summary={ summary }
 				onSummaryChange={ setSummary }
-				sensitive={ sensitive }
-				onSensitiveToggle={ setSensitive }
 			/>
 		),
-		[ visibility, cwEnabled, summary, sensitive, connectionId ]
+		[ visibility, cwEnabled, summary, connectionId ]
 	);
 
 	const extendBuildParams = useCallback(
@@ -136,18 +133,16 @@ export function useFediverseComposerExtras( ctx: {
 				...base,
 				visibility,
 				...( cwEnabled && summary.trim().length > 0 ? { summary } : {} ),
-				...( sensitive ? { sensitive: true } : {} ),
 				idempotencyKey: idempotencyKeyRef.current,
 			};
 		},
-		[ visibility, cwEnabled, summary, sensitive ]
+		[ visibility, cwEnabled, summary ]
 	);
 
 	const clear = useCallback( () => {
 		setVisibility( blogDefault );
 		setCwEnabled( false );
 		setSummary( '' );
-		setSensitive( false );
 		idempotencyKeyRef.current = null;
 	}, [ blogDefault ] );
 
