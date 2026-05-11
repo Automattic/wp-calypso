@@ -476,7 +476,31 @@ describe( 'useReelShare', () => {
 		} );
 	} );
 
-	describe( 'click-time freshness', () => {
+	describe( 'freshness', () => {
+		it( 'skips any non-IG connection that hydrates while the confirmation dialog is open', async () => {
+			// Initially only the IG connection exists.
+			mockState.connections = [ igConnection ];
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+
+			// A new non-IG connection hydrates after the dialog opened. The
+			// skipped list must be recomputed at confirm time so the Reel does
+			// not also publish to this newly enabled network.
+			mockState.connections = [ igConnection, twitterConnection ];
+
+			await act( async () => {
+				await result.current.confirmShare();
+			} );
+
+			expect( mockShareCurrentPost ).toHaveBeenCalledWith(
+				expect.objectContaining( { skipped_connections: [ '1002' ] } ),
+				expect.any( Object )
+			);
+		} );
+
 		it( 'rechecks the IG connection at click time even if useSelect missed it', async () => {
 			// Render with no IG connection — simulates the wp-data subscription
 			// missing the social store at mount time.

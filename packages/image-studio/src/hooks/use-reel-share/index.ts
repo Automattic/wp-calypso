@@ -41,7 +41,6 @@ interface JetpackSocialOptions {
 }
 
 interface PendingShare {
-	skipped: string[];
 	igDisplayName: string | null;
 }
 
@@ -196,12 +195,8 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			| { getConnections: () => Connection[] }
 			| undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
-		const freshEnabledConnections = freshConnections.filter( ( c ) => c.enabled !== false );
 		const freshIgConnection = freshConnections.find( ( c ) => c.service_name === IG_SERVICE );
 		const freshIgIsEnabled = !! freshIgConnection && freshIgConnection.enabled !== false;
-		const freshSkipped = freshEnabledConnections
-			.filter( ( c ) => c.service_name !== IG_SERVICE )
-			.map( ( c ) => String( c.connection_id ) );
 
 		const freshEditor = freshSelect( EDITOR_STORE ) as
 			| { isCurrentPostPublished: () => boolean }
@@ -269,7 +264,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		const resolvedHandle =
 			freshIgConnection.display_name || freshIgConnection.external_handle || null;
 
-		setPendingShare( { skipped: freshSkipped, igDisplayName: resolvedHandle } );
+		setPendingShare( { igDisplayName: resolvedHandle } );
 	}, [
 		currentAttachmentId,
 		currentDurationSeconds,
@@ -298,7 +293,18 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			return;
 		}
 
-		const { skipped } = pendingShare;
+		// Recompute the non-IG enabled connection IDs at confirm time. Capturing
+		// the list at requestShare time would miss any connection that finishes
+		// hydrating while the dialog is open — those would NOT be in
+		// `skipped_connections` and the Reel would also publish to them.
+		const freshSocial = freshSelect( SOCIAL_STORE ) as
+			| { getConnections: () => Connection[] }
+			| undefined;
+		const freshConnections = freshSocial?.getConnections?.() ?? [];
+		const skipped = freshConnections
+			.filter( ( c ) => c.enabled !== false && c.service_name !== IG_SERVICE )
+			.map( ( c ) => String( c.connection_id ) );
+
 		setPendingShare( null );
 
 		const existingSocialOptions =
