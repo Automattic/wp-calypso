@@ -21,6 +21,7 @@
 import { ThinkingMessage } from '@automattic/agenttic-ui';
 import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore } from '../stores/video-studio';
 import type { FeatureClipProgressPhase } from '../stores/video-studio';
 
@@ -87,6 +88,12 @@ export function buildFeatureClipThinkingLabel( {
  */
 export function useFeatureClipThinkingLabel(): string | null {
 	return useSelect( ( select ) => {
+		// Gate on entry point — selectedStyle persists across flows, so without
+		// this the highlights label leaks into image-edit / Veo-video flows.
+		const entryPoint = select( imageStudioStore ).getEntryPoint();
+		if ( entryPoint !== ImageStudioEntryPoint.PostEditorFeatureClip ) {
+			return null;
+		}
 		const store = select( videoStudioStore ) as ReturnType<
 			typeof select< typeof videoStudioStore >
 		> & {
