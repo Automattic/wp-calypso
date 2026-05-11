@@ -16,6 +16,30 @@ export interface UploadedFeatureClip {
  * Attachment objects (first a blob URL, eventually the full attachment with
  * an `id`). We resolve only on the latter.
  */
+// Parse a duration from the WP attachment payload. The REST API exposes
+// `media_details.length` (number, seconds) and sometimes `length_formatted`
+// ("0:24") — `fileLength` on the older shape was unreliable (string or
+// missing). Falls back to 0 when nothing usable is present; the renderer
+// treats 0 as "unknown duration".
+function resolveDurationSeconds( media: Partial< Attachment > ): number {
+	const details = ( media as { media_details?: { length?: unknown; length_formatted?: unknown } } )
+		.media_details;
+	if ( details && typeof details.length === 'number' && isFinite( details.length ) ) {
+		return Math.round( details.length );
+	}
+	if ( details && typeof details.length_formatted === 'string' ) {
+		const parts = details.length_formatted.split( ':' ).map( ( p ) => Number( p ) );
+		if ( parts.every( ( p ) => Number.isFinite( p ) ) ) {
+			return parts.reduce( ( acc, p ) => acc * 60 + p, 0 );
+		}
+	}
+	const fileLength = ( media as { fileLength?: unknown } ).fileLength;
+	if ( typeof fileLength === 'number' && isFinite( fileLength ) ) {
+		return Math.round( fileLength );
+	}
+	return 0;
+}
+
 export function uploadFeatureClipBlob( blob: Blob ): Promise< UploadedFeatureClip > {
 	const filename = `feature-clip-${ Date.now() }.mp4`;
 	const file = new File( [ blob ], filename, { type: 'video/mp4' } );
@@ -29,10 +53,7 @@ export function uploadFeatureClipBlob( blob: Blob ): Promise< UploadedFeatureCli
 					resolve( {
 						id: media.id,
 						url: media.url ?? '',
-						durationSeconds:
-							typeof ( media as { fileLength?: number } ).fileLength === 'number'
-								? Math.round( ( media as { fileLength?: number } ).fileLength as number )
-								: 0,
+						durationSeconds: resolveDurationSeconds( media ),
 					} );
 				}
 			},

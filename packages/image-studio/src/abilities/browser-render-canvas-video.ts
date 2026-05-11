@@ -79,6 +79,27 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 	) {
 		throw new Error( 'brief.titleCard.copy must be a string.' );
 	}
+	const titleCard = candidate.titleCard as { cta?: unknown };
+	if (
+		titleCard.cta !== undefined &&
+		titleCard.cta !== null &&
+		typeof titleCard.cta !== 'string'
+	) {
+		throw new Error( 'brief.titleCard.cta must be a string or null when present.' );
+	}
+	// audioBed must match the FeatureClipAudioBed union — installAudioBed
+	// indexes a mood profile by this value and throws on anything else. Coerce
+	// unknown values to undefined (renderer treats absent as silent) rather
+	// than rejecting outright so a stray LLM string doesn't kill the render.
+	const audioBed = candidate.audioBed;
+	if (
+		audioBed !== undefined &&
+		audioBed !== 'silent' &&
+		audioBed !== 'contemplative' &&
+		audioBed !== 'energetic'
+	) {
+		delete candidate.audioBed;
+	}
 	return candidate as unknown as FeatureClipBrief;
 }
 

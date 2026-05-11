@@ -52,19 +52,22 @@ interface RenderToVideoTimegroup extends HTMLElement {
 	renderToVideo: ( options: Record< string, unknown > ) => Promise< unknown >;
 }
 
-async function isImageReachable( url: string ): Promise< boolean > {
-	try {
-		const isSameOrigin =
-			typeof window !== 'undefined' &&
-			new URL( url, window.location.href ).origin === window.location.origin;
-		const response = await fetch( url, {
-			method: 'HEAD',
-			credentials: isSameOrigin ? 'same-origin' : 'omit',
-		} );
-		return response.ok;
-	} catch {
-		return false;
-	}
+// Probe via <img> rather than HEAD fetch — fetch HEAD on a cross-origin
+// URL usually trips CORS even when an <img> tag would load fine, so HEAD
+// produced false negatives and degraded scenes to text-only unnecessarily.
+// Image().onload/onerror fires for any URL the browser can decode, which is
+// exactly what EFImage uses downstream.
+function isImageReachable( url: string ): Promise< boolean > {
+	return new Promise( ( resolve ) => {
+		if ( typeof window === 'undefined' ) {
+			resolve( false );
+			return;
+		}
+		const img = new window.Image();
+		img.onload = () => resolve( true );
+		img.onerror = () => resolve( false );
+		img.src = url;
+	} );
 }
 
 // Strip the imageUrl on unreachable scenes — keeps the text overlay so a
@@ -187,9 +190,11 @@ export function FeatureClipRenderHost() {
 	// orchestrator on "Tool calls without results."
 	const prefetchedRequestIdRef = useRef< string | null >( null );
 
-	// When a new pendingRender appears, prefetch its scene images into data URLs
-	// before mounting the compositor. EditFrame's EFImage rewrites non-data: src
-	// to a backend asset-proxy URL we don't host, so direct site URLs 404.
+	// When a new pendingRender appears, probe each scene image's reachability
+	// before mounting. Unreachable URLs get stripped so the scene renders as
+	// text-on-gradient instead of a broken-image placeholder being captured
+	// into the MP4. (Pre-EditFrame-0.53 we base64-inlined each image to bypass
+	// the asset-proxy rewrite; 0.53's `imageProxy="none"` makes that obsolete.)
 	useEffect( () => {
 		if ( ! pendingRender ) {
 			prefetchedRequestIdRef.current = null;

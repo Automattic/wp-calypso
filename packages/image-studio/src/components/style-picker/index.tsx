@@ -207,9 +207,13 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 					<button
 						key={ option.value }
 						type="button"
-						// aria-disabled, not `disabled`, so the title tooltip
-						// fires on hover (disabled buttons don't get hover events).
+						// aria-disabled + tabIndex=-1 instead of the `disabled`
+						// attribute: native `disabled` blocks hover, so the
+						// title tooltip never surfaces. tabIndex=-1 removes
+						// the button from the keyboard tab order and the
+						// keydown guard short-circuits Enter/Space activation.
 						aria-disabled={ option.disabled || undefined }
+						tabIndex={ option.disabled ? -1 : undefined }
 						title={ option.disabled ? option.disabledReason : undefined }
 						className={ cn( 'image-studio-input-toolbar-card', {
 							'is-selected': selectedStyle === option.value,
@@ -220,6 +224,11 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 								return;
 							}
 							handleStyleSelect( option.value );
+						} }
+						onKeyDown={ ( event ) => {
+							if ( option.disabled && ( event.key === 'Enter' || event.key === ' ' ) ) {
+								event.preventDefault();
+							}
 						} }
 					>
 						<span className="image-studio-input-toolbar-card__image-wrapper">
