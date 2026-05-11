@@ -1,16 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SearchForm } from '..';
-import * as useContainerQueryModule from '../../../hooks/use-container-query';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
-
-jest.mock( '../../../hooks/use-container-query', () => ( {
-	useContainerQuery: jest.fn().mockReturnValue( {
-		activeQuery: 'large',
-		currentWidth: 480,
-		ref: jest.fn(),
-	} ),
-} ) );
 
 const expectPlaceholderPhrase = ( phrase: string ) => {
 	// Initial state
@@ -72,14 +63,8 @@ describe( 'SearchForm', () => {
 		expect( onQueryChange ).toHaveBeenCalledWith( 'studio' );
 	} );
 
-	it( 'hides the submit button on small screens', async () => {
+	it( 'submits via the Enter key', async () => {
 		const user = userEvent.setup();
-
-		jest.spyOn( useContainerQueryModule, 'useContainerQuery' ).mockReturnValue( {
-			activeQuery: 'small',
-			currentWidth: 479,
-			ref: jest.fn(),
-		} );
 
 		const onQueryChange = jest.fn();
 
@@ -89,7 +74,9 @@ describe( 'SearchForm', () => {
 			</TestDomainSearch>
 		);
 
-		expect( screen.queryByRole( 'button', { name: 'Search domains' } ) ).not.toBeInTheDocument();
+		// Submit button is rendered at every width now — keyboard
+		// submit (Enter) should still work as an alternate path.
+		expect( screen.getByRole( 'button', { name: 'Search domains' } ) ).toBeInTheDocument();
 
 		await user.type( screen.getByRole( 'searchbox' ), 'test' );
 		await user.type( screen.getByRole( 'searchbox' ), '{enter}' );

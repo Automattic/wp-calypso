@@ -7,7 +7,6 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useContainerQuery } from '../../hooks/use-container-query';
 import { useTypedPlaceholder } from '../../hooks/use-typed-placeholder';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
@@ -31,8 +30,6 @@ export const SearchForm = () => {
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
 
-	const { activeQuery, ref } = useContainerQuery( { small: 0, large: 480 } );
-
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		setQuery( localQuery );
@@ -45,7 +42,7 @@ export const SearchForm = () => {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 2 }>
-				<HStack alignment="flex-start" spacing={ 4 } ref={ ref }>
+				<HStack alignment="flex-start" spacing={ 4 }>
 					<DomainSearchControls.Input
 						value={ localQuery }
 						onChange={ ( value ) => setLocalQuery( value.trim() ) }
@@ -54,9 +51,7 @@ export const SearchForm = () => {
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
 					/>
-					{ activeQuery === 'large' && (
-						<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
-					) }
+					<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
 				</HStack>
 				{ showSearchHint && (
 					<Text variant="muted">
