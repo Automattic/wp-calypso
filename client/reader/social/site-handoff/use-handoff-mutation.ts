@@ -48,13 +48,6 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 	const { mutate, isPending } = useMutation( saveDraftMutation() );
 
 	const submit = ( { site, content }: { site: Site; content: string } ) => {
-		if ( options.tracks?.editorOpened ) {
-			const { event, props } = options.tracks.editorOpened( site.ID );
-			if ( event ) {
-				dispatch( recordReaderTracksEvent( event, props ) );
-			}
-		}
-
 		// Open the tab synchronously inside the click's user-gesture window so
 		// popup blockers don't reject the later navigation. We point it at
 		// about:blank now and redirect it to the editor URL once the draft
@@ -87,6 +80,18 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 							},
 						} )
 					);
+				}
+				// Fire the editor-opened Tracks event from the success path so
+				// it matches its name: the draft is saved and the tab is now
+				// navigating (or the user has the success-notice retry
+				// button). On error, only `errorShown` fires below — Track
+				// dashboards see one outcome event per submit instead of an
+				// `editor_opened` that overlaps with `error_shown`.
+				if ( options.tracks?.editorOpened ) {
+					const { event, props } = options.tracks.editorOpened( site.ID );
+					if ( event ) {
+						dispatch( recordReaderTracksEvent( event, props ) );
+					}
 				}
 				options.onSuccess?.();
 			},
