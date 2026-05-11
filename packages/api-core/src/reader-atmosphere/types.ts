@@ -404,3 +404,43 @@ export interface DeletePostParams {
 	connectionId: number;
 	rkey: string;
 }
+
+export type AtmosphereNotificationCanonicalType =
+	| 'like'
+	| 'repost'
+	| 'follow'
+	| 'mention'
+	| 'reply'
+	| 'quote'
+	| 'other';
+
+export interface AtmosphereNotificationActor {
+	handle: string;
+	display_name: string | null;
+	avatar_url: string | null;
+	profile_uri: string;
+}
+
+export interface AtmosphereNotificationTarget {
+	kind: 'post' | 'profile';
+	uri: string;
+	excerpt: string;
+}
+
+export interface AtmosphereNotification {
+	id: string;
+	protocol_type: string;
+	canonical_type: AtmosphereNotificationCanonicalType;
+	actor: AtmosphereNotificationActor;
+	target: AtmosphereNotificationTarget | null;
+	target_url: string;
+	created_at: string;
+	is_read: boolean;
+	raw: unknown;
+}
+
+export interface AtmosphereNotificationsPage {
+	items: AtmosphereNotification[];
+	next_cursor: string | null;
+	seen_at: string | null;
+}
