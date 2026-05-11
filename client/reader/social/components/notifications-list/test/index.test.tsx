@@ -21,7 +21,6 @@ const baseItem: AtmosphereNotification = {
 	target_url: 'https://bsky.app/profile/me/post/3k',
 	created_at: '2026-05-11T12:34:56Z',
 	is_read: false,
-	raw: {},
 };
 
 const baseProps = {

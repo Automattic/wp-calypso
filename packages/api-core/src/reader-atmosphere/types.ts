@@ -437,9 +437,11 @@ export interface AtmosphereNotificationTarget {
  * Envelope shape returned by
  * `/wpcom/v2/reader/atmosphere/connections/:id/notifications`.
  * `protocol_type` is the raw upstream string (verbatim, lossless);
- * `canonical_type` is the normalized enum. `raw` carries the original upstream
- * object for forward-compat rendering. `is_read` is server-computed against the
- * user's `seenAt` watermark.
+ * `canonical_type` is the normalized enum. There is no `raw` passthrough —
+ * `protocol_type` is the long-tail escape hatch for upstream kinds we don't
+ * yet render with bespoke templates. `created_at` is nullable: the backend
+ * returns `null` when `indexedAt` is missing or unparseable. `is_read` is
+ * server-computed against the user's `seenAt` watermark.
  */
 export interface AtmosphereNotification {
 	id: string;
@@ -449,9 +451,8 @@ export interface AtmosphereNotification {
 	actor: AtmosphereNotificationActor;
 	target: AtmosphereNotificationTarget | null;
 	target_url: string;
-	created_at: string;
+	created_at: string | null;
 	is_read: boolean;
-	raw: unknown;
 }
 
 /**
