@@ -1,5 +1,7 @@
 import { useFediverseConnectionsQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { FediverseComposerControls } from './composer-controls';
 import type { FediverseCreatePostParams, FediverseVisibility } from '@automattic/api-core';
 import type { ActiveMode, ComposerProtocolExtrasSlot } from 'calypso/reader/social/composer';
@@ -75,17 +77,30 @@ export function useFediverseComposerExtras( ctx: {
 	} );
 	// Optional-chain `connections` defensively — the wpcom proxy can hand back a
 	// 200 with `data` defined and `connections` missing (mid-deploy race on
-	// CM-684), in which case `.find()` would otherwise throw.
+	// CM-684), in which case `.find()` would otherwise throw. Log when that
+	// happens so the silent `'public'` fallback below stays observable; without
+	// the breadcrumb a proxy contract regression would silently route every
+	// publish at the default visibility.
+	const malformedRef = useRef( false );
+	if ( data && ! Array.isArray( data.connections ) && ! malformedRef.current ) {
+		malformedRef.current = true;
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Fediverse connections response missing `connections` array',
+			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+			extra: {
+				env: config( 'env_id' ),
+				type: 'reader_fediverse_connections_malformed',
+				connection_id: connectionId,
+			},
+		} );
+	}
 	const connection = data?.connections?.find( ( c ) => c.id === connectionId ) ?? null;
 	const blogDefault = connection?.default_visibility ?? 'public';
 
 	const [ visibility, setVisibility ] = useState< FediverseVisibility >( blogDefault );
 	const [ cwEnabled, setCwEnabled ] = useState( false );
 	const [ summary, setSummary ] = useState( '' );
-	// One Idempotency-Key per modal session — stays stable across user-initiated
-	// retries after a network error so the backend's de-dupe table can suppress
-	// the duplicate publish. Rotates only when the modal closes (`clear`).
-	const idempotencyKeyRef = useRef< string | null >( null );
 
 	// Apply localStorage override / blog default once the modal opens. Re-runs
 	// when the connection changes (the user navigates between connections
@@ -96,9 +111,6 @@ export function useFediverseComposerExtras( ctx: {
 		}
 		const stored = readLastVisibility( connectionId );
 		setVisibility( stored ?? blogDefault );
-		if ( ! idempotencyKeyRef.current ) {
-			idempotencyKeyRef.current = generateIdempotencyKey();
-		}
 	}, [ mode, connectionId, blogDefault ] );
 
 	const renderControls = useCallback(
@@ -126,17 +138,21 @@ export function useFediverseComposerExtras( ctx: {
 	const extendBuildParams = useCallback(
 		( params: unknown ): unknown => {
 			const base = params as FediverseCreatePostParams;
-			// Lazy-init in case `extendBuildParams` somehow runs before the
-			// `mode → open` effect (e.g. submit fires on the same render the
-			// modal opens). Cheap.
-			if ( ! idempotencyKeyRef.current ) {
-				idempotencyKeyRef.current = generateIdempotencyKey();
-			}
+			// Mint a fresh `Idempotency-Key` per submit attempt. Earlier
+			// iterations of this hook held a stable key across the whole
+			// modal session so the backend dedupe table could suppress a
+			// publish-time network retry — but that breaks when the user
+			// edits the body / visibility / CW after a failed submit:
+			// same key + different body would hit the dedupe table and
+			// could serve a cached failure (or a stale success) for the
+			// new content. Rotating per attempt trades the (rare)
+			// duplicate-publish-on-lost-response window for the (likelier)
+			// stale-cache-after-edit hazard the reviewer flagged.
 			return {
 				...base,
 				visibility,
 				...( cwEnabled && summary.trim().length > 0 ? { summary } : {} ),
-				idempotencyKey: idempotencyKeyRef.current,
+				idempotencyKey: generateIdempotencyKey(),
 			};
 		},
 		[ visibility, cwEnabled, summary ]
@@ -146,7 +162,6 @@ export function useFediverseComposerExtras( ctx: {
 		setVisibility( blogDefault );
 		setCwEnabled( false );
 		setSummary( '' );
-		idempotencyKeyRef.current = null;
 	}, [ blogDefault ] );
 
 	return { renderControls, extendBuildParams, clear };

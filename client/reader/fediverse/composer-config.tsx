@@ -145,11 +145,23 @@ function errorMessageFor( err: FediverseError, t: Translate ): ReactNode {
 		case 'unknown':
 			return t( 'Something went wrong. Try again in a moment.' );
 		default:
-			// Defensive fallback. Same pattern as the like / repost adapters —
-			// a future widening of `FediverseError` would otherwise surface an
-			// empty toast.
-			// eslint-disable-next-line no-console
-			console.warn( '[reader-fediverse] unhandled FediverseError kind in errorMessageFor()', err );
+			// Exhaustiveness gate — matches the Mastodon composer-config
+			// precedent (`client/reader/mastodon/composer-config.tsx`) and the
+			// project rule in `client/reader/social/AGENTS.md` § "Composer
+			// (slice 7)". A future widening of `FediverseError[ 'kind' ]`
+			// fails type-check here instead of silently rendering the generic
+			// toast; the logstash breadcrumb surfaces production drift.
+			err satisfies never;
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: 'Fediverse composer unhandled error kind',
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'reader_fediverse_composer_unhandled_error_kind',
+					error: err,
+				},
+			} );
 			return t( 'Something went wrong. Try again in a moment.' );
 	}
 }

@@ -146,23 +146,27 @@ export function ComposerModal< TError, TParams, TResult >() {
 			return;
 		}
 		const baseParams = config.buildParams( mode, text );
-		// First merge any protocol-specific extras (visibility, content
-		// warning, sensitive flag, etc.) — they're sync and never reject.
-		const baseParamsWithExtras = protocolExtrasSlot.extendBuildParams( baseParams ) as TParams;
-		// `extendBuildParams` may return synchronously (atmosphere) or as a
-		// Promise (mastodon, where staged media is uploaded at publish time).
-		// Awaiting in both cases keeps the call site uniform; sync returns
-		// resolve in a microtask without changing observable behaviour.
-		// A rejection here (e.g. a Mastodon media upload failing with a
-		// classified `MastodonError`) must surface through the same path as a
-		// post-mutation error: `config.errorMessage` rendered in the visible
-		// error region + `tracks.errorShown` fired. We funnel the rejection
-		// into local `extendError` state which `displayError` ORs into the
-		// rendered error and the analytics-watching effect, so the UX is
-		// indistinguishable from a `mutation.error`.
+		// Run protocol-extras then media-extras through the same try/catch.
+		// `protocolExtrasSlot.extendBuildParams` is typed as
+		// `( params: unknown ) => unknown` — sync today, but the contract
+		// doesn't forbid throws (or a future async widening for handle
+		// validation, derived params, etc.). Without the guard a throw here
+		// would skip the mutation, leave `mutation.isPending` false, and
+		// leave the Post button enabled with no error UI. Awaiting handles
+		// both sync and Promise returns uniformly.
+		// A rejection in either step (e.g. a Mastodon media upload failing
+		// with a classified `MastodonError`) must surface through the same
+		// path as a post-mutation error: `config.errorMessage` rendered in
+		// the visible error region + `tracks.errorShown` fired. We funnel
+		// the rejection into local `extendError` state which `displayError`
+		// ORs into the rendered error and the analytics-watching effect, so
+		// the UX is indistinguishable from a `mutation.error`.
 		let params: TParams;
 		setIsExtending( true );
 		try {
+			const baseParamsWithExtras = ( await protocolExtrasSlot.extendBuildParams(
+				baseParams
+			) ) as TParams;
 			params = ( await mediaSlot.extendBuildParams( baseParamsWithExtras ) ) as TParams;
 		} catch ( error ) {
 			setExtendError( error as TError );

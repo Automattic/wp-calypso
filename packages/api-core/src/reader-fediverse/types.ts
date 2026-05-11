@@ -47,14 +47,6 @@ export interface FediverseConnection {
 	/** Webfinger handle, e.g. `@myblog@myblog.wordpress.com`. */
 	webfinger: string;
 	/**
-	 * Per-blog grapheme cap for new posts. Surfaced by the connections
-	 * endpoint so the composer can validate against the blog's configured
-	 * cap rather than a hardcoded 500 — the AP plugin allows per-blog
-	 * overrides for long-form notes. Optional during the backend rollout
-	 * window; consumers default to 500 when absent.
-	 */
-	character_limit?: number;
-	/**
 	 * Blog-level default visibility for new posts. The composer's
 	 * visibility selector initialises to this value (modulo a localStorage
 	 * override carrying the user's last pick). Optional during the

@@ -46,6 +46,22 @@ export const fediverseConnectionsQueryOptions = () =>
 		// rarely change within a session and the list view re-mounts on
 		// every back-from-account navigation.
 		staleTime: 60_000,
+		// Same transient-error retry posture as every other query in this
+		// file. Without it a `rate_limited` 429 fails fast → `connection`
+		// resolves to `null` → the composer's `blogDefault` collapses to
+		// `'public'`, silently dropping the user's per-blog default.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
 	} );
 
 export function useFediverseConnectionsQuery( { enabled }: { enabled?: boolean } = {} ) {

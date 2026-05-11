@@ -249,8 +249,14 @@ export interface ComposerProtocolExtrasSlot {
 	 * then passes the result through this hook AND through `useMedia`'s
 	 * `extendBuildParams` (in that order) for the merged payload.
 	 * `unknown` keeps the slot opaque — implementations cast.
+	 *
+	 * Returning a Promise lets a per-protocol slot defer wire work (e.g.
+	 * handle validation, derived params). The modal awaits the result and
+	 * funnels any rejection through the same error path as a mutation
+	 * failure. Atmosphere/Mastodon don't ship this slot; Fediverse returns
+	 * synchronously today.
 	 */
-	extendBuildParams: ( params: unknown ) => unknown;
+	extendBuildParams: ( params: unknown ) => unknown | Promise< unknown >;
 	/**
 	 * Drop all extras state. Called by the provider when `mode` transitions
 	 * to `null` (modal closed / discarded / published).
