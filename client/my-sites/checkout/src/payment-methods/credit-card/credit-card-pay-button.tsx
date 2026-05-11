@@ -8,6 +8,7 @@ import debugFactory from 'debug';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { useSubmitButtonColor } from '../../hooks/use-submit-button-color';
 import { useVgsFormSubmit } from '../../hooks/use-vgs-form-submit';
 import { useVgsFormValidation } from '../../hooks/use-vgs-form-validation';
 import { logStashEvent } from '../../lib/analytics';
@@ -58,6 +59,7 @@ export default function CreditCardPayButton( {
 	const elements = useElements();
 	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
 
+	const submitButtonColor = useSubmitButtonColor();
 	const [ displayFieldsError, setDisplayFieldsError ] = useState( '' );
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
@@ -79,6 +81,7 @@ export default function CreditCardPayButton( {
 	return (
 		<Button
 			disabled={ disabled }
+			style={ { backgroundColor: submitButtonColor } }
 			onClick={ async () => {
 				if ( ! isCreditCardFormValid( store, paymentPartner, __, setDisplayFieldsError ) ) {
 					return;
