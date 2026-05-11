@@ -3,7 +3,6 @@
  */
 
 import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -12,15 +11,11 @@ import { DarkModeAnnouncement } from '..';
 import { ColorSchemeProvider } from '../../../app/color-scheme';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
+import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( () => 'development' );
-	return Object.assign( config, {
-		__esModule: true,
-		default: config,
-		isEnabled: jest.fn( () => false ),
-	} );
-} );
+jest.mock( '../../../utils/is-dashboard-backport', () => ( {
+	isDashboardBackport: jest.fn( () => false ),
+} ) );
 
 const API_BASE = 'https://public-api.wordpress.com';
 const PREFERENCES_PATH = '/rest/v1.1/me/preferences';
@@ -31,22 +26,23 @@ const optInPreference = {
 	value: 'opt-in',
 	updated_at: '2026-05-08T00:00:00.000Z',
 };
-const mockIsEnabled = jest.mocked( isEnabled );
+const mockIsDashboardBackport = jest.mocked( isDashboardBackport );
 const mockUpdatePreference = jest.fn();
 const dashboardConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,
 	optIn: true,
 	supports: {
 		...APP_CONTEXT_DEFAULT_CONFIG.supports,
+		colorScheme: true,
 		darkMode: true,
 	},
 };
 
-const renderAnnouncement = ( preferences: Record< string, unknown > ) => {
+const renderAnnouncement = ( preferences: Record< string, unknown >, config = dashboardConfig ) => {
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, preferences );
 
 	return render(
-		<AppProvider config={ dashboardConfig }>
+		<AppProvider config={ config }>
 			<ColorSchemeProvider>
 				<DarkModeAnnouncement tracksContext="sites" />
 			</ColorSchemeProvider>
@@ -82,7 +78,7 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	mockIsEnabled.mockReturnValue( false );
+	mockIsDashboardBackport.mockReturnValue( false );
 	document.documentElement.removeAttribute( 'data-theme' );
 } );
 
@@ -194,10 +190,10 @@ test( 'renders when the saved color scheme is invalid', async () => {
 	expect( document.documentElement.dataset.theme ).toBe( 'light' );
 } );
 
-test( 'renders for a forced opted-in user without a saved color scheme', async () => {
+test( 'renders when the user has opted out of the Hosting Dashboard', async () => {
 	renderAnnouncement( {
 		'hosting-dashboard-opt-in': {
-			value: 'forced-opt-in',
+			value: 'opt-out',
 			updated_at: '2026-05-08T00:00:00.000Z',
 		},
 	} );
@@ -207,15 +203,8 @@ test( 'renders for a forced opted-in user without a saved color scheme', async (
 	).toBeVisible();
 } );
 
-test( 'renders when the forced opt-in flag enrolls the user', async () => {
-	mockIsEnabled.mockReturnValue( true );
-
-	renderAnnouncement( {
-		'hosting-dashboard-opt-in': {
-			value: 'unset',
-			updated_at: '',
-		},
-	} );
+test( 'renders when the opt-in preference is missing', async () => {
+	renderAnnouncement( {} );
 
 	expect(
 		await screen.findByText( /Dark mode support is now available in the dashboard/i )
@@ -235,13 +224,56 @@ test( 'does not render when the announcement was already dismissed', async () =>
 	} );
 } );
 
-test( 'does not render when the user is not enrolled in the Hosting Dashboard', async () => {
+test( 'does not render in the Dashboard backport', async () => {
+	mockIsDashboardBackport.mockReturnValue( true );
+
 	renderAnnouncement( {
-		'hosting-dashboard-opt-in': {
-			value: 'opt-out',
-			updated_at: '2026-05-08T00:00:00.000Z',
-		},
+		'hosting-dashboard-opt-in': optInPreference,
 	} );
+
+	await waitFor( () => {
+		expect(
+			screen.queryByText( /Dark mode support is now available in the dashboard/i )
+		).not.toBeInTheDocument();
+	} );
+} );
+
+test( 'does not render when dark mode is not supported by the Dashboard config', async () => {
+	renderAnnouncement(
+		{
+			'hosting-dashboard-opt-in': optInPreference,
+		},
+		{
+			...dashboardConfig,
+			supports: {
+				...dashboardConfig.supports,
+				colorScheme: true,
+				darkMode: false,
+			},
+		}
+	);
+
+	await waitFor( () => {
+		expect(
+			screen.queryByText( /Dark mode support is now available in the dashboard/i )
+		).not.toBeInTheDocument();
+	} );
+} );
+
+test( 'does not render when color scheme is not supported by the Dashboard config', async () => {
+	renderAnnouncement(
+		{
+			'hosting-dashboard-opt-in': optInPreference,
+		},
+		{
+			...dashboardConfig,
+			supports: {
+				...dashboardConfig.supports,
+				colorScheme: false,
+				darkMode: true,
+			},
+		}
+	);
 
 	await waitFor( () => {
 		expect(
