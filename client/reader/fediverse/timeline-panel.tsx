@@ -48,7 +48,13 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 			(
 				data?.pages
 					.flatMap( ( page ) => page.items ?? [] )
-					.filter( ( post ): post is FediverseFeedItem => Boolean( post?.url ) ) ?? []
+					// Filter on `id` — the canonical keyring-scoped identifier per the
+					// wire types. `url` is the permalink and is documented as always
+					// present today, but filtering on it is brittle: future variants
+					// (placeholder items inserted by an optimistic mutation, AP
+					// `Article` objects without a canonical permalink, etc.) would be
+					// silently dropped.
+					.filter( ( post ): post is FediverseFeedItem => Boolean( post?.id ) ) ?? []
 			).map( ( item ) => mapFediverseFeedItemToSocialPost( item, { host } ) ),
 		[ data, host ]
 	);
