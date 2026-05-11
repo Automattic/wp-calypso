@@ -45,9 +45,6 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 	if ( ! Array.isArray( candidate.scenes ) ) {
 		throw new Error( 'brief.scenes must be an array.' );
 	}
-	// Fail-fast per-scene validation — downstream code calls .startsWith on
-	// imageUrl and uses camera as a class-name suffix, so malformed scenes
-	// would throw deep in the renderer with a useless stack.
 	const validCameras: ReadonlySet< string > = new Set( [
 		'zoom-in',
 		'zoom-out',

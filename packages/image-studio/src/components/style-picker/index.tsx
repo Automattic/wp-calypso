@@ -40,14 +40,7 @@ interface StyleOption {
 	label: string;
 	value: string;
 	preview: string;
-	// One-line explainer rendered under the label. Video styles use this
-	// to differentiate Cinematic (Veo prompt-driven) from Highlights
-	// (browser-rendered recap from post images). Image styles omit it.
 	description?: string;
-	// Hard-disabled in the picker (e.g. browser lacks the WebCodecs APIs
-	// the Highlights flow requires). The card still renders so users see
-	// the option exists; click is a no-op and `disabledReason` shows in
-	// the tooltip.
 	disabled?: boolean;
 	disabledReason?: string;
 }
@@ -137,12 +130,8 @@ export const STYLE_OPTIONS: StyleOption[] = [
 	},
 ];
 
-// Top-level video style choices, named for users (not video editors).
-//   Cinematic  → AI-generated single atmospheric shot. Veo path (server).
-//   Highlights → Browser-rendered walkthrough of the post's key points +
-//                images. EditFrame path; gated on WebCodecs support so
-//                we render the Highlights card disabled (with tooltip)
-//                on browsers that can't run the encoder.
+// Highlights is gated on WebCodecs support — disabled with a tooltip on
+// browsers that can't run the in-browser encoder.
 export const VIDEO_STYLE_OPTIONS: StyleOption[] = ( () => {
 	const capabilities = getFeatureClipCapabilities();
 	return [
@@ -168,9 +157,8 @@ export const VIDEO_STYLE_OPTIONS: StyleOption[] = ( () => {
 
 export function StylePicker( { disabled = false, mode, variant = 'image' }: StylePickerProps ) {
 	const isVideo = variant === 'video';
-	// Video and image variants live in independent stores so the two slices
-	// never collide — the video bundle's "Style" is unrelated to the image
-	// bundle's "Style".
+	// Video and image variants live in independent stores — the two "Style"
+	// slices are unrelated.
 	const targetStore = isVideo ? videoStudioStore : imageStudioStore;
 
 	const { setSelectedStyle } = useDispatch( targetStore );
@@ -186,12 +174,10 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 
 	const handleStyleSelect = ( value: string ) => {
 		setSelectedStyle( value );
-		// Track style selection
 		trackImageStudioStyleSelected( { style: value, mode } );
-		// Close dropdown by triggering a mousedown event outside the InputToolbar container
-		// We use requestAnimationFrame to ensure the state update completes first
+		// rAF + outside-mousedown closes the InputToolbar via its click-outside
+		// handler. State update must commit first or the toolbar can re-open.
 		requestAnimationFrame( () => {
-			// This will trigger the InputToolbar's click-outside handler to close the dropdown
 			document.body.dispatchEvent(
 				new MouseEvent( 'mousedown', {
 					bubbles: true,
@@ -221,9 +207,8 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 					<button
 						key={ option.value }
 						type="button"
-						// aria-disabled (not the `disabled` attribute) so the native
-						// title tooltip still fires on hover — disabled buttons
-						// don't receive hover events in most browsers.
+						// aria-disabled, not `disabled`, so the title tooltip
+						// fires on hover (disabled buttons don't get hover events).
 						aria-disabled={ option.disabled || undefined }
 						title={ option.disabled ? option.disabledReason : undefined }
 						className={ cn( 'image-studio-input-toolbar-card', {

@@ -46,19 +46,6 @@ interface RenderToVideoTimegroup extends HTMLElement {
 	renderToVideo: ( options: Record< string, unknown > ) => Promise< unknown >;
 }
 
-/**
- * Pre-flight validate that a scene image URL is fetchable. EditFrame's
- * <EFImage> in 0.53.0 with `imageProxy="none"` loads URLs directly, so we
- * no longer need to base64-inline them — but we still want to know up
- * front which scene images will fail (private-site uploads, CORS-blocked
- * hosts, 404s) so we can strip the imageUrl and fall back to a text-on-
- * gradient render before mount instead of seeing broken-image placeholders
- * captured into the MP4.
- *
- * HEAD-only — the request is cheap and discards the body. Cross-origin
- * HEAD without credentials avoids a CORS preflight in most cases; same-
- * origin keeps cookies so private-site media auth works.
- */
 async function isImageReachable( url: string ): Promise< boolean > {
 	try {
 		const isSameOrigin =
@@ -74,12 +61,13 @@ async function isImageReachable( url: string ): Promise< boolean > {
 	}
 }
 
+// Strip the imageUrl on unreachable scenes — keeps the text overlay so a
+// post with all-failing images still renders as text-on-gradient instead
+// of collapsing to a title-card-only clip.
 async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureClipBrief > {
 	if ( ! brief.scenes || brief.scenes.length === 0 ) {
 		return brief;
 	}
-	// Dedupe the validation calls when consecutive scenes share an imageUrl
-	// (the supported grouping signal). Each unique URL is HEAD'd once.
 	const reachability = new Map< string, Promise< boolean > >();
 	const settled = await Promise.all(
 		brief.scenes.map( async ( scene ) => {
@@ -94,11 +82,6 @@ async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureCl
 			if ( await probe ) {
 				return scene;
 			}
-			// Strip the unreachable imageUrl, keep the text overlay so the
-			// composition falls back to a gradient-background scene. Dropping
-			// the whole scene would lose the LLM-summarized content; if every
-			// image fails, this preserves the ~20 s text-driven clip instead
-			// of collapsing to title-card-only.
 			// eslint-disable-next-line no-console
 			console.warn( '[FeatureClipRenderHost] image not reachable; rendering scene as text-only', {
 				imageUrl: scene.imageUrl,

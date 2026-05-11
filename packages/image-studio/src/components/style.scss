@@ -581,7 +581,8 @@ body.js.is-image-studio-open {
 	// One-line explainer below the label (currently only the video styles
 	// use this — image styles are self-explanatory by their names).
 	&__description {
-		font-size: $text-xs;
+		font-size: 11px;
+		font-style: italic;
 		line-height: 1.4;
 		text-align: center;
 		color: #b0b0b0;
@@ -620,39 +621,13 @@ body.js.is-image-studio-open {
 }
 
 /*
- * While a Highlights clip is rendering (~60-90s), EditFrame's per-frame
- * DOM→SVG capture saturates the main thread AND the heaviest captured
- * frame work (image decode, drawImage) contends for paint/GPU resources.
- * Earlier attempts to keep specific animations smooth (will-change,
- * isolation, layer promotion, selective suppression) didn't hold up in
- * practice — the agenttic ThinkingMessage shimmer animates background-
- * position (paint-thread bound, can't be promoted) and the rotating SVG
- * stuttered too even with layer hints.
- *
- * Simpler, decisive approach: just freeze every animation in the modal
- * while rendering. Frozen mid-animation reads as a deliberate "paused"
- * state, which is far better UX than visible jitter. Frame rate +
- * bitrate cuts in RENDER_OPTIONS still apply on top of this to lighten
- * the main thread; that work just isn't competing with anything visible
- * any more.
+ * While a Highlights clip is rendering the central rotating SVG is the one
+ * animation guaranteed to stutter under render-thread load — pin it to its
+ * base state so it reads as a deliberate pause. Other animations (most
+ * notably the thinking-message shimmer + percentage update) are left alive
+ * so users see the render is making progress.
  */
 .image-studio-modal--rendering-feature-clip {
-	*,
-	*::before,
-	*::after {
-		animation-play-state: paused !important;
-		transition: none !important;
-	}
-
-	/*
-	 * Reset the central rotate+scale SVG to its base state when paused.
-	 * The keyframe animates `transform: scale() rotate()` and pausing
-	 * mid-cycle freezes it at, e.g., scale(1.5) rotate(180deg) — looks
-	 * stuck-mid-rotation. Overriding `animation` to `none` cancels the
-	 * keyframe entirely and the SVG snaps back to no transform (the
-	 * base CSS state). When rendering ends and this class drops, the
-	 * keyframe rule below this in source order resumes naturally.
-	 */
 	.image-studio-modal__generate-layout svg {
 		animation: none !important;
 		transform: none !important;
