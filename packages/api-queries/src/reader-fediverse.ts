@@ -557,7 +557,7 @@ export const createFediversePostMutation = ( queryClient: QueryClient ) =>
 						pages: data.pages.map( ( page ) => ( {
 							...page,
 							items: page.items.map( ( item ) =>
-								item.id === ctx.pendingUri ? result.item : item
+								item.id === ctx.pendingUri ? result.post : item
 							),
 						} ) ),
 					} );

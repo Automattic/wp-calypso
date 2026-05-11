@@ -343,12 +343,14 @@ export interface FediverseCreatePostParams {
 }
 
 /**
- * Response shape from the create-post endpoint. The wpcom backend
- * projects the upstream AP `Create(Note)` activity into a uniform
- * `FediverseFeedItem` — same shape returned by the timeline endpoint —
- * so the composer's `onSuccess` can splice the new post into the
- * timeline cache without an extra refetch.
+ * Wire envelope from `POST /reader/fediverse/connections/{id}/posts`.
+ * The backend projects the upstream AP `Create(Note)` activity into the
+ * same `FediverseFeedItem` shape returned by the timeline endpoint, so
+ * the composer's `onSuccess` can splice the new post straight into the
+ * timeline cache with no refetch flash. Mirrors the
+ * `FediverseAuthorProfileResponse` `{ profile: … }` envelope shape
+ * (the backend uses `post` here to match the AP activity nominal).
  */
 export interface FediverseCreatePostResult {
-	item: FediverseFeedItem;
+	post: FediverseFeedItem;
 }

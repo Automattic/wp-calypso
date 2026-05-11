@@ -16,7 +16,7 @@ import { ComposerOverflowHandoff } from './composer-overflow-handoff';
 import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
-import { countGraphemes } from './grapheme-count';
+import { countGraphemes, countWords } from './grapheme-count';
 import type { AppState } from 'calypso/types';
 
 export function ComposerModal< TError, TParams, TResult >() {
@@ -93,7 +93,14 @@ export function ComposerModal< TError, TParams, TResult >() {
 		}
 	}, [ displayError, mode, dispatch, config ] );
 
-	const graphemeCount = useMemo( () => countGraphemes( text ), [ text ] );
+	// Per-protocol counter unit: most protocols count graphemes against a
+	// hard wire cap; Fediverse counts words against a soft "blog-post" cap
+	// that surfaces the overflow handoff for longer text.
+	const counterUnit = config.counter ?? 'graphemes';
+	const graphemeCount = useMemo(
+		() => ( counterUnit === 'words' ? countWords( text ) : countGraphemes( text ) ),
+		[ text, counterUnit ]
+	);
 
 	const handleClose = useCallback( () => {
 		if ( mutation.isPending || isExtending ) {
@@ -241,6 +248,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					limit={ limit }
 					disabled={ ! canSubmit }
 					footerStart={ mediaSlot.renderFooterTrigger() }
+					counterUnit={ counterUnit }
 				/>
 				<ComposerOverflowHandoff text={ text } />
 			</Modal>

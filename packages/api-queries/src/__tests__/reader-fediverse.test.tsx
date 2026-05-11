@@ -416,7 +416,7 @@ describe( 'createFediversePostMutation', () => {
 			// Delay long enough for the mid-flight placeholder assertion to
 			// observe the optimistic-patch state before onSuccess runs.
 			.delay( 200 )
-			.reply( 200, { item: serverItem } );
+			.reply( 200, { post: serverItem } );
 
 		const { result } = renderHook( () => useMutation( createFediversePostMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -488,7 +488,7 @@ describe( 'createFediversePostMutation', () => {
 			reqheaders: { 'idempotency-key': 'fixed-uuid-abc' },
 		} )
 			.post( '/wpcom/v2/reader/fediverse/connections/1/posts' )
-			.reply( 200, { item: makeItem() } );
+			.reply( 200, { post: makeItem() } );
 
 		const { result } = renderHook( () => useMutation( createFediversePostMutation( client ) ), {
 			wrapper: makeWrapper( client ),
@@ -515,11 +515,11 @@ describe( 'createFediversePostMutation', () => {
 		nock( BASE )
 			.post( '/wpcom/v2/reader/fediverse/connections/1/posts' )
 			.delay( 50 )
-			.reply( 200, { item: makeItem( { id: 'first' } ) } );
+			.reply( 200, { post: makeItem( { id: 'first' } ) } );
 		nock( BASE )
 			.post( '/wpcom/v2/reader/fediverse/connections/1/posts' )
 			.delay( 50 )
-			.reply( 200, { item: makeItem( { id: 'second' } ) } );
+			.reply( 200, { post: makeItem( { id: 'second' } ) } );
 
 		const { result } = renderHook( () => useMutation( createFediversePostMutation( client ) ), {
 			wrapper: makeWrapper( client ),

@@ -106,6 +106,14 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 */
 	useLimit: ( connectionId: number | null ) => number;
 	/**
+	 * Counter unit. Atmosphere / Mastodon count graphemes (per-protocol
+	 * char caps). Fediverse counts words instead — AP posts are
+	 * blog-post-shaped, so a word threshold maps better onto when the
+	 * "publish on your own site" overflow handoff should appear.
+	 * Defaults to `'graphemes'` so existing configs need no change.
+	 */
+	counter?: 'graphemes' | 'words';
+	/**
 	 * Short display label for the protocol (e.g. "Bluesky", "Mastodon").
 	 * Surfaced in user-visible copy that mentions the social network by
 	 * name. Not localized — brand names don't translate.

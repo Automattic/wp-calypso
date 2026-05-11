@@ -31,13 +31,13 @@ describe( 'createFediversePost', () => {
 				content: 'hello world',
 				visibility: 'public',
 			} )
-			.reply( 200, { item: defaultServerItem() } );
+			.reply( 200, { post: defaultServerItem() } );
 		const result = await createFediversePost( {
 			connectionId: 7,
 			content: 'hello world',
 			visibility: 'public',
 		} );
-		expect( result.item.id ).toBe( 'https://example.com/users/me/statuses/1' );
+		expect( result.post.id ).toBe( 'https://example.com/users/me/statuses/1' );
 		expect( scope.isDone() ).toBe( true );
 	} );
 
@@ -52,7 +52,7 @@ describe( 'createFediversePost', () => {
 					body.language === 'en'
 				);
 			} )
-			.reply( 200, { item: defaultServerItem() } );
+			.reply( 200, { post: defaultServerItem() } );
 		await createFediversePost( {
 			connectionId: 7,
 			content: 'hello',
@@ -75,7 +75,7 @@ describe( 'createFediversePost', () => {
 					! ( 'language' in body )
 				);
 			} )
-			.reply( 200, { item: defaultServerItem() } );
+			.reply( 200, { post: defaultServerItem() } );
 		await createFediversePost( {
 			connectionId: 7,
 			content: 'hello',
@@ -92,7 +92,7 @@ describe( 'createFediversePost', () => {
 		// double-post.
 		const post = jest
 			.spyOn( wpcom.req, 'post' )
-			.mockResolvedValue( { item: defaultServerItem() } as never );
+			.mockResolvedValue( { post: defaultServerItem() } as never );
 		await createFediversePost( {
 			connectionId: 7,
 			content: 'hello',
@@ -111,7 +111,7 @@ describe( 'createFediversePost', () => {
 	it( 'omits the `Idempotency-Key` header when no key is supplied', async () => {
 		const post = jest
 			.spyOn( wpcom.req, 'post' )
-			.mockResolvedValue( { item: defaultServerItem() } as never );
+			.mockResolvedValue( { post: defaultServerItem() } as never );
 		await createFediversePost( {
 			connectionId: 7,
 			content: 'hello',

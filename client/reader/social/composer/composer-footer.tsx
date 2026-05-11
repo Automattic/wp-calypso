@@ -21,6 +21,12 @@ interface Props {
 	 * media picker.
 	 */
 	footerStart?: ReactNode;
+	/**
+	 * Counter unit — drives the screen-reader label only. Atmosphere /
+	 * Mastodon count graphemes (`'characters'`); Fediverse counts words.
+	 * Defaults to `'graphemes'` so existing call sites keep their labels.
+	 */
+	counterUnit?: 'graphemes' | 'words';
 }
 
 const WARN_THRESHOLD_REMAINING = 50;
@@ -32,6 +38,7 @@ export function ComposerFooter( {
 	limit,
 	disabled: disabledProp,
 	footerStart,
+	counterUnit = 'graphemes',
 }: Props ) {
 	const translate = useTranslate();
 	const remaining = limit - graphemeCount;
@@ -43,6 +50,23 @@ export function ComposerFooter( {
 		'is-warn': remaining > 0 && remaining <= WARN_THRESHOLD_REMAINING,
 		'is-over': remaining <= 0,
 	} );
+
+	const countLabel =
+		counterUnit === 'words'
+			? translate( '%(count)d word remaining', '%(count)d words remaining', {
+					count: remaining,
+					args: { count: remaining },
+					textOnly: true,
+					comment:
+						'Composer post-length counter (Fediverse, word-counter mode); %(count)d is the integer count of words still allowed before the soft blog-post threshold. Negative when the user is over the limit.',
+			  } )
+			: translate( '%(count)d character remaining', '%(count)d characters remaining', {
+					count: remaining,
+					args: { count: remaining },
+					textOnly: true,
+					comment:
+						'Composer post-length counter; %(count)d is the integer count of characters still allowed before the limit. Negative when the user is over the limit.',
+			  } );
 
 	return (
 		<HStack className="social-composer__footer" justify="space-between" alignment="center">
@@ -57,17 +81,7 @@ export function ComposerFooter( {
 					// Visible text is the bare integer; the accessible label
 					// adds units so the live-region announcement is meaningful
 					// without relying on the surrounding visual context.
-					aria-label={ translate(
-						'%(count)d character remaining',
-						'%(count)d characters remaining',
-						{
-							count: remaining,
-							args: { count: remaining },
-							textOnly: true,
-							comment:
-								'Composer post-length counter; %(count)d is the integer count of characters still allowed before the limit. Negative when the user is over the limit.',
-						}
-					) }
+					aria-label={ countLabel }
 				>
 					{ remaining }
 				</span>

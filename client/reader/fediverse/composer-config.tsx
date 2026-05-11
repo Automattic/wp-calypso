@@ -28,6 +28,11 @@ export const fediverseComposerConfig: ComposerConfig<
 	FediverseCreatePostResult
 > = {
 	useLimit: useFediverseComposerLimit,
+	// Count words rather than graphemes. AP posts are blog-post-shaped,
+	// so a word threshold maps onto "open the blog editor" handoff better
+	// than a grapheme cap. Backend enforces wire-level char limits and
+	// surfaces them via the `text_too_long` error path.
+	counter: 'words',
 	protocolLabel: 'Fediverse',
 	supportedModes: [ 'standalone' ],
 	mutationFactory: createFediversePostMutation,
@@ -65,7 +70,7 @@ export const fediverseComposerConfig: ComposerConfig<
 			event: 'calypso_reader_fediverse_post_published',
 			props: {
 				connection_id: mode.connectionId,
-				new_post_id: result.item.id,
+				new_post_id: result.post.id,
 			},
 		} ),
 		errorShown: ( mode, error ) => ( {
@@ -74,6 +79,16 @@ export const fediverseComposerConfig: ComposerConfig<
 				connection_id: mode.connectionId,
 				error_kind: error.kind,
 			},
+		} ),
+	},
+	overflowHandoff: {
+		shown: ( mode ) => ( {
+			event: 'calypso_reader_fediverse_overflow_handoff_shown',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind },
+		} ),
+		editorOpened: ( mode, { siteId } ) => ( {
+			event: 'calypso_reader_fediverse_overflow_handoff_editor_opened',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind, site_id: siteId },
 		} ),
 	},
 	copy: {
