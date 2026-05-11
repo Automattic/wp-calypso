@@ -17,6 +17,7 @@ export type { SocialAccountListProps } from './account-list';
 
 export { SocialPostCard } from './components/post-card';
 export { SocialFeedList } from './components/feed-list';
+export { SocialNotificationItem } from './components/notifications-list/notification-item';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
 
 export type {

@@ -1,0 +1,99 @@
+/**
+ * @jest-environment jsdom
+ */
+import { screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { SocialNotificationItem } from '../notification-item';
+import type { AtmosphereNotification } from '@automattic/api-core';
+
+function makeItem( overrides: Partial< AtmosphereNotification > = {} ): AtmosphereNotification {
+	return {
+		id: 'at://x',
+		protocol_type: 'like',
+		canonical_type: 'like',
+		actor: {
+			handle: 'jane.bsky.social',
+			display_name: 'Jane',
+			avatar_url: null,
+			profile_uri: 'at://did:plc:jane',
+		},
+		target: { kind: 'post', uri: 'at://post', excerpt: 'hello world' },
+		target_url: 'https://bsky.app/profile/me/post/3k',
+		created_at: '2026-05-11T12:34:56Z',
+		is_read: false,
+		raw: {},
+		...overrides,
+	};
+}
+
+describe( 'SocialNotificationItem', () => {
+	it( 'renders a like notification with actor + excerpt', () => {
+		renderWithProvider( <SocialNotificationItem notification={ makeItem() } /> );
+		expect( screen.getByText( /jane/i ) ).toBeVisible();
+		expect( screen.getByText( /liked your post/i ) ).toBeVisible();
+		expect( screen.getByText( /hello world/i ) ).toBeVisible();
+	} );
+
+	it( 'renders a follow notification with no target excerpt', () => {
+		renderWithProvider(
+			<SocialNotificationItem
+				notification={ makeItem( {
+					canonical_type: 'follow',
+					protocol_type: 'follow',
+					target: null,
+				} ) }
+			/>
+		);
+		expect( screen.getByText( /followed you/i ) ).toBeVisible();
+		expect( screen.queryByText( /hello world/i ) ).toBeNull();
+	} );
+
+	it.each( [
+		[ 'repost', /reposted your post/i ],
+		[ 'mention', /mentioned you/i ],
+		[ 'reply', /replied to your post/i ],
+		[ 'quote', /quoted your post/i ],
+	] as const )( 'renders a %s notification', ( type, copy ) => {
+		renderWithProvider(
+			<SocialNotificationItem
+				notification={ makeItem( { canonical_type: type, protocol_type: type } ) }
+			/>
+		);
+		expect( screen.getByText( copy ) ).toBeVisible();
+	} );
+
+	it( 'renders an unknown canonical_type via a generic template using protocol_type', () => {
+		renderWithProvider(
+			<SocialNotificationItem
+				notification={ makeItem( {
+					canonical_type: 'other',
+					protocol_type: 'starterpack-joined',
+					target: null,
+				} ) }
+			/>
+		);
+		expect( screen.getByText( /starterpack joined/i ) ).toBeVisible();
+	} );
+
+	it( 'links the row to target_url with target=_blank', () => {
+		renderWithProvider( <SocialNotificationItem notification={ makeItem() } /> );
+		const link = screen.getByRole( 'link' );
+		expect( link ).toHaveAttribute( 'href', 'https://bsky.app/profile/me/post/3k' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( link.getAttribute( 'rel' ) ).toMatch( /noopener/ );
+	} );
+
+	it( 'applies an unread class when is_read is false', () => {
+		const { container } = renderWithProvider(
+			<SocialNotificationItem notification={ makeItem( { is_read: false } ) } />
+		);
+		expect( container.querySelector( '.is-unread' ) ).not.toBeNull();
+	} );
+
+	it( 'does not apply unread class when is_read is true', () => {
+		const { container } = renderWithProvider(
+			<SocialNotificationItem notification={ makeItem( { is_read: true } ) } />
+		);
+		expect( container.querySelector( '.is-unread' ) ).toBeNull();
+	} );
+} );
