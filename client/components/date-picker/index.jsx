@@ -6,7 +6,7 @@ import { PureComponent } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DatePickerDay from './day';
-import { DatePickerNavBar, DatePickerChevron } from './nav-bar';
+import { DatePickerPreviousMonthButton, DatePickerNextMonthButton } from './nav-bar';
 
 import './style.scss';
 
@@ -133,6 +133,59 @@ class DatePicker extends PureComponent {
 		useArrowNavigation: false,
 	};
 
+	// `month` on react-day-picker is strictly controlled: the calendar won't
+	// change its displayed month unless the consumer re-passes a new value.
+	// Consumers in this repo (DateRange, DateControl) pass a static
+	// `focusedMonth` and don't listen to `onMonthChange`, so prev/next clicks
+	// would otherwise be no-ops. The wrapper holds its own "displayed month",
+	// re-seeded from the consumer prop whenever it changes (tracked via
+	// `lastSyncedConsumerInputs`) and updated by v9 navigation events.
+	state = {
+		displayedMonth: DatePicker.computeDisplayedMonth( this.props ),
+		lastSyncedConsumerInputs: DatePicker.consumerInputsKey( this.props ),
+	};
+
+	static consumerInputsKey( props ) {
+		return [ props.calendarViewDate, props.toMonth, props.numberOfMonths ];
+	}
+
+	static computeDisplayedMonth( props ) {
+		// v9's getDisplayMonths truncates the display when `firstDisplayedMonth +
+		// (numberOfMonths - 1) > endMonth`. If a consumer pins `calendarViewDate`
+		// to a date inside `toMonth`'s month while requesting multiple months,
+		// shift the first displayed month back so the cap stays visible as the
+		// LAST month (the v7-era behaviour).
+		let monthProp = props.calendarViewDate || undefined;
+		const numberOfMonths = props.numberOfMonths || 1;
+		if ( monthProp && props.toMonth && numberOfMonths > 1 ) {
+			const endMonthFirstDay = new Date( props.toMonth.getFullYear(), props.toMonth.getMonth(), 1 );
+			const lastDisplayed = addMonths( monthProp, numberOfMonths - 1 );
+			if ( lastDisplayed > endMonthFirstDay ) {
+				monthProp = addMonths( endMonthFirstDay, -( numberOfMonths - 1 ) );
+			}
+		}
+		return monthProp;
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		const nextKey = DatePicker.consumerInputsKey( props );
+		const sameAsLast = nextKey.every(
+			( value, i ) => value === state.lastSyncedConsumerInputs[ i ]
+		);
+		if ( sameAsLast ) {
+			return null;
+		}
+		return {
+			displayedMonth: DatePicker.computeDisplayedMonth( props ),
+			lastSyncedConsumerInputs: nextKey,
+		};
+	}
+
+	handleMonthChange = ( newMonth ) => {
+		this.setState( { displayedMonth: newMonth } );
+		this.props.onMonthChange( newMonth );
+	};
+
 	isSameDay( d0, d1 ) {
 		d0 = this.props.moment( d0 );
 		d1 = this.props.moment( d1 );
@@ -199,6 +252,11 @@ class DatePicker extends PureComponent {
 		return this.props.moment( date ).format( 'MMMM YYYY' );
 	};
 
+	// Single-letter weekday headers, matching the v7 wrapper. Works for Latin
+	// ("Mo" → "M"), CJK (already one char), Cyrillic/Greek/Arabic. Doesn't
+	// handle UTF-16 surrogate pairs but no moment locale ships such weekdays.
+	formatWeekdayName = ( date ) => this.props.moment( date ).format( 'dd' )[ 0 ];
+
 	// v9 dates land at midnight; v7's internal grid used noon (avoids DST
 	// surprises in the moment `llll` format). Pin to noon so the rendered
 	// aria-label matches v7's output exactly: e.g. "Thu, Oct 4, 2018 12:00 PM".
@@ -208,29 +266,56 @@ class DatePicker extends PureComponent {
 		return this.props.moment( noon ).format( 'llll' );
 	};
 
-	renderNav = ( navProps ) => {
-		// v7 advertised the *last* visible month as `nextMonth` (so multi-month
-		// pickers said "Next month (December 2018)" when showing Oct+Nov). v9
-		// always reports the immediate next month. Re-shift it so existing aria
-		// labels are preserved.
-		const numberOfMonths = this.props.numberOfMonths || 1;
-		const nextMonth =
-			navProps.nextMonth && numberOfMonths > 1
-				? addMonths( navProps.nextMonth, numberOfMonths - 1 )
-				: navProps.nextMonth;
-
-		return (
-			<DatePickerNavBar
-				{ ...navProps }
-				nextMonth={ nextMonth }
-				formatMonthTitle={ this.formatCaption }
-			/>
-		);
+	// v9 invokes the label callbacks immediately before rendering the matching
+	// PreviousMonthButton / NextMonthButton, so storing the date on `this`
+	// lets the button overrides read it without us having to recompute v9's
+	// navigation math.
+	formatLabelPrevious = ( date ) => {
+		this.prevNavMonth = date;
+		if ( ! date ) {
+			return this.props.translate( 'Previous month' );
+		}
+		return this.props.translate( 'Previous month (%s)', {
+			comment: 'Aria label for date picker controls',
+			args: this.formatCaption( date ),
+		} );
 	};
+
+	// v9's `nextMonth` is the IMMEDIATE next month; v7 advertised the *last*
+	// visible month for multi-month displays ("Next month (December 2018)"
+	// when showing Oct+Nov). Re-shift here so existing aria labels are
+	// preserved.
+	formatLabelNext = ( date ) => {
+		const numberOfMonths = this.props.numberOfMonths || 1;
+		const adjusted = date && numberOfMonths > 1 ? addMonths( date, numberOfMonths - 1 ) : date;
+		this.nextNavMonth = adjusted;
+		if ( ! adjusted ) {
+			return this.props.translate( 'Next month' );
+		}
+		return this.props.translate( 'Next month (%s)', {
+			comment: 'Aria label for date picker controls',
+			args: this.formatCaption( adjusted ),
+		} );
+	};
+
+	renderPreviousMonthButton = ( buttonProps ) => (
+		<DatePickerPreviousMonthButton
+			{ ...buttonProps }
+			useArrowNavigation={ this.props.useArrowNavigation }
+			monthDate={ this.prevNavMonth }
+		/>
+	);
+
+	renderNextMonthButton = ( buttonProps ) => (
+		<DatePickerNextMonthButton
+			{ ...buttonProps }
+			useArrowNavigation={ this.props.useArrowNavigation }
+			monthDate={ this.nextNavMonth }
+		/>
+	);
 
 	render() {
 		const {
-			calendarViewDate,
 			calendarInitialDate,
 			showOutsideDays,
 			numberOfMonths,
@@ -239,11 +324,9 @@ class DatePicker extends PureComponent {
 			disabledDays,
 			modifiers: extraModifiers,
 			selectedDay,
-			onMonthChange,
 			toMonth,
 			fromMonth,
 			rootClassNames,
-			useArrowNavigation,
 		} = this.props;
 
 		const { mode, selected } = determineSelectionModeFromProps( selectedDay, selectedDays );
@@ -276,12 +359,9 @@ class DatePicker extends PureComponent {
 
 		const components = {
 			DayButton: DatePickerDay,
+			PreviousMonthButton: this.renderPreviousMonthButton,
+			NextMonthButton: this.renderNextMonthButton,
 		};
-		if ( useArrowNavigation ) {
-			components.Chevron = DatePickerChevron;
-		} else {
-			components.Nav = this.renderNav;
-		}
 
 		return (
 			<DayPicker
@@ -291,14 +371,23 @@ class DatePicker extends PureComponent {
 				classNames={ CLASS_NAMES }
 				disabled={ disabledDays }
 				defaultMonth={ calendarInitialDate || undefined }
-				month={ calendarViewDate || undefined }
+				month={ this.state.displayedMonth }
 				startMonth={ fromMonth || undefined }
 				endMonth={ toMonth || undefined }
+				weekStartsOn={ this.props.moment().localeData().firstDayOfWeek() }
+				navLayout="around"
 				onDayClick={ this.handleDayClick }
 				components={ components }
-				formatters={ { formatCaption: this.formatCaption } }
-				labels={ { labelDayButton: this.formatLabelDayButton } }
-				onMonthChange={ onMonthChange }
+				formatters={ {
+					formatCaption: this.formatCaption,
+					formatWeekdayName: this.formatWeekdayName,
+				} }
+				labels={ {
+					labelDayButton: this.formatLabelDayButton,
+					labelPrevious: this.formatLabelPrevious,
+					labelNext: this.formatLabelNext,
+				} }
+				onMonthChange={ this.handleMonthChange }
 				showOutsideDays={ showOutsideDays }
 				mode={ mode }
 				required={ false }

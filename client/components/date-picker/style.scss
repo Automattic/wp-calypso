@@ -65,7 +65,13 @@ $date-picker_nav_button_size: 20px;
 
 .date-picker__previous-month,
 .date-picker__next-month {
-	float: right;
+	position: absolute;
+	top: 0;
+	// Match the caption row's height so flex centering puts the chevron / month
+	// text on the same baseline as the caption text.
+	height: $date-picker_caption_height;
+	display: inline-flex;
+	align-items: center;
 	padding: 1px 8px;
 	font-size: $font-body-extra-small;
 	text-transform: capitalize;
@@ -83,11 +89,11 @@ $date-picker_nav_button_size: 20px;
 }
 
 .date-picker__previous-month {
-	float: left;
+	left: 0;
 }
 
 .date-picker__next-month {
-	float: right;
+	right: 0;
 }
 
 .DayPicker-Month {
@@ -99,39 +105,20 @@ $date-picker_nav_button_size: 20px;
 	margin: 0;
 }
 
-.DayPicker-NavBar {
-	position: absolute;
-	left: 0;
-	right: 0;
-	height: $date-picker_caption_height;
-}
-
-.DayPicker-NavButton {
-	position: absolute;
-	width: $date-picker_nav_button_size;
-	height: $date-picker_nav_button_size;
-	line-height: $date-picker_nav_button_size;
-	top: ( $date-picker_caption_height - $date-picker_nav_button_size ) * 0.5;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: contain;
-	cursor: pointer;
-	font-size: $font-title-small;
-
-	&::before {
-		height: $date-picker_nav_button_size;
-	}
+// react-day-picker v9 with `navLayout="around"` renders the prev/next buttons
+// as siblings of the caption inside each month wrapper. Make the wrapper a
+// positioning context so the buttons can sit at its top-left/right corners.
+.DayPicker-Month-Wrapper {
+	position: relative;
 }
 
 .DayPicker-Caption {
-	display: table-caption;
+	// Side gutters leave room for the absolutely-positioned prev/next buttons.
+	margin: 0 $date-picker_nav_button_size * 1.5;
 	text-align: center;
 	height: $date-picker_caption_height;
 	line-height: $date-picker_caption_height;
 	font-size: $font-body;
-	margin: 0 $date-picker_nav_button_size * 1.5;
-	position: relative;
-	cursor: pointer;
 
 	&::first-letter {
 		text-transform: uppercase;

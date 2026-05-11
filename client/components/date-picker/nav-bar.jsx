@@ -1,80 +1,45 @@
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
-import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
-
-const noop = () => {};
-
-const handleMonthClick =
-	( onClick = noop ) =>
-	( event ) => {
-		event.preventDefault();
-		onClick();
-	};
 
 function defaultFormatMonthShort( date ) {
 	return new Intl.DateTimeFormat( undefined, { month: 'short' } ).format( date );
 }
 
-function defaultFormatMonthTitle( date ) {
-	return new Intl.DateTimeFormat( undefined, { month: 'long', year: 'numeric' } ).format( date );
-}
-
-export const DatePickerNavBar = ( {
-	nextMonth,
-	previousMonth,
-	onPreviousClick,
-	onNextClick,
-	className,
-	formatMonthTitle = defaultFormatMonthTitle,
+// Shared shape for the prev/next slot overrides plugged into v9's
+// `components.PreviousMonthButton` / `components.NextMonthButton`. v9 calls
+// these with `{ type, className, tabIndex, aria-disabled, aria-label, onClick,
+// children }`; the wrapper layer also passes `useArrowNavigation` and
+// `monthDate` so the button can render an icon or the month abbreviation.
+function MonthButton( {
+	useArrowNavigation,
+	monthDate,
 	formatMonthShort = defaultFormatMonthShort,
-} ) => {
-	const classes = clsx( 'date-picker__nav-bar', {
-		[ className ]: !! className,
-	} );
+	sideClassName,
+	icon,
+	children,
+	...buttonProps
+} ) {
+	// v7 hid the button entirely when navigation in that direction wasn't
+	// possible. v9 keeps it in the DOM with `aria-disabled="true"`; match the
+	// v7 behaviour so existing tests (and visual layout) line up.
+	if ( buttonProps[ 'aria-disabled' ] ) {
+		return null;
+	}
 
-	const buttonClass = 'date-picker__month-button button';
+	const buttonClass = useArrowNavigation
+		? 'date-picker__arrow-button'
+		: 'date-picker__month-button button';
 
 	return (
-		<nav className={ classes }>
-			{ previousMonth && (
-				<button
-					className={ `date-picker__previous-month ${ buttonClass }` }
-					type="button"
-					aria-label={ translate( 'Previous month (%s)', {
-						comment: 'Aria label for date picker controls',
-						args: formatMonthTitle( previousMonth ),
-					} ) }
-					onClick={ handleMonthClick( onPreviousClick ) }
-				>
-					{ formatMonthShort( previousMonth ) }
-				</button>
-			) }
-
-			{ nextMonth && (
-				<button
-					className={ `date-picker__next-month ${ buttonClass }` }
-					type="button"
-					aria-label={ translate( 'Next month (%s)', {
-						comment: 'Aria label for date picker controls',
-						args: formatMonthTitle( nextMonth ),
-					} ) }
-					onClick={ handleMonthClick( onNextClick ) }
-				>
-					{ formatMonthShort( nextMonth ) }
-				</button>
-			) }
-		</nav>
+		<button { ...buttonProps } type="button" className={ `${ sideClassName } ${ buttonClass }` }>
+			{ useArrowNavigation ? <Icon icon={ icon } /> : monthDate && formatMonthShort( monthDate ) }
+		</button>
 	);
-};
-
-export function DatePickerChevron( { orientation } ) {
-	if ( orientation === 'left' ) {
-		return <Icon icon={ chevronLeft } />;
-	}
-	if ( orientation === 'right' ) {
-		return <Icon icon={ chevronRight } />;
-	}
-	return null;
 }
 
-export default DatePickerNavBar;
+export const DatePickerPreviousMonthButton = ( props ) => (
+	<MonthButton { ...props } sideClassName="date-picker__previous-month" icon={ chevronLeft } />
+);
+
+export const DatePickerNextMonthButton = ( props ) => (
+	<MonthButton { ...props } sideClassName="date-picker__next-month" icon={ chevronRight } />
+);
