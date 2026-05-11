@@ -293,10 +293,8 @@ export class ReaderSidebar extends Component {
 						link="/reader/subscriptions"
 					/>
 
-					<SidebarSeparator />
-
 					<SidebarItem
-						label={ translate( 'Profile' ) }
+						label={ translate( 'Reader Profile' ) }
 						onNavigate={ () => recordReaderTracksEvent( 'calypso_reader_sidebar_profile_clicked' ) }
 						customIcon={
 							<Icon
