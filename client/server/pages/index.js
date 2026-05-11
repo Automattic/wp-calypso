@@ -267,7 +267,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	performanceMark( request.context, 'getAssets', true );
 	const assets = request.getAssets();
 	const manifests = assets.manifests;
-	const viteDev = !! assets.viteDev;
+	const useVite = !! assets.useVite;
 
 	performanceMark( request.context, 'assign context object', true );
 	const context = Object.assign( {}, request.context, {
@@ -281,7 +281,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: entrypointFiles,
 		manifests,
-		viteDev,
+		useVite,
 		reactQueryDevtoolsHelper,
 		accountSettingsHelper,
 		authHelper,

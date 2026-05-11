@@ -75,7 +75,7 @@ async function writeDevAssetsJson() {
 	await mkdir( buildDir, { recursive: true } );
 	const assets = {
 		manifests: [],
-		viteDev: true,
+		useVite: true,
 		assets: Object.fromEntries(
 			Object.entries( DEV_ENTRIES ).map( ( [ name, url ] ) => [
 				name,

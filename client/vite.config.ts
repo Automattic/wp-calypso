@@ -37,6 +37,8 @@ const ENTRYPOINTS: Record< string, string > = {
 	'entry-reauth-required': path.join( __dirname, 'reauth-required/bundle.js' ),
 };
 
+const ENTRYPOINT_PATHS = new Set< string >( Object.values( ENTRYPOINTS ) );
+
 /**
  * Custom Sass FileImporter that resolves bare package specifiers
  * (e.g. `@automattic/onboarding/styles/mixins`) directly from the filesystem,
@@ -277,6 +279,28 @@ const reactDayPickerV7Plugin: Plugin = {
 	},
 };
 
+// Inject the @vitejs/plugin-react fast-refresh preamble as the first import of
+// every entry module. Vite's React plugin normally injects this via
+// `transformIndexHtml`, which doesn't run here because the Node server renders
+// the HTML itself. Prepending the import (rather than emitting an inline
+// <script>) matches the pattern the plugin's README documents for backend
+// integrations under the `@vitejs/plugin-react/preamble` section, and lets the
+// plugin's virtual `@vitejs/plugin-react/preamble` module return "" in
+// production builds — making this a free no-op outside `vite serve`.
+// See: https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md
+const calypsoReactPreambleInjectorPlugin: Plugin = {
+	name: 'calypso-react-preamble-injector',
+	enforce: 'pre',
+	apply: 'serve',
+	transform( code: string, id: string ) {
+		const cleanId = id.split( '?' )[ 0 ];
+		if ( ! ENTRYPOINT_PATHS.has( cleanId ) ) {
+			return null;
+		}
+		return { code: `import '@vitejs/plugin-react/preamble';\n${ code }`, map: null };
+	},
+};
+
 const webpackCssLoaderImportsPlugin: Plugin = {
 	name: 'calypso-webpack-css-loader-imports',
 	enforce: 'pre',
@@ -423,6 +447,8 @@ export default defineConfig(
 			// jsxImportSource replaces @emotion/babel-plugin: emotion's JSX runtime handles
 			// the css prop at runtime rather than compile-time, eliminating the Babel dependency.
 			react( { jsxImportSource: '@emotion/react' } ),
+
+			calypsoReactPreambleInjectorPlugin,
 
 			transformReactVirtualizedJsxPlugin,
 

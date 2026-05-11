@@ -6,7 +6,7 @@ import { defaults, groupBy } from 'lodash';
 const ASSETS_PATH = path.resolve( __dirname, '../../../build' );
 const ASSETS_FILE = path.join( ASSETS_PATH, `assets.json` );
 const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
-const EMPTY_ASSETS_FILE = { manifests: [], assets: {}, viteDev: process.env.USE_VITE === '1' };
+const EMPTY_ASSETS_FILE = { manifests: [], assets: {}, useVite: process.env.USE_VITE === '1' };
 
 const getAssetType = ( asset ) => {
 	const [ assetPath, queryString = '' ] = asset.split( '?' );

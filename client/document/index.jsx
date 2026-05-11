@@ -70,7 +70,7 @@ class Document extends Component {
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
-			viteDev,
+			useVite,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -242,7 +242,7 @@ class Document extends Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && ! viteDev && (
+					{ env === 'development' && ! useVite && (
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
@@ -277,22 +277,11 @@ class Document extends Component {
 						<script key={ translationChunk } nonce={ inlineScriptNonce } src={ translationChunk } />
 					) ) }
 
-					{ viteDev && (
-						<script
-							key="@vitejs/plugin-react/preamble"
-							nonce={ inlineScriptNonce }
-							type="module"
-							dangerouslySetInnerHTML={ {
-								__html: `
-									import { injectIntoGlobalHook } from "/@react-refresh";
-									injectIntoGlobalHook( window );
-									window.$RefreshReg$ = () => {};
-									window.$RefreshSig$ = () => ( type ) => type;
-								`,
-							} }
-						/>
-					) }
-					{ viteDev && (
+					{ /* /@vite/client bootstraps HMR. Normally injected by Vite's */ }
+					{ /* transformIndexHtml(), but we render HTML ourselves. */ }
+					{ /* See also: @vitejs/plugin-react preamble is prepended to each entry */ }
+					{ /* module by calypso-react-preamble-injector in vite.config.ts. */ }
+					{ useVite && env === 'development' && (
 						<script
 							key="@vite/client"
 							nonce={ inlineScriptNonce }
@@ -304,7 +293,7 @@ class Document extends Component {
 						<script
 							key={ asset }
 							nonce={ inlineScriptNonce }
-							{ ...( viteDev ? { type: 'module' } : {} ) }
+							{ ...( useVite ? { type: 'module' } : {} ) }
 							src={ asset }
 						/>
 					) ) }
