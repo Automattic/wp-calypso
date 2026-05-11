@@ -26,14 +26,10 @@ import { getSiteUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HomeWizard from './home-wizard';
-import { draftFirstPost, type FirstPostDraft } from './home-wizard/draft-first-post';
+import { type FirstPostDraft } from './home-wizard/draft-first-post';
 import HomePrompt from './home-wizard/home-prompt';
 import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
-import {
-	tailorAndDraftFromIntent,
-	tailorLaunchpad,
-	type InferredContext,
-} from './home-wizard/tailor-launchpad';
+import { tailorAndDraftFromIntent, type InferredContext } from './home-wizard/tailor-launchpad';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
 import { TASK_REGISTRY, type SiteState } from './home-wizard/task-registry';
 import type { FeatureKey, GoalKey, WizardAnswers } from './home-wizard/types';
@@ -59,6 +55,7 @@ const HOME_WIZARD_FIRST_POST_DRAFT_PREF = 'home_wizard_first_post_draft';
 // re-tailor, "what should I do next") can use the same source of truth.
 const HOME_WIZARD_INTENT_PREF = 'home_wizard_intent';
 const HOME_WIZARD_INFERRED_PREF = 'home_wizard_inferred';
+const HOME_WIZARD_SITE_NAME_PREF = 'home_wizard_site_name';
 // Dolly typically responds in 4-10s for the wizard's structured prompt and
 // 25-35s for the intent prompt (which adds inference + draft). 40s gives
 // the intent path headroom; observed 5/7 verification prompts landed
@@ -468,8 +465,8 @@ function useHomeWizard() {
 		if ( answers?.goal ) {
 			dispatch( savePreference( HOME_WIZARD_GOAL_PREF, answers.goal ) );
 		}
-		if ( answers?.features ) {
-			dispatch( savePreference( HOME_WIZARD_FEATURES_PREF, answers.features ) );
+		if ( answers?.intent ) {
+			dispatch( savePreference( HOME_WIZARD_INTENT_PREF, answers.intent ) );
 		}
 		if ( forced && typeof window !== 'undefined' ) {
 			const url = new URL( window.location.href );
@@ -492,9 +489,7 @@ function useHomeWizard() {
  */
 function useTailoredFlow() {
 	const dispatch = useDispatch();
-	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
-	const site = useSiteState( siteSlug );
 	const [ isTailoring, setIsTailoring ] = useState< boolean >( false );
 
 	const startTailoring = (): {
@@ -525,28 +520,40 @@ function useTailoredFlow() {
 		if ( ! answers.goal ) {
 			return;
 		}
-		const goal = answers.goal;
-		const features = answers.features ?? [];
+		// Wizard now collects (goal, siteName, intent). We compose those into
+		// one prompt and reuse the same Dolly call as the prompt path so both
+		// entry points produce identical tailoring + draft outputs.
+		const trimmedName = answers.siteName?.trim() ?? '';
+		const trimmedIntent = answers.intent?.trim() ?? '';
+		const composed = [
+			`User selected goal: ${ answers.goal }`,
+			trimmedName ? `Site name: ${ trimmedName }` : '',
+			trimmedIntent,
+		]
+			.filter( Boolean )
+			.join( '\n' );
+
+		dispatch( savePreference( HOME_WIZARD_INTENT_PREF, composed ) );
+		if ( trimmedName ) {
+			dispatch( savePreference( HOME_WIZARD_SITE_NAME_PREF, trimmedName ) );
+		}
+
 		const { controller, stop } = startTailoring();
 
-		tailorLaunchpad( { goal, features }, site, {
-			siteId: siteId ?? undefined,
-			abortSignal: controller.signal,
-		} )
-			.then( ( result ) => persistTaskIds( result.task_ids ) )
-			.catch( ( error ) => {
-				window.console?.warn?.( '[Launchpad] tailor_launchpad failed:', error );
-			} )
-			.finally( stop );
-
-		draftFirstPost(
-			{ goal, features },
+		tailorAndDraftFromIntent(
+			{ intent: composed },
 			{ siteId: siteId ?? undefined, abortSignal: controller.signal }
 		)
-			.then( persistDraft )
+			.then( ( result ) => {
+				persistTaskIds( result.task_ids );
+				const inferred: InferredContext = result.inferred ?? {};
+				dispatch( savePreference( HOME_WIZARD_INFERRED_PREF, inferred ) );
+				persistDraft( result.first_post_draft );
+			} )
 			.catch( ( error ) => {
-				window.console?.warn?.( '[Launchpad] draft_first_post failed:', error );
-			} );
+				window.console?.warn?.( '[Launchpad] tailor_and_draft (wizard) failed:', error );
+			} )
+			.finally( stop );
 	};
 
 	const runFromIntent = ( intent: string ) => {

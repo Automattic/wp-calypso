@@ -277,3 +277,28 @@ body.is-home-wizard-open {
 .home-wizard__prompt-chip {
 	border-radius: 16px;
 }
+
+// Details-step: textarea with a "Presets" dropdown anchored bottom-right
+// of the textarea (sits inside the same border as the textarea).
+.home-wizard__textarea-wrap {
+	position: relative;
+
+	textarea {
+		// Make room for the presets button so typed text never sits under it.
+		padding-bottom: 44px;
+	}
+}
+
+.home-wizard__presets {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+}
+
+.home-wizard__presets-toggle {
+	border-radius: 16px;
+	background: var( --wpds-color-background-secondary, #f5f5f5 );
+	font-size: 12px;
+	padding: 2px 10px;
+	height: 28px;
+}

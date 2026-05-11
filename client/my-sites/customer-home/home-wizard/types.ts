@@ -12,5 +12,6 @@ export type FeatureKey =
 
 export type WizardAnswers = {
 	goal: GoalKey | null;
-	features: FeatureKey[];
+	siteName: string;
+	intent: string;
 };

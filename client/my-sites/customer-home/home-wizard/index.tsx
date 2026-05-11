@@ -1,9 +1,9 @@
 import { Modal, Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import FeaturesStep from './features-step';
+import DetailsStep from './details-step';
 import GoalsStep from './goals-step';
-import type { FeatureKey, GoalKey, WizardAnswers } from './types';
+import type { GoalKey, WizardAnswers } from './types';
 
 import './style.scss';
 
@@ -18,14 +18,17 @@ export default function HomeWizard( { onClose, onComplete }: Props ) {
 	const translate = useTranslate();
 	const [ step, setStep ] = useState< 0 | 1 >( 0 );
 	const [ goal, setGoal ] = useState< GoalKey | null >( null );
-	const [ features, setFeatures ] = useState< FeatureKey[] >( [] );
+	const [ siteName, setSiteName ] = useState< string >( '' );
+	const [ intent, setIntent ] = useState< string >( '' );
 
 	const isLast = step === TOTAL_STEPS - 1;
+	// Goal is the only required field. Step 2 (details) is optional — empty
+	// submission falls through to the generic Launchpad on /home.
 	const canContinue = step === 0 ? goal !== null : true;
 
 	const handleNext = () => {
 		if ( isLast ) {
-			onComplete( { goal, features } );
+			onComplete( { goal, siteName, intent } );
 			return;
 		}
 		setStep( ( step + 1 ) as 0 | 1 );
@@ -55,7 +58,14 @@ export default function HomeWizard( { onClose, onComplete }: Props ) {
 			</div>
 
 			{ step === 0 && <GoalsStep value={ goal } onChange={ setGoal } /> }
-			{ step === 1 && <FeaturesStep value={ features } onChange={ setFeatures } /> }
+			{ step === 1 && (
+				<DetailsStep
+					siteName={ siteName }
+					intent={ intent }
+					onSiteNameChange={ setSiteName }
+					onIntentChange={ setIntent }
+				/>
+			) }
 
 			<footer className="home-wizard__footer">
 				<Button variant="tertiary" onClick={ onClose }>
