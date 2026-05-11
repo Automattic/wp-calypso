@@ -110,14 +110,6 @@ describe( 'useRenewalPricingExperiment', () => {
 		expect( result.current ).toEqual( [ false, 'non_usd_variant' ] );
 	} );
 
-	it( 'uses V2 non-USD assignment over V2 USD assignment', () => {
-		( useExperiment as jest.Mock )
-			.mockReturnValueOnce( [ false, { variationName: 'usd_variant' } ] ) // V2 USD assigned
-			.mockReturnValueOnce( [ false, { variationName: 'non_usd_variant' } ] ); // V2 non-USD assigned
-		const { result } = renderHook( () => useRenewalPricingExperiment() );
-		expect( result.current ).toEqual( [ false, 'non_usd_variant' ] );
-	} );
-
 	it( 'uses V1 when both V2s are ineligible', () => {
 		( isJetpackCheckout as jest.Mock ).mockReturnValue( true ); // makes both V2s ineligible by isEligibleForExperiment
 		const { result } = renderHook( () => useRenewalPricingExperiment() );

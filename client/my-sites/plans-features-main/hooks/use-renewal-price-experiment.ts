@@ -17,7 +17,11 @@ function useCurrencyFromPlans(): string | undefined {
 	return firstPlan?.pricing?.currencyCode;
 }
 
-function useIsEligibleForV1EnUSDExperiment( flowName?: string | null ): [ boolean, string | null ] {
+function useIsEligibleForV1EnUSDExperiment(
+	flowName: string | null | undefined,
+	locale: string,
+	currencyCode: string | undefined
+): [ boolean, string | null ] {
 	const REGISTRATION_DATE_CUTOFF = new Date( '2026-03-31T11:00:00Z' );
 
 	function isNewUserOrLoggedOut( registrationDate: string | null | undefined ): boolean {
@@ -28,8 +32,6 @@ function useIsEligibleForV1EnUSDExperiment( flowName?: string | null ): [ boolea
 		return new Date( registrationDate ) >= REGISTRATION_DATE_CUTOFF;
 	}
 
-	const locale = useLocale();
-	const currencyCode = useCurrencyFromPlans();
 	const userRegistrationDate = useSelector( getCurrentUserDate );
 
 	const flowFromStorage = getSignupCompleteFlowName();
@@ -78,7 +80,11 @@ export function useRenewalPricingExperiment(
 ): [ boolean, string | null ] {
 	const locale = useLocale();
 	const currencyCode = useCurrencyFromPlans();
-	const [ isLoadingV1, v1Variation ] = useIsEligibleForV1EnUSDExperiment( flowName );
+	const [ isLoadingV1, v1Variation ] = useIsEligibleForV1EnUSDExperiment(
+		flowName,
+		locale,
+		currencyCode
+	);
 	const [ isLoadingV2EnUsd, v2EnUsdAssignment ] = useExperiment(
 		RENEWAL_PRICING_EXPERIMENT_V2_EN_USD,
 		{
