@@ -15,6 +15,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { SiteIconThumb } from './site-icon-thumb';
 import { useHandoffMutation } from './use-handoff-mutation';
+import type { HandoffMutationApi } from './use-handoff-mutation';
 import type { Site } from '@automattic/api-core';
 
 export interface SiteHandoffProps {
@@ -36,11 +37,16 @@ function SingleSiteBody( {
 	site,
 	content,
 	buttonLabel,
-	tracks,
-	caller,
-}: SiteHandoffProps & { site: Site } ) {
+	submit,
+	isPending,
+}: {
+	site: Site;
+	content: string;
+	buttonLabel: string;
+	submit: HandoffMutationApi[ 'submit' ];
+	isPending: boolean;
+} ) {
 	const translate = useTranslate();
-	const { submit, isPending } = useHandoffMutation( { tracks, caller } );
 	return (
 		<>
 			<p>
@@ -61,12 +67,22 @@ function SingleSiteBody( {
 	);
 }
 
-function MultiSiteBody( props: SiteHandoffProps ) {
-	const { sites, content, buttonLabel, tracks, caller } = props;
+function MultiSiteBody( {
+	sites,
+	content,
+	buttonLabel,
+	submit,
+	isPending,
+}: {
+	sites: Site[];
+	content: string;
+	buttonLabel: string;
+	submit: HandoffMutationApi[ 'submit' ];
+	isPending: boolean;
+} ) {
 	const translate = useTranslate();
 	const { data: userSettings, isPending: settingsPending } = useQuery( userSettingsQuery() );
 	const [ userSelection, setUserSelection ] = useState< number | null >( null );
-	const { submit, isPending } = useHandoffMutation( { tracks, caller } );
 
 	const options = useMemo(
 		() =>
@@ -158,8 +174,11 @@ function MultiSiteBody( props: SiteHandoffProps ) {
 }
 
 export function SiteHandoff( props: SiteHandoffProps ) {
-	if ( props.sites.length === 1 ) {
-		return <SingleSiteBody { ...props } site={ props.sites[ 0 ] } />;
+	const { sites, content, buttonLabel, tracks, caller } = props;
+	const { submit, isPending } = useHandoffMutation( { tracks, caller } );
+	const shared = { content, buttonLabel, submit, isPending };
+	if ( sites.length === 1 ) {
+		return <SingleSiteBody { ...shared } site={ sites[ 0 ] } />;
 	}
-	return <MultiSiteBody { ...props } />;
+	return <MultiSiteBody { ...shared } sites={ sites } />;
 }
