@@ -1,6 +1,5 @@
 import {
 	__experimentalVStack as VStack,
-	BaseControl,
 	RadioControl,
 	TextControl,
 	ToggleControl,
@@ -43,7 +42,6 @@ export function FediverseComposerControls( {
 	onSummaryChange,
 }: Props ) {
 	const translate = useTranslate();
-	const visibilityId = useId();
 	const summaryId = useId();
 
 	const handleVisibility = useCallback(
@@ -57,26 +55,28 @@ export function FediverseComposerControls( {
 
 	return (
 		<VStack spacing={ 4 } className="fediverse-composer-controls">
-			<BaseControl
-				__nextHasNoMarginBottom
-				id={ visibilityId }
+			{ /*
+			 * `label` + `help` are passed to RadioControl directly so its
+			 * built-in `<fieldset><legend>` semantics carry the accessible
+			 * group name (and the help id is wired via `aria-describedby`).
+			 * Wrapping in BaseControl renders the visible "Visibility" label
+			 * as a sibling that isn't associated with the radiogroup.
+			 */ }
+			<RadioControl
 				label={ String( translate( 'Visibility' ) ) }
 				help={ String(
 					translate(
 						'Public is shown to everyone. Unlisted hides the post from your followers’ feed but keeps it reachable by URL. Followers limits it to people who follow you.'
 					)
 				) }
-			>
-				<RadioControl
-					selected={ visibility }
-					onChange={ handleVisibility }
-					options={ [
-						{ label: String( translate( 'Public' ) ), value: 'public' },
-						{ label: String( translate( 'Unlisted' ) ), value: 'unlisted' },
-						{ label: String( translate( 'Followers only' ) ), value: 'followers' },
-					] }
-				/>
-			</BaseControl>
+				selected={ visibility }
+				onChange={ handleVisibility }
+				options={ [
+					{ label: String( translate( 'Public' ) ), value: 'public' },
+					{ label: String( translate( 'Unlisted' ) ), value: 'unlisted' },
+					{ label: String( translate( 'Followers only' ) ), value: 'followers' },
+				] }
+			/>
 
 			<ToggleControl
 				__nextHasNoMarginBottom
