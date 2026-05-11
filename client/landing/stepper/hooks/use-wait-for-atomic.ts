@@ -32,6 +32,8 @@ export const transferStates = {
 	CLEANUP: 'cleanup',
 } as const;
 
+type TransferStatus = ( typeof transferStates )[ keyof typeof transferStates ];
+
 interface UseWaitForAtomicProps {
 	handleTransferFailure?: ( failureInfo: FailureInfo ) => void;
 	siteId?: number;
@@ -71,7 +73,9 @@ export const useWaitForAtomic = ( {
 		);
 	};
 
-	const waitForTransfer = async () => {
+	const waitForTransfer = async ( {
+		acceptedStatuses = [ transferStates.COMPLETED ],
+	}: { acceptedStatuses?: readonly TransferStatus[] } = {} ) => {
 		const startTime = new Date().getTime();
 		const totalTimeout = 1000 * 300;
 		const maxFinishTime = startTime + totalTimeout;
@@ -102,7 +106,7 @@ export const useWaitForAtomic = ( {
 				throw new Error( 'transfer timeout' );
 			}
 
-			if ( transferStatus === transferStates.COMPLETED ) {
+			if ( transferStatus && acceptedStatuses.includes( transferStatus as TransferStatus ) ) {
 				break;
 			}
 		}

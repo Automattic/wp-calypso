@@ -22,7 +22,7 @@ import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
-import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
+import { transferStates, useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -118,7 +118,15 @@ const PostCheckoutOnboarding: StepType< {
 	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
 
 	const waitForAtomic = async () => {
-		await waitForTransfer();
+		// woo-hosting-solutions sends the user to a choice screen next, which
+		// only needs the Atomic install to be reachable. Unblock as soon as the
+		// transfer reaches "provisioned" rather than waiting for the post-
+		// transfer cleanup that "completed" implies.
+		await waitForTransfer(
+			isWooHostingSolutions
+				? { acceptedStatuses: [ transferStates.PROVISIONED, transferStates.COMPLETED ] }
+				: undefined
+		);
 		await setIntentOnSite( siteSlug, intent );
 		await setGoalsOnSite( siteSlug, goals );
 		await waitForFeature();
