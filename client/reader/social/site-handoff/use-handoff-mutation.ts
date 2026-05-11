@@ -63,7 +63,7 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 			onError: ( error: Error ) => {
 				dispatch(
 					errorNotice(
-						translate( "Couldn't save your draft. Try again or pick a different site." )
+						translate( 'Couldn’t save your draft. Try again or pick a different site.' )
 					)
 				);
 				const errorKind = error.name || 'unknown';
