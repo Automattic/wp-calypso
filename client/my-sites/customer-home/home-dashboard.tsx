@@ -26,9 +26,16 @@ import { getSiteUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HomeWizard from './home-wizard';
-import { selectTasks } from './home-wizard/select-tasks';
+import { draftFirstPost, type FirstPostDraft } from './home-wizard/draft-first-post';
+import HomePrompt from './home-wizard/home-prompt';
+import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
+import {
+	tailorAndDraftFromIntent,
+	tailorLaunchpad,
+	type InferredContext,
+} from './home-wizard/tailor-launchpad';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
-import type { SiteState } from './home-wizard/task-registry';
+import { TASK_REGISTRY, type SiteState } from './home-wizard/task-registry';
 import type { FeatureKey, GoalKey, WizardAnswers } from './home-wizard/types';
 import type { AppState } from 'calypso/types';
 
@@ -38,6 +45,25 @@ import './home-dashboard.scss';
 const HOME_WIZARD_COMPLETED_SITES_PREF = 'home_wizard_completed_sites';
 const HOME_WIZARD_GOAL_PREF = 'home_wizard_goal';
 const HOME_WIZARD_FEATURES_PREF = 'home_wizard_features';
+// Cached IDs from the most recent `tailor_launchpad` call. Absent for users
+// who finished the wizard before the AI hop existed, or when the call timed
+// out / returned empty / errored — in any of those cases the widget falls
+// back to the deterministic `selectTasks` output.
+const HOME_WIZARD_TASK_IDS_PREF = 'home_wizard_task_ids';
+// Cached starter draft from the `draft_first_post` Dolly call. Used by the
+// "Write your first post" task row to open the editor on a real draft
+// instead of a blank page. Absent if the call hadn't finished, errored, or
+// the user finished the wizard before this feature existed.
+const HOME_WIZARD_FIRST_POST_DRAFT_PREF = 'home_wizard_first_post_draft';
+// Prompt-path inputs. Stored verbatim so future Dolly calls (regenerate,
+// re-tailor, "what should I do next") can use the same source of truth.
+const HOME_WIZARD_INTENT_PREF = 'home_wizard_intent';
+const HOME_WIZARD_INFERRED_PREF = 'home_wizard_inferred';
+// Dolly typically responds in 4-10s for the wizard's structured prompt and
+// 8-20s for the intent prompt (which adds an inference step). 25s gives
+// both paths headroom; the skeleton's still capped well before the user
+// would interpret silence as "the page is broken."
+const TAILORING_TIMEOUT_MS = 25_000;
 
 const RECENT_POSTS_QUERY = { number: 5, status: 'publish' } as const;
 const LAUNCHPAD_CONTEXT = 'customer-home';
@@ -84,7 +110,21 @@ function useSiteState( siteSlug: string ): SiteState {
 	};
 }
 
-function SiteSetupWidget() {
+function TailoringSkeleton() {
+	const translate = useTranslate();
+	return (
+		<div className="home-dashboard__site-setup-skeleton" role="status" aria-live="polite">
+			<Text variant="muted">{ translate( 'Tailoring your checklist…' ) }</Text>
+			<ul className="home-dashboard__site-setup-skeleton-rows" aria-hidden="true">
+				{ [ 0, 1, 2, 3, 4 ].map( ( i ) => (
+					<li key={ i } className="home-dashboard__site-setup-skeleton-row" />
+				) ) }
+			</ul>
+		</div>
+	);
+}
+
+function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const site = useSelector( getSelectedSite );
@@ -95,13 +135,65 @@ function SiteSetupWidget() {
 		( useSelector( ( state: AppState ) => getPreference( state, HOME_WIZARD_FEATURES_PREF ) ) as
 			| FeatureKey[]
 			| null ) ?? [];
+	const tailoredIds = useSelector( ( state: AppState ) =>
+		getPreference( state, HOME_WIZARD_TASK_IDS_PREF )
+	) as string[] | null;
+	const wizardIntent = useSelector( ( state: AppState ) =>
+		getPreference( state, HOME_WIZARD_INTENT_PREF )
+	) as string | null;
+	const firstPostDraft = useSelector( ( state: AppState ) =>
+		getPreference( state, HOME_WIZARD_FIRST_POST_DRAFT_PREF )
+	) as FirstPostDraft | null;
 
 	const siteIntent = ( site?.options as { site_intent?: string } | undefined )?.site_intent ?? '';
 	const siteState = useSiteState( siteSlug );
 
-	const tailoredTasks = wizardGoal ? selectTasks( wizardGoal, wizardFeatures, siteState ) : [];
+	// Prefer the IDs returned by the most recent tailor call. If absent
+	// (timed out, errored, returned empty, or pre-feature wizard finish),
+	// fall back to the deterministic selectTasks() picks. Both paths apply
+	// site-state filters at render time so completion / hideWhen stay live.
+	let baseTailoredTasks: SelectedTask[] = [];
+	if ( tailoredIds && tailoredIds.length > 0 ) {
+		baseTailoredTasks = materializeTasks( tailoredIds, siteState );
+	} else if ( wizardGoal ) {
+		baseTailoredTasks = selectTasks( wizardGoal, wizardFeatures, siteState );
+	}
 
-	// Fallback path for users who skipped the wizard or whose preferences
+	// If Dolly drafted a starter post but didn't pick (or had filtered out)
+	// any of the three "first creation" tasks, surface the draft anyway by
+	// prepending a synthetic publish-first-post row. FirstPostTaskItem
+	// renders this with the "Draft your first post" override + Dolly's
+	// title as the subtitle. The existing tailored-launchpad gate already
+	// routes publish-first-post through FirstPostTaskItem.
+	const CREATION_TASK_IDS = new Set( [
+		'publish-first-post',
+		'add-portfolio-piece',
+		'send-first-newsletter',
+	] );
+	const hasCreationRow = baseTailoredTasks.some( ( t ) => CREATION_TASK_IDS.has( t.id ) );
+	const draftIsUsable =
+		!! firstPostDraft &&
+		typeof firstPostDraft.title === 'string' &&
+		Array.isArray( firstPostDraft.paragraphs ) &&
+		firstPostDraft.paragraphs.length > 0;
+
+	const tailoredTasks: SelectedTask[] =
+		draftIsUsable && ! hasCreationRow
+			? ( () => {
+					const template = TASK_REGISTRY.find( ( t ) => t.id === 'publish-first-post' );
+					if ( ! template ) {
+						return baseTailoredTasks;
+					}
+					const syntheticDraftRow: SelectedTask = {
+						...template,
+						completed: false,
+						resolvedUrl: template.url( siteSlug ),
+					};
+					return [ syntheticDraftRow, ...baseTailoredTasks ];
+			  } )()
+			: baseTailoredTasks;
+
+	// Fallback path for users who skipped both entries or whose preferences
 	// haven't loaded yet — keep the original server-driven Launchpad.
 	const fallbackChecklistSlug =
 		siteIntent || ( wizardGoal ? GOAL_TO_CHECKLIST[ wizardGoal ] ?? 'build' : 'build' );
@@ -109,10 +201,15 @@ function SiteSetupWidget() {
 		data: { checklist: fallbackChecklist },
 	} = useSortedLaunchpadTasks( siteSlug, fallbackChecklistSlug, LAUNCHPAD_CONTEXT );
 
-	const useTailored = wizardGoal !== null && tailoredTasks.length > 0;
+	// The user has "finished onboarding" if EITHER the wizard goal is set
+	// OR the prompt intent is stored. Either path is sufficient — without
+	// this, prompt-path users would never see the tailored list.
+	const hasFinishedOnboarding =
+		wizardGoal !== null || ( typeof wizardIntent === 'string' && wizardIntent.length > 0 );
+	const useTailored = hasFinishedOnboarding && tailoredTasks.length > 0;
 	const fallbackVisible = ! useTailored && ( fallbackChecklist?.length ?? 0 ) > 0;
 
-	if ( ! useTailored && ! fallbackVisible ) {
+	if ( ! isTailoring && ! useTailored && ! fallbackVisible ) {
 		return null;
 	}
 
@@ -124,15 +221,21 @@ function SiteSetupWidget() {
 				</Heading>
 			</CardHeader>
 			<CardBody>
-				{ useTailored ? (
-					<TailoredLaunchpad tasks={ tailoredTasks } />
-				) : (
-					<Launchpad
-						siteSlug={ siteSlug }
-						checklistSlug={ fallbackChecklistSlug }
-						launchpadContext={ LAUNCHPAD_CONTEXT }
-					/>
-				) }
+				{ ( () => {
+					if ( isTailoring ) {
+						return <TailoringSkeleton />;
+					}
+					if ( useTailored ) {
+						return <TailoredLaunchpad tasks={ tailoredTasks } />;
+					}
+					return (
+						<Launchpad
+							siteSlug={ siteSlug }
+							checklistSlug={ fallbackChecklistSlug }
+							launchpadContext={ LAUNCHPAD_CONTEXT }
+						/>
+					);
+				} )() }
 			</CardBody>
 		</Card>
 	);
@@ -377,6 +480,109 @@ function useHomeWizard() {
 	return { isOpen, open, finish };
 }
 
+/**
+ * Owns the post-finish async hop for both entry paths (the goals × features
+ * wizard and the free-text prompt). For each path:
+ *   - kick off the tailor call (real Dolly by default; mock when `?mock=*`)
+ *   - kick off the first-post draft in parallel (fire-and-forget)
+ *   - share a 13s abort signal across both calls
+ *   - silently fall back to the deterministic `selectTasks` output on any
+ *     timeout / empty / error
+ */
+function useTailoredFlow() {
+	const dispatch = useDispatch();
+	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
+	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
+	const site = useSiteState( siteSlug );
+	const [ isTailoring, setIsTailoring ] = useState< boolean >( false );
+
+	const startTailoring = (): {
+		controller: AbortController;
+		stop: () => void;
+	} => {
+		setIsTailoring( true );
+		const controller = new AbortController();
+		const timeoutId = setTimeout( () => controller.abort(), TAILORING_TIMEOUT_MS );
+		const stop = () => {
+			clearTimeout( timeoutId );
+			setIsTailoring( false );
+		};
+		return { controller, stop };
+	};
+
+	const persistTaskIds = ( task_ids: string[] ) => {
+		if ( task_ids.length > 0 ) {
+			dispatch( savePreference( HOME_WIZARD_TASK_IDS_PREF, task_ids ) );
+		}
+	};
+
+	const persistDraft = ( draft: { title: string; paragraphs: string[] } ) => {
+		dispatch( savePreference( HOME_WIZARD_FIRST_POST_DRAFT_PREF, draft ) );
+	};
+
+	const runFromAnswers = ( answers: WizardAnswers ) => {
+		if ( ! answers.goal ) {
+			return;
+		}
+		const goal = answers.goal;
+		const features = answers.features ?? [];
+		const { controller, stop } = startTailoring();
+
+		tailorLaunchpad( { goal, features }, site, {
+			siteId: siteId ?? undefined,
+			abortSignal: controller.signal,
+		} )
+			.then( ( result ) => persistTaskIds( result.task_ids ) )
+			.catch( ( error ) => {
+				window.console?.warn?.( '[Launchpad] tailor_launchpad failed:', error );
+			} )
+			.finally( stop );
+
+		draftFirstPost(
+			{ goal, features },
+			{ siteId: siteId ?? undefined, abortSignal: controller.signal }
+		)
+			.then( persistDraft )
+			.catch( ( error ) => {
+				window.console?.warn?.( '[Launchpad] draft_first_post failed:', error );
+			} );
+	};
+
+	const runFromIntent = ( intent: string ) => {
+		const trimmed = intent.trim();
+		if ( ! trimmed ) {
+			return;
+		}
+		// Persist the raw intent immediately — every future Dolly call (re-
+		// tailor, regenerate, "what's next") should be able to read it as
+		// the source of truth.
+		dispatch( savePreference( HOME_WIZARD_INTENT_PREF, trimmed ) );
+
+		const { controller, stop } = startTailoring();
+
+		// Single combined Dolly call: returns task_ids + inferred + draft
+		// in one round-trip. Saves the per-call overhead (auth, agent
+		// session init, LLM warmup) we'd otherwise pay twice. If it fails,
+		// all three preferences fall back silently — same UX as before.
+		tailorAndDraftFromIntent(
+			{ intent: trimmed },
+			{ siteId: siteId ?? undefined, abortSignal: controller.signal }
+		)
+			.then( ( result ) => {
+				persistTaskIds( result.task_ids );
+				const inferred: InferredContext = result.inferred ?? {};
+				dispatch( savePreference( HOME_WIZARD_INFERRED_PREF, inferred ) );
+				persistDraft( result.first_post_draft );
+			} )
+			.catch( ( error ) => {
+				window.console?.warn?.( '[Launchpad] tailor_and_draft failed:', error );
+			} )
+			.finally( stop );
+	};
+
+	return { isTailoring, runFromAnswers, runFromIntent };
+}
+
 function useBodyClass( className: string, active: boolean ) {
 	useEffect( () => {
 		if ( ! active ) {
@@ -390,13 +596,28 @@ function useBodyClass( className: string, active: boolean ) {
 export default function HomeDashboard() {
 	const translate = useTranslate();
 	const { isOpen: isWizardOpen, open: openWizard, finish: finishWizard } = useHomeWizard();
+	const { isTailoring, runFromAnswers, runFromIntent } = useTailoredFlow();
+	// Prompt modal lifecycle is local — the dev FAB is its only entry
+	// point today, so no preference persistence yet.
+	const [ isPromptOpen, setIsPromptOpen ] = useState< boolean >( false );
 
-	useBodyClass( 'is-home-wizard-open', isWizardOpen );
+	const isAnyModalOpen = isWizardOpen || isPromptOpen;
+	useBodyClass( 'is-home-wizard-open', isAnyModalOpen );
+
+	const handleWizardComplete = ( answers: WizardAnswers ) => {
+		finishWizard( answers );
+		runFromAnswers( answers );
+	};
+
+	const handlePromptComplete = ( { intent }: { intent: string } ) => {
+		setIsPromptOpen( false );
+		runFromIntent( intent );
+	};
 
 	return (
-		<div className={ 'home-dashboard' + ( isWizardOpen ? ' home-dashboard--wizard-open' : '' ) }>
+		<div className={ 'home-dashboard' + ( isAnyModalOpen ? ' home-dashboard--wizard-open' : '' ) }>
 			<QueryPreferences />
-			{ ! isWizardOpen && (
+			{ ! isAnyModalOpen && (
 				<>
 					<header className="home-dashboard__page-header">
 						<Heading level={ 1 } size={ 24 }>
@@ -405,7 +626,7 @@ export default function HomeDashboard() {
 					</header>
 					<div className="home-dashboard__grid">
 						<div className="home-dashboard__col home-dashboard__col--main">
-							<SiteSetupWidget />
+							<SiteSetupWidget isTailoring={ isTailoring } />
 							<div className="home-dashboard__row">
 								<ActivityWidget />
 								<AtAGlanceWidget />
@@ -418,21 +639,35 @@ export default function HomeDashboard() {
 				</>
 			) }
 			{ isWizardOpen && (
-				<HomeWizard
-					onClose={ () => finishWizard() }
-					onComplete={ ( answers ) => finishWizard( answers ) }
+				<HomeWizard onClose={ () => finishWizard() } onComplete={ handleWizardComplete } />
+			) }
+			{ isPromptOpen && (
+				<HomePrompt
+					onClose={ () => setIsPromptOpen( false ) }
+					onComplete={ handlePromptComplete }
 				/>
 			) }
-			{ ! isWizardOpen && (
-				<button
-					type="button"
-					className="home-dashboard__wizard-fab"
-					onClick={ openWizard }
-					aria-label={ translate( 'Open setup wizard' ) as string }
-				>
-					<Icon icon={ settings } size={ 20 } />
-					<span>{ translate( 'Setup wizard' ) }</span>
-				</button>
+			{ ! isAnyModalOpen && (
+				<div className="home-dashboard__wizard-fab-group">
+					<button
+						type="button"
+						className="home-dashboard__wizard-fab"
+						onClick={ openWizard }
+						aria-label={ translate( 'Open setup wizard' ) as string }
+					>
+						<Icon icon={ settings } size={ 20 } />
+						<span>{ translate( 'Wizard' ) }</span>
+					</button>
+					<button
+						type="button"
+						className="home-dashboard__wizard-fab"
+						onClick={ () => setIsPromptOpen( true ) }
+						aria-label={ translate( 'Open prompt' ) as string }
+					>
+						<Icon icon={ settings } size={ 20 } />
+						<span>{ translate( 'Prompt' ) }</span>
+					</button>
+				</div>
 			) }
 		</div>
 	);

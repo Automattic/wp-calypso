@@ -181,3 +181,29 @@ export function selectTasks(
 		resolvedUrl: template.url( site.siteSlug ),
 	} ) );
 }
+
+/**
+ * Render a list of task IDs (e.g. the `task_ids[]` returned by the
+ * `tailor_launchpad` ability) as `SelectedTask`s, applying site-state
+ * filters and the same category ordering as `selectTasks`.
+ *
+ * Unknown IDs are dropped silently. Tasks whose `hideWhen` matches the
+ * current site state are also dropped — site state can move between the
+ * wizard finishing and the dashboard rendering, so a task the AI picked
+ * legitimately may have completed in the meantime.
+ */
+export function materializeTasks( taskIds: string[], site: SiteState ): SelectedTask[] {
+	const idSet = new Set( taskIds );
+	const matched = TASK_REGISTRY.filter( ( t ) => idSet.has( t.id ) && ! shouldHide( t, site ) );
+	const sorted = sortTasks(
+		matched.map( ( template ) => ( {
+			template,
+			registryIndex: TASK_REGISTRY.indexOf( template ),
+		} ) )
+	);
+	return sorted.map( ( { template } ) => ( {
+		...template,
+		completed: isCompleted( template, site ),
+		resolvedUrl: template.url( site.siteSlug ),
+	} ) );
+}

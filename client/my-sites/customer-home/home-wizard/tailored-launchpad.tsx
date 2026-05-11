@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { border, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import FirstPostTaskItem from './first-post-task-item';
 import LaunchTaskItem from './launch-task-item';
 import type { SelectedTask } from './select-tasks';
 
@@ -37,6 +38,22 @@ export default function TailoredLaunchpad( { tasks }: Props ) {
 				// button — dispatch + celebrate modal — instead of a plain link.
 				if ( task.id === 'launch-site' && ! task.completed ) {
 					return <LaunchTaskItem key={ task.id } task={ task } itemClassName={ itemClassName } />;
+				}
+
+				// "First creation" tasks land the user on a real wpcom draft
+				// prefilled with Dolly's starter title + paragraphs (when
+				// available) — no blank-page problem. Any of the three
+				// content-creation tasks Dolly might pick gets the same
+				// draft-on-click treatment.
+				if (
+					( task.id === 'publish-first-post' ||
+						task.id === 'add-portfolio-piece' ||
+						task.id === 'send-first-newsletter' ) &&
+					! task.completed
+				) {
+					return (
+						<FirstPostTaskItem key={ task.id } task={ task } itemClassName={ itemClassName } />
+					);
 				}
 
 				const content = (

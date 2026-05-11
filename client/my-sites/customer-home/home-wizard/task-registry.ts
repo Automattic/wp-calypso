@@ -101,7 +101,10 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		subtitle: 'A portfolio without work is just a coming-soon page.',
 		category: 'activation',
 		goals: [ 'portfolio' ],
-		hideWhen: { hasPosts: true, hasPages: true },
+		// No `hideWhen` — having a regular post or page doesn't prove the
+		// user has published a portfolio piece, so the previous rule
+		// (hide-if-hasPosts-OR-hasPages) was hiding this task on most test
+		// sites by accident.
 		url: ( s ) => `/post/${ s }?type=jetpack-portfolio`,
 		cta: 'Add piece',
 	},
