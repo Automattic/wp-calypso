@@ -54,6 +54,30 @@ export const setLocalizedCanonicalUrl = ( context, next ) => {
 	next();
 };
 
+export const setEnglishCanonicalUrl = ( context, next ) => {
+	performanceMark( context, 'setEnglishCanonicalUrl' );
+
+	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
+		next();
+		return;
+	}
+
+	const canonicalUrl = getLocalizedCanonicalUrl(
+		context.originalUrl,
+		'en',
+		context.excludeSearchFromCanonicalUrl
+	);
+
+	context.store.dispatch(
+		setDocumentHeadLink( {
+			rel: 'canonical',
+			href: canonicalUrl,
+		} )
+	);
+
+	next();
+};
+
 export const setHrefLangLinks = ( context, next ) => {
 	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
 		next();
