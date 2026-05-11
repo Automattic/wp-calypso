@@ -153,7 +153,11 @@ const reducer = (
 			};
 
 		case 'SET_FEATURE_CLIP_PROGRESS_PHASE':
-			return { ...state, progressPhase: action.payload };
+			return {
+				...state,
+				progressPhase: action.payload,
+				renderProgress: action.payload === 'rendering' ? state.renderProgress : null,
+			};
 
 		case 'COMPLETE_FEATURE_CLIP_RENDER':
 			return {

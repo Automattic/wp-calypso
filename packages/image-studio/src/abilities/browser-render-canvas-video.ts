@@ -71,6 +71,9 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 		if ( s.eyebrow !== undefined && s.eyebrow !== null && typeof s.eyebrow !== 'string' ) {
 			throw new Error( `brief.scenes[${ idx }].eyebrow must be a string or null when present.` );
 		}
+		if ( s.eyebrow === null ) {
+			delete s.eyebrow;
+		}
 	} );
 	if (
 		! candidate.titleCard ||
@@ -86,6 +89,9 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 		typeof titleCard.cta !== 'string'
 	) {
 		throw new Error( 'brief.titleCard.cta must be a string or null when present.' );
+	}
+	if ( titleCard.cta === null ) {
+		delete titleCard.cta;
 	}
 	// audioBed must match the FeatureClipAudioBed union — installAudioBed
 	// indexes a mood profile by this value and throws on anything else. Coerce
