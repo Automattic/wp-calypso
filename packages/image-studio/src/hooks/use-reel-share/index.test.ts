@@ -228,6 +228,20 @@ describe( 'useReelShare', () => {
 			expect( result.current.igDisplayName ).toBe( 'myhandle' );
 		} );
 
+		it( 'is a no-op (no re-track, no re-stamp) when the dialog is already open', async () => {
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
+		} );
+
 		it( 'resolves igDisplayName from external_handle when display_name is missing', async () => {
 			mockState.connections = [
 				{

@@ -175,6 +175,12 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		! isAiProcessing;
 
 	const requestShare = useCallback( async () => {
+		// Already awaiting confirmation — don't re-fire `clicked` or overwrite
+		// the captured snapshot with a fresh re-read.
+		if ( pendingShare ) {
+			return;
+		}
+
 		trackImageStudioReelShareClicked( {
 			attachmentId: currentAttachmentId ?? 0,
 			durationSeconds: currentDurationSeconds,
@@ -264,7 +270,14 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			freshIgConnection.display_name || freshIgConnection.external_handle || null;
 
 		setPendingShare( { skipped: freshSkipped, igDisplayName: resolvedHandle } );
-	}, [ currentAttachmentId, currentDurationSeconds, currentVideoUrl, sharePath, showNotice ] );
+	}, [
+		currentAttachmentId,
+		currentDurationSeconds,
+		currentVideoUrl,
+		pendingShare,
+		sharePath,
+		showNotice,
+	] );
 
 	const confirmShare = useCallback( async () => {
 		// Synchronous double-click guard. `isSharing` from useSelect lags by a
