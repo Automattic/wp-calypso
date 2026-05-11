@@ -106,6 +106,12 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 */
 	useLimit: ( connectionId: number | null ) => number;
 	/**
+	 * Short display label for the protocol (e.g. "Bluesky", "Mastodon").
+	 * Surfaced in user-visible copy that mentions the social network by
+	 * name. Not localized — brand names don't translate.
+	 */
+	protocolLabel: string;
+	/**
 	 * Mode kinds this protocol supports. Atmosphere supports all three;
 	 * Mastodon supports `'reply' | 'standalone'` (no native quote concept).
 	 * The modal renders nothing when an unsupported mode is opened.
@@ -159,6 +165,22 @@ export interface ComposerConfig< TError, TParams, TResult > {
 		errorShown: (
 			mode: ActiveMode,
 			error: TError
+		) => { event: string; props: Record< string, unknown > };
+	};
+	/**
+	 * Optional Tracks events for the overflow-handoff section (the in-modal
+	 * "Publish on your own site" escape hatch). `shown` fires once per modal
+	 * session when the handoff section first renders (i.e. after the user
+	 * crosses the limit AND the sites query resolves with ≥1 site).
+	 * `editorOpened` fires when the user clicks "Move to editor" — analogous
+	 * to Reader's Quick Post `calypso_reader_quick_post_full_editor_opened`.
+	 * Configs that omit this field don't emit overflow-handoff Tracks events.
+	 */
+	overflowHandoff?: {
+		shown: ( mode: ActiveMode ) => { event: string; props: Record< string, unknown > };
+		editorOpened: (
+			mode: ActiveMode,
+			meta: { siteId: number }
 		) => { event: string; props: Record< string, unknown > };
 	};
 	/** Per-mode title and placeholder copy. */

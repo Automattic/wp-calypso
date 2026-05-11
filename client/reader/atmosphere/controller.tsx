@@ -24,6 +24,14 @@ const loadAuthorProfileView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-atmosphere-author-profile-view" */ 'calypso/reader/atmosphere/author-profile-view'
 	);
+const loadFollowersView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-atmosphere-followers-view" */ 'calypso/reader/atmosphere/followers-view'
+	);
+const loadFollowingView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-atmosphere-following-view" */ 'calypso/reader/atmosphere/following-view'
+	);
 const loadAtmosphereTagFeedView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-atmosphere-tag-feed-view" */ 'calypso/reader/atmosphere/tag-feed-view'
@@ -130,6 +138,60 @@ export const atmosphereProfile = ( context: Context, next: () => void ) => {
 	context.primary = (
 		<AsyncLoad
 			require={ loadAuthorProfileView }
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
+		/>
+	);
+	next();
+};
+
+export const atmosphereProfileFollowers = ( context: Context, next: () => void ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' );
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const actorValid = HANDLE_RE.test( actor ) || DID_RE.test( actor );
+
+	if ( ! idValid || ! actorValid ) {
+		page.redirect( idValid ? `/reader/atmosphere/${ id }` : '/reader/atmosphere' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			require={ loadFollowersView }
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
+		/>
+	);
+	next();
+};
+
+export const atmosphereProfileFollowing = ( context: Context, next: () => void ) => {
+	if ( ! ensureAtmosphereEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' );
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const actorValid = HANDLE_RE.test( actor ) || DID_RE.test( actor );
+
+	if ( ! idValid || ! actorValid ) {
+		page.redirect( idValid ? `/reader/atmosphere/${ id }` : '/reader/atmosphere' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			require={ loadFollowingView }
 			placeholder={ null }
 			connectionId={ id }
 			actor={ actor }

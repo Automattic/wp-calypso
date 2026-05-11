@@ -28,7 +28,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 const STREAM_STALE_TIME = 30 * 1000;
 
-const getStreamType = ( streamKey: string ): string => {
+export const getStreamType = ( streamKey: string ): string => {
 	const colon = streamKey.indexOf( ':' );
 	return colon === -1 ? streamKey : streamKey.substring( 0, colon );
 };
@@ -56,6 +56,68 @@ const fetchDiscover = (
 };
 
 /**
+ * Route a stream fetch to the right `@automattic/api-core` fetcher based on
+ * the streamKey prefix. Exposed so consumers (incl. `<Stream>`) can wire it
+ * into their own `queryOptions` / `infiniteQueryOptions` without re-implementing
+ * the switch.
+ */
+export const fetchReadStream = (
+	streamKey: string,
+	queryParams: ReadStreamQueryParams
+): Promise< ReadStreamResponse > => {
+	const streamType = getStreamType( streamKey );
+	const suffix = streamKeySuffix( streamKey );
+	switch ( streamType ) {
+		case 'following':
+			return fetchReadFollowing( queryParams );
+		case 'discover':
+			return fetchDiscover( streamKey, queryParams );
+		case 'recent':
+			return fetchReadRecent( queryParams );
+		case 'search':
+			return fetchReadSearch( queryParams );
+		case 'feed':
+			return fetchReadFeedPosts( suffix, queryParams );
+		case 'site':
+			return fetchReadSitePosts( suffix, queryParams );
+		case 'notifications':
+			return fetchReadNotifications( queryParams );
+		case 'featured':
+			return fetchReadSiteFeatured( suffix, queryParams );
+		case 'p2':
+			return fetchReadFollowingP2( queryParams );
+		case 'a8c':
+			return fetchReadA8c( queryParams );
+		case 'tag':
+			return fetchReadTagPosts( suffix, queryParams );
+		case 'tag_popular':
+			return fetchReadTagPopular( suffix, queryParams );
+		case 'list': {
+			const { owner, slug } = JSON.parse( suffix ) as { owner: string; slug: string };
+			return fetchReadListPosts( owner, slug, queryParams );
+		}
+		case 'user':
+			return fetchReadUserPosts( suffix, queryParams );
+		case 'on_this_day':
+			return fetchReadOnThisDay( queryParams );
+		case 'conversations':
+		case 'conversations-a8c':
+			return fetchReadConversations( queryParams );
+		case 'likes':
+			return fetchReadLiked( queryParams );
+		case 'recommendations_posts':
+		case 'custom_recs_posts_with_images':
+			return fetchReadRecommendationsPosts( queryParams );
+		case 'custom_recs_sites_with_images':
+			return fetchReadRecommendationsSites( queryParams );
+		default:
+			throw new Error(
+				`fetchReadStream: unsupported streamType "${ streamType }". Add the fetcher in @automattic/api-core and a case here when migrating this stream.`
+			);
+	}
+};
+
+/**
  * React Query factory for Reader stream pages (READ-485).
  *
  * Migrated: `following`, every `discover:*` sub-tab, plus `recent`, `search`,
@@ -70,58 +132,9 @@ export const readStreamQuery = (
 ) =>
 	queryOptions< ReadStreamResponse >( {
 		queryKey: [ 'read', 'stream', streamKey, pageHandle ?? null ],
-		queryFn: () => {
-			const streamType = getStreamType( streamKey );
-			const suffix = streamKeySuffix( streamKey );
-			switch ( streamType ) {
-				case 'following':
-					return fetchReadFollowing( queryParams );
-				case 'discover':
-					return fetchDiscover( streamKey, queryParams );
-				case 'recent':
-					return fetchReadRecent( queryParams );
-				case 'search':
-					return fetchReadSearch( queryParams );
-				case 'feed':
-					return fetchReadFeedPosts( suffix, queryParams );
-				case 'site':
-					return fetchReadSitePosts( suffix, queryParams );
-				case 'notifications':
-					return fetchReadNotifications( queryParams );
-				case 'featured':
-					return fetchReadSiteFeatured( suffix, queryParams );
-				case 'p2':
-					return fetchReadFollowingP2( queryParams );
-				case 'a8c':
-					return fetchReadA8c( queryParams );
-				case 'tag':
-					return fetchReadTagPosts( suffix, queryParams );
-				case 'tag_popular':
-					return fetchReadTagPopular( suffix, queryParams );
-				case 'list': {
-					const { owner, slug } = JSON.parse( suffix ) as { owner: string; slug: string };
-					return fetchReadListPosts( owner, slug, queryParams );
-				}
-				case 'user':
-					return fetchReadUserPosts( suffix, queryParams );
-				case 'on_this_day':
-					return fetchReadOnThisDay( queryParams );
-				case 'conversations':
-				case 'conversations-a8c':
-					return fetchReadConversations( queryParams );
-				case 'likes':
-					return fetchReadLiked( queryParams );
-				case 'recommendations_posts':
-				case 'custom_recs_posts_with_images':
-					return fetchReadRecommendationsPosts( queryParams );
-				case 'custom_recs_sites_with_images':
-					return fetchReadRecommendationsSites( queryParams );
-				default:
-					throw new Error(
-						`readStreamQuery: unsupported streamType "${ streamType }". Add the fetcher in @automattic/api-core and a case here when migrating this stream.`
-					);
-			}
-		},
+		queryFn: () => fetchReadStream( streamKey, queryParams ),
 		staleTime: STREAM_STALE_TIME,
 		meta: { persist: false },
 	} );
+
+export { STREAM_STALE_TIME };

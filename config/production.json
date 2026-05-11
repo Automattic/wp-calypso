@@ -136,6 +136,7 @@
 		"push-notifications": true,
 		"reader/achievements": false,
 		"reader/social": false,
+		"reader/fediverse": false,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": false,

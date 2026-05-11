@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
@@ -37,7 +38,9 @@ import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
+import { useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
@@ -56,11 +59,11 @@ import {
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 } from 'calypso/state/reader/viewing/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
@@ -695,9 +698,7 @@ export class FullPostView extends Component {
 			feed,
 			referralPost,
 			referral,
-			blogId,
-			feedId,
-			postId,
+			postKey,
 			hasOrganization,
 			isWPForTeamsItem,
 			commentsApiDisabled,
@@ -741,7 +742,6 @@ export class FullPostView extends Component {
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
-		const postKey = { blogId, feedId, postId };
 		const contentWidth = readerContentWidth();
 		const feedUrl = get( post, 'feed_URL' );
 		const shouldShowMarkAsSeen =
@@ -766,7 +766,7 @@ export class FullPostView extends Component {
 						<QueryReaderSite siteId={ +post.site_ID } />
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
-					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
+					<QueryReaderPost postKey={ postKey } />
 					{ ! isLoading &&
 						post &&
 						! post.is_error &&
@@ -940,7 +940,7 @@ export class FullPostView extends Component {
 	}
 }
 
-export default connect(
+const ConnectedFullPostView = connect(
 	( state, ownProps ) => {
 		const { feedId, blogId, postId } = ownProps;
 		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
@@ -978,20 +978,6 @@ export default connect(
 			props.referralPost = getPostByKey( state, ownProps.referral );
 		}
 
-		const currentStreamKey = getCurrentStream( state );
-		if ( currentStreamKey ) {
-			const previousPostKey = getPreviousItem( state, postKey );
-			const nextPostKey = getNextItem( state, postKey );
-
-			// Fetch full post data for navigation
-			props.previousPost = previousPostKey ? getPostByKey( state, previousPostKey ) : null;
-			props.nextPost = nextPostKey ? getPostByKey( state, nextPostKey ) : null;
-
-			// Keep the keys for navigation
-			props.previousPostKey = previousPostKey;
-			props.nextPostKey = nextPostKey;
-		}
-
 		return props;
 	},
 	{
@@ -1010,3 +996,39 @@ export default connect(
 		requestPostComments,
 	}
 )( FullPostView );
+
+const withFullPostNavigation = ( WrappedComponent ) =>
+	function FullPostNavigationContainer( props ) {
+		const currentStreamKey = useSelector( getCurrentStream );
+		const rawLocale = useSelector( getCurrentLocaleSlug );
+		// Mirror `<Stream>`'s normalization so we look up the correct cached
+		// stream variant — non-default locales carry the slug in the key.
+		const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
+		const currentPostKey = pickBy( {
+			feedId: props.feedId ? +props.feedId : undefined,
+			blogId: props.blogId ? +props.blogId : undefined,
+			postId: props.postId ? +props.postId : undefined,
+		} );
+		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
+			streamKey: currentStreamKey ?? '',
+			localeSlug,
+			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
+		} );
+		const previousPost = useSelector( ( state ) =>
+			previousPostKey ? getPostByKey( state, previousPostKey ) : null
+		);
+		const nextPost = useSelector( ( state ) =>
+			nextPostKey ? getPostByKey( state, nextPostKey ) : null
+		);
+		return (
+			<WrappedComponent
+				{ ...props }
+				previousPostKey={ previousPostKey }
+				nextPostKey={ nextPostKey }
+				previousPost={ previousPost }
+				nextPost={ nextPost }
+			/>
+		);
+	};
+
+export default withFullPostNavigation( ConnectedFullPostView );

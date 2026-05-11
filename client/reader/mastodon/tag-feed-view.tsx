@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { MastodonTagFeedPanel } from './tag-feed-panel';
+import { MastodonReauthGate } from './use-mastodon-reauth-gate';
 
 interface Props {
 	connectionId: number;
@@ -56,7 +57,9 @@ export function MastodonTagFeedView( { connectionId, hashtag }: Props ) {
 	return (
 		<ReaderMain className="mastodon-view">
 			<DocumentHead title={ translate( '#%s ‹ Mastodon ‹ Reader', { args: hashtag } ) } />
-			<MastodonTagFeedPanel connection={ connection } hashtag={ hashtag } />
+			<MastodonReauthGate connection={ connection }>
+				<MastodonTagFeedPanel connection={ connection } hashtag={ hashtag } />
+			</MastodonReauthGate>
 		</ReaderMain>
 	);
 }

@@ -32,7 +32,6 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { _n, sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { intlFormat } from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -53,7 +52,6 @@ import {
 	hasAmountAvailableToRefund,
 	hasMarketplaceProduct,
 	isAgencyPartnerType,
-	isAkismetHoldingSitePurchase,
 	isExpired,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackHoldingSitePurchase,
@@ -127,36 +125,6 @@ function renderTopNotice( args: TopNoticeArgs ) {
 			displayVariant={ displayVariant }
 			intent={ intent }
 		/>
-	);
-}
-
-// Build the success-snackbar message after a Remove mutation. Three shapes:
-// 1. Default: "%(productName)s was removed from %(siteName)s."
-// 2. Akismet/Jetpack holding-site purchase: drops the siteless.* domain.
-// 3. Domain registration: addresses the domain by name.
-function getRemoveSuccessMessage( purchase: Purchase ): string {
-	const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-	if ( isAkismetHoldingSitePurchase( purchase ) || isJetpackHoldingSitePurchase( purchase ) ) {
-		return sprintf(
-			/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") */
-			__( '%(productName)s was removed from your account.' ),
-			{ productName: purchaseName }
-		);
-	}
-	if ( purchase.is_domain_registration ) {
-		return sprintf(
-			/* translators: %(domain)s is a domain name */
-			__( 'The domain %(domain)s was removed from your account.' ),
-			{ domain: purchaseName }
-		);
-	}
-	return sprintf(
-		/* translators: %(productName)s is the name of a product (e.g., "WordPress.com Premium") and %(siteName)s is a domain name */
-		__( '%(productName)s was removed from %(siteName)s.' ),
-		{
-			productName: purchaseName,
-			siteName: purchase.domain,
-		}
 	);
 }
 
@@ -874,29 +842,6 @@ function CancelPurchaseInner() {
 		}
 	};
 
-	// Snackbar copy shown on the destination screen after the user finishes (or
-	// skips) the survey on the cancel-intent path. Only CANCEL_AUTORENEW and
-	// CANCEL_WITH_REFUND can reach here — the cancel-intent gate excludes
-	// REMOVE flows.
-	const getCancelSuccessMessage = ( effectiveFlowType: CancelFlowType ): string => {
-		if ( effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
-			return __( 'Your refund has been processed and your purchase removed.' );
-		}
-		const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-		const subscriptionEndDate = intlFormat(
-			purchase.expiry_date,
-			{ dateStyle: 'medium' },
-			{ locale: 'en-US' }
-		);
-		return sprintf(
-			/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
-			__(
-				'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
-			),
-			{ purchaseName, subscriptionEndDate }
-		);
-	};
-
 	// Fire-on-confirm applies to the URL-intent Cancel path only — the user
 	// clicked "Cancel" on Purchase Settings and we want their cancellation to
 	// settle before the survey appears (so the heading can read "Cancellation
@@ -1126,12 +1071,6 @@ function CancelPurchaseInner() {
 						if ( purchase.is_plan ) {
 							cancelAllMarketplaceSubscriptions();
 						}
-						createSuccessNotice(
-							__( 'Your refund has been processed and your purchase removed.' ),
-							{
-								type: 'snackbar',
-							}
-						);
 						invokeSurvicateEvent( 'purchaseRefunded' );
 						navigate( {
 							to: purchaseSettingsRoute.fullPath,
@@ -1151,28 +1090,10 @@ function CancelPurchaseInner() {
 			{ purchaseId: purchase.ID, autoRenew: false },
 			{
 				onSuccess: () => {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-					const subscriptionEndDate = intlFormat(
-						purchase.expiry_date,
-						{ dateStyle: 'medium' },
-						{ locale: 'en-US' }
-					);
-					createSuccessNotice(
-						sprintf(
-							/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
-							__(
-								'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
-							),
-							{
-								purchaseName,
-								subscriptionEndDate,
-							}
-						),
-						{ type: 'snackbar' }
-					);
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },
+						search: { cancelled: true },
 					} );
 				},
 				onError: () => {
@@ -1200,11 +1121,11 @@ function CancelPurchaseInner() {
 
 		removePurchaseMutator.mutate( purchase.ID, {
 			onSuccess: () => {
-				createSuccessNotice( getRemoveSuccessMessage( purchase ), { type: 'snackbar' } );
 				invokeSurvicateEvent( 'purchaseRemoved' );
 				navigate( {
 					to: purchaseSettingsRoute.fullPath,
 					params: { purchaseId: purchase.ID },
+					search: { cancelled: true },
 				} );
 			},
 			onError: () => {
@@ -1229,29 +1150,11 @@ function CancelPurchaseInner() {
 			{ purchaseId: purchase.ID, autoRenew: false },
 			{
 				onSuccess: () => {
-					const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-					const subscriptionEndDate = intlFormat(
-						purchase.expiry_date,
-						{ dateStyle: 'medium' },
-						{ locale: 'en-US' }
-					);
-					createSuccessNotice(
-						sprintf(
-							/* translators: %(purchaseName)s is the name of the product that was purchased, %(subscriptionEndDate)s is the date the product will no longer be available because the subscription has ended */
-							__(
-								'%(purchaseName)s was successfully cancelled. It will be available for use until it expires on %(subscriptionEndDate)s.'
-							),
-							{
-								purchaseName,
-								subscriptionEndDate,
-							}
-						),
-						{ type: 'snackbar' }
-					);
 					invokeSurvicateEvent( 'purchaseCancelled' );
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						params: { purchaseId: purchase.ID },
+						search: { cancelled: true },
 					} );
 				},
 				onError: () => {
@@ -1280,12 +1183,15 @@ function CancelPurchaseInner() {
 
 		if ( shouldFireMutationOnConfirm() ) {
 			// Cancel intent: the mutation already fired at confirm-click via
-			// fireMutationFromConfirm. Show the deferred success snackbar on the
-			// destination (purchase management) screen, then navigate.
-			createSuccessNotice( getCancelSuccessMessage( effectiveFlowType ), { type: 'snackbar' } );
+			// fireMutationFromConfirm. Navigate with the appropriate search param
+			// so the inline notice renders on the destination screen.
 			navigate( {
 				to: purchaseSettingsRoute.fullPath,
 				params: { purchaseId: purchase.ID },
+				search:
+					effectiveFlowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+						? { refunded: true }
+						: { cancelled: true },
 			} );
 			return;
 		}

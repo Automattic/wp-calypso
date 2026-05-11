@@ -1,26 +1,6 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
-.is-reader-page .reader__card.card.is-placeholder {
-	border-bottom: 1px solid #e9e9ea;
-	box-shadow: none;
-	border-radius: 6px; /* stylelint-disable-line scales/radii */
-	margin-bottom: 16px;
-	padding: 6px 16px 30px;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		margin: 0 15px 16px;
-	}
-
-	.reader__post-title {
-		margin-top: 0;
-	}
-
-	.reader__post-footer {
-		margin-left: 0;
-	}
-}
-
 .following {
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -97,6 +77,20 @@
 	&.is-placeholder {
 		pointer-events: none;
 		user-select: none;
+		// `<Card>` from `@automattic/components` defaults to a
+		// `box-shadow: 0 0 0 1px var(--color-border-subtle)` that simulates
+		// a 1px border around the card. Reset it on the placeholder so the
+		// simulated border doesn't flash before the surrounding stream
+		// styles take over once data lands.
+		box-shadow: none;
+		border-bottom: 1px solid #e9e9ea;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		margin-bottom: 16px;
+		padding: 6px 16px 30px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin: 0 15px 16px;
+		}
 
 		.reader__placeholder-text,
 		.site-icon {
@@ -119,6 +113,14 @@
 			@include breakpoint-deprecated( '<480px' ) {
 				font-size: $font-body-small;
 			}
+		}
+
+		.reader__post-title {
+			margin-top: 0;
+		}
+
+		.reader__post-footer {
+			margin-left: 0;
 		}
 	}
 

@@ -8,6 +8,8 @@ import {
 	deleteLike,
 	deletePost,
 	deleteRepost,
+	getAtmosphereActorFollowers,
+	getAtmosphereActorFollows,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -51,6 +53,7 @@ import type {
 	AtmosphereError,
 	AtmosphereFeedItem,
 	AtmosphereScopedProfile,
+	AtmosphereScopedProfilesPage,
 	AtmosphereTagFeedPage,
 	AtmosphereThreadResponse,
 	AtmosphereThreadNode,
@@ -342,6 +345,63 @@ export function useAtmosphereScopedAuthorFeedInfiniteQuery(
 	return useInfiniteQuery( atmosphereScopedAuthorFeedInfiniteQuery( params ) );
 }
 
+export interface AtmosphereActorPageQueryParams {
+	connectionId: number;
+	actor: string;
+}
+
+export const atmosphereActorFollowersInfiniteQuery = ( params: AtmosphereActorPageQueryParams ) =>
+	infiniteQueryOptions<
+		AtmosphereScopedProfilesPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereScopedProfilesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.actorFollowers( params.connectionId, params.actor ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereActorFollowers( {
+				connectionId: params.connectionId,
+				actor: params.actor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && params.actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export function useAtmosphereActorFollowersInfiniteQuery( params: AtmosphereActorPageQueryParams ) {
+	return useInfiniteQuery( atmosphereActorFollowersInfiniteQuery( params ) );
+}
+
+export const atmosphereActorFollowsInfiniteQuery = ( params: AtmosphereActorPageQueryParams ) =>
+	infiniteQueryOptions<
+		AtmosphereScopedProfilesPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereScopedProfilesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.actorFollows( params.connectionId, params.actor ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereActorFollows( {
+				connectionId: params.connectionId,
+				actor: params.actor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && params.actor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export function useAtmosphereActorFollowsInfiniteQuery( params: AtmosphereActorPageQueryParams ) {
+	return useInfiniteQuery( atmosphereActorFollowsInfiniteQuery( params ) );
+}
+
 export interface FollowAtmosphereActorVars {
 	connectionId: number;
 	actor: string;
@@ -350,6 +410,7 @@ export interface FollowAtmosphereActorVars {
 
 export interface FollowAtmosphereMutationContext {
 	previous: AtmosphereScopedProfile | undefined;
+	actorListSnapshots: ActorListRowSnapshot[];
 }
 
 const scopedProfileKey = ( vars: { connectionId: number; actor: string } ) =>
@@ -357,6 +418,175 @@ const scopedProfileKey = ( vars: { connectionId: number; actor: string } ) =>
 		connectionId: vars.connectionId,
 		actor: vars.actor,
 	} ).queryKey;
+
+type ActorListInfiniteData = InfiniteData< AtmosphereScopedProfilesPage >;
+
+/**
+ * The viewer's `following` / `following_rkey` form a discriminated union
+ * (both null = not following, both string = following). Modeling the patch
+ * as a union — rather than two independent `string | null` fields — keeps
+ * the discriminant intact when we spread it into the cached row's viewer.
+ *
+ * `'pending'` is the optimistic-state sentinel used by the follow flow
+ * (matches `<FollowButton>`'s gating on `mutation.isPending`).
+ */
+type ActorListViewerPatch =
+	| { following: null; following_rkey: null }
+	| { following: string; following_rkey: string };
+
+/**
+ * Snapshot of an actor-list row's prior viewer state, captured by
+ * `patchActorListsForSubject` so `onError` can roll back even when no
+ * scoped-profile cache exists for the target subject. Each entry is
+ * keyed by the cache it lives in plus an in-page coordinate tuple, and
+ * carries `subjectDid` so the restore path can verify the row at that
+ * coordinate is still the captured DID before overwriting (a concurrent
+ * refetch landing between capture and restore could shift items).
+ */
+interface ActorListRowSnapshot {
+	queryKey: QueryKey;
+	subjectDid: string;
+	pageIndex: number;
+	itemIndex: number;
+	viewer: AtmosphereScopedProfilesPage[ 'items' ][ number ][ 'viewer' ];
+}
+
+/**
+ * Walk the open actor-followers / actor-follows infinite caches for the
+ * given `connectionId` and patch the viewer state for any row whose DID
+ * matches `subjectDid`. Returns a snapshot list so the caller can roll
+ * back the patch on error.
+ *
+ * Scoping by `connectionId` matters: `viewer.following` is the caller's
+ * follow URI, valid only on the connection that fetched the page. A
+ * user with multiple ATmosphere connections must not see follow state
+ * from one connection bleed into another's cached rows.
+ *
+ * Uses `setQueriesData` (plural, prefix matcher) so the patch applies
+ * across every open list under the scoped prefix regardless of the
+ * `actor` slot in the cache key.
+ */
+function patchActorListsForSubject(
+	queryClient: QueryClient,
+	connectionId: number,
+	subjectDid: string,
+	patch: ActorListViewerPatch
+): ActorListRowSnapshot[] {
+	const matchKeys = [
+		[ ...readerAtmosphereKeys.all, 'actor-followers', connectionId ] as const,
+		[ ...readerAtmosphereKeys.all, 'actor-follows', connectionId ] as const,
+	];
+
+	const snapshots: ActorListRowSnapshot[] = [];
+
+	for ( const prefix of matchKeys ) {
+		const matches = queryClient.getQueriesData< ActorListInfiniteData >( {
+			queryKey: prefix as unknown as QueryKey,
+		} );
+
+		for ( const [ queryKey, data ] of matches ) {
+			if ( ! data ) {
+				continue;
+			}
+			let mutated = false;
+			const pages = data.pages.map( ( page, pageIndex ) => {
+				let pageMutated = false;
+				const items = page.items.map( ( item, itemIndex ) => {
+					if ( item.did !== subjectDid ) {
+						return item;
+					}
+					snapshots.push( {
+						queryKey,
+						subjectDid,
+						pageIndex,
+						itemIndex,
+						viewer: item.viewer,
+					} );
+					pageMutated = true;
+					mutated = true;
+					return {
+						...item,
+						viewer: {
+							...item.viewer,
+							...patch,
+						},
+					};
+				} );
+				return pageMutated ? { ...page, items } : page;
+			} );
+			if ( mutated ) {
+				queryClient.setQueryData< ActorListInfiniteData >( queryKey, { ...data, pages } );
+			}
+		}
+	}
+
+	return snapshots;
+}
+
+/**
+ * Restore a prior snapshot captured by `patchActorListsForSubject`. Used
+ * by `onError` handlers to undo the optimistic write across all
+ * actor-list caches without relying on a separately-loaded
+ * scoped-profile cache.
+ */
+function restoreActorListSnapshots(
+	queryClient: QueryClient,
+	snapshots: ActorListRowSnapshot[]
+): void {
+	for ( const snapshot of snapshots ) {
+		queryClient.setQueryData< ActorListInfiniteData >( snapshot.queryKey, ( old ) => {
+			if ( ! old ) {
+				return old;
+			}
+			const page = old.pages[ snapshot.pageIndex ];
+			if ( ! page ) {
+				return old;
+			}
+			const item = page.items[ snapshot.itemIndex ];
+			// Verify the row at the captured coordinates is still the same
+			// subject DID. A concurrent refetch landing between capture and
+			// restore could shift items; without this check we'd overwrite
+			// the wrong row's viewer state.
+			if ( ! item || item.did !== snapshot.subjectDid ) {
+				return old;
+			}
+			const items = page.items.slice();
+			items[ snapshot.itemIndex ] = { ...item, viewer: snapshot.viewer };
+			const pages = old.pages.slice();
+			pages[ snapshot.pageIndex ] = { ...page, items };
+			return { ...old, pages };
+		} );
+	}
+}
+
+/**
+ * Best-effort cancel of all in-flight queries that the actor-list and
+ * scoped-profile caches feed. TanStack documents `cancelQueries` as
+ * best-effort; if it rejects (route-change teardown races) we still
+ * want `onMutate` to write the optimistic patch and the mutationFn to
+ * fire. Each cancel is independently caught so any non-cancel
+ * exception (programmer error in the surrounding code) still surfaces.
+ */
+function cancelFollowMutationQueries(
+	queryClient: QueryClient,
+	connectionId: number,
+	scopedKey: QueryKey
+): Promise< void > {
+	const swallow = () => undefined;
+	return Promise.all( [
+		queryClient.cancelQueries( { queryKey: scopedKey } ).catch( swallow ),
+		queryClient
+			.cancelQueries( {
+				queryKey: [ ...readerAtmosphereKeys.all, 'actor-followers', connectionId ],
+			} )
+			.catch( swallow ),
+		queryClient
+			.cancelQueries( {
+				queryKey: [ ...readerAtmosphereKeys.all, 'actor-follows', connectionId ],
+			} )
+			.catch( swallow ),
+	] ).then( () => undefined );
+}
 
 /**
  * Mutation factory for creating an `app.bsky.graph.follow` record.
@@ -382,7 +612,7 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 			createFollow( { connectionId: vars.connectionId, subject_did: vars.subjectDid } ),
 		onMutate: async ( vars ) => {
 			const key = scopedProfileKey( vars );
-			await queryClient.cancelQueries( { queryKey: key } );
+			await cancelFollowMutationQueries( queryClient, vars.connectionId, key );
 			const previous = queryClient.getQueryData< AtmosphereScopedProfile >( key );
 			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
 				old
@@ -396,11 +626,23 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
-			return { previous };
+			const actorListSnapshots = patchActorListsForSubject(
+				queryClient,
+				vars.connectionId,
+				vars.subjectDid,
+				{
+					following: 'pending',
+					following_rkey: 'pending',
+				}
+			);
+			return { previous, actorListSnapshots };
 		},
 		onError: ( _err, vars, context ) => {
 			if ( context?.previous ) {
 				queryClient.setQueryData( scopedProfileKey( vars ), context.previous );
+			}
+			if ( context?.actorListSnapshots?.length ) {
+				restoreActorListSnapshots( queryClient, context.actorListSnapshots );
 			}
 		},
 		onSuccess: ( data, vars ) => {
@@ -416,6 +658,10 @@ export const followAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
+			patchActorListsForSubject( queryClient, vars.connectionId, vars.subjectDid, {
+				following: data.follow.uri,
+				following_rkey: data.follow.rkey,
+			} );
 		},
 	} );
 
@@ -423,6 +669,7 @@ export interface UnfollowAtmosphereActorVars {
 	connectionId: number;
 	actor: string;
 	rkey: string;
+	subjectDid: string;
 }
 
 /**
@@ -447,7 +694,7 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 		mutationFn: ( vars ) => deleteFollow( { connectionId: vars.connectionId, rkey: vars.rkey } ),
 		onMutate: async ( vars ) => {
 			const key = scopedProfileKey( vars );
-			await queryClient.cancelQueries( { queryKey: key } );
+			await cancelFollowMutationQueries( queryClient, vars.connectionId, key );
 			const previous = queryClient.getQueryData< AtmosphereScopedProfile >( key );
 			queryClient.setQueryData< AtmosphereScopedProfile >( key, ( old ) =>
 				old
@@ -461,11 +708,23 @@ export const unfollowAtmosphereActorMutation = ( queryClient: QueryClient ) =>
 					  }
 					: old
 			);
-			return { previous };
+			const actorListSnapshots = patchActorListsForSubject(
+				queryClient,
+				vars.connectionId,
+				vars.subjectDid,
+				{
+					following: null,
+					following_rkey: null,
+				}
+			);
+			return { previous, actorListSnapshots };
 		},
 		onError: ( _err, vars, context ) => {
 			if ( context?.previous ) {
 				queryClient.setQueryData( scopedProfileKey( vars ), context.previous );
+			}
+			if ( context?.actorListSnapshots?.length ) {
+				restoreActorListSnapshots( queryClient, context.actorListSnapshots );
 			}
 		},
 	} );

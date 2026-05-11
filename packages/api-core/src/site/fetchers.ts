@@ -37,6 +37,7 @@ export const SITE_FIELDS = [
 	'was_hosting_trial',
 	'was_upgraded_from_trial',
 	'is_garden',
+	'is_multisite',
 	'garden_name',
 	'garden_partner',
 	'garden_is_provisioned',

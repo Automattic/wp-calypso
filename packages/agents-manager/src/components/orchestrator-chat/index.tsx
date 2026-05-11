@@ -153,18 +153,23 @@ export default function OrchestratorChat( {
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
+	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
+	const dynamicSuggestionsKey = JSON.stringify(
+		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
+	);
 
 	// Register dynamic suggestions whenever they change
 	useEffect( () => {
-		const currentSuggestions = dynamicSuggestions?.suggestions;
-
-		if ( currentSuggestions && currentSuggestions.length > 0 ) {
-			registerSuggestions?.( currentSuggestions );
+		if ( dynamicSuggestionsList.length > 0 ) {
+			registerSuggestions?.( dynamicSuggestionsList );
 		} else {
 			// Clear suggestions when there are none
 			clearSuggestions?.();
 		}
-	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
+		// Track suggestion content, not array identity. Some merged providers
+		// return a fresh empty array on each render.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );

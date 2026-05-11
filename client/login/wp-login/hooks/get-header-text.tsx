@@ -103,8 +103,9 @@ export function getHeaderText( {
 		if ( isFromJetpackConnector ) {
 			// In the unified connection flow the site is already registered by
 			// the time the user lands on the login page, so the H1 stays
-			// neutral. The shared resolver owns the contract — PR 3 may make
-			// the title plugin-dependent, so we already pass the plugin set.
+			// neutral. The plugin set is forwarded so the resolver can pick
+			// the right (dynamic) subtitle and so the title can become
+			// plugin-dependent in the future without touching this call site.
 			headerText = getLoginCopy( connectorPlugins ).title;
 		} else if ( partnerConfig ) {
 			headerText = translate( 'Log in to %(partner)s', {

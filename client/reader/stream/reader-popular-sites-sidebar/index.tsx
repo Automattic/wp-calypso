@@ -1,9 +1,16 @@
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
+import { useStreamPosts } from 'calypso/reader/stream/use-stream-posts';
 import '../style.scss';
 
 interface PopularSitesSidebarProps {
 	followSource: string;
 	items: PopularSiteItemProp[];
+	title?: string;
+}
+
+interface PopularSitesSidebarContainerProps {
+	streamKey: string;
+	followSource: string;
 	title?: string;
 }
 
@@ -87,3 +94,25 @@ const ReaderPopularSitesSidebar = ( props: PopularSitesSidebarProps ) => {
 };
 
 export default ReaderPopularSitesSidebar;
+
+/**
+ * Container that fetches the stream items via `useStreamPosts` (React Query)
+ * and renders the presentational sidebar. Shares the cache key with `<Stream>`
+ * when both are mounted with the same `streamKey`, so a single network
+ * request feeds both consumers.
+ */
+export const ReaderPopularSitesSidebarContainer = ( {
+	streamKey,
+	followSource,
+	title,
+}: PopularSitesSidebarContainerProps ) => {
+	const { items } = useStreamPosts( { streamKey } );
+
+	return (
+		<ReaderPopularSitesSidebar
+			items={ items as unknown as PopularSiteItemProp[] }
+			followSource={ followSource }
+			title={ title }
+		/>
+	);
+};

@@ -9,11 +9,12 @@ import './like-button.scss';
 
 interface LikeButtonProps {
 	post: SocialPost;
+	hideCount?: boolean;
 }
 
-const ICON_SIZE = 16;
+const ICON_SIZE = 18;
 
-export function LikeButton( { post }: LikeButtonProps ) {
+export function LikeButton( { post, hideCount }: LikeButtonProps ) {
 	const translate = useTranslate();
 	const action = useLikeAction( post );
 	const formattedLikes = formatNumber( post.counts.likes );
@@ -26,8 +27,12 @@ export function LikeButton( { post }: LikeButtonProps ) {
 		return (
 			<span className="social-post-card-like-button social-post-card-like-button--static">
 				<ReaderLikeIcon liked={ false } iconSize={ ICON_SIZE } />
-				<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
-				<span className="social-post-card-like-button__count">{ formattedLikes }</span>
+				{ ! hideCount && (
+					<>
+						<span className="screen-reader-text">{ translate( 'Likes:' ) } </span>
+						<span className="social-post-card-like-button__count">{ formattedLikes }</span>
+					</>
+				) }
 			</span>
 		);
 	}
@@ -65,7 +70,9 @@ export function LikeButton( { post }: LikeButtonProps ) {
 			onClick={ onClick }
 		>
 			<ReaderLikeIcon liked={ isLiked } iconSize={ ICON_SIZE } />
-			<span className="social-post-card-like-button__count">{ formattedLikes }</span>
+			{ ! hideCount && (
+				<span className="social-post-card-like-button__count">{ formattedLikes }</span>
+			) }
 		</button>
 	);
 }
