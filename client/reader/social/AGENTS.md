@@ -63,6 +63,15 @@ client/reader/social/
       style.scss
       test/
 
+  site-handoff/                 # generic site picker + draft-save handoff (extracted from composer-overflow-handoff)
+    index.ts                    # public barrel — only export from here
+    site-handoff.tsx            # SiteHandoff — picker + submit button, owns single-vs-multi-site branching
+    site-icon-thumb.tsx
+    use-handoff-mutation.ts     # saveDraftMutation wrapper + popup-blocker fallback + tracks + logstash
+    site-handoff.scss
+    test/
+      site-handoff.test.tsx
+
   composer/                     # generic composer shell, driven by per-protocol ComposerConfig (slice 7)
     index.ts                    # public barrel — only export from here
     composer-provider.tsx       # ComposerProvider + ComposerMode union + useComposer / useOptionalComposer
@@ -411,6 +420,25 @@ The connection ID is captured by the adapter factory
 to `<RepostProvider value={…}>`; `<RepostButton>` reads its action via
 `useRepostAction(post)`. Mirrors the like / favorite flow.
 
+The far-right slot of `<PostCardCounts>` hosts `<BlogAboutButton>` — an
+icon-only button (WordPress logomark, `@wordpress/icons`'s `wordpress`
+glyph) that opens `<BlogAboutModal>`. The modal lets the user pick one
+of their WordPress sites, then creates a draft with a `core/embed`
+block pointing at the source post's permalink, and opens the editor in
+a new tab. The button renders unconditionally — `<PostCardCounts>` is
+only mounted by social post cards (atmosphere / mastodon today), and
+the analytics provider is always wrapped around it, so no extra gate is
+needed. The empty-sites case is handled inside the modal (a
+"Create a site" link). Tracks events: `_blog_about_clicked`,
+`_blog_about_shown`, `_blog_about_dismissed`,
+`_blog_about_editor_opened`, `_blog_about_error_shown` — all under
+`calypso_reader_<source>_*`.
+
+The far-right placement is achieved via `margin-inline-start: auto` on
+the button wrapper (`.social-post-card-counts__blog-about`); the
+existing `HStack` keeps `justify="flex-start"` so the three engagement
+buttons stay grouped on the left.
+
 ### Composer (slice 7)
 
 The reply / quote / standalone composer is a generic shell driven by a
@@ -519,6 +547,34 @@ The connection ID flows from the protocol shell:
 `<ComposerModal />` + `<ComposeFab />` (mounted as siblings of the
 view content). Inline pills (`<TimelineComposePill />`) live inside
 panels that opt into the composer via `useOptionalComposer()`.
+
+### Site handoff
+
+`<SiteHandoff>` (in `site-handoff/`) is the shared picker + save-draft +
+open-editor primitive used by every Reader Social surface that needs to
+create a WordPress draft from in-Reader content. Today two callers
+use it:
+
+- `ComposerOverflowHandoff` — over-limit "publish on your own site"
+  escape hatch inside the composer modal. Draft body is the composer's
+  plain text.
+- `<BlogAboutButton>` / `<BlogAboutModal>` in
+  `components/post-card/` — the fourth slot in `<PostCardCounts>` for
+  turning a third-party post into a WordPress blog post. Draft body is
+  a `core/embed` block pointing at `post.permalink` (built by
+  `buildEmbedBlock`).
+
+The shared piece owns the single-vs-multi-site branching, the
+`<ComboboxControl>` picker with primary-site pre-selection, the
+draft-save mutation, the popup-blocker fallback (success notice with
+"Open in editor" button when `window.open` returns null), and the
+logstash error log. Each caller owns its own gate, its own intro copy,
+its own draft body, and its own Tracks event shape (the `tracks` prop
+is optional and shaped as `{ editorOpened, errorShown }` callbacks
+returning `{ event, props }`).
+
+When adding a third caller, pass its own `caller: string` identifier
+so the logstash dashboard can split error rates by surface.
 
 ## Boundaries (for new code)
 
