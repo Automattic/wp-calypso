@@ -207,6 +207,47 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 * `useMastodonComposerMedia` (CM-676).
 	 */
 	useMedia?: ( ctx: { mode: ActiveMode | null; connectionId: number } ) => ComposerMediaSlot;
+	/**
+	 * Optional protocol-specific extras slot — for modal-level controls
+	 * that aren't media (e.g. Fediverse's visibility selector, content-warning
+	 * toggle, sensitive flag — CM-704). Same lifetime contract as `useMedia`:
+	 * called once at provider mount so the underlying form state survives
+	 * modal mount/unmount and the `extendBuildParams` merge runs on submit.
+	 * Distinct from `useMedia` so a protocol that needs *both* (future
+	 * Fediverse media) can wire each independently. Atmosphere and Mastodon
+	 * don't need this today — they leave it undefined.
+	 */
+	useProtocolExtras?: ( ctx: {
+		mode: ActiveMode | null;
+		connectionId: number;
+	} ) => ComposerProtocolExtrasSlot;
+}
+
+/**
+ * Per-protocol modal-level controls (visibility selectors, toggles, etc.)
+ * that aren't media uploads. The slot is rendered between the textarea
+ * (and any media grid) and the error region. Mirrors the `useMedia`
+ * surface where it makes sense; omits the upload-specific flags.
+ */
+export interface ComposerProtocolExtrasSlot {
+	/**
+	 * Render the protocol-specific controls. Returned `null` when nothing
+	 * should appear (e.g. mode is not supported by this protocol's extras).
+	 */
+	renderControls: () => ReactNode;
+	/**
+	 * Merge wire-level extras into the protocol's params before the
+	 * mutation runs. The modal calls `config.buildParams(mode, text)` first,
+	 * then passes the result through this hook AND through `useMedia`'s
+	 * `extendBuildParams` (in that order) for the merged payload.
+	 * `unknown` keeps the slot opaque — implementations cast.
+	 */
+	extendBuildParams: ( params: unknown ) => unknown;
+	/**
+	 * Drop all extras state. Called by the provider when `mode` transitions
+	 * to `null` (modal closed / discarded / published).
+	 */
+	clear?: () => void;
 }
 
 /**

@@ -9,6 +9,11 @@ export type {
 	ComposerEntryPoint,
 	ComposerParentRef,
 } from './composer-provider';
-export type { ComposerConfig, ComposerMediaSlot, Translate } from './composer-config';
+export type {
+	ComposerConfig,
+	ComposerMediaSlot,
+	ComposerProtocolExtrasSlot,
+	Translate,
+} from './composer-config';
 export { AltTextPopover, MediaGrid } from '../composer-media';
 export type { MediaGridItem } from '../composer-media';

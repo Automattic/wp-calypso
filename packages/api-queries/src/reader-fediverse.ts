@@ -1,5 +1,6 @@
 import {
 	createFediverseFollow,
+	createFediversePost,
 	deleteFediverseFollow,
 	getFediverseActorFollowers,
 	getFediverseActorFollowing,
@@ -8,6 +9,7 @@ import {
 	getFediverseConnection,
 	getFediverseConnections,
 	getFediverseTimeline,
+	PENDING_FEDIVERSE_POST_URI,
 	readerFediverseKeys,
 } from '@automattic/api-core';
 import {
@@ -26,7 +28,10 @@ import type {
 	FediverseAuthorProfile,
 	FediverseConnection,
 	FediverseConnectionsResponse,
+	FediverseCreatePostParams,
+	FediverseCreatePostResult,
 	FediverseError,
+	FediverseFeedItem,
 	FediverseFollowResponse,
 	FediverseTimelinePage,
 	GetFediverseAuthorFeedParams,
@@ -451,3 +456,147 @@ export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 			}
 		},
 	} );
+
+let pendingPostCounter = 0;
+/**
+ * Monotonic counter-stamped placeholder for an in-flight standalone post.
+ * Each submit gets a unique suffix so back-to-back composes can be told
+ * apart in the timeline cache. Mirrors atmosphere's `nextPendingPostUri`.
+ */
+export const nextPendingFediversePostUri = () =>
+	`${ PENDING_FEDIVERSE_POST_URI }#${ ++pendingPostCounter }`;
+
+export interface CreateFediversePostContext {
+	/** Snapshot of every timeline-page cache entry touched by the optimistic patch. */
+	snapshots: Array< {
+		queryKey: QueryKey;
+		data: InfiniteData< FediverseTimelinePage > | undefined;
+	} >;
+	/** Synthetic id stamped on the placeholder item; matched on success to splice in the server item. */
+	pendingUri: string;
+}
+
+/**
+ * Mutation factory for publishing a new ActivityPub post.
+ * Optimistically prepends a placeholder `FediverseFeedItem` (stamped
+ * with a `PENDING_FEDIVERSE_POST_URI` sentinel id) to every cached
+ * timeline page for the connection so the composer's success feels
+ * immediate; rolls back on error; on success splices the server item
+ * over the placeholder and invalidates the timeline to refetch from the
+ * canonical source.
+ *
+ * Accepts the consumer's QueryClient — Calypso boots its own
+ * separate from the api-queries singleton. See `client/reader/AGENTS.md`.
+ * Mirrors `createMastodonPostMutation` / `createPostMutation`.
+ */
+export const createFediversePostMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		FediverseCreatePostResult,
+		FediverseError,
+		FediverseCreatePostParams,
+		CreateFediversePostContext
+	>( {
+		mutationFn: createFediversePost,
+		onMutate: async ( vars ) => {
+			const timelineKey = readerFediverseKeys.timeline( vars.connectionId );
+			try {
+				await queryClient.cancelQueries( { queryKey: timelineKey } );
+			} catch {
+				// Best-effort per TanStack docs; the optimistic patch + mutationFn
+				// must still run.
+			}
+
+			const pendingUri = nextPendingFediversePostUri();
+			const snapshots: CreateFediversePostContext[ 'snapshots' ] = [];
+
+			const matches = queryClient.getQueriesData< InfiniteData< FediverseTimelinePage > >( {
+				queryKey: timelineKey,
+			} );
+			for ( const [ queryKey, data ] of matches ) {
+				snapshots.push( { queryKey, data } );
+				if ( ! data || data.pages.length === 0 ) {
+					continue;
+				}
+				const placeholder = buildPlaceholderItem( vars, pendingUri );
+				const [ firstPage, ...rest ] = data.pages;
+				const patchedFirst: FediverseTimelinePage = {
+					...firstPage,
+					items: [ placeholder, ...firstPage.items ],
+				};
+				queryClient.setQueryData< InfiniteData< FediverseTimelinePage > >( queryKey, {
+					...data,
+					pages: [ patchedFirst, ...rest ],
+				} );
+			}
+
+			return { snapshots, pendingUri };
+		},
+		onError: ( _err, _vars, ctx ) => {
+			if ( ! ctx ) {
+				return;
+			}
+			for ( const { queryKey, data } of ctx.snapshots ) {
+				queryClient.setQueryData( queryKey, data );
+			}
+		},
+		onSuccess: ( result, vars, ctx ) => {
+			// Replace placeholder with the server item in every snapshotted
+			// page where the placeholder landed. Avoids a refetch flash for
+			// the user while still letting `invalidateQueries` below reconcile
+			// any drift on the next read.
+			if ( ctx ) {
+				const matches = queryClient.getQueriesData< InfiniteData< FediverseTimelinePage > >( {
+					queryKey: readerFediverseKeys.timeline( vars.connectionId ),
+				} );
+				for ( const [ queryKey, data ] of matches ) {
+					if ( ! data ) {
+						continue;
+					}
+					queryClient.setQueryData< InfiniteData< FediverseTimelinePage > >( queryKey, {
+						...data,
+						pages: data.pages.map( ( page ) => ( {
+							...page,
+							items: page.items.map( ( item ) =>
+								item.id === ctx.pendingUri ? result.item : item
+							),
+						} ) ),
+					} );
+				}
+			}
+			queryClient.invalidateQueries( {
+				queryKey: readerFediverseKeys.timeline( vars.connectionId ),
+			} );
+		},
+	} );
+
+/**
+ * Build the synthetic feed item used during the optimistic-update window.
+ * Borrows shape from `FediverseFeedItem` so the timeline renderer can
+ * project it through the existing mapper without special-casing.
+ */
+function buildPlaceholderItem(
+	vars: FediverseCreatePostParams,
+	pendingUri: string
+): FediverseFeedItem {
+	return {
+		id: pendingUri,
+		url: '',
+		created_at: new Date().toISOString(),
+		account: {
+			id: '',
+			username: '',
+			acct: '',
+			display_name: '',
+			avatar: null,
+		},
+		content: vars.content,
+		spoiler_text: vars.summary ?? '',
+		sensitive: Boolean( vars.sensitive ),
+		language: vars.language ?? null,
+		in_reply_to_id: null,
+		in_reply_to_account_id: null,
+		boost: null,
+		media: [],
+		counts: { replies: 0, boosts: 0, favourites: 0 },
+	};
+}

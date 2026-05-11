@@ -22,7 +22,7 @@ import type { AppState } from 'calypso/types';
 export function ComposerModal< TError, TParams, TResult >() {
 	const translate = useTranslate();
 	const config = useComposerConfig< TError, TParams, TResult >();
-	const { mode, closeComposer, mediaSlot, markOverLimit } = useComposer();
+	const { mode, closeComposer, mediaSlot, protocolExtrasSlot, markOverLimit } = useComposer();
 	const queryClient = useQueryClient();
 	const mutation = useMutation( config.mutationFactory( queryClient ) );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -139,6 +139,9 @@ export function ComposerModal< TError, TParams, TResult >() {
 			return;
 		}
 		const baseParams = config.buildParams( mode, text );
+		// First merge any protocol-specific extras (visibility, content
+		// warning, sensitive flag, etc.) — they're sync and never reject.
+		const baseParamsWithExtras = protocolExtrasSlot.extendBuildParams( baseParams ) as TParams;
 		// `extendBuildParams` may return synchronously (atmosphere) or as a
 		// Promise (mastodon, where staged media is uploaded at publish time).
 		// Awaiting in both cases keeps the call site uniform; sync returns
@@ -153,7 +156,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 		let params: TParams;
 		setIsExtending( true );
 		try {
-			params = ( await mediaSlot.extendBuildParams( baseParams ) ) as TParams;
+			params = ( await mediaSlot.extendBuildParams( baseParamsWithExtras ) ) as TParams;
 		} catch ( error ) {
 			setExtendError( error as TError );
 			return;
@@ -187,6 +190,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 		translate,
 		config,
 		mediaSlot,
+		protocolExtrasSlot,
 		queryClient,
 	] );
 
@@ -224,6 +228,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					aria-invalid={ errorMessage ? true : undefined }
 				/>
 				{ mediaSlot.renderGrid() }
+				{ protocolExtrasSlot.renderControls() }
 				{ errorMessage && (
 					<div id="social-composer-error" className="social-composer__error" role="alert">
 						{ errorMessage }

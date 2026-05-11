@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
+import { fediverseComposerConfig } from './composer-config';
 import { FediverseNavigation } from './fediverse-navigation';
 import { PROFILE_TAB, TIMELINE_TAB } from './helper';
 import { ProfilePanel } from './profile-panel';
@@ -54,21 +56,25 @@ export function FediverseAccountView( { connectionId, tab }: Props ) {
 	const title = connection.name?.trim() || connection.webfinger;
 
 	return (
-		<ReaderMain className="fediverse-view">
-			<DocumentHead
-				title={
-					translate( '%(handle)s ‹ Fediverse ‹ Reader', {
-						args: { handle: connection.webfinger },
-					} ) as string
-				}
-			/>
-			<VStack spacing={ 4 }>
-				<NavigationHeader title={ title } subtitle={ connection.webfinger } compactBreadcrumb />
-				<FediverseNavigation connectionId={ connection.id } selectedTab={ tab } />
-				{ tab === TIMELINE_TAB && <TimelinePanel connection={ connection } /> }
-				{ tab === PROFILE_TAB && <ProfilePanel connection={ connection } /> }
-			</VStack>
-		</ReaderMain>
+		<ComposerProvider connectionId={ connection.id } config={ fediverseComposerConfig }>
+			<ReaderMain className="fediverse-view">
+				<DocumentHead
+					title={
+						translate( '%(handle)s ‹ Fediverse ‹ Reader', {
+							args: { handle: connection.webfinger },
+						} ) as string
+					}
+				/>
+				<VStack spacing={ 4 }>
+					<NavigationHeader title={ title } subtitle={ connection.webfinger } compactBreadcrumb />
+					<FediverseNavigation connectionId={ connection.id } selectedTab={ tab } />
+					{ tab === TIMELINE_TAB && <TimelinePanel connection={ connection } /> }
+					{ tab === PROFILE_TAB && <ProfilePanel connection={ connection } /> }
+				</VStack>
+			</ReaderMain>
+			<ComposeFab />
+			<ComposerModal />
+		</ComposerProvider>
 	);
 }
 

@@ -25,6 +25,14 @@
  *
  * Fields mirror the wire shape verbatim — see CM-684 for the contract.
  */
+/**
+ * Visibility levels the composer can stamp on a new Fediverse post. The
+ * AP plugin recognises `direct` too, but slice 2 intentionally omits it
+ * from the selector — the backend doesn't support it yet. Drop the
+ * comment + add the variant when that lands.
+ */
+export type FediverseVisibility = 'public' | 'unlisted' | 'followers';
+
 export interface FediverseConnection {
 	/** Keyring token id — canonical connection identifier for downstream calls. */
 	id: number;
@@ -38,6 +46,21 @@ export interface FediverseConnection {
 	icon: string;
 	/** Webfinger handle, e.g. `@myblog@myblog.wordpress.com`. */
 	webfinger: string;
+	/**
+	 * Per-blog grapheme cap for new posts. Surfaced by the connections
+	 * endpoint so the composer can validate against the blog's configured
+	 * cap rather than a hardcoded 500 — the AP plugin allows per-blog
+	 * overrides for long-form notes. Optional during the backend rollout
+	 * window; consumers default to 500 when absent.
+	 */
+	character_limit?: number;
+	/**
+	 * Blog-level default visibility for new posts. The composer's
+	 * visibility selector initialises to this value (modulo a localStorage
+	 * override carrying the user's last pick). Optional during the
+	 * rollout window; consumers default to `'public'` when absent.
+	 */
+	default_visibility?: FediverseVisibility;
 }
 
 export interface FediverseConnectionsResponse {
@@ -285,4 +308,47 @@ export interface FediverseDeleteFollowParams {
  */
 export interface FediverseFollowResponse {
 	viewer: FediverseAuthorProfileViewer;
+}
+
+/**
+ * Wire shape for `POST /reader/fediverse/connections/{id}/posts`. Sent
+ * by the standalone composer (slice 2). The reply / quote variants will
+ * extend this shape in later slices.
+ *
+ * `spoiler_text` carries the content-warning summary when the user
+ * toggles it on; the AP plugin maps it onto the upstream
+ * `summary` field. `sensitive` is the AP boolean and turns on the
+ * media-blur gate (relevant once media lands in a follow-up slice; the
+ * field is exposed now to keep the composer shape stable).
+ *
+ * `language` is optional — the backend infers from the blog locale when
+ * omitted. Slice 2 doesn't surface a language picker, but the wire
+ * accepts the field so a future power-user dropdown plugs in directly.
+ */
+export interface FediverseCreatePostParams {
+	connectionId: number;
+	content: string;
+	visibility: FediverseVisibility;
+	/** Content-warning summary. ≤100 chars per Mastodon convention. */
+	summary?: string;
+	sensitive?: boolean;
+	/** ISO-639-1 language code. */
+	language?: string;
+	/**
+	 * Idempotency token (UUID per submit attempt). Forwarded as the
+	 * `Idempotency-Key` request header so a network retry can't double-post.
+	 * Generated client-side at submit time.
+	 */
+	idempotencyKey?: string;
+}
+
+/**
+ * Response shape from the create-post endpoint. The wpcom backend
+ * projects the upstream AP `Create(Note)` activity into a uniform
+ * `FediverseFeedItem` — same shape returned by the timeline endpoint —
+ * so the composer's `onSuccess` can splice the new post into the
+ * timeline cache without an extra refetch.
+ */
+export interface FediverseCreatePostResult {
+	item: FediverseFeedItem;
 }

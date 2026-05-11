@@ -11,6 +11,7 @@ import {
 	mapFediverseFeedItemToSocialPost,
 	socialPostFeedItemKey,
 } from 'calypso/reader/social';
+import { TimelineComposePill, useOptionalComposer } from 'calypso/reader/social/composer';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectFediverseError } from './error-projection';
 import { getProfileUrl, hostFromUrl } from './route';
@@ -132,8 +133,16 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 		[ connection.id, onClickAnalytics, buildProfileUrl ]
 	);
 
+	// Only render the inline compose pill when a `<ComposerProvider>` is
+	// mounted upstream (account view). Surfaces without the provider — tests,
+	// embedded panels — skip the pill cleanly.
+	const composer = useOptionalComposer();
+
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
+			{ composer && (
+				<TimelineComposePill avatar={ connection.icon || null } entryPoint="timeline_inline" />
+			) }
 			<SocialFeedList< SocialPost >
 				items={ items }
 				isPending={ isPending }
