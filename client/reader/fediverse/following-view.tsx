@@ -123,8 +123,9 @@ export function FollowingView( { connectionId, actor }: Props ) {
 
 	const renderItem = ( item: FediverseAccountSummary ): SocialAccountRowProps => {
 		const isSelf = item.is_self;
-		const isFollowing = item.viewer.following;
-		const isRequested = item.viewer.requested;
+		// Viewer is optional during the backend rollout window and absent on
+		// `is_self` rows; treat its absence as "no follow UI available".
+		const viewer = item.viewer;
 		const isPending =
 			( followMut.isPending && followMut.variables?.actor === item.handle ) ||
 			( unfollowMut.isPending && unfollowMut.variables?.actor === item.handle );
@@ -138,43 +139,44 @@ export function FollowingView( { connectionId, actor }: Props ) {
 			biography: item.note_text,
 			profileHref,
 			isSelf,
-			followState: isSelf
-				? undefined
-				: {
-						isFollowing,
-						isFollowedBy: item.viewer.followed_by,
-						isRequested,
-						isPending,
-						onFollow: () =>
-							followMut.mutate(
-								{
-									connectionId,
-									actor: item.handle,
-									locked: item.locked,
-								},
-								{
-									onSuccess: () => {
-										dismissFollowError();
-										invalidateActorList();
+			followState:
+				isSelf || ! viewer
+					? undefined
+					: {
+							isFollowing: viewer.following,
+							isFollowedBy: viewer.followed_by,
+							isRequested: viewer.requested,
+							isPending,
+							onFollow: () =>
+								followMut.mutate(
+									{
+										connectionId,
+										actor: item.handle,
+										locked: item.locked,
 									},
-									onError: ( error ) => showFollowError( error, 'follow' ),
-								}
-							),
-						onUnfollow: () =>
-							unfollowMut.mutate(
-								{
-									connectionId,
-									actor: item.handle,
-								},
-								{
-									onSuccess: () => {
-										dismissFollowError();
-										invalidateActorList();
+									{
+										onSuccess: () => {
+											dismissFollowError();
+											invalidateActorList();
+										},
+										onError: ( error ) => showFollowError( error, 'follow' ),
+									}
+								),
+							onUnfollow: () =>
+								unfollowMut.mutate(
+									{
+										connectionId,
+										actor: item.handle,
 									},
-									onError: ( error ) => showFollowError( error, 'unfollow' ),
-								}
-							),
-				  },
+									{
+										onSuccess: () => {
+											dismissFollowError();
+											invalidateActorList();
+										},
+										onError: ( error ) => showFollowError( error, 'unfollow' ),
+									}
+								),
+					  },
 		};
 	};
 

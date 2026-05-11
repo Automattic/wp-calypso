@@ -245,7 +245,13 @@ export interface FediverseAccountSummary {
 	note_text: string;
 	avatar: string | null;
 	locked: boolean;
-	viewer: FediverseAuthorProfileViewer;
+	/**
+	 * Per-viewer relationship state. Optional during the backend rollout
+	 * window and absent for `is_self` rows (the server skips the
+	 * relationships call for the caller's own account). Consumers must
+	 * treat a missing viewer as "no follow UI available".
+	 */
+	viewer?: FediverseAuthorProfileViewer;
 	/** `true` when this row matches the connection's own actor. */
 	is_self: boolean;
 }
