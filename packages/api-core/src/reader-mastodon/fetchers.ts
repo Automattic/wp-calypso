@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import { classifyMastodonError, type MastodonError } from './errors';
 import type {
+	MastodonAccountSummariesPage,
 	MastodonAuthStatus,
 	MastodonCreateLikeParams,
 	MastodonDeleteLikeParams,
@@ -283,6 +284,77 @@ export async function getMastodonTagFeed(
 			},
 			query
 		) ) as MastodonTagFeedPage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonActorPageParams {
+	connectionId: number;
+	actor: string;
+	cursor?: string;
+	limit?: number;
+}
+
+const DEFAULT_ACTOR_PAGE_LIMIT = 40;
+
+function buildActorPageQuery(
+	cursor: string | undefined,
+	limit: number | undefined
+): Record< string, string > {
+	const out: Record< string, string > = {
+		limit: String( limit ?? DEFAULT_ACTOR_PAGE_LIMIT ),
+	};
+	if ( cursor && cursor.length > 0 ) {
+		out.cursor = cursor;
+	}
+	return out;
+}
+
+/**
+ * Authed page of accounts following `actor`. The wpcom backend extracts the
+ * upstream `Link: rel="next"` header into `cursor`, batches the per-row
+ * `viewer` relationship state, and skips the relationships call for the
+ * caller's own row (returning `is_self: true` with an all-false `viewer`).
+ */
+export async function getMastodonActorFollowers(
+	params: GetMastodonActorPageParams
+): Promise< MastodonAccountSummariesPage > {
+	const { connectionId, actor, cursor, limit } = params;
+	try {
+		return ( await wpcom.req.get(
+			{
+				// Encode `actor`; see getMastodonAuthorProfile for rationale.
+				path: `/reader/mastodon/connections/${ connectionId }/profile/${ encodeURIComponent(
+					actor
+				) }/followers`,
+				apiNamespace: NAMESPACE,
+			},
+			buildActorPageQuery( cursor, limit )
+		) ) as MastodonAccountSummariesPage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+/**
+ * Authed page of accounts `actor` follows. Same response shape and error
+ * contract as `getMastodonActorFollowers`.
+ */
+export async function getMastodonActorFollowing(
+	params: GetMastodonActorPageParams
+): Promise< MastodonAccountSummariesPage > {
+	const { connectionId, actor, cursor, limit } = params;
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/mastodon/connections/${ connectionId }/profile/${ encodeURIComponent(
+					actor
+				) }/following`,
+				apiNamespace: NAMESPACE,
+			},
+			buildActorPageQuery( cursor, limit )
+		) ) as MastodonAccountSummariesPage;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}

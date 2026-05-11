@@ -142,7 +142,10 @@ export interface MastodonThreadResponse {
 // Backend projects the home-instance Mastodon Account object. We surface
 // only the fields we render plus `raw` for forward-compat (matches the
 // existing MastodonConnectionDetails convention). `note` arrives sanitized
-// from the wire and is sanitized again client-side (defense-in-depth).
+// from the wire and is sanitized again client-side (defense-in-depth);
+// `SocialProfileCard` consumes it through its `bioHtml` slot. The full
+// profile shape does NOT carry a plain-text bio — the row variant
+// (`MastodonAccountSummary`) projects `note_text` for compact surfaces.
 // `id` is instance-local — same handle on a different home instance has a
 // different id; we still use it as the URL key when known because the
 // home-instance perspective is stable per connection. Webfinger handle
@@ -369,4 +372,41 @@ export interface MastodonFollowResponse {
 
 export interface MastodonAuthStatus {
 	needs_reauth: boolean;
+}
+
+/**
+ * Slim Mastodon Account shape returned by the followers / following list
+ * endpoints. Mirrors the fields the wpcom backend's row normaliser projects:
+ * profile-card surface fields plus per-viewer relationship state. `note` is
+ * sanitised server-side through the FEP-b2b8 allow-list (same subset as
+ * status `content`); `note_text` is the plain-text projection (HTML stripped
+ * server-side) so the row can render in compact form without un-rendering
+ * the HTML on the client. Mirrors AtmosphereProfileSummary's choice to
+ * expose a plain-text `description` field for list rows (Atmosphere's
+ * `description_html` companion lives on the full profile only).
+ */
+export interface MastodonAccountSummary {
+	id: string;
+	username: string;
+	acct: string;
+	/**
+	 * Bare webfinger handle (`user@instance`) synthesised server-side from
+	 * `acct` + connection's home instance. Mirrors the ATmosphere row
+	 * convention where `handle` is bare (`alice.bsky.social`); the display
+	 * layer (`SocialAccountRow`) renders the `@` prefix once.
+	 */
+	handle: string;
+	display_name: string;
+	note: string;
+	note_text: string;
+	avatar: string | null;
+	locked: boolean;
+	viewer: MastodonAuthorProfileViewer;
+	/** `true` when the row matches the connection's own account id; the server skips the relationships call for this row. */
+	is_self: boolean;
+}
+
+export interface MastodonAccountSummariesPage {
+	items: MastodonAccountSummary[];
+	cursor: string | null;
 }

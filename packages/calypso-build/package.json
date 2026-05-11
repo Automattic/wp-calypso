@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-build",
-	"version": "10.0.0",
+	"version": "11.0.0",
 	"description": "Shared Calypso build configuration files.",
 	"keywords": [
 		"babel",
@@ -54,8 +54,8 @@
 		"postcss-custom-properties": "^12.1.11",
 		"postcss-loader": "^6.2.1",
 		"recursive-copy": "^2.0.14",
-		"sass": "1.54.0",
-		"sass-loader": "^13.3.3",
+		"sass": "1.77.8",
+		"sass-loader": "^14.2.1",
 		"semver": "^7.7.2",
 		"stream-browserify": "^3.0.0",
 		"terser-webpack-plugin": "^5.3.14",
