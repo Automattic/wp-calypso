@@ -4,43 +4,53 @@ import { Theme } from 'calypso/types';
 import 'calypso/state/themes/init';
 
 /**
- * knownConflictingThemes: A list of themeIds which we prefer to fetch from the
- * jetpack/atomic site over the wpcom/wporg galleries.
- *
- * In most cases, we want to prefer the theme information found on wpcom or
- * wporg over the information found on a user's jetpack or atomic site, because
- * the info on wpcom or wporg has a longer description, more screenshots, and
- * more fields.
- *
- * However, some themes have a conflicting themeId. For example, let's say I
- * buy the bistro theme off woocommerce.com and install it on my jetpack or
- * atomic site. When I search for information about 'bistro' in the WPCOM ->
- * WPORG -> JP/Atomic order, I will first find information in
- * https://wp-themes.com/bistro/, which is a completely different theme than
- * the one offered on woocommerce.
- *
- * One solution would be to always prefer what's found on a user's
- * jetpack/atomic site over the centralized galleries. However, that results in
- * a notably degraded experience when looking at the theme info for popular
- * bundled themes like twentytwentyone.
- *
- * So it seems somewhat hacky, but keeping a list of themes where we prefer the
- * jetpack/atomic versions is a straightforward way to solve the bistro conflict while
- * keeping the rich theme information for twentytwentyone.
+ * Slugs whose installed copy on a site typically differs from the WP.com
+ * catalog entry with the same slug. Lookup order inverts to site-first for
+ * these so we don't show the wrong theme's metadata. Maintain manually.
  */
 export const knownConflictingThemes = new Set( [ 'bistro' ] );
 
 /**
- * On WordPress.com Atomic sites, wpcomsh rewrites the `theme_uri` field of
- * symlinked WP.com themes to `https://wordpress.com/theme/<slug>` so the API
- * response can distinguish managed (symlinked) themes from manually uploaded
- * third-party themes that happen to share a slug. This prefix is the reliable
- * signal that the installed theme is the WP.com-managed copy of the slug.
+ * wpcomsh rewrites `theme_uri` to this prefix only for symlinked WP.com
+ * themes (`wpcomsh_add_wpcom_suffix_to_theme_endpoint_response` filter).
+ * It is the signal that distinguishes a managed WP.com copy of a slug from
+ * a manually uploaded third-party theme that happens to share the slug.
  */
 const SYMLINKED_THEME_URI_PREFIX = 'https://wordpress.com/theme/';
 
+/**
+ * Whether the site's theme record represents the symlinked WP.com-managed
+ * copy of a slug, as opposed to a manually uploaded third-party theme.
+ * @param  {Object} siteTheme Theme record from the site's `queries[siteId]` subtree.
+ * @returns {boolean}
+ */
 function isSymlinkedManagedTheme( siteTheme ) {
 	return Boolean( siteTheme?.theme_uri?.startsWith( SYMLINKED_THEME_URI_PREFIX ) );
+}
+
+/**
+ * Resolves the slug-collision case where the WP.com catalog has a retired
+ * record AND the site has a same-slug unmanaged record. Returns a merged
+ * theme object (site display fields override wpcom, wpcom-shape fields
+ * preserved for downstream consumers, `retired` cleared), or `null` when
+ * the condition does not apply. Symlinked managed copies return `null` so
+ * legitimately-retired premium themes keep their canonical record.
+ * @param  {Object} state   Global state tree
+ * @param  {number} siteId  Site ID
+ * @param  {string} themeId Theme ID
+ * @returns {?Object}        Merged theme object, or `null`.
+ */
+function getRetiredCollisionTheme( state, siteId, themeId ) {
+	const wpcomTheme = getTheme( state, 'wpcom', themeId );
+	const siteTheme = siteId ? getTheme( state, siteId, themeId ) : null;
+	if ( ! wpcomTheme?.retired || ! siteTheme || isSymlinkedManagedTheme( siteTheme ) ) {
+		return null;
+	}
+	return {
+		...wpcomTheme,
+		...siteTheme,
+		retired: false,
+	};
 }
 
 /**
@@ -59,25 +69,9 @@ export function getCanonicalTheme( state, siteId, themeId ) {
 		searchOrder = [ siteId, 'wpcom', 'wporg' ];
 	}
 
-	// When the wpcom record for this slug is retired and the site has its own installed
-	// theme with the same slug that is NOT symlinked to the wpcom-managed copy, the
-	// installed theme is an unrelated third-party theme whose slug coincides with a
-	// retired wpcom premium theme. Merge so display fields (name, author, description,
-	// screenshot, version) come from the site's installed copy, while wpcom-shape
-	// fields (stylesheet, taxonomies, etc.) are preserved for downstream consumers
-	// that assume them. The retired flag is cleared so the retired-theme notice
-	// doesn't fire for an installed third-party theme. Symlinked wpcom themes keep
-	// the wpcom canonical record (and its retired notice) so customers who
-	// legitimately have a retired premium theme installed continue to see the
-	// "retired and only receives security updates" message.
-	const wpcomTheme = getTheme( state, 'wpcom', themeId );
-	const siteTheme = siteId ? getTheme( state, siteId, themeId ) : null;
-	if ( wpcomTheme?.retired && siteTheme && ! isSymlinkedManagedTheme( siteTheme ) ) {
-		return {
-			...wpcomTheme,
-			...siteTheme,
-			retired: false,
-		};
+	const collisionMerge = getRetiredCollisionTheme( state, siteId, themeId );
+	if ( collisionMerge ) {
+		return collisionMerge;
 	}
 
 	const source = find( searchOrder, ( s ) => getTheme( state, s, themeId ) );
