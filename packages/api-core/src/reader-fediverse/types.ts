@@ -216,3 +216,68 @@ export interface FediverseAuthorProfileResponse {
  * here too. Mirrors `MastodonAuthorFeedPage`.
  */
 export type FediverseAuthorFeedPage = FediverseTimelinePage;
+
+/**
+ * Compact account row shape returned by the followers / following list
+ * endpoints. Mirrors `MastodonAccountSummary`: a strict subset of the
+ * profile-card surface fields plus per-viewer relationship state. `note`
+ * is server-sanitised AP `summary` HTML (re-sanitised client-side as
+ * defence-in-depth via the same DOMPurify allow-list as the full
+ * profile); `note_text` is the plain-text projection (HTML stripped
+ * server-side) so the row can render in compact form without
+ * un-rendering the HTML on the client.
+ *
+ * `handle` is the bare webfinger handle (`user@host`) synthesised
+ * server-side from `acct` + connection's home host. Mirrors the
+ * Mastodon row convention — the display layer (`SocialAccountRow`)
+ * renders the `@` prefix once.
+ */
+export interface FediverseAccountSummary {
+	/** Canonical AP actor URL, e.g. `https://example.com/users/alice`. */
+	id: string;
+	username: string;
+	/** Webfinger handle with leading `@` (matches `FediverseAuthorProfile.acct`). */
+	acct: string;
+	/** Bare webfinger handle, e.g. `alice@example.com` (no leading `@`). */
+	handle: string;
+	display_name: string;
+	note: string;
+	note_text: string;
+	avatar: string | null;
+	locked: boolean;
+	viewer: FediverseAuthorProfileViewer;
+	/** `true` when this row matches the connection's own actor. */
+	is_self: boolean;
+}
+
+export interface FediverseAccountSummariesPage {
+	items: FediverseAccountSummary[];
+	cursor: string | null;
+}
+
+export interface FediverseCreateFollowParams {
+	connectionId: number;
+	/**
+	 * Actor identifier — webfinger handle (`user@host` or `@user@host`) or
+	 * canonical AP actor URL. The backend resolves to the upstream
+	 * activity-pub actor before issuing the Follow activity.
+	 */
+	actor: string;
+}
+
+export interface FediverseDeleteFollowParams {
+	connectionId: number;
+	/** Same actor identifier accepted by `FediverseCreateFollowParams`. */
+	actor: string;
+}
+
+/**
+ * Response shape returned by both the create-follow and delete-follow
+ * endpoints. Mirrors `MastodonFollowResponse` — the wpcom backend
+ * projects the upstream AP `Relationship` object into a uniform
+ * `viewer` block so optimistic + server-state updates use the same
+ * patcher.
+ */
+export interface FediverseFollowResponse {
+	viewer: FediverseAuthorProfileViewer;
+}

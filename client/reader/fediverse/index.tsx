@@ -8,6 +8,8 @@ import {
 	fediverseAuthorProfile,
 	fediverseIdRedirect,
 	fediverseLanding,
+	fediverseProfileFollowers,
+	fediverseProfileFollowing,
 } from './controller';
 
 export default function () {
@@ -27,6 +29,22 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		fediverseAuthorProfile,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/fediverse/:id(\\d+)/profile/:actor/followers',
+		sidebar,
+		setBeforePrimary,
+		fediverseProfileFollowers,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/fediverse/:id(\\d+)/profile/:actor/following',
+		sidebar,
+		setBeforePrimary,
+		fediverseProfileFollowing,
 		makeLayout,
 		clientRender
 	);

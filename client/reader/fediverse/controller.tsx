@@ -15,6 +15,14 @@ const loadFediverseAuthorProfileView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-fediverse-author-profile-view" */ 'calypso/reader/fediverse/author-profile-view'
 	);
+const loadFediverseFollowersView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-fediverse-followers-view" */ 'calypso/reader/fediverse/followers-view'
+	);
+const loadFediverseFollowingView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-fediverse-following-view" */ 'calypso/reader/fediverse/following-view'
+	);
 
 function ensureFediverseEnabled(): boolean {
 	if ( ! isEnabled( 'reader/social' ) ) {
@@ -78,6 +86,56 @@ export const fediverseAuthorProfile = ( context: Context, next: () => void ) => 
 		<AsyncLoad
 			key="reader-fediverse-author-profile"
 			require={ loadFediverseAuthorProfileView }
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
+		/>
+	);
+	next();
+};
+
+export const fediverseProfileFollowers = ( context: Context, next: () => void ) => {
+	if ( ! ensureFediverseEnabled() ) {
+		return;
+	}
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' ).trim();
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	if ( ! idValid || ! actor ) {
+		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/fediverse' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-fediverse-followers"
+			require={ loadFediverseFollowersView }
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
+		/>
+	);
+	next();
+};
+
+export const fediverseProfileFollowing = ( context: Context, next: () => void ) => {
+	if ( ! ensureFediverseEnabled() ) {
+		return;
+	}
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' ).trim();
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	if ( ! idValid || ! actor ) {
+		page.redirect( idValid ? `/reader/fediverse/${ id }` : '/reader/fediverse' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-fediverse-following"
+			require={ loadFediverseFollowingView }
 			placeholder={ null }
 			connectionId={ id }
 			actor={ actor }
