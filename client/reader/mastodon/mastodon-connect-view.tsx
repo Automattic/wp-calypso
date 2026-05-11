@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -77,10 +78,15 @@ export function MastodonConnectView() {
 		<ReaderMain className="mastodon-view">
 			<DocumentHead title={ translate( 'Connect account ‹ Mastodon ‹ Reader' ) } />
 			<NavigationHeader
-				title={ translate( 'Connect a Mastodon account' ) }
-				subtitle={ translate(
-					'Enter your server’s address — we’ll hand you off to sign in there.'
-				) }
+				title={
+					<span className="mastodon-view__section-title">
+						<span data-testid="mastodon-section-logo" aria-hidden="true">
+							<ReaderMastodonIcon />
+						</span>
+						<span>{ translate( 'Connect a Mastodon account' ) }</span>
+					</span>
+				}
+				subtitle={ translate( 'Bring your Mastodon account into the Reader.' ) }
 			/>
 			<VStack spacing={ 4 } className="mastodon-view__body">
 				<ConnectForm

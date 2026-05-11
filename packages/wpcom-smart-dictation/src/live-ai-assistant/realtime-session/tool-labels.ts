@@ -1,3 +1,4 @@
+import { STOP_DICTATION_TOOL_NAME } from '../tools/dictation-control-tool';
 import {
 	FORMAT_TEXT_TOOL_NAME,
 	GET_BLOCK_TOOL_NAME,
@@ -10,6 +11,7 @@ import {
 	INSERT_BLOCK_TOOL_NAME,
 	INSERT_BLOCKS_TOOL_NAME,
 	MOVE_BLOCK_TOOL_NAME,
+	REMOVE_ALL_BLOCKS_TOOL_NAME,
 	REMOVE_BLOCK_TOOL_NAME,
 	REPLACE_BLOCK_TOOL_NAME,
 	SELECT_BLOCK_TOOL_NAME,
@@ -24,6 +26,7 @@ import {
 	SET_POST_TITLE_TOOL_NAME,
 	UNDO_TOOL_NAME,
 } from '../tools/editor-post-tool';
+import { GENERATE_IMAGE_TOOL_NAME } from '../tools/generate-image-tool';
 import { PICK_IMAGE_TOOL_NAME } from '../tools/image-picker-tool';
 import { VERIFY_YOUTUBE_URL_TOOL_NAME } from '../tools/youtube-oembed-tool';
 
@@ -98,6 +101,16 @@ export function describeToolCall(
 		}
 		case REMOVE_BLOCK_TOOL_NAME:
 			return `${ errorPrefix }Removed block`;
+		case REMOVE_ALL_BLOCKS_TOOL_NAME: {
+			const count =
+				isObjectResult &&
+				typeof ( result as { removed_count?: unknown } ).removed_count === 'number'
+					? ( result as { removed_count: number } ).removed_count
+					: null;
+			return count === 1
+				? `${ errorPrefix }Removed 1 block`
+				: `${ errorPrefix }Removed ${ count ?? 'all' } blocks`;
+		}
 		case MOVE_BLOCK_TOOL_NAME: {
 			const dir = typeof args.direction === 'string' ? args.direction : null;
 			if ( dir === 'up' ) {
@@ -128,6 +141,8 @@ export function describeToolCall(
 			return `${ errorPrefix }Set post title`;
 		case SAVE_POST_TOOL_NAME:
 			return `${ errorPrefix }Saved draft`;
+		case STOP_DICTATION_TOOL_NAME:
+			return `${ errorPrefix }Stopped dictation`;
 		case PUBLISH_POST_TOOL_NAME:
 			return `${ errorPrefix }Published post`;
 		case UNDO_TOOL_NAME:
@@ -143,6 +158,16 @@ export function describeToolCall(
 					? ( result as { title: string } ).title
 					: null;
 			return title ? `Verified YouTube URL: ${ title }` : 'Verified YouTube URL';
+		}
+		case GENERATE_IMAGE_TOOL_NAME: {
+			if ( ! ok ) {
+				const message =
+					isObjectResult && typeof ( result as { error?: unknown } ).error === 'string'
+						? ( result as { error: string } ).error
+						: 'Could not generate image';
+				return `Failed: ${ message }`;
+			}
+			return 'Generated image';
 		}
 		case PICK_IMAGE_TOOL_NAME: {
 			const action = typeof args.action === 'string' ? args.action : '';

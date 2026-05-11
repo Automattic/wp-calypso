@@ -1,3 +1,4 @@
+import { stopDictationToolDefinition } from '../tools/dictation-control-tool';
 import {
 	formatTextToolDefinition,
 	getBlockToolDefinition,
@@ -10,6 +11,7 @@ import {
 	insertBlockToolDefinition,
 	insertBlocksToolDefinition,
 	moveBlockToolDefinition,
+	removeAllBlocksToolDefinition,
 	removeBlockToolDefinition,
 	replaceBlockToolDefinition,
 	selectBlockToolDefinition,
@@ -23,6 +25,7 @@ import {
 	setPostTitleToolDefinition,
 	undoToolDefinition,
 } from '../tools/editor-post-tool';
+import { generateImageToolDefinition } from '../tools/generate-image-tool';
 import { pickImageToolDefinition } from '../tools/image-picker-tool';
 import { verifyYoutubeUrlToolDefinition } from '../tools/youtube-oembed-tool';
 
@@ -39,6 +42,7 @@ export const realtimeToolDefinitions = [
 	updateBlockAttributesToolDefinition,
 	replaceBlockToolDefinition,
 	removeBlockToolDefinition,
+	removeAllBlocksToolDefinition,
 	moveBlockToolDefinition,
 	getBlockToolDefinition,
 	formatTextToolDefinition,
@@ -50,4 +54,6 @@ export const realtimeToolDefinitions = [
 	getPostInfoToolDefinition,
 	verifyYoutubeUrlToolDefinition,
 	pickImageToolDefinition,
+	stopDictationToolDefinition,
+	generateImageToolDefinition,
 ];

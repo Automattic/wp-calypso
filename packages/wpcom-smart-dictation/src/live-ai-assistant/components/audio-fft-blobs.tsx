@@ -1,23 +1,20 @@
 import clsx from 'clsx';
-import { useEffect, useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
+import { useEffect, useRef } from 'react';
 import './audio-fft-blobs.scss';
 
-const SHAPES = [
-	'M 100 600 q 0 -500, 500 -500 t 500 500 t -500 500 T 100 600 z',
-	'M 100 600 q -50 -400, 500 -500 t 450 550 t -500 500 T 100 600 z',
-	'M 100 600 q 0 -400, 500 -500 t 400 500 t -500 500 T 100 600 z',
-	'M 150 600 q 0 -600, 500 -500 t 500 550 t -500 500 T 150 600 z',
-] as const;
-
-const FFT_BANDS = [
-	[ 60, 250 ],
-	[ 250, 1000 ],
-	[ 1000, 4000 ],
-	[ 4000, 12000 ],
-] as const;
-
-type BandValues = readonly [ number, number, number, number ];
+const DEFAULT_SIZE = 64;
+const BAR_WIDTH = 3;
+const BAR_GAP = 1;
+const BAR_COUNT = 16;
+const MIN_BAR_HEIGHT = 4;
+const NOISE_FLOOR = 0.015;
+const PEAK_FLOOR = 0.08;
+const PEAK_ATTACK = 0.54;
+const PEAK_RELEASE = 0.012;
+const LEVEL_ATTACK = 0.32;
+const LEVEL_RELEASE = 0.16;
+const VISUAL_GAIN = 1.7;
+const TRAIL_ERASE_ALPHA = 0.34;
 
 interface AudioFftBlobsProps {
 	/**
@@ -29,158 +26,217 @@ interface AudioFftBlobsProps {
 	 * Controlled band amplitudes from 0 to 1. Used as fallback when `stream`
 	 * is not provided.
 	 */
-	bands?: Partial< BandValues >;
+	bands?: readonly number[];
 	className?: string;
 	isActive?: boolean;
 	size?: number;
 }
-
-type BlobStyle = CSSProperties & Record< `--fft-band-${ 1 | 2 | 3 | 4 }`, string >;
 
 export function AudioFftBlobs( {
 	stream = null,
 	bands,
 	className,
 	isActive = true,
-	size = 160,
+	size = DEFAULT_SIZE,
 }: AudioFftBlobsProps ) {
-	const controlledBands = useMemo< BandValues >(
-		() => [
-			normalizeBand( bands?.[ 0 ] ),
-			normalizeBand( bands?.[ 1 ] ),
-			normalizeBand( bands?.[ 2 ] ),
-			normalizeBand( bands?.[ 3 ] ),
-		],
-		[ bands ]
-	);
-	const [ fftBands, setFftBands ] = useState< BandValues >( controlledBands );
+	const canvasRef = useRef< HTMLCanvasElement | null >( null );
+	const bandsRef = useRef< readonly number[] | undefined >( bands );
 
 	useEffect( () => {
-		if ( isActive ) {
-			return;
-		}
-		setFftBands( [ 0, 0, 0, 0 ] );
-	}, [ isActive ] );
+		bandsRef.current = bands;
+	}, [ bands ] );
 
 	useEffect( () => {
-		if ( stream ) {
-			return;
-		}
-		setFftBands( controlledBands );
-	}, [ controlledBands, stream ] );
-
-	useEffect( () => {
-		if ( ! stream || ! isActive ) {
+		const canvas = canvasRef.current;
+		if ( ! canvas ) {
 			return;
 		}
 
-		const AudioContextCtor =
-			window.AudioContext ||
-			( window as Window & { webkitAudioContext?: typeof AudioContext } ).webkitAudioContext;
-		if ( ! AudioContextCtor ) {
-			return;
-		}
-
-		const audioContext = new AudioContextCtor();
-		const source = audioContext.createMediaStreamSource( stream );
-		const analyser = audioContext.createAnalyser();
-		analyser.fftSize = 1024;
-		analyser.smoothingTimeConstant = 0.82;
-		source.connect( analyser );
-
-		const frequencyData = new Uint8Array( analyser.frequencyBinCount );
 		let frameId = 0;
+		let audioContext: AudioContext | null = null;
+		let source: MediaStreamAudioSourceNode | null = null;
+		let analyser: AnalyserNode | null = null;
+		let timeDomainData: Uint8Array | null = null;
+		let lastValues = Array.from( { length: BAR_COUNT }, () => 0 );
+		let adaptivePeak = PEAK_FLOOR;
 
-		const tick = () => {
-			analyser.getByteFrequencyData( frequencyData );
-			setFftBands( readBands( frequencyData, audioContext.sampleRate ) );
-			frameId = window.requestAnimationFrame( tick );
+		const drawFrame = () => {
+			const nextValues =
+				stream && isActive && analyser && timeDomainData
+					? readWaveformBars( analyser, timeDomainData )
+					: readControlledBars( bandsRef.current, isActive );
+			const normalizedValues = normalizeBarsToAdaptivePeak( nextValues, adaptivePeak );
+			adaptivePeak = normalizedValues.peak;
+
+			lastValues = lastValues.map( ( value, index ) => {
+				const smoothing = normalizedValues.values[ index ] > value ? LEVEL_ATTACK : LEVEL_RELEASE;
+				return value * ( 1 - smoothing ) + normalizedValues.values[ index ] * smoothing;
+			} );
+			drawWaveform( canvas, lastValues, size );
+			frameId = window.requestAnimationFrame( drawFrame );
 		};
 
-		void audioContext.resume();
-		tick();
+		const start = async () => {
+			if ( stream && isActive ) {
+				const AudioContextCtor =
+					window.AudioContext ||
+					( window as Window & { webkitAudioContext?: typeof AudioContext } ).webkitAudioContext;
+
+				if ( AudioContextCtor ) {
+					audioContext = new AudioContextCtor();
+					source = audioContext.createMediaStreamSource( stream );
+					analyser = audioContext.createAnalyser();
+					analyser.fftSize = 512;
+					analyser.smoothingTimeConstant = 0.74;
+					source.connect( analyser );
+					timeDomainData = new Uint8Array( analyser.fftSize );
+					await audioContext.resume();
+				}
+			}
+
+			drawFrame();
+		};
+
+		void start();
 
 		return () => {
 			window.cancelAnimationFrame( frameId );
-			source.disconnect();
-			analyser.disconnect();
-			void audioContext.close();
+			source?.disconnect();
+			analyser?.disconnect();
+			void audioContext?.close();
 		};
-	}, [ isActive, stream ] );
-
-	const style: BlobStyle = {
-		width: size,
-		height: size,
-		'--fft-band-1': String( fftBands[ 0 ] ),
-		'--fft-band-2': String( fftBands[ 1 ] ),
-		'--fft-band-3': String( fftBands[ 2 ] ),
-		'--fft-band-4': String( fftBands[ 3 ] ),
-	};
+	}, [ isActive, size, stream ] );
 
 	return (
 		<div
 			className={ clsx( 'audio-fft-blobs', className, {
 				'is-active': isActive,
 			} ) }
-			style={ style }
+			style={ { width: size, height: size } }
 			aria-hidden="true"
 		>
-			<svg viewBox="0 0 1200 1200" focusable="false">
-				{ SHAPES.map( ( shape, index ) => {
-					const band = index + 1;
-					return (
-						<g
-							className={ `audio-fft-blobs__blob audio-fft-blobs__blob-${ band }` }
-							key={ `blob-${ band }` }
-						>
-							<path d={ shape } />
-						</g>
-					);
-				} ) }
-				{ SHAPES.map( ( shape, index ) => {
-					const band = index + 1;
-					return (
-						<g
-							className={ `audio-fft-blobs__blob audio-fft-blobs__blob-${ band } audio-fft-blobs__blob--alt` }
-							key={ `blob-${ band }-alt` }
-						>
-							<path d={ shape } />
-						</g>
-					);
-				} ) }
-			</svg>
+			<canvas ref={ canvasRef } width={ size } height={ size } />
 		</div>
 	);
 }
 
 export default AudioFftBlobs;
 
-function normalizeBand( value: unknown ): number {
-	return typeof value === 'number' && Number.isFinite( value )
-		? Math.max( 0, Math.min( 1, value ) )
-		: 0;
-}
+function readWaveformBars( analyser: AnalyserNode, timeDomainData: Uint8Array ): number[] {
+	analyser.getByteTimeDomainData( timeDomainData );
 
-function readBands( frequencyData: Uint8Array, sampleRate: number ): BandValues {
-	const nyquist = sampleRate / 2;
-
-	const bandValues = FFT_BANDS.map( ( [ minHz, maxHz ] ) => {
-		const start = Math.max( 0, Math.floor( ( minHz / nyquist ) * frequencyData.length ) );
-		const end = Math.min(
-			frequencyData.length - 1,
-			Math.ceil( ( Math.min( maxHz, nyquist ) / nyquist ) * frequencyData.length )
-		);
-
+	const samplesPerBar = Math.floor( timeDomainData.length / BAR_COUNT );
+	return Array.from( { length: BAR_COUNT }, ( _, index ) => {
+		const start = index * samplesPerBar;
+		const end = Math.min( timeDomainData.length, start + samplesPerBar );
 		let sum = 0;
 		let count = 0;
-		for ( let i = start; i <= end; i++ ) {
-			sum += frequencyData[ i ];
+
+		for ( let i = start; i < end; i++ ) {
+			sum += Math.abs( timeDomainData[ i ] - 128 ) / 128;
 			count++;
 		}
 
-		const average = count ? sum / count / 255 : 0;
-		return Math.max( 0, Math.min( 1, ( average - 0.04 ) * 1.8 ) );
+		return Math.max( 0, count ? sum / count : 0 );
+	} );
+}
+
+function readControlledBars( bands: readonly number[] | undefined, isActive: boolean ): number[] {
+	if ( ! isActive ) {
+		return Array.from( { length: BAR_COUNT }, () => 0 );
+	}
+	if ( ! bands?.length ) {
+		return Array.from( { length: BAR_COUNT }, () => 0 );
+	}
+
+	return Array.from( { length: BAR_COUNT }, ( _, index ) =>
+		Math.max( 0, bands[ Math.floor( ( index / BAR_COUNT ) * bands.length ) ] ?? 0 )
+	);
+}
+
+function normalizeBarsToAdaptivePeak(
+	values: number[],
+	previousPeak: number
+): { values: number[]; peak: number } {
+	const currentPeak = values.reduce( ( peak, value ) => Math.max( peak, value ), 0 );
+	const nextPeak = Math.max(
+		PEAK_FLOOR,
+		previousPeak +
+			( currentPeak - previousPeak ) * ( currentPeak > previousPeak ? PEAK_ATTACK : PEAK_RELEASE )
+	);
+
+	return {
+		peak: nextPeak,
+		values: values.map( ( value ) => {
+			const denoised = value <= NOISE_FLOOR ? 0 : value - NOISE_FLOOR;
+			return Math.max( 0, Math.min( 1, ( denoised / nextPeak ) * VISUAL_GAIN ) );
+		} ),
+	};
+}
+
+function drawWaveform( canvas: HTMLCanvasElement, values: number[], size: number ) {
+	const pixelRatio = window.devicePixelRatio || 1;
+	const width = Math.round( size * pixelRatio );
+	const height = Math.round( size * pixelRatio );
+
+	if ( canvas.width !== width || canvas.height !== height ) {
+		canvas.width = width;
+		canvas.height = height;
+	}
+
+	const ctx = canvas.getContext( '2d' );
+	if ( ! ctx ) {
+		return;
+	}
+
+	ctx.save();
+	ctx.scale( pixelRatio, pixelRatio );
+	ctx.globalCompositeOperation = 'destination-out';
+	ctx.fillStyle = `rgba( 0, 0, 0, ${ TRAIL_ERASE_ALPHA } )`;
+	ctx.fillRect( 0, 0, size, size );
+	ctx.globalCompositeOperation = 'source-over';
+
+	const gradient = ctx.createLinearGradient( 0, 0, size, size );
+	gradient.addColorStop( 0, '#3858e9' );
+	gradient.addColorStop( 1, '#183ad6' );
+	ctx.fillStyle = gradient;
+
+	const totalBarsWidth = BAR_COUNT * BAR_WIDTH + ( BAR_COUNT - 1 ) * BAR_GAP;
+	const startX = ( size - totalBarsWidth ) / 2;
+	const maxBarHeight = size - 18;
+
+	values.forEach( ( value, index ) => {
+		const barHeight = MIN_BAR_HEIGHT + value * maxBarHeight;
+		const x = startX + index * ( BAR_WIDTH + BAR_GAP );
+		const y = ( size - barHeight ) / 2;
+		drawRoundedBar( ctx, x, y, BAR_WIDTH, barHeight );
 	} );
 
-	return [ bandValues[ 0 ] ?? 0, bandValues[ 1 ] ?? 0, bandValues[ 2 ] ?? 0, bandValues[ 3 ] ?? 0 ];
+	ctx.restore();
+}
+
+function drawRoundedBar(
+	ctx: CanvasRenderingContext2D,
+	x: number,
+	y: number,
+	width: number,
+	height: number
+) {
+	const radius = width / 2;
+
+	ctx.beginPath();
+	if ( typeof ctx.roundRect === 'function' ) {
+		ctx.roundRect( x, y, width, height, radius );
+	} else {
+		ctx.moveTo( x + radius, y );
+		ctx.lineTo( x + width - radius, y );
+		ctx.quadraticCurveTo( x + width, y, x + width, y + radius );
+		ctx.lineTo( x + width, y + height - radius );
+		ctx.quadraticCurveTo( x + width, y + height, x + width - radius, y + height );
+		ctx.lineTo( x + radius, y + height );
+		ctx.quadraticCurveTo( x, y + height, x, y + height - radius );
+		ctx.lineTo( x, y + radius );
+		ctx.quadraticCurveTo( x, y, x + radius, y );
+	}
+	ctx.fill();
 }

@@ -326,4 +326,37 @@ describe( 'MastodonAccountView reauth gate', () => {
 
 		errorSpy.mockRestore();
 	} );
+
+	it( 'surfaces an error notice and refuses to redirect when sessionStorage cannot persist the oauth state', async () => {
+		const user = userEvent.setup();
+		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
+		const setItemSpy = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			throw new DOMException( 'QuotaExceeded' );
+		} );
+
+		mockConnections();
+		mockConnectionDetails();
+		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );
+		nock( BASE ).post( listUrl, { step: 'authorize', instance: 'a8c.social' } ).reply( 200, {
+			authorize_url: 'https://a8c.social/oauth/authorize?client_id=x&state=abc',
+			state: 'abc',
+		} );
+
+		renderWithProvider( <MastodonAccountView connectionId={ 42 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+
+		const button = await screen.findByRole( 'button', { name: /reconnect on a8c\.social/i } );
+		await user.click( button );
+
+		await waitFor( () => expect( errorSpy ).toHaveBeenCalled() );
+		expect( assignMock ).not.toHaveBeenCalled();
+		expect( trackSpy ).toHaveBeenCalledWith(
+			'calypso_reader_mastodon_authorize_error',
+			expect.objectContaining( { reason: 'state_persist_failed' } )
+		);
+
+		setItemSpy.mockRestore();
+		errorSpy.mockRestore();
+	} );
 } );

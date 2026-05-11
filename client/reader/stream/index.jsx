@@ -7,14 +7,13 @@ import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
@@ -29,22 +28,10 @@ import XPostHelper from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import {
-	clearStream,
-	requestPage,
-	selectItem,
-	selectNextItem,
-	selectPrevItem,
-	showUpdates,
-} from 'calypso/state/reader/streams/actions';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/reader/streams/normalize';
-import {
-	getStream,
-	getTransformedStreamItems,
-	shouldRequestRecs,
-} from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -57,7 +44,15 @@ import EmptyContent from './empty';
 import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-
+import { useStreamPendingPosts } from './use-stream-pending-posts';
+import { useStreamPostKeySelection } from './use-stream-post-key-selection';
+import { useStreamPosts } from './use-stream-posts';
+import {
+	getDistanceBetweenPrompts,
+	getDistanceBetweenRecs,
+	injectPrompts,
+	injectRecommendations,
+} from './utils';
 // minimal size for the two-column layout to show without cut off
 // 64 is padding, 8 is margin
 export const WIDE_DISPLAY_CUTOFF = 950 + 64 * 2 + 8 * 2;
@@ -94,6 +89,12 @@ class ReaderStream extends Component {
 		isLoggedIn: PropTypes.bool,
 		wideLayout: PropTypes.bool,
 		showBylineSecondarySiteLink: PropTypes.bool,
+		followsCount: PropTypes.number,
+		streamPostsQuery: PropTypes.object,
+		recsStreamPostsQuery: PropTypes.object,
+		pendingCount: PropTypes.number,
+		consumePending: PropTypes.func,
+		isRefetching: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -142,13 +143,13 @@ class ReaderStream extends Component {
 	componentDidUpdate( { selectedPostKey, streamKey, selectedFeedId } ) {
 		// Fetch new page if selected feed or stream is changed.
 		if ( selectedFeedId !== this.props.selectedFeedId ) {
+			// `useStreamPosts` is keyed by `feedId`, so the cache rotates
+			// automatically — no manual purge needed. Selection lives under the
+			// new `streamKey`'s entry, which starts empty.
 			this.scrollFeedListToTop();
-			this.props.clearStream( { streamKey } );
-			this.fetchNextPage( {}, { ...this.props, stream: null } ); // Stream as null to start fresh pagination.
 		} else if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
 			this.props.viewStream( streamKey, window.location.pathname );
-			this.fetchNextPage( {} );
 		}
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
@@ -161,19 +162,9 @@ class ReaderStream extends Component {
 			this.wasSelectedByOpeningPost = false;
 			this.focusSelectedPost( this.props.selectedPostKey );
 		}
-
-		if ( this.props.shouldRequestRecs ) {
-			this.props.requestPage( {
-				streamKey: this.props.recsStreamKey,
-				feedId: this.props.selectedFeedId,
-				pageHandle: this.props.recsStream.pageHandle,
-				localeSlug: this.props.localeSlug,
-			} );
-		}
 	}
 	tryAgain = () => {
-		this.props.clearStream( { streamKey: this.props.streamKey } );
-		this.fetchNextPage( {} );
+		this.props.streamPostsQuery.refetch();
 	};
 
 	focusSelectedPost = ( selectedPostKey ) => {
@@ -232,7 +223,6 @@ class ReaderStream extends Component {
 		const { streamKey } = this.props;
 		this.props.resetCardExpansions();
 		this.props.viewStream( streamKey, window.location.pathname );
-		this.fetchNextPage( {} );
 		this.isMounted = true;
 
 		window.addEventListener( 'popstate', this._popstate );
@@ -395,10 +385,7 @@ class ReaderStream extends Component {
 	selectNextItem = () => {
 		// note that we grab the items directly from the stream because we don't want the transformed
 		// one with combined cards
-		const {
-			streamKey,
-			stream: { items },
-		} = this.props;
+		const { items } = this.props;
 
 		// This should already be false but this is a safety.
 		this.wasSelectedByOpeningPost = false;
@@ -408,7 +395,7 @@ class ReaderStream extends Component {
 		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey && selectedItem ) {
-			this.props.selectNextItem( { streamKey, items } );
+			this.props.selectNextPost( items );
 			return;
 		}
 
@@ -442,9 +429,9 @@ class ReaderStream extends Component {
 			// Use lastIndexOf to walk the array from right to left
 			const selectedPostKey = findLast( items, items[ index ], index );
 			if ( keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
-				this.props.selectNextItem( { streamKey, items } );
+				this.props.selectNextPost( items );
 			} else {
-				this.props.selectItem( { streamKey, postKey: selectedPostKey } );
+				this.props.selectPostKey( selectedPostKey );
 			}
 		}
 	};
@@ -452,11 +439,7 @@ class ReaderStream extends Component {
 	selectPrevItem = () => {
 		// note that we grab the items directly from the stream because we don't want the transformed
 		// one with combined cards
-		const {
-			streamKey,
-			selectedPostKey,
-			stream: { items },
-		} = this.props;
+		const { selectedPostKey, items } = this.props;
 
 		// This should already be false but this is a safety.
 		this.wasSelectedByOpeningPost = false;
@@ -465,18 +448,8 @@ class ReaderStream extends Component {
 		// currently has a selected item. Otherwise do nothing.
 		// We avoid the magic here because we expect users to enter the flow using next, not previous.
 		if ( selectedPostKey ) {
-			this.props.selectPrevItem( { streamKey, items } );
+			this.props.selectPreviousPost( items );
 		}
-	};
-
-	poll = () => {
-		const { streamKey, localeSlug, selectedFeedId } = this.props;
-		this.props.requestPage( {
-			streamKey,
-			feedId: selectedFeedId,
-			isPoll: true,
-			localeSlug: localeSlug,
-		} );
 	};
 
 	getPageHandle = ( pageHandle, startDate ) => {
@@ -493,15 +466,14 @@ class ReaderStream extends Component {
 			return;
 		}
 
-		const { streamKey, stream, startDate, localeSlug, selectedFeedId } = props;
+		const { streamKey, streamPostsQuery } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
 
 			props.trackScrollPage( pageId );
 		}
-		const pageHandle = stream ? this.getPageHandle( stream.pageHandle, startDate ) : null;
-		props.requestPage( { feedId: selectedFeedId, streamKey, pageHandle, localeSlug } );
+		streamPostsQuery.fetchNextPage();
 	};
 
 	isLoginPromptVisible = () => {
@@ -510,9 +482,8 @@ class ReaderStream extends Component {
 	};
 
 	showUpdates = () => {
-		const { streamKey } = this.props;
 		this.props.onUpdatesShown();
-		this.props.showUpdates( { streamKey } );
+		this.props.consumePending();
 		this.scrollFeedListToTop();
 	};
 
@@ -533,6 +504,19 @@ class ReaderStream extends Component {
 				return this.props.placeholderFactory( { key: 'feed-post-placeholder-' + i } );
 			}
 			return <PostPlaceholder key={ 'feed-post-placeholder-' + i } />;
+		} );
+	};
+
+	// Light-weight loading hint shown above the list while the user-triggered
+	// refetch (e.g. clicking the "X new posts" pill) is in flight. Two skeleton
+	// rows are enough to communicate "new posts are coming" without pushing the
+	// existing list too far down.
+	renderRefreshingPlaceholders = () => {
+		return times( 2, ( i ) => {
+			if ( this.props.placeholderFactory ) {
+				return this.props.placeholderFactory( { key: 'refresh-placeholder-' + i } );
+			}
+			return <PostPlaceholder key={ 'refresh-placeholder-' + i } />;
 		} );
 	};
 
@@ -572,7 +556,7 @@ class ReaderStream extends Component {
 			// view, as well as avoids conflict between our systems for preserving scroll position
 			// and scrolling to selected posts when users use a mix of shortkeys and mouse clicks.
 			if ( ! isSelected ) {
-				this.props.selectItem( { streamKey: this.props.streamKey, postKey } );
+				this.props.selectPostKey( postKey );
 				this.wasSelectedByOpeningPost = true;
 			}
 			this.props.showSelectedPost( {
@@ -688,21 +672,24 @@ class ReaderStream extends Component {
 		} else {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
-				<InfiniteList
-					ref={ this.setListContext }
-					items={ items }
-					lastPage={ lastPage }
-					fetchingNextPage={ isRequesting }
-					guessedItemHeight={ GUESSED_POST_HEIGHT }
-					fetchNextPage={ this.fetchNextPage }
-					getItemRef={ this.getPostRef }
-					renderItem={ this.renderPost }
-					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
-					className="stream__list"
-					context={ this.state.listContext }
-					selectedItem={ selectedPostKey }
-					restoreScroll={ this.props.restoreScroll }
-				/>
+				<>
+					<InfiniteList
+						key={ this.props.streamKey }
+						ref={ this.setListContext }
+						items={ items }
+						lastPage={ lastPage }
+						fetchingNextPage={ isRequesting }
+						guessedItemHeight={ GUESSED_POST_HEIGHT }
+						fetchNextPage={ this.fetchNextPage }
+						getItemRef={ this.getPostRef }
+						renderItem={ this.renderPost }
+						renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+						className="stream__list"
+						context={ this.state.listContext }
+						selectedItem={ selectedPostKey }
+						restoreScroll={ this.props.restoreScroll }
+					/>
+				</>
 			);
 
 			// Exclude the sidebar layout for the search stream, since it's handled by `<SiteResults>`.
@@ -768,10 +755,6 @@ class ReaderStream extends Component {
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		// Check array of streamTypes to see if we should poll for updates;
-		const shouldPoll = ! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes(
-			streamType
-		);
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 
@@ -789,8 +772,7 @@ class ReaderStream extends Component {
 		return (
 			<TopLevel className={ baseClassnames } wideLayout={ this.props.wideLayout }>
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
-				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
-				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
+				<UpdateNotice count={ this.props.pendingCount } onClick={ this.showUpdates } />
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
@@ -818,11 +800,133 @@ function getStreamKey( state, streamKey ) {
 	return streamKey;
 }
 
+const withStreamPosts = ( WrappedComponent ) =>
+	function StreamPostsContainer( props ) {
+		const streamPostsQuery = useStreamPosts( {
+			streamKey: props.streamKey,
+			feedId: props.selectedFeedId,
+			localeSlug: props.localeSlug,
+			startDate: props.startDate,
+			options: {
+				enabled: ! props.forcePlaceholders,
+			},
+		} );
+
+		const recsStreamPostsQuery = useStreamPosts( {
+			streamKey: props.recsStreamKey,
+			localeSlug: props.localeSlug,
+			options: {
+				enabled: ! props.forcePlaceholders && streamPostsQuery.items.length > 0,
+			},
+		} );
+		const items = React.useMemo( () => {
+			const withRecommendations =
+				props.recsStreamKey && recsStreamPostsQuery.items.length > 0
+					? injectRecommendations(
+							streamPostsQuery.items,
+							recsStreamPostsQuery.items,
+							getDistanceBetweenRecs( props.followsCount )
+					  )
+					: streamPostsQuery.items;
+
+			return injectPrompts( withRecommendations, getDistanceBetweenPrompts( props.followsCount ) );
+		}, [
+			props.followsCount,
+			props.recsStreamKey,
+			recsStreamPostsQuery.items,
+			streamPostsQuery.items,
+		] );
+
+		const streamType = getStreamType( props.streamKey ?? '' );
+		const shouldPoll =
+			! [ 'search', 'custom_recs_posts_with_images', 'discover' ].includes( streamType ) &&
+			! props.forcePlaceholders;
+
+		const {
+			pendingCount,
+			hasPendingPosts,
+			reset: resetPending,
+		} = useStreamPendingPosts( {
+			streamKey: props.streamKey,
+			feedId: props.selectedFeedId,
+			localeSlug: props.localeSlug,
+			startDate: props.startDate,
+			shouldPoll,
+			items: streamPostsQuery.items,
+		} );
+
+		// Mark the infinite query stale (without refetching) the moment the
+		// poll spots new posts. The user's current scroll position stays put;
+		// the next time they navigate back to this stream the remount picks
+		// up the fresh data.
+		const { invalidate } = streamPostsQuery;
+		React.useEffect( () => {
+			if ( hasPendingPosts ) {
+				invalidate();
+			}
+		}, [ hasPendingPosts, invalidate ] );
+
+		// Click handler for `<UpdateNotice>`: refetch all loaded pages now and
+		// drop the polled head from cache so the pill clears immediately
+		// (instead of flickering until the next poll tick recomputes against
+		// the freshly refetched items).
+		const { refetch } = streamPostsQuery;
+		const consumePending = React.useCallback( () => {
+			refetch();
+			resetPending();
+		}, [ refetch, resetPending ] );
+
+		// Selection lives in the React Query cache (not Redux). The hook is
+		// keyed by `[streamKey, localeSlug]`, so switching streams (including
+		// `following:feed-X` ↔ `following:feed-Y`) naturally yields a fresh
+		// `selectedPostKey`.
+		const { selectedPostKey, selectPostKey, selectNextPost, selectPreviousPost } =
+			useStreamPostKeySelection( {
+				streamKey: props.streamKey,
+				localeSlug: props.localeSlug,
+				feedId: props.selectedFeedId,
+				startDate: props.startDate,
+				items: streamPostsQuery.items,
+			} );
+
+		// `<Stream>` reads the selected post body (for the keyboard `l` /
+		// like-toggle handler) and its liked status. Both still live in
+		// Redux (`state.reader.posts` / `state.posts.likes`) and are read
+		// here via `useSelector` so the slice no longer needs `getStream`
+		// to bridge selection.
+		const selectedPost = useSelector( ( state ) => getPostByKey( state, selectedPostKey ) );
+		const likedPost = useSelector( ( state ) =>
+			selectedPost ? isLikedPost( state, selectedPost.site_ID, selectedPost.ID ) : null
+		);
+
+		return (
+			<WrappedComponent
+				{ ...props }
+				items={ items }
+				lastPage={ streamPostsQuery.lastPage }
+				isRequesting={
+					streamPostsQuery.isLoading ||
+					streamPostsQuery.isFetchingNextPage ||
+					streamPostsQuery.isRefetching
+				}
+				error={ streamPostsQuery.error }
+				streamPostsQuery={ streamPostsQuery }
+				recsStreamPostsQuery={ recsStreamPostsQuery }
+				pendingCount={ pendingCount }
+				consumePending={ consumePending }
+				selectedPostKey={ selectedPostKey }
+				selectPostKey={ selectPostKey }
+				selectNextPost={ selectNextPost }
+				selectPreviousPost={ selectPreviousPost }
+				selectedPost={ selectedPost }
+				likedPost={ likedPost }
+			/>
+		);
+	};
+
 export default connect(
-	( state, { streamKey: tempStreamKey, recsStreamKey } ) => {
+	( state, { streamKey: tempStreamKey } ) => {
 		const streamKey = getStreamKey( state, tempStreamKey );
-		const stream = getStream( state, streamKey );
-		const selectedPost = getPostByKey( state, stream.selected );
 		const isLoggedIn = isUserLoggedIn( state );
 
 		let localeSlug = getCurrentLocaleSlug( state );
@@ -832,38 +936,20 @@ export default connect(
 
 		return {
 			blockedSites: getBlockedSites( state ),
-			items: getTransformedStreamItems( state, {
-				streamKey,
-				recsStreamKey,
-			} ),
 			notificationsOpen: isNotificationsOpen( state ),
-			stream,
 			streamKey,
-			recsStream: getStream( state, recsStreamKey ),
 			selectedFeedId: getSelectedRecentFeedId( state ),
-			selectedPostKey: stream.selected,
-			selectedPost,
-			lastPage: stream.lastPage,
-			isRequesting: stream.isRequesting,
-			error: stream.error,
-			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
-			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
+			followsCount: getReaderFollowsCount( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
 			isLoggedIn,
 		};
 	},
 	{
-		clearStream,
 		resetCardExpansions,
 		likePost,
 		unlikePost,
-		requestPage,
-		selectItem,
-		selectNextItem,
-		selectPrevItem,
 		showSelectedPost,
-		showUpdates,
 		viewStream,
 	}
-)( localize( withDimensions( ReaderStream ) ) );
+)( localize( withDimensions( withStreamPosts( ReaderStream ) ) ) );

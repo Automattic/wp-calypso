@@ -4,6 +4,7 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { ConnectForm } from './connect-form';
 
@@ -19,11 +20,20 @@ export function AtmosphereConnectView() {
 		} );
 	};
 
+	const title = (
+		<span className="atmosphere-view__section-title">
+			<span data-testid="atmosphere-section-logo" aria-hidden="true">
+				<ReaderBlueskyIcon />
+			</span>
+			<span>{ translate( 'Connect a Bluesky account' ) }</span>
+		</span>
+	);
+
 	return (
 		<ReaderMain className="atmosphere-view">
 			<DocumentHead title={ translate( 'Connect account ‹ ATmosphere ‹ Reader' ) } />
 			<NavigationHeader
-				title={ translate( 'Connect a Bluesky account' ) }
+				title={ title }
 				subtitle={ translate( 'Bring your Bluesky account into the Reader.' ) }
 			/>
 			<VStack spacing={ 4 } className="atmosphere-view__body">

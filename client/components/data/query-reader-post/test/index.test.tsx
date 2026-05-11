@@ -179,4 +179,31 @@ describe( 'QueryReaderPost', () => {
 			} );
 		} );
 	} );
+
+	it( 'still fetches when cached post lacks renderable content', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/read/sites/1/posts/2' )
+			.query( true )
+			.reply( 200, { ID: 2, site_ID: 1, global_ID: 'global-2', content: '<p>full</p>' } );
+
+		const { store } = renderBridge(
+			{ postKey: { blogId: 1, postId: 2 } },
+			{
+				reader: {
+					posts: {
+						items: {
+							'global-2': { ID: 2, site_ID: 1, global_ID: 'global-2', title: 'from stream' },
+						},
+						seen: {},
+					},
+				},
+			}
+		);
+
+		await waitFor( () => {
+			expect( getReceivedPosts( store ) ).toMatchObject( {
+				'global-2': { content: '<p>full</p>' },
+			} );
+		} );
+	} );
 } );

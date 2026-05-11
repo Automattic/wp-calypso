@@ -27,6 +27,8 @@ Out of scope (lives elsewhere):
 client/reader/social/
   index.ts                      # public barrel — only export from here
   profile-card.tsx              # SocialProfileCard (used by every protocol's profile/verify view)
+  account-row.tsx               # SocialAccountRow — one row in an account list (avatar / name / handle / bio / follow button)
+  account-list.tsx              # SocialAccountList<T> — generic wrapper around SocialFeedList<T> rendering each item via SocialAccountRow
   author-profile-header.tsx     # AuthorProfileHeader — back-button shim for the profile route (slice 6)
   author-profile-panel.tsx      # SocialAuthorProfilePanel — generic author-profile surface, both protocols wrap (slice 6)
   profile-header-skeleton.tsx   # SocialProfileHeaderSkeleton — layout-stable placeholder used by the panel (slice 6)
@@ -48,7 +50,7 @@ client/reader/social/
       analytics-context.tsx     # SocialAnalyticsProvider + useSocialAnalytics
       post-card-header.tsx      # avatar + name/handle + timestamp + repost reason + reply context
       post-card-body.tsx        # sanitized post.html injected as HTML
-      post-card-counts.tsx      # replies / reposts / likes / quotes row
+      post-card-counts.tsx      # replies / reposts / likes row + stats row on the focused thread root
       post-card-link.tsx        # card-link accessibility pattern (one real <a> + ::after overlay)
       post-card-embed.tsx       # dispatcher on embed.type
       post-card-embed-images.tsx
@@ -107,6 +109,8 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 - `SocialAuthorProfilePanel` (slice 6) — generic author-profile surface that owns the layout (back-button + profile header + feed list), the `profile_viewed` / `profile_error_shown` / `profile_retry_clicked` / `profile_back_to_timeline_clicked` Tracks events with ref-based dedupe, and the `SocialAnalyticsProvider` value. Per-protocol wrappers inject already-fetched query results, mappers, error projectors, URL builders, and copy. Atmosphere's wrapper is `client/reader/atmosphere/author-profile-panel.tsx`; Mastodon's is `client/reader/mastodon/author-profile-panel.tsx`. Both shrink to ~150 lines of config.
 - `SocialProfileHeaderSkeleton` (slice 6) — layout-stable placeholder used as the default `renderProfileLoading` slot of `SocialAuthorProfilePanel`. Mirrors `SocialProfileCard`'s sizing so the surface doesn't shift when profile data resolves.
 - `AuthorProfileHeader` — back-button shim taking `timelineUrl: string`. Both protocols use it directly via the shared panel.
+- `SocialAccountRow` — one row in an account list (avatar / name / handle / bio / follow button), with optional Follows you badge and self-row mode. Card-link overlay pattern: the whole row is a click target via a `::after` overlay on the timestamp-style anchor; the follow button sits above the overlay via `position: relative; z-index: 1` so it stays individually clickable. Caller maps the protocol shape to row props.
+- `SocialAccountList<T>` — thin generic wrapper around `SocialFeedList<T>` that renders each item via `<SocialAccountRow {...renderItem(item)} />`. Caller provides the `renderItem` mapper from protocol shape to `SocialAccountRow` props; the list shell, sentinel-based pagination, skeleton, and error variants are inherited unchanged. Optionally renders a follow-list header above the list via the `header` prop (`{ displayName, handle, count, mode: 'followers' | 'following', isPending }`) so followers/following surfaces look identical across protocols. The header shows the actor's display name (or `@handle` fallback) and a pluralized count line; while `isPending` it renders a layout-stable skeleton, and when `count` is `null` (profile fetch errored) it renders the heading only.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
@@ -204,7 +208,7 @@ Allow-list shape:
 - `ALLOWED_TAGS: ['p', 'br', 'a']` for post content (extend cautiously for new protocols).
 - `ALLOWED_TAGS: ['p', 'br', 'a', 'span']` for profile bios (Mastodon emits `<span>` mention scaffolding).
 - `ALLOWED_ATTR` for post content: `href`, `rel`, `target`, `data-id`. The `data-id` attribute carries the protocol's stable author identifier on @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
-- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`. Bios carry the same @-mention `data-id` contract as post content; `<SocialProfileCard>` intercepts bio mention clicks via the same pattern as `<PostCardBody>`.
+- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`, `data-tag`. Bios carry the same @-mention `data-id` and hashtag `data-tag` contracts as post content; `<SocialProfileCard>` intercepts bio mention and hashtag clicks via the same pattern as `<PostCardBody>`, routing through `getProfileUrl` and `getTagUrl` respectively.
 - `ALLOW_DATA_ATTR: false` on both post content and profile bios. DOMPurify allows every `data-*` attribute by default; we restrict to the explicit allow-list above so a future backend change can't smuggle a new `data-*` attribute (e.g. `data-tracking`) through to the DOM.
 - `ADD_URI_SAFE_ATTR: ['data-id']` on both post content and profile bios. DOMPurify scheme-checks every attribute value containing a colon and would otherwise drop `data-id="did:plc:…"` for atmosphere DIDs as an unknown URI scheme. Use `ADD_URI_SAFE_ATTR` (extends DOMPurify's defaults) rather than `URI_SAFE_ATTRIBUTES` (replaces them and would drop `xml:lang`, `xlink:href`, etc.). Don't switch to `ALLOW_UNKNOWN_PROTOCOLS: true` — that would also loosen `href` validation.
 - DOMPurify's default scheme allow-list strips `javascript:` / `data:` / etc. on `href`. Don't extend it.
@@ -235,8 +239,11 @@ the timeline). When `expanded={true}`, the component renders a native
 
 The thumbnail is used as the `<video poster>` so users see a frame before
 hitting play. `<SocialPostCard>` forwards `expandedVideo` only for the
-highlighted root node inside `<ThreadTree>` — replies and parents stay
-thumbnail-only.
+highlighted root node inside `<ThreadTree>` — replies and parents render
+as thumbnail buttons by default. Clicking a thumbnail flips the embed to
+the player inline (no navigation) and autoplays inside the click's
+user-gesture window, so video posts deeper in a thread don't require a
+detour through the post detail view to play.
 
 This mirrors what bsky.app's own web app and other modern Bluesky clients do.
 The static `embed.bsky.app` widget was an earlier attempt but doesn't include
@@ -320,13 +327,14 @@ Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
-The connection ID flows from the protocol panel:
-`Panel` → `<LikeProvider value={makeUse…LikeAction(id)}>` plus
-`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<LikeButton>`.
-Any future interactive count button (repost, follow, bookmark) should
-follow the same provider-injected adapter shape rather than reading
-connection identity from global state or hard-coding protocol logic into
-the shared button.
+The connection ID is captured by the adapter factory at panel mount time
+(`makeUse…LikeAction(connection.id)`) and lives inside the closure passed
+to `<LikeProvider value={…}>`. `<PostCardCounts>` does not need to know
+about it; `<LikeButton>` reads its action straight from the provider via
+`useLikeAction(post)`. Any future interactive count button (repost,
+follow, bookmark) should follow the same provider-injected adapter
+shape rather than reading connection identity from global state or
+hard-coding protocol logic into the shared button.
 
 ### Repost / Boost interactions
 
@@ -358,8 +366,7 @@ Two render branches by viewer state:
   (disabled when `action.canQuote === false`). ATmosphere sets
   `canQuote: Boolean(analytics.onQuoteClick && post.cid)` — both
   composer-presence and the AT-Proto strong-ref check are required;
-  clicking the item opens the same composer as the standalone
-  `<QuoteButton>`. Mastodon sets
+  the item opens the quote composer via `analytics.onQuoteClick`. Mastodon sets
   `canQuote: Boolean(analytics.onQuoteClick)` — no `cid` requirement
   since Mastodon's quote contract uses a numeric status id. Mastodon
   4.5+ supports native quote posts via `quoted_status_id`;
@@ -381,8 +388,9 @@ Each protocol shell wires its own adapter hook factory:
   emits the labels "Repost" / "Repost, %d repost(s)" / "Undo repost, %d
   repost(s)". Tracks events: `_repost_clicked`, `_unrepost_clicked`,
   `_quote_clicked`, `_repost_error_shown`. The `quote()` action delegates
-  to the analytics context's `onQuoteClick`, sharing the composer wiring
-  with the standalone `<QuoteButton>`.
+  to the analytics context's `onQuoteClick`, opening the composer in
+  quote mode (the only surface for quote actions after the standalone
+  QuoteButton was retired).
 - Mastodon: `client/reader/mastodon/use-mastodon-repost-action.ts`
   exports `makeUseMastodonRepostAction(connectionId)`. It calls
   `useCreateMastodonRepostMutation()` / `useDeleteMastodonRepostMutation()`,
@@ -398,10 +406,10 @@ Both mutation hooks optimistically patch every cached query under their
 protocol's `readerXxxKeys.all` (timeline / author-feed / tag-feed pages
 plus thread-tree nodes recursively), then restore snapshots on error.
 
-The connection ID flows from the protocol panel:
-`Panel` → `<RepostProvider value={makeUse…RepostAction(id)}>` plus
-`<SocialPostCard connectionId={id}>` → `<PostCardCounts>` → `<RepostButton>`.
-Mirrors the like / favorite flow.
+The connection ID is captured by the adapter factory
+(`makeUse…RepostAction(connection.id)`) and lives inside the closure passed
+to `<RepostProvider value={…}>`; `<RepostButton>` reads its action via
+`useRepostAction(post)`. Mirrors the like / favorite flow.
 
 ### Composer (slice 7)
 
@@ -461,6 +469,17 @@ Per-protocol `ComposerConfig` supplies:
   name + props. Names live in the config so a code search for
   `calypso_reader_<protocol>_<mode>_*` finds them; do not lift this
   into a shared helper.
+- `overflowHandoff.{shown, editorOpened}` — optional Tracks events
+  for the in-modal "Publish on your own site" escape hatch. `shown`
+  fires once per modal session when the handoff section first renders
+  (i.e. after the user crosses the limit AND the sites query resolves
+  with ≥1 site). `editorOpened` fires on Move-to-editor click with
+  `{ siteId }` — analogous to Reader's Quick Post
+  `calypso_reader_quick_post_full_editor_opened`. Configs that omit
+  this field don't emit overflow-handoff Tracks events. Atmosphere
+  and Mastodon both wire it as `calypso_reader_<protocol>_overflow_handoff_{shown,editor_opened}`
+  with `connection_id` + `mode_kind` props (plus `site_id` on the
+  click event).
 - `copy.{title, placeholder}` — per-mode strings.
 - `logBadRequest?` — fire-and-forget hook for the `bad_request` body
   log. Lives in the per-protocol adapter so `calypso/lib/logstash`
@@ -535,7 +554,7 @@ yarn test-client:watch client/reader/social
 
 When wiring up a second (Mastodon) or third social protocol, expect to:
 
-1. **Add a per-protocol shell** under `client/reader/<protocol>/` (e.g. `client/reader/mastodon/`) — routes, controller, account view, panels (timeline / profile / settings).
+1. **Add a per-protocol shell** under `client/reader/<protocol>/` (e.g. `client/reader/mastodon/`) — routes, controller, account view, panels (timeline / profile).
 2. **Add per-protocol fetchers + types + hooks** under `packages/api-core/src/reader-<protocol>/` and `packages/api-queries/src/reader-<protocol>.ts`. Mirror the ATmosphere shape: typed fetchers, error classifier, query keys, infinite-query factory + hook.
 3. **Reuse this directory's protocol-agnostic primitives directly:** `SocialProfileCard`, `SocialFeedList`, `PostCardLink`, `sanitizePostHtml`, `SocialAnalyticsProvider`. Don't duplicate.
 4. **Decide on the post card.** Either refactor `SocialPostCard` and the embed dispatcher to take a `SocialPost` shape with a Bluesky→`SocialPost` mapper and a Mastodon→`SocialPost` mapper, or fork into `BlueskyPostCard` / `MastodonPostCard` keeping shared subcomponents (`PostCardLink`, `PostCardCounts`, etc.). Pick after looking at concrete fixtures, not before.
@@ -548,7 +567,7 @@ Future-extraction candidates flagged for later PRs (currently in `client/reader/
 
 - `connect-form.tsx` — likely shareable with Mastodon's connect flow.
 - `profile-panel.tsx` (your-own-connection profile) — already uses `SocialProfileCard` (rich variant); the panel shell could move shared-side once Mastodon's profile shape is fully aligned.
-- `atmosphere-navigation.tsx` — the Timeline / Profile / Settings tab structure likely ports.
+- `atmosphere-navigation.tsx` — the Timeline / Profile tab structure likely ports.
 
 `author-profile-panel.tsx` was extracted to this directory as
 `SocialAuthorProfilePanel` in slice 6 — both protocols already wrap the

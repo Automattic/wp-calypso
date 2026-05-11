@@ -10,14 +10,16 @@ import './repost-button.scss';
 
 interface RepostButtonProps {
 	post: SocialPost;
+	hideCount?: boolean;
 }
 
-const ICON_SIZE = 16;
+const ICON_SIZE = 18;
 
-export function RepostButton( { post }: RepostButtonProps ) {
+export function RepostButton( { post, hideCount }: RepostButtonProps ) {
 	const translate = useTranslate();
 	const action = useRepostAction( post );
-	const formattedReposts = formatNumber( post.counts.reposts );
+	const totalReposts = post.counts.reposts + post.counts.quotes;
+	const formattedReposts = formatNumber( totalReposts );
 
 	// No <RepostProvider> mounted (or the adapter declined to support the
 	// post) — render a static count so the cell isn't empty. Mirrors the
@@ -27,14 +29,18 @@ export function RepostButton( { post }: RepostButtonProps ) {
 		return (
 			<span className="social-post-card-repost-button social-post-card-repost-button--static">
 				<ReaderRepostIcon iconSize={ ICON_SIZE } />
-				<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
-				<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
+				{ ! hideCount && (
+					<>
+						<span className="screen-reader-text">{ translate( 'Reposts:' ) } </span>
+						<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
+					</>
+				) }
 			</span>
 		);
 	}
 
 	const { isReposted, isPending } = action;
-	const accessibleLabel = String( action.label.accessibleLabel( post.counts.reposts, isReposted ) );
+	const accessibleLabel = String( action.label.accessibleLabel( totalReposts, isReposted ) );
 
 	if ( isReposted ) {
 		return (
@@ -57,7 +63,9 @@ export function RepostButton( { post }: RepostButtonProps ) {
 				} }
 			>
 				<ReaderRepostIcon iconSize={ ICON_SIZE } />
-				<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
+				{ ! hideCount && (
+					<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
+				) }
 			</button>
 		);
 	}
@@ -83,7 +91,9 @@ export function RepostButton( { post }: RepostButtonProps ) {
 					} }
 				>
 					<ReaderRepostIcon iconSize={ ICON_SIZE } />
-					<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
+					{ ! hideCount && (
+						<span className="social-post-card-repost-button__count">{ formattedReposts }</span>
+					) }
 				</button>
 			) }
 			renderContent={ ( { onClose } ) => (

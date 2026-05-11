@@ -1,15 +1,7 @@
 /**
- * Jetpack AI provider module for Agents Manager.
- *
- * Exports the full AM provider contract:
- * - useAbilitiesSetup: captures AM's addMessage callback
- * - toolProvider: surfaces Jetpack AI's client-side abilities to AM
- * - contextProvider: sends Gutenberg editor state to the orchestrator
- * - getChatComponent: resolves `title-picker` to the TitlePicker component
- *   for AM's show-component pipeline
- * - useCheckpoint: post-title snapshots for AM's native Undo action
- * - getEmptyViewSuggestions: initial suggestions before conversation starts
- * - useSuggestions: block-aware dynamic suggestions during conversation
+ * Jetpack AI provider module for Agents Manager — implements the AM provider
+ * contract (toolProvider, contextProvider, getChatComponent, useCheckpoint,
+ * getEmptyViewSuggestions, useSuggestions, useAbilitiesSetup).
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -17,15 +9,28 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { dispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import ReviewMediation from './components/review-mediation';
+import './components/review-mediation.scss';
 import TitlePicker from './components/title-picker';
 import './components/title-picker.scss';
 import './auto-scroll-fix.scss';
+import {
+	type CheckpointApi,
+	applyReviewEdit,
+	findBlockElement,
+	findBlockListLayout,
+	handleUpdateBlockContent,
+	setAddMessageFn,
+	setModuleCheckpointApi,
+	getModuleCheckpointApi,
+	startBlockShimmer,
+} from './utils/block-actions';
 import {
 	UPDATE_BLOCK_CONTENT_TOOL_ID,
 	UPDATE_BLOCK_CONTENT_ABILITY,
@@ -33,22 +38,12 @@ import {
 } from './utils/tool-provider';
 import type { ComponentType } from 'react';
 
+// Re-export block-action helpers as part of the package's public surface.
+export { applyReviewEdit, findBlockElement, findBlockListLayout };
+
 // ---------- Module state ----------
 
-let addMessageFn: ( ( message: any ) => void ) | null = null;
 let clearSuggestionsFn: ( () => void ) | null = null;
-
-/**
- * Checkpoint API shared between the React `useCheckpoint` hook (which AM
- * calls) and the synchronous `handleShowComponent` callback (which needs to
- * snapshot state before the picker renders).
- */
-interface CheckpointApi {
-	setCheckpoint: ( id: string ) => void;
-	hasCheckpoint: ( id: string ) => boolean;
-	restoreCheckpoint: ( id: string ) => Promise< void >;
-}
-let moduleCheckpointApi: CheckpointApi | null = null;
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -57,170 +52,39 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
 };
 
-// ---------- Block element helpers ----------
+/** Post-level suggestion to mediate multi-reviewer feedback on a draft. */
+const MEDIATE_REVIEW_SUGGESTION = {
+	id: 'mediate-review-notes',
+	label: __( 'Mediate review notes', 'jetpack' ),
+	prompt: __(
+		'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+		'jetpack'
+	),
+};
 
-/**
- * Find a block element by clientId in the main document or editor iframe.
- * @param {string} clientId - The block's clientId.
- * @returns The block element, or null.
- */
-function findBlockElement( clientId: string ): HTMLElement | null {
-	// Validate clientId format to prevent selector injection.
-	if ( ! /^[0-9a-f-]+$/i.test( clientId ) ) {
-		return null;
-	}
-
-	try {
-		const el = document.querySelector( `[data-block="${ clientId }"]` ) as HTMLElement | null;
-		if ( el ) {
-			return el;
-		}
-		const iframe = document.querySelector(
-			'iframe[name="editor-canvas"]'
-		) as HTMLIFrameElement | null;
-		return iframe?.contentDocument?.querySelector(
-			`[data-block="${ clientId }"]`
-		) as HTMLElement | null;
-	} catch {
-		return null;
-	}
+function isReviewMediatorEnabled(): boolean {
+	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.reviewMediatorEnabled;
 }
 
-// ---------- Processing effect (Flow Block shimmer) ----------
-
-/**
- * Inject processing styles into the document containing the block.
- * Uses Flow Block font + flash animation matching Big Sky's effect.
- * @param doc
- */
-function ensureProcessingStyles( doc: Document ): void {
-	if ( doc.getElementById( 'jetpack-ai-processing-styles' ) ) {
-		return;
-	}
-	const style = doc.createElement( 'style' );
-	style.id = 'jetpack-ai-processing-styles';
-	style.textContent = `
-		@import url("https://fonts.googleapis.com/css2?family=Flow+Block&display=swap");
-		@keyframes jetpack-ai-flash-text {
-			0% { opacity: 0.4; }
-			50% { opacity: 0.8; }
-			100% { opacity: 0.4; }
-		}
-		@keyframes jetpack-ai-highlight-fade {
-			0% { outline-color: rgba(56, 88, 233, 0.8); }
-			100% { outline-color: transparent; }
-		}
-		.jetpack-ai-is-processing,
-		.jetpack-ai-is-processing .wp-block-heading,
-		.jetpack-ai-is-processing .wp-block-paragraph {
-			font-family: "Flow Block", system-ui !important;
-			font-style: normal;
-			font-weight: 200;
-			transition: transform 1s;
-		}
-		.jetpack-ai-is-processing:not(:has(img)) {
-			animation: jetpack-ai-flash-text 2s infinite;
-		}
-		.jetpack-ai-has-processed {
-			outline: 2px solid rgba(56, 88, 233, 0.8);
-			outline-offset: 2px;
-			border-radius: 4px;
-			animation: jetpack-ai-highlight-fade 1s ease-out forwards;
-		}
-	`;
-	doc.head.appendChild( style );
+function getCurrentEditorPostType(): string | undefined {
+	const postType = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostType?.();
+	return typeof postType === 'string' ? postType : undefined;
 }
 
-/**
- * Apply processing effect to a block element.
- * @param el - The block element.
- */
-function applyProcessingEffect( el: HTMLElement ): void {
-	ensureProcessingStyles( el.ownerDocument );
-	el.classList.add( 'jetpack-ai-is-processing' );
+function isReviewMediatorAvailable(
+	// Default arguments run at call time, so callers can omit this when they
+	// want the current editor state read live.
+	currentPostType: string | undefined = getCurrentEditorPostType()
+): boolean {
+	return isReviewMediatorEnabled() && currentPostType === 'post';
 }
 
-/**
- * Remove processing effect and show a brief highlight.
- * @param el - The block element.
- */
-function removeProcessingEffect( el: HTMLElement ): void {
-	el.classList.remove( 'jetpack-ai-is-processing' );
-	el.classList.add( 'jetpack-ai-has-processed' );
-	setTimeout( () => {
-		el.classList.remove( 'jetpack-ai-has-processed' );
-	}, 1000 );
+function getReviewMediatorSuggestions( currentPostType?: string ) {
+	return isReviewMediatorAvailable( currentPostType ) ? [ MEDIATE_REVIEW_SUGGESTION ] : [];
 }
 
-/**
- * Start shimmer on the currently selected block (if any).
- */
-function startBlockShimmer(): void {
-	const wpData = ( window as any ).wp?.data;
-	if ( ! wpData ) {
-		return;
-	}
-	const block = wpData.select( 'core/block-editor' ).getSelectedBlock();
-	if ( block?.clientId ) {
-		const blockEl = findBlockElement( block.clientId );
-		if ( blockEl ) {
-			applyProcessingEffect( blockEl );
-		}
-	}
-}
-
-// ---------- Ability callbacks ----------
-
-/**
- * Handle the update-block-content tool call: apply text changes to a block.
- * @param {any} input - Tool input with clientId, content, and optional summary.
- * @returns {Object} Result with returnToAgent: false.
- */
-function handleUpdateBlockContent( input: any ): any {
-	const { clientId, content, summary } = input;
-	if ( ! clientId || content === undefined || content === null ) {
-		return { success: false, error: 'clientId and content are required', returnToAgent: false };
-	}
-
-	const wpData = ( window as any ).wp?.data;
-	if ( ! wpData ) {
-		return { success: false, error: 'WordPress data not available', returnToAgent: false };
-	}
-
-	const blockEditor = wpData.dispatch( 'core/block-editor' );
-	if ( ! blockEditor ) {
-		return { success: false, error: 'Block editor not available', returnToAgent: false };
-	}
-
-	// Apply shimmer briefly, then update content and show highlight
-	const blockEl = findBlockElement( clientId );
-	if ( blockEl ) {
-		applyProcessingEffect( blockEl );
-	}
-
-	// Short delay so the shimmer is visible before content swaps
-	return new Promise< any >( ( resolve ) => {
-		setTimeout( () => {
-			blockEditor.updateBlockAttributes( clientId, { content } );
-
-			if ( blockEl ) {
-				removeProcessingEffect( blockEl );
-			}
-
-			// Show summary in chat
-			if ( addMessageFn && summary ) {
-				addMessageFn( {
-					id: `block-update-${ Date.now() }`,
-					role: 'assistant',
-					content: [ { type: 'text', text: summary } ],
-					created_at: Math.floor( Date.now() / 1000 ),
-					showIcon: true,
-				} );
-			}
-
-			resolve( { success: true, returnToAgent: false } );
-		}, 800 );
-	} );
+function getPostLevelSuggestions( currentPostType?: string ) {
+	return [ OPTIMIZE_TITLE_SUGGESTION, ...getReviewMediatorSuggestions( currentPostType ) ];
 }
 
 // ---------- Show-component ability ----------
@@ -251,19 +115,9 @@ const SHOW_COMPONENT_ABILITY: any = {
 };
 
 /**
- * Handles `big_sky__show_component` tool calls from the wpcom ability.
- *
- * Follows the Big Sky unified-experience pattern: instead of injecting the
- * picker directly via `addMessage`, we return an `agentMessage` envelope.
- * agenttic-client wraps it as an `{ role: 'agent', parts: [text] }` message,
- * AM's `convert-tool-messages-to-components` transforms it into a component
- * message via `getChatComponent(type)`, and AgentChat's action bar (thumbs,
- * Undo) attaches because the original message had a text content part.
- *
- * Before returning, we snapshot the current post title via the shared
- * checkpoint API so AM's native `use-checkpoint-action` can restore it when
- * the user clicks Undo. The picker disables canvas zoom since title edits
- * don't change block content.
+ * Handle `big_sky__show_component` by returning an agentMessage envelope
+ * (Big Sky unified-experience pattern). Title picker opts into AM's
+ * message-level Undo because the checkpoint API snapshots the post title.
  * @param {any} input - Tool call arguments: `{ type, props, toolCallId, ... }`.
  * @returns {Object} Result containing the `agentMessage` to re-emit.
  */
@@ -282,27 +136,32 @@ function handleShowComponent( input: any ): any {
 		};
 	}
 
-	// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
-	// it matches the identifier AM reads from the rendered message.
-	const checkpointId: string =
-		input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
-	if ( moduleCheckpointApi && ! moduleCheckpointApi.hasCheckpoint( checkpointId ) ) {
-		try {
-			moduleCheckpointApi.setCheckpoint( checkpointId );
-		} catch {
-			// Non-fatal — Undo just won't attach if the snapshot fails.
+	const data: Record< string, unknown > = {
+		type,
+		props: props ?? {},
+		isCurrent: true,
+		hideZoomAction: true,
+	};
+
+	if ( type === 'title-picker' ) {
+		// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
+		// it matches the identifier AM reads from the rendered message.
+		const checkpointId: string =
+			input?.toolCallId || input?.calypsoCheckpointId || `show-component-${ type }-${ Date.now() }`;
+		const checkpointApi = getModuleCheckpointApi();
+		if ( checkpointApi && ! checkpointApi.hasCheckpoint( checkpointId ) ) {
+			try {
+				checkpointApi.setCheckpoint( checkpointId );
+			} catch {
+				// Non-fatal — Undo just won't attach if the snapshot fails.
+			}
 		}
+		data.calypsoCheckpointId = checkpointId;
 	}
 
 	const agentMessage = JSON.stringify( {
 		tool_id: SHOW_COMPONENT_TOOL_ID,
-		data: {
-			type,
-			props: props ?? {},
-			calypsoCheckpointId: checkpointId,
-			isCurrent: true,
-			hideZoomAction: true,
-		},
+		data,
 	} );
 
 	return {
@@ -335,7 +194,7 @@ export function useAbilitiesSetup( actions: {
 	clearSuggestions?: () => void;
 	[ key: string ]: unknown;
 } ): void {
-	addMessageFn = actions.addMessage;
+	setAddMessageFn( actions.addMessage );
 	if ( actions.clearSuggestions ) {
 		clearSuggestionsFn = actions.clearSuggestions;
 	}
@@ -371,12 +230,9 @@ function isShowComponentTool( toolId: string ): boolean {
 
 export const toolProvider = {
 	/**
-	 * Return the client-side abilities this provider handles:
-	 * - `wpcom/update-block-content`: applies block edits and posts a summary.
-	 * - `big_sky__show_component`: renders interactive pickers (title-picker)
-	 *   via `handleShowComponent`. Registered here so the tool_id is known
-	 *   to the orchestrator on self-hosted Jetpack sites where Big Sky's
-	 *   own registration is unavailable.
+	 * Client-side abilities this provider handles: `wpcom/update-block-content`
+	 * (block edits + summary) and `big_sky__show_component` (interactive pickers,
+	 * registered here so self-hosted Jetpack sees the tool_id).
 	 * @returns {Promise<any[]>} Array of ability descriptors.
 	 */
 	async getAbilities(): Promise< any[] > {
@@ -484,8 +340,12 @@ export const contextProvider = {
 		let currentPageContent: any[] = [];
 		let selectedBlockClientId = '';
 		let selectedBlockContent = '';
+		let currentPostType: string | undefined;
 
 		if ( wpData ) {
+			const editor = wpData.select( 'core/editor' );
+			currentPostType = editor?.getCurrentPostType?.();
+
 			const blockEditor = wpData.select( 'core/block-editor' );
 			if ( blockEditor ) {
 				const blocks = blockEditor.getBlocks?.() ?? [];
@@ -507,6 +367,10 @@ export const contextProvider = {
 			search: window.location.search,
 			environment: 'gutenberg',
 			titleSuggestionCount: 3,
+			currentScreen: {
+				url: window.location.href,
+				...( currentPostType && { postType: currentPostType } ),
+			},
 			currentPageContent,
 			selectedBlockClientId,
 			contextEntries: [
@@ -530,6 +394,9 @@ export const contextProvider = {
 export function getChatComponent( type: string ): ComponentType | null {
 	if ( type === 'title-picker' ) {
 		return TitlePicker as ComponentType;
+	}
+	if ( type === 'review-mediation' ) {
+		return ReviewMediation as ComponentType;
 	}
 	return null;
 }
@@ -564,13 +431,11 @@ export function useCheckpoint(): any {
 			}
 			const wpData = ( window as any ).wp?.data;
 			wpData?.dispatch?.( 'core/editor' )?.editPost?.( { title: previous } );
-			// Intentionally NOT deleting the snapshot here — the user can keep
-			// clicking titles in the picker and use Undo again to revert back
-			// to the original title (the state before the picker appeared).
-			// clearCheckpoint() removes the snapshot when AM resets the session.
+			// Keep snapshot so the user can re-Undo back to the original title.
+			// clearCheckpoint() removes it when AM resets the session.
 		},
 	};
-	moduleCheckpointApi = api;
+	setModuleCheckpointApi( api );
 
 	// Return the full shape AM's UseCheckpointReturn expects. Methods we
 	// don't implement are safe no-op stubs — AM only calls the three above
@@ -600,7 +465,7 @@ export function getEmptyViewSuggestions(): Array< {
 	label: string;
 	prompt?: string;
 } > {
-	return [ OPTIMIZE_TITLE_SUGGESTION ];
+	return getPostLevelSuggestions();
 }
 
 // ---------- useSuggestions ----------
@@ -647,9 +512,13 @@ const BLOCK_SUGGESTIONS = [
 
 // ---------- capabilities ----------
 
-// Off by default; consumer flips to `true` when the dependent feature ships.
+/**
+ * Provider capability flags (OR-merged across providers by AM's
+ * loadExternalProviders). `supportsSplitScreen` exposes the 50vw chat-header
+ * toggle here only — block-notes / image-studio / Big Sky don't opt in.
+ */
 export const capabilities = {
-	supportsSplitScreen: false,
+	supportsSplitScreen: true,
 };
 
 /**
@@ -665,10 +534,26 @@ export function useSuggestions(): {
 	const [ hidden, setHidden ] = useState( false );
 
 	useEffect( () => {
-		const handleSuggestionClick = () => {
+		const handleSuggestionClick = ( event: Event ) => {
 			setHidden( true );
 			clearSuggestionsFn?.();
 			startBlockShimmer();
+
+			// Mediation output is too dense for the 350px sidebar. Auto-expand
+			// to 50vw on the mediation suggestion only (matched by prompt).
+			const value = ( event as CustomEvent ).detail?.value;
+			if (
+				isReviewMediatorAvailable() &&
+				typeof value === 'string' &&
+				value === MEDIATE_REVIEW_SUGGESTION.prompt
+			) {
+				try {
+					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
+				} catch {
+					// Store not registered yet (e.g. tests); split-screen is a
+					// polish feature, so a silent no-op is the right fallback.
+				}
+			}
 		};
 		window.addEventListener( 'big-sky-inline-suggestion-click', handleSuggestionClick );
 		return () => {
@@ -676,26 +561,31 @@ export function useSuggestions(): {
 		};
 	}, [] );
 
-	const selectedBlock = useSelect(
-		( select ) =>
-			( select( 'core/block-editor' ) as { getSelectedBlock: () => any } ).getSelectedBlock(),
-		[]
-	);
+	const editorContext = useSelect( ( select ) => {
+		const blockEditor = select( 'core/block-editor' ) as { getSelectedBlock: () => any };
+		const editor = select( 'core/editor' ) as { getCurrentPostType?: () => string | undefined };
+		return {
+			selectedBlock: blockEditor.getSelectedBlock(),
+			postType: editor.getCurrentPostType?.(),
+		};
+	}, [] );
 
 	// Re-show suggestions when block selection changes (unless conversation is active)
 	useEffect( () => {
 		setHidden( false );
-	}, [ selectedBlock?.clientId ] );
+	}, [ editorContext.selectedBlock?.clientId ] );
 
 	if ( hidden ) {
 		return { suggestions: [] };
 	}
 
-	if ( ! selectedBlock ) {
-		return { suggestions: [ OPTIMIZE_TITLE_SUGGESTION ] };
+	if ( ! editorContext.selectedBlock ) {
+		return { suggestions: getPostLevelSuggestions( editorContext.postType ) };
 	}
 
-	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) => s.condition( selectedBlock ) );
+	const applicable = BLOCK_SUGGESTIONS.filter( ( s ) =>
+		s.condition( editorContext.selectedBlock )
+	);
 	return {
 		suggestions: applicable.map( ( { id, label, prompt } ) => ( { id, label, prompt } ) ),
 	};

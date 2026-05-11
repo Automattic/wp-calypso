@@ -8,13 +8,21 @@ export interface FollowButtonProps {
 	isFollowing: boolean;
 	/** Whether the target follows the viewer. Drives the "Follow back" affordance. */
 	isFollowedBy: boolean;
+	/**
+	 * Whether the viewer has a pending follow request awaiting the
+	 * target's approval. Mastodon's locked-account state. Renders as
+	 * "Requested" with hover/focus-swap to "Cancel request"; click invokes
+	 * `onUnfollow` (Mastodon's unfollow endpoint also cancels pending
+	 * requests). Defaults to `false`; ATmosphere callers can ignore.
+	 */
+	isRequested?: boolean;
 	/** Disable the button while a follow / unfollow request is in flight. */
 	isPending?: boolean;
 	/**
 	 * Optional handle of the target actor (without leading `@`). When supplied,
-	 * the Following-state button announces "Unfollow @{handle}" to assistive
-	 * tech so screen-reader and touch-AT users hear the action they're about
-	 * to take rather than just the current state.
+	 * the Following / Requested-state button announces the action it performs
+	 * to assistive tech so screen-reader and touch-AT users hear what the
+	 * click will do rather than just the current state.
 	 */
 	actorHandle?: string;
 	onFollow: () => void;
@@ -22,18 +30,20 @@ export interface FollowButtonProps {
 }
 
 /**
- * Protocol-agnostic Follow / Follow back / Following button. Consumers
- * pass mutation handlers in as props so this component stays decoupled
- * from the per-protocol API layer (Bluesky today, Mastodon next).
+ * Protocol-agnostic Follow / Follow back / Following / Requested button.
+ * Consumers pass mutation handlers in as props so this component stays
+ * decoupled from the per-protocol API layer.
  *
- * Three states:
- * - `isFollowing: false, isFollowedBy: false` → "Follow" (primary)
- * - `isFollowing: false, isFollowedBy: true`  → "Follow back" (primary)
- * - `isFollowing: true`                       → "Following" (secondary); on hover/focus, reveals "Unfollow" label
+ * Precedence order (top wins):
+ * - `isFollowing: true`            → "Following" (secondary), hover-swap "Unfollow"
+ * - `isRequested: true`            → "Requested" (secondary), hover-swap "Cancel request"
+ * - `isFollowedBy: true`           → "Follow back" (primary)
+ * - else                            → "Follow" (primary)
  */
 export function FollowButton( {
 	isFollowing,
 	isFollowedBy,
+	isRequested = false,
 	isPending = false,
 	actorHandle,
 	onFollow,
@@ -42,11 +52,6 @@ export function FollowButton( {
 	const translate = useTranslate();
 
 	if ( isFollowing ) {
-		// Visible label is "Following" by default and CSS-swaps to "Unfollow"
-		// on hover / focus. Touch and screen-reader users (no hover; focus and
-		// activation can be effectively simultaneous) wouldn't otherwise see
-		// the "Unfollow" affordance before the click commits, so override the
-		// accessible name to always describe the action.
 		const unfollowLabel = actorHandle
 			? translate( 'Unfollow @%(handle)s', { args: { handle: actorHandle } } )
 			: translate( 'Unfollow' );
@@ -63,6 +68,30 @@ export function FollowButton( {
 				</span>
 				<span aria-hidden="true" className="follow-button__label-unfollow">
 					{ translate( 'Unfollow' ) }
+				</span>
+			</Button>
+		);
+	}
+
+	if ( isRequested ) {
+		const cancelLabel = actorHandle
+			? translate( 'Cancel follow request to @%(handle)s', {
+					args: { handle: actorHandle },
+			  } )
+			: translate( 'Cancel follow request' );
+		return (
+			<Button
+				variant="secondary"
+				disabled={ isPending }
+				onClick={ onUnfollow }
+				className="follow-button follow-button--following follow-button--requested"
+				aria-label={ String( cancelLabel ) }
+			>
+				<span aria-hidden="true" className="follow-button__label-following">
+					{ translate( 'Requested' ) }
+				</span>
+				<span aria-hidden="true" className="follow-button__label-unfollow">
+					{ translate( 'Cancel request' ) }
 				</span>
 			</Button>
 		);

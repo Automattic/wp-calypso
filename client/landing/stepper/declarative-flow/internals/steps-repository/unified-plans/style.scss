@@ -37,10 +37,20 @@
 		padding-bottom: 0;
 	}
 
-	// This is temporary until we make the plans step more consistent according to the designs.
-	@media ( max-width: calc($break-small - 1px) ) {
-		.plans-features-main .plans-features-main__subheader {
-			text-align: left;
+	// Style the inline `start with a free plan` CTA inside Step.Heading subText
+	// to look like a link instead of a default borderless button. The legacy
+	// <PlansPageSubheader> applied equivalent styles to the same button via its
+	// styled <Subheader>; those don't carry over to Step.Heading's <p>.
+	.plans-features-main__free-plan-cta {
+		padding: 0;
+		color: inherit;
+		font-size: inherit;
+		font-weight: 500;
+		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: inherit;
 		}
 	}
 
