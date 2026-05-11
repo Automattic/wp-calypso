@@ -1,8 +1,10 @@
 import {
 	Button,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -28,6 +30,11 @@ export const SearchForm = () => {
 	const [ localQuery, setLocalQuery ] = useState( '' );
 	const { placeholder } = useTypedPlaceholder( PLACEHOLDER_PHRASES, false );
 	const [ showSearchHint, setShowSearchHint ] = useState( false );
+	// Mobile-only layout swap. Below the 'small' viewport breakpoint
+	// (600px), the Submit lives *inside* the search input as a compact
+	// icon button. At and above 'small', we fall back to the original
+	// HStack with the text "Search domains" button alongside.
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
@@ -38,27 +45,36 @@ export const SearchForm = () => {
 		}
 	};
 
+	const inputProps = {
+		value: localQuery,
+		onChange: ( value: string ) => setLocalQuery( value.trim() ),
+		onReset: () => setLocalQuery( '' ),
+		placeholder,
+		// eslint-disable-next-line jsx-a11y/no-autofocus
+		autoFocus: true,
+	};
+
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 2 }>
-				{ /* The submit button is *inside* the input on this screen
-				     rather than alongside it — see style.scss. The wrapper
-				     div gives the absolutely-positioned button a frame to
-				     anchor against. */ }
-				<div className="domain-search__search-form-field">
-					<DomainSearchControls.Input
-						value={ localQuery }
-						onChange={ ( value ) => setLocalQuery( value.trim() ) }
-						onReset={ () => setLocalQuery( '' ) }
-						placeholder={ placeholder }
-						// eslint-disable-next-line jsx-a11y/no-autofocus
-						autoFocus
-					/>
-					<DomainSearchControls.Submit
-						iconOnly
-						onClick={ () => onSubmitButtonClick( localQuery ) }
-					/>
-				</div>
+				{ isMobileViewport ? (
+					/* Mobile: wrapper div gives the absolutely-positioned
+					   Submit a frame to anchor against. */
+					<div className="domain-search__search-form-field">
+						<DomainSearchControls.Input { ...inputProps } />
+						<DomainSearchControls.Submit
+							iconOnly
+							onClick={ () => onSubmitButtonClick( localQuery ) }
+						/>
+					</div>
+				) : (
+					/* Desktop: original HStack layout with the text Submit
+					   sitting alongside the input. Unchanged from trunk. */
+					<HStack alignment="flex-start" spacing={ 4 }>
+						<DomainSearchControls.Input { ...inputProps } />
+						<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
+					</HStack>
+				) }
 				{ showSearchHint && (
 					<Text variant="muted">
 						{ createInterpolateElement(
