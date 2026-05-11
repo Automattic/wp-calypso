@@ -1,7 +1,27 @@
 .fediverse-view {
 	max-width: 720px;
-	margin-inline: auto;
-	padding-inline: 16px;
+	padding: 16px;
+}
+
+.fediverse-avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.fediverse-error {
+	color: #b32d2e;
+}
+
+.fediverse-view .fediverse-navigation {
+	.section-nav-tabs__list {
+		overflow-x: auto;
+	}
+
+	.section-nav-tab__link {
+		padding-top: 5px;
+	}
 }
 
 .fediverse-landing__header h1 {
@@ -63,47 +83,4 @@
 
 .fediverse-landing__account-host {
 	font-size: 0.75rem;
-}
-
-.fediverse-landing__add {
-	text-align: center;
-}
-
-.fediverse-profile__avatar {
-	inline-size: 64px;
-	block-size: 64px;
-	border-radius: 50%;
-	object-fit: cover;
-	flex-shrink: 0;
-}
-
-.fediverse-profile__avatar.is-placeholder {
-	background-color: var(--color-neutral-5);
-}
-
-.fediverse-profile__meta {
-	flex: 1;
-	min-inline-size: 0;
-}
-
-.fediverse-profile__name {
-	margin: 0;
-	font-size: 1.25rem;
-	font-weight: 600;
-	color: var(--color-text);
-}
-
-.fediverse-profile__handle {
-	color: var(--color-text-subtle);
-	font-size: 0.875rem;
-}
-
-.fediverse-profile__host {
-	color: var(--color-text-subtle);
-	font-size: 0.75rem;
-	text-decoration: none;
-}
-
-.fediverse-profile__host:hover {
-	text-decoration: underline;
 }

@@ -56,35 +56,40 @@ export function FediverseAuthorProfilePanel( {
 	// to the webfinger's host when the URL fails to parse.
 	const host = hostFromUrl( connection.url ) ?? connection.webfinger.split( '@' ).pop() ?? '';
 
-	const stats: SocialProfileStat[] = useMemo(
-		() =>
-			profile.data
-				? [
-						{
-							key: 'followers',
-							count: profile.data.counts.followers,
-							label: translate( 'follower', 'followers', {
-								count: profile.data.counts.followers,
-							} ),
-							href: getFollowersUrl( connection.id, actor ),
-						},
-						{
-							key: 'follows',
-							count: profile.data.counts.following,
-							label: translate( 'following', {
-								context: 'profile stats: count of accounts followed',
-							} ),
-							href: getFollowingUrl( connection.id, actor ),
-						},
-						{
-							key: 'posts',
-							count: profile.data.counts.posts,
-							label: translate( 'post', 'posts', { count: profile.data.counts.posts } ),
-						},
-				  ]
-				: [],
-		[ profile.data, translate, connection.id, actor ]
-	);
+	const stats: SocialProfileStat[] = useMemo( () => {
+		if ( ! profile.data ) {
+			return [];
+		}
+		// Followers / following list views only support the connected
+		// account's own actor today (the backend slice for third-party
+		// actor lists hasn't shipped yet). Skip the `href` on non-self
+		// profiles so the counts render as plain text instead of dead
+		// links. Drop the `is_self` gate when third-party list support lands.
+		const isSelf = profile.data.is_self;
+		return [
+			{
+				key: 'followers',
+				count: profile.data.counts.followers,
+				label: translate( 'follower', 'followers', {
+					count: profile.data.counts.followers,
+				} ),
+				href: isSelf ? getFollowersUrl( connection.id, actor ) : undefined,
+			},
+			{
+				key: 'follows',
+				count: profile.data.counts.following,
+				label: translate( 'following', {
+					context: 'profile stats: count of accounts followed',
+				} ),
+				href: isSelf ? getFollowingUrl( connection.id, actor ) : undefined,
+			},
+			{
+				key: 'posts',
+				count: profile.data.counts.posts,
+				label: translate( 'post', 'posts', { count: profile.data.counts.posts } ),
+			},
+		];
+	}, [ profile.data, translate, connection.id, actor ] );
 
 	const renderProfileBody = useCallback(
 		( profileData: FediverseAuthorProfile ) => {
