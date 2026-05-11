@@ -5,3 +5,39 @@
 		color: #{$gray-900};
 	}
 }
+
+// ── Empty-state-only refinements ─────────────────────────────────
+// SearchForm is rendered exclusively by InitialState, so scoping
+// these overrides to the .domain-search--initial-state wrapper
+// keeps the results-page search-bar (which also uses
+// DomainSearchControls.Input) on its existing dimensions.
+.domain-search--initial-state {
+	// 48px input height, 2px corner radius — matches the spec for
+	// the empty-state search input. Other consumers of the Input
+	// primitive (e.g. the results-page search bar) keep the default
+	// 56px / 4px because they sit inside a denser layout.
+	--domain-search-input-size: 48px;
+	--domain-search-input-border-radius: 2px;
+
+	// Field wrapper: positions the icon-only Submit absolutely inside
+	// the input's right edge. The input itself gets extra right
+	// padding so the placeholder / typed value never collides with
+	// the button (button width 36 + 6px gap from right edge + 6px
+	// breathing room from text = 48px reserved).
+	.domain-search__search-form-field {
+		position: relative;
+
+		.domain-search-controls__submit.is-icon-only {
+			position: absolute;
+			top: 50%;
+			right: 6px;
+			transform: translateY( -50% );
+		}
+
+		.domain-search-controls__input
+			.components-input-control__container
+			input.components-input-control__input {
+			padding-right: 48px;
+		}
+	}
+}

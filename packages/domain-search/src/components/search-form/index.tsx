@@ -1,6 +1,5 @@
 import {
 	Button,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
@@ -42,7 +41,11 @@ export const SearchForm = () => {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 2 }>
-				<HStack alignment="flex-start" spacing={ 4 }>
+				{ /* The submit button is *inside* the input on this screen
+				     rather than alongside it — see style.scss. The wrapper
+				     div gives the absolutely-positioned button a frame to
+				     anchor against. */ }
+				<div className="domain-search__search-form-field">
 					<DomainSearchControls.Input
 						value={ localQuery }
 						onChange={ ( value ) => setLocalQuery( value.trim() ) }
@@ -51,8 +54,11 @@ export const SearchForm = () => {
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
 					/>
-					<DomainSearchControls.Submit onClick={ () => onSubmitButtonClick( localQuery ) } />
-				</HStack>
+					<DomainSearchControls.Submit
+						iconOnly
+						onClick={ () => onSubmitButtonClick( localQuery ) }
+					/>
+				</div>
 				{ showSearchHint && (
 					<Text variant="muted">
 						{ createInterpolateElement(
