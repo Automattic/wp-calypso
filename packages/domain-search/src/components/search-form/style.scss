@@ -67,3 +67,18 @@
 		}
 	}
 }
+
+// Tighten the heading-to-content gap when this empty state is the
+// active step. The wireframe's .step-container-v2__content-wrapper
+// (owned by @automattic/onboarding) defaults to gap: 3rem between
+// the heading slot and the children slot. On mobile that's too
+// generous for this screen — drop it to 1.5rem.
+//
+// Scoped with :has() to the wrapper that actually contains the
+// initial-state, so other stepper-v2 pages keep the original 3rem.
+// Desktop is the natural fall-through.
+.step-container-v2__content-wrapper:has( .domain-search--initial-state ) {
+	@media ( max-width: #{ $break-small - 1px } ) {
+		gap: 1.5rem;
+	}
+}
