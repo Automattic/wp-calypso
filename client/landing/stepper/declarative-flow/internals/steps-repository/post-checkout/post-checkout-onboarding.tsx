@@ -17,7 +17,6 @@ import Loading from 'calypso/components/loading';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useQuery as useUrlParams } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
@@ -211,15 +210,6 @@ const PostCheckoutOnboarding: StepType< {
 					await waitForInitiateTransfer( pluginToInstall );
 					await waitForAtomic();
 				}
-			}
-
-			// Poll for the Woo ref regardless of the atomic path above — the
-			// site may already be Atomic when this effect mounts while
-			// WooCommerce is still finishing installation. This covers both the
-			// Commerce plan (backend auto-install) and the Business plan (install
-			// via the transfer initiated above).
-			if ( isWooHostingSolutions ) {
-				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
 			}
 
 			return providedDependencies;
