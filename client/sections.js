@@ -556,6 +556,8 @@ const sections = [
 			'/reader/fediverse/:id',
 			'/reader/fediverse/:id/:tab',
 			'/reader/fediverse/:id/profile/:actor',
+			'/reader/fediverse/:id/profile/:actor/followers',
+			'/reader/fediverse/:id/profile/:actor/following',
 		],
 		module: 'calypso/reader/fediverse',
 		group: 'reader',

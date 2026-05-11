@@ -45,7 +45,7 @@ export function FediverseLandingView() {
 
 				{ isError && (
 					<EmptyContent
-						title={ translate( "We couldn't load your Fediverse accounts." ) }
+						title={ translate( 'We couldn’t load your Fediverse accounts.' ) }
 						line={ translate( 'Check your connection and try again.' ) }
 						action={ translate( 'Try again' ) }
 						actionCallback={ () => refetch() }

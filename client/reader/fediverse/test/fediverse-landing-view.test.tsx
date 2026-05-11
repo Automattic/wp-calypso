@@ -88,7 +88,7 @@ describe( 'FediverseLandingView', () => {
 		renderWithProvider( <FediverseLandingView />, { queryClient: makeClient() } );
 
 		await waitFor( () =>
-			expect( screen.getByText( "We couldn't load your Fediverse accounts." ) ).toBeVisible()
+			expect( screen.getByText( 'We couldn’t load your Fediverse accounts.' ) ).toBeVisible()
 		);
 		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
 	} );

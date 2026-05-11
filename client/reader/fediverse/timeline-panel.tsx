@@ -139,7 +139,7 @@ export function TimelinePanel( { connection }: TimelinePanelProps ) {
 				refetch={ handleRetry }
 				renderItem={ renderItem }
 				itemKey={ itemKey }
-				emptyTitle={ String( translate( "You're all caught up." ) ) }
+				emptyTitle={ String( translate( 'You’re all caught up.' ) ) }
 				emptyLine={ String( translate( 'Follow some accounts to see their posts here.' ) ) }
 				emptyActionLabel={ String(
 					translate( 'Open %(blog)s', {
