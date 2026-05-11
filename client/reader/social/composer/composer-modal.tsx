@@ -125,6 +125,11 @@ export function ComposerModal< TError, TParams, TResult >() {
 		}
 	}, [ tooLong, markOverLimit ] );
 	const empty = graphemeCount === 0;
+	// `softLimit: true` (Fediverse) means the threshold is a UX cue, not a
+	// wire-level cap — submission stays enabled past the limit and the
+	// overflow handoff acts as a suggestion. Atmosphere / Mastodon keep
+	// the hard-cap gate (default).
+	const overLimitBlocksSubmit = tooLong && ! config.softLimit;
 	// Image-only posts are allowed: when the user has at least one uploaded
 	// image, the empty-text gate doesn't block submission. Pending media (any
 	// image still compressing/uploading) blocks regardless. `isExtending` covers
@@ -133,7 +138,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	const canSubmit =
 		! mutation.isPending &&
 		! isExtending &&
-		! tooLong &&
+		! overLimitBlocksSubmit &&
 		! mediaSlot.isAnyPending &&
 		mediaSlot.isAllUploaded &&
 		( ! empty || mediaSlot.hasUploaded );
@@ -253,6 +258,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					disabled={ ! canSubmit }
 					footerStart={ mediaSlot.renderFooterTrigger() }
 					counterUnit={ counterUnit }
+					softLimit={ config.softLimit }
 				/>
 				<ComposerOverflowHandoff text={ text } />
 			</Modal>

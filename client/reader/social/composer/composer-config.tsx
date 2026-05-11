@@ -114,6 +114,16 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 */
 	counter?: 'graphemes' | 'words';
 	/**
+	 * When true, the `useLimit` value is a UX threshold (e.g. "this is
+	 * getting long, consider the blog editor instead") rather than a
+	 * wire-level cap. Submission stays enabled past the limit and the
+	 * footer label stays "Post" rather than switching to the overflow-
+	 * handoff cue — users see the "publish on your own site" section as
+	 * a suggestion, not a block. Defaults to `false` (atmosphere /
+	 * mastodon: hard protocol caps where overflow really fails).
+	 */
+	softLimit?: boolean;
+	/**
 	 * Short display label for the protocol (e.g. "Bluesky", "Mastodon").
 	 * Surfaced in user-visible copy that mentions the social network by
 	 * name. Not localized — brand names don't translate.
@@ -229,6 +239,22 @@ export interface ComposerConfig< TError, TParams, TResult > {
 		mode: ActiveMode | null;
 		connectionId: number;
 	} ) => ComposerProtocolExtrasSlot;
+	/**
+	 * Optional hook returning the user's preferred site id for the overflow
+	 * handoff. When provided and non-null, the handoff filters its site list
+	 * to that single entry — `SiteHandoff` renders the "Publish on
+	 * %(siteName)s" button directly instead of the multi-site chooser.
+	 *
+	 * Fediverse uses this: the composer is already scoped to a specific blog
+	 * connection, so the chooser would be redundant. Atmosphere / Mastodon
+	 * don't (no blog scope; the chooser is meaningful).
+	 *
+	 * Called unconditionally inside `ComposerOverflowHandoff` — must be a
+	 * stable reference across renders. Returns `null` when no preference
+	 * applies (mode is null, connection is missing, etc.) and the handoff
+	 * falls back to the full chooser.
+	 */
+	usePreferredHandoffSiteId?: ( mode: ActiveMode | null ) => number | null;
 }
 
 /**

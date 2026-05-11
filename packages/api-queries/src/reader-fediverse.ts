@@ -582,6 +582,17 @@ export const createFediversePostMutation = ( queryClient: QueryClient ) =>
 					} );
 				}
 			}
+			// Known limitation (CM-704): the AP `/timeline` endpoint returns
+			// the home-stream inbox — posts from followed actors — and does
+			// NOT include the caller's own published posts. This refetch
+			// therefore wipes the just-published item from the cache, and
+			// the user sees their post briefly appear (via the optimistic
+			// patch) and then disappear once `invalidateQueries` resolves.
+			// The post still appears on the Profile view (author-feed
+			// endpoint) and on the published web URL. Tracked for a backend
+			// follow-up that mirrors Mastodon's home-timeline-includes-own
+			// semantics; until then, the invalidate is still correct
+			// (cache should mirror server truth) but the UX is rough.
 			queryClient.invalidateQueries( {
 				queryKey: readerFediverseKeys.timeline( vars.connectionId ),
 			} );

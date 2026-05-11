@@ -61,19 +61,26 @@ export function FediverseComposerControls( {
 			 * group name (and the help id is wired via `aria-describedby`).
 			 * Wrapping in BaseControl renders the visible "Visibility" label
 			 * as a sibling that isn't associated with the radiogroup.
+			 *
+			 * Option labels mirror the ActivityPub plugin's wp-admin wording
+			 * verbatim ("Public" / "Quiet public" / "Followers only" — see
+			 * `wordpress-activitypub/integration/class-classic-editor.php`)
+			 * so users see the same vocabulary in both surfaces. The wire
+			 * value `'unlisted'` is preserved; only the visible label
+			 * changed.
 			 */ }
 			<RadioControl
 				label={ String( translate( 'Visibility' ) ) }
 				help={ String(
 					translate(
-						'Public is shown to everyone. Unlisted hides the post from your followers’ feed but keeps it reachable by URL. Followers limits it to people who follow you.'
+						'Public is shown to everyone. Quiet public hides the post from your followers’ feed but keeps it reachable by URL. Followers limits it to people who follow you.'
 					)
 				) }
 				selected={ visibility }
 				onChange={ handleVisibility }
 				options={ [
 					{ label: String( translate( 'Public' ) ), value: 'public' },
-					{ label: String( translate( 'Unlisted' ) ), value: 'unlisted' },
+					{ label: String( translate( 'Quiet public' ) ), value: 'unlisted' },
 					{ label: String( translate( 'Followers only' ) ), value: 'followers' },
 				] }
 			/>

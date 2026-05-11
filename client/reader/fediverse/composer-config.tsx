@@ -1,4 +1,4 @@
-import { createFediversePostMutation } from '@automattic/api-queries';
+import { createFediversePostMutation, useFediverseConnectionsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useFediverseComposerExtras } from './use-fediverse-composer-extras';
@@ -8,8 +8,26 @@ import type {
 	FediverseCreatePostResult,
 	FediverseError,
 } from '@automattic/api-core';
-import type { ComposerConfig, Translate } from 'calypso/reader/social/composer';
+import type { ActiveMode, ComposerConfig, Translate } from 'calypso/reader/social/composer';
 import type { ReactNode } from 'react';
+
+/**
+ * Returns the blog id behind the active Fediverse connection so the
+ * overflow handoff pre-selects that site instead of showing the full
+ * multi-site chooser. The composer is already scoped to a specific
+ * blog via `connectionId`, so the chooser would be redundant.
+ *
+ * Called unconditionally by `<ComposerOverflowHandoff>`; returns null
+ * when no preference applies so the handoff falls back to the chooser.
+ */
+function useFediversePreferredHandoffSiteId( mode: ActiveMode | null ): number | null {
+	const { data } = useFediverseConnectionsQuery( { enabled: mode !== null } );
+	if ( ! mode ) {
+		return null;
+	}
+	const connection = data?.connections?.find( ( c ) => c.id === mode.connectionId );
+	return connection?.blog_id ?? null;
+}
 
 /**
  * Per-protocol composer configuration for the Fediverse standalone
@@ -33,6 +51,11 @@ export const fediverseComposerConfig: ComposerConfig<
 	// than a grapheme cap. Backend enforces wire-level char limits and
 	// surfaces them via the `text_too_long` error path.
 	counter: 'words',
+	// Fediverse has no hard protocol cap — the word threshold is a soft
+	// "this is getting long; consider the blog editor" cue, not a wall.
+	// Submission stays enabled past the limit; the overflow-handoff
+	// section above the footer carries the suggestion.
+	softLimit: true,
 	protocolLabel: 'Fediverse',
 	supportedModes: [ 'standalone' ],
 	mutationFactory: createFediversePostMutation,
@@ -110,6 +133,7 @@ export const fediverseComposerConfig: ComposerConfig<
 		} );
 	},
 	useProtocolExtras: useFediverseComposerExtras,
+	usePreferredHandoffSiteId: useFediversePreferredHandoffSiteId,
 };
 
 function errorMessageFor( err: FediverseError, t: Translate ): ReactNode {
