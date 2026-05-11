@@ -45,6 +45,36 @@ function validateBrief( raw: unknown ): FeatureClipBrief {
 	if ( ! Array.isArray( candidate.scenes ) ) {
 		throw new Error( 'brief.scenes must be an array.' );
 	}
+	// Fail-fast per-scene validation — downstream code calls .startsWith on
+	// imageUrl and uses camera as a class-name suffix, so malformed scenes
+	// would throw deep in the renderer with a useless stack.
+	const validCameras: ReadonlySet< string > = new Set( [
+		'zoom-in',
+		'zoom-out',
+		'pan-left',
+		'pan-right',
+		'static',
+	] );
+	candidate.scenes.forEach( ( scene, idx ) => {
+		if ( ! scene || typeof scene !== 'object' ) {
+			throw new Error( `brief.scenes[${ idx }] must be an object.` );
+		}
+		const s = scene as Record< string, unknown >;
+		if ( typeof s.camera !== 'string' || ! validCameras.has( s.camera ) ) {
+			throw new Error(
+				`brief.scenes[${ idx }].camera must be one of: zoom-in, zoom-out, pan-left, pan-right, static.`
+			);
+		}
+		if ( s.imageUrl !== undefined && typeof s.imageUrl !== 'string' ) {
+			throw new Error( `brief.scenes[${ idx }].imageUrl must be a string when present.` );
+		}
+		if ( s.text !== undefined && typeof s.text !== 'string' ) {
+			throw new Error( `brief.scenes[${ idx }].text must be a string when present.` );
+		}
+		if ( s.eyebrow !== undefined && s.eyebrow !== null && typeof s.eyebrow !== 'string' ) {
+			throw new Error( `brief.scenes[${ idx }].eyebrow must be a string or null when present.` );
+		}
+	} );
 	if (
 		! candidate.titleCard ||
 		typeof candidate.titleCard !== 'object' ||

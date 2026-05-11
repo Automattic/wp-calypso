@@ -106,7 +106,7 @@ export function HighlightsFeatureClip( { id, brief }: HighlightsFeatureClipProps
 		>
 			<Timegroup mode="sequence" overlapMs={ TRANSITION_OVERLAP_MS } className="timeline-sequence">
 				{ groups.map( ( group, groupIdx ) => {
-					const groupKey = `${ group.imageUrl ?? 'text' }-group-${ groupIdx }`;
+					const groupKey = `group-${ groupIdx }`;
 					const accent = TEXT_SCENE_ACCENTS[ groupIdx % TEXT_SCENE_ACCENTS.length ];
 
 					if ( ! group.imageUrl ) {

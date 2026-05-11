@@ -221,7 +221,10 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 					<button
 						key={ option.value }
 						type="button"
-						disabled={ option.disabled }
+						// aria-disabled (not the `disabled` attribute) so the native
+						// title tooltip still fires on hover — disabled buttons
+						// don't receive hover events in most browsers.
+						aria-disabled={ option.disabled || undefined }
 						title={ option.disabled ? option.disabledReason : undefined }
 						className={ cn( 'image-studio-input-toolbar-card', {
 							'is-selected': selectedStyle === option.value,
