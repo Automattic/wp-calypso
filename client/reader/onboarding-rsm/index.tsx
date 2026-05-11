@@ -180,14 +180,22 @@ const ReaderOnboardingRsm = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
 
-	// Reopen subscription onboarding page if prompted by query param.
+	// Reopen a specific onboarding step if signalled by a query param after email verification.
+	// Only one reload param will be present at a time.
 	useEffect( () => {
 		const urlParams = new URLSearchParams( window.location.search );
-		const shouldReloadOnboarding = urlParams.has( 'reloadSubscriptionOnboarding' );
 
-		if ( shouldReloadOnboarding ) {
-			openStep( 'discover' );
+		let stepToOpen: Step | null = null;
+		if ( urlParams.has( 'reloadSubscriptionOnboarding' ) ) {
+			stepToOpen = 'discover';
 			urlParams.delete( 'reloadSubscriptionOnboarding' );
+		} else if ( urlParams.has( 'reloadInterestsOnboarding' ) ) {
+			stepToOpen = 'interests';
+			urlParams.delete( 'reloadInterestsOnboarding' );
+		}
+
+		if ( stepToOpen ) {
+			openStep( stepToOpen );
 			page.redirect(
 				`${ window.location.pathname }${ urlParams.toString() ? '?' + urlParams.toString() : '' }`
 			);
@@ -274,14 +282,18 @@ const ReaderOnboardingRsm = ( {
 					onRequestClose={ handleStepClose }
 					size="medium"
 					className={ clsx( 'reader-onboarding-rsm-modal', STEP_FRAME_CLASS[ currentStep ], {
-						'is-disabled': currentStep === 'discover' && promptVerification,
+						'is-disabled':
+							( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
 					} ) }
 				>
 					{ currentStep === 'welcome' && (
 						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />
 					) }
 					{ currentStep === 'interests' && (
-						<InterestsModal onContinue={ handleInterestsContinue } />
+						<InterestsModal
+							onContinue={ handleInterestsContinue }
+							promptVerification={ promptVerification }
+						/>
 					) }
 					{ currentStep === 'discover' && (
 						<SubscribeModal onClose={ handleStepClose } promptVerification={ promptVerification } />
