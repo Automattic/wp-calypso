@@ -147,7 +147,7 @@ function MultiSiteBody( {
 
 	return (
 		<>
-			<fieldset disabled={ isPending }>
+			<fieldset disabled={ isPending } className="social-site-handoff-fieldset">
 				<ComboboxControl
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom

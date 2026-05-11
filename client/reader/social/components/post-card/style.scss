@@ -7,6 +7,7 @@
 	.social-post-card-header__reply-context-link,
 	.social-post-card-counts__link,
 	.social-post-card-counts__reply-button,
+	.social-post-card-counts__blog-about,
 	.social-post-card-timestamp-link,
 	.social-post-card-body a,
 	a.social-post-card-embed-external,
@@ -279,6 +280,15 @@ a.social-post-card-header__timestamp::after {
 
 .social-post-card-counts__blog-about {
 	margin-inline-start: auto;
+
+	.social-post-card-counts__blog-about-button {
+		color: var( --studio-gray-50 );
+
+		&:hover,
+		&:focus-visible {
+			color: var( --studio-blue-50 );
+		}
+	}
 }
 
 .social-post-card-counts {

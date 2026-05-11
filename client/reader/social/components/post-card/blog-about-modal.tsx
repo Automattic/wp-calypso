@@ -74,10 +74,14 @@ export function BlogAboutModal( { post, onClose }: BlogAboutModalProps ) {
 	};
 
 	return (
-		<Modal title={ translate( 'Blog about this post' ) as string } onRequestClose={ handleClose }>
+		<Modal
+			title={ translate( 'Blog about this post' ) as string }
+			onRequestClose={ handleClose }
+			size="medium"
+		>
 			<p>
 				{ translate(
-					'Turn this into something longer on your own site. We’ll open the editor with the post embedded — just add your take.'
+					'Turn this into something longer on your own site. We’ll open the editor with the post embedded, ready for your take.'
 				) }
 			</p>
 			{ isPending && <Spinner /> }

@@ -14,13 +14,6 @@
 	@media (prefers-reduced-motion: reduce) {
 		animation: none;
 	}
-
-	> fieldset {
-		border: 0;
-		padding: 0;
-		margin: 0;
-		margin-block-end: 16px;
-	}
 }
 
 @keyframes social-composer-overflow-handoff-fade-in {

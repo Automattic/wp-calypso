@@ -1,3 +1,11 @@
+.social-site-handoff-fieldset {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	margin-block-end: 16px;
+	min-inline-size: 0;
+}
+
 .social-site-handoff-combobox {
 	// Cap the suggestions popover so it doesn't dominate the host modal
 	// — ~3 rich rows visible, the rest scroll.
