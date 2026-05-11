@@ -1,6 +1,6 @@
 import { useMastodonConnectionQuery, useMastodonConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -63,8 +63,9 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		return (
 			<ReaderMain className="mastodon-view">
 				<DocumentHead title={ translate( 'Mastodon ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
