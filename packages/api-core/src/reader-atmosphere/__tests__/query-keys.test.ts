@@ -15,6 +15,15 @@ describe( 'readerAtmosphereKeys', () => {
 			42,
 		] );
 	} );
+
+	it( 'notifications(connectionId) returns a connection-scoped key', () => {
+		expect( readerAtmosphereKeys.notifications( 42 ) ).toEqual( [
+			'reader',
+			'atmosphere',
+			'notifications',
+			42,
+		] );
+	} );
 } );
 
 describe( 'readerAtmosphereKeys.profile', () => {
