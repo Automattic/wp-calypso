@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import { useSocialAnalytics } from './analytics-context';
+import { BlogAboutButton } from './blog-about-button';
 import { LikeButton } from './like-button';
 import { useLikeAction } from './like-context';
 import { RepostButton } from './repost-button';
@@ -177,6 +178,7 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 				{ renderRepliesNode() }
 				<RepostButton post={ post } hideCount={ hideCount } />
 				<LikeButton post={ post } hideCount={ hideCount } />
+				<BlogAboutButton post={ post } />
 			</HStack>
 		</>
 	);
