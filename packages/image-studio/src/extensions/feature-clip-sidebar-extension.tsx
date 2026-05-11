@@ -37,14 +37,16 @@ interface MediaRecord {
 	media_details?: { length?: number };
 }
 
-function openImageStudioForFeatureClip(): void {
+async function openImageStudioForFeatureClip(): Promise< void > {
 	const { openImageStudio } = dispatch( imageStudioStore );
 	const { setCurrentVideoUrl, setCurrentAttachmentId, setCurrentDurationSeconds } = dispatch(
 		videoStudioStore
 	) as VideoStudioActions;
-	// Reset the modal-session store synchronously; the modal will repopulate it
-	// on a successful regeneration.
-	void Promise.all( [
+	// Reset the modal-session store BEFORE opening the modal — these actions
+	// are promisified by wp-data, so a fire-and-forget here would let the modal
+	// mount with the previous clip's URL/attachmentId still in the store and
+	// flash the old preview for one render.
+	await Promise.all( [
 		setCurrentVideoUrl( null ),
 		setCurrentAttachmentId( null ),
 		setCurrentDurationSeconds( null ),

@@ -47,18 +47,27 @@ async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
 		saveEntityRecord?: (
 			kind: string,
 			name: string,
-			record: { id: number; meta: Record< string, unknown > }
+			record: { id: number; meta: Record< string, unknown > },
+			options?: { throwOnError?: boolean }
 		) => Promise< unknown >;
 	};
 
 	try {
-		await core.saveEntityRecord?.( 'postType', postType, {
-			id: postId,
-			meta: { [ FEATURE_CLIP_META_KEY ]: attachmentId },
-		} );
+		// `throwOnError: true` is required — by default core-data resolves
+		// `saveEntityRecord` with the error stored on the entity rather than
+		// rejecting, which would silently bypass this catch and we'd never log
+		// the failure.
+		await core.saveEntityRecord?.(
+			'postType',
+			postType,
+			{
+				id: postId,
+				meta: { [ FEATURE_CLIP_META_KEY ]: attachmentId },
+			},
+			{ throwOnError: true }
+		);
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.warn( '[Image Studio] Failed to persist feature clip meta:', error );
+		window.console?.warn?.( '[Image Studio] Failed to persist feature clip meta:', error );
 	}
 }
 

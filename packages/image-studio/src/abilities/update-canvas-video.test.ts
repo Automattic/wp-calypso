@@ -322,10 +322,12 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 				attachmentId: 42,
 			} );
 
-			expect( mockSaveEntityRecord ).toHaveBeenCalledWith( 'postType', 'post', {
-				id: 7,
-				meta: { _jetpack_feature_clip_id: 42 },
-			} );
+			expect( mockSaveEntityRecord ).toHaveBeenCalledWith(
+				'postType',
+				'post',
+				{ id: 7, meta: { _jetpack_feature_clip_id: 42 } },
+				{ throwOnError: true }
+			);
 		} );
 
 		it( 'forwards the current post type so saveEntityRecord targets the right entity', async () => {
@@ -337,10 +339,12 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 			const callback = getRegisteredCallback();
 			await callback( { url: 'https://files.wordpress.com/clip.mp4', attachmentId: 42 } );
 
-			expect( mockSaveEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', {
-				id: 9,
-				meta: { _jetpack_feature_clip_id: 42 },
-			} );
+			expect( mockSaveEntityRecord ).toHaveBeenCalledWith(
+				'postType',
+				'page',
+				{ id: 9, meta: { _jetpack_feature_clip_id: 42 } },
+				{ throwOnError: true }
+			);
 		} );
 
 		it( 'skips the meta write when there is no current post', async () => {
