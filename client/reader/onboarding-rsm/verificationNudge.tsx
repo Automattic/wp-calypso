@@ -2,9 +2,10 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import EmailVerificationBanner from 'calypso/me/email-verification-banner';
+import { type ReloadParam } from './get-reload-step';
 
 interface VerificationNudgeProps {
-	reloadParam: string;
+	reloadParam: ReloadParam;
 }
 
 const VerificationNudge: React.FC< VerificationNudgeProps > = ( { reloadParam } ) => {
