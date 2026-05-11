@@ -220,12 +220,12 @@ export type FediverseAuthorFeedPage = FediverseTimelinePage;
 /**
  * Compact account row shape returned by the followers / following list
  * endpoints. Mirrors `MastodonAccountSummary`: a strict subset of the
- * profile-card surface fields plus per-viewer relationship state. `note`
- * is server-sanitised AP `summary` HTML (re-sanitised client-side as
- * defence-in-depth via the same DOMPurify allow-list as the full
- * profile); `note_text` is the plain-text projection (HTML stripped
- * server-side) so the row can render in compact form without
- * un-rendering the HTML on the client.
+ * profile-card surface fields plus per-viewer relationship state.
+ * `note_text` is the server-side plain-text projection of the actor's
+ * AP `summary` so the row can render in compact form without
+ * un-rendering HTML on the client. The HTML `note` field exists on the
+ * full `FediverseAuthorProfile`; add it back to this row shape when a
+ * future surface needs to render bio HTML inline.
  *
  * `handle` is the bare webfinger handle (`user@host`) synthesised
  * server-side from `acct` + connection's home host. Mirrors the
@@ -241,7 +241,6 @@ export interface FediverseAccountSummary {
 	/** Bare webfinger handle, e.g. `alice@example.com` (no leading `@`). */
 	handle: string;
 	display_name: string;
-	note: string;
 	note_text: string;
 	avatar: string | null;
 	locked: boolean;

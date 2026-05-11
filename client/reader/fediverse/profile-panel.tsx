@@ -1,3 +1,4 @@
+import { stripLeadingAt } from 'calypso/reader/social';
 import { FediverseAuthorProfilePanel } from './author-profile-panel';
 import type { FediverseConnection } from '@automattic/api-core';
 
@@ -17,8 +18,10 @@ export function ProfilePanel( { connection }: Props ) {
 	// `webfinger` is emitted with a leading `@` (e.g. `@alice@example.com`).
 	// Strip it before forwarding so the panel's empty-title format (which
 	// prefixes its own `@`) and Tracks props don't end up with `@@user@host`.
-	const actor = connection.webfinger.startsWith( '@' )
-		? connection.webfinger.slice( 1 )
-		: connection.webfinger;
-	return <FediverseAuthorProfilePanel connection={ connection } actor={ actor } />;
+	return (
+		<FediverseAuthorProfilePanel
+			connection={ connection }
+			actor={ stripLeadingAt( connection.webfinger ) }
+		/>
+	);
 }

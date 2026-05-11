@@ -14,6 +14,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
+import { logToLogstash } from 'calypso/lib/logstash';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import {
 	AuthorProfileHeader,
@@ -101,7 +102,9 @@ export function FollowersView( { connectionId, actor }: Props ) {
 	const unfollowMut = useMutation( unfollowFediverseActorMutation( queryClient ) );
 
 	// Surface follow / unfollow failures via a stable notice id so a stale
-	// toast from one click is dismissed when the user retries.
+	// toast from one click is dismissed when the user retries. Also emit a
+	// pipeline-level log so failures stay observable in dashboards even
+	// when no Tracks dashboard is consulted.
 	const showFollowError = useCallback(
 		( error: FediverseError, action: 'follow' | 'unfollow' ) => {
 			dispatch(
@@ -109,8 +112,18 @@ export function FollowersView( { connectionId, actor }: Props ) {
 					id: 'fediverse-follow-error',
 				} )
 			);
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: `Reader Fediverse ${ action } mutation failed`,
+				severity: 'error',
+				extra: {
+					type: `reader_fediverse_${ action }_mutation_error`,
+					connection_id: connectionId,
+					error_kind: error.kind,
+				},
+			} );
 		},
-		[ dispatch, translate ]
+		[ dispatch, translate, connectionId ]
 	);
 	const dismissFollowError = useCallback( () => {
 		dispatch( removeNotice( 'fediverse-follow-error' ) );

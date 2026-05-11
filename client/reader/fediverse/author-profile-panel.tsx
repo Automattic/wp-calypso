@@ -10,6 +10,7 @@ import {
 	SocialProfileCard,
 	mapFediverseAuthorProfileToSocialProfileCardProps,
 	mapFediverseFeedItemToSocialPost,
+	stripLeadingAt,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
 import { projectFediverseError } from './error-projection';
@@ -201,13 +202,4 @@ export function FediverseAuthorProfilePanel( {
 			className="fediverse-author-profile"
 		/>
 	);
-}
-
-// Wire `acct` / `webfinger` values are emitted with a leading `@`
-// (e.g. `@alice@example.com`). Surfaces that prefix their own `@` —
-// the post-card header, the empty-title format string, Tracks event
-// props that match the bare `user@host` shape used by the
-// atmosphere/Mastodon adapters — need it stripped first.
-function stripLeadingAt( handle: string ): string {
-	return handle.startsWith( '@' ) ? handle.slice( 1 ) : handle;
 }

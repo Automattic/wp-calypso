@@ -98,6 +98,17 @@ function mapAccount( account: FediverseTimelineAccount, host: string ): SocialPo
 	};
 }
 
+/**
+ * Strip a leading `@` from a wire `acct` / `webfinger` / `handle` value.
+ * Wire values are emitted with a leading `@` (e.g. `@alice@example.com`);
+ * surfaces that prefix their own `@` — the post-card header, the
+ * empty-title format string, Tracks event props that match the bare
+ * `user@host` shape — need it stripped first.
+ */
+export function stripLeadingAt( handle: string ): string {
+	return handle.startsWith( '@' ) ? handle.slice( 1 ) : handle;
+}
+
 // Normalise the wire `acct` / `handle` to a bare `user@host` shape:
 //   - feed-item accounts may emit `acct: 'alice'` (local) or
 //     `acct: 'carol@example.com'` (remote)
@@ -106,7 +117,7 @@ function mapAccount( account: FediverseTimelineAccount, host: string ): SocialPo
 //     at render time, so we must strip it here to avoid `@@user@host`
 // Always return webfinger-style without the leading `@`.
 function qualifyAcct( acct: string, host: string ): string {
-	const stripped = acct.startsWith( '@' ) ? acct.slice( 1 ) : acct;
+	const stripped = stripLeadingAt( acct );
 	return stripped.includes( '@' ) ? stripped : `${ stripped }@${ host }`;
 }
 

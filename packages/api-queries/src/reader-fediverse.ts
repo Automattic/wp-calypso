@@ -298,6 +298,15 @@ const fediverseAuthorProfileKey = ( vars: { connectionId: number; actor: string 
  * pending request flag. The real server-side state (which may be
  * `requested: true` for locked accounts) is committed in `onSuccess`.
  *
+ * **List-row invariant**: this factory only writes to the
+ * `authorProfile` cache key. Callers that render followers / following
+ * list rows (each with their own `viewer` state) must invalidate the
+ * relevant `actorFollowers` / `actorFollowing` query in their own
+ * `onSuccess` so the row mirrors server truth. Without that, the row
+ * keeps the pre-click state until `staleTime` expires. The followers /
+ * following views both follow this contract; mirrors the Mastodon
+ * pattern in `client/reader/mastodon/{followers,following}-view.tsx`.
+ *
  * Accepts the consumer's QueryClient because Calypso boots its own
  * separate from the singleton in `@automattic/api-queries`. See
  * `client/reader/AGENTS.md` for the rationale. Mirrors
@@ -376,6 +385,11 @@ export const followFediverseActorMutation = ( queryClient: QueryClient ) =>
  * covers both. Optimistically clears `viewer.following` and
  * `viewer.requested`; rolls back on error. Mirrors
  * `unfollowMastodonActorMutation`.
+ *
+ * Same `authorProfile`-cache list-row invariant as
+ * `followFediverseActorMutation`: callers rendering list rows must
+ * invalidate the relevant `actorFollowers` / `actorFollowing` query in
+ * their own `onSuccess`.
  */
 export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 	mutationOptions<
