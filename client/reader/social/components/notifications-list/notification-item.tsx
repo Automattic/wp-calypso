@@ -16,6 +16,15 @@ interface Props {
 	notification: AtmosphereNotification;
 }
 
+function isSafeUrl( url: string ): boolean {
+	try {
+		const parsed = new URL( url );
+		return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+	} catch {
+		return false;
+	}
+}
+
 export function SocialNotificationItem( { notification }: Props ) {
 	const translate = useTranslate();
 	const { actor, target, target_url, canonical_type, protocol_type, is_read, created_at } =
@@ -26,40 +35,55 @@ export function SocialNotificationItem( { notification }: Props ) {
 		args: { actor: actorName, phrase: String( phrase ) },
 	} ) as string;
 
+	const safe = isSafeUrl( target_url );
+	const className = clsx( 'social-notification-item', { 'is-unread': ! is_read } );
+
+	const body = (
+		<HStack alignment="flex-start" spacing={ 3 }>
+			{ actor.avatar_url ? (
+				<img className="social-notification-item__avatar" src={ actor.avatar_url } alt="" />
+			) : (
+				<span className="social-notification-item__avatar is-placeholder" aria-hidden />
+			) }
+			<VStack spacing={ 1 } className="social-notification-item__body">
+				<span className="social-notification-item__line">
+					<span className="social-notification-item__actor">{ actorName }</span>{ ' ' }
+					<span className="social-notification-item__phrase">{ phrase }</span>
+				</span>
+				{ target?.excerpt ? (
+					<span className="social-notification-item__excerpt">{ target.excerpt }</span>
+				) : null }
+				{ created_at ? (
+					<TimeSince className="social-notification-item__time" date={ created_at } />
+				) : null }
+			</VStack>
+			{ ! is_read && (
+				<>
+					<span className="screen-reader-text">{ translate( 'Unread' ) as string }</span>
+					<span className="social-notification-item__unread-dot" aria-hidden />
+				</>
+			) }
+		</HStack>
+	);
+
+	if ( safe ) {
+		return (
+			<a
+				className={ className }
+				href={ target_url }
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label={ ariaLabel }
+			>
+				{ body }
+			</a>
+		);
+	}
+
 	return (
-		<a
-			className={ clsx( 'social-notification-item', { 'is-unread': ! is_read } ) }
-			href={ target_url }
-			target="_blank"
-			rel="noopener noreferrer"
-			aria-label={ ariaLabel }
-		>
-			<HStack alignment="flex-start" spacing={ 3 }>
-				{ actor.avatar_url ? (
-					<img className="social-notification-item__avatar" src={ actor.avatar_url } alt="" />
-				) : (
-					<span className="social-notification-item__avatar is-placeholder" aria-hidden />
-				) }
-				<VStack spacing={ 1 } className="social-notification-item__body">
-					<span className="social-notification-item__line">
-						<span className="social-notification-item__actor">{ actorName }</span>{ ' ' }
-						<span className="social-notification-item__phrase">{ phrase }</span>
-					</span>
-					{ target?.excerpt ? (
-						<span className="social-notification-item__excerpt">{ target.excerpt }</span>
-					) : null }
-					{ created_at ? (
-						<TimeSince className="social-notification-item__time" date={ created_at } />
-					) : null }
-				</VStack>
-				{ ! is_read && (
-					<span
-						className="social-notification-item__unread-dot"
-						aria-label={ translate( 'Unread' ) as string }
-					/>
-				) }
-			</HStack>
-		</a>
+		<div className={ className } aria-label={ ariaLabel }>
+			{ body }
+		</div>
 	);
 }
 

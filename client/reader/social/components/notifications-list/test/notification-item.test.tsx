@@ -96,4 +96,22 @@ describe( 'SocialNotificationItem', () => {
 		);
 		expect( container.querySelector( '.is-unread' ) ).toBeNull();
 	} );
+
+	it( 'renders as a non-navigating div when target_url is not http(s)', () => {
+		const { container } = renderWithProvider(
+			<SocialNotificationItem notification={ makeItem( { target_url: 'javascript:alert(1)' } ) } />
+		);
+		// Should NOT be a link.
+		expect( screen.queryByRole( 'link' ) ).toBeNull();
+		// Root is the .social-notification-item element, rendered as a <div>.
+		const root = container.querySelector( '.social-notification-item' );
+		expect( root?.tagName ).toBe( 'DIV' );
+	} );
+
+	it( 'announces unread state via screen-reader-only text', () => {
+		renderWithProvider(
+			<SocialNotificationItem notification={ makeItem( { is_read: false } ) } />
+		);
+		expect( screen.getByText( /^unread$/i ) ).toBeVisible();
+	} );
 } );
