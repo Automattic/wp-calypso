@@ -3,10 +3,17 @@ import './style.scss';
 import { Button, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { SocialNotificationItem } from './notification-item';
-import type { AtmosphereNotification } from '@automattic/api-core';
+import type { AtmosphereNotification, MastodonNotification } from '@automattic/api-core';
+
+// Cross-protocol envelope. The wpcom backend commits to a byte-compatible
+// shape across protocols (CM-660 / CM-662) so the shared renderer doesn't
+// have to branch on `source`. Listed as a discriminated-ish union here so a
+// future protocol whose envelope drifts surfaces as a type error at the
+// callers instead of a silent miss in the renderer.
+type SocialNotification = AtmosphereNotification | MastodonNotification;
 
 interface Props {
-	items: AtmosphereNotification[];
+	items: SocialNotification[];
 	isLoading: boolean;
 	isLoadingMore?: boolean;
 	isError: boolean;

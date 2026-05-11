@@ -410,3 +410,78 @@ export interface MastodonAccountSummariesPage {
 	items: MastodonAccountSummary[];
 	cursor: string | null;
 }
+
+/**
+ * Normalized cross-protocol notification kind. Identical to
+ * `AtmosphereNotificationCanonicalType` by design — the wpcom backend
+ * commits to a byte-compatible envelope across protocols so the shared
+ * frontend renderer doesn't have to branch on `source`. `'other'` is the
+ * forward-compat bucket for upstream Mastodon types we don't yet render
+ * with bespoke templates (`status`, `admin.*`, `update`, etc.). The
+ * shared renderer falls through to a generic phrase that humanizes
+ * `protocol_type` for the label.
+ */
+export type MastodonNotificationCanonicalType =
+	| 'like'
+	| 'repost'
+	| 'follow'
+	| 'mention'
+	| 'reply'
+	| 'quote'
+	| 'other';
+
+export interface MastodonNotificationActor {
+	handle: string;
+	display_name: string | null;
+	avatar_url: string | null;
+	profile_uri: string;
+}
+
+export interface MastodonNotificationTarget {
+	kind: 'post' | 'profile';
+	uri: string;
+	excerpt: string;
+}
+
+/**
+ * Envelope shape returned by
+ * `/wpcom/v2/reader/mastodon/connections/:id/notifications`. Byte-compatible
+ * with `AtmosphereNotification` — the wpcom backend normalizes both protocols
+ * to the same shape so the shared frontend renderer takes either.
+ *
+ * `protocol_type` is the raw upstream Mastodon `type` value (verbatim,
+ * lossless: `favourite`, `reblog`, `follow`, `mention`, `status`, …);
+ * `canonical_type` is the normalized enum. There is no `raw` passthrough —
+ * `protocol_type` is the long-tail escape hatch for upstream kinds we don't
+ * yet render with bespoke templates. `target.excerpt` is `''` for
+ * `like`/`repost` (the subject post text isn't fetched for these — only
+ * mention/reply/quote shapes populate it). `target_url` is best-effort: the
+ * status URL when buildable, otherwise the actor profile URL, otherwise the
+ * empty string (the frontend skips linkification when empty). `created_at` is
+ * normalized to `YYYY-MM-DDTHH:MM:SSZ` (UTC, no fractional seconds) and is
+ * nullable when the upstream timestamp is missing or unparseable. `is_read`
+ * is server-computed against the user's `last_read_id` watermark.
+ */
+export interface MastodonNotification {
+	id: string;
+	/** Raw upstream type string, e.g. Mastodon `notification.type`. */
+	protocol_type: string;
+	canonical_type: MastodonNotificationCanonicalType;
+	actor: MastodonNotificationActor;
+	target: MastodonNotificationTarget | null;
+	target_url: string;
+	created_at: string | null;
+	is_read: boolean;
+}
+
+/**
+ * Single page from the cursor-paginated notifications endpoint.
+ * `next_cursor: null` means end-of-list. `seen_at` is the server's watermark
+ * timestamp, exposed at the page level (not per-item) so subsequent "Load
+ * more" pages can classify items without re-fetching.
+ */
+export interface MastodonNotificationsPage {
+	items: MastodonNotification[];
+	next_cursor: string | null;
+	seen_at: string | null;
+}

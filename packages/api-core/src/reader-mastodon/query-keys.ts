@@ -11,6 +11,8 @@ export const readerMastodonKeys = {
 		[ ...readerMastodonKeys.all, 'instance-config', id ] as const,
 	timeline: ( connectionId: number ) =>
 		[ ...readerMastodonKeys.all, 'timeline', connectionId ] as const,
+	notifications: ( connectionId: number ) =>
+		[ ...readerMastodonKeys.all, 'notifications', connectionId ] as const,
 	thread: ( connectionId: number, statusId: string ) =>
 		[ ...readerMastodonKeys.all, 'thread', connectionId, statusId ] as const,
 	authorProfile: ( connectionId: number, actor: string ) =>

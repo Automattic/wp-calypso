@@ -10,10 +10,22 @@ import { useTranslate } from 'i18n-calypso';
 import type {
 	AtmosphereNotification,
 	AtmosphereNotificationCanonicalType,
+	MastodonNotification,
+	MastodonNotificationCanonicalType,
 } from '@automattic/api-core';
 
+// The wpcom backend ships byte-compatible notification envelopes across
+// protocols; both per-protocol types share the same canonical_type union.
+// Aliased here so the renderer takes either without per-protocol branching.
+// Keep both arms in the union so a future per-protocol widening surfaces as
+// a switch-exhaustiveness error instead of being silently funneled to 'other'.
+type SocialNotification = AtmosphereNotification | MastodonNotification;
+type SocialNotificationCanonicalType =
+	| AtmosphereNotificationCanonicalType
+	| MastodonNotificationCanonicalType;
+
 interface Props {
-	notification: AtmosphereNotification;
+	notification: SocialNotification;
 }
 
 function isSafeUrl( url: string ): boolean {
@@ -87,7 +99,7 @@ export function SocialNotificationItem( { notification }: Props ) {
 }
 
 function actionPhrase(
-	canonical: AtmosphereNotificationCanonicalType,
+	canonical: SocialNotificationCanonicalType,
 	translate: ReturnType< typeof useTranslate >
 ): string {
 	switch ( canonical ) {
@@ -104,13 +116,19 @@ function actionPhrase(
 		case 'quote':
 			return translate( 'quoted your post' ) as string;
 		case 'other':
-		default:
 			return translate( 'interacted with you' ) as string;
+		default: {
+			// Future per-protocol union widening should fail to type-check here
+			// instead of silently funneling new kinds to the generic phrase.
+			const _exhaustive: never = canonical;
+			void _exhaustive;
+			return translate( 'interacted with you' ) as string;
+		}
 	}
 }
 
 function actionAriaLabel(
-	canonical: AtmosphereNotificationCanonicalType,
+	canonical: SocialNotificationCanonicalType,
 	actor: string,
 	translate: ReturnType< typeof useTranslate >
 ): string {
@@ -128,7 +146,11 @@ function actionAriaLabel(
 		case 'quote':
 			return translate( '%(actor)s quoted your post', { args: { actor } } ) as string;
 		case 'other':
-		default:
 			return translate( '%(actor)s interacted with you', { args: { actor } } ) as string;
+		default: {
+			const _exhaustive: never = canonical;
+			void _exhaustive;
+			return translate( '%(actor)s interacted with you', { args: { actor } } ) as string;
+		}
 	}
 }

@@ -22,6 +22,7 @@ import type {
 	MastodonFollowResponse,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
+	MastodonNotificationsPage,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadResponse,
@@ -151,6 +152,38 @@ export async function getMastodonTimeline(
 			},
 			query
 		) ) as MastodonTimelinePage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonNotificationsParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getMastodonNotifications(
+	params: GetMastodonNotificationsParams
+): Promise< MastodonNotificationsPage > {
+	const { connectionId, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	// typeof guard so an explicit `limit: 0` (used by callers that want
+	// only the seen_at watermark refreshed without items) reaches the wire.
+	if ( typeof limit === 'number' ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/mastodon/connections/${ connectionId }/notifications`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as MastodonNotificationsPage;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
