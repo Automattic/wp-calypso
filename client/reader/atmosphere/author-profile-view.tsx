@@ -1,6 +1,6 @@
 import { useConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -64,8 +64,9 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 		return (
 			<ReaderMain className="atmosphere-view">
 				<DocumentHead title={ translate( 'Profile ‹ ATmosphere ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);

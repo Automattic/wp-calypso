@@ -108,7 +108,6 @@ const Routes: RoutesMapping[] = [
 	{ route: exactMatch( '/reader/atmosphere/connect' ), tracking: 'atmosphere_connect' },
 	{ route: matches( /^\/reader\/atmosphere\/\d+\/timeline$/ ), tracking: 'atmosphere_timeline' },
 	{ route: matches( /^\/reader\/atmosphere\/\d+\/profile$/ ), tracking: 'atmosphere_profile' },
-	{ route: matches( /^\/reader\/atmosphere\/\d+\/settings$/ ), tracking: 'atmosphere_settings' },
 	{ route: exactMatch( '/reader/atmosphere' ), tracking: 'atmosphere_landing' },
 
 	// Mastodon (ActivityPub)
@@ -119,7 +118,6 @@ const Routes: RoutesMapping[] = [
 	},
 	{ route: matches( /^\/reader\/mastodon\/\d+\/timeline$/ ), tracking: 'mastodon_timeline' },
 	{ route: matches( /^\/reader\/mastodon\/\d+\/profile$/ ), tracking: 'mastodon_profile' },
-	{ route: matches( /^\/reader\/mastodon\/\d+\/settings$/ ), tracking: 'mastodon_settings' },
 	{ route: matches( /^\/reader\/mastodon\/\d+\/tag\/[^/]+$/ ), tracking: 'mastodon_tag_feed' },
 	{ route: exactMatch( '/reader/mastodon' ), tracking: 'mastodon_landing' },
 

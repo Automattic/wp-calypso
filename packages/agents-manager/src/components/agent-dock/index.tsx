@@ -146,6 +146,23 @@ export default function AgentDock( {
 		setDesktopMediaQuery,
 	} );
 
+	// Reflect split-screen state on the sidebar container element. The
+	// container class is added by `useAgentLayoutManager` when docked; we
+	// only toggle the extra `is-split-screen` modifier on it so the CSS
+	// override in `agent-dock/style.scss` (`--am-sidebar-width: 50vw`)
+	// wins at runtime. No-op if the sidebar isn't mounted (floating or
+	// closed), and auto-clears on unmount to avoid leaking the class.
+	useEffect( () => {
+		const container = document.querySelector( '.agents-manager-sidebar-container' );
+		if ( ! container ) {
+			return;
+		}
+		container.classList.toggle( 'is-split-screen', !! isSplitScreen );
+		return () => {
+			container.classList.remove( 'is-split-screen' );
+		};
+	}, [ isSplitScreen, isDocked, isPersistedOpen ] );
+
 	const handleAbort = useCallback( () => {
 		const agentManager = getAgentManager();
 

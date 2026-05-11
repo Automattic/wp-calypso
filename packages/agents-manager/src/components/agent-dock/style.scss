@@ -699,8 +699,11 @@ body.post-new-php.agents-manager-sidebar-container {
 body.agents-manager-sidebar-container.is-split-screen {
 	--am-sidebar-width: 50vw;
 
-	// Drop agenttic-ui's hard-capped EmptyView widths so the empty state
-	// stretches with the sidebar. Attribute-prefix survives class hashing.
+	// Agenttic-ui's `EmptyView` ships fixed max-widths (400/500px) on its
+	// heading + suggestions wrapper. They're sensible at the docked 350px
+	// width but stay capped at split-screen widths, leaving the empty view
+	// stuck in a small box on a wide canvas. Bump them via attribute-prefix
+	// selectors so the override survives CSS-modules class hashing.
 	[class*="EmptyView-module_heading"],
 	[class*="EmptyView-module_help"],
 	[class*="EmptyView-module_suggestionsWrapper"] {
@@ -719,5 +722,4 @@ body.agents-manager-sidebar-container.is-split-screen {
 		flex: 0 0 100%;
 		max-inline-size: 100%;
 	}
-
 }
