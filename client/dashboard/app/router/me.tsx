@@ -36,6 +36,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
@@ -908,15 +909,12 @@ export const appearanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'appearance',
-	beforeLoad: async ( { context } ) => {
-		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-		const optIn = preferences[ 'hosting-dashboard-opt-in' ];
-		const isDashboardEnrolled =
-			context.config.optIn &&
-			( optIn?.value === 'opt-in' ||
-				optIn?.value === 'forced-opt-in' ||
-				isEnabled( 'dashboard/forced-opt-in' ) );
-		if ( ! context.config.supports.colorScheme || ! isDashboardEnrolled ) {
+	beforeLoad: ( { context } ) => {
+		if (
+			! context.config.supports.darkMode ||
+			! context.config.supports.colorScheme ||
+			isDashboardBackport()
+		) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},
@@ -1147,7 +1145,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
 	}
-	if ( config.supports.colorScheme && config.optIn ) {
+	if ( config.supports.darkMode && config.supports.colorScheme ) {
 		preferencesChildren.push( appearanceRoute );
 	}
 	if ( isEnabled( 'mcp-settings' ) ) {
