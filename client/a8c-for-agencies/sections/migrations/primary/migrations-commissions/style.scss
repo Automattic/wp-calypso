@@ -34,4 +34,14 @@
 		}
 	}
 
+	.migrations-commissions__content {
+		.consolidated-commissions {
+			padding: 16px;
+
+			@include break-large {
+				padding: 16px 64px 48px;
+				flex-direction: row;
+			}
+		}
+	}
 }

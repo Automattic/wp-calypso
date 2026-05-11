@@ -16,6 +16,7 @@ import LayoutHeader, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrationsCommissionsList from '../../commissions-list';
+import MigrationsConsolidatedCommissions from '../../consolidated-commissions';
 import useCanTagSitesForCommission from '../../hooks/use-can-tag-sites-for-commission';
 import useFetchTaggedSitesForMigration from '../../hooks/use-fetch-tagged-sites-for-migration';
 import MigrationsTagSitesModal from '../../tag-sites-modal';
@@ -63,10 +64,12 @@ export default function MigrationsCommissions() {
 			/>
 		) : (
 			<div className="migrations-commissions__content">
+				{ canTagSitesForCommission && <MigrationsConsolidatedCommissions items={ taggedSites } /> }
 				<MigrationsCommissionsList
 					items={ taggedSites }
 					fetchMigratedSites={ fetchMigratedSites }
 					migrationTags={ migrationTags }
+					canTagSitesForCommission={ canTagSitesForCommission }
 				/>
 			</div>
 		);
@@ -88,7 +91,7 @@ export default function MigrationsCommissions() {
 			wide
 		>
 			<LayoutTop isFullWidth={ ! showEmptyState }>
-				<IncentiveEndedBanner />
+				{ ! canTagSitesForCommission && <IncentiveEndedBanner /> }
 				{ ! showEmptyState && <MissingPaymentSettingsNotice commissionType="migrations" /> }
 				<LayoutHeader>
 					<Breadcrumb
