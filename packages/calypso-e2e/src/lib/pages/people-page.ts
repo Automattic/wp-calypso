@@ -1,3 +1,4 @@
+import { expect } from '@playwright/test';
 import { Page, Locator } from 'playwright';
 import { clickNavTab } from '../../element-helper';
 
@@ -45,14 +46,17 @@ export class PeoplePage {
 
 	/**
 	 * Click view all link if its available.
+	 *
+	 * The widget renders asynchronously after navigation; a bare `count()` check races
+	 * the render and silently bails when the link isn't there yet. Wait briefly for it.
 	 */
 	async clickViewAllIfAvailable(): Promise< void > {
-		const viewAllLink = this.page.getByRole( 'link', {
-			name: 'View all',
-		} );
-
-		if ( ( await viewAllLink.count() ) > 0 ) {
+		const viewAllLink = this.page.getByRole( 'link', { name: 'View all' } ).first();
+		try {
+			await viewAllLink.waitFor( { state: 'visible', timeout: 3000 } );
 			await viewAllLink.click();
+		} catch {
+			// No "View all" widget on this page — already on a full list.
 		}
 	}
 
@@ -76,24 +80,56 @@ export class PeoplePage {
 
 	/**
 	 * Waits for an invitation to appear in the pending invites list. Reloads the page until the invitation is found or the timeout is reached.
+	 *
+	 * On the user-management-revamp /people/team/<site> page, the invites widget only
+	 * renders the most recent invite (singleInviteView), so a test invite is invisible
+	 * whenever a concurrent test on the same shared site creates a newer one. Hop to
+	 * /people/pending-invites/<site> first, which lists every pending invite.
+	 *
 	 * @param emailaddress Email address of the invited user.
 	 * @param timeout Maximum time to wait in milliseconds (default: 60000).
 	 */
 	async waitForInvitation( emailaddress: string, timeout = 60000 ): Promise< void > {
-		await this.clickViewAllIfAvailable();
-		const invitationLocator = this.page.getByTitle( emailaddress );
-		const startTime = Date.now();
+		await this.ensureFullInvitesList();
+		const invitationLocator = this.invitationLink( emailaddress );
 
-		while ( Date.now() - startTime < timeout ) {
-			if ( await invitationLocator.isVisible() ) {
-				return;
-			}
-			await this.page.reload();
-			await this.page.waitForLoadState( 'domcontentloaded' );
+		await expect
+			.poll(
+				async () => {
+					if ( await invitationLocator.isVisible() ) {
+						return true;
+					}
+					await this.page.reload();
+					return false;
+				},
+				{ timeout, intervals: [ 1000, 2000, 5000 ] }
+			)
+			.toBe( true );
+	}
+
+	/**
+	 * If the current page is the All Users summary (/people/team/<site>), navigate to the
+	 * dedicated pending invites list so every invite is in the DOM.
+	 */
+	private async ensureFullInvitesList(): Promise< void > {
+		const currentUrl = new URL( this.page.url() );
+		const teamMatch = currentUrl.pathname.match( /^\/people\/team\/([^/]+)/ );
+		if ( ! teamMatch ) {
+			return;
 		}
+		const target = new URL( `/people/pending-invites/${ teamMatch[ 1 ] }`, currentUrl );
+		await this.page.goto( target.toString() );
+	}
 
-		// Final wait that will throw if not visible
-		await invitationLocator.waitFor( { state: 'visible', timeout: 5000 } );
+	/**
+	 * Locator for the pending-invite list entry of a given email.
+	 *
+	 * The row's accessible name is `<email> <role>` (e.g. "user@x.com Editor"), so a
+	 * substring match on the email is enough and avoids strict-mode collisions with
+	 * inner generics that also expose the email as their accessible name.
+	 */
+	private invitationLink( email: string ): Locator {
+		return this.page.getByRole( 'link', { name: email } ).first();
 	}
 
 	/**
@@ -102,7 +138,7 @@ export class PeoplePage {
 	 * @param {string} email Email of the user.
 	 */
 	async selectInvitation( email: string ): Promise< void > {
-		await this.page.getByTitle( email ).click();
+		await this.invitationLink( email ).click();
 	}
 
 	/**
