@@ -23,6 +23,14 @@ const loadMastodonAuthorProfileView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-mastodon-author-profile-view" */ 'calypso/reader/mastodon/author-profile-view'
 	);
+const loadMastodonFollowersView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-mastodon-followers-view" */ 'calypso/reader/mastodon/followers-view'
+	);
+const loadMastodonFollowingView = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-mastodon-following-view" */ 'calypso/reader/mastodon/following-view'
+	);
 const loadMastodonTagFeedView = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-mastodon-tag-feed-view" */ 'calypso/reader/mastodon/tag-feed-view'
@@ -148,6 +156,62 @@ export const mastodonProfile = ( context: Context, next: () => void ) => {
 		<AsyncLoad
 			key="reader-mastodon-author-profile"
 			require={ loadMastodonAuthorProfileView }
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
+		/>
+	);
+	next();
+};
+
+export const mastodonProfileFollowers = ( context: Context, next: () => void ) => {
+	if ( ! ensureMastodonEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' ).trim();
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const inputsValid = idValid && isValidActor( actor );
+
+	if ( ! inputsValid ) {
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-mastodon-followers"
+			require={ loadMastodonFollowersView }
+			placeholder={ null }
+			connectionId={ id }
+			actor={ actor }
+		/>
+	);
+	next();
+};
+
+export const mastodonProfileFollowing = ( context: Context, next: () => void ) => {
+	if ( ! ensureMastodonEnabled() ) {
+		return;
+	}
+
+	const id = Number( context.params.id );
+	const actor = String( context.params.actor ?? '' ).trim();
+
+	const idValid = Number.isFinite( id ) && id > 0;
+	const inputsValid = idValid && isValidActor( actor );
+
+	if ( ! inputsValid ) {
+		page.redirect( idValid ? `/reader/mastodon/${ id }` : '/reader/mastodon' );
+		return;
+	}
+
+	context.primary = (
+		<AsyncLoad
+			key="reader-mastodon-following"
+			require={ loadMastodonFollowingView }
 			placeholder={ null }
 			connectionId={ id }
 			actor={ actor }

@@ -1,11 +1,15 @@
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	createMastodonFollow,
 	createMastodonLike,
 	createMastodonPost,
 	createMastodonRepost,
+	deleteMastodonFollow,
 	deleteMastodonLike,
 	deleteMastodonRepost,
+	getMastodonActorFollowers,
+	getMastodonActorFollowing,
 	getMastodonAuthStatus,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
@@ -36,6 +40,7 @@ import type {
 	GetMastodonAuthorFeedParams,
 	GetMastodonTagFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAccountSummariesPage,
 	MastodonAuthStatus,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
@@ -48,6 +53,7 @@ import type {
 	MastodonCreatePostResult,
 	MastodonError,
 	MastodonFeedItem,
+	MastodonFollowResponse,
 	MastodonInstanceConfig,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
@@ -229,14 +235,14 @@ export function useMastodonThreadQuery( connectionId: number, statusId: string )
 // entry rather than two. (Numeric ids and `@user@instance` route segments
 // can't always be reduced to the same key without a backend round-trip; we
 // dedupe what we can.)
-function normalizeActor( actor: string ): string {
+export function normalizeMastodonActor( actor: string ): string {
 	const trimmed = actor.trim();
 	const stripped = trimmed.startsWith( '@' ) ? trimmed.slice( 1 ) : trimmed;
 	return stripped.toLowerCase();
 }
 
 export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: string ) => {
-	const normalized = normalizeActor( actor );
+	const normalized = normalizeMastodonActor( actor );
 	return queryOptions< MastodonAuthorProfile, MastodonError >( {
 		queryKey: readerMastodonKeys.authorProfile( connectionId, normalized ),
 		queryFn: () => getMastodonAuthorProfile( { connectionId, actor: normalized } ),
@@ -267,7 +273,7 @@ export const mastodonAuthorFeedInfiniteQuery = (
 	actor: string,
 	filter?: MastodonAuthorFeedFilter
 ) => {
-	const normalizedActor = normalizeActor( actor );
+	const normalizedActor = normalizeMastodonActor( actor );
 	// `posts_with_replies` is the wire default (no filter param); collapse
 	// to undefined so callers that pass it share the slice-6 cache key with
 	// no-filter callers. `posts_no_replies` and `posts_with_media` survive
@@ -317,6 +323,93 @@ export function useMastodonAuthorFeedInfiniteQuery(
 	filter?: MastodonAuthorFeedFilter
 ) {
 	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor, filter ) );
+}
+
+export interface MastodonActorPageQueryParams {
+	connectionId: number;
+	actor: string;
+}
+
+export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
+	const normalizedActor = normalizeMastodonActor( params.actor );
+	return infiniteQueryOptions<
+		MastodonAccountSummariesPage,
+		MastodonError,
+		InfiniteData< MastodonAccountSummariesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.actorFollowers( params.connectionId, normalizedActor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonActorFollowers( {
+				connectionId: params.connectionId,
+				actor: normalizedActor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		// `|| undefined` (not `??`): an empty-string cursor terminates pagination,
+		// matching the slice-6 author-feed hardening.
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonActorFollowersInfiniteQuery( params: MastodonActorPageQueryParams ) {
+	return useInfiniteQuery( mastodonActorFollowersInfiniteQuery( params ) );
+}
+
+export const mastodonActorFollowingInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
+	const normalizedActor = normalizeMastodonActor( params.actor );
+	return infiniteQueryOptions<
+		MastodonAccountSummariesPage,
+		MastodonError,
+		InfiniteData< MastodonAccountSummariesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.actorFollowing( params.connectionId, normalizedActor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonActorFollowing( {
+				connectionId: params.connectionId,
+				actor: normalizedActor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonActorFollowingInfiniteQuery( params: MastodonActorPageQueryParams ) {
+	return useInfiniteQuery( mastodonActorFollowingInfiniteQuery( params ) );
 }
 
 export const mastodonTagFeedInfiniteQuery = (
@@ -515,6 +608,22 @@ function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean 
 	return Array.isArray( key ) && key[ 3 ] === connectionId;
 }
 
+// Slot-2 names for Mastodon cache keys that hold MastodonFeedItem rows.
+// Keep in lockstep with `readerMastodonKeys` in `@automattic/api-core` —
+// other shapes (`actor-followers` / `actor-following` / `profile`) also
+// have `pages[].items` but the items are MastodonAccountSummary, and
+// Mastodon snowflake IDs are allocated per-table (account 12345 and
+// status 12345 routinely coexist), so walking those caches with a
+// status-id patch would corrupt the wrong row.
+const POST_BEARING_KEY_KINDS = new Set( [ 'timeline', 'thread', 'profile-feed', 'tag-feed' ] );
+
+function isPostBearingMastodonKey( key: unknown, connectionId: number ): boolean {
+	if ( ! Array.isArray( key ) || key[ 3 ] !== connectionId ) {
+		return false;
+	}
+	return typeof key[ 2 ] === 'string' && POST_BEARING_KEY_KINDS.has( key[ 2 ] );
+}
+
 function patchMastodonPostCaches(
 	queryClient: QueryClient,
 	connectionId: number,
@@ -525,7 +634,7 @@ function patchMastodonPostCaches(
 	for ( const [ key, data ] of queryClient.getQueriesData( {
 		queryKey: readerMastodonKeys.all,
 	} ) ) {
-		if ( ! isQueryKeyForConnection( key, connectionId ) ) {
+		if ( ! isPostBearingMastodonKey( key, connectionId ) ) {
 			continue;
 		}
 		const result = patchMastodonQueryData( data, statusId, patch );
@@ -969,4 +1078,191 @@ export const createMastodonPostMutation = (
 export const uploadMastodonMediaMutation = () =>
 	mutationOptions< MastodonMediaUploadResult, MastodonError, MastodonMediaUploadParams >( {
 		mutationFn: uploadMastodonMedia,
+	} );
+
+export interface FollowMastodonActorVars {
+	connectionId: number;
+	/**
+	 * Cache-key actor (numeric id or webfinger handle) — same value the
+	 * scoped profile query is keyed on. Used to locate the cache entry to
+	 * patch.
+	 */
+	actor: string;
+	/** Numeric Mastodon account id used in the wire call. */
+	accountId: string;
+	/**
+	 * Whether the target account is locked. Drives the optimistic patch:
+	 * locked accounts transition to `requested: true` (pending approval),
+	 * unlocked accounts go straight to `following: true`. Without this
+	 * the button paints "Following / Unfollow" mid-flight and snaps to
+	 * "Requested" once the server response commits — a UX flip-flop and
+	 * a misleading mid-flight aria-label for AT users. Optional so callers
+	 * who don't yet have `locked` in scope still get the unlocked default.
+	 */
+	locked?: boolean;
+}
+
+export interface FollowMastodonMutationContext {
+	previous: MastodonAuthorProfile | undefined;
+}
+
+// Normalize the actor before keying so we hit the same cache entry as
+// useMastodonAuthorProfileQuery, which runs every actor through
+// normalizeMastodonActor() before building its key. Without this, webfinger
+// or mixed-case actor inputs (e.g. '@Alice@MASTODON.social') key to a
+// different entry than the one the query reads from — the optimistic
+// patch and rollback become silent no-ops.
+const mastodonAuthorProfileKey = ( vars: { connectionId: number; actor: string } ) =>
+	readerMastodonKeys.authorProfile( vars.connectionId, normalizeMastodonActor( vars.actor ) );
+
+/**
+ * Mutation factory for following a Mastodon account. Optimistically
+ * marks the cached scoped-profile entry's viewer as following + clears
+ * any pending request flag. The real server-side state (which may be
+ * `requested: true` for locked accounts) is committed in `onSuccess`.
+ *
+ * Accepts the consumer's QueryClient because Calypso boots its own
+ * separate from the singleton in `@automattic/api-queries`. See
+ * `client/reader/AGENTS.md` for the rationale.
+ */
+export const followMastodonActorMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		MastodonFollowResponse,
+		MastodonError,
+		FollowMastodonActorVars,
+		FollowMastodonMutationContext
+	>( {
+		mutationFn: ( vars ) =>
+			createMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
+		onMutate: async ( vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			try {
+				await queryClient.cancelQueries( { queryKey: key } );
+			} catch {
+				// Best-effort per TanStack docs; if cancel fails the optimistic
+				// patch + mutationFn must still run.
+			}
+			const previous = queryClient.getQueryData< MastodonAuthorProfile >( key );
+			// Locked accounts go to `requested: true` (pending approval); unlocked
+			// accounts transition straight to `following: true`. Falling back to
+			// `old.locked` keeps callers who don't yet thread `vars.locked` working.
+			const isLocked = vars.locked ?? previous?.locked ?? false;
+			queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old && old.viewer
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: isLocked ? false : true,
+								requested: isLocked ? true : false,
+							},
+					  }
+					: old
+			);
+			return { previous };
+		},
+		onError: ( _err, vars, context ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			if ( context?.previous ) {
+				queryClient.setQueryData( key, context.previous );
+				return;
+			}
+			// No snapshot to roll back to; refetch so the optimistic patch can't
+			// outlive the failure as a stale cache value. Returning the promise
+			// keeps the mutation in `pending` until the refetch settles, matching
+			// the atmosphere-slice pattern.
+			return queryClient.invalidateQueries( { queryKey: key } );
+		},
+		onSuccess: ( data, vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			const updated = queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: data.viewer,
+					  }
+					: old
+			);
+			if ( ! updated ) {
+				// `setQueryData` returns undefined when the cache entry was
+				// absent at update time (evicted mid-flight, or never
+				// populated). Refetch so the authoritative server `viewer`
+				// — which carries `requested: true` for locked accounts —
+				// isn't lost.
+				return queryClient.invalidateQueries( { queryKey: key } );
+			}
+		},
+	} );
+
+/**
+ * Mutation factory for unfollowing a Mastodon account. Also cancels a
+ * pending follow request (locked accounts) — Mastodon's unfollow
+ * endpoint covers both. Optimistically clears `viewer.following` and
+ * `viewer.requested`; rolls back on error.
+ *
+ * Accepts the consumer's QueryClient for the same reason as
+ * `followMastodonActorMutation`.
+ */
+export const unfollowMastodonActorMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		MastodonFollowResponse,
+		MastodonError,
+		FollowMastodonActorVars,
+		FollowMastodonMutationContext
+	>( {
+		mutationFn: ( vars ) =>
+			deleteMastodonFollow( { connectionId: vars.connectionId, accountId: vars.accountId } ),
+		onMutate: async ( vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			try {
+				await queryClient.cancelQueries( { queryKey: key } );
+			} catch {
+				// Best-effort per TanStack docs; if cancel fails the optimistic
+				// patch + mutationFn must still run.
+			}
+			const previous = queryClient.getQueryData< MastodonAuthorProfile >( key );
+			queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old && old.viewer
+					? {
+							...old,
+							viewer: {
+								...old.viewer,
+								following: false,
+								requested: false,
+							},
+					  }
+					: old
+			);
+			return { previous };
+		},
+		onError: ( _err, vars, context ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			if ( context?.previous ) {
+				queryClient.setQueryData( key, context.previous );
+				return;
+			}
+			// No snapshot to roll back to; refetch so the optimistic patch can't
+			// outlive the failure as a stale cache value. Returning the promise
+			// keeps the mutation in `pending` until the refetch settles.
+			return queryClient.invalidateQueries( { queryKey: key } );
+		},
+		onSuccess: ( data, vars ) => {
+			const key = mastodonAuthorProfileKey( vars );
+			const updated = queryClient.setQueryData< MastodonAuthorProfile >( key, ( old ) =>
+				old
+					? {
+							...old,
+							viewer: data.viewer,
+					  }
+					: old
+			);
+			if ( ! updated ) {
+				// `setQueryData` returns undefined when the cache entry was
+				// absent at update time (evicted mid-flight, or never
+				// populated). Refetch so the authoritative server `viewer`
+				// — which carries `requested: true` for locked accounts —
+				// isn't lost.
+				return queryClient.invalidateQueries( { queryKey: key } );
+			}
+		},
 	} );

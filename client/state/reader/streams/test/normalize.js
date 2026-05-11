@@ -5,7 +5,6 @@ import {
 	PER_FETCH,
 	PER_POLL,
 	QUERY_META,
-	SITE_LIMITER_FIELDS,
 	analyticsForStream,
 	createStreamDataFromCards,
 	createStreamDataFromPosts,
@@ -39,20 +38,22 @@ describe( 'getQueryString', () => {
 } );
 
 describe( 'getQueryStringForPoll', () => {
-	it( 'returns the poll query with site-limiter fields by default', () => {
+	it( 'returns a rich poll payload with the standard query meta', () => {
 		expect( getQueryStringForPoll() ).toEqual( {
 			orderBy: 'date',
 			number: PER_POLL,
-			fields: SITE_LIMITER_FIELDS.join( ',' ),
+			meta: QUERY_META,
+			content_width: 675,
 		} );
 	} );
 
-	it( 'appends extra fields and merges extra query params', () => {
+	it( 'merges extra query params and ignores legacy extra fields', () => {
 		expect( getQueryStringForPoll( [ 'date_liked' ], { index: 'a8c' } ) ).toEqual( {
 			orderBy: 'date',
 			number: PER_POLL,
-			fields: [ ...SITE_LIMITER_FIELDS, 'date_liked' ].join( ',' ),
+			meta: QUERY_META,
 			index: 'a8c',
+			content_width: 675,
 		} );
 	} );
 } );

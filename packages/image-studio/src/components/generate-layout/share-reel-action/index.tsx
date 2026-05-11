@@ -18,6 +18,10 @@ export function ShareReelAction(): JSX.Element | null {
 		? __( 'Sharing on Instagram…', __i18n_text_domain__ )
 		: __( 'Share on Instagram', __i18n_text_domain__ );
 
+	const genericAriaLabel = generic.isSharing
+		? __( 'Sharing to other apps…', __i18n_text_domain__ )
+		: __( 'Share to other apps', __i18n_text_domain__ );
+
 	return (
 		<div
 			className="image-studio-share-reel-action"
@@ -28,8 +32,10 @@ export function ShareReelAction(): JSX.Element | null {
 				<Button
 					className="image-studio-share-reel-action__button"
 					icon={ share }
-					label={ __( 'Share to other apps', __i18n_text_domain__ ) }
+					label={ genericAriaLabel }
 					showTooltip
+					disabled={ generic.isSharing }
+					isBusy={ generic.isSharing }
 					onClick={ generic.handleShare }
 				/>
 			) }

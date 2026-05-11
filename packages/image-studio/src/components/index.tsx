@@ -348,7 +348,7 @@ const ImageStudioContent = withInstanceId(
 		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
 			authProvider: agentConfigState?.authProvider,
 			sessionId: agentConfigState?.sessionId,
-			displayImageUrl,
+			displayImageUrl: isVideoMode ? currentVideoUrl : displayImageUrl,
 			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
 		} );
 
@@ -587,6 +587,8 @@ const ImageStudioContent = withInstanceId(
 								isAiProcessing={ isAiProcessing }
 								isPromptSent={ isPromptSent }
 								videoUrl={ isVideoMode ? currentVideoUrl : null }
+								onFeedback={ handleFeedback }
+								onSubmitFeedbackText={ handleSubmitFeedbackText }
 							/>
 						) }
 

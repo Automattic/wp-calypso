@@ -7,7 +7,6 @@ import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
-import ListGap from 'calypso/reader/list-gap';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
@@ -82,8 +81,7 @@ class PostLifecycle extends Component {
 	};
 
 	render() {
-		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId, isDiscoverStream } =
-			this.props;
+		const { post, postKey, recsStreamKey, streamKey, siteId, isDiscoverStream } = this.props;
 
 		if ( this.props.isSynthetic ) {
 			return <TrackedPost { ...this.props } />;
@@ -119,15 +117,6 @@ class PostLifecycle extends Component {
 					postKey={ postKey }
 					streamKey={ streamKey }
 					fixedHeaderHeight={ this.props.fixedHeaderHeight }
-				/>
-			);
-		} else if ( postKey.isGap ) {
-			return (
-				<ListGap
-					gap={ postKey }
-					selected={ isSelected }
-					handleClick={ this.props.handleClick }
-					streamKey={ streamKey }
 				/>
 			);
 		} else if ( ! post ) {

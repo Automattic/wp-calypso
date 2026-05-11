@@ -20,7 +20,9 @@ jest.mock(
 		}
 );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+jest.mock( 'calypso/components/data/document-head', () => ( { title }: { title: string } ) => (
+	<div data-testid="document-head-title">{ title }</div>
+) );
 
 jest.mock( '../timeline-panel', () => ( {
 	TimelinePanel: () => <div>Mastodon timeline placeholder</div>,
@@ -156,26 +158,52 @@ describe( 'MastodonAccountView', () => {
 		);
 	} );
 
-	it( 'uses the display name from the details endpoint when the list omits it', async () => {
-		// Regression: the list endpoint returns display_name as null for
-		// Mastodon, so reading it directly made the header show the raw
-		// webfinger handle as the title AND subtitle. The details endpoint is
-		// authoritative for display name; the sidebar already lazy-fetches it,
-		// the header has to as well.
-		mockConnections( null );
-		mockConnectionDetails( 7, 'Rocinante the Bold' );
+	it( 'renders the section title and the handle-aware subtitle in the header', async () => {
+		mockConnections();
+		mockConnectionDetails( 7 );
 		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
 			queryClient: makeClient(),
 		} );
-		// The heading flashes to the handle before the details query resolves;
-		// assert on the final state rather than the first findByRole match.
-		await waitFor( () =>
-			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
-				'Rocinante the Bold'
+		expect( await screen.findByRole( 'heading', { name: /Mastodon/ } ) ).toBeVisible();
+		expect( screen.getByTestId( 'mastodon-section-logo' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				/Catch up with the latest from the people you follow on Mastodon with @alice@mastodon\.social/
 			)
-		);
-		expect( screen.getByRole( 'heading', { level: 1 } ) ).not.toHaveTextContent(
-			'@alice@mastodon.social'
+		).toBeVisible();
+	} );
+
+	it( 'still renders the section title when display_name is null on the list endpoint', async () => {
+		// The list endpoint can omit display_name for Mastodon connections.
+		// The section header is anchored on section identity, so the title
+		// should remain "Mastodon" and the subtitle should keep showing the
+		// handle without relying on the details endpoint.
+		mockConnections( null );
+		mockConnectionDetails( 7 );
+		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+		expect( await screen.findByRole( 'heading', { name: /Mastodon/ } ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				/Catch up with the latest from the people you follow on Mastodon with @alice@mastodon\.social/
+			)
+		).toBeVisible();
+	} );
+
+	it( 'pulls the document title from the details endpoint when the list omits display_name', async () => {
+		// Mastodon's list endpoint returns display_name: null. Without the
+		// details fallback, the browser tab and bookmarks would silently
+		// downgrade to the raw webfinger handle.
+		mockConnections( null );
+		mockConnectionDetails( 7, 'Alice the Brave' );
+		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ TIMELINE_TAB } />, {
+			queryClient: makeClient(),
+		} );
+		await waitFor( () =>
+			expect( screen.getByTestId( 'document-head-title' ) ).toHaveTextContent(
+				'Alice the Brave ‹ Mastodon ‹ Reader'
+			)
 		);
 	} );
 

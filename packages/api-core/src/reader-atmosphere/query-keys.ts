@@ -6,6 +6,8 @@ export const readerAtmosphereKeys = {
 	connection: ( id: number | null ) => [ ...readerAtmosphereKeys.all, 'connection', id ] as const,
 	timeline: ( connectionId: number ) =>
 		[ ...readerAtmosphereKeys.all, 'timeline', connectionId ] as const,
+	notifications: ( connectionId: number ) =>
+		[ ...readerAtmosphereKeys.all, 'notifications', connectionId ] as const,
 	thread: ( uri: string ) => [ ...readerAtmosphereKeys.all, 'thread', uri ] as const,
 	scopedThread: ( connectionId: number, uri: string ) =>
 		[ ...readerAtmosphereKeys.all, 'scoped-thread', connectionId, uri ] as const,
@@ -26,6 +28,10 @@ export const readerAtmosphereKeys = {
 					filter,
 			  ] as const )
 			: ( [ ...readerAtmosphereKeys.all, 'scoped-author-feed', connectionId, actor ] as const ),
+	actorFollowers: ( connectionId: number, actor: string ) =>
+		[ ...readerAtmosphereKeys.all, 'actor-followers', connectionId, actor ] as const,
+	actorFollows: ( connectionId: number, actor: string ) =>
+		[ ...readerAtmosphereKeys.all, 'actor-follows', connectionId, actor ] as const,
 	tagFeed: ( connectionId: number, hashtag: string ) =>
 		[ ...readerAtmosphereKeys.all, 'tag-feed', connectionId, hashtag ] as const,
 };

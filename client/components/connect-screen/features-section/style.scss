@@ -1,0 +1,132 @@
+@import '@wordpress/base-styles/breakpoints';
+
+.connect-screen-features-section {
+	width: 100%;
+	margin-block-end: 2rem;
+}
+
+.connect-screen-features-section__cards {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 24px;
+
+	@media screen and ( min-width: $break-mobile ) {
+		// Layout breaks: only switch off the single-column stack on wider
+		// viewports. The connector form column is 520px wide, which gives
+		// roughly 240px per card in the two-up grid — enough for a centered
+		// brand logo and 2-3 bullets.
+		.connect-screen-features-section.has-2-card & {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		// Three cards stack the highest-priority family (A4A) full-width on
+		// top, with the remaining two (Woo + Jetpack) sharing the row below
+		// — matches the two-card layout the no-A4A scenario already uses.
+		// The full-width card centers its bullets so the wider column reads
+		// as a deliberate hero block rather than a left-anchored list. See
+		// the bullet-text override below for why the text span also needs
+		// a `max-width` cap and `text-align: center` to keep the centering
+		// readable when bullets wrap.
+		.connect-screen-features-section.has-3-card & {
+			grid-template-columns: 1fr 1fr;
+
+			.connect-screen-features-section__card:first-child {
+				grid-column: 1 / -1;
+
+				.connect-screen-features-section__card-bullet {
+					justify-content: center;
+				}
+			}
+		}
+	}
+}
+
+.connect-screen-features-section__card {
+	box-sizing: border-box;
+	padding: 8px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.connect-screen-features-section__card-logo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 32px;
+
+	// Adds breathing room below the brand mark on top of the card's own
+	// 12px flex `gap`, so the logo doesn't sit too close to the first
+	// bullet.
+	margin-block-end: 0.5rem;
+
+	// Force a uniform 32px visual height across every brand mark,
+	// regardless of the source SVG's intrinsic aspect ratio. Without this,
+	// shorter wordmarks (notably Woo) render visibly smaller next to the
+	// inline-SVG marks that set their own size.
+	img,
+	svg {
+		height: 32px;
+		width: auto;
+		max-width: 100%;
+	}
+}
+
+.connect-screen-features-section__card-bullets {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.connect-screen-features-section__card-bullet {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	font-size: 0.875rem;
+	line-height: 1.4;
+	color: var( --color-text, #1e1e1e );
+}
+
+// A solo card has no siblings to anchor its alignment against, so center
+// the bullets in the column the same way the full-width A4A hero does in
+// the 3-card layout. Applies at every viewport — there's no row context
+// to preserve on mobile here.
+.connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullet {
+	justify-content: center;
+}
+
+// `justify-content: center` on the bullet row only has visible effect
+// when the row contents are narrower than the row. As soon as a bullet
+// wraps, the text span swells to fill the remaining row width and the
+// centering collapses — the bullet looks left-anchored. Capping the
+// text span at a comfortable reading width keeps the icon + text unit
+// narrow enough to leave slack for the row-level centering to work,
+// and `text-align: center` then centers each wrapped line within the
+// span itself. The cap is generous enough that almost every English
+// bullet still fits on one line; longer translated copy will wrap into
+// a tidy centered block instead of stranding to the left.
+//
+// Applied to the same surfaces that opt into row-level centering above:
+// every card in `has-1-card`, and the full-width A4A hero in
+// `has-3-card`. The shared positional `> span:last-child` selector
+// targets the bullet's text wrapper (the icon wrapper carries
+// `aria-hidden`, the text wrapper is the second/last span).
+.connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullet > span:last-child,
+.connect-screen-features-section.has-3-card .connect-screen-features-section__card:first-child .connect-screen-features-section__card-bullet > span:last-child {
+	// `ch` is the right unit semantically (character-count cap, not a
+	// font-size derivative) but is off the project's allowed list — the
+	// existing `28ch` / `30ch` / `55ch` overrides elsewhere in the
+	// codebase follow the same per-line escape hatch.
+	// stylelint-disable-next-line unit-allowed-list
+	max-width: 38ch;
+	text-align: center;
+}
+
+.connect-screen-features-section__card-bullet-icon {
+	flex-shrink: 0;
+	margin-block-start: 1px;
+	fill: var( --color-success-50, #008a20 );
+}
