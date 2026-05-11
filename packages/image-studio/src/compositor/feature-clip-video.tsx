@@ -1,3 +1,4 @@
+import { Configuration } from '@editframe/react';
 import { HighlightsFeatureClip } from './highlights-feature-clip';
 import type { FeatureClipBrief } from './types';
 import './style.scss';
@@ -9,12 +10,17 @@ interface FeatureClipVideoProps {
 	brief: FeatureClipBrief;
 }
 
-/**
- * Top-level dispatcher. Currently only 'highlights' briefs hit this renderer
- * ('cinematic' goes through Veo, not EditFrame).
- */
+// imageProxy="none" must be inside the cloned subtree — TimelineRoot's
+// clone factory re-renders this component into a detached container during
+// renderToVideo, and EFImage discovers the config via closest("ef-configuration")
+// in the DOM. An <ef-configuration> ancestor outside the component is invisible
+// to the clone.
 export function FeatureClipVideo( { id = COMPOSITION_ID, brief }: FeatureClipVideoProps ) {
-	return <HighlightsFeatureClip id={ id } brief={ brief } />;
+	return (
+		<Configuration imageProxy="none">
+			<HighlightsFeatureClip id={ id } brief={ brief } />
+		</Configuration>
+	);
 }
 
 export type { FeatureClipBrief } from './types';

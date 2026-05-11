@@ -419,7 +419,7 @@ export function FeatureClipRenderHost() {
 				while a render was pending. renderToVideo() is a method
 				on the timegroup itself and works without Preview.
 			*/ }
-			<Configuration apiHost={ apiHost } signingURL="" imageProxy="none">
+			<Configuration apiHost={ apiHost } signingURL="">
 				<TimelineRoot
 					key={ `mount-${ mountedRequestId }` }
 					id={ COMPOSITION_ID }

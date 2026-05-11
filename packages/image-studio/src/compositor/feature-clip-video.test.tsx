@@ -26,6 +26,7 @@ jest.mock(
 			return Component;
 		};
 		return {
+			Configuration: passthrough( 'EFConfiguration' ),
 			Image: passthrough( 'EFImage' ),
 			Text: passthrough( 'EFText' ),
 			Timegroup: passthrough( 'EFTimegroup' ),
