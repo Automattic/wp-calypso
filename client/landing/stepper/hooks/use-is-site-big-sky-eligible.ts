@@ -28,7 +28,7 @@ const invalidGoals = [
 	SiteGoal.SellDigital,
 ];
 
-export function useIsBigSkyEligible( flowName?: string ) {
+export function useIsBigSkyEligible( flowName?: string, options?: { skipFeatureCheck?: boolean } ) {
 	const { isOwner } = useIsSiteOwner();
 	const site = useSite();
 	const product_slug = site?.plan?.product_slug || '';
@@ -55,7 +55,7 @@ export function useIsBigSkyEligible( flowName?: string ) {
 				featureFlagEnabled &&
 				featurePostCheckoutAiStepEnabled &&
 				!! isOwner &&
-				siteHasBigSkyFeature &&
+				( options?.skipFeatureCheck || siteHasBigSkyFeature ) &&
 				onSupportedDevice,
 		};
 	}

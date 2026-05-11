@@ -76,7 +76,13 @@ const LaunchBigSky: StepType = function ( props ) {
 	const { siteSlug, siteId, site } = useSiteData();
 	const urlQuery = useQuery();
 	const ref = urlQuery.get( 'ref' );
-	const { isEligible } = useIsBigSkyEligible( flow );
+	const fromPostCheckoutSetupSite = urlQuery.get( 'fromPostCheckoutSetupSite' ) === '1';
+	// On the post-checkout entry path the upstream flow has already decided the
+	// user gets Big Sky, and this step is the one that writes the feature into
+	// the plan. Skip the plan-features check so we don't bounce on a stale read.
+	const { isEligible } = useIsBigSkyEligible( flow, {
+		skipFeatureCheck: fromPostCheckoutSetupSite,
+	} );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
 		useDispatch( SITE_STORE );
 	const goals = useSelect(
@@ -103,10 +109,16 @@ const LaunchBigSky: StepType = function ( props ) {
 	};
 
 	useEffect( () => {
+		// Wait for the site object to load before deciding eligibility; otherwise
+		// useIsSiteOwner returns null on the first render and we bounce before
+		// the real check can run.
+		if ( ! site ) {
+			return;
+		}
 		if ( ! isEligible ) {
 			window.location.replace( `/sites/${ siteSlug }` );
 		}
-	}, [ isEligible, siteSlug ] );
+	}, [ site, isEligible, siteSlug ] );
 
 	const exitFlow = useCallback(
 		async ( selectedSiteId: string, selectedSiteSlug: string ) => {
