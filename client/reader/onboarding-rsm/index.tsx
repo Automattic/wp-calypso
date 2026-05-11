@@ -30,6 +30,7 @@ import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
+import { getReloadStep } from './get-reload-step';
 import './style.scss';
 
 // All onboarding steps share a single <Modal> frame so transitions between
@@ -181,23 +182,12 @@ const ReaderOnboardingRsm = ( {
 	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
 
 	// Reopen a specific onboarding step if signalled by a query param after email verification.
-	// Only one reload param will be present at a time.
 	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-
-		let stepToOpen: Step | null = null;
-		if ( urlParams.has( 'reloadSubscriptionOnboarding' ) ) {
-			stepToOpen = 'discover';
-			urlParams.delete( 'reloadSubscriptionOnboarding' );
-		} else if ( urlParams.has( 'reloadInterestsOnboarding' ) ) {
-			stepToOpen = 'interests';
-			urlParams.delete( 'reloadInterestsOnboarding' );
-		}
-
-		if ( stepToOpen ) {
-			openStep( stepToOpen );
+		const result = getReloadStep( window.location.search );
+		if ( result ) {
+			openStep( result.step );
 			page.redirect(
-				`${ window.location.pathname }${ urlParams.toString() ? '?' + urlParams.toString() : '' }`
+				`${ window.location.pathname }${ result.cleanedSearch ? '?' + result.cleanedSearch : '' }`
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
