@@ -224,6 +224,11 @@ const onboarding: FlowV2< typeof initialize > = {
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
+							// The processing case stamped a wc-admin URL into the signup
+							// destination cookie as the woo-hosting-solutions fallback.
+							// Once the user commits to Build with AI, clear it so no
+							// downstream consumer (checkout, etc.) can send them there.
+							clearSignupDestinationCookie();
 							window.location.assign(
 								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
