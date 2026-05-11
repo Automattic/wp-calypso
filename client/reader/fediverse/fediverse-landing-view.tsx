@@ -24,13 +24,17 @@ export function FediverseLandingView() {
 		if ( isPending || isError || ! data ) {
 			return;
 		}
-		const first = data.connections[ 0 ];
+		// Defensive: the wpcom proxy occasionally hands back a 200 with
+		// `data` defined but `connections` missing (mid-deploy / cold-mint
+		// races on the backend). Optional-chain so the redirect simply
+		// no-ops instead of throwing.
+		const first = data.connections?.[ 0 ];
 		if ( first ) {
 			page.replace( `/reader/fediverse/${ first.id }/${ TIMELINE_TAB }` );
 		}
 	}, [ isPending, data, isError ] );
 
-	const hasConnections = ! isPending && ! isError && ( data?.connections.length ?? 0 ) > 0;
+	const hasConnections = ! isPending && ! isError && ( data?.connections?.length ?? 0 ) > 0;
 
 	return (
 		<ReaderMain className="fediverse-view">
