@@ -11,12 +11,13 @@ import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/soci
 import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
 import { AtmosphereNavigation } from './atmosphere-navigation';
 import { atmosphereComposerConfig } from './composer-config';
-import { PROFILE_TAB, TIMELINE_TAB } from './helper';
+import { NOTIFICATIONS_TAB, PROFILE_TAB, TIMELINE_TAB } from './helper';
+import { NotificationsPanel } from './notifications-panel';
 import { ProfilePanel } from './profile-panel';
 import { TimelinePanel } from './timeline-panel';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
-const VALID_TABS = new Set( [ TIMELINE_TAB, PROFILE_TAB ] );
+const VALID_TABS = new Set( [ TIMELINE_TAB, NOTIFICATIONS_TAB, PROFILE_TAB ] );
 
 interface Props {
 	connectionId: number;
@@ -94,6 +95,8 @@ function renderTab( slug: string, connection: AtmosphereConnection ) {
 	switch ( slug ) {
 		case PROFILE_TAB:
 			return <ProfilePanel connection={ connection } />;
+		case NOTIFICATIONS_TAB:
+			return <NotificationsPanel connection={ connection } />;
 		case TIMELINE_TAB:
 		default:
 			return <TimelinePanel connection={ connection } />;
