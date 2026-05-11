@@ -55,11 +55,19 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 			}
 		}
 
+		// Open the tab synchronously inside the click's user-gesture window so
+		// popup blockers don't reject the later navigation. We point it at
+		// about:blank now and redirect it to the editor URL once the draft
+		// saves. If the user has popups blocked entirely, `pending` is null
+		// and we fall back to the success-notice retry button.
+		const pending = window.open( 'about:blank', '_blank', 'noopener,noreferrer' );
+
 		mutate( { siteId: site.ID, content } satisfies SaveDraftMutationVariables, {
 			onSuccess: ( data: SaveDraftMutationResult ) => {
 				const editorUrl = deriveEditorUrl( site, data.ID );
-				const newWindow = window.open( editorUrl, '_blank', 'noopener,noreferrer' );
-				if ( ! newWindow ) {
+				if ( pending ) {
+					pending.location.href = editorUrl;
+				} else {
 					dispatch(
 						successNotice( translate( 'Draft saved.' ), {
 							button: translate( 'Open in editor' ),
@@ -72,6 +80,7 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 				options.onSuccess?.();
 			},
 			onError: ( error: Error ) => {
+				pending?.close();
 				dispatch(
 					errorNotice(
 						translate( 'Couldn’t save your draft. Try again or pick a different site.' )

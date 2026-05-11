@@ -108,9 +108,10 @@ describe( 'SiteHandoff — multi-site picker', () => {
 } );
 
 describe( 'SiteHandoff — click', () => {
-	it( 'creates a draft and opens wp-admin on click', async () => {
+	it( 'pre-opens a tab synchronously and redirects it to wp-admin on success', async () => {
 		const user = userEvent.setup();
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const fakeWindow = { location: { href: '' }, close: jest.fn() } as unknown as Window;
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => fakeWindow );
 		nock( ORIGIN )
 			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
 			.reply( 200, { ID: 555 } );
@@ -127,11 +128,11 @@ describe( 'SiteHandoff — click', () => {
 
 		await user.click( screen.getByRole( 'button', { name: /Move to editor/i } ) );
 
+		expect( openSpy ).toHaveBeenCalledWith( 'about:blank', '_blank', 'noopener,noreferrer' );
+
 		await waitFor( () =>
-			expect( openSpy ).toHaveBeenCalledWith(
-				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
-				'_blank',
-				'noopener,noreferrer'
+			expect( fakeWindow.location.href ).toBe(
+				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit'
 			)
 		);
 
@@ -182,6 +183,8 @@ describe( 'SiteHandoff — click', () => {
 
 	it( 'fires error notice + errorShown Tracks + logstash on save failure', async () => {
 		const user = userEvent.setup();
+		const fakeWindow = { location: { href: '' }, close: jest.fn() } as unknown as Window;
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => fakeWindow );
 		const { logToLogstash } = jest.requireMock( 'calypso/lib/logstash' );
 		const noticeSpy = jest
 			.spyOn( notices, 'errorNotice' )
@@ -224,8 +227,10 @@ describe( 'SiteHandoff — click', () => {
 				} ),
 			} )
 		);
+		expect( fakeWindow.close ).toHaveBeenCalled();
 
 		noticeSpy.mockRestore();
+		openSpy.mockRestore();
 	} );
 
 	it( 'disables the combobox while saving', async () => {
