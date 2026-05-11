@@ -7,7 +7,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTypedPlaceholder } from '../../hooks/use-typed-placeholder';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchControls } from '../../ui';
@@ -36,6 +36,25 @@ export const SearchForm = () => {
 	// HStack with the text "Search domains" button alongside.
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
+	// Explicitly focus the input on mount.
+	//
+	// We previously relied on the underlying <input>'s `autoFocus`
+	// attribute, but that fires too early during the stepper's
+	// AnimatePresence route transition — the element mounts while
+	// the page is still animating in, React calls .focus() before
+	// the browser treats the page as the active focus target, and
+	// the cursor never lands. useEffect runs after the commit phase
+	// and after the transition has settled, so .focus() lands.
+	//
+	// Note: on iOS Safari this places focus + visible caret but does
+	// NOT open the soft keyboard — that's an OS restriction (only a
+	// user gesture can open the keyboard). Desktop and most Android
+	// browsers behave as expected.
+	const inputRef = useRef< HTMLInputElement >( null );
+	useEffect( () => {
+		inputRef.current?.focus();
+	}, [ isMobileViewport ] );
+
 	const handleSubmit = ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 		setQuery( localQuery );
@@ -46,12 +65,11 @@ export const SearchForm = () => {
 	};
 
 	const inputProps = {
+		ref: inputRef,
 		value: localQuery,
 		onChange: ( value: string ) => setLocalQuery( value.trim() ),
 		onReset: () => setLocalQuery( '' ),
 		placeholder,
-		// eslint-disable-next-line jsx-a11y/no-autofocus
-		autoFocus: true,
 	};
 
 	return (
