@@ -112,19 +112,24 @@ const PostCheckoutOnboarding: StepType< {
 
 	const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 
-	const waitForAtomic = async () => {
-		await waitForTransfer();
-		await setIntentOnSite( siteSlug, intent );
-		await setGoalsOnSite( siteSlug, goals );
-		await waitForFeature();
-		await waitForLatestSiteData();
-	};
-
 	const goalPlugin = usePluginByGoal();
 	const hasPluginByGoal = !! goalPlugin;
 
 	const refParameter = useUrlParams().get( 'ref' );
 	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
+
+	const waitForAtomic = async () => {
+		await waitForTransfer();
+		await setIntentOnSite( siteSlug, intent );
+		await setGoalsOnSite( siteSlug, goals );
+		await waitForFeature();
+		// woo-hosting-solutions sends the user straight to a choice screen and
+		// then on to Atomic wp-admin; neither needs fresh WPCOM capabilities, so
+		// skip the ~20s wait for Jetpack sync to propagate manage_options.
+		if ( ! isWooHostingSolutions ) {
+			await waitForLatestSiteData();
+		}
+	};
 
 	// Prefer the cart item (what the user just bought — freshest signal during
 	// post-checkout) over site.plan (which can be stale before the site's plan
