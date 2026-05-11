@@ -1,7 +1,13 @@
 import { Configuration, TimelineRoot } from '@editframe/react';
-import { dispatch as wpDispatch, useDispatch, useSelect } from '@wordpress/data';
+import {
+	dispatch as wpDispatch,
+	select as wpSelect,
+	useDispatch,
+	useSelect,
+} from '@wordpress/data';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { FEATURE_CLIP_META_KEY } from '../extensions/feature-clip-meta';
 import { store as imageStudioStore, type ImageStudioActions } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
@@ -92,6 +98,48 @@ async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureCl
 		} )
 	);
 	return { ...brief, scenes: settled };
+}
+
+// Mirrors the cinematic path's private persistFeatureClipMeta in
+// `abilities/update-canvas-video.ts` — same key, same `throwOnError: true`,
+// same best-effort semantics. Kept inline rather than extracted so the
+// cinematic file stays untouched; both paths route through `core-data`'s
+// `saveEntityRecord`, which auto-resolves the entity REST base and hydrates
+// the local cache so the sidebar preview picks it up on next read.
+async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
+	const editor = wpSelect( 'core/editor' ) as
+		| { getCurrentPostId: () => number | null; getCurrentPostType: () => string | null }
+		| undefined;
+
+	const postId = editor?.getCurrentPostId?.() ?? null;
+	const postType = editor?.getCurrentPostType?.() ?? 'post';
+
+	if ( ! postId ) {
+		return;
+	}
+
+	const core = wpDispatch( 'core' ) as {
+		saveEntityRecord?: (
+			kind: string,
+			name: string,
+			record: { id: number; meta: Record< string, unknown > },
+			options?: { throwOnError?: boolean }
+		) => Promise< unknown >;
+	};
+
+	try {
+		await core.saveEntityRecord?.(
+			'postType',
+			postType,
+			{
+				id: postId,
+				meta: { [ FEATURE_CLIP_META_KEY ]: attachmentId },
+			},
+			{ throwOnError: true }
+		);
+	} catch ( error ) {
+		window.console?.warn?.( '[Image Studio] Failed to persist feature clip meta:', error );
+	}
 }
 
 /**
@@ -305,6 +353,8 @@ export function FeatureClipRenderHost() {
 				await videoActions.setCurrentVideoUrl( attachment.url );
 				await videoActions.setCurrentAttachmentId( attachment.id );
 				await videoActions.setCurrentDurationSeconds( attachment.durationSeconds );
+
+				await persistFeatureClipMeta( attachment.id );
 
 				imageActions.addNotice(
 					__( 'Video saved to Media Library', __i18n_text_domain__ ),
