@@ -11,9 +11,11 @@ import { arrowUp, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
+import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import type { Step as StepType } from '../../types';
 import './style.scss';
 
@@ -23,13 +25,38 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const ref = useQuery().get( 'ref' );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
+	const [ isFinalizing, setIsFinalizing ] = useState( false );
 
-	const submitBuildWithAI = ( trimmedPrompt?: string ) => {
+	const { waitForTransfer, waitForLatestSiteData } = useWaitForAtomic( { siteId } );
+
+	// post-checkout-onboarding unblocks this screen as soon as the transfer
+	// reaches "provisioned", so the remaining WPCOM-side readiness gates run
+	// here in parallel before we hand the user off. By the time they pick a
+	// choice, most of these have usually already resolved.
+	const finalizeAtomicReadiness = async () => {
+		if ( ! siteId ) {
+			return;
+		}
+		try {
+			await Promise.all( [
+				waitForTransfer(),
+				waitForLatestSiteData(),
+				waitForPluginsActive( siteId, [ 'woocommerce' ] ),
+			] );
+		} catch ( error ) {
+			recordTracksEvent( 'calypso_onboarding_setup_your_site_ai_finalize_error', {
+				message: ( error as Error )?.message,
+			} );
+		}
+	};
+
+	const submitBuildWithAI = async ( trimmedPrompt?: string ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'build-with-ai',
 			has_prompt: Boolean( trimmedPrompt ),
 		} );
-
+		setIsFinalizing( true );
+		await finalizeAtomicReadiness();
 		navigation.submit( {
 			setupChoice: 'build-with-ai',
 			siteSlug,
@@ -47,16 +74,21 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		submitBuildWithAI( prompt.trim() );
 	};
 
-	const handleBlankSite = () => {
+	const handleBlankSite = async () => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'blank-site',
 		} );
-
+		setIsFinalizing( true );
+		await finalizeAtomicReadiness();
 		navigation.submit( {
 			setupChoice: 'blank-site',
 			siteSlug,
 		} );
 	};
+
+	if ( isFinalizing ) {
+		return <Step.Loading />;
+	}
 
 	const buildWithAIPromptCard = (
 		<form className="setup-your-site-ai-step__build-with-ai" onSubmit={ handleBuildWithAISubmit }>
