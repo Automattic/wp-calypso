@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/colors';
 
 .domain-search {
@@ -38,6 +39,32 @@
 			.components-input-control__container
 			input.components-input-control__input {
 			padding-right: 48px;
+		}
+	}
+
+	// Mobile-only refinements (below the 'small' breakpoint, < 600px):
+	//   1. Drop the input text/placeholder size from 20px (1.25rem)
+	//      to 16px (1rem) — the 48px input is shorter on this state
+	//      and the smaller type is more proportional to the height.
+	//   2. Hide the search-glyph prefix on the *left* of the input —
+	//      it's redundant once the primary Submit (with the same
+	//      magnifying-glass icon) lives *inside* the input on the
+	//      right. Desktop keeps the prefix so the input still reads
+	//      visually as "a search field" without relying solely on
+	//      the right-side button.
+	// Pattern: mobile styles by default inside the @media block;
+	// desktop is the natural fall-through (the original 1.25rem +
+	// visible prefix from input.scss remain in effect outside the
+	// query).
+	@media ( max-width: #{ $break-small - 1px } ) {
+		.domain-search-controls__input
+			.components-input-control__container
+			input.components-input-control__input {
+			font-size: 1rem;
+		}
+
+		.domain-search-controls__input .components-input-control__prefix {
+			display: none;
 		}
 	}
 }
