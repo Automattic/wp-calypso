@@ -72,4 +72,17 @@ describe( 'SocialNotificationsList', () => {
 		renderWithProvider( <SocialNotificationsList { ...baseProps } hasMore isLoadingMore /> );
 		expect( screen.getByRole( 'button', { name: /load more/i } ) ).toBeDisabled();
 	} );
+
+	it( 'shows a retry footer when pagination errors with items present', async () => {
+		const onLoadMore = jest.fn();
+		const user = userEvent.setup();
+		renderWithProvider(
+			<SocialNotificationsList { ...baseProps } hasMore isError onLoadMore={ onLoadMore } />
+		);
+		expect( screen.getByText( /couldn’t load more notifications/i ) ).toBeVisible();
+		// The plain "Load more" button is replaced by the retry CTA.
+		expect( screen.queryByRole( 'button', { name: /load more/i } ) ).toBeNull();
+		await user.click( screen.getByRole( 'button', { name: /try again/i } ) );
+		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

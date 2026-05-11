@@ -13,8 +13,16 @@
 
 .social-notifications-list__footer {
 	display: flex;
+	flex-direction: column;
+	align-items: center;
 	justify-content: center;
+	gap: 0.5rem;
 	padding: 1rem;
+}
+
+.social-notifications-list__error {
+	margin: 0;
+	color: var(--color-text-subtle);
 }
 
 .social-notification-item {

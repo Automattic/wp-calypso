@@ -115,10 +115,34 @@ describe( 'SocialNotificationItem', () => {
 		expect( root?.tagName ).toBe( 'DIV' );
 	} );
 
-	it( 'announces unread state via screen-reader-only text', () => {
+	it( 'folds the unread state into the link aria-label so screen readers hear it', () => {
 		renderWithProvider(
 			<SocialNotificationItem notification={ makeItem( { is_read: false } ) } />
 		);
-		expect( screen.getByText( /^unread$/i ) ).toBeVisible();
+		expect( screen.getByRole( 'link' ) ).toHaveAccessibleName( /^unread\. jane liked your post/i );
+	} );
+
+	it( 'omits the unread prefix from the aria-label when is_read is true', () => {
+		renderWithProvider( <SocialNotificationItem notification={ makeItem( { is_read: true } ) } /> );
+		expect( screen.getByRole( 'link' ) ).toHaveAccessibleName( /^jane liked your post/i );
+	} );
+
+	it( 'falls back to the actor handle when display_name is null', () => {
+		renderWithProvider(
+			<SocialNotificationItem
+				notification={ makeItem( {
+					actor: {
+						handle: 'jane.bsky.social',
+						display_name: null,
+						avatar_url: null,
+						profile_uri: 'at://did:plc:jane',
+					},
+				} ) }
+			/>
+		);
+		expect( screen.getByText( /jane\.bsky\.social/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link' ) ).toHaveAccessibleName(
+			/jane\.bsky\.social liked your post/i
+		);
 	} );
 } );

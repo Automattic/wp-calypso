@@ -45,12 +45,26 @@ export function SocialNotificationsList( {
 			</div>
 		);
 	}
+	// `isError && items.length > 0` means an earlier page succeeded but the
+	// most recent fetchNextPage failed. Surface a retry affordance instead
+	// of silently degrading to the last successful page.
+	const showRetry = isError && hasMore && ! isLoadingMore;
 	return (
 		<VStack spacing={ 0 } className="social-notifications-list">
 			{ items.map( ( item ) => (
 				<SocialNotificationItem key={ item.id } notification={ item } />
 			) ) }
-			{ hasMore && (
+			{ showRetry && (
+				<div className="social-notifications-list__footer" role="alert">
+					<p className="social-notifications-list__error">
+						{ translate( 'We couldn’t load more notifications.' ) as string }
+					</p>
+					<Button variant="secondary" onClick={ onLoadMore }>
+						{ translate( 'Try again' ) as string }
+					</Button>
+				</div>
+			) }
+			{ hasMore && ! isError && (
 				<div className="social-notifications-list__footer">
 					<Button
 						variant="secondary"

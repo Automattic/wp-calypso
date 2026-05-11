@@ -30,7 +30,13 @@ export function SocialNotificationItem( { notification }: Props ) {
 	const { actor, target, target_url, canonical_type, is_read, created_at } = notification;
 	const actorName = actor.display_name || actor.handle;
 	const phrase = actionPhrase( canonical_type, translate );
-	const ariaLabel = actionAriaLabel( canonical_type, actorName, translate );
+	const actionLabel = actionAriaLabel( canonical_type, actorName, translate );
+	// An explicit `aria-label` on the anchor replaces the accessible name, so
+	// the inner SR-only "Unread" span would never be announced. Fold the unread
+	// state into the label instead.
+	const ariaLabel = is_read
+		? actionLabel
+		: ( translate( 'Unread. %(label)s', { args: { label: actionLabel } } ) as string );
 
 	const safe = isSafeUrl( target_url );
 	const className = clsx( 'social-notification-item', { 'is-unread': ! is_read } );
@@ -54,12 +60,7 @@ export function SocialNotificationItem( { notification }: Props ) {
 					<TimeSince className="social-notification-item__time" date={ created_at } />
 				) : null }
 			</VStack>
-			{ ! is_read && (
-				<>
-					<span className="screen-reader-text">{ translate( 'Unread' ) as string }</span>
-					<span className="social-notification-item__unread-dot" aria-hidden />
-				</>
-			) }
+			{ ! is_read && <span className="social-notification-item__unread-dot" aria-hidden /> }
 		</HStack>
 	);
 
