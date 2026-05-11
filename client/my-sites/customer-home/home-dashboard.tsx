@@ -60,10 +60,11 @@ const HOME_WIZARD_FIRST_POST_DRAFT_PREF = 'home_wizard_first_post_draft';
 const HOME_WIZARD_INTENT_PREF = 'home_wizard_intent';
 const HOME_WIZARD_INFERRED_PREF = 'home_wizard_inferred';
 // Dolly typically responds in 4-10s for the wizard's structured prompt and
-// 8-20s for the intent prompt (which adds an inference step). 25s gives
-// both paths headroom; the skeleton's still capped well before the user
-// would interpret silence as "the page is broken."
-const TAILORING_TIMEOUT_MS = 25_000;
+// 25-35s for the intent prompt (which adds inference + draft). 40s gives
+// the intent path headroom; observed 5/7 verification prompts landed
+// between 28-36s. The skeleton's still capped well before the user would
+// interpret silence as "the page is broken."
+const TAILORING_TIMEOUT_MS = 40_000;
 
 const RECENT_POSTS_QUERY = { number: 5, status: 'publish' } as const;
 const LAUNCHPAD_CONTEXT = 'customer-home';
