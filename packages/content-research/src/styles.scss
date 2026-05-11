@@ -3,16 +3,23 @@
 @import "./components/ai-summary/style";
 
 .content-research-source-filter {
-	padding-bottom: 16px;
+	box-sizing: border-box;
+	padding: 0 16px 16px;
+	width: 100%;
 
 	.components-button-group {
+		box-sizing: border-box;
 		display: flex;
+		gap: 4px;
 		width: 100%;
 	}
 
 	&__button.components-button {
-		flex: 1;
+		flex: 1 1 0;
+		min-width: 0;
 		justify-content: center;
+		height: 32px;
+		padding: 0 8px;
 		background: #fff;
 		box-shadow: inset 0 0 0 1px #ddd;
 		border-radius: 0;
@@ -44,6 +51,71 @@
 			color: #1e1e1e;
 			font-weight: 600;
 			background: #fff;
+		}
+	}
+}
+
+.content-research-source-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	color: #646970;
+
+	svg {
+		display: block;
+		width: 18px;
+		height: 18px;
+		fill: currentColor;
+	}
+
+	&--myposts {
+		color: #646970;
+
+		.is-sheet {
+			fill: #f6f7f7;
+		}
+
+		.is-border,
+		.is-line {
+			fill: currentColor;
+		}
+	}
+
+	&--reader {
+		color: #0675c4;
+	}
+
+	&--hn {
+		svg rect {
+			fill: #f0652f;
+		}
+
+		svg path {
+			fill: #fff;
+		}
+	}
+
+	&--googlenews {
+		.is-blue {
+			fill: #4285f4;
+		}
+
+		.is-green {
+			fill: #34a853;
+		}
+
+		.is-yellow {
+			fill: #fbbc04;
+		}
+
+		.is-white {
+			fill: #fff;
+		}
+
+		.is-red {
+			fill: #ea4335;
 		}
 	}
 }

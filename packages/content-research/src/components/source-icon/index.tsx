@@ -29,8 +29,6 @@ function getSourceIcon( source: SourceIconSource ) {
 			return <WordPressIcon />;
 		case 'hn':
 			return <HackerNewsIcon />;
-		case 'polymarket':
-			return <PolymarketIcon />;
 		case 'googlenews':
 			return <GoogleNewsIcon />;
 	}
@@ -49,15 +47,6 @@ function HackerNewsIcon() {
 		<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
 			<rect width="24" height="24" rx="4" />
 			<path d="M7 5h2.3l2.7 4.7L14.7 5H17l-4 6.7V19h-2v-7.3L7 5z" />
-		</svg>
-	);
-}
-
-function PolymarketIcon() {
-	return (
-		<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-			<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-13z" />
-			<path d="M7.2 15.7h2.1v-3.4H7.2v3.4zm3.8 0h2.1V8.3H11v7.4zm3.8 0h2.1v-5.3h-2.1v5.3z" />
 		</svg>
 	);
 }

@@ -93,6 +93,18 @@ export default function ContentResearchSidebar() {
 	};
 
 	const results = data?.results || [];
+	const orderedResults = useMemo( () => {
+		const selected: ResearchResult[] = [];
+		const unselected: ResearchResult[] = [];
+		for ( const result of results ) {
+			if ( selectedUrls.has( result.url ) ) {
+				selected.push( result );
+			} else {
+				unselected.push( result );
+			}
+		}
+		return [ ...selected, ...unselected ];
+	}, [ results, selectedUrls ] );
 
 	return (
 		<div className="content-research-sidebar">
@@ -104,7 +116,7 @@ export default function ContentResearchSidebar() {
 				<>
 					{ ! isSummaryVisible && (
 						<div className="content-research-sidebar__results">
-							{ results.map( ( result ) => (
+							{ orderedResults.map( ( result ) => (
 								<ResultCard
 									key={ result.url }
 									result={ result }
