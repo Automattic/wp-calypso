@@ -260,16 +260,20 @@ describe( 'ComposerOverflowHandoff — multi-site picker', () => {
 
 describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 	let openSpy: jest.SpyInstance;
+	let fakeWindow: { location: { href: string }; close: jest.Mock };
 
 	beforeEach( () => {
-		openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		fakeWindow = { location: { href: '' }, close: jest.fn() };
+		openSpy = jest
+			.spyOn( window, 'open' )
+			.mockImplementation( () => fakeWindow as unknown as Window );
 	} );
 
 	afterEach( () => {
 		openSpy.mockRestore();
 	} );
 
-	it( 'creates a draft post and opens wp-admin in a new tab on success', async () => {
+	it( 'pre-opens a tab synchronously and redirects it to wp-admin on success', async () => {
 		const user = userEvent.setup();
 		mockSitesQuery( [
 			{
@@ -305,17 +309,19 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
 		await user.click( button );
 
+		expect( openSpy ).toHaveBeenCalledWith( 'about:blank', '_blank' );
 		await waitFor( () =>
-			expect( openSpy ).toHaveBeenCalledWith(
-				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
-				'_blank',
-				'noopener,noreferrer'
+			expect( fakeWindow.location.href ).toBe(
+				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit'
 			)
 		);
 	} );
 
 	it( 'dispatches a fallback success notice with an Open-in-editor button when window.open is blocked', async () => {
 		const user = userEvent.setup();
+		// Re-mock window.open to return null for this test only (popup-blocker
+		// case). The default fakeWindow mock from beforeEach is replaced.
+		openSpy.mockImplementation( () => null );
 		const successNoticeSpy = jest.spyOn( notices, 'successNotice' );
 		mockSitesQuery( [
 			{
@@ -413,10 +419,8 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		// before appending `/wp-admin/post.php` so we don't end up with
 		// `//wp-admin/`.
 		await waitFor( () =>
-			expect( openSpy ).toHaveBeenCalledWith(
-				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit',
-				'_blank',
-				'noopener,noreferrer'
+			expect( fakeWindow.location.href ).toBe(
+				'https://myblog.wordpress.com/wp-admin/post.php?post=555&action=edit'
 			)
 		);
 	} );
@@ -457,7 +461,8 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		await user.click( button );
 
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
-		expect( openSpy ).not.toHaveBeenCalled();
+		await waitFor( () => expect( fakeWindow.close ).toHaveBeenCalled() );
+		expect( fakeWindow.location.href ).toBe( '' );
 	} );
 } );
 
@@ -563,14 +568,16 @@ describe( 'ComposerOverflowHandoff — Tracks events', () => {
 			const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
 			await user.click( button );
 
-			const openedCalls = recordSpy.mock.calls.filter(
-				( call ) => call[ 0 ] === 'test_composer_overflow_handoff_editor_opened'
-			);
-			expect( openedCalls ).toHaveLength( 1 );
-			expect( openedCalls[ 0 ][ 1 ] ).toEqual( {
-				connection_id: 1,
-				mode_kind: 'standalone',
-				site_id: 100,
+			await waitFor( () => {
+				const openedCalls = recordSpy.mock.calls.filter(
+					( call ) => call[ 0 ] === 'test_composer_overflow_handoff_editor_opened'
+				);
+				expect( openedCalls ).toHaveLength( 1 );
+				expect( openedCalls[ 0 ][ 1 ] ).toEqual( {
+					connection_id: 1,
+					mode_kind: 'standalone',
+					site_id: 100,
+				} );
 			} );
 		} finally {
 			openSpy.mockRestore();

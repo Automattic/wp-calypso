@@ -172,8 +172,10 @@ export interface ComposerConfig< TError, TParams, TResult > {
 	 * "Publish on your own site" escape hatch). `shown` fires once per modal
 	 * session when the handoff section first renders (i.e. after the user
 	 * crosses the limit AND the sites query resolves with ≥1 site).
-	 * `editorOpened` fires when the user clicks "Move to editor" — analogous
-	 * to Reader's Quick Post `calypso_reader_quick_post_full_editor_opened`.
+	 * `editorOpened` fires when the draft save succeeds and the editor tab
+	 * navigates (or the popup-blocker fallback success notice renders) —
+	 * analogous to Reader's Quick Post
+	 * `calypso_reader_quick_post_full_editor_opened`.
 	 * Configs that omit this field don't emit overflow-handoff Tracks events.
 	 */
 	overflowHandoff?: {
