@@ -176,7 +176,7 @@ export const notificationsInfiniteQuery = ( connectionId: number ) =>
 		queryKey: readerAtmosphereKeys.notifications( connectionId ),
 		queryFn: ( { pageParam } ) => getAtmosphereNotifications( { connectionId, cursor: pageParam } ),
 		initialPageParam: undefined,
-		getNextPageParam: ( lastPage ) => lastPage.next_cursor || undefined,
+		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
 		enabled: connectionId > 0,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,

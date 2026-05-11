@@ -112,7 +112,7 @@ export async function getAtmosphereNotifications(
 	if ( cursor ) {
 		query.cursor = cursor;
 	}
-	if ( limit ) {
+	if ( typeof limit === 'number' ) {
 		query.limit = String( limit );
 	}
 	try {

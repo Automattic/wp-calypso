@@ -44,6 +44,7 @@ export function SocialNotificationItem( { notification }: Props ) {
 	const body = (
 		<HStack alignment="flex-start" spacing={ 3 }>
 			{ actor.avatar_url ? (
+				// Decorative: the actor identity is announced via the row aria-label.
 				<img className="social-notification-item__avatar" src={ actor.avatar_url } alt="" />
 			) : (
 				<span className="social-notification-item__avatar is-placeholder" aria-hidden />
