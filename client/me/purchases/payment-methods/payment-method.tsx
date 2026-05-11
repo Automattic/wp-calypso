@@ -5,6 +5,7 @@ import {
 	isRetiredPaymentMethod,
 } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/payment-method-backup-toggle';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
@@ -57,6 +58,7 @@ function RetiredPaymentMethodDetails( {
 }: {
 	paymentMethod: RetiredStoredPaymentMethod;
 } ) {
+	const translate = useTranslate();
 	const label = paymentMethod.display_meta?.label;
 	const detail = paymentMethod.display_meta?.detail;
 	return (
@@ -67,7 +69,9 @@ function RetiredPaymentMethodDetails( {
 				alt=""
 			/>
 			<div className="payment-method-details__details">
-				<span className="payment-method-details__name">{ label || paymentMethod.name }</span>
+				<span className="payment-method-details__name">
+					{ label || paymentMethod.name || translate( 'Saved payment method' ) }
+				</span>
 				{ detail && <span className="payment-method-details__number">{ detail }</span> }
 			</div>
 		</div>
