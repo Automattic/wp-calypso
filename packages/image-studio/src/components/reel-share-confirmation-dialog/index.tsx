@@ -17,7 +17,7 @@ export function ReelShareConfirmationDialog( {
 }: ReelShareConfirmationDialogProps ): JSX.Element {
 	const body = igDisplayName
 		? createInterpolateElement(
-				__( 'This Reel will be published to <account /> on Instagram.', __i18n_text_domain__ ),
+				__( 'This video will be published to <account /> on Instagram.', __i18n_text_domain__ ),
 				{ account: <strong>{ igDisplayName }</strong> }
 		  )
 		: __(
