@@ -62,8 +62,6 @@ checkstyle.xml
 cover.html
 .test.log
 
-cached-requests.json
-
 # Monorepo output
 /apps/*/dist/
 /apps/*/build/

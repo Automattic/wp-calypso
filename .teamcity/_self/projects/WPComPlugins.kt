@@ -43,7 +43,7 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"help-center-release-build",
 					"agents-manager-release-build",
-					"wpcom-smart-dictation-build",
+					"wpcom-smart-dictation-release-build",
 				)
 			}
 			dataToKeep = everything()

@@ -164,3 +164,37 @@ describe( '<ComposerProvider>', () => {
 		expect( trigger ).toHaveFocus();
 	} );
 } );
+
+function wrapperHasBeenOverLimit( { children }: { children: ReactNode } ) {
+	return (
+		<ComposerProvider connectionId={ 1 } config={ testComposerConfig }>
+			{ children }
+		</ComposerProvider>
+	);
+}
+
+describe( 'ComposerProvider — hasBeenOverLimit', () => {
+	it( 'defaults to false', () => {
+		const { result } = renderHook( () => useComposer(), { wrapper: wrapperHasBeenOverLimit } );
+		expect( result.current.hasBeenOverLimit ).toBe( false );
+	} );
+
+	it( 'flips to true when markOverLimit() runs and is idempotent', () => {
+		const { result } = renderHook( () => useComposer(), { wrapper: wrapperHasBeenOverLimit } );
+		act( () => result.current.markOverLimit() );
+		expect( result.current.hasBeenOverLimit ).toBe( true );
+		act( () => result.current.markOverLimit() );
+		expect( result.current.hasBeenOverLimit ).toBe( true );
+	} );
+
+	it( 'resets to false each time the modal opens (mode flips from null to a value)', () => {
+		const { result } = renderHook( () => useComposer(), { wrapper: wrapperHasBeenOverLimit } );
+		act( () => result.current.openComposer( { kind: 'standalone', entry_point: 'fab' } ) );
+		act( () => result.current.markOverLimit() );
+		expect( result.current.hasBeenOverLimit ).toBe( true );
+		act( () => result.current.closeComposer() );
+		// Closing leaves the flag alone; the reset fires on next open.
+		act( () => result.current.openComposer( { kind: 'standalone', entry_point: 'fab' } ) );
+		expect( result.current.hasBeenOverLimit ).toBe( false );
+	} );
+} );

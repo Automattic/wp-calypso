@@ -7,10 +7,9 @@ import { getPluginEntry } from './plugin-registry';
  *
  * Scenarios reflect *which families* are present (A4A, Woo, Jetpack) and —
  * for the single-family Woo and Jetpack cases — *which specific plugins*.
- * Unknown plugins ("other" family) never change the scenario when a known
- * family is present; they only land in the "Also used by" overflow row in
- * PR 4. `OTHER_ONLY` is the fallback when no known family is present at
- * all (including the empty-plugin-list edge case).
+ * Unknown plugins ("other" family) are silently ignored when a known family
+ * is present. `OTHER_ONLY` is the fallback when no known family is present
+ * at all (including the empty-plugin-list edge case).
  *
  * Note: there is intentionally no `WOOPAY_ONLY` scenario. WooPayments has
  * WooCommerce core as a hard activation dependency, so a Woo-family plugin
@@ -78,15 +77,15 @@ function getJetpackSingleScenario( slug: string ): SubtitleScenario | null {
  *      list, which the WooPayments dependency on WooCommerce core makes
  *      impossible in practice) falls through to `WOO_ONLY`.
  *    - Jetpack: distinguish full Jetpack / a single individual plugin /
- *      two-or-more individuals (collapses to `JETPACK_MULTI`, which reuses
- *      the full-Jetpack copy by design — see the plan's "any 2+ individual
- *      Jetpacks" rule).
+ *      two-or-more individuals. Two or more individual Jetpack plugins
+ *      (without the full plugin) collapse to `JETPACK_MULTI`, which reuses
+ *      the full-Jetpack copy by design — the per-plugin specificity lives
+ *      in the feature cards, not in the subtitle.
  *    - A4A: only one plugin in this family.
  * 3. `OTHER_ONLY` for empty input or only-unknown plugins.
  *
  * Unknown ("other"-family) plugins are silently ignored once a known family
- * is present — they get surfaced in the PR 4 "Also used by" row instead of
- * driving subtitle copy.
+ * is present — they don't influence subtitle copy.
  */
 export function getSubtitleScenario( pluginSlugs: readonly string[] = [] ): SubtitleScenario {
 	const families = new Set( pluginSlugs.map( getFamilyFromSlug ) );

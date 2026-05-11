@@ -109,6 +109,15 @@ interface ComposerContextValue {
 	closeComposer: ( options?: CloseComposerOptions ) => void;
 	/** Read by the modal to render media UI and gate submission. */
 	mediaSlot: ComposerMediaSlot;
+	/**
+	 * Sticky-once flag: true after the user has crossed the per-protocol
+	 * char limit at least once during the current modal session. Reset on
+	 * each modal open. Stays true once tripped so the overflow-handoff UI
+	 * doesn't disappear when the user trims back under the limit, which
+	 * would otherwise hide the escape hatch they're working toward.
+	 */
+	hasBeenOverLimit: boolean;
+	markOverLimit: () => void;
 }
 
 const ComposerContext = createContext< ComposerContextValue | null >( null );
@@ -125,6 +134,7 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	children,
 }: Props< TError, TParams, TResult > ) {
 	const [ mode, setMode ] = useState< ActiveMode | null >( null );
+	const [ hasBeenOverLimit, setHasBeenOverLimit ] = useState( false );
 	const triggerRef = useRef< HTMLElement | null >( null );
 	const wasOpenRef = useRef( false );
 
@@ -145,6 +155,7 @@ export function ComposerProvider< TError, TParams, TResult >( {
 				return;
 			}
 			triggerRef.current = document.activeElement as HTMLElement | null;
+			setHasBeenOverLimit( false );
 			setMode( { ...next, connectionId } );
 		},
 		[ connectionId, config.supportedModes ]
@@ -159,6 +170,10 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	const closeComposer = useCallback( ( options?: CloseComposerOptions ) => {
 		keepPreviewUrlsAliveRef.current = options?.keepPreviewUrlsAlive ?? false;
 		setMode( null );
+	}, [] );
+
+	const markOverLimit = useCallback( () => {
+		setHasBeenOverLimit( true );
 	}, [] );
 
 	// `config.useMedia` is captured once at the start of the provider's life
@@ -188,8 +203,15 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	}, [ mode ] );
 
 	const value = useMemo(
-		() => ( { mode, openComposer, closeComposer, mediaSlot } ),
-		[ mode, openComposer, closeComposer, mediaSlot ]
+		() => ( {
+			mode,
+			openComposer,
+			closeComposer,
+			mediaSlot,
+			hasBeenOverLimit,
+			markOverLimit,
+		} ),
+		[ mode, openComposer, closeComposer, mediaSlot, hasBeenOverLimit, markOverLimit ]
 	);
 
 	return (

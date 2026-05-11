@@ -105,6 +105,7 @@ const createMockDomain = ( overrides?: Partial< Domain > ): Domain => ( {
 	points_to_wpcom: false,
 	pending_registration: false,
 	pending_registration_at_registry: false,
+	pending_registration_at_registry_url: '',
 	pending_transfer: false,
 	renewable_until: '',
 	ssl_status: 'inactive',

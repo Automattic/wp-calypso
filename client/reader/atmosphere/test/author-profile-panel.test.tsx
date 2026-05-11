@@ -756,7 +756,10 @@ describe( 'AuthorProfilePanel — quote composer integration', () => {
 			{ queryClient }
 		);
 
-		await user.click( await screen.findByRole( 'button', { name: /quote, 3 quotes/i } ) );
+		const repostButton = await screen.findByRole( 'button', { name: /repost, 3 reposts/i } );
+		await user.click( repostButton );
+		const quoteItem = await screen.findByRole( 'menuitem', { name: 'Quote post' } );
+		await user.click( quoteItem );
 		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
 	} );
 } );

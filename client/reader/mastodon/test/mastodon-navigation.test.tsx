@@ -33,12 +33,11 @@ describe( 'MastodonNavigation', () => {
 		mockRecordReaderTracksEvent.mockClear();
 	} );
 
-	it( 'renders three tabs and marks the selected one active', () => {
+	it( 'renders two tabs and marks the selected one active', () => {
 		renderWithProvider( <MastodonNavigation connectionId={ 42 } selectedTab="profile" /> );
 
 		expect( screen.getByRole( 'menuitem', { name: /timeline/i } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: /profile/i } ) ).toBeVisible();
-		expect( screen.getByRole( 'menuitem', { name: /settings/i } ) ).toBeVisible();
 
 		expect( screen.getByRole( 'menuitem', { name: /profile/i } ) ).toHaveAttribute(
 			'aria-current',
@@ -60,10 +59,6 @@ describe( 'MastodonNavigation', () => {
 		expect( screen.getByRole( 'menuitem', { name: /profile/i } ) ).toHaveAttribute(
 			'href',
 			'/reader/mastodon/42/profile'
-		);
-		expect( screen.getByRole( 'menuitem', { name: /settings/i } ) ).toHaveAttribute(
-			'href',
-			'/reader/mastodon/42/settings'
 		);
 	} );
 

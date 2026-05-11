@@ -15,6 +15,7 @@ import {
 	INSERT_BLOCK_TOOL_NAME,
 	INSERT_BLOCKS_TOOL_NAME,
 	MOVE_BLOCK_TOOL_NAME,
+	REMOVE_ALL_BLOCKS_TOOL_NAME,
 	REMOVE_BLOCK_TOOL_NAME,
 	REPLACE_BLOCK_TOOL_NAME,
 	SELECT_BLOCK_TOOL_NAME,
@@ -30,6 +31,7 @@ import {
 	executeInsertBlockTool,
 	executeInsertBlocksTool,
 	executeMoveBlockTool,
+	executeRemoveAllBlocksTool,
 	executeRemoveBlockTool,
 	executeReplaceBlockTool,
 	executeSelectBlockTool,
@@ -49,6 +51,7 @@ import {
 	executeSetPostTitleTool,
 	executeUndoTool,
 } from '../tools/editor-post-tool';
+import { GENERATE_IMAGE_TOOL_NAME, executeGenerateImageTool } from '../tools/generate-image-tool';
 import { PICK_IMAGE_TOOL_NAME, executePickImageTool } from '../tools/image-picker-tool';
 import {
 	VERIFY_YOUTUBE_URL_TOOL_NAME,
@@ -62,6 +65,12 @@ interface ExecuteRealtimeToolCallsArgs {
 	event: { response?: { output?: unknown[] } };
 	onToolEvent: ( event: RealtimeToolEvent ) => void;
 	sendFunctionCallOutput: ( callId: string, result: unknown ) => void;
+	/**
+	 * Aborted when the realtime session tears down. Long-running tools
+	 * (generate_image_tool, ~30–60s) forward this to their HTTP requests so
+	 * abandoned generations stop instead of finishing into a torn-down editor.
+	 */
+	signal?: AbortSignal;
 }
 
 interface ExecuteRealtimeToolCallsResult {
@@ -80,6 +89,7 @@ export async function executeRealtimeToolCalls( {
 	event,
 	onToolEvent,
 	sendFunctionCallOutput,
+	signal,
 }: ExecuteRealtimeToolCallsArgs ): Promise< ExecuteRealtimeToolCallsResult > {
 	const functionCalls = getFunctionCalls( event );
 
@@ -98,8 +108,16 @@ export async function executeRealtimeToolCalls( {
 		recordTracksEvent( 'calypso_smart_dictation_tool_called', {
 			tool_name: call.name || 'unknown',
 		} );
+		if ( call.name === GENERATE_IMAGE_TOOL_NAME ) {
+			onToolEvent( {
+				id: call.call_id,
+				label: 'Generating image…',
+				status: 'running',
+				timestamp: Date.now(),
+			} );
+		}
 		try {
-			result = await executeRealtimeToolCall( call );
+			result = await executeRealtimeToolCall( call, signal );
 		} catch ( err ) {
 			result = {
 				ok: false,
@@ -140,7 +158,10 @@ function getFunctionCalls( event: { response?: { output?: unknown[] } } ): Realt
 	);
 }
 
-async function executeRealtimeToolCall( call: RealtimeFunctionCall ): Promise< unknown > {
+async function executeRealtimeToolCall(
+	call: RealtimeFunctionCall,
+	signal?: AbortSignal
+): Promise< unknown > {
 	if ( call.name === GET_EDITOR_BLOCKS_TOOL_NAME ) {
 		return executeGetEditorBlocksTool( call.arguments );
 	}
@@ -177,6 +198,9 @@ async function executeRealtimeToolCall( call: RealtimeFunctionCall ): Promise< u
 	if ( call.name === REMOVE_BLOCK_TOOL_NAME ) {
 		return executeRemoveBlockTool( call.arguments );
 	}
+	if ( call.name === REMOVE_ALL_BLOCKS_TOOL_NAME ) {
+		return executeRemoveAllBlocksTool();
+	}
 	if ( call.name === MOVE_BLOCK_TOOL_NAME ) {
 		return executeMoveBlockTool( call.arguments );
 	}
@@ -212,6 +236,9 @@ async function executeRealtimeToolCall( call: RealtimeFunctionCall ): Promise< u
 	}
 	if ( call.name === STOP_DICTATION_TOOL_NAME ) {
 		return executeStopDictationTool();
+	}
+	if ( call.name === GENERATE_IMAGE_TOOL_NAME ) {
+		return executeGenerateImageTool( call.arguments, signal );
 	}
 	return { ok: false, error: `Unsupported tool: ${ call.name || 'unknown' }` };
 }

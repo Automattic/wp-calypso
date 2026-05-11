@@ -10,6 +10,7 @@ export interface SocialProfileStat {
 	key: string;
 	count: number;
 	label: TranslateResult;
+	href?: string;
 }
 
 export interface SocialProfileCardProps {
@@ -34,6 +35,13 @@ export interface SocialProfileCardProps {
 	statsLabel: string;
 	/** Slot for buttons / links in the header band (rich layout only). */
 	headerActions?: ReactNode;
+	/**
+	 * External URL pointing to the profile on the third-party service
+	 * (e.g. bsky.app for ATmosphere, the home-instance URL for Mastodon).
+	 * When set, the display name renders inside an external anchor with a
+	 * hover-reveal arrow affordance, mirroring the post timestamp link.
+	 */
+	displayNameLink?: string;
 }
 
 // Mastodon bios include paragraphs, line breaks, and anchors (including rel="me"
@@ -41,10 +49,12 @@ export interface SocialProfileCardProps {
 // so we never render scripts, media, iframes, or style/on* attributes. The
 // `data-id` attribute carries the protocol's stable author identifier on
 // @-mention anchors so the click handler below can route mentions in-app via
-// `getProfileUrl` without parsing the href.
+// `getProfileUrl` without parsing the href. The `data-tag` attribute carries
+// the canonical (lowercase) hashtag on tag anchors so the click handler can
+// route hashtag clicks in-app via `getTagUrl` instead of leaking to bsky.app.
 const BIO_SANITIZE_CONFIG = {
 	ALLOWED_TAGS: [ 'p', 'br', 'a', 'span' ],
-	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'class', 'data-id' ],
+	ALLOWED_ATTR: [ 'href', 'rel', 'target', 'class', 'data-id', 'data-tag' ],
 	// DOMPurify allows every data-* attribute by default; restrict to the
 	// explicit allow-list above so a future backend change can't smuggle a
 	// new data-* attribute (e.g. `data-tracking`) through to the DOM.
@@ -75,6 +85,7 @@ export function SocialProfileCard( {
 	stats,
 	statsLabel,
 	headerActions,
+	displayNameLink,
 }: SocialProfileCardProps ) {
 	const analytics = useSocialAnalytics();
 
@@ -85,11 +96,12 @@ export function SocialProfileCard( {
 		return sanitizeReaderSocialHtml( bioHtml, BIO_SANITIZE_CONFIG );
 	}, [ bioHtml ] );
 
-	// Mirrors PostCardBody: backend stamps @-mention anchors in bios with
+	// Mirrors PostCardBody: backend stamps @-mention anchors with
 	// `data-id="<author-id>"` (DID for atmosphere, numeric account id for
-	// Mastodon). When present, route the click in-app via the analytics
-	// context's `getProfileUrl` resolver. Modifier-clicks pass through so
-	// users can still open mentions in a new tab. When the resolver is not
+	// Mastodon) and hashtag anchors with `data-tag="<canonical-tag>"`. When
+	// present, route the click in-app via the analytics context's
+	// `getProfileUrl` / `getTagUrl` resolvers. Modifier-clicks pass through
+	// so users can still open links in a new tab. When the resolver is not
 	// in scope (slim layouts wrap SocialProfileCard outside any provider)
 	// the click falls through to the anchor's normal href.
 	const handleBioClick = ( event: MouseEvent< HTMLDivElement > ) => {
@@ -108,37 +120,61 @@ export function SocialProfileCard( {
 			return;
 		}
 		const dataId = anchor.getAttribute( 'data-id' );
-		if ( ! dataId ) {
+		if ( dataId ) {
+			// Set all three fields to the data-id value: per-protocol resolvers
+			// pick whichever they understand and validate. Atmosphere validates
+			// handle then DID; Mastodon reads `id`. The backend stamps either a
+			// DID (atmosphere) or a numeric account id (Mastodon) when available
+			// and falls back to a handle on atmosphere when no DID is known.
+			const inAppUrl =
+				analytics?.getProfileUrl?.( { id: dataId, handle: dataId, did: dataId } ) ?? null;
+			if ( inAppUrl ) {
+				event.preventDefault();
+				page( inAppUrl );
+				return;
+			}
+			if ( ! analytics ) {
+				return;
+			}
+			// data-id present but resolver returned null — likely a backend ↔
+			// frontend desync. Surface the event so it's observable instead of
+			// silently routing to the external host with no analytics signal.
+			// eslint-disable-next-line no-console
+			console.warn( '[reader-social] data-id mention anchor not resolved to in-app URL', {
+				dataId,
+				href: anchor.getAttribute( 'href' ),
+				source: analytics.source,
+			} );
+			analytics.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
+				connection_id: analytics.connectionId,
+				data_id: dataId,
+			} );
 			return;
 		}
-		// Set all three fields to the data-id value: per-protocol resolvers
-		// pick whichever they understand and validate. Atmosphere validates
-		// handle then DID; Mastodon reads `id`. The backend stamps either a
-		// DID (atmosphere) or a numeric account id (Mastodon) when available
-		// and falls back to a handle on atmosphere when no DID is known.
-		const inAppUrl =
-			analytics?.getProfileUrl?.( { id: dataId, handle: dataId, did: dataId } ) ?? null;
-		if ( inAppUrl ) {
-			event.preventDefault();
-			page( inAppUrl );
-			return;
+		const dataTag = anchor.getAttribute( 'data-tag' );
+		if ( dataTag ) {
+			const inAppTagUrl = analytics?.getTagUrl?.( dataTag ) ?? null;
+			if ( inAppTagUrl ) {
+				event.preventDefault();
+				page( inAppTagUrl );
+				return;
+			}
+			if ( ! analytics ) {
+				return;
+			}
+			// data-tag present but resolver returned null — backend ↔ frontend
+			// desync. Same observability pattern as the data-id miss path.
+			// eslint-disable-next-line no-console
+			console.warn( '[reader-social] data-tag anchor not resolved to in-app URL', {
+				dataTag,
+				href: anchor.getAttribute( 'href' ),
+				source: analytics.source,
+			} );
+			analytics.onClick( `calypso_reader_${ analytics.source }_timeline_tag_unresolved`, {
+				connection_id: analytics.connectionId,
+				data_tag: dataTag,
+			} );
 		}
-		if ( ! analytics ) {
-			return;
-		}
-		// data-id present but resolver returned null — likely a backend ↔
-		// frontend desync. Surface the event so it's observable instead of
-		// silently routing to the external host with no analytics signal.
-		// eslint-disable-next-line no-console
-		console.warn( '[reader-social] data-id mention anchor not resolved to in-app URL', {
-			dataId,
-			href: anchor.getAttribute( 'href' ),
-			source: analytics.source,
-		} );
-		analytics.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
-			connection_id: analytics.connectionId,
-			data_id: dataId,
-		} );
 	};
 
 	let bioNode = null;
@@ -161,6 +197,27 @@ export function SocialProfileCard( {
 	}
 
 	const headingText = displayName || handle;
+
+	// Defence-in-depth: `displayNameLink` is typed `string` but originates from
+	// a remote service (wpcom for Bluesky; the home Mastodon instance, which
+	// federates `acct` from arbitrary remote servers). Only render the anchor
+	// when the value parses as an http(s) URL — otherwise fall back to plain
+	// heading text so a malformed payload can't produce a same-origin or
+	// `data:`/`javascript:` navigation.
+	const safeDisplayNameLink = useMemo( () => {
+		if ( ! displayNameLink ) {
+			return undefined;
+		}
+		try {
+			const parsed = new URL( displayNameLink );
+			if ( parsed.protocol !== 'https:' && parsed.protocol !== 'http:' ) {
+				return undefined;
+			}
+			return parsed.toString();
+		} catch {
+			return undefined;
+		}
+	}, [ displayNameLink ] );
 
 	return (
 		<div className="social-profile-card">
@@ -190,19 +247,62 @@ export function SocialProfileCard( {
 				) : null }
 			</div>
 			{ headingText ? (
-				<h2 className="social-profile-card__display-name">{ headingText }</h2>
+				<h2 className="social-profile-card__display-name">
+					{ safeDisplayNameLink ? (
+						<a
+							className="social-profile-card__display-name-link"
+							href={ safeDisplayNameLink }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								if ( ! analytics ) {
+									return;
+								}
+								// Sibling to the prominent timestamp's
+								// `_external_post_clicked` (see post-card-timestamp.tsx).
+								// Emitted directly under `_profile_` so the panel-level
+								// `_timeline_*` → `_profile_*` rewrite leaves it alone.
+								analytics.onClick(
+									`calypso_reader_${ analytics.source }_profile_external_clicked`,
+									{
+										connection_id: analytics.connectionId,
+										destination: 'external',
+										actor_handle: handle ?? null,
+									}
+								);
+							} }
+						>
+							{ headingText }
+						</a>
+					) : (
+						headingText
+					) }
+				</h2>
 			) : null }
 			{ handle ? <p className="social-profile-card__handle">@{ handle }</p> : null }
 			{ bioNode }
 			<ul className="social-profile-card__stats" aria-label={ statsLabel }>
-				{ stats.map( ( stat ) => (
-					<li key={ stat.key } className="social-profile-card__stat">
-						<span className="social-profile-card__stat-count">
-							{ formatNumberCompact( stat.count ) }
-						</span>{ ' ' }
-						<span className="social-profile-card__stat-label">{ stat.label }</span>
-					</li>
-				) ) }
+				{ stats.map( ( stat ) => {
+					const inner = (
+						<>
+							<span className="social-profile-card__stat-count">
+								{ formatNumberCompact( stat.count ) }
+							</span>{ ' ' }
+							<span className="social-profile-card__stat-label">{ stat.label }</span>
+						</>
+					);
+					return (
+						<li key={ stat.key } className="social-profile-card__stat">
+							{ stat.href ? (
+								<a className="social-profile-card__stat-link" href={ stat.href }>
+									{ inner }
+								</a>
+							) : (
+								inner
+							) }
+						</li>
+					);
+				} ) }
 			</ul>
 		</div>
 	);
