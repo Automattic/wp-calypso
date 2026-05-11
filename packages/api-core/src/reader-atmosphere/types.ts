@@ -405,6 +405,12 @@ export interface DeletePostParams {
 	rkey: string;
 }
 
+/**
+ * Normalized cross-protocol notification kind. `'other'` is the forward-compat
+ * bucket for upstream types we don't yet render with bespoke templates (e.g.
+ * starterpack-joined, verified, subscribed-post). The frontend falls through to
+ * a generic renderer that uses `protocol_type` for the label.
+ */
 export type AtmosphereNotificationCanonicalType =
 	| 'like'
 	| 'repost'
@@ -427,8 +433,17 @@ export interface AtmosphereNotificationTarget {
 	excerpt: string;
 }
 
+/**
+ * Envelope shape returned by
+ * `/wpcom/v2/reader/atmosphere/connections/:id/notifications`.
+ * `protocol_type` is the raw upstream string (verbatim, lossless);
+ * `canonical_type` is the normalized enum. `raw` carries the original upstream
+ * object for forward-compat rendering. `is_read` is server-computed against the
+ * user's `seenAt` watermark.
+ */
 export interface AtmosphereNotification {
 	id: string;
+	/** Raw upstream type string, e.g. ATProto `reason`. */
 	protocol_type: string;
 	canonical_type: AtmosphereNotificationCanonicalType;
 	actor: AtmosphereNotificationActor;
@@ -439,6 +454,12 @@ export interface AtmosphereNotification {
 	raw: unknown;
 }
 
+/**
+ * Single page from the cursor-paginated notifications endpoint.
+ * `next_cursor: null` means end-of-list. `seen_at` is the server's watermark
+ * timestamp, exposed at the page level (not per-item) so subsequent "Load more"
+ * pages can classify items without re-fetching.
+ */
 export interface AtmosphereNotificationsPage {
 	items: AtmosphereNotification[];
 	next_cursor: string | null;

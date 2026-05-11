@@ -81,4 +81,10 @@ describe( 'AtmosphereNotification types', () => {
 		};
 		expect( page.items[ 0 ].canonical_type ).toBe( 'like' );
 	} );
+
+	it( 'rejects unknown canonical_type values', () => {
+		// @ts-expect-error - 'bogus' is not in the canonical union.
+		const bad: AtmosphereNotificationCanonicalType = 'bogus';
+		expect( bad ).toBe( 'bogus' );
+	} );
 } );
