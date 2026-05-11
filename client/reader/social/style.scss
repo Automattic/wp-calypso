@@ -60,6 +60,33 @@
 	line-height: 1.2;
 }
 
+// Wrapper anchor when a third-party profile URL is available; matches the
+// hover-reveal arrow used by the prominent post timestamp link.
+.social-profile-card__display-name-link {
+	color: inherit;
+	text-decoration: none;
+
+	&:focus-visible {
+		outline: 2px solid var( --studio-blue-50 );
+		outline-offset: 2px;
+	}
+
+	&::after {
+		content: "↗";
+		display: inline-block;
+		color: var( --studio-gray-30 );
+		font-size: 0.85em;
+		margin-inline-start: 6px;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
+
+	&:hover::after,
+	&:focus-visible::after {
+		opacity: 1;
+	}
+}
+
 .social-profile-card__handle {
 	margin: 0;
 	color: var( --studio-gray-50, #646970 );

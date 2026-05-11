@@ -208,7 +208,7 @@ Allow-list shape:
 - `ALLOWED_TAGS: ['p', 'br', 'a']` for post content (extend cautiously for new protocols).
 - `ALLOWED_TAGS: ['p', 'br', 'a', 'span']` for profile bios (Mastodon emits `<span>` mention scaffolding).
 - `ALLOWED_ATTR` for post content: `href`, `rel`, `target`, `data-id`. The `data-id` attribute carries the protocol's stable author identifier on @-mention anchors so `<PostCardBody>` can route mentions in-app via `getProfileUrl` without parsing the href.
-- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`. Bios carry the same @-mention `data-id` contract as post content; `<SocialProfileCard>` intercepts bio mention clicks via the same pattern as `<PostCardBody>`.
+- `ALLOWED_ATTR` for profile bios: `href`, `rel`, `target`, `class`, `data-id`, `data-tag`. Bios carry the same @-mention `data-id` and hashtag `data-tag` contracts as post content; `<SocialProfileCard>` intercepts bio mention and hashtag clicks via the same pattern as `<PostCardBody>`, routing through `getProfileUrl` and `getTagUrl` respectively.
 - `ALLOW_DATA_ATTR: false` on both post content and profile bios. DOMPurify allows every `data-*` attribute by default; we restrict to the explicit allow-list above so a future backend change can't smuggle a new `data-*` attribute (e.g. `data-tracking`) through to the DOM.
 - `ADD_URI_SAFE_ATTR: ['data-id']` on both post content and profile bios. DOMPurify scheme-checks every attribute value containing a colon and would otherwise drop `data-id="did:plc:…"` for atmosphere DIDs as an unknown URI scheme. Use `ADD_URI_SAFE_ATTR` (extends DOMPurify's defaults) rather than `URI_SAFE_ATTRIBUTES` (replaces them and would drop `xml:lang`, `xlink:href`, etc.). Don't switch to `ALLOW_UNKNOWN_PROTOCOLS: true` — that would also loosen `href` validation.
 - DOMPurify's default scheme allow-list strips `javascript:` / `data:` / etc. on `href`. Don't extend it.
@@ -239,8 +239,11 @@ the timeline). When `expanded={true}`, the component renders a native
 
 The thumbnail is used as the `<video poster>` so users see a frame before
 hitting play. `<SocialPostCard>` forwards `expandedVideo` only for the
-highlighted root node inside `<ThreadTree>` — replies and parents stay
-thumbnail-only.
+highlighted root node inside `<ThreadTree>` — replies and parents render
+as thumbnail buttons by default. Clicking a thumbnail flips the embed to
+the player inline (no navigation) and autoplays inside the click's
+user-gesture window, so video posts deeper in a thread don't require a
+detour through the post detail view to play.
 
 This mirrors what bsky.app's own web app and other modern Bluesky clients do.
 The static `embed.bsky.app` widget was an earlier attempt but doesn't include

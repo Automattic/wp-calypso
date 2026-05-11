@@ -505,6 +505,7 @@ export function AuthorProfilePanel( {
 				stats={ stats }
 				statsLabel={ String( translate( 'Profile stats' ) ) }
 				headerActions={ followButton }
+				displayNameLink={ profileData.bluesky_url }
 			/>
 		);
 	};
