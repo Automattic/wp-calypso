@@ -66,6 +66,15 @@ export default function SidebarItem( props ) {
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }
 			>
+				{ /*
+				 * Optional content rendered as the FIRST child of the link.
+				 * Used by the wp-admin-sidebar customize mode to inject the
+				 * drag grip (`.admin-sidebar-item__grip`) before the icon —
+				 * mirrors the public plugin's `link.insertBefore(grip, link.firstChild)`
+				 * decoration. Undefined for legacy callers so the existing
+				 * render is byte-identical when no grip is passed.
+				 */ }
+				{ props.prependContent }
 				{ icon &&
 					( typeof icon === 'string' ? (
 						<Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } />
@@ -131,4 +140,7 @@ SidebarItem.propTypes = {
 	// Optional. Drives the `data-wp-admin-sidebar-item-id` attribute the customize
 	// mode's drag-drop hook reads to find reassignable rows.
 	wpAdminSidebarItemId: PropTypes.string,
+	// Optional content rendered as the first child of the link. Used by the
+	// wp-admin-sidebar customize mode to inject the drag grip.
+	prependContent: PropTypes.node,
 };

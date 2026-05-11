@@ -40,6 +40,15 @@ const INDICATOR_CLASS = 'admin-sidebar-drop-indicator';
 const SOURCE_DRAGGING_CLASS = 'is-admin-sidebar-source-dragging';
 const REASSIGNABLE_SELECTOR = 'li[data-wp-admin-sidebar-item-id]';
 const GROUP_SELECTOR = 'li.wp-admin-sidebar-group';
+// Broad drop-target selector — mirrors the public plugin's
+// `li.menu-top, li.wp-admin-sidebar-group`. Any top-level Calypso item
+// (`.sidebar__menu-item-parent` for leaf items, bare `<li>` for expandable
+// items rendered via `<MySitesSidebarUnifiedMenu>`) is a valid drop
+// neighbour even if it's not itself reassignable. `.sidebar > li` is the
+// catch-all for the expandable wrappers that don't carry the
+// `sidebar__menu-item-parent` class.
+const DROP_NEIGHBOUR_SELECTOR =
+	'li[data-wp-admin-sidebar-item-id], li.sidebar__menu-item-parent, li.wp-admin-sidebar-group, .sidebar > li';
 
 export interface DragDropController {
 	commitMove: ( itemId: string, position: LayoutPosition ) => void;
@@ -137,9 +146,16 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 			return;
 		}
 		if ( lastTarget && lastTarget.position && lastTarget.container ) {
-			// Commit the move to the React state. We do NOT touch DOM directly
-			// — React re-renders against the working delta and the renderer
-			// applies the new position via `applyLayoutDelta`.
+			// Mirror the public plugin's drag-drop.js: DOM-insert the row
+			// at the target slot so the visual reflects the drop
+			// immediately, then commit to state. Calypso's render path
+			// (use-site-menu-items.js → applyLayoutDelta) only applies the
+			// *saved* delta today, so without the DOM insert here the
+			// dropped row would visually snap back to its original slot
+			// until Save persists the working delta. (Threading the
+			// working delta into use-site-menu-items is a separate task;
+			// the DOM insert is the public plugin's pattern anyway.)
+			lastTarget.container.insertBefore( activeItem.li, lastTarget.beforeLi || null );
 			controller.commitMove( activeItem.itemId, lastTarget.position );
 			const label = ( activeItem.li.textContent || activeItem.itemId ).trim();
 			const indexLabel = lastTarget.position.index + 1;
@@ -184,24 +200,30 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 		// elements and find the actual sidebar row beneath the cursor.
 		const elements = document.elementsFromPoint( x, y );
 		for ( const el of elements ) {
-			const groupContainer = el.closest( GROUP_SELECTOR );
-			const li = el.closest( `${ REASSIGNABLE_SELECTOR }, ${ GROUP_SELECTOR }` );
+			const li = el.closest( DROP_NEIGHBOUR_SELECTOR );
 			if ( ! li || li === activeItem?.li ) {
 				continue;
 			}
-			// Drop on a collapsed group header → land at end of that group's
-			// children (Phase 2 row 28). Only fires when the cursor is over
-			// the group container LI itself, not over a child row.
-			if (
-				li === groupContainer &&
-				groupContainer &&
-				groupContainer.getAttribute( 'data-expanded' ) !== 'true'
-			) {
-				const childList = groupContainer.querySelector(
-					':scope > .wp-admin-sidebar-group__children'
-				);
-				const groupId = groupContainer.getAttribute( 'data-group' );
-				if ( childList && groupId ) {
+
+			// Drop on a group header → land in that group's children list
+			// (Phase 2 row 28). Three cases:
+			//   1. Collapsed group: drop at end of children.
+			//   2. Expanded but EMPTY group: drop at index 0 of children.
+			//      Without this branch, an emptied "My Plugins" group has no
+			//      reassignable children and the group header is the only
+			//      hit-target — without it the user can never re-add items.
+			//   3. Expanded group with children: keep walking. The children
+			//      below will surface as drop neighbours on their own so the
+			//      indicator can paint between specific rows.
+			if ( li.classList.contains( 'wp-admin-sidebar-group' ) ) {
+				const childList = li.querySelector( ':scope > .wp-admin-sidebar-group__children' );
+				const groupId = li.getAttribute( 'data-group' );
+				if ( ! childList || ! groupId ) {
+					continue;
+				}
+				const isExpanded = li.getAttribute( 'data-expanded' ) === 'true';
+				const isEmpty = childList.querySelectorAll( ':scope > li' ).length === 0;
+				if ( ! isExpanded || isEmpty ) {
 					return {
 						container: childList,
 						beforeLi: null,
@@ -215,11 +237,8 @@ export function attachDragDrop( controller: DragDropController ): () => void {
 				continue;
 			}
 
-			// Hovering over a reassignable sibling — use vertical midpoint to
-			// decide above-or-below.
-			if ( ! li.matches( REASSIGNABLE_SELECTOR ) ) {
-				continue;
-			}
+			// Any top-level sibling row (reassignable or not) — use vertical
+			// midpoint to decide above-or-below.
 			const rect = li.getBoundingClientRect();
 			const above = y < rect.top + rect.height / 2;
 			const container = li.parentElement;
