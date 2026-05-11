@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { act, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { createStore } from 'redux';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
 import { getStream, getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
@@ -161,6 +161,10 @@ jest.mock( 'calypso/state/reader-ui/actions', () => ( {
 	} ) ),
 } ) );
 
+jest.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: jest.fn( ( text, options ) => ( { type: 'ERROR_NOTICE', text, options } ) ),
+} ) );
+
 const populatedStream = {
 	error: null,
 	isRequesting: false,
@@ -281,11 +285,10 @@ describe( 'FullFeed', () => {
 		);
 	} );
 
-	it( 'lets the error retry request a page even while stale request state is set', async () => {
-		const user = userEvent.setup();
+	it( 'surfaces stream errors via the Reader notice system', async () => {
 		( getStream as jest.Mock ).mockReturnValue( {
 			error: new Error( 'network failed' ),
-			isRequesting: true,
+			isRequesting: false,
 			items: [],
 			lastPage: false,
 			pageHandle: { page_handle: 'retry-page' },
@@ -294,30 +297,12 @@ describe( 'FullFeed', () => {
 
 		renderFullFeed();
 
-		await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
-
-		expect( requestPage ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				pageHandle: { page_handle: 'retry-page' },
-				streamKey: 'following',
-			} )
-		);
-	} );
-
-	it( 'guards duplicate page requests before request state updates', async () => {
-		const user = userEvent.setup();
-
-		renderFullFeed();
-
-		await user.dblClick( screen.getByRole( 'button', { name: 'Load more' } ) );
-
-		expect( requestPage ).toHaveBeenCalledTimes( 1 );
-		expect( requestPage ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				pageHandle: { page_handle: 'next-page' },
-				streamKey: 'following',
-			} )
-		);
+		await waitFor( () => {
+			expect( errorNotice ).toHaveBeenCalledWith(
+				'Sorry, we had a problem loading posts.',
+				expect.objectContaining( { duration: 5000 } )
+			);
+		} );
 	} );
 
 	it( 'resets the stream and requests a fresh first page when the selected feed changes', async () => {

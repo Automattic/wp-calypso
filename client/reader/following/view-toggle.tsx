@@ -1,5 +1,5 @@
 import { Button, Tooltip } from '@wordpress/components';
-import { drawerLeft, postContent, postList } from '@wordpress/icons';
+import { drawerLeft, postContent, pullquote } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { type ReaderFollowingView, useFollowingView } from './view-preference';
 
@@ -30,7 +30,7 @@ export default function ViewToggle( { views = DEFAULT_VISIBLE_VIEWS }: ViewToggl
 		},
 		{
 			view: 'stream',
-			icon: postList,
+			icon: pullquote,
 			label: translate( 'Scrolling feed' ),
 		},
 	];

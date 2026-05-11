@@ -3,8 +3,8 @@
  */
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createStore } from 'redux';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import PostByline from 'calypso/blocks/reader-post-card/byline';
 import { showFullPost } from 'calypso/reader/utils';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -13,6 +13,26 @@ import { FullFeedPost } from '../full-feed-post';
 jest.mock( 'calypso/blocks/reader-post-actions', () => ( {
 	__esModule: true,
 	default: jest.fn( () => <div aria-label="Reader post actions">Reader post actions</div> ),
+} ) );
+
+jest.mock( 'calypso/blocks/reader-post-card/byline', () => ( {
+	__esModule: true,
+	default: jest.fn( () => <div data-testid="post-byline">Byline</div> ),
+} ) );
+
+jest.mock( 'calypso/blocks/reader-suggested-follows/dialog', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
+
+jest.mock( 'calypso/components/data/query-reader-feed', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
+} ) );
+
+jest.mock( 'calypso/components/data/query-reader-site', () => ( {
+	__esModule: true,
+	default: jest.fn( () => null ),
 } ) );
 
 jest.mock( 'calypso/blocks/reader-full-post/wp-iframe-resize', () => ( {
@@ -40,6 +60,7 @@ const post = {
 	global_ID: 'global-post-id',
 	is_external: true,
 	site_ID: 456,
+	site_icon: undefined as string | undefined,
 	site_name: 'Example Site',
 	title: 'Example post',
 };
@@ -50,14 +71,29 @@ const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
 const originalRequestAnimationFrame = window.requestAnimationFrame;
 const originalCancelAnimationFrame = window.cancelAnimationFrame;
 
-const renderPost = ( postProps = post, commentsState = { apiDisabled: {} } ) => {
-	const store = createStore( ( state = { comments: commentsState } ) => state );
+const defaultReaderState = {
+	feeds: { items: {} },
+	follows: { items: {} },
+	sites: { items: {} },
+};
 
-	renderWithProvider( <FullFeedPost post={ postProps } />, {
-		store,
+const renderPost = ( {
+	commentsState = { apiDisabled: {} },
+	postProps = post,
+	readerState = defaultReaderState,
+	showSiteName = true,
+}: {
+	commentsState?: { apiDisabled: Record< number, boolean > };
+	postProps?: typeof post;
+	readerState?: typeof defaultReaderState;
+	showSiteName?: boolean;
+} = {} ) => {
+	renderWithProvider( <FullFeedPost post={ postProps } showSiteName={ showSiteName } />, {
+		reducers: {
+			comments: ( state = commentsState ) => state,
+			reader: ( state = readerState ) => state,
+		},
 	} );
-
-	return { store };
 };
 
 describe( 'FullFeedPost', () => {
@@ -108,6 +144,19 @@ describe( 'FullFeedPost', () => {
 		expect( screen.getByRole( 'region', { name: 'Post content' } ) ).toHaveTextContent(
 			'Full post body'
 		);
+		expect( PostByline ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				compact: false,
+				feed: null,
+				openSuggestedFollows: expect.any( Function ),
+				post,
+				showAvatar: true,
+				showFollow: true,
+				showSiteName: true,
+				site: null,
+			} ),
+			expect.any( Object )
+		);
 		expect( screen.getByLabelText( 'Reader post actions' ) ).toBeVisible();
 		expect( ReaderPostActions ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -121,7 +170,12 @@ describe( 'FullFeedPost', () => {
 			expect.any( Object )
 		);
 
-		await user.click( await screen.findByRole( 'button', { name: 'Read more: Example post' } ) );
+		const readMoreButton = await screen.findByRole( 'button', {
+			name: 'Read more: Example post',
+		} );
+		expect( readMoreButton ).toHaveClass( 'is-secondary' );
+
+		await user.click( readMoreButton );
 
 		expect(
 			screen.getAllByRole( 'button', { name: 'Collapse: Example post' } )[ 0 ]
@@ -165,7 +219,7 @@ describe( 'FullFeedPost', () => {
 			feed_item_ID: undefined,
 		};
 
-		renderPost( feedPostWithoutFeedItemId );
+		renderPost( { postProps: feedPostWithoutFeedItemId } );
 
 		const { onCommentClick } = ( ReaderPostActions as jest.Mock ).mock.calls[ 0 ][ 0 ];
 
@@ -183,17 +237,58 @@ describe( 'FullFeedPost', () => {
 	it( 'keeps the comment action hidden when comments API is disabled for an internal post', () => {
 		const internalPost = { ...post, is_external: false };
 
-		const { store } = renderPost( internalPost, {
-			apiDisabled: {
-				[ internalPost.site_ID ]: true,
+		renderPost( {
+			commentsState: {
+				apiDisabled: {
+					[ internalPost.site_ID ]: true,
+				},
 			},
+			postProps: internalPost,
 		} );
 
-		expect( store.getState().comments.apiDisabled[ internalPost.site_ID ] ).toBe( true );
 		expect( ReaderPostActions ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				commentsApiDisabled: true,
 				post: internalPost,
+			} ),
+			expect.any( Object )
+		);
+	} );
+
+	it( 'passes the same feed and site byline data as the scrolling feed card', () => {
+		const feed = {
+			feed_ID: post.feed_ID,
+			name: 'Example Feed',
+		};
+		const site = {
+			ID: post.site_ID,
+			slug: 'example.com',
+			title: 'Example Site',
+			URL: 'https://example.com',
+		};
+
+		renderPost( {
+			readerState: {
+				...defaultReaderState,
+				feeds: { items: { [ post.feed_ID ]: feed } },
+				follows: { items: { 'example-feed': { feed_ID: post.feed_ID, site_icon: 'icon.jpg' } } },
+				sites: { items: { [ post.site_ID ]: site } },
+			},
+			showSiteName: true,
+		} );
+
+		expect( PostByline ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				compact: false,
+				feed: expect.objectContaining( {
+					...feed,
+					site_icon: 'icon.jpg',
+				} ),
+				post,
+				showAvatar: true,
+				showFollow: true,
+				showSiteName: true,
+				site: null,
 			} ),
 			expect.any( Object )
 		);
@@ -222,6 +317,24 @@ describe( 'FullFeedPost', () => {
 		).toBeVisible();
 	} );
 
+	it( 'shows the blog icon in collapse controls when available', async () => {
+		const user = userEvent.setup();
+
+		renderPost( {
+			postProps: {
+				...post,
+				site_icon: 'https://example.com/icon.jpg',
+			},
+		} );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Read more: Example post' } ) );
+
+		const collapseButton = screen.getByRole( 'button', { name: 'Collapse: Example post' } );
+		expect(
+			collapseButton.querySelector( '.full-feed-post__collapse-icon .site-icon' )
+		).toBeInTheDocument();
+	} );
+
 	it( 'does not count the featured image against the collapsed text preview height', async () => {
 		contentScrollHeight = 1200;
 		jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockImplementation( function (
@@ -241,8 +354,10 @@ describe( 'FullFeedPost', () => {
 		} );
 
 		renderPost( {
-			...post,
-			featured_image: 'https://example.com/image.jpg',
+			postProps: {
+				...post,
+				featured_image: 'https://example.com/image.jpg',
+			},
 		} );
 
 		await waitFor( () => {

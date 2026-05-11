@@ -1,9 +1,9 @@
 import { isDefaultLocale } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
 import { fixMe, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { shallowEqual } from 'react-redux';
 import { UnknownAction } from 'redux';
+import ReaderFullPostContentPlaceholder from 'calypso/blocks/reader-full-post/placeholders/content';
 import ScrollTracker from 'calypso/blocks/reader-full-post/scroll-tracker';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
@@ -14,6 +14,7 @@ import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import PostUnavailable from 'calypso/reader/stream/post-unavailable';
 import { useDispatch, useSelector } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
@@ -30,6 +31,7 @@ import './full-feed.scss';
 
 interface FullFeedProps {
 	recsStreamKey?: string;
+	showSiteNameOnCards?: boolean;
 	startDate?: string | null;
 	streamKey?: string;
 	trackScrollPage?: ( pageNumber: number ) => void;
@@ -129,6 +131,7 @@ function getWindowScrollDepth() {
 
 export function FullFeed( {
 	recsStreamKey = '',
+	showSiteNameOnCards = true,
 	startDate = null,
 	streamKey: baseStreamKey = 'following',
 	trackScrollPage,
@@ -204,6 +207,20 @@ export function FullFeed( {
 			inFlightPageRequestRef.current = null;
 		}
 	}, [ stream.error, stream.isRequesting, stream.pageHandle, streamKey ] );
+
+	const lastReportedErrorRef = useRef< unknown >( null );
+	useEffect( () => {
+		if ( stream.error && lastReportedErrorRef.current !== stream.error ) {
+			lastReportedErrorRef.current = stream.error;
+			dispatch(
+				errorNotice( translate( 'Sorry, we had a problem loading posts.' ), {
+					duration: 5000,
+				} )
+			);
+		} else if ( ! stream.error ) {
+			lastReportedErrorRef.current = null;
+		}
+	}, [ dispatch, stream.error, translate ] );
 
 	useEffect( () => {
 		const scrollTracker = new ScrollTracker();
@@ -420,10 +437,17 @@ export function FullFeed( {
 					onFloatingCollapseChange={ handleFloatingCollapseChange }
 					post={ post }
 					scrollContainer={ scrollContainer }
+					showSiteName={ showSiteNameOnCards }
 				/>
 			);
 		},
-		[ activeFloatingCollapsePostKey, blockedSites, handleFloatingCollapseChange, scrollContainer ]
+		[
+			activeFloatingCollapsePostKey,
+			blockedSites,
+			handleFloatingCollapseChange,
+			scrollContainer,
+			showSiteNameOnCards,
+		]
 	);
 
 	return (
@@ -437,32 +461,20 @@ export function FullFeed( {
 				<div className="full-feed__header-actions">{ viewToggle }</div>
 			</NavigationHeader>
 
-			<div className="full-feed__content">
+			<div className="full-feed__content reader__content">
 				{ postRecords.map( renderPost ) }
 				{ stream.isRequesting && (
-					<div className="full-feed__loading" role="status">
-						{ translate( 'Loading posts…' ) }
+					<div
+						className="full-feed__loading"
+						role="status"
+						aria-label={ translate( 'Loading posts' ) }
+					>
+						<ReaderFullPostContentPlaceholder />
 					</div>
 				) }
 				{ hasNoPosts && <FollowingEmptyContent view="full-feed" /> }
-				{ stream.error && (
-					<div className="full-feed__error" role="alert">
-						<p>{ translate( 'Sorry, we had a problem loading posts.' ) }</p>
-						<Button variant="secondary" onClick={ () => fetchNextPage( { force: true } ) }>
-							{ translate( 'Try again' ) }
-						</Button>
-					</div>
-				) }
 				{ ! stream.lastPage && hasLoadedPosts && (
-					<div className="full-feed__pagination" ref={ paginationRef }>
-						<Button
-							variant="secondary"
-							onClick={ () => fetchNextPage() }
-							disabled={ stream.isRequesting }
-						>
-							{ translate( 'Load more' ) }
-						</Button>
-					</div>
+					<div className="full-feed__pagination" ref={ paginationRef } aria-hidden="true" />
 				) }
 				{ stream.lastPage && postRecords.length > 0 && <ListEnd /> }
 				{ ( hasLoadedPosts || hasNoPosts || Boolean( stream.error ) ) && (

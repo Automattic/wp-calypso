@@ -1,27 +1,36 @@
-import { Button, Card, CardBody, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { ReaderFullPostContentShell } from 'calypso/blocks/reader-full-post/content-shell';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import PostByline from 'calypso/blocks/reader-post-card/byline';
+import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
+import { SiteIcon } from 'calypso/blocks/site-icon';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { getPostUrl } from 'calypso/reader/route';
 import { getPostTitleFallback, showFullPost } from 'calypso/reader/utils';
 import { useSelector } from 'calypso/state';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import type { TrackPostData } from 'calypso/state/reader/analytics/types';
+import type { AppState } from 'calypso/types';
 
 const COLLAPSED_CONTENT_HEIGHT = 900;
 const FLOATING_COLLAPSE_MAX_VIEWPORT_INSET = 96;
 const FLOATING_COLLAPSE_VIEWPORT_INSET_RATIO = 0.08;
 const FLOATING_COLLAPSE_TITLE_LENGTH = 36;
 const CONTENT_OBSERVER_ROOT_MARGIN = '1200px 0px';
-const FULL_FEED_CONTENT_WIDTH = 924;
 
 type ReaderFullFeedPost = Partial< TrackPostData > & {
 	author?: {
+		avatar_URL?: string;
 		display_name?: string;
 		login?: string;
 		name?: string;
@@ -42,17 +51,12 @@ type ReaderFullFeedPost = Partial< TrackPostData > & {
 	better_excerpt?: string;
 	excerpt?: string;
 	featured_image?: string;
+	site_icon?: { img?: string } | string;
 	site_name?: string;
 	title?: string;
 	URL?: string;
 	use_excerpt?: boolean;
 };
-
-function getAuthorName( post: ReaderFullFeedPost ): string | undefined {
-	return (
-		post.author?.name || post.author?.display_name || post.author?.nice_name || post.author?.login
-	);
-}
 
 function getPostTrackingProps( post: ReaderFullFeedPost ) {
 	return {
@@ -69,6 +73,16 @@ function getShortTitle( title: string ) {
 	}
 
 	return `${ title.slice( 0, FLOATING_COLLAPSE_TITLE_LENGTH - 3 ) }...`;
+}
+
+function getIconUrl( icon: unknown ) {
+	if ( typeof icon === 'string' ) {
+		return icon;
+	}
+
+	if ( icon && typeof icon === 'object' && 'img' in icon && typeof icon.img === 'string' ) {
+		return icon.img;
+	}
 }
 
 function getFullFeedPostKey( post: ReaderFullFeedPost ) {
@@ -90,14 +104,6 @@ function getPostForFullPostNavigation( post: ReaderFullFeedPost ) {
 	return post;
 }
 
-function getFullFeedContentWidth() {
-	const contentWidth = readerContentWidth();
-
-	return typeof contentWidth === 'number'
-		? Math.max( contentWidth, FULL_FEED_CONTENT_WIDTH )
-		: contentWidth;
-}
-
 function getElementBlockSize( element: Element | null ) {
 	if ( ! ( element instanceof HTMLElement ) ) {
 		return 0;
@@ -117,6 +123,7 @@ interface FullFeedPostProps {
 	onFloatingCollapseChange?: ( postKey: string, isVisible: boolean ) => void;
 	post: ReaderFullFeedPost;
 	scrollContainer?: HTMLElement | null;
+	showSiteName?: boolean;
 }
 
 export function FullFeedPost( {
@@ -124,13 +131,41 @@ export function FullFeedPost( {
 	onFloatingCollapseChange,
 	post,
 	scrollContainer = null,
+	showSiteName = true,
 }: FullFeedPostProps ) {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
+	const feedId = post.feed_ID && post.feed_ID > 0 ? post.feed_ID : undefined;
+	const siteId = post.site_ID && post.site_ID > 0 ? post.site_ID : undefined;
+	const isExternal = !! post.is_external;
 	const commentsApiDisabled = useSelector(
-		( state ) =>
-			!! post.site_ID && ! post.is_external && isCommentsApiDisabled( state, post.site_ID )
+		( state ) => !! siteId && ! isExternal && isCommentsApiDisabled( state, siteId )
 	);
+	const feed = useSelector( ( state: AppState ) => {
+		if ( ! feedId || ! state.reader?.feeds?.items ) {
+			return null;
+		}
+
+		return getFeed( state, feedId ) ?? null;
+	} );
+	const feedSiteIcon = useSelector( ( state: AppState ) => {
+		if ( ! feedId || ! state.reader?.follows ) {
+			return null;
+		}
+
+		const follow = state.reader.follows ? getReaderFollowForFeed( state, feedId ) : null;
+		return follow?.site_icon ?? null;
+	} );
+	const feedWithIcon = useMemo(
+		() => ( feedSiteIcon && feed ? { ...feed, site_icon: feedSiteIcon } : feed ),
+		[ feed, feedSiteIcon ]
+	);
+	const site = useSelector( ( state: AppState ) => {
+		if ( isExternal || ! siteId || ! state.reader?.sites?.items ) {
+			return null;
+		}
+		return getSite( state, siteId ) ?? null;
+	} );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ isExpandable, setIsExpandable ] = useState( false );
 	const [ isFloatingCollapseVisible, setIsFloatingCollapseVisible ] = useState( false );
@@ -139,6 +174,7 @@ export function FullFeedPost( {
 	const [ isContentActive, setIsContentActive ] = useState(
 		() => typeof IntersectionObserver === 'undefined'
 	);
+	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 	const articleElementRef = useRef< HTMLElement | null >( null );
 	const contentElementRef = useRef< HTMLDivElement | null >( null );
 	const expandActionsElementRef = useRef< HTMLDivElement | null >( null );
@@ -153,10 +189,6 @@ export function FullFeedPost( {
 		},
 		translate( 'Untitled post' )
 	);
-	const authorName = getAuthorName( post );
-	const postDate = post.date
-		? new Intl.DateTimeFormat( undefined, { dateStyle: 'medium' } ).format( new Date( post.date ) )
-		: null;
 	const postKey = getFullFeedPostKey( post );
 	const titleId = `full-feed-post-${ post.feed_ID || post.site_ID }-${
 		post.feed_item_ID || post.ID
@@ -339,6 +371,14 @@ export function FullFeedPost( {
 		showFullPost( { post: postForNavigation, comments: true } );
 	}, [ post, recordReaderTracksEvent ] );
 
+	const openSuggestedFollows = useCallback( () => {
+		setIsSuggestedFollowsModalOpen( true );
+	}, [] );
+
+	const closeSuggestedFollows = useCallback( () => {
+		setIsSuggestedFollowsModalOpen( false );
+	}, [] );
+
 	useEffect( () => {
 		const contentElement = contentElementRef.current;
 		if ( ! isContentCollapsed || ! contentElement ) {
@@ -392,6 +432,18 @@ export function FullFeedPost( {
 	const floatingCollapseLabel = translate( 'Collapse: %(title)s', {
 		args: { title: shortTitle },
 	} );
+	const collapseIconUrl =
+		getIconUrl( feedWithIcon?.site_icon ) ??
+		getIconUrl( feedWithIcon?.image ) ??
+		getIconUrl( site?.icon ) ??
+		getIconUrl( post.site_icon ) ??
+		post.author?.avatar_URL;
+	const renderCollapseIcon = () =>
+		collapseIconUrl ? (
+			<span className="full-feed-post__collapse-icon" aria-hidden="true">
+				<SiteIcon iconUrl={ collapseIconUrl } size={ 20 } imgSize={ 40 } />
+			</span>
+		) : null;
 	const fullPostContentClasses = {
 		'reader-full-post': true,
 		'is-reddit-post': post.is_reddit_post,
@@ -415,6 +467,7 @@ export function FullFeedPost( {
 							aria-controls={ contentId }
 							aria-expanded
 						>
+							{ renderCollapseIcon() }
 							<span className="full-feed-post__floating-collapse-label">
 								{ floatingCollapseLabel }
 							</span>
@@ -426,102 +479,113 @@ export function FullFeedPost( {
 
 	return (
 		<>
-			<article ref={ postRef } className="full-feed-post" aria-labelledby={ titleId }>
-				<Card>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<header className="full-feed-post__header">
-								<h2 className="full-feed-post__title" id={ titleId }>
-									<a href={ postUrl }>{ title }</a>
-								</h2>
-								<div className="full-feed-post__meta">
-									{ post.site_name && <span>{ post.site_name }</span> }
-									{ authorName && <span>{ authorName }</span> }
-									{ post.date && (
-										<a href={ postUrl }>
-											<time dateTime={ post.date }>{ postDate }</time>
-										</a>
-									) }
-								</div>
-							</header>
-							<div
-								id={ contentId }
-								ref={ contentElementRef }
-								className={ clsx( 'full-feed-post__content', fullPostContentClasses, {
-									'is-collapsed': isContentCollapsed,
-									'is-clickable': isContentCollapsed,
-									'is-content-inactive': ! isContentActive,
+			{ feedId && <QueryReaderFeed feedId={ feedId } /> }
+			{ ! isExternal && siteId && <QueryReaderSite siteId={ siteId } /> }
+			<article
+				ref={ postRef }
+				className="full-feed-post reader-post-card card"
+				aria-labelledby={ titleId }
+			>
+				<header className="full-feed-post__header">
+					<div className="full-feed-post__byline">
+						<PostByline
+							post={ post }
+							site={ site }
+							feed={ feedWithIcon }
+							showSiteName={ showSiteName }
+							showAvatar
+							showFollow
+							openSuggestedFollows={ openSuggestedFollows }
+							compact={ false }
+						/>
+					</div>
+					<h2 className="full-feed-post__title" id={ titleId }>
+						<a href={ postUrl }>{ title }</a>
+					</h2>
+				</header>
+				<div
+					id={ contentId }
+					ref={ contentElementRef }
+					className={ clsx( 'full-feed-post__content', fullPostContentClasses, {
+						'is-collapsed': isContentCollapsed,
+						'is-clickable': isContentCollapsed,
+						'is-content-inactive': ! isContentActive,
+					} ) }
+					role={ isContentActive ? 'region' : undefined }
+					aria-label={ isContentActive ? translate( 'Post content' ) : undefined }
+					aria-hidden={ isContentActive ? undefined : true }
+					style={
+						{
+							'--full-feed-post-preview-height': `${ inactiveContentHeight }px`,
+							'--full-feed-post-inactive-height': `${ inactiveContentHeight }px`,
+						} as CSSProperties
+					}
+				>
+					<ReaderFullPostContentShell
+						isActive={ isContentActive }
+						maxWidth={ readerContentWidth() }
+						post={ post }
+						siteName={ post.site_name }
+					/>
+					{ isContentCollapsed && <div className="full-feed-post__fade" /> }
+				</div>
+				{ isExpandable && (
+					<div
+						className="full-feed-post__expand-actions"
+						ref={ expandActionsElementRef }
+						role="group"
+						aria-label={ translate( 'Post expansion controls' ) }
+					>
+						{ isExpanded ? (
+							<Button
+								variant="secondary"
+								onClick={ collapsePost }
+								aria-controls={ contentId }
+								aria-expanded
+								aria-label={ translate( 'Collapse: %(title)s', {
+									args: { title: shortTitle },
 								} ) }
-								role={ isContentActive ? 'region' : undefined }
-								aria-label={ isContentActive ? translate( 'Post content' ) : undefined }
-								aria-hidden={ isContentActive ? undefined : true }
-								style={
-									{
-										'--full-feed-post-preview-height': `${ inactiveContentHeight }px`,
-										'--full-feed-post-inactive-height': `${ inactiveContentHeight }px`,
-									} as CSSProperties
-								}
 							>
-								<ReaderFullPostContentShell
-									isActive={ isContentActive }
-									maxWidth={ getFullFeedContentWidth() }
-									post={ post }
-									siteName={ post.site_name }
-								/>
-								{ isContentCollapsed && <div className="full-feed-post__fade" /> }
-							</div>
-							{ isExpandable && (
-								<div
-									className="full-feed-post__expand-actions"
-									ref={ expandActionsElementRef }
-									role="group"
-									aria-label={ translate( 'Post expansion controls' ) }
-								>
-									{ isExpanded ? (
-										<Button
-											variant="secondary"
-											onClick={ collapsePost }
-											aria-controls={ contentId }
-											aria-expanded
-											aria-label={ translate( 'Collapse: %(title)s', {
-												args: { title: shortTitle },
-											} ) }
-										>
-											{ translate( 'Collapse' ) }
-										</Button>
-									) : (
-										<Button
-											variant="primary"
-											onClick={ expandPost }
-											aria-controls={ contentId }
-											aria-expanded={ false }
-											aria-label={ translate( 'Read more: %(title)s', {
-												args: { title: shortTitle },
-											} ) }
-										>
-											{ translate( 'Read more' ) }
-										</Button>
-									) }
-								</div>
-							) }
-							<div
-								className="full-feed-post__engagement"
-								role="group"
-								aria-label={ translate( 'Actions for %(title)s', { args: { title } } ) }
+								{ renderCollapseIcon() }
+								{ translate( 'Collapse' ) }
+							</Button>
+						) : (
+							<Button
+								variant="secondary"
+								onClick={ expandPost }
+								aria-controls={ contentId }
+								aria-expanded={ false }
+								aria-label={ translate( 'Read more: %(title)s', {
+									args: { title: shortTitle },
+								} ) }
 							>
-								<ReaderPostActions
-									post={ post }
-									onCommentClick={ handleCommentClick }
-									commentsApiDisabled={ commentsApiDisabled }
-									className="full-feed-post__reader-actions"
-									likeContext="full-feed"
-									markLikedPostSeen={ false }
-									showFreshlyPressed={ false }
-								/>
-							</div>
-						</VStack>
-					</CardBody>
-				</Card>
+								{ translate( 'Read more' ) }
+							</Button>
+						) }
+					</div>
+				) }
+				<div
+					className="full-feed-post__engagement"
+					role="group"
+					aria-label={ translate( 'Actions for %(title)s', { args: { title } } ) }
+				>
+					<ReaderPostActions
+						post={ post }
+						site={ site }
+						onCommentClick={ handleCommentClick }
+						commentsApiDisabled={ commentsApiDisabled }
+						className="full-feed-post__reader-actions"
+						likeContext="full-feed"
+						markLikedPostSeen={ false }
+						showFreshlyPressed={ false }
+					/>
+				</div>
+				<ReaderSuggestedFollowsDialog
+					onClose={ closeSuggestedFollows }
+					siteId={ +( post.site_ID ?? 0 ) }
+					postId={ +( post.ID ?? 0 ) }
+					isVisible={ isSuggestedFollowsModalOpen }
+				/>
 			</article>
 			{ floatingCollapse }
 		</>

@@ -1,16 +1,9 @@
 @import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/variables';
 
 body.is-reader-page .full-feed.main,
 body.is-section-reader .full-feed.main {
 	max-width: 924px;
-}
-
-.full-feed {
-	.full-feed__header {
-		margin: 0 auto;
-		padding-inline: 16px;
-		width: 100%;
-	}
 }
 
 .full-feed__header-actions {
@@ -28,69 +21,48 @@ body.is-section-reader .full-feed.main {
 
 .full-feed__content {
 	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
 	margin: 0 auto;
 	padding-block: 0 48px;
-	padding-inline: 16px;
 	width: 100%;
-
-	@include break-small {
-		padding-inline: 24px;
-	}
 }
 
-.full-feed-post {
+// Reuse `.reader-post-card.card` chrome (background, padding, box-shadow,
+// border-radius) from the scrolling feed, and stack post-internal blocks with
+// the same spacing the card uses on its mobile / desktop padding tiers.
+.full-feed-post.reader-post-card.card {
 	content-visibility: auto;
-	contain-intrinsic-size: auto 1200px;
-
-	.components-card {
-		border-color: var( --color-neutral-10 );
-		border-radius: 4px;
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.04 );
-	}
-
-	.components-card__body {
-		padding: 24px;
-	}
-}
-
-.full-feed-post__header {
+	contain-intrinsic-size: auto 900px;
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 16px;
 }
 
 .full-feed-post__title {
-	font-size: 1.75rem;
-	font-weight: 500;
-	line-height: 1.25;
-	margin: 0;
+	clear: none;
+	color: var( --color-neutral-70 );
+	font-family: $sans;
+	font-size: $font-title-medium;
+	font-weight: 700;
+	line-height: 1.3;
+	margin: 12px 0 0;
+	max-width: 750px;
 
 	a {
-		color: var( --color-text );
+		color: inherit;
 		text-decoration: none;
 
 		&:hover,
 		&:focus {
 			color: var( --color-link );
-			text-decoration: underline;
 		}
 	}
 }
 
-.full-feed-post__meta {
-	color: var( --color-neutral-60 );
-	display: flex;
-	flex-wrap: wrap;
-	font-size: 0.875rem;
-	gap: 4px 12px;
-	line-height: 1.5;
-
-	span,
-	a {
-		color: inherit;
+.full-feed-post__byline {
+	// PostByline ships its own layout; this scopes Reader-card spacing under
+	// the full-feed post so the byline sits where Reader users expect it.
+	.reader-post-card__byline {
+		padding: 0;
 	}
 }
 
@@ -130,17 +102,18 @@ body.is-section-reader .full-feed.main {
 
 .full-feed-post__expand-actions {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
+
+	.components-button.is-secondary {
+		background: var( --color-surface );
+	}
 }
 
 .full-feed-post__engagement {
 	border-block-start: 1px solid var( --color-neutral-5 );
-	display: flex;
-	justify-content: center;
-	padding-block-start: 16px;
+	padding-block-start: 12px;
 
 	.reader-post-actions {
-		justify-content: center;
 		padding: 0;
 	}
 }
@@ -153,13 +126,12 @@ body.is-section-reader .full-feed.main {
 	pointer-events: none;
 	position: fixed;
 	transform: translateX( -50% );
-	width: min( 100% - 32px, 924px );
+	width: min( 100% - 32px, 768px );
 	z-index: 20;
 
 	.components-button.is-secondary {
 		background: var( --color-surface );
-		border-color: var( --color-neutral-20 );
-		box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.16 );
+		border-color: var( --color-neutral-10 );
 		max-width: min( 100%, 420px );
 		pointer-events: auto;
 
@@ -167,9 +139,14 @@ body.is-section-reader .full-feed.main {
 		&:focus,
 		&:active {
 			background: var( --color-surface );
-			border-color: var( --color-neutral-40 );
+			border-color: var( --color-neutral-20 );
 		}
 	}
+}
+
+.full-feed-post__collapse-icon {
+	display: inline-flex;
+	margin-inline-end: 8px;
 }
 
 .full-feed-post__floating-collapse-label {
@@ -180,18 +157,9 @@ body.is-section-reader .full-feed.main {
 }
 
 .full-feed__loading,
-.full-feed__error,
-.full-feed__pagination {
+.full-feed__end-of-list {
 	align-items: center;
 	display: flex;
 	justify-content: center;
 	padding: 16px;
-}
-
-.full-feed__error {
-	background: var( --color-surface );
-	border-radius: 4px;
-	border: 1px solid var( --color-error-10 );
-	flex-direction: column;
-	gap: 12px;
 }
