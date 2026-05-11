@@ -554,7 +554,7 @@ yarn test-client:watch client/reader/social
 
 When wiring up a second (Mastodon) or third social protocol, expect to:
 
-1. **Add a per-protocol shell** under `client/reader/<protocol>/` (e.g. `client/reader/mastodon/`) — routes, controller, account view, panels (timeline / profile / settings).
+1. **Add a per-protocol shell** under `client/reader/<protocol>/` (e.g. `client/reader/mastodon/`) — routes, controller, account view, panels (timeline / profile).
 2. **Add per-protocol fetchers + types + hooks** under `packages/api-core/src/reader-<protocol>/` and `packages/api-queries/src/reader-<protocol>.ts`. Mirror the ATmosphere shape: typed fetchers, error classifier, query keys, infinite-query factory + hook.
 3. **Reuse this directory's protocol-agnostic primitives directly:** `SocialProfileCard`, `SocialFeedList`, `PostCardLink`, `sanitizePostHtml`, `SocialAnalyticsProvider`. Don't duplicate.
 4. **Decide on the post card.** Either refactor `SocialPostCard` and the embed dispatcher to take a `SocialPost` shape with a Bluesky→`SocialPost` mapper and a Mastodon→`SocialPost` mapper, or fork into `BlueskyPostCard` / `MastodonPostCard` keeping shared subcomponents (`PostCardLink`, `PostCardCounts`, etc.). Pick after looking at concrete fixtures, not before.
@@ -567,7 +567,7 @@ Future-extraction candidates flagged for later PRs (currently in `client/reader/
 
 - `connect-form.tsx` — likely shareable with Mastodon's connect flow.
 - `profile-panel.tsx` (your-own-connection profile) — already uses `SocialProfileCard` (rich variant); the panel shell could move shared-side once Mastodon's profile shape is fully aligned.
-- `atmosphere-navigation.tsx` — the Timeline / Profile / Settings tab structure likely ports.
+- `atmosphere-navigation.tsx` — the Timeline / Profile tab structure likely ports.
 
 `author-profile-panel.tsx` was extracted to this directory as
 `SocialAuthorProfilePanel` in slice 6 — both protocols already wrap the
