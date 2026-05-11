@@ -1,11 +1,9 @@
-import type { SourceFilter } from '../../types';
-
-type SourceIconSource = Exclude< SourceFilter, 'all' >;
+import type { Source } from '../../types';
 
 interface SourceIconProps {
 	className?: string;
 	label?: string;
-	source: SourceIconSource;
+	source: Source;
 }
 
 export default function SourceIcon( { className, label, source }: SourceIconProps ) {
@@ -23,8 +21,10 @@ export default function SourceIcon( { className, label, source }: SourceIconProp
 	);
 }
 
-function getSourceIcon( source: SourceIconSource ) {
+function getSourceIcon( source: Source ) {
 	switch ( source ) {
+		case 'myposts':
+			return <PostsIcon />;
 		case 'reader':
 			return <WordPressIcon />;
 		case 'hn':
@@ -34,6 +34,20 @@ function getSourceIcon( source: SourceIconSource ) {
 		case 'googlenews':
 			return <GoogleNewsIcon />;
 	}
+}
+
+function PostsIcon() {
+	return (
+		<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+			<path className="is-sheet" d="M6 3.5h8.8L19 7.7v12.8H6v-17z" />
+			<path
+				className="is-border"
+				d="M14.2 5.1H7.5v13.8h10V8.4h-3.3V5.1zm1.5.9 1.1 1.1h-1.1V6zM6 3.5h8.8L19 7.7v12.8H6v-17z"
+				fillRule="evenodd"
+			/>
+			<path className="is-line" d="M9 10.4h6v1.3H9v-1.3zm0 3h6v1.3H9v-1.3z" />
+		</svg>
+	);
 }
 
 function WordPressIcon() {

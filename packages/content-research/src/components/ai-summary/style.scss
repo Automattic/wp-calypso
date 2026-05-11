@@ -25,7 +25,13 @@
 		gap: 10px;
 		padding: 20px 16px;
 		font-size: 13px;
+		line-height: 18px;
 		color: #646970;
+
+		.components-spinner {
+			flex: 0 0 18px;
+			margin: 0;
+		}
 	}
 
 	&__footer {

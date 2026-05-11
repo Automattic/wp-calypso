@@ -3,7 +3,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { trackContentResearchResultClick } from '../../utils/tracking';
 import SourceIcon from '../source-icon';
-import type { ResearchResult } from '../../types';
+import type { ResearchResult, Source } from '../../types';
 
 interface ResultCardProps {
 	result: ResearchResult;
@@ -11,18 +11,18 @@ interface ResultCardProps {
 	onToggleSelect: () => void;
 }
 
-function getSourceLabel( source: string ): string {
+function getSourceLabel( source: Source ): string {
 	switch ( source ) {
 		case 'hn':
-			return 'Hacker News';
+			return __( 'Hacker News', 'content-research' );
 		case 'reader':
-			return 'WordPress.com';
+			return __( 'WordPress.com', 'content-research' );
 		case 'googlenews':
-			return 'Google News';
+			return __( 'Google News', 'content-research' );
 		case 'polymarket':
-			return 'Polymarket';
-		default:
-			return source;
+			return __( 'Polymarket', 'content-research' );
+		case 'myposts':
+			return __( 'Posts', 'content-research' );
 	}
 }
 

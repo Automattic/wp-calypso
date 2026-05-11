@@ -3,8 +3,10 @@ export interface EngagementData {
 	comments?: number;
 }
 
+export type Source = 'hn' | 'polymarket' | 'reader' | 'googlenews' | 'myposts';
+
 export interface ResearchResult {
-	source: 'hn' | 'polymarket' | 'reader' | 'googlenews';
+	source: Source;
 	title: string;
 	url: string;
 	excerpt?: string;
@@ -29,5 +31,3 @@ export interface ResearchSummary {
 	key_findings: string[];
 	suggested_angles: string[];
 }
-
-export type SourceFilter = 'all' | 'hn' | 'polymarket' | 'reader' | 'googlenews';
