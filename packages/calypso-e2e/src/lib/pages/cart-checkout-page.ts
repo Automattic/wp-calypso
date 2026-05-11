@@ -1,7 +1,8 @@
-import { Frame, Page } from 'playwright';
+import { expect } from 'playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
+import type { Frame, Page } from 'playwright';
 
 const selectors = {
 	// Modal
@@ -49,6 +50,7 @@ const selectors = {
 
 	// Payment field
 	cardholderName: 'input[id="cardholder-name"]',
+	cardPaymentRadio: 'input#card[type="radio"]',
 	cardNumberFrame: 'iframe[title="Secure card number input frame"]',
 	cardNumberInput: 'input[data-elements-stable-field-name="cardNumber"]',
 	cardExpiryFrame: 'iframe[title="Secure expiration date input frame"]',
@@ -313,13 +315,14 @@ export class CartCheckoutPage {
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
 		// Select the Credit or debit card payment method to expand the fields.
 		// On mobile the sticky Pay CTA and the auto-selected Google Pay tile sit
-		// over the card label, so a real click can't reach it. Wait for the
-		// labelled, enabled card option to appear, then dispatch the click on
-		// its underlying radio input.
-		await this.page
-			.locator( 'label[for="card"]:has-text("credit or debit card"):not([disabled])' )
-			.waitFor( { state: 'attached', timeout: 10 * 1000 } );
-		await this.page.locator( 'input#card[type="radio"]' ).dispatchEvent( 'click' );
+		// over the card label, so a real click can't reach it. Dispatch the
+		// click on the underlying radio input, then wait for the form fields
+		// that prove the payment method is ready.
+		const cardPaymentRadio = this.page.locator( selectors.cardPaymentRadio );
+		await cardPaymentRadio.waitFor( { state: 'attached', timeout: 15 * 1000 } );
+		await cardPaymentRadio.dispatchEvent( 'click' );
+		await expect( cardPaymentRadio ).toHaveJSProperty( 'checked', true );
+		await this.validatePaymentForm();
 
 		// Begin filling in the card details from
 		// top to bottom.
