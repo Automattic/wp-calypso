@@ -27,11 +27,46 @@ jest.mock( 'calypso/blocks/site-icon', () => ( {
 } ) );
 
 const blogs: CuratedBlog[] = [
-	{ feed_ID: 1, site_ID: 11, site_URL: 'https://a.example', site_name: 'A' },
-	{ feed_ID: 2, site_ID: 12, site_URL: 'https://b.example', site_name: 'B' },
-	{ feed_ID: 3, site_ID: 13, site_URL: 'https://c.example', site_name: 'C' },
-	{ feed_ID: 4, site_ID: 14, site_URL: 'https://d.example', site_name: 'D' },
-	{ feed_ID: 5, site_ID: 15, site_URL: 'https://e.example', site_name: 'E' },
+	{
+		feed_ID: 1,
+		site_ID: 11,
+		site_URL: 'https://a.example',
+		site_name: 'A',
+		feed_URL: 'https://a.example/feed',
+		has_icon: true,
+	},
+	{
+		feed_ID: 2,
+		site_ID: 12,
+		site_URL: 'https://b.example',
+		site_name: 'B',
+		feed_URL: 'https://b.example/feed',
+		has_icon: true,
+	},
+	{
+		feed_ID: 3,
+		site_ID: 13,
+		site_URL: 'https://c.example',
+		site_name: 'C',
+		feed_URL: 'https://c.example/feed',
+		has_icon: true,
+	},
+	{
+		feed_ID: 4,
+		site_ID: 14,
+		site_URL: 'https://d.example',
+		site_name: 'D',
+		feed_URL: 'https://d.example/feed',
+		has_icon: true,
+	},
+	{
+		feed_ID: 5,
+		site_ID: 15,
+		site_URL: 'https://e.example',
+		site_name: 'E',
+		feed_URL: 'https://e.example/feed',
+		has_icon: true,
+	},
 ];
 
 const defaultProps = {
@@ -63,6 +98,60 @@ describe( 'TopicGroupCard', () => {
 
 		// The mocked SiteIcon emits one node per blog avatar that we render.
 		expect( screen.getAllByTestId( 'site-icon' ) ).toHaveLength( 3 );
+		expect( screen.getByText( '+2' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the first three pack blogs for avatars (pack order from getPackBlogs puts icons first)', () => {
+		// Same ordering `getPackBlogs` applies after unbiased selection.
+		const packOrdered: CuratedBlog[] = [
+			{
+				feed_ID: 2,
+				site_ID: 12,
+				site_URL: 'https://has-icon-a.example',
+				site_name: 'HasIconA',
+				feed_URL: 'https://has-icon-a.example/feed',
+				has_icon: true,
+			},
+			{
+				feed_ID: 4,
+				site_ID: 14,
+				site_URL: 'https://has-icon-b.example',
+				site_name: 'HasIconB',
+				feed_URL: 'https://has-icon-b.example/feed',
+				has_icon: true,
+			},
+			{
+				feed_ID: 1,
+				site_ID: 11,
+				site_URL: 'https://no-icon-first.example',
+				site_name: 'NoIconFirst',
+				feed_URL: 'https://no-icon-first.example/feed',
+				has_icon: false,
+			},
+			{
+				feed_ID: 3,
+				site_ID: 13,
+				site_URL: 'https://no-icon-second.example',
+				site_name: 'NoIconSecond',
+				feed_URL: 'https://no-icon-second.example/feed',
+				has_icon: false,
+			},
+			{
+				feed_ID: 5,
+				site_ID: 15,
+				site_URL: 'https://no-icon-third.example',
+				site_name: 'NoIconThird',
+				feed_URL: 'https://no-icon-third.example/feed',
+				has_icon: false,
+			},
+		];
+
+		renderWithProvider( <TopicGroupCard { ...defaultProps } blogs={ packOrdered } /> );
+
+		const labels = screen
+			.getAllByTestId( 'site-icon' )
+			.map( ( el ) => el.getAttribute( 'aria-label' ) );
+		expect( labels ).toEqual( [ 'HasIconA', 'HasIconB', 'NoIconFirst' ] );
 		expect( screen.getByText( '+2' ) ).toBeInTheDocument();
 	} );
 

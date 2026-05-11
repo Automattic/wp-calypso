@@ -11,6 +11,7 @@ import {
 	INSERT_BLOCK_TOOL_NAME,
 	INSERT_BLOCKS_TOOL_NAME,
 	MOVE_BLOCK_TOOL_NAME,
+	REMOVE_ALL_BLOCKS_TOOL_NAME,
 	REMOVE_BLOCK_TOOL_NAME,
 	REPLACE_BLOCK_TOOL_NAME,
 	SELECT_BLOCK_TOOL_NAME,
@@ -100,6 +101,16 @@ export function describeToolCall(
 		}
 		case REMOVE_BLOCK_TOOL_NAME:
 			return `${ errorPrefix }Removed block`;
+		case REMOVE_ALL_BLOCKS_TOOL_NAME: {
+			const count =
+				isObjectResult &&
+				typeof ( result as { removed_count?: unknown } ).removed_count === 'number'
+					? ( result as { removed_count: number } ).removed_count
+					: null;
+			return count === 1
+				? `${ errorPrefix }Removed 1 block`
+				: `${ errorPrefix }Removed ${ count ?? 'all' } blocks`;
+		}
 		case MOVE_BLOCK_TOOL_NAME: {
 			const dir = typeof args.direction === 'string' ? args.direction : null;
 			if ( dir === 'up' ) {

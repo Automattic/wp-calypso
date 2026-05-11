@@ -7,7 +7,7 @@ import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AtmosphereAccountView } from '../atmosphere-account-view';
-import { PROFILE_TAB, TIMELINE_TAB } from '../helper';
+import { NOTIFICATIONS_TAB, PROFILE_TAB, TIMELINE_TAB } from '../helper';
 import type React from 'react';
 
 jest.mock(
@@ -129,6 +129,19 @@ describe( 'AtmosphereAccountView', () => {
 		const matches = await screen.findAllByText( /a\.bsky\.social/ );
 		expect( matches.length ).toBeGreaterThan( 0 );
 		matches.forEach( ( match ) => expect( match ).toBeVisible() );
+	} );
+
+	it( 'renders the notifications tab when asked', async () => {
+		mockConnections();
+		mockConnectionDetails( 7 );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `${ listUrl }/7/notifications` )
+			.query( true )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+		renderWithProvider( <AtmosphereAccountView connectionId={ 7 } tab={ NOTIFICATIONS_TAB } />, {
+			queryClient: makeClient(),
+		} );
+		expect( await screen.findByText( /no notifications yet/i ) ).toBeVisible();
 	} );
 
 	it( 'renders the section title and the handle-aware subtitle in the header', async () => {

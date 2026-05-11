@@ -11,13 +11,11 @@ import { SiteIcon } from 'calypso/blocks/site-icon';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { getFeedUrl } from 'calypso/reader/get-helpers';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding-rsm/constants';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
 import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { nextSelectedSite } from './selection';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
@@ -84,27 +82,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	const selectedFeed = useSelector( ( state: object ) =>
 		selectedSite ? getFeed( state, selectedSite.feed_ID ) : null
 	) as { site_icon?: string; image?: string; feed_URL?: string; URL?: string } | null;
-	// Pull the WP.com Reader site record once `<QueryReaderSite>` has populated
-	// the entry. Curated entries with `site_ID: 0` never produce one. For
-	// WP.com sites the record exposes the canonical `feed_URL` which
-	// `getFeedUrl` prefers over the feed object's own URL.
-	const selectedReduxSite = useSelector( ( state: object ) =>
-		selectedSite && selectedSite.site_ID > 0 ? getSite( state, selectedSite.site_ID ) : null
-	) as { feed_URL?: string } | null;
 	const selectedFeedIconUrl = selectedFeed?.site_icon ?? selectedFeed?.image;
-	// Subscribing via the curated `site_URL` (often a bare hostname like `design-milk.com`)
-	// can fail with `invalid_feed` for non-WP.com sites because the WP.com follow API has to
-	// auto-discover a feed and not all sites resolve. Mirror the
-	// `getFeedUrl({ feed, site })` derivation that the list-item path uses internally
-	// (precedence: `site.feed_URL` → `feed.feed_URL || feed.URL` → bare `site_URL`)
-	// so both subscribe paths agree on the URL the follow API ends up with.
-	const selectedFollowUrl =
-		getFeedUrl( {
-			feed: selectedFeed ?? undefined,
-			site: selectedReduxSite ?? undefined,
-		} ) ||
-		selectedSite?.site_URL ||
-		'';
+	// From `CardData.feed_URL` (see `useSubscribeRecommendations`). That value usually prefers a
+	// real feed URL (curated backfill, cards payload, `readFeedQuery`) over subscribing by site
+	// alone, but the hook can still fall back to `site_URL` when no feed URL is resolved—so this
+	// is best-effort, not a guarantee that the string is always an RSS endpoint.
+	const selectedFollowUrl = selectedSite?.feed_URL ?? '';
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
@@ -234,14 +217,10 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 											feedId={ site.feed_ID }
 											siteId={ site.site_ID }
 											site={ site }
-											// Intentionally not passing `url`: curated entries
-											// only carry a bare hostname (e.g. `design-milk.com`),
-											// and overriding the prop here would force the follow
-											// API to auto-discover a feed from that hostname,
-											// which fails for many non-WP.com sites with
-											// `invalid_feed`. Letting the list item fall back to
-											// `getFeedUrl({feed, site})` uses the canonical
-											// `feed_URL` from loaded feed metadata instead.
+											url={ site.feed_URL }
+											// Pass the canonical feed URL from onboarding data so
+											// the list item does not derive subscribe URL from
+											// `site_URL` or wait on Redux `getFeedUrl` alone.
 											showLastUpdatedDate={ false }
 											showNotificationSettings={ false }
 											showFollowedOnDate={ false }

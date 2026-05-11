@@ -98,6 +98,7 @@ export interface Site {
 	was_hosting_trial: boolean;
 	was_upgraded_from_trial: boolean;
 	is_garden: boolean;
+	is_multisite?: boolean;
 	garden_name: string | null;
 	garden_partner: string | null;
 	garden_is_provisioned: boolean | null;

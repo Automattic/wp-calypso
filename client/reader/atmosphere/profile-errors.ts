@@ -42,3 +42,23 @@ export function errorMessage(
 			return translate( 'Something went wrong.' );
 	}
 }
+
+/**
+ * Map an AtmosphereError kind to a follow / unfollow user-facing message.
+ * Most kinds are semantically identical to a profile-load failure, so we
+ * delegate to the shared `errorMessage`. The exception is `not_found`:
+ * the shared copy is profile-load-shaped and would mislead the user when
+ * an actor disappears between the page load and the click.
+ */
+export function followErrorMessage(
+	error: AtmosphereError,
+	action: 'follow' | 'unfollow',
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult {
+	if ( error.kind === 'not_found' ) {
+		return action === 'follow'
+			? translate( 'Couldn’t follow this account.' )
+			: translate( 'Couldn’t unfollow this account.' );
+	}
+	return errorMessage( error, translate );
+}

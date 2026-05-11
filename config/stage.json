@@ -132,7 +132,7 @@
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": false,
 		"push-notifications": true,
-		"reader/achievements": false,
+		"reader/achievements": true,
 		"reader/social": true,
 		"reader/fediverse": false,
 		"reader/full-errors": false,

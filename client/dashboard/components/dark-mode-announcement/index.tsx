@@ -1,5 +1,4 @@
 import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -8,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { useColorScheme } from '../../app/color-scheme';
 import { useAppContext } from '../../app/context';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { ButtonStack } from '../button-stack';
 import ComponentViewTracker from '../component-view-tracker';
 import Notice from '../notice';
@@ -16,18 +16,16 @@ const DISMISSED_PREFERENCE = 'hosting-dashboard-dark-mode-announcement-dismissed
 
 export function useShouldShowDarkModeAnnouncement() {
 	const config = useAppContext();
-	const { data: dashboardOptIn } = useSuspenseQuery(
-		userPreferenceQuery( 'hosting-dashboard-opt-in' )
-	);
 	const { data: isDismissedPersisted } = useSuspenseQuery(
 		userPreferenceQuery( DISMISSED_PREFERENCE )
 	);
-	const isDashboardEnrolled =
-		dashboardOptIn?.value === 'opt-in' ||
-		dashboardOptIn?.value === 'forced-opt-in' ||
-		isEnabled( 'dashboard/forced-opt-in' );
 
-	return config.optIn && config.supports.darkMode && isDashboardEnrolled && ! isDismissedPersisted;
+	return (
+		config.supports.darkMode &&
+		config.supports.colorScheme &&
+		! isDashboardBackport() &&
+		! isDismissedPersisted
+	);
 }
 
 function DarkModeAnnouncementContent( { tracksContext }: { tracksContext: string } ) {
