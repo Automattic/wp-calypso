@@ -2,12 +2,11 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+// Shared content width: the empty state and the submission banner above it line up at this width.
+$benchmarks-content-max-width: 900px;
+
 .benchmarks-quarter-selector {
 	min-inline-size: 140px;
-}
-
-.benchmarks-missing-submission-notice {
-	margin-block-start: 24px;
 }
 
 .benchmarks-form {
@@ -61,7 +60,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 24px;
-	max-inline-size: 900px;
+	max-inline-size: $benchmarks-content-max-width;
 	margin-inline: auto;
 	padding-block-start: 48px;
 }
@@ -145,7 +144,9 @@
 .benchmarks-submission-prompt {
 	background-color: var(--color-warning-0);
 	border-color: var(--color-warning-5);
+	max-inline-size: $benchmarks-content-max-width;
 	margin-block-start: 8px;
+	margin-inline: auto;
 
 	@include break-large {
 		align-items: center;

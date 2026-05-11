@@ -1,5 +1,4 @@
-import { Notice } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -15,9 +14,9 @@ import useFetchAgencyBenchmark from '../../hooks/use-fetch-agency-benchmark';
 import useFetchAgencyBenchmarksList from '../../hooks/use-fetch-agency-benchmarks-list';
 import useFetchBenchmarksConfig from '../../hooks/use-fetch-benchmarks-config';
 import { enumerateQuarters } from '../../lib/enumerate-quarters';
-import { formatQuarterLong } from '../../lib/format-quarter';
 import BenchmarksEmptyState from './empty-state';
 import HowToReadCard from './how-to-read-card';
+import BenchmarksMissingQuarterState from './missing-quarter-state';
 import PeerComparisonCard from './peer-comparison-card';
 import QuarterSelector from './quarter-selector';
 import BenchmarkStatsGrid from './stats-grid';
@@ -43,8 +42,6 @@ function BenchmarksOverviewContent( { earliest, latest, title }: ContentProps ) 
 		[ earliest, latest ]
 	);
 	const activeQuarter = selectedQuarter ?? latest;
-	const isActiveQuarterLatest =
-		activeQuarter.quarter === latest.quarter && activeQuarter.year === latest.year;
 
 	const { data: activeSubmission, isLoading: isActiveSubmissionLoading } = useFetchAgencyBenchmark(
 		activeQuarter.quarter,
@@ -54,17 +51,12 @@ function BenchmarksOverviewContent( { earliest, latest, title }: ContentProps ) 
 
 	const hasSubmissions = !! submissions && submissions.length > 0;
 	const hasNoSubmissions = ! isListLoading && submissions?.length === 0;
-	const submittedForLatest = !! submissions?.some(
-		( s ) => s.quarter === latest.quarter && s.year === latest.year
-	);
-	// Banner is a "you missed a quarter" nudge for the current reporting quarter; only
-	// meaningful for agencies that have submitted at least once before.
-	const showBanner = ! isListLoading && hasSubmissions && ! submittedForLatest;
 	const showQuarterSelector = hasSubmissions && quarterOptions.length > 1;
-	// When the agency picked a past quarter it never submitted, there is nothing to show; the
-	// current reporting quarter is already covered by the submission banner above.
-	const showMissingSubmissionNotice =
-		hasSubmissions && ! isActiveSubmissionLoading && ! activeSubmission && ! isActiveQuarterLatest;
+	const isContentReady = ! isListLoading && ! isActiveSubmissionLoading;
+	const showEmptyState = isContentReady && ! activeSubmission;
+	// Returning agencies get a "submit this quarter" nudge whenever the quarter they're viewing
+	// has no submission; brand-new agencies see the empty-state CTA instead.
+	const showBanner = isContentReady && hasSubmissions && ! activeSubmission;
 
 	const handleQuarterChange = ( quarter: Quarter ) => {
 		setSelectedQuarter( quarter );
@@ -94,49 +86,33 @@ function BenchmarksOverviewContent( { earliest, latest, title }: ContentProps ) 
 				</LayoutHeader>
 			</LayoutTop>
 			<LayoutBody>
-				{ hasNoSubmissions ? (
-					<BenchmarksEmptyState onSubmitClick={ () => setIsModalOpen( true ) } />
-				) : (
+				{ showBanner && (
+					<SubmissionBanner
+						quarter={ activeQuarter.quarter }
+						year={ activeQuarter.year }
+						onSubmitClick={ () => setIsModalOpen( true ) }
+					/>
+				) }
+				{ isContentReady && activeSubmission && (
 					<>
-						{ showBanner && (
-							<SubmissionBanner
-								quarter={ latest.quarter }
-								year={ latest.year }
-								onSubmitClick={ () => setIsModalOpen( true ) }
-							/>
-						) }
 						<HowToReadCard />
-						{ showMissingSubmissionNotice ? (
-							<Notice
-								className="benchmarks-missing-submission-notice"
-								status="info"
-								isDismissible={ false }
-							>
-								{ sprintf(
-									/* translators: %s: quarter label, e.g. "Q3 2024". */
-									__( 'Your agency didn’t submit benchmarks for %s.' ),
-									formatQuarterLong( activeQuarter )
-								) }
-							</Notice>
-						) : (
-							<>
-								<BenchmarkStatsGrid quarter={ activeQuarter.quarter } year={ activeQuarter.year } />
-								{ activeSubmission && (
-									<PeerComparisonCard
-										quarter={ activeQuarter.quarter }
-										year={ activeQuarter.year }
-										ownSubmission={ activeSubmission }
-									/>
-								) }
-							</>
-						) }
+						<BenchmarkStatsGrid quarter={ activeQuarter.quarter } year={ activeQuarter.year } />
+						<PeerComparisonCard
+							quarter={ activeQuarter.quarter }
+							year={ activeQuarter.year }
+							ownSubmission={ activeSubmission }
+						/>
 					</>
 				) }
+				{ showEmptyState && hasNoSubmissions && (
+					<BenchmarksEmptyState onSubmitClick={ () => setIsModalOpen( true ) } />
+				) }
+				{ showEmptyState && ! hasNoSubmissions && <BenchmarksMissingQuarterState /> }
 			</LayoutBody>
 			{ isModalOpen && (
 				<SubmissionModal
-					quarter={ latest.quarter }
-					year={ latest.year }
+					quarter={ activeQuarter.quarter }
+					year={ activeQuarter.year }
 					onClose={ () => setIsModalOpen( false ) }
 				/>
 			) }
