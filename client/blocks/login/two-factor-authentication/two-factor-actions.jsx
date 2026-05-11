@@ -11,8 +11,10 @@ import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendSmsCode } from 'calypso/state/login/actions';
-import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 import './two-factor-actions.scss';
 
@@ -27,6 +29,9 @@ class TwoFactorActions extends Component {
 		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
+		currentQuery: PropTypes.object,
+		locale: PropTypes.string,
+		redirectTo: PropTypes.string,
 	};
 
 	sendSmsCode = ( event ) => {
@@ -68,7 +73,16 @@ class TwoFactorActions extends Component {
 	handleSwitchToAnotherMethod = ( event ) => {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_from_webauthn_fallback_click' );
-		page( login( {} ) );
+		const { currentQuery, locale, oauth2Client, redirectTo } = this.props;
+		page(
+			login( {
+				locale,
+				oauth2ClientId: oauth2Client?.id,
+				redirectTo,
+				from: currentQuery?.from,
+				signupUrl: currentQuery?.signup_url,
+			} )
+		);
 	};
 
 	render() {
@@ -178,6 +192,9 @@ export default connect(
 			isBackupCodeSupported: isTwoFactorAuthTypeSupported( state, 'backup' ),
 			isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 			isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
+			currentQuery: getCurrentQueryArguments( state ),
+			locale: getCurrentLocaleSlug( state ),
+			redirectTo: getRedirectToOriginal( state ),
 		};
 	},
 	{
