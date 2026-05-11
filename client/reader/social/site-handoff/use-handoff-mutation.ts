@@ -58,9 +58,20 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 		// Open the tab synchronously inside the click's user-gesture window so
 		// popup blockers don't reject the later navigation. We point it at
 		// about:blank now and redirect it to the editor URL once the draft
-		// saves. If the user has popups blocked entirely, `pending` is null
-		// and we fall back to the success-notice retry button.
-		const pending = window.open( 'about:blank', '_blank', 'noopener,noreferrer' );
+		// saves. We can't pass 'noopener,noreferrer' here — that makes
+		// `window.open` return null and leaves us with no handle to redirect.
+		// Instead we sever `opener` manually right after, which gives us the
+		// same protection (the editor tab can't reach back into Reader). If
+		// the user has popups blocked entirely, `pending` is null and we fall
+		// back to the success-notice retry button.
+		const pending = window.open( 'about:blank', '_blank' );
+		if ( pending ) {
+			try {
+				pending.opener = null;
+			} catch {
+				// Some browsers throw on cross-origin opener writes — ignore.
+			}
+		}
 
 		mutate( { siteId: site.ID, content } satisfies SaveDraftMutationVariables, {
 			onSuccess: ( data: SaveDraftMutationResult ) => {

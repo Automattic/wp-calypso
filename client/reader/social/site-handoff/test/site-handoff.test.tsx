@@ -128,7 +128,7 @@ describe( 'SiteHandoff — click', () => {
 
 		await user.click( screen.getByRole( 'button', { name: /Move to editor/i } ) );
 
-		expect( openSpy ).toHaveBeenCalledWith( 'about:blank', '_blank', 'noopener,noreferrer' );
+		expect( openSpy ).toHaveBeenCalledWith( 'about:blank', '_blank' );
 
 		await waitFor( () =>
 			expect( fakeWindow.location.href ).toBe(
