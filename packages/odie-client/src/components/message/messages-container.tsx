@@ -14,9 +14,7 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import getMostRecentOpenLiveInteraction, {
-	hasReachedConversationLimit,
-} from '../notices/get-most-recent-open-live-interaction';
+import { useOpenLiveInteractions } from '../notices/use-open-interaction-status-map';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -44,7 +42,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
-	const alreadyHasActiveZendeskChatId = getMostRecentOpenLiveInteraction();
+	const { mostRecentId: alreadyHasActiveZendeskChatId, hasReachedLimit } =
+		useOpenLiveInteractions();
 
 	useZendeskMessageListener();
 	const isScrolling = useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
@@ -89,7 +88,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			}
 
 			// Don't create a new conversation if the user has reached the limit.
-			if ( hasReachedConversationLimit() ) {
+			if ( hasReachedLimit ) {
 				return;
 			}
 

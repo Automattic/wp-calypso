@@ -16,9 +16,7 @@ import {
 	getIsLastBotMessage,
 	getIsErrorMessage,
 } from '../../utils';
-import getMostRecentOpenLiveInteraction, {
-	hasReachedConversationLimit,
-} from '../notices/get-most-recent-open-live-interaction';
+import { useOpenLiveInteractions } from '../notices/use-open-interaction-status-map';
 import BotMessageActions from './bot-message-actions';
 import CustomALink from './custom-a-link';
 import { GetSupport } from './get-support';
@@ -82,7 +80,7 @@ export const UserMessage = ( {
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const isRequestingHumanSupport = getIsRequestingHumanSupport( message );
 	const isLastBotMessage = getIsLastBotMessage( chat, message );
-	const hasRecentOpenConversation = getMostRecentOpenLiveInteraction();
+	const { mostRecentId: hasRecentOpenConversation, hasReachedLimit } = useOpenLiveInteractions();
 	const isErrorMessage = getIsErrorMessage( message );
 	const isMessageShowingDisclaimer =
 		message.context?.question_tags?.inquiry_type !== 'request-for-human-support';
@@ -99,7 +97,7 @@ export const UserMessage = ( {
 			return '';
 		}
 
-		if ( hasReachedConversationLimit() ) {
+		if ( hasReachedLimit ) {
 			return getConversationLimitReachedMessage().content;
 		}
 

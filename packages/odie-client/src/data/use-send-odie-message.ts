@@ -5,9 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
-import getMostRecentOpenLiveInteraction, {
-	hasReachedConversationLimit,
-} from '../components/notices/get-most-recent-open-live-interaction';
+import { useOpenLiveInteractions } from '../components/notices/use-open-interaction-status-map';
 import {
 	getOdieRateLimitMessage,
 	getOdieEmailFallbackMessage,
@@ -168,6 +166,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 	const hasTriedToEscalateToSupport = hasRecentEscalationAttempt( chat );
 
+	const {
+		mostRecentId: warnAboutExistingConversationId,
+		hasReachedLimit: hasReachedConversationLimitValue,
+	} = useOpenLiveInteractions();
+
 	/*
 		Adds a message to the chat.
 		If the message is a request for human support, it will escalate the chat to human support, if eligible.
@@ -182,11 +185,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		props?: Partial< Chat >;
 		isFromError: boolean;
 	} ) => {
-		const warnAboutExistingConversation = getMostRecentOpenLiveInteraction();
+		const warnAboutExistingConversation = warnAboutExistingConversationId;
 
 		if ( ! Array.isArray( message ) ) {
 			if ( getIsRequestingHumanSupport( message ) ) {
-				if ( hasReachedConversationLimit() ) {
+				if ( hasReachedConversationLimitValue ) {
 					setChat( ( prevChat ) => ( {
 						...prevChat,
 						...props,

@@ -1,7 +1,7 @@
 import { useUpdateZendeskUserFields, type ZendeskConversation } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Smooch from 'smooch';
-import { hasReachedConversationLimit } from '../components/notices/get-most-recent-open-live-interaction';
+import { useOpenLiveInteractions } from '../components/notices/use-open-interaction-status-map';
 import {
 	getErrorTryAgainLaterMessage,
 	getOdieTransferMessages,
@@ -29,6 +29,7 @@ export const useCreateZendeskConversation = () => {
 	const chatId = chat.odieId;
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { hasReachedLimit } = useOpenLiveInteractions();
 
 	const getErrorMessage = ( error: unknown ) =>
 		error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error';
@@ -53,7 +54,7 @@ export const useCreateZendeskConversation = () => {
 			return chat.conversationId || '';
 		}
 
-		if ( hasReachedConversationLimit() ) {
+		if ( hasReachedLimit ) {
 			trackEvent( 'conversation_limit_reached', {
 				created_from: createdFrom,
 			} );
