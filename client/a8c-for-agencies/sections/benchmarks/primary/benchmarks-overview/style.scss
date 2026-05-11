@@ -31,6 +31,12 @@ $benchmarks-content-max-width: 900px;
 	margin-block: 0;
 }
 
+// "AI use cases" sits right after "AI tools used" — they're tightly related, so pull it
+// closer than the section's default 24px row gap.
+.benchmarks-form__checkbox-group + .benchmarks-form__checkbox-group {
+	margin-block-start: -12px;
+}
+
 .benchmarks-form__checkbox-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -41,19 +47,6 @@ $benchmarks-content-max-width: 900px;
 .benchmarks-form__required-information {
 	@include body-medium;
 	color: var(--color-neutral-50);
-	margin-block-start: -32px;
-}
-
-.benchmarks-form__footer {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-	gap: 8px;
-	margin-block-start: -16px;
-
-	@include breakpoint-deprecated("<660px") {
-		flex-direction: column;
-	}
 }
 
 .benchmarks-empty-state {
@@ -163,8 +156,22 @@ $benchmarks-content-max-width: 900px;
 
 .benchmarks-submission-modal .benchmarks-form {
 	padding-block-start: 0;
+	gap: 24px;
 }
 
+// The submission form is always rendered headerless in the modal, so its (empty) form
+// heading is hidden rather than left taking up vertical space.
 .benchmarks-submission-modal .a4a-form__heading {
-	margin-block-end: 16px;
+	display: none;
+}
+
+// FormFooter adds its own top margin on top of the form's flex gap; drop it so the actions
+// row sits the same distance below the last section as the sections sit from one another.
+.benchmarks-submission-modal .a4a-form__footer {
+	margin-block-start: 0;
+}
+
+// Trim the extra padding below the last field so it doesn't leave a big gap before the card edge.
+.benchmarks-submission-modal .a4a-form__section-body {
+	padding-block-end: 0;
 }

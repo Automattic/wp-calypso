@@ -3,6 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
+import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -214,7 +215,6 @@ export default function BenchmarksForm( { quarter, year, hideHeader, onSubmitSuc
 							year
 					  )
 			}
-			description={ __( 'All fields are anonymized in peer benchmarks.' ) }
 		>
 			<FormSection title={ __( 'Business performance' ) }>
 				<div className="benchmarks-form__row">
@@ -310,15 +310,14 @@ export default function BenchmarksForm( { quarter, year, hideHeader, onSubmitSuc
 				</FormFieldset>
 			</FormSection>
 
-			<div className="benchmarks-form__required-information">
-				{ __( '* Indicates a required field' ) }
-			</div>
-
-			<div className="benchmarks-form__footer">
+			<FormFooter>
+				<span className="benchmarks-form__required-information">
+					{ __( '* Indicates a required field' ) }
+				</span>
 				<Button variant="primary" onClick={ onSubmit } disabled={ isPending } isBusy={ isPending }>
 					{ __( 'Submit' ) }
 				</Button>
-			</div>
+			</FormFooter>
 		</Form>
 	);
 }
