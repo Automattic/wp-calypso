@@ -1,33 +1,230 @@
 import ContentResearchSidebar from '@automattic/content-research';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Button } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/editor';
+import { useSelect } from '@wordpress/data';
+import { PluginMoreMenuItem } from '@wordpress/editor';
+import { createPortal, useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { search } from '@wordpress/icons';
+import { chevronDown, chevronUp, closeSmall, Icon, search } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import './content-research.scss';
 
 const queryClient = new QueryClient();
 
-const SIDEBAR_ID = 'content-research/content-research-sidebar';
+const OPEN_CONTENT_RESEARCH_WINDOW_EVENT = 'content-research:open-window';
+const WINDOW_MARGIN = 16;
+const DEFAULT_WINDOW_WIDTH = 380;
+const DEFAULT_WINDOW_HEIGHT = 600;
+
+function getViewport() {
+	if ( typeof window === 'undefined' || typeof document === 'undefined' ) {
+		return {
+			width: DEFAULT_WINDOW_WIDTH + WINDOW_MARGIN * 2,
+			height: DEFAULT_WINDOW_HEIGHT + WINDOW_MARGIN * 2,
+		};
+	}
+
+	return {
+		width: document.documentElement.clientWidth || window.innerWidth,
+		height: document.documentElement.clientHeight || window.innerHeight,
+	};
+}
+
+function clampWindowPosition( position, node ) {
+	const viewport = getViewport();
+	const width = node?.offsetWidth || DEFAULT_WINDOW_WIDTH;
+	const height = node?.offsetHeight || DEFAULT_WINDOW_HEIGHT;
+	const maxX = Math.max( 0, viewport.width - width - WINDOW_MARGIN );
+	const maxY = Math.max( 0, viewport.height - height - WINDOW_MARGIN );
+	const minX = Math.min( WINDOW_MARGIN, maxX );
+	const minY = Math.min( WINDOW_MARGIN, maxY );
+
+	return {
+		x: Math.min( Math.max( position.x, minX ), maxX ),
+		y: Math.min( Math.max( position.y, minY ), maxY ),
+	};
+}
+
+function getDefaultWindowPosition() {
+	const viewport = getViewport();
+
+	return clampWindowPosition( {
+		x: viewport.width - DEFAULT_WINDOW_WIDTH - WINDOW_MARGIN,
+		y: 88,
+	} );
+}
+
+function dispatchOpenWindowEvent() {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
+
+	window.dispatchEvent( new window.CustomEvent( OPEN_CONTENT_RESEARCH_WINDOW_EVENT ) );
+}
 
 function ContentResearchPlugin() {
-	return (
-		<>
-			<PluginSidebarMoreMenuItem target="content-research-sidebar" icon={ search }>
-				{ __( 'Content Research', 'content-research' ) }
-			</PluginSidebarMoreMenuItem>
-			<PluginSidebar
-				name="content-research-sidebar"
-				title={ __( 'Content Research', 'content-research' ) }
-				icon={ search }
-			>
+	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isMinimized, setIsMinimized ] = useState( false );
+	const [ isDragging, setIsDragging ] = useState( false );
+	const [ position, setPosition ] = useState( getDefaultWindowPosition );
+	const windowRef = useRef( null );
+	const dragStateRef = useRef( null );
+
+	const openWindow = useCallback( () => {
+		setIsOpen( true );
+		setIsMinimized( false );
+	}, [] );
+
+	const closeWindow = useCallback( () => {
+		setIsOpen( false );
+		setIsDragging( false );
+	}, [] );
+
+	useEffect( () => {
+		if ( typeof window === 'undefined' ) {
+			return undefined;
+		}
+
+		window.addEventListener( OPEN_CONTENT_RESEARCH_WINDOW_EVENT, openWindow );
+
+		return () => {
+			window.removeEventListener( OPEN_CONTENT_RESEARCH_WINDOW_EVENT, openWindow );
+		};
+	}, [ openWindow ] );
+
+	useEffect( () => {
+		if ( ! isOpen || typeof window === 'undefined' ) {
+			return undefined;
+		}
+
+		const handleResize = () => {
+			setPosition( ( currentPosition ) =>
+				clampWindowPosition( currentPosition, windowRef.current )
+			);
+		};
+
+		handleResize();
+		window.addEventListener( 'resize', handleResize );
+
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+		};
+	}, [ isOpen, isMinimized ] );
+
+	const startDrag = useCallback(
+		( event ) => {
+			if ( event.button !== 0 ) {
+				return;
+			}
+
+			dragStateRef.current = {
+				origin: position,
+				pointerStart: {
+					x: event.clientX,
+					y: event.clientY,
+				},
+			};
+			setIsDragging( true );
+			event.currentTarget.setPointerCapture?.( event.pointerId );
+			event.preventDefault();
+		},
+		[ position ]
+	);
+
+	const dragWindow = useCallback( ( event ) => {
+		if ( ! dragStateRef.current ) {
+			return;
+		}
+
+		const nextPosition = {
+			x: dragStateRef.current.origin.x + event.clientX - dragStateRef.current.pointerStart.x,
+			y: dragStateRef.current.origin.y + event.clientY - dragStateRef.current.pointerStart.y,
+		};
+
+		setPosition( clampWindowPosition( nextPosition, windowRef.current ) );
+	}, [] );
+
+	const stopDrag = useCallback( ( event ) => {
+		event.currentTarget.releasePointerCapture?.( event.pointerId );
+		dragStateRef.current = null;
+		setIsDragging( false );
+	}, [] );
+
+	const toggleMinimized = useCallback( () => {
+		setIsMinimized( ( current ) => ! current );
+	}, [] );
+
+	const windowClassName = [
+		'content-research-window',
+		isMinimized ? 'is-minimized' : '',
+		isDragging ? 'is-dragging' : '',
+	]
+		.filter( Boolean )
+		.join( ' ' );
+	const windowElement = (
+		<section
+			ref={ windowRef }
+			className={ windowClassName }
+			role="dialog"
+			aria-label={ __( 'Content Research', 'content-research' ) }
+			style={ {
+				'--content-research-window-x': `${ position.x }px`,
+				'--content-research-window-y': `${ position.y }px`,
+			} }
+		>
+			<header className="content-research-window__header">
+				<div
+					className="content-research-window__drag-handle"
+					onPointerDown={ startDrag }
+					onPointerMove={ dragWindow }
+					onPointerUp={ stopDrag }
+					onPointerCancel={ stopDrag }
+					onDoubleClick={ toggleMinimized }
+					role="presentation"
+				>
+					<Icon icon={ search } size={ 20 } />
+					<span className="content-research-window__title">
+						{ __( 'Content Research', 'content-research' ) }
+					</span>
+				</div>
+				<div className="content-research-window__controls">
+					<Button
+						className="content-research-window__control"
+						icon={ isMinimized ? chevronUp : chevronDown }
+						label={
+							isMinimized
+								? __( 'Restore Content Research', 'content-research' )
+								: __( 'Minimize Content Research', 'content-research' )
+						}
+						onClick={ toggleMinimized }
+					/>
+					<Button
+						className="content-research-window__control"
+						icon={ closeSmall }
+						label={ __( 'Close Content Research', 'content-research' ) }
+						onClick={ closeWindow }
+					/>
+				</div>
+			</header>
+			<div className="content-research-window__body" aria-hidden={ isMinimized }>
 				<QueryClientProvider client={ queryClient }>
 					<ContentResearchSidebar />
 				</QueryClientProvider>
-			</PluginSidebar>
+			</div>
+		</section>
+	);
+
+	return (
+		<>
+			<PluginMoreMenuItem icon={ search } onClick={ openWindow }>
+				{ __( 'Content Research', 'content-research' ) }
+			</PluginMoreMenuItem>
+			{ isOpen &&
+				typeof document !== 'undefined' &&
+				document.body &&
+				createPortal( windowElement, document.body ) }
 		</>
 	);
 }
@@ -37,7 +234,7 @@ function ContentResearchPlugin() {
  *
  * Shows a subtle link below the default empty paragraph block
  * when the post has no title and no content, guiding users
- * to open the Content Research sidebar.
+ * to open the Content Research window.
  */
 function isContentEmpty( content ) {
 	if ( ! content ) {
@@ -75,8 +272,6 @@ function ParagraphWithInspirationPrompt( { BlockEdit, ...props } ) {
 		[ props.clientId, props.attributes.content ]
 	);
 
-	const { openGeneralSidebar } = useDispatch( 'core/edit-post' );
-
 	if ( ! isFirstBlock || ! isEmptyPost ) {
 		return <BlockEdit { ...props } />;
 	}
@@ -88,7 +283,7 @@ function ParagraphWithInspirationPrompt( { BlockEdit, ...props } ) {
 				className="content-research-inspiration-prompt"
 				onClick={ ( e ) => {
 					e.stopPropagation();
-					openGeneralSidebar( SIDEBAR_ID );
+					dispatchOpenWindowEvent();
 				} }
 				style={ {
 					position: 'absolute',

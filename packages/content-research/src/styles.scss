@@ -4,6 +4,80 @@
 
 .content-research-source-filter {
 	padding-bottom: 16px;
+
+	.components-button-group {
+		display: flex;
+		gap: 4px;
+		padding: 0 16px;
+	}
+
+	.components-button {
+		min-width: 32px;
+		height: 32px;
+		padding: 0 8px;
+	}
+}
+
+.content-research-source-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	color: #646970;
+
+	svg {
+		display: block;
+		width: 18px;
+		height: 18px;
+		fill: currentColor;
+	}
+
+	&--reader {
+		color: #0675c4;
+	}
+
+	&--hn {
+		svg rect {
+			fill: #f0652f;
+		}
+
+		svg path {
+			fill: #fff;
+		}
+	}
+
+	&--polymarket {
+		svg path:first-child {
+			fill: #2a72d8;
+		}
+
+		svg path:last-child {
+			fill: #fff;
+		}
+	}
+
+	&--googlenews {
+		.is-blue {
+			fill: #4285f4;
+		}
+
+		.is-green {
+			fill: #34a853;
+		}
+
+		.is-yellow {
+			fill: #fbbc04;
+		}
+
+		.is-white {
+			fill: #fff;
+		}
+
+		.is-red {
+			fill: #ea4335;
+		}
+	}
 }
 
 .content-research-sidebar {

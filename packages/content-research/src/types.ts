@@ -4,7 +4,7 @@ export interface EngagementData {
 }
 
 export interface ResearchResult {
-	source: 'hn' | 'reader' | 'googlenews';
+	source: 'hn' | 'polymarket' | 'reader' | 'googlenews';
 	title: string;
 	url: string;
 	excerpt?: string;
