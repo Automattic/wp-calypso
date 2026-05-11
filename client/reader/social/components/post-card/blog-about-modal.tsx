@@ -92,13 +92,21 @@ export function BlogAboutModal( { post, onClose }: BlogAboutModalProps ) {
 					) }
 				</p>
 			) }
-			{ ! isPending && ! isError && sites && sites.length > 0 && (
+			{ ! isPending && ! isError && sites && sites.length > 0 && ! content && (
+				<p>
+					{ translate(
+						'We couldn’t prepare an embed for this post. Try again from another post.'
+					) }
+				</p>
+			) }
+			{ ! isPending && ! isError && sites && sites.length > 0 && content && (
 				<SiteHandoff
 					sites={ sites }
 					content={ content }
 					buttonLabel={ translate( 'Start writing' ) as string }
 					tracks={ tracks }
 					caller="blog_about"
+					onSuccess={ onClose }
 				/>
 			) }
 		</Modal>

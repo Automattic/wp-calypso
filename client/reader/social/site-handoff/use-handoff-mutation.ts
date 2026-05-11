@@ -15,12 +15,18 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import type { Site } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
+export interface HandoffTracks {
+	editorOpened?: ( siteId: number ) => { event: string; props: Record< string, unknown > };
+	errorShown?: (
+		siteId: number,
+		errorKind: string
+	) => { event: string; props: Record< string, unknown > };
+}
+
 export interface UseHandoffMutationOptions {
-	tracks?: {
-		editorOpened: ( siteId: number ) => { event: string; props: object };
-		errorShown: ( siteId: number, errorKind: string ) => { event: string; props: object };
-	};
+	tracks?: HandoffTracks;
 	caller: string;
+	onSuccess?: () => void;
 }
 
 export interface HandoffMutationApi {
@@ -44,7 +50,9 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 	const submit = ( { site, content }: { site: Site; content: string } ) => {
 		if ( options.tracks?.editorOpened ) {
 			const { event, props } = options.tracks.editorOpened( site.ID );
-			dispatch( recordReaderTracksEvent( event, props ) );
+			if ( event ) {
+				dispatch( recordReaderTracksEvent( event, props ) );
+			}
 		}
 
 		mutate( { siteId: site.ID, content } satisfies SaveDraftMutationVariables, {
@@ -61,6 +69,7 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 						} )
 					);
 				}
+				options.onSuccess?.();
 			},
 			onError: ( error: Error ) => {
 				dispatch(
@@ -74,7 +83,9 @@ export function useHandoffMutation( options: UseHandoffMutationOptions ): Handof
 						site.ID,
 						errorKind
 					);
-					dispatch( recordReaderTracksEvent( errEvent, errProps ) );
+					if ( errEvent ) {
+						dispatch( recordReaderTracksEvent( errEvent, errProps ) );
+					}
 				}
 				logToLogstash( {
 					feature: 'calypso_client',

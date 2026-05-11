@@ -54,7 +54,6 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 		? {
 				editorOpened: ( siteId: number ) =>
 					config.overflowHandoff!.editorOpened( mode!, { siteId } ),
-				errorShown: () => ( { event: '', props: {} } ),
 		  }
 		: undefined;
 

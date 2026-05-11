@@ -15,18 +15,16 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { SiteIconThumb } from './site-icon-thumb';
 import { useHandoffMutation } from './use-handoff-mutation';
-import type { HandoffMutationApi } from './use-handoff-mutation';
+import type { HandoffMutationApi, HandoffTracks } from './use-handoff-mutation';
 import type { Site } from '@automattic/api-core';
 
-export interface SiteHandoffProps {
+interface SiteHandoffProps {
 	sites: Site[];
 	content: string;
 	buttonLabel: string;
-	tracks?: {
-		editorOpened: ( siteId: number ) => { event: string; props: object };
-		errorShown: ( siteId: number, errorKind: string ) => { event: string; props: object };
-	};
+	tracks?: HandoffTracks;
 	caller: string;
+	onSuccess?: () => void;
 }
 
 function getSiteDisplayUrl( site: Site ) {
@@ -94,6 +92,10 @@ function MultiSiteBody( {
 		[ sites ]
 	);
 
+	// Defensive: callers should already gate on a non-empty sites array, but
+	// TypeScript can't see through that guarantee. Hooks above run
+	// unconditionally; this guard sits below them and above the first
+	// `sites[0]` access.
 	if ( sites.length === 0 ) {
 		return null;
 	}
@@ -114,7 +116,7 @@ function MultiSiteBody( {
 		const isSelected = item.value === String( displayedSiteId );
 		return (
 			<HStack
-				className="social-composer__overflow-handoff-option"
+				className="social-site-handoff-option"
 				spacing={ 3 }
 				alignment="left"
 				justify="space-between"
@@ -130,13 +132,15 @@ function MultiSiteBody( {
 						</Text>
 					</VStack>
 				</HStack>
-				{ isSelected && (
-					<Icon icon={ check } size={ 24 } className="social-composer__overflow-handoff-check" />
-				) }
+				{ isSelected && <Icon icon={ check } size={ 24 } className="social-site-handoff-check" /> }
 			</HStack>
 		);
 	};
 
+	// Gate the picker render on the user-settings query having settled so
+	// the pre-selected option doesn't flip from sites[0] to the primary site
+	// once the query resolves — that flip is visible if the host modal
+	// opens before the settings query is in cache.
 	if ( settingsPending ) {
 		return null;
 	}
@@ -147,7 +151,7 @@ function MultiSiteBody( {
 				<ComboboxControl
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom
-					className="social-composer__overflow-handoff-combobox"
+					className="social-site-handoff-combobox"
 					label={ translate( 'Choose a site' ) as string }
 					value={ String( displayedSiteId ) }
 					onChange={ ( newValue ) => {
@@ -174,8 +178,8 @@ function MultiSiteBody( {
 }
 
 export function SiteHandoff( props: SiteHandoffProps ) {
-	const { sites, content, buttonLabel, tracks, caller } = props;
-	const { submit, isPending } = useHandoffMutation( { tracks, caller } );
+	const { sites, content, buttonLabel, tracks, caller, onSuccess } = props;
+	const { submit, isPending } = useHandoffMutation( { tracks, caller, onSuccess } );
 	const shared = { content, buttonLabel, submit, isPending };
 	if ( sites.length === 1 ) {
 		return <SingleSiteBody { ...shared } site={ sites[ 0 ] } />;

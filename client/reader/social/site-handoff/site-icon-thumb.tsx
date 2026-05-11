@@ -20,7 +20,7 @@ export function SiteIconThumb( { site }: { site: Site } ) {
 	if ( src ) {
 		return (
 			<img
-				className="social-composer__overflow-handoff-site-icon"
+				className="social-site-handoff-site-icon"
 				src={ src }
 				alt=""
 				width={ 32 }
@@ -32,7 +32,7 @@ export function SiteIconThumb( { site }: { site: Site } ) {
 
 	const fallbackInitial = ( site.name || site.URL || '?' ).charAt( 0 );
 	return (
-		<div className="social-composer__overflow-handoff-site-letter" aria-hidden="true">
+		<div className="social-site-handoff-site-letter" aria-hidden="true">
 			<span>{ fallbackInitial }</span>
 		</div>
 	);

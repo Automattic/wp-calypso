@@ -152,6 +152,55 @@ describe( 'BlogAboutModal', () => {
 		).toBeDefined();
 	} );
 
+	it( 'closes the modal after a successful handoff without firing _dismissed', async () => {
+		const user = userEvent.setup();
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const recordSpy = jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+
+		nock( ORIGIN )
+			.get( /\/rest\/v1\.\d+\/me\/sites/ )
+			.reply( 200, {
+				sites: [
+					{
+						ID: 100,
+						name: 'My Blog',
+						slug: 'myblog.wordpress.com',
+						URL: 'https://myblog.wordpress.com',
+						options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+						site_migration: { in_progress: false, is_complete: false },
+					},
+				],
+			} );
+		nock( ORIGIN )
+			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
+			.reply( 200, { ID: 555 } );
+
+		const onClick = jest.fn();
+		const onClose = jest.fn();
+		renderWithProvider(
+			<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 1, onClick } }>
+				<BlogAboutModal post={ post } onClose={ onClose } />
+			</SocialAnalyticsProvider>,
+			{ queryClient: new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
+		);
+
+		const button = await screen.findByRole( 'button', { name: /Start writing/i } );
+		await user.click( button );
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+
+		expect(
+			onClick.mock.calls.find(
+				( c ) => c[ 0 ] === 'calypso_reader_atmosphere_blog_about_dismissed'
+			)
+		).toBeUndefined();
+
+		openSpy.mockRestore();
+		recordSpy.mockRestore();
+	} );
+
 	it( 'fires _blog_about_editor_opened via SiteHandoff on submit', async () => {
 		const user = userEvent.setup();
 		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
