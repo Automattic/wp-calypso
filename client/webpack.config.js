@@ -283,7 +283,7 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ process.cwd(), __dirname ],
+				includePaths: [ path.resolve( __dirname, '..' ), __dirname ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
@@ -296,9 +296,9 @@ const webpackConfig = {
 				// Final result should be something like `@use 'client/assets/stylesheets/shared/_utils.scss' as *;`
 				prelude: `@use '${
 					path
-						// Path, relative to Node CWD
+						// Path, relative to the repo root
 						.relative(
-							process.cwd(),
+							path.resolve( __dirname, '..' ),
 							path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' )
 						)
 						.split( path.sep ) // Break any path (posix/win32) by path separator
