@@ -8,7 +8,6 @@
  */
 
 import { registerAbility } from '@wordpress/abilities';
-import apiFetch from '@wordpress/api-fetch';
 import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { FEATURE_CLIP_META_KEY } from '../extensions/feature-clip-meta';
@@ -19,19 +18,18 @@ import { trackImageStudioImageGenerated } from '../utils/tracking';
 
 /**
  * Persist the generated video clip's attachment ID against the current post
- * via the standard core REST `posts` endpoint. The meta is registered by the
+ * via the core entity store. The meta is registered server-side by the
  * Jetpack Image Studio extension with `show_in_rest`. Failures are logged but
  * never block the canvas swap — the in-memory video-studio store still
  * reflects the freshly generated clip even if the meta write loses the race.
  *
- * NOTE: deliberately uses raw `apiFetch` rather than the cleaner
- * `dispatch( 'core' ).saveEntityRecord( 'postType', ... )`. saveEntityRecord
- * routes through `core.isSavingEntityRecord( 'postType', post.type, post.id )`,
- * which `core/editor.isSavingPost` selects on. Calling it after every video
- * generation would briefly flip the toolbar "Saving…" pill and disable the
- * Publish button, even though the user didn't initiate a save. The meta write
- * is background bookkeeping and shouldn't disturb the editor's idle state, so
- * we POST the field directly and call `receiveEntityRecords` ourselves.
+ * `saveEntityRecord` flips `core.isSavingEntityRecord( 'postType', ... )`,
+ * which `core/editor.isSavingPost` is composed from — so the editor's
+ * "Saving…" pill briefly shows and Publish briefly disables for the duration
+ * of this request. That's deliberate: a meta write *is* a save, the user
+ * deserves honest signalling, and video generations are rare enough that the
+ * brief flicker is preferable to the maintenance burden of a hand-rolled
+ * REST call (with rest_base lookup + manual cache hydration).
  */
 async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
 	const editor = select( 'core/editor' ) as
@@ -45,33 +43,19 @@ async function persistFeatureClipMeta( attachmentId: number ): Promise< void > {
 		return;
 	}
 
-	// Look up the post type's actual REST base. Naive `${postType}s` breaks
-	// for custom post types whose REST base isn't a simple "+s" (e.g. an
-	// already-plural slug like `news`, or an explicit `rest_base` override).
-	// `getEntityRecord( 'root', 'postType', name )` is populated by the editor
-	// the moment the post loads, so this is a synchronous read in practice.
-	const core = select( 'core' ) as
-		| {
-				getEntityRecord: (
-					kind: string,
-					name: string,
-					id: string
-				) => { rest_base?: string } | undefined;
-		  }
-		| undefined;
-	const restBase = core?.getEntityRecord?.( 'root', 'postType', postType )?.rest_base;
-	const path = restBase ? `/wp/v2/${ restBase }/${ postId }` : `/wp/v2/${ postType }s/${ postId }`;
+	const core = dispatch( 'core' ) as {
+		saveEntityRecord?: (
+			kind: string,
+			name: string,
+			record: { id: number; meta: Record< string, unknown > }
+		) => Promise< unknown >;
+	};
 
 	try {
-		const response = ( await apiFetch( {
-			path,
-			method: 'POST',
-			data: { meta: { [ FEATURE_CLIP_META_KEY ]: attachmentId } },
-		} ) ) as Record< string, unknown >;
-
-		(
-			dispatch( 'core' ) as { receiveEntityRecords: ( ...args: unknown[] ) => void }
-		 )?.receiveEntityRecords?.( 'postType', postType, [ response ] );
+		await core.saveEntityRecord?.( 'postType', postType, {
+			id: postId,
+			meta: { [ FEATURE_CLIP_META_KEY ]: attachmentId },
+		} );
 	} catch ( error ) {
 		// eslint-disable-next-line no-console
 		console.warn( '[Image Studio] Failed to persist feature clip meta:', error );

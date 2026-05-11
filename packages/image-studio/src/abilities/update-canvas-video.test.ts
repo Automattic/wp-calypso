@@ -14,16 +14,14 @@ const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
 const mockAddNotice = jest.fn();
 const mockTrackImageStudioImageGenerated = jest.fn();
-const mockReceiveEntityRecords = jest.fn();
-const mockApiFetch = jest.fn();
+const mockSaveEntityRecord = jest.fn().mockResolvedValue( undefined );
 
 let mockCurrentPostId: number | null = null;
 let mockCurrentPostType = 'post';
-let mockRestBase: string | undefined = 'posts';
 
 const mockDispatch = jest.fn( ( store?: string ) => {
 	if ( store === 'core' ) {
-		return { receiveEntityRecords: mockReceiveEntityRecords };
+		return { saveEntityRecord: mockSaveEntityRecord };
 	}
 	return {
 		setCurrentVideoUrl: mockSetCurrentVideoUrl,
@@ -40,23 +38,8 @@ const mockSelect = jest.fn( ( store?: string ) => {
 			getCurrentPostType: () => mockCurrentPostType,
 		};
 	}
-	if ( store === 'core' ) {
-		return {
-			getEntityRecord: () =>
-				mockRestBase === undefined ? undefined : { rest_base: mockRestBase },
-		};
-	}
 	return null;
 } );
-
-jest.mock(
-	'@wordpress/api-fetch',
-	() => ( {
-		__esModule: true,
-		default: ( ...args: unknown[] ) => mockApiFetch( ...args ),
-	} ),
-	{ virtual: true }
-);
 
 jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioImageGenerated: ( ...args: unknown[] ) =>
@@ -99,13 +82,9 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 		jest.clearAllMocks();
 		mockRegisterAbilityCategory.mockResolvedValue( undefined );
 		mockRegisterAbility.mockResolvedValue( undefined );
-		mockApiFetch.mockResolvedValue( {
-			id: 1,
-			meta: { _jetpack_feature_clip_id: 42 },
-		} );
+		mockSaveEntityRecord.mockResolvedValue( undefined );
 		mockCurrentPostId = null;
 		mockCurrentPostType = 'post';
-		mockRestBase = 'posts';
 		// Reset module-level isRegistered guard between tests.
 		jest.resetModules();
 
@@ -343,18 +322,25 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 				attachmentId: 42,
 			} );
 
-			expect( mockApiFetch ).toHaveBeenCalledWith( {
-				path: '/wp/v2/posts/7',
-				method: 'POST',
-				data: { meta: { _jetpack_feature_clip_id: 42 } },
+			expect( mockSaveEntityRecord ).toHaveBeenCalledWith( 'postType', 'post', {
+				id: 7,
+				meta: { _jetpack_feature_clip_id: 42 },
 			} );
-			expect( mockReceiveEntityRecords ).toHaveBeenCalledWith(
-				'postType',
-				'post',
-				expect.arrayContaining( [
-					expect.objectContaining( { meta: { _jetpack_feature_clip_id: 42 } } ),
-				] )
-			);
+		} );
+
+		it( 'forwards the current post type so saveEntityRecord targets the right entity', async () => {
+			mockCurrentPostId = 9;
+			mockCurrentPostType = 'page';
+			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
+			await registerUpdateCanvasVideoAbility();
+
+			const callback = getRegisteredCallback();
+			await callback( { url: 'https://files.wordpress.com/clip.mp4', attachmentId: 42 } );
+
+			expect( mockSaveEntityRecord ).toHaveBeenCalledWith( 'postType', 'page', {
+				id: 9,
+				meta: { _jetpack_feature_clip_id: 42 },
+			} );
 		} );
 
 		it( 'skips the meta write when there is no current post', async () => {
@@ -368,13 +354,12 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 				attachmentId: 42,
 			} );
 
-			expect( mockApiFetch ).not.toHaveBeenCalled();
-			expect( mockReceiveEntityRecords ).not.toHaveBeenCalled();
+			expect( mockSaveEntityRecord ).not.toHaveBeenCalled();
 		} );
 
 		it( 'never throws when the meta write fails — the canvas still swaps', async () => {
 			mockCurrentPostId = 7;
-			mockApiFetch.mockRejectedValueOnce( new Error( 'network down' ) );
+			mockSaveEntityRecord.mockRejectedValueOnce( new Error( 'network down' ) );
 			const consoleWarnSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
 			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
@@ -388,41 +373,10 @@ describe( 'registerUpdateCanvasVideoAbility', () => {
 				} )
 			).resolves.toEqual( { ok: true } );
 
-			expect( mockReceiveEntityRecords ).not.toHaveBeenCalled();
 			expect( mockSetCurrentVideoUrl ).toHaveBeenCalledWith(
 				'https://files.wordpress.com/clip.mp4'
 			);
 			consoleWarnSpy.mockRestore();
-		} );
-
-		it( "uses the post type's rest_base for the REST path when it diverges from the slug", async () => {
-			mockCurrentPostId = 7;
-			mockCurrentPostType = 'news'; // CPT whose slug doesn't pluralize cleanly
-			mockRestBase = 'news'; // already-plural rest_base
-			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
-			await registerUpdateCanvasVideoAbility();
-
-			const callback = getRegisteredCallback();
-			await callback( { url: 'https://files.wordpress.com/clip.mp4', attachmentId: 42 } );
-
-			expect( mockApiFetch ).toHaveBeenCalledWith(
-				expect.objectContaining( { path: '/wp/v2/news/7' } )
-			);
-		} );
-
-		it( 'falls back to slug + "s" if rest_base lookup is unavailable', async () => {
-			mockCurrentPostId = 7;
-			mockCurrentPostType = 'post';
-			mockRestBase = undefined;
-			const { registerUpdateCanvasVideoAbility } = await import( './update-canvas-video' );
-			await registerUpdateCanvasVideoAbility();
-
-			const callback = getRegisteredCallback();
-			await callback( { url: 'https://files.wordpress.com/clip.mp4', attachmentId: 42 } );
-
-			expect( mockApiFetch ).toHaveBeenCalledWith(
-				expect.objectContaining( { path: '/wp/v2/posts/7' } )
-			);
 		} );
 	} );
 } );
