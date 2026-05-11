@@ -47,81 +47,68 @@ interface RenderToVideoTimegroup extends HTMLElement {
 }
 
 /**
- * EditFrame's <EFImage> hard-codes a rewrite of any non-data: src to
- * `${apiHost}/api/v1/assets/image?src=...` (its asset-proxy endpoint). We
- * don't run an EditFrame backend, so that path 404s. The only short-circuit
- * in EFImage is `src.startsWith("data:")`, so we prefetch each scene image
- * here and inline it as a data URL.
+ * Pre-flight validate that a scene image URL is fetchable. EditFrame's
+ * <EFImage> in 0.53.0 with `imageProxy="none"` loads URLs directly, so we
+ * no longer need to base64-inline them — but we still want to know up
+ * front which scene images will fail (private-site uploads, CORS-blocked
+ * hosts, 404s) so we can strip the imageUrl and fall back to a text-on-
+ * gradient render before mount instead of seeing broken-image placeholders
+ * captured into the MP4.
+ *
+ * HEAD-only — the request is cheap and discards the body. Cross-origin
+ * HEAD without credentials avoids a CORS preflight in most cases; same-
+ * origin keeps cookies so private-site media auth works.
  */
-async function imageUrlToDataUrl( url: string ): Promise< string > {
-	// Send cookies for same-origin (private-site media needs auth) but omit
-	// for cross-origin (avoids a CORS preflight that the asset host wouldn't
-	// satisfy with credentials anyway).
-	const isSameOrigin =
-		typeof window !== 'undefined' &&
-		new URL( url, window.location.href ).origin === window.location.origin;
-	const response = await fetch( url, {
-		credentials: isSameOrigin ? 'same-origin' : 'omit',
-	} );
-	if ( ! response.ok ) {
-		throw new Error( `Failed to fetch scene image (${ response.status }): ${ url }` );
+async function isImageReachable( url: string ): Promise< boolean > {
+	try {
+		const isSameOrigin =
+			typeof window !== 'undefined' &&
+			new URL( url, window.location.href ).origin === window.location.origin;
+		const response = await fetch( url, {
+			method: 'HEAD',
+			credentials: isSameOrigin ? 'same-origin' : 'omit',
+		} );
+		return response.ok;
+	} catch {
+		return false;
 	}
-	const blob = await response.blob();
-	return await new Promise< string >( ( resolve, reject ) => {
-		const reader = new FileReader();
-		reader.onload = () => resolve( String( reader.result ) );
-		reader.onerror = () => reject( new Error( `FileReader failed for ${ url }` ) );
-		reader.readAsDataURL( blob );
-	} );
 }
 
 async function resolveBriefImages( brief: FeatureClipBrief ): Promise< FeatureClipBrief > {
 	if ( ! brief.scenes || brief.scenes.length === 0 ) {
 		return brief;
 	}
-	// Same imageUrl across consecutive scenes is the supported grouping signal —
-	// fetch + base64-inline each unique URL exactly once and let scenes share
-	// the resulting data URL.
-	const inFlight = new Map< string, Promise< string > >();
-	const settled = await Promise.allSettled(
+	// Dedupe the validation calls when consecutive scenes share an imageUrl
+	// (the supported grouping signal). Each unique URL is HEAD'd once.
+	const reachability = new Map< string, Promise< boolean > >();
+	const settled = await Promise.all(
 		brief.scenes.map( async ( scene ) => {
-			// Text-overlay scenes don't carry an imageUrl — pass through unchanged.
-			if ( ! scene.imageUrl ) {
+			if ( ! scene.imageUrl || scene.imageUrl.startsWith( 'data:' ) ) {
 				return scene;
 			}
-			if ( scene.imageUrl.startsWith( 'data:' ) ) {
+			let probe = reachability.get( scene.imageUrl );
+			if ( ! probe ) {
+				probe = isImageReachable( scene.imageUrl );
+				reachability.set( scene.imageUrl, probe );
+			}
+			if ( await probe ) {
 				return scene;
 			}
-			let pending = inFlight.get( scene.imageUrl );
-			if ( ! pending ) {
-				pending = imageUrlToDataUrl( scene.imageUrl );
-				inFlight.set( scene.imageUrl, pending );
-			}
-			const dataUrl = await pending;
-			return { ...scene, imageUrl: dataUrl };
+			// Strip the unreachable imageUrl, keep the text overlay so the
+			// composition falls back to a gradient-background scene. Dropping
+			// the whole scene would lose the LLM-summarized content; if every
+			// image fails, this preserves the ~20 s text-driven clip instead
+			// of collapsing to title-card-only.
+			// eslint-disable-next-line no-console
+			console.warn( '[FeatureClipRenderHost] image not reachable; rendering scene as text-only', {
+				imageUrl: scene.imageUrl,
+			} );
+			const { imageUrl, ...rest } = scene;
+			void imageUrl;
+			return rest;
 		} )
 	);
-	// Keep the scene's text overlay even when its image fetch fails — strip
-	// only the imageUrl so the composition falls back to a gradient-background
-	// text scene. Dropping the whole scene loses the text content; if every
-	// image fails the brief collapses to title-card-only and the user gets a
-	// 6 s clip instead of the intended ~20 s text-driven highlights.
-	const resolvedScenes = settled.map( ( outcome, index ) => {
-		if ( outcome.status === 'fulfilled' ) {
-			return outcome.value;
-		}
-		const original = brief.scenes[ index ];
-		// eslint-disable-next-line no-console
-		console.warn( '[FeatureClipRenderHost] image fetch failed; rendering scene as text-only', {
-			index,
-			imageUrl: original?.imageUrl,
-			reason: outcome.reason instanceof Error ? outcome.reason.message : String( outcome.reason ),
-		} );
-		const { imageUrl, ...rest } = original;
-		void imageUrl;
-		return rest;
-	} );
-	return { ...brief, scenes: resolvedScenes };
+	return { ...brief, scenes: settled };
 }
 
 /**
@@ -449,7 +436,7 @@ export function FeatureClipRenderHost() {
 				while a render was pending. renderToVideo() is a method
 				on the timegroup itself and works without Preview.
 			*/ }
-			<Configuration apiHost={ apiHost } signingURL="">
+			<Configuration apiHost={ apiHost } signingURL="" imageProxy="none">
 				<TimelineRoot
 					key={ `mount-${ mountedRequestId }` }
 					id={ COMPOSITION_ID }

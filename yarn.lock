@@ -1424,8 +1424,8 @@ __metadata:
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
-    "@editframe/elements": "npm:0.49.7"
-    "@editframe/react": "npm:0.49.7"
+    "@editframe/elements": "npm:0.53.0"
+    "@editframe/react": "npm:0.53.0"
     "@testing-library/react": "npm:^15.0.0"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
@@ -4532,24 +4532,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@editframe/assets@npm:0.49.7":
-  version: 0.49.7
-  resolution: "@editframe/assets@npm:0.49.7"
+"@editframe/assets@npm:0.53.0":
+  version: 0.53.0
+  resolution: "@editframe/assets@npm:0.53.0"
   dependencies:
     debug: "npm:^4.3.5"
     ora: "npm:^8.0.1"
     zod: "npm:^3.23.8"
-  checksum: 969201e4c7d4667f4b026ac036131615d3b16b0895f0d1378bfe7c19f4f2fd526581f7d4671ee38c28f7320d89378726f3af2a3b45820d75bc379311a745600f
+  checksum: e7ab783897679e74c476257033aaf27d7daff4cae6f45d99787bdfe2592285a334b1f8b7bb2f1a80ea85ffcb7890e25dee2384e9adc613543ef20b557c140f75
   languageName: node
   linkType: hard
 
-"@editframe/elements@npm:0.49.7":
-  version: 0.49.7
-  resolution: "@editframe/elements@npm:0.49.7"
+"@editframe/elements@npm:0.53.0":
+  version: 0.53.0
+  resolution: "@editframe/elements@npm:0.53.0"
   dependencies:
     "@bramus/style-observer": "npm:^1.3.0"
-    "@editframe/assets": "npm:0.49.7"
+    "@editframe/assets": "npm:0.53.0"
     "@lit/context": "npm:^1.1.6"
+    "@lit/reactive-element": "npm:^2.1.1"
     "@opentelemetry/api": "npm:^1.9.0"
     "@opentelemetry/context-zone": "npm:^1.26.0"
     "@opentelemetry/core": "npm:^1.26.0"
@@ -4561,15 +4562,15 @@ __metadata:
     lit: "npm:^3.3.1"
     mediabunny: "npm:^1.1.1"
     zod: "npm:^3.24.1"
-  checksum: c3a66b4154f996e54e03f8afb3ef4129ac173eecf9bc88f3f3521341547121a2ba4a9df2a30e874c300c02945a8948cc363d8976b248c83a0e2f04b44f64a8aa
+  checksum: 68da1edf9d7fb35b2e152d56dccb5b87cd546079e1f667fb1b5eacc941a0eab202cfa03f891ba2ebcfb06c2c59cdba9f5739672b344e74916b4e57b211dbd46a
   languageName: node
   linkType: hard
 
-"@editframe/react@npm:0.49.7":
-  version: 0.49.7
-  resolution: "@editframe/react@npm:0.49.7"
+"@editframe/react@npm:0.53.0":
+  version: 0.53.0
+  resolution: "@editframe/react@npm:0.53.0"
   dependencies:
-    "@editframe/elements": "npm:0.49.7"
+    "@editframe/elements": "npm:0.53.0"
     lit: "npm:^3.3.1"
     mitt: "npm:^3.0.1"
   peerDependencies:
@@ -4585,7 +4586,7 @@ __metadata:
       optional: true
     three:
       optional: true
-  checksum: 9bdef974b156b9ec9551f85b580a8fcf60e3469febf20e5da969eb038e4ee845c40eb3a8fdf3c2d6f1bb41131ccee130b0c1a2acfa9fb46f9625838aab81316f
+  checksum: 6766e3dae8143670f7213c80835599ee8bf7608369f4f7e1ddb623dba27c6821eaa173f7edd8200f3418a952a4a26ee93e330966735e2cf3215aabcd0524e26a
   languageName: node
   linkType: hard
 
@@ -5558,7 +5559,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lit/reactive-element@npm:^1.6.2 || ^2.1.0, @lit/reactive-element@npm:^2.1.0":
+"@lit/reactive-element@npm:^1.6.2 || ^2.1.0, @lit/reactive-element@npm:^2.1.0, @lit/reactive-element@npm:^2.1.1":
   version: 2.1.2
   resolution: "@lit/reactive-element@npm:2.1.2"
   dependencies:
