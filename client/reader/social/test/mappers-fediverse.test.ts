@@ -231,11 +231,13 @@ describe( 'mapFediverseConnectionToSocialProfileCardProps', () => {
 		};
 	}
 
-	it( 'projects the connection onto the slim profile-card shape', () => {
+	it( 'projects the connection onto the slim profile-card shape, stripping the leading `@` from the handle', () => {
 		const card = mapFediverseConnectionToSocialProfileCardProps( makeConnection() );
 		expect( card.avatar ).toBe( 'https://myblog.test/icon.png' );
 		expect( card.displayName ).toBe( 'My Blog' );
-		expect( card.handle ).toBe( '@myblog@myblog.test' );
+		// `SocialProfileCard` renders `@${handle}` at render time, so the
+		// leading `@` on `webfinger` must be stripped here to avoid `@@`.
+		expect( card.handle ).toBe( 'myblog@myblog.test' );
 	} );
 
 	it( 'leaves avatar null when icon is empty', () => {

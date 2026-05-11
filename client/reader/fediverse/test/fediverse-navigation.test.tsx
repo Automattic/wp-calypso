@@ -29,16 +29,17 @@ describe( 'FediverseNavigation', () => {
 	} );
 	afterEach( () => jest.restoreAllMocks() );
 
-	it( 'renders the three top-level tabs with paths scoped to the connection id', () => {
+	it( 'renders the Timeline and Profile tabs with paths scoped to the connection id', () => {
 		renderWithProvider( <FediverseNavigation connectionId={ 7 } selectedTab="timeline" /> );
 
-		const posts = screen.getByRole( 'menuitem', { name: 'Posts' } );
+		const timeline = screen.getByRole( 'menuitem', { name: 'Timeline' } );
 		const profile = screen.getByRole( 'menuitem', { name: 'Profile' } );
-		const settings = screen.getByRole( 'menuitem', { name: 'Settings' } );
 
-		expect( posts ).toHaveAttribute( 'href', '/reader/fediverse/7/timeline' );
+		expect( timeline ).toHaveAttribute( 'href', '/reader/fediverse/7/timeline' );
 		expect( profile ).toHaveAttribute( 'href', '/reader/fediverse/7/profile' );
-		expect( settings ).toHaveAttribute( 'href', '/reader/fediverse/7/settings' );
+		// Settings tab was removed alongside the Mastodon / ATmosphere drop —
+		// no dead nav item leaks through.
+		expect( screen.queryByRole( 'menuitem', { name: 'Settings' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'marks the selected tab as the active item', () => {
@@ -49,7 +50,7 @@ describe( 'FediverseNavigation', () => {
 			'aria-current',
 			'true'
 		);
-		expect( screen.getByRole( 'menuitem', { name: 'Posts' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'menuitem', { name: 'Timeline' } ) ).toHaveAttribute(
 			'aria-current',
 			'false'
 		);

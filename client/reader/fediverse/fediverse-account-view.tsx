@@ -7,12 +7,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { FediverseNavigation } from './fediverse-navigation';
-import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
+import { PROFILE_TAB, TIMELINE_TAB } from './helper';
 import { ProfilePanel } from './profile-panel';
-import { SettingsPanel } from './settings-panel';
 import { TimelinePanel } from './timeline-panel';
 
-const VALID_TABS = new Set< string >( [ TIMELINE_TAB, PROFILE_TAB, SETTINGS_TAB ] );
+const VALID_TABS = new Set< string >( [ TIMELINE_TAB, PROFILE_TAB ] );
 
 interface Props {
 	connectionId: number;
@@ -67,7 +66,6 @@ export function FediverseAccountView( { connectionId, tab }: Props ) {
 				<FediverseNavigation connectionId={ connection.id } selectedTab={ tab } />
 				{ tab === TIMELINE_TAB && <TimelinePanel connection={ connection } /> }
 				{ tab === PROFILE_TAB && <ProfilePanel connection={ connection } /> }
-				{ tab === SETTINGS_TAB && <SettingsPanel connection={ connection } /> }
 			</VStack>
 		</ReaderMain>
 	);

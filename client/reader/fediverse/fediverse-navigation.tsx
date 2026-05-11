@@ -4,7 +4,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { TIMELINE_TAB, PROFILE_TAB, SETTINGS_TAB } from './helper';
+import { TIMELINE_TAB, PROFILE_TAB } from './helper';
 
 interface Tab {
 	slug: string;
@@ -33,18 +33,13 @@ export function FediverseNavigation( { connectionId, selectedTab }: Props ) {
 	const tabs: Tab[] = [
 		{
 			slug: TIMELINE_TAB,
-			title: translate( 'Posts' ),
+			title: translate( 'Timeline' ),
 			path: `/reader/fediverse/${ connectionId }/${ TIMELINE_TAB }`,
 		},
 		{
 			slug: PROFILE_TAB,
 			title: translate( 'Profile' ),
 			path: `/reader/fediverse/${ connectionId }/${ PROFILE_TAB }`,
-		},
-		{
-			slug: SETTINGS_TAB,
-			title: translate( 'Settings' ),
-			path: `/reader/fediverse/${ connectionId }/${ SETTINGS_TAB }`,
 		},
 	];
 

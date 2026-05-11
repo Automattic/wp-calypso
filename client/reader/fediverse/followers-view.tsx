@@ -19,6 +19,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import {
 	AuthorProfileHeader,
 	SocialAccountList,
+	stripLeadingAt,
 	type SocialAccountListProps,
 	type SocialAccountRowProps,
 } from 'calypso/reader/social';
@@ -245,7 +246,9 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				protocolHomeLabel={ String( translate( 'Back to Fediverse' ) ) }
 				header={ {
 					displayName: profileQuery.data?.display_name ?? null,
-					handle: profileQuery.data?.acct ?? actor,
+					// `acct` carries a leading `@`; the header renders `@${handle}`,
+					// so strip first to avoid a double-`@`.
+					handle: stripLeadingAt( profileQuery.data?.acct ?? actor ),
 					count: profileQuery.data?.counts.followers ?? null,
 					mode: 'followers',
 					isPending: profileQuery.isPending,

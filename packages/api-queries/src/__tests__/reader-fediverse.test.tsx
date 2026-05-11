@@ -9,7 +9,11 @@ import { readerFediverseKeys, type FediverseAuthorProfile } from '@automattic/ap
 import { QueryClient, QueryClientProvider, useMutation } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { followFediverseActorMutation, unfollowFediverseActorMutation } from '../reader-fediverse';
+import {
+	followFediverseActorMutation,
+	normalizeFediverseActor,
+	unfollowFediverseActorMutation,
+} from '../reader-fediverse';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -314,5 +318,33 @@ describe( 'followFediverseActorMutation / unfollowFediverseActorMutation', () =>
 			const cached = client.getQueryData< FediverseAuthorProfile >( normalizedKey );
 			expect( cached?.viewer?.following ).toBe( true );
 		} );
+	} );
+} );
+
+describe( 'normalizeFediverseActor', () => {
+	it( 'strips a leading `@` and lowercases webfinger handles', () => {
+		expect( normalizeFediverseActor( '@Alice@EXAMPLE.com' ) ).toBe( 'alice@example.com' );
+	} );
+
+	it( 'leaves bare webfinger handles unchanged once lowercased', () => {
+		expect( normalizeFediverseActor( 'alice@example.com' ) ).toBe( 'alice@example.com' );
+	} );
+
+	it( 'preserves URL-shaped actors verbatim (case-sensitive paths)', () => {
+		// Lowercasing a URL would change the path component on
+		// case-sensitive servers and silently break lookups; URLs round-trip
+		// trimmed only.
+		expect( normalizeFediverseActor( 'https://Example.com/Users/Alice' ) ).toBe(
+			'https://Example.com/Users/Alice'
+		);
+		expect( normalizeFediverseActor( '  https://example.com/users/alice  ' ) ).toBe(
+			'https://example.com/users/alice'
+		);
+	} );
+
+	it( 'recognises http (not just https) URL-shaped actors', () => {
+		expect( normalizeFediverseActor( 'http://Example.com/Users/Bob' ) ).toBe(
+			'http://Example.com/Users/Bob'
+		);
 	} );
 } );

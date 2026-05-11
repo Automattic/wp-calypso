@@ -158,7 +158,10 @@ export function mapFediverseConnectionToSocialProfileCardProps(
 	return {
 		avatar: connection.icon || null,
 		displayName: connection.name?.trim() ? connection.name : undefined,
-		handle: connection.webfinger,
+		// `webfinger` is emitted with a leading `@`; `SocialProfileCard`
+		// renders the `@` prefix at render time so feed-through would
+		// produce `@@user@host`. Strip first.
+		handle: stripLeadingAt( connection.webfinger ),
 	};
 }
 

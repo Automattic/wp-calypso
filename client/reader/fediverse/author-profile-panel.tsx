@@ -195,7 +195,11 @@ export function FediverseAuthorProfilePanel( {
 			) }
 			emptyLine={ String( translate( 'Their feed is empty.' ) ) }
 			emptyActionLabel={ String( translate( 'View on the Fediverse' ) ) }
-			emptyActionURL={ connection.url }
+			// Link to the *viewed actor's* profile URL when known, not the
+			// connected blog. Falls back to the connection URL only when the
+			// profile query hasn't resolved (rare — the empty-state surfaces
+			// after a successful profile fetch).
+			emptyActionURL={ profile.data?.url || connection.url }
 			protocolLabel="Fediverse"
 			protocolHomeURL="/reader/fediverse"
 			protocolHomeLabel={ translate( 'Back to Fediverse' ) }

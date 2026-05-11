@@ -99,14 +99,20 @@ export function useFediverseTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( fediverseTimelineInfiniteQuery( connectionId ) );
 }
 
-// Normalise an actor string for cache keying. Mirrors the Mastodon
-// implementation: trim, drop a leading `@`, lowercase. Webfinger handles
-// (`alice@example.com`, `@alice@example.com`, `@Alice@EXAMPLE.com`) all
-// dedupe to the same key. Numeric ids and URL-shaped actors (which the
-// backend also accepts) pass through unchanged below — only the leading
-// `@` and case are normalised.
+// Normalise an actor string for cache keying.
+//
+// Webfinger handles (`alice@example.com`, `@alice@example.com`,
+// `@Alice@EXAMPLE.com`) dedupe to the same key — trim, drop a leading
+// `@`, lowercase. URL-shaped actors (the backend also accepts canonical
+// AP actor URLs like `https://example.com/Users/Alice`) are
+// case-sensitive on the path segment, so lowercasing would point at a
+// different actor on case-sensitive servers; URLs are returned trimmed
+// only.
 export function normalizeFediverseActor( actor: string ): string {
 	const trimmed = actor.trim();
+	if ( /^https?:\/\//i.test( trimmed ) ) {
+		return trimmed;
+	}
 	const stripped = trimmed.startsWith( '@' ) ? trimmed.slice( 1 ) : trimmed;
 	return stripped.toLowerCase();
 }

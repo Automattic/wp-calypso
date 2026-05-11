@@ -196,10 +196,11 @@ export class ReaderSidebar extends Component {
 					{ isEnabled( 'reader/social' ) && (
 						<>
 							<ReaderSidebarAtmosphere path={ path } />
-							<ReaderSidebarFediverse path={ path } />
 							<ReaderSidebarMastodon path={ path } />
 						</>
 					) }
+
+					{ isEnabled( 'reader/fediverse' ) && <ReaderSidebarFediverse path={ path } /> }
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }
