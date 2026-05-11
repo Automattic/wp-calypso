@@ -1,4 +1,5 @@
 import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
