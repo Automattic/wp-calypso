@@ -1,40 +1,57 @@
-import { Button, ButtonGroup } from '@wordpress/components';
+import { Button, ButtonGroup, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import SourceIcon from '../source-icon';
-import type { SourceFilter } from '../../types';
+import type { Source } from '../../types';
 
 interface SourceFilterProps {
-	activeFilter: SourceFilter;
-	onFilterChange: ( filter: SourceFilter ) => void;
+	selectedSources: Set< Source >;
+	onToggleSource: ( source: Source ) => void;
 }
 
-const FILTERS: { value: SourceFilter; label: string; icon?: Exclude< SourceFilter, 'all' > }[] = [
-	{ value: 'all', label: __( 'All', 'content-research' ) },
-	{ value: 'reader', label: __( 'WordPress.com', 'content-research' ), icon: 'reader' },
-	{ value: 'hn', label: __( 'Hacker News', 'content-research' ), icon: 'hn' },
-	{ value: 'polymarket', label: __( 'Polymarket', 'content-research' ), icon: 'polymarket' },
-	{ value: 'googlenews', label: __( 'Google News', 'content-research' ), icon: 'googlenews' },
+const SOURCES: { value: Source; label: string; description: string }[] = [
+	{
+		value: 'myposts',
+		label: __( 'Posts', 'content-research' ),
+		description: __( 'Search across your own published posts.', 'content-research' ),
+	},
+	{
+		value: 'reader',
+		label: __( 'WPCOM', 'content-research' ),
+		description: __( 'Posts from the WordPress.com Reader.', 'content-research' ),
+	},
+	{
+		value: 'hn',
+		label: __( 'HN', 'content-research' ),
+		description: __( 'Top stories from Hacker News.', 'content-research' ),
+	},
+	{
+		value: 'googlenews',
+		label: __( 'News', 'content-research' ),
+		description: __( 'Recent articles from Google News.', 'content-research' ),
+	},
 ];
 
-export default function SourceFilterTabs( { activeFilter, onFilterChange }: SourceFilterProps ) {
+export default function SourceFilterTabs( { selectedSources, onToggleSource }: SourceFilterProps ) {
 	return (
 		<div className="content-research-source-filter">
-			<ButtonGroup aria-label={ __( 'Source', 'content-research' ) }>
-				{ FILTERS.map( ( filter ) => (
-					<Button
-						key={ filter.value }
-						isPressed={ activeFilter === filter.value }
-						label={ filter.label }
-						variant="secondary"
-						onClick={ () => onFilterChange( filter.value ) }
-					>
-						{ filter.icon ? (
-							<SourceIcon source={ filter.icon } label={ filter.label } />
-						) : (
-							filter.label
-						) }
-					</Button>
-				) ) }
+			<ButtonGroup aria-label={ __( 'Sources', 'content-research' ) }>
+				{ SOURCES.map( ( source ) => {
+					const isSelected = selectedSources.has( source.value );
+					return (
+						<Tooltip key={ source.value } text={ source.description }>
+							<Button
+								className={ `content-research-source-filter__button ${
+									isSelected ? 'is-selected' : 'is-deselected'
+								}` }
+								aria-pressed={ isSelected }
+								aria-label={ source.description }
+								variant="secondary"
+								onClick={ () => onToggleSource( source.value ) }
+							>
+								{ source.label }
+							</Button>
+						</Tooltip>
+					);
+				} ) }
 			</ButtonGroup>
 		</div>
 	);

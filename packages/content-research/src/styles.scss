@@ -7,75 +7,43 @@
 
 	.components-button-group {
 		display: flex;
-		gap: 4px;
-		padding: 0 16px;
+		width: 100%;
 	}
 
-	.components-button {
-		min-width: 32px;
-		height: 32px;
-		padding: 0 8px;
-	}
-}
+	&__button.components-button {
+		flex: 1;
+		justify-content: center;
+		background: #fff;
+		box-shadow: inset 0 0 0 1px #ddd;
+		border-radius: 0;
 
-.content-research-source-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 18px;
-	height: 18px;
-	color: #646970;
-
-	svg {
-		display: block;
-		width: 18px;
-		height: 18px;
-		fill: currentColor;
-	}
-
-	&--reader {
-		color: #0675c4;
-	}
-
-	&--hn {
-		svg rect {
-			fill: #f0652f;
+		&:hover:not(:disabled) {
+			background: #fff;
+			color: #1e1e1e;
+			box-shadow: inset 0 0 0 1px #1e1e1e;
 		}
 
-		svg path {
-			fill: #fff;
-		}
-	}
+		&.is-deselected {
+			color: #999;
+			background: #f6f7f7;
 
-	&--polymarket {
-		svg path:first-child {
-			fill: #2a72d8;
-		}
+			&:hover:not(:disabled) {
+				color: #1e1e1e;
+				background: #fff;
+				box-shadow: inset 0 0 0 1px #ddd;
+			}
 
-		svg path:last-child {
-			fill: #fff;
-		}
-	}
-
-	&--googlenews {
-		.is-blue {
-			fill: #4285f4;
+			&:focus:not(:disabled):not(:hover) {
+				color: #999;
+				background: #f6f7f7;
+				box-shadow: inset 0 0 0 1px #ddd;
+			}
 		}
 
-		.is-green {
-			fill: #34a853;
-		}
-
-		.is-yellow {
-			fill: #fbbc04;
-		}
-
-		.is-white {
-			fill: #fff;
-		}
-
-		.is-red {
-			fill: #ea4335;
+		&.is-selected {
+			color: #1e1e1e;
+			font-weight: 600;
+			background: #fff;
 		}
 	}
 }
