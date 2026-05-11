@@ -512,12 +512,15 @@ export const createFediversePostMutation = ( queryClient: QueryClient ) =>
 			const matches = queryClient.getQueriesData< InfiniteData< FediverseTimelinePage > >( {
 				queryKey: timelineKey,
 			} );
+			const connection = queryClient
+				.getQueryData< FediverseConnectionsResponse >( readerFediverseKeys.connections() )
+				?.connections.find( ( c ) => c.id === vars.connectionId );
 			for ( const [ queryKey, data ] of matches ) {
 				snapshots.push( { queryKey, data } );
 				if ( ! data || data.pages.length === 0 ) {
 					continue;
 				}
-				const placeholder = buildPlaceholderItem( vars, pendingUri );
+				const placeholder = buildPlaceholderItem( vars, pendingUri, connection );
 				const [ firstPage, ...rest ] = data.pages;
 				const patchedFirst: FediverseTimelinePage = {
 					...firstPage,
@@ -573,22 +576,24 @@ export const createFediversePostMutation = ( queryClient: QueryClient ) =>
  * Build the synthetic feed item used during the optimistic-update window.
  * Borrows shape from `FediverseFeedItem` so the timeline renderer can
  * project it through the existing mapper without special-casing.
+ *
+ * When the connections cache is warm, the placeholder's `account` is
+ * hydrated from the connection so the placeholder renders with the user's
+ * real avatar / handle / display name instead of a blank chip while the
+ * request is in flight. When cold, falls back to empty fields — the
+ * `invalidateQueries` in `onSuccess` will surface the canonical author on
+ * the refetch. Mirrors atmosphere's `authorFromConnection` shape.
  */
 function buildPlaceholderItem(
 	vars: FediverseCreatePostParams,
-	pendingUri: string
+	pendingUri: string,
+	connection: FediverseConnection | undefined
 ): FediverseFeedItem {
 	return {
 		id: pendingUri,
 		url: '',
 		created_at: new Date().toISOString(),
-		account: {
-			id: '',
-			username: '',
-			acct: '',
-			display_name: '',
-			avatar: null,
-		},
+		account: accountFromConnection( connection ),
 		content: vars.content,
 		spoiler_text: vars.summary ?? '',
 		sensitive: Boolean( vars.sensitive ),
@@ -598,5 +603,27 @@ function buildPlaceholderItem(
 		boost: null,
 		media: [],
 		counts: { replies: 0, boosts: 0, favourites: 0 },
+	};
+}
+
+function accountFromConnection(
+	connection: FediverseConnection | undefined
+): FediverseFeedItem[ 'account' ] {
+	if ( ! connection ) {
+		return { id: '', username: '', acct: '', display_name: '', avatar: null };
+	}
+	// `webfinger` is emitted with a leading `@` (`@user@host`); strip it so the
+	// mapper's `qualifyAcct` doesn't double up to `@@user@host`.
+	const handle = connection.webfinger.startsWith( '@' )
+		? connection.webfinger.slice( 1 )
+		: connection.webfinger;
+	const username = handle.split( '@' )[ 0 ] ?? '';
+	return {
+		// For blog actors the blog URL is also the canonical AP actor URL.
+		id: connection.url,
+		username,
+		acct: handle,
+		display_name: connection.name,
+		avatar: connection.icon || null,
 	};
 }

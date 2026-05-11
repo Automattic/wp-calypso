@@ -506,6 +506,57 @@ describe( 'createFediversePostMutation', () => {
 		expect( scope.isDone() ).toBe( true );
 	} );
 
+	it( 'hydrates the placeholder author from the cached connection when available', async () => {
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		// Seed the connections cache so the optimistic placeholder can pick up
+		// the user's avatar / handle / display name instead of rendering with
+		// empty author fields while the request is in flight.
+		client.setQueryData( readerFediverseKeys.connections(), {
+			connections: [
+				{
+					id: 1,
+					blog_id: 100,
+					url: 'https://example.com',
+					name: 'Example Blog',
+					icon: 'https://example.com/icon.png',
+					webfinger: '@example@example.com',
+				},
+			],
+		} );
+		const key = seedTimeline( client, 1, [] );
+
+		nock( BASE )
+			.post( '/wpcom/v2/reader/fediverse/connections/1/posts' )
+			.delay( 200 )
+			.reply( 200, { post: makeItem() } );
+
+		const { result } = renderHook( () => useMutation( createFediversePostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		let inFlight: Promise< unknown > | undefined;
+		act( () => {
+			inFlight = result.current.mutateAsync( {
+				connectionId: 1,
+				content: 'hi',
+				visibility: 'public',
+			} );
+		} );
+
+		await waitFor( () => {
+			const data = client.getQueryData< InfiniteData< FediverseTimelinePage > >( key );
+			const placeholder = data?.pages[ 0 ].items[ 0 ];
+			expect( placeholder?.id.startsWith( PENDING_FEDIVERSE_POST_URI ) ).toBe( true );
+			expect( placeholder?.account.display_name ).toBe( 'Example Blog' );
+			expect( placeholder?.account.avatar ).toBe( 'https://example.com/icon.png' );
+			expect( placeholder?.account.acct ).toBe( 'example@example.com' );
+		} );
+
+		await act( async () => {
+			await inFlight;
+		} );
+	} );
+
 	it( 'generates a fresh PENDING_FEDIVERSE_POST_URI per submit so back-to-back composes can coexist', async () => {
 		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 		const key = seedTimeline( client, 1, [] );

@@ -37,16 +37,13 @@ export const fediverseComposerConfig: ComposerConfig<
 	supportedModes: [ 'standalone' ],
 	mutationFactory: createFediversePostMutation,
 	buildParams: ( mode, text ) => {
-		if ( mode.kind !== 'standalone' ) {
-			// Shouldn't happen — the provider rejects unsupported kinds via
-			// `supportedModes`. Defensive fallback so the modal never crashes
-			// mid-submit if the union widens before this config is updated.
-			return { connectionId: mode.connectionId, content: text, visibility: 'public' };
-		}
 		// `visibility` / `summary` / `sensitive` / `idempotencyKey` are
 		// merged in by the extras slot's `extendBuildParams` (see
 		// `useFediverseComposerExtras`). `'public'` is a safe placeholder —
 		// the extras slot overrides it before the mutation runs.
+		// `supportedModes: [ 'standalone' ]` gates non-standalone modes at
+		// the provider level, so widening the union later requires updating
+		// this config (TypeScript will flag the missing arm).
 		return { connectionId: mode.connectionId, content: text, visibility: 'public' };
 	},
 	errorMessage: ( error, translate ) => errorMessageFor( error, translate ),
