@@ -10,3 +10,13 @@ export function formatQuarterShort( { quarter, year }: Quarter ): string {
 		year % 100
 	);
 }
+
+// "Q3 2024" — full label used in the header quarter selector and related copy.
+export function formatQuarterLong( { quarter, year }: Quarter ): string {
+	return sprintf(
+		/* translators: %1$d: quarter number, %2$d: 4-digit year. Example: Q3 2024 */
+		'Q%1$d %2$d',
+		quarter,
+		year
+	);
+}

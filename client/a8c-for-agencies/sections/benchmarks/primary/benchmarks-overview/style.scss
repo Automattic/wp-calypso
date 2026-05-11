@@ -2,6 +2,14 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+.benchmarks-quarter-selector {
+	min-inline-size: 140px;
+}
+
+.benchmarks-missing-submission-notice {
+	margin-block-start: 24px;
+}
+
 .benchmarks-form {
 	padding-block-start: 16px;
 }

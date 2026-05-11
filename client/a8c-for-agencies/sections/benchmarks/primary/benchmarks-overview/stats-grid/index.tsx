@@ -9,14 +9,21 @@ import './style.scss';
 
 const TREND_QUARTERS = 6;
 
+type Props = {
+	quarter: Quarter[ 'quarter' ];
+	year: Quarter[ 'year' ];
+};
+
 function buildTrendPoints(
 	submissions: AgencyBenchmark[],
+	startIndex: number,
 	getValue: ( s: AgencyBenchmark ) => number | undefined
 ): TrendPoint[] {
-	// `submissions` is year-desc, quarter-desc; trend chart wants chronological order.
-	const lastSix = submissions.slice( 0, TREND_QUARTERS ).reverse();
+	// `submissions` is year-desc, quarter-desc; take up to TREND_QUARTERS ending at the
+	// active quarter, then reverse into the chronological order the trend chart wants.
+	const window = submissions.slice( startIndex, startIndex + TREND_QUARTERS ).reverse();
 	const points: TrendPoint[] = [];
-	for ( const submission of lastSix ) {
+	for ( const submission of window ) {
 		const value = getValue( submission );
 		if ( value === undefined ) {
 			continue;
@@ -29,7 +36,7 @@ function buildTrendPoints(
 	return points;
 }
 
-export default function BenchmarkStatsGrid() {
+export default function BenchmarkStatsGrid( { quarter, year }: Props ) {
 	const { data: submissions, isLoading: isListLoading } = useFetchAgencyBenchmarksList();
 	const { data: aggregates, isLoading: isAggregatesLoading } = useFetchBenchmarksAggregates();
 
@@ -40,28 +47,31 @@ export default function BenchmarkStatsGrid() {
 		return null;
 	}
 
-	const latest = submissions[ 0 ];
-	const previous = submissions[ 1 ];
+	const activeIndex = submissions.findIndex( ( s ) => s.quarter === quarter && s.year === year );
+	if ( activeIndex === -1 ) {
+		return null;
+	}
+
+	const active = submissions[ activeIndex ];
+	const previous = submissions[ activeIndex + 1 ];
 	const previousQuarter: Quarter | undefined = previous
 		? { quarter: previous.quarter as Quarter[ 'quarter' ], year: previous.year }
 		: undefined;
 
-	const aggregateRow = aggregates?.find(
-		( row ) => row.quarter === latest.quarter && row.year === latest.year
-	);
+	const aggregateRow = aggregates?.find( ( row ) => row.quarter === quarter && row.year === year );
 
 	const configs = getStatCardConfigs();
 
 	return (
 		<div className="benchmarks-stats-grid">
 			{ configs.map( ( config ) => {
-				const currentValue = config.getSubmissionValue( latest );
+				const currentValue = config.getSubmissionValue( active );
 				if ( currentValue === undefined ) {
 					return null;
 				}
 				const previousValue = previous ? config.getSubmissionValue( previous ) : undefined;
 				const metricSummary = aggregateRow?.metrics[ config.metricKey ];
-				const trendPoints = buildTrendPoints( submissions, config.getSubmissionValue );
+				const trendPoints = buildTrendPoints( submissions, activeIndex, config.getSubmissionValue );
 
 				return (
 					<StatCard
