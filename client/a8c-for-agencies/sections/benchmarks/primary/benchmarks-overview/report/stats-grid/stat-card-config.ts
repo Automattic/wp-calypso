@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { AgencyBenchmark, AggregateMetricKey } from '../../../constants';
+import type { AgencyBenchmark, AggregateMetricKey } from '../../../../constants';
 
 const fmtPercent = ( v: number ) => `${ v.toFixed( 1 ) }%`;
 const fmtPercentDelta = ( d: number ) => `${ d >= 0 ? '+' : '' }${ d.toFixed( 1 ) }%`;

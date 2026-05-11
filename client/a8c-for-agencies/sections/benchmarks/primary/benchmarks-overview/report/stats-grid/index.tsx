@@ -1,9 +1,9 @@
-import useFetchAgencyBenchmarksList from '../../../hooks/use-fetch-agency-benchmarks-list';
-import useFetchBenchmarksAggregates from '../../../hooks/use-fetch-benchmarks-aggregates';
+import useFetchAgencyBenchmarksList from '../../../../hooks/use-fetch-agency-benchmarks-list';
+import useFetchBenchmarksAggregates from '../../../../hooks/use-fetch-benchmarks-aggregates';
 import StatCard from './stat-card';
 import { getStatCardConfigs } from './stat-card-config';
 import type { TrendPoint } from './stat-trend-chart';
-import type { AgencyBenchmark, Quarter } from '../../../constants';
+import type { AgencyBenchmark, Quarter } from '../../../../constants';
 
 import './style.scss';
 

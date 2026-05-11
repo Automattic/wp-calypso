@@ -1,13 +1,13 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import RangePlot from '../../../components/range-plot';
+import RangePlot from '../range-plot';
 import StatDeltaPill from './stat-delta-pill';
 import StatStatusBadge from './stat-status-badge';
 import StatTrendChart from './stat-trend-chart';
 import type { StatCardConfig } from './stat-card-config';
 import type { BadgeKind } from './stat-status-badge';
 import type { TrendPoint } from './stat-trend-chart';
-import type { MetricSummary, Quarter } from '../../../constants';
+import type { MetricSummary, Quarter } from '../../../../constants';
 
 const COLOR_BAND = 'var(--color-primary-0)';
 const COLOR_AGENCY = 'var(--color-primary-50)';

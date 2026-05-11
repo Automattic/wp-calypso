@@ -15,11 +15,9 @@ import useFetchAgencyBenchmarksList from '../../hooks/use-fetch-agency-benchmark
 import useFetchBenchmarksConfig from '../../hooks/use-fetch-benchmarks-config';
 import { enumerateQuarters } from '../../lib/enumerate-quarters';
 import BenchmarksEmptyState from './empty-state';
-import HowToReadCard from './how-to-read-card';
 import BenchmarksMissingQuarterState from './missing-quarter-state';
-import PeerComparisonCard from './peer-comparison-card';
 import QuarterSelector from './quarter-selector';
-import BenchmarkStatsGrid from './stats-grid';
+import BenchmarksReportState from './report-state';
 import SubmissionBanner from './submission-banner';
 import SubmissionModal from './submission-modal';
 import type { Quarter } from '../../constants';
@@ -94,15 +92,7 @@ function BenchmarksOverviewContent( { earliest, latest, title }: ContentProps ) 
 					/>
 				) }
 				{ isContentReady && activeSubmission && (
-					<>
-						<HowToReadCard />
-						<BenchmarkStatsGrid quarter={ activeQuarter.quarter } year={ activeQuarter.year } />
-						<PeerComparisonCard
-							quarter={ activeQuarter.quarter }
-							year={ activeQuarter.year }
-							ownSubmission={ activeSubmission }
-						/>
-					</>
+					<BenchmarksReportState quarter={ activeQuarter } submission={ activeSubmission } />
 				) }
 				{ showEmptyState && hasNoSubmissions && (
 					<BenchmarksEmptyState onSubmitClick={ () => setIsModalOpen( true ) } />

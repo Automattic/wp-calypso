@@ -3,14 +3,14 @@
  */
 
 import { render } from '@testing-library/react';
-import useFetchAgencyBenchmarksList from '../../../../hooks/use-fetch-agency-benchmarks-list';
-import useFetchBenchmarksAggregates from '../../../../hooks/use-fetch-benchmarks-aggregates';
+import useFetchAgencyBenchmarksList from '../../../../../hooks/use-fetch-agency-benchmarks-list';
+import useFetchBenchmarksAggregates from '../../../../../hooks/use-fetch-benchmarks-aggregates';
 import BenchmarkStatsGrid from '../index';
 import StatCard from '../stat-card';
-import type { AgencyBenchmark } from '../../../../constants';
+import type { AgencyBenchmark } from '../../../../../constants';
 
-jest.mock( '../../../../hooks/use-fetch-agency-benchmarks-list', () => jest.fn() );
-jest.mock( '../../../../hooks/use-fetch-benchmarks-aggregates', () => jest.fn() );
+jest.mock( '../../../../../hooks/use-fetch-agency-benchmarks-list', () => jest.fn() );
+jest.mock( '../../../../../hooks/use-fetch-benchmarks-aggregates', () => jest.fn() );
 jest.mock( '../stat-card', () => ( { __esModule: true, default: jest.fn( () => null ) } ) );
 
 const mockList = useFetchAgencyBenchmarksList as unknown as jest.Mock;

@@ -1,7 +1,7 @@
 import { sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { formatQuarterShort } from '../../../lib/format-quarter';
-import type { Quarter } from '../../../constants';
+import { formatQuarterShort } from '../../../../lib/format-quarter';
+import type { Quarter } from '../../../../constants';
 
 type Props = {
 	delta: number;

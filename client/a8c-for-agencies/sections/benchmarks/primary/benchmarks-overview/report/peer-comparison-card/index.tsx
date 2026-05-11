@@ -3,10 +3,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import useFetchBenchmarkPeers from '../../../hooks/use-fetch-benchmark-peers';
+import useFetchBenchmarkPeers from '../../../../hooks/use-fetch-benchmark-peers';
 import { getStatCardConfigs } from '../stats-grid/stat-card-config';
 import PeerCell from './peer-cell';
-import type { AgencyBenchmark, AggregateMetricKey, Quarter } from '../../../constants';
+import type { AgencyBenchmark, AggregateMetricKey, Quarter } from '../../../../constants';
 
 import './style.scss';
 

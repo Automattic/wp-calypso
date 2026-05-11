@@ -1,6 +1,6 @@
 import { LineChart } from '@automattic/charts';
-import { formatQuarterShort } from '../../../lib/format-quarter';
-import type { Quarter } from '../../../constants';
+import { formatQuarterShort } from '../../../../lib/format-quarter';
+import type { Quarter } from '../../../../constants';
 
 import '@automattic/charts/line-chart/style.css';
 
