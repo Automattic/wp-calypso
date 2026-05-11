@@ -28,18 +28,37 @@ const dashboardConfig: AppConfig = {
 
 type RouteLike = {
 	path?: string;
-	options?: {
-		path?: string;
-	};
-	children?: RouteLike[];
+	options?: unknown;
+	children?: unknown[];
 };
 
-function hasRoutePath( routes: RouteLike[], path: string ): boolean {
+function getRouteOptionsPath( route: RouteLike ): string | undefined {
+	if (
+		route.options &&
+		typeof route.options === 'object' &&
+		'path' in route.options &&
+		typeof route.options.path === 'string'
+	) {
+		return route.options.path;
+	}
+}
+
+function getRouteChildren( route: unknown ): unknown[] {
+	if ( ! route || typeof route !== 'object' || ! ( 'children' in route ) ) {
+		return [];
+	}
+
+	return Array.isArray( route.children ) ? route.children : [];
+}
+
+function hasRoutePath( routes: unknown[], path: string ): boolean {
 	return routes.some(
 		( route ) =>
-			route.options?.path === path ||
-			route.path === path ||
-			hasRoutePath( route.children ?? [], path )
+			typeof route === 'object' &&
+			route !== null &&
+			( getRouteOptionsPath( route ) === path ||
+				( 'path' in route && route.path === path ) ||
+				( 'children' in route && hasRoutePath( getRouteChildren( route ), path ) ) )
 	);
 }
 
