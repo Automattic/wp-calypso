@@ -25,11 +25,6 @@ const SOURCES: { value: Source; label: string; description: string }[] = [
 		description: __( 'Top stories from Hacker News.', 'content-research' ),
 	},
 	{
-		value: 'polymarket',
-		label: __( 'Polymarket', 'content-research' ),
-		description: __( 'Market forecasts from Polymarket.', 'content-research' ),
-	},
-	{
 		value: 'googlenews',
 		label: __( 'Google News', 'content-research' ),
 		description: __( 'Recent articles from Google News.', 'content-research' ),

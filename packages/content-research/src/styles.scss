@@ -3,19 +3,21 @@
 @import "./components/ai-summary/style";
 
 .content-research-source-filter {
-	padding-bottom: 16px;
+	box-sizing: border-box;
+	padding: 0 16px 16px;
+	width: 100%;
 
 	.components-button-group {
+		box-sizing: border-box;
 		display: flex;
 		gap: 4px;
-		padding: 0 16px;
 		width: 100%;
 	}
 
 	&__button.components-button {
-		flex: 1;
+		flex: 1 1 0;
+		min-width: 0;
 		justify-content: center;
-		min-width: 32px;
 		height: 32px;
 		padding: 0 8px;
 		background: #fff;
@@ -96,16 +98,6 @@
 		}
 
 		svg path {
-			fill: #fff;
-		}
-	}
-
-	&--polymarket {
-		svg path:first-child {
-			fill: #2a72d8;
-		}
-
-		svg path:last-child {
 			fill: #fff;
 		}
 	}

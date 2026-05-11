@@ -19,8 +19,6 @@ function getSourceLabel( source: Source ): string {
 			return __( 'WordPress.com', 'content-research' );
 		case 'googlenews':
 			return __( 'Google News', 'content-research' );
-		case 'polymarket':
-			return __( 'Polymarket', 'content-research' );
 		case 'myposts':
 			return __( 'Posts', 'content-research' );
 	}
