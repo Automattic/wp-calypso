@@ -1,8 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { ShareReelAction } from './index';
 
 const mockUseReelShare = jest.fn();
 const mockUseGenericShare = jest.fn();
+const mockDialogProps = jest.fn();
 
 jest.mock( '../../../hooks/use-reel-share', () => ( {
 	useReelShare: () => mockUseReelShare(),
@@ -35,31 +36,10 @@ jest.mock( '@wordpress/components', () => ( {
 	},
 } ) );
 
-jest.mock( '../../confirmation-dialog', () => ( {
-	ConfirmationDialog: ( {
-		isOpen,
-		title,
-		actions,
-		children,
-	}: {
-		isOpen: boolean;
-		title?: string;
-		actions: Array< { text: string; onClick: () => void } >;
-		children: React.ReactNode;
-	} ) => {
-		if ( ! isOpen ) {
-			return null;
-		}
-		return (
-			<div role="dialog" aria-label={ title }>
-				<p>{ children }</p>
-				{ actions.map( ( a ) => (
-					<button key={ a.text } onClick={ a.onClick }>
-						{ a.text }
-					</button>
-				) ) }
-			</div>
-		);
+jest.mock( '../../reel-share-confirmation-dialog', () => ( {
+	ReelShareConfirmationDialog: ( props: Record< string, unknown > ) => {
+		mockDialogProps( props );
+		return props.isOpen ? <div role="dialog" /> : null;
 	},
 } ) );
 
@@ -160,73 +140,40 @@ describe( '<ShareReelAction />', () => {
 		expect( handleShare ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	describe( 'confirmation dialog', () => {
-		it( 'is hidden when isConfirming is false', () => {
-			render( <ShareReelAction /> );
-			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'is shown when isConfirming is true', () => {
-			mockUseReelShare.mockReturnValue( {
-				...visibleReel,
-				isConfirming: true,
-				igDisplayName: 'myhandle',
-			} );
-			render( <ShareReelAction /> );
-			expect( screen.getByRole( 'dialog', { name: /Share to Instagram/i } ) ).toBeInTheDocument();
-		} );
-
-		it( 'shows the connected account handle in the body when present, wrapped in <strong>', () => {
-			mockUseReelShare.mockReturnValue( {
-				...visibleReel,
-				isConfirming: true,
-				igDisplayName: 'myhandle',
-			} );
-			render( <ShareReelAction /> );
-
-			const dialog = screen.getByRole( 'dialog' );
-			expect( dialog ).toHaveTextContent( /published to myhandle on Instagram/i );
-
-			const handle = screen.getByText( 'myhandle' );
-			expect( handle.tagName ).toBe( 'STRONG' );
-		} );
-
-		it( 'shows a generic fallback body when no handle is available', () => {
-			mockUseReelShare.mockReturnValue( {
-				...visibleReel,
-				isConfirming: true,
-				igDisplayName: null,
-			} );
-			render( <ShareReelAction /> );
-			expect(
-				screen.getByText( /published to your connected Instagram account/i )
-			).toBeInTheDocument();
-		} );
-
-		it( 'invokes confirmShare when Share is clicked', () => {
+	describe( 'confirmation dialog wiring', () => {
+		it( 'passes through reel state and handlers as props', () => {
 			const confirmShare = jest.fn();
-			mockUseReelShare.mockReturnValue( {
-				...visibleReel,
-				isConfirming: true,
-				igDisplayName: 'myhandle',
-				confirmShare,
-			} );
-			render( <ShareReelAction /> );
-			fireEvent.click( screen.getByRole( 'button', { name: 'Share' } ) );
-			expect( confirmShare ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		it( 'invokes cancelShare when Cancel is clicked', () => {
 			const cancelShare = jest.fn();
 			mockUseReelShare.mockReturnValue( {
 				...visibleReel,
 				isConfirming: true,
 				igDisplayName: 'myhandle',
+				confirmShare,
 				cancelShare,
 			} );
+
 			render( <ShareReelAction /> );
-			fireEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
-			expect( cancelShare ).toHaveBeenCalledTimes( 1 );
+
+			expect( mockDialogProps ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					isOpen: true,
+					igDisplayName: 'myhandle',
+					onConfirm: confirmShare,
+					onCancel: cancelShare,
+				} )
+			);
+			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		} );
+
+		it( 'passes isOpen=false when reel.isConfirming is false', () => {
+			mockUseReelShare.mockReturnValue( { ...visibleReel, isConfirming: false } );
+
+			render( <ShareReelAction /> );
+
+			expect( mockDialogProps ).toHaveBeenCalledWith(
+				expect.objectContaining( { isOpen: false } )
+			);
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

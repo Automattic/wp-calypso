@@ -129,31 +129,12 @@ jest.mock( '../hooks/use-reel-share', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../components/confirmation-dialog', () => ( {
-	ConfirmationDialog: ( {
-		isOpen,
-		title,
-		actions,
-		children,
-	}: {
-		isOpen: boolean;
-		title?: string;
-		actions: Array< { text: string; onClick: () => void } >;
-		children: React.ReactNode;
-	} ) => {
-		if ( ! isOpen ) {
-			return null;
-		}
-		return (
-			<div role="dialog" aria-label={ title }>
-				<p>{ children }</p>
-				{ actions.map( ( a ) => (
-					<button key={ a.text } onClick={ a.onClick }>
-						{ a.text }
-					</button>
-				) ) }
-			</div>
-		);
+const mockDialogProps = jest.fn();
+
+jest.mock( '../components/reel-share-confirmation-dialog', () => ( {
+	ReelShareConfirmationDialog: ( props: Record< string, unknown > ) => {
+		mockDialogProps( props );
+		return props.isOpen ? <div role="dialog" /> : null;
 	},
 } ) );
 
@@ -193,6 +174,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockReelConfirmShare.mockClear();
 		mockReelCancelShare.mockClear();
 		mockGenericHandleShare.mockClear();
+		mockDialogProps.mockClear();
 		mockInsertBlocks.mockClear();
 		mockCreateBlock.mockClear();
 		mockMeta = {};
@@ -347,56 +329,36 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( mockGenericHandleShare ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'hides the confirmation dialog when isConfirming is false', () => {
+		it( 'passes reel state and handlers to the confirmation dialog', () => {
+			setupClip();
+			mockReelVisible = true;
+			mockReelIsConfirming = true;
+			mockReelIgDisplayName = 'myhandle';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockDialogProps ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					isOpen: true,
+					igDisplayName: 'myhandle',
+					onConfirm: mockReelConfirmShare,
+					onCancel: mockReelCancelShare,
+				} )
+			);
+			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		} );
+
+		it( 'passes isOpen=false to the confirmation dialog when reel.isConfirming is false', () => {
 			setupClip();
 			mockReelVisible = true;
 			mockReelIsConfirming = false;
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
+
+			expect( mockDialogProps ).toHaveBeenCalledWith(
+				expect.objectContaining( { isOpen: false } )
+			);
 			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'shows the confirmation dialog with the connected account (in <strong>) when isConfirming is true', () => {
-			setupClip();
-			mockReelVisible = true;
-			mockReelIsConfirming = true;
-			mockReelIgDisplayName = 'myhandle';
-			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			render( <FeatureClipPanel /> );
-
-			const dialog = screen.getByRole( 'dialog', { name: /Share to Instagram/i } );
-			expect( dialog ).toHaveTextContent( /published to myhandle on Instagram/i );
-
-			const handle = screen.getByText( 'myhandle' );
-			expect( handle.tagName ).toBe( 'STRONG' );
-		} );
-
-		it( 'falls back to a generic body when no handle is available', () => {
-			setupClip();
-			mockReelVisible = true;
-			mockReelIsConfirming = true;
-			mockReelIgDisplayName = null;
-			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			render( <FeatureClipPanel /> );
-
-			expect(
-				screen.getByText( /published to your connected Instagram account/i )
-			).toBeInTheDocument();
-		} );
-
-		it( 'invokes confirmShare on Share click and cancelShare on Cancel click', () => {
-			setupClip();
-			mockReelVisible = true;
-			mockReelIsConfirming = true;
-			mockReelIgDisplayName = 'myhandle';
-			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			render( <FeatureClipPanel /> );
-
-			fireEvent.click( screen.getByRole( 'button', { name: 'Share' } ) );
-			expect( mockReelConfirmShare ).toHaveBeenCalledTimes( 1 );
-
-			fireEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
-			expect( mockReelCancelShare ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'opens Image Studio on Regenerate click', async () => {
