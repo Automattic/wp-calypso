@@ -230,12 +230,23 @@ export function FeatureClipRenderHost() {
 		// Surface this phase to the sidebar progress panel so the user sees
 		// "Reading post images" during the prefetch (it can take seconds).
 		setFeatureClipProgressPhase( 'analyzing' );
+		// isActive guards against a second pendingRender replacing the first
+		// while the probe is in-flight — the stale continuation would otherwise
+		// commit setResolvedBrief / setMountedRequestId for a requestId that's
+		// no longer current.
+		let isActive = true;
 		( async () => {
 			try {
 				const resolved = await resolveBriefImages( pendingRender.brief );
+				if ( ! isActive ) {
+					return;
+				}
 				setResolvedBrief( { requestId, brief: resolved } );
 				setMountedRequestId( requestId );
 			} catch ( error ) {
+				if ( ! isActive ) {
+					return;
+				}
 				const message = error instanceof Error ? error.message : 'Failed to load scene images.';
 				// eslint-disable-next-line no-console
 				console.error( '[FeatureClipRenderHost] prefetch_failed', { requestId, message } );
@@ -243,6 +254,9 @@ export function FeatureClipRenderHost() {
 				failFeatureClipRender( { requestId, message } );
 			}
 		} )();
+		return () => {
+			isActive = false;
+		};
 	}, [ pendingRender, resolvedBrief, mountedRequestId, failFeatureClipRender ] );
 
 	// Cancel handling: hard-cancel from the user → record a terminal failure

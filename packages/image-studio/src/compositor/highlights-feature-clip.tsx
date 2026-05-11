@@ -431,7 +431,9 @@ function installAudioBed(
 	const profile = MOOD_PROFILES[ mood ];
 
 	timegroup.renderAudio = async ( fromMs, toMs, signal ) => {
-		signal?.throwIfAborted();
+		if ( signal?.aborted ) {
+			throw signal.reason ?? new DOMException( 'Audio render aborted.', 'AbortError' );
+		}
 		const sampleRate = 48_000;
 		const length = Math.max( 1, Math.ceil( ( ( toMs - fromMs ) / 1000 ) * sampleRate ) );
 
