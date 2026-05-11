@@ -30,4 +30,4 @@ export interface ResearchSummary {
 	suggested_angles: string[];
 }
 
-export type SourceFilter = 'all' | 'hn' | 'polymarket' | 'reader' | 'googlenews';
+export type Source = 'hn' | 'reader' | 'googlenews' | 'myposts';

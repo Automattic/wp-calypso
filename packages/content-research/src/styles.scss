@@ -4,6 +4,48 @@
 
 .content-research-source-filter {
 	padding-bottom: 16px;
+
+	.components-button-group {
+		display: flex;
+		width: 100%;
+	}
+
+	&__button.components-button {
+		flex: 1;
+		justify-content: center;
+		background: #fff;
+		box-shadow: inset 0 0 0 1px #ddd;
+		border-radius: 0;
+
+		&:hover:not(:disabled) {
+			background: #fff;
+			color: #1e1e1e;
+			box-shadow: inset 0 0 0 1px #1e1e1e;
+		}
+
+		&.is-deselected {
+			color: #999;
+			background: #f6f7f7;
+
+			&:hover:not(:disabled) {
+				color: #1e1e1e;
+				background: #fff;
+				box-shadow: inset 0 0 0 1px #ddd;
+			}
+
+			&:focus:not(:disabled):not(:hover) {
+				color: #999;
+				background: #f6f7f7;
+				box-shadow: inset 0 0 0 1px #ddd;
+			}
+		}
+
+		&.is-selected {
+			color: #1e1e1e;
+			font-weight: 600;
+			background: #fff;
+		}
+	}
 }
 
 .content-research-sidebar {
