@@ -6,7 +6,8 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 2rem 1rem;
+	padding-block: 2rem;
+	padding-inline: 1rem;
 	color: var(--color-text-subtle);
 	text-align: center;
 }
@@ -17,7 +18,8 @@
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	padding: 1rem;
+	padding-block: 1rem;
+	padding-inline: 1rem;
 }
 
 .social-notifications-list__error {
@@ -27,7 +29,8 @@
 
 .social-notification-item {
 	display: block;
-	padding: 0.75rem 1rem;
+	padding-block: 0.75rem;
+	padding-inline: 1rem;
 	color: inherit;
 	text-decoration: none;
 	border-block-end: 1px solid var(--color-border-subtle);

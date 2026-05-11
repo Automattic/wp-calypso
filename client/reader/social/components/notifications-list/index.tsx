@@ -28,6 +28,9 @@ export function SocialNotificationsList( {
 		return (
 			<div className="social-notifications-list__status" role="status" aria-live="polite">
 				<Spinner />
+				<span className="screen-reader-text">
+					{ translate( 'Loading notifications' ) as string }
+				</span>
 			</div>
 		);
 	}

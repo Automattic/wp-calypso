@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function NotificationsPanel( { connection }: Props ) {
-	const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+	const { data, isPending, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
 		useAtmosphereNotificationsInfiniteQuery( connection.id );
 
 	const items = useMemo( () => data?.pages.flatMap( ( p ) => p.items ) ?? [], [ data ] );
@@ -16,7 +16,7 @@ export function NotificationsPanel( { connection }: Props ) {
 	return (
 		<SocialNotificationsList
 			items={ items }
-			isLoading={ isLoading }
+			isLoading={ isPending }
 			isLoadingMore={ isFetchingNextPage }
 			isError={ isError }
 			hasMore={ !! hasNextPage }
