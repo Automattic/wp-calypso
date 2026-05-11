@@ -1,3 +1,22 @@
+.social-notifications-list {
+	inline-size: 100%;
+}
+
+.social-notifications-list__status {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 2rem 1rem;
+	color: var(--color-text-subtle);
+	text-align: center;
+}
+
+.social-notifications-list__footer {
+	display: flex;
+	justify-content: center;
+	padding: 1rem;
+}
+
 .social-notification-item {
 	display: block;
 	padding: 0.75rem 1rem;
