@@ -10,7 +10,7 @@ React component used to display a Date Picker.
 import { Component } from 'react';
 import DatePicker from 'calypso/components/date-picker';
 
-export default class extends Component {
+export default class DatePickerExample extends Component {
 	// ...
 
 	onSelectDay( date ) {
