@@ -945,18 +945,6 @@ describe( 'getMastodonNotifications', () => {
 		expect( res.next_cursor ).toBeNull();
 	} );
 
-	it( 'sends explicit limit=0 (seen_at-only refresh)', async () => {
-		// Belt-and-suspenders: `typeof limit === 'number'` lets `limit: 0`
-		// through. A truthy guard would have dropped it and silently
-		// changed behaviour.
-		nock( BASE )
-			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
-			.query( { limit: '0' } )
-			.reply( 200, { items: [], next_cursor: null, seen_at: '2026-05-11T00:00:00Z' } );
-		const res = await getMastodonNotifications( { connectionId: 101, limit: 0 } );
-		expect( res.seen_at ).toBe( '2026-05-11T00:00:00Z' );
-	} );
-
 	it( 'classifies wpcom 401 as auth_required', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )

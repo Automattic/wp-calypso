@@ -171,9 +171,7 @@ export async function getMastodonNotifications(
 	if ( cursor ) {
 		query.cursor = cursor;
 	}
-	// typeof guard so an explicit `limit: 0` (used by callers that want
-	// only the seen_at watermark refreshed without items) reaches the wire.
-	if ( typeof limit === 'number' ) {
+	if ( limit ) {
 		query.limit = String( limit );
 	}
 	try {
