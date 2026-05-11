@@ -166,6 +166,21 @@ function ImageStudioAgentChat( {
 				messageLength: message?.length || 0,
 			} );
 
+			// Highlights renders in-browser and stalls when the tab loses
+			// focus — surface a hint up front so the user knows to keep it
+			// visible across both compose + render phases.
+			if ( isVideoMode && videoStudioStyle === 'highlights' ) {
+				addNotice(
+					__(
+						'Keep this tab visible while the clip renders — background tabs pause the render.',
+						__i18n_text_domain__
+					),
+					'info',
+					undefined,
+					true
+				);
+			}
+
 			try {
 				await agentChatProps.onSubmit?.( message );
 			} catch ( error ) {
@@ -253,16 +268,10 @@ function ImageStudioAgentChat( {
 				<p className="image-studio-modal__media-library-disclaimer">
 					<em>
 						{ __(
-							'Outputs from this experimental feature may need editing before publishing.',
+							'Clips are saved to your Media Library as 9:16 vertical MP4 files.',
 							__i18n_text_domain__
 						) }
 					</em>
-					<br />
-					<em>
-						{ __( 'All generated videos are saved to your Media Library.', __i18n_text_domain__ ) }
-					</em>
-					<br />
-					<em>{ __( 'All clips export as 9:16 vertical MP4 files.', __i18n_text_domain__ ) }</em>
 				</p>
 			) }
 		</>

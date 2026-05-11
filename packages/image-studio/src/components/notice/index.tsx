@@ -12,12 +12,13 @@ import './style.scss';
  * @param root0.notice    - The notice object to render.
  * @param root0.onDismiss - Callback when notice is dismissed.
  */
-function WarningNotice( { notice, onDismiss }: { notice: NoticeType; onDismiss?: () => void } ) {
+function InlineNotice( { notice, onDismiss }: { notice: NoticeType; onDismiss?: () => void } ) {
 	const isDismissible = notice.dismissible ?? false;
+	const status = notice.type === 'info' ? 'info' : 'warning';
 
 	return (
 		<Notice
-			status="warning"
+			status={ status }
 			isDismissible={ isDismissible }
 			onDismiss={ isDismissible ? onDismiss : undefined }
 			actions={
@@ -45,13 +46,19 @@ export function ImageStudioNotice() {
 
 	const { removeNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
 
-	const warningNotices = ( notices ?? [] ).filter( ( n ) => n.type === 'warning' );
-	const snackbarNotices = ( notices ?? [] ).filter( ( n ) => n.type !== 'warning' );
+	// 'warning' and 'info' render as inline notices (yellow / blue banners);
+	// 'success' and 'error' route through SnackbarList for transient toasts.
+	const inlineNotices = ( notices ?? [] ).filter(
+		( n ) => n.type === 'warning' || n.type === 'info'
+	);
+	const snackbarNotices = ( notices ?? [] ).filter(
+		( n ) => n.type !== 'warning' && n.type !== 'info'
+	);
 
 	return (
 		<>
-			{ warningNotices.map( ( notice ) => (
-				<WarningNotice
+			{ inlineNotices.map( ( notice ) => (
+				<InlineNotice
 					key={ notice.id }
 					notice={ notice }
 					onDismiss={ () => removeNotice( notice.id ) }
