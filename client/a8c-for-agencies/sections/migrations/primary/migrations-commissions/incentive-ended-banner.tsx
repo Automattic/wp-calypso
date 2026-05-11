@@ -12,10 +12,10 @@ export default function IncentiveEndedBanner() {
 			hideCloseButton
 		>
 			<div>
+			<Text>
 				{ translate(
 					'The incentive for sites migrated through August 31, 2025 has ended. New migrations are no longer eligible for commissions.'
 				) }
-			</div>
-		</LayoutBanner>
+			</Text>
 	);
 }
