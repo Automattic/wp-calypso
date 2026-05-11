@@ -71,11 +71,15 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		}
 	};
 
+	const isWideView = view === 'achievements';
+
 	return (
 		<div className="user-profile">
-			<ReaderMain>
-				<ReaderBackButton />
-				<UserProfileHeader user={ user } view={ view } />
+			<ReaderMain wideLayout={ isWideView }>
+				<div className={ isWideView ? 'user-profile__narrow' : undefined }>
+					<ReaderBackButton />
+					<UserProfileHeader user={ user } view={ view } />
+				</div>
 				{ renderSelectedTabContent() }
 			</ReaderMain>
 		</div>
