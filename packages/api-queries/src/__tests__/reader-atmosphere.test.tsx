@@ -36,6 +36,7 @@ import {
 	removePlaceholder,
 	swapPlaceholder,
 	unfollowAtmosphereActorMutation,
+	useAtmosphereNotificationsInfiniteQuery,
 	useAtmosphereScopedAuthorFeedInfiniteQuery,
 	useAtmosphereScopedThreadQuery,
 	useAuthorFeedInfiniteQuery,
@@ -220,6 +221,79 @@ describe( 'reader-atmosphere hooks', () => {
 				await result.current.refetch();
 			} );
 			expect( result.current.isSuccess ).toBe( true );
+		} );
+	} );
+
+	describe( 'useAtmosphereNotificationsInfiniteQuery', () => {
+		const PATH = '/wpcom/v2/reader/atmosphere/connections/42/notifications';
+
+		let wrapper: React.FC< { children: React.ReactNode } >;
+
+		// Same `notifyOnChangeProps: 'tracked'` workaround as the timeline test:
+		// touching properties inside the render callback so the observer
+		// notifies on later updates.
+		const renderNotificationsHook = ( connectionId: number ) =>
+			renderHook(
+				() => {
+					const q = useAtmosphereNotificationsInfiniteQuery( connectionId );
+					void q.data;
+					void q.hasNextPage;
+					void q.isFetchingNextPage;
+					void q.isError;
+					void q.error;
+					return q;
+				},
+				{ wrapper }
+			);
+
+		beforeEach( () => {
+			const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			wrapper = ( { children } ) => (
+				<QueryClientProvider client={ client }>{ children }</QueryClientProvider>
+			);
+		} );
+
+		afterEach( () => {
+			nock.cleanAll();
+		} );
+
+		it( 'is disabled when connectionId is 0', () => {
+			const { result } = renderNotificationsHook( 0 );
+			expect( result.current.fetchStatus ).toBe( 'idle' );
+			expect( result.current.data ).toBeUndefined();
+		} );
+
+		it( 'fetches the first page on mount', async () => {
+			nock( BASE ).get( PATH ).query( {} ).reply( 200, {
+				items: [],
+				next_cursor: null,
+				seen_at: null,
+			} );
+			const { result } = renderNotificationsHook( 42 );
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( result.current.data?.pages[ 0 ].items ).toEqual( [] );
+		} );
+
+		it( 'paginates via next_cursor returned by the previous page', async () => {
+			nock( BASE ).get( PATH ).query( {} ).reply( 200, {
+				items: [],
+				next_cursor: 'page-2',
+				seen_at: null,
+			} );
+			nock( BASE )
+				.get( PATH )
+				.query( { cursor: 'page-2' } )
+				.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+			const { result } = renderNotificationsHook( 42 );
+			await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+			expect( result.current.hasNextPage ).toBe( true );
+
+			await act( async () => {
+				await result.current.fetchNextPage();
+			} );
+			expect( result.current.data?.pages.length ).toBe( 2 );
+			expect( result.current.hasNextPage ).toBe( false );
 		} );
 	} );
 
