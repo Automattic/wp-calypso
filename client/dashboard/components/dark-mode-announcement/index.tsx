@@ -20,7 +20,12 @@ export function useShouldShowDarkModeAnnouncement() {
 		userPreferenceQuery( DISMISSED_PREFERENCE )
 	);
 
-	return config.supports.darkMode && ! isDashboardBackport() && ! isDismissedPersisted;
+	return (
+		config.supports.darkMode &&
+		config.supports.colorScheme &&
+		! isDashboardBackport() &&
+		! isDismissedPersisted
+	);
 }
 
 function DarkModeAnnouncementContent( { tracksContext }: { tracksContext: string } ) {

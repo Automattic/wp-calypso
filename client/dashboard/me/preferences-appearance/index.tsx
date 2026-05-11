@@ -36,7 +36,7 @@ function PreferencesAppearanceSummary( { density }: { density?: Density } ) {
 export default function PreferencesAppearance( { density }: { density?: Density } ) {
 	const config = useAppContext();
 
-	if ( ! config.supports.darkMode || isDashboardBackport() ) {
+	if ( ! config.supports.darkMode || ! config.supports.colorScheme || isDashboardBackport() ) {
 		return null;
 	}
 

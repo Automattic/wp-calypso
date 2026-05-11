@@ -260,6 +260,28 @@ test( 'does not render when dark mode is not supported by the Dashboard config',
 	} );
 } );
 
+test( 'does not render when color scheme is not supported by the Dashboard config', async () => {
+	renderAnnouncement(
+		{
+			'hosting-dashboard-opt-in': optInPreference,
+		},
+		{
+			...dashboardConfig,
+			supports: {
+				...dashboardConfig.supports,
+				colorScheme: false,
+				darkMode: true,
+			},
+		}
+	);
+
+	await waitFor( () => {
+		expect(
+			screen.queryByText( /Dark mode support is now available in the dashboard/i )
+		).not.toBeInTheDocument();
+	} );
+} );
+
 test( 'dismisses without saving a color-scheme preference', async () => {
 	const user = userEvent.setup();
 	nock( API_BASE )

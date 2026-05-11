@@ -67,3 +67,19 @@ test( 'does not register the appearance route when dark mode is not supported', 
 		)
 	).toBe( false );
 } );
+
+test( 'does not register the appearance route when color scheme is not supported', () => {
+	expect(
+		hasRoutePath(
+			createMeRoutes( {
+				...dashboardConfig,
+				supports: {
+					...dashboardConfig.supports,
+					colorScheme: false,
+					darkMode: true,
+				},
+			} ),
+			'appearance'
+		)
+	).toBe( false );
+} );

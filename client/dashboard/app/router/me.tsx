@@ -910,7 +910,11 @@ export const appearanceRoute = createRoute( {
 	getParentRoute: () => preferencesRoute,
 	path: 'appearance',
 	beforeLoad: ( { context } ) => {
-		if ( ! context.config.supports.darkMode || isDashboardBackport() ) {
+		if (
+			! context.config.supports.darkMode ||
+			! context.config.supports.colorScheme ||
+			isDashboardBackport()
+		) {
 			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
 		}
 	},
@@ -1141,7 +1145,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
 	}
-	if ( config.supports.darkMode ) {
+	if ( config.supports.darkMode && config.supports.colorScheme ) {
 		preferencesChildren.push( appearanceRoute );
 	}
 	if ( isEnabled( 'mcp-settings' ) ) {

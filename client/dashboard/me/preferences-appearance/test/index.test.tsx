@@ -93,3 +93,20 @@ test( 'does not render when dark mode is not supported', async () => {
 		).not.toBeInTheDocument();
 	} );
 } );
+
+test( 'does not render when color scheme is not supported', async () => {
+	renderPreferencesAppearance( {
+		...dashboardConfig,
+		supports: {
+			...dashboardConfig.supports,
+			colorScheme: false,
+			darkMode: true,
+		},
+	} );
+
+	await waitFor( () => {
+		expect(
+			screen.queryByRole( 'link', { name: /Appearance \(Experimental\)/i } )
+		).not.toBeInTheDocument();
+	} );
+} );
