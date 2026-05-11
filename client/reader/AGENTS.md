@@ -152,6 +152,12 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/mastodon/:id/profile/:actor`             | `client/reader/mastodon/author-profile-view.tsx`                          |
 | `/reader/mastodon/:id/profile/:actor/followers`   | `client/reader/mastodon/followers-view.tsx`                               |
 | `/reader/mastodon/:id/profile/:actor/following`   | `client/reader/mastodon/following-view.tsx`                               |
+| `/reader/fediverse`                               | `client/reader/fediverse/fediverse-landing-view.tsx`                      |
+| `/reader/fediverse/:id`                           | `client/reader/fediverse/controller.tsx` (redirect handler)               |
+| `/reader/fediverse/:id/:tab`                      | `client/reader/fediverse/fediverse-account-view.tsx`                      |
+| `/reader/fediverse/:id/profile/:actor`            | `client/reader/fediverse/author-profile-view.tsx`                         |
+| `/reader/fediverse/:id/profile/:actor/followers`  | `client/reader/fediverse/followers-view.tsx`                              |
+| `/reader/fediverse/:id/profile/:actor/following`  | `client/reader/fediverse/following-view.tsx`                              |
 
 The likes/favorites count on `<SocialPostCard>` becomes an interactive
 `<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
