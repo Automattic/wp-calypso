@@ -7,6 +7,8 @@ import {
 	type AtmosphereConnectionDetails,
 	type AtmosphereFeedItem,
 	type AtmosphereScopedProfile,
+	type AtmosphereScopedProfileSummary,
+	type AtmosphereScopedProfilesPage,
 	type AtmosphereTagFeedPage,
 	type AtmosphereThreadNode,
 	type AtmosphereThreadResponse,
@@ -24,6 +26,8 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { wpcom } from '../../../api-core/src/wpcom-fetcher';
 import {
+	atmosphereActorFollowersInfiniteQuery,
+	atmosphereActorFollowsInfiniteQuery,
 	atmosphereScopedProfileQuery,
 	buildPlaceholderStandalonePost,
 	createPostMutation,
@@ -774,6 +778,7 @@ describe( 'reader-atmosphere hooks', () => {
 					connectionId: 1,
 					actor: 'alice.bsky.social',
 					rkey: '3krkeyrkeyrke',
+					subjectDid: 'did:plc:target',
 				} );
 			} );
 
@@ -813,6 +818,7 @@ describe( 'reader-atmosphere hooks', () => {
 						connectionId: 1,
 						actor: 'alice.bsky.social',
 						rkey: '3krkeyrkeyrke',
+						subjectDid: 'did:plc:target',
 					} );
 				} catch {
 					// expected
@@ -825,6 +831,418 @@ describe( 'reader-atmosphere hooks', () => {
 			);
 			expect( after?.viewer.following_rkey ).toBe( '3krkeyrkeyrke' );
 			expect( after?.viewer.followed_by ).toBe( true );
+		} );
+
+		describe( 'cache fan-out to actor-list infinite caches', () => {
+			const CONNECTION_ID = 42;
+			const SUBJECT_DID = 'did:plc:alice';
+
+			function makeFollowersPage(
+				viewerOverrides: Partial< AtmosphereScopedProfileSummary[ 'viewer' ] > = {}
+			): InfiniteData< AtmosphereScopedProfilesPage > {
+				return {
+					pageParams: [ undefined ],
+					pages: [
+						{
+							cursor: null,
+							items: [
+								{
+									did: SUBJECT_DID,
+									handle: 'alice.bsky.social',
+									display_name: 'Alice',
+									description: '',
+									avatar: null,
+									viewer: {
+										following: null,
+										following_rkey: null,
+										followed_by: false,
+										...viewerOverrides,
+									},
+								},
+							],
+						},
+					],
+				};
+			}
+
+			it( 'follow patches viewer.following on a matching row in actor-followers infinite cache', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const followersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData( followersKey, makeFollowersPage() );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows` )
+					.reply( 201, {
+						follow: {
+							uri: 'at://did:plc:caller/app.bsky.graph.follow/newrkey123456',
+							cid: 'cid',
+							rkey: 'newrkey123456',
+						},
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( followAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					await result.current.mutateAsync( {
+						connectionId: CONNECTION_ID,
+						actor: 'alice.bsky.social',
+						subjectDid: SUBJECT_DID,
+					} );
+				} );
+
+				const updated =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( followersKey );
+				expect( updated?.pages[ 0 ].items[ 0 ].viewer.following ).toBe(
+					'at://did:plc:caller/app.bsky.graph.follow/newrkey123456'
+				);
+				expect( updated?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBe( 'newrkey123456' );
+			} );
+
+			it( 'follow patches viewer.following on a matching row in actor-follows infinite cache', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const followsKey = atmosphereActorFollowsInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'someone-else.bsky.social',
+				} ).queryKey;
+				client.setQueryData( followsKey, makeFollowersPage() );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows` )
+					.reply( 201, {
+						follow: {
+							uri: 'at://did:plc:caller/app.bsky.graph.follow/newrkey123456',
+							cid: 'cid',
+							rkey: 'newrkey123456',
+						},
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( followAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					await result.current.mutateAsync( {
+						connectionId: CONNECTION_ID,
+						actor: 'alice.bsky.social',
+						subjectDid: SUBJECT_DID,
+					} );
+				} );
+
+				const updated =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( followsKey );
+				expect( updated?.pages[ 0 ].items[ 0 ].viewer.following ).toBe(
+					'at://did:plc:caller/app.bsky.graph.follow/newrkey123456'
+				);
+				expect( updated?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBe( 'newrkey123456' );
+			} );
+
+			it( 'follow optimistically marks rows pending and rolls back on error', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const followersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData( followersKey, makeFollowersPage() );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows` )
+					.reply( 502, {
+						code: 'atmosphere_upstream_unavailable',
+						message: 'Bluesky unreachable.',
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( followAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					try {
+						await result.current.mutateAsync( {
+							connectionId: CONNECTION_ID,
+							actor: 'alice.bsky.social',
+							subjectDid: SUBJECT_DID,
+						} );
+					} catch {
+						// expected
+					}
+				} );
+
+				const reverted =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( followersKey );
+				expect( reverted?.pages[ 0 ].items[ 0 ].viewer.following ).toBeNull();
+				expect( reverted?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBeNull();
+			} );
+
+			it( 'unfollow clears viewer.following on a matching row across actor-list caches', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const followersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData(
+					followersKey,
+					makeFollowersPage( {
+						following: 'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke',
+						following_rkey: '3krkeyrkeyrke',
+					} )
+				);
+
+				nock( BASE )
+					.delete(
+						`/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows/3krkeyrkeyrke`
+					)
+					.reply( 204 );
+
+				const { result } = renderHook(
+					() => useMutation( unfollowAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					await result.current.mutateAsync( {
+						connectionId: CONNECTION_ID,
+						actor: 'alice.bsky.social',
+						rkey: '3krkeyrkeyrke',
+						subjectDid: SUBJECT_DID,
+					} );
+				} );
+
+				const after =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( followersKey );
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following ).toBeNull();
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBeNull();
+			} );
+
+			it( 'unfollow rolls back row patches when the request fails', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const followersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData(
+					followersKey,
+					makeFollowersPage( {
+						following: 'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke',
+						following_rkey: '3krkeyrkeyrke',
+					} )
+				);
+				// Seed the scoped-profile cache so the rollback context has a
+				// `previous` viewer state to read the prior `following` from.
+				const scopedKey = atmosphereScopedProfileQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'alice.bsky.social',
+				} ).queryKey;
+				client.setQueryData(
+					scopedKey,
+					makeScopedProfile( {
+						did: SUBJECT_DID,
+						viewer: {
+							following: 'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke',
+							following_rkey: '3krkeyrkeyrke',
+							followed_by: false,
+						},
+					} )
+				);
+
+				nock( BASE )
+					.delete(
+						`/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows/3krkeyrkeyrke`
+					)
+					.reply( 502, {
+						code: 'atmosphere_upstream_unavailable',
+						message: 'Bluesky unreachable.',
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( unfollowAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					try {
+						await result.current.mutateAsync( {
+							connectionId: CONNECTION_ID,
+							actor: 'alice.bsky.social',
+							rkey: '3krkeyrkeyrke',
+							subjectDid: SUBJECT_DID,
+						} );
+					} catch {
+						// expected
+					}
+				} );
+
+				const after =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( followersKey );
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following ).toBe(
+					'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke'
+				);
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBe( '3krkeyrkeyrke' );
+			} );
+
+			it( 'follow does not patch rows on a different connection', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const OTHER_CONNECTION_ID = 99;
+				const ourFollowersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				const otherFollowersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: OTHER_CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData( ourFollowersKey, makeFollowersPage() );
+				client.setQueryData( otherFollowersKey, makeFollowersPage() );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows` )
+					.reply( 201, {
+						follow: {
+							uri: 'at://did:plc:caller/app.bsky.graph.follow/newrkey123456',
+							cid: 'cid',
+							rkey: 'newrkey123456',
+						},
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( followAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					await result.current.mutateAsync( {
+						connectionId: CONNECTION_ID,
+						actor: 'alice.bsky.social',
+						subjectDid: SUBJECT_DID,
+					} );
+				} );
+
+				const ours =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( ourFollowersKey );
+				const other =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( otherFollowersKey );
+				expect( ours?.pages[ 0 ].items[ 0 ].viewer.following ).toBe(
+					'at://did:plc:caller/app.bsky.graph.follow/newrkey123456'
+				);
+				// The other connection's cached row must not be touched: viewer.following
+				// is per-caller, so leaking the URI between connections would falsely
+				// flip the Follow button on a connection that has not actually followed.
+				expect( other?.pages[ 0 ].items[ 0 ].viewer.following ).toBeNull();
+				expect( other?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBeNull();
+			} );
+
+			it( 'unfollow rolls back row patches even with no scoped-profile cache loaded', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const followersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData(
+					followersKey,
+					makeFollowersPage( {
+						following: 'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke',
+						following_rkey: '3krkeyrkeyrke',
+					} )
+				);
+				// Note: scoped-profile cache is intentionally NOT seeded — this is the
+				// realistic followers/following view path where the user opens a list
+				// without also having visited the target's profile page.
+
+				nock( BASE )
+					.delete(
+						`/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows/3krkeyrkeyrke`
+					)
+					.reply( 502, {
+						code: 'atmosphere_upstream_unavailable',
+						message: 'Bluesky unreachable.',
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( unfollowAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					try {
+						await result.current.mutateAsync( {
+							connectionId: CONNECTION_ID,
+							actor: 'alice.bsky.social',
+							rkey: '3krkeyrkeyrke',
+							subjectDid: SUBJECT_DID,
+						} );
+					} catch {
+						// expected
+					}
+				} );
+
+				const after =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( followersKey );
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following ).toBe(
+					'at://did:plc:caller/app.bsky.graph.follow/3krkeyrkeyrke'
+				);
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBe( '3krkeyrkeyrke' );
+			} );
+
+			it( 'follow does not patch rows whose DID does not match the subject', async () => {
+				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+				const followersKey = atmosphereActorFollowersInfiniteQuery( {
+					connectionId: CONNECTION_ID,
+					actor: 'target.bsky.social',
+				} ).queryKey;
+				client.setQueryData( followersKey, {
+					pageParams: [ undefined ],
+					pages: [
+						{
+							cursor: null,
+							items: [
+								{
+									did: 'did:plc:other',
+									handle: 'other.bsky.social',
+									display_name: 'Other',
+									description: '',
+									avatar: null,
+									viewer: { following: null, following_rkey: null, followed_by: false },
+								},
+							],
+						},
+					],
+				} );
+
+				nock( BASE )
+					.post( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/follows` )
+					.reply( 201, {
+						follow: {
+							uri: 'at://did:plc:caller/app.bsky.graph.follow/newrkey123456',
+							cid: 'cid',
+							rkey: 'newrkey123456',
+						},
+					} );
+
+				const { result } = renderHook(
+					() => useMutation( followAtmosphereActorMutation( client ) ),
+					{ wrapper: makeWrapper( client ) }
+				);
+
+				await act( async () => {
+					await result.current.mutateAsync( {
+						connectionId: CONNECTION_ID,
+						actor: 'alice.bsky.social',
+						subjectDid: SUBJECT_DID,
+					} );
+				} );
+
+				const after =
+					client.getQueryData< InfiniteData< AtmosphereScopedProfilesPage > >( followersKey );
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following ).toBeNull();
+				expect( after?.pages[ 0 ].items[ 0 ].viewer.following_rkey ).toBeNull();
+			} );
 		} );
 	} );
 

@@ -7,7 +7,17 @@ import { getLocaleSlug } from 'i18n-calypso';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import wpcom from 'calypso/lib/wp';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { useSubscribeRecommendations, type CardData } from '../use-subscribe-recommendations';
+import {
+	useSubscribeRecommendations,
+	type CardData,
+	type RecommendedBlogsApiSite,
+} from '../use-subscribe-recommendations';
+
+/** Controls `readFeedQuery` mock behavior (see `jest.mock( '@automattic/api-queries' )` below). */
+const readFeedQueryTestHarness = {
+	mode: 'off' as 'off' | 'enrich',
+	enrichmentByFeedId: {} as Record< number, { feed_URL: string } >,
+};
 
 jest.mock( 'calypso/lib/wp', () => ( {
 	req: {
@@ -30,12 +40,40 @@ jest.mock( 'i18n-calypso', () => {
 jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 	curatedBlogs: {
 		food: [
-			{ feed_ID: 100, site_ID: 0, site_URL: 'https://food1.example', site_name: 'Food 1' },
-			{ feed_ID: 101, site_ID: 1001, site_URL: 'https://food2.example', site_name: 'Food 2' },
+			{
+				feed_ID: 100,
+				site_ID: 0,
+				site_URL: 'https://food1.example',
+				site_name: 'Food 1',
+				feed_URL: 'https://food1.example/feed',
+				has_icon: true,
+			},
+			{
+				feed_ID: 101,
+				site_ID: 1001,
+				site_URL: 'https://food2.example',
+				site_name: 'Food 2',
+				feed_URL: 'https://food2.example/feed',
+				has_icon: true,
+			},
 		],
 		drinks: [
-			{ feed_ID: 200, site_ID: 0, site_URL: 'https://drinks1.example', site_name: 'Drinks 1' },
-			{ feed_ID: 201, site_ID: 2001, site_URL: 'https://drinks2.example', site_name: 'Drinks 2' },
+			{
+				feed_ID: 200,
+				site_ID: 0,
+				site_URL: 'https://drinks1.example',
+				site_name: 'Drinks 1',
+				feed_URL: 'https://drinks1.example/feed',
+				has_icon: true,
+			},
+			{
+				feed_ID: 201,
+				site_ID: 2001,
+				site_URL: 'https://drinks2.example',
+				site_name: 'Drinks 2',
+				feed_URL: 'https://drinks2.example/feed',
+				has_icon: false,
+			},
 		],
 	},
 } ) );
@@ -43,19 +81,28 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 // `readFeedQuery` is consumed by `useQueries` to fetch feed metadata and bridge
 // it back into Redux. The pinning logic in the hook reads that bridged state
 // (or our preloaded `initialState`) to decide whether a card is "validated".
-// We disable the query function entirely so React Query never fires during the
-// test — every test that cares about pinning preloads `state.reader.feeds.items`
-// (and `state.reader.sites.items`) directly, which is faster and gives us
-// pixel-perfect control over per-card load/error state.
+// By default we disable queries so tests that preload Redux stay fast. The
+// `enrich` harness enables targeted `readFeedQuery` responses (see feed_URL test).
 jest.mock( '@automattic/api-queries', () => {
 	const actual = jest.requireActual( '@automattic/api-queries' );
 	return {
 		...actual,
-		readFeedQuery: ( feedId: number ) => ( {
-			...actual.readFeedQuery( feedId ),
-			queryFn: jest.fn().mockResolvedValue( null ),
-			enabled: false,
-		} ),
+		readFeedQuery: ( feedId: number ) => {
+			const base = actual.readFeedQuery( feedId );
+			if ( readFeedQueryTestHarness.mode === 'off' ) {
+				return {
+					...base,
+					queryFn: jest.fn().mockResolvedValue( null ),
+					enabled: false,
+				};
+			}
+			const enrichment = readFeedQueryTestHarness.enrichmentByFeedId[ feedId ];
+			return {
+				...base,
+				queryFn: () => Promise.resolve( enrichment != null ? { ...enrichment } : null ),
+				enabled: Boolean( enrichment ),
+			};
+		},
 	};
 } );
 
@@ -77,9 +124,7 @@ const tagsLoaded = ( slugs: string[] ) =>
 		isLoading: false,
 	} ) as unknown as ReturnType< typeof useFollowedReaderTags >;
 
-type ApiSite = CardData & { URL?: string };
-
-const cardsResponse = ( sites: ApiSite[] ) => ( {
+const cardsResponse = ( sites: RecommendedBlogsApiSite[] ) => ( {
 	cards: [ { type: 'recommended_blogs', data: sites } ],
 } );
 
@@ -138,6 +183,8 @@ const renderHook = ( initialState: ReaderState = buildReaderState() ) =>
 
 beforeEach( () => {
 	jest.clearAllMocks();
+	readFeedQueryTestHarness.mode = 'off';
+	readFeedQueryTestHarness.enrichmentByFeedId = {};
 	mockGetLocaleSlug.mockReturnValue( 'en' );
 	mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [ 'food', 'drinks' ] ) );
 	mockGet.mockResolvedValue( cardsResponse( [] ) );
@@ -175,6 +222,37 @@ describe( 'useSubscribeRecommendations', () => {
 		} );
 	} );
 
+	describe( 'combinedRecommendations feed_URL enrichment', () => {
+		beforeEach( () => {
+			readFeedQueryTestHarness.mode = 'enrich';
+			readFeedQueryTestHarness.enrichmentByFeedId = {
+				999: { feed_URL: 'https://from-read-feed.example/feed' },
+			};
+			mockUseFollowedReaderTags.mockReturnValue( tagsLoaded( [ 'not-in-curated-mock' ] ) );
+			mockGet.mockResolvedValue(
+				cardsResponse( [
+					{
+						feed_ID: 999,
+						site_ID: 0,
+						site_URL: 'https://only-api.example',
+						site_name: 'API row without feed_URL on cards payload',
+					},
+				] )
+			);
+		} );
+
+		it( 'uses readFeedQuery feed_URL when `/read/tags/cards` omits feed_URL', async () => {
+			const { result } = renderHook();
+
+			await waitFor( () => {
+				const row = result.current.combinedRecommendations.find(
+					( s: CardData ) => s.feed_ID === 999
+				);
+				expect( row?.feed_URL ).toBe( 'https://from-read-feed.example/feed' );
+			} );
+		} );
+	} );
+
 	describe( 'combinedRecommendations ordering', () => {
 		it( 'round-robin interleaves curated blogs across followed tags', async () => {
 			const { result } = renderHook();
@@ -195,6 +273,7 @@ describe( 'useSubscribeRecommendations', () => {
 						site_ID: 9999,
 						site_URL: 'https://api.example',
 						site_name: 'API only',
+						feed_URL: 'https://api.example/feed',
 					},
 				] )
 			);
@@ -218,12 +297,14 @@ describe( 'useSubscribeRecommendations', () => {
 						site_ID: 0,
 						site_URL: 'https://food1.example',
 						site_name: 'Food 1 (api copy)',
+						feed_URL: 'https://food1.example/feed',
 					},
 					{
 						feed_ID: 999,
 						site_ID: 9999,
 						site_URL: 'https://api.example',
 						site_name: 'API only',
+						feed_URL: 'https://api.example/feed',
 					},
 				] )
 			);
@@ -245,6 +326,7 @@ describe( 'useSubscribeRecommendations', () => {
 						site_ID: 0,
 						site_URL: 'https://drinks1-api.example',
 						site_name: 'Drinks 1 (api copy)',
+						feed_URL: 'https://drinks1-api.example/feed',
 					},
 				] )
 			);

@@ -15,6 +15,7 @@ import {
 	INSERT_BLOCK_TOOL_NAME,
 	INSERT_BLOCKS_TOOL_NAME,
 	MOVE_BLOCK_TOOL_NAME,
+	REMOVE_ALL_BLOCKS_TOOL_NAME,
 	REMOVE_BLOCK_TOOL_NAME,
 	REPLACE_BLOCK_TOOL_NAME,
 	SELECT_BLOCK_TOOL_NAME,
@@ -30,6 +31,7 @@ import {
 	executeInsertBlockTool,
 	executeInsertBlocksTool,
 	executeMoveBlockTool,
+	executeRemoveAllBlocksTool,
 	executeRemoveBlockTool,
 	executeReplaceBlockTool,
 	executeSelectBlockTool,
@@ -195,6 +197,9 @@ async function executeRealtimeToolCall(
 	}
 	if ( call.name === REMOVE_BLOCK_TOOL_NAME ) {
 		return executeRemoveBlockTool( call.arguments );
+	}
+	if ( call.name === REMOVE_ALL_BLOCKS_TOOL_NAME ) {
+		return executeRemoveAllBlocksTool();
 	}
 	if ( call.name === MOVE_BLOCK_TOOL_NAME ) {
 		return executeMoveBlockTool( call.arguments );

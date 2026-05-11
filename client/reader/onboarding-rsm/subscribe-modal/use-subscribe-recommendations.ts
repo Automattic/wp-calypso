@@ -61,11 +61,41 @@ export interface CardData {
 	site_ID: number;
 	site_URL: string;
 	site_name: string;
+	/**
+	 * URL used for follow / stream preview: normally the RSS or feed endpoint from the curated
+	 * list, `/read/tags/cards`, or `readFeedQuery`. `combinedRecommendations` may still set this
+	 * to `site_URL` when no feed URL is available yet or the feed request never supplies one.
+	 */
+	feed_URL: string;
+}
+
+/**
+ * Row shape from `/read/tags/cards` `recommended_blogs` card `data` before normalization.
+ * `feed_URL` is often omitted until enriched via `readFeedQuery` in `combinedRecommendations`.
+ */
+export type RecommendedBlogsApiSite = {
+	feed_ID: number;
+	site_ID: number;
+	site_URL: string;
+	site_name: string;
+	feed_URL?: string;
+	/** Site URL alias sometimes returned by the API instead of `site_URL`. */
+	URL?: string;
+};
+
+function mapRecommendedBlogPayloadToCardData( site: RecommendedBlogsApiSite ): CardData {
+	return {
+		feed_ID: site.feed_ID,
+		site_ID: site.site_ID,
+		site_URL: site.URL || site.site_URL,
+		site_name: site.site_name,
+		feed_URL: site.feed_URL ?? '',
+	};
 }
 
 interface Card {
 	type: string;
-	data: CardData[];
+	data: RecommendedBlogsApiSite[];
 }
 
 export interface UseSubscribeRecommendationsResult {
@@ -141,10 +171,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			);
 
 			return recommendedBlogsCard
-				? recommendedBlogsCard.data.map( ( site: CardData & { URL?: string } ) => ( {
-						...site,
-						site_URL: site.URL || site.site_URL,
-				  } ) )
+				? recommendedBlogsCard.data.map( mapRecommendedBlogPayloadToCardData )
 				: [];
 		},
 		staleTime: Infinity,
@@ -159,7 +186,9 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	// flash the "No recommendations available" placeholder.
 	const isLoading = tagsLoading || apiLoading;
 
-	const combinedRecommendations = useMemo( () => {
+	// Candidate list before enriching `feed_URL` from `readFeedQuery` results
+	// (the `/read/tags/cards` payload sometimes omits `feed_URL` on API rows).
+	const baseCombinedRecommendations = useMemo( () => {
 		if ( isLoading ) {
 			return [];
 		}
@@ -213,10 +242,24 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 
 	// Fetch feed metadata via React Query and bridge into Redux (replaces deprecated QueryReaderFeed).
 	const feedQueries = useQueries( {
-		queries: combinedRecommendations.map( ( site ) => ( {
+		queries: baseCombinedRecommendations.map( ( site ) => ( {
 			...readFeedQuery( site.feed_ID ),
 		} ) ),
 	} );
+
+	const combinedRecommendations = useMemo( () => {
+		return baseCombinedRecommendations.map( ( site, index ) => {
+			const query = feedQueries[ index ];
+			const fromFeed =
+				query?.isSuccess && query.data && typeof query.data.feed_URL === 'string'
+					? query.data.feed_URL
+					: '';
+			return {
+				...site,
+				feed_URL: site.feed_URL || fromFeed || site.site_URL,
+			};
+		} );
+	}, [ baseCombinedRecommendations, feedQueries ] );
 
 	const feedQueriesStateKey = useMemo(
 		() =>
@@ -231,7 +274,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 
 	useEffect( () => {
 		feedQueries.forEach( ( query, index ) => {
-			const feedId = combinedRecommendations[ index ]?.feed_ID;
+			const feedId = baseCombinedRecommendations[ index ]?.feed_ID;
 			if ( feedId == null ) {
 				return;
 			}
@@ -254,7 +297,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		} );
 		// feedQueries is read from the latest render; feedQueriesStateKey bumps when any query status changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ combinedRecommendations, dispatch, feedQueriesStateKey ] );
+	}, [ baseCombinedRecommendations, dispatch, feedQueriesStateKey ] );
 
 	const readerFeedItems = useSelector(
 		( state: AppState ): ReaderItemMap => state.reader?.feeds?.items ?? {}

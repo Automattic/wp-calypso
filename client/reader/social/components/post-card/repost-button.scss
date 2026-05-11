@@ -1,12 +1,12 @@
 .social-post-card-repost-button {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
+	gap: 6px;
 	margin: 0;
-	padding: 2px 4px;
+	padding: 4px 6px;
 	background: transparent;
 	border: 0;
-	border-radius: 4px;
+	border-radius: 8px;
 	color: inherit;
 	cursor: pointer;
 	font: inherit;
@@ -17,6 +17,7 @@
 	&:hover:not( :disabled ),
 	&:focus-visible {
 		color: var( --studio-green-50 );
+		background: var( --studio-gray-0 );
 	}
 
 	&:focus-visible {

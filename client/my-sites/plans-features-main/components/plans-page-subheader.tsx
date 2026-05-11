@@ -237,6 +237,7 @@ const PlansPageSubheader = ( {
 	siteSlug,
 	isDisplayingPlansNeededForFeature,
 	deemphasizeFreePlan,
+	renderFreePlanCtaInStepContainerV2,
 	showPlanBenefits,
 	offeringFreePlan,
 	flowName,
@@ -248,6 +249,7 @@ const PlansPageSubheader = ( {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
 	deemphasizeFreePlan?: boolean;
+	renderFreePlanCtaInStepContainerV2?: boolean;
 	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
 	flowName?: string | null;
@@ -316,7 +318,11 @@ const PlansPageSubheader = ( {
 			return null;
 		}
 
-		if ( ! isUsingStepContainerV2 && deemphasizeFreePlan && offeringFreePlan ) {
+		if (
+			( ! isUsingStepContainerV2 || renderFreePlanCtaInStepContainerV2 ) &&
+			deemphasizeFreePlan &&
+			offeringFreePlan
+		) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate(

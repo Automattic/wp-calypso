@@ -9,6 +9,7 @@ import {
 	trackImageStudioGenericShareCompleted,
 	trackImageStudioGenericShareFailed,
 } from '../../utils/tracking';
+import type { ShareClipIdentity } from '../share-types';
 
 interface UseGenericShareReturn {
 	isVisible: boolean;
@@ -39,22 +40,46 @@ function canShareVideoFiles( nav: NavigatorWithShare, filename: string ): boolea
 	}
 }
 
-export function useGenericShare(): UseGenericShareReturn {
-	const { currentVideoUrl, currentAttachmentId, entryPoint, isAiProcessing } = useSelect(
-		( select ) => {
-			const videoStore = select( videoStudioStore );
-			const studio = select( imageStudioStore );
-			return {
-				currentVideoUrl: videoStore.getCurrentVideoUrl?.() ?? null,
-				currentAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
-				entryPoint: studio.getEntryPoint?.() ?? null,
-				isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
-			};
-		},
-		[]
-	);
+export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareReturn {
+	const hasOverride = clip !== undefined;
 
-	const { addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { storeUrl, storeAttachmentId, entryPoint, isAiProcessing } = useSelect( ( select ) => {
+		const videoStore = select( videoStudioStore );
+		const studio = select( imageStudioStore );
+		return {
+			storeUrl: videoStore.getCurrentVideoUrl?.() ?? null,
+			storeAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
+			entryPoint: studio.getEntryPoint?.() ?? null,
+			isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
+		};
+	}, [] );
+
+	const currentVideoUrl = hasOverride ? clip.url : storeUrl;
+	const currentAttachmentId = hasOverride ? clip.attachmentId : storeAttachmentId;
+
+	const { addNotice: addModalNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { createNotice: createCoreNotice } = useDispatch( 'core/notices' ) as {
+		createNotice?: (
+			status: string,
+			message: string,
+			options?: { type?: 'default' | 'snackbar'; isDismissible?: boolean }
+		) => Promise< void >;
+	};
+
+	/**
+	 * See `useReelShare` — same rationale. Sidebar callers (override clip) get
+	 * notices on the editor snackbar; modal callers get them in-modal.
+	 */
+	const showNotice = async ( message: string, type: 'success' | 'warning' | 'error' ) => {
+		if ( hasOverride ) {
+			await createCoreNotice?.( type, message, {
+				type: 'snackbar',
+				isDismissible: true,
+			} );
+			return;
+		}
+		await addModalNotice( message, type );
+	};
 
 	// Synchronous double-click guard — same rationale as in useReelShare.
 	// Kept alongside `isSharing` state because state updates lag a render and
@@ -62,11 +87,12 @@ export function useGenericShare(): UseGenericShareReturn {
 	const isSharingRef = useRef( false );
 	const [ isSharing, setIsSharing ] = useState( false );
 
+	// When the caller supplies an explicit clip, it has already asserted the
+	// video context — the entryPoint guard is only meaningful for the in-modal
+	// call site that reads the live store.
+	const isVideoContext = hasOverride || entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 	const isVisible =
-		entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip &&
-		!! currentVideoUrl &&
-		!! currentAttachmentId &&
-		! isAiProcessing;
+		isVideoContext && !! currentVideoUrl && !! currentAttachmentId && ! isAiProcessing;
 
 	const handleShare = useCallback( async () => {
 		if ( isSharingRef.current ) {
@@ -141,7 +167,7 @@ export function useGenericShare(): UseGenericShareReturn {
 				failureKind: 'open-blocked',
 				message: 'window.open returned null',
 			} );
-			await addNotice(
+			await showNotice(
 				__(
 					'Could not open the video for download. Allow popups for this site and try again.',
 					__i18n_text_domain__
@@ -152,7 +178,7 @@ export function useGenericShare(): UseGenericShareReturn {
 			isSharingRef.current = false;
 			setIsSharing( false );
 		}
-	}, [ addNotice, currentAttachmentId, currentVideoUrl ] );
+	}, [ showNotice, currentAttachmentId, currentVideoUrl ] );
 
 	return {
 		isVisible,

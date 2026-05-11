@@ -264,6 +264,29 @@ export interface AtmosphereScopedProfile extends AtmosphereAuthorProfile {
 }
 
 /**
+ * Slim profile shape returned by `getFollowers` / `getFollows`.
+ * Bluesky's `app.bsky.actor.defs#profileView` lacks the count and
+ * banner fields included in `ProfileViewDetailed`, so this is a
+ * subset of `AtmosphereAuthorProfile`.
+ */
+export interface AtmosphereProfileSummary {
+	did: string;
+	handle: string;
+	display_name: string | null;
+	description: string;
+	avatar: string | null;
+}
+
+export interface AtmosphereScopedProfileSummary extends AtmosphereProfileSummary {
+	viewer: AtmosphereProfileViewer;
+}
+
+export interface AtmosphereScopedProfilesPage {
+	items: AtmosphereScopedProfileSummary[];
+	cursor: string | null;
+}
+
+/**
  * A single follow record returned by the create-follow endpoint.
  * The rkey is parsed server-side from `uri` so callers can issue
  * the matching DELETE without splitting the AT-URI themselves.

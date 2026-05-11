@@ -8,6 +8,8 @@ import {
 	deleteMastodonFollow,
 	deleteMastodonLike,
 	deleteMastodonRepost,
+	getMastodonActorFollowers,
+	getMastodonActorFollowing,
 	getMastodonAuthStatus,
 	getMastodonAuthorFeed,
 	getMastodonAuthorProfile,
@@ -38,6 +40,7 @@ import type {
 	GetMastodonAuthorFeedParams,
 	GetMastodonTagFeedParams,
 	GetMastodonTimelineParams,
+	MastodonAccountSummariesPage,
 	MastodonAuthStatus,
 	MastodonAuthorFeedFilter,
 	MastodonAuthorFeedPage,
@@ -232,14 +235,14 @@ export function useMastodonThreadQuery( connectionId: number, statusId: string )
 // entry rather than two. (Numeric ids and `@user@instance` route segments
 // can't always be reduced to the same key without a backend round-trip; we
 // dedupe what we can.)
-function normalizeActor( actor: string ): string {
+export function normalizeMastodonActor( actor: string ): string {
 	const trimmed = actor.trim();
 	const stripped = trimmed.startsWith( '@' ) ? trimmed.slice( 1 ) : trimmed;
 	return stripped.toLowerCase();
 }
 
 export const mastodonAuthorProfileQueryOptions = ( connectionId: number, actor: string ) => {
-	const normalized = normalizeActor( actor );
+	const normalized = normalizeMastodonActor( actor );
 	return queryOptions< MastodonAuthorProfile, MastodonError >( {
 		queryKey: readerMastodonKeys.authorProfile( connectionId, normalized ),
 		queryFn: () => getMastodonAuthorProfile( { connectionId, actor: normalized } ),
@@ -270,7 +273,7 @@ export const mastodonAuthorFeedInfiniteQuery = (
 	actor: string,
 	filter?: MastodonAuthorFeedFilter
 ) => {
-	const normalizedActor = normalizeActor( actor );
+	const normalizedActor = normalizeMastodonActor( actor );
 	// `posts_with_replies` is the wire default (no filter param); collapse
 	// to undefined so callers that pass it share the slice-6 cache key with
 	// no-filter callers. `posts_no_replies` and `posts_with_media` survive
@@ -320,6 +323,93 @@ export function useMastodonAuthorFeedInfiniteQuery(
 	filter?: MastodonAuthorFeedFilter
 ) {
 	return useInfiniteQuery( mastodonAuthorFeedInfiniteQuery( connectionId, actor, filter ) );
+}
+
+export interface MastodonActorPageQueryParams {
+	connectionId: number;
+	actor: string;
+}
+
+export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
+	const normalizedActor = normalizeMastodonActor( params.actor );
+	return infiniteQueryOptions<
+		MastodonAccountSummariesPage,
+		MastodonError,
+		InfiniteData< MastodonAccountSummariesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.actorFollowers( params.connectionId, normalizedActor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonActorFollowers( {
+				connectionId: params.connectionId,
+				actor: normalizedActor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		// `|| undefined` (not `??`): an empty-string cursor terminates pagination,
+		// matching the slice-6 author-feed hardening.
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonActorFollowersInfiniteQuery( params: MastodonActorPageQueryParams ) {
+	return useInfiniteQuery( mastodonActorFollowersInfiniteQuery( params ) );
+}
+
+export const mastodonActorFollowingInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
+	const normalizedActor = normalizeMastodonActor( params.actor );
+	return infiniteQueryOptions<
+		MastodonAccountSummariesPage,
+		MastodonError,
+		InfiniteData< MastodonAccountSummariesPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerMastodonKeys.actorFollowing( params.connectionId, normalizedActor ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonActorFollowing( {
+				connectionId: params.connectionId,
+				actor: normalizedActor,
+				cursor: pageParam,
+			} ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
+	} );
+};
+
+export function useMastodonActorFollowingInfiniteQuery( params: MastodonActorPageQueryParams ) {
+	return useInfiniteQuery( mastodonActorFollowingInfiniteQuery( params ) );
 }
 
 export const mastodonTagFeedInfiniteQuery = (
@@ -518,6 +608,22 @@ function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean 
 	return Array.isArray( key ) && key[ 3 ] === connectionId;
 }
 
+// Slot-2 names for Mastodon cache keys that hold MastodonFeedItem rows.
+// Keep in lockstep with `readerMastodonKeys` in `@automattic/api-core` —
+// other shapes (`actor-followers` / `actor-following` / `profile`) also
+// have `pages[].items` but the items are MastodonAccountSummary, and
+// Mastodon snowflake IDs are allocated per-table (account 12345 and
+// status 12345 routinely coexist), so walking those caches with a
+// status-id patch would corrupt the wrong row.
+const POST_BEARING_KEY_KINDS = new Set( [ 'timeline', 'thread', 'profile-feed', 'tag-feed' ] );
+
+function isPostBearingMastodonKey( key: unknown, connectionId: number ): boolean {
+	if ( ! Array.isArray( key ) || key[ 3 ] !== connectionId ) {
+		return false;
+	}
+	return typeof key[ 2 ] === 'string' && POST_BEARING_KEY_KINDS.has( key[ 2 ] );
+}
+
 function patchMastodonPostCaches(
 	queryClient: QueryClient,
 	connectionId: number,
@@ -528,7 +634,7 @@ function patchMastodonPostCaches(
 	for ( const [ key, data ] of queryClient.getQueriesData( {
 		queryKey: readerMastodonKeys.all,
 	} ) ) {
-		if ( ! isQueryKeyForConnection( key, connectionId ) ) {
+		if ( ! isPostBearingMastodonKey( key, connectionId ) ) {
 			continue;
 		}
 		const result = patchMastodonQueryData( data, statusId, patch );
@@ -1002,12 +1108,12 @@ export interface FollowMastodonMutationContext {
 
 // Normalize the actor before keying so we hit the same cache entry as
 // useMastodonAuthorProfileQuery, which runs every actor through
-// normalizeActor() before building its key. Without this, webfinger
+// normalizeMastodonActor() before building its key. Without this, webfinger
 // or mixed-case actor inputs (e.g. '@Alice@MASTODON.social') key to a
 // different entry than the one the query reads from — the optimistic
 // patch and rollback become silent no-ops.
 const mastodonAuthorProfileKey = ( vars: { connectionId: number; actor: string } ) =>
-	readerMastodonKeys.authorProfile( vars.connectionId, normalizeActor( vars.actor ) );
+	readerMastodonKeys.authorProfile( vars.connectionId, normalizeMastodonActor( vars.actor ) );
 
 /**
  * Mutation factory for following a Mastodon account. Optimistically
