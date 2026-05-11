@@ -13,7 +13,13 @@ import {
 	type SocialProfileStat,
 } from 'calypso/reader/social';
 import { projectFediverseError } from './error-projection';
-import { getProfileUrl, getTimelineUrl, hostFromUrl } from './route';
+import {
+	getFollowersUrl,
+	getFollowingUrl,
+	getProfileUrl,
+	getTimelineUrl,
+	hostFromUrl,
+} from './route';
 import type {
 	FediverseAuthorProfile,
 	FediverseConnection,
@@ -60,6 +66,7 @@ export function FediverseAuthorProfilePanel( {
 							label: translate( 'follower', 'followers', {
 								count: profile.data.counts.followers,
 							} ),
+							href: getFollowersUrl( connection.id, actor ),
 						},
 						{
 							key: 'follows',
@@ -67,6 +74,7 @@ export function FediverseAuthorProfilePanel( {
 							label: translate( 'following', {
 								context: 'profile stats: count of accounts followed',
 							} ),
+							href: getFollowingUrl( connection.id, actor ),
 						},
 						{
 							key: 'posts',
@@ -75,7 +83,7 @@ export function FediverseAuthorProfilePanel( {
 						},
 				  ]
 				: [],
-		[ profile.data, translate ]
+		[ profile.data, translate, connection.id, actor ]
 	);
 
 	const renderProfileBody = useCallback(
