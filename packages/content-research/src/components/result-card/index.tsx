@@ -2,27 +2,13 @@ import { CheckboxControl, ExternalLink } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { trackContentResearchResultClick } from '../../utils/tracking';
+import SourceIcon from '../source-icon';
 import type { ResearchResult } from '../../types';
 
 interface ResultCardProps {
 	result: ResearchResult;
 	isSelected: boolean;
 	onToggleSelect: () => void;
-}
-
-function getSourceAbbreviation( source: string ): string {
-	switch ( source ) {
-		case 'hn':
-			return 'HN';
-		case 'reader':
-			return 'WP';
-		case 'googlenews':
-			return 'GN';
-		case 'polymarket':
-			return 'PM';
-		default:
-			return source.slice( 0, 2 ).toUpperCase();
-	}
 }
 
 function getSourceLabel( source: string ): string {
@@ -120,12 +106,11 @@ export default function ResultCard( { result, isSelected, onToggleSelect }: Resu
 					href={ result.url }
 					onClick={ () => trackContentResearchResultClick( result.source, result.url ) }
 				>
-					<span
-						className={ `content-research-result-card__source-icon content-research-result-card__source-icon--${ result.source }` }
-						title={ getSourceLabel( result.source ) }
-					>
-						{ getSourceAbbreviation( result.source ) }
-					</span>
+					<SourceIcon
+						className="content-research-result-card__source-icon"
+						source={ result.source }
+						label={ getSourceLabel( result.source ) }
+					/>
 					<span className="content-research-result-card__title-text">
 						{ decodeEntities( result.title ) }
 					</span>

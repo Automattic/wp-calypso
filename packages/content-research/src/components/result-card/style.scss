@@ -32,32 +32,8 @@
 	}
 
 	&__source-icon {
-		font-size: 9px;
-		font-weight: 700;
-		line-height: 1;
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
-		padding: 2px 4px;
-		border-radius: 3px;
-		margin-right: 5px;
-		color: #fff;
-		background: #949494;
-
-		&--hn {
-			background: #f0652f;
-		}
-
-		&--reader {
-			background: #0675c4;
-		}
-
-		&--googlenews {
-			background: #1a73e8;
-		}
-
-		&--polymarket {
-			background: #2a72d8;
-		}
+		margin-right: 6px;
+		vertical-align: -4px;
 	}
 
 	&__body {
