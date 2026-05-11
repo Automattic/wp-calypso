@@ -73,7 +73,10 @@ export function useFediverseComposerExtras( ctx: {
 	const { data } = useFediverseConnectionsQuery( {
 		enabled: connectionId > 0,
 	} );
-	const connection = data?.connections.find( ( c ) => c.id === connectionId ) ?? null;
+	// Optional-chain `connections` defensively — the wpcom proxy can hand back a
+	// 200 with `data` defined and `connections` missing (mid-deploy race on
+	// CM-684), in which case `.find()` would otherwise throw.
+	const connection = data?.connections?.find( ( c ) => c.id === connectionId ) ?? null;
 	const blogDefault = connection?.default_visibility ?? 'public';
 
 	const [ visibility, setVisibility ] = useState< FediverseVisibility >( blogDefault );
