@@ -568,5 +568,31 @@ describe( 'useReelShare', () => {
 			expect( mockEditPost ).toHaveBeenCalledTimes( 1 );
 			expect( mockShareCurrentPost ).toHaveBeenCalledTimes( 1 );
 		} );
+
+		it( 'ignores a fresh requestShare while a share is still in flight', async () => {
+			let resolveShare: ( value: boolean ) => void = () => {};
+			const inFlight = new Promise< boolean >( ( resolve ) => {
+				resolveShare = resolve;
+			} );
+			mockShareCurrentPost.mockReturnValueOnce( inFlight );
+
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			await act( async () => {
+				// Kick off the dispatch but don't await yet — the share is
+				// in flight while we attempt a second requestShare.
+				const inFlightConfirm = result.current.confirmShare();
+				await result.current.requestShare();
+				resolveShare( true );
+				await inFlightConfirm;
+			} );
+
+			// First requestShare counted; the second was blocked.
+			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
+			expect( mockShareCurrentPost ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 } );

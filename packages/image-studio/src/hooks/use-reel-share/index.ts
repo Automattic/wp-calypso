@@ -174,9 +174,10 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		! isAiProcessing;
 
 	const requestShare = useCallback( async () => {
-		// Already awaiting confirmation — don't re-fire `clicked` or overwrite
-		// the captured snapshot with a fresh re-read.
-		if ( pendingShare ) {
+		// `isSharing` from useSelect lags by a render, so the IG button can
+		// stay briefly clickable mid-dispatch — guard here to avoid a
+		// double-publish via a reopened dialog.
+		if ( isSharingRef.current || pendingShare ) {
 			return;
 		}
 
