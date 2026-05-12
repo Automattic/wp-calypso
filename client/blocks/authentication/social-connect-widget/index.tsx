@@ -32,11 +32,11 @@ const SocialConnectWidget = ( { service }: SocialConnectWidgetProps ) => (
 			aria-hidden="true"
 		>
 			<g stroke="none" fill="none" fillRule="evenodd">
-				<circle fill="#C8D7E2" cx="2" cy="2" r="2" />
-				<circle fill="#C8D7E2" cx="13" cy="2" r="2" />
-				<circle fill="#C8D7E2" cx="24" cy="2" r="2" />
-				<circle fill="#74DCFC" cx="35" cy="2" r="2" />
-				<circle fill="#C8D7E2" cx="46" cy="2" r="2" />
+				<circle className="auth-social-connect-widget__dot" cx="2" cy="2" r="2" />
+				<circle className="auth-social-connect-widget__dot" cx="13" cy="2" r="2" />
+				<circle className="auth-social-connect-widget__dot" cx="24" cy="2" r="2" />
+				<circle className="auth-social-connect-widget__dot is-accent" cx="35" cy="2" r="2" />
+				<circle className="auth-social-connect-widget__dot" cx="46" cy="2" r="2" />
 			</g>
 		</svg>
 		<SocialLogo className="auth-social-connect-widget__wp-logo" icon="wordpress" size={ 48 } />

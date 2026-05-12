@@ -10,7 +10,11 @@
 	// but that scope isn't defined outside the dashboard app, so set the
 	// background here.
 	background: var(--dashboard__background-color, #fcfcfc);
+	// Fall back to `100vh` for browsers without dynamic-viewport support; modern
+	// mobile browsers use `100dvh` so the surface stays stable as the URL bar
+	// expands/collapses on scroll.
 	min-block-size: 100vh;
+	min-block-size: 100dvh;
 
 	// `Notice` from `client/dashboard/components/notice/` uses dashboard
 	// CSS variables for variant background tints (`color-mix(in srgb,

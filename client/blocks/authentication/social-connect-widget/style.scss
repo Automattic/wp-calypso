@@ -18,3 +18,14 @@
 .auth-social-connect-widget__dots {
 	flex-shrink: 0;
 }
+
+// The dotted-line connector previously hard-coded its fill colours in the
+// SVG. Move them to CSS via `--studio-*` tokens so the widget inherits the
+// theme palette and can be re-skinned for dark mode without touching the SVG.
+.auth-social-connect-widget__dot {
+	fill: var(--studio-gray-10);
+}
+
+.auth-social-connect-widget__dot.is-accent {
+	fill: var(--studio-celadon-30);
+}
