@@ -58,6 +58,9 @@ function rowTimestamp( row: GroupedRow ): string {
 	return row.kind === 'stack' ? row.newestCreatedAt : row.item.created_at;
 }
 
+// `filter` is rendered into the chip strip but not applied to `items` locally —
+// the per-protocol hook varies its query key on the active filter so the
+// upstream endpoint returns the already-filtered page.
 export function SocialNotificationsList( {
 	items,
 	isLoading,
@@ -72,10 +75,9 @@ export function SocialNotificationsList( {
 	const translate = useTranslate();
 
 	const grouped = useMemo( () => groupNotifications( items ), [ items ] );
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const now = useMemo( () => new Date(), [ items ] );
 
 	const withBuckets = useMemo( () => {
+		const now = new Date();
 		const out: Array< { kind: 'divider'; bucket: DateBucket } | { kind: 'row'; row: GroupedRow } > =
 			[];
 		const bucketsSeen: DateBucket[] = [];
@@ -93,7 +95,7 @@ export function SocialNotificationsList( {
 			return out.filter( ( e ) => e.kind !== 'divider' );
 		}
 		return out;
-	}, [ grouped, now ] );
+	}, [ grouped ] );
 
 	const filterBar = <NotificationsFilterBar value={ filter } onChange={ onFilterChange } />;
 
@@ -140,14 +142,13 @@ export function SocialNotificationsList( {
 		<div className="social-notifications-list">
 			{ filterBar }
 			<VStack spacing={ 0 }>
-				{ withBuckets.map( ( entry, idx ) => {
+				{ withBuckets.map( ( entry ) => {
 					if ( entry.kind === 'divider' ) {
 						return (
 							<div
 								key={ `divider-${ entry.bucket }` }
 								className="social-notifications-list__divider"
 								role="separator"
-								aria-label={ bucketLabel( entry.bucket, translate ) }
 							>
 								{ bucketLabel( entry.bucket, translate ) }
 							</div>
@@ -156,7 +157,7 @@ export function SocialNotificationsList( {
 					if ( entry.row.kind === 'stack' ) {
 						return (
 							<StackedNotification
-								key={ entry.row.groupKey + ':' + idx }
+								key={ entry.row.groupKey }
 								stack={ entry.row }
 								onExpandedChange={ onStackExpandedChange }
 							/>
