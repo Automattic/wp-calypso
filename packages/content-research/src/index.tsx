@@ -110,7 +110,12 @@ export default function ContentResearchSidebar() {
 		<div className="content-research-sidebar">
 			<SearchInput onSearch={ handleSearch } isLoading={ isLoading } />
 
-			<SourceFilterTabs selectedSources={ selectedSources } onToggleSource={ handleToggleSource } />
+			{ ! isSummaryVisible && (
+				<SourceFilterTabs
+					selectedSources={ selectedSources }
+					onToggleSource={ handleToggleSource }
+				/>
+			) }
 
 			{ data && results.length > 0 && (
 				<>
@@ -134,6 +139,7 @@ export default function ContentResearchSidebar() {
 						hasResults={ results.length > 0 }
 						selectedCount={ selectedUrls.size }
 						isExpanded={ isSummaryVisible }
+						sourceArticles={ summaryResults }
 					/>
 				</>
 			) }
