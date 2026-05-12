@@ -6,12 +6,11 @@ import type { StoredPaymentMethod } from '@automattic/api-core';
 
 export function PaymentMethodDetails( { paymentMethod }: { paymentMethod: StoredPaymentMethod } ) {
 	// Retired rows lose their partner-specific top-level fields; the back-end
-	// emits `display_meta.label` + `display_meta.detail` so any retired
-	// partner renders uniformly without per-partner front-end code. Saved
-	// `name` is the final fallback if both are absent.
+	// emits `display_label` + `display_detail` so any retired partner renders
+	// uniformly without per-partner front-end code. Saved `name` is the final
+	// fallback if both are absent.
 	if ( isRetiredPaymentMethod( paymentMethod ) ) {
-		const label = paymentMethod.display_meta?.label;
-		const detail = paymentMethod.display_meta?.detail;
+		const { display_label: label, display_detail: detail } = paymentMethod;
 		if ( label || detail ) {
 			return (
 				<HStack>

@@ -118,13 +118,23 @@ export interface StoredPaymentMethodRazorpay extends StoredPaymentMethodBase {
  * subclass that has been deleted). The `retired: true` literal is the
  * discriminator for narrowing — live arms don't carry the property at all.
  *
- * `display_meta` carries the registry-declared display fields for the partner
- * (e.g. `razorpay_vpa` for retired Razorpay rows). Values are always strings;
- * keys with no underlying meta row are omitted from the envelope rather than
- * emitted as null.
+ * `display_label` is the partner's user-facing type name (e.g. "UPI Payment
+ * Method"), resolved server-side from the retirement registry.
+ *
+ * `display_detail` is the pre-resolved value of the registry's
+ * `primary_identifier` for this method (e.g. the VPA for a retired Razorpay
+ * row), suitable for direct rendering. Null if the registry doesn't declare a
+ * primary identifier or the value isn't present in `display_meta`.
+ *
+ * `display_meta` carries the full registry-declared identifier bag for the
+ * partner (e.g. `razorpay_vpa`, `razorpay_email`, `razorpay_customer_id` for
+ * retired Razorpay rows). Values are always strings; keys with no underlying
+ * meta row are omitted from the envelope rather than emitted as null.
  */
 export interface RetiredStoredPaymentMethod extends StoredPaymentMethodBase {
 	retired: true;
+	display_label: string;
+	display_detail: string | null;
 	display_meta: Record< string, string >;
 }
 

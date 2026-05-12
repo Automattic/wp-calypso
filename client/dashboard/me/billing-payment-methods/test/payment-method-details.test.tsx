@@ -45,13 +45,15 @@ describe( '<PaymentMethodDetails>', () => {
 		expect( screen.getByText( 'user@okaxis' ) ).toBeVisible();
 	} );
 
-	test( 'renders display_meta label and detail for a retired payment method', () => {
-		// Once wpcom emits a retired row, `display_meta.label` + `display_meta.detail`
-		// carry the rendered strings. Any retired partner uses the same code path.
+	test( 'renders display_label and display_detail for a retired payment method', () => {
+		// Once wpcom emits a retired row, `display_label` and `display_detail` carry
+		// the rendered strings. Any retired partner uses the same code path.
 		const method = {
 			payment_partner: 'razorpay',
 			retired: true,
-			display_meta: { label: 'UPI Payment Method', detail: 'user@okaxis' },
+			display_label: 'UPI Payment Method',
+			display_detail: 'user@okaxis',
+			display_meta: { razorpay_vpa: 'user@okaxis' },
 		} as unknown as StoredPaymentMethod;
 
 		render( <PaymentMethodDetails paymentMethod={ method } /> );
@@ -60,11 +62,13 @@ describe( '<PaymentMethodDetails>', () => {
 		expect( screen.getByText( 'user@okaxis' ) ).toBeVisible();
 	} );
 
-	test( 'renders only display_meta label when detail is absent', () => {
+	test( 'renders only display_label when display_detail is null', () => {
 		const method = {
 			payment_partner: 'ebanx',
 			retired: true,
-			display_meta: { label: 'Retired processor' },
+			display_label: 'Retired processor',
+			display_detail: null,
+			display_meta: {},
 		} as unknown as StoredPaymentMethod;
 
 		render( <PaymentMethodDetails paymentMethod={ method } /> );
@@ -72,11 +76,13 @@ describe( '<PaymentMethodDetails>', () => {
 		expect( screen.getByText( 'Retired processor' ) ).toBeVisible();
 	} );
 
-	test( 'falls back to saved name for a retired method with no display_meta strings', () => {
+	test( 'falls back to saved name when display_label and display_detail are both empty', () => {
 		const method = {
 			payment_partner: 'ebanx',
 			retired: true,
 			name: 'My Brazilian card',
+			display_label: '',
+			display_detail: null,
 			display_meta: {},
 		} as unknown as StoredPaymentMethod;
 
@@ -85,11 +91,13 @@ describe( '<PaymentMethodDetails>', () => {
 		expect( screen.getByText( 'My Brazilian card' ) ).toBeVisible();
 	} );
 
-	test( 'falls back to a generic label when a retired method has neither display_meta nor name', () => {
+	test( 'falls back to a generic label when a retired method has no label, detail, or name', () => {
 		const method = {
 			payment_partner: 'ebanx',
 			retired: true,
 			name: '',
+			display_label: '',
+			display_detail: null,
 			display_meta: {},
 		} as unknown as StoredPaymentMethod;
 

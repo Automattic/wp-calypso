@@ -59,8 +59,7 @@ function RetiredPaymentMethodDetails( {
 	paymentMethod: RetiredStoredPaymentMethod;
 } ) {
 	const translate = useTranslate();
-	const label = paymentMethod.display_meta?.label;
-	const detail = paymentMethod.display_meta?.detail;
+	const { display_label: label, display_detail: detail } = paymentMethod;
 	return (
 		<div className="payment-method-details">
 			<img
