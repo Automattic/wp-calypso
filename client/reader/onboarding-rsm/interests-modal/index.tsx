@@ -21,12 +21,14 @@ import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { getPackBlogs } from './get-pack-blogs';
 import TopicGroupCard from './topic-group-card';
 import { getTopicGroups, type TopicGroup } from './topic-groups';
+import InterestsVerificationNudge from './verificationNudge';
 import type { CuratedBlog } from '../curated-blogs';
 
 import './style.scss';
 
 interface InterestsModalProps {
 	onContinue: () => void;
+	promptVerification: boolean;
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
@@ -36,7 +38,7 @@ const MAX_INTEREST_TOPICS = 40;
 // provided by the parent (`ReaderOnboardingRsm`); this component is only
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`.
-const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
+const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVerification } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
@@ -265,6 +267,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 
 	return (
 		<>
+			{ promptVerification && <InterestsVerificationNudge /> }
 			<VStack spacing={ 5 } className="interests-modal__content">
 				<VStack spacing={ 0 }>
 					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
@@ -347,7 +350,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 							__next40pxDefaultSize
 							onClick={ handleContinue }
 							variant="secondary"
-							disabled={ isContinueDisabled }
+							disabled={ isContinueDisabled || promptVerification }
 							accessibleWhenDisabled
 						>
 							{ __( 'Continue' ) }

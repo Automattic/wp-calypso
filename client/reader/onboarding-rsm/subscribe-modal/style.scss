@@ -19,6 +19,10 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 	// the footer are shared with the other onboarding-rsm modals; see
 	// `client/reader/onboarding-rsm/style.scss`.
 
+	.email-verification-banner {
+		margin: 12px 16px 0;
+	}
+
 	&__container {
 		display: flex;
 		flex-direction: column;

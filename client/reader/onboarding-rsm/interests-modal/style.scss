@@ -6,6 +6,17 @@
 	// the footer are shared with the other onboarding-rsm modals; see
 	// `client/reader/onboarding-rsm/style.scss`.
 
+	.email-verification-banner {
+		margin: 12px 16px 0;
+	}
+
+	&.is-disabled {
+		.interests-modal__content {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+
 	&__content {
 		padding: 4px 32px 12px;
 	}
