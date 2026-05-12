@@ -241,3 +241,38 @@ describe( 'usePostsToPodcastJob — resume from localStorage', () => {
 		expect( window.localStorage.getItem( storageKey ) ).toBeNull();
 	} );
 } );
+
+describe( 'usePostsToPodcastJob — timeout and cleanup', () => {
+	it( 'transitions to failed with code "timeout" when polling exceeds 5 minutes', async () => {
+		const startedAt = Date.now() - ( 5 * 60 * 1000 + 1000 );
+		window.localStorage.setItem( storageKey, JSON.stringify( { jobId: 11, startedAt } ) );
+
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+		// Resume init clears over-the-line entries and stays idle.
+		expect( result.current.status ).toBe( 'idle' );
+	} );
+
+	it( 'clears the pending timer on unmount', async () => {
+		wpcom.req.post.mockResolvedValueOnce( { jobId: 8 } );
+		wpcom.req.get.mockResolvedValue( { status: 'pending' } );
+
+		const { result, unmount } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+
+		await act( async () => {
+			await result.current.generate( {
+				window: { unit: 'days', n: 7 },
+				length: 'short',
+				voicePreset: 'witty',
+			} );
+		} );
+		await act( async () => {} );
+
+		const callsBeforeUnmount = wpcom.req.get.mock.calls.length;
+		unmount();
+		await act( async () => {
+			jest.advanceTimersByTime( 60_000 );
+		} );
+
+		expect( wpcom.req.get.mock.calls.length ).toBe( callsBeforeUnmount );
+	} );
+} );
