@@ -163,6 +163,12 @@ export interface VariantPriceData {
  * `discountedPricePerMonth` is intentionally not set: `WPCOMProductVariant`
  * does not separate site-level discounts from the intro price. Coupon discounts
  * in checkout are tracked separately via `product.coupon_savings_integer`.
+ *
+ * Per-month values are derived by dividing full-term prices (integers in the
+ * smallest currency unit) by the number of months. The result is rounded to the
+ * nearest integer (Math.round) so that all fields in the returned `PlanPriceInfo`
+ * remain whole-cent values safe for use with currency formatters. The rounding
+ * error is at most 0.5¢ per month and is negligible for percentage comparisons.
  */
 export function fromVariantPriceData( variant: VariantPriceData ): PlanPriceInfo {
 	const {
@@ -173,7 +179,7 @@ export function fromVariantPriceData( variant: VariantPriceData ): PlanPriceInfo
 		introductoryTerm,
 	} = variant;
 
-	const regularPricePerMonth = priceBeforeDiscounts / termMonths;
+	const regularPricePerMonth = Math.round( priceBeforeDiscounts / termMonths );
 
 	const introDurationMonths =
 		introductoryInterval > 0 ? introductoryInterval * ( introductoryTerm === 'year' ? 12 : 1 ) : 0;
@@ -186,7 +192,7 @@ export function fromVariantPriceData( variant: VariantPriceData ): PlanPriceInfo
 		const nonIntroMonths = termMonths - introDurationMonths;
 		const introPriceTotal = priceInteger - nonIntroMonths * regularPricePerMonth;
 		introOffer = {
-			pricePerMonth: introPriceTotal / introDurationMonths,
+			pricePerMonth: Math.round( introPriceTotal / introDurationMonths ),
 			durationMonths: introDurationMonths,
 			isActive: true,
 		};
