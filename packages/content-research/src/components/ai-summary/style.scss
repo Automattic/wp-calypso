@@ -29,11 +29,16 @@
 
 	&__loading-indicator {
 		display: flex;
-		align-items: center;
 		gap: 10px;
 		padding: 20px 16px;
 		font-size: 13px;
 		color: #646970;
+		height: 100%;
+
+		.components-spinner {
+			flex: 0 0 18px;
+			margin: 0;
+		}
 	}
 
 	&__footer {
@@ -199,6 +204,10 @@
 		svg {
 			fill: currentColor;
 		}
+	}
+
+	&__title-action-icon {
+		transform: scaleX(-1);
 	}
 
 	&__angles-list {

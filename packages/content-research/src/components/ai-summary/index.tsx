@@ -1,7 +1,8 @@
 import { Button, Icon, Spinner } from '@wordpress/components';
+import { dispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { arrowLeft, check, chevronDown, chevronUp, copy, warning } from '@wordpress/icons';
+import { arrowLeft, pencil, check, chevronDown, chevronUp, warning } from '@wordpress/icons';
 import SourceIcon from '../source-icon';
 import type { ResearchResult, ResearchSummary, SuggestedAngle } from '../../types';
 
@@ -51,10 +52,10 @@ function CollapsibleSection( {
 	return (
 		<div className={ `content-research-ai-summary__collapsible ${ className ?? '' }`.trim() }>
 			<button
-				type="button"
 				className="content-research-ai-summary__collapsible-toggle"
 				onClick={ () => setIsOpen( ! isOpen ) }
 				aria-expanded={ isOpen }
+				title={ __( 'Use as title', 'content-research' ) }
 			>
 				<span className="content-research-ai-summary__collapsible-title">{ title }</span>
 				<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 20 } />
@@ -91,32 +92,29 @@ interface CopyableItemProps {
 	text: string;
 }
 
-function CopyableItem( { text }: CopyableItemProps ) {
-	const [ copied, setCopied ] = useState( false );
+interface CoreEditorActions {
+	editPost: ( post: { title: string } ) => void;
+}
 
-	const onCopy = () => {
-		if ( ! navigator.clipboard ) {
-			return;
-		}
-		navigator.clipboard.writeText( text ).then( () => {
-			setCopied( true );
-			setTimeout( () => setCopied( false ), 1500 );
-		} );
+function setPostTitle( title: string ) {
+	const editorActions = dispatch( 'core/editor' ) as CoreEditorActions;
+	editorActions.editPost( { title } );
+}
+
+function TitleSuggestionItem( { text }: CopyableItemProps ) {
+	const onApplyTitle = () => {
+		setPostTitle( text );
 	};
 
 	return (
 		<li className="content-research-ai-summary__copyable">
 			<span className="content-research-ai-summary__copyable-text">{ text }</span>
-			<button
-				type="button"
+			<Button
 				className="content-research-ai-summary__copyable-button"
-				onClick={ onCopy }
-				aria-label={
-					copied ? __( 'Copied', 'content-research' ) : __( 'Copy', 'content-research' )
-				}
-			>
-				<Icon icon={ copied ? check : copy } size={ 16 } />
-			</button>
+				icon={ pencil }
+				onClick={ onApplyTitle }
+				title={ __( 'Use as title', 'content-research' ) }
+			/>
 		</li>
 	);
 }
@@ -326,7 +324,7 @@ export default function AiSummary( {
 						<Section title={ __( 'Headline ideas', 'content-research' ) }>
 							<ul className="content-research-ai-summary__copyable-list">
 								{ headlineIdeas.map( ( headline, i ) => (
-									<CopyableItem key={ i } text={ headline } />
+									<TitleSuggestionItem key={ i } text={ headline } />
 								) ) }
 							</ul>
 						</Section>
@@ -336,7 +334,9 @@ export default function AiSummary( {
 						<Section title={ __( 'Opening hooks', 'content-research' ) }>
 							<ul className="content-research-ai-summary__copyable-list">
 								{ openingHooks.map( ( hook, i ) => (
-									<CopyableItem key={ i } text={ hook } />
+									<li key={ i } className="content-research-ai-summary__copyable">
+										<span className="content-research-ai-summary__copyable-text">{ hook }</span>
+									</li>
 								) ) }
 							</ul>
 						</Section>
