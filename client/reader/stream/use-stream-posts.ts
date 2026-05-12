@@ -44,12 +44,14 @@ export interface UseStreamPostsResult {
 	invalidate: () => void;
 }
 
-interface StreamIdentity {
+export interface StreamIdentity {
 	streamKey: string;
 	feedId: number | null;
 	localeSlug: string | null;
 	startDate: string | null;
 }
+
+export type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'infinite', string ];
 
 export type StreamInfiniteQueryKey = readonly [
 	'read',
@@ -73,6 +75,41 @@ export function getStreamInfiniteQueryKey( {
 	startDate,
 }: StreamIdentity ): StreamInfiniteQueryKey {
 	return [ 'read', 'stream', 'infinite', streamKey, feedId, localeSlug, startDate ] as const;
+}
+
+/**
+ * Prefix tuple for `queryClient.getQueriesData` / `invalidateQueries` calls
+ * that need to match every cached variant of a given `streamKey` (across
+ * `feedId` / `localeSlug` / `startDate` combinations).
+ */
+export function getStreamInfiniteQueryKeyPrefix( streamKey: string ): StreamInfiniteQueryKeyPrefix {
+	return [ 'read', 'stream', 'infinite', streamKey ] as const;
+}
+
+/**
+ * Inverse of `getStreamInfiniteQueryKey`. Returns the parsed identity when
+ * `queryKey` matches the infinite-stream tuple shape, otherwise `null` — so
+ * scanners over `queryClient.getQueriesData(...)` results don't have to
+ * touch slot indices directly.
+ */
+export function parseStreamInfiniteQueryKey( queryKey: unknown ): StreamIdentity | null {
+	if ( ! Array.isArray( queryKey ) || queryKey.length !== 7 ) {
+		return null;
+	}
+	if (
+		queryKey[ 0 ] !== 'read' ||
+		queryKey[ 1 ] !== 'stream' ||
+		queryKey[ 2 ] !== 'infinite' ||
+		typeof queryKey[ 3 ] !== 'string'
+	) {
+		return null;
+	}
+	return {
+		streamKey: queryKey[ 3 ] as string,
+		feedId: ( queryKey[ 4 ] ?? null ) as number | null,
+		localeSlug: ( queryKey[ 5 ] ?? null ) as string | null,
+		startDate: ( queryKey[ 6 ] ?? null ) as string | null,
+	};
 }
 
 interface UseStreamPostsOptions {

@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { keysAreEqual } from 'calypso/reader/post-key';
 import { combineXPosts } from 'calypso/state/reader/streams/utils';
 import { normalizeStreamPage } from './stream-normalization';
+import { getStreamInfiniteQueryKeyPrefix, parseStreamInfiniteQueryKey } from './use-stream-posts';
 import type { PostKey } from './use-stream-posts';
 import type { ReadStreamResponse } from '@automattic/api-core';
 
@@ -69,8 +70,6 @@ function getOffsetPostKey(
 	return items[ index + offset ] ?? null;
 }
 
-type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'infinite', string ];
-
 export function useStreamPostKeySelection( {
 	streamKey,
 	localeSlug = null,
@@ -85,8 +84,8 @@ export function useStreamPostKeySelection( {
 		() => [ 'read', 'stream', 'selected', streamKey, localeSlug ] as const,
 		[ streamKey, localeSlug ]
 	);
-	const streamQueryKeyPrefix = useMemo< StreamInfiniteQueryKeyPrefix >(
-		() => [ 'read', 'stream', 'infinite', streamKey ] as const,
+	const streamQueryKeyPrefix = useMemo(
+		() => getStreamInfiniteQueryKeyPrefix( streamKey ),
 		[ streamKey ]
 	);
 	const selectedQuery = useQuery< PostKey | null, Error, PostKey | null, SelectedPostQueryKey >( {
@@ -113,8 +112,6 @@ export function useStreamPostKeySelection( {
 		const normalizedLocaleSlug = localeSlug ?? null;
 		const normalizedStartDate = startDate ?? null;
 
-		// Infinite stream keys are:
-		// ['read','stream','infinite', streamKey, feedId, localeSlug, startDate]
 		const itemsForEntry = ( entry: ( typeof cachedEntries )[ number ] | undefined ): PostKey[] => {
 			const pages = entry?.[ 1 ]?.pages ?? [];
 			if ( ! pages.length ) {
@@ -131,13 +128,12 @@ export function useStreamPostKeySelection( {
 		// case where multiple variants of the same `streamKey` are cached
 		// (different `feedId` / `localeSlug` / `startDate`).
 		const exactEntry = cachedEntries.find( ( [ queryKey ] ) => {
-			if ( ! Array.isArray( queryKey ) ) {
-				return false;
-			}
+			const id = parseStreamInfiniteQueryKey( queryKey );
 			return (
-				( queryKey[ 4 ] ?? null ) === normalizedFeedId &&
-				( queryKey[ 5 ] ?? null ) === normalizedLocaleSlug &&
-				( queryKey[ 6 ] ?? null ) === normalizedStartDate
+				!! id &&
+				id.feedId === normalizedFeedId &&
+				id.localeSlug === normalizedLocaleSlug &&
+				id.startDate === normalizedStartDate
 			);
 		} );
 		if ( exactEntry ) {
@@ -158,12 +154,10 @@ export function useStreamPostKeySelection( {
 		}
 
 		// Fallback: locale match, then first entry.
-		const localeMatchedEntry = cachedEntries.find( ( [ queryKey ] ) => {
-			if ( ! Array.isArray( queryKey ) ) {
-				return false;
-			}
-			return ( queryKey[ 5 ] ?? null ) === normalizedLocaleSlug;
-		} );
+		const localeMatchedEntry = cachedEntries.find(
+			( [ queryKey ] ) =>
+				parseStreamInfiniteQueryKey( queryKey )?.localeSlug === normalizedLocaleSlug
+		);
 		return itemsForEntry( localeMatchedEntry ?? cachedEntries[ 0 ] );
 	}, [
 		queryClient,
