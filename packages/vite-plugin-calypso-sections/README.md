@@ -8,7 +8,7 @@ Vite plugin for the Calypso sections system.
 
 ### Client build
 
-- Every section is rewritten to `load: () => import( '...' )` so Rolldown code-splits each section.
+- Every section is rewritten to add a `load: () => import( '...' )` property so that Rolldown code-splits each section.
 - A `manualChunks` function is pushed onto `rolldownOptions.output` so section chunks are named after the section name (e.g. `account.[hash].min.js`) rather than the file name Rolldown would choose by default.
 
 ### SSR build
