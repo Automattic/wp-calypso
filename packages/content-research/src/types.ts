@@ -26,10 +26,40 @@ export interface ResearchResponse {
 	meta: ResearchMeta;
 }
 
+export interface SuggestedAngle {
+	type: string;
+	angle: string;
+	blog_value?: string;
+}
+
+export interface EditorialRelevance {
+	score: number;
+	reason?: string;
+}
+
+export interface BloggerBrief {
+	best_angle?: string;
+	core_thesis?: string;
+	reader_takeaway?: string;
+	what_to_add?: string[];
+	avoid?: string[];
+}
+
 export interface ResearchSummary {
+	title?: string;
+	tldr?: string;
+	why_it_matters?: string;
 	summary: string;
 	key_findings: string[];
-	suggested_angles: string[];
+	suggested_angles: Array< string | SuggestedAngle >;
+	blogger_brief?: BloggerBrief;
+	headline_ideas?: string[];
+	opening_hooks?: string[];
+	audience?: string[];
+	seo_keywords?: string[];
+	tags?: string[];
+	editorial_relevance?: EditorialRelevance;
+	fact_check_notes?: string[];
 }
 
 export type Source = 'hn' | 'reader' | 'googlenews' | 'myposts';

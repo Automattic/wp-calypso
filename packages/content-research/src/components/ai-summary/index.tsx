@@ -1,8 +1,9 @@
 import { Button, Icon, Spinner } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { arrowLeft, chevronDown, chevronUp } from '@wordpress/icons';
-import type { ResearchSummary } from '../../types';
+import { arrowLeft, check, chevronDown, chevronUp, copy, warning } from '@wordpress/icons';
+import SourceIcon from '../source-icon';
+import type { ResearchResult, ResearchSummary, SuggestedAngle } from '../../types';
 
 const PROGRESS_STEPS = [
 	__( 'Fetching articles…', 'content-research' ),
@@ -10,6 +11,8 @@ const PROGRESS_STEPS = [
 	__( 'Analyzing sources…', 'content-research' ),
 	__( 'Generating summary…', 'content-research' ),
 ];
+
+const MAX_SCORE = 5;
 
 function useProgressMessage( isLoading: boolean ): string {
 	const [ stepIndex, setStepIndex ] = useState( 0 );
@@ -46,17 +49,148 @@ function CollapsibleSection( {
 	const [ isOpen, setIsOpen ] = useState( defaultOpen );
 
 	return (
-		<div className={ `content-research-ai-summary__section ${ className ?? '' }`.trim() }>
+		<div className={ `content-research-ai-summary__collapsible ${ className ?? '' }`.trim() }>
 			<button
 				type="button"
-				className="content-research-ai-summary__section-toggle"
+				className="content-research-ai-summary__collapsible-toggle"
 				onClick={ () => setIsOpen( ! isOpen ) }
 				aria-expanded={ isOpen }
 			>
-				<span className="content-research-ai-summary__section-title">{ title }</span>
+				<span className="content-research-ai-summary__collapsible-title">{ title }</span>
 				<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 20 } />
 			</button>
-			{ isOpen && <div className="content-research-ai-summary__section-content">{ children }</div> }
+			{ isOpen && (
+				<div className="content-research-ai-summary__collapsible-content">{ children }</div>
+			) }
+		</div>
+	);
+}
+
+interface SectionProps {
+	title: string;
+	tone?: 'default' | 'highlight' | 'caution';
+	children: React.ReactNode;
+}
+
+function Section( { title, tone = 'default', children }: SectionProps ) {
+	let toneClass = '';
+	if ( tone === 'highlight' ) {
+		toneClass = ' is-highlight';
+	} else if ( tone === 'caution' ) {
+		toneClass = ' is-caution';
+	}
+	return (
+		<section className={ `content-research-ai-summary__block${ toneClass }` }>
+			<h3 className="content-research-ai-summary__block-title">{ title }</h3>
+			<div className="content-research-ai-summary__block-body">{ children }</div>
+		</section>
+	);
+}
+
+interface CopyableItemProps {
+	text: string;
+}
+
+function CopyableItem( { text }: CopyableItemProps ) {
+	const [ copied, setCopied ] = useState( false );
+
+	const onCopy = () => {
+		if ( ! navigator.clipboard ) {
+			return;
+		}
+		navigator.clipboard.writeText( text ).then( () => {
+			setCopied( true );
+			setTimeout( () => setCopied( false ), 1500 );
+		} );
+	};
+
+	return (
+		<li className="content-research-ai-summary__copyable">
+			<span className="content-research-ai-summary__copyable-text">{ text }</span>
+			<button
+				type="button"
+				className="content-research-ai-summary__copyable-button"
+				onClick={ onCopy }
+				aria-label={
+					copied ? __( 'Copied', 'content-research' ) : __( 'Copy', 'content-research' )
+				}
+			>
+				<Icon icon={ copied ? check : copy } size={ 16 } />
+			</button>
+		</li>
+	);
+}
+
+function normalizeAngles( angles: ResearchSummary[ 'suggested_angles' ] ): SuggestedAngle[] {
+	if ( ! Array.isArray( angles ) ) {
+		return [];
+	}
+	return angles.map( ( raw ) => {
+		if ( typeof raw === 'string' ) {
+			return { type: '', angle: raw };
+		}
+		return {
+			type: raw?.type ?? '',
+			angle: raw?.angle ?? '',
+			blog_value: raw?.blog_value,
+		};
+	} );
+}
+
+function deriveTldr( summary: ResearchSummary ): string | null {
+	if ( summary.tldr && summary.tldr.trim() ) {
+		return summary.tldr.trim();
+	}
+	if ( ! summary.summary ) {
+		return null;
+	}
+	const sentences = summary.summary
+		.split( /(?<=[.!?])\s+/ )
+		.slice( 0, 2 )
+		.join( ' ' );
+	if ( sentences && sentences.length < summary.summary.length ) {
+		return sentences;
+	}
+	return null;
+}
+
+function nonEmptyArray( value: string[] | undefined ): string[] {
+	if ( ! Array.isArray( value ) ) {
+		return [];
+	}
+	return value.map( ( item ) => ( typeof item === 'string' ? item.trim() : '' ) ).filter( Boolean );
+}
+
+interface RelevanceMeterProps {
+	score: number;
+}
+
+function RelevanceMeter( { score }: RelevanceMeterProps ) {
+	const clamped = Math.max( 0, Math.min( MAX_SCORE, Math.round( score ) ) );
+	return (
+		<div
+			className="content-research-ai-summary__relevance-meter"
+			role="img"
+			aria-label={ sprintf(
+				/* translators: 1: score, 2: max score */
+				__( 'Editorial relevance: %1$d out of %2$d', 'content-research' ),
+				clamped,
+				MAX_SCORE
+			) }
+		>
+			<span className="content-research-ai-summary__relevance-score">
+				{ sprintf( '%1$d/%2$d', clamped, MAX_SCORE ) }
+			</span>
+			<span className="content-research-ai-summary__relevance-dots" aria-hidden="true">
+				{ Array.from( { length: MAX_SCORE } ).map( ( _, i ) => (
+					<span
+						key={ i }
+						className={ `content-research-ai-summary__relevance-dot${
+							i < clamped ? ' is-filled' : ''
+						}` }
+					/>
+				) ) }
+			</span>
 		</div>
 	);
 }
@@ -69,6 +203,7 @@ interface AiSummaryProps {
 	hasResults: boolean;
 	selectedCount: number;
 	isExpanded: boolean;
+	sourceArticles?: ResearchResult[];
 }
 
 export default function AiSummary( {
@@ -79,6 +214,7 @@ export default function AiSummary( {
 	hasResults,
 	selectedCount,
 	isExpanded,
+	sourceArticles,
 }: AiSummaryProps ) {
 	const progressMessage = useProgressMessage( isLoading );
 
@@ -129,36 +265,241 @@ export default function AiSummary( {
 		return null;
 	}
 
+	const tldr = deriveTldr( summary );
+	const whyItMatters = summary.why_it_matters?.trim();
+	const keyFindings = nonEmptyArray( summary.key_findings );
+	const angles = normalizeAngles( summary.suggested_angles ?? [] ).filter( ( a ) => a.angle );
+	const brief = summary.blogger_brief ?? {};
+	const bestAngle = brief.best_angle?.trim() || angles[ 0 ]?.angle;
+	const coreThesis = brief.core_thesis?.trim();
+	const readerTakeaway = brief.reader_takeaway?.trim();
+	const whatToAdd = nonEmptyArray( brief.what_to_add );
+	const avoid = nonEmptyArray( brief.avoid );
+	const headlineIdeas = nonEmptyArray( summary.headline_ideas );
+	const openingHooks = nonEmptyArray( summary.opening_hooks );
+	const audience = nonEmptyArray( summary.audience );
+	const seoKeywords = nonEmptyArray( summary.seo_keywords );
+	const tags = nonEmptyArray( summary.tags );
+	const relevance = summary.editorial_relevance;
+	const factCheckNotes = nonEmptyArray( summary.fact_check_notes );
+	const detailedSummary = summary.summary?.trim();
+
 	return (
 		<div className={ containerClass }>
 			<div className="content-research-ai-summary__scrollable">
 				<div className="content-research-ai-summary__content">
-					<div className="content-research-ai-summary__section">
-						<p className="content-research-ai-summary__text">{ summary.summary }</p>
-					</div>
-					{ summary.key_findings.length > 0 && (
-						<CollapsibleSection
-							title={ __( 'Key findings', 'content-research' ) }
-							className="content-research-ai-summary__findings"
-						>
-							<ul>
-								{ summary.key_findings.map( ( finding, i ) => (
+					{ summary.title && (
+						<h2 className="content-research-ai-summary__title">{ summary.title }</h2>
+					) }
+
+					{ bestAngle && (
+						<Section title={ __( 'Recommended blog angle', 'content-research' ) } tone="highlight">
+							<p className="content-research-ai-summary__text">{ bestAngle }</p>
+						</Section>
+					) }
+
+					{ coreThesis && (
+						<Section title={ __( 'Core thesis', 'content-research' ) } tone="highlight">
+							<p className="content-research-ai-summary__text">{ coreThesis }</p>
+						</Section>
+					) }
+
+					{ readerTakeaway && (
+						<Section title={ __( 'Reader takeaway', 'content-research' ) }>
+							<p className="content-research-ai-summary__text">{ readerTakeaway }</p>
+						</Section>
+					) }
+
+					{ tldr && (
+						<Section title={ __( 'In short', 'content-research' ) }>
+							<p className="content-research-ai-summary__text">{ tldr }</p>
+						</Section>
+					) }
+
+					{ whyItMatters && (
+						<Section title={ __( 'Why it matters', 'content-research' ) }>
+							<p className="content-research-ai-summary__text">{ whyItMatters }</p>
+						</Section>
+					) }
+
+					{ headlineIdeas.length > 0 && (
+						<Section title={ __( 'Headline ideas', 'content-research' ) }>
+							<ul className="content-research-ai-summary__copyable-list">
+								{ headlineIdeas.map( ( headline, i ) => (
+									<CopyableItem key={ i } text={ headline } />
+								) ) }
+							</ul>
+						</Section>
+					) }
+
+					{ openingHooks.length > 0 && (
+						<Section title={ __( 'Opening hooks', 'content-research' ) }>
+							<ul className="content-research-ai-summary__copyable-list">
+								{ openingHooks.map( ( hook, i ) => (
+									<CopyableItem key={ i } text={ hook } />
+								) ) }
+							</ul>
+						</Section>
+					) }
+
+					{ keyFindings.length > 0 && (
+						<Section title={ __( 'Key findings', 'content-research' ) }>
+							<ul className="content-research-ai-summary__findings-list">
+								{ keyFindings.map( ( finding, i ) => (
 									<li key={ i }>{ finding }</li>
 								) ) }
 							</ul>
-						</CollapsibleSection>
+						</Section>
 					) }
-					{ summary.suggested_angles.length > 0 && (
-						<CollapsibleSection
-							title={ __( 'Suggested angles', 'content-research' ) }
-							className="content-research-ai-summary__angles"
-						>
-							<ul>
-								{ summary.suggested_angles.map( ( angle, i ) => (
-									<li key={ i }>{ angle }</li>
+
+					{ angles.length > 0 && (
+						<Section title={ __( 'Suggested angles', 'content-research' ) }>
+							<ul className="content-research-ai-summary__angles-list">
+								{ angles.map( ( angle, i ) => (
+									<li key={ i } className="content-research-ai-summary__angle">
+										{ angle.type && (
+											<span className="content-research-ai-summary__angle-type">
+												{ angle.type }
+											</span>
+										) }
+										<span className="content-research-ai-summary__angle-text">{ angle.angle }</span>
+										{ angle.blog_value && (
+											<span className="content-research-ai-summary__angle-value">
+												<strong>{ __( 'Why it works:', 'content-research' ) }</strong>{ ' ' }
+												{ angle.blog_value }
+											</span>
+										) }
+									</li>
 								) ) }
 							</ul>
+						</Section>
+					) }
+
+					{ whatToAdd.length > 0 && (
+						<Section title={ __( 'What to add', 'content-research' ) }>
+							<ul className="content-research-ai-summary__checklist">
+								{ whatToAdd.map( ( item, i ) => (
+									<li key={ i }>
+										<Icon
+											className="content-research-ai-summary__checklist-icon"
+											icon={ check }
+											size={ 16 }
+										/>
+										<span>{ item }</span>
+									</li>
+								) ) }
+							</ul>
+						</Section>
+					) }
+
+					{ avoid.length > 0 && (
+						<Section title={ __( 'What to avoid', 'content-research' ) } tone="caution">
+							<ul className="content-research-ai-summary__caution-list">
+								{ avoid.map( ( item, i ) => (
+									<li key={ i }>
+										<Icon
+											className="content-research-ai-summary__caution-icon"
+											icon={ warning }
+											size={ 16 }
+										/>
+										<span>{ item }</span>
+									</li>
+								) ) }
+							</ul>
+						</Section>
+					) }
+
+					{ audience.length > 0 && (
+						<Section title={ __( 'Audience', 'content-research' ) }>
+							<ul className="content-research-ai-summary__pills-list">
+								{ audience.map( ( item, i ) => (
+									<li key={ i } className="content-research-ai-summary__pill">
+										{ item }
+									</li>
+								) ) }
+							</ul>
+						</Section>
+					) }
+
+					{ seoKeywords.length > 0 && (
+						<Section title={ __( 'SEO keywords', 'content-research' ) }>
+							<ul className="content-research-ai-summary__keywords-list">
+								{ seoKeywords.map( ( keyword, i ) => (
+									<li key={ i } className="content-research-ai-summary__keyword">
+										{ keyword }
+									</li>
+								) ) }
+							</ul>
+						</Section>
+					) }
+
+					{ tags.length > 0 && (
+						<Section title={ __( 'Tags', 'content-research' ) }>
+							<ul className="content-research-ai-summary__tags-list">
+								{ tags.map( ( tag, i ) => (
+									<li key={ i } className="content-research-ai-summary__tag">
+										#{ tag }
+									</li>
+								) ) }
+							</ul>
+						</Section>
+					) }
+
+					{ relevance && typeof relevance.score === 'number' && (
+						<Section title={ __( 'Editorial relevance', 'content-research' ) }>
+							<RelevanceMeter score={ relevance.score } />
+							{ relevance.reason && (
+								<p className="content-research-ai-summary__relevance-reason">
+									{ relevance.reason }
+								</p>
+							) }
+						</Section>
+					) }
+
+					{ factCheckNotes.length > 0 && (
+						<Section title={ __( 'Fact-check notes', 'content-research' ) } tone="caution">
+							<ul className="content-research-ai-summary__caution-list">
+								{ factCheckNotes.map( ( note, i ) => (
+									<li key={ i }>
+										<Icon
+											className="content-research-ai-summary__caution-icon"
+											icon={ warning }
+											size={ 16 }
+										/>
+										<span>{ note }</span>
+									</li>
+								) ) }
+							</ul>
+						</Section>
+					) }
+
+					{ detailedSummary && (
+						<CollapsibleSection
+							title={ __( 'Detailed summary', 'content-research' ) }
+							className="content-research-ai-summary__detailed"
+						>
+							<p className="content-research-ai-summary__text">{ detailedSummary }</p>
 						</CollapsibleSection>
+					) }
+
+					{ sourceArticles && sourceArticles.length > 0 && (
+						<Section title={ __( 'Articles used', 'content-research' ) }>
+							<ul className="content-research-ai-summary__sources-list">
+								{ sourceArticles.map( ( article ) => (
+									<li key={ article.url } className="content-research-ai-summary__source">
+										<SourceIcon source={ article.source } />
+										<a
+											className="content-research-ai-summary__source-link"
+											href={ article.url }
+											target="_blank"
+											rel="noreferrer noopener"
+										>
+											{ article.title }
+										</a>
+									</li>
+								) ) }
+							</ul>
+						</Section>
 					) }
 				</div>
 			</div>
