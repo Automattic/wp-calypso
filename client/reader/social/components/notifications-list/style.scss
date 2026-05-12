@@ -204,3 +204,34 @@
 	font-size: 12px;
 	color: var(--color-primary);
 }
+
+.social-notifications-stack__body {
+	min-inline-size: 0;
+	flex: 1;
+}
+
+.social-notifications-stack__line {
+	color: var(--color-text);
+}
+
+.social-notifications-stack__excerpt {
+	color: var(--color-text-subtle);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-inline-size: 100%;
+}
+
+.social-notifications-stack__time {
+	color: var(--color-text-subtle);
+	font-size: 0.85em;
+}
+
+.social-notifications-stack__unread-dot {
+	flex: 0 0 0.5rem;
+	inline-size: 0.5rem;
+	block-size: 0.5rem;
+	border-radius: 50%;
+	background: var(--color-accent);
+	align-self: center;
+}
