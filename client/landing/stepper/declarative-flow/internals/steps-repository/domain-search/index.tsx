@@ -80,11 +80,6 @@ const DomainSearchStep: StepType< {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
-	// On mobile, the empty-state "Already have a domain?" body card is
-	// hidden via CSS (see style.scss) and its CTA is surfaced in the
-	// top bar's right slot instead — keeps the affordance reachable
-	// without the in-body card taking up scarce vertical space on
-	// small screens.
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
