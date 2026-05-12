@@ -59,6 +59,7 @@ class Document extends Component {
 			manifests,
 			params,
 			preferencesHelper,
+			path,
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
@@ -204,6 +205,9 @@ class Document extends Component {
 										sectionName={ sectionName }
 										isWCCOM={ isWCCOM }
 										isOneTapAuth={ !! query?.oneTapAuth }
+										isWooCommerceQrLoginAuthCheck={
+											path === '/me/security/qr-login' && query?.origin === 'woocommerce'
+										}
 										showStepContainerV2Loader={ showStepContainerV2Loader }
 									/>
 								</div>
@@ -339,13 +343,15 @@ function LoadingPlaceholder( {
 	sectionName,
 	isWCCOM,
 	isOneTapAuth,
+	isWooCommerceQrLoginAuthCheck,
 	showStepContainerV2Loader,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
 		sectionName === 'stepper' ||
 		sectionName === 'signup' ||
-		isOneTapAuth;
+		isOneTapAuth ||
+		isWooCommerceQrLoginAuthCheck;
 
 	const stepContainerV2Context = useMemo(
 		() => ( {

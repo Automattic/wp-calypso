@@ -49,6 +49,7 @@ const baseProps: DocumentProps = {
 	renderedLayout: null,
 	sectionGroup: '',
 	sectionName: 'stepper',
+	path: '/',
 	storeSandboxHelper: false,
 	target: 'evergreen',
 	user: null,
@@ -70,6 +71,21 @@ describe( 'Document LoadingPlaceholder', () => {
 		const html = renderToStaticMarkup( <Document { ...baseProps } sectionName="stepper" /> );
 
 		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo-wrapper' );
+	} );
+
+	it( 'hides the WordPress boot logo on the WooCommerce QR login auth-check route', () => {
+		const html = renderToStaticMarkup(
+			<Document
+				{ ...baseProps }
+				path="/me/security/qr-login"
+				query={ { origin: 'woocommerce' } }
+				sectionName="me"
+				showStepContainerV2Loader={ false }
+			/>
+		);
+
+		expect( html ).not.toContain( 'wpcom-site__logo' );
+		expect( html ).toContain( 'wpcom-loading__boot' );
 	} );
 
 	it( 'renders the dark mode helper placeholder when enabled', () => {
