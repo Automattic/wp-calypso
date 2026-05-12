@@ -38,8 +38,12 @@ export function SocialAccountMenuItem( {
 					<SiteIcon iconUrl={ null } size={ 22 } />
 				) }
 				<div className="sidebar-social__account-text">
-					<div className="sidebar__menu-item-title">{ displayName }</div>
-					<div className="sidebar-social__account-handle">{ handle }</div>
+					<div className="sidebar__menu-item-title" title={ displayName }>
+						{ displayName }
+					</div>
+					<div className="sidebar-social__account-handle" title={ handle }>
+						{ handle }
+					</div>
 				</div>
 			</MenuItemLink>
 		</MenuItem>

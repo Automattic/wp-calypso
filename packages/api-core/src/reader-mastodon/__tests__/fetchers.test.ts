@@ -649,6 +649,45 @@ describe( 'createMastodonPost', () => {
 		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( { status: 'plain' } );
 		post.mockRestore();
 	} );
+
+	it( 'forwards `visibility` and `spoiler_text` when supplied (CM-710)', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'u',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( {
+			connectionId: 5,
+			status: 'hi',
+			visibility: 'private',
+			spoiler_text: 'spoilers',
+		} );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( {
+			status: 'hi',
+			visibility: 'private',
+			spoiler_text: 'spoilers',
+		} );
+		post.mockRestore();
+	} );
+
+	it( 'omits `spoiler_text` when an empty string is supplied', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'u',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( {
+			connectionId: 5,
+			status: 'hi',
+			visibility: 'public',
+			spoiler_text: '',
+		} );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( {
+			status: 'hi',
+			visibility: 'public',
+		} );
+		post.mockRestore();
+	} );
 } );
 
 describe( 'uploadMastodonMedia', () => {
