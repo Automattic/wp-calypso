@@ -82,7 +82,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		flex: 1;
 		min-height: 0;
 		padding: 20px 24px 0;
-		gap: 16px;
+		gap: 8px;
 
 		// Below ~700px viewport the modal itself starts clamping to 100vw
 		// and both columns no longer have usable room; collapse to list-only.
@@ -96,7 +96,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		padding-top: 2px;
 		overflow-y: auto;
 		max-width: 300px;
-		padding-inline-end: 32px;
+		padding-inline-end: 16px;
 
 		@media ( max-width: 699px ) {
 			flex: 1;
