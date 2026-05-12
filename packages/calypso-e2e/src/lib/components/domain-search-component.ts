@@ -140,12 +140,7 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectFirstSuggestion( waitForContinueButton: boolean = true ): Promise< string > {
-		const targetRow = this.getContainer()
-			.getByRole( 'listitem' )
-			.filter( {
-				has: this.page.getByRole( 'button', { name: 'Add to cart' } ),
-			} )
-			.first();
+		const targetRow = this.getContainer().getByRole( 'listitem' ).first();
 		const suggestion = await this.selectSuggestion( targetRow, waitForContinueButton );
 
 		if ( ! suggestion ) {

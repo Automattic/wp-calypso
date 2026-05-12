@@ -315,11 +315,12 @@ export class CartCheckoutPage {
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
 		// Select the Credit or debit card payment method to expand the fields.
 		// On mobile the sticky Pay CTA and the auto-selected Google Pay tile sit
-		// over the card label, so a real click can't reach it. Dispatch the
-		// click on the underlying radio input, then wait for the form fields
-		// that prove the payment method is ready.
+		// over the card label, so a real click can't reach it. Wait for the
+		// underlying radio input to become enabled, then dispatch the click and
+		// wait for the form fields that prove the payment method is ready.
 		const cardPaymentRadio = this.page.locator( selectors.cardPaymentRadio );
 		await cardPaymentRadio.waitFor( { state: 'attached', timeout: 15 * 1000 } );
+		await expect( cardPaymentRadio ).toBeEnabled( { timeout: 30 * 1000 } );
 		await cardPaymentRadio.dispatchEvent( 'click' );
 		await expect( cardPaymentRadio ).toHaveJSProperty( 'checked', true );
 		await this.validatePaymentForm();
