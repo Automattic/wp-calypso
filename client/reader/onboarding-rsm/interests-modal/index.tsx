@@ -268,7 +268,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 	return (
 		<>
 			{ promptVerification && <InterestsVerificationNudge /> }
-			<VStack spacing={ 5 } className="interests-modal__content">
+			<VStack spacing={ 4 } className="interests-modal__content">
 				<VStack spacing={ 0 }>
 					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
 					<p className="interests-modal__subtitle">
