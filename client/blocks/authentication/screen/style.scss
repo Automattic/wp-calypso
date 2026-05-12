@@ -29,23 +29,24 @@
 }
 
 // Default (1-col) screens cap their content row at 400px on desktop. `is-wide`
-// screens (login + signup) widen to 768px to fit two columns side-by-side.
-// Chain the `.auth-screen` class twice to raise specificity above
-// `@wordpress/onboarding`'s `.step-container-v2__content-row` rule (which
-// itself caps at the WPDS-derived 660px for `columnWidth=6`).
-.auth-screen.auth-screen .step-container-v2__content-row {
+// screens (login + signup) widen to 768px once the consumer's grid actually
+// flips to 2 columns at `@break-medium` (782px). Below that, even `is-wide`
+// stays at 400 to avoid a wide-but-stretched single-column middle ground.
+//
+// `!important` is used here because `@wordpress/onboarding`'s
+// `.step-container-v2__content-row` rule computes its own max-width inside a
+// `@media (min-width: 600px)` block via a CSS-variable calc, and selector
+// specificity alone hasn't reliably won the cascade in the Storybook bundle.
+// The override is intentional and scoped to the `.auth-screen` wrapper.
+.auth-screen .step-container-v2__content-row {
 	@include break-small {
-		max-width: 400px;
+		max-width: 400px !important;
 	}
 }
 
-// `is-wide` screens only widen to 768 once we're actually rendering the
-// two columns (the consumer's CSS flips its grid at `break-medium`, 782px).
-// Below that, the content stays single-column at the default 400px so we
-// don't get a wide-but-stretched-single-column middle ground.
-.auth-screen.auth-screen.is-wide .step-container-v2__content-row {
+.auth-screen.is-wide .step-container-v2__content-row {
 	@include break-medium {
-		max-width: 768px;
+		max-width: 768px !important;
 	}
 }
 
