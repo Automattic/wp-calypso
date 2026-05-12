@@ -18,6 +18,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import {
 	AuthorProfileHeader,
 	SocialAccountList,
+	SocialAccountListHeader,
 	type SocialAccountListProps,
 	type SocialAccountRowProps,
 } from 'calypso/reader/social';
@@ -236,7 +237,16 @@ export function FollowersView( { connectionId, actor }: Props ) {
 			/>
 			<AuthorProfileHeader timelineUrl={ profileHref ?? `/reader/mastodon/${ connectionId }` } />
 			{ hideCollections ? (
-				<HiddenCollectionsMessage />
+				<>
+					<SocialAccountListHeader
+						displayName={ profileQuery.data?.display_name ?? null }
+						handle={ profileQuery.data?.acct ?? actor }
+						count={ profileQuery.data?.counts.followers ?? null }
+						mode="followers"
+						isPending={ profileQuery.isPending }
+					/>
+					<HiddenCollectionsMessage />
+				</>
 			) : (
 				<>
 					<SocialAccountList< MastodonAccountSummary >
