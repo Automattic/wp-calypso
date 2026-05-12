@@ -1,6 +1,8 @@
 module.exports = {
 	moduleNameMapper: {
 		'^@automattic/calypso-config$': '<rootDir>/client/server/config/index.js',
+		// Strip Vite-style asset query suffixes so Jest can resolve `foo.svg?no-inline`.
+		'^(.+\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css))\\?[^?]*$': '$1',
 	},
 	modulePaths: [ '<rootDir>/client/extensions' ],
 	rootDir: '../..',

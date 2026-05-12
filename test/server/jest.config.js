@@ -9,6 +9,7 @@ module.exports = {
 		'node_modules[\\/\\\\](?!(@fnando[\\/\\\\]|(?:.*[\\/\\\\])?uuid[\\/\\\\])|.*\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$)',
 	],
 	moduleNameMapper: {
+		...base.moduleNameMapper,
 		'^@automattic/calypso-config$': 'calypso/server/config',
 		'^@automattic/calypso-config/(.*)$': 'calypso/server/config/$1',
 	},

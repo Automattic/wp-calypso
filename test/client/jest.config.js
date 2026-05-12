@@ -8,6 +8,7 @@ const shared = {
 	testPathIgnorePatterns: [ ...base.testPathIgnorePatterns, '<rootDir>/server/' ],
 
 	moduleNameMapper: {
+		...base.moduleNameMapper,
 		'^@automattic/calypso-config$': '<rootDir>/server/config/index.js',
 		'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',
 	},

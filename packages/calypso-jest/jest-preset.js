@@ -10,6 +10,11 @@ module.exports = {
 	setupFilesAfterEnv: [ require.resolve( './src/setup.js' ) ],
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
+	moduleNameMapper: {
+		// Strip Vite-style asset query suffixes (e.g. `foo.svg?no-inline`) so
+		// the asset-transform below can stub them out by extension.
+		'^(.+\\.(?:gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css))\\?[^?]*$': '$1',
+	},
 	transform: {
 		'\\.(?:[jt]sx?|mjs)$': [ 'babel-jest', { rootMode: 'upward' } ],
 		'\\.(gif|jpg|jpeg|png|svg|webp|scss|mp4|sass|css)$': require.resolve(
