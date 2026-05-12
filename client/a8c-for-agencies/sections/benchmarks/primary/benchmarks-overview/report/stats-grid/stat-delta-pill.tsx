@@ -1,4 +1,4 @@
-import { sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { formatQuarterShort } from '../../../../lib/format-quarter';
 import type { Quarter } from '../../../../constants';
@@ -30,7 +30,7 @@ export default function StatDeltaPill( {
 		<span className={ clsx( 'benchmarks-stat-delta-pill', `is-${ tone }` ) }>
 			{ sprintf(
 				/* translators: %1$s: signed delta (e.g. "+7.3%"), %2$s: previous quarter shorthand (e.g. "Q3 24"). */
-				'%1$s vs %2$s',
+				__( '%1$s vs %2$s' ),
 				formatDelta( delta ),
 				formatQuarterShort( previousQuarter )
 			) }

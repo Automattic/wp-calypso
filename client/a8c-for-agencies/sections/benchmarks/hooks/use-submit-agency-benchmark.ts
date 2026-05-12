@@ -9,6 +9,8 @@ import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { APIError } from 'calypso/state/partner-portal/types';
 import { getFetchAgencyBenchmarkQueryKey } from './use-fetch-agency-benchmark';
+import { getFetchAgencyBenchmarksListQueryKey } from './use-fetch-agency-benchmarks-list';
+import { getFetchBenchmarksAggregatesQueryKey } from './use-fetch-benchmarks-aggregates';
 import type { AgencyBenchmark, AgencyBenchmarkSubmission } from '../constants';
 
 function postAgencyBenchmark(
@@ -41,6 +43,12 @@ export default function useSubmitAgencyBenchmark< TContext = unknown >(
 					variables.quarter as 1 | 2 | 3 | 4,
 					variables.year
 				),
+			} );
+			queryClient.invalidateQueries( {
+				queryKey: getFetchAgencyBenchmarksListQueryKey( agencyId ),
+			} );
+			queryClient.invalidateQueries( {
+				queryKey: getFetchBenchmarksAggregatesQueryKey( agencyId ),
 			} );
 			options?.onSuccess?.( data, variables, context );
 		},

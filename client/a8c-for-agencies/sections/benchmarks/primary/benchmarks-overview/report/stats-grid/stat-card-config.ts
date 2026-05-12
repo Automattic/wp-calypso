@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import type { AgencyBenchmark, AggregateMetricKey } from '../../../../constants';
 
 const fmtPercent = ( v: number ) => `${ v.toFixed( 1 ) }%`;
@@ -8,8 +8,18 @@ const fmtCurrency = ( v: number ) => `$${ Math.round( v ).toLocaleString( 'en-US
 const fmtCurrencyDelta = ( d: number ) =>
 	`${ d >= 0 ? '+' : '-' }$${ Math.abs( Math.round( d ) ).toLocaleString( 'en-US' ) }`;
 
-const fmtDays = ( v: number ) => `${ Math.round( v ) } days`;
-const fmtDaysDelta = ( d: number ) => `${ d >= 0 ? '+' : '' }${ Math.round( d ) } days`;
+const fmtDays = ( v: number ) =>
+	sprintf(
+		/* translators: %d: number of days. */
+		__( '%d days' ),
+		Math.round( v )
+	);
+const fmtDaysDelta = ( d: number ) =>
+	sprintf(
+		/* translators: %s: signed number of days, e.g. "+5" or "-3". */
+		__( '%s days' ),
+		`${ d >= 0 ? '+' : '' }${ Math.round( d ) }`
+	);
 
 const fmtScore = ( v: number ) => `${ Math.round( v ) }`;
 const fmtScoreDelta = ( d: number ) => `${ d >= 0 ? '+' : '' }${ Math.round( d ) }`;

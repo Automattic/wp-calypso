@@ -4,8 +4,8 @@ import type { Quarter } from '../../../../constants';
 
 import '@automattic/charts/style.css';
 
-const STROKE = '#3858E9';
-const POINT_FILL = '#FFFFFF';
+const STROKE = 'var(--color-primary)';
+const POINT_FILL = 'var(--color-surface)';
 
 export type TrendPoint = { quarter: Quarter; value: number };
 
