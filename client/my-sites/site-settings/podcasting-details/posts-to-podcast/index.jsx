@@ -9,6 +9,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getLengthPresets, getVoicePresets, getWindowPresets } from './presets';
@@ -115,18 +116,15 @@ export function PostsToPodcastSection( { siteId, siteSlug } ) {
 					</Notice>
 				) }
 				{ status === 'succeeded' && result?.postId && (
-					<Notice className="posts-to-podcast__notice" status="is-success" onDismissClick={ reset }>
-						{ translate( 'Draft created.' ) }
-						<Button
-							variant="primary"
-							href={ `/post/${ siteSlug }/${ result.postId }` }
-							style={ { marginInlineStart: '8px' } }
-						>
+					<Notice
+						className="posts-to-podcast__notice"
+						status="is-success"
+						onDismissClick={ reset }
+						text={ translate( 'Draft created.' ) }
+					>
+						<NoticeAction href={ `/post/${ siteSlug }/${ result.postId }` }>
 							{ translate( 'Open draft' ) }
-						</Button>
-						<Button variant="link" href={ `/posts/drafts/${ siteSlug }` }>
-							{ translate( 'View drafts' ) }
-						</Button>
+						</NoticeAction>
 					</Notice>
 				) }
 				{ status === 'failed' && (
