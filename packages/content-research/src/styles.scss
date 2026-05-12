@@ -4,6 +4,7 @@
 
 .content-research-source-filter {
 	box-sizing: border-box;
+	flex: 0 0 auto;
 	padding: 0 16px 16px;
 	width: 100%;
 
@@ -127,6 +128,9 @@
 	min-height: 0;
 
 	&__results {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
 		padding-top: 4px;
 	}
 
