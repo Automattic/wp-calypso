@@ -266,18 +266,6 @@ body.is-home-wizard-open {
 	gap: 8px;
 }
 
-// Prompt-step chips: example prompts rendered as compact tertiary buttons
-// the user can tap to populate the textarea. Wrap onto multiple rows when
-// they don't fit.
-.home-wizard__prompt-chips {
-	flex-wrap: wrap;
-	row-gap: 8px;
-}
-
-.home-wizard__prompt-chip {
-	border-radius: 16px;
-}
-
 // Details-step: textarea with a "Presets" dropdown anchored bottom-right
 // of the textarea (sits inside the same border as the textarea).
 .home-wizard__textarea-wrap {

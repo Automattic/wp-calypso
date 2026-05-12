@@ -149,17 +149,11 @@
 	white-space: nowrap;
 }
 
-.home-dashboard__wizard-fab-group {
+.home-dashboard__wizard-fab {
 	position: fixed;
 	right: 24px;
 	bottom: 24px;
-	display: flex;
-	flex-direction: row;
-	gap: 8px;
 	z-index: 100000;
-}
-
-.home-dashboard__wizard-fab {
 	display: inline-flex;
 	align-items: center;
 	gap: 8px;

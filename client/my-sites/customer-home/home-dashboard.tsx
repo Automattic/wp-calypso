@@ -27,7 +27,6 @@ import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selector
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HomeWizard from './home-wizard';
 import { type FirstPostDraft } from './home-wizard/draft-first-post';
-import HomePrompt from './home-wizard/home-prompt';
 import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
 import {
 	prewarmTailorAndDraft,
@@ -571,44 +570,6 @@ function useTailoredFlow() {
 			.finally( finalize );
 	};
 
-	const runFromIntent = ( intent: string ) => {
-		const trimmed = intent.trim();
-		if ( ! trimmed ) {
-			return;
-		}
-		// Persist the raw intent immediately — every future Dolly call (re-
-		// tailor, regenerate, "what's next") should be able to read it as
-		// the source of truth.
-		dispatch( savePreference( HOME_WIZARD_INTENT_PREF, trimmed ) );
-
-		const { controller, finalize } = startTailoring();
-
-		// Streamed combined Dolly call: emits task_ids first, then the draft.
-		// We paint the Launchpad as soon as task_ids arrives (onPartialTaskIds)
-		// and let the draft fill in behind it.
-		tailorAndDraftFromIntent(
-			{ intent: trimmed },
-			{
-				siteId: siteId ?? undefined,
-				abortSignal: controller.signal,
-				onPartialTaskIds: ( ids ) => {
-					persistTaskIds( ids );
-					setIsTailoring( false );
-				},
-			}
-		)
-			.then( ( result ) => {
-				persistTaskIds( result.task_ids );
-				const inferred: InferredContext = result.inferred ?? {};
-				dispatch( savePreference( HOME_WIZARD_INFERRED_PREF, inferred ) );
-				persistDraft( result.first_post_draft );
-			} )
-			.catch( ( error ) => {
-				window.console?.warn?.( '[Launchpad] tailor_and_draft failed:', error );
-			} )
-			.finally( finalize );
-	};
-
 	const prewarm = useCallback(
 		( answers: { goal: GoalKey | null; siteName: string; intent: string } ) => {
 			if ( ! answers.goal ) {
@@ -633,7 +594,7 @@ function useTailoredFlow() {
 		[ siteId ]
 	);
 
-	return { isTailoring, runFromAnswers, runFromIntent, prewarm };
+	return { isTailoring, runFromAnswers, prewarm };
 }
 
 function useBodyClass( className: string, active: boolean ) {
@@ -649,28 +610,19 @@ function useBodyClass( className: string, active: boolean ) {
 export default function HomeDashboard() {
 	const translate = useTranslate();
 	const { isOpen: isWizardOpen, open: openWizard, finish: finishWizard } = useHomeWizard();
-	const { isTailoring, runFromAnswers, runFromIntent, prewarm } = useTailoredFlow();
-	// Prompt modal lifecycle is local — the dev FAB is its only entry
-	// point today, so no preference persistence yet.
-	const [ isPromptOpen, setIsPromptOpen ] = useState< boolean >( false );
+	const { isTailoring, runFromAnswers, prewarm } = useTailoredFlow();
 
-	const isAnyModalOpen = isWizardOpen || isPromptOpen;
-	useBodyClass( 'is-home-wizard-open', isAnyModalOpen );
+	useBodyClass( 'is-home-wizard-open', isWizardOpen );
 
 	const handleWizardComplete = ( answers: WizardAnswers ) => {
 		finishWizard( answers );
 		runFromAnswers( answers );
 	};
 
-	const handlePromptComplete = ( { intent }: { intent: string } ) => {
-		setIsPromptOpen( false );
-		runFromIntent( intent );
-	};
-
 	return (
-		<div className={ 'home-dashboard' + ( isAnyModalOpen ? ' home-dashboard--wizard-open' : '' ) }>
+		<div className={ 'home-dashboard' + ( isWizardOpen ? ' home-dashboard--wizard-open' : '' ) }>
 			<QueryPreferences />
-			{ ! isAnyModalOpen && (
+			{ ! isWizardOpen && (
 				<>
 					<header className="home-dashboard__page-header">
 						<Heading level={ 1 } size={ 24 }>
@@ -698,33 +650,16 @@ export default function HomeDashboard() {
 					onPrewarm={ prewarm }
 				/>
 			) }
-			{ isPromptOpen && (
-				<HomePrompt
-					onClose={ () => setIsPromptOpen( false ) }
-					onComplete={ handlePromptComplete }
-				/>
-			) }
-			{ ! isAnyModalOpen && (
-				<div className="home-dashboard__wizard-fab-group">
-					<button
-						type="button"
-						className="home-dashboard__wizard-fab"
-						onClick={ openWizard }
-						aria-label={ translate( 'Open setup wizard' ) as string }
-					>
-						<Icon icon={ settings } size={ 20 } />
-						<span>{ translate( 'Wizard' ) }</span>
-					</button>
-					<button
-						type="button"
-						className="home-dashboard__wizard-fab"
-						onClick={ () => setIsPromptOpen( true ) }
-						aria-label={ translate( 'Open prompt' ) as string }
-					>
-						<Icon icon={ settings } size={ 20 } />
-						<span>{ translate( 'Prompt' ) }</span>
-					</button>
-				</div>
+			{ ! isWizardOpen && (
+				<button
+					type="button"
+					className="home-dashboard__wizard-fab"
+					onClick={ openWizard }
+					aria-label={ translate( 'Open setup wizard' ) as string }
+				>
+					<Icon icon={ settings } size={ 20 } />
+					<span>{ translate( 'Wizard' ) }</span>
+				</button>
 			) }
 		</div>
 	);
