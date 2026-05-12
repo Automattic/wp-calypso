@@ -71,12 +71,14 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		}
 	};
 
-	const isWideView = view === 'achievements';
+	const isAchievementWideView = view === 'achievements';
 
 	return (
 		<div className="user-profile">
-			<ReaderMain wideLayout={ isWideView }>
-				<div className={ isWideView ? 'user-profile__narrow' : undefined }>
+			<ReaderMain
+				className={ isAchievementWideView ? 'user-profile__achievements-view' : undefined }
+			>
+				<div className={ isAchievementWideView ? 'user-profile__narrow' : undefined }>
 					<ReaderBackButton />
 					<UserProfileHeader user={ user } view={ view } />
 				</div>

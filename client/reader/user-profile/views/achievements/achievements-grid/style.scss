@@ -8,8 +8,8 @@
 		grid-template-columns: 1fr;
 		gap: 16px;
 
-		@media (min-width: 440px) {
-			grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+		@include break-small() {
+			grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
 		}
 	}
 
@@ -109,8 +109,9 @@
 	.achievements__locked-heading {
 		font-size: 1.25rem;
 		font-weight: 500;
-		margin: 32px auto 16px;
+		margin: 48px auto 16px;
 		max-width: 720px;
+		text-align: center;
 	}
 
 	.achievements-grid--locked {
