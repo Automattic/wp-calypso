@@ -206,3 +206,38 @@ describe( 'usePostsToPodcastJob — failures', () => {
 		expect( result.current.error.code ).toBe( 'poll-failed' );
 	} );
 } );
+
+describe( 'usePostsToPodcastJob — resume from localStorage', () => {
+	it( 'resumes polling on mount when a fresh entry is stored', async () => {
+		const startedAt = Date.now() - 90 * 1000;
+		window.localStorage.setItem( storageKey, JSON.stringify( { jobId: 77, startedAt } ) );
+		wpcom.req.get.mockResolvedValueOnce( {
+			status: 'complete',
+			postId: 12,
+			editUrl: 'https://e.test/x',
+		} );
+
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+		expect( result.current.status ).toBe( 'polling' );
+		expect( result.current.jobId ).toBe( 77 );
+		expect( wpcom.req.post ).not.toHaveBeenCalled();
+
+		await act( async () => {} );
+
+		expect( wpcom.req.get ).toHaveBeenCalledWith( {
+			path: `/sites/${ SITE_ID }/posts-to-podcast/jobs/77`,
+			apiNamespace: 'wpcom/v2',
+		} );
+		expect( result.current.status ).toBe( 'succeeded' );
+	} );
+
+	it( 'discards an expired entry and stays idle', () => {
+		const startedAt = Date.now() - 6 * 60 * 1000;
+		window.localStorage.setItem( storageKey, JSON.stringify( { jobId: 77, startedAt } ) );
+
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+
+		expect( result.current.status ).toBe( 'idle' );
+		expect( window.localStorage.getItem( storageKey ) ).toBeNull();
+	} );
+} );
