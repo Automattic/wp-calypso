@@ -95,11 +95,15 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 		</>
 	);
 
-	const repliesAccessibleLabel = translate( 'Reply, %(count)d reply', 'Reply, %(count)d replies', {
-		count: counts.replies,
-		args: { count: counts.replies },
-		textOnly: true,
-	} ) as string;
+	const repliesAccessibleLabel = (
+		counts.replies > 0
+			? translate( 'Reply, %(count)d reply', 'Reply, %(count)d replies', {
+					count: counts.replies,
+					args: { count: counts.replies },
+					textOnly: true,
+			  } )
+			: translate( 'Reply', { textOnly: true } )
+	) as string;
 
 	const renderRepliesNode = () => {
 		// Render the interactive reply button when an `onReplyClick`

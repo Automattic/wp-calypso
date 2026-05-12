@@ -159,11 +159,13 @@ export function makeUseAtmosphereLikeAction( connectionId: number ): UseLikeActi
 		};
 
 		const accessibleLabel = ( count: number ) =>
-			translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
-				count,
-				args: { count: formatNumber( count ) },
-				textOnly: true,
-			} );
+			count > 0
+				? translate( 'Like, %(count)s like', 'Like, %(count)s likes', {
+						count,
+						args: { count: formatNumber( count ) },
+						textOnly: true,
+				  } )
+				: translate( 'Like', { textOnly: true } );
 
 		const statRowText = ( count: number ) =>
 			translate( '{{strong}}%(count)s{{/strong}} like', '{{strong}}%(count)s{{/strong}} likes', {

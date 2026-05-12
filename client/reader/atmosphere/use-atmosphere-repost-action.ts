@@ -201,17 +201,22 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 
 		const accessibleLabel = ( count: number, reposted: boolean ) => {
 			const formatted = formatNumber( count );
-			return reposted
-				? translate( 'Undo repost, %(count)s repost', 'Undo repost, %(count)s reposts', {
+			if ( reposted ) {
+				return count > 0
+					? translate( 'Undo repost, %(count)s repost', 'Undo repost, %(count)s reposts', {
+							count,
+							args: { count: formatted },
+							textOnly: true,
+					  } )
+					: translate( 'Undo repost', { textOnly: true } );
+			}
+			return count > 0
+				? translate( 'Repost, %(count)s repost', 'Repost, %(count)s reposts', {
 						count,
 						args: { count: formatted },
 						textOnly: true,
 				  } )
-				: translate( 'Repost, %(count)s repost', 'Repost, %(count)s reposts', {
-						count,
-						args: { count: formatted },
-						textOnly: true,
-				  } );
+				: translate( 'Repost', { textOnly: true } );
 		};
 
 		const statRowText = ( count: number ) =>

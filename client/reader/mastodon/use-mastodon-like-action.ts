@@ -116,11 +116,13 @@ export function makeUseMastodonLikeAction( connectionId: number ): UseLikeAction
 		};
 
 		const accessibleLabel = ( count: number ) =>
-			translate( 'Favorite, %(count)s favorite', 'Favorite, %(count)s favorites', {
-				count,
-				args: { count: formatNumber( count ) },
-				textOnly: true,
-			} );
+			count > 0
+				? translate( 'Favorite, %(count)s favorite', 'Favorite, %(count)s favorites', {
+						count,
+						args: { count: formatNumber( count ) },
+						textOnly: true,
+				  } )
+				: translate( 'Favorite', { textOnly: true } );
 
 		const statRowText = ( count: number ) =>
 			translate(

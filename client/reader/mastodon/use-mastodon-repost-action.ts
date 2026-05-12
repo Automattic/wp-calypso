@@ -134,17 +134,22 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 
 		const accessibleLabel = ( count: number, reposted: boolean ) => {
 			const formatted = formatNumber( count );
-			return reposted
-				? translate( 'Undo boost, %(count)s boost', 'Undo boost, %(count)s boosts', {
+			if ( reposted ) {
+				return count > 0
+					? translate( 'Undo boost, %(count)s boost', 'Undo boost, %(count)s boosts', {
+							count,
+							args: { count: formatted },
+							textOnly: true,
+					  } )
+					: translate( 'Undo boost', { textOnly: true } );
+			}
+			return count > 0
+				? translate( 'Boost, %(count)s boost', 'Boost, %(count)s boosts', {
 						count,
 						args: { count: formatted },
 						textOnly: true,
 				  } )
-				: translate( 'Boost, %(count)s boost', 'Boost, %(count)s boosts', {
-						count,
-						args: { count: formatted },
-						textOnly: true,
-				  } );
+				: translate( 'Boost', { textOnly: true } );
 		};
 
 		const statRowText = ( count: number ) =>
