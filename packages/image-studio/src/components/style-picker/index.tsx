@@ -19,6 +19,7 @@ import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
 import videoCinematicPreview from '../../assets/video/styles/cinematic.webp';
+import videoHighlightsSoonPreview from '../../assets/video/styles/highlights-soon.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
@@ -41,6 +42,10 @@ interface StyleOption {
 	// One-line explainer rendered under the label. Video styles use it;
 	// image styles are self-explanatory by name and omit it.
 	description?: string;
+	// Renders the card greyed-out and inert (click + keyboard no-op).
+	// Used to tease an upcoming style; the preview thumbnail carries the
+	// "Coming soon" treatment so no tooltip is needed.
+	disabled?: boolean;
 }
 
 export const STYLE_OPTIONS: StyleOption[] = [
@@ -131,12 +136,24 @@ export const STYLE_OPTIONS: StyleOption[] = [
 // The prior Informative / Promotional video styles collapse into one
 // "Cinematic" preset — they were the same Veo chain with cosmetically
 // different prompt templates, which never read as meaningfully distinct.
+// "Highlights" is shown disabled as a teaser; the browser-rendered
+// implementation lands in a follow-up.
 export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 	{
 		label: __( 'Cinematic', __i18n_text_domain__ ),
 		value: 'cinematic',
 		preview: videoCinematicPreview,
 		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
+	},
+	{
+		label: __( 'Highlights', __i18n_text_domain__ ),
+		value: 'highlights',
+		preview: videoHighlightsSoonPreview,
+		description: __(
+			"Build a 20-second recap clip using your post's images and key points.",
+			__i18n_text_domain__
+		),
+		disabled: true,
 	},
 ];
 
@@ -191,10 +208,26 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 					<button
 						key={ option.value }
 						type="button"
+						// aria-disabled + tabIndex=-1 rather than the native
+						// `disabled` attribute, and an Enter/Space keydown
+						// guard, so the card is fully inert but still rendered.
+						aria-disabled={ option.disabled || undefined }
+						tabIndex={ option.disabled ? -1 : undefined }
 						className={ cn( 'image-studio-input-toolbar-card', {
 							'is-selected': selectedStyle === option.value,
+							'is-disabled': option.disabled,
 						} ) }
-						onClick={ () => handleStyleSelect( option.value ) }
+						onClick={ () => {
+							if ( option.disabled ) {
+								return;
+							}
+							handleStyleSelect( option.value );
+						} }
+						onKeyDown={ ( event ) => {
+							if ( option.disabled && ( event.key === 'Enter' || event.key === ' ' ) ) {
+								event.preventDefault();
+							}
+						} }
 					>
 						<span className="image-studio-input-toolbar-card__image-wrapper">
 							<img
