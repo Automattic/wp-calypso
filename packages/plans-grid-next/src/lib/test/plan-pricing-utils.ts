@@ -361,7 +361,7 @@ describe( 'fromVariantPriceData', () => {
 		// introDuration = 1 × 12 = 12 months = full term
 		// nonIntroMonths = 12 - 12 = 0
 		// introPriceTotal = 10000 - 0 × 2000 = 10000
-		// introPricePerMonth = 10000 / 12
+		// introPricePerMonth = Math.round(10000 / 12) = Math.round(833.33) = 833
 		const variant = makeVariant( {
 			termIntervalInMonths: 12,
 			priceInteger: 10000,
@@ -373,7 +373,7 @@ describe( 'fromVariantPriceData', () => {
 		expect( result.termMonths ).toBe( 12 );
 		expect( result.regularPricePerMonth ).toBe( 2000 );
 		expect( result.introOffer ).toEqual( {
-			pricePerMonth: 10000 / 12,
+			pricePerMonth: 833,
 			durationMonths: 12,
 			isActive: true,
 		} );
@@ -386,7 +386,7 @@ describe( 'fromVariantPriceData', () => {
 		// introDuration = 1 × 12 = 12 months
 		// nonIntroMonths = 24 - 12 = 12
 		// introPriceTotal = 34000 - 12 × 2000 = 34000 - 24000 = 10000
-		// introPricePerMonth = 10000 / 12
+		// introPricePerMonth = Math.round(10000 / 12) = Math.round(833.33) = 833
 		const variant = makeVariant( {
 			termIntervalInMonths: 24,
 			priceInteger: 34000,
@@ -398,10 +398,40 @@ describe( 'fromVariantPriceData', () => {
 		expect( result.termMonths ).toBe( 24 );
 		expect( result.regularPricePerMonth ).toBe( 2000 );
 		expect( result.introOffer ).toEqual( {
-			pricePerMonth: 10000 / 12,
+			pricePerMonth: 833,
 			durationMonths: 12,
 			isActive: true,
 		} );
+	} );
+
+	it( 'rounds regularPricePerMonth to the nearest integer for non-evenly-divisible prices', () => {
+		// 10000 / 12 = 833.333... → rounds to 833 (not 834, and not a fraction)
+		const variant = makeVariant( {
+			termIntervalInMonths: 12,
+			priceBeforeDiscounts: 10000,
+			priceInteger: 10000,
+			introductoryInterval: 0,
+		} );
+		const result = fromVariantPriceData( variant );
+		expect( result.regularPricePerMonth ).toBe( 833 );
+		expect( Number.isInteger( result.regularPricePerMonth ) ).toBe( true );
+	} );
+
+	it( 'rounds introOffer.pricePerMonth to the nearest integer for non-evenly-divisible prices', () => {
+		// Annual plan, full term is the intro period
+		// priceBeforeDiscounts = 24000 → regularPricePerMonth = 2000 (exact)
+		// priceInteger = 5000 → introPriceTotal = 5000 - 0*2000 = 5000
+		// 5000 / 12 = 416.666... → rounds to 417
+		const variant = makeVariant( {
+			termIntervalInMonths: 12,
+			priceBeforeDiscounts: 24000,
+			priceInteger: 5000,
+			introductoryInterval: 1,
+			introductoryTerm: 'year',
+		} );
+		const result = fromVariantPriceData( variant );
+		expect( result.introOffer?.pricePerMonth ).toBe( 417 );
+		expect( Number.isInteger( result.introOffer?.pricePerMonth ) ).toBe( true );
 	} );
 
 	it( 'handles a monthly intro offer (introductoryTerm: month)', () => {
