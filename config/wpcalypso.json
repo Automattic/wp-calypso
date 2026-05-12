@@ -138,6 +138,7 @@
 		"reader/social": true,
 		"reader/fediverse": true,
 		"reader/unified-connections": true,
+		"reader/pulse-overview": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": false,

@@ -1,0 +1,219 @@
+import {
+	useConnectionQuery,
+	useConnectionsQuery,
+	useFediverseConnectionsQuery,
+	useMastodonConnectionQuery,
+	useMastodonConnectionsQuery,
+} from '@automattic/api-queries';
+import { Card, Spinner } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import DocumentHead from 'calypso/components/data/document-head';
+import NavigationHeader from 'calypso/components/navigation-header';
+import { DEFAULT_ATMOSPHERE_TAB } from 'calypso/reader/atmosphere/helper';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import { DEFAULT_FEDIVERSE_TAB } from 'calypso/reader/fediverse/helper';
+import { DEFAULT_MASTODON_TAB } from 'calypso/reader/mastodon/helper';
+import {
+	getProtocolIcon,
+	getProtocolLabel,
+	type ConnectionProtocol,
+} from 'calypso/reader/sidebar/reader-sidebar-connections/types';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import type {
+	AtmosphereConnection,
+	FediverseConnection,
+	MastodonConnection,
+} from '@automattic/api-core';
+
+interface PulseCard {
+	protocol: ConnectionProtocol;
+	id: number;
+	displayName: string;
+	handle: string;
+	avatarUrl: string | null;
+	href: string;
+}
+
+function mapAtmosphere( c: AtmosphereConnection ): PulseCard {
+	return {
+		protocol: 'atmosphere',
+		id: c.id,
+		displayName: c.display_name || c.handle,
+		handle: `@${ c.handle }`,
+		avatarUrl: c.avatar ?? null,
+		href: `/reader/atmosphere/${ c.id }/${ DEFAULT_ATMOSPHERE_TAB }`,
+	};
+}
+
+function mapMastodon( c: MastodonConnection ): PulseCard {
+	return {
+		protocol: 'mastodon',
+		id: c.id,
+		displayName: c.display_name || c.handle,
+		handle: c.handle,
+		avatarUrl: c.avatar ?? null,
+		href: `/reader/mastodon/${ c.id }/${ DEFAULT_MASTODON_TAB }`,
+	};
+}
+
+function mapFediverse( c: FediverseConnection ): PulseCard {
+	return {
+		protocol: 'fediverse',
+		id: c.id,
+		displayName: c.name || c.webfinger,
+		handle: c.webfinger,
+		avatarUrl: c.icon || null,
+		href: `/reader/fediverse/${ c.id }/${ DEFAULT_FEDIVERSE_TAB }`,
+	};
+}
+
+/**
+ * Single card. Mirrors the per-id lazy fetch pattern from the sidebar
+ * rows: Mastodon and ATmosphere list endpoints return null avatar and
+ * empty display_name, so we hydrate from the per-id query. Fediverse
+ * carries the icon on the list endpoint already.
+ */
+function PulseCardItem( { card, onClick }: { card: PulseCard; onClick: () => void } ) {
+	const atmosphereId = card.protocol === 'atmosphere' ? card.id : null;
+	const mastodonId = card.protocol === 'mastodon' ? card.id : null;
+	const atmosphere = useConnectionQuery( atmosphereId );
+	const mastodon = useMastodonConnectionQuery( mastodonId );
+
+	let avatarUrl = card.avatarUrl;
+	let displayName = card.displayName;
+	if ( card.protocol === 'atmosphere' ) {
+		avatarUrl = atmosphere.data?.avatar ?? avatarUrl;
+		displayName = atmosphere.data?.display_name || displayName;
+	} else if ( card.protocol === 'mastodon' ) {
+		avatarUrl = mastodon.data?.avatar ?? avatarUrl;
+		displayName = mastodon.data?.display_name || displayName;
+	}
+
+	return (
+		<a
+			className={ `pulse-card pulse-card--${ card.protocol }` }
+			href={ card.href }
+			onClick={ onClick }
+		>
+			<div className="pulse-card__avatar-wrap">
+				{ avatarUrl ? (
+					<img
+						className="pulse-card__avatar"
+						src={ avatarUrl }
+						alt=""
+						width={ 56 }
+						height={ 56 }
+						loading="lazy"
+						decoding="async"
+					/>
+				) : (
+					<div className="pulse-card__avatar pulse-card__avatar--placeholder" />
+				) }
+				<span
+					className={ `pulse-card__badge pulse-card__badge--${ card.protocol }` }
+					aria-hidden="true"
+				>
+					{ getProtocolIcon( card.protocol ) }
+				</span>
+			</div>
+			<div className="pulse-card__body">
+				<div className="pulse-card__name">{ displayName }</div>
+				<div className="pulse-card__handle">{ card.handle }</div>
+				<div className="pulse-card__protocol">{ getProtocolLabel( card.protocol ) }</div>
+			</div>
+		</a>
+	);
+}
+
+/**
+ * "Pulse" overview surface — a grid of cards, one per connected social
+ * account across every protocol. Replaces the bare redirect at
+ * /reader/connections when the `reader/pulse-overview` flag is on, so the
+ * unified section has a real home page rather than just shovelling users
+ * into the first connection's timeline. Each card is a shortcut into its
+ * respective timeline.
+ */
+export function PulseOverviewView() {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const atmosphere = useConnectionsQuery();
+	const mastodon = useMastodonConnectionsQuery();
+	const fediverse = useFediverseConnectionsQuery();
+
+	const isLoading = atmosphere.isPending || mastodon.isPending || fediverse.isPending;
+
+	const cards: PulseCard[] = [
+		...( atmosphere.data?.connections ?? [] ).map( mapAtmosphere ),
+		...( mastodon.data?.connections ?? [] ).map( mapMastodon ),
+		...( fediverse.data?.connections ?? [] ).map( mapFediverse ),
+	];
+
+	const handleCardClick = ( card: PulseCard ) => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_pulse_card_clicked', {
+				protocol: card.protocol,
+				connection_id: card.id,
+			} )
+		);
+	};
+
+	return (
+		<ReaderMain className="pulse-view">
+			<DocumentHead title={ translate( 'Pulse ‹ Reader' ) } />
+			<NavigationHeader
+				title={ translate( 'Pulse' ) }
+				subtitle={ translate(
+					'Everything you’ve plugged into the Reader, in one place. Pick a network to dive in.'
+				) }
+			/>
+
+			{ isLoading && (
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
+				</div>
+			) }
+
+			{ ! isLoading && cards.length === 0 && (
+				<Card className="pulse-empty" elevation={ 0 }>
+					<h2>{ translate( 'Nothing here yet' ) }</h2>
+					<p>
+						{ translate(
+							'You haven’t connected any social accounts yet. Start with the network you already know best — or let your WordPress site do the work for you.'
+						) }
+					</p>
+					<a className="pulse-empty__cta" href="/reader/connections/new">
+						{ translate( 'Pick a network →' ) }
+					</a>
+				</Card>
+			) }
+
+			{ ! isLoading && cards.length > 0 && (
+				<div className="pulse-grid">
+					{ cards.map( ( card ) => (
+						<PulseCardItem
+							key={ `${ card.protocol }-${ card.id }` }
+							card={ card }
+							onClick={ () => handleCardClick( card ) }
+						/>
+					) ) }
+					<a className="pulse-card pulse-card--add" href="/reader/connections/new">
+						<div className="pulse-card__plus" aria-hidden="true">
+							+
+						</div>
+						<div className="pulse-card__body">
+							<div className="pulse-card__name">{ translate( 'Add another' ) }</div>
+							<div className="pulse-card__handle">
+								{ translate( 'Bluesky, Mastodon, or your own site' ) }
+							</div>
+						</div>
+					</a>
+				</div>
+			) }
+		</ReaderMain>
+	);
+}
+
+export default PulseOverviewView;

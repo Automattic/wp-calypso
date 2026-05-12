@@ -17,7 +17,6 @@
 	align-items: center;
 	justify-content: center;
 	background-color: var( --color-sidebar-background );
-	color: var( --color-sidebar-text );
 	border-radius: 50%;
 	box-shadow: 0 0 0 1px var( --color-sidebar-background );
 	pointer-events: none;
@@ -31,16 +30,27 @@
 	}
 }
 
-// Per-protocol tint so the badge is recognisable even at a tiny size:
-// follow each protocol's brand cue from the larger sidebar icons.
+// Per-protocol brand tint. Each protocol gets its own colour cue so the
+// badge reads at a glance even at 10px. Studio palette tokens chosen to
+// approximate the public brand of each protocol while staying inside the
+// design system: Bluesky→blue, Mastodon→purple (indigo-adjacent),
+// Fediverse→pink (the ActivityPub-ecosystem convention).
 .sidebar-connections__badge--atmosphere {
-	color: var( --color-link );
+	color: var( --studio-blue-50 );
 }
 
 .sidebar-connections__badge--mastodon {
-	color: var( --color-link );
+	color: var( --studio-purple-50 );
 }
 
 .sidebar-connections__badge--fediverse {
-	color: var( --color-text );
+	color: var( --studio-pink-50 );
+}
+
+.sidebar-connections__empty {
+	padding: 4px 16px 8px;
+	font-size: 0.75rem;
+	color: var( --color-sidebar-text-alternative );
+	font-style: italic;
+	list-style: none;
 }

@@ -10,25 +10,33 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
+type ProtocolKey = 'fediverse' | 'atmosphere' | 'mastodon';
+
 interface ProtocolOption {
-	key: 'atmosphere' | 'mastodon' | 'fediverse';
+	key: ProtocolKey;
 	label: string;
-	description: string;
+	tagline: string;
+	body: string;
 	href: string | null;
 	icon: JSX.Element;
 	available: boolean;
 }
 
 /**
- * Chooser surface for connecting a new account. The three cards mirror
+ * Chooser surface for connecting a new account. Three cards mirror
  * the per-protocol entry points; clicking one forwards to the existing
  * protocol-specific connect view, which still owns the actual OAuth /
- * app-password / detection flow.
+ * app-password flow.
  *
- * Fediverse has no user-driven OAuth — connections appear automatically
- * when a wpcom user enables the ActivityPub plugin on one of their
- * sites. We surface a non-actionable explainer card in that case so the
- * three protocols remain visually consistent.
+ * Ordering is intentional: Fediverse first because a WordPress.com user
+ * "already has a fediverse account" — they just need to flip a switch on
+ * their own site. We surface that nudge as a quirky "start here"
+ * recommendation; the other two cards then introduce Bluesky and
+ * Mastodon for users who already live there.
+ *
+ * Copy leans warm and a bit playful — the network names alone aren't
+ * enough for a first-time user to know what they're choosing between,
+ * so the body lines do double-duty as primer + recommendation.
  */
 export function ConnectionsNewView() {
 	const translate = useTranslate();
@@ -37,42 +45,51 @@ export function ConnectionsNewView() {
 	const socialEnabled = isEnabled( 'reader/social' );
 	const fediverseEnabled = isEnabled( 'reader/fediverse' );
 
-	const options: ProtocolOption[] = [
-		{
-			key: 'atmosphere',
-			label: 'Bluesky',
-			description: String(
-				translate( 'Read your Bluesky timeline, reply, like, and repost from the Reader.' )
-			),
-			href: '/reader/atmosphere/connect',
-			icon: <ReaderBlueskyIcon />,
-			available: socialEnabled,
-		},
-		{
-			key: 'mastodon',
-			label: 'Mastodon',
-			description: String(
-				translate( 'Sign in to your Mastodon instance to bring your feed into the Reader.' )
-			),
-			href: '/reader/mastodon/connect',
-			icon: <ReaderMastodonIcon />,
-			available: socialEnabled,
-		},
-		{
-			key: 'fediverse',
-			label: 'Fediverse',
-			description: String(
-				translate(
-					'Enable the ActivityPub plugin on a WordPress site you own to have it appear here.'
-				)
-			),
-			href: null,
-			icon: <ReaderFediverseIcon />,
-			available: fediverseEnabled,
-		},
-	];
+	const fediverse: ProtocolOption = {
+		key: 'fediverse',
+		label: 'Fediverse',
+		tagline: String( translate( 'Start here — your site is already social.' ) ),
+		body: String(
+			translate(
+				'If you have a WordPress.com site, you already have a home on the open social web. Flip the ActivityPub switch on your blog and it shows up here automatically. No new account, no new password, no algorithm.'
+			)
+		),
+		href: null,
+		icon: <ReaderFediverseIcon />,
+		available: fediverseEnabled,
+	};
 
-	const visibleOptions = options.filter( ( option ) => option.available );
+	const atmosphere: ProtocolOption = {
+		key: 'atmosphere',
+		label: 'Bluesky',
+		tagline: String( translate( 'Already on Bluesky? Bring it over.' ) ),
+		body: String(
+			translate(
+				'Plug your bsky.social handle in and you can scroll, like, repost, and reply to your Bluesky timeline without leaving the Reader.'
+			)
+		),
+		href: '/reader/atmosphere/connect',
+		icon: <ReaderBlueskyIcon filled />,
+		available: socialEnabled,
+	};
+
+	const mastodon: ProtocolOption = {
+		key: 'mastodon',
+		label: 'Mastodon',
+		tagline: String( translate( 'Got a Mastodon instance? Sign right in.' ) ),
+		body: String(
+			translate(
+				'Tell us which instance you live on, sign in once, and your Mastodon feed slots in next to everything else you read here.'
+			)
+		),
+		href: '/reader/mastodon/connect',
+		icon: <ReaderMastodonIcon />,
+		available: socialEnabled,
+	};
+
+	const options: ProtocolOption[] = [ fediverse, atmosphere, mastodon ].filter(
+		( option ) => option.available
+	);
 
 	const handleClick = ( option: ProtocolOption ) => {
 		dispatch(
@@ -84,23 +101,35 @@ export function ConnectionsNewView() {
 
 	return (
 		<ReaderMain className="connections-view">
-			<DocumentHead title={ translate( 'Add an account ‹ Social ‹ Reader' ) } />
+			<DocumentHead title={ translate( 'Add an account ‹ Pulse ‹ Reader' ) } />
 			<NavigationHeader
 				title={ translate( 'Add a social account' ) }
 				subtitle={ translate(
-					'Bring an account from another network into the Reader. Pick where it lives.'
+					'Pick where your other social home lives — or start one from the WordPress site you already have.'
 				) }
 			/>
 			<VStack spacing={ 3 } className="connections-new__cards">
-				{ visibleOptions.map( ( option ) => {
+				{ options.map( ( option, index ) => {
+					const featured = option.key === 'fediverse' && index === 0;
 					const card = (
-						<Card className="connections-new__card" elevation={ 0 }>
+						<Card
+							className={ `connections-new__card connections-new__card--${ option.key }${
+								featured ? ' is-featured' : ''
+							}` }
+							elevation={ 0 }
+						>
 							<div className="connections-new__card-icon" aria-hidden="true">
 								{ option.icon }
 							</div>
 							<div className="connections-new__card-body">
+								{ featured && (
+									<div className="connections-new__card-badge">
+										{ translate( 'Recommended for WordPress folks' ) }
+									</div>
+								) }
 								<h3 className="connections-new__card-label">{ option.label }</h3>
-								<p className="connections-new__card-description">{ option.description }</p>
+								<p className="connections-new__card-tagline">{ option.tagline }</p>
+								<p className="connections-new__card-description">{ option.body }</p>
 							</div>
 						</Card>
 					);
@@ -125,6 +154,11 @@ export function ConnectionsNewView() {
 					);
 				} ) }
 			</VStack>
+			<p className="connections-new__footnote">
+				{ translate(
+					'Connecting a network doesn’t move your data — it just lets the Reader peek into your accounts on your behalf. Disconnect any time.'
+				) }
+			</p>
 		</ReaderMain>
 	);
 }

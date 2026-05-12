@@ -15,7 +15,9 @@ export interface UnifiedConnection {
 
 export function getProtocolIcon( protocol: ConnectionProtocol ): JSX.Element {
 	if ( protocol === 'atmosphere' ) {
-		return <ReaderBlueskyIcon />;
+		// Filled glyph reads better at the 10px badge size — outline strokes
+		// lose fidelity past the rasterisation threshold.
+		return <ReaderBlueskyIcon filled />;
 	}
 	if ( protocol === 'mastodon' ) {
 		return <ReaderMastodonIcon />;

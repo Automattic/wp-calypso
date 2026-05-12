@@ -45,11 +45,8 @@ import {
 import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
-import ReaderSidebarAtmosphere from './reader-sidebar-atmosphere';
 import ReaderSidebarConnections from './reader-sidebar-connections';
-import ReaderSidebarFediverse from './reader-sidebar-fediverse';
 import ReaderSidebarLists from './reader-sidebar-lists';
-import ReaderSidebarMastodon from './reader-sidebar-mastodon';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
@@ -194,20 +191,10 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
-					{ isEnabled( 'reader/unified-connections' ) ? (
-						<ReaderSidebarConnections path={ path } />
-					) : (
-						<>
-							{ isEnabled( 'reader/social' ) && (
-								<>
-									<ReaderSidebarAtmosphere path={ path } />
-									<ReaderSidebarMastodon path={ path } />
-								</>
-							) }
-
-							{ isEnabled( 'reader/fediverse' ) && <ReaderSidebarFediverse path={ path } /> }
-						</>
-					) }
+					{ isEnabled( 'reader/unified-connections' ) &&
+						( isEnabled( 'reader/social' ) || isEnabled( 'reader/fediverse' ) ) && (
+							<ReaderSidebarConnections path={ path } />
+						) }
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }

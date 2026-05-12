@@ -139,6 +139,12 @@ function ReaderSidebarConnections( { path }: Props ) {
 		return all.sort( sortConnections );
 	}, [ atmosphereData, mastodonData, fediverseData ] );
 
+	// Distinguish "we haven't fetched yet" from "we fetched and found none".
+	// Only render the empty-state hint after all three queries resolved.
+	const hasResolved =
+		atmosphereData !== undefined && mastodonData !== undefined && fediverseData !== undefined;
+	const showEmptyHint = shouldFetch && hasResolved && connections.length === 0;
+
 	const recordHeaderClick = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_connections_clicked' ) );
 	};
@@ -175,7 +181,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 		<li>
 			<ExpandableSidebarMenu
 				expanded={ isOpen }
-				title={ translate( 'Social accounts' ) }
+				title={ translate( 'Pulse' ) }
 				customIcon={ <Icon className="sidebar__menu-icon" icon={ people } /> }
 				onClick={ handleMainClick }
 				expandableIconClick={ () => setIsOpen( ! isOpen ) }
@@ -194,6 +200,11 @@ function ReaderSidebarConnections( { path }: Props ) {
 						onClick={ () => recordConnectionClick( connection ) }
 					/>
 				) ) }
+				{ showEmptyHint && (
+					<li className="sidebar-connections__empty" aria-live="polite">
+						{ translate( 'Nothing here yet — connect one below.' ) }
+					</li>
+				) }
 				<SocialAddAccountMenuItem
 					label={ translate( 'Add account' ) }
 					href={ NEW_CONNECTION_PATH }
