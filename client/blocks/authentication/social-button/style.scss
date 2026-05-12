@@ -1,10 +1,22 @@
 .auth-social-button {
 	inline-size: 100%;
-	justify-content: flex-start;
+	justify-content: center;
+	position: relative;
+}
 
-	.social-icons {
-		inline-size: 20px;
-		block-size: 20px;
-		margin-inline-end: 8px;
-	}
+// Position the icon absolutely on the leading edge so the label centers
+// in the remaining space, matching the Figma spec. WPDS Button may render
+// the icon as either a direct child SVG (with `icon` prop as JSX) or
+// wrapped in `.components-button__icon`; handle both.
+.auth-social-button > svg,
+.auth-social-button > .components-button__icon {
+	position: absolute;
+	inset-inline-start: 12px;
+	inset-block-start: 50%;
+	transform: translateY(-50%);
+}
+
+.auth-social-button .social-icons {
+	inline-size: 20px;
+	block-size: 20px;
 }
