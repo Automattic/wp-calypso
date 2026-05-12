@@ -14,6 +14,15 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
+	// The siteless cart keys used by signup steps before a site exists.
+	// /start/domain/domain-only adds the domain to 'no-site' (logged-in) or
+	// 'no-user' (logged-out); if the user then picks "New site" the checkout
+	// runs against the freshly-created site's cart and the original siteless
+	// cart goes untouched. Emptying the cart from checkout has to clear those
+	// too, or the leftover items reappear when the user is redirected back to
+	// the signup origin via `skippedCheckout=1`.
+	const { replaceProductsInCart: replaceProductsInNoSiteCart } = useShoppingCart( 'no-site' );
+	const { replaceProductsInCart: replaceProductsInNoUserCart } = useShoppingCart( 'no-user' );
 	const previousPath = useSelector( getPreviousRoute );
 
 	const closeAndLeave = ( options?: {
@@ -50,8 +59,26 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		} );
 	};
 
-	const clearCartAndLeave = () => {
-		replaceProductsInCart( [] );
+	const clearCartAndLeave = async () => {
+		// `replaceProductsInCart` debounces the POST via setTimeout and resolves
+		// only after the server confirms. `closeAndLeave` triggers a hard
+		// navigation (`window.location.href = ...`) which cancels any in-flight
+		// or queued requests, so we have to await every cart-clear before
+		// leaving — otherwise the items stay on the server and reappear when
+		// the user lands back on the signup step.
+		const clearPromises: Promise< unknown >[] = [ replaceProductsInCart( [] ) ];
+		if ( cartKey !== 'no-site' ) {
+			clearPromises.push( replaceProductsInNoSiteCart( [] ) );
+		}
+		if ( cartKey !== 'no-user' ) {
+			clearPromises.push( replaceProductsInNoUserCart( [] ) );
+		}
+		try {
+			await Promise.all( clearPromises );
+		} catch {
+			// Leave checkout even if a cart-clear fails so the user is never
+			// trapped on the modal.
+		}
 		closeAndLeave( {
 			userHasClearedCart: true,
 		} );
