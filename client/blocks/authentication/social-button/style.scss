@@ -27,10 +27,15 @@
 	color: var(--color-text);
 }
 
-.components-button.auth-social-button:focus:not(:disabled) {
-	border-color: var(--color-primary);
-	box-shadow: 0 0 0 1px var(--color-primary);
+.components-button.auth-social-button:focus:not(:disabled),
+.components-button.auth-social-button:focus-visible:not(:disabled) {
+	border-color: var(--studio-gray-100);
+	box-shadow: 0 0 0 1px var(--studio-gray-100);
 	outline: 2px solid transparent;
+}
+
+.components-button.auth-social-button:active:not(:disabled) {
+	border-color: var(--studio-gray-100);
 }
 
 .auth-social-button__icon {
