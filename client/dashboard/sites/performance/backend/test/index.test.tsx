@@ -9,6 +9,12 @@ import { render } from '../../../../test-utils';
 import SitePerformanceBackend from '../index';
 import type { Site } from '@automattic/api-core';
 
+jest.mock( '@automattic/charts', () => ( {
+	AreaChart: () => null,
+	BarListChart: () => null,
+	GlobalChartsProvider: ( { children }: { children: React.ReactNode } ) => children,
+} ) );
+
 const siteSlug = 'test-site.wordpress.com';
 const siteId = 1;
 
@@ -68,11 +74,10 @@ describe( '<SitePerformanceBackend>', () => {
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		expect( await screen.findByRole( 'tab', { name: 'Overview' } ) ).toBeVisible();
-		expect( screen.getByRole( 'tab', { name: 'Requests' } ) ).toBeVisible();
-		expect( screen.getByRole( 'tab', { name: 'Transactions' } ) ).toBeVisible();
-		expect( screen.getByRole( 'tab', { name: 'Database' } ) ).toBeVisible();
-		expect( screen.getByRole( 'tab', { name: 'External requests' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: 'Response time breakdown' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Slowest requests' } ) ).toBeVisible();
 	} );
 
 	test( 'clicking Enable POSTs { active: true }', async () => {

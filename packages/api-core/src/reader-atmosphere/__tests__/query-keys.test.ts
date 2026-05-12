@@ -16,12 +16,23 @@ describe( 'readerAtmosphereKeys', () => {
 		] );
 	} );
 
-	it( 'notifications(connectionId) returns a connection-scoped key', () => {
-		expect( readerAtmosphereKeys.notifications( 42 ) ).toEqual( [
+	it( 'notifications(connectionId, "all") shapes the All-chip key', () => {
+		expect( readerAtmosphereKeys.notifications( 42, 'all' ) ).toEqual( [
 			'reader',
 			'atmosphere',
 			'notifications',
 			42,
+			'all',
+		] );
+	} );
+
+	it( 'notifications(connectionId, filter) includes filter in key', () => {
+		expect( readerAtmosphereKeys.notifications( 42, 'likes' ) ).toEqual( [
+			'reader',
+			'atmosphere',
+			'notifications',
+			42,
+			'likes',
 		] );
 	} );
 } );

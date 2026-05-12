@@ -3,7 +3,9 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
-import { Modal } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
@@ -30,6 +32,7 @@ import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
+import { getReloadStep } from './get-reload-step';
 import './style.scss';
 
 // All onboarding steps share a single <Modal> frame so transitions between
@@ -153,6 +156,16 @@ const ReaderOnboardingRsm = ( {
 		setCurrentStep( 'discover' );
 	};
 
+	const handleInterestsBack = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back` );
+		openStep( 'welcome' );
+	};
+
+	const handleDiscoverBack = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_back` );
+		openStep( 'interests' );
+	};
+
 	const itemClickHandler = ( task: Task ) => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }task_click`, {
 			task: task.id,
@@ -180,16 +193,13 @@ const ReaderOnboardingRsm = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
 
-	// Reopen subscription onboarding page if prompted by query param.
+	// Reopen a specific onboarding step if signalled by a query param after email verification.
 	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		const shouldReloadOnboarding = urlParams.has( 'reloadSubscriptionOnboarding' );
-
-		if ( shouldReloadOnboarding ) {
-			openStep( 'discover' );
-			urlParams.delete( 'reloadSubscriptionOnboarding' );
+		const result = getReloadStep( window.location.search );
+		if ( result ) {
+			openStep( result.step );
 			page.redirect(
-				`${ window.location.pathname }${ urlParams.toString() ? '?' + urlParams.toString() : '' }`
+				`${ window.location.pathname }${ result.cleanedSearch ? '?' + result.cleanedSearch : '' }`
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -243,6 +253,29 @@ const ReaderOnboardingRsm = ( {
 		},
 	];
 
+	let modalBackButton = null;
+	if ( currentStep === 'interests' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleInterestsBack }
+				icon={ chevronLeft }
+				label={ __( 'Back' ) }
+			/>
+		);
+	} else if ( currentStep === 'discover' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleDiscoverBack }
+				icon={ chevronLeft }
+				label={ __( 'Back' ) }
+			/>
+		);
+	}
+
 	return (
 		<>
 			<div className="reader-onboarding">
@@ -274,14 +307,19 @@ const ReaderOnboardingRsm = ( {
 					onRequestClose={ handleStepClose }
 					size="medium"
 					className={ clsx( 'reader-onboarding-rsm-modal', STEP_FRAME_CLASS[ currentStep ], {
-						'is-disabled': currentStep === 'discover' && promptVerification,
+						'is-disabled':
+							( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
 					} ) }
+					headerActions={ modalBackButton }
 				>
 					{ currentStep === 'welcome' && (
 						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />
 					) }
 					{ currentStep === 'interests' && (
-						<InterestsModal onContinue={ handleInterestsContinue } />
+						<InterestsModal
+							onContinue={ handleInterestsContinue }
+							promptVerification={ promptVerification }
+						/>
 					) }
 					{ currentStep === 'discover' && (
 						<SubscribeModal onClose={ handleStepClose } promptVerification={ promptVerification } />

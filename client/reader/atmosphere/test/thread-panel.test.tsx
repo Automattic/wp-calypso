@@ -99,7 +99,7 @@ describe( 'ThreadPanel', () => {
 			0
 		);
 		await waitFor( () => expect( screen.getByText( 'hello world' ) ).toBeVisible() );
-		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /^like$/i } ) ).toBeVisible();
 	} );
 
 	it( 'renders the not_found tombstone when root.type === "not_found"', async () => {

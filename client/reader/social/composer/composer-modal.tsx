@@ -16,13 +16,13 @@ import { ComposerOverflowHandoff } from './composer-overflow-handoff';
 import { ComposerPinnedContext } from './composer-pinned-context';
 import { useComposer } from './composer-provider';
 import { ComposerTextarea } from './composer-textarea';
-import { countGraphemes } from './grapheme-count';
+import { countGraphemes, countWords } from './grapheme-count';
 import type { AppState } from 'calypso/types';
 
 export function ComposerModal< TError, TParams, TResult >() {
 	const translate = useTranslate();
 	const config = useComposerConfig< TError, TParams, TResult >();
-	const { mode, closeComposer, mediaSlot, markOverLimit } = useComposer();
+	const { mode, closeComposer, mediaSlot, protocolExtrasSlot, markOverLimit } = useComposer();
 	const queryClient = useQueryClient();
 	const mutation = useMutation( config.mutationFactory( queryClient ) );
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
@@ -93,7 +93,14 @@ export function ComposerModal< TError, TParams, TResult >() {
 		}
 	}, [ displayError, mode, dispatch, config ] );
 
-	const graphemeCount = useMemo( () => countGraphemes( text ), [ text ] );
+	// Per-protocol counter unit: most protocols count graphemes against a
+	// hard wire cap; Fediverse counts words against a soft "blog-post" cap
+	// that surfaces the overflow handoff for longer text.
+	const counterUnit = config.counter ?? 'graphemes';
+	const graphemeCount = useMemo(
+		() => ( counterUnit === 'words' ? countWords( text ) : countGraphemes( text ) ),
+		[ text, counterUnit ]
+	);
 
 	const handleClose = useCallback( () => {
 		if ( mutation.isPending || isExtending ) {
@@ -118,6 +125,11 @@ export function ComposerModal< TError, TParams, TResult >() {
 		}
 	}, [ tooLong, markOverLimit ] );
 	const empty = graphemeCount === 0;
+	// `softLimit: true` (Fediverse) means the threshold is a UX cue, not a
+	// wire-level cap — submission stays enabled past the limit and the
+	// overflow handoff acts as a suggestion. Atmosphere / Mastodon keep
+	// the hard-cap gate (default).
+	const overLimitBlocksSubmit = tooLong && ! config.softLimit;
 	// Image-only posts are allowed: when the user has at least one uploaded
 	// image, the empty-text gate doesn't block submission. Pending media (any
 	// image still compressing/uploading) blocks regardless. `isExtending` covers
@@ -126,7 +138,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 	const canSubmit =
 		! mutation.isPending &&
 		! isExtending &&
-		! tooLong &&
+		! overLimitBlocksSubmit &&
 		! mediaSlot.isAnyPending &&
 		mediaSlot.isAllUploaded &&
 		( ! empty || mediaSlot.hasUploaded );
@@ -139,21 +151,28 @@ export function ComposerModal< TError, TParams, TResult >() {
 			return;
 		}
 		const baseParams = config.buildParams( mode, text );
-		// `extendBuildParams` may return synchronously (atmosphere) or as a
-		// Promise (mastodon, where staged media is uploaded at publish time).
-		// Awaiting in both cases keeps the call site uniform; sync returns
-		// resolve in a microtask without changing observable behaviour.
-		// A rejection here (e.g. a Mastodon media upload failing with a
-		// classified `MastodonError`) must surface through the same path as a
-		// post-mutation error: `config.errorMessage` rendered in the visible
-		// error region + `tracks.errorShown` fired. We funnel the rejection
-		// into local `extendError` state which `displayError` ORs into the
-		// rendered error and the analytics-watching effect, so the UX is
-		// indistinguishable from a `mutation.error`.
+		// Run protocol-extras then media-extras through the same try/catch.
+		// `protocolExtrasSlot.extendBuildParams` is typed as
+		// `( params: unknown ) => unknown` — sync today, but the contract
+		// doesn't forbid throws (or a future async widening for handle
+		// validation, derived params, etc.). Without the guard a throw here
+		// would skip the mutation, leave `mutation.isPending` false, and
+		// leave the Post button enabled with no error UI. Awaiting handles
+		// both sync and Promise returns uniformly.
+		// A rejection in either step (e.g. a Mastodon media upload failing
+		// with a classified `MastodonError`) must surface through the same
+		// path as a post-mutation error: `config.errorMessage` rendered in
+		// the visible error region + `tracks.errorShown` fired. We funnel
+		// the rejection into local `extendError` state which `displayError`
+		// ORs into the rendered error and the analytics-watching effect, so
+		// the UX is indistinguishable from a `mutation.error`.
 		let params: TParams;
 		setIsExtending( true );
 		try {
-			params = ( await mediaSlot.extendBuildParams( baseParams ) ) as TParams;
+			const baseParamsWithExtras = ( await protocolExtrasSlot.extendBuildParams(
+				baseParams
+			) ) as TParams;
+			params = ( await mediaSlot.extendBuildParams( baseParamsWithExtras ) ) as TParams;
 		} catch ( error ) {
 			setExtendError( error as TError );
 			return;
@@ -187,6 +206,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 		translate,
 		config,
 		mediaSlot,
+		protocolExtrasSlot,
 		queryClient,
 	] );
 
@@ -224,6 +244,7 @@ export function ComposerModal< TError, TParams, TResult >() {
 					aria-invalid={ errorMessage ? true : undefined }
 				/>
 				{ mediaSlot.renderGrid() }
+				{ protocolExtrasSlot.renderControls() }
 				{ errorMessage && (
 					<div id="social-composer-error" className="social-composer__error" role="alert">
 						{ errorMessage }
@@ -236,6 +257,8 @@ export function ComposerModal< TError, TParams, TResult >() {
 					limit={ limit }
 					disabled={ ! canSubmit }
 					footerStart={ mediaSlot.renderFooterTrigger() }
+					counterUnit={ counterUnit }
+					softLimit={ config.softLimit }
 				/>
 				<ComposerOverflowHandoff text={ text } />
 			</Modal>

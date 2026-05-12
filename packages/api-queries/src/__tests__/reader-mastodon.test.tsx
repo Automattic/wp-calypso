@@ -23,6 +23,8 @@ import nock from 'nock';
 import {
 	createMastodonPostMutation,
 	followMastodonActorMutation,
+	mastodonActorFollowersInfiniteQuery,
+	mastodonActorFollowingInfiniteQuery,
 	mastodonAuthStatusQueryOptions,
 	unfollowMastodonActorMutation,
 	uploadMastodonMediaMutation,
@@ -37,6 +39,7 @@ import {
 	useMastodonAuthorProfileQuery,
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
+	useMastodonNotificationsInfiniteQuery,
 	useMastodonTagFeedInfiniteQuery,
 	useMastodonTimelineInfiniteQuery,
 } from '../reader-mastodon';
@@ -239,6 +242,82 @@ describe( 'useMastodonTimelineInfiniteQuery', () => {
 		} );
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( result.current.data?.pages[ 0 ].cursor ).toBe( 'next-cursor' );
+	} );
+} );
+
+describe( 'useMastodonNotificationsInfiniteQuery', () => {
+	const PATH = '/wpcom/v2/reader/mastodon/connections/42/notifications';
+
+	// Touch tracked properties inside the render callback so React Query's
+	// `notifyOnChangeProps: 'tracked'` observer fires on later updates.
+	// Without this, `fetchNextPage()` resolves but the rendered `data` /
+	// `hasNextPage` lag, producing flaky pagination assertions.
+	const renderNotificationsHook = (
+		connectionId: number,
+		wrapper: ReturnType< typeof createWrapper >
+	) =>
+		renderHook(
+			() => {
+				const q = useMastodonNotificationsInfiniteQuery( connectionId );
+				void q.data;
+				void q.hasNextPage;
+				void q.isFetchingNextPage;
+				void q.isError;
+				void q.error;
+				return q;
+			},
+			{ wrapper }
+		);
+
+	afterEach( () => nock.cleanAll() );
+
+	it( 'is disabled when connectionId is 0', () => {
+		const { result } = renderNotificationsHook( 0, createWrapper() );
+		expect( result.current.fetchStatus ).toBe( 'idle' );
+		expect( result.current.data ).toBeUndefined();
+	} );
+
+	it( 'fetches the first page on mount', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, {
+			items: [],
+			next_cursor: null,
+			seen_at: null,
+		} );
+		const { result } = renderNotificationsHook( 42, createWrapper() );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data?.pages[ 0 ].items ).toEqual( [] );
+	} );
+
+	it( 'paginates via next_cursor returned by the previous page', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, {
+			items: [],
+			next_cursor: 'page-2',
+			seen_at: null,
+		} );
+		nock( BASE )
+			.get( PATH )
+			.query( { cursor: 'page-2' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result } = renderNotificationsHook( 42, createWrapper() );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.hasNextPage ).toBe( true );
+
+		await act( async () => {
+			await result.current.fetchNextPage();
+		} );
+		expect( result.current.data?.pages.length ).toBe( 2 );
+		expect( result.current.hasNextPage ).toBe( false );
+	} );
+
+	it( 'does not retry terminal errors', async () => {
+		// Mirror the timeline test policy: auth_required is terminal — no
+		// extra requests beyond the first. nock would throw if a retry
+		// happened (only one interceptor registered).
+		nock( BASE ).get( PATH ).query( {} ).reply( 401, { code: 'reader_mastodon_auth_required' } );
+		const { result } = renderNotificationsHook( 42, createWrapper() );
+		await waitFor( () => expect( result.current.isError ).toBe( true ) );
+		expect( ( result.current.error as { kind: string } ).kind ).toBe( 'auth_required' );
 	} );
 } );
 
@@ -1877,5 +1956,91 @@ describe( 'useMastodonAuthStatusQuery', () => {
 
 	it( 'mastodonAuthStatusQueryOptions(null) is disabled', () => {
 		expect( mastodonAuthStatusQueryOptions( null ).enabled ).toBe( false );
+	} );
+} );
+
+describe( 'useMastodonNotificationsInfiniteQuery — filter', () => {
+	let wrapper: React.FC< { children: React.ReactNode } >;
+
+	beforeEach( () => {
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		wrapper = ( { children } ) => (
+			<QueryClientProvider client={ client }>{ children }</QueryClientProvider>
+		);
+	} );
+
+	afterEach( () => nock.cleanAll() );
+
+	it( 'forwards filter as types= query param', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { types: 'like' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result } = renderHook(
+			() => useMastodonNotificationsInfiniteQuery( 101, { filter: 'likes' } ),
+			{ wrapper }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'omits types= when filter is "all"', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result } = renderHook(
+			() => useMastodonNotificationsInfiniteQuery( 101, { filter: 'all' } ),
+			{ wrapper }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'each filter caches under its own query key', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { types: 'like' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result, rerender } = renderHook(
+			( { filter }: { filter: 'all' | 'likes' } ) =>
+				useMastodonNotificationsInfiniteQuery( 101, { filter } ),
+			{ wrapper, initialProps: { filter: 'all' as const } }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		rerender( { filter: 'likes' as const } );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( nock.isDone() ).toBe( true );
+	} );
+} );
+
+describe.each( [
+	[ 'mastodonActorFollowersInfiniteQuery', mastodonActorFollowersInfiniteQuery ],
+	[ 'mastodonActorFollowingInfiniteQuery', mastodonActorFollowingInfiniteQuery ],
+] )( '%s enabled gating', ( _name, factory ) => {
+	const validParams = { connectionId: 1, actor: 'alice@mastodon.social' };
+
+	it( 'is enabled by default when connectionId and actor are valid', () => {
+		expect( factory( validParams ).enabled ).toBe( true );
+	} );
+
+	it( 'is enabled when `enabled: true` is passed explicitly', () => {
+		expect( factory( { ...validParams, enabled: true } ).enabled ).toBe( true );
+	} );
+
+	it( 'is disabled when `enabled: false` overrides otherwise-valid params', () => {
+		expect( factory( { ...validParams, enabled: false } ).enabled ).toBe( false );
+	} );
+
+	it( 'stays disabled when connectionId is invalid even with `enabled: true`', () => {
+		expect( factory( { ...validParams, connectionId: 0, enabled: true } ).enabled ).toBe( false );
+	} );
+
+	it( 'stays disabled when actor is empty even with `enabled: true`', () => {
+		expect( factory( { ...validParams, actor: '', enabled: true } ).enabled ).toBe( false );
 	} );
 } );

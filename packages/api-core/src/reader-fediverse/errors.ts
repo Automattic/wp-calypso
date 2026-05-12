@@ -20,6 +20,16 @@ export type FediverseError =
 	| { kind: 'not_found' }
 	| { kind: 'rate_limited'; retry_after?: number }
 	| { kind: 'upstream_unavailable' }
+	// Slice 2 composer write paths add bad-request flavours surfaced by the
+	// `POST /posts` endpoint. The classifier reads the wpcom body-level
+	// `error` code to pick the right variant; all 400-flavour errors map
+	// here.
+	| { kind: 'bad_request'; message?: string }
+	| { kind: 'text_too_long' }
+	| { kind: 'summary_too_long' }
+	| { kind: 'visibility_invalid' }
+	| { kind: 'publish_disabled' }
+	| { kind: 'target_unavailable' }
 	| { kind: 'unknown'; cause: unknown };
 
 interface WpErrorLike {
@@ -55,11 +65,32 @@ export function classifyFediverseError( raw: unknown ): FediverseError {
 			return { kind: 'auth_required' };
 		case 'connection_not_found':
 			return { kind: 'connection_not_found' };
+		// Slice 2 composer write paths.
+		case 'fediverse_text_too_long':
+		case 'reader_fediverse_text_too_long':
+			return { kind: 'text_too_long' };
+		case 'fediverse_summary_too_long':
+		case 'reader_fediverse_summary_too_long':
+			return { kind: 'summary_too_long' };
+		case 'fediverse_visibility_invalid':
+		case 'reader_fediverse_visibility_invalid':
+			return { kind: 'visibility_invalid' };
+		case 'fediverse_publish_disabled':
+		case 'reader_fediverse_publish_disabled':
+			return { kind: 'publish_disabled' };
+		case 'fediverse_target_unavailable':
+		case 'reader_fediverse_target_unavailable':
+			return { kind: 'target_unavailable' };
+		case 'fediverse_bad_request':
+		case 'reader_fediverse_bad_request':
+			return { kind: 'bad_request', message: raw.message };
 	}
 	const status = raw.statusCode ?? raw.status;
 	switch ( status ) {
 		case 401:
 			return { kind: 'auth_required' };
+		case 403:
+			return { kind: 'publish_disabled' };
 		case 404:
 			return { kind: 'not_found' };
 		case 429:

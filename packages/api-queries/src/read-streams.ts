@@ -24,7 +24,7 @@ import {
 	type ReadStreamQueryParams,
 	type ReadStreamResponse,
 } from '@automattic/api-core';
-import { queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 const STREAM_STALE_TIME = 30 * 1000;
 
@@ -117,14 +117,6 @@ export const fetchReadStream = (
 	}
 };
 
-/**
- * React Query factory for Reader stream pages (READ-485).
- *
- * Migrated: `following`, every `discover:*` sub-tab, plus `recent`, `search`,
- * `feed`, `site`, `notifications`, `featured`, `p2`, `a8c`, `tag`,
- * `tag_popular`, `list`, `on_this_day`, `user`, `conversations`,
- * `conversations-a8c`, `likes`, `recommendations_posts`, and `custom_recs_*`.
- */
 export const readStreamQuery = (
 	streamKey: string,
 	queryParams: ReadStreamQueryParams,
@@ -138,3 +130,140 @@ export const readStreamQuery = (
 	} );
 
 export { STREAM_STALE_TIME };
+
+// `useInfiniteQuery` cache identity for a reader stream. Pagination cursors
+// can take three shapes depending on the endpoint family.
+export type PageHandle = { page_handle: string } | { offset: number } | { before: string } | null;
+
+export interface StreamIdentity {
+	streamKey: string;
+	feedId: number | null;
+	localeSlug: string | null;
+	startDate: string | null;
+}
+
+export type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'infinite', string ];
+
+export type StreamInfiniteQueryKey = readonly [
+	'read',
+	'stream',
+	'infinite',
+	string,
+	number | null,
+	string | null,
+	string | null,
+];
+
+const STREAM_INFINITE_QUERY_STALE_TIME = 5 * 60 * 1000;
+
+/**
+ * Single source of truth for the `useInfiniteQuery` cache key. Used by the
+ * Reader stream hook and any sibling that needs to read/write the same cache
+ * via `setQueryData` / `getQueryData` without re-deriving the tuple shape.
+ */
+export function getStreamInfiniteQueryKey( {
+	streamKey,
+	feedId,
+	localeSlug,
+	startDate,
+}: StreamIdentity ): StreamInfiniteQueryKey {
+	return [ 'read', 'stream', 'infinite', streamKey, feedId, localeSlug, startDate ] as const;
+}
+
+/**
+ * Prefix tuple for `queryClient.getQueriesData` / `invalidateQueries` calls
+ * that need to match every cached variant of a given `streamKey` (across
+ * `feedId` / `localeSlug` / `startDate` combinations).
+ */
+export function getStreamInfiniteQueryKeyPrefix( streamKey: string ): StreamInfiniteQueryKeyPrefix {
+	return [ 'read', 'stream', 'infinite', streamKey ] as const;
+}
+
+/**
+ * Inverse of `getStreamInfiniteQueryKey`. Returns the parsed identity when
+ * `queryKey` matches the infinite-stream tuple shape, otherwise `null` — so
+ * scanners over `queryClient.getQueriesData(...)` results don't have to
+ * touch slot indices directly.
+ */
+export function parseStreamInfiniteQueryKey( queryKey: unknown ): StreamIdentity | null {
+	if ( ! Array.isArray( queryKey ) || queryKey.length !== 7 ) {
+		return null;
+	}
+	if (
+		queryKey[ 0 ] !== 'read' ||
+		queryKey[ 1 ] !== 'stream' ||
+		queryKey[ 2 ] !== 'infinite' ||
+		typeof queryKey[ 3 ] !== 'string'
+	) {
+		return null;
+	}
+	return {
+		streamKey: queryKey[ 3 ] as string,
+		feedId: ( queryKey[ 4 ] ?? null ) as number | null,
+		localeSlug: ( queryKey[ 5 ] ?? null ) as string | null,
+		startDate: ( queryKey[ 6 ] ?? null ) as string | null,
+	};
+}
+
+export interface ReadStreamInfiniteQueryHelpers {
+	/**
+	 * Builds the per-page query params from the current pagination cursor.
+	 * Lives in the consumer because it depends on Calypso-side stream-config
+	 * knowledge (`buildStreamQueryParams`, `getTagsFromStreamKey`, locale).
+	 */
+	buildPageParams: ( pageHandle: PageHandle ) => ReadStreamQueryParams;
+	/**
+	 * Computes the next-page cursor from a response. Returns `undefined` to
+	 * stop pagination (`useInfiniteQuery` semantics). Owns the
+	 * `streamItems.length === 0` cutoff because the response shape (cards /
+	 * posts / sites) is normalized on the consumer side.
+	 */
+	getNextPageHandle: (
+		lastPage: ReadStreamResponse,
+		lastPageParam: PageHandle
+	) => PageHandle | undefined;
+}
+
+export interface ReadStreamInfiniteQueryIdentity extends StreamIdentity {
+	enabled?: boolean;
+}
+
+/**
+ * `infiniteQueryOptions` factory for the Reader stream. The cache key shape
+ * lives here so siblings (the selection hook, the pending-posts poller) can
+ * read/patch the same cache through `getStreamInfiniteQueryKey` and friends.
+ *
+ * The two helpers (`buildPageParams`, `getNextPageHandle`) are caller-supplied
+ * because they pull in Calypso-side normalization that the package can't
+ * import. The factory owns the pieces that are protocol-shaped: the queryKey,
+ * the `queryFn` that routes through `fetchReadStream`, the `initialPageParam`
+ * convention (date-anchored vs. cursor), and the cache freshness window.
+ */
+export function readStreamInfiniteQuery(
+	{ streamKey, feedId, localeSlug, startDate, enabled }: ReadStreamInfiniteQueryIdentity,
+	{ buildPageParams, getNextPageHandle }: ReadStreamInfiniteQueryHelpers
+) {
+	return infiniteQueryOptions<
+		ReadStreamResponse,
+		Error,
+		{ pageParams: PageHandle[]; pages: ReadStreamResponse[] },
+		StreamInfiniteQueryKey,
+		PageHandle
+	>( {
+		queryKey: getStreamInfiniteQueryKey( { streamKey, feedId, localeSlug, startDate } ),
+		queryFn: ( { pageParam } ) => fetchReadStream( streamKey, buildPageParams( pageParam ) ),
+		initialPageParam: startDate ? { before: startDate } : null,
+		enabled,
+		getNextPageParam: ( lastPage, _allPages, lastPageParam ) =>
+			getNextPageHandle( lastPage, lastPageParam ),
+		// Cache treated as "fresh" for 5 minutes: within that window
+		// `useInfiniteQuery` serves data straight from cache and never
+		// touches the network. After that, the cache is still rendered
+		// immediately; a refetch happens silently in the background.
+		staleTime: STREAM_INFINITE_QUERY_STALE_TIME,
+		// `meta.persist` is intentionally omitted so the consumer's
+		// persistence layer (Calypso's localStorage cache) can dehydrate
+		// loaded pages and rehydrate on reload.
+		refetchOnWindowFocus: false,
+	} );
+}

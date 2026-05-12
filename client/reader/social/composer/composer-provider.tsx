@@ -11,6 +11,7 @@ import {
 	ComposerConfigProvider,
 	type ComposerConfig,
 	type ComposerMediaSlot,
+	type ComposerProtocolExtrasSlot,
 } from './composer-config';
 import type { ReactNode } from 'react';
 
@@ -35,6 +36,22 @@ const NOOP_MEDIA_SLOT: ComposerMediaSlot = {
 
 function useNoopMedia(): ComposerMediaSlot {
 	return NOOP_MEDIA_SLOT;
+}
+
+/**
+ * Default `ComposerProtocolExtrasSlot` returned when a config doesn't
+ * supply `useProtocolExtras`. Render is null; the param hook is the
+ * identity. Atmosphere / Mastodon configs leave the slot undefined and
+ * fall through to this.
+ */
+const NOOP_EXTRAS_SLOT: ComposerProtocolExtrasSlot = {
+	renderControls: () => null,
+	extendBuildParams: ( params ) => params,
+	clear: () => undefined,
+};
+
+function useNoopProtocolExtras(): ComposerProtocolExtrasSlot {
+	return NOOP_EXTRAS_SLOT;
 }
 
 /**
@@ -109,6 +126,8 @@ interface ComposerContextValue {
 	closeComposer: ( options?: CloseComposerOptions ) => void;
 	/** Read by the modal to render media UI and gate submission. */
 	mediaSlot: ComposerMediaSlot;
+	/** Read by the modal to render protocol-specific controls. */
+	protocolExtrasSlot: ComposerProtocolExtrasSlot;
 	/**
 	 * Sticky-once flag: true after the user has crossed the per-protocol
 	 * char limit at least once during the current modal session. Reset on
@@ -186,6 +205,12 @@ export function ComposerProvider< TError, TParams, TResult >( {
 	const useMedia = config.useMedia ?? useNoopMedia;
 	const mediaSlot = useMedia( { mode, connectionId } );
 
+	// Protocol-specific extras slot (visibility selectors, CW toggles, etc.).
+	// Same lifetime contract as `useMedia` — invoked unconditionally so React's
+	// hook-ordering rules apply, even when no extras are wired.
+	const useProtocolExtras = config.useProtocolExtras ?? useNoopProtocolExtras;
+	const protocolExtrasSlot = useProtocolExtras( { mode, connectionId } );
+
 	// Reset media state when the composer closes (mode → null). `clear` is
 	// driven by the per-protocol slot — atmosphere's implementation calls
 	// `useImageUploads.clearAll` with deferred revocation when the publish
@@ -195,10 +220,12 @@ export function ComposerProvider< TError, TParams, TResult >( {
 			const keepPreviewUrlsAlive = keepPreviewUrlsAliveRef.current;
 			keepPreviewUrlsAliveRef.current = false;
 			mediaSlot.clear( { keepPreviewUrlsAlive } );
+			protocolExtrasSlot.clear?.();
 		}
-		// `mediaSlot` is recreated each render — capturing it in deps would
-		// re-run the effect every render. The closure reads the snapshot at
-		// effect time, which is the desired behavior.
+		// `mediaSlot` / `protocolExtrasSlot` are recreated each render —
+		// capturing them in deps would re-run the effect every render. The
+		// closure reads the snapshot at effect time, which is the desired
+		// behavior.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ mode ] );
 
@@ -208,10 +235,19 @@ export function ComposerProvider< TError, TParams, TResult >( {
 			openComposer,
 			closeComposer,
 			mediaSlot,
+			protocolExtrasSlot,
 			hasBeenOverLimit,
 			markOverLimit,
 		} ),
-		[ mode, openComposer, closeComposer, mediaSlot, hasBeenOverLimit, markOverLimit ]
+		[
+			mode,
+			openComposer,
+			closeComposer,
+			mediaSlot,
+			protocolExtrasSlot,
+			hasBeenOverLimit,
+			markOverLimit,
+		]
 	);
 
 	return (
