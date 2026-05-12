@@ -64,3 +64,80 @@ describe( 'usePostsToPodcastJob — initial + enqueue', () => {
 		expect( typeof stored.startedAt ).toBe( 'number' );
 	} );
 } );
+
+describe( 'usePostsToPodcastJob — polling', () => {
+	it( 'transitions to succeeded when the first poll returns complete', async () => {
+		wpcom.req.post.mockResolvedValueOnce( { jobId: 7 } );
+		wpcom.req.get.mockResolvedValueOnce( {
+			status: 'complete',
+			postId: 99,
+			editUrl: 'https://example.test/edit',
+		} );
+
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+
+		await act( async () => {
+			await result.current.generate( {
+				window: { unit: 'days', n: 7 },
+				length: 'short',
+				voicePreset: 'earnest',
+			} );
+		} );
+
+		// The first poll fires immediately; flush pending promises.
+		await act( async () => {} );
+
+		expect( wpcom.req.get ).toHaveBeenCalledWith( {
+			path: `/sites/${ SITE_ID }/posts-to-podcast/jobs/7`,
+			apiNamespace: 'wpcom/v2',
+		} );
+		expect( result.current.status ).toBe( 'succeeded' );
+		expect( result.current.result ).toEqual( { postId: 99, editUrl: 'https://example.test/edit' } );
+		expect( window.localStorage.getItem( storageKey ) ).toBeNull();
+	} );
+
+	it( 'polls at 3s while elapsed < 30s, then switches to 10s', async () => {
+		wpcom.req.post.mockResolvedValueOnce( { jobId: 1 } );
+		for ( let i = 0; i < 12; i++ ) {
+			wpcom.req.get.mockResolvedValueOnce( { status: 'pending' } );
+		}
+		wpcom.req.get.mockResolvedValueOnce( {
+			status: 'complete',
+			postId: 5,
+			editUrl: 'https://e.test/e',
+		} );
+
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+
+		await act( async () => {
+			await result.current.generate( {
+				window: { unit: 'days', n: 7 },
+				length: 'short',
+				voicePreset: 'witty',
+			} );
+		} );
+
+		// Drain the first poll (immediate).
+		await act( async () => {} );
+		expect( wpcom.req.get ).toHaveBeenCalledTimes( 1 );
+
+		// 3s × 9 advances = 9 more polls (10 total, last at 27s).
+		for ( let i = 0; i < 9; i++ ) {
+			await act( async () => {
+				jest.advanceTimersByTime( 3000 );
+			} );
+		}
+		expect( wpcom.req.get ).toHaveBeenCalledTimes( 10 );
+
+		// Now elapsed ≥ 30s; next scheduled delay should be 10s, not 3s.
+		await act( async () => {
+			jest.advanceTimersByTime( 3000 );
+		} );
+		expect( wpcom.req.get ).toHaveBeenCalledTimes( 10 );
+
+		await act( async () => {
+			jest.advanceTimersByTime( 7000 );
+		} );
+		expect( wpcom.req.get ).toHaveBeenCalledTimes( 11 );
+	} );
+} );

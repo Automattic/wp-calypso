@@ -1,6 +1,9 @@
-import { useCallback, useReducer } from 'react';
+import { useCallback, useEffect, useReducer, useRef } from 'react';
 import wpcom from 'calypso/lib/wp';
 
+const POLL_FAST_MS = 3000;
+const POLL_SLOW_MS = 10000;
+const POLL_SWITCH_MS = 30000;
 const POLL_TIMEOUT_MS = 5 * 60 * 1000;
 
 const storageKey = ( siteId ) => `posts-to-podcast:active-job:${ siteId }`;
@@ -87,6 +90,77 @@ export function usePostsToPodcastJob( siteId ) {
 		}
 		return init;
 	} );
+
+	const timerRef = useRef( null );
+
+	useEffect( () => {
+		if ( state.status !== 'polling' ) {
+			return undefined;
+		}
+
+		let cancelled = false;
+
+		async function poll() {
+			if ( Date.now() - state.startedAt > POLL_TIMEOUT_MS ) {
+				clearStored( siteId );
+				dispatch( {
+					type: 'FAILED',
+					error: { code: 'timeout', message: null },
+				} );
+				return;
+			}
+			try {
+				const record = await wpcom.req.get( {
+					path: `/sites/${ siteId }/posts-to-podcast/jobs/${ state.jobId }`,
+					apiNamespace: 'wpcom/v2',
+				} );
+				if ( cancelled ) {
+					return;
+				}
+				if ( record.status === 'complete' ) {
+					clearStored( siteId );
+					dispatch( {
+						type: 'SUCCEEDED',
+						result: { postId: record.postId, editUrl: record.editUrl },
+					} );
+					return;
+				}
+				if ( record.status === 'failed' ) {
+					clearStored( siteId );
+					dispatch( {
+						type: 'FAILED',
+						error: {
+							code: record.errorCode || 'job-failed',
+							message: record.message || record.errorMessage || null,
+						},
+					} );
+					return;
+				}
+				const elapsed = Date.now() - state.startedAt;
+				const nextDelay = elapsed + POLL_FAST_MS < POLL_SWITCH_MS ? POLL_FAST_MS : POLL_SLOW_MS;
+				timerRef.current = setTimeout( poll, nextDelay );
+			} catch {
+				if ( cancelled ) {
+					return;
+				}
+				clearStored( siteId );
+				dispatch( {
+					type: 'FAILED',
+					error: { code: 'poll-failed', message: null },
+				} );
+			}
+		}
+
+		poll();
+
+		return () => {
+			cancelled = true;
+			if ( timerRef.current ) {
+				clearTimeout( timerRef.current );
+				timerRef.current = null;
+			}
+		};
+	}, [ state.status, state.jobId, state.startedAt, siteId ] );
 
 	const generate = useCallback(
 		async ( { window: windowParam, length, voicePreset } ) => {
