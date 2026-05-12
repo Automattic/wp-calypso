@@ -202,7 +202,41 @@ export function useMastodonTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( mastodonTimelineInfiniteQuery( connectionId ) );
 }
 
-export const mastodonNotificationsInfiniteQuery = ( connectionId: number ) =>
+// Kept in sync with `ChipFilter` in
+// client/reader/social/components/notifications-list/filter.ts. The two
+// definitions cannot import each other (api-queries cannot reference
+// calypso/* and vice-versa) so they share this string-union contract by
+// convention.
+type NotificationsFilter = 'all' | 'conversations' | 'likes' | 'reposts' | 'follows';
+
+function mapNotificationsFilter( filter: NotificationsFilter ): string | undefined {
+	switch ( filter ) {
+		case 'all':
+			return undefined;
+		case 'conversations':
+			return 'mention,reply,quote';
+		case 'likes':
+			return 'like';
+		case 'reposts':
+			return 'repost';
+		case 'follows':
+			return 'follow';
+		default: {
+			const _exhaustive: never = filter;
+			void _exhaustive;
+			return undefined;
+		}
+	}
+}
+
+export interface UseMastodonNotificationsOptions {
+	filter?: NotificationsFilter;
+}
+
+export const mastodonNotificationsInfiniteQuery = (
+	connectionId: number,
+	filter: NotificationsFilter = 'all'
+) =>
 	infiniteQueryOptions<
 		MastodonNotificationsPage,
 		MastodonError,
@@ -210,8 +244,13 @@ export const mastodonNotificationsInfiniteQuery = ( connectionId: number ) =>
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerMastodonKeys.notifications( connectionId ),
-		queryFn: ( { pageParam } ) => getMastodonNotifications( { connectionId, cursor: pageParam } ),
+		queryKey: readerMastodonKeys.notifications( connectionId, filter ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonNotifications( {
+				connectionId,
+				cursor: pageParam,
+				types: mapNotificationsFilter( filter ),
+			} ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
 		enabled: connectionId > 0,
@@ -235,8 +274,12 @@ export const mastodonNotificationsInfiniteQuery = ( connectionId: number ) =>
 		},
 	} );
 
-export function useMastodonNotificationsInfiniteQuery( connectionId: number ) {
-	return useInfiniteQuery( mastodonNotificationsInfiniteQuery( connectionId ) );
+export function useMastodonNotificationsInfiniteQuery(
+	connectionId: number,
+	options: UseMastodonNotificationsOptions = {}
+) {
+	const { filter = 'all' } = options;
+	return useInfiniteQuery( mastodonNotificationsInfiniteQuery( connectionId, filter ) );
 }
 
 export const mastodonThreadQueryOptions = ( connectionId: number, statusId: string ) =>
