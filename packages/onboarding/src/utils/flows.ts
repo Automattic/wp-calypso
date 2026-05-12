@@ -3,6 +3,7 @@ export const NEWSLETTER_FLOW = 'newsletter';
 export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
+export const DIRECT_TO_CART_FLOW = 'direct-to-cart';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const DOMAIN_FLOW = 'domain';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
@@ -65,6 +66,10 @@ export const isNewHostedSiteCreationFlow = ( flowName: string | null ) => {
 export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && TRANSFERRING_HOSTED_SITE_FLOW === flowName );
 };
+
+export function isDirectToCartFlow( flowName: string | null | undefined ): boolean {
+	return Boolean( flowName && DIRECT_TO_CART_FLOW === flowName );
+}
 
 export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	return Boolean(

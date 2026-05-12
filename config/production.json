@@ -2,6 +2,7 @@
 	"env": "production",
 	"env_id": "production",
 	"favicon_url": "//s1.wp.com/i/favicon.ico",
+	"checkout_additional_allowed_redirect_hosts": [ "telex.automattic.ai" ],
 	"client_slug": "browser",
 	"hostname": "wordpress.com",
 	"i18n_default_locale_slug": "en",
