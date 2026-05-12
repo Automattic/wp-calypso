@@ -245,8 +245,9 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 			transition: none;
 		}
 
+		// Omit `:focus` here — `box-shadow: none` removed the keyboard focus ring;
+		// global onboarding focus styles in `onboarding-rsm/style.scss` supply it.
 		.follow-button.has-button-style:hover,
-		.follow-button.has-button-style:focus,
 		.follow-button.has-button-style:active {
 			padding: 8px 14px;
 			border-width: 1px;

@@ -25,6 +25,29 @@ $actions-height: 64px;
 	order: -1;
 }
 
+// Match Calypso keyboard-mode focus (`accessible-focus` on `<html>` from
+// `@automattic/accessible-focus`): hide focus rings on pointer use, show a
+// consistent outline when the user is navigating by keyboard.
+html:not( .accessible-focus ) .reader-onboarding-rsm-modal {
+	button:focus,
+	a:focus,
+	[tabindex]:focus {
+		box-shadow: none;
+		outline: none;
+	}
+}
+
+.accessible-focus .reader-onboarding-rsm-modal {
+	button:focus,
+	a:focus,
+	[tabindex]:focus-visible {
+		outline: 2px solid var( --color-accent, #3858e9 );
+		outline-offset: 2px;
+		border-radius: 4px;
+		box-shadow: none;
+	}
+}
+
 // Shared layout for all reader-onboarding-rsm modals (welcome, interests,
 // subscribe). All three share the same overall size, the same flex-column
 // scroll/footer architecture, and the same footer styling. Per-modal
