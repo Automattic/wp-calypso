@@ -4,29 +4,15 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
 import BarList, { type BarListRow } from '../bar-list';
+import { formatMs } from '../utils';
 import type { ApmSlowRequest } from '@automattic/api-core';
 
 type Metric = 'avg' | 'max';
-
-function formatDuration( ms: number ): string {
-	if ( ms >= 1000 ) {
-		return sprintf(
-			/* translators: %s is a number of seconds. */
-			__( '%s s' ),
-			( ms / 1000 ).toFixed( 2 )
-		);
-	}
-	return sprintf(
-		/* translators: %d is a number of milliseconds. */
-		__( '%d ms' ),
-		ms
-	);
-}
 
 function toRows( requests: ApmSlowRequest[], metric: Metric ): BarListRow[] {
 	return requests.map( ( request ) => ( {
@@ -67,7 +53,7 @@ export default function SlowRequestsList( { slowRequests }: { slowRequests: ApmS
 							{ __( 'Slowest requests' ) }
 						</Text>
 						<Text size={ 32 } weight={ 500 } lineHeight="40px">
-							{ formatDuration( headline ) }
+							{ formatMs( headline ) }
 						</Text>
 						<Text variant="muted">{ description }</Text>
 					</VStack>
@@ -86,7 +72,7 @@ export default function SlowRequestsList( { slowRequests }: { slowRequests: ApmS
 				</HStack>
 			</CardHeader>
 			<CardBody>
-				<BarList rows={ rows } valueFormatter={ formatDuration } />
+				<BarList rows={ rows } valueFormatter={ formatMs } />
 			</CardBody>
 		</Card>
 	);

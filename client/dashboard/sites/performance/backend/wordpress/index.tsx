@@ -3,27 +3,13 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
 import BarList, { type BarListRow } from '../bar-list';
 import { siteApmWordPressQuery } from '../mock-data';
+import { formatMs } from '../utils';
 import type { ApmHookUsage, ApmPluginUsage, ApmTemplateUsage, Site } from '@automattic/api-core';
-
-function formatMs( ms: number ): string {
-	if ( ms >= 1000 ) {
-		return sprintf(
-			/* translators: %s is a number of seconds. */
-			__( '%s s' ),
-			( ms / 1000 ).toFixed( 2 )
-		);
-	}
-	return sprintf(
-		/* translators: %d is a number of milliseconds. */
-		__( '%d ms' ),
-		ms
-	);
-}
 
 function totalMs( items: Array< { total_ms: number } > ): number {
 	return items.reduce( ( sum, item ) => sum + item.total_ms, 0 );

@@ -90,6 +90,38 @@ describe( '<SitePerformanceBackend>', () => {
 		expect( screen.getByRole( 'heading', { name: 'Templates' } ) ).toBeVisible();
 	} );
 
+	test( 'shows a status notice with the average response time', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		// The notice variant depends on seeded mock data, but one of these three
+		// titles must always appear and must include the formatted avg duration.
+		expect(
+			await screen.findByText(
+				/(Healthy backend|Backend needs improvement|Backend is slow) — avg /
+			)
+		).toBeVisible();
+	} );
+
+	test( 'toggling Avg/Max on Slowest requests updates the description', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		// Wait for the Slowest requests card to mount.
+		await screen.findByRole( 'heading', { name: 'Slowest requests' } );
+
+		expect( screen.getByText( /Slowest single response observed/ ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'radio', { name: 'Avg' } ) );
+
+		expect(
+			screen.getByText( /Average response time across the slowest endpoints/ )
+		).toBeVisible();
+		expect( screen.queryByText( /Slowest single response observed/ ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'clicking Enable POSTs { active: true }', async () => {
 		mockSite( businessSite( false ) );
 		const scope = mockApmToggle( true );
