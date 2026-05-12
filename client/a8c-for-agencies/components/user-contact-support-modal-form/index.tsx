@@ -64,7 +64,9 @@ export default function UserContactSupportModalForm( {
 	const hasCompletedForm =
 		!! message && !! name && !! email && !! product && ( !! agency || isClient || isAnonymousMode );
 
-	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport();
+	const { isSubmitting, submit, isSubmissionSuccessful } = useSubmitContactSupport( {
+		isSignup: isAnonymousMode,
+	} );
 
 	const resetForm = useCallback( () => {
 		setMessage( defaultMessage );
