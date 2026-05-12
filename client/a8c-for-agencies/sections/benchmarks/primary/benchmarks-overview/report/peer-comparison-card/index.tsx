@@ -3,6 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getAgencySpecializationOptions } from '../../../../constants';
 import { getStatCardConfigs } from '../stats-grid/stat-card-config';
 import PeerCell from './peer-cell';
 import type {
@@ -22,6 +23,24 @@ const PEER_COMPARISON_METRICS: AggregateMetricKey[] = [
 	'retainer_mrr_usd',
 	'avg_time_to_close_days',
 ];
+
+const SPECIALIZATION_LABELS: Record< string, string > = Object.fromEntries(
+	getAgencySpecializationOptions().map( ( o ) => [ o.value, o.label ] )
+);
+
+// "Peer A — EMEA, 6-15, eCommerce development" — appends whichever bucket fields the peer has.
+function describePeer( peer: PeerBenchmarkRow ): string {
+	const base = sprintf(
+		/* translators: %s: anonymized peer label, e.g. "A". */
+		__( 'Peer %s' ),
+		peer.label
+	);
+	const specializations = peer.agency_specializations?.length
+		? peer.agency_specializations.map( ( s ) => SPECIALIZATION_LABELS[ s ] ?? s ).join( ', ' )
+		: undefined;
+	const details = [ peer.agency_region, peer.agency_size, specializations ].filter( Boolean );
+	return details.length ? `${ base } — ${ details.join( ', ' ) }` : base;
+}
 
 type Props = {
 	quarter: Quarter[ 'quarter' ];
@@ -54,11 +73,7 @@ export default function PeerComparisonCard( {
 	const activePeer = peers.find( ( p ) => p.label === activeLabel ) ?? peers[ 0 ];
 
 	const peerOptions = peers.map( ( p ) => ( {
-		label: sprintf(
-			/* translators: %s: anonymized peer label, e.g. "A". */
-			__( 'Peer %s' ),
-			p.label
-		),
+		label: describePeer( p ),
 		value: p.label,
 	} ) );
 

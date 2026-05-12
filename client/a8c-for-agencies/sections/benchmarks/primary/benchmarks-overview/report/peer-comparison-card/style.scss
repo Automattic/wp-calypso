@@ -22,6 +22,17 @@
 
 	.components-base-control {
 		min-inline-size: 200px;
+		max-inline-size: 320px;
+	}
+
+	.components-select-control__input {
+		text-overflow: ellipsis;
+	}
+
+	@media (max-width: $break-small) {
+		.components-base-control {
+			max-inline-size: none;
+		}
 	}
 }
 
