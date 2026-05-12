@@ -4,6 +4,7 @@ import {
 	A4A_AI_MCP_AVAILABLE_TOOLS_LINK,
 	A4A_AI_MCP_CONNECT_LINK,
 	A4A_AI_MCP_LINK,
+	A4A_AGENT_STUDIO_LINK,
 	A4A_BENCHMARKS_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_LEARN_LINK,
@@ -11,6 +12,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { agentStudioContext } from '../agent-studio/controller';
 import {
 	aiMcpAvailableToolsContext,
 	aiMcpConnectContext,
@@ -29,6 +31,16 @@ export default function () {
 		clientRender
 	);
 	page( A4A_DEV_TOOLS_LINK, requireAccessContext, devToolsContext, makeLayout, clientRender );
+
+	if ( isEnabled( 'a4a-agent-studio' ) ) {
+		page(
+			A4A_AGENT_STUDIO_LINK,
+			requireAccessContext,
+			agentStudioContext,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	if ( isEnabled( 'a4a-benchmarks' ) ) {
 		page( A4A_BENCHMARKS_LINK, requireAccessContext, benchmarksContext, makeLayout, clientRender );
