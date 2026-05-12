@@ -2,10 +2,15 @@
  * @jest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { NotificationsPanel } from '../notifications-panel';
 import type { MastodonConnection } from '@automattic/api-core';
+
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: () => ( { type: '@@TEST/NOOP' } ),
+} ) );
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -132,5 +137,23 @@ describe( 'Mastodon NotificationsPanel', () => {
 			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
 		renderWithProvider( <NotificationsPanel connection={ connection } /> );
 		await waitFor( () => expect( screen.getByText( /no notifications yet/i ) ).toBeVisible() );
+	} );
+
+	it( 'switching to the Likes chip refetches with types=like', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { types: 'like' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const user = userEvent.setup();
+		renderWithProvider( <NotificationsPanel connection={ connection } /> );
+		await waitFor( () => expect( screen.getByText( /no notifications yet/i ) ).toBeVisible() );
+
+		await user.click( screen.getByRole( 'radio', { name: /^likes$/i } ) );
+		await waitFor( () => expect( screen.getByText( /no likes yet/i ) ).toBeVisible() );
+		expect( nock.isDone() ).toBe( true );
 	} );
 } );
