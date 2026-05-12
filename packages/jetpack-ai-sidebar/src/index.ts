@@ -36,6 +36,10 @@ import {
 	UPDATE_BLOCK_CONTENT_ABILITY,
 	isUpdateBlockContentTool,
 } from './utils/tool-provider';
+import {
+	trackAiEditorialReviewSuggestionClick,
+	trackAiEditorialReviewSuggestionRendered,
+} from './utils/tracking';
 import type { ComponentType } from 'react';
 
 // Re-export block-action helpers as part of the package's public surface.
@@ -44,6 +48,9 @@ export { applyReviewEdit, findBlockElement, findBlockListLayout };
 // ---------- Module state ----------
 
 let clearSuggestionsFn: ( () => void ) | null = null;
+
+/** Whether `_suggestion_rendered` has fired this page life (once-per-session). */
+let suggestionRenderedFiredOnce = false;
 
 /** Default suggestion shown when no block is selected. */
 const OPTIMIZE_TITLE_SUGGESTION = {
@@ -85,7 +92,14 @@ function isAiEditorialReviewAvailable(
 }
 
 function getAiEditorialReviewSuggestions( currentPostType?: string ) {
-	return isAiEditorialReviewAvailable( currentPostType ) ? [ AI_EDITORIAL_REVIEW_SUGGESTION ] : [];
+	if ( ! isAiEditorialReviewAvailable( currentPostType ) ) {
+		return [];
+	}
+	if ( ! suggestionRenderedFiredOnce ) {
+		suggestionRenderedFiredOnce = true;
+		trackAiEditorialReviewSuggestionRendered();
+	}
+	return [ AI_EDITORIAL_REVIEW_SUGGESTION ];
 }
 
 function getPostLevelSuggestions( currentPostType?: string ) {
@@ -552,6 +566,7 @@ export function useSuggestions(): {
 				typeof value === 'string' &&
 				value === AI_EDITORIAL_REVIEW_SUGGESTION.prompt
 			) {
+				trackAiEditorialReviewSuggestionClick();
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );
 				} catch {
