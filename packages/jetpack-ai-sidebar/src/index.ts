@@ -52,12 +52,12 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
 };
 
-/** Post-level suggestion to mediate multi-reviewer feedback on a draft. */
+/** Post-level suggestion to run AI Editorial Review on a draft. */
 const MEDIATE_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
-	label: __( 'Mediate review notes', 'jetpack' ),
+	label: __( 'AI Editorial Review', 'jetpack' ),
 	prompt: __(
-		'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+		'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 		'jetpack'
 	),
 };

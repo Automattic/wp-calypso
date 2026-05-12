@@ -1,5 +1,5 @@
 /**
- * ReviewMediation — renders the multi-reviewer mediation card. Mounted by
+ * ReviewMediation — renders the AI Editorial Review card. Mounted by
  * `getChatComponent('review-mediation')` from a `big_sky__show_component`
  * orchestrator response.
  */
@@ -76,12 +76,20 @@ interface GuidelineViolation {
 	issue: string;
 }
 
+type ReviewContext =
+	| 'notes_and_guidelines'
+	| 'notes_only'
+	| 'guidelines_only'
+	| 'content_only'
+	| 'insufficient_input';
+
 interface ReviewMediationProps {
 	summary: string;
 	conflicts: Conflict[];
 	implications: Implication[];
 	suggested_edits: SuggestedEdit[];
 	guideline_violations: GuidelineViolation[];
+	review_context?: ReviewContext;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * mediations or the empty-state payload may omit it; consumers degrade
@@ -89,7 +97,7 @@ interface ReviewMediationProps {
 	 */
 	reviewers_metadata?: Record< string, ReviewerMetadata >;
 	/**
-	 * Unix timestamp when the cached mediation was first generated. Only set
+	 * Unix timestamp when the cached review was first generated. Only set
 	 * when the server short-circuited the LLM call on a state-hash match
 	 * (same inputs as the previous run). Absent on fresh runs. The client
 	 * renders a subtle "reusing cached run" note so the reviewer knows the
@@ -819,7 +827,7 @@ export default function ReviewMediation( {
 							>
 								{ sprintf(
 									/* translators: %s is a short relative-time phrase, e.g. "3 minutes ago" */
-									__( 'Reusing mediation from %s. Edit the post to re-run.', 'jetpack' ),
+									__( 'Reusing review from %s. Edit the post to re-run.', 'jetpack' ),
 									formatRelativeTime( cached_at )
 								) }
 							</p>

@@ -148,38 +148,38 @@ describe( 'getEmptyViewSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'hides Review Mediator by default', () => {
+	it( 'hides AI Editorial Review by default', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Mediate review notes' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
-	it( 'shows Review Mediator when enabled by agentsManagerData', () => {
+	it( 'shows AI Editorial Review when enabled by agentsManagerData', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		installPostTypeMock( 'post' );
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).toContain( 'Mediate review notes' );
+		expect( labels ).toContain( 'AI Editorial Review' );
 	} );
 
-	it( 'hides Review Mediator on page editors', () => {
+	it( 'hides AI Editorial Review on page editors', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		installPostTypeMock( 'page' );
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Mediate review notes' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 
-	it( 'hides Review Mediator until the post type is known', () => {
+	it( 'hides AI Editorial Review until the post type is known', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		installPostTypeMock();
 
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 
 		expect( labels ).toContain( 'Optimize Title' );
-		expect( labels ).not.toContain( 'Mediate review notes' );
+		expect( labels ).not.toContain( 'AI Editorial Review' );
 	} );
 } );
 
@@ -196,7 +196,7 @@ describe( 'useSuggestions', () => {
 		delete ( window as any ).wp;
 	} );
 
-	it( 'does not append Review Mediator to block-specific suggestions', () => {
+	it( 'does not append AI Editorial Review to block-specific suggestions', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
 		const onSuggestions = jest.fn();
@@ -206,11 +206,11 @@ describe( 'useSuggestions', () => {
 		const latestSuggestions =
 			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
 		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).not.toContain(
-			'Mediate review notes'
+			'AI Editorial Review'
 		);
 	} );
 
-	it( 'opens split-screen when the Review Mediator suggestion is clicked', () => {
+	it( 'opens split-screen when the AI Editorial Review suggestion is clicked', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		installPostTypeMock( 'post' );
 		const mediationPrompt = getEmptyViewSuggestions().find(
@@ -230,7 +230,7 @@ describe( 'useSuggestions', () => {
 		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'does not open split-screen when Review Mediator is unavailable', () => {
+	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
 		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
 		mockCurrentPostType = 'page';
 		installPostTypeMock( 'page' );
@@ -242,7 +242,7 @@ describe( 'useSuggestions', () => {
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
 					detail: {
 						value:
-							'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+							'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
 					},
 				} )
 			);
