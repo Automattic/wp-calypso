@@ -1,13 +1,17 @@
-.auth-social-button {
+// Chained selector raises specificity above `.components-button` so the
+// padding override sticks without `!important`.
+.components-button.auth-social-button {
 	inline-size: 100%;
 	justify-content: center;
 	position: relative;
+	padding-inline-start: 40px;
+	padding-inline-end: 40px;
 }
 
-// Position the icon absolutely on the leading edge so the label centers
-// in the remaining space, matching the Figma spec. WPDS Button may render
-// the icon as either a direct child SVG (with `icon` prop as JSX) or
-// wrapped in `.components-button__icon`; handle both.
+// Pin the provider icon to the leading edge so the label centers in the
+// remaining symmetric space. WPDS Button may render the icon as either
+// a direct child SVG (with `icon` prop as JSX) or wrapped in
+// `.components-button__icon`; handle both.
 .auth-social-button > svg,
 .auth-social-button > .components-button__icon {
 	position: absolute;
