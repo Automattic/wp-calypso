@@ -16,10 +16,12 @@ import {
 	getMastodonConnection,
 	getMastodonConnections,
 	getMastodonInstanceConfig,
+	getMastodonNotifications,
 	getMastodonTagFeed,
 	getMastodonTimeline,
 	uploadMastodonMedia,
 } from '../fetchers';
+import type { MastodonNotificationsPage } from '../types';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -887,5 +889,69 @@ describe( 'deleteMastodonFollow', () => {
 		await expect(
 			deleteMastodonFollow( { connectionId: 7, accountId: '200' } )
 		).rejects.toMatchObject( { kind: expectedKind } );
+	} );
+} );
+
+describe( 'getMastodonNotifications', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'hits the connection-scoped path with cursor + limit', async () => {
+		const page: MastodonNotificationsPage = {
+			items: [
+				{
+					id: '13371337',
+					protocol_type: 'favourite',
+					canonical_type: 'like',
+					actor: {
+						handle: 'jane@mastodon.social',
+						display_name: 'Jane',
+						avatar_url: null,
+						profile_uri: 'https://mastodon.social/@jane',
+					},
+					target: {
+						kind: 'post',
+						uri: 'https://mastodon.social/@me/110000000000000001',
+						excerpt: '',
+					},
+					target_url: 'https://mastodon.social/@me/110000000000000001',
+					created_at: '2026-05-11T12:34:56Z',
+					is_read: false,
+				},
+			],
+			next_cursor: 'next',
+			seen_at: '2026-05-10T00:00:00Z',
+		};
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { cursor: 'abc', limit: '30' } )
+			.reply( 200, page );
+
+		const res = await getMastodonNotifications( {
+			connectionId: 101,
+			cursor: 'abc',
+			limit: 30,
+		} );
+		expect( res ).toEqual( page );
+	} );
+
+	it( 'omits cursor + limit when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+		expect( res.next_cursor ).toBeNull();
+	} );
+
+	it( 'classifies wpcom 401 as auth_required', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 401, { code: 'reader_mastodon_auth_required' } );
+		await expect( getMastodonNotifications( { connectionId: 101 } ) ).rejects.toMatchObject( {
+			kind: 'auth_required',
+		} );
 	} );
 } );
