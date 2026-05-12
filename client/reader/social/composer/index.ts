@@ -15,5 +15,9 @@ export type {
 	ComposerProtocolExtrasSlot,
 	Translate,
 } from './composer-config';
+export { DEFAULT_SUMMARY_MAX_LENGTH, VisibilityCwControls } from './visibility-cw-controls';
+export type { VisibilityCwControlsProps } from './visibility-cw-controls';
+export { useVisibilityCwState } from './use-visibility-cw-state';
+export type { UseVisibilityCwStateOptions, VisibilityCwState } from './use-visibility-cw-state';
 export { AltTextPopover, MediaGrid } from '../composer-media';
 export type { MediaGridItem } from '../composer-media';
