@@ -1,7 +1,19 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useViewportMatch } from '@wordpress/compose';
 import { SearchForm } from '..';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
+
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
+
+const mockUseViewportMatch = useViewportMatch as jest.Mock;
+
+beforeEach( () => {
+	mockUseViewportMatch.mockReturnValue( false );
+} );
 
 const expectPlaceholderPhrase = ( phrase: string ) => {
 	// Initial state
@@ -74,12 +86,32 @@ describe( 'SearchForm', () => {
 			</TestDomainSearch>
 		);
 
-		// Submit button is rendered at every width now — keyboard
-		// submit (Enter) should still work as an alternate path.
 		expect( screen.getByRole( 'button', { name: 'Search domains' } ) ).toBeInTheDocument();
 
 		await user.type( screen.getByRole( 'searchbox' ), 'test' );
 		await user.type( screen.getByRole( 'searchbox' ), '{enter}' );
+
+		expect( onQueryChange ).toHaveBeenCalledWith( 'test' );
+	} );
+
+	it( 'renders the icon-only submit inside a field wrapper on mobile', async () => {
+		mockUseViewportMatch.mockReturnValue( true );
+		const user = userEvent.setup();
+		const onQueryChange = jest.fn();
+
+		const { container } = render(
+			<TestDomainSearch events={ { onQueryChange } }>
+				<SearchForm />
+			</TestDomainSearch>
+		);
+
+		expect( container.querySelector( '.domain-search__search-form-field' ) ).toBeInTheDocument();
+		expect(
+			container.querySelector( '.domain-search-controls__submit.is-icon-only' )
+		).toBeInTheDocument();
+
+		await user.type( screen.getByRole( 'searchbox' ), 'test' );
+		await user.click( screen.getByRole( 'button', { name: 'Search domains' } ) );
 
 		expect( onQueryChange ).toHaveBeenCalledWith( 'test' );
 	} );

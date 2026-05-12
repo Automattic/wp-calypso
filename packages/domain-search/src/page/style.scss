@@ -53,9 +53,8 @@
 		}
 
 		.domain-search-controls__input {
-			// Mirror the radius onto the container so its inset
-			// box-shadow (which draws the visible border line)
-			// follows the corner curve instead of rendering square.
+			// The container's inset box-shadow draws the visible
+			// border, so the radius needs to live here too.
 			.components-input-control__container {
 				border-radius: var( --domain-search-input-border-radius );
 			}

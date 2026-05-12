@@ -10,12 +10,6 @@ export const DomainSearchControlsSubmit = ( {
 	iconOnly = false,
 }: {
 	onClick?: () => void;
-	/**
-	 * Render as a compact icon-only button (36×36 square with a
-	 * magnifying-glass glyph) instead of the default text button.
-	 * Used when the Submit lives *inside* the search input rather
-	 * than alongside it — see SearchForm's empty-state layout.
-	 */
 	iconOnly?: boolean;
 } ) => {
 	const { __ } = useI18n();

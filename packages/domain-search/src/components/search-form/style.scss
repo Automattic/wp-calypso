@@ -7,32 +7,11 @@
 	}
 }
 
-// ── Empty-state mobile-only refinements ──────────────────────────
-//
-// SearchForm is rendered exclusively by InitialState, so scoping
-// these overrides to the .domain-search--initial-state wrapper
-// keeps the results-page search-bar (which also uses
-// DomainSearchControls.Input) unaffected.
-//
-// All rules below are wrapped in a single @media query for the
-// 'small' breakpoint (< 600px). Above this breakpoint the empty
-// state falls back to the original trunk layout — HStack with the
-// text "Search domains" button alongside the input, 56px input
-// height, 4px corner radius, 20px placeholder text, visible left
-// search-glyph prefix.
 .domain-search--initial-state {
 	@media ( max-width: #{ $break-small - 1px } ) {
-		// 48px input height, 2px corner radius — matches the spec
-		// for the empty-state search input on mobile.
 		--domain-search-input-size: 48px;
 		--domain-search-input-border-radius: 2px;
 
-		// Field wrapper: positions the icon-only Submit absolutely
-		// inside the input's right edge. The input itself gets
-		// extra right padding so the placeholder / typed value
-		// never collides with the button (button width 36 + 6px
-		// gap from right edge + 6px breathing room from text =
-		// 48px reserved).
 		.domain-search__search-form-field {
 			position: relative;
 
@@ -50,33 +29,18 @@
 			}
 		}
 
-		// Drop the input/placeholder text from 20px (1.25rem) to
-		// 16px (1rem) — the 48px mobile input is shorter and the
-		// smaller type is more proportional.
 		.domain-search-controls__input
 			.components-input-control__container
 			input.components-input-control__input {
 			font-size: 1rem;
 		}
 
-		// Hide the left search-glyph prefix — redundant once the
-		// primary Submit (with the same magnifying-glass icon)
-		// lives inside the input on the right.
 		.domain-search-controls__input .components-input-control__prefix {
 			display: none;
 		}
 	}
 }
 
-// Tighten the heading-to-content gap when this empty state is the
-// active step. The wireframe's .step-container-v2__content-wrapper
-// (owned by @automattic/onboarding) defaults to gap: 3rem between
-// the heading slot and the children slot. On mobile that's too
-// generous for this screen — drop it to 1.5rem.
-//
-// Scoped with :has() to the wrapper that actually contains the
-// initial-state, so other stepper-v2 pages keep the original 3rem.
-// Desktop is the natural fall-through.
 .step-container-v2__content-wrapper:has( .domain-search--initial-state ) {
 	@media ( max-width: #{ $break-small - 1px } ) {
 		gap: 1.5rem;

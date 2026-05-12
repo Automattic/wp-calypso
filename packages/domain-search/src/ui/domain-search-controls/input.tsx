@@ -18,10 +18,6 @@ interface DomainSearchControlsInputProps {
 	'aria-describedby'?: string;
 }
 
-// Forwarded ref attaches to the underlying <input>. @wordpress/components'
-// SearchControl is itself a forwardRef component and merges any ref it
-// receives into its internal searchRef via useMergeRefs, so callers
-// can drive focus / selection imperatively.
 export const DomainSearchControlsInput = forwardRef<
 	HTMLInputElement,
 	DomainSearchControlsInputProps

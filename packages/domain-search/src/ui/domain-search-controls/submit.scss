@@ -5,9 +5,6 @@
 	font-size: 1rem;
 	flex-shrink: 0;
 
-	// Compact icon-only variant — used when the submit lives inside
-	// the search input rather than alongside it. Fixed 36×36 square
-	// with a 24×24 white search glyph and a tighter 2px corner radius.
 	&.is-icon-only {
 		width: 36px;
 		min-width: 36px;
@@ -16,9 +13,6 @@
 		border-radius: 2px;
 		flex-shrink: 0;
 
-		// Force the WP <Icon /> SVG to the spec'd 24×24 regardless of
-		// the parent button's text-driven sizing rules. White fill so
-		// the glyph reads against the primary-blue background.
 		svg {
 			width: 24px;
 			height: 24px;
