@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from 'react';
+import CurrentUser from '../current-user';
 import { FormDivider } from '../index';
 import LinkButton from '../link-button';
 import OptionsList from '../options-list';
@@ -89,6 +90,20 @@ const SocialConnectRecipe = () => (
 	</FauxScreen>
 );
 
+const ContinueAsUserRecipe = () => (
+	<FauxScreen heading="Log in to WordPress.com">
+		<VStack spacing={ 4 }>
+			<CurrentUser
+				avatarUrl="https://gravatar.com/avatar/0?d=mp&s=96"
+				name="Jane Doe"
+				email="jane@example.com"
+			/>
+			<PrimaryButton type="button">Continue as Jane Doe</PrimaryButton>
+			<LinkButton href="#">Log in with another account</LinkButton>
+		</VStack>
+	</FauxScreen>
+);
+
 const TwoFactorCodeRecipe = () => {
 	const [ code, setCode ] = useState( '' );
 	return (
@@ -121,6 +136,10 @@ export const Login: Story = {
 
 export const SocialConnect: Story = {
 	render: () => <SocialConnectRecipe />,
+};
+
+export const ContinueAsUser: Story = {
+	render: () => <ContinueAsUserRecipe />,
 };
 
 export const TwoFactorCode: Story = {

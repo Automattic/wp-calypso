@@ -1,0 +1,14 @@
+.auth-current-user__avatar {
+	inline-size: 48px;
+	block-size: 48px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.auth-current-user__name {
+	font-weight: 600;
+}
+
+.auth-current-user__email {
+	color: var(--color-text-subtle);
+}

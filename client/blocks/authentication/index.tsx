@@ -1,4 +1,4 @@
-export { default as ContinueAsUserCard } from './continue-as-user-card';
+export { default as CurrentUser } from './current-user';
 export { default as FormDivider } from './form-divider';
 export { default as LinkButton } from './link-button';
 export { default as OptionsList } from './options-list';
