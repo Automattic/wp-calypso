@@ -37,34 +37,17 @@ export interface UseStreamPostKeySelectionResult {
 	selectPreviousPost: () => void;
 }
 
-/**
- * Identity comparison for selection: prefers `globalId` when both sides have
- * it (every stream endpoint we hit returns `global_ID`, so this is the common
- * path). Falls back to the legacy tuple comparison for callers that haven't
- * been threaded with `globalId` yet — e.g., the URL-derived key in the
- * full-post view before the post hydrates, or recommendation/prompt blocks
- * that never carry a wpcom post identity.
- */
-export function samePostIdentity(
-	a: PostKey | null | undefined,
-	b: PostKey | null | undefined
-): boolean {
-	if ( ! a || ! b ) {
-		return false;
-	}
-	if ( a.globalId && b.globalId ) {
-		return a.globalId === b.globalId;
-	}
-	return keysAreEqual( a, b );
-}
-
 function findPostKeyIndex( items: PostKey[], postKey: PostKey | null ): number {
 	if ( ! postKey ) {
 		return -1;
 	}
 
+	// Match either the item itself or its `xPostMetadata` — for x-posts the
+	// URL-derived current key points at the original blog/post (the
+	// `xPostMetadata` target), but the stream item wrapping it is what
+	// participates in prev/next.
 	return items.findIndex(
-		( item ) => samePostIdentity( item, postKey ) || samePostIdentity( item.xPostMetadata, postKey )
+		( item ) => keysAreEqual( item, postKey ) || keysAreEqual( item.xPostMetadata, postKey )
 	);
 }
 
@@ -78,11 +61,11 @@ function getOffsetPostKey(
 		return null;
 	}
 
-	// Always return the stream item itself — preserves the canonical
-	// identity (incl. `globalId`) so consumers can compare prev/next keys
-	// back to the rendered list. X-post routing is handled downstream by
-	// `showSelectedPost` (`client/reader/utils.ts`), which detects xposts
-	// from the post body in Redux and redirects to the original URL.
+	// Always return the stream item itself — preserves the parent identity
+	// so consumers can compare prev/next keys back to the rendered list.
+	// X-post routing is handled downstream by `showSelectedPost`
+	// (`client/reader/utils.ts`), which detects xposts from the post body
+	// in Redux and redirects to the original URL.
 	return items[ index + offset ] ?? null;
 }
 

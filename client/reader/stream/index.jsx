@@ -45,7 +45,7 @@ import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import { useStreamPendingPosts } from './use-stream-pending-posts';
-import { samePostIdentity, useStreamPostKeySelection } from './use-stream-post-key-selection';
+import { useStreamPostKeySelection } from './use-stream-post-key-selection';
 import { useStreamPosts } from './use-stream-posts';
 import {
 	getDistanceBetweenPrompts,
@@ -424,7 +424,7 @@ class ReaderStream extends Component {
 			}
 
 			const candidate = items[ index ];
-			if ( samePostIdentity( candidate, this.props.selectedPostKey ) ) {
+			if ( keysAreEqual( candidate, this.props.selectedPostKey ) ) {
 				this.props.selectNextPost();
 			} else {
 				this.props.selectPostKey( candidate );
@@ -542,7 +542,7 @@ class ReaderStream extends Component {
 
 	renderPost = ( postKey, index ) => {
 		const { selectedPostKey, streamKey, primarySiteId } = this.props;
-		const isSelected = samePostIdentity( selectedPostKey, postKey );
+		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = ( args ) => {

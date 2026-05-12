@@ -34,7 +34,7 @@ import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/rea
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { getGlobalId, keyForPost } from 'calypso/reader/post-key';
+import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -1007,27 +1007,15 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 		// Mirror `<Stream>`'s normalization so we look up the correct cached
 		// stream variant — non-default locales carry the slug in the key.
 		const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
-		const urlPostKey = pickBy( {
+		const currentPostKey = pickBy( {
 			feedId: props.feedId ? +props.feedId : undefined,
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
-		// Hydrate `globalId` from Redux as soon as the post is loaded so the
-		// controlled key matches stream items by their canonical identity.
-		// Until then the legacy tuple is used as a fallback inside the hook.
-		const hydratedGlobalId = useSelector( ( state ) => {
-			if ( ! Object.keys( urlPostKey ).length ) {
-				return undefined;
-			}
-			return getGlobalId( getPostByKey( state, urlPostKey ) );
-		} );
-		const currentPostKey = Object.keys( urlPostKey ).length
-			? { ...urlPostKey, ...( hydratedGlobalId ? { globalId: hydratedGlobalId } : {} ) }
-			: null;
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
-			currentPostKey,
+			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
 		} );
 
 		const previousPost = useSelector( ( state ) =>

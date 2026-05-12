@@ -1,36 +1,23 @@
-// Sole reader of `post.global_ID`. Use this everywhere instead of touching
-// the snake_case field directly so the camelCase `globalId` on `PostKey`
-// stays the only spelling that leaks out into the rest of the code.
-export function getGlobalId( post ) {
-	return post?.global_ID || post?.globalId || undefined;
-}
-
 export function keyForPost( post ) {
 	if ( ! post ) {
 		return;
 	}
 
-	const gid = getGlobalId( post );
-	const globalId = gid ? { globalId: gid } : null;
-
 	if ( post.feed_ID && post.feed_item_ID ) {
 		return {
 			feedId: post.feed_ID,
 			postId: post.feed_item_ID,
-			...globalId,
 		};
 	}
 	if ( post.is_external ) {
 		return {
 			feedId: post.feed_ID || post.site_ID,
 			postId: post.feed_item_ID || post.ID,
-			...globalId,
 		};
 	}
 	return {
 		blogId: post.site_ID,
 		postId: post.ID,
-		...globalId,
 	};
 }
 
