@@ -36,6 +36,19 @@ async function flushImport() {
 	await Promise.resolve();
 }
 
+function mountFakeMasterbar() {
+	const section = document.createElement( 'div' );
+	section.className = 'masterbar__section--right';
+	const profileWrapper = document.createElement( 'div' );
+	profileWrapper.className = 'masterbar__item-wrapper';
+	const profile = document.createElement( 'div' );
+	profile.className = 'masterbar__item-howdy';
+	profileWrapper.appendChild( profile );
+	section.appendChild( profileWrapper );
+	document.body.appendChild( section );
+	return section;
+}
+
 describe( 'installKonamiListener', () => {
 	let uninstall: () => void;
 
@@ -90,17 +103,48 @@ describe( 'installKonamiListener', () => {
 } );
 
 describe( 'activateArcadeMode', () => {
+	let masterbar: HTMLElement | null = null;
+
+	beforeEach( () => {
+		masterbar = mountFakeMasterbar();
+	} );
+
 	afterEach( () => {
 		// Send Escape to deactivate, then sweep any leftovers from a failed test.
 		dispatchKey( 'Escape' );
-		document.body.classList.remove( 'is-arcade-mode', 'is-arcade-mode--just-activated' );
-		document.getElementById( 'arcade-mode-font' )?.remove();
+		document.body.classList.remove( 'is-arcade-mode' );
 		document.getElementById( 'arcade-mode-lives' )?.remove();
+		document.querySelectorAll( '.arcade-mode-flash' ).forEach( ( node ) => node.remove() );
+		masterbar?.remove();
+		masterbar = null;
 	} );
 
 	it( 'adds the arcade body class', () => {
 		realActivate.activateArcadeMode();
 		expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( true );
+	} );
+
+	it( 'mounts the lives counter inside the masterbar', () => {
+		realActivate.activateArcadeMode();
+		const counter = document.getElementById( 'arcade-mode-lives' );
+		expect( counter ).not.toBeNull();
+		expect( counter?.parentElement ).toBe( masterbar );
+	} );
+
+	it( 'mounts a translatable flash banner', () => {
+		realActivate.activateArcadeMode();
+		const banner = document.querySelector( '.arcade-mode-flash' );
+		expect( banner ).not.toBeNull();
+		expect( banner?.textContent ).toBeTruthy();
+	} );
+
+	it( 'does not activate when the masterbar is absent', () => {
+		masterbar?.remove();
+		masterbar = null;
+		realActivate.activateArcadeMode();
+		expect( document.body.classList.contains( 'is-arcade-mode' ) ).toBe( false );
+		expect( document.getElementById( 'arcade-mode-lives' ) ).toBeNull();
+		expect( document.querySelector( '.arcade-mode-flash' ) ).toBeNull();
 	} );
 
 	it( 'removes the arcade body class when Escape is pressed', () => {
@@ -118,10 +162,10 @@ describe( 'activateArcadeMode', () => {
 		input.remove();
 	} );
 
-	it( 'is idempotent — calling again while active does not re-add side effects', () => {
+	it( 'is idempotent — calling again while active does not duplicate the lives counter', () => {
 		realActivate.activateArcadeMode();
 		realActivate.activateArcadeMode();
-		expect( document.querySelectorAll( '#arcade-mode-font' ) ).toHaveLength( 1 );
+		expect( document.querySelectorAll( '#arcade-mode-lives' ) ).toHaveLength( 1 );
 	} );
 
 	it( 'allows re-activation after Escape', () => {

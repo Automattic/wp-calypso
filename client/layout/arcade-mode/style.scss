@@ -1,3 +1,5 @@
+@import "https://fonts.googleapis.com/css?family=VT323&display=swap";
+
 // Konami code easter egg — Arcade Mode visuals.
 // All selectors are gated behind body.is-arcade-mode so they have no effect when off.
 
@@ -82,8 +84,7 @@ body.is-arcade-mode {
 }
 
 // One-shot activation banner (auto-removed after 1.5s).
-body.is-arcade-mode--just-activated::after {
-	content: 'ARCADE MODE ACTIVATED';
+.arcade-mode-flash {
 	position: fixed;
 	inset: 0;
 	display: flex;
