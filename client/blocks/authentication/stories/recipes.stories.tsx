@@ -1,7 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from 'react';
 import CurrentUser from '../current-user';
-import { FormDivider } from '../index';
 import LinkButton from '../link-button';
 import OptionsList from '../options-list';
 import PrimaryButton from '../primary-button';
@@ -11,12 +10,24 @@ import SocialConnectWidget from '../social-connect-widget';
 import TextField from '../text-field';
 import type { Meta, StoryObj } from '@storybook/react';
 
+import './recipes.scss';
+
 const meta: Meta = {
 	title: 'client/blocks/authentication/Recipes',
 	tags: [ 'autodocs' ],
 	parameters: {
 		layout: 'fullscreen',
 	},
+	// `.wp-brand-font` only applies Recoleta when the parent has `lang` set
+	// to a supported language; Storybook's iframe has no lang attribute so
+	// the brand font silently falls back to the default serif. Match prod.
+	decorators: [
+		( Story ) => (
+			<div lang="en">
+				<Story />
+			</div>
+		),
+	],
 };
 
 export default meta;
@@ -53,23 +64,27 @@ const LoginRecipe = () => {
 			subheading="By continuing, you agree to our Terms of Service and Privacy Policy."
 			topBarAction={ <LinkButton href="/start">Create an account</LinkButton> }
 		>
-			<VStack spacing={ 4 }>
+			<div className="auth-recipe-login">
+				<VStack spacing={ 4 } className="auth-recipe-login__input">
+					<TextField
+						label="Email address or username"
+						value={ email }
+						onChange={ setEmail }
+						type="text"
+						autoComplete="username"
+					/>
+					<PrimaryButton type="submit">Continue</PrimaryButton>
+				</VStack>
+				<div className="auth-recipe-login__or">
+					<span>or</span>
+				</div>
 				<OptionsList>
 					<SocialButton provider="google">Continue with Google</SocialButton>
 					<SocialButton provider="apple">Continue with Apple</SocialButton>
 					<SocialButton provider="github">Continue with GitHub</SocialButton>
 					<SocialButton provider="email">Continue with email</SocialButton>
 				</OptionsList>
-				<FormDivider isHorizontal />
-				<TextField
-					label="Email address or username"
-					value={ email }
-					onChange={ setEmail }
-					type="text"
-					autoComplete="username"
-				/>
-				<PrimaryButton type="submit">Continue</PrimaryButton>
-			</VStack>
+			</div>
 		</Screen>
 	);
 };

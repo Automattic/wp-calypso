@@ -1,0 +1,68 @@
+// Recipe-specific layout for the Login screen. On narrow viewports the
+// content stacks (1-col); on wider viewports it lays out the input-CTA and
+// the social options side-by-side with a vertical OR rule between them,
+// matching the Figma's `auth-desktop-template-2col` frame.
+
+$recipes-two-col-breakpoint: 600px;
+
+.auth-recipe-login {
+	display: grid;
+	grid-template-columns: 1fr;
+	row-gap: 16px;
+}
+
+.auth-recipe-login__or {
+	font-size: 0.75rem;
+	color: var(--studio-gray-50);
+	text-transform: uppercase;
+	text-align: center;
+	position: relative;
+}
+
+.auth-recipe-login__or::before {
+	content: '';
+	position: absolute;
+	inset-inline: 0;
+	inset-block-start: 50%;
+	border-block-start: 1px solid var(--studio-gray-5);
+	z-index: 0;
+}
+
+.auth-recipe-login__or > span {
+	position: relative;
+	background: var(--color-surface);
+	padding-inline: 8px;
+	z-index: 1;
+}
+
+@media (min-width: #{$recipes-two-col-breakpoint}) {
+	.auth-recipe-login {
+		grid-template-columns: 1fr auto 1fr;
+		column-gap: 24px;
+		row-gap: 0;
+		align-items: start;
+	}
+
+	.auth-recipe-login__or {
+		inline-size: 24px;
+		min-block-size: 100%;
+	}
+
+	.auth-recipe-login__or::before {
+		inset-inline: 50%;
+		inset-block: 0;
+		border-block-start: 0;
+		border-inline-start: 1px solid var(--studio-gray-5);
+	}
+
+	.auth-recipe-login__or > span {
+		display: inline-block;
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 50%;
+		transform: translate(-50%, -50%);
+		background: var(--color-surface);
+		padding-inline: 0;
+		padding-block: 8px;
+	}
+}

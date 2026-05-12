@@ -12,6 +12,17 @@ const meta: Meta< typeof Screen > = {
 	parameters: {
 		layout: 'fullscreen',
 	},
+	// The `.wp-brand-font` selector only applies Recoleta when the parent has
+	// `lang` set to a supported language. Production HTML always has
+	// `<html lang="…">`; Storybook's iframe does not, so headings fall back
+	// to the default serif. Wrap stories with `lang="en"` to match prod.
+	decorators: [
+		( Story ) => (
+			<div lang="en">
+				<Story />
+			</div>
+		),
+	],
 };
 
 export default meta;
