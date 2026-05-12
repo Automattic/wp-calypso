@@ -5,7 +5,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { SocialNotificationItem } from './notification-item';
 import type { StackedRow, StackableCanonicalType } from './group-notifications';
 
@@ -26,6 +26,11 @@ function isSafeUrl( url: string ): boolean {
 	}
 }
 
+// Each branch owns a full sentence so translators control word order,
+// verb agreement, and the "and N other(s)" conjunction without splicing
+// nested translated fragments. Stacks form at members.length >= 2, so
+// `second` is always populated in practice; the single-actor arm is a
+// defensive fallback that should never run.
 function stackedPhrase(
 	canonical: StackableCanonicalType,
 	count: number,
@@ -33,49 +38,117 @@ function stackedPhrase(
 	second: string | null,
 	translate: ReturnType< typeof useTranslate >
 ): string {
-	const others = count - ( second ? 2 : 1 );
-	let subject: string;
-	if ( second && others > 0 ) {
-		subject = translate(
-			'%(first)s, %(second)s and %(others)d other',
-			'%(first)s, %(second)s and %(others)d others',
-			{
-				count: others,
-				args: { first, second, others },
+	if ( ! second ) {
+		switch ( canonical ) {
+			case 'like':
+				return translate( '%(first)s liked your post', { args: { first } } ) as string;
+			case 'repost':
+				return translate( '%(first)s reposted your post', { args: { first } } ) as string;
+			case 'follow':
+				return translate( '%(first)s followed you', { args: { first } } ) as string;
+			case 'mention':
+				return translate( '%(first)s mentioned you', { args: { first } } ) as string;
+			case 'reply':
+				return translate( '%(first)s replied to your post', { args: { first } } ) as string;
+			case 'quote':
+				return translate( '%(first)s quoted your post', { args: { first } } ) as string;
+			default: {
+				const _exhaustive: never = canonical;
+				void _exhaustive;
+				return translate( '%(first)s interacted with you', { args: { first } } ) as string;
 			}
-		) as string;
-	} else if ( second ) {
-		subject = translate( '%(first)s and %(second)s', { args: { first, second } } ) as string;
-	} else {
-		subject = first;
+		}
+	}
+
+	const others = count - 2;
+	if ( others > 0 ) {
+		switch ( canonical ) {
+			case 'like':
+				return translate(
+					'%(first)s, %(second)s and %(others)d other liked your post',
+					'%(first)s, %(second)s and %(others)d others liked your post',
+					{ count: others, args: { first, second, others } }
+				) as string;
+			case 'repost':
+				return translate(
+					'%(first)s, %(second)s and %(others)d other reposted your post',
+					'%(first)s, %(second)s and %(others)d others reposted your post',
+					{ count: others, args: { first, second, others } }
+				) as string;
+			case 'follow':
+				return translate(
+					'%(first)s, %(second)s and %(others)d other followed you',
+					'%(first)s, %(second)s and %(others)d others followed you',
+					{ count: others, args: { first, second, others } }
+				) as string;
+			case 'mention':
+				return translate(
+					'%(first)s, %(second)s and %(others)d other mentioned you',
+					'%(first)s, %(second)s and %(others)d others mentioned you',
+					{ count: others, args: { first, second, others } }
+				) as string;
+			case 'reply':
+				return translate(
+					'%(first)s, %(second)s and %(others)d other replied to your post',
+					'%(first)s, %(second)s and %(others)d others replied to your post',
+					{ count: others, args: { first, second, others } }
+				) as string;
+			case 'quote':
+				return translate(
+					'%(first)s, %(second)s and %(others)d other quoted your post',
+					'%(first)s, %(second)s and %(others)d others quoted your post',
+					{ count: others, args: { first, second, others } }
+				) as string;
+			default: {
+				const _exhaustive: never = canonical;
+				void _exhaustive;
+				return translate(
+					'%(first)s, %(second)s and %(others)d other interacted with you',
+					'%(first)s, %(second)s and %(others)d others interacted with you',
+					{ count: others, args: { first, second, others } }
+				) as string;
+			}
+		}
 	}
 
 	switch ( canonical ) {
 		case 'like':
-			return translate( '%(subject)s liked your post', { args: { subject } } ) as string;
+			return translate( '%(first)s and %(second)s liked your post', {
+				args: { first, second },
+			} ) as string;
 		case 'repost':
-			return translate( '%(subject)s reposted your post', { args: { subject } } ) as string;
+			return translate( '%(first)s and %(second)s reposted your post', {
+				args: { first, second },
+			} ) as string;
 		case 'follow':
-			return translate( '%(subject)s followed you', { args: { subject } } ) as string;
+			return translate( '%(first)s and %(second)s followed you', {
+				args: { first, second },
+			} ) as string;
 		case 'mention':
-			return translate( '%(subject)s mentioned you', { args: { subject } } ) as string;
+			return translate( '%(first)s and %(second)s mentioned you', {
+				args: { first, second },
+			} ) as string;
 		case 'reply':
-			return translate( '%(subject)s replied to your post', { args: { subject } } ) as string;
+			return translate( '%(first)s and %(second)s replied to your post', {
+				args: { first, second },
+			} ) as string;
 		case 'quote':
-			return translate( '%(subject)s quoted your post', { args: { subject } } ) as string;
+			return translate( '%(first)s and %(second)s quoted your post', {
+				args: { first, second },
+			} ) as string;
 		default: {
-			// Exhaustiveness guard. If the union widens, fail typecheck
-			// here rather than silently collapsing the new type into
-			// generic "interacted" copy.
 			const _exhaustive: never = canonical;
 			void _exhaustive;
-			return translate( '%(subject)s interacted with you', { args: { subject } } ) as string;
+			return translate( '%(first)s and %(second)s interacted with you', {
+				args: { first, second },
+			} ) as string;
 		}
 	}
 }
 
 export function StackedNotification( { stack, onExpandedChange }: Props ) {
 	const translate = useTranslate();
+	const reactId = useId();
 	const [ expanded, setExpanded ] = useState( false );
 	const isFollowStack = stack.canonicalType === 'follow';
 	const safe = isSafeUrl( stack.targetUrl );
@@ -128,7 +201,12 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 				) : null }
 				<TimeSince className="social-notifications-stack__time" date={ stack.newestCreatedAt } />
 			</VStack>
-			{ stack.isUnread && <span className="social-notifications-stack__unread-dot" aria-hidden /> }
+			{ stack.isUnread && (
+				<span className="social-notifications-stack__unread">
+					<span className="screen-reader-text">{ translate( 'Unread' ) as string }</span>
+					<span className="social-notifications-stack__unread-dot" aria-hidden />
+				</span>
+			) }
 		</HStack>
 	);
 
@@ -153,10 +231,11 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 		);
 	}
 
-	const childListId = `social-notifications-stack-children-${ stack.groupKey.replace(
-		/[^a-z0-9]/gi,
-		'-'
-	) }`;
+	// Two `<SocialNotificationsList>` instances mounted simultaneously
+	// would otherwise produce duplicate DOM IDs — the follow-stack key
+	// is always literally `'follow'`. `useId` gives a stable per-instance
+	// suffix so `aria-controls` always resolves to the right list.
+	const childListId = `social-notifications-stack-children-${ reactId }`;
 
 	const visibleMembers = stack.members.slice( 0, FOLLOW_TRUNCATE_AT );
 

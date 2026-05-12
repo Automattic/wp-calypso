@@ -195,11 +195,17 @@
 	font-size: 0.85em;
 }
 
-.social-notifications-stack__unread-dot {
+.social-notifications-stack__unread {
 	flex: 0 0 0.5rem;
+	align-self: center;
+	display: inline-flex;
+	align-items: center;
+}
+
+.social-notifications-stack__unread-dot {
+	display: inline-block;
 	inline-size: 0.5rem;
 	block-size: 0.5rem;
 	border-radius: 50%;
 	background: var(--color-accent);
-	align-self: center;
 }

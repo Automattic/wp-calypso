@@ -460,11 +460,13 @@ byte-compatible envelope (`{ items, next_cursor, seen_at }`) keyed by
 other`), so one renderer handles both protocols. Three coordinated
 behaviours sit on top of that envelope:
 
-**Filter chips** — `<NotificationsFilterBar>` renders an
-`aria-pressed`-toggle chip strip (`All / Conversations / Likes /
-Reposts / Follows`) inside `<div role="group">`. The chips are plain
-`<button>` toggles, not `role="radio"` — the latter would require
-arrow-key handling that doesn't fit this surface. Selected chip is
+**Filter chips** — `<NotificationsFilterBar>` wraps
+`@wordpress/components`' `ToggleGroupControl` (with
+`ToggleGroupControlOption` children) for the chip strip
+(`All / Conversations / Likes / Reposts / Follows`). The component
+renders as a `radiogroup`, gets arrow-key handling and the WP design
+system's selected-state styling for free, and reports its accessible
+name via the hidden `label` prop. Selected chip is
 session state in the per-protocol panel wrapper
 (`useState< ChipFilter >( 'all' )`); on change, the wrapper threads it
 into the hook and fires
@@ -482,8 +484,8 @@ for the `other` bucket.
 **Date dividers** — `bucketFor( iso, now )` in `date-bucket.ts` returns
 `'today' | 'yesterday' | 'this_week' | 'earlier'` against the user's
 local timezone, with a 7-day rolling window for `this_week`. The list
-walks grouped rows and inserts a divider `<div role="separator">`
-whenever the bucket changes. Empty buckets are not rendered; when every
+walks grouped rows and emits an `<h3>` heading whenever the bucket
+changes. Empty buckets are not rendered; when every
 loaded row lands in a single bucket the lone divider is also suppressed
 (it would feel like noise). `now` is captured inside the bucketing
 `useMemo`, not lifted to its own hook.
