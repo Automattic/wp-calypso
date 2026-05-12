@@ -25,6 +25,12 @@ function renderSection( { teams = [] } = {} ) {
 	} );
 }
 
+beforeEach( () => {
+	window.localStorage.clear();
+	wpcom.req.post.mockReset();
+	wpcom.req.get.mockReset();
+} );
+
 describe( '<PostsToPodcastSection>', () => {
 	it( 'renders nothing when user is not in the a8c team', () => {
 		const { container } = renderSection( { teams: [ { slug: 'other' } ] } );
@@ -38,12 +44,6 @@ describe( '<PostsToPodcastSection>', () => {
 		expect( getByRole( 'combobox', { name: /Voice/i } ) ).toBeVisible();
 		expect( getByRole( 'button', { name: /Generate/i } ) ).toBeVisible();
 	} );
-} );
-
-beforeEach( () => {
-	window.localStorage.clear();
-	wpcom.req.post.mockReset();
-	wpcom.req.get.mockReset();
 } );
 
 describe( '<PostsToPodcastSection> — interactions', () => {
