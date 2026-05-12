@@ -36,9 +36,14 @@ function stackedPhrase(
 	const others = count - ( second ? 2 : 1 );
 	let subject: string;
 	if ( second && others > 0 ) {
-		subject = translate( '%(first)s, %(second)s and %(others)d others', {
-			args: { first, second, others },
-		} ) as string;
+		subject = translate(
+			'%(first)s, %(second)s and %(others)d other',
+			'%(first)s, %(second)s and %(others)d others',
+			{
+				count: others,
+				args: { first, second, others },
+			}
+		) as string;
 	} else if ( second ) {
 		subject = translate( '%(first)s and %(second)s', { args: { first, second } } ) as string;
 	} else {

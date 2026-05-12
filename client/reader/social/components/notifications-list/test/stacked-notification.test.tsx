@@ -79,6 +79,11 @@ describe( 'StackedNotification', () => {
 		expect( screen.getByText( /M0, M1 and 3 others liked your post/i ) ).toBeVisible();
 	} );
 
+	it( 'renders a like stack of 3 with the singular "1 other"', () => {
+		renderWithProvider( <StackedNotification stack={ makeLikeStack( 3 ) } /> );
+		expect( screen.getByText( /M0, M1 and 1 other liked your post/i ) ).toBeVisible();
+	} );
+
 	it( 'shows up to 3 avatars + a "+N" badge for >3 members', () => {
 		const { container } = renderWithProvider(
 			<StackedNotification stack={ makeLikeStack( 7 ) } />
