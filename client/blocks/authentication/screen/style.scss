@@ -56,12 +56,11 @@
 	}
 }
 
-// Wide (2-col) screens center the heading title and subheading on desktop.
-// Targeting the heading + subheading text directly leaves the Notice's own
-// internal alignment untouched.
+// Wide (2-col) screens center the subheading text on desktop. The h1 is
+// handled by Step.Heading's `align` prop in index.tsx; the Notice keeps its
+// own internal alignment.
 .auth-screen.is-wide {
 	@include break-medium {
-		.step-container-v2__heading,
 		.auth-screen__subheading {
 			text-align: center;
 		}
