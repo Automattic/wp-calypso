@@ -1,5 +1,6 @@
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, info } from '@wordpress/icons';
+import { info } from '@wordpress/icons';
 import RangePlot from '../range-plot';
 import StatDeltaPill from './stat-delta-pill';
 import StatStatusBadge from './stat-status-badge';
@@ -55,9 +56,13 @@ export default function StatCard( {
 			<header className="benchmarks-stat-card-header">
 				<div className="benchmarks-stat-card-label">
 					<span>{ config.label }</span>
-					<span className="benchmarks-stat-card-info" title={ config.infoText }>
-						<Icon icon={ info } size={ 16 } />
-					</span>
+					<Button
+						className="benchmarks-stat-card-info"
+						icon={ info }
+						iconSize={ 16 }
+						size="small"
+						label={ config.infoText }
+					/>
 				</div>
 				{ badge && <StatStatusBadge kind={ badge } /> }
 			</header>

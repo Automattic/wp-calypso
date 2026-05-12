@@ -30,7 +30,7 @@ export function getStatCardConfigs(): StatCardConfig[] {
 			metricKey: 'ai_maturity_score',
 			label: __( 'AI maturity' ),
 			infoText: __(
-				'Composite 0–100 score based on AI involvement, revenue, productivity lift, training, governance, and stakeholder demand.'
+				'Composite 0 to 100 score from adoption, revenue, training, governance, productivity, services, and client demand.'
 			),
 			formatter: fmtScore,
 			formatDelta: fmtScoreDelta,
@@ -58,7 +58,7 @@ export function getStatCardConfigs(): StatCardConfig[] {
 		{
 			metricKey: 'avg_project_size_usd',
 			label: __( 'Avg project size' ),
-			infoText: __( 'Average revenue per closed project in USD.' ),
+			infoText: __( 'Average revenue per closed project in the quarter.' ),
 			formatter: fmtCurrency,
 			formatDelta: fmtCurrencyDelta,
 			higherIsBetter: true,
@@ -67,7 +67,7 @@ export function getStatCardConfigs(): StatCardConfig[] {
 		{
 			metricKey: 'win_rate',
 			label: __( 'Win rate' ),
-			infoText: __( 'Percentage of proposals that close as won.' ),
+			infoText: __( 'Percentage of qualified proposals that converted to signed work.' ),
 			formatter: fmtPercent,
 			formatDelta: fmtPercentDelta,
 			higherIsBetter: true,
@@ -76,7 +76,7 @@ export function getStatCardConfigs(): StatCardConfig[] {
 		{
 			metricKey: 'retainer_mrr_usd',
 			label: __( 'Retainer MRR' ),
-			infoText: __( 'Recurring monthly revenue from retainer clients in USD.' ),
+			infoText: __( 'Recurring monthly revenue under retainer agreements.' ),
 			formatter: fmtCurrency,
 			formatDelta: fmtCurrencyDelta,
 			higherIsBetter: true,
@@ -85,7 +85,7 @@ export function getStatCardConfigs(): StatCardConfig[] {
 		{
 			metricKey: 'avg_time_to_close_days',
 			label: __( 'Avg time to close' ),
-			infoText: __( 'Average days between first contact and a signed proposal. Lower is better.' ),
+			infoText: __( 'Average days between first contact and a signed contract. Lower is better.' ),
 			formatter: fmtDays,
 			formatDelta: fmtDaysDelta,
 			higherIsBetter: false,
@@ -94,7 +94,7 @@ export function getStatCardConfigs(): StatCardConfig[] {
 		{
 			metricKey: 'client_retention',
 			label: __( 'Client retention' ),
-			infoText: __( 'Percentage of clients retained year over year.' ),
+			infoText: __( 'Percentage of active clients retained quarter over quarter.' ),
 			formatter: fmtPercent,
 			formatDelta: fmtPercentDelta,
 			higherIsBetter: true,

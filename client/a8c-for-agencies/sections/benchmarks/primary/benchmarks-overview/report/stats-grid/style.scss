@@ -43,10 +43,17 @@
 	color: var(--color-neutral-60);
 }
 
-.benchmarks-stat-card-info {
-	display: inline-flex;
+.benchmarks-stat-card-info.components-button.has-icon {
+	min-inline-size: 0;
+	block-size: auto;
+	padding: 2px;
 	color: var(--color-neutral-50);
-	cursor: help;
+
+	&:hover,
+	&:active {
+		background: transparent;
+		color: var(--color-neutral-70);
+	}
 }
 
 .benchmarks-stat-status-badge {
