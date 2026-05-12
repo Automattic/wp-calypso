@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
-import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, Spinner, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import { useState } from 'react';
+import { PrimaryButton, TextField } from 'calypso/blocks/authentication';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -15,7 +14,6 @@ const LostPasswordForm = ( {
 	locale,
 	from,
 	isWooJPC,
-	isWoo,
 	isJetpack,
 } ) => {
 	const translate = useTranslate();
@@ -23,11 +21,6 @@ const LostPasswordForm = ( {
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
-
-	const inputRef = useRef( null );
-	useEffect( () => {
-		inputRef.current?.focus();
-	}, [] );
 
 	const validateUserLogin = () => {
 		// Allow empty input or any non-empty value (username or email)
@@ -172,40 +165,39 @@ const LostPasswordForm = ( {
 			onSubmit={ onSubmit }
 		>
 			<div className="login__form-userdata">
-				<FormLabel htmlFor="userLogin">{ translate( 'Email address or username' ) }</FormLabel>
-				<FormTextInput
-					autoCapitalize="off"
-					autoCorrect="off"
-					spellCheck="false"
-					autoComplete="username"
-					id="userLogin"
-					name="userLogin"
-					type="text"
+				<TextField
+					label={ translate( 'Email address or username' ) }
 					value={ userLogin }
-					isError={ showError }
-					onBlur={ validateUserLogin }
-					onChange={ ( event ) => {
-						const newValue = event.target.value.trim();
-						setUserLogin( newValue );
+					onChange={ ( newValue ) => {
+						const trimmed = newValue.trim();
+						setUserLogin( trimmed );
 						// Clear error immediately when user starts typing to fix input
 						if ( error ) {
 							setError( null );
 						}
 					} }
-					ref={ inputRef }
+					onBlur={ validateUserLogin }
+					type="text"
+					autoComplete="username"
+					autoCapitalize="off"
+					autoCorrect="off"
+					spellCheck="false"
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 				/>
-				{ showError && <FormInputValidation isError text={ error } /> }
+				{ showError && (
+					<p className="login__lostpassword-error" role="alert">
+						{ error }
+					</p>
+				) }
 			</div>
 			<div className="login__form-action">
-				<Button
-					variant="primary"
+				<PrimaryButton
 					type="submit"
 					disabled={ userLogin.length === 0 || showError || isBusy }
 					isBusy={ isBusy }
-					__next40pxDefaultSize
 				>
-					{ isBusy && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
-				</Button>
+					{ translate( 'Reset my password' ) }
+				</PrimaryButton>
 			</div>
 			<div className="login__form-help">
 				<ExternalLink

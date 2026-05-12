@@ -328,3 +328,13 @@ $breakpoint-mobile: 782px; //Mobile size.
 		}
 	}
 }
+
+// Inline validation / server-error text rendered below the lost-password
+// input. The migration to TextField (DES-620) replaced the old
+// FormInputValidation component with a plain <p role="alert">; this rule
+// preserves the red treatment the previous component provided.
+.login__lostpassword-error {
+	color: var(--studio-red-50);
+	font-size: 0.875rem;
+	margin: 4px 0 0;
+}
