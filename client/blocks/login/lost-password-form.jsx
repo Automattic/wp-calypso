@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { PrimaryButton, TextField } from 'calypso/blocks/authentication';
+import { PrimaryButton, Screen, TextField } from 'calypso/blocks/authentication';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -158,58 +158,65 @@ const LostPasswordForm = ( {
 
 	const showError = !! error;
 	return (
-		<form
-			name="lostpasswordform"
-			className="login__lostpassword-form"
-			method="post"
-			onSubmit={ onSubmit }
+		<Screen
+			heading={ translate( 'Lost your password?' ) }
+			subheading={ translate(
+				"Please enter your username or email address. You'll receive a link to create a new password via email."
+			) }
 		>
-			<div className="login__form-userdata">
-				<TextField
-					label={ translate( 'Email address or username' ) }
-					value={ userLogin }
-					onChange={ ( newValue ) => {
-						const trimmed = newValue.trim();
-						setUserLogin( trimmed );
-						// Clear error immediately when user starts typing to fix input
-						if ( error ) {
-							setError( null );
-						}
-					} }
-					onBlur={ validateUserLogin }
-					type="text"
-					autoComplete="username"
-					autoCapitalize="off"
-					autoCorrect="off"
-					spellCheck="false"
-					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-				/>
-				{ showError && (
-					<p className="login__lostpassword-error" role="alert">
-						{ error }
-					</p>
-				) }
-			</div>
-			<div className="login__form-action">
-				<PrimaryButton
-					type="submit"
-					disabled={ userLogin.length === 0 || showError || isBusy }
-					isBusy={ isBusy }
-				>
-					{ translate( 'Reset my password' ) }
-				</PrimaryButton>
-			</div>
-			<div className="login__form-help">
-				<ExternalLink
-					href={ localizeUrl(
-						'https://wordpress.com/support/account-recovery/#verify-your-account-ownership',
-						locale
+			<form
+				name="lostpasswordform"
+				className="login__lostpassword-form"
+				method="post"
+				onSubmit={ onSubmit }
+			>
+				<div className="login__form-userdata">
+					<TextField
+						label={ translate( 'Email address or username' ) }
+						value={ userLogin }
+						onChange={ ( newValue ) => {
+							const trimmed = newValue.trim();
+							setUserLogin( trimmed );
+							// Clear error immediately when user starts typing to fix input
+							if ( error ) {
+								setError( null );
+							}
+						} }
+						onBlur={ validateUserLogin }
+						type="text"
+						autoComplete="username"
+						autoCapitalize="off"
+						autoCorrect="off"
+						spellCheck="false"
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+					/>
+					{ showError && (
+						<p className="login__lostpassword-error" role="alert">
+							{ error }
+						</p>
 					) }
-				>
-					{ translate( 'Need more help?' ) }
-				</ExternalLink>
-			</div>
-		</form>
+				</div>
+				<div className="login__form-action">
+					<PrimaryButton
+						type="submit"
+						disabled={ userLogin.length === 0 || showError || isBusy }
+						isBusy={ isBusy }
+					>
+						{ translate( 'Reset my password' ) }
+					</PrimaryButton>
+				</div>
+				<div className="login__form-help">
+					<ExternalLink
+						href={ localizeUrl(
+							'https://wordpress.com/support/account-recovery/#verify-your-account-ownership',
+							locale
+						) }
+					>
+						{ translate( 'Need more help?' ) }
+					</ExternalLink>
+				</div>
+			</form>
+		</Screen>
 	);
 };
 

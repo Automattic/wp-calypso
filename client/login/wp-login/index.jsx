@@ -368,6 +368,14 @@ export class Login extends Component {
 
 		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
 
+		// Lost-password renders its own foundation `Screen` shell from
+		// `client/blocks/authentication/` (see DES-619 / DES-620), so skip the
+		// `OneLoginLayout` wrap for this route. Other login routes keep
+		// `OneLoginLayout` until they migrate to the foundation in turn.
+		if ( isLostPasswordView && ! isGravPoweredClient ) {
+			return mainContent;
+		}
+
 		return (
 			<>
 				{ ! isGravPoweredClient && (
