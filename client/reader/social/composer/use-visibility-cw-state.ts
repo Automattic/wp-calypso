@@ -5,11 +5,12 @@ export interface UseVisibilityCwStateOptions< V extends string > {
 	mode: ActiveMode | null;
 	connectionId: number;
 	/**
-	 * The composer's default value when no localStorage pick exists.
-	 * Read every time the modal opens (and whenever the connection
-	 * switches), so a fresh backend value mid-session percolates through
-	 * cleanly. Also the value `clear()` writes back when the provider
-	 * calls it on modal close — see the provider's `mode → null` effect.
+	 * Fallback used when no localStorage pick exists. Read every time
+	 * the modal opens (and whenever the connection switches), so a fresh
+	 * backend value mid-session percolates through cleanly. Also the
+	 * value `clear()` resets the in-memory state to when the provider
+	 * fires it on modal close (the localStorage pick is NOT cleared —
+	 * it persists across sessions and is re-read on the next open).
 	 */
 	defaultVisibility: V;
 	/** Predicate used to validate localStorage values before adopting them. */
@@ -64,7 +65,7 @@ export function useVisibilityCwState< V extends string >( {
 	// Apply the localStorage override (falling back to the supplied default)
 	// each time the modal opens or the connection switches. Reading
 	// `defaultVisibility` from deps means a backend update mid-session
-	// percolates through cleanly. Localstorage access is wrapped in
+	// percolates through cleanly. localStorage access is wrapped in
 	// try/catch because private-mode browsers throw on `localStorage.getItem`.
 	useEffect( () => {
 		if ( ! mode ) {

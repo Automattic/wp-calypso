@@ -295,8 +295,10 @@ export interface MastodonCreatePostParams {
 	/**
 	 * Per-post visibility. Optional — the upstream defaults to the user's
 	 * account-level default when omitted. The composer always supplies a
-	 * value via `extendBuildParams` (per-connection localStorage + the
-	 * blog default if known).
+	 * value via `extendBuildParams` (per-connection localStorage pick
+	 * falling back to `'public'`; the connection detail shape doesn't
+	 * currently surface the user's account default, so the bare `'public'`
+	 * floor is the only fallback).
 	 */
 	visibility?: MastodonVisibility;
 	/**

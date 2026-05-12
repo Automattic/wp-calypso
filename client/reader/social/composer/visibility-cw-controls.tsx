@@ -123,7 +123,7 @@ export function VisibilityCwControls< V extends string >( {
 						? visibilityHelp
 						: String(
 								translate(
-									'Public is shown to everyone. Quiet public hides the post from your followers’ feed but keeps it reachable by URL. Followers limits it to people who follow you.'
+									'Public is shown to everyone. Quiet public is hidden from public timelines and search but still appears in your followers’ feed and is reachable by URL. Followers limits it to people who follow you.'
 								)
 						  )
 				}
