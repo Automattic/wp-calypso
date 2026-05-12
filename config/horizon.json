@@ -105,6 +105,7 @@
 		"reader/achievements": true,
 		"reader/social": true,
 		"reader/fediverse": true,
+		"reader/unified-connections": false,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": false,
