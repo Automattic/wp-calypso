@@ -40,12 +40,14 @@ const SocialButton = ( {
 		variant="secondary"
 		__next40pxDefaultSize
 		className={ clsx( 'auth-social-button', className ) }
-		icon={ providerIcon[ provider ] }
 		disabled={ disabled }
 		aria-label={ ariaLabel }
 		onClick={ onClick }
 	>
-		{ children }
+		<span className="auth-social-button__icon" aria-hidden="true">
+			{ providerIcon[ provider ] }
+		</span>
+		<span className="auth-social-button__label">{ children }</span>
 	</Button>
 );
 

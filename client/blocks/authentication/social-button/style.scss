@@ -1,23 +1,50 @@
-// Chained selector raises specificity above `.components-button` so the
-// padding override sticks without `!important`.
+// Match the Figma spec for auth social buttons:
+// - neutral white surface with a subtle border (not the calypso-themed
+//   blue that WPDS `variant="secondary"` produces inside calypso),
+// - provider icon pinned to the leading edge with its brand colours,
+// - label centered in the remaining symmetric space.
+//
+// Chained selector raises specificity above `.components-button` and
+// `.components-button.is-secondary` so the overrides stick without
+// `!important`.
+
 .components-button.auth-social-button {
 	inline-size: 100%;
-	justify-content: center;
-	position: relative;
-	padding-inline-start: 40px;
-	padding-inline-end: 40px;
+	display: grid;
+	grid-template-columns: 20px 1fr 20px;
+	align-items: center;
+	column-gap: 12px;
+	padding-inline: 12px;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-subtle);
+	color: var(--color-text);
+	box-shadow: none;
 }
 
-// Pin the provider icon to the leading edge so the label centers in the
-// remaining symmetric space. WPDS Button may render the icon as either
-// a direct child SVG (with `icon` prop as JSX) or wrapped in
-// `.components-button__icon`; handle both.
-.auth-social-button > svg,
-.auth-social-button > .components-button__icon {
-	position: absolute;
-	inset-inline-start: 12px;
-	inset-block-start: 50%;
-	transform: translateY(-50%);
+.components-button.auth-social-button:hover:not(:disabled) {
+	background: var(--color-surface-backdrop);
+	border-color: var(--color-border);
+	color: var(--color-text);
+}
+
+.components-button.auth-social-button:focus:not(:disabled) {
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 1px var(--color-primary);
+	outline: 2px solid transparent;
+}
+
+.auth-social-button__icon {
+	grid-column: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 20px;
+	block-size: 20px;
+}
+
+.auth-social-button__label {
+	grid-column: 2;
+	text-align: center;
 }
 
 .auth-social-button .social-icons {
