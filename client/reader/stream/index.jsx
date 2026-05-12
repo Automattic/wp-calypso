@@ -2,7 +2,7 @@ import './style.scss';
 import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { findLast, times } from 'lodash';
+import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
@@ -45,7 +45,7 @@ import { StreamError } from './error';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import { useStreamPendingPosts } from './use-stream-pending-posts';
-import { useStreamPostKeySelection } from './use-stream-post-key-selection';
+import { samePostIdentity, useStreamPostKeySelection } from './use-stream-post-key-selection';
 import { useStreamPosts } from './use-stream-posts';
 import {
 	getDistanceBetweenPrompts,
@@ -395,7 +395,7 @@ class ReaderStream extends Component {
 		const selectedItem = this.state.listContext?.querySelector( '.card.is-selected' );
 		// do we have a selected item? if so, just move to the next one
 		if ( this.props.selectedPostKey && selectedItem ) {
-			this.props.selectNextPost( items );
+			this.props.selectNextPost();
 			return;
 		}
 
@@ -423,15 +423,11 @@ class ReaderStream extends Component {
 				}
 			}
 
-			// find the index of the post / gap in the items array.
-			// Start the search from the index in the items array, which has to be equal to or larger than
-			// the index in the items array.
-			// Use lastIndexOf to walk the array from right to left
-			const selectedPostKey = findLast( items, items[ index ], index );
-			if ( keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
-				this.props.selectNextPost( items );
+			const candidate = items[ index ];
+			if ( samePostIdentity( candidate, this.props.selectedPostKey ) ) {
+				this.props.selectNextPost();
 			} else {
-				this.props.selectPostKey( selectedPostKey );
+				this.props.selectPostKey( candidate );
 			}
 		}
 	};
@@ -546,7 +542,7 @@ class ReaderStream extends Component {
 
 	renderPost = ( postKey, index ) => {
 		const { selectedPostKey, streamKey, primarySiteId } = this.props;
-		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
+		const isSelected = samePostIdentity( selectedPostKey, postKey );
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = ( args ) => {

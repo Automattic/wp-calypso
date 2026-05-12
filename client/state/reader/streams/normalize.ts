@@ -80,6 +80,7 @@ interface RawPost {
 	site_ID?: number;
 	feed_ID?: number;
 	feed_item_ID?: number;
+	global_ID?: string;
 	URL?: string;
 	site_icon?: { ico?: string };
 	description?: string;

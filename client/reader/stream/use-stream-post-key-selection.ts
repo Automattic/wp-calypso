@@ -33,8 +33,29 @@ export interface UseStreamPostKeySelectionResult {
 	previousPostKey: PostKey | null;
 	nextPostKey: PostKey | null;
 	selectPostKey: ( postKey: PostKey | null ) => void;
-	selectNextPost: ( fromList?: PostKey[] ) => void;
-	selectPreviousPost: ( fromList?: PostKey[] ) => void;
+	selectNextPost: () => void;
+	selectPreviousPost: () => void;
+}
+
+/**
+ * Identity comparison for selection: prefers `globalId` when both sides have
+ * it (every stream endpoint we hit returns `global_ID`, so this is the common
+ * path). Falls back to the legacy tuple comparison for callers that haven't
+ * been threaded with `globalId` yet — e.g., the URL-derived key in the
+ * full-post view before the post hydrates, or recommendation/prompt blocks
+ * that never carry a wpcom post identity.
+ */
+export function samePostIdentity(
+	a: PostKey | null | undefined,
+	b: PostKey | null | undefined
+): boolean {
+	if ( ! a || ! b ) {
+		return false;
+	}
+	if ( a.globalId && b.globalId ) {
+		return a.globalId === b.globalId;
+	}
+	return keysAreEqual( a, b );
 }
 
 function findPostKeyIndex( items: PostKey[], postKey: PostKey | null ): number {
@@ -43,7 +64,7 @@ function findPostKeyIndex( items: PostKey[], postKey: PostKey | null ): number {
 	}
 
 	return items.findIndex(
-		( item ) => keysAreEqual( item, postKey ) || keysAreEqual( item.xPostMetadata, postKey )
+		( item ) => samePostIdentity( item, postKey ) || samePostIdentity( item.xPostMetadata, postKey )
 	);
 }
 
@@ -57,12 +78,12 @@ function getOffsetPostKey(
 		return null;
 	}
 
-	const offsetItem = items[ index + offset ];
-	if ( ! offsetItem ) {
-		return null;
-	}
-
-	return offsetItem.xPostMetadata ? ( offsetItem.xPostMetadata as PostKey ) : offsetItem;
+	// Always return the stream item itself — preserves the canonical
+	// identity (incl. `globalId`) so consumers can compare prev/next keys
+	// back to the rendered list. X-post routing is handled downstream by
+	// `showSelectedPost` (`client/reader/utils.ts`), which detects xposts
+	// from the post body in Redux and redirects to the original URL.
+	return items[ index + offset ] ?? null;
 }
 
 type StreamInfiniteQueryKeyPrefix = readonly [ 'read', 'stream', 'infinite', string ];
@@ -191,40 +212,34 @@ export function useStreamPostKeySelection( {
 		[ queryClient, selectedQueryKey ]
 	);
 
-	const selectNextPost = useCallback(
-		( fromList?: PostKey[] ) => {
-			const list = fromList ?? items;
-			queryClient.setQueryData< PostKey | null >( selectedQueryKey, ( current ) => {
-				const currentSelected = current ?? null;
-				if ( ! list.length ) {
-					return currentSelected;
-				}
+	const selectNextPost = useCallback( () => {
+		const list = items;
+		queryClient.setQueryData< PostKey | null >( selectedQueryKey, ( current ) => {
+			const currentSelected = current ?? null;
+			if ( ! list.length ) {
+				return currentSelected;
+			}
 
-				const next = getOffsetPostKey( list, currentSelected, 1 );
-				if ( next ) {
-					return next;
-				}
+			const next = getOffsetPostKey( list, currentSelected, 1 );
+			if ( next ) {
+				return next;
+			}
 
-				return currentSelected ? currentSelected : list[ 0 ];
-			} );
-		},
-		[ items, queryClient, selectedQueryKey ]
-	);
+			return currentSelected ? currentSelected : list[ 0 ];
+		} );
+	}, [ items, queryClient, selectedQueryKey ] );
 
-	const selectPreviousPost = useCallback(
-		( fromList?: PostKey[] ) => {
-			const list = fromList ?? items;
-			queryClient.setQueryData< PostKey | null >( selectedQueryKey, ( current ) => {
-				const currentSelected = current ?? null;
-				if ( ! list.length ) {
-					return currentSelected;
-				}
+	const selectPreviousPost = useCallback( () => {
+		const list = items;
+		queryClient.setQueryData< PostKey | null >( selectedQueryKey, ( current ) => {
+			const currentSelected = current ?? null;
+			if ( ! list.length ) {
+				return currentSelected;
+			}
 
-				return getOffsetPostKey( list, currentSelected, -1 ) ?? currentSelected;
-			} );
-		},
-		[ items, queryClient, selectedQueryKey ]
-	);
+			return getOffsetPostKey( list, currentSelected, -1 ) ?? currentSelected;
+		} );
+	}, [ items, queryClient, selectedQueryKey ] );
 
 	return {
 		selectedPostKey,

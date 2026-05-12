@@ -16,7 +16,8 @@ export interface PostKey {
 	feedId?: number | string;
 	postId?: number | string;
 	feedItemId?: number | string;
-	xPostMetadata?: { blogId?: number | string; postId?: number | string };
+	globalId?: string;
+	xPostMetadata?: { blogId?: number | string; postId?: number | string; globalId?: string };
 	[ key: string ]: unknown;
 }
 

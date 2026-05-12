@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { createRef, Component, useMemo } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
@@ -34,12 +34,13 @@ import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/rea
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { keyForPost } from 'calypso/reader/post-key';
+import { getGlobalId, keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
+import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
@@ -882,6 +883,8 @@ export class FullPostView extends Component {
 									nextPost={ this.props.nextPost }
 									previousPostKey={ this.props.previousPostKey }
 									nextPostKey={ this.props.nextPostKey }
+									previousPostUrl={ this.props.previousPostUrl }
+									nextPostUrl={ this.props.nextPostUrl }
 									onNavigate={ this.goToPost }
 								/>
 							) }
@@ -1004,21 +1007,48 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 		// Mirror `<Stream>`'s normalization so we look up the correct cached
 		// stream variant — non-default locales carry the slug in the key.
 		const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
-		const currentPostKey = pickBy( {
+		const urlPostKey = pickBy( {
 			feedId: props.feedId ? +props.feedId : undefined,
 			blogId: props.blogId ? +props.blogId : undefined,
 			postId: props.postId ? +props.postId : undefined,
 		} );
+		// Hydrate `globalId` from Redux as soon as the post is loaded so the
+		// controlled key matches stream items by their canonical identity.
+		// Until then the legacy tuple is used as a fallback inside the hook.
+		const hydratedGlobalId = useSelector( ( state ) => {
+			if ( ! Object.keys( urlPostKey ).length ) {
+				return undefined;
+			}
+			return getGlobalId( getPostByKey( state, urlPostKey ) );
+		} );
+		const currentPostKey = Object.keys( urlPostKey ).length
+			? { ...urlPostKey, ...( hydratedGlobalId ? { globalId: hydratedGlobalId } : {} ) }
+			: null;
 		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
 			streamKey: currentStreamKey ?? '',
 			localeSlug,
-			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
+			currentPostKey,
 		} );
+
 		const previousPost = useSelector( ( state ) =>
 			previousPostKey ? getPostByKey( state, previousPostKey ) : null
 		);
 		const nextPost = useSelector( ( state ) =>
 			nextPostKey ? getPostByKey( state, nextPostKey ) : null
+		);
+
+		// Pre-compute the navigation URL so the prev/next card's `<a href>`
+		// points at the destination the user lands on (middle-click /
+		// open-in-new-tab respect it). For x-posts that's the original
+		// blog/post — `showSelectedPost` handles the same redirection on
+		// regular clicks, but the visible link must match.
+		const previousPostUrl = useMemo(
+			() => navigationUrlFor( previousPost, previousPostKey ),
+			[ previousPost, previousPostKey ]
+		);
+		const nextPostUrl = useMemo(
+			() => navigationUrlFor( nextPost, nextPostKey ),
+			[ nextPost, nextPostKey ]
 		);
 		return (
 			<WrappedComponent
@@ -1027,8 +1057,34 @@ const withFullPostNavigation = ( WrappedComponent ) =>
 				nextPostKey={ nextPostKey }
 				previousPost={ previousPost }
 				nextPost={ nextPost }
+				previousPostUrl={ previousPostUrl }
+				nextPostUrl={ nextPostUrl }
 			/>
 		);
 	};
+
+/**
+ * Picks the URL the prev/next navigation card should link to. For x-posts the
+ * stream-item wrapper is just a "X-post: …" stub on the local site; the user
+ * actually lands on the original blog/post (`showSelectedPost` redirects on
+ * click). Building the same URL here keeps the visible `<a href>` honest for
+ * middle-click / open-in-new-tab. Falls back to the wrapper URL when the
+ * wrapper isn't hydrated yet or has no resolvable x-post target.
+ */
+function navigationUrlFor( post, postKey ) {
+	if ( ! postKey ) {
+		return undefined;
+	}
+	if ( post && isXPost( post ) ) {
+		const xMeta = XPostHelper.getXPostMetadata( post );
+		if ( xMeta?.blogId && xMeta?.postId ) {
+			return `/reader/blogs/${ xMeta.blogId }/posts/${ xMeta.postId }`;
+		}
+	}
+	if ( postKey.feedId ) {
+		return `/reader/feeds/${ postKey.feedId }/posts/${ postKey.postId }`;
+	}
+	return `/reader/blogs/${ postKey.blogId }/posts/${ postKey.postId }`;
+}
 
 export default withFullPostNavigation( ConnectedFullPostView );
