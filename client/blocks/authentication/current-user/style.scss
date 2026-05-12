@@ -1,8 +1,15 @@
+.auth-current-user {
+	padding: 8px;
+	border: 1px solid var(--studio-gray-10);
+	border-radius: 4px;
+}
+
 .auth-current-user__avatar {
 	inline-size: 48px;
 	block-size: 48px;
-	border-radius: 50%;
+	border-radius: 4px;
 	flex-shrink: 0;
+	object-fit: cover;
 }
 
 .auth-current-user__name {
