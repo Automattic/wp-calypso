@@ -19,10 +19,6 @@ function makeWrapper( queryClient: QueryClient ) {
 	};
 }
 
-// Run the real wpcom payload through the same pipeline the production hook
-// uses. Each item ends up as
-//   { feedId, postId: feed_item_ID, xPostMetadata, ... }
-// because every post in the fixture has `feed_ID && feed_item_ID`.
 const items: PostKey[] = streamResponse.posts.map( ( post ) =>
 	createStreamItemFromPost( post, 'date' )
 );
@@ -39,13 +35,9 @@ describe( 'useStreamPostKeySelection', () => {
 			{ wrapper: makeWrapper( queryClient ) }
 		);
 
-		// Nothing selected yet — `nextPostKey` is null until the user picks
-		// an anchor (the keyboard `j` shortcut anchors to the visible item
-		// in `<ReaderStream>` before delegating to the hook).
 		expect( result.current.selectedPostKey ).toBeNull();
 		expect( result.current.nextPostKey ).toBeNull();
 
-		// User clicks the first card.
 		act( () => {
 			result.current.selectPostKey( FIRST );
 		} );
@@ -56,16 +48,12 @@ describe( 'useStreamPostKeySelection', () => {
 				postId: FIRST.postId,
 			} )
 		);
-		// Prev/next return the stream items themselves — full identity
-		// preserved. X-post URL redirection happens downstream in
-		// `showSelectedPost`.
 		expect( result.current.nextPostKey ).toMatchObject( {
 			feedId: SECOND.feedId,
 			postId: SECOND.postId,
 		} );
 		expect( result.current.previousPostKey ).toBeNull();
 
-		// User presses `j` — selection advances to the second stream item.
 		act( () => {
 			result.current.selectNextPost();
 		} );
@@ -93,7 +81,6 @@ describe( 'useStreamPostKeySelection', () => {
 			{ wrapper: makeWrapper( queryClient ) }
 		);
 
-		// Anchor on the first item.
 		act( () => {
 			result.current.selectPostKey( FIRST );
 		} );
@@ -104,7 +91,6 @@ describe( 'useStreamPostKeySelection', () => {
 			} )
 		);
 
-		// Forward through the rest of the list.
 		for ( let i = 1; i < items.length; i++ ) {
 			act( () => {
 				result.current.selectNextPost();
@@ -112,10 +98,8 @@ describe( 'useStreamPostKeySelection', () => {
 			const expected = { feedId: items[ i ].feedId, postId: items[ i ].postId };
 			await waitFor( () => expect( result.current.selectedPostKey ).toMatchObject( expected ) );
 		}
-		// At the tail there's no further next.
 		expect( result.current.nextPostKey ).toBeNull();
 
-		// And back to the head.
 		for ( let i = items.length - 2; i >= 0; i-- ) {
 			act( () => {
 				result.current.selectPreviousPost();
@@ -126,16 +110,10 @@ describe( 'useStreamPostKeySelection', () => {
 		expect( result.current.previousPostKey ).toBeNull();
 	} );
 
-	it( 'matches the current item by xPostMetadata for full-post navigation', () => {
-		// `<ReaderFullPost>` lands on x-post target URLs of the form
-		// `/reader/blogs/<original>/posts/<original>`. The current key
-		// derived from the URL points at the original; the stream item
-		// wrapping it is keyed by `{feedId, feed_item_ID}`. `findPostKeyIndex`
-		// falls back to `xPostMetadata` to locate the wrapper.
-		//
-		// `SECOND` is mid-list and has a valid `xpost_origin`, so addressing
-		// it via the xPostMetadata target resolves prev (FIRST) and next
-		// (THIRD).
+	it( 'matches the current item by xPostMetadata', () => {
+		// `SECOND` is mid-list and has a valid `xpost_origin`; addressing it
+		// via the xPostMetadata target should still resolve to it (and to
+		// FIRST/THIRD as prev/next).
 		const xMeta = SECOND.xPostMetadata as { blogId: number; postId: number };
 		expect( xMeta?.blogId ).toBeTruthy();
 		expect( xMeta?.postId ).toBeTruthy();
@@ -183,9 +161,6 @@ describe( 'useStreamPostKeySelection', () => {
 			} )
 		);
 
-		// `<ReaderFullPost>` pins `currentPostKey` to the second item. The
-		// cached selection (the highlighted card in `<Stream>`) stays on
-		// the first; only prev/next reflect the URL anchor.
 		rerender( { currentPostKey: SECOND } );
 
 		expect( result.current.selectedPostKey ).toMatchObject( {
@@ -223,8 +198,6 @@ describe( 'useStreamPostKeySelection', () => {
 			} )
 		);
 
-		// Switching streams resets selection — each streamKey owns its
-		// `selectedPostKey` slot in the React Query cache.
 		rerender( { streamKey: 'a8c' } );
 		expect( result.current.selectedPostKey ).toBeNull();
 
@@ -238,7 +211,6 @@ describe( 'useStreamPostKeySelection', () => {
 			} )
 		);
 
-		// Switching back restores the prior selection for `following`.
 		rerender( { streamKey: 'following' } );
 		expect( result.current.selectedPostKey ).toMatchObject( {
 			feedId: SECOND.feedId,
@@ -247,9 +219,6 @@ describe( 'useStreamPostKeySelection', () => {
 	} );
 
 	it( 'derives previous/next from the react-query cache when items are omitted', () => {
-		// `<ReaderFullPost>` mounts without passing explicit `items` —
-		// the hook reaches into the infinite-stream cache to find the
-		// list the user came from, so prev/next still resolve.
 		const queryClient = makeQueryClient();
 		queryClient.setQueryData( [ 'read', 'stream', 'infinite', 'following', null, null, null ], {
 			pages: [ streamResponse ],
