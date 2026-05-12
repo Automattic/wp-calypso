@@ -42,9 +42,8 @@ interface StyleOption {
 	// One-line explainer rendered under the label. Video styles use it;
 	// image styles are self-explanatory by name and omit it.
 	description?: string;
-	// Renders the card greyed-out and inert (click + keyboard no-op).
-	// Used to tease an upcoming style; the preview thumbnail carries the
-	// "Coming soon" treatment so no tooltip is needed.
+	// Renders the card with the native disabled attribute + a greyed-out
+	// .is-disabled style — used to tease an upcoming style.
 	disabled?: boolean;
 }
 
@@ -208,26 +207,12 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 					<button
 						key={ option.value }
 						type="button"
-						// aria-disabled + tabIndex=-1 rather than the native
-						// `disabled` attribute, and an Enter/Space keydown
-						// guard, so the card is fully inert but still rendered.
-						aria-disabled={ option.disabled || undefined }
-						tabIndex={ option.disabled ? -1 : undefined }
+						disabled={ option.disabled }
 						className={ cn( 'image-studio-input-toolbar-card', {
 							'is-selected': selectedStyle === option.value,
 							'is-disabled': option.disabled,
 						} ) }
-						onClick={ () => {
-							if ( option.disabled ) {
-								return;
-							}
-							handleStyleSelect( option.value );
-						} }
-						onKeyDown={ ( event ) => {
-							if ( option.disabled && ( event.key === 'Enter' || event.key === ' ' ) ) {
-								event.preventDefault();
-							}
-						} }
+						onClick={ () => handleStyleSelect( option.value ) }
 					>
 						<span className="image-studio-input-toolbar-card__image-wrapper">
 							<img

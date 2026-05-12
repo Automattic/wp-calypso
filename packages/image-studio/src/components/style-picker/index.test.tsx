@@ -466,18 +466,14 @@ describe( 'StylePicker', () => {
 			expect( dropdown ).not.toHaveTextContent( 'Pixel Art' );
 		} );
 
-		it( 'does not select a disabled video style when clicked', async () => {
+		it( 'renders the disabled video style as an inert (native-disabled) card', async () => {
 			const user = userEvent.setup();
 			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
 
 			await user.click( screen.getByTestId( 'toolbar-button' ) );
 			const dropdown = screen.getByTestId( 'dropdown-content' );
-			// The disabled "Highlights" card is rendered but inert.
 			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
-			expect( highlightsCard ).toHaveAttribute( 'aria-disabled', 'true' );
-			await user.click( highlightsCard );
-			// Selected label stays on the default — no-op click.
-			expect( screen.getByTestId( 'toolbar-button' ) ).not.toHaveTextContent( 'Highlights' );
+			expect( highlightsCard ).toBeDisabled();
 		} );
 
 		it( 'maps style values correctly', async () => {
