@@ -18,8 +18,7 @@ import origamiPreview from '../../assets/origami.webp';
 import photographicPreview from '../../assets/photographic.webp';
 import pixelArtPreview from '../../assets/pixel-art.webp';
 import texturePreview from '../../assets/texture.webp';
-import informativePreview from '../../assets/video/styles/informative.webp';
-import promotionalPreview from '../../assets/video/styles/promotional.webp';
+import videoCinematicPreview from '../../assets/video/styles/cinematic.webp';
 import vividPreview from '../../assets/vivid.webp';
 import { store as imageStudioStore } from '../../store';
 import { store as videoStudioStore } from '../../stores/video-studio';
@@ -35,7 +34,16 @@ interface StylePickerProps {
 	variant?: StylePickerVariant;
 }
 
-export const STYLE_OPTIONS = [
+interface StyleOption {
+	label: string;
+	value: string;
+	preview: string;
+	// One-line explainer rendered under the label. Video styles use it;
+	// image styles are self-explanatory by name and omit it.
+	description?: string;
+}
+
+export const STYLE_OPTIONS: StyleOption[] = [
 	{ label: __( 'None', __i18n_text_domain__ ), value: 'none', preview: nonePreview },
 	{
 		label: __( 'Vivid', __i18n_text_domain__ ),
@@ -120,16 +128,15 @@ export const STYLE_OPTIONS = [
 	},
 ];
 
-export const VIDEO_STYLE_OPTIONS = [
+// The prior Informative / Promotional video styles collapse into one
+// "Cinematic" preset — they were the same Veo chain with cosmetically
+// different prompt templates, which never read as meaningfully distinct.
+export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 	{
-		label: __( 'Informative', __i18n_text_domain__ ),
-		value: 'informative',
-		preview: informativePreview,
-	},
-	{
-		label: __( 'Promotional', __i18n_text_domain__ ),
-		value: 'promotional',
-		preview: promotionalPreview,
+		label: __( 'Cinematic', __i18n_text_domain__ ),
+		value: 'cinematic',
+		preview: videoCinematicPreview,
+		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
 	},
 ];
 
@@ -197,6 +204,11 @@ export function StylePicker( { disabled = false, mode, variant = 'image' }: Styl
 							/>
 						</span>
 						<span className="image-studio-input-toolbar-card__label">{ option.label }</span>
+						{ option.description ? (
+							<span className="image-studio-input-toolbar-card__description">
+								{ option.description }
+							</span>
+						) : null }
 					</button>
 				) ) }
 			</div>

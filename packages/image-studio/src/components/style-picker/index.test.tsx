@@ -434,11 +434,8 @@ describe( 'StylePicker', () => {
 			} );
 		} );
 
-		it( 'exports the two expected video style options', () => {
-			const expected = [
-				{ label: 'Informative', value: 'informative' },
-				{ label: 'Promotional', value: 'promotional' },
-			];
+		it( 'exports a single Cinematic video style option', () => {
+			const expected = [ { label: 'Cinematic', value: 'cinematic' } ];
 
 			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( expected.length );
 			expected.forEach( ( { label, value }, index ) => {
@@ -454,9 +451,7 @@ describe( 'StylePicker', () => {
 			await user.click( screen.getByTestId( 'toolbar-button' ) );
 
 			const dropdown = screen.getByTestId( 'dropdown-content' );
-			[ 'Informative', 'Promotional' ].forEach( ( label ) => {
-				expect( dropdown ).toHaveTextContent( label );
-			} );
+			expect( dropdown ).toHaveTextContent( 'Cinematic' );
 			// Image-only options should not appear in the video dropdown.
 			expect( dropdown ).not.toHaveTextContent( 'Anime' );
 			expect( dropdown ).not.toHaveTextContent( 'Pixel Art' );

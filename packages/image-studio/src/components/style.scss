@@ -570,6 +570,21 @@ body.js.is-image-studio-open {
 	&.is-selected &__label {
 		color: #fff;
 	}
+
+	// One-line explainer below the label (video styles only).
+	&__description {
+		font-size: 11px;
+		font-style: italic;
+		line-height: 1.4;
+		text-align: center;
+		color: #b0b0b0;
+		max-width: 100%;
+		word-wrap: break-word;
+	}
+
+	&.is-selected &__description {
+		color: #d0d0d0;
+	}
 }
 
 .wrap .wpcom-media-library-action-buttons .big-sky-image-studio-link {
