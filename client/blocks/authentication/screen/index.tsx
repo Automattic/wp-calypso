@@ -45,20 +45,22 @@ const Screen = ( {
 	columnWidth = 6,
 	children,
 }: ScreenProps ) => (
-	<Step.CenteredColumnLayout
-		columnWidth={ columnWidth }
-		verticalAlign="center"
-		topBar={ <Step.TopBar rightElement={ topBarAction } compactLogo="always" /> }
-		heading={
-			<div className="auth-screen__heading">
-				<Step.Heading text={ heading } />
-				{ notice && <div className="auth-screen__notice">{ notice }</div> }
-				{ subheading && <h2 className="auth-screen__subheading">{ subheading }</h2> }
-			</div>
-		}
-	>
-		{ children }
-	</Step.CenteredColumnLayout>
+	<div className="auth-screen">
+		<Step.CenteredColumnLayout
+			columnWidth={ columnWidth }
+			verticalAlign="center"
+			topBar={ <Step.TopBar rightElement={ topBarAction } compactLogo="always" /> }
+			heading={
+				<div className="auth-screen__heading">
+					<Step.Heading text={ heading } />
+					{ notice && <div className="auth-screen__notice">{ notice }</div> }
+					{ subheading && <h2 className="auth-screen__subheading">{ subheading }</h2> }
+				</div>
+			}
+		>
+			{ children }
+		</Step.CenteredColumnLayout>
+	</div>
 );
 
 export default Screen;

@@ -1,3 +1,25 @@
+.auth-screen {
+	// Figma spec for the auth surface is #FCFCFC — a touch lighter than
+	// calypso's default `--color-surface-backdrop` (gray-0 / #F6F7F7) that
+	// the global `body` rule paints. This matches the dashboard's
+	// `--dashboard__background-color` from `client/dashboard/app-dotcom/`,
+	// but that scope isn't defined outside the dashboard app, so set the
+	// background here.
+	background: var(--dashboard__background-color, #fcfcfc);
+	min-block-size: 100vh;
+
+	// `Notice` from `client/dashboard/components/notice/` uses dashboard
+	// CSS variables for variant background tints (`color-mix(in srgb,
+	// var(--dashboard__background-color-error) 4%, transparent)` and
+	// friends). Those variables are only defined inside the dashboard
+	// app's `:root` scope, so provide fallbacks here, anchored to
+	// `@automattic/color-studio` tokens that exist globally.
+	--dashboard__background-color-error: var(--studio-red-50);
+	--dashboard__background-color-warning: var(--studio-yellow-50);
+	--dashboard__background-color-success: var(--studio-green-50);
+	--dashboard__background-color-info: var(--wp-admin-theme-color);
+}
+
 .auth-screen__heading {
 	display: flex;
 	flex-direction: column;
