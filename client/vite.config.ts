@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import { viteBuildAssetsWriter } from '@automattic/vite-plugin-calypso-assets-writer';
 import { vitePluginRtlCss } from '@automattic/vite-plugin-calypso-rtl-css';
 import { vitePluginSections } from '@automattic/vite-plugin-calypso-sections';
+import * as babel from '@babel/core';
 import react from '@vitejs/plugin-react';
 import autoprefixer from 'autoprefixer';
 import { defineConfig, transformWithOxc, type Plugin, type UserConfig } from 'vite';
@@ -301,6 +302,56 @@ const calypsoReactPreambleInjectorPlugin: Plugin = {
 	},
 };
 
+// @vitejs/plugin-react@6 transforms JSX with OXC and does not accepts a
+// `babel` option, so Emotion's compile-time features (component selectors
+// like `${SomeStyled}:hover &`, source-aware labels, etc.) need a separate
+// Babel pass. Run it only on files that import from @emotion/styled or
+// @emotion/react to keep the cost off non-emotion code.
+// Note: if we migrate away from emotion, we can remove this entire custom
+// plugin and the related babel dependency.
+const emotionBabelPlugin: Plugin = {
+	name: 'calypso-emotion-babel',
+	enforce: 'pre',
+	async transform( code: string, id: string ) {
+		const filename = id.split( '?' )[ 0 ];
+		if ( filename.includes( '/node_modules/' ) ) {
+			return null;
+		}
+		if ( ! /\.[jt]sx?$/.test( filename ) ) {
+			return null;
+		}
+		if ( ! /@emotion\/(?:styled|react)/.test( code ) ) {
+			return null;
+		}
+
+		const isTSX = filename.endsWith( '.tsx' );
+		const isTS = filename.endsWith( '.ts' );
+		const isJSX = filename.endsWith( '.jsx' );
+
+		const syntaxPlugins: babel.PluginItem[] = [];
+		if ( isTSX ) {
+			syntaxPlugins.push( [ '@babel/plugin-syntax-typescript', { isTSX: true } ] );
+		} else if ( isTS ) {
+			syntaxPlugins.push( '@babel/plugin-syntax-typescript' );
+		} else if ( isJSX || /<[A-Za-z]/.test( code ) ) {
+			syntaxPlugins.push( '@babel/plugin-syntax-jsx' );
+		}
+
+		const result = await babel.transformAsync( code, {
+			babelrc: false,
+			configFile: false,
+			filename,
+			sourceMaps: true,
+			plugins: [ ...syntaxPlugins, '@emotion/babel-plugin' ],
+		} );
+
+		if ( ! result?.code ) {
+			return null;
+		}
+		return { code: result.code, map: result.map };
+	},
+};
+
 const webpackCssLoaderImportsPlugin: Plugin = {
 	name: 'calypso-webpack-css-loader-imports',
 	enforce: 'pre',
@@ -444,9 +495,12 @@ export default defineConfig(
 		},
 
 		plugins: [
-			// jsxImportSource replaces @emotion/babel-plugin: emotion's JSX runtime handles
-			// the css prop at runtime rather than compile-time, eliminating the Babel dependency.
+			// jsxImportSource handles the css prop via emotion's JSX runtime.
+			// Component selectors (e.g. ${SomeStyled}:hover &) still need the
+			// emotion babel plugin — see emotionBabelPlugin below.
 			react( { jsxImportSource: '@emotion/react' } ),
+
+			emotionBabelPlugin,
 
 			calypsoReactPreambleInjectorPlugin,
 
