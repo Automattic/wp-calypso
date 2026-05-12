@@ -107,9 +107,10 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 8px;
+		gap: 12px;
 		padding-inline: 60px;
 		margin-block-start: 4px;
+		padding-block-end: 32px;
 
 		@media ( max-width: $break-medium ) {
 			padding-inline: 12px;
