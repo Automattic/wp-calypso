@@ -30,7 +30,11 @@ function isSafeUrl( url: string ): boolean {
 // verb agreement, and the "and N other(s)" conjunction without splicing
 // nested translated fragments. Stacks form at members.length >= 2, so
 // `second` is always populated in practice; the single-actor arm is a
-// defensive fallback that should never run.
+// defensive fallback that should never run. The `_exhaustive: never`
+// `default:` arms in each switch are also defensive — they only render
+// if a new `canonical_type` ships in the wire payload before this
+// switch is updated, which is why their copy is generic ("interacted
+// with you") rather than action-specific.
 function stackedPhrase(
 	canonical: StackableCanonicalType,
 	count: number,
@@ -218,17 +222,16 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 					href={ stack.targetUrl }
 					target="_blank"
 					rel="noopener noreferrer"
-					aria-label={ phrase }
 				>
 					{ visualHeader }
 				</a>
 			);
 		}
-		return (
-			<div className={ className } aria-label={ phrase }>
-				{ visualHeader }
-			</div>
-		);
+		// Non-interactive fallback when target_url isn't http(s)-safe.
+		// `aria-label` on a generic div is ignored by screen readers
+		// (no implicit role); rely on the visible phrase inside
+		// `visualHeader` instead.
+		return <div className={ className }>{ visualHeader }</div>;
 	}
 
 	// Two `<SocialNotificationsList>` instances mounted simultaneously
@@ -246,7 +249,6 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 				className="social-notifications-stack__toggle"
 				aria-expanded={ expanded }
 				aria-controls={ childListId }
-				aria-label={ phrase }
 				onClick={ () => {
 					setExpanded( ( prev ) => {
 						const next = ! prev;

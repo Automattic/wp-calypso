@@ -144,13 +144,20 @@ export function SocialNotificationsList( {
 			<VStack spacing={ 0 }>
 				{ withBuckets.map( ( entry ) => {
 					if ( entry.kind === 'divider' ) {
+						// Visual-only separator. Rendered as a presentational
+						// `<div>` rather than a heading so the surrounding
+						// route shell owns page heading order — every Reader
+						// surface that mounts this list already supplies its
+						// own page heading, and an `<h3>` here would land
+						// without a parent `<h2>` on some of them.
 						return (
-							<h3
+							<div
 								key={ `divider-${ entry.bucket }` }
 								className="social-notifications-list__divider"
+								role="presentation"
 							>
 								{ bucketLabel( entry.bucket, translate ) }
-							</h3>
+							</div>
 						);
 					}
 					if ( entry.row.kind === 'stack' ) {

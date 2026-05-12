@@ -133,8 +133,8 @@
 }
 
 .social-notifications-stack__avatar {
-	width: 28px;
-	height: 28px;
+	inline-size: 28px;
+	block-size: 28px;
 	border-radius: 50%;
 	margin-inline-start: -8px;
 	border: 2px solid var(--color-surface);
@@ -157,7 +157,7 @@
 
 .social-notifications-stack__toggle {
 	display: block;
-	width: 100%;
+	inline-size: 100%;
 	background: transparent;
 	border: 0;
 	padding: 0;
