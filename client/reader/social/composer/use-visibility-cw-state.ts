@@ -5,11 +5,11 @@ export interface UseVisibilityCwStateOptions< V extends string > {
 	mode: ActiveMode | null;
 	connectionId: number;
 	/**
-	 * The composer's default value when the connections cache hasn't
-	 * resolved a per-blog override and no localStorage pick exists.
-	 * Re-evaluated on every render — the hook resets to this value when
-	 * `mode` becomes null (modal closed) so a fresh open picks up the
-	 * latest default.
+	 * The composer's default value when no localStorage pick exists.
+	 * Read every time the modal opens (and whenever the connection
+	 * switches), so a fresh backend value mid-session percolates through
+	 * cleanly. Also the value `clear()` writes back when the provider
+	 * calls it on modal close — see the provider's `mode → null` effect.
 	 */
 	defaultVisibility: V;
 	/** Predicate used to validate localStorage values before adopting them. */

@@ -5,7 +5,7 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useId } from 'react';
+import { useId } from 'react';
 
 /**
  * Default upper bound on the content-warning summary. Matches the
@@ -88,22 +88,22 @@ export function VisibilityCwControls< V extends string >( {
 	const translate = useTranslate();
 	const summaryId = useId();
 
-	const validValues = visibilityOptions.map( ( option ) => option.value );
-
-	const handleVisibility = useCallback(
-		( next: string | undefined ) => {
-			if ( next !== undefined && ( validValues as string[] ).includes( next ) ) {
-				onVisibilityChange( next as V );
-			}
-		},
-		// `validValues` is derived from the `visibilityOptions` prop; depending on
-		// the derived array directly would re-create the callback every render
-		// since `.map()` returns a new array each time. Depending on the prop
-		// instead keeps the callback stable when the parent passes a stable
-		// reference (which it should).
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ onVisibilityChange, visibilityOptions ]
-	);
+	// Guard the `onChange` payload — the wrapped `string | undefined`
+	// signature from `RadioControl` is wider than `V`. Re-creating the
+	// handler each render is cheap (a single `.find()` over a three-
+	// element array); we used to wrap it in `useCallback` but the per-
+	// protocol wrappers all hand us a freshly-built `visibilityOptions`
+	// literal (the labels go through `translate(…)`), so the memoization
+	// never hit. Inline keeps the intent obvious.
+	const handleVisibility = ( next: string | undefined ): void => {
+		if ( next === undefined ) {
+			return;
+		}
+		const matched = visibilityOptions.find( ( option ) => option.value === next );
+		if ( matched ) {
+			onVisibilityChange( matched.value );
+		}
+	};
 
 	return (
 		<VStack spacing={ 4 } className={ className }>
