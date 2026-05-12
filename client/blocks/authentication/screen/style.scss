@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .auth-screen {
 	// Figma spec for the auth surface is #FCFCFC — a touch lighter than
@@ -23,15 +24,14 @@
 	--dashboard__background-color-info: var(--wp-admin-theme-color);
 }
 
-// Default (1-col) screens cap their content row at 348px on desktop, matching
-// the Figma `auth-desktop-template-1col` Content area. `is-wide` screens
-// (login + signup) widen to 768px to fit two 327px columns side-by-side with
-// a vertical OR between them — `auth-desktop-template-2col`. Use `max-width`
-// (same property WPDS uses on .step-container-v2__content-row) so higher
-// specificity wins on cascade.
+// Default (1-col) screens cap their content row at 400px on desktop. `is-wide`
+// screens (login + signup) widen to 768px to fit two columns side-by-side
+// with a vertical OR between them — `auth-desktop-template-2col`. Use
+// `max-width` (same property WPDS uses on .step-container-v2__content-row) so
+// higher specificity wins on cascade.
 .auth-screen .step-container-v2__content-row {
 	@include break-small {
-		max-width: 348px;
+		max-width: 400px;
 	}
 }
 
@@ -68,7 +68,7 @@
 }
 
 .auth-screen__subheading {
-	font-size: 14px;
+	font-size: $font-size-large;
 	line-height: 20px;
 	font-weight: 400;
 	color: var(--color-text-subtle);
