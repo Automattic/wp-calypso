@@ -85,7 +85,6 @@ class ReaderStream extends Component {
 		translate: PropTypes.func,
 		useCompactCards: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
-		selectedStreamName: PropTypes.string,
 		isLoggedIn: PropTypes.bool,
 		wideLayout: PropTypes.bool,
 		showBylineSecondarySiteLink: PropTypes.bool,
@@ -193,6 +192,13 @@ class ReaderStream extends Component {
 	};
 
 	scrollToSelectedPost( animate ) {
+		// Don't scroll when the selection is the very first item in the list:
+		// the page is (or should be) already at the top, and pushing it past
+		// the fixed header just to "show" item 0 looks like a glitch — the
+		// user wasn't navigating away from item 0 in the first place.
+		if ( this.props.selectedPostIndex === 0 ) {
+			return;
+		}
 		const scrollContainer = this.state.listContext || window;
 		const containerOffset = scrollContainer.getBoundingClientRect?.().top || 0;
 		const headerOffset = -1 * this.props.fixedHeaderHeight || 0; // a fixed position header means we can't just scroll the element into view.
@@ -876,14 +882,19 @@ const withStreamPosts = ( WrappedComponent ) =>
 		// keyed by `[streamKey, localeSlug]`, so switching streams (including
 		// `following:feed-X` ↔ `following:feed-Y`) naturally yields a fresh
 		// `selectedPostKey`.
-		const { selectedPostKey, selectPostKey, selectNextPost, selectPreviousPost } =
-			useStreamPostKeySelection( {
-				streamKey: props.streamKey,
-				localeSlug: props.localeSlug,
-				feedId: props.selectedFeedId,
-				startDate: props.startDate,
-				items: streamPostsQuery.items,
-			} );
+		const {
+			selectedPostKey,
+			selectedPostIndex,
+			selectPostKey,
+			selectNextPost,
+			selectPreviousPost,
+		} = useStreamPostKeySelection( {
+			streamKey: props.streamKey,
+			localeSlug: props.localeSlug,
+			feedId: props.selectedFeedId,
+			startDate: props.startDate,
+			items: streamPostsQuery.items,
+		} );
 
 		// `<Stream>` reads the selected post body (for the keyboard `l` /
 		// like-toggle handler) and its liked status. Both still live in
@@ -911,6 +922,7 @@ const withStreamPosts = ( WrappedComponent ) =>
 				pendingCount={ pendingCount }
 				consumePending={ consumePending }
 				selectedPostKey={ selectedPostKey }
+				selectedPostIndex={ selectedPostIndex }
 				selectPostKey={ selectPostKey }
 				selectNextPost={ selectNextPost }
 				selectPreviousPost={ selectPreviousPost }

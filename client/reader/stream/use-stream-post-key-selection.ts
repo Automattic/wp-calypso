@@ -30,6 +30,14 @@ interface UseStreamPostKeySelectionOptions {
 
 export interface UseStreamPostKeySelectionResult {
 	selectedPostKey: PostKey | null;
+	/**
+	 * Position of `selectedPostKey` in `items`. `-1` when nothing is selected
+	 * or the selection doesn't belong to the current list (e.g. selection
+	 * lingering from a different stream variant). Exposed so consumers can
+	 * short-circuit behaviour at list boundaries — `<ReaderStream>` uses it
+	 * to suppress scroll-into-view at index 0.
+	 */
+	selectedPostIndex: number;
 	currentPostKey: PostKey | null;
 	previousPostKey: PostKey | null;
 	nextPostKey: PostKey | null;
@@ -173,6 +181,10 @@ export function useStreamPostKeySelection( {
 
 	const selectedPostKey = selectedQuery.data ?? null;
 	const currentPostKey = controlledCurrentPostKey ?? selectedPostKey;
+	const selectedPostIndex = useMemo(
+		() => findPostKeyIndex( items, selectedPostKey ),
+		[ items, selectedPostKey ]
+	);
 	const previousPostKey = useMemo(
 		() => getOffsetPostKey( items, currentPostKey, -1 ),
 		[ items, currentPostKey ]
@@ -220,6 +232,7 @@ export function useStreamPostKeySelection( {
 
 	return {
 		selectedPostKey,
+		selectedPostIndex,
 		currentPostKey,
 		previousPostKey,
 		nextPostKey,
