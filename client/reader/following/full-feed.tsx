@@ -19,7 +19,7 @@ import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRe
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
-import { getStream, getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
+import { getStream } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -56,7 +56,17 @@ interface FullFeedStreamState {
 	pageHandle?: unknown;
 }
 
+interface FullFeedPageRequest {
+	feedId?: number | null;
+	localeSlug?: string | null;
+	pageHandle?: unknown;
+	streamKey: string;
+}
+
 const pagesByKey = new Map< string, number >();
+const requestFullFeedPage = requestPage as unknown as (
+	params: FullFeedPageRequest
+) => UnknownAction;
 
 function getFollowingStreamKey( selectedFeedId: number | null, streamKey = 'following' ) {
 	if ( streamKey === 'following' && selectedFeedId ) {
@@ -130,7 +140,6 @@ function getWindowScrollDepth() {
 }
 
 export function FullFeed( {
-	recsStreamKey = '',
 	showSiteNameOnCards = true,
 	startDate = null,
 	streamKey: baseStreamKey = 'following',
@@ -165,10 +174,7 @@ export function FullFeed( {
 	);
 	const blockedSites = useSelector< AppState, number[] >( getBlockedSites );
 	const posts = useSelector( ( state: AppState ) => {
-		const items = getTransformedStreamItems( state, {
-			streamKey,
-			recsStreamKey,
-		} ) as ReaderStreamItem[];
+		const items = ( getStream( state, streamKey ) as FullFeedStreamState ).items ?? [];
 
 		return items
 			.filter( isPostStreamItem )
@@ -192,7 +198,7 @@ export function FullFeed( {
 	useEffect( () => {
 		recordReaderTracksEventRef.current( 'calypso_reader_full_feed_viewed', {
 			feed_id: selectedFeedId ?? undefined,
-			is_filtered_feed: Boolean( selectedFeedId ),
+			is_filtered_feed: selectedFeedId ? 1 : 0,
 			stream_key: streamKey,
 		} );
 	}, [ selectedFeedId, streamKey ] );
@@ -297,7 +303,7 @@ export function FullFeed( {
 			}
 
 			dispatch(
-				requestPage( {
+				requestFullFeedPage( {
 					feedId: selectedFeedId,
 					streamKey,
 					pageHandle,
@@ -320,7 +326,7 @@ export function FullFeed( {
 
 	const fetchFirstPage = useCallback( () => {
 		dispatch(
-			requestPage( {
+			requestFullFeedPage( {
 				feedId: selectedFeedId,
 				streamKey,
 				pageHandle: getPageHandle( null ),

@@ -85,6 +85,16 @@ function getIconUrl( icon: unknown ) {
 	}
 }
 
+function getObjectProperty( value: unknown, property: string ) {
+	if ( value && typeof value === 'object' && property in value ) {
+		return ( value as Record< string, unknown > )[ property ];
+	}
+}
+
+function translateToString( value: unknown ) {
+	return String( value );
+}
+
 function getFullFeedPostKey( post: ReaderFullFeedPost ) {
 	if ( post.global_ID ) {
 		return post.global_ID;
@@ -429,13 +439,25 @@ export function FullFeedPost( {
 	};
 
 	const shortTitle = getShortTitle( title );
-	const floatingCollapseLabel = translate( 'Collapse: %(title)s', {
-		args: { title: shortTitle },
-	} );
+	const floatingCollapseLabel = translateToString(
+		translate( 'Collapse: %(title)s', {
+			args: { title: shortTitle },
+		} )
+	);
+	const readMoreLabel = translateToString(
+		translate( 'Read more: %(title)s', {
+			args: { title: shortTitle },
+		} )
+	);
+	const postExpansionControlsLabel = translateToString( translate( 'Post expansion controls' ) );
+	const postContentLabel = translateToString( translate( 'Post content' ) );
+	const postActionsLabel = translateToString(
+		translate( 'Actions for %(title)s', { args: { title } } )
+	);
 	const collapseIconUrl =
-		getIconUrl( feedWithIcon?.site_icon ) ??
-		getIconUrl( feedWithIcon?.image ) ??
-		getIconUrl( site?.icon ) ??
+		getIconUrl( getObjectProperty( feedWithIcon, 'site_icon' ) ) ??
+		getIconUrl( getObjectProperty( feedWithIcon, 'image' ) ) ??
+		getIconUrl( getObjectProperty( site, 'icon' ) ) ??
 		getIconUrl( post.site_icon ) ??
 		post.author?.avatar_URL;
 	const renderCollapseIcon = () =>
@@ -466,6 +488,7 @@ export function FullFeedPost( {
 							onClick={ collapsePost }
 							aria-controls={ contentId }
 							aria-expanded
+							aria-label={ floatingCollapseLabel }
 						>
 							{ renderCollapseIcon() }
 							<span className="full-feed-post__floating-collapse-label">
@@ -512,7 +535,7 @@ export function FullFeedPost( {
 						'is-content-inactive': ! isContentActive,
 					} ) }
 					role={ isContentActive ? 'region' : undefined }
-					aria-label={ isContentActive ? translate( 'Post content' ) : undefined }
+					aria-label={ isContentActive ? postContentLabel : undefined }
 					aria-hidden={ isContentActive ? undefined : true }
 					style={
 						{
@@ -523,7 +546,7 @@ export function FullFeedPost( {
 				>
 					<ReaderFullPostContentShell
 						isActive={ isContentActive }
-						maxWidth={ readerContentWidth() }
+						maxWidth={ readerContentWidth() ?? 0 }
 						post={ post }
 						siteName={ post.site_name }
 					/>
@@ -534,7 +557,7 @@ export function FullFeedPost( {
 						className="full-feed-post__expand-actions"
 						ref={ expandActionsElementRef }
 						role="group"
-						aria-label={ translate( 'Post expansion controls' ) }
+						aria-label={ postExpansionControlsLabel }
 					>
 						{ isExpanded ? (
 							<Button
@@ -542,9 +565,7 @@ export function FullFeedPost( {
 								onClick={ collapsePost }
 								aria-controls={ contentId }
 								aria-expanded
-								aria-label={ translate( 'Collapse: %(title)s', {
-									args: { title: shortTitle },
-								} ) }
+								aria-label={ floatingCollapseLabel }
 							>
 								{ renderCollapseIcon() }
 								{ translate( 'Collapse' ) }
@@ -555,20 +576,14 @@ export function FullFeedPost( {
 								onClick={ expandPost }
 								aria-controls={ contentId }
 								aria-expanded={ false }
-								aria-label={ translate( 'Read more: %(title)s', {
-									args: { title: shortTitle },
-								} ) }
+								aria-label={ readMoreLabel }
 							>
 								{ translate( 'Read more' ) }
 							</Button>
 						) }
 					</div>
 				) }
-				<div
-					className="full-feed-post__engagement"
-					role="group"
-					aria-label={ translate( 'Actions for %(title)s', { args: { title } } ) }
-				>
+				<div className="full-feed-post__engagement" role="group" aria-label={ postActionsLabel }>
 					<ReaderPostActions
 						post={ post }
 						site={ site }

@@ -6,7 +6,7 @@ import { createStore } from 'redux';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
-import { getStream, getTransformedStreamItems } from 'calypso/state/reader/streams/selectors';
+import { getStream } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -128,7 +128,6 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 
 jest.mock( 'calypso/state/reader/streams/selectors', () => ( {
 	getStream: jest.fn(),
-	getTransformedStreamItems: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/reader/posts/selectors', () => ( {
@@ -168,7 +167,11 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 const populatedStream = {
 	error: null,
 	isRequesting: false,
-	items: [ { feedId: 123, postId: 456 } ],
+	items: [
+		{ isGap: true, postId: 1 },
+		{ feedId: 123, postId: 456 },
+		{ isRecommendationBlock: true, postId: 2 },
+	],
 	lastPage: false,
 	pageHandle: { page_handle: 'next-page' },
 };
@@ -192,11 +195,6 @@ describe( 'FullFeed', () => {
 		( getCurrentLocaleSlug as jest.Mock ).mockReturnValue( 'en' );
 		( getBlockedSites as jest.Mock ).mockReturnValue( [] );
 		( getStream as jest.Mock ).mockReturnValue( populatedStream );
-		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [
-			{ isGap: true, postId: 1 },
-			{ feedId: 123, postId: 456 },
-			{ isRecommendationBlock: true, postId: 2 },
-		] );
 	} );
 
 	it( 'renders full-feed posts from the following stream', () => {
@@ -210,16 +208,19 @@ describe( 'FullFeed', () => {
 		expect( viewStream ).toHaveBeenCalledWith( 'following', expect.any( String ) );
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith( 'calypso_reader_full_feed_viewed', {
 			feed_id: undefined,
-			is_filtered_feed: false,
+			is_filtered_feed: 0,
 			stream_key: 'following',
 		} );
 	} );
 
 	it( 'renders posts even when the API marks them seen', () => {
-		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [
-			{ feedId: 123, postId: 456 },
-			{ feedId: 123, postId: 789 },
-		] );
+		( getStream as jest.Mock ).mockReturnValue( {
+			...populatedStream,
+			items: [
+				{ feedId: 123, postId: 456 },
+				{ feedId: 123, postId: 789 },
+			],
+		} );
 
 		renderFullFeed();
 
@@ -232,10 +233,13 @@ describe( 'FullFeed', () => {
 
 	it( 'uses the stream lifecycle blocked and unavailable states', () => {
 		( getBlockedSites as jest.Mock ).mockReturnValue( [ 999 ] );
-		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [
-			{ feedId: 123, postId: 147 },
-			{ feedId: 123, postId: 258 },
-		] );
+		( getStream as jest.Mock ).mockReturnValue( {
+			...populatedStream,
+			items: [
+				{ feedId: 123, postId: 147 },
+				{ feedId: 123, postId: 258 },
+			],
+		} );
 
 		renderFullFeed();
 
@@ -251,7 +255,6 @@ describe( 'FullFeed', () => {
 			lastPage: false,
 			pageHandle: undefined,
 		} );
-		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [] );
 
 		renderFullFeed();
 
@@ -273,7 +276,6 @@ describe( 'FullFeed', () => {
 			lastPage: false,
 			pageHandle: undefined,
 		} );
-		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [] );
 
 		renderFullFeed( { startDate: '2026-04-17' } );
 
@@ -293,7 +295,6 @@ describe( 'FullFeed', () => {
 			lastPage: false,
 			pageHandle: { page_handle: 'retry-page' },
 		} );
-		( getTransformedStreamItems as jest.Mock ).mockReturnValue( [] );
 
 		renderFullFeed();
 
@@ -339,7 +340,7 @@ describe( 'FullFeed', () => {
 				'calypso_reader_full_feed_viewed',
 				{
 					feed_id: 123,
-					is_filtered_feed: true,
+					is_filtered_feed: 1,
 					stream_key: 'following:feed-123',
 				}
 			);

@@ -56,7 +56,8 @@ const post = {
 	content: '<p>Full post body</p>',
 	date: '2026-04-17T12:00:00Z',
 	feed_ID: 123,
-	feed_item_ID: 789,
+	feed_item_ID: 789 as number | undefined,
+	featured_image: undefined as string | undefined,
 	global_ID: 'global-post-id',
 	is_external: true,
 	site_ID: 456,
@@ -198,7 +199,7 @@ describe( 'FullFeedPost', () => {
 	it( 'opens the full post comments when the comment action is clicked', () => {
 		renderPost();
 
-		const { onCommentClick } = ( ReaderPostActions as jest.Mock ).mock.calls[ 0 ][ 0 ];
+		const { onCommentClick } = ( ReaderPostActions as unknown as jest.Mock ).mock.calls[ 0 ][ 0 ];
 
 		onCommentClick();
 
@@ -221,7 +222,7 @@ describe( 'FullFeedPost', () => {
 
 		renderPost( { postProps: feedPostWithoutFeedItemId } );
 
-		const { onCommentClick } = ( ReaderPostActions as jest.Mock ).mock.calls[ 0 ][ 0 ];
+		const { onCommentClick } = ( ReaderPostActions as unknown as jest.Mock ).mock.calls[ 0 ][ 0 ];
 
 		onCommentClick();
 
