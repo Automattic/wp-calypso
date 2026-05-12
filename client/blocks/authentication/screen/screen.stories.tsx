@@ -1,9 +1,6 @@
+import { Button, TextControl, __experimentalVStack as VStack } from '@wordpress/components';
 import Notice from 'calypso/dashboard/components/notice';
-import LinkButton from '../link-button';
-import OptionsList from '../options-list';
-import PrimaryButton from '../primary-button';
 import SocialButton from '../social-button';
-import TextField from '../text-field';
 import Screen from './index';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -33,23 +30,35 @@ export default meta;
 
 type Story = StoryObj< typeof Screen >;
 
+const fullWidth = { width: '100%' };
+
 const PlaceholderContent = () => (
-	<div style={ { display: 'flex', flexDirection: 'column', gap: 16 } }>
-		<TextField
+	<VStack spacing={ 4 }>
+		<TextControl
+			__nextHasNoMarginBottom
+			__next40pxDefaultSize
 			label="Email address or username"
 			value=""
 			onChange={ () => {} }
 			type="text"
 			autoComplete="username"
 		/>
-		<PrimaryButton type="submit">Continue</PrimaryButton>
-		<LinkButton href="/log-in/lostpassword">Lost your password?</LinkButton>
-	</div>
+		<Button variant="primary" __next40pxDefaultSize type="submit" style={ fullWidth }>
+			Continue
+		</Button>
+		<Button variant="link" href="/log-in/lostpassword">
+			Lost your password?
+		</Button>
+	</VStack>
 );
 
 export const Default: Story = {
 	args: {
-		topBarAction: <LinkButton href="/start">Create an account</LinkButton>,
+		topBarAction: (
+			<Button variant="link" href="/start">
+				Create an account
+			</Button>
+		),
 		heading: 'Log in to WordPress.com',
 		subheading: 'By continuing, you agree to our Terms of Service and Privacy Policy.',
 		children: <PlaceholderContent />,
@@ -58,7 +67,11 @@ export const Default: Story = {
 
 export const WithNotice: Story = {
 	args: {
-		topBarAction: <LinkButton href="/start">Create an account</LinkButton>,
+		topBarAction: (
+			<Button variant="link" href="/start">
+				Create an account
+			</Button>
+		),
 		heading: 'Log in to WordPress.com',
 		notice: (
 			<Notice variant="error">
@@ -80,7 +93,11 @@ export const HeadingOnly: Story = {
 
 export const SignupAction: Story = {
 	args: {
-		topBarAction: <LinkButton href="/log-in">Log in</LinkButton>,
+		topBarAction: (
+			<Button variant="link" href="/log-in">
+				Log in
+			</Button>
+		),
 		heading: 'Create your account',
 		subheading:
 			'By continuing with any of the options listed, you agree to our Terms of Service and Privacy Policy.',
@@ -96,34 +113,39 @@ export const SignupAction: Story = {
 // example, see `Recipes / Login`.
 const TwoColumnContent = () => (
 	<div className="auth-recipe-login">
-		<div
-			className="auth-recipe-login__input"
-			style={ { display: 'flex', flexDirection: 'column', gap: 16 } }
-		>
-			<TextField
+		<VStack spacing={ 4 } className="auth-recipe-login__input">
+			<TextControl
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
 				label="Email address or username"
 				value=""
 				onChange={ () => {} }
 				type="text"
 				autoComplete="username"
 			/>
-			<PrimaryButton type="submit">Continue</PrimaryButton>
-		</div>
+			<Button variant="primary" __next40pxDefaultSize type="submit" style={ fullWidth }>
+				Continue
+			</Button>
+		</VStack>
 		<div className="auth-recipe-login__or">
 			<span>or</span>
 		</div>
-		<OptionsList>
+		<VStack spacing={ 2 } role="group">
 			<SocialButton provider="google">Continue with Google</SocialButton>
 			<SocialButton provider="apple">Continue with Apple</SocialButton>
 			<SocialButton provider="github">Continue with GitHub</SocialButton>
 			<SocialButton provider="email">Continue with email</SocialButton>
-		</OptionsList>
+		</VStack>
 	</div>
 );
 
 export const Wide: Story = {
 	args: {
-		topBarAction: <LinkButton href="/start">Create an account</LinkButton>,
+		topBarAction: (
+			<Button variant="link" href="/start">
+				Create an account
+			</Button>
+		),
 		heading: 'Log in to WordPress.com',
 		subheading: 'By continuing, you agree to our Terms of Service and Privacy Policy.',
 		wide: true,

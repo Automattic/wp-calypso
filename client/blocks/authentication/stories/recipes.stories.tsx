@@ -1,13 +1,9 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, TextControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from 'react';
 import CurrentUser from '../current-user';
-import LinkButton from '../link-button';
-import OptionsList from '../options-list';
-import PrimaryButton from '../primary-button';
 import Screen from '../screen';
 import SocialButton from '../social-button';
 import SocialConnectWidget from '../social-connect-widget';
-import TextField from '../text-field';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import './recipes.scss';
@@ -34,23 +30,33 @@ export default meta;
 
 type Story = StoryObj;
 
+const fullWidth = { width: '100%' };
+
 const LostPasswordRecipe = () => {
 	const [ email, setEmail ] = useState( '' );
 	return (
 		<Screen
 			heading="Lost your password?"
 			subheading="Enter the email address or username you use to sign in, and we'll send you a reset link."
-			topBarAction={ <LinkButton href="/log-in">Back to log in</LinkButton> }
+			topBarAction={
+				<Button variant="link" href="/log-in">
+					Back to log in
+				</Button>
+			}
 		>
 			<VStack spacing={ 4 }>
-				<TextField
+				<TextControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
 					label="Email address or username"
 					value={ email }
 					onChange={ setEmail }
 					type="text"
 					autoComplete="username"
 				/>
-				<PrimaryButton type="submit">Reset my password</PrimaryButton>
+				<Button variant="primary" __next40pxDefaultSize type="submit" style={ fullWidth }>
+					Reset my password
+				</Button>
 			</VStack>
 		</Screen>
 	);
@@ -62,29 +68,37 @@ const LoginRecipe = () => {
 		<Screen
 			heading="Log in to WordPress.com"
 			subheading="By continuing, you agree to our Terms of Service and Privacy Policy."
-			topBarAction={ <LinkButton href="/start">Create an account</LinkButton> }
+			topBarAction={
+				<Button variant="link" href="/start">
+					Create an account
+				</Button>
+			}
 			wide
 		>
 			<div className="auth-recipe-login">
 				<VStack spacing={ 4 } className="auth-recipe-login__input">
-					<TextField
+					<TextControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
 						label="Email address or username"
 						value={ email }
 						onChange={ setEmail }
 						type="text"
 						autoComplete="username"
 					/>
-					<PrimaryButton type="submit">Continue</PrimaryButton>
+					<Button variant="primary" __next40pxDefaultSize type="submit" style={ fullWidth }>
+						Continue
+					</Button>
 				</VStack>
 				<div className="auth-recipe-login__or">
 					<span>or</span>
 				</div>
-				<OptionsList>
+				<VStack spacing={ 2 } role="group">
 					<SocialButton provider="google">Continue with Google</SocialButton>
 					<SocialButton provider="apple">Continue with Apple</SocialButton>
 					<SocialButton provider="github">Continue with GitHub</SocialButton>
 					<SocialButton provider="email">Continue with email</SocialButton>
-				</OptionsList>
+				</VStack>
 			</div>
 		</Screen>
 	);
@@ -94,11 +108,17 @@ const SocialConnectRecipe = () => (
 	<Screen
 		heading="Connect your account"
 		subheading="Connect your WordPress.com account to your Google profile. You will be able to use Google to log in to WordPress.com."
-		topBarAction={ <LinkButton href="/log-in">Log in</LinkButton> }
+		topBarAction={
+			<Button variant="link" href="/log-in">
+				Log in
+			</Button>
+		}
 	>
 		<VStack spacing={ 4 }>
 			<SocialConnectWidget service="google" />
-			<PrimaryButton type="button">Connect</PrimaryButton>
+			<Button variant="primary" __next40pxDefaultSize type="button" style={ fullWidth }>
+				Connect
+			</Button>
 		</VStack>
 	</Screen>
 );
@@ -106,7 +126,11 @@ const SocialConnectRecipe = () => (
 const ContinueAsUserRecipe = () => (
 	<Screen
 		heading="Log in to WordPress.com"
-		topBarAction={ <LinkButton href="/start">Create an account</LinkButton> }
+		topBarAction={
+			<Button variant="link" href="/start">
+				Create an account
+			</Button>
+		}
 	>
 		<VStack spacing={ 4 }>
 			<CurrentUser
@@ -114,8 +138,12 @@ const ContinueAsUserRecipe = () => (
 				name="Jane Doe"
 				email="jane@example.com"
 			/>
-			<PrimaryButton type="button">Continue as Jane Doe</PrimaryButton>
-			<LinkButton href="#">Log in with another account</LinkButton>
+			<Button variant="primary" __next40pxDefaultSize type="button" style={ fullWidth }>
+				Continue as Jane Doe
+			</Button>
+			<Button variant="link" href="#">
+				Log in with another account
+			</Button>
 		</VStack>
 	</Screen>
 );
@@ -128,7 +156,9 @@ const TwoFactorCodeRecipe = () => {
 			subheading="Enter the code from your authenticator app."
 		>
 			<VStack spacing={ 4 }>
-				<TextField
+				<TextControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
 					label="6-digit code"
 					value={ code }
 					onChange={ setCode }
@@ -137,8 +167,12 @@ const TwoFactorCodeRecipe = () => {
 					pattern="[0-9 ]*"
 					placeholder="123 456"
 				/>
-				<PrimaryButton type="submit">Continue</PrimaryButton>
-				<LinkButton href="#">Use a different method</LinkButton>
+				<Button variant="primary" __next40pxDefaultSize type="submit" style={ fullWidth }>
+					Continue
+				</Button>
+				<Button variant="link" href="#">
+					Use a different method
+				</Button>
 			</VStack>
 		</Screen>
 	);
