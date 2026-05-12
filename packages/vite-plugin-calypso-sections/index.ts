@@ -15,92 +15,91 @@ function exportSectionsAsEsm( code: string ): string {
 }
 
 export function vitePluginSections( { root }: { root: string } ): Plugin {
-	const moduleToSectionName = new Map< string, string >();
+	const sectionsPath = path.resolve( root, 'client/sections.js' );
+
+	let sections: Section[] = [];
+	// Sorted longest-prefix-first so the most specific section wins for nested
+	// modules like `calypso/a8c-for-agencies` vs `.../sections/landing`.
+	let sectionPrefixes: { prefix: string; name: string }[] = [];
+
 	let isSSR = false;
 
 	return {
 		name: 'calypso-sections',
 
+		buildStart() {
+			try {
+				// Drop any cached copy so watch-mode picks up edits.
+				delete require.cache[ sectionsPath ];
+				const loaded = require( sectionsPath );
+				if ( ! Array.isArray( loaded ) ) {
+					throw new Error( `expected array export, got ${ typeof loaded }` );
+				}
+				sections = loaded;
+				sectionPrefixes = sections
+					.filter( ( s ) => s.module && s.name )
+					.map( ( s ) => ( {
+						prefix: path.resolve( root, s.module.replace( /^calypso\//, 'client/' ) ) + '/',
+						name: s.name,
+					} ) )
+					.sort( ( a, b ) => b.prefix.length - a.prefix.length );
+			} catch ( err: unknown ) {
+				const message = err instanceof Error ? err.message : String( err );
+				this.warn( `calypso-sections: could not load sections.js: ${ message }` );
+			}
+		},
+
 		configResolved( config: ResolvedConfig ) {
 			isSSR = config.build.ssr === true;
 
-			// In SSR mode the server bundle is not code-split by section.
+			// manualChunks isn't needed for SSR (the server bundle isn't code-split
+			// by section). The transform hook below still runs to inject load() for
+			// isomorphic sections.
 			if ( isSSR ) {
 				return;
 			}
 
-			const buildConfig = config.build as {
-				rolldownOptions?: {
-					output?: { manualChunks?: ( id: string ) => string | undefined };
-				};
-			};
-			if ( ! buildConfig.rolldownOptions ) {
-				buildConfig.rolldownOptions = {};
+			if ( ! config.build.rolldownOptions ) {
+				config.build.rolldownOptions = {};
 			}
-			if ( ! buildConfig.rolldownOptions.output ) {
-				buildConfig.rolldownOptions.output = {};
+			if ( ! config.build.rolldownOptions.output ) {
+				config.build.rolldownOptions.output = [];
+			} else if ( ! Array.isArray( config.build.rolldownOptions.output ) ) {
+				config.build.rolldownOptions.output = [ config.build.rolldownOptions.output ];
 			}
 
-			buildConfig.rolldownOptions.output.manualChunks = ( id: string ) => {
-				for ( const [ modulePath, sectionName ] of moduleToSectionName ) {
-					const clientPath = modulePath.replace( /^calypso\//, 'client/' );
-					if ( id.includes( '/' + clientPath ) || id.includes( '/' + clientPath + '/' ) ) {
-						return sectionName;
+			config.build.rolldownOptions.output.push( {
+				manualChunks( id: string ) {
+					for ( const { prefix, name } of sectionPrefixes ) {
+						if ( id.startsWith( prefix ) ) {
+							return name;
+						}
 					}
-				}
-				return undefined;
-			};
+					return undefined;
+				},
+			} );
 		},
 
 		transform( code: string, id: string ) {
-			const sectionsPath = path.join( root, 'client/sections.js' );
 			if ( id !== sectionsPath ) {
 				return;
-			}
-
-			let sections: Section[] | undefined;
-			try {
-				const vm = require( 'vm' );
-				const esmToCommonJs = code
-					.replace( /^export default /, 'module.exports = ' )
-					.replace( /^export /gm, '' );
-
-				const ctx = vm.createContext( { module: { exports: null } } );
-				vm.runInContext( esmToCommonJs, ctx );
-
-				if ( Array.isArray( ctx.module.exports ) ) {
-					sections = ctx.module.exports;
-					for ( const section of sections ) {
-						if ( section.module && section.name ) {
-							moduleToSectionName.set( section.module, section.name );
-						}
-					}
-				}
-			} catch ( err: unknown ) {
-				const message = err instanceof Error ? err.message : String( err );
-				this.warn( `calypso-sections: could not evaluate sections.js: ${ message }` );
 			}
 
 			if ( isSSR ) {
 				// Match webpack's server sections-loader: only isomorphic sections need
 				// server-side load() functions. Keep them synchronous because the server
 				// calls section.load().default(...) without await.
-				const isomorphicModulePaths = sections
-					? new Set(
-							sections
-								.filter( ( section ) => section.isomorphic && section.module )
-								.map( ( section ) => section.module )
-					  )
-					: null;
+				const isomorphic = new Set(
+					sections.filter( ( s ) => s.isomorphic && s.module ).map( ( s ) => s.module )
+				);
 				const modulePaths: string[] = [];
 				const modified = exportSectionsAsEsm(
 					code.replace(
 						/\bmodule: (["'])([^"']+)\1/g,
-						( _match: string, quote: string, modulePath: string ) => {
-							if ( isomorphicModulePaths && ! isomorphicModulePaths.has( modulePath ) ) {
-								return _match;
+						( match: string, quote: string, modulePath: string ) => {
+							if ( ! isomorphic.has( modulePath ) ) {
+								return match;
 							}
-
 							let varIdx = modulePaths.indexOf( modulePath );
 							if ( varIdx === -1 ) {
 								varIdx = modulePaths.push( modulePath ) - 1;
