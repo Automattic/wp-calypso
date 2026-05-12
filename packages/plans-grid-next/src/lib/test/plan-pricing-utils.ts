@@ -476,6 +476,58 @@ describe( 'fromVariantPriceData', () => {
 		expect( fromVariantPriceData( variant ).introOffer ).toBeUndefined();
 	} );
 
+	it( 'handles a multi-month intro on a monthly plan (introDurationMonths > termMonths)', () => {
+		// Monthly plan ($20/month), 3-month intro at $5/month.
+		// termMonths=1, introDurationMonths=3 → whole term is within the intro period.
+		// nonIntroMonths = max(0, 1 - 3) = 0
+		// introPriceTotal = 500 - 0 = 500
+		// introPricePerMonth = round(500 / min(3, 1)) = round(500 / 1) = 500
+		const variant = makeVariant( {
+			termIntervalInMonths: 1,
+			priceBeforeDiscounts: 2000,
+			priceInteger: 500,
+			introductoryInterval: 3,
+			introductoryTerm: 'month',
+		} );
+		const result = fromVariantPriceData( variant );
+		expect( result.introOffer?.pricePerMonth ).toBe( 500 );
+		expect( result.introOffer?.durationMonths ).toBe( 3 );
+	} );
+
+	it( 'handles a multi-year intro on an annual plan (introDurationMonths > termMonths)', () => {
+		// Annual plan ($200/year), 3-year intro at $100/year.
+		// termMonths=12, introDurationMonths=36 → whole term is within the intro period.
+		// regularPricePerMonth = round(20000 / 12) = 1667
+		// nonIntroMonths = max(0, 12 - 36) = 0
+		// introPriceTotal = 10000 - 0 = 10000
+		// introPricePerMonth = round(10000 / min(36, 12)) = round(10000 / 12) = 833
+		const variant = makeVariant( {
+			termIntervalInMonths: 12,
+			priceBeforeDiscounts: 20000,
+			priceInteger: 10000,
+			introductoryInterval: 3,
+			introductoryTerm: 'year',
+		} );
+		const result = fromVariantPriceData( variant );
+		expect( result.introOffer?.pricePerMonth ).toBe( 833 );
+		expect( result.introOffer?.durationMonths ).toBe( 36 );
+	} );
+
+	it( 'produces no introOffer when introPriceTotal is non-positive (inconsistent data)', () => {
+		// Annual plan with a 3-month intro, but priceInteger is too low to be consistent:
+		// regularPricePerMonth = round(24000 / 12) = 2000
+		// nonIntroMonths = 12 - 3 = 9
+		// introPriceTotal = 1000 - 9 × 2000 = 1000 - 18000 = -17000 → bail out
+		const variant = makeVariant( {
+			termIntervalInMonths: 12,
+			priceBeforeDiscounts: 24000,
+			priceInteger: 1000,
+			introductoryInterval: 3,
+			introductoryTerm: 'month',
+		} );
+		expect( fromVariantPriceData( variant ).introOffer ).toBeUndefined();
+	} );
+
 	it( 'does not set discountedPricePerMonth', () => {
 		const variant = makeVariant();
 		const result = fromVariantPriceData( variant );
