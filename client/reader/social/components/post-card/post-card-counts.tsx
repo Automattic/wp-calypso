@@ -1,5 +1,5 @@
 import { formatNumber } from '@automattic/number-formatters';
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Tooltip } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
@@ -95,6 +95,12 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 		</>
 	);
 
+	const repliesAccessibleLabel = translate( 'Reply, %(count)d reply', 'Reply, %(count)d replies', {
+		count: counts.replies,
+		args: { count: counts.replies },
+		textOnly: true,
+	} ) as string;
+
 	const renderRepliesNode = () => {
 		// Render the interactive reply button when an `onReplyClick`
 		// handler is bound by the per-protocol shell. The shell decides
@@ -107,32 +113,33 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 		if ( analytics?.onReplyClick ) {
 			const onReplyClick = analytics.onReplyClick;
 			return (
-				<button
-					type="button"
-					className="social-post-card-counts__reply-button"
-					onClick={ () => {
-						onReplyClick( post );
-						fireRepliesClicked( 'composer' );
-					} }
-					aria-label={ translate( 'Reply, %(count)d reply', 'Reply, %(count)d replies', {
-						count: counts.replies,
-						args: { count: counts.replies },
-						textOnly: true,
-					} ) }
-				>
-					{ repliesContent }
-				</button>
+				<Tooltip text={ repliesAccessibleLabel }>
+					<button
+						type="button"
+						className="social-post-card-counts__reply-button"
+						onClick={ () => {
+							onReplyClick( post );
+							fireRepliesClicked( 'composer' );
+						} }
+						aria-label={ repliesAccessibleLabel }
+					>
+						{ repliesContent }
+					</button>
+				</Tooltip>
 			);
 		}
 		if ( inAppUrl ) {
 			return (
-				<a
-					className="social-post-card-counts__link"
-					href={ inAppUrl }
-					onClick={ () => fireRepliesClicked( 'in_app_thread' ) }
-				>
-					{ repliesContent }
-				</a>
+				<Tooltip text={ repliesAccessibleLabel }>
+					<a
+						className="social-post-card-counts__link"
+						href={ inAppUrl }
+						aria-label={ repliesAccessibleLabel }
+						onClick={ () => fireRepliesClicked( 'in_app_thread' ) }
+					>
+						{ repliesContent }
+					</a>
+				</Tooltip>
 			);
 		}
 		return <span>{ repliesContent }</span>;
