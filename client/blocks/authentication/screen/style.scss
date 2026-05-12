@@ -55,20 +55,27 @@
 	gap: 16px;
 
 	// Desktop: cap the heading column at 347px and center it within the
-	// wrapper, matching both Figma desktop templates. Text inside is
-	// left-aligned by default — that matches the 1-col layout. Mobile
-	// inherits the natural full-width, left-aligned flow.
+	// wrapper, matching both Figma desktop templates. Mobile inherits the
+	// natural full-width flow.
 	@include break-medium {
 		max-inline-size: 347px;
 		margin-inline: auto;
 	}
 }
 
-// Wide (2-col) screens center the subheading text on desktop. The h1 is
-// handled by Step.Heading's `align` prop in index.tsx; the Notice keeps its
-// own internal alignment.
+// `Step.Heading` defaults to `text-align: center` at `@break-small` via its
+// own SCSS. Override that to left for all auth screens — `is-wide` screens
+// re-center the heading text only once the 2-col layout activates at
+// `@break-medium`, matching how the content row flips at the same breakpoint.
+.auth-screen .step-container-v2__heading {
+	@include break-small {
+		text-align: left;
+	}
+}
+
 .auth-screen.is-wide {
 	@include break-medium {
+		.step-container-v2__heading,
 		.auth-screen__subheading {
 			text-align: center;
 		}

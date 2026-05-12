@@ -57,7 +57,7 @@ const Screen = ( {
 			topBar={ <Step.TopBar rightElement={ topBarAction } compactLogo="always" /> }
 			heading={
 				<div className="auth-screen__heading">
-					<Step.Heading text={ heading } align={ wide ? 'center' : 'left' } />
+					<Step.Heading text={ heading } />
 					{ notice && <div className="auth-screen__notice">{ notice }</div> }
 					{ subheading && <p className="auth-screen__subheading">{ subheading }</p> }
 				</div>
