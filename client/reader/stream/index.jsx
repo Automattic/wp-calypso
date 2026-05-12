@@ -90,8 +90,8 @@ class ReaderStream extends Component {
 		wideLayout: PropTypes.bool,
 		showBylineSecondarySiteLink: PropTypes.bool,
 		followsCount: PropTypes.number,
-		streamPostsQuery: PropTypes.object,
-		recsStreamPostsQuery: PropTypes.object,
+		refetch: PropTypes.func,
+		fetchNextPage: PropTypes.func,
 		pendingCount: PropTypes.number,
 		consumePending: PropTypes.func,
 		isRefetching: PropTypes.bool,
@@ -164,7 +164,7 @@ class ReaderStream extends Component {
 		}
 	}
 	tryAgain = () => {
-		this.props.streamPostsQuery.refetch();
+		this.props.refetch();
 	};
 
 	focusSelectedPost = ( selectedPostKey ) => {
@@ -462,14 +462,14 @@ class ReaderStream extends Component {
 			return;
 		}
 
-		const { streamKey, streamPostsQuery } = props;
+		const { streamKey } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
 			pagesByKey.set( streamKey, pageId + 1 );
 
 			props.trackScrollPage( pageId );
 		}
-		streamPostsQuery.fetchNextPage();
+		props.fetchNextPage();
 	};
 
 	isLoginPromptVisible = () => {
@@ -906,8 +906,8 @@ const withStreamPosts = ( WrappedComponent ) =>
 					streamPostsQuery.isRefetching
 				}
 				error={ streamPostsQuery.error }
-				streamPostsQuery={ streamPostsQuery }
-				recsStreamPostsQuery={ recsStreamPostsQuery }
+				refetch={ refetch }
+				fetchNextPage={ streamPostsQuery.fetchNextPage }
 				pendingCount={ pendingCount }
 				consumePending={ consumePending }
 				selectedPostKey={ selectedPostKey }
