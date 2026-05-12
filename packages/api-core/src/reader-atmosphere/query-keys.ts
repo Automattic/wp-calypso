@@ -6,8 +6,8 @@ export const readerAtmosphereKeys = {
 	connection: ( id: number | null ) => [ ...readerAtmosphereKeys.all, 'connection', id ] as const,
 	timeline: ( connectionId: number ) =>
 		[ ...readerAtmosphereKeys.all, 'timeline', connectionId ] as const,
-	notifications: ( connectionId: number ) =>
-		[ ...readerAtmosphereKeys.all, 'notifications', connectionId ] as const,
+	notifications: ( connectionId: number, filter: string = 'all' ) =>
+		[ ...readerAtmosphereKeys.all, 'notifications', connectionId, filter ] as const,
 	thread: ( uri: string ) => [ ...readerAtmosphereKeys.all, 'thread', uri ] as const,
 	scopedThread: ( connectionId: number, uri: string ) =>
 		[ ...readerAtmosphereKeys.all, 'scoped-thread', connectionId, uri ] as const,
