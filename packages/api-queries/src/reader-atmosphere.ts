@@ -10,6 +10,7 @@ import {
 	deleteRepost,
 	getAtmosphereActorFollowers,
 	getAtmosphereActorFollows,
+	getAtmosphereNotifications,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -52,6 +53,7 @@ import type {
 	AtmosphereEmbed,
 	AtmosphereError,
 	AtmosphereFeedItem,
+	AtmosphereNotificationsPage,
 	AtmosphereScopedProfile,
 	AtmosphereScopedProfilesPage,
 	AtmosphereTagFeedPage,
@@ -161,6 +163,27 @@ export const timelineInfiniteQuery = ( connectionId: number ) =>
 
 export function useTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( timelineInfiniteQuery( connectionId ) );
+}
+
+export const notificationsInfiniteQuery = ( connectionId: number ) =>
+	infiniteQueryOptions<
+		AtmosphereNotificationsPage,
+		AtmosphereError,
+		InfiniteData< AtmosphereNotificationsPage >,
+		QueryKey,
+		string | undefined
+	>( {
+		queryKey: readerAtmosphereKeys.notifications( connectionId ),
+		queryFn: ( { pageParam } ) => getAtmosphereNotifications( { connectionId, cursor: pageParam } ),
+		initialPageParam: undefined,
+		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
+		enabled: connectionId > 0,
+		staleTime: 30_000,
+		gcTime: 5 * 60_000,
+	} );
+
+export function useAtmosphereNotificationsInfiniteQuery( connectionId: number ) {
+	return useInfiniteQuery( notificationsInfiniteQuery( connectionId ) );
 }
 
 export const threadQueryOptions = ( uri: string ) =>

@@ -12,6 +12,7 @@ import {
 	deleteRepost,
 	getAtmosphereActorFollowers,
 	getAtmosphereActorFollows,
+	getAtmosphereNotifications,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -28,6 +29,7 @@ import type {
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereFeedItem,
+	AtmosphereNotificationsPage,
 	AtmosphereScopedProfile,
 	AtmosphereThreadResponse,
 } from '../types';
@@ -1324,5 +1326,55 @@ describe( 'atmosphere fetchers', () => {
 			expect( res.cursor ).toBeNull();
 			expect( res.items ).toEqual( [] );
 		} );
+	} );
+
+	it( 'getAtmosphereNotifications hits the connection-scoped path with cursor + limit', async () => {
+		const page: AtmosphereNotificationsPage = {
+			items: [
+				{
+					id: 'at://did:plc:jane/app.bsky.feed.like/3l',
+					protocol_type: 'like',
+					canonical_type: 'like',
+					actor: {
+						handle: 'jane.bsky.social',
+						display_name: 'Jane',
+						avatar_url: null,
+						profile_uri: 'at://did:plc:jane',
+					},
+					target: {
+						kind: 'post',
+						uri: 'at://did:plc:me/app.bsky.feed.post/3k',
+						excerpt: 'hello',
+					},
+					target_url: 'https://bsky.app/profile/me/post/3k',
+					created_at: '2026-05-11T12:34:56Z',
+					is_read: false,
+				},
+			],
+			next_cursor: 'next',
+			seen_at: '2026-05-10T00:00:00Z',
+		};
+
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( { cursor: 'abc', limit: '30' } )
+			.reply( 200, page );
+
+		const res = await getAtmosphereNotifications( {
+			connectionId: 101,
+			cursor: 'abc',
+			limit: 30,
+		} );
+		expect( res ).toEqual( page );
+	} );
+
+	it( 'getAtmosphereNotifications omits cursor + limit when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
 	} );
 } );

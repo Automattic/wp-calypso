@@ -8,6 +8,7 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereCreateFollowResponse,
+	AtmosphereNotificationsPage,
 	AtmosphereScopedProfile,
 	AtmosphereScopedProfilesPage,
 	AtmosphereTagFeedPage,
@@ -92,6 +93,36 @@ export async function getTimeline( params: GetTimelineParams ): Promise< Atmosph
 			},
 			query
 		) ) as AtmosphereTimelinePage;
+	} catch ( raw ) {
+		throw classifyAtmosphereError( raw );
+	}
+}
+
+export interface GetAtmosphereNotificationsParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+}
+
+export async function getAtmosphereNotifications(
+	params: GetAtmosphereNotificationsParams
+): Promise< AtmosphereNotificationsPage > {
+	const { connectionId, cursor, limit } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( typeof limit === 'number' ) {
+		query.limit = String( limit );
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/atmosphere/connections/${ connectionId }/notifications`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as AtmosphereNotificationsPage;
 	} catch ( raw ) {
 		throw classifyAtmosphereError( raw );
 	}

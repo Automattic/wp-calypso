@@ -65,6 +65,11 @@ describe( 'PostCardCounts', () => {
 		expect( screen.queryByRole( 'link' ) ).toBeNull();
 	} );
 
+	it( 'renders the BlogAboutButton with an accessible label', () => {
+		render( wrap( <PostCardCounts post={ post } /> ) );
+		expect( screen.getByRole( 'button', { name: /Blog about this post/i } ) ).toBeVisible();
+	} );
+
 	it( 'renders the replies count as a link when getThreadUrl returns a string', () => {
 		const getThreadUrl = () => '/reader/atmosphere/7/thread/did:plc:abc/3kabc';
 		render( wrap( <PostCardCounts post={ post } />, getThreadUrl ) );

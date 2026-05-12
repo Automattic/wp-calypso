@@ -46,6 +46,7 @@ import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-col
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarAtmosphere from './reader-sidebar-atmosphere';
+import ReaderSidebarFediverse from './reader-sidebar-fediverse';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarMastodon from './reader-sidebar-mastodon';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
@@ -198,6 +199,8 @@ export class ReaderSidebar extends Component {
 							<ReaderSidebarMastodon path={ path } />
 						</>
 					) }
+
+					{ isEnabled( 'reader/fediverse' ) && <ReaderSidebarFediverse path={ path } /> }
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }

@@ -39,4 +39,18 @@
 	flex: 1;
 	display: flex;
 	flex-direction: column;
+
+	// Empty-state "Already have a domain?" CTA.
+	// On mobile, vertical space is scarce and the same CTA is
+	// surfaced in the top bar (see getTopBarRightElement in
+	// index.tsx) — so the in-body card is hidden below the small
+	// breakpoint. Desktop keeps the card where there's plenty of
+	// room and the top bar stays focused on Back.
+	.domain-search--initial-state__already-own-domain-cta {
+		display: none;
+
+		@include break-small {
+			display: revert;
+		}
+	}
 }

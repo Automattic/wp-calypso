@@ -552,6 +552,20 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [
+			'/reader/fediverse',
+			'/reader/fediverse/:id',
+			'/reader/fediverse/:id/:tab',
+			'/reader/fediverse/:id/profile/:actor',
+			'/reader/fediverse/:id/profile/:actor/followers',
+			'/reader/fediverse/:id/profile/:actor/following',
+		],
+		module: 'calypso/reader/fediverse',
+		group: 'reader',
+		enableLoggedOut: false,
+	},
+	{
+		name: 'reader',
+		paths: [
 			'/reader/subscriptions',
 			'/reader/subscriptions/comments',
 			'/reader/subscriptions/pending',

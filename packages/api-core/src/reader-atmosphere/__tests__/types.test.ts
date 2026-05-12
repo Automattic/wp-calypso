@@ -4,6 +4,11 @@ import type {
 	AtmosphereConnectionsResponse,
 	AtmosphereCreateConnectionResponse,
 	AtmosphereProfileCounts,
+	AtmosphereNotification,
+	AtmosphereNotificationActor,
+	AtmosphereNotificationTarget,
+	AtmosphereNotificationCanonicalType,
+	AtmosphereNotificationsPage,
 } from '../types';
 
 describe( 'reader-atmosphere types compile', () => {
@@ -41,5 +46,44 @@ describe( 'reader-atmosphere types compile', () => {
 		};
 		expect( [ list, created ] ).toHaveLength( 2 );
 		expect( details.counts.followers ).toBe( 0 );
+	} );
+} );
+
+describe( 'AtmosphereNotification types', () => {
+	it( 'compiles a notification envelope', () => {
+		const actor: AtmosphereNotificationActor = {
+			handle: 'jane.bsky.social',
+			display_name: 'Jane',
+			avatar_url: 'https://example/avatar.png',
+			profile_uri: 'at://did:plc:jane',
+		};
+		const target: AtmosphereNotificationTarget = {
+			kind: 'post',
+			uri: 'at://did:plc:me/app.bsky.feed.post/3k',
+			excerpt: 'hello',
+		};
+		const canonical: AtmosphereNotificationCanonicalType = 'like';
+		const item: AtmosphereNotification = {
+			id: 'at://did:plc:jane/app.bsky.feed.like/3l',
+			protocol_type: 'like',
+			canonical_type: canonical,
+			actor,
+			target,
+			target_url: 'https://bsky.app/profile/me/post/3k',
+			created_at: '2026-05-11T12:34:56Z',
+			is_read: false,
+		};
+		const page: AtmosphereNotificationsPage = {
+			items: [ item ],
+			next_cursor: null,
+			seen_at: '2026-05-10T00:00:00Z',
+		};
+		expect( page.items[ 0 ].canonical_type ).toBe( 'like' );
+	} );
+
+	it( 'rejects unknown canonical_type values', () => {
+		// @ts-expect-error - 'bogus' is not in the canonical union.
+		const bad: AtmosphereNotificationCanonicalType = 'bogus';
+		expect( bad ).toBe( 'bogus' );
 	} );
 } );
