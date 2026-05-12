@@ -1068,6 +1068,12 @@ function navigationUrlFor( post, postKey ) {
 		if ( xMeta?.blogId && xMeta?.postId ) {
 			return `/reader/blogs/${ xMeta.blogId }/posts/${ xMeta.postId }`;
 		}
+		// No `xpost_origin` IDs (P2 xposts without the metadata pair) — mirror
+		// `showFullXPost`'s `window.open( xMeta.postURL )` fallback so the
+		// visible `<a href>` matches where the click actually lands.
+		if ( xMeta?.postURL ) {
+			return xMeta.postURL;
+		}
 	}
 	if ( postKey.feedId ) {
 		return `/reader/feeds/${ postKey.feedId }/posts/${ postKey.postId }`;
