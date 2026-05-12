@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { wpcom } from '../../wpcom-fetcher';
 import {
 	createConnection,
 	createFollow,
@@ -9,6 +10,9 @@ import {
 	deleteLike,
 	deletePost,
 	deleteRepost,
+	getAtmosphereActorFollowers,
+	getAtmosphereActorFollows,
+	getAtmosphereNotifications,
 	getAtmosphereTagFeed,
 	getAuthorFeed,
 	getAuthorProfile,
@@ -19,11 +23,13 @@ import {
 	getScopedThread,
 	getThread,
 	getTimeline,
+	uploadBlob,
 } from '../fetchers';
 import type {
 	AtmosphereAuthorFeedPage,
 	AtmosphereAuthorProfile,
 	AtmosphereFeedItem,
+	AtmosphereNotificationsPage,
 	AtmosphereScopedProfile,
 	AtmosphereThreadResponse,
 } from '../types';
@@ -1114,6 +1120,99 @@ describe( 'atmosphere fetchers', () => {
 		} );
 	} );
 
+	describe( 'uploadBlob', () => {
+		// Multipart uploads can't be exercised end-to-end through nock here:
+		// the wpcom transport hands its `formData` to superagent's Node
+		// adapter, which streams via `form-data` and rejects jsdom Blob/File
+		// instances with `source.on is not a function`. Spying on
+		// `wpcom.req.post` keeps the fetcher contract under test (path,
+		// namespace, formData shape, error classification) without taking on
+		// the transport's stream wiring.
+		afterEach( () => jest.restoreAllMocks() );
+
+		it( 'POSTs to /connections/{id}/blobs with a multipart file field', async () => {
+			const file = new Blob( [ new Uint8Array( [ 0xff, 0xd8, 0xff ] ) ], { type: 'image/jpeg' } );
+			const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+				blob: {
+					$type: 'blob',
+					ref: { $link: 'bafkrei' + 'a'.repeat( 50 ) },
+					mimeType: 'image/jpeg',
+					size: 3,
+				},
+			} );
+
+			const result = await uploadBlob( { connectionId: 42, file } );
+
+			expect( post ).toHaveBeenCalledTimes( 1 );
+			const callArg = post.mock.calls[ 0 ][ 0 ];
+			expect( callArg.path ).toBe( '/reader/atmosphere/connections/42/blobs' );
+			expect( callArg.apiNamespace ).toBe( 'wpcom/v2' );
+			expect( callArg.formData ).toHaveLength( 1 );
+			expect( callArg.formData[ 0 ][ 0 ] ).toBe( 'file' );
+			expect( result.blob.$type ).toBe( 'blob' );
+			expect( result.blob.mimeType ).toBe( 'image/jpeg' );
+			expect( result.blob.size ).toBe( 3 );
+		} );
+
+		it( 'classifies a 400 atmosphere_bad_request into a bad_request kind', async () => {
+			// The slice-8a backend collapses every /blobs rejection
+			// (oversize, unsupported MIME, undecodable bytes, …) into
+			// `atmosphere_bad_request` rather than a specific subtype. The
+			// classifier mirrors that shape.
+			jest.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
+				code: 'atmosphere_bad_request',
+				message: 'Image is too large.',
+				statusCode: 400,
+			} );
+
+			const file = new Blob( [ 'x' ], { type: 'image/jpeg' } );
+			await expect( uploadBlob( { connectionId: 42, file } ) ).rejects.toMatchObject( {
+				kind: 'bad_request',
+				message: 'Image is too large.',
+			} );
+		} );
+	} );
+
+	describe( 'createPost — media forwarding', () => {
+		it( 'forwards optional media body when provided', async () => {
+			let capturedBody: any = null;
+			nock( BASE )
+				.post( '/wpcom/v2/reader/atmosphere/connections/9/posts', ( body ) => {
+					capturedBody = body;
+					return true;
+				} )
+				.reply( 200, {
+					post: {
+						uri: 'at://did:plc:x/app.bsky.feed.post/abc',
+						cid: 'bafkreiabc',
+						rkey: 'abc',
+					},
+				} );
+
+			await createPost( {
+				connectionId: 9,
+				text: '',
+				media: {
+					images: [
+						{
+							blob: {
+								$type: 'blob',
+								ref: { $link: 'bafkrei' + 'b'.repeat( 50 ) },
+								mimeType: 'image/jpeg',
+								size: 100,
+							},
+							alt: 'a sunset',
+							aspectRatio: { width: 2000, height: 1500 },
+						},
+					],
+				},
+			} );
+
+			expect( capturedBody.text ).toBe( '' );
+			expect( capturedBody.media.images[ 0 ].alt ).toBe( 'a sunset' );
+		} );
+	} );
+
 	describe( 'deletePost', () => {
 		const connectionId = 99;
 		const rkey = '3kabc';
@@ -1140,5 +1239,142 @@ describe( 'atmosphere fetchers', () => {
 
 			await expect( deletePost( { connectionId, rkey } ) ).rejects.toMatchObject( { kind } );
 		} );
+	} );
+
+	describe( 'getAtmosphereActorFollowers', () => {
+		const samplePage = {
+			items: [
+				{
+					did: 'did:plc:alice',
+					handle: 'alice.bsky.social',
+					display_name: 'Alice',
+					description: 'hi',
+					avatar: 'https://cdn.test/alice.jpg',
+					viewer: {
+						following: 'at://did:plc:caller/app.bsky.graph.follow/abc1234567890',
+						following_rkey: 'abc1234567890',
+						followed_by: false,
+					},
+				},
+			],
+			cursor: 'next',
+		};
+
+		it( 'GETs the followers path and returns the typed page', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/followers' )
+				.query( { limit: 50 } )
+				.reply( 200, samplePage );
+
+			const res = await getAtmosphereActorFollowers( {
+				connectionId: 42,
+				actor: 'alice.bsky.social',
+			} );
+			expect( res.cursor ).toBe( 'next' );
+			expect( res.items ).toHaveLength( 1 );
+			expect( res.items[ 0 ].handle ).toBe( 'alice.bsky.social' );
+		} );
+
+		it( 'forwards cursor and limit query params', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/followers' )
+				.query( { cursor: 'abc', limit: 25 } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAtmosphereActorFollowers( {
+				connectionId: 42,
+				actor: 'alice.bsky.social',
+				cursor: 'abc',
+				limit: 25,
+			} );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'percent-encodes the actor', async () => {
+			const scope = nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/did%3Aplc%3Aabc/followers' )
+				.query( { limit: 50 } )
+				.reply( 200, { items: [], cursor: null } );
+
+			await getAtmosphereActorFollowers( { connectionId: 42, actor: 'did:plc:abc' } );
+			expect( scope.isDone() ).toBe( true );
+		} );
+
+		it( 'classifies upstream auth failure', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/followers' )
+				.query( true )
+				.reply( 401, { error: 'atmosphere_auth_required' } );
+
+			await expect(
+				getAtmosphereActorFollowers( { connectionId: 42, actor: 'alice.bsky.social' } )
+			).rejects.toMatchObject( { kind: 'auth_required' } );
+		} );
+	} );
+
+	describe( 'getAtmosphereActorFollows', () => {
+		it( 'GETs the follows path and returns the typed page', async () => {
+			nock( BASE )
+				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social/follows' )
+				.query( { limit: 50 } )
+				.reply( 200, { items: [], cursor: null } );
+
+			const res = await getAtmosphereActorFollows( {
+				connectionId: 42,
+				actor: 'alice.bsky.social',
+			} );
+			expect( res.cursor ).toBeNull();
+			expect( res.items ).toEqual( [] );
+		} );
+	} );
+
+	it( 'getAtmosphereNotifications hits the connection-scoped path with cursor + limit', async () => {
+		const page: AtmosphereNotificationsPage = {
+			items: [
+				{
+					id: 'at://did:plc:jane/app.bsky.feed.like/3l',
+					protocol_type: 'like',
+					canonical_type: 'like',
+					actor: {
+						handle: 'jane.bsky.social',
+						display_name: 'Jane',
+						avatar_url: null,
+						profile_uri: 'at://did:plc:jane',
+					},
+					target: {
+						kind: 'post',
+						uri: 'at://did:plc:me/app.bsky.feed.post/3k',
+						excerpt: 'hello',
+					},
+					target_url: 'https://bsky.app/profile/me/post/3k',
+					created_at: '2026-05-11T12:34:56Z',
+					is_read: false,
+				},
+			],
+			next_cursor: 'next',
+			seen_at: '2026-05-10T00:00:00Z',
+		};
+
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( { cursor: 'abc', limit: '30' } )
+			.reply( 200, page );
+
+		const res = await getAtmosphereNotifications( {
+			connectionId: 101,
+			cursor: 'abc',
+			limit: 30,
+		} );
+		expect( res ).toEqual( page );
+	} );
+
+	it( 'getAtmosphereNotifications omits cursor + limit when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
 	} );
 } );

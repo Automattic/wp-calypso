@@ -1,8 +1,10 @@
 import { filter, forEach, partition, get } from 'lodash';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { keyForPost } from 'calypso/reader/post-key';
+import { pageViewForPost } from 'calypso/reader/stats';
 import { receiveLikes } from 'calypso/state/posts/likes/actions';
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
 import { runFastRules, runSlowRules } from './normalization-rules';
@@ -10,17 +12,8 @@ import { hasPostBeenSeen } from './selectors';
 
 import 'calypso/state/reader/init';
 
-// TODO: make underlying lib/analytics/tracks and reader/stats capable of existing in test code without mocks
-// OR switch to analytics middleware
-let tracks = { recordEvent: () => {} };
-let pageViewForPost = () => {};
-if ( process.env.NODE_ENV !== 'test' ) {
-	pageViewForPost = require( 'calypso/reader/stats' ).pageViewForPost;
-	tracks = require( 'calypso/lib/analytics/tracks' );
-}
-
 function trackRailcarRender( post ) {
-	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
+	recordTracksEvent( 'calypso_traintracks_render', post.railcar );
 }
 
 // helper that hides promise rejections so they return successfully with null instead of rejecting

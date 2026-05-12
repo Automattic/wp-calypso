@@ -9,10 +9,12 @@
  * evaluation time. This avoids a race if AM imports this module
  * before the IIFE has executed.
  */
-const lazy = ( key ) => ( ...args ) => {
-	const fn = window.__JetpackAIProvider?.[ key ];
-	return typeof fn === 'function' ? fn( ...args ) : undefined;
-};
+const lazy =
+	( key ) =>
+	( ...args ) => {
+		const fn = window.__JetpackAIProvider?.[ key ];
+		return typeof fn === 'function' ? fn( ...args ) : undefined;
+	};
 
 export const getChatComponent = lazy( 'getChatComponent' );
 export const getEmptyViewSuggestions = lazy( 'getEmptyViewSuggestions' );
@@ -29,6 +31,9 @@ export const contextProvider = new Proxy(
 	{},
 	{ get: ( _, prop ) => window.__JetpackAIProvider?.contextProvider?.[ prop ] }
 );
+// `capabilities` is a flat flag object (e.g. `{ supportsSplitScreen: true }`).
+// Same lazy-proxy pattern so AM's `loadExternalProviders` sees it even if
+// the IIFE hasn't yet assigned it when this ESM is first evaluated.
 export const capabilities = new Proxy(
 	{},
 	{ get: ( _, prop ) => window.__JetpackAIProvider?.capabilities?.[ prop ] }

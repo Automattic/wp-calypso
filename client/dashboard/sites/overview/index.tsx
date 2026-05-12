@@ -14,6 +14,7 @@ import clsx from 'clsx';
 import { useRef } from 'react';
 import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
+import { DarkModeAnnouncement } from '../../components/dark-mode-announcement';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
 import OptInSurvey, { useShouldShowOptInSurvey } from '../../components/opt-in-survey';
 import { PageHeader } from '../../components/page-header';
@@ -208,6 +209,10 @@ function SiteOverview( {
 
 		if ( ! isDashboardBackport() && shouldShowOptInSurvey ) {
 			return <OptInSurvey />;
+		}
+
+		if ( ! isDashboardBackport() ) {
+			return <DarkModeAnnouncement tracksContext="site-overview" />;
 		}
 
 		return null;

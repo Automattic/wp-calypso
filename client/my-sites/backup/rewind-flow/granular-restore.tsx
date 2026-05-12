@@ -284,8 +284,6 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 
 	const { restoreId } = rewindState.rewind || {};
 
-	const disableRestore = ! isAtomic && areCredentialsInvalid;
-
 	const goBackUrl = backupContentsPath( siteSlug as string, rewindId );
 
 	const showAllType = ( type: FileBrowserNodeType ): boolean => {
@@ -495,12 +493,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 					<Button className="rewind-flow__back-button" href={ goBackUrl } onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					<Button
-						className="rewind-flow__primary-button"
-						primary
-						onClick={ onConfirm }
-						disabled={ disableRestore }
-					>
+					<Button className="rewind-flow__primary-button" primary onClick={ onConfirm }>
 						{ translate( 'Restore now' ) }
 					</Button>
 				</div>

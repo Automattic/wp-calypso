@@ -1,5 +1,8 @@
-import { mapMastodonFeedItemToSocialPost } from '../mastodon';
-import type { MastodonFeedItem } from '@automattic/api-core';
+import {
+	mapMastodonAccountToSocialProfileCardProps,
+	mapMastodonFeedItemToSocialPost,
+} from '../mastodon';
+import type { MastodonAuthorProfile, MastodonFeedItem } from '@automattic/api-core';
 
 const FIXTURE: MastodonFeedItem = {
 	id: '111111111111111111',
@@ -130,12 +133,12 @@ describe( 'mapMastodonFeedItemToSocialPost', () => {
 		expect( post.viewer?.like ).toBeNull();
 	} );
 
-	it( 'sets viewer.like to "favourited" when viewer.favourited is true', () => {
+	it( 'sets viewer.like to "favorited" when viewer.favourited is true', () => {
 		const post = mapMastodonFeedItemToSocialPost(
 			{ ...FIXTURE, viewer: { favourited: true, reblogged: false } },
 			OPTS
 		);
-		expect( post.viewer?.like ).toBe( 'favourited' );
+		expect( post.viewer?.like ).toBe( 'favorited' );
 		expect( post.viewer?.repost ).toBeNull();
 	} );
 
@@ -248,12 +251,12 @@ describe( 'mapMastodonFeedItemToSocialPost', () => {
 	} );
 
 	describe( 'viewer translation', () => {
-		it( 'sets viewer.like to "favourited" when viewer.favourited is true', () => {
+		it( 'sets viewer.like to "favorited" when viewer.favourited is true', () => {
 			const post = mapMastodonFeedItemToSocialPost(
 				{ ...FIXTURE, viewer: { favourited: true, reblogged: false } },
 				OPTS
 			);
-			expect( post.viewer?.like ).toBe( 'favourited' );
+			expect( post.viewer?.like ).toBe( 'favorited' );
 		} );
 
 		it( 'sets viewer.like to null when viewer.favourited is false', () => {
@@ -285,5 +288,49 @@ describe( 'mapMastodonFeedItemToSocialPost', () => {
 			const post = mapMastodonFeedItemToSocialPost( FIXTURE, OPTS );
 			expect( post.viewer ).toBeUndefined();
 		} );
+	} );
+} );
+
+describe( 'mapMastodonAccountToSocialProfileCardProps', () => {
+	const PROFILE: MastodonAuthorProfile = {
+		id: '7',
+		acct: 'alice',
+		display_name: 'Alice',
+		avatar: 'https://cdn/a.jpg',
+		header: 'https://cdn/h.jpg',
+		note: '<p>Hi</p>',
+		counts: { followers: 1, following: 2, posts: 3 },
+		locked: false,
+		raw: {},
+	};
+
+	it( 'derives the local-account display-name link from the connection instance', () => {
+		const props = mapMastodonAccountToSocialProfileCardProps( PROFILE, {
+			instance: 'mastodon.social',
+		} );
+		expect( props.displayNameLink ).toBe( 'https://mastodon.social/@alice' );
+	} );
+
+	it( 'derives the remote-account display-name link from the qualified acct', () => {
+		const props = mapMastodonAccountToSocialProfileCardProps(
+			{ ...PROFILE, acct: 'carol@infosec.exchange' },
+			{ instance: 'mastodon.social' }
+		);
+		expect( props.displayNameLink ).toBe( 'https://infosec.exchange/@carol' );
+	} );
+
+	it.each( [
+		[ 'empty acct', '' ],
+		[ 'trailing-@ acct', 'alice@' ],
+		[ 'leading-@ acct', '@alice' ],
+		[ 'double-@ acct (userinfo trick)', 'alice@@two.example' ],
+		[ 'single-label remote host', 'alice@localhost' ],
+		[ 'remote host with userinfo separator', 'alice@evil@host.example' ],
+	] )( 'returns undefined displayNameLink for malformed %s', ( _label, acct ) => {
+		const props = mapMastodonAccountToSocialProfileCardProps(
+			{ ...PROFILE, acct },
+			{ instance: 'mastodon.social' }
+		);
+		expect( props.displayNameLink ).toBeUndefined();
 	} );
 } );

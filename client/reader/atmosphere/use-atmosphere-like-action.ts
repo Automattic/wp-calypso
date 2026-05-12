@@ -2,6 +2,7 @@ import { PENDING_LIKE_URI } from '@automattic/api-core';
 import { useCreateLikeMutation, useDeleteLikeMutation } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
+import { createElement } from 'react';
 import { useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { rkeyFromUri } from 'calypso/reader/social/utils/rkey-from-uri';
@@ -35,6 +36,7 @@ function errorMessageForLike(
 		case 'quote_disabled':
 		case 'target_unavailable':
 		case 'unknown':
+		case 'blob_decode_failed':
 			return translate( 'Could not save your like. Please try again.' );
 		default:
 			// Defensive fallback if AtmosphereError widens before this
@@ -163,11 +165,18 @@ export function makeUseAtmosphereLikeAction( connectionId: number ): UseLikeActi
 				textOnly: true,
 			} );
 
+		const statRowText = ( count: number ) =>
+			translate( '{{strong}}%(count)s{{/strong}} like', '{{strong}}%(count)s{{/strong}} likes', {
+				count,
+				args: { count: formatNumber( count ) },
+				components: { strong: createElement( 'strong' ) },
+			} );
+
 		return {
 			supported: true,
 			isLiked,
 			isPending,
-			label: { accessibleLabel },
+			label: { accessibleLabel, statRowText },
 			like,
 			unlike,
 		};

@@ -58,7 +58,7 @@ export function createEpsMethod( {
 		activeContent: <EpsFields state={ state } />,
 		submitButton: <EpsPayButton state={ state } submitButtonContent={ submitButtonContent } />,
 		inactiveContent: <EpsSummary state={ state } />,
-		getAriaLabel: ( __ ) => __( 'EPS e-Pay' ),
+		getAriaLabel: ( __ ) => __( 'EPS' ),
 	};
 }
 
@@ -186,7 +186,7 @@ function isFormValid( state: EpsPaymentMethodState ): boolean {
 }
 
 function EpsLogoImg( { className }: { className?: string } ) {
-	return <img src="/calypso/images/upgrades/eps.svg" alt="EPS e-Pay" className={ className } />;
+	return <img src="/calypso/images/upgrades/eps.svg" alt="EPS" className={ className } />;
 }
 
 const EpsLogo = styled( EpsLogoImg )`
@@ -197,7 +197,7 @@ function EpsLabel() {
 	const { __ } = useI18n();
 	return (
 		<Fragment>
-			<span>{ __( 'EPS e-Pay' ) }</span>
+			<span>{ __( 'EPS' ) }</span>
 			<PaymentMethodLogos className="eps__logo payment-logos">
 				<EpsLogo />
 			</PaymentMethodLogos>

@@ -59,22 +59,28 @@ function makeQueryClient() {
 
 function renderRepostButton(
 	post = makePost(),
-	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
+	{
+		onClick = jest.fn(),
+		onQuoteClick,
+		hideCount,
+	}: { onClick?: jest.Mock; onQuoteClick?: jest.Mock; hideCount?: boolean } = {}
 ) {
 	const useRepostAction = makeUseAtmosphereRepostAction( 42 );
 	const socialPost = mapAtmosphereFeedItemToSocialPost( post );
 	return {
 		onClick,
+		onQuoteClick,
 		...renderWithProvider(
 			<SocialAnalyticsProvider
 				value={ {
 					source: 'atmosphere',
 					connectionId: 42,
 					onClick,
+					onQuoteClick,
 				} }
 			>
 				<RepostProvider value={ useRepostAction }>
-					<RepostButton post={ socialPost } />
+					<RepostButton post={ socialPost } hideCount={ hideCount } />
 				</RepostProvider>
 			</SocialAnalyticsProvider>,
 			{ queryClient: makeQueryClient() }
@@ -86,6 +92,12 @@ describe( '<RepostButton>', () => {
 	afterEach( () => {
 		nock.cleanAll();
 		jest.restoreAllMocks();
+	} );
+
+	it( 'omits the visible count when hideCount is true but keeps the aria-label count', () => {
+		renderRepostButton( makePost(), { hideCount: true } );
+		const button = screen.getByRole( 'button', { name: /repost, 4 reposts/i } );
+		expect( button ).not.toHaveTextContent( '4' );
 	} );
 
 	it( 'renders a menu trigger when not reposted', () => {
@@ -186,6 +198,31 @@ describe( '<RepostButton>', () => {
 			'calypso_reader_atmosphere_unrepost_rkey_missing',
 			expect.objectContaining( { connection_id: 42, post_uri: POST_URI } )
 		);
+	} );
+
+	it( 'sums reposts + quotes in the visible count and the aria-label', () => {
+		renderRepostButton( makePost( { counts: { replies: 0, reposts: 4, likes: 0, quotes: 3 } } ) );
+		const button = screen.getByRole( 'button', { name: /repost, 7 reposts/i } );
+		expect( button ).toHaveTextContent( '7' );
+	} );
+
+	it( 'static render branch (no RepostProvider) shows the summed count', () => {
+		const socialPost = mapAtmosphereFeedItemToSocialPost(
+			makePost( { counts: { replies: 0, reposts: 4, likes: 0, quotes: 3 } } )
+		);
+		// Render without `<RepostProvider>` so `action.supported === false` and
+		// the static fallback `<span class="...--static">` branch renders.
+		renderWithProvider(
+			<SocialAnalyticsProvider
+				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+			>
+				<RepostButton post={ socialPost } />
+			</SocialAnalyticsProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+		// Static fallback renders a <span>, not a button — no role: button query.
+		expect( screen.queryByRole( 'button' ) ).toBeNull();
+		expect( screen.getByText( '7' ) ).toBeVisible();
 	} );
 
 	it( 'renders the singular aria-label when reposts === 1', () => {
@@ -296,19 +333,46 @@ describe( '<RepostButton>', () => {
 		expect( errorNoticeSpy ).toHaveBeenCalledWith( 'Reconnect your Bluesky account to repost.' );
 	} );
 
-	// The dropdown's "Quote post" menu item is disabled when the adapter
-	// reports `canQuote === false`. The atmosphere adapter sets `canQuote:
-	// false` until slice 7d wires composer-driven quoting, so this is the
-	// only case the cm-660 design covers today. The previously passing
-	// "enables Quote post via onQuote prop" test was replaced when the
-	// RepostButton signature lost its `onQuote` prop in favour of the
-	// adapter contract.
-	it( 'leaves "Quote post" disabled when the adapter reports canQuote=false', async () => {
+	it( 'leaves "Quote post" disabled when no onQuoteClick is wired in the analytics context', async () => {
 		const user = userEvent.setup();
 		renderRepostButton();
 		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
 		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
 		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	it( 'leaves "Quote post" disabled when the post is missing a cid', async () => {
+		const onQuoteClick = jest.fn();
+		const user = userEvent.setup();
+		const { onClick } = renderRepostButton( makePost( { cid: '' } ), { onQuoteClick } );
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: /quote post/i } );
+		expect( item ).toHaveAttribute( 'aria-disabled', 'true' );
+		await user.click( item );
+		expect( onQuoteClick ).not.toHaveBeenCalled();
+		expect( onClick ).not.toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_quote_clicked',
+			expect.anything()
+		);
+	} );
+
+	it( 'enables "Quote post" and invokes onQuoteClick when the analytics context wires it', async () => {
+		const onQuoteClick = jest.fn();
+		const user = userEvent.setup();
+		const { onClick } = renderRepostButton( makePost(), { onQuoteClick } );
+		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
+		const item = await screen.findByRole( 'menuitem', { name: 'Quote post' } );
+		expect( item ).not.toHaveAttribute( 'aria-disabled', 'true' );
+
+		await user.click( item );
+		expect( onQuoteClick ).toHaveBeenCalledTimes( 1 );
+		expect( onQuoteClick.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( { uri: POST_URI, cid: POST_CID } )
+		);
+		expect( onClick ).toHaveBeenCalledWith(
+			'calypso_reader_atmosphere_quote_clicked',
+			expect.objectContaining( { connection_id: 42, post_uri: POST_URI } )
+		);
 	} );
 
 	it( 'click does not bubble to a parent listener', async () => {

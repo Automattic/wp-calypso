@@ -231,9 +231,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const loading = rewindState.state === 'uninitialized';
 	const { restoreId } = rewindState.rewind || {};
 
-	const disableRestore =
-		( ! isAtomic && areCredentialsInvalid ) ||
-		Object.values( rewindConfig ).every( ( setting ) => ! setting );
+	const disableRestore = Object.values( rewindConfig ).every( ( setting ) => ! setting );
 
 	const selectedDate = moment( rewindId, 'X' );
 	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;

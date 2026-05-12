@@ -10,6 +10,7 @@ import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getSessionStorageKey } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
+import { getExternalContextEntries } from './external-context';
 import { isReaderChatAgent } from './is-reader-chat-agent';
 import type { ContextEntry, ToolProvider, ContextProvider } from '../extension-types';
 import type { UseAgentChatConfig, Ability as AgenticAbility } from '@automattic/agenttic-client';
@@ -86,6 +87,11 @@ async function canAccessZendeskForAgent( agentId?: string ): Promise< boolean > 
 	return canConnectToZendesk();
 }
 
+function normalizeSiteId( siteId: unknown ): number | undefined {
+	const numericSiteId = Number( siteId );
+	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
+}
+
 /**
  * Create a context provider that resolves context entries.
  */
@@ -98,14 +104,26 @@ async function createWrappedContextProvider(
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
+			const resolvedSiteId = normalizeSiteId( siteId );
 			const pluginContext = contextProvider.getClientContext();
 
-			const resolvedContext = pluginContext.contextEntries?.length
+			let resolvedContext = pluginContext.contextEntries?.length
 				? {
 						...pluginContext,
 						contextEntries: resolveContextEntries( pluginContext.contextEntries ),
 				  }
 				: pluginContext;
+
+			const externalEntries = getExternalContextEntries();
+			if ( externalEntries.length ) {
+				resolvedContext = {
+					...resolvedContext,
+					contextEntries: [
+						...( resolvedContext.contextEntries || [] ),
+						...resolveContextEntries( externalEntries ),
+					],
+				};
+			}
 
 			return {
 				...resolvedContext,
@@ -113,7 +131,8 @@ async function createWrappedContextProvider(
 				currentScreen: resolvedContext.currentScreen || {
 					url: window.location.href,
 				},
-				...( siteId && ! resolvedContext.selectedSiteId && { selectedSiteId: siteId } ),
+				...( resolvedSiteId &&
+					! resolvedContext.selectedSiteId && { selectedSiteId: resolvedSiteId } ),
 				constructorArguments: {
 					...( resolvedContext.constructorArguments || {} ),
 					...( version && { version } ),
@@ -145,6 +164,12 @@ async function createDefaultContextProvider(
 				? ( window as unknown as { agentsManagerData?: Record< string, unknown > } )
 						.agentsManagerData ?? {}
 				: {};
+			const resolvedSiteId = normalizeSiteId( siteId ?? hostData.siteId );
+
+			const externalEntries = getExternalContextEntries();
+			const contextEntries = externalEntries.length
+				? resolveContextEntries( externalEntries )
+				: undefined;
 
 			return {
 				url: window.location.href,
@@ -154,10 +179,11 @@ async function createDefaultContextProvider(
 				environment,
 				// Match Odie's context shape so the server can read current_screen.url
 				currentScreen: { url: window.location.href },
-				...( siteId && { selectedSiteId: siteId } ),
+				...( resolvedSiteId && { selectedSiteId: resolvedSiteId } ),
 				...( hostData.currentPost ? { currentPost: hostData.currentPost } : {} ),
 				...( hostData.siteName ? { siteName: hostData.siteName } : {} ),
 				...( hostData.siteUrl ? { siteUrl: hostData.siteUrl } : {} ),
+				...( contextEntries ? { contextEntries } : {} ),
 				// TODO: Remove once agenttic-client supports top-level constructorArguments
 				...( version && { constructorArguments: { version } } ),
 			};

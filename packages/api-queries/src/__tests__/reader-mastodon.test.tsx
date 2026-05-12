@@ -7,19 +7,32 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 
 import {
 	readerMastodonKeys,
+	type MastodonAuthorProfile,
 	type MastodonFeedItem,
 	type MastodonThreadResponse,
+	type MastodonTimelinePage,
 } from '@automattic/api-core';
-import { QueryClient, QueryClientProvider, type InfiniteData } from '@tanstack/react-query';
+import {
+	QueryClient,
+	QueryClientProvider,
+	useMutation,
+	type InfiniteData,
+} from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	createMastodonPostMutation,
+	followMastodonActorMutation,
+	mastodonAuthStatusQueryOptions,
+	unfollowMastodonActorMutation,
+	uploadMastodonMediaMutation,
 	useAuthorizeMastodonConnectionMutation,
 	useCompleteMastodonConnectionMutation,
 	useCreateMastodonLikeMutation,
 	useCreateMastodonRepostMutation,
 	useDeleteMastodonLikeMutation,
 	useDeleteMastodonRepostMutation,
+	useMastodonAuthStatusQuery,
 	useMastodonAuthorFeedInfiniteQuery,
 	useMastodonAuthorProfileQuery,
 	useMastodonConnectionQuery,
@@ -371,8 +384,6 @@ function makeMastodonFeedItem( overrides: Partial< MastodonFeedItem > = {} ): Ma
 	};
 }
 
-type MastodonTimelinePage = { items: MastodonFeedItem[]; cursor: string | null };
-
 function seedTimeline(
 	client: QueryClient,
 	pages: MastodonTimelinePage[],
@@ -397,6 +408,314 @@ function getThreadCache( client: QueryClient ) {
 		readerMastodonKeys.thread( CONNECTION_ID, TARGET_ID )
 	);
 }
+
+function seedTimelineWithParent(
+	client: QueryClient,
+	connectionId: number,
+	parentId: string,
+	parentReplies: number
+): InfiniteData< MastodonTimelinePage > {
+	const data: InfiniteData< MastodonTimelinePage > = {
+		pages: [
+			{
+				items: [
+					makeMastodonFeedItem( {
+						id: parentId,
+						counts: { replies: parentReplies, boosts: 0, favourites: 0 },
+					} ),
+				],
+				cursor: null,
+			},
+		],
+		pageParams: [ undefined ],
+	};
+	client.setQueryData( readerMastodonKeys.timeline( connectionId ), data );
+	return data;
+}
+
+describe( 'createMastodonPostMutation', () => {
+	const connectionId = 42;
+	const parentId = '108020';
+
+	afterEach( () => nock.cleanAll() );
+
+	it( 'POSTs status to /reader/mastodon/connections/:id/statuses (standalone)', async () => {
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses`, {
+				status: 'hello world',
+			} )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: null,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( { connectionId, status: 'hello world' } );
+		} );
+
+		expect( result.current.data ).toEqual( {
+			id: '999',
+			url: 'https://mastodon.social/@me/999',
+			in_reply_to_id: null,
+		} );
+	} );
+
+	it( 'POSTs status + in_reply_to_id when replying', async () => {
+		const scope = nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses`, {
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: parentId,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( {
+				connectionId,
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} );
+		} );
+
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'optimistically bumps counts.replies on the parent post in the timeline cache', async () => {
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		seedTimelineWithParent( client, connectionId, parentId, 3 );
+
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.delay( 50 )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: parentId,
+			} );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		let promise: Promise< unknown > = Promise.resolve();
+		await act( async () => {
+			promise = result.current.mutateAsync( {
+				connectionId,
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} );
+			await Promise.resolve();
+		} );
+
+		await waitFor( () => {
+			const timeline = client.getQueryData< InfiniteData< MastodonTimelinePage > >(
+				readerMastodonKeys.timeline( connectionId )
+			);
+			expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 4 );
+		} );
+
+		await promise;
+	} );
+
+	it( 'also bumps counts.replies on the parent inside the thread cache', async () => {
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const initial: MastodonThreadResponse = {
+			thread: {
+				type: 'post',
+				post: makeMastodonFeedItem( {
+					id: parentId,
+					counts: { replies: 1, boosts: 0, favourites: 0 },
+				} ),
+				parent: null,
+				replies: [],
+			},
+		};
+		client.setQueryData( readerMastodonKeys.thread( connectionId, parentId ), initial );
+
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.delay( 50 )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: parentId,
+			} );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		let promise: Promise< unknown > = Promise.resolve();
+		await act( async () => {
+			promise = result.current.mutateAsync( {
+				connectionId,
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} );
+			await Promise.resolve();
+		} );
+
+		await waitFor( () => {
+			const thread = client.getQueryData< MastodonThreadResponse >(
+				readerMastodonKeys.thread( connectionId, parentId )
+			);
+			if ( thread?.thread.type !== 'post' ) {
+				throw new Error( 'expected thread root to be a post node' );
+			}
+			expect( thread.thread.post.counts.replies ).toBe( 2 );
+		} );
+
+		await promise;
+	} );
+
+	it( 'restores the parent counts snapshot on error', async () => {
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		seedTimelineWithParent( client, connectionId, parentId, 3 );
+
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.reply( 500, { error: 'mastodon_upstream_unavailable' } );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await expect(
+				result.current.mutateAsync( {
+					connectionId,
+					status: 'a reply',
+					in_reply_to_id: parentId,
+				} )
+			).rejects.toBeTruthy();
+		} );
+
+		const timeline = client.getQueryData< InfiniteData< MastodonTimelinePage > >(
+			readerMastodonKeys.timeline( connectionId )
+		);
+		expect( timeline?.pages[ 0 ].items[ 0 ].counts.replies ).toBe( 3 );
+	} );
+
+	it( 'invalidates the timeline query on success', async () => {
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: null,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( { connectionId, status: 'standalone' } );
+		} );
+
+		expect(
+			invalidateSpy.mock.calls.some( ( [ filters ] ) => {
+				const queryKey = ( filters as { queryKey?: readonly unknown[] } )?.queryKey;
+				return (
+					Array.isArray( queryKey ) &&
+					JSON.stringify( queryKey ) ===
+						JSON.stringify( readerMastodonKeys.timeline( connectionId ) )
+				);
+			} )
+		).toBe( true );
+	} );
+
+	it( 'also invalidates the parent thread query on reply success', async () => {
+		// Without this invalidate, the optimistic counts.replies bump would
+		// stick but the newly-created reply would not appear in the thread
+		// view until the 30s staleTime elapses — replying from a thread
+		// surface looks broken to the user.
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: parentId,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( {
+				connectionId,
+				status: 'a reply',
+				in_reply_to_id: parentId,
+			} );
+		} );
+
+		expect(
+			invalidateSpy.mock.calls.some( ( [ filters ] ) => {
+				const queryKey = ( filters as { queryKey?: readonly unknown[] } )?.queryKey;
+				return (
+					Array.isArray( queryKey ) &&
+					JSON.stringify( queryKey ) ===
+						JSON.stringify( readerMastodonKeys.thread( connectionId, parentId ) )
+				);
+			} )
+		).toBe( true );
+	} );
+
+	it( 'does not invalidate any thread query on standalone success', async () => {
+		nock( BASE )
+			.post( `/wpcom/v2/reader/mastodon/connections/${ connectionId }/statuses` )
+			.reply( 200, {
+				id: '999',
+				url: 'https://mastodon.social/@me/999',
+				in_reply_to_id: null,
+			} );
+
+		const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+		const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+		const { result } = renderHook( () => useMutation( createMastodonPostMutation( client ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await act( async () => {
+			await result.current.mutateAsync( { connectionId, status: 'standalone' } );
+		} );
+
+		const threadKeyRoot = JSON.stringify(
+			readerMastodonKeys.thread( connectionId, '' ).slice( 0, -1 )
+		);
+		expect(
+			invalidateSpy.mock.calls.some( ( [ filters ] ) => {
+				const queryKey = ( filters as { queryKey?: readonly unknown[] } )?.queryKey;
+				if ( ! Array.isArray( queryKey ) ) {
+					return false;
+				}
+				return JSON.stringify( queryKey.slice( 0, -1 ) ) === threadKeyRoot;
+			} )
+		).toBe( false );
+	} );
+} );
 
 describe( 'useCreateMastodonLikeMutation / useDeleteMastodonLikeMutation', () => {
 	afterEach( () => nock.cleanAll() );
@@ -1088,5 +1407,475 @@ describe( 'useCreateMastodonRepostMutation / useDeleteMastodonRepostMutation', (
 			expect( settled?.pages[ 0 ].items[ 1 ].viewer?.reblogged ).toBe( false );
 			expect( settled?.pages[ 0 ].items[ 1 ].counts.boosts ).toBe( 2 );
 		} );
+	} );
+} );
+
+describe( 'uploadMastodonMediaMutation', () => {
+	it( 'returns mutationOptions wrapping uploadMastodonMedia', () => {
+		const opts = uploadMastodonMediaMutation();
+		expect( typeof opts.mutationFn ).toBe( 'function' );
+		// mutationKey intentionally absent — composer-config types Omit it.
+		expect( ( opts as Record< string, unknown > ).mutationKey ).toBeUndefined();
+	} );
+} );
+
+describe( 'followMastodonActorMutation / unfollowMastodonActorMutation', () => {
+	afterEach( () => nock.cleanAll() );
+
+	function makeProfile( overrides: Partial< MastodonAuthorProfile > = {} ): MastodonAuthorProfile {
+		return {
+			id: '200',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '',
+			counts: { followers: 10, following: 5, posts: 42 },
+			locked: false,
+			raw: {},
+			viewer: { following: false, followed_by: false, requested: false },
+			is_self: false,
+			...overrides,
+		};
+	}
+
+	describe( 'followMastodonActorMutation', () => {
+		it( 'optimistically sets viewer.following=true on follow', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 200, {
+					viewer: { following: true, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.following ).toBe( true );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+
+		it( 'optimistically sets viewer.requested=true (not following) on follow when vars.locked is true', async () => {
+			// Without the locked branch the patch would write `following: true`
+			// for the duration of the round-trip, then snap to `requested: true`
+			// on commit — a UX flip-flop and a misleading mid-flight aria-label.
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile( { locked: true } ) );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.delay( 50 )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: true },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let inFlight: Promise< unknown > | undefined;
+			act( () => {
+				inFlight = result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+					locked: true,
+				} );
+			} );
+
+			// Wait for onMutate to resolve before reading the cache — the
+			// optimistic patch lands synchronously after cancelQueries settles.
+			await waitFor( () => {
+				const mid = client.getQueryData< MastodonAuthorProfile >( key );
+				expect( mid?.viewer?.requested ).toBe( true );
+				expect( mid?.viewer?.following ).toBe( false );
+			} );
+
+			await act( async () => {
+				await inFlight;
+			} );
+		} );
+
+		it( 'vars.locked wins over old.locked when both are defined', async () => {
+			// Edge case: cached profile says locked but the call site has fresher
+			// information (e.g. the target unlocked their account between the
+			// profile fetch and the click). vars.locked: false should drive the
+			// optimistic patch even though old.locked is true.
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile( { locked: true } ) );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.delay( 50 )
+				.reply( 200, {
+					viewer: { following: true, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let inFlight: Promise< unknown > | undefined;
+			act( () => {
+				inFlight = result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+					locked: false,
+				} );
+			} );
+
+			await waitFor( () => {
+				const mid = client.getQueryData< MastodonAuthorProfile >( key );
+				expect( mid?.viewer?.following ).toBe( true );
+				expect( mid?.viewer?.requested ).toBe( false );
+			} );
+
+			await act( async () => {
+				await inFlight;
+			} );
+		} );
+
+		it( 'falls back to old.locked when vars.locked is omitted', async () => {
+			// Backwards-compat: callers that haven't yet threaded `locked` into
+			// vars still get the right optimistic patch by reading the cached
+			// profile's `locked` flag.
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile( { locked: true } ) );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.delay( 50 )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: true },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			let inFlight: Promise< unknown > | undefined;
+			act( () => {
+				inFlight = result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+			} );
+
+			await waitFor( () => {
+				const mid = client.getQueryData< MastodonAuthorProfile >( key );
+				expect( mid?.viewer?.requested ).toBe( true );
+				expect( mid?.viewer?.following ).toBe( false );
+			} );
+
+			await act( async () => {
+				await inFlight;
+			} );
+		} );
+
+		it( 'commits requested: true from server response (locked account)', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile( { locked: true } ) );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: true },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.requested ).toBe( true );
+			expect( cached?.viewer?.following ).toBe( false );
+		} );
+
+		it( 'rolls back to previous viewer on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 502, { code: 'reader_mastodon_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId: 1,
+						actor: '200',
+						accountId: '200',
+					} );
+				} catch {
+					// expected
+				}
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.following ).toBe( false );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+
+		it( 'normalizes the actor when keying the cache so webfinger handles still see the optimistic patch', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			// Seed under the NORMALIZED key — this is what the query layer
+			// (mastodonAuthorProfileQueryOptions) writes to.
+			const normalizedKey = readerMastodonKeys.authorProfile( 1, 'alice@mastodon.social' );
+			client.setQueryData( normalizedKey, makeProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 200, {
+					viewer: { following: true, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			// Drive the mutation with the UNNORMALIZED webfinger form — the
+			// panel can pass '@Alice@MASTODON.social' when the URL came
+			// from a federated mention link.
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '@Alice@MASTODON.social',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( normalizedKey );
+			expect( cached?.viewer?.following ).toBe( true );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+
+		it( 'invalidates the cache on error when there is no previous snapshot to roll back to', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			// No setQueryData seeding — context.previous will be undefined,
+			// so onError must fall back to invalidateQueries to avoid
+			// leaving an optimistic patch as a stale cache value.
+			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 502, { code: 'reader_mastodon_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId: 1,
+						actor: '200',
+						accountId: '200',
+					} );
+				} catch {
+					// expected
+				}
+			} );
+
+			expect( invalidateSpy ).toHaveBeenCalledWith( { queryKey: key } );
+			invalidateSpy.mockRestore();
+		} );
+
+		it( 'invalidates the cache on success when the entry was evicted between onMutate and onSuccess', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData( key, makeProfile() );
+
+			nock( BASE )
+				.post( '/wpcom/v2/reader/mastodon/connections/1/follows' )
+				.reply( 200, {
+					viewer: { following: true, followed_by: false, requested: false },
+				} );
+
+			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+
+			const { result } = renderHook( () => useMutation( followMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			// Simulate a route change evicting the cached profile while
+			// the mutation is in flight; setQueryData on a missing entry
+			// returns undefined, so onSuccess must invalidate to refetch
+			// the authoritative server viewer.
+			await act( async () => {
+				const promise = result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+				client.removeQueries( { queryKey: key } );
+				await promise;
+			} );
+
+			expect( invalidateSpy ).toHaveBeenCalledWith( { queryKey: key } );
+			invalidateSpy.mockRestore();
+		} );
+	} );
+
+	describe( 'unfollowMastodonActorMutation', () => {
+		it( 'optimistically clears viewer.following and viewer.requested on unfollow', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData(
+				key,
+				makeProfile( {
+					locked: true,
+					viewer: { following: false, followed_by: false, requested: true },
+				} )
+			);
+
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/mastodon/connections/1/follows/200' )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( unfollowMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '200',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.following ).toBe( false );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+
+		it( 'rolls back to previous viewer on error', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const key = readerMastodonKeys.authorProfile( 1, '200' );
+			client.setQueryData(
+				key,
+				makeProfile( {
+					viewer: { following: true, followed_by: false, requested: false },
+				} )
+			);
+
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/mastodon/connections/1/follows/200' )
+				.reply( 502, { code: 'reader_mastodon_upstream_unavailable' } );
+
+			const { result } = renderHook( () => useMutation( unfollowMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				try {
+					await result.current.mutateAsync( {
+						connectionId: 1,
+						actor: '200',
+						accountId: '200',
+					} );
+				} catch {
+					// expected
+				}
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( key );
+			expect( cached?.viewer?.following ).toBe( true );
+			expect( cached?.viewer?.requested ).toBe( false );
+		} );
+
+		it( 'normalizes the actor when keying the cache so webfinger handles still see the optimistic patch', async () => {
+			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+			const normalizedKey = readerMastodonKeys.authorProfile( 1, 'alice@mastodon.social' );
+			client.setQueryData(
+				normalizedKey,
+				makeProfile( {
+					viewer: { following: true, followed_by: false, requested: false },
+				} )
+			);
+
+			nock( BASE )
+				.delete( '/wpcom/v2/reader/mastodon/connections/1/follows/200' )
+				.reply( 200, {
+					viewer: { following: false, followed_by: false, requested: false },
+				} );
+
+			const { result } = renderHook( () => useMutation( unfollowMastodonActorMutation( client ) ), {
+				wrapper: makeWrapper( client ),
+			} );
+
+			await act( async () => {
+				await result.current.mutateAsync( {
+					connectionId: 1,
+					actor: '@Alice@MASTODON.social',
+					accountId: '200',
+				} );
+			} );
+
+			const cached = client.getQueryData< MastodonAuthorProfile >( normalizedKey );
+			expect( cached?.viewer?.following ).toBe( false );
+		} );
+	} );
+} );
+
+describe( 'useMastodonAuthStatusQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'returns needs_reauth from the auth-status endpoint', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/42/auth-status' )
+			.reply( 200, { needs_reauth: true } );
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		const { result } = renderHook( () => useMastodonAuthStatusQuery( 42 ), {
+			wrapper: makeWrapper( client ),
+		} );
+		await waitFor( () => expect( result.current.data ).toEqual( { needs_reauth: true } ) );
+	} );
+
+	it( 'is disabled when connectionId is null', () => {
+		const client = new QueryClient();
+		const { result } = renderHook( () => useMastodonAuthStatusQuery( null ), {
+			wrapper: makeWrapper( client ),
+		} );
+		expect( result.current.fetchStatus ).toBe( 'idle' );
+	} );
+
+	it( 'mastodonAuthStatusQueryOptions(null) is disabled', () => {
+		expect( mastodonAuthStatusQueryOptions( null ).enabled ).toBe( false );
 	} );
 } );

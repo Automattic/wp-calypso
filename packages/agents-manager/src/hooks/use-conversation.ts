@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
-import { isFreshSession } from '../utils/agent-session';
 import { getConversationBotId } from '../utils/conversation-bot-id';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
@@ -53,11 +52,10 @@ export default function useConversation( {
 				true
 			);
 		},
-		// Skip server fetch for brand-new client-created sessions — they
-		// have no history to load and the extra round-trip blocks the
-		// skeleton unnecessarily.
-		enabled:
-			enabled && !! sessionId && ! ( isReaderChatAgent( agentId ) && isFreshSession( agentId ) ),
+		// Public Reader Chat does not expose conversation history, and the
+		// server-side history endpoint requires permissions public readers
+		// usually do not have.
+		enabled: enabled && !! sessionId && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
 	} );
 

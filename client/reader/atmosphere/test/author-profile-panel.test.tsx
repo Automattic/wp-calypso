@@ -8,10 +8,11 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfilePanel } from '../author-profile-panel';
-import { ComposerModal, ComposerProvider } from '../composer';
+import { atmosphereComposerConfig } from '../composer-config';
 import type { AtmosphereScopedProfile, AtmosphereConnection } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-router', () => ( {
@@ -744,7 +745,7 @@ describe( 'AuthorProfilePanel — quote composer integration', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ connection.id }>
+			<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
 				<AuthorProfilePanel
 					connection={ connection }
 					actor="alice.bsky.social"
@@ -755,7 +756,10 @@ describe( 'AuthorProfilePanel — quote composer integration', () => {
 			{ queryClient }
 		);
 
-		await user.click( await screen.findByRole( 'button', { name: /quote, 3 quotes/i } ) );
+		const repostButton = await screen.findByRole( 'button', { name: /repost, 3 reposts/i } );
+		await user.click( repostButton );
+		const quoteItem = await screen.findByRole( 'menuitem', { name: 'Quote post' } );
+		await user.click( quoteItem );
 		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
 	} );
 } );
