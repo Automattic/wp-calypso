@@ -1,4 +1,7 @@
-import clsx from 'clsx';
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { CHIP_FILTERS, type ChipFilter } from './filter';
 
@@ -16,28 +19,26 @@ export function NotificationsFilterBar( { value, onChange }: Props ) {
 		reposts: translate( 'Reposts' ) as string,
 		follows: translate( 'Follows' ) as string,
 	};
+	const handleChange = ( next: string | number | undefined ) => {
+		if ( typeof next === 'string' && CHIP_FILTERS.includes( next as ChipFilter ) ) {
+			onChange( next as ChipFilter );
+		}
+	};
 	return (
-		<div
-			role="group"
-			aria-label={ translate( 'Filter notifications by type' ) as string }
-			className="social-notifications-filter-bar"
-		>
-			{ CHIP_FILTERS.map( ( chip ) => {
-				const isActive = chip === value;
-				return (
-					<button
-						key={ chip }
-						type="button"
-						aria-pressed={ isActive }
-						className={ clsx( 'social-notifications-filter-bar__chip', {
-							'is-active': isActive,
-						} ) }
-						onClick={ () => onChange( chip ) }
-					>
-						{ labels[ chip ] }
-					</button>
-				);
-			} ) }
+		<div className="social-notifications-filter-bar">
+			<ToggleGroupControl
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				isBlock
+				hideLabelFromVision
+				label={ translate( 'Filter notifications by type' ) as string }
+				value={ value }
+				onChange={ handleChange }
+			>
+				{ CHIP_FILTERS.map( ( chip ) => (
+					<ToggleGroupControlOption key={ chip } value={ chip } label={ labels[ chip ] } />
+				) ) }
+			</ToggleGroupControl>
 		</div>
 	);
 }

@@ -91,7 +91,7 @@ describe( 'SocialNotificationsList', () => {
 		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'renders the filter bar with the active chip', () => {
+	it( 'renders the filter bar with the active option', () => {
 		renderWithProvider(
 			<SocialNotificationsList
 				{ ...defaultProps }
@@ -100,10 +100,7 @@ describe( 'SocialNotificationsList', () => {
 				onFilterChange={ jest.fn() }
 			/>
 		);
-		expect( screen.getByRole( 'button', { name: /^likes$/i } ) ).toHaveAttribute(
-			'aria-pressed',
-			'true'
-		);
+		expect( screen.getByRole( 'radio', { name: /^likes$/i } ) ).toBeChecked();
 	} );
 
 	it( 'shows a per-filter empty-state message', () => {
@@ -136,6 +133,6 @@ describe( 'SocialNotificationsList', () => {
 				onFilterChange={ jest.fn() }
 			/>
 		);
-		expect( screen.queryByRole( 'separator', { name: /today/i } ) ).toBeNull();
+		expect( screen.queryByRole( 'heading', { name: /today/i, level: 3 } ) ).toBeNull();
 	} );
 } );

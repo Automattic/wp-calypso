@@ -98,44 +98,19 @@
 }
 
 .social-notifications-filter-bar {
-	display: flex;
-	gap: 6px;
-	flex-wrap: wrap;
 	padding-block: 12px;
 	padding-inline: 16px;
 	border-block-end: 1px solid var(--color-border-subtle);
 }
 
-.social-notifications-filter-bar__chip {
-	padding-block: 4px;
-	padding-inline: 10px;
-	border-radius: 16px;
-	font: inherit;
-	font-size: 12px;
-	background: var(--color-neutral-5);
-	color: var(--color-text);
-	border: 0;
-	cursor: pointer;
-}
-
-.social-notifications-filter-bar__chip.is-active {
-	background: var(--color-text);
-	color: var(--color-surface);
-}
-
-.social-notifications-filter-bar__chip:focus-visible {
-	outline: 2px solid var(--color-primary);
-	outline-offset: 2px;
-}
-
 .social-notifications-list__divider {
-	padding-block: 8px;
+	margin: 0;
+	padding-block: 16px 8px;
 	padding-inline: 16px;
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
 	color: var(--color-text-subtle);
-	background: var(--color-neutral-5);
 }
 
 .social-notifications-stack {

@@ -145,13 +145,12 @@ export function SocialNotificationsList( {
 				{ withBuckets.map( ( entry ) => {
 					if ( entry.kind === 'divider' ) {
 						return (
-							<div
+							<h3
 								key={ `divider-${ entry.bucket }` }
 								className="social-notifications-list__divider"
-								role="separator"
 							>
 								{ bucketLabel( entry.bucket, translate ) }
-							</div>
+							</h3>
 						);
 					}
 					if ( entry.row.kind === 'stack' ) {
