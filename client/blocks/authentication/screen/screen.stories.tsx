@@ -1,9 +1,13 @@
 import Notice from 'calypso/dashboard/components/notice';
 import LinkButton from '../link-button';
+import OptionsList from '../options-list';
 import PrimaryButton from '../primary-button';
+import SocialButton from '../social-button';
 import TextField from '../text-field';
 import Screen from './index';
 import type { Meta, StoryObj } from '@storybook/react';
+
+import '../stories/recipes.scss';
 
 const meta: Meta< typeof Screen > = {
 	title: 'client/blocks/authentication/Screen',
@@ -84,12 +88,45 @@ export const SignupAction: Story = {
 	},
 };
 
+// Demonstrates the `wide` prop with the canonical 2-column content
+// arrangement from `auth-desktop-template-2col`. The content row caps at
+// 768px so input-CTA + vertical OR + social options fit side-by-side on
+// desktop; on mobile the same composition stacks single-column via the
+// shared `recipes.scss` grid styles. For a fully composed real-world
+// example, see `Recipes / Login`.
+const TwoColumnContent = () => (
+	<div className="auth-recipe-login">
+		<div
+			className="auth-recipe-login__input"
+			style={ { display: 'flex', flexDirection: 'column', gap: 16 } }
+		>
+			<TextField
+				label="Email address or username"
+				value=""
+				onChange={ () => {} }
+				type="text"
+				autoComplete="username"
+			/>
+			<PrimaryButton type="submit">Continue</PrimaryButton>
+		</div>
+		<div className="auth-recipe-login__or">
+			<span>or</span>
+		</div>
+		<OptionsList>
+			<SocialButton provider="google">Continue with Google</SocialButton>
+			<SocialButton provider="apple">Continue with Apple</SocialButton>
+			<SocialButton provider="github">Continue with GitHub</SocialButton>
+			<SocialButton provider="email">Continue with email</SocialButton>
+		</OptionsList>
+	</div>
+);
+
 export const Wide: Story = {
 	args: {
 		topBarAction: <LinkButton href="/start">Create an account</LinkButton>,
 		heading: 'Log in to WordPress.com',
 		subheading: 'By continuing, you agree to our Terms of Service and Privacy Policy.',
 		wide: true,
-		children: <PlaceholderContent />,
+		children: <TwoColumnContent />,
 	},
 };
