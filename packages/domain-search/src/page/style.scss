@@ -48,6 +48,10 @@
 		--domain-search-input-size: 48px;
 		--domain-search-input-border-radius: 2px;
 
+		.domain-search__search-bar {
+			gap: 0.5rem;
+		}
+
 		.domain-search-controls__input {
 			// Mirror the radius onto the container so its inset
 			// box-shadow (which draws the visible border line)
