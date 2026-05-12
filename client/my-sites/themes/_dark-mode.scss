@@ -165,8 +165,7 @@
 	}
 
 	.theme-download-card .button,
-	.theme__sheet-demo-button,
-	.theme__sheet-preview-demo-site {
+	.theme__sheet-demo-button {
 		background-color: transparent;
 		border-color: var( --dashboard-field__border-color );
 		color: var( --dashboard__text-color );
@@ -177,6 +176,23 @@
 
 		&:hover {
 			background-color: transparent;
+			border-color: var( --dashboard__text-muted-color );
+			color: var( --dashboard__text-color );
+		}
+	}
+
+	.theme__sheet-preview-demo-site.button {
+		background: var( --dashboard-surface__background-color );
+		border-color: var( --dashboard-field__border-color );
+		color: var( --dashboard__text-color );
+
+		&:visited {
+			color: var( --dashboard__text-color );
+		}
+
+		&:focus,
+		&:hover {
+			background: var( --dashboard-surface__background-color );
 			border-color: var( --dashboard__text-muted-color );
 			color: var( --dashboard__text-color );
 		}
