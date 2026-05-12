@@ -42,6 +42,7 @@ import {
 import PodcastFeedUrl from './feed-url';
 import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
+import { PostsToPodcastSection } from './posts-to-podcast';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingPublishNotice from './publish-notice';
 import TopicsSelector from './topics-selector';
@@ -422,6 +423,10 @@ const PodcastingSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 							),
 						} ) }
 					</Card>
+
+					{ isPodcastingEnabled && (
+						<PostsToPodcastSection siteId={ siteId } siteSlug={ siteSlug } />
+					) }
 				</>
 			) }
 		</form>
