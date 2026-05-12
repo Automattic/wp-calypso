@@ -1,0 +1,14 @@
+.auth-continue-as-user-card__avatar {
+	inline-size: 48px;
+	block-size: 48px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.auth-continue-as-user-card__name {
+	font-weight: 600;
+}
+
+.auth-continue-as-user-card__email {
+	color: var(--wp-components-color-foreground-muted, var(--color-text-subtle));
+}

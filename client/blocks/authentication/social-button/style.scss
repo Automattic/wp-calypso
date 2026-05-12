@@ -1,0 +1,10 @@
+.auth-social-button {
+	inline-size: 100%;
+	justify-content: flex-start;
+
+	.social-icons {
+		inline-size: 20px;
+		block-size: 20px;
+		margin-inline-end: 8px;
+	}
+}
