@@ -16,8 +16,8 @@ describe( 'readerAtmosphereKeys', () => {
 		] );
 	} );
 
-	it( 'notifications(connectionId) defaults filter to "all"', () => {
-		expect( readerAtmosphereKeys.notifications( 42 ) ).toEqual( [
+	it( 'notifications(connectionId, "all") shapes the All-chip key', () => {
+		expect( readerAtmosphereKeys.notifications( 42, 'all' ) ).toEqual( [
 			'reader',
 			'atmosphere',
 			'notifications',

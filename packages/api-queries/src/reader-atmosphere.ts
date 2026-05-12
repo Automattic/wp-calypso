@@ -26,6 +26,7 @@ import {
 	PENDING_REPLY_URI,
 	PENDING_REPOST_URI,
 	isValidHashtag,
+	mapNotificationsFilter,
 	readerAtmosphereKeys,
 	uploadBlob,
 } from '@automattic/api-core';
@@ -65,6 +66,7 @@ import type {
 	CreatePostParams,
 	CreatePostResult,
 	CreateRepostResult,
+	NotificationsFilter,
 	UploadBlobParams,
 	UploadBlobResult,
 } from '@automattic/api-core';
@@ -163,33 +165,6 @@ export const timelineInfiniteQuery = ( connectionId: number ) =>
 
 export function useTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( timelineInfiniteQuery( connectionId ) );
-}
-
-// Kept in sync with `ChipFilter` in
-// client/reader/social/components/notifications-list/filter.ts. The two
-// definitions cannot import each other (api-queries cannot reference
-// calypso/* and vice-versa) so they share this string-union contract by
-// convention.
-type NotificationsFilter = 'all' | 'conversations' | 'likes' | 'reposts' | 'follows';
-
-function mapNotificationsFilter( filter: NotificationsFilter ): string | undefined {
-	switch ( filter ) {
-		case 'all':
-			return undefined;
-		case 'conversations':
-			return 'mention,reply,quote';
-		case 'likes':
-			return 'like';
-		case 'reposts':
-			return 'repost';
-		case 'follows':
-			return 'follow';
-		default: {
-			const _exhaustive: never = filter;
-			void _exhaustive;
-			return undefined;
-		}
-	}
 }
 
 export interface UseAtmosphereNotificationsOptions {

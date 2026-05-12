@@ -82,8 +82,8 @@ describe( 'readerMastodonKeys.tagFeed', () => {
 } );
 
 describe( 'readerMastodonKeys.notifications', () => {
-	it( 'notifications(connectionId) defaults filter to "all"', () => {
-		expect( readerMastodonKeys.notifications( 42 ) ).toEqual( [
+	it( 'notifications(connectionId, "all") shapes the All-chip key', () => {
+		expect( readerMastodonKeys.notifications( 42, 'all' ) ).toEqual( [
 			'reader',
 			'mastodon',
 			'notifications',

@@ -30,7 +30,6 @@ function makeMember(
 		target_url: overrides.target_url ?? 'https://bsky.app/profile/me/post/p1',
 		created_at: overrides.created_at ?? '2026-05-12T12:00:00Z',
 		is_read: overrides.is_read ?? false,
-		raw: {},
 	};
 }
 
@@ -41,7 +40,7 @@ function makeLikeStack( count: number ): StackedRow {
 		groupKey: 'like:at://post/p1',
 		canonicalType: 'like',
 		members,
-		newestCreatedAt: members[ 0 ].created_at,
+		newestCreatedAt: members[ 0 ].created_at ?? '',
 		isUnread: true,
 		target: members[ 0 ].target,
 		targetUrl: members[ 0 ].target_url,
@@ -62,7 +61,7 @@ function makeFollowStack( count: number ): StackedRow {
 		groupKey: 'follow',
 		canonicalType: 'follow',
 		members,
-		newestCreatedAt: members[ 0 ].created_at,
+		newestCreatedAt: members[ 0 ].created_at ?? '',
 		isUnread: false,
 		target: null,
 		targetUrl: members[ 0 ].target_url,

@@ -55,7 +55,7 @@ function bucketLabel( bucket: DateBucket, translate: ReturnType< typeof useTrans
 }
 
 function rowTimestamp( row: GroupedRow ): string {
-	return row.kind === 'stack' ? row.newestCreatedAt : row.item.created_at;
+	return row.kind === 'stack' ? row.newestCreatedAt : row.item.created_at ?? '';
 }
 
 // `filter` is rendered into the chip strip but not applied to `items` locally —

@@ -1,3 +1,5 @@
+import type { NotificationsFilter } from '../reader-social/notifications-filter';
+
 export const readerMastodonKeys = {
 	all: [ 'reader', 'mastodon' ] as const,
 	connections: () => [ ...readerMastodonKeys.all, 'connections' ] as const,
@@ -11,7 +13,7 @@ export const readerMastodonKeys = {
 		[ ...readerMastodonKeys.all, 'instance-config', id ] as const,
 	timeline: ( connectionId: number ) =>
 		[ ...readerMastodonKeys.all, 'timeline', connectionId ] as const,
-	notifications: ( connectionId: number, filter: string = 'all' ) =>
+	notifications: ( connectionId: number, filter: NotificationsFilter ) =>
 		[ ...readerMastodonKeys.all, 'notifications', connectionId, filter ] as const,
 	thread: ( connectionId: number, statusId: string ) =>
 		[ ...readerMastodonKeys.all, 'thread', connectionId, statusId ] as const,

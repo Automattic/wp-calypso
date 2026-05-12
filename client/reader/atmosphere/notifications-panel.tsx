@@ -1,10 +1,13 @@
 import { useAtmosphereNotificationsInfiniteQuery } from '@automattic/api-queries';
 import { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { UnknownAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { SocialNotificationsList } from 'calypso/reader/social';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import type { AtmosphereConnection } from '@automattic/api-core';
 import type { ChipFilter } from 'calypso/reader/social';
+import type { AppState } from 'calypso/types';
 
 interface Props {
 	connection: AtmosphereConnection;
@@ -12,7 +15,7 @@ interface Props {
 
 export function NotificationsPanel( { connection }: Props ) {
 	const [ filter, setFilter ] = useState< ChipFilter >( 'all' );
-	const dispatch = useDispatch();
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const { data, isPending, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
 		useAtmosphereNotificationsInfiniteQuery( connection.id, { filter } );
 

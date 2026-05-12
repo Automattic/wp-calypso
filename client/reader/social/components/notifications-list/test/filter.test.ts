@@ -1,30 +1,30 @@
-import { chipFilterToTypes, type ChipFilter } from '../filter';
+import { mapNotificationsFilter } from '@automattic/api-core';
+import { CHIP_FILTERS, type ChipFilter } from '../filter';
 
-describe( 'chipFilterToTypes', () => {
+describe( 'mapNotificationsFilter', () => {
 	it( 'returns undefined for "all"', () => {
-		expect( chipFilterToTypes( 'all' ) ).toBeUndefined();
+		expect( mapNotificationsFilter( 'all' ) ).toBeUndefined();
 	} );
 
 	it( 'returns mention,reply,quote for "conversations"', () => {
-		expect( chipFilterToTypes( 'conversations' ) ).toBe( 'mention,reply,quote' );
+		expect( mapNotificationsFilter( 'conversations' ) ).toBe( 'mention,reply,quote' );
 	} );
 
 	it( 'returns "like" for "likes"', () => {
-		expect( chipFilterToTypes( 'likes' ) ).toBe( 'like' );
+		expect( mapNotificationsFilter( 'likes' ) ).toBe( 'like' );
 	} );
 
 	it( 'returns "repost" for "reposts"', () => {
-		expect( chipFilterToTypes( 'reposts' ) ).toBe( 'repost' );
+		expect( mapNotificationsFilter( 'reposts' ) ).toBe( 'repost' );
 	} );
 
 	it( 'returns "follow" for "follows"', () => {
-		expect( chipFilterToTypes( 'follows' ) ).toBe( 'follow' );
+		expect( mapNotificationsFilter( 'follows' ) ).toBe( 'follow' );
 	} );
 
-	it( 'is exhaustive over ChipFilter', () => {
-		const chips: ChipFilter[] = [ 'all', 'conversations', 'likes', 'reposts', 'follows' ];
-		chips.forEach( ( c ) => {
-			expect( () => chipFilterToTypes( c ) ).not.toThrow();
+	it( 'is exhaustive over the ChipFilter union exposed by CHIP_FILTERS', () => {
+		CHIP_FILTERS.forEach( ( c: ChipFilter ) => {
+			expect( () => mapNotificationsFilter( c ) ).not.toThrow();
 		} );
 	} );
 } );

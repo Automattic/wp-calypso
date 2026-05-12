@@ -28,7 +28,6 @@ function makeItem( overrides: Partial< N > & { id: string } ): N {
 		target_url: overrides.target_url ?? 'https://bsky.app/profile/me/post/p1',
 		created_at: overrides.created_at ?? '2026-05-12T12:00:00Z',
 		is_read: overrides.is_read ?? false,
-		raw: {},
 	};
 }
 

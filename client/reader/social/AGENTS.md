@@ -67,7 +67,7 @@ client/reader/social/
       index.tsx                 # SocialNotificationsList — filter bar + date dividers + grouped rows
       notification-item.tsx     # SocialNotificationItem — single-row renderer
       stacked-notification.tsx  # StackedNotification — multi-actor row with inline follow expansion
-      filter.ts                 # ChipFilter union + CHIP_FILTERS + chipFilterToTypes mapper
+      filter.ts                 # ChipFilter UI alias (re-exports NotificationsFilter from @automattic/api-core) + CHIP_FILTERS array
       filter-bar.tsx            # NotificationsFilterBar — aria-pressed chip strip
       date-bucket.ts            # bucketFor( iso, now ) → 'today' | 'yesterday' | 'this_week' | 'earlier'
       group-notifications.ts    # groupNotifications( items ) — stacking algorithm + GroupedRow types
@@ -468,14 +468,16 @@ arrow-key handling that doesn't fit this surface. Selected chip is
 session state in the per-protocol panel wrapper
 (`useState< ChipFilter >( 'all' )`); on change, the wrapper threads it
 into the hook and fires
-`calypso_reader_<source>_notifications_filter_changed`. The chip value
-maps to the `types=` query param via `chipFilterToTypes( filter )` in
-`filter.ts` (a private `NotificationsFilter` union is duplicated inside
-`packages/api-queries/src/reader-{atmosphere,mastodon}.ts` because the
-package can't import from `calypso/*`; the comment in each file
-documents the dual definition). The wpcom side translates `types=` into
-ATProto `reasons[]` (Bluesky) or Mastodon `types[]`, post-filtering
-client-side for the `other` bucket.
+`calypso_reader_<source>_notifications_filter_changed`. The chip union
+and the wire mapper both live in
+`packages/api-core/src/reader-social/notifications-filter.ts` as
+`NotificationsFilter` and `mapNotificationsFilter`: `filter.ts`
+re-exports the type as `ChipFilter` for UI call sites, and the
+per-protocol notifications-infinite-query hooks
+(`packages/api-queries/src/reader-{atmosphere,mastodon}.ts`) import the
+mapper directly. The wpcom side translates `types=` into ATProto
+`reasons[]` (Bluesky) or Mastodon `types[]`, post-filtering client-side
+for the `other` bucket.
 
 **Date dividers** — `bucketFor( iso, now )` in `date-bucket.ts` returns
 `'today' | 'yesterday' | 'this_week' | 'earlier'` against the user's

@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { SocialNotificationItem } from './notification-item';
-import type { StackedRow, SocialNotificationCanonicalType } from './group-notifications';
+import type { StackedRow, StackableCanonicalType } from './group-notifications';
 
 const MAX_AVATARS = 3;
 const FOLLOW_TRUNCATE_AT = 50;
@@ -27,7 +27,7 @@ function isSafeUrl( url: string ): boolean {
 }
 
 function stackedPhrase(
-	canonical: SocialNotificationCanonicalType,
+	canonical: StackableCanonicalType,
 	count: number,
 	first: string,
 	second: string | null,
@@ -58,10 +58,14 @@ function stackedPhrase(
 			return translate( '%(subject)s replied to your post', { args: { subject } } ) as string;
 		case 'quote':
 			return translate( '%(subject)s quoted your post', { args: { subject } } ) as string;
-		case 'other':
+		default: {
+			// Exhaustiveness guard. If the union widens, fail typecheck
+			// here rather than silently collapsing the new type into
+			// generic "interacted" copy.
+			const _exhaustive: never = canonical;
+			void _exhaustive;
 			return translate( '%(subject)s interacted with you', { args: { subject } } ) as string;
-		default:
-			return translate( '%(subject)s interacted with you', { args: { subject } } ) as string;
+		}
 	}
 }
 

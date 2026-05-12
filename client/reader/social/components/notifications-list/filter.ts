@@ -1,23 +1,12 @@
-export type ChipFilter = 'all' | 'conversations' | 'likes' | 'reposts' | 'follows';
+import { NOTIFICATIONS_FILTERS, type NotificationsFilter } from '@automattic/api-core';
 
-export const CHIP_FILTERS: ChipFilter[] = [ 'all', 'conversations', 'likes', 'reposts', 'follows' ];
+/**
+ * `ChipFilter` is the UI alias for the shared `NotificationsFilter`
+ * union exported by `@automattic/api-core`. The api-core module also
+ * exports the wire mapper used by the per-protocol notifications
+ * hooks, so the chip strip and the wire boundary share a single
+ * source of truth.
+ */
+export type ChipFilter = NotificationsFilter;
 
-export function chipFilterToTypes( filter: ChipFilter ): string | undefined {
-	switch ( filter ) {
-		case 'all':
-			return undefined;
-		case 'conversations':
-			return 'mention,reply,quote';
-		case 'likes':
-			return 'like';
-		case 'reposts':
-			return 'repost';
-		case 'follows':
-			return 'follow';
-		default: {
-			const _exhaustive: never = filter;
-			void _exhaustive;
-			return undefined;
-		}
-	}
-}
+export const CHIP_FILTERS: readonly ChipFilter[] = NOTIFICATIONS_FILTERS;

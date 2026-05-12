@@ -10,11 +10,20 @@ export type SocialNotificationCanonicalType =
 	| AtmosphereNotificationCanonicalType
 	| MastodonNotificationCanonicalType;
 
+/**
+ * Canonical types that may form a stack. `keyFor` returns `null` for
+ * `'other'`, so an `'other'` row always renders as a singleton — encoding
+ * that here means the renderer's switch over `StackedRow.canonicalType`
+ * stays exhaustive and unknown types fail typecheck instead of silently
+ * collapsing to the `'other'` phrase.
+ */
+export type StackableCanonicalType = Exclude< SocialNotificationCanonicalType, 'other' >;
+
 export type SingleRow = { kind: 'single'; item: SocialNotification };
 export type StackedRow = {
 	kind: 'stack';
 	groupKey: string;
-	canonicalType: SocialNotificationCanonicalType;
+	canonicalType: StackableCanonicalType;
 	members: SocialNotification[];
 	newestCreatedAt: string;
 	isUnread: boolean;
@@ -65,14 +74,17 @@ export function groupNotifications( items: SocialNotification[] ): GroupedRow[] 
 			return { kind: 'single', item: b.members[ 0 ] };
 		}
 		const head = b.members[ 0 ];
+		// Safe by construction: `keyFor` returns null for `'other'`, so any
+		// bucket that reached `members.length >= 2` cannot be `'other'`.
+		const canonicalType = head.canonical_type as StackableCanonicalType;
 		return {
 			kind: 'stack',
 			groupKey: b.key,
-			canonicalType: head.canonical_type,
+			canonicalType,
 			members: b.members,
-			newestCreatedAt: b.members.reduce(
-				( max, m ) => ( m.created_at > max ? m.created_at : max ),
-				b.members[ 0 ].created_at
+			newestCreatedAt: b.members.reduce< string >(
+				( max, m ) => ( m.created_at && m.created_at > max ? m.created_at : max ),
+				b.members[ 0 ].created_at ?? ''
 			),
 			isUnread: b.members.some( ( m ) => ! m.is_read ),
 			target: head.target,

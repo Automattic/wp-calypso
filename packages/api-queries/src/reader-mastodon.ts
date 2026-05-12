@@ -20,6 +20,7 @@ import {
 	getMastodonTagFeed,
 	getMastodonThread,
 	getMastodonTimeline,
+	mapNotificationsFilter,
 	readerMastodonKeys,
 	uploadMastodonMedia,
 } from '@automattic/api-core';
@@ -64,6 +65,7 @@ import type {
 	MastodonThreadNode,
 	MastodonThreadResponse,
 	MastodonTimelinePage,
+	NotificationsFilter,
 } from '@automattic/api-core';
 
 export const mastodonConnectionsQueryOptions = () =>
@@ -200,33 +202,6 @@ export const mastodonTimelineInfiniteQuery = ( connectionId: number ) =>
 
 export function useMastodonTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( mastodonTimelineInfiniteQuery( connectionId ) );
-}
-
-// Kept in sync with `ChipFilter` in
-// client/reader/social/components/notifications-list/filter.ts. The two
-// definitions cannot import each other (api-queries cannot reference
-// calypso/* and vice-versa) so they share this string-union contract by
-// convention.
-type NotificationsFilter = 'all' | 'conversations' | 'likes' | 'reposts' | 'follows';
-
-function mapNotificationsFilter( filter: NotificationsFilter ): string | undefined {
-	switch ( filter ) {
-		case 'all':
-			return undefined;
-		case 'conversations':
-			return 'mention,reply,quote';
-		case 'likes':
-			return 'like';
-		case 'reposts':
-			return 'repost';
-		case 'follows':
-			return 'follow';
-		default: {
-			const _exhaustive: never = filter;
-			void _exhaustive;
-			return undefined;
-		}
-	}
 }
 
 export interface UseMastodonNotificationsOptions {
