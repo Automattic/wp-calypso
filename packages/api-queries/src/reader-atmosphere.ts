@@ -165,7 +165,41 @@ export function useTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( timelineInfiniteQuery( connectionId ) );
 }
 
-export const notificationsInfiniteQuery = ( connectionId: number ) =>
+// Kept in sync with `ChipFilter` in
+// client/reader/social/components/notifications-list/filter.ts. The two
+// definitions cannot import each other (api-queries cannot reference
+// calypso/* and vice-versa) so they share this string-union contract by
+// convention.
+type NotificationsFilter = 'all' | 'conversations' | 'likes' | 'reposts' | 'follows';
+
+function mapNotificationsFilter( filter: NotificationsFilter ): string | undefined {
+	switch ( filter ) {
+		case 'all':
+			return undefined;
+		case 'conversations':
+			return 'mention,reply,quote';
+		case 'likes':
+			return 'like';
+		case 'reposts':
+			return 'repost';
+		case 'follows':
+			return 'follow';
+		default: {
+			const _exhaustive: never = filter;
+			void _exhaustive;
+			return undefined;
+		}
+	}
+}
+
+export interface UseAtmosphereNotificationsOptions {
+	filter?: NotificationsFilter;
+}
+
+export const notificationsInfiniteQuery = (
+	connectionId: number,
+	filter: NotificationsFilter = 'all'
+) =>
 	infiniteQueryOptions<
 		AtmosphereNotificationsPage,
 		AtmosphereError,
@@ -173,8 +207,13 @@ export const notificationsInfiniteQuery = ( connectionId: number ) =>
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerAtmosphereKeys.notifications( connectionId ),
-		queryFn: ( { pageParam } ) => getAtmosphereNotifications( { connectionId, cursor: pageParam } ),
+		queryKey: readerAtmosphereKeys.notifications( connectionId, filter ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereNotifications( {
+				connectionId,
+				cursor: pageParam,
+				types: mapNotificationsFilter( filter ),
+			} ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
 		enabled: connectionId > 0,
@@ -182,8 +221,12 @@ export const notificationsInfiniteQuery = ( connectionId: number ) =>
 		gcTime: 5 * 60_000,
 	} );
 
-export function useAtmosphereNotificationsInfiniteQuery( connectionId: number ) {
-	return useInfiniteQuery( notificationsInfiniteQuery( connectionId ) );
+export function useAtmosphereNotificationsInfiniteQuery(
+	connectionId: number,
+	options: UseAtmosphereNotificationsOptions = {}
+) {
+	const { filter = 'all' } = options;
+	return useInfiniteQuery( notificationsInfiniteQuery( connectionId, filter ) );
 }
 
 export const threadQueryOptions = ( uri: string ) =>
