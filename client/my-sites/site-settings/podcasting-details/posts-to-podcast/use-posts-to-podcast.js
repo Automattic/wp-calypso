@@ -101,6 +101,9 @@ export function usePostsToPodcastJob( siteId ) {
 		let cancelled = false;
 
 		async function poll() {
+			if ( cancelled ) {
+				return;
+			}
 			if ( Date.now() - state.startedAt > POLL_TIMEOUT_MS ) {
 				clearStored( siteId );
 				dispatch( {
@@ -137,6 +140,7 @@ export function usePostsToPodcastJob( siteId ) {
 					return;
 				}
 				const elapsed = Date.now() - state.startedAt;
+				// Ensure the scheduled poll lands before the switch point, not just that now is before it.
 				const nextDelay = elapsed + POLL_FAST_MS < POLL_SWITCH_MS ? POLL_FAST_MS : POLL_SLOW_MS;
 				timerRef.current = setTimeout( poll, nextDelay );
 			} catch {
