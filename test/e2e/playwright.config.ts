@@ -38,6 +38,8 @@ if ( process.env.CI ) {
 
 // All end-to-end tests use a custom user agent containing this string.
 const E2E_USER_AGENT_SUFFIX = 'wp-e2e-tests';
+// Keep Chromium on HTTP/2 for WPCOM rest-proxy stability; the legacy Jest suite used the same flag.
+const CHROMIUM_LAUNCH_ARGS = [ '--disable-quic' ];
 
 const appendE2EUserAgent = ( userAgent: string ) => `${ userAgent } ${ E2E_USER_AGENT_SUFFIX }`;
 
@@ -94,6 +96,9 @@ export default defineConfig( {
 			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Desktop Chrome HiDPI' ],
+				launchOptions: {
+					args: CHROMIUM_LAUNCH_ARGS,
+				},
 				userAgent: appendE2EUserAgent( devices[ 'Desktop Chrome HiDPI' ].userAgent ),
 				viewportName: 'desktop',
 			} ),
@@ -121,6 +126,9 @@ export default defineConfig( {
 			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Pixel 7' ],
+				launchOptions: {
+					args: CHROMIUM_LAUNCH_ARGS,
+				},
 				userAgent: appendE2EUserAgent( devices[ 'Pixel 7' ].userAgent ),
 				viewportName: 'mobile',
 			} ),
@@ -131,6 +139,9 @@ export default defineConfig( {
 			dependencies: [ 'mailosaur-usage-check' ],
 			use: withCustomOptions( {
 				...devices[ 'Galaxy S24' ],
+				launchOptions: {
+					args: CHROMIUM_LAUNCH_ARGS,
+				},
 				userAgent: appendE2EUserAgent( devices[ 'Galaxy S24' ].userAgent ),
 				viewportName: 'mobile',
 			} ),
@@ -156,6 +167,7 @@ export default defineConfig( {
 				bypassCSP: true,
 				launchOptions: {
 					args: [
+						...CHROMIUM_LAUNCH_ARGS,
 						'--disable-blink-features=AutomationControlled',
 						'--disable-features=IsolateOrigins,site-per-process',
 					],
