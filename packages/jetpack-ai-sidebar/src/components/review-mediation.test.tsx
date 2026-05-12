@@ -5,9 +5,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import '@testing-library/jest-dom';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import ReviewMediation from './review-mediation';
+
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
 
 // Mock scrollIntoView for JSDOM compatibility.
 Element.prototype.scrollIntoView = jest.fn();
@@ -22,6 +27,9 @@ const mockApplyReviewEdit = jest.fn();
 const mockFindBlockElement = jest.fn();
 const mockFindBlockListLayout = jest.fn();
 const mockUndoBlockEdit = jest.fn();
+const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
+	typeof recordTracksEvent
+>;
 
 jest.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
@@ -109,6 +117,7 @@ beforeEach( () => {
 	mockUndoBlockEdit.mockReset();
 	mockUndoBlockEdit.mockReturnValue( true );
 	mockSelectBlock.mockReset();
+	mockedRecordTracksEvent.mockClear();
 	mockBlocks = blocks;
 } );
 
@@ -181,6 +190,60 @@ describe( 'ReviewMediation — smoke render', () => {
 		expect( screen.getByText( 'Copy' ) ).toBeInTheDocument();
 		// Violating excerpt rendered in its own blockquote.
 		expect( screen.getByText( 'was voted upon' ) ).toBeInTheDocument();
+	} );
+
+	it( 'tracks the rendered result with aggregate counts', async () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					review_context: 'notes_and_guidelines',
+					conflicts: [
+						{
+							subject: 'Procedural framing',
+							positions: [],
+							guideline_anchor: null,
+							recommended_resolution: '',
+						},
+					],
+					implications: [
+						{ change: 'Tone shift', implies: 'Update related FAQ.', affected_blocks: [ 1 ] },
+					],
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+						},
+					],
+					guideline_violations: [
+						{
+							category: 'copy',
+							block_name: null,
+							guideline_quote: 'Avoid passive voice.',
+							block_index: 1,
+							violating_text: 'was voted upon',
+							issue: 'Passive voice detected.',
+						},
+					],
+				} ) }
+			/>
+		);
+
+		await waitFor( () => {
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'jetpack_ai_editorial_review_result_rendered',
+				{
+					outcome: 'success',
+					conflict_count: 1,
+					implication_count: 1,
+					suggested_edit_count: 1,
+					guideline_violation_count: 1,
+					review_context: 'notes_and_guidelines',
+				}
+			);
+		} );
 	} );
 
 	it.each( [
@@ -320,6 +383,14 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 		await waitFor( () => {
 			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
 		} );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_editorial_review_item_action',
+			{
+				action: 'accept',
+				target: 'edit',
+				outcome: 'success',
+			}
+		);
 
 		// Collapsed: rationale gone, Undo present.
 		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
