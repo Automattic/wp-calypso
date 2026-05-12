@@ -1,8 +1,10 @@
 .is-reader-page {
 	.achievements__header {
 		display: flex;
-		align-items: flex-start;
+		flex-wrap: wrap;
+		align-items: center;
 		justify-content: flex-end;
+		gap: 12px;
 		margin: 16px 0;
 
 		.years-of-service-badge {
