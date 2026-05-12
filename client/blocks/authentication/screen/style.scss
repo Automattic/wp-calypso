@@ -46,13 +46,25 @@
 	flex-direction: column;
 	gap: 16px;
 
-	// Mobile: full content width, left-aligned (auth-mobile-template).
-	// Desktop: centered with a 347px max-width matching the Figma's
-	// heading column inside the desktop wrapper.
+	// Desktop: cap the heading column at 347px and center it within the
+	// wrapper, matching both Figma desktop templates. Text inside is
+	// left-aligned by default — that matches the 1-col layout. Mobile
+	// inherits the natural full-width, left-aligned flow.
 	@include break-medium {
 		max-inline-size: 347px;
 		margin-inline: auto;
-		text-align: center;
+	}
+}
+
+// Wide (2-col) screens center the heading title and subheading on desktop.
+// Targeting the heading + subheading text directly leaves the Notice's own
+// internal alignment untouched.
+.auth-screen.is-wide {
+	@include break-medium {
+		.step-container-v2__heading,
+		.auth-screen__subheading {
+			text-align: center;
+		}
 	}
 }
 
