@@ -39,8 +39,12 @@
 	}
 }
 
+// `is-wide` screens only widen to 768 once we're actually rendering the
+// two columns (the consumer's CSS flips its grid at `break-medium`, 782px).
+// Below that, the content stays single-column at the default 400px so we
+// don't get a wide-but-stretched-single-column middle ground.
 .auth-screen.auth-screen.is-wide .step-container-v2__content-row {
-	@include break-small {
+	@include break-medium {
 		max-width: 768px;
 	}
 }
