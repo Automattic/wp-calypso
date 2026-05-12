@@ -21,14 +21,42 @@ export type ApmRequestDetail = ApmSlowRequest;
 
 export interface ApmSummary {
 	avg_response_ms: number;
-	slow_request_count: number;
 	transaction_count: number;
 	db_avg_ms: number;
 	external_avg_ms: number;
+	plugins_avg_ms: number;
 }
 
 export interface ApmOverview {
 	summary: ApmSummary;
 	timeseries: ApmTimePoint[];
 	slow_requests: ApmSlowRequest[];
+}
+
+export interface ApmPluginUsage {
+	slug: string;
+	name: string;
+	total_ms: number;
+	avg_ms: number;
+	call_count: number;
+}
+
+export interface ApmHookUsage {
+	name: string;
+	total_ms: number;
+	avg_ms: number;
+	call_count: number;
+}
+
+export interface ApmTemplateUsage {
+	template: string;
+	total_ms: number;
+	avg_ms: number;
+	hit_count: number;
+}
+
+export interface ApmWordPress {
+	plugins: ApmPluginUsage[];
+	hooks: ApmHookUsage[];
+	templates: ApmTemplateUsage[];
 }

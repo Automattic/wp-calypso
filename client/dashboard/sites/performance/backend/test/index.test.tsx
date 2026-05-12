@@ -80,6 +80,16 @@ describe( '<SitePerformanceBackend>', () => {
 		expect( screen.getByRole( 'heading', { name: 'Slowest requests' } ) ).toBeVisible();
 	} );
 
+	test( 'renders Plugins, Hooks and Templates on the WordPress tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="wordpress" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Plugins' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Hooks' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Templates' } ) ).toBeVisible();
+	} );
+
 	test( 'clicking Enable POSTs { active: true }', async () => {
 		mockSite( businessSite( false ) );
 		const scope = mockApmToggle( true );

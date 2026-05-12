@@ -92,14 +92,15 @@ export default function BackendTabs( {
 			intent: bucketByMs( summary.avg_response_ms, 500, 1500 ),
 		},
 		{
-			tabId: 'requests',
-			label: compact ? __( 'Slow' ) : __( 'Slow requests' ),
-			value: formatCount( summary.slow_request_count ),
-		},
-		{
 			tabId: 'transactions',
 			label: __( 'Transactions' ),
 			value: formatCount( summary.transaction_count ),
+		},
+		{
+			tabId: 'wordpress',
+			label: compact ? __( 'WP' ) : __( 'WordPress' ),
+			value: formatMs( summary.plugins_avg_ms ),
+			intent: bucketByMs( summary.plugins_avg_ms, 100, 300 ),
 		},
 		{
 			tabId: 'database',
