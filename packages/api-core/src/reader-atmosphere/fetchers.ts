@@ -102,18 +102,22 @@ export interface GetAtmosphereNotificationsParams {
 	connectionId: number;
 	cursor?: string;
 	limit?: number;
+	types?: string;
 }
 
 export async function getAtmosphereNotifications(
 	params: GetAtmosphereNotificationsParams
 ): Promise< AtmosphereNotificationsPage > {
-	const { connectionId, cursor, limit } = params;
+	const { connectionId, cursor, limit, types } = params;
 	const query: Record< string, string > = {};
 	if ( cursor ) {
 		query.cursor = cursor;
 	}
 	if ( typeof limit === 'number' ) {
 		query.limit = String( limit );
+	}
+	if ( types ) {
+		query.types = types;
 	}
 	try {
 		return ( await wpcom.req.get(
