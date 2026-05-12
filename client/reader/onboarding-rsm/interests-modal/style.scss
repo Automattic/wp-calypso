@@ -37,6 +37,14 @@
 		margin: 0;
 	}
 
+	&__subtitle-break {
+		// Keep subtitle sentances on separate lines when there is reasonable room for them.
+		// On smaller viewports, they should be one text block for wrapping.
+		@media ( max-width: $break-medium ) {
+			display: none;
+		}
+	}
+
 	&__packs {
 		display: flex;
 		gap: 16px;

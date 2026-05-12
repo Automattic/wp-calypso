@@ -74,6 +74,14 @@ $entry-offset: 10px;
 		color: var( --color-text-subtle );
 	}
 
+	// Keep subtitle sentances on separate lines when there is reasonable room for them.
+	// On smaller viewports, they should be one text block for wrapping.
+	&__subtitle-break {
+		@media ( max-width: $break-medium ) {
+			display: none;
+		}
+	}
+
 	&__people-grid {
 		display: flex;
 		flex-direction: column;
