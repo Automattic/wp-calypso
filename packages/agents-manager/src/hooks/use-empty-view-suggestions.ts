@@ -2,12 +2,22 @@ import { type Suggestion } from '@automattic/agenttic-ui';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useAgentsManagerContext } from '../contexts';
 import { isReaderChatHost } from '../utils/is-reader-chat-agent';
 import type { LoadedProviders } from '../utils/load-external-providers';
 
 interface UseEmptyViewSuggestionsOptions {
 	loadedProviders: LoadedProviders | null;
 }
+
+const SITE_EDITOR_ONLY_SUGGESTION_IDS = new Set( [
+	'customize-colors',
+	'choose-new-fonts',
+	'change-page-layout',
+	'edit-pages',
+	'add-new-page',
+	'what-else-can-i-do',
+] );
 
 /**
  * Hook to manage empty view suggestions, handling Big Sky's theme-dependent suggestions
@@ -46,15 +56,69 @@ function readOverrideSuggestions(): Suggestion[] | null {
 	}
 	const valid = override.filter(
 		( s ): s is Suggestion =>
-			!! s && typeof s === 'object' && 'label' in s && 'prompt' in s && 'id' in s
+			!! s &&
+			typeof s === 'object' &&
+			'id' in s &&
+			'label' in s &&
+			'prompt' in s &&
+			typeof s.id === 'string' &&
+			typeof s.label === 'string' &&
+			typeof s.prompt === 'string'
 	);
 	return valid.length > 0 ? valid : null;
+}
+
+function getSuggestionsKey( suggestions: Suggestion[] | null ): string | null {
+	return suggestions
+		? JSON.stringify( suggestions.map( ( s ) => [ s.id, s.label, s.prompt ] ) )
+		: null;
+}
+
+function getWindowPathname(): string {
+	return typeof window !== 'undefined' ? window.location.pathname : '';
+}
+
+function isPostEditorSurface( sectionName: string, currentRoute?: string ): boolean {
+	const pathname = getWindowPathname();
+	return (
+		sectionName === 'gutenberg' ||
+		!! currentRoute?.includes( 'post.php' ) ||
+		!! currentRoute?.includes( 'post-new.php' ) ||
+		pathname.includes( 'post.php' ) ||
+		pathname.includes( 'post-new.php' )
+	);
+}
+
+function isSiteEditorSurface( sectionName: string, currentRoute?: string ): boolean {
+	if ( isPostEditorSurface( sectionName, currentRoute ) ) {
+		return false;
+	}
+
+	return (
+		sectionName === 'site-editor' ||
+		!! currentRoute?.includes( 'site-editor.php' ) ||
+		getWindowPathname().includes( 'site-editor.php' )
+	);
+}
+
+function filterEmptyViewSuggestions(
+	suggestions: Suggestion[],
+	shouldShowSiteEditorSuggestions: boolean
+): Suggestion[] {
+	if ( shouldShowSiteEditorSuggestions ) {
+		return suggestions;
+	}
+	return suggestions.filter(
+		( suggestion ) => ! SITE_EDITOR_ONLY_SUGGESTION_IDS.has( suggestion.id )
+	);
 }
 
 export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
 	const isReaderChat = isReaderChatHost();
+	const { sectionName, currentRoute } = useAgentsManagerContext();
+	const shouldShowSiteEditorSuggestions = isSiteEditorSurface( sectionName, currentRoute );
 
 	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(
@@ -121,25 +185,21 @@ export function useEmptyViewSuggestions( {
 	}, [ isReaderChat ] );
 
 	useEffect( () => {
-		if ( ! loadedProviders || ! isCoreStoreReady ) {
-			return;
-		}
-
-		// Re-read override on every effect run. We compare by JSON-identity
-		// against the current state so we only call setState when the
-		// override content actually changes — otherwise a fresh array
-		// reference every render would loop infinitely.
+		// Re-read override before the core-store readiness gate. Reader-chat
+		// suggestions come from the host page and do not depend on theme data.
+		// Compare against current state so a fresh override array does not
+		// trigger a render loop.
 		const currentOverride = readOverrideSuggestions();
-		if ( currentOverride ) {
-			const currentKey = JSON.stringify(
-				currentOverride.map( ( s ) => [ s.id, s.label, s.prompt ] )
-			);
-			const stateKey = emptyViewSuggestions
-				? JSON.stringify( emptyViewSuggestions.map( ( s ) => [ s.id, s.label, s.prompt ] ) )
-				: null;
+		if ( currentOverride !== null ) {
+			const currentKey = getSuggestionsKey( currentOverride );
+			const stateKey = getSuggestionsKey( emptyViewSuggestions );
 			if ( currentKey !== stateKey ) {
 				setEmptyViewSuggestions( currentOverride );
 			}
+			return;
+		}
+
+		if ( ! loadedProviders || ! isCoreStoreReady ) {
 			return;
 		}
 
@@ -152,9 +212,19 @@ export function useEmptyViewSuggestions( {
 			setEmptyViewSuggestions( defaultSuggestions );
 		} else {
 			// Big Sky provides suggestions and store is ready - get filtered suggestions
-			const suggestions = loadedProviders.getEmptyViewSuggestions?.();
-			if ( suggestions && suggestions.length > 0 ) {
+			const providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
+			const suggestions = filterEmptyViewSuggestions(
+				providerSuggestions,
+				shouldShowSiteEditorSuggestions
+			);
+			if ( suggestions.length > 0 ) {
 				setEmptyViewSuggestions( suggestions );
+			} else if ( providerSuggestions.length > 0 ) {
+				// The provider returned suggestions, but all of them are hidden
+				// on this surface (for example Site Editor suggestions in the
+				// post editor). Keep the empty view empty instead of falling
+				// back to generic suggestions.
+				setEmptyViewSuggestions( [] );
 			} else {
 				// Provider exists but returned empty/undefined (e.g. lazy proxy
 				// race where the IIFE hasn't set window globals yet). Fall back
@@ -169,6 +239,7 @@ export function useEmptyViewSuggestions( {
 		defaultSuggestions,
 		emptyViewSuggestions,
 		overrideVersion,
+		shouldShowSiteEditorSuggestions,
 	] );
 
 	return emptyViewSuggestions;

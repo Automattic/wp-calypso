@@ -1,5 +1,5 @@
 import { select as freshSelect, useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useRef } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	ImageStudioEntryPoint,
@@ -9,6 +9,7 @@ import {
 import { store as videoStudioStore } from '../../stores/video-studio';
 import { getJetpackAdminUrl, getReelSharePostPath } from '../../utils/jetpack-script-data';
 import {
+	trackImageStudioReelShareCancelled,
 	trackImageStudioReelShareClicked,
 	trackImageStudioReelShareConnectionDisabled,
 	trackImageStudioReelShareDispatched,
@@ -17,6 +18,7 @@ import {
 	trackImageStudioReelShareNotConnected,
 	trackImageStudioReelShareNotPublished,
 } from '../../utils/tracking';
+import type { ShareClipIdentity } from '../share-types';
 
 const SOCIAL_STORE = 'jetpack-social-plugin';
 const EDITOR_STORE = 'core/editor';
@@ -26,6 +28,8 @@ interface Connection {
 	connection_id: string | number;
 	service_name: string;
 	enabled?: boolean;
+	display_name?: string;
+	external_handle?: string;
 }
 
 interface JetpackSocialOptions {
@@ -36,19 +40,28 @@ interface JetpackSocialOptions {
 	[ key: string ]: unknown;
 }
 
+interface PendingShare {
+	igDisplayName: string | null;
+}
+
 interface UseReelShareReturn {
 	isVisible: boolean;
 	isSharing: boolean;
-	handleShare: () => Promise< void >;
+	isConfirming: boolean;
+	igDisplayName: string | null;
+	requestShare: () => Promise< void >;
+	confirmShare: () => Promise< void >;
+	cancelShare: () => void;
 }
 
-export function useReelShare(): UseReelShareReturn {
+export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 	const sharePath = getReelSharePostPath();
+	const hasOverride = clip !== undefined;
 
 	const {
-		currentVideoUrl,
-		currentAttachmentId,
-		currentDurationSeconds,
+		storeUrl,
+		storeAttachmentId,
+		storeDuration,
 		entryPoint,
 		isAiProcessing,
 		currentMeta,
@@ -62,9 +75,9 @@ export function useReelShare(): UseReelShareReturn {
 		const social = select( SOCIAL_STORE ) as { isSharingCurrentPost: () => boolean } | undefined;
 
 		return {
-			currentVideoUrl: videoStore.getCurrentVideoUrl?.() ?? null,
-			currentAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
-			currentDurationSeconds: videoStore.getCurrentDurationSeconds?.() ?? null,
+			storeUrl: videoStore.getCurrentVideoUrl?.() ?? null,
+			storeAttachmentId: videoStore.getCurrentAttachmentId?.() ?? null,
+			storeDuration: videoStore.getCurrentDurationSeconds?.() ?? null,
 			entryPoint: studio.getEntryPoint?.() ?? null,
 			isAiProcessing: studio.getImageStudioAiProcessing?.() ?? false,
 			currentMeta:
@@ -72,6 +85,10 @@ export function useReelShare(): UseReelShareReturn {
 			isSharing: social?.isSharingCurrentPost?.() ?? false,
 		};
 	}, [] );
+
+	const currentVideoUrl = hasOverride ? clip.url : storeUrl;
+	const currentAttachmentId = hasOverride ? clip.attachmentId : storeAttachmentId;
+	const currentDurationSeconds = hasOverride ? clip.durationSeconds ?? null : storeDuration;
 
 	const { editPost } = useDispatch( EDITOR_STORE ) as {
 		editPost: ( edits: { meta: Record< string, unknown > } ) => void;
@@ -82,23 +99,85 @@ export function useReelShare(): UseReelShareReturn {
 			config: { apiPath: string; savePost?: boolean }
 		) => Promise< boolean >;
 	};
-	const { addNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { addNotice: addModalNotice } = useDispatch( imageStudioStore ) as ImageStudioActions;
+	const { createNotice: createCoreNotice } = useDispatch( 'core/notices' ) as {
+		createNotice?: (
+			status: string,
+			message: string,
+			options?: {
+				type?: 'default' | 'snackbar';
+				isDismissible?: boolean;
+				actions?: Array< { label: string; url?: string; onClick?: () => void } >;
+			}
+		) => Promise< void >;
+	};
+
+	/**
+	 * Route notices to the surface that's actually visible right now. The
+	 * imageStudioStore notice list only renders inside the open Image Studio
+	 * modal; from the sidebar the modal isn't on screen, so notices need to
+	 * land on the editor's `core/notices` snackbar instead. We use the
+	 * presence of the clip override as the heuristic — only the sidebar
+	 * supplies one today.
+	 */
+	const showNotice = async (
+		message: string,
+		type: 'success' | 'warning' | 'error',
+		actions?: Array< { label: string; url: string; openInNewTab?: boolean } >,
+		isDismissible?: boolean
+	) => {
+		if ( hasOverride ) {
+			await createCoreNotice?.( type, message, {
+				type: 'snackbar',
+				// Match imageStudioStore.addNotice's default (dismissible) when
+				// the caller doesn't say otherwise — coercing undefined to false
+				// would silently lose the user's ability to dismiss.
+				isDismissible: isDismissible ?? true,
+				// Honour `openInNewTab` by routing through an onClick that opens
+				// in a new tab, instead of the default same-tab navigation a
+				// bare `url` action triggers. Same-tab navigation away from the
+				// editor would discard any unsaved post edits.
+				actions: actions?.map( ( a ) =>
+					a.openInNewTab
+						? { label: a.label, onClick: () => window.open( a.url, '_blank', 'noopener' ) }
+						: { label: a.label, url: a.url }
+				),
+			} );
+			return;
+		}
+		// Forward only the args that were supplied so call sites that don't
+		// pass actions/isDismissible aren't surprised by trailing undefineds.
+		if ( isDismissible !== undefined ) {
+			await addModalNotice( message, type, actions, isDismissible );
+		} else if ( actions !== undefined ) {
+			await addModalNotice( message, type, actions );
+		} else {
+			await addModalNotice( message, type );
+		}
+	};
 
 	// Synchronous guard against double-clicks — `isSharing` from useSelect lags
 	// the first dispatch by a render, so we can't rely on `disabled` alone.
 	const isSharingRef = useRef( false );
 
+	const [ pendingShare, setPendingShare ] = useState< PendingShare | null >( null );
+
+	// When the caller supplies an explicit clip (e.g. the sidebar reading meta),
+	// it has already asserted the video context — the entryPoint guard is only
+	// meaningful for the in-modal call site that reads the live store.
+	const isVideoContext = hasOverride || entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
 	const isVisible =
-		entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip &&
+		isVideoContext &&
 		!! currentVideoUrl &&
 		!! currentAttachmentId &&
 		!! sharePath &&
 		! isAiProcessing;
 
-	const handleShare = useCallback( async () => {
-		// Synchronous double-click guard. `isSharing` from useSelect lags by a
-		// render so it can't reliably block a fast second click on its own.
-		if ( isSharingRef.current ) {
+	const requestShare = useCallback( async () => {
+		// `isSharing` from useSelect lags by a render, so the IG button can
+		// stay briefly clickable mid-dispatch — guard here to avoid a
+		// double-publish via a reopened dialog.
+		if ( isSharingRef.current || pendingShare ) {
 			return;
 		}
 
@@ -117,12 +196,8 @@ export function useReelShare(): UseReelShareReturn {
 			| { getConnections: () => Connection[] }
 			| undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
-		const freshEnabledConnections = freshConnections.filter( ( c ) => c.enabled !== false );
 		const freshIgConnection = freshConnections.find( ( c ) => c.service_name === IG_SERVICE );
 		const freshIgIsEnabled = !! freshIgConnection && freshIgConnection.enabled !== false;
-		const freshSkipped = freshEnabledConnections
-			.filter( ( c ) => c.service_name !== IG_SERVICE )
-			.map( ( c ) => String( c.connection_id ) );
 
 		const freshEditor = freshSelect( EDITOR_STORE ) as
 			| { isCurrentPostPublished: () => boolean }
@@ -131,7 +206,7 @@ export function useReelShare(): UseReelShareReturn {
 
 		if ( ! currentVideoUrl || ! currentAttachmentId ) {
 			trackImageStudioReelShareInvalidState();
-			await addNotice(
+			await showNotice(
 				__( 'Generate a video first to share it as a Reel.', __i18n_text_domain__ ),
 				'error'
 			);
@@ -144,7 +219,7 @@ export function useReelShare(): UseReelShareReturn {
 
 		if ( ! freshIgConnection ) {
 			trackImageStudioReelShareNotConnected();
-			await addNotice(
+			await showNotice(
 				__(
 					'Connect Instagram in your site marketing settings to share Reels.',
 					__i18n_text_domain__
@@ -164,7 +239,7 @@ export function useReelShare(): UseReelShareReturn {
 
 		if ( ! freshIgIsEnabled ) {
 			trackImageStudioReelShareConnectionDisabled();
-			await addNotice(
+			await showNotice(
 				__(
 					'Instagram sharing is not enabled for this post. Enable it in the Jetpack Social sidebar to share this Reel.',
 					__i18n_text_domain__
@@ -178,7 +253,7 @@ export function useReelShare(): UseReelShareReturn {
 
 		if ( ! freshIsPublished ) {
 			trackImageStudioReelShareNotPublished();
-			await addNotice(
+			await showNotice(
 				__( 'Publish this post first to share it as an Instagram Reel.', __i18n_text_domain__ ),
 				'warning',
 				undefined,
@@ -186,6 +261,52 @@ export function useReelShare(): UseReelShareReturn {
 			);
 			return;
 		}
+
+		const resolvedHandle =
+			freshIgConnection.display_name || freshIgConnection.external_handle || null;
+
+		setPendingShare( { igDisplayName: resolvedHandle } );
+	}, [
+		currentAttachmentId,
+		currentDurationSeconds,
+		currentVideoUrl,
+		pendingShare,
+		sharePath,
+		showNotice,
+	] );
+
+	const confirmShare = useCallback( async () => {
+		// Synchronous double-click guard. `isSharing` from useSelect lags by a
+		// render so it can't reliably block a fast second click on its own.
+		if ( isSharingRef.current ) {
+			return;
+		}
+
+		if ( ! pendingShare ) {
+			return;
+		}
+
+		if ( ! currentVideoUrl || ! currentAttachmentId || ! sharePath ) {
+			// requestShare gated these already; if we somehow lost state between
+			// open and confirm, fall back to closing the dialog rather than
+			// dispatching a half-formed share.
+			setPendingShare( null );
+			return;
+		}
+
+		// Recompute the non-IG enabled connection IDs at confirm time. Capturing
+		// the list at requestShare time would miss any connection that finishes
+		// hydrating while the dialog is open — those would NOT be in
+		// `skipped_connections` and the Reel would also publish to them.
+		const freshSocial = freshSelect( SOCIAL_STORE ) as
+			| { getConnections: () => Connection[] }
+			| undefined;
+		const freshConnections = freshSocial?.getConnections?.() ?? [];
+		const skipped = freshConnections
+			.filter( ( c ) => c.enabled !== false && c.service_name !== IG_SERVICE )
+			.map( ( c ) => String( c.connection_id ) );
+
+		setPendingShare( null );
 
 		const existingSocialOptions =
 			( currentMeta.jetpack_social_options as JetpackSocialOptions | undefined ) ?? {};
@@ -215,13 +336,13 @@ export function useReelShare(): UseReelShareReturn {
 			// the share fires; we depend on that ordering rather than awaiting a
 			// separate save round-trip ourselves.
 			const success = await shareCurrentPost(
-				{ message: '', skipped_connections: freshSkipped },
+				{ message: '', skipped_connections: skipped },
 				{ savePost: true, apiPath: sharePath }
 			);
 
 			if ( success ) {
 				trackImageStudioReelShareDispatched();
-				await addNotice(
+				await showNotice(
 					__(
 						'Reel shared to Instagram. It may take a few minutes to appear on your account.',
 						__i18n_text_domain__
@@ -240,9 +361,9 @@ export function useReelShare(): UseReelShareReturn {
 			isSharingRef.current = false;
 		}
 	}, [
-		addNotice,
+		pendingShare,
+		showNotice,
 		currentAttachmentId,
-		currentDurationSeconds,
 		currentMeta,
 		currentVideoUrl,
 		editPost,
@@ -250,9 +371,20 @@ export function useReelShare(): UseReelShareReturn {
 		shareCurrentPost,
 	] );
 
+	const cancelShare = useCallback( () => {
+		if ( pendingShare ) {
+			trackImageStudioReelShareCancelled();
+		}
+		setPendingShare( null );
+	}, [ pendingShare ] );
+
 	return {
 		isVisible,
 		isSharing,
-		handleShare,
+		isConfirming: pendingShare !== null,
+		igDisplayName: pendingShare?.igDisplayName ?? null,
+		requestShare,
+		confirmShare,
+		cancelShare,
 	};
 }

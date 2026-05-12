@@ -589,6 +589,13 @@ export function trackImageStudioReelShareInvalidState(): void {
 }
 
 /**
+ * Tracks when the user dismisses the Reel share confirmation dialog.
+ */
+export function trackImageStudioReelShareCancelled(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_cancelled' );
+}
+
+/**
  * Tracks when shareCurrentPost successfully dispatched the IG submission.
  */
 export function trackImageStudioReelShareDispatched(): void {

@@ -81,6 +81,17 @@ describe( 'readerMastodonKeys.tagFeed', () => {
 	} );
 } );
 
+describe( 'readerMastodonKeys.notifications', () => {
+	it( 'keys by connection id', () => {
+		expect( readerMastodonKeys.notifications( 42 ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'notifications',
+			42,
+		] );
+	} );
+} );
+
 describe( 'readerMastodonKeys.authStatus', () => {
 	it( 'authStatus key includes the connection id', () => {
 		expect( readerMastodonKeys.authStatus( 42 ) ).toEqual( [

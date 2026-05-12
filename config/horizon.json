@@ -104,6 +104,7 @@
 		"purchases/split-cancel-remove": false,
 		"reader/achievements": true,
 		"reader/social": true,
+		"reader/fediverse": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": false,

@@ -21,9 +21,11 @@ export const MigratedOnColumn = ( { migratedOn }: { migratedOn: number } ) => {
 export const ReviewStatusColumn = ( {
 	reviewStatus,
 	rejectionReason,
+	canTagSitesForCommission,
 }: {
 	reviewStatus: string;
 	rejectionReason?: string;
+	canTagSitesForCommission: boolean;
 } ) => {
 	const translate = useTranslate();
 	const buttonRef = useRef< HTMLButtonElement | null >( null );
@@ -57,10 +59,18 @@ export const ReviewStatusColumn = ( {
 					statusType: 'info',
 				};
 			case 'pending':
-				return {
-					statusText: translate( 'Pending' ),
-					statusType: 'warning',
-				};
+				// Agencies still eligible for the Pressable migration incentive see a real
+				// "Pending" review state; for everyone else the incentive has ended, so a
+				// pending migration is effectively ineligible.
+				return canTagSitesForCommission
+					? {
+							statusText: translate( 'Pending' ),
+							statusType: 'warning',
+					  }
+					: {
+							statusText: translate( 'Ineligible' ),
+							statusType: 'info',
+					  };
 			default:
 				// Unknown status - don't show a badge
 				return null;

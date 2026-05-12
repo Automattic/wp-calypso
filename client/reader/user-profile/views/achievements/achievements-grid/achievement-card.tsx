@@ -1,4 +1,5 @@
 import { ProgressBar } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -57,7 +58,7 @@ export default function AchievementCard( {
 							total={ progressTarget }
 						/>
 						<span className="achievement-card__progress-label">
-							{ `${ progressCurrent ?? 0 }/${ progressTarget }` }
+							{ `${ formatNumber( progressCurrent ?? 0 ) }/${ formatNumber( progressTarget ) }` }
 						</span>
 					</div>
 				) }

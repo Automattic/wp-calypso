@@ -12,6 +12,7 @@ import {
 	StepContainer,
 } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -79,6 +80,7 @@ const DomainSearchStep: StepType< {
 	const userSiteCount = useSelector( getCurrentUserSiteCount );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -434,7 +436,13 @@ const DomainSearchStep: StepType< {
 		};
 
 		const getTopBarRightElement = () => {
-			if ( ! query ) {
+			// Surface the "Use a domain I own" CTA whenever:
+			//   - the user has searched (query is non-empty), OR
+			//   - we're on a mobile viewport (where the in-body
+			//     empty-state card is hidden — see style.scss).
+			// On desktop empty state, the link stays hidden and the
+			// in-body card carries the same CTA.
+			if ( ! query && ! isMobileViewport ) {
 				return;
 			}
 

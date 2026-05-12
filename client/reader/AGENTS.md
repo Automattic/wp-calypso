@@ -35,12 +35,12 @@ Pattern for any mutation factory whose `onSuccess` (or `onError`/`onMutate`) nee
 import { mutationOptions, type QueryClient } from '@tanstack/react-query';
 
 export const fooMutation = ( queryClient: QueryClient ) =>
-    mutationOptions( {
-        mutationFn: foo,
-        onSuccess: () => {
-            queryClient.invalidateQueries( { queryKey: barQuery().queryKey } );
-        },
-    } );
+	mutationOptions( {
+		mutationFn: foo,
+		onSuccess: () => {
+			queryClient.invalidateQueries( { queryKey: barQuery().queryKey } );
+		},
+	} );
 ```
 
 Consumers in the Reader (and any other Calypso classic surface) pass `useQueryClient()` in:
@@ -111,64 +111,72 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 
 ### Page entrypoints
 
-| Route                                      | Entrypoint                                                                |
-| ------------------------------------------ | ------------------------------------------------------------------------- |
-| `/reader`                                  | `client/reader/following/main.tsx`                                        |
-| `/reader/feeds/:feed_id`                   | `client/reader/feed-stream/`                                              |
-| `/reader/blogs/:blog_id`                   | `client/reader/site-stream/`                                              |
-| `/reader/feeds/:feed/posts/:post`          | `client/reader/full-post/`                                                |
-| `/reader/blogs/:blog/posts/:post`          | `client/reader/full-post/`                                                |
-| `/reader/a8c`                              | `client/reader/a8c/main.jsx`                                              |
-| `/reader/p2`                               | `client/reader/p2/main.jsx`                                               |
-| `/reader/search`                           | `client/reader/search/`                                                   |
-| `/reader/notifications`                    | `client/reader/notifications/`                                            |
-| `/reader/new`                              | `client/reader/new-subscription/`                                         |
-| `/reader/subscriptions`                    | `client/reader/site-subscriptions-manager/`                               |
-| `/reader/subscriptions/comments`           | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
-| `/reader/subscriptions/pending`            | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
-| `/reader/subscriptions/:id`                | `client/reader/site-subscription/`                                        |
-| `/reader/site/subscription/:blog_id`       | `client/reader/site-subscription/`                                        |
-| `/reader/conversations`                    | `client/reader/conversations/`                                            |
-| `/reader/list/*`                           | `client/reader/list/`                                                     |
-| `/discover/*`                              | `client/reader/discover/`                                                 |
-| `/tag/:tag`                                | `client/reader/tag-stream/`                                               |
-| `/tags`                                    | `client/reader/tags/`                                                     |
-| `/activities/likes`                        | `client/reader/liked-stream/`                                             |
-| `/reader/users/*`                          | `client/reader/user-profile/`                                             |
-| `/reader/atmosphere`                       | `client/reader/atmosphere/atmosphere-landing-view.tsx`                    |
-| `/reader/atmosphere/connect`               | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
-| `/reader/atmosphere/:id`                   | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
-| `/reader/atmosphere/:id/:tab`              | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
-| `/reader/atmosphere/:id/thread/:did/:rkey` | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
-| `/reader/atmosphere/:id/profile/:actor`    | `client/reader/atmosphere/author-profile-view.tsx`                        |
-| `/reader/mastodon`                         | `client/reader/mastodon/mastodon-landing-view.tsx`                        |
-| `/reader/mastodon/connect`                 | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
-| `/reader/mastodon/oauth-callback`          | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |
-| `/reader/mastodon/:id`                     | `client/reader/mastodon/controller.tsx` (redirect handler)                |
-| `/reader/mastodon/:id/:tab`                | `client/reader/mastodon/mastodon-account-view.tsx`                        |
-| `/reader/mastodon/:id/thread/:status_id`   | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
-| `/reader/mastodon/:id/profile/:actor`      | `client/reader/mastodon/author-profile-view.tsx`                          |
+| Route                                             | Entrypoint                                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------- |
+| `/reader`                                         | `client/reader/following/main.tsx`                                        |
+| `/reader/feeds/:feed_id`                          | `client/reader/feed-stream/`                                              |
+| `/reader/blogs/:blog_id`                          | `client/reader/site-stream/`                                              |
+| `/reader/feeds/:feed/posts/:post`                 | `client/reader/full-post/`                                                |
+| `/reader/blogs/:blog/posts/:post`                 | `client/reader/full-post/`                                                |
+| `/reader/a8c`                                     | `client/reader/a8c/main.jsx`                                              |
+| `/reader/p2`                                      | `client/reader/p2/main.jsx`                                               |
+| `/reader/search`                                  | `client/reader/search/`                                                   |
+| `/reader/notifications`                           | `client/reader/notifications/`                                            |
+| `/reader/new`                                     | `client/reader/new-subscription/`                                         |
+| `/reader/subscriptions`                           | `client/reader/site-subscriptions-manager/`                               |
+| `/reader/subscriptions/comments`                  | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/` |
+| `/reader/subscriptions/pending`                   | `client/reader/site-subscriptions-manager/pending-subscriptions-manager/` |
+| `/reader/subscriptions/:id`                       | `client/reader/site-subscription/`                                        |
+| `/reader/site/subscription/:blog_id`              | `client/reader/site-subscription/`                                        |
+| `/reader/conversations`                           | `client/reader/conversations/`                                            |
+| `/reader/list/*`                                  | `client/reader/list/`                                                     |
+| `/discover/*`                                     | `client/reader/discover/`                                                 |
+| `/tag/:tag`                                       | `client/reader/tag-stream/`                                               |
+| `/tags`                                           | `client/reader/tags/`                                                     |
+| `/activities/likes`                               | `client/reader/liked-stream/`                                             |
+| `/reader/users/*`                                 | `client/reader/user-profile/`                                             |
+| `/reader/atmosphere`                              | `client/reader/atmosphere/atmosphere-landing-view.tsx`                    |
+| `/reader/atmosphere/connect`                      | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
+| `/reader/atmosphere/:id`                          | `client/reader/atmosphere/controller.tsx` (redirect handler)              |
+| `/reader/atmosphere/:id/:tab`                     | `client/reader/atmosphere/atmosphere-account-view.tsx`                    |
+| `/reader/atmosphere/:id/thread/:did/:rkey`        | `client/reader/atmosphere/atmosphere-thread-view.tsx`                     |
+| `/reader/atmosphere/:id/profile/:actor`           | `client/reader/atmosphere/author-profile-view.tsx`                        |
+| `/reader/atmosphere/:id/profile/:actor/followers` | `client/reader/atmosphere/followers-view.tsx`                             |
+| `/reader/atmosphere/:id/profile/:actor/following` | `client/reader/atmosphere/following-view.tsx`                             |
+| `/reader/mastodon`                                | `client/reader/mastodon/mastodon-landing-view.tsx`                        |
+| `/reader/mastodon/connect`                        | `client/reader/mastodon/mastodon-connect-view.tsx`                        |
+| `/reader/mastodon/oauth-callback`                 | `client/reader/mastodon/mastodon-oauth-callback-view.tsx`                 |
+| `/reader/mastodon/:id`                            | `client/reader/mastodon/controller.tsx` (redirect handler)                |
+| `/reader/mastodon/:id/:tab`                       | `client/reader/mastodon/mastodon-account-view.tsx`                        |
+| `/reader/mastodon/:id/thread/:status_id`          | `client/reader/mastodon/mastodon-thread-view.tsx`                         |
+| `/reader/mastodon/:id/profile/:actor`             | `client/reader/mastodon/author-profile-view.tsx`                          |
+| `/reader/mastodon/:id/profile/:actor/followers`   | `client/reader/mastodon/followers-view.tsx`                               |
+| `/reader/mastodon/:id/profile/:actor/following`   | `client/reader/mastodon/following-view.tsx`                               |
+| `/reader/fediverse`                               | `client/reader/fediverse/fediverse-landing-view.tsx`                      |
+| `/reader/fediverse/:id`                           | `client/reader/fediverse/controller.tsx` (redirect handler)               |
+| `/reader/fediverse/:id/:tab`                      | `client/reader/fediverse/fediverse-account-view.tsx`                      |
+| `/reader/fediverse/:id/profile/:actor`            | `client/reader/fediverse/author-profile-view.tsx`                         |
+| `/reader/fediverse/:id/profile/:actor/followers`  | `client/reader/fediverse/followers-view.tsx`                              |
+| `/reader/fediverse/:id/profile/:actor/following`  | `client/reader/fediverse/following-view.tsx`                              |
 
 The likes/favorites count on `<SocialPostCard>` becomes an interactive
 `<LikeButton>` (in `client/reader/social/components/post-card/like-button.tsx`)
-when the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
-the tree with a `<LikeProvider>` carrying a per-protocol adapter hook.
-ATmosphere panels (timeline / thread / tag-feed) wire
-`makeUseAtmosphereLikeAction(connection.id)`; Mastodon panels (timeline
+when the host shell wraps the tree with a `<LikeProvider>` carrying a
+per-protocol adapter hook. ATmosphere panels (timeline / thread / tag-feed)
+wire `makeUseAtmosphereLikeAction(connection.id)`; Mastodon panels (timeline
 / thread / tag-feed) wire `makeUseMastodonLikeAction(connection.id)`.
 Surfaces without a provider (quoted-post embeds, the shared
-`SocialAuthorProfilePanel` until it forwards `connectionId`, non-social
+`SocialAuthorProfilePanel` until it forwards a provider, non-social
 cards) fall back to the static count.
 
 The reposts count likewise becomes an interactive `<RepostButton>` when
-the host shell passes a `connectionId` to `<PostCardCounts>` AND wraps
-the tree with `<RepostProvider>` carrying a per-protocol adapter hook.
-ATmosphere panels (timeline / thread / tag-feed) wire
-`makeUseAtmosphereRepostAction(connection.id)`; Mastodon panels (timeline
+the host shell wraps the tree with `<RepostProvider>` carrying a
+per-protocol adapter hook. ATmosphere panels (timeline / thread / tag-feed)
+wire `makeUseAtmosphereRepostAction(connection.id)`; Mastodon panels (timeline
 / thread / tag-feed) wire `makeUseMastodonRepostAction(connection.id)` and
 render the UK-spelled "Boost" label. Surfaces without a provider
 (quoted-post embeds, the shared `SocialAuthorProfilePanel` until it
-forwards `connectionId`, non-social cards) fall back to the static count.
+forwards a provider, non-social cards) fall back to the static count.
 
 The reply / quote / standalone composer follows the same pattern with
 `<ComposerProvider connectionId={…} config={…}>` from
