@@ -25,10 +25,13 @@
 
 // Match the Figma's 768px desktop wrapper width. `Step.CenteredColumnLayout`
 // derives its row max-width from `columnWidth * 90px + gaps`, which lands on
-// 660px for `columnWidth=6`. Force the content row to 768 inside our scope.
+// 660px for `columnWidth=6`. Force both the heading and content rows to 768
+// inside our scope. Using `max-width` (not the logical equivalent) so we
+// override WPDS's `max-width` rule directly on the same property — higher
+// specificity wins on cascade.
 .auth-screen .step-container-v2__content-row {
 	@include break-small {
-		max-inline-size: 768px;
+		max-width: 768px;
 	}
 }
 
@@ -36,11 +39,14 @@
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	// The Figma heading column is 347px wide and centered within the 768px
-	// wrapper. Cap and center it here regardless of how wide the parent row is.
-	max-inline-size: 347px;
-	margin-inline: auto;
-	text-align: center;
+
+	// Mobile: full content width, left-aligned (auth-mobile-template).
+	// Desktop: centered with a 347px max-width (auth-desktop-template-2col).
+	@include break-medium {
+		max-inline-size: 347px;
+		margin-inline: auto;
+		text-align: center;
+	}
 }
 
 .auth-screen__subheading {
