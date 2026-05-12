@@ -3,7 +3,12 @@ import useFetchBenchmarksAggregates from '../../../../hooks/use-fetch-benchmarks
 import StatCard from './stat-card';
 import { getStatCardConfigs } from './stat-card-config';
 import type { TrendPoint } from './stat-trend-chart';
-import type { AgencyBenchmark, Quarter } from '../../../../constants';
+import type {
+	AgencyBenchmark,
+	AggregateMetricKey,
+	MetricSummary,
+	Quarter,
+} from '../../../../constants';
 
 import './style.scss';
 
@@ -12,6 +17,12 @@ const TREND_QUARTERS = 6;
 type Props = {
 	quarter: Quarter[ 'quarter' ];
 	year: Quarter[ 'year' ];
+	// When a peer filter is active, the parent recomputes the per-metric summaries from the
+	// filtered `/peers` rows and passes them here in place of the unfiltered `/aggregates` data.
+	// `isFiltered` with no `metricSummaries` means the filtered pool is empty — show "no peer data".
+	metricSummaries?: Record< AggregateMetricKey, MetricSummary >;
+	sampleSizeOverride?: number;
+	isFiltered?: boolean;
 };
 
 function buildTrendPoints(
@@ -36,7 +47,13 @@ function buildTrendPoints(
 	return points;
 }
 
-export default function BenchmarkStatsGrid( { quarter, year }: Props ) {
+export default function BenchmarkStatsGrid( {
+	quarter,
+	year,
+	metricSummaries,
+	sampleSizeOverride,
+	isFiltered,
+}: Props ) {
 	const { data: submissions, isLoading: isListLoading } = useFetchAgencyBenchmarksList();
 	const { data: aggregates, isLoading: isAggregatesLoading } = useFetchBenchmarksAggregates();
 
@@ -59,6 +76,9 @@ export default function BenchmarkStatsGrid( { quarter, year }: Props ) {
 		: undefined;
 
 	const aggregateRow = aggregates?.find( ( row ) => row.quarter === quarter && row.year === year );
+	const summaryForMetric = ( metricKey: AggregateMetricKey ): MetricSummary | undefined =>
+		isFiltered ? metricSummaries?.[ metricKey ] : aggregateRow?.metrics[ metricKey ];
+	const sampleSize = isFiltered ? sampleSizeOverride : aggregateRow?.sample_size;
 
 	const configs = getStatCardConfigs();
 
@@ -70,7 +90,7 @@ export default function BenchmarkStatsGrid( { quarter, year }: Props ) {
 					return null;
 				}
 				const previousValue = previous ? config.getSubmissionValue( previous ) : undefined;
-				const metricSummary = aggregateRow?.metrics[ config.metricKey ];
+				const metricSummary = summaryForMetric( config.metricKey );
 				const trendPoints = buildTrendPoints( submissions, activeIndex, config.getSubmissionValue );
 
 				return (
@@ -81,7 +101,7 @@ export default function BenchmarkStatsGrid( { quarter, year }: Props ) {
 						previousValue={ previousValue }
 						previousQuarter={ previousQuarter }
 						metricSummary={ metricSummary }
-						sampleSize={ aggregateRow?.sample_size }
+						sampleSize={ sampleSize }
 						trendPoints={ trendPoints }
 					/>
 				);

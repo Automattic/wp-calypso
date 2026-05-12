@@ -3,10 +3,14 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import useFetchBenchmarkPeers from '../../../../hooks/use-fetch-benchmark-peers';
 import { getStatCardConfigs } from '../stats-grid/stat-card-config';
 import PeerCell from './peer-cell';
-import type { AgencyBenchmark, AggregateMetricKey, Quarter } from '../../../../constants';
+import type {
+	AgencyBenchmark,
+	AggregateMetricKey,
+	PeerBenchmarkRow,
+	Quarter,
+} from '../../../../constants';
 
 import './style.scss';
 
@@ -23,24 +27,33 @@ type Props = {
 	quarter: Quarter[ 'quarter' ];
 	year: Quarter[ 'year' ];
 	ownSubmission: AgencyBenchmark;
+	peers: PeerBenchmarkRow[];
+	sampleSize: number | undefined;
+	isLoading: boolean;
 };
 
-export default function PeerComparisonCard( { quarter, year, ownSubmission }: Props ) {
+export default function PeerComparisonCard( {
+	quarter,
+	year,
+	ownSubmission,
+	peers,
+	sampleSize,
+	isLoading,
+}: Props ) {
 	const dispatch = useDispatch();
-	const { data: peerData, isLoading } = useFetchBenchmarkPeers( quarter, year );
 	const [ selectedLabel, setSelectedLabel ] = useState< string | null >( null );
 
-	if ( isLoading || ! peerData || peerData.peers.length === 0 ) {
+	if ( isLoading || peers.length === 0 ) {
 		return null;
 	}
 
 	const activeLabel =
-		selectedLabel && peerData.peers.some( ( p ) => p.label === selectedLabel )
+		selectedLabel && peers.some( ( p ) => p.label === selectedLabel )
 			? selectedLabel
-			: peerData.peers[ 0 ].label;
-	const activePeer = peerData.peers.find( ( p ) => p.label === activeLabel ) ?? peerData.peers[ 0 ];
+			: peers[ 0 ].label;
+	const activePeer = peers.find( ( p ) => p.label === activeLabel ) ?? peers[ 0 ];
 
-	const peerOptions = peerData.peers.map( ( p ) => ( {
+	const peerOptions = peers.map( ( p ) => ( {
 		label: sprintf(
 			/* translators: %s: anonymized peer label, e.g. "A". */
 			__( 'Peer %s' ),
@@ -55,7 +68,7 @@ export default function PeerComparisonCard( { quarter, year, ownSubmission }: Pr
 			recordTracksEvent( 'calypso_a4a_benchmarks_peer_selected', {
 				quarter,
 				year,
-				sample_size: peerData.sample_size,
+				sample_size: sampleSize,
 			} )
 		);
 	};
