@@ -204,6 +204,25 @@ describe( 'usePostsToPodcastJob — failures', () => {
 
 		expect( result.current.status ).toBe( 'failed' );
 		expect( result.current.error.code ).toBe( 'poll-failed' );
+		expect( window.localStorage.getItem( storageKey ) ).toBeNull();
+	} );
+
+	it( 'transitions to failed when enqueue returns no jobId', async () => {
+		wpcom.req.post.mockResolvedValueOnce( {} );
+
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+
+		await act( async () => {
+			await result.current.generate( {
+				window: { unit: 'days', n: 7 },
+				length: 'short',
+				voicePreset: 'witty',
+			} );
+		} );
+
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.error.code ).toBe( 'queue-failed' );
+		expect( window.localStorage.getItem( storageKey ) ).toBeNull();
 	} );
 } );
 
@@ -244,12 +263,30 @@ describe( 'usePostsToPodcastJob — resume from localStorage', () => {
 
 describe( 'usePostsToPodcastJob — timeout and cleanup', () => {
 	it( 'transitions to failed with code "timeout" when polling exceeds 5 minutes', async () => {
-		const startedAt = Date.now() - ( 5 * 60 * 1000 + 1000 );
+		// Seed an entry that has 1 second of budget left (still under 5 min on mount).
+		const startedAt = Date.now() - ( 5 * 60 * 1000 - 1000 );
 		window.localStorage.setItem( storageKey, JSON.stringify( { jobId: 11, startedAt } ) );
+		wpcom.req.get.mockResolvedValue( { status: 'pending' } );
 
 		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
-		// Resume init clears over-the-line entries and stays idle.
-		expect( result.current.status ).toBe( 'idle' );
+		// Still within the window on mount — should be polling.
+		expect( result.current.status ).toBe( 'polling' );
+
+		// The first poll fires immediately and returns 'pending', scheduling the next poll at 3s.
+		// Flush that first poll so the 3s timer is armed.
+		await act( async () => {} );
+
+		// Advance 3s — triggers the next poll; by now elapsed > 5 min, so it hits the timeout branch.
+		// We use runOnlyPendingTimers so the setTimeout fires but doesn't re-arm new timers.
+		await act( async () => {
+			jest.runOnlyPendingTimers();
+		} );
+		// Flush microtasks so the poll() async function runs to completion.
+		await act( async () => {} );
+
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.error.code ).toBe( 'timeout' );
+		expect( window.localStorage.getItem( storageKey ) ).toBeNull();
 	} );
 
 	it( 'clears the pending timer on unmount', async () => {
