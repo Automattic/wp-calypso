@@ -14,6 +14,8 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getLengthPresets, getVoicePresets, getWindowPresets } from './presets';
 import { usePostsToPodcastJob } from './use-posts-to-podcast';
 
+import './style.scss';
+
 export function PostsToPodcastSection( { siteId, siteSlug } ) {
 	const translate = useTranslate();
 	const { data: teamsData, isLoading: teamsLoading } = useQuery( readTeamsQuery() );
@@ -106,14 +108,14 @@ export function PostsToPodcastSection( { siteId, siteSlug } ) {
 				</Button>
 
 				{ status === 'polling' && (
-					<Notice status="is-info" showDismiss={ false }>
+					<Notice className="posts-to-podcast__notice" status="is-info" showDismiss={ false }>
 						{ translate(
 							'Generating episode script — this usually takes 2–3 minutes. You can leave this page and come back.'
 						) }
 					</Notice>
 				) }
 				{ status === 'succeeded' && result?.postId && (
-					<Notice status="is-success" onDismissClick={ reset }>
+					<Notice className="posts-to-podcast__notice" status="is-success" onDismissClick={ reset }>
 						{ translate( 'Draft created.' ) }
 						<Button
 							variant="primary"
@@ -128,7 +130,7 @@ export function PostsToPodcastSection( { siteId, siteSlug } ) {
 					</Notice>
 				) }
 				{ status === 'failed' && (
-					<Notice status="is-error" onDismissClick={ reset }>
+					<Notice className="posts-to-podcast__notice" status="is-error" onDismissClick={ reset }>
 						{ error?.message || translate( 'Generation failed. Please try again.' ) }
 					</Notice>
 				) }
