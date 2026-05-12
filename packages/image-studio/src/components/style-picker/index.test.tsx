@@ -445,7 +445,7 @@ describe( 'StylePicker', () => {
 			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
 
 			expect( VIDEO_STYLE_OPTIONS[ 1 ] ).toMatchObject( {
-				label: 'Highlights',
+				label: 'Highlights (Coming Soon)',
 				value: 'highlights',
 				disabled: true,
 			} );

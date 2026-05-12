@@ -146,7 +146,7 @@ export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
 	},
 	{
-		label: __( 'Highlights', __i18n_text_domain__ ),
+		label: __( 'Highlights (Coming Soon)', __i18n_text_domain__ ),
 		value: 'highlights',
 		preview: videoHighlightsSoonPreview,
 		description: __(
