@@ -9,7 +9,7 @@ describe( 'HiddenCollectionsMessage', () => {
 		render( <HiddenCollectionsMessage /> );
 		expect(
 			screen.getByText( 'This user has chosen to not make this information available.' )
-		).toBeInTheDocument();
+		).toBeVisible();
 	} );
 } );
 
@@ -21,8 +21,9 @@ describe( 'PartialCollectionsNotice', () => {
 				mode="followers"
 			/>
 		);
-		expect( screen.getByText( /Followers for this profile may be missing\./ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Followers for this profile may be missing\./ ) ).toBeVisible();
 		const link = screen.getByRole( 'link', { name: /social\.growyourown\.services/ } );
+		expect( link ).toBeVisible();
 		expect( link ).toHaveAttribute( 'href', 'https://social.growyourown.services/@FediTips' );
 	} );
 
@@ -30,8 +31,8 @@ describe( 'PartialCollectionsNotice', () => {
 		render( <PartialCollectionsNotice profileUrl="https://mas.to/@alice" mode="following" /> );
 		expect(
 			screen.getByText( /Accounts followed by this profile may be missing\./ )
-		).toBeInTheDocument();
-		expect( screen.getByRole( 'link', { name: /mas\.to/ } ) ).toBeInTheDocument();
+		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /mas\.to/ } ) ).toBeVisible();
 	} );
 
 	it.each( [
