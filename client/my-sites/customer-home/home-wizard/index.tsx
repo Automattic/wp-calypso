@@ -8,6 +8,10 @@ import type { GoalKey, WizardAnswers } from './types';
 import './style.scss';
 
 type Props = {
+	// Existing site title (blogname) — usually set when the user picked a
+	// domain. Pre-fills the Name input so users don't retype it, and acts as
+	// the baseline for detecting whether they want to rename the site.
+	initialSiteName?: string;
 	onClose: () => void;
 	onComplete: ( answers: WizardAnswers ) => void;
 	// Fired with the current draft of the user's answers whenever they pause
@@ -20,11 +24,16 @@ type Props = {
 const TOTAL_STEPS = 2;
 const PREWARM_DEBOUNCE_MS = 1_500;
 
-export default function HomeWizard( { onClose, onComplete, onPrewarm }: Props ) {
+export default function HomeWizard( {
+	initialSiteName = '',
+	onClose,
+	onComplete,
+	onPrewarm,
+}: Props ) {
 	const translate = useTranslate();
 	const [ step, setStep ] = useState< 0 | 1 >( 0 );
 	const [ goal, setGoal ] = useState< GoalKey | null >( null );
-	const [ siteName, setSiteName ] = useState< string >( '' );
+	const [ siteName, setSiteName ] = useState< string >( initialSiteName );
 	const [ intent, setIntent ] = useState< string >( '' );
 
 	// Pre-fetch on Step 2 textarea pause. Cancelled whenever the user keeps
@@ -82,6 +91,7 @@ export default function HomeWizard( { onClose, onComplete, onPrewarm }: Props ) 
 			{ step === 0 && <GoalsStep value={ goal } onChange={ setGoal } /> }
 			{ step === 1 && (
 				<DetailsStep
+					goal={ goal }
 					siteName={ siteName }
 					intent={ intent }
 					onSiteNameChange={ setSiteName }

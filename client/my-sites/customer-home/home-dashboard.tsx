@@ -22,6 +22,7 @@ import { getAllPostCount } from 'calypso/state/posts/counts/selectors';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -609,12 +610,24 @@ function useBodyClass( className: string, active: boolean ) {
 
 export default function HomeDashboard() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { isOpen: isWizardOpen, open: openWizard, finish: finishWizard } = useHomeWizard();
 	const { isTailoring, runFromAnswers, prewarm } = useTailoredFlow();
+
+	const selectedSiteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
+	const currentSiteName = useSelector(
+		( state: AppState ) => getSelectedSite( state )?.name ?? ''
+	);
 
 	useBodyClass( 'is-home-wizard-open', isWizardOpen );
 
 	const handleWizardComplete = ( answers: WizardAnswers ) => {
+		// If the user changed the site name in the wizard, push it to
+		// Site Settings (blogname) so the new title persists site-wide.
+		const trimmedName = answers.siteName?.trim() ?? '';
+		if ( selectedSiteId !== null && trimmedName !== '' && trimmedName !== currentSiteName.trim() ) {
+			dispatch( saveSiteSettings( selectedSiteId, { blogname: trimmedName } ) );
+		}
 		finishWizard( answers );
 		runFromAnswers( answers );
 	};
@@ -645,6 +658,7 @@ export default function HomeDashboard() {
 			) }
 			{ isWizardOpen && (
 				<HomeWizard
+					initialSiteName={ currentSiteName }
 					onClose={ () => finishWizard() }
 					onComplete={ handleWizardComplete }
 					onPrewarm={ prewarm }

@@ -1,6 +1,7 @@
 import {
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
+	__experimentalVStack as VStack,
 	Icon,
 } from '@wordpress/components';
 import { edit, tool, store, envelope, megaphone, gallery } from '@wordpress/icons';
@@ -66,13 +67,15 @@ export default function GoalsStep( { value, onChange }: Props ) {
 	const options = useGoalOptions();
 
 	return (
-		<div className="home-wizard__step">
-			<header className="home-wizard__step-header">
-				<Heading level={ 2 } size={ 20 }>
+		<VStack spacing={ 4 } className="home-wizard__step">
+			<VStack spacing={ 1 }>
+				<Heading level={ 2 } size={ 20 } weight={ 500 }>
 					{ translate( "What's your main goal?" ) }
 				</Heading>
-				<Text variant="muted">{ translate( 'This helps us tailor your setup checklist.' ) }</Text>
-			</header>
+				<Text variant="muted" size={ 13 }>
+					{ translate( 'This helps us tailor your setup checklist.' ) }
+				</Text>
+			</VStack>
 			<div className="home-wizard__cards" role="radiogroup">
 				{ options.map( ( option ) => {
 					const selected = value === option.key;
@@ -94,6 +97,6 @@ export default function GoalsStep( { value, onChange }: Props ) {
 					);
 				} ) }
 			</div>
-		</div>
+		</VStack>
 	);
 }
