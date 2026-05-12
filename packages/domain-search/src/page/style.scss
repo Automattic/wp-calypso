@@ -46,6 +46,22 @@
 
 	@media ( max-width: #{ $break-small - 1px } ) {
 		--domain-search-input-size: 48px;
+
+		.domain-search-controls__input {
+			.components-input-control__prefix > div {
+				padding-inline-start: 12px;
+			}
+
+			.components-input-control__container input.components-input-control__input {
+				min-height: var( --domain-search-input-size );
+				font-size: 1rem;
+				padding-left: 8px;
+			}
+
+			.components-input-control__suffix > div {
+				padding-inline-end: 12px;
+			}
+		}
 	}
 }
 
