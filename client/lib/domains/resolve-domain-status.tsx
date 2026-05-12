@@ -443,7 +443,17 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( isRecentlyRegistered( domain.registrationDate ) || domain.pendingRegistration ) {
+			if ( domain.pendingRegistration || domain.pendingRegistrationAtRegistry ) {
+				return {
+					statusText: translate( 'Registering' ),
+					statusClass: 'status-warning',
+					status: translate( 'Registering' ),
+					icon: 'cloud_upload',
+					listStatusWeight: 400,
+				};
+			}
+
+			if ( isRecentlyRegistered( domain.registrationDate ) ) {
 				let noticeText;
 				if ( domain.isPrimary ) {
 					noticeText = translate(

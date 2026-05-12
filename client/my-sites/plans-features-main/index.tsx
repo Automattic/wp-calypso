@@ -188,6 +188,7 @@ export interface PlansFeaturesMainProps {
 	 * It's outside of the intent system since it is about the way the Free plan is presented, not the plan mix available to choose.
 	 */
 	deemphasizeFreePlan?: boolean;
+	renderFreePlanCtaInStepContainerV2?: boolean;
 
 	selectedThemeType?: string;
 }
@@ -233,6 +234,7 @@ const PlansFeaturesMain = ( {
 	isLaunchPage = false,
 	showLegacyStorageFeature = false,
 	deemphasizeFreePlan,
+	renderFreePlanCtaInStepContainerV2 = false,
 	isSpotlightOnCurrentPlan,
 	renderSiblingWhenLoaded,
 	showPlanTypeSelectorDropdown = false,
@@ -911,6 +913,7 @@ const PlansFeaturesMain = ( {
 					offeringFreePlan={ offeringFreePlan }
 					flowName={ flowName }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
+					renderFreePlanCtaInStepContainerV2={ renderFreePlanCtaInStepContainerV2 }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					showDifferentiatorHeader={ showDifferentiatorHeader }

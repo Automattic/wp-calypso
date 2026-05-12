@@ -73,4 +73,18 @@ describe( 'createAgentConfig', () => {
 			} )
 		);
 	} );
+
+	it( 'uses the Reader Chat host site ID when no site prop is available', async () => {
+		setAgentsManagerData( {
+			siteId: '247750866',
+		} );
+
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			agentId: 'reader-chat',
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).toEqual( expect.objectContaining( { selectedSiteId: 247750866 } ) );
+	} );
 } );

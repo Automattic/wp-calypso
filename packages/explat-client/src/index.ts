@@ -10,3 +10,5 @@ const createExPlatClient =
 
 export { createExPlatClient };
 export type { ExPlatClient, ExperimentAssignment };
+
+export * as ExPlatSdk from './sdk';

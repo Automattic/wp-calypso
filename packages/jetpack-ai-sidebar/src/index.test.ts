@@ -7,8 +7,63 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { act, render } from '@testing-library/react';
+import React from 'react';
+import ReviewMediation from './components/review-mediation';
 import TitlePicker from './components/title-picker';
-import { getChatComponent, toolProvider, useCheckpoint } from './index';
+import { undoBlockEdit } from './utils/block-actions';
+import {
+	applyReviewEdit,
+	findBlockElement,
+	findBlockListLayout,
+	getChatComponent,
+	getEmptyViewSuggestions,
+	contextProvider,
+	toolProvider,
+	useAbilitiesSetup,
+	useCheckpoint,
+	useSuggestions,
+} from './index';
+
+const mockSetIsSplitScreen = jest.fn();
+let mockSelectedBlock: any = null;
+let mockCurrentPostType: string | undefined = 'post';
+
+jest.mock( '@wordpress/components', () => {
+	const React = require( 'react' );
+	return {
+		Panel: ( { children }: any ) => React.createElement( 'div', null, children ),
+		PanelBody: ( { children }: any ) => React.createElement( 'section', null, children ),
+	};
+} );
+
+jest.mock( '@wordpress/data', () => ( {
+	dispatch: jest.fn( ( store: string ) => {
+		if ( store === 'automattic/agents-manager' ) {
+			return { setIsSplitScreen: mockSetIsSplitScreen };
+		}
+		return {};
+	} ),
+	useDispatch: () => ( {
+		editPost: jest.fn(),
+		selectBlock: jest.fn(),
+	} ),
+	useSelect: ( fn: any ) =>
+		fn( ( store: string ) => {
+			if ( store === 'core/block-editor' ) {
+				return {
+					getSelectedBlock: () => mockSelectedBlock,
+					getBlocks: () => [],
+				};
+			}
+			if ( store === 'core/editor' ) {
+				return {
+					getCurrentPostType: () => mockCurrentPostType,
+				};
+			}
+			return {};
+		} ),
+} ) );
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
 // can read/write the post title via the core/editor store.
@@ -42,15 +97,173 @@ function installWpDataMock( initialTitle: string ) {
 	return state;
 }
 
+function installPostTypeMock( postType?: string ) {
+	( window as any ).wp = {
+		data: {
+			select: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return {
+						getCurrentPostType: () => postType,
+					};
+				}
+				if ( store === 'core/block-editor' ) {
+					return {
+						getSelectedBlock: () => mockSelectedBlock,
+						getBlocks: () => [],
+					};
+				}
+				return undefined;
+			},
+		},
+	};
+}
+
+function SuggestionsProbe( { onSuggestions }: { onSuggestions: ( suggestions: any[] ) => void } ) {
+	const { suggestions } = useSuggestions();
+	React.useEffect( () => {
+		onSuggestions( suggestions );
+	}, [ onSuggestions, suggestions ] );
+	return null;
+}
+
 describe( 'getChatComponent', () => {
 	it( 'returns TitlePicker for type "title-picker"', () => {
 		expect( getChatComponent( 'title-picker' ) ).toBe( TitlePicker );
+	} );
+
+	it( 'returns ReviewMediation for type "review-mediation"', () => {
+		expect( getChatComponent( 'review-mediation' ) ).toBe( ReviewMediation );
 	} );
 
 	it( 'returns null for an unknown type', () => {
 		expect( getChatComponent( 'font-picker' ) ).toBeNull();
 		expect( getChatComponent( '' ) ).toBeNull();
 		expect( getChatComponent( 'anything-else' ) ).toBeNull();
+	} );
+} );
+
+describe( 'getEmptyViewSuggestions', () => {
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+	} );
+
+	it( 'hides Review Mediator by default', () => {
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Mediate review notes' );
+	} );
+
+	it( 'shows Review Mediator when enabled by agentsManagerData', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock( 'post' );
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).toContain( 'Mediate review notes' );
+	} );
+
+	it( 'hides Review Mediator on page editors', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock( 'page' );
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Mediate review notes' );
+	} );
+
+	it( 'hides Review Mediator until the post type is known', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock();
+
+		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
+
+		expect( labels ).toContain( 'Optimize Title' );
+		expect( labels ).not.toContain( 'Mediate review notes' );
+	} );
+} );
+
+describe( 'useSuggestions', () => {
+	beforeEach( () => {
+		mockSelectedBlock = null;
+		mockCurrentPostType = 'post';
+		mockSetIsSplitScreen.mockReset();
+		delete ( globalThis as any ).agentsManagerData;
+	} );
+
+	afterEach( () => {
+		delete ( globalThis as any ).agentsManagerData;
+		delete ( window as any ).wp;
+	} );
+
+	it( 'does not append Review Mediator to block-specific suggestions', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		mockSelectedBlock = { clientId: 'b1', name: 'core/paragraph' };
+		const onSuggestions = jest.fn();
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions } ) );
+
+		const latestSuggestions =
+			onSuggestions.mock.calls[ onSuggestions.mock.calls.length - 1 ]?.[ 0 ] ?? [];
+		expect( latestSuggestions.map( ( suggestion: any ) => suggestion.label ) ).not.toContain(
+			'Mediate review notes'
+		);
+	} );
+
+	it( 'opens split-screen when the Review Mediator suggestion is clicked', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		installPostTypeMock( 'post' );
+		const mediationPrompt = getEmptyViewSuggestions().find(
+			( suggestion ) => suggestion.id === 'mediate-review-notes'
+		)?.prompt;
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: { value: mediationPrompt },
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+	} );
+
+	it( 'does not open split-screen when Review Mediator is unavailable', () => {
+		( globalThis as any ).agentsManagerData = { reviewMediatorEnabled: true };
+		mockCurrentPostType = 'page';
+		installPostTypeMock( 'page' );
+
+		render( React.createElement( SuggestionsProbe, { onSuggestions: jest.fn() } ) );
+
+		act( () => {
+			window.dispatchEvent(
+				new CustomEvent( 'big-sky-inline-suggestion-click', {
+					detail: {
+						value:
+							'Review the unresolved notes on this post, apply the site guidelines, and surface conflicts, implications, and suggested edits.',
+					},
+				} )
+			);
+		} );
+
+		expect( mockSetIsSplitScreen ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'contextProvider', () => {
+	afterEach( () => {
+		delete ( window as any ).wp;
+	} );
+
+	it( 'includes the current post type in client context', () => {
+		installPostTypeMock( 'post' );
+
+		expect( contextProvider.getClientContext().currentScreen ).toMatchObject( {
+			url: window.location.href,
+			postType: 'post',
+		} );
 	} );
 } );
 
@@ -128,6 +341,26 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.hideZoomAction ).toBe( true );
 		} );
 
+		it( 'does not attach a title checkpoint to review-mediation components', async () => {
+			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+				type: 'review-mediation',
+				props: {
+					summary: 'Summary.',
+					conflicts: [],
+					implications: [],
+					suggested_edits: [],
+					guideline_violations: [],
+				},
+				toolCallId: 'call_review_mediation_123',
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'review-mediation' );
+			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
+			expect( parsed.data.isCurrent ).toBe( true );
+			expect( parsed.data.hideZoomAction ).toBe( true );
+		} );
+
 		it( 'generates a checkpointId fallback when toolCallId is missing', async () => {
 			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
 				type: 'title-picker',
@@ -192,5 +425,429 @@ describe( 'useCheckpoint', () => {
 	it( 'hasCheckpoint returns false for unknown ids', () => {
 		const api = useCheckpoint();
 		expect( api.hasCheckpoint( 'never-set' ) ).toBe( false );
+	} );
+} );
+
+// Minimal wp.data mock covering both core/editor (for checkpoint) and
+// core/block-editor (for updateBlockAttributes / getBlock). Tracks calls so
+// tests can assert exact dispatches.
+function installWpDataMockWithBlockEditor(
+	blocks: Record< string, { name: string; attributes: { content?: string } } > = {
+		'550e8400-e29b-41d4-a716-446655440000': {
+			name: 'core/paragraph',
+			attributes: { content: 'original block content' },
+		},
+	}
+) {
+	const editorState: { title: string } = { title: 'original' };
+	const blockUpdates: Array< { clientId: string; attrs: Record< string, unknown > } > = [];
+	( window as any ).wp = {
+		data: {
+			select: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return {
+						getEditedPostAttribute: ( attr: string ) =>
+							attr === 'title' ? editorState.title : undefined,
+					};
+				}
+				if ( store === 'core/block-editor' ) {
+					return {
+						getBlock: ( clientId: string ) => blocks[ clientId ] ?? null,
+					};
+				}
+				return undefined;
+			},
+			dispatch: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return {
+						editPost: ( attrs: { title?: string } ) => {
+							if ( typeof attrs.title === 'string' ) {
+								editorState.title = attrs.title;
+							}
+						},
+					};
+				}
+				if ( store === 'core/block-editor' ) {
+					return {
+						updateBlockAttributes: ( clientId: string, attrs: Record< string, unknown > ) => {
+							blockUpdates.push( { clientId, attrs } );
+						},
+					};
+				}
+				return undefined;
+			},
+		},
+	};
+	return { editorState, blockUpdates, blocks };
+}
+
+describe( 'applyReviewEdit', () => {
+	beforeEach( () => {
+		jest.useFakeTimers();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	it( 'dispatches updateBlockAttributes with the suggested content', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor();
+		const addMessage = jest.fn();
+		useAbilitiesSetup( {
+			addMessage,
+			clearSuggestions: () => undefined,
+		} as any );
+
+		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
+		// handleUpdateBlockContent uses an 800ms setTimeout before committing.
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'original block content',
+			contentAfter: 'new text',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'new text' },
+			},
+		] );
+	} );
+
+	it( 'posts the rationale as an assistant message to the chat when a summary is provided', async () => {
+		installWpDataMockWithBlockEditor();
+		const addMessage = jest.fn();
+		useAbilitiesSetup( {
+			addMessage,
+			clearSuggestions: () => undefined,
+		} as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			'Follows Copy guideline on specific dates.'
+		);
+		jest.advanceTimersByTime( 1000 );
+		await promise;
+
+		expect( addMessage ).toHaveBeenCalledTimes( 1 );
+		const message = addMessage.mock.calls[ 0 ][ 0 ];
+		expect( message.role ).toBe( 'assistant' );
+		expect( message.content[ 0 ] ).toEqual( {
+			type: 'text',
+			text: 'Follows Copy guideline on specific dates.',
+		} );
+	} );
+
+	it( 'does not emit a chat message when summary is omitted', async () => {
+		installWpDataMockWithBlockEditor();
+		const addMessage = jest.fn();
+		useAbilitiesSetup( {
+			addMessage,
+			clearSuggestions: () => undefined,
+		} as any );
+
+		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'only-content' );
+		jest.advanceTimersByTime( 1000 );
+		await promise;
+
+		expect( addMessage ).not.toHaveBeenCalled();
+	} );
+
+	// Intentionally no direct unit test for the `setCheckpoint` call inside
+	// applyReviewEdit: `useCheckpoint()` spreads its api into a fresh object
+	// (`{ ...api }`), so `jest.spyOn(useCheckpoint(), 'setCheckpoint')` would
+	// wrap the returned copy rather than the module-level singleton that
+	// applyReviewEdit actually invokes. The checkpoint API's own behaviour is
+	// covered by the `useCheckpoint` describe block below.
+
+	it( 'replaces only the matching span when currentText is provided', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'The board voted last Tuesday on the proposal.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'voted on Tuesday',
+			undefined,
+			'voted last Tuesday'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			contentBefore: 'The board voted last Tuesday on the proposal.',
+			contentAfter: 'The board voted on Tuesday on the proposal.',
+		} );
+
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'The board voted on Tuesday on the proposal.' },
+			},
+		] );
+	} );
+
+	it( 'revalidates currentText against the latest block content before writing', async () => {
+		const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'The board voted last Tuesday on the proposal.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'voted on Tuesday',
+			undefined,
+			'voted last Tuesday'
+		);
+		blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content =
+			'Updated intro. The board voted last Tuesday on the proposal.';
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: true,
+			contentBefore: 'Updated intro. The board voted last Tuesday on the proposal.',
+			contentAfter: 'Updated intro. The board voted on Tuesday on the proposal.',
+		} );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'Updated intro. The board voted on Tuesday on the proposal.' },
+			},
+		] );
+	} );
+
+	it( 'fails safely when currentText disappears before the delayed write', async () => {
+		const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'The board voted last Tuesday on the proposal.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'voted on Tuesday',
+			undefined,
+			'voted last Tuesday'
+		);
+		blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content =
+			'The board voted yesterday on the proposal.';
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'currentText not found in block content',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+		expect( warn ).toHaveBeenCalledWith(
+			'[ReviewMediation] currentText not found in block content',
+			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
+		);
+		warn.mockRestore();
+	} );
+
+	it( 'fails without replacing the block when currentText is not present in the block', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'Unrelated paragraph content.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'replacement text',
+			undefined,
+			'span that is not in the block'
+		);
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'currentText not found in block content',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+		expect( warn ).toHaveBeenCalledWith(
+			'[ReviewMediation] currentText not found in block content',
+			{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
+		);
+		warn.mockRestore();
+	} );
+
+	it.each( [
+		[ 'separate matches', 'vote now, then vote again after discussion.', 'vote' ],
+		[ 'overlapping matches', 'banana', 'ana' ],
+	] )(
+		'fails without replacing the block when currentText has %s',
+		async ( _label, content, currentText ) => {
+			const { blockUpdates } = installWpDataMockWithBlockEditor( {
+				'550e8400-e29b-41d4-a716-446655440000': {
+					name: 'core/paragraph',
+					attributes: { content },
+				},
+			} );
+			useAbilitiesSetup( {
+				addMessage: () => undefined,
+				clearSuggestions: () => undefined,
+			} as any );
+			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+			const promise = applyReviewEdit(
+				'550e8400-e29b-41d4-a716-446655440000',
+				'cast a ballot',
+				undefined,
+				currentText
+			);
+			jest.advanceTimersByTime( 1000 );
+			const result = await promise;
+
+			expect( result ).toMatchObject( {
+				success: false,
+				error: 'currentText matches multiple spans in block content',
+			} );
+			expect( blockUpdates ).toEqual( [] );
+			expect( warn ).toHaveBeenCalledWith(
+				'[ReviewMediation] currentText matches multiple spans in block content',
+				{ clientId: '550e8400-e29b-41d4-a716-446655440000' }
+			);
+			warn.mockRestore();
+		}
+	);
+
+	it( 'fails safely on unsupported block types', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/list',
+				attributes: { content: 'A list item.' },
+			},
+		} );
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const promise = applyReviewEdit( '550e8400-e29b-41d4-a716-446655440000', 'new text' );
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( { success: false } );
+		expect( blockUpdates ).toEqual( [] );
+	} );
+
+	it( 'returns an error result when clientId is missing', async () => {
+		installWpDataMockWithBlockEditor();
+		useAbilitiesSetup( {
+			addMessage: () => undefined,
+			clearSuggestions: () => undefined,
+		} as any );
+
+		const promise = applyReviewEdit( '', 'new text' );
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( { success: false } );
+	} );
+
+	it( 'undoBlockEdit restores only when the expected content still matches', () => {
+		const { blockUpdates, blocks } = installWpDataMockWithBlockEditor( {
+			'550e8400-e29b-41d4-a716-446655440000': {
+				name: 'core/paragraph',
+				attributes: { content: 'The board voted on Tuesday.' },
+			},
+		} );
+
+		const restored = undoBlockEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'The board voted last Tuesday.',
+			'The board voted on Tuesday.'
+		);
+
+		expect( restored ).toBe( true );
+		expect( blockUpdates ).toEqual( [
+			{
+				clientId: '550e8400-e29b-41d4-a716-446655440000',
+				attrs: { content: 'The board voted last Tuesday.' },
+			},
+		] );
+
+		blocks[ '550e8400-e29b-41d4-a716-446655440000' ].attributes.content =
+			'The board voted on Wednesday.';
+
+		const blocked = undoBlockEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'The board voted last Tuesday.',
+			'The board voted on Tuesday.'
+		);
+
+		expect( blocked ).toBe( false );
+		expect( blockUpdates ).toHaveLength( 1 );
+	} );
+} );
+
+describe( 'findBlockElement', () => {
+	afterEach( () => {
+		document.body.innerHTML = '';
+	} );
+
+	it( 'returns the element with matching data-block attribute in the main document', () => {
+		const el = document.createElement( 'div' );
+		el.setAttribute( 'data-block', '550e8400-e29b-41d4-a716-446655440000' );
+		document.body.appendChild( el );
+		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440000' ) ).toBe( el );
+	} );
+
+	it( 'returns null when the clientId is not in the DOM', () => {
+		// Returns null from the regex guard, the main-doc querySelector miss,
+		// or the optional editor-canvas iframe lookup chain (coerced via ?? null).
+		expect( findBlockElement( '550e8400-e29b-41d4-a716-446655440001' ) ).toBeNull();
+	} );
+
+	it( 'rejects malformed clientIds to prevent selector injection', () => {
+		expect( findBlockElement( '"][onerror="alert(1)"]' ) ).toBeNull();
+		expect( findBlockElement( 'contains space' ) ).toBeNull();
+		// Non-hex characters fail the regex guard.
+		expect( findBlockElement( 'not-a-real-clientid-g' ) ).toBeNull();
+	} );
+} );
+
+describe( 'findBlockListLayout', () => {
+	afterEach( () => {
+		document.body.innerHTML = '';
+	} );
+
+	it( 'finds the root block-list layout element in the main document', () => {
+		const el = document.createElement( 'div' );
+		el.className = 'block-editor-block-list__layout is-root-container';
+		document.body.appendChild( el );
+		expect( findBlockListLayout() ).toBe( el );
+	} );
+
+	it( 'returns null when the root layout is not in the DOM', () => {
+		// Returns null from the main-doc querySelector miss or the optional
+		// editor-canvas iframe lookup chain (coerced via ?? null).
+		expect( findBlockListLayout() ).toBeNull();
+	} );
+
+	it( 'ignores layout elements that are not the root container', () => {
+		// Nested (non-root) block lists appear inside group blocks and must
+		// not be matched — we only toggle focus mode on the editor's root.
+		const nested = document.createElement( 'div' );
+		nested.className = 'block-editor-block-list__layout';
+		document.body.appendChild( nested );
+		expect( findBlockListLayout() ).toBeFalsy();
 	} );
 } );
