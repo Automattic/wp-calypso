@@ -1,12 +1,14 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink, TextControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { PrimaryButton, Screen, TextField } from 'calypso/blocks/authentication';
+import { Screen } from 'calypso/blocks/authentication';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+
+const submitButtonStyle = { width: '100%' };
 
 const LostPasswordForm = ( {
 	redirectToAfterLoginUrl,
@@ -171,7 +173,9 @@ const LostPasswordForm = ( {
 				onSubmit={ onSubmit }
 			>
 				<div className="login__form-userdata">
-					<TextField
+					<TextControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
 						label={ translate( 'Email address or username' ) }
 						value={ userLogin }
 						onChange={ ( newValue ) => {
@@ -197,13 +201,16 @@ const LostPasswordForm = ( {
 					) }
 				</div>
 				<div className="login__form-action">
-					<PrimaryButton
+					<Button
+						variant="primary"
+						__next40pxDefaultSize
 						type="submit"
 						disabled={ userLogin.length === 0 || showError || isBusy }
 						isBusy={ isBusy }
+						style={ submitButtonStyle }
 					>
 						{ translate( 'Reset my password' ) }
-					</PrimaryButton>
+					</Button>
 				</div>
 				<div className="login__form-help">
 					<ExternalLink
