@@ -141,3 +141,68 @@ describe( 'usePostsToPodcastJob — polling', () => {
 		expect( wpcom.req.get ).toHaveBeenCalledTimes( 11 );
 	} );
 } );
+
+describe( 'usePostsToPodcastJob — failures', () => {
+	it( 'transitions to failed when enqueue rejects', async () => {
+		wpcom.req.post.mockRejectedValueOnce( new Error( 'network' ) );
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+
+		await act( async () => {
+			await result.current.generate( {
+				window: { unit: 'days', n: 7 },
+				length: 'short',
+				voicePreset: 'witty',
+			} );
+		} );
+
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.error.code ).toBe( 'queue-failed' );
+		expect( window.localStorage.getItem( storageKey ) ).toBeNull();
+	} );
+
+	it( 'transitions to failed when poll returns terminal failed', async () => {
+		wpcom.req.post.mockResolvedValueOnce( { jobId: 3 } );
+		wpcom.req.get.mockResolvedValueOnce( {
+			status: 'failed',
+			errorCode: 'upstream-bork',
+			message: 'Upstream said no.',
+		} );
+
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+
+		await act( async () => {
+			await result.current.generate( {
+				window: { unit: 'days', n: 7 },
+				length: 'short',
+				voicePreset: 'witty',
+			} );
+		} );
+		await act( async () => {} );
+
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.error ).toEqual( {
+			code: 'upstream-bork',
+			message: 'Upstream said no.',
+		} );
+		expect( window.localStorage.getItem( storageKey ) ).toBeNull();
+	} );
+
+	it( 'transitions to failed when poll rejects', async () => {
+		wpcom.req.post.mockResolvedValueOnce( { jobId: 4 } );
+		wpcom.req.get.mockRejectedValueOnce( new Error( 'network' ) );
+
+		const { result } = renderHookWithProvider( () => usePostsToPodcastJob( SITE_ID ) );
+
+		await act( async () => {
+			await result.current.generate( {
+				window: { unit: 'days', n: 7 },
+				length: 'short',
+				voicePreset: 'witty',
+			} );
+		} );
+		await act( async () => {} );
+
+		expect( result.current.status ).toBe( 'failed' );
+		expect( result.current.error.code ).toBe( 'poll-failed' );
+	} );
+} );
