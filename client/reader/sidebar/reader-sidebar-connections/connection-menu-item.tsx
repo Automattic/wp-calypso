@@ -24,12 +24,12 @@ function useResolvedConnection( connection: UnifiedConnection ): {
 	const atmosphereId = connection.protocol === 'atmosphere' ? connection.id : null;
 	const mastodonId = connection.protocol === 'mastodon' ? connection.id : null;
 
-	const atmosphere = useConnectionQuery( atmosphereId ?? 0, {
-		enabled: atmosphereId !== null,
-	} );
-	const mastodon = useMastodonConnectionQuery( mastodonId ?? 0, {
-		enabled: mastodonId !== null,
-	} );
+	// Both hooks accept `id: number | null`; the underlying query options
+	// gate `enabled` on `id !== null && id > 0`, so passing null here
+	// keeps the query off for non-matching protocols without firing a
+	// useless request.
+	const atmosphere = useConnectionQuery( atmosphereId );
+	const mastodon = useMastodonConnectionQuery( mastodonId );
 
 	if ( connection.protocol === 'atmosphere' ) {
 		return {
