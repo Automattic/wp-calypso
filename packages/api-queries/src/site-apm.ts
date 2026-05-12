@@ -1,8 +1,14 @@
-import { updateApmEnabled } from '@automattic/api-core';
-import { mutationOptions } from '@tanstack/react-query';
+import { fetchApmTraces, updateApmEnabled } from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
-import type { Site } from '@automattic/api-core';
+import type { ApmTracesParams, Site } from '@automattic/api-core';
+
+export const siteApmTracesQuery = ( siteId: number, params: ApmTracesParams ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'apm', 'traces', params ],
+		queryFn: () => fetchApmTraces( siteId, params ),
+	} );
 
 export const siteApmEnabledMutation = ( siteId: number ) =>
 	mutationOptions( {

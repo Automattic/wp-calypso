@@ -33,6 +33,20 @@ export interface ApmOverview {
 	slow_requests: ApmSlowRequest[];
 }
 
+export interface ApmTracesParams {
+	/** Inclusive lower bound, epoch milliseconds. */
+	from: number;
+	/** Exclusive upper bound, epoch milliseconds. */
+	to: number;
+}
+
+export interface ApmTraces {
+	summary: ApmSummary;
+	timeseries: ApmTimePoint[];
+	slow_requests: ApmSlowRequest[];
+	wordpress: ApmWordPress;
+}
+
 export interface ApmPluginUsage {
 	slug: string;
 	name: string;
