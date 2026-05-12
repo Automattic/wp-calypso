@@ -1,8 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { ShareReelAction } from './index';
 
 const mockUseReelShare = jest.fn();
 const mockUseGenericShare = jest.fn();
+const mockDialogProps = jest.fn();
 
 jest.mock( '../../../hooks/use-reel-share', () => ( {
 	useReelShare: () => mockUseReelShare(),
@@ -35,6 +36,13 @@ jest.mock( '@wordpress/components', () => ( {
 	},
 } ) );
 
+jest.mock( '../../reel-share-confirmation-dialog', () => ( {
+	ReelShareConfirmationDialog: ( props: Record< string, unknown > ) => {
+		mockDialogProps( props );
+		return props.isOpen ? <div role="dialog" /> : null;
+	},
+} ) );
+
 jest.mock( 'social-logos', () => ( {
 	SocialLogo: ( { icon, size }: { icon: string; size: number } ) => (
 		<span data-testid="social-logo" data-icon={ icon } data-size={ size } />
@@ -42,11 +50,13 @@ jest.mock( 'social-logos', () => ( {
 } ) );
 
 const visibleReel = {
-	canShare: true,
-	reason: null,
 	isVisible: true,
 	isSharing: false,
-	handleShare: jest.fn(),
+	isConfirming: false,
+	igDisplayName: null as string | null,
+	requestShare: jest.fn(),
+	confirmShare: jest.fn(),
+	cancelShare: jest.fn(),
 };
 
 const visibleGeneric = {
@@ -58,8 +68,8 @@ const visibleGeneric = {
 describe( '<ShareReelAction />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockUseReelShare.mockReturnValue( visibleReel );
-		mockUseGenericShare.mockReturnValue( visibleGeneric );
+		mockUseReelShare.mockReturnValue( { ...visibleReel } );
+		mockUseGenericShare.mockReturnValue( { ...visibleGeneric } );
 	} );
 
 	it( 'renders nothing when both share modes are hidden', () => {
@@ -110,13 +120,15 @@ describe( '<ShareReelAction />', () => {
 		expect( screen.getByRole( 'button', { name: /Sharing to other apps/i } ) ).toBeDisabled();
 	} );
 
-	it( 'invokes handleShare on IG click', () => {
-		const handleShare = jest.fn();
-		mockUseReelShare.mockReturnValue( { ...visibleReel, handleShare } );
+	it( 'invokes requestShare on IG click (does not dispatch yet)', () => {
+		const requestShare = jest.fn();
+		const confirmShare = jest.fn();
+		mockUseReelShare.mockReturnValue( { ...visibleReel, requestShare, confirmShare } );
 
 		render( <ShareReelAction /> );
 		fireEvent.click( screen.getByRole( 'button', { name: /Share on Instagram/i } ) );
-		expect( handleShare ).toHaveBeenCalledTimes( 1 );
+		expect( requestShare ).toHaveBeenCalledTimes( 1 );
+		expect( confirmShare ).not.toHaveBeenCalled();
 	} );
 
 	it( 'invokes generic handleShare on share-icon click', () => {
@@ -126,5 +138,42 @@ describe( '<ShareReelAction />', () => {
 		render( <ShareReelAction /> );
 		fireEvent.click( screen.getByRole( 'button', { name: /Share to other apps/i } ) );
 		expect( handleShare ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	describe( 'confirmation dialog wiring', () => {
+		it( 'passes through reel state and handlers as props', () => {
+			const confirmShare = jest.fn();
+			const cancelShare = jest.fn();
+			mockUseReelShare.mockReturnValue( {
+				...visibleReel,
+				isConfirming: true,
+				igDisplayName: 'myhandle',
+				confirmShare,
+				cancelShare,
+			} );
+
+			render( <ShareReelAction /> );
+
+			expect( mockDialogProps ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					isOpen: true,
+					igDisplayName: 'myhandle',
+					onConfirm: confirmShare,
+					onCancel: cancelShare,
+				} )
+			);
+			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		} );
+
+		it( 'passes isOpen=false when reel.isConfirming is false', () => {
+			mockUseReelShare.mockReturnValue( { ...visibleReel, isConfirming: false } );
+
+			render( <ShareReelAction /> );
+
+			expect( mockDialogProps ).toHaveBeenCalledWith(
+				expect.objectContaining( { isOpen: false } )
+			);
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
