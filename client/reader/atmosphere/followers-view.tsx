@@ -136,6 +136,9 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				getProfileUrl( connectionId, { handle: item.handle, did: item.did } ) ??
 				getBlueskyProfileUrl( item.handle ),
 			isSelf,
+			// Every row on this followers list trivially follows the viewer,
+			// so the "Follows you" badge would be redundant on every row.
+			hideFollowedByBadge: true,
 			followState: isSelf
 				? undefined
 				: {
