@@ -29,17 +29,17 @@
 }
 
 // Default (1-col) screens cap their content row at 400px on desktop. `is-wide`
-// screens (login + signup) widen to 768px to fit two columns side-by-side
-// with a vertical OR between them — `auth-desktop-template-2col`. Use
-// `max-width` (same property WPDS uses on .step-container-v2__content-row) so
-// higher specificity wins on cascade.
-.auth-screen .step-container-v2__content-row {
+// screens (login + signup) widen to 768px to fit two columns side-by-side.
+// Chain the `.auth-screen` class twice to raise specificity above
+// `@wordpress/onboarding`'s `.step-container-v2__content-row` rule (which
+// itself caps at the WPDS-derived 660px for `columnWidth=6`).
+.auth-screen.auth-screen .step-container-v2__content-row {
 	@include break-small {
 		max-width: 400px;
 	}
 }
 
-.auth-screen.is-wide .step-container-v2__content-row {
+.auth-screen.auth-screen.is-wide .step-container-v2__content-row {
 	@include break-small {
 		max-width: 768px;
 	}
@@ -71,10 +71,11 @@
 	}
 }
 
+// Subheading uses the WPDS `$font-size-large` scale value and inherits
+// line-height / font-weight from the surrounding body styles. No hardcoded
+// type metrics — WPDS owns the defaults.
 .auth-screen__subheading {
 	font-size: $font-size-large;
-	line-height: 20px;
-	font-weight: 400;
 	color: var(--color-text-subtle);
 	margin: 0;
 }

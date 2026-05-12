@@ -30,9 +30,9 @@ type ScreenProps = {
 	 * When true, the content row caps at the Figma 2-col desktop wrapper
 	 * width (768px) so a consumer can lay out two columns side-by-side
 	 * (input-CTA + social options, with a vertical OR between them). When
-	 * false (default), the content row caps at 348px to match the Figma
-	 * 1-col desktop layout used by lost-password, magic-link, 2FA,
-	 * social-connect, continue-as-user, etc.
+	 * false (default), the content row caps at 400px — the 1-col desktop
+	 * width used by lost-password, magic-link, 2FA, social-connect,
+	 * continue-as-user, etc.
 	 */
 	wide?: boolean;
 	/**
@@ -59,7 +59,7 @@ const Screen = ( {
 				<div className="auth-screen__heading">
 					<Step.Heading text={ heading } align={ wide ? 'center' : 'left' } />
 					{ notice && <div className="auth-screen__notice">{ notice }</div> }
-					{ subheading && <h2 className="auth-screen__subheading">{ subheading }</h2> }
+					{ subheading && <p className="auth-screen__subheading">{ subheading }</p> }
 				</div>
 			}
 		>

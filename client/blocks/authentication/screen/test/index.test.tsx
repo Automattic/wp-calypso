@@ -28,13 +28,13 @@ describe( 'Screen', () => {
 	} );
 
 	test( 'omits the subheading when not provided', () => {
-		render(
+		const { container } = render(
 			<Screen heading="Log in">
 				<div>content</div>
 			</Screen>
 		);
 
-		expect( screen.queryByRole( 'heading', { level: 2 } ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.auth-screen__subheading' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders an optional notice between heading and subheading', () => {
