@@ -184,22 +184,16 @@ describe( 'useStreamPendingPosts', () => {
 
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 1 ) );
 
-		// `resetQueries` re-fetches active observers; mock the second call.
-		nock( BASE )
-			.get( LIKES_PATH )
-			.query( true )
-			.reply( 200, {
-				posts: [ apiPost( 2 ), apiPost( 3 ) ],
-				date_range: { after: null, before: null },
-			} );
-
+		// `reset` overwrites the cached head with an empty response — it must
+		// not trigger a follow-up fetch (the previous `resetQueries`
+		// implementation did, racing the consumer's infinite-query refetch
+		// and flashing the badge back to N).
 		act( () => {
 			result.current.reset();
 		} );
 
-		// pendingCount snaps to 0 immediately after reset (data is undefined),
-		// and stays 0 once the follow-up fetch lands matching the visible items.
 		await waitFor( () => expect( result.current.pendingCount ).toBe( 0 ) );
+		expect( nock.pendingMocks() ).toHaveLength( 0 );
 	} );
 
 	it( 'rotates queryKey on streamKey change so polled head does not bleed across streams', async () => {

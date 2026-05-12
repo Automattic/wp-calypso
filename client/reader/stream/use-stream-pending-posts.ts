@@ -145,7 +145,16 @@ export function useStreamPendingPosts( {
 	}, [ pollHead.data, items, streamType ] );
 
 	const reset = useCallback( () => {
-		queryClient.resetQueries( { queryKey: pollQueryKey, exact: true } );
+		// Snapshot an empty response into the cache instead of `resetQueries`.
+		// `resetQueries` would re-trigger an immediate fetch from this active
+		// observer; the freshly fetched head could land before the consumer's
+		// infinite-query refetch settles, flashing `pendingCount` back to N
+		// before `items[]` has caught up — the badge would reappear right
+		// after the click. `setQueryData` clears the count without scheduling
+		// a new fetch; the next `refetchInterval` tick handles re-syncing.
+		queryClient.setQueryData< ReadStreamResponse >( pollQueryKey, () => ( {
+			posts: [],
+		} ) );
 	}, [ queryClient, pollQueryKey ] );
 
 	return { pendingCount, hasPendingPosts: pendingCount > 0, reset };
