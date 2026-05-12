@@ -19,6 +19,7 @@ export { SocialPostCard } from './components/post-card';
 export { SocialFeedList } from './components/feed-list';
 export { SocialNotificationItem } from './components/notifications-list/notification-item';
 export { SocialNotificationsList } from './components/notifications-list';
+export type { ChipFilter } from './components/notifications-list/filter';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
 
 export type {
