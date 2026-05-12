@@ -19,7 +19,7 @@ function safeProfileUrl(
 		if ( parsed.protocol !== 'https:' ) {
 			return null;
 		}
-		return { href: profileUrl, host: parsed.host };
+		return { href: parsed.href, host: parsed.host };
 	} catch {
 		return null;
 	}
@@ -61,32 +61,33 @@ export function PartialCollectionsNotice( { profileUrl, mode }: PartialCollectio
 		return null;
 	}
 
-	// Split into two translations so each lead-in has its own translator
-	// context — the home-instance label below is shared, so we render the
-	// `ExternalLink` once via `components` interpolation.
-	const lead =
+	// One full translatable sentence per mode so translators see (and can
+	// reorder) the assembled string. `children` is provided by the
+	// i18n-calypso substitution; passing `null` here satisfies the typed
+	// required prop on `ExternalLink` without overriding the substituted
+	// text.
+	const options = {
+		args: { host: link.host },
+		components: {
+			externalLink: (
+				<ExternalLink
+					className="mastodon-profile-collections-notice__link"
+					href={ link.href }
+					children={ null }
+				/>
+			),
+		},
+	};
+	const message =
 		mode === 'followers'
-			? translate( 'Followers for this profile may be missing.' )
-			: translate( 'Accounts followed by this profile may be missing.' );
+			? translate(
+					'Followers for this profile may be missing. See more on {{externalLink}}%(host)s{{/externalLink}}.',
+					options
+			  )
+			: translate(
+					'Accounts followed by this profile may be missing. See more on {{externalLink}}%(host)s{{/externalLink}}.',
+					options
+			  );
 
-	return (
-		<p className="mastodon-profile-collections-notice">
-			{ lead }{ ' ' }
-			{ translate( 'See more on {{externalLink}}%(host)s{{/externalLink}}.', {
-				args: { host: link.host },
-				components: {
-					// `children` is provided by the i18n-calypso substitution;
-					// passing `null` here satisfies the typed required prop on
-					// `ExternalLink` without overriding the substituted text.
-					externalLink: (
-						<ExternalLink
-							className="mastodon-profile-collections-notice__link"
-							href={ link.href }
-							children={ null }
-						/>
-					),
-				},
-			} ) }
-		</p>
-	);
+	return <p className="mastodon-profile-collections-notice">{ message }</p>;
 }
