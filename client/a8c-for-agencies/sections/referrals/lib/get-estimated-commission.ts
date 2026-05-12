@@ -1,52 +1,40 @@
-import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { Referral } from '../types';
 
-export const getDailyPrice = ( product: APIProductFamilyProduct, quantity: number ) => {
-	// If quantity is not 1 than we search corresponding bundle
-	if ( quantity !== 1 ) {
-		return (
-			product.supported_bundles.find( ( bundleProduct ) => quantity === bundleProduct.quantity )
-				?.price_per_unit ?? 0
-		);
-	}
-	// If quantity is 1 than we return price per unit
-	return product.price_per_unit ?? 0;
-};
-
+/**
+ * Sum the estimated commissions wpcom returns per referral purchase, for
+ * either the current or previous payout quarter.
+ *
+ * Every purchase carries server-computed `estimated_commission_*_quarter`
+ * numbers as of Aug 2025 — the JS-only legacy fallback (license dates ×
+ * daily price × commission percentage) was removed when wpcom started
+ * computing those numbers for legacy purchases too. Purchases without a
+ * `commissions` block contribute 0 (rather than triggering the old
+ * fallback compute, which was double-counting alongside the BD path in
+ * mixed cases).
+ */
 export const getEstimatedCommission = (
 	referrals: Referral[],
-	products: APIProductFamilyProduct[],
-	activityWindow: { start: Date; finish: Date },
 	usePreviousQuarter: boolean = false
 ) => {
-	const { commissions } = referrals.reduce(
-		( acc, referral ) => {
-			if ( ! referral?.purchases?.length ) {
-				return acc;
-			}
-			for ( const purchase of referral.purchases ) {
-				// We go over 'active' and 'cancelled' subscriptions
-				if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
-					continue;
-				}
-				if ( purchase.commissions ) {
-					// As of Aug 2025, new client purchases will use BD for purchases
-					// In this case the estimated commission has already been calculated on the backend
-					// and we just need to add it to the total commission
-					const commissionAmount = usePreviousQuarter
-						? purchase.commissions.estimated_commission_previous_quarter ?? 0
-						: purchase.commissions.estimated_commission_current_quarter ?? 0;
-					acc.commissions += commissionAmount;
-				}
-			}
+	const total = referrals.reduce( ( acc, referral ) => {
+		if ( ! referral?.purchases?.length ) {
 			return acc;
-		},
-		{ commissions: 0 }
-	);
+		}
+		for ( const purchase of referral.purchases ) {
+			// Walk only 'active' / 'cancelled' subscriptions; pending and
+			// error purchases haven't produced commissionable activity.
+			if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
+				continue;
+			}
+			if ( ! purchase.commissions ) {
+				continue;
+			}
+			acc += usePreviousQuarter
+				? purchase.commissions.estimated_commission_previous_quarter ?? 0
+				: purchase.commissions.estimated_commission_current_quarter ?? 0;
+		}
+		return acc;
+	}, 0 );
 
-	// Convert commission from cents to dollars,
-	// add subscriptions commission and round to 2 decimal places
-	const totalCommission = Number( commissions.toFixed( 2 ) );
-
-	return totalCommission;
+	return Number( total.toFixed( 2 ) );
 };
