@@ -62,9 +62,8 @@ $actions-height: 64px;
 	.reader-onboarding-modal__footer {
 		height: $actions-height;
 		flex: 0 0 auto;
-		background-color: #fff;
+		background-color: var( --color-surface );
 		padding-inline: 32px;
-		border-top: 1px solid #ddd; //$gray-300;
 
 		.reader-onboarding-modal__footer-actions {
 			height: 100%;
@@ -79,11 +78,6 @@ $actions-height: 64px;
 			justify-content: flex-end;
 		}
 	}
-}
-
-// Welcome doesn't show a divider above its footer.
-.reader-welcome-modal .reader-onboarding-modal__footer {
-	border-top: 0;
 }
 
 // VStack-based modals (welcome, interests) make the inner content the scroll
