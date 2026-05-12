@@ -1,9 +1,10 @@
-// Recipe-specific layout for the Login screen. On narrow viewports the
-// content stacks (1-col); on wider viewports it lays out the input-CTA and
-// the social options side-by-side with a vertical OR rule between them,
-// matching the Figma's `auth-desktop-template-2col` frame.
+@import '@wordpress/base-styles/breakpoints';
 
-$recipes-two-col-breakpoint: 600px;
+// Recipe-specific layout for the Login screen. On narrow viewports the
+// content stacks (1-col); from `$break-medium` (782px) up it lays out
+// the input-CTA and the social options side-by-side with a vertical OR
+// rule between them, matching the Figma's `auth-desktop-template-2col`
+// frame (Wrapper 768px wide, columns 327px each, 34px OR gutter).
 
 .auth-recipe-login {
 	display: grid;
@@ -30,21 +31,21 @@ $recipes-two-col-breakpoint: 600px;
 
 .auth-recipe-login__or > span {
 	position: relative;
-	background: var(--color-surface);
+	background: var(--dashboard__background-color, #fcfcfc);
 	padding-inline: 8px;
 	z-index: 1;
 }
 
-@media (min-width: #{$recipes-two-col-breakpoint}) {
+@include break-medium {
 	.auth-recipe-login {
-		grid-template-columns: 1fr auto 1fr;
+		grid-template-columns: 1fr 34px 1fr;
 		column-gap: 24px;
 		row-gap: 0;
 		align-items: start;
 	}
 
 	.auth-recipe-login__or {
-		inline-size: 24px;
+		inline-size: 34px;
 		min-block-size: 100%;
 	}
 
@@ -61,7 +62,6 @@ $recipes-two-col-breakpoint: 600px;
 		inset-block-start: 50%;
 		inset-inline-start: 50%;
 		transform: translate(-50%, -50%);
-		background: var(--color-surface);
 		padding-inline: 0;
 		padding-block: 8px;
 	}
