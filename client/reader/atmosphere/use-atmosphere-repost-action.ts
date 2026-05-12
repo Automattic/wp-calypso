@@ -208,7 +208,11 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 							args: { count: formatted },
 							textOnly: true,
 					  } )
-					: translate( 'Undo repost', { textOnly: true } );
+					: translate( 'Undo repost', {
+							textOnly: true,
+							comment:
+								'Accessible label and tooltip for the repost button on a Bluesky/ATmosphere post card when the viewer has already reposted the post and the count is zero. Verb phrase that undoes a repost.',
+					  } );
 			}
 			return count > 0
 				? translate( 'Repost, %(count)s repost', 'Repost, %(count)s reposts', {
@@ -216,7 +220,11 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 						args: { count: formatted },
 						textOnly: true,
 				  } )
-				: translate( 'Repost', { textOnly: true } );
+				: translate( 'Repost', {
+						textOnly: true,
+						comment:
+							'Accessible label and tooltip for the repost button on a Bluesky/ATmosphere post card when the post has no reposts yet. Verb meaning to share the post.',
+				  } );
 		};
 
 		const statRowText = ( count: number ) =>

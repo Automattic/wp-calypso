@@ -53,7 +53,7 @@ export function RepostButton( { post, hideCount }: RepostButtonProps ) {
 					} ) }
 					aria-pressed
 					aria-label={ accessibleLabel }
-					aria-disabled={ isPending }
+					aria-disabled={ isPending || undefined }
 					onClick={ ( event ) => {
 						event.preventDefault();
 						event.stopPropagation();
@@ -83,7 +83,7 @@ export function RepostButton( { post, hideCount }: RepostButtonProps ) {
 						aria-haspopup="menu"
 						aria-expanded={ isOpen }
 						aria-label={ accessibleLabel }
-						aria-disabled={ isPending }
+						aria-disabled={ isPending || undefined }
 						onClick={ ( event ) => {
 							event.preventDefault();
 							event.stopPropagation();

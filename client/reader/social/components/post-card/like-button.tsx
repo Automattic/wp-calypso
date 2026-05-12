@@ -68,7 +68,7 @@ export function LikeButton( { post, hideCount }: LikeButtonProps ) {
 				} ) }
 				aria-pressed={ isLiked }
 				aria-label={ accessibleLabel }
-				aria-disabled={ isPending }
+				aria-disabled={ isPending || undefined }
 				onClick={ onClick }
 			>
 				<ReaderLikeIcon liked={ isLiked } iconSize={ ICON_SIZE } />

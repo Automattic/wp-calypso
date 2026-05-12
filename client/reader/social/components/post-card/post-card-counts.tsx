@@ -102,7 +102,11 @@ export function PostCardCounts( { post, prominentTimestamp }: PostCardCountsProp
 					args: { count: counts.replies },
 					textOnly: true,
 			  } )
-			: translate( 'Reply', { textOnly: true } )
+			: translate( 'Reply', {
+					textOnly: true,
+					comment:
+						'Accessible label and tooltip for the reply button on a social (Bluesky/ATmosphere, Mastodon) post card when the post has no replies yet. Verb.',
+			  } )
 	) as string;
 
 	const renderRepliesNode = () => {

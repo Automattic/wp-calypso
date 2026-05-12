@@ -141,7 +141,11 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 							args: { count: formatted },
 							textOnly: true,
 					  } )
-					: translate( 'Undo boost', { textOnly: true } );
+					: translate( 'Undo boost', {
+							textOnly: true,
+							comment:
+								'Accessible label and tooltip for the boost button on a Mastodon post card when the viewer has already boosted the post and the count is zero. Verb phrase that undoes a boost (Mastodon UI vocabulary; equivalent to "undo repost").',
+					  } );
 			}
 			return count > 0
 				? translate( 'Boost, %(count)s boost', 'Boost, %(count)s boosts', {
@@ -149,7 +153,11 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 						args: { count: formatted },
 						textOnly: true,
 				  } )
-				: translate( 'Boost', { textOnly: true } );
+				: translate( 'Boost', {
+						textOnly: true,
+						comment:
+							'Accessible label and tooltip for the boost button on a Mastodon post card when the post has no boosts yet. Verb (Mastodon UI vocabulary; equivalent to "repost").',
+				  } );
 		};
 
 		const statRowText = ( count: number ) =>
