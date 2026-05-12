@@ -166,8 +166,7 @@
 
 	.theme-download-card .button,
 	.theme__sheet-demo-button,
-	.theme__sheet-preview-demo-site,
-	.card.theme__sheet-card-support .components-button {
+	.theme__sheet-preview-demo-site {
 		background-color: transparent;
 		border-color: var( --dashboard-field__border-color );
 		color: var( --dashboard__text-color );
@@ -183,10 +182,35 @@
 		}
 	}
 
+	.card.theme__sheet-card-support .components-button {
+		background-color: transparent;
+		border-color: var( --dashboard-field__border-color );
+		color: var( --dashboard-field__border-color );
+
+		&:visited {
+			color: var( --dashboard-field__border-color );
+		}
+
+		&:hover {
+			background-color: transparent;
+			border-color: var( --dashboard__text-muted-color );
+			color: var( --dashboard__text-muted-color );
+		}
+	}
+
 	.theme__sheet-web-preview,
 	.theme__sheet-screenshot {
 		background-color: var( --dashboard-surface__background-color );
 		box-shadow: 0 0 0 1px var( --dashboard-surface__border-color );
+	}
+
+	.web-preview__close.button {
+		border-right-color: var( --dashboard-surface__border-color );
+		color: var( --wp-components-color-accent-darker-20 );
+
+		&:hover {
+			color: var( --wp-components-color-accent-darker-20 );
+		}
 	}
 
 	.theme-collection__carousel-controls {
