@@ -152,7 +152,7 @@ describe( 'Mastodon NotificationsPanel', () => {
 		renderWithProvider( <NotificationsPanel connection={ connection } /> );
 		await waitFor( () => expect( screen.getByText( /no notifications yet/i ) ).toBeVisible() );
 
-		await user.click( screen.getByRole( 'radio', { name: /^likes$/i } ) );
+		await user.click( screen.getByRole( 'button', { name: /^likes$/i } ) );
 		await waitFor( () => expect( screen.getByText( /no likes yet/i ) ).toBeVisible() );
 		expect( nock.isDone() ).toBe( true );
 	} );

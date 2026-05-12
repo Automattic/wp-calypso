@@ -18,7 +18,7 @@ export function NotificationsFilterBar( { value, onChange }: Props ) {
 	};
 	return (
 		<div
-			role="radiogroup"
+			role="group"
 			aria-label={ translate( 'Filter notifications by type' ) as string }
 			className="social-notifications-filter-bar"
 		>
@@ -28,8 +28,7 @@ export function NotificationsFilterBar( { value, onChange }: Props ) {
 					<button
 						key={ chip }
 						type="button"
-						role="radio"
-						aria-checked={ isActive }
+						aria-pressed={ isActive }
 						className={ clsx( 'social-notifications-filter-bar__chip', {
 							'is-active': isActive,
 						} ) }

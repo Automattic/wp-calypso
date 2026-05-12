@@ -120,6 +120,16 @@ describe( 'groupNotifications', () => {
 		expect( out[ 0 ].isUnread ).toBe( true );
 	} );
 
+	it( 'computes newestCreatedAt as the max of member timestamps regardless of input order', () => {
+		const a = makeItem( { id: '1', created_at: '2026-05-12T10:00:00Z' } );
+		const b = makeItem( { id: '2', created_at: '2026-05-12T12:00:00Z' } );
+		const c = makeItem( { id: '3', created_at: '2026-05-12T11:00:00Z' } );
+		const out = groupNotifications( [ a, b, c ] );
+		expect( out ).toHaveLength( 1 );
+		assertStack( out[ 0 ] );
+		expect( out[ 0 ].newestCreatedAt ).toBe( '2026-05-12T12:00:00Z' );
+	} );
+
 	it( 'positions a stack at its newest member', () => {
 		// Order: A (newest, like-on-X), B (a single mention-on-Y between),
 		// C (like-on-X, older). Stack of like-on-X should appear before B.

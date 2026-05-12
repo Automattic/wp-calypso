@@ -70,7 +70,10 @@ export function groupNotifications( items: SocialNotification[] ): GroupedRow[] 
 			groupKey: b.key,
 			canonicalType: head.canonical_type,
 			members: b.members,
-			newestCreatedAt: head.created_at,
+			newestCreatedAt: b.members.reduce(
+				( max, m ) => ( m.created_at > max ? m.created_at : max ),
+				b.members[ 0 ].created_at
+			),
 			isUnread: b.members.some( ( m ) => ! m.is_read ),
 			target: head.target,
 			targetUrl: head.target_url,

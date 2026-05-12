@@ -125,13 +125,12 @@ describe( 'StackedNotification', () => {
 		expect( onExpandedChange ).toHaveBeenLastCalledWith( false, 3 );
 	} );
 
-	it( 'truncates follow stacks above 50 members and shows a "view all" link', async () => {
+	it( 'truncates follow stacks above 50 members', async () => {
 		const user = userEvent.setup();
 		renderWithProvider( <StackedNotification stack={ makeFollowStack( 60 ) } /> );
 		await user.click( screen.getByRole( 'button', { name: /followed you/i } ) );
 
 		const links = screen.getAllByRole( 'link' );
-		expect( links ).toHaveLength( 51 );
-		expect( screen.getByRole( 'link', { name: /view all/i } ) ).toBeVisible();
+		expect( links ).toHaveLength( 50 );
 	} );
 } );

@@ -150,7 +150,6 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 	) }`;
 
 	const visibleMembers = stack.members.slice( 0, FOLLOW_TRUNCATE_AT );
-	const truncated = stack.members.length > FOLLOW_TRUNCATE_AT;
 
 	return (
 		<div className={ className }>
@@ -175,16 +174,6 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 					{ visibleMembers.map( ( m ) => (
 						<SocialNotificationItem key={ m.id } notification={ m } />
 					) ) }
-					{ truncated && (
-						<a
-							className="social-notifications-stack__view-all"
-							href={ stack.members[ 0 ].target_url }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{ translate( 'View all on the upstream service' ) as string }
-						</a>
-					) }
 				</div>
 			) }
 		</div>

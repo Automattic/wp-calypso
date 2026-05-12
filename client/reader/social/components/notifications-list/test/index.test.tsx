@@ -100,8 +100,8 @@ describe( 'SocialNotificationsList', () => {
 				onFilterChange={ jest.fn() }
 			/>
 		);
-		expect( screen.getByRole( 'radio', { name: /^likes$/i } ) ).toHaveAttribute(
-			'aria-checked',
+		expect( screen.getByRole( 'button', { name: /^likes$/i } ) ).toHaveAttribute(
+			'aria-pressed',
 			'true'
 		);
 	} );
