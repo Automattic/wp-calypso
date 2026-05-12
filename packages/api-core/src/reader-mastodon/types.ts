@@ -162,6 +162,22 @@ export interface MastodonAuthorProfile {
 	note: string;
 	counts: MastodonProfileCounts;
 	locked: boolean;
+	/**
+	 * Web URL of the actor's profile on their home instance, e.g.
+	 * `https://social.growyourown.services/@FediTips`. Used by the
+	 * followers / following surfaces to link out to the source-of-truth
+	 * list (the home-instance API only returns the locally-known subset).
+	 * Optional: older backend revisions don't emit it.
+	 */
+	url?: string | null;
+	/**
+	 * `true` when the actor has opted to hide their followers / following
+	 * collections. Absent on backends that haven't deployed the flag yet —
+	 * consumers must treat `undefined` as `false` (visible) rather than as
+	 * "hidden", so a missing field on an older backend doesn't black out
+	 * the tabs.
+	 */
+	hide_collections?: boolean;
 	raw: Record< string, unknown >;
 	/**
 	 * Relationship state from the connected account's perspective. Absent

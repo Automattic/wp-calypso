@@ -23,6 +23,7 @@ import {
 } from 'calypso/reader/social';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { projectMastodonError } from './error-projection';
+import { HiddenCollectionsMessage, PartialCollectionsNotice } from './profile-collections-notice';
 import { followErrorMessage } from './profile-errors';
 import { getProfileUrl } from './route';
 import type { MastodonAccountSummary, MastodonError } from '@automattic/api-core';
@@ -56,7 +57,20 @@ export function FollowersView( { connectionId, actor }: Props ) {
 	}, [ connectionsPending, connectionsError, connection ] );
 
 	const profileQuery = useMastodonAuthorProfileQuery( connectionId, actor );
-	const followersQuery = useMastodonActorFollowersInfiniteQuery( { connectionId, actor } );
+
+	// When the actor has hidden their social graph (`hide_collections: true`),
+	// the upstream API returns 200 with an empty page. Short-circuit the list
+	// query so we don't burn an upstream call just to render an empty state —
+	// we'll render a dedicated "hidden" message instead. Older backends that
+	// don't emit the field surface as `undefined`, which is treated as "not
+	// hidden" so the existing behaviour is preserved.
+	const hideCollections = profileQuery.data?.hide_collections === true;
+
+	const followersQuery = useMastodonActorFollowersInfiniteQuery( {
+		connectionId,
+		actor,
+		enabled: ! hideCollections,
+	} );
 	const {
 		data: followersData,
 		isPending: followersIsPending,
@@ -221,27 +235,37 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				) }
 			/>
 			<AuthorProfileHeader timelineUrl={ profileHref ?? `/reader/mastodon/${ connectionId }` } />
-			<SocialAccountList< MastodonAccountSummary >
-				query={ query }
-				renderItem={ renderItem }
-				itemKey={ ( item ) => item.id }
-				emptyTitle={ String( translate( 'No followers yet' ) ) }
-				emptyLine={ String(
-					translate( 'When someone follows %(actor)s, they will appear here.', {
-						args: { actor },
-					} )
-				) }
-				protocolLabel="Mastodon"
-				protocolHomeURL="/reader/mastodon"
-				protocolHomeLabel={ String( translate( 'Back to Mastodon' ) ) }
-				header={ {
-					displayName: profileQuery.data?.display_name ?? null,
-					handle: profileQuery.data?.acct ?? actor,
-					count: profileQuery.data?.counts.followers ?? null,
-					mode: 'followers',
-					isPending: profileQuery.isPending,
-				} }
-			/>
+			{ hideCollections ? (
+				<HiddenCollectionsMessage />
+			) : (
+				<>
+					<SocialAccountList< MastodonAccountSummary >
+						query={ query }
+						renderItem={ renderItem }
+						itemKey={ ( item ) => item.id }
+						emptyTitle={ String( translate( 'No followers yet' ) ) }
+						emptyLine={ String(
+							translate( 'When someone follows %(actor)s, they will appear here.', {
+								args: { actor },
+							} )
+						) }
+						protocolLabel="Mastodon"
+						protocolHomeURL="/reader/mastodon"
+						protocolHomeLabel={ String( translate( 'Back to Mastodon' ) ) }
+						header={ {
+							displayName: profileQuery.data?.display_name ?? null,
+							handle: profileQuery.data?.acct ?? actor,
+							count: profileQuery.data?.counts.followers ?? null,
+							mode: 'followers',
+							isPending: profileQuery.isPending,
+						} }
+					/>
+					<PartialCollectionsNotice
+						profileUrl={ profileQuery.data?.url ?? null }
+						mode="followers"
+					/>
+				</>
+			) }
 		</ReaderMain>
 	);
 }
