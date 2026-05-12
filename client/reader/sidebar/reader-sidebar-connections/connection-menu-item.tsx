@@ -10,13 +10,17 @@ interface Props {
 }
 
 /**
- * ATmosphere and Mastodon list endpoints return `avatar: null` — the
- * real avatar URL lives on the per-id endpoint. Mirror the lazy fetch
- * the previous per-protocol sidebar rows did so the unified list shows
- * avatars once they resolve. Fediverse already returns the icon on the
- * list payload so it doesn't need a follow-up fetch.
+ * ATmosphere and Mastodon list endpoints return `avatar: null` and an
+ * empty `display_name` until the per-id endpoint is queried. Mirror the
+ * lazy fetch the previous per-protocol sidebar rows did so the unified
+ * list shows real avatars and display names once they resolve. Fediverse
+ * already returns the icon + name on the list payload so it doesn't
+ * need a follow-up fetch.
  */
-function useResolvedAvatar( connection: UnifiedConnection ): string | null {
+function useResolvedConnection( connection: UnifiedConnection ): {
+	avatarUrl: string | null;
+	displayName: string;
+} {
 	const atmosphereId = connection.protocol === 'atmosphere' ? connection.id : null;
 	const mastodonId = connection.protocol === 'mastodon' ? connection.id : null;
 
@@ -28,16 +32,22 @@ function useResolvedAvatar( connection: UnifiedConnection ): string | null {
 	} );
 
 	if ( connection.protocol === 'atmosphere' ) {
-		return atmosphere.data?.avatar ?? connection.avatarUrl ?? null;
+		return {
+			avatarUrl: atmosphere.data?.avatar ?? connection.avatarUrl ?? null,
+			displayName: atmosphere.data?.display_name || connection.displayName,
+		};
 	}
 	if ( connection.protocol === 'mastodon' ) {
-		return mastodon.data?.avatar ?? connection.avatarUrl ?? null;
+		return {
+			avatarUrl: mastodon.data?.avatar ?? connection.avatarUrl ?? null,
+			displayName: mastodon.data?.display_name || connection.displayName,
+		};
 	}
-	return connection.avatarUrl;
+	return { avatarUrl: connection.avatarUrl, displayName: connection.displayName };
 }
 
 export function ConnectionMenuItem( { connection, isSelected, onClick }: Props ) {
-	const avatarUrl = useResolvedAvatar( connection );
+	const { avatarUrl, displayName } = useResolvedConnection( connection );
 	const protocolLabel = getProtocolLabel( connection.protocol );
 
 	return (
@@ -74,8 +84,8 @@ export function ConnectionMenuItem( { connection, isSelected, onClick }: Props )
 					</span>
 				</span>
 				<div className="sidebar-social__account-text">
-					<div className="sidebar__menu-item-title" title={ connection.displayName }>
-						{ connection.displayName }
+					<div className="sidebar__menu-item-title" title={ displayName }>
+						{ displayName }
 					</div>
 					<div className="sidebar-social__account-handle" title={ connection.handle }>
 						{ connection.handle }

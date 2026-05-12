@@ -119,13 +119,16 @@ function ReaderSidebarConnections( { path }: Props ) {
 		}
 	}, [ isOnConnections ] );
 
-	// All three queries gated on the menu being open. On other Reader pages
-	// the menu collapses to a flat link and we don't need to hit the
-	// endpoints. The queries don't refetch every render thanks to React
-	// Query caching.
-	const { data: atmosphereData } = useConnectionsQuery( { enabled: isOnConnections } );
-	const { data: mastodonData } = useMastodonConnectionsQuery( { enabled: isOnConnections } );
-	const { data: fediverseData } = useFediverseConnectionsQuery( { enabled: isOnConnections } );
+	// All three queries gated on the menu being expanded *or* on a
+	// connections route — i.e. whenever we'd actually render the rows.
+	// Otherwise the user expanding the menu manually from an unrelated
+	// Reader page (e.g. `/reader/search`) would see no connections at all
+	// because the queries never fire. The queries don't refetch every
+	// render thanks to React Query caching.
+	const shouldFetch = isOnConnections || isOpen;
+	const { data: atmosphereData } = useConnectionsQuery( { enabled: shouldFetch } );
+	const { data: mastodonData } = useMastodonConnectionsQuery( { enabled: shouldFetch } );
+	const { data: fediverseData } = useFediverseConnectionsQuery( { enabled: shouldFetch } );
 
 	const connections = useMemo( () => {
 		const all: UnifiedConnection[] = [
