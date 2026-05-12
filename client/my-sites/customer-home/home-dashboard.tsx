@@ -9,7 +9,7 @@ import {
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { Icon, settings } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
@@ -29,7 +29,11 @@ import HomeWizard from './home-wizard';
 import { type FirstPostDraft } from './home-wizard/draft-first-post';
 import HomePrompt from './home-wizard/home-prompt';
 import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
-import { tailorAndDraftFromIntent, type InferredContext } from './home-wizard/tailor-launchpad';
+import {
+	prewarmTailorAndDraft,
+	tailorAndDraftFromIntent,
+	type InferredContext,
+} from './home-wizard/tailor-launchpad';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
 import { TASK_REGISTRY, type SiteState } from './home-wizard/task-registry';
 import type { FeatureKey, GoalKey, WizardAnswers } from './home-wizard/types';
@@ -494,16 +498,16 @@ function useTailoredFlow() {
 
 	const startTailoring = (): {
 		controller: AbortController;
-		stop: () => void;
+		finalize: () => void;
 	} => {
 		setIsTailoring( true );
 		const controller = new AbortController();
 		const timeoutId = setTimeout( () => controller.abort(), TAILORING_TIMEOUT_MS );
-		const stop = () => {
+		const finalize = () => {
 			clearTimeout( timeoutId );
 			setIsTailoring( false );
 		};
-		return { controller, stop };
+		return { controller, finalize };
 	};
 
 	const persistTaskIds = ( task_ids: string[] ) => {
@@ -538,11 +542,22 @@ function useTailoredFlow() {
 			dispatch( savePreference( HOME_WIZARD_SITE_NAME_PREF, trimmedName ) );
 		}
 
-		const { controller, stop } = startTailoring();
+		const { controller, finalize } = startTailoring();
 
 		tailorAndDraftFromIntent(
 			{ intent: composed },
-			{ siteId: siteId ?? undefined, abortSignal: controller.signal }
+			{
+				siteId: siteId ?? undefined,
+				abortSignal: controller.signal,
+				// Streaming early-paint: task_ids arrives long before the draft
+				// finishes generating. Persist + drop the skeleton here so the
+				// user sees real tailored tasks ~10s sooner; the draft fills in
+				// when the rest of the stream completes.
+				onPartialTaskIds: ( ids ) => {
+					persistTaskIds( ids );
+					setIsTailoring( false );
+				},
+			}
 		)
 			.then( ( result ) => {
 				persistTaskIds( result.task_ids );
@@ -553,7 +568,7 @@ function useTailoredFlow() {
 			.catch( ( error ) => {
 				window.console?.warn?.( '[Launchpad] tailor_and_draft (wizard) failed:', error );
 			} )
-			.finally( stop );
+			.finally( finalize );
 	};
 
 	const runFromIntent = ( intent: string ) => {
@@ -566,15 +581,21 @@ function useTailoredFlow() {
 		// the source of truth.
 		dispatch( savePreference( HOME_WIZARD_INTENT_PREF, trimmed ) );
 
-		const { controller, stop } = startTailoring();
+		const { controller, finalize } = startTailoring();
 
-		// Single combined Dolly call: returns task_ids + inferred + draft
-		// in one round-trip. Saves the per-call overhead (auth, agent
-		// session init, LLM warmup) we'd otherwise pay twice. If it fails,
-		// all three preferences fall back silently — same UX as before.
+		// Streamed combined Dolly call: emits task_ids first, then the draft.
+		// We paint the Launchpad as soon as task_ids arrives (onPartialTaskIds)
+		// and let the draft fill in behind it.
 		tailorAndDraftFromIntent(
 			{ intent: trimmed },
-			{ siteId: siteId ?? undefined, abortSignal: controller.signal }
+			{
+				siteId: siteId ?? undefined,
+				abortSignal: controller.signal,
+				onPartialTaskIds: ( ids ) => {
+					persistTaskIds( ids );
+					setIsTailoring( false );
+				},
+			}
 		)
 			.then( ( result ) => {
 				persistTaskIds( result.task_ids );
@@ -585,10 +606,34 @@ function useTailoredFlow() {
 			.catch( ( error ) => {
 				window.console?.warn?.( '[Launchpad] tailor_and_draft failed:', error );
 			} )
-			.finally( stop );
+			.finally( finalize );
 	};
 
-	return { isTailoring, runFromAnswers, runFromIntent };
+	const prewarm = useCallback(
+		( answers: { goal: GoalKey | null; siteName: string; intent: string } ) => {
+			if ( ! answers.goal ) {
+				return;
+			}
+			const trimmedName = answers.siteName.trim();
+			const trimmedIntent = answers.intent.trim();
+			if ( ! trimmedIntent && ! trimmedName ) {
+				return;
+			}
+			// Compose with the same shape the wizard uses on Finish so the
+			// cache hit lands cleanly when Continue fires.
+			const composed = [
+				`User selected goal: ${ answers.goal }`,
+				trimmedName ? `Site name: ${ trimmedName }` : '',
+				trimmedIntent,
+			]
+				.filter( Boolean )
+				.join( '\n' );
+			prewarmTailorAndDraft( composed, { siteId: siteId ?? undefined } );
+		},
+		[ siteId ]
+	);
+
+	return { isTailoring, runFromAnswers, runFromIntent, prewarm };
 }
 
 function useBodyClass( className: string, active: boolean ) {
@@ -604,7 +649,7 @@ function useBodyClass( className: string, active: boolean ) {
 export default function HomeDashboard() {
 	const translate = useTranslate();
 	const { isOpen: isWizardOpen, open: openWizard, finish: finishWizard } = useHomeWizard();
-	const { isTailoring, runFromAnswers, runFromIntent } = useTailoredFlow();
+	const { isTailoring, runFromAnswers, runFromIntent, prewarm } = useTailoredFlow();
 	// Prompt modal lifecycle is local — the dev FAB is its only entry
 	// point today, so no preference persistence yet.
 	const [ isPromptOpen, setIsPromptOpen ] = useState< boolean >( false );
@@ -647,7 +692,11 @@ export default function HomeDashboard() {
 				</>
 			) }
 			{ isWizardOpen && (
-				<HomeWizard onClose={ () => finishWizard() } onComplete={ handleWizardComplete } />
+				<HomeWizard
+					onClose={ () => finishWizard() }
+					onComplete={ handleWizardComplete }
+					onPrewarm={ prewarm }
+				/>
 			) }
 			{ isPromptOpen && (
 				<HomePrompt

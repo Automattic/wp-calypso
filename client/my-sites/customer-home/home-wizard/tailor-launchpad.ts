@@ -430,7 +430,7 @@ export async function tailorLaunchpadFromIntent(
 function buildCombinedPromptFromIntent( intent: string ): string {
 	const menu = buildMenu();
 
-	return `You are helping a new WordPress.com user onboard. They've described their site idea in their own words. Produce THREE things in a single JSON response: a tailored task list, inferred context, and a starter blog post draft.
+	return `You are helping a new WordPress.com user onboard. They've described their site idea in their own words. Produce TWO things in a single JSON response: a tailored task list, then a starter blog post draft.
 
 ============ task_ids ============
 - Pick exactly 6 task IDs from the menu — no more, no less. IDs MUST come from the menu (no inventing).
@@ -460,14 +460,6 @@ function buildCombinedPromptFromIntent( intent: string ): string {
   STEP 3 — Round out with universal foundation tasks until you have 5: "design-homepage", "set-site-title-tagline", "pick-fonts-colors", "connect-social-accounts", "discover-yoast-seo".
   STEP 4 — The 6th and final ID MUST be "launch-site".
 
-============ inferred ============
-Extract what's mentioned in the user's description:
-- "goal": kind of site, 1-3 words (e.g. "photography blog") — required
-- "brand_name": only if they named their site/brand
-- "niche": subject area (e.g. "photography") — required if a topic is implied
-- "vibe": aesthetic if mentioned (e.g. "minimal", "Japan-inspired")
-- "audience": only if implied
-
 ============ first_post_draft ============
 Write a friendly starter blog post the user can edit and publish:
 - "title": clear, evocative, max 8 words. Can riff on their brand if mentioned.
@@ -479,7 +471,6 @@ Return ONE valid JSON object. No prose, no markdown fences. First character MUST
 
 Schema: {
   "task_ids": [...],
-  "inferred": {...},
   "first_post_draft": {"title": "...", "subtitle": "...", "paragraphs": ["...", "..."]}
 }
 
@@ -563,10 +554,31 @@ async function tailorAndDraftViaMock(
 	};
 }
 
+// Pull `task_ids` out of a partially-streamed JSON response as soon as the
+// array's closing `]` arrives. Dolly is instructed to emit `task_ids` first,
+// so this typically resolves long before the full draft is generated — giving
+// us an early-paint signal for the Launchpad.
+function tryExtractTaskIds( text: string ): string[] | null {
+	const match = text.match( /"task_ids"\s*:\s*\[([^\]]*)\]/ );
+	if ( ! match ) {
+		return null;
+	}
+	try {
+		const parsed = JSON.parse( `[${ match[ 1 ] }]` );
+		if ( Array.isArray( parsed ) && parsed.every( ( id ) => typeof id === 'string' ) ) {
+			return parsed;
+		}
+	} catch {
+		// Array body is still mid-token (e.g. unterminated string). Wait.
+	}
+	return null;
+}
+
 async function tailorAndDraftViaDolly(
 	{ intent }: TailorLaunchpadFromIntentInput,
 	siteId: number | undefined,
-	abortSignal: AbortSignal | undefined
+	abortSignal: AbortSignal | undefined,
+	onPartialTaskIds: ( ( ids: string[] ) => void ) | undefined
 ): Promise< TailorAndDraftFromIntentOutput > {
 	const sessionId =
 		typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
@@ -582,14 +594,56 @@ async function tailorAndDraftViaDolly(
 		environment: 'calypso',
 	} );
 	const client = createClient( config );
+	const known = new Set( TASK_REGISTRY.map( ( t ) => t.id ) );
 
-	const response = await client.sendMessage( {
-		message: createTextMessage( prompt ),
-		abortSignal,
-	} );
+	let accumulatedText = '';
+	let firedPartial = false;
+	let firstPaintMs: number | undefined;
+	let firstTickMs: number | undefined;
+	let updateCount = 0;
+
+	try {
+		for await ( const update of client.sendMessageStream( {
+			message: createTextMessage( prompt ),
+			abortSignal,
+			enableStreaming: true,
+		} ) ) {
+			updateCount += 1;
+			if ( firstTickMs === undefined ) {
+				firstTickMs = Math.round( performance.now() - startedAt );
+			}
+			// `update.text` carries the cumulative assembled assistant text in
+			// this SDK; replace rather than append so we don't double-count.
+			if ( typeof update.text === 'string' && update.text.length > accumulatedText.length ) {
+				accumulatedText = update.text;
+			}
+
+			if ( ! firedPartial && onPartialTaskIds ) {
+				const ids = tryExtractTaskIds( accumulatedText );
+				if ( ids ) {
+					const accepted = ids.filter( ( id ) => known.has( id ) );
+					firstPaintMs = Math.round( performance.now() - startedAt );
+					onPartialTaskIds( accepted );
+					firedPartial = true;
+				}
+			}
+
+			if ( update.final ) {
+				break;
+			}
+		}
+	} catch ( error ) {
+		const elapsedMs = Math.round( performance.now() - startedAt );
+		// eslint-disable-next-line no-console
+		console.warn(
+			`[Launchpad] tailor_and_draft: aborted/failed after ${ elapsedMs }ms · prompt ${ prompt.length } chars`,
+			error
+		);
+		throw error;
+	}
 
 	const elapsedMs = Math.round( performance.now() - startedAt );
-	const parsed = extractJson( response.text );
+	const parsed = extractJson( accumulatedText );
 
 	if ( ! isValidCombinedResponse( parsed ) ) {
 		// eslint-disable-next-line no-console
@@ -597,24 +651,24 @@ async function tailorAndDraftViaDolly(
 			`[Launchpad] tailor_and_draft: unparseable response in ${ elapsedMs }ms\n` +
 				`prompt size: ${ prompt.length } chars\n` +
 				'raw response:',
-			response.text
+			accumulatedText
 		);
 		throw new Error( 'tailorAndDraftFromIntent: unparseable response from Dolly' );
 	}
 
-	const known = new Set( TASK_REGISTRY.map( ( t ) => t.id ) );
 	const accepted = parsed.task_ids.filter( ( id ) => known.has( id ) );
 	const dropped = parsed.task_ids.filter( ( id ) => ! known.has( id ) );
 	const inferred = coerceInferred( parsed.inferred );
 
 	// eslint-disable-next-line no-console
 	console.log(
-		`[Launchpad] tailor_and_draft: ${ elapsedMs }ms · prompt ${ prompt.length } chars · ` +
+		`[Launchpad] tailor_and_draft: ${ elapsedMs }ms total · ` +
+			`first tick @ ${ firstTickMs ?? 'n/a' }ms · ${ updateCount } ticks · ` +
+			`first paint @ ${ firstPaintMs ?? 'n/a' }ms · prompt ${ prompt.length } chars · ` +
 			`returned ${ parsed.task_ids.length } IDs (${ accepted.length } accepted, ` +
 			`${ dropped.length } dropped) · draft title="${ parsed.first_post_draft.title }" · ` +
-			`subtitle="${ parsed.first_post_draft.subtitle ?? '(none)' }" · inferred:`,
-		inferred,
-		{ intent, accepted, dropped, draft: parsed.first_post_draft, raw: response.text }
+			`subtitle="${ parsed.first_post_draft.subtitle ?? '(none)' }"`,
+		{ intent, accepted, dropped, draft: parsed.first_post_draft, inferred, raw: accumulatedText }
 	);
 
 	return {
@@ -624,13 +678,95 @@ async function tailorAndDraftViaDolly(
 	};
 }
 
+// Pre-fetch cache. The wizard's Step 2 debounces textarea changes and calls
+// `prewarmTailorAndDraft` to fire the Dolly call early — by the time the user
+// hits Continue, the agent has often already finished its 30s of pre-work.
+// On Continue, `tailorAndDraftFromIntent` consumes the cached promise instead
+// of starting a new call. Same-intent re-prewarm is a no-op; changed-intent
+// aborts the previous call and starts a new one.
+let pendingPrewarm: {
+	intent: string;
+	promise: Promise< TailorAndDraftFromIntentOutput >;
+	controller: AbortController;
+	startedAt: number;
+} | null = null;
+
+export function prewarmTailorAndDraft( intent: string, options?: { siteId?: number } ): void {
+	const trimmed = intent.trim();
+	if ( ! trimmed ) {
+		return;
+	}
+	if ( pendingPrewarm && pendingPrewarm.intent === trimmed ) {
+		// eslint-disable-next-line no-console
+		console.log( '[Launchpad] prewarm: already in flight (same intent), keeping it' );
+		return;
+	}
+	if ( pendingPrewarm ) {
+		// eslint-disable-next-line no-console
+		console.log( '[Launchpad] prewarm: intent changed, aborting previous and starting new' );
+		pendingPrewarm.controller.abort();
+		pendingPrewarm = null;
+	}
+	if ( readMockOverride() ) {
+		return;
+	}
+	const controller = new AbortController();
+	setTimeout( () => controller.abort(), 40_000 );
+	// eslint-disable-next-line no-console
+	console.log( `[Launchpad] prewarm: starting (intent length=${ trimmed.length })` );
+	const promise = tailorAndDraftViaDolly(
+		{ intent: trimmed },
+		options?.siteId,
+		controller.signal,
+		undefined
+	);
+	pendingPrewarm = { intent: trimmed, promise, controller, startedAt: performance.now() };
+}
+
 export async function tailorAndDraftFromIntent(
 	input: TailorLaunchpadFromIntentInput,
-	options?: { siteId?: number; abortSignal?: AbortSignal }
+	options?: {
+		siteId?: number;
+		abortSignal?: AbortSignal;
+		onPartialTaskIds?: ( ids: string[] ) => void;
+	}
 ): Promise< TailorAndDraftFromIntentOutput > {
 	const override = readMockOverride();
 	if ( override ) {
 		return tailorAndDraftViaMock( override );
 	}
-	return tailorAndDraftViaDolly( input, options?.siteId, options?.abortSignal );
+	const trimmed = input.intent.trim();
+	if ( pendingPrewarm && pendingPrewarm.intent === trimmed ) {
+		// Pre-fetch hit. The prewarm's stream was started without an
+		// onPartialTaskIds callback, so we fire any caller-supplied callback
+		// synchronously off the resolved value — this lets the dashboard
+		// paint task_ids the instant the cached promise settles.
+		const cached = pendingPrewarm;
+		pendingPrewarm = null;
+		const continueClickedAt = performance.now();
+		const prewarmHeadStart = Math.round( continueClickedAt - cached.startedAt );
+		// eslint-disable-next-line no-console
+		console.log(
+			`[Launchpad] tailor_and_draft: cache hit · prewarm head-start ${ prewarmHeadStart }ms`
+		);
+		return cached.promise.then( ( result ) => {
+			const perceivedWaitMs = Math.round( performance.now() - continueClickedAt );
+			// eslint-disable-next-line no-console
+			console.log(
+				`[Launchpad] tailor_and_draft: cache resolved · perceived wait ${ perceivedWaitMs }ms`
+			);
+			options?.onPartialTaskIds?.( result.task_ids );
+			return result;
+		} );
+	}
+	if ( pendingPrewarm ) {
+		pendingPrewarm.controller.abort();
+		pendingPrewarm = null;
+	}
+	return tailorAndDraftViaDolly(
+		input,
+		options?.siteId,
+		options?.abortSignal,
+		options?.onPartialTaskIds
+	);
 }
