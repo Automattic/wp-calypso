@@ -5,6 +5,7 @@ import { FormDivider } from '../index';
 import LinkButton from '../link-button';
 import OptionsList from '../options-list';
 import PrimaryButton from '../primary-button';
+import Screen from '../screen';
 import SocialButton from '../social-button';
 import SocialConnectWidget from '../social-connect-widget';
 import TextField from '../text-field';
@@ -14,7 +15,7 @@ const meta: Meta = {
 	title: 'client/blocks/authentication/Recipes',
 	tags: [ 'autodocs' ],
 	parameters: {
-		layout: 'centered',
+		layout: 'fullscreen',
 	},
 };
 
@@ -22,21 +23,14 @@ export default meta;
 
 type Story = StoryObj;
 
-const FauxScreen = ( { heading, children }: { heading: string; children: React.ReactNode } ) => (
-	<div style={ { inlineSize: 343, padding: 16 } }>
-		<VStack spacing={ 6 }>
-			<h1 style={ { font: 'var(--wp--preset--font-family--serif, serif) 600 32px/40px' } }>
-				{ heading }
-			</h1>
-			{ children }
-		</VStack>
-	</div>
-);
-
 const LostPasswordRecipe = () => {
 	const [ email, setEmail ] = useState( '' );
 	return (
-		<FauxScreen heading="Lost your password?">
+		<Screen
+			heading="Lost your password?"
+			subheading="Enter the email address or username you use to sign in, and we'll send you a reset link."
+			topBarAction={ <LinkButton href="/log-in">Back to log in</LinkButton> }
+		>
 			<VStack spacing={ 4 }>
 				<TextField
 					label="Email address or username"
@@ -46,16 +40,19 @@ const LostPasswordRecipe = () => {
 					autoComplete="username"
 				/>
 				<PrimaryButton type="submit">Reset my password</PrimaryButton>
-				<LinkButton href="/log-in">Back to log in</LinkButton>
 			</VStack>
-		</FauxScreen>
+		</Screen>
 	);
 };
 
 const LoginRecipe = () => {
 	const [ email, setEmail ] = useState( '' );
 	return (
-		<FauxScreen heading="Log in to WordPress.com">
+		<Screen
+			heading="Log in to WordPress.com"
+			subheading="By continuing, you agree to our Terms of Service and Privacy Policy."
+			topBarAction={ <LinkButton href="/start">Create an account</LinkButton> }
+		>
 			<VStack spacing={ 4 }>
 				<OptionsList>
 					<SocialButton provider="google">Continue with Google</SocialButton>
@@ -73,25 +70,28 @@ const LoginRecipe = () => {
 				/>
 				<PrimaryButton type="submit">Continue</PrimaryButton>
 			</VStack>
-		</FauxScreen>
+		</Screen>
 	);
 };
 
 const SocialConnectRecipe = () => (
-	<FauxScreen heading="Connect your account">
+	<Screen
+		heading="Connect your account"
+		subheading="Connect your WordPress.com account to your Google profile. You will be able to use Google to log in to WordPress.com."
+		topBarAction={ <LinkButton href="/log-in">Log in</LinkButton> }
+	>
 		<VStack spacing={ 4 }>
-			<p>
-				Connect your WordPress.com account to your Google profile. You will be able to use Google to
-				log in to WordPress.com.
-			</p>
 			<SocialConnectWidget service="google" />
 			<PrimaryButton type="button">Connect</PrimaryButton>
 		</VStack>
-	</FauxScreen>
+	</Screen>
 );
 
 const ContinueAsUserRecipe = () => (
-	<FauxScreen heading="Log in to WordPress.com">
+	<Screen
+		heading="Log in to WordPress.com"
+		topBarAction={ <LinkButton href="/start">Create an account</LinkButton> }
+	>
 		<VStack spacing={ 4 }>
 			<CurrentUser
 				avatarUrl="https://gravatar.com/avatar/0?d=mp&s=96"
@@ -101,15 +101,17 @@ const ContinueAsUserRecipe = () => (
 			<PrimaryButton type="button">Continue as Jane Doe</PrimaryButton>
 			<LinkButton href="#">Log in with another account</LinkButton>
 		</VStack>
-	</FauxScreen>
+	</Screen>
 );
 
 const TwoFactorCodeRecipe = () => {
 	const [ code, setCode ] = useState( '' );
 	return (
-		<FauxScreen heading="Two-step authentication">
+		<Screen
+			heading="Two-step authentication"
+			subheading="Enter the code from your authenticator app."
+		>
 			<VStack spacing={ 4 }>
-				<p>Enter the code from your authenticator app.</p>
 				<TextField
 					label="6-digit code"
 					value={ code }
@@ -122,7 +124,7 @@ const TwoFactorCodeRecipe = () => {
 				<PrimaryButton type="submit">Continue</PrimaryButton>
 				<LinkButton href="#">Use a different method</LinkButton>
 			</VStack>
-		</FauxScreen>
+		</Screen>
 	);
 };
 
