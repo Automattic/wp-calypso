@@ -89,3 +89,23 @@ export function hasReachedConversationLimit(
 ): boolean {
 	return getOpenLiveInteractionCount( interactionStatusByUuid ) >= MAX_OPEN_CONVERSATIONS;
 }
+
+/**
+ * Single-pass scan of the Smooch conversation list. Returns the open-conversation
+ * trio (`mostRecentId`, `openCount`, `hasReachedLimit`) from one `Smooch.getConversations()`
+ * call so callers don't pay 3× SDK reads per render.
+ */
+export function getOpenLiveInteractions( interactionStatusByUuid?: InteractionStatusByUuid ): {
+	mostRecentId: string | null;
+	openCount: number;
+	hasReachedLimit: boolean;
+} {
+	const open = getConversations().filter( ( conversation ) =>
+		isOpenConversation( conversation, interactionStatusByUuid )
+	);
+	return {
+		mostRecentId: ( open[ 0 ]?.metadata.supportInteractionId as string ) ?? null,
+		openCount: open.length,
+		hasReachedLimit: open.length >= MAX_OPEN_CONVERSATIONS,
+	};
+}

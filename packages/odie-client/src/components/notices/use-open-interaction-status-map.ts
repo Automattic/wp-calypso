@@ -1,28 +1,28 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
-import { useQueryClient } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import getMostRecentOpenLiveInteraction, {
-	getOpenLiveInteractionCount,
-	hasReachedConversationLimit,
+import {
+	getOpenLiveInteractions,
+	type InteractionStatusByUuid,
 } from './get-most-recent-open-live-interaction';
-import type { InteractionStatusByUuid } from './get-most-recent-open-live-interaction';
 import type { SupportInteraction } from '../../types';
 
 /**
- * Reads the cached SupportInteraction list from TanStack Query and returns a
- * Map<supportInteractionId, status> for use by getMostRecentOpenLiveInteraction
- * and friends. Returns an empty Map when the query hasn't populated yet — callers
- * fall back to the Smooch heuristic in that case.
+ * Subscribes to the cached SupportInteraction list in TanStack Query and returns a
+ * Map<supportInteractionId, status> for use by the open-conversation helpers.
+ *
+ * Uses `useQuery` with `skipToken` (instead of `queryClient.getQueryData`) so the
+ * hook re-renders when the cache entry is updated by other queries/mutations.
+ * Returns an empty Map when the query hasn't populated yet — callers fall back to
+ * the Smooch heuristic in that case.
  */
 export function useOpenInteractionStatusMap(): InteractionStatusByUuid {
-	const queryClient = useQueryClient();
 	const isTestMode = isTestModeEnvironment();
 
-	const interactions = queryClient.getQueryData< SupportInteraction[] >( [
-		'support-interactions',
-		'get-interactions',
-		isTestMode,
-	] );
+	const { data: interactions } = useQuery< SupportInteraction[] >( {
+		queryKey: [ 'support-interactions', 'get-interactions', isTestMode ],
+		queryFn: skipToken,
+	} );
 
 	return useMemo( () => {
 		const map: InteractionStatusByUuid = new Map();
@@ -37,9 +37,15 @@ export function useOpenInteractionStatusMap(): InteractionStatusByUuid {
 }
 
 /**
- * Render-time snapshot of open live conversations, cross-checked against the
- * cached SupportInteraction status. Use this in components/hooks; the returned
- * values are safe to read directly or capture in callbacks (closure semantics).
+ * Render-time snapshot of open live conversations, cross-checked against the cached
+ * SupportInteraction status. Reads the Smooch conversation list once per render and
+ * derives `mostRecentId`, `hasReachedLimit`, and `openCount` from that single snapshot.
+ *
+ * Note: the returned values are a snapshot of Smooch state at render time. Smooch can
+ * mutate its conversation list outside React (e.g. on incoming messages) without
+ * triggering a re-render, so callbacks that need up-to-the-millisecond accuracy should
+ * call `getOpenLiveInteractions()` directly at the moment of action rather than capture
+ * these values in a closure.
  */
 export function useOpenLiveInteractions(): {
 	mostRecentId: string | null;
@@ -47,9 +53,5 @@ export function useOpenLiveInteractions(): {
 	openCount: number;
 } {
 	const statusMap = useOpenInteractionStatusMap();
-	return {
-		mostRecentId: getMostRecentOpenLiveInteraction( statusMap ),
-		hasReachedLimit: hasReachedConversationLimit( statusMap ),
-		openCount: getOpenLiveInteractionCount( statusMap ),
-	};
+	return getOpenLiveInteractions( statusMap );
 }
