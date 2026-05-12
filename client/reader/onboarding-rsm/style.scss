@@ -18,6 +18,13 @@
 
 $actions-height: 64px;
 
+// Back button appears in the WP Modal header via the `headerActions` prop.
+// `order: -1` moves it before the (empty) title container, placing it on the
+// left side while the close button stays on the right.
+.reader-onboarding-rsm-modal .reader-onboarding-modal__back-button {
+	order: -1;
+}
+
 // Shared layout for all reader-onboarding-rsm modals (welcome, interests,
 // subscribe). All three share the same overall size, the same flex-column
 // scroll/footer architecture, and the same footer styling. Per-modal
