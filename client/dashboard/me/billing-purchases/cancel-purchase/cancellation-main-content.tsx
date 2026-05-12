@@ -190,7 +190,7 @@ export default function CancellationMainContent( {
 				}
 			);
 
-			if ( selectedDomain?.is_gravatar_domain ) {
+			if ( selectedDomain?.is_gravatar_restricted_domain ) {
 				defaultChanges.push( {
 					getSlug: () => 'gravatarDomain',
 					getTitle: () =>

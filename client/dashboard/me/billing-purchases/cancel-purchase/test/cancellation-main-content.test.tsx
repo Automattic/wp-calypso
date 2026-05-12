@@ -217,7 +217,7 @@ describe( '<CancellationMainContent />', () => {
 					is_domain_registration: true,
 					meta: 'mygravatar.com',
 				} ) }
-				selectedDomain={ { is_gravatar_domain: true } as Domain }
+				selectedDomain={ { is_gravatar_restricted_domain: true } as Domain }
 			/>
 		);
 
