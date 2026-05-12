@@ -38,7 +38,7 @@
 	}
 
 	&__subtitle-break {
-		// Keep subtitle sentances on separate lines when there is reasonable room for them.
+		// Keep subtitle sentences on separate lines when there is reasonable room for them.
 		// On smaller viewports, they should be one text block for wrapping.
 		@media ( max-width: $break-medium ) {
 			display: none;
