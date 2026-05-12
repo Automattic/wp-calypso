@@ -6,7 +6,7 @@
 @import 'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap';
 
 .is-section-themes {
-	&.theme-default.color-scheme {
+	&.theme-default.color-scheme:not( .is-logged-out ) {
 		--color-surface-backdrop: var( --studio-white );
 		--color-main-background: var( --studio-white );
 	}

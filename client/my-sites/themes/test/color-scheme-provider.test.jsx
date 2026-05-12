@@ -4,11 +4,10 @@
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { PREFERENCE_KEY } from 'calypso/dashboard/app/color-scheme';
 import ThemesColorSchemeProvider, { withThemesColorScheme } from '../color-scheme-provider';
 
 const mockStore = configureStore();
-
-const PREFERENCE_KEY = 'hosting-dashboard-color-scheme';
 
 function buildRemoteValues( { received, scheme } ) {
 	if ( ! received ) {
@@ -97,6 +96,33 @@ describe( 'ThemesColorSchemeProvider', () => {
 			</ThemesColorSchemeProvider>
 		);
 		expect( document.documentElement.dataset.theme ).toBe( 'system' );
+	} );
+
+	test( 'removes data-theme when unmounted if there was no previous value', () => {
+		const { unmount } = renderWithStore(
+			buildState( { scheme: 'dark' } ),
+			<ThemesColorSchemeProvider>
+				<span>child</span>
+			</ThemesColorSchemeProvider>
+		);
+
+		unmount();
+
+		expect( document.documentElement.dataset.theme ).toBeUndefined();
+	} );
+
+	test( 'restores the previous data-theme value when unmounted', () => {
+		document.documentElement.dataset.theme = 'light';
+		const { unmount } = renderWithStore(
+			buildState( { scheme: 'dark' } ),
+			<ThemesColorSchemeProvider>
+				<span>child</span>
+			</ThemesColorSchemeProvider>
+		);
+
+		unmount();
+
+		expect( document.documentElement.dataset.theme ).toBe( 'light' );
 	} );
 } );
 

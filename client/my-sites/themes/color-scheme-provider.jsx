@@ -13,7 +13,16 @@ export default function ThemesColorSchemeProvider( { children } ) {
 		if ( ! isReady ) {
 			return;
 		}
+		const previousTheme = document.documentElement.dataset.theme;
 		document.documentElement.dataset.theme = colorScheme;
+
+		return () => {
+			if ( previousTheme === undefined ) {
+				delete document.documentElement.dataset.theme;
+				return;
+			}
+			document.documentElement.dataset.theme = previousTheme;
+		};
 	}, [ colorScheme, isReady ] );
 
 	return children;
