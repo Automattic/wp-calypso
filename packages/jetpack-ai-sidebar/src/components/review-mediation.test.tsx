@@ -980,11 +980,11 @@ describe( 'ReviewMediation — cached-run hint', () => {
 		const cached_at = Math.floor( Date.now() / 1000 ) - 600;
 		render( <ReviewMediation { ...basePayload( { cached_at } ) } /> );
 
-		expect( screen.getByText( /Reusing mediation from .* ago/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Reusing review from .* ago/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'omits the note when cached_at is not provided', () => {
 		render( <ReviewMediation { ...basePayload() } /> );
-		expect( screen.queryByText( /Reusing mediation/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Reusing review/ ) ).not.toBeInTheDocument();
 	} );
 } );
