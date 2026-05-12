@@ -4,11 +4,15 @@
 // `@automattic/api-queries`, then delete this file.
 import { queryOptions } from '@tanstack/react-query';
 import type {
+	ApmHookUsage,
 	ApmOverview,
+	ApmPluginUsage,
 	ApmRequestDetail,
 	ApmSlowRequest,
 	ApmSummary,
+	ApmTemplateUsage,
 	ApmTimePoint,
+	ApmWordPress,
 } from '@automattic/api-core';
 
 function rng( seed: number ) {
@@ -92,18 +96,100 @@ function generateSummary( timeseries: ApmTimePoint[], slowRequests: ApmSlowReque
 			acc.total += point.db + point.wp_core + point.plugins + point.external + point.cache;
 			acc.db += point.db;
 			acc.external += point.external;
+			acc.plugins += point.plugins;
 			return acc;
 		},
-		{ total: 0, db: 0, external: 0 }
+		{ total: 0, db: 0, external: 0, plugins: 0 }
 	);
 	const points = Math.max( timeseries.length, 1 );
 	return {
 		avg_response_ms: Math.round( totals.total / points ),
-		slow_request_count: slowRequests.length,
 		transaction_count: 1000 + slowRequests.length * 47,
 		db_avg_ms: Math.round( totals.db / points ),
 		external_avg_ms: Math.round( totals.external / points ),
+		plugins_avg_ms: Math.round( totals.plugins / points ),
 	};
+}
+
+const SAMPLE_PLUGINS: Array< { slug: string; name: string } > = [
+	{ slug: 'jetpack', name: 'Jetpack' },
+	{ slug: 'woocommerce', name: 'WooCommerce' },
+	{ slug: 'akismet', name: 'Akismet Anti-spam' },
+	{ slug: 'yoast-seo', name: 'Yoast SEO' },
+	{ slug: 'wpforms-lite', name: 'WPForms Lite' },
+	{ slug: 'elementor', name: 'Elementor' },
+	{ slug: 'wordfence', name: 'Wordfence Security' },
+	{ slug: 'classic-editor', name: 'Classic Editor' },
+];
+
+const SAMPLE_HOOKS = [
+	'init',
+	'wp_loaded',
+	'template_redirect',
+	'wp_enqueue_scripts',
+	'plugins_loaded',
+	'admin_init',
+	'pre_get_posts',
+	'shutdown',
+	'rest_api_init',
+	'save_post',
+];
+
+const SAMPLE_TEMPLATES = [
+	'single.php',
+	'page.php',
+	'archive.php',
+	'index.php',
+	'header.php',
+	'footer.php',
+	'sidebar.php',
+	'searchform.php',
+	'404.php',
+	'category.php',
+];
+
+function generateWordPress( seed: number ): ApmWordPress {
+	const random = rng( seed ^ 0x57504d50 );
+
+	const plugins: ApmPluginUsage[] = SAMPLE_PLUGINS.map( ( plugin ) => {
+		const call_count = Math.round( 200 + random() * 4800 );
+		const avg_ms = Math.round( 5 + random() * 95 );
+		return {
+			slug: plugin.slug,
+			name: plugin.name,
+			call_count,
+			avg_ms,
+			total_ms: call_count * avg_ms,
+		};
+	} ).sort( ( a, b ) => b.total_ms - a.total_ms );
+
+	const hooks: ApmHookUsage[] = SAMPLE_HOOKS.map( ( name ) => {
+		const call_count = Math.round( 500 + random() * 9500 );
+		const avg_ms = Math.round( 1 + random() * 40 );
+		return {
+			name,
+			call_count,
+			avg_ms,
+			total_ms: call_count * avg_ms,
+		};
+	} ).sort( ( a, b ) => b.total_ms - a.total_ms );
+
+	const templates: ApmTemplateUsage[] = SAMPLE_TEMPLATES.map( ( template ) => {
+		const hit_count = Math.round( 50 + random() * 2950 );
+		const avg_ms = Math.round( 20 + random() * 380 );
+		return {
+			template,
+			hit_count,
+			avg_ms,
+			total_ms: hit_count * avg_ms,
+		};
+	} ).sort( ( a, b ) => b.total_ms - a.total_ms );
+
+	return { plugins, hooks, templates };
+}
+
+function fetchApmWordPress( siteId: number ): Promise< ApmWordPress > {
+	return Promise.resolve( generateWordPress( siteId ) );
 }
 
 function fetchApmOverview( siteId: number ): Promise< ApmOverview > {
@@ -162,4 +248,10 @@ export const siteApmRequestQuery = ( siteId: number, requestId: string ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'apm', 'request', requestId ],
 		queryFn: () => fetchApmRequest( siteId, requestId ),
+	} );
+
+export const siteApmWordPressQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'apm', 'wordpress' ],
+		queryFn: () => fetchApmWordPress( siteId ),
 	} );
