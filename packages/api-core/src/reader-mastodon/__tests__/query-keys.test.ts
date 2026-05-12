@@ -82,12 +82,23 @@ describe( 'readerMastodonKeys.tagFeed', () => {
 } );
 
 describe( 'readerMastodonKeys.notifications', () => {
-	it( 'keys by connection id', () => {
+	it( 'notifications(connectionId) defaults filter to "all"', () => {
 		expect( readerMastodonKeys.notifications( 42 ) ).toEqual( [
 			'reader',
 			'mastodon',
 			'notifications',
 			42,
+			'all',
+		] );
+	} );
+
+	it( 'notifications(connectionId, filter) includes filter in key', () => {
+		expect( readerMastodonKeys.notifications( 42, 'likes' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'notifications',
+			42,
+			'likes',
 		] );
 	} );
 } );
