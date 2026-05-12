@@ -6,6 +6,7 @@ import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { isRefundable } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -17,7 +18,7 @@ type AtomicRevertChangesProps = {
 	onConfirmationChange: ( isChecked: boolean ) => void;
 	needsAtomicRevertConfirmation: boolean;
 	isLoading?: boolean;
-	additionalChanges?: Array< { slug: string; text: string } >;
+	additionalChanges?: Array< { slug: string; text: ReactNode } >;
 };
 
 const AtomicRevertChanges = ( {

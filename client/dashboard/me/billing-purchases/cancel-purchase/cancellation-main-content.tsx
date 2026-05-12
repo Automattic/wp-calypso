@@ -110,7 +110,7 @@ export default function CancellationMainContent( {
 		defaultChanges.push( ...atomicRevertChanges );
 	}
 
-	if ( config.isEnabled( 'purchases/split-cancel-remove' ) ) {
+	if ( isSplitCancelRemoveEnabled ) {
 		// Non-primary domain forwarding: plan cancellation on a site with a custom primary domain.
 		if ( purchase.is_plan && site?.URL && site?.options?.unmapped_url ) {
 			const primaryDomain = new URL( site.URL ).hostname;
@@ -209,7 +209,7 @@ export default function CancellationMainContent( {
 		showDefaultChanges = true;
 	}
 	// Under the flag, domain registrations also have warning bullets in defaultChanges.
-	if ( config.isEnabled( 'purchases/split-cancel-remove' ) && isDomainRegistrationPurchase ) {
+	if ( isSplitCancelRemoveEnabled && isDomainRegistrationPurchase ) {
 		showDefaultChanges = true;
 	}
 

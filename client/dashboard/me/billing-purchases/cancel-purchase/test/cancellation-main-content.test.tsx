@@ -67,6 +67,7 @@ const defaultProps = {
 		isLoading: false,
 		domainConfirmationConfirmed: false,
 		showDomainOptionsStep: false,
+		questionOneOrder: [],
 	},
 	onCancelConfirmationStateChange: noop,
 	onDomainConfirmationChange: noop,

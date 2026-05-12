@@ -945,8 +945,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const cancellationFeatures = purchaseCancelFeatures?.features ?? [];
 
 		// Build site-dependency warnings shown inline under the flag.
-		const siteWarnings: Array< { slug: string; text: string } > = [];
-		if ( isSplitEnabled ) {
+		const siteWarnings: Array< { slug: string; text: ReactNode } > = [];
+		if ( isSplitCancelRemoveEnabled ) {
 			// Non-primary domain forwarding.
 			if ( isPlan( purchase ) && hasCustomPrimaryDomain && site ) {
 				const primaryDomain = site.domain;
@@ -1357,7 +1357,8 @@ const ConnectedCancelPurchase = connect(
 			isHundredYearDomain: selectedDomain?.isHundredYearDomain,
 			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
 			hasSetupAds: Boolean(
-				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+				site?.options?.wordads ||
+					( site && isRequestingWordAdsApprovalForSite( state as object, site ) )
 			),
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			selectedDomainIsGravatar: Boolean( selectedDomain?.isGravatarRestrictedDomain ),
