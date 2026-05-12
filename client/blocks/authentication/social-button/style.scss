@@ -1,12 +1,16 @@
-// Match the Figma spec for auth social buttons:
-// - neutral white surface with a subtle border (not the calypso-themed
-//   blue that WPDS `variant="secondary"` produces inside calypso),
-// - provider icon pinned to the leading edge with its brand colours,
-// - label centered in the remaining symmetric space.
+// Auth social button — Figma spec calls for a neutral surface:
+// - white background
+// - subtle gray border (studio-gray-10)
+// - dark text
+// - hover/focus/active borders darken to studio-gray-100
+// - NO calypso-blue accent anywhere
 //
-// Chained selector raises specificity above `.components-button` and
-// `.components-button.is-secondary` so the overrides stick without
-// `!important`.
+// Calypso's _wp-components-overrides.scss sets
+// `--wp-components-color-accent: var(--color-accent)` (blue), and WPDS
+// `is-secondary` uses that variable for the border (via inset box-shadow),
+// the text color, hover, focus ring, and active states. Matching WPDS's
+// exact selector patterns (including the `:not(...)` arms) so we tie on
+// specificity and win on cascade order — no `!important` needed.
 
 .components-button.auth-social-button {
 	inline-size: 100%;
@@ -16,26 +20,24 @@
 	column-gap: 12px;
 	padding-inline: 12px;
 	background: var(--color-surface);
-	border: 1px solid var(--color-border-subtle);
 	color: var(--color-text);
-	box-shadow: none;
+	box-shadow: inset 0 0 0 1px var(--studio-gray-10);
 }
 
-.components-button.auth-social-button:hover:not(:disabled) {
-	background: var(--color-surface-backdrop);
-	border-color: var(--studio-gray-100);
+.components-button.auth-social-button:hover:not(:disabled, [aria-disabled='true'], .is-pressed) {
+	background: var(--color-surface);
 	color: var(--color-text);
+	box-shadow: inset 0 0 0 1px var(--studio-gray-100);
 }
 
-.components-button.auth-social-button:focus:not(:disabled),
-.components-button.auth-social-button:focus-visible:not(:disabled) {
-	border-color: var(--studio-gray-100);
-	box-shadow: 0 0 0 1px var(--studio-gray-100);
-	outline: 2px solid transparent;
+.components-button.auth-social-button:focus:not(:active) {
+	box-shadow:
+		inset 0 0 0 1px var(--studio-gray-100),
+		0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--studio-gray-100);
 }
 
 .components-button.auth-social-button:active:not(:disabled) {
-	border-color: var(--studio-gray-100);
+	box-shadow: inset 0 0 0 1px var(--studio-gray-100);
 }
 
 .auth-social-button__icon {
