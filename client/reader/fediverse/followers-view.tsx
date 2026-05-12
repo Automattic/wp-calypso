@@ -163,6 +163,9 @@ export function FollowersView( { connectionId, actor }: Props ) {
 			biography: item.note_text,
 			profileHref,
 			isSelf,
+			// Every row on this followers list trivially follows the viewer,
+			// so the "Follows you" badge would be redundant on every row.
+			hideFollowedByBadge: true,
 			followState:
 				isSelf || ! viewer
 					? undefined
