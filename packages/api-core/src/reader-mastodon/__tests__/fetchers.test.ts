@@ -3,9 +3,11 @@ import { wpcom } from '../../wpcom-fetcher';
 import {
 	authorizeMastodonConnection,
 	completeMastodonConnection,
+	createMastodonFollow,
 	createMastodonLike,
 	createMastodonPost,
 	createMastodonRepost,
+	deleteMastodonFollow,
 	deleteMastodonLike,
 	deleteMastodonRepost,
 	getMastodonAuthStatus,
@@ -14,10 +16,12 @@ import {
 	getMastodonConnection,
 	getMastodonConnections,
 	getMastodonInstanceConfig,
+	getMastodonNotifications,
 	getMastodonTagFeed,
 	getMastodonTimeline,
 	uploadMastodonMedia,
 } from '../fetchers';
+import type { MastodonNotificationsPage } from '../types';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -645,6 +649,45 @@ describe( 'createMastodonPost', () => {
 		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( { status: 'plain' } );
 		post.mockRestore();
 	} );
+
+	it( 'forwards `visibility` and `spoiler_text` when supplied (CM-710)', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'u',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( {
+			connectionId: 5,
+			status: 'hi',
+			visibility: 'private',
+			spoiler_text: 'spoilers',
+		} );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( {
+			status: 'hi',
+			visibility: 'private',
+			spoiler_text: 'spoilers',
+		} );
+		post.mockRestore();
+	} );
+
+	it( 'omits `spoiler_text` when an empty string is supplied', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'u',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( {
+			connectionId: 5,
+			status: 'hi',
+			visibility: 'public',
+			spoiler_text: '',
+		} );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( {
+			status: 'hi',
+			visibility: 'public',
+		} );
+		post.mockRestore();
+	} );
 } );
 
 describe( 'uploadMastodonMedia', () => {
@@ -746,5 +789,241 @@ describe( 'uploadMastodonMedia', () => {
 			kind: 'media_too_large',
 		} );
 		post.mockRestore();
+	} );
+} );
+
+describe( 'createMastodonFollow', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'POSTs /reader/mastodon/connections/:id/follows with account_id in the body and returns the viewer block', async () => {
+		const scope = nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
+			.reply( 200, {
+				viewer: { following: true, followed_by: false, requested: false },
+			} );
+		const res = await createMastodonFollow( { connectionId: 7, accountId: '200' } );
+		expect( res.viewer ).toEqual( { following: true, followed_by: false, requested: false } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
+			.reply( 401, {
+				error: 'reader_mastodon_unauthenticated',
+				message: '',
+				statusCode: 401,
+				status: 401,
+			} );
+		await expect(
+			createMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+
+	it.each( [
+		[ '{} is rejected', {} ],
+		[ 'viewer: null is rejected', { viewer: null } ],
+		[ 'viewer: {} is rejected', { viewer: {} } ],
+		[ 'viewer missing requested is rejected', { viewer: { following: true, followed_by: false } } ],
+		[
+			'viewer with non-boolean fields is rejected',
+			{ viewer: { following: 'yes', followed_by: false, requested: false } },
+		],
+	] )( 'rejects a malformed payload (%s) as bad_request', async ( _label, body ) => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
+			.reply( 200, body );
+		await expect(
+			createMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: 'bad_request' } );
+	} );
+
+	it.each( [
+		[
+			'404 with reader_mastodon_not_found',
+			{ status: 404, body: { code: 'reader_mastodon_not_found' } },
+			'not_found',
+		],
+		[
+			'429 surfaces as rate_limited',
+			{ status: 429, body: { statusCode: 429, status: 429 } },
+			'rate_limited',
+		],
+		[
+			'502 with reader_mastodon_upstream_unavailable',
+			{ status: 502, body: { code: 'reader_mastodon_upstream_unavailable' } },
+			'upstream_unavailable',
+		],
+		[
+			'400 with reader_mastodon_bad_request',
+			{ status: 400, body: { code: 'reader_mastodon_bad_request', message: 'no such id' } },
+			'bad_request',
+		],
+	] )( 'classifies %s correctly', async ( _label, fixture, expectedKind ) => {
+		nock( BASE )
+			.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '200' } )
+			.reply( fixture.status, fixture.body );
+		await expect(
+			createMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: expectedKind } );
+	} );
+} );
+
+describe( 'deleteMastodonFollow', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'DELETEs /reader/mastodon/connections/:id/follows/:account_id and returns the viewer block', async () => {
+		const scope = nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/follows/200' )
+			.reply( 200, {
+				viewer: { following: false, followed_by: false, requested: false },
+			} );
+		const res = await deleteMastodonFollow( { connectionId: 7, accountId: '200' } );
+		expect( res.viewer ).toEqual( { following: false, followed_by: false, requested: false } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'URL-encodes the account id defensively', async () => {
+		const scope = nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/follows/200%2Ffoo' )
+			.reply( 200, {
+				viewer: { following: false, followed_by: false, requested: false },
+			} );
+		await deleteMastodonFollow( { connectionId: 7, accountId: '200/foo' } );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'classifies a 401 as auth_required', async () => {
+		nock( BASE ).delete( '/wpcom/v2/reader/mastodon/connections/7/follows/200' ).reply( 401, {
+			error: 'reader_mastodon_unauthenticated',
+			message: '',
+			statusCode: 401,
+			status: 401,
+		} );
+		await expect(
+			deleteMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: 'auth_required' } );
+	} );
+
+	it.each( [
+		[
+			'404 with reader_mastodon_not_found',
+			{ status: 404, body: { code: 'reader_mastodon_not_found' } },
+			'not_found',
+		],
+		[
+			'429 surfaces as rate_limited',
+			{ status: 429, body: { statusCode: 429, status: 429 } },
+			'rate_limited',
+		],
+		[
+			'502 with reader_mastodon_upstream_unavailable',
+			{ status: 502, body: { code: 'reader_mastodon_upstream_unavailable' } },
+			'upstream_unavailable',
+		],
+	] )( 'classifies %s correctly', async ( _label, fixture, expectedKind ) => {
+		nock( BASE )
+			.delete( '/wpcom/v2/reader/mastodon/connections/7/follows/200' )
+			.reply( fixture.status, fixture.body );
+		await expect(
+			deleteMastodonFollow( { connectionId: 7, accountId: '200' } )
+		).rejects.toMatchObject( { kind: expectedKind } );
+	} );
+} );
+
+describe( 'getMastodonNotifications', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'hits the connection-scoped path with cursor + limit', async () => {
+		const page: MastodonNotificationsPage = {
+			items: [
+				{
+					id: '13371337',
+					protocol_type: 'favourite',
+					canonical_type: 'like',
+					actor: {
+						handle: 'jane@mastodon.social',
+						display_name: 'Jane',
+						avatar_url: null,
+						profile_uri: 'https://mastodon.social/@jane',
+					},
+					target: {
+						kind: 'post',
+						uri: 'https://mastodon.social/@me/110000000000000001',
+						excerpt: '',
+					},
+					target_url: 'https://mastodon.social/@me/110000000000000001',
+					created_at: '2026-05-11T12:34:56Z',
+					is_read: false,
+				},
+			],
+			next_cursor: 'next',
+			seen_at: '2026-05-10T00:00:00Z',
+		};
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { cursor: 'abc', limit: '30' } )
+			.reply( 200, page );
+
+		const res = await getMastodonNotifications( {
+			connectionId: 101,
+			cursor: 'abc',
+			limit: 30,
+		} );
+		expect( res ).toEqual( page );
+	} );
+
+	it( 'omits cursor + limit when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+		expect( res.next_cursor ).toBeNull();
+	} );
+
+	it( 'classifies wpcom 401 as auth_required', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 401, { code: 'reader_mastodon_auth_required' } );
+		await expect( getMastodonNotifications( { connectionId: 101 } ) ).rejects.toMatchObject( {
+			kind: 'auth_required',
+		} );
+	} );
+
+	it( 'getMastodonNotifications forwards types when provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { types: 'like,repost' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( {
+			connectionId: 101,
+			types: 'like,repost',
+		} );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getMastodonNotifications omits types when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getMastodonNotifications omits types when empty string', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( { connectionId: 101, types: '' } );
+		expect( res.items ).toEqual( [] );
 	} );
 } );

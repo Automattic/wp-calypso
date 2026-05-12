@@ -10,6 +10,8 @@ import {
 	mastodonAccount,
 	mastodonOauthCallback,
 	mastodonProfile,
+	mastodonProfileFollowers,
+	mastodonProfileFollowing,
 	mastodonTagFeed,
 	mastodonThread,
 } from './controller';
@@ -46,6 +48,22 @@ export default function () {
 		sidebar,
 		setBeforePrimary,
 		mastodonProfile,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/mastodon/:id(\\d+)/profile/:actor/followers',
+		sidebar,
+		setBeforePrimary,
+		mastodonProfileFollowers,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/mastodon/:id(\\d+)/profile/:actor/following',
+		sidebar,
+		setBeforePrimary,
+		mastodonProfileFollowing,
 		makeLayout,
 		clientRender
 	);

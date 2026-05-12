@@ -30,6 +30,7 @@ import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
+import { getReloadStep } from './get-reload-step';
 import './style.scss';
 
 // All onboarding steps share a single <Modal> frame so transitions between
@@ -180,16 +181,13 @@ const ReaderOnboardingRsm = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
 
-	// Reopen subscription onboarding page if prompted by query param.
+	// Reopen a specific onboarding step if signalled by a query param after email verification.
 	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		const shouldReloadOnboarding = urlParams.has( 'reloadSubscriptionOnboarding' );
-
-		if ( shouldReloadOnboarding ) {
-			openStep( 'discover' );
-			urlParams.delete( 'reloadSubscriptionOnboarding' );
+		const result = getReloadStep( window.location.search );
+		if ( result ) {
+			openStep( result.step );
 			page.redirect(
-				`${ window.location.pathname }${ urlParams.toString() ? '?' + urlParams.toString() : '' }`
+				`${ window.location.pathname }${ result.cleanedSearch ? '?' + result.cleanedSearch : '' }`
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -274,14 +272,18 @@ const ReaderOnboardingRsm = ( {
 					onRequestClose={ handleStepClose }
 					size="medium"
 					className={ clsx( 'reader-onboarding-rsm-modal', STEP_FRAME_CLASS[ currentStep ], {
-						'is-disabled': currentStep === 'discover' && promptVerification,
+						'is-disabled':
+							( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
 					} ) }
 				>
 					{ currentStep === 'welcome' && (
 						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />
 					) }
 					{ currentStep === 'interests' && (
-						<InterestsModal onContinue={ handleInterestsContinue } />
+						<InterestsModal
+							onContinue={ handleInterestsContinue }
+							promptVerification={ promptVerification }
+						/>
 					) }
 					{ currentStep === 'discover' && (
 						<SubscribeModal onClose={ handleStepClose } promptVerification={ promptVerification } />

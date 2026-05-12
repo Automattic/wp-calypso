@@ -8,16 +8,26 @@ export function assistantTurnEntryId( evt: Record< string, unknown > ): string {
 	return ix ? `${ base }:${ ix }` : base;
 }
 
+/**
+ * Inverse of the optional `:contentIndex` suffix produced by
+ * {@link assistantTurnEntryId}. Returns the bare conversation item id, which
+ * is what the server uses in `conversation.item.added` / `.created` events.
+ */
+export function entryIdToItemId( entryId: string ): string {
+	const colonIdx = entryId.indexOf( ':' );
+	return colonIdx === -1 ? entryId : entryId.slice( 0, colonIdx );
+}
+
 export function upsertEntry(
 	prev: RealtimeTranscriptEntry[],
 	id: string,
 	role: RealtimeTranscriptEntry[ 'role' ],
 	delta: string,
-	isFinal: boolean
+	isFinal: boolean,
+	timestamp: number = Date.now()
 ): RealtimeTranscriptEntry[] {
 	const existingIndex = prev.findIndex( ( entry ) => entry.id === id );
 	if ( existingIndex === -1 ) {
-		const timestamp = Date.now();
 		return [ ...prev, { id, role, text: delta, isFinal, timestamp } ];
 	}
 	const updated = [ ...prev ];

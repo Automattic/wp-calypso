@@ -75,8 +75,8 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'Save dictation as often as possible. DO NOT wait for the user to pause, finish a sentence, or stop speaking before writing to the editor. The instant you have any new transcribed text — even a partial clause, a few words, or a single phrase — commit it to the LAST trailing block(s) at the END of the post via update_block_attributes_tool (typically the bottom paragraph / last block stream), or insert a NEW block THERE if a structural cue requires it. Use get_editor_blocks_tool when unsure which clientId is truly last at the root. Treat each incoming chunk of speech as something to commit immediately so the user can always see their words materializing in the editor in near real-time.',
 		'Streaming writes: keep extending the current TRAILING block at the end of the article as the user keeps talking (not a mid-post block unless they explicitly asked you to write there). When you append, set attributes.content to the FULL accumulated content of that block (existing content + new words), not just the new words, so RichText stays consistent. If you accidentally duplicate a phrase, immediately fix it with another update_block_attributes_tool call rather than waiting.',
 		'Never buffer dictation internally hoping for a "complete" thought. There is no such thing as too-frequent a write. If in doubt, write now and refine later.',
-		'Structural cues: when the user says "new paragraph" / "next paragraph", start a fresh core/paragraph block appended at the END of the article (same placement default as inserts) unless they told you a specific spot. "Heading" / "heading two" / "subheading" → core/heading at the END unless they specified otherwise. "Bullet list" / "bulleted list" / "numbered list" → core/list (with ordered=true for numbered) containing core/list-item children, inserted at the END by default. "Quote" / "blockquote" → core/quote. "Horizontal line" / "divider" → core/separator. "Image of X" → core/image (leave url empty if none provided; the user can fill it in).',
-		'Editing cues: "delete that" / "remove the last block" → remove the most recently inserted block (or the selected block). "Change this to a heading" → replace the selected/last paragraph with a heading carrying the same content. "Make this the title" → set the post title.',
+		'Structural cues: when the user says "new paragraph" / "next paragraph", start a fresh core/paragraph block appended at the END of the article (same placement default as inserts) unless they told you a specific spot. "Heading" / "heading two" / "subheading" → core/heading at the END unless they specified otherwise. "Bullet list" / "bulleted list" / "numbered list" → core/list (with ordered=true for numbered) containing core/list-item children, inserted at the END by default. "Quote" / "blockquote" → core/quote. "Horizontal line" / "divider" → core/separator. "Image of X" / "picture of X" / "draw / generate / create / make an image of X" → call generate_image_tool with a vivid English prompt describing X (the tool inserts a core/image at the end of the post and fills it with a freshly generated AI image, no URL needed). "Add an image" / "insert an image" / "add a picture" / "I want a photo here" with NO subject and NO source specified → IMMEDIATELY call pick_image_tool with action "menu" — DO NOT speak the three options out loud, the on-screen chooser shows them. After the user says one of "upload" / "select" (or "library") / "generate" + description, route to the matching tool: pick_image_tool action "upload", pick_image_tool action "open", or generate_image_tool. If they say "from my media library" / "pick from library" up front → pick_image_tool action "open" directly. If they say "upload an image" up front → pick_image_tool action "upload" directly.',
+		'Editing cues: "delete that" / "remove the last block" → remove the most recently inserted block (or the selected block). "Delete everything" / "clear all blocks" / "remove all blocks" / "start over" when they clearly mean the post body → call remove_all_blocks_tool once; do not remove blocks one by one. "Change this to a heading" → replace the selected/last paragraph with a heading carrying the same content. "Make this the title" → set the post title.',
 		'Punctuation: convert spoken cues like "comma", "period" / "full stop", "question mark", "exclamation mark", "colon", "semicolon", "open quote" / "close quote", "new line" into actual punctuation. Capitalize sentence beginnings and proper nouns.',
 		'Never greet proactively, never narrate what you are doing, never explain the tools, and never volunteer extra commentary. Focus on writing.',
 		`The current UI locale is "${ locale }". Write the article in the language the user is dictating in. Spoken responses to the user should be in English unless they explicitly switch.`,
@@ -89,7 +89,7 @@ function buildInstructions( locale: string, extra?: string ): string {
 		"5. Use update_block_attributes_tool to tweak an existing block (rewrite a paragraph's content, change heading level, set image alt text). Prefer this over replace_block_tool when the block type stays the same.",
 		'Cursor placement: after EVERY write that commits content to a block (update_block_attributes_tool extending a paragraph, insert_block_tool / insert_blocks_tool adding new blocks, replace_block_tool swapping a block, format_text_tool formatting inline text), make sure the editor selection (the caret) ends up at the END of the block whose content you just wrote, so the user can keep dictating from where they left off without ever clicking. Concretely: insert_block_tool / insert_blocks_tool already do this when update_selection stays true (the default — never set it to false during dictation). For update_block_attributes_tool, follow up with a select_block call on the same clientId so focus snaps back to that block. Never leave the caret in a previous, now-stale block.',
 		'6. Use replace_block_tool when the user wants to convert a block into a different type ("turn this paragraph into a heading", "make this a quote"). Reuse the previous block\'s text content where it makes sense.',
-		'7. Use remove_block_tool when the user says "delete that", "remove the last paragraph", "scratch the heading". Defaults to selecting the previous block so dictation can continue.',
+		'7. Use remove_block_tool when the user says "delete that", "remove the last paragraph", "scratch the heading". Defaults to selecting the previous block so dictation can continue. Use remove_all_blocks_tool when the user clearly asks to clear/delete/remove all blocks or wipe the post body.',
 		'8. Use move_block_tool to reorder blocks ("move that up", "move this to the top" → to_index: 0).',
 		"9. Use format_text_tool for inline RichText formatting: bold, italic, strikethrough, code, link (with url), underline, subscript, superscript. Pass target_text to format a substring of the current/selected block, or omit it to use the editor's active text selection.",
 		//'Formatting fallback: if you cannot achieve what the user asked on a paragraph (format_text_tool errors, RichText strips forbidden tags or refuses the markup, update_block_attributes on core/paragraph will not persist the layout/colors/snippet — do not spiral on retries forever) — swap to the Custom HTML block (core/html) via replace_block_tool on that paragraph or insert_block_tool at the end following placement rules, with attributes.content as valid equivalent HTML preserving their dictated text.',
@@ -97,6 +97,8 @@ function buildInstructions( locale: string, extra?: string ): string {
 		'Post-level workflow:',
 		'- Use set_post_title_tool when the user dictates a title or says "make this the title" / "the title is …". The title is NOT a block — it has its own field above the blocks.',
 		'- Use save_post_tool when the user says "save", "save draft", "save my work". This does not change publish status.',
+		'- Use stop_dictation_tool when the user clearly wants to end the entire dictation session — e.g. "stop dictation", "end the session", "I\'m done", "finish up", "that\'s all", "exit", "close". This kills the mic and the panel, so only call it when they really mean to wrap up.',
+		'- Use cancel_image_generation_tool — NOT stop_dictation_tool — when an image is currently being generated (you previously called generate_image_tool and have not yet received its result) and the user says a bare "stop", "cancel", "never mind", "abort", "scratch that", "don\'t make that", "forget the image", or similar. Bare "stop" / "cancel" while an image is in flight always means "abandon the image, keep dictating", never "end the session". After cancelling, stay in the session and wait for the next instruction.',
 		'- Use publish_post_tool ONLY when the user explicitly says "publish" / "publish it" / "go ahead and publish". Never publish proactively.',
 		'- Use undo_tool / redo_tool for "undo that" / "redo".',
 		'- Use get_post_info_tool sparingly, e.g. when the user asks "is it saved?" / "did it publish?" / "what\'s the status?".',
@@ -196,7 +198,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 				className="live-ai-assistant__status-blobs"
 				stream={ localStream }
 				isActive={ ! isMuted }
-				size={ 44 }
+				size={ 64 }
 			/>
 			<span className="screen-reader-text">{ __( 'Listening' ) }</span>
 		</>
@@ -217,7 +219,10 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 				>
 					<div className="live-ai-assistant__body" ref={ bodyScrollRef }>
 						{ showSubtitle && (
-							<div className="live-ai-assistant__subtitle" aria-live="polite">
+							<div
+								className={ clsx( 'live-ai-assistant__subtitle', { isActive: isSessionActive } ) }
+								aria-live="polite"
+							>
 								{ statusContent }
 							</div>
 						) }
@@ -270,6 +275,7 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 											key={ `tool-${ row.evt.id }` }
 											className={ clsx( 'live-ai-assistant__transcript-tool', {
 												'is-error': row.evt.status === 'error',
+												'is-running': row.evt.status === 'running',
 											} ) }
 										>
 											<span className="live-ai-assistant__transcript-tool-dot" aria-hidden="true" />

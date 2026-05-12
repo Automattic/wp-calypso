@@ -29,6 +29,15 @@ jest.mock( 'calypso/reader/components/achievements/years-of-service-badge', () =
 	),
 } ) );
 
+const mockStreakPillProps = jest.fn();
+jest.mock( '../activity-streak-pill', () => ( {
+	__esModule: true,
+	ActivityStreakPill: ( props: { streak?: { current_streak: number }; isOwnProfile: boolean } ) => {
+		mockStreakPillProps( props );
+		return <div data-testid="activity-streak-pill" />;
+	},
+} ) );
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const useAchievementsVisibility =
 	require( 'calypso/reader/components/achievements/use-achievements-visibility' )
@@ -54,6 +63,7 @@ describe( 'UserAchievements', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockAchievementsGridProps.mockClear();
+		mockStreakPillProps.mockClear();
 		useAchievementsQuery.mockReturnValue( {
 			yearsOfService: undefined,
 			lockedAchievements: [],
@@ -192,6 +202,57 @@ describe( 'UserAchievements', () => {
 
 		expect( mockAchievementsGridProps ).toHaveBeenCalledWith(
 			expect.objectContaining( { userLogin: 'test_user', isOwnProfile: false } )
+		);
+	} );
+
+	test( 'renders ActivityStreakPill with the engagement streak slice', () => {
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: true,
+			isVisible: true,
+			isLoading: false,
+		} );
+		useAchievementsQuery.mockReturnValue( {
+			yearsOfService: undefined,
+			lockedAchievements: [],
+			engagementStreak: {
+				current_streak: 7,
+				longest_streak: 12,
+				freezes_available: 1,
+				freeze_used_date: null,
+				next_freeze_in_days: 0,
+			},
+			isLoading: false,
+		} );
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		expect( screen.getByTestId( 'activity-streak-pill' ) ).toBeVisible();
+		expect( mockStreakPillProps ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				streak: expect.objectContaining( { current_streak: 7 } ),
+				isOwnProfile: true,
+			} )
+		);
+	} );
+
+	test( 'still renders ActivityStreakPill when engagement streak is undefined (pill self-handles)', () => {
+		useAchievementsVisibility.mockReturnValue( {
+			isOwnProfile: false,
+			isVisible: true,
+			isLoading: false,
+		} );
+		useAchievementsQuery.mockReturnValue( {
+			yearsOfService: undefined,
+			lockedAchievements: [],
+			engagementStreak: undefined,
+			isLoading: false,
+		} );
+
+		render( <UserAchievements user={ defaultUser } /> );
+
+		// Pill is mounted; the pill itself returns null internally when streak is undefined.
+		expect( mockStreakPillProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { streak: undefined, isOwnProfile: false } )
 		);
 	} );
 } );

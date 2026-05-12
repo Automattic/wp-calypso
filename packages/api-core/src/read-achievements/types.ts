@@ -42,6 +42,10 @@ export interface LockedAchievement {
 	badge_prefix: string;
 	is_secret: false;
 	date_created: string;
+	/** Current progress toward `target`. Present alongside `target` for incremental achievements. */
+	progress?: number;
+	/** Goal value for incremental achievements. Presence triggers progress UI. */
+	target?: number;
 }
 
 /**
@@ -56,10 +60,24 @@ export interface LockedSecretAchievement {
 export type EarnedAchievementEntry = Achievement | MaskedSecretAchievement;
 export type LockedAchievementEntry = LockedAchievement | LockedSecretAchievement;
 
+/**
+ * Engagement (activity) streak slice on the achievements endpoint response.
+ * See: https://fieldguide.automattic.com/activity-streak/
+ */
+export interface EngagementStreak {
+	current_streak: number;
+	longest_streak: number;
+	freezes_available: number;
+	freeze_used_date: string | null;
+	next_freeze_in_days: number;
+}
+
 export interface AchievementsResponse {
 	found: number;
 	achievements: EarnedAchievementEntry[];
 	/** Self-reads only. Endpoint returns the full set on page 1; not paginated. */
 	locked_achievements?: LockedAchievementEntry[];
 	years_of_service?: number;
+	/** Activity streak data. */
+	engagement_streak?: EngagementStreak;
 }

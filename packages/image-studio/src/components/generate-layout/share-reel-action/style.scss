@@ -1,18 +1,11 @@
 .image-studio-share-reel-action {
-	// Sits just above the chat box (footer). Width-matched and centered to
-	// the same 600px column the .image-studio-footer uses, so the button's
-	// right edge aligns with the chat input's right edge — not the modal's
-	// far edge.
+	// Right-side cluster of the .image-studio-modal__video-actions-bar row.
+	// The parent owns width/centering/padding; we own the button gap.
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 	gap: 6px;
 	flex: 0 0 auto;
-	width: 100%;
-	max-width: 600px;
-	align-self: center;
-	padding: 0 16px;
-	margin-top: 4px;
 
 	&__button svg {
 		transition:

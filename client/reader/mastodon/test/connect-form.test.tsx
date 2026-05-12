@@ -6,6 +6,19 @@ import userEvent from '@testing-library/user-event';
 import { ConnectForm } from '../connect-form';
 
 describe( 'ConnectForm', () => {
+	it( 'renders the prose intro describing what the user gets', () => {
+		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		expect(
+			screen.getByText( /your Mastodon timeline appears alongside your blog feeds/i )
+		).toBeVisible();
+	} );
+
+	it( 'renders the instance helper text describing the OAuth handoff', () => {
+		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		expect( screen.getByText( /hand you off to sign in there/i ) ).toBeVisible();
+		expect( screen.getByText( /never see your password/i ) ).toBeVisible();
+	} );
+
 	it( 'disables submit while instance is empty', () => {
 		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
 		expect( screen.getByRole( 'button', { name: /continue/i } ) ).toBeDisabled();

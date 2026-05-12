@@ -229,13 +229,9 @@ function ImageStudioAgentChat( {
 				<p className="image-studio-modal__media-library-disclaimer">
 					<em>
 						{ __(
-							'Outputs from this experimental feature may need editing before publishing.',
+							'Clips are saved to your Media Library as 9:16 vertical MP4 files.',
 							__i18n_text_domain__
 						) }
-					</em>
-					<br />
-					<em>
-						{ __( 'All generated videos are saved to your Media Library.', __i18n_text_domain__ ) }
 					</em>
 				</p>
 			) }
@@ -348,7 +344,7 @@ const ImageStudioContent = withInstanceId(
 		const { handleFeedback, handleSubmitFeedbackText } = useImageStudioFeedback( {
 			authProvider: agentConfigState?.authProvider,
 			sessionId: agentConfigState?.sessionId,
-			displayImageUrl,
+			displayImageUrl: isVideoMode ? currentVideoUrl : displayImageUrl,
 			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
 		} );
 
@@ -587,6 +583,8 @@ const ImageStudioContent = withInstanceId(
 								isAiProcessing={ isAiProcessing }
 								isPromptSent={ isPromptSent }
 								videoUrl={ isVideoMode ? currentVideoUrl : null }
+								onFeedback={ handleFeedback }
+								onSubmitFeedbackText={ handleSubmitFeedbackText }
 							/>
 						) }
 

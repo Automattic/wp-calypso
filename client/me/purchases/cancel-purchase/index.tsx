@@ -1,4 +1,5 @@
 import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -38,6 +39,7 @@ import {
 	getButtonLabels,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
+import { getProductNounForCategory } from 'calypso/dashboard/me/billing-purchases/purchase-settings/classify-purchase-for-copy';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getName,
@@ -54,6 +56,7 @@ import {
 } from 'calypso/lib/purchases/actions';
 import { getMutationFlowType, getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
+import { classifyPurchaseForCopy } from 'calypso/me/purchases/manage-purchase/classify-purchase-for-copy';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
@@ -61,7 +64,11 @@ import { isDataLoading } from 'calypso/me/purchases/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { clearPurchases } from 'calypso/state/purchases/actions';
+import {
+	clearPurchases,
+	removePurchaseFromState,
+	restorePurchaseToState,
+} from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
 	getSitePurchases,
@@ -150,6 +157,7 @@ export interface CancelPurchaseState {
 	showDomainOptionsStep: boolean;
 	showDialog: boolean;
 	cancelIntent: 'refund' | 'autorenew' | null;
+	fireMutationWasRefund: boolean;
 }
 
 export interface CancelPurchaseActions {
@@ -159,9 +167,16 @@ export interface CancelPurchaseActions {
 	) => void;
 	clearPurchases: () => void;
 	refreshSitePlans: ( siteId: string | number ) => void;
+	removePurchaseFromState: ( purchaseId: string | number ) => Purchases.RawPurchase | null;
+	restorePurchaseToState: ( purchase: Purchases.RawPurchase ) => void;
 	successNotice: (
 		message: string | ReactNode,
-		properties: { displayOnNextPage?: boolean; duration?: number }
+		properties: {
+			displayOnNextPage?: boolean;
+			duration?: number;
+			button?: string;
+			href?: string;
+		}
 	) => void;
 	errorNotice: ( message: string | ReactNode ) => void;
 }
@@ -216,6 +231,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		// Cancellation state moved from button component
 		showDialog: false,
 		cancelIntent: null,
+		fireMutationWasRefund: false,
 	};
 
 	onCustomerConfirmedUnderstandingChange = ( checked: boolean ) => {
@@ -378,12 +394,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				if ( ! isAutoRenewIntent ) {
 					await this.handleMarketplaceSubscriptions( refundable );
 				}
-				this.props.successNotice( result.message, {
-					displayOnNextPage: true,
-					duration: 10000,
-				} );
+				if ( refundable ) {
+					this.props.successNotice( result.message, {
+						displayOnNextPage: true,
+						duration: 10000,
+					} );
+				}
 				invokeSurvicateEvent( refundable ? 'purchaseRefunded' : 'purchaseCancelled' );
-				this.setState( { surveyShown: true, isLoading: false } );
+				this.setState( { surveyShown: true, isLoading: false, fireMutationWasRefund: refundable } );
 			} else {
 				this.props.errorNotice( result.error );
 				this.setState( { isLoading: false } );
@@ -436,6 +454,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			await cancelAndRefundPurchaseAsync( purchase.id, {
 				product_id: purchase.productId,
 				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
+				email_variant: config.isEnabled( 'purchases/split-cancel-remove' )
+					? 'treatment'
+					: 'control',
 			} );
 			return {
 				success: true,
@@ -536,16 +557,61 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				this.props.purchaseId
 			);
 			const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
-			page.redirect( managePurchaseUrl ?? backupRedirect );
+			const redirectUrl = managePurchaseUrl ?? backupRedirect;
+			page.redirect(
+				this.state.fireMutationWasRefund ? redirectUrl : redirectUrl + '?cancelled=true'
+			);
 			return;
 		}
 
 		// Set loading state to show busy button
 		this.setState( { isLoading: true } );
 
+		const isAutoRenewIntent = this.state.cancelIntent === 'autorenew';
+		const isRemoveDeleteFlow = this.isLegacyRemoveDeleteFlow( this.props.purchase );
+
+		// Optimistic path: strip cache → navigate → fire mutation in background
+		if ( isRemoveDeleteFlow ) {
+			// Capture props before the timeout — connect() + useSyncExternalStore
+			// may update this.props synchronously when the Redux store changes.
+			const { purchase, purchaseId, atomicTransfer, purchaseListUrl, translate } = this.props;
+			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
+			const isAtomic = Boolean( atomicTransfer?.created_at );
+			const backupRedirect = purchaseListUrl ?? purchasesRoot;
+
+			// Delay everything for tactile feedback (button stays busy for 1.5s)
+			setTimeout( () => {
+				// 1. Strip purchase from Redux store (preserves loaded flags — no refetch cascade).
+				//    Capture the raw form so we can restore it if the mutation fails.
+				const rawPurchase = this.props.removePurchaseFromState( purchaseId );
+
+				// 2. Navigate with notice params (removedId enables the list to dismiss
+				//    the success notice if the background mutation rolls back.)
+				invokeSurvicateEvent( 'purchaseRemoved' );
+				const params = new URLSearchParams();
+				params.set( 'removed', productNoun );
+				params.set( 'removedId', String( purchase.id ) );
+				if ( isAtomic ) {
+					params.set( 'removedDomain', purchase.domain );
+				}
+				page.redirect( `${ backupRedirect }?${ params.toString() }` );
+
+				// 3. Fire mutation in background. On failure, restore the purchase to
+				//    Redux — the list watches getUserPurchases for reappearance and
+				//    self-dismisses its notice.
+				removePurchaseRequest( purchase.id ).catch( () => {
+					if ( rawPurchase ) {
+						this.props.restorePurchaseToState( rawPurchase );
+					}
+					this.props.errorNotice(
+						translate( 'There was a problem removing your purchase. Please try again.' )
+					);
+				} );
+			}, 1500 );
+			return;
+		}
+
 		try {
-			const isAutoRenewIntent = this.state.cancelIntent === 'autorenew';
-			const isRemoveDeleteFlow = this.isLegacyRemoveDeleteFlow( this.props.purchase );
 			const result = isAutoRenewIntent
 				? await this.cancelPurchase( this.props.purchase )
 				: await this.submitCancelAndRefundPurchase( this.props.purchase );
@@ -556,26 +622,22 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				await this.handleMarketplaceSubscriptions( refundable );
 				this.props.refreshSitePlans( this.props.purchase.siteId );
 				this.props.clearPurchases();
-				this.props.successNotice( result.message, { displayOnNextPage: true, duration: 10000 } );
-				if ( isRemoveDeleteFlow ) {
-					invokeSurvicateEvent( 'purchaseRemoved' );
-				} else if ( refundable ) {
+				this.props.successNotice( result.message, {
+					displayOnNextPage: true,
+					duration: 10000,
+				} );
+				if ( refundable ) {
 					invokeSurvicateEvent( 'purchaseRefunded' );
 				} else {
 					invokeSurvicateEvent( 'purchaseCancelled' );
 				}
-				// After DELETE the purchase row no longer exists, so manage-purchase
-				// would 404. Redirect straight to the purchases list instead.
+				const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
+					this.props.siteSlug,
+					this.props.purchaseId
+				);
 				const backupRedirect = this.props.purchaseListUrl ?? purchasesRoot;
-				if ( isRemoveDeleteFlow ) {
-					page.redirect( backupRedirect );
-				} else {
-					const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
-						this.props.siteSlug,
-						this.props.purchaseId
-					);
-					page.redirect( managePurchaseUrl ?? backupRedirect );
-				}
+				const redirectUrl = managePurchaseUrl ?? backupRedirect;
+				page.redirect( refundable ? redirectUrl : redirectUrl + '?cancelled=true' );
 			} else {
 				this.props.errorNotice( result.error );
 			}
@@ -1207,7 +1269,15 @@ const ConnectedCancelPurchase = connect(
 			atomicTransfer: getAtomicTransfer( state, purchase?.siteId ),
 		};
 	},
-	{ recordTracksEvent, clearPurchases, refreshSitePlans, successNotice, errorNotice }
+	{
+		recordTracksEvent,
+		clearPurchases,
+		refreshSitePlans,
+		removePurchaseFromState,
+		restorePurchaseToState,
+		successNotice,
+		errorNotice,
+	}
 )( localize( withLocalizedMoment( CancelPurchase ) ) );
 
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {

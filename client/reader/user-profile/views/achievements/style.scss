@@ -1,13 +1,14 @@
 .is-reader-page {
 	.achievements__header {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: flex-start;
-		justify-content: flex-end;
+		gap: 24px;
 		margin: 16px 0;
+	}
 
-		.years-of-service-badge {
-			margin-bottom: 16px;
-			margin-inline-end: auto;
-		}
+	.achievements__header .activity-streak-pill {
+		flex: 1 1 240px;
+		min-width: 240px;
 	}
 }
