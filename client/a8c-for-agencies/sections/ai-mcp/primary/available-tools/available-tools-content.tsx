@@ -1,7 +1,6 @@
 import {
 	ToggleControl,
 	__experimentalHStack as HStack,
-	__experimentalSpacer as Spacer,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -136,14 +135,12 @@ export default function AiMcpAvailableToolsContent() {
 	);
 
 	return (
-		<div className="a4a-ai-mcp-overview">
-			<Spacer className="a4a-ai-mcp-overview__intro" marginBottom={ 12 }>
-				<Text size={ 15 }>
-					{ preventWidows(
-						__( 'Control which AI tools are available to your external AI assistant.' )
-					) }
-				</Text>
-			</Spacer>
+		<VStack className="a4a-ai-mcp-overview" spacing={ 6 }>
+			<Text className="a4a-ai-mcp-overview__intro" size={ 15 }>
+				{ preventWidows(
+					__( 'Control which AI tools are available to your external AI assistant.' )
+				) }
+			</Text>
 			{ ! abilities.length ? (
 				<VStack spacing={ 4 }>
 					<Card>
@@ -171,7 +168,6 @@ export default function AiMcpAvailableToolsContent() {
 											{ group.label }
 										</Text>
 										<ToggleControl
-											__nextHasNoMarginBottom
 											checked={ allEnabled }
 											label={ __( 'Enable all' ) }
 											onChange={ ( next: boolean ) => onToggleCategory( group, next ) }
@@ -184,7 +180,6 @@ export default function AiMcpAvailableToolsContent() {
 										{ group.abilities.map( ( ability ) => (
 											<ToggleControl
 												key={ ability.name }
-												__nextHasNoMarginBottom
 												checked={ ability.enabled }
 												label={ ability.title }
 												help={ ability.description }
@@ -198,6 +193,6 @@ export default function AiMcpAvailableToolsContent() {
 					} ) }
 				</VStack>
 			) }
-		</div>
+		</VStack>
 	);
 }
