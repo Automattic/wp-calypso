@@ -63,6 +63,7 @@ const LoginRecipe = () => {
 			heading="Log in to WordPress.com"
 			subheading="By continuing, you agree to our Terms of Service and Privacy Policy."
 			topBarAction={ <LinkButton href="/start">Create an account</LinkButton> }
+			wide
 		>
 			<div className="auth-recipe-login">
 				<VStack spacing={ 4 } className="auth-recipe-login__input">

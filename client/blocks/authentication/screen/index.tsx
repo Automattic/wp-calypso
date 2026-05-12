@@ -1,4 +1,5 @@
 import { Step } from '@automattic/onboarding';
+import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
 import './style.scss';
@@ -26,10 +27,14 @@ type ScreenProps = {
 	 */
 	notice?: ReactNode;
 	/**
-	 * Width of the centered content column, in twelfths. Mirrors
-	 * `Step.CenteredColumnLayout`'s `columnWidth` prop.
+	 * When true, the content row caps at the Figma 2-col desktop wrapper
+	 * width (768px) so a consumer can lay out two columns side-by-side
+	 * (input-CTA + social options, with a vertical OR between them). When
+	 * false (default), the content row caps at 348px to match the Figma
+	 * 1-col desktop layout used by lost-password, magic-link, 2FA,
+	 * social-connect, continue-as-user, etc.
 	 */
-	columnWidth?: 4 | 5 | 6 | 8 | 10;
+	wide?: boolean;
 	/**
 	 * The content of the screen — typically a composition of the foundation
 	 * content blocks (TextField, PrimaryButton, OptionsList, etc.).
@@ -42,12 +47,12 @@ const Screen = ( {
 	heading,
 	subheading,
 	notice,
-	columnWidth = 6,
+	wide = false,
 	children,
 }: ScreenProps ) => (
-	<div className="auth-screen">
+	<div className={ clsx( 'auth-screen', { 'is-wide': wide } ) }>
 		<Step.CenteredColumnLayout
-			columnWidth={ columnWidth }
+			columnWidth={ wide ? 8 : 6 }
 			verticalAlign="center"
 			topBar={ <Step.TopBar rightElement={ topBarAction } compactLogo="always" /> }
 			heading={

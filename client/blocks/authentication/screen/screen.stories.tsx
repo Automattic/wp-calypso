@@ -83,3 +83,13 @@ export const SignupAction: Story = {
 		children: <PlaceholderContent />,
 	},
 };
+
+export const Wide: Story = {
+	args: {
+		topBarAction: <LinkButton href="/start">Create an account</LinkButton>,
+		heading: 'Log in to WordPress.com',
+		subheading: 'By continuing, you agree to our Terms of Service and Privacy Policy.',
+		wide: true,
+		children: <PlaceholderContent />,
+	},
+};

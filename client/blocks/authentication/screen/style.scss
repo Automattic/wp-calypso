@@ -23,13 +23,19 @@
 	--dashboard__background-color-info: var(--wp-admin-theme-color);
 }
 
-// Match the Figma's 768px desktop wrapper width. `Step.CenteredColumnLayout`
-// derives its row max-width from `columnWidth * 90px + gaps`, which lands on
-// 660px for `columnWidth=6`. Force both the heading and content rows to 768
-// inside our scope. Using `max-width` (not the logical equivalent) so we
-// override WPDS's `max-width` rule directly on the same property — higher
+// Default (1-col) screens cap their content row at 348px on desktop, matching
+// the Figma `auth-desktop-template-1col` Content area. `is-wide` screens
+// (login + signup) widen to 768px to fit two 327px columns side-by-side with
+// a vertical OR between them — `auth-desktop-template-2col`. Use `max-width`
+// (same property WPDS uses on .step-container-v2__content-row) so higher
 // specificity wins on cascade.
 .auth-screen .step-container-v2__content-row {
+	@include break-small {
+		max-width: 348px;
+	}
+}
+
+.auth-screen.is-wide .step-container-v2__content-row {
 	@include break-small {
 		max-width: 768px;
 	}
@@ -41,7 +47,8 @@
 	gap: 16px;
 
 	// Mobile: full content width, left-aligned (auth-mobile-template).
-	// Desktop: centered with a 347px max-width (auth-desktop-template-2col).
+	// Desktop: centered with a 347px max-width matching the Figma's
+	// heading column inside the desktop wrapper.
 	@include break-medium {
 		max-inline-size: 347px;
 		margin-inline: auto;
