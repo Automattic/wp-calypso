@@ -1,21 +1,27 @@
 .auth-current-user {
-	padding: 8px;
-	border: 1px solid var(--studio-gray-10);
+	border: 1px solid var(--studio-gray-5);
 	border-radius: 4px;
+	padding-inline-end: 12px;
+	overflow: hidden;
 }
 
 .auth-current-user__avatar {
-	inline-size: 48px;
-	block-size: 48px;
-	border-radius: 4px;
+	inline-size: 64px;
+	block-size: 64px;
 	flex-shrink: 0;
 	object-fit: cover;
 }
 
 .auth-current-user__name {
-	font-weight: 600;
+	font-size: 16px;
+	line-height: 24px;
+	font-weight: 500;
+	color: var(--color-text);
 }
 
 .auth-current-user__email {
+	font-size: 12px;
+	line-height: 20px;
+	font-weight: 400;
 	color: var(--color-text-subtle);
 }
