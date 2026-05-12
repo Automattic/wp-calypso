@@ -23,6 +23,8 @@ import nock from 'nock';
 import {
 	createMastodonPostMutation,
 	followMastodonActorMutation,
+	mastodonActorFollowersInfiniteQuery,
+	mastodonActorFollowingInfiniteQuery,
 	mastodonAuthStatusQueryOptions,
 	unfollowMastodonActorMutation,
 	uploadMastodonMediaMutation,
@@ -2013,5 +2015,32 @@ describe( 'useMastodonNotificationsInfiniteQuery — filter', () => {
 		rerender( { filter: 'likes' as const } );
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( nock.isDone() ).toBe( true );
+	} );
+} );
+
+describe.each( [
+	[ 'mastodonActorFollowersInfiniteQuery', mastodonActorFollowersInfiniteQuery ],
+	[ 'mastodonActorFollowingInfiniteQuery', mastodonActorFollowingInfiniteQuery ],
+] )( '%s enabled gating', ( _name, factory ) => {
+	const validParams = { connectionId: 1, actor: 'alice@mastodon.social' };
+
+	it( 'is enabled by default when connectionId and actor are valid', () => {
+		expect( factory( validParams ).enabled ).toBe( true );
+	} );
+
+	it( 'is enabled when `enabled: true` is passed explicitly', () => {
+		expect( factory( { ...validParams, enabled: true } ).enabled ).toBe( true );
+	} );
+
+	it( 'is disabled when `enabled: false` overrides otherwise-valid params', () => {
+		expect( factory( { ...validParams, enabled: false } ).enabled ).toBe( false );
+	} );
+
+	it( 'stays disabled when connectionId is invalid even with `enabled: true`', () => {
+		expect( factory( { ...validParams, connectionId: 0, enabled: true } ).enabled ).toBe( false );
+	} );
+
+	it( 'stays disabled when actor is empty even with `enabled: true`', () => {
+		expect( factory( { ...validParams, actor: '', enabled: true } ).enabled ).toBe( false );
 	} );
 } );
