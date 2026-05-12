@@ -9,7 +9,7 @@ jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn(),
 } ) );
 
-const mockUseViewportMatch = useViewportMatch as jest.Mock;
+const mockUseViewportMatch = jest.mocked( useViewportMatch );
 
 beforeEach( () => {
 	mockUseViewportMatch.mockReturnValue( false );
