@@ -147,7 +147,7 @@ describe( '<LikeButton>', () => {
 		const user = userEvent.setup();
 		renderLikeButton( makePost( { viewer: { like: PENDING_LIKE_URI, repost: null } } ) );
 		const button = screen.getByRole( 'button', { name: /like, 5 likes/i } );
-		expect( button ).toBeDisabled();
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
 		await user.click( button );
 
 		expect( interceptor.isDone() ).toBe( false );

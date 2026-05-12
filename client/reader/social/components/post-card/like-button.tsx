@@ -40,7 +40,7 @@ export function LikeButton( { post, hideCount }: LikeButtonProps ) {
 
 	const isLiked = action.isLiked;
 	const isPending = action.isPending;
-	const accessibleLabel = action.label.accessibleLabel( post.counts.likes );
+	const accessibleLabel = String( action.label.accessibleLabel( post.counts.likes ) );
 
 	const onClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.preventDefault();
@@ -59,7 +59,7 @@ export function LikeButton( { post, hideCount }: LikeButtonProps ) {
 	};
 
 	return (
-		<Tooltip text={ String( accessibleLabel ) }>
+		<Tooltip text={ accessibleLabel }>
 			<button
 				type="button"
 				className={ clsx( 'social-post-card-like-button', {
@@ -67,8 +67,8 @@ export function LikeButton( { post, hideCount }: LikeButtonProps ) {
 					'is-pending': isPending,
 				} ) }
 				aria-pressed={ isLiked }
-				aria-label={ String( accessibleLabel ) }
-				disabled={ isPending }
+				aria-label={ accessibleLabel }
+				aria-disabled={ isPending }
 				onClick={ onClick }
 			>
 				<ReaderLikeIcon liked={ isLiked } iconSize={ ICON_SIZE } />

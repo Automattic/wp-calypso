@@ -272,7 +272,7 @@ describe( '<RepostButton>', () => {
 		const user = userEvent.setup();
 		renderRepostButton( makePost( { viewer: { like: null, repost: PENDING_REPOST_URI } } ) );
 		const button = screen.getByRole( 'button', { name: /undo repost, 4 reposts/i } );
-		expect( button ).toBeDisabled();
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
 		await user.click( button );
 
 		expect( interceptor.isDone() ).toBe( false );
