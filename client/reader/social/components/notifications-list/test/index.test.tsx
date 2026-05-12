@@ -23,32 +23,38 @@ const baseItem: AtmosphereNotification = {
 	is_read: false,
 };
 
-const baseProps = {
+function makeNotification( overrides: Partial< AtmosphereNotification > ): AtmosphereNotification {
+	return { ...baseItem, ...overrides };
+}
+
+const defaultProps = {
 	items: [ baseItem ],
 	isLoading: false,
 	isError: false,
 	hasMore: false,
 	onLoadMore: jest.fn(),
+	filter: 'all' as const,
+	onFilterChange: jest.fn(),
 };
 
 describe( 'SocialNotificationsList', () => {
 	it( 'renders an empty state when items is empty and not loading', () => {
-		renderWithProvider( <SocialNotificationsList { ...baseProps } items={ [] } /> );
+		renderWithProvider( <SocialNotificationsList { ...defaultProps } items={ [] } /> );
 		expect( screen.getByText( /no notifications yet/i ) ).toBeVisible();
 	} );
 
 	it( 'renders a spinner when loading the first page', () => {
-		renderWithProvider( <SocialNotificationsList { ...baseProps } items={ [] } isLoading /> );
+		renderWithProvider( <SocialNotificationsList { ...defaultProps } items={ [] } isLoading /> );
 		expect( screen.getByRole( 'status' ) ).toBeVisible();
 	} );
 
 	it( 'renders an error state when isError is true with no items', () => {
-		renderWithProvider( <SocialNotificationsList { ...baseProps } items={ [] } isError /> );
+		renderWithProvider( <SocialNotificationsList { ...defaultProps } items={ [] } isError /> );
 		expect( screen.getByText( /couldn’t load notifications/i ) ).toBeVisible();
 	} );
 
 	it( 'renders items', () => {
-		renderWithProvider( <SocialNotificationsList { ...baseProps } /> );
+		renderWithProvider( <SocialNotificationsList { ...defaultProps } /> );
 		expect( screen.getByText( /liked your post/i ) ).toBeVisible();
 	} );
 
@@ -56,19 +62,19 @@ describe( 'SocialNotificationsList', () => {
 		const onLoadMore = jest.fn();
 		const user = userEvent.setup();
 		renderWithProvider(
-			<SocialNotificationsList { ...baseProps } hasMore onLoadMore={ onLoadMore } />
+			<SocialNotificationsList { ...defaultProps } hasMore onLoadMore={ onLoadMore } />
 		);
 		await user.click( screen.getByRole( 'button', { name: /load more/i } ) );
 		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'does not render Load more when hasMore is false', () => {
-		renderWithProvider( <SocialNotificationsList { ...baseProps } hasMore={ false } /> );
+		renderWithProvider( <SocialNotificationsList { ...defaultProps } hasMore={ false } /> );
 		expect( screen.queryByRole( 'button', { name: /load more/i } ) ).toBeNull();
 	} );
 
 	it( 'disables Load more while fetching the next page', () => {
-		renderWithProvider( <SocialNotificationsList { ...baseProps } hasMore isLoadingMore /> );
+		renderWithProvider( <SocialNotificationsList { ...defaultProps } hasMore isLoadingMore /> );
 		expect( screen.getByRole( 'button', { name: /load more/i } ) ).toBeDisabled();
 	} );
 
@@ -76,12 +82,57 @@ describe( 'SocialNotificationsList', () => {
 		const onLoadMore = jest.fn();
 		const user = userEvent.setup();
 		renderWithProvider(
-			<SocialNotificationsList { ...baseProps } hasMore isError onLoadMore={ onLoadMore } />
+			<SocialNotificationsList { ...defaultProps } hasMore isError onLoadMore={ onLoadMore } />
 		);
 		expect( screen.getByText( /couldn’t load more notifications/i ) ).toBeVisible();
 		// The plain "Load more" button is replaced by the retry CTA.
 		expect( screen.queryByRole( 'button', { name: /load more/i } ) ).toBeNull();
 		await user.click( screen.getByRole( 'button', { name: /try again/i } ) );
 		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'renders the filter bar with the active option', () => {
+		renderWithProvider(
+			<SocialNotificationsList
+				{ ...defaultProps }
+				items={ [] }
+				filter="likes"
+				onFilterChange={ jest.fn() }
+			/>
+		);
+		expect( screen.getByRole( 'radio', { name: /^likes$/i } ) ).toBeChecked();
+	} );
+
+	it( 'shows a per-filter empty-state message', () => {
+		renderWithProvider(
+			<SocialNotificationsList
+				{ ...defaultProps }
+				items={ [] }
+				filter="likes"
+				onFilterChange={ jest.fn() }
+			/>
+		);
+		expect( screen.getByText( /no likes yet/i ) ).toBeVisible();
+	} );
+
+	it( 'does not render a Today divider when every item is in Today', () => {
+		// Single bucket → divider should be hidden.
+		const item1 = makeNotification( {
+			id: 'a',
+			created_at: new Date().toISOString(),
+		} );
+		const item2 = makeNotification( {
+			id: 'b',
+			created_at: new Date().toISOString(),
+		} );
+		renderWithProvider(
+			<SocialNotificationsList
+				{ ...defaultProps }
+				items={ [ item1, item2 ] }
+				filter="all"
+				onFilterChange={ jest.fn() }
+			/>
+		);
+		expect( screen.queryByRole( 'heading', { name: /today/i, level: 3 } ) ).toBeNull();
 	} );
 } );

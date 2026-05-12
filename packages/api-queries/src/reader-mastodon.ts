@@ -20,6 +20,7 @@ import {
 	getMastodonTagFeed,
 	getMastodonThread,
 	getMastodonTimeline,
+	mapNotificationsFilter,
 	readerMastodonKeys,
 	uploadMastodonMedia,
 } from '@automattic/api-core';
@@ -64,6 +65,7 @@ import type {
 	MastodonThreadNode,
 	MastodonThreadResponse,
 	MastodonTimelinePage,
+	NotificationsFilter,
 } from '@automattic/api-core';
 
 export const mastodonConnectionsQueryOptions = () =>
@@ -202,7 +204,14 @@ export function useMastodonTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( mastodonTimelineInfiniteQuery( connectionId ) );
 }
 
-export const mastodonNotificationsInfiniteQuery = ( connectionId: number ) =>
+export interface UseMastodonNotificationsOptions {
+	filter?: NotificationsFilter;
+}
+
+export const mastodonNotificationsInfiniteQuery = (
+	connectionId: number,
+	filter: NotificationsFilter = 'all'
+) =>
 	infiniteQueryOptions<
 		MastodonNotificationsPage,
 		MastodonError,
@@ -210,8 +219,13 @@ export const mastodonNotificationsInfiniteQuery = ( connectionId: number ) =>
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerMastodonKeys.notifications( connectionId ),
-		queryFn: ( { pageParam } ) => getMastodonNotifications( { connectionId, cursor: pageParam } ),
+		queryKey: readerMastodonKeys.notifications( connectionId, filter ),
+		queryFn: ( { pageParam } ) =>
+			getMastodonNotifications( {
+				connectionId,
+				cursor: pageParam,
+				types: mapNotificationsFilter( filter ),
+			} ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
 		enabled: connectionId > 0,
@@ -235,8 +249,12 @@ export const mastodonNotificationsInfiniteQuery = ( connectionId: number ) =>
 		},
 	} );
 
-export function useMastodonNotificationsInfiniteQuery( connectionId: number ) {
-	return useInfiniteQuery( mastodonNotificationsInfiniteQuery( connectionId ) );
+export function useMastodonNotificationsInfiniteQuery(
+	connectionId: number,
+	options: UseMastodonNotificationsOptions = {}
+) {
+	const { filter = 'all' } = options;
+	return useInfiniteQuery( mastodonNotificationsInfiniteQuery( connectionId, filter ) );
 }
 
 export const mastodonThreadQueryOptions = ( connectionId: number, statusId: string ) =>
@@ -367,6 +385,14 @@ export function useMastodonAuthorFeedInfiniteQuery(
 export interface MastodonActorPageQueryParams {
 	connectionId: number;
 	actor: string;
+	/**
+	 * Lets the caller suppress the request even when connectionId and actor
+	 * are valid — used by the followers / following views to short-circuit
+	 * when the upstream profile reports `hide_collections: true` so we don't
+	 * burn an upstream call only to render the empty-state placeholder.
+	 * Defaults to enabled.
+	 */
+	enabled?: boolean;
 }
 
 export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQueryParams ) => {
@@ -389,7 +415,7 @@ export const mastodonActorFollowersInfiniteQuery = ( params: MastodonActorPageQu
 		// `|| undefined` (not `??`): an empty-string cursor terminates pagination,
 		// matching the slice-6 author-feed hardening.
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
-		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0 && params.enabled !== false,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {
@@ -429,7 +455,7 @@ export const mastodonActorFollowingInfiniteQuery = ( params: MastodonActorPageQu
 			} ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.cursor || undefined,
-		enabled: params.connectionId > 0 && normalizedActor.length > 0,
+		enabled: params.connectionId > 0 && normalizedActor.length > 0 && params.enabled !== false,
 		staleTime: 30_000,
 		gcTime: 5 * 60_000,
 		retry: ( failureCount, error ) => {

@@ -23,6 +23,8 @@ import nock from 'nock';
 import {
 	createMastodonPostMutation,
 	followMastodonActorMutation,
+	mastodonActorFollowersInfiniteQuery,
+	mastodonActorFollowingInfiniteQuery,
 	mastodonAuthStatusQueryOptions,
 	unfollowMastodonActorMutation,
 	uploadMastodonMediaMutation,
@@ -1954,5 +1956,91 @@ describe( 'useMastodonAuthStatusQuery', () => {
 
 	it( 'mastodonAuthStatusQueryOptions(null) is disabled', () => {
 		expect( mastodonAuthStatusQueryOptions( null ).enabled ).toBe( false );
+	} );
+} );
+
+describe( 'useMastodonNotificationsInfiniteQuery — filter', () => {
+	let wrapper: React.FC< { children: React.ReactNode } >;
+
+	beforeEach( () => {
+		const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		wrapper = ( { children } ) => (
+			<QueryClientProvider client={ client }>{ children }</QueryClientProvider>
+		);
+	} );
+
+	afterEach( () => nock.cleanAll() );
+
+	it( 'forwards filter as types= query param', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { types: 'like' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result } = renderHook(
+			() => useMastodonNotificationsInfiniteQuery( 101, { filter: 'likes' } ),
+			{ wrapper }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'omits types= when filter is "all"', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result } = renderHook(
+			() => useMastodonNotificationsInfiniteQuery( 101, { filter: 'all' } ),
+			{ wrapper }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+	} );
+
+	it( 'each filter caches under its own query key', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { types: 'like' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const { result, rerender } = renderHook(
+			( { filter }: { filter: 'all' | 'likes' } ) =>
+				useMastodonNotificationsInfiniteQuery( 101, { filter } ),
+			{ wrapper, initialProps: { filter: 'all' as const } }
+		);
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		rerender( { filter: 'likes' as const } );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( nock.isDone() ).toBe( true );
+	} );
+} );
+
+describe.each( [
+	[ 'mastodonActorFollowersInfiniteQuery', mastodonActorFollowersInfiniteQuery ],
+	[ 'mastodonActorFollowingInfiniteQuery', mastodonActorFollowingInfiniteQuery ],
+] )( '%s enabled gating', ( _name, factory ) => {
+	const validParams = { connectionId: 1, actor: 'alice@mastodon.social' };
+
+	it( 'is enabled by default when connectionId and actor are valid', () => {
+		expect( factory( validParams ).enabled ).toBe( true );
+	} );
+
+	it( 'is enabled when `enabled: true` is passed explicitly', () => {
+		expect( factory( { ...validParams, enabled: true } ).enabled ).toBe( true );
+	} );
+
+	it( 'is disabled when `enabled: false` overrides otherwise-valid params', () => {
+		expect( factory( { ...validParams, enabled: false } ).enabled ).toBe( false );
+	} );
+
+	it( 'stays disabled when connectionId is invalid even with `enabled: true`', () => {
+		expect( factory( { ...validParams, connectionId: 0, enabled: true } ).enabled ).toBe( false );
+	} );
+
+	it( 'stays disabled when actor is empty even with `enabled: true`', () => {
+		expect( factory( { ...validParams, actor: '', enabled: true } ).enabled ).toBe( false );
 	} );
 } );

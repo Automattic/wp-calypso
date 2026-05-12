@@ -16,6 +16,24 @@
 	background-color: var( --color-sidebar-menu-selected-background );
 }
 
+// The link is `display: flex` with `overflow: hidden`. Without `min-width: 0`,
+// the text column refuses to shrink below its content width and long handles
+// (especially Mastodon-style `@user@instance` where username and instance are
+// the same domain) escape the sidebar. Truncate both the display name and the
+// handle with a single-line ellipsis; the native `title` attribute on each
+// element exposes the full value on hover.
+.sidebar-social__account-text {
+	flex: 1;
+	min-width: 0;
+}
+
+.sidebar-social__account-item .sidebar__menu-item-title,
+.sidebar-social__account-handle {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
 .sidebar-social__account-handle {
 	display: block;
 	font-size: 0.67rem; /* stylelint-disable-line scales/font-sizes */

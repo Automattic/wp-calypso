@@ -230,6 +230,21 @@ describe( '<RepostButton>', () => {
 		expect( screen.getByRole( 'button', { name: /^repost, 1 repost$/i } ) ).toBeVisible();
 	} );
 
+	it( 'omits the zero-count clause when there are no reposts', () => {
+		renderRepostButton( makePost( { counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 } } ) );
+		expect( screen.getByRole( 'button', { name: /^repost$/i } ) ).toBeVisible();
+	} );
+
+	it( 'omits the zero-count clause from the "Undo repost" label when the viewer has reposted but the count is zero', () => {
+		renderRepostButton(
+			makePost( {
+				counts: { replies: 0, reposts: 0, likes: 0, quotes: 0 },
+				viewer: { like: null, repost: REPOST_URI },
+			} )
+		);
+		expect( screen.getByRole( 'button', { name: /^undo repost$/i } ) ).toBeVisible();
+	} );
+
 	it( 'shows a rate-limit notice on rate_limited create errors', async () => {
 		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
 		nock( BASE )
@@ -272,7 +287,7 @@ describe( '<RepostButton>', () => {
 		const user = userEvent.setup();
 		renderRepostButton( makePost( { viewer: { like: null, repost: PENDING_REPOST_URI } } ) );
 		const button = screen.getByRole( 'button', { name: /undo repost, 4 reposts/i } );
-		expect( button ).toBeDisabled();
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
 		await user.click( button );
 
 		expect( interceptor.isDone() ).toBe( false );

@@ -993,4 +993,37 @@ describe( 'getMastodonNotifications', () => {
 			kind: 'auth_required',
 		} );
 	} );
+
+	it( 'getMastodonNotifications forwards types when provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { types: 'like,repost' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( {
+			connectionId: 101,
+			types: 'like,repost',
+		} );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getMastodonNotifications omits types when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getMastodonNotifications omits types when empty string', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( { connectionId: 101, types: '' } );
+		expect( res.items ).toEqual( [] );
+	} );
 } );

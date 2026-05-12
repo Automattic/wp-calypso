@@ -23,10 +23,17 @@ import {
 	siteFeaturesQuery,
 	removePurchaseMutation,
 	userPreferenceQuery,
+	userPurchasesQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { useSuspenseQuery, useQuery, useMutation } from '@tanstack/react-query';
+import {
+	useSuspenseQuery,
+	useQuery,
+	useMutation,
+	useQueryClient,
+	type QueryCacheNotifyEvent,
+} from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -59,6 +66,10 @@ import {
 	isPartnerPurchase,
 	isOneTimePurchase,
 } from '../../../utils/purchase';
+import {
+	classifyPurchaseForCopy,
+	getProductNounForCategory,
+} from '../purchase-settings/classify-purchase-for-copy';
 import CancelHeaderTitle from './cancel-header-title';
 import CancelPurchaseForm from './cancel-purchase-form';
 import {
@@ -326,6 +337,7 @@ export default function CancelPurchase() {
 }
 
 function CancelPurchaseInner() {
+	const queryClient = useQueryClient();
 	const { createSuccessNotice, removeNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
@@ -1122,30 +1134,93 @@ function CancelPurchaseInner() {
 			return;
 		}
 
-		removePurchaseMutator.mutate( purchase.ID, {
-			onSuccess: () => {
-				invokeSurvicateEvent( 'purchaseRemoved' );
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: purchase.ID },
-					search: { cancelled: true },
-				} );
-			},
-			onError: () => {
-				const purchaseName = purchase.is_domain ? purchase.meta : purchase.product_name;
-				createErrorNotice(
-					sprintf(
-						/* translators: %(purchaseName)s is the name of the product that was purchased. */
-						__(
-							'There was a problem removing %(purchaseName)s. Please try again later or contact support.'
-						),
-						{ purchaseName }
-					),
-					{ type: 'snackbar' }
+		setTimeout( () => {
+			// 1. Optimistic cache strip
+			const stripPurchaseFromList = () => {
+				queryClient.setQueryData( userPurchasesQuery().queryKey, ( old: Purchase[] | undefined ) =>
+					( old ?? [] ).filter( ( p ) => p.ID !== purchase.ID )
 				);
-				setState( ( state ) => ( { ...state, surveyShown: false, isLoading: false } ) );
-			},
-		} );
+			};
+
+			stripPurchaseFromList();
+
+			// 2. Cache guard — re-strip if a stale refetch brings the purchase back.
+			// Pattern: packages/api-queries/src/site-collision-listener.ts
+			let guardActive = true;
+			let processing = false;
+
+			const unsubscribeGuard = queryClient
+				.getQueryCache()
+				.subscribe( ( event: QueryCacheNotifyEvent ) => {
+					if (
+						! guardActive ||
+						processing ||
+						event.type !== 'updated' ||
+						event.action.type !== 'success' ||
+						event.query.queryKey[ 0 ] !== 'upgrades'
+					) {
+						return;
+					}
+
+					const data = event.query.state.data as Purchase[] | undefined;
+					if ( data?.some( ( p ) => p.ID === purchase.ID ) ) {
+						processing = true;
+						try {
+							stripPurchaseFromList();
+						} finally {
+							processing = false;
+						}
+					}
+				} );
+
+			const cleanupGuard = () => {
+				if ( ! guardActive ) {
+					return;
+				}
+				guardActive = false;
+				unsubscribeGuard();
+			};
+
+			// Self-terminate after 15s with a final authoritative fetch
+			setTimeout( () => {
+				cleanupGuard();
+				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
+			}, 15_000 );
+
+			// 3. Navigate with notice params
+			invokeSurvicateEvent( 'purchaseRemoved' );
+			const productNoun = getProductNounForCategory( classifyPurchaseForCopy( purchase ) );
+			navigate( {
+				to: purchasesRoute.to,
+				search: {
+					removed: productNoun,
+					removedId: purchase.ID,
+					...( purchase.will_atomic_revert_after_removal
+						? { removedDomain: purchase.domain }
+						: {} ),
+				},
+			} );
+
+			// 4. Fire mutation in background. On failure, restore the purchase to
+			//    the cache — the list watches userPurchasesQuery for reappearance
+			//    and self-dismisses its notice. The cache guard's re-strip happens
+			//    synchronously inside the QueryCache notify callback, so the list's
+			//    useEffect never observes transient successes-path reappearances.
+			removePurchaseMutator.mutateAsync( purchase.ID ).catch( () => {
+				cleanupGuard();
+				queryClient.setQueryData(
+					userPurchasesQuery().queryKey,
+					( old: Purchase[] | undefined ) => {
+						const list = old ?? [];
+						return list.some( ( p ) => p.ID === purchase.ID ) ? list : [ ...list, purchase ];
+					}
+				);
+				createErrorNotice( __( 'Failed to remove your purchase. Please try again.' ), {
+					type: 'snackbar',
+				} );
+				queryClient.invalidateQueries( { queryKey: userPurchasesQuery().queryKey } );
+			} );
+		}, 1500 );
 	};
 
 	const submitTurnOffAutoRenew = ( purchase: Purchase ) => {
