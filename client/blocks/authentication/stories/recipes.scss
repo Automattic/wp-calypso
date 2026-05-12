@@ -42,7 +42,11 @@
 		grid-template-columns: 1fr 34px 1fr;
 		column-gap: 24px;
 		row-gap: 0;
-		align-items: start;
+		// Vertically center the shorter column against the taller one so the
+		// input-CTA reads as aligned to the middle of the row, matching the
+		// Figma's auth-desktop-template-2col (input-cta at y:14 inside a
+		// 208-tall row = centered).
+		align-items: center;
 	}
 
 	.auth-recipe-login__or {
