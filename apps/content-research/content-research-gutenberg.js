@@ -4,7 +4,14 @@ import { Button } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { PluginMoreMenuItem } from '@wordpress/editor';
-import { createPortal, useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createPortal,
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp, closeSmall, Icon, search } from '@wordpress/icons';
@@ -14,7 +21,9 @@ import './content-research.scss';
 const queryClient = new QueryClient();
 
 const OPEN_CONTENT_RESEARCH_WINDOW_EVENT = 'content-research:open-window';
+const INTERFACE_CONTENT_SELECTOR = '.interface-interface-skeleton__content';
 const WINDOW_MARGIN = 16;
+const INTERFACE_CONTENT_INSET = 10;
 const DEFAULT_WINDOW_WIDTH = 380;
 const DEFAULT_WINDOW_HEIGHT = 600;
 
@@ -36,18 +45,45 @@ function clampWindowPosition( position, node ) {
 	const viewport = getViewport();
 	const width = node?.offsetWidth || DEFAULT_WINDOW_WIDTH;
 	const height = node?.offsetHeight || DEFAULT_WINDOW_HEIGHT;
-	const maxX = Math.max( 0, viewport.width - width - WINDOW_MARGIN );
-	const maxY = Math.max( 0, viewport.height - height - WINDOW_MARGIN );
-	const minX = Math.min( WINDOW_MARGIN, maxX );
-	const minY = Math.min( WINDOW_MARGIN, maxY );
+	const maxX = Math.max( 0, viewport.width - width );
+	const maxY = Math.max( 0, viewport.height - height );
 
 	return {
-		x: Math.min( Math.max( position.x, minX ), maxX ),
-		y: Math.min( Math.max( position.y, minY ), maxY ),
+		x: Math.min( Math.max( position.x, 0 ), maxX ),
+		y: Math.min( Math.max( position.y, 0 ), maxY ),
 	};
 }
 
-function getDefaultWindowPosition() {
+function getInterfaceContentWindowPosition( node ) {
+	if ( typeof document === 'undefined' ) {
+		return null;
+	}
+
+	const interfaceContent = document.querySelector( INTERFACE_CONTENT_SELECTOR );
+
+	if ( ! interfaceContent ) {
+		return null;
+	}
+
+	const interfaceContentRect = interfaceContent.getBoundingClientRect();
+	const width = node?.offsetWidth || DEFAULT_WINDOW_WIDTH;
+
+	return clampWindowPosition(
+		{
+			x: interfaceContentRect.right - width - INTERFACE_CONTENT_INSET,
+			y: interfaceContentRect.top + INTERFACE_CONTENT_INSET,
+		},
+		node
+	);
+}
+
+function getDefaultWindowPosition( node ) {
+	const interfaceContentPosition = getInterfaceContentWindowPosition( node );
+
+	if ( interfaceContentPosition ) {
+		return interfaceContentPosition;
+	}
+
 	const viewport = getViewport();
 
 	return clampWindowPosition( {
@@ -71,11 +107,16 @@ function ContentResearchPlugin() {
 	const [ position, setPosition ] = useState( getDefaultWindowPosition );
 	const windowRef = useRef( null );
 	const dragStateRef = useRef( null );
+	const shouldPinOnOpenRef = useRef( false );
 
 	const openWindow = useCallback( () => {
+		if ( ! isOpen ) {
+			shouldPinOnOpenRef.current = true;
+			setPosition( getDefaultWindowPosition( windowRef.current ) );
+		}
 		setIsOpen( true );
 		setIsMinimized( false );
-	}, [] );
+	}, [ isOpen ] );
 
 	const closeWindow = useCallback( () => {
 		setIsOpen( false );
@@ -93,6 +134,20 @@ function ContentResearchPlugin() {
 			window.removeEventListener( OPEN_CONTENT_RESEARCH_WINDOW_EVENT, openWindow );
 		};
 	}, [ openWindow ] );
+
+	useLayoutEffect( () => {
+		if ( ! isOpen || ! shouldPinOnOpenRef.current ) {
+			return;
+		}
+
+		const interfaceContentPosition = getInterfaceContentWindowPosition( windowRef.current );
+
+		if ( interfaceContentPosition ) {
+			setPosition( interfaceContentPosition );
+		}
+
+		shouldPinOnOpenRef.current = false;
+	}, [ isOpen ] );
 
 	useEffect( () => {
 		if ( ! isOpen || typeof window === 'undefined' ) {
