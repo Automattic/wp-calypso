@@ -163,7 +163,10 @@
 		border-color: color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
 		box-shadow: 0 1px 4px 0 rgba( 0, 0, 0, 0.4 );
 	}
-
+	.theme__sheet-style-variations::after{
+		@include long-content-fade( $direction: right, $size: 24px, $color: var( --dashboard__background-color ) );
+		right:-1px; // fixes a 1px gap between the fade and the edge of the container
+	}
 	.theme-download-card .button,
 	.theme__sheet-demo-button {
 		background-color: transparent;
@@ -199,18 +202,12 @@
 	}
 
 	.card.theme__sheet-card-support .components-button {
+		--wp-components-color-accent: var(--color-accent-70);
+    	--wp-components-color-accent-darker-20: var(--color-accent-80);
 		background-color: transparent;
-		border-color: var( --dashboard-field__border-color );
-		color: var( --dashboard-field__border-color );
-
-		&:visited {
-			color: var( --dashboard-field__border-color );
-		}
 
 		&:hover {
 			background-color: transparent;
-			border-color: var( --dashboard__text-muted-color );
-			color: var( --dashboard__text-muted-color );
 		}
 	}
 
