@@ -41,7 +41,7 @@
 		display: flex;
 		gap: 16px;
 		overflow-x: auto;
-		padding: 12px 4px 12px;
+		padding: 16px 4px 12px;
 		// Allow card shadows and stacked-card pseudo-elements to show without being clipped.
 		margin: 0 -4px;
 		scroll-snap-type: x mandatory;
@@ -77,19 +77,19 @@
 			border: 1px solid var( --studio-gray-5, #f0f0f0 );
 		}
 
-		// Middle stacked card: 4px inset on each side, peeks 4px above.
+		// Middle stacked card: 10px inset on each side, peeks 6px above.
 		&::before {
-			inset-inline: 4px;
-			top: -4px;
-			bottom: 4px;
+			inset-inline: 10px;
+			top: -6px;
+			bottom: 6px;
 			z-index: 0;
 		}
 
-		// Back stacked card: 8px inset on each side, peeks 8px above.
+		// Back stacked card: 20px inset on each side, peeks 12px above.
 		&::after {
-			inset-inline: 8px;
-			top: -8px;
-			bottom: 8px;
+			inset-inline: 20px;
+			top: -12px;
+			bottom: 12px;
 			z-index: -1;
 		}
 	}
