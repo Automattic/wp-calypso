@@ -27,6 +27,7 @@ interface CancellationMainContentProps {
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
 	site?: Site;
+	wpcomDomain?: string | null;
 	activeMarketplaceSubscriptions?: Purchase[];
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
@@ -59,6 +60,7 @@ export default function CancellationMainContent( {
 	atomicTransfer,
 	selectedDomain,
 	site,
+	wpcomDomain,
 	activeMarketplaceSubscriptions,
 	state,
 	purchaseCancelFeatures,
@@ -112,9 +114,8 @@ export default function CancellationMainContent( {
 
 	if ( isSplitCancelRemoveEnabled ) {
 		// Non-primary domain forwarding: plan cancellation on a site with a custom primary domain.
-		if ( purchase.is_plan && site?.URL && site?.options?.unmapped_url ) {
+		if ( purchase.is_plan && site?.URL && wpcomDomain ) {
 			const primaryDomain = new URL( site.URL ).hostname;
-			const wpcomDomain = new URL( site.options.unmapped_url ).hostname;
 			if ( primaryDomain !== wpcomDomain ) {
 				defaultChanges.push(
 					{

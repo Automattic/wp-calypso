@@ -96,6 +96,7 @@ describe( '<CancellationMainContent />', () => {
 						unmapped_url: 'https://example.wordpress.com',
 					},
 				} ) }
+				wpcomDomain="example.wordpress.com"
 			/>
 		);
 
@@ -107,6 +108,36 @@ describe( '<CancellationMainContent />', () => {
 				/example\.wordpress\.com will become the address people see when they visit your site/
 			)
 		).toBeVisible();
+	} );
+
+	test( 'non-primary domain bullets prefer wpcomDomain prop over site.options.unmapped_url (.home.blog fix)', () => {
+		mockedIsEnabled.mockImplementation( ( flag ) => flag === 'purchases/split-cancel-remove' );
+
+		// Server-side unmapped_url returns .wordpress.com even when the site's free
+		// domain is .home.blog. The wpcomDomain prop, sourced from the loaded
+		// domain list, is the source of truth.
+		render(
+			<CancellationMainContent
+				{ ...defaultProps }
+				purchase={ makePurchase( { is_plan: true } ) }
+				site={ makeSite( {
+					URL: 'https://mycustomdomain.com',
+					options: {
+						admin_url: 'https://mycustomdomain.com/wp-admin/',
+						software_version: '6.5',
+						unmapped_url: 'https://example.wordpress.com',
+					},
+				} ) }
+				wpcomDomain="example.home.blog"
+			/>
+		);
+
+		expect(
+			screen.getByText( /mycustomdomain\.com will start forwarding to example\.home\.blog/ )
+		).toBeVisible();
+		expect(
+			screen.queryByText( /example\.wordpress\.com will become the address/ )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'WordAds bullet appears when site has wordads enabled and flag is on', () => {

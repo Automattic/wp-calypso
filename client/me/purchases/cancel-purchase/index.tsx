@@ -78,7 +78,7 @@ import {
 	getDowngradePlanFromPurchase,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId, getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
@@ -200,6 +200,7 @@ export interface CancelPurchaseConnectedProps {
 	site: SiteDetails;
 	hasSetupAds: boolean;
 	hasCustomPrimaryDomain: boolean | null;
+	wpcomDomain: string | null;
 	selectedDomainIsGravatar: boolean;
 }
 
@@ -939,6 +940,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			site,
 			hasSetupAds,
 			hasCustomPrimaryDomain,
+			wpcomDomain,
 			selectedDomainIsGravatar,
 		} = this.props;
 		const { isSplitCancelRemoveEnabled } = this.props;
@@ -950,7 +952,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			// Non-primary domain forwarding.
 			if ( isPlan( purchase ) && hasCustomPrimaryDomain && site ) {
 				const primaryDomain = site.domain;
-				const wpcomDomain = site.wpcom_url;
 				if ( primaryDomain && wpcomDomain ) {
 					siteWarnings.push(
 						{
@@ -1361,6 +1362,9 @@ const ConnectedCancelPurchase = connect(
 					( site && isRequestingWordAdsApprovalForSite( state as object, site ) )
 			),
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
+			// site.wpcom_url is incorrect for .home.blog sites — read the actual WPCOM
+			// domain from the domain list instead.
+			wpcomDomain: getWpComDomainBySiteId( state as object, purchase?.siteId )?.name ?? null,
 			selectedDomainIsGravatar: Boolean( selectedDomain?.isGravatarRestrictedDomain ),
 		};
 	},

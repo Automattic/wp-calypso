@@ -17,6 +17,7 @@ interface CancellationPreSurveyContentProps {
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
 	site?: Site;
+	wpcomDomain?: string | null;
 	activeMarketplaceSubscriptions?: Purchase[];
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
@@ -39,6 +40,7 @@ export default function CancellationPreSurveyContent( {
 	atomicTransfer,
 	selectedDomain,
 	site,
+	wpcomDomain,
 	activeMarketplaceSubscriptions,
 	state,
 	purchaseCancelFeatures,
@@ -72,6 +74,7 @@ export default function CancellationPreSurveyContent( {
 			atomicTransfer={ atomicTransfer }
 			selectedDomain={ selectedDomain }
 			site={ site }
+			wpcomDomain={ wpcomDomain }
 			activeMarketplaceSubscriptions={ activeMarketplaceSubscriptions }
 			state={ state }
 			purchaseCancelFeatures={ purchaseCancelFeatures }
