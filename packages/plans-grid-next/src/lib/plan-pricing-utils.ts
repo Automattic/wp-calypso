@@ -187,15 +187,24 @@ export function fromVariantPriceData( variant: VariantPriceData ): PlanPriceInfo
 	let introOffer: PlanPriceInfo[ 'introOffer' ] | undefined;
 
 	if ( introDurationMonths > 0 && priceInteger < priceBeforeDiscounts ) {
-		// Derive the intro-period price by subtracting the non-intro months
-		// (billed at the regular rate) from the total priceInteger.
-		const nonIntroMonths = termMonths - introDurationMonths;
+		// When the intro spans the full term (introDurationMonths >= termMonths), all of
+		// priceInteger is at the intro rate and there are zero non-intro months.
+		// When the intro is shorter than the term (introDurationMonths < termMonths), we
+		// subtract the non-intro portion (billed at the regular rate) to isolate the intro cost.
+		const nonIntroMonths = Math.max( 0, termMonths - introDurationMonths );
 		const introPriceTotal = priceInteger - nonIntroMonths * regularPricePerMonth;
-		introOffer = {
-			pricePerMonth: Math.round( introPriceTotal / introDurationMonths ),
-			durationMonths: introDurationMonths,
-			isActive: true,
-		};
+
+		// A non-positive introPriceTotal means inconsistent data (e.g. a sub-term intro
+		// with a priceInteger that is less than the non-intro months at the regular rate).
+		if ( introPriceTotal > 0 ) {
+			// When introDurationMonths > termMonths the whole billing term is within the
+			// intro period, so we spread introPriceTotal over termMonths (not introDurationMonths).
+			introOffer = {
+				pricePerMonth: Math.round( introPriceTotal / Math.min( introDurationMonths, termMonths ) ),
+				durationMonths: introDurationMonths,
+				isActive: true,
+			};
+		}
 	}
 
 	return { termMonths, regularPricePerMonth, introOffer };
