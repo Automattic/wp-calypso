@@ -18,6 +18,7 @@ import { share } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { SocialLogo } from 'social-logos';
 import { ExperimentalBadge } from '../components/experimental-badge';
+import { ReelShareConfirmationDialog } from '../components/reel-share-confirmation-dialog';
 import { useGenericShare } from '../hooks/use-generic-share';
 import { useReelShare } from '../hooks/use-reel-share';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
@@ -124,11 +125,17 @@ function FeatureClipPreview( {
 					__next40pxDefaultSize
 					disabled={ reel.isSharing }
 					isBusy={ reel.isSharing }
-					onClick={ reel.handleShare }
+					onClick={ reel.requestShare }
 				>
 					{ reelLabel }
 				</Button>
 			) }
+			<ReelShareConfirmationDialog
+				isOpen={ reel.isConfirming }
+				igDisplayName={ reel.igDisplayName }
+				onConfirm={ reel.confirmShare }
+				onCancel={ reel.cancelShare }
+			/>
 			<div className="image-studio-feature-clip-panel__bottom-actions">
 				<Button
 					variant="secondary"
