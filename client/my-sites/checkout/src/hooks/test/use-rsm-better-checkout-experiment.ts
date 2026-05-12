@@ -49,7 +49,12 @@ describe( 'useRsmBetterCheckoutExperiment', () => {
 		mockUseViewportMatch.mockReturnValue( true );
 		mockUseExperiment.mockReturnValue( [
 			false,
-			{ experimentName: 'calypso_rsm_better_checkout_v2', variationName: 'treatment' },
+			{
+				experimentName: 'calypso_rsm_better_checkout_v2',
+				variationName: 'treatment',
+				retrievedTimestamp: 0,
+				ttl: 0,
+			},
 		] );
 
 		const { result } = renderHook( () => useRsmBetterCheckoutExperiment() );
@@ -61,7 +66,12 @@ describe( 'useRsmBetterCheckoutExperiment', () => {
 		mockUseViewportMatch.mockReturnValue( true );
 		mockUseExperiment.mockReturnValue( [
 			false,
-			{ experimentName: 'calypso_rsm_better_checkout_v2', variationName: 'control' },
+			{
+				experimentName: 'calypso_rsm_better_checkout_v2',
+				variationName: 'control',
+				retrievedTimestamp: 0,
+				ttl: 0,
+			},
 		] );
 
 		const { result } = renderHook( () => useRsmBetterCheckoutExperiment() );
