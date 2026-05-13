@@ -1,0 +1,44 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.auth-social-connect-widget {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: $grid-unit-10;
+}
+
+.auth-social-connect-widget__service-logo,
+.auth-social-connect-widget__wp-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: $grid-unit-50;
+	block-size: $grid-unit-50;
+	flex-shrink: 0;
+}
+
+// `client/components/social-icons/style.scss` applies a global
+// `margin-top: -2px` to `.social-icons` for inline-with-text alignment.
+// In our flex-centered 40×40 slot it pulls the provider icons 2px above
+// the row's center, breaking alignment with the WordPress `SocialLogo`
+// (which uses `.social-logo` and isn't affected). Neutralize it here.
+.auth-social-connect-widget__service-logo .social-icons {
+	margin-block-start: 0;
+}
+
+.auth-social-connect-widget__dots {
+	flex-shrink: 0;
+}
+
+// The dotted-line connector's fills come from WPDS tokens so the widget
+// inherits the theme palette: a neutral gray for the trail and the
+// themable admin accent for the one dot closest to the WP logo, reading
+// as a connection toward WordPress.com.
+.auth-social-connect-widget__dot {
+	fill: $gray-200;
+}
+
+.auth-social-connect-widget__dot.is-accent {
+	fill: var(--wp-admin-theme-color);
+}

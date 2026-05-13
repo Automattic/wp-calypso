@@ -1,0 +1,75 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+// Recipe-specific layout for the Login screen. On narrow viewports the
+// content stacks (1-col); from `$break-medium` (782px) up it lays out
+// the input-CTA and the social options side-by-side with a vertical OR
+// rule between them, matching the Figma's `auth-desktop-template-2col`
+// frame (Wrapper 768px wide, columns 327px each, 34px OR gutter).
+
+.auth-recipe-login {
+	display: grid;
+	grid-template-columns: 1fr;
+	row-gap: $grid-unit-20;
+}
+
+.auth-recipe-login__or {
+	font-size: $font-size-small;
+	color: $gray-700;
+	text-transform: uppercase;
+	text-align: center;
+	position: relative;
+}
+
+.auth-recipe-login__or::before {
+	content: '';
+	position: absolute;
+	inset-inline: 0;
+	inset-block-start: 50%;
+	border-block-start: $border-width solid $gray-200;
+	z-index: 0;
+}
+
+.auth-recipe-login__or > span {
+	position: relative;
+	background: var(--dashboard__background-color, #fcfcfc);
+	padding-inline: $grid-unit-10;
+	z-index: 1;
+}
+
+@include break-medium {
+	.auth-recipe-login {
+		grid-template-columns: 1fr 34px 1fr;
+		column-gap: $grid-unit-30;
+		row-gap: 0;
+		// Vertically center the shorter column against the taller one so the
+		// input-CTA reads as aligned to the middle of the row, matching the
+		// Figma's auth-desktop-template-2col (input-cta at y:14 inside a
+		// 208-tall row = centered).
+		align-items: center;
+	}
+
+	.auth-recipe-login__or {
+		inline-size: 34px;
+		min-block-size: 100%;
+	}
+
+	.auth-recipe-login__or::before {
+		inset-inline: 50%;
+		inset-block: 0;
+		border-block-start: 0;
+		border-inline-start: $border-width solid $gray-200;
+	}
+
+	.auth-recipe-login__or > span {
+		display: inline-block;
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 50%;
+		transform: translate(-50%, -50%);
+		padding-inline: 0;
+		padding-block: $grid-unit-10;
+	}
+}

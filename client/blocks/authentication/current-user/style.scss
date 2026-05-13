@@ -1,0 +1,39 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.auth-current-user {
+	// Figma's 1-col template renders the card at `w-full` inside the 400px
+	// content-row. `box-sizing: border-box` keeps border + right padding
+	// inside the 100% — without it, the card renders ~14px wider than the
+	// equally-100% primary button below it.
+	box-sizing: border-box;
+	inline-size: 100%;
+	background: $white;
+	border: $border-width solid $gray-200;
+	border-radius: $radius-medium;
+	padding-inline-end: $grid-unit-15;
+	overflow: hidden;
+}
+
+.auth-current-user__avatar {
+	inline-size: $grid-unit-80;
+	block-size: $grid-unit-80;
+	flex-shrink: 0;
+	object-fit: cover;
+}
+
+// Type scale: WPDS has no 16px size token (jumps 15 → 20), so the name inherits
+// body's 16px ($font-body in packages/typography/styles/variables.scss). Weight
+// and line-height come from WPDS scale.
+.auth-current-user__name {
+	line-height: $font-line-height-medium;
+	font-weight: $font-weight-medium;
+	color: var(--color-text);
+}
+
+.auth-current-user__email {
+	font-size: $font-size-small;
+	line-height: $font-line-height-small;
+	font-weight: $font-weight-regular;
+	color: var(--color-text-subtle);
+}

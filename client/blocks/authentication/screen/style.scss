@@ -1,0 +1,175 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.auth-screen {
+	// Figma surface — a touch lighter than calypso's default
+	// `--color-surface-backdrop` (gray-0 / #F6F7F7). Matches the dashboard's
+	// `--dashboard__background-color` from `client/dashboard/app-dotcom/`,
+	// but that scope isn't defined outside the dashboard app, so set the
+	// background here.
+	background: var(--dashboard__background-color, #fcfcfc);
+	// Fall back to 100vh for browsers without dynamic-viewport support; modern
+	// mobile browsers use 100dvh so the surface stays stable as the URL bar
+	// expands/collapses on scroll.
+	min-block-size: 100vh;
+	min-block-size: 100dvh;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	// `Notice` from `client/dashboard/components/notice/` uses dashboard
+	// CSS variables for variant background tints (`color-mix(in srgb,
+	// var(--dashboard__background-color-error) 4%, transparent)` and
+	// friends). Those variables are only defined inside the dashboard
+	// app's `:root` scope, so provide fallbacks here that mirror what the
+	// dashboard sets: WPDS `$alert-red` for error, plus the same
+	// hand-picked tints the dashboard uses for warning/success. The info
+	// variant reads `--wp-admin-theme-color` directly and doesn't need a
+	// fallback.
+	--dashboard__background-color-error: #{$alert-red};
+	--dashboard__background-color-warning: #d47608;
+	--dashboard__background-color-success: #3ca758;
+}
+
+// Top bar — full-bleed, with the logo on the leading edge and an optional
+// action on the trailing edge.
+.auth-screen__top-bar {
+	inline-size: 100%;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	gap: $grid-unit-20;
+	padding: $grid-unit-20;
+
+	@include break-small {
+		padding-inline: $grid-unit-30;
+	}
+}
+
+.auth-screen__top-bar-logo {
+	color: var(--color-text);
+	display: flex;
+	align-items: center;
+}
+
+// Show the compact W mark on mobile and the full wordmark from `@break-small`,
+// matching the Figma DesktopBar (134×18 wordmark on desktop, compact logo on
+// mobile).
+.auth-screen__top-bar-logo-compact {
+	display: block;
+
+	@include break-small {
+		display: none;
+	}
+}
+
+.auth-screen__top-bar-logo-wordmark {
+	display: none;
+
+	@include break-small {
+		display: block;
+	}
+}
+
+.auth-screen__top-bar-action {
+	margin-inline-start: auto;
+	display: flex;
+	align-items: center;
+
+	// WPDS `Button variant="link"` colors itself with
+	// `--wp-components-color-accent`, which Calypso themes to its blue via
+	// `_wp-components-overrides.scss`. The Figma top-bar action reads as a
+	// neutral text link, so rebind the accent to WPDS `$gray-900` for any
+	// non-destructive link button inside the top-bar action slot.
+	.components-button.is-link:not(.is-destructive) {
+		--wp-components-color-accent: #{$gray-900};
+	}
+}
+
+// Content area — vertically centers heading + body in the remaining viewport.
+.auth-screen__content {
+	inline-size: 100%;
+	box-sizing: border-box;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: $grid-unit-40;
+	padding-inline: $grid-unit-20;
+	padding-block-end: $grid-unit-40;
+
+	@include break-small {
+		padding-inline: $grid-unit-30;
+	}
+}
+
+// Cap the heading and body at 400px (1-col) — the canonical Figma width.
+// `is-wide` widens to 768px at `@break-medium` for the 2-col Login template,
+// and the heading + subheading re-center at the same breakpoint.
+.auth-screen__heading,
+.auth-screen__body {
+	inline-size: 100%;
+	max-inline-size: 400px;
+}
+
+.auth-screen.is-wide {
+	@include break-medium {
+		.auth-screen__heading,
+		.auth-screen__body {
+			max-inline-size: 768px;
+		}
+
+		.auth-screen__heading,
+		.auth-screen__heading h1,
+		.auth-screen__subheading {
+			text-align: center;
+		}
+
+		// Cap the subheading at 347px so long ToS / disclaimer copy doesn't
+		// stretch the full 768 wrapper — small body text becomes hard to
+		// scan past ~85 characters per line.
+		.auth-screen__subheading {
+			max-inline-size: 347px;
+			align-self: center;
+		}
+	}
+}
+
+// Heading block stacks h1 / notice / subheading vertically with an 8px gap,
+// matching the Figma's heading container (gap-[var(--8px,8px)]).
+// Left-aligned by default for 1-col.
+.auth-screen__heading {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-10;
+}
+
+.auth-screen__heading h1 {
+	margin: 0;
+	font-size: $font-size-2x-large;
+	line-height: $font-line-height-2x-large;
+	color: var(--color-neutral-100);
+	text-wrap: balance;
+}
+
+.auth-screen__subheading {
+	margin: 0;
+	font-size: $font-size-large;
+	color: var(--color-text-subtle);
+
+	// Inline links (e.g. Terms of Service / Privacy Policy) inherit the
+	// paragraph's gray instead of picking up Calypso's themed blue accent.
+	// The underline keeps them recognizable as links.
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
+}
+
+.auth-screen__notice {
+	margin: 0;
+}

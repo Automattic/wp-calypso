@@ -1,0 +1,63 @@
+// Auth social button — Figma spec calls for a neutral surface:
+// - white background
+// - subtle WPDS gray border ($gray-200)
+// - dark text
+// - hover/focus/active borders darken to $gray-900
+// - NO calypso-blue accent anywhere
+//
+// Calypso's _wp-components-overrides.scss sets
+// `--wp-components-color-accent: var(--color-accent)` (blue), and WPDS
+// `is-secondary` uses that variable for the border (via inset box-shadow),
+// the text color, hover, focus ring, and active states. Matching WPDS's
+// exact selector patterns (including the `:not(...)` arms) so we tie on
+// specificity and win on cascade order — no `!important` needed.
+
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.components-button.auth-social-button {
+	inline-size: 100%;
+	display: grid;
+	grid-template-columns: 20px 1fr 20px;
+	align-items: center;
+	column-gap: $grid-unit-15;
+	padding-inline: $grid-unit-15;
+	background: var(--color-surface);
+	color: var(--color-text);
+	box-shadow: inset 0 0 0 $border-width $gray-200;
+}
+
+.components-button.auth-social-button:hover:not(:disabled, [aria-disabled='true'], .is-pressed) {
+	background: var(--color-surface);
+	color: var(--color-text);
+	box-shadow: inset 0 0 0 $border-width $gray-900;
+}
+
+.components-button.auth-social-button:focus:not(:active) {
+	box-shadow:
+		inset 0 0 0 $border-width $gray-900,
+		0 0 0 var(--wp-admin-border-width-focus, 1.5px) $gray-900;
+}
+
+.components-button.auth-social-button:active:not(:disabled) {
+	box-shadow: inset 0 0 0 $border-width $gray-900;
+}
+
+.auth-social-button__icon {
+	grid-column: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 20px;
+	block-size: 20px;
+}
+
+.auth-social-button__label {
+	grid-column: 2;
+	text-align: center;
+}
+
+.auth-social-button .social-icons {
+	inline-size: 20px;
+	block-size: 20px;
+}
