@@ -174,7 +174,7 @@ const HomeContent = ( {
 						dashboardOptIn ? dashboardLink( `/sites/${ site.slug }` ) : `/overview/${ site.slug }`
 					}
 				>
-					{ dashboardOptIn ? translate( 'Hosting Dashboard' ) : translate( 'Hosting Overview' ) }
+					{ dashboardOptIn ? translate( 'Hosting Dashboard' ) : translate( 'Site Management' ) }
 				</Button>
 			) }
 		</>
