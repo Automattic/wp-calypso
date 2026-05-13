@@ -63,6 +63,9 @@ export function PostCardBody( { post }: PostCardBodyProps ) {
 				page( inAppUrl );
 				return;
 			}
+			if ( ! analytics ) {
+				return;
+			}
 			// data-id / data-handle present but resolver returned null — likely
 			// a backend ↔ frontend desync (validator rejected a shape we didn't
 			// anticipate, or the protocol shell forgot to bind getProfileUrl).
@@ -73,9 +76,9 @@ export function PostCardBody( { post }: PostCardBodyProps ) {
 				dataId,
 				dataHandle,
 				href: anchor.getAttribute( 'href' ),
-				source: analytics?.source,
+				source: analytics.source,
 			} );
-			analytics?.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
+			analytics.onClick( `calypso_reader_${ analytics.source }_timeline_mention_unresolved`, {
 				connection_id: analytics.connectionId,
 				data_id: dataId,
 				data_handle: dataHandle,
@@ -90,15 +93,18 @@ export function PostCardBody( { post }: PostCardBodyProps ) {
 				page( inAppTagUrl );
 				return;
 			}
+			if ( ! analytics ) {
+				return;
+			}
 			// data-tag present but resolver returned null — backend ↔ frontend desync.
 			// Same observability pattern as the data-id miss path.
 			// eslint-disable-next-line no-console
 			console.warn( '[reader-social] data-tag anchor not resolved to in-app URL', {
 				dataTag,
 				href: anchor.getAttribute( 'href' ),
-				source: analytics?.source,
+				source: analytics.source,
 			} );
-			analytics?.onClick( `calypso_reader_${ analytics.source }_timeline_tag_unresolved`, {
+			analytics.onClick( `calypso_reader_${ analytics.source }_timeline_tag_unresolved`, {
 				connection_id: analytics.connectionId,
 				data_tag: dataTag,
 			} );
