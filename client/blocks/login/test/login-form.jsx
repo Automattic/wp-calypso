@@ -78,6 +78,44 @@ describe( 'LoginForm', () => {
 		expect( wrapper ).toContainElement( google.closest( 'button' ) );
 	} );
 
+	test( 'shows the Last used badge next to the email label when cookie is password', async () => {
+		cookie.parse.mockImplementationOnce( () => ( {
+			last_used_authentication_method: 'password',
+		} ) );
+
+		const { container } = render( <LoginForm isSocialFirst /> );
+
+		const badge = screen.getByText( /Last used/i );
+		expect( badge ).toBeInTheDocument();
+
+		const label = container.querySelector( '.form-label.has-last-used-badge' );
+		expect( label ).toBeInTheDocument();
+		expect( label ).toContainElement( badge );
+	} );
+
+	test( 'honours the ?last_used= query-param override in non-production', async () => {
+		// Cookie is empty — the badge can only appear via the dev-only query override.
+		const { container } = render( <LoginForm isSocialFirst />, {
+			initialState: {
+				route: {
+					query: {
+						current: { last_used: 'google' },
+						initial: {},
+					},
+				},
+			},
+		} );
+
+		const badge = screen.getByText( /Last used/i );
+		expect( badge ).toBeInTheDocument();
+
+		const google = screen.getByText( /Continue with Google/i );
+		expect( google ).toBeInTheDocument();
+
+		const wrapper = container.querySelector( '.social-buttons__last-used' );
+		expect( wrapper ).toContainElement( google.closest( 'button' ) );
+	} );
+
 	test( 'shows the password form alongside the last used badge when social account is linking', async () => {
 		cookie.parse.mockImplementationOnce( () => ( { last_used_authentication_method: 'google' } ) );
 

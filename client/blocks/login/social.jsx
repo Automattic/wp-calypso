@@ -122,6 +122,9 @@ class SocialLoginForm extends Component {
 			.filter( ( { enabled } ) => enabled )
 			.map( ( { service, button } ) => {
 				// Wrap the matching service with a small "Last used" badge.
+				// `button` may be falsy even when `enabled: true` — magic-login
+				// and qr-code resolve to `false` when their links are missing —
+				// so we must guard before dereferencing `button.key`.
 				if ( isSocialFirst && service === lastUsedAuthenticationMethod && button ) {
 					return <LastUsedBadge key={ button.key }>{ button }</LastUsedBadge>;
 				}
