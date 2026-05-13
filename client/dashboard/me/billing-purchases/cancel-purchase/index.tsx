@@ -389,8 +389,12 @@ function CancelPurchaseInner() {
 		siteFeaturesQuery( purchase.blog_id )
 	);
 	const { data: plans } = useSuspenseQuery( plansQuery() );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: purchaseCancelFeatures } = useQuery(
-		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
+		purchaseCancelFeaturesQuery(
+			parseInt( purchaseId, 10 ),
+			isSplitCancelRemoveEnabled ? 'treatment' : 'control'
+		)
 	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
@@ -438,8 +442,6 @@ function CancelPurchaseInner() {
 		error: offerApplyError,
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
-
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	// Handler helpers
 	const purchases = purchase && sitePurchases;

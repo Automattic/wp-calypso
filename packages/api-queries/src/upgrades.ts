@@ -44,10 +44,13 @@ export const purchaseQuery = ( purchaseId: number ) =>
 		queryFn: () => fetchPurchase( purchaseId ),
 	} );
 
-export const purchaseCancelFeaturesQuery = ( purchaseId: number ) =>
+export const purchaseCancelFeaturesQuery = (
+	purchaseId: number,
+	variant?: 'control' | 'treatment'
+) =>
 	queryOptions( {
-		queryKey: [ 'upgrades', purchaseId, 'cancel-features' ],
-		queryFn: () => fetchCancellationFeatures( purchaseId ),
+		queryKey: [ 'upgrades', purchaseId, 'cancel-features', variant ?? 'control' ],
+		queryFn: () => fetchCancellationFeatures( purchaseId, variant ),
 	} );
 
 export const hasPurchaseBeenExtendedQuery = ( purchaseId: number ) =>
