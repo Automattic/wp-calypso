@@ -8,9 +8,8 @@ import {
 	startOfYear,
 	differenceInCalendarDays,
 } from 'date-fns';
-import { formatDate, parseYmdLocal, formatYmd } from '../../utils/datetime';
+import { formatDate, parseYmdLocal, formatYmd } from './datetime';
 
-// Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {
 	from: new Date( date.getFullYear(), date.getMonth(), date.getDate() - ( number - 1 ) ),
 	to: date,
@@ -37,6 +36,7 @@ export type PresetId =
 	| 'yesterday'
 	| 'last-7-days'
 	| 'last-30-days'
+	| 'last-90-days'
 	| 'month-to-date'
 	| 'last-12-months'
 	| 'year-to-date'
@@ -48,6 +48,7 @@ export const presetDefs = [
 	{ id: 'yesterday', label: __( 'Yesterday' ) },
 	{ id: 'last-7-days', label: __( 'Last 7 days' ) },
 	{ id: 'last-30-days', label: __( 'Last 30 days' ) },
+	{ id: 'last-90-days', label: __( 'Last 90 days' ) },
 	{ id: 'month-to-date', label: __( 'Month to date' ) },
 	{ id: 'last-12-months', label: __( 'Last 12 months' ) },
 	{ id: 'year-to-date', label: __( 'Year to date' ) },
@@ -67,6 +68,8 @@ export function computePresetRange( preset: PresetId, baseDate: Date ) {
 			return lastNDays( baseDate, 7 );
 		case 'last-30-days':
 			return lastNDays( baseDate, 30 );
+		case 'last-90-days':
+			return lastNDays( baseDate, 90 );
 		case 'month-to-date':
 			return monthToDate( baseDate );
 		case 'last-12-months':
@@ -110,6 +113,9 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 		if ( diff === 29 ) {
 			return 'last-30-days';
 		}
+		if ( diff === 89 ) {
+			return 'last-90-days';
+		}
 		if (
 			isSameDay( newFrom, addYears( todayStart, -1 ) ) ||
 			isSameDay( newFrom, addDays( addYears( todayStart, -1 ), 1 ) )
@@ -144,7 +150,9 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 	return undefined;
 }
 
-// UI-specific: Date range label for the picker
+/**
+ * Format a date range as a localized label, e.g. "Aug 1, 2025 to Aug 31, 2025".
+ */
 export function formatLabel( start: Date, end: Date, locale: string ) {
 	return sprintf(
 		/* translators: %1$s: start date, %2$s: end date */
@@ -154,7 +162,10 @@ export function formatLabel( start: Date, end: Date, locale: string ) {
 	);
 }
 
-// Determine if the given date range matches the last 7 days preset
+/**
+ * Determine whether the given range matches the "Last 7 days" preset for the
+ * given site timezone.
+ */
 export function isLast7Days(
 	range: { start: Date; end: Date },
 	timezoneString?: string,

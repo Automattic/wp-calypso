@@ -8,9 +8,9 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { startOfMonth, subMonths } from 'date-fns';
 import { useState } from 'react';
-import { ButtonStack } from '../../components/button-stack';
-import { formatYmd, parseYmdLocal } from '../../utils/datetime';
+import { ButtonStack } from './button-stack';
 import { DateInputs } from './date-inputs';
+import { formatYmd, formatSiteYmd, parseYmdLocal } from './datetime';
 import { PresetsListbox } from './presets-listbox';
 import { computePresetRange, getActivePresetId, PresetId, presetDefs } from './utils';
 
@@ -36,7 +36,9 @@ type DateRangeContentProps = {
 	mobileLabelId: string;
 	desktopLabelId: string;
 	disableFuture?: boolean;
+	disabledBefore?: Date;
 	defaultFallbackPreset?: PresetId;
+	hiddenPresets?: PresetId[];
 	inputsProps?: {
 		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
 		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
@@ -68,17 +70,17 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		mobileLabelId,
 		desktopLabelId,
 		disableFuture = true,
+		disabledBefore,
 		defaultFallbackPreset = 'last-7-days',
+		hiddenPresets,
 		inputsProps,
 	} = props;
 
-	// Avoid passing invalid or empty time zones to Intl consumers
 	const isValidIanaTimeZone = ( timeZone?: string ): timeZone is string => {
 		if ( ! timeZone ) {
 			return false;
 		}
 		try {
-			// Will throw for invalid IANA identifiers (including empty strings)
 			Intl.DateTimeFormat( 'en-US', { timeZone: timeZone } );
 			return true;
 		} catch ( _e ) {
@@ -96,7 +98,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		setFromStr( '' );
 		setToStr( '' );
 		setIsTyping( false );
-		// Force controlled inputs to remount so any internal buffers are reset
 		setInputsVersion( ( version ) => version + 1 );
 	};
 
@@ -139,24 +140,19 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		if ( preset ) {
 			return preset;
 		}
-		// Only mark "custom" when both dates are present and do not match a known preset
 		if ( fromDraft && toDraft ) {
 			return 'custom';
 		}
-		// When cleared or incomplete, highlight nothing
 		return undefined;
 	} )();
 
-	// Site “today” as a site-day Date
 	const siteToday =
 		parseYmdLocal( formatYmd( today, timezoneString, gmtOffset ) ) ??
 		new Date( today.getFullYear(), today.getMonth(), today.getDate() );
 
-	// Month anchors in site time
 	const siteMonthStart = startOfMonth( siteToday );
 	const prevMonthStart = subMonths( siteMonthStart, 1 );
 
-	// Build calendar month refs
 	const makeTZMonthFromDate = ( d: Date ) =>
 		timeZoneForCalendar
 			? new TZDate( Date.UTC( d.getFullYear(), d.getMonth(), 1, 12 ), timeZoneForCalendar )
@@ -168,7 +164,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 	const endMonth = makeTZMonthFromDate( siteMonthStart );
 
-	// Use TZDate for calendar selection when a valid IANA time zone is available
 	const selected =
 		timeZoneForCalendar && ( fromDraft || toDraft )
 			? {
@@ -176,6 +171,22 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					to: toDraft ? new TZDate( +toDraft, timeZoneForCalendar ) : undefined,
 			  }
 			: { from: fromDraft ?? undefined, to: toDraft ?? undefined };
+
+	const disabledMatcher = ( () => {
+		const matchers: Array< { after: Date } | { before: Date } > = [];
+		if ( disableFuture ) {
+			matchers.push( { after: today } );
+		}
+		if ( disabledBefore ) {
+			matchers.push( { before: disabledBefore } );
+		}
+		if ( matchers.length === 0 ) {
+			return undefined;
+		}
+		return matchers.length === 1 ? matchers[ 0 ] : matchers;
+	} )();
+
+	const minInputStr = disabledBefore ? formatSiteYmd( disabledBefore ) : undefined;
 
 	return (
 		<VStack as="div" spacing={ 3 } style={ { padding: 12 } }>
@@ -191,6 +202,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						onSelect={ setPreset }
 						compositeActiveId={ compositeActiveId }
 						setCompositeActiveId={ setCompositeActiveId }
+						hiddenPresets={ hiddenPresets }
 					/>
 
 					<DateInputs
@@ -210,6 +222,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
+						minStr={ minInputStr }
 						onFromFocus={ ( e ) => {
 							setIsTyping( true );
 							inputsProps?.onStartFocus?.( e );
@@ -261,6 +274,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 							setIsTyping( Boolean( fromStr || value ) );
 						} }
 						todayStr={ todayStr }
+						minStr={ minInputStr }
 						onFromFocus={ ( e ) => {
 							setIsTyping( true );
 							inputsProps?.onStartFocus?.( e );
@@ -297,6 +311,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						onSelect={ setPreset }
 						compositeActiveId={ compositeActiveId }
 						setCompositeActiveId={ setCompositeActiveId }
+						hiddenPresets={ hiddenPresets }
 					/>
 				) }
 
@@ -306,7 +321,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						numberOfMonths={ isSmall ? 1 : 2 }
 						defaultMonth={ defaultMonth }
 						endMonth={ endMonth }
-						disabled={ disableFuture ? { after: today } : undefined }
+						disabled={ disabledMatcher }
 						excludeDisabled
 						selected={ selected }
 						onSelect={ ( range ) => {

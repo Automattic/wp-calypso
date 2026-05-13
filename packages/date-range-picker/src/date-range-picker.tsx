@@ -3,13 +3,13 @@ import { useMediaQuery, useInstanceId } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { calendar } from '@wordpress/icons';
 import { useMemo, useState } from 'react';
-import { parseYmdLocal, formatYmd, formatSiteYmd } from '../../utils/datetime';
 import { DateRangeContent } from './date-range-content';
+import { parseYmdLocal, formatYmd, formatSiteYmd } from './datetime';
 import { formatLabel } from './utils';
 import type { PresetId } from './utils';
 import './style.scss';
 
-type DateRangePickerProps = {
+export type DateRangePickerProps = {
 	start: Date;
 	end: Date;
 	onChange: ( next: { start: Date; end: Date } ) => void;
@@ -17,7 +17,9 @@ type DateRangePickerProps = {
 	gmtOffset?: number;
 	locale: string;
 	disableFuture?: boolean;
-	defaultFallbackPreset?: PresetId; // preset to apply when inputs are empty and user presses Apply
+	disabledBefore?: Date;
+	defaultFallbackPreset?: PresetId;
+	hiddenPresets?: PresetId[];
 	inputsProps?: {
 		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
 		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
@@ -34,11 +36,12 @@ export function DateRangePicker( {
 	timezoneString,
 	locale,
 	disableFuture = true,
+	disabledBefore,
 	defaultFallbackPreset = 'last-7-days',
+	hiddenPresets,
 	inputsProps,
 }: DateRangePickerProps ) {
 	const isSmall = useMediaQuery( '(max-width: 600px)' );
-	// Use a wider breakpoint to decide when two calendars can fit comfortably
 	const showTwoMonths = useMediaQuery( '(min-width: 900px)' );
 	const instanceId = useInstanceId( DateRangePicker, 'daterange' );
 	const mobileLabelId = `presets-label-${ instanceId }-mobile`;
@@ -46,7 +49,6 @@ export function DateRangePicker( {
 
 	const label = formatLabel( start, end, locale );
 
-	// Reset internal draft state when key inputs change by remounting the inner component
 	const resetKey = [
 		formatSiteYmd( start ),
 		formatSiteYmd( end ),
@@ -96,7 +98,9 @@ export function DateRangePicker( {
 					mobileLabelId={ mobileLabelId }
 					desktopLabelId={ desktopLabelId }
 					disableFuture={ disableFuture }
+					disabledBefore={ disabledBefore }
 					defaultFallbackPreset={ defaultFallbackPreset }
+					hiddenPresets={ hiddenPresets }
 					inputsProps={ inputsProps }
 				/>
 			) }
@@ -116,7 +120,10 @@ function DateRangePickerInner( {
 	mobileLabelId,
 	desktopLabelId,
 	disableFuture,
+	disabledBefore,
 	defaultFallbackPreset,
+	hiddenPresets,
+	inputsProps,
 }: {
 	isSmall: boolean;
 	showTwoMonths: boolean;
@@ -129,7 +136,9 @@ function DateRangePickerInner( {
 	mobileLabelId: string;
 	desktopLabelId: string;
 	disableFuture: boolean;
+	disabledBefore?: Date;
 	defaultFallbackPreset: PresetId;
+	hiddenPresets?: PresetId[];
 	inputsProps?: {
 		onStartFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
 		onEndFocus?: ( e: React.FocusEvent< HTMLInputElement > ) => void;
@@ -141,12 +150,10 @@ function DateRangePickerInner( {
 	const [ toDraft, setToDraft ] = useState< Date | undefined >( () => end );
 	const [ fromStr, setFromStr ] = useState( () => formatSiteYmd( start ) );
 	const [ toStr, setToStr ] = useState( () => formatSiteYmd( end ) );
-	// Tracks the keyboard-focused preset in the listbox (roving focus), not the selected preset.
 	const [ compositeActiveId, setCompositeActiveId ] = useState< string | null >( null );
 
 	const today = useMemo( () => {
 		const parsed = parseYmdLocal( formatYmd( new Date(), timezoneString, gmtOffset ) );
-		// Fallback to local midnight if parsing ever fails
 		return (
 			parsed ?? new Date( new Date().getFullYear(), new Date().getMonth(), new Date().getDate() )
 		);
@@ -176,8 +183,11 @@ function DateRangePickerInner( {
 			mobileLabelId={ mobileLabelId }
 			desktopLabelId={ desktopLabelId }
 			disableFuture={ disableFuture }
+			disabledBefore={ disabledBefore }
 			showTwoMonths={ showTwoMonths }
 			defaultFallbackPreset={ defaultFallbackPreset }
+			hiddenPresets={ hiddenPresets }
+			inputsProps={ inputsProps }
 		/>
 	);
 }
