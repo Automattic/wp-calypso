@@ -76,20 +76,12 @@ interface GuidelineViolation {
 	issue: string;
 }
 
-type ReviewContext =
-	| 'notes_and_guidelines'
-	| 'notes_only'
-	| 'guidelines_only'
-	| 'content_only'
-	| 'insufficient_input';
-
 interface ReviewMediationProps {
 	summary: string;
 	conflicts: Conflict[];
 	implications: Implication[];
 	suggested_edits: SuggestedEdit[];
 	guideline_violations: GuidelineViolation[];
-	review_context?: ReviewContext;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * mediations or the empty-state payload may omit it; consumers degrade

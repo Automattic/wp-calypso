@@ -52,8 +52,13 @@ const OPTIMIZE_TITLE_SUGGESTION = {
 	prompt: __( 'Optimize the title of this post', 'jetpack' ),
 };
 
-/** Post-level suggestion to run AI Editorial Review on a draft. */
-const MEDIATE_REVIEW_SUGGESTION = {
+/**
+ * Post-level suggestion to run AI Editorial Review on a draft.
+ *
+ * The id remains stable because saved chats/tests may still refer to the
+ * original review-mediation identifier.
+ */
+const AI_EDITORIAL_REVIEW_SUGGESTION = {
 	id: 'mediate-review-notes',
 	label: __( 'AI Editorial Review', 'jetpack' ),
 	prompt: __(
@@ -62,7 +67,7 @@ const MEDIATE_REVIEW_SUGGESTION = {
 	),
 };
 
-function isReviewMediatorEnabled(): boolean {
+function isAiEditorialReviewEnabled(): boolean {
 	return typeof agentsManagerData !== 'undefined' && !! agentsManagerData?.reviewMediatorEnabled;
 }
 
@@ -71,20 +76,20 @@ function getCurrentEditorPostType(): string | undefined {
 	return typeof postType === 'string' ? postType : undefined;
 }
 
-function isReviewMediatorAvailable(
+function isAiEditorialReviewAvailable(
 	// Default arguments run at call time, so callers can omit this when they
 	// want the current editor state read live.
 	currentPostType: string | undefined = getCurrentEditorPostType()
 ): boolean {
-	return isReviewMediatorEnabled() && currentPostType === 'post';
+	return isAiEditorialReviewEnabled() && currentPostType === 'post';
 }
 
-function getReviewMediatorSuggestions( currentPostType?: string ) {
-	return isReviewMediatorAvailable( currentPostType ) ? [ MEDIATE_REVIEW_SUGGESTION ] : [];
+function getAiEditorialReviewSuggestions( currentPostType?: string ) {
+	return isAiEditorialReviewAvailable( currentPostType ) ? [ AI_EDITORIAL_REVIEW_SUGGESTION ] : [];
 }
 
 function getPostLevelSuggestions( currentPostType?: string ) {
-	return [ OPTIMIZE_TITLE_SUGGESTION, ...getReviewMediatorSuggestions( currentPostType ) ];
+	return [ OPTIMIZE_TITLE_SUGGESTION, ...getAiEditorialReviewSuggestions( currentPostType ) ];
 }
 
 // ---------- Show-component ability ----------
@@ -539,13 +544,13 @@ export function useSuggestions(): {
 			clearSuggestionsFn?.();
 			startBlockShimmer();
 
-			// Mediation output is too dense for the 350px sidebar. Auto-expand
-			// to 50vw on the mediation suggestion only (matched by prompt).
+			// AI Editorial Review output is too dense for the 350px sidebar.
+			// Auto-expand to 50vw on that suggestion only (matched by prompt).
 			const value = ( event as CustomEvent ).detail?.value;
 			if (
-				isReviewMediatorAvailable() &&
+				isAiEditorialReviewAvailable() &&
 				typeof value === 'string' &&
-				value === MEDIATE_REVIEW_SUGGESTION.prompt
+				value === AI_EDITORIAL_REVIEW_SUGGESTION.prompt
 			) {
 				try {
 					( dispatch as any )( 'automattic/agents-manager' ).setIsSplitScreen( true );

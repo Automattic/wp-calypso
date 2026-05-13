@@ -240,10 +240,7 @@ describe( 'useSuggestions', () => {
 		act( () => {
 			window.dispatchEvent(
 				new CustomEvent( 'big-sky-inline-suggestion-click', {
-					detail: {
-						value:
-							'Run an AI Editorial Review for this post. Check the content, reviewer notes, and site guidelines, then surface conflicts, implications, guideline issues, and suggested edits.',
-					},
+					detail: { value: 'unavailable suggestion prompt' },
 				} )
 			);
 		} );
