@@ -181,7 +181,7 @@ export function PulseOverviewView() {
 					<h2>{ translate( 'Nothing here yet' ) }</h2>
 					<p>
 						{ translate(
-							'You haven’t connected any social accounts yet. Start with the network you already know best — or let your WordPress site do the work for you.'
+							'You haven’t connected any social accounts yet. Start with the network you already know best, or let your WordPress site do the work for you.'
 						) }
 					</p>
 					<a className="pulse-empty__cta" href="/reader/connections/new">

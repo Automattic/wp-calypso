@@ -82,22 +82,22 @@
 
 .connections-new__card-icon {
 	flex-shrink: 0;
-	width: 40px;
-	height: 40px;
+	width: 56px;
+	height: 56px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	color: var( --connections-new-card-accent, var( --color-text ) );
-	margin-block-start: 4px;
+	margin-block-start: 2px;
 
 	// Brand icons hard-code the `sidebar__menu-icon` class on their SVG,
 	// which inherits a section-scoped margin-inline-end intended for the
-	// sidebar menu gap. Zero it here so the 40px glyph sits centred in
-	// its slot. See the matching note in reader-sidebar-connections/
+	// sidebar menu gap. Zero it here so the glyph sits centred in its
+	// slot. See the matching note in reader-sidebar-connections/
 	// style.scss for why we override with !important.
 	svg {
-		width: 40px;
-		height: 40px;
+		width: 56px;
+		height: 56px;
 		margin: 0 !important;
 	}
 }

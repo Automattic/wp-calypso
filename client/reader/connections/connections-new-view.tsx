@@ -48,10 +48,10 @@ export function ConnectionsNewView() {
 	const fediverse: ProtocolOption = {
 		key: 'fediverse',
 		label: 'Fediverse',
-		tagline: String( translate( 'Start here — your site is already social.' ) ),
+		tagline: String( translate( 'Your WordPress site is already social.' ) ),
 		body: String(
 			translate(
-				'If you have a WordPress.com site, you already have a home on the open social web. Flip the ActivityPub switch on your blog and it shows up here — nothing to sign up for, since your site already does the talking.'
+				'If you have a WordPress.com site, you already have a home on the open social web. Flip the ActivityPub switch on your blog and it shows up here. No new account, since your site already does the talking.'
 			)
 		),
 		href: null,
@@ -105,7 +105,7 @@ export function ConnectionsNewView() {
 			<NavigationHeader
 				title={ translate( 'Add a social account' ) }
 				subtitle={ translate(
-					'Pick where your other social home lives — or start one from the WordPress site you already have.'
+					'Pick where your other social home lives. Or start one from the WordPress site you already have.'
 				) }
 			/>
 			<VStack spacing={ 3 } className="connections-new__cards">
@@ -156,7 +156,7 @@ export function ConnectionsNewView() {
 			</VStack>
 			<p className="connections-new__footnote">
 				{ translate(
-					'Connecting a network doesn’t move your data — it just lets the Reader peek into your accounts on your behalf. Disconnect any time.'
+					'Connecting a network doesn’t move your data. It just lets the Reader peek into your accounts on your behalf. Disconnect any time.'
 				) }
 			</p>
 		</ReaderMain>
