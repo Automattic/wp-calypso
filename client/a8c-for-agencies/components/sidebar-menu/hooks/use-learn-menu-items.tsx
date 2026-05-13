@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { BigSkyLogo } from '@automattic/components/src/logos/big-sky-logo';
-import { chartBar, pages, tool } from '@wordpress/icons';
+import { brush, chartBar, pages, tool } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import {
+	A4A_AGENT_STUDIO_LINK,
 	A4A_AI_MCP_LINK,
 	A4A_BENCHMARKS_LINK,
 	A4A_DEV_TOOLS_LINK,
@@ -14,6 +15,7 @@ import { createItem } from '../lib/utils';
 
 const useLearnMenuItems = ( path: string ) => {
 	const translate = useTranslate();
+	const isAgentStudioEnabled = isEnabled( 'a4a-agent-studio' );
 	const isAiMcpEnabled = isEnabled( 'a4a-ai-mcp' );
 	const isBenchmarksEnabled = isEnabled( 'a4a-benchmarks' );
 
@@ -31,6 +33,22 @@ const useLearnMenuItems = ( path: string ) => {
 				},
 				path
 			),
+			...( isAgentStudioEnabled
+				? [
+						createItem(
+							{
+								icon: brush,
+								path: A4A_AGENT_STUDIO_LINK,
+								link: A4A_AGENT_STUDIO_LINK,
+								title: translate( 'Agent studio' ),
+								trackEventProps: {
+									menu_item: 'Automattic for Agencies / Resources and tools / Agent studio',
+								},
+							},
+							path
+						),
+				  ]
+				: [] ),
 			createItem(
 				{
 					icon: tool,
@@ -80,7 +98,7 @@ const useLearnMenuItems = ( path: string ) => {
 		}
 
 		return items;
-	}, [ path, translate, isAiMcpEnabled, isBenchmarksEnabled ] );
+	}, [ path, translate, isAgentStudioEnabled, isAiMcpEnabled, isBenchmarksEnabled ] );
 
 	return menuItems;
 };

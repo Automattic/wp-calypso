@@ -4,10 +4,10 @@ import { createContext, useCallback, useContext, useEffect } from 'react';
 
 export type ColorScheme = 'light' | 'dark' | 'system';
 
-const PREFERENCE_KEY = 'hosting-dashboard-color-scheme';
-const DEFAULT_SCHEME: ColorScheme = 'light';
+export const PREFERENCE_KEY = 'hosting-dashboard-color-scheme';
+export const DEFAULT_SCHEME: ColorScheme = 'light';
 
-function isColorScheme( value: unknown ): value is ColorScheme {
+export function isColorScheme( value: unknown ): value is ColorScheme {
 	return value === 'light' || value === 'dark' || value === 'system';
 }
 

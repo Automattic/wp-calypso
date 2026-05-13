@@ -25,15 +25,15 @@ import EnableApmCallout from './enable-apm-callout';
 import ExternalRequests from './external-requests';
 import { siteApmOverviewQuery } from './mock-data';
 import Overview from './overview';
-import Requests from './requests';
 import Transactions from './transactions';
+import WordPress from './wordpress';
 
-export type ApmTab = 'overview' | 'requests' | 'transactions' | 'database' | 'external-requests';
+export type ApmTab = 'overview' | 'transactions' | 'wordpress' | 'database' | 'external-requests';
 
 const TAB_PATHS: Record< ApmTab, string > = {
 	overview: '',
-	requests: 'requests',
 	transactions: 'transactions',
+	wordpress: 'wordpress',
 	database: 'database',
 	'external-requests': 'external-requests',
 };
@@ -68,14 +68,14 @@ function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 		switch ( tab ) {
 			case 'overview':
 				return <Overview site={ site } />;
-			case 'requests':
-				return <Requests />;
 			case 'transactions':
-				return <Transactions />;
+				return <Transactions site={ site } />;
+			case 'wordpress':
+				return <WordPress site={ site } />;
 			case 'database':
-				return <Database />;
+				return <Database site={ site } />;
 			case 'external-requests':
-				return <ExternalRequests />;
+				return <ExternalRequests site={ site } />;
 		}
 	};
 

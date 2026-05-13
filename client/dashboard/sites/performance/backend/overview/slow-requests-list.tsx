@@ -1,48 +1,25 @@
-import { BarListChart, GlobalChartsProvider, type SeriesData } from '@automattic/charts';
-import { useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-	Button,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { Card, CardBody, CardHeader, CardFooter } from '../../../../components/card';
+import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
-import type { ApmSlowRequest, Site } from '@automattic/api-core';
-
-import '@automattic/charts/style.css';
+import BarList, { type BarListRow } from '../bar-list';
+import { formatMs } from '../utils';
+import type { ApmSlowRequest } from '@automattic/api-core';
 
 type Metric = 'avg' | 'max';
-const CHART_ID = 'apm-slow-requests';
 
-function formatDuration( ms: number ): string {
-	if ( ms >= 1000 ) {
-		return sprintf(
-			/* translators: %s is a number of seconds. */
-			__( '%s s' ),
-			( ms / 1000 ).toFixed( 2 )
-		);
-	}
-	return sprintf(
-		/* translators: %d is a number of milliseconds. */
-		__( '%d ms' ),
-		ms
-	);
-}
-
-function toSeriesData( requests: ApmSlowRequest[], metric: Metric ): SeriesData[] {
-	return [
-		{
-			label: metric === 'avg' ? __( 'Average' ) : __( 'Max' ),
-			data: requests.map( ( request ) => ( {
-				label: `${ request.method } ${ request.url }`,
-				value: metric === 'avg' ? request.avg_duration_ms : request.duration_ms,
-			} ) ),
-		},
-	];
+function toRows( requests: ApmSlowRequest[], metric: Metric ): BarListRow[] {
+	return requests.map( ( request ) => ( {
+		id: request.id,
+		label: `${ request.method } ${ request.url }`,
+		value: metric === 'avg' ? request.avg_duration_ms : request.duration_ms,
+	} ) );
 }
 
 function pickHeadlineDuration( requests: ApmSlowRequest[], metric: Metric ): number {
@@ -56,25 +33,11 @@ function pickHeadlineDuration( requests: ApmSlowRequest[], metric: Metric ): num
 	return requests.reduce( ( max, r ) => Math.max( max, r.duration_ms ), 0 );
 }
 
-export default function SlowRequestsList( {
-	site,
-	slowRequests,
-}: {
-	site: Site;
-	slowRequests: ApmSlowRequest[];
-} ) {
-	const router = useRouter();
+export default function SlowRequestsList( { slowRequests }: { slowRequests: ApmSlowRequest[] } ) {
 	const [ metric, setMetric ] = useState< Metric >( 'max' );
 
-	const data = toSeriesData( slowRequests, metric );
+	const rows = toRows( slowRequests, metric );
 	const headline = pickHeadlineDuration( slowRequests, metric );
-	const height = Math.max( 240, slowRequests.length * 36 );
-
-	const viewAllRequests = () => {
-		router.navigate( {
-			to: `/sites/${ site.slug }/performance/backend/requests`,
-		} );
-	};
 
 	const description =
 		metric === 'avg'
@@ -90,7 +53,7 @@ export default function SlowRequestsList( {
 							{ __( 'Slowest requests' ) }
 						</Text>
 						<Text size={ 32 } weight={ 500 } lineHeight="40px">
-							{ formatDuration( headline ) }
+							{ formatMs( headline ) }
 						</Text>
 						<Text variant="muted">{ description }</Text>
 					</VStack>
@@ -109,25 +72,8 @@ export default function SlowRequestsList( {
 				</HStack>
 			</CardHeader>
 			<CardBody>
-				<GlobalChartsProvider>
-					<BarListChart
-						chartId={ CHART_ID }
-						data={ data }
-						height={ height }
-						withTooltips
-						options={ {
-							yScale: {},
-							xScale: {},
-							valueFormatter: formatDuration,
-						} }
-					/>
-				</GlobalChartsProvider>
+				<BarList rows={ rows } valueFormatter={ formatMs } />
 			</CardBody>
-			<CardFooter>
-				<Button variant="secondary" onClick={ viewAllRequests }>
-					{ __( 'View all requests' ) }
-				</Button>
-			</CardFooter>
 		</Card>
 	);
 }
