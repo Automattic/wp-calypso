@@ -12,6 +12,7 @@ const baseStreak: EngagementStreak = {
 	freezes_available: 1,
 	freeze_used_date: null,
 	next_freeze_in_days: 5,
+	last_streak_date: '2026-05-13',
 };
 
 describe( 'ActivityStreak', () => {

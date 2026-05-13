@@ -68,8 +68,11 @@ export interface EngagementStreak {
 	current_streak: number;
 	longest_streak: number;
 	freezes_available: number;
+	/** Y-m-d in the user's timezone; null if no freeze has been used. */
 	freeze_used_date: string | null;
 	next_freeze_in_days: number;
+	/** Y-m-d in the user's timezone; null if the user has never engaged. */
+	last_streak_date: string | null;
 }
 
 export interface AchievementsResponse {
