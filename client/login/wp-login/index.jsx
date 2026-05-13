@@ -260,6 +260,28 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
 
+		// On the lost-password route the form renders its own foundation
+		// `Screen` shell (DES-619 / DES-620) with the "Back to log in" link
+		// in the top bar and the "Need more help?" link inside the form, so
+		// the OneLoginFooter ("Back to Login" + "Support") is redundant.
+		// Gravatar-powered clients keep their own bespoke footer.
+		const isLostPasswordContent =
+			( action === 'lostpassword' || action === 'jetpack/lostpassword' ) && ! isGravPoweredClient;
+
+		let footer = null;
+		if ( isGravPoweredLoginPage ) {
+			footer = <GravPoweredLoginBlockFooter />;
+		} else if ( ! isLostPasswordContent ) {
+			footer = (
+				<OneLoginFooter
+					isLoginView={ isLoginView }
+					lostPasswordLink={ this.getLostPasswordLink() }
+					loginLink={ this.getLoginLink() }
+					supportLink={ this.getSupportLink() }
+				/>
+			);
+		}
+
 		return (
 			<LoginBlock
 				action={ action }
@@ -274,18 +296,7 @@ export class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				fromSite={ fromSite }
-				footer={
-					isGravPoweredLoginPage ? (
-						<GravPoweredLoginBlockFooter />
-					) : (
-						<OneLoginFooter
-							isLoginView={ isLoginView }
-							lostPasswordLink={ this.getLostPasswordLink() }
-							loginLink={ this.getLoginLink() }
-							supportLink={ this.getSupportLink() }
-						/>
-					)
-				}
+				footer={ footer }
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
 				signupUrl={ signupUrl }
@@ -367,6 +378,14 @@ export class Login extends Component {
 		);
 
 		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+
+		// The lost-password form renders its own foundation `Screen` shell
+		// from `client/blocks/authentication/` (DES-619 / DES-620), so skip
+		// the `OneLoginLayout` wrap for this route. Other login routes keep
+		// `OneLoginLayout` until they migrate to the foundation in turn.
+		if ( isLostPasswordView && ! isGravPoweredClient ) {
+			return mainContent;
+		}
 
 		return (
 			<>

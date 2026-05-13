@@ -1,13 +1,15 @@
 import page from '@automattic/calypso-router';
-import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, Spinner, ExternalLink } from '@wordpress/components';
+import { Button, TextControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import { useState } from 'react';
+import { Screen } from 'calypso/blocks/authentication';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+
+const submitButtonStyle = { width: '100%' };
+const externalArrowStyle = { marginInlineStart: '0.5ch' };
 
 const LostPasswordForm = ( {
 	redirectToAfterLoginUrl,
@@ -15,7 +17,6 @@ const LostPasswordForm = ( {
 	locale,
 	from,
 	isWooJPC,
-	isWoo,
 	isJetpack,
 } ) => {
 	const translate = useTranslate();
@@ -23,11 +24,6 @@ const LostPasswordForm = ( {
 	const [ error, setError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
-
-	const inputRef = useRef( null );
-	useEffect( () => {
-		inputRef.current?.focus();
-	}, [] );
 
 	const validateUserLogin = () => {
 		// Allow empty input or any non-empty value (username or email)
@@ -164,60 +160,87 @@ const LostPasswordForm = ( {
 	};
 
 	const showError = !! error;
+	const backToLoginHref = login( {
+		locale,
+		oauth2ClientId,
+		from,
+		isJetpack,
+	} );
+
 	return (
-		<form
-			name="lostpasswordform"
-			className="login__lostpassword-form"
-			method="post"
-			onSubmit={ onSubmit }
-		>
-			<div className="login__form-userdata">
-				<FormLabel htmlFor="userLogin">{ translate( 'Email address or username' ) }</FormLabel>
-				<FormTextInput
-					autoCapitalize="off"
-					autoCorrect="off"
-					spellCheck="false"
-					autoComplete="username"
-					id="userLogin"
-					name="userLogin"
-					type="text"
-					value={ userLogin }
-					isError={ showError }
-					onBlur={ validateUserLogin }
-					onChange={ ( event ) => {
-						const newValue = event.target.value.trim();
-						setUserLogin( newValue );
-						// Clear error immediately when user starts typing to fix input
-						if ( error ) {
-							setError( null );
-						}
-					} }
-					ref={ inputRef }
-				/>
-				{ showError && <FormInputValidation isError text={ error } /> }
-			</div>
-			<div className="login__form-action">
-				<Button
-					variant="primary"
-					type="submit"
-					disabled={ userLogin.length === 0 || showError || isBusy }
-					isBusy={ isBusy }
-					__next40pxDefaultSize
-				>
-					{ isBusy && isWoo ? <Spinner /> : translate( 'Reset my password' ) }
+		<Screen
+			heading={ translate( 'Lost your password?' ) }
+			subheading={ translate(
+				"Please enter your username or email address. You'll receive a link to create a new password via email."
+			) }
+			topBarAction={
+				<Button variant="link" href={ backToLoginHref }>
+					{ translate( 'Login' ) }
 				</Button>
-			</div>
-			<div className="login__form-help">
-				<ExternalLink
-					href={ localizeUrl(
-						'https://wordpress.com/support/account-recovery/#verify-your-account-ownership',
-						locale
-					) }
-				>
-					{ translate( 'Need more help?' ) }
-				</ExternalLink>
-			</div>
-		</form>
+			}
+		>
+			<form
+				name="lostpasswordform"
+				className="login__lostpassword-form"
+				method="post"
+				onSubmit={ onSubmit }
+			>
+				<VStack spacing={ 4 }>
+					<div>
+						<TextControl
+							__nextHasNoMarginBottom
+							__next40pxDefaultSize
+							label={ translate( 'Email address or username' ) }
+							value={ userLogin }
+							onChange={ ( newValue ) => {
+								const trimmed = newValue.trim();
+								setUserLogin( trimmed );
+								// Clear error immediately when user starts typing to fix input
+								if ( error ) {
+									setError( null );
+								}
+							} }
+							onBlur={ validateUserLogin }
+							type="text"
+							autoComplete="username"
+							autoCapitalize="off"
+							autoCorrect="off"
+							spellCheck="false"
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+						/>
+						{ showError && (
+							<p className="login__lostpassword-error" role="alert">
+								{ error }
+							</p>
+						) }
+					</div>
+					<Button
+						variant="primary"
+						__next40pxDefaultSize
+						type="submit"
+						disabled={ userLogin.length === 0 || showError || isBusy }
+						isBusy={ isBusy }
+						style={ submitButtonStyle }
+					>
+						{ translate( 'Reset my password' ) }
+					</Button>
+					<Button
+						variant="link"
+						href={ localizeUrl(
+							'https://wordpress.com/support/account-recovery/#verify-your-account-ownership',
+							locale
+						) }
+						target="_blank"
+						rel="external noopener noreferrer"
+					>
+						{ translate( 'Need more help?' ) }
+						<span style={ externalArrowStyle } aria-label={ translate( '(opens in a new tab)' ) }>
+							↗
+						</span>
+					</Button>
+				</VStack>
+			</form>
+		</Screen>
 	);
 };
 

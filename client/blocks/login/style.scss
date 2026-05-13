@@ -321,10 +321,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 	text-transform: initial;
 }
 
-.layout:not(.is-grav-powered-client) {
-	&.is-mobile {
-		.login__lostpassword-form  {
-			padding: 16px 16px 0;
-		}
-	}
+// Inline validation / server-error text rendered below the lost-password
+// input. DES-620 replaced the previous `FormInputValidation` component with
+// a plain <p role="alert"> — this rule preserves the red treatment the
+// previous component provided.
+.login__lostpassword-error {
+	color: var(--color-error);
+	font-size: 0.875rem;
+	margin-block-start: 4px;
 }

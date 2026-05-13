@@ -435,7 +435,6 @@ class Login extends Component {
 							redirectToAfterLoginUrl={ this.props.redirectTo }
 							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
 							locale={ locale }
-							isWoo={ isWoo }
 							isWooJPC={ isWooJPC }
 							from={ get( currentQuery, 'from' ) }
 							isJetpack={ isJetpack }
