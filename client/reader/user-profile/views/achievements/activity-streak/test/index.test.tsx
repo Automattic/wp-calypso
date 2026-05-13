@@ -190,6 +190,58 @@ describe( 'ActivityStreak', () => {
 		} );
 	} );
 
+	describe( 'record byline', () => {
+		test( 'shows the longest streak when current is below longest', () => {
+			render(
+				<ActivityStreak
+					streak={ { ...baseStreak, current_streak: 12, longest_streak: 28 } }
+					isOwnProfile
+				/>
+			);
+			expect( screen.getByText( 'Your longest streak on record is 28 days.' ) ).toBeVisible();
+		} );
+
+		test( 'pluralizes "day" when longest is 1', () => {
+			render(
+				<ActivityStreak
+					streak={ {
+						...baseStreak,
+						current_streak: 0,
+						longest_streak: 1,
+						last_streak_date: '2026-05-10',
+					} }
+					isOwnProfile
+				/>
+			);
+			expect( screen.getByText( 'Your longest streak on record is 1 day.' ) ).toBeVisible();
+		} );
+
+		test( 'hides the byline when current matches longest', () => {
+			render(
+				<ActivityStreak
+					streak={ { ...baseStreak, current_streak: 14, longest_streak: 14 } }
+					isOwnProfile
+				/>
+			);
+			expect( screen.queryByText( /Your longest streak on record/ ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'hides the byline when the user has never started', () => {
+			render(
+				<ActivityStreak
+					streak={ {
+						...baseStreak,
+						current_streak: 0,
+						longest_streak: 0,
+						last_streak_date: null,
+					} }
+					isOwnProfile
+				/>
+			);
+			expect( screen.queryByText( /Your longest streak on record/ ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'variation', () => {
 		test( 'shows "N streak freezes available" when freezes are banked', () => {
 			const { container } = render(

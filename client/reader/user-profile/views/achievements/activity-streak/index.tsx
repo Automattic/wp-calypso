@@ -174,6 +174,24 @@ function getFreezeDescription(
 	return null;
 }
 
+function getRecordDescription(
+	streak: EngagementStreak,
+	translate: ReturnType< typeof useTranslate >
+): ReactNode | null {
+	if ( streak.current_streak >= streak.longest_streak ) {
+		return null;
+	}
+
+	return translate(
+		'Your longest streak on record is %(count)d day.',
+		'Your longest streak on record is %(count)d days.',
+		{
+			count: streak.longest_streak,
+			args: { count: streak.longest_streak },
+		}
+	);
+}
+
 export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -190,6 +208,7 @@ export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) 
 	const yesterday = moment().subtract( 1, 'day' ).format( 'YYYY-MM-DD' );
 	const mode = deriveMode( streak, today, yesterday );
 	const { badgeState, badgeLabel, description } = getModeContent( mode, streak, translate );
+	const recordDescription = getRecordDescription( streak, translate );
 	const freezeDescription = getFreezeDescription( streak, translate );
 
 	return (
@@ -199,6 +218,7 @@ export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) 
 				<div className="activity-streak__title">{ translate( 'Activity Streak' ) }</div>
 				<div className="activity-streak__description">
 					<p>{ description }</p>
+					{ recordDescription && <p>{ recordDescription }</p> }
 					{ freezeDescription && <p>{ freezeDescription }</p> }
 				</div>
 			</div>
