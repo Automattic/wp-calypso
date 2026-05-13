@@ -683,7 +683,7 @@ describe( 'ResultsPage', () => {
 			).toBeInTheDocument();
 		} );
 
-		it( 'does not render the skip suggestion when searching for a FQDN', async () => {
+		it( 'does not render the skip suggestion when searching for an available FQDN', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'test.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test.com' } ) ],
@@ -716,6 +716,44 @@ describe( 'ResultsPage', () => {
 				screen.queryByLabelText( 'Skip purchase and continue with testcom.wordpress.com' )
 			).not.toBeInTheDocument();
 		} );
+
+		it.each( [
+			[ 'already registered', DomainAvailabilityStatus.REGISTERED ],
+			[ 'an unsupported TLD', DomainAvailabilityStatus.TLD_NOT_SUPPORTED ],
+			[ 'an invalid domain name', DomainAvailabilityStatus.INVALID ],
+		] )(
+			'renders the skip suggestion when the FQDN search returns %s',
+			async ( _label, status ) => {
+				mockGetSuggestionsQuery( {
+					params: { query: 'taken.com' },
+					suggestions: [],
+				} );
+
+				mockGetAvailabilityQuery( {
+					params: { domainName: 'taken.com' },
+					availability: buildAvailability( {
+						domain_name: 'taken.com',
+						tld: 'com',
+						status,
+					} ),
+				} );
+
+				mockGetFreeSuggestionQuery( {
+					params: { query: 'taken.com' },
+					freeSuggestion: buildFreeSuggestion( { domain_name: 'takencom.wordpress.com' } ),
+				} );
+
+				render(
+					<TestDomainSearch config={ { skippable: true } } query="taken.com">
+						<ResultsPage />
+					</TestDomainSearch>
+				);
+
+				expect(
+					await screen.findByLabelText( 'Skip purchase and continue with takencom.wordpress.com' )
+				).toBeInTheDocument();
+			}
+		);
 
 		it( 'renders the skip suggestion when searching for an available WordPress.com subdomain', async () => {
 			mockGetSuggestionsQuery( {

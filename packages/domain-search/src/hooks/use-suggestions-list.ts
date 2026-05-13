@@ -11,6 +11,7 @@ import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-sugg
 import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
+import type { DomainSearchContextType } from '../page/types';
 
 const hasDataAndIsSupportedPremiumDomain = (
 	result: UseQueryResult< DomainAvailability, Error >
@@ -29,6 +30,29 @@ const availablePremiumDomainsCombinator = (
 	};
 };
 
+/**
+ * Whether the FQDN the user searched for can itself be offered as a suggestion
+ * (available to register, an owned domain we can resurface, or a supported
+ * premium domain).
+ */
+const canUseFqdnAsSuggestion = (
+	availability: DomainAvailability,
+	config: DomainSearchContextType[ 'config' ]
+): boolean => {
+	if ( availability.status === DomainAvailabilityStatus.AVAILABLE ) {
+		return true;
+	}
+
+	if (
+		config.includeOwnedDomainInSuggestions &&
+		availability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER
+	) {
+		return true;
+	}
+
+	return isSupportedPremiumDomain( availability );
+};
+
 export const useSuggestionsList = () => {
 	const { query, queries, config } = useDomainSearch();
 
@@ -44,14 +68,22 @@ export const useSuggestionsList = () => {
 
 	const isFqdnQuery = ! isFreeSubdomain && !! getTld( query );
 
-	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
-		...queries.freeSuggestion( freeSuggestionQuery ),
-		enabled: config.skippable && ! isFqdnQuery,
-	} );
-
 	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
 		...queries.domainAvailability( query ),
 		enabled: isFqdnQuery,
+	} );
+
+	// A non-FQDN search always offers the free subdomain. For an FQDN search,
+	// we only offer the subdomain once the FQDN check confirms the user can't
+	// use the domain they entered (registered elsewhere, invalid name,
+	// unsupported TLD, etc.) — when the FQDN is usable, intent to purchase is
+	// high and we let them proceed with their custom domain.
+	const isFqdnUnusable =
+		isFqdnQuery && !! fqdnAvailability && ! canUseFqdnAsSuggestion( fqdnAvailability, config );
+
+	const { isLoading: isLoadingFreeSuggestion } = useQuery( {
+		...queries.freeSuggestion( freeSuggestionQuery ),
+		enabled: config.skippable && ( ! isFqdnQuery || isFqdnUnusable ),
 	} );
 
 	const premiumSuggestions = useMemo(
@@ -96,28 +128,13 @@ export const useSuggestionsList = () => {
 						return false;
 					}
 
-					if (
-						fqdnAvailability.status === DomainAvailabilityStatus.AVAILABLE ||
-						( config.includeOwnedDomainInSuggestions &&
-							fqdnAvailability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER )
-					) {
-						return true;
-					}
-
-					return isSupportedPremiumDomain( fqdnAvailability );
+					return canUseFqdnAsSuggestion( fqdnAvailability, config );
 				} )
 				.map( ( suggestion ) => suggestion.domain_name ),
 			query,
 			deemphasizedTlds: config.deemphasizedTlds,
 		} );
-	}, [
-		suggestions,
-		query,
-		config.deemphasizedTlds,
-		availablePremiumDomains,
-		fqdnAvailability,
-		config.includeOwnedDomainInSuggestions,
-	] );
+	}, [ suggestions, query, config, availablePremiumDomains, fqdnAvailability ] );
 
 	return {
 		isLoading,
