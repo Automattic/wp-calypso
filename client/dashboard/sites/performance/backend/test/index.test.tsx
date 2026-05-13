@@ -61,15 +61,20 @@ function mockApmToggle( expectedActive: boolean ) {
 }
 
 describe( '<SitePerformanceBackend>', () => {
-	test( 'renders Enable CTA when APM is disabled on a Business site', async () => {
+	test( 'renders the dashboard with a Start capturing CTA when APM is disabled', async () => {
 		mockSite( businessSite( false ) );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		expect( await screen.findByRole( 'button', { name: 'Enable' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: 'Response time breakdown' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Start capturing' } ) ).toBeVisible();
+		expect( screen.getByRole( 'status', { name: 'Not capturing' } ) ).toBeVisible();
+		expect( screen.getByText( /Capturing is off\./ ) ).toBeVisible();
 	} );
 
-	test( 'renders the tabbed dashboard when APM is enabled', async () => {
+	test( 'renders the tabbed dashboard without the Start capturing CTA when APM is enabled', async () => {
 		mockSite( businessSite( true ) );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
@@ -78,6 +83,9 @@ describe( '<SitePerformanceBackend>', () => {
 			await screen.findByRole( 'heading', { name: 'Response time breakdown' } )
 		).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Slowest requests' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Start capturing' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'status', { name: 'Capturing' } ) ).toBeVisible();
+		expect( screen.getByText( /Capturing performance data\./ ) ).toBeVisible();
 	} );
 
 	test( 'renders Plugins, Hooks and Templates on the WordPress tab', async () => {
@@ -152,13 +160,13 @@ describe( '<SitePerformanceBackend>', () => {
 		expect( screen.queryByText( /Slowest single response observed/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'clicking Enable POSTs { active: true }', async () => {
+	test( 'clicking Start capturing POSTs { active: true }', async () => {
 		mockSite( businessSite( false ) );
 		const scope = mockApmToggle( true );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Enable' } ) );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Start capturing' } ) );
 
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
@@ -171,6 +179,6 @@ describe( '<SitePerformanceBackend>', () => {
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
 		expect( await screen.findByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Enable' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Start capturing' } ) ).not.toBeInTheDocument();
 	} );
 } );
