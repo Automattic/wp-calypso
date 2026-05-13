@@ -124,12 +124,8 @@ async function initialize() {
 	};
 	onboardActions.setPlanCartItem( cartProduct );
 
-	// Subdomain takes precedence over title for createSite's siteTitle, since it
-	// drives both the URL hint and the display title. Partners that want a
-	// different display title can rename the site after creation.
-	const siteTitleSource = params.subdomain || params.title;
-	if ( siteTitleSource ) {
-		onboardActions.setSiteTitle( siteTitleSource );
+	if ( params.title ) {
+		onboardActions.setSiteTitle( params.title );
 	}
 	// TODO(integration-attribution): backend coordination needed (spec open question #2)
 	// The onboard store doesn't currently expose a setter for site_source_slug. When
