@@ -1,4 +1,10 @@
-import { Button, ButtonGroup, Tooltip } from '@wordpress/components';
+import {
+	Button,
+	ButtonGroup,
+	Tooltip,
+	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+	__experimentalToolsPanel as ToolsPanel,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SourceIcon from '../source-icon';
 import type { Source } from '../../types';
@@ -6,6 +12,7 @@ import type { Source } from '../../types';
 interface SourceFilterProps {
 	selectedSources: Set< Source >;
 	onToggleSource: ( source: Source ) => void;
+	onResetSources: () => void;
 }
 
 const SOURCES: { value: Source; label: string; description: string }[] = [
@@ -31,9 +38,17 @@ const SOURCES: { value: Source; label: string; description: string }[] = [
 	},
 ];
 
-export default function SourceFilterTabs( { selectedSources, onToggleSource }: SourceFilterProps ) {
+export default function SourceFilterTabs( {
+	selectedSources,
+	onToggleSource,
+	onResetSources,
+}: SourceFilterProps ) {
 	return (
-		<div className="content-research-source-filter">
+		<ToolsPanel
+			className="content-research-source-filter"
+			label={ __( 'Research Sources', 'content-research' ) }
+			resetAll={ onResetSources }
+		>
 			<ButtonGroup aria-label={ __( 'Sources', 'content-research' ) }>
 				{ SOURCES.map( ( source ) => {
 					const isSelected = selectedSources.has( source.value );
@@ -54,6 +69,6 @@ export default function SourceFilterTabs( { selectedSources, onToggleSource }: S
 					);
 				} ) }
 			</ButtonGroup>
-		</div>
+		</ToolsPanel>
 	);
 }
