@@ -1,4 +1,7 @@
 .content-research-empty {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
@@ -40,8 +43,13 @@
 	}
 
 	.cr-robot {
-		transform-origin: 70px 38px;
+		transform-origin: 92px 40px;
 		animation: cr-robot-bob 3.6s ease-in-out infinite;
+	}
+
+	.cr-magnifier {
+		transform-origin: 150px 98px;
+		animation: cr-magnifier-search 4.2s ease-in-out infinite;
 	}
 
 	.cr-blob {
@@ -55,6 +63,25 @@
 
 	.cr-card {
 		animation: cr-card-float 4.8s ease-in-out infinite;
+	}
+}
+
+@keyframes cr-magnifier-search {
+	0%,
+	100% {
+		transform: translate(0, 0);
+	}
+
+	25% {
+		transform: translate(-6px, -2px);
+	}
+
+	50% {
+		transform: translate(2px, 3px);
+	}
+
+	75% {
+		transform: translate(6px, -1px);
 	}
 }
 
