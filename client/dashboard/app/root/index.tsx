@@ -18,8 +18,12 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
+import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
-import OmnibarHeader from '../omnibar-header';
+import Notifications from '../notifications';
+import { useOmnibarEvent } from '../omnibar/events';
+import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
+import { useInitializeOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
@@ -35,7 +39,8 @@ const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
+	const isOmnibarEnabled =
+		isEnabled( 'dashboard/omnibar' ) || isEnabled( 'dashboard/omnibar-radical' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
@@ -43,6 +48,31 @@ function Root() {
 	const queryCache = queryClient.getQueryCache();
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
+
+	useInitializeOmnibarSite();
+	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
+	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
+		const url = new URL( href, window.location.origin );
+
+		if ( url.origin !== window.location.origin ) {
+			return;
+		}
+
+		const path = url.pathname + url.search + url.hash;
+		const parsedLocation = router.parseLocation( undefined, {
+			pathname: url.pathname,
+			search: url.search,
+			hash: url.hash,
+			href: path,
+			state: { __TSR_index: 0 },
+		} );
+		const { foundRoute } = router.getMatchedRoutes( parsedLocation );
+
+		if ( foundRoute ) {
+			event.preventDefault();
+			router.navigate( { to: path } );
+		}
+	} );
 
 	const loadingQueryRequestedFullPageLoader = useSyncExternalStore(
 		( onStoreChange ) => queryCache.subscribe( onStoreChange ),
@@ -117,7 +147,7 @@ function Root() {
 			return <Header />;
 		}
 
-		return <OmnibarHeader onToggleMenu={ () => setIsSidebarOpen( ( value ) => ! value ) } />;
+		return null;
 	};
 
 	const renderBody = () => {
@@ -167,6 +197,9 @@ function Root() {
 			{ renderHeader() }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
+			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
+			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
+			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
 			<Snackbars />
 			<PageViewTracker />
 			<NavigationBlockerRegistry />

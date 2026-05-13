@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { Gridicon } from '@automattic/components';
 import { Badge } from '@automattic/ui';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _x, sprintf } from '@wordpress/i18n';
@@ -11,7 +12,7 @@ import { connect } from 'react-redux';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
@@ -27,7 +28,6 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -57,10 +57,31 @@ import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getMostRecentlySelectedSiteId, getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
+import { AgentsManagerIcon } from './masterbar-agents-manager/agents-manager-icon';
+import { HelpCenterIcon } from './masterbar-help-center/help-center-icon';
 import Notifications from './masterbar-notifications/notifications-button';
+
+const loadCheckout = () =>
+	import( /* webpackChunkName: "async-load-calypso-layout-masterbar-checkout" */ './checkout.tsx' );
+const loadQuickLanguageSwitcher = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-quick-language-switcher" */ './quick-language-switcher'
+	);
+const loadMasterbarCartWrapper = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-cart-masterbar-cart-wrapper" */ './masterbar-cart/masterbar-cart-wrapper'
+	);
+const loadMasterbarAgentsManager = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-agents-manager" */ './masterbar-agents-manager'
+	);
+const loadMasterbarHelpCenter = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-masterbar-help-center" */ './masterbar-help-center'
+	);
 
 class MasterbarLoggedIn extends Component {
 	static propTypes = {
@@ -81,6 +102,8 @@ class MasterbarLoggedIn extends Component {
 		useUnifiedAgent: PropTypes.bool,
 	};
 
+	state = { mounted: false };
+
 	handleLayoutFocus = ( currentSection ) => {
 		if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
@@ -94,6 +117,12 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	componentDidMount() {
+		// We really do want to re-render after mounting. When the masterbar is rendered on the server we
+		// need the first client-side render to match the server-rendered elements. And then we can
+		// kick off another render with client-side-only features (like the async loaded help menu).
+		// eslint-disable-next-line react/no-did-mount-set-state
+		this.setState( { mounted: true } );
+
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
 		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
 		if ( qryString?.openSidebar === 'true' ) {
@@ -300,7 +329,7 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<AsyncLoad
-				require="calypso/layout/masterbar/checkout"
+				require={ loadCheckout }
 				placeholder={ null }
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
@@ -640,7 +669,12 @@ class MasterbarLoggedIn extends Component {
 				label: (
 					<span className="button wpcom-button">
 						{ createInterpolateElement( __( 'My <wpcomIcon /> WordPress.com Account' ), {
-							wpcomIcon: this.wordpressIcon(),
+							wpcomIcon:
+								typeof this.wordpressIcon() !== 'string' ? (
+									this.wordpressIcon()
+								) : (
+									<Gridicon icon={ this.wordpressIcon() } size={ 24 } />
+								),
 						} ) }
 					</span>
 				),
@@ -661,13 +695,15 @@ class MasterbarLoggedIn extends Component {
 				subItems={ [ profileActions, wpcomActions ] }
 				hasGlobalBorderStyle
 			>
-				<span className="masterbar__item-howdy-howdy">
-					{ sprintf(
-						/* translators: %s is the user's display name */
-						__( 'Howdy, %s' ),
-						user.display_name
-					) }
-				</span>
+				{ user.display_name && (
+					<span className="masterbar__item-howdy-howdy">
+						{ sprintf(
+							/* translators: %s is the user's display name */
+							__( 'Howdy, %s' ),
+							user.display_name
+						) }
+					</span>
+				) }
 				<Gravatar
 					className="masterbar__item-howdy-gravatar"
 					role="presentation"
@@ -683,7 +719,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/reader"
+				url={ wpcomLink( '/reader' ) }
 				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }
@@ -700,7 +736,7 @@ class MasterbarLoggedIn extends Component {
 
 	renderLanguageSwitcher() {
 		if ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) {
-			return <AsyncLoad require="./quick-language-switcher" placeholder={ null } />;
+			return <AsyncLoad require={ loadQuickLanguageSwitcher } placeholder={ null } />;
 		}
 		return null;
 	}
@@ -713,7 +749,7 @@ class MasterbarLoggedIn extends Component {
 		}
 		return (
 			<AsyncLoad
-				require="./masterbar-cart/masterbar-cart-wrapper"
+				require={ loadMasterbarCartWrapper }
 				placeholder={ null }
 				goToCheckout={ this.goToCheckout }
 				onRemoveProduct={ this.onRemoveCartProduct }
@@ -746,22 +782,46 @@ class MasterbarLoggedIn extends Component {
 		const { siteId, useUnifiedAgent } = this.props;
 
 		if ( useUnifiedAgent ) {
+			const placeholder = (
+				<Item
+					className="masterbar__item-agents-manager"
+					tooltip={ __( 'Help' ) }
+					icon={ <AgentsManagerIcon hasUnread={ false } /> }
+				/>
+			);
+
+			if ( ! this.state.mounted ) {
+				return placeholder;
+			}
+
 			return (
 				<AsyncLoad
-					require="./masterbar-agents-manager"
+					require={ loadMasterbarAgentsManager }
 					siteId={ siteId }
 					tooltip={ __( 'Help' ) }
-					placeholder={ null }
+					placeholder={ placeholder }
 				/>
 			);
 		}
 
+		const placeholder = (
+			<Item
+				className="masterbar__item-help"
+				tooltip={ __( 'Help' ) }
+				icon={ <HelpCenterIcon hasUnread={ false } /> }
+			/>
+		);
+
+		if ( ! this.state.mounted ) {
+			return placeholder;
+		}
+
 		return (
 			<AsyncLoad
-				require="./masterbar-help-center"
+				require={ loadMasterbarHelpCenter }
 				siteId={ siteId }
 				tooltip={ __( 'Help' ) }
-				placeholder={ null }
+				placeholder={ placeholder }
 			/>
 		);
 	}
@@ -800,12 +860,9 @@ class MasterbarLoggedIn extends Component {
 export { MasterbarLoggedIn };
 
 export default connect(
-	( state ) => {
+	( state, { siteId } ) => {
 		const sectionGroup = getSectionGroup( state );
 
-		// Falls back to using the user's primary site if no site has been selected
-		// by the user yet
-		const siteId = getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );

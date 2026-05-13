@@ -1,8 +1,9 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, useNavigator } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
 	backup,
@@ -15,9 +16,8 @@ import {
 	settings,
 	shield,
 } from '@wordpress/icons';
-import { Suspense, lazy, useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import {
+	siteRoute,
 	siteOverviewRoute,
 	siteDeploymentsRoute,
 	sitePerformanceRoute,
@@ -35,22 +35,19 @@ import {
 	SidebarMenuItem,
 } from '../../components/sidebar';
 import { hasHostingFeature } from '../../utils/site-features';
+import { isSiteMigrationInProgress } from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canSwitchEnvironment } from '../features';
-import EnvironmentSwitcher from '../site/environment-switcher-v2';
+import SidebarEnvironmentSwitcher from '../site/sidebar-environment-switcher';
+import SiteSwitcherItem from './site-switcher-item';
 import type { Site } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export default function SiteSidebar() {
-	const { params } = useNavigator();
-	const siteSlug = params.siteSlug as string;
-
+	const { siteSlug } = siteRoute.useParams();
 	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
-
-	const { components } = useAppContext();
-	const SiteSwitcherV2 = useMemo( () => lazy( components.siteSwitcherV2 ), [ components ] );
 
 	if ( ! site ) {
 		return null;
@@ -60,12 +57,10 @@ export default function SiteSidebar() {
 		<VStack spacing={ 2 }>
 			<SidebarBackButton to="/sites">{ __( 'Back to Sites' ) }</SidebarBackButton>
 			<VStack spacing={ 4 }>
-				<Suspense fallback={ null }>
-					<SidebarMenu>
-						<SiteSwitcherV2 />
-						{ canSwitchEnvironment( site ) && <EnvironmentSwitcher site={ site } /> }
-					</SidebarMenu>
-				</Suspense>
+				<SidebarMenu>
+					<SiteSwitcherItem site={ site } />
+					{ canSwitchEnvironment( site ) && <SidebarEnvironmentSwitcher site={ site } /> }
+				</SidebarMenu>
 				<SiteMenuSidebar site={ site } />
 			</VStack>
 		</VStack>
@@ -75,6 +70,11 @@ export default function SiteSidebar() {
 function SiteMenuSidebar( { site }: { site: Site } ) {
 	const siteSlug = site.slug;
 	const siteTypeSupports = getSiteTypeFeatureSupports( site );
+	const isApmEnabled = isEnabled( 'performance/apm' );
+
+	if ( isSiteMigrationInProgress( site ) ) {
+		return null;
+	}
 
 	if ( hasSiteTrialEnded( site ) ) {
 		return (
@@ -124,11 +124,26 @@ function SiteMenuSidebar( { site }: { site: Site } ) {
 					{ __( 'Deployments' ) }
 				</SidebarMenuItem>
 			) }
-			{ isAvailable( sitePerformanceRoute ) && siteTypeSupports.performance && (
-				<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
-					{ __( 'Performance' ) }
-				</SidebarMenuItem>
-			) }
+			{ isAvailable( sitePerformanceRoute ) &&
+				siteTypeSupports.performance &&
+				( isApmEnabled ? (
+					<SidebarExpandableMenuItem
+						label={ __( 'Performance' ) }
+						icon={ chartBar }
+						to={ `/sites/${ siteSlug }/performance` }
+					>
+						<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/frontend` }>
+							{ __( 'Frontend' ) }
+						</SidebarMenuItem>
+						<SidebarMenuItem to={ `/sites/${ siteSlug }/performance/backend` }>
+							{ __( 'Backend' ) }
+						</SidebarMenuItem>
+					</SidebarExpandableMenuItem>
+				) : (
+					<SidebarMenuItem icon={ chartBar } to={ `/sites/${ siteSlug }/performance` }>
+						{ __( 'Performance' ) }
+					</SidebarMenuItem>
+				) ) }
 			{ isAvailable( siteMonitoringRoute ) && siteTypeSupports.monitoring && (
 				<SidebarMenuItem icon={ pending } to={ `/sites/${ siteSlug }/monitoring` }>
 					{ __( 'Monitoring' ) }

@@ -3,9 +3,12 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { commentAuthorAvatar } from '@wordpress/icons';
 import { useAuth } from '../../app/auth';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
+import type {
+	Density,
+	SummaryButtonBadgeProps,
+} from '@automattic/components/src/summary-button/types';
 
-export default function SecuritySocialLoginsSummary() {
+export default function SecuritySocialLoginsSummary( { density }: { density?: Density } ) {
 	const { user } = useAuth();
 
 	const socialLoginCount = user.social_login_connections?.length ?? 0;
@@ -25,6 +28,7 @@ export default function SecuritySocialLoginsSummary() {
 
 	return (
 		<RouterLinkSummaryButton
+			density={ density }
 			to="/me/security/social-logins"
 			title={ __( 'Social logins' ) }
 			description={ __( 'Log in faster with the accounts you already use.' ) }

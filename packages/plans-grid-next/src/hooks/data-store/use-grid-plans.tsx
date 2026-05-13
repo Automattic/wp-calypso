@@ -29,10 +29,12 @@ import {
 	getPlanClass,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { isSamePlan } from '../../lib/is-same-plan';
 import { UseGridPlansParams, UseGridPlansType } from './types';
 import useHighlightLabels from './use-highlight-labels';
 import usePlansFromTypes from './use-plans-from-types';
+import useTitleBadges from './use-title-badges';
 import type { HiddenPlans, PlansIntent } from '../../types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -174,7 +176,7 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 			break;
 		case 'plans-new-hosted-site':
-			planTypes = [ TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
 		case 'plans-new-hosted-site-business-only':
 			planTypes = [ TYPE_BUSINESS ];
@@ -274,6 +276,11 @@ export const usePlanTypesWithIntent = ( {
 		case 'plans-woo-hosted':
 			planTypes = [ TYPE_WOO_HOSTED_BASIC, TYPE_WOO_HOSTED_PRO ];
 			break;
+		// Used by the woo-hosting-solutions-flow ref: only show plans that support
+		// post-checkout WooCommerce auto-install.
+		case 'plans-woo-hosting-solutions':
+			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
+			break;
 		case 'plans-migration':
 			planTypes = [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ];
 			break;
@@ -309,8 +316,9 @@ const useGridPlans: UseGridPlansType = ( {
 	highlightLabelOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	isExperimentVariant,
+	useFocusedNewCopyTaglines,
 } ) => {
+	const translate = useTranslate();
 	const freeTrialPlanSlugs = useFreeTrialPlanSlugs?.( {
 		intent: intent ?? 'default',
 		eligibleForFreeHostingTrial,
@@ -356,7 +364,11 @@ const useGridPlans: UseGridPlansType = ( {
 		plansAvailabilityForPurchase,
 		highlightLabelOverrides,
 		isDomainOnlySite: isDomainOnlySite || false,
-		isExperimentVariant,
+	} );
+
+	const titleBadges = useTitleBadges( {
+		intent,
+		planSlugs: planSlugsForIntent,
 	} );
 
 	// TODO: pricedAPIPlans to be queried from data-store package
@@ -391,8 +403,69 @@ const useGridPlans: UseGridPlansType = ( {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
+		} else if ( 'plans-woo-hosting-solutions' === intent ) {
+			if ( isPersonalPlan( planSlug ) ) {
+				tagline = translate(
+					'Try out a store idea with low commitment. Custom domain and basic tools.'
+				);
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline = translate(
+					'A solid foundation for new stores. More design options and faster support when you need help.'
+				);
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline = translate(
+					'Built for real stores. 24/7 priority support, advanced features, and the performance your customers expect.'
+				);
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline = translate(
+					'For serious stores. Priority support, advanced extensions, and premium store themes.'
+				);
+			} else {
+				tagline = planConstantObj.getPlanTagline?.() ?? '';
+			}
 		} else {
 			tagline = planConstantObj.getPlanTagline?.() ?? '';
+		}
+
+		if ( useFocusedNewCopyTaglines ) {
+			const existingTagline = tagline;
+			if ( isFreePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Start your WordPress journey.' )
+						? translate( 'Start your WordPress journey.' )
+						: existingTagline;
+			} else if ( isPersonalPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Build your presence with a site you can customize.' )
+						? translate( 'Build your presence with a site you can customize.' )
+						: existingTagline;
+			} else if ( isPremiumPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Accept payments on your site and reach more people.' )
+						? translate( 'Accept payments on your site and reach more people.' )
+						: existingTagline;
+			} else if ( isBusinessPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Grow your business with powerful tools and priority support.' )
+						? translate( 'Grow your business with powerful tools and priority support.' )
+						: existingTagline;
+			} else if ( isEcommercePlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Run an online store and keep more of what you earn.' )
+						? translate( 'Run an online store and keep more of what you earn.' )
+						: existingTagline;
+			} else if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
+				tagline =
+					i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+					i18n.hasTranslation( 'Publish securely at enterprise scale.' )
+						? translate( 'Publish securely at enterprise scale.' )
+						: existingTagline;
+			}
 		}
 
 		const productNameShort =
@@ -432,6 +505,7 @@ const useGridPlans: UseGridPlansType = ( {
 			isMonthlyPlan,
 			cartItemForPlan,
 			highlightLabel: highlightLabels[ planSlug ],
+			titleBadge: titleBadges[ planSlug ],
 			pricing: pricingMeta[ planSlug ],
 		};
 	} );

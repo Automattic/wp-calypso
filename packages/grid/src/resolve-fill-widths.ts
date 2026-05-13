@@ -58,6 +58,7 @@ export function resolveFillWidths(
 					break;
 				}
 				const nextW = widths[ j ];
+				// 1 = minimum span for the fill item itself
 				if ( currentCol + 1 + reserved + nextW <= maxColumns ) {
 					reserved += nextW;
 				} else {

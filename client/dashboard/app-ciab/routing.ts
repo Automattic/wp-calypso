@@ -36,7 +36,8 @@ export function isAllowedCiabLegacyRoute( path: string = '' ): boolean {
 
 export function buildCiabDashboardLink( path: string = '' ) {
 	if ( config( 'env' ) === 'development' ) {
-		return new URL( path, 'http://my.woo.localhost:3000' ).href;
+		const port = config( 'port' ) ?? 3000;
+		return new URL( path, `http://my.woo.localhost:${ port }` ).href;
 	}
 	return new URL( path, 'https://my.woo.ai' ).href;
 }

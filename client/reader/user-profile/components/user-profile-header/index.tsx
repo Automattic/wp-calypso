@@ -3,21 +3,25 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
 import GravatarIcon from 'calypso/assets/images/icons/gravatar.svg';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import UserAvatar from 'calypso/blocks/user-avatar';
 import AutoDirection from 'calypso/components/auto-direction';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { UserProfileData } from 'calypso/lib/user/user';
+import { AuthorAchievementBadges } from 'calypso/reader/components/achievements/author-achievement-badges';
+import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import UserTopSites from '../top-sites';
+import type { ReaderUser } from '@automattic/api-core';
 
 interface UserProfileHeaderProps {
-	user: UserProfileData;
+	user: ReaderUser;
 	view: string;
 }
 
 const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
+	const { isVisible: showAchievements } = useAchievementsVisibility( user.user_login );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ showMoreToggle, setShowMoreToggle ] = useState( false );
 	const bioRef = useRef< HTMLParagraphElement >( null );
@@ -28,7 +32,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			const isOverflowing = bioElement.scrollHeight > bioElement.clientHeight;
 			setShowMoreToggle( isOverflowing );
 		}
-	}, [ user.bio ] );
+	}, [ user.description ] );
 
 	const handleShowMoreToggle = () => {
 		setIsExpanded( ! isExpanded );
@@ -42,6 +46,11 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			selected: view === 'posts',
 		},
 		{
+			label: translate( 'Sites' ),
+			path: `${ userProfileUrl }/sites`,
+			selected: view === 'sites',
+		},
+		{
 			label: translate( 'Lists' ),
 			path: `${ userProfileUrl }/lists`,
 			selected: view === 'lists',
@@ -51,13 +60,22 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 			path: `${ userProfileUrl }/recommended-blogs`,
 			selected: view === 'recommended-blogs',
 		},
+		...( showAchievements
+			? [
+					{
+						label: translate( 'Achievements' ),
+						path: `${ userProfileUrl }/achievements`,
+						selected: view === 'achievements',
+					},
+			  ]
+			: [] ),
 	];
 
 	return (
 		<>
 			<header className="user-profile-header">
 				<div className="user-profile-header__user-info">
-					<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } iconSize={ 56 } />
+					<UserAvatar user={ user } size={ 56 } hideHovercard />
 					<div className="user-profile-header__names">
 						<h1>
 							{ user.display_name }
@@ -77,6 +95,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									/>
 								</a>
 							) }
+							<AuthorAchievementBadges authorLogin={ user.user_login } size="medium" />
 						</h1>
 						<p>
 							<span dir="ltr">@{ user.user_login }</span>
@@ -84,7 +103,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 					</div>
 				</div>
 
-				{ user.bio && (
+				{ user.description && (
 					<AutoDirection>
 						<div className="user-profile-header__bio">
 							<p
@@ -94,7 +113,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 									'is-expanded': isExpanded,
 								} ) }
 							>
-								{ user.bio }
+								{ user.description }
 							</p>
 							{ showMoreToggle && (
 								<button
@@ -107,6 +126,10 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 							) }
 						</div>
 					</AutoDirection>
+				) }
+
+				{ user.ID && user.user_login && (
+					<UserTopSites userId={ user.ID } userLogin={ user.user_login } />
 				) }
 			</header>
 			<SectionNav enforceTabsView variation="minimal">

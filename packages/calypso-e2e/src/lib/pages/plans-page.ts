@@ -1,7 +1,8 @@
-import { Page } from 'playwright';
+import { expect } from 'playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
+import type { Page } from 'playwright';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plans =
@@ -116,6 +117,9 @@ export class PlansPage {
 	 */
 	async selectPlan( plan: Plans ): Promise< void > {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
+		// Wait for the page to settle after any preceding navigation before
+		// clicking, to avoid the navigation consuming the action timeout budget.
+		await locator.first().waitFor( { state: 'visible', timeout: 30_000 } );
 		// In the `/plans` view, there are two buttons for "Upgrade" on the
 		// plan comparison chart. Select the first one.
 		await locator.first().click();
@@ -125,8 +129,24 @@ export class PlansPage {
 	 * Opens the escape hatch modal by clicking the "start with a free plan" trigger link.
 	 */
 	async openEscapeHatch(): Promise< void > {
-		const locator = this.page.getByText( 'start with a free plan' );
-		await locator.first().click();
+		const trigger = this.page
+			.getByRole( 'button', {
+				name: 'start with a free plan',
+				exact: true,
+			} )
+			.first();
+		await expect( trigger ).toBeVisible( { timeout: 30_000 } );
+		await trigger.click();
+
+		const escapeHatchDialog = this.page
+			.getByRole( 'dialog' )
+			.filter( {
+				has: this.page.getByRole( 'button', {
+					name: /Continue with Free|Get Personal|Get Premium/,
+				} ),
+			} )
+			.first();
+		await expect( escapeHatchDialog ).toBeVisible();
 	}
 
 	/**

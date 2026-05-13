@@ -27,7 +27,7 @@ export interface CanvasMetadata {
 	alt_text?: string | null;
 }
 
-export type NoticeType = 'error' | 'success' | 'warning';
+export type NoticeType = 'error' | 'success' | 'warning' | 'info';
 export interface NoticeAction {
 	label: string;
 	url: string;
@@ -45,6 +45,8 @@ export enum ImageStudioEntryPoint {
 	MediaLibrary = 'media_library',
 	EditorBlock = 'editor_block',
 	EditorSidebar = 'editor_sidebar',
+	// Post-editor "Generate Feature Clip" sidebar panel — video-only entrypoint.
+	PostEditorFeatureClip = 'post_editor_feature_clip',
 	JetpackExternalMediaBlock = 'jetpack_external_media_block',
 	JetpackExternalMediaFeaturedImage = 'jetpack_external_media_featured_image',
 	// Entry points for jetpack.ai.imageGenerationHandler filter
@@ -105,6 +107,10 @@ export interface ImageStudioState {
 	selectedAspectRatio: string | null;
 	// Last agent message ID for feedback tracking
 	lastAgentMessageId: string | null;
+	// Ratings the user has submitted in this session, keyed by attachment ID.
+	// Once a rating is recorded for an image it stays for the session so the
+	// buttons remain disabled when navigating back to that image.
+	imageRatings: Record< number, 'up' | 'down' >;
 }
 
 /**
@@ -254,6 +260,14 @@ type SetLastAgentMessageIdAction = {
 	payload: string | null;
 };
 
+type SetImageRatingAction = {
+	type: 'SET_IMAGE_RATING';
+	payload: {
+		attachmentId: number;
+		rating: 'up' | 'down';
+	};
+};
+
 type ResetCanvasHistoryAction = {
 	type: 'RESET_CANVAS_HISTORY';
 };
@@ -285,6 +299,7 @@ type ImageStudioAction =
 	| SetSelectedStyleAction
 	| SetSelectedAspectRatioAction
 	| SetLastAgentMessageIdAction
+	| SetImageRatingAction
 	| ResetCanvasHistoryAction;
 
 /**
@@ -349,9 +364,10 @@ const initialState: ImageStudioState = {
 	navigationCurrentPage: 1,
 	navigationHasMorePages: true,
 	isSidebarOpen: getSidebarIsOpenStateFromLocalStorage(),
-	selectedStyle: '',
+	selectedStyle: null,
 	selectedAspectRatio: null,
 	lastAgentMessageId: null,
+	imageRatings: {},
 };
 
 /**
@@ -590,6 +606,8 @@ const reducer = (
 				onCloseCallback: null,
 				entryPoint: null,
 				blockType: null,
+				// Reset ratings for the new file since it's a new working session
+				imageRatings: {},
 				// Keep navigation state (navigableAttachmentIds, currentNavigationIndex, pagination)
 				// Keep user preferences (isSidebarOpen, selectedStyle, selectedAspectRatio)
 			};
@@ -630,6 +648,15 @@ const reducer = (
 			return {
 				...state,
 				lastAgentMessageId: action.payload,
+			};
+
+		case 'SET_IMAGE_RATING':
+			return {
+				...state,
+				imageRatings: {
+					...state.imageRatings,
+					[ action.payload.attachmentId ]: action.payload.rating,
+				},
 			};
 
 		case 'RESET_CANVAS_HISTORY':
@@ -710,6 +737,10 @@ export interface ImageStudioActions {
 	setSelectedStyle: ( style: string | null ) => Promise< SetSelectedStyleAction >;
 	setSelectedAspectRatio: ( aspectRatio: string | null ) => Promise< SetSelectedAspectRatioAction >;
 	setLastAgentMessageId: ( messageId: string | null ) => Promise< SetLastAgentMessageIdAction >;
+	setImageRating: (
+		attachmentId: number,
+		rating: 'up' | 'down'
+	) => Promise< SetImageRatingAction >;
 	resetCanvasHistory: () => Promise< ResetCanvasHistoryAction >;
 }
 
@@ -927,6 +958,13 @@ const actions = {
 		};
 	},
 
+	setImageRating( attachmentId: number, rating: 'up' | 'down' ): SetImageRatingAction {
+		return {
+			type: 'SET_IMAGE_RATING',
+			payload: { attachmentId, rating },
+		};
+	},
+
 	resetCanvasHistory(): ResetCanvasHistoryAction {
 		return {
 			type: 'RESET_CANVAS_HISTORY',
@@ -972,6 +1010,8 @@ export interface ImageStudioSelectors {
 	getSelectedStyle: ( state: ImageStudioState ) => string | null;
 	getSelectedAspectRatio: ( state: ImageStudioState ) => string | null;
 	getLastAgentMessageId: ( state: ImageStudioState ) => string | null;
+	getImageRatings: ( state: ImageStudioState ) => Record< number, 'up' | 'down' >;
+	getImageRating: ( state: ImageStudioState, attachmentId: number | null ) => 'up' | 'down' | null;
 	getSupportedMimeTypes: () => readonly string[];
 }
 
@@ -1144,6 +1184,17 @@ const selectors = {
 
 	getLastAgentMessageId( state: ImageStudioState ): string | null {
 		return state.lastAgentMessageId;
+	},
+
+	getImageRatings( state: ImageStudioState ): Record< number, 'up' | 'down' > {
+		return state.imageRatings;
+	},
+
+	getImageRating( state: ImageStudioState, attachmentId: number | null ): 'up' | 'down' | null {
+		if ( attachmentId === null ) {
+			return null;
+		}
+		return state.imageRatings[ attachmentId ] ?? null;
 	},
 
 	getSupportedMimeTypes(): readonly string[] {

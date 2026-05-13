@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
+import { Page } from '@wordpress/admin-ui';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { Component } from 'react';
@@ -8,13 +9,13 @@ import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import JetpackFooter from 'calypso/components/jetpack/jetpack-footer';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import JetpackTitle from 'calypso/components/jetpack-title';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -92,15 +93,19 @@ class ScanPage extends Component< Props > {
 	renderProvisioning() {
 		return (
 			<>
-				<SecurityIcon />
-				{ this.renderHeader( translate( 'Preparing to scan' ) ) }
-				<p>
-					{ translate(
-						"Welcome to Jetpack Scan! We're scoping out your site, setting up to do a full scan. " +
-							"We'll let you know if we spot any issues that might impact a scan, " +
-							'then your first full scan will start.'
-					) }
-				</p>
+				<div className="scan__header">
+					<SecurityIcon />
+				</div>
+				<div className="scan__card-body">
+					{ this.renderHeader( translate( 'Preparing to scan' ) ) }
+					<p>
+						{ translate(
+							"Welcome to Jetpack Scan! We're scoping out your site, setting up to do a full scan. " +
+								"We'll let you know if we spot any issues that might impact a scan, " +
+								'then your first full scan will start.'
+						) }
+					</p>
+				</div>
 			</>
 		);
 	}
@@ -149,31 +154,35 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<>
-				<SecurityIcon />
-				{ this.renderHeader( translate( 'Don’t worry about a thing' ) ) }
-				<p>
-					{ translate(
-						/* translators: %s is a time string relative to now */
-						'The last Jetpack scan ran {{strong}}%s{{/strong}} and everything ' +
-							'looked great.' +
-							'{{br/}}' +
-							'Run a manual scan now or wait for Jetpack to scan your site later today.',
-						{
-							args: [ lastScanFinishTime ],
-							components: {
-								strong: <strong />,
-								br: <br />,
-							},
-						}
-					) }
-				</p>
-				<Button
-					primary
-					className="scan__button"
-					onClick={ () => siteId && dispatchScanRun( siteId ) }
-				>
-					{ translate( 'Scan now' ) }
-				</Button>
+				<div className="scan__header">
+					<SecurityIcon />
+				</div>
+				<div className="scan__card-body">
+					{ this.renderHeader( translate( "Don't worry about a thing" ) ) }
+					<p>
+						{ translate(
+							/* translators: %s is a time string relative to now */
+							'The last Jetpack scan ran {{strong}}%s{{/strong}} and everything ' +
+								'looked great.' +
+								'{{br/}}' +
+								'Run a manual scan now or wait for Jetpack to scan your site later today.',
+							{
+								args: [ lastScanFinishTime ],
+								components: {
+									strong: <strong />,
+									br: <br />,
+								},
+							}
+						) }
+					</p>
+					<Button
+						primary
+						className="scan__button"
+						onClick={ () => siteId && dispatchScanRun( siteId ) }
+					>
+						{ translate( 'Scan now' ) }
+					</Button>
+				</div>
 			</>
 		);
 	}
@@ -187,32 +196,36 @@ class ScanPage extends Component< Props > {
 		return (
 			<>
 				<Card>
-					<SecurityIcon icon="in-progress" />
-					{ this.renderHeader( heading ) }
-					{ isInitialScan && (
-						<p className="scan__initial-scan-message">
+					<div className="scan__header">
+						<SecurityIcon icon="in-progress" />
+					</div>
+					<div className="scan__card-body">
+						{ this.renderHeader( heading ) }
+						{ isInitialScan && (
+							<p className="scan__initial-scan-message">
+								{ translate(
+									'Welcome to Jetpack Scan. We are starting your first scan now. ' +
+										'Scan results will be ready soon.'
+								) }
+							</p>
+						) }
+						<p className="scan__progress-bar-percent">{ scanProgress }%</p>
+						<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
+						<p>
 							{ translate(
-								'Welcome to Jetpack Scan. We are starting your first scan now. ' +
-									'Scan results will be ready soon.'
+								'{{strong}}Did you know{{/strong}} {{br/}}' +
+									'We will send you an email if security threats are found. In the meantime feel ' +
+									'free to continue to use your site as normal, you can check back on ' +
+									'progress at any time.',
+								{
+									components: {
+										strong: <strong />,
+										br: <br />,
+									},
+								}
 							) }
 						</p>
-					) }
-					<p className="scan__progress-bar-percent">{ scanProgress }%</p>
-					<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
-					<p>
-						{ translate(
-							'{{strong}}Did you know{{/strong}} {{br/}}' +
-								'We will send you an email if security threats are found. In the meantime feel ' +
-								'free to continue to use your site as normal, you can check back on ' +
-								'progress at any time.',
-							{
-								components: {
-									strong: <strong />,
-									br: <br />,
-								},
-							}
-						) }
-					</p>
+					</div>
 				</Card>
 			</>
 		);
@@ -223,21 +236,25 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<>
-				<SecurityIcon icon="scan-error" />
-				{ this.renderHeader( translate( 'Something went wrong' ) ) }
-				<p>
-					{ translate(
-						"Jetpack Scan couldn't complete a scan of your site. Please check to see if your site is down " +
-							"– if it's not, try again. If it is, or if Jetpack Scan is still having problems, contact our support team."
-					) }
-				</p>
-				{ this.renderContactSupportButton() }
-				<Button
-					className="scan__button scan__retry-bottom"
-					onClick={ () => siteId && dispatchScanRun( siteId ) }
-				>
-					{ translate( 'Retry scan' ) }
-				</Button>
+				<div className="scan__header">
+					<SecurityIcon icon="scan-error" />
+				</div>
+				<div className="scan__card-body">
+					{ this.renderHeader( translate( 'Something went wrong' ) ) }
+					<p>
+						{ translate(
+							"Jetpack Scan couldn't complete a scan of your site. Please check to see if your site is down " +
+								"– if it's not, try again. If it is, or if Jetpack Scan is still having problems, contact our support team."
+						) }
+					</p>
+					{ this.renderContactSupportButton() }
+					<Button
+						className="scan__button scan__retry-bottom"
+						onClick={ () => siteId && dispatchScanRun( siteId ) }
+					>
+						{ translate( 'Retry scan' ) }
+					</Button>
+				</div>
 			</>
 		);
 	}
@@ -325,7 +342,8 @@ class ScanPage extends Component< Props > {
 
 	render() {
 		const { siteId, siteSettingsUrl } = this.props;
-		const isJetpackPlatform = isJetpackCloud();
+		const isJetpackPlatform = isJetpackCloud() || isA8CForAgencies();
+		const showHeader = ! isJetpackPlatform;
 		let mainClass = 'scan';
 
 		if ( ! siteId ) {
@@ -338,27 +356,31 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<Main
-				wideLayout
+				fullWidthLayout
 				className={ clsx( mainClass, {
-					is_jetpackcom: isJetpackPlatform,
+					is_jetpackcom: isJetpackCloud(),
 				} ) }
 			>
 				<DocumentHead title="Scan" />
-				{ isJetpackPlatform && <SidebarNavigation /> }
+				{ isJetpackCloud() && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
-					<NavigationHeader
-						navigationItems={ [] }
-						title={ <JetpackTitle title={ translate( 'Scan' ) } /> }
-						subtitle={ translate( 'Automated malware scanning and firewall protection.' ) }
-					/>
-				) }
-
-				<QueryJetpackScan siteId={ siteId } />
-				<ScanNavigation section="scanner" />
-				<div className="scan__content">{ this.renderScanState() }</div>
-				{ this.renderJetpackReviewPrompt() }
+				<Page
+					hasPadding
+					showSidebarToggle={ false }
+					title={ showHeader ? <JetpackTitle title={ translate( 'Scan' ) } /> : undefined }
+					subTitle={
+						showHeader
+							? translate( 'Automated malware scanning and firewall protection.' )
+							: undefined
+					}
+				>
+					<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
+					<QueryJetpackScan siteId={ siteId } />
+					<ScanNavigation section="scanner" />
+					<div className="scan__content">{ this.renderScanState() }</div>
+					{ this.renderJetpackReviewPrompt() }
+				</Page>
+				{ showHeader && <JetpackFooter /> }
 			</Main>
 		);
 	}

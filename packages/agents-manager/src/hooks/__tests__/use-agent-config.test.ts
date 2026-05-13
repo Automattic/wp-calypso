@@ -25,11 +25,13 @@ describe( 'useAgentConfig', () => {
 
 	beforeEach( () => {
 		mockSearch( '' );
+		mockUseUnifiedAiChat.mockClear();
 		mockUseUnifiedAiChat.mockReturnValue( { data: undefined } );
 	} );
 
 	afterEach( () => {
 		window.history.pushState( {}, '', '/' );
+		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
 	} );
 
 	it( 'returns `ORCHESTRATOR_AGENT_ID` when `useUnifiedAiChat` returns `undefined`', () => {
@@ -84,5 +86,44 @@ describe( 'useAgentConfig', () => {
 		const { result } = renderHook( () => useAgentConfig() );
 		expect( result.current.agentId ).toBe( ORCHESTRATOR_AGENT_ID );
 		expect( result.current.isLoading ).toBe( true );
+	} );
+
+	it( 'uses `agentsManagerData.agentId` as default when set', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			agentId: 'woo-workflow-unified_chat',
+		};
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'woo-workflow-unified_chat' );
+		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
+	} );
+
+	it( 'URL `?agent=` param overrides `agentsManagerData.agentId`', () => {
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			agentId: 'woo-workflow-unified_chat',
+		};
+		mockSearch( '?agent=custom-agent-id' );
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'custom-agent-id' );
+		delete ( globalThis as Record< string, unknown > ).agentsManagerData;
+	} );
+
+	it( '`agentsManagerData.agentId` takes priority over unified experience', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: true } );
+		( globalThis as Record< string, unknown > ).agentsManagerData = {
+			agentId: 'woo-workflow-unified_chat',
+		};
+		const { result } = renderHook( () => useAgentConfig() );
+		expect( result.current.agentId ).toBe( 'woo-workflow-unified_chat' );
+	} );
+
+	it( 'uses an explicit host agent ID over URL and unified chat overrides', () => {
+		mockUseUnifiedAiChat.mockReturnValue( { data: true, isLoading: true } );
+		mockSearch( '?agent=wpcom-workflow-unified_chat' );
+
+		const { result } = renderHook( () => useAgentConfig( 'reader-chat' ) );
+
+		expect( result.current.agentId ).toBe( 'reader-chat' );
+		expect( result.current.isLoading ).toBe( false );
+		expect( mockUseUnifiedAiChat ).toHaveBeenCalledWith( false );
 	} );
 } );

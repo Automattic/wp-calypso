@@ -93,6 +93,8 @@ const webpackCacheBuildDependencies = [
 	require.resolve( '../build-tools/webpack/sections-loader' ),
 	// Workspace config helper modules used to build rules/plugins
 	require.resolve( '@automattic/calypso-build/webpack/file-loader' ),
+	require.resolve( '@automattic/calypso-build/webpack/mini-css-runtime-full-hash' ),
+	require.resolve( '@automattic/calypso-build/webpack/mini-css-with-rtl' ),
 	require.resolve( '@automattic/calypso-build/webpack/minify' ),
 	require.resolve( '@automattic/calypso-build/webpack/sass' ),
 	require.resolve( '@automattic/calypso-build/webpack/transpile' ),
@@ -192,8 +194,11 @@ if ( isDevelopment ) {
 	outputChunkFilename = '[name].js';
 }
 
-const cssFilename = cssNameFromFilename( outputFilename );
-const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
+const cssFilename = cssNameFromFilename( outputFilename ).replace( '[contenthash]', '[chunkhash]' );
+const cssChunkFilename = cssNameFromFilename( outputChunkFilename ).replace(
+	'[contenthash]',
+	'[chunkhash]'
+);
 
 const outputDir = path.resolve( '.' );
 
@@ -278,7 +283,7 @@ const webpackConfig = {
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
-				includePaths: [ __dirname ],
+				includePaths: [ process.cwd(), __dirname ],
 				postCssOptions: {
 					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
@@ -437,13 +442,15 @@ const webpackConfig = {
 				errorHandler: ( err, invokeErr, compilation ) => {
 					// Sentry should _never_ fail the webpack build, so only emit warnings here:
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
+					console.error( 'Sentry CLI Plugin Error:', err.message );
+					console.error( 'Sentry Full error:', err );
 				},
 			} ),
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {
 				overlay: false,
-				exclude: [ /node_modules/, /devdocs/ ],
+				exclude: [ /node_modules/ ],
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],

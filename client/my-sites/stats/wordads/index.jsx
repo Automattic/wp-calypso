@@ -16,8 +16,6 @@ import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -167,7 +165,20 @@ class WordAds extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main fullWidthLayout>
+			<Main
+				fullWidthLayout
+				pageSubTitle={ translate( 'Simple, powerful analytics to grow your site.' ) }
+				pageTabs={
+					canAccessAds ? (
+						<StatsNavigation
+							selectedItem="wordads"
+							interval={ period }
+							siteId={ siteId }
+							slug={ slug }
+						/>
+					) : undefined
+				}
+			>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
@@ -175,12 +186,6 @@ class WordAds extends Component {
 				/>
 
 				<div className={ wordAdsPageClasses }>
-					<PageHeader
-						titleProps={ {
-							subtitle: translate( 'Simple, powerful analytics to grow your site.' ),
-						} }
-					/>
-
 					{ ! canAccessAds && (
 						<EmptyContent
 							title={
@@ -195,13 +200,6 @@ class WordAds extends Component {
 
 					{ canAccessAds && (
 						<Fragment>
-							<StatsNavigation
-								selectedItem="wordads"
-								interval={ period }
-								siteId={ siteId }
-								slug={ slug }
-							/>
-
 							<HighlightsSection siteId={ siteId } />
 
 							<div id="my-stats-content" className={ statsWrapperClass }>
@@ -250,8 +248,6 @@ class WordAds extends Component {
 							</div>
 
 							<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="ads" slug={ slug } />
-
-							<JetpackColophon />
 						</Fragment>
 					) }
 				</div>

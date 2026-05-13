@@ -2,6 +2,7 @@ import { DomainProductSlugs, DotcomPlans, WooHostedPlans } from '@automattic/api
 import {
 	purchaseQuery,
 	sitePurchasesQuery,
+	siteBySlugQuery,
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
@@ -10,12 +11,11 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { differenceInCalendarDays } from 'date-fns';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
-import { getCurrentDashboard } from '../../../app/routing';
 import Notice from '../../../components/notice';
 import { getRelativeTimeString } from '../../../utils/datetime';
 import { wpcomLink } from '../../../utils/link';
@@ -33,18 +33,38 @@ import {
 	isInExpirationGracePeriod,
 	isAkismetFreeProduct,
 } from '../../../utils/purchase';
+import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
+import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import {
 	OtherRenewablePurchasesNotice,
 	shouldShowOtherRenewablePurchasesNotice,
 } from './other-renewable-purchases-notice';
+import { PurchaseCancelledNotice } from './purchase-cancelled-notice';
 import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-expiring-notice';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
 export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { user } = useAuth();
-	const { refunded } = purchaseSettingsRoute.useSearch();
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { refunded, upgraded, cancelled } = purchaseSettingsRoute.useSearch();
+	const navigate = purchaseSettingsRoute.useNavigate();
+	// Show the transient cancelled success notice once after a cancel redirects
+	// here. The URL search param is cleared immediately so that a refresh / back
+	// navigation falls through to the regular expiring notice.
+	const [ showCancelledNotice, setShowCancelledNotice ] = useState( Boolean( cancelled ) );
+	useEffect( () => {
+		if ( cancelled ) {
+			navigate( {
+				search: ( prev: Record< string, unknown > ) => {
+					const { cancelled: _cancelled, ...rest } = prev;
+					return rest;
+				},
+				replace: true,
+			} );
+		}
+	}, [ cancelled, navigate ] );
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
 		enabled: Boolean( purchase.attached_to_purchase_id ),
@@ -52,6 +72,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const { data: sitePurchases } = useQuery( {
 		...sitePurchasesQuery( purchase.blog_id ?? 0 ),
 	} );
+	const { data: site } = useQuery( {
+		...siteBySlugQuery( purchase.site_slug ?? '' ),
+		enabled: Boolean( purchase.site_slug ) && ! purchase.is_attached_to_holding_site,
+	} );
+	const isDomainWithoutSite = Boolean( site?.options?.is_domain_only && purchase.is_domain );
 	const renewableSitePurchases = sitePurchases?.filter( needsToRenewSoon );
 
 	const { data: isDismissedPersisted } = useSuspenseQuery(
@@ -70,6 +95,38 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 			} }
 		/>
 	) : null;
+
+	const [ showUpgradedNotice, setShowUpgradedNotice ] = useState( () => Boolean( upgraded ) );
+
+	useEffect( () => {
+		if ( upgraded ) {
+			// Strip ?upgraded from the URL so the notice doesn't survive refresh.
+			navigate( {
+				search: { refunded },
+				replace: true,
+			} );
+		}
+	}, [ upgraded, refunded, navigate ] );
+
+	// Transient cancelled success notice — suppresses every other notice until
+	// dismissed, refreshed, or navigated-away-and-back. Gated on the
+	// `?cancelled=true` search param set by the cancel redirect.
+	if ( isSplitCancelRemoveEnabled && showCancelledNotice ) {
+		return (
+			<PurchaseCancelledNotice
+				purchase={ purchase }
+				onClose={ () => setShowCancelledNotice( false ) }
+			/>
+		);
+	}
+
+	if ( showUpgradedNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowUpgradedNotice( false ) }>
+				{ __( 'Thank you for your purchase. Your site has been upgraded.' ) }
+			</Notice>
+		);
+	}
 
 	if ( purchase.async_pending_payment_block_is_set ) {
 		return <AsyncPendingNotice />;
@@ -131,7 +188,11 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<>
 				{ cancellationOfferNotice && cancellationOfferNotice }
-				<PurchaseExpiringNotice purchase={ purchase } purchaseAttachedTo={ purchaseAttachedTo } />
+				<PurchaseExpiringNotice
+					purchase={ purchase }
+					purchaseAttachedTo={ purchaseAttachedTo }
+					isDomainWithoutSite={ isDomainWithoutSite }
+				/>
 			</>
 		);
 	}
@@ -140,7 +201,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<>
 				{ cancellationOfferNotice && cancellationOfferNotice }
-				<CreditCardExpiringNotice purchase={ purchase } />;
+				<CreditCardExpiringNotice purchase={ purchase } />
 			</>
 		);
 	}
@@ -321,26 +382,17 @@ function InAppPurchaseNotice( { purchase }: { purchase: Purchase } ) {
 function TrialNotice( { purchase }: { purchase: Purchase } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const onClickUpgrade = () => {
-		if ( purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY ) {
+		if (
+			purchase.product_slug === WooHostedPlans.WOO_HOSTED_FREE_TRIAL_PLAN_MONTHLY ||
+			purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY
+		) {
 			recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
 				current_plan_slug: purchase.product_slug,
 				to_checkout: false,
 			} );
 
-			window.location.href = addQueryArgs( wpcomLink( '/setup/woo-hosted-plans' ), {
-				siteSlug: purchase.site_slug ?? '',
-				dashboard: getCurrentDashboard(),
-			} );
-			return;
-		}
-
-		if ( purchase.product_slug === DotcomPlans.ECOMMERCE_TRIAL_MONTHLY ) {
-			recordTracksEvent( 'calypso_subscription_trial_notice_cta_clicked', {
-				current_plan_slug: purchase.product_slug,
-				to_checkout: false,
-			} );
-
-			window.location.href = wpcomLink( `/plans/${ purchase.site_slug ?? '' }` );
+			window.location.href =
+				getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() ) ?? '';
 			return;
 		}
 

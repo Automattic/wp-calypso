@@ -188,8 +188,8 @@ export const getSiteAuthorName = ( site: ReaderSite ): string => {
 
 interface isEligibleForUnseenArgs {
 	isWPForTeamsItem: boolean;
-	currentRoute: string | null;
-	hasOrganization: boolean | null;
+	currentRoute?: string | null;
+	hasOrganization?: boolean | null;
 }
 
 /**

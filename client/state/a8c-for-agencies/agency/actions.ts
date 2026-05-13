@@ -2,6 +2,10 @@ import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 // Required for modular state.
 import 'calypso/state/a8c-for-agencies/init';
+import {
+	A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG,
+	A4A_PARTNER_DIRECTORY_LEAD_MATCHING_PILOT_AGENCY_IDS,
+} from 'calypso/a8c-for-agencies/sections/partner-directory/lib/lead-matching-visibility';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { NoticeActionOptions } from 'calypso/state/notices/types';
 import { APIError, Agency, AgencyThunkAction, UserBillingType } from '../types';
@@ -13,6 +17,7 @@ import {
 	JETPACK_SET_AGENCY_CLIENT_USER,
 } from './action-types';
 import { getActiveAgency, isFetchingAgency } from './selectors';
+import type { LeadMatchingDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 
 export function setActiveAgency( agency: Agency ): AgencyThunkAction {
 	return ( dispatch, getState ) => {
@@ -20,6 +25,73 @@ export function setActiveAgency( agency: Agency ): AgencyThunkAction {
 			return;
 		}
 		dispatch( { type: JETPACK_CURRENT_AGENCY_UPDATE, activeAgency: agency } );
+	};
+}
+
+export function updateActiveAgencyLeadMatching( {
+	draft,
+	profile,
+	sync,
+}: {
+	draft?: LeadMatchingDetails | null;
+	profile?: NonNullable< Agency[ 'lead_matching' ] >[ 'profile' ];
+	sync?: NonNullable< Agency[ 'lead_matching' ] >[ 'sync' ];
+} ): AgencyThunkAction {
+	return ( dispatch, getState ) => {
+		const agency = getActiveAgency( getState() );
+
+		if ( ! agency || isFetchingAgency( getState() ) ) {
+			return;
+		}
+
+		dispatch(
+			setActiveAgency( {
+				...agency,
+				lead_matching: {
+					...agency.lead_matching,
+					...( draft !== undefined ? { draft } : {} ),
+					...( profile !== undefined ? { profile } : {} ),
+					...( sync !== undefined ? { sync } : {} ),
+				},
+			} )
+		);
+	};
+}
+
+export function updateActiveAgencyAvailability( isAvailable: boolean ): AgencyThunkAction {
+	return ( dispatch, getState ) => {
+		const agency = getActiveAgency( getState() );
+
+		if ( ! agency || isFetchingAgency( getState() ) ) {
+			return;
+		}
+
+		dispatch(
+			setActiveAgency( {
+				...agency,
+				profile: {
+					...agency.profile,
+					listing_details: {
+						...agency.profile.listing_details,
+						is_available: isAvailable,
+					},
+				},
+				lead_matching: agency.lead_matching
+					? {
+							...agency.lead_matching,
+							profile: agency.lead_matching.profile
+								? {
+										...agency.lead_matching.profile,
+										availability: {
+											...agency.lead_matching.profile.availability,
+											accepting_work: isAvailable,
+										},
+								  }
+								: agency.lead_matching.profile,
+					  }
+					: agency.lead_matching,
+			} )
+		);
 	};
 }
 
@@ -83,6 +155,13 @@ export function receiveAgencies( agencies: Agency[] ): AgencyThunkAction {
 			// Enable the Partner Directory section
 			if ( ! config.isEnabled( 'a4a-partner-directory' ) && newAgency.partner_directory.allowed ) {
 				config.enable( 'a4a-partner-directory' );
+			}
+
+			if (
+				! config.isEnabled( A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG ) &&
+				A4A_PARTNER_DIRECTORY_LEAD_MATCHING_PILOT_AGENCY_IDS.has( newAgency.id )
+			) {
+				config.enable( A4A_PARTNER_DIRECTORY_LEAD_MATCHING_FEATURE_FLAG );
 			}
 		}
 	};

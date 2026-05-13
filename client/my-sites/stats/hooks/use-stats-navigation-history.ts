@@ -186,6 +186,100 @@ export const useStatsNavigationHistory = (): { text: string; url: string | null 
 };
 
 /**
+ * Hook that returns the full navigation trail as breadcrumb items.
+ * Excludes the current screen (last item in history).
+ * Each item has a label and URL for building breadcrumb navigation.
+ */
+export const useStatsBreadcrumbTrail = (): Array< { label: string; url: string | null } > => {
+	const localizedTabNames: { [ key: string ]: string | null } = useMemo(
+		() => ( {
+			traffic: translate( 'Traffic' ),
+			insights: translate( 'Insights' ),
+			store: translate( 'Store' ),
+			realtime: translate( 'Realtime' ),
+			ads: translate( 'Ads' ),
+			subscribers: translate( 'Subscribers' ),
+			posts: translate( 'Most viewed' ),
+			authors: translate( 'Authors' ),
+			filedownloads: translate( 'File Downloads' ),
+			referrers: translate( 'Referrers' ),
+			locations: translate( 'Locations' ),
+			countryviews: translate( 'Countries' ),
+			utm: translate( 'UTM' ),
+			clicks: translate( 'Clicks' ),
+			searchterms: translate( 'Search Terms' ),
+			videoplays: translate( 'Videos' ),
+			annualstats: translate( 'Annual insights' ),
+			postList: translate( 'Post List' ),
+			emailsummary: translate( 'Emails' ),
+			postDetails: null,
+		} ),
+		[]
+	);
+
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const adminBaseUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
+	const [ trail, setTrail ] = useState< Array< { label: string; url: string | null } > >( [] );
+
+	useEffect( () => {
+		try {
+			const navState = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) || '[]' );
+			if ( ! Array.isArray( navState ) || navState.length < 2 ) {
+				setTrail( [] );
+				return;
+			}
+
+			// Exclude the last item (current screen).
+			const items = navState.slice( 0, -1 );
+
+			const breadcrumbs = items
+				.map( ( entry: { screen: string; queryParams: QueryArgs; period: string | null } ) => {
+					const label = localizedTabNames[ entry.screen ];
+					if ( ! label ) {
+						return null;
+					}
+
+					let link = possibleBackLinks[ entry.screen ];
+					if ( ! link ) {
+						return null;
+					}
+
+					if ( link.includes( '{period}' ) && entry.period ) {
+						link = link.replace( '{period}', entry.period );
+					}
+
+					if ( link.includes( '{adminUrl}' ) ) {
+						if ( ! adminBaseUrl ) {
+							return null;
+						}
+						link = link.replace( '{adminUrl}', adminBaseUrl );
+						return {
+							label,
+							url: addQueryArgs( link, prepareAdminQueryParams( entry.queryParams ) ),
+						};
+					}
+
+					return {
+						label,
+						url: siteSlug
+							? addQueryArgs( link + siteSlug, getFilteredQueryParams( entry.queryParams ) )
+							: null,
+					};
+				} )
+				.filter( Boolean ) as Array< { label: string; url: string | null } >;
+
+			setTrail( breadcrumbs );
+		} catch ( e ) {
+			setTrail( [] );
+		}
+	}, [ localizedTabNames, siteSlug, adminBaseUrl ] );
+
+	return trail;
+};
+
+/**
  * Utility to record the current screen for back navigation
  * @param {string} screen - Current screen identifier
  * @param {Object} args - Arguments for the screen

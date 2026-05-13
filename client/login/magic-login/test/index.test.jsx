@@ -1,10 +1,10 @@
 /** @jest-environment jsdom */
 import React from 'react';
 import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
-import { getMagicLoginInitialHeaders, MagicLogin } from '../index';
+import { getConnectionFlowFromRedirectTo, getMagicLoginInitialHeaders, MagicLogin } from '../index';
 
 jest.mock( 'calypso/lib/partner-branding', () => ( {
-	detectCiabConfig: jest.fn(),
+	detectPartnerConfig: jest.fn(),
 	getPartnerSignupTosElement: jest.fn(),
 } ) );
 
@@ -22,7 +22,7 @@ describe( 'magic-login branding behavior', () => {
 		translate: ( text ) => text,
 		oauth2Client: null,
 		isWooJPC: false,
-		ciabConfig: null,
+		partnerConfig: null,
 	};
 
 	beforeEach( () => {
@@ -41,7 +41,7 @@ describe( 'magic-login branding behavior', () => {
 		const { heading } = getMagicLoginInitialHeaders(
 			{
 				...baseProps,
-				ciabConfig: {
+				partnerConfig: {
 					displayName: 'Woo',
 				},
 			},
@@ -70,7 +70,7 @@ describe( 'magic-login branding behavior', () => {
 
 		const instance = new MagicLogin( {
 			...baseProps,
-			ciabConfig: { id: 'woo', displayName: 'Woo' },
+			partnerConfig: { id: 'woo', displayName: 'Woo' },
 		} );
 
 		expect( instance.renderTos() ).toBe( partnerTosElement );
@@ -103,7 +103,7 @@ describe( 'magic-login branding behavior', () => {
 		const instance = new MagicLogin( {
 			...baseProps,
 			showCheckYourEmail: true,
-			ciabConfig: { id: 'woo', displayName: 'Woo' },
+			partnerConfig: { id: 'woo', displayName: 'Woo' },
 		} );
 
 		expect( instance.renderLinks() ).toBeNull();
@@ -113,7 +113,7 @@ describe( 'magic-login branding behavior', () => {
 		const instance = new MagicLogin( {
 			...baseProps,
 			showCheckYourEmail: true,
-			ciabConfig: null,
+			partnerConfig: null,
 		} );
 
 		expect( instance.renderLinks() ).toEqual(
@@ -124,5 +124,93 @@ describe( 'magic-login branding behavior', () => {
 				} ),
 			} )
 		);
+	} );
+} );
+
+describe( 'getConnectionFlowFromRedirectTo', () => {
+	it( 'flags the connector flow and parses plugins when from=jetpack-connector', () => {
+		const params = getConnectionFlowFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack,woocommerce'
+		);
+
+		expect( params ).toEqual( {
+			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
+			connectorPlugins: [ 'jetpack', 'woocommerce' ],
+		} );
+	} );
+
+	it( 'recognises jetpack-onboarding as part of the unified flow without flagging the connector', () => {
+		const params = getConnectionFlowFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-onboarding'
+		);
+
+		expect( params.isUnifiedConnectionFlow ).toBe( true );
+		expect( params.isFromJetpackConnector ).toBe( false );
+		expect( params.connectorPlugins ).toEqual( [] );
+	} );
+
+	it( 'does not flag the connector for unrelated from values and ignores plugins', () => {
+		const params = getConnectionFlowFromRedirectTo(
+			'/jetpack/connect/authorize?from=my-jetpack&plugins=jetpack,woocommerce'
+		);
+
+		expect( params.isFromJetpackConnector ).toBe( false );
+		expect( params.isUnifiedConnectionFlow ).toBe( false );
+		expect( params.connectorPlugins ).toEqual( [] );
+	} );
+
+	it( 'falls back to currentQuery.from when redirect_to does not carry from', () => {
+		const params = getConnectionFlowFromRedirectTo( '/jetpack/connect/authorize', {
+			from: 'jetpack-connector',
+			plugins: 'jetpack,woocommerce',
+		} );
+
+		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.isUnifiedConnectionFlow ).toBe( true );
+		expect( params.connectorPlugins ).toEqual( [ 'jetpack', 'woocommerce' ] );
+	} );
+
+	it( 'prefers redirect_to over currentQuery for from and plugins when both are present', () => {
+		const params = getConnectionFlowFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack',
+			{ from: 'my-jetpack', plugins: 'woocommerce' }
+		);
+
+		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.connectorPlugins ).toEqual( [ 'jetpack' ] );
+	} );
+
+	it( 'trims whitespace inside the plugins list', () => {
+		const params = getConnectionFlowFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack,%20woocommerce'
+		);
+
+		expect( params.connectorPlugins ).toEqual( [ 'jetpack', 'woocommerce' ] );
+	} );
+
+	it( 'returns an empty plugin list when the plugins query param is absent', () => {
+		const params = getConnectionFlowFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-connector'
+		);
+
+		expect( params.isFromJetpackConnector ).toBe( true );
+		expect( params.connectorPlugins ).toEqual( [] );
+	} );
+
+	it( 'returns sensible defaults when redirect_to is missing', () => {
+		expect( getConnectionFlowFromRedirectTo( undefined ) ).toEqual( {
+			isFromJetpackConnector: false,
+			isUnifiedConnectionFlow: false,
+			connectorPlugins: [],
+		} );
+	} );
+
+	it( 'filters empty entries produced by trailing commas in plugins', () => {
+		const params = getConnectionFlowFromRedirectTo(
+			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack,,woocommerce,'
+		);
+
+		expect( params.connectorPlugins ).toEqual( [ 'jetpack', 'woocommerce' ] );
 	} );
 } );

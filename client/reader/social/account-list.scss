@@ -1,0 +1,57 @@
+.social-account-list-header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+	padding-block: 0.75rem 1rem;
+	padding-inline: 0.5rem;
+	border-block-end: 1px solid var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+}
+
+.social-account-list-header__display-name {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.3;
+	color: var( --color-text, var( --studio-gray-90, #1d2327 ) );
+}
+
+.social-account-list-header__count {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle, var( --studio-gray-50, #646970 ) );
+}
+
+@keyframes social-account-list-header-skeleton-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.5;
+	}
+}
+
+.social-account-list-header-skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding-block: 0.75rem 1rem;
+	padding-inline: 0.5rem;
+	border-block-end: 1px solid var( --color-border-subtle, var( --studio-gray-5, #dcdcde ) );
+	animation: social-account-list-header-skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.social-account-list-header-skeleton__name {
+	block-size: 1.25rem;
+	inline-size: 40%;
+	background: var( --studio-gray-5, #dcdcde );
+	border-radius: 4px;
+}
+
+.social-account-list-header-skeleton__count {
+	block-size: 0.875rem;
+	inline-size: 25%;
+	background: var( --studio-gray-5, #dcdcde );
+	border-radius: 4px;
+}

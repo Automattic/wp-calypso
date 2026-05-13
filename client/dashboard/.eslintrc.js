@@ -68,6 +68,7 @@ module.exports = {
 							'!@automattic/search',
 							'!@automattic/calypso-razorpay',
 							'!@automattic/calypso-stripe',
+							'!@automattic/calypso-url',
 							'!@automattic/composite-checkout',
 							'!@automattic/shopping-cart',
 							'!@automattic/ui',
@@ -76,6 +77,7 @@ module.exports = {
 							'!@automattic/survicate',
 							'!@automattic/viewport',
 							'!@automattic/browser-data-collector',
+							'!@automattic/omnibar',
 							'!@automattic/posthog',
 							// Please do not add exceptions which pull in Calypso code/concepts.
 							// See docs/package-imports.md for policy.
@@ -121,6 +123,12 @@ module.exports = {
 							'CardMedia',
 						],
 						message: 'Use local components exported from client/dashboard/components/card instead.',
+					},
+					{
+						name: '@tanstack/react-router',
+						importNames: [ 'redirect' ],
+						message:
+							'Use dashboardRedirect from client/dashboard/app/router/redirect instead. It disables view transitions on redirects.',
 					},
 					{
 						name: '@automattic/api-queries',

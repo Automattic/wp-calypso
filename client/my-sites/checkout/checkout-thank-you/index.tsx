@@ -1,3 +1,4 @@
+import { receiptQuery } from '@automattic/api-queries';
 import {
 	domainProductSlugs,
 	isCredits,
@@ -19,9 +20,10 @@ import {
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { css, Global } from '@emotion/react';
+import { useQuery } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, ComponentProps, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -76,6 +78,7 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { logStashEvent } from '../src/lib/analytics';
 import CheckoutThankYouHeader from './header';
 import HundredYearThankYou from './hundred-year-thank-you';
 import MasterbarStyled from './redesign-v2/masterbar-styled';
@@ -119,6 +122,7 @@ export interface CheckoutThankYouProps {
 	upgradeIntent: string;
 	redirectTo?: string;
 	displayMode?: string;
+	checkoutType?: string;
 }
 
 export interface CheckoutThankYouConnectedProps {
@@ -632,7 +636,11 @@ export class CheckoutThankYou extends Component<
 						/>
 					</>
 				);
-			} else if ( this.props.receipt.data && isOnlyDomainPurchases( purchases ) ) {
+			} else if (
+				this.props.receipt.data &&
+				isOnlyDomainPurchases( purchases ) &&
+				this.props.domainOnlySiteFlow
+			) {
 				if ( domainPurchases.length > 1 ) {
 					const domainsUrl = this.props.hasDashboardOptIn
 						? dashboardLink( '/domains' )
@@ -655,6 +663,7 @@ export class CheckoutThankYou extends Component<
 						primaryPurchase={ purchases[ 0 ] }
 						isEmailVerified={ this.props.isEmailVerified }
 						transferComplete={ this.props.transferComplete }
+						checkoutType={ this.props.checkoutType }
 					/>
 				);
 			} else if ( purchases.length === 1 && isSearch( purchases[ 0 ] ) ) {
@@ -772,7 +781,7 @@ function isWooCommercePluginInstalled( sitePlugins: { slug: string }[] ) {
 	return sitePlugins.length > 0 && sitePlugins.some( ( item ) => item.slug === 'woocommerce' );
 }
 
-export default connect(
+const ConnectedCheckoutThankYou = connect(
 	( state: IAppState, props: CheckoutThankYouProps ) => {
 		let siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId ?? 0 );
@@ -829,3 +838,42 @@ export default connect(
 		requestSite,
 	}
 )( localize( CheckoutThankYou ) );
+
+function CheckoutThankYouWithReceipt( props: ComponentProps< typeof ConnectedCheckoutThankYou > ) {
+	const {
+		data: receipt,
+		isLoading,
+		isError,
+		error,
+	} = useQuery( {
+		...receiptQuery( props.receiptId ),
+		enabled: !! props.receiptId,
+	} );
+
+	useEffect( () => {
+		if ( isError && error ) {
+			logStashEvent(
+				'checkout thank you receipt fetch error',
+				{
+					type: 'checkout_thank_you_receipt',
+					message: ( error as Error )?.message ?? String( error ),
+					tags: [ 'checkout-thank-you' ],
+				},
+				'warning'
+			);
+		}
+	}, [ isError, error ] );
+
+	if ( isLoading ) {
+		return <Loading />;
+	}
+
+	return (
+		<ConnectedCheckoutThankYou
+			{ ...props }
+			checkoutType={ receipt?.checkout_type ?? props.checkoutType }
+		/>
+	);
+}
+
+export default CheckoutThankYouWithReceipt;

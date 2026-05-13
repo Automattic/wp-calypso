@@ -4,15 +4,12 @@ import {
 	createApplePayMethod,
 	createGooglePayMethod,
 	createBancontactMethod,
+	createBlikMethod,
 	createP24Method,
 	createEpsMethod,
-	createEpsPaymentMethodStore,
 	createIdealMethod,
-	createIdealPaymentMethodStore,
 	createSofortMethod,
-	createSofortPaymentMethodStore,
 	createAlipayMethod,
-	createAlipayPaymentMethodStore,
 	createRazorpayMethod,
 	createStripeUpiMethod,
 	isValueTruthy,
@@ -29,14 +26,14 @@ import {
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
-import {
-	createNetBankingPaymentMethodStore,
-	createNetBankingMethod,
-} from '../../payment-methods/netbanking';
-import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
+import { createNetBankingMethod } from '../../payment-methods/netbanking';
+import { createPayPalMethod } from '../../payment-methods/paypal';
 import { createPayPal } from '../../payment-methods/paypal-js';
-import { createPixPaymentMethod } from '../../payment-methods/pix';
-import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
+import {
+	createPixPaymentMethod,
+	createPixAutomaticoPaymentMethod,
+} from '../../payment-methods/pix';
+import { createWeChatMethod } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
 import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
@@ -58,10 +55,9 @@ export function useCreatePayPalExpress( {
 	labelText?: string | null;
 	shouldShowTaxFields?: boolean;
 } ): PaymentMethod | null {
-	const store = useMemo( () => createPayPalStore(), [] );
 	const paypalMethod = useMemo(
-		() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
-		[ labelText, shouldShowTaxFields, store ]
+		() => createPayPalMethod( { labelText, shouldShowTaxFields } ),
+		[ labelText, shouldShowTaxFields ]
 	);
 	return paypalMethod;
 }
@@ -136,15 +132,22 @@ export function useCreateCreditCard( {
 }
 
 function useCreatePix(): PaymentMethod | null {
-	const isPixEnabled = isEnabled( 'checkout/ebanx-pix' );
 	return useMemo(
 		() =>
-			isPixEnabled
-				? createPixPaymentMethod( {
-						submitButtonContent: <CheckoutSubmitButtonContent />,
-				  } )
-				: null,
-		[ isPixEnabled ]
+			createPixPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
+	);
+}
+
+function useCreatePixAutomatico(): PaymentMethod | null {
+	return useMemo(
+		() =>
+			createPixAutomaticoPaymentMethod( {
+				submitButtonContent: <CheckoutSubmitButtonContent />,
+			} ),
+		[]
 	);
 }
 
@@ -156,16 +159,14 @@ function useCreateAlipay( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createAlipayPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createAlipayMethod( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
@@ -215,16 +216,7 @@ function useCreateWeChat( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createWeChatPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			shouldLoad
-				? createWeChatMethod( {
-						store: paymentMethodStore,
-				  } )
-				: null,
-		[ shouldLoad, paymentMethodStore ]
-	);
+	return useMemo( () => ( shouldLoad ? createWeChatMethod() : null ), [ shouldLoad ] );
 }
 
 function useCreateIdeal( {
@@ -235,16 +227,36 @@ function useCreateIdeal( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createIdealPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createIdealMethod( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
+	);
+}
+
+function useCreateBlik( {
+	isStripeLoading,
+	stripeLoadingError,
+}: {
+	isStripeLoading: boolean;
+	stripeLoadingError: StripeLoadingError;
+} ): PaymentMethod | null {
+	// BLIK availability is gated server-side in WPCOM_Billing_Stripe_Redirect::get_active_payment_methods,
+	// which filters BLIK out of the cart's allowed_payment_methods unless the request is sandboxed.
+	// No additional client gate is needed.
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
+	return useMemo(
+		() =>
+			shouldLoad
+				? createBlikMethod( {
+						submitButtonContent: <CheckoutSubmitButtonContent />,
+				  } )
+				: null,
+		[ shouldLoad ]
 	);
 }
 
@@ -256,16 +268,14 @@ function useCreateSofort( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createSofortPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createSofortMethod( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
@@ -277,28 +287,24 @@ function useCreateEps( {
 	stripeLoadingError: StripeLoadingError;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
-	const paymentMethodStore = useMemo( () => createEpsPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			shouldLoad
 				? createEpsMethod( {
-						store: paymentMethodStore,
 						submitButtonContent: <CheckoutSubmitButtonContent />,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore ]
+		[ shouldLoad ]
 	);
 }
 
 function useCreateNetbanking(): PaymentMethod {
-	const paymentMethodStore = useMemo( () => createNetBankingPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
 			createNetBankingMethod( {
-				store: paymentMethodStore,
 				submitButtonContent: <CheckoutSubmitButtonContent />,
 			} ),
-		[ paymentMethodStore ]
+		[]
 	);
 }
 
@@ -455,8 +461,13 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
-	const pixMethod = useCreatePix();
+	const blikMethod = useCreateBlik( {
+		isStripeLoading,
+		stripeLoadingError,
+	} );
 
+	const pixMethod = useCreatePix();
+	const pixAutomaticoMethod = useCreatePixAutomatico();
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -572,9 +583,11 @@ export default function useCreatePaymentMethods( {
 		paypalExpressMethod,
 		paypalPPCPMethod,
 		idealMethod,
+		blikMethod,
 		sofortMethod,
 		netbankingMethod,
 		pixMethod,
+		pixAutomaticoMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,
@@ -600,6 +613,7 @@ export default function useCreatePaymentMethods( {
 			sofortMethod,
 			netbankingMethod,
 			pixMethod,
+			pixAutomaticoMethod,
 			alipayMethod,
 			p24Method,
 			epsMethod,

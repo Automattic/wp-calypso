@@ -3,15 +3,14 @@ import { sprintf, __ } from '@wordpress/i18n';
 import {
 	isAkismetProduct,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	getPurchaseCancellationFlowType,
-	CANCEL_FLOW_TYPE,
+	DisplayVariant,
 } from '../../../utils/purchase';
 import BackupRetentionOptionOnCancelPurchase from './backup-retention-management/retention-option-on-cancel-purchase';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import GSuiteAccessMessage from './gsuite-access-message';
 import PlanProductRevertContent from './plan-product-revert-content';
-import CancelPurchaseRefundInformation from './refund-information';
+import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { CancelPurchaseState } from './types';
 import type {
 	Purchase,
@@ -22,11 +21,13 @@ import type {
 
 interface CancellationMainContentProps {
 	purchase: Purchase;
+	displayVariant: DisplayVariant;
 	includedDomainPurchase?: Purchase;
 	atomicTransfer?: AtomicTransfer;
 	selectedDomain?: Domain;
 	state: CancelPurchaseState;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
+	isBusy?: boolean;
 	onCancelConfirmationStateChange: ( newState: Partial< CancelPurchaseState > ) => void;
 	onDomainConfirmationChange: ( checked: boolean ) => void;
 	onCustomerConfirmedUnderstandingChange: ( checked: boolean ) => void;
@@ -43,17 +44,20 @@ const willShowDomainOptionsRadioButtons = (
 	return (
 		includedDomainPurchase.is_domain_registration &&
 		purchase.is_refundable &&
-		!! includedDomainPurchase.cost_to_unbundle_display
+		!! includedDomainPurchase.cost_to_unbundle_display &&
+		includedDomainPurchase.is_within_initial_refund_window
 	);
 };
 
 export default function CancellationMainContent( {
 	purchase,
+	displayVariant,
 	includedDomainPurchase,
 	atomicTransfer,
 	selectedDomain,
 	state,
 	purchaseCancelFeatures,
+	isBusy,
 	onCancelConfirmationStateChange,
 	onDomainConfirmationChange,
 	onCustomerConfirmedUnderstandingChange,
@@ -65,6 +69,7 @@ export default function CancellationMainContent( {
 	const isAkismet = isAkismetProduct( purchase );
 	const isDomainRegistrationPurchase = purchase && purchase.is_domain_registration;
 	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( purchase.product_slug );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	const atomicRevertChanges = [
 		{
@@ -135,29 +140,24 @@ export default function CancellationMainContent( {
 
 			<BackupRetentionOptionOnCancelPurchase siteId={ purchase.blog_id } purchase={ purchase } />
 
-			{ isGSuite && (
+			{ isGSuite && ! isSplitCancelRemoveEnabled && (
 				<GSuiteAccessMessage purchase={ purchase } selectedDomain={ selectedDomain } />
 			) }
 
 			<CancelPurchaseFeatureList
 				purchase={ purchase }
+				displayVariant={ displayVariant }
 				cancellationFeatures={ cancellationFeatures }
 				cancellationChanges={ cancellationChanges }
 			/>
 
-			{ getPurchaseCancellationFlowType( purchase ) !== CANCEL_FLOW_TYPE.REMOVE && (
-				<CancelPurchaseRefundInformation
-					purchase={ purchase }
-					isJetpackPurchase={ isJetpack }
-					selectedDomain={ selectedDomain }
-				/>
-			) }
-
 			<PlanProductRevertContent
 				purchase={ purchase }
+				displayVariant={ displayVariant }
 				includedDomainPurchase={ includedDomainPurchase }
 				atomicTransfer={ atomicTransfer }
 				state={ state }
+				isBusy={ isBusy }
 				onDomainConfirmationChange={ onDomainConfirmationChange }
 				onCustomerConfirmedUnderstandingChange={ onCustomerConfirmedUnderstandingChange }
 				onCustomerConfirmedUnderstandingAtomicPlanRevert={

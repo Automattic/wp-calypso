@@ -14,6 +14,7 @@ import isDashboardEnv from '../utils/is-dashboard-env';
 import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
+import { omnibarEvents } from './omnibar/events';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
 
@@ -23,6 +24,8 @@ import './style.scss';
 // eslint-disable-next-line no-restricted-imports
 import 'calypso/layout/masterbar/style.scss';
 import './interim-omnibar/style.scss';
+import './omnibar/style.scss';
+import '@automattic/omnibar/style.scss';
 
 function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {
@@ -45,8 +48,12 @@ function boot( config: AppConfig ) {
 	}
 	const root = createRoot( rootElement );
 
-	if ( isEnabled( 'dashboard/omnibar' ) ) {
-		import( './interim-omnibar' ).then( ( m ) => m.default() ).catch( captureException );
+	if ( isEnabled( 'dashboard/omnibar-radical' ) ) {
+		import( './omnibar' ).then( ( m ) => m.default() ).catch( captureException );
+	} else if ( isEnabled( 'dashboard/omnibar' ) ) {
+		import( './interim-omnibar' )
+			.then( ( m ) => m.default( omnibarEvents ) )
+			.catch( captureException );
 	}
 
 	persistQueryClientPromise.then( () => {

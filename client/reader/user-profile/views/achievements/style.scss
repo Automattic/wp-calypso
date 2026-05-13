@@ -1,0 +1,14 @@
+.is-reader-page {
+	.achievements__header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: 24px;
+		margin: 16px 0;
+	}
+
+	.achievements__header .activity-streak-pill {
+		flex: 1 1 240px;
+		min-width: 240px;
+	}
+}

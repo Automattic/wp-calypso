@@ -1,16 +1,16 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer } from '@automattic/components';
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { createRef, Component, useMemo } from 'react';
 import { connect } from 'react-redux';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFullPostFeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
@@ -32,12 +32,16 @@ import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { keyForPost } from 'calypso/reader/post-key';
 import { ReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
+import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
+import { useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
 import { isCommentsApiDisabled } from 'calypso/state/comments/selectors/get-comments-api-disabled';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
@@ -56,11 +60,11 @@ import {
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 } from 'calypso/state/reader/viewing/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
@@ -251,6 +255,11 @@ export class FullPostView extends Component {
 
 		const tagName = ( event.target || event.srcElement ).tagName;
 		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
+			return;
+		}
+
+		// Don't handle keyboard shortcuts when focus is inside the popover.
+		if ( event.target.closest?.( '.components-popover' ) ) {
 			return;
 		}
 
@@ -690,9 +699,7 @@ export class FullPostView extends Component {
 			feed,
 			referralPost,
 			referral,
-			blogId,
-			feedId,
-			postId,
+			postKey,
 			hasOrganization,
 			isWPForTeamsItem,
 			commentsApiDisabled,
@@ -736,7 +743,6 @@ export class FullPostView extends Component {
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
-		const postKey = { blogId, feedId, postId };
 		const contentWidth = readerContentWidth();
 		const feedUrl = get( post, 'feed_URL' );
 		const shouldShowMarkAsSeen =
@@ -761,7 +767,7 @@ export class FullPostView extends Component {
 						<QueryReaderSite siteId={ +post.site_ID } />
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
-					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
+					<QueryReaderPost postKey={ postKey } />
 					{ ! isLoading &&
 						post &&
 						! post.is_error &&
@@ -805,7 +811,11 @@ export class FullPostView extends Component {
 									onCommentClick={ this.handleCommentClick }
 									onEditClick={ this.onEditClick }
 									commentsApiDisabled={ commentsApiDisabled }
-									showComments={ shouldShowComments( post ) }
+									showComments={
+										isCommentsOpen( post ) ||
+										isLoginRequiredToComment( post ) ||
+										post.discussion?.comment_count > 0
+									}
 									renderMarkAsSeenButton={
 										shouldShowMarkAsSeen ? this.renderMarkAsSenButton : null
 									}
@@ -816,13 +826,7 @@ export class FullPostView extends Component {
 							) }
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<ReaderFeaturedImage
-									canonicalMedia={ null }
-									imageUrl={ post.featured_image }
-									href={ getStreamUrlFromPost( post ) }
-									imageWidth={ contentWidth }
-									children={ <div style={ { width: contentWidth } } /> }
-								/>
+								<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
 							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (
@@ -853,21 +857,24 @@ export class FullPostView extends Component {
 							{ ! isLoading && <ReaderPerformanceTrackerStop /> }
 
 							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
-								{ ! commentsApiDisabled && shouldShowComments( post ) && (
-									<Comments
-										showNestingReplyArrow
-										post={ post }
-										initialSize={ startingCommentId ? commentCount : 10 }
-										pageSize={ 25 }
-										startingCommentId={ startingCommentId }
-										commentCount={ commentCount }
-										maxDepth={ 1 }
-										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-										showConversationFollowButton
-										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-										shouldHighlightNew
-									/>
-								) }
+								{ ! commentsApiDisabled &&
+									( isCommentsOpen( post ) ||
+										isLoginRequiredToComment( post ) ||
+										post.discussion?.comment_count > 0 ) && (
+										<Comments
+											showNestingReplyArrow
+											post={ post }
+											initialSize={ startingCommentId ? commentCount : 10 }
+											pageSize={ 25 }
+											startingCommentId={ startingCommentId }
+											commentCount={ commentCount }
+											maxDepth={ 1 }
+											commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+											showConversationFollowButton
+											shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+											shouldHighlightNew
+										/>
+									) }
 							</div>
 
 							{ isDefaultLayout && (
@@ -876,6 +883,8 @@ export class FullPostView extends Component {
 									nextPost={ this.props.nextPost }
 									previousPostKey={ this.props.previousPostKey }
 									nextPostKey={ this.props.nextPostKey }
+									previousPostUrl={ this.props.previousPostUrl }
+									nextPostUrl={ this.props.nextPostUrl }
 									onNavigate={ this.goToPost }
 								/>
 							) }
@@ -934,7 +943,7 @@ export class FullPostView extends Component {
 	}
 }
 
-export default connect(
+const ConnectedFullPostView = connect(
 	( state, ownProps ) => {
 		const { feedId, blogId, postId } = ownProps;
 		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
@@ -972,20 +981,6 @@ export default connect(
 			props.referralPost = getPostByKey( state, ownProps.referral );
 		}
 
-		const currentStreamKey = getCurrentStream( state );
-		if ( currentStreamKey ) {
-			const previousPostKey = getPreviousItem( state, postKey );
-			const nextPostKey = getNextItem( state, postKey );
-
-			// Fetch full post data for navigation
-			props.previousPost = previousPostKey ? getPostByKey( state, previousPostKey ) : null;
-			props.nextPost = nextPostKey ? getPostByKey( state, nextPostKey ) : null;
-
-			// Keep the keys for navigation
-			props.previousPostKey = previousPostKey;
-			props.nextPostKey = nextPostKey;
-		}
-
 		return props;
 	},
 	{
@@ -1004,3 +999,86 @@ export default connect(
 		requestPostComments,
 	}
 )( FullPostView );
+
+const withFullPostNavigation = ( WrappedComponent ) =>
+	function FullPostNavigationContainer( props ) {
+		const currentStreamKey = useSelector( getCurrentStream );
+		const rawLocale = useSelector( getCurrentLocaleSlug );
+		// Mirror `<Stream>`'s normalization so we look up the correct cached
+		// stream variant — non-default locales carry the slug in the key.
+		const localeSlug = rawLocale && ! isDefaultLocale( rawLocale ) ? rawLocale : null;
+		const currentPostKey = pickBy( {
+			feedId: props.feedId ? +props.feedId : undefined,
+			blogId: props.blogId ? +props.blogId : undefined,
+			postId: props.postId ? +props.postId : undefined,
+		} );
+		const { previousPostKey, nextPostKey } = useStreamPostKeySelection( {
+			streamKey: currentStreamKey ?? '',
+			localeSlug,
+			currentPostKey: Object.keys( currentPostKey ).length ? currentPostKey : null,
+		} );
+
+		const previousPost = useSelector( ( state ) =>
+			previousPostKey ? getPostByKey( state, previousPostKey ) : null
+		);
+		const nextPost = useSelector( ( state ) =>
+			nextPostKey ? getPostByKey( state, nextPostKey ) : null
+		);
+
+		// Pre-compute the navigation URL so the prev/next card's `<a href>`
+		// points at the destination the user lands on (middle-click /
+		// open-in-new-tab respect it). For x-posts that's the original
+		// blog/post — `showSelectedPost` handles the same redirection on
+		// regular clicks, but the visible link must match.
+		const previousPostUrl = useMemo(
+			() => navigationUrlFor( previousPost, previousPostKey ),
+			[ previousPost, previousPostKey ]
+		);
+		const nextPostUrl = useMemo(
+			() => navigationUrlFor( nextPost, nextPostKey ),
+			[ nextPost, nextPostKey ]
+		);
+		return (
+			<WrappedComponent
+				{ ...props }
+				previousPostKey={ previousPostKey }
+				nextPostKey={ nextPostKey }
+				previousPost={ previousPost }
+				nextPost={ nextPost }
+				previousPostUrl={ previousPostUrl }
+				nextPostUrl={ nextPostUrl }
+			/>
+		);
+	};
+
+/**
+ * Picks the URL the prev/next navigation card should link to. For x-posts the
+ * stream-item wrapper is just a "X-post: …" stub on the local site; the user
+ * actually lands on the original blog/post (`showSelectedPost` redirects on
+ * click). Building the same URL here keeps the visible `<a href>` honest for
+ * middle-click / open-in-new-tab. Falls back to the wrapper URL when the
+ * wrapper isn't hydrated yet or has no resolvable x-post target.
+ */
+function navigationUrlFor( post, postKey ) {
+	if ( ! postKey ) {
+		return undefined;
+	}
+	if ( post && isXPost( post ) ) {
+		const xMeta = XPostHelper.getXPostMetadata( post );
+		if ( xMeta?.blogId && xMeta?.postId ) {
+			return `/reader/blogs/${ xMeta.blogId }/posts/${ xMeta.postId }`;
+		}
+		// No `xpost_origin` IDs (P2 xposts without the metadata pair) — mirror
+		// `showFullXPost`'s `window.open( xMeta.postURL )` fallback so the
+		// visible `<a href>` matches where the click actually lands.
+		if ( xMeta?.postURL ) {
+			return xMeta.postURL;
+		}
+	}
+	if ( postKey.feedId ) {
+		return `/reader/feeds/${ postKey.feedId }/posts/${ postKey.postId }`;
+	}
+	return `/reader/blogs/${ postKey.blogId }/posts/${ postKey.postId }`;
+}
+
+export default withFullPostNavigation( ConnectedFullPostView );

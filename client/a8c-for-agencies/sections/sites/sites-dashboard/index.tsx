@@ -14,7 +14,6 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import JetpackSitesDataViews from 'calypso/a8c-for-agencies/sections/sites/features/jetpack/jetpack-sites-dataviews';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import GuidedTour from 'calypso/components/guided-tour';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import useFetchMonitorVerifiedContacts from 'calypso/data/agency-dashboard/use-fetch-monitor-verified-contacts';
@@ -267,7 +266,6 @@ export function SitesDashboard() {
 
 				<SiteNotifications />
 				{ tourId && <GuidedTour defaultTourId={ tourId } /> }
-				<QueryReaderTeams />
 				<DashboardDataContext.Provider
 					value={ {
 						verifiedContacts: {

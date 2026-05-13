@@ -52,7 +52,12 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		coupon,
 		helpers,
 		showBillingDescriptionForIncreasedRenewalPrice,
+		isExperimentVariant,
 	} = usePlansGridContext();
+
+	const pricingBadgeClassName = clsx( 'plans-grid-next-header-price__badge', {
+		'is-plan-differentiators-experiment-badge': isExperimentVariant,
+	} );
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
@@ -74,7 +79,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			prices,
 			currencyCode: currencyCode || 'USD',
 			ignoreWhitespace: true,
-		} ) && ! showBillingDescriptionForIncreasedRenewalPrice?.includes( 'crossed_price' ); // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
+		} ) && ! showBillingDescriptionForIncreasedRenewalPrice; // a temporary fix to handle an issue with isLargeCurrency logic for intro offers
 
 	const termVariantPlanSlug = useTermVariantPlanSlugForSavings( { planSlug, billingPeriod } );
 	const termVariantPricing = Plans.usePricingMetaForGridPlans( {
@@ -128,12 +133,10 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 				( ( compareToMonthlyPrice - monthlyPrice ) / compareToMonthlyPrice ) * 100
 			);
 		}
-		const hideCrossedPrice = showBillingDescriptionForIncreasedRenewalPrice === 'no_crossed_price';
-
 		return (
 			<div className="plans-grid-next-header-price">
 				{ ! current && (
-					<div className="plans-grid-next-header-price__badge">
+					<div className={ pricingBadgeClassName }>
 						{ showBillingDescriptionForIncreasedRenewalPrice
 							? translate( 'Save %(savings)d%%', {
 									args: { savings },
@@ -147,17 +150,15 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 						'is-large-currency': isLargeCurrency,
 					} ) }
 				>
-					{ ! hideCrossedPrice && (
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ compareToMonthlyPrice }
-							displayPerMonthNotation={ false }
-							isLargeCurrency={ isLargeCurrency }
-							isSmallestUnit
-							priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
-							original
-						/>
-					) }
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ compareToMonthlyPrice }
+						displayPerMonthNotation={ false }
+						isLargeCurrency={ isLargeCurrency }
+						isSmallestUnit
+						priceDisplayWrapperClassName="plans-grid-next-header-price__display-wrapper"
+						original
+					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ monthlyPrice }
@@ -175,9 +176,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isGridPlanOneTimeDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				<div className="plans-grid-next-header-price__badge">
-					{ translate( 'One time discount' ) }
-				</div>
+				<div className={ pricingBadgeClassName }>{ translate( 'One time discount' ) }</div>
 				<div
 					className={ clsx( 'plans-grid-next-header-price__pricing-group', {
 						'is-large-currency': isLargeCurrency,
@@ -209,7 +208,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( enableTermSavingsPriceDisplay && termVariantPricing && savings ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				<div className="plans-grid-next-header-price__badge">
+				<div className={ pricingBadgeClassName }>
 					{ translate( 'Save %(savings)d%%', {
 						args: { savings },
 						comment: 'Example: Save 35%',
@@ -246,15 +245,15 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 	if ( isAnyPlanPriceDiscounted ) {
 		return (
 			<div className="plans-grid-next-header-price">
-				{ showBillingDescriptionForIncreasedRenewalPrice === 'crossed_price' && savings ? (
-					<div className="plans-grid-next-header-price__badge">
+				{ showBillingDescriptionForIncreasedRenewalPrice && savings ? (
+					<div className={ pricingBadgeClassName }>
 						{ translate( 'Save %(savings)d%%', {
 							args: { savings },
 							comment: 'Example: Save 35%',
 						} ) }
 					</div>
 				) : (
-					<div className="plans-grid-next-header-price__badge is-hidden">' '</div>
+					<div className={ clsx( pricingBadgeClassName, 'is-hidden' ) }>' '</div>
 				) }
 				{ isLargeCurrency ? (
 					<div className="plans-grid-next-header-price__pricing-group is-large-currency">

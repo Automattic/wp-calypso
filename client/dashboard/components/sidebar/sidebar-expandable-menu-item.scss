@@ -1,3 +1,24 @@
 .dashboard-sidebar__expandable {
 	width: 100%;
 }
+
+.dashboard-sidebar__expandable-panel {
+	interpolate-size: allow-keywords;
+	block-size: 0;
+	overflow: hidden;
+	opacity: 0;
+	transition:
+	block-size 0.2s ease-out,
+	opacity 0.2s ease-out;
+
+	&.is-open {
+		block-size: auto;
+		opacity: 1;
+		overflow: clip;
+		overflow-clip-margin: 2px;
+	}
+
+	.dashboard-sidebar__menu-item {
+		padding-inline-start: calc( 12px + 20px + 8px );
+	}
+}

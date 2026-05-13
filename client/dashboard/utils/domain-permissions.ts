@@ -4,6 +4,13 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { __, sprintf } from '@wordpress/i18n';
 import type { Domain } from '@automattic/api-core';
 
+export class DomainPermissionError extends Error {
+	constructor( message: string ) {
+		super( message );
+		this.name = 'DomainPermissionError';
+	}
+}
+
 /**
  * Individual domain check functions
  * Each function checks a specific condition and returns true if the check passes, false if it fails
@@ -21,7 +28,12 @@ const checkNotHundredYearDomain: DomainCheckFunction = ( domain: Domain ) =>
 	! domain.is_hundred_year_domain;
 
 const checkNotPendingRegistration: DomainCheckFunction = ( domain: Domain ) =>
-	! domain.is_pending_registration && ! domain.is_pending_registration_at_registry;
+	! domain.pending_registration && ! domain.pending_registration_at_registry;
+
+const getPendingRegistrationErrorMessage = () =>
+	__(
+		'Your domain is being registered - this usually takes just a few minutes. Please check back shortly.'
+	);
 
 const checkNotAftermarketAuction: DomainCheckFunction = ( domain: Domain ) =>
 	! domain.aftermarket_auction;
@@ -112,10 +124,7 @@ const DOMAIN_PERMISSION_CHECKS = {
 		},
 		{
 			check: checkNotPendingRegistration,
-			getErrorMessage: () =>
-				__(
-					'We are still setting up your domain. You will not be able to transfer it until the registration setup is done.'
-				),
+			getErrorMessage: getPendingRegistrationErrorMessage,
 		},
 		{
 			check: checkNotAftermarketAuction,
@@ -135,6 +144,10 @@ const DOMAIN_PERMISSION_CHECKS = {
 	],
 	[ PermissionCheck.NAME_SERVERS ]: [
 		{
+			check: checkNotPendingRegistration,
+			getErrorMessage: getPendingRegistrationErrorMessage,
+		},
+		{
 			check: checkCanManageNameServers,
 			getErrorMessage: ( domain: Domain ) =>
 				domain.cannot_manage_name_servers_reason ||
@@ -143,6 +156,10 @@ const DOMAIN_PERMISSION_CHECKS = {
 	],
 	[ PermissionCheck.DNS_RECORDS ]: [
 		{
+			check: checkNotPendingRegistration,
+			getErrorMessage: getPendingRegistrationErrorMessage,
+		},
+		{
 			check: checkCanManageDnsRecords,
 			getErrorMessage: ( domain: Domain ) =>
 				domain.cannot_manage_dns_records_reason ||
@@ -150,6 +167,10 @@ const DOMAIN_PERMISSION_CHECKS = {
 		},
 	],
 	[ PermissionCheck.CONTACT_INFO ]: [
+		{
+			check: checkNotPendingRegistration,
+			getErrorMessage: getPendingRegistrationErrorMessage,
+		},
 		{
 			check: checkNotInSupportSession,
 			getErrorMessage: () =>
@@ -179,6 +200,10 @@ const DOMAIN_PERMISSION_CHECKS = {
 	],
 	[ PermissionCheck.CONTACT_VERIFICATION ]: [
 		{
+			check: checkNotPendingRegistration,
+			getErrorMessage: getPendingRegistrationErrorMessage,
+		},
+		{
 			check: checkCurrentUserIsOwner,
 			getErrorMessage: ( domain: Domain ) =>
 				sprintf(
@@ -202,7 +227,7 @@ function checkDomainPermissions(
 
 	for ( const { check, getErrorMessage } of checks ) {
 		if ( ! check( domain ) ) {
-			throw new Error( getErrorMessage( domain ) );
+			throw new DomainPermissionError( getErrorMessage( domain ) );
 		}
 	}
 }
@@ -231,4 +256,10 @@ export function checkDomainDnsRecordsPermissions( domain: Domain ): void {
 
 export function checkDomainContactVerificationPermissions( domain: Domain ): void {
 	checkDomainPermissions( domain, PermissionCheck.CONTACT_VERIFICATION );
+}
+
+export function checkDomainNotPendingRegistration( domain: Domain ): void {
+	if ( ! checkNotPendingRegistration( domain ) ) {
+		throw new DomainPermissionError( getPendingRegistrationErrorMessage() );
+	}
 }

@@ -1,3 +1,10 @@
+// Layer order — weakest to strongest.
+// Unlayered styles (the bulk of Calypso) still beat both layers below.
+// Pinning `reset` before `wp-ui-components` lets `@wordpress/ui` defaults
+// override our reset (otherwise an unlayered reset would win over the
+// package's `@layer wp-ui-components` styles).
+@layer reset, wp-ui-components;
+
 // External Dependencies
 @import "vendor";
 

@@ -11,44 +11,7 @@ import { store as imageStudioStore, type ImageStudioEntryPoint } from '../store'
 import { getSessionId } from '../utils/session';
 import type { ImageStudioMode, MetadataField } from '../types';
 
-const TRACKS_PREFIX_MAP: Record< ImageStudioPlatform, string > = {
-	wpcom: 'wpcom',
-	jetpack: 'jetpack',
-};
-
-export type ImageStudioPlatform = 'wpcom' | 'jetpack';
-
-// Cached platform value — doesn't change during a session
-let cachedPlatform: ImageStudioPlatform | null = null;
-
-/**
- * Detect the current product where Image Studio is running.
- * - 'wpcom': Big Sky plugin is active (WP.com AI Assistant)
- * - 'jetpack': Loaded via Agents Manager / Jetpack (Jetpack AI Assistant)
- * Result is cached since platform doesn't change during a session.
- * @returns The detected platform identifier
- */
-export function detectPlatform(): ImageStudioPlatform {
-	if ( cachedPlatform ) {
-		return cachedPlatform;
-	}
-
-	// Big Sky plugin sets this global when active
-	if ( window.bigSkyInitialState ) {
-		cachedPlatform = 'wpcom';
-	} else {
-		cachedPlatform = 'jetpack';
-	}
-
-	return cachedPlatform;
-}
-
-/**
- * Reset the cached platform value. Exported for testing only.
- */
-export function resetPlatformCache(): void {
-	cachedPlatform = null;
-}
+const TRACKS_PREFIX = 'jetpack_big_sky';
 
 /**
  * Format suggestion IDs into a pipe-delimited string for tracking
@@ -79,7 +42,7 @@ function getImageStudioEntryPoint(): string | null {
 }
 
 /**
- * Record a tracks event with a platform-specific prefix
+ * Record a tracks event with the Big Sky prefix
  * @param eventName  - The event name to track
  * @param properties - Additional properties to include
  */
@@ -87,8 +50,7 @@ function recordTracksEvent(
 	eventName: string,
 	properties: Record< string, string | number | boolean > = {}
 ): void {
-	const prefix = TRACKS_PREFIX_MAP[ detectPlatform() ];
-	recordTracksEventBase( `${ prefix }_${ eventName }`, properties );
+	recordTracksEventBase( `${ TRACKS_PREFIX }_${ eventName }`, properties );
 }
 
 /**
@@ -118,6 +80,9 @@ function recordImageStudioEvent(
 	if ( win.typenow ) {
 		baseProps.post_type = win.typenow;
 	}
+
+	// Add dev mode flag for filtering test/internal traffic
+	baseProps.is_test = !! win.imageStudioData?.isDevMode;
 
 	recordTracksEvent( eventName, baseProps );
 }
@@ -218,12 +183,10 @@ export function trackImageStudioOpened( {
 	if ( attachmentId ) {
 		properties.attachment_id = attachmentId;
 	}
-	// For the opened event, use the passed entry point since the store hasn't been updated yet
 	if ( entryPoint ) {
 		properties.placement = entryPoint;
 	}
-	// Don't use recordImageStudioEvent here since we're manually adding placement
-	recordTracksEvent( 'image_studio_opened', properties );
+	recordImageStudioEvent( 'image_studio_opened', properties );
 }
 
 /**
@@ -574,4 +537,136 @@ export function trackImageStudioImageDeletedPermanently( {
 		properties.attachment_id = attachmentId;
 	}
 	recordImageStudioEvent( 'image_studio_file_deleted_permanently', properties );
+}
+
+/**
+ * Tracks when the Reel share button is clicked, before any pre-checks run.
+ * @param options                  - Tracking options
+ * @param options.attachmentId     - The video attachment ID
+ * @param options.durationSeconds  - Optional duration of the clip in seconds
+ */
+export function trackImageStudioReelShareClicked( {
+	attachmentId,
+	durationSeconds,
+}: {
+	attachmentId: number;
+	durationSeconds?: number | null;
+} ): void {
+	const properties: Record< string, string | number > = { attachment_id: attachmentId };
+	if ( durationSeconds != null ) {
+		properties.duration_seconds = durationSeconds;
+	}
+	recordImageStudioEvent( 'image_studio_reel_share_clicked', properties );
+}
+
+/**
+ * Tracks when the Reel share is blocked by a missing Instagram Business connection.
+ */
+export function trackImageStudioReelShareNotConnected(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_not_connected' );
+}
+
+/**
+ * Tracks when the Reel share is blocked because the IG connection exists but is
+ * toggled off for this post in the Jetpack Social sidebar.
+ */
+export function trackImageStudioReelShareConnectionDisabled(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_connection_disabled' );
+}
+
+/**
+ * Tracks when the Reel share is blocked because the post isn't published yet.
+ */
+export function trackImageStudioReelShareNotPublished(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_post_not_published' );
+}
+
+/**
+ * Tracks when the Reel share is blocked by missing video state (defensive).
+ */
+export function trackImageStudioReelShareInvalidState(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_invalid_state' );
+}
+
+/**
+ * Tracks when the user dismisses the Reel share confirmation dialog.
+ */
+export function trackImageStudioReelShareCancelled(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_cancelled' );
+}
+
+/**
+ * Tracks when shareCurrentPost successfully dispatched the IG submission.
+ */
+export function trackImageStudioReelShareDispatched(): void {
+	recordImageStudioEvent( 'image_studio_reel_share_dispatched' );
+}
+
+/**
+ * Tracks when shareCurrentPost returned false or threw.
+ * @param errorMessage - Optional error description from the thunk/exception.
+ */
+export function trackImageStudioReelShareFailed( errorMessage?: string ): void {
+	const properties: Record< string, string | number > = {};
+	if ( errorMessage ) {
+		properties.error_message = errorMessage;
+	}
+	recordImageStudioEvent( 'image_studio_reel_share_failed', properties );
+}
+
+/**
+ * Tracks when the generic share initiates a particular method. Fires once per
+ * attempted method, before the work runs — so a click that probes web-share,
+ * finds files unsupported, and falls back to download produces three events
+ * (one per method tried).
+ * @param options        - Tracking options
+ * @param options.method - 'web-share' (Web Share API attempt), 'web-share-unsupported'
+ *                         (canShare rejected files), or 'download' (fallback / direct).
+ */
+export function trackImageStudioGenericShareClicked( {
+	method,
+}: {
+	method: 'web-share' | 'web-share-unsupported' | 'download';
+} ): void {
+	recordImageStudioEvent( 'image_studio_generic_share_clicked', { method } );
+}
+
+/**
+ * Tracks when the generic share completed successfully.
+ * @param options        - Tracking options
+ * @param options.method - 'web-share' or 'download' (the only methods that can complete;
+ *                         'web-share-unsupported' is a precondition failure, never a success).
+ */
+export function trackImageStudioGenericShareCompleted( {
+	method,
+}: {
+	method: 'web-share' | 'download';
+} ): void {
+	recordImageStudioEvent( 'image_studio_generic_share_completed', { method } );
+}
+
+/**
+ * Tracks when the generic share failed.
+ * @param options             - Tracking options
+ * @param options.method      - 'web-share', 'web-share-unsupported', or 'download'
+ * @param options.message     - Optional error message
+ * @param options.failureKind - Optional categorical reason: 'http' | 'open-blocked'
+ */
+export function trackImageStudioGenericShareFailed( {
+	method,
+	message,
+	failureKind,
+}: {
+	method: 'web-share' | 'web-share-unsupported' | 'download';
+	message?: string;
+	failureKind?: 'http' | 'open-blocked';
+} ): void {
+	const properties: Record< string, string | number > = { method };
+	if ( message ) {
+		properties.error_message = message;
+	}
+	if ( failureKind ) {
+		properties.failure_kind = failureKind;
+	}
+	recordImageStudioEvent( 'image_studio_generic_share_failed', properties );
 }

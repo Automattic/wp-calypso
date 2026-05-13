@@ -7,13 +7,22 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Fragment } from 'react';
 import { getAccountMcpAbilities } from '../../../../me/mcp/utils';
+import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { CATEGORY_ORDER, getDisplayCategory, isWriteTool } from '../categories';
+import {
+	CATEGORY_ORDER,
+	SUB_CATEGORY_ORDER,
+	getDisplayCategory,
+	getSubCategory,
+	isWriteTool,
+	sortTools,
+} from '../categories';
 
 interface McpAbility {
 	title: string;
@@ -28,6 +37,7 @@ interface McpAbility {
 }
 
 export default function McpWrite() {
+	const { recordTracksEvent } = useAnalytics();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const mcpAbilities = getAccountMcpAbilities( userSettings || {} );
 
@@ -47,25 +57,49 @@ export default function McpWrite() {
 	} );
 
 	const handleToolChange = ( toolId: string, enabled: boolean ) => {
-		mutation.mutate( {
-			mcp_abilities: {
-				account: {
-					[ toolId ]: enabled,
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: {
+						[ toolId ]: enabled,
+					},
 				},
-			},
-		} as any );
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_write_tool_toggled', {
+						tool_id: toolId,
+						enabled,
+					} );
+				},
+			}
+		);
 	};
 
-	const handleEnableAll = ( categoryTools: Array< [ string, McpAbility ] >, enabled: boolean ) => {
+	const handleEnableAll = (
+		categoryTools: Array< [ string, McpAbility ] >,
+		enabled: boolean,
+		category: string
+	) => {
 		const accountAbilities: Record< string, boolean > = {};
 		categoryTools.forEach( ( [ toolId ] ) => {
 			accountAbilities[ toolId ] = enabled;
 		} );
-		mutation.mutate( {
-			mcp_abilities: {
-				account: accountAbilities,
-			},
-		} as any );
+		mutation.mutate(
+			{
+				mcp_abilities: {
+					account: accountAbilities,
+				},
+			} as any,
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_write_enable_all_toggled', {
+						enabled,
+						category,
+					} );
+				},
+			}
+		);
 	};
 
 	// Group tools by display category
@@ -79,6 +113,58 @@ export default function McpWrite() {
 	} );
 
 	const hasWriteTools = writeTools.length > 0;
+
+	const renderToolToggles = ( tools: Array< [ string, McpAbility ] > ) =>
+		tools.map( ( [ toolId, tool ] ) => (
+			<ToggleControl
+				key={ toolId }
+				__nextHasNoMarginBottom
+				checked={ tool.enabled }
+				disabled={ mutation.isPending }
+				label={ tool.title }
+				help={ tool.description }
+				onChange={ ( checked ) => handleToolChange( toolId, checked ) }
+			/>
+		) );
+
+	const renderSubGroupedTools = (
+		categoryTools: Array< [ string, McpAbility ] >,
+		categoryName: string
+	) => {
+		const subGrouped: Record< string, Array< [ string, McpAbility ] > > = {};
+		categoryTools.forEach( ( [ toolId, tool ] ) => {
+			const sub = getSubCategory( toolId, tool ) ?? '';
+			if ( ! subGrouped[ sub ] ) {
+				subGrouped[ sub ] = [];
+			}
+			subGrouped[ sub ].push( [ toolId, tool ] );
+		} );
+
+		const order = SUB_CATEGORY_ORDER[ categoryName ] ?? [];
+		const subGroups = order.filter( ( sub ) => subGrouped[ sub ] && subGrouped[ sub ].length > 0 );
+		// Tools with no sub-category are appended at the end so they are never silently dropped.
+		const ungrouped = subGrouped[ '' ] ?? [];
+		const allGroups = ungrouped.length > 0 ? [ ...subGroups, '' ] : subGroups;
+
+		return allGroups.map( ( subName, index ) => (
+			<Fragment key={ subName || '__ungrouped__' }>
+				{ index > 0 && (
+					<CardBody style={ { padding: 'calc(4px * 2) calc(4px * 6)' } }>
+						<hr
+							style={ {
+								border: 'none',
+								borderTop: '1px solid var(--color-border-subtle, #dcdcde)',
+								margin: 0,
+							} }
+						/>
+					</CardBody>
+				) }
+				<CardBody>
+					<VStack spacing={ 4 }>{ renderToolToggles( sortTools( subGrouped[ subName ] ) ) }</VStack>
+				</CardBody>
+			</Fragment>
+		) );
+	};
 
 	return (
 		<PageLayout
@@ -109,6 +195,7 @@ export default function McpWrite() {
 					}
 
 					const allEnabled = categoryTools.every( ( [ , tool ] ) => tool.enabled );
+					const subOrder = SUB_CATEGORY_ORDER[ categoryName ];
 
 					return (
 						<Card key={ categoryName }>
@@ -122,26 +209,20 @@ export default function McpWrite() {
 										checked={ allEnabled }
 										disabled={ mutation.isPending }
 										label={ __( 'Enable all' ) }
-										onChange={ ( checked ) => handleEnableAll( categoryTools, checked ) }
+										onChange={ ( checked ) =>
+											handleEnableAll( categoryTools, checked, categoryName )
+										}
 									/>
 								</HStack>
 							</CardBody>
 							<CardDivider />
-							<CardBody>
-								<VStack spacing={ 4 }>
-									{ categoryTools.map( ( [ toolId, tool ] ) => (
-										<ToggleControl
-											key={ toolId }
-											__nextHasNoMarginBottom
-											checked={ tool.enabled }
-											disabled={ mutation.isPending }
-											label={ tool.title }
-											help={ tool.description }
-											onChange={ ( checked ) => handleToolChange( toolId, checked ) }
-										/>
-									) ) }
-								</VStack>
-							</CardBody>
+							{ subOrder ? (
+								renderSubGroupedTools( categoryTools, categoryName )
+							) : (
+								<CardBody>
+									<VStack spacing={ 4 }>{ renderToolToggles( categoryTools ) }</VStack>
+								</CardBody>
+							) }
 						</Card>
 					);
 				} ) }

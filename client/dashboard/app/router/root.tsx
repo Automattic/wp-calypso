@@ -4,11 +4,12 @@ import {
 	queryClient,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { createRootRouteWithContext, redirect } from '@tanstack/react-router';
+import { createRootRouteWithContext } from '@tanstack/react-router';
 import { wpcomLink } from '../../utils/link';
 import { AUTH_QUERY_KEY } from '../auth';
 import Root from '../root';
 import NotFoundRoot from '../root/error';
+import { dashboardRedirect } from './redirect';
 import type { AppConfig } from '../context';
 import type { User } from '@automattic/api-core';
 
@@ -42,10 +43,14 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 
 		const userPreference = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 		const optIn = userPreference[ 'hosting-dashboard-opt-in' ];
-		if ( optIn?.value === 'opt-in' || optIn?.value === 'forced-opt-in' ) {
+		const isDashboardEnrolled =
+			optIn?.value === 'opt-in' ||
+			optIn?.value === 'forced-opt-in' ||
+			config.isEnabled( 'dashboard/forced-opt-in' );
+		if ( isDashboardEnrolled ) {
 			return;
 		}
 
-		throw redirect( { href: wpcomLink( '/' ), replace: true } );
+		throw dashboardRedirect( { href: wpcomLink( '/' ), replace: true } );
 	},
 } );

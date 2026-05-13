@@ -1,4 +1,5 @@
 import { LineChart } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { GlyphCircle, GlyphSquare, GlyphTriangle } from '@visx/glyph';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -14,8 +15,8 @@ import {
 	getStatusText,
 	mapThresholdsToStatus,
 } from '../../utils/site-performance';
+import { VIEWPORT_BREAKPOINTS } from './constants';
 import type { SitePerformanceReport, SitePerformanceHistory, Metrics } from '@automattic/api-core';
-import '@automattic/charts/line-chart/style.css';
 
 const WEEK_TO_SHOW = 8;
 
@@ -152,7 +153,7 @@ export default function CoreMetricsChart( {
 	metricsThresholds: Record< Metrics, { good: number; needsImprovement: number; bad: number } >;
 } ) {
 	const { good, needsImprovement } = metricsThresholds[ metric ];
-	const isDesktop = useViewportMatch( 'medium' );
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
 	const lineChartData = useLineChartData( metric, report.history );
 
 	const formatThresholdValue = ( valuation: Valuation ) => {

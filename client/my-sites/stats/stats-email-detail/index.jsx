@@ -21,11 +21,10 @@ import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { isHttps } from 'calypso/lib/url';
-import PageHeader from 'calypso/my-sites/stats/components/headers/page-header';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import {
-	useStatsNavigationHistory,
+	useStatsBreadcrumbTrail,
 	recordCurrentScreen,
 } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
@@ -233,7 +232,7 @@ class StatsEmailDetail extends Component {
 			showViewLink,
 			previewUrl,
 			siteSlug,
-			lastScreen,
+			breadcrumbTrail,
 		} = this.props;
 		const { maxBars } = this.state;
 
@@ -253,16 +252,6 @@ class StatsEmailDetail extends Component {
 		// TODO: Refactor navigationItems to a single object with backLink and title attributes.
 		const navigationItems = this.getNavigationItemsWithTitle( this.getNavigationTitle() );
 
-		const backLinkProps = {
-			text: lastScreen?.text,
-			url: lastScreen?.url,
-		};
-		const titleProps = {
-			title: navigationItems[ 1 ].label,
-			// Remove the default logo for Odyssey stats.
-			titleLogo: null,
-		};
-
 		let actionLabel;
 		const postType = post && post.type !== null ? post.type : 'post';
 		if ( postType === 'page' ) {
@@ -273,7 +262,21 @@ class StatsEmailDetail extends Component {
 
 		return (
 			<>
-				<Main className={ clsx( 'stats', 'stats__email-detail' ) }>
+				<Main
+					fullWidthLayout
+					className={ clsx( 'stats__email-detail' ) }
+					breadcrumbs={ [
+						...breadcrumbTrail.map( ( item ) => ( { label: item.label, to: item.url } ) ),
+						{ label: navigationItems[ 1 ].label },
+					] }
+					pageActions={
+						showViewLink && (
+							<CoreButton onClick={ this.openPreview } variant="primary" size="compact">
+								<span>{ actionLabel }</span>
+							</CoreButton>
+						)
+					}
+				>
 					<QueryPosts siteId={ siteId } postId={ postId } />
 					<QueryPostStats siteId={ siteId } postId={ postId } />
 					<QueryEmailStats
@@ -292,18 +295,6 @@ class StatsEmailDetail extends Component {
 					<PageViewTracker
 						path="/stats/email/:statType/:site/:period/:email_id"
 						title="Stats > Single Email"
-					/>
-
-					<PageHeader
-						backLinkProps={ backLinkProps }
-						titleProps={ titleProps }
-						rightSection={
-							showViewLink && (
-								<CoreButton onClick={ this.openPreview } variant="primary">
-									<span>{ actionLabel }</span>
-								</CoreButton>
-							)
-						}
 					/>
 
 					{ ! isRequestingStats && ! countViews && post && (
@@ -333,7 +324,7 @@ class StatsEmailDetail extends Component {
 									givenSiteId={ givenSiteId }
 								/>
 							</div>
-							<div className="stats__email-wrapper">
+							<div className="stats stats__email-wrapper">
 								<h3 className="highlight-cards-heading">{ this.getTitle( statType ) }</h3>
 
 								<StatsEmailTopRow
@@ -451,8 +442,8 @@ class StatsEmailDetail extends Component {
 }
 
 const StatsEmailDetailWrapper = ( props ) => {
-	const lastScreen = useStatsNavigationHistory();
-	return <StatsEmailDetail { ...props } lastScreen={ lastScreen } />;
+	const breadcrumbTrail = useStatsBreadcrumbTrail();
+	return <StatsEmailDetail { ...props } breadcrumbTrail={ breadcrumbTrail } />;
 };
 
 const connectComponent = connect(

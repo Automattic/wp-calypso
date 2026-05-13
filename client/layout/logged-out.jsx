@@ -36,7 +36,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -57,6 +57,27 @@ import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-sche
 import HelpCenterLoader from './help-center-loader';
 
 import './style.scss';
+
+const loadWooCoreProfiler = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-woo-core-profiler" */ 'calypso/layout/masterbar/woo-core-profiler'
+	);
+const loadJetpackCloudStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-jetpack-cloud-style" */ 'calypso/jetpack-cloud/style'
+	);
+const loadA8cForAgenciesStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
+	);
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+const loadSupportArticleDialog = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
+	);
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -88,11 +109,12 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isJetpackCloud,
+	isJetpackConnectorLogin,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
-	const { ciabConfig } = usePartnerBranding();
+	const { partnerConfig } = usePartnerBranding();
 
 	const dashboard =
 		typeof window !== 'undefined' && getDashboardFromHostname( window.location.hostname );
@@ -133,15 +155,11 @@ const LayoutLoggedOut = ( {
 		! isWooOAuth2Client( oauth2Client );
 
 	const loadHelpCenter =
-		// Load for all logged out users only on the devdocs page.
-		( isLoggedIn === false &&
-			isEnabled( 'help-center/logged-out' ) &&
-			'devdocs' === sectionName ) ||
-		( isLoggedIn &&
-			// we want to show only the Help center in my home and the help section (but not the FAB)
-			( [ 'home', 'help' ].includes( sectionName ) ||
-				currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
-			userAllowedToHelpCenter );
+		isLoggedIn &&
+		// we want to show only the Help center in my home and the help section (but not the FAB)
+		( [ 'home', 'help' ].includes( sectionName ) ||
+			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
+		userAllowedToHelpCenter;
 
 	const isThemeShowcaseModern =
 		[ 'themes', 'theme' ].includes( sectionName ) &&
@@ -169,12 +187,13 @@ const LayoutLoggedOut = ( {
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWoo,
 		'is-blaze-pro': isBlazePro,
-		'is-ciab-font-system': ciabConfig?.fontStyle === 'system',
+		'is-ciab-font-system': partnerConfig?.fontStyle === 'system',
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
+		'is-jetpack-connector-login': isJetpackConnectorLogin,
 		'is-theme-showcase-modern': isThemeShowcaseModern,
 	};
 
@@ -251,9 +270,7 @@ const LayoutLoggedOut = ( {
 	} else if ( isWooJPC ) {
 		classes.woo = true;
 		classes[ 'has-no-masterbar' ] = false;
-		masterbar = (
-			<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
-		);
+		masterbar = <AsyncLoad require={ loadWooCoreProfiler } placeholder={ null } />;
 	} else {
 		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut
@@ -292,17 +309,13 @@ const LayoutLoggedOut = ( {
 					) }
 				</div>
 				{ isJetpackCloudEnvironment() && (
-					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+					<AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } />
 				) }
 				{ isA8CForAgencies() && (
-					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+					<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 				) }
 				<div id="content" className="layout__content">
-					<AsyncLoad
-						require="calypso/components/global-notices"
-						placeholder={ null }
-						id="notices"
-					/>
+					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					<div id="primary" className="layout__primary">
 						{ primary }
 					</div>
@@ -319,7 +332,7 @@ const LayoutLoggedOut = ( {
 						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
-							<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+							<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 						) }
 					</>
 				) }
@@ -405,6 +418,14 @@ export default withCurrentRoute(
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
+			const redirectToOriginal = getRedirectToOriginal( state ) || currentQuery?.redirect_to;
+			const redirectFromParam = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get(
+				'from'
+			);
+			const isJetpackConnectorLogin =
+				isJetpackLogin &&
+				( redirectFromParam === 'jetpack-connector' || currentQuery?.from === 'jetpack-connector' );
+
 			return {
 				isAkismet,
 				isPassport,
@@ -428,6 +449,7 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
+				isJetpackConnectorLogin,
 			};
 		},
 		{ clearLastActionRequiresLogin }

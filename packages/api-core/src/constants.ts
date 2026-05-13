@@ -127,6 +127,7 @@ export const TrialPlans = [
 ];
 
 export const DotcomFeatures = {
+	APM: 'apm',
 	ATOMIC: 'atomic',
 	BACKUPS: 'backups',
 	BACKUPS_SELF_SERVE: 'backups-self-serve',
@@ -183,6 +184,7 @@ export type JetpackModuleSlug = ( typeof JetpackModules )[ keyof typeof JetpackM
 // Features that needs Atomic or self-hosted infrastructure,
 // mapped to the required WordPress.com plan feature.
 export const HostingFeatures = {
+	APM: DotcomFeatures.APM,
 	BACKUPS: DotcomFeatures.BACKUPS,
 	BACKUPS_SELF_SERVE: DotcomFeatures.BACKUPS_SELF_SERVE,
 	BIG_SKY: DotcomFeatures.BIG_SKY,
@@ -222,6 +224,8 @@ export const SubscriptionBillPeriod = {
 	PLAN_DECENNIAL_PERIOD: 3650,
 	PLAN_CENTENNIAL_PERIOD: 36500,
 } as const;
+export type SubscriptionBillPeriodValue =
+	( typeof SubscriptionBillPeriod )[ keyof typeof SubscriptionBillPeriod ];
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 

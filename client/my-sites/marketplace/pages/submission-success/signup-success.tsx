@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import checkCircleImage from 'calypso/assets/images/marketplace/check-circle-gray.svg';
 import settingsImage from 'calypso/assets/images/marketplace/settings.svg';
 import shoppingCartImage from 'calypso/assets/images/marketplace/shopping-cart.svg';
-import submissionSuccessImage from 'calypso/assets/images/marketplace/submission-success.png';
+import submissionSuccessImage from 'calypso/assets/images/marketplace/submission-success.webp';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserDisplayName } from 'calypso/state/current-user/selectors';

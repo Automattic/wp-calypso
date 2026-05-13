@@ -14,10 +14,12 @@ export default function MigrationsCommissionsList( {
 	items,
 	fetchMigratedSites,
 	migrationTags,
+	canTagSitesForCommission,
 }: {
 	items: TaggedSite[];
 	fetchMigratedSites: () => void;
 	migrationTags: string[];
+	canTagSitesForCommission: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -58,7 +60,13 @@ export default function MigrationsCommissionsList( {
 				label: translate( 'Review status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item }: { item: TaggedSite } ): ReactNode => {
-					return <ReviewStatusColumn reviewStatus={ item.incentive_status } />;
+					return (
+						<ReviewStatusColumn
+							reviewStatus={ item.incentive_status }
+							rejectionReason={ item.incentive_rejection_reason }
+							canTagSitesForCommission={ canTagSitesForCommission }
+						/>
+					);
 				},
 				enableHiding: false,
 				enableSorting: false,
@@ -77,11 +85,16 @@ export default function MigrationsCommissionsList( {
 				enableSorting: false,
 			},
 		],
-		[ translate, fetchMigratedSites, migrationTags ]
+		[ translate, fetchMigratedSites, migrationTags, canTagSitesForCommission ]
 	);
 
 	if ( ! isDesktop ) {
-		return <MigrationsCommissionsListMobileView commissions={ items } />;
+		return (
+			<MigrationsCommissionsListMobileView
+				commissions={ items }
+				canTagSitesForCommission={ canTagSitesForCommission }
+			/>
+		);
 	}
 
 	return (

@@ -49,7 +49,10 @@ export class SlideshowBlockFlow implements BlockFlow {
 			await Promise.all( [
 				fileInputLocator.setInputFiles( testFile.fullpath ),
 				context.page.waitForResponse(
-					( response ) => response.url().includes( 'media?' ) && response.ok()
+					( response ) =>
+						response.request().method() === 'POST' &&
+						response.url().includes( 'media?' ) &&
+						response.ok()
 				),
 			] );
 			const uploadingIndicatorLocator = editorCanvas.locator( selectors.uploadingIndicator ).last();

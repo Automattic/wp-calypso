@@ -48,10 +48,7 @@ interface SignupFormSocialFirst {
 	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
-	isExperimentVariant?: boolean;
-	isEmailVariation?: boolean;
-	isMessagingVariation?: boolean;
-	isSliderVariation?: boolean;
+	isEmailFirstVariant?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -93,10 +90,7 @@ const SignupFormSocialFirst = ( {
 	passDataToNextStep,
 	backButtonInFooter = true,
 	emailLabelText,
-	isExperimentVariant,
-	isEmailVariation,
-	isMessagingVariation,
-	isSliderVariation,
+	isEmailFirstVariant,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -126,8 +120,6 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
-		} else if ( isMessagingVariation ) {
-			tosText = __( 'Sign up for free to start creating your site.' );
 		} else {
 			tosText = createInterpolateElement(
 				__(
@@ -140,7 +132,7 @@ const SignupFormSocialFirst = ( {
 		return (
 			<p
 				className={ clsx( 'signup-form-social-first__tos-link', {
-					'is-left-aligned': isExperimentVariant,
+					'is-left-aligned': isEmailFirstVariant,
 				} ) }
 			>
 				{ tosText }
@@ -149,7 +141,7 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		return isMessagingVariation ? null : (
+		return (
 			<p className="signup-form-social-first__email-tos-link">
 				{ createInterpolateElement(
 					__(
@@ -170,7 +162,7 @@ const SignupFormSocialFirst = ( {
 	};
 
 	let emailLoginComponent = null;
-	if ( isEmailVariation ) {
+	if ( isEmailFirstVariant ) {
 		emailLoginComponent = (
 			<>
 				<div className="signup-form-social-first-email">
@@ -222,10 +214,10 @@ const SignupFormSocialFirst = ( {
 					disableTosText
 					compact
 					isSocialFirst={ isSocialFirst }
-					shouldShowEmailButton={ ! isEmailVariation }
+					shouldShowEmailButton={ ! isEmailFirstVariant }
 					allowedSocialServices={ allowedSocialServices }
 				/>
-				{ isSliderVariation && (
+				{ isEmailFirstVariant && (
 					<p className="signup-form-social-first__login-link">
 						{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
 							link: <Step.LinkButton href={ logInUrl } />,

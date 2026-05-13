@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import PostComments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import { isCommentsOpen } from 'calypso/reader/post/capabilities';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestPostComments } from 'calypso/state/comments/actions';
@@ -16,8 +17,7 @@ const PostCardComments = ( { post, handleClick, fixedHeaderHeight, streamKey } )
 
 	// If the user is unable to comment and the comment count is zero, there is no reason to fetch
 	// and show comments.
-	const shouldHideComments =
-		! post.discussion?.comments_open && post.discussion?.comment_count === 0;
+	const shouldHideComments = ! isCommentsOpen( post ) && post.discussion?.comment_count === 0;
 
 	useEffect( () => {
 		// Request comments if they have not been set in state.

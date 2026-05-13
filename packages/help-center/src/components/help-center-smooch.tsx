@@ -109,6 +109,14 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const authExternalId = authData?.externalId;
 	const authIsLoggedIn = authData?.isLoggedIn;
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
+
+	// Keep a ref to the latest JWT so the init effect can always read a fresh value
+	// without listing the JWT string itself as a dependency. JWT rotation is handled
+	// by Smooch's onInvalidAuth delegate — we only need to (re-)initialize when a JWT
+	// transitions from absent → present, not on every value change.
+	const authJwtRef = useRef< string | undefined >( authJwt );
+	authJwtRef.current = authJwt;
+	const hasAuthJwt = !! authJwt;
 	const {
 		setIsChatLoaded,
 		setZendeskClientId,
@@ -177,7 +185,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	// Initialize Smooch which communicates with Zendesk
 	useEffect( () => {
-		if ( ! isMessagingScriptLoaded || ! authIsLoggedIn || ! authJwt || ! authExternalId ) {
+		if ( ! isMessagingScriptLoaded || ! authIsLoggedIn || ! hasAuthJwt || ! authExternalId ) {
 			return;
 		}
 
@@ -186,14 +194,24 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 		const initialize = async () => {
 			setIsChatLoaded( false );
-			await Smooch?.destroy?.();
+			try {
+				await Smooch?.destroy?.();
+			} catch ( error ) {
+				recordTracksEvent( 'calypso_smooch_messenger_destroy_error', {
+					error: ( error as Error ).message,
+					context: 'initialize',
+				} );
+			}
 
 			if ( isCancelled ) {
 				return;
 			}
 
 			try {
-				await initSmooch( authJwt, authExternalId, queryClient );
+				// Read the JWT from the ref so we always use the freshest token without
+				// this effect needing to re-run (and destroy + reinit Smooch) on every
+				// JWT rotation. Rotations are handled by Smooch's onInvalidAuth delegate.
+				await initSmooch( authJwtRef.current!, authExternalId, queryClient );
 
 				if ( isCancelled ) {
 					return;
@@ -227,12 +245,17 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		return () => {
 			isCancelled = true;
 			clearTimeout( retryTimeout );
-			Smooch?.destroy?.();
+			Smooch?.destroy?.()?.catch?.( ( error: Error ) => {
+				recordTracksEvent( 'calypso_smooch_messenger_destroy_error', {
+					error: error.message,
+					context: 'cleanup',
+				} );
+			} );
 		};
 	}, [
 		isMessagingScriptLoaded,
 		authIsLoggedIn,
-		authJwt,
+		hasAuthJwt,
 		authExternalId,
 		setIsChatLoaded,
 		queryClient,

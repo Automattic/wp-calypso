@@ -106,10 +106,11 @@ export default function McpSitesPage( { path } ) {
 	}, [ sites, exceptionSiteIds ] );
 
 	const handleComboboxChange = ( siteIdStr ) => {
-		setComboboxValue( siteIdStr || '' );
 		if ( ! siteIdStr ) {
+			setComboboxValue( '' );
 			return;
 		}
+		setComboboxValue( '' );
 		const blogId = Number( siteIdStr );
 		if ( isNaN( blogId ) ) {
 			return;
@@ -119,7 +120,7 @@ export default function McpSitesPage( { path } ) {
 				sites: [
 					{
 						blog_id: blogId,
-						account_tools_enabled: false,
+						site_level_enabled: false,
 					},
 				],
 			},
@@ -132,7 +133,7 @@ export default function McpSitesPage( { path } ) {
 				sites: [
 					{
 						blog_id: siteId,
-						account_tools_enabled: true,
+						site_level_enabled: null,
 					},
 				],
 			},
@@ -171,6 +172,7 @@ export default function McpSitesPage( { path } ) {
 									value={ comboboxValue }
 									onChange={ handleComboboxChange }
 									disabled={ mutation.isPending || comboboxOptions.length === 0 }
+									isLoading={ mutation.isPending }
 									label={ translate( 'Search for a site to add an exception' ) }
 								/>
 								{ sites.length === 0 && (

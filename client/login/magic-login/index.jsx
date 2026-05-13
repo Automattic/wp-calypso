@@ -14,7 +14,7 @@ import {
 	isIosOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { detectCiabConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
+import { detectPartnerConfig, getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import OneLoginLayout from 'calypso/login/wp-login/components/one-login-layout';
@@ -112,7 +112,7 @@ export class MagicLogin extends Component {
 		// From `localize`
 		translate: PropTypes.func.isRequired,
 		isWooJPC: PropTypes.bool,
-		ciabConfig: PropTypes.object,
+		partnerConfig: PropTypes.object,
 	};
 
 	state = {
@@ -167,7 +167,7 @@ export class MagicLogin extends Component {
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
 		const isMobileApp = isIosOAuth2Client( oauth2Client ) || isAndroidOAuth2Client( oauth2Client );
-		const hasPartnerBranding = Boolean( this.props.ciabConfig );
+		const hasPartnerBranding = Boolean( this.props.partnerConfig );
 
 		if ( showCheckYourEmail ) {
 			if ( isA4A || isMobileApp || hasPartnerBranding ) {
@@ -232,8 +232,8 @@ export class MagicLogin extends Component {
 	}
 
 	renderTos = () => {
-		const { ciabConfig, translate } = this.props;
-		const partnerTosElement = getPartnerSignupTosElement( ciabConfig, translate );
+		const { partnerConfig, translate } = this.props;
+		const partnerTosElement = getPartnerSignupTosElement( partnerConfig, translate );
 
 		if ( partnerTosElement ) {
 			return partnerTosElement;
@@ -268,8 +268,16 @@ export class MagicLogin extends Component {
 	};
 
 	render() {
-		const { oauth2Client, query, translate, isWooJPC, isJetpackLogin, isFromJetpackOnboarding } =
-			this.props;
+		const {
+			oauth2Client,
+			query,
+			translate,
+			isWooJPC,
+			isJetpackLogin,
+			isUnifiedConnectionFlow,
+			isFromJetpackConnector,
+			connectorPlugins,
+		} = this.props;
 		const { usernameOrEmail } = this.state;
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
@@ -284,7 +292,7 @@ export class MagicLogin extends Component {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
 			isJetpackMagicLinkSignUpEnabled: this.props.isJetpackLogin,
 			createAccountForNewUser: true,
-			isFromJetpackOnboarding,
+			isUnifiedConnectionFlow,
 			tosComponent: this.renderTos(),
 			...( isStudio
 				? {
@@ -326,7 +334,16 @@ export class MagicLogin extends Component {
 			</Main>
 		);
 
-		return <OneLoginLayout isJetpack={ isJetpackLogin }>{ mainContent }</OneLoginLayout>;
+		return (
+			<OneLoginLayout
+				isJetpack={ isJetpackLogin }
+				isFromJetpackConnector={ isFromJetpackConnector }
+				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
+				connectorPlugins={ connectorPlugins }
+			>
+				{ mainContent }
+			</OneLoginLayout>
+		);
 	}
 }
 
@@ -351,10 +368,10 @@ export const getMagicLoginInitialHeaders = ( props, translate ) => {
 		return getCheckYourEmailHeaders( translate, { emailAddress } );
 	}
 
-	const headingOverride = props.ciabConfig?.displayName
+	const headingOverride = props.partnerConfig?.displayName
 		? translate( 'Log in to %(partnerName)s', {
 				args: {
-					partnerName: props.ciabConfig.displayName,
+					partnerName: props.partnerConfig.displayName,
 				},
 		  } )
 		: undefined;
@@ -373,11 +390,29 @@ const MagicLoginWithContext = ( props ) => {
 	);
 };
 
+export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
+	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
+	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
+	const isFromJetpackConnector = from === 'jetpack-connector';
+	const rawPlugins = isFromJetpackConnector
+		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
+		: '';
+	return {
+		isUnifiedConnectionFlow: [ 'jetpack-onboarding', 'jetpack-connector' ].includes( from ),
+		isFromJetpackConnector,
+		connectorPlugins: rawPlugins
+			.split( ',' )
+			.map( ( s ) => s.trim() )
+			.filter( Boolean ),
+	};
+};
+
 const mapState = ( state ) => {
 	const currentRoute = getCurrentRoute( state );
 	const currentQuery = getCurrentQueryArguments( state );
 	const initialQuery = getInitialQueryArguments( state );
 	const redirectToOriginal = getRedirectToOriginal( state );
+	const connectorParams = getConnectionFlowFromRedirectTo( redirectToOriginal, currentQuery );
 
 	return {
 		locale: getCurrentLocaleSlug( state ),
@@ -394,12 +429,10 @@ const mapState = ( state ) => {
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		redirectToSanitized: getRedirectToSanitized( state ),
 		redirectToOriginal,
-		isFromJetpackOnboarding:
-			new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get( 'from' ) ===
-			'jetpack-onboarding',
+		...connectorParams,
 		isWooJPC: isWooJPCFlow( state ),
 		publicToken: getMagicLoginPublicToken( state ),
-		ciabConfig: detectCiabConfig( getCurrentOAuth2Client( state ) ),
+		partnerConfig: detectPartnerConfig( getCurrentOAuth2Client( state ) ),
 	};
 };
 

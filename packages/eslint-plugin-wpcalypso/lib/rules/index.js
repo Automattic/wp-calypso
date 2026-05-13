@@ -8,6 +8,7 @@ module.exports = {
 	'i18n-no-variables': require( './i18n-no-variables' ),
 	'i18n-translate-identifier': require( './i18n-translate-identifier' ),
 	'i18n-unlocalized-url': require( './i18n-unlocalized-url' ),
+	'jsx-async-load-require-top-level': require( './jsx-async-load-require-top-level' ),
 	'jsx-classname-namespace': require( './jsx-classname-namespace' ),
 	'jsx-gridicon-size': require( './jsx-gridicon-size' ),
 	'post-message-no-wildcard-targets': require( './post-message-no-wildcard-targets' ),

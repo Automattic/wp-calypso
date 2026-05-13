@@ -3,12 +3,12 @@ import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { get, forEach, uniqBy } from 'lodash';
+import { forEach, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import UserAvatar from 'calypso/blocks/user-avatar';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
@@ -34,15 +34,6 @@ class CrossPost extends PureComponent {
 		isWPForTeamsItem: PropTypes.bool,
 		currentRoute: PropTypes.string,
 		hasOrganization: PropTypes.bool,
-	};
-
-	handleTitleClick = ( event ) => {
-		// modified clicks should let the default action open a new tab/window
-		if ( event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
-			return;
-		}
-		event.preventDefault();
-		this.props.handleClick( this.props.xMetadata );
 	};
 
 	handleCardClick = ( event ) => {
@@ -161,19 +152,9 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const {
-			post,
-			postKey,
-			site,
-			feed,
-			translate,
-			currentRoute,
-			hasOrganization,
-			isWPForTeamsItem,
-		} = this.props;
+		const { post, postKey, translate, currentRoute, hasOrganization, isWPForTeamsItem } =
+			this.props;
 		const { blogId: siteId, feedId } = postKey;
-		const siteIcon = get( site, 'icon.img' );
-		const feedIcon = get( feed, 'image' );
 
 		let isSeen = false;
 		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
@@ -197,13 +178,8 @@ class CrossPost extends PureComponent {
 
 		return (
 			<Card tagName="article" onClick={ this.handleCardClick } className={ articleClasses }>
-				<ReaderAvatar
-					siteIcon={ siteIcon }
-					feedIcon={ feedIcon }
-					author={ post.author }
-					onClick={ this.handleTitleClick }
-					isCompact
-				/>
+				<UserAvatar user={ post.author } size={ 40 } />
+
 				<div className="reader__x-post">
 					{ post.title && (
 						<h1 className="reader__post-title">

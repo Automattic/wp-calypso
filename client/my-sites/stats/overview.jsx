@@ -4,10 +4,8 @@ import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -96,9 +94,7 @@ class StatsOverview extends Component {
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				<StatsNavigation selectedItem="traffic" interval={ period } isLegacy />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
-				<JetpackColophon />
 			</Main>
 		);
 	}

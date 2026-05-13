@@ -137,6 +137,57 @@ body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .main.m
 			padding: 24px 32px 8px;
 		}
 	}
+
+	// Sub-group tool list — same padding as group-body but no top border
+	.mcp-tools-subpage__sub-group-body {
+		padding: 0 0 4px;
+	}
+
+	// Sub-group divider within merged cards (e.g. Posts) — content-width, equal spacing
+	.mcp-tools-subpage__sub-divider {
+		border-top: 1px solid var(--color-border-subtle);
+		margin: 16px 0 24px;
+	}
+}
+
+// Setup page — zero out card-heading margins so CardBody padding is the only spacing
+.mcp-setup .card-heading {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+// Setup page — flat cards, ordered lists, code blocks
+.mcp-setup {
+	.components-card,
+	.components-surface.components-card {
+		border-radius: 0;
+		margin-top: 24px;
+
+		&:first-of-type {
+			margin-top: 0;
+		}
+	}
+
+	.mcp-setup__steps {
+		padding-inline-start: 20px;
+		margin: 0;
+	}
+
+	.mcp-setup__code {
+		background-color: #f0f0f1;
+		padding: 2px 6px;
+		border-radius: 3px;
+		font-family: monospace;
+		font-size: 13px;
+	}
+
+	.mcp-setup__action-button {
+		align-self: flex-start;
+	}
+
+	.components-textarea-control__input[readonly] {
+		min-height: 160px;
+	}
 }
 
 // Site exceptions — flat `@wordpress/components` Cards only (same as hub / tools subpages)

@@ -84,6 +84,25 @@ export function createPixPaymentMethod( {
 	};
 }
 
+export function createPixAutomaticoPaymentMethod( {
+	submitButtonContent,
+}: {
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
+	const state = new PixPaymentMethodState();
+
+	return {
+		id: 'pix_automatico',
+		paymentProcessorId: 'pix_automatico',
+		label: <PixAutomaticoLabel />,
+		activeContent: <PixForm state={ state } />,
+		submitButton: (
+			<PixAutomaticoPayButton submitButtonContent={ submitButtonContent } state={ state } />
+		),
+		getAriaLabel: () => 'Pix Automático',
+	};
+}
+
 function useSubscribeToEventEmitter( state: PixPaymentMethodState ) {
 	const [ , forceReload ] = useState( 0 );
 	useEffect( () => {
@@ -291,6 +310,51 @@ function PixPayButton( {
 	);
 }
 
+function PixAutomaticoPayButton( {
+	disabled,
+	onClick,
+	submitButtonContent,
+	state,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	submitButtonContent: ReactNode;
+	state: PixPaymentMethodState;
+} ) {
+	const { formStatus } = useFormStatus();
+
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; PixAutomaticoPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
+
+	return (
+		<Button
+			disabled={ disabled }
+			onClick={ () => {
+				onClick( {
+					name: state.data.cardholderName,
+					countryCode: countryCode,
+					state: state.data.state,
+					city: state.data.city,
+					postalCode: state.data.postalCode,
+					address: state.data.address,
+					streetNumber: state.data.streetNumber,
+					phoneNumber: state.data.phoneNumber,
+					document: state.data.taxpayerId,
+				} );
+			} }
+			buttonType="primary"
+			isBusy={ FormStatus.SUBMITTING === formStatus }
+			fullWidth
+		>
+			{ submitButtonContent }
+			<div className="pix-automatico-modal-target" />
+		</Button>
+	);
+}
+
 const PixLogoWrapper = styled.div`
 	width: 24px;
 `;
@@ -311,6 +375,17 @@ function PixLabel() {
 	return (
 		<Fragment>
 			<span>Pix</span>
+			<PixLogoWrapper>
+				<PixLogo />
+			</PixLogoWrapper>
+		</Fragment>
+	);
+}
+
+function PixAutomaticoLabel() {
+	return (
+		<Fragment>
+			<span>Pix Automático</span>
 			<PixLogoWrapper>
 				<PixLogo />
 			</PixLogoWrapper>

@@ -338,6 +338,41 @@ describe( 'upiProcessor', () => {
 		} );
 	} );
 
+	it( 'returns a success response when the order is payment-confirmed', async () => {
+		render( createElement( 'div', { className: 'upi-modal-target' } ) );
+
+		const orderId = 54321;
+		const mockOrderStatus = {
+			order_id: orderId,
+			user_id: 1234,
+			receipt_id: undefined,
+			processing_status: 'payment-confirmed',
+		};
+		mockOrderEndpoint( orderId, () => [ 200, mockOrderStatus ] );
+		mockTransactionsEndpoint( () => mockTransactionsRedirectResponse( orderId ) );
+
+		const expected = {
+			payload: { success: true, order_id: orderId },
+			type: 'SUCCESS',
+		};
+
+		await act( async () => {
+			await expect(
+				upiProcessor(
+					submitData,
+					{
+						...options,
+						contactDetails: {
+							countryCode,
+							postalCode,
+						},
+					},
+					translate
+				)
+			).resolves.toStrictEqual( expected );
+		} );
+	} );
+
 	it( 'returns a success response when the order succeeds', async () => {
 		render( createElement( 'div', { className: 'upi-modal-target' } ) );
 

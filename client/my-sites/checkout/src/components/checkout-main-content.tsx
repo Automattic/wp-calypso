@@ -34,11 +34,14 @@ import {
 	RestorableProductsProvider,
 } from '@automattic/wpcom-checkout';
 import { css, keyframes } from '@emotion/react';
+import { Icon } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { pencil } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Loading from 'calypso/components/loading';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
@@ -59,8 +62,14 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
+import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
+import { useRsmBetterCheckoutExperiment } from 'calypso/my-sites/checkout/src/hooks/use-rsm-better-checkout-experiment';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
+import {
+	SubmitButtonSlotContext,
+	useSubmitButtonSlot,
+} from 'calypso/my-sites/checkout/src/lib/submit-button-slot';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
@@ -86,7 +95,9 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
+import CheckoutTrustCards from './checkout-trust-cards';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
@@ -331,6 +342,22 @@ function CheckoutSidebarNudge( {
 	);
 }
 
+// Renders CheckoutFormSubmit inside CheckoutStepGroup (so it keeps full step-state
+// awareness) while portaling its output into the sidebar slot registered via
+// SubmitButtonSlotContext. The sidebar button IS the active payment-method submit
+// button — no hidden main-column button, no querySelector click proxy.
+function PortaledCheckoutFormSubmit( {
+	validateForm,
+}: {
+	validateForm?: () => Promise< boolean >;
+} ) {
+	const { slotEl } = useSubmitButtonSlot();
+	if ( ! slotEl ) {
+		return null;
+	}
+	return createPortal( <CheckoutFormSubmit validateForm={ validateForm } />, slotEl );
+}
+
 export default function CheckoutMainContent( {
 	addItemToCart,
 	changeSelection,
@@ -390,6 +417,17 @@ export default function CheckoutMainContent( {
 	} = useShoppingCart( cartKey );
 
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+
+	// Shared sidebar slot for the active payment-method submit button. We render
+	// <CheckoutFormSubmit> inside <CheckoutStepGroup> so it keeps full step-state
+	// awareness, but createPortal its output into this slot in the sidebar — the
+	// sidebar Pay button IS the real submit button (including native Apple Pay /
+	// Google Pay buttons that require a genuine user click).
+	const [ submitButtonSlotEl, setSubmitButtonSlotEl ] = useState< HTMLElement | null >( null );
+	const submitButtonSlotValue = useMemo(
+		() => ( { slotEl: submitButtonSlotEl, setSlotEl: setSubmitButtonSlotEl } ),
+		[ submitButtonSlotEl ]
+	);
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -510,6 +548,14 @@ export default function CheckoutMainContent( {
 	const isStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
+	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
+	const isRsmBetterCheckout = useRsmBetterCheckoutExperiment();
+	const originalPriceForHeader = responseCart.products.reduce(
+		( sum, product ) => sum + product.item_original_subtotal_integer,
+		0
+	);
+	const hasDiscountForHeader = originalPriceForHeader > responseCart.total_cost_integer;
+
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
 	if ( ! checkoutActions ) {
@@ -555,11 +601,15 @@ export default function CheckoutMainContent( {
 	) {
 		debug( 'rendering empty cart page' );
 		return (
-			<WPCheckoutWrapper>
-				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent>
+			<WPCheckoutWrapper isRsmBetterCheckout={ isRsmBetterCheckout }>
+				<WPCheckoutSidebarContent
+					isRsmBetterCheckout={ isRsmBetterCheckout }
+				></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent isRsmBetterCheckout={ isRsmBetterCheckout }>
 					<PerformanceTrackerStop />
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
 					<EmptyCart />
 					<CheckoutFormSubmit
 						submitButton={
@@ -588,59 +638,132 @@ export default function CheckoutMainContent( {
 	};
 
 	const checkoutSummary = (
-		<WPCheckoutSidebarContent className="checkout-sidebar-content">
+		<WPCheckoutSidebarContent
+			className="checkout-sidebar-content"
+			isRsmBetterCheckout={ isRsmBetterCheckout }
+		>
 			{ isLoading && <LoadingSidebarContent /> }
 			{ ! isLoading && (
-				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-					<CheckoutErrorBoundary
-						errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
-						onError={ onSummaryError }
-					>
-						<CheckoutSummaryTitleLink
-							className="checkout__summary-button"
-							onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+				<>
+					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+						<CheckoutErrorBoundary
+							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+							onError={ onSummaryError }
 						>
-							<CheckoutSummaryTitleContent className="checkout__summary-title">
-								<CheckoutSummaryTitle>
-									{ ! isStepContainerV2 && (
-										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-									) }
-									{ translate( 'Purchase Details' ) }
-									<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-								</CheckoutSummaryTitle>
-								<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-									{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-										isSmallestUnit: true,
-										stripZeros: true,
-									} ) }
-								</CheckoutSummaryTitlePrice>
-							</CheckoutSummaryTitleContent>
-						</CheckoutSummaryTitleLink>
-
-						<CheckoutSummaryBody className="checkout__summary-body">
-							{ shouldShowSitePreview && (
-								<div className="checkout-site-preview">
-									<SitePreviewWrapper>
-										<SitePreview showEditSite={ false } showSiteDetails={ false } />
-									</SitePreviewWrapper>
-								</div>
+							{ isCheckoutUiRedesignV1 ? (
+								<CheckoutSummaryTitleLinkRedesign
+									className="checkout__summary-button"
+									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+								>
+									<CheckoutSummaryTitleContentRedesign className="checkout__summary-title">
+										<CheckoutSummaryTitle>
+											<CheckoutSummaryBagIconWrapper>
+												<MaterialIcon icon="shopping_cart" size={ 24 } />
+											</CheckoutSummaryBagIconWrapper>
+											{ translate( 'Purchase details' ) }
+										</CheckoutSummaryTitle>
+										<CheckoutSummaryPricesWrapper>
+											{ hasDiscountForHeader && (
+												<CheckoutSummaryOriginalPrice>
+													{ formatCurrency( originalPriceForHeader, responseCart.currency, {
+														isSmallestUnit: true,
+														stripZeros: true,
+													} ) }
+												</CheckoutSummaryOriginalPrice>
+											) }
+											<CheckoutSummaryCurrentPrice>
+												{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+													isSmallestUnit: true,
+													stripZeros: true,
+												} ) }
+											</CheckoutSummaryCurrentPrice>
+											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+										</CheckoutSummaryPricesWrapper>
+									</CheckoutSummaryTitleContentRedesign>
+								</CheckoutSummaryTitleLinkRedesign>
+							) : (
+								<CheckoutSummaryTitleLink
+									className="checkout__summary-button"
+									onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+								>
+									<CheckoutSummaryTitleContent className="checkout__summary-title">
+										<CheckoutSummaryTitle>
+											{ ! isStepContainerV2 && (
+												<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+											) }
+											{ translate( 'Purchase Details' ) }
+											<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+										</CheckoutSummaryTitle>
+										<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+											{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+												isSmallestUnit: true,
+												stripZeros: true,
+											} ) }
+										</CheckoutSummaryTitlePrice>
+									</CheckoutSummaryTitleContent>
+								</CheckoutSummaryTitleLink>
 							) }
 
-							<WPCheckoutOrderSummary />
-							<CheckoutSidebarNudge
-								addItemToCart={ addItemToCart }
-								areThereDomainProductsInCart={ areThereDomainProductsInCart }
-							/>
-						</CheckoutSummaryBody>
-					</CheckoutErrorBoundary>
-				</CheckoutSummaryArea>
+							<CheckoutSummaryBody className="checkout__summary-body">
+								{ shouldShowSitePreview && (
+									<div className="checkout-site-preview">
+										<SitePreviewWrapper>
+											<SitePreview showEditSite={ false } showSiteDetails={ false } />
+										</SitePreviewWrapper>
+									</div>
+								) }
+
+								<WPCheckoutOrderSummary />
+								{ ! isCheckoutUiRedesignV1 && (
+									<CheckoutSidebarNudge
+										addItemToCart={ addItemToCart }
+										areThereDomainProductsInCart={ areThereDomainProductsInCart }
+									/>
+								) }
+							</CheckoutSummaryBody>
+						</CheckoutErrorBoundary>
+						{
+							// In treatment, render the upsell inside CheckoutSummaryArea so it
+							// sits within the sticky container and stays 24px below the order
+							// card as the page scrolls. In control it renders outside the area
+							// (legacy position).
+							isRsmBetterCheckout &&
+								isCheckoutUiRedesignV1 &&
+								( isSummaryVisible || isLargeViewport ) && (
+									<CheckoutSummaryNudgeArea>
+										<CheckoutSidebarNudge
+											addItemToCart={ addItemToCart }
+											areThereDomainProductsInCart={ areThereDomainProductsInCart }
+										/>
+									</CheckoutSummaryNudgeArea>
+								)
+						}
+					</CheckoutSummaryArea>
+					{
+						// Legacy position for the upsell, used when not in the rsm
+						// better-checkout treatment.
+						! isRsmBetterCheckout &&
+							isCheckoutUiRedesignV1 &&
+							( isSummaryVisible || isLargeViewport ) && (
+								<CheckoutSummaryNudgeArea>
+									<CheckoutSidebarNudge
+										addItemToCart={ addItemToCart }
+										areThereDomainProductsInCart={ areThereDomainProductsInCart }
+									/>
+								</CheckoutSummaryNudgeArea>
+							)
+					}
+				</>
 			) }
 		</WPCheckoutSidebarContent>
 	);
 
 	const checkoutMainContent = (
 		<RestorableProductsProvider>
-			<WPCheckoutMainContent className="checkout-main-content">
+			<WPCheckoutMainContent
+				className="checkout-main-content"
+				isRsmBetterCheckout={ isRsmBetterCheckout }
+			>
 				<CheckoutOrderBanner />
 				{ isStepContainerV2 ? (
 					<Step.Heading
@@ -649,9 +772,15 @@ export default function CheckoutMainContent( {
 						size={ ! isLargeViewport ? 'small' : undefined }
 					/>
 				) : (
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+					<WPCheckoutTitle className="checkout__main-title">
+						{ translate( 'Checkout' ) }
+					</WPCheckoutTitle>
 				) }
-				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
+				<CheckoutStepGroup
+					loadingHeader={ loadingHeader }
+					onStepChanged={ onStepChanged }
+					scrollToStepOnForwardNavigation={ ! ( isRsmBetterCheckout && isLargeViewport ) }
+				>
 					<PerformanceTrackerStop />
 					{ infoMessage }
 
@@ -779,7 +908,10 @@ export default function CheckoutMainContent( {
 								</>
 							}
 							titleContent={ <ContactFormTitle /> }
-							editButtonText={ String( translate( 'Edit' ) ) }
+							editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
+							editButtonElement={
+								isCheckoutUiRedesignV1 ? <Icon icon={ pencil } size={ 18 } /> : undefined
+							}
 							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
 							nextStepButtonText={ nextStepButtonText }
 							nextStepButtonAriaLabel={ String(
@@ -797,7 +929,10 @@ export default function CheckoutMainContent( {
 							/>
 						}
 						canEditStep={ canEditPaymentStep() }
-						editButtonText={ String( translate( 'Edit' ) ) }
+						editButtonText={ isCheckoutUiRedesignV1 ? undefined : String( translate( 'Edit' ) ) }
+						editButtonElement={
+							isCheckoutUiRedesignV1 ? <Icon icon={ pencil } size={ 18 } /> : undefined
+						}
 						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 						nextStepButtonText={ String( translate( 'Continue' ) ) }
 						nextStepButtonAriaLabel={ String(
@@ -832,18 +967,23 @@ export default function CheckoutMainContent( {
 						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
+						isLargeViewport={ isRsmBetterCheckout && isLargeViewport }
 					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
+					{ isRsmBetterCheckout && isLargeViewport ? (
+						<PortaledCheckoutFormSubmit validateForm={ validateForm } />
+					) : (
+						<CheckoutFormSubmit
+							validateForm={ validateForm }
+							submitButtonHeader={ <SubmitButtonHeader /> }
+							submitButtonFooter={
+								hasCartJetpackProductsOnly ? (
+									<JetpackCheckoutSeals />
+								) : (
+									<CheckoutMoneyBackGuarantee cart={ responseCart } />
+								)
+							}
+						/>
+					) }
 				</CheckoutStepGroup>
 			</WPCheckoutMainContent>
 		</RestorableProductsProvider>
@@ -851,65 +991,102 @@ export default function CheckoutMainContent( {
 
 	if ( ! isStepContainerV2 ) {
 		return (
-			<WPCheckoutWrapper className="checkout-wrapper" isLargeViewport={ isLargeViewport }>
-				{ checkoutSummary }
-				{ checkoutMainContent }
-			</WPCheckoutWrapper>
+			<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+				<WPCheckoutWrapper
+					className="checkout-wrapper"
+					isLargeViewport={ isLargeViewport }
+					isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+					isRsmBetterCheckout={ isRsmBetterCheckout }
+				>
+					{ isCheckoutUiRedesignV1 && ! isLargeViewport && (
+						<WPCheckoutTitle className="checkout__main-title checkout__redesign-header">
+							{ translate( 'Checkout' ) }
+						</WPCheckoutTitle>
+					) }
+					{ checkoutSummary }
+					{ checkoutMainContent }
+					{ isRsmBetterCheckout && isLargeViewport && (
+						<>
+							<CheckoutProcessorNotice />
+							<CheckoutTrustCards cart={ responseCart } />
+						</>
+					) }
+				</WPCheckoutWrapper>
+			</SubmitButtonSlotContext.Provider>
 		);
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
-			<Step.TwoColumnLayout
-				firstColumnWidth={ 8 }
-				secondColumnWidth={ 4 }
-				topBar={ ( { isLargeViewport } ) => {
-					const topBar = (
-						<Step.TopBar
-							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-							rightElement={
-								<span className="checkout-skip-button">
-									{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
-									<Step.LinkButton onClick={ toggleHelpCenter }>
-										{ helpCenterButtonLink }
-									</Step.LinkButton>
-								</span>
-							}
-						/>
-					);
-
-					if ( isLargeViewport ) {
-						return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
-					}
-
-					return (
-						<>
-							{ topBar }
-							{ checkoutSummary }
-						</>
-					);
-				} }
+		<SubmitButtonSlotContext.Provider value={ submitButtonSlotValue }>
+			<StepContainerV2CheckoutFixer
+				isLargeViewport={ isLargeViewport }
+				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
+				isRsmBetterCheckout={ isRsmBetterCheckout }
 			>
-				{ ( { isLargeViewport } ) => {
-					if ( isLargeViewport ) {
+				<Step.TwoColumnLayout
+					firstColumnWidth={ 8 }
+					secondColumnWidth={ 4 }
+					topBar={ ( { isLargeViewport } ) => {
+						const topBar = (
+							<Step.TopBar
+								leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+								rightElement={
+									<span className="checkout-skip-button">
+										{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
+										<Step.LinkButton onClick={ toggleHelpCenter }>
+											{ helpCenterButtonLink }
+										</Step.LinkButton>
+									</span>
+								}
+							/>
+						);
+
+						if ( isLargeViewport ) {
+							return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
+						}
+
 						return (
 							<>
-								{ checkoutMainContent }
+								{ topBar }
+								{ isCheckoutUiRedesignV1 && (
+									<Step.Heading text={ translate( 'Checkout' ) } align="left" size="small" />
+								) }
 								{ checkoutSummary }
 							</>
 						);
-					}
+					} }
+				>
+					{ ( { isLargeViewport } ) => {
+						if ( isLargeViewport ) {
+							return (
+								<>
+									{ isRsmBetterCheckout ? (
+										<div className="checkout-main-column">
+											{ checkoutMainContent }
+											<CheckoutProcessorNotice />
+											<CheckoutTrustCards cart={ responseCart } />
+										</div>
+									) : (
+										checkoutMainContent
+									) }
+									{ checkoutSummary }
+								</>
+							);
+						}
 
-					return checkoutMainContent;
-				} }
-			</Step.TwoColumnLayout>
-			<LeaveCheckoutModal { ...leaveModalProps } />
-		</StepContainerV2CheckoutFixer>
+						return checkoutMainContent;
+					} }
+				</Step.TwoColumnLayout>
+				<LeaveCheckoutModal { ...leaveModalProps } />
+			</StepContainerV2CheckoutFixer>
+		</SubmitButtonSlotContext.Provider>
 	);
 }
 
 const StepContainerV2CheckoutFixer = styled.div< {
 	isLargeViewport: boolean;
+	isCheckoutUiRedesignV1?: boolean;
+	isRsmBetterCheckout?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
@@ -1013,16 +1190,19 @@ const StepContainerV2CheckoutFixer = styled.div< {
 				position: relative;
 				height: 100%;
 
-				&:before {
-					content: '';
-					display: block;
-					background: var( --color-neutral-0 );
-					position: fixed;
-					top: calc( var( --step-container-v2-top-bar-height ) * -1 );
-					transform: translateX( calc( var( --left-padding ) * -1 ) );
-					width: 100vw;
-					bottom: 0;
-				}
+				${ ! props.isRsmBetterCheckout &&
+				css`
+					&:before {
+						content: '';
+						display: block;
+						background: var( --color-neutral-0 );
+						position: fixed;
+						top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+						transform: translateX( calc( var( --left-padding ) * -1 ) );
+						width: 100vw;
+						bottom: 0;
+					}
+				` }
 			}
 
 			.checkout__summary-area,
@@ -1045,6 +1225,7 @@ const StepContainerV2CheckoutFixer = styled.div< {
 		` }
 	${ ( props ) =>
 		props.isLargeViewport &&
+		! props.isRsmBetterCheckout &&
 		css`
 			div:has( .checkout-sidebar-content ) {
 				position: sticky;
@@ -1053,6 +1234,378 @@ const StepContainerV2CheckoutFixer = styled.div< {
 			.checkout__summary-area,
 			.checkout-loading-sidebar {
 				min-width: 384px;
+			}
+		` }
+	${ ( props ) =>
+		props.isLargeViewport &&
+		props.isRsmBetterCheckout &&
+		css`
+			/*
+			 * Stick the inner summary area, not the sidebar wrapper.
+			 *
+			 * Earlier versions targeted div:has( .checkout-sidebar-content )
+			 * which matched multiple ancestors; making each sticky with no
+			 * positioned containing block let the upsell paint over the trust
+			 * cards row at scroll-bottom. Targeting .checkout-sidebar-content
+			 * directly didn't help either: when the sidebar is the sticky
+			 * element it equals its containing block's height (the column
+			 * stretches it), leaving no room to actually stick — so the
+			 * sticky degenerated to static and the Pay CTA scrolled away.
+			 *
+			 * .checkout__summary-area is shorter than the sidebar (just the
+			 * order card + upsell), so it has room to slide within the
+			 * stretched sidebar's bounds and pin to top: 32px.
+			 */
+			.checkout__summary-area {
+				position: sticky;
+				top: 32px;
+			}
+			.checkout__summary-area,
+			.checkout-loading-sidebar {
+				min-width: 384px;
+			}
+			/*
+			 * Give the sticky .checkout__summary-area room to slide.
+			 *
+			 * TwoColumnLayout's row uses align-items: flex-start at break-large
+			 * (packages/onboarding/.../TwoColumnLayout/style.scss), so its
+			 * column wrappers size to content instead of stretching to row
+			 * height. With the right column collapsed, .checkout-sidebar-content
+			 * inside it is just as short as the .checkout__summary-area it
+			 * contains — so the sticky rule above has zero distance to travel.
+			 *
+			 * Override the row's align-items to stretch (so both column wrappers
+			 * match row height), then promote the sidebar's column wrapper to a
+			 * flex column so .checkout-sidebar-content fills it. The legacy
+			 * WPCheckoutWrapper path gets this for free via grid-area stretching.
+			 */
+			.step-container-v2__content-row--two-column-layout {
+				align-items: stretch;
+			}
+			.step-container-v2__content-row--two-column-layout > div:has( > .checkout-sidebar-content ) {
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout-sidebar-content {
+				flex: 1;
+			}
+			/*
+			 * Keep the totals + Pay CTA + terms always visible regardless of
+			 * cart length. Cap the summary card itself (not the whole area)
+			 * at viewport height, scroll the line items list inside, and
+			 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+			 *
+			 * The Save 19% upsell below the card sits at its natural size;
+			 * if it doesn't fit alongside the card in a short viewport,
+			 * it scrolls past the bottom — the Pay CTA is the priority.
+			 */
+			.checkout__summary-card {
+				max-height: calc( 100vh - 64px );
+				display: flex;
+				flex-direction: column;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__products-list {
+				flex: 1 1 auto;
+				min-height: 0;
+				overflow-y: auto;
+			}
+			.checkout__summary-card > .wp-checkout-order-summary__section-title,
+			.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+				flex-shrink: 0;
+			}
+			/*
+			 * Lock intrinsic child sizing so the 24px gap between the sticky order
+			 * card and the two-year upsell isn't collapsed when the sticky area
+			 * reaches the bottom of its grid cell.
+			 */
+			.checkout__summary-area > * {
+				flex-shrink: 0;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		! props.isLargeViewport &&
+		css`
+			.checkout-sidebar-content {
+				background: ${ colorStudio.colors[ 'White' ] };
+			}
+			.checkout__summary-area {
+				background: #f5f5f5;
+				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+				border-radius: 8px;
+				margin: 12px 16px;
+				overflow: hidden;
+				width: calc( 100% - 32px );
+			}
+			.checkout__summary-button {
+				background: transparent;
+				border-bottom: none;
+			}
+			.checkout__summary-body {
+				padding-block-start: 0;
+			}
+			.wp-checkout-order-summary__section-title {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				padding-top: 20px;
+			}
+			.step-container-v2__top-bar-wrapper .step-container-v2__heading {
+				padding-inline: 16px;
+				margin-bottom: 4px;
+			}
+			.checkout-main-content .step-container-v2__heading {
+				display: none;
+			}
+			.checkout-step {
+				padding: 16px 16px 48px 16px;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		css`
+			.checkout__main-title,
+			.step-container-v2__heading h1 {
+				font-size: 28px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-card {
+				background: transparent;
+				box-shadow: none;
+				padding: 0;
+				padding-inline-end: 22px;
+				margin-bottom: 0;
+			}
+			.promo-card.checkout-sidebar-plan-upsell {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+				border-radius: 8px;
+				margin: 0;
+				max-width: none;
+				width: 100%;
+			}
+			.checkout-sidebar-plan-upsell__plan-grid > div {
+				border-top: none;
+			}
+			.item-variation-picker {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding: 0;
+			}
+			.item-variation-picker > li {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.item-variation-picker > li:last-child {
+				border-bottom: none;
+			}
+			.item-variation-picker > li > div.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.item-variation-picker > li > div::before,
+			.item-variation-picker > li > div:hover::before {
+				border: none;
+			}
+			.item-variation-picker > li > div > label {
+				min-height: 52px;
+			}
+			.checkout-step__stepper > div > div:first-child {
+				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 600;
+			}
+			.checkout-payment-methods {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding-top: 0;
+			}
+			.checkout-payment-methods .has-highlight,
+			.item-variation-picker > li > div {
+				border-radius: 0;
+			}
+			.checkout-payment-methods .has-highlight {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.checkout-payment-methods .has-highlight:last-child {
+				border-bottom: none;
+			}
+			.checkout-payment-methods .has-highlight.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.checkout-payment-methods .has-highlight::before,
+			.checkout-payment-methods .has-highlight:hover::before {
+				border: none;
+			}
+			.checkout-payment-methods .has-highlight > label {
+				min-height: 52px;
+				font-size: 13px;
+				font-weight: 400;
+			}
+			.checkout-payment-methods .payment-logos {
+				display: flex;
+				filter: none;
+			}
+			.checkout-payment-methods .StripeElement {
+				background-color: field;
+			}
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 0 16px 16px 16px;
+			}
+			.checkout-steps__step-complete-content .checkout-payment-methods {
+				background: white;
+				padding: 12px 16px;
+				min-height: 52px;
+				display: flex;
+				align-items: center;
+				box-sizing: border-box;
+				font-size: 15px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content {
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
+				display: none;
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
+				margin-top: 0;
+			}
+			.checkout-step__edit-button {
+				padding: 4px;
+				display: flex;
+				align-items: center;
+				line-height: 1;
+			}
+			.checkout-step__header h2 {
+				font-size: 15px;
+			}
+			.checkout-step__header h2 > span {
+				font-weight: 590;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout-step--active .checkout-step__header,
+			.checkout-step--complete .checkout-step__header {
+				margin-block-end: 24px;
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 > span {
+				font-weight: 500;
+			}
+			.wp-checkout-order-review__show-coupon-field-button {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 500;
+				text-decoration: none;
+			}
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				margin-block-start: -4px;
+				padding-block-start: 0;
+			}
+			.wp-checkout__review-order-step .checkout-step__stepper {
+				@media ( max-width: 699px ) {
+					display: none;
+				}
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 {
+				font-size: 20px;
+			}
+			.wp-checkout__review-order-step .checkout-line-item {
+				font-size: 15px;
+			}
+			.wp-checkout__review-order-step .order-review-line-items {
+				margin-top: 0;
+			}
+			.wp-checkout__review-order-step .checkout-review-order__site {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					margin-top: 0;
+				}
+			}
+			.checkout-contact-form-step .checkout-steps__step-content > p {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__terms strong {
+				font-size: 16px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__terms-item {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__summary-title {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-body {
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+			.wp-checkout-order-summary__subtotal,
+			.wp-checkout-order-summary__total {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-size: 13px;
+				line-height: 20px;
+			}
+			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__line-item,
+			.wp-checkout-order-summary__tax-not-calculated {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__section-title {
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__section-title > span {
+				display: none;
+			}
+			.cost-overrides-list-product-wrapper,
+			:has( > .cost-overrides-list-item--coupon ) {
+				padding-inline-start: 0;
+			}
+			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
+			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
+				display: none;
+			}
+			.wp-checkout-order-summary__amount-wrapper {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.wp-checkout-order-summary__subtotal-section {
+				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.checkout-terms-and-checkboxes {
+				padding-block-start: 24px;
+			}
+			.checkout-terms-and-checkboxes > *:first-child {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+			}
+			.checkout-steps__submit-footer-wrapper > div {
+				margin-top: 8px;
+			}
+			.checkout-steps__submit-footer-wrapper > div > svg {
+				display: none;
+			}
+			.checkout-steps__submit-footer-wrapper > div > p {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		props.isLargeViewport &&
+		css`
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				padding-block-start: 24px;
 			}
 		` }
 `;
@@ -1236,12 +1789,14 @@ function CheckoutTermsAndCheckboxes( {
 	is100YearPlanTermsAccepted,
 	setIs100YearPlanTermsAccepted,
 	isSubmitted,
+	isLargeViewport,
 }: {
 	is3PDAccountConsentAccepted: boolean;
 	setIs3PDAccountConsentAccepted: ( isAccepted: boolean ) => void;
 	is100YearPlanTermsAccepted: boolean;
 	setIs100YearPlanTermsAccepted: ( isAccepted: boolean ) => void;
 	isSubmitted: boolean;
+	isLargeViewport: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -1251,9 +1806,18 @@ function CheckoutTermsAndCheckboxes( {
 
 	const translate = useTranslate();
 
+	const needsConsentCheckbox = hasMarketplaceProduct || has100YearPlan;
+
 	return (
 		<CheckoutTermsAndCheckboxesWrapper className="checkout-terms-and-checkboxes">
-			<BeforeSubmitCheckoutHeader />
+			{
+				// Keep the inline legal block above the consent checkbox so
+				// "I have read and agree to all of the above" still refers to
+				// something visible. On desktop without a consent checkbox the
+				// same text is reachable via the sidebar's Read more modal;
+				// mobile has no sidebar modal, so always render it inline.
+				( ! isLargeViewport || needsConsentCheckbox ) && <BeforeSubmitCheckoutHeader />
+			}
 
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
@@ -1417,19 +1981,43 @@ const SubmitButtonHeaderWrapper = styled.div`
 
 const WPCheckoutWrapper = styled.div< {
 	isLargeViewport?: boolean;
+	isCheckoutUiRedesignV1?: boolean;
+	isRsmBetterCheckout?: boolean;
 } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
-	grid-template-rows: auto;
 	grid-template-columns: 1fr;
-	grid-template-areas: 'sidebar-content' 'main-content';
+	${ ( props ) =>
+		props.isRsmBetterCheckout
+			? css`
+					grid-template-areas:
+						'sidebar-content'
+						'main-content'
+						'processor-notice'
+						'trust-cards';
+					align-content: start;
+			  `
+			: css`
+					grid-template-rows: auto;
+					grid-template-areas: 'sidebar-content' 'main-content';
+			  ` }
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		grid-template-columns: 1fr minmax( 500px, 688px ) 475px 1fr;
-		grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
+		${ ( props ) =>
+			props.isRsmBetterCheckout
+				? css`
+						grid-template-areas:
+							'main-content main-content sidebar-content sidebar-content'
+							'. processor-notice sidebar-content sidebar-content'
+							'. trust-cards sidebar-content sidebar-content';
+				  `
+				: css`
+						grid-template-areas: 'main-content main-content sidebar-content sidebar-content';
+				  ` }
 		justify-items: end;
 	}
 
@@ -1437,9 +2025,23 @@ const WPCheckoutWrapper = styled.div< {
 		box-sizing: border-box;
 		width: 100%;
 
-		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-			min-height: 100vh;
-		}
+		${ ( props ) =>
+			! props.isRsmBetterCheckout &&
+			css`
+				@media ( ${ props.theme.breakpoints.desktopUp } ) {
+					min-height: 100vh;
+				}
+			` }
+	}
+
+	& > .checkout-trust-cards {
+		grid-area: trust-cards;
+		justify-self: center;
+	}
+
+	& > .checkout-processor-notice {
+		grid-area: processor-notice;
+		justify-self: center;
 	}
 
 	& *:focus {
@@ -1457,6 +2059,384 @@ const WPCheckoutWrapper = styled.div< {
 			.checkout-loading-sidebar,
 			.checkout-sidebar-plan-upsell {
 				min-width: 384px;
+			}
+			${ props.isRsmBetterCheckout &&
+			css`
+				/*
+				 * Keep the totals + Pay CTA + terms always visible regardless of
+				 * cart length. Cap the summary card itself (not the whole area)
+				 * at viewport height, scroll the line items list inside, and
+				 * lock the bottom block (subtotal/total/CTA/terms) at full size.
+				 *
+				 * The Save 19% upsell below the card sits at its natural size;
+				 * if it doesn't fit alongside the card in a short viewport,
+				 * it scrolls past the bottom — the Pay CTA is the priority.
+				 */
+				.checkout__summary-card {
+					max-height: calc( 100vh - 64px );
+					display: flex;
+					flex-direction: column;
+				}
+				.checkout__summary-card > .wp-checkout-order-summary__products-list {
+					flex: 1 1 auto;
+					min-height: 0;
+					overflow-y: auto;
+				}
+				.checkout__summary-card > .wp-checkout-order-summary__section-title,
+				.checkout__summary-card > .wp-checkout-order-summary__amount-wrapper {
+					flex-shrink: 0;
+				}
+				/*
+				 * Lock intrinsic child sizing so the 24px gap between the sticky
+				 * order card and the two-year upsell isn't collapsed when the
+				 * sticky area reaches the bottom of its grid cell.
+				 */
+				.checkout__summary-area > * {
+					flex-shrink: 0;
+				}
+			` }
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		! props.isLargeViewport &&
+		css`
+			${ props.isRsmBetterCheckout
+				? css`
+						grid-template-areas:
+							'checkout-title-area'
+							'sidebar-content'
+							'main-content'
+							'processor-notice'
+							'trust-cards';
+				  `
+				: css`
+						grid-template-areas: 'checkout-title-area' 'sidebar-content' 'main-content';
+				  ` }
+			.checkout-sidebar-content {
+				background: ${ colorStudio.colors[ 'White' ] };
+			}
+			.checkout__summary-area {
+				background: #f5f5f5;
+				border: 1px solid ${ colorStudio.colors[ 'Gray 10' ] };
+				border-radius: 8px;
+				margin: 12px 16px;
+				overflow: hidden;
+				width: calc( 100% - 32px );
+			}
+			.checkout__summary-button {
+				background: transparent;
+				border-bottom: none;
+			}
+			.checkout__summary-body {
+				padding-block-start: 0;
+			}
+			.wp-checkout-order-summary__section-title {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 10' ] };
+				padding-top: 20px;
+			}
+			.checkout__redesign-header {
+				grid-area: checkout-title-area;
+				margin-top: var( --masterbar-checkout-height );
+				margin-bottom: 12px;
+				padding-inline: 16px;
+			}
+			.checkout-sidebar-content {
+				margin-top: 0;
+			}
+			.checkout-main-content .checkout__main-title {
+				display: none;
+			}
+			.checkout-main-content {
+				margin-top: 12px;
+			}
+			.wp-checkout__review-order-step {
+				padding-block-start: 0;
+			}
+			.checkout-step {
+				padding: 16px 16px 48px 16px;
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		css`
+			.checkout__main-title,
+			.step-container-v2__heading h1 {
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+
+				@media ( max-width: 699px ) {
+					font-size: 28px;
+				}
+			}
+			.checkout__summary-card {
+				background: transparent;
+				box-shadow: none;
+				padding: 0;
+				margin-bottom: 0;
+			}
+			@media ( ${ props.theme.breakpoints.desktopUp } ) {
+				.checkout__summary-card {
+					background: ${ colorStudio.colors[ 'White' ] };
+					border: 1px solid ${ colorStudio.colors[ 'Gray 5' ] };
+					border-radius: 8px;
+					padding: 24px;
+				}
+			}
+			.promo-card.checkout-sidebar-plan-upsell {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+				border-radius: 8px;
+				margin: 0;
+				max-width: none;
+				width: 100%;
+			}
+			.checkout-sidebar-plan-upsell__plan-grid > div {
+				border-top: none;
+			}
+			.item-variation-picker {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding: 0;
+			}
+			.item-variation-picker > li {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.item-variation-picker > li:last-child {
+				border-bottom: none;
+			}
+			.item-variation-picker > li > div.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.item-variation-picker > li > div::before,
+			.item-variation-picker > li > div:hover::before {
+				border: none;
+			}
+			.item-variation-picker > li > div > label {
+					min-height: 64px;
+					padding-top: 2px;
+					padding-bottom: 0;
+				@media ( ${ props.theme.breakpoints.desktopUp } ) {
+					min-height: 72px;
+				}
+			}
+			.checkout-step__stepper > div > div:first-child {
+				border: 1px solid ${ colorStudio.colors[ 'Gray 90' ] };
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 600;
+			}
+			.checkout-payment-methods {
+				background: #ffffff;
+				border: 1px solid #e0e0e0;
+				border-radius: 8px;
+				overflow: hidden;
+				padding-top: 0;
+			}
+			.checkout-payment-methods .has-highlight,
+			.item-variation-picker > li > div {
+				border-radius: 0;
+			}
+			.checkout-payment-methods .has-highlight {
+				margin: 0;
+				border-bottom: 1px solid #f0f0f0;
+			}
+			.checkout-payment-methods .has-highlight:last-child {
+				border-bottom: none;
+			}
+			.checkout-payment-methods .has-highlight.is-checked {
+				background: linear-gradient( 135deg, rgba( 255, 255, 255, 0 ) 0%, #fff 50%, #e6f1ff 100% );
+			}
+			.checkout-payment-methods .has-highlight::before,
+			.checkout-payment-methods .has-highlight:hover::before {
+				border: none;
+			}
+			.checkout-payment-methods .has-highlight > label {
+				font-size: 13px;
+				font-weight: 400;
+			}
+			.checkout-payment-methods .payment-logos {
+				display: flex;
+				filter: none;
+			}
+			.checkout-payment-methods .StripeElement {
+				background-color: field;
+			}
+			div:has( > .credit-card-fields-inner-wrapper ) {
+				padding: 0 16px 16px 16px;
+			}
+			.checkout-steps__step-complete-content .checkout-payment-methods {
+				background: white;
+				padding: 12px 16px;
+				min-height: 52px;
+				display: flex;
+				align-items: center;
+				box-sizing: border-box;
+				font-size: 15px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content {
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul:empty {
+				display: none;
+			}
+			.checkout-contact-form-step .checkout-steps__step-complete-content ul {
+				margin-top: 0;
+			}
+			.checkout-step__edit-button {
+				padding: 4px;
+				display: flex;
+				align-items: center;
+				line-height: 1;
+			}
+
+			.checkout-step__header h2 > span {
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+				font-size: 18px;
+					@media ( ${ props.theme.breakpoints.desktopUp } ) {
+						font-size: 20px;
+					}
+				}
+
+			.checkout-step__header {
+				margin-bottom: 16px;
+			}
+
+			.wp-checkout__review-order-step .checkout-step__header {
+				margin-bottom: 0;
+			}
+
+			.checkout-line-item {
+				padding-top: 24px;
+				padding-bottom: 0;
+			}
+
+			.wp-checkout__review-order-step .checkout-step__header h2 > span {
+				font-weight: 500;
+			}
+			.wp-checkout-order-review__show-coupon-field-button {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-weight: 500;
+				text-decoration: none;
+			}
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				margin-block-start: -4px;
+				padding-block-start: 0;
+			}
+			.wp-checkout__review-order-step .checkout-step__stepper {
+				@media ( max-width: 699px ) {
+					display: none;
+				}
+			}
+			.wp-checkout__review-order-step .checkout-step__header h2 {
+				font-size: 20px;
+			}
+			.wp-checkout__review-order-step .checkout-line-item {
+				font-size: 15px;
+			}
+			.wp-checkout__review-order-step .order-review-line-items {
+				margin-top: 0;
+			}
+			.wp-checkout__review-order-step .checkout-review-order__site {
+				font-size: 14px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 50' ] };
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					margin-top: 0;
+				}
+			}
+			.checkout-contact-form-step .checkout-steps__step-content > p {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__terms strong {
+				font-size: 16px;
+				font-weight: 500;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__terms-item {
+				font-size: 12px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 40' ] };
+			}
+			.checkout__summary-title {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 100' ] };
+			}
+			.checkout__summary-body {
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+			.wp-checkout-order-summary__subtotal,
+			.wp-checkout-order-summary__total {
+				color: ${ colorStudio.colors[ 'Gray 90' ] };
+				font-size: 16px;
+				line-height: 20px;
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__subtotal:first-child,
+			.wp-checkout-order-summary__total:first-child {
+				margin-bottom: 4px;
+			}
+			.wp-checkout-order-summary__subtotal .wp-checkout-order-summary__subtotal-price {
+				font-size: 14px;
+			}
+			.wp-checkout-order-summary__line-item,
+			.wp-checkout-order-summary__tax-not-calculated {
+				font-size: 13px;
+			}
+			.wp-checkout-order-summary__section-title {
+				margin-bottom: 0;
+			}
+			.wp-checkout-order-summary__section-title > span {
+				display: none;
+			}
+			.cost-overrides-list-product-wrapper,
+			:has( > .cost-overrides-list-item--coupon ) {
+				padding-inline-start: 0;
+			}
+			.cost-overrides-list-product-wrapper > svg[aria-hidden='true'],
+			:has( > .cost-overrides-list-item--coupon ) > svg[aria-hidden='true'] {
+				display: none;
+			}
+			.wp-checkout-order-summary__amount-wrapper {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
+			}
+			.wp-checkout-order-summary__subtotal-section {
+				border-top: 0;
+				border-bottom: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };S
+			}
+			.checkout-terms-and-checkboxes {
+				padding-block-start: 24px;
+			}
+			.checkout-terms-and-checkboxes > *:first-child {
+				border-top: 1px dashed ${ colorStudio.colors[ 'Gray 5' ] };
+			}
+			.checkout-steps__submit-footer-wrapper > div {
+				margin-top: 8px;
+			}
+			.checkout-steps__submit-footer-wrapper > div > svg {
+				display: none;
+			}
+			.checkout-steps__submit-footer-wrapper > div > p {
+				font-size: 13px;
+				font-weight: 400;
+				color: ${ colorStudio.colors[ 'Gray 70' ] };
+			}
+		` }
+	${ ( props ) =>
+		props.isCheckoutUiRedesignV1 &&
+		props.isLargeViewport &&
+		css`
+			.checkout__summary-area {
+				padding-top: 50px;
+			}
+			div:has( > div > .wp-checkout-order-review__show-coupon-field-button ) {
+				padding-block-start: 24px;
 			}
 		` }
 `;
@@ -1479,10 +2459,14 @@ const WPCheckoutCompletedWrapper = styled.div`
 	}
 `;
 
-const WPCheckoutMainContent = styled.div`
+const WPCheckoutMainContent = styled.div< { isRsmBetterCheckout?: boolean } >`
 	grid-area: main-content;
 	margin-top: 50px;
-	min-height: 100vh;
+	${ ( props ) =>
+		! props.isRsmBetterCheckout &&
+		css`
+			min-height: 100vh;
+		` }
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
@@ -1492,12 +2476,34 @@ const WPCheckoutMainContent = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: calc( var( --masterbar-checkout-height ) + 24px );
 		max-width: 688px;
-		padding: 0 64px 0 24px;
+		${ ( props ) =>
+			props.isRsmBetterCheckout
+				? css`
+						padding-block: 0;
+						padding-inline-start: 24px;
+						padding-inline-end: 64px;
+				  `
+				: css`
+						padding: 0 64px 0 24px;
 
-		.rtl & {
-			padding: 0 24px 0 64px;
-		}
+						.rtl & {
+							padding: 0 24px 0 64px;
+						}
+				  ` }
 	}
+
+	${ ( props ) =>
+		props.isRsmBetterCheckout &&
+		css`
+			/* On narrower desktops the 64px between form and sidebar is too tight
+			   when stacked with the sidebar's own 64px left padding. Drop the form's
+			   right padding so its content reaches col-2's right edge, matching the
+			   trust cards row beneath. Restored above 1024px where the layout has
+			   room to breathe. */
+			@media ( ${ props.theme.breakpoints.desktopUp } ) and ( max-width: 1024px ) {
+				padding-inline-end: 0;
+			}
+		` }
 	${ ( props ) => css`
 		.checkout-line-item .checkout-line-item__remove-product {
 			font-size: 14px;
@@ -1530,7 +2536,7 @@ const WPCheckoutCompletedMainContent = styled.div`
 	}
 `;
 
-const WPCheckoutSidebarContent = styled.div`
+const WPCheckoutSidebarContent = styled.div< { isRsmBetterCheckout?: boolean } >`
 	background: ${ ( props ) => props.theme.colors.background };
 	grid-area: sidebar-content;
 	margin-top: var( --masterbar-checkout-height );
@@ -1541,11 +2547,23 @@ const WPCheckoutSidebarContent = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin-top: 0;
-		padding: 144px 24px 144px 64px;
+		${ ( props ) =>
+			props.isRsmBetterCheckout
+				? css`
+						background: ${ colorStudio.colors[ 'White' ] };
+						padding: 144px 24px 24px 64px;
 
-		.rtl & {
-			padding: 144px 64px 0 24px;
-		}
+						.rtl & {
+							padding: 144px 64px 24px 24px;
+						}
+				  `
+				: css`
+						padding: 144px 24px 144px 64px;
+
+						.rtl & {
+							padding: 144px 64px 0 24px;
+						}
+				  ` }
 	}
 `;
 const SitePreviewWrapper = styled.div`
@@ -1583,5 +2601,71 @@ const WPCheckoutTitle = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0;
+	}
+`;
+
+// Redesign V1 styled components for summary header
+const CheckoutSummaryTitleLinkRedesign = styled.button`
+	background: transparent;
+	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		display: none;
+	}
+`;
+
+const CheckoutSummaryTitleContentRedesign = styled.span`
+	color: ${ ( props ) => props.theme.colors.textColor };
+	display: flex;
+	font-size: 13px;
+	font-weight: 400;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 auto;
+	padding: 16px;
+	max-width: 600px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 16px 0;
+	}
+`;
+
+const CheckoutSummaryPricesWrapper = styled.span`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+`;
+
+const CheckoutSummaryOriginalPrice = styled.s`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
+	font-size: 13px;
+`;
+
+const CheckoutSummaryCurrentPrice = styled.span`
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+`;
+
+const CheckoutSummaryBagIconWrapper = styled.span`
+	opacity: 0.5;
+	display: flex;
+	align-items: center;
+	margin-inline-end: 6px;
+	& svg {
+		width: 16px;
+		height: 16px;
+	}
+`;
+
+const CheckoutSummaryNudgeArea = styled.div`
+	margin: 8px 16px 12px;
+	flex-shrink: 0;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		margin-inline: 0;
+		margin-block-start: 24px;
+		max-width: 288px;
 	}
 `;

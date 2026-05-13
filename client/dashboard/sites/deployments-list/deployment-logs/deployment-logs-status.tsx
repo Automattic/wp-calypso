@@ -61,7 +61,7 @@ const getStatusIcon = (
 		case 'queued':
 			return {
 				icon: scheduled,
-				fill: '#3b3b3b',
+				fill: 'var(--dashboard__text-muted-color)',
 			};
 		case 'success':
 			return {
@@ -112,7 +112,7 @@ export function DeploymentLogsStatus( {
 					} }
 				/>
 			) }
-			<Text size="small" style={ { color: '#3b3b3b' } }>
+			<Text size="small" style={ { color: 'var(--dashboard__text-muted-color)' } }>
 				{ getStatusText( status, startedOn, completedOn ) }
 			</Text>
 		</HStack>

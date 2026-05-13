@@ -36,30 +36,21 @@ export interface UseGridPlansParams {
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
 	/**
-	 * When true, use the long/expanded feature set for the plans differentiators experiment.
+	 * When true, use the no-AI feature set for the rolled-out pricing differentiation cohort.
 	 */
-	useLongSetFeatures?: boolean;
+	useVar42NoAiFeatures?: boolean;
 	/**
-	 * When true, use the stacked (incremental) feature set for the long_set_stacked variant.
+	 * When true, show plan-scoped feature pills. AI-labeled pills are suppressed.
 	 */
-	useLongSetStackedFeatures?: boolean;
+	showPricingDifferentiationFeaturePills?: boolean;
 	/**
-	 * When true, use the stacked (incremental) feature set for the short_set_stacked variant.
+	 * When true, use the focused_new_copy taglines for plan headers.
 	 */
-	useShortSetStackedFeatures?: boolean;
+	useFocusedNewCopyTaglines?: boolean;
 	/**
-	 * When true, use the var5 feature set (getVar5StackedSignupWpcomFeatures).
-	 */
-	useVar5Features?: boolean;
-	/**
-	 * When true, the user is in an experiment variant (not control).
+	 * When true, use cohort feature lists and comparison grid copy.
 	 */
 	isExperimentVariant?: boolean;
-	/**
-	 * When true, mark features after "Everything in X, plus:" header as differentiator features.
-	 * Used for var1d experiment variant styling.
-	 */
-	isVar1dVariant?: boolean;
 }
 
 export type UseGridPlansType = (

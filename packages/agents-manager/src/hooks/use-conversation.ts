@@ -1,16 +1,14 @@
-import {
-	loadAllMessagesFromServer,
-	createOdieBotId,
-	isOdieBotId,
-	type Message,
-} from '@automattic/agenttic-client';
+import { loadAllMessagesFromServer, type Message } from '@automattic/agenttic-client';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from '@wordpress/element';
 import { API_BASE_URL } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { getConversationBotId } from '../utils/conversation-bot-id';
+import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 
 interface Config {
 	maxPages?: number;
+	enabled?: boolean;
 	onSuccess?: ( messages: Message[], sessionId: string ) => void;
 }
 
@@ -23,7 +21,11 @@ interface Result {
 /**
  * Fetches a conversation from the server when a `sessionId` is available.
  */
-export default function useConversation( { maxPages = 10, onSuccess = () => {} }: Config ): Result {
+export default function useConversation( {
+	maxPages = 10,
+	enabled = true,
+	onSuccess = () => {},
+}: Config ): Result {
 	const { agentConfig } = useAgentsManagerContext();
 	const { agentId, sessionId, authProvider } = agentConfig!;
 
@@ -37,7 +39,7 @@ export default function useConversation( { maxPages = 10, onSuccess = () => {} }
 		queryFn: async () => {
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
-			const botId = hasAgentParam || isOdieBotId( agentId ) ? agentId : createOdieBotId( agentId );
+			const botId = getConversationBotId( agentId, hasAgentParam );
 
 			return await loadAllMessagesFromServer(
 				sessionId,
@@ -50,11 +52,11 @@ export default function useConversation( { maxPages = 10, onSuccess = () => {} }
 				true
 			);
 		},
-		enabled: !! sessionId,
-		// Keep history stable while browsing; use explicit non-default refetch behavior for chat UX.
+		// Public Reader Chat does not expose conversation history, and the
+		// server-side history endpoint requires permissions public readers
+		// usually do not have.
+		enabled: enabled && !! sessionId && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
-		refetchOnMount: false,
-		staleTime: 300000, // 5 minutes
 	} );
 
 	useEffect(

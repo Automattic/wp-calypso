@@ -1,0 +1,102 @@
+import page from '@automattic/calypso-router';
+import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
+import debugModule from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import store from 'store';
+import DocumentHead from 'calypso/components/data/document-head';
+import { navigate } from 'calypso/lib/navigate';
+import {
+	detectPartnerConfig,
+	getPartnerConfigFromGarden,
+	getPartnerFormattedWindowTitle,
+} from 'calypso/lib/partner-branding';
+import InviteAccept from 'calypso/my-sites/invites/invite-accept';
+import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { setUserEmailVerified } from 'calypso/state/current-user/actions';
+import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
+import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:invite-accept:controller' );
+
+export function redirectWithoutLocaleifLoggedIn( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) && getLocaleFromPath( context.path ) ) {
+		return page.redirect( removeLocaleFromPath( context.path ) );
+	}
+
+	next();
+}
+
+export function acceptInvite( context, next ) {
+	// Skip if unified invite flow is handling this request
+	if ( context.useUnifiedInvite ) {
+		return next();
+	}
+
+	const acceptedInvite = store.get( 'invite_accepted' );
+	if ( acceptedInvite ) {
+		debug( 'invite_accepted is set in localStorage' );
+		if ( getCurrentUserEmail( context.store.getState() ) === acceptedInvite.sentTo ) {
+			debug( 'Setting email_verified in user object' );
+			context.store.dispatch( setUserEmailVerified( true ) );
+		}
+		store.remove( 'invite_accepted' );
+		const emailVerificationSecret = context.query.email_verification_secret;
+
+		context.store
+			.dispatch( acceptInviteAction( acceptedInvite, emailVerificationSecret ) )
+			.then( () => {
+				const redirect = getRedirectAfterAccept(
+					acceptedInvite,
+					hasDashboardOptIn( context.store.getState() )
+				);
+				debug( 'Accepted invite and redirecting to:  ' + redirect );
+				navigate( redirect );
+			} )
+			.catch( ( error ) => {
+				debug( 'Accept invite error: ' + JSON.stringify( error ) );
+				page( window.location.href );
+			} );
+		return;
+	}
+
+	const AcceptInviteTitle = () => {
+		const translate = useTranslate();
+		const blogDetails = context.inviteData?.blog_details;
+		const partnerConfig =
+			blogDetails?.is_garden_site && blogDetails.garden
+				? getPartnerConfigFromGarden( blogDetails.garden.partner, blogDetails.garden.name, {
+						persistToSession: true,
+				  } )
+				: detectPartnerConfig();
+
+		return (
+			<DocumentHead
+				title={ getPartnerFormattedWindowTitle(
+					translate( 'Accept Invite', { textOnly: true } ),
+					partnerConfig
+				) }
+				skipTitleFormatting
+			/>
+		);
+	};
+
+	context.primary = (
+		<>
+			<AcceptInviteTitle />
+			<InviteAccept
+				siteId={ context.params.site_id }
+				inviteKey={ context.params.invitation_key }
+				activationKey={ context.params.activation_key }
+				authKey={ context.params.auth_key }
+				locale={ context.params.locale }
+				path={ context.path }
+				prefetchedInvite={ context.inviteData }
+			/>
+		</>
+	);
+	next();
+}
