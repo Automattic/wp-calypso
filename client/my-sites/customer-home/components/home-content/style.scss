@@ -76,6 +76,20 @@ body.is-section-home.theme-default.color-scheme {
 		}
 	}
 
+	.navigation-header__actions .button:not(.is-primary) {
+		background-color: var(--studio-green-50);
+		border-color: var(--studio-green-50);
+		color: var(--studio-white);
+
+		&:hover,
+		&:focus {
+			background-color: var(--studio-green-60);
+			border-color: var(--studio-green-60);
+			color: var(--studio-white);
+			box-shadow: 0 0 0 2px var(--studio-green-20);
+		}
+	}
+
 }
 
 .customer-home__heading + .customer-home__layout {
