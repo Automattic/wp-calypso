@@ -1,3 +1,5 @@
+@import '@automattic/components/src/styles/typography';
+
 .activity-streak {
 	display: flex;
 	flex-direction: row;
@@ -12,11 +14,10 @@
 	flex-direction: column;
 	gap: 8px;
 	min-width: 0;
-	padding: 16px 0;
 }
 
 .activity-streak__title {
-	font-size: 24px;
+	font-size: 1rem;
 	font-weight: 600;
 	line-height: 1.2;
 }
@@ -25,7 +26,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	line-height: 1.4;
 

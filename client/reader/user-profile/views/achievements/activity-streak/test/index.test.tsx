@@ -66,10 +66,10 @@ describe( 'ActivityStreak', () => {
 			expect( screen.getByText( /Start your activity streak today/ ) ).toBeVisible();
 		} );
 
-		test( 'badge is inactive with no label', () => {
+		test( 'badge is inactive with the "Get started!" label', () => {
 			render( <ActivityStreak streak={ streak } isOwnProfile /> );
 			expect( getBadgeStateClass() ).toBe( 'is-inactive' );
-			expect( getBadgeLabel() ).toBe( '' );
+			expect( getBadgeLabel() ).toBe( 'Get started!' );
 		} );
 	} );
 
@@ -102,10 +102,10 @@ describe( 'ActivityStreak', () => {
 			).toBeVisible();
 		} );
 
-		test( 'badge is inactive with no label', () => {
+		test( 'badge is inactive with the "Don’t break it!" label', () => {
 			render( <ActivityStreak streak={ streak } isOwnProfile /> );
 			expect( getBadgeStateClass() ).toBe( 'is-inactive' );
-			expect( getBadgeLabel() ).toBe( '' );
+			expect( getBadgeLabel() ).toBe( 'Don’t break it!' );
 		} );
 	} );
 

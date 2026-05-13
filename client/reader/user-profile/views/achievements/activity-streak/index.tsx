@@ -64,7 +64,7 @@ function getModeContent(
 		case 'never-started':
 			return {
 				badgeState: 'inactive',
-				badgeLabel: '',
+				badgeLabel: translate( 'Get started!' ) as string,
 				description: translate(
 					'Start your activity streak today.{{br/}}Like, comment, follow, or post — anything counts.',
 					{ components: { br: <br /> } }
@@ -73,7 +73,7 @@ function getModeContent(
 		case 'lost':
 			return {
 				badgeState: 'inactive',
-				badgeLabel: '',
+				badgeLabel: translate( 'Try again!' ) as string,
 				description: translate(
 					'Restart your activity streak today.{{br/}}Like, comment, follow, or post — anything counts.',
 					{ components: { br: <br /> } }
@@ -82,7 +82,7 @@ function getModeContent(
 		case 'pending':
 			return {
 				badgeState: 'inactive',
-				badgeLabel: '',
+				badgeLabel: translate( 'Don’t break it!' ) as string,
 				description: translate( 'Like, comment, follow, or post every day to build your streak.' ),
 			};
 		case 'pending-frozen':
