@@ -19,7 +19,7 @@ export default function EmptyState() {
 					) }
 				</p>
 			</div>
-			<Notice.Root intent="info" className="content-research-empty__notice">
+			<Notice.Root intent="info">
 				<Notice.Title>{ __( 'Beta feature', 'content-research' ) }</Notice.Title>
 				<Notice.Description>
 					{ __( 'Only available for proxied a11ns', 'content-research' ) }

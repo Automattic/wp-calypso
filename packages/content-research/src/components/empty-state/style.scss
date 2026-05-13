@@ -11,7 +11,7 @@
 	justify-content: space-between;
 
 	&__title {
-		margin: 4px 0 0;
+		margin: 8px 0;
 		font-size: 14px;
 		font-weight: 600;
 		text-transform: uppercase;
@@ -24,9 +24,5 @@
 		font-size: 13px;
 		line-height: 1.5;
 		color: #50575e;
-	}
-
-	&__notice {
-		margin-top: 8px;
 	}
 }
