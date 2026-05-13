@@ -87,7 +87,7 @@ function getModeContent(
 			};
 		case 'pending-frozen':
 			return {
-				badgeState: 'inactive',
+				badgeState: 'frozen',
 				badgeLabel: translate( 'Streak frozen' ) as string,
 				description: translate(
 					'A streak freeze protected your streak yesterday.{{br/}}Like, comment, follow, or post every day to build your streak.',

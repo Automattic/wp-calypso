@@ -15,6 +15,7 @@ describe( 'StreakBadge', () => {
 		[ 'inactive', '.streak-badge.is-inactive' ],
 		[ 'active', '.streak-badge.is-active' ],
 		[ 'longest-active', '.streak-badge.is-longest-active' ],
+		[ 'frozen', '.streak-badge.is-frozen' ],
 	] as const )( 'should apply the %s state class', ( state, selector ) => {
 		const { container } = render( <StreakBadge streak={ 7 } state={ state } /> );
 

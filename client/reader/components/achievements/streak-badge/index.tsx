@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
-export type StreakBadgeState = 'inactive' | 'active' | 'longest-active';
+export type StreakBadgeState = 'inactive' | 'active' | 'longest-active' | 'frozen';
 
 interface StreakBadgeProps {
 	streak: number;

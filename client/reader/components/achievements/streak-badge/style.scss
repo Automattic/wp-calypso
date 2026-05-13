@@ -56,3 +56,10 @@
 	--streak-badge-color: var( --studio-red-50 );
 	--streak-badge-shadow: rgba( var( --studio-red-50-rgb ), 0.4 );
 }
+
+.streak-badge.is-frozen {
+	--streak-badge-background: var( --studio-blue-70 )
+		url( calypso/assets/images/achievements/streak-badge-frozen.svg ) no-repeat center / cover;
+	--streak-badge-color: var( --studio-white );
+	--streak-badge-shadow: rgba( var( --studio-blue-70-rgb ), 0.4 );
+}

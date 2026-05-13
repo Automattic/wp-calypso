@@ -123,8 +123,9 @@ describe( 'ActivityStreak', () => {
 			expect( screen.getByText( /A streak freeze protected your streak yesterday/ ) ).toBeVisible();
 		} );
 
-		test( 'badge label is "Streak frozen"', () => {
+		test( 'badge state is frozen with the "Streak frozen" label', () => {
 			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( getBadgeStateClass() ).toBe( 'is-frozen' );
 			expect( getBadgeLabel() ).toBe( 'Streak frozen' );
 		} );
 	} );
