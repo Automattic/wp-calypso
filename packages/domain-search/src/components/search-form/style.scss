@@ -1,7 +1,48 @@
+@import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/colors';
 
 .domain-search {
 	.domain-search__search-form-hint {
 		color: #{$gray-900};
+	}
+}
+
+.domain-search--initial-state {
+	@media ( max-width: #{ $break-small - 1px } ) {
+		--domain-search-input-size: 48px;
+		--domain-search-input-border-radius: 2px;
+
+		.domain-search__search-form-field {
+			position: relative;
+
+			.domain-search-controls__submit.is-icon-only {
+				position: absolute;
+				top: 50%;
+				right: 6px;
+				transform: translateY( -50% );
+			}
+
+			.domain-search-controls__input
+				.components-input-control__container
+				input.components-input-control__input {
+				padding-right: 48px;
+			}
+		}
+
+		.domain-search-controls__input
+			.components-input-control__container
+			input.components-input-control__input {
+			font-size: 1rem;
+		}
+
+		.domain-search-controls__input .components-input-control__prefix {
+			display: none;
+		}
+	}
+}
+
+.step-container-v2__content-wrapper:has( .domain-search--initial-state ) {
+	@media ( max-width: #{ $break-small - 1px } ) {
+		gap: 1.5rem;
 	}
 }
