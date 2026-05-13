@@ -36,6 +36,7 @@ export interface VideoStudioData {
 	id: number | null;
 	style?: string;
 	title?: string;
+	currentPostId?: number;
 	metadata: ImageStudioMetadata;
 	entryPoint: ImageStudioEntryPoint | null;
 	blockType: string | null;
@@ -285,6 +286,7 @@ function detectImageEntity(): DetectedEntity | null {
 			// non-editor contexts (e.g. tests, uploads.php), so treat it as optional.
 			const editorSelect = select( 'core/editor' ) as unknown as {
 				getEditedPostAttribute?: ( name: string ) => unknown;
+				getCurrentPostId?: () => number | undefined;
 			};
 			const postTitle =
 				typeof editorSelect?.getEditedPostAttribute === 'function'
@@ -294,6 +296,17 @@ function detectImageEntity(): DetectedEntity | null {
 
 			if ( trimmedTitle ) {
 				videoStudio.title = trimmedTitle.slice( 0, POST_TITLE_MAX_LENGTH );
+			}
+
+			// Send the current post ID so the wpcom side can look up the
+			// featured image and composite the title onto it as the opener
+			// frame for the generated video.
+			const currentPostId =
+				typeof editorSelect?.getCurrentPostId === 'function'
+					? editorSelect.getCurrentPostId()
+					: undefined;
+			if ( typeof currentPostId === 'number' && currentPostId > 0 ) {
+				videoStudio.currentPostId = currentPostId;
 			}
 
 			return { videoStudio, isOpen, isVideo: true };

@@ -51,6 +51,7 @@ interface VideoStoreSelectors {
 
 interface EditorStoreSelectors {
 	getEditedPostAttribute?: ( name: string ) => unknown;
+	getCurrentPostId?: () => number | undefined;
 }
 
 function setupSelect( {
@@ -219,6 +220,74 @@ describe( 'getClientContext', () => {
 
 		expect( ctx.videoStudio ).toBeDefined();
 		expect( ctx.videoStudio ).not.toHaveProperty( 'title' );
+	} );
+
+	it( 'includes currentPostId in the videoStudio payload when available', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'post_editor_feature_clip',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => 'cinematic',
+			},
+			editor: {
+				getCurrentPostId: () => 12345,
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.videoStudio?.currentPostId ).toBe( 12345 );
+	} );
+
+	it( 'omits currentPostId when the editor store returns a falsy ID', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'post_editor_feature_clip',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => 'cinematic',
+			},
+			editor: {
+				getCurrentPostId: () => 0,
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.videoStudio ).toBeDefined();
+		expect( ctx.videoStudio ).not.toHaveProperty( 'currentPostId' );
+	} );
+
+	it( 'omits currentPostId when the core/editor store is unavailable', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'post_editor_feature_clip',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => 'cinematic',
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.videoStudio ).toBeDefined();
+		expect( ctx.videoStudio ).not.toHaveProperty( 'currentPostId' );
 	} );
 
 	it( 'sources the videoStudio id and attachment metadata from the video-studio store', () => {
