@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { ActivityStreak } from '../index';
 import type { EngagementStreak } from '@automattic/api-core';
 
@@ -119,8 +120,23 @@ describe( 'ActivityStreak', () => {
 		};
 
 		test( 'renders the freeze-protected description', () => {
+			const { container } = render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( container.textContent ).toMatch( /A streak freeze protected your streak yesterday/ );
+		} );
+
+		test( 'wraps "streak freeze" with a Tooltip that reveals the explainer on hover', async () => {
+			const user = userEvent.setup();
 			render( <ActivityStreak streak={ streak } isOwnProfile /> );
-			expect( screen.getByText( /A streak freeze protected your streak yesterday/ ) ).toBeVisible();
+
+			const term = screen.getByText( 'streak freeze' );
+			expect( term ).toHaveClass( 'activity-streak__term' );
+
+			await user.hover( term );
+			expect(
+				await screen.findByText(
+					'A streak freeze automatically protects your streak when you miss a day.'
+				)
+			).toBeVisible();
 		} );
 
 		test( 'badge state is frozen with the "Streak frozen" label', () => {
@@ -176,17 +192,21 @@ describe( 'ActivityStreak', () => {
 
 	describe( 'variation', () => {
 		test( 'shows "N streak freezes available" when freezes are banked', () => {
-			render( <ActivityStreak streak={ { ...baseStreak, freezes_available: 2 } } isOwnProfile /> );
-			expect( screen.getByText( '2 streak freezes available.' ) ).toBeVisible();
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, freezes_available: 2 } } isOwnProfile />
+			);
+			expect( container.textContent ).toContain( '2 streak freezes available.' );
 		} );
 
 		test( 'pluralizes "streak freeze available" for 1', () => {
-			render( <ActivityStreak streak={ { ...baseStreak, freezes_available: 1 } } isOwnProfile /> );
-			expect( screen.getByText( '1 streak freeze available.' ) ).toBeVisible();
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, freezes_available: 1 } } isOwnProfile />
+			);
+			expect( container.textContent ).toContain( '1 streak freeze available.' );
 		} );
 
 		test( 'shows recharging copy when no freezes banked and recharging', () => {
-			render(
+			const { container } = render(
 				<ActivityStreak
 					streak={ {
 						...baseStreak,
@@ -196,7 +216,7 @@ describe( 'ActivityStreak', () => {
 					isOwnProfile
 				/>
 			);
-			expect( screen.getByText( 'Streak freeze available in 3 days.' ) ).toBeVisible();
+			expect( container.textContent ).toContain( 'Streak freeze available in 3 days.' );
 		} );
 
 		test( 'renders nothing when streak is 0', () => {

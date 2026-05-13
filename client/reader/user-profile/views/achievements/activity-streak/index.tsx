@@ -1,3 +1,4 @@
+import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
@@ -12,6 +13,29 @@ import './style.scss';
 interface ActivityStreakProps {
 	streak: EngagementStreak | undefined;
 	isOwnProfile: boolean;
+}
+
+// Wraps a "streak freeze" mention so a tooltip explains the feature on hover
+// or focus. Used as an i18n component placeholder, so it receives the term's
+// translated text as children.
+function StreakFreezeTerm( { children }: { children?: ReactNode } ) {
+	const translate = useTranslate();
+	return (
+		<Tooltip
+			text={
+				translate(
+					'A streak freeze automatically protects your streak when you miss a day.'
+				) as string
+			}
+		>
+			<span
+				className="activity-streak__term"
+				tabIndex={ 0 } // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
+			>
+				{ children }
+			</span>
+		</Tooltip>
+	);
 }
 
 type ActivityStreakMode =
@@ -90,8 +114,8 @@ function getModeContent(
 				badgeState: 'frozen',
 				badgeLabel: translate( 'Streak frozen' ) as string,
 				description: translate(
-					'A streak freeze protected your streak yesterday.{{br/}}Like, comment, follow, or post every day to build your streak.',
-					{ components: { br: <br /> } }
+					'A {{term}}streak freeze{{/term}} protected your streak yesterday.{{br/}}Like, comment, follow, or post every day to build your streak.',
+					{ components: { term: <StreakFreezeTerm />, br: <br /> } }
 				),
 			};
 		case 'engaged':
@@ -126,18 +150,24 @@ function getFreezeDescription(
 		return null;
 	}
 	if ( streak.freezes_available > 0 ) {
-		return translate( '%(count)d streak freeze available.', '%(count)d streak freezes available.', {
-			count: streak.freezes_available,
-			args: { count: streak.freezes_available },
-		} );
+		return translate(
+			'%(count)d {{term}}streak freeze{{/term}} available.',
+			'%(count)d {{term}}streak freezes{{/term}} available.',
+			{
+				count: streak.freezes_available,
+				args: { count: streak.freezes_available },
+				components: { term: <StreakFreezeTerm /> },
+			}
+		);
 	}
 	if ( streak.next_freeze_in_days >= 1 ) {
 		return translate(
-			'Streak freeze available in %(count)d day.',
-			'Streak freeze available in %(count)d days.',
+			'{{term}}Streak freeze{{/term}} available in %(count)d day.',
+			'{{term}}Streak freeze{{/term}} available in %(count)d days.',
 			{
 				count: streak.next_freeze_in_days,
 				args: { count: streak.next_freeze_in_days },
+				components: { term: <StreakFreezeTerm /> },
 			}
 		);
 	}
