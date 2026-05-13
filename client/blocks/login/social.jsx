@@ -135,7 +135,11 @@ class SocialLoginForm extends Component {
 				// oauth2) is handled upstream via the `enabled` field, so the
 				// badge never wraps a vanishing child.
 				if ( isSocialFirst && service === lastUsedAuthenticationMethod && button ) {
-					return <LastUsedBadge key={ button.key }>{ button }</LastUsedBadge>;
+					return (
+						<LastUsedBadge key={ button.key } method={ service }>
+							{ button }
+						</LastUsedBadge>
+					);
 				}
 				return button;
 			} );

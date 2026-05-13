@@ -136,6 +136,15 @@ export class LoginForm extends Component {
 			url.searchParams.delete( 'username_only' );
 			window.history.replaceState( {}, document.title, url );
 		}
+
+		// Mirror impression event for the password "Last used" hint rendered below.
+		// The social-button variant of the badge fires its own impression from
+		// <LastUsedBadge> in client/components/social-buttons/last-used-badge.tsx.
+		if ( this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password' ) {
+			this.props.recordTracksEvent( 'calypso_login_last_used_badge_shown', {
+				method: 'password',
+			} );
+		}
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -143,6 +152,18 @@ export class LoginForm extends Component {
 
 		if ( handleUsernameChange && prevState.usernameOrEmail !== this.state.usernameOrEmail ) {
 			handleUsernameChange( this.state.usernameOrEmail );
+		}
+
+		// Fire the password-badge impression when the hint becomes visible mid-session
+		// (e.g. social-link flow flips lastUsedAuthenticationMethod to 'password').
+		const wasPasswordBadge =
+			this.props.isSocialFirst && prevState.lastUsedAuthenticationMethod === 'password';
+		const isPasswordBadge =
+			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
+		if ( isPasswordBadge && ! wasPasswordBadge ) {
+			this.props.recordTracksEvent( 'calypso_login_last_used_badge_shown', {
+				method: 'password',
+			} );
 		}
 
 		if ( prevProps.requestError || ! requestError ) {
