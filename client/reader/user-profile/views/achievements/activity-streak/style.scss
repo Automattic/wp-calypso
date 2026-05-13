@@ -3,6 +3,7 @@
 .activity-streak {
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	align-items: flex-start;
 	gap: 16px;
 	color: var( --color-text );
@@ -12,6 +13,9 @@
 .activity-streak__content {
 	display: flex;
 	flex-direction: column;
+	// Basis acts as the wrap floor: once the row can't seat badge + this much
+	// content side-by-side, content wraps below the badge.
+	flex: 1 1 200px;
 	gap: 8px;
 	min-width: 0;
 }

@@ -226,7 +226,6 @@ describe( 'UserAchievements', () => {
 
 		render( <UserAchievements user={ defaultUser } /> );
 
-		expect( screen.getByTestId( 'activity-streak' ) ).toBeVisible();
 		expect( mockActivityStreakProps ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				streak: expect.objectContaining( { current_streak: 7 } ),

@@ -1,26 +1,32 @@
 .is-reader-page {
 	.achievements__header {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: flex-start;
 		gap: 24px;
 		margin: 16px auto 48px;
 		max-width: 720px;
+		position: relative;
+		// Reserve room on the right for the absolutely-positioned settings button
+		// so flex children never run into it.
+		padding-inline-end: 48px;
+		container-type: inline-size;
+		container-name: achievements-header;
 	}
 
-	.achievements__header .activity-streak {
-		flex: 1;
+	.achievements__header > .activity-streak {
+		// 360px is the wrap floor: as long as the row can seat the streak at
+		// 360px (alongside YOS), it stays a single row. Below that, YOS drops to
+		// its own row and the streak shrinks to the available width — at which
+		// point the streak's internal layout wraps its content under the badge.
+		flex: 1 1 360px;
 	}
 
-	// Settings stays right-aligned even when ActivityStreak and/or
-	// YearsOfServiceBadge are absent.
+	// Pinned top-right of the header, regardless of which other items are
+	// present or how the row wraps.
 	.achievements__header > .achievements__settings {
-		margin-inline-start: auto;
-	}
-
-	// When ActivityStreak is present, its flex: 1 already pushes the trailing
-	// items to the right edge — drop the auto margin so it doesn't compete with
-	// flex grow.
-	.achievements__header > .activity-streak ~ .achievements__settings {
-		margin-inline-start: 0;
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-end: 0;
 	}
 }

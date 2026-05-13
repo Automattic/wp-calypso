@@ -6,6 +6,9 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 8px;
+	// Anchor the badge to the circle's width so long labels wrap underneath
+	// instead of widening the column and unbalancing the layout next to it.
+	width: 120px;
 }
 
 .streak-badge__circle {
@@ -32,8 +35,10 @@
 }
 
 .streak-badge__label {
+	max-width: 100%;
 	font-size: rem( 13px );
 	color: var( --studio-gray-40 );
+	text-align: center;
 }
 
 .streak-badge.is-inactive {
