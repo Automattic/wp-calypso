@@ -1,3 +1,4 @@
+import { Tip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import './style.scss';
@@ -19,17 +20,25 @@ export default function EmptyState() {
 					) }
 				</p>
 			</div>
-			<Notice.Root intent="info">
-				<Notice.Title>{ __( 'Beta feature', 'content-research' ) }</Notice.Title>
-				<Notice.Description>
-					{ __( 'Only available for proxied a11ns', 'content-research' ) }
-				</Notice.Description>
-				<Notice.Actions>
-					<Notice.ActionLink href={ FEEDBACK_URL } openInNewTab>
-						{ __( 'Share feedback', 'content-research' ) }
-					</Notice.ActionLink>
-				</Notice.Actions>
-			</Notice.Root>
+			<div className="content-research-empty__footer">
+				<Tip>
+					{ __(
+						'If you highlight text before opening a tool, search will start automatically',
+						'content-research'
+					) }
+				</Tip>
+				<Notice.Root intent="info">
+					<Notice.Title>{ __( 'Beta feature', 'content-research' ) }</Notice.Title>
+					<Notice.Description>
+						{ __( 'Only available for proxied a11ns', 'content-research' ) }
+					</Notice.Description>
+					<Notice.Actions>
+						<Notice.ActionLink href={ FEEDBACK_URL } openInNewTab>
+							{ __( 'Share feedback', 'content-research' ) }
+						</Notice.ActionLink>
+					</Notice.Actions>
+				</Notice.Root>
+			</div>
 		</div>
 	);
 }
