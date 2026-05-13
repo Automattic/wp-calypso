@@ -449,7 +449,22 @@ const DomainSearchStep: StepType< {
 			return (
 				<>
 					{ config.allowsUsingOwnDomain && (
-						<Step.LinkButton onClick={ () => events.onExternalDomainClick( query ) }>
+						<Step.LinkButton
+							onClick={ () => {
+								// Mobile empty state replaced the in-body card,
+								// which fired this Tracks event. Fire it here so
+								// the mobile metric doesn't drop. Other top-bar
+								// paths stay silent — they always have been.
+								if ( isMobileViewport && ! query ) {
+									recordTracksEvent( 'calypso_domain_search_results_use_my_domain_button_click', {
+										section: 'signup',
+										source: 'top-bar-mobile',
+										flow_name: flow,
+									} );
+								}
+								events.onExternalDomainClick( query );
+							} }
+						>
 							{ __( 'Use a domain I own' ) }
 						</Step.LinkButton>
 					) }
