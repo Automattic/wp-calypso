@@ -45,7 +45,7 @@ export default function SourceFilterTabs( {
 	return (
 		<ToolsPanel
 			className="content-research-source-filter"
-			label={ __( 'Research Sources', 'content-research' ) }
+			label={ __( 'Sources', 'content-research' ) }
 			resetAll={ onResetSources }
 		>
 			<ButtonGroup aria-label={ __( 'Sources', 'content-research' ) }>

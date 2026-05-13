@@ -308,6 +308,38 @@ function isContentEmpty( content ) {
 	return false;
 }
 
+const INSPIRATION_PROMPT_CSS = `
+@keyframes content-research-inspiration-shine {
+	0% { background-position: 100% center; }
+	100% { background-position: -100% center; }
+}
+.content-research-inspiration-prompt {
+	position: absolute;
+	top: 0;
+	left: 190px;
+	padding: 0;
+	border: none;
+	background: none;
+	background-image: linear-gradient(110deg, #949494 0%, #949494 40%, #fff 50%, #949494 60%, #949494 100%);
+	background-size: 200% auto;
+	background-position: 100% center;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	white-space: nowrap;
+	cursor: pointer;
+	animation: content-research-inspiration-shine 5s linear infinite;
+}
+.content-research-inspiration-prompt:hover {
+	animation-play-state: paused;
+	background-image: linear-gradient(110deg, #1e1e1e, #1e1e1e);
+}
+`;
+
 function ParagraphWithInspirationPrompt( { BlockEdit, ...props } ) {
 	const { isFirstBlock, isEmptyPost } = useSelect(
 		( select ) => {
@@ -330,6 +362,7 @@ function ParagraphWithInspirationPrompt( { BlockEdit, ...props } ) {
 
 	return (
 		<div style={ { position: 'relative' } }>
+			<style>{ INSPIRATION_PROMPT_CSS }</style>
 			<BlockEdit { ...props } />
 			<button
 				className="content-research-inspiration-prompt"
@@ -337,22 +370,6 @@ function ParagraphWithInspirationPrompt( { BlockEdit, ...props } ) {
 					e.stopPropagation();
 					dispatchOpenWindowEvent();
 				} }
-				style={ {
-					position: 'absolute',
-					top: 0,
-					left: '190px',
-					padding: 0,
-					border: 'none',
-					background: 'none',
-					fontSize: 'inherit',
-					fontFamily: 'inherit',
-					color: '#949494',
-					cursor: 'pointer',
-					whiteSpace: 'nowrap',
-					lineHeight: 'inherit',
-				} }
-				onMouseEnter={ ( e ) => ( e.target.style.color = '#3858e9' ) }
-				onMouseLeave={ ( e ) => ( e.target.style.color = '#949494' ) }
 			>
 				{ __( '— Need inspiration?', 'content-research' ) }
 			</button>
