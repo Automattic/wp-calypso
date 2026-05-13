@@ -92,10 +92,11 @@ function delay( ms: number ): Promise< void > {
 }
 
 function buildMenu(): string {
-	// Subtitles are dropped on purpose — they roughly double prompt length
-	// without adding meaningful disambiguation for an LLM that already has
-	// the task IDs and titles. Smaller prompt = faster response.
-	return TASK_REGISTRY.map( ( t ) => `- ${ t.id }: ${ t.title }` ).join( '\n' );
+	// IDs only — titles are redundant. Most IDs are self-descriptive
+	// (`publish-first-post`, `discover-yoast-seo`) and the prompt's STEP
+	// rules already map concepts → IDs explicitly. Halves menu size and
+	// noticeably shortens Dolly's generation phase.
+	return TASK_REGISTRY.map( ( t ) => `- ${ t.id }` ).join( '\n' );
 }
 
 function buildPrompt( goal: GoalKey, features: FeatureKey[] ): string {
@@ -266,6 +267,7 @@ async function tailorViaDolly(
 		sessionId,
 		siteId,
 		environment: 'calypso',
+		agentId: 'dolly',
 	} );
 	const client = createClient( config );
 
@@ -371,6 +373,7 @@ async function tailorFromIntentViaDolly(
 		sessionId,
 		siteId,
 		environment: 'calypso',
+		agentId: 'dolly',
 	} );
 	const client = createClient( config );
 
@@ -592,6 +595,7 @@ async function tailorAndDraftViaDolly(
 		sessionId,
 		siteId,
 		environment: 'calypso',
+		agentId: 'dolly',
 	} );
 	const client = createClient( config );
 	const known = new Set( TASK_REGISTRY.map( ( t ) => t.id ) );

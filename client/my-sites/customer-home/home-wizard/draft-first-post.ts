@@ -186,6 +186,7 @@ async function draftViaDolly(
 		sessionId,
 		siteId,
 		environment: 'calypso',
+		agentId: 'dolly',
 	} );
 	const client = createClient( config );
 
