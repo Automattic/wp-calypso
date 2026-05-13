@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
-type StreakBadgeState = 'active-engaged' | 'active-pending' | 'inactive' | 'frozen';
+export type StreakBadgeState = 'inactive' | 'active' | 'longest-active';
 
 interface StreakBadgeProps {
 	streak: number;
@@ -21,9 +21,7 @@ export const StreakBadge = ( { streak, state }: StreakBadgeProps ): JSX.Element 
 			<div className="streak-badge__circle" data-digits={ digits }>
 				{ streak }
 			</div>
-			<span className="streak-badge__label">
-				{ translate( 'Day streak', 'Day streak', { count: streak } ) }
-			</span>
+			<span className="streak-badge__label">{ translate( 'Activity Streak' ) }</span>
 		</div>
 	);
 };

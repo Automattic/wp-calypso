@@ -36,20 +36,6 @@
 	color: var( --studio-gray-40 );
 }
 
-.streak-badge.is-active-engaged {
-	--streak-badge-background: var( --studio-yellow-20 )
-		url( calypso/assets/images/achievements/streak-badge-active-engaged.svg ) no-repeat center / cover;
-	--streak-badge-color: var( --studio-red-50 );
-	--streak-badge-shadow: rgba( var( --studio-red-50-rgb ), 0.4 );
-}
-
-.streak-badge.is-active-pending {
-	--streak-badge-background: var( --studio-yellow-20 )
-		url( calypso/assets/images/achievements/streak-badge-active-pending.svg ) no-repeat center / cover;
-	--streak-badge-color: var( --studio-orange-30 );
-	--streak-badge-shadow: rgba( var( --studio-orange-30-rgb ), 0.4 );
-}
-
 .streak-badge.is-inactive {
 	--streak-badge-background: var( --studio-gray-5 )
 		url( calypso/assets/images/achievements/streak-badge-inactive.svg ) no-repeat center / cover;
@@ -57,9 +43,16 @@
 	--streak-badge-shadow: rgba( var( --studio-gray-10-rgb ), 0.4 );
 }
 
-.streak-badge.is-frozen {
-	--streak-badge-background: var( --studio-blue-70 )
-		url( calypso/assets/images/achievements/streak-badge-frozen.svg ) no-repeat center / cover;
-	--streak-badge-color: var( --studio-white );
-	--streak-badge-shadow: rgba( var( --studio-blue-70-rgb ), 0.4 );
+.streak-badge.is-active {
+	--streak-badge-background: var( --studio-yellow-20 )
+		url( calypso/assets/images/achievements/streak-badge-active.svg ) no-repeat center / cover;
+	--streak-badge-color: var( --studio-orange-30 );
+	--streak-badge-shadow: rgba( var( --studio-orange-30-rgb ), 0.4 );
+}
+
+.streak-badge.is-longest-active {
+	--streak-badge-background: var( --studio-yellow-20 )
+		url( calypso/assets/images/achievements/streak-badge-longest-active.svg ) no-repeat center / cover;
+	--streak-badge-color: var( --studio-red-50 );
+	--streak-badge-shadow: rgba( var( --studio-red-50-rgb ), 0.4 );
 }

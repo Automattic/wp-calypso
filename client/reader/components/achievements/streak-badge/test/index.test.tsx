@@ -6,22 +6,21 @@ import { StreakBadge } from '../index';
 
 describe( 'StreakBadge', () => {
 	test( 'should render the streak number', () => {
-		render( <StreakBadge streak={ 5 } state="active-engaged" /> );
+		render( <StreakBadge streak={ 5 } state="active" /> );
 
 		expect( screen.getByText( '5' ) ).toBeVisible();
 	} );
 
-	test( 'should render the "Day streak" label', () => {
-		render( <StreakBadge streak={ 5 } state="active-engaged" /> );
+	test( 'should render the "Activity Streak" label', () => {
+		render( <StreakBadge streak={ 5 } state="active" /> );
 
-		expect( screen.getByText( 'Day streak' ) ).toBeVisible();
+		expect( screen.getByText( 'Activity Streak' ) ).toBeVisible();
 	} );
 
 	test.each( [
-		[ 'active-engaged', '.streak-badge.is-active-engaged' ],
-		[ 'active-pending', '.streak-badge.is-active-pending' ],
 		[ 'inactive', '.streak-badge.is-inactive' ],
-		[ 'frozen', '.streak-badge.is-frozen' ],
+		[ 'active', '.streak-badge.is-active' ],
+		[ 'longest-active', '.streak-badge.is-longest-active' ],
 	] as const )( 'should apply the %s state class', ( state, selector ) => {
 		const { container } = render( <StreakBadge streak={ 7 } state={ state } /> );
 

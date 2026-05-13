@@ -1,7 +1,10 @@
 import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { StreakBadge } from 'calypso/reader/components/achievements/streak-badge';
+import {
+	StreakBadge,
+	type StreakBadgeState,
+} from 'calypso/reader/components/achievements/streak-badge';
 import type { EngagementStreak } from '@automattic/api-core';
 
 import './style.scss';
@@ -11,22 +14,25 @@ interface ActivityStreakProps {
 	isOwnProfile: boolean;
 }
 
-type StreakBadgeState = 'active-engaged' | 'active-pending' | 'inactive' | 'frozen';
-
 const SEPARATOR = ' · ';
 
-// The current /achievements payload doesn't expose an "engaged today" flag, so
-// active-engaged vs. active-pending can't be distinguished here. Treat any
-// non-zero streak as active-engaged for now; a freeze ever having been used
-// proxies the frozen state.
-function deriveBadgeState( streak: EngagementStreak ): StreakBadgeState {
-	if ( streak.current_streak === 0 ) {
+const LONGEST_ACTIVE_MIN_STREAK = 10;
+
+// "Today" comes from the browser's local date. The server returns
+// last_streak_date in the user's account timezone — close enough for users
+// whose browser TZ matches their account TZ, with at worst a day-off mismatch
+// otherwise. The badge is a profile decoration, not a source of truth.
+function deriveBadgeState( streak: EngagementStreak, today: string ): StreakBadgeState {
+	if ( streak.current_streak === 0 || streak.last_streak_date !== today ) {
 		return 'inactive';
 	}
-	if ( streak.freeze_used_date ) {
-		return 'frozen';
+	if (
+		streak.current_streak >= streak.longest_streak &&
+		streak.current_streak >= LONGEST_ACTIVE_MIN_STREAK
+	) {
+		return 'longest-active';
 	}
-	return 'active-engaged';
+	return 'active';
 }
 
 export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) {
@@ -41,7 +47,7 @@ export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) 
 		return null;
 	}
 
-	const badgeState = deriveBadgeState( streak );
+	const badgeState = deriveBadgeState( streak, moment().format( 'YYYY-MM-DD' ) );
 
 	if ( streak.current_streak === 0 ) {
 		return (
@@ -140,6 +146,8 @@ export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) 
 				tabIndex={ 0 } // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
 			>
 				<StreakBadge streak={ streak.current_streak } state={ badgeState } />
+				<StreakBadge streak={ streak.current_streak } state="active" />
+				<StreakBadge streak={ streak.current_streak } state="longest-active" />
 				<div className="activity-streak__content">
 					<div className="activity-streak__headline">
 						<span className="activity-streak__emoji" aria-hidden="true">
