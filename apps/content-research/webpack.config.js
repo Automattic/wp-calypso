@@ -41,6 +41,11 @@ function getWebpackConfig( env = {}, argv = {} ) {
 				injectPolyfill: true,
 				outputFilename: '[name].asset.json',
 				outputFormat: 'json',
+				requestToExternal( request ) {
+					if ( request === '@wordpress/ui' ) {
+						return null;
+					}
+				},
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
 		],
