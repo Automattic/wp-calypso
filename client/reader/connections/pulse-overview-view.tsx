@@ -163,6 +163,7 @@ export function PulseOverviewView() {
 	const fediverse = useFediverseConnectionsQuery();
 
 	const isLoading = atmosphere.isPending || mastodon.isPending || fediverse.isPending;
+	const hasAllErrored = atmosphere.isError && mastodon.isError && fediverse.isError;
 
 	const cards: PulseCard[] = useMemo(
 		() => [
@@ -215,7 +216,18 @@ export function PulseOverviewView() {
 				</div>
 			) }
 
-			{ ! isLoading && cards.length === 0 && (
+			{ ! isLoading && hasAllErrored && (
+				<Card className="pulse-empty" elevation={ 0 }>
+					<h2>{ translate( "We couldn't load your social accounts" ) }</h2>
+					<p>
+						{ translate(
+							'Something went wrong while checking your connections. Please refresh to try again.'
+						) }
+					</p>
+				</Card>
+			) }
+
+			{ ! isLoading && ! hasAllErrored && cards.length === 0 && (
 				<Card className="pulse-empty" elevation={ 0 }>
 					<h2>{ translate( 'Nothing here yet' ) }</h2>
 					<p>

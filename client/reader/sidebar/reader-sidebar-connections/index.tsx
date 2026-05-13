@@ -126,24 +126,30 @@ function ReaderSidebarConnections( { path }: Props ) {
 	// because the queries never fire. The queries don't refetch every
 	// render thanks to React Query caching.
 	const shouldFetch = isOnConnections || isOpen;
-	const { data: atmosphereData } = useConnectionsQuery( { enabled: shouldFetch } );
-	const { data: mastodonData } = useMastodonConnectionsQuery( { enabled: shouldFetch } );
-	const { data: fediverseData } = useFediverseConnectionsQuery( { enabled: shouldFetch } );
+	const atmosphereQuery = useConnectionsQuery( { enabled: shouldFetch } );
+	const mastodonQuery = useMastodonConnectionsQuery( { enabled: shouldFetch } );
+	const fediverseQuery = useFediverseConnectionsQuery( { enabled: shouldFetch } );
 
 	const connections = useMemo( () => {
 		const all: UnifiedConnection[] = [
-			...( atmosphereData?.connections ?? [] ).map( mapAtmosphere ),
-			...( mastodonData?.connections ?? [] ).map( mapMastodon ),
-			...( fediverseData?.connections ?? [] ).map( mapFediverse ),
+			...( atmosphereQuery.data?.connections ?? [] ).map( mapAtmosphere ),
+			...( mastodonQuery.data?.connections ?? [] ).map( mapMastodon ),
+			...( fediverseQuery.data?.connections ?? [] ).map( mapFediverse ),
 		];
 		return all.sort( sortConnections );
-	}, [ atmosphereData, mastodonData, fediverseData ] );
+	}, [ atmosphereQuery.data, mastodonQuery.data, fediverseQuery.data ] );
 
-	// Distinguish "we haven't fetched yet" from "we fetched and found none".
-	// Only render the empty-state hint after all three queries resolved.
-	const hasResolved =
-		atmosphereData !== undefined && mastodonData !== undefined && fediverseData !== undefined;
-	const showEmptyHint = shouldFetch && hasResolved && connections.length === 0;
+	// Distinguish "we haven't fetched yet" from "we fetched and found none",
+	// and separate both from "the fetch errored". A query that errors stays
+	// at `data: undefined` forever, so without the explicit error check the
+	// menu would sit silently empty when the backend is degraded.
+	const hasSettled =
+		( atmosphereQuery.isSuccess || atmosphereQuery.isError ) &&
+		( mastodonQuery.isSuccess || mastodonQuery.isError ) &&
+		( fediverseQuery.isSuccess || fediverseQuery.isError );
+	const hasError = atmosphereQuery.isError || mastodonQuery.isError || fediverseQuery.isError;
+	const showEmptyHint = shouldFetch && hasSettled && ! hasError && connections.length === 0;
+	const showErrorHint = shouldFetch && hasError && connections.length === 0;
 
 	const recordHeaderClick = () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_sidebar_connections_clicked' ) );
@@ -203,6 +209,11 @@ function ReaderSidebarConnections( { path }: Props ) {
 				{ showEmptyHint && (
 					<li className="sidebar-connections__empty" aria-live="polite">
 						{ translate( 'Nothing here yet — connect one below.' ) }
+					</li>
+				) }
+				{ showErrorHint && (
+					<li className="sidebar-connections__empty" aria-live="polite">
+						{ translate( 'Couldn’t load accounts. Refresh to try again.' ) }
 					</li>
 				) }
 				<SocialAddAccountMenuItem
