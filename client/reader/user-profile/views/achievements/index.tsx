@@ -5,7 +5,7 @@ import useAchievementsVisibility from 'calypso/reader/components/achievements/us
 import { YearsOfServiceBadge } from 'calypso/reader/components/achievements/years-of-service-badge';
 import AchievementsGrid from './achievements-grid';
 import AchievementsSettings from './achievements-settings';
-import { ActivityStreakPill } from './activity-streak-pill';
+import { ActivityStreak } from './activity-streak';
 import type { ReaderUser } from '@automattic/api-core';
 
 import './style.scss';
@@ -39,11 +39,15 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 	return (
 		<div className="achievements">
 			<div className="achievements__header">
+				<ActivityStreak streak={ engagementStreak } isOwnProfile={ isOwnProfile } />
 				{ !! yearsOfService && (
 					<YearsOfServiceBadge size="large" yearsOfService={ yearsOfService } />
 				) }
-				<ActivityStreakPill streak={ engagementStreak } isOwnProfile={ isOwnProfile } />
-				{ isOwnProfile && <AchievementsSettings /> }
+				{ isOwnProfile && (
+					<div className="achievements__settings">
+						<AchievementsSettings />
+					</div>
+				) }
 			</div>
 			<AchievementsGrid userLogin={ user.user_login } isOwnProfile={ isOwnProfile } />
 		</div>

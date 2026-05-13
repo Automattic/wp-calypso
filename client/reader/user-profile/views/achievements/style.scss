@@ -1,15 +1,26 @@
 .is-reader-page {
 	.achievements__header {
 		display: flex;
-		flex-wrap: wrap;
 		align-items: flex-start;
 		gap: 24px;
 		margin: 16px auto 48px;
 		max-width: 720px;
 	}
 
-	.achievements__header .activity-streak-pill {
-		flex: 1 1 240px;
-		min-width: 240px;
+	.achievements__header .activity-streak {
+		flex: 1;
+	}
+
+	// Settings stays right-aligned even when ActivityStreak and/or
+	// YearsOfServiceBadge are absent.
+	.achievements__header > .achievements__settings {
+		margin-inline-start: auto;
+	}
+
+	// When ActivityStreak is present, its flex: 1 already pushes the trailing
+	// items to the right edge — drop the auto margin so it doesn't compete with
+	// flex grow.
+	.achievements__header > .activity-streak ~ .achievements__settings {
+		margin-inline-start: 0;
 	}
 }

@@ -1,18 +1,35 @@
 import { Tooltip } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { StreakBadge } from 'calypso/reader/components/achievements/streak-badge';
 import type { EngagementStreak } from '@automattic/api-core';
 
 import './style.scss';
 
-interface ActivityStreakPillProps {
+interface ActivityStreakProps {
 	streak: EngagementStreak | undefined;
 	isOwnProfile: boolean;
 }
 
+type StreakBadgeState = 'active-engaged' | 'active-pending' | 'inactive' | 'frozen';
+
 const SEPARATOR = ' · ';
 
-export function ActivityStreakPill( { streak, isOwnProfile }: ActivityStreakPillProps ) {
+// The current /achievements payload doesn't expose an "engaged today" flag, so
+// active-engaged vs. active-pending can't be distinguished here. Treat any
+// non-zero streak as active-engaged for now; a freeze ever having been used
+// proxies the frozen state.
+function deriveBadgeState( streak: EngagementStreak ): StreakBadgeState {
+	if ( streak.current_streak === 0 ) {
+		return 'inactive';
+	}
+	if ( streak.freeze_used_date ) {
+		return 'frozen';
+	}
+	return 'active-engaged';
+}
+
+export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
@@ -24,21 +41,26 @@ export function ActivityStreakPill( { streak, isOwnProfile }: ActivityStreakPill
 		return null;
 	}
 
+	const badgeState = deriveBadgeState( streak );
+
 	if ( streak.current_streak === 0 ) {
 		return (
 			<div
-				className="activity-streak-pill activity-streak-pill--coaching"
+				className="activity-streak activity-streak--coaching"
 				role="group"
 				aria-label={ translate( 'Activity streak' ) }
 			>
-				<div className="activity-streak-pill__headline">
-					<span className="activity-streak-pill__emoji" aria-hidden="true">
-						🔥
-					</span>
-					<span>{ translate( 'Start your activity streak today' ) }</span>
-				</div>
-				<div className="activity-streak-pill__sub-line">
-					{ translate( 'Like, comment, follow, or post — anything counts.' ) }
+				<StreakBadge streak={ streak.current_streak } state={ badgeState } />
+				<div className="activity-streak__content">
+					<div className="activity-streak__headline">
+						<span className="activity-streak__emoji" aria-hidden="true">
+							🔥
+						</span>
+						<span>{ translate( 'Start your activity streak today' ) }</span>
+					</div>
+					<div className="activity-streak__sub-line">
+						{ translate( 'Like, comment, follow, or post — anything counts.' ) }
+					</div>
 				</div>
 			</div>
 		);
@@ -100,9 +122,9 @@ export function ActivityStreakPill( { streak, isOwnProfile }: ActivityStreakPill
 			: '';
 	const freezeLine = [ freezeExplainer, freezeEarnAppend ].filter( Boolean ).join( ' ' );
 	const tooltipContent = (
-		<span className="activity-streak-pill__tooltip">
-			<span className="activity-streak-pill__tooltip-line">{ streakExplainer }</span>
-			<span className="activity-streak-pill__tooltip-line">{ freezeLine }</span>
+		<span className="activity-streak__tooltip">
+			<span className="activity-streak__tooltip-line">{ streakExplainer }</span>
+			<span className="activity-streak__tooltip-line">{ freezeLine }</span>
 		</span>
 	);
 
@@ -112,23 +134,26 @@ export function ActivityStreakPill( { streak, isOwnProfile }: ActivityStreakPill
 		// the two sentences. Cast keeps the build green without changing behavior.
 		<Tooltip text={ tooltipContent as unknown as string }>
 			<div
-				className="activity-streak-pill"
+				className="activity-streak"
 				role="group"
 				aria-label={ translate( 'Activity streak' ) }
 				tabIndex={ 0 } // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
 			>
-				<div className="activity-streak-pill__headline">
-					<span className="activity-streak-pill__emoji" aria-hidden="true">
-						🔥
-					</span>
-					<span>
-						{ translate( '{{strong}}%(count)d{{/strong}}-day activity streak', {
-							args: { count: streak.current_streak },
-							components: { strong: <strong /> },
-						} ) }
-					</span>
+				<StreakBadge streak={ streak.current_streak } state={ badgeState } />
+				<div className="activity-streak__content">
+					<div className="activity-streak__headline">
+						<span className="activity-streak__emoji" aria-hidden="true">
+							🔥
+						</span>
+						<span>
+							{ translate( '{{strong}}%(count)d{{/strong}}-day activity streak', {
+								args: { count: streak.current_streak },
+								components: { strong: <strong /> },
+							} ) }
+						</span>
+					</div>
+					<div className="activity-streak__sub-line">{ subLineChips.join( SEPARATOR ) }</div>
 				</div>
-				<div className="activity-streak-pill__sub-line">{ subLineChips.join( SEPARATOR ) }</div>
 			</div>
 		</Tooltip>
 	);
