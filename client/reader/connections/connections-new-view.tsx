@@ -55,7 +55,7 @@ export function ConnectionsNewView() {
 			)
 		),
 		href: null,
-		icon: <ReaderFediverseIcon />,
+		icon: <ReaderFediverseIcon viewBox="4 3 16 18" />,
 		available: fediverseEnabled,
 	};
 
@@ -69,7 +69,7 @@ export function ConnectionsNewView() {
 			)
 		),
 		href: '/reader/atmosphere/connect',
-		icon: <ReaderBlueskyIcon filled />,
+		icon: <ReaderBlueskyIcon filled viewBox="2 3 20 18" />,
 		available: socialEnabled,
 	};
 
@@ -83,7 +83,7 @@ export function ConnectionsNewView() {
 			)
 		),
 		href: '/reader/mastodon/connect',
-		icon: <ReaderMastodonIcon />,
+		icon: <ReaderMastodonIcon viewBox="0 0 74 78" />,
 		available: socialEnabled,
 	};
 
