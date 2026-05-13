@@ -94,7 +94,7 @@ const LoginRecipe = () => {
 				<div className="auth-recipe-login__or">
 					<span>or</span>
 				</div>
-				<VStack spacing={ 2 } role="group">
+				<VStack spacing={ 2 } role="group" aria-label="Social login options">
 					<SocialButton provider="google">Continue with Google</SocialButton>
 					<SocialButton provider="apple">Continue with Apple</SocialButton>
 					<SocialButton provider="github">Continue with GitHub</SocialButton>

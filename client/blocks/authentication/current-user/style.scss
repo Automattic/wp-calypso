@@ -8,8 +8,8 @@
 	// equally-100% primary button below it.
 	box-sizing: border-box;
 	inline-size: 100%;
-	background: $white;
-	border: $border-width solid $gray-200;
+	background: var(--color-surface);
+	border: $border-width solid var(--color-border-subtle);
 	border-radius: $radius-medium;
 	padding-inline-end: $grid-unit-15;
 	overflow: hidden;

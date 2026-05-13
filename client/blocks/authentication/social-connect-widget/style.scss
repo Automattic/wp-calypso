@@ -1,3 +1,4 @@
+@import '@automattic/color-studio/dist/color-variables';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
@@ -40,5 +41,8 @@
 }
 
 .auth-social-connect-widget__dot.is-accent {
-	fill: var(--wp-admin-theme-color);
+	// Fallback for contexts that don't define `--wp-admin-theme-color`
+	// (Storybook iframe, isolated tests): without it, the SVG `<g>` parent's
+	// `fill="none"` wins and the accent dot renders invisible.
+	fill: var(--wp-admin-theme-color, #{$studio-wordpress-blue});
 }

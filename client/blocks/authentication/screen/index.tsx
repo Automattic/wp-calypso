@@ -69,11 +69,11 @@ const Screen = ( {
 			{ topBarAction && <div className="auth-screen__top-bar-action">{ topBarAction }</div> }
 		</header>
 		<main className="auth-screen__content">
-			<header className="auth-screen__heading">
+			<div className="auth-screen__heading">
 				<h1 className="wp-brand-font">{ heading }</h1>
 				{ notice && <div className="auth-screen__notice">{ notice }</div> }
 				{ subheading && <p className="auth-screen__subheading">{ subheading }</p> }
-			</header>
+			</div>
 			<div className="auth-screen__body">{ children }</div>
 		</main>
 	</div>

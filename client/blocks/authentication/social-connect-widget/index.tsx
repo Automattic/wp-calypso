@@ -21,7 +21,11 @@ const serviceIcon: Record< SocialConnectService, ReactNode > = {
 };
 
 const SocialConnectWidget = ( { service }: SocialConnectWidgetProps ) => (
-	<div className="auth-social-connect-widget">
+	// The widget is a decorative summary of "[service] ↔ WordPress" — the
+	// connection's meaning is conveyed in the surrounding copy. Hide it
+	// from assistive tech so screen readers don't announce three separate
+	// graphics with no context.
+	<div className="auth-social-connect-widget" aria-hidden="true">
 		<div className="auth-social-connect-widget__service-logo">{ serviceIcon[ service ] }</div>
 		<svg
 			className="auth-social-connect-widget__dots"
@@ -29,7 +33,6 @@ const SocialConnectWidget = ( { service }: SocialConnectWidgetProps ) => (
 			height="4"
 			viewBox="0 0 48 4"
 			xmlns="http://www.w3.org/2000/svg"
-			aria-hidden="true"
 		>
 			<g stroke="none" fill="none" fillRule="evenodd">
 				<circle className="auth-social-connect-widget__dot" cx="2" cy="2" r="2" />
