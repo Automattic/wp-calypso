@@ -46,10 +46,10 @@ export const purchaseQuery = ( purchaseId: number ) =>
 
 export const purchaseCancelFeaturesQuery = (
 	purchaseId: number,
-	variant?: 'control' | 'treatment'
+	variant: 'control' | 'treatment' = 'control'
 ) =>
 	queryOptions( {
-		queryKey: [ 'upgrades', purchaseId, 'cancel-features', variant ?? 'control' ],
+		queryKey: [ 'upgrades', purchaseId, 'cancel-features', variant ],
 		queryFn: () => fetchCancellationFeatures( purchaseId, variant ),
 	} );
 
