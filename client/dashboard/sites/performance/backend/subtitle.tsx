@@ -11,7 +11,7 @@ function CaptureStatusIndicator( { capturing }: { capturing: boolean } ) {
 				flex: '0 0 auto',
 				backgroundColor: capturing
 					? 'var(--dashboard__foreground-color-success)'
-					: 'var(--dashboard-color-neutral-20, #dcdcde)',
+					: 'var(--color-border-subtle)',
 			} }
 			role="status"
 			aria-label={ capturing ? __( 'Capturing' ) : __( 'Not capturing' ) }

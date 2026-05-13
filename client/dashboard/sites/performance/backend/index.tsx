@@ -59,8 +59,8 @@ function StartCapturingButton( { site }: { site: Site } ) {
 		...siteApmEnabledMutation( site.ID ),
 		meta: {
 			snackbar: {
-				success: __( 'APM is now capturing data.' ),
-				error: __( 'Failed to start capturing APM data.' ),
+				success: __( 'APM enabled.' ),
+				error: __( 'Failed to enable APM.' ),
 			},
 		},
 	} );
