@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import { fediverseComposerConfig } from './composer-config';
@@ -75,21 +76,29 @@ export function FediverseAccountView( { connectionId, tab }: Props ) {
 		);
 	}
 
-	const title = connection.name?.trim() || connection.webfinger;
+	const documentTitle = connection.name?.trim() || connection.webfinger;
+	const subtitle = translate(
+		'Catch up with the latest from the people you follow on the Fediverse.'
+	);
+
+	const title = (
+		<span className="fediverse-view__section-title">
+			<span data-testid="fediverse-section-logo" aria-hidden="true">
+				<ReaderFediverseIcon />
+			</span>
+			<span>Fediverse</span>
+		</span>
+	);
 
 	return (
 		<ComposerProvider connectionId={ connection.id } config={ fediverseComposerConfig }>
 			<ReaderMain className="fediverse-view">
 				<DocumentHead
-					title={
-						translate( '%(handle)s ‹ Fediverse ‹ Reader', {
-							args: { handle: connection.webfinger },
-						} ) as string
-					}
+					title={ translate( '%s ‹ Fediverse ‹ Reader', { args: documentTitle } ) as string }
 				/>
-				<VStack spacing={ 4 }>
-					<NavigationHeader title={ title } subtitle={ connection.webfinger } compactBreadcrumb />
-					<FediverseNavigation connectionId={ connection.id } selectedTab={ tab } />
+				<NavigationHeader title={ title } subtitle={ subtitle } />
+				<FediverseNavigation connectionId={ connection.id } selectedTab={ tab } />
+				<VStack spacing={ 4 } className="fediverse-view__body">
 					{ tab === TIMELINE_TAB && <TimelinePanel connection={ connection } /> }
 					{ tab === PROFILE_TAB && <ProfilePanel connection={ connection } /> }
 				</VStack>
