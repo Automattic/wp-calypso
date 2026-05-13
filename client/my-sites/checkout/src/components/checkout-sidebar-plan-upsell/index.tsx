@@ -183,7 +183,7 @@ export function CheckoutSidebarPlanUpsell() {
 	);
 	const percentSavings =
 		calculateDiscountPercentage(
-			getPlanPriceForDuration( currentInfo, upsellInfo.termMonths ),
+			compareToPriceForVariantTerm,
 			getPlanPriceForDuration( upsellInfo, upsellInfo.termMonths )
 		) ?? 0;
 
