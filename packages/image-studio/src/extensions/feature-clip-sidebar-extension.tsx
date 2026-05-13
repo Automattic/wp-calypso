@@ -294,10 +294,6 @@ export function registerFeatureClipSidebar(): void {
 		return;
 	}
 
-	if ( ! window.imageStudioData?.isDevMode ) {
-		return;
-	}
-
 	if ( pluginRegistered ) {
 		return;
 	}

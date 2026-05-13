@@ -184,7 +184,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockGenericVisible = false;
 		mockReelIsConfirming = false;
 		mockReelIgDisplayName = null;
-		( window as Record< string, unknown > ).imageStudioData = { isDevMode: true };
+		( window as Record< string, unknown > ).imageStudioData = {};
 		jest.resetModules();
 	} );
 
@@ -192,16 +192,8 @@ describe( 'feature-clip-sidebar-extension', () => {
 		delete ( window as Record< string, unknown > ).imageStudioData;
 	} );
 
-	it( 'does not register the plugin when isDevMode is false', () => {
-		( window as Record< string, unknown > ).imageStudioData = { isDevMode: false };
-		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
-		registerFeatureClipSidebar();
-		expect( mockRegisterPlugin ).not.toHaveBeenCalled();
-	} );
-
 	it( 'does not register the plugin when canGenerateVideoClips is false', () => {
 		( window as Record< string, unknown > ).imageStudioData = {
-			isDevMode: true,
 			canGenerateVideoClips: false,
 		};
 		const { registerFeatureClipSidebar } = require( './feature-clip-sidebar-extension' );
