@@ -24,18 +24,18 @@ describe( 'direct-to-cart flow — initialize', () => {
 		window.localStorage.clear();
 	} );
 
-	it( 'returns the invalid-plan step set when no plan is provided', async () => {
+	it( 'routes to the shared error step when no plan is provided', async () => {
 		setLocation( '' );
 		const steps = await ( directToCart.initialize as () => Promise< Array< { slug: string } > > )();
 		const slugs = steps.map( ( s ) => s.slug );
-		expect( slugs ).toEqual( [ 'direct-to-cart-invalid-plan' ] );
+		expect( slugs ).toEqual( [ 'error' ] );
 	} );
 
-	it( 'returns the invalid-plan step set when plan is non-atomic', async () => {
+	it( 'routes to the shared error step when plan is non-atomic', async () => {
 		setLocation( '?plan=personal-bundle' );
 		const steps = await ( directToCart.initialize as () => Promise< Array< { slug: string } > > )();
 		const slugs = steps.map( ( s ) => s.slug );
-		expect( slugs ).toEqual( [ 'direct-to-cart-invalid-plan' ] );
+		expect( slugs ).toEqual( [ 'error' ] );
 	} );
 
 	it( 'returns the full step list for a valid atomic-triggering plan', async () => {
@@ -44,7 +44,6 @@ describe( 'direct-to-cart flow — initialize', () => {
 		const slugs = steps.map( ( s ) => s.slug );
 		expect( slugs ).toContain( 'create-site' );
 		expect( slugs ).toContain( 'processing' );
-		expect( slugs ).toContain( 'direct-to-cart-invalid-plan' );
 		expect( slugs ).toContain( 'error' );
 	} );
 

@@ -41,11 +41,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/design-setup' ),
 	},
 
-	DIRECT_TO_CART_INVALID_PLAN: {
-		slug: 'direct-to-cart-invalid-plan',
-		asyncComponent: () => import( './steps-repository/direct-to-cart-invalid-plan' ),
-	},
-
 	DIFM_STARTING_POINT: {
 		slug: 'difmStartingPoint',
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),

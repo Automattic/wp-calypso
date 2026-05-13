@@ -1,6 +1,7 @@
 import { DIRECT_TO_CART_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { dispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -12,7 +13,7 @@ import {
 	setSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../../../hooks/use-query';
-import { ONBOARD_STORE } from '../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
@@ -22,7 +23,7 @@ import { resumeKey, writeResumeRecord } from './resume-storage';
 import { sanitizeDirectToCartRedirect } from './sanitize-redirect';
 import { validateParams } from './validate-params';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
-import type { OnboardActions } from '@automattic/data-stores';
+import type { OnboardActions, SiteActions } from '@automattic/data-stores';
 
 interface SitePlansResponse {
 	plans?: Array< { product_slug: string; is_current?: boolean } >;
@@ -48,12 +49,18 @@ async function initialize() {
 	const query = new URLSearchParams( window.location.search );
 	const params = validateParams( query );
 
-	// Invalid plan short-circuit.
+	// Invalid plan short-circuit. Populate the shared error-step state and
+	// route to STEPS.ERROR rather than carrying a flow-specific step.
 	if ( params.invalidPlan ) {
 		recordTracksEvent( 'calypso_direct_to_cart_invalid_plan', {
 			plan: params.plan?.slice( 0, 64 ) ?? '',
 		} );
-		return [ STEPS.DIRECT_TO_CART_INVALID_PLAN ];
+		const siteActions = dispatch( SITE_STORE ) as SiteActions;
+		siteActions.setSiteSetupError(
+			__( 'Unsupported plan' ),
+			__( "The plan in this link isn't available here. You can choose a plan that works for you." )
+		);
+		return [ STEPS.ERROR ];
 	}
 
 	// Param-validation Tracks.
@@ -135,12 +142,7 @@ async function initialize() {
 		// signup_flow Tracks events). Site-side attribution deferred.
 	}
 
-	return stepsWithRequiredLogin( [
-		STEPS.SITE_CREATION_STEP,
-		STEPS.PROCESSING,
-		STEPS.DIRECT_TO_CART_INVALID_PLAN,
-		STEPS.ERROR,
-	] );
+	return stepsWithRequiredLogin( [ STEPS.SITE_CREATION_STEP, STEPS.PROCESSING, STEPS.ERROR ] );
 }
 
 const flow: FlowV2< typeof initialize > = {
