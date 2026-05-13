@@ -100,7 +100,6 @@ function getIndividualConfig( options = {} ) {
  * Omits DependencyExtractionWebpackPlugin entirely so React, @wordpress/data,
  * and other WP packages are inlined. The resulting reader-chat.min.js is
  * self-contained and safe to load on the frontend (no WP script loader needed).
- *
  * @param   {Object}  options                       options
  * @param   {Object}  options.env                   environment options
  * @param   {Object}  options.argv                  webpack CLI args
@@ -119,6 +118,8 @@ function getReaderConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js',
+			chunkLoadingGlobal: 'webpackChunkJetpackReaderChat',
+			uniqueName: 'JetpackReaderChat',
 		},
 		module: {
 			...webpackConfig.module,
