@@ -8,6 +8,7 @@
 	gap: 12px;
 	padding: 4px 16px 16px;
 	text-align: left;
+	justify-content: space-between;
 
 	&__title {
 		margin: 4px 0 0;
@@ -16,7 +17,6 @@
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		color: #1e1e1e;
-		text-align: center;
 	}
 
 	&__description {

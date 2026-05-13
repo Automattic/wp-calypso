@@ -8,15 +8,17 @@ const FEEDBACK_URL =
 export default function EmptyState() {
 	return (
 		<div className="content-research-empty">
-			<h3 className="content-research-empty__title">
-				{ __( 'Research before you write', 'content-research' ) }
-			</h3>
-			<p className="content-research-empty__description">
-				{ __(
-					'Type a topic to pull recent posts and discussions from WordPress.com, Hacker News, Google News, and your own drafts. Pick the sources you care about, then summarize them into an editorial brief in one click.',
-					'content-research'
-				) }
-			</p>
+			<div>
+				<h3 className="content-research-empty__title">
+					{ __( 'Research before you write', 'content-research' ) }
+				</h3>
+				<p className="content-research-empty__description">
+					{ __(
+						'Type a topic to pull recent posts and discussions from WordPress.com, Hacker News, Google News, and your own drafts. Pick the sources you care about, then summarize them into an editorial brief in one click.',
+						'content-research'
+					) }
+				</p>
+			</div>
 			<Notice.Root intent="info" className="content-research-empty__notice">
 				<Notice.Title>{ __( 'Beta feature', 'content-research' ) }</Notice.Title>
 				<Notice.Description>
