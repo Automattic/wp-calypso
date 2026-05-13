@@ -7,13 +7,12 @@ import { ReaderBlueskyIcon } from 'calypso/reader/components/icons/bluesky-icon'
 import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-icon';
 import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { type ConnectionProtocol } from 'calypso/reader/sidebar/reader-sidebar-connections/types';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-type ProtocolKey = 'fediverse' | 'atmosphere' | 'mastodon';
-
 interface ProtocolOption {
-	key: ProtocolKey;
+	key: ConnectionProtocol;
 	label: string;
 	tagline: string;
 	body: string;

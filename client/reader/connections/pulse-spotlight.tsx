@@ -2,10 +2,14 @@ import {
 	getFediverseTimeline,
 	getMastodonTimeline,
 	getTimeline as getAtmosphereTimeline,
+	type AtmosphereFeedItem,
+	type FediverseFeedItem,
+	type MastodonFeedItem,
 } from '@automattic/api-core';
 import { useQueries } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl as getAtmosphereThreadUrl } from 'calypso/reader/atmosphere/route';
 import { getThreadUrl as getMastodonThreadUrl } from 'calypso/reader/mastodon/route';
 import {
@@ -20,21 +24,15 @@ import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import type { SocialPost } from 'calypso/reader/social/types';
 
-export interface SpotlightConnection {
-	protocol: ConnectionProtocol;
-	id: number;
-	/**
-	 * Required for Mastodon connections. The home instance host
-	 * (e.g. `mastodon.social`) used to qualify local-account handles
-	 * inside the Mastodon mapper.
-	 */
-	instance?: string;
-	/**
-	 * Required for Fediverse connections. The blog host
-	 * (e.g. `myblog.wordpress.com`) used by the Fediverse mapper.
-	 */
-	host?: string;
-}
+/**
+ * Per-protocol Spotlight input. Discriminated on `protocol` so Mastodon
+ * carries its required home instance and Fediverse carries its host —
+ * both at compile time, removing the runtime skip-arms below.
+ */
+export type SpotlightConnection =
+	| { protocol: 'atmosphere'; id: number }
+	| { protocol: 'mastodon'; id: number; instance: string }
+	| { protocol: 'fediverse'; id: number; host: string };
 
 interface Props {
 	connections: SpotlightConnection[];
@@ -130,28 +128,31 @@ export function PulseSpotlight( { connections }: Props ) {
 				let post: SocialPost | null = null;
 				try {
 					if ( connection.protocol === 'atmosphere' ) {
-						post = mapAtmosphereFeedItemToSocialPost(
-							raw as Parameters< typeof mapAtmosphereFeedItemToSocialPost >[ 0 ]
-						);
+						post = mapAtmosphereFeedItemToSocialPost( raw as AtmosphereFeedItem );
 					} else if ( connection.protocol === 'mastodon' ) {
-						if ( ! connection.instance ) {
-							continue;
-						}
-						post = mapMastodonFeedItemToSocialPost(
-							raw as Parameters< typeof mapMastodonFeedItemToSocialPost >[ 0 ],
-							{ instance: connection.instance }
-						);
+						post = mapMastodonFeedItemToSocialPost( raw as MastodonFeedItem, {
+							instance: connection.instance,
+						} );
 					} else {
-						if ( ! connection.host ) {
-							continue;
-						}
-						post = mapFediverseFeedItemToSocialPost(
-							raw as Parameters< typeof mapFediverseFeedItemToSocialPost >[ 0 ],
-							{ host: connection.host }
-						);
+						post = mapFediverseFeedItemToSocialPost( raw as FediverseFeedItem, {
+							host: connection.host,
+						} );
 					}
-				} catch {
-					// A single bad item shouldn't break the strip. Skip it.
+				} catch ( error ) {
+					// A single bad item shouldn't break the strip — but log
+					// the failure so a regression in a mapper or in the wire
+					// shape doesn't go silently unnoticed.
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'Reader Pulse Spotlight: mapper failed',
+						severity: 'warning',
+						extra: {
+							type: 'reader_pulse_spotlight_map_failed',
+							protocol: connection.protocol,
+							connection_id: connection.id,
+							error: error instanceof Error ? error.message : String( error ),
+						},
+					} );
 					continue;
 				}
 				if ( ! post ) {
@@ -177,7 +178,8 @@ export function PulseSpotlight( { connections }: Props ) {
 
 	// While first pages are still loading, render nothing — the Pulse
 	// overview's own spinner already covers the slow case, and a flash of
-	// "no posts yet" before items resolve would read as broken.
+	// "no posts yet" before items resolve would read as broken. Same for
+	// the steady state with no scoreable posts; the strip is opt-in noise.
 	if ( isLoading || items.length === 0 ) {
 		return null;
 	}

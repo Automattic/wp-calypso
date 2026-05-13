@@ -22,7 +22,7 @@ import {
 } from 'calypso/reader/sidebar/reader-sidebar-connections/types';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { PulseSpotlight } from './pulse-spotlight';
+import { PulseSpotlight, type SpotlightConnection } from './pulse-spotlight';
 import type {
 	AtmosphereConnection,
 	FediverseConnection,
@@ -177,16 +177,21 @@ export function PulseOverviewView() {
 	// Flat protocol+id (+instance/host) list for the Spotlight strip.
 	// Memoised so a reference-stable array reaches `useQueries` inside
 	// the Spotlight, avoiding a refetch storm on every overview re-render.
-	const spotlightConnections = useMemo(
-		() =>
-			cards.map( ( card ) => ( {
-				protocol: card.protocol,
-				id: card.id,
-				instance: card.instance,
-				host: card.host,
-			} ) ),
-		[ cards ]
-	);
+	const spotlightConnections = useMemo< SpotlightConnection[] >( () => {
+		const result: SpotlightConnection[] = [];
+		for ( const card of cards ) {
+			if ( card.protocol === 'atmosphere' ) {
+				result.push( { protocol: 'atmosphere', id: card.id } );
+			} else if ( card.protocol === 'mastodon' ) {
+				if ( card.instance ) {
+					result.push( { protocol: 'mastodon', id: card.id, instance: card.instance } );
+				}
+			} else if ( card.host ) {
+				result.push( { protocol: 'fediverse', id: card.id, host: card.host } );
+			}
+		}
+		return result;
+	}, [ cards ] );
 	const showSpotlight =
 		isEnabled( 'reader/pulse-spotlight' ) && ! isLoading && spotlightConnections.length > 0;
 

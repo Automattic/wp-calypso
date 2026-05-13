@@ -5,7 +5,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar, setBeforePrimary } from 'calypso/reader/controller';
 import { connectionsLanding, connectionsNew } from './controller';
 
-export default function () {
+export default function initConnections() {
 	page(
 		'/reader/connections',
 		sidebar,

@@ -54,10 +54,22 @@ function getActiveConnection( path: string ): { protocol: ConnectionProtocol; id
 	if ( ! match ) {
 		return null;
 	}
-	return {
-		protocol: match[ 1 ] as ConnectionProtocol,
-		id: Number( match[ 2 ] ),
-	};
+	const protocol = ( () => {
+		switch ( match[ 1 ] ) {
+			case 'atmosphere':
+				return 'atmosphere' as const;
+			case 'mastodon':
+				return 'mastodon' as const;
+			case 'fediverse':
+				return 'fediverse' as const;
+			default:
+				return null;
+		}
+	} )();
+	if ( protocol === null ) {
+		return null;
+	}
+	return { protocol, id: Number( match[ 2 ] ) };
 }
 
 function mapAtmosphere( connection: AtmosphereConnection ): UnifiedConnection {
@@ -226,5 +238,4 @@ function ReaderSidebarConnections( { path }: Props ) {
 	);
 }
 
-export { ReaderSidebarConnections };
 export default ReaderSidebarConnections;
