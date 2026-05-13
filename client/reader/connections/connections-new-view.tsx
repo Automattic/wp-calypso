@@ -156,7 +156,7 @@ export function ConnectionsNewView() {
 			</VStack>
 			<p className="connections-new__footnote">
 				{ translate(
-					'Connecting a network doesn’t move your data. It just lets the Reader peek into your accounts on your behalf. Disconnect any time.'
+					'Connecting a network doesn’t move your data. It just lets the Reader peek into your accounts on your behalf.'
 				) }
 			</p>
 		</ReaderMain>
