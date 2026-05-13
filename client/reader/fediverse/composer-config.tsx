@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useFediverseComposerExtras } from './use-fediverse-composer-extras';
 import { useFediverseComposerLimit } from './use-fediverse-composer-limit';
+import { useFediverseComposerMedia } from './use-fediverse-composer-media';
 import type {
 	FediverseCreatePostParams,
 	FediverseCreatePostResult,
@@ -134,6 +135,16 @@ export const fediverseComposerConfig: ComposerConfig<
 	},
 	useProtocolExtras: useFediverseComposerExtras,
 	usePreferredHandoffSiteId: useFediversePreferredHandoffSiteId,
+	// CM-726: blog-level ActivityPub C2S exposes inbox/outbox for posts
+	// but no media-upload endpoint yet. The footer-start media button
+	// matches atmosphere/mastodon's shape exactly (same icon, same
+	// `social-composer__media` class, same `aria-label`) — the only
+	// difference is the click: instead of opening a file picker, it
+	// hands off to the block editor on the connection's blog with the
+	// current draft text prefilled. Replace `useFediverseComposerMedia`
+	// with an in-pane upload hook (mirroring `useAtmosphereComposerMedia`
+	// / `useMastodonComposerMedia`) when a C2S media endpoint ships.
+	useMedia: useFediverseComposerMedia,
 };
 
 function errorMessageFor( err: FediverseError, t: Translate ): ReactNode {

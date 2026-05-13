@@ -79,12 +79,14 @@ function PreferredSiteHandoff( {
 
 export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps ) {
 	const translate = useTranslate();
-	const { hasBeenOverLimit, mode } = useComposer();
+	const { hasBeenOverLimit, hasRequestedMediaHandoff, mode } = useComposer();
 	const config = useComposerConfig();
+
+	const isVisible = hasBeenOverLimit || hasRequestedMediaHandoff;
 
 	const { data: sites } = useQuery( {
 		...sitesQuery( 'all' ),
-		enabled: hasBeenOverLimit,
+		enabled: isVisible,
 	} );
 
 	// Read the per-protocol preferred-site hook unconditionally (Rules of
@@ -97,7 +99,7 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 		config.usePreferredHandoffSiteId ?? useNullPreferredHandoffSiteId;
 	const preferredSiteId = usePreferredHandoffSiteId( mode );
 
-	if ( ! hasBeenOverLimit ) {
+	if ( ! isVisible ) {
 		return null;
 	}
 
@@ -124,11 +126,15 @@ export function ComposerOverflowHandoff( { text }: ComposerOverflowHandoffProps 
 		>
 			<OverflowHandoffShownEffect mode={ mode } />
 			<p>
-				{ translate( 'Too long for %(protocol)s? Publish it on your own site instead.', {
-					args: { protocol: config.protocolLabel },
-					comment:
-						'%(protocol)s is a brand name (e.g. "Bluesky", "Mastodon") and should not be translated.',
-				} ) }
+				{ hasRequestedMediaHandoff
+					? translate(
+							'Want to add media? Adding images isn’t supported here yet — publish it on your own site instead.'
+					  )
+					: translate( 'Too long for %(protocol)s? Publish it on your own site instead.', {
+							args: { protocol: config.protocolLabel },
+							comment:
+								'%(protocol)s is a brand name (e.g. "Bluesky", "Mastodon") and should not be translated.',
+					  } ) }
 			</p>
 			{ preferredSite ? (
 				<PreferredSiteHandoff
