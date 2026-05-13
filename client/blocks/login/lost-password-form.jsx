@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, TextControl, __experimentalVStack as VStack } from '@wordpress/components';
+import { chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { Screen } from 'calypso/blocks/authentication';
@@ -173,9 +174,9 @@ const LostPasswordForm = ( {
 			subheading={ translate(
 				"Please enter your username or email address. You'll receive a link to create a new password via email."
 			) }
-			topBarAction={
-				<Button variant="link" href={ backToLoginHref }>
-					{ translate( 'Login' ) }
+			backAction={
+				<Button variant="link" href={ backToLoginHref } icon={ chevronLeft } iconPosition="left">
+					{ translate( 'Back' ) }
 				</Button>
 			}
 		>
