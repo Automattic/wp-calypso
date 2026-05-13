@@ -59,6 +59,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
+import { withThemesColorScheme } from 'calypso/my-sites/themes/color-scheme-provider';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -128,6 +129,13 @@ import ThemeSupportTab from './theme-support-tab';
 
 import './style.scss';
 
+const loadJitm = () =>
+	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+
 const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
 	'@wordpress/components'
@@ -166,6 +174,7 @@ class ThemeSheet extends Component {
 		isThemePurchased: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		isStandaloneJetpack: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -611,7 +620,7 @@ class ThemeSheet extends Component {
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
 					<AsyncLoad
-						require="calypso/blocks/jitm"
+						require={ loadJitm }
 						placeholder={ null }
 						messagePath="calypso:theme:admin_notices"
 					/>
@@ -1246,7 +1255,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
+				<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 				{
 					siteId && (
 						<QueryActiveTheme siteId={ siteId } />
@@ -1406,7 +1415,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
-	return (
+	return withThemesColorScheme(
 		<ConnectedThemeSheet
 			{ ...props }
 			themeTier={ themeTier }
@@ -1418,7 +1427,8 @@ const ThemeSheetWithOptions = ( props ) => {
 			source="showcase-sheet"
 			activeThemeId={ activeThemeId }
 			siteIntent={ siteIntent }
-		/>
+		/>,
+		{ isSiteRoute: props.isSiteRoute, isLoggedIn: props.isLoggedIn }
 	);
 };
 

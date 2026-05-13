@@ -22,6 +22,13 @@ export function useActivityActions( {
 	const { recordTracksEvent } = useAnalytics();
 
 	return useMemo( () => {
+		// Inaccessible Jetpack sites can't open the backup detail route (it
+		// doesn't opt into availableToInaccessibleJetpackSites), so hide the
+		// action rather than route the user into a dead end.
+		if ( site.__inaccessible_jetpack_error ) {
+			return [];
+		}
+
 		const backupAction: Action< Activity > = {
 			id: 'backup',
 			isPrimary: true,

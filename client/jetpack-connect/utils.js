@@ -53,6 +53,12 @@ export function authQueryTransformer( queryObject ) {
 		// Related WooCommerce PR: https://github.com/woocommerce/woocommerce/pull/39799
 		// this param will be removed after the expierment is over
 		plugin_name: queryObject.plugin_name || null,
+		plugins: queryObject.plugins
+			? queryObject.plugins
+					.split( ',' )
+					.map( ( s ) => s.trim() )
+					.filter( Boolean )
+			: [],
 	};
 }
 
@@ -76,6 +82,7 @@ export const authQueryPropTypes = PropTypes.shape( {
 	userEmail: PropTypes.string,
 	installedExtSuccess: PropTypes.string,
 	plugin_name: PropTypes.string,
+	plugins: PropTypes.arrayOf( PropTypes.string ),
 } );
 
 export function addCalypsoEnvQueryArg( url ) {

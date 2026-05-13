@@ -99,9 +99,7 @@ export function useFields( {
 										height={ 16 }
 										style={ { borderRadius: '50%' } }
 									/>
-									<Text size="small" style={ { color: '#3b3b3b' } }>
-										{ author.name }
-									</Text>
+									<Text size="small">{ author.name }</Text>
 								</HStack>
 								{ item.is_active_deployment && <Badge>{ __( 'Latest Deployment' ) }</Badge> }
 							</HStack>
@@ -167,9 +165,7 @@ export function useFields( {
 								item.status
 							) }
 						>
-							<span>
-								<TimeSince timestamp={ item.created_on } hideTitle />
-							</span>
+							<TimeSince timestamp={ item.created_on } hideTitle />
 						</Tooltip>
 					</div>
 				),

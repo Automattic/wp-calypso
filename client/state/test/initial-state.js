@@ -331,7 +331,7 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					feeds: { items: { 1: { feed_ID: 1, blog_ID: 100, name: 'saved' } } },
 					_timestamp: Date.now(),
 				},
 			};
@@ -363,7 +363,9 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using saved state', () => {
-				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
+				expect( state.feeds.items ).toEqual( {
+					1: { feed_ID: 1, blog_ID: 100, name: 'saved' },
+				} );
 			} );
 		} );
 
@@ -376,7 +378,7 @@ describe( 'initial-state', () => {
 
 			const serverState = {
 				reader: {
-					organizations: { items: [ { id: 2, slug: 'server' } ] },
+					feeds: { items: { 2: { feed_ID: 2, blog_ID: 200, name: 'server' } } },
 				},
 			};
 
@@ -405,7 +407,9 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using server state', () => {
-				expect( state.organizations.items ).toEqual( [ { id: 2, slug: 'server' } ] );
+				expect( state.feeds.items ).toEqual( {
+					2: { feed_ID: 2, blog_ID: 200, name: 'server' },
+				} );
 			} );
 		} );
 
@@ -419,14 +423,14 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					feeds: { items: { 1: { feed_ID: 1, blog_ID: 100, name: 'saved' } } },
 					_timestamp: oldDate.getTime(),
 				},
 			};
 
 			const serverState = {
 				reader: {
-					organizations: { items: [ { id: 2, slug: 'server' } ] },
+					feeds: { items: { 2: { feed_ID: 2, blog_ID: 200, name: 'server' } } },
 				},
 			};
 
@@ -455,7 +459,9 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using server state', () => {
-				expect( state.organizations.items ).toEqual( [ { id: 2, slug: 'server' } ] );
+				expect( state.feeds.items ).toEqual( {
+					2: { feed_ID: 2, blog_ID: 200, name: 'server' },
+				} );
 			} );
 		} );
 
@@ -469,14 +475,14 @@ describe( 'initial-state', () => {
 
 			const savedState = {
 				'redux-state-123456789:reader': {
-					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					feeds: { items: { 1: { feed_ID: 1, blog_ID: 100, name: 'saved' } } },
 					_timestamp: newerDate.getTime(),
 				},
 			};
 
 			const serverState = {
 				reader: {
-					organizations: { items: [ { id: 2, slug: 'server' } ] },
+					feeds: { items: { 2: { feed_ID: 2, blog_ID: 200, name: 'server' } } },
 				},
 			};
 
@@ -505,7 +511,9 @@ describe( 'initial-state', () => {
 			} );
 
 			test( 'builds initial state using saved state', () => {
-				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
+				expect( state.feeds.items ).toEqual( {
+					1: { feed_ID: 1, blog_ID: 100, name: 'saved' },
+				} );
 			} );
 		} );
 

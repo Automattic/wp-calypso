@@ -1,0 +1,177 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+// Shared content width: the empty state and the submission banner above it line up at this width.
+$benchmarks-content-max-width: 900px;
+
+.benchmarks-quarter-selector {
+	min-inline-size: 140px;
+}
+
+.benchmarks-form {
+	padding-block-start: 16px;
+}
+
+.benchmarks-form__row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
+
+	@include breakpoint-deprecated("<660px") {
+		grid-template-columns: 1fr;
+	}
+
+	&:has(> .a4a-form__section-field:only-child) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.benchmarks-form__checkbox-group {
+	margin-block: 0;
+}
+
+// "AI use cases" sits right after "AI tools used" — they're tightly related, so pull it
+// closer than the section's default 24px row gap.
+.benchmarks-form__checkbox-group + .benchmarks-form__checkbox-group {
+	margin-block-start: -12px;
+}
+
+.benchmarks-form__checkbox-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: 8px 16px;
+	margin-block-start: 8px;
+}
+
+.benchmarks-form__required-information {
+	@include body-medium;
+	color: var(--color-neutral-50);
+}
+
+.benchmarks-empty-state {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	max-inline-size: $benchmarks-content-max-width;
+	margin-inline: auto;
+	padding-block-start: 48px;
+}
+
+.benchmarks-empty-state__heading {
+	@include heading-2x-large;
+	margin-block-end: 8px;
+}
+
+.benchmarks-empty-state__description {
+	@include body-large;
+	color: var(--color-neutral-70);
+}
+
+.benchmarks-empty-state .step-section-item {
+	@include break-large {
+		align-items: center;
+
+		.step-section-item__button {
+			margin-block-start: 0;
+		}
+	}
+}
+
+.benchmarks-what-youll-get {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+
+	@media (max-width: $break-medium) {
+		grid-template-columns: 1fr;
+	}
+
+	// Reuse the step-card chrome; grid gap handles spacing, and there's no action column
+	// so let the heading/description fill the card width.
+	.step-section-item {
+		margin-block-end: 0;
+	}
+
+	.step-section-item__content {
+		@include break-large {
+			max-width: 100%;
+		}
+	}
+}
+
+.benchmarks-how-to-read {
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 8px;
+	padding: 24px;
+	margin-block-start: 24px;
+
+	p {
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: var(--color-neutral-70);
+		margin-block: 0 8px;
+	}
+
+	p:last-of-type {
+		margin-block-end: 0;
+	}
+
+	// Keep the inline "About this data" Button visually flush with the surrounding text.
+	.components-button.is-link {
+		vertical-align: baseline;
+	}
+}
+
+.benchmarks-how-to-read__eyebrow {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.4;
+	color: var(--color-neutral-60);
+	margin-block: 0 12px;
+}
+
+.benchmarks-submission-prompt {
+	background-color: var(--color-warning-0);
+	border-color: var(--color-warning-5);
+	max-inline-size: $benchmarks-content-max-width;
+	margin-block-start: 8px;
+	margin-inline: auto;
+
+	@include break-large {
+		align-items: center;
+
+		.step-section-item__button {
+			margin-block-start: 0;
+		}
+	}
+}
+
+.benchmarks-submission-modal.components-modal__frame {
+	max-inline-size: 720px;
+}
+
+.benchmarks-submission-modal .benchmarks-form {
+	padding-block-start: 0;
+	gap: 24px;
+}
+
+// The submission form is always rendered headerless in the modal, so its (empty) form
+// heading is hidden rather than left taking up vertical space.
+.benchmarks-submission-modal .a4a-form__heading {
+	display: none;
+}
+
+// FormFooter adds its own top margin on top of the form's flex gap; drop it so the actions
+// row sits the same distance below the last section as the sections sit from one another.
+.benchmarks-submission-modal .a4a-form__footer {
+	margin-block-start: 0;
+}
+
+// Trim the extra padding below the last field so it doesn't leave a big gap before the card edge.
+.benchmarks-submission-modal .a4a-form__section-body {
+	padding-block-end: 0;
+}

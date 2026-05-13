@@ -1,0 +1,166 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.benchmarks-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 24px;
+	margin-block-start: 24px;
+
+	@include break-medium {
+		// keep 2 columns
+	}
+
+	@media (max-width: $break-medium) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.benchmarks-stat-card {
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 8px;
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.benchmarks-stat-card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+}
+
+.benchmarks-stat-card-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--color-neutral-60);
+}
+
+.benchmarks-stat-card-info.components-button.has-icon {
+	min-inline-size: 0;
+	block-size: auto;
+	padding: 2px;
+	color: var(--color-neutral-50);
+
+	&:hover,
+	&:active {
+		background: transparent;
+		color: var(--color-neutral-70);
+	}
+}
+
+.benchmarks-stat-status-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	border-radius: 16px;
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.benchmarks-stat-status-badge.is-better {
+	background: var(--color-success-0);
+	color: var(--color-success-50);
+}
+
+.benchmarks-stat-status-badge.is-below {
+	background: var(--color-warning-0);
+	color: var(--color-warning-60);
+}
+
+.benchmarks-stat-status-badge.is-at {
+	background: var(--color-neutral-0);
+	color: var(--color-neutral-70);
+}
+
+.benchmarks-stat-card-value {
+	font-size: 2rem;
+	font-weight: 600;
+	color: var(--color-neutral-90);
+	line-height: 1.1;
+}
+
+.benchmarks-stat-delta-pill {
+	display: inline-flex;
+	align-self: flex-start;
+	padding: 2px 10px;
+	border-radius: 16px;
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.benchmarks-stat-delta-pill.is-up {
+	background: var(--color-success-0);
+	color: var(--color-success-50);
+}
+
+.benchmarks-stat-delta-pill.is-down {
+	background: var(--color-warning-0);
+	color: var(--color-warning-60);
+}
+
+.benchmarks-stat-delta-pill.is-neutral {
+	background: var(--color-neutral-0);
+	color: var(--color-neutral-70);
+}
+
+.benchmarks-stat-card-legend {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+	font-size: 0.875rem;
+	color: var(--color-neutral-70);
+	margin-block-start: 4px;
+}
+
+.benchmarks-stat-card-legend-items {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 4px 16px;
+}
+
+.benchmarks-stat-card-legend-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.benchmarks-stat-card-legend-dot {
+	display: inline-block;
+	inline-size: 10px;
+	block-size: 10px;
+	border-radius: 50%;
+}
+
+.benchmarks-stat-card-legend strong {
+	color: var(--color-neutral-90);
+	font-weight: 600;
+}
+
+.benchmarks-stat-card-helper {
+	font-size: 0.875rem;
+	color: var(--color-neutral-50);
+	margin: 0;
+}
+
+.benchmarks-stat-trend {
+	margin-block-start: 8px;
+}
+
+.benchmarks-stat-card-caption {
+	font-size: 0.75rem;
+	color: var(--color-neutral-60);
+	margin: 0;
+}
+
+.benchmarks-stat-card-caption.is-muted {
+	color: var(--color-neutral-50);
+}

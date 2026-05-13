@@ -11,6 +11,7 @@ import {
 	monetizeSubscriptionsQuery,
 	plansQuery,
 	productsQuery,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	queryClient,
 	rawUserPreferencesQuery,
@@ -35,10 +36,12 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
 import {
 	getTitleForDisplay,
 	getPurchaseCancellationFlowType,
+	getDisplayVariant,
 	isDotcomPlan,
 	CANCEL_FLOW_TYPE,
 } from '../../utils/purchase';
@@ -232,11 +235,23 @@ export const purchasesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( userPaymentMethodsQuery( {} ) );
 		queryClient.prefetchQuery( allSitesQuery() );
 	},
-	validateSearch: ( search ): { page?: number; search?: string; site?: number } => {
+	validateSearch: (
+		search
+	): {
+		page?: number;
+		search?: string;
+		site?: number;
+		removed?: string;
+		removedDomain?: string;
+		removedId?: number;
+	} => {
 		return {
 			page: typeof search.page === 'number' ? search.page : undefined,
 			search: typeof search.search === 'string' ? search.search : undefined,
 			site: typeof search.site === 'number' ? search.site : undefined,
+			removed: typeof search.removed === 'string' ? search.removed : undefined,
+			removedDomain: typeof search.removedDomain === 'string' ? search.removedDomain : undefined,
+			removedId: typeof search.removedId === 'number' ? search.removedId : undefined,
 		};
 	},
 } ).lazy( () =>
@@ -263,9 +278,15 @@ export const purchaseSettingsRoute = createRoute( {
 		};
 	},
 	path: '$purchaseId',
-	validateSearch: ( search ): { refunded?: true } => {
+	validateSearch: ( search ): { refunded?: true; upgraded?: true; cancelled?: true } => {
 		const isRefunded = search.refunded === true || search.refunded === 'true';
-		return isRefunded ? { refunded: true } : {};
+		const isUpgraded = search.upgraded === true || search.upgraded === 'true';
+		const isCancelled = search.cancelled === true || search.cancelled === 'true';
+		return {
+			...( isRefunded ? { refunded: true } : {} ),
+			...( isUpgraded ? { upgraded: true } : {} ),
+			...( isCancelled ? { cancelled: true } : {} ),
+		};
 	},
 } );
 
@@ -376,35 +397,46 @@ export const addPaymentMethodRoute = createRoute( {
 );
 
 export const cancelPurchaseRoute = createRoute( {
-	head: ( { loaderData }: { loaderData?: { purchase?: Purchase } } ) => {
-		const purchase = loaderData?.purchase;
+	head: ( {
+		loaderData,
+	}: {
+		loaderData?: { purchase?: Purchase; intent?: 'cancel' | 'remove' };
+	} ) => {
+		// URL intent is authoritative; when absent, fall back to the flow-type
+		// heuristic on the loaded purchase. Delegates to `getDisplayVariant` so
+		// the tab title tracks the same cancel/remove decision the screen uses.
+		const { purchase, intent = null } = loaderData ?? {};
+		const flowType = purchase
+			? getPurchaseCancellationFlowType( purchase )
+			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		const title =
-			purchase && getPurchaseCancellationFlowType( purchase ) === CANCEL_FLOW_TYPE.REMOVE
-				? __( 'Remove' )
-				: __( 'Cancel' );
+			getDisplayVariant( intent, flowType ) === 'remove' ? __( 'Remove' ) : __( 'Cancel' );
 		return {
-			meta: [
-				{
-					title,
-				},
-			],
+			meta: [ { title } ],
 		};
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	loader: async ( { parentMatchPromise } ) => {
+	validateSearch: ( search ): { intent?: 'cancel' | 'remove' } => {
+		return search.intent === 'cancel' || search.intent === 'remove'
+			? { intent: search.intent }
+			: {};
+	},
+	loaderDeps: ( { search } ) => ( { intent: search.intent } ),
+	loader: async ( { parentMatchPromise, deps: { intent } } ) => {
 		const parentMatch = await parentMatchPromise;
 		const purchase = parentMatch.loaderData?.purchase;
 		if ( ! purchase ) {
-			return { purchase: undefined };
+			return { purchase: undefined, intent };
 		}
 		await Promise.all( [
 			queryClient.ensureQueryData( sitePurchasesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( productsQuery() ),
 			queryClient.ensureQueryData( siteFeaturesQuery( purchase.blog_id ) ),
 			queryClient.ensureQueryData( plansQuery() ),
+			queryClient.ensureQueryData( purchaseCancelFeaturesQuery( purchase.ID ) ),
 		] );
-		return { purchase };
+		return { purchase, intent };
 	},
 } ).lazy( () =>
 	import( '../../me/billing-purchases/cancel-purchase' ).then( ( d ) =>
@@ -879,6 +911,33 @@ export const hostingDashboardRoute = createRoute( {
 	)
 );
 
+export const appearanceRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Appearance' ),
+			},
+		],
+	} ),
+	getParentRoute: () => preferencesRoute,
+	path: 'appearance',
+	beforeLoad: ( { context } ) => {
+		if (
+			! context.config.supports.darkMode ||
+			! context.config.supports.colorScheme ||
+			isDashboardBackport()
+		) {
+			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../me/appearance' ).then( ( d ) =>
+		createLazyRoute( 'appearance' )( {
+			component: d.default,
+		} )
+	)
+);
+
 export const languageRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -904,7 +963,7 @@ export const wordpressDefaultsRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'WordPress.com defaults' ),
+				title: __( 'Account defaults' ),
 			},
 		],
 	} ),
@@ -1097,6 +1156,9 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	}
 	if ( config.optIn ) {
 		preferencesChildren.push( hostingDashboardRoute );
+	}
+	if ( config.supports.darkMode && config.supports.colorScheme ) {
+		preferencesChildren.push( appearanceRoute );
 	}
 	if ( isEnabled( 'mcp-settings' ) ) {
 		preferencesChildren.push(

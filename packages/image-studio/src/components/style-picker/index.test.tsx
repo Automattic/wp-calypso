@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
 jest.mock( '@automattic/agenttic-ui', () => {
@@ -64,6 +64,10 @@ jest.mock( '../../store', () => ( {
 	store: 'image-studio',
 } ) );
 
+jest.mock( '../../stores/video-studio', () => ( {
+	store: 'video-studio',
+} ) );
+
 jest.mock( '../icons/BrushIcon', () => ( {
 	BrushIcon: ( { size }: { size: number } ) => <div data-testid="brush-icon">Brush { size }</div>,
 } ) );
@@ -72,7 +76,7 @@ jest.mock( '../icons/BrushIcon', () => ( {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImageStudioMode } from '../../types';
 import { trackImageStudioStyleSelected } from '../../utils/tracking';
-import { STYLE_OPTIONS, StylePicker } from './index';
+import { STYLE_OPTIONS, StylePicker, VIDEO_STYLE_OPTIONS } from './index';
 
 const mockUseDispatch = useDispatch as jest.MockedFunction< typeof useDispatch >;
 const mockUseSelect = useSelect as jest.MockedFunction< typeof useSelect >;
@@ -428,6 +432,48 @@ describe( 'StylePicker', () => {
 			expectedStyles.forEach( ( style ) => {
 				expect( dropdown ).toHaveTextContent( style );
 			} );
+		} );
+
+		it( 'exports Cinematic (active) + Highlights (disabled teaser) video styles', () => {
+			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( 2 );
+
+			expect( VIDEO_STYLE_OPTIONS[ 0 ] ).toMatchObject( {
+				label: 'Cinematic',
+				value: 'cinematic',
+			} );
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].disabled ).toBeFalsy();
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
+
+			expect( VIDEO_STYLE_OPTIONS[ 1 ] ).toMatchObject( {
+				label: 'Highlights (Coming Soon)',
+				value: 'highlights',
+				disabled: true,
+			} );
+			expect( VIDEO_STYLE_OPTIONS[ 1 ].preview ).toBeTruthy();
+		} );
+
+		it( 'renders video options when variant="video"', async () => {
+			const user = userEvent.setup();
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+
+			const dropdown = screen.getByTestId( 'dropdown-content' );
+			expect( dropdown ).toHaveTextContent( 'Cinematic' );
+			expect( dropdown ).toHaveTextContent( 'Highlights' );
+			// Image-only options should not appear in the video dropdown.
+			expect( dropdown ).not.toHaveTextContent( 'Anime' );
+			expect( dropdown ).not.toHaveTextContent( 'Pixel Art' );
+		} );
+
+		it( 'renders the disabled video style as an inert (native-disabled) card', async () => {
+			const user = userEvent.setup();
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+			const dropdown = screen.getByTestId( 'dropdown-content' );
+			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
+			expect( highlightsCard ).toBeDisabled();
 		} );
 
 		it( 'maps style values correctly', async () => {

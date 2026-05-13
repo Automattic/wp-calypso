@@ -1,5 +1,6 @@
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const MiniCSSRuntimeFullHashPlugin = require( './mini-css-runtime-full-hash' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
 
 /**
@@ -37,13 +38,13 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 			loader: require.resolve( 'sass-loader' ),
 			options: {
 				additionalData: prelude,
-				sassOptions: {
-					includePaths,
+				api: 'modern',
+				sassOptions: ( loaderContext ) => ( {
+					loadPaths: includePaths,
 					quietDeps: true,
-				},
-				// The warnRuleAsWarning can be removed once sass-loader is updated to v14. It defaults to true in that version.
-				// @see https://github.com/webpack-contrib/sass-loader/tree/v14.0.0?tab=readme-ov-file#warnruleaswarning
-				warnRuleAsWarning: true,
+					silenceDeprecations: [ 'mixed-decls' ],
+					...( loaderContext.resourcePath.endsWith( '.css' ) ? { syntax: 'scss' } : {} ),
+				} ),
 			},
 		},
 	],
@@ -71,6 +72,7 @@ module.exports.plugins = ( { chunkFilename, filename } ) => [
 		// approach used by v1.
 		experimentalUseImportModule: false,
 	} ),
+	new MiniCSSRuntimeFullHashPlugin(),
 	new MiniCSSWithRTLPlugin(),
 	new WebpackRTLPlugin(),
 ];

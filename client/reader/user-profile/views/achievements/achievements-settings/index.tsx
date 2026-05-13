@@ -16,94 +16,80 @@ export default function AchievementsSettings() {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 
-	const { data: savedIsPublic } = useQuery( userPreferenceQuery( 'achievements-page-public' ) );
+	const { data: savedVisibility } = useQuery( userPreferenceQuery( 'achievements-visibility' ) );
 	const { data: savedNotifications } = useQuery(
-		userPreferenceQuery( 'achievements-notifications-enabled' )
+		userPreferenceQuery( 'achievements-global-notifications' )
 	);
 
-	const [ isPublic, setIsPublic ] = useState( !! savedIsPublic );
-	const [ notificationsEnabled, setNotificationsEnabled ] = useState(
-		savedNotifications !== false
-	);
-
-	// Sync local state when server data changes (e.g. on initial load).
-	useEffect( () => setIsPublic( !! savedIsPublic ), [ savedIsPublic ] );
+	// Local state for immediate toggle feedback. Synced from query data on load.
+	const [ visibility, setLocalVisibility ] = useState( savedVisibility ?? 'private' );
+	const [ notifications, setLocalNotifications ] = useState( savedNotifications ?? 'enabled' );
+	useEffect( () => setLocalVisibility( savedVisibility ?? 'private' ), [ savedVisibility ] );
 	useEffect(
-		() => setNotificationsEnabled( savedNotifications !== false ),
+		() => setLocalNotifications( savedNotifications ?? 'enabled' ),
 		[ savedNotifications ]
 	);
 
-	const { mutate: setPublic, isPending: isSetPublicPending } = useMutation(
-		userPreferenceOptimisticMutation( 'achievements-page-public' )
+	const { mutate: setVisibility, isPending: isSetVisibilityPending } = useMutation(
+		userPreferenceOptimisticMutation( 'achievements-visibility' )
 	);
 	const { mutate: setNotifications, isPending: isSetNotificationsPending } = useMutation(
-		userPreferenceOptimisticMutation( 'achievements-notifications-enabled' )
+		userPreferenceOptimisticMutation( 'achievements-global-notifications' )
 	);
 
-	const dispatchSuccessNotice = ( message: string ) => {
-		dispatch(
-			successNotice( message, {
-				duration: 4000,
-			} )
-		);
-	};
-	const dispatchErrorNotice = ( message: string ) => {
-		dispatch(
-			errorNotice( message, {
-				duration: 4000,
-			} )
-		);
-	};
-
-	const handleSetPublic = ( value: boolean ) => {
-		setPublic( value, {
-			onSuccess( _, data ) {
-				setIsPublic( !! data );
-				if ( data ) {
-					dispatchSuccessNotice( translate( 'The achievements page is now public.' ) );
-					recordAction( 'set_achievements_page_public' );
-					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
-						setting: 'achievements-page-visibility',
-						value: 'public',
-					} );
-				} else {
-					dispatchSuccessNotice( translate( 'The achievements page is now private.' ) );
-					recordAction( 'set_achievements_page_private' );
-					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
-						setting: 'achievements-page-visibility',
-						value: 'private',
-					} );
-				}
+	const handleSetVisibility = ( checked: boolean ) => {
+		const newVisibility = checked ? 'public' : 'private';
+		setLocalVisibility( newVisibility );
+		setVisibility( newVisibility, {
+			onSuccess() {
+				dispatch(
+					successNotice(
+						newVisibility === 'public'
+							? translate( 'Your achievements page is now public.' )
+							: translate( 'Your achievements page is now private.' ),
+						{ duration: 4000 }
+					)
+				);
+				recordAction( `set_achievements_visibility_${ newVisibility }` );
+				recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
+					setting: 'achievements-visibility',
+					value: newVisibility,
+				} );
 			},
 			onError() {
-				dispatchErrorNotice( translate( 'Failed to save the achievements page settings.' ) );
+				dispatch(
+					errorNotice( translate( 'Failed to save the achievements visibility settings.' ), {
+						duration: 4000,
+					} )
+				);
 			},
 		} );
 	};
 
-	const handleSetNotifications = ( value: boolean ) => {
-		setNotifications( value, {
-			onSuccess( _, data ) {
-				setNotificationsEnabled( !! data );
-				if ( data ) {
-					dispatchSuccessNotice( translate( 'Achievements notifications are now enabled.' ) );
-					recordAction( 'set_achievements_notifications_enabled' );
-					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
-						setting: 'achievements-notifications',
-						value: 'enabled',
-					} );
-				} else {
-					dispatchSuccessNotice( translate( 'Achievements notifications are now disabled.' ) );
-					recordAction( 'set_achievements_notifications_disabled' );
-					recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
-						setting: 'achievements-notifications',
-						value: 'disabled',
-					} );
-				}
+	const handleSetNotifications = ( checked: boolean ) => {
+		const newNotifications = checked ? 'enabled' : 'disabled';
+		setLocalNotifications( newNotifications );
+		setNotifications( newNotifications, {
+			onSuccess() {
+				dispatch(
+					successNotice(
+						newNotifications === 'enabled'
+							? translate( 'Achievements notifications are now enabled.' )
+							: translate( 'Achievements notifications are now disabled.' ),
+						{ duration: 4000 }
+					)
+				);
+				recordAction( `set_achievements_notifications_${ newNotifications }` );
+				recordReaderTracksEvent( 'calypso_reader_achievements_settings_saved', {
+					setting: 'achievements-notifications',
+					value: newNotifications,
+				} );
 			},
 			onError() {
-				dispatchErrorNotice(
-					translate( 'Failed to save the achievements notifications settings.' )
+				dispatch(
+					errorNotice( translate( 'Failed to save the achievements notifications settings.' ), {
+						duration: 4000,
+					} )
 				);
 			},
 		} );
@@ -135,14 +121,14 @@ export default function AchievementsSettings() {
 			renderContent={ () => (
 				<div className="achievements-settings__content">
 					<ToggleControl
-						checked={ isPublic }
-						disabled={ isSetPublicPending }
-						onChange={ handleSetPublic }
+						checked={ visibility === 'public' }
+						disabled={ isSetVisibilityPending }
+						onChange={ handleSetVisibility }
 						label={ translate( 'Public achievements' ) }
 						help={ translate( 'When enabled, your achievements page is visible to other users.' ) }
 					/>
 					<ToggleControl
-						checked={ notificationsEnabled }
+						checked={ notifications !== 'disabled' }
 						disabled={ isSetNotificationsPending }
 						onChange={ handleSetNotifications }
 						label={ translate( 'Achievement notifications' ) }

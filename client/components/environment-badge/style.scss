@@ -1,3 +1,5 @@
+@import "@automattic/calypso-color-schemes/root-only";
+
 $z-index: 999;
 
 .environment-badge {
@@ -25,16 +27,20 @@ $z-index: 999;
 	.bug-report {
 		position: relative;
 		display: inline-flex;
-		background-color: #fff;
-		border: solid 1px #3c434a;
+		background-color: var(--color-surface);
+		border: solid 1px var(--studio-gray-70);
 		border-radius: 50%;
-		color: #3c434a;
+		color: var(--color-text);
 		margin-left: -4px;
 		text-decoration: none;
 		text-align: center;
 		z-index: $z-index + 1;
 		transition: border-radius 0.2s ease-out;
 		vertical-align: middle;
+
+		svg {
+			fill: currentColor;
+		}
 	}
 
 	.environment {
@@ -47,8 +53,8 @@ $z-index: 999;
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
 		transition: all 0.2s ease-out;
-		background-color: #fff;
-		box-shadow: 0 0 0 1px #3c434a;
+		background-color: var(--color-surface);
+		box-shadow: 0 0 0 1px var(--studio-gray-70);
 
 		&.is-env {
 			display: inline-block;
@@ -56,7 +62,7 @@ $z-index: 999;
 		a {
 			text-decoration: none;
 			display: inline-block;
-			color: #3c434a;
+			color: var(--studio-gray-70);
 
 			&:hover {
 				transform: scale(1.1);
@@ -64,32 +70,32 @@ $z-index: 999;
 		}
 
 		&.is-staging {
-			color: #361f00;
-			background-color: #faa754;
+			color: var(--studio-orange-90);
+			background-color: var(--studio-orange-20);
 		}
 		&.is-wpcalypso {
-			color: #003024;
-			background-color: #31cc9f;
+			color: var(--studio-celadon-90);
+			background-color: var(--studio-celadon-20);
 		}
 		&.is-dev {
-			color: #35163b;
-			background-color: #d48fc8;
+			color: var(--studio-purple-90);
+			background-color: var(--studio-purple-20);
 		}
 		&.is-horizon,
 		&.is-feedback {
-			color: #14215a;
-			background-color: #adbaf3;
+			color: var(--studio-blue-90);
+			background-color: var(--studio-blue-20);
 		}
 		&.is-jetpack-cloud-dev,
 		&.is-jetpack-cloud-staging {
-			color: #003010;
-			background-color: #64ca43;
+			color: var(--studio-jetpack-green-90);
+			background-color: var(--studio-jetpack-green-20);
 		}
 
 		&.branch-name {
 			text-transform: inherit;
-			background-color: #3c434a;
-			color: #fff;
+			background-color: var(--studio-gray-70);
+			color: var(--color-text-inverted);
 		}
 	}
 

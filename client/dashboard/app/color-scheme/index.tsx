@@ -1,30 +1,17 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { userPreferenceOptimisticMutation, userPreferenceQuery } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createContext, useCallback, useContext, useEffect } from 'react';
 
 export type ColorScheme = 'light' | 'dark' | 'system';
 
-const STORAGE_KEY = 'wpcom_dashboard_color_scheme';
-const DEFAULT_SCHEME: ColorScheme = 'light';
+export const PREFERENCE_KEY = 'hosting-dashboard-color-scheme';
+export const DEFAULT_SCHEME: ColorScheme = 'light';
 
-function isColorScheme( value: unknown ): value is ColorScheme {
+export function isColorScheme( value: unknown ): value is ColorScheme {
 	return value === 'light' || value === 'dark' || value === 'system';
 }
 
-function readStoredScheme(): ColorScheme {
-	if ( typeof window === 'undefined' ) {
-		return DEFAULT_SCHEME;
-	}
-	try {
-		const stored = window.localStorage.getItem( STORAGE_KEY );
-		if ( isColorScheme( stored ) ) {
-			return stored;
-		}
-	} catch {
-		// Access to localStorage can throw in privacy modes; fall through.
-	}
-	return DEFAULT_SCHEME;
-}
-
-function applyScheme( scheme: ColorScheme ) {
+function applyColorScheme( scheme: ColorScheme ) {
 	if ( typeof document === 'undefined' ) {
 		return;
 	}
@@ -33,32 +20,44 @@ function applyScheme( scheme: ColorScheme ) {
 
 interface ColorSchemeContextType {
 	colorScheme: ColorScheme;
-	setColorScheme: ( scheme: ColorScheme ) => void;
+	setColorScheme: ( scheme: ColorScheme, options?: { onSuccess?: () => void } ) => void;
 }
 
 const ColorSchemeContext = createContext< ColorSchemeContextType | undefined >( undefined );
 
 export function ColorSchemeProvider( { children }: { children: React.ReactNode } ) {
-	const [ colorScheme, setColorSchemeState ] = useState< ColorScheme >( readStoredScheme );
+	const { data: savedColorScheme, isError } = useQuery( userPreferenceQuery( PREFERENCE_KEY ) );
+	const { mutate: saveColorScheme, isPending } = useMutation(
+		userPreferenceOptimisticMutation( PREFERENCE_KEY )
+	);
+	const colorScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_SCHEME;
+	const isReady = savedColorScheme !== undefined || isError;
 
 	useEffect( () => {
-		applyScheme( colorScheme );
-	}, [ colorScheme ] );
-
-	const setColorScheme = useCallback( ( scheme: ColorScheme ) => {
-		setColorSchemeState( scheme );
-		try {
-			window.localStorage.setItem( STORAGE_KEY, scheme );
-		} catch {
-			// Ignore storage failures; the in-memory state still updates.
+		if ( ! isReady ) {
+			return;
 		}
-	}, [] );
+		applyColorScheme( colorScheme );
+	}, [ colorScheme, isReady ] );
 
-	return (
+	const setColorScheme = useCallback(
+		( scheme: ColorScheme, options?: { onSuccess?: () => void } ) => {
+			if ( ! isColorScheme( scheme ) || scheme === colorScheme || isPending ) {
+				return;
+			}
+
+			saveColorScheme( scheme, {
+				onSuccess: options?.onSuccess,
+			} );
+		},
+		[ colorScheme, isPending, saveColorScheme ]
+	);
+
+	return isReady ? (
 		<ColorSchemeContext.Provider value={ { colorScheme, setColorScheme } }>
 			{ children }
 		</ColorSchemeContext.Provider>
-	);
+	) : null;
 }
 
 export function useColorScheme(): ColorSchemeContextType {

@@ -2,10 +2,9 @@ import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkou
 import { snakeToCamelCase } from '@automattic/js-utils';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, register, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode } from 'react';
+import { useEffect, useState, Fragment, ReactNode } from 'react';
 import { maskField } from 'calypso/lib/checkout';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
@@ -18,197 +17,111 @@ import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-import type {
-	StoreSelectors,
-	StoreSelectorsWithState,
-	StoreStateValue,
-} from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
-import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'composite-checkout:netbanking-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
-type NounsInStore = 'customerName';
-type FieldsType = Record< string, StoreStateValue >;
-type NetBankingStoreState< N extends string > = Record< N, StoreStateValue > & {
-	fields: FieldsType;
-};
-
-interface NetBankingPaymentMethodStore< N extends string > extends ReturnType< typeof register > {
-	getState: () => NetBankingStoreState< N >;
+interface NetBankingFieldState {
+	value: string;
+	isTouched: boolean;
+	errors: string[];
 }
-type NetBankingStore = NetBankingPaymentMethodStore< NounsInStore >;
 
-type NetBankingSelectors = StoreSelectors< NounsInStore > & { getFields: () => FieldsType };
+type StateSubscriber = () => void;
 
-const actions = {
-	changeCustomerName( payload: string ) {
-		return { type: 'CUSTOMER_NAME_SET', payload };
-	},
-	setFieldValue( key: string, value: string ) {
-		return { type: 'FIELD_VALUE_SET', payload: { key, value } };
-	},
-	setFieldError( key: string, message: string ) {
-		return { type: 'FIELD_ERROR_SET', payload: { key, message } };
-	},
-	touchAllFields() {
-		return { type: 'TOUCH_ALL_FIELDS' };
-	},
-	resetFields() {
-		return { type: 'RESET_FIELDS' };
-	},
-};
+class NetBankingPaymentMethodState {
+	customerName: { value: string; isTouched: boolean } = { value: '', isTouched: false };
+	fields: Record< string, NetBankingFieldState > = {};
+	subscribers: StateSubscriber[] = [];
 
-const selectors: StoreSelectorsWithState< NounsInStore > & {
-	getFields: ( state: NetBankingStoreState< NounsInStore > ) => FieldsType;
-} = {
-	getCustomerName( state ) {
-		return state.customerName;
-	},
-	getFields( state ) {
-		return state.fields;
-	},
-};
+	changeCustomerName = ( value: string ): void => {
+		this.customerName = { value, isTouched: true };
+		this.notifySubscribers();
+	};
 
-export function createNetBankingPaymentMethodStore(): NetBankingStore {
-	debug( 'creating a new netbanking payment method store' );
-	const store = registerStore( 'netbanking', {
-		reducer(
-			state: NetBankingStoreState< NounsInStore > = {
-				customerName: { value: '', isTouched: false },
-				fields: {},
+	setFieldValue = ( key: string, value: string ): void => {
+		const maskedValue = maskField( key, this.fields[ key ]?.value, value );
+		this.fields = {
+			...this.fields,
+			[ key ]: {
+				value: maskedValue,
+				isTouched: true,
+				errors: [],
 			},
-			action: AnyAction
-		) {
-			switch ( action.type ) {
-				case 'CUSTOMER_NAME_SET':
-					return { ...state, customerName: { value: action.payload, isTouched: true } };
-				case 'FIELD_VALUE_SET':
-					return {
-						...state,
-						fields: {
-							...state.fields,
-							[ action.payload.key ]: {
-								value: maskField(
-									action.payload.key,
-									state.fields[ action.payload.key ]?.value,
-									action.payload.value
-								),
-								isTouched: true,
-								errors: [],
-							},
-						},
-					};
-				case 'FIELD_ERROR_SET':
-					return {
-						...state,
-						fields: {
-							...state.fields,
-							[ action.payload.key ]: {
-								...state.fields[ action.payload.key ],
-								errors: [ action.payload.message ],
-							},
-						},
-					};
-				case 'TOUCH_ALL_FIELDS':
-					return {
-						...state,
-						fields: Object.keys( state.fields ).reduce(
-							( obj, key ) => ( {
-								...obj,
-								[ key ]: {
-									...state.fields[ key ],
-									isTouched: true,
-								},
-							} ),
-							{}
-						),
-					};
-				case 'RESET_FIELDS': {
-					return { ...state, fields: {} };
-				}
-			}
-			return state;
-		},
-		actions,
-		selectors,
-	} );
-	return store;
+		};
+		this.notifySubscribers();
+	};
+
+	setFieldError = ( key: string, message: string ): void => {
+		this.fields = {
+			...this.fields,
+			[ key ]: {
+				...( this.fields[ key ] ?? { value: '', isTouched: false, errors: [] } ),
+				errors: [ message ],
+			},
+		};
+		this.notifySubscribers();
+	};
+
+	touchAllFields = (): void => {
+		this.fields = Object.keys( this.fields ).reduce(
+			( obj, key ) => ( {
+				...obj,
+				[ key ]: {
+					...this.fields[ key ],
+					isTouched: true,
+				},
+			} ),
+			{}
+		);
+		this.notifySubscribers();
+	};
+
+	resetFields = (): void => {
+		this.fields = {};
+		this.notifySubscribers();
+	};
+
+	subscribe = ( callback: () => void ): ( () => void ) => {
+		this.subscribers.push( callback );
+		return () => {
+			this.subscribers = this.subscribers.filter( ( subscriber ) => subscriber !== callback );
+		};
+	};
+
+	notifySubscribers = (): void => {
+		this.subscribers.forEach( ( subscriber ) => subscriber() );
+	};
 }
 
 export function createNetBankingMethod( {
-	store,
 	submitButtonContent,
 }: {
-	store: NetBankingStore;
 	submitButtonContent: ReactNode;
 } ): PaymentMethod {
+	const state = new NetBankingPaymentMethodState();
+
 	return {
 		id: 'netbanking',
 		hasRequiredFields: true,
 		paymentProcessorId: 'netbanking',
 		label: <NetBankingLabel />,
-		activeContent: <NetBankingFields />,
+		activeContent: <NetBankingFields state={ state } />,
 		submitButton: (
-			<NetBankingPayButton store={ store } submitButtonContent={ submitButtonContent } />
+			<NetBankingPayButton state={ state } submitButtonContent={ submitButtonContent } />
 		),
-		inactiveContent: <NetBankingSummary />,
+		inactiveContent: <NetBankingSummary state={ state } />,
 		getAriaLabel: () => 'Transferência bancária',
 	};
 }
 
-function NetBankingFields() {
-	const { __ } = useI18n();
-
-	const fields = useSelect(
-		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getFields(),
-		[]
-	);
-	const getField = ( key: string ) => fields[ key ] || {};
-	const getFieldValue = ( key: string ) => getField( key ).value ?? '';
-	const getErrorMessagesForField = ( key: string ) => {
-		const managedValue = getField( key );
-		return managedValue.errors ?? [];
-	};
-	const { setFieldValue } = useDispatch( 'netbanking' );
-
-	const customerName = useSelect(
-		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getCustomerName(),
-		[]
-	);
-	const { changeCustomerName } = useDispatch( 'netbanking' );
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-	const countriesList = useCountryList();
-
-	return (
-		<NetBankingFormWrapper>
-			<NetBankingField
-				id="netbanking-cardholder-name"
-				type="Text"
-				autoComplete="cc-name"
-				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
-				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
-			<div className="netbanking__contact-fields">
-				<CountrySpecificPaymentFields
-					countryCode="IN" // If this payment method is available and the country is not India, we have other problems
-					countriesList={ countriesList }
-					getErrorMessages={ getErrorMessagesForField }
-					getFieldValue={ getFieldValue }
-					handleFieldChange={ setFieldValue }
-					disableFields={ isDisabled }
-				/>
-			</div>
-		</NetBankingFormWrapper>
-	);
+function useSubscribeToEventEmitter( state: NetBankingPaymentMethodState ) {
+	const [ , forceReload ] = useState( 0 );
+	useEffect( () => {
+		return state.subscribe( () => {
+			forceReload( ( val: number ) => val + 1 );
+		} );
+	}, [ state ] );
 }
 
 const NetBankingFormWrapper = styled.div`
@@ -240,31 +153,61 @@ const NetBankingField = styled( Field )`
 	}
 `;
 
+function NetBankingFields( { state }: { state: NetBankingPaymentMethodState } ) {
+	const { __ } = useI18n();
+	useSubscribeToEventEmitter( state );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+	const countriesList = useCountryList();
+
+	const getFieldValue = ( key: string ) => state.fields[ key ]?.value ?? '';
+	const getErrorMessagesForField = ( key: string ) => state.fields[ key ]?.errors ?? [];
+
+	return (
+		<NetBankingFormWrapper>
+			<NetBankingField
+				id="netbanking-cardholder-name"
+				type="Text"
+				autoComplete="cc-name"
+				label={ __( 'Your name' ) }
+				value={ state.customerName.value }
+				onChange={ state.changeCustomerName }
+				isError={ state.customerName.isTouched && state.customerName.value.length === 0 }
+				errorMessage={ __( 'This field is required' ) }
+				disabled={ isDisabled }
+			/>
+			<div className="netbanking__contact-fields">
+				<CountrySpecificPaymentFields
+					countryCode="IN" // If this payment method is available and the country is not India, we have other problems
+					countriesList={ countriesList }
+					getErrorMessages={ getErrorMessagesForField }
+					getFieldValue={ getFieldValue }
+					handleFieldChange={ state.setFieldValue }
+					disableFields={ isDisabled }
+				/>
+			</div>
+		</NetBankingFormWrapper>
+	);
+}
+
 function NetBankingPayButton( {
 	disabled,
 	onClick,
-	store,
+	state,
 	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
-	store: NetBankingStore;
+	state: NetBankingPaymentMethodState;
 	submitButtonContent: ReactNode;
 } ) {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect(
-		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getCustomerName(),
-		[]
-	);
-	const fields = useSelect(
-		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getFields(),
-		[]
-	);
-	const massagedFields: typeof fields = Object.entries( fields ).reduce(
-		( accum, [ key, managedValue ] ) => ( {
+	useSubscribeToEventEmitter( state );
+	const massagedFields: Record< string, string > = Object.entries( state.fields ).reduce(
+		( accum, [ key, fieldState ] ) => ( {
 			...accum,
-			[ snakeToCamelCase( key ) ]: managedValue.value,
+			[ snakeToCamelCase( key ) ]: fieldState.value,
 		} ),
 		{}
 	);
@@ -284,11 +227,11 @@ function NetBankingPayButton( {
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store, contactCountryCode, __, reduxDispatch ) ) {
+				if ( isFormValid( state, contactCountryCode, __, reduxDispatch ) ) {
 					debug( 'submitting netbanking payment' );
 					onClick( {
 						...massagedFields,
-						name: customerName?.value,
+						name: state.customerName.value,
 						address: massagedFields?.address1,
 					} );
 				}
@@ -302,44 +245,37 @@ function NetBankingPayButton( {
 	);
 }
 
-function NetBankingSummary() {
-	const customerName = useSelect(
-		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getCustomerName(),
-		[]
-	);
+function NetBankingSummary( { state }: { state: NetBankingPaymentMethodState } ) {
+	useSubscribeToEventEmitter( state );
 
 	return (
 		<SummaryDetails>
-			<SummaryLine>{ customerName?.value }</SummaryLine>
+			<SummaryLine>{ state.customerName.value }</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
 function isFormValid(
-	store: NetBankingStore,
+	state: NetBankingPaymentMethodState,
 	contactCountryCode: string,
 	__: ( text: string ) => string,
 	reduxDispatch: CalypsoDispatch
 ) {
 	// Touch fields so that we show errors
-	store.dispatch( actions.touchAllFields() );
+	state.touchAllFields();
 	let isValid = true;
 
-	const customerName = selectors.getCustomerName( store.getState() );
-
-	if ( ! customerName?.value.length ) {
+	if ( ! state.customerName.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( actions.changeCustomerName( '' ) );
+		state.changeCustomerName( '' );
 		isValid = false;
 	}
 
-	const rawState = selectors.getFields( store.getState() );
-
 	const validationResults = validatePaymentDetails(
 		Object.entries( {
-			...rawState,
+			...state.fields,
 			country: { value: contactCountryCode },
-			name: customerName,
+			name: state.customerName,
 		} ).reduce( ( accum: Record< string, string >, [ key, managedValue ] ) => {
 			accum[ key ] = managedValue.value;
 			return accum;
@@ -350,7 +286,7 @@ function isFormValid(
 	Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
 		errors.map( ( error ) => {
 			isValid = false;
-			store.dispatch( actions.setFieldError( key, error ) );
+			state.setFieldError( key, error );
 		} );
 	} );
 	debug( 'netbanking card details validation results: ', validationResults );
@@ -364,6 +300,16 @@ function isFormValid(
 	return isValid;
 }
 
+function NetBankingLogoImg( { className }: { className?: string } ) {
+	return (
+		<img src="/calypso/images/upgrades/netbanking.svg" alt="NetBanking" className={ className } />
+	);
+}
+
+const NetBankingLogo = styled( NetBankingLogoImg )`
+	width: 76px;
+`;
+
 function NetBankingLabel() {
 	return (
 		<Fragment>
@@ -372,15 +318,5 @@ function NetBankingLabel() {
 				<NetBankingLogo />
 			</PaymentMethodLogos>
 		</Fragment>
-	);
-}
-
-const NetBankingLogo = styled( NetBankingLogoImg )`
-	width: 76px;
-`;
-
-function NetBankingLogoImg( { className }: { className?: string } ) {
-	return (
-		<img src="/calypso/images/upgrades/netbanking.svg" alt="NetBanking" className={ className } />
 	);
 }

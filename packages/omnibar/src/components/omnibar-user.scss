@@ -1,0 +1,43 @@
+.omnibar,
+.omnibar__popover {
+	.omnibar__user {
+		padding-top: 8px;
+	}
+
+	.omnibar__user-avatar {
+		display: inline-flex;
+		border-radius: 50%;
+		overflow: hidden;
+		width: 26px;
+		height: 26px;
+
+		@media ( min-width: 782px ) {
+			width: 20px;
+			height: 20px;
+		}
+
+		&.omnibar__user-info-avatar {
+			width: 56px;
+			height: 56px;
+		}
+
+		> * {
+			width: 100%;
+			height: 100%;
+			display: block;
+			object-fit: cover;
+		}
+	}
+
+	.omnibar__user-info {
+		opacity: 0.8;
+		font-size: 11px;
+	}
+}
+
+.omnibar__popover {
+	.omnibar__user-avatar {
+		width: 56px;
+		height: 56px;
+	}
+}

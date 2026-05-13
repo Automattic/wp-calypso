@@ -10,7 +10,6 @@ import EnvironmentBadge, {
 	Branch,
 	AccountSettingsHelper,
 	AuthHelper,
-	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
 	ReactQueryDevtoolsHelper,
@@ -21,6 +20,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InterimOmnibar } from 'calypso/dashboard/app/interim-omnibar/interim-omnibar';
+import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
 import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -42,8 +42,6 @@ class Document extends Component {
 			clientData,
 			commitChecksum,
 			commitSha,
-			devDocs,
-			devDocsURL,
 			entrypoint,
 			env,
 			featuresHelper,
@@ -164,15 +162,22 @@ class Document extends Component {
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
-					{ dashboard && config.isEnabled( 'dashboard/omnibar' ) && (
+					{ dashboard && config.isEnabled( 'dashboard/omnibar-radical' ) && (
 						<div id="wpcom-omnibar">
-							<InterimOmnibar
-								user={ user || null }
-								site={ null }
-								currentRoute={ this.props.path ?? '/' }
-							/>
+							<InitialOmnibar user={ user } />
 						</div>
 					) }
+					{ dashboard &&
+						config.isEnabled( 'dashboard/omnibar' ) &&
+						! config.isEnabled( 'dashboard/omnibar-radical' ) && (
+							<div id="wpcom-omnibar">
+								<InterimOmnibar
+									user={ user || null }
+									site={ null }
+									currentRoute={ this.props.path ?? '/' }
+								/>
+							</div>
+						) }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"
@@ -214,7 +219,6 @@ class Document extends Component {
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
 						</EnvironmentBadge>
 					) }
 
@@ -237,8 +241,9 @@ class Document extends Component {
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
-						manifests.map( ( manifest ) => (
+						manifests.map( ( manifest, index ) => (
 							<script
+								key={ `manifest-${ index }` }
 								nonce={ inlineScriptNonce }
 								dangerouslySetInnerHTML={ {
 									__html: manifest,
@@ -258,17 +263,6 @@ class Document extends Component {
 							data-site-tz="Etc/UTC"
 						/>
 					) }
-
-					{ sectionName === 'login' &&
-						config.isEnabled( 'blackbox-login' ) &&
-						config( 'blackbox_api_key' ) && (
-							<script
-								nonce={ inlineScriptNonce }
-								defer
-								src={ config( 'blackbox_url' ) }
-								data-apikey={ config( 'blackbox_api_key' ) }
-							/>
-						) }
 
 					{ entrypoint?.language?.manifest && (
 						<script nonce={ inlineScriptNonce } src={ entrypoint.language.manifest } />

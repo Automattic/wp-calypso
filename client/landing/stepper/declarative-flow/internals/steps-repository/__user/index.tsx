@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
@@ -10,6 +11,7 @@ import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-ov
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -25,6 +27,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
+import { SignupSlider } from './signup-slider';
 import { useSocialService } from './use-social-service';
 
 import './style.scss';
@@ -44,6 +47,10 @@ const UserStepComponent: StepType = function UserStep( {
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
 	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
+
+	// Users arriving from woocommerce.com's hosting-solutions CTA see the "open email + slider"
+	// account-step variant. Everyone else sees the default single-column signup.
+	const isEmailFirstVariant = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -89,6 +96,7 @@ const UserStepComponent: StepType = function UserStep( {
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
+	const isLargeViewport = useViewportMatch( 'large' );
 
 	const stepContent = (
 		<>
@@ -109,6 +117,7 @@ const UserStepComponent: StepType = function UserStep( {
 				onCreateAccountSuccess={ handleCreateAccountSuccess }
 				backButtonInFooter={ ! isStepContainerV2 }
 				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
+				isEmailFirstVariant={ isEmailFirstVariant }
 				allowedSocialServices={ partnerConfig?.ssoProviders }
 				customTosElement={ signupTosElement }
 			/>
@@ -134,7 +143,7 @@ const UserStepComponent: StepType = function UserStep( {
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ headingText } />
+				<Step.Heading text={ headingText } align={ isEmailFirstVariant ? 'left' : undefined } />
 			</>
 		);
 
@@ -145,10 +154,37 @@ const UserStepComponent: StepType = function UserStep( {
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
 				rightElement={
-					<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
+					isEmailFirstVariant ? null : (
+						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
+					)
 				}
 			/>
 		);
+
+		if ( isLargeViewport && isEmailFirstVariant ) {
+			return (
+				<Step.TwoColumnLayout
+					className="step-container-v2--user"
+					firstColumnWidth={ 6 }
+					secondColumnWidth={ 6 }
+					columns={ 12 }
+					noInlinePadding
+					isFullWidth
+				>
+					<Step.CenteredColumnLayout
+						verticalAlign="center"
+						headingColumnWidth={ 4 }
+						columnWidth={ 4 }
+						heading={ heading }
+						topBar={ topBar }
+						noGap
+					>
+						{ stepContent }
+					</Step.CenteredColumnLayout>
+					<SignupSlider />
+				</Step.TwoColumnLayout>
+			);
+		}
 
 		return (
 			<Step.CenteredColumnLayout

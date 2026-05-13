@@ -1,0 +1,65 @@
+{
+	"name": "@automattic/wpcom-smart-dictation",
+	"version": "1.0.0",
+	"description": "WordPress.com Smart Dictation.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/wpcom-smart-dictation"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@wordpress/components": "^32.1.0",
+		"@wordpress/data": "^10.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"@wordpress/ui": "^0.9.0",
+		"clsx": "^2.1.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"wpcom-proxy-request": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^5.8.3"
+	},
+	"peerDependencies": {
+		"@wordpress/element": "^6.23.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"private": true
+}
