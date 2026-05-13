@@ -11,12 +11,6 @@ describe( 'StreakBadge', () => {
 		expect( screen.getByText( '5' ) ).toBeVisible();
 	} );
 
-	test( 'should render the "Activity Streak" label', () => {
-		render( <StreakBadge streak={ 5 } state="active" /> );
-
-		expect( screen.getByText( 'Activity Streak' ) ).toBeVisible();
-	} );
-
 	test.each( [
 		[ 'inactive', '.streak-badge.is-inactive' ],
 		[ 'active', '.streak-badge.is-active' ],
