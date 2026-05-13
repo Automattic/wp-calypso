@@ -7,6 +7,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, render } from '@testing-library/react';
 import React from 'react';
 import ReviewMediation from './components/review-mediation';
@@ -25,7 +26,14 @@ import {
 	useSuggestions,
 } from './index';
 
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: jest.fn(),
+} ) );
+
 const mockSetIsSplitScreen = jest.fn();
+const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
+	typeof recordTracksEvent
+>;
 let mockSelectedBlock: any = null;
 let mockCurrentPostType: string | undefined = 'post';
 
@@ -143,6 +151,10 @@ describe( 'getChatComponent', () => {
 } );
 
 describe( 'getEmptyViewSuggestions', () => {
+	beforeEach( () => {
+		mockedRecordTracksEvent.mockClear();
+	} );
+
 	afterEach( () => {
 		delete ( globalThis as any ).agentsManagerData;
 		delete ( window as any ).wp;
@@ -160,6 +172,10 @@ describe( 'getEmptyViewSuggestions', () => {
 		const labels = getEmptyViewSuggestions().map( ( suggestion ) => suggestion.label );
 		expect( labels ).toContain( 'Optimize Title' );
 		expect( labels ).toContain( 'AI Editorial Review' );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_editorial_review_suggestion_rendered',
+			{}
+		);
 	} );
 
 	it( 'hides AI Editorial Review on page editors', () => {
@@ -188,6 +204,7 @@ describe( 'useSuggestions', () => {
 		mockSelectedBlock = null;
 		mockCurrentPostType = 'post';
 		mockSetIsSplitScreen.mockReset();
+		mockedRecordTracksEvent.mockClear();
 		delete ( globalThis as any ).agentsManagerData;
 	} );
 
@@ -228,6 +245,10 @@ describe( 'useSuggestions', () => {
 		} );
 
 		expect( mockSetIsSplitScreen ).toHaveBeenCalledWith( true );
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_ai_editorial_review_suggestion_click',
+			{}
+		);
 	} );
 
 	it( 'does not open split-screen when AI Editorial Review is unavailable', () => {
