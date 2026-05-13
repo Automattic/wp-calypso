@@ -5,8 +5,10 @@ import {
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { DEFAULT_ATMOSPHERE_TAB } from 'calypso/reader/atmosphere/helper';
@@ -20,6 +22,7 @@ import {
 } from 'calypso/reader/sidebar/reader-sidebar-connections/types';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { PulseSpotlight } from './pulse-spotlight';
 import type {
 	AtmosphereConnection,
 	FediverseConnection,
@@ -33,6 +36,10 @@ interface PulseCard {
 	handle: string;
 	avatarUrl: string | null;
 	href: string;
+	/** Mastodon-only: home instance host. */
+	instance?: string;
+	/** Fediverse-only: blog host derived from webfinger. */
+	host?: string;
 }
 
 function mapAtmosphere( c: AtmosphereConnection ): PulseCard {
@@ -54,7 +61,19 @@ function mapMastodon( c: MastodonConnection ): PulseCard {
 		handle: c.handle,
 		avatarUrl: c.avatar ?? null,
 		href: `/reader/mastodon/${ c.id }/${ DEFAULT_MASTODON_TAB }`,
+		instance: c.instance,
 	};
+}
+
+/**
+ * Strip a leading `@` and the leading user segment from a webfinger
+ * handle like `@user@host` (or `user@host`) to surface the host portion
+ * the Fediverse mapper expects.
+ */
+function hostFromWebfinger( webfinger: string ): string {
+	const trimmed = webfinger.replace( /^@/, '' );
+	const at = trimmed.indexOf( '@' );
+	return at === -1 ? trimmed : trimmed.slice( at + 1 );
 }
 
 function mapFediverse( c: FediverseConnection ): PulseCard {
@@ -65,6 +84,7 @@ function mapFediverse( c: FediverseConnection ): PulseCard {
 		handle: c.webfinger,
 		avatarUrl: c.icon || null,
 		href: `/reader/fediverse/${ c.id }/${ DEFAULT_FEDIVERSE_TAB }`,
+		host: hostFromWebfinger( c.webfinger ),
 	};
 }
 
@@ -144,11 +164,30 @@ export function PulseOverviewView() {
 
 	const isLoading = atmosphere.isPending || mastodon.isPending || fediverse.isPending;
 
-	const cards: PulseCard[] = [
-		...( atmosphere.data?.connections ?? [] ).map( mapAtmosphere ),
-		...( mastodon.data?.connections ?? [] ).map( mapMastodon ),
-		...( fediverse.data?.connections ?? [] ).map( mapFediverse ),
-	];
+	const cards: PulseCard[] = useMemo(
+		() => [
+			...( atmosphere.data?.connections ?? [] ).map( mapAtmosphere ),
+			...( mastodon.data?.connections ?? [] ).map( mapMastodon ),
+			...( fediverse.data?.connections ?? [] ).map( mapFediverse ),
+		],
+		[ atmosphere.data, mastodon.data, fediverse.data ]
+	);
+
+	// Flat protocol+id (+instance/host) list for the Spotlight strip.
+	// Memoised so a reference-stable array reaches `useQueries` inside
+	// the Spotlight, avoiding a refetch storm on every overview re-render.
+	const spotlightConnections = useMemo(
+		() =>
+			cards.map( ( card ) => ( {
+				protocol: card.protocol,
+				id: card.id,
+				instance: card.instance,
+				host: card.host,
+			} ) ),
+		[ cards ]
+	);
+	const showSpotlight =
+		isEnabled( 'reader/pulse-spotlight' ) && ! isLoading && spotlightConnections.length > 0;
 
 	const handleCardClick = ( card: PulseCard ) => {
 		dispatch(
@@ -189,6 +228,8 @@ export function PulseOverviewView() {
 					</a>
 				</Card>
 			) }
+
+			{ showSpotlight && <PulseSpotlight connections={ spotlightConnections } /> }
 
 			{ ! isLoading && cards.length > 0 && (
 				<div className="pulse-grid">

@@ -333,6 +333,162 @@
 	}
 }
 
+// ---------- Pulse Spotlight ----------
+
+.pulse-spotlight {
+	margin-block: 24px;
+}
+
+.pulse-spotlight__header {
+	margin-block-end: 12px;
+}
+
+.pulse-spotlight__title {
+	margin: 0;
+	font-size: 0.95rem; /* stylelint-disable-line scales/font-sizes */
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var( --color-text-subtle );
+}
+
+.pulse-spotlight__subtitle {
+	margin: 4px 0 0;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+}
+
+.pulse-spotlight__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 260px, 1fr ) );
+	gap: 12px;
+}
+
+.pulse-spotlight__card {
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	overflow: hidden;
+	background: var( --color-surface );
+	transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+	&:hover,
+	&:focus-within {
+		transform: translateY( -2px );
+		box-shadow: 0 4px 14px rgba( 0, 0, 0, 0.06 );
+	}
+}
+
+.pulse-spotlight__card--atmosphere {
+	border-block-start: 3px solid var( --studio-blue-50 );
+}
+
+.pulse-spotlight__card--mastodon {
+	border-block-start: 3px solid var( --studio-purple-50 );
+}
+
+.pulse-spotlight__card--fediverse {
+	border-block-start: 3px solid var( --studio-pink-50 );
+}
+
+.pulse-spotlight__link {
+	display: block;
+	padding: 12px;
+	text-decoration: none;
+	color: inherit;
+}
+
+.pulse-spotlight__card-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-block-end: 8px;
+}
+
+.pulse-spotlight__card-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.pulse-spotlight__card-avatar--placeholder {
+	background: linear-gradient( 135deg, var( --studio-gray-5 ) 0%, var( --studio-gray-10 ) 100% );
+}
+
+.pulse-spotlight__card-author {
+	flex: 1;
+	min-width: 0;
+}
+
+.pulse-spotlight__card-author-name {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var( --color-text );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pulse-spotlight__card-author-handle {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pulse-spotlight__badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background-color: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	flex-shrink: 0;
+
+	svg {
+		width: 14px;
+		height: 14px;
+		margin: 0 !important;
+	}
+}
+
+.pulse-spotlight__badge--atmosphere {
+	color: var( --studio-blue-50 );
+}
+
+.pulse-spotlight__badge--mastodon {
+	color: var( --studio-purple-50 );
+}
+
+.pulse-spotlight__badge--fediverse {
+	color: var( --studio-pink-50 );
+}
+
+.pulse-spotlight__card-text {
+	margin: 0 0 8px;
+	font-size: 0.875rem;
+	color: var( --color-text );
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.pulse-spotlight__card-counts {
+	display: flex;
+	gap: 16px;
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+}
+
 .pulse-empty__cta {
 	display: inline-block;
 	padding: 8px 16px;

@@ -139,6 +139,7 @@
 		"reader/fediverse": false,
 		"reader/unified-connections": false,
 		"reader/pulse-overview": false,
+		"reader/pulse-spotlight": false,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
 		"reader/onboarding-rsm": false,
