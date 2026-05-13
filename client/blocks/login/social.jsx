@@ -28,6 +28,8 @@ class SocialLoginForm extends Component {
 		resetLastUsedAuthenticationMethod: PropTypes.func,
 		isJetpack: PropTypes.bool,
 		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
+		oauth2Client: PropTypes.object,
+		isWoo: PropTypes.bool,
 	};
 
 	socialLoginButtons = [
@@ -95,7 +97,11 @@ class SocialLoginForm extends Component {
 		},
 		{
 			service: 'qr-code',
-			enabled: true,
+			// QrCodeLoginButton itself returns null when there is an oauth2Client
+			// outside the Woo flow. Disabling the entry here keeps that case out of
+			// the rendered list — otherwise the `<LastUsedBadge>` wrapper would
+			// still mount around a null child and produce an orphan badge.
+			enabled: ! ( this.props.oauth2Client && ! this.props.isWoo ),
 			button: this.props.isSocialFirst && this.props.qrLoginLink && (
 				<QrCodeLoginButton loginUrl={ this.props.qrLoginLink } key="social-login-button-qr-code" />
 			),
@@ -124,7 +130,10 @@ class SocialLoginForm extends Component {
 				// Wrap the matching service with a small "Last used" badge.
 				// `button` may be falsy even when `enabled: true` — magic-login
 				// and qr-code resolve to `false` when their links are missing —
-				// so we must guard before dereferencing `button.key`.
+				// so we must guard before dereferencing `button.key`. The other
+				// "renders to null at runtime" case (qr-code under non-Woo
+				// oauth2) is handled upstream via the `enabled` field, so the
+				// badge never wraps a vanishing child.
 				if ( isSocialFirst && service === lastUsedAuthenticationMethod && button ) {
 					return <LastUsedBadge key={ button.key }>{ button }</LastUsedBadge>;
 				}

@@ -907,6 +907,8 @@ export class LoginForm extends Component {
 							qrLoginLink={ this.getQrLoginLink() }
 							isJetpack={ isJetpack }
 							allowedSocialServices={ this.props.allowedSocialServices }
+							oauth2Client={ this.props.oauth2Client }
+							isWoo={ this.props.isWoo }
 						/>
 					</Fragment>
 				) }

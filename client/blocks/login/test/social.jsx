@@ -99,6 +99,28 @@ describe( 'SocialLoginForm', () => {
 		expect( screen.queryByText( /Continue with email/i ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'drops the qr-code entry (and avoids an orphan Last used badge) under non-Woo oauth2', () => {
+		const { container } = render(
+			<SocialLoginForm
+				{ ...defaultProps }
+				isSocialFirst
+				lastUsedAuthenticationMethod="qr-code"
+				qrLoginLink="https://wordpress.com/log-in/jetpack"
+				oauth2Client={ { id: 1 } }
+				isWoo={ false }
+			/>
+		);
+
+		// QrCodeLoginButton would render null in this context, so the entry is
+		// filtered out before badge-wrapping — no orphan "Last used" pill.
+		expect( screen.queryByText( /Last used/i ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.social-buttons__last-used' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Log in via Jetpack app/i ) ).not.toBeInTheDocument();
+
+		// Other social buttons still render normally.
+		expect( screen.getByText( /Continue with Google/i ) ).toBeInTheDocument();
+	} );
+
 	test( 'wraps the last used button and skips the fallback when the last used service is in allowedSocialServices', () => {
 		const { container } = render(
 			<SocialLoginForm
