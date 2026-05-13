@@ -289,6 +289,23 @@ describe( 'SocialProfileCard', () => {
 		expect( link ).toHaveAttribute( 'data-id', 'alice.bsky.social' );
 	} );
 
+	it( 'preserves data-handle alongside data-id on bio mention anchors (CM-725)', () => {
+		const { container } = render(
+			<SocialProfileCard
+				bioHtml={
+					'<p><a href="https://example.com/@alice"' +
+					' data-id="https://example.com/users/alice"' +
+					' data-handle="alice@example.com">@alice@example.com</a></p>'
+				}
+				statsLabel="Profile stats"
+				stats={ [ { key: 'followers', count: 0, label: 'followers' } ] }
+			/>
+		);
+		const link = container.querySelector( '.social-profile-card__bio a' );
+		expect( link ).toHaveAttribute( 'data-id', 'https://example.com/users/alice' );
+		expect( link ).toHaveAttribute( 'data-handle', 'alice@example.com' );
+	} );
+
 	it( 'strips arbitrary data-* attributes from bio anchors', () => {
 		const { container } = render(
 			<SocialProfileCard
@@ -455,6 +472,31 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 		);
 		await user.click( getByText( '@alice' ) );
 		expect( pageMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'passes data-handle as ref.handle separately from data-id (CM-725)', async () => {
+		// Bios on Fediverse / Mastodon profile pages can carry mention
+		// anchors stamped with both `data-id` (canonical id — actor URL
+		// or numeric) and `data-handle` (webfinger). The bio click
+		// handler routes them to distinct ref fields so resolvers can
+		// build a clean user-readable URL from the handle.
+		const user = userEvent.setup();
+		const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+			ref.handle ? `/reader/fediverse/7/profile/${ ref.handle }` : null
+		);
+		const { getByText } = renderInsideProvider(
+			'<p><a href="https://example.com/@alice"' +
+				' data-id="https://example.com/users/alice"' +
+				' data-handle="alice@example.com">@alice</a></p>',
+			getProfileUrl
+		);
+		await user.click( getByText( '@alice' ) );
+		expect( getProfileUrl ).toHaveBeenCalledWith( {
+			id: 'https://example.com/users/alice',
+			handle: 'alice@example.com',
+			did: 'https://example.com/users/alice',
+		} );
+		expect( pageMock ).toHaveBeenCalledWith( '/reader/fediverse/7/profile/alice@example.com' );
 	} );
 } );
 

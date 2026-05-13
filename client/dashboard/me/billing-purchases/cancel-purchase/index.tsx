@@ -16,6 +16,7 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	siteByIdQuery,
+	siteDomainsQuery,
 	sitePurchasesQuery,
 	userPreferenceMutation,
 	hasPurchaseBeenExtendedQuery,
@@ -413,6 +414,11 @@ function CancelPurchaseInner() {
 		...domainQuery( purchase.meta ?? '' ),
 		enabled: Boolean( purchase.meta ),
 	} );
+	// site.options.unmapped_url is incorrect for .home.blog sites — read the
+	// actual WPCOM domain from the site's domain list instead.
+	const { data: siteDomains } = useQuery( siteDomainsQuery( purchase.blog_id ) );
+	const wpcomDomain =
+		siteDomains?.find( ( d ) => d.wpcom_domain || d.is_wpcom_staging_domain )?.domain ?? null;
 	const { data: cancellationOffers } = useQuery(
 		cancellationOffersQuery( purchase.blog_id, purchase.ID )
 	);
@@ -1627,6 +1633,9 @@ function CancelPurchaseInner() {
 									includedDomainPurchase={ includedDomainPurchase }
 									atomicTransfer={ atomicTransfer }
 									selectedDomain={ selectedDomain }
+									site={ site }
+									wpcomDomain={ wpcomDomain }
+									activeMarketplaceSubscriptions={ activeSubscriptions }
 									state={ state }
 									purchaseCancelFeatures={ purchaseCancelFeatures }
 									isBusy={ isMutationPending }

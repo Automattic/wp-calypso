@@ -100,17 +100,24 @@ export function FollowingView( { connectionId, actor }: Props ) {
 	const followMut = useMutation( followFediverseActorMutation( queryClient ) );
 	const unfollowMut = useMutation( unfollowFediverseActorMutation( queryClient ) );
 
-	// Surface follow / unfollow failures via a stable notice id so a stale
-	// toast from one click is dismissed when the user retries. Also emit a
-	// pipeline-level log so failures stay observable in dashboards even
-	// when no Tracks dashboard is consulted.
+	// Scope the error-notice id to `(connectionId, rowActor)` so a successful
+	// click on one row only dismisses its own stale toast, not another row's
+	// unresolved error. Sibling surfaces (author panel, followers list) keep
+	// their own toast space.
+	const noticeIdFor = useCallback(
+		( rowActor: string ) => `fediverse-follow-error-${ connectionId }-${ rowActor }`,
+		[ connectionId ]
+	);
 	const showFollowError = useCallback(
-		( error: FediverseError, action: 'follow' | 'unfollow' ) => {
+		( error: FediverseError, action: 'follow' | 'unfollow', rowActor: string ) => {
 			dispatch(
 				errorNotice( followErrorMessage( error, action, translate ), {
-					id: 'fediverse-follow-error',
+					id: noticeIdFor( rowActor ),
 				} )
 			);
+			// Pipeline-level log so failures stay observable in dashboards even
+			// when no Tracks dashboard is consulted. Swallow rejections — the
+			// logstash POST going down must not bubble to the global handler.
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: `Reader Fediverse ${ action } mutation failed`,
@@ -120,13 +127,16 @@ export function FollowingView( { connectionId, actor }: Props ) {
 					connection_id: connectionId,
 					error_kind: error.kind,
 				},
-			} );
+			} ).catch( () => undefined );
 		},
-		[ dispatch, translate, connectionId ]
+		[ dispatch, translate, connectionId, noticeIdFor ]
 	);
-	const dismissFollowError = useCallback( () => {
-		dispatch( removeNotice( 'fediverse-follow-error' ) );
-	}, [ dispatch ] );
+	const dismissFollowError = useCallback(
+		( rowActor: string ) => {
+			dispatch( removeNotice( noticeIdFor( rowActor ) ) );
+		},
+		[ dispatch, noticeIdFor ]
+	);
 
 	const invalidateActorList = useCallback( () => {
 		queryClient.invalidateQueries( {
@@ -172,10 +182,10 @@ export function FollowingView( { connectionId, actor }: Props ) {
 									},
 									{
 										onSuccess: () => {
-											dismissFollowError();
+											dismissFollowError( item.handle );
 											invalidateActorList();
 										},
-										onError: ( error ) => showFollowError( error, 'follow' ),
+										onError: ( error ) => showFollowError( error, 'follow', item.handle ),
 									}
 								),
 							onUnfollow: () =>
@@ -186,10 +196,10 @@ export function FollowingView( { connectionId, actor }: Props ) {
 									},
 									{
 										onSuccess: () => {
-											dismissFollowError();
+											dismissFollowError( item.handle );
 											invalidateActorList();
 										},
-										onError: ( error ) => showFollowError( error, 'unfollow' ),
+										onError: ( error ) => showFollowError( error, 'unfollow', item.handle ),
 									}
 								),
 					  },

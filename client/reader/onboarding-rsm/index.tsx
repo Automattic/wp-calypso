@@ -3,7 +3,9 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
-import { Modal } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
@@ -154,6 +156,16 @@ const ReaderOnboardingRsm = ( {
 		setCurrentStep( 'discover' );
 	};
 
+	const handleInterestsBack = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back` );
+		openStep( 'welcome' );
+	};
+
+	const handleDiscoverBack = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_back` );
+		openStep( 'interests' );
+	};
+
 	const itemClickHandler = ( task: Task ) => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }task_click`, {
 			task: task.id,
@@ -241,6 +253,29 @@ const ReaderOnboardingRsm = ( {
 		},
 	];
 
+	let modalBackButton = null;
+	if ( currentStep === 'interests' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleInterestsBack }
+				icon={ chevronLeft }
+				label={ __( 'Back' ) }
+			/>
+		);
+	} else if ( currentStep === 'discover' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleDiscoverBack }
+				icon={ chevronLeft }
+				label={ __( 'Back' ) }
+			/>
+		);
+	}
+
 	return (
 		<>
 			<div className="reader-onboarding">
@@ -275,6 +310,7 @@ const ReaderOnboardingRsm = ( {
 						'is-disabled':
 							( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
 					} ) }
+					headerActions={ modalBackButton }
 				>
 					{ currentStep === 'welcome' && (
 						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />

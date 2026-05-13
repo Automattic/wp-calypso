@@ -79,6 +79,9 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 			if ( propName === 'selected_page_titles' && Array.isArray( propValue ) ) {
 				propValue = propValue.join( ',' );
 			}
+			if ( propName === 'selected_page_instances' && Array.isArray( propValue ) ) {
+				propValue = JSON.stringify( propValue );
+			}
 
 			if (
 				[ 'cart_items', 'domain_item', 'email_item' ].includes( propName ) &&

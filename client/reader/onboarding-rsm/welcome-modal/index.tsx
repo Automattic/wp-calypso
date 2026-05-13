@@ -125,7 +125,7 @@ const WelcomeModal: React.FC< WelcomeModalProps > = ( { onClose, onContinue } ) 
 					<h2 className="reader-welcome-modal__title">{ __( 'Your reading home base' ) }</h2>
 					<p className="reader-welcome-modal__subtitle">
 						<span>{ __( 'All your favorite blogs and newsletters in one focused feed.' ) }</span>
-						<br />
+						<br className="reader-welcome-modal__subtitle-break" />{ ' ' }
 						<span>
 							{ __( "Discover writers you'll love, no pop-ups, no clutter, just great writing." ) }
 						</span>

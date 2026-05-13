@@ -22,6 +22,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
+import { withThemesColorScheme } from 'calypso/my-sites/themes/color-scheme-provider';
 import FilterBarModern from 'calypso/my-sites/themes/filter-bar-modern';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -105,6 +106,7 @@ class ThemeShowcase extends Component {
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		loggedOutComponent: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
 		isSiteECommerceFreeTrial: PropTypes.bool,
@@ -719,7 +721,7 @@ class ThemeShowcase extends Component {
 		const showThemeErrors =
 			siteId && this.props.category === staticFilters.MYTHEMES.key && isJetpackSite;
 
-		return (
+		const showcase = (
 			<div className={ classnames }>
 				<PageViewTracker
 					path={ this.props.analyticsPath }
@@ -872,6 +874,11 @@ class ThemeShowcase extends Component {
 				</div>
 			</div>
 		);
+
+		return withThemesColorScheme( showcase, {
+			isSiteRoute: this.props.isSiteRoute,
+			isLoggedIn,
+		} );
 	}
 }
 

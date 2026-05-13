@@ -137,6 +137,19 @@ interface ComposerContextValue {
 	 */
 	hasBeenOverLimit: boolean;
 	markOverLimit: () => void;
+	/**
+	 * Sticky-once flag: true after the user has explicitly asked to hand
+	 * off to the block editor for a feature the in-pane composer can't
+	 * cover (today: Fediverse media, CM-726 — blog-level ActivityPub C2S
+	 * has no media-upload endpoint). The fediverse `useMedia` slot's
+	 * footer-start button flips this flag on click; the overflow-handoff
+	 * section reuses its existing UI to render the "Move to editor" CTA
+	 * with media-flavoured copy. Stays true once tripped so the section
+	 * stays visible across re-renders (same lifecycle as `hasBeenOverLimit`).
+	 * Reset on each modal open.
+	 */
+	hasRequestedMediaHandoff: boolean;
+	markMediaHandoffRequested: () => void;
 }
 
 const ComposerContext = createContext< ComposerContextValue | null >( null );
@@ -154,6 +167,7 @@ export function ComposerProvider< TError, TParams, TResult >( {
 }: Props< TError, TParams, TResult > ) {
 	const [ mode, setMode ] = useState< ActiveMode | null >( null );
 	const [ hasBeenOverLimit, setHasBeenOverLimit ] = useState( false );
+	const [ hasRequestedMediaHandoff, setHasRequestedMediaHandoff ] = useState( false );
 	const triggerRef = useRef< HTMLElement | null >( null );
 	const wasOpenRef = useRef( false );
 
@@ -175,6 +189,7 @@ export function ComposerProvider< TError, TParams, TResult >( {
 			}
 			triggerRef.current = document.activeElement as HTMLElement | null;
 			setHasBeenOverLimit( false );
+			setHasRequestedMediaHandoff( false );
 			setMode( { ...next, connectionId } );
 		},
 		[ connectionId, config.supportedModes ]
@@ -193,6 +208,10 @@ export function ComposerProvider< TError, TParams, TResult >( {
 
 	const markOverLimit = useCallback( () => {
 		setHasBeenOverLimit( true );
+	}, [] );
+
+	const markMediaHandoffRequested = useCallback( () => {
+		setHasRequestedMediaHandoff( true );
 	}, [] );
 
 	// `config.useMedia` is captured once at the start of the provider's life
@@ -238,6 +257,8 @@ export function ComposerProvider< TError, TParams, TResult >( {
 			protocolExtrasSlot,
 			hasBeenOverLimit,
 			markOverLimit,
+			hasRequestedMediaHandoff,
+			markMediaHandoffRequested,
 		} ),
 		[
 			mode,
@@ -247,6 +268,8 @@ export function ComposerProvider< TError, TParams, TResult >( {
 			protocolExtrasSlot,
 			hasBeenOverLimit,
 			markOverLimit,
+			hasRequestedMediaHandoff,
+			markMediaHandoffRequested,
 		]
 	);
 
