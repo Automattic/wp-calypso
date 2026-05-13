@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import { ActivityStreak } from '../index';
 import type { EngagementStreak } from '@automattic/api-core';
 
-// 2026-05-13 is "today" per the global currentDate in this workspace.
 const TODAY = '2026-05-13';
 const YESTERDAY = '2026-05-12';
 

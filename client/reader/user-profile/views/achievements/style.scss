@@ -12,8 +12,6 @@
 		// inside the 720px cap so the header doesn't grow past its alignment.
 		box-sizing: border-box;
 		padding-inline-end: 48px;
-		container-type: inline-size;
-		container-name: achievements-header;
 	}
 
 	.achievements__header > .activity-streak {
