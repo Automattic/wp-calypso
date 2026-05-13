@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import AiSummary from './components/ai-summary';
+import EmptyState from './components/empty-state';
 import ResultCard from './components/result-card';
 import SearchInput from './components/search-input';
 import SourceFilterTabs from './components/source-filter';
@@ -116,6 +117,8 @@ export default function ContentResearchSidebar() {
 					onToggleSource={ handleToggleSource }
 				/>
 			) }
+
+			{ ! topic && ! isLoading && ! isError && <EmptyState /> }
 
 			{ data && results.length > 0 && (
 				<>
