@@ -1,6 +1,7 @@
 @import '@automattic/onboarding/styles/mixins';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
+@import '../themes/dark-mode';
 
 $theme-sheet-content-max-width: 1462px;
 $theme-sheet-content-padding-x: 20px;
@@ -553,6 +554,7 @@ $button-border: 4px;
 
 .theme__sheet-content {
 	&.card {
+		background-color: transparent;
 		box-shadow: none;
 		font-size: 1rem;
 		min-height: auto;
@@ -721,6 +723,7 @@ $button-border: 4px;
 	margin-bottom: 24px;
 
 	.card {
+		background-color: transparent;
 		box-shadow: none;
 		padding: 0;
 	}
@@ -839,5 +842,16 @@ $button-border: 4px;
 		.theme__sheet-features .card.is-compact {
 			padding: 16px 0;
 		}
+	}
+}
+
+body.color-scheme.is-themes-dark-mode.is-classic-dark,
+:root[data-theme='dark'] body.color-scheme.is-themes-dark-mode {
+	@include themes-dark-mode-root;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-themes-dark-mode {
+		@include themes-dark-mode-root;
 	}
 }

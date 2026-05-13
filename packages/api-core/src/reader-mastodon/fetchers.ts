@@ -22,6 +22,7 @@ import type {
 	MastodonFollowResponse,
 	MastodonMediaUploadParams,
 	MastodonMediaUploadResult,
+	MastodonNotificationsPage,
 	MastodonTagFilter,
 	MastodonTagFeedPage,
 	MastodonThreadResponse,
@@ -151,6 +152,40 @@ export async function getMastodonTimeline(
 			},
 			query
 		) ) as MastodonTimelinePage;
+	} catch ( raw ) {
+		throw classifyMastodonError( raw );
+	}
+}
+
+export interface GetMastodonNotificationsParams {
+	connectionId: number;
+	cursor?: string;
+	limit?: number;
+	types?: string;
+}
+
+export async function getMastodonNotifications(
+	params: GetMastodonNotificationsParams
+): Promise< MastodonNotificationsPage > {
+	const { connectionId, cursor, limit, types } = params;
+	const query: Record< string, string > = {};
+	if ( cursor ) {
+		query.cursor = cursor;
+	}
+	if ( limit ) {
+		query.limit = String( limit );
+	}
+	if ( types ) {
+		query.types = types;
+	}
+	try {
+		return ( await wpcom.req.get(
+			{
+				path: `/reader/mastodon/connections/${ connectionId }/notifications`,
+				apiNamespace: NAMESPACE,
+			},
+			query
+		) ) as MastodonNotificationsPage;
 	} catch ( raw ) {
 		throw classifyMastodonError( raw );
 	}
@@ -418,7 +453,16 @@ export async function deleteMastodonRepost( params: MastodonDeleteRepostParams )
 export async function createMastodonPost(
 	params: MastodonCreatePostParams
 ): Promise< MastodonCreatePostResult > {
-	const { connectionId, status, in_reply_to_id, quoted_status_id, media_ids, sensitive } = params;
+	const {
+		connectionId,
+		status,
+		in_reply_to_id,
+		quoted_status_id,
+		media_ids,
+		sensitive,
+		visibility,
+		spoiler_text,
+	} = params;
 	const body: Record< string, unknown > = { status };
 	if ( in_reply_to_id ) {
 		body.in_reply_to_id = in_reply_to_id;
@@ -431,6 +475,12 @@ export async function createMastodonPost(
 	}
 	if ( sensitive !== undefined ) {
 		body.sensitive = sensitive;
+	}
+	if ( visibility !== undefined ) {
+		body.visibility = visibility;
+	}
+	if ( spoiler_text !== undefined && spoiler_text.length > 0 ) {
+		body.spoiler_text = spoiler_text;
 	}
 	try {
 		return ( await wpcom.req.post( {

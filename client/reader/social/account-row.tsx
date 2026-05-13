@@ -20,6 +20,13 @@ export interface SocialAccountRowProps {
 	profileHref: string;
 	isSelf?: boolean;
 	followState?: SocialAccountRowFollowState;
+	/**
+	 * Suppress the "Follows you" badge. On a followers list every row
+	 * trivially follows the viewer, so the badge is redundant. The follow
+	 * button still uses `followState.isFollowedBy` to pick the "Follow back"
+	 * label.
+	 */
+	hideFollowedByBadge?: boolean;
 }
 
 /**
@@ -32,7 +39,16 @@ export interface SocialAccountRowProps {
  */
 export function SocialAccountRow( props: SocialAccountRowProps ) {
 	const translate = useTranslate();
-	const { avatarUrl, displayName, handle, biography, profileHref, isSelf, followState } = props;
+	const {
+		avatarUrl,
+		displayName,
+		handle,
+		biography,
+		profileHref,
+		isSelf,
+		followState,
+		hideFollowedByBadge,
+	} = props;
 
 	return (
 		<div className="social-account-row">
@@ -48,7 +64,7 @@ export function SocialAccountRow( props: SocialAccountRowProps ) {
 						{ displayName }
 					</a>
 					<span className="social-account-row__handle">@{ handle }</span>
-					{ followState?.isFollowedBy && (
+					{ followState?.isFollowedBy && ! hideFollowedByBadge && (
 						<span className="social-account-row__followed-by-badge">
 							{ translate( 'Follows you' ) }
 						</span>

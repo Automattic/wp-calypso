@@ -34,6 +34,42 @@ describe( 'classifyFediverseError — body-level codes', () => {
 	} );
 } );
 
+describe( 'classifyFediverseError — slice 2 composer write-path codes', () => {
+	it.each( [
+		[ 'fediverse_text_too_long', 'text_too_long' ],
+		[ 'reader_fediverse_text_too_long', 'text_too_long' ],
+		[ 'fediverse_summary_too_long', 'summary_too_long' ],
+		[ 'reader_fediverse_summary_too_long', 'summary_too_long' ],
+		[ 'fediverse_visibility_invalid', 'visibility_invalid' ],
+		[ 'reader_fediverse_visibility_invalid', 'visibility_invalid' ],
+		[ 'fediverse_publish_disabled', 'publish_disabled' ],
+		[ 'reader_fediverse_publish_disabled', 'publish_disabled' ],
+		[ 'fediverse_target_unavailable', 'target_unavailable' ],
+		[ 'reader_fediverse_target_unavailable', 'target_unavailable' ],
+	] )( 'maps body-level %s to kind %s', ( code, kind ) => {
+		expect( classifyFediverseError( wpErr( code, 400 ) ).kind ).toBe( kind );
+	} );
+
+	it.each( [
+		[ 'fediverse_text_too_long', 'text_too_long' ],
+		[ 'reader_fediverse_text_too_long', 'text_too_long' ],
+		[ 'fediverse_publish_disabled', 'publish_disabled' ],
+		[ 'reader_fediverse_publish_disabled', 'publish_disabled' ],
+	] )( 'maps %s when surfaced on .code (proxy wire shape) to kind %s', ( code, kind ) => {
+		expect( classifyFediverseError( wpProxyErr( code, 400 ) ).kind ).toBe( kind );
+	} );
+
+	it( 'preserves the message on bad_request', () => {
+		expect(
+			classifyFediverseError( wpErr( 'fediverse_bad_request', 400, 'invalid input' ) )
+		).toEqual( { kind: 'bad_request', message: 'invalid input' } );
+	} );
+
+	it( 'falls back to publish_disabled for a 403 with no body-level code', () => {
+		expect( classifyFediverseError( { statusCode: 403 } ).kind ).toBe( 'publish_disabled' );
+	} );
+} );
+
 describe( 'classifyFediverseError — status fallbacks', () => {
 	it( 'maps HTTP 401 to auth_required when no body code is present', () => {
 		expect( classifyFediverseError( { statusCode: 401 } ) ).toEqual( { kind: 'auth_required' } );

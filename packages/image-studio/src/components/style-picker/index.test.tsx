@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // Mock dependencies - MUST be before imports that use them
 jest.mock( '@automattic/agenttic-ui', () => {
@@ -434,17 +434,22 @@ describe( 'StylePicker', () => {
 			} );
 		} );
 
-		it( 'exports the two expected video style options', () => {
-			const expected = [
-				{ label: 'Informative', value: 'informative' },
-				{ label: 'Promotional', value: 'promotional' },
-			];
+		it( 'exports Cinematic (active) + Highlights (disabled teaser) video styles', () => {
+			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( 2 );
 
-			expect( VIDEO_STYLE_OPTIONS ).toHaveLength( expected.length );
-			expected.forEach( ( { label, value }, index ) => {
-				expect( VIDEO_STYLE_OPTIONS[ index ] ).toMatchObject( { label, value } );
-				expect( VIDEO_STYLE_OPTIONS[ index ].preview ).toBeTruthy();
+			expect( VIDEO_STYLE_OPTIONS[ 0 ] ).toMatchObject( {
+				label: 'Cinematic',
+				value: 'cinematic',
 			} );
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].disabled ).toBeFalsy();
+			expect( VIDEO_STYLE_OPTIONS[ 0 ].preview ).toBeTruthy();
+
+			expect( VIDEO_STYLE_OPTIONS[ 1 ] ).toMatchObject( {
+				label: 'Highlights (Coming Soon)',
+				value: 'highlights',
+				disabled: true,
+			} );
+			expect( VIDEO_STYLE_OPTIONS[ 1 ].preview ).toBeTruthy();
 		} );
 
 		it( 'renders video options when variant="video"', async () => {
@@ -454,12 +459,21 @@ describe( 'StylePicker', () => {
 			await user.click( screen.getByTestId( 'toolbar-button' ) );
 
 			const dropdown = screen.getByTestId( 'dropdown-content' );
-			[ 'Informative', 'Promotional' ].forEach( ( label ) => {
-				expect( dropdown ).toHaveTextContent( label );
-			} );
+			expect( dropdown ).toHaveTextContent( 'Cinematic' );
+			expect( dropdown ).toHaveTextContent( 'Highlights' );
 			// Image-only options should not appear in the video dropdown.
 			expect( dropdown ).not.toHaveTextContent( 'Anime' );
 			expect( dropdown ).not.toHaveTextContent( 'Pixel Art' );
+		} );
+
+		it( 'renders the disabled video style as an inert (native-disabled) card', async () => {
+			const user = userEvent.setup();
+			render( <StylePicker mode={ ImageStudioMode.Generate } variant="video" /> );
+
+			await user.click( screen.getByTestId( 'toolbar-button' ) );
+			const dropdown = screen.getByTestId( 'dropdown-content' );
+			const highlightsCard = within( dropdown ).getByRole( 'button', { name: /Highlights/ } );
+			expect( highlightsCard ).toBeDisabled();
 		} );
 
 		it( 'maps style values correctly', async () => {

@@ -1377,4 +1377,37 @@ describe( 'atmosphere fetchers', () => {
 		const res = await getAtmosphereNotifications( { connectionId: 101 } );
 		expect( res.items ).toEqual( [] );
 	} );
+
+	it( 'getAtmosphereNotifications forwards types when provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( { types: 'like,repost' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( {
+			connectionId: 101,
+			types: 'like,repost',
+		} );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getAtmosphereNotifications omits types when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getAtmosphereNotifications omits types when empty string', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/atmosphere/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getAtmosphereNotifications( { connectionId: 101, types: '' } );
+		expect( res.items ).toEqual( [] );
+	} );
 } );

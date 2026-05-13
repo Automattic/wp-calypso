@@ -37,12 +37,20 @@
 		margin: 0;
 	}
 
+	&__subtitle-break {
+		// Keep subtitle sentences on separate lines when there is reasonable room for them.
+		// On smaller viewports, they should be one text block for wrapping.
+		@media ( max-width: $break-medium ) {
+			display: none;
+		}
+	}
+
 	&__packs {
 		display: flex;
 		gap: 16px;
 		overflow-x: auto;
-		padding: 4px 4px 12px;
-		// Allow card shadows to show without being clipped while we scroll.
+		padding: 16px 4px 12px;
+		// Allow card shadows and stacked-card pseudo-elements to show without being clipped.
 		margin: 0 -4px;
 		scroll-snap-type: x mandatory;
 		scroll-padding-left: 4px;
@@ -63,6 +71,35 @@
 	&__pack-item {
 		display: flex;
 		flex: 0 0 auto;
+		position: relative;
+
+		// Create two "stacked cards" behind the main card using pseudo-elements.
+		// Only the bottom strips of the stacked cards are visible below the main card.
+		// Front card border: --color-border-subtle (#E0E0E0). Back cards: #F0F0F0 (designer spec).
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			background: var( --color-surface );
+			border-radius: 8px;
+			border: 1px solid var( --studio-gray-5, #f0f0f0 );
+		}
+
+		// Middle stacked card: 10px inset on each side, peeks 6px above.
+		&::before {
+			inset-inline: 10px;
+			top: -6px;
+			bottom: 6px;
+			z-index: 0;
+		}
+
+		// Back stacked card: 20px inset on each side, peeks 12px above.
+		&::after {
+			inset-inline: 20px;
+			top: -12px;
+			bottom: 12px;
+			z-index: -1;
+		}
 	}
 
 	&__topics-toggle-row {
@@ -78,9 +115,10 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		gap: 8px;
+		gap: 12px;
 		padding-inline: 60px;
 		margin-block-start: 4px;
+		padding-block-end: 32px;
 
 		@media ( max-width: $break-medium ) {
 			padding-inline: 12px;

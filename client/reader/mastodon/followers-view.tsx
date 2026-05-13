@@ -18,11 +18,13 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import {
 	AuthorProfileHeader,
 	SocialAccountList,
+	SocialAccountListHeader,
 	type SocialAccountListProps,
 	type SocialAccountRowProps,
 } from 'calypso/reader/social';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { projectMastodonError } from './error-projection';
+import { HiddenCollectionsMessage, PartialCollectionsNotice } from './profile-collections-notice';
 import { followErrorMessage } from './profile-errors';
 import { getProfileUrl } from './route';
 import type { MastodonAccountSummary, MastodonError } from '@automattic/api-core';
@@ -56,7 +58,20 @@ export function FollowersView( { connectionId, actor }: Props ) {
 	}, [ connectionsPending, connectionsError, connection ] );
 
 	const profileQuery = useMastodonAuthorProfileQuery( connectionId, actor );
-	const followersQuery = useMastodonActorFollowersInfiniteQuery( { connectionId, actor } );
+
+	// When the actor has hidden their social graph (`hide_collections: true`),
+	// the upstream API returns 200 with an empty page. Short-circuit the list
+	// query so we don't burn an upstream call just to render an empty state —
+	// we'll render a dedicated "hidden" message instead. Older backends that
+	// don't emit the field surface as `undefined`, which is treated as "not
+	// hidden" so the existing behaviour is preserved.
+	const hideCollections = profileQuery.data?.hide_collections === true;
+
+	const followersQuery = useMastodonActorFollowersInfiniteQuery( {
+		connectionId,
+		actor,
+		enabled: ! hideCollections,
+	} );
 	const {
 		data: followersData,
 		isPending: followersIsPending,
@@ -100,21 +115,29 @@ export function FollowersView( { connectionId, actor }: Props ) {
 	const followMut = useMutation( followMastodonActorMutation( queryClient ) );
 	const unfollowMut = useMutation( unfollowMastodonActorMutation( queryClient ) );
 
-	// Surface follow / unfollow failures via a stable notice id so a stale
-	// toast from one click is dismissed when the user retries.
+	// Scope the error-notice id to `(connectionId, rowActor)` so a successful
+	// click on one row only dismisses its own stale toast, not another row's
+	// unresolved error (or one posted by a sibling surface).
+	const noticeIdFor = useCallback(
+		( rowActor: string ) => `mastodon-follow-error-${ connectionId }-${ rowActor }`,
+		[ connectionId ]
+	);
 	const showFollowError = useCallback(
-		( error: MastodonError, action: 'follow' | 'unfollow' ) => {
+		( error: MastodonError, action: 'follow' | 'unfollow', rowActor: string ) => {
 			dispatch(
 				errorNotice( followErrorMessage( error, action, translate ), {
-					id: 'mastodon-follow-error',
+					id: noticeIdFor( rowActor ),
 				} )
 			);
 		},
-		[ dispatch, translate ]
+		[ dispatch, translate, noticeIdFor ]
 	);
-	const dismissFollowError = useCallback( () => {
-		dispatch( removeNotice( 'mastodon-follow-error' ) );
-	}, [ dispatch ] );
+	const dismissFollowError = useCallback(
+		( rowActor: string ) => {
+			dispatch( removeNotice( noticeIdFor( rowActor ) ) );
+		},
+		[ dispatch, noticeIdFor ]
+	);
 
 	// Refetch the actor list after a follow / unfollow so the row's `viewer`
 	// state mirrors server truth. Without this, the row keeps the pre-click
@@ -149,6 +172,9 @@ export function FollowersView( { connectionId, actor }: Props ) {
 			biography: item.note_text,
 			profileHref,
 			isSelf,
+			// Every row on this followers list trivially follows the viewer,
+			// so the "Follows you" badge would be redundant on every row.
+			hideFollowedByBadge: true,
 			followState: isSelf
 				? undefined
 				: {
@@ -166,10 +192,10 @@ export function FollowersView( { connectionId, actor }: Props ) {
 								},
 								{
 									onSuccess: () => {
-										dismissFollowError();
+										dismissFollowError( item.handle );
 										invalidateActorList();
 									},
-									onError: ( error ) => showFollowError( error, 'follow' ),
+									onError: ( error ) => showFollowError( error, 'follow', item.handle ),
 								}
 							),
 						onUnfollow: () =>
@@ -181,10 +207,10 @@ export function FollowersView( { connectionId, actor }: Props ) {
 								},
 								{
 									onSuccess: () => {
-										dismissFollowError();
+										dismissFollowError( item.handle );
 										invalidateActorList();
 									},
-									onError: ( error ) => showFollowError( error, 'unfollow' ),
+									onError: ( error ) => showFollowError( error, 'unfollow', item.handle ),
 								}
 							),
 				  },
@@ -218,27 +244,46 @@ export function FollowersView( { connectionId, actor }: Props ) {
 				) }
 			/>
 			<AuthorProfileHeader timelineUrl={ profileHref ?? `/reader/mastodon/${ connectionId }` } />
-			<SocialAccountList< MastodonAccountSummary >
-				query={ query }
-				renderItem={ renderItem }
-				itemKey={ ( item ) => item.id }
-				emptyTitle={ String( translate( 'No followers yet' ) ) }
-				emptyLine={ String(
-					translate( 'When someone follows %(actor)s, they will appear here.', {
-						args: { actor },
-					} )
-				) }
-				protocolLabel="Mastodon"
-				protocolHomeURL="/reader/mastodon"
-				protocolHomeLabel={ String( translate( 'Back to Mastodon' ) ) }
-				header={ {
-					displayName: profileQuery.data?.display_name ?? null,
-					handle: profileQuery.data?.acct ?? actor,
-					count: profileQuery.data?.counts.followers ?? null,
-					mode: 'followers',
-					isPending: profileQuery.isPending,
-				} }
-			/>
+			{ hideCollections ? (
+				<>
+					<SocialAccountListHeader
+						displayName={ profileQuery.data?.display_name ?? null }
+						handle={ profileQuery.data?.acct ?? actor }
+						count={ profileQuery.data?.counts.followers ?? null }
+						mode="followers"
+						isPending={ profileQuery.isPending }
+					/>
+					<HiddenCollectionsMessage />
+				</>
+			) : (
+				<>
+					<SocialAccountList< MastodonAccountSummary >
+						query={ query }
+						renderItem={ renderItem }
+						itemKey={ ( item ) => item.id }
+						emptyTitle={ String( translate( 'No followers yet' ) ) }
+						emptyLine={ String(
+							translate( 'When someone follows %(actor)s, they will appear here.', {
+								args: { actor },
+							} )
+						) }
+						protocolLabel="Mastodon"
+						protocolHomeURL="/reader/mastodon"
+						protocolHomeLabel={ String( translate( 'Back to Mastodon' ) ) }
+						header={ {
+							displayName: profileQuery.data?.display_name ?? null,
+							handle: profileQuery.data?.acct ?? actor,
+							count: profileQuery.data?.counts.followers ?? null,
+							mode: 'followers',
+							isPending: profileQuery.isPending,
+						} }
+					/>
+					<PartialCollectionsNotice
+						profileUrl={ profileQuery.data?.url ?? null }
+						mode="followers"
+					/>
+				</>
+			) }
 		</ReaderMain>
 	);
 }

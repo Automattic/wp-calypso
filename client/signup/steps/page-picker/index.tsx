@@ -34,11 +34,11 @@ import {
 	SHOP_PAGE,
 	CUSTOM_PAGE,
 	EVENTS_PAGE,
-	CAREERS_PAGE,
 	DONATE_PAGE,
 	NEWSLETTER_PAGE,
-	CASE_STUDIES_PAGE,
 } from 'calypso/signup/difm/constants';
+import addCustomPageSvg from 'calypso/signup/difm/images/page-descriptions/add-custom-page.svg';
+import { newInstanceId, type PageInstance } from 'calypso/signup/difm/page-instances';
 import {
 	BBE_ONBOARDING_PAGE_PICKER_STEP,
 	BBE_STORE_ONBOARDING_PAGE_PICKER_STEP,
@@ -136,16 +136,27 @@ const PageCellBadge = styled.div`
 interface PageCellType {
 	pageId: PageId;
 	selectedPages: string[];
-	onClick: ( pageId: string ) => void;
+	/** 0-based global selection order (for badge). If set, overrides type-based index. */
+	globalIndex?: number;
+	onClick: ( pageId: PageId ) => void;
 	popular?: boolean;
 	required?: boolean;
 	context: BBETranslationContext;
 }
 
-function PageCell( { pageId, popular, required, selectedPages, context, onClick }: PageCellType ) {
+function PageCell( {
+	pageId,
+	popular,
+	required,
+	selectedPages,
+	globalIndex,
+	context,
+	onClick,
+}: PageCellType ) {
 	const translate = useTranslate();
-	const selectedIndex = selectedPages.indexOf( pageId );
-	const isSelected = Boolean( selectedIndex > -1 );
+	const isSelected =
+		globalIndex !== undefined ? globalIndex >= 0 : selectedPages.indexOf( pageId ) > -1;
+	const selectedIndex = globalIndex !== undefined ? globalIndex : selectedPages.indexOf( pageId );
 	const title = useTranslatedPageTitles()[ pageId ];
 	const description = useTranslatedPageDescriptions( pageId, context );
 
@@ -170,26 +181,111 @@ function PageCell( { pageId, popular, required, selectedPages, context, onClick 
 	);
 }
 
-function PageSelector( {
-	selectedPages,
-	setSelectedPages,
-	isStoreFlow,
-}: {
-	selectedPages: string[];
-	setSelectedPages: ( pages: string[] ) => void;
+interface CustomPageInstanceCellProps {
+	instance: PageInstance;
+	/** 0-based global selection order (for badge). */
+	globalIndex: number;
+	context: BBETranslationContext;
+	onClick: ( instanceId: string ) => void;
+}
+
+function CustomPageInstanceCell( {
+	instance,
+	globalIndex,
+	context,
+	onClick,
+}: CustomPageInstanceCellProps ) {
+	const translate = useTranslate();
+	const description = useTranslatedPageDescriptions( CUSTOM_PAGE, context );
+
+	return (
+		<GridCellContainer isSelected isClickDisabled={ false }>
+			<BrowserView
+				onClick={ () => onClick( instance.id ) }
+				pageId={ CUSTOM_PAGE }
+				isClickDisabled={ false }
+				isSelected
+				selectedIndex={ globalIndex >= 0 ? globalIndex : -1 }
+			/>
+			<CellLabelContainer>
+				<div>{ translate( 'Custom Page' ) }</div>
+				<InfoPopover showOnHover position={ isMobile() ? 'left' : 'top left' }>
+					{ description }
+				</InfoPopover>
+			</CellLabelContainer>
+		</GridCellContainer>
+	);
+}
+
+interface AddCustomPageCellProps {
+	onClick: () => void;
+}
+
+function AddCustomPageCell( { onClick }: AddCustomPageCellProps ) {
+	const translate = useTranslate();
+	const addCustomPageTooltip = translate(
+		"Perfect for any page you'd like to create. Add as many as you need, then share the title and content after checkout."
+	);
+
+	return (
+		<GridCellContainer isSelected={ false } isClickDisabled={ false }>
+			<BrowserView
+				onClick={ onClick }
+				pageId={ CUSTOM_PAGE }
+				isClickDisabled={ false }
+				isSelected={ false }
+				selectedIndex={ -1 }
+				thumbnailOverride={ addCustomPageSvg }
+			/>
+			<CellLabelContainer>
+				<div>{ translate( 'Add a Custom Page' ) }</div>
+				<InfoPopover showOnHover position={ isMobile() ? 'left' : 'top left' }>
+					{ addCustomPageTooltip }
+				</InfoPopover>
+			</CellLabelContainer>
+		</GridCellContainer>
+	);
+}
+
+interface InstancePageGridProps {
+	instances: PageInstance[];
+	setInstances: ( updater: ( prev: PageInstance[] ) => PageInstance[] ) => void;
 	isStoreFlow: boolean;
-} ) {
-	const onPageClick = ( pageId: string ) => {
-		const isPageSelected = selectedPages.includes( pageId );
-		// The home page cannot be touched and is always included
-		if ( ! [ HOME_PAGE, SHOP_PAGE ].includes( pageId ) ) {
-			if ( isPageSelected ) {
-				// Unselect selected page
-				setSelectedPages( selectedPages.filter( ( page ) => page !== pageId ) );
-			} else {
-				setSelectedPages( [ ...selectedPages, pageId ] );
-			}
+}
+
+/** 0-based index of the first instance with the given type in the instances list, or -1. */
+function getGlobalIndexForType( instances: PageInstance[], pageId: PageId ): number {
+	const idx = instances.findIndex( ( i ) => i.type === pageId );
+	return idx;
+}
+
+function InstancePageGrid( { instances, setInstances, isStoreFlow }: InstancePageGridProps ) {
+	const selectedPages = instances.map( ( instance ) => instance.type );
+	const customInstances = instances.filter( ( instance ) => instance.type === CUSTOM_PAGE );
+
+	const onPageClick = ( pageId: PageId ) => {
+		// The home and shop pages cannot be touched and are always included
+		if ( [ HOME_PAGE, SHOP_PAGE ].includes( pageId ) ) {
+			return;
 		}
+
+		setInstances( ( prev ) => {
+			const hasInstanceForType = prev.some( ( instance ) => instance.type === pageId );
+
+			if ( hasInstanceForType ) {
+				return prev.filter( ( instance ) => instance.type !== pageId );
+			}
+
+			return [ ...prev, { id: newInstanceId(), type: pageId } ];
+		} );
+	};
+
+	const handleCustomInstanceClick = ( instanceId: string ) => {
+		setInstances( ( prev ) => prev.filter( ( instance ) => instance.id !== instanceId ) );
+	};
+
+	const handleAddCustomPage = () => {
+		setInstances( ( prev ) => [ ...prev, { id: newInstanceId(), type: CUSTOM_PAGE } ] );
 	};
 
 	const context = isStoreFlow
@@ -203,6 +299,7 @@ function PageSelector( {
 				required
 				pageId={ HOME_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, HOME_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			{ isStoreFlow && (
@@ -211,6 +308,7 @@ function PageSelector( {
 					required
 					pageId={ SHOP_PAGE }
 					selectedPages={ selectedPages }
+					globalIndex={ getGlobalIndexForType( instances, SHOP_PAGE ) }
 					onClick={ onPageClick }
 				/>
 			) }
@@ -219,6 +317,7 @@ function PageSelector( {
 				popular
 				pageId={ ABOUT_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, ABOUT_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			<PageCell
@@ -226,6 +325,7 @@ function PageSelector( {
 				popular
 				pageId={ CONTACT_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, CONTACT_PAGE ) }
 				onClick={ onPageClick }
 			/>
 
@@ -234,13 +334,14 @@ function PageSelector( {
 				popular
 				pageId={ BLOG_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, BLOG_PAGE ) }
 				onClick={ onPageClick }
 			/>
-
 			<PageCell
 				context={ context }
 				pageId={ PHOTO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, PHOTO_GALLERY_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			{ isStoreFlow ? (
@@ -249,6 +350,7 @@ function PageSelector( {
 					popular
 					pageId={ FAQ_PAGE }
 					selectedPages={ selectedPages }
+					globalIndex={ getGlobalIndexForType( instances, FAQ_PAGE ) }
 					onClick={ onPageClick }
 				/>
 			) : (
@@ -257,6 +359,7 @@ function PageSelector( {
 					popular
 					pageId={ SERVICES_PAGE }
 					selectedPages={ selectedPages }
+					globalIndex={ getGlobalIndexForType( instances, SERVICES_PAGE ) }
 					onClick={ onPageClick }
 				/>
 			) }
@@ -264,6 +367,7 @@ function PageSelector( {
 				context={ context }
 				pageId={ VIDEO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, VIDEO_GALLERY_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			{ ! isStoreFlow && (
@@ -272,6 +376,7 @@ function PageSelector( {
 					popular
 					pageId={ PRICING_PAGE }
 					selectedPages={ selectedPages }
+					globalIndex={ getGlobalIndexForType( instances, PRICING_PAGE ) }
 					onClick={ onPageClick }
 				/>
 			) }
@@ -279,6 +384,7 @@ function PageSelector( {
 				context={ context }
 				pageId={ PORTFOLIO_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, PORTFOLIO_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			{ isStoreFlow ? (
@@ -286,6 +392,7 @@ function PageSelector( {
 					context={ context }
 					pageId={ SERVICES_PAGE }
 					selectedPages={ selectedPages }
+					globalIndex={ getGlobalIndexForType( instances, SERVICES_PAGE ) }
 					onClick={ onPageClick }
 				/>
 			) : (
@@ -294,6 +401,7 @@ function PageSelector( {
 					popular
 					pageId={ FAQ_PAGE }
 					selectedPages={ selectedPages }
+					globalIndex={ getGlobalIndexForType( instances, FAQ_PAGE ) }
 					onClick={ onPageClick }
 				/>
 			) }
@@ -302,51 +410,47 @@ function PageSelector( {
 				popular={ isStoreFlow }
 				pageId={ TESTIMONIALS_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, TESTIMONIALS_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			<PageCell
 				context={ context }
 				pageId={ TEAM_PAGE }
 				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
-				context={ context }
-				pageId={ CAREERS_PAGE }
-				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, TEAM_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			<PageCell
 				context={ context }
 				pageId={ EVENTS_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, EVENTS_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			<PageCell
 				context={ context }
 				pageId={ DONATE_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, DONATE_PAGE ) }
 				onClick={ onPageClick }
 			/>
 			<PageCell
 				context={ context }
 				pageId={ NEWSLETTER_PAGE }
 				selectedPages={ selectedPages }
+				globalIndex={ getGlobalIndexForType( instances, NEWSLETTER_PAGE ) }
 				onClick={ onPageClick }
 			/>
-			<PageCell
-				context={ context }
-				pageId={ CASE_STUDIES_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
-				popular
-				context={ context }
-				pageId={ CUSTOM_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
+			{ customInstances.map( ( instance ) => (
+				<CustomPageInstanceCell
+					key={ instance.id }
+					instance={ instance }
+					globalIndex={ instances.indexOf( instance ) }
+					context={ context }
+					onClick={ handleCustomInstanceClick }
+				/>
+			) ) }
+			<AddCustomPageCell onClick={ handleAddCustomPage } />
 		</PageGrid>
 	);
 }
@@ -403,6 +507,7 @@ function OneClickPurchaseModal( {
 	siteSlug,
 	siteId,
 	selectedPages,
+	selectedPageInstances,
 	isStoreFlow,
 	flowName,
 	coupon,
@@ -411,6 +516,7 @@ function OneClickPurchaseModal( {
 	siteSlug: SiteSlug;
 	siteId: SiteId;
 	selectedPages: string[];
+	selectedPageInstances: Array< { id: string; type: PageId } >;
 	isStoreFlow: boolean;
 	flowName: string;
 	coupon?: string;
@@ -424,6 +530,7 @@ function OneClickPurchaseModal( {
 				{
 					...signupDependencies,
 					selectedPageTitles: selectedPages,
+					selectedPageInstances,
 					isStoreFlow,
 				},
 				siteId,
@@ -431,7 +538,7 @@ function OneClickPurchaseModal( {
 			),
 			quantity: selectedPages.length,
 		} );
-	}, [ flowName, isStoreFlow, selectedPages, signupDependencies, siteId ] );
+	}, [ flowName, isStoreFlow, selectedPages, selectedPageInstances, signupDependencies, siteId ] );
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -470,11 +577,15 @@ function DIFMPagePicker( props: StepProps ) {
 	const isStoreFlow = 'do-it-for-me-store' === flowName;
 	const [ isCheckoutPressed, setIsCheckoutPressed ] = useState( false );
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
-	const [ selectedPages, setSelectedPages ] = useState< string[] >(
-		isStoreFlow
-			? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
-			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
-	);
+	const [ pageInstances, setPageInstances ] = useState< PageInstance[] >( () => {
+		const initialTypes = (
+			isStoreFlow
+				? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
+				: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, PHOTO_GALLERY_PAGE, SERVICES_PAGE ]
+		) satisfies PageId[];
+		return initialTypes.map( ( type ): PageInstance => ( { id: newInstanceId(), type } ) );
+	} );
+	const selectedPages = pageInstances.map( ( instance ) => instance.type );
 
 	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) ) || siteIdFromDependencies;
 	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
@@ -519,6 +630,7 @@ function DIFMPagePicker( props: StepProps ) {
 					{ stepName },
 					{
 						selectedPageTitles: selectedPages,
+						selectedPageInstances: pageInstances.map( ( { id, type } ) => ( { id, type } ) ),
 						newOrExistingSiteChoice: isExistingSite ? 'existing-site' : 'new-site', // Ensure the value of newOrExistingSiteChoice is set if it's not already
 					}
 				)
@@ -530,7 +642,7 @@ function DIFMPagePicker( props: StepProps ) {
 	const handleModalOnClose = () => {
 		setShowPurchaseModal( false );
 		setIsCheckoutPressed( false );
-		setSelectedPages( ( selectedPages ) => selectedPages.slice() );
+		setPageInstances( ( instances ) => instances.slice() );
 	};
 
 	const isCheckoutButtonBusy =
@@ -628,15 +740,16 @@ function DIFMPagePicker( props: StepProps ) {
 							siteSlug={ siteSlug }
 							siteId={ siteId }
 							selectedPages={ selectedPages }
+							selectedPageInstances={ pageInstances.map( ( { id, type } ) => ( { id, type } ) ) }
 							isStoreFlow={ isStoreFlow }
 							flowName={ flowName }
 							coupon={ coupon }
 						/>
 					) }
-					<PageSelector
+					<InstancePageGrid
 						isStoreFlow={ isStoreFlow }
-						selectedPages={ selectedPages }
-						setSelectedPages={ setSelectedPages }
+						instances={ pageInstances }
+						setInstances={ setPageInstances }
 					/>
 				</>
 			}

@@ -25,7 +25,11 @@ let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
 let mockReelVisible = false;
 let mockGenericVisible = false;
-const mockReelHandleShare = jest.fn();
+let mockReelIsConfirming = false;
+let mockReelIgDisplayName: string | null = null;
+const mockReelRequestShare = jest.fn();
+const mockReelConfirmShare = jest.fn();
+const mockReelCancelShare = jest.fn();
 const mockGenericHandleShare = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
@@ -117,8 +121,21 @@ jest.mock( '../hooks/use-reel-share', () => ( {
 	useReelShare: () => ( {
 		isVisible: mockReelVisible,
 		isSharing: false,
-		handleShare: mockReelHandleShare,
+		isConfirming: mockReelIsConfirming,
+		igDisplayName: mockReelIgDisplayName,
+		requestShare: mockReelRequestShare,
+		confirmShare: mockReelConfirmShare,
+		cancelShare: mockReelCancelShare,
 	} ),
+} ) );
+
+const mockDialogProps = jest.fn();
+
+jest.mock( '../components/reel-share-confirmation-dialog', () => ( {
+	ReelShareConfirmationDialog: ( props: Record< string, unknown > ) => {
+		mockDialogProps( props );
+		return props.isOpen ? <div role="dialog" /> : null;
+	},
 } ) );
 
 jest.mock( '../hooks/use-generic-share', () => ( {
@@ -153,8 +170,11 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
-		mockReelHandleShare.mockClear();
+		mockReelRequestShare.mockClear();
+		mockReelConfirmShare.mockClear();
+		mockReelCancelShare.mockClear();
 		mockGenericHandleShare.mockClear();
+		mockDialogProps.mockClear();
 		mockInsertBlocks.mockClear();
 		mockCreateBlock.mockClear();
 		mockMeta = {};
@@ -162,6 +182,8 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockHasResolvedMedia = true;
 		mockReelVisible = false;
 		mockGenericVisible = false;
+		mockReelIsConfirming = false;
+		mockReelIgDisplayName = null;
 		( window as Record< string, unknown > ).imageStudioData = { isDevMode: true };
 		jest.resetModules();
 	} );
@@ -292,7 +314,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.getByRole( 'button', { name: /^Share$/i } ) ).toBeInTheDocument();
 		} );
 
-		it( 'invokes handleShare on share button clicks', () => {
+		it( 'invokes requestShare on the IG button and handleShare on the generic button', () => {
 			setupClip();
 			mockReelVisible = true;
 			mockGenericVisible = true;
@@ -300,10 +322,43 @@ describe( 'feature-clip-sidebar-extension', () => {
 			render( <FeatureClipPanel /> );
 
 			fireEvent.click( screen.getByRole( 'button', { name: /Share on Instagram/i } ) );
-			expect( mockReelHandleShare ).toHaveBeenCalledTimes( 1 );
+			expect( mockReelRequestShare ).toHaveBeenCalledTimes( 1 );
+			expect( mockReelConfirmShare ).not.toHaveBeenCalled();
 
 			fireEvent.click( screen.getByRole( 'button', { name: /^Share$/i } ) );
 			expect( mockGenericHandleShare ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'passes reel state and handlers to the confirmation dialog', () => {
+			setupClip();
+			mockReelVisible = true;
+			mockReelIsConfirming = true;
+			mockReelIgDisplayName = 'myhandle';
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockDialogProps ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					isOpen: true,
+					igDisplayName: 'myhandle',
+					onConfirm: mockReelConfirmShare,
+					onCancel: mockReelCancelShare,
+				} )
+			);
+			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		} );
+
+		it( 'passes isOpen=false to the confirmation dialog when reel.isConfirming is false', () => {
+			setupClip();
+			mockReelVisible = true;
+			mockReelIsConfirming = false;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockDialogProps ).toHaveBeenCalledWith(
+				expect.objectContaining( { isOpen: false } )
+			);
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'opens Image Studio on Regenerate click', async () => {

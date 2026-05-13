@@ -59,6 +59,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
+import { withThemesColorScheme } from 'calypso/my-sites/themes/color-scheme-provider';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -173,6 +174,7 @@ class ThemeSheet extends Component {
 		isThemePurchased: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		isStandaloneJetpack: PropTypes.bool,
+		isSiteRoute: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -1413,7 +1415,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'activate';
 	}
 
-	return (
+	return withThemesColorScheme(
 		<ConnectedThemeSheet
 			{ ...props }
 			themeTier={ themeTier }
@@ -1425,7 +1427,8 @@ const ThemeSheetWithOptions = ( props ) => {
 			source="showcase-sheet"
 			activeThemeId={ activeThemeId }
 			siteIntent={ siteIntent }
-		/>
+		/>,
+		{ isSiteRoute: props.isSiteRoute, isLoggedIn: props.isLoggedIn }
 	);
 };
 
