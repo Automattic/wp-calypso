@@ -9,8 +9,17 @@ export { ConnectionReauthTag } from './connection-reauth-tag';
 export { FollowButton } from './follow-button';
 export type { FollowButtonProps } from './follow-button';
 
+export { SocialAccountRow } from './account-row';
+export type { SocialAccountRowProps, SocialAccountRowFollowState } from './account-row';
+
+export { SocialAccountList, SocialAccountListHeader } from './account-list';
+export type { SocialAccountListProps } from './account-list';
+
 export { SocialPostCard } from './components/post-card';
 export { SocialFeedList } from './components/feed-list';
+export { SocialNotificationItem } from './components/notifications-list/notification-item';
+export { SocialNotificationsList } from './components/notifications-list';
+export type { ChipFilter } from './components/notifications-list/filter';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
 
 export type {
@@ -47,4 +56,10 @@ export {
 	mapMastodonFeedItemToSocialPost,
 	mapMastodonThreadResponseToSocialThreadNode,
 } from './mappers/mastodon';
+export {
+	mapFediverseAuthorProfileToSocialProfileCardProps,
+	mapFediverseConnectionToSocialProfileCardProps,
+	mapFediverseFeedItemToSocialPost,
+	stripLeadingAt,
+} from './mappers/fediverse';
 export { socialPostFeedItemKey } from './utils/social-post-feed-item-key';

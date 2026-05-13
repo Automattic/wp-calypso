@@ -1,4 +1,11 @@
-import { Button, Card, CardBody, ExternalLink, TextControl } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	Card,
+	CardBody,
+	ExternalLink,
+	TextControl,
+} from '@wordpress/components';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useState, type FormEvent } from 'react';
 import type { AtmosphereError } from '@automattic/api-core';
@@ -15,10 +22,13 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 	const [ appPassword, setAppPassword ] = useState( '' );
 	const canSubmit = handle.trim().length > 0 && appPassword.length > 0 && ! isSubmitting;
 
-	const helpLink = (
-		<ExternalLink href="https://bsky.app/settings/app-passwords">
-			{ translate( 'How do I get an app password?' ) }
-		</ExternalLink>
+	const appPasswordHelp = translate(
+		'Use a Bluesky app password rather than your main password, so you can revoke access anytime. {{a}}How do I get an app password?{{/a}}',
+		{
+			components: {
+				a: <ExternalLink children={ null } href="https://bsky.app/settings/app-passwords" />,
+			},
+		}
 	);
 
 	const handleSubmit = ( event: FormEvent< HTMLFormElement > ) => {
@@ -33,33 +43,51 @@ export function ConnectForm( { onSubmit, isSubmitting, error }: ConnectFormProps
 		<Card>
 			<CardBody>
 				<form onSubmit={ handleSubmit }>
-					<TextControl
-						label={ translate( 'Handle' ) }
-						value={ handle }
-						onChange={ setHandle }
-						placeholder="alice.bsky.social"
-						disabled={ isSubmitting }
-						__nextHasNoMarginBottom
-					/>
-					<TextControl
-						label={ translate( 'App password' ) }
-						type="password"
-						autoComplete="new-password"
-						value={ appPassword }
-						onChange={ setAppPassword }
-						placeholder="xxxx-xxxx-xxxx-xxxx"
-						help={ helpLink }
-						disabled={ isSubmitting }
-						__nextHasNoMarginBottom
-					/>
-					{ error ? (
-						<p className="atmosphere-error" role="alert">
-							{ errorMessage( error, translate ) }
+					<VStack spacing={ 4 }>
+						<p>
+							{ translate(
+								'Once connected, your Bluesky timeline appears alongside your blog feeds. You can like, repost, reply, and post directly from the Reader, with no app switching needed.'
+							) }
 						</p>
-					) : null }
-					<Button variant="primary" type="submit" disabled={ ! canSubmit } isBusy={ isSubmitting }>
-						{ translate( 'Connect' ) }
-					</Button>
+						<TextControl
+							label={ translate( 'Bluesky username' ) }
+							value={ handle }
+							onChange={ setHandle }
+							placeholder="alice.bsky.social"
+							help={ translate(
+								'Your full handle, including the domain (for example, alice.bsky.social).'
+							) }
+							disabled={ isSubmitting }
+							__nextHasNoMarginBottom
+						/>
+						<TextControl
+							label={ translate( 'App password' ) }
+							type="password"
+							autoComplete="new-password"
+							value={ appPassword }
+							onChange={ setAppPassword }
+							placeholder="xxxx-xxxx-xxxx-xxxx"
+							help={ appPasswordHelp }
+							disabled={ isSubmitting }
+							__nextHasNoMarginBottom
+						/>
+						{ error ? (
+							<p className="atmosphere-error" role="alert">
+								{ errorMessage( error, translate ) }
+							</p>
+						) : null }
+						{ /* Wrap so the button stays intrinsic-sized inside VStack (which stretches children by default). */ }
+						<div>
+							<Button
+								variant="primary"
+								type="submit"
+								disabled={ ! canSubmit }
+								isBusy={ isSubmitting }
+							>
+								{ translate( 'Connect' ) }
+							</Button>
+						</div>
+					</VStack>
 				</form>
 			</CardBody>
 		</Card>
@@ -87,7 +115,7 @@ function errorMessage(
 		// The slice 7c POST /posts wire codes shouldn't surface from the
 		// connect form (it doesn't post), but the AtmosphereError union
 		// covers the whole atmosphere surface, so list them explicitly to
-		// keep `assertNever` exhaustive without changing the user-visible
+		// keep the switch exhaustive without changing the user-visible
 		// copy on this screen. The slice-8a `blob_decode_failed` kind is
 		// set client-side from `compressImage` failures and listed here
 		// for the same reason — it won't surface from the connect form.

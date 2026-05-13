@@ -1,4 +1,7 @@
-import { STOP_DICTATION_TOOL_NAME } from '../tools/dictation-control-tool';
+import {
+	CANCEL_IMAGE_GENERATION_TOOL_NAME,
+	STOP_DICTATION_TOOL_NAME,
+} from '../tools/dictation-control-tool';
 import {
 	FORMAT_TEXT_TOOL_NAME,
 	GET_BLOCK_TOOL_NAME,
@@ -11,6 +14,7 @@ import {
 	INSERT_BLOCK_TOOL_NAME,
 	INSERT_BLOCKS_TOOL_NAME,
 	MOVE_BLOCK_TOOL_NAME,
+	REMOVE_ALL_BLOCKS_TOOL_NAME,
 	REMOVE_BLOCK_TOOL_NAME,
 	REPLACE_BLOCK_TOOL_NAME,
 	SELECT_BLOCK_TOOL_NAME,
@@ -100,6 +104,16 @@ export function describeToolCall(
 		}
 		case REMOVE_BLOCK_TOOL_NAME:
 			return `${ errorPrefix }Removed block`;
+		case REMOVE_ALL_BLOCKS_TOOL_NAME: {
+			const count =
+				isObjectResult &&
+				typeof ( result as { removed_count?: unknown } ).removed_count === 'number'
+					? ( result as { removed_count: number } ).removed_count
+					: null;
+			return count === 1
+				? `${ errorPrefix }Removed 1 block`
+				: `${ errorPrefix }Removed ${ count ?? 'all' } blocks`;
+		}
 		case MOVE_BLOCK_TOOL_NAME: {
 			const dir = typeof args.direction === 'string' ? args.direction : null;
 			if ( dir === 'up' ) {
@@ -132,6 +146,9 @@ export function describeToolCall(
 			return `${ errorPrefix }Saved draft`;
 		case STOP_DICTATION_TOOL_NAME:
 			return `${ errorPrefix }Stopped dictation`;
+		case CANCEL_IMAGE_GENERATION_TOOL_NAME:
+			// "no-op" failure (nothing was in flight) doesn't deserve a noisy entry.
+			return ok ? 'Cancelled image generation' : null;
 		case PUBLISH_POST_TOOL_NAME:
 			return `${ errorPrefix }Published post`;
 		case UNDO_TOOL_NAME:
@@ -150,6 +167,12 @@ export function describeToolCall(
 		}
 		case GENERATE_IMAGE_TOOL_NAME: {
 			if ( ! ok ) {
+				// User-initiated abort (e.g. they said "stop" mid-generation): the
+				// "Stopped dictation" entry already conveys what happened, so
+				// don't litter the log with a redundant failure row.
+				if ( isObjectResult && ( result as { aborted?: boolean } ).aborted ) {
+					return null;
+				}
 				const message =
 					isObjectResult && typeof ( result as { error?: unknown } ).error === 'string'
 						? ( result as { error: string } ).error

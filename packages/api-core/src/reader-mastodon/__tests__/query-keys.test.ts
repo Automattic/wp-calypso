@@ -81,6 +81,28 @@ describe( 'readerMastodonKeys.tagFeed', () => {
 	} );
 } );
 
+describe( 'readerMastodonKeys.notifications', () => {
+	it( 'notifications(connectionId, "all") shapes the All-chip key', () => {
+		expect( readerMastodonKeys.notifications( 42, 'all' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'notifications',
+			42,
+			'all',
+		] );
+	} );
+
+	it( 'notifications(connectionId, filter) includes filter in key', () => {
+		expect( readerMastodonKeys.notifications( 42, 'likes' ) ).toEqual( [
+			'reader',
+			'mastodon',
+			'notifications',
+			42,
+			'likes',
+		] );
+	} );
+} );
+
 describe( 'readerMastodonKeys.authStatus', () => {
 	it( 'authStatus key includes the connection id', () => {
 		expect( readerMastodonKeys.authStatus( 42 ) ).toEqual( [

@@ -74,9 +74,18 @@ $entry-offset: 10px;
 		color: var( --color-text-subtle );
 	}
 
+	// Keep subtitle sentences on separate lines when there is reasonable room for them.
+	// On smaller viewports, they should be one text block for wrapping.
+	&__subtitle-break {
+		@media ( max-width: $break-medium ) {
+			display: none;
+		}
+	}
+
 	&__people-grid {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: 28px;
 		margin-top: 28px;
 	}
@@ -87,8 +96,21 @@ $entry-offset: 10px;
 		gap: 28px;
 		flex-wrap: nowrap;
 
+		// At tablet widths, constrain the row to exactly 3 tiles wide and allow
+		// wrapping. The fixed max-width forces the break at 3 per row, while
+		// justify-content: center (from the base rule) centers any partial last
+		// row — so publications wrap 3+3 and bloggers wrap 3+2 (centered).
 		@media ( max-width: $break-medium ) {
 			flex-wrap: wrap;
+			max-width: 356px; // 3 × 100px + 2 × 28px gap
+			width: 100%;
+		}
+
+		// At mobile widths, shrink to 2 tiles wide with a tighter gap.
+		// 2 × 100px + 1 × 20px gap = 220px.
+		@media ( max-width: $break-mobile ) {
+			max-width: 220px;
+			gap: 20px;
 		}
 	}
 

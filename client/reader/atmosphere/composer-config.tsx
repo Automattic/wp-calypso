@@ -21,6 +21,7 @@ export const atmosphereComposerConfig: ComposerConfig<
 	CreatePostResult
 > = {
 	useLimit: useAtmosphereComposerLimit,
+	protocolLabel: 'Bluesky',
 	supportedModes: [ 'reply', 'quote', 'standalone' ],
 	mutationFactory: createPostMutation,
 	buildParams: ( mode, text ) => buildParamsForMode( mode, text ),
@@ -119,6 +120,16 @@ export const atmosphereComposerConfig: ComposerConfig<
 				props: { connection_id: mode.connectionId, error_kind: error.kind },
 			};
 		},
+	},
+	overflowHandoff: {
+		shown: ( mode ) => ( {
+			event: 'calypso_reader_atmosphere_overflow_handoff_shown',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind },
+		} ),
+		editorOpened: ( mode, { siteId } ) => ( {
+			event: 'calypso_reader_atmosphere_overflow_handoff_editor_opened',
+			props: { connection_id: mode.connectionId, mode_kind: mode.kind, site_id: siteId },
+		} ),
 	},
 	copy: {
 		title: ( mode, translate ) => titleForMode( mode, translate ),

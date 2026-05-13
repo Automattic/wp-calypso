@@ -1,4 +1,6 @@
 .topic-group-card {
+	position: relative;
+	z-index: 1;
 	display: flex;
 	flex-direction: column;
 	width: 264px;
@@ -67,6 +69,7 @@
 	}
 
 	&__avatar {
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -74,7 +77,11 @@
 		overflow: hidden;
 		margin-left: -6px;
 		background-color: var( --studio-white, #fff );
-		box-shadow: 0 0 0 2px var( --color-surface, #fff );
+		// Reverse stacking so left avatars overlap right ones.
+		&:nth-child(1) { z-index: 4; }
+		&:nth-child(2) { z-index: 3; }
+		&:nth-child(3) { z-index: 2; }
+		&:nth-child(4) { z-index: 1; }
 	}
 
 	&__avatar-more {
@@ -82,7 +89,6 @@
 		font-weight: 500;
 		color: var( --color-neutral-40, #8c8f94 );
 		background-color: var( --color-neutral-0, #efefef );
-		box-shadow: 0 0 0 2px var( --color-surface, #fff );
 	}
 
 	&__subscribe {

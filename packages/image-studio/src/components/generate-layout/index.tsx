@@ -1,16 +1,21 @@
 import { BigSkyIcon, cn } from '@automattic/agenttic-ui';
 import { __ } from '@wordpress/i18n';
 import { ShareReelAction } from './share-reel-action';
+import { VideoFeedbackButtons } from './video-feedback-buttons';
 import './style.scss';
 
 export const GenerateLayout = ( {
 	isAiProcessing,
 	isPromptSent,
 	videoUrl,
+	onFeedback,
+	onSubmitFeedbackText,
 }: {
 	isPromptSent: boolean;
 	isAiProcessing: boolean;
 	videoUrl?: string | null;
+	onFeedback?: ( feedback: 'up' | 'down' ) => void;
+	onSubmitFeedbackText?: ( feedbackText: string ) => Promise< void >;
 } ) => {
 	if ( videoUrl ) {
 		return (
@@ -32,7 +37,14 @@ export const GenerateLayout = ( {
 						preload="metadata"
 					/>
 				</div>
-				<ShareReelAction />
+				<div className="image-studio-modal__video-actions-bar">
+					<VideoFeedbackButtons
+						videoUrl={ videoUrl }
+						onFeedback={ onFeedback }
+						onSubmitFeedbackText={ onSubmitFeedbackText }
+					/>
+					<ShareReelAction />
+				</div>
 			</div>
 		);
 	}

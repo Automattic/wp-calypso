@@ -1,3 +1,5 @@
+import type { NotificationsFilter } from '../reader-social/notifications-filter';
+
 export const readerMastodonKeys = {
 	all: [ 'reader', 'mastodon' ] as const,
 	connections: () => [ ...readerMastodonKeys.all, 'connections' ] as const,
@@ -11,10 +13,16 @@ export const readerMastodonKeys = {
 		[ ...readerMastodonKeys.all, 'instance-config', id ] as const,
 	timeline: ( connectionId: number ) =>
 		[ ...readerMastodonKeys.all, 'timeline', connectionId ] as const,
+	notifications: ( connectionId: number, filter: NotificationsFilter ) =>
+		[ ...readerMastodonKeys.all, 'notifications', connectionId, filter ] as const,
 	thread: ( connectionId: number, statusId: string ) =>
 		[ ...readerMastodonKeys.all, 'thread', connectionId, statusId ] as const,
 	authorProfile: ( connectionId: number, actor: string ) =>
 		[ ...readerMastodonKeys.all, 'profile', connectionId, actor ] as const,
+	actorFollowers: ( connectionId: number, actor: string ) =>
+		[ ...readerMastodonKeys.all, 'actor-followers', connectionId, actor ] as const,
+	actorFollowing: ( connectionId: number, actor: string ) =>
+		[ ...readerMastodonKeys.all, 'actor-following', connectionId, actor ] as const,
 	// `filter` is appended only when set so the no-filter cache key matches
 	// the slice-6 shape exactly. Wrappers are expected to collapse the
 	// no-op filter (`posts_with_replies` for Mastodon) to undefined before

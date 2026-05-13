@@ -18,7 +18,7 @@ export function ContactPageDetails( {
 }: PageDetailsParams< ContactPageData > ) {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
-	const description = useTranslatedPageDescriptions( page.id, context );
+	const description = useTranslatedPageDescriptions( page.type, context );
 	const { onFieldChanged } = useChangeHandlers( {
 		pageId: page.id,
 		onChangeField,

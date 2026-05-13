@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { fixMe, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
@@ -21,12 +21,14 @@ import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { getPackBlogs } from './get-pack-blogs';
 import TopicGroupCard from './topic-group-card';
 import { getTopicGroups, type TopicGroup } from './topic-groups';
+import InterestsVerificationNudge from './verificationNudge';
 import type { CuratedBlog } from '../curated-blogs';
 
 import './style.scss';
 
 interface InterestsModalProps {
 	onContinue: () => void;
+	promptVerification: boolean;
 }
 
 type ResolvedPack = TopicGroup & { blogs: CuratedBlog[] };
@@ -36,7 +38,7 @@ const MAX_INTEREST_TOPICS = 40;
 // provided by the parent (`ReaderOnboardingRsm`); this component is only
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`.
-const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
+const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVerification } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
 	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
@@ -237,7 +239,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 				}
 				// Best effort only: site-specific failures are handled by existing
 				// follow data-layer notices and should not block pack completion.
-				dispatch( follow( blog.site_URL, followData, null ) );
+				dispatch( follow( blog.feed_URL, followData, null ) );
 			}
 		} finally {
 			setProcessingPacks( ( current ) => {
@@ -265,22 +267,20 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 
 	return (
 		<>
-			<VStack spacing={ 8 } className="interests-modal__content">
+			{ promptVerification && <InterestsVerificationNudge /> }
+			<VStack spacing={ 4 } className="interests-modal__content">
 				<VStack spacing={ 0 }>
 					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
 					<p className="interests-modal__subtitle">
-						{ __(
-							'​​Stay up-to-date with your favorite blogs and discover new voices—all from one place.'
-						) }
-					</p>
-					<p className="interests-modal__subtitle">
-						{ fixMe( {
-							text: 'Pick a pack that describes your interest, or switch to individual topics.',
-							newCopy: __(
-								'Pick a pack that describes your interest, or switch to individual topics.'
-							),
-							oldCopy: __( 'Follow at least 3 topics to personalize your Reader feed.' ),
-						} ) }
+						<span>
+							{ __(
+								'​​Stay up-to-date with your favorite blogs and discover new voices—all from one place.'
+							) }
+						</span>
+						<br className="interests-modal__subtitle-break" />{ ' ' }
+						<span>
+							{ __( 'Pick a pack that describes your interest, or switch to individual topics.' ) }
+						</span>
 					</p>
 				</VStack>
 
@@ -347,7 +347,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue } ) => {
 							__next40pxDefaultSize
 							onClick={ handleContinue }
 							variant="secondary"
-							disabled={ isContinueDisabled }
+							disabled={ isContinueDisabled || promptVerification }
 							accessibleWhenDisabled
 						>
 							{ __( 'Continue' ) }

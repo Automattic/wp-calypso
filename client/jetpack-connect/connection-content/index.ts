@@ -1,15 +1,24 @@
 export type { Family } from './families';
 export { FAMILY_PRIORITY, getFamilyFromSlug } from './families';
 export type { PluginEntry } from './plugin-registry';
-export { PLUGIN_REGISTRY, getPluginEntry, getLogoForFamilies } from './plugin-registry';
 export {
+	PLUGIN_REGISTRY,
+	getPluginEntry,
+	getPluginDisplayName,
+	getLogoForFamilies,
+} from './plugin-registry';
+export type { FeatureSelection } from './selectors';
+export {
+	MAX_FEATURED_CARDS,
 	getPresentFamilies,
 	getTopFamilies,
 	isStore,
 	hasFullJetpack,
-	getOverflowSlugs,
+	getFeatureSelection,
 } from './selectors';
 export type { SurfaceCopy } from './copy';
 export { getAuthCopy, getSignupCopy, getLoginCopy } from './copy';
 export type { SubtitleScenario } from './scenarios';
 export { getSubtitleScenario } from './scenarios';
+export type { FeatureCardKey, FeatureCardData } from './family-features';
+export { getFeatureCardData } from './family-features';
