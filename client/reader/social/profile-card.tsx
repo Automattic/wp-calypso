@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { useMemo } from 'react';
+import { SocialAvatar } from './avatar';
 import { useSocialAnalytics } from './components/post-card/analytics-context';
 import { sanitizeReaderSocialHtml } from './components/post-card/sanitize-post-html';
 import type { TranslateResult } from 'i18n-calypso';
@@ -221,27 +222,9 @@ export function SocialProfileCard( {
 
 	return (
 		<div className="social-profile-card">
-			{ banner ? (
-				<img
-					src={ banner }
-					alt=""
-					className="social-profile-card__banner"
-					onError={ ( event ) => {
-						event.currentTarget.style.display = 'none';
-					} }
-				/>
-			) : null }
+			<SocialAvatar src={ banner } alt="" className="social-profile-card__banner" />
 			<div className="social-profile-card__header-row">
-				{ avatar ? (
-					<img
-						src={ avatar }
-						alt=""
-						className="social-profile-card__avatar"
-						onError={ ( event ) => {
-							event.currentTarget.style.display = 'none';
-						} }
-					/>
-				) : null }
+				<SocialAvatar src={ avatar } alt="" className="social-profile-card__avatar" />
 				{ headerActions ? (
 					<div className="social-profile-card__header-actions">{ headerActions }</div>
 				) : null }

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SocialAnalyticsProvider } from '../components/post-card/analytics-context';
 import { SocialProfileCard } from '../profile-card';
@@ -731,7 +731,7 @@ describe( 'SocialProfileCard — rich variant', () => {
 		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
 	} );
 
-	it( 'hides the banner image on load failure', () => {
+	it( 'unmounts the banner image on load failure (SocialAvatar onError → null fallback)', () => {
 		const { container } = render(
 			<SocialProfileCard
 				banner="https://cdn.example/broken.jpg"
@@ -740,11 +740,28 @@ describe( 'SocialProfileCard — rich variant', () => {
 				statsLabel="Profile stats"
 			/>
 		);
-		const banner = container.querySelector(
-			'.social-profile-card__banner'
-		) as HTMLImageElement | null;
+		const banner = container.querySelector( '.social-profile-card__banner' );
 		expect( banner ).not.toBeNull();
-		banner!.dispatchEvent( new Event( 'error', { bubbles: true } ) );
-		expect( banner!.style.display ).toBe( 'none' );
+		// `fireEvent.error` triggers React's synthetic onError handler, which
+		// flips the SocialAvatar's `errored` state and renders the fallback
+		// (`null` for the banner — the band collapses entirely so a broken
+		// CDN URL doesn't leak a broken-image icon into the layout).
+		fireEvent.error( banner! );
+		expect( container.querySelector( '.social-profile-card__banner' ) ).toBeNull();
+	} );
+
+	it( 'unmounts the avatar image on load failure (SocialAvatar onError → null fallback)', () => {
+		const { container } = render(
+			<SocialProfileCard
+				avatar="https://cdn.example/broken.jpg"
+				displayName="Alice"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const avatar = container.querySelector( '.social-profile-card__avatar' );
+		expect( avatar ).not.toBeNull();
+		fireEvent.error( avatar! );
+		expect( container.querySelector( '.social-profile-card__avatar' ) ).toBeNull();
 	} );
 } );
