@@ -90,9 +90,15 @@
 	color: var( --connections-new-card-accent, var( --color-text ) );
 	margin-block-start: 4px;
 
+	// Brand icons hard-code the `sidebar__menu-icon` class on their SVG,
+	// which inherits a section-scoped margin-inline-end intended for the
+	// sidebar menu gap. Zero it here so the 40px glyph sits centred in
+	// its slot. See the matching note in reader-sidebar-connections/
+	// style.scss for why we override with !important.
 	svg {
 		width: 40px;
 		height: 40px;
+		margin: 0 !important;
 	}
 }
 
@@ -243,9 +249,13 @@
 	border-radius: 50%;
 	box-shadow: 0 0 0 2px var( --color-surface );
 
+	// Same story as the sidebar badge — brand SVGs carry a section-wide
+	// `margin-inline-end` from `.sidebar__menu-icon` that throws off
+	// centring at small sizes. Zero it.
 	svg {
 		width: 16px;
 		height: 16px;
+		margin: 0 !important;
 	}
 }
 

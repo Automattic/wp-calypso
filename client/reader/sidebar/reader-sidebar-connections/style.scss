@@ -22,11 +22,17 @@
 	pointer-events: none;
 
 	// The brand SVGs render at 24×24 and inherit a sidebar-icon class
-	// that targets the top-level menu icon size. Force them down to fit
-	// inside the 14px circular badge slot.
+	// that targets the top-level menu icon size — including a section-
+	// scoped `margin-inline-end` meant for the menu's text gap. That
+	// margin pushes the glyph off-centre inside the 14px badge slot, so
+	// zero it out alongside the size override. The `!important` is
+	// scoped to this badge and only needed because the section-wide
+	// selector (`:root .theme-default .is-section-reader …`) outranks
+	// element selectors.
 	svg {
 		width: 10px;
 		height: 10px;
+		margin: 0 !important;
 	}
 }
 
