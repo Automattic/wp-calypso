@@ -1,15 +1,16 @@
 import { Button, SearchControl } from '@wordpress/components';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { search } from '@wordpress/icons';
 
 interface SearchInputProps {
+	value: string;
+	onChange: ( value: string ) => void;
 	onSearch: ( topic: string ) => void;
 	isLoading: boolean;
 }
 
-export default function SearchInput( { onSearch, isLoading }: SearchInputProps ) {
-	const [ value, setValue ] = useState( '' );
+export default function SearchInput( { value, onChange, onSearch, isLoading }: SearchInputProps ) {
 	const inputRef = useRef< HTMLInputElement >( null );
 
 	useEffect( () => {
@@ -30,7 +31,7 @@ export default function SearchInput( { onSearch, isLoading }: SearchInputProps )
 				ref={ inputRef }
 				__nextHasNoMarginBottom
 				value={ value }
-				onChange={ setValue }
+				onChange={ onChange }
 				placeholder={ __( 'Enter a topic to research…', 'content-research' ) }
 			/>
 			<Button

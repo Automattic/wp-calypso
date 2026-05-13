@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from '@wordpress/element';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import AiSummary from './components/ai-summary';
 import EmptyState from './components/empty-state';
@@ -18,12 +18,59 @@ export { isContentResearchEnabled } from './utils/feature-flag';
 
 const DEFAULT_SOURCES: Source[] = [ 'myposts', 'reader', 'hn', 'googlenews' ];
 
+function getSelectionFromDocument( targetDocument: Document ): string {
+	const selectedText = targetDocument.getSelection()?.toString();
+	if ( ! selectedText ) {
+		return '';
+	}
+
+	return selectedText.replace( /\s+/g, ' ' ).trim().slice( 0, 120 );
+}
+
+function getSelectedTextQuery(): string {
+	if ( typeof document === 'undefined' ) {
+		return '';
+	}
+
+	const mainDocumentSelection = getSelectionFromDocument( document );
+	if ( mainDocumentSelection ) {
+		return mainDocumentSelection;
+	}
+
+	for ( const iframe of Array.from( document.querySelectorAll( 'iframe' ) ) ) {
+		try {
+			const iframeDocument = iframe.contentDocument;
+			if ( ! iframeDocument ) {
+				continue;
+			}
+
+			const iframeSelection = getSelectionFromDocument( iframeDocument );
+			if ( iframeSelection ) {
+				return iframeSelection;
+			}
+		} catch {
+			// Cross-origin frames cannot expose their selection.
+		}
+	}
+
+	return '';
+}
+
 export default function ContentResearchSidebar() {
+	const initialSelectedTextRef = useRef< string | null >( null );
+	if ( initialSelectedTextRef.current === null ) {
+		initialSelectedTextRef.current = getSelectedTextQuery();
+	}
+
 	useEffect( () => {
 		trackContentResearchOpen();
+		if ( initialSelectedTextRef.current ) {
+			trackContentResearchSearch( initialSelectedTextRef.current );
+		}
 	}, [] );
 
-	const [ topic, setTopic ] = useState( '' );
+	const [ topic, setTopic ] = useState( () => initialSelectedTextRef.current || '' );
+	const [ searchValue, setSearchValue ] = useState( () => initialSelectedTextRef.current || '' );
 	const [ selectedSources, setSelectedSources ] = useState< Set< Source > >(
 		() => new Set( DEFAULT_SOURCES )
 	);
@@ -47,13 +94,14 @@ export default function ContentResearchSidebar() {
 
 	const isSummaryVisible = ! isSummaryDismissed && ( isSummaryLoading || !! summary );
 
-	const handleSearch = ( newTopic: string ) => {
+	const handleSearch = useCallback( ( newTopic: string ) => {
 		setTopic( newTopic );
+		setSearchValue( newTopic );
 		setSelectedUrls( new Set() );
 		setIsSummaryDismissed( true );
 		setSummaryResults( [] );
 		trackContentResearchSearch( newTopic );
-	};
+	}, [] );
 
 	const handleToggleSource = ( source: Source ) => {
 		setSelectedSources( ( prev ) => {
@@ -93,7 +141,7 @@ export default function ContentResearchSidebar() {
 		} );
 	};
 
-	const results = data?.results || [];
+	const results = useMemo( () => data?.results || [], [ data?.results ] );
 	const orderedResults = useMemo( () => {
 		const selected: ResearchResult[] = [];
 		const unselected: ResearchResult[] = [];
@@ -109,12 +157,18 @@ export default function ContentResearchSidebar() {
 
 	return (
 		<div className="content-research-sidebar">
-			<SearchInput onSearch={ handleSearch } isLoading={ isLoading } />
+			<SearchInput
+				value={ searchValue }
+				onChange={ setSearchValue }
+				onSearch={ handleSearch }
+				isLoading={ isLoading }
+			/>
 
 			{ ! isSummaryVisible && (
 				<SourceFilterTabs
 					selectedSources={ selectedSources }
 					onToggleSource={ handleToggleSource }
+					onResetSources={ () => setSelectedSources( new Set( DEFAULT_SOURCES ) ) }
 				/>
 			) }
 
