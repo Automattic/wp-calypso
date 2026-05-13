@@ -630,9 +630,22 @@ export default defineConfig(
 		publicDir: false,
 
 		optimizeDeps: {
-			// Force pre-bundling for the v7 alias — deep node_modules paths
-			// aren't auto-discovered by the dep scanner.
-			include: [ 'react-day-picker-v7' ],
+			include: [
+				// Force pre-bundling for the v7 alias — deep node_modules paths
+				// aren't auto-discovered by the dep scanner.
+				'react-day-picker-v7',
+
+				// Workspace @automattic/* packages aren't pre-bundled by default
+				// (unlike packages in node_modules), which produces hundreds of dev
+				// requests per cold page load. The packages below are large,
+				// widely imported, pure-JS (no scss imports), and have no
+				// subpath imports — safe to collapse into one esbuild chunk.
+				// Tradeoff: HMR is lost inside these; edits trigger a re-optimize
+				// + full reload.
+				'@automattic/api-core',
+				'@automattic/api-queries',
+				'@automattic/calypso-products',
+			],
 			rolldownOptions: {
 				plugins: [
 					transformReactVirtualizedJsxPlugin,
