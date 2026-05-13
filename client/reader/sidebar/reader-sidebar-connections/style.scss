@@ -25,13 +25,15 @@
 	// that targets the top-level menu icon size — including a section-
 	// scoped `margin-inline-end` meant for the menu's text gap. That
 	// margin pushes the glyph off-centre inside the 14px badge slot, so
-	// zero it out alongside the size override. The `!important` is
-	// scoped to this badge and only needed because the section-wide
-	// selector (`:root .theme-default .is-section-reader …`) outranks
-	// element selectors.
+	// zero it out alongside the size override. Size the SVG to match the
+	// badge so the glyph fills the slot edge-to-edge; the badge's
+	// `box-shadow` ring separates it from the avatar behind. The
+	// `!important` is scoped to this badge and only needed because the
+	// section-wide selector (`:root .theme-default .is-section-reader …`)
+	// outranks element selectors.
 	svg {
-		width: 10px;
-		height: 10px;
+		width: 14px;
+		height: 14px;
 		margin: 0 !important;
 	}
 }
