@@ -280,6 +280,81 @@ const reactDayPickerV7Plugin: Plugin = {
 	},
 };
 
+// PostCSS reaches the browser bundle via @wordpress/block-editor's
+// `utils/transform-styles`, which runs PostCSS at runtime to rewrite block
+// stylesheets (e.g. scoping selectors for the editor iframe). Anything that
+// imports @wordpress/block-editor therefore pulls PostCSS into the client.
+//
+// PostCSS's package.json declares `"browser": { "fs": false, "url": false, ... }`,
+// asking bundlers to swap those Node built-ins for an empty module in browser
+// builds. Webpack honours that by inlining an actual empty module (see the
+// `mainFields: [ 'browser', ... ]` entry in client/webpack.config.js). Vite's
+// dep optimizer instead treats `false` as externalization, so PostCSS's
+// top-level `require('fs')` / `require('url')` land on Vite's externalized-stub
+// and spam the console at import time. Resolve them to a real empty module to
+// match webpack's behaviour.
+const postcssNodeStubsPlugin: Plugin = {
+	name: 'calypso-postcss-node-stubs',
+	enforce: 'pre',
+	resolveId( id: string, importer: string | undefined ) {
+		if ( id !== 'fs' && id !== 'url' && id !== 'node:fs' && id !== 'node:url' ) {
+			return null;
+		}
+		if ( ! importer?.includes( '/node_modules/postcss/' ) ) {
+			return null;
+		}
+		return '\0calypso-postcss-node-stub';
+	},
+	load( id: string ) {
+		if ( id === '\0calypso-postcss-node-stub' ) {
+			return 'export default {};';
+		}
+	},
+};
+
+// Trace Vite's "Module X has been externalized for browser compatibility"
+// warnings to a stack so we can find the importer. Vite emits these from a
+// proxy stub it injects for Node built-ins; the warning text alone gives no
+// caller info. We wrap console.warn at entry boot to print a stack trace
+// whenever the message matches.
+const externalizedNodeTracePlugin: Plugin = {
+	name: 'calypso-externalized-node-trace',
+	enforce: 'pre',
+	apply: 'serve',
+	resolveId( id: string ) {
+		if ( id === 'virtual:calypso-externalized-node-trace' ) {
+			return '\0virtual:calypso-externalized-node-trace';
+		}
+	},
+	load( id: string ) {
+		if ( id !== '\0virtual:calypso-externalized-node-trace' ) {
+			return null;
+		}
+		return `
+			const origWarn = console.warn;
+			console.warn = function (...args) {
+				origWarn.apply(this, args);
+				if (typeof args[0] === 'string' && args[0].includes('externalized for browser compatibility')) {
+					// Capture stack, strip the "at " prefix and the "Error:" header
+					// so Chrome's stack parser doesn't apply ignore-list filtering.
+					const frames = (new Error().stack || '')
+						.split('\\n')
+						.slice(1)
+						.map((l) => l.trim().replace(/^at\\s+/, '→ '));
+					origWarn.call(this, 'externalized module access trace:\\n' + frames.join('\\n'));
+				}
+			};
+		`;
+	},
+	transform( code: string, id: string ) {
+		const cleanId = id.split( '?' )[ 0 ];
+		if ( ! ENTRYPOINT_PATHS.has( cleanId ) ) {
+			return null;
+		}
+		return { code: `import 'virtual:calypso-externalized-node-trace';\n${ code }`, map: null };
+	},
+};
+
 // Inject the @vitejs/plugin-react fast-refresh preamble as the first import of
 // every entry module. Vite's React plugin normally injects this via
 // `transformIndexHtml`, which doesn't run here because the Node server renders
@@ -431,8 +506,12 @@ export default defineConfig(
 				{ find: 'path', replacement: 'path-browserify' },
 				{ find: 'util', replacement: findPackage( 'util/' ) },
 
-				// PostCSS marks source-map-js as browser:false, but Gutenberg's
-				// browser bundle imports PostCSS and can safely use the package.
+				// PostCSS's package.json declares `"browser": { "source-map-js": false }`
+				// — meant to drop source-map-js in Node-only contexts. Vite's dep
+				// optimizer honours that as an externalization, but source-map-js is
+				// a pure-JS package that works fine in the browser, and PostCSS calls
+				// into it at runtime (e.g. SourceMapConsumer). Force the resolver to
+				// the real entry to override the browser-field stub.
 				{
 					find: /^source-map-js$/,
 					replacement: require.resolve( 'source-map-js/source-map.js' ),
@@ -502,6 +581,10 @@ export default defineConfig(
 
 			emotionBabelPlugin,
 
+			postcssNodeStubsPlugin,
+
+			externalizedNodeTracePlugin,
+
 			calypsoReactPreambleInjectorPlugin,
 
 			transformReactVirtualizedJsxPlugin,
@@ -551,7 +634,11 @@ export default defineConfig(
 			// aren't auto-discovered by the dep scanner.
 			include: [ 'react-day-picker-v7' ],
 			rolldownOptions: {
-				plugins: [ transformReactVirtualizedJsxPlugin, reactDayPickerV7Plugin ],
+				plugins: [
+					transformReactVirtualizedJsxPlugin,
+					reactDayPickerV7Plugin,
+					postcssNodeStubsPlugin,
+				],
 			},
 		},
 
