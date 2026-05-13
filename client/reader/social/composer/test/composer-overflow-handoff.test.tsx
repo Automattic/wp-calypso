@@ -70,6 +70,96 @@ describe( 'ComposerOverflowHandoff — gate', () => {
 	} );
 } );
 
+describe( 'ComposerOverflowHandoff — media-handoff trigger', () => {
+	it( 'surfaces the section with media-flavoured copy when hasRequestedMediaHandoff is set', async () => {
+		mockSitesQuery( [
+			{
+				ID: 100,
+				name: 'My Blog',
+				slug: 'myblog.wordpress.com',
+				URL: 'https://myblog.wordpress.com',
+				options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+			} as Partial< Site >,
+		] );
+
+		let composer: ReturnType< typeof useComposer > | null = null;
+		function Probe() {
+			composer = useComposer();
+			return null;
+		}
+
+		renderWithComposer(
+			<>
+				<Probe />
+				<ComposerOverflowHandoff text="" />
+			</>,
+			{ withMode: true }
+		);
+
+		act( () => composer!.markMediaHandoffRequested() );
+
+		// Media copy ("Want to add media?…") rather than the limit-overflow
+		// copy ("Too long for…").
+		expect( await screen.findByText( /Want to add media\?/i ) ).toBeVisible();
+		expect( screen.queryByText( /Too long for/i ) ).toBeNull();
+	} );
+
+	it( 'saves a non-empty draft body when the composer is empty (CM-726 empty-text guard)', async () => {
+		const user = userEvent.setup();
+		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		try {
+			mockSitesQuery( [
+				{
+					ID: 100,
+					name: 'My Blog',
+					slug: 'myblog.wordpress.com',
+					URL: 'https://myblog.wordpress.com',
+					site_migration: { in_progress: false, is_complete: false },
+					options: { admin_url: 'https://myblog.wordpress.com/wp-admin/' },
+				} as Partial< Site >,
+			] );
+
+			// Body-matcher: the placeholder must be present in the POST body
+			// so wpcom doesn't reject `content: ''`.
+			nock( ORIGIN )
+				.post(
+					/\/rest\/v1\.\d+\/sites\/100\/posts\/new/,
+					( body: { content?: string; status?: string } ) =>
+						body.content !== '' &&
+						typeof body.content === 'string' &&
+						body.content.trim().length > 0
+				)
+				.reply( 200, { ID: 777 } );
+
+			let composer: ReturnType< typeof useComposer > | null = null;
+			const Probe = () => {
+				composer = useComposer();
+				return null;
+			};
+
+			renderWithComposer(
+				<>
+					<Probe />
+					<ComposerOverflowHandoff text="" />
+				</>,
+				{ withMode: true }
+			);
+
+			act( () => composer!.markMediaHandoffRequested() );
+
+			const button = await screen.findByRole( 'button', { name: /Move to editor/i } );
+			await user.click( button );
+
+			// If the placeholder guard regressed (`content: ''` sent), the
+			// nock matcher above would fail and `isDone()` returns false.
+			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
+		} finally {
+			openSpy.mockRestore();
+		}
+	} );
+} );
+
 describe( 'ComposerOverflowHandoff — null branches', () => {
 	it( 'renders nothing when sites query resolves to []', async () => {
 		mockSitesQuery( [] );

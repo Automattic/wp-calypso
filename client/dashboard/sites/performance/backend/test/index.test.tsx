@@ -80,6 +80,78 @@ describe( '<SitePerformanceBackend>', () => {
 		expect( screen.getByRole( 'heading', { name: 'Slowest requests' } ) ).toBeVisible();
 	} );
 
+	test( 'renders Plugins, Hooks and Templates on the WordPress tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="wordpress" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Plugins' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Hooks' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Templates' } ) ).toBeVisible();
+	} );
+
+	test( 'renders Slowest transactions on the Transactions tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="transactions" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Slowest transactions' } ) ).toBeVisible();
+		expect( screen.getByText( /GET \/wp-json\/wp\/v2\/posts/ ) ).toBeVisible();
+		expect( screen.getByRole( 'radio', { name: 'Max' } ) ).toBeChecked();
+	} );
+
+	test( 'renders Slowest queries on the Database tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="database" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Slowest queries' } ) ).toBeVisible();
+		expect( screen.getByText( /SELECT \* FROM wp_woocommerce_order_items/ ) ).toBeVisible();
+	} );
+
+	test( 'renders Slowest external requests on the External tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="external-requests" /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Slowest external requests' } )
+		).toBeVisible();
+		expect( screen.getByText( /api\.stripe\.com/ ) ).toBeVisible();
+	} );
+
+	test( 'shows a status notice with the average response time', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		// The notice variant depends on seeded mock data, but one of these three
+		// titles must always appear and must include the formatted avg duration.
+		expect(
+			await screen.findByText(
+				/(Healthy backend|Backend needs improvement|Backend is slow) — avg /
+			)
+		).toBeVisible();
+	} );
+
+	test( 'toggling Avg/Max on Slowest requests updates the description', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		// Wait for the Slowest requests card to mount.
+		await screen.findByRole( 'heading', { name: 'Slowest requests' } );
+
+		expect( screen.getByText( /Slowest single response observed/ ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'radio', { name: 'Avg' } ) );
+
+		expect(
+			screen.getByText( /Average response time across the slowest endpoints/ )
+		).toBeVisible();
+		expect( screen.queryByText( /Slowest single response observed/ ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'clicking Enable POSTs { active: true }', async () => {
 		mockSite( businessSite( false ) );
 		const scope = mockApmToggle( true );
