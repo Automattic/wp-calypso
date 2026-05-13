@@ -10,12 +10,14 @@
 		display: flex;
 		align-items: center;
 
-		button {
+		button,
+		.reader-post-actions__view-original {
 			margin: 0;
 			padding: 8px 16px;
 			background: var(--color-surface);
 			border: 1px solid var(--color-neutral-10);
 			border-radius: 4px;
+			box-sizing: border-box;
 			transition: all 0.2s ease;
 			cursor: pointer;
 			display: flex;
@@ -25,9 +27,11 @@
 			height: auto;
 			min-height: 40px;
 			color: var( --color-text-subtle );
+			text-decoration: none;
 
 			&:hover {
 				border-color: var( --color-neutral-20 );
+				color: var( --color-text-subtle );
 			}
 
 			svg {
@@ -38,6 +42,29 @@
 
 			&:hover svg {
 				opacity: 1;
+			}
+		}
+
+		.reader-post-actions__view-original-label {
+			font-size: $font-body-small;
+			color: var( --color-text-subtle );
+		}
+
+		.reader-post-actions__view-original {
+			min-height: auto;
+
+			svg {
+				fill: var( --color-text-subtle );
+			}
+
+			&:hover {
+				.reader-post-actions__view-original-label {
+					color: var( --color-link );
+				}
+
+				svg {
+					fill: var( --color-link );
+				}
 			}
 		}
 

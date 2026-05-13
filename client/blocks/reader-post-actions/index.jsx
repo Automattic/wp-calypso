@@ -1,7 +1,9 @@
 import { readTeamsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
+import { Icon, globe } from '@wordpress/icons';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
@@ -15,6 +17,7 @@ import {
 	isRebloggable,
 	isLikeable,
 } from 'calypso/reader/post/capabilities';
+import { recordAction, recordPermalinkClick } from 'calypso/reader/stats';
 import { useSelector } from 'calypso/state';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { ReaderFreshlyPressedButton } from '../reader-freshly-pressed-button';
@@ -31,17 +34,27 @@ const ReaderPostActions = ( {
 	likeContext,
 	markLikedPostSeen,
 	showFreshlyPressed = true,
+	showViewOriginal = false,
+	visitUrl,
 } ) => {
+	const translate = useTranslate();
 	const hasSites = !! useSelector( getPrimarySiteId );
 	const showShare = isSharable( post );
 	const showReblog = isRebloggable( post, hasSites );
 	const showComments = isCommentsOpen( post ) || post.discussion?.comment_count > 0;
 	const showLikes = isLikeable( post );
+	const viewOriginalUrl = visitUrl || post.URL;
+	const shouldShowViewOriginal = showViewOriginal && viewOriginalUrl;
 	const listClassnames = clsx( 'reader-post-actions', className );
 	const shouldQueryTeams = showFreshlyPressed && fullPost && showShare;
 	const { data } = useQuery( { ...readTeamsQuery(), enabled: shouldQueryTeams } );
 	const isAutomattician = isAutomatticTeamMember( data?.teams ?? [] );
 	const shouldShowFreshlyPressed = shouldQueryTeams && isAutomattician;
+
+	const handleViewOriginalClick = () => {
+		recordAction( 'clicked_view_original' );
+		recordPermalinkClick( 'full_post_visit_link', post );
+	};
 
 	return (
 		<ul className={ listClassnames }>
@@ -102,6 +115,22 @@ const ReaderPostActions = ( {
 					/>
 				</li>
 			) }
+			{ shouldShowViewOriginal && (
+				<li className="reader-post-actions__item">
+					<a
+						className="reader-post-actions__view-original"
+						href={ viewOriginalUrl }
+						target="_blank"
+						rel="external noopener noreferrer"
+						onClick={ handleViewOriginalClick }
+					>
+						<Icon icon={ globe } size={ iconSize } />
+						<span className="reader-post-actions__view-original-label">
+							{ translate( 'View original' ) }
+						</span>
+					</a>
+				</li>
+			) }
 			{ shouldShowFreshlyPressed && (
 				<li className="reader-post-actions__item">
 					<ReaderFreshlyPressedButton blogId={ post.site_ID } postId={ post.ID } />
@@ -121,6 +150,8 @@ ReaderPostActions.propTypes = {
 	likeContext: PropTypes.string,
 	markLikedPostSeen: PropTypes.bool,
 	showFreshlyPressed: PropTypes.bool,
+	showViewOriginal: PropTypes.bool,
+	visitUrl: PropTypes.string,
 };
 
 export default ReaderPostActions;

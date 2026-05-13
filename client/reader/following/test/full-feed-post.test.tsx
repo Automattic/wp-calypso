@@ -167,6 +167,8 @@ describe( 'FullFeedPost', () => {
 				onCommentClick: expect.any( Function ),
 				post,
 				showFreshlyPressed: false,
+				showViewOriginal: true,
+				visitUrl: post.URL,
 			} ),
 			expect.any( Object )
 		);

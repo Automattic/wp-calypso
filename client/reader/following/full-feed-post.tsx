@@ -593,6 +593,8 @@ export function FullFeedPost( {
 						likeContext="full-feed"
 						markLikedPostSeen={ false }
 						showFreshlyPressed={ false }
+						showViewOriginal
+						visitUrl={ post.URL }
 					/>
 				</div>
 				<ReaderSuggestedFollowsDialog
