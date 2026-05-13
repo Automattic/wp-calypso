@@ -24,6 +24,7 @@ import {
 import {
 	trackAiEditorialReviewItemAction,
 	trackAiEditorialReviewResultRendered,
+	type ReviewContext,
 } from '../utils/tracking';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
@@ -86,6 +87,7 @@ interface ReviewMediationProps {
 	implications: Implication[];
 	suggested_edits: SuggestedEdit[];
 	guideline_violations: GuidelineViolation[];
+	review_context?: ReviewContext;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * mediations or the empty-state payload may omit it; consumers degrade

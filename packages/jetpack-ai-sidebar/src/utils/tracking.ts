@@ -32,7 +32,7 @@ function recordTracksEvent( eventName: string, properties: TrackProperties = {} 
 	} );
 }
 
-type ReviewContext =
+export type ReviewContext =
 	| 'notes_and_guidelines'
 	| 'notes_only'
 	| 'guidelines_only'
