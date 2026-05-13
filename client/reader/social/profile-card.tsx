@@ -222,9 +222,24 @@ export function SocialProfileCard( {
 
 	return (
 		<div className="social-profile-card">
-			<SocialAvatar src={ banner } alt="" className="social-profile-card__banner" />
+			{ /* `fallback` shares the same SCSS class as the `<img>` so the
+			   placeholder div keeps the avatar/banner box dimensions and the
+			   solid background color when the URL is missing or the image
+			   fails to load. Without it the layout slot collapses entirely
+			   and we get a "no placeholder" gap in the card. */ }
+			<SocialAvatar
+				src={ banner }
+				alt=""
+				className="social-profile-card__banner"
+				fallback={ <div className="social-profile-card__banner" aria-hidden="true" /> }
+			/>
 			<div className="social-profile-card__header-row">
-				<SocialAvatar src={ avatar } alt="" className="social-profile-card__avatar" />
+				<SocialAvatar
+					src={ avatar }
+					alt=""
+					className="social-profile-card__avatar"
+					fallback={ <div className="social-profile-card__avatar" aria-hidden="true" /> }
+				/>
 				{ headerActions ? (
 					<div className="social-profile-card__header-actions">{ headerActions }</div>
 				) : null }

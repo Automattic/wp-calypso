@@ -731,7 +731,7 @@ describe( 'SocialProfileCard — rich variant', () => {
 		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
 	} );
 
-	it( 'unmounts the banner image on load failure (SocialAvatar onError → null fallback)', () => {
+	it( 'swaps the banner image for a same-class placeholder div on load failure', () => {
 		const { container } = render(
 			<SocialProfileCard
 				banner="https://cdn.example/broken.jpg"
@@ -740,17 +740,18 @@ describe( 'SocialProfileCard — rich variant', () => {
 				statsLabel="Profile stats"
 			/>
 		);
-		const banner = container.querySelector( '.social-profile-card__banner' );
-		expect( banner ).not.toBeNull();
+		const bannerImg = container.querySelector( 'img.social-profile-card__banner' );
+		expect( bannerImg ).not.toBeNull();
 		// `fireEvent.error` triggers React's synthetic onError handler, which
 		// flips the SocialAvatar's `errored` state and renders the fallback
-		// (`null` for the banner — the band collapses entirely so a broken
-		// CDN URL doesn't leak a broken-image icon into the layout).
-		fireEvent.error( banner! );
-		expect( container.querySelector( '.social-profile-card__banner' ) ).toBeNull();
+		// (a `<div>` with the same SCSS class) so the band keeps its
+		// dimensions + background colour instead of collapsing.
+		fireEvent.error( bannerImg! );
+		expect( container.querySelector( 'img.social-profile-card__banner' ) ).toBeNull();
+		expect( container.querySelector( 'div.social-profile-card__banner' ) ).not.toBeNull();
 	} );
 
-	it( 'unmounts the avatar image on load failure (SocialAvatar onError → null fallback)', () => {
+	it( 'swaps the avatar image for a same-class placeholder div on load failure', () => {
 		const { container } = render(
 			<SocialProfileCard
 				avatar="https://cdn.example/broken.jpg"
@@ -759,9 +760,10 @@ describe( 'SocialProfileCard — rich variant', () => {
 				statsLabel="Profile stats"
 			/>
 		);
-		const avatar = container.querySelector( '.social-profile-card__avatar' );
-		expect( avatar ).not.toBeNull();
-		fireEvent.error( avatar! );
-		expect( container.querySelector( '.social-profile-card__avatar' ) ).toBeNull();
+		const avatarImg = container.querySelector( 'img.social-profile-card__avatar' );
+		expect( avatarImg ).not.toBeNull();
+		fireEvent.error( avatarImg! );
+		expect( container.querySelector( 'img.social-profile-card__avatar' ) ).toBeNull();
+		expect( container.querySelector( 'div.social-profile-card__avatar' ) ).not.toBeNull();
 	} );
 } );
