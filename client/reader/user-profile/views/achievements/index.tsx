@@ -5,6 +5,7 @@ import useAchievementsVisibility from 'calypso/reader/components/achievements/us
 import { YearsOfServiceBadge } from 'calypso/reader/components/achievements/years-of-service-badge';
 import AchievementsGrid from './achievements-grid';
 import AchievementsSettings from './achievements-settings';
+import { ActivityStreakPill } from './activity-streak-pill';
 import type { ReaderUser } from '@automattic/api-core';
 
 import './style.scss';
@@ -16,9 +17,12 @@ interface UserAchievementsProps {
 const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const { isOwnProfile, isVisible, isLoading } = useAchievementsVisibility( user.user_login );
-	const { yearsOfService } = useAchievementsQuery( isVisible ? user.user_login : undefined, {
-		refetchOnMount: 'always',
-	} );
+	const { yearsOfService, engagementStreak } = useAchievementsQuery(
+		isVisible ? user.user_login : undefined,
+		{
+			refetchOnMount: 'always',
+		}
+	);
 
 	if ( isLoading ) {
 		return (
@@ -38,6 +42,7 @@ const UserAchievements = ( { user }: UserAchievementsProps ): JSX.Element | null
 				{ !! yearsOfService && (
 					<YearsOfServiceBadge size="large" yearsOfService={ yearsOfService } />
 				) }
+				<ActivityStreakPill streak={ engagementStreak } isOwnProfile={ isOwnProfile } />
 				{ isOwnProfile && <AchievementsSettings /> }
 			</div>
 			<AchievementsGrid userLogin={ user.user_login } isOwnProfile={ isOwnProfile } />

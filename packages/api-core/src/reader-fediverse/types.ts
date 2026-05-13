@@ -210,9 +210,21 @@ export interface FediverseAuthorProfile {
 	/** True for AP actors that gate their content behind a follow approval. */
 	locked: boolean;
 	counts: FediverseProfileCounts;
-	viewer: FediverseAuthorProfileViewer;
-	/** True when this actor is the connected caller's own self. */
-	is_self: boolean;
+	/**
+	 * Relationship state from the connected account's perspective. Optional
+	 * during the backend rollout window — consumers must treat undefined as
+	 * "no follow UI available" rather than synthesizing a default, which
+	 * would mislead users into clicking Follow on accounts they already
+	 * follow. Matches the `FediverseFeedItem.viewer` rollout shape and the
+	 * Mastodon sibling type.
+	 */
+	viewer?: FediverseAuthorProfileViewer;
+	/**
+	 * `true` when this actor matches the connected caller's own account.
+	 * Optional during the backend rollout window — the panel hides the
+	 * follow button on `is_self === true`. Matches the Mastodon sibling.
+	 */
+	is_self?: boolean;
 }
 
 /**

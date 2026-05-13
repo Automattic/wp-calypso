@@ -113,7 +113,7 @@ describe( 'AuthorProfilePanel', () => {
 		expect( handles.length ).toBeGreaterThanOrEqual( 1 );
 		expect( handles[ 0 ] ).toBeVisible();
 		expect( await screen.findByText( 'hello' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: /like, 0 likes/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /^like$/i } ) ).toBeVisible();
 	} );
 
 	it( 'does not render the back-to-timeline button (it is owned by the parent view)', async () => {

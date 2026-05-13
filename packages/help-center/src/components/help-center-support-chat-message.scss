@@ -100,7 +100,7 @@
 
 		.help-center-support-chat__conversation-information-message {
 			display: -webkit-box;
-			color: #000;
+			color: var( --color-text );
 			font-weight: 500;
 			font-size: $font-body-small;
 			line-height: 20px;
@@ -114,8 +114,13 @@
 	}
 
 	.help-center-support-chat__open-conversation {
+		color: var( --color-text );
 		display: flex;
 		align-items: center;
+
+		svg {
+			fill: currentColor;
+		}
 	}
 
 	&:last-child {

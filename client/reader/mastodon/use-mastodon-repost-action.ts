@@ -134,16 +134,29 @@ export function makeUseMastodonRepostAction( connectionId: number ): UseRepostAc
 
 		const accessibleLabel = ( count: number, reposted: boolean ) => {
 			const formatted = formatNumber( count );
-			return reposted
-				? translate( 'Undo boost, %(count)s boost', 'Undo boost, %(count)s boosts', {
+			if ( reposted ) {
+				return count > 0
+					? translate( 'Undo boost, %(count)s boost', 'Undo boost, %(count)s boosts', {
+							count,
+							args: { count: formatted },
+							textOnly: true,
+					  } )
+					: translate( 'Undo boost', {
+							textOnly: true,
+							comment:
+								'Accessible label and tooltip for the boost button on a Mastodon post card when the viewer has already boosted the post and the count is zero. Verb phrase that undoes a boost (Mastodon UI vocabulary; equivalent to "undo repost").',
+					  } );
+			}
+			return count > 0
+				? translate( 'Boost, %(count)s boost', 'Boost, %(count)s boosts', {
 						count,
 						args: { count: formatted },
 						textOnly: true,
 				  } )
-				: translate( 'Boost, %(count)s boost', 'Boost, %(count)s boosts', {
-						count,
-						args: { count: formatted },
+				: translate( 'Boost', {
 						textOnly: true,
+						comment:
+							'Accessible label and tooltip for the boost button on a Mastodon post card when the post has no boosts yet. Verb (Mastodon UI vocabulary; equivalent to "repost").',
 				  } );
 		};
 

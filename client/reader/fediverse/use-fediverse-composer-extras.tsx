@@ -1,7 +1,8 @@
 import { useFediverseConnectionsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { useVisibilityCwState } from 'calypso/reader/social/composer';
 import { FediverseComposerControls } from './composer-controls';
 import type { FediverseCreatePostParams, FediverseVisibility } from '@automattic/api-core';
 import type { ActiveMode, ComposerProtocolExtrasSlot } from 'calypso/reader/social/composer';
@@ -26,46 +27,24 @@ function generateIdempotencyKey(): string {
 	} );
 }
 
-const LAST_VISIBILITY_STORAGE_KEY = ( connectionId: number ) =>
-	`calypso_reader_fediverse_composer_visibility_v1:${ connectionId }`;
+function storageKeyForConnection( connectionId: number ): string {
+	return `calypso_reader_fediverse_composer_visibility_v1:${ connectionId }`;
+}
 
-function isVisibility( value: unknown ): value is FediverseVisibility {
+function isFediverseVisibility( value: unknown ): value is FediverseVisibility {
 	return value === 'public' || value === 'unlisted' || value === 'followers';
 }
 
-function readLastVisibility( connectionId: number ): FediverseVisibility | null {
-	try {
-		const raw = window.localStorage.getItem( LAST_VISIBILITY_STORAGE_KEY( connectionId ) );
-		return isVisibility( raw ) ? raw : null;
-	} catch {
-		// Private-mode storage access, etc. — silently fall back to the blog default.
-		return null;
-	}
-}
-
-function writeLastVisibility( connectionId: number, value: FediverseVisibility ): void {
-	try {
-		window.localStorage.setItem( LAST_VISIBILITY_STORAGE_KEY( connectionId ), value );
-	} catch {
-		// Best-effort persistence; cosmetic feature.
-	}
-}
-
 /**
- * Per-Fediverse-connection composer-extras hook. Owns the state for the
- * three protocol-specific controls (visibility, content-warning toggle +
- * summary, sensitive flag) and projects them into the wire payload via
- * `extendBuildParams`.
- *
- * Visibility defaults: user's last pick (localStorage, keyed on
- * connection id) → blog's `default_visibility` from the connections
- * endpoint → `'public'`. Persists the user's pick on submit so
- * subsequent composes default to it. Per CM-704: cosmetic — backend
- * doesn't care.
+ * Per-Fediverse-connection composer-extras hook. Wraps the shared
+ * `useVisibilityCwState` with Fediverse-specific concerns: reading
+ * `default_visibility` from the cached connection, the per-submit
+ * `Idempotency-Key` header, and projecting state into the
+ * `FediverseCreatePostParams` wire shape.
  *
  * Mounted by the provider via `ComposerConfig.useProtocolExtras`. The
- * provider calls `clear()` when the modal closes so state resets between
- * sessions.
+ * provider calls `clear()` when the modal closes so state resets
+ * between sessions.
  */
 export function useFediverseComposerExtras( ctx: {
 	mode: ActiveMode | null;
@@ -96,31 +75,22 @@ export function useFediverseComposerExtras( ctx: {
 		} );
 	}
 	const connection = data?.connections?.find( ( c ) => c.id === connectionId ) ?? null;
-	const blogDefault = connection?.default_visibility ?? 'public';
+	const blogDefault: FediverseVisibility = connection?.default_visibility ?? 'public';
 
-	const [ visibility, setVisibility ] = useState< FediverseVisibility >( blogDefault );
-	const [ cwEnabled, setCwEnabled ] = useState( false );
-	const [ summary, setSummary ] = useState( '' );
-
-	// Apply localStorage override / blog default once the modal opens. Re-runs
-	// when the connection changes (the user navigates between connections
-	// without closing the modal — rare but supported).
-	useEffect( () => {
-		if ( ! mode ) {
-			return;
-		}
-		const stored = readLastVisibility( connectionId );
-		setVisibility( stored ?? blogDefault );
-	}, [ mode, connectionId, blogDefault ] );
+	const { visibility, setVisibility, cwEnabled, setCwEnabled, summary, setSummary, clear } =
+		useVisibilityCwState< FediverseVisibility >( {
+			mode,
+			connectionId,
+			defaultVisibility: blogDefault,
+			isValidVisibility: isFediverseVisibility,
+			storageKey: storageKeyForConnection,
+		} );
 
 	const renderControls = useCallback(
 		() => (
 			<FediverseComposerControls
 				visibility={ visibility }
-				onVisibilityChange={ ( next ) => {
-					setVisibility( next );
-					writeLastVisibility( connectionId, next );
-				} }
+				onVisibilityChange={ setVisibility }
 				cwEnabled={ cwEnabled }
 				onCwToggle={ ( enabled ) => {
 					setCwEnabled( enabled );
@@ -132,7 +102,7 @@ export function useFediverseComposerExtras( ctx: {
 				onSummaryChange={ setSummary }
 			/>
 		),
-		[ visibility, cwEnabled, summary, connectionId ]
+		[ visibility, setVisibility, cwEnabled, setCwEnabled, summary, setSummary ]
 	);
 
 	const extendBuildParams = useCallback(
@@ -157,12 +127,6 @@ export function useFediverseComposerExtras( ctx: {
 		},
 		[ visibility, cwEnabled, summary ]
 	);
-
-	const clear = useCallback( () => {
-		setVisibility( blogDefault );
-		setCwEnabled( false );
-		setSummary( '' );
-	}, [ blogDefault ] );
 
 	return { renderControls, extendBuildParams, clear };
 }

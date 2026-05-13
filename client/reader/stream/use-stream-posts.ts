@@ -1,5 +1,10 @@
-import { fetchReadStream, getStreamType } from '@automattic/api-queries';
-import { infiniteQueryOptions, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import {
+	getStreamType,
+	readStreamInfiniteQuery,
+	type PageHandle,
+	type ReadStreamInfiniteQueryHelpers,
+} from '@automattic/api-queries';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'calypso/state';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
@@ -9,7 +14,20 @@ import { combineXPosts } from 'calypso/state/reader/streams/utils';
 import { normalizeStreamPage } from './stream-normalization';
 import type { ReadStreamQueryParams, ReadStreamResponse } from '@automattic/api-core';
 
-export type PageHandle = { page_handle: string } | { offset: number } | { before: string } | null;
+// Re-export cache-key helpers so existing callers (stream/index, the
+// selection hook, the pending-posts poller) keep their `./use-stream-posts`
+// import paths. The actual definitions live in `@automattic/api-queries`.
+export {
+	getStreamInfiniteQueryKey,
+	getStreamInfiniteQueryKeyPrefix,
+	parseStreamInfiniteQueryKey,
+} from '@automattic/api-queries';
+export type {
+	PageHandle,
+	StreamIdentity,
+	StreamInfiniteQueryKey,
+	StreamInfiniteQueryKeyPrefix,
+} from '@automattic/api-queries';
 
 export interface PostKey {
 	blogId?: number | string;
@@ -42,37 +60,6 @@ export interface UseStreamPostsResult {
 	 * (e.g., the user navigates away and back) it refetches because it's stale.
 	 */
 	invalidate: () => void;
-}
-
-interface StreamIdentity {
-	streamKey: string;
-	feedId: number | null;
-	localeSlug: string | null;
-	startDate: string | null;
-}
-
-export type StreamInfiniteQueryKey = readonly [
-	'read',
-	'stream',
-	'infinite',
-	string,
-	number | null,
-	string | null,
-	string | null,
-];
-
-/**
- * Single source of truth for the `useInfiniteQuery` cache key. Exported so
- * sibling hooks (e.g. `useStreamPendingPosts`) can read or mutate the same
- * cache via `setQueryData` without re-deriving the tuple shape.
- */
-export function getStreamInfiniteQueryKey( {
-	streamKey,
-	feedId,
-	localeSlug,
-	startDate,
-}: StreamIdentity ): StreamInfiniteQueryKey {
-	return [ 'read', 'stream', 'infinite', streamKey, feedId, localeSlug, startDate ] as const;
 }
 
 interface UseStreamPostsOptions {
@@ -109,6 +96,7 @@ export function useStreamPosts( {
 	const resolvedStreamKey = streamKey ?? '';
 	const streamType = resolvedStreamKey ? getStreamType( resolvedStreamKey ) : '';
 	const enabled = ( options?.enabled ?? true ) && !! streamKey;
+
 	const buildPageParams = useCallback(
 		( pageHandle: PageHandle ): ReadStreamQueryParams =>
 			buildStreamQueryParams( {
@@ -124,63 +112,46 @@ export function useStreamPosts( {
 		[ resolvedStreamKey, feedId, localeSlug ]
 	);
 
+	const getNextPageHandle = useCallback< ReadStreamInfiniteQueryHelpers[ 'getNextPageHandle' ] >(
+		( lastPage, lastPageParam ) => {
+			// Stop paginating once a page comes back empty even if the API
+			// still returns a `next_page` cursor — conversations (and a few
+			// other endpoints) keep echoing a cursor past the end of the
+			// stream, which would otherwise loop the same page forever.
+			// Mirrors the legacy `lastPage` reducer:
+			// `streamItems.length === 0 || ! pageHandle`.
+			const { streamItems } = normalizeStreamPage( lastPage, streamType );
+			if ( streamItems.length === 0 ) {
+				return undefined;
+			}
+			// `extractPageHandle` only consults `payload.pageHandle.offset` for
+			// the recommendations family; for cursor / date streams the rest of
+			// the union is harmless extra fields.
+			const action = {
+				payload: {
+					pageHandle: ( lastPageParam ?? undefined ) as { offset?: number } | undefined,
+				},
+			};
+			return extractPageHandle( streamType, action, lastPage ) ?? undefined;
+		},
+		[ streamType ]
+	);
+
 	const queryOptions = useMemo(
 		() =>
-			infiniteQueryOptions<
-				ReadStreamResponse,
-				Error,
-				{ pageParams: PageHandle[]; pages: ReadStreamResponse[] },
-				StreamInfiniteQueryKey,
-				PageHandle
-			>( {
-				queryKey: getStreamInfiniteQueryKey( {
-					streamKey: resolvedStreamKey,
-					feedId,
-					localeSlug,
-					startDate,
-				} ),
-				queryFn: ( { pageParam } ) =>
-					fetchReadStream( resolvedStreamKey, buildPageParams( pageParam ) ),
-				initialPageParam: startDate ? { before: startDate } : null,
-				enabled,
-				getNextPageParam: ( lastPage, _allPages, lastPageParam ) => {
-					// Stop paginating once a page comes back empty even if the API
-					// still returns a `next_page` cursor — conversations (and a few
-					// other endpoints) keep echoing a cursor past the end of the
-					// stream, which would otherwise loop the same page forever.
-					// Mirrors the legacy `lastPage` reducer:
-					// `streamItems.length === 0 || ! pageHandle`.
-					const { streamItems } = normalizeStreamPage( lastPage, streamType );
-					if ( streamItems.length === 0 ) {
-						return undefined;
-					}
-					// `extractPageHandle` only consults `payload.pageHandle.offset` for
-					// the recommendations family; for cursor / date streams the rest of
-					// the union is harmless extra fields.
-					const action = {
-						payload: {
-							pageHandle: ( lastPageParam ?? undefined ) as { offset?: number } | undefined,
-						},
-					};
-					return extractPageHandle( streamType, action, lastPage ) ?? undefined;
-				},
-				// Cache is treated as "fresh" for 5 minutes: within that window
-				// `useInfiniteQuery` serves data straight from cache and never
-				// touches the network — long enough that quick back-and-forth
-				// navigation inside the Reader is instant, short enough that newly
-				// liked posts surface on the next deliberate visit. After 5
-				// minutes the cache is still rendered immediately; a refetch
-				// happens silently in the background and the screen swaps in
-				// the fresh data when it lands.
-				staleTime: 5 * 60 * 1000,
-				// `meta.persist` is omitted so Calypso's persistence layer (see
-				// client/state/query-client.ts + should-dehydrate-query.ts) writes
-				// pages to localStorage. After a page reload, the very first paint
-				// rehydrates already-fetched streams from storage instead of
-				// showing a skeleton.
-				refetchOnWindowFocus: false,
-			} ),
-		[ resolvedStreamKey, feedId, localeSlug, startDate, enabled, streamType, buildPageParams ]
+			readStreamInfiniteQuery(
+				{ streamKey: resolvedStreamKey, feedId, localeSlug, startDate, enabled },
+				{ buildPageParams, getNextPageHandle }
+			),
+		[
+			resolvedStreamKey,
+			feedId,
+			localeSlug,
+			startDate,
+			enabled,
+			buildPageParams,
+			getNextPageHandle,
+		]
 	);
 
 	const query = useInfiniteQuery( queryOptions );
@@ -191,7 +162,7 @@ export function useStreamPosts( {
 			return;
 		}
 		for ( let i = 0; i < pages.length; i++ ) {
-			const { streamPosts } = normalizeStreamPage( pages[ i ], streamType );
+			const { streamPosts } = normalizeStreamPage( pages[ i ] as ReadStreamResponse, streamType );
 			if ( streamPosts.length > 0 ) {
 				dispatch( receivePosts( streamPosts ) );
 			}
@@ -202,7 +173,7 @@ export function useStreamPosts( {
 		const pages = query.data?.pages ?? [];
 		const collected: PostKey[] = [];
 		for ( const page of pages ) {
-			const { streamItems } = normalizeStreamPage( page, streamType );
+			const { streamItems } = normalizeStreamPage( page as ReadStreamResponse, streamType );
 			for ( const item of streamItems ) {
 				collected.push( item );
 			}

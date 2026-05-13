@@ -49,7 +49,7 @@ export interface SocialAccountListProps< T > {
 	header?: SocialAccountListHeader;
 }
 
-function AccountListHeader( {
+export function SocialAccountListHeader( {
 	displayName,
 	handle,
 	count,
@@ -108,7 +108,7 @@ export function SocialAccountList< T >( props: SocialAccountListProps< T > ) {
 
 	return (
 		<>
-			{ props.header && <AccountListHeader { ...props.header } /> }
+			{ props.header && <SocialAccountListHeader { ...props.header } /> }
 			<SocialFeedList< T >
 				items={ items }
 				isPending={ props.query.isPending }

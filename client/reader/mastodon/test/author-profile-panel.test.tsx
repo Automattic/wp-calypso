@@ -521,7 +521,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 				},
 			] );
 			expect( await screen.findByRole( 'button', { name: /^Follow$/ } ) ).toBeVisible();
-			expect( removeSpy ).toHaveBeenCalledWith( 'mastodon-follow-error' );
+			expect( removeSpy ).toHaveBeenCalledWith( 'mastodon-follow-error-7-108020' );
 		} );
 
 		it( 'cancels a pending follow request and emits was_requested: true when clicking Cancel', async () => {
@@ -615,7 +615,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			// `type` discriminator carries the `unfollow` action.
 			expect( noticeSpy ).toHaveBeenCalledWith(
 				expect.anything(),
-				expect.objectContaining( { id: 'mastodon-follow-error' } )
+				expect.objectContaining( { id: 'mastodon-follow-error-7-108020' } )
 			);
 			expect( logstash.logToLogstash ).toHaveBeenCalledWith(
 				expect.objectContaining( {
@@ -659,7 +659,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			await waitFor( () =>
 				expect( noticeSpy ).toHaveBeenCalledWith(
 					'Couldn’t unfollow this account.',
-					expect.objectContaining( { id: 'mastodon-follow-error' } )
+					expect.objectContaining( { id: 'mastodon-follow-error-7-108020' } )
 				)
 			);
 		} );
@@ -710,7 +710,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			);
 			expect( noticeSpy ).toHaveBeenCalledWith(
 				expect.anything(),
-				expect.objectContaining( { id: 'mastodon-follow-error' } )
+				expect.objectContaining( { id: 'mastodon-follow-error-7-108020' } )
 			);
 			// Pipeline-level log so failures stay observable in dashboards
 			// even when no Tracks dashboard is consulted.
@@ -759,7 +759,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			await waitFor( () =>
 				expect( noticeSpy ).toHaveBeenCalledWith(
 					'Couldn’t follow this account.',
-					expect.objectContaining( { id: 'mastodon-follow-error' } )
+					expect.objectContaining( { id: 'mastodon-follow-error-7-108020' } )
 				)
 			);
 		} );
@@ -778,7 +778,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 				);
 			stubFeed();
 			// First click 502s; second click succeeds — the success path
-			// should fire `removeNotice('mastodon-follow-error')` so the
+			// should fire `removeNotice('mastodon-follow-error-7-108020')` so the
 			// stale error toast doesn't outlive the retry.
 			nock( BASE )
 				.post( '/wpcom/v2/reader/mastodon/connections/7/follows', { account_id: '108020' } )
@@ -802,7 +802,9 @@ describe( 'MastodonAuthorProfilePanel', () => {
 			await screen.findByRole( 'button', { name: /^Follow$/ } );
 			await user.click( screen.getByRole( 'button', { name: /^Follow$/ } ) );
 
-			await waitFor( () => expect( removeSpy ).toHaveBeenCalledWith( 'mastodon-follow-error' ) );
+			await waitFor( () =>
+				expect( removeSpy ).toHaveBeenCalledWith( 'mastodon-follow-error-7-108020' )
+			);
 		} );
 	} );
 } );

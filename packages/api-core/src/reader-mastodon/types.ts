@@ -162,6 +162,22 @@ export interface MastodonAuthorProfile {
 	note: string;
 	counts: MastodonProfileCounts;
 	locked: boolean;
+	/**
+	 * Web URL of the actor's profile on their home instance, e.g.
+	 * `https://social.growyourown.services/@FediTips`. Used by the
+	 * followers / following surfaces to link out to the source-of-truth
+	 * list (the home-instance API only returns the locally-known subset).
+	 * Optional: older backend revisions don't emit it.
+	 */
+	url?: string | null;
+	/**
+	 * `true` when the actor has opted to hide their followers / following
+	 * collections. Absent on backends that haven't deployed the flag yet —
+	 * consumers must treat `undefined` as `false` (visible) rather than as
+	 * "hidden", so a missing field on an older backend doesn't black out
+	 * the tabs.
+	 */
+	hide_collections?: boolean;
 	raw: Record< string, unknown >;
 	/**
 	 * Relationship state from the connected account's perspective. Absent
@@ -255,6 +271,20 @@ export interface MastodonInstanceConfig {
 }
 
 /**
+ * Visibility levels the composer can stamp on a new Mastodon post. The
+ * upstream API also accepts `'direct'` for DM-style posts, but that's
+ * intentionally omitted from the in-Reader composer (parity with the
+ * Fediverse composer's scope — CM-704). Re-introduce when the per-
+ * recipient direct surface lands.
+ *
+ * Wire value `'private'` is what Mastodon labels "Followers only" in the
+ * upstream UI; the visible label in the composer matches that wording
+ * (and the wp-admin ActivityPub plugin), but the wire key stays
+ * `'private'` per the Mastodon API contract.
+ */
+export type MastodonVisibility = 'public' | 'unlisted' | 'private';
+
+/**
  * Wire-pure shape passed to `createMastodonPost`. Every field here lands
  * in the request body (or the path, in `connectionId`'s case). Do not
  * widen this type with client-only metadata — see
@@ -278,6 +308,22 @@ export interface MastodonCreatePostParams {
 	// Slice 8a: optional media attachments + sensitive flag.
 	media_ids?: string[];
 	sensitive?: boolean;
+	/**
+	 * Per-post visibility. Optional — the upstream defaults to the user's
+	 * account-level default when omitted. The composer always supplies a
+	 * value via `extendBuildParams` (per-connection localStorage pick
+	 * falling back to `'public'`; the connection detail shape doesn't
+	 * currently surface the user's account default, so the bare `'public'`
+	 * floor is the only fallback).
+	 */
+	visibility?: MastodonVisibility;
+	/**
+	 * Content-warning summary, ≤ instance-configured limit (treated as 100
+	 * chars in the composer UI for parity with the Mastodon web client).
+	 * Maps to the upstream `spoiler_text` body field; omitted from the
+	 * wire when empty.
+	 */
+	spoiler_text?: string;
 }
 
 /**

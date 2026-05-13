@@ -17,4 +17,13 @@
 		justify-content: center;
 		margin-top: 50px;
 	}
+
+	.main:not(.is-wide-layout).user-profile__achievements-view {
+		max-width: 1280px;
+	}
+
+	.user-profile__narrow {
+		max-width: 720px;
+		margin-inline: auto;
+	}
 }

@@ -2,6 +2,7 @@ import { createMastodonPostMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl } from './route';
+import { useMastodonComposerExtras } from './use-mastodon-composer-extras';
 import { useMastodonComposerLimit } from './use-mastodon-composer-limit';
 import { useMastodonComposerMedia } from './use-mastodon-composer-media';
 import type {
@@ -178,6 +179,7 @@ export const mastodonComposerConfig: ComposerConfig<
 		} );
 	},
 	useMedia: useMastodonComposerMedia,
+	useProtocolExtras: useMastodonComposerExtras,
 };
 
 function titleForMode( mode: ActiveMode, t: Translate ): string {

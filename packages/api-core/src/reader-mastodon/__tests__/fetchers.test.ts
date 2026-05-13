@@ -649,6 +649,45 @@ describe( 'createMastodonPost', () => {
 		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( { status: 'plain' } );
 		post.mockRestore();
 	} );
+
+	it( 'forwards `visibility` and `spoiler_text` when supplied (CM-710)', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'u',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( {
+			connectionId: 5,
+			status: 'hi',
+			visibility: 'private',
+			spoiler_text: 'spoilers',
+		} );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( {
+			status: 'hi',
+			visibility: 'private',
+			spoiler_text: 'spoilers',
+		} );
+		post.mockRestore();
+	} );
+
+	it( 'omits `spoiler_text` when an empty string is supplied', async () => {
+		const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			id: '1',
+			url: 'u',
+			in_reply_to_id: null,
+		} );
+		await createMastodonPost( {
+			connectionId: 5,
+			status: 'hi',
+			visibility: 'public',
+			spoiler_text: '',
+		} );
+		expect( post.mock.calls[ 0 ][ 0 ].body ).toEqual( {
+			status: 'hi',
+			visibility: 'public',
+		} );
+		post.mockRestore();
+	} );
 } );
 
 describe( 'uploadMastodonMedia', () => {
@@ -953,5 +992,38 @@ describe( 'getMastodonNotifications', () => {
 		await expect( getMastodonNotifications( { connectionId: 101 } ) ).rejects.toMatchObject( {
 			kind: 'auth_required',
 		} );
+	} );
+
+	it( 'getMastodonNotifications forwards types when provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( { types: 'like,repost' } )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( {
+			connectionId: 101,
+			types: 'like,repost',
+		} );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getMastodonNotifications omits types when not provided', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( { connectionId: 101 } );
+		expect( res.items ).toEqual( [] );
+	} );
+
+	it( 'getMastodonNotifications omits types when empty string', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/reader/mastodon/connections/101/notifications' )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+
+		const res = await getMastodonNotifications( { connectionId: 101, types: '' } );
+		expect( res.items ).toEqual( [] );
 	} );
 } );

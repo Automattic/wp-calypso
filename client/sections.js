@@ -901,7 +901,9 @@ const sections = [
 		paths: [
 			'/resources-and-tools',
 			'/resources-and-tools/learn',
+			'/resources-and-tools/agent-studio',
 			'/resources-and-tools/dev-tools',
+			'/resources-and-tools/benchmarks',
 		],
 		module: 'calypso/a8c-for-agencies/sections/learn',
 		group: 'a8c-for-agencies',
