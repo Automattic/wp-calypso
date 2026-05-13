@@ -1,4 +1,4 @@
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart, useShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -14,15 +14,17 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
-	// The siteless cart keys used by signup steps before a site exists.
-	// /start/domain/domain-only adds the domain to 'no-site' (logged-in) or
-	// 'no-user' (logged-out); if the user then picks "New site" the checkout
-	// runs against the freshly-created site's cart and the original siteless
-	// cart goes untouched. Emptying the cart from checkout has to clear those
-	// too, or the leftover items reappear when the user is redirected back to
-	// the signup origin via `skippedCheckout=1`.
-	const { replaceProductsInCart: replaceProductsInNoSiteCart } = useShoppingCart( 'no-site' );
-	const { replaceProductsInCart: replaceProductsInNoUserCart } = useShoppingCart( 'no-user' );
+	// Used to lazily clear the siteless 'no-site'/'no-user' carts used by
+	// signup steps before a site exists. /start/domain/domain-only adds the
+	// domain to 'no-site' (logged-in) or 'no-user' (logged-out); if the user
+	// then picks "New site" the checkout runs against the freshly-created
+	// site's cart and the original siteless cart goes untouched. Emptying the
+	// cart from checkout has to clear those too, or the leftover items
+	// reappear when the user is redirected back to the signup origin via
+	// `skippedCheckout=1`. We access these via the manager client rather than
+	// `useShoppingCart()` to avoid eagerly fetching both siteless carts on
+	// every checkout page load.
+	const cartManagerClient = useShoppingCartManagerClient();
 	const previousPath = useSelector( getPreviousRoute );
 
 	const closeAndLeave = ( options?: {
@@ -68,16 +70,23 @@ export const useCheckoutLeaveModal = ( { siteUrl }: { siteUrl: string } ) => {
 		// the user lands back on the signup step.
 		const clearPromises: Promise< unknown >[] = [ replaceProductsInCart( [] ) ];
 		if ( cartKey !== 'no-site' ) {
-			clearPromises.push( replaceProductsInNoSiteCart( [] ) );
+			clearPromises.push(
+				cartManagerClient.forCartKey( 'no-site' ).actions.replaceProductsInCart( [] )
+			);
 		}
 		if ( cartKey !== 'no-user' ) {
-			clearPromises.push( replaceProductsInNoUserCart( [] ) );
+			clearPromises.push(
+				cartManagerClient.forCartKey( 'no-user' ).actions.replaceProductsInCart( [] )
+			);
 		}
 		try {
 			await Promise.all( clearPromises );
-		} catch {
+		} catch ( err ) {
 			// Leave checkout even if a cart-clear fails so the user is never
-			// trapped on the modal.
+			// trapped on the modal, but record the failure so it isn't silent.
+			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_clear_failed', {
+				error: err instanceof Error ? err.message : String( err ),
+			} );
 		}
 		closeAndLeave( {
 			userHasClearedCart: true,
