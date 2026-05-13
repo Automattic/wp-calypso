@@ -196,6 +196,97 @@ export default myFlow;
 | `BLUEPRINT` | `blueprint` | Blueprint template selection |
 | `READYMADE_TEMPLATE_GENERATE_CONTENT` | `generateContent` | Generate content from template |
 
+## Step customization — what the flow can change without touching step code
+
+### How it works
+
+A flow can pass custom props to any step via `useStepsProps()`. The TypeScript type system
+enforces which props each step accepts — you cannot pass props a step doesn't declare.
+
+```ts
+const myFlow: FlowV2< typeof initialize > = {
+    // ...
+    useStepsProps() {
+        return {
+            [ STEPS.UNIFIED_PLANS.slug ]: {
+                displayedIntervals: [ 'yearly', '2yearly' ],
+                isInSignup: true,
+            },
+        };
+    },
+};
+```
+
+### Steps that accept customization props today
+
+Most steps expose **no** flow-level props. Only `STEPS.UNIFIED_PLANS` has an `accepts:`
+type defined. Every other step listed here has none — changes require Engineering.
+
+#### `STEPS.UNIFIED_PLANS` (slug: `'plans'`)
+
+| Prop | Type | What it does |
+|---|---|---|
+| `isInSignup` | `boolean` | `true` = signup pricing (free plan shown); `false` = upgrade pricing |
+| `isStepperUpgradeFlow` | `boolean` | Enables upgrade-specific behavior in PlansFeaturesMain |
+| `selectedFeature` | `string` | Highlights a plan that includes this feature slug |
+| `displayedIntervals` | `('monthly'\|'yearly'\|'2yearly'\|'3yearly')[]` | Restricts which billing cycles are shown |
+| `wrapperProps.hideBack` | `boolean` | Hides the back button |
+| `wrapperProps.goBack` | `() => void` | Custom back button handler |
+
+Note: `hideFreePlan` and `headerText` exist on the underlying component but are **not**
+exposed via `accepts` — they cannot be set from the flow without an Engineering PR.
+
+### Store-based customizations (set in `initialize()`)
+
+These affect step appearance without requiring `accepts:` props on the step.
+Call them via `dispatch( ONBOARD_STORE )` inside `initialize()`.
+
+| Call | Effect |
+|---|---|
+| `setHidePlansFeatureComparison( true )` | Hides the plan feature comparison table in `STEPS.UNIFIED_PLANS` |
+| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps (site-options, etc.) |
+| `setIntent( Onboard.SiteIntent.Build )` | Generic "build a site" intent |
+| `setIntent( Onboard.SiteIntent.Sell )` | Store intent — changes site-options labels |
+| `setIntent( Onboard.SiteIntent.Write )` | Blog intent |
+| `clearSignupDestinationCookie()` | Ensures a fresh signup start (no redirect leftovers) |
+
+```ts
+// Example: newsletter-style flow with plan comparison hidden
+import { Onboard, OnboardActions } from '@automattic/data-stores';
+import { dispatch } from '@wordpress/data';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { ONBOARD_STORE } from '../../../stores';
+
+function initialize() {
+    const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
+    setHidePlansFeatureComparison( true );
+    setIntent( Onboard.SiteIntent.Newsletter );
+    clearSignupDestinationCookie();
+
+    return stepsWithRequiredLogin( [
+        STEPS.NEWSLETTER_SETUP,
+        STEPS.DOMAIN_SEARCH,
+        STEPS.UNIFIED_PLANS,
+        STEPS.PROCESSING,
+        STEPS.LAUNCHPAD,
+        STEPS.ERROR,
+    ] );
+}
+```
+
+### What requires an Engineering PR
+
+To add customisation props (copy, hidden options, etc.) to a step that doesn't have
+them yet, a dev must:
+
+1. Open the step component file in `steps-repository/<step-name>/index.tsx`.
+2. Change `Step< { submits: ... } >` to `Step< { submits: ..., accepts: { myProp?: string } } >`.
+3. Use the prop inside the component.
+4. TypeScript then automatically surfaces `myProp` in `useStepsProps()` return type.
+
+When you need a prop that doesn't exist yet, file a request with the step name, the
+prop name, its type, and what it should do.
+
 ## Authentication
 
 Wrap steps that require a logged-in user with `stepsWithRequiredLogin()`. Stepper
