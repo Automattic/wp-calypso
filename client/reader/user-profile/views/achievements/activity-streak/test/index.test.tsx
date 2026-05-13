@@ -2,18 +2,30 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { ActivityStreak } from '../index';
 import type { EngagementStreak } from '@automattic/api-core';
+
+// 2026-05-13 is "today" per the global currentDate in this workspace.
+const TODAY = '2026-05-13';
+const YESTERDAY = '2026-05-12';
 
 const baseStreak: EngagementStreak = {
 	current_streak: 12,
 	longest_streak: 28,
-	freezes_available: 1,
+	freezes_available: 0,
 	freeze_used_date: null,
-	next_freeze_in_days: 5,
-	last_streak_date: '2026-05-13',
+	next_freeze_in_days: 0,
+	last_streak_date: TODAY,
 };
+
+function getBadgeLabel(): string {
+	return document.querySelector( '.streak-badge__label' )?.textContent ?? '';
+}
+
+function getBadgeStateClass(): string | undefined {
+	const badge = document.querySelector( '.streak-badge' );
+	return Array.from( badge?.classList ?? [] ).find( ( cls ) => cls.startsWith( 'is-' ) );
+}
 
 describe( 'ActivityStreak', () => {
 	test( 'renders nothing when streak is undefined', () => {
@@ -24,203 +36,183 @@ describe( 'ActivityStreak', () => {
 	test( 'renders nothing when current_streak is 0 and not own profile', () => {
 		const { container } = render(
 			<ActivityStreak
-				streak={ { ...baseStreak, current_streak: 0, longest_streak: 4 } }
+				streak={ {
+					...baseStreak,
+					current_streak: 0,
+					longest_streak: 0,
+					last_streak_date: null,
+				} }
 				isOwnProfile={ false }
 			/>
 		);
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	test( 'renders the active two-line pill with headline and sub-line when current_streak > 0', () => {
+	test( 'always renders the "Activity Streak" title in active states', () => {
 		render( <ActivityStreak streak={ baseStreak } isOwnProfile /> );
-
-		const group = screen.getByRole( 'group', { name: 'Activity streak' } );
-		expect( group ).toBeVisible();
-		expect( group ).toHaveTextContent( '12-day activity streak' );
-		expect( group ).toHaveTextContent( 'Longest 28' );
+		expect( screen.getByText( 'Activity Streak' ) ).toBeVisible();
 	} );
 
-	test( 'renders the StreakBadge with the current streak count', () => {
-		render( <ActivityStreak streak={ baseStreak } isOwnProfile /> );
+	describe( 'never-started (current=0, longest=0, own profile)', () => {
+		const streak: EngagementStreak = {
+			...baseStreak,
+			current_streak: 0,
+			longest_streak: 0,
+			last_streak_date: null,
+		};
 
-		const group = screen.getByRole( 'group', { name: 'Activity streak' } );
-		expect( group.querySelector( '.streak-badge' ) ).toBeInTheDocument();
-		expect( group.querySelector( '.streak-badge__circle' ) ).toHaveTextContent( '12' );
-	} );
-
-	describe( 'freeze chip', () => {
-		test( 'shows "1 freeze available" when freezes_available is 1', () => {
-			render( <ActivityStreak streak={ { ...baseStreak, freezes_available: 1 } } isOwnProfile /> );
-			expect( screen.getByText( /1 freeze available/ ) ).toBeVisible();
+		test( 'renders the start-today description', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( screen.getByText( /Start your activity streak today/ ) ).toBeVisible();
 		} );
 
-		test( 'pluralizes "freezes available" for freezes_available > 1', () => {
+		test( 'badge is inactive with no label', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( getBadgeStateClass() ).toBe( 'is-inactive' );
+			expect( getBadgeLabel() ).toBe( '' );
+		} );
+	} );
+
+	describe( 'lost (current=0, longest>0, own profile)', () => {
+		const streak: EngagementStreak = {
+			...baseStreak,
+			current_streak: 0,
+			longest_streak: 4,
+			last_streak_date: '2026-05-01',
+		};
+
+		test( 'renders the restart description', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( screen.getByText( /Restart your activity streak today/ ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'pending (current>0, not engaged today, no freeze used yesterday)', () => {
+		const streak: EngagementStreak = {
+			...baseStreak,
+			current_streak: 5,
+			longest_streak: 5,
+			last_streak_date: '2026-05-10',
+		};
+
+		test( 'renders the build-your-streak description', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect(
+				screen.getByText( 'Like, comment, follow, or post every day to build your streak.' )
+			).toBeVisible();
+		} );
+
+		test( 'badge is inactive with no label', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( getBadgeStateClass() ).toBe( 'is-inactive' );
+			expect( getBadgeLabel() ).toBe( '' );
+		} );
+	} );
+
+	describe( 'pending-frozen (current>0, not engaged today, freeze used yesterday)', () => {
+		const streak: EngagementStreak = {
+			...baseStreak,
+			current_streak: 5,
+			longest_streak: 5,
+			last_streak_date: '2026-05-11',
+			freeze_used_date: YESTERDAY,
+		};
+
+		test( 'renders the freeze-protected description', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( screen.getByText( /A streak freeze protected your streak yesterday/ ) ).toBeVisible();
+		} );
+
+		test( 'badge label is "Streak frozen"', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( getBadgeLabel() ).toBe( 'Streak frozen' );
+		} );
+	} );
+
+	describe( 'engaged (current>0, engaged today, not record)', () => {
+		const streak: EngagementStreak = {
+			...baseStreak,
+			current_streak: 12,
+			longest_streak: 28,
+			last_streak_date: TODAY,
+		};
+
+		test( 'renders the keep-building description', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect(
+				screen.getByText( 'Like, comment, follow, or post every day to keep building your streak.' )
+			).toBeVisible();
+		} );
+
+		test( 'badge state is active with the streak label', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( getBadgeStateClass() ).toBe( 'is-active' );
+			expect( getBadgeLabel() ).toBe( 'You’re on a streak!' );
+		} );
+	} );
+
+	describe( 'engaged-record (current>0, engaged today, longest on record ≥ 10)', () => {
+		const streak: EngagementStreak = {
+			...baseStreak,
+			current_streak: 14,
+			longest_streak: 14,
+			last_streak_date: TODAY,
+		};
+
+		test( 'renders the congrats description with the day count', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect(
+				screen.getByText( /Congrats on using WordPress\.com for 14 days in a row/ )
+			).toBeVisible();
+		} );
+
+		test( 'badge state is longest-active with the on-fire label', () => {
+			render( <ActivityStreak streak={ streak } isOwnProfile /> );
+			expect( getBadgeStateClass() ).toBe( 'is-longest-active' );
+			expect( getBadgeLabel() ).toBe( 'You’re on fire!' );
+		} );
+	} );
+
+	describe( 'variation', () => {
+		test( 'shows "N streak freezes available" when freezes are banked', () => {
 			render( <ActivityStreak streak={ { ...baseStreak, freezes_available: 2 } } isOwnProfile /> );
-			expect( screen.getByText( /2 freezes available/ ) ).toBeVisible();
+			expect( screen.getByText( '2 streak freezes available.' ) ).toBeVisible();
 		} );
 
-		test( 'shows "freeze used <relative>" when freeze_used_date is set and in cooldown', () => {
-			jest.useFakeTimers().setSystemTime( new Date( '2026-05-11T12:00:00Z' ) );
+		test( 'pluralizes "streak freeze available" for 1', () => {
+			render( <ActivityStreak streak={ { ...baseStreak, freezes_available: 1 } } isOwnProfile /> );
+			expect( screen.getByText( '1 streak freeze available.' ) ).toBeVisible();
+		} );
+
+		test( 'shows recharging copy when no freezes banked and recharging', () => {
 			render(
 				<ActivityStreak
 					streak={ {
 						...baseStreak,
 						freezes_available: 0,
-						freeze_used_date: '2026-05-10T08:00:00Z',
-						next_freeze_in_days: 6,
+						next_freeze_in_days: 3,
 					} }
 					isOwnProfile
 				/>
 			);
-			expect( screen.getByText( /freeze used .+ago|freeze used yesterday/i ) ).toBeVisible();
-			jest.useRealTimers();
+			expect( screen.getByText( 'Streak freeze available in 3 days.' ) ).toBeVisible();
 		} );
 
-		test( 'shows "next freeze in N days" when no freeze banked and none recently used', () => {
+		test( 'renders nothing when streak is 0', () => {
 			render(
 				<ActivityStreak
 					streak={ {
 						...baseStreak,
+						current_streak: 0,
+						longest_streak: 0,
 						freezes_available: 0,
-						freeze_used_date: null,
-						next_freeze_in_days: 4,
-					} }
-					isOwnProfile
-				/>
-			);
-			expect( screen.getByText( /next freeze in 4 days/i ) ).toBeVisible();
-		} );
-
-		test( 'pluralizes "next freeze in 1 day" (singular)', () => {
-			render(
-				<ActivityStreak
-					streak={ {
-						...baseStreak,
-						freezes_available: 0,
-						freeze_used_date: null,
-						next_freeze_in_days: 1,
-					} }
-					isOwnProfile
-				/>
-			);
-			expect( screen.getByText( /next freeze in 1 day(?!s)/i ) ).toBeVisible();
-		} );
-	} );
-
-	test( 'renders the coaching CTA when current_streak is 0 and own profile', () => {
-		render(
-			<ActivityStreak
-				streak={ { ...baseStreak, current_streak: 0, longest_streak: 0 } }
-				isOwnProfile
-			/>
-		);
-		const group = screen.getByRole( 'group', { name: 'Activity streak' } );
-		expect( group ).toBeVisible();
-		expect( group ).toHaveTextContent( 'Start your activity streak today' );
-		expect( group ).toHaveTextContent( 'Like, comment, follow, or post — anything counts.' );
-	} );
-
-	test( 'omits the "Longest" segment when longest_streak equals current_streak', () => {
-		render(
-			<ActivityStreak
-				streak={ { ...baseStreak, current_streak: 5, longest_streak: 5 } }
-				isOwnProfile
-			/>
-		);
-		const group = screen.getByRole( 'group', { name: 'Activity streak' } );
-		expect( group ).toBeVisible();
-		expect( group ).toHaveTextContent( '5-day activity streak' );
-		expect( screen.queryByText( /Longest 5/ ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'includes the "Longest" segment when longest_streak differs from current_streak', () => {
-		render(
-			<ActivityStreak
-				streak={ { ...baseStreak, current_streak: 5, longest_streak: 28 } }
-				isOwnProfile
-			/>
-		);
-		expect( screen.getByText( /Longest 28/ ) ).toBeVisible();
-	} );
-
-	test( 'emoji glyphs in the active pill are hidden from assistive tech', () => {
-		render( <ActivityStreak streak={ baseStreak } isOwnProfile /> );
-		const emoji = screen.getByText( '🔥' );
-		expect( emoji ).toHaveAttribute( 'aria-hidden', 'true' );
-	} );
-
-	describe( 'tooltip', () => {
-		test( 'active pill is focusable so the tooltip is keyboard-accessible', () => {
-			render( <ActivityStreak streak={ baseStreak } isOwnProfile /> );
-			expect( screen.getByRole( 'group', { name: 'Activity streak' } ) ).toHaveAttribute(
-				'tabindex',
-				'0'
-			);
-		} );
-
-		test( 'coaching CTA is not focusable (no tooltip)', () => {
-			render(
-				<ActivityStreak
-					streak={ { ...baseStreak, current_streak: 0, longest_streak: 0 } }
-					isOwnProfile
-				/>
-			);
-			expect( screen.getByRole( 'group', { name: 'Activity streak' } ) ).not.toHaveAttribute(
-				'tabindex'
-			);
-		} );
-
-		test( 'hovering the active pill reveals streak-day and freeze explainers', async () => {
-			const user = userEvent.setup();
-			render( <ActivityStreak streak={ baseStreak } isOwnProfile /> );
-			await user.hover( screen.getByRole( 'group', { name: 'Activity streak' } ) );
-			expect(
-				await screen.findByText( /Like, comment, follow, or post — anything counts\./i )
-			).toBeVisible();
-			expect(
-				screen.getByText(
-					/A streak freeze automatically protects your streak when you miss a day\./i
-				)
-			).toBeVisible();
-		} );
-
-		test( 'tooltip appends "earn one in N more active days" when next_freeze_in_days > 0', async () => {
-			const user = userEvent.setup();
-			render(
-				<ActivityStreak
-					streak={ {
-						...baseStreak,
-						freezes_available: 0,
-						freeze_used_date: null,
-						next_freeze_in_days: 4,
-					} }
-					isOwnProfile
-				/>
-			);
-			await user.hover( screen.getByRole( 'group', { name: 'Activity streak' } ) );
-			expect(
-				await screen.findByText( /You will earn one in 4 more active days\./i )
-			).toBeVisible();
-		} );
-
-		test( 'tooltip omits the earn-one append when next_freeze_in_days is 0', async () => {
-			const user = userEvent.setup();
-			render(
-				<ActivityStreak
-					streak={ {
-						...baseStreak,
-						freezes_available: 1,
-						freeze_used_date: null,
 						next_freeze_in_days: 0,
+						last_streak_date: null,
 					} }
 					isOwnProfile
 				/>
 			);
-			await user.hover( screen.getByRole( 'group', { name: 'Activity streak' } ) );
-			await screen.findByText(
-				/A streak freeze automatically protects your streak when you miss a day\./i
-			);
-			expect( screen.queryByText( /You will earn one in/i ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /streak freeze/i ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
