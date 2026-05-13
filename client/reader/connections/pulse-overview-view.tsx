@@ -5,7 +5,6 @@ import {
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -148,10 +147,8 @@ function PulseCardItem( { card, onClick }: { card: PulseCard; onClick: () => voi
 
 /**
  * "Pulse" overview surface — a grid of cards, one per connected social
- * account across every protocol. Replaces the bare redirect at
- * /reader/connections when the `reader/pulse-overview` flag is on, so the
- * unified section has a real home page rather than just shovelling users
- * into the first connection's timeline. Each card is a shortcut into its
+ * account across every protocol. The home page for the unified
+ * `/reader/connections` section; each card is a shortcut into its
  * respective timeline.
  */
 export function PulseOverviewView() {
@@ -192,8 +189,7 @@ export function PulseOverviewView() {
 		}
 		return result;
 	}, [ cards ] );
-	const showSpotlight =
-		isEnabled( 'reader/pulse-spotlight' ) && ! isLoading && spotlightConnections.length > 0;
+	const showSpotlight = ! isLoading && spotlightConnections.length > 0;
 
 	const handleCardClick = ( card: PulseCard ) => {
 		dispatch(

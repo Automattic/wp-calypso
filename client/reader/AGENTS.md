@@ -135,7 +135,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/tags`                                           | `client/reader/tags/`                                                     |
 | `/activities/likes`                               | `client/reader/liked-stream/`                                             |
 | `/reader/users/*`                                 | `client/reader/user-profile/`                                             |
-| `/reader/connections`                             | `client/reader/connections/connections-landing-view.tsx` (or `pulse-overview-view.tsx` behind `reader/pulse-overview`) |
+| `/reader/connections`                             | `client/reader/connections/pulse-overview-view.tsx`                       |
 | `/reader/connections/new`                         | `client/reader/connections/connections-new-view.tsx` (unified chooser)    |
 | `/reader/atmosphere`                              | redirects to `/reader/connections`                                        |
 | `/reader/atmosphere/connect`                      | `client/reader/atmosphere/atmosphere-connect-view.tsx`                    |
