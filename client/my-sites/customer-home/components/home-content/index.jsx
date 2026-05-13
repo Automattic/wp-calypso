@@ -1,3 +1,4 @@
+import { recordTracksEvent as __explatRecordExposure } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
@@ -19,6 +20,7 @@ import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layo
 import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
+import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
@@ -59,7 +61,294 @@ const loadTrackResurrections = () =>
 		/* webpackChunkName: "async-load-calypso-lib-analytics-track-resurrections" */ 'calypso/lib/analytics/track-resurrections'
 	);
 
-const HomeContent = ( {
+const HomeContentControl = ( {
+	canUserUseCustomerHome,
+	hasWooCommerceInstalled,
+	isJetpack,
+	isPossibleJetpackConnectionProblem,
+	isRequestingSitePlugins,
+	isSiteLaunching,
+	site,
+	siteId,
+	trackViewSiteAction,
+	trackStudioSyncConnectSite,
+	isSiteWooExpressEcommerceTrial,
+	ssoModuleActive,
+	fetchingJetpackModules,
+	handleVerifyIcannEmail,
+	isAdmin,
+	dashboardOptIn,
+} ) => {
+	const celebrateLaunchModalIsOpen = useSelector( ( state ) =>
+		getIsSiteLaunchCelebrationModalOpen( state, siteId )
+	);
+	const [ launchedSiteId, setLaunchedSiteId ] = useState( null );
+	const queryClient = useQueryClient();
+	const translate = useTranslate();
+	const isP2 = site?.options?.is_wpforteams_site;
+
+	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
+
+	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
+	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
+	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
+	const primaryDomain = customDomains?.find( ( domain ) => domain.isPrimary );
+
+	const {
+		data: domainDiagnosticData,
+		isFetching: isFetchingDomainDiagnostics,
+		refetch: refetchDomainDiagnosticData,
+	} = useDomainDiagnosticsQuery( primaryDomain?.name, {
+		staleTime: 5 * 60 * 1000,
+		gcTime: 5 * 60 * 1000,
+		enabled: primaryDomain !== undefined && primaryDomain.isMappedToAtomicSite,
+	} );
+	const emailDnsDiagnostics = domainDiagnosticData?.email_dns_records;
+	const [ dismissedEmailDnsDiagnostics, setDismissedEmailDnsDiagnostics ] = useState( false );
+
+	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
+
+	useEffect( () => {
+		if ( ! isSiteLaunching && launchedSiteId === siteId ) {
+			queryClient.invalidateQueries( { queryKey: getCacheKey( siteId ) } );
+			setLaunchedSiteId( null );
+		}
+	}, [ isSiteLaunching, launchedSiteId, queryClient, siteId ] );
+
+	useEffect( () => {
+		if ( isSiteLaunching ) {
+			setLaunchedSiteId( siteId );
+		}
+	}, [ isSiteLaunching, siteId ] );
+
+	useEffect( () => {
+		if ( emailDnsDiagnostics?.dismissed_email_dns_issues_notice ) {
+			setDismissedEmailDnsDiagnostics( true );
+		}
+	}, [ emailDnsDiagnostics ] );
+
+	useEffect( () => {
+		const queryArgs = getQueryArgs();
+		const studioSiteId = queryArgs.studioSiteId;
+		const autoOpenPush = queryArgs.autoOpenPush === 'true';
+
+		if ( ! studioSiteId ) {
+			return;
+		}
+		trackStudioSyncConnectSite( {
+			click: false,
+			blogId: siteId,
+			studioSiteId,
+		} );
+		openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
+	}, [ siteId, trackStudioSyncConnectSite ] );
+
+	const isFirstSecondaryCardInPrimaryLocation =
+		Array.isArray( layout?.primary ) &&
+		layout.primary.length === 0 &&
+		Array.isArray( layout?.secondary ) &&
+		layout.secondary.length > 0;
+
+	if ( ! canUserUseCustomerHome ) {
+		const title = translate( 'This page is not available on this site.' );
+		return <EmptyContent title={ preventWidows( title ) } />;
+	}
+
+	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
+	// while doing the redirection.
+	if (
+		isSiteWooExpressEcommerceTrial &&
+		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
+		( fetchingJetpackModules || ssoModuleActive )
+	) {
+		return <WooCommerceHomePlaceholder />;
+	}
+
+	const headerActions = (
+		<>
+			<Button href={ site.URL } onClick={ trackViewSiteAction }>
+				{ translate( 'View site' ) }
+			</Button>
+			{ isAdmin && ! isP2 && (
+				<Button
+					primary
+					href={
+						dashboardOptIn ? dashboardLink( `/sites/${ site.slug }` ) : `/overview/${ site.slug }`
+					}
+				>
+					{ dashboardOptIn ? translate( 'Hosting Dashboard' ) : translate( 'Hosting Overview' ) }
+				</Button>
+			) }
+		</>
+	);
+	const header = (
+		<div className="customer-home__heading">
+			<NavigationHeader
+				compactBreadcrumb={ false }
+				navigationItems={ [] }
+				mobileItem={ null }
+				title={ translate( 'My Home' ) }
+				subtitle={ translate( 'Your hub for next steps, support center, and quick links.' ) }
+			>
+				{ headerActions }
+			</NavigationHeader>
+
+			<div className="customer-home__site-content">
+				<SiteIcon site={ site } size={ 58 } />
+				<div className="customer-home__site-info">
+					<div className="customer-home__site-title">{ site.name }</div>
+					<a
+						href={ site.URL }
+						className="customer-home__site-domain"
+						onClick={ trackViewSiteAction }
+					>
+						<span className="customer-home__site-domain-text">{ site.domain }</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	);
+
+	const renderUnverifiedEmailNotice = () => {
+		if ( customDomain?.isPendingIcannVerification ) {
+			return (
+				<Notice
+					text={ translate(
+						'You must respond to the ICANN email to verify your domain email address or your domain will stop working. Please check your inbox and respond to the email.'
+					) }
+					icon="cross-circle"
+					showDismiss={ false }
+					status="is-warning"
+				>
+					<NoticeAction onClick={ () => handleVerifyIcannEmail( customDomain.name ) }>
+						{ translate( 'Resend Email' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+		return null;
+	};
+
+	const renderDnsSettingsDiagnosticNotice = () => {
+		if (
+			dismissedEmailDnsDiagnostics ||
+			isFetchingDomainDiagnostics ||
+			! emailDnsDiagnostics ||
+			emailDnsDiagnostics.code === 'domain_not_mapped_to_atomic_site' ||
+			emailDnsDiagnostics.all_essential_email_dns_records_are_correct
+		) {
+			return null;
+		}
+
+		return (
+			<Notice
+				text={ translate(
+					"There are some issues with your domain's email DNS settings. {{diagnosticLink}}Click here{{/diagnosticLink}} to see the full diagnostic for your domain. {{supportLink}}Learn more{{/supportLink}}.",
+					{
+						components: {
+							diagnosticLink: (
+								<a
+									href={ domainManagementEdit( siteId, primaryDomain.name, null, {
+										diagnostics: true,
+									} ) }
+								/>
+							),
+							supportLink: (
+								<a href={ localizeUrl( SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN ) } />
+							),
+						},
+					}
+				) }
+				icon="cross-circle"
+				showDismiss
+				onDismissClick={ () => {
+					setDismissedEmailDnsDiagnostics( true );
+					setDomainNotice( primaryDomain.name, 'email-dns-records-diagnostics', 'ignored', () => {
+						refetchDomainDiagnosticData();
+					} );
+				} }
+				status="is-warning"
+			/>
+		);
+	};
+
+	const renderStudioSyncNotice = () => {
+		const studioSiteId = getQueryArgs().studioSiteId;
+		const autoOpenPush = getQueryArgs().autoOpenPush === 'true';
+		if ( ! studioSiteId ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				className="customer-home__studio-sync-notice"
+				text={ translate( 'Open your Studio site to start syncing.' ) }
+				icon="sync"
+				showDismiss={ false }
+				status="is-info"
+			>
+				<NoticeAction
+					onClick={ () => {
+						trackStudioSyncConnectSite( {
+							click: true,
+							blogId: siteId,
+							studioSiteId,
+						} );
+						openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
+					} }
+					external
+				>
+					{ translate( 'Open Studio' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	};
+
+	return (
+		<div className="customer-home__main">
+			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
+				<JetpackConnectionHealthBanner siteId={ siteId } />
+			) }
+			{ header }
+			{ ! isLoading && ! layout && homeLayoutError ? (
+				<TrackComponentView
+					eventName="calypso_customer_home_my_site_view_layout_error"
+					eventProperties={ {
+						site_id: siteId,
+						error: homeLayoutError?.message ?? 'Layout is not available.',
+					} }
+				/>
+			) : null }
+
+			{ renderStudioSyncNotice() }
+			{ renderUnverifiedEmailNotice() }
+			{ renderDnsSettingsDiagnosticNotice() }
+
+			{ isLoading && <div className="customer-home__loading-placeholder"></div> }
+			{ ! isLoading && layout && ! homeLayoutError ? (
+				<>
+					<Primary cards={ layout?.primary } />
+					<div className="customer-home__layout">
+						<div className="customer-home__layout-col customer-home__layout-col-left">
+							<Secondary
+								cards={ layout?.secondary }
+								siteId={ siteId }
+								trackFirstCardAsPrimary={ isFirstSecondaryCardInPrimaryLocation }
+							/>
+						</div>
+						<div className="customer-home__layout-col customer-home__layout-col-right">
+							<Tertiary cards={ layout?.tertiary } />
+						</div>
+					</div>
+				</>
+			) : null }
+			<ResurrectedWelcomeModalGate isSuppressed={ celebrateLaunchModalIsOpen } />
+			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
+		</div>
+	);
+};
+
+const HomeContentTreatment = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
 	isJetpack,
@@ -344,6 +633,30 @@ const HomeContent = ( {
 			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</div>
 	);
+};
+
+const HomeContent = ( props ) => {
+	const [ __explatLoading, __explatVariation ] = useExperiment(
+		'wpcom_wp_myhome_hosting_button_202605'
+	);
+	useEffect( () => {
+		if ( __explatLoading ) {
+			return;
+		}
+		if ( ! __explatVariation ) {
+			return;
+		}
+		__explatRecordExposure( 'wpcom_myhome_hosting_button_view', {
+			experiment_variation: __explatVariation,
+		} );
+	}, [ __explatLoading, __explatVariation ] );
+	if ( __explatLoading ) {
+		return null;
+	}
+	if ( __explatVariation === 'treatment' ) {
+		return HomeContentTreatment( props );
+	}
+	return HomeContentControl( props );
 };
 
 const mapStateToProps = ( state ) => {
