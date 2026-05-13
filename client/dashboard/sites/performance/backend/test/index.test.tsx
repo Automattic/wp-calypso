@@ -90,6 +90,36 @@ describe( '<SitePerformanceBackend>', () => {
 		expect( screen.getByRole( 'heading', { name: 'Templates' } ) ).toBeVisible();
 	} );
 
+	test( 'renders Slowest transactions on the Transactions tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="transactions" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Slowest transactions' } ) ).toBeVisible();
+		expect( screen.getByText( /GET \/wp-json\/wp\/v2\/posts/ ) ).toBeVisible();
+		expect( screen.getByRole( 'radio', { name: 'Max' } ) ).toBeChecked();
+	} );
+
+	test( 'renders Slowest queries on the Database tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="database" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Slowest queries' } ) ).toBeVisible();
+		expect( screen.getByText( /SELECT \* FROM wp_woocommerce_order_items/ ) ).toBeVisible();
+	} );
+
+	test( 'renders Slowest external requests on the External tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="external-requests" /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Slowest external requests' } )
+		).toBeVisible();
+		expect( screen.getByText( /api\.stripe\.com/ ) ).toBeVisible();
+	} );
+
 	test( 'shows a status notice with the average response time', async () => {
 		mockSite( businessSite( true ) );
 

@@ -60,3 +60,31 @@ export interface ApmWordPress {
 	hooks: ApmHookUsage[];
 	templates: ApmTemplateUsage[];
 }
+
+export interface ApmTransaction {
+	method: string;
+	url: string;
+	avg_ms: number;
+	max_ms: number;
+	call_count: number;
+	total_ms: number;
+}
+
+export interface ApmSlowQuery {
+	id: string;
+	query: string;
+	avg_ms: number;
+	max_ms: number;
+	call_count: number;
+	total_ms: number;
+}
+
+export interface ApmExternalRequest {
+	host: string;
+	endpoint: string;
+	method: string;
+	avg_ms: number;
+	max_ms: number;
+	call_count: number;
+	total_ms: number;
+}

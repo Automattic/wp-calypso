@@ -69,13 +69,13 @@ function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 			case 'overview':
 				return <Overview site={ site } />;
 			case 'transactions':
-				return <Transactions />;
+				return <Transactions site={ site } />;
 			case 'wordpress':
 				return <WordPress site={ site } />;
 			case 'database':
-				return <Database />;
+				return <Database site={ site } />;
 			case 'external-requests':
-				return <ExternalRequests />;
+				return <ExternalRequests site={ site } />;
 		}
 	};
 
