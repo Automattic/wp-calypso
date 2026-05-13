@@ -51,7 +51,7 @@ export function ConnectionsNewView() {
 		tagline: String( translate( 'Start here — your site is already social.' ) ),
 		body: String(
 			translate(
-				'If you have a WordPress.com site, you already have a home on the open social web. Flip the ActivityPub switch on your blog and it shows up here automatically. No new account, no new password, no algorithm.'
+				'If you have a WordPress.com site, you already have a home on the open social web. Flip the ActivityPub switch on your blog and it shows up here — nothing to sign up for, since your site already does the talking.'
 			)
 		),
 		href: null,
@@ -65,7 +65,7 @@ export function ConnectionsNewView() {
 		tagline: String( translate( 'Already on Bluesky? Bring it over.' ) ),
 		body: String(
 			translate(
-				'Plug your bsky.social handle in and you can scroll, like, repost, and reply to your Bluesky timeline without leaving the Reader.'
+				'Plug your bsky.social handle in and your Bluesky timeline shows up here, ready to scroll and reply to without leaving the Reader.'
 			)
 		),
 		href: '/reader/atmosphere/connect',
