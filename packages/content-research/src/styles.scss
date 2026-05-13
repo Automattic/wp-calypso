@@ -8,6 +8,46 @@
 	flex: 0 0 auto;
 	padding: 0 16px 16px;
 	width: 100%;
+	border-top: 0;
+	border-bottom: 0;
+
+	&.components-tools-panel {
+		row-gap: 0;
+		padding: 4px 16px 12px;
+	}
+
+	.components-tools-panel-header {
+		grid-column: span 2;
+		margin: 0 0 8px;
+		padding: 0;
+		min-height: 0;
+		border: 0;
+		background: transparent;
+
+		h2 {
+			margin: 0;
+			font-size: 11px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: #50575e;
+		}
+
+		.components-dropdown-menu {
+			margin-left: auto;
+
+			.components-button {
+				min-width: 24px;
+				height: 24px;
+				padding: 0;
+				color: #50575e;
+
+				svg {
+					fill: currentColor;
+				}
+			}
+		}
+	}
 
 	.components-button-group {
 		box-sizing: border-box;

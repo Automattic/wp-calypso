@@ -311,13 +311,10 @@ function isContentEmpty( content ) {
 function ParagraphWithInspirationPrompt( { BlockEdit, ...props } ) {
 	const { isFirstBlock, isEmptyPost } = useSelect(
 		( select ) => {
-			const editor = select( 'core/editor' );
 			const blockEditor = select( 'core/block-editor' );
 			const blocks = blockEditor.getBlocks();
-			const title = editor.getEditedPostAttribute( 'title' ) || '';
 			const isFirst = blocks.length <= 1 && blocks[ 0 ]?.clientId === props.clientId;
-			const isEmpty =
-				title.trim() === '' && blocks.length <= 1 && isContentEmpty( props.attributes.content );
+			const isEmpty = blocks.length <= 1 && isContentEmpty( props.attributes.content );
 
 			return {
 				isFirstBlock: isFirst,
