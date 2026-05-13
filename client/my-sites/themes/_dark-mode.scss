@@ -1,4 +1,4 @@
-@import '../../dashboard/app/dark-theme';
+@import 'calypso/dashboard/app/dark-theme';
 
 @mixin themes-dark-mode-color-scheme {
 	@include dashboard-dark-theme;
@@ -33,7 +33,6 @@
 	--color-surface-backdrop: var( --dashboard__background-color );
 	--color-text: var( --dashboard__text-color );
 	--color-text-subtle: var( --dashboard__text-muted-color );
-	--color-text-inverted: var( --wp-components-color-accent-inverted );
 	--color-border: var( --dashboard-surface__border-color );
 	--color-border-subtle: var( --dashboard-surface__border-color );
 	--color-border-shadow: var( --dashboard-surface__border-color );
@@ -68,6 +67,16 @@
 
 	.community-translator.is-incompatible {
 		--color-neutral-20: var( --dashboard__text-muted-color );
+	}
+
+	.masterbar {
+		--color-masterbar-submenu-text: var( --dashboard__text-color );
+		--color-masterbar-submenu-hover-text: var( --wp-components-color-accent-darker-20 );
+		--color-global-masterbar-submenu-background: var( --dashboard-surface__background-color );
+		--color-global-masterbar-submenu-hover-background: var(
+			--dashboard-item-selected-hover__background-color
+		);
+		--color-sidebar-submenu-background: var( --dashboard-item-selected__background-color );
 	}
 
 	.navigation-header .breadcrumbs {
@@ -106,6 +115,7 @@
 		border-color: color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
 		box-shadow: 0 1px 4px 0 color-mix( in srgb, var( --dashboard__text-color ) 12%, transparent );
 	}
+
 	.theme__sheet-style-variations::after {
 		@include long-content-fade(
 			$direction: right,
@@ -114,6 +124,7 @@
 		);
 		right: -1px; // fixes a 1px gap between the fade and the edge of the container
 	}
+
 	.theme-download-card .button,
 	.theme__sheet-demo-button {
 		background-color: transparent;
@@ -157,10 +168,21 @@
 		}
 	}
 
+	.theme__sheet-features-list {
+		a,
+		span {
+			color: var( --color-text );
+		}
+	}
+
 	.theme__sheet-web-preview,
 	.theme__sheet-screenshot {
 		background-color: var( --dashboard-surface__background-color );
 		box-shadow: 0 0 0 1px var( --dashboard-surface__border-color );
+	}
+
+	.theme__sheet-web-preview .theme-preview__container--loading .theme-preview__frame-wrapper {
+		background: var( --dashboard-surface__background-color );
 	}
 
 	.web-preview__close.button {
