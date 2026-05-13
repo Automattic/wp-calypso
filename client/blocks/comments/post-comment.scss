@@ -1,3 +1,5 @@
+@use '../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 .comments__comment {
 	list-style-type: none;
 	margin-top: 20px;
@@ -91,6 +93,14 @@ a.comments__comment-username {
 
 	&:hover {
 		color: var(--color-primary-light);
+	}
+
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-link );
+
+		&:hover {
+			color: var( --color-link-dark );
+		}
 	}
 }
 

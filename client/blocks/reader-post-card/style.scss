@@ -1,9 +1,29 @@
+@use '../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 .reader-post-options-menu__ellipsis-menu {
 	margin-left: 16px;
 
 	.ellipsis-menu__toggle {
 		padding: 0;
 		height: 24px;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.ellipsis-menu__toggle {
+			color: var( --color-text-subtle );
+
+			.gridicon,
+			svg,
+			svg path {
+				fill: currentColor;
+			}
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var( --color-link );
+			}
+		}
 	}
 }
 
@@ -402,6 +422,16 @@
 	}
 }
 
+.reader__content .reader-post-card__byline-secondary-item {
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-text-subtle );
+
+		&:hover {
+			color: var( --color-link );
+		}
+	}
+}
+
 .reader__content .reader-post-card__tag-link {
 	color: var(--color-neutral-100);
 	&:focus {
@@ -459,6 +489,10 @@
 
 	&::after {
 		@include long-content-fade( $size: 10% );
+
+		@include ui-mixins.when-dark-theme {
+			background: linear-gradient( to right, transparent, var( --color-surface ) 90% );
+		}
 	}
 }
 
@@ -637,6 +671,35 @@
 
 	.follow-button__label {
 		color: var(--color-primary);
+	}
+
+	@include ui-mixins.when-dark-theme {
+		color: var( --color-link );
+
+		.gridicon {
+			fill: var( --color-link );
+		}
+
+		svg,
+		svg path {
+			fill: currentColor;
+		}
+
+		.follow-button__label {
+			color: var( --color-link );
+		}
+
+		&:hover {
+			color: var( --color-link-dark );
+
+			.gridicon {
+				fill: var( --color-link-dark );
+			}
+
+			.follow-button__label {
+				color: var( --color-link-dark );
+			}
+		}
 	}
 
 	&:hover {

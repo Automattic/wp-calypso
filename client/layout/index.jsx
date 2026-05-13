@@ -87,6 +87,10 @@ const loadReaderHeader = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-components-header" */ 'calypso/reader/components/header'
 	);
+const loadReaderColorScheme = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-color-scheme" */ 'calypso/reader/color-scheme'
+	);
 const loadCelebrateSiteLaunchModal = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-customer-home-celebrate-site-launch-modal" */ 'calypso/my-sites/customer-home/celebrate-site-launch-modal'
@@ -384,6 +388,9 @@ class Layout extends Component {
 					<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				) }
 				<QueryPreferences />
+				{ this.props.sectionName === 'reader' && this.props.isLoggedIn && (
+					<AsyncLoad require={ loadReaderColorScheme } placeholder={ null } />
+				) }
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				<QuerySiteAdminMenu siteId={ this.props.siteId } />
 				<QuerySiteAdminColor siteId={ this.props.siteId } />

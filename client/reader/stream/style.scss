@@ -336,7 +336,7 @@
 			display: none;
 
 			&.stream__init-overlay-enabled {
-				background: var( --studio-white );
+				background: var( --color-surface );
 				position: absolute;
 				display: block;
 				left: 0;
@@ -740,7 +740,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 				width: 225px;
 			}
 			.stream__two-column &::after {
-				@include long-content-fade( $size: 5%, $color: var( --studio-white ) );
+				@include long-content-fade( $size: 5%, $color: var( --color-surface ) );
 			}
 		}
 	}

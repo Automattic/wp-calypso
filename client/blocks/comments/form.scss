@@ -1,3 +1,5 @@
+@use '../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 // Add a New Comment Form
 .comments__form {
 	position: relative;
@@ -42,6 +44,23 @@
 	.comments__cancel-reply {
 		font-size: $font-body-extra-small;
 		cursor: pointer;
+	}
+
+	@include ui-mixins.when-dark-theme {
+		.form-textarea {
+			background: var( --color-surface );
+			border-color: var( --dashboard-field__border-color );
+			color: var( --color-text );
+
+			&::placeholder {
+				color: var( --color-text-subtle );
+			}
+
+			&:focus {
+				border-color: var( --color-link );
+				box-shadow: 0 0 0 1px var( --color-link );
+			}
+		}
 	}
 }
 

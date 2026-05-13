@@ -1,3 +1,5 @@
+@use '../../../packages/ui/src/utils/mixins' as ui-mixins;
+
 .reader-full-post__link-preview {
 	margin: 16px 0;
 	border-radius: 8px;
@@ -21,6 +23,26 @@
 
 		a {
 			color: var(--color-error);
+		}
+	}
+
+	@include ui-mixins.when-dark-theme {
+		background: var( --color-surface );
+		border-color: var( --color-border-subtle );
+
+		.reader-full-post__link-preview-site-name,
+		.reader-full-post__link-preview-description,
+		.reader-full-post__link-preview-date {
+			color: var( --color-text-subtle );
+		}
+
+		.reader-full-post__link-preview-title {
+			color: var( --color-text );
+		}
+
+		.reader-full-post__link-preview-type {
+			background: var( --dashboard-item-selected__background-color );
+			color: var( --color-text );
 		}
 	}
 }
