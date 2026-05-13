@@ -1,3 +1,4 @@
+@import '@automattic/color-studio/dist/color-properties-rgb.css';
 @import '@automattic/components/src/styles/typography';
 
 .years-of-service-badge {
@@ -23,7 +24,7 @@
 		width: 120px;
 		height: 120px;
 		font-size: rem( 48px );
-		box-shadow: 0 4px 16px rgba( 56, 88, 233, 0.4 );
+		box-shadow: 0 4px 16px rgba( var( --studio-blue-50-rgb ), 0.4 );
 		background: url( calypso/assets/images/achievements/years-of-service-badge.svg ) no-repeat center / cover;
 	}
 }
