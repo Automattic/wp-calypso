@@ -74,6 +74,12 @@ export function FediverseAuthorProfilePanel( {
 	const followMutate = followMut.mutate;
 	const unfollowMutate = unfollowMut.mutate;
 
+	// Scope the error-notice id to `(connectionId, actor)` so a successful
+	// follow on one surface doesn't silently dismiss an unresolved error
+	// toast posted by a different surface (the followers / following lists
+	// share the same notice space). Same pattern as the Mastodon panel.
+	const noticeId = `fediverse-follow-error-${ connection.id }-${ actor }`;
+
 	const showFollowError = useCallback(
 		( error: FediverseError, action: 'follow' | 'unfollow' ) => {
 			dispatch(
@@ -85,11 +91,14 @@ export function FediverseAuthorProfilePanel( {
 			);
 			dispatch(
 				errorNotice( followErrorMessage( error, action, translate ), {
-					id: 'fediverse-follow-error',
+					id: noticeId,
 				} )
 			);
 			// Pipeline-level log so failures stay observable in dashboards even
 			// when no Tracks dashboard is consulted (matches the Mastodon panel).
+			// Swallow rejections — the logstash POST going down must not bubble
+			// to the global handler, which is exactly the silent failure this
+			// breadcrumb exists to surface.
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: `Reader Fediverse ${ action } mutation failed`,
@@ -99,9 +108,9 @@ export function FediverseAuthorProfilePanel( {
 					connection_id: connection.id,
 					error_kind: error.kind,
 				},
-			} );
+			} ).catch( () => undefined );
 		},
-		[ connection.id, dispatch, translate ]
+		[ connection.id, dispatch, translate, noticeId ]
 	);
 
 	const handleFollow = useCallback( () => {
@@ -122,12 +131,12 @@ export function FediverseAuthorProfilePanel( {
 			{ connectionId: connection.id, actor, locked },
 			{
 				onSuccess: () => {
-					dispatch( removeNotice( 'fediverse-follow-error' ) );
+					dispatch( removeNotice( noticeId ) );
 				},
 				onError: ( error ) => showFollowError( error, 'follow' ),
 			}
 		);
-	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError ] );
+	}, [ profile.data, connection.id, actor, dispatch, followMutate, showFollowError, noticeId ] );
 
 	const handleUnfollow = useCallback( () => {
 		if ( ! profile.data ) {
@@ -143,12 +152,12 @@ export function FediverseAuthorProfilePanel( {
 			{ connectionId: connection.id, actor },
 			{
 				onSuccess: () => {
-					dispatch( removeNotice( 'fediverse-follow-error' ) );
+					dispatch( removeNotice( noticeId ) );
 				},
 				onError: ( error ) => showFollowError( error, 'unfollow' ),
 			}
 		);
-	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError ] );
+	}, [ profile.data, connection.id, actor, dispatch, unfollowMutate, showFollowError, noticeId ] );
 
 	// Connection's home host — feeds the mapper's webfinger qualifier
 	// so local-account `acct` values render as `@user@host`. Falls back
