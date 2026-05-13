@@ -91,10 +91,10 @@ export default function usePlanBillingDescription( {
 				: yearlyVariantPricing.introOffer?.rawPrice?.monthly ?? null;
 		}
 
-		const discountRate = calculateDiscountPercentage(
-			originalPrice.monthly,
-			yearlyVariantMaybeDiscountedPrice ?? 0
-		);
+		const discountRate =
+			yearlyVariantMaybeDiscountedPrice != null
+				? calculateDiscountPercentage( originalPrice.monthly, yearlyVariantMaybeDiscountedPrice )
+				: undefined;
 		if ( discountRate !== undefined ) {
 			return translate( 'Save %(discountRate)s%% by paying annually', {
 				args: { discountRate },

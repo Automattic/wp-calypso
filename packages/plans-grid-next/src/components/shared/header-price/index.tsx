@@ -138,6 +138,10 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 			typeof discountedPrice.monthly === 'number'
 				? discountedPrice.monthly
 				: introOffer.rawPrice.monthly;
+		// Recalculate the savings for Monthly plans with introductory offers
+		// since we are comparing the introductory price with the same plan
+		// renewal price, instead of comparing yearly to monthly costs for
+		// the same period.
 		if (
 			showBillingDescriptionForIncreasedRenewalPrice &&
 			compareToMonthlyPrice > monthlyPrice &&
