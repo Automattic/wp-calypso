@@ -642,6 +642,35 @@ export default defineConfig(
 			},
 		},
 
+		server: {
+			// To get a list of files which are frequently requested:
+			//
+			// DEBUG=vite:transform yarn start:vite 2> vite-transform.log
+			//
+			// and then see the top 30 most required:
+			//
+			// grep -a 'vite:transform' vite-transform.log \
+			//   | perl -pe 's/\e\[[0-9;]*m//g' \
+			//   | sed -E 's/.*vite:transform ([0-9]+)ms ([^ ]+).*/\1 \2/' \
+			//   | sort -rn | head -30
+			warmup: {
+				clientFiles: [
+					'./apps/notifications/*/*.{js,jsx,ts,tsx,scss}',
+					'./packages/help-center/src/components/*.scss',
+					'./client/state/automated-transfer/selectors/*.{ts,js}',
+					'./client/state/selectors/has-site-pending-automated-transfer.js',
+					'./client/state/lib/automated-transfer-middleware.js',
+					'./client/notifications/style.scss',
+					'./client/components/search/style.scss',
+					'./client/components/search-card/style.scss',
+					'./client/components/forms/form-textarea/style.scss',
+					'./client/components/community-translator/style.scss',
+					'./client/layout/community-translator/style.scss',
+					'./client/layout/masterbar/masterbar-help-center/style.scss',
+				],
+			},
+		},
+
 		build: {
 			// Emit .vite/manifest.json — used by viteBuildAssetsWriter to generate
 			// build/assets.json for the Node.js server.
