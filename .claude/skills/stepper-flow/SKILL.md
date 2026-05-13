@@ -208,9 +208,125 @@ import { <CONSTANT> } from '@automattic/onboarding';
 
 ---
 
-### Phase 5 — Summarise
+### Phase 5 — TypeScript check
 
-After writing all files, print:
+Before browser testing, verify the generated code compiles:
+
+```bash
+cd /path/to/wp-calypso && yarn typecheck-client 2>&1 | tail -20
+```
+
+If there are TypeScript errors in the generated files, fix them before continuing.
+Do not proceed to Phase 6 if the type check fails.
+
+---
+
+### Phase 6 — Browser test loop
+
+Use the `playwright-test` MCP server (configured in `.mcp.json` at the repo root) to
+drive a real browser against the local dev server and validate the flow end-to-end.
+
+#### 6a. Prerequisites
+
+Check the dev server is reachable:
+```
+GET http://calypso.localhost:3000/setup/<flow-name>
+```
+If it returns a connection error, tell the user:
+> The local dev server doesn't appear to be running. Start it with `yarn start` and
+> try again, or skip browser testing and go straight to the PR.
+
+#### 6b. Generate a test email
+
+Construct a throwaway email for signup:
+```
+test-<8-random-hex-chars>@example.com
+```
+Example: `test-a3f9c21b@example.com`
+
+Using `@example.com` is safe — the domain is reserved for documentation and
+testing (RFC 2606). It will never receive email, so it does not affect spam scores
+and no email verification is needed.
+
+#### 6c. Walk through the flow
+
+Use the Playwright MCP tools to navigate, interact, and screenshot each step:
+
+1. Navigate to `http://calypso.localhost:3000/setup/<flow-name>`
+2. On the account creation screen, enter the test email and complete signup
+3. Walk through each step of the flow in order, making minimal valid choices
+   (pick any goal, search any domain, select the free plan, etc.)
+4. Take a screenshot after each step completes successfully
+5. If a step fails (error message, broken layout, infinite spinner, wrong redirect):
+   - Take a screenshot of the failure
+   - Note the step slug and what went wrong
+   - Stop the run and proceed to 6d
+
+If the flow completes without errors, proceed directly to 6e.
+
+#### 6d. Fix and retry (iteration loop)
+
+When an issue is detected:
+
+1. Identify the root cause in the flow TypeScript file
+   (wrong slug in a `case`, missing `navigate()`, bad `processingResult` check, etc.)
+2. Fix the file
+3. Re-run from 6c (navigate back to `/setup/<flow-name>` with a fresh test email)
+4. Repeat until the flow completes without errors or until 3 iterations have been
+   attempted — if still failing after 3, document the remaining issue in the report
+   and move on.
+
+#### 6e. Write the test report
+
+Write a Markdown report to:
+```
+client/landing/stepper/declarative-flow/flows/<flow-name>/TEST-REPORT.md
+```
+
+Use this structure:
+
+```md
+# Browser Test Report — <flow-name>
+
+**Date:** <ISO date>
+**Test email:** test-<hex>@example.com
+**Base URL:** http://calypso.localhost:3000
+**Result:** ✅ Passed / ⚠️ Passed with fixes / ❌ Failed (see issues)
+
+## Steps walkthrough
+
+| Step | Slug | Result | Notes |
+|------|------|--------|-------|
+| Goals | goals | ✅ | Rendered and submitted correctly |
+| Domain search | domains | ✅ | Free domain selected |
+| … | … | … | … |
+
+## Screenshots
+
+### Step: <step-name>
+![<step-name>](./<step-name>.png)
+
+…
+
+## Issues found and fixed
+
+### Issue 1 — <short title>
+**Step:** <slug>
+**Symptom:** <what was observed>
+**Fix applied:** <what was changed in the flow file>
+
+## Remaining issues (if any)
+
+<List any issues that could not be resolved after 3 iterations, with screenshots>
+```
+
+Save each screenshot alongside the report as `<step-slug>.png`.
+
+---
+
+### Phase 7 — Final summary
+
+After the browser test loop, print:
 
 ```
 Files written:
@@ -219,14 +335,14 @@ Files written:
   client/landing/stepper/declarative-flow/flows/<flow-name>/README.md
   client/landing/stepper/declarative-flow/flows/<flow-name>/style.scss
   client/landing/stepper/declarative-flow/registered-flows.ts           (entry added)
+  client/landing/stepper/declarative-flow/flows/<flow-name>/TEST-REPORT.md  (browser test report)
 
 Flow URL (after deploy): /setup/<flow-name>
+Browser test result: ✅ / ⚠️ / ❌  (copy from report)
 
 Next steps:
-  1. yarn typecheck-client — checks that the TypeScript compiles with no errors
-  2. yarn start — starts the local dev server; visit /setup/<flow-name> to smoke-test
-  3. Open a draft PR targeting trunk and link the Linear issue / P2 in the description
-  4. Add @alshakero as reviewer (Stepper framework awareness)
+  1. Open a draft PR targeting trunk and link the Linear issue / P2 in the description
+  2. Add @Automattic/dotcom-stepper as reviewer (Stepper framework awareness)
 ```
 
 If any customizations were flagged as requiring Engineering, also print:
@@ -234,7 +350,7 @@ If any customizations were flagged as requiring Engineering, also print:
 ```
 Engineering requests needed before these customizations can be applied:
   • [step name]: [plain-English description of the prop to add]
-    Where to ask: #dotcom-stepper, tag @alshakero
+    Where to ask: #dotcom-stepper, tag @Automattic/dotcom-stepper
     What to say: "[exact request text from Phase 3 preview]"
 ```
 

@@ -2,7 +2,7 @@
 
 Wizard/walkthrough framework for WordPress.com signup and onboarding. Lives at
 `client/landing/stepper/`. All new signup flows should be built here.
-Support channel: `#dotcom-stepper`. Owner: `@alshakero` (Team T-Rex).
+Support channel: `#dotcom-stepper`. Owner: `@Automattic/dotcom-stepper`.
 
 ## Directory structure
 
