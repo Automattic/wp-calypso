@@ -80,12 +80,12 @@ A free-form source tag recorded in our analytics. Useful for measuring which of 
 
 ## Operational runbook
 
-| Symptom | First check |
-|---|---|
-| Users land on `/home/<slug>` instead of returning | Tracks: `calypso_direct_to_cart_invalid_redirect` volume. Likely allowlist mismatch (you moved domains? check config). |
-| No `wpcom_purchase=1` on returns | Tracks: `calypso_signup_complete` for `flow=direct-to-cart` vs. start volume. If a gap, check logstash for sanitization failures or PROCESSING errors. |
-| Sudden spike in `calypso_direct_to_cart_invalid_plan` | URL-builder regression on your side; check the plan slugs you're emitting. |
-| Atomic transfer never completes | WordPress.com hosting issue — escalate. User is parked on `/setup/transferring-hosted-site`. |
+| Symptom                                               | First check                                                                                                                                            |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Users land on `/home/<slug>` instead of returning     | Tracks: `calypso_direct_to_cart_invalid_redirect` volume. Likely allowlist mismatch (you moved domains? check config).                                 |
+| No `wpcom_purchase=1` on returns                      | Tracks: `calypso_signup_complete` for `flow=direct-to-cart` vs. start volume. If a gap, check logstash for sanitization failures or PROCESSING errors. |
+| Sudden spike in `calypso_direct_to_cart_invalid_plan` | URL-builder regression on your side; check the plan slugs you're emitting.                                                                             |
+| Atomic transfer never completes                       | WordPress.com hosting issue — escalate. User is parked on `/setup/transferring-hosted-site`.                                                           |
 
 ## Adding your hostname to the allowlist
 
