@@ -20,6 +20,15 @@
 	background: var( --streak-badge-background );
 	color: var( --streak-badge-color );
 	box-shadow: 0 4px 16px var( --streak-badge-shadow );
+
+	&[data-digits="3"] {
+		letter-spacing: -0.02em;
+	}
+
+	&[data-digits="4"] {
+		font-size: rem( 38px );
+		letter-spacing: -0.06em;
+	}
 }
 
 .streak-badge__label {
