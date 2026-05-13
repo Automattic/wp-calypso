@@ -74,6 +74,17 @@
 	}
 }
 
+.auth-screen__top-bar-back {
+	display: flex;
+	align-items: center;
+
+	// Same neutral-link treatment the trailing action gets — keeps a
+	// "Back" link from picking up Calypso's themed blue accent.
+	.components-button.is-link:not(.is-destructive) {
+		--wp-components-color-accent: #{$gray-900};
+	}
+}
+
 .auth-screen__top-bar-action {
 	margin-inline-start: auto;
 	display: flex;
@@ -90,6 +101,9 @@
 }
 
 // Content area — vertically centers heading + body in the remaining viewport.
+// Symmetric block padding so `justify-content: center` lands the content on
+// the true mid-line of the post-topbar area; an asymmetric pad would shift
+// the centroid toward the smaller edge.
 .auth-screen__content {
 	inline-size: 100%;
 	box-sizing: border-box;
@@ -99,8 +113,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: $grid-unit-40;
-	padding-inline: $grid-unit-20;
-	padding-block-end: $grid-unit-40;
+	padding: $grid-unit-40 $grid-unit-20;
 
 	@include break-small {
 		padding-inline: $grid-unit-30;

@@ -1,4 +1,5 @@
 import { Button, TextControl, __experimentalVStack as VStack } from '@wordpress/components';
+import { chevronLeft } from '@wordpress/icons';
 import { useState } from 'react';
 import CurrentUser from '../current-user';
 import Screen from '../screen';
@@ -38,9 +39,9 @@ const LostPasswordRecipe = () => {
 		<Screen
 			heading="Lost your password?"
 			subheading="Enter the email address or username you use to sign in, and we'll send you a reset link."
-			topBarAction={
-				<Button variant="link" href="/log-in">
-					Back to log in
+			backAction={
+				<Button variant="link" href="/log-in" icon={ chevronLeft } iconPosition="left">
+					Back
 				</Button>
 			}
 		>

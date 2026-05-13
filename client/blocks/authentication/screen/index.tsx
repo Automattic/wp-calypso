@@ -6,6 +6,14 @@ import './style.scss';
 
 type ScreenProps = {
 	/**
+	 * Optional element rendered on the leading edge of the top bar, next to
+	 * the logo — typically a "Back" link that returns to the previous step
+	 * (e.g. lost-password → log-in). Consumers render the button themselves
+	 * so they can wire up the right destination and any client-side
+	 * navigation.
+	 */
+	backAction?: ReactNode;
+	/**
 	 * Optional element rendered on the trailing edge of the top bar — typically
 	 * a context-specific link like "Create an account" or "Log in".
 	 */
@@ -43,6 +51,7 @@ type ScreenProps = {
 };
 
 const Screen = ( {
+	backAction,
 	topBarAction,
 	heading,
 	subheading,
@@ -56,6 +65,7 @@ const Screen = ( {
 				<WordPressLogo size={ 21 } className="auth-screen__top-bar-logo-compact" />
 				<WordPressWordmark color="currentColor" className="auth-screen__top-bar-logo-wordmark" />
 			</div>
+			{ backAction && <div className="auth-screen__top-bar-back">{ backAction }</div> }
 			{ topBarAction && <div className="auth-screen__top-bar-action">{ topBarAction }</div> }
 		</header>
 		<main className="auth-screen__content">
