@@ -74,14 +74,15 @@ jest.mock( '@wordpress/data', () => ( {
 } ) );
 
 // Stub @wordpress/data on window so useCheckpoint / handleShowComponent
-// can read/write the post title via the core/editor store.
-function installWpDataMock( initialTitle: string ) {
+// can read/write the post title and current post id via the core/editor store.
+function installWpDataMock( initialTitle: string, postId = 123 ) {
 	const state = { title: initialTitle };
 	( window as any ).wp = {
 		data: {
 			select: ( store: string ) => {
 				if ( store === 'core/editor' ) {
 					return {
+						getCurrentPostId: () => postId,
 						getEditedPostAttribute: ( attr: string ) =>
 							attr === 'title' ? state.title : undefined,
 					};
@@ -354,6 +355,7 @@ describe( 'toolProvider', () => {
 			expect( parsed.tool_id ).toBe( 'big_sky__show_component' );
 			expect( parsed.data.type ).toBe( 'title-picker' );
 			expect( parsed.data.props ).toEqual( { titles } );
+			expect( parsed.data.postId ).toBeUndefined();
 			expect( parsed.data.calypsoCheckpointId ).toBe( 'call_test_123' );
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
@@ -377,6 +379,28 @@ describe( 'toolProvider', () => {
 			expect( parsed.data.calypsoCheckpointId ).toBeUndefined();
 			expect( parsed.data.isCurrent ).toBe( true );
 			expect( parsed.data.hideZoomAction ).toBe( true );
+			expect( parsed.data.postId ).toBe( 123 );
+			expect( parsed.data.props.postId ).toBe( 123 );
+		} );
+
+		it( 'does not stamp review-mediation components without a saved editor post ID', async () => {
+			installWpDataMock( 'Original Title', 0 );
+
+			const { result } = ( await toolProvider.executeAbility( 'big_sky__show_component', {
+				type: 'review-mediation',
+				props: {
+					summary: 'Summary.',
+					conflicts: [],
+					implications: [],
+					suggested_edits: [],
+					guideline_violations: [],
+				},
+			} ) ) as any;
+
+			const parsed = JSON.parse( result.agentMessage );
+			expect( parsed.data.type ).toBe( 'review-mediation' );
+			expect( parsed.data.postId ).toBeUndefined();
+			expect( parsed.data.props.postId ).toBeUndefined();
 		} );
 
 		it( 'generates a checkpointId fallback when toolCallId is missing', async () => {

@@ -42,12 +42,16 @@ jest.mock( '../utils/block-actions', () => ( {
 
 const mockSelectBlock = jest.fn();
 let mockBlocks: any[] = [];
+let mockCurrentPostId: number | null | undefined = 1;
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: ( fn: any ) =>
 		fn( ( store: string ) => {
 			if ( store === 'core/block-editor' ) {
 				return { getBlocks: () => mockBlocks };
+			}
+			if ( store === 'core/editor' ) {
+				return { getCurrentPostId: () => mockCurrentPostId };
 			}
 			return {};
 		} ),
@@ -102,6 +106,7 @@ function basePayload(
 ): React.ComponentProps< typeof ReviewMediation > {
 	return {
 		summary: 'Two reviewers disagree on the procedural framing.',
+		postId: 1,
 		conflicts: [],
 		implications: [],
 		suggested_edits: [],
@@ -119,6 +124,7 @@ beforeEach( () => {
 	mockSelectBlock.mockReset();
 	mockedRecordTracksEvent.mockClear();
 	mockBlocks = blocks;
+	mockCurrentPostId = 1;
 } );
 
 describe( 'ReviewMediation — smoke render', () => {
@@ -244,6 +250,94 @@ describe( 'ReviewMediation — smoke render', () => {
 				}
 			);
 		} );
+	} );
+
+	it( 'marks a review for another post as stale and non-actionable', () => {
+		// Review was generated for post 2 (postId prop); editor is currently on post 1 (mockCurrentPostId).
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					postId: 2,
+					conflicts: [
+						{
+							subject: 'Procedural framing',
+							positions: [],
+							guideline_anchor: null,
+							recommended_resolution: '',
+							candidate_resolutions: [
+								{
+									source: 'ai',
+									reviewer_name: null,
+									label: 'AI resolution',
+									block_index: 1,
+									current_text: 'voted last Tuesday',
+									text: 'voted on Tuesday',
+									rationale: '',
+								},
+							],
+						},
+					],
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText( 'Review context changed. Start a new chat to re-run this review.' )
+		).toBeInTheDocument();
+		expect( screen.getByTitle( 'Jump to conflicts' ) ).toBeDisabled();
+		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Accept AI resolution' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeDisabled();
+		screen
+			.getAllByRole( 'button', { name: 'Dismiss' } )
+			.forEach( ( button ) => expect( button ).toBeDisabled() );
+		expect(
+			screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } )
+		).toBeDisabled();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'marks a review without source post context as stale', () => {
+		render(
+			<ReviewMediation
+				{ ...basePayload( {
+					postId: undefined,
+					suggested_edits: [
+						{
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							suggested_text: 'voted on Tuesday',
+							rationale: 'Concise.',
+							supported_by_reviewers: [],
+						},
+					],
+				} ) }
+			/>
+		);
+
+		expect(
+			screen.getByText( 'Review context changed. Start a new chat to re-run this review.' )
+		).toBeInTheDocument();
+		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeDisabled();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
+
+		expect( mockApplyReviewEdit ).not.toHaveBeenCalled();
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it.each( [

@@ -105,6 +105,15 @@
 	line-height: 1.5;
 	color: inherit;
 
+	&.is-post-stale {
+		.jetpack-ai-review-mediation__stats,
+		.jetpack-ai-review-mediation__panel,
+		.jetpack-ai-review-mediation__footer {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+
 	// ---------- Panel / PanelBody overrides ----------
 	// Strip Gutenberg's white bg + bottom divider; replace with a translucent
 	// top divider so sections read as separate panes on the chat surface.
@@ -214,6 +223,15 @@
 		&.is-manual {
 			color: #f0b849;
 		}
+	}
+
+	&__stale-warning {
+		margin: 0 0 0.75rem;
+		padding: 0.5rem 0.75rem;
+		font-size: 12px;
+		font-weight: 600;
+		border-left: 3px solid #d63638;
+		background: rgba(214, 54, 56, 0.08);
 	}
 
 	// ---------- Suggested edit cards ----------
@@ -466,11 +484,16 @@
 			border-color 0.15s ease,
 			background 0.15s ease;
 
-		&:hover,
-		&:focus-visible {
+		&:hover:not(:disabled),
+		&:focus-visible:not(:disabled) {
 			border-color: rgba(255, 255, 255, 0.5);
 			background: rgba(255, 255, 255, 0.06);
 			outline: none;
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.55;
 		}
 	}
 
@@ -600,7 +623,7 @@
 				border-color 0.15s ease,
 				background 0.15s ease;
 
-			&:hover {
+			&:hover:not(:disabled) {
 				border-color: rgba(255, 255, 255, 0.4);
 				background: rgba(255, 255, 255, 0.06);
 			}
@@ -611,12 +634,17 @@
 			}
 		}
 
+		&:disabled {
+			cursor: default;
+			opacity: 0.55;
+		}
+
 		&.is-conflicts {
 			color: #e8a520;
 			border-color: rgba(232, 165, 32, 0.45);
 			background: rgba(232, 165, 32, 0.08);
 
-			&.is-clickable:hover {
+			&.is-clickable:hover:not(:disabled) {
 				border-color: rgba(232, 165, 32, 0.7);
 				background: rgba(232, 165, 32, 0.14);
 			}

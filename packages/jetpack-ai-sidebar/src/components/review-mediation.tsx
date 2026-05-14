@@ -88,6 +88,8 @@ interface ReviewMediationProps {
 	suggested_edits: SuggestedEdit[];
 	guideline_violations: GuidelineViolation[];
 	review_context?: ReviewContext;
+	/** Source post the review was generated for. Used to detect navigation to a different post. */
+	postId?: number;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * mediations or the empty-state payload may omit it; consumers degrade
@@ -326,9 +328,20 @@ export default function ReviewMediation( {
 	suggested_edits,
 	guideline_violations,
 	review_context,
+	postId,
 	reviewers_metadata,
 	cached_at,
 }: ReviewMediationProps ) {
+	// Review actions are only safe when the result can be tied to the current editor post.
+	const currentPostId = useSelect(
+		( select ) =>
+			(
+				select( 'core/editor' ) as { getCurrentPostId?: () => number | null }
+			 )?.getCurrentPostId?.() ?? undefined,
+		[]
+	);
+	const isPostStale = ! postId || ! currentPostId || postId !== currentPostId;
+
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ conflictStatuses, setConflictStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ bulkRunning, setBulkRunning ] = useState( false );
@@ -357,9 +370,15 @@ export default function ReviewMediation( {
 		violations: null,
 	} );
 
-	const setSectionOpen = useCallback( ( key: SectionKey, opened: boolean ) => {
-		setOpenSections( ( prev ) => ( { ...prev, [ key ]: opened } ) );
-	}, [] );
+	const setSectionOpen = useCallback(
+		( key: SectionKey, opened: boolean ) => {
+			if ( isPostStale ) {
+				return;
+			}
+			setOpenSections( ( prev ) => ( { ...prev, [ key ]: opened } ) );
+		},
+		[ isPostStale ]
+	);
 
 	const renderedGuidelineViolations = useMemo(
 		() => guideline_violations.filter( ( v ) => hasRenderableGuidelineQuote( v.guideline_quote ) ),
@@ -368,6 +387,9 @@ export default function ReviewMediation( {
 
 	const handleStatClick = useCallback(
 		( key: SectionKey ) => {
+			if ( isPostStale ) {
+				return;
+			}
 			// Open first, then scroll on the next-next frame so React + layout
 			// have committed the expanded panel before scrollIntoView runs.
 			setSectionOpen( key, true );
@@ -380,7 +402,7 @@ export default function ReviewMediation( {
 				} );
 			} );
 		},
-		[ setSectionOpen ]
+		[ isPostStale, setSectionOpen ]
 	);
 
 	// Flat pre-order list of blocks; ability's `block_index` maps to this array.
@@ -427,6 +449,9 @@ export default function ReviewMediation( {
 
 	const focusBlock = useCallback(
 		( blockIndex: number | null ) => {
+			if ( isPostStale ) {
+				return;
+			}
 			const clientId = getClientId( blockIndex );
 			if ( ! clientId ) {
 				return;
@@ -438,8 +463,9 @@ export default function ReviewMediation( {
 			// index.ts commentary for why we don't use the private spotlight action).
 			findBlockListLayout()?.classList.add( FOCUS_MODE_CLASS );
 		},
-		[ getClientId, selectBlock ]
+		[ getClientId, isPostStale, selectBlock ]
 	);
+	const focusCurrentPostBlock = isPostStale ? undefined : focusBlock;
 
 	const fireItemAction = useCallback(
 		( options: {
@@ -478,6 +504,9 @@ export default function ReviewMediation( {
 			contentBefore?: string;
 			contentAfter?: string;
 		} > => {
+			if ( isPostStale ) {
+				return { success: false };
+			}
 			if ( getBlockEditDisabledReason( blockIndex, currentText ) ) {
 				return { success: false };
 			}
@@ -506,12 +535,15 @@ export default function ReviewMediation( {
 				return { success: false };
 			}
 		},
-		[ getBlockEditDisabledReason, getClientId ]
+		[ getBlockEditDisabledReason, getClientId, isPostStale ]
 	);
 
 	// ---------- Suggested edit handlers ----------
 	const handleAcceptEdit = useCallback(
 		async ( edit: SuggestedEdit, editIndex: number ) => {
+			if ( isPostStale ) {
+				return;
+			}
 			if ( isManualSuggestedEdit( edit ) ) {
 				return;
 			}
@@ -549,10 +581,13 @@ export default function ReviewMediation( {
 			} );
 			setEditStatus( editIndex, result.success ? 'accepted' : 'failed' );
 		},
-		[ applyTextToBlock, fireItemAction, setEditStatus ]
+		[ applyTextToBlock, fireItemAction, isPostStale, setEditStatus ]
 	);
 	const handleUndoEdit = useCallback(
 		( editIndex: number ) => {
+			if ( isPostStale ) {
+				return;
+			}
 			const snap = editSnapshots.current[ editIndex ];
 			if ( snap ) {
 				if ( ! undoBlockEdit( snap.clientId, snap.contentBefore, snap.contentAfter ) ) {
@@ -572,10 +607,13 @@ export default function ReviewMediation( {
 			} );
 			setEditStatus( editIndex, 'pending' );
 		},
-		[ fireItemAction, setEditStatus ]
+		[ fireItemAction, isPostStale, setEditStatus ]
 	);
 	const handleDismissEdit = useCallback(
 		( editIndex: number ) => {
+			if ( isPostStale ) {
+				return;
+			}
 			fireItemAction( {
 				action: 'dismiss',
 				target: 'edit',
@@ -583,12 +621,15 @@ export default function ReviewMediation( {
 			} );
 			setEditStatus( editIndex, 'dismissed' );
 		},
-		[ fireItemAction, setEditStatus ]
+		[ fireItemAction, isPostStale, setEditStatus ]
 	);
 
 	// ---------- Conflict handlers ----------
 	const handleAcceptCandidate = useCallback(
 		async ( conflictIndex: number, candidate: CandidateResolution ) => {
+			if ( isPostStale ) {
+				return;
+			}
 			if ( getBlockEditDisabledReason( candidate.block_index, candidate.current_text ) ) {
 				setConflictStatus( conflictIndex, 'failed' );
 				fireItemAction( {
@@ -623,10 +664,13 @@ export default function ReviewMediation( {
 			} );
 			setConflictStatus( conflictIndex, result.success ? 'accepted' : 'failed' );
 		},
-		[ applyTextToBlock, fireItemAction, getBlockEditDisabledReason, setConflictStatus ]
+		[ applyTextToBlock, fireItemAction, getBlockEditDisabledReason, isPostStale, setConflictStatus ]
 	);
 	const handleUndoConflict = useCallback(
 		( conflictIndex: number ) => {
+			if ( isPostStale ) {
+				return;
+			}
 			const snap = conflictSnapshots.current[ conflictIndex ];
 			if ( snap ) {
 				if ( ! undoBlockEdit( snap.clientId, snap.contentBefore, snap.contentAfter ) ) {
@@ -646,10 +690,13 @@ export default function ReviewMediation( {
 			} );
 			setConflictStatus( conflictIndex, 'pending' );
 		},
-		[ fireItemAction, setConflictStatus ]
+		[ fireItemAction, isPostStale, setConflictStatus ]
 	);
 	const handleDismissConflict = useCallback(
 		( conflictIndex: number ) => {
+			if ( isPostStale ) {
+				return;
+			}
 			fireItemAction( {
 				action: 'dismiss',
 				target: 'conflict',
@@ -657,7 +704,7 @@ export default function ReviewMediation( {
 			} );
 			setConflictStatus( conflictIndex, 'dismissed' );
 		},
-		[ fireItemAction, setConflictStatus ]
+		[ fireItemAction, isPostStale, setConflictStatus ]
 	);
 
 	// ---------- Bulk apply ----------
@@ -690,7 +737,7 @@ export default function ReviewMediation( {
 	const totalPendingCount = pendingAiConflictCount + pendingEditCount;
 
 	const handleAcceptAllAi = useCallback( async () => {
-		if ( bulkRunning || totalPendingCount === 0 ) {
+		if ( isPostStale || bulkRunning || totalPendingCount === 0 ) {
 			return;
 		}
 		let bulkTarget: 'edit' | 'conflict' | 'mixed' = 'edit';
@@ -804,6 +851,7 @@ export default function ReviewMediation( {
 		applyTextToBlock,
 		fireItemAction,
 		getBlockEditDisabledReason,
+		isPostStale,
 		setConflictStatus,
 		setEditStatus,
 	] );
@@ -837,7 +885,7 @@ export default function ReviewMediation( {
 	// Latch on the first effect run so re-renders do not duplicate `_result_rendered`.
 	const hasTrackedResultRef = useRef( false );
 	useEffect( () => {
-		if ( hasTrackedResultRef.current ) {
+		if ( isPostStale || hasTrackedResultRef.current ) {
 			return;
 		}
 		hasTrackedResultRef.current = true;
@@ -859,13 +907,22 @@ export default function ReviewMediation( {
 		cached_at,
 		conflicts,
 		implications,
+		isPostStale,
 		renderedGuidelineViolations,
 		review_context,
 		suggested_edits,
 	] );
 
 	return (
-		<div className="jetpack-ai-review-mediation">
+		<div
+			className={ `jetpack-ai-review-mediation${ isPostStale ? ' is-post-stale' : '' }` }
+			aria-disabled={ isPostStale || undefined }
+		>
+			{ isPostStale && (
+				<p className="jetpack-ai-review-mediation__stale-warning" role="note">
+					{ __( 'Review context changed. Start a new chat to re-run this review.', 'jetpack' ) }
+				</p>
+			) }
 			{ /* ---------- Stats strip ---------- *
 			 * Each chip that maps to a section (`conflicts`, `implications`,
 			 * `edits`, `violations`) becomes a button that scrolls — and
@@ -882,6 +939,7 @@ export default function ReviewMediation( {
 						<button
 							type="button"
 							className="jetpack-ai-review-mediation__stat is-conflicts is-clickable"
+							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'conflicts' ) }
 							title={ __( 'Jump to conflicts', 'jetpack' ) }
 						>
@@ -895,6 +953,7 @@ export default function ReviewMediation( {
 						<button
 							type="button"
 							className="jetpack-ai-review-mediation__stat is-clickable"
+							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'implications' ) }
 							title={ __( 'Jump to implications', 'jetpack' ) }
 						>
@@ -910,6 +969,7 @@ export default function ReviewMediation( {
 						<button
 							type="button"
 							className="jetpack-ai-review-mediation__stat is-clickable"
+							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'edits' ) }
 							title={ __( 'Jump to suggested edits', 'jetpack' ) }
 						>
@@ -925,6 +985,7 @@ export default function ReviewMediation( {
 						<button
 							type="button"
 							className="jetpack-ai-review-mediation__stat is-clickable"
+							disabled={ isPostStale }
 							onClick={ () => handleStatClick( 'violations' ) }
 							title={ __( 'Jump to guideline violations', 'jetpack' ) }
 						>
@@ -1021,6 +1082,7 @@ export default function ReviewMediation( {
 											blockCandidateStates[ 0 ];
 										const headerBlockIndex = headerCandidateState?.candidate.block_index ?? null;
 										const actionsDisabled =
+											isPostStale ||
 											status === 'applying' ||
 											status === 'accepted' ||
 											status === 'dismissed' ||
@@ -1065,7 +1127,7 @@ export default function ReviewMediation( {
 															<BlockRef
 																index={ headerBlockIndex }
 																blocks={ blocks }
-																onFocus={ focusBlock }
+																onFocus={ focusCurrentPostBlock }
 															/>
 															<span
 																className="jetpack-ai-review-mediation__collapsed-sep"
@@ -1081,6 +1143,7 @@ export default function ReviewMediation( {
 													<button
 														type="button"
 														className="jetpack-ai-review-mediation__collapsed-undo"
+														disabled={ isPostStale }
 														onClick={ () => handleUndoConflict( i ) }
 														title={
 															status === 'accepted'
@@ -1115,7 +1178,7 @@ export default function ReviewMediation( {
 														<BlockRef
 															index={ headerBlockIndex }
 															blocks={ blocks }
-															onFocus={ focusBlock }
+															onFocus={ focusCurrentPostBlock }
 															className="jetpack-ai-review-mediation__conflict-block-ref"
 														/>
 													) }
@@ -1234,7 +1297,11 @@ export default function ReviewMediation( {
 														{ imp.affected_blocks.map( ( b, j ) => (
 															<span key={ `imp-${ i }-aff-${ j }` }>
 																{ j > 0 && ', ' }
-																<BlockRef index={ b } blocks={ blocks } onFocus={ focusBlock } />
+																<BlockRef
+																	index={ b }
+																	blocks={ blocks }
+																	onFocus={ focusCurrentPostBlock }
+																/>
 															</span>
 														) ) }
 													</span>
@@ -1273,12 +1340,14 @@ export default function ReviewMediation( {
 										const clickable = ! isPostWide;
 										const isCollapsed = status === 'accepted' || status === 'dismissed';
 										const acceptDisabled =
+											isPostStale ||
 											!! acceptDisabledReason ||
 											status === 'applying' ||
 											status === 'accepted' ||
 											status === 'dismissed' ||
 											bulkRunning;
 										const dismissDisabled =
+											isPostStale ||
 											status === 'applying' ||
 											status === 'accepted' ||
 											status === 'dismissed' ||
@@ -1311,7 +1380,7 @@ export default function ReviewMediation( {
 													<BlockRef
 														index={ edit.block_index }
 														blocks={ blocks }
-														onFocus={ clickable ? focusBlock : undefined }
+														onFocus={ clickable ? focusCurrentPostBlock : undefined }
 													/>
 													{ edit.suggested_text && (
 														<>
@@ -1329,6 +1398,7 @@ export default function ReviewMediation( {
 													<button
 														type="button"
 														className="jetpack-ai-review-mediation__collapsed-undo"
+														disabled={ isPostStale }
 														onClick={ () => handleUndoEdit( i ) }
 														title={
 															status === 'accepted'
@@ -1355,7 +1425,7 @@ export default function ReviewMediation( {
 													<BlockRef
 														index={ edit.block_index }
 														blocks={ blocks }
-														onFocus={ clickable ? focusBlock : undefined }
+														onFocus={ clickable ? focusCurrentPostBlock : undefined }
 													/>
 												</p>
 												{ edit.current_text && (
@@ -1471,7 +1541,7 @@ export default function ReviewMediation( {
 															<BlockRef
 																index={ v.block_index }
 																blocks={ blocks }
-																onFocus={ focusBlock }
+																onFocus={ focusCurrentPostBlock }
 															/>
 														</>
 													) }
@@ -1504,7 +1574,7 @@ export default function ReviewMediation( {
 					<button
 						type="button"
 						className="jetpack-ai-review-mediation__footer-action is-accept"
-						disabled={ bulkRunning || totalPendingCount === 0 }
+						disabled={ isPostStale || bulkRunning || totalPendingCount === 0 }
 						onClick={ handleAcceptAllAi }
 					>
 						{ bulkRunning
