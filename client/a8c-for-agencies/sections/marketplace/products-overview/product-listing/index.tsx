@@ -17,6 +17,7 @@ import { useProductTermAvailabilityTooltip } from '../../hooks/use-marketplace';
 import usePressableAddonVisibility, {
 	canShowPressableAddonsInMarketplace,
 } from '../../hooks/use-pressable-addon-visibility';
+import { getProductCardKey, isSameMarketplaceProduct } from '../../lib/pressable-memory-addon';
 import { SelectedFilters } from '../../lib/product-filter';
 import useProductAndPlansWithPressableVisibility from '../hooks/use-product-and-plans-with-pressable-visibility';
 import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
@@ -149,8 +150,8 @@ export default function ProductListing( {
 				...product,
 				quantity,
 			};
-			const index = selectedCartItems.findIndex(
-				( item ) => item.quantity === productBundle.quantity && item.slug === productBundle.slug
+			const index = selectedCartItems.findIndex( ( item ) =>
+				isSameMarketplaceProduct( item, productBundle, quantity )
 			);
 			if ( index === -1 ) {
 				// Item doesn't exist, add it
@@ -184,7 +185,7 @@ export default function ProductListing( {
 			if ( replace ) {
 				setSelectedCartItems(
 					selectedCartItems.map( ( item ) => {
-						if ( item.slug === replace.slug && item.quantity === quantity ) {
+						if ( isSameMarketplaceProduct( item, replace, quantity ) ) {
 							return { ...product, quantity };
 						}
 
@@ -228,11 +229,9 @@ export default function ProductListing( {
 	const { isReady } = useSubmitForm( { selectedSite, suggestedProductSlugs } );
 
 	const isSelected = useCallback(
-		( slug: string | string[] ) =>
-			selectedCartItems.some(
-				( item ) =>
-					( Array.isArray( slug ) ? slug.includes( item.slug ) : item.slug === slug ) &&
-					item.quantity === quantity
+		( products: APIProductFamilyProduct[] ) =>
+			selectedCartItems.some( ( item ) =>
+				products.some( ( product ) => isSameMarketplaceProduct( item, product, quantity ) )
 			),
 		[ quantity, selectedCartItems ]
 	);
@@ -296,16 +295,16 @@ export default function ProductListing( {
 				<ProductCard
 					asReferral={ isReferralMode }
 					termPricing={ termPricing }
-					key={ options.map( ( { slug } ) => slug ).join( ',' ) }
+					key={ options.map( getProductCardKey ).join( ',' ) }
 					products={ options }
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
-					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
+					isSelected={ isSelected( options ) }
 					isDisabled={
 						productDoNotHaveSupportedBundles ||
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
-							! isSelected( options.map( ( { slug } ) => slug ) ) )
+							! isSelected( options ) )
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }

@@ -947,6 +947,7 @@ export interface ResponseCartProductExtra {
 	isA4ADevSiteCheckout?: boolean;
 	referral_id?: number;
 	agency_id?: number;
+	site_domain?: string;
 
 	/**
 	 * Marketplace properties

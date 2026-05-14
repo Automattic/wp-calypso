@@ -5,6 +5,7 @@ import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-prod
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { MarketplaceTypeContext, TermPricingContext } from '../context';
+import { getPressableMemoryTarget, isPressablePhpMemoryAddon } from '../lib/pressable-memory-addon';
 import { CART_URL_HASH_FRAGMENT } from '../shopping-cart';
 import { type ShoppingCartItem } from '../types';
 
@@ -74,16 +75,22 @@ export default function useShoppingCart() {
 						...( cacheData[ 3 ]
 							? { siteUrls: decodeURIComponent( cacheData[ 3 ] ).split( ',' ) }
 							: {} ),
+						...( cacheData[ 4 ] ? { site_domain: decodeURIComponent( cacheData[ 4 ] ) } : {} ),
 					};
 				} ) ?? [];
 
 		if ( data && !! selectedItemsCache.length ) {
 			const loadedItems: ShoppingCartItem[] = [];
 
-			selectedItemsCache.forEach( ( { slug, quantity, licenseId, siteUrls } ) => {
+			selectedItemsCache.forEach( ( { slug, quantity, licenseId, siteUrls, site_domain } ) => {
 				const match =
 					quantity === 1 || slug.startsWith( 'wpcom-hosting' )
-						? data.find( ( product ) => product.slug === slug )
+						? data.find(
+								( product ) =>
+									product.slug === slug &&
+									( ! isPressablePhpMemoryAddon( product ) ||
+										getPressableMemoryTarget( product ) === ( site_domain ?? '' ) )
+						  )
 						: data.find(
 								( product ) =>
 									product.slug === slug &&
@@ -91,7 +98,7 @@ export default function useShoppingCart() {
 						  );
 
 				if ( match ) {
-					loadedItems.push( { ...match, quantity, licenseId, siteUrls } );
+					loadedItems.push( { ...match, quantity, licenseId, siteUrls, site_domain } );
 				}
 			} );
 
@@ -110,8 +117,10 @@ export default function useShoppingCart() {
 						item.licenseId
 							? `${ item.slug }:${ item.quantity }:${ item.licenseId }:${ encodeURIComponent(
 									item.siteUrls?.join( ',' ) ?? ''
-							  ) }`
-							: `${ item.slug }:${ item.quantity }`
+							  ) }:${ encodeURIComponent( item.site_domain ?? '' ) }`
+							: `${ item.slug }:${ item.quantity }::${ encodeURIComponent(
+									item.siteUrls?.join( ',' ) ?? ''
+							  ) }:${ encodeURIComponent( item.site_domain ?? '' ) }`
 					)
 					.join( ',' )
 			);
