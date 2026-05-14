@@ -406,11 +406,8 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 
 	@include ui-mixins.when-dark-theme {
-		color: var( --color-text );
-
 		blockquote {
 			border-color: var( --color-border-subtle );
-			color: var( --color-text-subtle );
 		}
 	}
 }
@@ -698,13 +695,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	}
 
 	@include ui-mixins.when-dark-theme {
-		color: var( --color-text );
-
-		.reader-full-post__header-title-link,
-		.reader-full-post__header-title-link:hover {
-			color: var( --color-text );
-		}
-
 		.reader-full-post__header-title-link::after {
 			color: var( --color-text-subtle );
 		}

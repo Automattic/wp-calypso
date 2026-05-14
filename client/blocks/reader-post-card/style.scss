@@ -422,20 +422,18 @@
 	}
 }
 
-.reader__content .reader-post-card__byline-secondary-item {
-	@include ui-mixins.when-dark-theme {
-		color: var( --color-text-subtle );
-
-		&:hover {
-			color: var( --color-link );
-		}
-	}
-}
-
 .reader__content .reader-post-card__tag-link {
 	color: var(--color-neutral-100);
 	&:focus {
 		outline: dotted 1px;
+	}
+}
+
+.reader__content .reader-post-card__byline-secondary-item {
+	@include ui-mixins.when-dark-theme {
+		&:hover {
+			color: var( --color-link );
+		}
 	}
 }
 
@@ -489,10 +487,6 @@
 
 	&::after {
 		@include long-content-fade( $size: 10% );
-
-		@include ui-mixins.when-dark-theme {
-			background: linear-gradient( to right, transparent, var( --color-surface ) 90% );
-		}
 	}
 }
 
