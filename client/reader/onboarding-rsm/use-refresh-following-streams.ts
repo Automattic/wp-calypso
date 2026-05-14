@@ -1,10 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
-import {
-	READER_FOLLOWING_VIEW_PREFERENCE,
-	DEFAULT_VIEW,
-} from 'calypso/reader/following/view-preference';
-import { useDispatch, useSelector } from 'calypso/state';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { useFollowingView } from 'calypso/reader/following/view-preference';
+import { useDispatch } from 'calypso/state';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import {
 	clearStream,
@@ -21,15 +17,13 @@ import {
  * - Stream data is only refreshed when the user is currently on /reader,
  *   since `recent` re-fetches unconditionally on mount and `following` will
  *   be invisible if not on the page.
- * - Which stream is refreshed is determined by the `reader_following_view`
- *   preference ('stream' default or 'recent').
+ * - Which stream is refreshed follows `useFollowingView().currentView` (same source as the
+ *   Reader following / recent toggle; typed as `ReaderFollowingView`).
  */
 export const useRefreshFollowingStreams = () => {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const currentView = useSelector(
-		( state ) => getPreference( state, READER_FOLLOWING_VIEW_PREFERENCE ) ?? DEFAULT_VIEW
-	);
+	const { currentView } = useFollowingView();
 
 	return () => {
 		// Always refresh the follows list so the sidebar site list is up to date.

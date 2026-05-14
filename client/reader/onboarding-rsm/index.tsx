@@ -73,12 +73,6 @@ const ReaderOnboardingRsm = ( {
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
 	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
 
-	// If the user has completed the onboarding, save the preference and track the event.
-	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites ) {
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-	}
-
 	const meetsEligibility =
 		preferencesLoaded &&
 		! hasCompletedOnboarding &&
@@ -163,6 +157,16 @@ const ReaderOnboardingRsm = ( {
 		} );
 		task?.actionDispatch?.();
 	};
+
+	// Persist completion + track once the user meets the checklist (not during render —
+	// avoids duplicate dispatches/events under StrictMode or extra renders).
+	useEffect( () => {
+		if ( hasCompletedOnboarding || ! hasFollowedTags || ! hasFollowedSites ) {
+			return;
+		}
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+	}, [ hasCompletedOnboarding, hasFollowedTags, hasFollowedSites, dispatch ] );
 
 	// Track if user viewed Reader Onboarding.
 	useEffect( () => {
