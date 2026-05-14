@@ -980,6 +980,63 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/content-research-app@workspace:apps/content-research":
+  version: 0.0.0-use.local
+  resolution: "@automattic/content-research-app@workspace:apps/content-research"
+  dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/content-research": "workspace:^"
+    "@tanstack/react-query": "npm:^5.83.0"
+    "@wordpress/components": "npm:^32.1.0"
+    "@wordpress/compose": "npm:^7.23.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.24.0"
+    "@wordpress/editor": "npm:^14.23.0"
+    "@wordpress/element": "npm:^6.23.0"
+    "@wordpress/hooks": "npm:^4.23.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/keycodes": "npm:^4.23.0"
+    "@wordpress/plugins": "npm:^7.23.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.24.0"
+    webpack: "npm:^5.99.8"
+  peerDependencies:
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    postcss: "*"
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  languageName: unknown
+  linkType: soft
+
+"@automattic/content-research@workspace:^, @automattic/content-research@workspace:packages/content-research":
+  version: 0.0.0-use.local
+  resolution: "@automattic/content-research@workspace:packages/content-research"
+  dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/react-query": "npm:^5.83.0"
+    "@testing-library/react": "npm:^15.0.0"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wordpress/api-fetch": "npm:^7.23.0"
+    "@wordpress/components": "npm:^32.1.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    "@wordpress/ui": "npm:^0.9.0"
+    "@wordpress/url": "npm:^4.23.0"
+    clsx: "npm:^2.1.1"
+    typescript: "npm:^5.8.3"
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    "@wordpress/data": ^10.23.0
+    "@wordpress/element": ^6.23.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/create-calypso-config@workspace:^, @automattic/create-calypso-config@workspace:packages/create-calypso-config":
   version: 0.0.0-use.local
   resolution: "@automattic/create-calypso-config@workspace:packages/create-calypso-config"
