@@ -60,7 +60,11 @@ function interleaveByTag< T >( perTagLists: T[][] ): T[] {
  * Canonical feed URL for de-duping follows vs recommendations when `feed_ID`
  * drifts (same subscription, new feed row) or when matching across sources.
  *
- * Omits the URL scheme so `http://` and `https://` (and default ports) match the same feed.
+ * Omits the scheme so `http://` and `https://` match. Uses `hostname` (no port),
+ * normalized path (no trailing slash except `/`), and `search`. Reader feeds
+ * are effectively default-port; ignoring port avoids `host`/`host:443` mismatches
+ * without special-casing ports (same host+path on different non-default ports
+ * is treated as one feed — rare here).
  */
 function normalizeReaderFeedUrlForSubscriptionMatch(
 	raw: string | undefined | null
@@ -74,12 +78,12 @@ function normalizeReaderFeedUrlForSubscriptionMatch(
 	}
 	try {
 		const u = new URL( trimmed );
-		const host = u.host.toLowerCase();
+		const hostname = u.hostname.toLowerCase();
 		let pathname = u.pathname;
 		if ( pathname.length > 1 && pathname.endsWith( '/' ) ) {
 			pathname = pathname.slice( 0, -1 );
 		}
-		return `${ host }${ pathname }${ u.search }`;
+		return `${ hostname }${ pathname }${ u.search }`;
 	} catch {
 		return trimmed.toLowerCase();
 	}
