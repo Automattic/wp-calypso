@@ -25,8 +25,7 @@ export const useRefreshFollowingStreams = () => {
 	return () => {
 		dispatch( requestFollows() );
 
-		const pathWithoutQuery = window.location.pathname.split( '?' )[ 0 ];
-		const path = removeLocaleFromPathLocaleInFront( pathWithoutQuery );
+		const path = removeLocaleFromPathLocaleInFront( window.location.pathname );
 
 		const refreshStream = ( streamKey: string ) => {
 			dispatch( clearStream( { streamKey } ) );
