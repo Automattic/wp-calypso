@@ -135,6 +135,7 @@ export * from './site-reset';
 export * from './site-scan';
 export * from './site-settings';
 export * from './site-staging-site';
+export * from './site-wordads-status';
 export * from './site-staging-sync';
 export * from './site-stats';
 export * from './site-themes';

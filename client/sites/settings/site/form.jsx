@@ -1,4 +1,5 @@
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
 import { DIFMUpsell } from '../components/difm-upsell-banner';
 import { A4AFullyManagedSiteForm } from './agency';
 import EnhancedOwnershipForm from './enhanced-ownership';
@@ -32,6 +33,7 @@ export default function SiteSettingsForm( {
 	return (
 		<>
 			{ site && <QuerySiteSettings siteId={ site.ID } /> }
+			{ site && <QueryWordadsStatus siteId={ site.ID } /> }
 
 			{ isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated && ! isWpcomStagingSite ? (
 				<LaunchSite />

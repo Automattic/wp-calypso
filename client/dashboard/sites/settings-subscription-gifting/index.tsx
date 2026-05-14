@@ -1,5 +1,5 @@
-import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery, siteWordadsStatusQuery } from '@automattic/api-queries';
+import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
@@ -12,6 +12,7 @@ import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { SiteSettings } from '@automattic/api-core';
@@ -46,6 +47,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
+	const { data: wordadsStatus } = useQuery( siteWordadsStatusQuery( site.ID ) );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
 
 	const [ formData, setFormData ] = useState( {
@@ -57,6 +59,8 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 	);
 
 	const { isPending } = mutation;
+
+	const isMatureSite = wordadsStatus?.unsafe === 'mature';
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -89,7 +93,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 					title={ __( 'Accept a gift subscription' ) }
 					description={ createInterpolateElement(
 						__(
-							'Allow a site visitor to cover the full cost of your site’s WordPress.com plan. <learnMoreLink />'
+							'Allow a site visitor to cover the full cost of your site's WordPress.com plan. <learnMoreLink />'
 						),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="gift-a-subscription" />,
@@ -98,6 +102,13 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				/>
 			}
 		>
+			{ isMatureSite && (
+				<Notice variant="warning">
+					{ __(
+						'Gift subscriptions are unavailable for this site because it has been identified as containing mature content.'
+					) }
+				</Notice>
+			) }
 			<Card>
 				<CardBody>
 					<form onSubmit={ handleSubmit }>

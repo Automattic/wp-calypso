@@ -124,6 +124,7 @@ export * from './site-reset';
 export * from './site-scan';
 export * from './site-settings';
 export * from './site-sftp';
+export * from './site-wordads-status';
 export * from './site-ssh';
 export * from './site-staging-sites';
 export * from './site-staging-sync';
