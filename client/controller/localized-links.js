@@ -11,11 +11,12 @@ const getLocalizedCanonicalUrl = ( path, locale, excludeSearch = false ) => {
 		baseUrl.search = '';
 	}
 
-	const baseUrlWithoutLang = baseUrl.href.replace(
-		new RegExp( `\\/(${ getLanguageSlugs().join( '|' ) })(\\/|\\?|$)` ),
-		'$2'
-	);
-	let localizedUrl = localizeUrl( baseUrlWithoutLang, locale, false );
+	// Anchor the strip to the start of the pathname so slugs that happen to
+	// match a language code (e.g. /plugins/de, /tag/es) survive.
+	const langPrefixRegex = new RegExp( `^/(${ getLanguageSlugs().join( '|' ) })(/|$)` );
+	baseUrl.pathname = baseUrl.pathname.replace( langPrefixRegex, '/' );
+
+	let localizedUrl = localizeUrl( baseUrl.href, locale, false );
 
 	// Remove the trailing slash if `path` doesn't have one either.
 	if ( ! path.endsWith( '/' ) && localizedUrl.endsWith( '/' ) ) {
