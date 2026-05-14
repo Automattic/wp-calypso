@@ -220,6 +220,9 @@ function getRecordStat(
 	streak: EngagementStreak,
 	translate: ReturnType< typeof useTranslate >
 ): ReactNode | null {
+	if ( streak.longest_streak === 0 ) {
+		return null;
+	}
 	const count = streak.longest_streak;
 	const shortText = translate( '%(count)d day', '%(count)d days', {
 		count,

@@ -245,17 +245,18 @@ describe( 'ActivityStreak', () => {
 			).toBeVisible();
 		} );
 
-		test( 'hides the stat when current matches longest', () => {
+		test( 'shows the stat even when current matches longest', () => {
 			const { container } = render(
 				<ActivityStreak
 					streak={ { ...baseStreak, current_streak: 14, longest_streak: 14 } }
 					isOwnProfile
 				/>
 			);
-			expect( getRecordStat( container ) ).toBeNull();
+			expect( getRecordStat( container ) ).not.toBeNull();
+			expect( screen.getByText( '14 days' ) ).toBeVisible();
 		} );
 
-		test( 'hides the stat when the user has never started', () => {
+		test( 'hides the stat when longest_streak is 0', () => {
 			const { container } = render(
 				<ActivityStreak
 					streak={ {
