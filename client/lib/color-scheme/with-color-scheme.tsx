@@ -4,22 +4,18 @@ import type { ComponentType, ReactNode } from 'react';
 
 type ColorSchemeProviderComponent = ComponentType< { children: ReactNode } >;
 
-function BodyClass( { classNames }: { classNames: string[] } ) {
+function BodyClass( { className }: { className: string } ) {
 	useEffect( () => {
 		if ( typeof document === 'undefined' ) {
 			return;
 		}
 
-		classNames.forEach( ( className ) => {
-			document.body.classList.add( className );
-		} );
+		document.body.classList.add( className );
 
 		return () => {
-			classNames.forEach( ( className ) => {
-				document.body.classList.remove( className );
-			} );
+			document.body.classList.remove( className );
 		};
-	}, [ classNames ] );
+	}, [ className ] );
 
 	return null;
 }
@@ -31,7 +27,7 @@ export function withColorScheme(
 		enabled = true,
 		Provider = ColorSchemeProvider,
 	}: {
-		bodyClass?: string | string[];
+		bodyClass?: string;
 		enabled?: boolean;
 		Provider?: ColorSchemeProviderComponent;
 	} = {}
@@ -40,11 +36,9 @@ export function withColorScheme(
 		return children;
 	}
 
-	const bodyClasses = typeof bodyClass === 'string' ? [ bodyClass ] : bodyClass;
-
 	return (
 		<Provider>
-			{ bodyClasses && <BodyClass classNames={ bodyClasses } /> }
+			{ bodyClass && <BodyClass className={ bodyClass } /> }
 			{ children }
 		</Provider>
 	);

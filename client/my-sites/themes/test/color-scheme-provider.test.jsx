@@ -200,4 +200,35 @@ describe( 'withColorScheme', () => {
 
 		expect( document.body.classList.contains( 'is-themes-dark-mode' ) ).toBe( false );
 	} );
+
+	test( 'keeps the body class effect stable across re-renders', () => {
+		const store = mockStore( buildState( { scheme: 'dark' } ) );
+		const addClass = jest.spyOn( document.body.classList, 'add' );
+		const removeClass = jest.spyOn( document.body.classList, 'remove' );
+		const renderWrappedColorScheme = () => (
+			<Provider store={ store }>
+				{ withColorScheme( <span>child</span>, {
+					bodyClass: 'is-themes-dark-mode',
+					enabled: true,
+					Provider: ClassicColorSchemeProvider,
+				} ) }
+			</Provider>
+		);
+
+		const { rerender, unmount } = render( renderWrappedColorScheme() );
+
+		expect( document.body.classList.contains( 'is-themes-dark-mode' ) ).toBe( true );
+		expect( addClass ).toHaveBeenCalledWith( 'is-themes-dark-mode' );
+
+		addClass.mockClear();
+		removeClass.mockClear();
+		rerender( renderWrappedColorScheme() );
+
+		expect( addClass ).not.toHaveBeenCalled();
+		expect( removeClass ).not.toHaveBeenCalled();
+
+		unmount();
+		addClass.mockRestore();
+		removeClass.mockRestore();
+	} );
 } );
