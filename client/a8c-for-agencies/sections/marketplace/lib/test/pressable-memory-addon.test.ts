@@ -1,10 +1,8 @@
 import {
-	getProductCardKey,
 	getPressableMemoryTarget,
 	isPressablePhpMemoryAddon,
-	isSameMarketplaceProduct,
+	keepFirstPressableMemoryAddonProduct,
 } from '../pressable-memory-addon';
-import type { ShoppingCartItem } from '../../types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 const buildProduct = (
@@ -18,12 +16,6 @@ const buildProduct = (
 	price_interval: 'year',
 	family_slug: 'pressable-addon',
 	supported_bundles: [],
-	...overrides,
-} );
-
-const buildCartItem = ( overrides: Partial< ShoppingCartItem > = {} ): ShoppingCartItem => ( {
-	...buildProduct(),
-	quantity: 1,
 	...overrides,
 } );
 
@@ -42,42 +34,13 @@ describe( 'pressable memory add-on helpers', () => {
 		expect( getPressableMemoryTarget( buildProduct() ) ).toBe( '' );
 	} );
 
-	it( 'uses the target site/domain in card identity', () => {
-		expect( getProductCardKey( buildProduct( { site_domain: 'example.com' } ) ) ).toBe(
-			'pressable-addon-php-memory-512mb:example.com'
-		);
-		expect( getProductCardKey( buildProduct( { site_domain: 'client site.test' } ) ) ).toBe(
-			'pressable-addon-php-memory-512mb:client%20site.test'
-		);
-	} );
-
-	it( 'matches PHP memory cart items by slug, quantity, and target site/domain', () => {
-		const product = buildProduct( { site_domain: 'example.com' } );
+	it( 'keeps only the first PHP memory add-on product', () => {
+		const storageAddon = buildProduct( { slug: 'pressable-addon-storage-1gb' } );
+		const firstMemoryAddon = buildProduct( { site_domain: 'example.com' } );
+		const secondMemoryAddon = buildProduct( { site_domain: 'another-example.com' } );
 
 		expect(
-			isSameMarketplaceProduct( buildCartItem( { site_domain: 'example.com' } ), product, 1 )
-		).toBe( true );
-		expect(
-			isSameMarketplaceProduct(
-				buildCartItem( { site_domain: 'another-example.com' } ),
-				product,
-				1
-			)
-		).toBe( false );
-	} );
-
-	it( 'keeps non-memory products matched by slug and quantity only', () => {
-		const product = buildProduct( {
-			slug: 'pressable-addon-storage-1gb',
-			site_domain: 'example.com',
-		} );
-
-		expect(
-			isSameMarketplaceProduct(
-				buildCartItem( { slug: 'pressable-addon-storage-1gb', site_domain: 'other.com' } ),
-				product,
-				1
-			)
-		).toBe( true );
+			keepFirstPressableMemoryAddonProduct( [ storageAddon, firstMemoryAddon, secondMemoryAddon ] )
+		).toEqual( [ storageAddon, firstMemoryAddon ] );
 	} );
 } );

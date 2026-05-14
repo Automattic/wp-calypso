@@ -12,6 +12,21 @@ import { type ShoppingCartItem } from '../types';
 const SELECTED_ITEMS_SESSION_STORAGE_KEY = 'shopping-card-selected-items';
 const SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL = 'referrals-shopping-card-selected-items';
 
+function serializeCartItem( item: ShoppingCartItem ) {
+	const siteUrls = encodeURIComponent( item.siteUrls?.join( ',' ) ?? '' );
+	const siteDomain = encodeURIComponent( item.site_domain ?? '' );
+
+	if ( item.licenseId ) {
+		const cachedItem = `${ item.slug }:${ item.quantity }:${ item.licenseId }:${ siteUrls }`;
+
+		return item.site_domain ? `${ cachedItem }:${ siteDomain }` : cachedItem;
+	}
+
+	return isPressablePhpMemoryAddon( item )
+		? `${ item.slug }:${ item.quantity }::${ siteUrls }:${ siteDomain }`
+		: `${ item.slug }:${ item.quantity }`;
+}
+
 export default function useShoppingCart() {
 	const dispatch = useDispatch();
 
@@ -112,17 +127,7 @@ export default function useShoppingCart() {
 		( items: ShoppingCartItem[] ) => {
 			sessionStorage.setItem(
 				storageKey,
-				items
-					.map( ( item ) =>
-						item.licenseId
-							? `${ item.slug }:${ item.quantity }:${ item.licenseId }:${ encodeURIComponent(
-									item.siteUrls?.join( ',' ) ?? ''
-							  ) }:${ encodeURIComponent( item.site_domain ?? '' ) }`
-							: `${ item.slug }:${ item.quantity }::${ encodeURIComponent(
-									item.siteUrls?.join( ',' ) ?? ''
-							  ) }:${ encodeURIComponent( item.site_domain ?? '' ) }`
-					)
-					.join( ',' )
+				items.map( ( item ) => serializeCartItem( item ) ).join( ',' )
 			);
 			setSelectedCartItems( items );
 		},

@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, UseQueryResult, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { keepFirstPressableMemoryAddonProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/pressable-memory-addon';
 import getProductsRaw from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-products-raw';
 import selectAlphabeticallySortedProductOptions from 'calypso/jetpack-cloud/sections/partner-portal/lib/select-alphabetically-sorted-product-options';
 import wpcom from 'calypso/lib/wp';
@@ -45,18 +46,18 @@ async function queryProducts( agencyId?: number ): Promise< APIProductFamily[] >
 				.map( ( family ) => {
 					return {
 						...family,
-						products: family.products
-							.filter( ( product ) => {
+						products: keepFirstPressableMemoryAddonProduct(
+							family.products.filter( ( product ) => {
 								return exclude.indexOf( product.slug ) === -1;
 							} )
-							.map( ( product ) => ( {
-								...product,
-								family_slug: family.slug,
-								alternative_product_id:
-									product.alternative_product_id ||
-									product.monthly_alternative_product_id ||
-									product.yearly_alternative_product_id,
-							} ) ),
+						).map( ( product ) => ( {
+							...product,
+							family_slug: family.slug,
+							alternative_product_id:
+								product.alternative_product_id ||
+								product.monthly_alternative_product_id ||
+								product.yearly_alternative_product_id,
+						} ) ),
 					};
 				} )
 				.filter( ( family ) => {

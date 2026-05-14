@@ -1,4 +1,4 @@
-import { formatCurrency, formatNumber, formatNumberCompact } from '@automattic/number-formatters';
+import { formatCurrency, formatNumberCompact } from '@automattic/number-formatters';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
@@ -8,7 +8,6 @@ import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-p
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isPressablePhpMemoryAddon } from '../lib/pressable-memory-addon';
 import getPressablePlan from '../pressable-overview/lib/get-pressable-plan';
 import type { ShoppingCartItem } from '../types';
 
@@ -29,7 +28,6 @@ export default function ProductInfo( {
 	const isWooCommerceProduct = product.slug.startsWith( 'woocommerce-' );
 	const isPressableAddonProduct =
 		product.family_slug === 'pressable-addon' || product.slug.startsWith( 'pressable-addon-' );
-	const isPressableMemoryAddon = isPressablePhpMemoryAddon( product );
 
 	let productIcon =
 		productInfo?.productSlug && getProductIcon( { productSlug: productInfo?.productSlug } );
@@ -116,31 +114,7 @@ export default function ProductInfo( {
 			);
 		}
 
-		if ( isPressableMemoryAddon ) {
-			const phpMemory =
-				pressableAddonPlan?.phpMemory != null
-					? `${ formatNumber( pressableAddonPlan.phpMemory ) } MB`
-					: '512 MB';
-			productDescription = product.site_domain
-				? translate(
-						'Add %(phpMemory)s of PHP memory for each PHP worker/process on %(siteDomain)s.',
-						{
-							args: {
-								phpMemory,
-								siteDomain: product.site_domain,
-							},
-							comment: '%(siteDomain)s is the target site/domain for the add-on.',
-						}
-				  )
-				: translate(
-						'Add %(phpMemory)s of PHP memory for each PHP worker/process on one Pressable site/domain.',
-						{
-							args: {
-								phpMemory,
-							},
-						}
-				  );
-		} else if ( ! productDescription ) {
+		if ( ! productDescription ) {
 			productDescription = translate(
 				'Add-on that increases your Pressable plan limits while your plan is active.'
 			);
@@ -259,16 +233,6 @@ export default function ProductInfo( {
 					)
 				}
 				{ product.licenseId && siteUrls && <p className="product-info__site-url">{ siteUrls }</p> }
-				{ isPressableMemoryAddon && product.site_domain && (
-					<p className="product-info__site-url">
-						{ translate( 'Site: %(siteDomain)s', {
-							args: {
-								siteDomain: product.site_domain,
-							},
-							comment: '%(siteDomain)s is the target site/domain for the add-on.',
-						} ) }
-					</p>
-				) }
 			</div>
 		</div>
 	);

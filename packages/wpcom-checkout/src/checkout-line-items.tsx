@@ -913,27 +913,6 @@ export function LineItemSublabelAndPrice( {
 		isSmallestUnit: true,
 		stripZeros: true,
 	} );
-	const isA4APressableMemoryAddon =
-		product.extra?.isA4ASitelessCheckout &&
-		productSlug.startsWith( 'pressable_addon_php_memory_512mb' );
-	const pressableMemoryAddonSiteDomain = isA4APressableMemoryAddon ? product.extra.site_domain : '';
-
-	if ( isA4APressableMemoryAddon ) {
-		return (
-			<>
-				<DefaultLineItemSublabel product={ product } />
-				<br />
-				{ pressableMemoryAddonSiteDomain
-					? translate( 'Site: %(siteDomain)s', {
-							args: {
-								siteDomain: pressableMemoryAddonSiteDomain,
-							},
-							comment: '%(siteDomain)s is the target site/domain for the add-on.',
-					  } )
-					: translate( 'Site: one Pressable site/domain' ) }
-			</>
-		);
-	}
 
 	if ( isP2Plus( product ) ) {
 		// This is the price for one item for products with a quantity (eg. seats in a license).
