@@ -12,7 +12,7 @@ import {
 	useState,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp, closeSmall, Icon, search, tip } from '@wordpress/icons';
+import { chevronDown, chevronUp, closeSmall, Icon, search } from '@wordpress/icons';
 import { rawShortcut } from '@wordpress/keycodes';
 import { registerPlugin } from '@wordpress/plugins';
 import './content-research.scss';
@@ -163,8 +163,8 @@ function ContentResearchInspirationPrompt() {
 			type="button"
 			aria-label={ __( 'Need inspiration?', 'content-research' ) }
 		>
-			<span className="content-research-inspiration-float__icon">
-				<Icon icon={ tip } size={ 28 } />
+			<span className="content-research-inspiration-float__icon" aria-hidden="true">
+				🔍
 			</span>
 			<span className="content-research-inspiration-float__text">
 				{ __( 'Need inspiration?', 'content-research' ) }
