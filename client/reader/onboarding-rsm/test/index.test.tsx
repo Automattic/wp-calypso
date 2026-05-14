@@ -114,6 +114,11 @@ jest.mock( 'calypso/state/reader/onboarding/selectors/has-completed-reader-profi
 jest.mock( 'calypso/state/reader/streams/actions', () => ( {
 	clearStream: jest.fn( () => ( { type: 'READER_CLEAR_STREAM' } ) ),
 	requestPage: jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) ),
+	requestPaginatedStream: jest.fn( () => ( { type: 'READER_REQUEST_PAGINATED_STREAM' } ) ),
+} ) );
+
+jest.mock( '../use-refresh-following-streams', () => ( {
+	useRefreshFollowingStreams: () => jest.fn(),
 } ) );
 
 // ── Data hooks ────────────────────────────────────────────────────────────────

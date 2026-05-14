@@ -27,12 +27,11 @@ import { requestGravatarDetails } from 'calypso/state/gravatar-status/actions';
 import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
-import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
+import { useRefreshFollowingStreams } from './use-refresh-following-streams';
 import './style.scss';
 
 // All onboarding steps share a single <Modal> frame so transitions between
@@ -55,6 +54,7 @@ const ReaderOnboardingRsm = ( {
 	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
+	const refreshFollowingStreams = useRefreshFollowingStreams();
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
 	const [ hasCompletedWelcomeStep, setHasCompletedWelcomeStep ] = useState( false );
 
@@ -108,14 +108,10 @@ const ReaderOnboardingRsm = ( {
 			}
 		} else if ( step === 'interests' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
+			refreshFollowingStreams();
 		} else if ( step === 'discover' ) {
 			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
-			// Refresh the Following stream after the user might have followed
-			// new sites in the discover step.
-			dispatch( requestFollows() );
-			dispatch( clearStream( { streamKey: 'following' } ) );
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch( requestPage( { streamKey: 'following' } as any ) );
+			refreshFollowingStreams();
 		}
 	};
 
