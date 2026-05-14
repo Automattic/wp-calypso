@@ -41,12 +41,14 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Store
 					/>
 				) }
 				{ isCreditCard( paymentMethod ) && <PaymentMethodBackupToggle card={ paymentMethod } /> }
-				<TaxInfoArea
-					last4={ 'card_last_4' in paymentMethod ? paymentMethod.card_last_4 : undefined }
-					brand={ 'card_type' in paymentMethod ? paymentMethod.card_type : undefined }
-					storedDetailsId={ paymentMethod.stored_details_id }
-					paymentPartnerProcessorId={ paymentMethod.payment_partner }
-				/>
+				{ ! isRetiredPaymentMethod( paymentMethod ) && (
+					<TaxInfoArea
+						last4={ 'card_last_4' in paymentMethod ? paymentMethod.card_last_4 : undefined }
+						brand={ 'card_type' in paymentMethod ? paymentMethod.card_type : undefined }
+						storedDetailsId={ paymentMethod.stored_details_id }
+						paymentPartnerProcessorId={ paymentMethod.payment_partner }
+					/>
+				) }
 				<PaymentMethodDelete card={ paymentMethod } />
 			</div>
 		</CompactCard>
