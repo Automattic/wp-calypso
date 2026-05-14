@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient, type UseMutationOptions } from '@tanstack/react-query';
-import { agentStudioService } from './agent-studio-service';
+import { useAgentStudioService } from './agent-studio-service';
 import { getAgentStudioProjectQueryKey } from './use-agent-studio-project';
 import { getAgentStudioProjectsQueryKey } from './use-agent-studio-projects';
 import type {
@@ -11,10 +11,11 @@ type Options = UseMutationOptions< AgentStudioProject, Error, CreateAgentStudioP
 
 export default function useCreateAgentStudioProject( options?: Options ) {
 	const queryClient = useQueryClient();
+	const service = useAgentStudioService();
 
 	return useMutation< AgentStudioProject, Error, CreateAgentStudioProjectInput >( {
 		...options,
-		mutationFn: ( input ) => agentStudioService.createProject( input ),
+		mutationFn: ( input ) => service.createProject( input ),
 		onSuccess: ( project, variables, context ) => {
 			queryClient.setQueryData( getAgentStudioProjectQueryKey( project.id ), project );
 			queryClient.invalidateQueries( { queryKey: getAgentStudioProjectsQueryKey() } );

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { agentStudioService } from './agent-studio-service';
+import { useAgentStudioService } from './agent-studio-service';
 import type { AgentStudioOutput } from '../types';
 
 export const getAgentStudioProjectOutputsQueryKey = ( projectId?: string ) => [
@@ -8,9 +8,11 @@ export const getAgentStudioProjectOutputsQueryKey = ( projectId?: string ) => [
 ];
 
 export default function useAgentStudioProjectOutputs( projectId?: string ) {
+	const service = useAgentStudioService();
+
 	return useQuery< AgentStudioOutput[] >( {
 		queryKey: getAgentStudioProjectOutputsQueryKey( projectId ),
-		queryFn: () => agentStudioService.listProjectOutputs( projectId as string ),
+		queryFn: () => service.listProjectOutputs( projectId as string ),
 		enabled: !! projectId,
 		refetchOnWindowFocus: false,
 	} );
