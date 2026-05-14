@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/date-range-picker",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A date-range picker built on top of @automattic/ui's DateRangeCalendar, with timezone-aware site-day handling, preset shortcuts, and accessible inputs.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -39,7 +39,7 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
