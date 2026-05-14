@@ -81,6 +81,10 @@ $date-range-mobile-layout-switch: $break-small;
 	}
 }
 
+.date-range__picker-placeholder {
+	min-height: 290px;
+}
+
 .date-range__controls {
 	order: 1;
 	display: flex;
@@ -304,7 +308,9 @@ $date-range-mobile-layout-switch: $break-small;
 			}
 		}
 	}
-	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+	// DateRangePicker is lazy-loaded; extra `&.date-picker` specificity
+	// ensures this rule wins regardless of CSS chunk load order.
+	&.date-picker .DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
 		background-color: var(--date-range-picker-highlight-color);
 		.date-picker__day {
 			background-color: transparent;

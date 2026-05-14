@@ -4,9 +4,8 @@ import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { createRef, Component, lazy, Suspense } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import DateRangePicker from './date-range-picker';
 import DateRangeFooter from './footer';
 import DateRangeHeader from './header';
 import DateRangeInputs from './inputs';
@@ -14,6 +13,12 @@ import Shortcuts from './shortcuts';
 import DateRangeTrigger from './trigger';
 
 import './style.scss';
+
+const loadDateRangePicker = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-date-range-date-range-picker" */ './date-range-picker'
+	);
+const DateRangePicker = lazy( loadDateRangePicker );
 
 /**
  * Module variables
@@ -141,6 +146,8 @@ export class DateRange extends Component {
 
 	componentDidMount() {
 		window.addEventListener( 'resize', this.throttledHandleResize );
+		// Pre-warm the picker chunk so it's ready by the time the popover opens.
+		loadDateRangePicker();
 	}
 
 	componentWillUnmount() {
@@ -549,16 +556,18 @@ export class DateRange extends Component {
 	 */
 	renderDatePicker() {
 		return (
-			<DateRangePicker
-				firstSelectableDate={ this.props.firstSelectableDate }
-				lastSelectableDate={ this.props.lastSelectableDate }
-				selectedStartDate={ this.state.startDate }
-				selectedEndDate={ this.state.endDate }
-				onDateRangeChange={ this.handleDateRangeChange }
-				focusedMonth={ this.state.focusedMonth }
-				numberOfMonths={ this.state.numberOfMonths }
-				useArrowNavigation={ this.props.useArrowNavigation }
-			/>
+			<Suspense fallback={ <div className="date-range__picker-placeholder" /> }>
+				<DateRangePicker
+					firstSelectableDate={ this.props.firstSelectableDate }
+					lastSelectableDate={ this.props.lastSelectableDate }
+					selectedStartDate={ this.state.startDate }
+					selectedEndDate={ this.state.endDate }
+					onDateRangeChange={ this.handleDateRangeChange }
+					focusedMonth={ this.state.focusedMonth }
+					numberOfMonths={ this.state.numberOfMonths }
+					useArrowNavigation={ this.props.useArrowNavigation }
+				/>
+			</Suspense>
 		);
 	}
 
