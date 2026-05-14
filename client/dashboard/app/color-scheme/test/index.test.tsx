@@ -7,9 +7,9 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { ColorSchemeProvider, useColorScheme } from '..';
+import { ColorSchemeProvider, useColorScheme } from 'calypso/lib/color-scheme';
 import { render } from '../../../test-utils';
-import type { ColorScheme } from '..';
+import type { ColorScheme } from 'calypso/lib/color-scheme';
 
 const PREFERENCE_KEY = 'hosting-dashboard-color-scheme';
 const API_BASE = 'https://public-api.wordpress.com';
