@@ -22,8 +22,8 @@ jest.mock( 'calypso/state/reader/follows/actions', () => ( {
 
 // ── Stream actions ────────────────────────────────────────────────────────────
 
-const mockClearStream = jest.fn( () => ( { type: 'READER_CLEAR_STREAM' } ) );
-const mockRequestPage = jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) );
+const mockClearStream = jest.fn().mockReturnValue( { type: 'READER_CLEAR_STREAM' } );
+const mockRequestPage = jest.fn().mockReturnValue( { type: 'READER_REQUEST_PAGE' } );
 
 jest.mock( 'calypso/state/reader/streams/actions', () => ( {
 	clearStream: ( payload: { streamKey: string } ) => mockClearStream( payload ),
