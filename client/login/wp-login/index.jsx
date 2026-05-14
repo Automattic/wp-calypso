@@ -261,17 +261,16 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/backup' );
 
 		// On the lost-password route the form renders its own foundation
-		// `Screen` shell (DES-619 / DES-620) with the "Back to log in" link
-		// in the top bar and the "Need more help?" link inside the form, so
-		// the OneLoginFooter ("Back to Login" + "Support") is redundant.
-		// Gravatar-powered clients keep their own bespoke footer.
-		const isLostPasswordContent =
-			( action === 'lostpassword' || action === 'jetpack/lostpassword' ) && ! isGravPoweredClient;
+		// `Screen` shell with the "Back to log in" link in the top bar and
+		// the "Need more help?" link inside the form, so the OneLoginFooter
+		// ("Back to Login" + "Support") is redundant. Gravatar-powered
+		// clients keep their own bespoke footer.
+		const skipOneLoginFooter = this.isLostPasswordView() && ! isGravPoweredClient;
 
 		let footer = null;
 		if ( isGravPoweredLoginPage ) {
 			footer = <GravPoweredLoginBlockFooter />;
-		} else if ( ! isLostPasswordContent ) {
+		} else if ( ! skipOneLoginFooter ) {
 			footer = (
 				<OneLoginFooter
 					isLoginView={ isLoginView }
@@ -328,16 +327,14 @@ export class Login extends Component {
 		} );
 	}
 
+	isLostPasswordView() {
+		const { action } = this.props;
+		return action === 'lostpassword' || action === 'jetpack/lostpassword';
+	}
+
 	render() {
-		const {
-			locale,
-			translate,
-			isGenericOauth,
-			isGravPoweredClient,
-			isJetpack,
-			action,
-			partnerConfig,
-		} = this.props;
+		const { locale, translate, isGenericOauth, isGravPoweredClient, isJetpack, partnerConfig } =
+			this.props;
 
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 
@@ -377,12 +374,12 @@ export class Login extends Component {
 			</Main>
 		);
 
-		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+		const isLostPasswordView = this.isLostPasswordView();
 
 		// The lost-password form renders its own foundation `Screen` shell
-		// from `client/blocks/authentication/` (DES-619 / DES-620), so skip
-		// the `OneLoginLayout` wrap for this route. Other login routes keep
-		// `OneLoginLayout` until they migrate to the foundation in turn.
+		// from `client/blocks/authentication/`, so skip the `OneLoginLayout`
+		// wrap for this route. Other login routes keep `OneLoginLayout`
+		// until they migrate to the foundation in turn.
 		if ( isLostPasswordView && ! isGravPoweredClient ) {
 			return mainContent;
 		}
