@@ -1,8 +1,4 @@
-import {
-	getPressableMemoryTarget,
-	isPressablePhpMemoryAddon,
-	keepFirstPressableMemoryAddonProduct,
-} from '../pressable-memory-addon';
+import { getPressableMemoryTarget, isPressablePhpMemoryAddon } from '../pressable-memory-addon';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 const buildProduct = (
@@ -32,15 +28,5 @@ describe( 'pressable memory add-on helpers', () => {
 			'example.com'
 		);
 		expect( getPressableMemoryTarget( buildProduct() ) ).toBe( '' );
-	} );
-
-	it( 'keeps only the first PHP memory add-on product', () => {
-		const storageAddon = buildProduct( { slug: 'pressable-addon-storage-1gb' } );
-		const firstMemoryAddon = buildProduct( { site_domain: 'example.com' } );
-		const secondMemoryAddon = buildProduct( { site_domain: 'another-example.com' } );
-
-		expect(
-			keepFirstPressableMemoryAddonProduct( [ storageAddon, firstMemoryAddon, secondMemoryAddon ] )
-		).toEqual( [ storageAddon, firstMemoryAddon ] );
 	} );
 } );

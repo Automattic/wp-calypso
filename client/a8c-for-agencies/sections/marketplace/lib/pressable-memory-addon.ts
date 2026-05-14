@@ -11,20 +11,3 @@ export function getPressableMemoryTarget(
 ) {
 	return product.site_domain?.trim() ?? '';
 }
-
-export function keepFirstPressableMemoryAddonProduct( products: APIProductFamilyProduct[] ) {
-	let hasPressableMemoryAddon = false;
-
-	return products.filter( ( product ) => {
-		if ( ! isPressablePhpMemoryAddon( product ) ) {
-			return true;
-		}
-
-		if ( hasPressableMemoryAddon ) {
-			return false;
-		}
-
-		hasPressableMemoryAddon = true;
-		return true;
-	} );
-}
