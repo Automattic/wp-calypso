@@ -13,9 +13,12 @@ import './style.scss';
 type MagicLoginButtonProps = {
 	loginUrl: string;
 	isJetpack?: boolean;
+	// Optional click hook. social.jsx injects this when this button is the
+	// badged "Last used" option, to fire `calypso_login_last_used_badge_click`.
+	onClick?: () => void;
 };
 
-export const MagicLoginButton = ( { loginUrl, isJetpack }: MagicLoginButtonProps ) => {
+export const MagicLoginButton = ( { loginUrl, isJetpack, onClick }: MagicLoginButtonProps ) => {
 	const translate = useTranslate();
 	const isDisabled = useSelector( isFormDisabled );
 	const dispatch = useDispatch();
@@ -26,6 +29,7 @@ export const MagicLoginButton = ( { loginUrl, isJetpack }: MagicLoginButtonProps
 			origin: 'login-links',
 		} );
 
+		onClick?.();
 		dispatch( resetMagicLoginRequestForm() );
 	};
 

@@ -1,8 +1,9 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, cloneElement } from 'react';
 import {
 	GoogleSocialButton,
 	AppleLoginButton,
@@ -15,6 +16,11 @@ import {
 } from 'calypso/components/social-buttons';
 
 import './social.scss';
+
+// Services whose buttons fire `calypso_login_social_button_click` through
+// `trackLoginAndRememberRedirect`. magic-login / qr-code don't — they have
+// their own internal Tracks events and take a plain `onClick` hook instead.
+const SOCIAL_CLICK_SERVICES = [ 'google', 'apple', 'github', 'paypal' ];
 
 class SocialLoginForm extends Component {
 	static propTypes = {
@@ -135,9 +141,34 @@ class SocialLoginForm extends Component {
 				// oauth2) is handled upstream via the `enabled` field, so the
 				// badge never wraps a vanishing child.
 				if ( isSocialFirst && service === lastUsedAuthenticationMethod && button ) {
+					// Clone the button so its click reports two things:
+					//
+					// 1. `calypso_login_last_used_badge_click` — the click
+					//    counterpart to the `calypso_login_last_used_badge_view`
+					//    impression event, giving us a uniform view→click funnel
+					//    for every badged method.
+					// 2. For social services, the existing
+					//    `calypso_login_social_button_click` event with
+					//    `is_last_used_authentication_method: true`. That flag is
+					//    the only signal the pre-badge UI also recorded, so it's
+					//    the bridge for before/after comparisons. magic-login /
+					//    qr-code skip this — they have no such legacy signal and
+					//    just take the badge-click hook above.
+					const badgedButton = cloneElement( button, {
+						onClick: ( event ) => {
+							recordTracksEvent( 'calypso_login_last_used_badge_click', {
+								method: service,
+							} );
+
+							if ( SOCIAL_CLICK_SERVICES.includes( service ) ) {
+								this.props.trackLoginAndRememberRedirect( event, true );
+							}
+						},
+					} );
+
 					return (
 						<LastUsedBadge key={ button.key } method={ service }>
-							{ button }
+							{ badgedButton }
 						</LastUsedBadge>
 					);
 				}

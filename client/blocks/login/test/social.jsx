@@ -1,11 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import SocialLoginForm from 'calypso/blocks/login/social';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+
+const mockRecordTracksEvent = jest.fn();
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: ( ...args ) => mockRecordTracksEvent( ...args ),
+} ) );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = jest.fn( ( key ) => {
@@ -36,6 +41,10 @@ const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { login: loginReducer, route: routeReducer } } );
 
 describe( 'SocialLoginForm', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	test( 'renders Google social login button', () => {
 		render( <SocialLoginForm { ...defaultProps } /> );
 
@@ -62,6 +71,27 @@ describe( 'SocialLoginForm', () => {
 
 		// No fallback UsernameOrEmailButton when the last used service is rendered.
 		expect( screen.queryByText( /Continue with email/i ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'clicking the badged social button fires the badge-click event and the last-used flag', () => {
+		render(
+			<SocialLoginForm { ...defaultProps } isSocialFirst lastUsedAuthenticationMethod="github" />
+		);
+
+		fireEvent.click( screen.getByText( /Continue with GitHub/i ).closest( 'button' ) );
+
+		// Click counterpart to the `calypso_login_last_used_badge_view` impression.
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_login_last_used_badge_click', {
+			method: 'github',
+		} );
+
+		// Social buttons also re-fire the legacy click event with the last-used
+		// flag set — the only signal the pre-badge UI recorded, so it's the
+		// bridge for before/after analysis.
+		expect( defaultProps.trackLoginAndRememberRedirect ).toHaveBeenCalledWith(
+			expect.anything(),
+			true
+		);
 	} );
 
 	test( 'renders UsernameOrEmailButton when lastUsedAuthenticationMethod is not in allowedSocialServices', () => {

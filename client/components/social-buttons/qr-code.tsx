@@ -13,9 +13,12 @@ import './style.scss';
 
 type QrCodeLoginButtonProps = {
 	loginUrl: string;
+	// Optional click hook. social.jsx injects this when this button is the
+	// badged "Last used" option, to fire `calypso_login_last_used_badge_click`.
+	onClick?: () => void;
 };
 
-export default function QrCodeLoginButton( { loginUrl }: QrCodeLoginButtonProps ) {
+export default function QrCodeLoginButton( { loginUrl, onClick }: QrCodeLoginButtonProps ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isDisabled = useSelector( isFormDisabled );
@@ -33,6 +36,7 @@ export default function QrCodeLoginButton( { loginUrl }: QrCodeLoginButtonProps 
 			origin: 'login-links',
 		} );
 
+		onClick?.();
 		dispatch( resetMagicLoginRequestForm() );
 	};
 
