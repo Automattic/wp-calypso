@@ -24,6 +24,7 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
@@ -74,6 +75,7 @@ import { shouldLoadInlineHelp, handleScroll } from './utils';
 import '@automattic/components/src/button/style.scss';
 import '@automattic/components/src/card/style.scss';
 
+import 'calypso/reader/color-scheme/dark-mode.scss';
 import './style.scss';
 
 const loadWooCoreProfiler = () =>
@@ -87,10 +89,6 @@ const loadBlazePro = () =>
 const loadReaderHeader = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-components-header" */ 'calypso/reader/components/header'
-	);
-const loadReaderColorScheme = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-color-scheme" */ 'calypso/reader/color-scheme'
 	);
 const loadCelebrateSiteLaunchModal = () =>
 	import(
@@ -142,6 +140,8 @@ const loadGlobalNotifications = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-layout-global-notifications" */ 'calypso/layout/global-notifications'
 	);
+
+const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
 
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
@@ -393,9 +393,11 @@ class Layout extends Component {
 					<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				) }
 				<QueryPreferences />
-				{ this.props.sectionName === 'reader' && this.props.isLoggedIn && (
-					<AsyncLoad require={ loadReaderColorScheme } placeholder={ null } />
-				) }
+				{ withColorScheme( null, {
+					bodyClass: READER_DARK_MODE_BODY_CLASS,
+					enabled: this.props.sectionName === 'reader' && this.props.isLoggedIn,
+					Provider: ClassicColorSchemeProvider,
+				} ) }
 				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				<QuerySiteAdminMenu siteId={ this.props.siteId } />
 				<QuerySiteAdminColor siteId={ this.props.siteId } />

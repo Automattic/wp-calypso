@@ -16,7 +16,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
-import { DEFAULT_SCHEME, PREFERENCE_KEY, isColorScheme } from 'calypso/dashboard/app/color-scheme';
+import { DEFAULT_SCHEME, PREFERENCE_KEY, isColorScheme } from 'calypso/lib/color-scheme';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
