@@ -10,14 +10,12 @@ import {
 	createIdealMethod,
 	createSofortMethod,
 	createAlipayMethod,
-	createRazorpayMethod,
 	createStripeUpiMethod,
 	isValueTruthy,
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	type StoredPaymentMethod,
 	type ContactDetailsType,
 } from '@automattic/wpcom-checkout';
-import debugFactory from 'debug';
 import { useMemo } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
@@ -36,14 +34,11 @@ import {
 import { createWeChatMethod } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import useCreateExistingPayPalPPCP from './use-create-existing-paypal-ppcp';
-import type { RazorpayConfiguration, RazorpayLoadingError } from '@automattic/calypso-razorpay';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 import type { Stripe } from '@stripe/stripe-js';
 import type { ReactNode } from 'react';
-
-const debug = debugFactory( 'calypso:use-create-payment-methods' );
 
 export { useCreateExistingCards };
 export { default as useCreateExistingPayPalPPCP } from './use-create-existing-paypal-ppcp';
@@ -384,38 +379,6 @@ function useCreateStripeUpi( {
 	);
 }
 
-function useCreateRazorpay( {
-	isRazorpayLoading,
-	razorpayLoadingError,
-	razorpayConfiguration,
-	cartKey,
-}: {
-	isRazorpayLoading: boolean;
-	razorpayLoadingError: RazorpayLoadingError;
-	razorpayConfiguration: RazorpayConfiguration | null;
-	cartKey: CartKey | undefined;
-} ): PaymentMethod | null {
-	if ( ! isEnabled( 'checkout/razorpay' ) ) {
-		debug( 'Razorpay disabled by configuration' );
-	}
-
-	const isRazorpayReady =
-		! isRazorpayLoading &&
-		! razorpayLoadingError &&
-		razorpayConfiguration &&
-		isEnabled( 'checkout/razorpay' );
-
-	return useMemo( () => {
-		return isRazorpayReady && razorpayConfiguration && cartKey
-			? createRazorpayMethod( {
-					razorpayConfiguration,
-					cartKey,
-					submitButtonContent: <CheckoutSubmitButtonContent />,
-			  } )
-			: null;
-	}, [ razorpayConfiguration, isRazorpayReady, cartKey ] );
-}
-
 /**
  * Create all possible payment methods.
  *
@@ -436,9 +399,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isRazorpayLoading,
-	razorpayLoadingError,
-	razorpayConfiguration,
 	storedCards,
 }: {
 	contactDetailsType: ContactDetailsType;
@@ -447,9 +407,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isRazorpayLoading: boolean;
-	razorpayLoadingError: RazorpayLoadingError;
-	razorpayConfiguration: RazorpayConfiguration | null;
 	storedCards: StoredPaymentMethod[];
 } ): PaymentMethod[] {
 	const cartKey = useCartKey();
@@ -561,13 +518,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
-	const razorpayMethod = useCreateRazorpay( {
-		isRazorpayLoading,
-		razorpayLoadingError,
-		razorpayConfiguration,
-		cartKey,
-	} );
-
 	// The order of this array is the order that Payment Methods will be
 	// displayed in Checkout, although not all payment methods here will be
 	// listed; the list of allowed payment methods is returned by the shopping
@@ -593,7 +543,6 @@ export default function useCreatePaymentMethods( {
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
-		razorpayMethod,
 		stripeUpiMethod,
 	].filter( isValueTruthy );
 
@@ -619,7 +568,6 @@ export default function useCreatePaymentMethods( {
 			epsMethod,
 			wechatMethod,
 			bancontactMethod,
-			razorpayMethod,
 			stripeUpiMethod,
 		].filter( isValueTruthy );
 	}

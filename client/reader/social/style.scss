@@ -10,6 +10,10 @@
 	block-size: clamp( 80px, 28vw, 200px );
 	object-fit: cover;
 	border-radius: 4px;
+	// Visible behind the `<img>` while it loads, and serves as the
+	// placeholder colour when `<SocialAvatar>` swaps the failed image
+	// out for the same-class placeholder `<div>`.
+	background: var( --studio-gray-5 );
 }
 
 .social-profile-card__header-row {

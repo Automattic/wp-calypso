@@ -10,15 +10,18 @@ interface AchievementCardProps {
 	badge?: ReactNode;
 	description?: ReactNode;
 	caption?: ReactNode;
+	iconNode?: ReactNode;
 	image?: string;
 	locked?: boolean;
 	secret?: boolean;
 	progressCurrent?: number;
 	progressTarget?: number;
+	className?: string;
 }
 
 export default function AchievementCard( {
 	image,
+	iconNode,
 	title,
 	badge,
 	description,
@@ -27,22 +30,31 @@ export default function AchievementCard( {
 	secret,
 	progressCurrent,
 	progressTarget,
+	className,
 }: AchievementCardProps ) {
 	const showLockIcon = locked || secret;
-	const rootClass = clsx( 'achievement-card', {
+	const rootClass = clsx( 'achievement-card', className, {
 		'is-locked': locked,
 		'is-secret': secret,
 	} );
 
-	return (
-		<div className={ rootClass }>
-			{ showLockIcon ? (
+	const renderIcon = () => {
+		if ( showLockIcon ) {
+			return (
 				<div className="achievement-card__icon achievement-card__icon--lock">
 					<Icon icon={ lock } />
 				</div>
-			) : (
-				<img className="achievement-card__icon" src={ image } alt="" />
-			) }
+			);
+		}
+		if ( iconNode ) {
+			return iconNode;
+		}
+		return <img className="achievement-card__icon" src={ image } alt="" />;
+	};
+
+	return (
+		<div className={ rootClass }>
+			{ renderIcon() }
 			<div className="achievement-card__details">
 				<h3 className="achievement-card__title">
 					{ title }

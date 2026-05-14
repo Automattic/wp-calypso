@@ -56,6 +56,7 @@ import {
 	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 	A4A_LEARN_LINK,
 	A4A_AGENT_STUDIO_LINK,
+	A4A_AGENT_STUDIO_PROJECTS_LINK,
 	A4A_RESOURCES_LINK,
 	A4A_DEV_TOOLS_LINK,
 	A4A_AI_MCP_LINK,
@@ -125,6 +126,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_RESOURCES_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_LEARN_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_AGENT_STUDIO_LINK ]: [ 'a4a_read_learn' ],
+	[ A4A_AGENT_STUDIO_PROJECTS_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_DEV_TOOLS_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_AI_MCP_LINK ]: [ 'a4a_read_learn' ],
 	[ A4A_AI_MCP_AVAILABLE_TOOLS_LINK ]: [ 'a4a_read_learn' ],
@@ -139,6 +141,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	licenses: [ 'a4a_jetpack_licensing' ],
 	plugins: [ 'a4a_read_managed_sites' ],
 	referrals: [ 'a4a_read_referrals' ],
+	'agent-studio': [ 'a4a_read_learn' ],
 };
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
@@ -148,6 +151,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
 	referrals: /^\/referrals(\/.*)?$/,
+	'agent-studio': /^\/resources-and-tools\/agent-studio\/projects\/[^/]+(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
