@@ -1,0 +1,71 @@
+{
+	"name": "@automattic/date-range-picker",
+	"version": "1.0.0",
+	"description": "A date-range picker built on top of @automattic/ui's DateRangeCalendar, with timezone-aware site-day handling, preset shortcuts, and accessible inputs.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./src/*": {
+			"calypso:src": "./src/*"
+		}
+	},
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/date-range-picker"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"dependencies": {
+		"@automattic/ui": "workspace:^",
+		"@wordpress/base-styles": "^5.23.0",
+		"@wordpress/components": "^32.1.0",
+		"@wordpress/compose": "7.23.0",
+		"@wordpress/date": "5.23.0",
+		"@wordpress/i18n": "^5.23.0",
+		"@wordpress/icons": "^10.23.0",
+		"date-fns": "^4.1.0",
+		"tslib": "^2.8.1"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/dom": "^10.4.1",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.0",
+		"@testing-library/user-event": "^14.6.1",
+		"@types/react": "^18.3.18",
+		"jest": "^29.7.0",
+		"mockdate": "^2.0.5",
+		"typescript": "^5.8.3"
+	}
+}

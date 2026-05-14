@@ -1036,6 +1036,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/date-range-picker@workspace:^, @automattic/date-range-picker@workspace:packages/date-range-picker":
+  version: 0.0.0-use.local
+  resolution: "@automattic/date-range-picker@workspace:packages/date-range-picker"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/ui": "workspace:^"
+    "@testing-library/dom": "npm:^10.4.1"
+    "@testing-library/jest-dom": "npm:^6.9.1"
+    "@testing-library/react": "npm:^16.3.0"
+    "@testing-library/user-event": "npm:^14.6.1"
+    "@types/react": "npm:^18.3.18"
+    "@wordpress/base-styles": "npm:^5.23.0"
+    "@wordpress/components": "npm:^32.1.0"
+    "@wordpress/compose": "npm:7.23.0"
+    "@wordpress/date": "npm:5.23.0"
+    "@wordpress/i18n": "npm:^5.23.0"
+    "@wordpress/icons": "npm:^10.23.0"
+    date-fns: "npm:^4.1.0"
+    jest: "npm:^29.7.0"
+    mockdate: "npm:^2.0.5"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/design-picker@workspace:^, @automattic/design-picker@workspace:packages/design-picker":
   version: 0.0.0-use.local
   resolution: "@automattic/design-picker@workspace:packages/design-picker"
@@ -13568,6 +13596,7 @@ __metadata:
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/date-range-picker": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-search": "workspace:^"

@@ -49,18 +49,6 @@ const useLearnMenuItems = ( path: string ) => {
 						),
 				  ]
 				: [] ),
-			createItem(
-				{
-					icon: tool,
-					path: A4A_DEV_TOOLS_LINK,
-					link: A4A_DEV_TOOLS_LINK,
-					title: translate( 'Developer tools' ),
-					trackEventProps: {
-						menu_item: 'Automattic for Agencies / Resources and tools / Developer tools',
-					},
-				},
-				path
-			),
 		];
 
 		if ( isBenchmarksEnabled ) {
@@ -96,6 +84,21 @@ const useLearnMenuItems = ( path: string ) => {
 				)
 			);
 		}
+
+		items.push(
+			createItem(
+				{
+					icon: tool,
+					path: A4A_DEV_TOOLS_LINK,
+					link: A4A_DEV_TOOLS_LINK,
+					title: translate( 'Developer tools' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Resources and tools / Developer tools',
+					},
+				},
+				path
+			)
+		);
 
 		return items;
 	}, [ path, translate, isAgentStudioEnabled, isAiMcpEnabled, isBenchmarksEnabled ] );
