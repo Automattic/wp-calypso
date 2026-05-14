@@ -901,6 +901,7 @@ const sections = [
 		paths: [
 			'/resources-and-tools',
 			'/resources-and-tools/learn',
+			'/resources-and-tools/agent-studio',
 			'/resources-and-tools/dev-tools',
 			'/resources-and-tools/benchmarks',
 		],

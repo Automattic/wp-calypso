@@ -109,3 +109,5 @@ marketplace subscriptions on site.
 7. **Transferred purchases** — Always check ownership before allowing purchase actions.
 
 8. **Route params are strings** — `purchaseId` from URL params must be `parseInt()`'d before passing to query functions.
+
+9. **`site.options.unmapped_url` lies for `.home.blog` sites** — Returns the `.wordpress.com` URL even when the site's free domain is `.home.blog` (or another `.blog` subdomain). Don't use it to render the user's free hostname. Read the actual WPCOM domain from `siteDomainsQuery( siteId )` — find the entry flagged `wpcom_domain` or `is_wpcom_staging_domain` and use its `domain` field. This is the same root issue as Classic's `site.wpcom_url`, which is just `withoutHttp( unmapped_url )` — see `client/me/purchases/AGENTS.md` pitfall #6.

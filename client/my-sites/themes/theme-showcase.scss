@@ -2,11 +2,13 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
-@import "https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap";
+@import './dark-mode';
+@import 'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap';
 
 .is-section-themes {
-	&.theme-default.color-scheme {
+	&.theme-default.color-scheme:not( .is-logged-out ) {
 		--color-surface-backdrop: var( --studio-white );
+		--color-main-background: var( --studio-white );
 	}
 
 	&.is-global-sidebar-visible {
@@ -119,11 +121,12 @@
 		margin-bottom: 0;
 	}
 }
-
 .is-logged-out {
+	--color-surface-backdrop: var( --color-primary-5 );
+
 	.themes__header-logged-out::before,
 	.themes__controls::before {
-		background-color: #e5f4ff;
+		background-color: var( --color-surface-backdrop );
 		content: '';
 		left: 0;
 		height: 100%;
@@ -145,7 +148,7 @@
 		}
 
 		h1 {
-			color: var( --studio-blue-50 );
+			color: var( --color-primary );
 			font-family: Recoleta, 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 			font-size: 2.75rem;
 			line-height: 1.15;
@@ -175,7 +178,7 @@
 		.theme__search {
 			.theme__search-input {
 				.components-input-control__container {
-					background-color: #fff;
+					background-color: var( --color-surface );
 				}
 
 				.components-input-base {
@@ -252,7 +255,7 @@
 			}
 
 			&:hover::before {
-				background-color: color-mix( in srgb, var( --studio-blue ) 10%, transparent );
+				background-color: var( --color-primary-20 );
 			}
 		}
 
@@ -531,7 +534,7 @@
 			padding: 24px 32px 8px 33px;
 			border-bottom: 1px solid var( --studio-gray-5 );
 			box-sizing: border-box;
-			background: var( --studio-white );
+			background: var( --color-surface );
 			z-index: 20;
 
 			.is-global-sidebar-visible & {
@@ -644,7 +647,7 @@
 		margin: 0 auto 96px auto;
 
 		@include break-small {
-			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+			grid-template-columns: repeat( auto-fill, minmax( 320px, 1fr ) );
 			max-width: 1220px;
 		}
 
@@ -660,7 +663,7 @@
 	.theme-card__image-container {
 		border: none;
 		border-radius: 8px;
-		box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
+		box-shadow: 0 1px 4px 0 rgba( 0, 0, 0, 0.25 );
 	}
 
 	.theme-card__info {
@@ -674,5 +677,16 @@
 	// Hide style variation swatches for logged-out modern view
 	.theme-card__info-style-variations {
 		display: none;
+	}
+}
+
+body.color-scheme.is-themes-dark-mode.is-classic-dark,
+:root[data-theme='dark'] body.color-scheme.is-themes-dark-mode {
+	@include themes-dark-mode-root;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-themes-dark-mode {
+		@include themes-dark-mode-root;
 	}
 }

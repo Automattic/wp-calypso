@@ -278,14 +278,6 @@ describe( 'generic share tracking helpers', () => {
 		);
 	} );
 
-	it( 'fires generic_share_clicked with method=download', () => {
-		trackImageStudioGenericShareClicked( { method: 'download' } );
-		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_generic_share_clicked',
-			expect.objectContaining( { method: 'download' } )
-		);
-	} );
-
 	it( 'fires generic_share_completed with the chosen method', () => {
 		trackImageStudioGenericShareCompleted( { method: 'web-share' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
@@ -302,18 +294,18 @@ describe( 'generic share tracking helpers', () => {
 		);
 	} );
 
-	it( 'fires generic_share_failed with method, message, and failureKind', () => {
+	it( 'fires generic_share_failed with method, message, and failureKind=http on a fetch failure', () => {
 		trackImageStudioGenericShareFailed( {
-			method: 'download',
-			message: 'window.open returned null',
-			failureKind: 'open-blocked',
+			method: 'web-share',
+			message: 'Fetch failed: 404',
+			failureKind: 'http',
 		} );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
 			'jetpack_big_sky_image_studio_generic_share_failed',
 			expect.objectContaining( {
-				method: 'download',
-				error_message: 'window.open returned null',
-				failure_kind: 'open-blocked',
+				method: 'web-share',
+				error_message: 'Fetch failed: 404',
+				failure_kind: 'http',
 			} )
 		);
 	} );

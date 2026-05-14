@@ -1,0 +1,166 @@
+@import './components/search-input/style';
+@import './components/result-card/style';
+@import './components/ai-summary/style';
+@import './components/empty-state/style';
+
+.content-research-source-filter {
+	box-sizing: border-box;
+	flex: 0 0 auto;
+	padding: 0 16px 16px;
+	width: 100%;
+	border-top: 0;
+	border-bottom: 0 !important;
+
+	&__heading {
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: #424242;
+		margin: 4px 0;
+	}
+
+	.components-button-group {
+		box-sizing: border-box;
+		display: flex;
+		gap: 4px;
+		width: 100%;
+	}
+
+	&__button.components-button {
+		flex: 1 1 0;
+		min-width: 0;
+		justify-content: center;
+		height: 32px;
+		padding: 0 8px;
+		background: #fff;
+		box-shadow: inset 0 0 0 1px #ddd;
+		border-radius: 0;
+
+		&:hover:not( :disabled ) {
+			background: #fff;
+			color: #1e1e1e;
+			box-shadow: inset 0 0 0 1px #1e1e1e;
+		}
+
+		&.is-deselected {
+			color: #999;
+			background: #f6f7f7;
+
+			&:hover:not( :disabled ) {
+				color: #1e1e1e;
+				background: #fff;
+				box-shadow: inset 0 0 0 1px #ddd;
+			}
+
+			&:focus:not( :disabled ):not( :hover ) {
+				color: #999;
+				background: #f6f7f7;
+				box-shadow: inset 0 0 0 1px #ddd;
+			}
+
+			.content-research-source-icon {
+				filter: grayscale( 1 );
+				opacity: 0.45;
+			}
+		}
+
+		&.is-selected {
+			color: #1e1e1e;
+			font-weight: 600;
+			background: #fff;
+		}
+	}
+}
+
+.content-research-source-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	color: #646970;
+
+	svg {
+		display: block;
+		width: 18px;
+		height: 18px;
+		fill: currentColor;
+	}
+
+	&--myposts {
+		color: #646970;
+
+		.is-sheet {
+			fill: #f6f7f7;
+		}
+
+		.is-border,
+		.is-line {
+			fill: currentColor;
+		}
+	}
+
+	&--reader {
+		color: #0675c4;
+	}
+
+	&--hn {
+		svg rect {
+			fill: #f0652f;
+		}
+
+		svg path {
+			fill: #fff;
+		}
+	}
+
+	&--googlenews {
+		.is-blue {
+			fill: #4285f4;
+		}
+
+		.is-green {
+			fill: #34a853;
+		}
+
+		.is-yellow {
+			fill: #fbbc04;
+		}
+
+		.is-white {
+			fill: #fff;
+		}
+
+		.is-red {
+			fill: #ea4335;
+		}
+	}
+}
+
+.content-research-sidebar {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 0;
+
+	&__results {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+		padding-top: 4px;
+	}
+
+	&__empty,
+	&__error {
+		padding: 24px 16px;
+		font-size: 13px;
+		color: #757575;
+		text-align: center;
+		line-height: 1.5;
+	}
+
+	&__error {
+		color: #cc1818;
+	}
+}

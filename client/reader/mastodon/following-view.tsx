@@ -109,19 +109,29 @@ export function FollowingView( { connectionId, actor }: Props ) {
 	const followMut = useMutation( followMastodonActorMutation( queryClient ) );
 	const unfollowMut = useMutation( unfollowMastodonActorMutation( queryClient ) );
 
+	// Scope the error-notice id to `(connectionId, rowActor)` so a successful
+	// click on one row only dismisses its own stale toast, not another row's
+	// unresolved error (or one posted by a sibling surface).
+	const noticeIdFor = useCallback(
+		( rowActor: string ) => `mastodon-follow-error-${ connectionId }-${ rowActor }`,
+		[ connectionId ]
+	);
 	const showFollowError = useCallback(
-		( error: MastodonError, action: 'follow' | 'unfollow' ) => {
+		( error: MastodonError, action: 'follow' | 'unfollow', rowActor: string ) => {
 			dispatch(
 				errorNotice( followErrorMessage( error, action, translate ), {
-					id: 'mastodon-follow-error',
+					id: noticeIdFor( rowActor ),
 				} )
 			);
 		},
-		[ dispatch, translate ]
+		[ dispatch, translate, noticeIdFor ]
 	);
-	const dismissFollowError = useCallback( () => {
-		dispatch( removeNotice( 'mastodon-follow-error' ) );
-	}, [ dispatch ] );
+	const dismissFollowError = useCallback(
+		( rowActor: string ) => {
+			dispatch( removeNotice( noticeIdFor( rowActor ) ) );
+		},
+		[ dispatch, noticeIdFor ]
+	);
 
 	const invalidateActorList = useCallback( () => {
 		queryClient.invalidateQueries( {
@@ -169,10 +179,10 @@ export function FollowingView( { connectionId, actor }: Props ) {
 								},
 								{
 									onSuccess: () => {
-										dismissFollowError();
+										dismissFollowError( item.handle );
 										invalidateActorList();
 									},
-									onError: ( error ) => showFollowError( error, 'follow' ),
+									onError: ( error ) => showFollowError( error, 'follow', item.handle ),
 								}
 							),
 						onUnfollow: () =>
@@ -184,10 +194,10 @@ export function FollowingView( { connectionId, actor }: Props ) {
 								},
 								{
 									onSuccess: () => {
-										dismissFollowError();
+										dismissFollowError( item.handle );
 										invalidateActorList();
 									},
-									onError: ( error ) => showFollowError( error, 'unfollow' ),
+									onError: ( error ) => showFollowError( error, 'unfollow', item.handle ),
 								}
 							),
 				  },

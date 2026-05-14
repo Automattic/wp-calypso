@@ -276,8 +276,8 @@ function CancelOrRemoveActionButton( { purchase }: { purchase: Purchase } ) {
 	const locale = useLocale();
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 
-	// FIXME: render renderWordAdsEligibilityWarningDialog for refund/cancel
-	// FIXME: render renderNonPrimaryDomainWarningDialog for refund/cancel
+	// WordAds and non-primary domain warnings are shown inline on the confirmation screen
+	// under purchases/split-cancel-remove (see cancellation-main-content.tsx).
 	// FIXME: render "Domain transfers can take anywhere from five to seven days to complete." next to cancel button (see domainTransferDuration)
 
 	const goToCancel = ( intent?: 'cancel' | 'remove' ) =>

@@ -71,11 +71,17 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		}
 	};
 
+	const isAchievementWideView = view === 'achievements';
+
 	return (
 		<div className="user-profile">
-			<ReaderMain>
-				<ReaderBackButton />
-				<UserProfileHeader user={ user } view={ view } />
+			<ReaderMain
+				className={ isAchievementWideView ? 'user-profile__achievements-view' : undefined }
+			>
+				<div className={ isAchievementWideView ? 'user-profile__narrow' : undefined }>
+					<ReaderBackButton />
+					<UserProfileHeader user={ user } view={ view } />
+				</div>
 				{ renderSelectedTabContent() }
 			</ReaderMain>
 		</div>
