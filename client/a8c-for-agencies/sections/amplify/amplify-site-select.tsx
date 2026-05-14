@@ -5,16 +5,22 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import AmplifyAnalysisModal from './amplify-analysis-modal';
 import useConnectedSites from './hooks/use-connected-sites';
 
 const RECENT_LIMIT = 10;
 
-export default function AmplifySiteSelect() {
+type Props = {
+	/**
+	 * Called when the user hits "Amplify it". AmplifyPage owns the analysis
+	 * modal — this component just signals which URL to analyse.
+	 */
+	onSiteSelected: ( url: string ) => void;
+};
+
+export default function AmplifySiteSelect( { onSiteSelected }: Props ) {
 	const dispatch = useDispatch();
 	const [ selectedUrl, setSelectedUrl ] = useState< string | null >( null );
 	const [ search, setSearch ] = useState( '' );
-	const [ analysisFlowSite, setAnalysisFlowSite ] = useState< string | null >( null );
 
 	const { sites, isLoading, hasAnyConnectedSites } = useConnectedSites( {
 		search,
@@ -37,9 +43,7 @@ export default function AmplifySiteSelect() {
 	const handleSelectSite = ( url: string ) => {
 		setSelectedUrl( url );
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_amplify_site_select', {
-				site_url: url,
-			} )
+			recordTracksEvent( 'calypso_a4a_amplify_site_select', { site_url: url } )
 		);
 	};
 
@@ -48,17 +52,17 @@ export default function AmplifySiteSelect() {
 			return;
 		}
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_amplify_audit_open', {
-				site_url: selectedUrl,
-			} )
+			recordTracksEvent( 'calypso_a4a_amplify_audit_open', { site_url: selectedUrl } )
 		);
-		setAnalysisFlowSite( selectedUrl );
+		onSiteSelected( selectedUrl );
 	};
 
 	return (
 		<div className="amplify-landing-selector">
 			<div className="amplify-landing-selector-field">
-				<span className="amplify-landing-selector-label">{ __( 'Recently connected sites' ) }</span>
+				<span className="amplify-landing-selector-label">
+					{ __( 'Recently connected sites' ) }
+				</span>
 				<Dropdown
 					className="amplify-landing-site-dropdown"
 					contentClassName="amplify-landing-site-dropdown-content"
@@ -104,7 +108,9 @@ export default function AmplifySiteSelect() {
 								/>
 							</div>
 							{ sites.length === 0 ? (
-								<p className="amplify-landing-site-dropdown-empty">{ __( 'No matches' ) }</p>
+								<p className="amplify-landing-site-dropdown-empty">
+									{ __( 'No matches' ) }
+								</p>
 							) : (
 								<ul className="amplify-landing-site-dropdown-list" role="listbox">
 									{ sites.map( ( site ) => {
@@ -142,10 +148,6 @@ export default function AmplifySiteSelect() {
 			>
 				{ __( 'Amplify it' ) }
 			</Button>
-			<AmplifyAnalysisModal
-				site={ analysisFlowSite }
-				onClose={ () => setAnalysisFlowSite( null ) }
-			/>
 		</div>
 	);
 }

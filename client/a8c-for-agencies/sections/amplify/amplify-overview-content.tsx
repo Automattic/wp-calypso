@@ -13,7 +13,11 @@ import AmplifySiteSelect from './amplify-site-select';
 const REMAINING_AUDITS = 1;
 const MONTHLY_AUDIT_LIMIT = 3;
 
-export default function AmplifyOverviewContent() {
+type Props = {
+	onSiteSelected: ( url: string ) => void;
+};
+
+export default function AmplifyOverviewContent( { onSiteSelected }: Props ) {
 	return (
 		<div className="amplify-landing">
 			<section className="amplify-landing-hero">
@@ -29,7 +33,7 @@ export default function AmplifyOverviewContent() {
 							'First impressions happen fast, and the way clients find you is changing. AI tools now help businesses discover agencies before a single conversation happens. Amplify audits your site through both lenses, then generates precise, agent-ready prompts so you can elevate your site instantly, captivate prospects, and close more deals.'
 						) }
 					</p>
-					<AmplifySiteSelect />
+					<AmplifySiteSelect onSiteSelected={ onSiteSelected } />
 					<p className="amplify-landing-usage">
 						{ sprintf(
 							/* translators: %1$d is the number of audits remaining, %2$d is the monthly limit. */

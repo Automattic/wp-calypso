@@ -1,9 +1,25 @@
+/**
+ * AmplifyReportsContent
+ *
+ * Fetches the reports index from Cloudflare R2 and renders them in a DataViews
+ * table. Also accepts `pendingJobs` from amplify-page.tsx — jobs that have been
+ * submitted but not yet written to R2. These are merged at the top of the list
+ * and shown with an "In progress" indicator instead of a download button.
+ *
+ * Data flow:
+ *   R2 index (https://pub-*.r2.dev/reports/index.json)
+ *     └── fetched on mount, refreshed only on page reload
+ *   pendingJobs (in-memory, from amplify-page.tsx)
+ *     └── added immediately when a job is submitted via the analysis modal
+ *     └── displayed until the page is reloaded and R2 reflects the real status
+ */
+
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -12,47 +28,80 @@ import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import AmplifySiteSelect from './amplify-site-select';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
+import type { PendingJob } from './amplify-analysis-modal';
 
-type AnalysisType = 'human' | 'ai' | 'full';
+type AnalysisMode = 'human' | 'ai' | 'fullanalysis';
 
 type Report = {
 	id: string;
-	site: string;
-	analysisType: AnalysisType;
+	agencyName: string;
+	url: string;
+	mode: AnalysisMode;
 	timestamp: string;
+	humanScore?: number;
+	aiScore?: number;
+	score?: number;
+	pdfUrl?: string;
+	reportUrl?: string;
+	/** True for jobs submitted this session that haven't yet appeared in R2. */
+	pending?: boolean;
 };
 
-const REPORTS: Report[] = [
-	{ id: '1', site: 'brightleaf.studio', analysisType: 'human', timestamp: '2026-04-28T15:42:00Z' },
-	{ id: '2', site: 'pixelcraft.agency', analysisType: 'ai', timestamp: '2026-04-28T11:18:00Z' },
-	{ id: '3', site: 'novastudio.design', analysisType: 'full', timestamp: '2026-04-27T17:21:00Z' },
-	{ id: '4', site: 'webweavers.co', analysisType: 'human', timestamp: '2026-04-26T09:04:00Z' },
-	{
-		id: '5',
-		site: 'crestlinestudio.com',
-		analysisType: 'full',
-		timestamp: '2026-04-25T14:33:00Z',
-	},
-	{ id: '6', site: 'atlasdigital.io', analysisType: 'ai', timestamp: '2026-04-24T10:57:00Z' },
-	{ id: '7', site: 'unityworks.studio', analysisType: 'human', timestamp: '2026-04-22T16:09:00Z' },
-	{ id: '8', site: 'forgemedia.co', analysisType: 'full', timestamp: '2026-04-21T13:48:00Z' },
-	{
-		id: '9',
-		site: 'canopycollective.com',
-		analysisType: 'ai',
-		timestamp: '2026-04-19T08:12:00Z',
-	},
-	{
-		id: '10',
-		site: 'lightspring.agency',
-		analysisType: 'full',
-		timestamp: '2026-04-17T15:55:00Z',
-	},
-	{ id: '11', site: 'orbitcreative.io', analysisType: 'human', timestamp: '2026-04-14T11:30:00Z' },
-	{ id: '12', site: 'relayhq.studio', analysisType: 'ai', timestamp: '2026-04-10T18:02:00Z' },
-];
+const INDEX_URL =
+	'https://pub-d85717c601eb44398d8336c65ac7cfbb.r2.dev/reports/index.json';
+
+const MODE_LABELS: Record< AnalysisMode, string > = {
+	human: 'Human',
+	ai: 'AI',
+	fullanalysis: 'Full',
+};
+
+function useAmplifyReports(): { reports: Report[]; isLoading: boolean; error: string | null } {
+	const [ reports, setReports ] = useState< Report[] >( [] );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const [ error, setError ] = useState< string | null >( null );
+
+	useEffect( () => {
+		let cancelled = false;
+
+		window
+			.fetch( `${ INDEX_URL }?_=${ Date.now() }` )
+			.then( ( res ) => {
+				// 404 means no analyses have been run yet — treat as empty, not error.
+				if ( res.status === 404 ) {
+					return { reports: [] };
+				}
+				if ( ! res.ok ) {
+					throw new Error( `Failed to load reports: ${ res.status }` );
+				}
+				return res.json();
+			} )
+			.then( ( data ) => {
+				if ( ! cancelled ) {
+					setReports( Array.isArray( data.reports ) ? data.reports : [] );
+				}
+			} )
+			.catch( ( err ) => {
+				if ( ! cancelled ) {
+					setError( err.message );
+				}
+			} )
+			.finally( () => {
+				if ( ! cancelled ) {
+					setIsLoading( false );
+				}
+			} );
+
+		return () => {
+			cancelled = true;
+		};
+	}, [] );
+
+	return { reports, isLoading, error };
+}
 
 function formatTimestamp( iso: string ): string {
 	return new Date( iso ).toLocaleString( undefined, {
@@ -63,60 +112,131 @@ function formatTimestamp( iso: string ): string {
 	} );
 }
 
-export default function AmplifyReportsContent() {
+function ScoreBadge( { score, label }: { score?: number; label: string } ) {
+	if ( score === undefined ) {
+		return null;
+	}
+	const threshold = score >= 80 ? 'strong' : score >= 50 ? 'needs-work' : 'at-risk';
+	return (
+		<span className={ clsx( 'amplify-reports-score', `is-${ threshold }` ) }>
+			{ sprintf(
+				/* translators: %1$s is the score label (e.g. Human), %2$d is the numeric score */
+				__( '%1$s %2$d' ),
+				label,
+				score
+			) }
+		</span>
+	);
+}
+
+export default function AmplifyReportsContent( {
+	pendingJobs = [],
+	onSiteSelected,
+}: {
+	pendingJobs?: PendingJob[];
+	onSiteSelected: ( url: string ) => void;
+} ) {
 	const dispatch = useDispatch();
+	const { reports: fetchedReports, isLoading, error } = useAmplifyReports();
+
+	// Merge pending jobs into the reports list. A pending job is shown at the
+	// top with the `pending` flag set. Once the R2 index updates and a real
+	// report with the same site + mode appears, the pending row will naturally
+	// be replaced on the next fetch (page reload). We deduplicate by jobId so a
+	// pending row never shows alongside the completed report for the same run.
+	const completedJobIds = new Set( fetchedReports.map( ( r ) => r.id ) );
+	const pendingReports: Report[] = pendingJobs
+		.filter( ( job ) => ! completedJobIds.has( job.jobId ) )
+		.map( ( job ) => ( {
+			id: job.jobId,
+			agencyName: '',
+			url: job.site,
+			mode: job.type === 'full' ? 'fullanalysis' : ( job.type as AnalysisMode ),
+			timestamp: job.startedAt,
+			pending: true,
+		} ) );
+
+	const reports = [ ...pendingReports, ...fetchedReports ];
+
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
 		type: DATAVIEWS_TABLE,
-		fields: [ 'site', 'analysisType', 'timestamp', 'download' ],
+		fields: [ 'site', 'mode', 'scores', 'timestamp', 'download' ],
 	} );
 
 	const fields: Field< Report >[] = useMemo( () => {
-		const analysisLabels: Record< AnalysisType, string > = {
-			human: __( 'Human' ),
-			ai: __( 'AI' ),
-			full: __( 'Full' ),
-		};
-
 		const handleDownload = ( item: Report ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_amplify_report_download', {
 					report_id: item.id,
-					site_url: item.site,
-					analysis_type: item.analysisType,
+					site_url: item.url,
+					analysis_type: item.mode,
 				} )
 			);
+			if ( item.pdfUrl ) {
+				// noopener prevents the new tab from accessing window.opener.
+				window.open( item.pdfUrl, '_blank', 'noopener,noreferrer' );
+			}
 		};
 
 		return [
 			{
 				id: 'site',
 				label: __( 'Site' ),
-				getValue: ( { item }: { item: Report } ) => item.site,
+				getValue: ( { item }: { item: Report } ) => item.agencyName || item.url,
 				render: ( { item }: { item: Report } ): ReactNode => (
-					<span className="amplify-reports-site">{ item.site }</span>
+					<span className="amplify-reports-site">
+						<span className="amplify-reports-site-name">
+							{ item.agencyName || item.url }
+						</span>
+						<span className="amplify-reports-site-url">{ item.url }</span>
+					</span>
 				),
 				enableHiding: false,
 				enableSorting: true,
 			},
 			{
-				id: 'analysisType',
+				id: 'mode',
 				label: __( 'Analysis type' ),
-				getValue: ( { item }: { item: Report } ) => analysisLabels[ item.analysisType ],
+				getValue: ( { item }: { item: Report } ) => MODE_LABELS[ item.mode ] ?? item.mode,
 				render: ( { item }: { item: Report } ): ReactNode => (
-					<span className={ clsx( 'amplify-reports-badge', `is-${ item.analysisType }` ) }>
-						{ analysisLabels[ item.analysisType ] }
+					<span className={ clsx( 'amplify-reports-badge', `is-${ item.mode }` ) }>
+						{ MODE_LABELS[ item.mode ] ?? item.mode }
 					</span>
 				),
 				enableHiding: true,
 				enableSorting: true,
 			},
 			{
+				id: 'scores',
+				label: __( 'Scores' ),
+				getValue: () => '',
+				render: ( { item }: { item: Report } ): ReactNode => (
+					<span className="amplify-reports-scores">
+						{ item.mode === 'fullanalysis' ? (
+							<>
+								<ScoreBadge score={ item.humanScore } label={ __( 'Human' ) } />
+								<ScoreBadge score={ item.aiScore } label={ __( 'AI' ) } />
+							</>
+						) : (
+							<ScoreBadge
+								score={ item.score }
+								label={ item.mode === 'human' ? __( 'Human' ) : __( 'AI' ) }
+							/>
+						) }
+					</span>
+				),
+				enableHiding: true,
+				enableSorting: false,
+			},
+			{
 				id: 'timestamp',
 				label: __( 'Time & date' ),
 				getValue: ( { item }: { item: Report } ) => item.timestamp,
 				render: ( { item }: { item: Report } ): ReactNode => (
-					<span className="amplify-reports-timestamp">{ formatTimestamp( item.timestamp ) }</span>
+					<span className="amplify-reports-timestamp">
+						{ formatTimestamp( item.timestamp ) }
+					</span>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -125,17 +245,23 @@ export default function AmplifyReportsContent() {
 				id: 'download',
 				label: __( 'Download' ),
 				getValue: () => '',
-				render: ( { item }: { item: Report } ): ReactNode => (
-					<Button
-						variant="secondary"
-						size="compact"
-						icon={ download }
-						iconSize={ 16 }
-						onClick={ () => handleDownload( item ) }
-					>
-						{ __( 'Download PDF' ) }
-					</Button>
-				),
+				render: ( { item }: { item: Report } ): ReactNode =>
+					item.pending ? (
+						<span className="amplify-reports-in-progress">
+							{ __( 'Report in progress' ) }
+						</span>
+					) : (
+						<Button
+							variant="secondary"
+							size="compact"
+							icon={ download }
+							iconSize={ 16 }
+							disabled={ ! item.pdfUrl }
+							onClick={ () => handleDownload( item ) }
+						>
+							{ __( 'Download PDF' ) }
+						</Button>
+					),
 				enableHiding: false,
 				enableSorting: false,
 			},
@@ -143,8 +269,33 @@ export default function AmplifyReportsContent() {
 	}, [ dispatch ] );
 
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
-		return filterSortAndPaginate( REPORTS, dataViewsState, fields );
-	}, [ dataViewsState, fields ] );
+		return filterSortAndPaginate( reports, dataViewsState, fields );
+	}, [ reports, dataViewsState, fields ] );
+
+	if ( isLoading ) {
+		return (
+			<div className="amplify-reports-loading">
+				{ __( 'Loading reports…' ) }
+			</div>
+		);
+	}
+
+	// Show the empty / prompt state only when there are truly no rows to display
+	// (no R2 reports and no pending jobs). A fetch error alone is not enough to
+	// hide pending rows — if R2 is unavailable the in-progress jobs should still
+	// be visible in the table.
+	if ( reports.length === 0 ) {
+		return (
+			<div className="amplify-reports-empty">
+				<p className="amplify-reports-empty-heading">
+					{ error
+						? __( 'Unable to load reports. Please refresh to try again.' )
+						: __( "You haven't run any Amplify analyses yet." ) }
+				</p>
+				{ ! error && <AmplifySiteSelect onSiteSelected={ onSiteSelected } /> }
+			</div>
+		);
+	}
 
 	return (
 		<div className="amplify-reports redesigned-a8c-table full-width">

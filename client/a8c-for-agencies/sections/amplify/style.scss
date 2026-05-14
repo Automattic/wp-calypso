@@ -220,6 +220,32 @@
 	color: var(--color-error);
 }
 
+.amplify-reports-in-progress {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: var(--color-text-subtle);
+	font-style: italic;
+
+	// Subtle pulsing dot to indicate activity
+	&::before {
+		content: "";
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--color-accent);
+		animation: amplify-pulse 1.6s ease-in-out infinite;
+		flex-shrink: 0;
+	}
+}
+
+@keyframes amplify-pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.3; }
+}
+
 .amplify-reports-loading {
 	padding-block: 48px;
 	text-align: center;
