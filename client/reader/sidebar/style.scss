@@ -277,6 +277,16 @@ body.is-section-reader {
 
 .theme-default .global-sidebar .sidebar .sidebar__menu {
 	&:is( .is-togglable ) {
+		@include ui-mixins.when-dark-theme {
+			.sidebar__expandable-button.components-button {
+				color: inherit;
+			}
+
+			.sidebar__expandable-arrow {
+				fill: currentColor;
+			}
+		}
+
 		&.is-toggle-open {
 			outline: 1px solid #e0e0e0;
 			border-radius: 4px;

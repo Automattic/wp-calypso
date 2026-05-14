@@ -12,12 +12,6 @@
 		.ellipsis-menu__toggle {
 			color: var( --color-text-subtle );
 
-			.gridicon,
-			svg,
-			svg path {
-				fill: currentColor;
-			}
-
 			&:hover,
 			&:focus,
 			&:active {
@@ -487,6 +481,10 @@
 
 	&::after {
 		@include long-content-fade( $size: 10% );
+
+		@include ui-mixins.when-dark-theme {
+			background: linear-gradient( to right, transparent, var( --color-surface ) 90% );
+		}
 	}
 }
 

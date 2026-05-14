@@ -23,12 +23,6 @@
 		.ellipsis-menu__toggle.button {
 			color: var( --color-text-subtle );
 
-			.gridicon,
-			svg,
-			svg path {
-				fill: currentColor;
-			}
-
 			&:hover,
 			&:focus,
 			&:active {

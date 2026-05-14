@@ -60,7 +60,6 @@
 
 	@include ui-mixins.when-dark-theme {
 		color: var( --color-link );
-		fill: currentColor;
 	}
 }
 

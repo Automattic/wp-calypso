@@ -83,6 +83,27 @@
 		color: var( --color-text-subtle );
 	}
 
+	:where( a, button, [role='button'] ) {
+		> svg:not( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ),
+		> .components-button__icon > svg:not( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			fill: currentColor;
+		}
+	}
+
+	.masterbar {
+		--color-masterbar-submenu-text: var( --dashboard__text-color );
+		--color-masterbar-submenu-hover-text: var( --wp-components-color-accent-darker-20 );
+		--color-masterbar-unread-dot-background: var( --wp-components-color-accent-darker-20 );
+		--color-global-masterbar-submenu-background: var( --dashboard-surface__background-color );
+		--color-global-masterbar-submenu-hover-background: var(
+			--dashboard-item-selected-hover__background-color
+		);
+		--color-global-masterbar-site-info-background: var( --wp-components-color-gray-200 );
+		--color-global-masterbar-site-info-badge-background: var( --wp-components-color-gray-300 );
+		--color-global-masterbar-site-info-badge-color: var( --wp-components-color-gray-800 );
+		--color-sidebar-submenu-background: var( --dashboard-item-selected__background-color );
+	}
+
 	&.theme-default .is-global-sidebar-visible {
 		// The shared sidebar sets these variables at this scope, so keep Reader dark overrides here too.
 		--color-sidebar-menu-selected-background: var( --dashboard-item-selected__background-color );
@@ -94,7 +115,6 @@
 		--color-sidebar-submenu-selected-hover-text: var( --color-sidebar-menu-selected-text );
 		--color-sidebar-gridicon-hover-fill: currentColor;
 		--color-sidebar-gridicon-selected-fill: var( --color-sidebar-menu-selected-text );
-		--color-masterbar-submenu-hover-text: var( --wp-components-color-accent-darker-20 );
 	}
 
 	.reader-onboarding-modal__footer {
