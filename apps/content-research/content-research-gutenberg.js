@@ -1,8 +1,8 @@
 import ContentResearchSidebar from '@automattic/content-research';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import { Button, KeyboardShortcuts } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { useSelect } from '@wordpress/data';
+import { dispatch, useSelect } from '@wordpress/data';
 import { PluginMoreMenuItem } from '@wordpress/editor';
 import {
 	createPortal,
@@ -12,20 +12,80 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
-import { addFilter } from '@wordpress/hooks';
-import { __ } from '@wordpress/i18n';
+import { addAction, addFilter } from '@wordpress/hooks';
+import { __, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronUp, closeSmall, Icon, search } from '@wordpress/icons';
+import { displayShortcut, rawShortcut } from '@wordpress/keycodes';
 import { registerPlugin } from '@wordpress/plugins';
 import './content-research.scss';
 
 const queryClient = new QueryClient();
 
+const CONTENT_RESEARCH_PLUGIN_NAME = 'content-research';
 const OPEN_CONTENT_RESEARCH_WINDOW_EVENT = 'content-research:open-window';
 const INTERFACE_CONTENT_SELECTOR = '.interface-interface-skeleton__content';
 const WINDOW_MARGIN = 16;
 const INTERFACE_CONTENT_INSET = 10;
 const DEFAULT_WINDOW_WIDTH = 380;
 const DEFAULT_WINDOW_HEIGHT = 600;
+const CONTENT_RESEARCH_SHORTCUT = rawShortcut.primaryAlt( 'g' );
+const CONTENT_RESEARCH_SHORTCUT_LABEL = displayShortcut.primaryAlt( 'g' );
+let contentResearchPlaceholderTypingTimer;
+
+function getContentResearchPlaceholderBase() {
+	return __( 'Type / to choose a block', 'content-research' );
+}
+
+function getContentResearchPlaceholderShortcutText() {
+	return sprintf(
+		/* translators: %s: keyboard shortcut for opening Content Research. */
+		__( '. Feeling lost? Press %s to try content research 🔍', 'content-research' ),
+		CONTENT_RESEARCH_SHORTCUT_LABEL
+	);
+}
+
+function updateContentResearchPlaceholder( placeholder = getContentResearchPlaceholderBase() ) {
+	dispatch( 'core/block-editor' )?.updateSettings( {
+		bodyPlaceholder: placeholder,
+	} );
+}
+
+function typeContentResearchPlaceholder() {
+	window.clearInterval( contentResearchPlaceholderTypingTimer );
+
+	const placeholderBase = getContentResearchPlaceholderBase();
+	const shortcutText = getContentResearchPlaceholderShortcutText();
+	let characterIndex = 0;
+
+	updateContentResearchPlaceholder( placeholderBase );
+	contentResearchPlaceholderTypingTimer = window.setInterval( () => {
+		characterIndex += 1;
+		updateContentResearchPlaceholder(
+			`${ placeholderBase }${ shortcutText.slice( 0, characterIndex ) }`
+		);
+
+		if ( characterIndex >= shortcutText.length ) {
+			window.clearInterval( contentResearchPlaceholderTypingTimer );
+		}
+	}, 45 );
+}
+
+addAction(
+	'plugins.pluginRegistered',
+	'content-research/update-body-placeholder',
+	( _settings, name ) => {
+		if ( name === CONTENT_RESEARCH_PLUGIN_NAME ) {
+			setTimeout( () => {
+				typeContentResearchPlaceholder();
+			}, 5000 );
+		}
+	}
+);
+
+function handleContentResearchShortcut( event ) {
+	event.preventDefault();
+	dispatchOpenWindowEvent();
+}
 
 function getViewport() {
 	if ( typeof window === 'undefined' || typeof document === 'undefined' ) {
@@ -273,6 +333,12 @@ function ContentResearchPlugin() {
 
 	return (
 		<>
+			<KeyboardShortcuts
+				bindGlobal
+				shortcuts={ {
+					[ CONTENT_RESEARCH_SHORTCUT ]: handleContentResearchShortcut,
+				} }
+			/>
 			<PluginMoreMenuItem icon={ search } onClick={ openWindow }>
 				{ __( 'Content Research', 'content-research' ) }
 			</PluginMoreMenuItem>
@@ -374,6 +440,6 @@ const withInspirationPrompt = createHigherOrderComponent( ( BlockEdit ) => {
 
 addFilter( 'editor.BlockEdit', 'content-research/inspiration-prompt', withInspirationPrompt );
 
-registerPlugin( 'content-research', {
+registerPlugin( CONTENT_RESEARCH_PLUGIN_NAME, {
 	render: () => <ContentResearchPlugin />,
 } );
