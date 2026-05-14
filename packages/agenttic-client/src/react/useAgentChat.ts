@@ -653,6 +653,18 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 								),
 							} ) );
 						}
+
+						// Close the streaming bubble after a non-final text-bearing
+						// status event. Each TaskStatusUpdateEvent carrying text
+						// represents a completed model utterance — the agent server
+						// guarantees the next deltas will not extend that message —
+						// so we rotate to a fresh bubble. This preserves the preamble
+						// when the model says something before tool calls and a
+						// separate final answer afterward; without rotation the
+						// post-preamble deltas would overwrite the preamble bubble.
+						if ( update.kind === 'status' ) {
+							streamingMessageId = null;
+						}
 					}
 
 					// Handle final update - update message properties without changing ID

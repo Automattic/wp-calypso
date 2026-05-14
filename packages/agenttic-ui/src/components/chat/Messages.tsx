@@ -37,12 +37,6 @@ export function Messages( {
 
 	useAutoScroll( { scrollAreaRef, visibleMessages } );
 
-	// Check if we have an agent message being streamed
-	// If so, hide the thinking indicator since content is arriving
-	const hasAgentResponse =
-		visibleMessages.length > 0 &&
-		visibleMessages[ visibleMessages.length - 1 ].role === 'agent';
-
 	const liveRegionText = useMemo( () => {
 		// Find the last agent message
 		const agentMessages = visibleMessages.filter(
@@ -63,6 +57,14 @@ export function Messages( {
 
 	// Debounce live region updates to prevent repeated announcements during streaming
 	const [ announcedText ] = useDebounce( liveRegionText, 1000 );
+
+	// Hide the indicator only while text is actively arriving, not just because
+	// an agent message exists. We compare current agent text to its 1s debounced
+	// shadow: equal means streaming has paused (indicator visible during tool-call
+	// gaps); unequal means deltas are flowing (indicator hidden). The 1s window
+	// is chosen to comfortably exceed typical inter-delta cadence (~430ms) so
+	// the indicator does not flicker during steady streaming.
+	const isAgentTextStreaming = liveRegionText !== announcedText;
 
 	if ( visibleMessages.length === 0 && ! isProcessing ) {
 		if ( emptyView ) {
@@ -111,7 +113,7 @@ export function Messages( {
 							messageRenderer={ messageRenderer }
 						/>
 					) ) }
-					{ isProcessing && ! hasAgentResponse && (
+					{ isProcessing && ! isAgentTextStreaming && (
 						<ThinkingMessage content={ thinkingMessage } />
 					) }
 					{ error && (

@@ -176,6 +176,7 @@ export async function* parseSSEStream(
 										},
 										final: false,
 										text: accumulator.getTextContent(),
+										kind: 'delta',
 									};
 								}
 							}
@@ -216,6 +217,7 @@ export async function* parseSSEStream(
 							text: extractTextFromMessage( statusMessage ),
 							progressMessage: progress?.summary,
 							progressPhase: progress?.phase,
+							kind: 'status',
 						};
 
 						yield update;
@@ -243,6 +245,7 @@ export async function* parseSSEStream(
 								text: extractTextFromMessage( statusMessage ),
 								progressMessage: progress?.summary,
 								progressPhase: progress?.phase,
+								kind: 'status',
 							};
 							yield update;
 						}

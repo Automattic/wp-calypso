@@ -521,4 +521,74 @@ describe( 'parseSSEStream', () => {
 			},
 		] );
 	} );
+
+	it( 'tags delta-derived updates with kind: "delta" and status-envelope updates with kind: "status"', async () => {
+		// The reducer in useAgentChat uses `kind` to detect utterance
+		// boundaries: every non-final text-bearing status event represents
+		// a completed model utterance and should rotate to a fresh streaming
+		// bubble. Without distinct kinds the reducer cannot tell deltas
+		// apart from status envelopes.
+		const updates = [];
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				method: 'message/delta',
+				params: {
+					id: 'task-1',
+					delta: {
+						type: 'delta',
+						deltaType: 'content',
+						content: 'Hello',
+					},
+				},
+			},
+			{
+				jsonrpc: '2.0',
+				result: {
+					id: 'task-1',
+					sessionId: 'session-1',
+					status: {
+						state: 'working',
+						message: {
+							role: 'agent',
+							parts: [ { type: 'text', text: 'Hello world' } ],
+							kind: 'message',
+							messageId: 'msg-preamble',
+						},
+					},
+				},
+			},
+			{
+				jsonrpc: '2.0',
+				id: 'rpc-1',
+				result: {
+					id: 'task-1',
+					sessionId: 'session-1',
+					status: {
+						state: 'completed',
+						message: {
+							role: 'agent',
+							parts: [ { type: 'text', text: 'Final answer' } ],
+							kind: 'message',
+							messageId: 'msg-final',
+						},
+					},
+				},
+			},
+		] );
+
+		for await ( const update of parseSSEStream( stream, {
+			supportDeltas: true,
+		} ) ) {
+			updates.push( update );
+		}
+
+		expect( updates ).toHaveLength( 3 );
+		expect( updates[ 0 ].kind ).toBe( 'delta' );
+		expect( updates[ 0 ].final ).toBe( false );
+		expect( updates[ 1 ].kind ).toBe( 'status' );
+		expect( updates[ 1 ].final ).toBe( false );
+		expect( updates[ 2 ].kind ).toBe( 'status' );
+		expect( updates[ 2 ].final ).toBe( true );
+	} );
 } );
