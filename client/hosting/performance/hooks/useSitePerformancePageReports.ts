@@ -12,7 +12,7 @@ import { isValidURL } from '../utils';
 interface SitePage {
 	id: number;
 	link: string;
-	title: { rendered: string };
+	title: { rendered: string } | null;
 	wpcom_performance_report_url: string;
 }
 
@@ -96,7 +96,7 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 				return {
 					url: page.link,
 					path,
-					label: page.title.rendered || __( 'No Title' ),
+					label: page.title?.rendered || __( 'No Title' ),
 					value: page.id.toString(),
 					wpcom_performance_report_url: toPerformanceReportParts(
 						page.link,

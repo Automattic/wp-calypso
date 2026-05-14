@@ -20,7 +20,7 @@ const defaultStyle = {
 
 function mapPageToPageOption( page: SitePerformancePage, siteUrl: string ): PageOption {
 	const key = page.id.toString();
-	const name = page.title.rendered || __( 'No title' );
+	const name = page.title?.rendered || __( 'No title' );
 	const path = page.link.replace( siteUrl ?? '', '' );
 
 	return {
