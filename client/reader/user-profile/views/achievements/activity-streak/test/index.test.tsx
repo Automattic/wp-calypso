@@ -3,11 +3,20 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import MockDate from 'mockdate';
 import { ActivityStreak } from '../index';
 import type { EngagementStreak } from '@automattic/api-core';
 
 const TODAY = '2026-05-13';
 const YESTERDAY = '2026-05-12';
+
+beforeEach( () => {
+	MockDate.set( `${ TODAY }T12:00:00Z` );
+} );
+
+afterEach( () => {
+	MockDate.reset();
+} );
 
 const baseStreak: EngagementStreak = {
 	current_streak: 12,

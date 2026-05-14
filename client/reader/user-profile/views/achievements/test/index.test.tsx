@@ -23,12 +23,6 @@ jest.mock( '../achievements-settings', () => ( {
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
-jest.mock( 'calypso/reader/components/achievements/years-of-service-badge', () => ( {
-	YearsOfServiceBadge: ( { yearsOfService }: { yearsOfService: number } ) => (
-		<div data-testid="years-of-service-badge">{ yearsOfService }</div>
-	),
-} ) );
-
 const mockActivityStreakProps = jest.fn();
 jest.mock( '../activity-streak', () => ( {
 	__esModule: true,
@@ -65,7 +59,6 @@ describe( 'UserAchievements', () => {
 		mockAchievementsGridProps.mockClear();
 		mockActivityStreakProps.mockClear();
 		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
 			lockedAchievements: [],
 			isLoading: false,
 		} );
@@ -133,50 +126,6 @@ describe( 'UserAchievements', () => {
 		expect( screen.queryByTestId( 'achievements-settings' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'should render YearsOfServiceBadge when years_of_service > 0', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( { yearsOfService: 5, isLoading: false } );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.getByTestId( 'years-of-service-badge' ) ).toBeVisible();
-		expect( screen.getByText( '5' ) ).toBeVisible();
-	} );
-
-	test( 'should not render YearsOfServiceBadge when years_of_service is 0', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( { yearsOfService: 0, isLoading: false } );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'should not render YearsOfServiceBadge when years_of_service is undefined', () => {
-		useAchievementsVisibility.mockReturnValue( {
-			isOwnProfile: false,
-			isVisible: true,
-			isLoading: false,
-		} );
-		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
-			lockedAchievements: [],
-			isLoading: false,
-		} );
-
-		render( <UserAchievements user={ defaultUser } /> );
-
-		expect( screen.queryByTestId( 'years-of-service-badge' ) ).not.toBeInTheDocument();
-	} );
-
 	test( 'forwards isOwnProfile=true to AchievementsGrid on own profile', () => {
 		useAchievementsVisibility.mockReturnValue( {
 			isOwnProfile: true,
@@ -212,7 +161,6 @@ describe( 'UserAchievements', () => {
 			isLoading: false,
 		} );
 		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
 			lockedAchievements: [],
 			engagementStreak: {
 				current_streak: 7,
@@ -241,7 +189,6 @@ describe( 'UserAchievements', () => {
 			isLoading: false,
 		} );
 		useAchievementsQuery.mockReturnValue( {
-			yearsOfService: undefined,
 			lockedAchievements: [],
 			engagementStreak: undefined,
 			isLoading: false,
