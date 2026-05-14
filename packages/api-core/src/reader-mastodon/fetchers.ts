@@ -161,18 +161,22 @@ export interface GetMastodonNotificationsParams {
 	connectionId: number;
 	cursor?: string;
 	limit?: number;
+	types?: string;
 }
 
 export async function getMastodonNotifications(
 	params: GetMastodonNotificationsParams
 ): Promise< MastodonNotificationsPage > {
-	const { connectionId, cursor, limit } = params;
+	const { connectionId, cursor, limit, types } = params;
 	const query: Record< string, string > = {};
 	if ( cursor ) {
 		query.cursor = cursor;
 	}
 	if ( limit ) {
 		query.limit = String( limit );
+	}
+	if ( types ) {
+		query.types = types;
 	}
 	try {
 		return ( await wpcom.req.get(

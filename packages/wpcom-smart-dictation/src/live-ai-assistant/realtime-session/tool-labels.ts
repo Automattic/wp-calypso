@@ -1,4 +1,7 @@
-import { STOP_DICTATION_TOOL_NAME } from '../tools/dictation-control-tool';
+import {
+	CANCEL_IMAGE_GENERATION_TOOL_NAME,
+	STOP_DICTATION_TOOL_NAME,
+} from '../tools/dictation-control-tool';
 import {
 	FORMAT_TEXT_TOOL_NAME,
 	GET_BLOCK_TOOL_NAME,
@@ -143,6 +146,9 @@ export function describeToolCall(
 			return `${ errorPrefix }Saved draft`;
 		case STOP_DICTATION_TOOL_NAME:
 			return `${ errorPrefix }Stopped dictation`;
+		case CANCEL_IMAGE_GENERATION_TOOL_NAME:
+			// "no-op" failure (nothing was in flight) doesn't deserve a noisy entry.
+			return ok ? 'Cancelled image generation' : null;
 		case PUBLISH_POST_TOOL_NAME:
 			return `${ errorPrefix }Published post`;
 		case UNDO_TOOL_NAME:
@@ -161,6 +167,12 @@ export function describeToolCall(
 		}
 		case GENERATE_IMAGE_TOOL_NAME: {
 			if ( ! ok ) {
+				// User-initiated abort (e.g. they said "stop" mid-generation): the
+				// "Stopped dictation" entry already conveys what happened, so
+				// don't litter the log with a redundant failure row.
+				if ( isObjectResult && ( result as { aborted?: boolean } ).aborted ) {
+					return null;
+				}
 				const message =
 					isObjectResult && typeof ( result as { error?: unknown } ).error === 'string'
 						? ( result as { error: string } ).error

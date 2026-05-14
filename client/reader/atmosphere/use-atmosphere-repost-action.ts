@@ -201,16 +201,29 @@ export function makeUseAtmosphereRepostAction( connectionId: number ): UseRepost
 
 		const accessibleLabel = ( count: number, reposted: boolean ) => {
 			const formatted = formatNumber( count );
-			return reposted
-				? translate( 'Undo repost, %(count)s repost', 'Undo repost, %(count)s reposts', {
+			if ( reposted ) {
+				return count > 0
+					? translate( 'Undo repost, %(count)s repost', 'Undo repost, %(count)s reposts', {
+							count,
+							args: { count: formatted },
+							textOnly: true,
+					  } )
+					: translate( 'Undo repost', {
+							textOnly: true,
+							comment:
+								'Accessible label and tooltip for the repost button on a Bluesky/ATmosphere post card when the viewer has already reposted the post and the count is zero. Verb phrase that undoes a repost.',
+					  } );
+			}
+			return count > 0
+				? translate( 'Repost, %(count)s repost', 'Repost, %(count)s reposts', {
 						count,
 						args: { count: formatted },
 						textOnly: true,
 				  } )
-				: translate( 'Repost, %(count)s repost', 'Repost, %(count)s reposts', {
-						count,
-						args: { count: formatted },
+				: translate( 'Repost', {
 						textOnly: true,
+						comment:
+							'Accessible label and tooltip for the repost button on a Bluesky/ATmosphere post card when the post has no reposts yet. Verb meaning to share the post.',
 				  } );
 		};
 

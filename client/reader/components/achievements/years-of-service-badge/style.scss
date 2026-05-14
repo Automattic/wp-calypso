@@ -1,3 +1,4 @@
+@import '@automattic/color-studio/dist/color-properties-rgb.css';
 @import '@automattic/components/src/styles/typography';
 
 .years-of-service-badge {
@@ -18,12 +19,15 @@
 
 .years-of-service-badge.is-large {
 	gap: 8px;
+	// Anchor the badge to the circle's width so long labels wrap underneath
+	// instead of widening the column and unbalancing the layout next to it.
+	width: 120px;
 
 	.years-of-service-badge__circle {
 		width: 120px;
 		height: 120px;
 		font-size: rem( 48px );
-		box-shadow: 0 4px 16px rgba( 56, 88, 233, 0.4 );
+		box-shadow: 0 4px 16px rgba( var( --studio-blue-50-rgb ), 0.4 );
 		background: url( calypso/assets/images/achievements/years-of-service-badge.svg ) no-repeat center / cover;
 	}
 }
@@ -41,8 +45,10 @@
 }
 
 .years-of-service-badge__label {
+	max-width: 100%;
 	font-size: rem( 13px );
 	color: var( --studio-gray-40 );
+	text-align: center;
 }
 
 a.years-of-service-badge {

@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { fixMe, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import { useReaderInterestTags } from 'calypso/data/reader/use-reader-interest-tags';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
@@ -268,22 +268,19 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 	return (
 		<>
 			{ promptVerification && <InterestsVerificationNudge /> }
-			<VStack spacing={ 5 } className="interests-modal__content">
+			<VStack spacing={ 4 } className="interests-modal__content">
 				<VStack spacing={ 0 }>
 					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
 					<p className="interests-modal__subtitle">
-						{ __(
-							'​​Stay up-to-date with your favorite blogs and discover new voices—all from one place.'
-						) }
-					</p>
-					<p className="interests-modal__subtitle">
-						{ fixMe( {
-							text: 'Pick a pack that describes your interest, or switch to individual topics.',
-							newCopy: __(
-								'Pick a pack that describes your interest, or switch to individual topics.'
-							),
-							oldCopy: __( 'Follow at least 3 topics to personalize your Reader feed.' ),
-						} ) }
+						<span>
+							{ __(
+								'​​Stay up-to-date with your favorite blogs and discover new voices—all from one place.'
+							) }
+						</span>
+						<br className="interests-modal__subtitle-break" />{ ' ' }
+						<span>
+							{ __( 'Pick a pack that describes your interest, or switch to individual topics.' ) }
+						</span>
 					</p>
 				</VStack>
 

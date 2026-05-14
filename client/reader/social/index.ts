@@ -1,5 +1,8 @@
 import './style.scss';
 
+export { SocialAvatar } from './avatar';
+export type { SocialAvatarProps } from './avatar';
+
 export { SocialProfileCard } from './profile-card';
 export type { SocialProfileCardProps, SocialProfileStat } from './profile-card';
 
@@ -12,13 +15,14 @@ export type { FollowButtonProps } from './follow-button';
 export { SocialAccountRow } from './account-row';
 export type { SocialAccountRowProps, SocialAccountRowFollowState } from './account-row';
 
-export { SocialAccountList } from './account-list';
+export { SocialAccountList, SocialAccountListHeader } from './account-list';
 export type { SocialAccountListProps } from './account-list';
 
 export { SocialPostCard } from './components/post-card';
 export { SocialFeedList } from './components/feed-list';
 export { SocialNotificationItem } from './components/notifications-list/notification-item';
 export { SocialNotificationsList } from './components/notifications-list';
+export type { ChipFilter } from './components/notifications-list/filter';
 export { SocialAnalyticsProvider } from './components/post-card/analytics-context';
 
 export type {

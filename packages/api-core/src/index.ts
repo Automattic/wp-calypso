@@ -90,6 +90,7 @@ export * from './read-thumbnails';
 export * from './reader-atmosphere';
 export * from './reader-fediverse';
 export * from './reader-mastodon';
+export * from './reader-social';
 export * from './site';
 export * from './site-activity-log';
 export * from './site-activity-log-backup';

@@ -146,6 +146,37 @@ describe( 'follow types', () => {
 		expect( p.is_self ).toBe( false );
 	} );
 
+	it( 'MastodonAuthorProfile exposes hide_collections as an optional boolean', () => {
+		const hidden: MastodonAuthorProfile = {
+			id: '200',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '',
+			counts: { followers: 0, following: 0, posts: 0 },
+			locked: false,
+			hide_collections: true,
+			raw: {},
+		};
+		expect( hidden.hide_collections ).toBe( true );
+
+		// Older backend response — field absent. Consumers must treat
+		// `undefined` as `false` (visible), not as "hidden".
+		const visible: MastodonAuthorProfile = {
+			id: '200',
+			acct: 'alice@mastodon.social',
+			display_name: 'Alice',
+			avatar: null,
+			header: null,
+			note: '',
+			counts: { followers: 0, following: 0, posts: 0 },
+			locked: false,
+			raw: {},
+		};
+		expect( visible.hide_collections ).toBeUndefined();
+	} );
+
 	it( 'MastodonCreateFollowParams + DeleteFollowParams shape', () => {
 		const c: MastodonCreateFollowParams = { connectionId: 1, accountId: '200' };
 		const d: MastodonDeleteFollowParams = { connectionId: 1, accountId: '200' };

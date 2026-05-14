@@ -1,10 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import useGetJetpackTransferredLicensePurchases from '@automattic/data-stores/src/purchases/queries/use-get-jetpack-transferred-license-purchases';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
@@ -15,6 +16,7 @@ import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -94,6 +96,43 @@ const PurchasesListDataView: React.FC<
 	userId,
 } ) => {
 	const translate = useTranslate();
+
+	// Read ?removed, ?removedDomain, and ?removedId from URL on mount, then strip params.
+	const [ removedNoticeData ] = useState( () => {
+		if ( typeof window === 'undefined' ) {
+			return null;
+		}
+		const params = new URLSearchParams( window.location.search );
+		const removed = params.get( 'removed' );
+		if ( ! removed ) {
+			return null;
+		}
+		const removedDomain = params.get( 'removedDomain' );
+		const removedIdStr = params.get( 'removedId' );
+		const purchaseId = removedIdStr ? Number( removedIdStr ) : null;
+		params.delete( 'removed' );
+		params.delete( 'removedDomain' );
+		params.delete( 'removedId' );
+		const newSearch = params.toString();
+		const newUrl =
+			window.location.pathname + ( newSearch ? '?' + newSearch : '' ) + window.location.hash;
+		window.history.replaceState( window.history.state, '', newUrl );
+		return { productNoun: removed, atomicDomain: removedDomain, purchaseId };
+	} );
+	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
+
+	// Dismiss the success notice when the background mutation rolls back —
+	// detected by the captured purchase reappearing in the user's purchase list.
+	// `purchases` is camelCase via getUserPurchases → createPurchasesArray.
+	useEffect( () => {
+		if ( ! removedNoticeData?.purchaseId ) {
+			return;
+		}
+		if ( purchases?.some( ( p ) => String( p.id ) === String( removedNoticeData.purchaseId ) ) ) {
+			setShowRemovedNotice( false );
+		}
+	}, [ purchases, removedNoticeData ] );
+
 	const {
 		data: transferredOwnershipPurchases = [],
 		isLoading,
@@ -145,6 +184,38 @@ const PurchasesListDataView: React.FC<
 				) }
 			/>
 			<PurchasesNavigation section="activeUpgrades" />
+			{ config.isEnabled( 'purchases/split-cancel-remove' ) &&
+				showRemovedNotice &&
+				removedNoticeData && (
+					<Notice
+						showDismiss
+						onDismissClick={ () => setShowRemovedNotice( false ) }
+						status="is-success"
+					>
+						{ removedNoticeData.atomicDomain
+							? translate(
+									'Your %(productNoun)s has been removed. Your site will revert to its previous state \u2014 {{a}}download a backup{{/a}} to save your content, themes, and plugins. You\u2019ll receive a confirmation email shortly.',
+									{
+										args: { productNoun: removedNoticeData.productNoun },
+										components: {
+											a: (
+												<a
+													href={ `https://${ removedNoticeData.atomicDomain }/wp-admin/export.php` }
+													target="_blank"
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
+							  )
+							: translate(
+									'Your %(productNoun)s has been removed. You\u2019ll receive a confirmation email shortly.',
+									{
+										args: { productNoun: removedNoticeData.productNoun },
+									}
+							  ) }
+					</Notice>
+				) }
 			<PurchasesContent
 				isDataLoading={ isDataLoading() }
 				allPurchases={ allPurchases }

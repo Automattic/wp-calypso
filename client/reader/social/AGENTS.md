@@ -63,6 +63,17 @@ client/reader/social/
       style.scss
       test/
 
+    notifications-list/
+      index.tsx                 # SocialNotificationsList — filter bar + date dividers + grouped rows
+      notification-item.tsx     # SocialNotificationItem — single-row renderer
+      stacked-notification.tsx  # StackedNotification — multi-actor row with inline follow expansion
+      filter.ts                 # ChipFilter UI alias (re-exports NotificationsFilter from @automattic/api-core) + CHIP_FILTERS array
+      filter-bar.tsx            # NotificationsFilterBar — aria-pressed chip strip
+      date-bucket.ts            # bucketFor( iso, now ) → 'today' | 'yesterday' | 'this_week' | 'earlier'
+      group-notifications.ts    # groupNotifications( items ) — stacking algorithm + GroupedRow types
+      style.scss
+      test/
+
   site-handoff/                 # generic site picker + draft-save handoff (extracted from composer-overflow-handoff)
     index.ts                    # public barrel — only export from here
     site-handoff.tsx            # SiteHandoff — picker + submit button, owns single-vs-multi-site branching
@@ -120,6 +131,7 @@ Don't speculate ahead of that signal. Adding a generic shape now will make the a
 - `AuthorProfileHeader` — back-button shim taking `timelineUrl: string`. Both protocols use it directly via the shared panel.
 - `SocialAccountRow` — one row in an account list (avatar / name / handle / bio / follow button), with optional Follows you badge and self-row mode. Pass `hideFollowedByBadge: true` to suppress the badge on followers-list surfaces (where every row trivially follows the viewer); `followState.isFollowedBy` is still consumed by the follow button to pick the "Follow back" label. Card-link overlay pattern: the whole row is a click target via a `::after` overlay on the timestamp-style anchor; the follow button sits above the overlay via `position: relative; z-index: 1` so it stays individually clickable. Caller maps the protocol shape to row props.
 - `SocialAccountList<T>` — thin generic wrapper around `SocialFeedList<T>` that renders each item via `<SocialAccountRow {...renderItem(item)} />`. Caller provides the `renderItem` mapper from protocol shape to `SocialAccountRow` props; the list shell, sentinel-based pagination, skeleton, and error variants are inherited unchanged. Optionally renders a follow-list header above the list via the `header` prop (`{ displayName, handle, count, mode: 'followers' | 'following', isPending }`) so followers/following surfaces look identical across protocols. The header shows the actor's display name (or `@handle` fallback) and a pluralized count line; while `isPending` it renders a layout-stable skeleton, and when `count` is `null` (profile fetch errored) it renders the heading only.
+- `SocialNotificationsList` — the Notifications-tab list shell, generic across protocols. Owns the filter-chip bar, date-divider insertion, and stack-aware row rendering. Per-protocol wrappers (`client/reader/atmosphere/notifications-panel.tsx`, `client/reader/mastodon/notifications-panel.tsx`) own the `useState< ChipFilter >( 'all' )` and thread `filter` + `onFilterChange` + `onStackExpandedChange` into the shared list. See "Notifications list" below for the architecture.
 
 ### What's Bluesky-specific today (likely needs forking or refactoring)
 
@@ -438,6 +450,75 @@ The far-right placement is achieved via `margin-inline-start: auto` on
 the button wrapper (`.social-post-card-counts__blog-about`); the
 existing `HStack` keeps `justify="flex-start"` so the three engagement
 buttons stay grouped on the left.
+
+### Notifications list
+
+The Notifications-tab list (`components/notifications-list/`) is shared
+across ATmosphere and Mastodon. The wpcom endpoints emit a
+byte-compatible envelope (`{ items, next_cursor, seen_at }`) keyed by
+`canonical_type` (`like | repost | follow | mention | reply | quote |
+other`), so one renderer handles both protocols. Three coordinated
+behaviours sit on top of that envelope:
+
+**Filter chips** — `<NotificationsFilterBar>` wraps
+`@wordpress/components`' `ToggleGroupControl` (with
+`ToggleGroupControlOption` children) for the chip strip
+(`All / Conversations / Likes / Reposts / Follows`). The component
+renders as a `radiogroup`, gets arrow-key handling and the WP design
+system's selected-state styling for free, and reports its accessible
+name via the hidden `label` prop. Selected chip is
+session state in the per-protocol panel wrapper
+(`useState< ChipFilter >( 'all' )`); on change, the wrapper threads it
+into the hook and fires
+`calypso_reader_<source>_notifications_filter_changed`. The chip union
+and the wire mapper both live in
+`packages/api-core/src/reader-social/notifications-filter.ts` as
+`NotificationsFilter` and `mapNotificationsFilter`: `filter.ts`
+re-exports the type as `ChipFilter` for UI call sites, and the
+per-protocol notifications-infinite-query hooks
+(`packages/api-queries/src/reader-{atmosphere,mastodon}.ts`) import the
+mapper directly. The wpcom side translates `types=` into ATProto
+`reasons[]` (Bluesky) or Mastodon `types[]`, post-filtering client-side
+for the `other` bucket.
+
+**Date dividers** — `bucketFor( iso, now )` in `date-bucket.ts` returns
+`'today' | 'yesterday' | 'this_week' | 'earlier'` against the user's
+local timezone, with a 7-day rolling window for `this_week`. The list
+walks grouped rows and emits an `<h3>` heading whenever the bucket
+changes. Empty buckets are not rendered; when every
+loaded row lands in a single bucket the lone divider is also suppressed
+(it would feel like noise). `now` is captured inside the bucketing
+`useMemo`, not lifted to its own hook.
+
+**Stacking** — `groupNotifications( items )` in
+`group-notifications.ts` is a pure function that buckets a flat
+newest-first `SocialNotification[]` into `GroupedRow[]`. Group key:
+`canonical_type:target.uri` for like/repost/mention/reply/quote, the
+literal `'follow'` for follow rows (no target needed), and a per-item
+singleton key for `other` (never stacks) or for any row missing a
+`target.uri`. Stacks form only at `members.length >= 2`; singletons
+render via `<SocialNotificationItem>` unchanged. Position of a stack in
+the rendered list is the position of its newest member, which falls out
+of the algorithm because the first time a key is seen creates its
+bucket. `newestCreatedAt` is computed via `reduce` over the members so
+the algorithm is robust to out-of-order input (e.g. paginated pages
+re-merged). `<StackedNotification>` renders the avatar cluster (max 3
+visible avatars + `+N` overflow), name line ("Jane, Sam and N others
+liked your post"), excerpt, timestamp, and unread dot. Like/repost/etc
+stacks click → `targetUrl` (external `<a target="_blank">`). Follow
+stacks click → `aria-expanded` toggle revealing per-member child rows;
+follow stacks cap rendered children at 50 (`FOLLOW_TRUNCATE_AT`). The
+toggle fires
+`calypso_reader_<source>_notifications_stack_{expanded,collapsed}` via
+the panel wrapper's `onStackExpandedChange` callback.
+
+**Per-protocol wrappers** (`client/reader/{atmosphere,mastodon}/notifications-panel.tsx`)
+own the filter state, hook invocation
+(`useXxxNotificationsInfiniteQuery( connectionId, { filter } )`), the
+Tracks dispatches above, and pass everything as props into the shared
+list. They are deliberately byte-for-byte symmetric (only event-name
+prefix + protocol-specific imports differ), matching the pattern
+established by the timeline / thread / author-profile wrappers.
 
 ### Composer (slice 7)
 

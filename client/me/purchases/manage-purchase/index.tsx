@@ -1086,7 +1086,7 @@ class ManagePurchase extends Component<
 				this.showWordAdsEligibilityWarningDialog( link );
 			}
 
-			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+			if ( ! isSplitEnabled && this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
 				this.showNonPrimaryDomainWarningDialog( link );
 			}

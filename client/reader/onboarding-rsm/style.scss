@@ -18,6 +18,36 @@
 
 $actions-height: 64px;
 
+// Back button appears in the WP Modal header via the `headerActions` prop.
+// `order: -1` moves it before the (empty) title container, placing it on the
+// left side while the close button stays on the right.
+.reader-onboarding-rsm-modal .reader-onboarding-modal__back-button {
+	order: -1;
+}
+
+// Match Calypso keyboard-mode focus (`accessible-focus` on `<html>` from
+// `@automattic/accessible-focus`): hide focus rings on pointer use, show a
+// consistent outline when the user is navigating by keyboard.
+html:not( .accessible-focus ) .reader-onboarding-rsm-modal {
+	button:focus,
+	a:focus,
+	[tabindex]:focus {
+		box-shadow: none;
+		outline: none;
+	}
+}
+
+.accessible-focus .reader-onboarding-rsm-modal {
+	button:focus,
+	a:focus,
+	[tabindex]:focus-visible {
+		outline: 2px solid var( --color-accent, #3858e9 );
+		outline-offset: 2px;
+		border-radius: 4px;
+		box-shadow: none;
+	}
+}
+
 // Shared layout for all reader-onboarding-rsm modals (welcome, interests,
 // subscribe). All three share the same overall size, the same flex-column
 // scroll/footer architecture, and the same footer styling. Per-modal
@@ -62,9 +92,8 @@ $actions-height: 64px;
 	.reader-onboarding-modal__footer {
 		height: $actions-height;
 		flex: 0 0 auto;
-		background-color: #fff;
+		background-color: var( --color-surface );
 		padding-inline: 32px;
-		border-top: 1px solid #ddd; //$gray-300;
 
 		.reader-onboarding-modal__footer-actions {
 			height: 100%;
@@ -79,11 +108,6 @@ $actions-height: 64px;
 			justify-content: flex-end;
 		}
 	}
-}
-
-// Welcome doesn't show a divider above its footer.
-.reader-welcome-modal .reader-onboarding-modal__footer {
-	border-top: 0;
 }
 
 // VStack-based modals (welcome, interests) make the inner content the scroll

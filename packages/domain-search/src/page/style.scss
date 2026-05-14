@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/colors';
 
 .domain-search {
@@ -42,4 +43,41 @@
 .domain-search--results {
 	width: 100%;
 	max-width: var( --domain-search-content-max-width );
+
+	@media ( max-width: #{ $break-small - 1px } ) {
+		--domain-search-input-size: 48px;
+		--domain-search-input-border-radius: 2px;
+
+		.domain-search__search-bar {
+			gap: 0.5rem;
+		}
+
+		.domain-search-controls__input {
+			// The container's inset box-shadow draws the visible
+			// border, so the radius needs to live here too.
+			.components-input-control__container {
+				border-radius: var( --domain-search-input-border-radius );
+			}
+
+			.components-input-control__prefix > div {
+				padding-inline-start: 12px;
+			}
+
+			.components-input-control__container input.components-input-control__input {
+				min-height: var( --domain-search-input-size );
+				font-size: 1rem;
+				padding-left: 8px;
+			}
+
+			.components-input-control__suffix > div {
+				padding-inline-end: 12px;
+			}
+		}
+	}
+}
+
+.step-container-v2__content-wrapper:has( .domain-search--results ) {
+	@media ( max-width: #{ $break-small - 1px } ) {
+		gap: 1.5rem;
+	}
 }
