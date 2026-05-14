@@ -15,11 +15,9 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { savePost } from 'calypso/state/posts/actions/save-post';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import type { FirstPostDraft } from './draft-first-post';
+import { HOME_WIZARD_STATE_PREF, type HomeWizardState } from './wizard-state';
 import type { SelectedTask } from './select-tasks';
 import type { AppState } from 'calypso/types';
-
-const HOME_WIZARD_FIRST_POST_DRAFT_PREF = 'home_wizard_first_post_draft';
 
 type Props = {
 	task: SelectedTask;
@@ -58,9 +56,12 @@ export default function FirstPostTaskItem( { task, itemClassName }: Props ) {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
-	const draft = useSelector( ( state: AppState ) =>
-		getPreference( state, HOME_WIZARD_FIRST_POST_DRAFT_PREF )
-	) as FirstPostDraft | null;
+	const draft =
+		(
+			useSelector( ( state: AppState ) =>
+				getPreference( state, HOME_WIZARD_STATE_PREF )
+			) as HomeWizardState | null
+		 )?.firstPostDraft ?? null;
 	const [ isCreating, setIsCreating ] = useState< boolean >( false );
 
 	const hasUsableDraft =

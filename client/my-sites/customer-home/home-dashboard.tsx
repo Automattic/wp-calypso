@@ -27,39 +27,22 @@ import { getSiteUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HomeWizard from './home-wizard';
-import { type FirstPostDraft } from './home-wizard/draft-first-post';
 import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
-import {
-	prewarmTailorAndDraft,
-	tailorAndDraftFromIntent,
-	type InferredContext,
-} from './home-wizard/tailor-launchpad';
+import { prewarmTailorAndDraft, tailorAndDraftFromIntent } from './home-wizard/tailor-launchpad';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
 import { TASK_REGISTRY, type SiteState } from './home-wizard/task-registry';
+import { HOME_WIZARD_STATE_PREF, type HomeWizardState } from './home-wizard/wizard-state';
 import type { FeatureKey, GoalKey, WizardAnswers } from './home-wizard/types';
 import type { AppState } from 'calypso/types';
 
 import './home-dashboard.scss';
 
-// Per-site list so each newly created site triggers the wizard once.
+// Per-site list so each newly created site triggers the wizard once. Kept
+// as its own preference (not folded into the combined wizard state) because
+// it's a global cross-site list, written independently of any single
+// wizard run. The per-run wizard output lives under HOME_WIZARD_STATE_PREF
+// — see wizard-state.ts for why it's a single key.
 const HOME_WIZARD_COMPLETED_SITES_PREF = 'home_wizard_completed_sites';
-const HOME_WIZARD_GOAL_PREF = 'home_wizard_goal';
-const HOME_WIZARD_FEATURES_PREF = 'home_wizard_features';
-// Cached IDs from the most recent `tailor_launchpad` call. Absent for users
-// who finished the wizard before the AI hop existed, or when the call timed
-// out / returned empty / errored — in any of those cases the widget falls
-// back to the deterministic `selectTasks` output.
-const HOME_WIZARD_TASK_IDS_PREF = 'home_wizard_task_ids';
-// Cached starter draft from the `draft_first_post` Dolly call. Used by the
-// "Write your first post" task row to open the editor on a real draft
-// instead of a blank page. Absent if the call hadn't finished, errored, or
-// the user finished the wizard before this feature existed.
-const HOME_WIZARD_FIRST_POST_DRAFT_PREF = 'home_wizard_first_post_draft';
-// Prompt-path inputs. Stored verbatim so future Dolly calls (regenerate,
-// re-tailor, "what should I do next") can use the same source of truth.
-const HOME_WIZARD_INTENT_PREF = 'home_wizard_intent';
-const HOME_WIZARD_INFERRED_PREF = 'home_wizard_inferred';
-const HOME_WIZARD_SITE_NAME_PREF = 'home_wizard_site_name';
 // Dolly typically responds in 4-10s for the wizard's structured prompt and
 // 25-35s for the intent prompt (which adds inference + draft). 40s gives
 // the intent path headroom; observed 5/7 verification prompts landed
@@ -130,22 +113,18 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const site = useSelector( getSelectedSite );
-	const wizardGoal = useSelector( ( state: AppState ) =>
-		getPreference( state, HOME_WIZARD_GOAL_PREF )
-	) as GoalKey | null;
-	const wizardFeatures =
-		( useSelector( ( state: AppState ) => getPreference( state, HOME_WIZARD_FEATURES_PREF ) ) as
-			| FeatureKey[]
-			| null ) ?? [];
-	const tailoredIds = useSelector( ( state: AppState ) =>
-		getPreference( state, HOME_WIZARD_TASK_IDS_PREF )
-	) as string[] | null;
-	const wizardIntent = useSelector( ( state: AppState ) =>
-		getPreference( state, HOME_WIZARD_INTENT_PREF )
-	) as string | null;
-	const firstPostDraft = useSelector( ( state: AppState ) =>
-		getPreference( state, HOME_WIZARD_FIRST_POST_DRAFT_PREF )
-	) as FirstPostDraft | null;
+	const wizardState =
+		( useSelector( ( state: AppState ) =>
+			getPreference( state, HOME_WIZARD_STATE_PREF )
+		) as HomeWizardState | null ) ?? {};
+	const wizardGoal = wizardState.goal ?? null;
+	const tailoredIds = wizardState.taskIds ?? null;
+	const wizardIntent = wizardState.intent ?? null;
+	const firstPostDraft = wizardState.firstPostDraft ?? null;
+	// The wizard infers features from the free-text description rather than
+	// collecting them explicitly, so there's no stored feature list — the
+	// deterministic fallback runs goal-only.
+	const wizardFeatures: FeatureKey[] = [];
 
 	const siteIntent = ( site?.options as { site_intent?: string } | undefined )?.site_intent ?? '';
 	const siteState = useSiteState( siteSlug );
@@ -458,19 +437,17 @@ function useHomeWizard() {
 		setIsOpen( true );
 	};
 
-	const finish = ( answers?: WizardAnswers ) => {
+	// Closes the wizard and records this site as done. The wizard's actual
+	// answers (goal, intent, draft, …) are persisted by `useTailoredFlow`
+	// under the combined `home_wizard_state` key — `finish` only owns the
+	// open/close lifecycle and the global completed-sites list.
+	const finish = () => {
 		touched.current = true;
 		setIsOpen( false );
 
 		if ( siteId !== null ) {
 			const next = Array.from( new Set( [ ...( completedSites ?? [] ), siteId ] ) );
 			dispatch( savePreference( HOME_WIZARD_COMPLETED_SITES_PREF, next ) );
-		}
-		if ( answers?.goal ) {
-			dispatch( savePreference( HOME_WIZARD_GOAL_PREF, answers.goal ) );
-		}
-		if ( answers?.intent ) {
-			dispatch( savePreference( HOME_WIZARD_INTENT_PREF, answers.intent ) );
 		}
 		if ( forced && typeof window !== 'undefined' ) {
 			const url = new URL( window.location.href );
@@ -510,14 +487,17 @@ function useTailoredFlow() {
 		return { controller, finalize };
 	};
 
-	const persistTaskIds = ( task_ids: string[] ) => {
-		if ( task_ids.length > 0 ) {
-			dispatch( savePreference( HOME_WIZARD_TASK_IDS_PREF, task_ids ) );
-		}
-	};
-
-	const persistDraft = ( draft: { title: string; paragraphs: string[] } ) => {
-		dispatch( savePreference( HOME_WIZARD_FIRST_POST_DRAFT_PREF, draft ) );
+	// Read-modify-write of the combined wizard-state preference: pull the
+	// current value out of redux, merge the patch, save the whole thing back
+	// in a single `savePreference`. Every write stage goes through this so
+	// each is one PUT that preserves what earlier stages wrote — see
+	// HOME_WIZARD_STATE_PREF for why one key (one PUT per stage) matters.
+	const mergeWizardState = ( patch: Partial< HomeWizardState > ) => {
+		dispatch( ( innerDispatch, getState ) => {
+			const current =
+				( getPreference( getState(), HOME_WIZARD_STATE_PREF ) as HomeWizardState | null ) ?? {};
+			innerDispatch( savePreference( HOME_WIZARD_STATE_PREF, { ...current, ...patch } ) );
+		} );
 	};
 
 	const runFromAnswers = ( answers: WizardAnswers ) => {
@@ -537,10 +517,15 @@ function useTailoredFlow() {
 			.filter( Boolean )
 			.join( '\n' );
 
-		dispatch( savePreference( HOME_WIZARD_INTENT_PREF, composed ) );
-		if ( trimmedName ) {
-			dispatch( savePreference( HOME_WIZARD_SITE_NAME_PREF, trimmedName ) );
-		}
+		// Write stage 1: the inputs, persisted before the async hop starts.
+		// `goal` lives here now (not in `finish`) so the whole wizard run is
+		// one key. `setPreference` inside `savePreference` runs synchronously,
+		// so stages 2 and 3 are guaranteed to read this back.
+		mergeWizardState( {
+			goal: answers.goal,
+			intent: composed,
+			...( trimmedName ? { siteName: trimmedName } : {} ),
+		} );
 
 		const { controller, finalize } = startTailoring();
 
@@ -552,18 +537,27 @@ function useTailoredFlow() {
 				// Streaming early-paint: task_ids arrives long before the draft
 				// finishes generating. Persist + drop the skeleton here so the
 				// user sees real tailored tasks ~10s sooner; the draft fills in
-				// when the rest of the stream completes.
+				// when the rest of the stream completes. Write stage 2.
 				onPartialTaskIds: ( ids ) => {
-					persistTaskIds( ids );
+					if ( ids.length > 0 ) {
+						mergeWizardState( { taskIds: ids } );
+					}
 					setIsTailoring( false );
 				},
 			}
 		)
+			// Write stage 3: the full result. One merge for task_ids + inferred
+			// + draft so the draft (the subtitle source) can't be clobbered by
+			// a sibling write landing out of order.
 			.then( ( result ) => {
-				persistTaskIds( result.task_ids );
-				const inferred: InferredContext = result.inferred ?? {};
-				dispatch( savePreference( HOME_WIZARD_INFERRED_PREF, inferred ) );
-				persistDraft( result.first_post_draft );
+				const patch: Partial< HomeWizardState > = {
+					inferred: result.inferred ?? {},
+					firstPostDraft: result.first_post_draft,
+				};
+				if ( result.task_ids.length > 0 ) {
+					patch.taskIds = result.task_ids;
+				}
+				mergeWizardState( patch );
 			} )
 			.catch( ( error ) => {
 				window.console?.warn?.( '[Launchpad] tailor_and_draft (wizard) failed:', error );
@@ -628,7 +622,7 @@ export default function HomeDashboard() {
 		if ( selectedSiteId !== null && trimmedName !== '' && trimmedName !== currentSiteName.trim() ) {
 			dispatch( saveSiteSettings( selectedSiteId, { blogname: trimmedName } ) );
 		}
-		finishWizard( answers );
+		finishWizard();
 		runFromAnswers( answers );
 	};
 
