@@ -286,6 +286,42 @@ describe( 'QRCodeAppLogin', () => {
 		).toBeVisible();
 	} );
 
+	it( 'keeps Sign-in complete when the local countdown expires after consumed', async () => {
+		mockedUseCreateToken.mockReturnValue( tokenIssued() );
+		mockedUseStatus.mockReturnValue( {
+			data: { status: 'consumed' },
+			isError: false,
+		} as unknown as StatusReturn );
+		mockedUseCountdown.mockReturnValue( { remainingMs: 0, totalMs: 120_000, hasExpired: true } );
+
+		await renderWithGenerateClicked();
+
+		expect( screen.getByText( 'Sign-in complete.' ) ).toBeVisible();
+		expect(
+			screen.queryByText( /sign-in attempt has expired/, {
+				selector: '.components-notice__content',
+			} )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the approved state when the local countdown expires after approval', async () => {
+		mockedUseCreateToken.mockReturnValue( tokenIssued() );
+		mockedUseStatus.mockReturnValue( {
+			data: { status: 'approved' },
+			isError: false,
+		} as unknown as StatusReturn );
+		mockedUseCountdown.mockReturnValue( { remainingMs: 0, totalMs: 120_000, hasExpired: true } );
+
+		await renderWithGenerateClicked();
+
+		expect( screen.getByText( /waiting for the app to finish signing in/ ) ).toBeVisible();
+		expect(
+			screen.queryByText( /sign-in attempt has expired/, {
+				selector: '.components-notice__content',
+			} )
+		).not.toBeInTheDocument();
+	} );
+
 	describe( 'approve error branches', () => {
 		it( 'flips to rejected on a wrong_number error', async () => {
 			mockedUseCreateToken.mockReturnValue( tokenIssued() );
@@ -415,6 +451,23 @@ describe( 'QRCodeAppLogin', () => {
 			await renderWithGenerateClicked();
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_qr_app_login_expired' );
+		} );
+
+		it( 'does not fire expired when local countdown exhausts after consumed', async () => {
+			mockedUseCreateToken.mockReturnValue( tokenIssued() );
+			mockedUseStatus.mockReturnValue( {
+				data: { status: 'consumed' },
+				isError: false,
+			} as unknown as StatusReturn );
+			mockedUseCountdown.mockReturnValue( {
+				remainingMs: 0,
+				totalMs: 120_000,
+				hasExpired: true,
+			} );
+
+			await renderWithGenerateClicked();
+
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith( 'calypso_qr_app_login_expired' );
 		} );
 
 		it( 'fires approve_clicked on number tap', async () => {

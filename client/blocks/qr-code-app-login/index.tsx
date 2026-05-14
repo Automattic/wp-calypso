@@ -72,11 +72,12 @@ export default function QRCodeAppLogin() {
 	}, [ pollStatus, recordOnce ] );
 
 	const localExpired = forcedExpired || countdown?.hasExpired === true;
+	const reachedTerminal = pollStatus === 'consumed' || pollStatus === 'approved';
 	useEffect( () => {
-		if ( localExpired ) {
+		if ( localExpired && ! reachedTerminal ) {
 			recordOnce( 'calypso_qr_app_login_expired' );
 		}
-	}, [ localExpired, recordOnce ] );
+	}, [ localExpired, reachedTerminal, recordOnce ] );
 
 	const handleGenerate = () => {
 		recordTracksEvent( 'calypso_qr_app_login_generate_clicked' );
@@ -166,21 +167,6 @@ export default function QRCodeAppLogin() {
 		);
 	}
 
-	const isExpired = forcedExpired || status === 'expired' || countdown?.hasExpired === true;
-
-	if ( isExpired ) {
-		return (
-			<div className="qr-code-app-login is-error">
-				<Notice status="warning" isDismissible={ false }>
-					{ translate( 'This sign-in attempt has expired.' ) }
-				</Notice>
-				<Button variant="primary" onClick={ startOver }>
-					{ translate( 'Start over' ) }
-				</Button>
-			</div>
-		);
-	}
-
 	if ( status === 'consumed' ) {
 		return (
 			<div className="qr-code-app-login">
@@ -202,6 +188,21 @@ export default function QRCodeAppLogin() {
 					{ translate( 'Approved — waiting for the app to finish signing in…' ) }
 				</p>
 				{ connectionLost }
+			</div>
+		);
+	}
+
+	const isExpired = forcedExpired || status === 'expired' || countdown?.hasExpired === true;
+
+	if ( isExpired ) {
+		return (
+			<div className="qr-code-app-login is-error">
+				<Notice status="warning" isDismissible={ false }>
+					{ translate( 'This sign-in attempt has expired.' ) }
+				</Notice>
+				<Button variant="primary" onClick={ startOver }>
+					{ translate( 'Start over' ) }
+				</Button>
 			</div>
 		);
 	}
