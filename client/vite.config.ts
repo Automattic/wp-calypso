@@ -3,6 +3,7 @@ import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { viteBuildAssetsWriter } from '@automattic/vite-plugin-calypso-assets-writer';
+import { viteBuildChunksMap } from '@automattic/vite-plugin-calypso-chunks-map';
 import { vitePluginRtlCss } from '@automattic/vite-plugin-calypso-rtl-css';
 import { vitePluginSections } from '@automattic/vite-plugin-calypso-sections';
 import * as babel from '@babel/core';
@@ -464,6 +465,11 @@ export default defineConfig(
 		// Project root — Vite serves files from here in dev mode.
 		root: projectRoot,
 
+		// Public base URL — controls in-chunk import paths and manifest URLs.
+		// Production assets are served from /calypso/evergreen/; dev keeps the
+		// default `/` so Vite's own paths (/@vite/client, /client/*) resolve.
+		base: isDevelopment ? '/' : '/calypso/evergreen/',
+
 		resolve: {
 			// Resolve the calypso:src export condition so workspace packages are
 			// imported from their TypeScript source files, not pre-built dist.
@@ -621,6 +627,11 @@ export default defineConfig(
 				buildDir: path.join( projectRoot, 'build' ),
 				publicPath: '/calypso/evergreen/',
 				entrypoints: ENTRYPOINTS,
+			} ),
+
+			viteBuildChunksMap( {
+				output: path.join( projectRoot, 'public/chunks-map.json' ),
+				baseDir: projectRoot,
 			} ),
 		],
 

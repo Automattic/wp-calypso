@@ -2492,6 +2492,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/vite-plugin-calypso-chunks-map@workspace:^, @automattic/vite-plugin-calypso-chunks-map@workspace:packages/vite-plugin-calypso-chunks-map":
+  version: 0.0.0-use.local
+  resolution: "@automattic/vite-plugin-calypso-chunks-map@workspace:packages/vite-plugin-calypso-chunks-map"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/vite-plugin-calypso-rtl-css@workspace:^, @automattic/vite-plugin-calypso-rtl-css@workspace:packages/vite-plugin-calypso-rtl-css":
   version: 0.0.0-use.local
   resolution: "@automattic/vite-plugin-calypso-rtl-css@workspace:packages/vite-plugin-calypso-rtl-css"
@@ -34097,6 +34103,7 @@ __metadata:
     "@automattic/verbum-block-editor": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/vite-plugin-calypso-assets-writer": "workspace:^"
+    "@automattic/vite-plugin-calypso-chunks-map": "workspace:^"
     "@automattic/vite-plugin-calypso-rtl-css": "workspace:^"
     "@automattic/vite-plugin-calypso-sections": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"

@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { createRequire } from 'module';
+import { builtinModules, createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { vitePluginSections } from '@automattic/vite-plugin-calypso-sections';
@@ -31,6 +31,50 @@ function getMonorepoPackageNames(): string[] {
 }
 
 const monorepoPackageNames = getMonorepoPackageNames();
+
+// Mirror of webpack's ExternalModulesWriter (client/server/bundler/external-modules.js):
+// write build/modules.json — the list of bare-package specifiers that the server bundle
+// externalizes — so bin/copy-production-modules.js can copy their node_modules trees
+// into build/node_modules/ for the production server runtime.
+const externalModulesWriterPlugin: Plugin = {
+	name: 'calypso-external-modules-writer',
+	apply: 'build',
+	generateBundle( _options, bundle ) {
+		const chunkFiles = new Set( Object.keys( bundle ) );
+		const builtins = new Set( builtinModules );
+		const externals = new Set< string >();
+
+		const getPackageName = ( request: string ): string => {
+			const parts = request.split( '/' );
+			return parts[ 0 ].startsWith( '@' ) ? parts[ 0 ] + '/' + parts[ 1 ] : parts[ 0 ];
+		};
+
+		for ( const chunk of Object.values( bundle ) ) {
+			if ( chunk.type !== 'chunk' ) {
+				continue;
+			}
+			for ( const id of [ ...chunk.imports, ...chunk.dynamicImports ] ) {
+				if ( chunkFiles.has( id ) ) {
+					continue;
+				}
+				if ( id.startsWith( './' ) || id.startsWith( '../' ) || id.startsWith( '/' ) ) {
+					continue;
+				}
+				const stripped = id.replace( /^node:/, '' );
+				if ( builtins.has( stripped ) ) {
+					continue;
+				}
+				externals.add( getPackageName( stripped ) );
+			}
+		}
+
+		this.emitFile( {
+			type: 'asset',
+			fileName: 'modules.json',
+			source: JSON.stringify( [ ...externals ].sort(), null, 2 ),
+		} );
+	},
+};
 
 // @automattic/react-virtualized currently publishes JSX in .js files.
 // Keep this scoped transform until the package ships parseable JS or .jsx files.
@@ -86,6 +130,8 @@ export default defineConfig( {
 	},
 
 	plugins: [
+		externalModulesWriterPlugin,
+
 		// Stub all CSS/SCSS imports — the server has no use for styles and the
 		// Sass preprocessor would fail without the browser-only additionalData prelude.
 		// Also stub webpack-style CSS loader imports (!!css-loader!sass-loader!...)

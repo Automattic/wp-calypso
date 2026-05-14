@@ -1,0 +1,20 @@
+{
+	"name": "@automattic/vite-plugin-calypso-chunks-map",
+	"version": "1.0.0",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"description": "Vite plugin that writes public/chunks-map.json in the shape webpack's GenerateChunksMapPlugin produces, so bin/build-languages.js can map i18n strings to chunks.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/vite-plugin-calypso-chunks-map"
+	},
+	"main": "index.ts",
+	"type": "module",
+	"private": true,
+	"files": [
+		"index.ts"
+	]
+}

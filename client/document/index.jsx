@@ -281,7 +281,7 @@ class Document extends Component {
 					{ /* transformIndexHtml(), but we render HTML ourselves. */ }
 					{ /* See also: @vitejs/plugin-react preamble is prepended to each entry */ }
 					{ /* module by calypso-react-preamble-injector in vite.config.ts. */ }
-					{ useVite && env === 'development' && (
+					{ useVite && process.env.NODE_ENV === 'development' && (
 						<script
 							key="@vite/client"
 							nonce={ inlineScriptNonce }

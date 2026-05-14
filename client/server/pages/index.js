@@ -267,7 +267,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	performanceMark( request.context, 'getAssets', true );
 	const assets = request.getAssets();
 	const manifests = assets.manifests;
-	const useVite = !! assets.useVite;
+	const useVite = process.env.USE_VITE === '1';
 
 	performanceMark( request.context, 'assign context object', true );
 	const context = Object.assign( {}, request.context, {
