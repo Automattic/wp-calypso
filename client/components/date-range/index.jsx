@@ -556,7 +556,7 @@ export class DateRange extends Component {
 	 */
 	renderDatePicker() {
 		return (
-			<Suspense fallback={ <div className="date-range__picker-placeholder" /> }>
+			<Suspense fallback={ null }>
 				<DateRangePicker
 					firstSelectableDate={ this.props.firstSelectableDate }
 					lastSelectableDate={ this.props.lastSelectableDate }
