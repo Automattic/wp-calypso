@@ -23,7 +23,7 @@ export default function EmptyState() {
 			<div className="content-research-empty__footer">
 				<Tip>
 					{ __(
-						'If you highlight text before opening a tool, search will start automatically',
+						'If you highlight text before opening a tool, search will start automatically.',
 						'content-research'
 					) }
 				</Tip>

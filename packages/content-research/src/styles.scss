@@ -1,7 +1,7 @@
-@import "./components/search-input/style";
-@import "./components/result-card/style";
-@import "./components/ai-summary/style";
-@import "./components/empty-state/style";
+@import './components/search-input/style';
+@import './components/result-card/style';
+@import './components/ai-summary/style';
+@import './components/empty-state/style';
 
 .content-research-source-filter {
 	box-sizing: border-box;
@@ -9,44 +9,15 @@
 	padding: 0 16px 16px;
 	width: 100%;
 	border-top: 0;
-	border-bottom: 0;
+	border-bottom: 0 !important;
 
-	&.components-tools-panel {
-		row-gap: 0;
-		padding: 4px 16px 12px;
-	}
-
-	.components-tools-panel-header {
-		grid-column: span 2;
-		margin: 0 0 8px;
-		padding: 0;
-		min-height: 0;
-		border: 0;
-		background: transparent;
-
-		h2 {
-			margin: 0;
-			font-size: 11px;
-			font-weight: 600;
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
-			color: #50575e;
-		}
-
-		.components-dropdown-menu {
-			margin-left: auto;
-
-			.components-button {
-				min-width: 24px;
-				height: 24px;
-				padding: 0;
-				color: #50575e;
-
-				svg {
-					fill: currentColor;
-				}
-			}
-		}
+	&__heading {
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: #424242;
+		margin: 4px 0;
 	}
 
 	.components-button-group {
@@ -66,7 +37,7 @@
 		box-shadow: inset 0 0 0 1px #ddd;
 		border-radius: 0;
 
-		&:hover:not(:disabled) {
+		&:hover:not( :disabled ) {
 			background: #fff;
 			color: #1e1e1e;
 			box-shadow: inset 0 0 0 1px #1e1e1e;
@@ -76,20 +47,20 @@
 			color: #999;
 			background: #f6f7f7;
 
-			&:hover:not(:disabled) {
+			&:hover:not( :disabled ) {
 				color: #1e1e1e;
 				background: #fff;
 				box-shadow: inset 0 0 0 1px #ddd;
 			}
 
-			&:focus:not(:disabled):not(:hover) {
+			&:focus:not( :disabled ):not( :hover ) {
 				color: #999;
 				background: #f6f7f7;
 				box-shadow: inset 0 0 0 1px #ddd;
 			}
 
 			.content-research-source-icon {
-				filter: grayscale(1);
+				filter: grayscale( 1 );
 				opacity: 0.45;
 			}
 		}

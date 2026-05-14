@@ -1,10 +1,4 @@
-import {
-	Button,
-	ButtonGroup,
-	Tooltip,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-	__experimentalToolsPanel as ToolsPanel,
-} from '@wordpress/components';
+import { Button, ButtonGroup, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SourceIcon from '../source-icon';
 import type { Source } from '../../types';
@@ -38,17 +32,12 @@ const SOURCES: { value: Source; label: string; description: string }[] = [
 	},
 ];
 
-export default function SourceFilterTabs( {
-	selectedSources,
-	onToggleSource,
-	onResetSources,
-}: SourceFilterProps ) {
+export default function SourceFilterTabs( { selectedSources, onToggleSource }: SourceFilterProps ) {
 	return (
-		<ToolsPanel
-			className="content-research-source-filter"
-			label={ __( 'Research Sources', 'content-research' ) }
-			resetAll={ onResetSources }
-		>
+		<div className="content-research-source-filter">
+			<h3 className="content-research-source-filter__heading">
+				{ __( 'Sources', 'content-research' ) }
+			</h3>
 			<ButtonGroup aria-label={ __( 'Sources', 'content-research' ) }>
 				{ SOURCES.map( ( source ) => {
 					const isSelected = selectedSources.has( source.value );
@@ -69,6 +58,6 @@ export default function SourceFilterTabs( {
 					);
 				} ) }
 			</ButtonGroup>
-		</ToolsPanel>
+		</div>
 	);
 }
