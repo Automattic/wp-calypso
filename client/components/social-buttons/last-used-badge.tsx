@@ -13,7 +13,7 @@ const LastUsedBadge = ( { method, children }: LastUsedBadgeProps ) => {
 	const translate = useTranslate();
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_login_last_used_badge_shown', { method } );
+		recordTracksEvent( 'calypso_login_last_used_badge_view', { method } );
 	}, [ method ] );
 
 	return (

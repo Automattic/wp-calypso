@@ -141,7 +141,7 @@ export class LoginForm extends Component {
 		// The social-button variant of the badge fires its own impression from
 		// <LastUsedBadge> in client/components/social-buttons/last-used-badge.tsx.
 		if ( this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password' ) {
-			this.props.recordTracksEvent( 'calypso_login_last_used_badge_shown', {
+			this.props.recordTracksEvent( 'calypso_login_last_used_badge_view', {
 				method: 'password',
 			} );
 		}
@@ -161,7 +161,7 @@ export class LoginForm extends Component {
 		const isPasswordBadge =
 			this.props.isSocialFirst && this.state.lastUsedAuthenticationMethod === 'password';
 		if ( isPasswordBadge && ! wasPasswordBadge ) {
-			this.props.recordTracksEvent( 'calypso_login_last_used_badge_shown', {
+			this.props.recordTracksEvent( 'calypso_login_last_used_badge_view', {
 				method: 'password',
 			} );
 		}
