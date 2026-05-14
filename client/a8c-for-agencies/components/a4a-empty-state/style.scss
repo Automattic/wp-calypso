@@ -1,0 +1,18 @@
+.a4a-empty-state {
+	padding: 64px 24px;
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 4px;
+	background: var( --color-surface );
+	text-align: center;
+}
+
+.a4a-empty-state-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 72px;
+	height: 72px;
+	border-radius: 50%;
+	background: var( --color-neutral-0 );
+	color: var( --color-neutral-60 );
+}

@@ -1,23 +1,5 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-
 .a4a-agent-studio-overview {
 	.hosting-dashboard-layout__body-wrapper {
-		max-width: 700px;
+		max-width: 760px;
 	}
-}
-
-.a4a-agent-studio-overview__heading {
-	margin-block-start: 32px;
-	@include heading-x-large;
-	margin-block-end: 8px;
-}
-
-.a4a-agent-studio-overview__subtitle {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	@include body-medium;
-	margin-block-end: 48px;
-	color: var(--color-neutral-50);
 }

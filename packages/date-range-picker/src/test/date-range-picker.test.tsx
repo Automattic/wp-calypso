@@ -5,7 +5,7 @@ import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { useState } from 'react';
-import { DateRangePicker } from '../index';
+import { DateRangePicker } from '../date-range-picker';
 import type { ComponentProps } from 'react';
 
 function renderDateRangePicker( {
@@ -198,6 +198,35 @@ describe( 'DateRangePicker (new)', () => {
 		expect( pastBtn ).toBeEnabled();
 	} );
 
+	test( 'disabledBefore disables dates before the boundary', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			disabledBefore: new Date( 2025, 7, 15 ),
+		} );
+
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const augGrid = await findByRole( 'grid', { name: /August 2025/i } );
+
+		// Day before the boundary is disabled
+		const earlyBtn = within( augGrid ).getByRole( 'button', { name: /August 10, 2025/i } );
+		expect( earlyBtn ).toBeDisabled();
+
+		// Day on/after the boundary is enabled
+		const okBtn = within( augGrid ).getByRole( 'button', { name: /August 20, 2025/i } );
+		expect( okBtn ).toBeEnabled();
+	} );
+
+	test( 'disabledBefore sets the start input min so native pickers cannot offer earlier days', async () => {
+		const { getByRole, getByLabelText } = renderDateRangePicker( {
+			disabledBefore: new Date( 2025, 7, 15 ),
+		} );
+
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const startInput = getByLabelText( 'Start date' ) as HTMLInputElement;
+		expect( startInput.min ).toBe( '2025-08-15' );
+	} );
+
 	test( 'preset selection updates label (Yesterday)', async () => {
 		const { getByRole, findByRole } = renderDateRangePicker();
 		// Open
@@ -210,6 +239,32 @@ describe( 'DateRangePicker (new)', () => {
 		// Label should reflect Aug 24 → Aug 24
 		const updated = await findByRole( 'button', {
 			name: /Date range:.*Aug 24, 2025.*Aug 24, 2025/i,
+		} );
+		expect( updated ).toBeVisible();
+	} );
+
+	test( 'hiddenPresets removes presets from the listbox', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			hiddenPresets: [ 'yesterday', 'last-3-years' ],
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
+		expect( within( listbox ).queryByRole( 'option', { name: /yesterday/i } ) ).toBeNull();
+		expect( within( listbox ).queryByRole( 'option', { name: /last 3 years/i } ) ).toBeNull();
+		expect( within( listbox ).getByRole( 'option', { name: /last 7 days/i } ) ).toBeVisible();
+	} );
+
+	test( 'last-90-days preset applies a 90-day window', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker();
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const listbox = await findByRole( 'listbox', { name: /Date range presets/i } );
+		await userEvent.click( within( listbox ).getByRole( 'option', { name: /last 90 days/i } ) );
+
+		// 89 days back from Aug 25 2025 → May 28 2025 (inclusive 90 days)
+		const updated = await findByRole( 'button', {
+			name: /Date range:.*May 28, 2025.*Aug 25, 2025/i,
 		} );
 		expect( updated ).toBeVisible();
 	} );

@@ -38,6 +38,7 @@
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/create-calypso-config": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
+		"@automattic/date-range-picker": "workspace:^",
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/design-preview": "workspace:^",
 		"@automattic/domain-search": "workspace:^",

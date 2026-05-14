@@ -32,6 +32,17 @@
 	}
 }
 
+.years-of-service-badge.is-achievement-card {
+	width: 80px;
+
+	.years-of-service-badge__circle {
+		width: 80px;
+		height: 80px;
+		font-size: 2rem;
+		background: url( calypso/assets/images/achievements/years-of-service-badge.svg ) no-repeat center / cover;
+	}
+}
+
 .years-of-service-badge.is-medium .years-of-service-badge__circle {
 	width: 22px;
 	height: 22px;

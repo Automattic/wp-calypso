@@ -8,7 +8,7 @@ import {
 	startOfYear,
 	differenceInCalendarDays,
 } from 'date-fns';
-import { formatDate, parseYmdLocal, formatYmd } from '../../utils/datetime';
+import { formatDate, parseYmdLocal, formatYmd } from './datetime';
 
 // Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {
@@ -37,6 +37,7 @@ export type PresetId =
 	| 'yesterday'
 	| 'last-7-days'
 	| 'last-30-days'
+	| 'last-90-days'
 	| 'month-to-date'
 	| 'last-12-months'
 	| 'year-to-date'
@@ -48,6 +49,7 @@ export const presetDefs = [
 	{ id: 'yesterday', label: __( 'Yesterday' ) },
 	{ id: 'last-7-days', label: __( 'Last 7 days' ) },
 	{ id: 'last-30-days', label: __( 'Last 30 days' ) },
+	{ id: 'last-90-days', label: __( 'Last 90 days' ) },
 	{ id: 'month-to-date', label: __( 'Month to date' ) },
 	{ id: 'last-12-months', label: __( 'Last 12 months' ) },
 	{ id: 'year-to-date', label: __( 'Year to date' ) },
@@ -67,6 +69,8 @@ export function computePresetRange( preset: PresetId, baseDate: Date ) {
 			return lastNDays( baseDate, 7 );
 		case 'last-30-days':
 			return lastNDays( baseDate, 30 );
+		case 'last-90-days':
+			return lastNDays( baseDate, 90 );
 		case 'month-to-date':
 			return monthToDate( baseDate );
 		case 'last-12-months':
@@ -109,6 +113,9 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 		}
 		if ( diff === 29 ) {
 			return 'last-30-days';
+		}
+		if ( diff === 89 ) {
+			return 'last-90-days';
 		}
 		if (
 			isSameDay( newFrom, addYears( todayStart, -1 ) ) ||

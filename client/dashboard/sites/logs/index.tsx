@@ -1,6 +1,7 @@
 import { HostingFeatures, LogType, type Site, type SiteSettings } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { DateRangePicker, isLast7Days } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { TabPanel } from '@wordpress/components';
@@ -11,8 +12,6 @@ import { useDateRange } from '../../app/hooks/use-date-range';
 import { useLocale } from '../../app/locale';
 import { siteRoute } from '../../app/router/sites';
 import { Card, CardBody, CardHeader } from '../../components/card';
-import { DateRangePicker } from '../../components/date-range-picker';
-import { isLast7Days } from '../../components/date-range-picker/utils';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
