@@ -1,10 +1,12 @@
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import Notice from 'calypso/components/notice';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 
 export default function SubscriptionGiftingForm( { fields, handleAutosavingToggle, disabled } ) {
@@ -14,12 +16,26 @@ export default function SubscriptionGiftingForm( { fields, handleAutosavingToggl
 		WPCOM_FEATURES_SUBSCRIPTION_GIFTING
 	);
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
+	const siteSettings = useSelectedSiteSelector( getSiteSettings );
+	const isGiftingBlocked = siteSettings?.wpcom_gifting_subscription_blocked ?? false;
 
 	if ( ! hasSubscriptionGifting || isWpcomStagingSite ) {
 		return;
 	}
 
 	const renderForm = () => {
+		if ( isGiftingBlocked ) {
+			return (
+				<Notice
+					status="is-info"
+					showDismiss={ false }
+					text={ translate(
+						'Gift subscriptions are not available for this site because it has been identified as serving restricted content.'
+					) }
+				/>
+			);
+		}
+
 		return (
 			<>
 				<ToggleControl

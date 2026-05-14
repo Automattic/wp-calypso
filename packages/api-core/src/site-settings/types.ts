@@ -11,6 +11,7 @@ export interface SiteSettings {
 	wpcom_data_sharing_opt_out?: boolean | string;
 	wpcom_prevent_third_party_sharing?: boolean;
 	wpcom_gifting_subscription?: boolean;
+	wpcom_gifting_subscription_blocked?: boolean;
 	wpcom_performance_report_url?: string;
 	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;

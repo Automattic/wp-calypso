@@ -9,8 +9,11 @@ export function CheckoutOrderBanner() {
 
 	const path = window.location.pathname;
 
+	const isGiftingRestricted = responseCart.gift_details?.is_gifting_restricted ?? false;
+
 	// Check the path instead of using responseCart.is_gift_purchase because it visually loads the banner faster.
-	if ( path.startsWith( '/checkout/' ) && path.includes( '/gift/' ) ) {
+	// Suppress the banner if the receiver site is brown-flagged or mature.
+	if ( path.startsWith( '/checkout/' ) && path.includes( '/gift/' ) && ! isGiftingRestricted ) {
 		return <GiftingCheckoutBanner siteSlug={ giftSiteSlug } />;
 	}
 	return null;

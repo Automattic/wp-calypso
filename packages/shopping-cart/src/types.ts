@@ -923,6 +923,7 @@ export interface ResponseCartGiftDetails {
 	receiver_blog_id: number;
 	receiver_blog_slug?: string;
 	receiver_blog_url?: string;
+	is_gifting_restricted?: boolean;
 }
 
 export type SitelessCheckoutType =

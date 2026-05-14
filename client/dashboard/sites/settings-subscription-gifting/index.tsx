@@ -12,6 +12,7 @@ import { NavigationBlocker } from '../../app/navigation-blocker';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import type { SiteSettings } from '@automattic/api-core';
@@ -47,6 +48,8 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
+
+	const isGiftingBlocked = data.wpcom_gifting_subscription_blocked ?? false;
 
 	const [ formData, setFormData ] = useState( {
 		wpcom_gifting_subscription: data.wpcom_gifting_subscription,
@@ -98,33 +101,41 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				/>
 			}
 		>
-			<Card>
-				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<NavigationBlocker shouldBlock={ isDirty } />
-							<DataForm< SiteSettings >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: Partial< SiteSettings > ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
-						</VStack>
-					</form>
-				</CardBody>
-			</Card>
+			{ isGiftingBlocked ? (
+				<Notice variant="warning">
+					{ __(
+						'Gift subscriptions are not available for this site because it has been identified as serving restricted content.'
+					) }
+				</Notice>
+			) : (
+				<Card>
+					<CardBody>
+						<form onSubmit={ handleSubmit }>
+							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
+								<DataForm< SiteSettings >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: Partial< SiteSettings > ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<ButtonStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending || ! isDirty }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</ButtonStack>
+							</VStack>
+						</form>
+					</CardBody>
+				</Card>
+			) }
 		</PageLayout>
 	);
 }
