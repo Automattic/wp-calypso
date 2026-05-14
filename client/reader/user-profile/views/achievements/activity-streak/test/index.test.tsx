@@ -198,15 +198,20 @@ describe( 'ActivityStreak', () => {
 		} );
 	} );
 
-	describe( 'record byline', () => {
-		test( 'shows the longest streak when current is below longest', () => {
+	describe( 'record stat', () => {
+		function getRecordStat( container: HTMLElement ): HTMLElement | null {
+			const icon = container.querySelector( '.activity-streak__stat-icon.is-record' );
+			return ( icon?.parentElement as HTMLElement ) ?? null;
+		}
+
+		test( 'shows the longest streak as short text when current is below longest', () => {
 			render(
 				<ActivityStreak
 					streak={ { ...baseStreak, current_streak: 12, longest_streak: 28 } }
 					isOwnProfile
 				/>
 			);
-			expect( screen.getByText( 'Your longest streak on record is 28 days.' ) ).toBeVisible();
+			expect( screen.getByText( '28 days' ) ).toBeVisible();
 		} );
 
 		test( 'pluralizes "day" when longest is 1', () => {
@@ -221,21 +226,37 @@ describe( 'ActivityStreak', () => {
 					isOwnProfile
 				/>
 			);
-			expect( screen.getByText( 'Your longest streak on record is 1 day.' ) ).toBeVisible();
+			expect( screen.getByText( '1 day' ) ).toBeVisible();
 		} );
 
-		test( 'hides the byline when current matches longest', () => {
-			render(
+		test( 'reveals the full sentence in a tooltip on hover', async () => {
+			const user = userEvent.setup();
+			const { container } = render(
+				<ActivityStreak
+					streak={ { ...baseStreak, current_streak: 12, longest_streak: 28 } }
+					isOwnProfile
+				/>
+			);
+			const stat = getRecordStat( container );
+			expect( stat ).not.toBeNull();
+			await user.hover( stat! );
+			expect(
+				await screen.findByText( /Your longest streak on record is 28 days\./ )
+			).toBeVisible();
+		} );
+
+		test( 'hides the stat when current matches longest', () => {
+			const { container } = render(
 				<ActivityStreak
 					streak={ { ...baseStreak, current_streak: 14, longest_streak: 14 } }
 					isOwnProfile
 				/>
 			);
-			expect( screen.queryByText( /Your longest streak on record/ ) ).not.toBeInTheDocument();
+			expect( getRecordStat( container ) ).toBeNull();
 		} );
 
-		test( 'hides the byline when the user has never started', () => {
-			render(
+		test( 'hides the stat when the user has never started', () => {
+			const { container } = render(
 				<ActivityStreak
 					streak={ {
 						...baseStreak,
@@ -246,7 +267,7 @@ describe( 'ActivityStreak', () => {
 					isOwnProfile
 				/>
 			);
-			expect( screen.queryByText( /Your longest streak on record/ ) ).not.toBeInTheDocument();
+			expect( getRecordStat( container ) ).toBeNull();
 		} );
 	} );
 
@@ -353,23 +374,24 @@ describe( 'ActivityStreak', () => {
 		} );
 	} );
 
-	describe( 'variation', () => {
-		test( 'shows "N streak freezes available" when freezes are banked', () => {
-			const { container } = render(
-				<ActivityStreak streak={ { ...baseStreak, freezes_available: 2 } } isOwnProfile />
-			);
-			expect( container.textContent ).toContain( '2 streak freezes available.' );
+	describe( 'freeze stat', () => {
+		function getFreezeStat( container: HTMLElement ): HTMLElement | null {
+			const icon = container.querySelector( '.activity-streak__stat-icon.is-freeze' );
+			return ( icon?.parentElement as HTMLElement ) ?? null;
+		}
+
+		test( 'shows "N available" short text when freezes are banked', () => {
+			render( <ActivityStreak streak={ { ...baseStreak, freezes_available: 2 } } isOwnProfile /> );
+			expect( screen.getByText( '2 available' ) ).toBeVisible();
 		} );
 
-		test( 'pluralizes "streak freeze available" for 1', () => {
-			const { container } = render(
-				<ActivityStreak streak={ { ...baseStreak, freezes_available: 1 } } isOwnProfile />
-			);
-			expect( container.textContent ).toContain( '1 streak freeze available.' );
+		test( 'pluralizes "available" for 1', () => {
+			render( <ActivityStreak streak={ { ...baseStreak, freezes_available: 1 } } isOwnProfile /> );
+			expect( screen.getByText( '1 available' ) ).toBeVisible();
 		} );
 
-		test( 'shows recharging copy when no freezes banked and recharging', () => {
-			const { container } = render(
+		test( 'shows recharging short text when no freezes banked and recharging', () => {
+			render(
 				<ActivityStreak
 					streak={ {
 						...baseStreak,
@@ -379,11 +401,26 @@ describe( 'ActivityStreak', () => {
 					isOwnProfile
 				/>
 			);
-			expect( container.textContent ).toContain( 'Streak freeze available in 3 days.' );
+			expect( screen.getByText( 'available in 3 days' ) ).toBeVisible();
 		} );
 
-		test( 'renders nothing when streak is 0', () => {
-			render(
+		test( 'reveals the full sentence and the freeze explanation on hover', async () => {
+			const user = userEvent.setup();
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, freezes_available: 2 } } isOwnProfile />
+			);
+			const stat = getFreezeStat( container );
+			expect( stat ).not.toBeNull();
+			await user.hover( stat! );
+			expect(
+				await screen.findByText(
+					/2 streak freezes available\.\s+A streak freeze automatically protects your streak when you miss a day\./
+				)
+			).toBeVisible();
+		} );
+
+		test( 'hides the stat when streak is 0', () => {
+			const { container } = render(
 				<ActivityStreak
 					streak={ {
 						...baseStreak,
@@ -396,7 +433,7 @@ describe( 'ActivityStreak', () => {
 					isOwnProfile
 				/>
 			);
-			expect( screen.queryByText( /streak freeze/i ) ).not.toBeInTheDocument();
+			expect( getFreezeStat( container ) ).toBeNull();
 		} );
 	} );
 } );
