@@ -1,4 +1,5 @@
 import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
+import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
@@ -18,6 +19,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
+import { useQuery } from '@tanstack/react-query';
 import { Button as GutenbergButton } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -1403,10 +1405,18 @@ const ConnectedCancelPurchase = connect(
 
 function CancelPurchaseWithExperiment( props: CancelPurchaseProps ) {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { data: purchaseCancelFeatures, isPending: isPurchaseCancelFeaturesLoading } = useQuery(
+		purchaseCancelFeaturesQuery(
+			props.purchaseId,
+			isSplitCancelRemoveEnabled ? 'treatment' : 'control'
+		)
+	);
 	return (
 		<ConnectedCancelPurchase
 			{ ...props }
 			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+			purchaseCancelFeatures={ purchaseCancelFeatures }
+			isPurchaseCancelFeaturesLoading={ isPurchaseCancelFeaturesLoading }
 		/>
 	);
 }

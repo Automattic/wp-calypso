@@ -42,9 +42,6 @@ export type WPCOMTransactionEndpointResponseRedirect = {
 	order_id: number | '';
 	redirect_url: string;
 	qr_code?: string;
-	razorpay_order_id?: string;
-	razorpay_customer_id?: string;
-	razorpay_option_recurring?: boolean;
 };
 
 export type WPCOMTransactionEndpointResponsePayPal = {
@@ -351,7 +348,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'stripe' // a synonym for 'card'
 	| 'apple-pay' // a synonym for 'web-pay'
 	| 'google-pay' // a synonym for 'web-pay'
-	| 'razorpay'
 	| 'stripe-upi'
 	| 'stripe-blik';
 
@@ -378,7 +374,6 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Web_Payment'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico'
-	| 'WPCOM_Billing_Razorpay'
 	| 'WPCOM_Billing_Stripe_Upi'
 	| 'WPCOM_Billing_Stripe_Blik';
 

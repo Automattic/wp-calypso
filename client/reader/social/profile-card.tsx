@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { useMemo } from 'react';
+import { SocialAvatar } from './avatar';
 import { useSocialAnalytics } from './components/post-card/analytics-context';
 import { sanitizeReaderSocialHtml } from './components/post-card/sanitize-post-html';
 import type { TranslateResult } from 'i18n-calypso';
@@ -233,27 +234,24 @@ export function SocialProfileCard( {
 
 	return (
 		<div className="social-profile-card">
-			{ banner ? (
-				<img
-					src={ banner }
-					alt=""
-					className="social-profile-card__banner"
-					onError={ ( event ) => {
-						event.currentTarget.style.display = 'none';
-					} }
-				/>
-			) : null }
+			{ /* `fallback` shares the same SCSS class as the `<img>` so the
+			   placeholder div keeps the avatar/banner box dimensions and the
+			   solid background color when the URL is missing or the image
+			   fails to load. Without it the layout slot collapses entirely
+			   and we get a "no placeholder" gap in the card. */ }
+			<SocialAvatar
+				src={ banner }
+				alt=""
+				className="social-profile-card__banner"
+				fallback={ <div className="social-profile-card__banner" aria-hidden="true" /> }
+			/>
 			<div className="social-profile-card__header-row">
-				{ avatar ? (
-					<img
-						src={ avatar }
-						alt=""
-						className="social-profile-card__avatar"
-						onError={ ( event ) => {
-							event.currentTarget.style.display = 'none';
-						} }
-					/>
-				) : null }
+				<SocialAvatar
+					src={ avatar }
+					alt=""
+					className="social-profile-card__avatar"
+					fallback={ <div className="social-profile-card__avatar" aria-hidden="true" /> }
+				/>
 				{ headerActions ? (
 					<div className="social-profile-card__header-actions">{ headerActions }</div>
 				) : null }

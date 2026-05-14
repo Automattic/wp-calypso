@@ -1,5 +1,8 @@
 import './style.scss';
 
+export { SocialAvatar } from './avatar';
+export type { SocialAvatarProps } from './avatar';
+
 export { SocialProfileCard } from './profile-card';
 export type { SocialProfileCardProps, SocialProfileStat } from './profile-card';
 

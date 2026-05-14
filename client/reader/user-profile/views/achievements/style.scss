@@ -6,10 +6,27 @@
 		gap: 24px;
 		margin: 16px auto 48px;
 		max-width: 720px;
+		position: relative;
+		// Reserve room on the right for the absolutely-positioned settings button
+		// so flex children never run into it. `border-box` keeps the padding
+		// inside the 720px cap so the header doesn't grow past its alignment.
+		box-sizing: border-box;
+		padding-inline-end: 48px;
 	}
 
-	.achievements__header .activity-streak-pill {
-		flex: 1 1 240px;
-		min-width: 240px;
+	.achievements__header > .activity-streak {
+		// 360px is the wrap floor: as long as the row can seat the streak at
+		// 360px (alongside YOS), it stays a single row. Below that, YOS drops to
+		// its own row and the streak shrinks to the available width — at which
+		// point the streak's internal layout wraps its content under the badge.
+		flex: 1 1 360px;
+	}
+
+	// Pinned top-right of the header, regardless of which other items are
+	// present or how the row wraps.
+	.achievements__header > .achievements__settings {
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-end: 0;
 	}
 }

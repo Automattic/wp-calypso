@@ -1,9 +1,8 @@
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
-import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
@@ -80,9 +79,7 @@ export default function ClientCheckoutV2() {
 		>
 			<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 				<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-					<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
-						<ClientCheckoutContent />
-					</RazorpayHookProvider>
+					<ClientCheckoutContent />
 				</StripeHookProvider>
 			</CalypsoShoppingCartProvider>
 		</CheckoutErrorBoundary>

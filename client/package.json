@@ -27,7 +27,6 @@
 		"@automattic/calypso-paypal": "workspace:^",
 		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
-		"@automattic/calypso-razorpay": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
 		"@automattic/calypso-sentry": "workspace:^",
 		"@automattic/calypso-stripe": "workspace:^",
