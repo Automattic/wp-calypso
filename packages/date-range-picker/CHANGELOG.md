@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Fix: restore `*.scss` in `sideEffects` so Calypso (which consumes the package via `calypso:src`) doesn't tree-shake the `import './style.scss'` and lose all of the picker's styles.
+
 ## 1.0.2
 
 - Packaging: pre-compile SCSS to CSS in `dist/{esm,cjs}/style.css` so external consumers no longer need a Sass loader. SCSS variables from `@wordpress/base-styles` are resolved at build time.
