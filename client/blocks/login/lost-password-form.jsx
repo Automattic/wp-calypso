@@ -233,9 +233,10 @@ const LostPasswordForm = ( {
 						) }
 						target="_blank"
 						rel="external noopener noreferrer"
+						aria-label={ translate( 'Need more help? (opens in a new tab)' ) }
 					>
 						{ translate( 'Need more help?' ) }
-						<span style={ externalArrowStyle } aria-label={ translate( '(opens in a new tab)' ) }>
+						<span style={ externalArrowStyle } aria-hidden="true">
 							↗
 						</span>
 					</Button>
