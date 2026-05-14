@@ -18,5 +18,9 @@ export default function getIntroOfferEligibility(
 
 	const ineligibleReason = introOffer?.ineligibleReason;
 
+	if ( introOffer?.isContentFlagged ) {
+		return false;
+	}
+
 	return ! ineligibleReason || ineligibleReason?.length === 0;
 }

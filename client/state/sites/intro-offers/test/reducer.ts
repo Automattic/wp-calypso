@@ -74,6 +74,60 @@ describe( 'reducer', () => {
 					},
 				} );
 			} );
+
+			test( 'should map is_content_flagged from the API response', () => {
+				const state = items( undefined, {
+					type: SITE_INTRO_OFFER_RECEIVE,
+					siteId: 12345,
+					payload: [
+						{
+							product_id: 2010,
+							product_slug: 'jetpack_security_daily',
+							currency_code: 'USD',
+							formatted_price: '$149',
+							raw_price: 149,
+							ineligible_reason: [ 'content_flagged' ],
+							is_content_flagged: true,
+							discount_percentage: 50,
+						},
+					],
+				} as IntroOfferReceiveAction );
+
+				expect( state ).toEqual( {
+					12345: {
+						2010: {
+							productId: 2010,
+							productSlug: 'jetpack_security_daily',
+							currencyCode: 'USD',
+							formattedPrice: '$149',
+							rawPrice: 149,
+							ineligibleReason: [ 'content_flagged' ],
+							isContentFlagged: true,
+							discountPercentage: 50,
+						},
+					},
+				} );
+			} );
+
+			test( 'should set isContentFlagged to undefined when is_content_flagged is absent', () => {
+				const state = items( undefined, {
+					type: SITE_INTRO_OFFER_RECEIVE,
+					siteId: 12345,
+					payload: [
+						{
+							product_id: 2010,
+							product_slug: 'jetpack_security_daily',
+							currency_code: 'USD',
+							formatted_price: '$149',
+							raw_price: 149,
+							ineligible_reason: null,
+							discount_percentage: 50,
+						},
+					],
+				} as IntroOfferReceiveAction );
+
+				expect( state?.[ 12345 ]?.[ 2010 ]?.isContentFlagged ).toBeUndefined();
+			} );
 		} );
 	} );
 } );
