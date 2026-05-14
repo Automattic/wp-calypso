@@ -1,7 +1,6 @@
 import { dateI18n } from '@wordpress/date';
 import { parse, isValid, format } from 'date-fns';
 
-const HOUR_MS = 3_600_000;
 const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
@@ -41,7 +40,7 @@ export function formatYmd( date: Date, timezoneString?: string, gmtOffset?: numb
 		return dateI18n( 'Y-m-d', date, timezoneString );
 	}
 	if ( typeof gmtOffset === 'number' ) {
-		const shifted = new Date( date.getTime() + gmtOffset * HOUR_MS );
+		const shifted = new Date( date.getTime() + gmtOffset * 60 * 60 * 1000 );
 		const year = shifted.getUTCFullYear();
 		const month = String( shifted.getUTCMonth() + 1 ).padStart( 2, '0' );
 		const day = String( shifted.getUTCDate() ).padStart( 2, '0' );
