@@ -1,0 +1,46 @@
+@import '@automattic/components/src/styles/typography';
+
+.activity-streak {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 16px;
+	color: var( --color-text );
+	min-width: 0;
+}
+
+.activity-streak__content {
+	display: flex;
+	flex-direction: column;
+	// Basis acts as the wrap floor: once the row can't seat badge + this much
+	// content side-by-side, content wraps below the badge.
+	flex: 1 1 200px;
+	gap: 8px;
+	min-width: 0;
+}
+
+.activity-streak__title {
+	font-size: 1rem;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.activity-streak__description {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	font-size: $font-body-small;
+	color: var( --color-text-subtle );
+	line-height: 1.4;
+
+	p {
+		margin: 0;
+	}
+}
+
+.activity-streak__term {
+	cursor: help;
+	text-decoration: underline dotted;
+	text-underline-offset: 2px;
+}

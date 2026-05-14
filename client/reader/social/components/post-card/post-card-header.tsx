@@ -1,6 +1,7 @@
 import { TimeSince } from '@automattic/components';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { SocialAvatar } from '../../avatar';
 import { useSocialAnalytics } from './analytics-context';
 import type { SocialPost } from '../../types';
 import type React from 'react';
@@ -89,20 +90,22 @@ export function PostCardHeader( {
 		} );
 	};
 
-	const avatarEl: ReactNode = post.author.avatar ? (
-		<img
+	const avatarPlaceholder: ReactNode = (
+		<div
+			className="social-post-card-header__avatar social-post-card-header__avatar--placeholder"
+			style={ { width: avatarSize, height: avatarSize } }
+			aria-hidden="true"
+		/>
+	);
+	const avatarEl: ReactNode = (
+		<SocialAvatar
 			src={ post.author.avatar }
 			alt=""
 			width={ avatarSize }
 			height={ avatarSize }
 			loading="lazy"
 			className="social-post-card-header__avatar"
-		/>
-	) : (
-		<div
-			className="social-post-card-header__avatar social-post-card-header__avatar--placeholder"
-			style={ { width: avatarSize, height: avatarSize } }
-			aria-hidden="true"
+			fallback={ avatarPlaceholder }
 		/>
 	);
 

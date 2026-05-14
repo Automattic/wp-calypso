@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SocialAnalyticsProvider } from '../components/post-card/analytics-context';
 import { SocialProfileCard } from '../profile-card';
@@ -773,7 +773,7 @@ describe( 'SocialProfileCard — rich variant', () => {
 		expect( screen.getByRole( 'heading', { level: 2, name: 'Alice' } ) ).toBeVisible();
 	} );
 
-	it( 'hides the banner image on load failure', () => {
+	it( 'swaps the banner image for a same-class placeholder div on load failure', () => {
 		const { container } = render(
 			<SocialProfileCard
 				banner="https://cdn.example/broken.jpg"
@@ -782,11 +782,30 @@ describe( 'SocialProfileCard — rich variant', () => {
 				statsLabel="Profile stats"
 			/>
 		);
-		const banner = container.querySelector(
-			'.social-profile-card__banner'
-		) as HTMLImageElement | null;
-		expect( banner ).not.toBeNull();
-		banner!.dispatchEvent( new Event( 'error', { bubbles: true } ) );
-		expect( banner!.style.display ).toBe( 'none' );
+		const bannerImg = container.querySelector( 'img.social-profile-card__banner' );
+		expect( bannerImg ).not.toBeNull();
+		// `fireEvent.error` triggers React's synthetic onError handler, which
+		// flips the SocialAvatar's `errored` state and renders the fallback
+		// (a `<div>` with the same SCSS class) so the band keeps its
+		// dimensions + background colour instead of collapsing.
+		fireEvent.error( bannerImg! );
+		expect( container.querySelector( 'img.social-profile-card__banner' ) ).toBeNull();
+		expect( container.querySelector( 'div.social-profile-card__banner' ) ).not.toBeNull();
+	} );
+
+	it( 'swaps the avatar image for a same-class placeholder div on load failure', () => {
+		const { container } = render(
+			<SocialProfileCard
+				avatar="https://cdn.example/broken.jpg"
+				displayName="Alice"
+				stats={ [] }
+				statsLabel="Profile stats"
+			/>
+		);
+		const avatarImg = container.querySelector( 'img.social-profile-card__avatar' );
+		expect( avatarImg ).not.toBeNull();
+		fireEvent.error( avatarImg! );
+		expect( container.querySelector( 'img.social-profile-card__avatar' ) ).toBeNull();
+		expect( container.querySelector( 'div.social-profile-card__avatar' ) ).not.toBeNull();
 	} );
 } );

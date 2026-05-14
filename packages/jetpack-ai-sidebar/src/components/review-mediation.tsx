@@ -1,5 +1,5 @@
 /**
- * ReviewMediation — renders the multi-reviewer mediation card. Mounted by
+ * ReviewMediation — renders the AI Editorial Review card. Mounted by
  * `getChatComponent('review-mediation')` from a `big_sky__show_component`
  * orchestrator response.
  */
@@ -21,6 +21,11 @@ import {
 	isSupportedEditBlockType,
 	undoBlockEdit,
 } from '../utils/block-actions';
+import {
+	trackAiEditorialReviewItemAction,
+	trackAiEditorialReviewResultRendered,
+	type ReviewContext,
+} from '../utils/tracking';
 import BlockRef, { type BlockSnapshot } from './block-ref';
 import ReviewerChip, { type ReviewerMetadata } from './reviewer-chip';
 
@@ -82,6 +87,7 @@ interface ReviewMediationProps {
 	implications: Implication[];
 	suggested_edits: SuggestedEdit[];
 	guideline_violations: GuidelineViolation[];
+	review_context?: ReviewContext;
 	/**
 	 * Server-built map keyed by reviewer display name. Optional — older
 	 * mediations or the empty-state payload may omit it; consumers degrade
@@ -89,7 +95,7 @@ interface ReviewMediationProps {
 	 */
 	reviewers_metadata?: Record< string, ReviewerMetadata >;
 	/**
-	 * Unix timestamp when the cached mediation was first generated. Only set
+	 * Unix timestamp when the cached review was first generated. Only set
 	 * when the server short-circuited the LLM call on a state-hash match
 	 * (same inputs as the previous run). Absent on fresh runs. The client
 	 * renders a subtle "reusing cached run" note so the reviewer knows the
@@ -265,6 +271,23 @@ function isManualSuggestedEdit( edit: SuggestedEdit ): boolean {
 	return edit.requires_manual === true;
 }
 
+function deriveResultOutcome(
+	isCacheHit: boolean,
+	reviewContext: ReviewContext | undefined,
+	hasNoFindings: boolean
+): 'success' | 'cache_hit' | 'no_findings' | 'insufficient_input' {
+	if ( isCacheHit ) {
+		return 'cache_hit';
+	}
+	if ( reviewContext === 'insufficient_input' ) {
+		return 'insufficient_input';
+	}
+	if ( hasNoFindings ) {
+		return 'no_findings';
+	}
+	return 'success';
+}
+
 function getSuggestedEditApplyUnavailableReason(
 	isManual: boolean,
 	disabledReason?: string
@@ -302,6 +325,7 @@ export default function ReviewMediation( {
 	implications,
 	suggested_edits,
 	guideline_violations,
+	review_context,
 	reviewers_metadata,
 	cached_at,
 }: ReviewMediationProps ) {
@@ -417,6 +441,18 @@ export default function ReviewMediation( {
 		[ getClientId, selectBlock ]
 	);
 
+	const fireItemAction = useCallback(
+		( options: {
+			action: 'accept' | 'undo' | 'dismiss' | 'bulk_accept';
+			target: 'edit' | 'conflict' | 'mixed';
+			outcome: 'success' | 'failed' | 'partial_failed';
+			itemCount?: number;
+		} ) => {
+			trackAiEditorialReviewItemAction( options );
+		},
+		[]
+	);
+
 	// Clear focus-mode when the mediation session ends.
 	useEffect( () => {
 		return () => {
@@ -481,6 +517,11 @@ export default function ReviewMediation( {
 			}
 			if ( edit.block_index === null ) {
 				setEditStatus( editIndex, 'failed' );
+				fireItemAction( {
+					action: 'accept',
+					target: 'edit',
+					outcome: 'failed',
+				} );
 				return;
 			}
 			setEditStatus( editIndex, 'applying' );
@@ -501,26 +542,48 @@ export default function ReviewMediation( {
 					contentAfter: result.contentAfter,
 				};
 			}
+			fireItemAction( {
+				action: 'accept',
+				target: 'edit',
+				outcome: result.success ? 'success' : 'failed',
+			} );
 			setEditStatus( editIndex, result.success ? 'accepted' : 'failed' );
 		},
-		[ applyTextToBlock, setEditStatus ]
+		[ applyTextToBlock, fireItemAction, setEditStatus ]
 	);
 	const handleUndoEdit = useCallback(
 		( editIndex: number ) => {
 			const snap = editSnapshots.current[ editIndex ];
 			if ( snap ) {
 				if ( ! undoBlockEdit( snap.clientId, snap.contentBefore, snap.contentAfter ) ) {
+					fireItemAction( {
+						action: 'undo',
+						target: 'edit',
+						outcome: 'failed',
+					} );
 					return;
 				}
 				delete editSnapshots.current[ editIndex ];
 			}
+			fireItemAction( {
+				action: 'undo',
+				target: 'edit',
+				outcome: 'success',
+			} );
 			setEditStatus( editIndex, 'pending' );
 		},
-		[ setEditStatus ]
+		[ fireItemAction, setEditStatus ]
 	);
 	const handleDismissEdit = useCallback(
-		( editIndex: number ) => setEditStatus( editIndex, 'dismissed' ),
-		[ setEditStatus ]
+		( editIndex: number ) => {
+			fireItemAction( {
+				action: 'dismiss',
+				target: 'edit',
+				outcome: 'success',
+			} );
+			setEditStatus( editIndex, 'dismissed' );
+		},
+		[ fireItemAction, setEditStatus ]
 	);
 
 	// ---------- Conflict handlers ----------
@@ -528,6 +591,11 @@ export default function ReviewMediation( {
 		async ( conflictIndex: number, candidate: CandidateResolution ) => {
 			if ( getBlockEditDisabledReason( candidate.block_index, candidate.current_text ) ) {
 				setConflictStatus( conflictIndex, 'failed' );
+				fireItemAction( {
+					action: 'accept',
+					target: 'conflict',
+					outcome: 'failed',
+				} );
 				return;
 			}
 			setConflictStatus( conflictIndex, 'applying' );
@@ -548,26 +616,48 @@ export default function ReviewMediation( {
 					contentAfter: result.contentAfter,
 				};
 			}
+			fireItemAction( {
+				action: 'accept',
+				target: 'conflict',
+				outcome: result.success ? 'success' : 'failed',
+			} );
 			setConflictStatus( conflictIndex, result.success ? 'accepted' : 'failed' );
 		},
-		[ applyTextToBlock, getBlockEditDisabledReason, setConflictStatus ]
+		[ applyTextToBlock, fireItemAction, getBlockEditDisabledReason, setConflictStatus ]
 	);
 	const handleUndoConflict = useCallback(
 		( conflictIndex: number ) => {
 			const snap = conflictSnapshots.current[ conflictIndex ];
 			if ( snap ) {
 				if ( ! undoBlockEdit( snap.clientId, snap.contentBefore, snap.contentAfter ) ) {
+					fireItemAction( {
+						action: 'undo',
+						target: 'conflict',
+						outcome: 'failed',
+					} );
 					return;
 				}
 				delete conflictSnapshots.current[ conflictIndex ];
 			}
+			fireItemAction( {
+				action: 'undo',
+				target: 'conflict',
+				outcome: 'success',
+			} );
 			setConflictStatus( conflictIndex, 'pending' );
 		},
-		[ setConflictStatus ]
+		[ fireItemAction, setConflictStatus ]
 	);
 	const handleDismissConflict = useCallback(
-		( conflictIndex: number ) => setConflictStatus( conflictIndex, 'dismissed' ),
-		[ setConflictStatus ]
+		( conflictIndex: number ) => {
+			fireItemAction( {
+				action: 'dismiss',
+				target: 'conflict',
+				outcome: 'success',
+			} );
+			setConflictStatus( conflictIndex, 'dismissed' );
+		},
+		[ fireItemAction, setConflictStatus ]
 	);
 
 	// ---------- Bulk apply ----------
@@ -603,6 +693,20 @@ export default function ReviewMediation( {
 		if ( bulkRunning || totalPendingCount === 0 ) {
 			return;
 		}
+		let bulkTarget: 'edit' | 'conflict' | 'mixed' = 'edit';
+		if ( pendingAiConflictCount > 0 && pendingEditCount > 0 ) {
+			bulkTarget = 'mixed';
+		} else if ( pendingAiConflictCount > 0 ) {
+			bulkTarget = 'conflict';
+		}
+		let successCount = 0;
+		let failureCount = 0;
+		const getBulkOutcome = () => {
+			if ( failureCount === 0 ) {
+				return 'success';
+			}
+			return successCount === 0 ? 'failed' : 'partial_failed';
+		};
 		setBulkRunning( true );
 		// Sequential so users see the shimmer on each block as it applies;
 		// parallel would race the same dispatch and confuse the state store.
@@ -635,6 +739,11 @@ export default function ReviewMediation( {
 					contentBefore: result.contentBefore,
 					contentAfter: result.contentAfter,
 				};
+			}
+			if ( ! result.success ) {
+				failureCount++;
+			} else {
+				successCount++;
 			}
 			setConflictStatus( i, result.success ? 'accepted' : 'failed' );
 		}
@@ -669,17 +778,31 @@ export default function ReviewMediation( {
 					contentAfter: result.contentAfter,
 				};
 			}
+			if ( ! result.success ) {
+				failureCount++;
+			} else {
+				successCount++;
+			}
 			setEditStatus( i, result.success ? 'accepted' : 'failed' );
 		}
+		fireItemAction( {
+			action: 'bulk_accept',
+			target: bulkTarget,
+			outcome: getBulkOutcome(),
+			itemCount: successCount + failureCount,
+		} );
 		setBulkRunning( false );
 	}, [
 		bulkRunning,
 		totalPendingCount,
+		pendingAiConflictCount,
+		pendingEditCount,
 		conflicts,
 		conflictStatuses,
 		suggested_edits,
 		editStatuses,
 		applyTextToBlock,
+		fireItemAction,
 		getBlockEditDisabledReason,
 		setConflictStatus,
 		setEditStatus,
@@ -710,6 +833,36 @@ export default function ReviewMediation( {
 		( name: string ): ReviewerMetadata | null => reviewers_metadata?.[ name ] ?? null,
 		[ reviewers_metadata ]
 	);
+
+	// Latch on the first effect run so re-renders do not duplicate `_result_rendered`.
+	const hasTrackedResultRef = useRef( false );
+	useEffect( () => {
+		if ( hasTrackedResultRef.current ) {
+			return;
+		}
+		hasTrackedResultRef.current = true;
+		const isCacheHit = cached_at !== undefined;
+		const noReviewerSignal =
+			conflicts.length === 0 &&
+			implications.length === 0 &&
+			suggested_edits.length === 0 &&
+			renderedGuidelineViolations.length === 0;
+		trackAiEditorialReviewResultRendered( {
+			outcome: deriveResultOutcome( isCacheHit, review_context, noReviewerSignal ),
+			conflictCount: conflicts.length,
+			implicationCount: implications.length,
+			suggestedEditCount: suggested_edits.length,
+			guidelineViolationCount: renderedGuidelineViolations.length,
+			reviewContext: review_context,
+		} );
+	}, [
+		cached_at,
+		conflicts,
+		implications,
+		renderedGuidelineViolations,
+		review_context,
+		suggested_edits,
+	] );
 
 	return (
 		<div className="jetpack-ai-review-mediation">
@@ -819,7 +972,7 @@ export default function ReviewMediation( {
 							>
 								{ sprintf(
 									/* translators: %s is a short relative-time phrase, e.g. "3 minutes ago" */
-									__( 'Reusing mediation from %s. Edit the post to re-run.', 'jetpack' ),
+									__( 'Reusing review from %s. Edit the post to re-run.', 'jetpack' ),
 									formatRelativeTime( cached_at )
 								) }
 							</p>
