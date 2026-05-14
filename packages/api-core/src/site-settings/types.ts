@@ -11,6 +11,11 @@ export interface SiteSettings {
 	wpcom_data_sharing_opt_out?: boolean | string;
 	wpcom_prevent_third_party_sharing?: boolean;
 	wpcom_gifting_subscription?: boolean;
+	/**
+	 * Content flag assigned by Trust & Safety. Falsy when the site is not flagged.
+	 * Possible string values include 'mature', 'brown', and 'black'.
+	 */
+	flag?: string | false;
 	wpcom_performance_report_url?: string;
 	wpcom_legacy_contact?: string;
 	wpcom_locked_mode?: boolean;

@@ -2,6 +2,7 @@ import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-product
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -19,7 +20,21 @@ export default function SubscriptionGiftingForm( { fields, handleAutosavingToggl
 		return;
 	}
 
+	const isSiteFlagged = !! fields.flag;
+
 	const renderForm = () => {
+		if ( isSiteFlagged ) {
+			return (
+				<Notice
+					status="is-warning"
+					showDismiss={ false }
+					text={ translate(
+						'Gift subscriptions are not available for this site because it has been flagged for content review.'
+					) }
+				/>
+			);
+		}
+
 		return (
 			<>
 				<ToggleControl
