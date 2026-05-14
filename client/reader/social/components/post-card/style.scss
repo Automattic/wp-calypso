@@ -202,7 +202,7 @@ a.social-post-card-header__timestamp::after {
 	}
 
 	a {
-		color: var( --studio-blue-50 );
+		color: var( --color-link, var( --studio-blue-50 ) );
 		text-decoration: none;
 
 		&:hover {
@@ -479,7 +479,7 @@ button.social-post-card-embed-video--thumbnail {
 	border-radius: 8px;
 	overflow: hidden;
 	text-decoration: none;
-	color: inherit;
+	color: var( --color-text );
 	background: var( --color-surface );
 
 	&:hover {

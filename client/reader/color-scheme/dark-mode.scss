@@ -121,6 +121,59 @@
 		border-top-color: var( --color-border-subtle );
 	}
 
+	.community-translator.is-incompatible {
+		--color-neutral-20: var( --dashboard__text-muted-color );
+	}
+
+	.notice-banner {
+		--jp-black: var( --color-text );
+		--jp-gray-5: var( --color-border-subtle );
+
+		background-color: var( --color-surface );
+		color: var( --color-text );
+	}
+
+	.form-select,
+	.form-text-input,
+	.form-textarea,
+	.form-radio,
+	.section-header__actions .button,
+	.summary-button.components-button,
+	.summary-button.components-button.has-density-low {
+		border-color: var( --color-neutral-20 );
+	}
+
+	.button.is-primary,
+	.components-button.is-primary {
+		border-color: var( --wp-components-color-accent-darker-20 );
+	}
+
+	.button.follow-button.is-following {
+		border-color: var( --color-neutral-20 );
+		color: var( --color-text );
+
+		svg,
+		svg * {
+			fill: currentColor;
+		}
+	}
+
+	.reader-notifications__3pc-notice a,
+	.reader-notifications__3pc-notice a:hover,
+	.reader-notifications__3pc-notice a:active,
+	.reader-notifications__3pc-notice a:focus {
+		color: var( --color-link );
+	}
+
+	.p2-label {
+		color: var( --studio-white );
+	}
+
+	.rss-label,
+	.comp-label {
+		color: var( --dashboard__background-color );
+	}
+
 	.search-stream__recommendation-list-item.is-placeholder,
 	.reader__card.card.is-placeholder,
 	.reader__card.card.is-x-post {

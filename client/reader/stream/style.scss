@@ -985,16 +985,16 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 
 	.section-nav-tab__link {
 		background-color: transparent;
-		color: var( --color-primary );
+		color: var( --color-link );
 		padding: 16px;
 
 		&:hover {
-			color: var( --color-primary );
+			color: var( --color-link );
 		}
 	}
 
 	.section-nav-tab__text {
-		color: var( --color-primary );
+		color: var( --color-link );
 		font-weight: 600;
 		font-size: $font-body-small;
 		text-transform: uppercase;

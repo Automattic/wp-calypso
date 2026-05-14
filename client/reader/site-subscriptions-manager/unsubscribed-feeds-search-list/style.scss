@@ -5,6 +5,11 @@
 	display: flex;
 	justify-content: center;
 	margin-top: 30px;
+	color: var( --color-text-subtle );
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 .reader-unsubscribed-feeds-search-list {

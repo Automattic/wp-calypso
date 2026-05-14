@@ -201,6 +201,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.follow-button {
 		background: transparent;
 
+		@include ui-mixins.when-dark-theme {
+			border-color: var( --color-neutral-20 );
+		}
+
 		svg,
 		.gridicon,
 		.reader-following-feed,
@@ -426,10 +430,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	color: var( --color-text-subtle );
 
 	a.reader-author-link {
-		color: var( --color-primary );
+		color: var( --color-link );
 
 		&:hover {
-			color: var( --color-primary-light );
+			color: var( --color-link-light );
 		}
 	}
 }
@@ -732,7 +736,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	color: var( --color-text-subtle );
 
 	&:hover {
-		color: var( --color-primary-light );
+		color: var( --color-link-light );
 	}
 }
 
@@ -751,7 +755,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post .reader-post-card__tag-link:hover {
-	color: var( --color-primary );
+	color: var( --color-link );
 }
 
 .reader-full-post__header {

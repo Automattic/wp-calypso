@@ -37,8 +37,8 @@
 	}
 
 	button:focus {
-		outline: dotted 1px var(--color-primary);
-		color: var(--color-primary);
+		outline: dotted 1px var(--color-link);
+		color: var(--color-link);
 	}
 
 	.comments__cancel-reply {
