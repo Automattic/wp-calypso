@@ -1,50 +1,47 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useFollowingView } from 'calypso/reader/following/view-preference';
-import { useDispatch } from 'calypso/state';
+import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
+import { getOnThisDayStreamKey } from 'calypso/reader/on-this-day/get-stream-key';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
-import {
-	clearStream,
-	requestPage,
-	requestPaginatedStream,
-} from 'calypso/state/reader/streams/actions';
+import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 /**
- * Returns a callback that refreshes the reader following streams after the
- * user has followed new sites or tags during onboarding.
+ * Returns a callback that refreshes reader stream data after the user has
+ * followed new sites or tags during onboarding.
  *
- * - `requestFollows` always runs to sync the Redux follows slice (keeps the
- *   sidebar "Recent" site list up to date).
- * - Stream data is only refreshed when the user is currently on /reader,
- *   since `recent` re-fetches unconditionally on mount and `following` will
- *   be invisible if not on the page.
- * - Which stream is refreshed follows `useFollowingView().currentView` (same source as the
- *   Reader following / recent toggle; typed as `ReaderFollowingView`).
+ * - `requestFollows` always runs to sync the Redux follows slice (e.g. sidebar
+ *   site list).
+ * - On `/reader` only (with optional locale prefix), clears and re-requests the
+ *   aggregate `following` stream. `/reader/recent/:feedId` is scoped to a
+ *   single feed in the UI; onboarding follows do not warrant reloading that.
+ * - On `/reader/on-this-day` (with optional locale prefix), clears and
+ *   re-requests the On This Day stream for the current route query args (see
+ *   `getOnThisDayStreamKey`).
  */
 export const useRefreshFollowingStreams = () => {
 	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
-	const { currentView } = useFollowingView();
+	const queryArguments = useSelector( getCurrentQueryArguments );
 
 	return () => {
-		// Always refresh the follows list so the sidebar site list is up to date.
 		dispatch( requestFollows() );
 
-		// Only refresh visible stream data if the user is on /reader.
-		const isOnReaderFeed =
-			window.location.pathname === '/reader' ||
-			window.location.pathname.startsWith( '/reader/recent' );
-		if ( ! isOnReaderFeed ) {
-			return;
+		const pathWithoutQuery = window.location.pathname.split( '?' )[ 0 ];
+		const path = removeLocaleFromPathLocaleInFront( pathWithoutQuery );
+
+		const refreshStream = ( streamKey: string ) => {
+			dispatch( clearStream( { streamKey } ) );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- stream actions payload typing
+			dispatch( requestPage( { streamKey } as any ) );
+		};
+
+		const isOnReaderFeed = path === '/reader';
+		if ( isOnReaderFeed ) {
+			refreshStream( 'following' );
 		}
 
-		if ( currentView === 'recent' ) {
-			queryClient.invalidateQueries( { queryKey: [ 'read', 'subscriptions-count' ] } );
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch( requestPaginatedStream( { streamKey: 'recent', page: 1, perPage: 10 } as any ) );
-		} else {
-			dispatch( clearStream( { streamKey: 'following' } ) );
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			dispatch( requestPage( { streamKey: 'following' } as any ) );
+		const isOnThisDayRoute = path === '/reader/on-this-day';
+		if ( isOnThisDayRoute ) {
+			refreshStream( getOnThisDayStreamKey( queryArguments ) );
 		}
 	};
 };
