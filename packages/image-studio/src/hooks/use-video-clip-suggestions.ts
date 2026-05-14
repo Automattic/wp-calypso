@@ -50,6 +50,36 @@ POST BODY:
 ${ trimmed }`;
 }
 
+/**
+ * Suggestions for the Highlights style. The Highlights flow doesn't use the
+ * user prompt to describe what the video should LOOK like — the cloud render
+ * path (wpcom/generate-html-for-video → wpcom/generate-video-for-studio with
+ * mode='editframe') composes the HTML server-side from the post itself. The
+ * user prompt's role here is purely steering the agent: angle, audience,
+ * voice, structure. So suggestions here are short framing hints, not
+ * cinematography.
+ */
+export function buildHighlightsClipSuggestionsPrompt( postBody: string ): string {
+	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
+	return `Below is the body of a WordPress post. Propose 3 short framing hints a user could pick to steer a ~24-second summary video derived from this post.
+
+The video itself is rendered automatically from the post's content — these hints DO NOT describe what the video should look like. They steer how the LLM picks WHICH parts to emphasize. Think of them as editorial direction.
+
+Each hint MUST be:
+- Grounded in the post's actual content (an angle that makes sense for THIS post, not generic blog-post advice).
+- One of these flavors:
+  - **Angle**: lead with a specific aspect ("Lead with the geology", "Focus on the family's first reaction").
+  - **Audience**: who's it for ("For travel-curious readers", "For someone who's never visited", "For experienced cooks").
+  - **Structure**: how it's organized ("Three things to try at home", "Before-and-after", "What I'd do differently").
+  - **Voice**: tone register ("Punchier", "More contemplative", "Drop the hedges").
+- 2-8 words for the chip label, 6-15 words for the prompt sentence.
+- Concrete and actionable — never "Make it good" or "Be engaging".
+- No camera moves, no lighting, no visual description (those don't apply here).
+
+POST BODY:
+${ trimmed }`;
+}
+
 function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ): string {
 	return `You generate suggestion chips for a short video clip composer. You DO NOT call any tools. You DO NOT generate, edit, or modify any media. You return only JSON.
 
@@ -77,6 +107,16 @@ interface UseVideoClipSuggestionsParams {
 	 */
 	inputValue?: string;
 	disabled?: boolean;
+	/**
+	 * The currently-selected video style. Determines which prompt variant
+	 * the loader uses — Cinematic gets cinematography-flavored chips
+	 * (camera/lighting/audio direction for the Veo render path);
+	 * Highlights gets framing/steering chips that nudge the agent's
+	 * editorial angle when it composes the cloud-rendered recap. Cache
+	 * key includes the style so toggling between them reuses prior
+	 * results without re-fetching.
+	 */
+	style?: string | null;
 }
 
 interface UseVideoClipSuggestionsReturn {
@@ -94,6 +134,7 @@ export function useVideoClipSuggestions( {
 	messages,
 	inputValue,
 	disabled = false,
+	style = null,
 }: UseVideoClipSuggestionsParams ): UseVideoClipSuggestionsReturn {
 	const lastTrackedSuggestionsRef = useRef< string >( '' );
 
@@ -131,8 +172,18 @@ export function useVideoClipSuggestions( {
 	);
 
 	const enabled = ! disabled && postBodyText.length > 0;
-	const cacheKey = enabled && postId ? `video-clip-post-${ postId }` : null;
-	const prompt = enabled ? buildVideoClipSuggestionsPrompt( postBodyText ) : '';
+	// Style flavor is part of the cache key so toggling between Cinematic and
+	// Highlights reuses prior results instead of refetching, and so chips
+	// generated for one style never leak into the other.
+	const styleKey = style === 'highlights' ? 'highlights' : 'cinematic';
+	const cacheKey = enabled && postId ? `video-clip-post-${ postId }-${ styleKey }` : null;
+	let prompt = '';
+	if ( enabled ) {
+		prompt =
+			styleKey === 'highlights'
+				? buildHighlightsClipSuggestionsPrompt( postBodyText )
+				: buildVideoClipSuggestionsPrompt( postBodyText );
+	}
 
 	const {
 		suggestions: asyncSuggestions,

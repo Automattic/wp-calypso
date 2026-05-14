@@ -135,8 +135,10 @@ export const STYLE_OPTIONS: StyleOption[] = [
 // The prior Informative / Promotional video styles collapse into one
 // "Cinematic" preset — they were the same Veo chain with cosmetically
 // different prompt templates, which never read as meaningfully distinct.
-// "Highlights" is shown disabled as a teaser; the browser-rendered
-// implementation lands in a follow-up.
+// "Highlights" is server-rendered via EditFrame Cloud on this branch
+// (LLM-composed HTML → EditFrame /api/v1/renders → MP4 → media library);
+// the in-browser encoding implementation lives on the older compositor
+// branches and is preserved there.
 export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 	{
 		label: __( 'Cinematic', __i18n_text_domain__ ),
@@ -145,14 +147,13 @@ export const VIDEO_STYLE_OPTIONS: StyleOption[] = [
 		description: __( 'Create an 8-second b-roll mood clip from a prompt.', __i18n_text_domain__ ),
 	},
 	{
-		label: __( 'Highlights (Coming Soon)', __i18n_text_domain__ ),
+		label: __( 'Highlights (a12s only)', __i18n_text_domain__ ),
 		value: 'highlights',
 		preview: videoHighlightsSoonPreview,
 		description: __(
 			"Build a 20-second recap clip using your post's images and key points.",
 			__i18n_text_domain__
 		),
-		disabled: true,
 	},
 ];
 

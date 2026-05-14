@@ -81,10 +81,43 @@ describe( 'useVideoClipSuggestions', () => {
 
 		expect( mockUseAsyncSuggestionsLoader ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				cacheKey: 'video-clip-post-42',
+				cacheKey: 'video-clip-post-42-cinematic',
 				enabled: true,
 			} )
 		);
+	} );
+
+	it( 'namespaces cache + prompt for the highlights style', () => {
+		renderHook( () =>
+			useVideoClipSuggestions( {
+				registerSuggestions: jest.fn(),
+				clearSuggestions: jest.fn(),
+				messages: [],
+				style: 'highlights',
+			} )
+		);
+
+		const call = mockUseAsyncSuggestionsLoader.mock.calls.at( -1 )?.[ 0 ];
+		expect( call?.cacheKey ).toBe( 'video-clip-post-42-highlights' );
+		expect( typeof call?.prompt ).toBe( 'string' );
+		// "summary video" is unique to the Highlights builder.
+		expect( call?.prompt ).toMatch( /summary video/i );
+	} );
+
+	it( 'uses the cinematic prompt for non-highlights styles', () => {
+		renderHook( () =>
+			useVideoClipSuggestions( {
+				registerSuggestions: jest.fn(),
+				clearSuggestions: jest.fn(),
+				messages: [],
+				style: 'cinematic',
+			} )
+		);
+
+		const call = mockUseAsyncSuggestionsLoader.mock.calls.at( -1 )?.[ 0 ];
+		expect( call?.cacheKey ).toBe( 'video-clip-post-42-cinematic' );
+		// "directional prompts" is unique to the cinematic builder.
+		expect( call?.prompt ).toMatch( /directional prompts/i );
 	} );
 
 	it( 'disables the loader and returns no-op handlers when disabled', () => {
