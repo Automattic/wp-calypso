@@ -94,25 +94,12 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
 } ) );
 
-jest.mock( 'calypso/state/gravatar-status/selectors', () => ( {
-	hasGravatar: jest.fn().mockReturnValue( false ),
-} ) );
-
-jest.mock( 'calypso/state/gravatar-status/actions', () => ( {
-	requestGravatarDetails: jest.fn( () => ( { type: 'GRAVATAR_DETAILS_REQUEST' } ) ),
-} ) );
-
 jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
 	getReaderFollows: jest.fn().mockReturnValue( [] ),
 } ) );
 
 jest.mock( 'calypso/state/reader/follows/actions', () => ( {
 	requestFollows: jest.fn( () => ( { type: 'READER_FOLLOWS_REQUEST' } ) ),
-} ) );
-
-jest.mock( 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile', () => ( {
-	__esModule: true,
-	default: jest.fn().mockReturnValue( false ),
 } ) );
 
 jest.mock( 'calypso/state/reader/streams/actions', () => ( {

@@ -23,12 +23,9 @@ import {
 	getCurrentUserDate,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
-import { requestGravatarDetails } from 'calypso/state/gravatar-status/actions';
-import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
@@ -59,13 +56,11 @@ const ReaderOnboardingRsm = ( {
 	const [ hasCompletedWelcomeStep, setHasCompletedWelcomeStep ] = useState( false );
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
-	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
+	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
 	const { data: followedTags } = useFollowedReaderTags();
 	const follows = useSelector( getReaderFollows );
-	const profileCompleted = useSelector( hasCompletedReaderProfile );
-	const hasUserGravatar = useSelector( hasGravatar );
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
@@ -79,7 +74,7 @@ const ReaderOnboardingRsm = ( {
 	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
 
 	// If the user has completed the onboarding, save the preference and track the event.
-	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
+	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites ) {
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 	}
@@ -169,11 +164,6 @@ const ReaderOnboardingRsm = ( {
 		task?.actionDispatch?.();
 	};
 
-	const navToAccountProfile = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_account_profile` );
-		page( '/me?ref=reader-onboarding' );
-	};
-
 	// Track if user viewed Reader Onboarding.
 	useEffect( () => {
 		if ( shouldRenderOnboarding ) {
@@ -200,11 +190,6 @@ const ReaderOnboardingRsm = ( {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
-
-	// Fetch gravatar info when component mounts
-	useEffect( () => {
-		dispatch( requestGravatarDetails() );
-	}, [ dispatch ] );
 
 	// Notify the parent component if onboarding will render.
 	// Use useEffect to avoid calling setState during render (React anti-pattern).
@@ -237,15 +222,6 @@ const ReaderOnboardingRsm = ( {
 			actionDispatch: () => openStep( 'discover' ),
 			completed: hasFollowedSites,
 			disabled: ! hasFollowedSites && ! hasFollowedTags,
-		},
-		{
-			id: 'account-profile',
-			title: hasUserGravatar
-				? translate( 'Fill out your profile' )
-				: translate( 'Add your avatar and fill out your profile' ),
-			actionDispatch: navToAccountProfile,
-			completed: profileCompleted,
-			disabled: ! profileCompleted && ( ! hasFollowedTags || ! hasFollowedSites ),
 		},
 	];
 
