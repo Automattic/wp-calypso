@@ -37,18 +37,22 @@ jest.mock( 'calypso/state/reader/streams/actions', () => ( {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const setPathname = ( pathname: string ) => {
-	Object.defineProperty( window, 'location', {
-		value: { ...window.location, pathname },
-		writable: true,
-	} );
+	window.history.replaceState( null, '', pathname );
 };
+
+let locationHrefBeforeTest: string;
 
 beforeEach( () => {
 	jest.clearAllMocks();
+	locationHrefBeforeTest = window.location.href;
 	// Default: not on /reader.
 	setPathname( '/sites' );
 	// Default: 'stream' view (null → DEFAULT_VIEW fallback).
 	mockGetPreference.mockReturnValue( null );
+} );
+
+afterEach( () => {
+	window.history.replaceState( null, '', locationHrefBeforeTest );
 } );
 
 // ── Tests ─────────────────────────────────────────────────────────────────────

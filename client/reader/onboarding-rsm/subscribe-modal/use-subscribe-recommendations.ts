@@ -13,6 +13,7 @@ import {
 	receiveReaderFeedRequestSuccess,
 } from 'calypso/state/reader/feeds/actions';
 import { ReaderFollowItem } from 'calypso/state/reader/follows/selectors/types';
+import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 import { AppState } from 'calypso/types';
 
 /**
@@ -60,11 +61,8 @@ function interleaveByTag< T >( perTagLists: T[][] ): T[] {
  * Canonical feed URL for de-duping follows vs recommendations when `feed_ID`
  * drifts (same subscription, new feed row) or when matching across sources.
  *
- * Omits the scheme so `http://` and `https://` match. Uses `hostname` (no port),
- * normalized path (no trailing slash except `/`), and `search`. Reader feeds
- * are effectively default-port; ignoring port avoids `host`/`host:443` mismatches
- * without special-casing ports (same host+path on different non-default ports
- * is treated as one feed — rare here).
+ * Delegates to `prepareComparableUrl` so keys match how the reader follows slice
+ * indexes subscriptions (scheme stripped, trailing slash trimmed, lowercased).
  */
 function normalizeReaderFeedUrlForSubscriptionMatch(
 	raw: string | undefined | null
@@ -76,17 +74,8 @@ function normalizeReaderFeedUrlForSubscriptionMatch(
 	if ( trimmed === '' ) {
 		return null;
 	}
-	try {
-		const u = new URL( trimmed );
-		const hostname = u.hostname.toLowerCase();
-		let pathname = u.pathname;
-		if ( pathname.length > 1 && pathname.endsWith( '/' ) ) {
-			pathname = pathname.slice( 0, -1 );
-		}
-		return `${ hostname }${ pathname }${ u.search }`;
-	} catch {
-		return trimmed.toLowerCase();
-	}
+	const comparable = prepareComparableUrl( trimmed );
+	return comparable ? comparable : null;
 }
 
 type FollowedSubscriptions = {
