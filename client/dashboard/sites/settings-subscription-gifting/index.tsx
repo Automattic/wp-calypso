@@ -1,6 +1,6 @@
-import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
-import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
+import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery, siteWordadsStatusQuery } from '@automattic/api-queries';
+import { useSuspenseQuery, useMutation, useQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack, Button, CheckboxControl, Notice } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -47,6 +47,8 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
 	const mutation = useMutation( siteSettingsMutation( site.ID ) );
+	const { data: wordadsStatus } = useQuery( siteWordadsStatusQuery( site.ID ) );
+	const isMatureSite = wordadsStatus?.unsafe === 'mature';
 
 	const [ formData, setFormData ] = useState( {
 		wpcom_gifting_subscription: data.wpcom_gifting_subscription,
@@ -89,7 +91,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 					title={ __( 'Accept a gift subscription' ) }
 					description={ createInterpolateElement(
 						__(
-							'Allow a site visitor to cover the full cost of your site’s WordPress.com plan. <learnMoreLink />'
+							'Allow a site visitor to cover the full cost of your site's WordPress.com plan. <learnMoreLink />'
 						),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="gift-a-subscription" />,
@@ -98,33 +100,41 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 				/>
 			}
 		>
-			<Card>
-				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<VStack spacing={ 4 }>
-							<NavigationBlocker shouldBlock={ isDirty } />
-							<DataForm< SiteSettings >
-								data={ formData }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits: Partial< SiteSettings > ) => {
-									setFormData( ( data ) => ( { ...data, ...edits } ) );
-								} }
-							/>
-							<ButtonStack justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isPending }
-									disabled={ isPending || ! isDirty }
-								>
-									{ __( 'Save' ) }
-								</Button>
-							</ButtonStack>
-						</VStack>
-					</form>
-				</CardBody>
-			</Card>
+			{ isMatureSite ? (
+				<Notice status="info" isDismissible={ false }>
+					{ __(
+						'Gift subscriptions are not available for this site due to its content classification.'
+					) }
+				</Notice>
+			) : (
+				<Card>
+					<CardBody>
+						<form onSubmit={ handleSubmit }>
+							<VStack spacing={ 4 }>
+								<NavigationBlocker shouldBlock={ isDirty } />
+								<DataForm< SiteSettings >
+									data={ formData }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits: Partial< SiteSettings > ) => {
+										setFormData( ( data ) => ( { ...data, ...edits } ) );
+									} }
+								/>
+								<ButtonStack justify="flex-start">
+									<Button
+										variant="primary"
+										type="submit"
+										isBusy={ isPending }
+										disabled={ isPending || ! isDirty }
+									>
+										{ __( 'Save' ) }
+									</Button>
+								</ButtonStack>
+							</VStack>
+						</form>
+					</CardBody>
+				</Card>
+			) }
 		</PageLayout>
 	);
 }

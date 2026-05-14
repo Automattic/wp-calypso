@@ -6,6 +6,7 @@ import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/compo
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
+import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 
 export default function SubscriptionGiftingForm( { fields, handleAutosavingToggle, disabled } ) {
 	const translate = useTranslate();
@@ -14,8 +15,10 @@ export default function SubscriptionGiftingForm( { fields, handleAutosavingToggl
 		WPCOM_FEATURES_SUBSCRIPTION_GIFTING
 	);
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
+	const wordadsUnsafeStatus = useSelectedSiteSelector( isSiteWordadsUnsafe );
+	const isMatureSite = wordadsUnsafeStatus === 'mature';
 
-	if ( ! hasSubscriptionGifting || isWpcomStagingSite ) {
+	if ( ! hasSubscriptionGifting || isWpcomStagingSite || isMatureSite ) {
 		return;
 	}
 

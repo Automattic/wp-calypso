@@ -127,6 +127,7 @@ export * from './site-sftp';
 export * from './site-ssh';
 export * from './site-staging-sites';
 export * from './site-staging-sync';
+export * from './site-wordads-status';
 export * from './site-static-file-404';
 export * from './site-stats';
 export * from './site-themes';
