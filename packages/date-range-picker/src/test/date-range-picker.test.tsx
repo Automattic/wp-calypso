@@ -191,6 +191,17 @@ describe( 'DateRangePicker', () => {
 		expect( okBtn ).toBeEnabled();
 	} );
 
+	test( 'disabledBefore sets the start input min so native pickers cannot offer earlier days', async () => {
+		const { getByRole, getByLabelText } = renderDateRangePicker( {
+			disabledBefore: new Date( 2025, 7, 15 ),
+		} );
+
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+
+		const startInput = getByLabelText( 'Start date' ) as HTMLInputElement;
+		expect( startInput.min ).toBe( '2025-08-15' );
+	} );
+
 	test( 'preset selection updates label (Yesterday)', async () => {
 		const { getByRole, findByRole } = renderDateRangePicker();
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
