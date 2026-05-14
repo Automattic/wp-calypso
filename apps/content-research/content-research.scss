@@ -103,50 +103,6 @@
 	}
 }
 
-.content-research-inspiration-prompt {
-	position: absolute;
-	top: 0;
-	left: 190px;
-	padding: 0;
-	border: none;
-	background: none;
-	font-family: inherit;
-	font-size: inherit;
-	line-height: inherit;
-	white-space: nowrap;
-	cursor: pointer;
-	background-image: linear-gradient(
-		110deg,
-		#949494 0%,
-		#949494 40%,
-		#3858e9 50%,
-		#949494 60%,
-		#949494 100%
-	);
-	background-size: 200% auto;
-	background-position: 100% center;
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
-	-webkit-text-fill-color: transparent;
-	animation: content-research-inspiration-shine 5s linear infinite;
-
-	&:hover {
-		animation-play-state: paused;
-		background-image: linear-gradient(110deg, #3858e9, #3858e9);
-	}
-}
-
-@keyframes content-research-inspiration-shine {
-	0% {
-		background-position: 100% center;
-	}
-
-	100% {
-		background-position: -100% center;
-	}
-}
-
 @media ( max-width: 480px ) {
 	.content-research-window {
 		width: calc( 100vw - 16px );
