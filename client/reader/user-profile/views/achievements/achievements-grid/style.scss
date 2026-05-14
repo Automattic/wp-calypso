@@ -1,3 +1,4 @@
+@import '@automattic/color-studio/dist/color-properties-rgb.css';
 @import '@automattic/components/src/styles/typography';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
@@ -95,6 +96,41 @@
 		opacity: 0.5;
 	}
 
+	.achievement-card.is-years-of-service {
+		transition: box-shadow 250ms ease-out;
+
+		&:hover {
+			box-shadow: 0 6px 24px rgba( var( --studio-blue-50-rgb ), 0.35 );
+		}
+
+		// The white sweep runs across the blue badge circle (where it actually
+		// shows up) rather than across the mostly-white card body.
+		.years-of-service-badge__circle {
+			position: relative;
+			overflow: hidden;
+			isolation: isolate;
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(
+					115deg,
+					transparent 40%,
+					rgba( var( --studio-white-rgb ), 0.7 ) 50%,
+					transparent 60%
+				);
+				transform: translateX( -110% );
+				pointer-events: none;
+			}
+		}
+
+		&:hover .years-of-service-badge__circle::after {
+			animation: years-of-service-achievement-shine 1100ms cubic-bezier( 0.25, 0.8, 0.3, 1 )
+				forwards;
+		}
+	}
+
 	.achievement-card__icon--lock {
 		align-items: center;
 		background: var( --studio-gray-5 );
@@ -123,5 +159,22 @@
 		margin: 24px auto 0;
 		max-width: 720px;
 		text-align: center;
+	}
+}
+
+@keyframes years-of-service-achievement-shine {
+	from {
+		transform: translateX( -110% );
+	}
+	to {
+		transform: translateX( 110% );
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.is-reader-page
+		.achievement-card.is-years-of-service:hover
+		.years-of-service-badge__circle::after {
+		animation: none;
 	}
 }
