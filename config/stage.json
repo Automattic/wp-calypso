@@ -2,6 +2,7 @@
 	"env": "production",
 	"env_id": "stage",
 	"favicon_url": "/calypso/images/favicons/favicon-staging.ico",
+	"checkout_additional_allowed_redirect_hosts": [ "ai-w0.a8c.com" ],
 	"client_slug": "browser",
 	"hostname": "wordpress.com",
 	"i18n_default_locale_slug": "en",

@@ -5,6 +5,7 @@ import {
 	StreakBadge,
 	type StreakBadgeState,
 } from 'calypso/reader/components/achievements/streak-badge';
+import { DailyInfo } from './daily-info';
 import type { EngagementStreak } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -142,54 +143,97 @@ function getModeContent(
 	}
 }
 
-function getFreezeDescription(
+type StreakStatVariant = 'freeze' | 'record';
+
+interface StreakStatProps {
+	variant: StreakStatVariant;
+	shortText: ReactNode;
+	tooltipText: string;
+}
+
+function StreakStat( { variant, shortText, tooltipText }: StreakStatProps ) {
+	return (
+		<Tooltip className="activity-streak__stat-tooltip" text={ tooltipText }>
+			<span
+				className="activity-streak__stat"
+				tabIndex={ 0 } // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
+			>
+				<span className={ `activity-streak__stat-icon is-${ variant }` } aria-hidden="true" />
+				<span className="activity-streak__stat-text">{ shortText }</span>
+			</span>
+		</Tooltip>
+	);
+}
+
+function getFreezeStat(
 	streak: EngagementStreak,
 	translate: ReturnType< typeof useTranslate >
 ): ReactNode | null {
 	if ( streak.current_streak === 0 ) {
 		return null;
 	}
+	const explanation = translate(
+		'A streak freeze automatically protects your streak when you miss a day.'
+	) as string;
 	if ( streak.freezes_available > 0 ) {
-		return translate(
-			'%(count)d {{term}}streak freeze{{/term}} available.',
-			'%(count)d {{term}}streak freezes{{/term}} available.',
-			{
-				count: streak.freezes_available,
-				args: { count: streak.freezes_available },
-				components: { term: <StreakFreezeTerm /> },
-			}
+		const count = streak.freezes_available;
+		const shortText = translate( '%(count)d available', '%(count)d available', {
+			count,
+			args: { count },
+		} );
+		const longSentence = translate(
+			'%(count)d streak freeze available.',
+			'%(count)d streak freezes available.',
+			{ count, args: { count } }
+		) as string;
+		return (
+			<StreakStat
+				variant="freeze"
+				shortText={ shortText }
+				tooltipText={ `${ longSentence }\n\n${ explanation }` }
+			/>
 		);
 	}
 	if ( streak.next_freeze_in_days >= 1 ) {
-		return translate(
-			'{{term}}Streak freeze{{/term}} available in %(count)d day.',
-			'{{term}}Streak freeze{{/term}} available in %(count)d days.',
-			{
-				count: streak.next_freeze_in_days,
-				args: { count: streak.next_freeze_in_days },
-				components: { term: <StreakFreezeTerm /> },
-			}
+		const count = streak.next_freeze_in_days;
+		const shortText = translate( 'available in %(count)d day', 'available in %(count)d days', {
+			count,
+			args: { count },
+		} );
+		const longSentence = translate(
+			'Streak freeze available in %(count)d day.',
+			'Streak freeze available in %(count)d days.',
+			{ count, args: { count } }
+		) as string;
+		return (
+			<StreakStat
+				variant="freeze"
+				shortText={ shortText }
+				tooltipText={ `${ longSentence }\n\n${ explanation }` }
+			/>
 		);
 	}
 	return null;
 }
 
-function getRecordDescription(
+function getRecordStat(
 	streak: EngagementStreak,
 	translate: ReturnType< typeof useTranslate >
 ): ReactNode | null {
-	if ( streak.current_streak >= streak.longest_streak ) {
+	if ( streak.longest_streak === 0 ) {
 		return null;
 	}
-
-	return translate(
+	const count = streak.longest_streak;
+	const shortText = translate( '%(count)d day', '%(count)d days', {
+		count,
+		args: { count },
+	} );
+	const tooltipText = translate(
 		'Your longest streak on record is %(count)d day.',
 		'Your longest streak on record is %(count)d days.',
-		{
-			count: streak.longest_streak,
-			args: { count: streak.longest_streak },
-		}
-	);
+		{ count, args: { count } }
+	) as string;
+	return <StreakStat variant="record" shortText={ shortText } tooltipText={ tooltipText } />;
 }
 
 export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) {
@@ -208,8 +252,8 @@ export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) 
 	const yesterday = moment().subtract( 1, 'day' ).format( 'YYYY-MM-DD' );
 	const mode = deriveMode( streak, today, yesterday );
 	const { badgeState, badgeLabel, description } = getModeContent( mode, streak, translate );
-	const recordDescription = getRecordDescription( streak, translate );
-	const freezeDescription = getFreezeDescription( streak, translate );
+	const recordStat = getRecordStat( streak, translate );
+	const freezeStat = getFreezeStat( streak, translate );
 
 	return (
 		<div className="activity-streak" role="group" aria-label={ translate( 'Activity streak' ) }>
@@ -218,9 +262,14 @@ export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) 
 				<div className="activity-streak__title">{ translate( 'Activity Streak' ) }</div>
 				<div className="activity-streak__description">
 					<p>{ description }</p>
-					{ recordDescription && <p>{ recordDescription }</p> }
-					{ freezeDescription && <p>{ freezeDescription }</p> }
 				</div>
+				{ ( recordStat || freezeStat ) && (
+					<div className="activity-streak__stats">
+						{ recordStat }
+						{ freezeStat }
+					</div>
+				) }
+				{ streak.days && streak.days.length > 0 && <DailyInfo days={ streak.days } /> }
 			</div>
 		</div>
 	);

@@ -61,6 +61,22 @@ export type EarnedAchievementEntry = Achievement | MaskedSecretAchievement;
 export type LockedAchievementEntry = LockedAchievement | LockedSecretAchievement;
 
 /**
+ * Per-day status on the engagement streak timeline.
+ * - `missed`: streak inactive, broken, or pending engagement that day.
+ * - `extended`: streak active and engaged that day.
+ * - `freeze_used`: day missed but a streak freeze protected the streak.
+ */
+export type EngagementStreakDayStatus = 'missed' | 'extended' | 'freeze_used';
+
+export interface EngagementStreakDay {
+	/** Y-m-d in the user's timezone. */
+	date: string;
+	status: EngagementStreakDayStatus;
+	/** True when the user earned a streak freeze on this day. */
+	freeze_earned: boolean;
+}
+
+/**
  * Engagement (activity) streak slice on the achievements endpoint response.
  * See: https://fieldguide.automattic.com/activity-streak/
  */
@@ -73,6 +89,8 @@ export interface EngagementStreak {
 	next_freeze_in_days: number;
 	/** Y-m-d in the user's timezone; null if the user has never engaged. */
 	last_streak_date: string | null;
+	/** Daily timeline, oldest → newest. Up to 30 entries. Optional for legacy responses. */
+	days?: EngagementStreakDay[];
 }
 
 export interface AchievementsResponse {
