@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	CheckboxControl,
@@ -27,26 +28,59 @@ interface Props {
 	submitButtonText?: string;
 }
 
-function getRenewalDescription( item: Purchase, locale: string ): string {
+function getRenewalDescription(
+	item: Purchase,
+	locale: string,
+	hasEnTranslation: ( phrase: string ) => boolean
+): string {
 	const subtitleText = getSubtitleForDisplay( item );
-	const prefix = subtitleText ? `${ subtitleText }: ` : '';
 	const price = formatCurrency( item.sale_amount ?? item.amount, item.currency_code, {
 		stripZeros: true,
 	} );
 
 	if ( isRenewing( item ) ) {
 		const date = formatDate( new Date( item.renew_date ), locale, { dateStyle: 'long' } );
+		if ( subtitleText && hasEnTranslation( '%1$s: Renews at %2$s on %3$s' ) ) {
+			return sprintf(
+				// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted price, %3$s: formatted date
+				__( '%1$s: Renews at %2$s on %3$s' ),
+				subtitleText,
+				price,
+				date
+			);
+		}
 		// translators: %1$s: formatted price, %2$s: formatted date
-		return prefix + sprintf( __( 'Renews at %1$s on %2$s' ), price, date );
+		const text = sprintf( __( 'Renews at %1$s on %2$s' ), price, date );
+		return subtitleText ? `${ subtitleText }: ${ text }` : text;
 	}
-	if ( isExpired( item ) || isInExpirationGracePeriod( item ) ) {
-		const date = formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } );
-		// translators: %s: formatted date
-		return prefix + sprintf( __( 'Expired on %s' ), date );
-	}
+
 	const date = formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } );
+
+	if ( isExpired( item ) || isInExpirationGracePeriod( item ) ) {
+		if ( subtitleText && hasEnTranslation( '%1$s: Expired on %2$s' ) ) {
+			return sprintf(
+				// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted date
+				__( '%1$s: Expired on %2$s' ),
+				subtitleText,
+				date
+			);
+		}
+		// translators: %s: formatted date
+		const text = sprintf( __( 'Expired on %s' ), date );
+		return subtitleText ? `${ subtitleText }: ${ text }` : text;
+	}
+
+	if ( subtitleText && hasEnTranslation( '%1$s: Expires on %2$s' ) ) {
+		return sprintf(
+			// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted date
+			__( '%1$s: Expires on %2$s' ),
+			subtitleText,
+			date
+		);
+	}
 	// translators: %s: formatted date
-	return prefix + sprintf( __( 'Expires on %s' ), date );
+	const text = sprintf( __( 'Expires on %s' ), date );
+	return subtitleText ? `${ subtitleText }: ${ text }` : text;
 }
 
 export function UpcomingRenewalsDialog( {
@@ -57,6 +91,7 @@ export function UpcomingRenewalsDialog( {
 	submitButtonText,
 }: Props ) {
 	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
@@ -109,7 +144,7 @@ export function UpcomingRenewalsDialog( {
 								<CheckboxControl
 									__nextHasNoMarginBottom
 									label={ item.is_domain ? item.meta ?? '' : item.product_name }
-									help={ getRenewalDescription( item, locale ) }
+									help={ getRenewalDescription( item, locale, hasEnTranslation ) }
 									checked={ selection.includes( id ) }
 									onChange={ () => {
 										setSelection( ( prev ) =>
