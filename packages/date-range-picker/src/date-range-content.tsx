@@ -76,11 +76,13 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		inputsProps,
 	} = props;
 
+	// Avoid passing invalid or empty time zones to Intl consumers
 	const isValidIanaTimeZone = ( timeZone?: string ): timeZone is string => {
 		if ( ! timeZone ) {
 			return false;
 		}
 		try {
+			// Will throw for invalid IANA identifiers (including empty strings)
 			Intl.DateTimeFormat( 'en-US', { timeZone: timeZone } );
 			return true;
 		} catch ( _e ) {
@@ -98,6 +100,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		setFromStr( '' );
 		setToStr( '' );
 		setIsTyping( false );
+		// Force controlled inputs to remount so any internal buffers are reset
 		setInputsVersion( ( version ) => version + 1 );
 	};
 
@@ -140,19 +143,24 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 		if ( preset ) {
 			return preset;
 		}
+		// Only mark "custom" when both dates are present and do not match a known preset
 		if ( fromDraft && toDraft ) {
 			return 'custom';
 		}
+		// When cleared or incomplete, highlight nothing
 		return undefined;
 	} )();
 
+	// Site “today” as a site-day Date
 	const siteToday =
 		parseYmdLocal( formatYmd( today, timezoneString, gmtOffset ) ) ??
 		new Date( today.getFullYear(), today.getMonth(), today.getDate() );
 
+	// Month anchors in site time
 	const siteMonthStart = startOfMonth( siteToday );
 	const prevMonthStart = subMonths( siteMonthStart, 1 );
 
+	// Build calendar month refs
 	const makeTZMonthFromDate = ( d: Date ) =>
 		timeZoneForCalendar
 			? new TZDate( Date.UTC( d.getFullYear(), d.getMonth(), 1, 12 ), timeZoneForCalendar )
@@ -164,6 +172,7 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 
 	const endMonth = makeTZMonthFromDate( siteMonthStart );
 
+	// Use TZDate for calendar selection when a valid IANA time zone is available
 	const selected =
 		timeZoneForCalendar && ( fromDraft || toDraft )
 			? {

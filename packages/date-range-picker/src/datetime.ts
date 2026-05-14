@@ -3,9 +3,6 @@ import { parse, isValid, format } from 'date-fns';
 
 const YMD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-/**
- * Format a date for display using Intl.DateTimeFormat.
- */
 export function formatDate(
 	date: Date,
 	locale: string,
@@ -28,7 +25,7 @@ export function parseYmdLocal( value: string ): Date | null {
 	if ( ! isValid( parsed ) ) {
 		return null;
 	}
-	// Reject overflows like 2023-02-31 -> 2023-03-03
+	// Ensure strict match (reject overflows like 2023-02-31 -> 2023-03-03)
 	return format( parsed, 'yyyy-MM-dd' ) === value ? parsed : null;
 }
 
@@ -51,7 +48,7 @@ export function formatYmd( date: Date, timezoneString?: string, gmtOffset?: numb
 
 /**
  * Format a Date that already represents a site calendar day.
- * Avoids reapplying timezone math to dates coming from the picker or URL.
+ * This avoids reapplying timezone math to dates coming from the picker or URL.
  */
 export function formatSiteYmd( date: Date ) {
 	const year = date.getFullYear();

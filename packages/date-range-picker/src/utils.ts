@@ -10,6 +10,7 @@ import {
 } from 'date-fns';
 import { formatDate, parseYmdLocal, formatYmd } from './datetime';
 
+// Range helpers (inclusive)
 const lastNDays = ( date: Date, number: number ) => ( {
 	from: new Date( date.getFullYear(), date.getMonth(), date.getDate() - ( number - 1 ) ),
 	to: date,
@@ -150,9 +151,7 @@ export function getActivePresetId( from?: Date, to?: Date, baseDate?: Date ): Pr
 	return undefined;
 }
 
-/**
- * Format a date range as a localized label, e.g. "Aug 1, 2025 to Aug 31, 2025".
- */
+// UI-specific: Date range label for the picker
 export function formatLabel( start: Date, end: Date, locale: string ) {
 	return sprintf(
 		/* translators: %1$s: start date, %2$s: end date */
@@ -162,10 +161,7 @@ export function formatLabel( start: Date, end: Date, locale: string ) {
 	);
 }
 
-/**
- * Determine whether the given range matches the "Last 7 days" preset for the
- * given site timezone.
- */
+// Determine if the given date range matches the last 7 days preset
 export function isLast7Days(
 	range: { start: Date; end: Date },
 	timezoneString?: string,

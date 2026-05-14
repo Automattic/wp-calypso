@@ -1,41 +1,40 @@
-@use '@wordpress/base-styles/colors' as colors;
-@use '@wordpress/base-styles/variables' as variables;
+@use '@wordpress/base-styles/variables' as *;
 
 /* Popover sizing */
 .daterange-popover .components-popover__content {
 	overflow: visible;
 	width: auto;
-	max-width: calc(100vw - 48px);
+	max-width: calc( 100vw - 48px );
 }
 
 /* Body rows */
 .daterange-inputs {
-	margin-block-end: 12px;
+	margin-bottom: 12px;
 }
 
 .daterange-input {
 	&__field {
-		// Extra class to override the default button styles.
+		// The extra class is to make sure it overrides the default button styles
 		&.components-button {
-			background: var(--dashboard-surface__background-color, var(--wp-components-color-background, #{colors.$white}));
-			padding: variables.$grid-unit-05 variables.$grid-unit-05 variables.$grid-unit-05 variables.$grid-unit-10;
+			background: var( --dashboard-surface__background-color );
+			padding: $grid-unit-05 $grid-unit-05 $grid-unit-05 $grid-unit-10;
 			box-shadow: none;
-			border-radius: variables.$radius-small;
-			border: 1px solid var(--dashboard-field__border-color, #{colors.$gray-600});
+			border-radius: $radius-small;
+			border: 1px solid var(--dashboard-field__border-color, $gray-600);
 		}
 		svg {
-			color: var(--dashboard__text-color, currentColor);
-			padding: variables.$grid-unit-05;
+			color: var(--dashboard__text-color);
+			padding: $grid-unit-05;
 		}
 	}
 	&__text {
-		color: var(--dashboard__text-color, currentColor);
-		padding: 0 variables.$grid-unit-05;
+		color: var(--dashboard__text-color);
+		padding: 0 $grid-unit-05;
 	}
 }
 
 /* Mobile */
-@media (max-width: 600px) {
+@media ( max-width: 600px ) {
 	.daterange-calendar {
 		display: flex;
 		justify-content: center;
@@ -44,14 +43,14 @@
 }
 
 /* Medium screens: presets and calendar should be centered with no awkward right margin */
-@media (min-width: 601px) and (max-width: 899px) {
+@media ( min-width: 601px ) and ( max-width: 899px ) {
 	.daterange-body {
 		justify-content: space-between !important;
 	}
 }
 
 /* Desktop presets column: ensure a reasonable width to avoid awkward wrapping */
-@media (min-width: 601px) {
+@media ( min-width: 601px ) {
 	.daterange-presets {
 		min-width: 240px;
 	}
