@@ -75,7 +75,7 @@ Processors must handle four response paths: immediate success, redirect (PayPal/
 
 ### Adding a Payment Method
 
-Seven touchpoints required (follow an existing implementation like Razorpay):
+Seven touchpoints required (follow an existing implementation like PIX or BLIK):
 
 1. **Payment method component** — `src/payment-methods/{name}.tsx`, export `create{Name}PaymentMethod()` returning a `PaymentMethod` object (`{ id, paymentProcessorId, label, activeContent, submitButton }`)
 2. **Processor function** — `src/lib/{name}-processor.ts`, signature: `async (submitData, options, translate) => PaymentProcessorResponse`
