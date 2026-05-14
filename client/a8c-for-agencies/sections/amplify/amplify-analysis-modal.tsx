@@ -3,10 +3,29 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Icon, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import wpcom from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 type AnalysisType = 'human' | 'ai' | 'full';
+
+interface AmplifyAnalyzeResponse {
+	jobId: string;
+}
+
+// TODO: The /wpcom/v2/amplify/analyze endpoint needs to be implemented in the
+// WordPress.com backend. It should accept POST { url, mode }, trigger a
+// Trigger.dev job (task ID: amplify-analysis), and return { jobId } from the
+// Trigger.dev run handle.
+async function startAmplifyAnalysis( url: string, mode: AnalysisType ): Promise< string > {
+	const data: AmplifyAnalyzeResponse = await wpcom.req.post( {
+		apiNamespace: 'wpcom/v2',
+		path: '/amplify/analyze',
+		body: { url, mode },
+	} );
+
+	return data.jobId;
+}
 
 type Props = {
 	site: string | null;
@@ -73,9 +92,11 @@ type Option = {
 function ChooseAnalysis( {
 	site,
 	onSelect,
+	isSubmitting,
 }: {
 	site: string;
 	onSelect: ( type: AnalysisType ) => void;
+	isSubmitting: boolean;
 } ) {
 	const options: Option[] = [
 		{
@@ -118,6 +139,7 @@ function ChooseAnalysis( {
 						<button
 							type="button"
 							className="amplify-analysis-option"
+							disabled={ isSubmitting }
 							onClick={ () => onSelect( opt.type ) }
 						>
 							<span
@@ -187,14 +209,16 @@ function ProgressAnalysis( {
 
 export default function AmplifyAnalysisModal( { site, onClose }: Props ) {
 	const dispatch = useDispatch();
-	const [ stage, setStage ] = useState< 'choose' | 'progress' >( 'choose' );
+	const [ stage, setStage ] = useState< 'choose' | 'progress' | 'error' >( 'choose' );
 	const [ selectedType, setSelectedType ] = useState< AnalysisType | null >( null );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	// Reset internal state whenever the modal opens for a new site.
 	useEffect( () => {
 		if ( site ) {
 			setStage( 'choose' );
 			setSelectedType( null );
+			setIsSubmitting( false );
 		}
 	}, [ site ] );
 
@@ -202,7 +226,7 @@ export default function AmplifyAnalysisModal( { site, onClose }: Props ) {
 		return null;
 	}
 
-	const handleSelectType = ( type: AnalysisType ) => {
+	const handleSelectType = async ( type: AnalysisType ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_amplify_analysis_start', {
 				analysis_type: type,
@@ -210,18 +234,44 @@ export default function AmplifyAnalysisModal( { site, onClose }: Props ) {
 			} )
 		);
 		setSelectedType( type );
-		setStage( 'progress' );
+		setIsSubmitting( true );
+
+		try {
+			await startAmplifyAnalysis( site, type );
+			setStage( 'progress' );
+		} catch ( err ) {
+			setStage( 'error' );
+		} finally {
+			setIsSubmitting( false );
+		}
 	};
 
+	let modalTitle: string;
+	if ( stage === 'progress' ) {
+		modalTitle = __( 'Analysis in progress' );
+	} else if ( stage === 'error' ) {
+		modalTitle = __( 'Something went wrong' );
+	} else {
+		modalTitle = __( 'Choose your analysis' );
+	}
+
 	return (
-		<Modal
-			title={ stage === 'choose' ? __( 'Choose your analysis' ) : __( 'Analysis in progress' ) }
-			onRequestClose={ onClose }
-			className="amplify-analysis-modal"
-		>
-			{ stage === 'choose' && <ChooseAnalysis site={ site } onSelect={ handleSelectType } /> }
+		<Modal title={ modalTitle } onRequestClose={ onClose } className="amplify-analysis-modal">
+			{ stage === 'choose' && (
+				<ChooseAnalysis site={ site } onSelect={ handleSelectType } isSubmitting={ isSubmitting } />
+			) }
 			{ stage === 'progress' && selectedType && (
 				<ProgressAnalysis site={ site } type={ selectedType } onDismiss={ onClose } />
+			) }
+			{ stage === 'error' && (
+				<div className="amplify-analysis-error">
+					<p className="amplify-analysis-progress-body">
+						{ __( 'We were unable to start your analysis. Please try again in a moment.' ) }
+					</p>
+					<Button __next40pxDefaultSize variant="primary" onClick={ () => setStage( 'choose' ) }>
+						{ __( 'Try again' ) }
+					</Button>
+				</div>
 			) }
 		</Modal>
 	);

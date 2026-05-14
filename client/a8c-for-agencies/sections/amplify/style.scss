@@ -71,6 +71,19 @@
 /* Reports tab — DataViews table */
 .amplify-reports {
 	padding-block-start: 16px;
+	max-inline-size: 100%;
+	overflow-x: hidden;
+}
+
+/* Align the DataViews toolbar (settings cog row) with the layout header and
+ * table content. DataViews defaults to 24px horizontal padding; match the 64px
+ * used by both the page title and the first/last table columns. */
+.amplify-reports .dataviews__view-actions {
+	padding-inline: 16px;
+
+	@media ( min-width: 661px ) {
+		padding-inline: 64px;
+	}
 }
 
 .amplify-reports .dataviews-view-table {
@@ -78,34 +91,47 @@
 	inline-size: 100%;
 }
 
-.amplify-reports .dataviews-view-table th:nth-child(1),
-.amplify-reports .dataviews-view-table td:nth-child(1) {
-	inline-size: 50%;
+/* Align the first-column header with cell content.
+ * full-width-layout-with-table sets padding-inline-start: 64px on both th and td.
+ * DataViews' sort button adds its own padding-inline-start: 8px, so the header text
+ * lands 8px further right than the cell content. Zero it out here. */
+.amplify-reports .dataviews-view-table thead th:nth-child(1) .dataviews-view-table-header-button {
+	padding-inline-start: 0;
 }
 
+/* No checkbox column when actions=[] — user columns start at nth-child(1) */
+
+/* Site */
+.amplify-reports .dataviews-view-table th:nth-child(1),
+.amplify-reports .dataviews-view-table td:nth-child(1) {
+	inline-size: 35%;
+}
+
+/* Analysis type */
 .amplify-reports .dataviews-view-table th:nth-child(2),
 .amplify-reports .dataviews-view-table td:nth-child(2) {
 	inline-size: 15%;
 }
 
+/* Scores */
 .amplify-reports .dataviews-view-table th:nth-child(3),
 .amplify-reports .dataviews-view-table td:nth-child(3) {
-	inline-size: 20%;
+	inline-size: 18%;
 }
 
+/* Time & date */
 .amplify-reports .dataviews-view-table th:nth-child(4),
 .amplify-reports .dataviews-view-table td:nth-child(4) {
-	inline-size: 15%;
+	inline-size: 18%;
 }
 
-.amplify-reports-site {
-	display: block;
-	font-weight: 500;
-	color: var(--color-text-black);
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+/* Download */
+.amplify-reports .dataviews-view-table th:nth-child(5),
+.amplify-reports .dataviews-view-table td:nth-child(5) {
+	inline-size: 14%;
 }
+
+/* .amplify-reports-site styles moved below with site-name/site-url children */
 
 .amplify-reports-timestamp {
 	color: var(--color-text-subtle);
@@ -133,9 +159,88 @@
 	color: rgb(124, 58, 237);
 }
 
-.amplify-reports-badge.is-full {
+.amplify-reports-badge.is-full,
+.amplify-reports-badge.is-fullanalysis {
 	background: var(--color-success-5);
 	color: var(--color-success);
+}
+
+.amplify-reports-site {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	overflow: hidden;
+}
+
+.amplify-reports-site-name {
+	font-weight: 500;
+	color: var(--color-text-black);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.amplify-reports-site-url {
+	font-size: 12px;
+	color: var(--color-text-subtle);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.amplify-reports-scores {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.amplify-reports-score {
+	display: inline-flex;
+	align-items: center;
+	padding-block: 2px;
+	padding-inline: 8px;
+	font-size: 12px;
+	font-weight: 600;
+	border-radius: 16px;
+	white-space: nowrap;
+}
+
+.amplify-reports-score.is-strong {
+	background: var(--color-success-5);
+	color: var(--color-success);
+}
+
+.amplify-reports-score.is-needs-work {
+	background: rgba(234, 179, 8, 0.1);
+	color: rgb(161, 120, 0);
+}
+
+.amplify-reports-score.is-at-risk {
+	background: var(--color-error-5);
+	color: var(--color-error);
+}
+
+.amplify-reports-loading {
+	padding-block: 48px;
+	text-align: center;
+	color: var(--color-text-subtle);
+	font-size: 14px;
+}
+
+.amplify-reports-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-block: 64px;
+	gap: 24px;
+}
+
+.amplify-reports-empty-heading {
+	font-size: 16px;
+	font-weight: 500;
+	color: var(--color-text-black);
+	margin: 0;
+	text-align: center;
 }
 
 /* Analysis flow modal */
@@ -232,6 +337,15 @@
 	font-size: 13px;
 	color: var(--color-text-subtle);
 	line-height: 1.45;
+}
+
+/* Error stage */
+.amplify-analysis-error {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
+	padding-block-end: 8px;
 }
 
 /* Progress stage */
