@@ -1,8 +1,7 @@
 import ContentResearchSidebar from '@automattic/content-research';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Button, KeyboardShortcuts } from '@wordpress/components';
-import { createHigherOrderComponent } from '@wordpress/compose';
-import { dispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { PluginMoreMenuItem } from '@wordpress/editor';
 import {
 	createPortal,
@@ -12,16 +11,14 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
-import { addAction, addFilter } from '@wordpress/hooks';
-import { __, sprintf } from '@wordpress/i18n';
-import { chevronDown, chevronUp, closeSmall, Icon, search } from '@wordpress/icons';
-import { displayShortcut, rawShortcut } from '@wordpress/keycodes';
+import { __ } from '@wordpress/i18n';
+import { chevronDown, chevronUp, closeSmall, Icon, search, tip } from '@wordpress/icons';
+import { rawShortcut } from '@wordpress/keycodes';
 import { registerPlugin } from '@wordpress/plugins';
 import './content-research.scss';
 
 const queryClient = new QueryClient();
 
-const CONTENT_RESEARCH_PLUGIN_NAME = 'content-research';
 const OPEN_CONTENT_RESEARCH_WINDOW_EVENT = 'content-research:open-window';
 const INTERFACE_CONTENT_SELECTOR = '.interface-interface-skeleton__content';
 const WINDOW_MARGIN = 16;
@@ -29,58 +26,6 @@ const INTERFACE_CONTENT_INSET = 10;
 const DEFAULT_WINDOW_WIDTH = 380;
 const DEFAULT_WINDOW_HEIGHT = 600;
 const CONTENT_RESEARCH_SHORTCUT = rawShortcut.primaryAlt( 'g' );
-const CONTENT_RESEARCH_SHORTCUT_LABEL = displayShortcut.primaryAlt( 'g' );
-let contentResearchPlaceholderTypingTimer;
-
-function getContentResearchPlaceholderBase() {
-	return __( 'Type / to choose a block', 'content-research' );
-}
-
-function getContentResearchPlaceholderShortcutText() {
-	return sprintf(
-		/* translators: %s: keyboard shortcut for opening Content Research. */
-		__( '. Feeling lost? Press %s to try content research 🔍', 'content-research' ),
-		CONTENT_RESEARCH_SHORTCUT_LABEL
-	);
-}
-
-function updateContentResearchPlaceholder( placeholder = getContentResearchPlaceholderBase() ) {
-	dispatch( 'core/block-editor' )?.updateSettings( {
-		bodyPlaceholder: placeholder,
-	} );
-}
-
-function typeContentResearchPlaceholder() {
-	window.clearInterval( contentResearchPlaceholderTypingTimer );
-
-	const placeholderBase = getContentResearchPlaceholderBase();
-	const shortcutText = getContentResearchPlaceholderShortcutText();
-	let characterIndex = 0;
-
-	updateContentResearchPlaceholder( placeholderBase );
-	contentResearchPlaceholderTypingTimer = window.setInterval( () => {
-		characterIndex += 1;
-		updateContentResearchPlaceholder(
-			`${ placeholderBase }${ shortcutText.slice( 0, characterIndex ) }`
-		);
-
-		if ( characterIndex >= shortcutText.length ) {
-			window.clearInterval( contentResearchPlaceholderTypingTimer );
-		}
-	}, 45 );
-}
-
-addAction(
-	'plugins.pluginRegistered',
-	'content-research/update-body-placeholder',
-	( _settings, name ) => {
-		if ( name === CONTENT_RESEARCH_PLUGIN_NAME ) {
-			setTimeout( () => {
-				typeContentResearchPlaceholder();
-			}, 5000 );
-		}
-	}
-);
 
 function handleContentResearchShortcut( event ) {
 	event.preventDefault();
@@ -158,6 +103,75 @@ function dispatchOpenWindowEvent() {
 	}
 
 	window.dispatchEvent( new window.CustomEvent( OPEN_CONTENT_RESEARCH_WINDOW_EVENT ) );
+}
+
+function isBlockEmpty( block ) {
+	if ( ! block ) {
+		return true;
+	}
+
+	const textContent = Object.values( block.attributes ?? {} )
+		.map( ( value ) => {
+			if ( typeof value === 'string' ) {
+				return value;
+			}
+
+			if ( value && typeof value === 'object' && typeof value.text === 'string' ) {
+				return value.text;
+			}
+
+			return '';
+		} )
+		.join( '' )
+		.replace( /<[^>]*>/g, '' )
+		.trim();
+
+	return textContent === '' && ( block.innerBlocks ?? [] ).every( isBlockEmpty );
+}
+
+function ContentResearchInspirationPrompt() {
+	const hasBlocks = useSelect( ( select ) => {
+		const blocks = select( 'core/block-editor' ).getBlocks();
+
+		return blocks.some( ( block ) => ! isBlockEmpty( block ) );
+	}, [] );
+	const [ isReady, setIsReady ] = useState( false );
+
+	useEffect( () => {
+		if ( hasBlocks ) {
+			setIsReady( false );
+			return undefined;
+		}
+
+		const timeout = window.setTimeout( () => {
+			setIsReady( true );
+		}, 5000 );
+
+		return () => {
+			window.clearTimeout( timeout );
+		};
+	}, [ hasBlocks ] );
+
+	if ( hasBlocks || ! isReady || typeof document === 'undefined' || ! document.body ) {
+		return null;
+	}
+
+	return createPortal(
+		<button
+			className="content-research-inspiration-float"
+			onClick={ dispatchOpenWindowEvent }
+			type="button"
+			aria-label={ __( 'Need inspiration?', 'content-research' ) }
+		>
+			<span className="content-research-inspiration-float__icon">
+				<Icon icon={ tip } size={ 28 } />
+			</span>
+			<span className="content-research-inspiration-float__text">
+				{ __( 'Need inspiration?', 'content-research' ) }
+			</span>
+		</button>,
+		document.body
+	);
 }
 
 function ContentResearchPlugin() {
@@ -342,6 +356,7 @@ function ContentResearchPlugin() {
 			<PluginMoreMenuItem icon={ search } onClick={ openWindow }>
 				{ __( 'Content Research', 'content-research' ) }
 			</PluginMoreMenuItem>
+			<ContentResearchInspirationPrompt />
 			{ isOpen &&
 				typeof document !== 'undefined' &&
 				document.body &&
@@ -350,96 +365,6 @@ function ContentResearchPlugin() {
 	);
 }
 
-/**
- * "Need inspiration?" prompt on empty posts.
- *
- * Shows a subtle link below the default empty paragraph block
- * when the post has no title and no content, guiding users
- * to open the Content Research window.
- */
-function isContentEmpty( content ) {
-	if ( ! content ) {
-		return true;
-	}
-	if ( typeof content === 'string' ) {
-		return content === '';
-	}
-	// RichText value object — check the text property or length.
-	if ( typeof content === 'object' && typeof content.text === 'string' ) {
-		return content.text === '';
-	}
-	if ( typeof content === 'object' && typeof content.length === 'number' ) {
-		return content.length === 0;
-	}
-	return false;
-}
-
-function ParagraphWithInspirationPrompt( { BlockEdit, ...props } ) {
-	const { isFirstBlock, isEmptyPost } = useSelect(
-		( select ) => {
-			const editor = select( 'core/editor' );
-			const blockEditor = select( 'core/block-editor' );
-			const blocks = blockEditor.getBlocks();
-			const title = editor.getEditedPostAttribute( 'title' ) || '';
-			const isFirst = blocks.length <= 1 && blocks[ 0 ]?.clientId === props.clientId;
-			const isEmpty =
-				title.trim() === '' && blocks.length <= 1 && isContentEmpty( props.attributes.content );
-
-			return {
-				isFirstBlock: isFirst,
-				isEmptyPost: isEmpty,
-			};
-		},
-		[ props.clientId, props.attributes.content ]
-	);
-
-	if ( ! isFirstBlock || ! isEmptyPost ) {
-		return <BlockEdit { ...props } />;
-	}
-
-	return (
-		<div style={ { position: 'relative' } }>
-			<BlockEdit { ...props } />
-			<button
-				className="content-research-inspiration-prompt"
-				onClick={ ( e ) => {
-					e.stopPropagation();
-					dispatchOpenWindowEvent();
-				} }
-				style={ {
-					position: 'absolute',
-					top: 0,
-					left: '190px',
-					padding: 0,
-					border: 'none',
-					background: 'none',
-					fontSize: 'inherit',
-					fontFamily: 'inherit',
-					color: '#949494',
-					cursor: 'pointer',
-					whiteSpace: 'nowrap',
-					lineHeight: 'inherit',
-				} }
-				onMouseEnter={ ( e ) => ( e.target.style.color = '#3858e9' ) }
-				onMouseLeave={ ( e ) => ( e.target.style.color = '#949494' ) }
-			>
-				{ __( '— Need inspiration?', 'content-research' ) }
-			</button>
-		</div>
-	);
-}
-
-const withInspirationPrompt = createHigherOrderComponent( ( BlockEdit ) => {
-	return function InspirationPromptBlockEdit( props ) {
-		if ( props.name !== 'core/paragraph' ) {
-			return <BlockEdit { ...props } />;
-		}
-		return <ParagraphWithInspirationPrompt BlockEdit={ BlockEdit } { ...props } />;
-	};
-}, 'withInspirationPrompt' );
-
-addFilter( 'editor.BlockEdit', 'content-research/inspiration-prompt', withInspirationPrompt );
-
-registerPlugin( CONTENT_RESEARCH_PLUGIN_NAME, {
+registerPlugin( 'content-research', {
 	render: () => <ContentResearchPlugin />,
 } );
