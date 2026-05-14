@@ -1040,7 +1040,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/date-range-picker@workspace:packages/date-range-picker"
   dependencies:
-    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/ui": "workspace:^"
     "@testing-library/dom": "npm:^10.4.1"
@@ -1057,11 +1056,8 @@ __metadata:
     date-fns: "npm:^4.1.0"
     jest: "npm:^29.7.0"
     mockdate: "npm:^2.0.5"
-    postcss: "npm:^8.5.3"
-    sass-embedded: "npm:^1.89.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
-    webpack: "npm:^5.99.8"
   peerDependencies:
     react: ^18.3.1
     react-dom: ^18.3.1

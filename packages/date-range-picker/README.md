@@ -11,13 +11,18 @@ site-day handling.
 npm install @automattic/date-range-picker
 ```
 
-Consumers must also load the calendar styles from `@automattic/ui` and the
-picker's own stylesheet:
+Consumers must also load the calendar styles from `@automattic/ui` and import
+the picker's own stylesheet. The package ships SCSS source; compile it via
+your own build pipeline (sass-loader, etc.):
 
 ```ts
 import '@automattic/ui/style.css';
-import '@automattic/date-range-picker/style.css';
+import '@automattic/date-range-picker/src/style.scss';
 ```
+
+The SCSS expects `$grid-unit-*`, `$radius-small`, and `$gray-600` from
+`@wordpress/base-styles` to be in scope (either via a global `@import` or via
+sass-loader's `additionalData`).
 
 ## Usage
 

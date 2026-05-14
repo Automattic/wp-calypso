@@ -15,9 +15,8 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
-		"./style.css": "./dist/style.css",
-		"./style.scss": {
-			"calypso:src": "./src/style.scss"
+		"./src/*": {
+			"calypso:src": "./src/*"
 		}
 	},
 	"sideEffects": [
@@ -40,11 +39,8 @@
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build:ts": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"build:css": "sass --load-path=../../node_modules --no-source-map src/style.scss dist/style.css",
-		"build": "yarn run build:ts && yarn run build:css",
-		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
 		"@automattic/ui": "workspace:^",
@@ -62,7 +58,6 @@
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
@@ -71,9 +66,6 @@
 		"@types/react": "^18.3.18",
 		"jest": "^29.7.0",
 		"mockdate": "^2.0.5",
-		"postcss": "^8.5.3",
-		"sass-embedded": "^1.89.0",
-		"typescript": "^5.8.3",
-		"webpack": "^5.99.8"
+		"typescript": "^5.8.3"
 	}
 }
