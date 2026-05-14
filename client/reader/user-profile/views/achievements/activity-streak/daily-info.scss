@@ -1,0 +1,43 @@
+.activity-streak__daily-info {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.activity-streak__day {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: 32px;
+	cursor: default;
+}
+
+.activity-streak__day-weekday {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	line-height: 1.2;
+}
+
+.activity-streak__day-icon {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var( --activity-streak-day-color );
+}
+
+.activity-streak__day-icon.is-missed {
+	--activity-streak-day-color: var( --studio-gray-10 );
+}
+
+.activity-streak__day-icon.is-extended {
+	--activity-streak-day-color: var( --studio-yellow-30 );
+}
+
+.activity-streak__day-icon.is-freeze-used {
+	--activity-streak-day-color: var( --studio-blue-30 );
+}
+
+.activity-streak__day-icon.is-freeze-earned {
+	--activity-streak-day-color: var( --studio-green-30 );
+}

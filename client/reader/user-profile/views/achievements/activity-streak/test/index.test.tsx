@@ -250,6 +250,109 @@ describe( 'ActivityStreak', () => {
 		} );
 	} );
 
+	describe( 'daily info', () => {
+		const sevenDays = [
+			{ date: '2026-05-07', status: 'missed' as const, freeze_earned: false },
+			{ date: '2026-05-08', status: 'freeze_used' as const, freeze_earned: false },
+			{ date: '2026-05-09', status: 'extended' as const, freeze_earned: false },
+			{ date: '2026-05-10', status: 'extended' as const, freeze_earned: false },
+			{ date: '2026-05-11', status: 'extended' as const, freeze_earned: false },
+			{ date: '2026-05-12', status: 'extended' as const, freeze_earned: false },
+			{ date: '2026-05-13', status: 'extended' as const, freeze_earned: true },
+		];
+
+		function getDays( container: HTMLElement ): HTMLElement[] {
+			return Array.from( container.querySelectorAll( '.activity-streak__day' ) );
+		}
+
+		function getIconStateClass( dayEl: HTMLElement ): string | undefined {
+			const icon = dayEl.querySelector( '.activity-streak__day-icon' );
+			return Array.from( icon?.classList ?? [] ).find( ( cls ) => cls.startsWith( 'is-' ) );
+		}
+
+		test( 'renders 7 day cells when days has 7 entries', () => {
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, days: sevenDays } } isOwnProfile />
+			);
+			expect( getDays( container ) ).toHaveLength( 7 );
+		} );
+
+		test( 'renders only the last 7 cells when days has more than 7 entries', () => {
+			const tenDays = [
+				{ date: '2026-05-04', status: 'missed' as const, freeze_earned: false },
+				{ date: '2026-05-05', status: 'missed' as const, freeze_earned: false },
+				{ date: '2026-05-06', status: 'missed' as const, freeze_earned: false },
+				...sevenDays,
+			];
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, days: tenDays } } isOwnProfile />
+			);
+			const cells = getDays( container );
+			expect( cells ).toHaveLength( 7 );
+			expect( cells[ 0 ] ).toHaveAttribute( 'title', 'May 7, 2026' );
+			expect( cells[ 6 ] ).toHaveAttribute( 'title', 'May 13, 2026' );
+		} );
+
+		test( 'renders fewer cells when days is shorter than 7', () => {
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, days: sevenDays.slice( -3 ) } } isOwnProfile />
+			);
+			expect( getDays( container ) ).toHaveLength( 3 );
+		} );
+
+		test( 'renders no daily info row when days is undefined', () => {
+			const { container } = render( <ActivityStreak streak={ baseStreak } isOwnProfile /> );
+			expect( container.querySelector( '.activity-streak__daily-info' ) ).toBeNull();
+		} );
+
+		test( 'renders no daily info row when days is empty', () => {
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, days: [] } } isOwnProfile />
+			);
+			expect( container.querySelector( '.activity-streak__daily-info' ) ).toBeNull();
+		} );
+
+		test( 'maps each status to the expected state class', () => {
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, days: sevenDays } } isOwnProfile />
+			);
+			const cells = getDays( container );
+			expect( getIconStateClass( cells[ 0 ] ) ).toBe( 'is-missed' );
+			expect( getIconStateClass( cells[ 1 ] ) ).toBe( 'is-freeze-used' );
+			expect( getIconStateClass( cells[ 2 ] ) ).toBe( 'is-extended' );
+			expect( getIconStateClass( cells[ 6 ] ) ).toBe( 'is-freeze-earned' );
+		} );
+
+		test( 'shows the full localized date in the title attribute', () => {
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, days: sevenDays } } isOwnProfile />
+			);
+			const lastCell = getDays( container ).at( -1 );
+			expect( lastCell ).toHaveAttribute( 'title', 'May 13, 2026' );
+		} );
+
+		test( 'exposes a descriptive aria-label per cell', () => {
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, days: sevenDays } } isOwnProfile />
+			);
+			const lastCell = getDays( container ).at( -1 );
+			expect( lastCell ).toHaveAttribute(
+				'aria-label',
+				'Wed, May 13, 2026: active, streak freeze earned'
+			);
+		} );
+
+		test( 'renders the abbreviated weekday', () => {
+			const { container } = render(
+				<ActivityStreak streak={ { ...baseStreak, days: sevenDays } } isOwnProfile />
+			);
+			const lastCell = getDays( container ).at( -1 );
+			expect( lastCell?.querySelector( '.activity-streak__day-weekday' )?.textContent ).toBe(
+				'Wed'
+			);
+		} );
+	} );
+
 	describe( 'variation', () => {
 		test( 'shows "N streak freezes available" when freezes are banked', () => {
 			const { container } = render(

@@ -5,6 +5,7 @@ import {
 	StreakBadge,
 	type StreakBadgeState,
 } from 'calypso/reader/components/achievements/streak-badge';
+import { DailyInfo } from './daily-info';
 import type { EngagementStreak } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
@@ -221,6 +222,7 @@ export function ActivityStreak( { streak, isOwnProfile }: ActivityStreakProps ) 
 					{ recordDescription && <p>{ recordDescription }</p> }
 					{ freezeDescription && <p>{ freezeDescription }</p> }
 				</div>
+				{ streak.days && streak.days.length > 0 && <DailyInfo days={ streak.days } /> }
 			</div>
 		</div>
 	);
