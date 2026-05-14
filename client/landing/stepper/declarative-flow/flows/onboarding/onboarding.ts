@@ -219,6 +219,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
 					const siteId = providedDependencies?.siteId as number | string | undefined;
+					const prompt = providedDependencies?.prompt as string | undefined;
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
@@ -228,6 +229,7 @@ const onboarding: FlowV2< typeof initialize > = {
 									siteId,
 									fromPostCheckoutSetupSite: '1',
 									...( refParameter ? { ref: refParameter } : {} ),
+									...( prompt ? { prompt } : {} ),
 								} )
 							);
 							return;
