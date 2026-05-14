@@ -13,3 +13,21 @@ div.components-modal__screen-overlay.upcoming-renewals-dialog {
 		margin-inline-start: 0;
 	}
 }
+
+.purchase-settings__feature-list {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.purchase-settings__feature-icon {
+	fill: var(--dashboard__foreground-color-success);
+	flex-shrink: 0;
+	align-self: flex-start;
+}
+
+.purchase-settings__divider {
+	border: none;
+	border-block-start: 1px solid $gray-100;
+	margin: 0;
+}
