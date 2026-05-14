@@ -1097,6 +1097,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/date-range-picker@workspace:packages/date-range-picker"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/ui": "workspace:^"
     "@testing-library/dom": "npm:^10.4.1"
