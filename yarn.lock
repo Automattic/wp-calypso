@@ -1097,7 +1097,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/date-range-picker@workspace:packages/date-range-picker"
   dependencies:
-    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/ui": "workspace:^"
     "@testing-library/dom": "npm:^10.4.1"
@@ -1115,12 +1114,32 @@ __metadata:
     jest: "npm:^29.7.0"
     mockdate: "npm:^2.0.5"
     postcss: "npm:^8.5.3"
-    tslib: "npm:^2.8.1"
+    sass: "npm:1.77.8"
     typescript: "npm:^5.8.3"
     webpack: "npm:^5.99.8"
   peerDependencies:
+    "@wordpress/components": ">=32.1.0"
+    "@wordpress/compose": ">=7.23.0"
+    "@wordpress/date": ">=5.23.0"
+    "@wordpress/i18n": ">=5.23.0"
+    "@wordpress/icons": ">=10.23.0"
     react: ^18.3.1
     react-dom: ^18.3.1
+  peerDependenciesMeta:
+    "@wordpress/components":
+      optional: false
+    "@wordpress/compose":
+      optional: false
+    "@wordpress/date":
+      optional: false
+    "@wordpress/i18n":
+      optional: false
+    "@wordpress/icons":
+      optional: false
+    react:
+      optional: false
+    react-dom:
+      optional: false
   languageName: unknown
   linkType: soft
 

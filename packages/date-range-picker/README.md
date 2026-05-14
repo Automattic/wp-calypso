@@ -11,19 +11,6 @@ site-day handling.
 npm install @automattic/date-range-picker
 ```
 
-Consumers must also load the calendar styles from `@automattic/ui` and import
-the picker's own stylesheet. The package ships SCSS source; compile it via
-your own build pipeline (sass-loader, etc.):
-
-```ts
-import '@automattic/ui/style.css';
-import '@automattic/date-range-picker/src/style.scss';
-```
-
-The SCSS expects `$grid-unit-*`, `$radius-small`, and `$gray-600` from
-`@wordpress/base-styles` to be in scope (either via a global `@import` or via
-sass-loader's `additionalData`).
-
 ## Usage
 
 ```tsx
@@ -43,6 +30,11 @@ function Example() {
 	);
 }
 ```
+
+The picker's stylesheet is side-effect imported from the component module, so a
+plain `import { DateRangePicker }` is enough — there's no separate CSS import to
+remember. The package ships pre-compiled CSS in `dist/`, so consumers don't
+need a Sass loader.
 
 ### Props
 
@@ -72,6 +64,51 @@ import {
 	type PresetId,
 } from '@automattic/date-range-picker';
 ```
+
+## Using outside Calypso
+
+The package is published to npm and works for any React app — Jetpack, custom
+WordPress plugins, etc. A few things to know:
+
+### Required peer dependencies
+
+The host application must install these alongside the picker:
+
+- `react` and `react-dom` (`^18.3.1`)
+- `@wordpress/components` (`>=32.1.0`)
+- `@wordpress/compose` (`>=7.23.0`)
+- `@wordpress/date` (`>=5.23.0`)
+- `@wordpress/i18n` (`>=5.23.0`)
+- `@wordpress/icons` (`>=10.23.0`)
+
+These are peer dependencies (not bundled) so that the host can control the
+exact version and avoid duplicate copies of WordPress packages — multiple
+copies of `@wordpress/compose` will silently break hooks shared across the
+picker and the host.
+
+### Calendar styles
+
+The picker renders `@automattic/ui`'s `DateRangeCalendar`. Make sure the
+host loads its stylesheet once:
+
+```ts
+import '@automattic/ui/style.css';
+```
+
+### Skinning via CSS custom properties
+
+The picker honours these CSS custom properties on a wrapping element, with
+sensible defaults when they're not set:
+
+| Custom property                         | Default       | Purpose                                |
+| --------------------------------------- | ------------- | -------------------------------------- |
+| `--dashboard-surface__background-color` | `#fff`        | Trigger button background.             |
+| `--dashboard__text-color`               | `#1e1e1e`     | Trigger button text and icon colour.   |
+| `--dashboard-field__border-color`       | `#949494`     | Trigger button border colour.          |
+
+Set them on `:root` (or any ancestor of the picker) to theme it. The Calypso
+dashboard shell sets these globally; outside Calypso, set whichever you'd like
+to override.
 
 ## Translations
 
