@@ -14,7 +14,7 @@ export function appendReturnSignals( externalUrl: string, siteSlug: string ): st
 	} );
 }
 
-interface BuildChainedCheckoutUrlArgs {
+interface BuildTransferringUrlArgs {
 	siteSlug: string;
 	/**
 	 * Numeric site ID. Optional because the resume path doesn't store it.
@@ -22,18 +22,52 @@ interface BuildChainedCheckoutUrlArgs {
 	 * WAIT_FOR_ATOMIC's useSiteData() hook can pick it up and start polling.
 	 */
 	siteId?: number;
-	/** Plan slug to embed in the checkout path so checkout auto-adds it to the cart. */
-	plan: string;
 	/** Sanitized external URL (already includes return signals), or null to fall back to /home/<slug>. */
 	externalRedirect: string | null;
+}
+
+/**
+ * Builds the post-checkout destination: the `/setup/transferring-hosted-site`
+ * URL that initiates and waits for the atomic transfer, or `/home/<slug>` when
+ * there's no valid external redirect.
+ *
+ * `initiate_transfer_context: 'hosting'` is required: buying a Business /
+ * Commerce plan only grants the `atomic` capability — it does not start the
+ * transfer. WAIT_FOR_ATOMIC only calls `initiateThemeTransfer()` when this
+ * param is present; without it, nothing creates a transfer record and the
+ * step polls `/atomic/transfers/latest` forever (404 `no_transfer_record`).
+ * This mirrors the dashboard "Activate hosting features" flow.
+ *
+ * This is the single source of truth for the transferring URL — both the
+ * checkout `redirect_to` and the persisted signup destination use it, so they
+ * can't drift apart.
+ */
+export function buildTransferringUrl( args: BuildTransferringUrlArgs ): string {
+	const { siteSlug, siteId, externalRedirect } = args;
+
+	if ( ! externalRedirect ) {
+		return `/home/${ siteSlug }`;
+	}
+
+	return addQueryArgs( TRANSFERRING_FLOW_PATH, {
+		redirect_to: externalRedirect,
+		siteSlug,
+		siteId: siteId !== undefined ? String( siteId ) : undefined,
+		initiate_transfer_context: 'hosting',
+		initiate_transfer_geo_affinity: '',
+	} );
+}
+
+interface BuildChainedCheckoutUrlArgs extends BuildTransferringUrlArgs {
+	/** Plan slug to embed in the checkout path so checkout auto-adds it to the cart. */
+	plan: string;
 	coupon: string | null;
 }
 
 /**
  * Builds the URL we navigate to from PROCESSING. The user lands on /checkout,
  * which on success navigates to redirect_to. We chain through
- * /setup/transferring-hosted-site (which waits for atomic transfer) and then
- * to the external redirect.
+ * /setup/transferring-hosted-site and then to the external redirect.
  *
  * Encoding: addQueryArgs handles one level of URL-encoding. The external URL
  * is passed in already-formed (no manual encoding here); addQueryArgs encodes
@@ -43,13 +77,7 @@ interface BuildChainedCheckoutUrlArgs {
 export function buildChainedCheckoutUrl( args: BuildChainedCheckoutUrlArgs ): string {
 	const { siteSlug, siteId, plan, externalRedirect, coupon } = args;
 
-	const transferringOrHome = externalRedirect
-		? addQueryArgs( TRANSFERRING_FLOW_PATH, {
-				redirect_to: externalRedirect,
-				siteSlug,
-				siteId: siteId !== undefined ? String( siteId ) : undefined,
-		  } )
-		: `/home/${ siteSlug }`;
+	const transferringOrHome = buildTransferringUrl( { siteSlug, siteId, externalRedirect } );
 
 	// Path: /checkout/<plan>/<site>. The plan-first form makes checkout
 	// auto-populate the cart if it's empty — this matters for the

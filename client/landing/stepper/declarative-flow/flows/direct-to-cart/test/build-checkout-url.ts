@@ -1,4 +1,8 @@
-import { buildChainedCheckoutUrl, appendReturnSignals } from '../build-checkout-url';
+import {
+	buildChainedCheckoutUrl,
+	buildTransferringUrl,
+	appendReturnSignals,
+} from '../build-checkout-url';
 
 describe( 'appendReturnSignals', () => {
 	it( 'appends wpcom_purchase=1 and wpcom_site to a URL with no existing params', () => {
@@ -53,6 +57,9 @@ describe( 'buildChainedCheckoutUrl', () => {
 		// useSiteData() hook can read them and start polling.
 		expect( parsedInner.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
 		expect( parsedInner.searchParams.get( 'siteId' ) ).toBe( '12345' );
+		// initiate_transfer_context is what makes WAIT_FOR_ATOMIC actually
+		// initiate the transfer — without it the step polls forever.
+		expect( parsedInner.searchParams.get( 'initiate_transfer_context' ) ).toBe( 'hosting' );
 		expect( parsedInner.searchParams.get( 'redirect_to' ) ).toBe(
 			'https://allowed.example/return?wpcom_purchase=1&wpcom_site=example.wordpress.com'
 		);
@@ -115,5 +122,42 @@ describe( 'buildChainedCheckoutUrl', () => {
 			coupon: null,
 		} );
 		expect( url ).toContain( '/checkout/business%20bundle/example.wordpress.com' );
+	} );
+} );
+
+describe( 'buildTransferringUrl', () => {
+	it( 'builds a transferring URL that initiates the atomic transfer', () => {
+		const url = buildTransferringUrl( {
+			siteSlug: 'example.wordpress.com',
+			siteId: 12345,
+			externalRedirect: 'https://allowed.example/return?wpcom_purchase=1',
+		} );
+		const parsed = new URL( url, 'https://wordpress.com' );
+		expect( parsed.pathname ).toBe( '/setup/transferring-hosted-site' );
+		expect( parsed.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+		expect( parsed.searchParams.get( 'siteId' ) ).toBe( '12345' );
+		expect( parsed.searchParams.get( 'initiate_transfer_context' ) ).toBe( 'hosting' );
+		expect( parsed.searchParams.has( 'initiate_transfer_geo_affinity' ) ).toBe( true );
+		expect( parsed.searchParams.get( 'redirect_to' ) ).toBe(
+			'https://allowed.example/return?wpcom_purchase=1'
+		);
+	} );
+
+	it( 'omits siteId when not provided', () => {
+		const url = buildTransferringUrl( {
+			siteSlug: 'example.wordpress.com',
+			externalRedirect: 'https://allowed.example/return',
+		} );
+		const parsed = new URL( url, 'https://wordpress.com' );
+		expect( parsed.searchParams.has( 'siteId' ) ).toBe( false );
+		expect( parsed.searchParams.get( 'initiate_transfer_context' ) ).toBe( 'hosting' );
+	} );
+
+	it( 'falls back to /home/<slug> when externalRedirect is null', () => {
+		const url = buildTransferringUrl( {
+			siteSlug: 'example.wordpress.com',
+			externalRedirect: null,
+		} );
+		expect( url ).toBe( '/home/example.wordpress.com' );
 	} );
 } );

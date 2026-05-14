@@ -2,7 +2,6 @@ import { DIRECT_TO_CART_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
@@ -17,7 +16,11 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import { appendReturnSignals, buildChainedCheckoutUrl } from './build-checkout-url';
+import {
+	appendReturnSignals,
+	buildChainedCheckoutUrl,
+	buildTransferringUrl,
+} from './build-checkout-url';
 import { resolveResumability, type SitePlanStatusResult } from './resolve-resumability';
 import { resumeKey, writeResumeRecord } from './resume-storage';
 import { sanitizeDirectToCartRedirect } from './sanitize-redirect';
@@ -207,13 +210,11 @@ const flow: FlowV2< typeof initialize > = {
 					} );
 
 					// Persist standard signup state so post-checkout machinery has
-					// what it expects.
-					const outerRedirect = externalRedirect
-						? addQueryArgs( '/setup/transferring-hosted-site', {
-								redirect_to: externalRedirect,
-						  } )
-						: `/home/${ siteSlug }`;
-					persistSignupDestination( outerRedirect );
+					// what it expects. Reuse buildTransferringUrl so the persisted
+					// destination can't drift from checkout's redirect_to.
+					persistSignupDestination(
+						buildTransferringUrl( { siteSlug, siteId, externalRedirect } )
+					);
 					setSignupCompleteFlowName( DIRECT_TO_CART_FLOW );
 					setSignupCompleteSlug( siteSlug );
 					if ( siteId ) {
