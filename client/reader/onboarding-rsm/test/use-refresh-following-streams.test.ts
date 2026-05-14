@@ -9,7 +9,7 @@ const mockGetCurrentQueryArguments = jest.fn();
 
 jest.mock( 'calypso/state/selectors/get-current-query-arguments', () => ( {
 	__esModule: true,
-	default: ( ...args: unknown[] ) => mockGetCurrentQueryArguments( ...args ),
+	default: ( state: unknown ) => mockGetCurrentQueryArguments( state ),
 } ) );
 
 // ── Follows ───────────────────────────────────────────────────────────────────
@@ -26,8 +26,8 @@ const mockClearStream = jest.fn( () => ( { type: 'READER_CLEAR_STREAM' } ) );
 const mockRequestPage = jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) );
 
 jest.mock( 'calypso/state/reader/streams/actions', () => ( {
-	clearStream: ( ...args: unknown[] ) => mockClearStream( ...args ),
-	requestPage: ( ...args: unknown[] ) => mockRequestPage( ...args ),
+	clearStream: ( payload: { streamKey: string } ) => mockClearStream( payload ),
+	requestPage: ( payload: { streamKey: string } ) => mockRequestPage( payload ),
 } ) );
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
