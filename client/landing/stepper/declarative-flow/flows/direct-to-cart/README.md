@@ -2,7 +2,14 @@
 
 `/setup/direct-to-cart` — a partner-facing entry that drops users into checkout with a pre-selected paid plan, an auto-generated free subdomain, and a guaranteed atomic site, then redirects back to the referring integration after atomic transfer completes.
 
-See `docs/integrations/direct-to-cart.md` for the partner-facing URL contract and `docs/proposals/2026-05-11-direct-to-cart-flow.md` for the design proposal.
+## URL parameters
+
+- `plan` (required) — an atomic-triggering plan slug (Business/Commerce billing variants, or a free-hosting-trial slug). Anything else routes to the shared error step.
+- `redirect_to` — https URL the user returns to after checkout + atomic transfer. Sanitized against the allowlist; `wpcom_purchase=1&wpcom_site=<slug>` is appended on the way back.
+- `integration` — short opaque partner id (`^[a-z0-9-]{1,32}$`).
+- `context_id` — per-context id (`^[a-z0-9-]{1,64}$`); the resumability key. Always pass a unique value per logical context.
+- `title` — site title hint (≤80 chars); also biases the auto-generated subdomain.
+- `coupon`, `ref` — passed through to checkout / recorded in Tracks.
 
 ## Files
 

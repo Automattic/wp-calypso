@@ -63,9 +63,11 @@ async function initialize() {
 		return [ STEPS.ERROR ];
 	}
 
-	// Param-validation Tracks.
-	for ( const name of params.invalidParams ) {
-		recordTracksEvent( 'calypso_direct_to_cart_invalid_param', { param_name: name } );
+	// Param-validation Tracks — one event listing every invalid param.
+	if ( params.invalidParams.length > 0 ) {
+		recordTracksEvent( 'calypso_direct_to_cart_invalid_params', {
+			param_names: params.invalidParams.join( ',' ),
+		} );
 	}
 
 	const sanitizedRedirect = sanitizeDirectToCartRedirect( params.redirectTo );
@@ -95,7 +97,8 @@ async function initialize() {
 		const externalRedirect = sanitizedRedirect
 			? appendReturnSignals( sanitizedRedirect, resume.siteSlug )
 			: `/home/${ resume.siteSlug }`;
-		window.location.assign( externalRedirect );
+		// replace(), not assign(): the back button shouldn't re-run the flow.
+		window.location.replace( externalRedirect );
 		return [];
 	}
 
@@ -113,7 +116,8 @@ async function initialize() {
 			externalRedirect,
 			coupon: params.coupon,
 		} );
-		window.location.assign( checkoutUrl );
+		// replace(), not assign(): the back button shouldn't re-run the flow.
+		window.location.replace( checkoutUrl );
 		return [];
 	}
 
@@ -164,20 +168,11 @@ const flow: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug );
 
 				case STEPS.PROCESSING.slug: {
-					const deps = providedDependencies as
-						| {
-								processingResult?: ProcessingResult;
-								siteSlug?: string;
-								siteId?: number;
-						  }
-						| undefined;
-
-					if ( deps?.processingResult !== ProcessingResult.SUCCESS ) {
+					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					const siteSlug = deps?.siteSlug;
-					const siteId = deps?.siteId;
+					const { siteSlug, siteId } = providedDependencies;
 
 					if ( ! siteSlug ) {
 						recordTracksEvent( 'calypso_direct_to_cart_missing_site_slug', {} );

@@ -67,10 +67,6 @@ export const isTransferringHostedSiteCreationFlow = ( flowName: string | null ) 
 	return Boolean( flowName && TRANSFERRING_HOSTED_SITE_FLOW === flowName );
 };
 
-export function isDirectToCartFlow( flowName: string | null | undefined ): boolean {
-	return Boolean( flowName && DIRECT_TO_CART_FLOW === flowName );
-}
-
 export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	return Boolean(
 		flowName &&
