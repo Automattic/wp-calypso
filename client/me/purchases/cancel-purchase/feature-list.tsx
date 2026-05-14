@@ -7,38 +7,10 @@ import {
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
 } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
-import { getOverrideCancellationFeatures } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-override-features';
-import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { CancellationFeature } from '@automattic/api-core';
 import type { Purchases } from '@automattic/data-stores';
-import type { PurchaseForCopy } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/get-confirmation-copy';
 import type { DisplayVariant } from 'calypso/lib/purchases/utils';
-
-type LossItem = { key: string; title: string };
-
-function getLossItems(
-	overrideFeatures: CancellationFeature[] | null,
-	cancellationFeatures: CancellationFeature[],
-	adapted: PurchaseForCopy
-): LossItem[] {
-	if ( overrideFeatures ) {
-		return overrideFeatures.map( ( feature ) => ( {
-			key: String( feature.feature_id ),
-			title: feature.title,
-		} ) );
-	}
-	if ( cancellationFeatures.length ) {
-		return cancellationFeatures.map( ( feature ) => ( {
-			key: feature.feature_id,
-			title: feature.title,
-		} ) );
-	}
-	return getFallbackLossItems( adapted ).map( ( title, idx ) => ( {
-		key: `fallback-${ idx }`,
-		title,
-	} ) );
-}
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
@@ -50,14 +22,16 @@ const CancelPurchaseFeatureList = ( {
 	cancellationFeatures: CancellationFeature[];
 } ) => {
 	const adapted = toPurchaseForCopy( purchase );
-
-	// When the split-cancel-remove flag is on, use client-side feature overrides
-	// instead of the server-provided list. Falls back to API features when the
-	// override returns null (no entries yet for this product category).
-	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
-	const overrideFeatures = isSplitEnabled ? getOverrideCancellationFeatures( adapted ) : null;
-
-	const items = getLossItems( overrideFeatures, cancellationFeatures, adapted );
+	// When the server returns no features, fall back to a per-product-type item.
+	const items: Array< { key: string; title: string } > = cancellationFeatures.length
+		? cancellationFeatures.map( ( feature ) => ( {
+				key: feature.feature_id,
+				title: feature.title,
+		  } ) )
+		: getFallbackLossItems( adapted ).map( ( title, idx ) => ( {
+				key: `fallback-${ idx }`,
+				title,
+		  } ) );
 
 	if ( ! items.length ) {
 		return null;

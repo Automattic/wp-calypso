@@ -15,41 +15,12 @@ import {
 	getSingleItemCancelCopy,
 	getSingleItemRemoveCopy,
 } from './get-confirmation-copy';
-import { getOverrideCancellationFeatures } from './get-override-features';
-import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import type { Purchase, CancellationFeature } from '@automattic/api-core';
 
 type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( params?: { domainName?: string } ) => string;
 };
-
-type LossItem = { key: string; title: string };
-
-function getLossItems(
-	overrideFeatures: CancellationFeature[] | null,
-	cancellationFeatures: CancellationFeature[],
-	purchase: Purchase
-): LossItem[] {
-	if ( overrideFeatures ) {
-		return overrideFeatures.map( ( feature ) => ( {
-			key: String( feature.feature_id ),
-			title: feature.title,
-		} ) );
-	}
-	if ( cancellationFeatures.length ) {
-		return cancellationFeatures
-			.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
-			.map( ( feature ) => ( {
-				key: String( feature.feature_id ),
-				title: feature.title,
-			} ) );
-	}
-	return getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
-		key: `fallback-${ idx }`,
-		title,
-	} ) );
-}
 
 const CancelPurchaseFeatureList = ( {
 	purchase,
@@ -62,13 +33,17 @@ const CancelPurchaseFeatureList = ( {
 	cancellationFeatures: CancellationFeature[];
 	cancellationChanges: FeatureObject[];
 } ) => {
-	// When the split-cancel-remove flag is on, use client-side feature overrides
-	// instead of the server-provided list. Falls back to API features when the
-	// override returns null (no entries yet for this product category).
-	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
-	const overrideFeatures = isSplitEnabled ? getOverrideCancellationFeatures( purchase ) : null;
-
-	const lossItems = getLossItems( overrideFeatures, cancellationFeatures, purchase );
+	// When the server returns no feature list, fall back to a per-product-type
+	// item so every confirmation screen shows at least one concrete thing the
+	// user is giving up.
+	const lossItems: Array< { key: string; title: string } > = cancellationFeatures.length
+		? cancellationFeatures
+				.filter( ( feature ): feature is CancellationFeature => Boolean( feature ) )
+				.map( ( feature ) => ( { key: String( feature.feature_id ), title: feature.title } ) )
+		: getFallbackLossItems( purchase ).map( ( title, idx ) => ( {
+				key: `fallback-${ idx }`,
+				title,
+		  } ) );
 
 	if ( ! lossItems.length && ! cancellationChanges.length ) {
 		return null;

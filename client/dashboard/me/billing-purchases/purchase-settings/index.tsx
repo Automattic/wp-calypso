@@ -7,6 +7,7 @@ import {
 } from '@automattic/api-core';
 import {
 	domainQuery,
+	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	userPurchaseSetAutoRenewQuery,
 	siteDifmWebsiteContentQuery,
@@ -96,7 +97,6 @@ import {
 } from '../../../utils/purchase';
 import { getSitePurchaseUpgradeUrl, getUpgradedPurchaseRedirectUrl } from '../../../utils/site-url';
 import BillingFlexUsageCard from '../../billing-flex-usage';
-import { getOverrideCancellationFeatures } from '../cancel-purchase/get-override-features';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
@@ -1337,7 +1337,11 @@ export default function PurchaseSettings() {
 
 	const isCentennial = isCentennialPurchase( purchase );
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
-	const features = isSplitEnabled ? getOverrideCancellationFeatures( purchase ) : null;
+	const { data: cancelFeaturesResponse } = useQuery( {
+		...purchaseCancelFeaturesQuery( purchase.ID, 'treatment' ),
+		enabled: isSplitEnabled,
+	} );
+	const features = isSplitEnabled ? cancelFeaturesResponse?.features ?? null : null;
 
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;

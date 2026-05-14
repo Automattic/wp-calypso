@@ -24,6 +24,5 @@ export function toPurchaseForCopy( purchase: Purchases.Purchase ): PurchaseForCo
 		expiry_status: isOneTimePurchase( purchase ) ? 'one-time-purchase' : purchase.expiryStatus,
 		meta: purchase.meta,
 		domain: purchase.domain ?? '',
-		site_slug: purchase.siteSlug ?? '',
 	};
 }
