@@ -1,17 +1,17 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useNavigate } from '@tanstack/react-router';
 import {
+	CheckboxControl,
 	__experimentalText as Text,
 	__experimentalConfirmDialog as ConfirmDialog,
-	__experimentalDivider as Divider,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
 } from '@wordpress/components';
-import { DataViews } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState, useEffect, useMemo } from 'react';
-import { purchaseSettingsRoute } from '../../../app/router/me';
-import { getRelativeTimeString } from '../../../utils/datetime';
+import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useLocale } from '../../../app/locale';
+import { CardDivider } from '../../../components/card';
+import { formatDate } from '../../../utils/datetime';
 import {
 	getSubtitleForDisplay,
 	isExpired,
@@ -19,7 +19,6 @@ import {
 	isInExpirationGracePeriod,
 } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
-import type { Field, View, Action } from '@wordpress/dataviews';
 
 interface Props {
 	siteDomain: string;
@@ -27,68 +26,61 @@ interface Props {
 	onClose: () => void;
 	onConfirm: ( purchases: Purchase[] ) => void;
 	submitButtonText?: string;
-	hideManagePurchaseLinks?: boolean;
 }
 
-function ExpiresText( { purchase }: { purchase: Purchase } ) {
-	if ( isRenewing( purchase ) ) {
-		if ( isInExpirationGracePeriod( purchase ) ) {
-			return __( 'pending renewal' );
-		}
-		// translators: "renewDate" is relative to the present time and it is already localized, eg. "in a year", "in a month"
-		return sprintf( __( 'renews %(renewDate)s' ), {
-			renewDate: getRelativeTimeString( new Date( purchase.renew_date ) ),
-		} );
-	}
-	if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
-		// translators: "expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"
-		return sprintf( __( 'expired %(expiry)s' ), {
-			expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
-		} );
-	}
-	// translators: "expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"
-	return sprintf( __( 'expires %(expiry)s' ), {
-		expiry: getRelativeTimeString( new Date( purchase.expiry_date ) ),
+function getRenewalDescription(
+	item: Purchase,
+	locale: string,
+	hasEnTranslation: ( phrase: string ) => boolean
+): string {
+	const subtitleText = getSubtitleForDisplay( item );
+	const price = formatCurrency( item.sale_amount ?? item.amount, item.currency_code, {
+		stripZeros: true,
 	} );
-}
 
-function getPurchaseFields(): Field< Purchase >[] {
-	const fields: Field< Purchase >[] = [
-		{
-			id: 'product_name',
-			type: 'text',
-			label: __( 'Product' ),
-			getValue: ( { item } ) => ( item.is_domain ? item.meta ?? '' : item.product_name ),
-			render: ( { item } ) => {
-				const purchaseTypeText = getSubtitleForDisplay( item );
-				return (
-					<VStack spacing={ 1 }>
-						<Text>{ item.is_domain ? item.meta ?? '' : item.product_name }</Text>
-						<Text variant="muted">
-							{ purchaseTypeText ? `${ purchaseTypeText }: ` : '' }
-							<span>{ purchaseTypeText && <ExpiresText purchase={ item } /> }</span>
-						</Text>
-					</VStack>
-				);
-			},
-		},
-		{
-			id: 'amount',
-			type: 'text',
-			label: __( 'Price' ),
-			getValue: ( { item } ) =>
-				formatCurrency( item.sale_amount ?? item.amount, item.currency_code, { stripZeros: true } ),
-			render: ( { item } ) => (
-				<Text>
-					{ formatCurrency( item.sale_amount ?? item.amount, item.currency_code, {
-						stripZeros: true,
-					} ) }
-				</Text>
-			),
-		},
-	];
+	if ( isRenewing( item ) ) {
+		const date = formatDate( new Date( item.renew_date ), locale, { dateStyle: 'long' } );
+		if ( subtitleText && hasEnTranslation( '%1$s: Renews at %2$s on %3$s' ) ) {
+			return sprintf(
+				// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted price, %3$s: formatted date
+				__( '%1$s: Renews at %2$s on %3$s' ),
+				subtitleText,
+				price,
+				date
+			);
+		}
+		// translators: %1$s: formatted price, %2$s: formatted date
+		const text = sprintf( __( 'Renews at %1$s on %2$s' ), price, date );
+		return subtitleText ? `${ subtitleText }: ${ text }` : text;
+	}
 
-	return fields;
+	const date = formatDate( new Date( item.expiry_date ), locale, { dateStyle: 'long' } );
+
+	if ( isExpired( item ) || isInExpirationGracePeriod( item ) ) {
+		if ( subtitleText && hasEnTranslation( '%1$s: Expired on %2$s' ) ) {
+			return sprintf(
+				// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted date
+				__( '%1$s: Expired on %2$s' ),
+				subtitleText,
+				date
+			);
+		}
+		// translators: %s: formatted date
+		const text = sprintf( __( 'Expired on %s' ), date );
+		return subtitleText ? `${ subtitleText }: ${ text }` : text;
+	}
+
+	if ( subtitleText && hasEnTranslation( '%1$s: Expires on %2$s' ) ) {
+		return sprintf(
+			// translators: %1$s: purchase type subtitle (e.g. “Site plan”), %2$s: formatted date
+			__( '%1$s: Expires on %2$s' ),
+			subtitleText,
+			date
+		);
+	}
+	// translators: %s: formatted date
+	const text = sprintf( __( 'Expires on %s' ), date );
+	return subtitleText ? `${ subtitleText }: ${ text }` : text;
 }
 
 export function UpcomingRenewalsDialog( {
@@ -97,9 +89,10 @@ export function UpcomingRenewalsDialog( {
 	onClose,
 	onConfirm,
 	submitButtonText,
-	hideManagePurchaseLinks,
 }: Props ) {
-	const navigate = useNavigate();
+	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
+
 	const purchasesSortByRecentExpiryDate = useMemo(
 		() =>
 			[ ...purchases ].sort( ( a, b ) => {
@@ -110,95 +103,60 @@ export function UpcomingRenewalsDialog( {
 		[ purchases ]
 	);
 
-	const [ view, setView ] = useState< View >( {
-		type: 'table',
-		perPage: 100,
-		page: 1,
-		fields: [ 'product_name', 'amount' ],
-		layout: {},
-	} );
-
 	const [ selection, setSelection ] = useState< string[] >(
-		purchases.map( ( purchase ) => purchase.ID.toString() )
+		purchases.map( ( p ) => String( p.ID ) )
 	);
 
 	useEffect( () => {
-		setSelection( purchases.map( ( purchase ) => purchase.ID.toString() ) );
+		setSelection( purchases.map( ( p ) => String( p.ID ) ) );
 	}, [ purchases ] );
 
-	const fields = useMemo( () => getPurchaseFields(), [] );
-
-	const actions = useMemo( (): Action< Purchase >[] => {
-		const actionsList: Action< Purchase >[] = [
-			{
-				id: 'select-for-renewal',
-				label: __( 'Select for renewal' ),
-				supportsBulk: true,
-				icon: () => null,
-				callback: () => {
-					// This action exists just to enable bulk selection checkboxes.
-					// The actual renewal logic is handled by the dialog's confirm button.
-				},
-			},
-		];
-
-		if ( ! hideManagePurchaseLinks ) {
-			actionsList.push( {
-				id: 'manage-purchase',
-				label: __( 'Manage purchase' ),
-				supportsBulk: false,
-				callback: ( [ item ] ) => {
-					onClose();
-					navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: item.ID } } );
-				},
-			} );
-		}
-
-		return actionsList;
-	}, [ hideManagePurchaseLinks, onClose, navigate ] );
-
 	const handleConfirm = () => {
-		const selectedPurchaseIds = selection.map( Number );
-		const selectedPurchasesData = purchases.filter( ( purchase ) =>
-			selectedPurchaseIds.includes( purchase.ID )
-		);
+		const selectedIds = new Set( selection );
+		const selectedPurchasesData = purchases.filter( ( p ) => selectedIds.has( String( p.ID ) ) );
 		onConfirm( selectedPurchasesData );
 	};
 
 	return (
 		<ConfirmDialog
 			overlayClassName="upcoming-renewals-dialog"
-			size="large"
+			size="medium"
 			confirmButtonText={ submitButtonText ?? __( 'Renew now' ) }
 			onConfirm={ handleConfirm }
 			onCancel={ onClose }
 		>
-			<VStack>
-				<Heading>{ __( 'Upcoming renewals' ) }</Heading>
-				<Text variant="muted">
-					{
-						// translators: siteName is the URL of the site
-						sprintf( __( 'Site: %(siteName)s' ), { siteName: siteDomain } )
-					}
-				</Text>
+			<VStack spacing={ 4 }>
+				<VStack>
+					<Heading>{ __( 'Upcoming renewals' ) }</Heading>
+					<Text variant="muted" className="upcoming-renewals-dialog__site-label">
+						{
+							// translators: siteName is the URL of the site
+							sprintf( __( 'Site: %(siteName)s' ), { siteName: siteDomain } )
+						}
+					</Text>
+				</VStack>
+				<VStack spacing={ 4 }>
+					{ purchasesSortByRecentExpiryDate.map( ( item ) => {
+						const id = String( item.ID );
+						return (
+							<Fragment key={ id }>
+								<CardDivider />
+								<CheckboxControl
+									__nextHasNoMarginBottom
+									label={ item.is_domain ? item.meta ?? '' : item.product_name }
+									help={ getRenewalDescription( item, locale, hasEnTranslation ) }
+									checked={ selection.includes( id ) }
+									onChange={ () => {
+										setSelection( ( prev ) =>
+											prev.includes( id ) ? prev.filter( ( s ) => s !== id ) : [ ...prev, id ]
+										);
+									} }
+								/>
+							</Fragment>
+						);
+					} ) }
+				</VStack>
 			</VStack>
-			<Divider margin={ 3 } />
-			<DataViews
-				data={ purchasesSortByRecentExpiryDate }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				selection={ selection }
-				onChangeSelection={ setSelection }
-				actions={ actions }
-				getItemId={ ( item ) => item.ID.toString() }
-				isLoading={ false }
-				paginationInfo={ {
-					totalItems: purchasesSortByRecentExpiryDate.length,
-					totalPages: 1,
-				} }
-				defaultLayouts={ { table: {} } }
-			/>
 		</ConfirmDialog>
 	);
 }
