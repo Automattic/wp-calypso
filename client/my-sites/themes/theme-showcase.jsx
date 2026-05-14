@@ -19,10 +19,10 @@ import ThemeDesignYourOwnModal from 'calypso/components/theme-design-your-own-mo
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
-import { withThemesColorScheme } from 'calypso/my-sites/themes/color-scheme-provider';
 import FilterBarModern from 'calypso/my-sites/themes/filter-bar-modern';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
@@ -875,9 +875,10 @@ class ThemeShowcase extends Component {
 			</div>
 		);
 
-		return withThemesColorScheme( showcase, {
-			isSiteRoute: this.props.isSiteRoute,
-			isLoggedIn,
+		return withColorScheme( showcase, {
+			bodyClass: 'is-themes-dark-mode',
+			enabled: ! this.props.isSiteRoute && isLoggedIn,
+			Provider: ClassicColorSchemeProvider,
 		} );
 	}
 }
