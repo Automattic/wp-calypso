@@ -260,3 +260,26 @@ export function getLoginCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy
 		subtitle: getLoginSubtitles()[ getSubtitleScenario( pluginSlugs ) ],
 	};
 }
+
+/**
+ * Title + subtitle for the authorize page when a secondary user (not the
+ * connection owner) is connecting via the connector flow.
+ *
+ * Secondary admin connections unlock activity logs, Jetpack Cloud admin
+ * pages, backups, social features, and SSO. Non-admin connections
+ * primarily enable SSO, so the subtitle uses a simpler value-prop.
+ *
+ * This is intentionally separate from `getAuthCopy` because the secondary
+ * copy doesn't depend on plugin composition -- the benefits are the same
+ * regardless of which plugins are active.
+ */
+export function getSecondaryAuthCopy( isAdmin: boolean ): SurfaceCopy {
+	return {
+		title: __( 'Connect your account' ),
+		subtitle: isAdmin
+			? __(
+					'Connect your account to access activity logs, backups, social sharing, and Jetpack Cloud management for this site.'
+			  )
+			: __( 'Connect to manage this site using your WordPress.com account.' ),
+	};
+}

@@ -65,7 +65,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
-import { getAuthCopy } from './connection-content';
+import { getAuthCopy, getSecondaryAuthCopy } from './connection-content';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -85,7 +85,7 @@ import {
 	REMOTE_PATH_AUTH,
 } from './constants';
 import Disclaimer from './disclaimer';
-import { getConnectorFeatureCards } from './feature-cards';
+import { getConnectorFeatureCards, getSecondaryAdminFeatureCards } from './feature-cards';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -528,6 +528,14 @@ export class JetpackAuthorize extends Component {
 		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
 	}
 
+	isSecondaryConnection() {
+		return this.isFromJetpackConnector() && this.props.authQuery.alreadyAuthorized;
+	}
+
+	isAdminConnection() {
+		return getRoleFromScope( this.props.authQuery.scope ) === 'administrator';
+	}
+
 	getCompanyName() {
 		return this.isFromAutomatticForAgenciesPlugin() ? 'Automattic, Inc.' : 'WordPress.com';
 	}
@@ -602,7 +610,12 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
 		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
 
-		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+		if (
+			! this.props.isAlreadyOnSitesList &&
+			! this.props.isFetchingSites &&
+			alreadyAuthorized &&
+			! this.isFromJetpackConnector()
+		) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
 			return this.externalRedirectOnce( redirectAfterAuth );
 		}
@@ -687,10 +700,16 @@ export class JetpackAuthorize extends Component {
 			};
 		}
 
-		if ( alreadyAuthorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
+		if (
+			alreadyAuthorized &&
+			! this.props.isFetchingSites &&
+			! this.props.isAlreadyOnSitesList &&
+			! this.isFromJetpackConnector()
+		) {
 			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
 			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
-			// flows will be reserved for brand new connections.
+			// flows will be reserved for brand new connections. The connector flow allows secondary
+			// connections and shows role-appropriate content instead.
 			return (
 				<JetpackConnectNotices
 					noticeType={ ALREADY_CONNECTED_BY_OTHER_USER }
@@ -791,7 +810,12 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
 
-		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+		if (
+			! this.props.isAlreadyOnSitesList &&
+			! this.props.isFetchingSites &&
+			alreadyAuthorized &&
+			! this.isFromJetpackConnector()
+		) {
 			return translate( 'Go back to your site' );
 		}
 
@@ -839,7 +863,12 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
 
-		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
+		if (
+			! this.props.isAlreadyOnSitesList &&
+			! this.props.isFetchingSites &&
+			alreadyAuthorized &&
+			! this.isFromJetpackConnector()
+		) {
 			return;
 		}
 
@@ -1054,7 +1083,17 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isFromJetpackConnector() ) {
-			const { cards } = getConnectorFeatureCards( authQuery.plugins );
+			const isSecondary = this.isSecondaryConnection();
+			const isAdmin = this.isAdminConnection();
+
+			let cards;
+			if ( isSecondary && isAdmin ) {
+				( { cards } = getSecondaryAdminFeatureCards() );
+			} else if ( isSecondary && ! isAdmin ) {
+				cards = [];
+			} else {
+				( { cards } = getConnectorFeatureCards( authQuery.plugins ) );
+			}
 
 			return (
 				<>
@@ -1068,7 +1107,7 @@ export class JetpackAuthorize extends Component {
 					/>
 					{ this.renderUseDifferentAccountLink() }
 
-					<FeaturesSection cards={ cards } />
+					{ cards.length > 0 && <FeaturesSection cards={ cards } /> }
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</>
@@ -1336,7 +1375,13 @@ export class JetpackAuthorize extends Component {
 		const connectorBranding = isFromJetpackConnector
 			? getConnectorBranding( this.props.authQuery.plugins )
 			: null;
-		const authCopy = isFromJetpackConnector ? getAuthCopy( this.props.authQuery.plugins ) : null;
+		const isSecondary = this.isSecondaryConnection();
+		let authCopy = null;
+		if ( isFromJetpackConnector && isSecondary ) {
+			authCopy = getSecondaryAuthCopy( this.isAdminConnection() );
+		} else if ( isFromJetpackConnector ) {
+			authCopy = getAuthCopy( this.props.authQuery.plugins );
+		}
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (

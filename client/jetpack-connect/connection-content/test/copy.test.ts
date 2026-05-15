@@ -1,4 +1,4 @@
-import { getAuthCopy, getLoginCopy, getSignupCopy } from '../copy';
+import { getAuthCopy, getLoginCopy, getSignupCopy, getSecondaryAuthCopy } from '../copy';
 import type { SubtitleScenario } from '../scenarios';
 
 /**
@@ -274,5 +274,32 @@ describe( 'default arguments', () => {
 		expect( expectedAuth.subtitle ).toContain( 'features your active plugins need' );
 		expect( expectedLogin.subtitle ).toContain( 'power your active plugins' );
 		expect( expectedSignup.subtitle ).toContain( 'power your active plugins' );
+	} );
+} );
+
+describe( 'secondary auth copy', () => {
+	test( 'title is "Connect your account" for both admin and non-admin', () => {
+		expect( getSecondaryAuthCopy( true ).title ).toBe( 'Connect your account' );
+		expect( getSecondaryAuthCopy( false ).title ).toBe( 'Connect your account' );
+	} );
+
+	test( 'admin subtitle mentions activity logs, backups, social sharing, and Jetpack Cloud', () => {
+		const { subtitle } = getSecondaryAuthCopy( true );
+		expect( subtitle ).toContain( 'activity logs' );
+		expect( subtitle ).toContain( 'backups' );
+		expect( subtitle ).toContain( 'social sharing' );
+		expect( subtitle ).toContain( 'Jetpack Cloud' );
+	} );
+
+	test( 'non-admin subtitle uses simple manage-site framing', () => {
+		const { subtitle } = getSecondaryAuthCopy( false );
+		expect( subtitle ).toContain( 'manage this site' );
+		expect( subtitle ).toContain( 'WordPress.com account' );
+	} );
+
+	test( 'admin and non-admin subtitles are different', () => {
+		expect( getSecondaryAuthCopy( true ).subtitle ).not.toBe(
+			getSecondaryAuthCopy( false ).subtitle
+		);
 	} );
 } );
