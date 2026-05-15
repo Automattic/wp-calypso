@@ -15,13 +15,6 @@ yarn test-client:watch client/reader/<path>  # Run Reader tests in watch mode
 
 ## Architecture decisions
 
-### Dark mode
-
-- Reader dark-mode activation is centralized in `client/layout/index.jsx` through `withColorScheme()` and `ClassicColorSchemeProvider`, gated to logged-in Reader routes with `body.is-reader-dark-mode`. Do not add route-local color-scheme providers or new Reader-specific preferences.
-- Reader dark-mode token aliases live in `client/reader/color-scheme/dark-mode.scss`. Prefer overriding existing Reader/Calypso CSS custom properties there over adding component-level hardcoded color overrides.
-- Use component-level dark-mode styles only when the component owns an isolated surface that the token bridge cannot reach, such as CSS Modules, popovers, or iframe/editor canvases. For regular Sass, prefer `@include ui-mixins.when-dark-theme` with the existing `packages/ui/src/utils/mixins` helper.
-- Preserve intentional brand, media, and user-content colors unless an exact same-purpose token already exists.
-
 ### Data fetching migration
 
 The Reader is migrating from **Redux + data-layer** to **React Query** using the `@automattic/api-core` and `@automattic/api-queries` packages from the same codebase.
