@@ -2,9 +2,9 @@ import { createExPlatClient } from '../../create-explat-client';
 import { setBrowserContext } from '../test-common';
 import type { Config } from '../../types';
 
-// Canonical contract shape per 00-contracts.md § 6: rule-level `ranges`,
-// no inline `range` per variation. `loadFlagPayload` distributes ranges
-// onto variations to bridge the canonical payload to the SDK's reader.
+// Canonical payload shape: rule-level `ranges`, no inline `range` per
+// variation. `loadFlagPayload` distributes ranges onto variations to bridge
+// the canonical payload to the SDK's reader.
 const experimentRule = {
 	type: 'experiment' as const,
 	seed: 'exp_a',
