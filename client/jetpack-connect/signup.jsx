@@ -187,6 +187,14 @@ export class JetpackSignup extends Component {
 						...userData.extra,
 						jpc: true,
 						source: this.isWooJPC() ? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from : '',
+						// Forwarded so the wpcom-side activation mailer can route on
+						// the originating flow (`from=jetpack-connector` triggers the
+						// unified-connection email theme) and pick the right family
+						// lockup logo from the active plugin set. Both are already
+						// present on the URL — we're just lifting them from the
+						// auth-query state into the signup payload's `extra` bag.
+						from: this.props.authQuery.from,
+						plugins: this.props.authQuery.plugins,
 					},
 				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
