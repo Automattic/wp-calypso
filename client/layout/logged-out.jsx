@@ -10,6 +10,7 @@ import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
+import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
@@ -78,6 +79,8 @@ const loadSupportArticleDialog = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
 	);
+
+const HELP_CENTER_FAB_SECTIONS = [ 'plugins', 'theme', 'themes' ];
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -153,6 +156,14 @@ const LayoutLoggedOut = ( {
 		! hasGravPoweredClientClass &&
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
+
+	// FAB launches Help Center for logged-out visitors on showcase pages.
+	// Logged-in users use the masterbar control instead.
+	const showHelpCenterFab =
+		! isLoggedIn &&
+		isEnabled( 'help-center/logged-out-fab' ) &&
+		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) &&
+		userAllowedToHelpCenter;
 
 	const loadHelpCenter =
 		isLoggedIn &&
@@ -285,6 +296,10 @@ const LayoutLoggedOut = ( {
 	}
 
 	const bodyClass = [ 'font-smoothing-antialiased' ];
+	if ( showHelpCenterFab ) {
+		// See `body.has-help-center-fab` in `help-center-fab/style.scss`.
+		bodyClass.push( 'has-help-center-fab' );
+	}
 
 	return (
 		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
@@ -296,6 +311,7 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 					/>
 				) }
+				{ showHelpCenterFab && <AsyncHelpCenterFab sectionName={ sectionName } /> }
 				{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 				<BodySectionCssClass
 					group={ sectionGroup }

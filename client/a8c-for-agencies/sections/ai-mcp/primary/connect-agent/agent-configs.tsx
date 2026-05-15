@@ -89,20 +89,19 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 		id: 'claude-desktop',
 		label: 'Claude Desktop',
 		quickSetup: [
-			__( 'Install Node 20 or later (required by mcp-remote).' ),
-			__(
-				'Open Claude Desktop → Settings → Developer, then click “Edit Config” under Local MCP servers.'
-			),
+			__( 'Open Claude Desktop and go to Settings → Connectors (or Customize).' ),
+			__( 'Click “Add custom connector”.' ),
 			createInterpolateElement(
-				__(
-					'Add the configuration below to <code>claude_desktop_config.json</code> (typically at <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>).'
+				sprintf(
+					/* translators: %s: A4A MCP server URL, kept inside <code> */
+					__(
+						'Enter a name (for example, “A4A MCP”) and paste <code>%s</code> into the Remote MCP server URL field.'
+					),
+					A4A_MCP_URL
 				),
 				{ code: <code /> }
 			),
-			__( 'Restart Claude Desktop.' ),
-			__(
-				'If you haven’t authenticated yet, Claude Desktop will prompt you in your browser as soon as it reopens.'
-			),
+			__( 'Authenticate when Claude Desktop prompts you in your browser.' ),
 		],
 		manualSetupFile: 'claude_desktop_config.json',
 		manualSetupLanguage: 'json',
