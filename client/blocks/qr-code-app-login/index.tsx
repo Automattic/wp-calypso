@@ -250,9 +250,6 @@ export default function QRCodeAppLogin() {
 						</li>
 					) ) }
 				</ul>
-				{ countdown && (
-					<TimerBar remainingMs={ countdown.remainingMs } totalMs={ countdown.totalMs } />
-				) }
 				{ connectionLost }
 			</div>
 		);
