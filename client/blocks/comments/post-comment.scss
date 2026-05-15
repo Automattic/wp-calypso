@@ -146,6 +146,12 @@ a.comments__comment-username {
 	&::after {
 		@include long-content-fade( $size: 35px );
 	}
+
+	@include ui-mixins.when-dark-theme {
+		&::after {
+			background: linear-gradient( to right, transparent, var( --color-surface ) 90% );
+		}
+	}
 }
 
 .comments__comment-respondee {
