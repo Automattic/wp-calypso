@@ -119,6 +119,60 @@ function HowMockSite() {
 	);
 }
 
+// Hoisted to module scope — static demo data, no reason to reallocate on every render.
+const MODES: Record< Mode, ModeData > = {
+	human: {
+		score: 86,
+		thresholdLabel: __( 'Strong' ),
+		modeLabel: __( 'Human-centric analysis' ),
+		improveLabel: __( 'Improve for humans' ),
+		pins: [
+			{ top: '14%', left: '7%', label: __( 'Headline could be sharper' ), severity: 'warn' },
+			{ top: '5%', left: '58%', label: __( 'Nav links not descriptive' ), severity: 'warn' },
+			{
+				top: '33%',
+				left: '7%',
+				label: __( 'No social proof above the fold' ),
+				severity: 'danger',
+			},
+			{ top: '44%', left: '7%', label: __( 'CTA copy lacks urgency' ), severity: 'warn' },
+			{
+				top: '22%',
+				left: '60%',
+				label: __( 'Hero clashes with site palette' ),
+				severity: 'warn',
+			},
+			{ top: '75%', left: '6%', label: __( 'Portfolio quality: solid' ), severity: 'good' },
+			{ top: '77%', left: '38%', label: __( 'Missing testimonials' ), severity: 'danger' },
+		],
+		bars: [
+			{ label: __( 'Trust signals' ), value: 89 },
+			{ label: __( 'Mobile experience' ), value: 92 },
+			{ label: __( 'SEO' ), value: 77 },
+		],
+	},
+	ai: {
+		score: 42,
+		thresholdLabel: __( 'At risk' ),
+		modeLabel: __( 'AI analysis' ),
+		improveLabel: __( 'Improve for AI' ),
+		pins: [
+			{ top: '14%', left: '7%', label: __( 'H1 missing schema markup' ), severity: 'danger' },
+			{ top: '5%', left: '50%', label: __( 'Entity type undefined' ), severity: 'danger' },
+			{ top: '27%', left: '7%', label: __( 'Thin content detected' ), severity: 'warn' },
+			{ top: '44%', left: '7%', label: __( 'No FAQ structured data' ), severity: 'danger' },
+			{ top: '22%', left: '60%', label: __( 'No breadcrumb schema' ), severity: 'warn' },
+			{ top: '75%', left: '6%', label: __( 'Content freshness: stale' ), severity: 'warn' },
+			{ top: '77%', left: '38%', label: __( 'AEO readiness: 38%' ), severity: 'danger' },
+		],
+		bars: [
+			{ label: __( 'Technical health' ), value: 60 },
+			{ label: __( 'AEO readiness' ), value: 38 },
+			{ label: __( 'Structured data' ), value: 33 },
+		],
+	},
+};
+
 export default function AmplifyHowItWorks() {
 	const dispatch = useDispatch();
 	const [ mode, setMode ] = useState< Mode >( 'human' );
@@ -136,60 +190,7 @@ export default function AmplifyHowItWorks() {
 		setMode( nextMode );
 	};
 
-	const modes: Record< Mode, ModeData > = {
-		human: {
-			score: 86,
-			thresholdLabel: __( 'Strong' ),
-			modeLabel: __( 'Human-centric analysis' ),
-			improveLabel: __( 'Improve for humans' ),
-			pins: [
-				{ top: '14%', left: '7%', label: __( 'Headline could be sharper' ), severity: 'warn' },
-				{ top: '5%', left: '58%', label: __( 'Nav links not descriptive' ), severity: 'warn' },
-				{
-					top: '33%',
-					left: '7%',
-					label: __( 'No social proof above the fold' ),
-					severity: 'danger',
-				},
-				{ top: '44%', left: '7%', label: __( 'CTA copy lacks urgency' ), severity: 'warn' },
-				{
-					top: '22%',
-					left: '60%',
-					label: __( 'Hero clashes with site palette' ),
-					severity: 'warn',
-				},
-				{ top: '75%', left: '6%', label: __( 'Portfolio quality: solid' ), severity: 'good' },
-				{ top: '77%', left: '38%', label: __( 'Missing testimonials' ), severity: 'danger' },
-			],
-			bars: [
-				{ label: __( 'Trust signals' ), value: 89 },
-				{ label: __( 'Mobile experience' ), value: 92 },
-				{ label: __( 'SEO' ), value: 77 },
-			],
-		},
-		ai: {
-			score: 42,
-			thresholdLabel: __( 'At risk' ),
-			modeLabel: __( 'AI analysis' ),
-			improveLabel: __( 'Improve for AI' ),
-			pins: [
-				{ top: '14%', left: '7%', label: __( 'H1 missing schema markup' ), severity: 'danger' },
-				{ top: '5%', left: '50%', label: __( 'Entity type undefined' ), severity: 'danger' },
-				{ top: '27%', left: '7%', label: __( 'Thin content detected' ), severity: 'warn' },
-				{ top: '44%', left: '7%', label: __( 'No FAQ structured data' ), severity: 'danger' },
-				{ top: '22%', left: '60%', label: __( 'No breadcrumb schema' ), severity: 'warn' },
-				{ top: '75%', left: '6%', label: __( 'Content freshness: stale' ), severity: 'warn' },
-				{ top: '77%', left: '38%', label: __( 'AEO readiness: 38%' ), severity: 'danger' },
-			],
-			bars: [
-				{ label: __( 'Technical health' ), value: 60 },
-				{ label: __( 'AEO readiness' ), value: 38 },
-				{ label: __( 'Structured data' ), value: 33 },
-			],
-		},
-	};
-
-	const data = modes[ mode ];
+	const data = MODES[ mode ];
 	const ringSeverity = severityFor( data.score );
 
 	return (

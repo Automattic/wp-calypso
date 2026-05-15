@@ -29,9 +29,9 @@ import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashbo
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AmplifySiteSelect from './amplify-site-select';
+import type { PendingJob } from './amplify-analysis-modal';
 import type { Field } from '@wordpress/dataviews';
 import type { ReactNode } from 'react';
-import type { PendingJob } from './amplify-analysis-modal';
 
 type AnalysisMode = 'human' | 'ai' | 'fullanalysis';
 
@@ -50,8 +50,7 @@ type Report = {
 	pending?: boolean;
 };
 
-const INDEX_URL =
-	'https://pub-d85717c601eb44398d8336c65ac7cfbb.r2.dev/reports/index.json';
+const INDEX_URL = 'https://pub-d85717c601eb44398d8336c65ac7cfbb.r2.dev/reports/index.json';
 
 const MODE_LABELS: Record< AnalysisMode, string > = {
 	human: 'Human',
@@ -116,7 +115,14 @@ function ScoreBadge( { score, label }: { score?: number; label: string } ) {
 	if ( score === undefined ) {
 		return null;
 	}
-	const threshold = score >= 80 ? 'strong' : score >= 50 ? 'needs-work' : 'at-risk';
+	let threshold: string;
+	if ( score >= 80 ) {
+		threshold = 'strong';
+	} else if ( score >= 50 ) {
+		threshold = 'needs-work';
+	} else {
+		threshold = 'at-risk';
+	}
 	return (
 		<span className={ clsx( 'amplify-reports-score', `is-${ threshold }` ) }>
 			{ sprintf(
@@ -144,19 +150,22 @@ export default function AmplifyReportsContent( {
 	// report with the same site + mode appears, the pending row will naturally
 	// be replaced on the next fetch (page reload). We deduplicate by jobId so a
 	// pending row never shows alongside the completed report for the same run.
-	const completedJobIds = new Set( fetchedReports.map( ( r ) => r.id ) );
-	const pendingReports: Report[] = pendingJobs
-		.filter( ( job ) => ! completedJobIds.has( job.jobId ) )
-		.map( ( job ) => ( {
-			id: job.jobId,
-			agencyName: '',
-			url: job.site,
-			mode: job.type === 'full' ? 'fullanalysis' : ( job.type as AnalysisMode ),
-			timestamp: job.startedAt,
-			pending: true,
-		} ) );
-
-	const reports = [ ...pendingReports, ...fetchedReports ];
+	// Memoized so that table interactions (sort/filter/paginate) that trigger a
+	// re-render don't rebuild the Set and re-map the arrays unnecessarily.
+	const reports = useMemo( () => {
+		const completedJobIds = new Set( fetchedReports.map( ( r ) => r.id ) );
+		const pendingReports: Report[] = pendingJobs
+			.filter( ( job ) => ! completedJobIds.has( job.jobId ) )
+			.map( ( job ) => ( {
+				id: job.jobId,
+				agencyName: '',
+				url: job.site,
+				mode: job.type === 'full' ? 'fullanalysis' : ( job.type as AnalysisMode ),
+				timestamp: job.startedAt,
+				pending: true,
+			} ) );
+		return [ ...pendingReports, ...fetchedReports ];
+	}, [ fetchedReports, pendingJobs ] );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
@@ -173,8 +182,9 @@ export default function AmplifyReportsContent( {
 					analysis_type: item.mode,
 				} )
 			);
-			if ( item.pdfUrl ) {
-				// noopener prevents the new tab from accessing window.opener.
+			// Validate the URL is https:// before opening to guard against
+			// a javascript: or data: URI if the R2 payload were ever tampered with.
+			if ( item.pdfUrl && /^https:\/\//i.test( item.pdfUrl ) ) {
 				window.open( item.pdfUrl, '_blank', 'noopener,noreferrer' );
 			}
 		};
@@ -186,9 +196,7 @@ export default function AmplifyReportsContent( {
 				getValue: ( { item }: { item: Report } ) => item.agencyName || item.url,
 				render: ( { item }: { item: Report } ): ReactNode => (
 					<span className="amplify-reports-site">
-						<span className="amplify-reports-site-name">
-							{ item.agencyName || item.url }
-						</span>
+						<span className="amplify-reports-site-name">{ item.agencyName || item.url }</span>
 						<span className="amplify-reports-site-url">{ item.url }</span>
 					</span>
 				),
@@ -234,9 +242,7 @@ export default function AmplifyReportsContent( {
 				label: __( 'Time & date' ),
 				getValue: ( { item }: { item: Report } ) => item.timestamp,
 				render: ( { item }: { item: Report } ): ReactNode => (
-					<span className="amplify-reports-timestamp">
-						{ formatTimestamp( item.timestamp ) }
-					</span>
+					<span className="amplify-reports-timestamp">{ formatTimestamp( item.timestamp ) }</span>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -247,9 +253,7 @@ export default function AmplifyReportsContent( {
 				getValue: () => '',
 				render: ( { item }: { item: Report } ): ReactNode =>
 					item.pending ? (
-						<span className="amplify-reports-in-progress">
-							{ __( 'Report in progress' ) }
-						</span>
+						<span className="amplify-reports-in-progress">{ __( 'Report in progress' ) }</span>
 					) : (
 						<Button
 							variant="secondary"
@@ -273,11 +277,7 @@ export default function AmplifyReportsContent( {
 	}, [ reports, dataViewsState, fields ] );
 
 	if ( isLoading ) {
-		return (
-			<div className="amplify-reports-loading">
-				{ __( 'Loading reports…' ) }
-			</div>
-		);
+		return <div className="amplify-reports-loading">{ __( 'Loading reports…' ) }</div>;
 	}
 
 	// Show the empty / prompt state only when there are truly no rows to display
@@ -299,6 +299,11 @@ export default function AmplifyReportsContent( {
 
 	return (
 		<div className="amplify-reports redesigned-a8c-table full-width">
+			{ error && (
+				<p className="amplify-reports-fetch-error">
+					{ __( 'Could not load previous reports. Showing in-progress jobs only.' ) }
+				</p>
+			) }
 			<ItemsDataViews
 				data={ {
 					items,

@@ -19,14 +19,15 @@
  *   to `pendingJobs`. AmplifyReportsContent merges this list with reports fetched
  *   from R2, showing an "In progress" row immediately without waiting for the
  *   background task to finish and update the index.
- *   Pending jobs are in memory only — they reset on page reload, at which point
- *   the real R2 data takes over.
+ *   Pending jobs are persisted to sessionStorage so they survive a page reload
+ *   within the same tab. On the next full load, real R2 data takes over and
+ *   any completed jobs are dropped from the pending list.
  */
 
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -72,10 +73,10 @@ export default function AmplifyPage( { selectedTab }: Props ) {
 	const [ analysisFlowSite, setAnalysisFlowSite ] = useState< string | null >( null );
 	const [ pendingJobs, setPendingJobs ] = useState< PendingJob[] >( loadPendingJobs );
 
-	const handleSiteSelected = ( url: string ) => {
+	const handleSiteSelected = useCallback( ( url: string ) => {
 		setIsSiteSelectOpen( false );
 		setAnalysisFlowSite( url );
-	};
+	}, [] );
 
 	const handleAnalysisStarted = ( job: PendingJob ) => {
 		// Add the new job to the front of the pending list so it appears at the
@@ -91,16 +92,13 @@ export default function AmplifyPage( { selectedTab }: Props ) {
 	let content: ReactNode;
 	switch ( selectedTab ) {
 		case 'overview':
-			title = __( 'Overview' );
+			title = __( 'Amplify Overview' );
 			content = <AmplifyOverviewContent onSiteSelected={ handleSiteSelected } />;
 			break;
 		case 'reports':
 			title = __( 'Reports' );
 			content = (
-				<AmplifyReportsContent
-					pendingJobs={ pendingJobs }
-					onSiteSelected={ handleSiteSelected }
-				/>
+				<AmplifyReportsContent pendingJobs={ pendingJobs } onSiteSelected={ handleSiteSelected } />
 			);
 			break;
 	}

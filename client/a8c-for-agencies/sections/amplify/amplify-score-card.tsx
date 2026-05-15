@@ -45,6 +45,42 @@ function thresholdLabel( score: number ): string {
 	return __( 'At risk' );
 }
 
+// Hoisted to module scope — static demo data, no reason to reallocate on every render.
+const MODES: Record< Mode, ModeData > = {
+	human: {
+		score: 86,
+		body: __(
+			'Your site is set up to win business. A few targeted refinements will keep you ahead.'
+		),
+		metrics: [
+			{ label: __( 'Trust signals' ), score: 16, max: 18 },
+			{ label: __( 'Contact & conversion' ), score: 13, max: 15 },
+			{ label: __( 'SEO' ), score: 10, max: 13 },
+			{ label: __( 'Mobile experience' ), score: 12, max: 13 },
+			{ label: __( 'Content quality' ), score: 10, max: 12 },
+			{ label: __( 'Design & experience' ), score: 9, max: 11 },
+			{ label: __( 'Accessibility' ), score: 8, max: 10 },
+			{ label: __( 'Audience resonance' ), score: 8, max: 8 },
+		],
+	},
+	ai: {
+		score: 42,
+		body: __(
+			"AI tools can't read or rank your site reliably yet. These gaps are likely costing you visibility."
+		),
+		metrics: [
+			{ label: __( 'Technical health' ), score: 12, max: 20 },
+			{ label: __( 'Structured data' ), score: 6, max: 18 },
+			{ label: __( 'AEO readiness' ), score: 6, max: 16 },
+			{ label: __( 'E-E-A-T signals' ), score: 6, max: 14 },
+			{ label: __( 'Content freshness' ), score: 5, max: 12 },
+			{ label: __( 'Entity clarity' ), score: 4, max: 10 },
+			{ label: __( 'Content specificity' ), score: 3, max: 7 },
+			{ label: 'llms.txt', score: 0, max: 3 },
+		],
+	},
+};
+
 export default function AmplifyScoreCard() {
 	const dispatch = useDispatch();
 	const [ mode, setMode ] = useState< Mode >( 'human' );
@@ -62,42 +98,7 @@ export default function AmplifyScoreCard() {
 		setMode( nextMode );
 	};
 
-	const modes: Record< Mode, ModeData > = {
-		human: {
-			score: 86,
-			body: __(
-				'Your site is set up to win business. A few targeted refinements will keep you ahead.'
-			),
-			metrics: [
-				{ label: __( 'Trust signals' ), score: 16, max: 18 },
-				{ label: __( 'Contact & conversion' ), score: 13, max: 15 },
-				{ label: __( 'SEO' ), score: 10, max: 13 },
-				{ label: __( 'Mobile experience' ), score: 12, max: 13 },
-				{ label: __( 'Content quality' ), score: 10, max: 12 },
-				{ label: __( 'Design & experience' ), score: 9, max: 11 },
-				{ label: __( 'Accessibility' ), score: 8, max: 10 },
-				{ label: __( 'Audience resonance' ), score: 8, max: 8 },
-			],
-		},
-		ai: {
-			score: 42,
-			body: __(
-				'AI tools can’t read or rank your site reliably yet. These gaps are likely costing you visibility.'
-			),
-			metrics: [
-				{ label: __( 'Technical health' ), score: 12, max: 20 },
-				{ label: __( 'Structured data' ), score: 6, max: 18 },
-				{ label: __( 'AEO readiness' ), score: 6, max: 16 },
-				{ label: __( 'E-E-A-T signals' ), score: 6, max: 14 },
-				{ label: __( 'Content freshness' ), score: 5, max: 12 },
-				{ label: __( 'Entity clarity' ), score: 4, max: 10 },
-				{ label: __( 'Content specificity' ), score: 3, max: 7 },
-				{ label: 'llms.txt', score: 0, max: 3 },
-			],
-		},
-	};
-
-	const data = modes[ mode ];
+	const data = MODES[ mode ];
 	const ringSeverity = severityFor( data.score, 100 );
 	const offset = CIRCUMFERENCE - ( data.score / 100 ) * CIRCUMFERENCE;
 

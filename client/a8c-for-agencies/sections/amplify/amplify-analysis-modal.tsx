@@ -22,6 +22,7 @@ import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { A4A_AMPLIFY_REPORTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { ReactNode } from 'react';
 
 export type AnalysisType = 'human' | 'ai' | 'full';
 
@@ -155,6 +156,40 @@ type Option = {
 	icon: React.ReactNode;
 };
 
+// Hoisted to module scope — static data, no reason to reallocate on every render.
+const ANALYSIS_OPTIONS: Option[] = [
+	{
+		type: 'human',
+		title: __( 'Human-centric analysis' ),
+		description: __( 'Score how potential clients perceive your site when they land on it.' ),
+		iconClass: 'is-human',
+		icon: ICON_PERSON,
+	},
+	{
+		type: 'ai',
+		title: __( 'AI analysis' ),
+		description: __(
+			'Score how AI tools like ChatGPT, Gemini, and Perplexity read and rank your site.'
+		),
+		iconClass: 'is-ai',
+		icon: ICON_SPARKLES,
+	},
+	{
+		type: 'full',
+		title: __( 'Full analysis' ),
+		description: __( 'Run both lenses for a complete picture and prompt-ready findings.' ),
+		iconClass: 'is-full',
+		icon: ICON_TARGET,
+	},
+];
+
+// Hoisted to module scope — static translated strings.
+const TYPE_LABELS: Record< AnalysisType, string > = {
+	human: __( 'Human-centric analysis' ),
+	ai: __( 'AI analysis' ),
+	full: __( 'Full analysis' ),
+};
+
 function ChooseAnalysis( {
 	onSelect,
 	isSubmitting,
@@ -162,35 +197,9 @@ function ChooseAnalysis( {
 	onSelect: ( type: AnalysisType ) => void;
 	isSubmitting: boolean;
 } ) {
-	const options: Option[] = [
-		{
-			type: 'human',
-			title: __( 'Human-centric analysis' ),
-			description: __( 'Score how potential clients perceive your site when they land on it.' ),
-			iconClass: 'is-human',
-			icon: ICON_PERSON,
-		},
-		{
-			type: 'ai',
-			title: __( 'AI analysis' ),
-			description: __(
-				'Score how AI tools like ChatGPT, Gemini, and Perplexity read and rank your site.'
-			),
-			iconClass: 'is-ai',
-			icon: ICON_SPARKLES,
-		},
-		{
-			type: 'full',
-			title: __( 'Full analysis' ),
-			description: __( 'Run both lenses for a complete picture and prompt-ready findings.' ),
-			iconClass: 'is-full',
-			icon: ICON_TARGET,
-		},
-	];
-
 	return (
 		<ul className="amplify-analysis-list">
-			{ options.map( ( opt ) => (
+			{ ANALYSIS_OPTIONS.map( ( opt ) => (
 				<li key={ opt.type }>
 					<button
 						type="button"
@@ -217,12 +226,6 @@ function ChooseAnalysis( {
 }
 
 function ProgressContent( { site, type }: { site: string; type: AnalysisType } ) {
-	const typeLabels: Record< AnalysisType, string > = {
-		human: __( 'Human-centric analysis' ),
-		ai: __( 'AI analysis' ),
-		full: __( 'Full analysis' ),
-	};
-
 	return (
 		<div className="amplify-analysis-progress">
 			<div className="amplify-analysis-progress-icon" aria-hidden="true">
@@ -234,14 +237,12 @@ function ProgressContent( { site, type }: { site: string; type: AnalysisType } )
 					__(
 						'Running %1$s for %2$s. This may take 10 to 20 minutes depending on the size of your site.'
 					),
-					typeLabels[ type ],
+					TYPE_LABELS[ type ],
 					site
 				) }
 			</p>
 			<p className="amplify-analysis-progress-body">
-				{ __(
-					'You can navigate away. All your reports can be found in the reports dashboard.'
-				) }
+				{ __( 'You can navigate away. All your reports can be found in the reports dashboard.' ) }
 			</p>
 			<div className="amplify-analysis-progress-bar" aria-hidden="true">
 				<div className="amplify-analysis-progress-fill" />
@@ -303,12 +304,14 @@ export default function AmplifyAnalysisModal( { site, onClose, onAnalysisStarted
 	};
 
 	// Title and subtitle vary by stage.
-	const modalTitle =
-		stage === 'progress'
-			? __( 'Analysis in progress' )
-			: stage === 'error'
-			? __( 'Something went wrong' )
-			: __( 'Choose your analysis' );
+	let modalTitle: string;
+	if ( stage === 'progress' ) {
+		modalTitle = __( 'Analysis in progress' );
+	} else if ( stage === 'error' ) {
+		modalTitle = __( 'Something went wrong' );
+	} else {
+		modalTitle = __( 'Choose your analysis' );
+	}
 
 	const modalSubtitle =
 		stage === 'choose'
@@ -320,16 +323,20 @@ export default function AmplifyAnalysisModal( { site, onClose, onAnalysisStarted
 			: null;
 
 	// Footer actions vary by stage.
-	const extraActions =
-		stage === 'progress' ? (
+	let extraActions: ReactNode;
+	if ( stage === 'progress' ) {
+		extraActions = (
 			<Button __next40pxDefaultSize variant="primary" onClick={ handleViewReports }>
 				{ __( 'View reports dashboard' ) }
 			</Button>
-		) : stage === 'error' ? (
+		);
+	} else if ( stage === 'error' ) {
+		extraActions = (
 			<Button __next40pxDefaultSize variant="primary" onClick={ () => setStage( 'choose' ) }>
 				{ __( 'Try again' ) }
 			</Button>
-		) : undefined;
+		);
+	}
 
 	return (
 		<A4AModal

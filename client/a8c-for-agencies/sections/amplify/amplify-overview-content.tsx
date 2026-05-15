@@ -1,11 +1,10 @@
 import './style.scss';
 
-import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { __ } from '@wordpress/i18n';
+import AmplifyAiSection from './amplify-ai-section';
 import AmplifyAiWorkflow from './amplify-ai-workflow';
-import AmplifyBenefits from './amplify-benefits';
 import AmplifyHowItWorks from './amplify-how-it-works';
+import AmplifyHumanSection from './amplify-human-section';
 import AmplifyScoreCard from './amplify-score-card';
 import AmplifySiteSelect from './amplify-site-select';
 
@@ -20,42 +19,45 @@ type Props = {
 export default function AmplifyOverviewContent( { onSiteSelected }: Props ) {
 	return (
 		<div className="amplify-landing">
+			{ /* ── HERO ── */ }
 			<section className="amplify-landing-hero">
 				<div className="amplify-landing-hero-text">
 					<h1 className="amplify-landing-h1">
-						{ createInterpolateElement(
-							__( 'Your agency’s website<br />needs to win more clients' ),
-							{ br: <br /> }
-						) }
+						{ __( 'Your clients want more business. Find out what their site is doing about it.' ) }
 					</h1>
 					<p className="amplify-landing-sub">
 						{ __(
-							'First impressions happen fast, and the way clients find you is changing. AI tools now help businesses discover agencies before a single conversation happens. Amplify audits your site through both lenses, then generates precise, agent-ready prompts so you can elevate your site instantly, captivate prospects, and close more deals.'
+							'Amplify scans your clients’ connected sites through two lenses: how their prospective clients perceive them on first visit, and how AI tools like ChatGPT and Perplexity read and rank them. Run a scan in minutes. Find what’s holding them back. Deliver fixes that prove your value and build trust.'
 						) }
 					</p>
 					<AmplifySiteSelect onSiteSelected={ onSiteSelected } />
 					<p className="amplify-landing-usage">
-						{ sprintf(
-							/* translators: %1$d is the number of audits remaining, %2$d is the monthly limit. */
-							__( '%1$d of %2$d audits remaining this month.' ),
-							REMAINING_AUDITS,
-							MONTHLY_AUDIT_LIMIT
-						) }{ ' ' }
-						<a className="amplify-landing-usage-link" href={ A4A_AGENCY_TIER_LINK }>
-							{ __( 'View your tier limits' ) }
-						</a>
+						{ `${ REMAINING_AUDITS } of ${ MONTHLY_AUDIT_LIMIT } ${ __(
+							'scans remaining this month.'
+						) }` }
 					</p>
 				</div>
 				<div className="amplify-landing-hero-visual">
 					<AmplifyScoreCard />
 				</div>
 			</section>
-			<section className="amplify-landing-benefits">
-				<AmplifyBenefits />
-			</section>
+
+			{ /* ── HOW IT WORKS (interactive browser mockup) ── */ }
 			<section className="amplify-landing-how-section">
 				<AmplifyHowItWorks />
 			</section>
+
+			{ /* ── HUMAN-CENTRIC ANALYSIS ── */ }
+			<section className="amplify-landing-human-section">
+				<AmplifyHumanSection />
+			</section>
+
+			{ /* ── AI ANALYSIS ── */ }
+			<section className="amplify-landing-ai-section">
+				<AmplifyAiSection />
+			</section>
+
+			{ /* ── PROMPT WORKFLOW ── */ }
 			<section className="amplify-landing-workflow-section">
 				<AmplifyAiWorkflow />
 			</section>

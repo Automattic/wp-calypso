@@ -30,38 +30,39 @@ function PromptItem( { label, severity, body }: Prompt ) {
 	);
 }
 
-export default function AmplifyAiWorkflow() {
-	const prompts: Prompt[] = [
-		{
-			label: __( 'Service clarity' ),
-			severity: 'danger',
-			body: __(
-				'Rewrite the services section of this WordPress page to clearly articulate the specific outcomes each service delivers. Replace generic descriptions with client-focused language that answers “what will this do for my business?”'
-			),
-		},
-		{
-			label: __( 'Trust signals' ),
-			severity: 'danger',
-			body: __(
-				'Add a testimonials block above the fold on the homepage using the Jetpack Reviews block. Pull from existing client testimonials and prioritise quotes that reference measurable outcomes or specific project types.'
-			),
-		},
-		{
-			label: __( 'CTA optimization' ),
-			severity: 'warn',
-			body: __(
-				'Update the primary hero button text from “Learn more” to a specific, action-oriented phrase that communicates value. Suggested: “See how we work” or “Start your project.” Ensure it links to the contact or work page.'
-			),
-		},
-		{
-			label: __( 'Visual hierarchy' ),
-			severity: 'warn',
-			body: __(
-				'Audit the heading structure across the homepage. Ensure there is a single H1, that H2s clearly segment each section, and that no decorative text is marked as a heading element. Fix any heading tags used purely for styling.'
-			),
-		},
-	];
+// Hoisted to module scope — static data, no reason to reallocate on every render.
+const PROMPTS: Prompt[] = [
+	{
+		label: __( 'Service clarity' ),
+		severity: 'danger',
+		body: __(
+			'Rewrite the services section of this WordPress page to clearly articulate the specific outcomes each service delivers. Replace generic descriptions with client-focused language that answers “what will this do for my business?”'
+		),
+	},
+	{
+		label: __( 'Trust signals' ),
+		severity: 'danger',
+		body: __(
+			'Add a testimonials block above the fold on the homepage using the Jetpack Reviews block. Pull from existing client testimonials and prioritise quotes that reference measurable outcomes or specific project types.'
+		),
+	},
+	{
+		label: __( 'CTA optimization' ),
+		severity: 'warn',
+		body: __(
+			'Update the primary hero button text from “Learn more” to a specific, action-oriented phrase that communicates value. Suggested: “See how we work” or “Start your project.” Ensure it links to the contact or work page.'
+		),
+	},
+	{
+		label: __( 'Visual hierarchy' ),
+		severity: 'warn',
+		body: __(
+			'Audit the heading structure across the homepage. Ensure there is a single H1, that H2s clearly segment each section, and that no decorative text is marked as a heading element. Fix any heading tags used purely for styling.'
+		),
+	},
+];
 
+export default function AmplifyAiWorkflow() {
 	return (
 		<div className="amplify-landing-workflow">
 			<div className="amplify-landing-workflow-top">
@@ -92,7 +93,7 @@ export default function AmplifyAiWorkflow() {
 						<span className="amplify-landing-workflow-card-count">{ __( '4 issues found' ) }</span>
 					</div>
 					<div className="amplify-landing-workflow-prompt-items">
-						{ prompts.map( ( prompt ) => (
+						{ PROMPTS.map( ( prompt ) => (
 							<PromptItem key={ prompt.label } { ...prompt } />
 						) ) }
 					</div>
