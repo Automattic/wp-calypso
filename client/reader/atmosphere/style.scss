@@ -1,5 +1,3 @@
-@use "packages/ui/src/utils/mixins" as ui-mixins;
-
 .atmosphere-view {
 	max-width: 720px;
 	padding: 16px;
@@ -13,11 +11,7 @@
 }
 
 .atmosphere-error {
-	color: #b32d2e;
-
-	@include ui-mixins.when-dark-theme {
-		color: var( --color-error );
-	}
+	color: var( --color-error );
 }
 
 .atmosphere-view .atmosphere-navigation {

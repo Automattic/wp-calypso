@@ -89,7 +89,7 @@
 	}
 }
 
-body.color-scheme.is-reader-dark-mode .reader-post-actions {
+.reader-post-actions {
 	@include ui-mixins.when-dark-theme {
 		.reader-post-actions__item button {
 			background: transparent;

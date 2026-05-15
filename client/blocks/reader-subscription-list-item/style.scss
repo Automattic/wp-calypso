@@ -1,3 +1,5 @@
+@use "packages/ui/src/utils/mixins" as ui-mixins;
+
 .reader-subscription-list-item__byline {
 	color: var(--color-text);
 	margin: 0 12px;
@@ -116,6 +118,10 @@
 		@include long-content-fade( $size: 20% );
 		height: 100%;
 		top: auto;
+
+		@include ui-mixins.when-dark-theme {
+			background: linear-gradient( to right, transparent, var( --color-surface ) 90% );
+		}
 	}
 
 	.external-link .gridicons-external {

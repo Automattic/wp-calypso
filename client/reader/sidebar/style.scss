@@ -272,7 +272,7 @@ body.is-section-reader {
 }
 
 .is-reader-page.theme-default .sidebar .sidebar__menu-link::after {
-	border-right-color: var( --color-surface );
+	border-inline-end-color: var( --color-surface );
 }
 
 .theme-default .global-sidebar .sidebar .sidebar__menu {
