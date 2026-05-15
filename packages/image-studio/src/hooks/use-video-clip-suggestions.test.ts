@@ -237,7 +237,7 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( built ).toContain( 'inner prompt body' );
 	} );
 
-	it( 'asks the loader for 3 dense three-axis suggestions (35-60 words, audio axis included)', () => {
+	it( 'asks the loader for 3 rich multi-axis suggestions (60-120 words, 8 axes, optional closing direction)', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
 				registerSuggestions: jest.fn(),
@@ -247,19 +247,29 @@ describe( 'useVideoClipSuggestions', () => {
 		);
 
 		const callArgs = mockUseAsyncSuggestionsLoader.mock.calls[ 0 ][ 0 ];
-		expect( callArgs.prompt ).toMatch( /3\s+dense/i );
-		expect( callArgs.prompt ).toContain( '35-60 words' );
-		expect( callArgs.prompt ).not.toContain( '20-40 words' );
-		expect( callArgs.prompt ).toMatch( /COMBINES THREE/i );
+		expect( callArgs.prompt ).toMatch( /3\s+rich/i );
+		expect( callArgs.prompt ).toContain( '60-120 words' );
+		expect( callArgs.prompt ).not.toContain( '35-60 words' );
+		// Weaves 5-7 of the 8 axes per chip (was 3 of 6).
+		expect( callArgs.prompt ).toMatch( /5-7 of the eight axes/i );
+		// All six original axes survive.
 		expect( callArgs.prompt ).toMatch( /Audio \/ atmosphere/i );
+		expect( callArgs.prompt ).toMatch( /Lighting/i );
+		// Two new axes are present.
+		expect( callArgs.prompt ).toMatch( /Palette/i );
+		expect( callArgs.prompt ).toMatch( /Rendering medium/i );
+		// New optional closing-direction sub-clause — exposes the closerStatement steering affordance.
+		expect( callArgs.prompt ).toMatch( /closing-direction sub-clause/i );
+		expect( callArgs.prompt ).toMatch( /end on the|close on a|land on the/i );
+		// Safety rules preserved verbatim.
 		expect( callArgs.prompt ).toMatch( /only adults/i );
 		expect( callArgs.prompt ).toMatch( /no children or minors/i );
 		expect( callArgs.prompt ).toContain( 'signage' );
 
 		const built = callArgs.buildSystemPrompt( 'inner prompt body', 'en' );
 		expect( built ).toMatch( /exactly\s+3\s+items/i );
-		expect( built ).toContain( '35-60 word' );
-		expect( built ).not.toContain( '20-40 word' );
+		expect( built ).toContain( '60-120 word' );
+		expect( built ).not.toContain( '35-60 word' );
 		expect( built ).toContain( '2-4 word' );
 	} );
 
