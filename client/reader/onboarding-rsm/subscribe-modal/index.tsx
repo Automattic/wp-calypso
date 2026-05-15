@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -16,7 +15,7 @@ import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { requestPage, requestPaginatedStream } from 'calypso/state/reader/streams/actions';
+import { requestPage } from 'calypso/state/reader/streams/actions';
 import { nextSelectedSite } from './selection';
 import { type CardData, useSubscribeRecommendations } from './use-subscribe-recommendations';
 import SubscribeVerificationNudge from './verificationNudge';
@@ -89,7 +88,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	// is best-effort, not a guarantee that the string is always an RSS endpoint.
 	const selectedFollowUrl = selectedSite?.feed_URL ?? '';
 	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
 
 	const maxPages = Math.ceil( recommendations.length / SITES_PER_PAGE ) - 1;
 
@@ -164,20 +162,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 	);
 
 	const handleContinue = useCallback( () => {
-		queryClient.invalidateQueries( {
-			queryKey: [ 'read', 'subscriptions-count' ],
-		} );
-
-		dispatch(
-			requestPaginatedStream( {
-				streamKey: 'recent',
-				page: 1,
-				perPage: 10,
-			} )
-		);
-
 		onClose();
-	}, [ dispatch, onClose, queryClient ] );
+	}, [ onClose ] );
 
 	return (
 		<>
