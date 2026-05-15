@@ -1,6 +1,5 @@
 import { removePurchase as removePurchaseRequest } from '@automattic/api-core';
 import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -521,9 +520,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			await cancelAndRefundPurchaseAsync( purchase.id, {
 				product_id: purchase.productId,
 				cancel_bundled_domain: cancelBundledDomain ? 1 : 0,
-				email_variant: config.isEnabled( 'purchases/split-cancel-remove' )
-					? 'treatment'
-					: 'control',
+				email_variant: this.props.isSplitCancelRemoveEnabled ? 'treatment' : 'control',
 			} );
 			return {
 				success: true,

@@ -1,9 +1,9 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, ToggleControl } from '@wordpress/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component, type ReactNode } from 'react';
 import { connect } from 'react-redux';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -42,6 +42,7 @@ export interface AutoRenewToggleConnectedProps {
 	isEnabled: boolean;
 	currentUserId: number | null;
 	isAtomicSite: boolean;
+	isSplitCancelRemoveEnabled: boolean;
 	siteSlug?: string | null;
 	fetchUserPurchases: ( userId: number ) => Promise< Purchase[] >;
 	recordTracksEvent: (
@@ -195,10 +196,10 @@ class AutoRenewToggle extends Component<
 	};
 
 	onToggleAutoRenew = () => {
-		const { isEnabled, purchase, siteSlug } = this.props;
+		const { isEnabled, isSplitCancelRemoveEnabled, purchase, siteSlug } = this.props;
 
 		if ( isEnabled ) {
-			if ( config.isEnabled( 'purchases/split-cancel-remove' ) ) {
+			if ( isSplitCancelRemoveEnabled ) {
 				const url = cancelPurchaseUrl( siteSlug ?? '', purchase.id );
 				page( `${ url }?intent=auto-renew` );
 				return;
@@ -290,7 +291,7 @@ class AutoRenewToggle extends Component<
 	}
 }
 
-export default connect(
+const ConnectedAutoRenewToggle = connect(
 	( state: IAppState, { purchase, siteSlug }: AutoRenewToggleProps ) => ( {
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: purchase.isAutoRenewEnabled,
@@ -305,3 +306,13 @@ export default connect(
 		createNotice,
 	}
 )( localize( AutoRenewToggle ) );
+
+export default function AutoRenewToggleWithExperiment( props: AutoRenewToggleProps ) {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	return (
+		<ConnectedAutoRenewToggle
+			{ ...props }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+		/>
+	);
+}
