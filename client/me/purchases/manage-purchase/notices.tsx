@@ -109,9 +109,9 @@ class PurchaseNotice extends Component<
 		showCancelledRedirectNotice:
 			typeof window !== 'undefined' &&
 			new URLSearchParams( window.location.search ).get( 'cancelled' ) === 'true',
-		cancelledSource:
+		cancelledIntent:
 			typeof window !== 'undefined'
-				? new URLSearchParams( window.location.search ).get( 'source' )
+				? new URLSearchParams( window.location.search ).get( 'intent' )
 				: null,
 	};
 
@@ -122,7 +122,7 @@ class PurchaseNotice extends Component<
 		const params = new URLSearchParams( window.location.search );
 		if ( params.get( 'cancelled' ) === 'true' ) {
 			params.delete( 'cancelled' );
-			params.delete( 'source' );
+			params.delete( 'intent' );
 			const newSearch = params.toString();
 			const newUrl =
 				window.location.pathname + ( newSearch ? '?' + newSearch : '' ) + window.location.hash;
@@ -149,7 +149,7 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
-		if ( this.state.cancelledSource === 'auto-renew-toggle' ) {
+		if ( this.state.cancelledIntent === 'auto-renew' ) {
 			const noticeText = translate(
 				'Auto-renew has been disabled. You won\u2019t be billed again, and you\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.',
 				{

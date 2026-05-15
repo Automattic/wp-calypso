@@ -41,15 +41,11 @@ export const purchaseDetails = ( context, next ) => {
 };
 
 export const purchaseCancel = ( context, next ) => {
-	const rawSource = context.query?.source;
-	const source = rawSource === 'auto-renew-toggle' ? rawSource : null;
-
 	context.primary = (
 		<PurchaseCancel
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 			intent={ getCancelIntentFromQuery( context.query ?? {} ) }
-			source={ source }
 		/>
 	);
 	next();

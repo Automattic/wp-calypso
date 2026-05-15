@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Notice } from '../../../../../components/notice';
 import { getCancellationReasons } from '../cancellation-reasons';
 import { toSelectOption } from '../to-select-options';
+import type { CancelIntent } from '../../../../../utils/purchase';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 type ChangeCallback = ( value: string ) => void;
@@ -19,7 +20,7 @@ type CancellationReasonProps = {
 	onChange: ChangeCallback;
 	plans: PlanProduct[];
 	onDetailsChange: DetailsChangeCallback;
-	intent?: 'cancel' | 'remove';
+	intent?: CancelIntent;
 };
 
 function CancellationReason( {
@@ -158,7 +159,7 @@ type FeedbackStepProps = {
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
 	onChangeImportFeedback: ChangeCallback;
-	intent?: 'cancel' | 'remove';
+	intent?: CancelIntent;
 };
 
 export default function FeedbackStep( {

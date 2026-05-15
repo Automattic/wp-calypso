@@ -59,6 +59,7 @@ import {
 import {
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
+	type CancelIntent,
 	type DisplayVariant,
 } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
@@ -224,8 +225,7 @@ export interface CancelPurchaseProps {
 	purchaseId: number;
 	purchaseListUrl?: string;
 	siteSlug: string;
-	intent?: 'cancel' | 'remove' | null;
-	source?: 'auto-renew-toggle' | null;
+	intent?: CancelIntent | null;
 	purchaseCancelFeatures?: UpgradesCancelFeaturesResponse;
 	isPurchaseCancelFeaturesLoading?: boolean;
 }
@@ -293,14 +293,14 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return true;
 		}
 
-		// Under the split flag, if intent=cancel but auto-renew is already off
-		// (e.g. page refresh after cancel-autorenew mutation), redirect to
-		// Purchase Settings instead of re-showing the confirmation screen.
-		// Bypass when surveyShown is true — the post-mutation survey should
-		// still render within the same session.
+		// Under the split flag, if intent=cancel/auto-renew but auto-renew is
+		// already off (e.g. page refresh after cancel-autorenew mutation),
+		// redirect to Purchase Settings instead of re-showing the confirmation
+		// screen. Bypass when surveyShown is true — the post-mutation survey
+		// should still render within the same session.
 		if (
 			props.isSplitCancelRemoveEnabled &&
-			props.intent === 'cancel' &&
+			( props.intent === 'cancel' || props.intent === 'auto-renew' ) &&
 			! purchase.isAutoRenewEnabled &&
 			! this.state.surveyShown
 		) {
@@ -327,7 +327,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		const isAlreadyCancelledForSplitFlag =
 			this.props.isSplitCancelRemoveEnabled &&
-			this.props.intent === 'cancel' &&
+			( this.props.intent === 'cancel' || this.props.intent === 'auto-renew' ) &&
 			purchase &&
 			! purchase.isAutoRenewEnabled;
 
@@ -347,6 +347,15 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		page.redirect( redirectPath );
 	};
 
+	/**
+	 * The single source of truth for "what display variant does this cancel
+	 * flow render?". URL-borne intent is authoritative; falls back to 'cancel'
+	 * when intent is absent (legacy deep links, flag-off paths).
+	 */
+	getDisplayVariant(): DisplayVariant {
+		return this.props.intent ?? 'cancel';
+	}
+
 	getCancelledRedirectUrl() {
 		const managePurchaseUrl = ( this.props.getManagePurchaseUrlFor ?? managePurchase )(
 			this.props.siteSlug,
@@ -357,8 +366,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			return backupRedirect;
 		}
 		const params = new URLSearchParams( { cancelled: 'true' } );
-		if ( this.props.source === 'auto-renew-toggle' ) {
-			params.set( 'source', 'auto-renew-toggle' );
+		// Carry the intent through so the destination notice can pick the right copy.
+		if ( this.props.intent ) {
+			params.set( 'intent', this.props.intent );
 		}
 		return `${ managePurchaseUrl }?${ params.toString() }`;
 	}
@@ -428,7 +438,8 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	// confirmed"). Remove (and the no-intent legacy deep link) defer the
 	// mutation to onSurveyComplete, matching trunk's submit-handlers.
 	shouldFireMutationOnConfirm = (): boolean =>
-		this.props.isSplitCancelRemoveEnabled && this.props.intent === 'cancel';
+		this.props.isSplitCancelRemoveEnabled &&
+		( this.props.intent === 'cancel' || this.props.intent === 'auto-renew' );
 
 	// Fire the cancel mutation when the user confirms, then advance to the
 	// survey. The success notice is queued with displayOnNextPage so it shows
@@ -852,17 +863,18 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 	};
 
 	shouldUseAutoRenewFlow = () => {
-		// The Cancel split-button always carries intent=cancel, which routes to
-		// auto-renew cancellation (disable auto-renew, keep features until expiry).
-		return this.props.intent === 'cancel';
+		// The Cancel split-button (intent=cancel) and the auto-renew toggle
+		// (intent=auto-renew) both route to the disable-auto-renew flow:
+		// disable auto-renew, keep features until expiry.
+		return this.props.intent === 'cancel' || this.props.intent === 'auto-renew';
 	};
 
 	getCancelFlowType = ( purchase: Purchases.Purchase ) => {
 		const { intent } = this.props;
 
 		// URL intent is authoritative when present: it was set at the Purchase
-		// Settings button click.
-		if ( intent === 'cancel' ) {
+		// Settings button click or the auto-renew toggle.
+		if ( intent === 'cancel' || intent === 'auto-renew' ) {
 			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 		}
 		if ( intent === 'remove' ) {
@@ -916,11 +928,11 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 		// cancelIntentOverride drives the CancelPurchaseButton's label + mutation
 		// choice. URL intent is authoritative when present:
-		// - intent=cancel  → autorenew (disable auto-renew)
-		// - intent=remove  → refund (cancel-and-refund; for non-refundable falls
-		//   through to REMOVE via the button's existing logic)
+		// - intent=cancel/auto-renew → autorenew (disable auto-renew)
+		// - intent=remove            → refund (cancel-and-refund; for non-refundable
+		//   falls through to REMOVE via the button's existing logic)
 		let urlIntentOverride: 'refund' | 'autorenew' | undefined;
-		if ( this.props.intent === 'cancel' ) {
+		if ( this.props.intent === 'cancel' || this.props.intent === 'auto-renew' ) {
 			urlIntentOverride = 'autorenew';
 		} else if ( this.props.intent === 'remove' ) {
 			urlIntentOverride = 'refund';
@@ -933,15 +945,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			siteSlug,
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
-			displayVariant: ( (): DisplayVariant | undefined => {
-				if ( this.props.intent === 'remove' ) {
-					return 'remove';
-				}
-				if ( this.props.source === 'auto-renew-toggle' ) {
-					return 'auto-renew';
-				}
-				return undefined;
-			} )(),
+			displayVariant: this.props.intent ?? undefined,
 			cancelIntentOverride:
 				urlIntentOverride ??
 				( this.shouldUseAutoRenewFlow() ? ( 'autorenew' as const ) : undefined ),
@@ -968,15 +972,9 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	renderKeepSubscriptionButton = () => {
 		const { purchase, siteSlug } = this.props;
-		let keepIntent: DisplayVariant = 'cancel';
-		if ( this.props.intent === 'remove' ) {
-			keepIntent = 'remove';
-		} else if ( this.props.source === 'auto-renew-toggle' ) {
-			keepIntent = 'auto-renew';
-		}
 		const label = getButtonLabels( {
 			purchase: toPurchaseForCopy( purchase ),
-			intent: keepIntent,
+			intent: this.getDisplayVariant(),
 		} ).secondary;
 
 		return (
@@ -999,7 +997,6 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			includedDomainPurchase,
 			atomicTransfer,
 			isDomainRegistrationPurchase,
-			intent,
 			purchaseCancelFeatures,
 			translate,
 			site,
@@ -1087,12 +1084,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			}
 		}
 
-		let displayVariant: DisplayVariant = 'cancel';
-		if ( intent === 'remove' ) {
-			displayVariant = 'remove';
-		} else if ( this.props.source === 'auto-renew-toggle' ) {
-			displayVariant = 'auto-renew';
-		}
+		const displayVariant = this.getDisplayVariant();
 		const checkboxLabel = getCheckboxLabel();
 
 		// Check if we should show domain options inline (when they don't need radio buttons)
@@ -1305,12 +1297,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { purchase, isJetpack, isAkismet, isDomainRegistrationPurchase, intent } = this.props;
 		const { siteName, siteId } = purchase;
 
-		let displayVariant: DisplayVariant = 'cancel';
-		if ( intent === 'remove' ) {
-			displayVariant = 'remove';
-		} else if ( this.props.source === 'auto-renew-toggle' ) {
-			displayVariant = 'auto-renew';
-		}
+		const displayVariant = this.getDisplayVariant();
 		// Once the cancel mutation has resolved and the user is on the survey,
 		// the cancellation has already happened — reflect that in the heading.
 		const heading = ( () => {
@@ -1352,7 +1339,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						cancellationInProgress={ this.state.isLoading }
 						downgradeClick={ this.downgradeClick }
 						freeMonthOfferClick={ this.freeMonthOfferClick }
-						intent={ this.props.source === 'auto-renew-toggle' ? 'auto-renew' : this.props.intent }
+						intent={ this.props.intent }
 					/>
 				) }
 				<Card className="cancel-purchase__wrapper-card">
@@ -1387,7 +1374,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 						/>
 					) }
 					{ ! this.state.showDomainOptionsStep &&
-						( ! refundAmountString || intent === 'cancel' ) && (
+						( ! refundAmountString || intent === 'cancel' || intent === 'auto-renew' ) && (
 							<TimeRemainingNotice
 								purchase={ purchase }
 								displayVariant={ displayVariant }

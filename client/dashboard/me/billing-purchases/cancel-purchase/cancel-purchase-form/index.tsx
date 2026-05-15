@@ -5,7 +5,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
-import { CANCEL_FLOW_TYPE, CancelFlowType } from '../../../../utils/purchase';
+import {
+	CANCEL_FLOW_TYPE,
+	type CancelFlowType,
+	type CancelIntent,
+} from '../../../../utils/purchase';
 import { getSolutionsForReason } from '../get-solutions-for-reason';
 import { AtomicRevertStep } from './step-components/atomic-revert-step';
 import EducationContentStep from './step-components/educational-content-step';
@@ -37,7 +41,7 @@ interface CancelPurchaseFormProps {
 	atomicTransfer?: Pick< AtomicTransfer, 'created_at' >;
 	cancelBundledDomain?: boolean;
 	cancellationInProgress?: boolean;
-	intent?: 'cancel' | 'remove' | null;
+	intent?: CancelIntent | null;
 	cancellationOffer?: Pick<
 		CancellationOffer,
 		'discounted_periods' | 'raw_price' | 'currency_code' | 'original_price'

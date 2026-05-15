@@ -200,7 +200,7 @@ class AutoRenewToggle extends Component<
 		if ( isEnabled ) {
 			if ( config.isEnabled( 'purchases/split-cancel-remove' ) ) {
 				const url = cancelPurchaseUrl( siteSlug ?? '', purchase.id );
-				page( `${ url }?intent=cancel&source=auto-renew-toggle` );
+				page( `${ url }?intent=auto-renew` );
 				return;
 			}
 
