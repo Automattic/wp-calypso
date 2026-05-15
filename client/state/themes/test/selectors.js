@@ -448,12 +448,27 @@ describe( 'themes selectors', () => {
 			expect( theme.retired ).toBe( false );
 		} );
 
-		test( 'when wpcom record is not retired, returns the wpcom record even if the site has its own copy', () => {
-			const wpcomTwentySixteen = { ...twentysixteen };
+		test( 'when wpcom record is not retired and the site has its own installed theme with the same slug, merges site fields over wpcom (DOTTHEM-150)', () => {
+			const wpcomTwentySixteen = {
+				...twentysixteen,
+				download: 'https://wordpress.com/theme/twentysixteen.zip',
+				descriptionLong: '<p>Canonical long description.</p>',
+				supportDocumentation: '<p>Canonical support docs.</p>',
+				taxonomies: {
+					theme_feature: [ { slug: 'block-editor-styles' } ],
+				},
+			};
 			const sideloadedTwentySixteen = {
 				id: 'twentysixteen',
 				name: 'Twenty Sixteen (local)',
 				author: 'unrelated',
+				author_uri: 'https://example.com/theme-author',
+				stylesheet: undefined,
+				download: undefined,
+				descriptionLong: '<img src=x onerror=alert(1)>',
+				supportDocumentation: '<img src=x onerror=alert(1)>',
+				taxonomies: undefined,
+				theme_tier: undefined,
 			};
 
 			const theme = getCanonicalTheme(
@@ -473,7 +488,111 @@ describe( 'themes selectors', () => {
 				'twentysixteen'
 			);
 
+			expect( theme ).toMatchObject( {
+				name: 'Twenty Sixteen (local)',
+				author: 'unrelated',
+				author_uri: 'https://example.com/theme-author',
+				stylesheet: 'pub/twentysixteen',
+				download: 'https://wordpress.com/theme/twentysixteen.zip',
+				descriptionLong: '<p>Canonical long description.</p>',
+				supportDocumentation: '<p>Canonical support docs.</p>',
+				taxonomies: {
+					theme_feature: [ { slug: 'block-editor-styles' } ],
+				},
+				theme_tier: freeThemeTier,
+				retired: false,
+			} );
+		} );
+
+		test( 'when a colliding site theme has an unsafe author URL, ignores the site author URL', () => {
+			const wpcomTwentySixteen = {
+				...twentysixteen,
+				author_uri: 'https://wordpress.org/',
+			};
+			const sideloadedTwentySixteen = {
+				id: 'twentysixteen',
+				name: 'Twenty Sixteen (local)',
+				author: 'unrelated',
+				author_uri: 'javascript:alert(1)',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen: wpcomTwentySixteen },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { twentysixteen: sideloadedTwentySixteen },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'twentysixteen'
+			);
+
+			expect( theme.author_uri ).toBe( 'https://wordpress.org/' );
+		} );
+
+		test( 'when wpcom record is not retired and the site has the symlinked wpcom-managed copy, still returns the wpcom record (no regression)', () => {
+			const wpcomTwentySixteen = { ...twentysixteen };
+			const symlinkedTwentySixteen = {
+				id: 'twentysixteen',
+				name: 'Twenty Sixteen',
+				author: 'WordPress.com',
+				theme_uri: 'https://wordpress.com/theme/twentysixteen',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen: wpcomTwentySixteen },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { twentysixteen: symlinkedTwentySixteen },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'twentysixteen'
+			);
+
 			expect( theme ).toEqual( wpcomTwentySixteen );
+		} );
+
+		test( 'when site theme_uri equals the symlink prefix without a slug, treats it as an unmanaged collision', () => {
+			const wpcomTwentySixteen = { ...twentysixteen };
+			const sideloadedTwentySixteen = {
+				id: 'twentysixteen',
+				name: 'Twenty Sixteen (local)',
+				author: 'unrelated',
+				theme_uri: 'https://wordpress.com/theme/',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen: wpcomTwentySixteen },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { twentysixteen: sideloadedTwentySixteen },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'twentysixteen'
+			);
+
+			expect( theme.name ).toBe( 'Twenty Sixteen (local)' );
+			expect( theme.retired ).toBe( false );
 		} );
 	} );
 
