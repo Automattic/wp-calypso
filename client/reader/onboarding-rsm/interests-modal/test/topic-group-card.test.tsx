@@ -9,16 +9,25 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import TopicGroupCard from '../topic-group-card';
 import type { CuratedBlog } from '../../curated-blogs';
 
+// Track every feed query the component actually fires so tests can assert
+// the viewport-gated fetching behavior (no requests until cards enter the viewport).
+// `mock`-prefixed name is required by babel-plugin-jest-hoist to be referenced
+// inside the jest.mock factory below.
+const mockFeedQueryCalls: number[] = [];
+
 jest.mock( '@automattic/api-queries', () => {
 	const actual = jest.requireActual( '@automattic/api-queries' );
 	return {
 		...actual,
 		readFeedQuery: ( feedId: number ) => ( {
 			...actual.readFeedQuery( feedId ),
-			queryFn: async () => ( {
-				image: `https://icons.example/${ feedId }.png`,
-				subscribers_count: 1000 * feedId,
-			} ),
+			queryFn: async () => {
+				mockFeedQueryCalls.push( feedId );
+				return {
+					image: `https://icons.example/${ feedId }.png`,
+					subscribers_count: 1000 * feedId,
+				};
+			},
 		} ),
 	};
 } );
@@ -84,6 +93,7 @@ const defaultProps = {
 describe( 'TopicGroupCard', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockFeedQueryCalls.length = 0;
 	} );
 
 	it( 'renders the title, description, and image', () => {
@@ -232,14 +242,16 @@ describe( 'TopicGroupCard', () => {
 	} );
 
 	describe( 'in-view behavior', () => {
-		it( 'does not show subscriber count while the card is out of view', async () => {
-			// Render the card, then explicitly report it as out of view.
+		it( 'does not fire any feed queries while the card is out of view', async () => {
+			// Render the card, then explicitly report it (and all child avatar refs) as out of view.
 			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
 			mockAllIsIntersecting( false );
 
-			// Flush async operations — no queries should have fired since the card is off-screen.
+			// Flush async operations to give any (incorrectly enabled) queries a chance to run.
 			await act( async () => {} );
 
+			// The PR's key behavior: no network requests fire for out-of-view cards.
+			expect( mockFeedQueryCalls ).toEqual( [] );
 			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
 		} );
 
@@ -252,7 +264,11 @@ describe( 'TopicGroupCard', () => {
 				expect( screen.getByText( /readers/i ) ).toBeVisible();
 			} );
 
-			// All 5 feeds are requested (not just the 3 shown as avatars).
+			// All 5 feeds are requested (not just the 3 shown as avatars). Use Set to
+			// dedupe — BlogAvatar's per-avatar useQuery and the card-level useQueries
+			// share the React Query cache, so each feedId is fetched once.
+			expect( new Set( mockFeedQueryCalls ) ).toEqual( new Set( [ 1, 2, 3, 4, 5 ] ) );
+
 			// 1000+2000+3000+4000+5000 = 15000 → "15K readers".
 			expect( screen.getByText( /15[,.]?0?K?\s*readers/i ) ).toBeInTheDocument();
 		} );
