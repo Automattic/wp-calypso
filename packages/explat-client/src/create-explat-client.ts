@@ -302,7 +302,6 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					runtime.can_log_assignment &&
 					runtime.can_create_assignment
 				) {
-					// Fire-and-forget: don't await the beacon. Failures are logged + swallowed.
 					// No client-side dedupe — the server's `Assigned_Variation` writers
 					// already short-circuit duplicate `(user|anon, experiment)` rows.
 					void fireFeatureAssignmentBeacon( {

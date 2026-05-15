@@ -1,3 +1,5 @@
+import { asyncOneAtATime } from './timing';
+import { isObject } from './validations';
 import type { Feature, Range } from '../sdk/types';
 import type { Config } from '../types';
 
@@ -29,65 +31,58 @@ export function createFlagPayloadLoader(
 	logError: Config[ 'logError' ]
 ): () => Promise< FlagPayload | null > {
 	let cache: FlagPayloadCache | null = null;
-	let inflight: Promise< FlagPayload | null > | null = null;
+
+	const fetchAndCache = asyncOneAtATime( async (): Promise< FlagPayload | null > => {
+		try {
+			const raw = await fetchPayload();
+			const payload = parsePayload( raw, logError );
+			if ( ! payload ) {
+				return null;
+			}
+			cache = {
+				payload,
+				expiresAt: Date.now() + payload.ttl * 1000,
+			};
+			return payload;
+		} catch ( e ) {
+			logError( {
+				message: ( e as Error ).message,
+				source: 'loadFlagPayload-fetchError',
+			} );
+			return null;
+		}
+	} );
 
 	return async function loadFlagPayload(): Promise< FlagPayload | null > {
-		const now = Date.now();
-		if ( cache && cache.expiresAt > now ) {
+		if ( cache && cache.expiresAt > Date.now() ) {
 			return cache.payload;
 		}
-		if ( inflight ) {
-			return inflight;
-		}
-		inflight = ( async () => {
-			try {
-				const raw = await fetchPayload();
-				const payload = parsePayload( raw, logError );
-				if ( ! payload ) {
-					return null;
-				}
-				cache = {
-					payload,
-					expiresAt: Date.now() + payload.ttl * 1000,
-				};
-				return payload;
-			} catch ( e ) {
-				logError( {
-					message: ( e as Error ).message,
-					source: 'loadFlagPayload-fetchError',
-				} );
-				return null;
-			} finally {
-				inflight = null;
-			}
-		} )();
-		return inflight;
+		return fetchAndCache();
 	};
 }
 
 function parsePayload( raw: unknown, logError: Config[ 'logError' ] ): FlagPayload | null {
-	if ( typeof raw !== 'object' || raw === null ) {
+	if ( ! isObject( raw ) ) {
 		return null;
 	}
-	const obj = raw as Record< string, unknown >;
-	if ( obj.schema_version !== SCHEMA_VERSION_SUPPORTED ) {
+	if ( raw.schema_version !== SCHEMA_VERSION_SUPPORTED ) {
 		logError( {
-			message: `Unsupported flag payload schema_version=${ String( obj.schema_version ) }`,
+			message: `Unsupported flag payload schema_version=${ String( raw.schema_version ) }`,
 			source: 'loadFlagPayload-unsupportedSchema',
 		} );
 		return null;
 	}
 	return {
-		schema_version: obj.schema_version,
-		flags: normalizeFlags( ( obj.flags as Record< string, Feature > ) ?? {} ),
-		ttl: typeof obj.ttl === 'number' ? obj.ttl : DEFAULT_TTL_SECONDS,
+		schema_version: raw.schema_version,
+		flags: normalizeFlags( ( raw.flags as Record< string, Feature > ) ?? {} ),
+		ttl: typeof raw.ttl === 'number' ? raw.ttl : DEFAULT_TTL_SECONDS,
 	};
 }
 
 /**
- * Bridge the canonical contract shape (`rule.ranges: [number,number][]` per
- * `00-contracts.md` § 6) to the SDK's inline `variation.range` shape. The
- * payload from the wpcom flag-compiler emits the canonical form; the SDK in
+ * Bridge the canonical payload shape (`rule.ranges: [number,number][]`) to
+ * the SDK's inline `variation.range` shape. The payload from the wpcom
+ * flag-compiler emits the canonical form; the SDK in
  * `packages/explat-client/src/sdk` reads `variations[i].range`. Distribute
  * `rule.ranges[i]` onto each variation here so callers don't notice the
  * difference. Already-inline payloads (e.g. unit-test fixtures) pass through
