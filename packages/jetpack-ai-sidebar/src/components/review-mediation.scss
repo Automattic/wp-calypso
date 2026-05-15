@@ -105,6 +105,14 @@
 	line-height: 1.5;
 	color: inherit;
 
+	&.is-post-stale {
+		.jetpack-ai-review-mediation__stats,
+		.jetpack-ai-review-mediation__panel,
+		.jetpack-ai-review-mediation__footer {
+			opacity: 0.5;
+		}
+	}
+
 	// ---------- Panel / PanelBody overrides ----------
 	// Strip Gutenberg's white bg + bottom divider; replace with a translucent
 	// top divider so sections read as separate panes on the chat surface.
@@ -160,8 +168,12 @@
 		fill: currentColor;
 	}
 
-	// Content region indent — flush left looks naked in a chat bubble.
-	.components-panel__body.is-opened > :not(.components-panel__body-title) {
+	// Content region bottom spacing. Keep cards out of this broad PanelBody
+	// rule so their own internal padding is not overwritten.
+	.components-panel__body.is-opened
+		> :not(.components-panel__body-title):not(.jetpack-ai-review-mediation__card):not(
+			.jetpack-ai-review-mediation__conflict-card
+		) {
 		padding: 0 0 0.75rem;
 	}
 
@@ -214,6 +226,15 @@
 		&.is-manual {
 			color: #f0b849;
 		}
+	}
+
+	&__stale-warning {
+		margin: 0 0 0.75rem;
+		padding: 0.5rem 0.75rem;
+		font-size: 12px;
+		font-weight: 600;
+		border-left: 3px solid #d63638;
+		background: rgba(214, 54, 56, 0.08);
 	}
 
 	// ---------- Suggested edit cards ----------
@@ -466,11 +487,16 @@
 			border-color 0.15s ease,
 			background 0.15s ease;
 
-		&:hover,
-		&:focus-visible {
+		&:hover:not(:disabled),
+		&:focus-visible:not(:disabled) {
 			border-color: rgba(255, 255, 255, 0.5);
 			background: rgba(255, 255, 255, 0.06);
 			outline: none;
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.55;
 		}
 	}
 
@@ -600,7 +626,7 @@
 				border-color 0.15s ease,
 				background 0.15s ease;
 
-			&:hover {
+			&:hover:not(:disabled) {
 				border-color: rgba(255, 255, 255, 0.4);
 				background: rgba(255, 255, 255, 0.06);
 			}
@@ -611,12 +637,17 @@
 			}
 		}
 
+		&:disabled {
+			cursor: default;
+			opacity: 0.55;
+		}
+
 		&.is-conflicts {
 			color: #e8a520;
 			border-color: rgba(232, 165, 32, 0.45);
 			background: rgba(232, 165, 32, 0.08);
 
-			&.is-clickable:hover {
+			&.is-clickable:hover:not(:disabled) {
 				border-color: rgba(232, 165, 32, 0.7);
 				background: rgba(232, 165, 32, 0.14);
 			}
@@ -670,6 +701,16 @@
 		&.is-failed {
 			border-color: rgba(214, 54, 56, 0.7);
 		}
+	}
+
+	// Keep the intended card padding anchored to this component root without
+	// changing collapsed rows or reaching for `!important`.
+	& &__card:not(.is-collapsed) {
+		padding: 1rem 1.25rem;
+	}
+
+	& &__conflict-card:not(.is-collapsed) {
+		padding: 1.25rem 1.5rem;
 	}
 
 	&__conflict-header {
@@ -764,12 +805,17 @@
 	}
 
 	&__ai-badge {
+		display: inline-flex;
+		flex: 0 0 auto;
 		background: var(--wp-admin-theme-color, #3858e9);
 		color: #fff;
 		font-size: 10px;
 		padding: 2px 6px;
 		border-radius: 3px;
 		letter-spacing: 0.06em;
+		white-space: nowrap;
+		word-break: normal;
+		overflow-wrap: normal;
 	}
 
 	&__ai-text {
