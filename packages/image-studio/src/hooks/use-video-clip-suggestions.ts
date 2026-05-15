@@ -24,9 +24,11 @@ const EMPTY_SUGGESTIONS: Suggestion[] = [];
  * Each chip prompt weaves together 5-7 axes drawn from a pool of eight
  * (camera, subject, lighting, texture, time-of-day, audio, palette,
  * rendering medium). Each chip leans into a distinct angle on the post
- * rather than trying to cover all 8 axes; across the three chips, all 8
- * axes should appear at least once so the user sees real variety in the
- * starter prompts rather than three near-duplicates.
+ * rather than trying to cover all 8 axes; across the three chips, the
+ * seven non-medium axes should each appear at least once. Rendering
+ * medium is OPT-IN — it's included only when at least one chip genuinely
+ * benefits from stylization, never forced onto a chip just to cover the
+ * axis (news / lifestyle / nature posts often skip it entirely).
  *
  * Each chip may also include an optional closing-direction sub-clause
  * — exposes the chat-steerable `closerStatement` affordance via example.
@@ -45,9 +47,9 @@ Each prompt MUST be:
   - Time-of-day (dawn, blue hour, late afternoon, deep dusk, twilight).
   - Audio / atmosphere (a 2-5 word *instrumental* music cue or concrete non-voice ambient cue: "warm acoustic folk, fingerpicked guitar"; "minimal ambient electronic, ~95 bpm"; "instrumental jazz, brushed drums"; "distant gull cries"; "espresso machine hiss, ceramic clink"; "wind through pines"). Instrumental genre or environmental cue only — NEVER vocals, lyrics, dialogue, crowd murmur, song titles, or artists.
   - Palette (concrete hue relationships — dominant + accent, or warm-vs-cool split: "earth tones — ochre, sage, dusty cream — against a single cool slate-blue note"; "cool slate blues and graphite with a single warm amber accent"; "warm umber and brass highlights against deep teal shadows"). Name actual colors, NOT mood adjectives ("moody", "vibrant").
-  - Rendering medium (OPT-IN — include ONLY when the post topic clearly calls for stylization away from photoreal): "graphic novel" for action/drama; "editorial illustration" for tech/analytical/data posts; "painterly oil" for arts/literary essays; "watercolor sketch" for travel/nature journaling; "retro Polaroid" for nostalgia; "Studio Ghibli" for character-led storytelling; "isometric pixel art" for retro tech. Omit for news/lifestyle/food/nature — those default to photorealistic and don't need this axis.
+  - Rendering medium (OPT-IN — include ONLY when the post topic clearly calls for stylization away from photoreal): "graphic novel" for action/drama; "editorial illustration" for tech/analytical/data posts; "painterly oil" for arts/literary essays; "watercolor sketch" for travel/nature journaling; "instant-film aesthetic" for nostalgia; "whimsical hand-drawn cel animation" for character-led storytelling; "isometric pixel art" for retro tech. Use generic descriptors only — NEVER name studios, brands, artists, or copyrighted properties. Omit for news/lifestyle/food/nature — those default to photorealistic and don't need this axis.
 
-Across the three chips, all 8 axes should appear at least once. Don't make all three chips lean on the same axes — each chip should feel like a distinct angle on the post (e.g. one sensory / textural, one cinematic / atmospheric, one stylized / editorial).
+Across the three chips, the seven non-medium axes (camera, subject, lighting, texture, time-of-day, audio, palette) should each appear at least once. Rendering medium is OPT-IN and is included only when at least one chip genuinely benefits from stylization — never force it onto a chip just to cover the axis. Don't make all three chips lean on the same axes — each chip should feel like a distinct angle on the post (e.g. one sensory / textural, one cinematic / atmospheric, one stylized / editorial).
 
 Each chip MAY also include an optional closing-direction sub-clause (a short phrase hinting how the clip should resolve — e.g. "end on the resilience theme", "close on a quiet settled note", "land on the small-craft detail"). This exposes the chat-steerable closing-line affordance to the user. Include in 1-2 of the 3 chips; skip when no obvious resolution.
 
@@ -67,7 +69,7 @@ function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ):
 ${ suggestionPrompt }
 
 Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). The "suggestions" array MUST contain exactly 3 items:
-{"suggestions":[{"label":"2-4 word chip A","prompt":"60-120 word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"},{"label":"2-4 word chip B","prompt":"60-120 word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"},{"label":"2-4 word chip C","prompt":"60-120 word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"}]}
+{"suggestions":[{"label":"2-4 word chip A","prompt":"60-120-word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"},{"label":"2-4 word chip B","prompt":"60-120-word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"},{"label":"2-4 word chip C","prompt":"60-120-word directional prose weaving 5-7 axes (plus an optional closing-direction clause)"}]}
 
 The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the rich one — 60-120 words, 5-7 axes woven into prose, with an optional closing-direction clause in 1-2 of the 3 chips.
 
