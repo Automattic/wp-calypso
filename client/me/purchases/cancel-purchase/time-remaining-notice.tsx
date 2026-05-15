@@ -4,10 +4,12 @@ import { getTopNoticeCopy } from 'calypso/dashboard/me/billing-purchases/cancel-
 import { isPartnerPurchase } from 'calypso/lib/purchases';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { Purchases } from '@automattic/data-stores';
+import type { CancelIntent, DisplayVariant } from 'calypso/lib/purchases/utils';
+
 interface TimeRemainingNoticeProps {
 	purchase: Purchases.Purchase;
-	displayVariant: 'cancel' | 'remove' | 'auto-renew';
-	intent: 'cancel' | 'remove' | 'auto-renew' | null;
+	displayVariant: DisplayVariant;
+	intent: CancelIntent | null;
 }
 
 export default function TimeRemainingNotice( {

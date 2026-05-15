@@ -717,10 +717,16 @@ export function getCancelIntentFromSearch( search: { intent?: unknown } ): Cance
 	return search.intent === 'cancel' || search.intent === 'remove' ? search.intent : null;
 }
 
-export type DisplayVariant = 'cancel' | 'remove';
+/**
+ * The set of UI variants the cancel/confirmation screens can render. Wider
+ * than CancelIntent because `auto-renew` is synthesized from `source=auto-renew-toggle`
+ * — it is never carried directly in the URL `intent` param.
+ */
+export type DisplayVariant = 'cancel' | 'remove' | 'auto-renew';
 
 /**
  * Derives which screen variant to show from intent, with a flow-type fallback when intent is absent.
+ * Never returns 'auto-renew' — that variant is selected at the call site based on `source`.
  */
 export function getDisplayVariant(
 	intent: CancelIntent | null,

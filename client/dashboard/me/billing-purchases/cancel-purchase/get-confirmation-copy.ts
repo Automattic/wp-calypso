@@ -1,7 +1,7 @@
 import { AkismetPlans, TitanMailSlugs } from '@automattic/api-core';
 import { _n, __, sprintf } from '@wordpress/i18n';
 import { intervalToDuration } from 'date-fns';
-import { isGSuiteOrGoogleWorkspaceProductSlug, CancelIntent } from '../../../utils/purchase';
+import { isGSuiteOrGoogleWorkspaceProductSlug, DisplayVariant } from '../../../utils/purchase';
 
 /**
  * Minimal purchase shape the confirmation copy depends on. Both surfaces
@@ -155,11 +155,9 @@ export function formatTimeRemaining( expiryDate: string | Date, from: Date = new
 	);
 }
 
-type ConfirmationIntent = CancelIntent | 'auto-renew';
-
 type ConfirmationCopyArgs = {
 	purchase: PurchaseForCopy;
-	intent: ConfirmationIntent;
+	intent: DisplayVariant;
 };
 
 /**

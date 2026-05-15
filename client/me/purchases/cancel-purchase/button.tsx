@@ -25,6 +25,7 @@ import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dia
 import { willShowDomainOptionsRadioButtons } from './domain-options';
 import { toPurchaseForCopy } from './to-purchase-for-copy';
 import type { Purchases } from '@automattic/data-stores';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 import type { LocalizeProps } from 'i18n-calypso';
 
 interface MomentProps {
@@ -44,7 +45,7 @@ export interface CancelPurchaseButtonProps {
 	includedDomainPurchase: Purchases.Purchase;
 	disabled?: boolean;
 	textVariant?: string;
-	displayVariant?: 'cancel' | 'remove' | 'auto-renew';
+	displayVariant?: DisplayVariant;
 	isLinkStyle?: boolean;
 	isInline?: boolean;
 	cancelIntentOverride?: 'refund' | 'autorenew';

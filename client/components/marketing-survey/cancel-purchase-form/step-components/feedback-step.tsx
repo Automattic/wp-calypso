@@ -6,6 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { getCancellationReasons } from '../cancellation-reasons';
 import { toSelectOption } from '../to-select-options';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
 type ChangeCallback = ( value: string ) => void;
 type DetailsChangeCallback = ( value: string, details?: string ) => void;
@@ -15,7 +16,7 @@ type CancellationReasonProps = {
 	reasonCodes: string[];
 	onChange: ChangeCallback;
 	onDetailsChange: DetailsChangeCallback;
-	intent?: 'cancel' | 'remove' | 'auto-renew';
+	intent?: DisplayVariant;
 };
 
 function CancellationReason( {
@@ -156,7 +157,7 @@ type FeedbackStepProps = {
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
 	onChangeImportFeedback?: ChangeCallback;
-	intent?: 'cancel' | 'remove' | 'auto-renew';
+	intent?: DisplayVariant;
 };
 
 export default function FeedbackStep( {

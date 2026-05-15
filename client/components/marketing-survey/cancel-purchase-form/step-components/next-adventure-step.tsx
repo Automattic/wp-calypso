@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { toSelectOption } from '../to-select-options';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
 interface Props {
 	isPlan: boolean;
 	isOnlyStep?: boolean;
 	adventureOptions: string[];
-	intent?: 'cancel' | 'remove' | 'auto-renew';
+	intent?: DisplayVariant;
 	onChangeText?: ( text: string ) => void;
 	onSelectNextAdventure?: ( nextAdventure: string ) => void;
 	onChangeNextAdventureDetails?: ( details: string ) => void;

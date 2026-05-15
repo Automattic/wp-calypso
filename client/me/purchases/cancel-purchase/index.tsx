@@ -56,7 +56,11 @@ import {
 	cancelAndRefundPurchase,
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
-import { getMutationFlowType, getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
+import {
+	getMutationFlowType,
+	getPurchaseCancellationFlowType,
+	type DisplayVariant,
+} from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { classifyPurchaseForCopy } from 'calypso/me/purchases/manage-purchase/classify-purchase-for-copy';
@@ -107,7 +111,7 @@ function ContactSupportButton( {
 	...props
 }: {
 	purchase: { siteId: number; siteUrl: string; productName: string };
-	displayVariant: 'cancel' | 'remove' | 'auto-renew';
+	displayVariant: DisplayVariant;
 	children?: ReactNode;
 } & ButtonHTMLAttributes< HTMLButtonElement > ) {
 	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
@@ -929,7 +933,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			siteSlug,
 			cancelBundledDomain: this.state.cancelBundledDomain,
 			purchaseListUrl: purchaseListUrl ?? purchasesRoot,
-			displayVariant: ( (): 'remove' | 'auto-renew' | undefined => {
+			displayVariant: ( (): DisplayVariant | undefined => {
 				if ( this.props.intent === 'remove' ) {
 					return 'remove';
 				}
@@ -964,7 +968,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 
 	renderKeepSubscriptionButton = () => {
 		const { purchase, siteSlug } = this.props;
-		let keepIntent: 'cancel' | 'remove' | 'auto-renew' = 'cancel';
+		let keepIntent: DisplayVariant = 'cancel';
 		if ( this.props.intent === 'remove' ) {
 			keepIntent = 'remove';
 		} else if ( this.props.source === 'auto-renew-toggle' ) {
@@ -1083,7 +1087,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 			}
 		}
 
-		let displayVariant: 'cancel' | 'remove' | 'auto-renew' = 'cancel';
+		let displayVariant: DisplayVariant = 'cancel';
 		if ( intent === 'remove' ) {
 			displayVariant = 'remove';
 		} else if ( this.props.source === 'auto-renew-toggle' ) {
@@ -1301,7 +1305,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 		const { purchase, isJetpack, isAkismet, isDomainRegistrationPurchase, intent } = this.props;
 		const { siteName, siteId } = purchase;
 
-		let displayVariant: 'cancel' | 'remove' | 'auto-renew' = 'cancel';
+		let displayVariant: DisplayVariant = 'cancel';
 		if ( intent === 'remove' ) {
 			displayVariant = 'remove';
 		} else if ( this.props.source === 'auto-renew-toggle' ) {

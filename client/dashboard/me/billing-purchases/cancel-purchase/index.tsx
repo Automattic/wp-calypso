@@ -55,6 +55,8 @@ import {
 	getCancelIntentFromSearch,
 	getDisplayVariant,
 	getIncludedDomainPurchase,
+	type CancelIntent,
+	type DisplayVariant,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
 	hasAmountAvailableToRefund,
@@ -112,9 +114,9 @@ import './style.scss';
 type TopNoticeArgs = {
 	surveyShown?: boolean;
 	showDomainOptionsStep?: boolean;
-	displayVariant: 'cancel' | 'remove';
+	displayVariant: DisplayVariant;
 	purchase: Purchase;
-	intent: 'cancel' | 'remove' | null;
+	intent: CancelIntent | null;
 };
 
 /**
