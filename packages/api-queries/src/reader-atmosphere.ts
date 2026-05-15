@@ -26,6 +26,7 @@ import {
 	PENDING_REPLY_URI,
 	PENDING_REPOST_URI,
 	isValidHashtag,
+	mapNotificationsFilter,
 	readerAtmosphereKeys,
 	uploadBlob,
 } from '@automattic/api-core';
@@ -65,6 +66,7 @@ import type {
 	CreatePostParams,
 	CreatePostResult,
 	CreateRepostResult,
+	NotificationsFilter,
 	UploadBlobParams,
 	UploadBlobResult,
 } from '@automattic/api-core';
@@ -165,7 +167,14 @@ export function useTimelineInfiniteQuery( connectionId: number ) {
 	return useInfiniteQuery( timelineInfiniteQuery( connectionId ) );
 }
 
-export const notificationsInfiniteQuery = ( connectionId: number ) =>
+export interface UseAtmosphereNotificationsOptions {
+	filter?: NotificationsFilter;
+}
+
+export const notificationsInfiniteQuery = (
+	connectionId: number,
+	filter: NotificationsFilter = 'all'
+) =>
 	infiniteQueryOptions<
 		AtmosphereNotificationsPage,
 		AtmosphereError,
@@ -173,8 +182,13 @@ export const notificationsInfiniteQuery = ( connectionId: number ) =>
 		QueryKey,
 		string | undefined
 	>( {
-		queryKey: readerAtmosphereKeys.notifications( connectionId ),
-		queryFn: ( { pageParam } ) => getAtmosphereNotifications( { connectionId, cursor: pageParam } ),
+		queryKey: readerAtmosphereKeys.notifications( connectionId, filter ),
+		queryFn: ( { pageParam } ) =>
+			getAtmosphereNotifications( {
+				connectionId,
+				cursor: pageParam,
+				types: mapNotificationsFilter( filter ),
+			} ),
 		initialPageParam: undefined,
 		getNextPageParam: ( lastPage ) => lastPage.next_cursor ?? undefined,
 		enabled: connectionId > 0,
@@ -182,8 +196,12 @@ export const notificationsInfiniteQuery = ( connectionId: number ) =>
 		gcTime: 5 * 60_000,
 	} );
 
-export function useAtmosphereNotificationsInfiniteQuery( connectionId: number ) {
-	return useInfiniteQuery( notificationsInfiniteQuery( connectionId ) );
+export function useAtmosphereNotificationsInfiniteQuery(
+	connectionId: number,
+	options: UseAtmosphereNotificationsOptions = {}
+) {
+	const { filter = 'all' } = options;
+	return useInfiniteQuery( notificationsInfiniteQuery( connectionId, filter ) );
 }
 
 export const threadQueryOptions = ( uri: string ) =>

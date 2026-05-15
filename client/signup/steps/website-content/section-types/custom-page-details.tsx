@@ -6,6 +6,7 @@ import {
 	CheckboxField,
 	TextInputField,
 } from 'calypso/signup/accordion-form/form-components';
+import { CUSTOM_PAGE } from 'calypso/signup/difm/constants';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -30,7 +31,7 @@ export function CustomPageDetails( {
 }: PageDetailsParams< PageData > ) {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
-	const description = useTranslatedPageDescriptions( page.id, context );
+	const description = useTranslatedPageDescriptions( CUSTOM_PAGE, context );
 
 	const { onCheckboxChanged, onFieldChanged } = useChangeHandlers( {
 		pageId: page.id,

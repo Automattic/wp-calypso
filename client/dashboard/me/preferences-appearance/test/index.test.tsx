@@ -5,8 +5,8 @@
 import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
+import { ColorSchemeProvider } from 'calypso/lib/color-scheme';
 import PreferencesAppearance from '..';
-import { ColorSchemeProvider } from '../../../app/color-scheme';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';

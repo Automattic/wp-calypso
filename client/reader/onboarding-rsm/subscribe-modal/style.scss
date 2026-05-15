@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 
 body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-placeholder {
-	padding: 12px 0;
+	padding: 14px 16px;
 
 	.reader__post-title {
 		margin-top: 0;
@@ -73,7 +73,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 12px;
+		gap: 4px;
 		padding: 20px 24px 10px;
 	}
 
@@ -82,7 +82,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		flex: 1;
 		min-height: 0;
 		padding: 20px 24px 0;
-		gap: 16px;
+		gap: 8px;
 
 		// Below ~700px viewport the modal itself starts clamping to 100vw
 		// and both columns no longer have usable room; collapse to list-only.
@@ -96,7 +96,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		padding-top: 2px;
 		overflow-y: auto;
 		max-width: 300px;
-		padding-inline-end: 32px;
+		padding-inline-end: 16px;
 
 		@media ( max-width: 699px ) {
 			flex: 1;
@@ -245,8 +245,9 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 			transition: none;
 		}
 
+		// Omit `:focus` here — `box-shadow: none` removed the keyboard focus ring;
+		// global onboarding focus styles in `onboarding-rsm/style.scss` supply it.
 		.follow-button.has-button-style:hover,
-		.follow-button.has-button-style:focus,
 		.follow-button.has-button-style:active {
 			padding: 8px 14px;
 			border-width: 1px;

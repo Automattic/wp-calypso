@@ -151,7 +151,7 @@ const OneLoginLayout = ( {
 			</nav>
 		);
 
-		return <Step.TopBar rightElement={ rightElement } compactLogo="always" logo={ topBarLogo } />;
+		return <Step.TopBar rightElement={ rightElement } logo={ topBarLogo } />;
 	};
 
 	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;

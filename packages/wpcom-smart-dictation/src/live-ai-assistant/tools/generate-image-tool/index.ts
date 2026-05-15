@@ -200,6 +200,23 @@ async function resolveTargetClientId( provided: string | undefined ): Promise< R
 	return { clientId: newBlock.clientId, inserted: true };
 }
 
+// Tracks the AbortController of the currently in-flight image generation, if
+// any, so that `cancel_image_generation_tool` can abort it without tearing down
+// the whole dictation session. Module-scoped because at most one image
+// generation runs at a time (the realtime tool runner serializes calls within
+// a response, and the model only emits one generate_image_tool per turn).
+let inFlightController: AbortController | null = null;
+
+export function abortInFlightImageGeneration(): boolean {
+	const controller = inFlightController;
+	if ( ! controller ) {
+		return false;
+	}
+	inFlightController = null;
+	controller.abort();
+	return true;
+}
+
 export async function executeGenerateImageTool( rawArgs: unknown, signal?: AbortSignal ) {
 	const parsed = parseArgs( rawArgs );
 	if ( 'error' in parsed ) {
@@ -221,13 +238,25 @@ export async function executeGenerateImageTool( rawArgs: unknown, signal?: Abort
 		};
 	}
 
+	// Local controller fires either when the parent session signal aborts (panel
+	// closed, dictation stopped) OR when the model calls cancel_image_generation_tool.
+	const localController = new AbortController();
+	if ( signal ) {
+		if ( signal.aborted ) {
+			localController.abort();
+		} else {
+			signal.addEventListener( 'abort', () => localController.abort(), { once: true } );
+		}
+	}
+	inFlightController = localController;
+
 	try {
 		const result = await generateAndApplyHeadless( {
 			prompt: parsed.prompt,
 			aspectRatio: parsed.aspectRatio,
 			style: parsed.style,
 			clientId,
-			signal,
+			signal: localController.signal,
 		} );
 		return {
 			ok: true,
@@ -253,10 +282,27 @@ export async function executeGenerateImageTool( rawArgs: unknown, signal?: Abort
 				// Block may already be gone (e.g. user undid); ignore.
 			}
 		}
+		const aborted =
+			localController.signal.aborted ||
+			signal?.aborted ||
+			( err as { name?: string } )?.name === 'AbortError' ||
+			undefined;
+		let errorMessage: string;
+		if ( aborted ) {
+			errorMessage = 'Image generation cancelled';
+		} else if ( err instanceof Error ) {
+			errorMessage = err.message;
+		} else {
+			errorMessage = String( err );
+		}
 		return {
 			ok: false,
-			error: err instanceof Error ? err.message : String( err ),
-			aborted: ( err as { name?: string } )?.name === 'AbortError' ? true : undefined,
+			error: errorMessage,
+			aborted,
 		};
+	} finally {
+		if ( inFlightController === localController ) {
+			inFlightController = null;
+		}
 	}
 }

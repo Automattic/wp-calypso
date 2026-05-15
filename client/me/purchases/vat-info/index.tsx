@@ -72,10 +72,16 @@ export default function VatInfoPage() {
 		translate( 'tax (VAT/GST/CT)' );
 	const fallbackTaxName = genericTaxName;
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-	const title = translate( 'Add %s details', {
+	const editVatText = translate( 'Edit %s details', {
 		textOnly: true,
 		args: [ taxName ?? fallbackTaxName ],
 	} );
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const addVatText = translate( 'Add %s details', {
+		textOnly: true,
+		args: [ taxName ?? fallbackTaxName ],
+	} );
+	const title = vatDetails.id ? editVatText : addVatText;
 
 	return (
 		<Layout className="vat-info">
@@ -100,15 +106,13 @@ export default function VatInfoPage() {
 						<br />
 						<br />
 						{ translate(
-							/* translators: This is a list of tax-related reasons a customer might need to contact support */
-							'If you:' +
+							/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names. {{contactSupportLink}} wraps the call-to-action text. */
+							'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}} if you:' +
 								'{{ul}}' +
-								/* translators: %(taxName)s is the name of taxes in the country (eg: "VAT" or "GST") or a generic fallback string of tax names */
-								'{{li}}Need to update existing %(taxName)s details{{/li}}' +
 								'{{li}}Have been charged taxes as a business subject to reverse charges{{/li}}' +
 								'{{li}}Do not see your country listed in this form{{/li}}' +
 								'{{/ul}}' +
-								'{{contactSupportLink}}Contact our Happiness Engineers{{/contactSupportLink}}. Include your %(taxName)s number and country code when you contact us.',
+								'Include your %(taxName)s number and country code when you contact us.',
 							{
 								args: { taxName: taxName ?? fallbackTaxName },
 								components: {

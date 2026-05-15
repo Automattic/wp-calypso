@@ -105,6 +105,21 @@ function throwIfAborted( signal: AbortSignal | undefined ): void {
 	}
 }
 
+// `wpcom-proxy-request` rejects with the raw `abort` Event when an XHR is
+// cancelled via AbortSignal — not with an Error whose `name === 'AbortError'`.
+// Stringifying that Event yields `[object Event]`, which is what surfaced in
+// the user-facing failure label. Use the signal as the source of truth instead.
+function isAbort( err: unknown, signal: AbortSignal | undefined ): boolean {
+	if ( signal?.aborted ) {
+		return true;
+	}
+	const name = ( err as { name?: string } | null )?.name;
+	if ( name === 'AbortError' ) {
+		return true;
+	}
+	return typeof Event !== 'undefined' && err instanceof Event && err.type === 'abort';
+}
+
 /**
  * Fully headless flow — no modal, no UI gestures.
  */
@@ -149,8 +164,8 @@ export async function generateAndApplyHeadless( opts: GenerateOptions ): Promise
 			signal,
 		} );
 	} catch ( err ) {
-		if ( ( err as { name?: string } )?.name === 'AbortError' ) {
-			throw err;
+		if ( isAbort( err, signal ) ) {
+			throw new DOMException( 'Image generation aborted', 'AbortError' );
 		}
 		throw new Error(
 			`jetpack-ai-image failed: ${ err instanceof Error ? err.message : String( err ) }`
@@ -203,8 +218,8 @@ export async function generateAndApplyHeadless( opts: GenerateOptions ): Promise
 			} );
 		}
 	} catch ( err ) {
-		if ( ( err as { name?: string } )?.name === 'AbortError' ) {
-			throw err;
+		if ( isAbort( err, signal ) ) {
+			throw new DOMException( 'Image generation aborted', 'AbortError' );
 		}
 		throw new Error(
 			`Media sideload failed: ${ err instanceof Error ? err.message : String( err ) }`

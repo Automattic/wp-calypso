@@ -11,6 +11,7 @@
 
 import './config';
 import AgentsManager, { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
+import { createCalypsoAuthProvider } from '@automattic/agents-manager/src/auth/calypso-auth-provider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -394,6 +395,10 @@ function normalizeSuggestions( items, resultIdPrefix ) {
 	} );
 }
 
+function getSuggestionsFetchHeaders( siteId = readerSiteId ) {
+	return createCalypsoAuthProvider( siteId )();
+}
+
 /**
  * Call the reader-chat-suggestions agent with an arbitrary user message and
  * return a list of {id,label,prompt} suggestions, or null on failure.
@@ -447,7 +452,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
 		const fetchOptions = {
 			method: 'POST',
 			credentials: 'omit',
-			headers: { 'Content-Type': 'application/json' },
+			headers: await getSuggestionsFetchHeaders(),
 			body: JSON.stringify( body ),
 		};
 		if ( controller ) {
@@ -973,4 +978,5 @@ export {
 	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
+	getSuggestionsFetchHeaders,
 };

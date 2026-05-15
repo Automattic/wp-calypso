@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
+import { createRef } from 'react';
 import loginReducer from 'calypso/state/login/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -164,6 +165,37 @@ describe( 'JetpackSignup', () => {
 			screen.queryByText( /Already have a WordPress.com account\?/ )
 		).not.toBeInTheDocument();
 		expect( container.querySelector( '.connect-screen-features-section' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'handleSubmitSignup forwards from and plugins from authQuery into the signup extra bag', async () => {
+		const createAccount = jest.fn().mockResolvedValue( {} );
+		const signupRef = createRef();
+
+		render(
+			<JetpackSignup
+				ref={ signupRef }
+				{ ...DEFAULT_PROPS }
+				createAccount={ createAccount }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'jetpack-connector',
+					plugins: [ 'woocommerce', 'jetpack' ],
+				} }
+			/>
+		);
+
+		await act( async () => {
+			signupRef.current.handleSubmitSignup( null, { extra: {} } );
+		} );
+
+		expect( createAccount ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				extra: expect.objectContaining( {
+					from: 'jetpack-connector',
+					plugins: [ 'woocommerce', 'jetpack' ],
+				} ),
+			} )
+		);
 	} );
 
 	describe( 'isFromJetpackConnector', () => {
