@@ -1,4 +1,5 @@
 import { isOnboardingFlow } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useExperiment } from 'calypso/lib/explat';
@@ -29,17 +30,22 @@ function useAccountCreationExperiment( {
 }: UseAccountCreationExperimentParams ): AccountCreationExperimentResult {
 	const queryArgs = useQuery();
 	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	// `large` matches the 960 px breakpoint we use for the two-column slider layout.
+	const isLargeViewport = useViewportMatch( 'large' );
 
-	// Woo-referrer users already see a permanent email-first + slider treatment from PR #110118.
-	// Excluding them here keeps their behaviour stable and prevents skewed attribution.
+	// Excluded from the experiment:
+	//   - Woo-referrer users (permanent treatment from PR #110118 — preserve their UX).
+	//   - Sub-960 px viewports — mobile-web signup is owned by a separate team.
 	const [ isLoading, assignment ] = useExperiment( 'calypso_account_step_improvement_202605', {
-		isEligible: isOnboardingFlow( flow ) && ! isWooReferrer,
+		isEligible: isOnboardingFlow( flow ) && ! isWooReferrer && isLargeViewport,
 	} );
 
-	// Default to control while assignment is loading so the step renders immediately.
-	// Round 1 blocked render on assignment and cost ~300 ms of LCP — avoid that here.
+	// Default to control while assignment is loading so the step renders immediately
+	// (round 1 blocked render on assignment and cost ~300 ms of LCP — avoid that here),
+	// and force control on sub-960 px viewports as a render-time guard against any
+	// post-assignment viewport change.
 	const variationName = (
-		isLoading ? 'control' : assignment?.variationName ?? 'control'
+		isLoading || ! isLargeViewport ? 'control' : assignment?.variationName ?? 'control'
 	) as AccountCreationExperimentVariant;
 
 	return {
