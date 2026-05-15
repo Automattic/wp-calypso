@@ -370,15 +370,9 @@ export default function ReviewMediation( {
 		violations: null,
 	} );
 
-	const setSectionOpen = useCallback(
-		( key: SectionKey, opened: boolean ) => {
-			if ( isPostStale ) {
-				return;
-			}
-			setOpenSections( ( prev ) => ( { ...prev, [ key ]: opened } ) );
-		},
-		[ isPostStale ]
-	);
+	const setSectionOpen = useCallback( ( key: SectionKey, opened: boolean ) => {
+		setOpenSections( ( prev ) => ( { ...prev, [ key ]: opened } ) );
+	}, [] );
 
 	const renderedGuidelineViolations = useMemo(
 		() => guideline_violations.filter( ( v ) => hasRenderableGuidelineQuote( v.guideline_quote ) ),
@@ -920,7 +914,7 @@ export default function ReviewMediation( {
 		>
 			{ isPostStale && (
 				<p className="jetpack-ai-review-mediation__stale-warning" role="note">
-					{ __( 'Review context changed. Start a new chat to re-run this review.', 'jetpack' ) }
+					{ __( 'Review context changed. Start a new chat and re-run this review.', 'jetpack' ) }
 				</p>
 			) }
 			{ /* ---------- Stats strip ---------- *

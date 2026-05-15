@@ -168,8 +168,12 @@
 		fill: currentColor;
 	}
 
-	// Content region indent — flush left looks naked in a chat bubble.
-	.components-panel__body.is-opened > :not(.components-panel__body-title) {
+	// Content region bottom spacing. Keep cards out of this broad PanelBody
+	// rule so their own internal padding is not overwritten.
+	.components-panel__body.is-opened
+		> :not(.components-panel__body-title):not(.jetpack-ai-review-mediation__card):not(
+			.jetpack-ai-review-mediation__conflict-card
+		) {
 		padding: 0 0 0.75rem;
 	}
 
@@ -699,6 +703,16 @@
 		}
 	}
 
+	// Keep the intended card padding anchored to this component root without
+	// changing collapsed rows or reaching for `!important`.
+	& &__card:not(.is-collapsed) {
+		padding: 1rem 1.25rem;
+	}
+
+	& &__conflict-card:not(.is-collapsed) {
+		padding: 1.25rem 1.5rem;
+	}
+
 	&__conflict-header {
 		display: flex;
 		align-items: baseline;
@@ -791,12 +805,17 @@
 	}
 
 	&__ai-badge {
+		display: inline-flex;
+		flex: 0 0 auto;
 		background: var(--wp-admin-theme-color, #3858e9);
 		color: #fff;
 		font-size: 10px;
 		padding: 2px 6px;
 		border-radius: 3px;
 		letter-spacing: 0.06em;
+		white-space: nowrap;
+		word-break: normal;
+		overflow-wrap: normal;
 	}
 
 	&__ai-text {

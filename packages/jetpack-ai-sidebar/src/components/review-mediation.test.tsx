@@ -291,7 +291,7 @@ describe( 'ReviewMediation — smoke render', () => {
 		);
 
 		expect(
-			screen.getByText( 'Review context changed. Start a new chat to re-run this review.' )
+			screen.getByText( 'Review context changed. Start a new chat and re-run this review.' )
 		).toBeInTheDocument();
 		expect( screen.getByTitle( 'Jump to conflicts' ) ).toBeDisabled();
 		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
@@ -303,6 +303,12 @@ describe( 'ReviewMediation — smoke render', () => {
 		expect(
 			screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } )
 		).toBeDisabled();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Suggested edits' } ) );
+		expect( screen.queryByText( 'Concise.' ) ).not.toBeInTheDocument();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Suggested edits' } ) );
+		expect( screen.getByText( 'Concise.' ) ).toBeInTheDocument();
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Accept' } ) );
 
@@ -329,7 +335,7 @@ describe( 'ReviewMediation — smoke render', () => {
 		);
 
 		expect(
-			screen.getByText( 'Review context changed. Start a new chat to re-run this review.' )
+			screen.getByText( 'Review context changed. Start a new chat and re-run this review.' )
 		).toBeInTheDocument();
 		expect( screen.getByTitle( 'Jump to suggested edits' ) ).toBeDisabled();
 		expect( screen.getByRole( 'button', { name: 'Accept' } ) ).toBeDisabled();
@@ -658,7 +664,7 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 
 		render( <ReviewMediation { ...editsPayload } /> );
 
-		const card = screen.getByText( 'Concise.' ).closest( 'article' );
+		const card = screen.getByText( 'Concise.' ).closest( '.jetpack-ai-review-mediation__card' );
 		expect( card ).toBeInTheDocument();
 
 		fireEvent.click( card! );
