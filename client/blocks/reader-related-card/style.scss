@@ -12,7 +12,7 @@
 	-webkit-box-orient: vertical;
 
 	&::after {
-		@include long-content-fade( $size: 35px, $color: var( --color-surface ) );
+		@include long-content-fade( $size: 35px );
 	}
 }
 
@@ -134,7 +134,7 @@
 		overflow: hidden;
 
 		&::after {
-			@include long-content-fade( $size: 35px, $color: var( --color-surface ) );
+			@include long-content-fade( $size: 35px );
 			bottom: 0;
 			height: 23px;
 			top: inherit;
@@ -167,7 +167,7 @@
 	}
 
 	.reader-related-card__post::after {
-		@include long-content-fade( $size: 35px, $color: var( --color-surface ) );
+		@include long-content-fade( $size: 35px );
 		bottom: 0;
 		height: 22px;
 		top: auto;
@@ -239,7 +239,7 @@
 	color: var(--color-link);
 
 	&::after {
-		@include long-content-fade( $size: 10%, $color: var( --color-surface ) );
+		@include long-content-fade( $size: 10% );
 	}
 }
 
@@ -252,7 +252,7 @@
 	overflow: hidden;
 
 	&::after {
-		@include long-content-fade( $size: 10%, $color: var( --color-surface ) );
+		@include long-content-fade( $size: 10% );
 	}
 
 	a.reader-related-card__link {
@@ -323,7 +323,7 @@
 	word-wrap: break-word;
 
 	&::after {
-		@include long-content-fade( $size: 35px, $color: var( --color-surface ) );
+		@include long-content-fade( $size: 35px );
 		top: 16px * 1.4;
 		height: 16px * 1.4;
 	}
@@ -335,7 +335,7 @@
 		word-wrap: break-word;
 
 		&::after {
-			@include long-content-fade( $size: 35px, $color: var( --color-surface ) );
+			@include long-content-fade( $size: 35px );
 			top: 16px * 1.5 * 2;
 			height: 16px * 1.5;
 		}

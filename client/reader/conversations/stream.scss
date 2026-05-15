@@ -29,7 +29,7 @@
 		position: relative;
 
 		&::after {
-			@include long-content-fade( $size: 35px, $color: var( --color-surface ) );
+			@include long-content-fade( $size: 35px );
 		}
 	}
 

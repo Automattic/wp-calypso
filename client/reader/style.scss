@@ -1,6 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
+@import 'client/assets/stylesheets/shared/mixins/long-content-fade';
 
 body.is-reader-page,
 .is-reader-page .layout,
@@ -195,7 +196,7 @@ body.is-section-reader {
 		position: relative;
 
 		&::after {
-			@include long-content-fade( $color: var( --color-surface ) );
+			@include long-content-fade();
 		}
 	}
 

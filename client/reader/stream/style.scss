@@ -2,6 +2,7 @@
 
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
+@import 'client/assets/stylesheets/shared/mixins/long-content-fade';
 
 .following {
 
@@ -746,7 +747,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .bac
 				width: 225px;
 			}
 			.stream__two-column &::after {
-				@include long-content-fade( $size: 5%, $color: var( --color-surface ) );
+				@include long-content-fade( $size: 5% );
 			}
 		}
 	}

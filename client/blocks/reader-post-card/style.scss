@@ -480,7 +480,7 @@
 	width: calc(100% - 25px);
 
 	&::after {
-		@include long-content-fade( $size: 10%, $color: var( --color-surface ) );
+		@include long-content-fade( $size: 10% );
 	}
 }
 
