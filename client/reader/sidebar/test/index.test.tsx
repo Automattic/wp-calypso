@@ -28,30 +28,64 @@ describe( 'ReaderSidebar', () => {
 			} );
 		} );
 
-		it( 'should call tracking functions when handler is provided', () => {
-			const handler = {
+		it.each( [
+			{
+				label: 'discover',
 				action: 'clicked_reader_sidebar_discover',
 				gaEvent: 'Clicked Reader Sidebar Discover',
 				tracksEvent: 'calypso_reader_sidebar_discover_clicked',
-			};
-			const path = '/discover';
+				path: '/discover',
+			},
+			{
+				label: 'search',
+				action: 'clicked_reader_sidebar_search',
+				gaEvent: 'Clicked Reader Sidebar Search',
+				tracksEvent: 'calypso_reader_sidebar_search_clicked',
+				path: '/reader/search',
+			},
+			{
+				label: 'likes',
+				action: 'clicked_reader_sidebar_like_activity',
+				gaEvent: 'Clicked Reader Sidebar Like Activity',
+				tracksEvent: 'calypso_reader_sidebar_like_activity_clicked',
+				path: '/activities/likes',
+			},
+			{
+				label: 'conversations',
+				action: 'clicked_reader_sidebar_conversations',
+				gaEvent: 'Clicked Reader Sidebar Conversations',
+				tracksEvent: 'calypso_reader_sidebar_conversations_clicked',
+				path: '/reader/conversations',
+			},
+			{
+				label: 'manage subscriptions',
+				action: 'clicked_reader_sidebar_manage_subscriptions',
+				gaEvent: 'Clicked Reader Sidebar Manage Subscriptions',
+				tracksEvent: 'calypso_reader_sidebar_manage_subscriptions_clicked',
+				path: '/reader/subscriptions',
+			},
+		] )(
+			'dispatches all four tracking calls when the $label handler fires',
+			( { action, gaEvent, tracksEvent, path } ) => {
+				const clickHandler = instance.handleSidebarMenuClick( {
+					action,
+					gaEvent,
+					tracksEvent,
+				} );
+				clickHandler( {}, path );
 
-			const clickHandler = instance.handleSidebarMenuClick( handler );
-			clickHandler( {}, path );
-
-			expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_discover' );
-			expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Discover' );
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_sidebar_discover_clicked'
-			);
-			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_global_sidebar_menu_item_click',
-				{
-					section: 'read',
-					path: '/discover',
-				}
-			);
-		} );
+				expect( recordAction ).toHaveBeenCalledWith( action );
+				expect( recordGaEvent ).toHaveBeenCalledWith( gaEvent );
+				expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith( tracksEvent );
+				expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_global_sidebar_menu_item_click',
+					{
+						section: 'read',
+						path,
+					}
+				);
+			}
+		);
 
 		it( 'should not call tracking functions when handler is undefined', () => {
 			const clickHandler = instance.handleSidebarMenuClick( undefined );
@@ -71,78 +105,6 @@ describe( 'ReaderSidebar', () => {
 			expect( recordGaEvent ).not.toHaveBeenCalled();
 			expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalled();
 			expect( mockRecordTracksEvent ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should handle search menu click with correct tracking keys', () => {
-			const handler = {
-				action: 'clicked_reader_sidebar_search',
-				gaEvent: 'Clicked Reader Sidebar Search',
-				tracksEvent: 'calypso_reader_sidebar_search_clicked',
-			};
-			const path = '/reader/search';
-
-			const clickHandler = instance.handleSidebarMenuClick( handler );
-			clickHandler( {}, path );
-
-			expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_search' );
-			expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Search' );
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_sidebar_search_clicked'
-			);
-		} );
-
-		it( 'should handle likes menu click with correct tracking keys', () => {
-			const handler = {
-				action: 'clicked_reader_sidebar_like_activity',
-				gaEvent: 'Clicked Reader Sidebar Like Activity',
-				tracksEvent: 'calypso_reader_sidebar_like_activity_clicked',
-			};
-			const path = '/activities/likes';
-
-			const clickHandler = instance.handleSidebarMenuClick( handler );
-			clickHandler( {}, path );
-
-			expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_like_activity' );
-			expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Like Activity' );
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_sidebar_like_activity_clicked'
-			);
-		} );
-
-		it( 'should handle conversations menu click with correct tracking keys', () => {
-			const handler = {
-				action: 'clicked_reader_sidebar_conversations',
-				gaEvent: 'Clicked Reader Sidebar Conversations',
-				tracksEvent: 'calypso_reader_sidebar_conversations_clicked',
-			};
-			const path = '/reader/conversations';
-
-			const clickHandler = instance.handleSidebarMenuClick( handler );
-			clickHandler( {}, path );
-
-			expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_conversations' );
-			expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Conversations' );
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_sidebar_conversations_clicked'
-			);
-		} );
-
-		it( 'should handle manage subscriptions menu click with correct tracking keys', () => {
-			const handler = {
-				action: 'clicked_reader_sidebar_manage_subscriptions',
-				gaEvent: 'Clicked Reader Sidebar Manage Subscriptions',
-				tracksEvent: 'calypso_reader_sidebar_manage_subscriptions_clicked',
-			};
-			const path = '/reader/subscriptions';
-
-			const clickHandler = instance.handleSidebarMenuClick( handler );
-			clickHandler( {}, path );
-
-			expect( recordAction ).toHaveBeenCalledWith( 'clicked_reader_sidebar_manage_subscriptions' );
-			expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked Reader Sidebar Manage Subscriptions' );
-			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_sidebar_manage_subscriptions_clicked'
-			);
 		} );
 	} );
 } );
