@@ -530,6 +530,7 @@ describe( 'applyReviewEdit', () => {
 
 	afterEach( () => {
 		jest.useRealTimers();
+		document.body.innerHTML = '';
 	} );
 
 	it( 'dispatches updateBlockAttributes with the suggested content', async () => {
@@ -556,6 +557,54 @@ describe( 'applyReviewEdit', () => {
 				attrs: { content: 'new text' },
 			},
 		] );
+	} );
+
+	it( 'does not snapshot or write when shouldApply is already false', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor();
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+
+		const result = await applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			undefined,
+			undefined,
+			() => false
+		);
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'context changed',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+	} );
+
+	it( 'does not write and clears processing state when shouldApply turns false before the delayed write', async () => {
+		const { blockUpdates } = installWpDataMockWithBlockEditor();
+		useAbilitiesSetup( { addMessage: () => undefined, clearSuggestions: () => undefined } as any );
+		const blockEl = document.createElement( 'div' );
+		blockEl.setAttribute( 'data-block', '550e8400-e29b-41d4-a716-446655440000' );
+		document.body.appendChild( blockEl );
+		let shouldApply = true;
+
+		const promise = applyReviewEdit(
+			'550e8400-e29b-41d4-a716-446655440000',
+			'new text',
+			undefined,
+			undefined,
+			() => shouldApply
+		);
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( true );
+
+		shouldApply = false;
+		jest.advanceTimersByTime( 1000 );
+		const result = await promise;
+
+		expect( result ).toMatchObject( {
+			success: false,
+			error: 'context changed',
+		} );
+		expect( blockUpdates ).toEqual( [] );
+		expect( blockEl.classList.contains( 'jetpack-ai-is-processing' ) ).toBe( false );
 	} );
 
 	it( 'posts the rationale as an assistant message to the chat when a summary is provided', async () => {

@@ -107,6 +107,22 @@ interface ReviewMediationProps {
 }
 
 type EditStatus = 'pending' | 'applying' | 'accepted' | 'dismissed' | 'failed';
+type WpCurrentPostStore = { getCurrentPostId?: () => number | null };
+type WpGlobal = Window & {
+	wp?: {
+		data?: {
+			select?: ( store: string ) => WpCurrentPostStore | undefined;
+		};
+	};
+};
+
+function getCurrentEditorPostIdFromStore(): number | undefined {
+	if ( typeof window === 'undefined' ) {
+		return undefined;
+	}
+	const wp = ( window as WpGlobal ).wp;
+	return wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.() ?? undefined;
+}
 
 /**
  * The five PanelBody sections we manage in controlled mode. Used as the
@@ -341,17 +357,12 @@ export default function ReviewMediation( {
 		[]
 	);
 	const isPostStale = ! postId || ! currentPostId || postId !== currentPostId;
-	const latestPostContextRef = useRef( { postId, currentPostId } );
-	useEffect( () => {
-		latestPostContextRef.current = { postId, currentPostId };
-	}, [ postId, currentPostId ] );
 	const isLatestPostContextStale = useCallback( () => {
-		const { postId: latestSourcePostId, currentPostId: latestCurrentPostId } =
-			latestPostContextRef.current;
-		return (
-			! latestSourcePostId || ! latestCurrentPostId || latestSourcePostId !== latestCurrentPostId
-		);
-	}, [] );
+		// Async edit guards must read the editor store at call time so navigation
+		// between the click and delayed block write is observed immediately.
+		const latestCurrentPostId = getCurrentEditorPostIdFromStore() ?? currentPostId;
+		return ! postId || ! latestCurrentPostId || postId !== latestCurrentPostId;
+	}, [ currentPostId, postId ] );
 
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ conflictStatuses, setConflictStatuses ] = useState< Record< number, EditStatus > >( {} );

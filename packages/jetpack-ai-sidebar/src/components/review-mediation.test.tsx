@@ -125,6 +125,20 @@ beforeEach( () => {
 	mockedRecordTracksEvent.mockClear();
 	mockBlocks = blocks;
 	mockCurrentPostId = 1;
+	( window as any ).wp = {
+		data: {
+			select: ( store: string ) => {
+				if ( store === 'core/editor' ) {
+					return { getCurrentPostId: () => mockCurrentPostId };
+				}
+				return undefined;
+			},
+		},
+	};
+} );
+
+afterEach( () => {
+	delete ( window as any ).wp;
 } );
 
 describe( 'ReviewMediation — smoke render', () => {
