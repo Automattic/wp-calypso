@@ -54,7 +54,11 @@ import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { domainRoute } from '../../../app/router/domains';
 import { emailsRoute } from '../../../app/router/emails';
-import { cancelPurchaseRoute, purchaseSettingsRoute } from '../../../app/router/me';
+import {
+	cancelPurchaseRoute,
+	changePaymentMethodRoute,
+	purchaseSettingsRoute,
+} from '../../../app/router/me';
 import { getCurrentDashboard } from '../../../app/routing';
 import { ActionList } from '../../../components/action-list';
 import { Card, CardBody } from '../../../components/card';
@@ -688,6 +692,7 @@ function getFields( {
 			label: __( 'Enable auto-renew' ),
 			Edit: ( { field, data: purchase, onChange } ) => {
 				const locale = useLocale();
+				const navigate = useNavigate();
 				const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 				const { getValue } = field;
 				const helpText = ( () => {
@@ -704,55 +709,47 @@ function getFields( {
 							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
 						} );
 					}
-					if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
-						return (
-							<Link
-								to={ purchaseSettingsRoute.fullPath }
-								params={ { purchaseId: purchase.attached_to_purchase_id } }
-							>
-								{ __( 'Renews with plan' ) }
-							</Link>
+					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
+						const date = formatDate( new Date( purchase.expiry_date ), locale, {
+							dateStyle: 'long',
+						} );
+						if ( isExpired( purchase ) || isInExpirationGracePeriod( purchase ) ) {
+							return sprintf(
+								// translators: date is a formatted expiry date
+								__( 'Expired on %(date)s.' ),
+								{ date }
+							);
+						}
+						return sprintf(
+							// translators: date is a formatted expiry date
+							__( 'Expires on %(date)s.' ),
+							{ date }
 						);
-					}
-					if ( purchase.is_auto_renew_enabled ) {
-						return __( 'Will not auto-renew because there is no payment method' );
 					}
 					return undefined;
 				} )();
-				if ( purchase.is_jetpack_plan_or_product ) {
-					if ( purchase.is_auto_renew_enabled ) {
-						return (
-							<ActionList.ActionItem
-								title={ __( 'Subscription renewal' ) }
-								description={ ( (): string => {
-									return typeof helpText === 'string' ? helpText : '';
-								} )() }
-								actions={ <></> }
-							/>
-						);
-					}
+				if ( purchase.is_auto_renew_enabled && ! purchase.is_rechargeable ) {
 					return (
-						<ActionList.ActionItem
-							title={ __( 'Your subscription is inactive' ) }
-							description={ sprintf(
-								// translators: date is a formatted expiry date
-								__( 'Expires on %(date)s.' ),
-								{
-									date: formatDate( new Date( purchase.expiry_date ), locale, {
-										dateStyle: 'long',
-									} ),
+						<div className="purchase-settings__action-item-standalone">
+							<ActionList.ActionItem
+								title={ __( 'Enable auto-renew' ) }
+								description={ __( 'Auto-renew needs a payment method.' ) }
+								actions={
+									<Button
+										variant="secondary"
+										size="compact"
+										onClick={ () =>
+											navigate( {
+												to: changePaymentMethodRoute.fullPath,
+												params: { purchaseId: purchase.ID },
+											} )
+										}
+									>
+										{ __( 'Add payment method' ) }
+									</Button>
 								}
-							) }
-							actions={
-								<Button
-									variant="secondary"
-									size="compact"
-									onClick={ () => onChange( { is_auto_renew_enabled: true } ) }
-								>
-									{ __( 'Re-activate subscription' ) }
-								</Button>
-							}
-						/>
+							/>
+						</div>
 					);
 				}
 				return (
@@ -760,7 +757,9 @@ function getFields( {
 						__nextHasNoMarginBottom
 						className="purchase-settings__toggle-control"
 						label={
-							shouldAllowExpiredAutoRenewToggle( purchase )
+							! purchase.is_auto_renew_enabled &&
+							isExpired( purchase ) &&
+							purchase.is_jetpack_plan_or_product
 								? __( 'Re-activate subscription' )
 								: field.label
 						}
@@ -777,7 +776,7 @@ function getFields( {
 		},
 		{
 			id: 'purchase_payment_method',
-			isVisible: ( item ) => item.is_auto_renew_enabled,
+			isVisible: ( item ) => item.is_auto_renew_enabled && item.is_rechargeable,
 			Edit: ( { data: purchase } ) => {
 				return <PurchasePaymentMethod purchase={ purchase } showUpdateButton />;
 			},
@@ -805,6 +804,11 @@ function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		isPending: isMutationPending,
 	} = useMutation( userPurchaseSetAutoRenewQuery() );
 	const { user } = useAuth();
+
+	if ( isIncludedWithPlan( purchase ) ) {
+		return null;
+	}
+
 	return (
 		<Card>
 			<CardBody>
@@ -1315,13 +1319,30 @@ export default function PurchaseSettings() {
 		...domainQuery( purchase.meta ?? '' ),
 		enabled: Boolean( purchase.meta ) && purchase.is_domain,
 	} );
+	const isIncluded = isIncludedWithPlan( purchase ) && Boolean( purchase.attached_to_purchase_id );
+	const { data: parentPurchase } = useQuery( {
+		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
+		enabled: isIncluded,
+	} );
 	const formattedExpiry = useFormattedTime( purchase.expiry_date ?? '' );
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
+	const formattedParentExpiry = useFormattedTime( parentPurchase?.expiry_date ?? '' );
+	const formattedParentRenewal = useFormattedTime( parentPurchase?.renew_date ?? '' );
 	const upgradeUrl = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl() );
 	const willRenew = Boolean(
 		! isExpired( purchase ) && purchase.renew_date && ! isExpiring( purchase )
 	);
+	const parentWillRenew = parentPurchase
+		? Boolean(
+				parentPurchase.is_auto_renew_enabled &&
+					parentPurchase.renew_date &&
+					! isExpiring( parentPurchase )
+		  )
+		: undefined;
 	const expiryDateTitle = ( () => {
+		if ( isIncluded && parentPurchase ) {
+			return parentWillRenew ? __( 'Renews' ) : __( 'Expires' );
+		}
 		if ( isExpired( purchase ) ) {
 			return __( 'Expired' );
 		}
@@ -1440,6 +1461,9 @@ export default function PurchaseSettings() {
 								icon={ calendar }
 								title={ expiryDateTitle }
 								heading={ ( () => {
+									if ( isIncluded && parentPurchase ) {
+										return parentWillRenew ? formattedParentRenewal : formattedParentExpiry;
+									}
 									if ( isOneTimePurchase( purchase ) || isAkismetFreeProduct( purchase ) ) {
 										return __( 'Never expires' );
 									}
@@ -1464,13 +1488,15 @@ export default function PurchaseSettings() {
 									if ( purchase.is_auto_renew_enabled && isRenewing( purchase ) ) {
 										return __( 'Auto-renew is enabled' );
 									}
-									if ( isIncludedWithPlan( purchase ) && purchase.attached_to_purchase_id ) {
+									if ( isIncluded && purchase.attached_to_purchase_id ) {
 										return (
 											<Link
 												to={ purchaseSettingsRoute.fullPath }
 												params={ { purchaseId: purchase.attached_to_purchase_id } }
 											>
-												{ __( 'Renews with plan' ) }
+												{ parentPurchase && ! parentWillRenew
+													? __( 'Expires with plan' )
+													: __( 'Renews with plan' ) }
 											</Link>
 										);
 									}

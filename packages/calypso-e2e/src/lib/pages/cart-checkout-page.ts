@@ -1,5 +1,5 @@
-import { expect } from 'playwright/test';
 import { getCalypsoURL } from '../../data-helper';
+import { waitForElementEnabled } from '../../element-helper';
 import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
 import type { Frame, Page } from 'playwright';
@@ -320,9 +320,13 @@ export class CartCheckoutPage {
 		// wait for the form fields that prove the payment method is ready.
 		const cardPaymentRadio = this.page.locator( selectors.cardPaymentRadio );
 		await cardPaymentRadio.waitFor( { state: 'attached', timeout: 15 * 1000 } );
-		await expect( cardPaymentRadio ).toBeEnabled( { timeout: 30 * 1000 } );
+		await waitForElementEnabled( this.page, selectors.cardPaymentRadio, { timeout: 30 * 1000 } );
 		await cardPaymentRadio.dispatchEvent( 'click' );
-		await expect( cardPaymentRadio ).toHaveJSProperty( 'checked', true );
+		await this.page.waitForFunction(
+			( selector ) => document.querySelector< HTMLInputElement >( selector )?.checked === true,
+			selectors.cardPaymentRadio,
+			{ timeout: 30 * 1000 }
+		);
 		await this.validatePaymentForm();
 
 		// Begin filling in the card details from
