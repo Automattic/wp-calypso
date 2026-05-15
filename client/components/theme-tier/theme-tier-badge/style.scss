@@ -54,6 +54,17 @@
 		white-space: nowrap;
 		font-size: $font-body-extra-small;
 	}
+
+	.theme-tier-active-label {
+		background-color: var(--color-primary);
+		border-radius: 4px;
+		color: var(--studio-white);
+		font-family: $sans;
+		font-size: $font-body-extra-small;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 }
 
 .theme-tier-badge-tooltip,

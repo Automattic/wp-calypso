@@ -5,6 +5,7 @@ import { useSelector } from 'calypso/state';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { getThemeType } from 'calypso/state/themes/selectors';
+import ThemeTierActiveBadge from './theme-tier-active-badge';
 import { ThemeTierBadgeContextProvider } from './theme-tier-badge-context';
 import ThemeTierBundledBadge from './theme-tier-bundled-badge';
 import ThemeTierCommunityBadge from './theme-tier-community-badge';
@@ -112,7 +113,7 @@ export default function ThemeTierBadge( {
 		isThemeActiveForSite,
 	] );
 
-	if ( ! badge ) {
+	if ( ! badge && ! isThemeActiveForSite ) {
 		return null;
 	}
 
@@ -127,6 +128,7 @@ export default function ThemeTierBadge( {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 			>
+				{ isThemeActiveForSite && <ThemeTierActiveBadge /> }
 				{ badge }
 			</ThemeTierBadgeContextProvider>
 		</div>

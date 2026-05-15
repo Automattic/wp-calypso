@@ -96,6 +96,20 @@ describe( 'ThemeTierBadge', () => {
 		expect( screen.getByText( 'Partner' ) ).toBeInTheDocument();
 	} );
 
+	it( 'should render the active badge when the theme is active on the site', () => {
+		render(
+			<ThemeTierBadge
+				themeId="twentysixteen"
+				siteId={ 123 }
+				siteSlug="test-site"
+				isLockedStyleVariation={ false }
+				isThemeActiveForSite
+			/>
+		);
+
+		expect( screen.getByText( 'Active' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should render nothing for inactive & retired themes', () => {
 		const { container } = render(
 			<ThemeTierBadge
