@@ -17,6 +17,8 @@
 	--domain-search-warning-badge-background-color: #f9edb4;
 	--domain-search-success-badge-border-color: #b8e5be;
 	--domain-search-success-badge-background-color: #d1eed5;
+	--domain-search-sticky-overlay-z-index: 1;
+	--domain-search-full-cart-z-index: 2;
 	--domain-search-mini-cart-height: 80px;
 	--domain-search-mini-cart-inline-padding: 1rem;
 	--domain-search-content-max-width: 64rem;
@@ -80,4 +82,120 @@
 	@media ( max-width: #{ $break-small - 1px } ) {
 		gap: 1.5rem;
 	}
+}
+
+// Zero-height sentinel — positioned immediately after the in-flow search bar.
+// IntersectionObserver fires when this element crosses the top viewport edge,
+// which coincides with the search bar having just scrolled out of view.
+.domain-search--results__sentinel {
+	block-size: 0;
+	overflow: hidden;
+	// aria-hidden="true" is set in TSX; no further a11y work needed.
+}
+
+// Fixed overlay — always in the DOM on mobile (when a BeforeResults slot is
+// present), always at position:fixed. Default state: slid fully above the
+// viewport via transform. When .is-stuck is applied the overlay slides into
+// view. Only `transform` is animated → compositor-only, zero layout/paint cost.
+// The in-flow render tree is never affected: no min-height placeholder needed.
+.domain-search--results__sticky-overlay {
+	// Hidden from non-mobile viewports — the overlay is mobile-only.
+	// On desktop the in-flow promo card (slots.BeforeResults) is always visible.
+	display: none;
+
+	@media ( max-width: #{ $break-small - 1px } ) {
+		display: flex;
+		flex-direction: column;
+		position: fixed;
+		inset-block-start: 0;
+		inset-inline: 0;
+		z-index: var( --domain-search-sticky-overlay-z-index );
+		// Start fully above the viewport; slide in by adding .is-stuck.
+		// Exit transition: accelerate (cubic-bezier(0.4,0,1,1)) — feels intentional.
+		transform: translateY( -100% );
+		opacity: 0;
+		transition:
+			transform 220ms cubic-bezier( 0.4, 0, 1, 1 ),
+			opacity 160ms ease-in;
+		will-change: transform, opacity;
+
+		&.is-stuck {
+			transform: translateY( 0 );
+			opacity: 1;
+			// Enter transition: decelerate (cubic-bezier(0,0,0.2,1)) — softer arrival.
+			transition:
+				transform 280ms cubic-bezier( 0, 0, 0.2, 1 ),
+				opacity 200ms ease-out;
+		}
+	}
+}
+
+// Search bar row inside the overlay — white background, padding, and bottom
+// border matching the Figma spec. These styles apply only inside the overlay;
+// the identical in-flow <SearchBar> has no wrapper and retains trunk styling.
+.domain-search--results__search-bar-row {
+	background-color: var( --color-surface );
+	padding-block: 12px;
+	padding-inline: var( --step-container-v2-content-inline-padding, 1rem );
+	border-block-end: 1px solid rgba( 0, 0, 0, 0.08 ); // exact Figma spec; no semantic token matches
+	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.02 );
+}
+
+// Compact sticky banner — rendered inside the overlay, animates as part of the
+// single transform slide. No independent animation needed.
+.domain-search--results__compact-banner {
+	// Reset button defaults.
+	appearance: none;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	width: 100%;
+	border: none;
+	border-block-start: 1px solid rgba( 0, 0, 0, 0.08 ); // exact Figma spec; no semantic token matches
+	border-block-end: 1px solid rgba( 0, 0, 0, 0.08 ); // exact Figma spec; no semantic token matches
+	padding-block: 12px;
+	padding-inline: var( --step-container-v2-content-inline-padding, 1rem );
+	// #f6f7f9 is the exact Figma spec. --studio-gray-0 resolves to #f6f7f7
+	// (2-channel delta); no semantic token matches this value.
+	background-color: #f6f7f9;
+	cursor: pointer;
+	text-align: start;
+	box-shadow: none;
+}
+
+.domain-search--results__compact-banner-title {
+	flex: 1;
+	font-size: 13px;
+	font-weight: 400;
+	// Figma line-height 24px on a 13px element.
+	line-height: 24px;
+	// #2f2f2f is the Figma-exact value. --studio-gray-80 resolves to #2c3338
+	// (3-channel delta on R); no semantic token matches this value.
+	color: #2f2f2f;
+	letter-spacing: -0.08px;
+}
+
+.domain-search--results__compact-banner-chevron {
+	flex-shrink: 0;
+	// rgba(0,0,0,0.32) is Figma-exact. No semantic token matches this value.
+	// `fill` (not `color`) is required: @wordpress/icons chevron-down has no
+	// explicit `fill="currentColor"`, so SVG fill must be set directly.
+	fill: rgba( 0, 0, 0, 0.32 );
+}
+
+.domain-search--results__compact-banner-subtitle {
+	// Force the subtitle onto its own line by taking full width.
+	width: 100%;
+	display: block;
+	font-size: 13px;
+	font-weight: 400;
+	// Figma line-height 20px on a 13px element.
+	line-height: 20px;
+	// #757575 is the Figma-exact value. --studio-gray-50 resolves to #646970
+	// (3-channel delta on G and B); no semantic token matches this value.
+	color: #757575;
+	letter-spacing: -0.08px;
+	text-align: start;
 }
