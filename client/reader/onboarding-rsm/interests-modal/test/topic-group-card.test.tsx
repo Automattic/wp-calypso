@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import TopicGroupCard from '../topic-group-card';
@@ -206,13 +206,13 @@ describe( 'TopicGroupCard', () => {
 
 		it( 'renders no subscriber count when all feeds return 0 subscribers', async () => {
 			// feed_ID: 0 → module-level mock returns subscribers_count: 1000 * 0 = 0.
-			// Even after the query settles, totalSubscribers is 0 so no label appears.
+			// Flush the async queryFn so allSettled flips to true, then assert absence.
 			const zeroBlog = { ...blogs[ 0 ], feed_ID: 0 };
 			renderWithProvider( <TopicGroupCard { ...defaultProps } blogs={ [ zeroBlog ] } /> );
 
-			await waitFor( () => {
-				expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
-			} );
+			await act( async () => {} );
+
+			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'renders no subscriber count while feeds are still loading', () => {

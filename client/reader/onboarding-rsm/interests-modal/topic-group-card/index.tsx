@@ -1,6 +1,6 @@
 import { readFeedQuery } from '@automattic/api-queries';
 import { formatNumberCompact } from '@automattic/number-formatters';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __, sprintf, _n } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -64,42 +64,22 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 		fallbackInView: true,
 	} );
 
-	// Fetch subscriber counts for all pack blogs (up to 5) when the card enters the
-	// viewport. Hooks must be called unconditionally, so each position uses a -1
-	// fallback feedId that readFeedQuery disables automatically (feedId < 0).
-	// React Query deduplicates requests with BlogAvatar's per-avatar queries.
-	const fq0 = readFeedQuery( blogs[ 0 ]?.feed_ID ?? -1 );
-	const { data: fd0, status: st0 } = useQuery( {
-		...fq0,
-		enabled: Boolean( fq0.enabled ) && cardInView,
-	} );
-	const fq1 = readFeedQuery( blogs[ 1 ]?.feed_ID ?? -1 );
-	const { data: fd1, status: st1 } = useQuery( {
-		...fq1,
-		enabled: Boolean( fq1.enabled ) && cardInView,
-	} );
-	const fq2 = readFeedQuery( blogs[ 2 ]?.feed_ID ?? -1 );
-	const { data: fd2, status: st2 } = useQuery( {
-		...fq2,
-		enabled: Boolean( fq2.enabled ) && cardInView,
-	} );
-	const fq3 = readFeedQuery( blogs[ 3 ]?.feed_ID ?? -1 );
-	const { data: fd3, status: st3 } = useQuery( {
-		...fq3,
-		enabled: Boolean( fq3.enabled ) && cardInView,
-	} );
-	const fq4 = readFeedQuery( blogs[ 4 ]?.feed_ID ?? -1 );
-	const { data: fd4, status: st4 } = useQuery( {
-		...fq4,
-		enabled: Boolean( fq4.enabled ) && cardInView,
+	// Fetch subscriber counts for all pack blogs when the card enters the viewport.
+	// useQueries handles a dynamic-length array and deduplicates requests with
+	// BlogAvatar's per-avatar queries via the shared React Query cache.
+	const feedResults = useQueries( {
+		queries: blogs.map( ( blog ) => {
+			const fq = readFeedQuery( blog.feed_ID );
+			return { ...fq, enabled: Boolean( fq.enabled ) && cardInView };
+		} ),
 	} );
 
-	const feedDatas = [ fd0, fd1, fd2, fd3, fd4 ].slice( 0, blogs.length );
-	const totalSubscribers = feedDatas.reduce( ( sum, f ) => sum + ( f?.subscribers_count ?? 0 ), 0 );
+	const totalSubscribers = feedResults.reduce(
+		( sum, r ) => sum + ( r.data?.subscribers_count ?? 0 ),
+		0
+	);
 	// Wait for all enabled feed queries to settle so we never show a partial/undercount.
-	const allSettled =
-		cardInView &&
-		[ st0, st1, st2, st3, st4 ].slice( 0, blogs.length ).every( ( s ) => s !== 'pending' );
+	const allSettled = cardInView && feedResults.every( ( r ) => r.status !== 'pending' );
 	const subscriberLabel =
 		allSettled && totalSubscribers > 0
 			? sprintf(
