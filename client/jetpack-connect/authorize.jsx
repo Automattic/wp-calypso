@@ -46,7 +46,6 @@ import {
 import {
 	getAuthAttempts,
 	getAuthorizationData,
-	getRemoteSiteData,
 	getUserAlreadyConnected,
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
@@ -176,16 +175,6 @@ export class JetpackAuthorize extends Component {
 		if ( this.shouldAutoAuthorize() ) {
 			debug( 'Authorizing automatically on component mount' );
 			return this.authorize();
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.remoteSiteData && ! prevProps.remoteSiteData ) {
-			debug( 'Remote site data received (site accessible, user not connected):', {
-				remoteSiteData: this.props.remoteSiteData,
-				userAlreadyConnected: this.props.userAlreadyConnected,
-				isFromJetpackConnector: this.isFromJetpackConnector(),
-			} );
 		}
 	}
 
@@ -1532,7 +1521,6 @@ const connectComponent = connect(
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
 			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
 			user: getCurrentUser( state ),
-			remoteSiteData: getRemoteSiteData( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 			fromSource,
 		};

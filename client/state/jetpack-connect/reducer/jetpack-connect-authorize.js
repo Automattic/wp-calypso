@@ -10,7 +10,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_QUERY_SET,
-	JETPACK_CONNECT_SITE_DATA_RECEIVED,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 } from 'calypso/state/jetpack-connect/action-types';
 import { withSchemaValidation, withPersistence } from 'calypso/state/utils';
@@ -67,9 +66,6 @@ function jetpackConnectAuthorize( state = {}, action ) {
 				return Object.assign( {}, state, { clientNotResponding: true } );
 			}
 			return state;
-
-		case JETPACK_CONNECT_SITE_DATA_RECEIVED:
-			return Object.assign( {}, state, { remoteSiteData: action.siteData } );
 
 		case JETPACK_CONNECT_USER_ALREADY_CONNECTED:
 			return Object.assign( {}, state, { userAlreadyConnected: true } );

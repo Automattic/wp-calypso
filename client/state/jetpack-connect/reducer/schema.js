@@ -31,14 +31,6 @@ export const jetpackConnectAuthorizeSchema = {
 				isAuthorizing: { type: 'boolean' },
 				plansUrl: { type: 'string' },
 				siteReceived: { type: 'boolean' },
-				remoteSiteData: {
-					type: 'object',
-					properties: {
-						jetpack: { type: 'boolean' },
-						jetpackConnection: { type: 'boolean' },
-						siteOwner: { type: 'integer' },
-					},
-				},
 				timestamp: { type: 'integer' },
 				userAlreadyConnected: { type: 'boolean' },
 			},
