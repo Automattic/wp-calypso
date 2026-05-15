@@ -341,6 +341,17 @@ export default function ReviewMediation( {
 		[]
 	);
 	const isPostStale = ! postId || ! currentPostId || postId !== currentPostId;
+	const latestPostContextRef = useRef( { postId, currentPostId } );
+	useEffect( () => {
+		latestPostContextRef.current = { postId, currentPostId };
+	}, [ postId, currentPostId ] );
+	const isLatestPostContextStale = useCallback( () => {
+		const { postId: latestSourcePostId, currentPostId: latestCurrentPostId } =
+			latestPostContextRef.current;
+		return (
+			! latestSourcePostId || ! latestCurrentPostId || latestSourcePostId !== latestCurrentPostId
+		);
+	}, [] );
 
 	const [ editStatuses, setEditStatuses ] = useState< Record< number, EditStatus > >( {} );
 	const [ conflictStatuses, setConflictStatuses ] = useState< Record< number, EditStatus > >( {} );
@@ -498,7 +509,7 @@ export default function ReviewMediation( {
 			contentBefore?: string;
 			contentAfter?: string;
 		} > => {
-			if ( isPostStale ) {
+			if ( isPostStale || isLatestPostContextStale() ) {
 				return { success: false };
 			}
 			if ( getBlockEditDisabledReason( blockIndex, currentText ) ) {
@@ -509,7 +520,12 @@ export default function ReviewMediation( {
 				return { success: false };
 			}
 			try {
-				const result = await applyReviewEdit( clientId, text, undefined, currentText );
+				const result = await applyReviewEdit( clientId, text, undefined, currentText, () => {
+					return ! isLatestPostContextStale();
+				} );
+				if ( isLatestPostContextStale() ) {
+					return { success: false };
+				}
 				if ( result?.success ) {
 					return {
 						success: true,
@@ -529,7 +545,7 @@ export default function ReviewMediation( {
 				return { success: false };
 			}
 		},
-		[ getBlockEditDisabledReason, getClientId, isPostStale ]
+		[ getBlockEditDisabledReason, getClientId, isLatestPostContextStale, isPostStale ]
 	);
 
 	// ---------- Suggested edit handlers ----------
@@ -749,90 +765,111 @@ export default function ReviewMediation( {
 			return successCount === 0 ? 'failed' : 'partial_failed';
 		};
 		setBulkRunning( true );
-		// Sequential so users see the shimmer on each block as it applies;
-		// parallel would race the same dispatch and confuse the state store.
-		for ( let i = 0; i < conflicts.length; i++ ) {
-			const status = conflictStatuses[ i ] ?? 'pending';
-			if ( status !== 'pending' && status !== 'failed' ) {
-				continue;
+		try {
+			// Sequential so users see the shimmer on each block as it applies;
+			// parallel would race the same dispatch and confuse the state store.
+			for ( let i = 0; i < conflicts.length; i++ ) {
+				if ( isLatestPostContextStale() ) {
+					return;
+				}
+				const status = conflictStatuses[ i ] ?? 'pending';
+				if ( status !== 'pending' && status !== 'failed' ) {
+					continue;
+				}
+				const aiCandidate = conflicts[ i ].candidate_resolutions?.find(
+					( c ) =>
+						c.source === 'ai' && ! getBlockEditDisabledReason( c.block_index, c.current_text )
+				);
+				if ( ! aiCandidate ) {
+					continue;
+				}
+				setConflictStatus( i, 'applying' );
+				// eslint-disable-next-line no-await-in-loop
+				const result = await applyTextToBlock(
+					aiCandidate.block_index,
+					aiCandidate.text,
+					aiCandidate.current_text
+				);
+				if ( isLatestPostContextStale() ) {
+					setConflictStatus( i, status );
+					return;
+				}
+				if (
+					result.success &&
+					result.clientId &&
+					typeof result.contentBefore === 'string' &&
+					typeof result.contentAfter === 'string'
+				) {
+					conflictSnapshots.current[ i ] = {
+						clientId: result.clientId,
+						contentBefore: result.contentBefore,
+						contentAfter: result.contentAfter,
+					};
+				}
+				if ( ! result.success ) {
+					failureCount++;
+				} else {
+					successCount++;
+				}
+				setConflictStatus( i, result.success ? 'accepted' : 'failed' );
 			}
-			const aiCandidate = conflicts[ i ].candidate_resolutions?.find(
-				( c ) => c.source === 'ai' && ! getBlockEditDisabledReason( c.block_index, c.current_text )
-			);
-			if ( ! aiCandidate ) {
-				continue;
+			for ( let i = 0; i < suggested_edits.length; i++ ) {
+				if ( isLatestPostContextStale() ) {
+					return;
+				}
+				const status = editStatuses[ i ] ?? 'pending';
+				if ( status !== 'pending' && status !== 'failed' ) {
+					continue;
+				}
+				const edit = suggested_edits[ i ];
+				if ( isManualSuggestedEdit( edit ) ) {
+					continue;
+				}
+				if ( getBlockEditDisabledReason( edit.block_index, edit.current_text ) ) {
+					continue;
+				}
+				setEditStatus( i, 'applying' );
+				// eslint-disable-next-line no-await-in-loop
+				const result = await applyTextToBlock(
+					edit.block_index,
+					edit.suggested_text,
+					edit.current_text
+				);
+				if ( isLatestPostContextStale() ) {
+					setEditStatus( i, status );
+					return;
+				}
+				if (
+					result.success &&
+					result.clientId &&
+					typeof result.contentBefore === 'string' &&
+					typeof result.contentAfter === 'string'
+				) {
+					editSnapshots.current[ i ] = {
+						clientId: result.clientId,
+						contentBefore: result.contentBefore,
+						contentAfter: result.contentAfter,
+					};
+				}
+				if ( ! result.success ) {
+					failureCount++;
+				} else {
+					successCount++;
+				}
+				setEditStatus( i, result.success ? 'accepted' : 'failed' );
 			}
-			setConflictStatus( i, 'applying' );
-			// eslint-disable-next-line no-await-in-loop
-			const result = await applyTextToBlock(
-				aiCandidate.block_index,
-				aiCandidate.text,
-				aiCandidate.current_text
-			);
-			if (
-				result.success &&
-				result.clientId &&
-				typeof result.contentBefore === 'string' &&
-				typeof result.contentAfter === 'string'
-			) {
-				conflictSnapshots.current[ i ] = {
-					clientId: result.clientId,
-					contentBefore: result.contentBefore,
-					contentAfter: result.contentAfter,
-				};
+			if ( isLatestPostContextStale() ) {
+				return;
 			}
-			if ( ! result.success ) {
-				failureCount++;
-			} else {
-				successCount++;
-			}
-			setConflictStatus( i, result.success ? 'accepted' : 'failed' );
+			fireItemAction( {
+				action: 'bulk_accept',
+				target: bulkTarget,
+				outcome: getBulkOutcome(),
+				itemCount: successCount + failureCount,
+			} );
+		} finally {
+			setBulkRunning( false );
 		}
-		for ( let i = 0; i < suggested_edits.length; i++ ) {
-			const status = editStatuses[ i ] ?? 'pending';
-			if ( status !== 'pending' && status !== 'failed' ) {
-				continue;
-			}
-			const edit = suggested_edits[ i ];
-			if ( isManualSuggestedEdit( edit ) ) {
-				continue;
-			}
-			if ( getBlockEditDisabledReason( edit.block_index, edit.current_text ) ) {
-				continue;
-			}
-			setEditStatus( i, 'applying' );
-			// eslint-disable-next-line no-await-in-loop
-			const result = await applyTextToBlock(
-				edit.block_index,
-				edit.suggested_text,
-				edit.current_text
-			);
-			if (
-				result.success &&
-				result.clientId &&
-				typeof result.contentBefore === 'string' &&
-				typeof result.contentAfter === 'string'
-			) {
-				editSnapshots.current[ i ] = {
-					clientId: result.clientId,
-					contentBefore: result.contentBefore,
-					contentAfter: result.contentAfter,
-				};
-			}
-			if ( ! result.success ) {
-				failureCount++;
-			} else {
-				successCount++;
-			}
-			setEditStatus( i, result.success ? 'accepted' : 'failed' );
-		}
-		fireItemAction( {
-			action: 'bulk_accept',
-			target: bulkTarget,
-			outcome: getBulkOutcome(),
-			itemCount: successCount + failureCount,
-		} );
-		setBulkRunning( false );
 	}, [
 		bulkRunning,
 		totalPendingCount,
@@ -845,6 +882,7 @@ export default function ReviewMediation( {
 		applyTextToBlock,
 		fireItemAction,
 		getBlockEditDisabledReason,
+		isLatestPostContextStale,
 		isPostStale,
 		setConflictStatus,
 		setEditStatus,

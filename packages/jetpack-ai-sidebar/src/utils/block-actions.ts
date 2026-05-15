@@ -209,7 +209,7 @@ function getBlockSnapshot( clientId: string ): { name: string; content: string }
  *   so callers can revert later via `undoBlockEdit`.
  */
 export function handleUpdateBlockContent( input: any ): any {
-	const { clientId, content, summary, currentText } = input;
+	const { clientId, content, summary, currentText, shouldApply } = input;
 	if ( ! clientId || content === undefined || content === null ) {
 		return { success: false, error: 'clientId and content are required', returnToAgent: false };
 	}
@@ -222,6 +222,9 @@ export function handleUpdateBlockContent( input: any ): any {
 	const blockEditor = wpData.dispatch( 'core/block-editor' );
 	if ( ! blockEditor ) {
 		return { success: false, error: 'Block editor not available', returnToAgent: false };
+	}
+	if ( typeof shouldApply === 'function' && ! shouldApply() ) {
+		return { success: false, error: 'context changed', returnToAgent: false };
 	}
 
 	const snapshot = getBlockSnapshot( clientId );
@@ -281,6 +284,10 @@ export function handleUpdateBlockContent( input: any ): any {
 				resolve( { success: false, error, returnToAgent: false } );
 			};
 
+			if ( typeof shouldApply === 'function' && ! shouldApply() ) {
+				resolveFailure( 'context changed' );
+				return;
+			}
 			if ( ! latestSnapshot ) {
 				resolveFailure( 'block not found' );
 				return;
@@ -354,7 +361,8 @@ export async function applyReviewEdit(
 	clientId: string,
 	content: string,
 	summary?: string,
-	currentText?: string
+	currentText?: string,
+	shouldApply?: () => boolean
 ): Promise< {
 	success: boolean;
 	contentBefore?: string;
@@ -362,7 +370,7 @@ export async function applyReviewEdit(
 	error?: string;
 	returnToAgent?: boolean;
 } > {
-	return handleUpdateBlockContent( { clientId, content, summary, currentText } );
+	return handleUpdateBlockContent( { clientId, content, summary, currentText, shouldApply } );
 }
 
 /**

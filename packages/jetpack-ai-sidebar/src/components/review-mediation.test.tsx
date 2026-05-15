@@ -477,7 +477,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			'b1',
 			'voted on Tuesday',
 			undefined,
-			'voted last Tuesday'
+			'voted last Tuesday',
+			expect.any( Function )
 		);
 
 		await waitFor( () => {
@@ -728,7 +729,8 @@ describe( 'ReviewMediation — suggested-edit accept flow', () => {
 			'nested-1',
 			'Updated nested paragraph text.',
 			undefined,
-			'Nested paragraph text.'
+			'Nested paragraph text.',
+			expect.any( Function )
 		);
 	} );
 
@@ -817,7 +819,8 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'b1',
 			'voted softly on Tuesday',
 			undefined,
-			'voted last Tuesday'
+			'voted last Tuesday',
+			expect.any( Function )
 		);
 		await waitFor( () => {
 			expect( screen.getByText( 'Accepted' ) ).toBeInTheDocument();
@@ -837,7 +840,8 @@ describe( 'ReviewMediation — conflict resolutions', () => {
 			'b1',
 			'voted on Tuesday',
 			undefined,
-			'voted last Tuesday'
+			'voted last Tuesday',
+			expect.any( Function )
 		);
 	} );
 
@@ -1128,20 +1132,89 @@ describe( 'ReviewMediation — bulk Accept all AI resolutions', () => {
 			'b1',
 			'AI rewrite',
 			undefined,
-			'voted last Tuesday'
+			'voted last Tuesday',
+			expect.any( Function )
 		);
 		expect( mockApplyReviewEdit ).toHaveBeenNthCalledWith(
 			2,
 			'b2',
 			'tighter copy',
 			undefined,
-			'Funding'
+			'Funding',
+			expect.any( Function )
 		);
 
 		// Footer disappears once everything is accepted (totalPendingCount === 0).
 		await waitFor( () => {
 			expect( screen.queryByText( /Accept all AI resolutions/ ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	it( 'stops bulk applying when the editor navigates to another post mid-run', async () => {
+		let resolveFirstApply: ( value: { success: boolean } ) => void = () => {};
+		mockApplyReviewEdit.mockImplementationOnce(
+			() =>
+				new Promise( ( resolve ) => {
+					resolveFirstApply = resolve;
+				} )
+		);
+
+		const payload = basePayload( {
+			conflicts: [
+				{
+					subject: 'Procedural framing',
+					positions: [],
+					guideline_anchor: null,
+					recommended_resolution: '',
+					candidate_resolutions: [
+						{
+							source: 'ai',
+							reviewer_name: null,
+							label: 'AI',
+							block_index: 1,
+							current_text: 'voted last Tuesday',
+							text: 'AI rewrite',
+							rationale: '',
+						},
+					],
+				},
+			],
+			suggested_edits: [
+				{
+					block_index: 2,
+					current_text: 'Funding',
+					suggested_text: 'tighter copy',
+					rationale: '',
+					supported_by_reviewers: [],
+				},
+			],
+		} );
+		const { rerender } = render( <ReviewMediation { ...payload } /> );
+
+		await act( async () => {
+			fireEvent.click( screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } ) );
+		} );
+
+		await waitFor( () => {
+			expect( mockApplyReviewEdit ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		mockCurrentPostId = 2;
+		rerender( <ReviewMediation { ...payload } /> );
+
+		await act( async () => {
+			resolveFirstApply( { success: true } );
+		} );
+
+		await waitFor( () => {
+			expect(
+				screen.getByText( 'Review context changed. Start a new chat and re-run this review.' )
+			).toBeInTheDocument();
+		} );
+		expect( mockApplyReviewEdit ).toHaveBeenCalledTimes( 1 );
+		expect(
+			screen.getByRole( 'button', { name: /Accept all AI resolutions \(2\)/ } )
+		).toBeDisabled();
 	} );
 } );
 
