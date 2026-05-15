@@ -12,7 +12,7 @@
 .qr-code-app-login.is-pending {
 	gap: 16px 48px;
 
-	@include break-small {
+	@include break-medium {
 		flex-direction: row-reverse;
 		justify-content: center;
 		align-items: flex-start;
