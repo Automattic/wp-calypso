@@ -120,6 +120,41 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( call?.prompt ).toMatch( /directional prompts/i );
 	} );
 
+	it( 'pairs the highlights style with an editorial system prompt (6-15 word prompts, no three-axes)', () => {
+		renderHook( () =>
+			useVideoClipSuggestions( {
+				registerSuggestions: jest.fn(),
+				clearSuggestions: jest.fn(),
+				messages: [],
+				style: 'highlights',
+			} )
+		);
+
+		const call = mockUseAsyncSuggestionsLoader.mock.calls.at( -1 )?.[ 0 ];
+		const built = call?.buildSystemPrompt( 'inner prompt body', 'en' ) ?? '';
+		expect( built ).toContain( '6-15 word editorial steering sentence' );
+		expect( built ).toContain( '2-8 word chip' );
+		expect( built ).not.toMatch( /three axes/i );
+		expect( built ).not.toContain( '35-60 word' );
+	} );
+
+	it( 'pairs the cinematic style with the three-axes system prompt', () => {
+		renderHook( () =>
+			useVideoClipSuggestions( {
+				registerSuggestions: jest.fn(),
+				clearSuggestions: jest.fn(),
+				messages: [],
+				style: 'cinematic',
+			} )
+		);
+
+		const call = mockUseAsyncSuggestionsLoader.mock.calls.at( -1 )?.[ 0 ];
+		const built = call?.buildSystemPrompt( 'inner prompt body', 'en' ) ?? '';
+		expect( built ).toContain( '35-60 word' );
+		expect( built ).toContain( 'three axes' );
+		expect( built ).not.toContain( '6-15 word' );
+	} );
+
 	it( 'disables the loader and returns no-op handlers when disabled', () => {
 		const registerSuggestions = jest.fn();
 		const { result } = renderHook( () =>

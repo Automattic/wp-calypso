@@ -61,7 +61,7 @@ ${ trimmed }`;
  */
 export function buildHighlightsClipSuggestionsPrompt( postBody: string ): string {
 	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
-	return `Below is the body of a WordPress post. Propose 3 short framing hints a user could pick to steer a ~24-second summary video derived from this post.
+	return `Below is the body of a WordPress post. Propose 3 short framing hints a user could pick to steer a 20-second summary video derived from this post.
 
 The video itself is rendered automatically from the post's content — these hints DO NOT describe what the video should look like. They steer how the LLM picks WHICH parts to emphasize. Think of them as editorial direction.
 
@@ -89,6 +89,27 @@ Output ONLY valid JSON matching this exact structure (no markdown, no explanatio
 {"suggestions":[{"label":"2-4 word chip A","prompt":"35-60 word directional sentence combining three axes"},{"label":"2-4 word chip B","prompt":"35-60 word directional sentence combining three axes"},{"label":"2-4 word chip C","prompt":"35-60 word directional sentence combining three axes"}]}
 
 The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the dense one — 35-60 words, three axes woven into prose.
+
+Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
+
+Output valid JSON only, nothing else.`;
+}
+
+/**
+ * Highlights-specific system prompt. Constraints match the editorial user
+ * prompt in buildHighlightsClipSuggestionsPrompt — 2-8 word labels, 6-15
+ * word prompt sentences, no cinematography axes. The cinematic prompt's
+ * "three axes" language is wrong for this style.
+ */
+function buildHighlightsClipSystemPrompt( suggestionPrompt: string, locale: string ): string {
+	return `You generate suggestion chips for a short summary-video composer. You DO NOT call any tools. You DO NOT generate, edit, or modify any media. You return only JSON.
+
+${ suggestionPrompt }
+
+Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). The "suggestions" array MUST contain exactly 3 items:
+{"suggestions":[{"label":"2-8 word chip A","prompt":"6-15 word editorial steering sentence"},{"label":"2-8 word chip B","prompt":"6-15 word editorial steering sentence"},{"label":"2-8 word chip C","prompt":"6-15 word editorial steering sentence"}]}
+
+The chip "label" stays 2-8 words. The "prompt" is a short editorial direction — 6-15 words, framing the angle / audience / structure / voice. NOT cinematography.
 
 Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
 
@@ -185,6 +206,12 @@ export function useVideoClipSuggestions( {
 				: buildVideoClipSuggestionsPrompt( postBodyText );
 	}
 
+	// Pair the right system-prompt builder with the user-prompt variant.
+	// The cinematic system prompt hard-codes the three-axes JSON shape that
+	// conflicts with the editorial Highlights user prompt.
+	const buildSystemPrompt =
+		styleKey === 'highlights' ? buildHighlightsClipSystemPrompt : buildVideoClipSystemPrompt;
+
 	const {
 		suggestions: asyncSuggestions,
 		abortLoading: abortSuggestionsLoading,
@@ -193,7 +220,7 @@ export function useVideoClipSuggestions( {
 		prompt,
 		cacheKey,
 		enabled,
-		buildSystemPrompt: buildVideoClipSystemPrompt,
+		buildSystemPrompt,
 		fallbackSuggestions: EMPTY_SUGGESTIONS,
 	} );
 
