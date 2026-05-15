@@ -205,39 +205,19 @@ describe( 'TopicGroupCard', () => {
 		} );
 
 		it( 'renders no subscriber count when all feeds return 0 subscribers', async () => {
-			const api =
-				jest.requireActual< typeof import('@automattic/api-queries') >( '@automattic/api-queries' );
-			jest.doMock( '@automattic/api-queries', () => ( {
-				...api,
-				readFeedQuery: ( feedId: number ) => ( {
-					...api.readFeedQuery( feedId ),
-					queryFn: async () => ( {
-						image: `https://icons.example/${ feedId }.png`,
-						subscribers_count: 0,
-					} ),
-				} ),
-			} ) );
+			// feed_ID: 0 → module-level mock returns subscribers_count: 1000 * 0 = 0.
+			// Even after the query settles, totalSubscribers is 0 so no label appears.
+			const zeroBlog = { ...blogs[ 0 ], feed_ID: 0 };
+			renderWithProvider( <TopicGroupCard { ...defaultProps } blogs={ [ zeroBlog ] } /> );
 
-			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
-
-			// Wait a tick for any async queries to settle, then assert absence.
 			await waitFor( () => {
 				expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
 			} );
 		} );
 
 		it( 'renders no subscriber count while feeds are still loading', () => {
-			// Use a queryFn that never resolves so feeds stay pending.
-			const api =
-				jest.requireActual< typeof import('@automattic/api-queries') >( '@automattic/api-queries' );
-			jest.doMock( '@automattic/api-queries', () => ( {
-				...api,
-				readFeedQuery: ( feedId: number ) => ( {
-					...api.readFeedQuery( feedId ),
-					queryFn: () => new Promise( () => {} ),
-				} ),
-			} ) );
-
+			// On initial render the feed queries are still pending (async, not yet resolved)
+			// so allSettled is false and no subscriber label should appear.
 			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
 
 			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
