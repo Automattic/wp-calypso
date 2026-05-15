@@ -53,16 +53,15 @@ $help-center-fab-gap: 8px;
 	}
 }
 
-// Anchor the panel above the FAB. The base `is-desktop` rule pins
-// `right: 50px; bottom: 50px;` via a `forwards` `slideIn` animation, so we
-// disable the animation and clear the physical insets before declaring the
-// logical ones — otherwise RTL ends up constrained by both `right: 50px`
-// and `left: <offset>`.
+// Anchor the panel above the FAB by overriding the base `is-desktop`
+// rule (which pins `right: 50px; bottom: 50px` and runs a `slideIn`
+// animation `forwards`). `inset-inline-start: auto` clears the base's
+// physical `right` in RTL; we use only logical properties because the
+// CSS pipeline alphabetises declarations, so a physical `right: auto`
+// declared alongside `inset-inline-end` would clobber it in LTR.
 body.has-help-center-fab .help-center .help-center__container.is-desktop {
 	animation: none;
-	right: auto;
-	left: auto;
-	bottom: auto;
+	inset-inline-start: auto;
 	inset-inline-end: $help-center-fab-offset;
 	// Mirror the FAB's safe-area offset so the panel stays 8px above the FAB
 	// on iOS devices with a non-zero `safe-area-inset-bottom`.
