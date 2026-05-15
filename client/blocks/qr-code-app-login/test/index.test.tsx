@@ -74,7 +74,7 @@ const buildCapturingApprove = (): CapturingApprove => {
 	};
 };
 
-const tokenData = { token: 't', encrypted: 'e', expiresAt: 9_999_999_999 };
+const tokenData = { token: 't', encrypted: 'e', expires: 9_999_999_999 };
 
 const tokenIssued = () =>
 	( {
@@ -134,7 +134,7 @@ describe( 'QRCodeAppLogin', () => {
 	it( 'renders the QR + steps once a token has been issued', async () => {
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
-			data: { token: 't', encrypted: 'e', expiresAt: 9_999_999_999 },
+			data: { token: 't', encrypted: 'e', expires: 9_999_999_999 },
 		} as unknown as CreateTokenReturn );
 
 		render( <QRCodeAppLogin /> );
@@ -164,7 +164,7 @@ describe( 'QRCodeAppLogin', () => {
 	it( 'renders the scanned state with device name and number buttons', async () => {
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
-			data: { token: 't', encrypted: 'e', expiresAt: 9_999_999_999 },
+			data: { token: 't', encrypted: 'e', expires: 9_999_999_999 },
 		} as unknown as CreateTokenReturn );
 		mockedUseStatus.mockReturnValue( {
 			data: { status: 'scanned', numbers: [ 3, 7, 11 ], device: 'Pixel 7' },
@@ -184,7 +184,7 @@ describe( 'QRCodeAppLogin', () => {
 		const mutate = jest.fn();
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
-			data: { token: 't', encrypted: 'e', expiresAt: 9_999_999_999 },
+			data: { token: 't', encrypted: 'e', expires: 9_999_999_999 },
 		} as unknown as CreateTokenReturn );
 		mockedUseStatus.mockReturnValue( {
 			data: { status: 'scanned', numbers: [ 3, 7, 11 ], device: 'Pixel 7' },
@@ -205,7 +205,7 @@ describe( 'QRCodeAppLogin', () => {
 	it( 'renders the approved state', async () => {
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
-			data: { token: 't', encrypted: 'e', expiresAt: 9_999_999_999 },
+			data: { token: 't', encrypted: 'e', expires: 9_999_999_999 },
 		} as unknown as CreateTokenReturn );
 		mockedUseStatus.mockReturnValue( {
 			data: { status: 'approved' },
@@ -221,7 +221,7 @@ describe( 'QRCodeAppLogin', () => {
 	it( 'renders the consumed state', async () => {
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
-			data: { token: 't', encrypted: 'e', expiresAt: 9_999_999_999 },
+			data: { token: 't', encrypted: 'e', expires: 9_999_999_999 },
 		} as unknown as CreateTokenReturn );
 		mockedUseStatus.mockReturnValue( {
 			data: { status: 'consumed' },
@@ -237,7 +237,7 @@ describe( 'QRCodeAppLogin', () => {
 	it( 'renders the rejected state', async () => {
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
-			data: { token: 't', encrypted: 'e', expiresAt: 9_999_999_999 },
+			data: { token: 't', encrypted: 'e', expires: 9_999_999_999 },
 		} as unknown as CreateTokenReturn );
 		mockedUseStatus.mockReturnValue( {
 			data: { status: 'rejected' },
@@ -256,7 +256,7 @@ describe( 'QRCodeAppLogin', () => {
 	it( 'renders the expired state when the server says expired', async () => {
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
-			data: { token: 't', encrypted: 'e', expiresAt: 9_999_999_999 },
+			data: { token: 't', encrypted: 'e', expires: 9_999_999_999 },
 		} as unknown as CreateTokenReturn );
 		mockedUseStatus.mockReturnValue( {
 			data: { status: 'expired' },

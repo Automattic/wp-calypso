@@ -2,7 +2,7 @@ export interface Token {
 	token: string;
 	encrypted: string;
 	/** Token expiry as a Unix timestamp in seconds. */
-	expiresAt: number;
+	expires: number;
 }
 
 export interface StatusPending {

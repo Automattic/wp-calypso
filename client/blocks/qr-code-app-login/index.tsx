@@ -25,7 +25,7 @@ export default function QRCodeAppLogin() {
 
 	const isVisible = useDocumentVisible();
 	const { data: statusData, isError: isStatusError } = useStatus( token?.token, isVisible );
-	const countdown = useCountdown( token?.expiresAt );
+	const countdown = useCountdown( token?.expires );
 
 	const [ wrongNumber, setWrongNumber ] = useState( false );
 	const [ forcedExpired, setForcedExpired ] = useState( false );
