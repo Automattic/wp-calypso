@@ -2,6 +2,7 @@ export { getAuthAttempts } from 'calypso/state/jetpack-connect/selectors/get-aut
 export { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 export { getConnectingSite } from 'calypso/state/jetpack-connect/selectors/get-connecting-site';
 export { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors/get-jetpack-site-by-url';
+export { getRemoteSiteData } from 'calypso/state/jetpack-connect/selectors/get-remote-site-data';
 export { getSSO } from 'calypso/state/jetpack-connect/selectors/get-sso';
 export { getUserAlreadyConnected } from 'calypso/state/jetpack-connect/selectors/get-user-already-connected';
 export { hasExpiredSecretError } from 'calypso/state/jetpack-connect/selectors/has-expired-secret-error';

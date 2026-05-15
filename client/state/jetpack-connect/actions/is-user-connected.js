@@ -6,7 +6,10 @@ import {
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { JETPACK_CONNECT_USER_ALREADY_CONNECTED } from 'calypso/state/jetpack-connect/action-types';
+import {
+	JETPACK_CONNECT_SITE_DATA_RECEIVED,
+	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
+} from 'calypso/state/jetpack-connect/action-types';
 import { receiveDeletedSite, receiveSite } from 'calypso/state/sites/actions';
 
 import 'calypso/state/jetpack-connect/init';
@@ -57,6 +60,21 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 					error,
 				} );
 				debug( 'user is not connected from', error );
+				if ( accessibleSite ) {
+					debug( 'site was accessible, storing site data for connection detection', {
+						jetpack: accessibleSite.jetpack,
+						jetpack_connection: accessibleSite.jetpack_connection,
+						site_owner: accessibleSite.site_owner,
+					} );
+					dispatch( {
+						type: JETPACK_CONNECT_SITE_DATA_RECEIVED,
+						siteData: {
+							jetpack: accessibleSite.jetpack,
+							jetpackConnection: accessibleSite.jetpack_connection,
+							siteOwner: accessibleSite.site_owner,
+						},
+					} );
+				}
 				if ( siteIsOnSitesList ) {
 					debug( 'removing site from sites list', siteId );
 					dispatch( receiveDeletedSite( siteId ) );
