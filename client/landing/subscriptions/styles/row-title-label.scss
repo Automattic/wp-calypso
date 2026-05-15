@@ -33,25 +33,3 @@
 	color: var( --studio-gray-0 );
 	background: var( --studio-orange-20 );
 }
-
-@mixin reader-dark-row-title-labels {
-	.site-subscriptions-list .row .title-name .p2-label,
-	.subscription-manager__comment-list .row .title-box .title-column .name .p2-label {
-		color: var( --studio-white );
-	}
-
-	.site-subscriptions-list .row .title-name .rss-label,
-	.site-subscriptions-list .row .title-name .comp-label {
-		color: var( --dashboard__background-color );
-	}
-}
-
-:root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
-	@include reader-dark-row-title-labels;
-}
-
-@media ( prefers-color-scheme: dark ) {
-	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
-		@include reader-dark-row-title-labels;
-	}
-}

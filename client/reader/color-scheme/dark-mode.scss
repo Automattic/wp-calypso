@@ -40,6 +40,7 @@
 	--color-main-background: var( --dashboard__background-color );
 	--color-surface: var( --dashboard-surface__background-color );
 	--color-surface-1: var( --dashboard-surface__background-color );
+	--color-surface-subtle: var( --dashboard-item-selected__background-color );
 	--color-surface-backdrop: var( --dashboard__background-color );
 	--color-text: var( --dashboard__text-color );
 	--color-text-subtle: var( --dashboard__text-muted-color );
@@ -84,8 +85,9 @@
 	}
 
 	:where( a, button, [role='button'] ) {
-		> svg:not( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ),
-		> .components-button__icon > svg:not( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+		> svg:not( .reader-facebook, .reader-x, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ),
+		> .components-button__icon
+			> svg:not( .reader-facebook, .reader-x, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
 			fill: currentColor;
 		}
 	}
