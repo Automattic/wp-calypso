@@ -1,4 +1,5 @@
 import { readFeedQuery } from '@automattic/api-queries';
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __, sprintf, _n } from '@wordpress/i18n';
@@ -58,6 +59,37 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 	isBusy = false,
 	onSubscribe,
 } ) => {
+	const { ref: cardRef, inView: cardInView } = useInView( {
+		triggerOnce: true,
+		fallbackInView: true,
+	} );
+
+	// Fetch subscriber counts for all pack blogs (up to 5) when the card enters the
+	// viewport. Hooks must be called unconditionally, so each position uses a -1
+	// fallback feedId that readFeedQuery disables automatically (feedId < 0).
+	// React Query deduplicates requests with BlogAvatar's per-avatar queries.
+	const fq0 = readFeedQuery( blogs[ 0 ]?.feed_ID ?? -1 );
+	const { data: fd0 } = useQuery( { ...fq0, enabled: Boolean( fq0.enabled ) && cardInView } );
+	const fq1 = readFeedQuery( blogs[ 1 ]?.feed_ID ?? -1 );
+	const { data: fd1 } = useQuery( { ...fq1, enabled: Boolean( fq1.enabled ) && cardInView } );
+	const fq2 = readFeedQuery( blogs[ 2 ]?.feed_ID ?? -1 );
+	const { data: fd2 } = useQuery( { ...fq2, enabled: Boolean( fq2.enabled ) && cardInView } );
+	const fq3 = readFeedQuery( blogs[ 3 ]?.feed_ID ?? -1 );
+	const { data: fd3 } = useQuery( { ...fq3, enabled: Boolean( fq3.enabled ) && cardInView } );
+	const fq4 = readFeedQuery( blogs[ 4 ]?.feed_ID ?? -1 );
+	const { data: fd4 } = useQuery( { ...fq4, enabled: Boolean( fq4.enabled ) && cardInView } );
+
+	const feedDatas = [ fd0, fd1, fd2, fd3, fd4 ].slice( 0, blogs.length );
+	const totalSubscribers = feedDatas.reduce( ( sum, f ) => sum + ( f?.subscribers_count ?? 0 ), 0 );
+	const subscriberLabel =
+		totalSubscribers > 0
+			? sprintf(
+					/* translators: %s is a compact number like "10.4K" */
+					__( '%s readers' ),
+					formatNumberCompact( totalSubscribers )
+			  )
+			: null;
+
 	const visibleBlogs = blogs.slice( 0, MAX_VISIBLE_AVATARS );
 	const remainingCount = Math.max( 0, blogs.length - MAX_VISIBLE_AVATARS );
 
@@ -102,12 +134,20 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 
 	return (
 		<article
+			ref={ cardRef }
 			className={ clsx( 'topic-group-card', { 'is-subscribed': isSubscribed } ) }
 			aria-label={ title }
 		>
 			<header className="topic-group-card__header">
 				<h3 className="topic-group-card__title">{ title }</h3>
-				{ meta && <p className="topic-group-card__meta">{ meta }</p> }
+				{ meta && (
+					<div className="topic-group-card__meta">
+						<span>{ meta }</span>
+						{ subscriberLabel && (
+							<span className="topic-group-card__subscribers">{ subscriberLabel }</span>
+						) }
+					</div>
+				) }
 			</header>
 			{ imageUrl && (
 				<div className="topic-group-card__image-wrap">

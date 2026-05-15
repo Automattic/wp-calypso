@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import TopicGroupCard from '../topic-group-card';
@@ -16,6 +16,7 @@ jest.mock( '@automattic/api-queries', () => {
 			...actual.readFeedQuery( feedId ),
 			queryFn: async () => ( {
 				image: `https://icons.example/${ feedId }.png`,
+				subscribers_count: 1000 * feedId,
 			} ),
 		} ),
 	};
@@ -187,5 +188,59 @@ describe( 'TopicGroupCard', () => {
 
 		await user.click( button );
 		expect( onSubscribe ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'subscriber count', () => {
+		it( 'renders the formatted total subscriber count once feed data loads', async () => {
+			// The mock returns subscribers_count: 1000 * feedId for each feed.
+			// With blogs fixture (feed_ID 1–5): 1000+2000+3000+4000+5000 = 15000 → "15K readers".
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+
+			await waitFor( () => {
+				expect( screen.getByText( /readers/i ) ).toBeVisible();
+			} );
+
+			// formatNumberCompact(15000) → "15K" in the default locale.
+			expect( screen.getByText( /15[,.]?0?K?\s*readers/i ) ).toBeInTheDocument();
+		} );
+
+		it( 'renders no subscriber count when all feeds return 0 subscribers', async () => {
+			const api =
+				jest.requireActual< typeof import('@automattic/api-queries') >( '@automattic/api-queries' );
+			jest.doMock( '@automattic/api-queries', () => ( {
+				...api,
+				readFeedQuery: ( feedId: number ) => ( {
+					...api.readFeedQuery( feedId ),
+					queryFn: async () => ( {
+						image: `https://icons.example/${ feedId }.png`,
+						subscribers_count: 0,
+					} ),
+				} ),
+			} ) );
+
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+
+			// Wait a tick for any async queries to settle, then assert absence.
+			await waitFor( () => {
+				expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'renders no subscriber count while feeds are still loading', () => {
+			// Use a queryFn that never resolves so feeds stay pending.
+			const api =
+				jest.requireActual< typeof import('@automattic/api-queries') >( '@automattic/api-queries' );
+			jest.doMock( '@automattic/api-queries', () => ( {
+				...api,
+				readFeedQuery: ( feedId: number ) => ( {
+					...api.readFeedQuery( feedId ),
+					queryFn: () => new Promise( () => {} ),
+				} ),
+			} ) );
+
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+
+			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
