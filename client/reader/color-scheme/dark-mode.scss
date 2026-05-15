@@ -123,6 +123,12 @@
 		border-top-color: var( --color-border-subtle );
 	}
 
+	.popover.is-top .popover__arrow::before,
+	.popover.is-top-left .popover__arrow::before,
+	.popover.is-top-right .popover__arrow::before {
+		border-top-color: var( --color-surface );
+	}
+
 	.community-translator.is-incompatible {
 		--color-neutral-20: var( --dashboard__text-muted-color );
 	}
