@@ -1,3 +1,5 @@
+@use "packages/ui/src/utils/mixins" as ui-mixins;
+
 .reader-related-card__heading {
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
@@ -161,6 +163,16 @@
 	border-top: 1px solid var(--color-neutral-10);
 	margin-top: 30px;
 	padding-top: 11px;
+
+	@include ui-mixins.when-dark-theme {
+		.reader-related-card__heading::after,
+		.reader-related-card__post::after,
+		.reader-related-card__byline-site::after,
+		.reader-related-card__byline-author::after,
+		.reader-related-card__title::after {
+			background: linear-gradient( to right, transparent, var( --color-surface ) 90% );
+		}
+	}
 
 	@include breakpoint-deprecated( "<480px" ) {
 		margin-top: 0;
