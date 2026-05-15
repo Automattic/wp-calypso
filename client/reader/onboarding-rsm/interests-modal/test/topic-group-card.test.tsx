@@ -4,6 +4,7 @@
 
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import TopicGroupCard from '../topic-group-card';
 import type { CuratedBlog } from '../../curated-blogs';
@@ -195,6 +196,9 @@ describe( 'TopicGroupCard', () => {
 			// The mock returns subscribers_count: 1000 * feedId for each feed.
 			// With blogs fixture (feed_ID 1–5): 1000+2000+3000+4000+5000 = 15000 → "15K readers".
 			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+			// mockAllIsIntersecting must be called after render so the observed elements receive
+			// the callback. This simulates the card entering the viewport.
+			mockAllIsIntersecting( true );
 
 			await waitFor( () => {
 				expect( screen.getByText( /readers/i ) ).toBeVisible();
@@ -209,6 +213,7 @@ describe( 'TopicGroupCard', () => {
 			// Flush the async queryFn so allSettled flips to true, then assert absence.
 			const zeroBlog = { ...blogs[ 0 ], feed_ID: 0 };
 			renderWithProvider( <TopicGroupCard { ...defaultProps } blogs={ [ zeroBlog ] } /> );
+			mockAllIsIntersecting( true );
 
 			await act( async () => {} );
 
@@ -216,11 +221,40 @@ describe( 'TopicGroupCard', () => {
 		} );
 
 		it( 'renders no subscriber count while feeds are still loading', () => {
-			// On initial render the feed queries are still pending (async, not yet resolved)
-			// so allSettled is false and no subscriber label should appear.
+			// After render, queries are pending (async, not yet resolved). Simulate the card
+			// entering the viewport to enable queries, then assert before they resolve.
 			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+			mockAllIsIntersecting( true ); // enables queries but they haven't resolved yet
+
+			// Synchronous check — the async queryFns haven't resolved yet.
+			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'in-view behavior', () => {
+		it( 'does not show subscriber count while the card is out of view', async () => {
+			// Render the card, then explicitly report it as out of view.
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+			mockAllIsIntersecting( false );
+
+			// Flush async operations — no queries should have fired since the card is off-screen.
+			await act( async () => {} );
 
 			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'fetches data for all pack blogs and shows the total when the card is in view', async () => {
+			// Render, then simulate the card entering the viewport.
+			renderWithProvider( <TopicGroupCard { ...defaultProps } /> );
+			mockAllIsIntersecting( true );
+
+			await waitFor( () => {
+				expect( screen.getByText( /readers/i ) ).toBeVisible();
+			} );
+
+			// All 5 feeds are requested (not just the 3 shown as avatars).
+			// 1000+2000+3000+4000+5000 = 15000 → "15K readers".
+			expect( screen.getByText( /15[,.]?0?K?\s*readers/i ) ).toBeInTheDocument();
 		} );
 	} );
 } );
