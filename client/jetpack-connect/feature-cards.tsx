@@ -1,8 +1,11 @@
-import { __ } from '@wordpress/i18n';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { getFeatureCardData, getFeatureSelection } from './connection-content';
+import {
+	getFeatureCardData,
+	getFeatureSelection,
+	getSecondaryFeatureCardData,
+} from './connection-content';
 import type { FeatureCardKey } from './connection-content';
 import type { FeatureCard } from 'calypso/components/connect-screen/features-section';
 import type { ReactNode } from 'react';
@@ -82,25 +85,24 @@ export function getConnectorFeatureCards(
  * Feature cards for secondary admin connections (not the connection owner).
  *
  * Secondary admin connections enable a narrower set of features than the
- * owner connection: activity logs, Jetpack Cloud admin pages, backups,
- * social features, and SSO. The card content is static and independent
- * of which plugins are active -- those features are tied to the user
- * connection itself, not to specific plugin activations.
+ * owner connection. The card selection reuses the same plugin-aware
+ * family/priority system as first connections, but the bullet copy
+ * reflects the narrower scope (SSO, cloud management, etc.).
  */
-export function getSecondaryAdminFeatureCards(): ConnectorFeatureCards {
-	return {
-		cards: [
-			{
-				id: 'secondary-admin',
-				logo: <JetpackLogo full size={ 32 } />,
-				title: __( 'Jetpack' ),
-				bullets: [
-					__( 'Access the activity log to track every change on your site.' ),
-					__( 'Manage backups, security, and settings from Jetpack Cloud.' ),
-					__( 'Publish and schedule social media shares with Jetpack Social.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
-				],
-			},
-		],
-	};
+export function getSecondaryAdminFeatureCards(
+	pluginSlugs: readonly string[] = []
+): ConnectorFeatureCards {
+	const { cardKeys } = getFeatureSelection( pluginSlugs );
+
+	const cards: FeatureCard[] = cardKeys.map( ( key ) => {
+		const data = getSecondaryFeatureCardData( key );
+		return {
+			id: key,
+			logo: getLogoForCardKey( key ),
+			title: data.title,
+			bullets: data.bullets,
+		};
+	} );
+
+	return { cards };
 }

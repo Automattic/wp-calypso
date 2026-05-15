@@ -279,27 +279,51 @@ describe( 'default arguments', () => {
 
 describe( 'secondary auth copy', () => {
 	test( 'title is "Connect your account" for both admin and non-admin', () => {
-		expect( getSecondaryAuthCopy( true ).title ).toBe( 'Connect your account' );
-		expect( getSecondaryAuthCopy( false ).title ).toBe( 'Connect your account' );
+		expect( getSecondaryAuthCopy( true, [ 'jetpack' ] ).title ).toBe( 'Connect your account' );
+		expect( getSecondaryAuthCopy( false, [ 'jetpack' ] ).title ).toBe( 'Connect your account' );
 	} );
 
-	test( 'admin subtitle mentions activity logs, backups, social sharing, and Jetpack Cloud', () => {
-		const { subtitle } = getSecondaryAuthCopy( true );
+	test( 'non-admin subtitle uses simple manage-site framing regardless of plugins', () => {
+		const jp = getSecondaryAuthCopy( false, [ 'jetpack' ] ).subtitle;
+		const woo = getSecondaryAuthCopy( false, [ 'woocommerce' ] ).subtitle;
+		const empty = getSecondaryAuthCopy( false, [] ).subtitle;
+		expect( jp ).toContain( 'manage this site' );
+		expect( woo ).toBe( jp );
+		expect( empty ).toBe( jp );
+	} );
+
+	test( 'admin subtitle with Jetpack mentions activity logs and Jetpack Cloud', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [ 'jetpack' ] );
 		expect( subtitle ).toContain( 'activity logs' );
-		expect( subtitle ).toContain( 'backups' );
-		expect( subtitle ).toContain( 'social sharing' );
 		expect( subtitle ).toContain( 'Jetpack Cloud' );
 	} );
 
-	test( 'non-admin subtitle uses simple manage-site framing', () => {
-		const { subtitle } = getSecondaryAuthCopy( false );
+	test( 'admin subtitle with Woo (no Jetpack) mentions store analytics and Woo mobile app', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [ 'woocommerce' ] );
+		expect( subtitle ).toContain( 'store analytics' );
+		expect( subtitle ).toContain( 'Woo mobile app' );
+		expect( subtitle ).not.toContain( 'Jetpack Cloud' );
+	} );
+
+	test( 'admin subtitle with Jetpack + Woo mentions both Jetpack Cloud and Woo', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [ 'jetpack', 'woocommerce' ] );
+		expect( subtitle ).toContain( 'Jetpack Cloud' );
+		expect( subtitle ).toContain( 'Woo mobile app' );
+	} );
+
+	test( 'admin subtitle with unknown plugins uses generic manage-site framing', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [ 'unknown-plugin' ] );
 		expect( subtitle ).toContain( 'manage this site' );
-		expect( subtitle ).toContain( 'WordPress.com account' );
+	} );
+
+	test( 'admin subtitle with empty plugins uses generic manage-site framing', () => {
+		const { subtitle } = getSecondaryAuthCopy( true, [] );
+		expect( subtitle ).toContain( 'manage this site' );
 	} );
 
 	test( 'admin and non-admin subtitles are different', () => {
-		expect( getSecondaryAuthCopy( true ).subtitle ).not.toBe(
-			getSecondaryAuthCopy( false ).subtitle
+		expect( getSecondaryAuthCopy( true, [ 'jetpack' ] ).subtitle ).not.toBe(
+			getSecondaryAuthCopy( false, [ 'jetpack' ] ).subtitle
 		);
 	} );
 } );

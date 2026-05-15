@@ -1088,7 +1088,7 @@ export class JetpackAuthorize extends Component {
 
 			let cards;
 			if ( isSecondary && isAdmin ) {
-				( { cards } = getSecondaryAdminFeatureCards() );
+				( { cards } = getSecondaryAdminFeatureCards( authQuery.plugins ) );
 			} else if ( isSecondary && ! isAdmin ) {
 				cards = [];
 			} else {
@@ -1378,7 +1378,7 @@ export class JetpackAuthorize extends Component {
 		const isSecondary = this.isSecondaryConnection();
 		let authCopy = null;
 		if ( isFromJetpackConnector && isSecondary ) {
-			authCopy = getSecondaryAuthCopy( this.isAdminConnection() );
+			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), this.props.authQuery.plugins );
 		} else if ( isFromJetpackConnector ) {
 			authCopy = getAuthCopy( this.props.authQuery.plugins );
 		}
