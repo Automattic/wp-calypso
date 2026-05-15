@@ -99,7 +99,11 @@ const CancelPurchaseFeatureList = ( {
 			) }
 			{ cancellationChanges.length > 0 && (
 				<VStack spacing={ 2 }>
-					<Text as="p">{ __( 'We will also make these changes to your site:' ) }</Text>
+					<Text as="p">
+						{ purchase.is_plan
+							? __( 'We will also make these changes to your site:' )
+							: __( "Here's what will happen:" ) }
+					</Text>
 					<VStack as="ul" spacing={ 1 } style={ { listStyle: 'none', padding: 0, margin: 0 } }>
 						{ cancellationChanges.map( ( change ) => (
 							<li key={ change.getSlug() }>

@@ -13,6 +13,7 @@ import {
 	receiveReaderFeedRequestSuccess,
 } from 'calypso/state/reader/feeds/actions';
 import { ReaderFollowItem } from 'calypso/state/reader/follows/selectors/types';
+import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 import { AppState } from 'calypso/types';
 
 /**
@@ -54,6 +55,74 @@ function interleaveByTag< T >( perTagLists: T[][] ): T[] {
 		}
 	}
 	return result;
+}
+
+/**
+ * Canonical feed URL for de-duping follows vs recommendations when `feed_ID`
+ * drifts (same subscription, new feed row) or when matching across sources.
+ *
+ * Delegates to `prepareComparableUrl` so keys match how the reader follows slice
+ * indexes subscriptions (scheme stripped, trailing slash trimmed, lowercased).
+ */
+function normalizeReaderFeedUrlForSubscriptionMatch(
+	raw: string | undefined | null
+): string | null {
+	if ( raw == null ) {
+		return null;
+	}
+	const trimmed = raw.trim();
+	if ( trimmed === '' ) {
+		return null;
+	}
+	const comparable = prepareComparableUrl( trimmed );
+	return comparable ? comparable : null;
+}
+
+type FollowedSubscriptions = {
+	feedIds: Set< number >;
+	blogIds: Set< number >;
+	feedUrls: Set< string >;
+};
+
+function buildFollowedSubscriptions(
+	rawFollowingItems: ReaderFollowItem[]
+): FollowedSubscriptions {
+	const feedIds = new Set< number >();
+	const blogIds = new Set< number >();
+	const feedUrls = new Set< string >();
+	for ( const f of rawFollowingItems ) {
+		if ( f.feed_ID != null ) {
+			feedIds.add( f.feed_ID );
+		}
+		if ( f.blog_ID != null && f.blog_ID !== 0 ) {
+			blogIds.add( f.blog_ID );
+		}
+		const urlCandidates = [ f.feed_URL, ...( f.alias_feed_URLs ?? [] ) ];
+		for ( const url of urlCandidates ) {
+			const normalized = normalizeReaderFeedUrlForSubscriptionMatch( url );
+			if ( normalized ) {
+				feedUrls.add( normalized );
+			}
+		}
+	}
+	return { feedIds, blogIds, feedUrls };
+}
+
+function isFollowedSubscription(
+	blog: Pick< CardData, 'feed_ID' | 'site_ID' | 'feed_URL' | 'site_URL' >,
+	followed: FollowedSubscriptions
+): boolean {
+	if ( followed.feedIds.has( blog.feed_ID ) ) {
+		return true;
+	}
+	if ( blog.site_ID > 0 && followed.blogIds.has( blog.site_ID ) ) {
+		return true;
+	}
+	const normalizedFeedUrl = normalizeReaderFeedUrlForSubscriptionMatch( blog.feed_URL );
+	if ( normalizedFeedUrl && followed.feedUrls.has( normalizedFeedUrl ) ) {
+		return true;
+	}
+	return false;
 }
 
 export interface CardData {
@@ -99,7 +168,7 @@ interface Card {
 }
 
 export interface UseSubscribeRecommendationsResult {
-	/** Combined + sorted + filtered recommendations (max 18), before feed/site validation. */
+	/** Combined + sorted + filtered recommendations (max 18), after follow de-dupe by ID/URL and `readFeedQuery` URL enrichment. */
 	combinedRecommendations: CardData[];
 	/** Stable list: only items whose feed loaded in Redux without feed/site errors. */
 	recommendations: CardData[];
@@ -131,24 +200,17 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	const currentLocale = getLocaleSlug();
 
 	/**
-	 * Set of feed_IDs and blog_IDs the user is currently following. Reactive: updates as the
-	 * paginated follows API fills in. Safe to use in the memo deps below because
-	 * `getReaderFollowingItemsRaw` only depends on `state.reader.follows.items`, not
-	 * `feeds.items`, so the feed bridge below can't cause a render storm via this selector.
+	 * Feed IDs, blog IDs, and normalized feed URLs the user is currently following.
+	 * URLs cover cases where the same subscription gets a new `feed_ID` over time.
+	 * Reactive: updates as the paginated follows API fills in. Safe to use in the
+	 * memo deps below because `getReaderFollowingItemsRaw` only depends on
+	 * `state.reader.follows.items`, not `feeds.items`, so the feed bridge below
+	 * can't cause a render storm via this selector.
 	 */
-	const followedIds = useMemo( () => {
-		const feedIds = new Set< number >();
-		const blogIds = new Set< number >();
-		for ( const f of rawFollowingItems ) {
-			if ( f.feed_ID != null ) {
-				feedIds.add( f.feed_ID );
-			}
-			if ( f.blog_ID != null && f.blog_ID !== 0 ) {
-				blogIds.add( f.blog_ID );
-			}
-		}
-		return { feedIds, blogIds };
-	}, [ rawFollowingItems ] );
+	const followedSubscriptions = useMemo(
+		() => buildFollowedSubscriptions( rawFollowingItems ),
+		[ rawFollowingItems ]
+	);
 
 	const { data: apiRecommendedSites = [], isLoading: apiLoading } = useQuery( {
 		queryKey: [ 'reader-onboarding-recommended-sites', followedTagSlugs, currentLocale ],
@@ -233,12 +295,11 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 		const sortedRecommendations = uniqueRecommendations.sort( ( a, b ) => b.weight - a.weight );
 
 		const unsubscribedRecommendations = sortedRecommendations.filter(
-			( blog ) =>
-				! followedIds.feedIds.has( blog.feed_ID ) && ! followedIds.blogIds.has( blog.site_ID )
+			( blog ) => ! isFollowedSubscription( blog, followedSubscriptions )
 		);
 
 		return unsubscribedRecommendations.slice( 0, 18 );
-	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale, followedIds ] );
+	}, [ followedTagSlugs, apiRecommendedSites, isLoading, currentLocale, followedSubscriptions ] );
 
 	// Fetch feed metadata via React Query and bridge into Redux (replaces deprecated QueryReaderFeed).
 	const feedQueries = useQueries( {
@@ -248,7 +309,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	} );
 
 	const combinedRecommendations = useMemo( () => {
-		return baseCombinedRecommendations.map( ( site, index ) => {
+		const enriched = baseCombinedRecommendations.map( ( site, index ) => {
 			const query = feedQueries[ index ];
 			const fromFeed =
 				query?.isSuccess && query.data && typeof query.data.feed_URL === 'string'
@@ -259,7 +320,10 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				feed_URL: site.feed_URL || fromFeed || site.site_URL,
 			};
 		} );
-	}, [ baseCombinedRecommendations, feedQueries ] );
+		// Re-check after `readFeedQuery` enriches `feed_URL` so API rows that omitted
+		// the URL in `/read/tags/cards` still match follows keyed by URL when `feed_ID` differs.
+		return enriched.filter( ( site ) => ! isFollowedSubscription( site, followedSubscriptions ) );
+	}, [ baseCombinedRecommendations, feedQueries, followedSubscriptions ] );
 
 	const feedQueriesStateKey = useMemo(
 		() =>
@@ -358,7 +422,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	// Prune pinned cards once the follows slice reveals they were already
 	// subscribed before this modal session — unless the user followed them in
 	// this session (which is the "keep visible after follow" UX). Runs whenever
-	// `followedIds` changes (e.g. a paginated follows page lands).
+	// `followedSubscriptions` changes (e.g. a paginated follows page lands).
 	useEffect( () => {
 		setPinnedSites( ( prev ) => {
 			let pruned = false;
@@ -366,9 +430,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 				if ( sessionFollowedFeedIdsRef.current.has( site.feed_ID ) ) {
 					return true;
 				}
-				const followedByFeed = site.feed_ID > 0 && followedIds.feedIds.has( site.feed_ID );
-				const followedBySite = site.site_ID > 0 && followedIds.blogIds.has( site.site_ID );
-				if ( followedByFeed || followedBySite ) {
+				if ( isFollowedSubscription( site, followedSubscriptions ) ) {
 					pruned = true;
 					return false;
 				}
@@ -376,7 +438,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 			} );
 			return pruned ? next : prev;
 		} );
-	}, [ followedIds ] );
+	}, [ followedSubscriptions ] );
 
 	useEffect( () => {
 		if ( combinedRecommendations.length === 0 ) {
@@ -446,7 +508,7 @@ export function useSubscribeRecommendations(): UseSubscribeRecommendationsResult
 	// `combinedRecommendations` is either in `pinnedSites` or `rejectedFeedIds`.
 	// We deliberately intersect rather than count totals: `combinedRecommendations`
 	// shrinks reactively as paginated follows arrive (already-followed feeds get
-	// filtered out via `followedIds`), and a raw `pinned + rejected >= length`
+	// filtered out via `followedSubscriptions`), and a raw `pinned + rejected >= length`
 	// comparison can overshoot once enough previously-rejected feeds drop out of
 	// the candidate set, prematurely flipping `hasNoRecommendations` on while
 	// genuinely pending candidates remain. Iterating the candidate list also keeps

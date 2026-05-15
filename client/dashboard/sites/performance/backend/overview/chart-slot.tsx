@@ -3,9 +3,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
+import { formatMs } from '../utils';
 import type { ApmTimePoint } from '@automattic/api-core';
 
 import '@automattic/charts/style.css';
@@ -28,21 +29,6 @@ function toSeriesData( timeseries: ApmTimePoint[] ): SeriesData[] {
 			value: point[ key ],
 		} ) ),
 	} ) );
-}
-
-function formatMs( ms: number ): string {
-	if ( ms >= 1000 ) {
-		return sprintf(
-			/* translators: %s is a number of seconds. */
-			__( '%s s' ),
-			( ms / 1000 ).toFixed( 2 )
-		);
-	}
-	return sprintf(
-		/* translators: %d is a number of milliseconds. */
-		__( '%d ms' ),
-		ms
-	);
 }
 
 function getAverageTotal( timeseries: ApmTimePoint[] ): number {

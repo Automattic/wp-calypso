@@ -71,7 +71,6 @@ jest.mock( 'calypso/state/reader/feeds/selectors', () => ( {
 
 jest.mock( 'calypso/state/reader/streams/actions', () => ( {
 	requestPage: jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) ),
-	requestPaginatedStream: jest.fn( () => ( { type: 'READER_REQUEST_PAGINATED_STREAM' } ) ),
 } ) );
 
 // ── Analytics ────────────────────────────────────────────────────────────────

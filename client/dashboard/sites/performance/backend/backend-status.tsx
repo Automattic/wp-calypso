@@ -1,38 +1,12 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { Notice } from '../../../components/notice';
-
-export type BackendStatus = 'good' | 'needsImprovement' | 'bad';
-
-export function getBackendStatus( avgResponseMs: number ): BackendStatus {
-	if ( avgResponseMs <= 500 ) {
-		return 'good';
-	}
-	if ( avgResponseMs <= 1500 ) {
-		return 'needsImprovement';
-	}
-	return 'bad';
-}
-
-function formatMs( ms: number ): string {
-	if ( ms >= 1000 ) {
-		return sprintf(
-			/* translators: %s is a number of seconds. */
-			__( '%s s' ),
-			( ms / 1000 ).toFixed( 2 )
-		);
-	}
-	return sprintf(
-		/* translators: %d is a number of milliseconds. */
-		__( '%d ms' ),
-		ms
-	);
-}
+import { BACKEND_THRESHOLDS_MS, bucketByMs, formatMs } from './utils';
 
 export default function BackendStatusNotice( { avgResponseMs }: { avgResponseMs: number } ) {
-	const status = getBackendStatus( avgResponseMs );
+	const intent = bucketByMs( avgResponseMs, BACKEND_THRESHOLDS_MS.response );
 	const formatted = formatMs( avgResponseMs );
 
-	if ( status === 'bad' ) {
+	if ( intent === 'error' ) {
 		return (
 			<Notice
 				variant="error"
@@ -49,7 +23,7 @@ export default function BackendStatusNotice( { avgResponseMs }: { avgResponseMs:
 		);
 	}
 
-	if ( status === 'needsImprovement' ) {
+	if ( intent === 'warning' ) {
 		return (
 			<Notice
 				variant="warning"
