@@ -357,7 +357,7 @@ describe( 'themes selectors', () => {
 			expect( theme ).toEqual( retiredWpcomPinboard );
 		} );
 
-		test( 'when wpcom record is not retired, returns the wpcom record even if the site has its own copy', () => {
+		test( 'when wpcom record is not retired and the site has its own installed theme with the same slug, merges site fields over wpcom (DOTTHEM-150)', () => {
 			const wpcomTwentySixteen = { ...twentysixteen };
 			const sideloadedTwentySixteen = {
 				id: 'twentysixteen',
@@ -374,6 +374,37 @@ describe( 'themes selectors', () => {
 							} ),
 							2916284: new ThemeQueryManager( {
 								items: { twentysixteen: sideloadedTwentySixteen },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'twentysixteen'
+			);
+
+			expect( theme.name ).toEqual( 'Twenty Sixteen (local)' );
+			expect( theme.author ).toEqual( 'unrelated' );
+			expect( theme.retired ).toBe( false );
+		} );
+
+		test( 'when wpcom record is not retired and the site has the symlinked wpcom-managed copy, still returns the wpcom record (no regression)', () => {
+			const wpcomTwentySixteen = { ...twentysixteen };
+			const symlinkedTwentySixteen = {
+				id: 'twentysixteen',
+				name: 'Twenty Sixteen',
+				author: 'WordPress.com',
+				theme_uri: 'https://wordpress.com/theme/twentysixteen',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { twentysixteen: wpcomTwentySixteen },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { twentysixteen: symlinkedTwentySixteen },
 							} ),
 						},
 					},
