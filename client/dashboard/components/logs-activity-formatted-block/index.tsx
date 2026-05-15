@@ -45,6 +45,8 @@ const Preformatted = ( { children }: { children: ReactNode } ) => <pre>{ childre
 const isWordPressDotComUrl = ( url?: string | null ) =>
 	!! url && url.startsWith( 'https://wordpress.com/' ); // we want the extra slash at the end because other subdomains could be used to trick this check (e.g. wordpress.com.malicious-site.com)
 
+const EXTERNAL_LINK_REL = 'external noreferrer noopener';
+
 const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	const { url, activity, section, intent } = content;
 
@@ -59,6 +61,7 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	return (
 		<ExternalLink
 			href={ url }
+			rel={ EXTERNAL_LINK_REL }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section }
@@ -154,12 +157,14 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	}
 
 	const url = `/plugins/${ pluginSlug }/${ siteSlug }`;
-	const href = isDashboardBackport() ? url : wpcomLink( url );
-	const Component = isDashboardBackport() ? 'a' : ExternalLink;
+	const isBackport = isDashboardBackport();
+	const href = isBackport ? url : wpcomLink( url );
+	const Component = isBackport ? 'a' : ExternalLink;
 
 	return (
 		<Component
 			href={ href }
+			rel={ isBackport ? undefined : EXTERNAL_LINK_REL }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'plugins' }
