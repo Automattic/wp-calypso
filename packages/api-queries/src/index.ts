@@ -46,7 +46,6 @@ export * from './me-notifications-devices';
 export * from './me-notifications-settings';
 export * from './me-payment-methods';
 export * from './me-preferences';
-export * from './me-razorpay-configuration';
 export * from './me-settings';
 export * from './me-social-logins';
 export * from './me-ssh';

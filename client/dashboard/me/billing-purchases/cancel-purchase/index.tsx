@@ -16,6 +16,7 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	siteByIdQuery,
+	siteDomainsQuery,
 	sitePurchasesQuery,
 	userPreferenceMutation,
 	hasPurchaseBeenExtendedQuery,
@@ -388,8 +389,12 @@ function CancelPurchaseInner() {
 		siteFeaturesQuery( purchase.blog_id )
 	);
 	const { data: plans } = useSuspenseQuery( plansQuery() );
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const { data: purchaseCancelFeatures } = useQuery(
-		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
+		purchaseCancelFeaturesQuery(
+			parseInt( purchaseId, 10 ),
+			isSplitCancelRemoveEnabled ? 'treatment' : 'control'
+		)
 	);
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
@@ -413,6 +418,11 @@ function CancelPurchaseInner() {
 		...domainQuery( purchase.meta ?? '' ),
 		enabled: Boolean( purchase.meta ),
 	} );
+	// site.options.unmapped_url is incorrect for .home.blog sites — read the
+	// actual WPCOM domain from the site's domain list instead.
+	const { data: siteDomains } = useQuery( siteDomainsQuery( purchase.blog_id ) );
+	const wpcomDomain =
+		siteDomains?.find( ( d ) => d.wpcom_domain || d.is_wpcom_staging_domain )?.domain ?? null;
 	const { data: cancellationOffers } = useQuery(
 		cancellationOffersQuery( purchase.blog_id, purchase.ID )
 	);
@@ -432,8 +442,6 @@ function CancelPurchaseInner() {
 		error: offerApplyError,
 	} = useMutation( applyCancellationOfferMutation( purchase.blog_id, purchase.ID ) );
 	const marketingSurveyMutate = useMutation( marketingSurveyMutation() );
-
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
 	// Handler helpers
 	const purchases = purchase && sitePurchases;
@@ -1354,6 +1362,18 @@ function CancelPurchaseInner() {
 			return false;
 		}
 
+		// Under the split flag, if intent=cancel but auto-renew is already off
+		// (e.g. page refresh after cancel-autorenew mutation), redirect to
+		// Purchase Settings instead of re-showing the confirmation screen.
+		// Bypass when surveyShown is true — the post-mutation survey should
+		// still render within the same session.
+		const isAlreadyCancelledForSplitFlag =
+			isSplitCancelRemoveEnabled && intent === 'cancel' && ! purchase.is_auto_renew_enabled;
+
+		if ( isAlreadyCancelledForSplitFlag && ! state.surveyShown ) {
+			return false;
+		}
+
 		if ( ! purchase.is_cancelable && state.surveyShown ) {
 			return true;
 		}
@@ -1398,7 +1418,14 @@ function CancelPurchaseInner() {
 		}
 
 		return true;
-	}, [ createErrorNotice, isDataLoading, purchase, state.surveyShown ] );
+	}, [
+		createErrorNotice,
+		intent,
+		isDataLoading,
+		isSplitCancelRemoveEnabled,
+		purchase,
+		state.surveyShown,
+	] );
 
 	const didRunEffect = useRef< boolean >( false );
 
@@ -1627,6 +1654,9 @@ function CancelPurchaseInner() {
 									includedDomainPurchase={ includedDomainPurchase }
 									atomicTransfer={ atomicTransfer }
 									selectedDomain={ selectedDomain }
+									site={ site }
+									wpcomDomain={ wpcomDomain }
+									activeMarketplaceSubscriptions={ activeSubscriptions }
 									state={ state }
 									purchaseCancelFeatures={ purchaseCancelFeatures }
 									isBusy={ isMutationPending }

@@ -1,0 +1,72 @@
+$help-center-fab-size: 48px;
+$help-center-fab-offset: 24px;
+$help-center-fab-gap: 8px;
+
+.components-button.help-center-fab {
+	position: fixed;
+	// `env(safe-area-inset-*)` keeps the FAB clear of the iOS home indicator and
+	// any browser UI overlap on the inline-end edge. For the inline axis we max
+	// over both physical insets so the rule works the same in LTR and RTL —
+	// only one of them is ever non-zero (landscape notch on a single side).
+	inset-block-end: max( #{ $help-center-fab-offset }, env( safe-area-inset-bottom ) );
+	inset-inline-end: max(
+		#{ $help-center-fab-offset },
+		env( safe-area-inset-left ),
+		env( safe-area-inset-right )
+	);
+	z-index: z-index( "root", ".help-center-fab" );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: $help-center-fab-size;
+	block-size: $help-center-fab-size;
+	padding: 0;
+	border-radius: 50%;
+	background: var( --color-primary );
+	color: var( --color-text-inverted );
+	@include elevation( 4 );
+	transition: background-color 0.15s ease-in-out;
+
+	&:hover,
+	&.is-active {
+		background: var( --color-primary-dark );
+		color: var( --color-text-inverted );
+	}
+
+	// Suppress the default WordPress Button focus ring for non-keyboard focus
+	// (mouse / touch), since we already convey state via background colour.
+	&:focus:not( :focus-visible ):not( :disabled ) {
+		@include elevation( 4 );
+		outline: none;
+	}
+
+	// Restore a visible keyboard-focus indicator. Uses an outline so it sits
+	// outside the FAB without competing with the drop shadow.
+	&:focus-visible:not( :disabled ) {
+		@include elevation( 4 );
+		outline: 2px solid var( --color-primary-dark );
+		outline-offset: 3px;
+	}
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+// Anchor the panel above the FAB by overriding the base `is-desktop`
+// rule (which pins `right: 50px; bottom: 50px` and runs a `slideIn`
+// animation `forwards`). `inset-inline-start: auto` clears the base's
+// physical `right` in RTL; we use only logical properties because the
+// CSS pipeline alphabetises declarations, so a physical `right: auto`
+// declared alongside `inset-inline-end` would clobber it in LTR.
+body.has-help-center-fab .help-center .help-center__container.is-desktop {
+	animation: none;
+	inset-inline-start: auto;
+	inset-inline-end: $help-center-fab-offset;
+	// Mirror the FAB's safe-area offset so the panel stays 8px above the FAB
+	// on iOS devices with a non-zero `safe-area-inset-bottom`.
+	inset-block-end: calc(
+		max( #{ $help-center-fab-offset }, env( safe-area-inset-bottom ) ) +
+			#{ $help-center-fab-size + $help-center-fab-gap }
+	);
+}

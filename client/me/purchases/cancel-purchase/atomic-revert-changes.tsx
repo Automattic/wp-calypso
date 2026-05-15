@@ -6,6 +6,7 @@ import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { isRefundable } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -17,6 +18,7 @@ type AtomicRevertChangesProps = {
 	onConfirmationChange: ( isChecked: boolean ) => void;
 	needsAtomicRevertConfirmation: boolean;
 	isLoading?: boolean;
+	additionalChanges?: Array< { slug: string; text: ReactNode } >;
 };
 
 const AtomicRevertChanges = ( {
@@ -25,13 +27,16 @@ const AtomicRevertChanges = ( {
 	onConfirmationChange,
 	needsAtomicRevertConfirmation,
 	isLoading = false,
+	additionalChanges,
 }: AtomicRevertChangesProps ) => {
 	const translate = useTranslate();
 	const [ isConfirmed, setIsConfirmed ] = useState( false );
 
-	// Only show for plan cancellations on Atomic sites — removing a plugin or
-	// domain on an Atomic site does not trigger a site revert.
-	if ( ! atomicTransfer?.created_at || ! isPlan( purchase ) ) {
+	const hasAtomicChanges = Boolean( atomicTransfer?.created_at ) && isPlan( purchase );
+	const hasAdditionalChanges = Boolean( additionalChanges?.length );
+
+	// Only show when there are Atomic changes or additional site-dependency warnings.
+	if ( ! hasAtomicChanges && ! hasAdditionalChanges ) {
 		return null;
 	}
 
@@ -63,7 +68,7 @@ const AtomicRevertChanges = ( {
 		return changes;
 	};
 
-	const changes = getChangesList();
+	const changes = hasAtomicChanges ? getChangesList() : [];
 
 	const handleCheckboxChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const checked = event.target.checked;
@@ -73,7 +78,11 @@ const AtomicRevertChanges = ( {
 
 	return (
 		<div className="cancel-purchase__atomic-revert-changes">
-			<p>{ translate( 'We will also make these changes to your site:' ) }</p>
+			<p>
+				{ isPlan( purchase )
+					? translate( 'We will also make these changes to your site:' )
+					: translate( "Here's what will happen:" ) }
+			</p>
 			<ul className="cancel-purchase__atomic-revert-changes-list">
 				{ changes.map( ( change, index ) => (
 					<li key={ index }>
@@ -83,6 +92,16 @@ const AtomicRevertChanges = ( {
 							icon="notice-outline"
 						/>
 						<span>{ change }</span>
+					</li>
+				) ) }
+				{ additionalChanges?.map( ( change ) => (
+					<li key={ change.slug }>
+						<Gridicon
+							className="cancel-purchase__atomic-revert-changes--item-notice"
+							size={ 24 }
+							icon="notice-outline"
+						/>
+						<span>{ change.text }</span>
 					</li>
 				) ) }
 			</ul>

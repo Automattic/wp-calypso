@@ -11,11 +11,21 @@ import type { SocialPost } from '../../types';
 
 export interface SocialProfileRefInput {
 	// Universal protocol-agnostic identifier — DID for atmosphere, numeric
-	// account id for Mastodon. Per-protocol resolvers decide which they
-	// understand and which to validate.
+	// account id for Mastodon, canonical AP actor URL for Fediverse. Per-
+	// protocol resolvers decide which they understand and which to validate.
 	id?: string | null;
 	// Atmosphere-named alias kept for back-compat with the slice-6 wiring.
 	did?: string | null;
+	// User-readable identifier. Across protocols: a bsky handle
+	// (`alice.bsky.social`) for atmosphere, a webfinger handle
+	// (`alice@example.com`) for Mastodon and Fediverse. Mention anchors
+	// in post HTML can stamp `data-handle="<value>"` alongside `data-id`
+	// (CM-725 wires this for Fediverse and Mastodon); the body / bio
+	// click handlers read it and pass it here so per-protocol resolvers
+	// can build a cleaner user-readable URL than they would from the
+	// raw `data-id` (which carries actor URLs or numeric ids). When
+	// `data-handle` is absent the handlers broadcast `data-id` to this
+	// field as a back-compat fallback (atmosphere today).
 	handle?: string | null;
 }
 

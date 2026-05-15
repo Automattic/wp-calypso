@@ -616,17 +616,15 @@ export function trackImageStudioReelShareFailed( errorMessage?: string ): void {
 
 /**
  * Tracks when the generic share initiates a particular method. Fires once per
- * attempted method, before the work runs — so a click that probes web-share,
- * finds files unsupported, and falls back to download produces three events
- * (one per method tried).
+ * attempted method, before the work runs.
  * @param options        - Tracking options
- * @param options.method - 'web-share' (Web Share API attempt), 'web-share-unsupported'
- *                         (canShare rejected files), or 'download' (fallback / direct).
+ * @param options.method - 'web-share' (Web Share API attempt) or 'web-share-unsupported'
+ *                         (canShare rejected files / Web Share unavailable).
  */
 export function trackImageStudioGenericShareClicked( {
 	method,
 }: {
-	method: 'web-share' | 'web-share-unsupported' | 'download';
+	method: 'web-share' | 'web-share-unsupported';
 } ): void {
 	recordImageStudioEvent( 'image_studio_generic_share_clicked', { method } );
 }
@@ -634,32 +632,28 @@ export function trackImageStudioGenericShareClicked( {
 /**
  * Tracks when the generic share completed successfully.
  * @param options        - Tracking options
- * @param options.method - 'web-share' or 'download' (the only methods that can complete;
- *                         'web-share-unsupported' is a precondition failure, never a success).
+ * @param options.method - 'web-share' (the only method that can complete;
+ *                         'web-share-unsupported' is a precondition failure).
  */
-export function trackImageStudioGenericShareCompleted( {
-	method,
-}: {
-	method: 'web-share' | 'download';
-} ): void {
+export function trackImageStudioGenericShareCompleted( { method }: { method: 'web-share' } ): void {
 	recordImageStudioEvent( 'image_studio_generic_share_completed', { method } );
 }
 
 /**
  * Tracks when the generic share failed.
  * @param options             - Tracking options
- * @param options.method      - 'web-share', 'web-share-unsupported', or 'download'
+ * @param options.method      - 'web-share' or 'web-share-unsupported'
  * @param options.message     - Optional error message
- * @param options.failureKind - Optional categorical reason: 'http' | 'open-blocked'
+ * @param options.failureKind - Optional categorical reason: 'http' (fetch returned !ok).
  */
 export function trackImageStudioGenericShareFailed( {
 	method,
 	message,
 	failureKind,
 }: {
-	method: 'web-share' | 'web-share-unsupported' | 'download';
+	method: 'web-share' | 'web-share-unsupported';
 	message?: string;
-	failureKind?: 'http' | 'open-blocked';
+	failureKind?: 'http';
 } ): void {
 	const properties: Record< string, string | number > = { method };
 	if ( message ) {

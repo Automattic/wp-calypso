@@ -8,23 +8,48 @@ import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-fl
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
 const Subheader = styled.p< { isUsingStepContainerV2?: boolean; isVisualSplitIntent?: boolean } >`
-	margin: ${ ( props ) => ( props.isVisualSplitIntent ? '-40px 0 30px 0' : '-32px 0 40px 0' ) };
-	color: var( --studio-gray-60 );
-	font-size: 1rem;
-	text-align: ${ ( props ) => ( props.isUsingStepContainerV2 ? 'left' : 'center' ) };
-	button.is-borderless {
-		font-weight: ${ ( props ) => ( props.isVisualSplitIntent ? 'inherit' : '500' ) };
-		color: var( --studio-gray-90 );
-		text-decoration: underline;
-		font-size: 16px;
-		padding: 0;
-	}
-	@media ( max-width: 960px ) {
-		margin-top: -16px;
-	}
-	@media ( min-width: 600px ) {
-		text-align: center;
-	}
+	${ ( props ) =>
+		props.isUsingStepContainerV2
+			? `
+				margin: -2.5rem 0 3rem;
+				color: var( --color-text );
+				font-size: 0.875rem;
+				line-height: 1.5;
+				text-wrap: balance;
+				text-align: left;
+				button.is-borderless {
+					font-weight: 500;
+					color: inherit;
+					text-decoration: underline;
+					font-size: inherit;
+					padding: 0;
+				}
+				@media ( min-width: 600px ) {
+					text-align: center;
+				}
+				@media ( min-width: 960px ) {
+					font-size: 1rem;
+				}
+			`
+			: `
+				margin: ${ props.isVisualSplitIntent ? '-40px 0 30px 0' : '-32px 0 40px 0' };
+				color: var( --studio-gray-60 );
+				font-size: 1rem;
+				text-align: center;
+				button.is-borderless {
+					font-weight: ${ props.isVisualSplitIntent ? 'inherit' : '500' };
+					color: var( --studio-gray-90 );
+					text-decoration: underline;
+					font-size: 16px;
+					padding: 0;
+				}
+				@media ( max-width: 960px ) {
+					margin-top: -16px;
+				}
+				@media ( min-width: 600px ) {
+					text-align: center;
+				}
+			` }
 `;
 
 const SecondaryFormattedHeader = ( {

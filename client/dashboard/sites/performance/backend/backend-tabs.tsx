@@ -1,9 +1,10 @@
 import { __experimentalVStack as VStack, privateApis } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Text } from '../../../components/text';
 import { VIEWPORT_BREAKPOINTS } from '../constants';
+import { BACKEND_THRESHOLDS_MS, bucketByMs, formatMs, type Intent } from './utils';
 import type { ApmTab } from '.';
 import type { ApmSummary } from '@automattic/api-core';
 
@@ -14,35 +15,8 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { Tabs } = unlock( privateApis );
 
-type Intent = 'success' | 'warning' | 'error';
-
-function formatMs( ms: number ): string {
-	if ( ms >= 1000 ) {
-		return sprintf(
-			/* translators: %s is a number of seconds. */
-			__( '%s s' ),
-			( ms / 1000 ).toFixed( 2 )
-		);
-	}
-	return sprintf(
-		/* translators: %d is a number of milliseconds. */
-		__( '%d ms' ),
-		ms
-	);
-}
-
 function formatCount( value: number ): string {
 	return new Intl.NumberFormat().format( value );
-}
-
-function bucketByMs( ms: number, good: number, warn: number ): Intent {
-	if ( ms <= good ) {
-		return 'success';
-	}
-	if ( ms <= warn ) {
-		return 'warning';
-	}
-	return 'error';
 }
 
 function Tab( {
@@ -89,12 +63,7 @@ export default function BackendTabs( {
 			tabId: 'overview',
 			label: compact ? __( 'Avg' ) : __( 'Avg response' ),
 			value: formatMs( summary.avg_response_ms ),
-			intent: bucketByMs( summary.avg_response_ms, 500, 1500 ),
-		},
-		{
-			tabId: 'requests',
-			label: compact ? __( 'Slow' ) : __( 'Slow requests' ),
-			value: formatCount( summary.slow_request_count ),
+			intent: bucketByMs( summary.avg_response_ms, BACKEND_THRESHOLDS_MS.response ),
 		},
 		{
 			tabId: 'transactions',
@@ -102,16 +71,22 @@ export default function BackendTabs( {
 			value: formatCount( summary.transaction_count ),
 		},
 		{
+			tabId: 'wordpress',
+			label: compact ? __( 'WP' ) : __( 'WordPress' ),
+			value: formatMs( summary.plugins_avg_ms ),
+			intent: bucketByMs( summary.plugins_avg_ms, BACKEND_THRESHOLDS_MS.plugins ),
+		},
+		{
 			tabId: 'database',
 			label: compact ? __( 'DB' ) : __( 'Database' ),
 			value: formatMs( summary.db_avg_ms ),
-			intent: bucketByMs( summary.db_avg_ms, 200, 600 ),
+			intent: bucketByMs( summary.db_avg_ms, BACKEND_THRESHOLDS_MS.db ),
 		},
 		{
 			tabId: 'external-requests',
 			label: __( 'External' ),
 			value: formatMs( summary.external_avg_ms ),
-			intent: bucketByMs( summary.external_avg_ms, 200, 600 ),
+			intent: bucketByMs( summary.external_avg_ms, BACKEND_THRESHOLDS_MS.external ),
 		},
 	];
 

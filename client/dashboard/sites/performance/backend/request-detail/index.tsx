@@ -5,23 +5,13 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../../../app/breadcrumbs';
 import { Card, CardHeader } from '../../../../components/card';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
 import { siteApmRequestQuery } from '../mock-data';
-
-function formatMs( ms: number ): string {
-	if ( ms >= 1000 ) {
-		return `${ ( ms / 1000 ).toFixed( 2 ) } s`;
-	}
-	return sprintf(
-		/* translators: %d is a number of milliseconds. */
-		__( '%d ms' ),
-		ms
-	);
-}
+import { formatMs } from '../utils';
 
 export default function RequestDetail( {
 	siteSlug,

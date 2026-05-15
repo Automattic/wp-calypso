@@ -6,6 +6,7 @@ import {
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useId, useState } from 'react';
+import { SocialAvatar } from '../../avatar';
 import { SocialNotificationItem } from './notification-item';
 import type { StackedRow, StackableCanonicalType } from './group-notifications';
 
@@ -176,22 +177,17 @@ export function StackedNotification( { stack, onExpandedChange }: Props ) {
 	const visualHeader = (
 		<HStack alignment="flex-start" spacing={ 3 }>
 			<div className="social-notifications-stack__avatars">
-				{ visibleAvatars.map( ( m ) =>
-					m.actor.avatar_url ? (
-						<img
-							key={ m.id }
-							className="social-notifications-stack__avatar"
-							src={ m.actor.avatar_url }
-							alt=""
-						/>
-					) : (
-						<span
-							key={ m.id }
-							className="social-notifications-stack__avatar is-placeholder"
-							aria-hidden
-						/>
-					)
-				) }
+				{ visibleAvatars.map( ( m ) => (
+					<SocialAvatar
+						key={ m.id }
+						className="social-notifications-stack__avatar"
+						src={ m.actor.avatar_url }
+						alt=""
+						fallback={
+							<span className="social-notifications-stack__avatar is-placeholder" aria-hidden />
+						}
+					/>
+				) ) }
 				{ overflowCount > 0 && (
 					<span className="social-notifications-stack__overflow" aria-hidden>
 						{ '+' + overflowCount }
