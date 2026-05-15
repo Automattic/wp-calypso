@@ -225,6 +225,11 @@ describe( 'TopicGroupCard', () => {
 			renderWithProvider( <TopicGroupCard { ...defaultProps } blogs={ [ zeroBlog ] } /> );
 			mockAllIsIntersecting( true );
 
+			// Wait for the feed query to actually fire AND settle, so we know we're
+			// asserting the post-load zero-count path rather than the still-loading state.
+			await waitFor( () => {
+				expect( mockFeedQueryCalls ).toContain( 0 );
+			} );
 			await act( async () => {} );
 
 			expect( screen.queryByText( /readers/i ) ).not.toBeInTheDocument();
@@ -264,10 +269,13 @@ describe( 'TopicGroupCard', () => {
 				expect( screen.getByText( /readers/i ) ).toBeVisible();
 			} );
 
-			// All 5 feeds are requested (not just the 3 shown as avatars). Use Set to
-			// dedupe — BlogAvatar's per-avatar useQuery and the card-level useQueries
-			// share the React Query cache, so each feedId is fetched once.
-			expect( new Set( mockFeedQueryCalls ) ).toEqual( new Set( [ 1, 2, 3, 4, 5 ] ) );
+			// All 5 feeds are requested exactly once (not just the 3 shown as avatars).
+			// BlogAvatar's per-avatar useQuery and the card-level useQueries share the
+			// React Query cache, so each feedId's queryFn runs at most once. Asserting
+			// both the sorted contents and the length catches missing requests, extra
+			// requests, and duplicate requests (which would defeat the cache-sharing).
+			expect( [ ...mockFeedQueryCalls ].sort() ).toEqual( [ 1, 2, 3, 4, 5 ] );
+			expect( mockFeedQueryCalls ).toHaveLength( 5 );
 
 			// 1000+2000+3000+4000+5000 = 15000 → "15K readers".
 			expect( screen.getByText( /15[,.]?0?K?\s*readers/i ) ).toBeInTheDocument();
