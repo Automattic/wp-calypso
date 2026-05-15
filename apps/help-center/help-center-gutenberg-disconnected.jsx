@@ -2,6 +2,7 @@ import './config';
 import { HelpIcon } from '@automattic/help-center';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useReducer } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import ReactDOM from 'react-dom';
@@ -12,8 +13,10 @@ function HelpCenterContent() {
 	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const canvasMode = useCanvasMode();
+	const isPostEditor = useSelect( ( select ) => !! select( 'core/edit-post' ), [] );
 
 	const sidebarActionsContainer = document.querySelector( '.edit-site-site-hub__actions' );
+	const postEditorMobileContainer = document.querySelector( '.editor-header__settings' );
 
 	const content = (
 		<>
@@ -37,6 +40,10 @@ function HelpCenterContent() {
 
 	if ( canvasMode === 'view' ) {
 		return sidebarActionsContainer && ReactDOM.createPortal( content, sidebarActionsContainer );
+	}
+
+	if ( ! isDesktop && isPostEditor && postEditorMobileContainer ) {
+		return ReactDOM.createPortal( content, postEditorMobileContainer );
 	}
 
 	return isDesktop && <Fill name="PinnedItems/core">{ content }</Fill>;
