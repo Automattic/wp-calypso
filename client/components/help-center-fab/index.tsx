@@ -36,7 +36,6 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 	const handleClick = () => {
 		const willShow = ! isHelpCenterShown;
 		recordTracksEvent( `calypso_inlinehelp_${ willShow ? 'show' : 'close' }`, {
-			force_site_id: true,
 			location: 'help-center-fab',
 			section: sectionName,
 		} );
