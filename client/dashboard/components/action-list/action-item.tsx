@@ -24,14 +24,16 @@ function UnforwardedActionItem(
 			decoration={ decoration }
 			layout={ layout }
 			suffix={
-				<ButtonStack
-					className="action-item__actions"
-					justify={ buttonConfig.justify }
-					expanded={ buttonConfig.expanded }
-					as="span"
-				>
-					{ actions }
-				</ButtonStack>
+				actions ? (
+					<ButtonStack
+						className="action-item__actions"
+						justify={ buttonConfig.justify }
+						expanded={ buttonConfig.expanded }
+						as="span"
+					>
+						{ actions }
+					</ButtonStack>
+				) : undefined
 			}
 			ref={ ref }
 		/>

@@ -3,9 +3,10 @@ import type { IconListItemProps, IconListProps, ItemLayout } from '../icon-list/
 
 export interface ActionItemProps extends Omit< IconListItemProps, 'suffix' | 'density' > {
 	/**
-	 * Renders a button that invokes the related action.
+	 * Renders a button that invokes the related action. Omit for
+	 * informational rows that have no associated action.
 	 */
-	actions: React.ReactNode;
+	actions?: React.ReactNode;
 
 	/**
 	 * Controls the layout of the actions relative to content.

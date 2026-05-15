@@ -771,7 +771,6 @@ function getFields( {
 						<ActionList.ActionItem
 							title={ __( 'Subscription renewal' ) }
 							description={ typeof helpText === 'string' ? helpText : '' }
-							actions={ <></> }
 						/>
 					);
 				}
