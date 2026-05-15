@@ -11,7 +11,8 @@ import './help-center.scss';
 
 function HelpCenterContent() {
 	const [ , forceUpdate ] = useReducer( ( x ) => x + 1, 0 );
-	const isDesktop = useMediaQuery( '(min-width: 480px)' );
+	// Gutenberg's PinnedItems/core slot is CSS-hidden under 600px.
+	const canRenderPinnedItem = useMediaQuery( '(min-width: 600px)' );
 	const canvasMode = useCanvasMode();
 	const isPostEditor = useSelect( ( select ) => !! select( 'core/edit-post' ), [] );
 
@@ -42,11 +43,11 @@ function HelpCenterContent() {
 		return sidebarActionsContainer && ReactDOM.createPortal( content, sidebarActionsContainer );
 	}
 
-	if ( ! isDesktop && isPostEditor && postEditorMobileContainer ) {
+	if ( ! canRenderPinnedItem && isPostEditor && postEditorMobileContainer ) {
 		return ReactDOM.createPortal( content, postEditorMobileContainer );
 	}
 
-	return isDesktop && <Fill name="PinnedItems/core">{ content }</Fill>;
+	return canRenderPinnedItem && <Fill name="PinnedItems/core">{ content }</Fill>;
 }
 
 registerPlugin( 'jetpack-help-center', {

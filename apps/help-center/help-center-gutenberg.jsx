@@ -22,6 +22,8 @@ const queryClient = new QueryClient();
 
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
+	// Gutenberg's PinnedItems/core slot is CSS-hidden under 600px.
+	const canRenderPinnedItem = useMediaQuery( '(min-width: 600px)' );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const [ helpCenterPage, setHelpCenterPage ] = useState( null );
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( 'automattic/help-center' );
@@ -243,12 +245,12 @@ function HelpCenterContent() {
 				canvasMode === 'view' &&
 				sidebarActionsContainer &&
 				ReactDOM.createPortal( content, sidebarActionsContainer ) }
-			{ ! isDesktop &&
+			{ ! canRenderPinnedItem &&
 				isPostEditor &&
 				showHelpIcon &&
 				postEditorMobileContainer &&
 				ReactDOM.createPortal( content, postEditorMobileContainer ) }
-			{ isDesktop && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
+			{ canRenderPinnedItem && showHelpIcon && <Fill name="PinnedItems/core">{ content }</Fill> }
 			<HelpCenter
 				locale={ helpCenterData.locale }
 				sectionName={ helpCenterData.sectionName || 'gutenberg-editor' }
