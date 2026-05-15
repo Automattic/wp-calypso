@@ -260,12 +260,26 @@ describe( 'themes selectors', () => {
 				name: 'Retired WPCOM Theme',
 				author: 'Automattic',
 				stylesheet: 'premium/colliding-slug',
+				download: 'https://wordpress.com/theme/colliding-slug.zip',
+				descriptionLong: '<p>Canonical long description.</p>',
+				supportDocumentation: '<p>Canonical support docs.</p>',
+				taxonomies: {
+					theme_feature: [ { slug: 'block-editor-styles' } ],
+				},
+				theme_tier: freeThemeTier,
 				retired: true,
 			};
 			const thirdPartyTheme = {
 				id: 'colliding-slug',
 				name: 'Third-Party Theme',
 				author: 'Third-Party Author',
+				author_uri: 'https://example.com/theme-author',
+				stylesheet: undefined,
+				download: undefined,
+				descriptionLong: '<img src=x onerror=alert(1)>',
+				supportDocumentation: '<img src=x onerror=alert(1)>',
+				taxonomies: undefined,
+				theme_tier: undefined,
 			};
 
 			const theme = getCanonicalTheme(
@@ -285,13 +299,55 @@ describe( 'themes selectors', () => {
 				'colliding-slug'
 			);
 
-			// Site fields win for display
-			expect( theme.name ).toBe( 'Third-Party Theme' );
-			expect( theme.author ).toBe( 'Third-Party Author' );
-			// wpcom-shape fields preserved so downstream consumers don't NPE
-			expect( theme.stylesheet ).toBe( 'premium/colliding-slug' );
-			// Retired notice must not fire for an installed third-party theme
-			expect( theme.retired ).toBe( false );
+			expect( theme ).toMatchObject( {
+				name: 'Third-Party Theme',
+				author: 'Third-Party Author',
+				author_uri: 'https://example.com/theme-author',
+				stylesheet: 'premium/colliding-slug',
+				download: 'https://wordpress.com/theme/colliding-slug.zip',
+				descriptionLong: '<p>Canonical long description.</p>',
+				supportDocumentation: '<p>Canonical support docs.</p>',
+				taxonomies: {
+					theme_feature: [ { slug: 'block-editor-styles' } ],
+				},
+				theme_tier: freeThemeTier,
+				retired: false,
+			} );
+		} );
+
+		test( 'when a retired collision site theme has an unsafe author URL, ignores the site author URL', () => {
+			const retiredWpcomTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				author_uri: 'https://wordpress.com/themes/',
+				retired: true,
+			};
+			const thirdPartyTheme = {
+				id: 'colliding-slug',
+				name: 'Third-Party Theme',
+				author: 'Third-Party Author',
+				author_uri: 'javascript:alert(1)',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { 'colliding-slug': retiredWpcomTheme },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { 'colliding-slug': thirdPartyTheme },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'colliding-slug'
+			);
+
+			expect( theme.author_uri ).toBe( 'https://wordpress.com/themes/' );
 		} );
 
 		test( 'when wpcom record is retired and the site has the symlinked wpcom-managed copy (theme_uri starts with https://wordpress.com/theme/), still returns the wpcom record so the retired notice is preserved', () => {
@@ -355,6 +411,41 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( theme ).toEqual( retiredWpcomPinboard );
+		} );
+
+		test( 'when retired site theme_uri equals the symlink prefix without a slug, treats it as an unmanaged collision', () => {
+			const retiredWpcomTheme = {
+				id: 'colliding-slug',
+				name: 'Retired WPCOM Theme',
+				author: 'Automattic',
+				retired: true,
+			};
+			const thirdPartyTheme = {
+				id: 'colliding-slug',
+				name: 'Third-Party Theme',
+				author: 'Third-Party Author',
+				theme_uri: 'https://wordpress.com/theme/',
+			};
+
+			const theme = getCanonicalTheme(
+				{
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { 'colliding-slug': retiredWpcomTheme },
+							} ),
+							2916284: new ThemeQueryManager( {
+								items: { 'colliding-slug': thirdPartyTheme },
+							} ),
+						},
+					},
+				},
+				2916284,
+				'colliding-slug'
+			);
+
+			expect( theme.name ).toBe( 'Third-Party Theme' );
+			expect( theme.retired ).toBe( false );
 		} );
 
 		test( 'when wpcom record is not retired, returns the wpcom record even if the site has its own copy', () => {

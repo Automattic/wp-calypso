@@ -17,6 +17,21 @@ export const knownConflictingThemes = new Set( [ 'bistro' ] );
  * a manually uploaded third-party theme that happens to share the slug.
  */
 const SYMLINKED_THEME_URI_PREFIX = 'https://wordpress.com/theme/';
+const SITE_THEME_OVERRIDE_FIELDS = [ 'name', 'author', 'author_uri', 'theme_uri', 'version' ];
+const URL_OVERRIDE_FIELDS = new Set( [ 'author_uri', 'theme_uri' ] );
+
+function isSafeHttpUrl( url ) {
+	if ( typeof url !== 'string' ) {
+		return false;
+	}
+
+	try {
+		const parsedUrl = new URL( url );
+		return [ 'http:', 'https:' ].includes( parsedUrl.protocol );
+	} catch {
+		return false;
+	}
+}
 
 /**
  * Whether the site's theme record represents the symlinked WP.com-managed
@@ -25,7 +40,38 @@ const SYMLINKED_THEME_URI_PREFIX = 'https://wordpress.com/theme/';
  * @returns {boolean}
  */
 function isSymlinkedManagedTheme( siteTheme ) {
-	return Boolean( siteTheme?.theme_uri?.startsWith( SYMLINKED_THEME_URI_PREFIX ) );
+	const themeUri = siteTheme?.theme_uri;
+	return (
+		typeof themeUri === 'string' &&
+		themeUri.startsWith( SYMLINKED_THEME_URI_PREFIX ) &&
+		themeUri.length > SYMLINKED_THEME_URI_PREFIX.length
+	);
+}
+
+function getSafeSiteOverride( field, siteTheme, wpcomTheme ) {
+	const siteValue = siteTheme[ field ];
+	if ( siteValue == null ) {
+		return wpcomTheme[ field ];
+	}
+
+	if ( URL_OVERRIDE_FIELDS.has( field ) && ! isSafeHttpUrl( siteValue ) ) {
+		return wpcomTheme[ field ];
+	}
+
+	return siteValue;
+}
+
+function mergeRetiredCollisionTheme( wpcomTheme, siteTheme ) {
+	return {
+		...wpcomTheme,
+		...Object.fromEntries(
+			SITE_THEME_OVERRIDE_FIELDS.map( ( field ) => [
+				field,
+				getSafeSiteOverride( field, siteTheme, wpcomTheme ),
+			] )
+		),
+		retired: false,
+	};
 }
 
 /**
@@ -46,11 +92,7 @@ function getRetiredCollisionTheme( state, siteId, themeId ) {
 	if ( ! wpcomTheme?.retired || ! siteTheme || isSymlinkedManagedTheme( siteTheme ) ) {
 		return null;
 	}
-	return {
-		...wpcomTheme,
-		...siteTheme,
-		retired: false,
-	};
+	return mergeRetiredCollisionTheme( wpcomTheme, siteTheme );
 }
 
 /**
