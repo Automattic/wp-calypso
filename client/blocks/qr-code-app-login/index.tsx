@@ -260,10 +260,8 @@ export default function QRCodeAppLogin() {
 
 	const steps = [
 		translate( 'Open the WooCommerce app on your phone.' ),
-		translate( 'Tap the {{strong}}Menu{{/strong}} tab.', {
-			components: { strong: <strong /> },
-		} ),
-		translate( 'Tap the {{strong}}Scan login code{{/strong}} option.', {
+		translate( 'Start the login flow.' ),
+		translate( 'Tap {{strong}}Scan QR code{{/strong}}.', {
 			components: { strong: <strong /> },
 		} ),
 		translate( 'Point your phone at this screen to scan the code.' ),

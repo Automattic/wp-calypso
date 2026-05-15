@@ -14,8 +14,14 @@
 
 	@include break-medium {
 		flex-direction: row-reverse;
+		flex-wrap: wrap;
 		justify-content: center;
-		align-items: flex-start;
+		align-items: center;
+
+		.qr-code-app-login__instructions {
+			flex: 0 1 320px;
+			min-width: 0;
+		}
 	}
 }
 
@@ -36,6 +42,7 @@
 	margin: 0;
 	padding-inline-start: 20px;
 	line-height: 1.6;
+	text-align: start;
 }
 
 .qr-code-app-login__step {
