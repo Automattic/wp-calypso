@@ -88,6 +88,7 @@
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
 		"onboarding/post-checkout-ai-step": true,
+		"onboarding/woo-hosting-post-purchase-setup-choice": true,
 		"p2/p2-plus": true,
 		"performance/apm": false,
 		"plans/hosting-trial": true,
