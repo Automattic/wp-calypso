@@ -1314,7 +1314,7 @@ class CancelPurchase extends Component< CancelPurchaseAllProps, CancelPurchaseSt
 				return this.props.translate( 'Cancellation confirmed' );
 			}
 			if ( this.state.surveyShown && displayVariant === 'auto-renew' ) {
-				return this.props.translate( 'Auto-renew turned off' );
+				return this.props.translate( 'Auto-renew disabled' );
 			}
 			return getCancellationHeading( {
 				purchase: toPurchaseForCopy( purchase ),
