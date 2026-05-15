@@ -8,6 +8,8 @@ import type {
 	FediverseConnection,
 	FediverseConnectionsResponse,
 	FediverseCreateFollowParams,
+	FediverseCreatePostParams,
+	FediverseCreatePostResult,
 	FediverseDeleteFollowParams,
 	FediverseFollowResponse,
 	FediverseTimelinePage,
@@ -258,6 +260,41 @@ export async function deleteFediverseFollow(
 			) }`,
 			apiNamespace: NAMESPACE,
 		} ) ) as FediverseFollowResponse;
+	} catch ( raw ) {
+		throw classifyFediverseError( raw );
+	}
+}
+
+/**
+ * Publish a new ActivityPub post via the connected blog. Slice 2's
+ * standalone composer entry point — reply / quote variants will extend
+ * this fetcher (or sibling ones) in later slices. Forwards the
+ * caller-supplied `idempotencyKey` as the `Idempotency-Key` request
+ * header so a network retry can't double-post: the backend keys the
+ * de-dupe table on this header.
+ */
+export async function createFediversePost(
+	params: FediverseCreatePostParams
+): Promise< FediverseCreatePostResult > {
+	const { connectionId, content, visibility, summary, sensitive, language, idempotencyKey } =
+		params;
+	const body: Record< string, unknown > = { content, visibility };
+	if ( summary !== undefined && summary.length > 0 ) {
+		body.summary = summary;
+	}
+	if ( sensitive !== undefined ) {
+		body.sensitive = sensitive;
+	}
+	if ( language !== undefined ) {
+		body.language = language;
+	}
+	try {
+		return ( await wpcom.req.post( {
+			path: `/reader/fediverse/connections/${ connectionId }/posts`,
+			apiNamespace: NAMESPACE,
+			body,
+			...( idempotencyKey ? { headers: { 'Idempotency-Key': idempotencyKey } } : {} ),
+		} ) ) as FediverseCreatePostResult;
 	} catch ( raw ) {
 		throw classifyFediverseError( raw );
 	}

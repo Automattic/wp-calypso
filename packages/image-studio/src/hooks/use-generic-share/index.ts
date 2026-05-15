@@ -69,17 +69,24 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 	/**
 	 * See `useReelShare` — same rationale. Sidebar callers (override clip) get
 	 * notices on the editor snackbar; modal callers get them in-modal.
+	 *
+	 * Memoized so `handleShare` (which depends on it) doesn't get re-created
+	 * on every render. The dispatch refs from `useDispatch` are stable, so
+	 * once `hasOverride` settles `showNotice` keeps a stable identity.
 	 */
-	const showNotice = async ( message: string, type: 'success' | 'warning' | 'error' ) => {
-		if ( hasOverride ) {
-			await createCoreNotice?.( type, message, {
-				type: 'snackbar',
-				isDismissible: true,
-			} );
-			return;
-		}
-		await addModalNotice( message, type );
-	};
+	const showNotice = useCallback(
+		async ( message: string, type: 'success' | 'warning' | 'error' ) => {
+			if ( hasOverride ) {
+				await createCoreNotice?.( type, message, {
+					type: 'snackbar',
+					isDismissible: true,
+				} );
+				return;
+			}
+			await addModalNotice( message, type );
+		},
+		[ hasOverride, createCoreNotice, addModalNotice ]
+	);
 
 	// Synchronous double-click guard — same rationale as in useReelShare.
 	// Kept alongside `isSharing` state because state updates lag a render and
@@ -109,71 +116,52 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 		isSharingRef.current = true;
 		setIsSharing( true );
 		try {
-			// Fire the clicked event at the start of every method we attempt
-			// (web-share, web-share-unsupported, download), not after the work
-			// succeeds. Otherwise a fetch failure or canShare-rejects-files
-			// emits a `failed` event with no matching `clicked` and the funnel
-			// doesn't add up.
-			//
-			// Probe before fetching — saves a full MP4 download on browsers
-			// that expose navigator.share but reject files (most desktops).
-			if ( nav && canShareVideoFiles( nav, filename ) ) {
-				trackImageStudioGenericShareClicked( { method: 'web-share' } );
-				try {
-					const response = await fetch( currentVideoUrl );
-					if ( ! response.ok ) {
-						throw new Error( `Fetch failed: ${ response.status }` );
-					}
-					const blob = await response.blob();
-					const file = new File( [ blob ], filename, { type: 'video/mp4' } );
+			const showShareFailedNotice = async () =>
+				showNotice(
+					__( 'Could not share the video. Please try again.', __i18n_text_domain__ ),
+					'error'
+				);
 
-					await nav.share?.( {
-						files: [ file ],
-						title: __( 'Generated video clip', __i18n_text_domain__ ),
-					} );
-					trackImageStudioGenericShareCompleted( { method: 'web-share' } );
-					return;
-				} catch ( err ) {
-					if ( err instanceof DOMException && err.name === 'AbortError' ) {
-						// User cancelled the share sheet — silent, no notice, no fallback.
-						return;
-					}
-					const message = err instanceof Error ? err.message : '';
-					const failureKind =
-						err instanceof Error && err.message.startsWith( 'Fetch failed:' ) ? 'http' : undefined;
-					trackImageStudioGenericShareFailed( {
-						method: 'web-share',
-						...( failureKind ? { failureKind } : {} ),
-						message,
-					} );
-					// Fall through to download.
-				}
-			} else if ( nav && typeof nav.share === 'function' ) {
-				// Web Share API exists but doesn't accept video files — record this
-				// case so we can see how often it happens vs. a clean download path.
+			// Sharing a video *file* is essentially a mobile / Safari capability —
+			// desktop Chrome & Firefox expose navigator.share but throw when handed
+			// a File. Probe before fetching so we don't pull a multi-MB MP4 just to
+			// fail. When there's no file-share support, surface an error rather than
+			// falling back to a download — the toolbar already has a download action.
+			if ( ! nav || ! canShareVideoFiles( nav, filename ) ) {
 				trackImageStudioGenericShareClicked( { method: 'web-share-unsupported' } );
 				trackImageStudioGenericShareFailed( { method: 'web-share-unsupported' } );
-			}
-
-			// Fallback: open the MP4 URL in a new tab so the browser can save it.
-			trackImageStudioGenericShareClicked( { method: 'download' } );
-			const opened = window.open( currentVideoUrl, '_blank', 'noopener' );
-			if ( opened ) {
-				trackImageStudioGenericShareCompleted( { method: 'download' } );
+				await showShareFailedNotice();
 				return;
 			}
-			trackImageStudioGenericShareFailed( {
-				method: 'download',
-				failureKind: 'open-blocked',
-				message: 'window.open returned null',
-			} );
-			await showNotice(
-				__(
-					'Could not open the video for download. Allow popups for this site and try again.',
-					__i18n_text_domain__
-				),
-				'error'
-			);
+
+			trackImageStudioGenericShareClicked( { method: 'web-share' } );
+			try {
+				const response = await fetch( currentVideoUrl );
+				if ( ! response.ok ) {
+					throw new Error( `Fetch failed: ${ response.status }` );
+				}
+				const blob = await response.blob();
+				const file = new File( [ blob ], filename, { type: 'video/mp4' } );
+				await nav.share?.( {
+					files: [ file ],
+					title: __( 'Generated video clip', __i18n_text_domain__ ),
+				} );
+				trackImageStudioGenericShareCompleted( { method: 'web-share' } );
+			} catch ( err ) {
+				if ( err instanceof DOMException && err.name === 'AbortError' ) {
+					// User dismissed the share sheet — silent, no notice.
+					return;
+				}
+				const message = err instanceof Error ? err.message : '';
+				const failureKind =
+					err instanceof Error && err.message.startsWith( 'Fetch failed:' ) ? 'http' : undefined;
+				trackImageStudioGenericShareFailed( {
+					method: 'web-share',
+					...( failureKind ? { failureKind } : {} ),
+					message,
+				} );
+				await showShareFailedNotice();
+			}
 		} finally {
 			isSharingRef.current = false;
 			setIsSharing( false );

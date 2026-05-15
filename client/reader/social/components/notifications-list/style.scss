@@ -96,3 +96,116 @@
 	background: var(--color-accent);
 	margin-block-start: 0.5rem;
 }
+
+.social-notifications-filter-bar {
+	padding-block: 12px;
+	padding-inline: 16px;
+	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.social-notifications-list__divider {
+	margin: 0;
+	padding-block: 16px 8px;
+	padding-inline: 16px;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	color: var(--color-text-subtle);
+}
+
+.social-notifications-stack {
+	display: block;
+	color: inherit;
+	text-decoration: none;
+	padding-block: 14px;
+	padding-inline: 16px;
+	border-block-end: 1px solid var(--color-border-subtle);
+}
+
+.social-notifications-stack.is-unread {
+	background: var(--color-primary-0);
+}
+
+.social-notifications-stack__avatars {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.social-notifications-stack__avatar {
+	inline-size: 28px;
+	block-size: 28px;
+	border-radius: 50%;
+	margin-inline-start: -8px;
+	border: 2px solid var(--color-surface);
+	background: var(--color-neutral-10);
+}
+
+.social-notifications-stack__avatar:first-child {
+	margin-inline-start: 0;
+}
+
+.social-notifications-stack__avatar.is-placeholder {
+	display: inline-block;
+}
+
+.social-notifications-stack__overflow {
+	margin-inline-start: 6px;
+	font-size: 11px;
+	color: var(--color-text-subtle);
+}
+
+.social-notifications-stack__toggle {
+	display: block;
+	inline-size: 100%;
+	background: transparent;
+	border: 0;
+	padding: 0;
+	font: inherit;
+	color: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+.social-notifications-stack__children {
+	margin-block-start: 8px;
+	display: flex;
+	flex-direction: column;
+}
+
+.social-notifications-stack__body {
+	min-inline-size: 0;
+	flex: 1;
+}
+
+.social-notifications-stack__line {
+	color: var(--color-text);
+}
+
+.social-notifications-stack__excerpt {
+	color: var(--color-text-subtle);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-inline-size: 100%;
+}
+
+.social-notifications-stack__time {
+	color: var(--color-text-subtle);
+	font-size: 0.85em;
+}
+
+.social-notifications-stack__unread {
+	flex: 0 0 0.5rem;
+	align-self: center;
+	display: inline-flex;
+	align-items: center;
+}
+
+.social-notifications-stack__unread-dot {
+	display: inline-block;
+	inline-size: 0.5rem;
+	block-size: 0.5rem;
+	border-radius: 50%;
+	background: var(--color-accent);
+}

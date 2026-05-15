@@ -78,3 +78,10 @@
 	// with `gap`, so reset the inherited margin to keep the gap honest.
 	margin: 0;
 }
+
+.mastodon-view .mastodon-profile-collections-notice {
+	margin: 16px 0 0;
+	color: var(--color-text-subtle);
+	font-size: 13px;
+	text-align: center;
+}

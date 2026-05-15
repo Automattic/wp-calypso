@@ -10,8 +10,8 @@ export default function Overview( { site }: { site: Site } ) {
 
 	return (
 		<VStack spacing={ 6 }>
-			<ChartSlot />
-			<SlowRequestsList site={ site } slowRequests={ data.slow_requests } />
+			<ChartSlot timeseries={ data.timeseries } />
+			<SlowRequestsList slowRequests={ data.slow_requests } />
 		</VStack>
 	);
 }

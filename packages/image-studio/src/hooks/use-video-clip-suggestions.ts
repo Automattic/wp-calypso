@@ -21,10 +21,12 @@ const EMPTY_SUGGESTIONS: Suggestion[] = [];
  * and an active video tool, and it ends up calling the tool instead of
  * returning chips.
  *
- * Each prompt deliberately combines TWO descriptive axes (e.g. camera
- * move + lighting, or texture + time-of-day). Single-axis prompts read
- * thin to Veo and tend to produce generic outputs; pairing two axes
- * gives the model concrete intent in both motion and look.
+ * Each prompt deliberately combines THREE descriptive axes drawn from a
+ * pool of six (camera, subject, lighting, texture, time-of-day, audio).
+ * Two-axis prompts read thin to Veo; three concrete axes — woven into
+ * prose, each contributing a distinct word or phrase — give the model
+ * enough hooks to commit to a specific shot rather than averaging toward
+ * generic "scenic" output.
  */
 export function buildVideoClipSuggestionsPrompt( postBody: string ): string {
 	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
@@ -32,13 +34,15 @@ export function buildVideoClipSuggestionsPrompt( postBody: string ): string {
 
 Each prompt MUST be:
 - Grounded in the post's subject matter (a place, object, environment, mood, or texture mentioned in the post — not the post's literal headline).
-- Phrased as a single piece of visual direction that COMBINES TWO of the following axes (never just one):
-  - Camera move (slow drift, gentle pan, dolly-in, crane, push-in, held wide, parallax tracking).
-  - Subject specificity (a concrete object/place from the post — not a generic noun).
-  - Lighting / mood (golden hour, overcast, naturalistic key, contemplative, motion-rich, energetic, twilight ambient).
-  - Texture / material detail (worn copper, weathered linen, polished oak, condensation on glass, matte ceramic).
-  - Time-of-day (dawn, blue hour, late afternoon, deep dusk).
-- 20-40 words, no trailing punctuation.
+- Phrased as a single piece of visual + audio direction that COMBINES THREE of the six axes below (never fewer than three). The three chosen axes must each contribute a distinct word or phrase you could point at — generic mood adjectives ("beautiful", "stunning", "atmospheric") do NOT count as an axis.
+  - Camera (movement + lens cue: slow dolly-in 24mm wide, macro push-in, gentle parallax pan, low crane lift, held wide deep-focus, hand-held 35mm follow).
+  - Subject specificity (a concrete object, place, or material from the post — never a generic noun like "scene" or "view").
+  - Lighting (quality + direction + temperature + contrast: low warm raking key, soft cool ambient fill, neutral diffuse overcast, single warm practical against cool ambient, hard rim against soft fill). Describes HOW the light behaves; pair with the Time-of-day axis if you also need to say WHEN.
+  - Texture / material detail (worn copper, weathered linen, polished oak, condensation on glass, matte ceramic, salt-crusted rope, moss-damp stone).
+  - Time-of-day (dawn, blue hour, late afternoon, deep dusk, twilight).
+  - Audio / atmosphere (a 2-5 word *instrumental* music cue or concrete non-voice ambient cue: "warm acoustic folk, fingerpicked guitar"; "minimal ambient electronic, ~95 bpm"; "instrumental jazz, brushed drums"; "distant gull cries"; "espresso machine hiss, ceramic clink"; "wind through pines"). Instrumental genre or environmental cue only — NEVER vocals, lyrics, dialogue, crowd murmur, song titles, or artists.
+- Written as woven prose — NOT a bulleted list, NOT axis labels (do not output "Camera: ... Subject: ...").
+- 35-60 words, no trailing punctuation.
 - People may appear — only adults, no children or minors. Describe them generically (e.g. "a barista", "a hiker") with no named individuals, public figures, or recognizable likenesses.
 - Free of crowds, on-screen text, signage, dialogue, or copyrighted properties — these are non-negotiable for the safety pipeline.
 
@@ -52,9 +56,9 @@ function buildVideoClipSystemPrompt( suggestionPrompt: string, locale: string ):
 ${ suggestionPrompt }
 
 Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). The "suggestions" array MUST contain exactly 3 items:
-{"suggestions":[{"label":"2-4 word chip A","prompt":"20-40 word directional sentence combining two axes"},{"label":"2-4 word chip B","prompt":"20-40 word directional sentence combining two axes"},{"label":"2-4 word chip C","prompt":"20-40 word directional sentence combining two axes"}]}
+{"suggestions":[{"label":"2-4 word chip A","prompt":"35-60 word directional sentence combining three axes"},{"label":"2-4 word chip B","prompt":"35-60 word directional sentence combining three axes"},{"label":"2-4 word chip C","prompt":"35-60 word directional sentence combining three axes"}]}
 
-The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the dense one — 20-40 words, two axes combined.
+The chip "label" stays 2-4 words (it's tight UI real estate). The "prompt" is the dense one — 35-60 words, three axes woven into prose.
 
 Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
 

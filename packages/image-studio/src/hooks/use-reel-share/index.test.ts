@@ -1,5 +1,11 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { act, renderHook } from '@testing-library/react';
 import { useReelShare } from './index';
+
+( globalThis as Record< string, unknown > ).__i18n_text_domain__ = 'default';
 
 // Tracking spies
 const mockTrackClicked = jest.fn();
@@ -9,6 +15,7 @@ const mockTrackNotPublished = jest.fn();
 const mockTrackInvalidState = jest.fn();
 const mockTrackDispatched = jest.fn();
 const mockTrackFailed = jest.fn();
+const mockTrackCancelled = jest.fn();
 
 // Store action spies
 const mockEditPost = jest.fn();
@@ -16,7 +23,13 @@ const mockShareCurrentPost = jest.fn();
 const mockAddNotice = jest.fn();
 
 // Selector state — mutable per-test
-type Connection = { connection_id: string; service_name: string; enabled: boolean };
+type Connection = {
+	connection_id: string;
+	service_name: string;
+	enabled: boolean;
+	display_name?: string;
+	external_handle?: string;
+};
 
 let mockState: {
 	currentVideoUrl: string | null;
@@ -86,6 +99,7 @@ jest.mock( '@wordpress/element', () => {
 	return {
 		useCallback: ( fn: ( ...args: unknown[] ) => unknown ) => fn,
 		useRef: React.useRef,
+		useState: React.useState,
 	};
 } );
 
@@ -124,12 +138,14 @@ jest.mock( '../../utils/tracking', () => ( {
 	trackImageStudioReelShareInvalidState: () => mockTrackInvalidState(),
 	trackImageStudioReelShareDispatched: () => mockTrackDispatched(),
 	trackImageStudioReelShareFailed: ( ...args: unknown[] ) => mockTrackFailed( ...args ),
+	trackImageStudioReelShareCancelled: () => mockTrackCancelled(),
 } ) );
 
 const igConnection: Connection = {
 	connection_id: '1001',
 	service_name: 'instagram-business',
 	enabled: true,
+	display_name: 'myhandle',
 };
 const twitterConnection: Connection = {
 	connection_id: '1002',
@@ -194,61 +210,82 @@ describe( 'useReelShare', () => {
 		} );
 	} );
 
-	describe( 'handleShare — happy path', () => {
-		it( 'writes attached_media and media_source then dispatches shareCurrentPost with non-IG connections skipped', async () => {
+	describe( 'requestShare — gates the confirmation', () => {
+		it( 'opens the confirmation without dispatching when validation passes', async () => {
 			const { result } = renderHook( () => useReelShare() );
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
 			} );
 
 			expect( mockTrackClicked ).toHaveBeenCalledWith( {
 				attachmentId: 555,
 				durationSeconds: 12,
 			} );
-
-			expect( mockEditPost ).toHaveBeenCalledWith( {
-				meta: {
-					jetpack_social_options: {
-						version: 2,
-						attached_media: [ { id: 555, url: 'https://example.com/clip.mp4', type: 'video/mp4' } ],
-						media_source: 'upload-video',
-					},
-				},
-			} );
-
-			expect( mockShareCurrentPost ).toHaveBeenCalledWith(
-				{ message: '', skipped_connections: [ '1002' ] },
-				{ savePost: true, apiPath: '/wpcom/v2/publicize/share-post/{postId}' }
-			);
-
-			expect( mockTrackDispatched ).toHaveBeenCalledTimes( 1 );
-			expect( mockTrackFailed ).not.toHaveBeenCalled();
+			expect( mockEditPost ).not.toHaveBeenCalled();
+			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+			expect( result.current.isConfirming ).toBe( true );
+			expect( result.current.igDisplayName ).toBe( 'myhandle' );
 		} );
 
-		it( 'shows a success notice when shareCurrentPost resolves truthy', async () => {
+		it( 'is a no-op (no re-track, no re-stamp) when the dialog is already open', async () => {
 			const { result } = renderHook( () => useReelShare() );
-			await act( async () => {
-				await result.current.handleShare();
-			} );
-			expect( mockAddNotice ).toHaveBeenCalledWith(
-				expect.stringMatching( /Reel shared to Instagram/i ),
-				'success'
-			);
-		} );
-	} );
 
-	describe( 'handleShare — pre-check gates', () => {
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'resolves igDisplayName from external_handle when display_name is missing', async () => {
+			mockState.connections = [
+				{
+					connection_id: '1001',
+					service_name: 'instagram-business',
+					enabled: true,
+					external_handle: '@brand',
+				},
+				twitterConnection,
+			];
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+
+			expect( result.current.igDisplayName ).toBe( '@brand' );
+		} );
+
+		it( 'resolves igDisplayName to null when neither field is present on the connection', async () => {
+			mockState.connections = [
+				{ connection_id: '1001', service_name: 'instagram-business', enabled: true },
+				twitterConnection,
+			];
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+
+			expect( result.current.igDisplayName ).toBeNull();
+		} );
+
 		it( 'shows a no-connection notice with action when IG is not connected', async () => {
 			mockState.connections = [ twitterConnection ];
 			const { result } = renderHook( () => useReelShare() );
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
 			} );
 
 			expect( mockEditPost ).not.toHaveBeenCalled();
 			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+			expect( result.current.isConfirming ).toBe( false );
 			expect( mockTrackNotConnected ).toHaveBeenCalledTimes( 1 );
 			expect( mockTrackConnectionDisabled ).not.toHaveBeenCalled();
 			expect( mockAddNotice ).toHaveBeenCalledWith(
@@ -269,11 +306,11 @@ describe( 'useReelShare', () => {
 			const { result } = renderHook( () => useReelShare() );
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
 			} );
 
 			expect( mockEditPost ).not.toHaveBeenCalled();
-			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+			expect( result.current.isConfirming ).toBe( false );
 			expect( mockTrackConnectionDisabled ).toHaveBeenCalledTimes( 1 );
 			expect( mockTrackNotConnected ).not.toHaveBeenCalled();
 			expect( mockAddNotice ).toHaveBeenCalledWith(
@@ -289,11 +326,11 @@ describe( 'useReelShare', () => {
 			const { result } = renderHook( () => useReelShare() );
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
 			} );
 
 			expect( mockEditPost ).not.toHaveBeenCalled();
-			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+			expect( result.current.isConfirming ).toBe( false );
 			expect( mockTrackNotPublished ).toHaveBeenCalledTimes( 1 );
 			expect( mockAddNotice ).toHaveBeenCalledWith(
 				expect.stringMatching( /Publish this post first/i ),
@@ -308,11 +345,11 @@ describe( 'useReelShare', () => {
 			const { result } = renderHook( () => useReelShare() );
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
 			} );
 
 			expect( mockEditPost ).not.toHaveBeenCalled();
-			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+			expect( result.current.isConfirming ).toBe( false );
 			expect( mockTrackInvalidState ).toHaveBeenCalledTimes( 1 );
 			expect( mockAddNotice ).toHaveBeenCalledWith(
 				expect.stringMatching( /Generate a video first/i ),
@@ -321,13 +358,73 @@ describe( 'useReelShare', () => {
 		} );
 	} );
 
-	describe( 'handleShare — failure', () => {
+	describe( 'confirmShare — happy path', () => {
+		it( 'writes attached_media and dispatches shareCurrentPost with non-IG connections skipped', async () => {
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			await act( async () => {
+				await result.current.confirmShare();
+			} );
+
+			expect( mockEditPost ).toHaveBeenCalledWith( {
+				meta: {
+					jetpack_social_options: {
+						version: 2,
+						attached_media: [ { id: 555, url: 'https://example.com/clip.mp4', type: 'video/mp4' } ],
+						media_source: 'upload-video',
+					},
+				},
+			} );
+
+			expect( mockShareCurrentPost ).toHaveBeenCalledWith(
+				{ message: '', skipped_connections: [ '1002' ] },
+				{ savePost: true, apiPath: '/wpcom/v2/publicize/share-post/{postId}' }
+			);
+
+			expect( mockTrackDispatched ).toHaveBeenCalledTimes( 1 );
+			expect( mockTrackFailed ).not.toHaveBeenCalled();
+			expect( result.current.isConfirming ).toBe( false );
+		} );
+
+		it( 'shows a success notice when shareCurrentPost resolves truthy', async () => {
+			const { result } = renderHook( () => useReelShare() );
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			await act( async () => {
+				await result.current.confirmShare();
+			} );
+			expect( mockAddNotice ).toHaveBeenCalledWith(
+				expect.stringMatching( /Reel shared to Instagram/i ),
+				'success'
+			);
+		} );
+
+		it( 'is a no-op when confirmShare is called without a pending request', async () => {
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.confirmShare();
+			} );
+
+			expect( mockEditPost ).not.toHaveBeenCalled();
+			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'confirmShare — failure', () => {
 		it( 'tracks reel_share_failed when shareCurrentPost resolves falsy', async () => {
 			mockShareCurrentPost.mockResolvedValueOnce( false );
 			const { result } = renderHook( () => useReelShare() );
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
+			} );
+			await act( async () => {
+				await result.current.confirmShare();
 			} );
 
 			expect( mockTrackFailed ).toHaveBeenCalledTimes( 1 );
@@ -339,7 +436,10 @@ describe( 'useReelShare', () => {
 			const { result } = renderHook( () => useReelShare() );
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
+			} );
+			await act( async () => {
+				await result.current.confirmShare();
 			} );
 
 			expect( mockTrackFailed ).toHaveBeenCalledWith( 'boom' );
@@ -347,7 +447,60 @@ describe( 'useReelShare', () => {
 		} );
 	} );
 
-	describe( 'click-time freshness', () => {
+	describe( 'cancelShare', () => {
+		it( 'clears isConfirming and fires the cancelled tracker', async () => {
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			expect( result.current.isConfirming ).toBe( true );
+
+			act( () => {
+				result.current.cancelShare();
+			} );
+
+			expect( result.current.isConfirming ).toBe( false );
+			expect( mockTrackCancelled ).toHaveBeenCalledTimes( 1 );
+			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not fire the cancelled tracker when there was no pending request', () => {
+			const { result } = renderHook( () => useReelShare() );
+
+			act( () => {
+				result.current.cancelShare();
+			} );
+
+			expect( mockTrackCancelled ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'freshness', () => {
+		it( 'skips any non-IG connection that hydrates while the confirmation dialog is open', async () => {
+			// Initially only the IG connection exists.
+			mockState.connections = [ igConnection ];
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+
+			// A new non-IG connection hydrates after the dialog opened. The
+			// skipped list must be recomputed at confirm time so the Reel does
+			// not also publish to this newly enabled network.
+			mockState.connections = [ igConnection, twitterConnection ];
+
+			await act( async () => {
+				await result.current.confirmShare();
+			} );
+
+			expect( mockShareCurrentPost ).toHaveBeenCalledWith(
+				expect.objectContaining( { skipped_connections: [ '1002' ] } ),
+				expect.any( Object )
+			);
+		} );
+
 		it( 'rechecks the IG connection at click time even if useSelect missed it', async () => {
 			// Render with no IG connection — simulates the wp-data subscription
 			// missing the social store at mount time.
@@ -356,11 +509,14 @@ describe( 'useReelShare', () => {
 
 			// Now the social store hydrates with an IG connection. useSelect
 			// would normally not re-run if its initial subscription missed the
-			// store, but our handleShare reads via standalone select() at click.
+			// store, but our requestShare reads via standalone select() at click.
 			mockState.connections = [ igConnection ];
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
+			} );
+			await act( async () => {
+				await result.current.confirmShare();
 			} );
 
 			expect( mockTrackNotConnected ).not.toHaveBeenCalled();
@@ -379,16 +535,17 @@ describe( 'useReelShare', () => {
 			mockState.isCurrentPostPublished = false;
 
 			await act( async () => {
-				await result.current.handleShare();
+				await result.current.requestShare();
 			} );
 
 			expect( mockTrackNotPublished ).toHaveBeenCalledTimes( 1 );
+			expect( result.current.isConfirming ).toBe( false );
 			expect( mockShareCurrentPost ).not.toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'double-click guard', () => {
-		it( 'ignores a second click while the first share is still in flight', async () => {
+		it( 'ignores a second confirmShare while the first share is still in flight', async () => {
 			let resolveShare: ( value: boolean ) => void = () => {};
 			const inFlight = new Promise< boolean >( ( resolve ) => {
 				resolveShare = resolve;
@@ -398,15 +555,44 @@ describe( 'useReelShare', () => {
 			const { result } = renderHook( () => useReelShare() );
 
 			await act( async () => {
-				const firstClick = result.current.handleShare();
-				await result.current.handleShare();
+				await result.current.requestShare();
+			} );
+
+			await act( async () => {
+				const firstClick = result.current.confirmShare();
+				await result.current.confirmShare();
 				resolveShare( true );
 				await firstClick;
 			} );
 
 			expect( mockEditPost ).toHaveBeenCalledTimes( 1 );
 			expect( mockShareCurrentPost ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'ignores a fresh requestShare while a share is still in flight', async () => {
+			let resolveShare: ( value: boolean ) => void = () => {};
+			const inFlight = new Promise< boolean >( ( resolve ) => {
+				resolveShare = resolve;
+			} );
+			mockShareCurrentPost.mockReturnValueOnce( inFlight );
+
+			const { result } = renderHook( () => useReelShare() );
+
+			await act( async () => {
+				await result.current.requestShare();
+			} );
+			await act( async () => {
+				// Kick off the dispatch but don't await yet — the share is
+				// in flight while we attempt a second requestShare.
+				const inFlightConfirm = result.current.confirmShare();
+				await result.current.requestShare();
+				resolveShare( true );
+				await inFlightConfirm;
+			} );
+
+			// First requestShare counted; the second was blocked.
 			expect( mockTrackClicked ).toHaveBeenCalledTimes( 1 );
+			expect( mockShareCurrentPost ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

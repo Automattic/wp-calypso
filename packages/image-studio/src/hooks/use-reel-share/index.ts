@@ -1,5 +1,5 @@
 import { select as freshSelect, useDispatch, useSelect } from '@wordpress/data';
-import { useCallback, useRef } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	ImageStudioEntryPoint,
@@ -9,6 +9,7 @@ import {
 import { store as videoStudioStore } from '../../stores/video-studio';
 import { getJetpackAdminUrl, getReelSharePostPath } from '../../utils/jetpack-script-data';
 import {
+	trackImageStudioReelShareCancelled,
 	trackImageStudioReelShareClicked,
 	trackImageStudioReelShareConnectionDisabled,
 	trackImageStudioReelShareDispatched,
@@ -27,6 +28,8 @@ interface Connection {
 	connection_id: string | number;
 	service_name: string;
 	enabled?: boolean;
+	display_name?: string;
+	external_handle?: string;
 }
 
 interface JetpackSocialOptions {
@@ -37,10 +40,18 @@ interface JetpackSocialOptions {
 	[ key: string ]: unknown;
 }
 
+interface PendingShare {
+	igDisplayName: string | null;
+}
+
 interface UseReelShareReturn {
 	isVisible: boolean;
 	isSharing: boolean;
-	handleShare: () => Promise< void >;
+	isConfirming: boolean;
+	igDisplayName: string | null;
+	requestShare: () => Promise< void >;
+	confirmShare: () => Promise< void >;
+	cancelShare: () => void;
 }
 
 export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
@@ -149,6 +160,8 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 	// the first dispatch by a render, so we can't rely on `disabled` alone.
 	const isSharingRef = useRef( false );
 
+	const [ pendingShare, setPendingShare ] = useState< PendingShare | null >( null );
+
 	// When the caller supplies an explicit clip (e.g. the sidebar reading meta),
 	// it has already asserted the video context — the entryPoint guard is only
 	// meaningful for the in-modal call site that reads the live store.
@@ -160,10 +173,11 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		!! sharePath &&
 		! isAiProcessing;
 
-	const handleShare = useCallback( async () => {
-		// Synchronous double-click guard. `isSharing` from useSelect lags by a
-		// render so it can't reliably block a fast second click on its own.
-		if ( isSharingRef.current ) {
+	const requestShare = useCallback( async () => {
+		// `isSharing` from useSelect lags by a render, so the IG button can
+		// stay briefly clickable mid-dispatch — guard here to avoid a
+		// double-publish via a reopened dialog.
+		if ( isSharingRef.current || pendingShare ) {
 			return;
 		}
 
@@ -182,12 +196,8 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			| { getConnections: () => Connection[] }
 			| undefined;
 		const freshConnections = freshSocial?.getConnections?.() ?? [];
-		const freshEnabledConnections = freshConnections.filter( ( c ) => c.enabled !== false );
 		const freshIgConnection = freshConnections.find( ( c ) => c.service_name === IG_SERVICE );
 		const freshIgIsEnabled = !! freshIgConnection && freshIgConnection.enabled !== false;
-		const freshSkipped = freshEnabledConnections
-			.filter( ( c ) => c.service_name !== IG_SERVICE )
-			.map( ( c ) => String( c.connection_id ) );
 
 		const freshEditor = freshSelect( EDITOR_STORE ) as
 			| { isCurrentPostPublished: () => boolean }
@@ -252,6 +262,52 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			return;
 		}
 
+		const resolvedHandle =
+			freshIgConnection.display_name || freshIgConnection.external_handle || null;
+
+		setPendingShare( { igDisplayName: resolvedHandle } );
+	}, [
+		currentAttachmentId,
+		currentDurationSeconds,
+		currentVideoUrl,
+		pendingShare,
+		sharePath,
+		showNotice,
+	] );
+
+	const confirmShare = useCallback( async () => {
+		// Synchronous double-click guard. `isSharing` from useSelect lags by a
+		// render so it can't reliably block a fast second click on its own.
+		if ( isSharingRef.current ) {
+			return;
+		}
+
+		if ( ! pendingShare ) {
+			return;
+		}
+
+		if ( ! currentVideoUrl || ! currentAttachmentId || ! sharePath ) {
+			// requestShare gated these already; if we somehow lost state between
+			// open and confirm, fall back to closing the dialog rather than
+			// dispatching a half-formed share.
+			setPendingShare( null );
+			return;
+		}
+
+		// Recompute the non-IG enabled connection IDs at confirm time. Capturing
+		// the list at requestShare time would miss any connection that finishes
+		// hydrating while the dialog is open — those would NOT be in
+		// `skipped_connections` and the Reel would also publish to them.
+		const freshSocial = freshSelect( SOCIAL_STORE ) as
+			| { getConnections: () => Connection[] }
+			| undefined;
+		const freshConnections = freshSocial?.getConnections?.() ?? [];
+		const skipped = freshConnections
+			.filter( ( c ) => c.enabled !== false && c.service_name !== IG_SERVICE )
+			.map( ( c ) => String( c.connection_id ) );
+
+		setPendingShare( null );
+
 		const existingSocialOptions =
 			( currentMeta.jetpack_social_options as JetpackSocialOptions | undefined ) ?? {};
 
@@ -280,7 +336,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			// the share fires; we depend on that ordering rather than awaiting a
 			// separate save round-trip ourselves.
 			const success = await shareCurrentPost(
-				{ message: '', skipped_connections: freshSkipped },
+				{ message: '', skipped_connections: skipped },
 				{ savePost: true, apiPath: sharePath }
 			);
 
@@ -305,9 +361,9 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			isSharingRef.current = false;
 		}
 	}, [
+		pendingShare,
 		showNotice,
 		currentAttachmentId,
-		currentDurationSeconds,
 		currentMeta,
 		currentVideoUrl,
 		editPost,
@@ -315,9 +371,20 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		shareCurrentPost,
 	] );
 
+	const cancelShare = useCallback( () => {
+		if ( pendingShare ) {
+			trackImageStudioReelShareCancelled();
+		}
+		setPendingShare( null );
+	}, [ pendingShare ] );
+
 	return {
 		isVisible,
 		isSharing,
-		handleShare,
+		isConfirming: pendingShare !== null,
+		igDisplayName: pendingShare?.igDisplayName ?? null,
+		requestShare,
+		confirmShare,
+		cancelShare,
 	};
 }

@@ -7,7 +7,7 @@ import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import * as readerAnalytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { PROFILE_TAB, TIMELINE_TAB } from '../helper';
+import { NOTIFICATIONS_TAB, PROFILE_TAB, TIMELINE_TAB } from '../helper';
 import { MastodonAccountView } from '../mastodon-account-view';
 import type { MastodonAuthorProfile } from '@automattic/api-core';
 import type React from 'react';
@@ -205,6 +205,19 @@ describe( 'MastodonAccountView', () => {
 				'Alice the Brave ‹ Mastodon ‹ Reader'
 			)
 		);
+	} );
+
+	it( 'renders the notifications tab when asked', async () => {
+		mockConnections();
+		mockConnectionDetails( 7 );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `${ listUrl }/7/notifications` )
+			.query( {} )
+			.reply( 200, { items: [], next_cursor: null, seen_at: null } );
+		renderWithProvider( <MastodonAccountView connectionId={ 7 } tab={ NOTIFICATIONS_TAB } />, {
+			queryClient: makeClient(),
+		} );
+		expect( await screen.findByText( /no notifications yet/i ) ).toBeVisible();
 	} );
 
 	it( 'renders the profile tab when asked', async () => {

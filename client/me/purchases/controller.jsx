@@ -210,10 +210,16 @@ export function vatDetails( context, next ) {
 			translate( 'tax (VAT/GST/CT)' );
 		const fallbackTaxName = genericTaxName;
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		const title = translate( 'Add %s details', {
+		const editVatText = translate( 'Edit %s details', {
 			textOnly: true,
 			args: [ taxName ?? fallbackTaxName ],
 		} );
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		const addVatText = translate( 'Add %s details', {
+			textOnly: true,
+			args: [ taxName ?? fallbackTaxName ],
+		} );
+		const title = vatDetailsFromServer.id ? editVatText : addVatText;
 
 		return (
 			<PurchasesWrapper title={ title }>

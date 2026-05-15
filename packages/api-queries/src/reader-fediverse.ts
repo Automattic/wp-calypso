@@ -1,5 +1,6 @@
 import {
 	createFediverseFollow,
+	createFediversePost,
 	deleteFediverseFollow,
 	getFediverseActorFollowers,
 	getFediverseActorFollowing,
@@ -8,6 +9,7 @@ import {
 	getFediverseConnection,
 	getFediverseConnections,
 	getFediverseTimeline,
+	PENDING_FEDIVERSE_POST_URI,
 	readerFediverseKeys,
 } from '@automattic/api-core';
 import {
@@ -26,7 +28,10 @@ import type {
 	FediverseAuthorProfile,
 	FediverseConnection,
 	FediverseConnectionsResponse,
+	FediverseCreatePostParams,
+	FediverseCreatePostResult,
 	FediverseError,
+	FediverseFeedItem,
 	FediverseFollowResponse,
 	FediverseTimelinePage,
 	GetFediverseAuthorFeedParams,
@@ -41,6 +46,22 @@ export const fediverseConnectionsQueryOptions = () =>
 		// rarely change within a session and the list view re-mounts on
 		// every back-from-account navigation.
 		staleTime: 60_000,
+		// Same transient-error retry posture as every other query in this
+		// file. Without it a `rate_limited` 429 fails fast → `connection`
+		// resolves to `null` → the composer's `blogDefault` collapses to
+		// `'public'`, silently dropping the user's per-blog default.
+		retry: ( failureCount, error ) => {
+			if ( error.kind === 'rate_limited' || error.kind === 'upstream_unavailable' ) {
+				return failureCount < 2;
+			}
+			return false;
+		},
+		retryDelay: ( _attempt, error ) => {
+			if ( error.kind === 'rate_limited' && error.retry_after !== undefined ) {
+				return Math.min( error.retry_after * 1000, 30_000 );
+			}
+			return 2_000;
+		},
 	} );
 
 export function useFediverseConnectionsQuery( { enabled }: { enabled?: boolean } = {} ) {
@@ -451,3 +472,185 @@ export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 			}
 		},
 	} );
+
+let pendingPostCounter = 0;
+/**
+ * Monotonic counter-stamped placeholder for an in-flight standalone post.
+ * Each submit gets a unique suffix so back-to-back composes can be told
+ * apart in the timeline cache. Mirrors atmosphere's `nextPendingPostUri`.
+ */
+export const nextPendingFediversePostUri = () =>
+	`${ PENDING_FEDIVERSE_POST_URI }#${ ++pendingPostCounter }`;
+
+export interface CreateFediversePostContext {
+	/** Snapshot of every timeline-page cache entry touched by the optimistic patch. */
+	snapshots: Array< {
+		queryKey: QueryKey;
+		data: InfiniteData< FediverseTimelinePage > | undefined;
+	} >;
+	/** Synthetic id stamped on the placeholder item; matched on success to splice in the server item. */
+	pendingUri: string;
+}
+
+/**
+ * Mutation factory for publishing a new ActivityPub post.
+ * Optimistically prepends a placeholder `FediverseFeedItem` (stamped
+ * with a `PENDING_FEDIVERSE_POST_URI` sentinel id) to every cached
+ * timeline page for the connection so the composer's success feels
+ * immediate; rolls back on error; on success splices the server item
+ * over the placeholder and invalidates the timeline to refetch from the
+ * canonical source.
+ *
+ * Accepts the consumer's QueryClient — Calypso boots its own
+ * separate from the api-queries singleton. See `client/reader/AGENTS.md`.
+ * Mirrors `createMastodonPostMutation` / `createPostMutation`.
+ */
+export const createFediversePostMutation = ( queryClient: QueryClient ) =>
+	mutationOptions<
+		FediverseCreatePostResult,
+		FediverseError,
+		FediverseCreatePostParams,
+		CreateFediversePostContext
+	>( {
+		mutationFn: createFediversePost,
+		onMutate: async ( vars ) => {
+			const timelineKey = readerFediverseKeys.timeline( vars.connectionId );
+			try {
+				await queryClient.cancelQueries( { queryKey: timelineKey } );
+			} catch {
+				// Best-effort per TanStack docs; the optimistic patch + mutationFn
+				// must still run.
+			}
+
+			const pendingUri = nextPendingFediversePostUri();
+			const snapshots: CreateFediversePostContext[ 'snapshots' ] = [];
+
+			const matches = queryClient.getQueriesData< InfiniteData< FediverseTimelinePage > >( {
+				queryKey: timelineKey,
+			} );
+			const connection = queryClient
+				.getQueryData< FediverseConnectionsResponse >( readerFediverseKeys.connections() )
+				?.connections.find( ( c ) => c.id === vars.connectionId );
+			for ( const [ queryKey, data ] of matches ) {
+				snapshots.push( { queryKey, data } );
+				if ( ! data || data.pages.length === 0 ) {
+					continue;
+				}
+				const placeholder = buildPlaceholderItem( vars, pendingUri, connection );
+				const [ firstPage, ...rest ] = data.pages;
+				const patchedFirst: FediverseTimelinePage = {
+					...firstPage,
+					items: [ placeholder, ...firstPage.items ],
+				};
+				queryClient.setQueryData< InfiniteData< FediverseTimelinePage > >( queryKey, {
+					...data,
+					pages: [ patchedFirst, ...rest ],
+				} );
+			}
+
+			return { snapshots, pendingUri };
+		},
+		onError: ( _err, _vars, ctx ) => {
+			if ( ! ctx ) {
+				return;
+			}
+			for ( const { queryKey, data } of ctx.snapshots ) {
+				queryClient.setQueryData( queryKey, data );
+			}
+		},
+		onSuccess: ( result, vars, ctx ) => {
+			// Replace placeholder with the server item in every snapshotted
+			// page where the placeholder landed. Avoids a refetch flash for
+			// the user while still letting `invalidateQueries` below reconcile
+			// any drift on the next read.
+			if ( ctx ) {
+				const matches = queryClient.getQueriesData< InfiniteData< FediverseTimelinePage > >( {
+					queryKey: readerFediverseKeys.timeline( vars.connectionId ),
+				} );
+				for ( const [ queryKey, data ] of matches ) {
+					if ( ! data ) {
+						continue;
+					}
+					queryClient.setQueryData< InfiniteData< FediverseTimelinePage > >( queryKey, {
+						...data,
+						pages: data.pages.map( ( page ) => ( {
+							...page,
+							items: page.items.map( ( item ) =>
+								item.id === ctx.pendingUri ? result.post : item
+							),
+						} ) ),
+					} );
+				}
+			}
+			// Known limitation (CM-704): the AP `/timeline` endpoint returns
+			// the home-stream inbox — posts from followed actors — and does
+			// NOT include the caller's own published posts. This refetch
+			// therefore wipes the just-published item from the cache, and
+			// the user sees their post briefly appear (via the optimistic
+			// patch) and then disappear once `invalidateQueries` resolves.
+			// The post still appears on the Profile view (author-feed
+			// endpoint) and on the published web URL. Tracked for a backend
+			// follow-up that mirrors Mastodon's home-timeline-includes-own
+			// semantics; until then, the invalidate is still correct
+			// (cache should mirror server truth) but the UX is rough.
+			queryClient.invalidateQueries( {
+				queryKey: readerFediverseKeys.timeline( vars.connectionId ),
+			} );
+		},
+	} );
+
+/**
+ * Build the synthetic feed item used during the optimistic-update window.
+ * Borrows shape from `FediverseFeedItem` so the timeline renderer can
+ * project it through the existing mapper without special-casing.
+ *
+ * When the connections cache is warm, the placeholder's `account` is
+ * hydrated from the connection so the placeholder renders with the user's
+ * real avatar / handle / display name instead of a blank chip while the
+ * request is in flight. When cold, falls back to empty fields — the
+ * `invalidateQueries` in `onSuccess` will surface the canonical author on
+ * the refetch. Mirrors atmosphere's `authorFromConnection` shape.
+ */
+function buildPlaceholderItem(
+	vars: FediverseCreatePostParams,
+	pendingUri: string,
+	connection: FediverseConnection | undefined
+): FediverseFeedItem {
+	return {
+		id: pendingUri,
+		url: '',
+		created_at: new Date().toISOString(),
+		account: accountFromConnection( connection ),
+		content: vars.content,
+		spoiler_text: vars.summary ?? '',
+		sensitive: Boolean( vars.sensitive ),
+		language: vars.language ?? null,
+		in_reply_to_id: null,
+		in_reply_to_account_id: null,
+		boost: null,
+		media: [],
+		counts: { replies: 0, boosts: 0, favourites: 0 },
+	};
+}
+
+function accountFromConnection(
+	connection: FediverseConnection | undefined
+): FediverseFeedItem[ 'account' ] {
+	if ( ! connection ) {
+		return { id: '', username: '', acct: '', display_name: '', avatar: null };
+	}
+	// `webfinger` is emitted with a leading `@` (`@user@host`); strip it so the
+	// mapper's `qualifyAcct` doesn't double up to `@@user@host`.
+	const handle = connection.webfinger.startsWith( '@' )
+		? connection.webfinger.slice( 1 )
+		: connection.webfinger;
+	const username = handle.split( '@' )[ 0 ] ?? '';
+	return {
+		// For blog actors the blog URL is also the canonical AP actor URL.
+		id: connection.url,
+		username,
+		acct: handle,
+		display_name: connection.name,
+		avatar: connection.icon || null,
+	};
+}

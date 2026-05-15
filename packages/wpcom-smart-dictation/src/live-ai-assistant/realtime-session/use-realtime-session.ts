@@ -205,6 +205,9 @@ export function useRealtimeSession( options: UseRealtimeSessionOptions ): UseRea
 							: next;
 					} );
 				},
+				onToolEventRemove: ( id ) => {
+					setToolEvents( ( prev ) => prev.filter( ( e ) => e.id !== id ) );
+				},
 				sendFunctionCallOutput: ( callId, result ) => {
 					dc.send(
 						JSON.stringify( {
