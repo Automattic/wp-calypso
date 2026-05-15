@@ -84,7 +84,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 	const packBlogsByIdRef = useRef< Map< string, CuratedBlog[] > | null >( null );
 	if ( ! packBlogsByIdRef.current ) {
 		packBlogsByIdRef.current = new Map(
-			topicGroups.map( ( group ) => [ group.id, getPackBlogs( group.tags ) ] )
+			topicGroups.map( ( group ) => [
+				group.id,
+				getPackBlogs( group.tags, group.tags.length === 0 ? { directKey: group.id } : undefined ),
+			] )
 		);
 	}
 	const packBlogsById = packBlogsByIdRef.current;
@@ -94,7 +97,8 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 			...group,
 			blogs: packBlogsById.get( group.id ) ?? [],
 		} ) )
-		// Hide the "Most Subscribed" pack while it has nothing to subscribe to.
+		// Defensive: hide any pack that resolves to nothing to subscribe to
+		// (e.g., a tagless pack id with no curated entry).
 		.filter( ( pack ) => pack.tags.length > 0 || pack.blogs.length > 0 );
 
 	const isBlogFollowed = ( blog: CuratedBlog ): boolean =>
