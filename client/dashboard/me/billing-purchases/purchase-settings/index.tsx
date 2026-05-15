@@ -734,7 +734,11 @@ function getFields( {
 					}
 					return undefined;
 				} )();
-				if ( purchase.is_auto_renew_enabled && ! purchase.is_rechargeable ) {
+				if (
+					! isSplitCancelRemoveEnabled &&
+					purchase.is_auto_renew_enabled &&
+					! purchase.is_rechargeable
+				) {
 					return (
 						<div className="purchase-settings__action-item-standalone">
 							<ActionList.ActionItem
