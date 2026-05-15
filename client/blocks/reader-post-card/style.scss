@@ -480,11 +480,7 @@
 	width: calc(100% - 25px);
 
 	&::after {
-		@include long-content-fade( $size: 10% );
-
-		@include ui-mixins.when-dark-theme {
-			background: linear-gradient( to right, transparent, var( --color-surface ) 90% );
-		}
+		@include long-content-fade( $size: 10%, $color: var( --color-surface ) );
 	}
 }
 

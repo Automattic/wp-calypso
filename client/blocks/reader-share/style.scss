@@ -186,6 +186,6 @@
 .reader-share__site-selector .site__title,
 .reader-share__site-selector .site__domain {
 	&::after {
-		@include long-content-fade();
+		@include long-content-fade( $color: var( --color-surface ) );
 	}
 }

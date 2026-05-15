@@ -195,7 +195,7 @@ body.is-section-reader {
 		position: relative;
 
 		&::after {
-			@include long-content-fade();
+			@include long-content-fade( $color: var( --color-surface ) );
 		}
 	}
 

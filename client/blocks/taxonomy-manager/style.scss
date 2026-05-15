@@ -71,7 +71,7 @@
 		position: relative;
 
 		&::after {
-			@include long-content-fade();
+			@include long-content-fade( $color: var( --color-surface ) );
 		}
 
 		.taxonomy-manager__list-item.is-placeholder & {

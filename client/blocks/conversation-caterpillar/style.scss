@@ -20,7 +20,7 @@
 	}
 
 	&::after {
-		@include long-content-fade( $size: 35px );
+		@include long-content-fade( $size: 35px, $color: var( --color-surface ) );
 		height: 16px * 2;
 		width: 16px * 2;
 		z-index: 1;
