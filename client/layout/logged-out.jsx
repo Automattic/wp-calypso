@@ -80,7 +80,14 @@ const loadSupportArticleDialog = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
 	);
 
-const HELP_CENTER_FAB_SECTIONS = [ 'plugins', 'theme', 'themes' ];
+const HELP_CENTER_FAB_SECTIONS = [
+	'patterns',
+	'performance-profiler',
+	'plugins',
+	'site-profiler',
+	'theme',
+	'themes',
+];
 
 const LayoutLoggedOut = ( {
 	isAkismet,
