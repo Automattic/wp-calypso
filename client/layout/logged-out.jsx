@@ -80,7 +80,19 @@ const loadSupportArticleDialog = () =>
 		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
 	);
 
-const HELP_CENTER_FAB_SECTIONS = [ 'plugins', 'theme', 'themes' ];
+const HELP_CENTER_FAB_SECTIONS = [
+	'accept-invite',
+	'mailing-lists',
+	'patterns',
+	'performance-profiler',
+	'plugins',
+	'site-profiler',
+	'theme',
+	'themes',
+];
+
+// Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
+const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -162,7 +174,8 @@ const LayoutLoggedOut = ( {
 	const showHelpCenterFab =
 		! isLoggedIn &&
 		isEnabled( 'help-center/logged-out-fab' ) &&
-		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) &&
+		( HELP_CENTER_FAB_SECTIONS.includes( sectionName ) ||
+			HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
 		userAllowedToHelpCenter;
 
 	const loadHelpCenter =

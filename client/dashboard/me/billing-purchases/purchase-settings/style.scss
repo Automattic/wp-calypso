@@ -1,3 +1,9 @@
+@import "@wordpress/base-styles/variables";
+
+.purchase-settings__action-item-standalone {
+	margin-block: -$grid-unit-20;
+}
+
 .purchase-settings__toggle-control {
 	.components-form-toggle {
 		order: 2;

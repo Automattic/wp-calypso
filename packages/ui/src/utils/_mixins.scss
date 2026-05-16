@@ -2,11 +2,13 @@
 // OS prefers dark. Intended to be nested inside a CSS-module selector so `&`
 // resolves to the scoped class.
 @mixin when-dark-theme {
-	:root[data-theme="dark"] & {
-		@content;
+	@media screen {
+		:root[data-theme="dark"] & {
+			@content;
+		}
 	}
 
-	@media (prefers-color-scheme: dark) {
+	@media screen and (prefers-color-scheme: dark) {
 		:root[data-theme="system"] & {
 			@content;
 		}

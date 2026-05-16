@@ -40,6 +40,7 @@ export * from './marketplace-search';
 export * from './marketing-survey';
 export * from './me';
 export * from './me-account';
+export * from './me-achieve';
 export * from './me-allowed-payment-methods';
 export * from './me-account-recovery';
 export * from './me-billing-history';
