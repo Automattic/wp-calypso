@@ -26,13 +26,11 @@ function ViewportAwareTooltip( { children }: { children: ReactNode } ) {
 		// Measure against the parent (visx's TooltipWithBounds wrapper) — its
 		// rect reflects visx's intended position. Our own transform only shifts
 		// this element relative to that parent, so parent.left is stable and
-		// safe to re-evaluate without oscillation.
+		// safe to re-evaluate without oscillation. Coordinates are
+		// viewport-relative, so this works under both LTR and RTL.
 		const update = () => {
 			const parentRect = parent.getBoundingClientRect();
 			const ownWidth = node.getBoundingClientRect().width;
-			if ( ! ownWidth ) {
-				return;
-			}
 			const naturalRight = parentRect.left + ownWidth;
 			const overflowsRight = naturalRight > window.innerWidth - VIEWPORT_EDGE_PAD;
 			const wouldFitFlipped = parentRect.left - ownWidth - FLIP_OFFSET >= VIEWPORT_EDGE_PAD;
@@ -44,14 +42,22 @@ function ViewportAwareTooltip( { children }: { children: ReactNode } ) {
 		// visx applies its position via inline `transform` on the parent and
 		// updates it asynchronously (withBoundingRects). Re-measure when it
 		// changes so we react to the final placement, not the initial one.
-		const observer = new MutationObserver( update );
-		observer.observe( parent, { attributes: true, attributeFilter: [ 'style' ] } );
+		const mutationObserver = new MutationObserver( update );
+		mutationObserver.observe( parent, { attributes: true, attributeFilter: [ 'style' ] } );
+
+		// Re-measure when the tooltip's own size changes (e.g. content swap on
+		// a different data point, font load shifting wrap, etc.). The mutation
+		// observer above only fires on parent style changes.
+		const resizeObserver = new ResizeObserver( update );
+		resizeObserver.observe( node );
+
 		window.addEventListener( 'resize', update );
 		return () => {
-			observer.disconnect();
+			mutationObserver.disconnect();
+			resizeObserver.disconnect();
 			window.removeEventListener( 'resize', update );
 		};
-	}, [ children ] );
+	}, [] );
 
 	return (
 		<div
