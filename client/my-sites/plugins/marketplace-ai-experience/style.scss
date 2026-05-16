@@ -1,0 +1,155 @@
+.marketplace-ai-experience {
+	&__header {
+		text-align: center;
+		margin-bottom: 20px;
+	}
+
+	&__icon {
+		display: inline-block;
+		margin: -5px 10px 0 0;
+		color: var(--color-accent);
+		font-size: 30px;
+		line-height: 1;
+		vertical-align: middle;
+	}
+
+	&__title {
+		font-size: 1.75rem;
+		font-weight: 400;
+		line-height: 1.2;
+		margin: 0 0 8px;
+	}
+
+	&__subtitle {
+		font-size: 14px;
+		color: var(--studio-gray-60);
+		max-width: 560px;
+		margin: 0 auto;
+	}
+
+	// Soft gray surface — matches the plugin-detail "install" button
+	// area. Accent blue (--color-accent, same family as the `why`
+	// callout) is used sparingly inside for the icon, submit, chip
+	// hover, and the focus ring. 40px top margin matches the
+	// .plugins-browser-list section spacing on category pages; no
+	// bottom margin — the following section's padding-top handles it.
+	&__prompt-panel {
+		margin: 40px 0 0;
+		padding: 24px 32px 32px;
+		background: var(--studio-gray-0);
+		border-radius: 8px;
+	}
+
+	// Refine accordion — gray CTA banner that expands inline into the
+	// same gray body containing the input + chips. Sits between the
+	// categories strip and the results.
+	&__refine {
+		margin: 40px 0 0;
+		background: var(--studio-gray-0);
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	&__refine-banner {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		width: 100%;
+		padding: 14px 20px;
+		background: transparent;
+		border: 0;
+		color: var(--studio-gray-80);
+		font-size: 14px;
+		font-weight: 400;
+		text-align: left;
+		cursor: pointer;
+		transition: background-color 0.15s ease;
+
+		&:hover,
+		&:focus-visible {
+			background: var(--studio-gray-5);
+		}
+	}
+
+	&__refine-banner-icon {
+		flex-shrink: 0;
+		color: var(--color-accent);
+		font-size: 16px;
+	}
+
+	&__refine-banner-text {
+		flex: 1;
+	}
+
+	&__refine-banner-chevron {
+		flex-shrink: 0;
+		color: var(--studio-gray-40);
+		font-size: 14px;
+		transition: transform 0.15s ease;
+
+		[aria-expanded="true"] & {
+			transform: rotate(180deg);
+		}
+	}
+
+	// Top padding gives the banner's hover background a visible gap
+	// before the input box starts.
+	&__refine-body {
+		padding: 15px 20px 20px;
+	}
+
+	&__prompt-panel-loading {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: 12px;
+		padding: 24px 12px;
+		color: var(--studio-gray-60);
+
+		p {
+			margin: 0;
+			font-size: 14px;
+		}
+	}
+
+	.plugins-browser-item__author-name {
+		color: var(--studio-gray-60);
+	}
+
+	// Base footer uses `margin: auto 0`, which centers it in the leftover
+	// flex space. The "why this fits" callout has variable height, so
+	// without this override the footer floats to a different vertical
+	// position on each card. Pin to the bottom so price / rating align
+	// across the row.
+	.plugins-browser-item__footer {
+		margin-top: auto;
+		margin-bottom: 0;
+	}
+
+	.plugins-browser-item__description {
+		margin-bottom: 20px;
+	}
+
+	.plugins-browser-item__why {
+		margin-bottom: 20px;
+	}
+}
+
+// TODO: remove once this is fixed upstream:
+//   - calypso's `client/layout/utils.ts` stops setting inline
+//     `min-height: initial` on #content (currently does so when the
+//     window is taller than the left sidebar), OR
+//   - the agents-manager package raises specificity on its
+//     `#content { min-height: 100vh; background-color: #fcfcfc }` rule
+//     (currently in `packages/agents-manager/src/components/agent-dock/
+//     style.scss` under the `agents-manager-sidebar-container` body class)
+//     so that inline doesn't beat it.
+//
+// Until then: any short page that mounts MarketplaceAIExperience would
+// otherwise expose the dark dashboard background below the panel when
+// the dock is docked-but-closed. The `:has()` selector forces #content
+// to fill the viewport so the package's #fcfcfc paint covers cleanly.
+body:not(.agents-manager-sidebar-container--sidebar-open) #content:has(.marketplace-ai-experience) {
+	min-height: 100vh !important;
+}
