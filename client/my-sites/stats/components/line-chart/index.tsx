@@ -2,12 +2,67 @@ import { LineChart, type EventHandlerParams, type DataPointDate } from '@automat
 import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
 import { useMomentInSite } from '../../hooks/use-moment-site-zone';
 import StatsEmptyState from '../../stats-empty-state';
 
 import './styles.scss';
+
+const VIEWPORT_EDGE_PAD = 8;
+const FLIP_OFFSET = 24;
+
+function ViewportAwareTooltip( { children }: { children: ReactNode } ) {
+	const ref = useRef< HTMLDivElement >( null );
+	const [ flip, setFlip ] = useState( false );
+
+	useLayoutEffect( () => {
+		const node = ref.current;
+		const parent = node?.parentElement;
+		if ( ! node || ! parent ) {
+			return;
+		}
+
+		// Measure against the parent (visx's TooltipWithBounds wrapper) — its
+		// rect reflects visx's intended position. Our own transform only shifts
+		// this element relative to that parent, so parent.left is stable and
+		// safe to re-evaluate without oscillation.
+		const update = () => {
+			const parentRect = parent.getBoundingClientRect();
+			const ownWidth = node.getBoundingClientRect().width;
+			if ( ! ownWidth ) {
+				return;
+			}
+			const naturalRight = parentRect.left + ownWidth;
+			const overflowsRight = naturalRight > window.innerWidth - VIEWPORT_EDGE_PAD;
+			const wouldFitFlipped = parentRect.left - ownWidth - FLIP_OFFSET >= VIEWPORT_EDGE_PAD;
+			setFlip( overflowsRight && wouldFitFlipped );
+		};
+
+		update();
+
+		// visx applies its position via inline `transform` on the parent and
+		// updates it asynchronously (withBoundingRects). Re-measure when it
+		// changes so we react to the final placement, not the initial one.
+		const observer = new MutationObserver( update );
+		observer.observe( parent, { attributes: true, attributeFilter: [ 'style' ] } );
+		window.addEventListener( 'resize', update );
+		return () => {
+			observer.disconnect();
+			window.removeEventListener( 'resize', update );
+		};
+	}, [ children ] );
+
+	return (
+		<div
+			ref={ ref }
+			className="stats-line-chart-tooltip"
+			style={ flip ? { transform: `translateX(calc(-100% - ${ FLIP_OFFSET }px))` } : undefined }
+		>
+			{ children }
+		</div>
+	);
+}
 
 function StatsLineChart( {
 	chartData = [],
@@ -171,7 +226,7 @@ function StatsLineChart( {
 				nearestDatum.label || ( nearestDatum.date && moment( nearestDatum.date ).format( 'LL' ) );
 
 			return (
-				<div className="stats-line-chart-tooltip">
+				<ViewportAwareTooltip>
 					<div className="module-content-list-item is-date-label">{ tooltipLabel }</div>
 					<ul>
 						{ tooltipPoints.map( ( point ) => (
@@ -183,7 +238,7 @@ function StatsLineChart( {
 							/>
 						) ) }
 					</ul>
-				</div>
+				</ViewportAwareTooltip>
 			);
 		},
 		[ moment, seriesIcons ]
