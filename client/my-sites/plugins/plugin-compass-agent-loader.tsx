@@ -3,6 +3,7 @@
 // chain. Lives at layout level (rendered by `client/layout/index.jsx`)
 // so the dock survives navigation between marketplace sub-routes.
 
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useEffect, useState } from '@wordpress/element';
 import { useSelector, useStore } from 'react-redux';
@@ -55,8 +56,8 @@ export default function PluginCompassAgentLoader( {
 }: {
 	sectionName: string;
 } ): JSX.Element | null {
-	if ( sectionName !== 'plugins' ) {
-		// Fast-path the majority of routes pageviews that aren't in the plugins section.
+	if ( sectionName !== 'plugins' || ! isEnabled( 'plugins/plugin-compass' ) ) {
+		// Fast-path for the majority of routes pageviews that aren't in the plugins section.
 		return null;
 	}
 

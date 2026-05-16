@@ -139,7 +139,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 			);
 		}
 
-		if ( category === DESCRIBE_CATEGORY_SLUG ) {
+		if ( category === DESCRIBE_CATEGORY_SLUG && isEnabled( 'plugins/plugin-compass' ) ) {
 			// Lazy-loaded so the agenttic-ui CSS import (and the rest of
 			// the AI bundle) stays out of the SSR build. Same pattern
 			// AgentsManagerLoader uses for the dock itself.
@@ -260,15 +260,18 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 						</FullWidthSection>
 					</>
 				) }
-				{ selectedSite && category !== DESCRIBE_CATEGORY_SLUG && ( ! category || search ) && (
-					<div
-						className={ clsx( 'marketplace-ai-banner-wrap', {
-							'is-slim': !! search,
-						} ) }
-					>
-						<MarketplaceAIBanner variant={ search ? 'slim' : 'hero' } />
-					</div>
-				) }
+				{ selectedSite &&
+					isEnabled( 'plugins/plugin-compass' ) &&
+					category !== DESCRIBE_CATEGORY_SLUG &&
+					( ! category || search ) && (
+						<div
+							className={ clsx( 'marketplace-ai-banner-wrap', {
+								'is-slim': !! search,
+							} ) }
+						>
+							<MarketplaceAIBanner variant={ search ? 'slim' : 'hero' } />
+						</div>
+					) }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && (
 					<FullWidthSection

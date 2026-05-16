@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __, _x } from '@wordpress/i18n';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import { useSelector } from 'calypso/state';
@@ -1104,6 +1105,11 @@ export function useCategories(
 	// Jetpack sites shouldn't see paid plugins
 	if ( isJetpack && allowed.indexOf( 'paid' ) >= 0 ) {
 		allowed.splice( allowed.indexOf( 'paid' ), 1 );
+	}
+
+	// Plugin Compass `describe` tab is gated behind the feature flag.
+	if ( ! isEnabled( 'plugins/plugin-compass' ) && allowed.indexOf( 'describe' ) >= 0 ) {
+		allowed.splice( allowed.indexOf( 'describe' ), 1 );
 	}
 
 	return Object.fromEntries(
