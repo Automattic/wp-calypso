@@ -39,6 +39,7 @@
 		"global-styles/on-personal-plan": true,
 		"google-my-business": false,
 		"help": true,
+		"help-center/logged-out-fab": true,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": false,
