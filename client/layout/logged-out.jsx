@@ -81,6 +81,9 @@ const loadSupportArticleDialog = () =>
 	);
 
 const HELP_CENTER_FAB_SECTIONS = [
+	'accept-invite',
+	'account-close',
+	'login',
 	'patterns',
 	'performance-profiler',
 	'plugins',
