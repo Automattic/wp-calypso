@@ -34,17 +34,8 @@ const withActors = ( WrappedComponent ) => {
 // `actor` values are opaque synthetic ids (e.g. `wpcom:123`, `mcp:cursor`).
 // `actor_kinds` is derived as the distinct set of id prefixes so analytics
 // can compare MCP-vs-wpcom usage without leaking the underlying ids.
-const selectActor = ( siteId, actors, allActors ) => ( dispatch ) => {
-	if ( 0 === actors.length ) {
-		return dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_actor_filter_changed', { actor_count: 0 } ),
-				updateFilter( siteId, { actor: null, page: 1 } )
-			)
-		);
-	}
-
-	const actorKinds = Array.from(
+const getActorKinds = ( actors ) =>
+	Array.from(
 		new Set(
 			actors
 				.map( ( id ) => {
@@ -57,13 +48,25 @@ const selectActor = ( siteId, actors, allActors ) => ( dispatch ) => {
 		.sort()
 		.join( ',' );
 
+const selectActor = ( siteId, actors, allActors ) => ( dispatch ) => {
+	const eventProps = {
+		actor_count: actors.length,
+		actor_kinds: getActorKinds( actors ),
+		num_actors_available: allActors.length,
+	};
+
+	if ( 0 === actors.length ) {
+		return dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_actor_filter_changed', eventProps ),
+				updateFilter( siteId, { actor: null, page: 1 } )
+			)
+		);
+	}
+
 	return dispatch(
 		withAnalytics(
-			recordTracksEvent( 'calypso_activitylog_actor_filter_changed', {
-				actor_count: actors.length,
-				actor_kinds: actorKinds,
-				num_actors_available: allActors.length,
-			} ),
+			recordTracksEvent( 'calypso_activitylog_actor_filter_changed', eventProps ),
 			updateFilter( siteId, { actor: actors, page: 1 } )
 		)
 	);
