@@ -6,12 +6,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useEffect, useState } from '@wordpress/element';
-import { useSelector, useStore } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import {
 	deliverPicks,
 	setPicks,
 } from 'calypso/my-sites/plugins/marketplace-ai-experience/picks-store';
+import { useStore } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
