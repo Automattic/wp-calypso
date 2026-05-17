@@ -7,6 +7,7 @@ import { HelpCenterArticle } from '@automattic/support-articles';
 import { CardBody, Disabled } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef, lazy, Suspense, Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 /**
@@ -47,7 +48,10 @@ class RoutesErrorBoundary extends Component<
 		if ( this.state.hasError ) {
 			return (
 				<p className="help-center-article__error">
-					Something went wrong. Please close and reopen the Help Center.
+					{ __(
+						'Something went wrong. Please close and reopen the Help Center.',
+						__i18n_text_domain__
+					) }
 				</p>
 			);
 		}
