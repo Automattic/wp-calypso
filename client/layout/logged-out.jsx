@@ -82,6 +82,7 @@ const loadSupportArticleDialog = () =>
 
 const HELP_CENTER_FAB_SECTIONS = [
 	'accept-invite',
+	'checkout',
 	'mailing-lists',
 	'patterns',
 	'performance-profiler',
@@ -169,7 +170,6 @@ const LayoutLoggedOut = ( {
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
 
-	// FAB launches Help Center for logged-out visitors on showcase pages.
 	// Logged-in users use the masterbar control instead.
 	const showHelpCenterFab =
 		! isLoggedIn &&
