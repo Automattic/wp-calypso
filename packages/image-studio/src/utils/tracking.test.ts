@@ -169,22 +169,22 @@ describe( 'reel share tracking helpers', () => {
 		} );
 	} );
 
-	it( 'fires reel_share_clicked with surface, attachment_id and duration_seconds', () => {
+	it( 'fires feature_clip_share_clicked with surface, attachment_id and duration_seconds', () => {
 		trackImageStudioReelShareClicked( {
 			surface: 'sidebar',
 			attachmentId: 555,
 			durationSeconds: 12,
 		} );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_clicked',
+			'jetpack_big_sky_image_studio_feature_clip_share_clicked',
 			expect.objectContaining( { surface: 'sidebar', attachment_id: 555, duration_seconds: 12 } )
 		);
 	} );
 
-	it( 'fires reel_share_clicked without duration_seconds when not provided', () => {
+	it( 'fires feature_clip_share_clicked without duration_seconds when not provided', () => {
 		trackImageStudioReelShareClicked( { surface: 'modal', attachmentId: 555 } );
 		const call = recordTracksEventMock.mock.calls[ 0 ];
-		expect( call[ 0 ] ).toBe( 'jetpack_big_sky_image_studio_reel_share_clicked' );
+		expect( call[ 0 ] ).toBe( 'jetpack_big_sky_image_studio_feature_clip_share_clicked' );
 		expect( call[ 1 ] ).not.toHaveProperty( 'duration_seconds' );
 		expect( call[ 1 ] ).toMatchObject( { surface: 'modal' } );
 	} );
@@ -197,58 +197,58 @@ describe( 'reel share tracking helpers', () => {
 		);
 	} );
 
-	it( 'fires reel_share_post_not_published with surface', () => {
+	it( 'fires feature_clip_share_post_not_published with surface', () => {
 		trackImageStudioReelShareNotPublished( { surface: 'modal' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_post_not_published',
+			'jetpack_big_sky_image_studio_feature_clip_share_post_not_published',
 			expect.objectContaining( { surface: 'modal' } )
 		);
 	} );
 
-	it( 'fires reel_share_invalid_state with surface', () => {
+	it( 'fires feature_clip_share_invalid_state with surface', () => {
 		trackImageStudioReelShareInvalidState( { surface: 'sidebar' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_invalid_state',
+			'jetpack_big_sky_image_studio_feature_clip_share_invalid_state',
 			expect.objectContaining( { surface: 'sidebar' } )
 		);
 	} );
 
-	it( 'fires reel_share_dispatched with surface', () => {
+	it( 'fires feature_clip_share_dispatched with surface', () => {
 		trackImageStudioReelShareDispatched( { surface: 'modal' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_dispatched',
+			'jetpack_big_sky_image_studio_feature_clip_share_dispatched',
 			expect.objectContaining( { surface: 'modal' } )
 		);
 	} );
 
-	it( 'fires reel_share_cancelled with surface', () => {
+	it( 'fires feature_clip_share_cancelled with surface', () => {
 		trackImageStudioReelShareCancelled( { surface: 'sidebar' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_cancelled',
+			'jetpack_big_sky_image_studio_feature_clip_share_cancelled',
 			expect.objectContaining( { surface: 'sidebar' } )
 		);
 	} );
 
-	it( 'fires reel_share_failed with surface and error_message when provided', () => {
+	it( 'fires feature_clip_share_failed with surface and error_message when provided', () => {
 		trackImageStudioReelShareFailed( { surface: 'modal', errorMessage: 'boom' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_failed',
+			'jetpack_big_sky_image_studio_feature_clip_share_failed',
 			expect.objectContaining( { surface: 'modal', error_message: 'boom' } )
 		);
 	} );
 
-	it( 'fires reel_share_failed without error_message when omitted', () => {
+	it( 'fires feature_clip_share_failed without error_message when omitted', () => {
 		trackImageStudioReelShareFailed( { surface: 'sidebar' } );
 		const call = recordTracksEventMock.mock.calls[ 0 ];
-		expect( call[ 0 ] ).toBe( 'jetpack_big_sky_image_studio_reel_share_failed' );
+		expect( call[ 0 ] ).toBe( 'jetpack_big_sky_image_studio_feature_clip_share_failed' );
 		expect( call[ 1 ] ).not.toHaveProperty( 'error_message' );
 		expect( call[ 1 ] ).toMatchObject( { surface: 'sidebar' } );
 	} );
 
-	it( 'fires reel_share_connection_disabled with surface', () => {
+	it( 'fires feature_clip_share_connection_disabled with surface', () => {
 		trackImageStudioReelShareConnectionDisabled( { surface: 'modal' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_connection_disabled',
+			'jetpack_big_sky_image_studio_feature_clip_share_connection_disabled',
 			expect.objectContaining( { surface: 'modal' } )
 		);
 	} );
@@ -256,7 +256,7 @@ describe( 'reel share tracking helpers', () => {
 	it( 'preserves a duration_seconds value of 0', () => {
 		trackImageStudioReelShareClicked( { surface: 'modal', attachmentId: 1, durationSeconds: 0 } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_clicked',
+			'jetpack_big_sky_image_studio_feature_clip_share_clicked',
 			expect.objectContaining( { duration_seconds: 0 } )
 		);
 	} );
@@ -270,39 +270,39 @@ describe( 'generic share tracking helpers', () => {
 		} );
 	} );
 
-	it( 'fires generic_share_clicked with surface and method=web-share', () => {
+	it( 'fires feature_clip_generic_share_clicked with surface and method=web-share', () => {
 		trackImageStudioGenericShareClicked( { surface: 'sidebar', method: 'web-share' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_generic_share_clicked',
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
 			expect.objectContaining( { surface: 'sidebar', method: 'web-share' } )
 		);
 	} );
 
-	it( 'fires generic_share_clicked with surface and method=web-share-unsupported', () => {
+	it( 'fires feature_clip_generic_share_clicked with surface and method=web-share-unsupported', () => {
 		trackImageStudioGenericShareClicked( { surface: 'modal', method: 'web-share-unsupported' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_generic_share_clicked',
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_clicked',
 			expect.objectContaining( { surface: 'modal', method: 'web-share-unsupported' } )
 		);
 	} );
 
-	it( 'fires generic_share_completed with surface and the chosen method', () => {
+	it( 'fires feature_clip_generic_share_completed with surface and the chosen method', () => {
 		trackImageStudioGenericShareCompleted( { surface: 'sidebar', method: 'web-share' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_generic_share_completed',
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_completed',
 			expect.objectContaining( { surface: 'sidebar', method: 'web-share' } )
 		);
 	} );
 
-	it( 'fires generic_share_failed with surface and method only', () => {
+	it( 'fires feature_clip_generic_share_failed with surface and method only', () => {
 		trackImageStudioGenericShareFailed( { surface: 'modal', method: 'web-share-unsupported' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_generic_share_failed',
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_failed',
 			expect.objectContaining( { surface: 'modal', method: 'web-share-unsupported' } )
 		);
 	} );
 
-	it( 'fires generic_share_failed with surface, method, message, and failureKind=http on a fetch failure', () => {
+	it( 'fires feature_clip_generic_share_failed with surface, method, message, and failureKind=http on a fetch failure', () => {
 		trackImageStudioGenericShareFailed( {
 			surface: 'sidebar',
 			method: 'web-share',
@@ -310,7 +310,7 @@ describe( 'generic share tracking helpers', () => {
 			failureKind: 'http',
 		} );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_generic_share_failed',
+			'jetpack_big_sky_image_studio_feature_clip_generic_share_failed',
 			expect.objectContaining( {
 				surface: 'sidebar',
 				method: 'web-share',

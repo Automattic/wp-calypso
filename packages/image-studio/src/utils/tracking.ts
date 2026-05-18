@@ -569,7 +569,7 @@ export function trackImageStudioReelShareClicked( {
 	if ( durationSeconds != null ) {
 		properties.duration_seconds = durationSeconds;
 	}
-	recordImageStudioEvent( 'image_studio_reel_share_clicked', properties );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_clicked', properties );
 }
 
 /**
@@ -596,7 +596,7 @@ export function trackImageStudioReelShareConnectionDisabled( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_reel_share_connection_disabled', { surface } );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_connection_disabled', { surface } );
 }
 
 /**
@@ -609,7 +609,7 @@ export function trackImageStudioReelShareNotPublished( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_reel_share_post_not_published', { surface } );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_post_not_published', { surface } );
 }
 
 /**
@@ -622,7 +622,7 @@ export function trackImageStudioReelShareInvalidState( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_reel_share_invalid_state', { surface } );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_invalid_state', { surface } );
 }
 
 /**
@@ -631,7 +631,7 @@ export function trackImageStudioReelShareInvalidState( {
  * @param options.surface - Where the share originated ('sidebar' | 'modal')
  */
 export function trackImageStudioReelShareCancelled( { surface }: { surface: ShareSurface } ): void {
-	recordImageStudioEvent( 'image_studio_reel_share_cancelled', { surface } );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_cancelled', { surface } );
 }
 
 /**
@@ -644,7 +644,7 @@ export function trackImageStudioReelShareDispatched( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_reel_share_dispatched', { surface } );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_dispatched', { surface } );
 }
 
 /**
@@ -664,7 +664,7 @@ export function trackImageStudioReelShareFailed( {
 	if ( errorMessage ) {
 		properties.error_message = errorMessage;
 	}
-	recordImageStudioEvent( 'image_studio_reel_share_failed', properties );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_failed', properties );
 }
 
 /**
@@ -682,7 +682,7 @@ export function trackImageStudioGenericShareClicked( {
 	surface: ShareSurface;
 	method: 'web-share' | 'web-share-unsupported';
 } ): void {
-	recordImageStudioEvent( 'image_studio_generic_share_clicked', { surface, method } );
+	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_clicked', { surface, method } );
 }
 
 /**
@@ -699,7 +699,10 @@ export function trackImageStudioGenericShareCompleted( {
 	surface: ShareSurface;
 	method: 'web-share';
 } ): void {
-	recordImageStudioEvent( 'image_studio_generic_share_completed', { surface, method } );
+	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_completed', {
+		surface,
+		method,
+	} );
 }
 
 /**
@@ -728,7 +731,7 @@ export function trackImageStudioGenericShareFailed( {
 	if ( failureKind ) {
 		properties.failure_kind = failureKind;
 	}
-	recordImageStudioEvent( 'image_studio_generic_share_failed', properties );
+	recordImageStudioEvent( 'image_studio_feature_clip_generic_share_failed', properties );
 }
 
 /**
