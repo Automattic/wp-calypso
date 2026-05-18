@@ -216,7 +216,9 @@ export async function createAgentConfig(
 		agentUrl: ORCHESTRATOR_AGENT_URL,
 		sessionId,
 		sessionIdStorageKey: getSessionStorageKey( agentId ),
-		authProvider: createCalypsoAuthProvider( siteId ),
+		authProvider: createCalypsoAuthProvider( siteId, {
+			logWpcomJwtFailure: ! isReaderChatAgent( agentId ),
+		} ),
 		enableStreaming: true,
 	};
 

@@ -153,6 +153,9 @@ function injectScopedReset() {
 			left: 16px !important;
 			right: auto !important;
 		}
+		.agents-manager-chat--undocked [data-slot="chat-footer"] > [data-slot="suggestions"] button {
+			background: #ffffff !important;
+		}
 
 	`;
 	document.head.appendChild( style );
@@ -396,7 +399,7 @@ function normalizeSuggestions( items, resultIdPrefix ) {
 }
 
 function getSuggestionsFetchHeaders( siteId = readerSiteId ) {
-	return createCalypsoAuthProvider( siteId )();
+	return createCalypsoAuthProvider( siteId, { logWpcomJwtFailure: false } )();
 }
 
 /**
@@ -826,7 +829,7 @@ function setupTracksEvents() {
 		if ( ! target || typeof target.closest !== 'function' ) {
 			return;
 		}
-		const suggestionBtn = target.closest( '.Suggestions-module_button' );
+		const suggestionBtn = target.closest( '[data-slot="suggestions"] button' );
 		if ( suggestionBtn ) {
 			recordTracksEvent( 'jetpack_reader_chat_suggestion_click', {
 				...baseProps,

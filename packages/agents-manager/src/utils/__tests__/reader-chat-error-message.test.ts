@@ -51,6 +51,12 @@ describe( 'getReaderChatErrorMessage', () => {
 		).toBe( 'Reader Chat is not available for this site.' );
 	} );
 
+	it( 'maps JSON-encoded unavailable error codes to stable Reader Chat copy', () => {
+		expect(
+			getReaderChatErrorMessage( new Error( '{"code":"reader_chat_search_not_supported"}' ) )
+		).toBe( 'Reader Chat is not available for this site.' );
+	} );
+
 	it( 'maps production unavailable message strings to stable Reader Chat copy', () => {
 		expect(
 			getReaderChatErrorMessage(
