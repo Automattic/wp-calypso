@@ -130,31 +130,31 @@ describe( 'useGenericShare', () => {
 
 	describe( 'isVisible', () => {
 		it( 'is true with video state, correct entry point, and not processing', () => {
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			expect( result.current.isVisible ).toBe( true );
 		} );
 
 		it( 'is false on a different entry point', () => {
 			mockState.entryPoint = 'media_library';
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			expect( result.current.isVisible ).toBe( false );
 		} );
 
 		it( 'is false without a video URL', () => {
 			mockState.currentVideoUrl = null;
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			expect( result.current.isVisible ).toBe( false );
 		} );
 
 		it( 'is false without an attachment ID', () => {
 			mockState.currentAttachmentId = null;
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			expect( result.current.isVisible ).toBe( false );
 		} );
 
 		it( 'is false while AI is regenerating', () => {
 			mockState.isAiProcessing = true;
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			expect( result.current.isVisible ).toBe( false );
 		} );
 	} );
@@ -165,7 +165,7 @@ describe( 'useGenericShare', () => {
 			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'video' ], { type: 'video/mp4' } ) );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );
@@ -176,8 +176,11 @@ describe( 'useGenericShare', () => {
 			);
 			expect( window.open ).not.toHaveBeenCalled();
 			expect( mockAddNotice ).not.toHaveBeenCalled();
-			expect( mockTrackClicked ).toHaveBeenCalledWith( { method: 'web-share' } );
-			expect( mockTrackCompleted ).toHaveBeenCalledWith( { method: 'web-share' } );
+			expect( mockTrackClicked ).toHaveBeenCalledWith( { surface: 'modal', method: 'web-share' } );
+			expect( mockTrackCompleted ).toHaveBeenCalledWith( {
+				surface: 'modal',
+				method: 'web-share',
+			} );
 		} );
 
 		it( 'silently exits when the user dismisses the share sheet', async () => {
@@ -185,7 +188,7 @@ describe( 'useGenericShare', () => {
 			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );
@@ -194,7 +197,7 @@ describe( 'useGenericShare', () => {
 			expect( mockAddNotice ).not.toHaveBeenCalled();
 			// clicked fires before the work starts, so the funnel still records the attempt
 			// even though the silent-dismiss path emits no failed/completed.
-			expect( mockTrackClicked ).toHaveBeenCalledWith( { method: 'web-share' } );
+			expect( mockTrackClicked ).toHaveBeenCalledWith( { surface: 'modal', method: 'web-share' } );
 			expect( mockTrackFailed ).not.toHaveBeenCalled();
 			expect( mockTrackCompleted ).not.toHaveBeenCalled();
 		} );
@@ -204,7 +207,7 @@ describe( 'useGenericShare', () => {
 			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );
@@ -212,7 +215,11 @@ describe( 'useGenericShare', () => {
 			expect( window.open ).not.toHaveBeenCalled();
 			expect( mockAddNotice ).toHaveBeenCalledWith( expect.stringMatching( NOTICE_RE ), 'error' );
 			expect( mockTrackFailed ).toHaveBeenCalledWith(
-				expect.objectContaining( { method: 'web-share', message: 'NotAllowedError' } )
+				expect.objectContaining( {
+					surface: 'modal',
+					method: 'web-share',
+					message: 'NotAllowedError',
+				} )
 			);
 			expect( mockTrackCompleted ).not.toHaveBeenCalled();
 		} );
@@ -223,14 +230,18 @@ describe( 'useGenericShare', () => {
 				.fn()
 				.mockResolvedValue( { ok: false, status: 404 } ) as unknown as typeof fetch;
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );
 
 			expect( window.open ).not.toHaveBeenCalled();
 			expect( mockTrackFailed ).toHaveBeenCalledWith(
-				expect.objectContaining( { method: 'web-share', failureKind: 'http' } )
+				expect.objectContaining( {
+					surface: 'modal',
+					method: 'web-share',
+					failureKind: 'http',
+				} )
 			);
 			expect( mockAddNotice ).toHaveBeenCalledWith( expect.stringMatching( NOTICE_RE ), 'error' );
 		} );
@@ -241,29 +252,41 @@ describe( 'useGenericShare', () => {
 			setNavigatorShare( { share: jest.fn(), canShare: jest.fn().mockReturnValue( false ) } );
 			global.fetch = jest.fn() as unknown as typeof fetch;
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );
 
 			expect( global.fetch ).not.toHaveBeenCalled();
 			expect( window.open ).not.toHaveBeenCalled();
-			expect( mockTrackClicked ).toHaveBeenCalledWith( { method: 'web-share-unsupported' } );
-			expect( mockTrackFailed ).toHaveBeenCalledWith( { method: 'web-share-unsupported' } );
+			expect( mockTrackClicked ).toHaveBeenCalledWith( {
+				surface: 'modal',
+				method: 'web-share-unsupported',
+			} );
+			expect( mockTrackFailed ).toHaveBeenCalledWith( {
+				surface: 'modal',
+				method: 'web-share-unsupported',
+			} );
 			expect( mockAddNotice ).toHaveBeenCalledWith( expect.stringMatching( NOTICE_RE ), 'error' );
 		} );
 
 		it( 'shows an error notice when the Web Share API is missing entirely', async () => {
 			setNavigatorShare( { share: undefined, canShare: undefined } );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );
 
 			expect( window.open ).not.toHaveBeenCalled();
-			expect( mockTrackClicked ).toHaveBeenCalledWith( { method: 'web-share-unsupported' } );
-			expect( mockTrackFailed ).toHaveBeenCalledWith( { method: 'web-share-unsupported' } );
+			expect( mockTrackClicked ).toHaveBeenCalledWith( {
+				surface: 'modal',
+				method: 'web-share-unsupported',
+			} );
+			expect( mockTrackFailed ).toHaveBeenCalledWith( {
+				surface: 'modal',
+				method: 'web-share-unsupported',
+			} );
 			expect( mockAddNotice ).toHaveBeenCalledWith( expect.stringMatching( NOTICE_RE ), 'error' );
 		} );
 
@@ -274,7 +297,7 @@ describe( 'useGenericShare', () => {
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () =>
-				useGenericShare( {
+				useGenericShare( 'sidebar', {
 					url: 'https://example.com/sidebar-clip.mp4',
 					attachmentId: 999,
 				} )
@@ -292,7 +315,7 @@ describe( 'useGenericShare', () => {
 			// And NOT through the in-modal addNotice path.
 			expect( mockAddNotice ).not.toHaveBeenCalled();
 			expect( mockTrackFailed ).toHaveBeenCalledWith(
-				expect.objectContaining( { method: 'web-share' } )
+				expect.objectContaining( { surface: 'sidebar', method: 'web-share' } )
 			);
 		} );
 	} );
@@ -307,7 +330,7 @@ describe( 'useGenericShare', () => {
 			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 
 			await act( async () => {
 				const firstClick = result.current.handleShare();
@@ -323,7 +346,7 @@ describe( 'useGenericShare', () => {
 
 	describe( 'isSharing', () => {
 		it( 'starts false', () => {
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			expect( result.current.isSharing ).toBe( false );
 		} );
 
@@ -336,7 +359,7 @@ describe( 'useGenericShare', () => {
 			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 
 			let firstClick: Promise< void > = Promise.resolve();
 			await act( async () => {
@@ -360,7 +383,7 @@ describe( 'useGenericShare', () => {
 			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );
@@ -373,7 +396,7 @@ describe( 'useGenericShare', () => {
 			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );
@@ -384,7 +407,7 @@ describe( 'useGenericShare', () => {
 		it( 'resets to false when file sharing is unavailable', async () => {
 			setNavigatorShare( { share: jest.fn(), canShare: jest.fn().mockReturnValue( false ) } );
 
-			const { result } = renderHook( () => useGenericShare() );
+			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
 				await result.current.handleShare();
 			} );

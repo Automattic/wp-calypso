@@ -13,6 +13,7 @@ import { Button } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { share } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
@@ -24,7 +25,11 @@ import { useReelShare } from '../hooks/use-reel-share';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
-import { trackImageStudioOpened } from '../utils/tracking';
+import {
+	trackImageStudioFeatureClipAddedToPost,
+	trackImageStudioFeatureClipPanelViewed,
+	trackImageStudioOpened,
+} from '../utils/tracking';
 import { FEATURE_CLIP_META_KEY } from './feature-clip-meta';
 import './feature-clip-sidebar.scss';
 
@@ -38,7 +43,17 @@ interface MediaRecord {
 	media_details?: { length?: number };
 }
 
-async function openImageStudioForFeatureClip(): Promise< void > {
+/**
+ * Open Image Studio for the Feature Clip flow.
+ *
+ * @param mode - Telemetry label only: `Generate` for a first-time clip,
+ *               `Edit` when regenerating an existing one. It is not forwarded
+ *               to `openImageStudio` — the modal's actual mode is derived from
+ *               the entry point — so analysts read `mode` on the resulting
+ *               `image_studio_opened` event to split first-Generate from
+ *               Regenerate.
+ */
+async function openImageStudioForFeatureClip( mode: ImageStudioMode ): Promise< void > {
 	const { openImageStudio } = dispatch( imageStudioStore );
 	const { setCurrentVideoUrl, setCurrentAttachmentId, setCurrentDurationSeconds } = dispatch(
 		videoStudioStore
@@ -54,7 +69,7 @@ async function openImageStudioForFeatureClip(): Promise< void > {
 	] );
 
 	trackImageStudioOpened( {
-		mode: ImageStudioMode.Generate,
+		mode,
 		entryPoint: ImageStudioEntryPoint.PostEditorFeatureClip,
 	} );
 
@@ -72,8 +87,8 @@ function FeatureClipPreview( {
 	attachmentId,
 	durationSeconds,
 }: FeatureClipPreviewProps ): JSX.Element {
-	const reel = useReelShare( { url: videoUrl, attachmentId, durationSeconds } );
-	const generic = useGenericShare( { url: videoUrl, attachmentId } );
+	const reel = useReelShare( 'sidebar', { url: videoUrl, attachmentId, durationSeconds } );
+	const generic = useGenericShare( 'sidebar', { url: videoUrl, attachmentId } );
 
 	const reelLabel = reel.isSharing
 		? __( 'Sharing on Instagram…', __i18n_text_domain__ )
@@ -88,6 +103,7 @@ function FeatureClipPreview( {
 			insertBlocks?: ( blocks: unknown ) => void;
 		};
 		insertBlocks?.( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+		trackImageStudioFeatureClipAddedToPost( { attachmentId } );
 	};
 
 	return (
@@ -149,7 +165,7 @@ function FeatureClipPreview( {
 					variant="secondary"
 					className="image-studio-feature-clip-panel__bottom-action"
 					__next40pxDefaultSize
-					onClick={ openImageStudioForFeatureClip }
+					onClick={ () => openImageStudioForFeatureClip( ImageStudioMode.Edit ) }
 				>
 					{ __( 'Regenerate', __i18n_text_domain__ ) }
 				</Button>
@@ -171,7 +187,7 @@ function FeatureClipEmptyState(): JSX.Element {
 				variant="secondary"
 				className="image-studio-feature-clip-panel__cta"
 				__next40pxDefaultSize
-				onClick={ openImageStudioForFeatureClip }
+				onClick={ () => openImageStudioForFeatureClip( ImageStudioMode.Generate ) }
 			>
 				{ __( 'Generate clip', __i18n_text_domain__ ) }
 			</Button>
@@ -236,6 +252,12 @@ function FeatureClipPanel(): JSX.Element {
 		},
 		[ featureClipId ]
 	);
+
+	// Fire one impression per panel mount — the denominator for sidebar
+	// engagement rates. Empty deps: the panel mounts once per editor load.
+	useEffect( () => {
+		trackImageStudioFeatureClipPanelViewed();
+	}, [] );
 
 	const titleNode = (
 		<span className="image-studio-feature-clip-panel__title">

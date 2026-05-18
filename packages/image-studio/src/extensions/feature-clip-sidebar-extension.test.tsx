@@ -11,6 +11,8 @@ import React from 'react';
 const mockOpenImageStudio = jest.fn();
 const mockRegisterPlugin = jest.fn();
 const mockTrackOpened = jest.fn();
+const mockTrackAddedToPost = jest.fn();
+const mockTrackPanelViewed = jest.fn();
 const mockSetCurrentVideoUrl = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentAttachmentId = jest.fn().mockResolvedValue( undefined );
 const mockSetCurrentDurationSeconds = jest.fn().mockResolvedValue( undefined );
@@ -91,6 +93,16 @@ jest.mock( '@wordpress/data', () => ( {
 	},
 } ) );
 
+// Capture React's useEffect once, at module-load time, bound to the same
+// React instance @testing-library/react holds. The suite calls
+// jest.resetModules() per test, which would otherwise hand the component a
+// freshly-required React whose hook dispatcher react-dom never populates.
+const mockUseEffect = jest.requireActual< typeof import('react') >( 'react' ).useEffect;
+
+jest.mock( '@wordpress/element', () => ( {
+	useEffect: mockUseEffect,
+} ) );
+
 jest.mock( '@wordpress/editor', () => ( {
 	PluginDocumentSettingPanel: ( {
 		children,
@@ -157,6 +169,8 @@ jest.mock( '../stores/video-studio', () => ( {
 
 jest.mock( '../utils/tracking', () => ( {
 	trackImageStudioOpened: ( ...args: unknown[] ) => mockTrackOpened( ...args ),
+	trackImageStudioFeatureClipAddedToPost: ( ...args: unknown[] ) => mockTrackAddedToPost( ...args ),
+	trackImageStudioFeatureClipPanelViewed: ( ...args: unknown[] ) => mockTrackPanelViewed( ...args ),
 } ) );
 
 jest.mock( './feature-clip-sidebar.scss', () => ( {} ), { virtual: true } );
@@ -167,6 +181,8 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockOpenImageStudio.mockClear();
 		mockRegisterPlugin.mockClear();
 		mockTrackOpened.mockClear();
+		mockTrackAddedToPost.mockClear();
+		mockTrackPanelViewed.mockClear();
 		mockSetCurrentVideoUrl.mockClear();
 		mockSetCurrentAttachmentId.mockClear();
 		mockSetCurrentDurationSeconds.mockClear();
@@ -258,13 +274,19 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( mockSetCurrentAttachmentId ).toHaveBeenCalledWith( null );
 			expect( mockSetCurrentDurationSeconds ).toHaveBeenCalledWith( null );
 			expect( mockTrackOpened ).toHaveBeenCalledWith(
-				expect.objectContaining( { entryPoint: 'post_editor_feature_clip' } )
+				expect.objectContaining( { entryPoint: 'post_editor_feature_clip', mode: 'generate' } )
 			);
 			expect( mockOpenImageStudio ).toHaveBeenCalledWith(
 				undefined,
 				undefined,
 				'post_editor_feature_clip'
 			);
+		} );
+
+		it( 'fires the panel-viewed impression event on mount', () => {
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+			expect( mockTrackPanelViewed ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
@@ -376,7 +398,21 @@ describe( 'feature-clip-sidebar-extension', () => {
 			);
 		} );
 
-		it( 'inserts a core/video block when Add to post is clicked', () => {
+		it( 'tracks Regenerate as mode=edit to distinguish it from a first generate', async () => {
+			setupClip();
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Regenerate' } ) );
+			await Promise.resolve();
+			await Promise.resolve();
+
+			expect( mockTrackOpened ).toHaveBeenCalledWith(
+				expect.objectContaining( { entryPoint: 'post_editor_feature_clip', mode: 'edit' } )
+			);
+		} );
+
+		it( 'inserts a core/video block and tracks the add-to-post conversion', () => {
 			setupClip();
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
 			render( <FeatureClipPanel /> );
@@ -388,6 +424,7 @@ describe( 'feature-clip-sidebar-extension', () => {
 				src: 'https://files.wordpress.com/clip.mp4',
 			} );
 			expect( mockInsertBlocks ).toHaveBeenCalledTimes( 1 );
+			expect( mockTrackAddedToPost ).toHaveBeenCalledWith( { attachmentId: 42 } );
 		} );
 	} );
 } );
