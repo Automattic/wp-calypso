@@ -426,20 +426,6 @@ describe( 'feature-clip-sidebar-extension', () => {
 			);
 		} );
 
-		it( 'tracks Regenerate as mode=edit to distinguish it from a first generate', async () => {
-			setupClip();
-			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
-			render( <FeatureClipPanel /> );
-
-			fireEvent.click( screen.getByRole( 'button', { name: 'Regenerate' } ) );
-			await Promise.resolve();
-			await Promise.resolve();
-
-			expect( mockTrackOpened ).toHaveBeenCalledWith(
-				expect.objectContaining( { entryPoint: 'post_editor_feature_clip', mode: 'edit' } )
-			);
-		} );
-
 		it( 'inserts a core/video block and tracks the add-to-post conversion', () => {
 			setupClip();
 			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );

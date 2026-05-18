@@ -43,16 +43,7 @@ interface MediaRecord {
 	media_details?: { length?: number };
 }
 
-/**
- * Open Image Studio for the Feature Clip flow.
- * @param mode - Telemetry label only: `Generate` for a first-time clip,
- *               `Edit` when regenerating an existing one. It is not forwarded
- *               to `openImageStudio` — the modal's actual mode is derived from
- *               the entry point — so analysts read `mode` on the resulting
- *               `image_studio_opened` event to split first-Generate from
- *               Regenerate.
- */
-async function openImageStudioForFeatureClip( mode: ImageStudioMode ): Promise< void > {
+async function openImageStudioForFeatureClip(): Promise< void > {
 	const { openImageStudio } = dispatch( imageStudioStore );
 	const { setCurrentVideoUrl, setCurrentAttachmentId, setCurrentDurationSeconds } = dispatch(
 		videoStudioStore
@@ -68,7 +59,7 @@ async function openImageStudioForFeatureClip( mode: ImageStudioMode ): Promise< 
 	] );
 
 	trackImageStudioOpened( {
-		mode,
+		mode: ImageStudioMode.Generate,
 		entryPoint: ImageStudioEntryPoint.PostEditorFeatureClip,
 	} );
 
@@ -170,7 +161,7 @@ function FeatureClipPreview( {
 					variant="secondary"
 					className="image-studio-feature-clip-panel__bottom-action"
 					__next40pxDefaultSize
-					onClick={ () => openImageStudioForFeatureClip( ImageStudioMode.Edit ) }
+					onClick={ openImageStudioForFeatureClip }
 				>
 					{ __( 'Regenerate', __i18n_text_domain__ ) }
 				</Button>
@@ -192,7 +183,7 @@ function FeatureClipEmptyState(): JSX.Element {
 				variant="secondary"
 				className="image-studio-feature-clip-panel__cta"
 				__next40pxDefaultSize
-				onClick={ () => openImageStudioForFeatureClip( ImageStudioMode.Generate ) }
+				onClick={ openImageStudioForFeatureClip }
 			>
 				{ __( 'Generate clip', __i18n_text_domain__ ) }
 			</Button>
