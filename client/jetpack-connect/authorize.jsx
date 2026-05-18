@@ -159,6 +159,8 @@ export class JetpackAuthorize extends Component {
 			from,
 			is_mobile_app_flow: isMobileAppFlow,
 			site: clientId,
+			is_secondary_connection: this.isSecondaryConnection(),
+			is_admin_connection: this.isAdminConnection(),
 		};
 
 		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
@@ -528,12 +530,12 @@ export class JetpackAuthorize extends Component {
 		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
 	}
 
-	isSecondaryConnection() {
-		return this.isFromJetpackConnector() && this.props.authQuery.alreadyAuthorized;
+	isSecondaryConnection( props = this.props ) {
+		return this.isFromJetpackConnector( props ) && props.authQuery.alreadyAuthorized;
 	}
 
-	isAdminConnection() {
-		return getRoleFromScope( this.props.authQuery.scope ) === 'administrator';
+	isAdminConnection( props = this.props ) {
+		return getRoleFromScope( props.authQuery.scope ) === 'administrator';
 	}
 
 	getCompanyName() {
@@ -638,7 +640,10 @@ export class JetpackAuthorize extends Component {
 			return this.redirect();
 		}
 
-		recordTracksEvent( 'calypso_jpc_approve_click' );
+		recordTracksEvent( 'calypso_jpc_approve_click', {
+			is_secondary_connection: this.isSecondaryConnection(),
+			is_admin_connection: this.isAdminConnection(),
+		} );
 
 		if ( 'woocommerce-core-profiler' === from ) {
 			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
@@ -1086,14 +1091,15 @@ export class JetpackAuthorize extends Component {
 			const isSecondary = this.isSecondaryConnection();
 			const isAdmin = this.isAdminConnection();
 
-			let cards;
-			if ( isSecondary && isAdmin ) {
-				( { cards } = getSecondaryAdminFeatureCards( authQuery.plugins ) );
-			} else if ( isSecondary && ! isAdmin ) {
-				cards = [];
-			} else {
-				( { cards } = getConnectorFeatureCards( authQuery.plugins ) );
-			}
+			// Non-admin secondary connections show no cards — SSO is the
+			// sole benefit and the subtitle already communicates it.
+			const cards =
+				isSecondary && ! isAdmin
+					? []
+					: ( isSecondary
+							? getSecondaryAdminFeatureCards( authQuery.plugins )
+							: getConnectorFeatureCards( authQuery.plugins )
+					  ).cards;
 
 			return (
 				<>

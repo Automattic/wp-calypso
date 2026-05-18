@@ -202,6 +202,77 @@ describe( 'JetpackAuthorize', () => {
 		expect( screen.getByRole( 'article', { name: 'Jetpack Boost' } ) ).toBeInTheDocument();
 	} );
 
+	describe( 'secondary connection branches', () => {
+		test( 'admin secondary connection shows secondary cards and Connect account button, no blocking notice', () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from: 'jetpack-connector',
+						alreadyAuthorized: true,
+						plugins: [ 'jetpack' ],
+						scope: 'administrator:fooBarBaz',
+					} }
+				/>
+			);
+
+			// Secondary admin card with SSO bullet is rendered.
+			expect( screen.getByRole( 'article', { name: 'Jetpack' } ) ).toBeInTheDocument();
+			expect( screen.getByText( /SSO/ ) ).toBeInTheDocument();
+
+			// The blocking "already connected by other user" notice is NOT shown.
+			expect(
+				screen.queryByText( /already connected to a different WordPress.com user/ )
+			).not.toBeInTheDocument();
+
+			// The Connect account button is present.
+			expect( screen.getByText( 'Connect account' ) ).toBeInTheDocument();
+		} );
+
+		test( 'non-admin secondary connection shows no feature cards and uses simple subtitle', () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from: 'jetpack-connector',
+						alreadyAuthorized: true,
+						plugins: [ 'jetpack' ],
+						scope: 'editor:fooBarBaz',
+					} }
+				/>
+			);
+
+			// No feature cards rendered.
+			expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
+
+			// Simple non-admin subtitle is shown.
+			expect(
+				screen.getByText( 'Connect to manage this site using your WordPress.com account.' )
+			).toBeInTheDocument();
+		} );
+
+		test( 'from=my-jetpack with alreadyAuthorized still shows ALREADY_CONNECTED_BY_OTHER_USER notice', () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from: 'my-jetpack',
+						alreadyAuthorized: true,
+						plugins: [ 'jetpack' ],
+					} }
+				/>
+			);
+
+			// The blocking notice IS shown for non-connector flows.
+			expect(
+				screen.getByText( /already connected to a different WordPress.com user/ )
+			).toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'isSso', () => {
 		const isSso = new JetpackAuthorize().isSso;
 		const queryDataSiteId = 12349876;
