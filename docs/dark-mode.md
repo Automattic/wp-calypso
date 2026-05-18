@@ -64,6 +64,16 @@ Prefer these variable families before adding a custom value:
 - `--wp-admin-theme-color*` for accent and focus colors.
 - `--color-*` only when working with shared Calypso code that already expects Calypso theme properties.
 
+### Classic Calypso Neutral Tokens
+
+In classic Calypso surfaces such as Reader and Themes, dark mode aliases legacy `--color-neutral-*` tokens to semantic roles. This is a compatibility bridge, not an inverted numeric gray ramp:
+
+- Low neutral values such as `--color-neutral-0`, `--color-neutral-5`, and `--color-neutral-10` map to surfaces and borders.
+- Mid neutral values such as `--color-neutral-40`, `--color-neutral-50`, and `--color-neutral-60` map to muted text.
+- High neutral values such as `--color-neutral-70`, `--color-neutral-80`, and `--color-neutral-100` map to primary text.
+
+When updating a component, prefer replacing neutral usages with semantic tokens like `--color-surface`, `--color-border-subtle`, `--color-text`, and `--color-text-subtle`. If an older component depends on a neutral token with a local meaning, remap that token at the component boundary rather than adding broad property overrides. For example, `calypso-notice` keeps its existing styles and remaps the tokens it consumes in dark mode.
+
 Avoid hardcoded `#fff`, `#000`, and gray values for surfaces, borders, and text unless the value is intentionally brand, media, or asset related. If a component needs a fixed color, include a short comment explaining why it should not follow the theme.
 
 ## Adding Dark Overrides

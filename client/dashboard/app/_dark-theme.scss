@@ -1055,6 +1055,11 @@
 		var( --dashboard__foreground-color-error )
 	);
 
+	// Classic Calypso uses `--color-neutral-*` as a legacy compatibility scale,
+	// not a purely numeric gray ramp: older components use the same family for
+	// surfaces, borders, muted text, and primary text. Keep these aliases mapped
+	// to semantic roles and prefer local token remaps when a component needs a
+	// different meaning for one neutral token.
 	--color-neutral-10: var( --dashboard-surface__border-color );
 	--color-neutral-0: var( --dashboard-surface__background-color );
 	--color-neutral-5: var( --dashboard-surface__border-color );
