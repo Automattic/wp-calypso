@@ -49,10 +49,10 @@ describe( 'mastodonProfile controller', () => {
 		expect( mockNext ).toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/mastodon when id is non-finite', () => {
+	it( 'redirects to /reader/connections when id is non-finite', () => {
 		const ctx = makeContext( { id: 'NaN', actor: '108020' } );
 		mastodonProfile( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/mastodon' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
@@ -86,10 +86,10 @@ describe( 'mastodonThread controller', () => {
 		expect( mockNext ).toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/mastodon when id is non-finite', () => {
+	it( 'redirects to /reader/connections when id is non-finite', () => {
 		const ctx = makeContext( { id: 'NaN', status_id: '108020' } );
 		mastodonThread( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/mastodon' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
@@ -109,10 +109,10 @@ describe( 'mastodonTagFeed controller', () => {
 		expect( mockNext ).toHaveBeenCalled();
 	} );
 
-	it( 'redirects to /reader/mastodon when id is non-finite', () => {
+	it( 'redirects to /reader/connections when id is non-finite', () => {
 		const ctx = makeContext( { id: 'NaN', hashtag: 'rust' } );
 		mastodonTagFeed( ctx, mockNext );
-		expect( page.redirect ).toHaveBeenCalledWith( '/reader/mastodon' );
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );
 
