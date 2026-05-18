@@ -521,6 +521,7 @@ const sections = [
 		module: 'calypso/reader/connections',
 		group: 'reader',
 		enableLoggedOut: false,
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
