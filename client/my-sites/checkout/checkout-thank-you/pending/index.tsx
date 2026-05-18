@@ -1,6 +1,7 @@
 import { receiptQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
+import { ExternalLink } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
@@ -431,15 +432,17 @@ function displayRenewalSuccessNotice( {
 					},
 					components: {
 						a: (
-							<a
+							<ExternalLink
 								href={ localizeUrl(
 									'https://wordpress.com/support/manage-purchases/automatic-renewal/'
 								) }
-								target="_blank"
-								rel="noreferrer noopener"
+								localizeUrl={ false }
+								icon
 							/>
 						),
 					},
+					comment:
+						'Toast shown after a manual subscription renewal. %(productName)s is the renewed product. {{a}}…{{/a}} wraps the "Learn more about renewals" link text.',
 				}
 			),
 			{ displayOnNextPage: true }
