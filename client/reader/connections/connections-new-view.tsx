@@ -139,7 +139,7 @@ export function ConnectionsNewView() {
 		tagline: String( translate( 'Already on Bluesky? Bring it over.' ) ),
 		body: String(
 			translate(
-				'Plug your bsky.social handle in and your Bluesky timeline shows up here, ready to scroll and reply to without leaving the Reader.'
+				'Plug your Bluesky handle in — from bsky.social or any other ATproto server — and your timeline shows up here, ready to scroll and reply to without leaving the Reader.'
 			)
 		),
 		href: '/reader/atmosphere/connect',
