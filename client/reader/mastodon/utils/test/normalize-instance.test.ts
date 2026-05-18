@@ -56,6 +56,21 @@ describe( 'normalizeInstance', () => {
 		expect( normalizeInstance( 'mastodon.social.' ) ).toBe( 'mastodon.social' );
 	} );
 
+	it.each( [
+		[ 'fedi.instance.tld', 'fedi.instance.tld' ],
+		[ 'https://fedi.instance.tld', 'fedi.instance.tld' ],
+		[ 'https://fedi.instance.tld/', 'fedi.instance.tld' ],
+		[ 'https://fedi.instance.tld/@user', 'fedi.instance.tld' ],
+		[ 'https://fedi.instance.tld/web/timelines/home', 'fedi.instance.tld' ],
+		[ '@user@fedi.instance.tld', 'fedi.instance.tld' ],
+		[ 'user@fedi.instance.tld', 'fedi.instance.tld' ],
+		[ 'Fedi.Instance.TLD', 'fedi.instance.tld' ],
+		[ 'fedi.instance.tld:8443', 'fedi.instance.tld:8443' ],
+		[ 'social.fedi.instance.tld', 'social.fedi.instance.tld' ],
+	] )( 'normalizes subdomain host %s to %s', ( input, expected ) => {
+		expect( normalizeInstance( input ) ).toBe( expected );
+	} );
+
 	it( 'preserves an explicit port', () => {
 		expect( normalizeInstance( 'mastodon.social:8443' ) ).toBe( 'mastodon.social:8443' );
 		expect( normalizeInstance( 'https://mastodon.social:8443' ) ).toBe( 'mastodon.social:8443' );
