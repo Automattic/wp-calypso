@@ -112,7 +112,7 @@ Output valid JSON only, nothing else.`;
  * Highlights-specific system prompt. Constraints match the editorial user
  * prompt in buildHighlightsClipSuggestionsPrompt — 2-8 word labels, 6-15
  * word prompt sentences, no cinematography axes. The cinematic prompt's
- * "three axes" language is wrong for this style.
+ * multi-axis directional language is wrong for this style.
  */
 function buildHighlightsClipSystemPrompt( suggestionPrompt: string, locale: string ): string {
 	return `You generate suggestion chips for a short summary-video composer. You DO NOT call any tools. You DO NOT generate, edit, or modify any media. You return only JSON.
