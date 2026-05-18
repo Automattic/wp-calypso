@@ -52,7 +52,7 @@ interface SpotlightItem {
 	href: string;
 }
 
-const SPOTLIGHT_LIMIT = 3;
+const SPOTLIGHT_LIMIT = 4;
 const STALE_TIME_MS = 60_000;
 const MAX_SNIPPET_CHARS = 140;
 
