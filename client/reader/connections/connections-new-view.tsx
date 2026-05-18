@@ -187,7 +187,7 @@ export function ConnectionsNewView() {
 
 	return (
 		<ReaderMain className="connections-view">
-			<DocumentHead title={ translate( 'Add an account ‹ Pulse ‹ Reader' ) } />
+			<DocumentHead title={ translate( 'Add an account ‹ Social ‹ Reader' ) } />
 			<NavigationHeader
 				title={ translate( 'Add a social account' ) }
 				subtitle={ translate(

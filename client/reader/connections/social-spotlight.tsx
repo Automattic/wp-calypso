@@ -87,7 +87,7 @@ function spotlightHrefFor(
 	return post.permalink;
 }
 
-export function PulseSpotlight( { connections }: Props ) {
+export function SocialSpotlight( { connections }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -100,7 +100,7 @@ export function PulseSpotlight( { connections }: Props ) {
 	// `queryClient.getQueryData`.
 	const queries = useQueries( {
 		queries: connections.map( ( connection ) => ( {
-			queryKey: [ 'reader', 'pulse-spotlight', connection.protocol, connection.id ],
+			queryKey: [ 'reader', 'social-spotlight', connection.protocol, connection.id ],
 			queryFn: () => {
 				if ( connection.protocol === 'atmosphere' ) {
 					return getAtmosphereTimeline( { connectionId: connection.id } );
@@ -144,10 +144,10 @@ export function PulseSpotlight( { connections }: Props ) {
 					// shape doesn't go silently unnoticed.
 					logToLogstash( {
 						feature: 'calypso_client',
-						message: 'Reader Pulse Spotlight: mapper failed',
+						message: 'Reader Social Spotlight: mapper failed',
 						severity: 'warning',
 						extra: {
-							type: 'reader_pulse_spotlight_map_failed',
+							type: 'reader_social_spotlight_map_failed',
 							protocol: connection.protocol,
 							connection_id: connection.id,
 							error: error instanceof Error ? error.message : String( error ),
@@ -176,7 +176,7 @@ export function PulseSpotlight( { connections }: Props ) {
 
 	const isLoading = queries.some( ( q ) => q.isPending );
 
-	// While first pages are still loading, render nothing — the Pulse
+	// While first pages are still loading, render nothing — the Social
 	// overview's own spinner already covers the slow case, and a flash of
 	// "no posts yet" before items resolve would read as broken. Same for
 	// the steady state with no scoreable posts; the strip is opt-in noise.
@@ -186,7 +186,7 @@ export function PulseSpotlight( { connections }: Props ) {
 
 	const handleClick = ( item: SpotlightItem ) => {
 		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_pulse_spotlight_clicked', {
+			recordReaderTracksEvent( 'calypso_reader_social_spotlight_clicked', {
 				protocol: item.protocol,
 				connection_id: item.connectionId,
 				score: item.score,
@@ -195,33 +195,33 @@ export function PulseSpotlight( { connections }: Props ) {
 	};
 
 	return (
-		<section className="pulse-spotlight" aria-labelledby="pulse-spotlight-heading">
-			<header className="pulse-spotlight__header">
-				<h2 id="pulse-spotlight-heading" className="pulse-spotlight__title">
+		<section className="social-spotlight" aria-labelledby="social-spotlight-heading">
+			<header className="social-spotlight__header">
+				<h2 id="social-spotlight-heading" className="social-spotlight__title">
 					{ translate( 'What’s hot' ) }
 				</h2>
-				<p className="pulse-spotlight__subtitle">
+				<p className="social-spotlight__subtitle">
 					{ translate( 'The most-reacted-to posts across your connected networks right now.' ) }
 				</p>
 			</header>
-			<ul className="pulse-spotlight__list">
+			<ul className="social-spotlight__list">
 				{ items.map( ( item ) => {
 					const author = item.post.author;
 					const avatar = author.avatar;
 					return (
 						<li
 							key={ item.key }
-							className={ `pulse-spotlight__card pulse-spotlight__card--${ item.protocol }` }
+							className={ `social-spotlight__card social-spotlight__card--${ item.protocol }` }
 						>
 							<a
-								className="pulse-spotlight__link"
+								className="social-spotlight__link"
 								href={ item.href }
 								onClick={ () => handleClick( item ) }
 							>
-								<header className="pulse-spotlight__card-header">
+								<header className="social-spotlight__card-header">
 									{ avatar ? (
 										<img
-											className="pulse-spotlight__card-avatar"
+											className="social-spotlight__card-avatar"
 											src={ avatar }
 											alt=""
 											width={ 32 }
@@ -230,25 +230,25 @@ export function PulseSpotlight( { connections }: Props ) {
 											decoding="async"
 										/>
 									) : (
-										<div className="pulse-spotlight__card-avatar pulse-spotlight__card-avatar--placeholder" />
+										<div className="social-spotlight__card-avatar social-spotlight__card-avatar--placeholder" />
 									) }
-									<div className="pulse-spotlight__card-author">
-										<div className="pulse-spotlight__card-author-name">
+									<div className="social-spotlight__card-author">
+										<div className="social-spotlight__card-author-name">
 											{ author.display_name || author.handle }
 										</div>
-										<div className="pulse-spotlight__card-author-handle">
+										<div className="social-spotlight__card-author-handle">
 											{ author.handle.startsWith( '@' ) ? author.handle : `@${ author.handle }` }
 										</div>
 									</div>
 									<span
-										className={ `pulse-spotlight__badge pulse-spotlight__badge--${ item.protocol }` }
+										className={ `social-spotlight__badge social-spotlight__badge--${ item.protocol }` }
 										aria-label={ getProtocolLabel( item.protocol ) }
 									>
 										{ getProtocolIcon( item.protocol ) }
 									</span>
 								</header>
-								<p className="pulse-spotlight__card-text">{ snippet( item.post.text ) }</p>
-								<footer className="pulse-spotlight__card-counts">
+								<p className="social-spotlight__card-text">{ snippet( item.post.text ) }</p>
+								<footer className="social-spotlight__card-counts">
 									<span aria-label={ String( translate( 'Likes' ) ) }>
 										♡ { item.post.counts?.likes ?? 0 }
 									</span>

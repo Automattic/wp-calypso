@@ -184,20 +184,20 @@
 	text-align: center;
 }
 
-// ---------- Pulse overview ----------
+// ---------- Social overview ----------
 
-.pulse-view {
+.social-view {
 	max-width: 960px;
 }
 
-.pulse-grid {
+.social-grid {
 	display: grid;
 	grid-template-columns: repeat( auto-fill, minmax( 240px, 1fr ) );
 	gap: 16px;
 	margin-block-start: 16px;
 }
 
-.pulse-card {
+.social-card {
 	display: flex;
 	gap: 14px;
 	padding: 16px;
@@ -215,22 +215,22 @@
 	}
 }
 
-.pulse-card--atmosphere {
+.social-card--atmosphere {
 	border-block-start-color: var( --studio-blue-50 );
 	border-block-start-width: 3px;
 }
 
-.pulse-card--mastodon {
+.social-card--mastodon {
 	border-block-start-color: var( --studio-purple-50 );
 	border-block-start-width: 3px;
 }
 
-.pulse-card--fediverse {
+.social-card--fediverse {
 	border-block-start-color: var( --studio-pink-50 );
 	border-block-start-width: 3px;
 }
 
-.pulse-card--add {
+.social-card--add {
 	border-style: dashed;
 	border-color: var( --color-border-subtle );
 	color: var( --color-text-subtle );
@@ -243,14 +243,14 @@
 	}
 }
 
-.pulse-card__avatar-wrap {
+.social-card__avatar-wrap {
 	position: relative;
 	flex-shrink: 0;
 	width: 56px;
 	height: 56px;
 }
 
-.pulse-card__avatar {
+.social-card__avatar {
 	width: 56px;
 	height: 56px;
 	border-radius: 50%;
@@ -258,7 +258,7 @@
 	background-color: var( --color-neutral-0 );
 }
 
-.pulse-card__avatar--placeholder {
+.social-card__avatar--placeholder {
 	background: linear-gradient(
 		135deg,
 		var( --studio-gray-5 ) 0%,
@@ -266,7 +266,7 @@
 	);
 }
 
-.pulse-card__badge {
+.social-card__badge {
 	position: absolute;
 	inset-block-end: -2px;
 	inset-inline-end: -4px;
@@ -289,24 +289,24 @@
 	}
 }
 
-.pulse-card__badge--atmosphere {
+.social-card__badge--atmosphere {
 	color: var( --studio-blue-50 );
 }
 
-.pulse-card__badge--mastodon {
+.social-card__badge--mastodon {
 	color: var( --studio-purple-50 );
 }
 
-.pulse-card__badge--fediverse {
+.social-card__badge--fediverse {
 	color: var( --studio-pink-50 );
 }
 
-.pulse-card__body {
+.social-card__body {
 	flex: 1;
 	min-width: 0;
 }
 
-.pulse-card__name {
+.social-card__name {
 	font-size: 1rem;
 	font-weight: 600;
 	color: var( --color-text );
@@ -315,7 +315,7 @@
 	white-space: nowrap;
 }
 
-.pulse-card__handle {
+.social-card__handle {
 	font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
 	color: var( --color-text-subtle );
 	overflow: hidden;
@@ -323,7 +323,7 @@
 	white-space: nowrap;
 }
 
-.pulse-card__protocol {
+.social-card__protocol {
 	margin-block-start: 4px;
 	font-size: 0.6875rem; /* stylelint-disable-line scales/font-sizes */
 	font-weight: 600;
@@ -332,7 +332,7 @@
 	color: var( --color-text-subtle );
 }
 
-.pulse-card__plus {
+.social-card__plus {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -346,7 +346,7 @@
 	flex-shrink: 0;
 }
 
-.pulse-empty {
+.social-empty {
 	padding: 32px;
 	text-align: center;
 
@@ -363,17 +363,17 @@
 	}
 }
 
-// ---------- Pulse Spotlight ----------
+// ---------- Social Spotlight ----------
 
-.pulse-spotlight {
+.social-spotlight {
 	margin-block: 24px;
 }
 
-.pulse-spotlight__header {
+.social-spotlight__header {
 	margin-block-end: 12px;
 }
 
-.pulse-spotlight__title {
+.social-spotlight__title {
 	margin: 0;
 	font-size: 0.95rem; /* stylelint-disable-line scales/font-sizes */
 	font-weight: 600;
@@ -382,13 +382,13 @@
 	color: var( --color-text-subtle );
 }
 
-.pulse-spotlight__subtitle {
+.social-spotlight__subtitle {
 	margin: 4px 0 0;
 	font-size: 0.875rem;
 	color: var( --color-text-subtle );
 }
 
-.pulse-spotlight__list {
+.social-spotlight__list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -397,7 +397,7 @@
 	gap: 12px;
 }
 
-.pulse-spotlight__card {
+.social-spotlight__card {
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	overflow: hidden;
@@ -411,33 +411,33 @@
 	}
 }
 
-.pulse-spotlight__card--atmosphere {
+.social-spotlight__card--atmosphere {
 	border-block-start: 3px solid var( --studio-blue-50 );
 }
 
-.pulse-spotlight__card--mastodon {
+.social-spotlight__card--mastodon {
 	border-block-start: 3px solid var( --studio-purple-50 );
 }
 
-.pulse-spotlight__card--fediverse {
+.social-spotlight__card--fediverse {
 	border-block-start: 3px solid var( --studio-pink-50 );
 }
 
-.pulse-spotlight__link {
+.social-spotlight__link {
 	display: block;
 	padding: 12px;
 	text-decoration: none;
 	color: inherit;
 }
 
-.pulse-spotlight__card-header {
+.social-spotlight__card-header {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	margin-block-end: 8px;
 }
 
-.pulse-spotlight__card-avatar {
+.social-spotlight__card-avatar {
 	width: 32px;
 	height: 32px;
 	border-radius: 50%;
@@ -445,16 +445,16 @@
 	flex-shrink: 0;
 }
 
-.pulse-spotlight__card-avatar--placeholder {
+.social-spotlight__card-avatar--placeholder {
 	background: linear-gradient( 135deg, var( --studio-gray-5 ) 0%, var( --studio-gray-10 ) 100% );
 }
 
-.pulse-spotlight__card-author {
+.social-spotlight__card-author {
 	flex: 1;
 	min-width: 0;
 }
 
-.pulse-spotlight__card-author-name {
+.social-spotlight__card-author-name {
 	font-size: 0.875rem;
 	font-weight: 600;
 	color: var( --color-text );
@@ -463,7 +463,7 @@
 	white-space: nowrap;
 }
 
-.pulse-spotlight__card-author-handle {
+.social-spotlight__card-author-handle {
 	font-size: 0.75rem;
 	color: var( --color-text-subtle );
 	overflow: hidden;
@@ -471,7 +471,7 @@
 	white-space: nowrap;
 }
 
-.pulse-spotlight__badge {
+.social-spotlight__badge {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -489,19 +489,19 @@
 	}
 }
 
-.pulse-spotlight__badge--atmosphere {
+.social-spotlight__badge--atmosphere {
 	color: var( --studio-blue-50 );
 }
 
-.pulse-spotlight__badge--mastodon {
+.social-spotlight__badge--mastodon {
 	color: var( --studio-purple-50 );
 }
 
-.pulse-spotlight__badge--fediverse {
+.social-spotlight__badge--fediverse {
 	color: var( --studio-pink-50 );
 }
 
-.pulse-spotlight__card-text {
+.social-spotlight__card-text {
 	margin: 0 0 8px;
 	font-size: 0.875rem;
 	color: var( --color-text );
@@ -512,14 +512,14 @@
 	overflow: hidden;
 }
 
-.pulse-spotlight__card-counts {
+.social-spotlight__card-counts {
 	display: flex;
 	gap: 16px;
 	font-size: 0.75rem;
 	color: var( --color-text-subtle );
 }
 
-.pulse-empty__cta {
+.social-empty__cta {
 	display: inline-block;
 	padding: 8px 16px;
 	background-color: var( --color-primary );

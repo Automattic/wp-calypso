@@ -21,14 +21,14 @@ import {
 } from 'calypso/reader/sidebar/reader-sidebar-connections/types';
 import { useDispatch } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { PulseSpotlight, type SpotlightConnection } from './pulse-spotlight';
+import { SocialSpotlight, type SpotlightConnection } from './social-spotlight';
 import type {
 	AtmosphereConnection,
 	FediverseConnection,
 	MastodonConnection,
 } from '@automattic/api-core';
 
-interface PulseCard {
+interface SocialCard {
 	protocol: ConnectionProtocol;
 	id: number;
 	displayName: string;
@@ -41,7 +41,7 @@ interface PulseCard {
 	host?: string;
 }
 
-function mapAtmosphere( c: AtmosphereConnection ): PulseCard {
+function mapAtmosphere( c: AtmosphereConnection ): SocialCard {
 	return {
 		protocol: 'atmosphere',
 		id: c.id,
@@ -52,7 +52,7 @@ function mapAtmosphere( c: AtmosphereConnection ): PulseCard {
 	};
 }
 
-function mapMastodon( c: MastodonConnection ): PulseCard {
+function mapMastodon( c: MastodonConnection ): SocialCard {
 	return {
 		protocol: 'mastodon',
 		id: c.id,
@@ -75,7 +75,7 @@ function hostFromWebfinger( webfinger: string ): string {
 	return at === -1 ? trimmed : trimmed.slice( at + 1 );
 }
 
-function mapFediverse( c: FediverseConnection ): PulseCard {
+function mapFediverse( c: FediverseConnection ): SocialCard {
 	return {
 		protocol: 'fediverse',
 		id: c.id,
@@ -93,7 +93,7 @@ function mapFediverse( c: FediverseConnection ): PulseCard {
  * empty display_name, so we hydrate from the per-id query. Fediverse
  * carries the icon on the list endpoint already.
  */
-function PulseCardItem( { card, onClick }: { card: PulseCard; onClick: () => void } ) {
+function SocialCardItem( { card, onClick }: { card: SocialCard; onClick: () => void } ) {
 	const atmosphereId = card.protocol === 'atmosphere' ? card.id : null;
 	const mastodonId = card.protocol === 'mastodon' ? card.id : null;
 	const atmosphere = useConnectionQuery( atmosphereId );
@@ -111,14 +111,14 @@ function PulseCardItem( { card, onClick }: { card: PulseCard; onClick: () => voi
 
 	return (
 		<a
-			className={ `pulse-card pulse-card--${ card.protocol }` }
+			className={ `social-card social-card--${ card.protocol }` }
 			href={ card.href }
 			onClick={ onClick }
 		>
-			<div className="pulse-card__avatar-wrap">
+			<div className="social-card__avatar-wrap">
 				{ avatarUrl ? (
 					<img
-						className="pulse-card__avatar"
+						className="social-card__avatar"
 						src={ avatarUrl }
 						alt=""
 						width={ 56 }
@@ -127,31 +127,31 @@ function PulseCardItem( { card, onClick }: { card: PulseCard; onClick: () => voi
 						decoding="async"
 					/>
 				) : (
-					<div className="pulse-card__avatar pulse-card__avatar--placeholder" />
+					<div className="social-card__avatar social-card__avatar--placeholder" />
 				) }
 				<span
-					className={ `pulse-card__badge pulse-card__badge--${ card.protocol }` }
+					className={ `social-card__badge social-card__badge--${ card.protocol }` }
 					aria-hidden="true"
 				>
 					{ getProtocolIcon( card.protocol ) }
 				</span>
 			</div>
-			<div className="pulse-card__body">
-				<div className="pulse-card__name">{ displayName }</div>
-				<div className="pulse-card__handle">{ card.handle }</div>
-				<div className="pulse-card__protocol">{ getProtocolLabel( card.protocol ) }</div>
+			<div className="social-card__body">
+				<div className="social-card__name">{ displayName }</div>
+				<div className="social-card__handle">{ card.handle }</div>
+				<div className="social-card__protocol">{ getProtocolLabel( card.protocol ) }</div>
 			</div>
 		</a>
 	);
 }
 
 /**
- * "Pulse" overview surface — a grid of cards, one per connected social
+ * "Social" overview surface — a grid of cards, one per connected social
  * account across every protocol. The home page for the unified
  * `/reader/connections` section; each card is a shortcut into its
  * respective timeline.
  */
-export function PulseOverviewView() {
+export function SocialOverviewView() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -162,7 +162,7 @@ export function PulseOverviewView() {
 	const isLoading = atmosphere.isPending || mastodon.isPending || fediverse.isPending;
 	const hasAllErrored = atmosphere.isError && mastodon.isError && fediverse.isError;
 
-	const cards: PulseCard[] = useMemo(
+	const cards: SocialCard[] = useMemo(
 		() => [
 			...( atmosphere.data?.connections ?? [] ).map( mapAtmosphere ),
 			...( mastodon.data?.connections ?? [] ).map( mapMastodon ),
@@ -191,9 +191,9 @@ export function PulseOverviewView() {
 	}, [ cards ] );
 	const showSpotlight = ! isLoading && spotlightConnections.length > 0;
 
-	const handleCardClick = ( card: PulseCard ) => {
+	const handleCardClick = ( card: SocialCard ) => {
 		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_pulse_card_clicked', {
+			recordReaderTracksEvent( 'calypso_reader_social_card_clicked', {
 				protocol: card.protocol,
 				connection_id: card.id,
 			} )
@@ -201,10 +201,10 @@ export function PulseOverviewView() {
 	};
 
 	return (
-		<ReaderMain className="pulse-view">
-			<DocumentHead title={ translate( 'Pulse ‹ Reader' ) } />
+		<ReaderMain className="social-view">
+			<DocumentHead title={ translate( 'Social ‹ Reader' ) } />
 			<NavigationHeader
-				title={ translate( 'Pulse' ) }
+				title={ translate( 'Social' ) }
 				subtitle={ translate(
 					'Everything you’ve plugged into the Reader, in one place. Pick a network to dive in.'
 				) }
@@ -218,7 +218,7 @@ export function PulseOverviewView() {
 			) }
 
 			{ ! isLoading && hasAllErrored && (
-				<Card className="pulse-empty" elevation={ 0 }>
+				<Card className="social-empty" elevation={ 0 }>
 					<h2>{ translate( "We couldn't load your social accounts" ) }</h2>
 					<p>
 						{ translate(
@@ -229,37 +229,37 @@ export function PulseOverviewView() {
 			) }
 
 			{ ! isLoading && ! hasAllErrored && cards.length === 0 && (
-				<Card className="pulse-empty" elevation={ 0 }>
+				<Card className="social-empty" elevation={ 0 }>
 					<h2>{ translate( 'Nothing here yet' ) }</h2>
 					<p>
 						{ translate(
 							'You haven’t connected any social accounts yet. Start with the network you already know best, or let your WordPress site do the work for you.'
 						) }
 					</p>
-					<a className="pulse-empty__cta" href="/reader/connections/new">
+					<a className="social-empty__cta" href="/reader/connections/new">
 						{ translate( 'Pick a network →' ) }
 					</a>
 				</Card>
 			) }
 
-			{ showSpotlight && <PulseSpotlight connections={ spotlightConnections } /> }
+			{ showSpotlight && <SocialSpotlight connections={ spotlightConnections } /> }
 
 			{ ! isLoading && cards.length > 0 && (
-				<div className="pulse-grid">
+				<div className="social-grid">
 					{ cards.map( ( card ) => (
-						<PulseCardItem
+						<SocialCardItem
 							key={ `${ card.protocol }-${ card.id }` }
 							card={ card }
 							onClick={ () => handleCardClick( card ) }
 						/>
 					) ) }
-					<a className="pulse-card pulse-card--add" href="/reader/connections/new">
-						<div className="pulse-card__plus" aria-hidden="true">
+					<a className="social-card social-card--add" href="/reader/connections/new">
+						<div className="social-card__plus" aria-hidden="true">
 							+
 						</div>
-						<div className="pulse-card__body">
-							<div className="pulse-card__name">{ translate( 'Add another' ) }</div>
-							<div className="pulse-card__handle">
+						<div className="social-card__body">
+							<div className="social-card__name">{ translate( 'Add another' ) }</div>
+							<div className="social-card__handle">
 								{ translate( 'Bluesky, Mastodon, or your own site' ) }
 							</div>
 						</div>
@@ -270,4 +270,4 @@ export function PulseOverviewView() {
 	);
 }
 
-export default PulseOverviewView;
+export default SocialOverviewView;
