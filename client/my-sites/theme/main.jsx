@@ -344,7 +344,7 @@ class ThemeSheet extends Component {
 
 		// Intercept activation so the user can preview the new theme and choose
 		// between a basic and a full setup. Skip the modal on Jetpack/Atomic
-		// sites where the full-setup path (theme-setup) doesn't apply, leaving
+		// sites where the full-setup path (theme-headstart) doesn't apply, leaving
 		// only one effective choice.
 		const { isAtomic, isStandaloneJetpack } = this.props;
 		if ( this.props.defaultOption?.key === 'activate' && ! isAtomic && ! isStandaloneJetpack ) {

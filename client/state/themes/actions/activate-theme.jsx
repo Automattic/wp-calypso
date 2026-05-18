@@ -26,7 +26,7 @@ import { activateStyleVariation } from './activate-style-variation';
  * @param {string}  [options.source]     The source that is requesting theme activation, e.g. 'showcase'
  * @param {boolean} [options.purchased]  Whether the theme has been purchased prior to activation
  * @param {boolean} [options.showSuccessNotice]  Whether the theme has been purchased prior to activation
- * @param {'basic'|'full'} [options.setupChoice] The user's setup choice from the activation modal: `'full'` runs `/theme-setup` after activation to add the theme's extra demo content; `'basic'` skips it. Omit on direct activate paths that don't surface the choice (e.g., when the modal isn't shown).
+ * @param {'basic'|'full'} [options.setupChoice] The user's setup choice from the activation modal: `'full'` runs `/theme-headstart` after activation to add the theme's extra demo content; `'basic'` skips it. Omit on direct activate paths that don't surface the choice (e.g., when the modal isn't shown).
  * @returns {Function}        Action thunk
  */
 export function activateTheme( themeId, siteId, options = {} ) {
@@ -70,7 +70,7 @@ export function activateTheme( themeId, siteId, options = {} ) {
 				if ( setupChoice === 'full' ) {
 					try {
 						await wpcom.req.post( {
-							path: `/sites/${ siteId }/theme-setup/?_locale=user`,
+							path: `/sites/${ siteId }/theme-headstart/?_locale=user`,
 							apiNamespace: 'wpcom/v2',
 						} );
 					} catch ( error ) {

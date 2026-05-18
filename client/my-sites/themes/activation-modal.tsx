@@ -92,7 +92,7 @@ const ActivationModal = ( {
 	const localeParam = locale && locale !== 'en' ? { language: locale } : {};
 
 	// "Basic setup": preview the user's existing site with the new theme's
-	// stylesheet applied — no theme-setup, no content additions.
+	// stylesheet applied — no theme-headstart, no content additions.
 	const basicSetupIframeSrc = addQueryArgs( `//${ siteDomain }/`, {
 		theme: stylesheet,
 		hide_banners: 'true',
@@ -101,7 +101,7 @@ const ActivationModal = ( {
 	} );
 
 	// "Full setup": preview the theme's official demo site, which is what the
-	// theme-setup endpoint will broadly replicate by adding pages to the site.
+	// theme-headstart endpoint will broadly replicate by adding pages to the site.
 	const fullSetupIframeSrc = demoUri
 		? addQueryArgs( demoUri, {
 				demo: 'true',
@@ -209,7 +209,7 @@ export default connect(
 		return {
 			theme: getCanonicalTheme( state, siteId, themeId ),
 			siteDomain: getSiteDomain( state, siteId ),
-			// The "Full setup" path runs the theme-setup endpoint, which doesn't
+			// The "Full setup" path runs the theme-headstart endpoint, which doesn't
 			// apply on Jetpack/Atomic sites.
 			supportsFullSetup: ! isJetpackOrAtomic,
 		};
