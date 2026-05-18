@@ -191,9 +191,7 @@ export class ReaderSidebar extends Component {
 						link="/discover"
 					/>
 
-					{ ( isEnabled( 'reader/social' ) || isEnabled( 'reader/fediverse' ) ) && (
-						<ReaderSidebarConnections path={ path } />
-					) }
+					{ isEnabled( 'reader/social' ) && <ReaderSidebarConnections path={ path } /> }
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }
