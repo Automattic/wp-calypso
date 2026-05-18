@@ -884,6 +884,23 @@
 	}
 }
 
+/* Classic Masterbar */
+@mixin dashboard-dark-theme-masterbar {
+	.masterbar {
+		--color-masterbar-submenu-text: var( --dashboard__text-color );
+		--color-masterbar-submenu-hover-text: var( --wp-components-color-accent-darker-20 );
+		--color-masterbar-unread-dot-background: var( --wp-components-color-accent-darker-20 );
+		--color-global-masterbar-submenu-background: var( --dashboard-surface__background-color );
+		--color-global-masterbar-submenu-hover-background: var(
+			--dashboard-item-selected-hover__background-color
+		);
+		--color-global-masterbar-site-info-background: var( --wp-components-color-gray-200 );
+		--color-global-masterbar-site-info-badge-background: var( --wp-components-color-gray-300 );
+		--color-global-masterbar-site-info-badge-color: var( --wp-components-color-gray-800 );
+		--color-sidebar-submenu-background: var( --dashboard-item-selected__background-color );
+	}
+}
+
 // This mixin generates the color palette variables for the dark theme.
 @mixin dashboard-dark-theme-palettes {
 	// Blue

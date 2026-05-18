@@ -69,15 +69,7 @@
 		--color-neutral-20: var( --dashboard__text-muted-color );
 	}
 
-	.masterbar {
-		--color-masterbar-submenu-text: var( --dashboard__text-color );
-		--color-masterbar-submenu-hover-text: var( --wp-components-color-accent-darker-20 );
-		--color-global-masterbar-submenu-background: var( --dashboard-surface__background-color );
-		--color-global-masterbar-submenu-hover-background: var(
-			--dashboard-item-selected-hover__background-color
-		);
-		--color-sidebar-submenu-background: var( --dashboard-item-selected__background-color );
-	}
+	@include dashboard-dark-theme-masterbar;
 
 	.navigation-header .breadcrumbs {
 		--studio-gray-50: var( --dashboard__text-muted-color );
