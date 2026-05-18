@@ -19,7 +19,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	DATAVIEWS_TABLE,
 	initialDataViewsState,
@@ -173,8 +173,9 @@ export default function AmplifyReportsContent( {
 		fields: [ 'site', 'mode', 'scores', 'timestamp', 'download' ],
 	} );
 
-	const fields: Field< Report >[] = useMemo( () => {
-		const handleDownload = ( item: Report ) => {
+	// Memoized separately so the fields array below doesn't recreate on every render.
+	const handleDownload = useCallback(
+		( item: Report ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_amplify_report_download', {
 					report_id: item.id,
@@ -182,13 +183,27 @@ export default function AmplifyReportsContent( {
 					analysis_type: item.mode,
 				} )
 			);
-			// Validate the URL is https:// before opening to guard against
-			// a javascript: or data: URI if the R2 payload were ever tampered with.
-			if ( item.pdfUrl && /^https:\/\//i.test( item.pdfUrl ) ) {
-				window.open( item.pdfUrl, '_blank', 'noopener,noreferrer' );
+			// Validate protocol and domain before opening to guard against a
+			// javascript:, data:, or unexpected host URI if the R2 payload were
+			// ever tampered with.
+			if ( item.pdfUrl ) {
+				try {
+					const parsed = new URL( item.pdfUrl );
+					if (
+						parsed.protocol === 'https:' &&
+						parsed.hostname === 'pub-d85717c601eb44398d8336c65ac7cfbb.r2.dev'
+					) {
+						window.open( item.pdfUrl, '_blank', 'noopener,noreferrer' );
+					}
+				} catch {
+					// Invalid URL — do nothing.
+				}
 			}
-		};
+		},
+		[ dispatch ]
+	);
 
+	const fields: Field< Report >[] = useMemo( () => {
 		return [
 			{
 				id: 'site',

@@ -76,8 +76,16 @@ async function startAmplifyAnalysis( url: string, mode: AnalysisType ): Promise<
 		throw new Error( `Worker responded with ${ response.status }` );
 	}
 
-	const data: { jobId: string } = await response.json();
-	return data.jobId;
+	const data: unknown = await response.json();
+	if (
+		! data ||
+		typeof data !== 'object' ||
+		! ( 'jobId' in data ) ||
+		typeof ( data as { jobId: unknown } ).jobId !== 'string'
+	) {
+		throw new Error( 'Invalid response from worker: missing jobId' );
+	}
+	return ( data as { jobId: string } ).jobId;
 }
 
 /**

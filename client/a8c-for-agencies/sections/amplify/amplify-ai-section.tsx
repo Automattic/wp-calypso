@@ -224,7 +224,11 @@ export default function AmplifyAiSection() {
 		<div className="amplify-criteria-section is-ai">
 			<div className="amplify-criteria-section-header">
 				<p className="amplify-criteria-eyebrow">{ __( 'AI analysis' ) }</p>
-				<h2 className="amplify-criteria-title">{ __( 'Get found when buyers use AI' ) }</h2>
+				<h2 className="amplify-criteria-title">
+					{ __( "Your clients' next customers are searching with AI." ) }
+					<br />
+					{ __( 'Ensure they can be found.' ) }
+				</h2>
 				<p className="amplify-criteria-intro">
 					{ __(
 						"ChatGPT reached 100 million users in two months. Perplexity now fields tens of millions of searches a day. Google AI Overviews appear above organic results for hundreds of millions of queries. When your clients' customers search for products or services using AI, your clients' sites need to be readable, structured, and citable. Most aren't, and most agencies haven't checked."

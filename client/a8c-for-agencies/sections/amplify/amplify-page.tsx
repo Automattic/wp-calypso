@@ -51,10 +51,27 @@ type Props = {
 
 const PENDING_JOBS_KEY = 'amplify_pending_jobs';
 
+function isValidPendingJob( job: unknown ): job is PendingJob {
+	if ( ! job || typeof job !== 'object' ) {
+		return false;
+	}
+	const j = job as Record< string, unknown >;
+	return (
+		typeof j.jobId === 'string' &&
+		typeof j.site === 'string' &&
+		( j.type === 'human' || j.type === 'ai' || j.type === 'full' ) &&
+		typeof j.startedAt === 'string'
+	);
+}
+
 function loadPendingJobs(): PendingJob[] {
 	try {
 		const stored = sessionStorage.getItem( PENDING_JOBS_KEY );
-		return stored ? JSON.parse( stored ) : [];
+		if ( ! stored ) {
+			return [];
+		}
+		const parsed: unknown = JSON.parse( stored );
+		return Array.isArray( parsed ) ? parsed.filter( isValidPendingJob ) : [];
 	} catch {
 		return [];
 	}
@@ -78,7 +95,7 @@ export default function AmplifyPage( { selectedTab }: Props ) {
 		setAnalysisFlowSite( url );
 	}, [] );
 
-	const handleAnalysisStarted = ( job: PendingJob ) => {
+	const handleAnalysisStarted = useCallback( ( job: PendingJob ) => {
 		// Add the new job to the front of the pending list so it appears at the
 		// top of the reports table immediately, and persist across page refreshes.
 		setPendingJobs( ( prev ) => {
@@ -86,7 +103,7 @@ export default function AmplifyPage( { selectedTab }: Props ) {
 			savePendingJobs( updated );
 			return updated;
 		} );
-	};
+	}, [] );
 
 	let title: string;
 	let content: ReactNode;
@@ -109,7 +126,7 @@ export default function AmplifyPage( { selectedTab }: Props ) {
 		<Layout
 			title={ title }
 			wide
-			className={ clsx( { 'full-width-layout-with-table': isReports } ) }
+			className={ clsx( 'amplify-layout', { 'full-width-layout-with-table': isReports } ) }
 		>
 			<LayoutTop>
 				<LayoutHeader>

@@ -246,7 +246,7 @@ export default function AmplifyHowItWorks() {
 					<div className="amplify-landing-how-pins" aria-hidden="true">
 						{ data.pins.map( ( pin, index ) => (
 							<div
-								key={ `${ mode }-${ index }-${ pin.label }` }
+								key={ `${ mode }-${ index }` }
 								className="amplify-landing-how-pin is-visible"
 								style={ {
 									insetBlockStart: pin.top,

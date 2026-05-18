@@ -1,8 +1,32 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+// Zero out the hosting-dashboard body padding for the amplify layout so that
+// PageSection components (like the FAQ) can span full width and handle their
+// own internal spacing — the same approach used by migrations-overview-v2.
+.amplify-layout {
+	.hosting-dashboard-layout__body {
+		padding: 0;
+
+		> * {
+			max-width: 100%;
+			padding: 0;
+			margin: 0;
+		}
+	}
+}
+
+// amplify-landing is a direct child of hosting-dashboard-layout__body, so it
+// now needs to own its padding (previously inherited from the body > * rule).
 .amplify-landing {
 	padding-block-end: 32px;
+	padding-inline: 16px;
+	max-width: 1500px;
+	margin-inline: auto;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-inline: 64px;
+	}
 }
 
 .amplify-landing-hero {
@@ -1499,6 +1523,7 @@
 .amplify-landing-workflow-section {
 	padding-block: 48px;
 }
+
 
 .amplify-landing-workflow {
 	display: flex;

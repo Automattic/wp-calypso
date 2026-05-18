@@ -228,7 +228,7 @@ export default function AmplifyHumanSection() {
 		<div className="amplify-criteria-section">
 			<div className="amplify-criteria-section-header">
 				<p className="amplify-criteria-eyebrow">{ __( 'Human-centric analysis' ) }</p>
-				<h2 className="amplify-criteria-title">{ __( 'See what prospective clients see' ) }</h2>
+				<h2 className="amplify-criteria-title">{ __( 'See what prospective customers see' ) }</h2>
 				<p className="amplify-criteria-intro">
 					{ __(
 						"When someone lands on your client's site, they form an impression in under a second. They scan for trust. They look for contact information. They decide, in 3 to 5 seconds, whether this business is worth their time. Amplify measures all of it across eight criteria, then tells you exactly what to fix and why. This is the analysis that separates agencies who deliver beautiful sites from agencies who deliver sites that actually win business."
