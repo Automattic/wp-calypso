@@ -81,6 +81,7 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/post-checkout-ai-step": false,
+		"onboarding/woo-hosting-post-purchase-setup-choice": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

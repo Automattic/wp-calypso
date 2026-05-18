@@ -1,7 +1,9 @@
+@import "@wordpress/base-styles/colors";
+
 .setup-your-site-ai-step {
 	.summary-button.has-density-low  {
 		border-radius: 8px;
-		
+
 		// adjust gap between title and strapline
 		[data-wp-component="VStack"]:has(.summary-button-title) {
 			gap: $grid-unit-05;
@@ -16,5 +18,89 @@
 			text-align: start;
 		}
 	}
-}
 
+	.setup-your-site-ai-step__build-with-ai {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 7px;
+		border: 1px solid var(--color-border-subtle);
+		background-color: var(--color-surface);
+		padding: $grid-unit-30;
+		display: flex;
+		flex-direction: column;
+		gap: $grid-unit-20;
+	}
+
+	.setup-your-site-ai-step__build-with-ai-decoration {
+		display: inline-flex;
+
+		svg {
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+			fill: $gray-700;
+		}
+
+		img {
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+		}
+	}
+
+	.setup-your-site-ai-step__build-with-ai-title {
+		font-weight: 500;
+	}
+
+	.setup-your-site-ai-step__prompt-area {
+		background-color: var(--color-neutral-0, #f6f7f7);
+		border-radius: 8px;
+		padding: $grid-unit-30;
+		display: flex;
+		flex-direction: column;
+		gap: $grid-unit-20;
+	}
+
+	.setup-your-site-ai-step__prompt-description {
+		margin: 0;
+		text-align: center;
+		color: var(--color-text-subtle);
+	}
+
+	.setup-your-site-ai-step__prompt-input {
+		position: relative;
+		background-color: var(--color-surface);
+		border-radius: 8px;
+		border: 1px solid var(--color-border-subtle);
+		padding: $grid-unit-15;
+
+		.components-base-control {
+			margin-bottom: 0;
+		}
+
+		.components-textarea-control__input {
+			border: none;
+			box-shadow: none;
+			background: transparent;
+			padding: 0;
+			padding-inline-end: $grid-unit-40;
+			resize: none;
+			min-height: 64px;
+
+			&:focus {
+				box-shadow: none;
+				outline: none;
+			}
+		}
+	}
+
+	.setup-your-site-ai-step__prompt-submit.components-button.has-icon {
+		position: absolute;
+		inset-block-end: $grid-unit-10;
+		inset-inline-end: $grid-unit-10;
+		min-width: 32px;
+		width: 32px;
+		height: 32px;
+		padding: 0;
+		border-radius: 50%;
+	}
+}
