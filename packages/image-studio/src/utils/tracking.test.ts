@@ -189,10 +189,10 @@ describe( 'reel share tracking helpers', () => {
 		expect( call[ 1 ] ).toMatchObject( { surface: 'modal' } );
 	} );
 
-	it( 'fires reel_share_not_connected with surface', () => {
+	it( 'fires feature_clip_share_not_connected with surface', () => {
 		trackImageStudioReelShareNotConnected( { surface: 'sidebar' } );
 		expect( recordTracksEventMock ).toHaveBeenCalledWith(
-			'jetpack_big_sky_image_studio_reel_share_not_connected',
+			'jetpack_big_sky_image_studio_feature_clip_share_not_connected',
 			expect.objectContaining( { surface: 'sidebar' } )
 		);
 	} );
