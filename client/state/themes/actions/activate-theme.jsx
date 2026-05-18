@@ -49,6 +49,8 @@ export function activateTheme( themeId, siteId, options = {} ) {
 			siteId,
 		} );
 
+		let fullSetupFailed = false;
+
 		return wpcom.req
 			.post( `/sites/${ siteId }/themes/mine?_locale=user`, {
 				theme: themeId,
@@ -74,6 +76,7 @@ export function activateTheme( themeId, siteId, options = {} ) {
 							apiNamespace: 'wpcom/v2',
 						} );
 					} catch ( error ) {
+						fullSetupFailed = true;
 						dispatch(
 							errorNotice(
 								translate(
@@ -99,7 +102,10 @@ export function activateTheme( themeId, siteId, options = {} ) {
 					)
 				);
 
-				if ( showSuccessNotice ) {
+				// When the full-setup step failed, the partial-success error
+				// notice already conveys the outcome — skip the success notice
+				// so we don't show both at once.
+				if ( showSuccessNotice && ! fullSetupFailed ) {
 					dispatch(
 						successNotice(
 							translate( 'The %(themeName)s theme is activated successfully!', {
