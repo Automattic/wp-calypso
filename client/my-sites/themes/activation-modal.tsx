@@ -3,6 +3,7 @@ import { Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
@@ -60,6 +61,7 @@ const ActivationModal = ( {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const [ choice, setChoice ] = useState< SetupChoice >( 'full_setup' );
+	const [ isActivating, setIsActivating ] = useState( false );
 
 	// Fire the modal-view Tracks event once per modal mount, after the theme
 	// is loaded so we have the theme id to attach.
@@ -121,18 +123,25 @@ const ActivationModal = ( {
 	// `demo_uri` would briefly leave the basic-setup card stretched alone.
 	const isWaitingForFullSetup = supportsFullSetup && ! fullSetupIframeSrc && isLoadingTheme;
 
-	const handleActivate = () => {
+	const handleActivate = async () => {
 		const setupChoice = showFullSetupOption && choice === 'full_setup' ? 'full' : 'basic';
 		recordTracksEvent( 'calypso_theme_activation_modal_activate_click', {
 			theme: themeId,
 			source,
 			setup_choice: setupChoice,
 		} );
-		dispatchActivateTheme( themeId, siteId, { source, setupChoice } );
-		onClose();
+		setIsActivating( true );
+		try {
+			await dispatchActivateTheme( themeId, siteId, { source, setupChoice } );
+		} finally {
+			onClose();
+		}
 	};
 
 	const handleDismiss = () => {
+		if ( isActivating ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_theme_activation_modal_dismiss', {
 			theme: themeId,
 			source,
@@ -151,13 +160,15 @@ const ActivationModal = ( {
 
 	return (
 		<Modal
-			className="themes__activation-modal"
+			className={ clsx( 'themes__activation-modal', { 'is-activating': isActivating } ) }
 			title={
 				translate( 'How would you like to use %(themeName)s?', {
 					args: { themeName },
 				} ) as string
 			}
 			onRequestClose={ handleDismiss }
+			shouldCloseOnClickOutside={ ! isActivating }
+			shouldCloseOnEsc={ ! isActivating }
 		>
 			<div
 				className="themes__activation-modal-previews"
@@ -183,6 +194,7 @@ const ActivationModal = ( {
 								} ) as string
 							}
 							caption={ basicSetupLabel }
+							disabled={ isActivating }
 						/>
 						{ showFullSetupOption && (
 							<IframePreviewCard
@@ -199,16 +211,22 @@ const ActivationModal = ( {
 									} ) as string
 								}
 								caption={ fullSetupLabel }
+								disabled={ isActivating }
 							/>
 						) }
 					</>
 				) }
 			</div>
 			<div className="themes__activation-modal-actions">
-				<Button variant="tertiary" onClick={ handleDismiss }>
+				<Button variant="tertiary" onClick={ handleDismiss } disabled={ isActivating }>
 					{ translate( 'Cancel' ) }
 				</Button>
-				<Button variant="primary" onClick={ handleActivate }>
+				<Button
+					variant="primary"
+					onClick={ handleActivate }
+					isBusy={ isActivating }
+					disabled={ isActivating }
+				>
 					{ translate( 'Activate %(themeName)s', { args: { themeName } } ) }
 				</Button>
 			</div>

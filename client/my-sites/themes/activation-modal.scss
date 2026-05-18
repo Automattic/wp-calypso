@@ -59,6 +59,14 @@
 		min-height: 200px;
 	}
 
+	// While the theme is activating, dim the modal's close (X) button and
+	// block pointer events so it visually reads as disabled. We can't disable
+	// it via a Modal prop — the X is rendered internally by @wordpress/components.
+	&.is-activating .components-modal__header .components-button {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
 	.themes__activation-modal-actions {
 		display: flex;
 		justify-content: flex-end;

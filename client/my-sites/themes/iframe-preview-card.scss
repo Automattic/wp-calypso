@@ -27,6 +27,11 @@
 		border-color: var(--studio-blue-50);
 	}
 
+	&.is-disabled {
+		cursor: default;
+		opacity: 0.5;
+	}
+
 	// Once a card is selected, its iframe becomes interactive (scrollable).
 	// Until then, pointer events fall through to the wrapping <label> so a click
 	// anywhere on the card — including the iframe — selects it.

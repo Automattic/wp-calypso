@@ -20,6 +20,7 @@ interface IframePreviewCardProps {
 	iframeTitle: string;
 	caption: string;
 	className?: string;
+	disabled?: boolean;
 }
 
 const IframePreviewCard = ( {
@@ -33,6 +34,7 @@ const IframePreviewCard = ( {
 	iframeTitle,
 	caption,
 	className,
+	disabled = false,
 }: IframePreviewCardProps ) => {
 	const translate = useTranslate();
 	const radioId = useId();
@@ -50,7 +52,11 @@ const IframePreviewCard = ( {
 	return (
 		<label
 			htmlFor={ radioId }
-			className={ clsx( 'iframe-preview-card', { 'is-selected': isSelected }, className ) }
+			className={ clsx(
+				'iframe-preview-card',
+				{ 'is-selected': isSelected, 'is-disabled': disabled },
+				className
+			) }
 		>
 			<span className="iframe-preview-card__frame-wrapper">
 				{ ! isLoaded && (
@@ -78,6 +84,7 @@ const IframePreviewCard = ( {
 					type="button"
 					className="iframe-preview-card__enter-preview"
 					onClick={ handleEnterPreview }
+					disabled={ disabled }
 				>
 					{ translate( 'Enter preview for the "%(optionName)s" option', {
 						args: { optionName },
@@ -93,6 +100,7 @@ const IframePreviewCard = ( {
 					onChange={ () => onSelect( value ) }
 					aria-label={ label }
 					className="iframe-preview-card__radio"
+					disabled={ disabled }
 				/>
 				<span className="iframe-preview-card__caption">{ caption }</span>
 			</span>
