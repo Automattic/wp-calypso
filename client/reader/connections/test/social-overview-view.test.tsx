@@ -195,8 +195,9 @@ describe( 'SocialOverviewView — ATmosphere PDS hostname', () => {
 		expect( screen.getByText( 'pds.example.com' ) ).toBeVisible();
 	} );
 
-	// Pre-CM-739 connections: the list endpoint hasn't been backfilled,
-	// so it returns `null`, but getConnection(id) resolves the PDS.
+	// Pre-CM-739 connections lack a cached `pds_url`; the list endpoint
+	// returns `null` for them while getConnection(id)'s live fallback
+	// (CM-740) resolves the PDS.
 	it( 'uses the details value when the list value is null', () => {
 		mockUseConnectionsQuery.mockReturnValue( {
 			data: { connections: [ makeConnection( { pds_hostname: null } ) ] },

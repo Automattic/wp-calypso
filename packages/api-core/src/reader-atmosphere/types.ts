@@ -8,10 +8,11 @@ export interface AtmosphereConnection {
 	avatar: string | null;
 	// Hostname of the PDS this connection's token resolves to (e.g.
 	// `bsky.social`, `pds.example.com`). Optional during the rollout
-	// window: tokens minted before CM-739 don't have a stored PDS, so
-	// the serializer may omit the field on stale connections.
-	// TODO(post-CM-739): drop the `?` and keep `string | null` once the
-	// backfill completes.
+	// window: older serializer revisions (pre-CM-740) don't emit the
+	// field at all. Once CM-740 is in production the key is always
+	// present — `string` when resolvable, `null` when the fallback
+	// chain fails.
+	// TODO(post-CM-740): drop the `?` and keep `string | null`.
 	pds_hostname?: string | null;
 }
 
@@ -38,7 +39,7 @@ export interface AtmosphereConnectionDetails {
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
 	// Same caveat as `AtmosphereConnection.pds_hostname` — optional during
-	// the rollout window. TODO(post-CM-739): drop the `?` alongside the
+	// the rollout window. TODO(post-CM-740): drop the `?` alongside the
 	// one on `AtmosphereConnection`.
 	pds_hostname?: string | null;
 }
