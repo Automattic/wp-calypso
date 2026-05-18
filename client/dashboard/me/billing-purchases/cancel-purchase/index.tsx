@@ -1583,7 +1583,7 @@ function CancelPurchaseInner() {
 			cancelBundledDomain={ state.cancelBundledDomain }
 			cancellationInProgress={ state.isLoading || isMutationPending }
 			cancellationOffer={ cancellationOffer }
-			intent={ displayVariant === 'auto-renew' ? 'auto-renew' : intent }
+			intent={ intent }
 			clickNext={ clickNext }
 			closeDialog={ closeDialog }
 			disableButtons={ state.isLoading || isMutationPending }
