@@ -1,4 +1,7 @@
 import { useShouldUseUnifiedAgent } from '@automattic/agents-manager';
+import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { useRouterState } from '@tanstack/react-router';
 import { Suspense, lazy } from 'react';
 import { useAuth } from '../auth';
 
@@ -8,6 +11,29 @@ const AsyncAgentsManager = lazy(
 			/* webpackChunkName: "async-load-automattic-agents-manager" */ '@automattic/agents-manager'
 		)
 );
+
+/**
+ * Derive a section name from a TanStack Router `routeId`. The agent uses the
+ * section name to scope its context, so we want the coarse area of the
+ * product (e.g. `domains`, `emails`, `settings`) — not the full leaf path.
+ *
+ * For routes nested under `/sites/$siteSlug/...` we strip the prefix so a
+ * site-scoped route (e.g. `/sites/$siteSlug/domains`) reports the same
+ * section as the equivalent top-level route (`/domains`).
+ */
+function deriveSectionName( routeId: string | undefined ): string {
+	if ( ! routeId ) {
+		return 'dashboard';
+	}
+	const segments = routeId.split( '/' ).filter( Boolean );
+	if ( segments.length === 0 ) {
+		return 'dashboard';
+	}
+	if ( segments[ 0 ] === 'sites' && segments.length >= 3 ) {
+		return segments[ 2 ];
+	}
+	return segments[ 0 ];
+}
 
 /**
  * Renders the unified Big Sky chat experience when the current user has opted
@@ -23,14 +49,34 @@ const AsyncAgentsManager = lazy(
 export default function OmnibarAgentsManager() {
 	const shouldUseUnifiedAgent = useShouldUseUnifiedAgent();
 	const { user } = useAuth();
+	const { data: omnibarSiteId } = useQuery( omnibarSiteIdQuery() );
+	const { data: site } = useQuery( {
+		...siteByIdQuery( omnibarSiteId ?? 0 ),
+		enabled: !! omnibarSiteId,
+	} );
+	const { isSiteSpecific, sectionName } = useRouterState( {
+		select: ( state ) => ( {
+			isSiteSpecific: state.matches.some(
+				( match ) => !! ( match.params as { siteSlug?: string } )?.siteSlug
+			),
+			sectionName: deriveSectionName( state.matches.at( -1 )?.routeId ),
+		} ),
+	} );
 
 	if ( ! shouldUseUnifiedAgent ) {
 		return null;
 	}
 
+	const agentsManagerSite = site ? { ID: site.ID, domain: site.slug } : null;
+
 	return (
 		<Suspense fallback={ null }>
-			<AsyncAgentsManager currentUser={ user } sectionName="dashboard" />
+			<AsyncAgentsManager
+				currentUser={ user }
+				sectionName={ sectionName }
+				site={ agentsManagerSite }
+				currentSiteId={ isSiteSpecific ? site?.ID : undefined }
+			/>
 		</Suspense>
 	);
 }
