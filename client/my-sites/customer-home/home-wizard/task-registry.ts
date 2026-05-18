@@ -120,6 +120,23 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 		completesOn: 'first_published_post',
 	},
 	{
+		// AI-routed: when expanded, asks Dolly to recommend 3 themes from the
+		// curated allowlist based on the wizard's `inferred` context (vibe /
+		// niche / goal), then renders them with live iframe previews and a
+		// one-click activate. Theme is the highest-leverage activation step —
+		// it determines how every other piece of content lands.
+		id: 'pick-theme',
+		title: 'Choose a theme',
+		subtitle: "Three themes picked for what you're building. One click activates.",
+		category: 'activation',
+		goals: GOALS_ALL,
+		// No `hideWhen` for the POC — the task stays even after activation so
+		// users can swap themes again. ThemePickerTaskItem could be extended
+		// later to check the active theme and self-mark complete.
+		url: ( s ) => `/themes/${ s }`,
+		cta: 'Browse all themes',
+	},
+	{
 		id: 'launch-site',
 		title: 'Launch your site',
 		subtitle: 'Take it public — but only after the steps above.',
@@ -155,7 +172,11 @@ export const TASK_REGISTRY: TaskTemplate[] = [
 	{
 		id: 'setup-store',
 		title: 'Set up your store',
-		subtitle: 'Payments, shipping, and tax in one place.',
+		// Subtitle absorbs the framing previously on `discover-woocommerce`
+		// (the data point from Insight Index §2). The two rows pointed at the
+		// same action, so the discover variant is dropped client-side in
+		// home-dashboard.tsx when this row is already in the picked list.
+		subtitle: 'Stores that adopt WooCommerce early reach first sale 42 days sooner.',
 		category: 'feature-setup',
 		features: [ 'store' ],
 		hideWhen: { pluginInstalled: 'woocommerce' },

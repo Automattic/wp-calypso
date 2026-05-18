@@ -1,32 +1,25 @@
-import { SiteThumbnail, Spinner } from '@automattic/components';
 import { useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
-import {
-	Card,
-	CardHeader,
-	CardBody,
-	Button,
-	__experimentalText as Text,
-	__experimentalHeading as Heading,
-} from '@wordpress/components';
+import { __experimentalText as Text } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { Icon, settings } from '@wordpress/icons';
+import { Card as UICard, Text as UIText, Stack } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import QueryPosts from 'calypso/components/data/query-posts';
 import QueryPreferences from 'calypso/components/data/query-preferences';
+import SitePreview from 'calypso/dashboard/sites/site-preview';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getAllPostCount } from 'calypso/state/posts/counts/selectors';
-import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { getSiteUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HomeWizard from './home-wizard';
+import { buildPickThemeSubtitle } from './home-wizard/recommend-themes';
 import { materializeTasks, selectTasks, type SelectedTask } from './home-wizard/select-tasks';
 import { prewarmTailorAndDraft, tailorAndDraftFromIntent } from './home-wizard/tailor-launchpad';
 import TailoredLaunchpad from './home-wizard/tailored-launchpad';
@@ -50,7 +43,6 @@ const HOME_WIZARD_COMPLETED_SITES_PREF = 'home_wizard_completed_sites';
 // interpret silence as "the page is broken."
 const TAILORING_TIMEOUT_MS = 40_000;
 
-const RECENT_POSTS_QUERY = { number: 5, status: 'publish' } as const;
 const LAUNCHPAD_CONTEXT = 'customer-home';
 
 // Map wizard goal answers onto a Launchpad checklist slug. Anything that
@@ -140,18 +132,60 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 		baseTailoredTasks = selectTasks( wizardGoal, wizardFeatures, siteState );
 	}
 
-	// If Dolly drafted a starter post but didn't pick (or had filtered out)
-	// any of the three "first creation" tasks, surface the draft anyway by
-	// prepending a synthetic publish-first-post row. FirstPostTaskItem
-	// renders this with the "Draft your first post" override + Dolly's
-	// title as the subtitle. The existing tailored-launchpad gate already
-	// routes publish-first-post through FirstPostTaskItem.
-	const CREATION_TASK_IDS = new Set( [
+	// `setup-store` and `discover-woocommerce` both install Woo today — the
+	// discover row was meant as the "why" but reads as a duplicate when both
+	// are picked. Drop the discover row in that case; its 42-day-sooner stat
+	// now lives on `setup-store`'s subtitle (see task-registry.ts).
+	if (
+		baseTailoredTasks.some( ( t ) => t.id === 'setup-store' ) &&
+		baseTailoredTasks.some( ( t ) => t.id === 'discover-woocommerce' )
+	) {
+		baseTailoredTasks = baseTailoredTasks.filter( ( t ) => t.id !== 'discover-woocommerce' );
+	}
+
+	// For the sell goal, enforce the merchant-shaped sequence: pick a theme
+	// (so product pages have a frame), set up the store (Woo install — needed
+	// before you can list anything), then add the first product. selectTasks()
+	// emits add-first-product before pick-theme (registry order, both in
+	// activation) and setup-store last (feature-setup category sorts after
+	// activation), which jumbles the cognitive order for a new merchant.
+	if ( wizardGoal === 'sell' ) {
+		const pull = ( id: string ) => {
+			const idx = baseTailoredTasks.findIndex( ( t ) => t.id === id );
+			return idx === -1 ? null : baseTailoredTasks.splice( idx, 1 )[ 0 ];
+		};
+		const theme = pull( 'pick-theme' );
+		const store = pull( 'setup-store' );
+		const product = pull( 'add-first-product' );
+		baseTailoredTasks = [
+			...( theme ? [ theme ] : [] ),
+			...( store ? [ store ] : [] ),
+			...( product ? [ product ] : [] ),
+			...baseTailoredTasks,
+		];
+	}
+
+	// Two different "creation task" concepts:
+	//   ANY_CREATION_TASK_IDS — broad: "did the user's picked list already
+	//     include some first-creation step?" Used to decide whether to
+	//     inject a synthetic publish-first-post row. For sell goal, the
+	//     creation step is `add-first-product`, so we should NOT inject a
+	//     blog-post row on top of it.
+	//   POST_DRAFT_REFRAME_IDS — narrow: "which task ids should be reframed
+	//     as 'Draft your first post' when a Dolly post draft exists?" Only
+	//     the post-shaped ones — a product-listing task isn't a draft.
+	const ANY_CREATION_TASK_IDS = new Set( [
+		'publish-first-post',
+		'add-portfolio-piece',
+		'send-first-newsletter',
+		'add-first-product',
+	] );
+	const POST_DRAFT_REFRAME_IDS = new Set( [
 		'publish-first-post',
 		'add-portfolio-piece',
 		'send-first-newsletter',
 	] );
-	const hasCreationRow = baseTailoredTasks.some( ( t ) => CREATION_TASK_IDS.has( t.id ) );
+	const hasCreationRow = baseTailoredTasks.some( ( t ) => ANY_CREATION_TASK_IDS.has( t.id ) );
 	const draftIsUsable =
 		!! firstPostDraft &&
 		typeof firstPostDraft.title === 'string' &&
@@ -174,6 +208,37 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 			  } )()
 			: baseTailoredTasks;
 
+	// When Dolly drafted a starter post, reframe whichever post-shaped
+	// creation task carries it: the row title becomes the action ("Draft
+	// your first post") and the subtitle becomes Dolly's verb-led
+	// description. add-first-product is intentionally excluded — listing
+	// a product isn't "draft a post."
+	const reframedForDraft: SelectedTask[] = draftIsUsable
+		? tailoredTasks.map( ( task ) =>
+				POST_DRAFT_REFRAME_IDS.has( task.id ) && ! task.completed
+					? {
+							...task,
+							title: translate( 'Draft your first post' ) as string,
+							subtitle: firstPostDraft?.subtitle ?? firstPostDraft?.title ?? task.subtitle,
+					  }
+					: task
+		  )
+		: tailoredTasks;
+
+	// Personalize the pick-theme subtitle using the wizard's inferred niche
+	// and vibe. This is the COLLAPSED-row subtitle the user sees before they
+	// expand the task — by repeating their own words ("Designs that match
+	// your silver jewelry store"), the row reads as "this list knows me"
+	// before any modal opens. Falls back to the static registry subtitle when
+	// inferred is absent (e.g., goal-only wizard finish).
+	const inferredContext = wizardState.inferred ?? null;
+	const personalizedThemeSubtitle = buildPickThemeSubtitle( inferredContext );
+	const displayTasks: SelectedTask[] = personalizedThemeSubtitle
+		? reframedForDraft.map( ( task ) =>
+				task.id === 'pick-theme' ? { ...task, subtitle: personalizedThemeSubtitle } : task
+		  )
+		: reframedForDraft;
+
 	// Fallback path for users who skipped both entries or whose preferences
 	// haven't loaded yet — keep the original server-driven Launchpad.
 	const fallbackChecklistSlug =
@@ -187,154 +252,69 @@ function SiteSetupWidget( { isTailoring }: { isTailoring: boolean } ) {
 	// this, prompt-path users would never see the tailored list.
 	const hasFinishedOnboarding =
 		wizardGoal !== null || ( typeof wizardIntent === 'string' && wizardIntent.length > 0 );
-	const useTailored = hasFinishedOnboarding && tailoredTasks.length > 0;
+	const useTailored = hasFinishedOnboarding && displayTasks.length > 0;
 	const fallbackVisible = ! useTailored && ( fallbackChecklist?.length ?? 0 ) > 0;
 
 	if ( ! isTailoring && ! useTailored && ! fallbackVisible ) {
 		return null;
 	}
 
-	return (
-		<Card className="home-dashboard__widget home-dashboard__site-setup" size="small">
-			<CardHeader>
-				<Heading level={ 2 } size={ 16 }>
-					{ translate( 'Site Setup' ) }
-				</Heading>
-			</CardHeader>
-			<CardBody>
-				{ ( () => {
-					if ( isTailoring ) {
-						return <TailoringSkeleton />;
-					}
-					if ( useTailored ) {
-						return <TailoredLaunchpad tasks={ tailoredTasks } />;
-					}
-					return (
-						<Launchpad
-							siteSlug={ siteSlug }
-							checklistSlug={ fallbackChecklistSlug }
-							launchpadContext={ LAUNCHPAD_CONTEXT }
-						/>
-					);
-				} )() }
-			</CardBody>
-		</Card>
-	);
-}
-
-function ActivityWidget() {
-	const translate = useTranslate();
-	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
-	const posts = useSelector( ( state: AppState ) =>
-		siteId ? getPostsForQuery( state, siteId, RECENT_POSTS_QUERY ) : null
-	);
-
-	const dateFormatter = new Intl.DateTimeFormat( undefined, {
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric',
-	} );
-	const timeFormatter = new Intl.DateTimeFormat( undefined, {
-		hour: 'numeric',
-		minute: 'numeric',
-	} );
+	const completedCount = displayTasks.filter( ( task ) => task.completed ).length;
+	const progressLabel = translate( '%(completed)d of %(total)d completed', {
+		args: { completed: completedCount, total: displayTasks.length },
+	} ) as string;
 
 	return (
-		<Card className="home-dashboard__widget" size="small">
-			{ siteId && <QueryPosts siteId={ siteId } query={ RECENT_POSTS_QUERY } /> }
-			<CardHeader>
-				<Heading level={ 2 } size={ 16 }>
-					{ translate( 'Activity' ) }
-				</Heading>
-			</CardHeader>
-			<CardBody>
-				{ posts && posts.length > 0 ? (
-					<ul className="home-dashboard__activity-list">
-						{ posts.map( ( post ) => {
-							const date = post.date ? new Date( post.date ) : null;
+		<section className="home-dashboard__site-setup site-setup">
+			<Stack direction="column" gap="2xl">
+				<Stack direction="column" gap="xs" className="site-setup__heading">
+					{ /* WPDS injects the text content via the render prop, but the
+					   jsx-a11y rule can't see through that and flags the self-closing
+					   <h2 />. Disable narrowly — the heading does carry content. */ }
+					{ /* eslint-disable-next-line jsx-a11y/heading-has-content */ }
+					<UIText variant="heading-2xl" render={ <h2 /> }>
+						{ translate( 'Get the most out of WordPress' ) }
+					</UIText>
+					{ useTailored && (
+						<UIText variant="body-md" className="site-setup__progress">
+							{ progressLabel }
+						</UIText>
+					) }
+				</Stack>
+				<div className="site-setup__grid">
+					<div className="site-setup__launchpad">
+						{ ( () => {
+							if ( isTailoring ) {
+								return <TailoringSkeleton />;
+							}
+							if ( useTailored ) {
+								return <TailoredLaunchpad tasks={ displayTasks } />;
+							}
 							return (
-								<li key={ post.ID } className="home-dashboard__activity-item">
-									<Text variant="muted" size={ 12 }>
-										{ date
-											? `${ dateFormatter.format( date ) } · ${ timeFormatter.format( date ) }`
-											: '' }
-									</Text>
-									<a href={ post.URL }>{ post.title || translate( '(Untitled)' ) }</a>
-								</li>
+								<Launchpad
+									siteSlug={ siteSlug }
+									checklistSlug={ fallbackChecklistSlug }
+									launchpadContext={ LAUNCHPAD_CONTEXT }
+								/>
 							);
-						} ) }
-					</ul>
-				) : (
-					<Text variant="muted">{ translate( 'No recent activity yet.' ) }</Text>
-				) }
-			</CardBody>
-		</Card>
+						} )() }
+					</div>
+					<ThemePreviewCard />
+				</div>
+			</Stack>
+		</section>
 	);
 }
 
-function AtAGlanceWidget() {
-	const translate = useTranslate();
-	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
-	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
-	const postCount = useSelector( ( state: AppState ) =>
-		siteId ? getAllPostCount( state, siteId, 'post', 'publish' ) : 0
-	);
-	const pageCount = useSelector( ( state: AppState ) =>
-		siteId ? getAllPostCount( state, siteId, 'page', 'publish' ) : 0
-	);
-	const commentCount = useSelector( ( state: AppState ) =>
-		siteId ? Number( getSiteOption( state, siteId, 'comment_count' ) ?? 0 ) : 0
-	);
-
-	return (
-		<Card className="home-dashboard__widget" size="small">
-			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
-			{ siteId && <QueryPostCounts siteId={ siteId } type="page" /> }
-			<CardHeader>
-				<Heading level={ 2 } size={ 16 }>
-					{ translate( 'At a Glance' ) }
-				</Heading>
-			</CardHeader>
-			<CardBody>
-				<ul className="home-dashboard__glance-list">
-					<li>
-						<a href={ `/posts/${ siteSlug }` }>
-							{ translate( '%(count)d post', '%(count)d posts', {
-								count: postCount ?? 0,
-								args: { count: postCount ?? 0 },
-							} ) }
-						</a>
-					</li>
-					<li>
-						<a href={ `/comments/all/${ siteSlug }` }>
-							{ translate( '%(count)d comment', '%(count)d comments', {
-								count: commentCount,
-								args: { count: commentCount },
-							} ) }
-						</a>
-					</li>
-					<li>
-						<a href={ `/pages/${ siteSlug }` }>
-							{ translate( '%(count)d page', '%(count)d pages', {
-								count: pageCount ?? 0,
-								args: { count: pageCount ?? 0 },
-							} ) }
-						</a>
-					</li>
-				</ul>
-			</CardBody>
-		</Card>
-	);
-}
-
-const PREVIEW_WIDTH = 800;
-const PREVIEW_HEIGHT = 500;
-
-function SitePreviewWidget() {
-	const translate = useTranslate();
+/**
+ * The theme preview shown alongside the Launchpad checklist. A @wordpress/ui
+ * Card whose content is a full-bleed sandboxed iframe of the site's real
+ * theme — the launched site itself when public, otherwise the active
+ * theme's public demo (a coming-soon site's own URL is a wp.com placeholder).
+ */
+function ThemePreviewCard() {
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
 	const site = useSelector( getSelectedSite );
-	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const siteUrl = useSelector( ( state: AppState ) =>
 		siteId ? getSiteUrl( state, siteId ) : null
 	);
@@ -345,61 +325,38 @@ function SitePreviewWidget() {
 		siteId && activeThemeId ? getCanonicalTheme( state, siteId, activeThemeId ) : null
 	);
 
-	// Coming-soon / unlaunched sites serve a wp.com placeholder page on their
-	// public URL — useless as a preview. Fall back to the active theme's
-	// public demo so users see what their theme actually looks like.
 	const isPublic = site?.launch_status === 'launched' && ! site?.is_coming_soon;
 	const previewTarget =
 		isPublic && siteUrl ? siteUrl : ( theme?.demo_uri as string | undefined ) ?? '';
 
-	const previewLabel = translate( 'Site preview' ) as string;
+	// Same pattern as the /sites grid + overview SitePreviewCard: render the
+	// target page in a sandboxed iframe at a 1200px virtual width, then scale
+	// the transform to fit whatever size the container ends up. SitePreview
+	// appends `?hide_banners=true&preview=true&iframe=true` so the
+	// "Get this theme on WordPress.com" promo, cookie banners, and admin bar
+	// stay hidden in the screenshot.
+	const [ resizeListener, sizes ] = useResizeObserver();
+	const width = sizes?.width ?? null;
+	const height = sizes?.height ?? null;
+	const scale = width ? width / 1200 : 0;
 
 	return (
-		<Card className="home-dashboard__widget home-dashboard__site-preview-card" size="small">
+		<UICard.Root className="site-setup__theme">
 			{ siteId && <QueryActiveTheme siteId={ siteId } /> }
 			{ siteId && activeThemeId && (
 				<QueryCanonicalTheme siteId={ siteId } themeId={ activeThemeId } />
 			) }
-			<CardHeader>
-				<Heading level={ 2 } size={ 16 }>
-					{ translate( 'Site Preview' ) }
-				</Heading>
-			</CardHeader>
-			<CardBody>
-				<div className="home-dashboard__site-preview-frame">
-					<SiteThumbnail
-						mShotsUrl={ previewTarget }
-						alt={ previewLabel }
-						aria-label={ previewLabel }
-						width={ PREVIEW_WIDTH }
-						height={ PREVIEW_HEIGHT }
-						mshotsOption={ { vpw: 1600, vph: 1000, w: PREVIEW_WIDTH, h: PREVIEW_HEIGHT } }
-					>
-						<Spinner />
-					</SiteThumbnail>
-				</div>
-				<div className="home-dashboard__site-preview-meta">
-					<div>
-						<div className="home-dashboard__site-preview-name">
-							{ site?.name || translate( 'Site' ) }
+			<UICard.Content className="site-setup__theme-content">
+				<UICard.FullBleed className="site-setup__theme-bleed">
+					{ resizeListener }
+					{ previewTarget && width && height && (
+						<div className="site-setup__theme-iframe">
+							<SitePreview url={ previewTarget } scale={ scale } height={ height / scale } />
 						</div>
-						{ siteUrl && (
-							<a
-								className="home-dashboard__site-preview-url"
-								href={ siteUrl }
-								target="_blank"
-								rel="noreferrer"
-							>
-								{ new URL( siteUrl ).host }
-							</a>
-						) }
-					</div>
-					<Button variant="secondary" href={ `/site-editor/${ siteSlug }` } __next40pxDefaultSize>
-						{ translate( 'Edit Site' ) }
-					</Button>
-				</div>
-			</CardBody>
-		</Card>
+					) }
+				</UICard.FullBleed>
+			</UICard.Content>
+		</UICard.Root>
 	);
 }
 
@@ -517,42 +474,42 @@ function useTailoredFlow() {
 			.filter( Boolean )
 			.join( '\n' );
 
-		// Write stage 1: the inputs, persisted before the async hop starts.
-		// `goal` lives here now (not in `finish`) so the whole wizard run is
-		// one key. `setPreference` inside `savePreference` runs synchronously,
-		// so stages 2 and 3 are guaranteed to read this back.
-		mergeWizardState( {
-			goal: answers.goal,
-			intent: composed,
-			...( trimmedName ? { siteName: trimmedName } : {} ),
-		} );
-
 		const { controller, finalize } = startTailoring();
 
+		// ONE write per wizard run — collapsed from three (stages 1 + 2 + 3).
+		// The savePreference race lives at the receivePreferences layer:
+		// even though we use one key (home_wizard_state), three saves to the
+		// SAME key in quick succession can echo out of order, with an early
+		// echo wholesale-replacing remoteValues using the server's then-current
+		// blob (which still has the *previous* run's inferred). That made the
+		// theme picker render with stale inferred. Single save = no race.
+		//
+		// Trade-off: we lose the early-paint partial of task_ids (stage 2 in
+		// the old flow). The dashboard skeleton stays for the full Dolly
+		// duration (~30s) instead of swapping in tasks ~1-2s before the draft.
+		// Worth it for picker correctness. Recovery if user refreshes
+		// mid-wizard: their inputs are lost (no stage 1 either), but they can
+		// re-run the wizard via the FAB.
 		tailorAndDraftFromIntent(
 			{ intent: composed },
 			{
 				siteId: siteId ?? undefined,
 				abortSignal: controller.signal,
-				// Streaming early-paint: task_ids arrives long before the draft
-				// finishes generating. Persist + drop the skeleton here so the
-				// user sees real tailored tasks ~10s sooner; the draft fills in
-				// when the rest of the stream completes. Write stage 2.
-				onPartialTaskIds: ( ids ) => {
-					if ( ids.length > 0 ) {
-						mergeWizardState( { taskIds: ids } );
-					}
-					setIsTailoring( false );
-				},
+				// No-op: we used to drop the skeleton + persist partial task_ids
+				// here for an early paint, but that surfaced the PREVIOUS run's
+				// tasks until stage 3 completed (since the picker reads from the
+				// same key). Skeleton stays until the full result lands in the
+				// `.then` below — cleaner UX, no flash of stale tasks.
+				onPartialTaskIds: () => {},
 			}
 		)
-			// Write stage 3: the full result. One merge for task_ids + inferred
-			// + draft so the draft (the subtitle source) can't be clobbered by
-			// a sibling write landing out of order.
 			.then( ( result ) => {
 				const patch: Partial< HomeWizardState > = {
+					goal: answers.goal,
+					intent: composed,
 					inferred: result.inferred ?? {},
 					firstPostDraft: result.first_post_draft,
+					...( trimmedName ? { siteName: trimmedName } : {} ),
 				};
 				if ( result.task_ids.length > 0 ) {
 					patch.taskIds = result.task_ids;
@@ -630,25 +587,9 @@ export default function HomeDashboard() {
 		<div className={ 'home-dashboard' + ( isWizardOpen ? ' home-dashboard--wizard-open' : '' ) }>
 			<QueryPreferences />
 			{ ! isWizardOpen && (
-				<>
-					<header className="home-dashboard__page-header">
-						<Heading level={ 1 } size={ 24 }>
-							{ translate( 'Dashboard' ) }
-						</Heading>
-					</header>
-					<div className="home-dashboard__grid">
-						<div className="home-dashboard__col home-dashboard__col--main">
-							<SiteSetupWidget isTailoring={ isTailoring } />
-							<div className="home-dashboard__row">
-								<ActivityWidget />
-								<AtAGlanceWidget />
-							</div>
-						</div>
-						<div className="home-dashboard__col home-dashboard__col--side">
-							<SitePreviewWidget />
-						</div>
-					</div>
-				</>
+				<div className="home-dashboard__main">
+					<SiteSetupWidget isTailoring={ isTailoring } />
+				</div>
 			) }
 			{ isWizardOpen && (
 				<HomeWizard
