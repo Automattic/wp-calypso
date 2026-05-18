@@ -1211,28 +1211,29 @@ export class JetpackAuthorize extends Component {
 
 	/**
 	 * Render the "Use a different account" link that sits directly beneath
-	 * the user card on the unified connect-account surfaces. The link is
-	 * suppressed while the connection is in flight (or already succeeded)
-	 * so it doesn't offer a switch-account escape hatch mid-handshake —
-	 * matching the loading-state guard the action button uses below.
+	 * the user card on the unified connect-account surfaces. The link stays
+	 * visible but becomes inert and visually muted while the connection is
+	 * in flight so the layout doesn't shift when the spinner appears.
 	 */
 	renderUseDifferentAccountLink() {
 		if ( this.props.isSiteBlocked ) {
 			return null;
 		}
 
-		if ( this.isInFlight ) {
-			return null;
-		}
-
+		const disabled = this.isInFlight;
 		const { from } = this.props.authQuery;
 		const loginURL = login( { isJetpack: true, redirectTo: window.location.href, from } );
 
 		return (
 			<LoggedOutFormLinkItem
-				className="jetpack-connect__switch-account-link"
-				href={ loginURL }
-				onClick={ ( e ) => this.handleSignIn( e, loginURL ) }
+				className={ clsx( 'jetpack-connect__switch-account-link', {
+					'is-disabled': disabled,
+				} ) }
+				href={ disabled ? undefined : loginURL }
+				onClick={
+					disabled ? ( e ) => e.preventDefault() : ( e ) => this.handleSignIn( e, loginURL )
+				}
+				aria-disabled={ disabled }
 			>
 				{ this.props.translate( 'Use a different account' ) }
 			</LoggedOutFormLinkItem>

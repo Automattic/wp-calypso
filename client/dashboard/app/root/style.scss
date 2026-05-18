@@ -2,7 +2,7 @@
 // Old layout (no sidebar): sticky header
 // For pages without sub menus, the first header is the sticky header
 // For pages with sub menus, the second header is the sticky header
-.dashboard-root__layout:not(:has(main > .dashboard-header-bar)) > .dashboard-header-bar,
+.dashboard-root__layout:not( :has( main > .dashboard-header-bar ) ) > .dashboard-header-bar,
 .dashboard-root__layout > main > .dashboard-header-bar {
 	position: sticky;
 	top: 0;
@@ -16,13 +16,13 @@
 
 .dashboard-root__body {
 	display: flex;
-	min-height: calc(100vh - var(--masterbar-height) );
+	min-height: calc( 100vh - var( --masterbar-height ) );
 
-	&:has(> .dashboard-responsive-sidebar__sidebar) {
+	&:has( > .dashboard-responsive-sidebar__sidebar ) {
 		padding-inline-start: $sidebar-width;
 	}
 
-	&:has(.dashboard-responsive-sidebar) {
+	&:has( .dashboard-responsive-sidebar ) {
 		overflow-x: hidden;
 	}
 }
@@ -35,8 +35,28 @@
 	min-width: 0;
 	transition: transform 0.3s ease-in;
 
-	.dashboard-root__body:has(.dashboard-responsive-sidebar.is-open) & {
-			transform: translateX( $sidebar-width );
-			overflow: hidden;
+	.dashboard-root__body:has( .dashboard-responsive-sidebar.is-open ) & {
+		transform: translateX( $sidebar-width );
+		overflow: hidden;
+	}
+}
+
+@media print {
+	.dashboard-root__layout > .dashboard-header-bar,
+	.dashboard-root__layout > main > .dashboard-header-bar,
+	.dashboard-responsive-sidebar,
+	.dashboard-responsive-sidebar__sidebar,
+	.dashboard-responsive-sidebar__overlay {
+		display: none;
+	}
+
+	.dashboard-root__body {
+		padding-inline-start: 0;
+		overflow-x: visible;
+	}
+
+	.dashboard-root__content {
+		transform: none;
+		overflow: visible;
 	}
 }

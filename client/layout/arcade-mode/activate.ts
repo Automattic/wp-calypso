@@ -1,4 +1,6 @@
+import { unlockAchievement } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import './style.scss';
 
 const BODY_CLASS = 'is-arcade-mode';
@@ -64,6 +66,20 @@ function mountFlashBanner(): void {
 	document.body.appendChild( flashElement );
 }
 
+function unlockArcadeAchievement(): void {
+	unlockAchievement( 'arcade_mode' )
+		.then( ( result ) => {
+			if ( result.granted ) {
+				getCalypsoQueryClient()?.invalidateQueries( {
+					queryKey: [ 'read', 'achievements' ],
+				} );
+			}
+		} )
+		.catch( () => {
+			// Easter egg — never bother the user with errors.
+		} );
+}
+
 function deactivate(): void {
 	if ( ! active ) {
 		return;
@@ -113,4 +129,6 @@ export function activateArcadeMode(): void {
 		}
 	};
 	document.addEventListener( 'keydown', escapeListener );
+
+	unlockArcadeAchievement();
 }

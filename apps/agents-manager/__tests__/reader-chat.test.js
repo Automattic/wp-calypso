@@ -12,6 +12,16 @@
 jest.mock( '../config', () => {}, { virtual: true } );
 jest.mock( '@automattic/agents-manager', () => ( { default: () => null } ), { virtual: true } );
 jest.mock(
+	'@automattic/agents-manager/src/auth/calypso-auth-provider',
+	() => ( {
+		createCalypsoAuthProvider: jest.fn( ( siteId ) => async () => ( {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer test-token-${ siteId }`,
+		} ) ),
+	} ),
+	{ virtual: true }
+);
+jest.mock(
 	'@tanstack/react-query',
 	() => ( {
 		QueryClient: jest.fn( () => ( {} ) ),
@@ -48,6 +58,9 @@ beforeAll( () => {
 
 // Import after mocks are registered.
 const {
+	createCalypsoAuthProvider,
+} = require( '@automattic/agents-manager/src/auth/calypso-auth-provider' );
+const {
 	parseAgentSseResponse,
 	slugify,
 	getFallbackSuggestions,
@@ -58,6 +71,7 @@ const {
 	getReaderClientContext,
 	normalizeSuggestions,
 	parseSuggestionsResponse,
+	getSuggestionsFetchHeaders,
 } = require( '../reader-chat' );
 
 // ---------------------------------------------------------------------------
@@ -243,6 +257,21 @@ describe( 'getReaderClientContext', () => {
 		expect( getReaderClientContext( null, 247750866 ) ).toEqual( {
 			selectedSiteId: 247750866,
 		} );
+	} );
+} );
+
+// ---------------------------------------------------------------------------
+// getSuggestionsFetchHeaders
+// ---------------------------------------------------------------------------
+
+describe( 'getSuggestionsFetchHeaders', () => {
+	it( 'uses the Calypso auth provider with the selected site ID', async () => {
+		await expect( getSuggestionsFetchHeaders( 247750866 ) ).resolves.toEqual( {
+			'Content-Type': 'application/json',
+			Authorization: 'Bearer test-token-247750866',
+		} );
+
+		expect( createCalypsoAuthProvider ).toHaveBeenCalledWith( 247750866 );
 	} );
 } );
 

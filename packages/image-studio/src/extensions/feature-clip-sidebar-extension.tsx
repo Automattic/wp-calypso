@@ -290,11 +290,7 @@ let pluginRegistered = false;
  * editor package isn't loaded on the page (e.g. wp-admin Media Library).
  */
 export function registerFeatureClipSidebar(): void {
-	if ( window.imageStudioData?.canGenerateVideoClips === false ) {
-		return;
-	}
-
-	if ( ! window.imageStudioData?.isDevMode ) {
+	if ( window.imageStudioData?.canGenerateVideoClips !== true ) {
 		return;
 	}
 

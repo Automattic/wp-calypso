@@ -204,12 +204,15 @@ function getBlockSnapshot( clientId: string ): { name: string; content: string }
 
 /**
  * Handle the update-block-content tool call: apply text changes to a block.
- * @param {any} input - Tool input with clientId, content, and optional summary / currentText.
+ * @param {any} input - Tool input with clientId, content, optional summary / currentText,
+ *   and optional shouldApply guard. When shouldApply returns false before either the
+ *   initial snapshot or delayed write, the edit fails with "context changed" without
+ *   mutating the block.
  * @returns Result with success flag and (on success) the pre-edit `contentBefore`
  *   so callers can revert later via `undoBlockEdit`.
  */
 export function handleUpdateBlockContent( input: any ): any {
-	const { clientId, content, summary, currentText } = input;
+	const { clientId, content, summary, currentText, shouldApply } = input;
 	if ( ! clientId || content === undefined || content === null ) {
 		return { success: false, error: 'clientId and content are required', returnToAgent: false };
 	}
@@ -222,6 +225,10 @@ export function handleUpdateBlockContent( input: any ): any {
 	const blockEditor = wpData.dispatch( 'core/block-editor' );
 	if ( ! blockEditor ) {
 		return { success: false, error: 'Block editor not available', returnToAgent: false };
+	}
+	// Let callers veto before we snapshot if the editor context has changed.
+	if ( typeof shouldApply === 'function' && ! shouldApply() ) {
+		return { success: false, error: 'context changed', returnToAgent: false };
 	}
 
 	const snapshot = getBlockSnapshot( clientId );
@@ -281,6 +288,11 @@ export function handleUpdateBlockContent( input: any ): any {
 				resolve( { success: false, error, returnToAgent: false } );
 			};
 
+			// Re-check immediately before mutation because the shimmer intentionally delays writes.
+			if ( typeof shouldApply === 'function' && ! shouldApply() ) {
+				resolveFailure( 'context changed' );
+				return;
+			}
 			if ( ! latestSnapshot ) {
 				resolveFailure( 'block not found' );
 				return;
@@ -348,13 +360,15 @@ export function handleUpdateBlockContent( input: any ): any {
  * ambiguous, the edit fails safely rather than replacing the whole block. Returns
  * `success: false` for unsupported block types so the UI can show 'failed' rather
  * than corrupting the block. On success, returns `contentBefore` so the caller can
- * pair it with `clientId` and call `undoBlockEdit` later.
+ * pair it with `clientId` and call `undoBlockEdit` later. The optional shouldApply
+ * guard lets callers abort safely if editor context changes while the edit is pending.
  */
 export async function applyReviewEdit(
 	clientId: string,
 	content: string,
 	summary?: string,
-	currentText?: string
+	currentText?: string,
+	shouldApply?: () => boolean
 ): Promise< {
 	success: boolean;
 	contentBefore?: string;
@@ -362,7 +376,7 @@ export async function applyReviewEdit(
 	error?: string;
 	returnToAgent?: boolean;
 } > {
-	return handleUpdateBlockContent( { clientId, content, summary, currentText } );
+	return handleUpdateBlockContent( { clientId, content, summary, currentText, shouldApply } );
 }
 
 /**

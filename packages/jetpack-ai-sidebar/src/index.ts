@@ -83,6 +83,11 @@ function getCurrentEditorPostType(): string | undefined {
 	return typeof postType === 'string' ? postType : undefined;
 }
 
+function getCurrentEditorPostId(): number | undefined {
+	const postId = ( window as any ).wp?.data?.select?.( 'core/editor' )?.getCurrentPostId?.();
+	return typeof postId === 'number' && postId > 0 ? postId : undefined;
+}
+
 function isAiEditorialReviewAvailable(
 	// Default arguments run at call time, so callers can omit this when they
 	// want the current editor state read live.
@@ -155,12 +160,20 @@ function handleShowComponent( input: any ): any {
 		};
 	}
 
+	const componentProps: Record< string, unknown > = { ...( props ?? {} ) };
 	const data: Record< string, unknown > = {
 		type,
-		props: props ?? {},
+		props: componentProps,
 		isCurrent: true,
 		hideZoomAction: true,
 	};
+	if ( type === 'review-mediation' ) {
+		const currentPostId = getCurrentEditorPostId();
+		if ( currentPostId ) {
+			componentProps.postId = currentPostId;
+			data.postId = currentPostId;
+		}
+	}
 
 	if ( type === 'title-picker' ) {
 		// Snapshot state for Undo. Tool call id doubles as the checkpoint id so
