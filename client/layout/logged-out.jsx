@@ -87,6 +87,7 @@ const HELP_CENTER_FAB_SECTIONS = [
 	'patterns',
 	'performance-profiler',
 	'plugins',
+	'reader',
 	'site-profiler',
 	'theme',
 	'themes',
@@ -171,11 +172,13 @@ const LayoutLoggedOut = ( {
 		! isWooOAuth2Client( oauth2Client );
 
 	// Logged-in users use the masterbar control instead.
+	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
 	const showHelpCenterFab =
 		! isLoggedIn &&
 		isEnabled( 'help-center/logged-out-fab' ) &&
 		( HELP_CENTER_FAB_SECTIONS.includes( sectionName ) ||
 			HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
+		! isReaderTagEmbed &&
 		userAllowedToHelpCenter;
 
 	const loadHelpCenter =
