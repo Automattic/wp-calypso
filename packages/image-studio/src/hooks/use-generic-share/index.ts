@@ -9,6 +9,7 @@ import {
 	trackImageStudioGenericShareCompleted,
 	trackImageStudioGenericShareFailed,
 } from '../../utils/tracking';
+import type { ShareSurface } from '../../utils/tracking';
 import type { ShareClipIdentity } from '../share-types';
 
 interface UseGenericShareReturn {
@@ -40,7 +41,10 @@ function canShareVideoFiles( nav: NavigatorWithShare, filename: string ): boolea
 	}
 }
 
-export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareReturn {
+export function useGenericShare(
+	surface: ShareSurface,
+	clip?: ShareClipIdentity
+): UseGenericShareReturn {
 	const hasOverride = clip !== undefined;
 
 	const { storeUrl, storeAttachmentId, entryPoint, isAiProcessing } = useSelect( ( select ) => {
@@ -128,13 +132,13 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 			// fail. When there's no file-share support, surface an error rather than
 			// falling back to a download — the toolbar already has a download action.
 			if ( ! nav || ! canShareVideoFiles( nav, filename ) ) {
-				trackImageStudioGenericShareClicked( { method: 'web-share-unsupported' } );
-				trackImageStudioGenericShareFailed( { method: 'web-share-unsupported' } );
+				trackImageStudioGenericShareClicked( { surface, method: 'web-share-unsupported' } );
+				trackImageStudioGenericShareFailed( { surface, method: 'web-share-unsupported' } );
 				await showShareFailedNotice();
 				return;
 			}
 
-			trackImageStudioGenericShareClicked( { method: 'web-share' } );
+			trackImageStudioGenericShareClicked( { surface, method: 'web-share' } );
 			try {
 				const response = await fetch( currentVideoUrl );
 				if ( ! response.ok ) {
@@ -146,7 +150,7 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 					files: [ file ],
 					title: __( 'Generated video clip', __i18n_text_domain__ ),
 				} );
-				trackImageStudioGenericShareCompleted( { method: 'web-share' } );
+				trackImageStudioGenericShareCompleted( { surface, method: 'web-share' } );
 			} catch ( err ) {
 				if ( err instanceof DOMException && err.name === 'AbortError' ) {
 					// User dismissed the share sheet — silent, no notice.
@@ -156,6 +160,7 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 				const failureKind =
 					err instanceof Error && err.message.startsWith( 'Fetch failed:' ) ? 'http' : undefined;
 				trackImageStudioGenericShareFailed( {
+					surface,
 					method: 'web-share',
 					...( failureKind ? { failureKind } : {} ),
 					message,
@@ -166,7 +171,7 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 			isSharingRef.current = false;
 			setIsSharing( false );
 		}
-	}, [ showNotice, currentAttachmentId, currentVideoUrl ] );
+	}, [ showNotice, currentAttachmentId, currentVideoUrl, surface ] );
 
 	return {
 		isVisible,

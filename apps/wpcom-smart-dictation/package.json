@@ -34,7 +34,7 @@
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/wpcom-smart-dictation": "workspace:^",
-		"@wordpress/components": "^32.1.0",
+		"@wordpress/components": "^33.1.0",
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/editor": "^14.23.0",
 		"@wordpress/i18n": "^5.23.0",

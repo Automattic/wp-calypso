@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
@@ -33,6 +34,7 @@ export const LOGIN_SECTION_DEFINITION = {
 
 const ReduxWrappedLayout = ( {
 	store,
+	queryClient,
 	currentSection,
 	currentRoute,
 	currentQuery,
@@ -49,14 +51,16 @@ const ReduxWrappedLayout = ( {
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
 			>
-				<ReduxProvider store={ store }>
-					<LayoutLoggedOut
-						primary={ primary }
-						secondary={ secondary }
-						redirectUri={ redirectUri }
-						showGdprBanner={ showGdprBanner }
-					/>
-				</ReduxProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<LayoutLoggedOut
+							primary={ primary }
+							secondary={ secondary }
+							redirectUri={ redirectUri }
+							showGdprBanner={ showGdprBanner }
+						/>
+					</ReduxProvider>
+				</QueryClientProvider>
 			</RouteProvider>
 		</CalypsoI18nProvider>
 	);

@@ -4,3 +4,7 @@
 @import "../shared/typography"; // all the typographic rules, variables, etc.
 @import "../shared/extends"; // sass extends for commonly used styles
 @import "../shared/extends-forms"; // sass extends for form styles
+
+// @wordpress/base-styles/mixins includes a same-named mixin with a static #fff default.
+// Keep Calypso's token-based version last so unqualified includes use it.
+@import "../shared/mixins/long-content-fade";

@@ -124,6 +124,7 @@
 		"plans/self-service-downgrade": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
+		"plugins/plugin-compass": true,
 		"plugins/universal-header": true,
 		"post-editor/checkout-overlay": true,
 		"post-list/qr-code-link": true,

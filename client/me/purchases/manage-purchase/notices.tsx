@@ -109,6 +109,10 @@ class PurchaseNotice extends Component<
 		showCancelledRedirectNotice:
 			typeof window !== 'undefined' &&
 			new URLSearchParams( window.location.search ).get( 'cancelled' ) === 'true',
+		cancelledIntent:
+			typeof window !== 'undefined'
+				? new URLSearchParams( window.location.search ).get( 'intent' )
+				: null,
 	};
 
 	componentDidMount() {
@@ -118,6 +122,7 @@ class PurchaseNotice extends Component<
 		const params = new URLSearchParams( window.location.search );
 		if ( params.get( 'cancelled' ) === 'true' ) {
 			params.delete( 'cancelled' );
+			params.delete( 'intent' );
 			const newSearch = params.toString();
 			const newUrl =
 				window.location.pathname + ( newSearch ? '?' + newSearch : '' ) + window.location.hash;
@@ -144,6 +149,26 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 		const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
+		if ( this.state.cancelledIntent === 'auto-renew' ) {
+			const noticeText = translate(
+				'Auto-renew has been disabled. You won\u2019t be billed again, and you\u2019ll continue to have access to the %(productNoun)s until %(expiryDate)s.',
+				{
+					args: {
+						productNoun: getProductNounForCategory( classifyPurchaseForCopy( purchase ) ),
+						expiryDate,
+					},
+				}
+			);
+			return (
+				<Notice
+					className="manage-purchase__purchase-expiring-notice"
+					showDismiss
+					onDismissClick={ this.dismissCancelledRedirectNotice }
+					status="is-success"
+					text={ noticeText }
+				/>
+			);
+		}
 		if ( willAtomicSiteRevert ) {
 			const exportUrl = `https://${ purchase.domain }/wp-admin/export.php`;
 			return (

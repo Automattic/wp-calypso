@@ -18,6 +18,7 @@ import {
 	trackImageStudioReelShareNotConnected,
 	trackImageStudioReelShareNotPublished,
 } from '../../utils/tracking';
+import type { ShareSurface } from '../../utils/tracking';
 import type { ShareClipIdentity } from '../share-types';
 
 const SOCIAL_STORE = 'jetpack-social-plugin';
@@ -54,7 +55,10 @@ interface UseReelShareReturn {
 	cancelShare: () => void;
 }
 
-export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
+export function useReelShare(
+	surface: ShareSurface,
+	clip?: ShareClipIdentity
+): UseReelShareReturn {
 	const sharePath = getReelSharePostPath();
 	const hasOverride = clip !== undefined;
 
@@ -182,6 +186,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		}
 
 		trackImageStudioReelShareClicked( {
+			surface,
 			attachmentId: currentAttachmentId ?? 0,
 			durationSeconds: currentDurationSeconds,
 		} );
@@ -205,7 +210,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		const freshIsPublished = freshEditor?.isCurrentPostPublished?.() ?? false;
 
 		if ( ! currentVideoUrl || ! currentAttachmentId ) {
-			trackImageStudioReelShareInvalidState();
+			trackImageStudioReelShareInvalidState( { surface } );
 			await showNotice(
 				__( 'Generate a video first to share it as a Reel.', __i18n_text_domain__ ),
 				'error'
@@ -218,7 +223,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		}
 
 		if ( ! freshIgConnection ) {
-			trackImageStudioReelShareNotConnected();
+			trackImageStudioReelShareNotConnected( { surface } );
 			await showNotice(
 				__(
 					'Connect Instagram in your site marketing settings to share Reels.',
@@ -238,7 +243,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		}
 
 		if ( ! freshIgIsEnabled ) {
-			trackImageStudioReelShareConnectionDisabled();
+			trackImageStudioReelShareConnectionDisabled( { surface } );
 			await showNotice(
 				__(
 					'Instagram sharing is not enabled for this post. Enable it in the Jetpack Social sidebar to share this Reel.',
@@ -252,7 +257,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		}
 
 		if ( ! freshIsPublished ) {
-			trackImageStudioReelShareNotPublished();
+			trackImageStudioReelShareNotPublished( { surface } );
 			await showNotice(
 				__( 'Publish this post first to share it as an Instagram Reel.', __i18n_text_domain__ ),
 				'warning',
@@ -273,6 +278,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		pendingShare,
 		sharePath,
 		showNotice,
+		surface,
 	] );
 
 	const confirmShare = useCallback( async () => {
@@ -341,7 +347,7 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			);
 
 			if ( success ) {
-				trackImageStudioReelShareDispatched();
+				trackImageStudioReelShareDispatched( { surface } );
 				await showNotice(
 					__(
 						'Reel shared to Instagram. It may take a few minutes to appear on your account.',
@@ -352,11 +358,11 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 			} else {
 				// shareCurrentPost already created a notice via @wordpress/notices;
 				// avoid a second one. Just record telemetry.
-				trackImageStudioReelShareFailed();
+				trackImageStudioReelShareFailed( { surface } );
 			}
 		} catch ( err ) {
 			const message = err instanceof Error ? err.message : undefined;
-			trackImageStudioReelShareFailed( message );
+			trackImageStudioReelShareFailed( { surface, errorMessage: message } );
 		} finally {
 			isSharingRef.current = false;
 		}
@@ -369,14 +375,15 @@ export function useReelShare( clip?: ShareClipIdentity ): UseReelShareReturn {
 		editPost,
 		sharePath,
 		shareCurrentPost,
+		surface,
 	] );
 
 	const cancelShare = useCallback( () => {
 		if ( pendingShare ) {
-			trackImageStudioReelShareCancelled();
+			trackImageStudioReelShareCancelled( { surface } );
 		}
 		setPendingShare( null );
-	}, [ pendingShare ] );
+	}, [ pendingShare, surface ] );
 
 	return {
 		isVisible,

@@ -46,7 +46,7 @@
 			flex: 1 0 30%;
 			font-size: $font-body-small;
 			line-height: 20px;
-			color: $studio-gray-60;
+			color: var( --studio-gray-60 );
 			min-width: 200px;
 
 			.title {
@@ -56,7 +56,7 @@
 					@extend %ellipsis;
 					display: block;
 					font-weight: 500;
-					color: $studio-gray-100;
+					color: var( --studio-gray-100 );
 
 					&:hover {
 						text-decoration: underline;
@@ -71,7 +71,7 @@
 			.excerpt {
 				max-width: 350px;
 				font-weight: 400;
-				color: $studio-gray-60;
+				color: var( --studio-gray-60 );
 				margin-top: 4px;
 				@extend %ellipsis;
 			}
@@ -108,7 +108,7 @@
 					font-weight: 600;
 					font-size: $font-code;
 					line-height: 22px;
-					color: $studio-gray-100;
+					color: var( --studio-gray-100 );
 					letter-spacing: -0.24px;
 					padding-right: 10px;
 					@extend %ellipsis;
@@ -130,7 +130,7 @@
 					font-weight: 400;
 					font-size: $font-body-extra-small;
 					line-height: 18px;
-					color: $studio-gray-40;
+					color: var( --studio-gray-40 );
 					@extend %ellipsis;
 
 					&:hover {
@@ -152,7 +152,7 @@
 			font-size: $font-body-small;
 			line-height: 20px;
 			letter-spacing: -0.15px;
-			color: $studio-gray-60;
+			color: var( --studio-gray-60 );
 		}
 
 		@media (max-width: $break-medium) {
@@ -166,7 +166,7 @@
 			flex-grow: initial;
 
 			.gridicon {
-				fill: $studio-gray-50;
+				fill: var( --studio-gray-50 );
 			}
 		}
 

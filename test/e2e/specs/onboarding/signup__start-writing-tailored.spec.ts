@@ -29,7 +29,14 @@ test.describe(
 			} );
 
 			await test.step( 'Then I see the Create your account page', async function () {
-				await expect( flowStartWriting.userSignupPage.createYourAccountHeading ).toBeVisible();
+				// The Start Writing flow first lands on `/setup/start-writing`, then
+				// redirects to `/setup/start-writing/check-sites`, and finally to
+				// `/start/account/user-social?...`. On mobile in CI, this chain plus
+				// the lazy-loaded signup chunk can easily exceed the default 10s
+				// expect timeout, so allow more time for the heading to render.
+				await expect( flowStartWriting.userSignupPage.createYourAccountHeading ).toBeVisible( {
+					timeout: 30000,
+				} );
 			} );
 
 			await test.step( 'When I sign up with my email', async function () {
