@@ -1,6 +1,6 @@
-// Emits rules for the explicit dark theme AND for the system theme when the
-// OS prefers dark. Intended to be nested inside a CSS-module selector so `&`
-// resolves to the scoped class.
+// Emits rules for the explicit dark theme and for the system theme when the OS
+// prefers dark. Intended to be nested inside a selector so `&` resolves to the
+// component or surface being themed.
 @mixin when-dark-theme {
 	@media screen {
 		:root[data-theme="dark"] & {
