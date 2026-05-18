@@ -104,17 +104,17 @@ describe( 'ActivityStreak', () => {
 			last_streak_date: '2026-05-10',
 		};
 
-		test( 'renders the build-your-streak description', () => {
+		test( 'renders the keep-it-going description', () => {
 			render( <ActivityStreak streak={ streak } isOwnProfile /> );
 			expect(
-				screen.getByText( 'Like, comment, follow, or post every day to build your streak.' )
+				screen.getByText( 'Like, comment, follow, or post today to keep your streak going.' )
 			).toBeVisible();
 		} );
 
-		test( 'badge is inactive with the "Don’t break it!" label', () => {
+		test( 'badge is inactive with the "Keep it going!" label', () => {
 			render( <ActivityStreak streak={ streak } isOwnProfile /> );
 			expect( getBadgeStateClass() ).toBe( 'is-inactive' );
-			expect( getBadgeLabel() ).toBe( 'Don’t break it!' );
+			expect( getBadgeLabel() ).toBe( 'Keep it going!' );
 		} );
 	} );
 
@@ -147,10 +147,10 @@ describe( 'ActivityStreak', () => {
 			).toBeVisible();
 		} );
 
-		test( 'badge state is frozen with the "Streak frozen" label', () => {
+		test( 'badge state is frozen with the "Close call!" label', () => {
 			render( <ActivityStreak streak={ streak } isOwnProfile /> );
 			expect( getBadgeStateClass() ).toBe( 'is-frozen' );
-			expect( getBadgeLabel() ).toBe( 'Streak frozen' );
+			expect( getBadgeLabel() ).toBe( 'Close call!' );
 		} );
 	} );
 
@@ -162,10 +162,12 @@ describe( 'ActivityStreak', () => {
 			last_streak_date: TODAY,
 		};
 
-		test( 'renders the keep-building description', () => {
+		test( 'renders the today-counted description', () => {
 			render( <ActivityStreak streak={ streak } isOwnProfile /> );
 			expect(
-				screen.getByText( 'Like, comment, follow, or post every day to keep building your streak.' )
+				screen.getByText(
+					'Today counted! Like, comment, follow, or post every day to keep building your streak.'
+				)
 			).toBeVisible();
 		} );
 
