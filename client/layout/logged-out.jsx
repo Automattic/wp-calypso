@@ -91,6 +91,7 @@ const HELP_CENTER_FAB_SECTIONS = [
 	'performance-profiler',
 	'plugins',
 	'reader',
+	'signup',
 	'site-profiler',
 	'theme',
 	'themes',
@@ -199,8 +200,14 @@ const LayoutLoggedOut = ( {
 	const isWpcomLogin =
 		sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin && isFabSafeLoginUrl();
 
+	// OAuth client signups (Woo, BlazePro, Gravatar, WPJobManager, etc.) likewise
+	// run under their own brand and route support elsewhere.
+	const isWpcomSignup = sectionName === 'signup' && ! useOAuth2Layout;
+
 	const isEligibleSection =
-		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) && ( sectionName !== 'login' || isWpcomLogin );
+		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) &&
+		( sectionName !== 'login' || isWpcomLogin ) &&
+		( sectionName !== 'signup' || isWpcomSignup );
 
 	// Logged-in users use the masterbar control instead.
 	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
@@ -342,10 +349,6 @@ const LayoutLoggedOut = ( {
 	}
 
 	const bodyClass = [ 'font-smoothing-antialiased' ];
-	if ( showHelpCenterFab ) {
-		// See `body.has-help-center-fab` in `help-center-fab/style.scss`.
-		bodyClass.push( 'has-help-center-fab' );
-	}
 
 	return (
 		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
