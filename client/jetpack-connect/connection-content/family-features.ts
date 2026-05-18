@@ -176,7 +176,6 @@ export function getSecondaryFeatureCardData( key: FeatureCardKey ): FeatureCardD
 				bullets: [
 					__( 'Run your store on the go with the Woo mobile app.' ),
 					__( 'Real-time order alerts and store analytics.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
 				],
 			};
 
@@ -185,8 +184,6 @@ export function getSecondaryFeatureCardData( key: FeatureCardKey ): FeatureCardD
 				title: __( 'Jetpack' ),
 				bullets: [
 					__( 'Access the activity log to track every change on your site.' ),
-					__( 'Manage backups, security, and settings from Jetpack Cloud.' ),
-					__( 'Publish and schedule social media shares with Jetpack Social.' ),
 					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
 				],
 			};
@@ -197,63 +194,44 @@ export function getSecondaryFeatureCardData( key: FeatureCardKey ): FeatureCardD
 				bullets: [
 					__( 'Access the activity log to track every change on your site.' ),
 					__( 'Monitor backup status and restore from Jetpack Cloud.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
 				],
 			};
 
 		case 'jetpack-protect':
 			return {
 				title: __( 'Jetpack Protect' ),
-				bullets: [
-					__( 'View scan results and security status from Jetpack Cloud.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
-				],
+				bullets: [ __( 'View scan results and security status from Jetpack Cloud.' ) ],
 			};
 
 		case 'jetpack-boost':
 			return {
 				title: __( 'Jetpack Boost' ),
-				bullets: [
-					__( 'View performance scores and optimization status.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
-				],
+				bullets: [ __( 'View performance scores and optimization status.' ) ],
 			};
 
 		case 'jetpack-search':
 			return {
 				title: __( 'Jetpack Search' ),
-				bullets: [
-					__( 'Manage search settings and customizations from Jetpack Cloud.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
-				],
+				bullets: [ __( 'Manage search settings and customizations from Jetpack Cloud.' ) ],
 			};
 
 		case 'jetpack-social':
 			return {
 				title: __( 'Jetpack Social' ),
-				bullets: [
-					__( 'Publish and schedule social media shares.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
-				],
+				bullets: [ __( 'Publish and schedule social media shares.' ) ],
 			};
 
 		case 'jetpack-videopress':
 			return {
 				title: __( 'Jetpack VideoPress' ),
-				bullets: [
-					__( 'Manage videos and view analytics from Jetpack Cloud.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
-				],
+				bullets: [ __( 'Manage videos and view analytics from Jetpack Cloud.' ) ],
 			};
 
 		case 'other':
 		default:
 			return {
 				title: __( 'Your active plugins' ),
-				bullets: [
-					__( 'Keep your site and account in sync with WordPress.com.' ),
-					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
-				],
+				bullets: [ __( 'Keep your site and account in sync with WordPress.com.' ) ],
 			};
 	}
 }

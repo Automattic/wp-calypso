@@ -14,12 +14,11 @@ describe( 'getSecondaryAdminFeatureCards', () => {
 		expect( cards[ 0 ].bullets.join( ' ' ) ).toContain( 'activity log' );
 	} );
 
-	test( 'returns a Woo card with SSO when only woocommerce is installed', () => {
+	test( 'returns a Woo card when only woocommerce is installed', () => {
 		const { cards } = getSecondaryAdminFeatureCards( [ 'woocommerce' ] );
 		expect( cards ).toHaveLength( 1 );
 		expect( cards[ 0 ].id ).toBe( 'woo' );
 		expect( cards[ 0 ].title ).toBe( 'WooCommerce' );
-		expect( cards[ 0 ].bullets.join( ' ' ) ).toContain( 'SSO' );
 		expect( cards[ 0 ].bullets.join( ' ' ) ).toContain( 'Woo mobile app' );
 	} );
 
@@ -36,14 +35,14 @@ describe( 'getSecondaryAdminFeatureCards', () => {
 		expect( cards ).toHaveLength( 1 );
 		expect( cards[ 0 ].id ).toBe( 'jetpack-backup' );
 		expect( cards[ 0 ].title ).toBe( 'Jetpack VaultPress Backup' );
-		expect( cards[ 0 ].bullets.join( ' ' ) ).toContain( 'SSO' );
+		expect( cards[ 0 ].bullets.join( ' ' ) ).toContain( 'activity log' );
 	} );
 
 	test( 'returns the "other" fallback card for empty plugin list', () => {
 		const { cards } = getSecondaryAdminFeatureCards( [] );
 		expect( cards ).toHaveLength( 1 );
 		expect( cards[ 0 ].id ).toBe( 'other' );
-		expect( cards[ 0 ].bullets.join( ' ' ) ).toContain( 'SSO' );
+		expect( cards[ 0 ].bullets.join( ' ' ) ).toContain( 'WordPress.com' );
 	} );
 
 	test( 'every card includes a logo for known families', () => {
