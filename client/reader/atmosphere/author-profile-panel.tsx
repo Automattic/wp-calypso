@@ -1,8 +1,8 @@
 import {
 	followAtmosphereActorMutation,
 	unfollowAtmosphereActorMutation,
+	useAtmosphereScopedAuthorFeedInfiniteQuery,
 	useAtmosphereScopedProfileQuery,
-	useAuthorFeedInfiniteQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
@@ -11,7 +11,6 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import {
-	AuthorProfileHeader,
 	FollowButton,
 	SocialAnalyticsProvider,
 	SocialFeedList,
@@ -19,16 +18,27 @@ import {
 	SocialProfileCard,
 	SocialProfileHeaderSkeleton,
 	mapAtmosphereFeedItemToSocialPost,
+	socialPostFeedItemKey,
 	type SocialPost,
 	type SocialProfileStat,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
+import { useOptionalComposer } from 'calypso/reader/social/composer';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfileTabs, useAuthorProfileFilter } from './author-profile-tabs';
-import { useOptionalComposer } from './composer';
 import { projectAtmosphereError } from './error-projection';
-import { errorMessage } from './profile-errors';
-import { getProfileUrl, getTagFeedUrl, getThreadUrl, getTimelineUrl } from './route';
+import { errorMessage, followErrorMessage } from './profile-errors';
+import {
+	getFollowersUrl,
+	getFollowingUrl,
+	getProfileUrl,
+	getTagFeedUrl,
+	getThreadUrl,
+} from './route';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
+import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type {
 	AtmosphereAuthorFeedFilter,
 	AtmosphereScopedProfile,
@@ -39,26 +49,6 @@ import type {
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
-
-/**
- * Action-aware copy for follow / unfollow failure toasts. Most kinds are
- * semantically identical to a profile-load failure (auth, rate limit,
- * upstream), so we delegate to the shared `errorMessage`. The exception is
- * `not_found`: the shared copy is profile-load-shaped and would mislead the
- * user when an actor disappears between profile load and the follow click.
- */
-function followErrorMessage(
-	error: AtmosphereError,
-	action: 'follow' | 'unfollow',
-	translate: ReturnType< typeof useTranslate >
-): TranslateResult {
-	if ( error.kind === 'not_found' ) {
-		return action === 'follow'
-			? translate( 'Couldn’t follow this account.' )
-			: translate( 'Couldn’t unfollow this account.' );
-	}
-	return errorMessage( error, translate );
-}
 
 function buildEmptyTitle(
 	filter: AtmosphereAuthorFeedFilter,
@@ -92,9 +82,14 @@ function buildEmptyTitle(
 interface AuthorProfilePanelProps {
 	connection: AtmosphereConnection;
 	actor: string;
+	subtabBasePath: string;
 }
 
-export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelProps ) {
+export function AuthorProfilePanel( {
+	connection,
+	actor,
+	subtabBasePath,
+}: AuthorProfilePanelProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
 	const filter = useAuthorProfileFilter();
@@ -107,7 +102,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 	const profile = useAtmosphereScopedProfileQuery( { connectionId: connection.id, actor } );
 	const followMut = useMutation( followAtmosphereActorMutation( queryClient ) );
 	const unfollowMut = useMutation( unfollowAtmosphereActorMutation( queryClient ) );
-	const feed = useAuthorFeedInfiniteQuery( { actor, filter } );
+	const feed = useAtmosphereScopedAuthorFeedInfiniteQuery( {
+		connectionId: connection.id,
+		actor,
+		filter,
+	} );
 
 	// Reset the error_shown dedup ref when navigating between profiles so the
 	// next author's first error fires its analytics even when the kind matches.
@@ -225,15 +224,6 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		feed.refetch();
 	}, [ connection.id, actor, feed, dispatch ] );
 
-	const handleBackToTimeline = useCallback( () => {
-		dispatch(
-			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_back_to_timeline_clicked', {
-				connection_id: connection.id,
-				actor,
-			} )
-		);
-	}, [ connection.id, actor, dispatch ] );
-
 	const onClickAnalytics = useCallback(
 		( event: string, props: Record< string, unknown > ) => {
 			// Shared post-card subcomponents emit
@@ -273,7 +263,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		),
 		[ connection.id ]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const stats: SocialProfileStat[] = profile.data
 		? [
@@ -283,6 +273,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					label: translate( 'follower', 'followers', {
 						count: profile.data.counts.followers,
 					} ),
+					href:
+						getFollowersUrl( connection.id, {
+							handle: profile.data.handle,
+							did: profile.data.did,
+						} ) ?? undefined,
 				},
 				{
 					key: 'follows',
@@ -290,6 +285,11 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 					label: translate( 'following', {
 						context: 'profile stats: count of accounts followed',
 					} ),
+					href:
+						getFollowingUrl( connection.id, {
+							handle: profile.data.handle,
+							did: profile.data.did,
+						} ) ?? undefined,
 				},
 				{
 					key: 'posts',
@@ -326,6 +326,22 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 		};
 	}, [ openComposer ] );
 
+	const onQuoteClick = useMemo( () => {
+		if ( ! openComposer ) {
+			return undefined;
+		}
+		return ( post: SocialPost ) => {
+			if ( ! post.cid ) {
+				return;
+			}
+			openComposer( {
+				kind: 'quote',
+				quote: { uri: post.uri, cid: post.cid },
+				previewPost: post,
+			} );
+		};
+	}, [ openComposer ] );
+
 	const analyticsValue = useMemo(
 		() => ( {
 			source: 'atmosphere' as const,
@@ -335,8 +351,29 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			getProfileUrl: buildProfileUrl,
 			getTagUrl: buildTagUrl,
 			onReplyClick,
+			onQuoteClick,
+			ownerDid: connection.did,
 		} ),
-		[ connection.id, onClickAnalytics, buildThreadUrl, buildProfileUrl, buildTagUrl, onReplyClick ]
+		[
+			connection.id,
+			connection.did,
+			onClickAnalytics,
+			buildThreadUrl,
+			buildProfileUrl,
+			buildTagUrl,
+			onReplyClick,
+			onQuoteClick,
+		]
+	);
+
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
+	const useRepostAction = useMemo(
+		() => makeUseAtmosphereRepostAction( connection.id ),
+		[ connection.id ]
 	);
 
 	const isOwnProfile = profile.data?.did === connection.did;
@@ -409,7 +446,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 			} )
 		);
 		unfollowMutate(
-			{ connectionId: connection.id, actor, rkey },
+			{ connectionId: connection.id, actor, rkey, subjectDid: profile.data.did },
 			{
 				onSuccess: () => {
 					dispatch( removeNotice( 'atmosphere-follow-error' ) );
@@ -468,6 +505,7 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 				stats={ stats }
 				statsLabel={ String( translate( 'Profile stats' ) ) }
 				headerActions={ followButton }
+				displayNameLink={ profileData.bluesky_url }
 			/>
 		);
 	};
@@ -489,31 +527,36 @@ export function AuthorProfilePanel( { connection, actor }: AuthorProfilePanelPro
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<VStack spacing={ 4 } className="atmosphere-author-profile">
-				<AuthorProfileHeader
-					timelineUrl={ getTimelineUrl( connection.id ) }
-					onBackToTimeline={ handleBackToTimeline }
-				/>
-				{ renderHeader() }
-				<AuthorProfileTabs connectionId={ connection.id } actor={ actor } activeFilter={ filter } />
-				<SocialFeedList< SocialPost >
-					items={ items }
-					isPending={ feed.isPending }
-					isError={ feed.isError }
-					error={ projectAtmosphereError( feed.error ) }
-					hasNextPage={ Boolean( feed.hasNextPage ) }
-					isFetchingNextPage={ feed.isFetchingNextPage }
-					fetchNextPage={ feed.fetchNextPage }
-					refetch={ handleFeedRetry }
-					renderItem={ renderItem }
-					itemKey={ itemKey }
-					emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
-					emptyLine=""
-					protocolLabel="Bluesky"
-					protocolHomeURL="/reader/atmosphere"
-					protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
-				/>
-			</VStack>
+			<LikeProvider value={ useLikeAction }>
+				<RepostProvider value={ useRepostAction }>
+					<VStack spacing={ 4 } className="atmosphere-author-profile">
+						{ renderHeader() }
+						<AuthorProfileTabs
+							connectionId={ connection.id }
+							actor={ actor }
+							basePath={ subtabBasePath }
+							activeFilter={ filter }
+						/>
+						<SocialFeedList< SocialPost >
+							items={ items }
+							isPending={ feed.isPending }
+							isError={ feed.isError }
+							error={ projectAtmosphereError( feed.error ) }
+							hasNextPage={ Boolean( feed.hasNextPage ) }
+							isFetchingNextPage={ feed.isFetchingNextPage }
+							fetchNextPage={ feed.fetchNextPage }
+							refetch={ handleFeedRetry }
+							renderItem={ renderItem }
+							itemKey={ itemKey }
+							emptyTitle={ buildEmptyTitle( filter, emptyHandle, translate ) }
+							emptyLine=""
+							protocolLabel="Bluesky"
+							protocolHomeURL="/reader/atmosphere"
+							protocolHomeLabel={ translate( 'Back to ATmosphere' ) }
+						/>
+					</VStack>
+				</RepostProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

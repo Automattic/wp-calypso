@@ -13,6 +13,11 @@ export type AtmosphereError =
 	| { kind: 'reply_disabled' }
 	| { kind: 'quote_disabled' }
 	| { kind: 'target_unavailable' }
+	// Set client-side from `compressImage` failures; the server never emits
+	// a matching wire code (the slice-8a backend collapses every blob/media
+	// rejection into `atmosphere_bad_request`, which lands as `bad_request`
+	// above).
+	| { kind: 'blob_decode_failed' }
 	| { kind: 'unknown'; cause: unknown };
 
 interface WpErrorLike {

@@ -1,5 +1,6 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { type DataPointDate, LineChart, SeriesData } from '@automattic/charts';
+import '@automattic/charts/style.css';
 import { useQuery } from '@tanstack/react-query';
 import {
 	GlyphDiamond,
@@ -264,7 +265,7 @@ export default function MonitoringHttpResponsesCard( {
 						x: xAxisOptions,
 					},
 				} }
-				legendPosition="top"
+				legend={ { position: 'top' } }
 			/>
 		</MonitoringCard>
 	);

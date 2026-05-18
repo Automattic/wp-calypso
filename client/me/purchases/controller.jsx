@@ -1,4 +1,4 @@
-import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
+import { purchaseCancelFeaturesQuery, queryClient } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useQuery } from '@tanstack/react-query';
@@ -103,12 +103,18 @@ export function cancelPurchase( context, next ) {
 
 	const purchaseId = parseInt( context.params.purchaseId, 10 );
 
+	// Start fetching cancel features immediately — the useQuery inside
+	// CancelPurchaseWrapper will reuse this in-flight promise.
+	queryClient.prefetchQuery( purchaseCancelFeaturesQuery( purchaseId ) );
+
 	const CancelPurchaseWrapper = localize( () => {
 		// React Query owns the cancellation-features fetch: cancel-on-unmount,
 		// cross-purchase cache invalidation, and error state come for free. The
 		// dashboard side uses the same query at
 		// client/dashboard/me/billing-purchases/cancel-purchase/index.tsx.
-		const { data: purchaseCancelFeatures } = useQuery( purchaseCancelFeaturesQuery( purchaseId ) );
+		const { data: purchaseCancelFeatures, isLoading: isPurchaseCancelFeaturesLoading } = useQuery(
+			purchaseCancelFeaturesQuery( purchaseId )
+		);
 		return (
 			<PurchasesWrapper title={ pageTitle }>
 				<Main wideLayout className="purchases__cancel">
@@ -117,6 +123,7 @@ export function cancelPurchase( context, next ) {
 						siteSlug={ context.params.site }
 						intent={ intent }
 						purchaseCancelFeatures={ purchaseCancelFeatures }
+						isPurchaseCancelFeaturesLoading={ isPurchaseCancelFeaturesLoading }
 					/>
 				</Main>
 			</PurchasesWrapper>
@@ -203,10 +210,16 @@ export function vatDetails( context, next ) {
 			translate( 'tax (VAT/GST/CT)' );
 		const fallbackTaxName = genericTaxName;
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-		const title = translate( 'Add %s details', {
+		const editVatText = translate( 'Edit %s details', {
 			textOnly: true,
 			args: [ taxName ?? fallbackTaxName ],
 		} );
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		const addVatText = translate( 'Add %s details', {
+			textOnly: true,
+			args: [ taxName ?? fallbackTaxName ],
+		} );
+		const title = vatDetailsFromServer.id ? editVatText : addVatText;
 
 		return (
 			<PurchasesWrapper title={ title }>

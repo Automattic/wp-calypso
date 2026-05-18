@@ -3,8 +3,12 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
+import { Button, Modal } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { chevronLeft } from '@wordpress/icons';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useFollowedReaderTags } from 'calypso/data/reader/use-reader-tags';
 import {
 	READER_ONBOARDING_SEEN_PREFERENCE_KEY,
@@ -15,15 +19,29 @@ import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding-rsm/subscribe-modal';
 import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
-import { requestGravatarDetails } from 'calypso/state/gravatar-status/actions';
-import { hasGravatar } from 'calypso/state/gravatar-status/selectors';
+import {
+	getCurrentUserDate,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
+import { getReloadStep } from './get-reload-step';
+import { useRefreshFollowingStreams } from './use-refresh-following-streams';
 import './style.scss';
+
+// All onboarding steps share a single <Modal> frame so transitions between
+// them feel seamless (no close/open animation between steps). The active
+// step's body is rendered as the only child of the shared modal; the
+// per-step CSS class on the modal frame keeps existing styles working.
+type Step = 'welcome' | 'interests' | 'discover';
+
+const STEP_FRAME_CLASS: Record< Step, string > = {
+	welcome: 'reader-welcome-modal',
+	interests: 'interests-modal',
+	discover: 'subscribe-modal',
+};
 
 const ReaderOnboardingRsm = ( {
 	onRender,
@@ -33,19 +51,18 @@ const ReaderOnboardingRsm = ( {
 	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
-	const [ isWelcomeModalOpen, setIsWelcomeModalOpen ] = useState( false );
+	const refreshFollowingStreams = useRefreshFollowingStreams();
+	const completionRecordedRef = useRef( false );
+	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
 	const [ hasCompletedWelcomeStep, setHasCompletedWelcomeStep ] = useState( false );
-	const [ isInterestsModalOpen, setIsInterestsModalOpen ] = useState( false );
-	const [ isDiscoverModalOpen, setIsDiscoverModalOpen ] = useState( false );
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
-	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
+	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 
 	const { data: followedTags } = useFollowedReaderTags();
 	const follows = useSelector( getReaderFollows );
-	const profileCompleted = useSelector( hasCompletedReaderProfile );
-	const hasUserGravatar = useSelector( hasGravatar );
+	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
@@ -56,12 +73,6 @@ const ReaderOnboardingRsm = ( {
 
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) > 2;
 	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
-
-	// If the user has completed the onboarding, save the preference and track the event.
-	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-	}
 
 	const meetsEligibility =
 		preferencesLoaded &&
@@ -76,51 +87,69 @@ const ReaderOnboardingRsm = ( {
 
 	const shouldRenderOnboarding = shouldShowOnboarding && ! isSuppressed;
 
-	// Modal state handlers with tracking.
-	const openWelcomeModal = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_open` );
-		setIsWelcomeModalOpen( true );
-	};
-
-	const closeWelcomeModal = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
-		setIsWelcomeModalOpen( false );
-		if ( ! hasSeenOnboarding ) {
-			dispatch( savePreference( READER_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
+	// Side-effects that run when a given step is closed (whether via the X /
+	// escape, or via the "continue" button transitioning to the next step).
+	// Centralised so the same effects fire on either path.
+	const performStepCloseSideEffects = ( step: Step ) => {
+		if ( step === 'welcome' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_close` );
+			if ( ! hasSeenOnboarding ) {
+				dispatch( savePreference( READER_ONBOARDING_SEEN_PREFERENCE_KEY, true ) );
+			}
+		} else if ( step === 'interests' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
+			refreshFollowingStreams();
+		} else if ( step === 'discover' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
+			refreshFollowingStreams();
 		}
 	};
 
-	const openInterestsModal = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
-		setIsInterestsModalOpen( true );
+	const recordStepOpen = ( step: Step ) => {
+		if ( step === 'welcome' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_open` );
+		} else if ( step === 'interests' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_open` );
+		} else if ( step === 'discover' ) {
+			recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_open` );
+		}
 	};
 
-	const closeInterestsModal = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_close` );
-		setIsInterestsModalOpen( false );
+	const openStep = ( step: Step ) => {
+		recordStepOpen( step );
+		setCurrentStep( step );
 	};
 
-	const openDiscoverModal = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_open` );
-		setIsDiscoverModalOpen( true );
-	};
-
-	const closeDiscoverModal = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_close` );
-		setIsDiscoverModalOpen( false );
+	const handleStepClose = () => {
+		if ( currentStep ) {
+			performStepCloseSideEffects( currentStep );
+		}
+		setCurrentStep( null );
 	};
 
 	const handleWelcomeContinue = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_continue` );
 		setHasCompletedWelcomeStep( true );
-		closeWelcomeModal();
-		openInterestsModal();
+		performStepCloseSideEffects( 'welcome' );
+		recordStepOpen( 'interests' );
+		setCurrentStep( 'interests' );
 	};
 
 	const handleInterestsContinue = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_continue` );
-		closeInterestsModal();
-		openDiscoverModal();
+		performStepCloseSideEffects( 'interests' );
+		recordStepOpen( 'discover' );
+		setCurrentStep( 'discover' );
+	};
+
+	const handleInterestsBack = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_back` );
+		openStep( 'welcome' );
+	};
+
+	const handleDiscoverBack = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }discover_modal_back` );
+		openStep( 'interests' );
 	};
 
 	const itemClickHandler = ( task: Task ) => {
@@ -130,10 +159,20 @@ const ReaderOnboardingRsm = ( {
 		task?.actionDispatch?.();
 	};
 
-	const navToAccountProfile = () => {
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_account_profile` );
-		page( '/me?ref=reader-onboarding' );
-	};
+	// Persist completion + track when the user meets the checklist (not during render).
+	// `completionRecordedRef` avoids duplicate dispatches/Tracks if this effect re-runs
+	// before Redux reflects `hasCompletedOnboarding` (e.g. React StrictMode re-invokes effects).
+	useEffect( () => {
+		if ( hasCompletedOnboarding || ! hasFollowedTags || ! hasFollowedSites ) {
+			return;
+		}
+		if ( completionRecordedRef.current ) {
+			return;
+		}
+		completionRecordedRef.current = true;
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+	}, [ hasCompletedOnboarding, hasFollowedTags, hasFollowedSites, dispatch ] );
 
 	// Track if user viewed Reader Onboarding.
 	useEffect( () => {
@@ -142,31 +181,25 @@ const ReaderOnboardingRsm = ( {
 		}
 	}, [ shouldRenderOnboarding, dispatch ] );
 
-	// Auto-open the welcome modal if onboarding should render and it has never been opened before.
+	// Auto-open the welcome step if onboarding should render and it has never been opened before.
 	useEffect( () => {
 		if ( shouldRenderOnboarding && preferencesLoaded && ! hasSeenOnboarding ) {
-			openWelcomeModal();
+			openStep( 'welcome' );
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ shouldRenderOnboarding, preferencesLoaded, hasSeenOnboarding, dispatch ] );
 
-	// Reopen subscription onboarding page if prompted by query param.
+	// Reopen a specific onboarding step if signalled by a query param after email verification.
 	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		const shouldReloadOnboarding = urlParams.has( 'reloadSubscriptionOnboarding' );
-
-		if ( shouldReloadOnboarding ) {
-			openDiscoverModal();
-			urlParams.delete( 'reloadSubscriptionOnboarding' );
+		const result = getReloadStep( window.location.search );
+		if ( result ) {
+			openStep( result.step );
 			page.redirect(
-				`${ window.location.pathname }${ urlParams.toString() ? '?' + urlParams.toString() : '' }`
+				`${ window.location.pathname }${ result.cleanedSearch ? '?' + result.cleanedSearch : '' }`
 			);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
-
-	// Fetch gravatar info when component mounts
-	useEffect( () => {
-		dispatch( requestGravatarDetails() );
-	}, [ dispatch ] );
 
 	// Notify the parent component if onboarding will render.
 	// Use useEffect to avoid calling setState during render (React anti-pattern).
@@ -182,34 +215,48 @@ const ReaderOnboardingRsm = ( {
 		{
 			id: 'welcome',
 			title: translate( 'Welcome to Reader' ),
-			actionDispatch: openWelcomeModal,
+			actionDispatch: () => openStep( 'welcome' ),
 			completed: hasCompletedWelcomeStep,
 			disabled: false,
 		},
 		{
 			id: 'select-interests',
 			title: translate( 'Select some of your interests' ),
-			actionDispatch: openInterestsModal,
+			actionDispatch: () => openStep( 'interests' ),
 			completed: hasFollowedTags,
 			disabled: ! hasCompletedWelcomeStep,
 		},
 		{
 			id: 'discover-sites',
 			title: translate( "Discover and subscribe to sites you'll love" ),
-			actionDispatch: openDiscoverModal,
+			actionDispatch: () => openStep( 'discover' ),
 			completed: hasFollowedSites,
 			disabled: ! hasFollowedSites && ! hasFollowedTags,
 		},
-		{
-			id: 'account-profile',
-			title: hasUserGravatar
-				? translate( 'Fill out your profile' )
-				: translate( 'Add your avatar and fill out your profile' ),
-			actionDispatch: navToAccountProfile,
-			completed: profileCompleted,
-			disabled: ! profileCompleted && ( ! hasFollowedTags || ! hasFollowedSites ),
-		},
 	];
+
+	let modalBackButton = null;
+	if ( currentStep === 'interests' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleInterestsBack }
+				icon={ chevronLeft }
+				label={ __( 'Back' ) }
+			/>
+		);
+	} else if ( currentStep === 'discover' ) {
+		modalBackButton = (
+			<Button
+				size="compact"
+				className="reader-onboarding-modal__back-button"
+				onClick={ handleDiscoverBack }
+				icon={ chevronLeft }
+				label={ __( 'Back' ) }
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -237,17 +284,30 @@ const ReaderOnboardingRsm = ( {
 				</div>
 			</div>
 
-			<WelcomeModal
-				isOpen={ isWelcomeModalOpen }
-				onClose={ closeWelcomeModal }
-				onContinue={ handleWelcomeContinue }
-			/>
-			<InterestsModal
-				isOpen={ isInterestsModalOpen }
-				onClose={ closeInterestsModal }
-				onContinue={ handleInterestsContinue }
-			/>
-			<SubscribeModal isOpen={ isDiscoverModalOpen } onClose={ closeDiscoverModal } />
+			{ currentStep && (
+				<Modal
+					onRequestClose={ handleStepClose }
+					size="medium"
+					className={ clsx( 'reader-onboarding-rsm-modal', STEP_FRAME_CLASS[ currentStep ], {
+						'is-disabled':
+							( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
+					} ) }
+					headerActions={ modalBackButton }
+				>
+					{ currentStep === 'welcome' && (
+						<WelcomeModal onClose={ handleStepClose } onContinue={ handleWelcomeContinue } />
+					) }
+					{ currentStep === 'interests' && (
+						<InterestsModal
+							onContinue={ handleInterestsContinue }
+							promptVerification={ promptVerification }
+						/>
+					) }
+					{ currentStep === 'discover' && (
+						<SubscribeModal onClose={ handleStepClose } promptVerification={ promptVerification } />
+					) }
+				</Modal>
+			) }
 		</>
 	);
 };

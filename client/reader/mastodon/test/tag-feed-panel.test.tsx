@@ -109,8 +109,7 @@ describe( 'MastodonTagFeedPanel', () => {
 		const link = await screen.findByRole( 'link', { name: /View on Mastodon/ } );
 		expect( link ).toHaveAttribute( 'href', 'https://mastodon.social/tags/rust' );
 		expect( link ).toHaveAttribute( 'target', '_blank' );
-		// `ExternalLink` enforces `rel="external noreferrer noopener"`; assert the
-		// security tokens are present without locking to the exact ordering.
+		// Assert the security tokens are present without locking to the exact ordering.
 		const rel = ( link.getAttribute( 'rel' ) ?? '' ).split( /\s+/ );
 		expect( rel ).toEqual( expect.arrayContaining( [ 'noopener', 'noreferrer' ] ) );
 	} );
@@ -128,7 +127,7 @@ describe( 'MastodonTagFeedPanel', () => {
 		expect( screen.queryByRole( 'link', { name: /View on Mastodon/ } ) ).toBeNull();
 	} );
 
-	it( 'rejects non-https tag.url values (defence-in-depth)', async () => {
+	it( 'rejects non-https tag.url values (defense-in-depth)', async () => {
 		nock( BASE )
 			.get( '/wpcom/v2/reader/mastodon/connections/7/tag/rust/feed' )
 			.reply( 200, {

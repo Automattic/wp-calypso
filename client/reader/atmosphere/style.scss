@@ -23,3 +23,18 @@
 		padding-top: 5px;
 	}
 }
+
+.atmosphere-view__section-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.atmosphere-view__section-title svg {
+	display: block;
+	flex-shrink: 0;
+	// The icon component bakes in the `.sidebar__menu-icon` class so the
+	// sidebar can spec its own spacing. In the header we lay things out
+	// with `gap`, so reset the inherited margin to keep the gap honest.
+	margin: 0;
+}

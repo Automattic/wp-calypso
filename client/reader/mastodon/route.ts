@@ -65,9 +65,12 @@ export function getProfileUrl(
 		return null;
 	}
 	let canonical: string;
-	if ( options.instance && ! trimmed.includes( '@' ) ) {
+	if ( options.instance && ! trimmed.includes( '@' ) && ! STATUS_ID_RE.test( trimmed ) ) {
 		// Bare local handle (no `@`): qualify with the connection's instance
-		// so the URL carries the cross-instance webfinger form.
+		// so the URL carries the cross-instance webfinger form. Skip numeric
+		// account ids — they're already a valid actor shape and qualifying
+		// them produces a fake webfinger handle (`@<id>@<instance>`) that
+		// the backend's `/accounts/lookup?acct=` resolver can't resolve.
 		canonical = `@${ trimmed }@${ options.instance }`;
 	} else {
 		canonical = trimmed;
@@ -76,6 +79,24 @@ export function getProfileUrl(
 		return null;
 	}
 	return `/reader/mastodon/${ connectionId }/profile/${ encodeURIComponent( canonical ) }`;
+}
+
+export function getFollowersUrl(
+	connectionId: number,
+	actor: string,
+	options: GetProfileUrlOptions = {}
+): string | null {
+	const base = getProfileUrl( connectionId, actor, options );
+	return base ? `${ base }/followers` : null;
+}
+
+export function getFollowingUrl(
+	connectionId: number,
+	actor: string,
+	options: GetProfileUrlOptions = {}
+): string | null {
+	const base = getProfileUrl( connectionId, actor, options );
+	return base ? `${ base }/following` : null;
 }
 
 // Mastodon hashtags in canonical form: lowercase ASCII + underscore,

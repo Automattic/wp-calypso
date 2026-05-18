@@ -19,6 +19,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
+import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -225,6 +226,10 @@ class Layout extends Component {
 		// Load Survicate survey on all pages when the user is logged in
 		if ( this.props.isLoggedIn ) {
 			this.props.dispatch( loadTrackingTool( 'Survicate' ) );
+		}
+
+		if ( ! isJetpackCloud() && ! isA8CForAgencies() ) {
+			installKonamiListener();
 		}
 	}
 

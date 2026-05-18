@@ -1,6 +1,7 @@
 .webpack-cache
 .sass-cache
 .babel-cache
+.superpowers/
 .vagrant
 .unison
 .env
@@ -60,8 +61,6 @@ checkstyle.xml
 /chunks-map.*.json
 cover.html
 .test.log
-
-cached-requests.json
 
 # Monorepo output
 /apps/*/dist/

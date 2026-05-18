@@ -55,7 +55,6 @@ const baseProps: DocumentProps = {
 	user: null,
 	useTranslationChunks: false,
 	showStepContainerV2Loader: true,
-	darkModeHelper: false,
 };
 
 describe( 'Document LoadingPlaceholder', () => {

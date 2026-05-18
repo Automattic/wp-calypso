@@ -9,7 +9,7 @@ import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { comment, backup, page, video, rss } from '@wordpress/icons';
+import { backup, comment, page, rss, video } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { useRef } from 'react';
 import ReactDOM from 'react-dom';

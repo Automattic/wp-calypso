@@ -5,8 +5,6 @@ export default {
 			type: 'object',
 			properties: {
 				items: { type: 'array' },
-				selected: { type: 'object' },
-				pendingItems: { type: 'object' },
 				lastPage: { type: 'boolean' },
 				isRequesting: { type: 'boolean' },
 				pageHandle: { type: 'string' },

@@ -1,19 +1,24 @@
 import { useMastodonConnectionQuery, useMastodonConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { PROFILE_TAB, SETTINGS_TAB, TIMELINE_TAB } from './helper';
+import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
+import { normalizeHandle } from 'calypso/reader/social/utils/normalize-handle';
+import { mastodonComposerConfig } from './composer-config';
+import { NOTIFICATIONS_TAB, PROFILE_TAB, TIMELINE_TAB } from './helper';
 import { MastodonNavigation } from './mastodon-navigation';
+import { NotificationsPanel } from './notifications-panel';
 import { ProfilePanel } from './profile-panel';
-import { SettingsPanel } from './settings-panel';
 import { TimelinePanel } from './timeline-panel';
+import { MastodonReauthGate, useMastodonReauthGateState } from './use-mastodon-reauth-gate';
 import type { MastodonConnection } from '@automattic/api-core';
 
-const VALID_TABS = new Set( [ TIMELINE_TAB, PROFILE_TAB, SETTINGS_TAB ] );
+const VALID_TABS = new Set( [ TIMELINE_TAB, NOTIFICATIONS_TAB, PROFILE_TAB ] );
 
 interface Props {
 	connectionId: number;
@@ -28,12 +33,18 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 	const connection = connections.find( ( c ) => c.id === connectionId ) ?? null;
 	const tabValid = VALID_TABS.has( tab );
 
-	// The list endpoint omits display_name for Mastodon connections (it comes
-	// back null), so the header would otherwise fall back to the raw handle
-	// for the title and duplicate it as the subtitle. The details endpoint has
-	// the display name; React Query dedupes by key, so ProfilePanel and the
-	// sidebar row share this fetch — no extra request.
+	// The list endpoint omits display_name for Mastodon connections (it
+	// comes back null), so the browser tab title would otherwise fall
+	// back to the raw handle. The details endpoint has the display name;
+	// React Query dedupes by key, so ProfilePanel and the sidebar row
+	// share this fetch — no extra request.
 	const details = useMastodonConnectionQuery( connection?.id ?? null );
+
+	// The compose FAB and modal sit outside <ConnectionReauthGate>, so without
+	// an explicit guard they'd float over the reauth prompt. Hide both while
+	// the connection needs reauth — any post submitted via that path would
+	// fail with auth_required anyway.
+	const { needsReauth } = useMastodonReauthGateState( connection?.id ?? null );
 
 	useEffect( () => {
 		if ( isPending ) {
@@ -52,25 +63,51 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		return (
 			<ReaderMain className="mastodon-view">
 				<DocumentHead title={ translate( 'Mastodon ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
 	}
 
-	const title = details.data?.display_name || connection.display_name || connection.handle;
-	const subtitle = connection.handle;
+	const documentTitle = details.data?.display_name || connection.display_name || connection.handle;
+	const handle = normalizeHandle( connection.handle );
+	const subtitle = handle
+		? translate(
+				'Catch up with the latest from the people you follow on Mastodon with @%(handle)s',
+				{ args: { handle } }
+		  )
+		: translate( 'Catch up with the latest from the people you follow on Mastodon.' );
+
+	const title = (
+		<span className="mastodon-view__section-title">
+			<span data-testid="mastodon-section-logo" aria-hidden="true">
+				<ReaderMastodonIcon />
+			</span>
+			<span>Mastodon</span>
+		</span>
+	);
 
 	return (
-		<ReaderMain className="mastodon-view">
-			<DocumentHead title={ translate( '%s ‹ Mastodon ‹ Reader', { args: title } ) } />
-			<NavigationHeader title={ title } subtitle={ subtitle } />
-			<MastodonNavigation connectionId={ connection.id } selectedTab={ tab } />
-			<VStack spacing={ 4 } className="mastodon-view__body">
-				{ renderTab( tab, connection ) }
-			</VStack>
-		</ReaderMain>
+		<ComposerProvider connectionId={ connection.id } config={ mastodonComposerConfig }>
+			<ReaderMain className="mastodon-view">
+				<DocumentHead title={ translate( '%s ‹ Mastodon ‹ Reader', { args: documentTitle } ) } />
+				<NavigationHeader title={ title } subtitle={ subtitle } />
+				<MastodonNavigation connectionId={ connection.id } selectedTab={ tab } />
+				<VStack spacing={ 4 } className="mastodon-view__body">
+					<MastodonReauthGate connection={ connection }>
+						{ renderTab( tab, connection ) }
+					</MastodonReauthGate>
+				</VStack>
+			</ReaderMain>
+			{ ! needsReauth && (
+				<>
+					<ComposeFab />
+					<ComposerModal />
+				</>
+			) }
+		</ComposerProvider>
 	);
 }
 
@@ -78,8 +115,8 @@ function renderTab( slug: string, connection: MastodonConnection ) {
 	switch ( slug ) {
 		case PROFILE_TAB:
 			return <ProfilePanel connection={ connection } />;
-		case SETTINGS_TAB:
-			return <SettingsPanel />;
+		case NOTIFICATIONS_TAB:
+			return <NotificationsPanel connection={ connection } />;
 		case TIMELINE_TAB:
 		default:
 			return <TimelinePanel connection={ connection } />;

@@ -1,5 +1,4 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { PropsOf } from '@emotion/react';
@@ -10,7 +9,6 @@ import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main
 import {
 	mockGetCartEndpointWith,
 	fetchStripeConfiguration,
-	fetchRazorpayConfiguration,
 	siteId,
 	mockSetCartEndpointWith,
 	createTestReduxStore,
@@ -47,13 +45,11 @@ export function MockCheckout( {
 			<QueryClientProvider client={ queryClient }>
 				<ShoppingCartProvider managerClient={ managerClient }>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<RazorpayHookProvider fetchRazorpayConfiguration={ fetchRazorpayConfiguration }>
-							<CheckoutMain
-								siteId={ useUndefinedSiteId ? undefined : siteId }
-								siteSlug="foo.com"
-								{ ...additionalProps }
-							/>
-						</RazorpayHookProvider>
+						<CheckoutMain
+							siteId={ useUndefinedSiteId ? undefined : siteId }
+							siteSlug="foo.com"
+							{ ...additionalProps }
+						/>
 					</StripeHookProvider>
 				</ShoppingCartProvider>
 			</QueryClientProvider>

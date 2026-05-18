@@ -9,6 +9,12 @@ import { render } from '../../../../test-utils';
 import SitePerformanceBackend from '../index';
 import type { Site } from '@automattic/api-core';
 
+jest.mock( '@automattic/charts', () => ( {
+	AreaChart: () => null,
+	BarListChart: () => null,
+	GlobalChartsProvider: ( { children }: { children: React.ReactNode } ) => children,
+} ) );
+
 const siteSlug = 'test-site.wordpress.com';
 const siteId = 1;
 
@@ -55,44 +61,112 @@ function mockApmToggle( expectedActive: boolean ) {
 }
 
 describe( '<SitePerformanceBackend>', () => {
-	test( 'renders Enable CTA when APM is disabled on a Business site', async () => {
+	test( 'renders the dashboard with a Start capturing CTA when APM is disabled', async () => {
 		mockSite( businessSite( false ) );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		expect( await screen.findByRole( 'button', { name: 'Enable' } ) ).toBeVisible();
-		expect( screen.queryByText( 'APM dashboards coming soon.' ) ).not.toBeInTheDocument();
+		expect(
+			await screen.findByRole( 'heading', { name: 'Response time breakdown' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Start capturing' } ) ).toBeVisible();
+		expect( screen.getByRole( 'status', { name: 'Not capturing' } ) ).toBeVisible();
+		expect( screen.getByText( /Capturing is off\./ ) ).toBeVisible();
 	} );
 
-	test( 'renders enabled placeholder + Disable when APM is already enabled', async () => {
+	test( 'renders the tabbed dashboard without the Start capturing CTA when APM is enabled', async () => {
 		mockSite( businessSite( true ) );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		expect( await screen.findByText( 'APM dashboards coming soon.' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Disable' } ) ).toBeVisible();
+		expect(
+			await screen.findByRole( 'heading', { name: 'Response time breakdown' } )
+		).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Slowest requests' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Start capturing' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'status', { name: 'Capturing' } ) ).toBeVisible();
+		expect( screen.getByText( /Capturing performance data\./ ) ).toBeVisible();
 	} );
 
-	test( 'clicking Enable POSTs { active: true }', async () => {
+	test( 'renders Plugins, Hooks and Templates on the WordPress tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="wordpress" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Plugins' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Hooks' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Templates' } ) ).toBeVisible();
+	} );
+
+	test( 'renders Slowest transactions on the Transactions tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="transactions" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Slowest transactions' } ) ).toBeVisible();
+		expect( screen.getByText( /GET \/wp-json\/wp\/v2\/posts/ ) ).toBeVisible();
+		expect( screen.getByRole( 'radio', { name: 'Max' } ) ).toBeChecked();
+	} );
+
+	test( 'renders Slowest queries on the Database tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="database" /> );
+
+		expect( await screen.findByRole( 'heading', { name: 'Slowest queries' } ) ).toBeVisible();
+		expect( screen.getByText( /SELECT \* FROM wp_woocommerce_order_items/ ) ).toBeVisible();
+	} );
+
+	test( 'renders Slowest external requests on the External tab', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } tab="external-requests" /> );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Slowest external requests' } )
+		).toBeVisible();
+		expect( screen.getByText( /api\.stripe\.com/ ) ).toBeVisible();
+	} );
+
+	test( 'shows a status notice with the average response time', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		// The notice variant depends on seeded mock data, but one of these three
+		// titles must always appear and must include the formatted avg duration.
+		expect(
+			await screen.findByText(
+				/(Healthy backend|Backend needs improvement|Backend is slow) — avg /
+			)
+		).toBeVisible();
+	} );
+
+	test( 'toggling Avg/Max on Slowest requests updates the description', async () => {
+		mockSite( businessSite( true ) );
+
+		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
+
+		// Wait for the Slowest requests card to mount.
+		await screen.findByRole( 'heading', { name: 'Slowest requests' } );
+
+		expect( screen.getByText( /Slowest single response observed/ ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'radio', { name: 'Avg' } ) );
+
+		expect(
+			screen.getByText( /Average response time across the slowest endpoints/ )
+		).toBeVisible();
+		expect( screen.queryByText( /Slowest single response observed/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'clicking Start capturing POSTs { active: true }', async () => {
 		mockSite( businessSite( false ) );
 		const scope = mockApmToggle( true );
 
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Enable' } ) );
-
-		await waitFor( () => {
-			expect( scope.isDone() ).toBe( true );
-		} );
-	} );
-
-	test( 'clicking Disable POSTs { active: false }', async () => {
-		mockSite( businessSite( true ) );
-		const scope = mockApmToggle( false );
-
-		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Disable' } ) );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Start capturing' } ) );
 
 		await waitFor( () => {
 			expect( scope.isDone() ).toBe( true );
@@ -105,6 +179,6 @@ describe( '<SitePerformanceBackend>', () => {
 		render( <SitePerformanceBackend siteSlug={ siteSlug } /> );
 
 		expect( await screen.findByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Enable' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Start capturing' } ) ).not.toBeInTheDocument();
 	} );
 } );

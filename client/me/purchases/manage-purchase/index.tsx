@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { SubscriptionBillPeriod } from '@automattic/api-core';
+import { SubscriptionBillPeriod, type CancellationFeature } from '@automattic/api-core';
+import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import {
 	isPersonal,
@@ -55,8 +56,10 @@ import {
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
+import { useQuery } from '@tanstack/react-query';
 import { hasTranslation } from '@wordpress/i18n';
 import {
+	check,
 	column,
 	download,
 	Icon,
@@ -84,6 +87,7 @@ import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purch
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import {
 	getCancelButtonCopy,
 	getRemoveButtonCopy,
@@ -221,6 +225,8 @@ export interface ManagePurchaseProps {
 }
 
 export interface ManagePurchaseConnectedProps {
+	isSplitCancelRemoveEnabled: boolean;
+	cancellationFeatures: CancellationFeature[] | null;
 	hasCustomPrimaryDomain?: boolean | null;
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
@@ -774,7 +780,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 		const canRefund = hasAmountAvailableToRefund( purchase );
 		const autoRenewOn = !! purchase.isAutoRenewEnabled;
 
@@ -1025,7 +1031,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 		const { id } = purchase;
-		const isSplitEnabled = config.isEnabled( 'purchases/split-cancel-remove' );
+		const isSplitEnabled = this.props.isSplitCancelRemoveEnabled;
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
@@ -1084,7 +1090,7 @@ class ManagePurchase extends Component<
 				this.showWordAdsEligibilityWarningDialog( link );
 			}
 
-			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+			if ( ! isSplitEnabled && this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
 				this.showNonPrimaryDomainWarningDialog( link );
 			}
@@ -1290,7 +1296,8 @@ class ManagePurchase extends Component<
 	}
 
 	renderPurchaseDescription() {
-		const { purchase, site, translate } = this.props;
+		const { purchase, site, translate, isSplitCancelRemoveEnabled, cancellationFeatures } =
+			this.props;
 
 		if ( ! purchase ) {
 			return null;
@@ -1298,6 +1305,23 @@ class ManagePurchase extends Component<
 
 		if ( isMarketplaceHoldingSitePurchase( purchase ) || isA4AHoldingSitePurchase( purchase ) ) {
 			return null;
+		}
+
+		// When the split flag is on and the API has returned features for this
+		// purchase, show the feature list instead of the description.
+		if ( isSplitCancelRemoveEnabled && cancellationFeatures && cancellationFeatures.length > 0 ) {
+			return (
+				<div className="manage-purchase__content">
+					<ul className="manage-purchase__feature-list-items">
+						{ cancellationFeatures.map( ( feature ) => (
+							<li key={ feature.feature_id } className="manage-purchase__feature-list-item">
+								<Icon icon={ check } size={ 24 } className="manage-purchase__feature-icon" />
+								<span>{ feature.title }</span>
+							</li>
+						) ) }
+					</ul>
+				</div>
+			);
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );
@@ -1662,7 +1686,7 @@ class ManagePurchase extends Component<
 						renewableSitePurchases={ renewableSitePurchases }
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor ?? managePurchase }
-						isProductOwner={ isProductOwner }
+						isProductOwner={ isProductOwner ?? false }
 						willAtomicSiteRevert={ willAtomicSiteRevert }
 						getAddNewPaymentMethodUrlFor={
 							getAddNewPaymentMethodUrlFor ?? getAddNewPaymentMethodPath
@@ -1869,7 +1893,7 @@ const WrappedManagePurchase = (
 	);
 };
 
-export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
+const ConnectedManagePurchase = connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 
 	const purchaseAttachedTo =
@@ -1951,6 +1975,26 @@ function mapDispatchToProps( dispatch: CalypsoDispatch ) {
 		),
 	};
 }
+
+function ManagePurchaseWithExperiment( props: ManagePurchaseProps ) {
+	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { data: cancelFeaturesResponse } = useQuery( {
+		...purchaseCancelFeaturesQuery( props.purchaseId, 'treatment' ),
+		enabled: isSplitCancelRemoveEnabled,
+	} );
+	const cancellationFeatures = isSplitCancelRemoveEnabled
+		? cancelFeaturesResponse?.features ?? null
+		: null;
+	return (
+		<ConnectedManagePurchase
+			{ ...props }
+			isSplitCancelRemoveEnabled={ isSplitCancelRemoveEnabled }
+			cancellationFeatures={ cancellationFeatures }
+		/>
+	);
+}
+
+export default ManagePurchaseWithExperiment;
 
 function getCancelPurchaseNavText(
 	purchase: Purchase,

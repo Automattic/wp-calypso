@@ -20,6 +20,13 @@ export function PostCardEmbedImages( { embed, compact }: PostCardEmbedImagesProp
 			embed.images.map( ( image ) => ( {
 				src: image.fullsize,
 				alt: image.alt,
+				// Surface the user-authored alt text as the carousel
+				// footer caption so sighted viewers see the description
+				// the author wrote for screen readers. `ImageCarouselModal`
+				// renders an empty caption slot when this is empty, which
+				// is fine — pagination still occupies the footer for
+				// multi-image posts.
+				caption: image.alt,
 			} ) ),
 		[ embed.images ]
 	);

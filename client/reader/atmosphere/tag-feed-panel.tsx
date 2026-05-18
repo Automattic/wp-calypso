@@ -9,8 +9,11 @@ import {
 	SocialFeedList,
 	SocialPostCard,
 	mapAtmosphereFeedItemToSocialPost,
+	socialPostFeedItemKey,
 	type SocialPost,
 } from 'calypso/reader/social';
+import { LikeProvider } from 'calypso/reader/social/components/post-card/like-context';
+import { RepostProvider } from 'calypso/reader/social/components/post-card/repost-context';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { projectAtmosphereError } from './error-projection';
 import {
@@ -20,6 +23,8 @@ import {
 	getTimelineUrl,
 	type ProfileRefInput,
 } from './route';
+import { makeUseAtmosphereLikeAction } from './use-atmosphere-like-action';
+import { makeUseAtmosphereRepostAction } from './use-atmosphere-repost-action';
 import type { AtmosphereConnection, AtmosphereFeedItem } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 import type { UnknownAction } from 'redux';
@@ -141,7 +146,7 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 		),
 		[ connection.id ]
 	);
-	const itemKey = useCallback( ( post: SocialPost ) => post.uri, [] );
+	const itemKey = useCallback( ( post: SocialPost ) => socialPostFeedItemKey( post ), [] );
 
 	const analyticsValue = useMemo(
 		() => ( {
@@ -153,6 +158,16 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 			getTagUrl,
 		} ),
 		[ connection.id, onClickAnalytics, getThreadUrl, getProfileUrl, getTagUrl ]
+	);
+
+	const useLikeAction = useMemo(
+		() => makeUseAtmosphereLikeAction( connection.id ),
+		[ connection.id ]
+	);
+
+	const useRepostAction = useMemo(
+		() => makeUseAtmosphereRepostAction( connection.id ),
+		[ connection.id ]
 	);
 
 	const tagInfo = feed.data?.pages[ 0 ]?.tag;
@@ -169,35 +184,39 @@ export function TagFeedPanel( { connection, hashtag }: Props ) {
 
 	return (
 		<SocialAnalyticsProvider value={ analyticsValue }>
-			<VStack spacing={ 4 } className="atmosphere-tag-feed">
-				<AuthorProfileHeader
-					timelineUrl={ getTimelineUrl( connection.id ) }
-					onBackToTimeline={ handleBackToTimeline }
-				/>
-				<div className="atmosphere-tag-feed__header">
-					<h1 className="atmosphere-tag-feed__heading">{ `#${ hashtag }` }</h1>
-					{ countLine ? <p className="atmosphere-tag-feed__count">{ countLine }</p> : null }
-				</div>
-				<SocialFeedList< SocialPost >
-					items={ items }
-					isPending={ feed.isPending }
-					isError={ feed.isError }
-					error={ projectAtmosphereError( feed.error ) }
-					hasNextPage={ Boolean( feed.hasNextPage ) }
-					isFetchingNextPage={ feed.isFetchingNextPage }
-					fetchNextPage={ feed.fetchNextPage }
-					refetch={ handleRetry }
-					renderItem={ renderItem }
-					itemKey={ itemKey }
-					emptyTitle={ String(
-						translate( 'No posts found for #%(hashtag)s.', { args: { hashtag } } )
-					) }
-					emptyLine={ String( translate( 'Check back later.' ) ) }
-					protocolLabel="Bluesky"
-					protocolHomeURL="/reader/atmosphere"
-					protocolHomeLabel={ String( translate( 'Back to ATmosphere' ) ) }
-				/>
-			</VStack>
+			<LikeProvider value={ useLikeAction }>
+				<RepostProvider value={ useRepostAction }>
+					<VStack spacing={ 4 } className="atmosphere-tag-feed">
+						<AuthorProfileHeader
+							timelineUrl={ getTimelineUrl( connection.id ) }
+							onBackToTimeline={ handleBackToTimeline }
+						/>
+						<div className="atmosphere-tag-feed__header">
+							<h1 className="atmosphere-tag-feed__heading">{ `#${ hashtag }` }</h1>
+							{ countLine ? <p className="atmosphere-tag-feed__count">{ countLine }</p> : null }
+						</div>
+						<SocialFeedList< SocialPost >
+							items={ items }
+							isPending={ feed.isPending }
+							isError={ feed.isError }
+							error={ projectAtmosphereError( feed.error ) }
+							hasNextPage={ Boolean( feed.hasNextPage ) }
+							isFetchingNextPage={ feed.isFetchingNextPage }
+							fetchNextPage={ feed.fetchNextPage }
+							refetch={ handleRetry }
+							renderItem={ renderItem }
+							itemKey={ itemKey }
+							emptyTitle={ String(
+								translate( 'No posts found for #%(hashtag)s.', { args: { hashtag } } )
+							) }
+							emptyLine={ String( translate( 'Check back later.' ) ) }
+							protocolLabel="Bluesky"
+							protocolHomeURL="/reader/atmosphere"
+							protocolHomeLabel={ String( translate( 'Back to ATmosphere' ) ) }
+						/>
+					</VStack>
+				</RepostProvider>
+			</LikeProvider>
 		</SocialAnalyticsProvider>
 	);
 }

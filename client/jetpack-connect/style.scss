@@ -287,6 +287,18 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	}
 }
 
+// Scoped to the unified connect-account surfaces: the disclaimer drops
+// directly under the Connect button without the shared 1.5rem top margin,
+// so the call-to-action and its fine print read as one block. Other
+// `ConsentText` consumers (Woo JPC, magic-login, accept-invite, login
+// page wrapper) keep the default top margin.
+.jetpack-connect__authorize-form-wrapper--onboarding,
+.jetpack-connect__authorize-form-wrapper--connector {
+	.connect-screen-consent-text {
+		margin: 0;
+	}
+}
+
 .jetpack-connect__authorize-form-wrapper--connector {
 	max-width: 520px;
 	margin: 5vh auto 0;
@@ -304,20 +316,36 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		height: auto;
 	}
 
-	// WP.com brand serif for the main title
+	// WP.com brand serif for the main title. Capped at 2.25rem on large
+	// screens — the BrandHeader default escalates to 2.75rem at break-large,
+	// which made the English "Connect your account" / "Create your account"
+	// wrap inside the 520px column. With the cap, English fits on one line
+	// without forcing it; longer translations (e.g. Russian, German) still
+	// wrap naturally rather than overflowing the viewport on narrow screens.
+	// `text-wrap: balance` keeps any wrap that does happen visually balanced.
 	.connect-screen-brand-header__title {
 		font-family: $brand-serif;
 		color: var( --color-neutral-100 );
+		text-wrap: balance;
+
+		@include break-large {
+			font-size: 2.25rem;
+		}
 	}
 
+	// Dotcom-prominent description treatment, matching the login page's
+	// `is-prominent` subtitle slot: slightly darker than the default
+	// `--color-text-subtle` and a step up on the typography scale.
 	.connect-screen-brand-header__description {
-		color: var( --studio-gray-50, #646970 );
+		color: var( --color-text, var( --studio-gray-80 ) );
+		font-size: $font-body-large;
 	}
 
 	.connect-screen-permissions-list__title,
 	.connect-screen-permissions-list__item,
 	.connect-screen-user-card__name,
-	.connect-screen-user-card__details {
+	.connect-screen-user-card__details,
+	.connect-screen-features-section__card-bullet {
 		font-family: $sans;
 	}
 
@@ -337,12 +365,71 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		box-shadow: 0 0 0 2px var( --color-accent-light );
 	}
 
-	.jetpack-connect__switch-account-link {
+	.connect-screen-action-buttons__tertiary.components-button.is-link {
 		color: var( --color-accent );
 	}
 
-	.connect-screen-action-buttons__tertiary.components-button.is-link {
-		color: var( --color-accent );
+	.signup-form {
+		max-width: 758px;
+		margin-inline: auto;
+
+		.layout & .signup-form__passwordless-form-wrapper .card.logged-out-form,
+		.layout & > .card.auth-form__social {
+			box-shadow: none;
+			border: 0;
+			background: transparent;
+			clip-path: unset;
+		}
+
+		.signup-form__passwordless-form-wrapper .form-fieldset {
+			margin-bottom: 0;
+		}
+
+		@media ( min-width: 782px ) {
+			display: flex;
+			flex-direction: row;
+			align-items: stretch;
+			justify-content: center;
+
+			> .signup-form__passwordless-form-wrapper,
+			> .card.auth-form__social {
+				flex: 0 0 327px;
+				max-width: 327px;
+				margin: 0;
+			}
+
+			> .signup-form__passwordless-form-wrapper,
+			> .signup-form__passwordless-form-wrapper .card.logged-out-form,
+			> .signup-form__passwordless-form-wrapper form {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+
+			.auth-form__separator {
+				flex: 0 0 auto;
+				width: 24px;
+				margin: 0 24px;
+
+				&::before,
+				&::after {
+					border-inline-start: 1px solid var( --color-border-subtle );
+					border-block-start: 0;
+					inset-block-start: 0;
+					inset-inline-start: 50%;
+					height: 40%;
+					width: 0;
+				}
+
+				&::after {
+					top: 60%;
+				}
+
+				.auth-form__separator-text {
+					padding: 24px 0;
+				}
+			}
+		}
 	}
 
 	@media screen and ( max-width: $break-mobile ) {
@@ -361,11 +448,39 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	}
 }
 
-.jetpack-connect__switch-account-link {
-	@include body-medium;
-	margin: 12px 0 0;
+// "Use a different account" link rendered directly beneath the user card
+// on the unified connect-account surfaces (jetpack-connector and unified-
+// onboarding). Centered under the card with a muted gray treatment so it
+// reads as a secondary action; the top margin nudges it away from the
+// card and the larger bottom margin separates it from the FeaturesSection
+// / PermissionsList that follows.
+.jetpack-connect__switch-account-link.logged-out-form__link-item {
+	color: var( --studio-gray-50, #646970 );
 	padding: 0;
-	color: var( --studio-green-60 );
+	margin: 1rem 0 2rem;
+	text-align: center;
+
+	&.is-disabled {
+		color: var( --studio-gray-20, #ccc );
+		pointer-events: none;
+		cursor: default;
+	}
+}
+
+// "Already have a WordPress.com account? Log in" link rendered between the
+// brand header and the signup form on the unified connection signup surface
+// (jetpack-connector and jetpack-onboarding). Centered and visually
+// distinct so returning users can pivot before scanning past the social
+// signup section. The signup form keeps primary visual weight; this link
+// is a clearly available secondary action.
+.jetpack-connect__signup-existing-account {
+	margin: 0 0 1.5rem;
+	text-align: center;
+	font-size: 0.875rem;
+
+	a {
+		font-weight: 500;
+	}
 }
 
 .jetpack-connect__benefits {

@@ -6,11 +6,12 @@ import {
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { Plans } from '@automattic/data-stores';
+import { HelpCenter, HelpCenterSelect, Plans } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	DOMAIN_FLOW,
 	isNewHostedSiteCreationFlow,
+	isOnboardingFlow,
 	isTailoredSignupFlow,
 	ONBOARDING_FLOW,
 	Step,
@@ -202,6 +203,8 @@ export interface UnifiedPlansStepProps {
 	isStepperUpgradeFlow?: boolean;
 }
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 /**
  * This is a "unified" plans step component that is utilised by both Start (old framework) and Stepper (new framework).
  * It contains the latest logic/conditioning, properties, etc. that apply to the latest main iterations of the plans step.
@@ -257,6 +260,13 @@ function UnifiedPlansStep( {
 	const dispatch = reduxUseDispatch();
 	const translate = useTranslate();
 	const dashboardOptIn = useSelector( hasDashboardOptIn );
+
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const isHelpCenterShown = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
+	);
+	const toggleHelpCenter = () => setShowHelpCenter( ! isHelpCenterShown );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
 			return null;
@@ -301,7 +311,7 @@ function UnifiedPlansStep( {
 
 	const siteUrl = onboardingStoreSiteUrl ?? signupDependencies.siteUrl;
 
-	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
+	const isPaidTheme = Boolean( selectedThemeType && selectedThemeType !== FREE_THEME );
 
 	const effectiveSubmitSignupStep = useMemo(
 		() =>
@@ -450,6 +460,9 @@ function UnifiedPlansStep( {
 			( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
+	const shouldUseModalBackedFreePlanCTA =
+		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );
+
 	const getSubheaderText = () => {
 		const freePlanButton = (
 			<Button
@@ -478,11 +491,27 @@ function UnifiedPlansStep( {
 		}
 
 		if ( intent === 'plans-wordpress-hosting' ) {
-			return null; // Use PlansFeaturesMain subheader for hosting
+			return translate(
+				'All the security, flexibility, and control you need — without the overhead.'
+			);
 		}
 
 		if ( intent === 'plans-website-builder' ) {
-			return null; // Use PlansFeaturesMain subheader for website-builder
+			if ( deemphasizeFreePlan ) {
+				if ( shouldUseModalBackedFreePlanCTA ) {
+					return translate(
+						'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
+					);
+				}
+
+				return translate(
+					'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter. Or {{link}}start with our free plan{{/link}}.',
+					{ components: { link: freePlanButton } }
+				);
+			}
+			return translate(
+				'Everything you need to go from idea to one-of-a-kind site, blog, or newsletter.'
+			);
 		}
 
 		if ( intent === 'plans-woo-hosted' ) {
@@ -523,8 +552,21 @@ function UnifiedPlansStep( {
 			);
 		}
 
+		// Keep the non-modal CTA in Step.Heading. Paid-domain/theme flows use
+		// <PlansPageSubheader> so the CTA can open PlanUpsellModal first.
+		if ( useStepContainerV2 && deemphasizeFreePlan && ! shouldUseModalBackedFreePlanCTA ) {
+			return translate(
+				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
+				{ components: { link: freePlanButton } }
+			);
+		}
+
 		if ( deemphasizeFreePlanFromProps ) {
 			return null;
+		}
+
+		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
+			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
 	};
 
@@ -605,6 +647,7 @@ function UnifiedPlansStep( {
 				onUpgradeClick={ handleUpgradeClick }
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
+				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
@@ -639,12 +682,20 @@ function UnifiedPlansStep( {
 			<>
 				<MarketingMessage path="signup/plans" />
 				<Step.WideLayout
+					headingColumnWidth={ 6 }
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
 							leftElement={
 								goBack ? (
 									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+								) : undefined
+							}
+							rightElement={
+								isOnboardingFlow( flowName ) ? (
+									<Step.LinkButton onClick={ toggleHelpCenter }>
+										{ translate( 'Need help?' ) }
+									</Step.LinkButton>
 								) : undefined
 							}
 						/>

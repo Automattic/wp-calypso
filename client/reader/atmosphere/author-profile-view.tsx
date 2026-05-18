@@ -1,12 +1,20 @@
 import { useConnectionsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { AuthorProfileHeader } from 'calypso/reader/social';
+import { ComposeFab, ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { AuthorProfilePanel } from './author-profile-panel';
-import { ComposerModal, ComposerProvider } from './composer';
+import { atmosphereComposerConfig } from './composer-config';
+import { getTimelineUrl } from './route';
+import type { AppState } from 'calypso/types';
+import type { UnknownAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 
 interface Props {
 	connectionId: number;
@@ -15,6 +23,15 @@ interface Props {
 
 export function AuthorProfileView( { connectionId, actor }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch< ThunkDispatch< AppState, void, UnknownAction > >();
+	const handleBackToTimeline = useCallback( () => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_atmosphere_profile_back_to_timeline_clicked', {
+				connection_id: connectionId,
+				actor,
+			} )
+		);
+	}, [ connectionId, actor, dispatch ] );
 	const { data, isPending, isError, refetch } = useConnectionsQuery();
 
 	const connections = data?.connections ?? [];
@@ -47,19 +64,33 @@ export function AuthorProfileView( { connectionId, actor }: Props ) {
 		return (
 			<ReaderMain className="atmosphere-view">
 				<DocumentHead title={ translate( 'Profile ‹ ATmosphere ‹ Reader' ) } />
-				<div role="status" aria-live="polite">
-					{ translate( 'Loading…' ) }
+				<div className="wp-spinner-wrapper" role="status" aria-live="polite">
+					<Spinner />
+					<p>{ translate( 'Loading…' ) }</p>
 				</div>
 			</ReaderMain>
 		);
 	}
 
+	const subtabBasePath = `/reader/atmosphere/${ connection.id }/profile/${ encodeURIComponent(
+		actor
+	) }`;
+
 	return (
-		<ComposerProvider connectionId={ connection.id }>
+		<ComposerProvider connectionId={ connection.id } config={ atmosphereComposerConfig }>
 			<ReaderMain className="atmosphere-view">
 				<DocumentHead title={ translate( '%s ‹ ATmosphere ‹ Reader', { args: actor } ) } />
-				<AuthorProfilePanel connection={ connection } actor={ actor } />
+				<AuthorProfileHeader
+					timelineUrl={ getTimelineUrl( connection.id ) }
+					onBackToTimeline={ handleBackToTimeline }
+				/>
+				<AuthorProfilePanel
+					connection={ connection }
+					actor={ actor }
+					subtabBasePath={ subtabBasePath }
+				/>
 			</ReaderMain>
+			<ComposeFab />
 			<ComposerModal />
 		</ComposerProvider>
 	);

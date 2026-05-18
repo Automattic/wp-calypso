@@ -8,9 +8,10 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ComposerModal, ComposerProvider } from '../composer';
+import { atmosphereComposerConfig } from '../composer-config';
 import { TimelinePanel } from '../timeline-panel';
 import type {
 	AtmosphereConnection,
@@ -18,6 +19,10 @@ import type {
 	AtmosphereTimelinePage,
 } from '@automattic/api-core';
 import type { InfiniteData } from '@tanstack/react-query';
+
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn(),
+} ) );
 
 const connection: AtmosphereConnection = {
 	id: 42,
@@ -54,8 +59,40 @@ function makePost( uri: string, text = 'hello' ) {
 	};
 }
 
+// Pre-seed the connection-details cache (keyed by id) so the panel's
+// useConnectionQuery call is a cache hit and never issues a network
+// request the test isn't nocking. Tests that care about the avatar
+// can override the seeded data per-test.
 function makeQueryClient() {
-	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	const client = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	client.setQueryData( readerAtmosphereKeys.connection( 42 ), {
+		did: 'did:plc:abc',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	client.setQueryData( readerAtmosphereKeys.connection( 7 ), {
+		did: 'did:plc:abc234567defghi234567jklab',
+		handle: 'alice.bsky.social',
+		display_name: 'Alice',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	client.setQueryData( readerAtmosphereKeys.connection( 99 ), {
+		did: 'did:plc:other',
+		handle: 'bob.bsky.social',
+		display_name: 'Bob',
+		description: '',
+		avatar: null,
+		banner: null,
+		counts: { followers: 0, follows: 0, posts: 0 },
+	} );
+	return client;
 }
 
 describe( 'TimelinePanel', () => {
@@ -639,6 +676,53 @@ describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () 
 	} );
 } );
 
+describe( 'TimelinePanel — quote composer integration', () => {
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'opens the composer in quote mode when the quotes count is clicked', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( readerAtmosphereKeys.timeline( 42 ), {
+			pages: [
+				{
+					items: [
+						{
+							...makePost( 'at://parent', 'quotable post' ),
+							cid: 'pcid',
+							counts: { replies: 0, reposts: 0, likes: 0, quotes: 3 },
+						},
+					],
+					cursor: null,
+				},
+			],
+			pageParams: [ undefined ],
+		} );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		const repostButton = await screen.findByRole( 'button', { name: /repost, 3 reposts/i } );
+		await user.click( repostButton );
+		const quoteItem = await screen.findByRole( 'menuitem', { name: 'Quote post' } );
+		await user.click( quoteItem );
+		expect( await screen.findByRole( 'dialog', { name: /quote post/i } ) ).toBeVisible();
+	} );
+} );
+
 describe( 'TimelinePanel — reply composer integration', () => {
 	beforeEach( () => {
 		jest
@@ -691,7 +775,7 @@ describe( 'TimelinePanel — reply composer integration', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 				<ComposerModal />
 			</ComposerProvider>,
@@ -790,7 +874,7 @@ describe( 'TimelinePanel — reply composer errors', () => {
 
 			const user = userEvent.setup();
 			renderWithProvider(
-				<ComposerProvider connectionId={ 42 }>
+				<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 					<TimelinePanel connection={ connection } />
 					<ComposerModal />
 				</ComposerProvider>,
@@ -836,7 +920,7 @@ describe( 'TimelinePanel — reply composer errors', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 				<ComposerModal />
 			</ComposerProvider>,
@@ -850,6 +934,73 @@ describe( 'TimelinePanel — reply composer errors', () => {
 		const reconnect = await screen.findByRole( 'link', { name: /reconnect/i } );
 		expect( reconnect ).toHaveAttribute( 'target', '_blank' );
 		expect( reconnect ).toHaveAttribute( 'rel', expect.stringContaining( 'noopener' ) );
+	} );
+} );
+
+describe( 'TimelinePanel — compose pill', () => {
+	// Match either a curly or straight apostrophe — the production placeholder
+	// uses the curly form (CLAUDE.md preserves it).
+	const PLACEHOLDER_RE = /what['’]s up/i;
+
+	beforeEach( () => {
+		jest
+			.spyOn( analytics, 'recordReaderTracksEvent' )
+			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+		jest.restoreAllMocks();
+	} );
+
+	it( 'renders the compose pill at the top of the feed and opens the standalone modal on click', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
+
+		const user = userEvent.setup();
+		renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+				<ComposerModal />
+			</ComposerProvider>,
+			{ queryClient: makeQueryClient() }
+		);
+
+		const pill = await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
+		expect( pill ).toBeVisible();
+
+		await user.click( pill );
+
+		expect( await screen.findByRole( 'dialog', { name: 'New post' } ) ).toBeVisible();
+	} );
+
+	it( 'renders the pill avatar from the connection-details cache, not the list-endpoint shape', async () => {
+		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
+
+		// Override the seeded connection-details so avatar is non-null.
+		const queryClient = makeQueryClient();
+		const detailsAvatar = 'https://cdn.example/timeline-avatar.jpg';
+		queryClient.setQueryData( readerAtmosphereKeys.connection( 42 ), {
+			did: 'did:plc:abc',
+			handle: 'alice.bsky.social',
+			display_name: 'Alice',
+			description: '',
+			avatar: detailsAvatar,
+			banner: null,
+			counts: { followers: 0, follows: 0, posts: 0 },
+		} );
+
+		const { container } = renderWithProvider(
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
+				<TimelinePanel connection={ connection } />
+			</ComposerProvider>,
+			{ queryClient }
+		);
+
+		await screen.findByRole( 'button', { name: PLACEHOLDER_RE } );
+
+		const avatarImg = container.querySelector< HTMLImageElement >( '.social-compose-pill__avatar' );
+		expect( avatarImg?.tagName ).toBe( 'IMG' );
+		expect( avatarImg?.getAttribute( 'src' ) ).toBe( detailsAvatar );
 	} );
 } );
 
@@ -899,7 +1050,7 @@ describe( 'TimelinePanel — reply composer optimistic + stickiness', () => {
 
 		const user = userEvent.setup();
 		renderWithProvider(
-			<ComposerProvider connectionId={ 42 }>
+			<ComposerProvider connectionId={ 42 } config={ atmosphereComposerConfig }>
 				<TimelinePanel connection={ connection } />
 				<ComposerModal />
 			</ComposerProvider>,
@@ -953,7 +1104,7 @@ describe( 'TimelinePanel — reply composer optimistic + stickiness', () => {
 			return (
 				<>
 					<button onClick={ () => setId( 99 ) }>switch</button>
-					<ComposerProvider connectionId={ id }>
+					<ComposerProvider connectionId={ id } config={ atmosphereComposerConfig }>
 						<TimelinePanel connection={ activeConnection } />
 						<ComposerModal />
 					</ComposerProvider>

@@ -29,8 +29,8 @@ export function password( context, next ) {
 	next();
 }
 
-export function twoStep( context, next ) {
-	const TwoStepComponent = require( 'calypso/me/two-step' ).default;
+export async function twoStep( context, next ) {
+	const { default: TwoStepComponent } = await import( 'calypso/me/two-step' );
 
 	context.primary = createElement( TwoStepComponent, {
 		path: context.path,

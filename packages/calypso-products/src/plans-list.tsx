@@ -197,6 +197,10 @@ import {
 	PLAN_PERSONAL_3_YEARS,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL_TRIAL_MONTHLY,
+	PLAN_WPCOM_CHOOSE_LOW_YEARLY,
+	PLAN_WPCOM_CHOOSE_MID_YEARLY,
+	PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
+	WPCOM_CHOOSE_PLANS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
@@ -219,6 +223,7 @@ import {
 	TYPE_FREE,
 	TYPE_P2_PLUS,
 	TYPE_PERSONAL,
+	TYPE_CHOOSE,
 	TYPE_PREMIUM,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
@@ -232,6 +237,7 @@ import {
 	TYPE_STARTER,
 	TYPE_GOLDEN_TOKEN,
 	WPCOM_FEATURES_ATOMIC,
+	WPCOM_FEATURES_CUSTOM_DESIGN,
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
@@ -1081,7 +1087,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			: baseFeatures;
 	},
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, WPCOM_FEATURES_FULL_ACTIVITY_LOG ],
+	getIncludedFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+		WPCOM_FEATURES_BIG_SKY,
+	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
@@ -1938,6 +1948,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AUDIO_UPLOADS,
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_FULL_ACTIVITY_LOG,
+		WPCOM_FEATURES_BIG_SKY,
 	],
 	getInferiorFeatures: () => [],
 	getCancellationFeatures: () => [
@@ -3125,9 +3136,13 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanPersonalDetails(),
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) =>
-			[ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_TRIAL_MONTHLY ].includes(
-				plan
-			),
+			[
+				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_TRIAL_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1019,
 		getStoreSlug: () => PLAN_PERSONAL_MONTHLY,
 		getPathSlug: () => 'personal-monthly',
@@ -3140,6 +3155,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3157,6 +3173,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3175,6 +3192,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3187,12 +3205,65 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'personal-3-years',
 	},
 
+	[ PLAN_WPCOM_CHOOSE_LOW_YEARLY ]: {
+		...getPlanPersonalDetails(),
+		type: TYPE_CHOOSE,
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
+		getProductId: () => 1078,
+		getStoreSlug: () => PLAN_WPCOM_CHOOSE_LOW_YEARLY,
+		getPathSlug: () => 'choose-12-yearly',
+		getTitle: () => i18n.translate( 'WordPress.com Choose $12' ),
+		getPlanTagline: () => i18n.translate( 'A simple yearly plan to get started.' ),
+		getDescription: () => i18n.translate( 'Yearly plan for new sites.' ),
+		getShortDescription: () => i18n.translate( 'Yearly plan for new sites.' ),
+		getPlanCompareFeatures: () => [ FEATURE_STATS_PAID ],
+	},
+
+	[ PLAN_WPCOM_CHOOSE_MID_YEARLY ]: {
+		...getPlanPersonalDetails(),
+		type: TYPE_CHOOSE,
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
+		getProductId: () => 1079,
+		getStoreSlug: () => PLAN_WPCOM_CHOOSE_MID_YEARLY,
+		getPathSlug: () => 'choose-24-yearly',
+		getTitle: () => i18n.translate( 'WordPress.com Choose $24' ),
+		getPlanTagline: () => i18n.translate( 'A simple yearly plan to get started.' ),
+		getDescription: () => i18n.translate( 'Yearly plan for new sites.' ),
+		getShortDescription: () => i18n.translate( 'Yearly plan for new sites.' ),
+		getPlanCompareFeatures: () => [ FEATURE_STATS_PAID, WPCOM_FEATURES_CUSTOM_DESIGN ],
+	},
+
+	[ PLAN_WPCOM_CHOOSE_HIGH_YEARLY ]: {
+		...getPlanPersonalDetails(),
+		type: TYPE_CHOOSE,
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
+		getProductId: () => 1080,
+		getStoreSlug: () => PLAN_WPCOM_CHOOSE_HIGH_YEARLY,
+		getPathSlug: () => 'choose-36-yearly',
+		getTitle: () => i18n.translate( 'WordPress.com Choose $36' ),
+		getPlanTagline: () => i18n.translate( 'A simple yearly plan to get started.' ),
+		getDescription: () => i18n.translate( 'Yearly plan for new sites.' ),
+		getShortDescription: () => i18n.translate( 'Yearly plan for new sites.' ),
+		getPlanCompareFeatures: () => [
+			FEATURE_STATS_PAID,
+			WPCOM_FEATURES_CUSTOM_DESIGN,
+			FEATURE_NO_ADS,
+		],
+	},
+
 	[ PLAN_PREMIUM_MONTHLY ]: {
 		...getPlanPremiumDetails(),
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3212,6 +3283,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3233,6 +3305,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3254,6 +3327,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3277,6 +3351,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			isEnabled( 'upgrades/wpcom-monthly-plans' ) &&
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3302,6 +3377,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_WPCOM_STARTER,
 				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
@@ -3330,6 +3406,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_WPCOM_STARTER,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
@@ -3360,6 +3437,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_WPCOM_STARTER,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
@@ -3452,6 +3530,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_TRIAL_MONTHLY,
@@ -3481,6 +3560,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_WPCOM_STARTER,
 				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
@@ -3513,6 +3593,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_WPCOM_STARTER,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_WPCOM_PRO,
@@ -3708,6 +3789,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				...WPCOM_CHOOSE_PLANS,
 				PLAN_WPCOM_STARTER,
 				PLAN_WPCOM_PRO_MONTHLY,
 				PLAN_WPCOM_PRO,

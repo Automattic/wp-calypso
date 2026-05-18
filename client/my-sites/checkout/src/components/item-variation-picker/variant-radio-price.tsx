@@ -1,10 +1,14 @@
 import colorStudio from '@automattic/color-studio';
 import { formatCurrency } from '@automattic/number-formatters';
+import {
+	calculateDiscountPercentage,
+	fromVariantPriceData,
+	getPlanPriceForDuration,
+} from '@automattic/plans-grid-next';
 import { styled } from '@automattic/wpcom-checkout';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
-import { getItemVariantDiscount } from './util';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -81,7 +85,14 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
 	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
-	const discountPercentage = getItemVariantDiscount( variant, compareTo );
+	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
+	const variantInfo = fromVariantPriceData( variant );
+	const discountPercentage = compareToInfo
+		? calculateDiscountPercentage(
+				getPlanPriceForDuration( compareToInfo, variantInfo.termMonths ),
+				getPlanPriceForDuration( variantInfo, variantInfo.termMonths )
+		  ) ?? 0
+		: 0;
 
 	// Calculate months per bill period with introductory offers.
 	let priceTermIntervalInMonths = variant.termIntervalInMonths;

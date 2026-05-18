@@ -25,10 +25,30 @@
 	}
 }
 
-.a4a-ai-mcp-connect-agent ol code {
-	padding: 2px 6px;
-	border-radius: 3px;
-	background: var( --color-neutral-0 );
-	font-family: monospace;
-	font-size: inherit;
+// Constrain ToggleControl labels to their text width so the click target
+// only covers the visible label, not the whole row.
+.a4a-ai-mcp-overview .components-toggle-control__label {
+	flex: 0 1 auto;
+}
+
+.a4a-ai-mcp-connect-agent {
+	ol {
+		padding-inline-start: 20px;
+		margin: 0;
+
+		li,
+		li > span {
+			color: var( --color-neutral-60 );
+			font-size: calc(13px);
+		}
+
+		code {
+			padding: 2px 6px;
+			border-radius: 3px;
+			background: var( --color-neutral-0 );
+			font-family: monospace;
+			font-size: inherit;
+			overflow-wrap: anywhere;
+		}
+	}
 }

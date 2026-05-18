@@ -10,11 +10,11 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
 import { useMemo, useEffect } from 'react';
+import { withColorScheme } from 'calypso/lib/color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
 import { dashboardChartTheme } from './chart-theme';
-import { ColorSchemeProvider } from './color-scheme';
 import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
@@ -75,23 +75,21 @@ function AnalyticsProviderWithClient( {
 function Layout( { config }: { config: AppConfig } ) {
 	const router = useMemo( () => getRouter( config ), [ config ] );
 
-	const tree = (
-		<QueryClientProvider client={ queryClient }>
-			<AuthProvider>
-				<I18nProvider>
-					<AnalyticsProviderWithClient router={ router }>
-						<GlobalChartsProvider theme={ dashboardChartTheme }>
-							<RouterProvider router={ router } context={ { config } } />
-						</GlobalChartsProvider>
-					</AnalyticsProviderWithClient>
-				</I18nProvider>
-			</AuthProvider>
-		</QueryClientProvider>
-	);
-
 	return (
 		<AppProvider config={ config }>
-			{ config.supports.colorScheme ? <ColorSchemeProvider>{ tree }</ColorSchemeProvider> : tree }
+			<QueryClientProvider client={ queryClient }>
+				<AuthProvider>
+					<I18nProvider>
+						<AnalyticsProviderWithClient router={ router }>
+							<GlobalChartsProvider theme={ dashboardChartTheme }>
+								{ withColorScheme( <RouterProvider router={ router } context={ { config } } />, {
+									enabled: config.supports.colorScheme,
+								} ) }
+							</GlobalChartsProvider>
+						</AnalyticsProviderWithClient>
+					</I18nProvider>
+				</AuthProvider>
+			</QueryClientProvider>
 		</AppProvider>
 	);
 }
