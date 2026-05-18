@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Modal } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
@@ -8,7 +9,7 @@ import { connect } from 'react-redux';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { activate as activateTheme } from 'calypso/state/themes/actions';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getCanonicalTheme, isRequestingTheme } from 'calypso/state/themes/selectors';
 import IframePreviewCard from './iframe-preview-card';
 import type { IAppState } from 'calypso/state/types';
 import type { Theme } from 'calypso/types';
@@ -36,6 +37,7 @@ interface ConnectedProps {
 	theme: Theme | null;
 	siteDomain?: string | null;
 	supportsFullSetup: boolean;
+	isLoadingTheme: boolean;
 }
 
 interface DispatchProps {
@@ -49,6 +51,7 @@ const ActivationModal = ( {
 	siteId,
 	siteDomain,
 	supportsFullSetup,
+	isLoadingTheme,
 	source = 'details',
 	styleVariation,
 	onClose,
@@ -114,6 +117,10 @@ const ActivationModal = ( {
 
 	const showFullSetupOption = supportsFullSetup && !! fullSetupIframeSrc;
 
+	// Wait for the canonical theme to finish loading; otherwise a late-arriving
+	// `demo_uri` would briefly leave the basic-setup card stretched alone.
+	const isWaitingForFullSetup = supportsFullSetup && ! fullSetupIframeSrc && isLoadingTheme;
+
 	const handleActivate = () => {
 		const setupChoice = showFullSetupOption && choice === 'full_setup' ? 'full' : 'basic';
 		recordTracksEvent( 'calypso_theme_activation_modal_activate_click', {
@@ -156,37 +163,45 @@ const ActivationModal = ( {
 				className="themes__activation-modal-previews"
 				role={ showFullSetupOption ? 'radiogroup' : undefined }
 			>
-				<IframePreviewCard
-					name={ RADIO_GROUP_NAME }
-					value="basic_setup"
-					isSelected={ ! showFullSetupOption || choice === 'basic_setup' }
-					onSelect={ ( value ) => setChoice( value as SetupChoice ) }
-					label={ basicSetupLabel }
-					optionName={ basicSetupOptionName }
-					iframeUrl={ basicSetupIframeSrc }
-					iframeTitle={
-						translate( "Preview of your site with %(themeName)s's basic setup applied", {
-							args: { themeName },
-						} ) as string
-					}
-					caption={ basicSetupLabel }
-				/>
-				{ showFullSetupOption && (
-					<IframePreviewCard
-						name={ RADIO_GROUP_NAME }
-						value="full_setup"
-						isSelected={ choice === 'full_setup' }
-						onSelect={ ( value ) => setChoice( value as SetupChoice ) }
-						label={ fullSetupLabel }
-						optionName={ fullSetupOptionName }
-						iframeUrl={ fullSetupIframeSrc as string }
-						iframeTitle={
-							translate( "Preview of your site with %(themeName)s's full setup applied", {
-								args: { themeName },
-							} ) as string
-						}
-						caption={ fullSetupLabel }
-					/>
+				{ isWaitingForFullSetup ? (
+					<div className="themes__activation-modal-loading">
+						<Spinner size={ 50 } />
+					</div>
+				) : (
+					<>
+						<IframePreviewCard
+							name={ RADIO_GROUP_NAME }
+							value="basic_setup"
+							isSelected={ ! showFullSetupOption || choice === 'basic_setup' }
+							onSelect={ ( value ) => setChoice( value as SetupChoice ) }
+							label={ basicSetupLabel }
+							optionName={ basicSetupOptionName }
+							iframeUrl={ basicSetupIframeSrc }
+							iframeTitle={
+								translate( "Preview of your site with %(themeName)s's basic setup applied", {
+									args: { themeName },
+								} ) as string
+							}
+							caption={ basicSetupLabel }
+						/>
+						{ showFullSetupOption && (
+							<IframePreviewCard
+								name={ RADIO_GROUP_NAME }
+								value="full_setup"
+								isSelected={ choice === 'full_setup' }
+								onSelect={ ( value ) => setChoice( value as SetupChoice ) }
+								label={ fullSetupLabel }
+								optionName={ fullSetupOptionName }
+								iframeUrl={ fullSetupIframeSrc as string }
+								iframeTitle={
+									translate( "Preview of your site with %(themeName)s's full setup applied", {
+										args: { themeName },
+									} ) as string
+								}
+								caption={ fullSetupLabel }
+							/>
+						) }
+					</>
 				) }
 			</div>
 			<div className="themes__activation-modal-actions">
@@ -212,6 +227,7 @@ export default connect(
 			// The "Full setup" path runs the theme-headstart endpoint, which doesn't
 			// apply on Jetpack/Atomic sites.
 			supportsFullSetup: ! isJetpackOrAtomic,
+			isLoadingTheme: isRequestingTheme( state, 'wpcom', themeId ),
 		};
 	},
 	{

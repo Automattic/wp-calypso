@@ -51,6 +51,14 @@
 		}
 	}
 
+	.themes__activation-modal-loading {
+		flex: 1 1 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 200px;
+	}
+
 	.themes__activation-modal-actions {
 		display: flex;
 		justify-content: flex-end;
