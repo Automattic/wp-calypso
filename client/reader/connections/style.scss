@@ -1,0 +1,534 @@
+.connections-view {
+	max-width: 760px;
+}
+
+.connections-new__cards {
+	margin-block-start: 16px;
+}
+
+// Primary link wraps just the title, but its stretched ::after layer
+// extends across the whole card so any click outside the doc link still
+// navigates. The doc link sits above this overlay via z-index.
+// The title is wrapped in an <a> so the card has a single, accessible
+// primary link; the ::after layer below makes the whole card clickable
+// (stretched-link pattern). Visually it should read as a heading, not a
+// link, so we suppress underline / colour in all states.
+.connections-new__card-link {
+	color: inherit;
+
+	&,
+	&:hover,
+	&:focus,
+	&:visited,
+	&:active {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: 8px;
+		z-index: 1;
+	}
+
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+.connections-new__card.has-link {
+	cursor: pointer;
+	transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+	&:hover {
+		transform: translateY( -2px );
+		box-shadow: 0 0 0 2px var( --color-primary );
+	}
+
+	&:focus-within {
+		box-shadow: 0 0 0 2px var( --color-primary );
+	}
+}
+
+.connections-new__card {
+	position: relative;
+	padding: 28px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	transition: box-shadow 0.15s ease-in-out;
+	overflow: hidden;
+
+	// Brand accent stripe on the leading edge of each card.
+	&::before {
+		content: '';
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: 0;
+		width: 4px;
+		background: var( --connections-new-card-accent, transparent );
+	}
+
+	&.is-featured {
+		border-width: 2px;
+		border-style: solid;
+		border-color: var( --studio-pink-50 );
+		background: linear-gradient(
+			135deg,
+			var( --studio-pink-0 ) 0%,
+			var( --color-surface ) 60%
+		);
+	}
+}
+
+.connections-new__card--fediverse {
+	--connections-new-card-accent: var( --studio-pink-50 );
+}
+
+.connections-new__card--atmosphere {
+	--connections-new-card-accent: var( --studio-blue-50 );
+}
+
+.connections-new__card--mastodon {
+	--connections-new-card-accent: var( --studio-purple-50 );
+}
+
+.connections-new__card-heading {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-block-end: 16px;
+}
+
+.connections-new__card-icon {
+	flex-shrink: 0;
+	width: 36px;
+	height: 36px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var( --connections-new-card-accent, var( --color-text ) );
+
+	// Brand icons hard-code the `sidebar__menu-icon` class on their SVG,
+	// which inherits a section-scoped margin-inline-end intended for the
+	// sidebar menu gap. Zero it here so the glyph sits centred in its
+	// slot. See the matching note in reader-sidebar-connections/
+	// style.scss for why we override with !important.
+	svg {
+		width: 36px;
+		height: 36px;
+		margin: 0 !important;
+	}
+}
+
+.connections-new__card-badge {
+	display: inline-block;
+	margin-block-end: 16px;
+	padding: 2px 8px;
+	font-size: 0.6875rem; /* stylelint-disable-line scales/font-sizes */
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var( --color-surface );
+	background-color: var( --studio-pink-50 );
+	border-radius: 24px;
+}
+
+.connections-new__card-label {
+	margin: 0;
+	font-size: 1.1rem; /* stylelint-disable-line scales/font-sizes */
+	font-weight: 600;
+	color: var( --color-text );
+}
+
+.connections-new__card-tagline {
+	margin: 0 0 12px;
+	font-size: 0.95rem; /* stylelint-disable-line scales/font-sizes */
+	font-weight: 500;
+	color: var( --color-text );
+}
+
+.connections-new__card-description {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+	line-height: 1.5;
+}
+
+// Sits above the stretched primary link so the user can click through
+// to the support doc without triggering the card's primary action.
+.connections-new__card-doc {
+	position: relative;
+	z-index: 2;
+	display: inline-block;
+	margin-block-start: 16px;
+	font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
+	color: var( --color-link );
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration: underline;
+	}
+
+	&::after {
+		content: " ↗";
+	}
+}
+
+.connections-new__footnote {
+	margin-block-start: 24px;
+	font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
+	color: var( --color-text-subtle );
+	text-align: center;
+}
+
+// ---------- Social overview ----------
+
+.social-view {
+	max-width: 960px;
+}
+
+.social-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 240px, 1fr ) );
+	gap: 16px;
+	margin-block-start: 16px;
+}
+
+.social-card {
+	display: flex;
+	gap: 14px;
+	padding: 16px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	background: var( --color-surface );
+	text-decoration: none;
+	color: inherit;
+	transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+	&:hover,
+	&:focus-visible {
+		transform: translateY( -2px );
+		box-shadow: 0 4px 14px rgba( 0, 0, 0, 0.06 );
+	}
+}
+
+.social-card--atmosphere {
+	border-block-start-color: var( --studio-blue-50 );
+	border-block-start-width: 3px;
+}
+
+.social-card--mastodon {
+	border-block-start-color: var( --studio-purple-50 );
+	border-block-start-width: 3px;
+}
+
+.social-card--fediverse {
+	border-block-start-color: var( --studio-pink-50 );
+	border-block-start-width: 3px;
+}
+
+.social-card--add {
+	border-style: dashed;
+	border-color: var( --color-border-subtle );
+	color: var( --color-text-subtle );
+	align-items: center;
+
+	&:hover,
+	&:focus-visible {
+		border-color: var( --color-primary );
+		color: var( --color-text );
+	}
+}
+
+.social-card__avatar-wrap {
+	position: relative;
+	flex-shrink: 0;
+	width: 56px;
+	height: 56px;
+}
+
+.social-card__avatar {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	object-fit: cover;
+	background-color: var( --color-neutral-0 );
+}
+
+.social-card__avatar--placeholder {
+	background: linear-gradient(
+		135deg,
+		var( --studio-gray-5 ) 0%,
+		var( --studio-gray-10 ) 100%
+	);
+}
+
+.social-card__badge {
+	position: absolute;
+	inset-block-end: -2px;
+	inset-inline-end: -4px;
+	width: 22px;
+	height: 22px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var( --color-surface );
+	border-radius: 50%;
+	box-shadow: 0 0 0 2px var( --color-surface );
+
+	// Same story as the sidebar badge — brand SVGs carry a section-wide
+	// `margin-inline-end` from `.sidebar__menu-icon` that throws off
+	// centring at small sizes. Zero it.
+	svg {
+		width: 16px;
+		height: 16px;
+		margin: 0 !important;
+	}
+}
+
+.social-card__badge--atmosphere {
+	color: var( --studio-blue-50 );
+}
+
+.social-card__badge--mastodon {
+	color: var( --studio-purple-50 );
+}
+
+.social-card__badge--fediverse {
+	color: var( --studio-pink-50 );
+}
+
+.social-card__body {
+	flex: 1;
+	min-width: 0;
+}
+
+.social-card__name {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var( --color-text );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.social-card__handle {
+	font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
+	color: var( --color-text-subtle );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.social-card__protocol {
+	margin-block-start: 4px;
+	font-size: 0.6875rem; /* stylelint-disable-line scales/font-sizes */
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var( --color-text-subtle );
+}
+
+.social-card__plus {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	border: 1.5px dashed var( --color-border-subtle );
+	font-size: 1.5rem;
+	font-weight: 400;
+	color: var( --color-text-subtle );
+	flex-shrink: 0;
+}
+
+.social-empty {
+	padding: 32px;
+	text-align: center;
+
+	h2 {
+		margin: 0 0 8px;
+		font-size: 1.25rem;
+		font-weight: 600;
+	}
+
+	p {
+		margin: 0 auto 16px;
+		max-width: 460px;
+		color: var( --color-text-subtle );
+	}
+}
+
+// ---------- Social Spotlight ----------
+
+.social-spotlight {
+	margin-block: 24px;
+}
+
+.social-spotlight__header {
+	margin-block-end: 12px;
+}
+
+.social-spotlight__title {
+	margin: 0;
+	font-size: 0.95rem; /* stylelint-disable-line scales/font-sizes */
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var( --color-text-subtle );
+}
+
+.social-spotlight__subtitle {
+	margin: 4px 0 0;
+	font-size: 0.875rem;
+	color: var( --color-text-subtle );
+}
+
+.social-spotlight__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 220px, 1fr ) );
+	gap: 12px;
+}
+
+.social-spotlight__card {
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	overflow: hidden;
+	background: var( --color-surface );
+	transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+	&:hover,
+	&:focus-within {
+		transform: translateY( -2px );
+		box-shadow: 0 4px 14px rgba( 0, 0, 0, 0.06 );
+	}
+}
+
+.social-spotlight__card--atmosphere {
+	border-block-start: 3px solid var( --studio-blue-50 );
+}
+
+.social-spotlight__card--mastodon {
+	border-block-start: 3px solid var( --studio-purple-50 );
+}
+
+.social-spotlight__card--fediverse {
+	border-block-start: 3px solid var( --studio-pink-50 );
+}
+
+.social-spotlight__link {
+	display: block;
+	padding: 12px;
+	text-decoration: none;
+	color: inherit;
+}
+
+.social-spotlight__card-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-block-end: 8px;
+}
+
+.social-spotlight__card-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.social-spotlight__card-avatar--placeholder {
+	background: linear-gradient( 135deg, var( --studio-gray-5 ) 0%, var( --studio-gray-10 ) 100% );
+}
+
+.social-spotlight__card-author {
+	flex: 1;
+	min-width: 0;
+}
+
+.social-spotlight__card-author-name {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var( --color-text );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.social-spotlight__card-author-handle {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.social-spotlight__badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background-color: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	flex-shrink: 0;
+
+	svg {
+		width: 14px;
+		height: 14px;
+		margin: 0 !important;
+	}
+}
+
+.social-spotlight__badge--atmosphere {
+	color: var( --studio-blue-50 );
+}
+
+.social-spotlight__badge--mastodon {
+	color: var( --studio-purple-50 );
+}
+
+.social-spotlight__badge--fediverse {
+	color: var( --studio-pink-50 );
+}
+
+.social-spotlight__card-text {
+	margin: 0 0 8px;
+	font-size: 0.875rem;
+	color: var( --color-text );
+	line-height: 1.4;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.social-spotlight__card-counts {
+	display: flex;
+	gap: 16px;
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+}
+
+.social-empty__cta {
+	display: inline-block;
+	padding: 8px 16px;
+	background-color: var( --color-primary );
+	color: var( --color-surface );
+	border-radius: 4px;
+	text-decoration: none;
+	font-weight: 500;
+
+	&:hover {
+		background-color: var( --color-primary-dark );
+	}
+}

@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { useEffect } from 'react';
 import useShowHelpCenter from 'calypso/components/help-center/use-show-help-center';
 import { useCurrentRoute } from 'calypso/components/route';
 import HelpCenterLoader from 'calypso/layout/help-center-loader';
@@ -32,6 +33,13 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 	const { __ } = useI18n();
 	const { isShown: isHelpCenterShown, setShowHelpCenter } = useShowHelpCenter();
 	const { currentRoute } = useCurrentRoute();
+
+	// The Help Center panel's "above the FAB" positioning keys off this body
+	// class — see `body.has-help-center-fab` in `./style.scss`.
+	useEffect( () => {
+		document.body.classList.add( 'has-help-center-fab' );
+		return () => document.body.classList.remove( 'has-help-center-fab' );
+	}, [] );
 
 	const handleClick = () => {
 		const willShow = ! isHelpCenterShown;

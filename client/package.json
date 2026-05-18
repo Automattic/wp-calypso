@@ -105,7 +105,7 @@
 		"@wordpress/base-styles": "^5.23.0",
 		"@wordpress/blocks": "^14.12.0",
 		"@wordpress/commands": "^1.23.0",
-		"@wordpress/components": "^32.1.0",
+		"@wordpress/components": "^33.1.0",
 		"@wordpress/compose": "^7.23.0",
 		"@wordpress/data": "^10.23.0",
 		"@wordpress/dataviews": "^13.1.0",
