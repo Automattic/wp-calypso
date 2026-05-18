@@ -14,7 +14,12 @@ jest.mock( '@automattic/calypso-config', () => ( {
 } ) );
 
 import page from '@automattic/calypso-router';
-import { atmosphereProfile, atmosphereTagFeed, atmosphereThread } from '../controller';
+import {
+	atmosphereLanding,
+	atmosphereProfile,
+	atmosphereTagFeed,
+	atmosphereThread,
+} from '../controller';
 
 const validDid = 'did:plc:abc234567defghi234567jkl';
 const validRkey = '3kabcdefghijk';
@@ -26,6 +31,24 @@ function makeContext( params: Record< string, string > ) {
 beforeEach( () => {
 	mockNext.mockReset();
 	jest.mocked( page.redirect ).mockReset();
+} );
+
+describe( 'atmosphereLanding controller', () => {
+	it( 'redirects to /reader/connections without calling next', () => {
+		atmosphereLanding();
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
+
+	it( 'redirects to /reader when the feature flag is off', () => {
+		const config = jest.requireMock( '@automattic/calypso-config' ) as {
+			isEnabled: jest.Mock;
+		};
+		config.isEnabled.mockReturnValueOnce( false );
+		atmosphereLanding();
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
 } );
 
 describe( 'atmosphereThread controller', () => {

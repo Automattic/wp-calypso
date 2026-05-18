@@ -34,6 +34,14 @@ beforeEach( () => {
 	jest.mocked( isEnabled ).mockReturnValue( true );
 } );
 
+describe( 'mastodonLanding controller', () => {
+	it( 'redirects to /reader/connections without calling next', () => {
+		mastodonLanding();
+		expect( page.redirect ).toHaveBeenCalledWith( '/reader/connections' );
+		expect( mockNext ).not.toHaveBeenCalled();
+	} );
+} );
+
 describe( 'mastodonProfile controller', () => {
 	it( 'sets context.primary and calls next on a numeric id', () => {
 		const ctx = makeContext( { id: '7', actor: '108020' } );
@@ -138,8 +146,7 @@ describe( 'reader/social flag gating', () => {
 	} );
 
 	it( 'mastodonLanding redirects to /reader when flag is off', () => {
-		const ctx = makeContext( {} );
-		mastodonLanding( ctx, mockNext );
+		mastodonLanding();
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
 		expect( mockNext ).not.toHaveBeenCalled();
 	} );

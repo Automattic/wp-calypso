@@ -48,12 +48,11 @@ function ensureAtmosphereEnabled(): boolean {
  * `/reader/connections`, so this handler just hands off — and keeps the
  * URL stable for any external bookmarks pointing at the old root.
  */
-export const atmosphereLanding = ( context: Context, next: () => void ) => {
+export const atmosphereLanding = () => {
 	if ( ! ensureAtmosphereEnabled() ) {
 		return;
 	}
 	page.redirect( '/reader/connections' );
-	next();
 };
 
 export const atmosphereConnect = ( context: Context, next: () => void ) => {

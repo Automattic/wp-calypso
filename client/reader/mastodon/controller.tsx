@@ -44,12 +44,11 @@ function ensureMastodonEnabled(): boolean {
  * See note on `atmosphereLanding` — the unified `/reader/connections`
  * route now owns the "find a connection or send to chooser" decision.
  */
-export const mastodonLanding = ( context: Context, next: () => void ) => {
+export const mastodonLanding = () => {
 	if ( ! ensureMastodonEnabled() ) {
 		return;
 	}
 	page.redirect( '/reader/connections' );
-	next();
 };
 
 export const mastodonConnect = ( context: Context, next: () => void ) => {

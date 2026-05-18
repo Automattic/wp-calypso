@@ -32,12 +32,11 @@ function ensureFediverseEnabled(): boolean {
  * See note on `atmosphereLanding` — the unified `/reader/connections`
  * route now owns the "find a connection or send to chooser" decision.
  */
-export const fediverseLanding = ( context: Context, next: () => void ) => {
+export const fediverseLanding = () => {
 	if ( ! ensureFediverseEnabled() ) {
 		return;
 	}
 	page.redirect( '/reader/connections' );
-	next();
 };
 
 export const fediverseIdRedirect = ( context: Context ) => {
