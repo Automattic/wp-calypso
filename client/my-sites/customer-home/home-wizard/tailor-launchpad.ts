@@ -433,7 +433,7 @@ export async function tailorLaunchpadFromIntent(
 function buildCombinedPromptFromIntent( intent: string ): string {
 	const menu = buildMenu();
 
-	return `You are helping a new WordPress.com user onboard. They've described their site idea in their own words. Produce TWO things in a single JSON response: a tailored task list, then a starter blog post draft.
+	return `You are helping a new WordPress.com user onboard. They've described their site idea in their own words. Produce THREE things in a single JSON response: a tailored task list, an inferred-context blob, and a starter blog post draft.
 
 ============ task_ids ============
 - Pick exactly 6 task IDs from the menu — no more, no less. IDs MUST come from the menu (no inventing).
@@ -460,8 +460,16 @@ function buildCombinedPromptFromIntent( intent: string ): string {
     - NEVER include "setup-store", "discover-woocommerce", or "add-first-product" UNLESS the user explicitly mentions selling, products, store, shop, or commerce.
     - NEVER include "setup-bookings" UNLESS the user mentions bookings, appointments, scheduling, or classes.
     - NEVER include "setup-memberships" or "setup-donations" UNLESS the user explicitly mentions paid access, memberships, or donations/fundraising.
-  STEP 3 — Round out with universal foundation tasks until you have 5: "design-homepage", "set-site-title-tagline", "pick-fonts-colors", "connect-social-accounts", "discover-yoast-seo".
+  STEP 3 — Round out with universal foundation tasks until you have 5. Always include "pick-theme" (the visual identity is the highest-leverage activation step — it determines how everything else looks). Then fill remaining slots from: "design-homepage", "set-site-title-tagline", "pick-fonts-colors", "connect-social-accounts", "discover-yoast-seo".
   STEP 4 — The 6th and final ID MUST be "launch-site".
+
+============ inferred ============
+Extract these fields from the user's description. Used downstream by on-demand calls (theme recommendations, page drafts) so they can riff on the same vibe without re-asking the user.
+- "goal": kind of site in 2-4 words (e.g. "photography blog", "online ceramics shop"). Required.
+- "brand_name": only if they named their site/brand (otherwise omit).
+- "niche": subject area (e.g. "photography", "indie games", "vegan baking"). Required if topic is implied.
+- "vibe": aesthetic hint if mentioned or strongly implied (e.g. "minimal Japan-inspired", "warm and editorial", "bold and modern"). Omit if neutral.
+- "audience": who the site is for, if implied (e.g. "fellow photographers", "small-batch buyers").
 
 ============ first_post_draft ============
 Write a friendly starter blog post the user can edit and publish:
@@ -469,11 +477,27 @@ Write a friendly starter blog post the user can edit and publish:
 - "subtitle": ONE-LINE, verb-led description of what publishing this post does for them. This is shown as a row hint in the dashboard. Examples: "Introduce Kaonashi to your readers", "Share why you started this journey", "Welcome readers to your first chapter." Mention brand or niche if it fits. Max 10 words. NOT a tagline for the post.
 - "paragraphs": two short paragraphs of opening body text. First: introduce the topic in a warm, personal voice. Second: invite the reader in. Leave room for the user to expand. Friendly, plain English, no jargon. Avoid "Welcome to my blog" / "Hello world."
 
+============ name resolution ============
+If the user's description contains a line "Site name: X", treat X as THE
+ONLY brand/name to use anywhere — in the title, subtitle, paragraphs, and
+the inferred.brand_name field. X overrides EVERYTHING else, including:
+- ambient context (URL slug, blog title, wpcom site record), AND
+- names the user mentions in their own description text (e.g. if the
+  description says "...called Mira Studio" but the "Site name:" line says
+  "Grogu", you MUST use "Grogu" and ignore "Mira Studio" entirely).
+Treat the "Site name:" line as the user explicitly correcting any other
+name. Do NOT use the in-text name even as a secondary reference.
+
+If no "Site name:" line is present, fall back to a name only if the user
+mentions one in their own words; otherwise omit the brand and write
+generically.
+
 ============ format ============
 Return ONE valid JSON object. No prose, no markdown fences. First character MUST be "{".
 
 Schema: {
   "task_ids": [...],
+  "inferred": {"goal": "...", "brand_name": "...", "niche": "...", "vibe": "...", "audience": "..."},
   "first_post_draft": {"title": "...", "subtitle": "...", "paragraphs": ["...", "..."]}
 }
 
