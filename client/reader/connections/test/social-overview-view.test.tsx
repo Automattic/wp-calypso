@@ -4,7 +4,11 @@
 import { screen } from '@testing-library/react';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { SocialOverviewView } from '../social-overview-view';
-import type { AtmosphereConnection, AtmosphereConnectionDetails } from '@automattic/api-core';
+import type {
+	AtmosphereConnection,
+	AtmosphereConnectionDetails,
+	MastodonConnection,
+} from '@automattic/api-core';
 import type React from 'react';
 
 // `ReaderMain` mounts `<sync-reader-follows>`, which selects from a Redux
@@ -75,6 +79,19 @@ function makeDetails(
 		banner: null,
 		counts: { followers: 0, follows: 0, posts: 0 },
 		pds_hostname: 'pds.example.com',
+		...overrides,
+	};
+}
+
+function makeMastodonConnection(
+	overrides: Partial< MastodonConnection > = {}
+): MastodonConnection {
+	return {
+		id: 202,
+		handle: '@bob@mastodon.example',
+		instance: 'mastodon.example',
+		display_name: 'Bob',
+		avatar: null,
 		...overrides,
 	};
 }
@@ -158,5 +175,57 @@ describe( 'SocialOverviewView — ATmosphere PDS hostname', () => {
 		render( <SocialOverviewView /> );
 
 		expect( screen.getByText( 'pds.example.com' ) ).toBeVisible();
+	} );
+
+	// The rollout path for newly-minted tokens: the list endpoint hasn't
+	// been backfilled yet but getConnection(id) resolves the PDS dynamically.
+	it( 'uses the details value when the list value is null', () => {
+		mockUseConnectionsQuery.mockReturnValue( {
+			data: { connections: [ makeConnection( { pds_hostname: null } ) ] },
+			isPending: false,
+			isError: false,
+		} );
+		mockUseConnectionQuery.mockReturnValue( {
+			data: makeDetails( { pds_hostname: 'pds.example.com' } ),
+		} );
+
+		render( <SocialOverviewView /> );
+
+		expect( screen.getByText( 'pds.example.com' ) ).toBeVisible();
+	} );
+
+	it( 'hides the PDS line when pds_hostname is an empty string', () => {
+		mockUseConnectionsQuery.mockReturnValue( {
+			data: { connections: [ makeConnection( { pds_hostname: '' } ) ] },
+			isPending: false,
+			isError: false,
+		} );
+		mockUseConnectionQuery.mockReturnValue( {
+			data: makeDetails( { pds_hostname: '' } ),
+		} );
+
+		const { container } = render( <SocialOverviewView /> );
+
+		expect( container.querySelector( '.social-card__pds' ) ).toBeNull();
+	} );
+
+	it( 'never renders a PDS line for non-ATmosphere cards', () => {
+		mockUseConnectionsQuery.mockReturnValue( {
+			data: { connections: [ makeConnection( { pds_hostname: 'pds.example.com' } ) ] },
+			isPending: false,
+			isError: false,
+		} );
+		mockUseConnectionQuery.mockReturnValue( {
+			data: makeDetails( { pds_hostname: 'pds.example.com' } ),
+		} );
+		mockUseMastodonConnectionsQuery.mockReturnValue( {
+			data: { connections: [ makeMastodonConnection() ] },
+			isPending: false,
+			isError: false,
+		} );
+
+		const { container } = render( <SocialOverviewView /> );
+
+		expect( container.querySelectorAll( '.social-card__pds' ) ).toHaveLength( 1 );
 	} );
 } );

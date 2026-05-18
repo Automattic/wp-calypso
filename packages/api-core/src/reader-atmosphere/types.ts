@@ -10,6 +10,8 @@ export interface AtmosphereConnection {
 	// `bsky.social`, `pds.example.com`). Optional during the rollout
 	// window: tokens minted before CM-739 don't have a stored PDS, and
 	// the serializer occasionally falls back to dynamic resolution.
+	// TODO(post-CM-739): drop the `?` and keep `string | null` once the
+	// backfill completes.
 	pds_hostname?: string | null;
 }
 
@@ -36,7 +38,8 @@ export interface AtmosphereConnectionDetails {
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
 	// Same caveat as `AtmosphereConnection.pds_hostname` — optional during
-	// the rollout window.
+	// the rollout window. TODO(post-CM-739): drop the `?` alongside the
+	// one on `AtmosphereConnection`.
 	pds_hostname?: string | null;
 }
 
