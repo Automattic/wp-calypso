@@ -5,6 +5,7 @@ import {
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -155,20 +156,23 @@ export function SocialOverviewView() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const fediverseEnabled = isEnabled( 'reader/fediverse' );
 	const atmosphere = useConnectionsQuery();
 	const mastodon = useMastodonConnectionsQuery();
-	const fediverse = useFediverseConnectionsQuery();
+	const fediverse = useFediverseConnectionsQuery( { enabled: fediverseEnabled } );
 
-	const isLoading = atmosphere.isPending || mastodon.isPending || fediverse.isPending;
-	const hasAllErrored = atmosphere.isError && mastodon.isError && fediverse.isError;
+	const isLoading =
+		atmosphere.isPending || mastodon.isPending || ( fediverseEnabled && fediverse.isPending );
+	const hasAllErrored =
+		atmosphere.isError && mastodon.isError && ( ! fediverseEnabled || fediverse.isError );
 
 	const cards: SocialCard[] = useMemo(
 		() => [
 			...( atmosphere.data?.connections ?? [] ).map( mapAtmosphere ),
 			...( mastodon.data?.connections ?? [] ).map( mapMastodon ),
-			...( fediverse.data?.connections ?? [] ).map( mapFediverse ),
+			...( fediverseEnabled ? ( fediverse.data?.connections ?? [] ).map( mapFediverse ) : [] ),
 		],
-		[ atmosphere.data, mastodon.data, fediverse.data ]
+		[ atmosphere.data, mastodon.data, fediverse.data, fediverseEnabled ]
 	);
 
 	// Flat protocol+id (+instance/host) list for the Spotlight strip.

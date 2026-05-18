@@ -56,9 +56,9 @@ export function ConnectionsNewView() {
 	const socialEnabled = isEnabled( 'reader/social' );
 	const fediverseEnabled = isEnabled( 'reader/fediverse' );
 
-	const fediverseConnectionsQuery = useFediverseConnectionsQuery();
+	const fediverseConnectionsQuery = useFediverseConnectionsQuery( { enabled: fediverseEnabled } );
 	const fediverseConnectionCount = fediverseConnectionsQuery.data?.connections?.length ?? 0;
-	const hasFediverseConnection = fediverseConnectionCount > 0;
+	const hasFediverseConnection = fediverseEnabled && fediverseConnectionCount > 0;
 
 	const adminSites = useSelector( ( state ) =>
 		getSites( state ).filter( ( site ) => !! site?.capabilities?.manage_options )
