@@ -84,49 +84,51 @@
 	}
 }
 
-// Zero-height sentinel — positioned immediately after the in-flow search bar.
-// IntersectionObserver fires when this element crosses the top viewport edge,
-// which coincides with the search bar having just scrolled out of view.
-.domain-search--results__sentinel {
-	block-size: 0;
-	overflow: hidden;
-	// aria-hidden="true" is set in TSX; no further a11y work needed.
+// The in-flow SearchBar and in-flow promo card are the desktop affordances. On
+// mobile, the persistent fixed overlay below replaces both, so we hide these
+// in-flow nodes via CSS rather than unmounting them — keeping desktop markup
+// trunk-identical.
+@media ( max-width: #{ $break-small - 1px } ) {
+	.domain-search--results__in-flow-search,
+	.domain-search--results__in-flow-before-results {
+		display: none;
+	}
+
+	// The persistent fixed overlay (position: fixed at top:
+	// var(--step-container-v2-top-bar-height)) visually obscures the first
+	// ~123px of in-flow content. Reserve that vertical space at the top of the
+	// results region so the first row of suggestions renders just below the
+	// overlay rather than behind it.
+	//   - compact banner (collapsed): 12px + 24px + 12px + 2px borders = 50px
+	//   - search-bar row: 12px + var(--domain-search-input-size) + 12px + 1px border
+	// When the banner is expanded inline (subtitle visible), the additional
+	// ~20px briefly overlaps the first result — acceptable for a user-initiated
+	// affordance, the user can scroll to recover.
+	.domain-search--results {
+		padding-block-start: calc(
+			50px + ( 12px * 2 ) + var( --domain-search-input-size ) + 1px
+		);
+	}
 }
 
-// Fixed overlay — always in the DOM on mobile (when a BeforeResults slot is
-// present), always at position:fixed. Default state: slid fully above the
-// viewport via transform. When .is-stuck is applied the overlay slides into
-// view. Only `transform` is animated → compositor-only, zero layout/paint cost.
-// The in-flow render tree is never affected: no min-height placeholder needed.
+// Persistent fixed overlay — mobile-only. Always pinned at the top of the
+// viewport, directly below the WP top bar (the stepper makes the top bar
+// position:sticky on this step so the two surfaces read as one fixed region).
 .domain-search--results__sticky-overlay {
-	// Hidden from non-mobile viewports — the overlay is mobile-only.
-	// On desktop the in-flow promo card (slots.BeforeResults) is always visible.
+	// The overlay is mobile-only; on desktop the in-flow promo card +
+	// SearchBar carry the layout.
 	display: none;
 
 	@media ( max-width: #{ $break-small - 1px } ) {
 		display: flex;
 		flex-direction: column;
 		position: fixed;
-		inset-block-start: 0;
+		// Sit immediately below the WP top bar so they form a single fixed
+		// top region. Falls back to 0 when consumers don't render inside
+		// StepContainerV2.
+		inset-block-start: var( --step-container-v2-top-bar-height, 0 );
 		inset-inline: 0;
 		z-index: var( --domain-search-sticky-overlay-z-index );
-		// Start fully above the viewport; slide in by adding .is-stuck.
-		// Exit transition: accelerate (cubic-bezier(0.4,0,1,1)) — feels intentional.
-		transform: translateY( -100% );
-		opacity: 0;
-		transition:
-			transform 220ms cubic-bezier( 0.4, 0, 1, 1 ),
-			opacity 160ms ease-in;
-		will-change: transform, opacity;
-
-		&.is-stuck {
-			transform: translateY( 0 );
-			opacity: 1;
-			// Enter transition: decelerate (cubic-bezier(0,0,0.2,1)) — softer arrival.
-			transition:
-				transform 280ms cubic-bezier( 0, 0, 0.2, 1 ),
-				opacity 200ms ease-out;
-		}
 	}
 }
 
@@ -141,8 +143,7 @@
 	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.02 );
 }
 
-// Compact sticky banner — rendered inside the overlay, animates as part of the
-// single transform slide. No independent animation needed.
+// Compact sticky banner — sits at the top of the overlay, above the search bar.
 .domain-search--results__compact-banner {
 	// Reset button defaults.
 	appearance: none;

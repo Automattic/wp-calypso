@@ -1,8 +1,7 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { chevronDown, chevronUp, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Cart } from '../components/cart';
 import { FeaturedSearchResults } from '../components/featured-search-results';
 import { SearchBar } from '../components/search-bar';
@@ -57,70 +56,36 @@ export const ResultsPage = () => {
 
 	useRequestTracking();
 
-	// Sentinel-based sticky detection: place a zero-height sentinel immediately
-	// below the in-flow search bar. When the sentinel crosses the top edge of the
-	// viewport, the search bar has just scrolled out of view — slide the fixed
-	// overlay in. Only flips when the value actually changes.
-	const sentinelRef = useRef< HTMLDivElement >( null );
-	const [ isStuck, setIsStuck ] = useState( false );
-
-	useEffect( () => {
-		const sentinel = sentinelRef.current;
-		if ( ! sentinel ) {
-			return;
-		}
-
-		const observer = new IntersectionObserver(
-			( entries ) => {
-				const next = ! entries[ 0 ].isIntersecting;
-				setIsStuck( ( prev ) => ( prev !== next ? next : prev ) );
-			},
-			{ threshold: 0 }
-		);
-
-		observer.observe( sentinel );
-
-		return () => {
-			observer.disconnect();
-		};
-	}, [] );
-
 	const showCompactBanner = !! slots?.BeforeResults;
 
 	return (
 		<VStack spacing={ 8 } className="domain-search--results">
-			{ /* In-flow search bar — trunk-identical, always rendered, never moves.
-			     Wrapped in a single div so the outer VStack sees one child (not two),
-			     preventing a double gap between the search bar and BeforeResults.
-			     The sentinel sits immediately below the SearchBar VStack so the
-			     IntersectionObserver fires exactly when the search bar scrolls out. */ }
-			<div className="domain-search--results__search-region">
-				<VStack spacing={ 4 }>
-					<SearchBar />
-					{ ! isLoadingSuggestions && <SearchNotice /> }
-				</VStack>
-				<div ref={ sentinelRef } aria-hidden="true" className="domain-search--results__sentinel" />
+			{ /* Desktop in-flow SearchBar. CSS-hidden on mobile (the persistent
+			     overlay below is the only search affordance there). */ }
+			<div className="domain-search--results__in-flow-search">
+				<SearchBar />
 			</div>
+			{ ! isLoadingSuggestions && <SearchNotice /> }
 
-			{ /* Fixed overlay — always in the DOM on mobile, positioned off-screen
-			     above the viewport by default (transform: translateY(-100%)).
-			     When isStuck is true the overlay slides into view via transform only —
-			     no layout/paint work, no effect on the in-flow render tree. */ }
+			{ /* Persistent mobile overlay — always rendered when the BeforeResults
+			     slot is provided. position: fixed pins it below the WP top bar
+			     for the entire lifetime of the page (no scroll detection). */ }
 			{ showCompactBanner && (
-				<div
-					className={ clsx( 'domain-search--results__sticky-overlay', { 'is-stuck': isStuck } ) }
-					aria-hidden={ ! isStuck }
-				>
-					<div className="domain-search--results__compact-banner-container">
-						<StickyCompactBanner />
-					</div>
+				<div className="domain-search--results__sticky-overlay">
+					<StickyCompactBanner />
 					<div className="domain-search--results__search-bar-row">
 						<SearchBar />
 					</div>
 				</div>
 			) }
 
-			{ slots?.BeforeResults && <slots.BeforeResults /> }
+			{ /* Desktop in-flow promo card. CSS-hidden on mobile, where the
+			     compact banner inside the overlay supersedes it. */ }
+			{ slots?.BeforeResults && (
+				<div className="domain-search--results__in-flow-before-results">
+					<slots.BeforeResults />
+				</div>
+			) }
 			<VStack spacing={ 4 }>
 				{ config.skippable && (
 					<>{ isLoadingSuggestions ? <SkipSuggestion.Placeholder /> : <SkipSuggestion /> }</>
