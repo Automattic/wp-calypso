@@ -14,23 +14,33 @@ export interface UnifiedConnection {
 }
 
 export function getProtocolIcon( protocol: ConnectionProtocol ): JSX.Element {
-	if ( protocol === 'atmosphere' ) {
-		// Filled glyph reads better at the 10px badge size — outline strokes
-		// lose fidelity past the rasterisation threshold.
-		return <ReaderBlueskyIcon filled />;
+	switch ( protocol ) {
+		case 'atmosphere':
+			// Filled glyph reads better at the 10px badge size — outline strokes
+			// lose fidelity past the rasterisation threshold.
+			return <ReaderBlueskyIcon filled />;
+		case 'mastodon':
+			return <ReaderMastodonIcon />;
+		case 'fediverse':
+			return <ReaderFediverseIcon />;
+		default: {
+			const exhaustive: never = protocol;
+			return exhaustive;
+		}
 	}
-	if ( protocol === 'mastodon' ) {
-		return <ReaderMastodonIcon />;
-	}
-	return <ReaderFediverseIcon />;
 }
 
 export function getProtocolLabel( protocol: ConnectionProtocol ): string {
-	if ( protocol === 'atmosphere' ) {
-		return 'Bluesky';
+	switch ( protocol ) {
+		case 'atmosphere':
+			return 'Bluesky';
+		case 'mastodon':
+			return 'Mastodon';
+		case 'fediverse':
+			return 'Fediverse';
+		default: {
+			const exhaustive: never = protocol;
+			return exhaustive;
+		}
 	}
-	if ( protocol === 'mastodon' ) {
-		return 'Mastodon';
-	}
-	return 'Fediverse';
 }

@@ -70,7 +70,15 @@ function getActiveConnection( path: string ): { protocol: ConnectionProtocol; id
 	if ( protocol === null ) {
 		return null;
 	}
-	return { protocol, id: Number( match[ 2 ] ) };
+	// Defensive: the regex allows arbitrarily long digit strings, which
+	// would overflow into Infinity or lose precision past
+	// `Number.MAX_SAFE_INTEGER`. Treat those as "no active row" rather
+	// than producing an id that can never match a real connection.
+	const id = Number( match[ 2 ] );
+	if ( ! Number.isSafeInteger( id ) || id <= 0 ) {
+		return null;
+	}
+	return { protocol, id };
 }
 
 function mapAtmosphere( connection: AtmosphereConnection ): UnifiedConnection {
