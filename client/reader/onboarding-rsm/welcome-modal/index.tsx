@@ -5,6 +5,17 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import welcomeAtavistImage from 'calypso/assets/images/reader/onboarding/welcome-atavist.webp';
+import welcomeHughImage from 'calypso/assets/images/reader/onboarding/welcome-hugh.webp';
+import welcomeLongreadsImage from 'calypso/assets/images/reader/onboarding/welcome-longreads.webp';
+import welcomeMattImage from 'calypso/assets/images/reader/onboarding/welcome-matt.webp';
+import welcomeOmImage from 'calypso/assets/images/reader/onboarding/welcome-om.webp';
+import welcomeRollingStoneImage from 'calypso/assets/images/reader/onboarding/welcome-rolling-stone.webp';
+import welcomeSethImage from 'calypso/assets/images/reader/onboarding/welcome-seth.webp';
+import welcomeTimImage from 'calypso/assets/images/reader/onboarding/welcome-tim.webp';
+import welcomeTimeImage from 'calypso/assets/images/reader/onboarding/welcome-time.webp';
+import welcomeVarietyImage from 'calypso/assets/images/reader/onboarding/welcome-variety.webp';
+import welcomeWiredImage from 'calypso/assets/images/reader/onboarding/welcome-wired.webp';
 import { StepIndicator } from 'calypso/reader/onboarding-rsm/step-indicator';
 
 import './style.scss';
@@ -24,65 +35,61 @@ type WelcomeTileItem = {
 const publications: WelcomeTileItem[] = [
 	{
 		name: 'Longreads',
-		imageUrl: 'https://www.google.com/s2/favicons?domain=longreads.com&sz=128',
+		imageUrl: welcomeLongreadsImage,
 	},
 	{
 		name: 'The Atavist Magazine',
-		imageUrl: 'https://www.google.com/s2/favicons?domain=magazine.atavist.com&sz=128',
+		imageUrl: welcomeAtavistImage,
 	},
 	{
 		name: 'Time',
-		imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Time_Magazine_logo.svg',
+		imageUrl: welcomeTimeImage,
 		imageClass: 'is-contained-logo is-contained-logo--time',
 	},
 	{
 		name: 'Variety',
-		imageUrl: 'https://www.google.com/s2/favicons?domain=variety.com&sz=128',
+		imageUrl: welcomeVarietyImage,
 		porthole: true,
 		imageClass: 'reader-welcome-modal__variety-image',
 	},
 	{
 		name: 'Rolling Stone',
-		imageUrl:
-			'https://i0.wp.com/www.rollingstone.com/wp-content/uploads/2024/12/R-Avatar_512x512_flat.png?ssl=1&w=240',
+		imageUrl: welcomeRollingStoneImage,
 	},
 	{
 		name: 'Wired',
-		imageUrl: 'https://www.wired.com/apple-touch-icon.png',
+		imageUrl: welcomeWiredImage,
 	},
 ];
 
 const bloggers: WelcomeTileItem[] = [
 	{
 		name: 'Matt Mullenweg',
-		imageUrl:
-			'https://0.gravatar.com/avatar/33252cd1f33526af53580fcb1736172f06e6716f32afdd1be19ec3096d15dea5?s=256',
+		imageUrl: welcomeMattImage,
 		porthole: true,
 		imageClass: 'reader-welcome-modal__matt-image',
 	},
 	{
 		name: 'Seth Godin',
-		imageUrl: 'https://seths.blog/wp-content/themes/godin/img/seth.webp',
+		imageUrl: welcomeSethImage,
 		porthole: true,
 		imageClass: 'reader-welcome-modal__seth-image',
 	},
 	{
 		name: 'Tim Ferriss',
-		imageUrl:
-			'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Tim_Ferriss.jpg/500px-Tim_Ferriss.jpg',
+		imageUrl: welcomeTimImage,
 		porthole: true,
 		imageClass: 'reader-welcome-modal__tim-image',
 	},
 	{
 		name: 'Om Malik',
-		imageUrl: 'https://om.co/wp-content/uploads/2024/05/Om-headshot.png',
+		imageUrl: welcomeOmImage,
 		porthole: true,
 		imageClass: 'reader-welcome-modal__om-image',
 	},
 	{
 		name: 'Hugh Howey',
-		imageUrl:
-			'https://hughhowey.com/wp-content/themes/hughhowey2023new/assets/images/HH-circle.png',
+		imageUrl: welcomeHughImage,
 		porthole: true,
 		imageClass: 'reader-welcome-modal__hugh-image',
 	},

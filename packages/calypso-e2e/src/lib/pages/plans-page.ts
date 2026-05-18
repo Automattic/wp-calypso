@@ -1,4 +1,3 @@
-import { expect } from 'playwright/test';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -135,7 +134,7 @@ export class PlansPage {
 				exact: true,
 			} )
 			.first();
-		await expect( trigger ).toBeVisible( { timeout: 30_000 } );
+		await trigger.waitFor( { state: 'visible', timeout: 30_000 } );
 		await trigger.click();
 
 		const escapeHatchDialog = this.page
@@ -146,7 +145,7 @@ export class PlansPage {
 				} ),
 			} )
 			.first();
-		await expect( escapeHatchDialog ).toBeVisible();
+		await escapeHatchDialog.waitFor( { state: 'visible' } );
 	}
 
 	/**

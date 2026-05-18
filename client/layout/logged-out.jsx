@@ -1,5 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
@@ -10,6 +11,7 @@ import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
+import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
@@ -34,6 +36,7 @@ import {
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
+import untrailingslashit from 'calypso/lib/route/untrailingslashit';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
@@ -78,6 +81,43 @@ const loadSupportArticleDialog = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
 	);
+
+const HELP_CENTER_FAB_SECTIONS = [
+	'accept-invite',
+	'checkout',
+	'login',
+	'mailing-lists',
+	'patterns',
+	'performance-profiler',
+	'plugins',
+	'reader',
+	'site-profiler',
+	'theme',
+	'themes',
+];
+
+// Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
+const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
+
+// FAB safety on /log-in: window.location.href is forwarded to Zendesk verbatim by
+// packages/odie-client (use-create-zendesk-conversation: messaging_url/source).
+// Login sub-flows put secrets in the query (social handoff, OAuth callbacks,
+// magic-link, lostpassword) or fragment (desktop finalize, social-connect), and
+// ?redirect_to can wrap arbitrary OAuth URLs with tokens at any depth. We can't
+// safely introspect those, so allow only the bare credential form (with optional
+// locale) and require an empty query + fragment.
+const WPCOM_LOGIN_FAB_PATHNAMES = new Set( [
+	'/log-in',
+	...getLanguageSlugs().map( ( slug ) => `/log-in/${ slug }` ),
+] );
+
+const isFabSafeLoginUrl = () => {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	const { pathname, search, hash } = window.location;
+	return WPCOM_LOGIN_FAB_PATHNAMES.has( untrailingslashit( pathname ) ) && ! search && ! hash;
+};
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -153,6 +193,23 @@ const LayoutLoggedOut = ( {
 		! hasGravPoweredClientClass &&
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
+
+	// OAuth client logins (Gravatar, WPJobManager, Woo, etc.) and /log-in/jetpack
+	// have their own branding and support paths.
+	const isWpcomLogin =
+		sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin && isFabSafeLoginUrl();
+
+	const isEligibleSection =
+		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) && ( sectionName !== 'login' || isWpcomLogin );
+
+	// Logged-in users use the masterbar control instead.
+	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
+	const showHelpCenterFab =
+		! isLoggedIn &&
+		isEnabled( 'help-center/logged-out-fab' ) &&
+		( isEligibleSection || HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
+		! isReaderTagEmbed &&
+		userAllowedToHelpCenter;
 
 	const loadHelpCenter =
 		isLoggedIn &&
@@ -285,6 +342,10 @@ const LayoutLoggedOut = ( {
 	}
 
 	const bodyClass = [ 'font-smoothing-antialiased' ];
+	if ( showHelpCenterFab ) {
+		// See `body.has-help-center-fab` in `help-center-fab/style.scss`.
+		bodyClass.push( 'has-help-center-fab' );
+	}
 
 	return (
 		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
@@ -296,6 +357,7 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 					/>
 				) }
+				{ showHelpCenterFab && <AsyncHelpCenterFab sectionName={ sectionName } /> }
 				{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 				<BodySectionCssClass
 					group={ sectionGroup }

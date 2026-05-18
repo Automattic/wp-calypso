@@ -10,6 +10,10 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
+		// Keep "Feature Clip" + badge on a single line. Without this the
+		// panel toggle's narrow flex column can wrap the two-word title
+		// onto separate lines.
+		white-space: nowrap;
 	}
 
 	&__description {

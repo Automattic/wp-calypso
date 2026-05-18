@@ -69,17 +69,24 @@ export function useGenericShare( clip?: ShareClipIdentity ): UseGenericShareRetu
 	/**
 	 * See `useReelShare` — same rationale. Sidebar callers (override clip) get
 	 * notices on the editor snackbar; modal callers get them in-modal.
+	 *
+	 * Memoized so `handleShare` (which depends on it) doesn't get re-created
+	 * on every render. The dispatch refs from `useDispatch` are stable, so
+	 * once `hasOverride` settles `showNotice` keeps a stable identity.
 	 */
-	const showNotice = async ( message: string, type: 'success' | 'warning' | 'error' ) => {
-		if ( hasOverride ) {
-			await createCoreNotice?.( type, message, {
-				type: 'snackbar',
-				isDismissible: true,
-			} );
-			return;
-		}
-		await addModalNotice( message, type );
-	};
+	const showNotice = useCallback(
+		async ( message: string, type: 'success' | 'warning' | 'error' ) => {
+			if ( hasOverride ) {
+				await createCoreNotice?.( type, message, {
+					type: 'snackbar',
+					isDismissible: true,
+				} );
+				return;
+			}
+			await addModalNotice( message, type );
+		},
+		[ hasOverride, createCoreNotice, addModalNotice ]
+	);
 
 	// Synchronous double-click guard — same rationale as in useReelShare.
 	// Kept alongside `isSharing` state because state updates lag a render and

@@ -5,6 +5,7 @@
 	"boom_analytics_enabled": false,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,
+	"checkout_additional_allowed_redirect_hosts": [],
 	"client_slug": false,
 	"facebook_api_key": false,
 	"features": {},
