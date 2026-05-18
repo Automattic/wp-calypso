@@ -26,17 +26,7 @@
 
 	@include dashboard-dark-theme-masterbar;
 
-	.navigation-header .breadcrumbs {
-		--studio-gray-50: var( --dashboard__text-muted-color );
-		--studio-gray-80: var( --dashboard__text-color );
-		--studio-gray-100: var( --dashboard__text-color );
-	}
-
 	.global-styles-variations__header {
-		--studio-gray-50: var( --dashboard__text-muted-color );
-		--studio-gray-100: var( --dashboard__text-color );
-		--color-neutral-60: var( --dashboard__text-muted-color );
-
 		.premium-badge {
 			--studio-black: var( --dashboard-surface__background-color );
 			--studio-white: var( --dashboard__text-color );
