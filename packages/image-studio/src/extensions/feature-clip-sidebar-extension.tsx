@@ -45,7 +45,6 @@ interface MediaRecord {
 
 /**
  * Open Image Studio for the Feature Clip flow.
- *
  * @param mode - Telemetry label only: `Generate` for a first-time clip,
  *               `Edit` when regenerating an existing one. It is not forwarded
  *               to `openImageStudio` — the modal's actual mode is derived from
@@ -102,7 +101,13 @@ function FeatureClipPreview( {
 		const { insertBlocks } = dispatch( 'core/block-editor' ) as {
 			insertBlocks?: ( blocks: unknown ) => void;
 		};
-		insertBlocks?.( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+		// Bail before tracking if the block-editor dispatcher is unavailable —
+		// recording the conversion when no block was inserted would log a
+		// phantom add-to-post.
+		if ( ! insertBlocks ) {
+			return;
+		}
+		insertBlocks( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
 		trackImageStudioFeatureClipAddedToPost( { attachmentId } );
 	};
 

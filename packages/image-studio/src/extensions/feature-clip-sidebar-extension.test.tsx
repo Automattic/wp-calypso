@@ -25,6 +25,7 @@ const mockCreateBlock = jest.fn( ( name: string, attributes: Record< string, unk
 let mockMeta: Record< string, unknown > = {};
 let mockMedia: Record< string, unknown > | null = null;
 let mockHasResolvedMedia = true;
+let mockHasBlockEditor = true;
 let mockReelVisible = false;
 let mockGenericVisible = false;
 let mockReelIsConfirming = false;
@@ -33,6 +34,8 @@ const mockReelRequestShare = jest.fn();
 const mockReelConfirmShare = jest.fn();
 const mockReelCancelShare = jest.fn();
 const mockGenericHandleShare = jest.fn();
+const mockUseReelShare = jest.fn();
+const mockUseGenericShare = jest.fn();
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -73,7 +76,7 @@ jest.mock( '@wordpress/data', () => ( {
 			};
 		}
 		if ( store === 'core/block-editor' ) {
-			return { insertBlocks: mockInsertBlocks };
+			return mockHasBlockEditor ? { insertBlocks: mockInsertBlocks } : {};
 		}
 		return { openImageStudio: mockOpenImageStudio };
 	} ),
@@ -130,15 +133,18 @@ jest.mock( 'social-logos', () => ( {
 } ) );
 
 jest.mock( '../hooks/use-reel-share', () => ( {
-	useReelShare: () => ( {
-		isVisible: mockReelVisible,
-		isSharing: false,
-		isConfirming: mockReelIsConfirming,
-		igDisplayName: mockReelIgDisplayName,
-		requestShare: mockReelRequestShare,
-		confirmShare: mockReelConfirmShare,
-		cancelShare: mockReelCancelShare,
-	} ),
+	useReelShare: ( ...args: unknown[] ) => {
+		mockUseReelShare( ...args );
+		return {
+			isVisible: mockReelVisible,
+			isSharing: false,
+			isConfirming: mockReelIsConfirming,
+			igDisplayName: mockReelIgDisplayName,
+			requestShare: mockReelRequestShare,
+			confirmShare: mockReelConfirmShare,
+			cancelShare: mockReelCancelShare,
+		};
+	},
 } ) );
 
 const mockDialogProps = jest.fn();
@@ -151,11 +157,14 @@ jest.mock( '../components/reel-share-confirmation-dialog', () => ( {
 } ) );
 
 jest.mock( '../hooks/use-generic-share', () => ( {
-	useGenericShare: () => ( {
-		isVisible: mockGenericVisible,
-		isSharing: false,
-		handleShare: mockGenericHandleShare,
-	} ),
+	useGenericShare: ( ...args: unknown[] ) => {
+		mockUseGenericShare( ...args );
+		return {
+			isVisible: mockGenericVisible,
+			isSharing: false,
+			handleShare: mockGenericHandleShare,
+		};
+	},
 } ) );
 
 jest.mock( '../store', () => ( {
@@ -190,12 +199,15 @@ describe( 'feature-clip-sidebar-extension', () => {
 		mockReelConfirmShare.mockClear();
 		mockReelCancelShare.mockClear();
 		mockGenericHandleShare.mockClear();
+		mockUseReelShare.mockClear();
+		mockUseGenericShare.mockClear();
 		mockDialogProps.mockClear();
 		mockInsertBlocks.mockClear();
 		mockCreateBlock.mockClear();
 		mockMeta = {};
 		mockMedia = null;
 		mockHasResolvedMedia = true;
+		mockHasBlockEditor = true;
 		mockReelVisible = false;
 		mockGenericVisible = false;
 		mockReelIsConfirming = false;
@@ -313,6 +325,22 @@ describe( 'feature-clip-sidebar-extension', () => {
 			expect( screen.queryByRole( 'button', { name: 'Generate clip' } ) ).not.toBeInTheDocument();
 		} );
 
+		it( 'labels both share hooks with the sidebar surface and the meta clip', () => {
+			setupClip();
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			expect( mockUseReelShare ).toHaveBeenCalledWith( 'sidebar', {
+				url: 'https://files.wordpress.com/clip.mp4',
+				attachmentId: 42,
+				durationSeconds: 8,
+			} );
+			expect( mockUseGenericShare ).toHaveBeenCalledWith( 'sidebar', {
+				url: 'https://files.wordpress.com/clip.mp4',
+				attachmentId: 42,
+			} );
+		} );
+
 		it( 'hides share buttons when neither hook reports isVisible', () => {
 			setupClip();
 			mockReelVisible = false;
@@ -425,6 +453,18 @@ describe( 'feature-clip-sidebar-extension', () => {
 			} );
 			expect( mockInsertBlocks ).toHaveBeenCalledTimes( 1 );
 			expect( mockTrackAddedToPost ).toHaveBeenCalledWith( { attachmentId: 42 } );
+		} );
+
+		it( 'does not track add-to-post when the block-editor dispatcher is unavailable', () => {
+			setupClip();
+			mockHasBlockEditor = false;
+			const { FeatureClipPanel } = require( './feature-clip-sidebar-extension' );
+			render( <FeatureClipPanel /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Add to post' } ) );
+
+			expect( mockInsertBlocks ).not.toHaveBeenCalled();
+			expect( mockTrackAddedToPost ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
