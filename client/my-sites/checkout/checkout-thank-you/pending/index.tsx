@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
@@ -518,11 +519,25 @@ function displayRenewalSuccessNotice( {
 	// show renewal success notice
 	reduxDispatch(
 		successNotice(
-			translate( 'Success! You renewed %(productName)s.', {
-				args: {
-					productName,
-				},
-			} ),
+			translate(
+				'Success! You renewed %(productName)s. We will attempt to automatically renew it in the future. {{a}}Learn more about renewals{{/a}}',
+				{
+					args: {
+						productName,
+					},
+					components: {
+						a: (
+							<a
+								href={ localizeUrl(
+									'https://wordpress.com/support/manage-purchases/automatic-renewal/'
+								) }
+								target="_blank"
+								rel="noreferrer noopener"
+							/>
+						),
+					},
+				}
+			),
 			{ displayOnNextPage: true }
 		)
 	);
