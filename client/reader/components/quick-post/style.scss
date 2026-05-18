@@ -73,6 +73,10 @@
 				color: var( --color-text );
 			}
 
+			&.is-private .site__title::before {
+				color: var( --color-text );
+			}
+
 			.site__domain {
 				color: var( --color-text-subtle );
 			}
