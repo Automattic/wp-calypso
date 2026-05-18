@@ -65,8 +65,6 @@ export const TopBar = ( {
 		<div className="step-container-v2__top-bar">
 			{ ! hideLogo && resolvedLogo }
 
-			{ ! hideLogo && leftElement && <div className="step-container-v2__top-bar-divider" /> }
-
 			{ leftElement && (
 				<div className="step-container-v2__top-bar-left-element">{ leftElement }</div>
 			) }

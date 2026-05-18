@@ -1,0 +1,21 @@
+.image-studio-share-reel-action {
+	// Right-side cluster of the .image-studio-modal__video-actions-bar row.
+	// The parent owns width/centering/padding; we own the button gap.
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+	flex: 0 0 auto;
+
+	&__button svg {
+		transition:
+			color 0.15s ease,
+			transform 0.15s ease;
+	}
+
+	&__button:hover:not( :disabled ) svg,
+	&__button:focus-visible:not( :disabled ) svg {
+		color: #fff;
+		transform: scale(1.12);
+	}
+}

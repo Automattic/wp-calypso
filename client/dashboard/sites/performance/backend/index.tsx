@@ -1,0 +1,176 @@
+import { type Site } from '@automattic/api-core';
+import { siteApmEnabledMutation, siteBySlugQuery } from '@automattic/api-queries';
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+	privateApis,
+} from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { useEffect } from 'react';
+import { useAnalytics } from '../../../app/analytics';
+import { Card } from '../../../components/card';
+import { PageHeader } from '../../../components/page-header';
+import PageLayout from '../../../components/page-layout';
+import UpsellCallout from '../../hosting-feature-gated-with-callout/upsell';
+import { hasBackendAccess } from '../backend-access';
+import { getBackendCalloutProps } from '../backend-callout';
+import { VIEWPORT_BREAKPOINTS } from '../constants';
+import PerformanceTabs from '../performance-tabs';
+import BackendStatusNotice from './backend-status';
+import BackendTabs from './backend-tabs';
+import Database from './database';
+import ExternalRequests from './external-requests';
+import { siteApmOverviewQuery } from './mock-data';
+import Overview from './overview';
+import BackendSubtitle from './subtitle';
+import Transactions from './transactions';
+import WordPress from './wordpress';
+
+export type ApmTab = 'overview' | 'transactions' | 'wordpress' | 'database' | 'external-requests';
+
+const TAB_PATHS: Record< ApmTab, string > = {
+	overview: '',
+	transactions: 'transactions',
+	wordpress: 'wordpress',
+	database: 'database',
+	'external-requests': 'external-requests',
+};
+
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+
+const { Tabs } = unlock( privateApis );
+
+function StartCapturingButton( { site }: { site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_dashboard_site_apm_enable_impression' );
+	}, [ recordTracksEvent ] );
+
+	const { mutate, isPending } = useMutation( {
+		...siteApmEnabledMutation( site.ID ),
+		meta: {
+			snackbar: {
+				success: __( 'APM enabled.' ),
+				error: __( 'Failed to enable APM.' ),
+			},
+		},
+	} );
+
+	const handleClick = () => {
+		recordTracksEvent( 'calypso_dashboard_site_apm_enable_click' );
+		mutate( true );
+	};
+
+	return (
+		<Button variant="primary" isBusy={ isPending } disabled={ isPending } onClick={ handleClick }>
+			{ __( 'Start capturing' ) }
+		</Button>
+	);
+}
+
+function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
+	const router = useRouter();
+	const siteSlug = site.slug;
+	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
+	const { data } = useSuspenseQuery( siteApmOverviewQuery( site.ID ) );
+
+	const handleTabChange = ( name: string ) => {
+		const next = name as ApmTab;
+		if ( next === tab ) {
+			return;
+		}
+		const path = TAB_PATHS[ next ];
+		router.navigate( {
+			to: path
+				? `/sites/${ siteSlug }/performance/backend/${ path }`
+				: `/sites/${ siteSlug }/performance/backend`,
+		} );
+	};
+
+	const renderTab = () => {
+		switch ( tab ) {
+			case 'overview':
+				return <Overview site={ site } />;
+			case 'transactions':
+				return <Transactions site={ site } />;
+			case 'wordpress':
+				return <WordPress site={ site } />;
+			case 'database':
+				return <Database site={ site } />;
+			case 'external-requests':
+				return <ExternalRequests site={ site } />;
+		}
+	};
+
+	return (
+		<VStack spacing={ 6 }>
+			<BackendStatusNotice avgResponseMs={ data.summary.avg_response_ms } />
+			<Tabs
+				orientation={ isDesktop ? 'vertical' : 'horizontal' }
+				selectedTabId={ tab }
+				onSelect={ handleTabChange }
+			>
+				<HStack wrap={ ! isDesktop } alignment="flex-start" justify="flex-start" spacing={ 6 }>
+					<Card
+						style={ {
+							flex: '0 0 auto',
+							width: isDesktop ? 280 : '100%',
+							alignSelf: 'flex-start',
+						} }
+					>
+						<BackendTabs compact={ ! isDesktop } summary={ data.summary } />
+					</Card>
+					<div style={ { flex: '1 1 auto', minWidth: 0, width: '100%' } }>
+						<Tabs.TabPanel tabId={ tab }>{ renderTab() }</Tabs.TabPanel>
+					</div>
+				</HStack>
+			</Tabs>
+		</VStack>
+	);
+}
+
+export default function SitePerformanceBackend( {
+	siteSlug,
+	tab = 'overview',
+}: {
+	siteSlug: string;
+	tab?: ApmTab;
+} ) {
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const userHasBackendAccess = hasBackendAccess( site.plan?.product_slug );
+	const apmEnabled = !! site.options?.apm_enabled;
+
+	return (
+		<PageLayout
+			header={
+				<PageHeader
+					title={ __( 'Backend' ) }
+					description={
+						userHasBackendAccess ? <BackendSubtitle capturing={ apmEnabled } /> : undefined
+					}
+					actions={
+						userHasBackendAccess && ! apmEnabled ? (
+							<StartCapturingButton site={ site } />
+						) : undefined
+					}
+				/>
+			}
+		>
+			<PerformanceTabs siteSlug={ siteSlug } activeTab="backend" />
+			{ userHasBackendAccess ? (
+				<ApmDashboard site={ site } tab={ tab } />
+			) : (
+				<UpsellCallout site={ site } { ...getBackendCalloutProps() } />
+			) }
+		</PageLayout>
+	);
+}

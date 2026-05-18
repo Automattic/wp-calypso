@@ -17,7 +17,16 @@ import useFeedbackAction from '../../hooks/use-feedback-action';
 import useSaveNewChatRoute from '../../hooks/use-save-new-chat-route';
 import useSourcesAction from '../../hooks/use-sources-action';
 import useZoomAction from '../../hooks/use-zoom-action';
+import { markSessionUsed } from '../../utils/agent-session';
 import convertToolMessagesToComponents from '../../utils/convert-tool-messages-to-components';
+import {
+	consumeNextMessageExternalContextEntries,
+	removeExternalContextCard,
+	removeExternalContextEntry,
+	type ExternalContextCard,
+	type ExternalContextCardAction,
+} from '../../utils/external-context';
+import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { persistLastActivity } from '../../utils/persist-last-activity';
 import AgentChat from '../agent-chat';
 import { type Options as ChatHeaderOptions } from '../chat-header';
@@ -116,8 +125,20 @@ export default function OrchestratorChat( {
 		progressMessage,
 	} = useAgentChat( agentConfig! );
 
+	// Reader-chat sessions are short (usually < 50 messages) — don't waste
+	// time paginating 10 pages deep. One page covers typical use.
+	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
+	const shouldLoadConversation =
+		! isReaderChat || ( ! hasUserSentMessage && messages.length === 0 && ! isProcessing );
+
 	const { isLoading: isLoadingConversation } = useConversation( {
+		maxPages: isReaderChat ? 1 : 10,
+		enabled: shouldLoadConversation,
 		onSuccess: ( loadedMessages, serverSessionId ) => {
+			if ( isReaderChat && ( hasUserSentMessage || messages.length > 0 || isProcessing ) ) {
+				return;
+			}
+
 			// Update the UI with the loaded messages
 			loadMessages( loadedMessages );
 			// Make sure future messages go to the right session
@@ -132,18 +153,23 @@ export default function OrchestratorChat( {
 
 	// Use dynamic suggestions from the external provider (e.g., Big Sky block-based suggestions)
 	const dynamicSuggestions = useSuggestions?.();
+	const dynamicSuggestionsList = dynamicSuggestions?.suggestions ?? [];
+	const dynamicSuggestionsKey = JSON.stringify(
+		dynamicSuggestionsList.map( ( s ) => [ s.id, s.label, s.prompt ] )
+	);
 
 	// Register dynamic suggestions whenever they change
 	useEffect( () => {
-		const currentSuggestions = dynamicSuggestions?.suggestions;
-
-		if ( currentSuggestions && currentSuggestions.length > 0 ) {
-			registerSuggestions?.( currentSuggestions );
+		if ( dynamicSuggestionsList.length > 0 ) {
+			registerSuggestions?.( dynamicSuggestionsList );
 		} else {
 			// Clear suggestions when there are none
 			clearSuggestions?.();
 		}
-	}, [ dynamicSuggestions?.suggestions, registerSuggestions, clearSuggestions ] );
+		// Track suggestion content, not array identity. Some merged providers
+		// return a fresh empty array on each render.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ dynamicSuggestionsKey, registerSuggestions, clearSuggestions ] );
 
 	// Persist the chat route so the conversation can be resumed later.
 	useSaveNewChatRoute( hasUserSentMessage );
@@ -165,7 +191,7 @@ export default function OrchestratorChat( {
 	useZoomAction( registerMessageActions );
 
 	// Register a "Sources" action on agent messages with sources data.
-	useSourcesAction( registerMessageActions );
+	useSourcesAction( registerMessageActions, ! isReaderChat );
 
 	const imageUpload = useImageUpload?.();
 	const pendingImages = imageUpload?.pendingImages || [];
@@ -207,11 +233,96 @@ export default function OrchestratorChat( {
 				}
 			} else {
 				// No images, just send normally
-				onSubmit( message );
+				await onSubmit( message );
+			}
+			consumeNextMessageExternalContextEntries();
+			if ( isReaderChat ) {
+				markSessionUsed( agentConfig?.agentId );
 			}
 		},
-		[ onSubmit, pendingImages.length, siteKey, uploadImagesToWordPress ]
+		[
+			agentConfig?.agentId,
+			isReaderChat,
+			onSubmit,
+			pendingImages.length,
+			siteKey,
+			uploadImagesToWordPress,
+		]
 	);
+
+	const setChatInput = useCallback( ( value: string ) => {
+		if ( typeof value !== 'string' ) {
+			return;
+		}
+
+		setInputValue( value );
+
+		const textarea = document.querySelector< HTMLTextAreaElement >(
+			'.agenttic [data-slot="chat-input"] [data-slot="textarea"]'
+		);
+		if ( textarea ) {
+			textarea.focus();
+			textarea.setSelectionRange( value.length, value.length );
+		}
+	}, [] );
+
+	const submitChatMessage = useCallback(
+		async ( message?: string ) => {
+			const submittedMessage = typeof message === 'string' ? message : inputValue;
+
+			if ( ! submittedMessage.trim() ) {
+				return;
+			}
+
+			await onSubmitWithImages( submittedMessage );
+			setInputValue( '' );
+		},
+		[ inputValue, onSubmitWithImages ]
+	);
+
+	useEffect( () => {
+		window.__agentsManagerActions = window.__agentsManagerActions || ( {} as AgentsManagerActions );
+		window.__agentsManagerActions.setChatInput = setChatInput;
+		window.__agentsManagerActions.submitChatMessage = submitChatMessage;
+
+		return () => {
+			if ( window.__agentsManagerActions?.setChatInput === setChatInput ) {
+				delete window.__agentsManagerActions.setChatInput;
+			}
+			if ( window.__agentsManagerActions?.submitChatMessage === submitChatMessage ) {
+				delete window.__agentsManagerActions.submitChatMessage;
+			}
+		};
+	}, [ setChatInput, submitChatMessage ] );
+
+	const handleContextCardAction = useCallback(
+		( card: ExternalContextCard, action: ExternalContextCardAction ) => {
+			if ( ! action.prompt ) {
+				return;
+			}
+
+			// Remove the card immediately so the user gets instant collapse feedback.
+			// For 'submit' actions the linked context entry stays until the request
+			// is sent — `consumeNextMessageExternalContextEntries` runs after the
+			// awaited submit and clears it then.
+			removeExternalContextCard( card.id );
+
+			if ( action.type === 'submit' ) {
+				void submitChatMessage( action.prompt );
+				return;
+			}
+
+			setChatInput( action.prompt );
+		},
+		[ setChatInput, submitChatMessage ]
+	);
+
+	const dismissContextCard = useCallback( ( card: ExternalContextCard ) => {
+		removeExternalContextCard( card.id );
+		card.contextEntryIds?.forEach( ( entryId ) => {
+			removeExternalContextEntry( entryId );
+		} );
+	}, [] );
 
 	// Handle navigation continuation if hook is provided
 	// This allows to resume conversations after full page navigation
@@ -371,6 +482,8 @@ export default function OrchestratorChat( {
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
 			onCancelFeedback={ resetFeedback }
+			onContextCardAction={ handleContextCardAction }
+			onContextCardDismiss={ dismissContextCard }
 		/>
 	);
 }

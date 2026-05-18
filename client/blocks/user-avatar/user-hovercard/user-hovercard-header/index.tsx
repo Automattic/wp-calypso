@@ -22,6 +22,7 @@ function UserHovercardHeader( { user }: UserHovercardHeaderProps ): JSX.Element 
 			width={ 102 }
 			height={ 102 }
 			imgStyles={ { borderRadius: '50%' } }
+			fallbackIcon={ <UserAvatarDefaultIcon iconSize={ 102 } /> }
 		/>
 	) : (
 		<UserAvatarDefaultIcon iconSize={ 102 } />

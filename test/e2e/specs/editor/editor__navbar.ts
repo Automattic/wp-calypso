@@ -29,6 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Navbar' ), function () {
 
 	let page: Page;
 	let editorPage: EditorPage;
+	let siteSlug: string;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -36,10 +37,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Navbar' ), function () {
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		siteSlug = testAccount.getSiteURL( { protocol: false } );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post' );
+		await editorPage.visit( 'post', { siteSlug } );
 	} );
 
 	it( 'Return to Calypso dashboard', async function () {

@@ -91,8 +91,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-	useFocusedComparisonFeatures,
-	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
 	isExperimentVariant,
@@ -104,8 +102,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
-	useFocusedComparisonFeatures?: boolean;
-	useVar41MorePremiumFeatures?: boolean;
 	useVar42NoAiFeatures?: boolean;
 	showPricingDifferentiationFeaturePills?: boolean;
 	isExperimentVariant?: boolean;
@@ -124,8 +120,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
-	useFocusedComparisonFeatures,
-	useVar41MorePremiumFeatures,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
 	isExperimentVariant,
@@ -143,51 +137,18 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				let jetpackFeatures: FeatureObject[] = [];
 
 				if ( useVar42NoAiFeatures ) {
-					// Use the focused_no_ai feature list when available
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
-							planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
 							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
-						isExperimentVariant ?? true // isExperimentVariant
+						isExperimentVariant ?? true
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-				} else if ( useVar41MorePremiumFeatures ) {
-					// Use the focused_more_premium / focused_new_copy feature list when available
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj?.getVar41MorePremiumSignupWpcomFeatures?.() ??
-							planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
-							[],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-
-					jetpackFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-				} else if ( useFocusedComparisonFeatures ) {
-					// Use getLongSetSignupWpcomFeatures for focused_comparison
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj?.getLongSetSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
-							[],
-						isExperimentVariant ?? true // isExperimentVariant
-					);
-
-					jetpackFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true // isExperimentVariant
+						isExperimentVariant ?? true
 					);
 				} else if ( 'plans-newsletter' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -382,8 +343,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,
-		useFocusedComparisonFeatures,
-		useVar41MorePremiumFeatures,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,

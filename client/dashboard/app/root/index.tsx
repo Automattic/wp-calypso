@@ -18,11 +18,12 @@ import { bumpStat } from '../analytics';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import Header from '../header';
-import { useOmnibarEvent } from '../interim-omnibar/omnibar-events';
 import OmnibarHelpCenter from '../interim-omnibar/omnibar-help-center';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
-import { useInitializeOmnibarCurrentSite } from '../omnibar/current-site';
+import { useOmnibarEvent } from '../omnibar/events';
+import OmnibarSiteSwitcher from '../omnibar/omnibar-site-switcher';
+import { useInitializeOmnibarSite } from '../omnibar/site';
 import ResponsiveSidebar from '../responsive-sidebar';
 import Snackbars from '../snackbars';
 import './style.scss';
@@ -38,7 +39,8 @@ const SLOW_THRESHOLD_MS = 100;
 const VERY_SLOW_THRESHOLD_MS = 6000;
 
 function Root() {
-	const isOmnibarEnabled = isEnabled( 'dashboard/omnibar' );
+	const isOmnibarEnabled =
+		isEnabled( 'dashboard/omnibar' ) || isEnabled( 'dashboard/omnibar-radical' );
 	const { name, supports, LoadingLogo = WordPressLogo } = useAppContext();
 	const isFetching = useIsFetching();
 	const router = useRouter();
@@ -47,7 +49,7 @@ function Root() {
 	const [ isSidebarOpen, setIsSidebarOpen ] = useState( false );
 	const closeSidebar = useCallback( () => setIsSidebarOpen( false ), [ setIsSidebarOpen ] );
 
-	useInitializeOmnibarCurrentSite();
+	useInitializeOmnibarSite();
 	useOmnibarEvent( 'mobileMenu', () => setIsSidebarOpen( ( v ) => ! v ) );
 	useOmnibarEvent( 'linkClick', ( { href, event } ) => {
 		const url = new URL( href, window.location.origin );
@@ -197,6 +199,7 @@ function Root() {
 			{ supports.commandPalette && <CommandPalette /> }
 			{ isOmnibarEnabled && supports.notifications && <Notifications anchor /> }
 			{ isOmnibarEnabled && supports.help && <OmnibarHelpCenter /> }
+			{ isOmnibarEnabled && <OmnibarSiteSwitcher /> }
 			<Snackbars />
 			<PageViewTracker />
 			<NavigationBlockerRegistry />

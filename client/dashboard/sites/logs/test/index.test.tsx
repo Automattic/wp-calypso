@@ -76,8 +76,10 @@ jest.mock( '../dataviews', () => ( props: SiteLogsDataViewsProps ) => (
 ) );
 jest.mock( '../../logs-activity/dataviews', () => () => null );
 
-// DateRangePicker: stub with controls
-jest.mock( '../../../components/date-range-picker', () => ( {
+// DateRangePicker: stub with controls; isLast7Days is overridden via a per-test jest.fn
+const mockIsLast7Days = jest.fn().mockReturnValue( true );
+jest.mock( '@automattic/date-range-picker', () => ( {
+	...jest.requireActual( '@automattic/date-range-picker' ),
 	DateRangePicker: () => (
 		<div>
 			{ /* Keep the buttons in the DOM so tests find them, but remove onClick handlers */ }
@@ -85,6 +87,7 @@ jest.mock( '../../../components/date-range-picker', () => ( {
 			<button>Set last7</button>
 		</div>
 	),
+	isLast7Days: ( ...args: unknown[] ) => mockIsLast7Days( ...args ),
 } ) );
 
 type VStackProps = {
@@ -225,15 +228,7 @@ describe( 'SiteLogs page', () => {
 	} );
 
 	test( 'auto-refresh is blocked for non-last-7 (yesterday) range and shows warning notice', async () => {
-		// Mock the last-7 check to return false
-		const dateRangeUtils = jest.requireActual( '../../../components/date-range-picker/utils' ) as {
-			isLast7Days: (
-				range: { start: Date; end: Date },
-				timezoneString?: string,
-				gmtOffset?: number
-			) => boolean;
-		};
-		jest.spyOn( dateRangeUtils, 'isLast7Days' ).mockReturnValue( false );
+		mockIsLast7Days.mockReturnValue( false );
 
 		render( <SiteLogs logType={ LogType.PHP } /> );
 
@@ -249,15 +244,7 @@ describe( 'SiteLogs page', () => {
 	} );
 
 	test( 'auto-refresh is allowed for last-7 range and does not show warning notice', async () => {
-		// Mock the last-7 check to always allow auto-refresh
-		const dateRangeUtils = jest.requireActual( '../../../components/date-range-picker/utils' ) as {
-			isLast7Days: (
-				range: { start: Date; end: Date },
-				timezoneString?: string,
-				gmtOffset?: number
-			) => boolean;
-		};
-		jest.spyOn( dateRangeUtils, 'isLast7Days' ).mockReturnValue( true );
+		mockIsLast7Days.mockReturnValue( true );
 
 		render( <SiteLogs logType={ LogType.PHP } /> );
 

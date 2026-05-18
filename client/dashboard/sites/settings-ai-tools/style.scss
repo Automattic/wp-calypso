@@ -1,3 +1,19 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
+.ai-tools-settings__features-footer {
+	background: color-mix( in srgb, var( --dashboard-surface__background-color ) 98%, #000 );
+	border-top-color: var( --dashboard-surface__border-color );
+
+	@include ui-mixins.when-dark-theme {
+		background: color-mix( in srgb, var( --dashboard-surface__background-color ) 98%, #fff );
+		// The filled footer covers the card's inset box-shadow border, so redraw the covered edges.
+		box-shadow:
+			inset 1px 0 0 var( --dashboard-surface__border-color ),
+			inset -1px 0 0 var( --dashboard-surface__border-color ),
+			inset 0 -1px 0 var( --dashboard-surface__border-color );
+	}
+}
+
 // Override box-shadow-based hr divider which renders invisibly at zero height.
 .mcp-settings__sub-divider {
 	background: transparent;
@@ -5,6 +21,10 @@
 	border-top: 1px solid rgba( 0, 0, 0, 0.1 );
 	height: 0;
 	margin: 0;
+
+	@include ui-mixins.when-dark-theme {
+		border-top-color: var( --color-border-subtle );
+	}
 }
 
 // Clip children (summary button hover highlights) to the card's rounded corners,

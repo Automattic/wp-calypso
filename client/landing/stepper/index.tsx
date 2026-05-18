@@ -26,6 +26,7 @@ import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { AsyncHelpCenterApp } from 'calypso/components/help-center';
+import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
@@ -58,6 +59,23 @@ import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager'
 import type { CurrentUser, HelpCenterSelect, HelpCenterDispatch } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
 import type { WpcomRequestParams } from 'wpcom-proxy-request';
+
+const loadCookieBanner = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-cookie-banner" */ 'calypso/blocks/cookie-banner'
+	);
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+const loadAgentsManagerLoader = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-agents-manager-loader" */ 'calypso/layout/agents-manager-loader'
+	);
+const loadWebpackBuildMonitor = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-webpack-build-monitor" */ 'calypso/components/webpack-build-monitor'
+	);
 
 declare const window: AppWindow;
 
@@ -254,13 +272,9 @@ async function main() {
 					<BrowserRouter basename="setup">
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
-							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
+							<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
 						) }
-						<AsyncLoad
-							require="calypso/components/global-notices"
-							placeholder={ null }
-							id="notices"
-						/>
+						<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					</BrowserRouter>
 					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) &&
 						( flowName === WOO_HOSTED_PLANS_FLOW ? (
@@ -273,15 +287,20 @@ async function main() {
 									sectionName="stepper"
 								/>
 								<AsyncLoad
-									require="calypso/layout/agents-manager-loader"
+									require={ loadAgentsManagerLoader }
 									placeholder={ null }
 									sectionName={ flowName }
 									loadAgentsManager
 								/>
+								{ /* The stepper has no masterbar or help button, so logged-out visitors
+								   have no way to summon the Help Center otherwise. */ }
+								{ ! user && config.isEnabled( 'help-center/logged-out-fab' ) && (
+									<AsyncHelpCenterFab sectionName="stepper" />
+								) }
 							</>
 						) ) }
 					{ 'development' === process.env.NODE_ENV && (
-						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+						<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />
 					) }
 				</QueryClientProvider>
 			</Provider>

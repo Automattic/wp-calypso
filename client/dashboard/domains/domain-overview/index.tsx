@@ -27,6 +27,7 @@ import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
 import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
+import PendingRegistrationNotice from './pending-registration-notice';
 import DomainOverviewSettings from './settings';
 import TransferredDomainDetails from './transferred-domain-details';
 
@@ -126,6 +127,7 @@ export default function DomainOverview() {
 					isTldInMaintenance( domain ) && <TLDMaintenanceNotice showGoBackLink={ false } />
 				}
 			>
+				<PendingRegistrationNotice domain={ domain } />
 				{ domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER && (
 					<TransferredDomainDetails domain={ domain } />
 				) }

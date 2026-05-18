@@ -27,7 +27,7 @@ export interface CanvasMetadata {
 	alt_text?: string | null;
 }
 
-export type NoticeType = 'error' | 'success' | 'warning';
+export type NoticeType = 'error' | 'success' | 'warning' | 'info';
 export interface NoticeAction {
 	label: string;
 	url: string;
@@ -45,6 +45,8 @@ export enum ImageStudioEntryPoint {
 	MediaLibrary = 'media_library',
 	EditorBlock = 'editor_block',
 	EditorSidebar = 'editor_sidebar',
+	// Post-editor "Generate Feature Clip" sidebar panel — video-only entrypoint.
+	PostEditorFeatureClip = 'post_editor_feature_clip',
 	JetpackExternalMediaBlock = 'jetpack_external_media_block',
 	JetpackExternalMediaFeaturedImage = 'jetpack_external_media_featured_image',
 	// Entry points for jetpack.ai.imageGenerationHandler filter

@@ -9,8 +9,8 @@ import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAuth } from '../auth';
 import { useHelpCenter } from '../help-center';
-import { omnibarEvents, useOmnibarEvent } from '../interim-omnibar/omnibar-events';
 import { useLocale } from '../locale';
+import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import './style.scss';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );

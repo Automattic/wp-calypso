@@ -6,6 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { getCancellationReasons } from '../cancellation-reasons';
 import { toSelectOption } from '../to-select-options';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { DisplayVariant } from 'calypso/lib/purchases/utils';
 
 type ChangeCallback = ( value: string ) => void;
 type DetailsChangeCallback = ( value: string, details?: string ) => void;
@@ -15,9 +16,15 @@ type CancellationReasonProps = {
 	reasonCodes: string[];
 	onChange: ChangeCallback;
 	onDetailsChange: DetailsChangeCallback;
+	intent?: DisplayVariant;
 };
 
-function CancellationReason( { purchase, reasonCodes, ...props }: CancellationReasonProps ) {
+function CancellationReason( {
+	purchase,
+	reasonCodes,
+	intent,
+	...props
+}: CancellationReasonProps ) {
 	const translate = useTranslate();
 	const [ value, setValue ] = useState( '' );
 	const [ details, setDetails ] = useState( '' );
@@ -39,11 +46,21 @@ function CancellationReason( { purchase, reasonCodes, ...props }: CancellationRe
 		props.onDetailsChange( val, details );
 	};
 
+	const getReasonLabel = () => {
+		if ( intent === 'auto-renew' ) {
+			return translate( 'Why did you decide to disable auto-renew?' );
+		}
+		if ( intent === 'remove' ) {
+			return translate( 'Why would you like to remove?' );
+		}
+		return translate( 'Why would you like to cancel?' );
+	};
+
 	return (
 		<>
 			<div className="cancel-purchase-form__feedback-question">
 				<SelectControl
-					label={ translate( 'Why would you like to cancel?' ) }
+					label={ getReasonLabel() }
 					value={ value }
 					options={ reasons.map( toSelectOption ) }
 					onChange={ ( val ) => {
@@ -140,18 +157,34 @@ type FeedbackStepProps = {
 	onChangeCancellationReason: ChangeCallback;
 	onChangeCancellationReasonDetails: ChangeCallback;
 	onChangeImportFeedback?: ChangeCallback;
+	intent?: DisplayVariant;
 };
 
-export default function FeedbackStep( { purchase, isImport, ...props }: FeedbackStepProps ) {
+export default function FeedbackStep( {
+	purchase,
+	isImport,
+	intent,
+	...props
+}: FeedbackStepProps ) {
 	const translate = useTranslate();
 	const productName = translate( 'WordPress.com' );
 	const isPlanPurchase = isPlan( purchase );
+
+	const getHeaderText = () => {
+		if ( intent === 'auto-renew' ) {
+			return translate( 'Auto-renew disabled' );
+		}
+		if ( intent === 'cancel' ) {
+			return translate( 'Cancellation confirmed' );
+		}
+		return translate( 'Share your feedback' );
+	};
 
 	return (
 		<div className="cancel-purchase-form__feedback">
 			<FormattedHeader
 				brandFont
-				headerText={ translate( 'Share your feedback' ) }
+				headerText={ getHeaderText() }
 				subHeaderText={ translate(
 					'Before you go, please answer a few quick questions to help us improve %(productName)s.',
 					{
@@ -166,6 +199,7 @@ export default function FeedbackStep( { purchase, isImport, ...props }: Feedback
 						reasonCodes={ props.cancellationReasonCodes }
 						onChange={ props.onChangeCancellationReason }
 						onDetailsChange={ props.onChangeCancellationReasonDetails }
+						intent={ intent }
 					/>
 				) }
 				{ isPlanPurchase && isImport && (

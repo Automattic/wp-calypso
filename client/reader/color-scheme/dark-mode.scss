@@ -1,0 +1,183 @@
+@import 'calypso/dashboard/app/dark-theme';
+
+@mixin reader-dark-mode-color-scheme {
+	@include dashboard-dark-theme-calypso-color-scheme;
+
+	--color-sidebar-menu-hover-background: var( --dashboard-item-selected-hover__background-color );
+	--color-sidebar-menu-hover-text: var( --color-text );
+	--color-sidebar-menu-selected-text: var( --wp-components-color-accent-darker-20 );
+	--color-sidebar-text-alternative: var( --dashboard__text-muted-color );
+	--color-sidebar-gridicon-fill: var( --dashboard__text-muted-color );
+	--color-sidebar-gridicon-hover-fill: currentColor;
+	--color-sidebar-gridicon-selected-fill: var( --wp-components-color-accent-darker-20 );
+}
+
+@mixin reader-dark-mode-root {
+	@include reader-dark-mode-color-scheme;
+
+	background: var( --dashboard__background-color );
+	color: var( --dashboard__text-color );
+
+	.layout,
+	.layout__content,
+	.layout__primary {
+		background: var( --dashboard__background-color );
+		color: var( --dashboard__text-color );
+	}
+
+	.layout.is-global-sidebar-visible .layout__primary > div:not( :has( .recent-feed ) ) {
+		border-color: var( --color-border-subtle );
+	}
+
+	.navigation-header .formatted-header__subtitle {
+		color: var( --color-text-subtle );
+	}
+
+	:where( a, button, [role='button'] ) {
+		> svg:not( .reader-facebook, .reader-x, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ),
+		> .components-button__icon
+			> svg:not( .reader-facebook, .reader-x, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			fill: currentColor;
+		}
+	}
+
+	@include dashboard-dark-theme-masterbar;
+
+	&.theme-default .is-global-sidebar-visible {
+		// The shared sidebar sets these variables at this scope, so keep Reader dark overrides here too.
+		--color-sidebar-menu-selected-background: var( --dashboard-item-selected__background-color );
+		--color-sidebar-menu-hover-background: var( --dashboard-item-selected-hover__background-color );
+		--color-sidebar-menu-hover-text: var( --color-text );
+		--color-sidebar-menu-selected-text: var( --wp-components-color-accent-darker-20 );
+		--color-sidebar-submenu-selected-text: var( --color-sidebar-menu-selected-text );
+		--color-sidebar-submenu-hover-text: var( --color-sidebar-menu-selected-text );
+		--color-sidebar-submenu-selected-hover-text: var( --color-sidebar-menu-selected-text );
+		--color-sidebar-gridicon-hover-fill: currentColor;
+		--color-sidebar-gridicon-selected-fill: var( --color-sidebar-menu-selected-text );
+	}
+
+	.reader-onboarding-modal__footer {
+		border-top-color: var( --color-border-subtle );
+	}
+
+	.popover.is-top .popover__arrow::before,
+	.popover.is-top-left .popover__arrow::before,
+	.popover.is-top-right .popover__arrow::before {
+		border-top-color: var( --color-surface );
+	}
+
+	@include dashboard-dark-theme-community-translator;
+
+	.notice-banner {
+		--jp-black: var( --color-text );
+		--jp-gray-5: var( --color-border-subtle );
+
+		background-color: var( --color-surface );
+		color: var( --color-text );
+	}
+
+	.form-select,
+	.form-text-input,
+	.form-textarea,
+	.form-radio,
+	.section-header__actions .button,
+	.summary-button.components-button,
+	.summary-button.components-button.has-density-low {
+		border-color: var( --color-neutral-20 );
+	}
+
+	.button.is-primary,
+	.components-button.is-primary {
+		border-color: var( --wp-components-color-accent-darker-20 );
+	}
+
+	.button.follow-button.is-following {
+		border-color: var( --color-neutral-20 );
+		color: var( --color-text );
+
+		svg,
+		svg * {
+			fill: currentColor;
+		}
+	}
+
+	.reader-notifications__3pc-notice a,
+	.reader-notifications__3pc-notice a:hover,
+	.reader-notifications__3pc-notice a:active,
+	.reader-notifications__3pc-notice a:focus {
+		color: var( --color-link );
+	}
+
+	.p2-label {
+		color: var( --studio-white );
+	}
+
+	.rss-label,
+	.comp-label {
+		color: var( --dashboard__background-color );
+	}
+
+	.search-stream__recommendation-list-item.is-placeholder,
+	.reader__card.card.is-placeholder,
+	.reader__card.card.is-x-post {
+		border-bottom-color: var( --color-border-subtle );
+	}
+
+	.interests-modal__topic-pill.is-selected,
+	.topic-group-card__subscribe.is-subscribed.components-button.is-primary,
+	.subscribe-modal__preview-stream-header .button.follow-button.has-button-style.is-following,
+	.subscribe-modal__preview-stream-header .button.follow-button.has-button-style.is-following:hover {
+		background-color: var( --wp-components-color-foreground );
+		border-color: var( --wp-components-color-foreground );
+		color: var( --wp-components-color-foreground-inverted );
+	}
+
+	.subscribe-modal__preview-stream-header
+		.button.follow-button.has-button-style.is-following
+		svg.reader-following-feed,
+	.subscribe-modal__preview-stream-header
+		.button.follow-button.has-button-style.is-following
+		svg.reader-following-feed
+		* {
+		fill: var( --wp-components-color-foreground-inverted );
+	}
+
+	.subscribe-modal__preview-stream-header
+		.button.follow-button.has-button-style.is-following
+		.follow-button__label {
+		color: var( --wp-components-color-foreground-inverted );
+	}
+
+	.subscribe-modal__site-list-column .reader-subscription-list-item.is-selected {
+		background-color: color-mix( in srgb, var( --color-primary-0 ) 45%, var( --color-surface ) );
+		border-color: var( --color-primary );
+	}
+
+	.subscribe-modal__preview-placeholder {
+		background-color: var( --color-surface );
+		border-color: var( --color-border-subtle );
+	}
+
+	.trending-tags__column a:focus-visible .trending-tags__title,
+	.alphabetic-tags__tag-links button:focus-visible,
+	.alphabetic-tags__col a:focus-visible {
+		outline-color: var( --color-accent );
+	}
+
+	.trending-tags__title,
+	.user-profile-header .section-nav-tab__text {
+		color: var( --color-text );
+	}
+
+	@include dashboard-dark-theme-wpnc-panel;
+}
+
+:root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
+	@include reader-dark-mode-root;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
+		@include reader-dark-mode-root;
+	}
+}

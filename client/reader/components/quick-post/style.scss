@@ -1,4 +1,84 @@
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+
 .quick-post {
+	@include ui-mixins.when-dark-theme {
+		.editor__header-wrapper,
+		.editor__header-toolbar,
+		.block-editor-block-toolbar,
+		.editor__header,
+		.editor__main {
+			background: var( --color-surface );
+			border-color: var( --color-border-subtle );
+			color: var( --color-text );
+		}
+
+		.components-accessible-toolbar,
+		.components-toolbar,
+		.components-toolbar-group {
+			background: var( --color-surface );
+			color: var( --color-text );
+		}
+
+		.editor__header,
+		.editor__main {
+			.components-button {
+				background: var( --color-surface );
+				color: var( --color-text );
+			}
+
+			.components-button:hover,
+			.components-button[aria-pressed='true'],
+			.components-button.is-pressed,
+			.components-dropdown-menu__toggle[aria-expanded='true'] {
+				background: var( --dashboard-surface__border-color );
+				color: var( --color-text );
+			}
+		}
+
+		.quick-post-actions .components-button.is-tertiary {
+			--wp-components-color-accent: var( --wp-admin-theme-color-darker-20 );
+			--wp-components-color-accent-darker-20: var( --color-accent-80 );
+
+			background: transparent;
+			color: var( --wp-components-color-accent );
+
+			&:hover {
+				background: transparent;
+				color: var( --wp-components-color-accent-darker-20 );
+			}
+		}
+
+		.quick-post-actions .components-button.is-primary {
+			--wp-components-color-accent: var( --wp-admin-theme-color );
+			--wp-components-color-accent-darker-10: var( --wp-admin-theme-color-darker-10 );
+			--wp-components-color-accent-darker-20: var( --wp-admin-theme-color-darker-20 );
+			--wp-components-color-accent-inverted: var( --color-text-inverted );
+		}
+
+		.sites-dropdown__selected {
+			.site__title,
+			.site__title-chevron-icon {
+				color: var( --color-text );
+			}
+
+			.site__title-chevron-icon svg {
+				fill: currentColor;
+			}
+
+			.site__domain {
+				color: var( --color-text-subtle );
+			}
+
+			.site__badge.site__badge-private,
+			.site__badge.site__badge-coming-soon {
+				background-color: var( --wp-components-color-gray-200 );
+				border: 0;
+				box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
+				color: var( --wp-components-color-gray-800 );
+			}
+		}
+	}
+
 	.sites-dropdown__wrapper {
 		width: 200px;
 

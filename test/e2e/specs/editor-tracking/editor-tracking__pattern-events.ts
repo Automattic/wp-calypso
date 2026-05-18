@@ -23,19 +23,21 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 		let page: Page;
 		let editorPage: EditorPage;
 		let eventManager: EditorTracksEventManager;
+		let siteSlug: string;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
 
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+			siteSlug = testAccount.getSiteURL( { protocol: false } );
 
 			eventManager = new EditorTracksEventManager( page );
 			editorPage = new EditorPage( page );
 		} );
 
 		it( 'Start a new page', async function () {
-			await editorPage.visit( 'page' );
+			await editorPage.visit( 'page', { siteSlug } );
 			await editorPage.waitUntilLoaded();
 		} );
 

@@ -15,7 +15,11 @@ body.is-section-accept-invite-unified.is-ciab-font-system {
 }
 
 .accept-invite-consent-wrapper {
-	margin-bottom: 1.5rem;
+	// `UserCard` no longer carries its own bottom margin (the rounded
+	// connect-account variant relies on the surrounding flow to provide
+	// vertical rhythm), so the consent text restores the 1.5rem gap that
+	// previously came from the card itself.
+	margin-block: 1.5rem;
 }
 
 .invite-screen-switch-account {

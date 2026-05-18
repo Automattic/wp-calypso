@@ -209,6 +209,7 @@ describe( 'HeaderPrice', () => {
 			[ PLAN_PERSONAL_MONTHLY ]: {
 				originalPrice: { monthly: 20, full: 240 },
 				discountedPrice: { monthly: null, full: null },
+				billingPeriod: 31,
 			},
 		} );
 

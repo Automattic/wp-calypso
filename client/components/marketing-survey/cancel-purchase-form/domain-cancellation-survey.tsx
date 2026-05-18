@@ -6,6 +6,7 @@ import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { getName } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { useDispatch } from 'calypso/state';
@@ -23,6 +24,7 @@ interface Props {
 	purchase: Purchase;
 	purchaseListUrl: string;
 	isVisible: boolean;
+	intent?: 'cancel' | 'remove' | null;
 	onClose: () => void;
 	onSurveyComplete: () => void;
 	cancellationInProgress?: boolean;
@@ -41,10 +43,12 @@ interface DomainCancellationReason {
 const DomainCancellationSurvey: React.FC< Props > = ( {
 	isVisible = false,
 	purchase,
+	intent,
 	...props
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const [ selectedReason, setSelectedReason ] = useState< string >( '' );
 	const [ message, setMessage ] = useState< string >( '' );
 
@@ -139,18 +143,43 @@ const DomainCancellationSurvey: React.FC< Props > = ( {
 	const renderButtons = () => {
 		const { disableButtons, cancellationInProgress } = props;
 		const disabled = disableButtons || ! selectedReason;
+		const isRemoveIntent = intent === 'remove';
+		const getCompleteLabel = () => {
+			if ( ! isSplitEnabled ) {
+				return translate( 'Submit' );
+			}
+			return isRemoveIntent
+				? translate( 'Complete removal' )
+				: translate( 'Complete cancellation' );
+		};
+		const getCompletingLabel = () =>
+			isRemoveIntent ? translate( 'Completing removal' ) : translate( 'Completing cancellation' );
+		const primaryLabel =
+			isSplitEnabled && cancellationInProgress ? getCompletingLabel() : getCompleteLabel();
 
 		return (
 			<div className="cancel-purchase-form__actions">
 				<div className="cancel-purchase-form__buttons">
 					<Button
 						variant="primary"
+						isDestructive={ isSplitEnabled }
 						isBusy={ cancellationInProgress }
 						disabled={ disabled }
 						onClick={ handleSubmit }
 					>
-						{ translate( 'Submit' ) }
+						{ primaryLabel }
 					</Button>
+					{ isSplitEnabled && disabled && (
+						<Button
+							variant="tertiary"
+							isDestructive
+							isBusy={ cancellationInProgress }
+							disabled={ cancellationInProgress }
+							onClick={ handleSubmit }
+						>
+							{ isRemoveIntent ? translate( 'Skip and remove' ) : translate( 'Skip and cancel' ) }
+						</Button>
+					) }
 				</div>
 			</div>
 		);

@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useIsSplitCancelRemoveEnabled } from 'calypso/dashboard/me/billing-purchases/cancel-purchase/use-is-split-cancel-remove-enabled';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	hasPaymentMethod,
@@ -72,6 +73,7 @@ function PurchaseMetaExpiration( {
 	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
 		( domain: ResponseDomain ) => domain.domain === purchase.meta
 	);
+	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 
 	if (
 		! purchase ||
@@ -193,9 +195,23 @@ function PurchaseMetaExpiration( {
 				<em className="manage-purchase__detail-label">{ detailLabel }</em>
 				{ ! hideAutoRenew && ! isJetpackPurchaseUsingPrimaryCancellationFlow && (
 					<div className="manage-purchase__auto-renew">
-						<span className="manage-purchase__detail manage-purchase__auto-renew-text">
-							{ subsRenewText }
-						</span>
+						{ isSplitEnabled && shouldRenderToggle ? (
+							<AutoRenewToggle
+								planName={
+									site && ! isCancellableSitelessPurchase ? site.plan?.product_name_short : ''
+								}
+								siteDomain={ site && ! isCancellableSitelessPurchase ? site.domain : '' }
+								siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
+								purchase={ purchase }
+								toggleSource="manage-purchase"
+								label={ translate( 'Enable auto-renew' ) }
+								getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+							/>
+						) : (
+							<span className="manage-purchase__detail manage-purchase__auto-renew-text">
+								{ subsRenewText }
+							</span>
+						) }
 					</div>
 				) }
 				<span

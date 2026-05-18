@@ -6,14 +6,16 @@ export const fetchReadFeedSearch = ( options: {
 	query?: string;
 	excludeFollowed?: boolean;
 	sort?: ReadFeedSearchSort;
+	offset?: number;
 } ): Promise< ReadFeedSearchResponse > => {
-	const { query, excludeFollowed, sort } = options;
+	const { query, excludeFollowed, sort, offset } = options;
 
 	return wpcom.req.get( {
 		path: addQueryArgs( '/read/feed', {
 			q: query,
 			exclude_followed: excludeFollowed,
 			sort,
+			offset,
 		} ),
 		apiVersion: '1.1',
 		method: 'GET',

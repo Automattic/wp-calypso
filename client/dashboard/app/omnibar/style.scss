@@ -1,16 +1,12 @@
-$omnibar-height: 32px;
-
 #wpcom-omnibar {
 	position: fixed;
 	top: 0;
 	inset-inline: 0;
 	z-index: 99999;
-	height: $omnibar-height;
-	background-color: #1e1e1e;
 }
 
 body:has( #wpcom-omnibar ) #wpcom {
-	padding-block-start: $omnibar-height;
+	padding-block-start: var(--omnibar-height);
 	height: auto;
-	min-height: calc( 100vh - #{$omnibar-height} );
+	min-height: calc( 100vh - var(--omnibar-height) );
 }

@@ -1,5 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
@@ -10,6 +11,7 @@ import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import AsyncLoad from 'calypso/components/async-load';
+import AsyncHelpCenterFab from 'calypso/components/help-center-fab/async';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
@@ -34,9 +36,10 @@ import {
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
+import untrailingslashit from 'calypso/lib/route/untrailingslashit';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -57,6 +60,65 @@ import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-sche
 import HelpCenterLoader from './help-center-loader';
 
 import './style.scss';
+
+const loadWooCoreProfiler = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-layout-masterbar-woo-core-profiler" */ 'calypso/layout/masterbar/woo-core-profiler'
+	);
+const loadJetpackCloudStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-jetpack-cloud-style" */ 'calypso/jetpack-cloud/style'
+	);
+const loadA8cForAgenciesStyle = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
+	);
+const loadGlobalNotices = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
+	);
+const loadSupportArticleDialog = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-blocks-support-article-dialog" */ 'calypso/blocks/support-article-dialog'
+	);
+
+const HELP_CENTER_FAB_SECTIONS = [
+	'accept-invite',
+	'checkout',
+	'login',
+	'mailing-lists',
+	'patterns',
+	'performance-profiler',
+	'plugins',
+	'reader',
+	'signup',
+	'site-profiler',
+	'theme',
+	'themes',
+];
+
+// Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
+const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
+
+// FAB safety on /log-in: window.location.href is forwarded to Zendesk verbatim by
+// packages/odie-client (use-create-zendesk-conversation: messaging_url/source).
+// Login sub-flows put secrets in the query (social handoff, OAuth callbacks,
+// magic-link, lostpassword) or fragment (desktop finalize, social-connect), and
+// ?redirect_to can wrap arbitrary OAuth URLs with tokens at any depth. We can't
+// safely introspect those, so allow only the bare credential form (with optional
+// locale) and require an empty query + fragment.
+const WPCOM_LOGIN_FAB_PATHNAMES = new Set( [
+	'/log-in',
+	...getLanguageSlugs().map( ( slug ) => `/log-in/${ slug }` ),
+] );
+
+const isFabSafeLoginUrl = () => {
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	const { pathname, search, hash } = window.location;
+	return WPCOM_LOGIN_FAB_PATHNAMES.has( untrailingslashit( pathname ) ) && ! search && ! hash;
+};
 
 const LayoutLoggedOut = ( {
 	isAkismet,
@@ -88,6 +150,7 @@ const LayoutLoggedOut = ( {
 	userAllowedToHelpCenter,
 	colorScheme,
 	isJetpackCloud,
+	isJetpackConnectorLogin,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
@@ -132,16 +195,35 @@ const LayoutLoggedOut = ( {
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
 
+	// OAuth client logins (Gravatar, WPJobManager, Woo, etc.) and /log-in/jetpack
+	// have their own branding and support paths.
+	const isWpcomLogin =
+		sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin && isFabSafeLoginUrl();
+
+	// OAuth client signups (Woo, BlazePro, Gravatar, WPJobManager, etc.) likewise
+	// run under their own brand and route support elsewhere.
+	const isWpcomSignup = sectionName === 'signup' && ! useOAuth2Layout;
+
+	const isEligibleSection =
+		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) &&
+		( sectionName !== 'login' || isWpcomLogin ) &&
+		( sectionName !== 'signup' || isWpcomSignup );
+
+	// Logged-in users use the masterbar control instead.
+	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
+	const showHelpCenterFab =
+		! isLoggedIn &&
+		isEnabled( 'help-center/logged-out-fab' ) &&
+		( isEligibleSection || HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
+		! isReaderTagEmbed &&
+		userAllowedToHelpCenter;
+
 	const loadHelpCenter =
-		// Load for all logged out users only on the devdocs page.
-		( isLoggedIn === false &&
-			isEnabled( 'help-center/logged-out' ) &&
-			'devdocs' === sectionName ) ||
-		( isLoggedIn &&
-			// we want to show only the Help center in my home and the help section (but not the FAB)
-			( [ 'home', 'help' ].includes( sectionName ) ||
-				currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
-			userAllowedToHelpCenter );
+		isLoggedIn &&
+		// we want to show only the Help center in my home and the help section (but not the FAB)
+		( [ 'home', 'help' ].includes( sectionName ) ||
+			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
+		userAllowedToHelpCenter;
 
 	const isThemeShowcaseModern =
 		[ 'themes', 'theme' ].includes( sectionName ) &&
@@ -175,6 +257,7 @@ const LayoutLoggedOut = ( {
 		woo: isWoo,
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'jetpack-cloud': isJetpackCloud,
+		'is-jetpack-connector-login': isJetpackConnectorLogin,
 		'is-theme-showcase-modern': isThemeShowcaseModern,
 	};
 
@@ -251,9 +334,7 @@ const LayoutLoggedOut = ( {
 	} else if ( isWooJPC ) {
 		classes.woo = true;
 		classes[ 'has-no-masterbar' ] = false;
-		masterbar = (
-			<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
-		);
+		masterbar = <AsyncLoad require={ loadWooCoreProfiler } placeholder={ null } />;
 	} else {
 		masterbar = ! masterbarIsHidden && (
 			<MasterbarLoggedOut
@@ -279,6 +360,7 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 					/>
 				) }
+				{ showHelpCenterFab && <AsyncHelpCenterFab sectionName={ sectionName } /> }
 				{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 				<BodySectionCssClass
 					group={ sectionGroup }
@@ -292,17 +374,13 @@ const LayoutLoggedOut = ( {
 					) }
 				</div>
 				{ isJetpackCloudEnvironment() && (
-					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+					<AsyncLoad require={ loadJetpackCloudStyle } placeholder={ null } />
 				) }
 				{ isA8CForAgencies() && (
-					<AsyncLoad require="calypso/a8c-for-agencies/style" placeholder={ null } />
+					<AsyncLoad require={ loadA8cForAgenciesStyle } placeholder={ null } />
 				) }
 				<div id="content" className="layout__content">
-					<AsyncLoad
-						require="calypso/components/global-notices"
-						placeholder={ null }
-						id="notices"
-					/>
+					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
 					<div id="primary" className="layout__primary">
 						{ primary }
 					</div>
@@ -319,7 +397,7 @@ const LayoutLoggedOut = ( {
 						<UniversalNavbarFooter currentRoute={ currentRoute } isLoggedIn={ isLoggedIn } />
 
 						{ config.isEnabled( 'layout/support-article-dialog' ) && (
-							<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+							<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 						) }
 					</>
 				) }
@@ -405,6 +483,14 @@ export default withCurrentRoute(
 			 */
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
+			const redirectToOriginal = getRedirectToOriginal( state ) || currentQuery?.redirect_to;
+			const redirectFromParam = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] ).get(
+				'from'
+			);
+			const isJetpackConnectorLogin =
+				isJetpackLogin &&
+				( redirectFromParam === 'jetpack-connector' || currentQuery?.from === 'jetpack-connector' );
+
 			return {
 				isAkismet,
 				isPassport,
@@ -428,6 +514,7 @@ export default withCurrentRoute(
 				twoFactorEnabled,
 				colorScheme,
 				isJetpackCloud: isJetpackCloudOAuth2Client( oauth2Client ),
+				isJetpackConnectorLogin,
 			};
 		},
 		{ clearLastActionRequiresLogin }

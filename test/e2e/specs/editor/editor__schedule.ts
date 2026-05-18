@@ -31,6 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Schedule' ), function () {
 	let editorPage: EditorPage;
 	let context: BrowserContext;
 	let page: Page;
+	let siteSlug: string;
 
 	beforeAll( async function () {
 		context = await browser.newContext();
@@ -38,11 +39,12 @@ describe( DataHelper.createSuiteTitle( 'Editor: Schedule' ), function () {
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		siteSlug = testAccount.getSiteURL( { protocol: false } );
 	} );
 
 	it( 'Go to the new post page', async function () {
 		editorPage = new EditorPage( page );
-		await editorPage.visit( 'post' );
+		await editorPage.visit( 'post', { siteSlug } );
 	} );
 
 	it( 'Enter page title', async function () {

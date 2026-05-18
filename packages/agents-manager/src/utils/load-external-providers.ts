@@ -12,6 +12,8 @@
  */
 
 import { getAgentManager, UIMessage } from '@automattic/agenttic-client';
+import { isReaderChatAgent } from './is-reader-chat-agent';
+import { useReaderFollowupSuggestions } from './reader-followup-hook';
 import type { ImageUploadHook } from '../hooks/use-image-upload';
 import type { ToolProvider, ContextProvider, Suggestion, BigSkyMessage } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
@@ -70,7 +72,7 @@ export type AbilitiesSetupHook = ( actions: {
  */
 export type UseSuggestionsHook = ( maxSuggestions?: number ) => {
 	suggestions: Suggestion[];
-};
+} | void;
 
 export type SiteBuildUtils = {
 	hasSiteBuildMessages: ( messages: UIMessage[] ) => boolean;
@@ -120,6 +122,28 @@ export type UseCheckpointHook = () => UseCheckpointReturn;
 
 export type { ImageUploadHook };
 
+/** Optional flags providers can declare to opt into AM chat-dock features. */
+export interface ProviderCapabilities {
+	/** Adds the "Split screen sidebar" chat-header menu item when true. */
+	supportsSplitScreen?: boolean;
+}
+
+/**
+ * OR-merge a provider's `capabilities` into the running map. Works on both
+ * plain objects and lazy Proxies (probed by direct key access, not iteration).
+ */
+export function mergeCapabilitiesInto( merged: ProviderCapabilities, capabilities: unknown ): void {
+	if ( ! capabilities || typeof capabilities !== 'object' ) {
+		return;
+	}
+	const caps = capabilities as ProviderCapabilities;
+	// Strict `=== true` because `capabilities` arrives as `unknown` from
+	// runtime-imported modules; a stray `'false'` string would otherwise opt in.
+	if ( caps.supportsSplitScreen === true ) {
+		merged.supportsSplitScreen = true;
+	}
+}
+
 export interface LoadedProviders {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
@@ -134,18 +158,69 @@ export interface LoadedProviders {
 	siteBuildUtils?: SiteBuildUtils;
 	useImageUpload?: ImageUploadHook;
 	useCheckpoint?: UseCheckpointHook;
+	capabilities?: ProviderCapabilities;
+}
+
+export function mergeUseSuggestionsHooks(
+	hooks: UseSuggestionsHook[]
+): UseSuggestionsHook | undefined {
+	if ( hooks.length === 0 ) {
+		return undefined;
+	}
+
+	if ( hooks.length === 1 ) {
+		return hooks[ 0 ];
+	}
+
+	return ( maxSuggestions?: number ) => {
+		const combined: Suggestion[] = [];
+		const seenIds = new Set< string >();
+		for ( const hook of hooks ) {
+			const suggestions = hook( maxSuggestions )?.suggestions ?? [];
+			for ( const s of suggestions ) {
+				if ( ! seenIds.has( s.id ) ) {
+					seenIds.add( s.id );
+					combined.push( s );
+				}
+			}
+		}
+		return { suggestions: combined };
+	};
 }
 
 /**
  * Load external agent providers from agentsManagerData.agentProviders.
  *
- * Each provider module ID is dynamically imported using WordPress's script module
+ * Providers can be dynamically imported using WordPress's script module
  * system. Modules should export { toolProvider, contextProvider }.
+ *
+ * Alternatively, an already-loaded provider object can be passed in.
+ *
+ * Both shapes feed the same downstream merge: any of `toolProvider`,
+ * `contextProvider`, `getChatComponent`, `useSuggestions`, etc. are picked
+ * up from each entry and merged across all entries.
  * @returns Promise resolving to merged providers or empty object if none found.
  */
 export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const agentProviders =
 		typeof agentsManagerData !== 'undefined' ? agentsManagerData?.agentProviders || [] : [];
+
+	// Only the public reader-chat entry registers the follow-up chip globals
+	// (`window.__jetpackReaderFollowupChips` / `reader-chat-followups-updated`).
+	// Register the bridge for every reader-chat agent variant that uses the
+	// public reader-chat entry.
+	const registerReaderFollowups =
+		typeof window !== 'undefined' &&
+		isReaderChatAgent(
+			( window as unknown as { agentsManagerData?: { agentId?: string } } ).agentsManagerData
+				?.agentId
+		);
+
+	if ( registerReaderFollowups ) {
+		// Reader Chat runs on the public frontend and should not inherit editor providers
+		// such as the Jetpack AI sidebar.
+		return { useSuggestions: useReaderFollowupSuggestions };
+	}
 
 	if ( agentProviders.length === 0 ) {
 		return {};
@@ -159,10 +234,11 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	let mergedNavigationContinuation: NavigationContinuationHook | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
-	let mergedUseSuggestions: UseSuggestionsHook | undefined;
 	let mergedSiteBuildUtils: SiteBuildUtils | undefined;
 	let mergedImageUpload: ImageUploadHook | undefined;
 	let mergedUseCheckpoint: UseCheckpointHook | undefined;
+	// OR-merged across all providers.
+	const mergedCapabilities: ProviderCapabilities = {};
 
 	// Collect exports that need to be merged across all providers.
 	const allToolProviders: ToolProvider[] = [];
@@ -174,17 +250,21 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// Load all providers in parallel to avoid serializing network/module fetches.
 	// Results are processed in registration order to preserve first-write-wins semantics.
 	const loadedModules = await Promise.all(
-		agentProviders.map( async ( moduleId ) => {
+		agentProviders.map( async ( providerEntry ) => {
+			if ( typeof providerEntry === 'object' && providerEntry !== null ) {
+				return providerEntry;
+			}
+
 			try {
 				// Dynamic import of registered script module
 				// The webpackIgnore comment tells webpack not to bundle this - it's loaded at runtime
-				const module = await import( /* webpackIgnore: true */ moduleId );
+				const module = await import( /* webpackIgnore: true */ providerEntry );
 				// eslint-disable-next-line no-console
-				console.log( `[AgentsManager] Loaded provider "${ moduleId }"` );
+				console.log( `[AgentsManager] Loaded provider "${ providerEntry }"` );
 				return module;
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
-				console.warn( `[AgentsManager] Failed to load provider "${ moduleId }":`, error );
+				console.warn( `[AgentsManager] Failed to load provider "${ providerEntry }":`, error );
 				return null;
 			}
 		} )
@@ -234,6 +314,8 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		if ( module.useCheckpoint && ! mergedUseCheckpoint ) {
 			mergedUseCheckpoint = module.useCheckpoint;
 		}
+
+		mergeCapabilitiesInto( mergedCapabilities, module.capabilities );
 	}
 
 	// Merge toolProviders: first-write-wins by ability name, matching the
@@ -322,24 +404,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	}
 
 	// Merge useSuggestions: combine from all providers, dedupe by id.
-	if ( allUseSuggestions.length === 1 ) {
-		mergedUseSuggestions = allUseSuggestions[ 0 ];
-	} else if ( allUseSuggestions.length > 1 ) {
-		mergedUseSuggestions = ( ( maxSuggestions?: number ) => {
-			const combined: Suggestion[] = [];
-			const seenIds = new Set< string >();
-			for ( const hook of allUseSuggestions ) {
-				const { suggestions } = hook( maxSuggestions );
-				for ( const s of suggestions ) {
-					if ( ! seenIds.has( s.id ) ) {
-						seenIds.add( s.id );
-						combined.push( s );
-					}
-				}
-			}
-			return { suggestions: combined };
-		} ) as UseSuggestionsHook;
-	}
+	const mergedUseSuggestions = mergeUseSuggestionsHooks( allUseSuggestions );
 
 	// Merge getEmptyViewSuggestions: combine from all providers, dedupe by id.
 	if ( allGetEmptyViewSuggestions.length === 1 ) {
@@ -373,5 +438,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		siteBuildUtils: mergedSiteBuildUtils,
 		useImageUpload: mergedImageUpload,
 		useCheckpoint: mergedUseCheckpoint,
+		// Match peer fields: undefined when no provider opted in.
+		capabilities: Object.keys( mergedCapabilities ).length ? mergedCapabilities : undefined,
 	};
 }

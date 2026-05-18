@@ -9,7 +9,7 @@
  * THIS FILE SHOULD NOT CONTAIN ANY COMPONENT SPECIFIC STYLES.
  */
 .help-center > div.help-center__container {
-	background-color: #fff;
+	background-color: var(--color-surface);
 	z-index: $help-center-z-index;
 	cursor: default;
 	transition: max-height 0.5s;
@@ -56,7 +56,6 @@
 	.help-center__section-title {
 		font-size: $font-body-small;
 		font-weight: 500;
-		color: var( --studio-gray-100 );
 		margin: 8px 0 8px 0;
 	}
 
