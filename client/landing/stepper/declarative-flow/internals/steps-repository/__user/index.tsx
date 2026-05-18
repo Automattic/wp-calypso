@@ -3,6 +3,7 @@ import { Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -15,6 +16,7 @@ import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -29,8 +31,17 @@ import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
 import { useSocialService } from './use-social-service';
+import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
 import './style.scss';
+
+// Experiment: new mobile layout for the user step. Register in ExPlat with
+// `control` and `treatment` variations.
+const MOBILE_LAYOUT_EXPERIMENT_NAME = 'calypso_signup_onboarding_user_mobile_layout_202501';
+// Social providers shown on the mobile treatment per the design. Also keeps the
+// local-dev-only PayPal button off the treatment (the prod build never has that
+// flag enabled, but the local-dev one does).
+const MOBILE_SOCIAL_SERVICES: SignupAllowedService[] = [ 'google', 'apple', 'github' ];
 
 const UserStepComponent: StepType = function UserStep( {
 	flow,
@@ -50,7 +61,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 	// Users arriving from woocommerce.com's hosting-solutions CTA see the "open email + slider"
 	// account-step variant. Everyone else sees the default single-column signup.
-	const isEmailFirstVariant = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
+	const isWooEmailFirstVariant = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -97,30 +108,56 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
 	const isLargeViewport = useViewportMatch( 'large' );
+	const isMobileViewport = useViewportMatch( 'small', '<' );
+
+	// The mobile-layout experiment is only eligible on mobile viewports so desktop
+	// users never consume an ExPlat slot. While the assignment is loading we defer
+	// both the heading and the form — otherwise the brief flash of control-shape
+	// UI before treatment paints would self-bias the social-conversion metric the
+	// experiment is measuring.
+	const isMobileLayoutExperimentEligible =
+		isStepContainerV2 && isMobileViewport && ! isWooEmailFirstVariant;
+	const [ isExperimentLoading, experimentAssignment ] = useExperiment(
+		MOBILE_LAYOUT_EXPERIMENT_NAME,
+		{ isEligible: isMobileLayoutExperimentEligible }
+	);
+	const isMobileTreatment =
+		isMobileLayoutExperimentEligible &&
+		! isExperimentLoading &&
+		experimentAssignment?.variationName === 'treatment';
+	const shouldDeferMobileReveal = isMobileLayoutExperimentEligible && isExperimentLoading;
+
+	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
+	const allowedSocialServices = isMobileTreatment
+		? MOBILE_SOCIAL_SERVICES
+		: partnerConfig?.ssoProviders;
 
 	const stepContent = (
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
-			<SignupFormSocialFirst
-				stepName={ stepName }
-				flowName={ flow }
-				goToNextStep={ setWpAccountCreateResponse }
-				passDataToNextStep
-				logInUrl={ loginLink }
-				handleSocialResponse={ handleSocialResponse }
-				socialServiceResponse={ socialServiceResponse }
-				redirectToAfterLoginUrl={ window.location.href }
-				queryArgs={ {} }
-				userEmail={ queryArgs.get( 'user_email' ) || '' }
-				notice={ notice }
-				isSocialFirst
-				onCreateAccountSuccess={ handleCreateAccountSuccess }
-				backButtonInFooter={ ! isStepContainerV2 }
-				emailLabelText={ isStepContainerV2 ? translate( 'Enter your email' ) : undefined }
-				isEmailFirstVariant={ isEmailFirstVariant }
-				allowedSocialServices={ partnerConfig?.ssoProviders }
-				customTosElement={ signupTosElement }
-			/>
+			{ ! shouldDeferMobileReveal && (
+				<SignupFormSocialFirst
+					stepName={ stepName }
+					flowName={ flow }
+					goToNextStep={ setWpAccountCreateResponse }
+					passDataToNextStep
+					logInUrl={ loginLink }
+					handleSocialResponse={ handleSocialResponse }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ window.location.href }
+					queryArgs={ {} }
+					userEmail={ queryArgs.get( 'user_email' ) || '' }
+					notice={ notice }
+					isSocialFirst
+					onCreateAccountSuccess={ handleCreateAccountSuccess }
+					backButtonInFooter={ ! isStepContainerV2 }
+					emailLabelText={ emailLabelText }
+					isEmailFirstVariant={ isWooEmailFirstVariant }
+					isMobileCompactVariant={ isMobileTreatment }
+					allowedSocialServices={ allowedSocialServices }
+					customTosElement={ signupTosElement }
+				/>
+			) }
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
 					authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
@@ -133,17 +170,27 @@ const UserStepComponent: StepType = function UserStep( {
 
 	if ( isStepContainerV2 ) {
 		let headingText = translate( 'Create your account' );
+		let headingSubText;
 		if ( partnerConfig ) {
 			headingText = translate( 'Create an account for %(partner)s', {
 				args: { partner: partnerConfig.displayName },
 				textOnly: true,
 			} );
+		} else if ( isMobileTreatment ) {
+			headingText = translate( 'Welcome to WordPress.com' );
+			headingSubText = translate( 'Sign up free to start creating your site.' );
 		}
-		const heading = (
+		// While the mobile experiment is resolving we render the layout without the
+		// heading so neither cohort sees the other variant's copy flash on cold visits.
+		const heading = shouldDeferMobileReveal ? null : (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading text={ headingText } align={ isEmailFirstVariant ? 'left' : undefined } />
+				<Step.Heading
+					text={ headingText }
+					subText={ headingSubText }
+					align={ isWooEmailFirstVariant ? 'left' : undefined }
+				/>
 			</>
 		);
 
@@ -154,14 +201,14 @@ const UserStepComponent: StepType = function UserStep( {
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
 				rightElement={
-					isEmailFirstVariant ? null : (
+					isWooEmailFirstVariant ? null : (
 						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
 					)
 				}
 			/>
 		);
 
-		if ( isLargeViewport && isEmailFirstVariant ) {
+		if ( isLargeViewport && isWooEmailFirstVariant ) {
 			return (
 				<Step.TwoColumnLayout
 					className="step-container-v2--user"
@@ -188,7 +235,9 @@ const UserStepComponent: StepType = function UserStep( {
 
 		return (
 			<Step.CenteredColumnLayout
-				className="step-container-v2--user"
+				className={ clsx( 'step-container-v2--user', {
+					'step-container-v2--user-mobile-treatment': isMobileTreatment,
+				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }

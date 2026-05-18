@@ -49,6 +49,7 @@ interface SignupFormSocialFirst {
 	passDataToNextStep?: boolean;
 	emailLabelText?: string;
 	isEmailFirstVariant?: boolean;
+	isMobileCompactVariant?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 }
@@ -91,6 +92,7 @@ const SignupFormSocialFirst = ( {
 	backButtonInFooter = true,
 	emailLabelText,
 	isEmailFirstVariant,
+	isMobileCompactVariant,
 	allowedSocialServices,
 	customTosElement,
 }: SignupFormSocialFirst ) => {
@@ -200,6 +202,67 @@ const SignupFormSocialFirst = ( {
 		);
 	}
 
+	const loginLinkParagraph = (
+		<p className="signup-form-social-first__login-link">
+			{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
+				link: <Step.LinkButton href={ logInUrl } />,
+			} ) }
+		</p>
+	);
+
+	if ( isMobileCompactVariant ) {
+		// Mobile compact: no "Have an account? Log in" link inside the form —
+		// the Log in link in the top bar covers that affordance per the Figma.
+		return (
+			<div className="signup-form signup-form-social-first signup-form-social-first--mobile-compact">
+				{ notice }
+				<SocialSignupForm
+					handleResponse={ handleSocialResponse }
+					setCurrentStep={ setCurrentStep }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+					disableTosText
+					compact
+					isSocialFirst={ isSocialFirst }
+					shouldShowEmailButton={ false }
+					allowedSocialServices={ allowedSocialServices }
+				/>
+				<FormDivider isHorizontal />
+				<div className="signup-form-social-first-email">
+					<PasswordlessSignupForm
+						stepName={ stepName }
+						flowName={ flowName }
+						goToNextStep={ goToNextStep }
+						logInUrl={ logInUrl }
+						queryArgs={ queryArgs }
+						labelText={ emailLabelText ?? __( 'Your email' ) }
+						submitButtonLabel={ __( 'Continue' ) }
+						userEmail={ userEmail }
+						passDataToNextStep={ passDataToNextStep }
+						onCreateAccountError={ ( error: { error: string }, email: string ) => {
+							if ( isExistingAccountError( error.error ) ) {
+								window.location.assign(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+											redirect_to: queryArgs?.redirect_to,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
+						onCreateAccountSuccess={ onCreateAccountSuccess }
+						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
+						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
+					/>
+				</div>
+				{ renderTermsOfService() }
+			</div>
+		);
+	}
+
 	return (
 		<div className="signup-form signup-form-social-first">
 			<div className={ getVisibilityClassName( 'initial' ) }>
@@ -217,13 +280,7 @@ const SignupFormSocialFirst = ( {
 					shouldShowEmailButton={ ! isEmailFirstVariant }
 					allowedSocialServices={ allowedSocialServices }
 				/>
-				{ isEmailFirstVariant && (
-					<p className="signup-form-social-first__login-link">
-						{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
-							link: <Step.LinkButton href={ logInUrl } />,
-						} ) }
-					</p>
-				) }
+				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">

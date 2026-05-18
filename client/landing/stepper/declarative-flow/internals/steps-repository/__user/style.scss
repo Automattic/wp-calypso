@@ -244,7 +244,7 @@ $breakpoint-mobile: 660px;
 		}
 
 		.card.logged-out-form__footer {
-			margin: 24px 0 0 0;
+			margin: 16px 0 0 0;
 			padding: 0;
 			display: flex;
 			flex-direction: column;
@@ -272,5 +272,98 @@ $breakpoint-mobile: 660px;
 
 	.signup-form-social-first__email-tos-link {
 		margin-top: 3rem;
+	}
+}
+
+// Mobile treatment experiment: thumb-friendly layout per the Figma.
+// Heading at the top of the content area, action cluster (social row → divider →
+// email field → Continue → ToS) anchored to the bottom of the viewport. Scoped to
+// the class added when isMobileTreatment is true so desktop and control-group
+// mobile users are never affected.
+.step-container-v2:has(.step-container-v2--user-mobile-treatment) {
+	// Bottom-anchor the heading + form pair by giving the heading row an auto
+	// top margin. The pair flows together at the bottom of the viewport with
+	// atmosphere above the heading. When the form grows tall enough to fill the
+	// viewport (e.g. a validation error appears), the auto margin collapses to 0
+	// and the heading shifts up gracefully instead of being clipped off the top.
+	.step-container-v2__content-wrapper {
+		gap: 32px;
+		padding-block-end: 32px;
+		min-block-size: calc(
+			100dvh - var(--step-container-v2-top-bar-height, 0px)
+		);
+
+		.step-container-v2__content-row:first-child {
+			margin-block-start: auto;
+		}
+	}
+
+	// Subtitle color: Gray 50 (#646970) per Figma.
+	.step-container-v2__heading p {
+		color: var(--studio-gray-50);
+	}
+
+	.signup-form-social-first--mobile-compact {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		// Social row: icon-only, equal-width, horizontal. The selector chain matches
+		// the existing `.is-social-first .auth-form__social-buttons .auth-form__social-buttons-container`
+		// rule in signup-form/style.scss to win on specificity without `!important`.
+		.card.auth-form__social.is-signup.is-social-first
+			.auth-form__social-buttons
+			.auth-form__social-buttons-container {
+			flex-direction: row;
+			gap: 8px;
+
+			> * {
+				flex: 1 1 0;
+				min-inline-size: 0;
+			}
+
+			.social-buttons__button {
+				inline-size: 100%;
+				justify-content: center;
+			}
+
+			// Normalize icon sizing across providers — each provider ships its own
+			// SVG dimensions (Google 19px, Apple 17px, GitHub 20px), which renders
+			// inconsistently in an icon-only row. Figma spec is a uniform 16×16.
+			// Zero out the right-margin that the icons inherit from the labeled
+			// button layout — with no label, that margin was offsetting the icon
+			// to the left of its button.
+			.social-icons {
+				inline-size: 16px;
+				block-size: 16px;
+				margin: 0;
+			}
+		}
+
+		.social-buttons__service-name {
+			display: none;
+		}
+
+		// "or" divider: cancel the negative margins the base CSS applies when the
+		// divider sits next to a Card (`.card ~ .auth-form__separator`), so it
+		// participates in the parent's 16px flex gap cleanly. The text styling
+		// (uppercase "OR", gray-50, 12px) comes from the shared FormDivider
+		// styles and matches what /log-in already uses.
+		.auth-form__separator {
+			margin-block: 0;
+		}
+
+		// ToS sits at the bottom of the cluster, centered, small text, with a
+		// 32px gap above it per Figma (the parent's 16px gap + 16px margin).
+		.signup-form-social-first__tos-link {
+			margin-block: 16px 0;
+			text-align: center;
+			font-size: 0.75rem;
+		}
+
+		.signup-form-social-first__login-link {
+			margin-block-start: 0;
+			text-align: center;
+		}
 	}
 }
