@@ -33,7 +33,9 @@
 		opacity: 0.3;
 	}
 	&.is-fallback {
-		background: var(--color-neutral-10);
+		.gridicon {
+			fill: var(--color-neutral-40);
+		}
 	}
 }
 
