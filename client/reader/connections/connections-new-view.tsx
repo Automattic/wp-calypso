@@ -1,4 +1,6 @@
+import { useFediverseConnectionsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -8,8 +10,9 @@ import { ReaderFediverseIcon } from 'calypso/reader/components/icons/fediverse-i
 import { ReaderMastodonIcon } from 'calypso/reader/components/icons/mastodon-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { type ConnectionProtocol } from 'calypso/reader/sidebar/reader-sidebar-connections/types';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import getSites from 'calypso/state/selectors/get-sites';
 
 interface ProtocolOption {
 	key: ConnectionProtocol;
@@ -17,15 +20,19 @@ interface ProtocolOption {
 	tagline: string;
 	body: string;
 	href: string | null;
+	/** Open the primary link in a new tab — used for off-Calypso destinations like wp-admin. */
+	hrefExternal?: boolean;
+	docHref: string;
+	docLabel: string;
 	icon: JSX.Element;
 	available: boolean;
 }
 
 /**
  * Chooser surface for connecting a new account. Three cards mirror
- * the per-protocol entry points; clicking one forwards to the existing
- * protocol-specific connect view, which still owns the actual OAuth /
- * app-password flow.
+ * the per-protocol entry points; the primary action navigates into
+ * each protocol's existing connect view, which still owns the actual
+ * OAuth / app-password flow.
  *
  * Ordering is intentional: Fediverse first because a WordPress.com user
  * "already has a fediverse account" — they just need to flip a switch on
@@ -33,9 +40,14 @@ interface ProtocolOption {
  * recommendation; the other two cards then introduce Bluesky and
  * Mastodon for users who already live there.
  *
- * Copy leans warm and a bit playful — the network names alone aren't
- * enough for a first-time user to know what they're choosing between,
- * so the body lines do double-duty as primer + recommendation.
+ * The Fediverse card adapts its copy and primary action to the caller's
+ * state:
+ *   - already federating  → point at the existing entry in the sidebar
+ *   - exactly one admin site → deep-link straight into that site's
+ *     wp-admin ActivityPub settings
+ *   - multiple admin sites → ambient nudge to Settings → ActivityPub on
+ *     the site of their choice (no primary link, since we can't pick for them)
+ *   - no admin site → original explainer copy (no primary link)
  */
 export function ConnectionsNewView() {
 	const translate = useTranslate();
@@ -44,19 +56,82 @@ export function ConnectionsNewView() {
 	const socialEnabled = isEnabled( 'reader/social' );
 	const fediverseEnabled = isEnabled( 'reader/fediverse' );
 
-	const fediverse: ProtocolOption = {
-		key: 'fediverse',
-		label: 'Fediverse',
-		tagline: String( translate( 'Your WordPress site is already social.' ) ),
-		body: String(
-			translate(
-				'If you have a WordPress.com site, you already have a home on the open social web. Flip the ActivityPub switch on your blog and it shows up here. No new account, since your site already does the talking.'
-			)
-		),
-		href: null,
-		icon: <ReaderFediverseIcon viewBox="4 3 16 18" />,
-		available: fediverseEnabled,
-	};
+	const fediverseConnectionsQuery = useFediverseConnectionsQuery();
+	const fediverseConnectionCount = fediverseConnectionsQuery.data?.connections?.length ?? 0;
+	const hasFediverseConnection = fediverseConnectionCount > 0;
+
+	const adminSites = useSelector( ( state ) =>
+		getSites( state ).filter( ( site ) => !! site?.capabilities?.manage_options )
+	);
+
+	const fediverseDocHref = localizeUrl( 'https://wordpress.com/support/enter-the-fediverse/' );
+	const blueskyDocHref = localizeUrl( 'https://wordpress.com/support/reader/' );
+	const mastodonDocHref = localizeUrl( 'https://wordpress.com/support/reader/' );
+	const learnMoreLabel = String( translate( 'Learn more' ) );
+
+	const fediverse: ProtocolOption = ( () => {
+		const base = {
+			key: 'fediverse' as const,
+			label: 'Fediverse',
+			icon: <ReaderFediverseIcon viewBox="4 3 16 18" />,
+			available: fediverseEnabled,
+			docHref: fediverseDocHref,
+			docLabel: learnMoreLabel,
+		};
+
+		if ( hasFediverseConnection ) {
+			return {
+				...base,
+				tagline: String( translate( 'You’re already on the Fediverse.' ) ),
+				body: String(
+					translate(
+						'Your WordPress site is already federating. Look for it in the sidebar to jump into your timeline.'
+					)
+				),
+				href: null,
+			};
+		}
+
+		if ( adminSites.length === 1 ) {
+			const site = adminSites[ 0 ];
+			const adminUrl = site?.options?.admin_url;
+			return {
+				...base,
+				tagline: String( translate( 'Your WordPress site is already social.' ) ),
+				body: String(
+					translate(
+						'Flip the ActivityPub switch on your blog and it shows up here. No new account — your site already does the talking.'
+					)
+				),
+				href: adminUrl ? `${ adminUrl }options-general.php?page=activitypub` : null,
+				hrefExternal: !! adminUrl,
+			};
+		}
+
+		if ( adminSites.length > 1 ) {
+			return {
+				...base,
+				tagline: String( translate( 'Your WordPress site is already social.' ) ),
+				body: String(
+					translate(
+						'Open Settings › ActivityPub on the site you want to bring along, flip the switch, and it shows up here.'
+					)
+				),
+				href: null,
+			};
+		}
+
+		return {
+			...base,
+			tagline: String( translate( 'Your WordPress site is already social.' ) ),
+			body: String(
+				translate(
+					'If you have a WordPress.com site, you already have a home on the open social web. Flip the ActivityPub switch on your blog and it shows up here.'
+				)
+			),
+			href: null,
+		};
+	} )();
 
 	const atmosphere: ProtocolOption = {
 		key: 'atmosphere',
@@ -70,6 +145,8 @@ export function ConnectionsNewView() {
 		href: '/reader/atmosphere/connect',
 		icon: <ReaderBlueskyIcon filled viewBox="2 3 20 18" />,
 		available: socialEnabled,
+		docHref: blueskyDocHref,
+		docLabel: learnMoreLabel,
 	};
 
 	const mastodon: ProtocolOption = {
@@ -84,15 +161,25 @@ export function ConnectionsNewView() {
 		href: '/reader/mastodon/connect',
 		icon: <ReaderMastodonIcon viewBox="0 0 74 78" />,
 		available: socialEnabled,
+		docHref: mastodonDocHref,
+		docLabel: learnMoreLabel,
 	};
 
 	const options: ProtocolOption[] = [ fediverse, atmosphere, mastodon ].filter(
 		( option ) => option.available
 	);
 
-	const handleClick = ( option: ProtocolOption ) => {
+	const handlePrimaryClick = ( option: ProtocolOption ) => {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_connections_new_protocol_clicked', {
+				protocol: option.key,
+			} )
+		);
+	};
+
+	const handleDocClick = ( option: ProtocolOption ) => {
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_connections_new_doc_clicked', {
 				protocol: option.key,
 			} )
 		);
@@ -110,11 +197,16 @@ export function ConnectionsNewView() {
 			<VStack spacing={ 3 } className="connections-new__cards">
 				{ options.map( ( option, index ) => {
 					const featured = option.key === 'fediverse' && index === 0;
-					const card = (
+					const externalProps = option.hrefExternal
+						? { target: '_blank', rel: 'noopener noreferrer' }
+						: {};
+
+					return (
 						<Card
+							key={ option.key }
 							className={ `connections-new__card connections-new__card--${ option.key }${
-								featured ? ' is-featured' : ''
-							}` }
+								option.href ? ' has-link' : ''
+							}${ featured ? ' is-featured' : '' }` }
 							elevation={ 0 }
 						>
 							{ featured && (
@@ -126,30 +218,33 @@ export function ConnectionsNewView() {
 								<div className="connections-new__card-icon" aria-hidden="true">
 									{ option.icon }
 								</div>
-								<h3 className="connections-new__card-label">{ option.label }</h3>
+								<h3 className="connections-new__card-label">
+									{ option.href ? (
+										<a
+											className="connections-new__card-link"
+											href={ option.href }
+											onClick={ () => handlePrimaryClick( option ) }
+											{ ...externalProps }
+										>
+											{ option.label }
+										</a>
+									) : (
+										option.label
+									) }
+								</h3>
 							</div>
 							<p className="connections-new__card-tagline">{ option.tagline }</p>
 							<p className="connections-new__card-description">{ option.body }</p>
-						</Card>
-					);
-
-					if ( option.href ) {
-						return (
 							<a
-								key={ option.key }
-								href={ option.href }
-								className="connections-new__card-link"
-								onClick={ () => handleClick( option ) }
+								className="connections-new__card-doc"
+								href={ option.docHref }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ () => handleDocClick( option ) }
 							>
-								{ card }
+								{ option.docLabel }
 							</a>
-						);
-					}
-
-					return (
-						<div key={ option.key } className="connections-new__card-link is-info">
-							{ card }
-						</div>
+						</Card>
 					);
 				} ) }
 			</VStack>
