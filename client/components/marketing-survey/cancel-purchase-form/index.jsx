@@ -771,6 +771,10 @@ class CancelPurchaseForm extends Component {
 	getHeaderTitle() {
 		const { flowType, intent, purchase, translate } = this.props;
 
+		if ( intent === 'auto-renew' ) {
+			return translate( 'Disable auto-renew' );
+		}
+
 		if ( intent === 'remove' || flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 			if ( isPlan( purchase ) ) {
 				return translate( 'Remove plan' );

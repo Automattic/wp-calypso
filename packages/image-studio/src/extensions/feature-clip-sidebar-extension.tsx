@@ -13,6 +13,7 @@ import { Button } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { dispatch, useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { share } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
@@ -24,7 +25,11 @@ import { useReelShare } from '../hooks/use-reel-share';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore, type VideoStudioActions } from '../stores/video-studio';
 import { ImageStudioMode } from '../types';
-import { trackImageStudioOpened } from '../utils/tracking';
+import {
+	trackImageStudioFeatureClipAddedToPost,
+	trackImageStudioFeatureClipPanelViewed,
+	trackImageStudioOpened,
+} from '../utils/tracking';
 import { FEATURE_CLIP_META_KEY } from './feature-clip-meta';
 import './feature-clip-sidebar.scss';
 
@@ -72,8 +77,8 @@ function FeatureClipPreview( {
 	attachmentId,
 	durationSeconds,
 }: FeatureClipPreviewProps ): JSX.Element {
-	const reel = useReelShare( { url: videoUrl, attachmentId, durationSeconds } );
-	const generic = useGenericShare( { url: videoUrl, attachmentId } );
+	const reel = useReelShare( 'sidebar', { url: videoUrl, attachmentId, durationSeconds } );
+	const generic = useGenericShare( 'sidebar', { url: videoUrl, attachmentId } );
 
 	const reelLabel = reel.isSharing
 		? __( 'Sharing on Instagram…', __i18n_text_domain__ )
@@ -87,7 +92,14 @@ function FeatureClipPreview( {
 		const { insertBlocks } = dispatch( 'core/block-editor' ) as {
 			insertBlocks?: ( blocks: unknown ) => void;
 		};
-		insertBlocks?.( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+		// Bail before tracking if the block-editor dispatcher is unavailable —
+		// recording the conversion when no block was inserted would log a
+		// phantom add-to-post.
+		if ( ! insertBlocks ) {
+			return;
+		}
+		insertBlocks( createBlock( 'core/video', { id: attachmentId, src: videoUrl } ) );
+		trackImageStudioFeatureClipAddedToPost( { attachmentId } );
 	};
 
 	return (
@@ -236,6 +248,12 @@ function FeatureClipPanel(): JSX.Element {
 		},
 		[ featureClipId ]
 	);
+
+	// Fire one impression per panel mount — the denominator for sidebar
+	// engagement rates. Empty deps: the panel mounts once per editor load.
+	useEffect( () => {
+		trackImageStudioFeatureClipPanelViewed();
+	}, [] );
 
 	const titleNode = (
 		<span className="image-studio-feature-clip-panel__title">

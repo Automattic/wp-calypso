@@ -58,7 +58,7 @@
 .social-post-card.components-card {
 	box-shadow: none;
 	border-radius: 0;
-	border-bottom: 1px solid var( --studio-gray-5 );
+	border-bottom: 1px solid var( --color-border-subtle );
 	background: transparent;
 
 	&:hover {
@@ -73,7 +73,7 @@
 .social-post-card--compact.components-card {
 	border-radius: 8px;
 	border-bottom: none;
-	box-shadow: 0 0 0 1px var( --studio-gray-5 );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
 	background: transparent;
 
 	.components-card__body {
@@ -123,11 +123,11 @@ a.social-post-card-header__author:hover .social-post-card-header__display-name {
 	flex-shrink: 0;
 	border-radius: 50%;
 	object-fit: cover;
-	background: var( --studio-gray-5 );
+	background: var( --color-border-subtle );
 }
 
 .social-post-card-header__avatar--placeholder {
-	background: var( --studio-gray-10 );
+	background: var( --color-neutral-10 );
 }
 
 .social-post-card-header__author-text {
@@ -202,7 +202,7 @@ a.social-post-card-header__timestamp::after {
 	}
 
 	a {
-		color: var( --studio-blue-50 );
+		color: var( --color-link, var( --studio-blue-50 ) );
 		text-decoration: none;
 
 		&:hover {
@@ -220,7 +220,7 @@ a.social-post-card-header__timestamp::after {
 	padding-inline: 16px;
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
-	border-block: 1px solid var( --studio-gray-5 );
+	border-block: 1px solid var( --color-border-subtle );
 }
 
 .social-post-card-timestamp + .social-post-card-counts,
@@ -237,7 +237,7 @@ a.social-post-card-header__timestamp::after {
 	padding-inline: 16px;
 	font-size: 0.875rem;
 	color: var( --studio-gray-50 );
-	border-block-end: 1px solid var( --studio-gray-5 );
+	border-block-end: 1px solid var( --color-border-subtle );
 }
 
 .social-post-card-stats__item strong {
@@ -390,7 +390,7 @@ a.social-post-card-header__timestamp::after {
 .social-post-card-embed-images__item {
 	display: block;
 	overflow: hidden;
-	background: var( --studio-gray-5 );
+	background: var( --color-border-subtle );
 
 	img {
 		width: 100%;
@@ -475,12 +475,12 @@ button.social-post-card-embed-video--thumbnail {
 .social-post-card-embed-external {
 	display: block;
 	margin-top: 8px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	overflow: hidden;
 	text-decoration: none;
-	color: inherit;
-	background: var( --studio-white );
+	color: var( --color-text );
+	background: var( --color-surface );
 
 	&:hover {
 		background: var( --studio-gray-0 );
@@ -528,7 +528,7 @@ button.social-post-card-embed-video--thumbnail {
 .social-post-card-embed-quote-link {
 	display: block;
 	margin-top: 8px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	overflow: hidden;
 	text-decoration: none;
@@ -542,7 +542,7 @@ button.social-post-card-embed-video--thumbnail {
 .social-post-card-embed-quote-tombstone {
 	margin-top: 8px;
 	padding: 12px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	color: var( --studio-gray-50 );
 	font-size: 0.875rem;

@@ -49,6 +49,7 @@ const PluginsBrowserListElement = ( props ) => {
 		plugin = {},
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		why,
 	} = props;
 
 	const dispatch = useDispatch();
@@ -246,6 +247,19 @@ const PluginsBrowserListElement = ( props ) => {
 						<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 					) }
 				</div>
+				{ !! why && (
+					<div className="plugins-browser-item__why">
+						<span className="plugins-browser-item__why-icon" aria-hidden="true">
+							✦
+						</span>
+						<div className="plugins-browser-item__why-body">
+							<span className="plugins-browser-item__why-label">
+								{ translate( 'Why this fits' ) }
+							</span>
+							<p className="plugins-browser-item__why-text">{ why }</p>
+						</div>
+					</div>
+				) }
 				{ isUntestedVersion && (
 					<div className="plugins-browser-item__untested-notice">
 						<Icon size={ 20 } icon={ info } />

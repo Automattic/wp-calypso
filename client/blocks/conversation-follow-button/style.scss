@@ -7,18 +7,18 @@ button.conversation-follow-button {
 		pointer-events: auto;
 
 		path {
-			fill: var(--color-primary);
+			fill: var(--color-link);
 		}
 	}
 
 	.conversation-follow-button__label {
-		color: var(--color-primary);
+		color: var(--color-link);
 		position: relative;
 	}
 
 	&:hover,
 	&:focus {
-		color: var(--color-primary);
+		color: var(--color-link);
 	}
 
 	&.popover__menu-item {
