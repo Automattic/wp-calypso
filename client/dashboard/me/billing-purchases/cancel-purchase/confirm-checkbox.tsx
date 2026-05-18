@@ -38,7 +38,7 @@ export default function ConfirmCheckbox( {
 	const isSplitEnabled = useIsSplitCancelRemoveEnabled();
 	const { setNewMessagingChat } = useHelpCenter();
 
-	const supportHeadingText = ( () => {
+	const getSupportHeadingText = () => {
 		if ( displayVariant === 'remove' ) {
 			return __( 'Questions before you remove?' );
 		}
@@ -46,21 +46,25 @@ export default function ConfirmCheckbox( {
 			return __( 'Have a question before turning off auto-renew?' );
 		}
 		return __( 'Have a question before canceling?' );
-	} )();
+	};
+
+	const getContactInitialMessage = () => {
+		if ( displayVariant === 'remove' ) {
+			return `I have questions about removing my ${ purchase.product_name }. Can I speak with a human?`;
+		}
+		if ( displayVariant === 'auto-renew' ) {
+			return `I have questions about turning off auto-renew for my ${ purchase.product_name }. Can I speak with a human?`;
+		}
+		return `I have questions about canceling my ${ purchase.product_name }. Can I speak with a human?`;
+	};
+
+	const supportHeadingText = getSupportHeadingText();
 
 	const planConfirmationLabel = getCheckboxLabel();
 
 	const handleContactClick = () => {
 		setNewMessagingChat( {
-			initialMessage: ( () => {
-				if ( displayVariant === 'remove' ) {
-					return `I have questions about removing my ${ purchase.product_name }. Can I speak with a human?`;
-				}
-				if ( displayVariant === 'auto-renew' ) {
-					return `I have questions about turning off auto-renew for my ${ purchase.product_name }. Can I speak with a human?`;
-				}
-				return `I have questions about canceling my ${ purchase.product_name }. Can I speak with a human?`;
-			} )(),
+			initialMessage: getContactInitialMessage(),
 			siteUrl: purchase.site_slug,
 			siteId: String( purchase.blog_id ),
 		} );
