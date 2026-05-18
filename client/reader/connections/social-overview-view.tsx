@@ -40,14 +40,7 @@ interface SocialCard {
 	instance?: string;
 	/** Fediverse-only: blog host derived from webfinger. */
 	host?: string;
-	/** ATmosphere-only: PDS hostname (e.g. `pds.example.com`). */
-	pdsHostname?: string | null;
 }
-
-// Hide the PDS line for the common case so the card stays uncluttered;
-// custom-PDS users are the audience that benefits from seeing it. Mirrors
-// what mainstream ATproto clients do.
-const DEFAULT_PDS_HOSTNAME = 'bsky.social';
 
 function mapAtmosphere( c: AtmosphereConnection ): SocialCard {
 	return {
@@ -57,7 +50,6 @@ function mapAtmosphere( c: AtmosphereConnection ): SocialCard {
 		handle: `@${ c.handle }`,
 		avatarUrl: c.avatar ?? null,
 		href: `/reader/atmosphere/${ c.id }/${ DEFAULT_ATMOSPHERE_TAB }`,
-		pdsHostname: c.pds_hostname ?? null,
 	};
 }
 
@@ -110,26 +102,13 @@ function SocialCardItem( { card, onClick }: { card: SocialCard; onClick: () => v
 
 	let avatarUrl = card.avatarUrl;
 	let displayName = card.displayName;
-	let pdsHostname = card.pdsHostname ?? null;
 	if ( card.protocol === 'atmosphere' ) {
 		avatarUrl = atmosphere.data?.avatar ?? avatarUrl;
 		displayName = atmosphere.data?.display_name || displayName;
-		// Prefer the fresher per-id value when available, but never let
-		// an undefined details payload erase a hostname we already had
-		// from the list response.
-		pdsHostname = atmosphere.data?.pds_hostname ?? pdsHostname;
 	} else if ( card.protocol === 'mastodon' ) {
 		avatarUrl = mastodon.data?.avatar ?? avatarUrl;
 		displayName = mastodon.data?.display_name || displayName;
 	}
-
-	// Normalize before comparing: trim whitespace and lowercase so a
-	// padded or mis-cased value can't slip past the default-host gate
-	// (which would render a noisy or blank-looking pill on every default
-	// account).
-	const normalizedPds = pdsHostname?.trim().toLowerCase() ?? '';
-	const showPds =
-		card.protocol === 'atmosphere' && !! normalizedPds && normalizedPds !== DEFAULT_PDS_HOSTNAME;
 
 	return (
 		<a
@@ -161,7 +140,6 @@ function SocialCardItem( { card, onClick }: { card: SocialCard; onClick: () => v
 			<div className="social-card__body">
 				<div className="social-card__name">{ displayName }</div>
 				<div className="social-card__handle">{ card.handle }</div>
-				{ showPds && <div className="social-card__pds">{ normalizedPds }</div> }
 				<div className="social-card__protocol">{ getProtocolLabel( card.protocol ) }</div>
 			</div>
 		</a>
