@@ -37,7 +37,7 @@ import './style.scss';
 
 // Experiment: new mobile layout for the user step. Register in ExPlat with
 // `control` and `treatment` variations.
-const MOBILE_LAYOUT_EXPERIMENT_NAME = 'calypso_signup_onboarding_user_mobile_layout_202501';
+const MOBILE_LAYOUT_EXPERIMENT_NAME = 'calypso_signup_onboarding_user_mobile_layout_202605';
 // Social providers shown on the mobile treatment per the design. Also keeps the
 // local-dev-only PayPal button off the treatment (the prod build never has that
 // flag enabled, but the local-dev one does).
