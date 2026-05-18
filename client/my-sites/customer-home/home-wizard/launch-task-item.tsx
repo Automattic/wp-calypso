@@ -1,14 +1,6 @@
 import { siteLaunchMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	Icon,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	__experimentalItem as Item,
-	__experimentalText as Text,
-	__experimentalSpacer as Spacer,
-} from '@wordpress/components';
-import { border, chevronRight } from '@wordpress/icons';
+import { Button } from '@wordpress/ui';
 import { useExperiment } from 'calypso/lib/explat';
 import { useCelebrateLaunchModalSideEffects } from 'calypso/my-sites/customer-home/celebrate-site-launch-modal/use-side-effects';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -21,17 +13,18 @@ import type { AppState } from 'calypso/types';
 
 type Props = {
 	task: SelectedTask;
-	itemClassName: string;
 };
 
 /**
- * Launchpad row that triggers the same launch flow as the (now-removed)
- * masterbar Launch button — explat-gated mutate-or-redirect. On success it
- * fires the celebrate-launch side effects; the modal itself is a single
- * hoisted instance rendered globally (since trunk PR #109896 unified it),
- * triggered by the `celebrateLaunch` query param the side-effects hook sets.
+ * Call to action for the "launch site" task, shown inside the task's
+ * expanded Launchpad card. Triggers the same launch flow as the
+ * (now-removed) masterbar Launch button — explat-gated mutate-or-redirect.
+ * On success it fires the celebrate-launch side effects; the modal itself
+ * is a single hoisted instance rendered globally (since trunk PR #109896
+ * unified it), triggered by the `celebrateLaunch` query param the
+ * side-effects hook sets.
  */
-export default function LaunchTaskItem( { task, itemClassName }: Props ) {
+export default function LaunchTaskCta( { task }: Props ) {
 	const dispatch = useDispatch();
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
 	const site = useSelector( ( state: AppState ) => ( siteId ? getSite( state, siteId ) : null ) );
@@ -63,31 +56,14 @@ export default function LaunchTaskItem( { task, itemClassName }: Props ) {
 	};
 
 	return (
-		<Item
-			as="button"
-			type="button"
+		<Button
+			variant="solid"
+			tone="brand"
 			onClick={ onClick }
 			disabled={ disabled }
-			className={ itemClassName + ' tailored-launchpad__row' }
-			aria-label={ task.title }
+			loading={ launchSiteMutation.isPending }
 		>
-			<HStack alignment="center" spacing={ 3 }>
-				<span className="tailored-launchpad__check" aria-hidden="true">
-					<Icon icon={ border } size={ 24 } />
-				</span>
-				<VStack spacing={ 0 } className="tailored-launchpad__body">
-					<span className="tailored-launchpad__title">{ task.title }</span>
-					{ task.subtitle && (
-						<Text variant="muted" size={ 12 }>
-							{ task.subtitle }
-						</Text>
-					) }
-				</VStack>
-				<Spacer />
-				<span className="tailored-launchpad__chevron" aria-hidden="true">
-					<Icon icon={ chevronRight } size={ 20 } />
-				</span>
-			</HStack>
-		</Item>
+			{ task.cta }
+		</Button>
 	);
 }

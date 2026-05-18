@@ -1,152 +1,129 @@
-.home-dashboard {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 24px;
+// Lock the page to the viewport — the AI Launchpad is a one-screen canvas,
+// no scroll. Paired with the dashboard filling exactly that canvas below.
+body.is-section-home {
+	overflow: hidden;
 }
 
-.home-dashboard__page-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin-bottom: 24px;
+// Paint Calypso's content chrome white in the home section so the dashboard
+// has a seamless full-bleed canvas — no grey strip between layout__content's
+// padding (79px top for the masterbar, 32px bottom) and layout__primary.
+body.is-section-home .layout__content {
+	background: var(--wpds-color-bg-surface-neutral-strong, #fff);
+}
 
-	h1 {
-		font-size: 24px;
-		font-weight: 500;
-		line-height: 1.2;
-		margin: 0;
+// Dashboard fills exactly the available canvas (viewport minus
+// layout__content padding). Using `height` (not `min-height`) plus the
+// body's `overflow: hidden` above means the content can never push a
+// scrollbar onto the page. Tablet padding (71/24) handled in the breakpoint.
+.home-dashboard {
+	background: var(--wpds-color-bg-surface-neutral-strong, #fff);
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 79px - 32px);
+
+	@media (max-width: 959px) {
+		height: calc(100vh - 71px - 24px);
 	}
 }
 
-.home-dashboard__grid {
+// Centers the dashboard content vertically + horizontally in the canvas,
+// matching the Figma's centered Main area.
+.home-dashboard__main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+	padding: 24px;
+	box-sizing: border-box;
+}
+
+// --- Site Setup ("Get the most out of WordPress") ---------------------------
+
+// Content width — the launchpad column absorbs the extra space alongside
+// the fixed 320px theme card (resolves to ~680px wide at the max).
+.site-setup {
+	width: 100%;
+	max-width: 1024px;
+}
+
+.site-setup__heading h2 {
+	margin: 0;
+}
+
+.site-setup__progress {
+	color: var(--wpds-color-fg-content-neutral-weak, #707070);
+}
+
+.site-setup__grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 320px;
-	gap: 24px;
+	gap: var(--wpds-dimension-gap-2xl, 24px);
+	// Stretch (default) so the theme preview card matches the launchpad
+	// column's height — the iframe inside fills whatever shape it ends up.
 
 	@media (max-width: 880px) {
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
 
-.home-dashboard__col {
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
+.site-setup__launchpad {
 	min-width: 0;
 }
 
-.home-dashboard__row {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	gap: 24px;
-
-	@media (max-width: 600px) {
-		grid-template-columns: minmax(0, 1fr);
-	}
+// The theme preview: a @wordpress/ui Card containing a sandboxed iframe of
+// the site (same pattern as the /sites grid view's SitePreviewCard). The
+// iframe is virtually 1200px wide and scaled via CSS transform to fit the
+// card. FullBleed cancels horizontal padding; the negative margin-block
+// extends it vertically so the preview fills edge to edge. The bleed
+// wrapper is `position: relative` so useResizeObserver inside it measures
+// the right element.
+// Constrain the card to its 320px grid track regardless of what's inside.
+// The iframe at 1200px intrinsic width would otherwise force the column
+// wider via grid items' default `min-width: auto`. Explicit pixel height
+// (rather than aspect-ratio or 100% cascade) because @wordpress/ui Card
+// internals were overriding both — the bleed couldn't resolve a height
+// against an ambiguous Card.Content.
+.site-setup__theme {
+	overflow: hidden;
+	min-width: 0;
+	height: 300px;
+	align-self: start;
 }
 
-.home-dashboard__widget {
-	// @wordpress/components Card already provides border + shadow.
-	// Tighten the header layout to match the screenshot.
-	.components-card__header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
-
-		h2 {
-			margin: 0;
-			font-size: 16px;
-			font-weight: 500;
-			line-height: 1.4;
-		}
-	}
-
-	.components-card__body {
-		font-size: 13px;
-		line-height: 1.5;
-	}
+.site-setup__theme-content {
+	height: 100%;
 }
 
-.home-dashboard__activity-list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.home-dashboard__activity-item {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-
-	a {
-		color: var(--wp-admin-theme-color, #3858e9);
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
-	}
-}
-
-.home-dashboard__glance-list {
-	list-style: none;
-	margin: 0 0 12px;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-
-	a {
-		color: var(--wp-admin-theme-color, #3858e9);
-		text-decoration: none;
-
-		&:hover {
-			text-decoration: underline;
-		}
-	}
-}
-
-.home-dashboard__site-preview-frame {
+// FullBleed cancels the card's horizontal padding; the negative margin-block
+// + 100% + 2× padding height makes it span vertically edge-to-edge too. The
+// bleed is the positioned container the iframe wrapper sizes against.
+.site-setup__theme-bleed {
 	position: relative;
-	background: #f0f0f1;
-	border-radius: 4px;
-	height: 200px;
 	overflow: hidden;
-	margin-bottom: 12px;
-
-	// SiteThumbnail enforces its own width/height; stretch it to fill the frame.
-	.site-thumbnail {
-		width: 100% !important;
-		height: 100% !important;
-	}
-
-	.site-thumbnail__image {
-		display: block;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: top center;
-	}
+	margin-block: calc(-1 * var(--wp-ui-card-padding));
+	height: calc(100% + 2 * var(--wp-ui-card-padding));
 }
 
-.home-dashboard__site-preview-meta {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-}
-
-.home-dashboard__site-preview-name {
-	font-size: 14px;
-	font-weight: 500;
-	line-height: 1.3;
+// Absolutely-positioned wrapper around the iframe — same pattern as the
+// /sites grid's SitePreviewCard. Takes the 1200px-wide iframe out of normal
+// flow so it can't grow the parent. Shifts up by ~34px to crop the
+// "Get this theme on WordPress.com" promo banner (and its hairline bottom
+// border) that hide_banners=true doesn't suppress for theme demo URLs.
+.site-setup__theme-iframe {
+	position: absolute;
+	top: -34px;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+
+	// Defeat Calypso's global `iframe { max-width: 100% }` so the iframe
+	// keeps its 1200px intrinsic width — the transform: scale() does the fit.
+	iframe {
+		max-width: none;
+	}
 }
 
 .home-dashboard__wizard-fab {
@@ -181,21 +158,6 @@
 
 	svg {
 		fill: currentColor;
-	}
-}
-
-.home-dashboard__site-preview-url {
-	font-size: 12px;
-	color: #50575e;
-	text-decoration: none;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	display: inline-block;
-	max-width: 200px;
-
-	&:hover {
-		text-decoration: underline;
 	}
 }
 

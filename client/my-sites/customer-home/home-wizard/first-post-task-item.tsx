@@ -1,16 +1,6 @@
 import page from '@automattic/calypso-router';
-import {
-	Icon,
-	Spinner,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	__experimentalItem as Item,
-	__experimentalText as Text,
-	__experimentalSpacer as Spacer,
-} from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { border, chevronRight } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { Button } from '@wordpress/ui';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePost } from 'calypso/state/posts/actions/save-post';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -21,7 +11,6 @@ import type { AppState } from 'calypso/types';
 
 type Props = {
 	task: SelectedTask;
-	itemClassName: string;
 };
 
 function escapeHtml( text: string ): string {
@@ -42,18 +31,19 @@ function paragraphsToBlockMarkup( paragraphs: string[] ): string {
 }
 
 /**
- * Tailored Launchpad row for "Publish your first post". When Dolly's
- * starter draft is cached in preferences, clicking the row creates a real
- * wpcom draft pre-populated with the title + paragraphs, then routes to
- * its editor. The user lands on a draft instead of a blank page.
+ * Call to action for the "first creation" tasks (publish first post / add
+ * portfolio piece / send first newsletter), shown inside the task's
+ * expanded Launchpad card.
  *
- * If the draft preference is missing (Dolly hadn't returned, errored, or
- * the user finished the wizard before this feature shipped), the row
- * silently falls back to the existing direct link to a blank editor.
+ * When Dolly's starter draft is cached in the wizard state, clicking the
+ * button creates a real wpcom draft pre-populated with the title +
+ * paragraphs and routes to its editor — the user lands on a draft instead
+ * of a blank page. If the draft is missing (Dolly hadn't returned, errored,
+ * or the user finished the wizard before this feature shipped), the button
+ * falls back to a plain link to a blank editor.
  */
-export default function FirstPostTaskItem( { task, itemClassName }: Props ) {
+export default function FirstPostTaskCta( { task }: Props ) {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 	const siteId = useSelector( ( state: AppState ) => getSelectedSite( state )?.ID ?? null );
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
 	const draft =
@@ -70,57 +60,20 @@ export default function FirstPostTaskItem( { task, itemClassName }: Props ) {
 		Array.isArray( draft.paragraphs ) &&
 		draft.paragraphs.length > 0;
 
-	// When Dolly returned a draft, the task row is no longer "publish your
-	// first post" generically — it's a specific draft Dolly wrote, ready to
-	// open. Reframe the row: title becomes the action ("Draft your first
-	// post"), subtitle is Dolly's verb-led description of what publishing
-	// the draft does for the user (falls back to the draft's post title for
-	// older cached drafts that don't have a subtitle).
-	const displayTitle = hasUsableDraft
-		? ( translate( 'Draft your first post' ) as string )
-		: task.title;
-	const displaySubtitle = hasUsableDraft && draft ? draft.subtitle ?? draft.title : task.subtitle;
-
-	const renderRowContents = ( trailing: React.ReactNode ) => (
-		<HStack alignment="center" spacing={ 3 }>
-			<span className="tailored-launchpad__check" aria-hidden="true">
-				<Icon icon={ border } size={ 24 } />
-			</span>
-			<VStack spacing={ 0 } className="tailored-launchpad__body">
-				<span className="tailored-launchpad__title">{ displayTitle }</span>
-				{ displaySubtitle && (
-					<Text variant="muted" size={ 12 }>
-						{ displaySubtitle }
-					</Text>
-				) }
-			</VStack>
-			<Spacer />
-			{ trailing }
-		</HStack>
-	);
-
-	// No draft yet → behave exactly like the default row: a plain link to a
-	// blank editor. This keeps every fallback path (Dolly slow, errored,
-	// pre-feature wizard finish) working without surprise.
+	// No draft yet (or no site) → behave like the default CTA: a plain
+	// client-side navigation to a blank editor. Uses onClick + page() rather
+	// than `render={ <a> }` because Calypso's global anchor styles override
+	// the @wordpress/ui Button's brand-tone background, leaving the CTA
+	// near-invisible when rendered as an <a>.
 	if ( ! hasUsableDraft || ! siteId ) {
 		return (
-			<Item
-				className={ itemClassName + ' tailored-launchpad__row' }
-				as="a"
-				href={ task.resolvedUrl }
-				aria-label={ task.title }
-			>
-				{ renderRowContents(
-					<span className="tailored-launchpad__chevron" aria-hidden="true">
-						<Icon icon={ chevronRight } size={ 20 } />
-					</span>
-				) }
-			</Item>
+			<Button variant="solid" tone="brand" onClick={ () => page( task.resolvedUrl ) }>
+				{ task.cta }
+			</Button>
 		);
 	}
 
-	const onClick = async ( event: React.MouseEvent ) => {
-		event.preventDefault();
+	const onClick = async () => {
 		if ( isCreating ) {
 			return;
 		}
@@ -128,7 +81,7 @@ export default function FirstPostTaskItem( { task, itemClassName }: Props ) {
 		try {
 			const content = paragraphsToBlockMarkup( draft!.paragraphs );
 			const savedPost = ( await dispatch(
-				savePost( siteId, null, {
+				savePost( siteId, undefined, {
 					title: draft!.title,
 					content,
 					status: 'draft',
@@ -151,23 +104,8 @@ export default function FirstPostTaskItem( { task, itemClassName }: Props ) {
 	};
 
 	return (
-		<Item
-			as="button"
-			type="button"
-			onClick={ onClick }
-			disabled={ isCreating }
-			className={ itemClassName + ' tailored-launchpad__row' }
-			aria-label={ task.title }
-		>
-			{ renderRowContents(
-				isCreating ? (
-					<Spinner />
-				) : (
-					<span className="tailored-launchpad__chevron" aria-hidden="true">
-						<Icon icon={ chevronRight } size={ 20 } />
-					</span>
-				)
-			) }
-		</Item>
+		<Button variant="solid" tone="brand" loading={ isCreating } onClick={ onClick }>
+			{ task.cta }
+		</Button>
 	);
 }
