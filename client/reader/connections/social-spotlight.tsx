@@ -8,7 +8,7 @@ import {
 } from '@automattic/api-core';
 import { useQueries } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getThreadUrl as getAtmosphereThreadUrl } from 'calypso/reader/atmosphere/route';
 import { getThreadUrl as getMastodonThreadUrl } from 'calypso/reader/mastodon/route';
@@ -116,6 +116,51 @@ export function SocialSpotlight( { connections }: Props ) {
 		} ) ),
 	} );
 
+	// When a per-protocol timeline endpoint errors, the strip silently
+	// drops that connection's posts. Without a log, a regression in any
+	// of the three upstreams is invisible until somebody notices the
+	// strip never appears. Track which queries we've already logged for
+	// this session so a re-render or refetch loop doesn't spam logstash.
+	const loggedErrorKeys = useRef< Set< string > >( new Set() );
+	useEffect( () => {
+		queries.forEach( ( query, index ) => {
+			if ( ! query.isError ) {
+				return;
+			}
+			const connection = connections[ index ];
+			const key = `${ connection.protocol }-${ connection.id }`;
+			if ( loggedErrorKeys.current.has( key ) ) {
+				return;
+			}
+			loggedErrorKeys.current.add( key );
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: 'Reader Social Spotlight: timeline fetch failed',
+				severity: 'warning',
+				extra: {
+					type: 'reader_social_spotlight_fetch_failed',
+					protocol: connection.protocol,
+					connection_id: connection.id,
+					error:
+						query.error instanceof Error ? query.error.message : String( query.error ?? 'unknown' ),
+				},
+			} );
+		} );
+	}, [ queries, connections ] );
+
+	// `useQueries` returns a freshly-constructed array on each render even
+	// when no underlying state changed, so memoing on `queries` directly
+	// would re-run this body every render — including the per-item mapper
+	// and the logstash log-on-failure side-effect inside it. Key the memo
+	// on `dataUpdatedAt` instead: it only advances when a query delivers
+	// a new payload, which is exactly when we want to recompute.
+	const dataSignature = queries
+		.map( ( q, index ) => {
+			const connection = connections[ index ];
+			return `${ connection.protocol }-${ connection.id }-${ q.dataUpdatedAt ?? 0 }`;
+		} )
+		.join( '|' );
+
 	const items = useMemo( () => {
 		const all: SpotlightItem[] = [];
 		queries.forEach( ( query, index ) => {
@@ -172,7 +217,10 @@ export function SocialSpotlight( { connections }: Props ) {
 			.filter( ( item ) => item.score > 0 )
 			.sort( ( a, b ) => b.score - a.score )
 			.slice( 0, SPOTLIGHT_LIMIT );
-	}, [ queries, connections ] );
+		// `dataSignature` is the stable shadow of `queries` and `connections` —
+		// see the comment above its declaration.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ dataSignature ] );
 
 	const isLoading = queries.some( ( q ) => q.isPending );
 
@@ -249,11 +297,23 @@ export function SocialSpotlight( { connections }: Props ) {
 								</header>
 								<p className="social-spotlight__card-text">{ snippet( item.post.text ) }</p>
 								<footer className="social-spotlight__card-counts">
-									<span aria-label={ String( translate( 'Likes' ) ) }>
-										♡ { item.post.counts?.likes ?? 0 }
+									<span>
+										<span aria-hidden="true">♡ { item.post.counts?.likes ?? 0 }</span>
+										<span className="screen-reader-text">
+											{ translate( '%(count)d like', '%(count)d likes', {
+												count: item.post.counts?.likes ?? 0,
+												args: { count: item.post.counts?.likes ?? 0 },
+											} ) }
+										</span>
 									</span>
-									<span aria-label={ String( translate( 'Reposts' ) ) }>
-										↻ { item.post.counts?.reposts ?? 0 }
+									<span>
+										<span aria-hidden="true">↻ { item.post.counts?.reposts ?? 0 }</span>
+										<span className="screen-reader-text">
+											{ translate( '%(count)d repost', '%(count)d reposts', {
+												count: item.post.counts?.reposts ?? 0,
+												args: { count: item.post.counts?.reposts ?? 0 },
+											} ) }
+										</span>
 									</span>
 								</footer>
 							</a>
