@@ -6,6 +6,11 @@ export interface AtmosphereConnection {
 	// The list endpoint always returns null. Real avatars come from
 	// getConnection(id).
 	avatar: string | null;
+	// Hostname of the PDS this connection's token resolves to (e.g.
+	// `bsky.social`, `pds.example.com`). Optional during the rollout
+	// window: tokens minted before CM-739 don't have a stored PDS, and
+	// the serializer occasionally falls back to dynamic resolution.
+	pds_hostname?: string | null;
 }
 
 export interface AtmosphereConnectionsResponse {
@@ -30,6 +35,9 @@ export interface AtmosphereConnectionDetails {
 	avatar: string | null;
 	banner: string | null;
 	counts: AtmosphereProfileCounts;
+	// Same caveat as `AtmosphereConnection.pds_hostname` — optional during
+	// the rollout window.
+	pds_hostname?: string | null;
 }
 
 export interface AtmosphereAuthor {

@@ -323,6 +323,14 @@
 	white-space: nowrap;
 }
 
+.social-card__pds {
+	font-size: 0.75rem;
+	color: var( --color-text-subtle );
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .social-card__protocol {
 	margin-block-start: 4px;
 	font-size: 0.6875rem; /* stylelint-disable-line scales/font-sizes */
