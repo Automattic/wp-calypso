@@ -83,6 +83,7 @@ const loadSupportArticleDialog = () =>
 const HELP_CENTER_FAB_SECTIONS = [
 	'accept-invite',
 	'checkout',
+	'login',
 	'mailing-lists',
 	'patterns',
 	'performance-profiler',
@@ -171,13 +172,19 @@ const LayoutLoggedOut = ( {
 		! isJetpackCloud &&
 		! isWooOAuth2Client( oauth2Client );
 
+	// OAuth client logins (Gravatar, WPJobManager, Woo, etc.) and /log-in/jetpack
+	// have their own branding and support paths.
+	const isWpcomLogin = sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin;
+
+	const isEligibleSection =
+		HELP_CENTER_FAB_SECTIONS.includes( sectionName ) && ( sectionName !== 'login' || isWpcomLogin );
+
 	// Logged-in users use the masterbar control instead.
 	// Reader tag embeds are widgets meant to be iframed by third parties — no FAB.
 	const showHelpCenterFab =
 		! isLoggedIn &&
 		isEnabled( 'help-center/logged-out-fab' ) &&
-		( HELP_CENTER_FAB_SECTIONS.includes( sectionName ) ||
-			HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
+		( isEligibleSection || HELP_CENTER_FAB_ROUTES.includes( currentRoute ) ) &&
 		! isReaderTagEmbed &&
 		userAllowedToHelpCenter;
 
