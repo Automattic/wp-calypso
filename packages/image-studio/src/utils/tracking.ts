@@ -582,7 +582,7 @@ export function trackImageStudioReelShareNotConnected( {
 }: {
 	surface: ShareSurface;
 } ): void {
-	recordImageStudioEvent( 'image_studio_reel_share_not_connected', { surface } );
+	recordImageStudioEvent( 'image_studio_feature_clip_share_not_connected', { surface } );
 }
 
 /**
