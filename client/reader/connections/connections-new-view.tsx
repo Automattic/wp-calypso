@@ -117,19 +117,19 @@ export function ConnectionsNewView() {
 							}` }
 							elevation={ 0 }
 						>
-							<div className="connections-new__card-icon" aria-hidden="true">
-								{ option.icon }
-							</div>
-							<div className="connections-new__card-body">
-								{ featured && (
-									<div className="connections-new__card-badge">
-										{ translate( 'Recommended for WordPress folks' ) }
-									</div>
-								) }
+							{ featured && (
+								<div className="connections-new__card-badge">
+									{ translate( 'Recommended for WordPress folks' ) }
+								</div>
+							) }
+							<div className="connections-new__card-heading">
+								<div className="connections-new__card-icon" aria-hidden="true">
+									{ option.icon }
+								</div>
 								<h3 className="connections-new__card-label">{ option.label }</h3>
-								<p className="connections-new__card-tagline">{ option.tagline }</p>
-								<p className="connections-new__card-description">{ option.body }</p>
 							</div>
+							<p className="connections-new__card-tagline">{ option.tagline }</p>
+							<p className="connections-new__card-description">{ option.body }</p>
 						</Card>
 					);
 

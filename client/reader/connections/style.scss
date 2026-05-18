@@ -37,10 +37,7 @@
 
 .connections-new__card {
 	position: relative;
-	display: flex;
-	align-items: flex-start;
-	gap: 20px;
-	padding: 24px;
+	padding: 28px;
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	transition: box-shadow 0.15s ease-in-out;
@@ -80,15 +77,21 @@
 	--connections-new-card-accent: var( --studio-purple-50 );
 }
 
+.connections-new__card-heading {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-block-end: 16px;
+}
+
 .connections-new__card-icon {
 	flex-shrink: 0;
-	width: 56px;
-	height: 56px;
+	width: 36px;
+	height: 36px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	color: var( --connections-new-card-accent, var( --color-text ) );
-	margin-block-start: 2px;
 
 	// Brand icons hard-code the `sidebar__menu-icon` class on their SVG,
 	// which inherits a section-scoped margin-inline-end intended for the
@@ -96,21 +99,16 @@
 	// slot. See the matching note in reader-sidebar-connections/
 	// style.scss for why we override with !important.
 	svg {
-		width: 56px;
-		height: 56px;
+		width: 36px;
+		height: 36px;
 		margin: 0 !important;
 	}
 }
 
-.connections-new__card-body {
-	flex: 1;
-	min-width: 0;
-}
-
 .connections-new__card-badge {
 	display: inline-block;
+	margin-block-end: 16px;
 	padding: 2px 8px;
-	margin-block-end: 8px;
 	font-size: 0.6875rem; /* stylelint-disable-line scales/font-sizes */
 	font-weight: 600;
 	letter-spacing: 0.02em;
@@ -121,14 +119,14 @@
 }
 
 .connections-new__card-label {
-	margin: 0 0 4px;
+	margin: 0;
 	font-size: 1.1rem; /* stylelint-disable-line scales/font-sizes */
 	font-weight: 600;
 	color: var( --color-text );
 }
 
 .connections-new__card-tagline {
-	margin: 0 0 8px;
+	margin: 0 0 12px;
 	font-size: 0.95rem; /* stylelint-disable-line scales/font-sizes */
 	font-weight: 500;
 	color: var( --color-text );
