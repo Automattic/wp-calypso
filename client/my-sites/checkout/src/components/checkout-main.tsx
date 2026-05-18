@@ -1,4 +1,3 @@
-import { useRazorpay } from '@automattic/calypso-razorpay';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -58,7 +57,6 @@ import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
-import razorpayProcessor from '../lib/razorpay-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import upiProcessor from '../lib/upi-processor';
 import weChatProcessor from '../lib/we-chat-processor';
@@ -199,7 +197,6 @@ export default function CheckoutMain( {
 	} )();
 
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useMemo( () => {
@@ -439,9 +436,6 @@ export default function CheckoutMain( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isRazorpayLoading,
-		razorpayLoadingError,
-		razorpayConfiguration,
 		storedCards,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
@@ -534,7 +528,6 @@ export default function CheckoutMain( {
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
-			razorpayConfiguration,
 			recaptchaClientId,
 			fromSiteSlug,
 			isJetpackNotAtomic,
@@ -551,7 +544,6 @@ export default function CheckoutMain( {
 			updatedSiteId,
 			stripe,
 			stripeConfiguration,
-			razorpayConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
 			fromSiteSlug,
@@ -609,8 +601,6 @@ export default function CheckoutMain( {
 			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
-			razorpay: ( transactionData: unknown ) =>
-				razorpayProcessor( transactionData, dataForProcessor, translate ),
 		} ),
 		[ dataForProcessor, sitelessCheckoutType, translate ]
 	);

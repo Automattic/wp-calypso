@@ -6,7 +6,9 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { getPackBlogs } from '../get-pack-blogs';
 import InterestsModal from '../index';
+import { getTopicGroups } from '../topic-groups';
 
 // ── External data hooks ──────────────────────────────────────────────────────
 
@@ -21,17 +23,39 @@ jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
 // ── Internal helpers / child components ─────────────────────────────────────
 
 jest.mock( '../get-pack-blogs', () => ( {
-	getPackBlogs: () => [],
+	getPackBlogs: jest.fn( () => [] ),
 } ) );
 
 jest.mock( '../topic-groups', () => ( {
-	getTopicGroups: () => [],
+	getTopicGroups: jest.fn( () => [] ),
 } ) );
 
-jest.mock( '../topic-group-card', () => ( {
-	__esModule: true,
-	default: () => null,
-} ) );
+jest.mock( '../topic-group-card', () => {
+	const React = require( 'react' );
+	return {
+		__esModule: true,
+		default: ( {
+			title,
+			blogs,
+			onSubscribe,
+		}: {
+			title: string;
+			blogs: { length: number }[];
+			onSubscribe: () => void;
+		} ) =>
+			React.createElement(
+				'button',
+				{
+					type: 'button',
+					'data-testid': 'topic-pack-card',
+					'data-title': title,
+					'data-blog-count': String( blogs.length ),
+					onClick: onSubscribe,
+				},
+				'Pack subscribe'
+			),
+	};
+} );
 
 // Give the nudge a stable test-id so tests can assert on its presence.
 jest.mock( '../verificationNudge', () => ( {
@@ -129,5 +153,54 @@ describe( 'InterestsModal – verification nudge', () => {
 			'true'
 		);
 		expect( screen.queryByTestId( 'interests-verification-nudge' ) ).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'InterestsModal – most subscribed pack', () => {
+	const fivePackBlogs = Array.from( { length: 5 }, ( _, i ) => ( {
+		feed_ID: 900 + i,
+		site_ID: 800 + i,
+		site_URL: `https://pack-${ i }.example`,
+		site_name: `Pack site ${ i }`,
+		feed_URL: `https://pack-${ i }.example/feed`,
+		has_icon: true,
+	} ) );
+
+	afterEach( () => {
+		jest.mocked( getTopicGroups ).mockReset().mockReturnValue( [] );
+		jest.mocked( getPackBlogs ).mockReset().mockReturnValue( [] );
+	} );
+
+	it( 'renders the tagless pack with blog count from getPackBlogs( [], { directKey } ) and keeps Continue disabled after subscribe', async () => {
+		const user = userEvent.setup();
+
+		jest.mocked( getTopicGroups ).mockReturnValue( [
+			{
+				id: 'most-subscribed',
+				title: 'Most Subscribed',
+				description: 'Popular reads.',
+				imageUrl: 'https://images.example/subscribed.webp',
+				tags: [],
+			},
+		] );
+
+		jest.mocked( getPackBlogs ).mockImplementation( ( tags, opts ) => {
+			expect( tags ).toEqual( [] );
+			expect( opts ).toEqual( { directKey: 'most-subscribed' } );
+			return fivePackBlogs;
+		} );
+
+		renderWithProvider( <InterestsModal onContinue={ jest.fn() } promptVerification={ false } /> );
+
+		const packCard = screen.getByTestId( 'topic-pack-card' );
+		expect( packCard ).toHaveAttribute( 'data-title', 'Most Subscribed' );
+		expect( packCard ).toHaveAttribute( 'data-blog-count', '5' );
+
+		await user.click( packCard );
+
+		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
 	} );
 } );

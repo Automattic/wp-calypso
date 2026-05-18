@@ -1,6 +1,7 @@
 import './account-row.scss';
 
 import { useTranslate } from 'i18n-calypso';
+import { SocialAvatar } from './avatar';
 import { FollowButton } from './follow-button';
 
 export interface SocialAccountRowFollowState {
@@ -55,8 +56,10 @@ export function SocialAccountRow( props: SocialAccountRowProps ) {
 			<div className="social-account-row__avatar">
 				{ /* The display name is rendered as a sibling text node; mark the
 				   avatar decorative so screen readers don't double-announce it.
-				   Mirrors the SocialProfileCard pattern at profile-card.tsx. */ }
-				{ avatarUrl ? <img src={ avatarUrl } alt="" /> : null }
+				   Mirrors the SocialProfileCard pattern at profile-card.tsx.
+				   The container's `background` SCSS color is the visible fallback
+				   when there is no avatar URL or when the image fails to load. */ }
+				<SocialAvatar src={ avatarUrl } alt="" />
 			</div>
 			<div className="social-account-row__main">
 				<div className="social-account-row__identity">

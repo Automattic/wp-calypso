@@ -1,6 +1,7 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery, siteSettingsQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { DateRangePicker } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Outlet, useParams, useRouter } from '@tanstack/react-router';
 import { __experimentalGrid as Grid } from '@wordpress/components';
@@ -17,7 +18,6 @@ import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteBackupsIndexRoute, siteBackupDetailRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
-import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { hasHostingFeature } from '../../utils/site-features';

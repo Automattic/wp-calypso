@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -219,19 +220,31 @@ const onboarding: FlowV2< typeof initialize > = {
 					const setupChoice = providedDependencies?.setupChoice;
 					const siteSlug = providedDependencies?.siteSlug as string;
 					const siteId = providedDependencies?.siteId as number | string | undefined;
+					const prompt = providedDependencies?.prompt as string | undefined;
 
 					switch ( setupChoice ) {
 						case 'build-with-ai':
 							window.location.assign(
 								addQueryArgs( `/setup/${ SITE_SETUP_FLOW }/${ STEPS.LAUNCH_BIG_SKY.slug }`, {
 									siteSlug,
-									siteId,
+									// Skip siteId when it's 0/falsy: useSiteData returns 0 before
+									// the site object hydrates, and "0" in the URL poisons the
+									// next page's site lookup.
+									...( siteId && siteId !== '0' ? { siteId } : {} ),
 									fromPostCheckoutSetupSite: '1',
+									...( refParameter ? { ref: refParameter } : {} ),
+									...( prompt ? { prompt } : {} ),
 								} )
 							);
 							return;
 						case 'blank-site':
-							window.location.assign( `/sites/${ siteSlug }` );
+							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
+								const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
+								const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
+								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
+							} else {
+								window.location.assign( `/sites/${ siteSlug }` );
+							}
 							return;
 						default:
 							return;
@@ -297,6 +310,11 @@ const onboarding: FlowV2< typeof initialize > = {
 									coupon,
 								} )
 							);
+						} else if (
+							refParameter === WOO_HOSTING_SOLUTIONS_REF &&
+							isEnabled( 'onboarding/woo-hosting-post-purchase-setup-choice' )
+						) {
+							return navigate( 'setup-your-site-ai' );
 						} else if ( providedDependencies?.postCheckoutBigSkyVariation === 'big_sky' ) {
 							return navigate( 'setup-your-site-ai' );
 						} else {

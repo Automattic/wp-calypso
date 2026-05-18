@@ -70,7 +70,11 @@ jest.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
 
 jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 	__esModule: true,
-	default: () => <div data-testid="subscribe-modal-content" />,
+	default: ( { onClose }: { onClose: () => void } ) => (
+		<div data-testid="subscribe-modal-content">
+			<button onClick={ onClose }>Finish</button>
+		</div>
+	),
 } ) );
 
 // ── Redux / selectors ─────────────────────────────────────────────────────────
@@ -90,14 +94,6 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
 } ) );
 
-jest.mock( 'calypso/state/gravatar-status/selectors', () => ( {
-	hasGravatar: jest.fn().mockReturnValue( false ),
-} ) );
-
-jest.mock( 'calypso/state/gravatar-status/actions', () => ( {
-	requestGravatarDetails: jest.fn( () => ( { type: 'GRAVATAR_DETAILS_REQUEST' } ) ),
-} ) );
-
 jest.mock( 'calypso/state/reader/follows/selectors', () => ( {
 	getReaderFollows: jest.fn().mockReturnValue( [] ),
 } ) );
@@ -106,14 +102,15 @@ jest.mock( 'calypso/state/reader/follows/actions', () => ( {
 	requestFollows: jest.fn( () => ( { type: 'READER_FOLLOWS_REQUEST' } ) ),
 } ) );
 
-jest.mock( 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile', () => ( {
-	__esModule: true,
-	default: jest.fn().mockReturnValue( false ),
-} ) );
-
 jest.mock( 'calypso/state/reader/streams/actions', () => ( {
 	clearStream: jest.fn( () => ( { type: 'READER_CLEAR_STREAM' } ) ),
 	requestPage: jest.fn( () => ( { type: 'READER_REQUEST_PAGE' } ) ),
+	requestPaginatedStream: jest.fn( () => ( { type: 'READER_REQUEST_PAGINATED_STREAM' } ) ),
+} ) );
+
+const mockRefreshFollowingStreams = jest.fn();
+jest.mock( '../use-refresh-following-streams', () => ( {
+	useRefreshFollowingStreams: () => mockRefreshFollowingStreams,
 } ) );
 
 // ── Data hooks ────────────────────────────────────────────────────────────────
@@ -137,6 +134,10 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 } ) );
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
+
+beforeEach( () => {
+	mockRefreshFollowingStreams.mockClear();
+} );
 
 describe( 'ReaderOnboardingRsm – back button navigation', () => {
 	// The welcome step auto-opens because hasSeenOnboarding is null (mocked via getPreference).
@@ -179,5 +180,50 @@ describe( 'ReaderOnboardingRsm – back button navigation', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 
 		expect( await screen.findByTestId( 'interests-modal-content' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
+	it( 'calls refreshFollowingStreams when the interests step is closed via Continue', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+
+		expect( mockRefreshFollowingStreams ).not.toHaveBeenCalled();
+
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+		expect( mockRefreshFollowingStreams ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'calls refreshFollowingStreams when the discover step is closed via Finish', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		mockRefreshFollowingStreams.mockClear();
+
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( mockRefreshFollowingStreams ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not call refreshFollowingStreams when only the welcome step is closed', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+
+		// welcome close side-effects fire on Continue; refresh should NOT be called
+		expect( mockRefreshFollowingStreams ).not.toHaveBeenCalled();
 	} );
 } );
