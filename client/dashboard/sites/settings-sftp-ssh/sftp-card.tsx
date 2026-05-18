@@ -41,8 +41,16 @@ export default function SftpCard( {
 	sftpUsers: SftpUser[];
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
-	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation( {
+		...siteSftpUsersResetPasswordMutation( siteId ),
+		meta: {
+			snackbar: {
+				success: __( 'SFTP password reset.' ),
+				error: __( 'Failed to reset SFTP password. Please try again.' ),
+			},
+		},
+	} );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ showResetPasswordConfirmDialog, setShowResetPasswordConfirmDialog ] = useState( false );
 	const formData = {
 		url: SFTP_URL,
@@ -132,18 +140,7 @@ export default function SftpCard( {
 	};
 
 	const handleConfirmResetPassword = () => {
-		mutation.mutate( username, {
-			onError: () => {
-				createErrorNotice(
-					__(
-						'Sorry, we had a problem retrieving your SFTP user details. Please refresh the page and try again.'
-					),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
-		} );
+		mutation.mutate( username );
 
 		setShowResetPasswordConfirmDialog( false );
 	};
@@ -170,17 +167,16 @@ export default function SftpCard( {
 						form={ form }
 						onChange={ noop }
 					/>
-					{ ! password && (
-						<ButtonStack justify="flex-start">
-							<Button
-								variant="secondary"
-								isBusy={ mutation.isPending }
-								onClick={ () => setShowResetPasswordConfirmDialog( true ) }
-							>
-								{ __( 'Reset password' ) }
-							</Button>
-						</ButtonStack>
-					) }
+					<ButtonStack justify="flex-start">
+						<Button
+							variant="secondary"
+							isBusy={ mutation.isPending }
+							disabled={ mutation.isPending }
+							onClick={ () => setShowResetPasswordConfirmDialog( true ) }
+						>
+							{ __( 'Reset password' ) }
+						</Button>
+					</ButtonStack>
 				</VStack>
 			</CardBody>
 			<ConfirmDialog
