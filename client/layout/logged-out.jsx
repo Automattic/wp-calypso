@@ -36,6 +36,7 @@ import {
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
+import untrailingslashit from 'calypso/lib/route/untrailingslashit';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
@@ -115,8 +116,7 @@ const isFabSafeLoginUrl = () => {
 		return false;
 	}
 	const { pathname, search, hash } = window.location;
-	const normalizedPath = pathname.replace( /\/+$/, '' );
-	return WPCOM_LOGIN_FAB_PATHNAMES.has( normalizedPath ) && ! search && ! hash;
+	return WPCOM_LOGIN_FAB_PATHNAMES.has( untrailingslashit( pathname ) ) && ! search && ! hash;
 };
 
 const LayoutLoggedOut = ( {
@@ -195,8 +195,7 @@ const LayoutLoggedOut = ( {
 		! isWooOAuth2Client( oauth2Client );
 
 	// OAuth client logins (Gravatar, WPJobManager, Woo, etc.) and /log-in/jetpack
-	// have their own branding and support paths. Other login sub-flows are filtered
-	// out by isFabSafeLoginUrl, which rejects URLs that carry secrets.
+	// have their own branding and support paths.
 	const isWpcomLogin =
 		sectionName === 'login' && ! useOAuth2Layout && ! isJetpackLogin && isFabSafeLoginUrl();
 
