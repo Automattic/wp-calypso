@@ -11,8 +11,8 @@ import type {
 } from '@automattic/api-core';
 import type React from 'react';
 
-// `ReaderMain` mounts `<sync-reader-follows>`, which selects from a Redux
-// branch the test store doesn't seed. Stub it to a passthrough.
+// Stub `ReaderMain` to a passthrough so the test doesn't pull in
+// SyncReaderFollows and the data-layer requests it triggers.
 jest.mock(
 	'calypso/reader/components/reader-main',
 	() =>
@@ -177,8 +177,26 @@ describe( 'SocialOverviewView — ATmosphere PDS hostname', () => {
 		expect( screen.getByText( 'pds.example.com' ) ).toBeVisible();
 	} );
 
-	// The rollout path for newly-minted tokens: the list endpoint hasn't
-	// been backfilled yet but getConnection(id) resolves the PDS dynamically.
+	// Pins the inline-comment claim that an undefined details field
+	// must not erase the list value — separate from the `data: undefined`
+	// case above, since that one would also pass with inverted precedence.
+	it( 'keeps the list value when details has resolved but omits pds_hostname', () => {
+		mockUseConnectionsQuery.mockReturnValue( {
+			data: { connections: [ makeConnection( { pds_hostname: 'pds.example.com' } ) ] },
+			isPending: false,
+			isError: false,
+		} );
+		mockUseConnectionQuery.mockReturnValue( {
+			data: makeDetails( { pds_hostname: undefined } ),
+		} );
+
+		render( <SocialOverviewView /> );
+
+		expect( screen.getByText( 'pds.example.com' ) ).toBeVisible();
+	} );
+
+	// Pre-CM-739 connections: the list endpoint hasn't been backfilled,
+	// so it returns `null`, but getConnection(id) resolves the PDS.
 	it( 'uses the details value when the list value is null', () => {
 		mockUseConnectionsQuery.mockReturnValue( {
 			data: { connections: [ makeConnection( { pds_hostname: null } ) ] },
@@ -209,9 +227,50 @@ describe( 'SocialOverviewView — ATmosphere PDS hostname', () => {
 		expect( container.querySelector( '.social-card__pds' ) ).toBeNull();
 	} );
 
-	it( 'never renders a PDS line for non-ATmosphere cards', () => {
+	// A padded value would otherwise pass `!!pdsHostname` and slip past the
+	// default-host check, rendering a visually-blank pill in production.
+	it( 'hides the PDS line when pds_hostname is whitespace-only', () => {
 		mockUseConnectionsQuery.mockReturnValue( {
-			data: { connections: [ makeConnection( { pds_hostname: 'pds.example.com' } ) ] },
+			data: { connections: [ makeConnection( { pds_hostname: '   ' } ) ] },
+			isPending: false,
+			isError: false,
+		} );
+		mockUseConnectionQuery.mockReturnValue( {
+			data: makeDetails( { pds_hostname: '   ' } ),
+		} );
+
+		const { container } = render( <SocialOverviewView /> );
+
+		expect( container.querySelector( '.social-card__pds' ) ).toBeNull();
+	} );
+
+	it( 'normalizes casing and whitespace so a padded default still hides', () => {
+		mockUseConnectionsQuery.mockReturnValue( {
+			data: {
+				connections: [
+					makeConnection( { handle: 'alice.bsky.social', pds_hostname: ' BSKY.social ' } ),
+				],
+			},
+			isPending: false,
+			isError: false,
+		} );
+		mockUseConnectionQuery.mockReturnValue( {
+			data: makeDetails( { handle: 'alice.bsky.social', pds_hostname: ' BSKY.social ' } ),
+		} );
+
+		const { container } = render( <SocialOverviewView /> );
+
+		expect( container.querySelector( '.social-card__pds' ) ).toBeNull();
+	} );
+
+	it( 'never renders a PDS line for non-ATmosphere cards', () => {
+		const atmosphereConnection = makeConnection( {
+			id: 101,
+			handle: 'alice.example.com',
+			pds_hostname: 'pds.example.com',
+		} );
+		mockUseConnectionsQuery.mockReturnValue( {
+			data: { connections: [ atmosphereConnection ] },
 			isPending: false,
 			isError: false,
 		} );
@@ -226,6 +285,59 @@ describe( 'SocialOverviewView — ATmosphere PDS hostname', () => {
 
 		const { container } = render( <SocialOverviewView /> );
 
-		expect( container.querySelectorAll( '.social-card__pds' ) ).toHaveLength( 1 );
+		const atmosphereCard = container.querySelector( '.social-card--atmosphere' );
+		const mastodonCard = container.querySelector( '.social-card--mastodon' );
+		expect( atmosphereCard?.querySelector( '.social-card__pds' ) ).not.toBeNull();
+		expect( mastodonCard?.querySelector( '.social-card__pds' ) ).toBeNull();
+	} );
+
+	// The per-id details query is parameterized by id: each card must see
+	// the details for *its own* connection. A refactor that hoisted the
+	// query out of the per-card render (or captured the wrong id in a
+	// closure) would silently merge both cards' state.
+	it( 'wires the per-id details query to each card individually', () => {
+		const aliceCustom = makeConnection( {
+			id: 101,
+			handle: 'alice.example.com',
+			pds_hostname: 'pds.example.com',
+		} );
+		const bobDefault = makeConnection( {
+			id: 202,
+			did: 'did:plc:bob',
+			handle: 'bob.bsky.social',
+			pds_hostname: 'bsky.social',
+		} );
+		mockUseConnectionsQuery.mockReturnValue( {
+			data: { connections: [ aliceCustom, bobDefault ] },
+			isPending: false,
+			isError: false,
+		} );
+		mockUseConnectionQuery.mockImplementation( ( id: number | null ) => {
+			if ( id === 101 ) {
+				return {
+					data: makeDetails( {
+						did: 'did:plc:alice',
+						handle: 'alice.example.com',
+						pds_hostname: 'pds.example.com',
+					} ),
+				};
+			}
+			if ( id === 202 ) {
+				return {
+					data: makeDetails( {
+						did: 'did:plc:bob',
+						handle: 'bob.bsky.social',
+						pds_hostname: 'bsky.social',
+					} ),
+				};
+			}
+			return { data: undefined };
+		} );
+
+		const { container } = render( <SocialOverviewView /> );
+
+		const pdsLines = container.querySelectorAll( '.social-card__pds' );
+		expect( pdsLines ).toHaveLength( 1 );
+		expect( pdsLines[ 0 ].textContent ).toBe( 'pds.example.com' );
 	} );
 } );

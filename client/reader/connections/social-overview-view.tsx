@@ -123,8 +123,13 @@ function SocialCardItem( { card, onClick }: { card: SocialCard; onClick: () => v
 		displayName = mastodon.data?.display_name || displayName;
 	}
 
+	// Normalize before comparing: trim whitespace and lowercase so a
+	// padded or mis-cased value can't slip past the default-host gate
+	// (which would render a noisy or blank-looking pill on every default
+	// account).
+	const normalizedPds = pdsHostname?.trim().toLowerCase() ?? '';
 	const showPds =
-		card.protocol === 'atmosphere' && !! pdsHostname && pdsHostname !== DEFAULT_PDS_HOSTNAME;
+		card.protocol === 'atmosphere' && !! normalizedPds && normalizedPds !== DEFAULT_PDS_HOSTNAME;
 
 	return (
 		<a
@@ -156,7 +161,7 @@ function SocialCardItem( { card, onClick }: { card: SocialCard; onClick: () => v
 			<div className="social-card__body">
 				<div className="social-card__name">{ displayName }</div>
 				<div className="social-card__handle">{ card.handle }</div>
-				{ showPds && <div className="social-card__pds">{ pdsHostname }</div> }
+				{ showPds && <div className="social-card__pds">{ normalizedPds }</div> }
 				<div className="social-card__protocol">{ getProtocolLabel( card.protocol ) }</div>
 			</div>
 		</a>

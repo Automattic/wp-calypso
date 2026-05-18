@@ -8,8 +8,8 @@ export interface AtmosphereConnection {
 	avatar: string | null;
 	// Hostname of the PDS this connection's token resolves to (e.g.
 	// `bsky.social`, `pds.example.com`). Optional during the rollout
-	// window: tokens minted before CM-739 don't have a stored PDS, and
-	// the serializer occasionally falls back to dynamic resolution.
+	// window: tokens minted before CM-739 don't have a stored PDS, so
+	// the serializer may omit the field on stale connections.
 	// TODO(post-CM-739): drop the `?` and keep `string | null` once the
 	// backfill completes.
 	pds_hostname?: string | null;
