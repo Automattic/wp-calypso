@@ -100,24 +100,29 @@ const HELP_CENTER_FAB_SECTIONS = [
 // Fallback when section name is unreliable — e.g. /me/account/closed activates as 'me'.
 const HELP_CENTER_FAB_ROUTES = [ '/me/account/closed' ];
 
-// FAB safety on /log-in: window.location.href is forwarded to Zendesk verbatim by
-// packages/odie-client (use-create-zendesk-conversation: messaging_url/source).
-// Login sub-flows put secrets in the query (social handoff, OAuth callbacks,
-// magic-link, lostpassword) or fragment (desktop finalize, social-connect), and
-// ?redirect_to can wrap arbitrary OAuth URLs with tokens at any depth. We can't
-// safely introspect those, so allow only the bare credential form (with optional
-// locale) and require an empty query + fragment.
+// /log-in briefly carries social-handoff tokens before the login controller strips
+// them (?access_token / ?id_token in query, #id_token / #client_id in hash).
+// Suppress the FAB during that window so window.location.href doesn't reach Zendesk.
 const WPCOM_LOGIN_FAB_PATHNAMES = new Set( [
 	'/log-in',
 	...getLanguageSlugs().map( ( slug ) => `/log-in/${ slug }` ),
 ] );
+
+const TOKEN_BEARING_LOGIN_QUERY_KEYS = [ 'access_token', 'id_token' ];
 
 const isFabSafeLoginUrl = () => {
 	if ( typeof window === 'undefined' ) {
 		return false;
 	}
 	const { pathname, search, hash } = window.location;
-	return WPCOM_LOGIN_FAB_PATHNAMES.has( untrailingslashit( pathname ) ) && ! search && ! hash;
+	if ( ! WPCOM_LOGIN_FAB_PATHNAMES.has( untrailingslashit( pathname ) ) || hash ) {
+		return false;
+	}
+	if ( ! search ) {
+		return true;
+	}
+	const params = new URLSearchParams( search );
+	return ! TOKEN_BEARING_LOGIN_QUERY_KEYS.some( ( key ) => params.has( key ) );
 };
 
 const LayoutLoggedOut = ( {
