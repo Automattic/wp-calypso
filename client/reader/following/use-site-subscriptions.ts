@@ -9,13 +9,13 @@ import { useMemo, useEffect, useRef } from 'react';
  *   - isLoading: boolean indicating if subscription data is being loaded (true until
  *     the first page of subscriptions arrives — matches existing fast-render semantics
  *     for callers that want to show partial data ASAP)
- *   - hasLoadedAllSubscriptions: boolean indicating whether both the count and
- *     site-subscriptions queries have fetched at least once since the component
- *     mounted *and* every page of the infinite query has arrived. Only
+ *   - hasLoadedAllSubscriptions: boolean indicating whether a fresh fetch has been
+ *     observed since the component mounted, both queries are currently idle, and
+ *     every page of the infinite query has arrived (`hasNextPage` is false). Only
  *     `nonSelfSubscriptionsCount` (and the `blogCount === 0` branch of
  *     `hasNonSelfSubscriptions`) is fully accurate once this is true — callers
  *     making count-based decisions (e.g. eligibility snapshots in onboarding)
- *     should gate on it instead of `isLoading`.
+ *     should gate on it rather than relying on `isLoading` alone.
  *   - hasNonSelfSubscriptions: boolean indicating if user has any subscriptions to non-self-owned blogs
  *   - nonSelfSubscriptionsCount: number of subscriptions to non-self-owned blogs across
  *     the pages loaded so far. Only exact once `hasLoadedAllSubscriptions` is true; for
