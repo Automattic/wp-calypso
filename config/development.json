@@ -182,7 +182,6 @@
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": true,
 		"push-notifications": true,
-		"reader/achievements": true,
 		"reader/social": true,
 		"reader/full-errors": true,
 		"reader/msd-enabled": true,
