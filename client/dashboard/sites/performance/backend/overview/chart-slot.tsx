@@ -42,6 +42,25 @@ function getAverageTotal( timeseries: ApmTimePoint[] ): number {
 	return Math.round( total / timeseries.length );
 }
 
+function formatMsValue( value: number ): string {
+	return `${ Math.round( value ).toLocaleString() } ms`;
+}
+
+function formatTooltipDate( date: Date ): string {
+	return date.toLocaleDateString( undefined, {
+		weekday: 'short',
+		month: 'short',
+		day: 'numeric',
+	} );
+}
+
+function formatTooltipTime( date: Date ): string {
+	return date.toLocaleTimeString( undefined, {
+		hour: '2-digit',
+		minute: '2-digit',
+	} );
+}
+
 export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] } ) {
 	const data = toSeriesData( timeseries );
 	const averageTotal = getAverageTotal( timeseries );
@@ -76,6 +95,54 @@ export default function ChartSlot( { timeseries }: { timeseries: ApmTimePoint[] 
 						showLegend
 						legend={ { interactive: true } }
 						withTooltips
+						renderTooltip={ ( { tooltipData, colorScale } ) => {
+							const date = tooltipData?.nearestDatum?.datum?.date;
+							if ( ! date ) {
+								return null;
+							}
+							const series = Object.values( tooltipData?.datumByKey ?? {} );
+							return (
+								<VStack spacing={ 3 } style={ { padding: '4px 2px', minWidth: 240 } }>
+									<VStack spacing={ 0 }>
+										<Text weight={ 600 }>{ formatTooltipDate( date ) }</Text>
+										<Text size={ 11 } variant="muted">
+											{ formatTooltipTime( date ) }
+										</Text>
+									</VStack>
+									<VStack spacing={ 1 }>
+										{ series.map( ( entry ) => {
+											const value = ( entry.datum as { value?: number } ).value ?? 0;
+											return (
+												<HStack key={ entry.key } justify="space-between" spacing={ 3 }>
+													<HStack spacing={ 2 } justify="flex-start">
+														<span
+															aria-hidden
+															style={ {
+																display: 'inline-block',
+																flex: '0 0 auto',
+																width: 8,
+																height: 8,
+																borderRadius: 2,
+																background: colorScale ? colorScale( entry.key ) : 'currentColor',
+															} }
+														/>
+														<Text style={ { whiteSpace: 'nowrap' } }>{ entry.key }</Text>
+													</HStack>
+													<Text weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
+														{ formatMsValue( value ) }
+													</Text>
+												</HStack>
+											);
+										} ) }
+									</VStack>
+								</VStack>
+							);
+						} }
+						options={ {
+							axis: {
+								y: { tickFormat: ( value ) => formatMsValue( value as number ) },
+							},
+						} }
 					/>
 				</GlobalChartsProvider>
 			</CardBody>

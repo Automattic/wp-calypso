@@ -1,19 +1,22 @@
+import { siteApmAggregateQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
+import {
+	mergeAggregates,
+	type MergedHook,
+	type MergedPlugin,
+	type MergedTemplate,
+} from '../aggregate';
 import BarList, { type BarListRow } from '../bar-list';
-import { siteApmWordPressQuery } from '../mock-data';
 import { formatMs } from '../utils';
-import type { ApmHookUsage, ApmPluginUsage, ApmTemplateUsage, Site } from '@automattic/api-core';
-
-function totalMs( items: Array< { total_ms: number } > ): number {
-	return items.reduce( ( sum, item ) => sum + item.total_ms, 0 );
-}
+import type { Site } from '@automattic/api-core';
 
 function Section( {
 	title,
@@ -48,56 +51,65 @@ function Section( {
 	);
 }
 
-function pluginsToRows( plugins: ApmPluginUsage[] ): BarListRow[] {
+function pluginsToRows( plugins: MergedPlugin[] ): BarListRow[] {
 	return plugins.map( ( plugin ) => ( {
-		id: plugin.slug,
+		id: plugin.id,
 		label: plugin.name,
-		value: plugin.total_ms,
+		value: plugin.self_sum_ms,
 	} ) );
 }
 
-function hooksToRows( hooks: ApmHookUsage[] ): BarListRow[] {
+function hooksToRows( hooks: MergedHook[] ): BarListRow[] {
 	return hooks.map( ( hook ) => ( {
-		id: hook.name,
-		label: hook.name,
-		value: hook.total_ms,
+		id: hook.id,
+		label: hook.action,
+		value: hook.total_sum_ms,
 	} ) );
 }
 
-function templatesToRows( templates: ApmTemplateUsage[] ): BarListRow[] {
+function templatesToRows( templates: MergedTemplate[] ): BarListRow[] {
 	return templates.map( ( template ) => ( {
-		id: template.template,
-		label: template.template,
-		value: template.total_ms,
+		id: template.id,
+		label: template.name,
+		value: template.total_sum_ms,
 	} ) );
+}
+
+function sumValues( rows: BarListRow[] ): number {
+	return rows.reduce( ( sum, row ) => sum + row.value, 0 );
 }
 
 export default function WordPress( { site }: { site: Site } ) {
-	const { data } = useSuspenseQuery( siteApmWordPressQuery( site.ID ) );
+	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID ) );
+	const merged = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
+
+	const pluginRows = pluginsToRows( merged.slowest.plugins );
+	const hookRows = hooksToRows( merged.slowest.hooks );
+	const templateRows = templatesToRows( merged.slowest.templates );
 
 	return (
 		<VStack spacing={ 6 }>
 			<Section
 				title={ __( 'Plugins' ) }
-				headline={ formatMs( totalMs( data.plugins ) ) }
+				headline={ formatMs( sumValues( pluginRows ) ) }
 				description={ __( 'Total time consumed by each active plugin in the selected period.' ) }
-				rows={ pluginsToRows( data.plugins ) }
+				rows={ pluginRows }
 			/>
 			<Section
 				title={ __( 'Hooks' ) }
-				headline={ formatMs( totalMs( data.hooks ) ) }
+				headline={ formatMs( sumValues( hookRows ) ) }
 				description={ __(
 					'Total time spent in the slowest action and filter hooks fired during the selected period.'
 				) }
-				rows={ hooksToRows( data.hooks ) }
+				rows={ hookRows }
 			/>
 			<Section
 				title={ __( 'Templates' ) }
-				headline={ formatMs( totalMs( data.templates ) ) }
+				headline={ formatMs( sumValues( templateRows ) ) }
 				description={ __(
 					'Total time spent rendering each theme template in the selected period.'
 				) }
-				rows={ templatesToRows( data.templates ) }
+				rows={ templateRows }
 			/>
 		</VStack>
 	);

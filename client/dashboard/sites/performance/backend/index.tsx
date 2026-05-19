@@ -1,5 +1,9 @@
 import { type Site } from '@automattic/api-core';
-import { siteApmEnabledMutation, siteBySlugQuery } from '@automattic/api-queries';
+import {
+	siteApmAggregateQuery,
+	siteApmEnabledMutation,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import {
@@ -11,7 +15,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { Card } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
@@ -21,11 +25,11 @@ import { hasBackendAccess } from '../backend-access';
 import { getBackendCalloutProps } from '../backend-callout';
 import { VIEWPORT_BREAKPOINTS } from '../constants';
 import PerformanceTabs from '../performance-tabs';
+import { mergeAggregates } from './aggregate';
 import BackendStatusNotice from './backend-status';
 import BackendTabs from './backend-tabs';
 import Database from './database';
 import ExternalRequests from './external-requests';
-import { siteApmOverviewQuery } from './mock-data';
 import Overview from './overview';
 import BackendSubtitle from './subtitle';
 import Transactions from './transactions';
@@ -81,7 +85,8 @@ function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 	const router = useRouter();
 	const siteSlug = site.slug;
 	const isDesktop = useViewportMatch( VIEWPORT_BREAKPOINTS.desktop );
-	const { data } = useSuspenseQuery( siteApmOverviewQuery( site.ID ) );
+	const { data } = useSuspenseQuery( siteApmAggregateQuery( site.ID ) );
+	const { summary } = useMemo( () => mergeAggregates( data.aggregates ), [ data.aggregates ] );
 
 	const handleTabChange = ( name: string ) => {
 		const next = name as ApmTab;
@@ -113,7 +118,7 @@ function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 
 	return (
 		<VStack spacing={ 6 }>
-			<BackendStatusNotice avgResponseMs={ data.summary.avg_response_ms } />
+			<BackendStatusNotice avgResponseMs={ summary.avg_response_ms } />
 			<Tabs
 				orientation={ isDesktop ? 'vertical' : 'horizontal' }
 				selectedTabId={ tab }
@@ -127,7 +132,7 @@ function ApmDashboard( { site, tab }: { site: Site; tab: ApmTab } ) {
 							alignSelf: 'flex-start',
 						} }
 					>
-						<BackendTabs compact={ ! isDesktop } summary={ data.summary } />
+						<BackendTabs compact={ ! isDesktop } summary={ summary } />
 					</Card>
 					<div style={ { flex: '1 1 auto', minWidth: 0, width: '100%' } }>
 						<Tabs.TabPanel tabId={ tab }>{ renderTab() }</Tabs.TabPanel>
