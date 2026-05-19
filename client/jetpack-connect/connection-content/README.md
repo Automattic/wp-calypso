@@ -40,6 +40,7 @@ If your plugin falls into an existing family (A4A, Woo, or Jetpack), most of the
 ### 1. Verify family classification (`families.ts`)
 
 `getFamilyFromSlug()` classifies slugs by prefix:
+
 - `automattic*` → `a4a`
 - `woocommerce*` → `woo`
 - `jetpack` or `jetpack-*` → `jetpack`
@@ -196,16 +197,16 @@ If your plugin introduces a new family that needs a distinct header logo, add a 
 
 Tests live alongside each module:
 
-| File | Test file |
-|------|-----------|
-| `families.ts` | `test/families.test.ts` |
-| `plugin-registry.ts` | `test/plugin-registry.test.ts` |
-| `scenarios.ts` | `test/scenarios.test.ts` |
-| `selectors.ts` | `test/selectors.test.ts` |
-| `family-features.ts` | `test/family-features.test.ts` |
-| `copy.ts` | `test/copy.test.ts` |
-| `feature-cards.tsx` | `../test/feature-cards.test.tsx` |
-| `authorize.jsx` | `../test/authorize.js` |
+| File                 | Test file                        |
+| -------------------- | -------------------------------- |
+| `families.ts`        | `test/families.test.ts`          |
+| `plugin-registry.ts` | `test/plugin-registry.test.ts`   |
+| `scenarios.ts`       | `test/scenarios.test.ts`         |
+| `selectors.ts`       | `test/selectors.test.ts`         |
+| `family-features.ts` | `test/family-features.test.ts`   |
+| `copy.ts`            | `test/copy.test.ts`              |
+| `feature-cards.tsx`  | `../test/feature-cards.test.tsx` |
+| `authorize.jsx`      | `../test/authorize.js`           |
 
 Run the full suite:
 
@@ -217,19 +218,19 @@ yarn test-client client/jetpack-connect/test/authorize.js
 
 ## Quick reference: what to touch per family type
 
-| Step | Woo plugin | Jetpack sub-plugin | A4A plugin | Other |
-|------|------------|-------------------|------------|-------|
-| `families.ts` | Auto (prefix) | Auto (prefix) | Auto (prefix) | Add clause |
-| `plugin-registry.ts` | Add entry | Add entry | Add entry | Add entry |
-| `FeatureCardKey` type | No | If per-plugin card | No | No |
-| `getFeatureCardData()` | No | If per-plugin card | No | No |
-| `getSecondaryFeatureCardData()` | No | If per-plugin card | No | No |
-| `getFamilyCardKey()` | No | If per-plugin card | No | No |
-| `getLogoForCardKey()` | No | If per-plugin card | No | No |
-| `SubtitleScenario` | No | If unique subtitle | No | No |
-| `getSubtitleScenario()` | No | If unique subtitle | No | No |
-| `copy.ts` subtitles | No | If unique subtitle | No | No |
-| `getSecondaryAuthCopy()` | No | No | No | If new family |
-| `getLogoForFamilies()` | No | No | No | If new logo |
+| Step                            | Woo plugin    | Jetpack sub-plugin | A4A plugin    | Other         |
+| ------------------------------- | ------------- | ------------------ | ------------- | ------------- |
+| `families.ts`                   | Auto (prefix) | Auto (prefix)      | Auto (prefix) | Add clause    |
+| `plugin-registry.ts`            | Add entry     | Add entry          | Add entry     | Add entry     |
+| `FeatureCardKey` type           | No            | If per-plugin card | No            | No            |
+| `getFeatureCardData()`          | No            | If per-plugin card | No            | No            |
+| `getSecondaryFeatureCardData()` | No            | If per-plugin card | No            | No            |
+| `getFamilyCardKey()`            | No            | If per-plugin card | No            | No            |
+| `getLogoForCardKey()`           | No            | If per-plugin card | No            | No            |
+| `SubtitleScenario`              | No            | If unique subtitle | No            | No            |
+| `getSubtitleScenario()`         | No            | If unique subtitle | No            | No            |
+| `copy.ts` subtitles             | No            | If unique subtitle | No            | No            |
+| `getSecondaryAuthCopy()`        | No            | No                 | No            | If new family |
+| `getLogoForFamilies()`          | No            | No                 | No            | If new logo   |
 
 **TL;DR for existing families:** Add a `PLUGIN_REGISTRY` entry. That's it — the prefix-based family classification, family-level cards, and subtitle scenarios handle everything else automatically. Only add per-plugin overrides if the plugin appears alone and deserves unique copy.
