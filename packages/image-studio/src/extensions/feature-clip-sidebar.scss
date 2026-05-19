@@ -42,21 +42,12 @@
 		display: block;
 		width: 100%;
 		height: 100%;
-		// `cover` fills the 9:16 inline frame edge-to-edge even if a clip's
-		// intrinsic ratio is slightly off 9:16 (no inner letterbox bars in
-		// the small preview). It only turns destructive once the element's
-		// box stops being 9:16 — which is exactly what native fullscreen
-		// does. Chromium used to ignore author object-fit for fullscreened
-		// <video> (always letterboxed); it now honors it, so `cover` crops
-		// the 9:16 clip to fill the 16:9 screen. Force `contain` in
-		// fullscreen so the whole frame stays visible. Separate rule blocks,
-		// not a grouped selector: an engine that doesn't know one fullscreen
-		// pseudo would otherwise drop the whole group (CSS selector-list
-		// error recovery). Harmless/no-op on Firefox and Safari, which
-		// letterbox natively regardless.
 		object-fit: cover;
 		border-radius: inherit;
 
+		// Fullscreen makes the box 16:9; switch to contain so the 9:16 clip
+		// letterboxes instead of cropping. Separate blocks, not a group: an
+		// unknown pseudo would invalidate the whole selector list.
 		&:fullscreen {
 			object-fit: contain;
 		}
