@@ -9,8 +9,25 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PaymentRiskNoticeBanner from '..';
 import type { ReactNode } from 'react';
 
+const mockSetShowHelpCenter = jest.fn();
+const mockSetNavigateToRoute = jest.fn();
+const mockDispatch = jest.fn();
+
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
+} ) );
+
+jest.mock( '@automattic/data-stores', () => ( {
+	HelpCenter: {
+		register: jest.fn( () => 'help-center-store' ),
+	},
+} ) );
+
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( {
+		setShowHelpCenter: mockSetShowHelpCenter,
+		setNavigateToRoute: mockSetNavigateToRoute,
+	} ),
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -25,12 +42,16 @@ jest.mock( '@wordpress/components', () => ( {
 	}: {
 		children: ReactNode;
 		href?: string;
-		onClick?: () => void;
+		onClick?: ( event: { preventDefault: () => void } ) => void;
 	} ) => (
-		<button data-href={ href } onClick={ onClick }>
+		<button data-href={ href } onClick={ () => onClick?.( { preventDefault: jest.fn() } ) }>
 			{ children }
 		</button>
 	),
+} ) );
+
+jest.mock( 'calypso/a8c-for-agencies/components/a4a-contact-support-widget', () => ( {
+	CONTACT_URL_HASH_FRAGMENT: '#contact-support',
 } ) );
 
 jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
@@ -51,8 +72,6 @@ jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
 		</section>
 	),
 } ) );
-
-const mockDispatch = jest.fn();
 
 jest.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
@@ -92,11 +111,13 @@ describe( 'PaymentRiskNoticeBanner', () => {
 		render( <PaymentRiskNoticeBanner source="overview" /> );
 
 		expect(
-			screen.getByRole( 'heading', { name: 'Payment issue needs attention' } )
+			screen.getByRole( 'heading', {
+				name: 'Action required: We’re unable to renew your subscription(s)',
+			} )
 		).toBeVisible();
 		expect(
 			screen.getByText(
-				'Your agency has a payment issue. Update your payment method to avoid service interruption.'
+				'We couldn’t process payment for one or more of your subscriptions with the payment method we have on file. If this isn’t resolved, your subscriptions will be cancelled and your sites may go offline. Please update your payment method to stay covered.'
 			)
 		).toBeVisible();
 
@@ -105,11 +126,20 @@ describe( 'PaymentRiskNoticeBanner', () => {
 			{ source: 'overview' }
 		);
 
-		await user.click( screen.getByRole( 'button', { name: 'Update payment method' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Fix payment method' } ) );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a4a_payment_risk_notice_banner_cta_click',
 			{ source: 'overview' }
 		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Contact us' } ) );
+
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_payment_risk_notice_banner_contact_us_click',
+			{ source: 'overview' }
+		);
+		expect( mockSetShowHelpCenter ).toHaveBeenCalledWith( true );
+		expect( mockSetNavigateToRoute ).toHaveBeenCalledWith( '/contact-form' );
 	} );
 } );
