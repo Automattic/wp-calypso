@@ -68,26 +68,36 @@ ${ trimmed }`;
  * user prompt to describe what the video should LOOK like — the cloud render
  * path (wpcom/generate-html-for-video → wpcom/generate-video-for-studio with
  * mode='editframe') composes the HTML server-side from the post itself. The
- * user prompt's role here is purely steering the agent: angle, audience,
- * voice, structure. So suggestions here are short framing hints, not
- * cinematography.
+ * user prompt's role is purely editorial steering of that composer. The six
+ * axes below are the editorial analogue of the cinematic builder's
+ * cinematography axes — they map 1:1 to what generate-html-for-video
+ * actually honors (lead/focus, audience, voice, structure, beat emphasis,
+ * closer/CTA). Each chip weaves 2-3 of them, never cinematography.
  */
 export function buildHighlightsClipSuggestionsPrompt( postBody: string ): string {
 	const trimmed = postBody.slice( 0, MAX_POST_BODY_CHARS );
-	return `Below is the body of a WordPress post. Propose 3 short framing hints a user could pick to steer a 20-second summary video derived from this post.
+	return `Below is the body of a WordPress post. Propose 3 short editorial steers a user could pick to shape a 20-second summary video derived from this post.
 
-The video itself is rendered automatically from the post's content — these hints DO NOT describe what the video should look like. They steer how the LLM picks WHICH parts to emphasize. Think of them as editorial direction.
+The video is rendered automatically from the post's content — these steers DO NOT describe what it should look like. They tell the composer WHICH parts to emphasize and HOW to frame them. Editorial direction, never cinematography.
 
-Each hint MUST be:
-- Grounded in the post's actual content (an angle that makes sense for THIS post, not generic blog-post advice).
-- One of these flavors:
-  - **Angle**: lead with a specific aspect ("Lead with the geology", "Focus on the family's first reaction").
-  - **Audience**: who's it for ("For travel-curious readers", "For someone who's never visited", "For experienced cooks").
-  - **Structure**: how it's organized ("Three things to try at home", "Before-and-after", "What I'd do differently").
-  - **Voice**: tone register ("Punchier", "More contemplative", "Drop the hedges").
-- 2-8 words for the chip label, 6-15 words for the prompt sentence.
-- Concrete and actionable — never "Make it good" or "Be engaging".
-- No camera moves, no lighting, no visual description (those don't apply here).
+There are six steering axes. Each one you use MUST be concrete and specific to THIS post (never generic blog advice):
+- **Lead**: which aspect opens the video ("Open on how the caves formed", "Start with the family's first reaction").
+- **Audience**: who it's for ("For someone who's never visited", "For experienced cooks").
+- **Voice**: tone register ("Punchier, drop the hedges", "More contemplative").
+- **Structure**: how it's organized ("Three things to try", "Before-and-after", "What I'd do differently").
+- **Emphasis**: which beats to dwell on or cut ("Spend most of it on the payoff, skip the setup", "Quick equal hits, no deep dive").
+- **Closer**: how it lands ("End on the conservation note", "Close on a call to act").
+
+Each steer MUST:
+- Weave 2-3 of the six axes into ONE coherent direction — never only one axis, never more than three (a 20-second, 4-6-scene recap can't honor an over-stuffed steer).
+- For EVERY axis you include, name a concrete detail lifted from THIS post — a specific activity, place, moment, person, or term the reader would recognize. A generic editorial phrase ("focus on the theme", "make it engaging", just "a contemplative tone" with nothing attached) does NOT fill an axis; each axis must carry a pointable specific from the post.
+- Use 2-8 words for the chip label, 12-30 words for the steer sentence — long enough that every axis names its concrete detail, no longer.
+- Stay actionable — never "Make it good" or "Be engaging".
+- Carry NO camera, lighting, or visual description (those don't apply to this render path).
+
+Well-formed example (for a post about an autumn family weekend): "For families with young kids, structure it as three weekend outings and emphasize the orchard apple-picking and the lantern-lit harvest festival" — Audience + Structure + Emphasis, each axis naming a pointable detail from the post.
+
+Across the 3 chips, cover distinct axis combinations and distinct angles on the post — don't let two chips lean on the same pair.
 
 POST BODY:
 ${ trimmed }`;
@@ -110,9 +120,10 @@ Output valid JSON only, nothing else.`;
 
 /**
  * Highlights-specific system prompt. Constraints match the editorial user
- * prompt in buildHighlightsClipSuggestionsPrompt — 2-8 word labels, 6-15
- * word prompt sentences, no cinematography axes. The cinematic prompt's
- * multi-axis directional language is wrong for this style.
+ * prompt in buildHighlightsClipSuggestionsPrompt — 2-8 word labels, 12-30
+ * word steers each weaving 2-3 of the six editorial axes with a concrete
+ * post detail per axis, no cinematography. The cinematic prompt's
+ * multi-axis directional language is wrong here.
  */
 function buildHighlightsClipSystemPrompt( suggestionPrompt: string, locale: string ): string {
 	return `You generate suggestion chips for a short summary-video composer. You DO NOT call any tools. You DO NOT generate, edit, or modify any media. You return only JSON.
@@ -120,9 +131,9 @@ function buildHighlightsClipSystemPrompt( suggestionPrompt: string, locale: stri
 ${ suggestionPrompt }
 
 Output ONLY valid JSON matching this exact structure (no markdown, no explanation, no tool calls). The "suggestions" array MUST contain exactly 3 items:
-{"suggestions":[{"label":"2-8 word chip A","prompt":"6-15 word editorial steering sentence"},{"label":"2-8 word chip B","prompt":"6-15 word editorial steering sentence"},{"label":"2-8 word chip C","prompt":"6-15 word editorial steering sentence"}]}
+{"suggestions":[{"label":"2-8 word chip A","prompt":"12-30 word editorial steer weaving 2-3 axes, each naming a concrete post detail"},{"label":"2-8 word chip B","prompt":"12-30 word editorial steer weaving 2-3 axes, each naming a concrete post detail"},{"label":"2-8 word chip C","prompt":"12-30 word editorial steer weaving 2-3 axes, each naming a concrete post detail"}]}
 
-The chip "label" stays 2-8 words. The "prompt" is a short editorial direction — 6-15 words, framing the angle / audience / structure / voice. NOT cinematography.
+The chip "label" stays 2-8 words. The "prompt" is a short editorial steer — 12-30 words weaving 2-3 of the six axes (lead / audience / voice / structure / emphasis / closer), each axis naming a concrete detail from the post. NOT cinematography.
 
 Generate all text in the language corresponding to locale code "${ locale }" (e.g. en = English, fr = French, es = Spanish).
 

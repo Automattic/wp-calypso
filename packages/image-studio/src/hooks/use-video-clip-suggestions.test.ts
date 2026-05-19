@@ -120,7 +120,7 @@ describe( 'useVideoClipSuggestions', () => {
 		expect( call?.prompt ).toMatch( /directional prompts/i );
 	} );
 
-	it( 'pairs the highlights style with an editorial system prompt (6-15 word prompts, not the cinematic axes prompt)', () => {
+	it( 'pairs the highlights style with an editorial system prompt (12-30 word multi-axis steers, not the cinematic axes prompt)', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
 				registerSuggestions: jest.fn(),
@@ -132,8 +132,11 @@ describe( 'useVideoClipSuggestions', () => {
 
 		const call = mockUseAsyncSuggestionsLoader.mock.calls.at( -1 )?.[ 0 ];
 		const built = call?.buildSystemPrompt( 'inner prompt body', 'en' ) ?? '';
-		expect( built ).toContain( '6-15 word editorial steering sentence' );
+		expect( built ).toContain(
+			'12-30 word editorial steer weaving 2-3 axes, each naming a concrete post detail'
+		);
 		expect( built ).toContain( '2-8 word chip' );
+		expect( built ).toContain( 'lead / audience / voice / structure / emphasis / closer' );
 		expect( built ).not.toContain( '60-120' );
 		expect( built ).not.toContain( '5-7 axes' );
 	} );
