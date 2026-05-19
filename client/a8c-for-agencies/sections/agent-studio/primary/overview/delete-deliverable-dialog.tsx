@@ -1,3 +1,4 @@
+import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import { useDispatch } from 'calypso/state';
@@ -52,7 +53,7 @@ export default function DeleteDeliverableDialog( { output, onClose, onDeleted }:
 			isLoading={ mutation.isPending }
 			isDestructive
 		>
-			<p>{ __( 'This permanently deletes the deliverable. This can’t be undone.' ) }</p>
+			<Text>{ __( 'This permanently deletes the deliverable. This can’t be undone.' ) }</Text>
 		</A4AConfirmationDialog>
 	);
 }
