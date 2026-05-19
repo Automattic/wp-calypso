@@ -46,6 +46,18 @@
 	.dataviews-footer {
 		padding-inline: 0;
 	}
+
+	// Center-align the custom header controls (Download button + Auto-refresh
+	// toggle) with the sibling icon-only buttons (LayoutSwitcher / ViewConfig).
+	// WPDataViews' DefaultUI uses `align: top` on the actions row, and the
+	// `ToggleControl` is taller than icon buttons, so they don't share a baseline.
+	.dataviews__view-actions {
+		align-items: center;
+	}
+
+	.site-logs__auto-refresh {
+		align-self: center;
+	}
 }
 
 // https://github.com/WordPress/gutenberg/issues/69194
