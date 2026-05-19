@@ -570,7 +570,7 @@ export default withCurrentRoute(
 
 		const hasUniversalHeader =
 			dashboardOptIn &&
-			! siteId &&
+			! getSelectedSiteId( state ) &&
 			( isEnabledThemeUniversalHeader || isEnabledPluginsUniversalHeader );
 
 		return {
