@@ -40,7 +40,13 @@ const getCurrentPlatform = async (): Promise< {
 		}
 
 		if ( platform === 'linux' ) {
-			return { platform: PlatformType.Linux, detectionFailed: false };
+			if ( architecture === 'arm64' ) {
+				return { platform: PlatformType.LinuxARM64, detectionFailed: false };
+			} else if ( architecture === 'x64' ) {
+				return { platform: PlatformType.LinuxX64, detectionFailed: false };
+			}
+			// Client Hints available but no architecture - fallback to x64
+			return { platform: PlatformType.LinuxX64, detectionFailed: true };
 		}
 	}
 
@@ -61,7 +67,8 @@ const getCurrentPlatform = async (): Promise< {
 		}
 
 		if ( platform === 'linux' ) {
-			return { platform: PlatformType.Linux, detectionFailed: false };
+			// Cannot detect Linux architecture - default to x64 (more common)
+			return { platform: PlatformType.LinuxX64, detectionFailed: true };
 		}
 	}
 
@@ -90,10 +97,21 @@ const DesktopDownloadCard: React.FC< DesktopDownloadCardProps > = ( { appConfig 
 			} );
 	}, [] );
 
-	const currentPlatformConfig = useMemo(
-		() => ( platform ? appConfig.platforms[ platform ] : undefined ),
-		[ appConfig.platforms, platform ]
-	);
+	const currentPlatformConfig = useMemo( () => {
+		if ( ! platform ) {
+			return undefined;
+		}
+		// Linux arch-specific types fall back to the generic Linux entry so apps
+		// that don't differentiate by architecture (e.g. the WordPress.com
+		// desktop app) still resolve a config.
+		if (
+			( platform === PlatformType.LinuxX64 || platform === PlatformType.LinuxARM64 ) &&
+			! appConfig.platforms[ platform ]
+		) {
+			return appConfig.platforms[ PlatformType.Linux ];
+		}
+		return appConfig.platforms[ platform ];
+	}, [ appConfig.platforms, platform ] );
 
 	if ( isLoading ) {
 		return (
