@@ -90,7 +90,6 @@ jest.mock( 'calypso/state/preferences/actions', () => ( {
 } ) );
 
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUserDate: jest.fn().mockReturnValue( '2025-06-01' ),
 	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
 } ) );
 
