@@ -24,7 +24,7 @@ import './style.scss';
 
 interface SubscribeModalProps {
 	promptVerification: boolean;
-	onClose: () => void;
+	onFinish: () => void;
 }
 
 interface StreamProps {
@@ -52,7 +52,7 @@ const SITES_PER_PAGE = 6;
 // mounted while the step is active. X-out / escape are handled by the
 // wrapper's `onRequestClose`, which also runs the same close-side-effects
 // (data refresh, analytics) that `handleClose` previously did inline.
-const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onClose } ) => {
+const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, onFinish } ) => {
 	const {
 		combinedRecommendations,
 		recommendations,
@@ -161,9 +161,9 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 		[ selectedSite ]
 	);
 
-	const handleContinue = useCallback( () => {
-		onClose();
-	}, [ onClose ] );
+	const handleFinish = useCallback( () => {
+		onFinish();
+	}, [ onFinish ] );
 
 	return (
 		<>
@@ -290,7 +290,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { promptVerification, 
 					<HStack spacing={ 2 } justify="right" className="reader-onboarding-modal__footer-buttons">
 						<Button
 							__next40pxDefaultSize
-							onClick={ handleContinue }
+							onClick={ handleFinish }
 							variant="secondary"
 							disabled={ promptVerification }
 							accessibleWhenDisabled

@@ -89,19 +89,19 @@ jest.mock( 'calypso/reader/onboarding-rsm/step-indicator', () => ( {
 
 describe( 'SubscribeModal – verification nudge', () => {
 	it( 'does not render the verification nudge when promptVerification is false', () => {
-		renderWithProvider( <SubscribeModal onClose={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
 
 		expect( screen.queryByTestId( 'subscribe-verification-nudge' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the verification nudge when promptVerification is true', () => {
-		renderWithProvider( <SubscribeModal onClose={ jest.fn() } promptVerification /> );
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification /> );
 
 		expect( screen.getByTestId( 'subscribe-verification-nudge' ) ).toBeVisible();
 	} );
 
 	it( 'disables the Finish button when promptVerification is true', () => {
-		renderWithProvider( <SubscribeModal onClose={ jest.fn() } promptVerification /> );
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification /> );
 
 		// accessibleWhenDisabled renders aria-disabled instead of the native disabled attribute.
 		expect( screen.getByRole( 'button', { name: 'Finish' } ) ).toHaveAttribute(
@@ -110,19 +110,30 @@ describe( 'SubscribeModal – verification nudge', () => {
 		);
 	} );
 
-	it( 'does not invoke onClose when Finish is clicked while verification is required', async () => {
+	it( 'does not invoke onFinish when Finish is clicked while verification is required', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onFinish = jest.fn();
 
-		renderWithProvider( <SubscribeModal onClose={ onClose } promptVerification /> );
+		renderWithProvider( <SubscribeModal onFinish={ onFinish } promptVerification /> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
-		expect( onClose ).not.toHaveBeenCalled();
+		expect( onFinish ).not.toHaveBeenCalled();
+	} );
+
+	it( 'invokes onFinish when Finish is clicked and verification is not required', async () => {
+		const user = userEvent.setup();
+		const onFinish = jest.fn();
+
+		renderWithProvider( <SubscribeModal onFinish={ onFinish } promptVerification={ false } /> );
+
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( onFinish ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'enables the Finish button when promptVerification is false', () => {
-		renderWithProvider( <SubscribeModal onClose={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
 
 		const button = screen.getByRole( 'button', { name: 'Finish' } );
 		expect( button ).not.toHaveAttribute( 'aria-disabled', 'true' );

@@ -142,27 +142,27 @@ const ReaderOnboardingRsm = ( {
 		openStep( 'interests' );
 	};
 
+	const recordOnboardingCompleted = () => {
+		if ( hasCompletedOnboarding || completionRecordedRef.current ) {
+			return;
+		}
+		completionRecordedRef.current = true;
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+	};
+
+	const handleDiscoverFinish = () => {
+		recordOnboardingCompleted();
+		performStepCloseSideEffects( 'discover' );
+		setCurrentStep( null );
+	};
+
 	const itemClickHandler = ( task: Task ) => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }task_click`, {
 			task: task.id,
 		} );
 		task?.actionDispatch?.();
 	};
-
-	// Persist completion + track when the user meets the checklist (not during render).
-	// `completionRecordedRef` avoids duplicate dispatches/Tracks if this effect re-runs
-	// before Redux reflects `hasCompletedOnboarding` (e.g. React StrictMode re-invokes effects).
-	useEffect( () => {
-		if ( hasCompletedOnboarding || ! hasFollowedTags || ! hasFollowedSites ) {
-			return;
-		}
-		if ( completionRecordedRef.current ) {
-			return;
-		}
-		completionRecordedRef.current = true;
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-	}, [ hasCompletedOnboarding, hasFollowedTags, hasFollowedSites, dispatch ] );
 
 	// Track if user viewed Reader Onboarding.
 	useEffect( () => {
@@ -294,7 +294,10 @@ const ReaderOnboardingRsm = ( {
 						/>
 					) }
 					{ currentStep === 'discover' && (
-						<SubscribeModal onClose={ handleStepClose } promptVerification={ promptVerification } />
+						<SubscribeModal
+							onFinish={ handleDiscoverFinish }
+							promptVerification={ promptVerification }
+						/>
 					) }
 				</Modal>
 			) }

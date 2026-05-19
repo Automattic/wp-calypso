@@ -2,9 +2,15 @@
  * @jest-environment jsdom
  */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import {
+	READER_ONBOARDING_PREFERENCE_KEY,
+	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
+} from 'calypso/reader/onboarding-rsm/constants';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderOnboardingRsm from '../index';
 
@@ -70,9 +76,9 @@ jest.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
 
 jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 	__esModule: true,
-	default: ( { onClose }: { onClose: () => void } ) => (
+	default: ( { onFinish }: { onFinish: () => void } ) => (
 		<div data-testid="subscribe-modal-content">
-			<button onClick={ onClose }>Finish</button>
+			<button onClick={ onFinish }>Finish</button>
 		</div>
 	),
 } ) );
@@ -115,7 +121,7 @@ jest.mock( '../use-refresh-following-streams', () => ( {
 // ── Data hooks ────────────────────────────────────────────────────────────────
 
 jest.mock( 'calypso/data/reader/use-reader-tags', () => ( {
-	useFollowedReaderTags: () => ( { data: [] } ),
+	useFollowedReaderTags: jest.fn( () => ( { data: [] } ) ),
 } ) );
 
 jest.mock( '../../following/use-site-subscriptions', () => ( {
@@ -136,6 +142,17 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 
 beforeEach( () => {
 	mockRefreshFollowingStreams.mockClear();
+	jest.mocked( savePreference ).mockClear();
+	jest.mocked( recordTracksEvent ).mockClear();
+
+	const { getReaderFollows } = jest.requireMock( 'calypso/state/reader/follows/selectors' ) as {
+		getReaderFollows: jest.Mock;
+	};
+	const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
+		useFollowedReaderTags: jest.Mock;
+	};
+	getReaderFollows.mockReturnValue( [] );
+	useFollowedReaderTags.mockImplementation( () => ( { data: [] } ) );
 } );
 
 describe( 'ReaderOnboardingRsm – back button navigation', () => {
@@ -224,5 +241,69 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 
 		// welcome close side-effects fire on Continue; refresh should NOT be called
 		expect( mockRefreshFollowingStreams ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – onboarding completion', () => {
+	const navigateToSubscribeStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+	};
+
+	it( 'saves the completion preference and records completed when Finish is clicked', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( savePreference ).toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+		);
+	} );
+
+	it( 'does not save completion when the discover step is closed without Finish', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+		);
+	} );
+
+	it( 'does not auto-save completion when the user has enough follows without clicking Finish', async () => {
+		const { getReaderFollows } = jest.requireMock( 'calypso/state/reader/follows/selectors' ) as {
+			getReaderFollows: jest.Mock;
+		};
+		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
+			useFollowedReaderTags: jest.Mock;
+		};
+
+		getReaderFollows.mockReturnValue(
+			Array.from( { length: 4 }, ( _, i ) => ( { feed_ID: i + 1, is_owner: false } ) )
+		);
+		useFollowedReaderTags.mockReturnValue( {
+			data: [ { slug: 'a' }, { slug: 'b' }, { slug: 'c' } ],
+		} );
+
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await screen.findByTestId( 'welcome-modal-content' );
+
+		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`
+		);
+
+		getReaderFollows.mockReturnValue( [] );
+		useFollowedReaderTags.mockImplementation( () => ( { data: [] } ) );
 	} );
 } );
