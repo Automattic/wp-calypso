@@ -229,9 +229,9 @@ const UseMyDomain: StepType< {
 						<Step.TopBar
 							leftElement={ getTopBarLeftElement() }
 							rightElement={
-								stepCounter ? (
+								stepCounter && (
 									<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
-								) : undefined
+								)
 							}
 						/>
 					}
