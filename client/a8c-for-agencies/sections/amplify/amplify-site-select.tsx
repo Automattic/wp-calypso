@@ -2,17 +2,18 @@ import { Button, Dropdown, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useConnectedSites from './hooks/use-connected-sites';
 
 const RECENT_LIMIT = 10;
+const SEARCH_DEBOUNCE_MS = 150;
 
 type Props = {
 	/**
-	 * Called when the user hits "Amplify it". AmplifyPage owns the analysis
-	 * modal — this component just signals which URL to analyse.
+	 * Called when the user hits "Amplify it." AmplifyPage owns the analysis
+	 * modal — this component just signals which URL to analyze.
 	 */
 	onSiteSelected: ( url: string ) => void;
 };
@@ -20,10 +21,26 @@ type Props = {
 export default function AmplifySiteSelect( { onSiteSelected }: Props ) {
 	const dispatch = useDispatch();
 	const [ selectedUrl, setSelectedUrl ] = useState< string | null >( null );
-	const [ search, setSearch ] = useState( '' );
+
+	// `searchInput` is the controlled value bound to the TextControl so the
+	// field stays responsive to keystrokes. `debouncedSearch` is what we feed
+	// into useConnectedSites, so the filter only re-runs after the user pauses
+	// typing. Keeps the dropdown smooth on accounts with many connected sites.
+	const [ searchInput, setSearchInput ] = useState( '' );
+	const [ debouncedSearch, setDebouncedSearch ] = useState( '' );
+
+	useEffect( () => {
+		if ( searchInput === debouncedSearch ) {
+			return;
+		}
+		const timer = setTimeout( () => {
+			setDebouncedSearch( searchInput );
+		}, SEARCH_DEBOUNCE_MS );
+		return () => clearTimeout( timer );
+	}, [ searchInput, debouncedSearch ] );
 
 	const { sites, isLoading, hasAnyConnectedSites } = useConnectedSites( {
-		search,
+		search: debouncedSearch,
 		limit: RECENT_LIMIT,
 	} );
 
@@ -42,9 +59,7 @@ export default function AmplifySiteSelect( { onSiteSelected }: Props ) {
 
 	const handleSelectSite = ( url: string ) => {
 		setSelectedUrl( url );
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_amplify_site_select', { site_url: url } )
-		);
+		dispatch( recordTracksEvent( 'calypso_a4a_amplify_site_select', { site_url: url } ) );
 	};
 
 	const handleAmplifyClick = () => {
@@ -52,7 +67,10 @@ export default function AmplifySiteSelect( { onSiteSelected }: Props ) {
 			return;
 		}
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_amplify_audit_open', { site_url: selectedUrl } )
+			recordTracksEvent( 'calypso_a4a_amplify_audit_open', {
+				site_url: selectedUrl,
+				entry_point: 'hero_dropdown',
+			} )
 		);
 		onSiteSelected( selectedUrl );
 	};
@@ -60,9 +78,7 @@ export default function AmplifySiteSelect( { onSiteSelected }: Props ) {
 	return (
 		<div className="amplify-landing-selector">
 			<div className="amplify-landing-selector-field">
-				<span className="amplify-landing-selector-label">
-					{ __( 'Recently connected sites' ) }
-				</span>
+				<span className="amplify-landing-selector-label">{ __( 'Recently connected sites' ) }</span>
 				<Dropdown
 					className="amplify-landing-site-dropdown"
 					contentClassName="amplify-landing-site-dropdown-content"
@@ -70,7 +86,10 @@ export default function AmplifySiteSelect( { onSiteSelected }: Props ) {
 					popoverProps={ { offset: 4, shift: true } }
 					onToggle={ ( isOpen ) => {
 						if ( ! isOpen ) {
-							setSearch( '' );
+							// Reset both the input and the debounced value when the
+							// dropdown closes so reopening starts from a clean state.
+							setSearchInput( '' );
+							setDebouncedSearch( '' );
 						}
 					} }
 					renderToggle={ ( { isOpen, onToggle } ) => (
@@ -102,15 +121,13 @@ export default function AmplifySiteSelect( { onSiteSelected }: Props ) {
 									__next40pxDefaultSize
 									label={ __( 'Search' ) }
 									hideLabelFromVision
-									value={ search }
-									onChange={ setSearch }
+									value={ searchInput }
+									onChange={ setSearchInput }
 									placeholder={ __( 'Search connected sites' ) }
 								/>
 							</div>
 							{ sites.length === 0 ? (
-								<p className="amplify-landing-site-dropdown-empty">
-									{ __( 'No matches' ) }
-								</p>
+								<p className="amplify-landing-site-dropdown-empty">{ __( 'No matches' ) }</p>
 							) : (
 								<ul className="amplify-landing-site-dropdown-list" role="listbox">
 									{ sites.map( ( site ) => {

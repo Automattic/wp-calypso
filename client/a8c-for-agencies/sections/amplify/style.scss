@@ -1,9 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-// Zero out the hosting-dashboard body padding for the amplify layout so that
-// PageSection components (like the FAQ) can span full width and handle their
-// own internal spacing — the same approach used by migrations-overview-v2.
+// Zero out the hosting-dashboard body padding/max-width so each
+// PageSectionColumns can span the full viewport and own its own padding
+// (same approach used by woopayments-overview and dev-tools-overview).
 .amplify-layout {
 	.hosting-dashboard-layout__body {
 		padding: 0;
@@ -16,45 +16,15 @@
 	}
 }
 
-// amplify-landing is a direct child of hosting-dashboard-layout__body, so it
-// now needs to own its padding (previously inherited from the body > * rule).
-.amplify-landing {
-	padding-block-end: 32px;
-	padding-inline: 16px;
-	max-width: 1500px;
-	margin-inline: auto;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		padding-inline: 64px;
-	}
-}
-
-.amplify-landing-hero {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 48px;
-	align-items: center;
-	padding-block-end: 48px;
-
-	@include break-large {
-		grid-template-columns: 1fr 0.85fr;
-		gap: 64px;
-	}
-}
-
-.amplify-landing-hero-visual {
-	@include break-large {
-		margin-block-start: 48px;
-	}
-}
-
 .amplify-landing-h1 {
 	font-size: clamp(28px, 3.6vw, 44px);
 	font-weight: 600;
 	line-height: 1.15;
 	letter-spacing: -0.5px;
 	color: var(--color-text-black);
-	margin-block-end: 20px;
+	// Matches the criteria-section title rhythm (16px gap between title and
+	// the descriptive paragraph that follows).
+	margin-block-end: 16px;
 }
 
 .amplify-landing-sub {
@@ -634,6 +604,10 @@
 	border-radius: 8px;
 	padding: 24px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 16px rgba(0, 0, 0, 0.04);
+	// Cap the visual width so the score card doesn't crowd the hero headline
+	// at large breakpoints. Matches the woopayments hero visual treatment.
+	max-inline-size: 520px;
+	inline-size: 100%;
 }
 
 .amplify-landing-score-card-header {
@@ -904,10 +878,9 @@
 }
 
 /* How it works */
-.amplify-landing-how-section {
-	padding-block: 48px;
-}
-
+// Each top-level section is rendered as a PageSectionColumns, so the outer
+// section wrapper and the section-level background colors are handled by that
+// component. Inner-content styles below are still scoped to .amplify-landing-*.
 .amplify-landing-how {
 	display: flex;
 	flex-direction: column;
@@ -948,7 +921,7 @@
 
 .amplify-landing-how-mode-toggle {
 	display: inline-flex;
-	background: var(--color-neutral-0);
+	background: #fff;
 	border: 1px solid var(--color-border-subtle);
 	border-radius: 8px;
 	padding: 4px;
@@ -1336,14 +1309,37 @@
 }
 
 .amplify-landing-how-pin-label {
-	font-size: 11px;
-	font-weight: 600;
-	padding-block: 4px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1px;
+	padding-block: 5px;
 	padding-inline: 10px;
-	border-radius: 16px;
+	border-radius: 8px;
 	white-space: nowrap;
 	color: var(--color-text-inverted);
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	line-height: 1.2;
+}
+
+.amplify-landing-how-pin-label-criterion {
+	font-size: 9px;
+	font-weight: 500;
+	letter-spacing: 0.4px;
+	text-transform: uppercase;
+	opacity: 0.85;
+}
+
+.amplify-landing-how-pin-label-text {
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.amplify-landing-how-pin-label-score {
+	margin-inline-start: 6px;
+	font-weight: 500;
+	opacity: 0.78;
+	font-variant-numeric: tabular-nums;
 }
 
 .amplify-landing-how-pin-label.good {
@@ -1520,27 +1516,10 @@
 }
 
 /* AI workflow */
-.amplify-landing-workflow-section {
-	padding-block: 48px;
-}
-
-
-.amplify-landing-workflow {
-	display: flex;
-	flex-direction: column;
-}
-
-.amplify-landing-workflow-top {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 48px;
-	align-items: start;
-
-	@include break-large {
-		grid-template-columns: 1fr 1fr;
-		gap: 80px;
-	}
-}
+// .amplify-landing-workflow is the className passed to the workflow's
+// PageSectionColumns wrapper. Outer layout (padding, column grid, max-width)
+// is owned by PageSectionColumns; the rules below style the inner content
+// of each of its two columns.
 
 .amplify-landing-workflow-eyebrow {
 	font-size: 11px;
@@ -1549,14 +1528,15 @@
 	text-transform: uppercase;
 	color: var(--color-text-subtle);
 	margin: 0;
-	margin-block-end: 16px;
+	// Matches the criteria-section eyebrow rhythm (12px gap to title).
+	margin-block-end: 12px;
 }
 
 .amplify-landing-workflow-title {
-	font-size: clamp(32px, 4vw, 56px);
+	font-size: clamp(24px, 3vw, 36px);
 	font-weight: 600;
-	line-height: 1.05;
-	letter-spacing: -0.5px;
+	line-height: 1.15;
+	letter-spacing: -0.4px;
 	color: var(--color-text-black);
 	margin: 0;
 	margin-block-end: 24px;
@@ -1571,17 +1551,24 @@
 }
 
 /* Prompt card (dark themed to evoke an AI/code surface) */
+// Workflow card — styled to evoke a PDF report rather than a terminal window.
+// Light paper background, dark text, soft layered shadow for the "floating
+// document" feel, and a clean sans-serif body (no monospace).
 .amplify-landing-workflow-card {
-	background: #0d1117;
-	border-radius: 16px;
+	background: #fff;
+	border-radius: 8px;
+	border: 1px solid var(--color-border-subtle);
 	overflow: hidden;
-	box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18), 0 4px 20px rgba(0, 0, 0, 0.1);
+	box-shadow:
+		0 1px 2px rgba(0, 0, 0, 0.04),
+		0 8px 24px rgba(0, 0, 0, 0.08),
+		0 24px 60px rgba(0, 0, 0, 0.06);
 }
 
 .amplify-landing-workflow-card-header {
 	padding-block: 16px;
 	padding-inline: 20px;
-	border-block-end: 1px solid rgba(255, 255, 255, 0.08);
+	border-block-end: 1px solid var(--color-border-subtle);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -1590,38 +1577,61 @@
 
 .amplify-landing-workflow-card-header-left {
 	display: flex;
-	align-items: center;
-	gap: 10px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
 	min-inline-size: 0;
 }
 
 .amplify-landing-workflow-card-title {
 	font-size: 12px;
 	font-weight: 600;
-	color: rgba(255, 255, 255, 0.5);
+	color: var(--color-text-subtle);
 	letter-spacing: 0.5px;
 	text-transform: uppercase;
 	white-space: nowrap;
 }
 
-.amplify-landing-workflow-card-mode {
-	font-size: 10px;
-	font-weight: 700;
-	letter-spacing: 0.6px;
-	text-transform: uppercase;
-	padding-block: 3px;
-	padding-inline: 8px;
-	border-radius: 16px;
-	background: rgba(79, 124, 255, 0.18);
-	color: #7da4ff;
+// Segmented Human/AI toggle in the workflow card header. Same visual
+// treatment as the toggle in the See-it-in-action section above
+// (.amplify-landing-how-mode-toggle), just scaled down to fit the card header.
+.amplify-landing-workflow-mode-toggle {
+	display: inline-flex;
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 8px;
+	padding: 3px;
+	gap: 2px;
+	flex-shrink: 0;
+}
+
+.amplify-landing-workflow-mode-btn {
+	font-size: 11px;
+	font-weight: 600;
+	padding-block: 5px;
+	padding-inline: 12px;
+	border-radius: 3px;
+	border: none;
+	background: transparent;
+	color: var(--color-text-subtle);
+	cursor: pointer;
+	font-family: inherit;
+	transition: background 0.2s ease, color 0.2s ease;
 	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+}
+
+.amplify-landing-workflow-mode-btn:hover:not(.is-active) {
+	color: var(--color-text-black);
+}
+
+.amplify-landing-workflow-mode-btn.is-active {
+	background: var(--color-accent);
+	color: var(--color-text-inverted);
 }
 
 .amplify-landing-workflow-card-count {
 	font-size: 11px;
-	color: rgba(255, 255, 255, 0.25);
+	color: var(--color-text-subtle);
 	white-space: nowrap;
 	flex-shrink: 0;
 }
@@ -1631,24 +1641,28 @@
 	padding-inline: 0;
 }
 
+/// Two-column layout: content (label + body) on the left, Copy button on the
+// right. The body wraps inside the content column so its text never visually
+// runs underneath or close to the Copy button.
 .amplify-landing-workflow-prompt-item {
 	padding-block: 14px;
 	padding-inline: 20px;
-	border-block-end: 1px solid rgba(255, 255, 255, 0.05);
+	border-block-end: 1px solid var(--color-border-subtle);
 	display: flex;
-	flex-direction: column;
-	gap: 6px;
+	align-items: flex-start;
+	gap: 32px;
 }
 
 .amplify-landing-workflow-prompt-item:last-child {
 	border-block-end: none;
 }
 
-.amplify-landing-workflow-prompt-item-header {
+.amplify-landing-workflow-prompt-item-content {
+	flex: 1;
+	min-inline-size: 0;
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
+	flex-direction: column;
+	gap: 6px;
 }
 
 .amplify-landing-workflow-prompt-item-label {
@@ -1657,7 +1671,7 @@
 	gap: 7px;
 	font-size: 12px;
 	font-weight: 600;
-	color: rgba(255, 255, 255, 0.85);
+	color: var(--color-text-black);
 }
 
 .amplify-landing-workflow-prompt-item-dot {
@@ -1683,9 +1697,9 @@
 	font-size: 10px;
 	font-weight: 600;
 	letter-spacing: 0.4px;
-	color: rgba(255, 255, 255, 0.3);
-	background: rgba(255, 255, 255, 0.06);
-	border: none;
+	color: var(--color-text-subtle);
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-border-subtle);
 	border-radius: 4px;
 	padding-block: 3px;
 	padding-inline: 8px;
@@ -1697,92 +1711,65 @@
 }
 
 .amplify-landing-workflow-prompt-copy:hover {
-	color: rgba(255, 255, 255, 0.7);
-	background: rgba(255, 255, 255, 0.1);
+	color: var(--color-text);
+	background: var(--color-neutral-5);
 }
 
 .amplify-landing-workflow-prompt-text {
 	font-size: 12px;
-	color: rgba(255, 255, 255, 0.35);
+	color: var(--color-text);
 	line-height: 1.55;
-	font-family: "SF Mono", "Fira Code", monospace;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-
-.amplify-landing-workflow-card-footer {
-	padding-block: 16px;
-	padding-inline: 20px;
-	border-block-start: 1px solid rgba(255, 255, 255, 0.08);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-}
-
-.amplify-landing-workflow-studio-label {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	font-size: 11px;
-	color: rgba(255, 255, 255, 0.25);
-}
-
-.amplify-landing-workflow-studio-dot {
-	inline-size: 6px;
-	block-size: 6px;
-	border-radius: 16px;
-	background: var(--color-success);
-	flex-shrink: 0;
-}
-
-.amplify-landing-workflow-send-btn {
-	font-size: 12px;
-	font-weight: 600;
-	color: var(--color-text-inverted);
-	background: var(--color-accent);
-	border: none;
-	border-radius: 4px;
-	padding-block: 8px;
-	padding-inline: 16px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	transition: opacity 0.15s ease;
+	// Reverted from monospace; sans-serif reads like report body copy and
+	// reinforces the PDF/document framing. Line-clamp intentionally removed
+	// so prompts wrap to their natural length instead of ellipsizing — the
+	// prompt bodies above are written to be succinct enough to fit in 2 lines.
 	font-family: inherit;
-	white-space: nowrap;
 }
 
-.amplify-landing-workflow-send-btn:hover {
-	opacity: 0.9;
+// Footer area with the "Copy all prompts" bulk action. Right-aligned so it
+// reads as a document-level action separate from the per-prompt Copy buttons.
+.amplify-landing-workflow-card-footer {
+	padding-block: 12px;
+	padding-inline: 20px;
+	border-block-start: 1px solid var(--color-border-subtle);
+	display: flex;
+	justify-content: flex-end;
 }
 
-// ── HERO EYEBROW ───────────────────────────────────────────────────────────────
-
-.amplify-landing-eyebrow {
+.amplify-landing-workflow-copy-all {
 	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: 1.2px;
-	text-transform: uppercase;
-	color: var(--color-accent);
-	margin-block-end: 16px;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+	color: var(--color-text);
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 4px;
+	padding-block: 6px;
+	padding-inline: 14px;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: color 0.15s ease, background 0.15s ease;
+	font-family: inherit;
 }
+
+.amplify-landing-workflow-copy-all:hover {
+	color: var(--color-text-black);
+	background: var(--color-neutral-5);
+}
+
 
 // ── SECTION CONTAINERS ────────────────────────────────────────────────────────
-
-.amplify-landing-human-section,
-.amplify-landing-ai-section {
-	padding-block: 64px;
-	border-block-start: 1px solid var(--color-border);
-}
 
 // ── CRITERIA SECTION SHARED ───────────────────────────────────────────────────
 
 .amplify-criteria-section {
 	width: 100%;
+
+	// Local accent for the stat numbers (50ms, 75%, 34%) and the card numbers
+	// (01, 02, …) in this section. Both Human-centric and AI variants of the
+	// criteria section share this token so the blue stays consistent between
+	// them. Update here to retune both at once.
+	--amplify-criteria-accent: var(--studio-blue-50);
 }
 
 .amplify-criteria-section-header {
@@ -1843,7 +1830,7 @@
 	font-weight: 700;
 	line-height: 1;
 	letter-spacing: -1px;
-	color: var(--color-accent);
+	color: var(--amplify-criteria-accent);
 }
 
 .amplify-criteria-stat-label {
@@ -1972,7 +1959,7 @@
 	font-size: 11px;
 	font-weight: 700;
 	letter-spacing: 0.5px;
-	color: var(--color-accent);
+	color: var(--amplify-criteria-accent);
 	font-variant-numeric: tabular-nums;
 	margin-block-end: 2px;
 }

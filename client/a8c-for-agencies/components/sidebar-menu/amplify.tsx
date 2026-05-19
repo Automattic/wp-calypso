@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Badge } from '@automattic/components';
 import { chevronLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import Sidebar from '../sidebar';
@@ -16,7 +17,12 @@ export default function AmplifySidebar( { path }: Props ) {
 	return (
 		<Sidebar
 			path={ A4A_AMPLIFY_LINK }
-			title={ translate( 'Amplify' ) }
+			title={
+				<div className="sidebar-menu-item__title-with-badge">
+					<span>{ translate( 'Amplify' ) }</span>
+					<Badge type="info">{ translate( 'Alpha' ) }</Badge>
+				</div>
+			}
 			backButtonProps={ {
 				label: translate( 'Back to overview' ),
 				icon: chevronLeft,

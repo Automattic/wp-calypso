@@ -10,6 +10,8 @@
 	"features": {},
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
+	"amplify_worker_url": "",
+	"amplify_api_secret": "",
 	"survicate_enabled": false,
 	"hostname": false,
 	"hostname_allowlist": false,

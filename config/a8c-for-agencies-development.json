@@ -85,5 +85,7 @@
 	"restricted_me_access": false,
 	"theme_color": "#029CD7",
 	"theme_color_admin_color_scheme_override": false,
-	"hotjar_enabled": true
+	"hotjar_enabled": true,
+	"amplify_worker_url": "http://localhost:8787",
+	"amplify_api_secret": "d891214eed45021b7d7be0c6c0f727c2b856387836957e94e610a12efa6b8017"
 }

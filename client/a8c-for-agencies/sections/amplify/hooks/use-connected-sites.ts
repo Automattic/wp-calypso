@@ -30,7 +30,11 @@ export default function useConnectedSites( { search = '', limit }: Args = {} ): 
 		const list = Array.isArray( data ) ? ( data as ConnectedSite[] ) : [];
 		return list
 			.filter( ( site ) => {
-				if ( ! site.url ) {
+				// Defensive runtime check: the API response is cast above but not
+				// validated. If a malformed site ever comes through with a
+				// non-string url, downstream consumers (e.g. site.url.toLowerCase()
+				// in the search filter) would throw on a normal-looking dropdown.
+				if ( typeof site.url !== 'string' || ! site.url ) {
 					return false;
 				}
 				const state = site.features?.wpcom_atomic?.state;

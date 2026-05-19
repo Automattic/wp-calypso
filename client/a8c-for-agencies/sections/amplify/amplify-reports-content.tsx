@@ -58,6 +58,29 @@ const MODE_LABELS: Record< AnalysisMode, string > = {
 	fullanalysis: 'Full',
 };
 
+/**
+ * Determines whether a pending Trigger.dev job has a matching completed report
+ * in the R2 index. See the comment on the merge useMemo below for the full
+ * rationale on why we match by url + normalized mode + timestamp window rather
+ * than by ID.
+ */
+function isPendingJobResolved( job: PendingJob, fetchedReports: Report[] ): boolean {
+	const normalizedMode: AnalysisMode =
+		job.type === 'full' ? 'fullanalysis' : ( job.type as AnalysisMode );
+	return fetchedReports.some(
+		( r ) =>
+			r.url === job.site &&
+			r.mode === normalizedMode &&
+			// Lexicographic compare of ISO 8601 strings is correct here only
+			// because both timestamps come from Date.prototype.toISOString(),
+			// which always produces the canonical 'YYYY-MM-DDTHH:mm:ss.sssZ'
+			// form. If a future caller passes a timestamp in any other format
+			// (locale string, offset other than Z, missing milliseconds), switch
+			// this to Date.parse(...) comparisons.
+			r.timestamp >= job.startedAt
+	);
+}
+
 function useAmplifyReports(): { reports: Report[]; isLoading: boolean; error: string | null } {
 	const [ reports, setReports ] = useState< Report[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
@@ -138,24 +161,43 @@ function ScoreBadge( { score, label }: { score?: number; label: string } ) {
 export default function AmplifyReportsContent( {
 	pendingJobs = [],
 	onSiteSelected,
+	onPendingJobsResolved,
 }: {
 	pendingJobs?: PendingJob[];
 	onSiteSelected: ( url: string ) => void;
+	/**
+	 * Called with the jobIds of any pending jobs that now have a matching
+	 * completed report in the R2 index. Used by the parent to prune resolved
+	 * entries out of sessionStorage so the pending list doesn't accumulate.
+	 *
+	 * **Must be referentially stable across renders** (wrap in `useCallback`
+	 * with stable deps in the parent). The effect below lists this prop as a
+	 * dependency, so an unstable reference will fire the effect on every
+	 * render and risk a re-render loop.
+	 */
+	onPendingJobsResolved?: ( jobIds: string[] ) => void;
 } ) {
 	const dispatch = useDispatch();
 	const { reports: fetchedReports, isLoading, error } = useAmplifyReports();
 
 	// Merge pending jobs into the reports list. A pending job is shown at the
 	// top with the `pending` flag set. Once the R2 index updates and a real
-	// report with the same site + mode appears, the pending row will naturally
-	// be replaced on the next fetch (page reload). We deduplicate by jobId so a
-	// pending row never shows alongside the completed report for the same run.
+	// report appears for the same site + mode, the pending row is dropped on the
+	// next render so the table flips from "Report in progress" to the real row.
+	//
+	// We can't match on ID because the Trigger.dev jobId (held by the pending
+	// entry) and the R2 report id (the report filename basename) are different
+	// strings and there's no link between them in the index. Instead we match by
+	// url + normalized mode + a timestamp window: a completed report counts as
+	// the resolution of a pending job if its timestamp is at or after the job's
+	// startedAt. That keeps stale prior runs for the same URL from prematurely
+	// dropping a fresh pending row.
+	//
 	// Memoized so that table interactions (sort/filter/paginate) that trigger a
-	// re-render don't rebuild the Set and re-map the arrays unnecessarily.
+	// re-render don't rebuild the match index and re-map the arrays unnecessarily.
 	const reports = useMemo( () => {
-		const completedJobIds = new Set( fetchedReports.map( ( r ) => r.id ) );
 		const pendingReports: Report[] = pendingJobs
-			.filter( ( job ) => ! completedJobIds.has( job.jobId ) )
+			.filter( ( job ) => ! isPendingJobResolved( job, fetchedReports ) )
 			.map( ( job ) => ( {
 				id: job.jobId,
 				agencyName: '',
@@ -166,6 +208,30 @@ export default function AmplifyReportsContent( {
 			} ) );
 		return [ ...pendingReports, ...fetchedReports ];
 	}, [ fetchedReports, pendingJobs ] );
+
+	// Once a pending job is resolved by an R2 entry, tell the parent so it can
+	// drop the job from its state + sessionStorage. Without this, resolved jobs
+	// would render-filter correctly but accumulate forever in sessionStorage.
+	// The filter pattern in the parent's setter makes a no-op call cheap, but we
+	// still short-circuit here so we don't fire a state update for every render.
+	//
+	// Loop-prevention invariant: the parent's handlePendingJobsResolved must
+	// return the same array reference when nothing was actually pruned
+	// (reference-equality short-circuit in setPendingJobs). Without that, the
+	// new pendingJobs prop reference would re-run this effect every render and
+	// cause a re-render loop. If you change handlePendingJobsResolved, preserve
+	// that short-circuit.
+	useEffect( () => {
+		if ( ! onPendingJobsResolved || pendingJobs.length === 0 || fetchedReports.length === 0 ) {
+			return;
+		}
+		const resolvedIds = pendingJobs
+			.filter( ( job ) => isPendingJobResolved( job, fetchedReports ) )
+			.map( ( job ) => job.jobId );
+		if ( resolvedIds.length > 0 ) {
+			onPendingJobsResolved( resolvedIds );
+		}
+	}, [ pendingJobs, fetchedReports, onPendingJobsResolved ] );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,

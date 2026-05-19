@@ -104,6 +104,7 @@ export default function AmplifyAddSiteModal( { onClose, onSiteSelected }: Props 
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_amplify_audit_open', {
 				site_url: selectedSite.url,
+				entry_point: 'add_site_modal',
 			} )
 		);
 		onSiteSelected( selectedSite.url );

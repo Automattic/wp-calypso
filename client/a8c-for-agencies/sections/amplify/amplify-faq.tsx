@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
-import PageSection from 'calypso/a8c-for-agencies/components/page-section';
+import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -86,7 +86,7 @@ export default function AmplifyFAQ() {
 					} )
 				);
 			} else {
-				history.replaceState( '', document.title, location.pathname + location.search );
+				history.replaceState( null, document.title, location.pathname + location.search );
 				dispatch(
 					recordTracksEvent( 'calypso_a4a_amplify_faq_close', {
 						faq_id: id,
@@ -98,24 +98,37 @@ export default function AmplifyFAQ() {
 	);
 
 	return (
-		<PageSection
-			heading={ __( 'Frequently asked questions' ) }
-			description={ __( 'Curious about the details? We have answers.' ) }
-		>
-			<ul className="amplify-faqs">
-				{ FAQS.map( ( faq ) => (
-					<li key={ faq.id }>
-						<FoldableFAQ
-							id={ faq.id }
-							question={ faq.question }
-							onToggle={ onFaqToggle }
-							className="amplify-faqs__section"
-						>
-							{ faq.answer }
-						</FoldableFAQ>
-					</li>
-				) ) }
-			</ul>
-		</PageSection>
+		<PageSectionColumns background={ { color: 'var(--color-neutral-0)' } }>
+			<PageSectionColumns.Column fullWidth>
+				{ /*
+					Rendering the heading inside the column (rather than via
+					PageSectionColumns' `heading` prop) gives us control over the
+					title size and the gap below it, so the FAQ heading matches the
+					criteria-section / workflow-title rhythm. Wrapping heading +
+					description + list in a div keeps PageSectionColumns' column
+					gap from stacking on top of the per-element margins.
+				*/ }
+				<div className="amplify-faqs-wrapper">
+					<h2 className="amplify-faqs__title">{ __( 'Frequently asked questions' ) }</h2>
+					<p className="amplify-faqs__description">
+						{ __( 'Curious about the details? We have answers.' ) }
+					</p>
+					<ul className="amplify-faqs">
+						{ FAQS.map( ( faq ) => (
+							<li key={ faq.id }>
+								<FoldableFAQ
+									id={ faq.id }
+									question={ faq.question }
+									onToggle={ onFaqToggle }
+									className="amplify-faqs__section"
+								>
+									{ faq.answer }
+								</FoldableFAQ>
+							</li>
+						) ) }
+					</ul>
+				</div>
+			</PageSectionColumns.Column>
+		</PageSectionColumns>
 	);
 }

@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -13,8 +13,36 @@ type Pin = {
 	top: string;
 	left: string;
 	label: string;
+	/**
+	 * Criterion name from the Amplify scoring rubric (Trust Signals, Audience
+	 * Resonance, etc.). Rendered as an eyebrow tag above the pin label so the
+	 * demo visibly maps each finding to the framework it scores against. Keep
+	 * these in sync with the rubric in skills/human/SKILL.md and skills/ai/SKILL.md.
+	 */
+	criterion: string;
 	severity: Severity;
+	/**
+	 * Score impact for this finding in the rubric. Negative for points lost,
+	 * positive for points earned. Magnitude reflects the max points of the
+	 * underlying signal (or partial credit if applicable). Rendered inline next
+	 * to the label so viewers see how findings ladder up to the total score.
+	 */
+	pointsImpact: number;
 };
+
+function formatPointsImpact( pts: number ): string {
+	if ( pts === 0 ) {
+		return '';
+	}
+	const abs = Math.abs( pts );
+	const sign = pts > 0 ? '+' : '−';
+	return sprintf(
+		// translators: %1$s is a +/− sign, %2$d is the absolute point value.
+		_n( '%1$s%2$d pt', '%1$s%2$d pts', abs ),
+		sign,
+		abs
+	);
+}
 
 type Bar = {
 	label: string;
@@ -120,6 +148,8 @@ function HowMockSite() {
 }
 
 // Hoisted to module scope — static demo data, no reason to reallocate on every render.
+// Pin labels and criteria mirror the real scoring rubric in skills/human/SKILL.md
+// and skills/ai/SKILL.md so the demo reflects what the tool actually measures.
 const MODES: Record< Mode, ModeData > = {
 	human: {
 		score: 86,
@@ -127,23 +157,62 @@ const MODES: Record< Mode, ModeData > = {
 		modeLabel: __( 'Human-centric analysis' ),
 		improveLabel: __( 'Improve for humans' ),
 		pins: [
-			{ top: '14%', left: '7%', label: __( 'Headline could be sharper' ), severity: 'warn' },
-			{ top: '5%', left: '58%', label: __( 'Nav links not descriptive' ), severity: 'warn' },
+			{
+				top: '14%',
+				left: '7%',
+				label: __( 'Hero headline too vague' ),
+				criterion: __( 'Audience Resonance' ),
+				severity: 'warn',
+				pointsImpact: -1,
+			},
+			{
+				top: '5%',
+				left: '58%',
+				label: __( '4 nav items: focused choices' ),
+				criterion: __( 'Design & Experience' ),
+				severity: 'good',
+				pointsImpact: 1,
+			},
 			{
 				top: '33%',
 				left: '7%',
-				label: __( 'No social proof above the fold' ),
+				label: __( 'No client logos visible' ),
+				criterion: __( 'Trust Signals' ),
 				severity: 'danger',
+				pointsImpact: -2,
 			},
-			{ top: '44%', left: '7%', label: __( 'CTA copy lacks urgency' ), severity: 'warn' },
+			{
+				top: '44%',
+				left: '7%',
+				label: __( 'CTA copy is generic' ),
+				criterion: __( 'Contact & Conversion' ),
+				severity: 'warn',
+				pointsImpact: -2,
+			},
 			{
 				top: '22%',
 				left: '60%',
-				label: __( 'Hero clashes with site palette' ),
+				label: __( 'Aesthetic polish: adequate' ),
+				criterion: __( 'Design & Experience' ),
 				severity: 'warn',
+				pointsImpact: -1,
 			},
-			{ top: '75%', left: '6%', label: __( 'Portfolio quality: solid' ), severity: 'good' },
-			{ top: '77%', left: '38%', label: __( 'Missing testimonials' ), severity: 'danger' },
+			{
+				top: '75%',
+				left: '6%',
+				label: __( 'Case studies linked' ),
+				criterion: __( 'Trust Signals' ),
+				severity: 'good',
+				pointsImpact: 1,
+			},
+			{
+				top: '77%',
+				left: '38%',
+				label: __( 'No testimonials with attribution' ),
+				criterion: __( 'Trust Signals' ),
+				severity: 'danger',
+				pointsImpact: -3,
+			},
 		],
 		bars: [
 			{ label: __( 'Trust signals' ), value: 89 },
@@ -157,13 +226,62 @@ const MODES: Record< Mode, ModeData > = {
 		modeLabel: __( 'AI analysis' ),
 		improveLabel: __( 'Improve for AI' ),
 		pins: [
-			{ top: '14%', left: '7%', label: __( 'H1 missing schema markup' ), severity: 'danger' },
-			{ top: '5%', left: '50%', label: __( 'Entity type undefined' ), severity: 'danger' },
-			{ top: '27%', left: '7%', label: __( 'Thin content detected' ), severity: 'warn' },
-			{ top: '44%', left: '7%', label: __( 'No FAQ structured data' ), severity: 'danger' },
-			{ top: '22%', left: '60%', label: __( 'No breadcrumb schema' ), severity: 'warn' },
-			{ top: '75%', left: '6%', label: __( 'Content freshness: stale' ), severity: 'warn' },
-			{ top: '77%', left: '38%', label: __( 'AEO readiness: 38%' ), severity: 'danger' },
+			{
+				top: '14%',
+				left: '7%',
+				label: __( 'Organization schema missing' ),
+				criterion: __( 'Structured Data' ),
+				severity: 'danger',
+				pointsImpact: -5,
+			},
+			{
+				top: '5%',
+				left: '50%',
+				label: __( 'Clear entity identity' ),
+				criterion: __( 'Entity Clarity' ),
+				severity: 'good',
+				pointsImpact: 3,
+			},
+			{
+				top: '27%',
+				left: '7%',
+				label: __( 'Service detail too thin' ),
+				criterion: __( 'Content Specificity' ),
+				severity: 'warn',
+				pointsImpact: -1,
+			},
+			{
+				top: '44%',
+				left: '7%',
+				label: __( 'No FAQ schema' ),
+				criterion: __( 'Structured Data' ),
+				severity: 'danger',
+				pointsImpact: -3,
+			},
+			{
+				top: '22%',
+				left: '60%',
+				label: __( 'GPTBot blocked in robots.txt' ),
+				criterion: __( 'Technical Health' ),
+				severity: 'danger',
+				pointsImpact: -7,
+			},
+			{
+				top: '75%',
+				left: '6%',
+				label: __( 'Copyright year current' ),
+				criterion: __( 'Content Freshness' ),
+				severity: 'good',
+				pointsImpact: 3,
+			},
+			{
+				top: '77%',
+				left: '38%',
+				label: __( 'No question-framed headings' ),
+				criterion: __( 'AEO Readiness' ),
+				severity: 'danger',
+				pointsImpact: -2,
+			},
 		],
 		bars: [
 			{ label: __( 'Technical health' ), value: 60 },
@@ -198,7 +316,9 @@ export default function AmplifyHowItWorks() {
 			<div className="amplify-landing-how-header">
 				<div>
 					<p className="amplify-landing-how-eyebrow">{ __( 'How it works' ) }</p>
-					<h2 className="amplify-landing-how-title">{ __( 'See it in action' ) }</h2>
+					<h2 className="amplify-landing-how-title">
+						{ __( 'Two lenses. One complete picture.' ) }
+					</h2>
 				</div>
 				<div
 					className="amplify-landing-how-mode-toggle"
@@ -256,7 +376,13 @@ export default function AmplifyHowItWorks() {
 							>
 								<div className={ clsx( 'amplify-landing-how-pin-dot', pin.severity ) } />
 								<div className={ clsx( 'amplify-landing-how-pin-label', pin.severity ) }>
-									{ pin.label }
+									<span className="amplify-landing-how-pin-label-criterion">{ pin.criterion }</span>
+									<span className="amplify-landing-how-pin-label-text">
+										{ pin.label }
+										<span className="amplify-landing-how-pin-label-score">
+											{ formatPointsImpact( pin.pointsImpact ) }
+										</span>
+									</span>
 								</div>
 							</div>
 						) ) }

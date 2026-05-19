@@ -324,7 +324,7 @@ export default function AmplifyAnalysisModal( { site, onClose, onAnalysisStarted
 	const modalSubtitle =
 		stage === 'choose'
 			? sprintf(
-					/* translators: %s is the site URL being analysed. */
+					/* translators: %s is the site URL being analyzed. */
 					__( 'Run a comprehensive site analysis on %s' ),
 					site
 			  )

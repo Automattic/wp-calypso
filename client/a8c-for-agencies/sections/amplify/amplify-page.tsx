@@ -6,7 +6,7 @@
  * stay in sync without prop-drilling through the router.
  *
  * Modal flow (two steps, both managed here):
- *   1. AmplifyAddSiteModal  — user picks which connected site to analyse
+ *   1. AmplifyAddSiteModal  — user picks which connected site to analyze
  *   2. AmplifyAnalysisModal — user picks analysis type, job is submitted
  *
  * Why state lives here (not inside the modals):
@@ -65,6 +65,11 @@ function isValidPendingJob( job: unknown ): job is PendingJob {
 }
 
 function loadPendingJobs(): PendingJob[] {
+	// Guard against SSR where window/sessionStorage do not exist. A4A is
+	// client-rendered today but this keeps the helper safe if that changes.
+	if ( typeof window === 'undefined' ) {
+		return [];
+	}
 	try {
 		const stored = sessionStorage.getItem( PENDING_JOBS_KEY );
 		if ( ! stored ) {
@@ -78,6 +83,9 @@ function loadPendingJobs(): PendingJob[] {
 }
 
 function savePendingJobs( jobs: PendingJob[] ): void {
+	if ( typeof window === 'undefined' ) {
+		return;
+	}
 	try {
 		sessionStorage.setItem( PENDING_JOBS_KEY, JSON.stringify( jobs ) );
 	} catch {
@@ -105,6 +113,22 @@ export default function AmplifyPage( { selectedTab }: Props ) {
 		} );
 	}, [] );
 
+	const handlePendingJobsResolved = useCallback( ( jobIds: string[] ) => {
+		// AmplifyReportsContent calls this once it sees pending jobs that now have
+		// a matching completed report in the R2 index. We drop those entries from
+		// both state and sessionStorage so the pending list doesn't accumulate.
+		// The reference-equality short-circuit avoids a wasteful re-render when
+		// the callback fires with jobIds that have already been pruned.
+		setPendingJobs( ( prev ) => {
+			const remaining = prev.filter( ( job ) => ! jobIds.includes( job.jobId ) );
+			if ( remaining.length === prev.length ) {
+				return prev;
+			}
+			savePendingJobs( remaining );
+			return remaining;
+		} );
+	}, [] );
+
 	let title: string;
 	let content: ReactNode;
 	switch ( selectedTab ) {
@@ -115,7 +139,11 @@ export default function AmplifyPage( { selectedTab }: Props ) {
 		case 'reports':
 			title = __( 'Reports' );
 			content = (
-				<AmplifyReportsContent pendingJobs={ pendingJobs } onSiteSelected={ handleSiteSelected } />
+				<AmplifyReportsContent
+					pendingJobs={ pendingJobs }
+					onSiteSelected={ handleSiteSelected }
+					onPendingJobsResolved={ handlePendingJobsResolved }
+				/>
 			);
 			break;
 	}

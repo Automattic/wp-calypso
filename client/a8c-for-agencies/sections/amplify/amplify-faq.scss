@@ -1,6 +1,30 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+// FAQ heading sized to match .amplify-landing-workflow-title and
+// .amplify-criteria-title so all top-level section headings on the page
+// share the same scale.
+.amplify-faqs__title {
+	font-size: clamp(24px, 3vw, 36px);
+	font-weight: 600;
+	line-height: 1.15;
+	letter-spacing: -0.4px;
+	color: var(--color-text-black);
+	margin: 0;
+	// Matches the criteria-section title → intro spacing.
+	margin-block-end: 16px;
+}
+
+// FAQ description sits between the heading and the question list.
+.amplify-faqs__description {
+	font-size: 15px;
+	line-height: 1.65;
+	color: var(--color-text-subtle);
+	margin: 0;
+	// Matches the criteria-section intro → cards spacing.
+	margin-block-end: 36px;
+}
+
 ul.amplify-faqs {
 	margin: 0;
 	padding: 0;

@@ -203,7 +203,7 @@ const CRITERIA: Criterion[] = [
 			'Does the site feel made for the right client? Within seconds of landing, a prospective client should feel the site is speaking directly to them.'
 		),
 		why: __(
-			'Generic copy describes every agency equally, which differentiates none of them. Specific messaging creates the "that\'s me" feeling that generic copy cannot replicate. That feeling is what turns a browse into an enquiry.'
+			'Generic copy describes every agency equally, which differentiates none of them. Specific messaging creates the "that\'s me" feeling that generic copy cannot replicate. That feeling is what turns a browse into an inquiry.'
 		),
 		signals: [
 			__(
