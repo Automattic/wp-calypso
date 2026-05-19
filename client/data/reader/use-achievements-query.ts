@@ -1,5 +1,4 @@
 import { readAchievementsQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface UseAchievementsQueryOptions {
@@ -18,10 +17,9 @@ export function useAchievementsQuery(
 	userIdOrLogin?: number | string,
 	options: UseAchievementsQueryOptions = {}
 ) {
-	const enabled = isEnabled( 'reader/achievements' ) && userIdOrLogin != null;
 	const query = useInfiniteQuery( {
 		...readAchievementsQuery( userIdOrLogin ),
-		enabled,
+		enabled: userIdOrLogin != null,
 		...options,
 	} );
 

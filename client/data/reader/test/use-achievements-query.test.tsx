@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -14,11 +13,6 @@ jest.mock( 'calypso/lib/wp', () => ( {
 	},
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
-
-const mockIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 const mockGet = jest.mocked( wpcom.req.get );
 
 describe( 'useAchievementsQuery', () => {
@@ -27,7 +21,6 @@ describe( 'useAchievementsQuery', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockIsEnabled.mockReturnValue( true );
 
 		queryClient = new QueryClient( {
 			defaultOptions: { queries: { retry: false } },
@@ -35,14 +28,6 @@ describe( 'useAchievementsQuery', () => {
 		wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
-	} );
-
-	test( 'should not fire a request when feature flag is disabled', () => {
-		mockIsEnabled.mockReturnValue( false );
-
-		renderHook( () => useAchievementsQuery( 'testuser' ), { wrapper } );
-
-		expect( mockGet ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should not fire a request when userIdOrLogin is undefined', () => {

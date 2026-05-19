@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Badge } from '@automattic/components';
 import {
 	category,
@@ -42,6 +43,7 @@ import {
 	A4A_WOOPAYMENTS_LINK,
 	A4A_LEARN_LINK,
 	A4A_RESOURCES_LINK,
+	A4A_AGENT_STUDIO_LINK,
 	A4A_EXCLUSIVE_OFFERS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
@@ -115,7 +117,7 @@ const useMainMenuItems = ( path: string ) => {
 						{
 							icon: shortcode,
 							path: A4A_RESOURCES_LINK,
-							link: A4A_LEARN_LINK,
+							link: isEnabled( 'a4a-agent-studio' ) ? A4A_AGENT_STUDIO_LINK : A4A_LEARN_LINK,
 							title: translate( 'Resources and tools' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Resources and tools',
