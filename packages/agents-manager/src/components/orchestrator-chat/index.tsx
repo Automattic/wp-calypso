@@ -457,11 +457,22 @@ export default function OrchestratorChat( {
 	}
 
 	// When the host plugin populates `agentsManagerData.upgradeNudge` +
-	// `upgradeLink`, render any chat-stream error as an inline upgrade-nudge
-	// notice instead of the generic "Streaming error: …" toast. Opt-in by
-	// configuration: surfaces that don't set both keys keep existing behavior.
+	// `upgradeLink` and the chat-stream error looks like a rate-limit / quota
+	// response, render an inline upgrade-nudge notice instead of the generic
+	// "Streaming error: …" toast. Opt-in by configuration: surfaces that
+	// don't set both keys keep existing behavior. The error-pattern check is
+	// substring-based because agenttic-client currently reduces error details
+	// to a single string; revisit if structured error info (status/code) is
+	// plumbed through useAgentChat.
 	const quotaNudge = useMemo( () => {
 		if ( ! error ) {
+			return undefined;
+		}
+		if (
+			! /(?:request_limit_exceeded|message limit|rate limit|quota)/i.test(
+				error
+			)
+		) {
 			return undefined;
 		}
 		const data = (
