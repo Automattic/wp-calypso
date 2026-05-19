@@ -101,16 +101,16 @@ const DesktopDownloadCard: React.FC< DesktopDownloadCardProps > = ( { appConfig 
 		if ( ! platform ) {
 			return undefined;
 		}
-		// Linux arch-specific types fall back to the generic Linux entry so apps
-		// that don't differentiate by architecture (e.g. the WordPress.com
-		// desktop app) still resolve a config.
-		if (
-			( platform === PlatformType.LinuxX64 || platform === PlatformType.LinuxARM64 ) &&
-			! appConfig.platforms[ platform ]
-		) {
+		const config = appConfig.platforms[ platform ];
+		if ( config ) {
+			return config;
+		}
+		// Apps without arch-specific Linux entries (e.g. the WordPress.com
+		// desktop app) fall back to the generic Linux entry.
+		if ( platform === PlatformType.LinuxX64 || platform === PlatformType.LinuxARM64 ) {
 			return appConfig.platforms[ PlatformType.Linux ];
 		}
-		return appConfig.platforms[ platform ];
+		return undefined;
 	}, [ appConfig.platforms, platform ] );
 
 	if ( isLoading ) {
