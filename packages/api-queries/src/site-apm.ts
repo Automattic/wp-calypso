@@ -1,8 +1,8 @@
-import { updateApmEnabled } from '@automattic/api-core';
-import { mutationOptions } from '@tanstack/react-query';
+import { fetchSiteApmAggregate, updateApmEnabled } from '@automattic/api-core';
+import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
-import type { Site } from '@automattic/api-core';
+import type { ApmAggregateParams, Site } from '@automattic/api-core';
 
 export const siteApmEnabledMutation = ( siteId: number ) =>
 	mutationOptions( {
@@ -17,4 +17,10 @@ export const siteApmEnabledMutation = ( siteId: number ) =>
 					: site
 			);
 		},
+	} );
+
+export const siteApmAggregateQuery = ( siteId: number, params?: ApmAggregateParams ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'apm', 'aggregate', params ],
+		queryFn: () => fetchSiteApmAggregate( siteId, params ),
 	} );
