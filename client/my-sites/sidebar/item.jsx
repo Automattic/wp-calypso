@@ -33,6 +33,10 @@ import { MoveMenu } from './customize/move-menu';
 import SignalBadge from './signal-badge';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
 
+export function canCustomizeSidebarItem( isCustomizing, itemId, reassignable ) {
+	return !! isCustomizing && !! itemId && reassignable === true;
+}
+
 export const MySitesSidebarUnifiedItem = ( {
 	badge,
 	count,
@@ -52,17 +56,20 @@ export const MySitesSidebarUnifiedItem = ( {
 	trackClickEvent,
 	signal,
 	itemId,
+	reassignable,
 } ) => {
 	const reduxDispatch = useDispatch();
 	const customizeCtx = useCustomizeContext();
 	// Render the drag grip + 3-dot more-options trigger only on rows that
 	// the customize mode can act on: the orchestrator is mounted AND in
-	// customize mode, AND this item carries a compound itemId (which is
-	// what makes the row a drag target — the data-wp-admin-sidebar-item-id
-	// attribute matched by drag-drop.ts). The decorations mirror the public
-	// plugin's grip + more-options spans inserted into the link by
-	// `customizer.js` (Phase 2 row 17 / DES-597).
-	const showCustomizeDecorations = !! customizeCtx?.isCustomizing && !! itemId;
+	// customize mode, AND this item carries a compound itemId marked as
+	// reassignable by the classifier. The data attribute below is what
+	// drag-drop.ts reads, so non-reassignable rows must not receive it.
+	const showCustomizeDecorations = canCustomizeSidebarItem(
+		customizeCtx?.isCustomizing,
+		itemId,
+		reassignable
+	);
 	const gripLabel = title
 		? translate( 'Reorder %(label)s', { args: { label: title } } )
 		: translate( 'Reorder' );
@@ -102,7 +109,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			forceExternalLink={ forceExternalLink }
 			forceShowExternalIcon={ forceShowExternalIcon }
 			forceChevronIcon={ forceChevronIcon }
-			wpAdminSidebarItemId={ itemId }
+			wpAdminSidebarItemId={ showCustomizeDecorations ? itemId : undefined }
 			prependContent={
 				showCustomizeDecorations ? (
 					// `<span role="button">` (not <button>) — nested <button>
@@ -194,6 +201,8 @@ MySitesSidebarUnifiedItem.propTypes = {
 	// `data-wp-admin-sidebar-item-id` attribute the customize mode's
 	// drag-drop reads. Optional; legacy items without it pass through unchanged.
 	itemId: PropTypes.string,
+	// Classifier flag that controls whether customize mode may move this row.
+	reassignable: PropTypes.bool,
 };
 
 export default memo( MySitesSidebarUnifiedItem );
