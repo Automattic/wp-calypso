@@ -531,7 +531,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	isSecondaryConnection( props = this.props ) {
-		return this.isFromJetpackConnector( props ) && props.authQuery.alreadyAuthorized;
+		return this.isFromJetpackConnector( props ) && props.authQuery.hasConnectedOwner;
 	}
 
 	isAdminConnection( props = this.props ) {
@@ -612,12 +612,7 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
 		const { alreadyAuthorized, redirectAfterAuth, from } = this.props.authQuery;
 
-		if (
-			! this.props.isAlreadyOnSitesList &&
-			! this.props.isFetchingSites &&
-			alreadyAuthorized &&
-			! this.isFromJetpackConnector()
-		) {
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
 			return this.externalRedirectOnce( redirectAfterAuth );
 		}
@@ -705,16 +700,10 @@ export class JetpackAuthorize extends Component {
 			};
 		}
 
-		if (
-			alreadyAuthorized &&
-			! this.props.isFetchingSites &&
-			! this.props.isAlreadyOnSitesList &&
-			! this.isFromJetpackConnector()
-		) {
+		if ( alreadyAuthorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
 			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
 			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
-			// flows will be reserved for brand new connections. The connector flow allows secondary
-			// connections and shows role-appropriate content instead.
+			// flows will be reserved for brand new connections.
 			return (
 				<JetpackConnectNotices
 					noticeType={ ALREADY_CONNECTED_BY_OTHER_USER }
@@ -815,12 +804,7 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
 
-		if (
-			! this.props.isAlreadyOnSitesList &&
-			! this.props.isFetchingSites &&
-			alreadyAuthorized &&
-			! this.isFromJetpackConnector()
-		) {
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			return translate( 'Go back to your site' );
 		}
 
@@ -868,12 +852,7 @@ export class JetpackAuthorize extends Component {
 		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
 
-		if (
-			! this.props.isAlreadyOnSitesList &&
-			! this.props.isFetchingSites &&
-			alreadyAuthorized &&
-			! this.isFromJetpackConnector()
-		) {
+		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			return;
 		}
 

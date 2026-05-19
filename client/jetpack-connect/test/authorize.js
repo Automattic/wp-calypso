@@ -210,7 +210,7 @@ describe( 'JetpackAuthorize', () => {
 					authQuery={ {
 						...DEFAULT_PROPS.authQuery,
 						from: 'jetpack-connector',
-						alreadyAuthorized: true,
+						hasConnectedOwner: true,
 						plugins: [ 'jetpack' ],
 						scope: 'administrator:fooBarBaz',
 					} }
@@ -237,7 +237,7 @@ describe( 'JetpackAuthorize', () => {
 					authQuery={ {
 						...DEFAULT_PROPS.authQuery,
 						from: 'jetpack-connector',
-						alreadyAuthorized: true,
+						hasConnectedOwner: true,
 						plugins: [ 'jetpack' ],
 						scope: 'editor:fooBarBaz',
 					} }
@@ -253,7 +253,31 @@ describe( 'JetpackAuthorize', () => {
 			).toBeInTheDocument();
 		} );
 
-		test( 'from=my-jetpack with alreadyAuthorized still shows ALREADY_CONNECTED_BY_OTHER_USER notice', () => {
+		test( 'has_connected_owner alone (no alreadyAuthorized) does not block in non-connector flows', () => {
+			// Jetpack emits has_connected_owner from Manager::get_authorization_url() for every
+			// flow when the site has a connection owner. Non-connector flows must treat it as a
+			// no-op so legitimate secondary connections from My Jetpack proceed normally.
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from: 'my-jetpack',
+						hasConnectedOwner: true,
+						plugins: [ 'jetpack' ],
+					} }
+				/>
+			);
+
+			expect(
+				screen.queryByText( /already connected to a different WordPress.com user/ )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'legacy alreadyAuthorized still surfaces ALREADY_CONNECTED_BY_OTHER_USER in non-connector flows', () => {
+			// alreadyAuthorized is now only emitted by Webhooks::handle_connect_url_redirect(),
+			// which means the current WP user is already linked to a wpcom account. The notice
+			// remains the right response when they land on Calypso signed in to a different one.
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
@@ -266,7 +290,6 @@ describe( 'JetpackAuthorize', () => {
 				/>
 			);
 
-			// The blocking notice IS shown for non-connector flows.
 			expect(
 				screen.getByText( /already connected to a different WordPress.com user/ )
 			).toBeInTheDocument();
