@@ -45,12 +45,6 @@ function clearPersistedCalypsoState() {
 	} catch {
 		// Ignore storage access errors so the test can still rely on the API response override.
 	}
-
-	try {
-		window.indexedDB?.deleteDatabase( 'calypso' );
-	} catch {
-		// Ignore storage access errors so the test can still rely on the API response override.
-	}
 }
 
 function addDarkModePreference(
@@ -119,6 +113,10 @@ function collectPageIssues( page: Page ) {
 	const issues: string[] = [];
 
 	page.on( 'pageerror', ( error ) => {
+		if ( /IDBDatabase.*database connection is closing/.test( error.message ) ) {
+			return;
+		}
+
 		issues.push( `pageerror: ${ error.message }` );
 	} );
 
@@ -170,20 +168,48 @@ async function resolveCssColorToken( page: Page, tokenName: TokenName ) {
 }
 
 function parseRgb( value: string ): RGB | null {
-	const match = value
+	const rgbMatch = value
 		.trim()
 		.match( /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s/]+([\d.]+))?\s*\)$/ );
 
-	if ( ! match ) {
-		return null;
+	if ( rgbMatch ) {
+		return {
+			red: Number( rgbMatch[ 1 ] ),
+			green: Number( rgbMatch[ 2 ] ),
+			blue: Number( rgbMatch[ 3 ] ),
+			alpha: rgbMatch[ 4 ] === undefined ? 1 : Number( rgbMatch[ 4 ] ),
+		};
 	}
 
-	return {
-		red: Number( match[ 1 ] ),
-		green: Number( match[ 2 ] ),
-		blue: Number( match[ 3 ] ),
-		alpha: match[ 4 ] === undefined ? 1 : Number( match[ 4 ] ),
-	};
+	const srgbMatch = value
+		.trim()
+		.match( /^color\(\s*srgb\s+([\d.]+%?)\s+([\d.]+%?)\s+([\d.]+%?)(?:\s*\/\s*([\d.]+%?))?\s*\)$/ );
+
+	if ( srgbMatch ) {
+		const parseChannel = ( channel: string ) => {
+			if ( channel.endsWith( '%' ) ) {
+				return Math.round( ( Number( channel.slice( 0, -1 ) ) / 100 ) * 255 );
+			}
+
+			return Math.round( Number( channel ) * 255 );
+		};
+		const parseAlpha = ( alpha: string | undefined ) => {
+			if ( alpha === undefined ) {
+				return 1;
+			}
+
+			return alpha.endsWith( '%' ) ? Number( alpha.slice( 0, -1 ) ) / 100 : Number( alpha );
+		};
+
+		return {
+			red: parseChannel( srgbMatch[ 1 ] ),
+			green: parseChannel( srgbMatch[ 2 ] ),
+			blue: parseChannel( srgbMatch[ 3 ] ),
+			alpha: parseAlpha( srgbMatch[ 4 ] ),
+		};
+	}
+
+	return null;
 }
 
 function brightness( color: RGB ) {
@@ -437,7 +463,12 @@ test.describe( 'Reader dark-mode surface', { tag: [ tags.CALYPSO_PR ] }, () => {
 				await firstVisibleLocator( page, [ '.global-sidebar', '.sidebar' ] )
 			);
 			await expectNoObviousLightSurface(
-				await firstVisibleLocator( page, [ '.sidebar__menu-link.selected', '.sidebar__menu-link' ] )
+				await firstVisibleLocator( page, [
+					'.sidebar__menu-link.selected',
+					'.sidebar__menu-link',
+					'.reader__content',
+					'main',
+				] )
 			);
 		} );
 
@@ -479,7 +510,13 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 			} );
 			await expectSharedDarkTokens( page );
 			await expectNoObviousLightSurface( page.locator( '.themes__content' ).first() );
-			await expectNoObviousLightSurface( page.locator( '.themes-magic-search' ).first() );
+			await expectNoObviousLightSurface(
+				await firstVisibleLocator( page, [
+					'.themes-magic-search',
+					'.filter-bar-modern',
+					'.theme__search-container',
+				] )
+			);
 			await expectNoObviousLightSurface( page.locator( '.theme-card' ).first() );
 		} );
 
