@@ -10,6 +10,7 @@ Object {
   "closeWindowAfterAuthorize": false,
   "closeWindowAfterLogin": false,
   "from": "[unknown]",
+  "hasConnectedOwner": false,
   "homeUrl": "https://yourjetpack.blog",
   "installedExtSuccess": "1",
   "isPopup": false,

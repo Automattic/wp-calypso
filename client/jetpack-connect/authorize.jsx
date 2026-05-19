@@ -65,7 +65,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
-import { getAuthCopy } from './connection-content';
+import { getAuthCopy, getSecondaryAuthCopy } from './connection-content';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -85,7 +85,7 @@ import {
 	REMOTE_PATH_AUTH,
 } from './constants';
 import Disclaimer from './disclaimer';
-import { getConnectorFeatureCards } from './feature-cards';
+import { getConnectorFeatureCards, getSecondaryAdminFeatureCards } from './feature-cards';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -159,6 +159,8 @@ export class JetpackAuthorize extends Component {
 			from,
 			is_mobile_app_flow: isMobileAppFlow,
 			site: clientId,
+			is_secondary_connection: this.isSecondaryConnection(),
+			is_admin_connection: this.isAdminConnection(),
 		};
 
 		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
@@ -528,6 +530,14 @@ export class JetpackAuthorize extends Component {
 		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
 	}
 
+	isSecondaryConnection( props = this.props ) {
+		return this.isFromJetpackConnector( props ) && props.authQuery.hasConnectedOwner;
+	}
+
+	isAdminConnection( props = this.props ) {
+		return getRoleFromScope( props.authQuery.scope ) === 'administrator';
+	}
+
 	getCompanyName() {
 		return this.isFromAutomatticForAgenciesPlugin() ? 'Automattic, Inc.' : 'WordPress.com';
 	}
@@ -625,7 +635,10 @@ export class JetpackAuthorize extends Component {
 			return this.redirect();
 		}
 
-		recordTracksEvent( 'calypso_jpc_approve_click' );
+		recordTracksEvent( 'calypso_jpc_approve_click', {
+			is_secondary_connection: this.isSecondaryConnection(),
+			is_admin_connection: this.isAdminConnection(),
+		} );
 
 		if ( 'woocommerce-core-profiler' === from ) {
 			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
@@ -1054,7 +1067,18 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isFromJetpackConnector() ) {
-			const { cards } = getConnectorFeatureCards( authQuery.plugins );
+			const isSecondary = this.isSecondaryConnection();
+			const isAdmin = this.isAdminConnection();
+
+			// Non-admin secondary connections show no cards — SSO is the
+			// sole benefit and the subtitle already communicates it.
+			const cards =
+				isSecondary && ! isAdmin
+					? []
+					: ( isSecondary
+							? getSecondaryAdminFeatureCards( authQuery.plugins )
+							: getConnectorFeatureCards( authQuery.plugins )
+					  ).cards;
 
 			return (
 				<>
@@ -1068,7 +1092,7 @@ export class JetpackAuthorize extends Component {
 					/>
 					{ this.renderUseDifferentAccountLink() }
 
-					<FeaturesSection cards={ cards } />
+					{ cards.length > 0 && <FeaturesSection cards={ cards } /> }
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</>
@@ -1336,7 +1360,13 @@ export class JetpackAuthorize extends Component {
 		const connectorBranding = isFromJetpackConnector
 			? getConnectorBranding( this.props.authQuery.plugins )
 			: null;
-		const authCopy = isFromJetpackConnector ? getAuthCopy( this.props.authQuery.plugins ) : null;
+		const isSecondary = this.isSecondaryConnection();
+		let authCopy = null;
+		if ( isFromJetpackConnector && isSecondary ) {
+			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), this.props.authQuery.plugins );
+		} else if ( isFromJetpackConnector ) {
+			authCopy = getAuthCopy( this.props.authQuery.plugins );
+		}
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (

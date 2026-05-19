@@ -20,8 +20,8 @@ const loadFediverseFollowingView = () =>
 		/* webpackChunkName: "async-load-calypso-reader-fediverse-following-view" */ 'calypso/reader/fediverse/following-view'
 	);
 
-function ensureFediverseEnabled(): boolean {
-	if ( ! isEnabled( 'reader/fediverse' ) ) {
+function ensureSocialEnabled(): boolean {
+	if ( ! isEnabled( 'reader/social' ) ) {
 		page.redirect( '/reader' );
 		return false;
 	}
@@ -33,14 +33,14 @@ function ensureFediverseEnabled(): boolean {
  * route now owns the "find a connection or send to chooser" decision.
  */
 export const fediverseLanding = () => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	page.redirect( '/reader/connections' );
 };
 
 export const fediverseIdRedirect = ( context: Context ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -52,7 +52,7 @@ export const fediverseIdRedirect = ( context: Context ) => {
 };
 
 export const fediverseAccount = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -69,7 +69,7 @@ export const fediverseAccount = ( context: Context, next: () => void ) => {
 };
 
 export const fediverseAuthorProfile = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -94,7 +94,7 @@ export const fediverseAuthorProfile = ( context: Context, next: () => void ) => 
 };
 
 export const fediverseProfileFollowers = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
@@ -119,7 +119,7 @@ export const fediverseProfileFollowers = ( context: Context, next: () => void ) 
 };
 
 export const fediverseProfileFollowing = ( context: Context, next: () => void ) => {
-	if ( ! ensureFediverseEnabled() ) {
+	if ( ! ensureSocialEnabled() ) {
 		return;
 	}
 	const id = Number( context.params.id );
