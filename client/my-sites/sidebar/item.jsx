@@ -66,6 +66,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			badge={ badge }
 			count={ count }
 			label={ title }
+			labelSuffix={ <SignalBadge signal={ signal } /> }
 			tooltip={ showTooltip ? title : undefined }
 			link={ url }
 			onNavigate={ onNavigate }
@@ -81,13 +82,6 @@ export const MySitesSidebarUnifiedItem = ( {
 				className
 			) }
 		>
-			{ /*
-			 * Item-level signal — rendered inside the item layout next to the
-			 * title (mirrors public plugin's `target = '.wp-menu-name'`
-			 * insertion point). `<SignalBadge>` is a no-op when the signal is
-			 * `null`, so items without a redesigned signal pay no DOM cost.
-			 */ }
-			<SignalBadge signal={ signal } />
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
 		</SidebarItem>
 	);

@@ -108,7 +108,8 @@ export const SignalBadge = ( { signal, resolved: resolvedProp, badgeLabel }: Sig
 function resolveBadgeLabel( badgeText: string ): string {
 	const asNumber = Number.parseInt( badgeText, 10 );
 	if ( Number.isFinite( asNumber ) && String( asNumber ) === badgeText ) {
-		return translate( '%(count)d items need attention', {
+		return translate( '%(count)d item needs attention', '%(count)d items need attention', {
+			count: asNumber,
 			args: { count: asNumber },
 		} ) as string;
 	}

@@ -1,15 +1,9 @@
 /**
  * Memoised selector that returns the grouped admin-menu shape.
  *
- * Reads the cached flat menu from `state.adminMenu.menus[siteId]` and
- * partitions it via `groupMenuItems()`. Groups metadata travels through the
- * response; until the data layer is updated to surface it (Phase 1 task 1.1
- * lock-step), callers can pass `groups[]` explicitly. When the endpoint
- * starts emitting `groups[]`, the data-layer normalizer at
- * `state/data-layer/wpcom/sites/admin-menu` will dispatch a new
- * `ADMIN_MENU_GROUPS_RECEIVE` action and a separate `groupsBySite` reducer
- * will surface the value through state — at which point this selector reads
- * from state directly.
+ * Reads the cached flat menu from `state.adminMenu.menus[siteId]`, reads
+ * companion `groups[]` metadata from `state.adminMenu.groupsBySite[siteId]`,
+ * and partitions the result via `groupMenuItems()`.
  *
  * Memoisation: `createSelector` from `@automattic/state-utils` caches by
  * reference identity of the inputs. The same `(menu, groups)` references
@@ -22,7 +16,7 @@
 import { createSelector } from '@automattic/state-utils';
 import groupMenuItems from 'calypso/my-sites/sidebar/utils/group-menu-items';
 import 'calypso/state/admin-menu/init';
-import { getAdminMenu } from './index';
+import { getAdminMenu, getAdminMenuGroups } from './index';
 import type { AdminMenuItem, AdminMenuGroup, GroupedMenuShape } from '../types';
 
 /**
@@ -32,8 +26,6 @@ import type { AdminMenuItem, AdminMenuGroup, GroupedMenuShape } from '../types';
 type AdminMenuState = {
 	adminMenu?: {
 		menus?: Record< string | number, AdminMenuItem[] | null >;
-		// Future: a `groupsBySite` slice will land here in lock-step with the
-		// endpoint emitting `groups[]`. Today this field is undefined.
 		groupsBySite?: Record< string | number, AdminMenuGroup[] >;
 	};
 };
@@ -66,7 +58,7 @@ export const getGroupedAdminMenu = createSelector(
 		if ( ! Array.isArray( menu ) ) {
 			return null;
 		}
-		const resolvedGroups = groups ?? state?.adminMenu?.groupsBySite?.[ siteId ] ?? [];
+		const resolvedGroups = groups ?? getAdminMenuGroups( state, siteId ) ?? [];
 		if ( menu.length === 0 && resolvedGroups.length === 0 ) {
 			return EMPTY_GROUPED;
 		}
@@ -79,7 +71,7 @@ export const getGroupedAdminMenu = createSelector(
 	) => [
 		siteId,
 		siteId ? state?.adminMenu?.menus?.[ siteId ] : null,
-		groups ?? ( siteId ? state?.adminMenu?.groupsBySite?.[ siteId ] : null ),
+		groups ?? ( siteId ? getAdminMenuGroups( state, siteId ) : null ),
 	]
 );
 

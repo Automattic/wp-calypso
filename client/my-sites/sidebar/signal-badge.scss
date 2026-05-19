@@ -1,8 +1,8 @@
 /*
- * `<SignalBadge>` styles — item-level signal rendering.
+ * `<SignalBadge>` styles for item-level signal rendering.
  *
  * Mirrors `WordPress/wp-admin-sidebar` v0.1.4 `src/browse-rail/styles.css`
- * 1:1 (visible/audible/interactive output) — only the selectors are
+ * 1:1 (visible/audible/interactive output). Only the selectors are
  * Calypso-flavoured (no `body.wp-admin-sidebar-active` prefix is needed
  * because the redesigned components only render when the schema is
  * available). The class names match the public plugin so any wpcom-side
@@ -10,7 +10,7 @@
  * cleanly here too.
  *
  * Visual anchor: 18×18 circular for single digits, pill for multi-digits,
- * `#d63638` red on white text — the native wp-admin "Updates 3" badge style.
+ * `#d63638` red on white text, the native wp-admin "Updates 3" badge style.
  *
  * Inline-text + inline-icon are decorative side-channels. They do NOT
  * contribute to attention; they sit alongside the title to label plan tier
@@ -24,7 +24,7 @@
 	padding: 0 6px;
 	min-width: 18px;
 	height: 18px;
-	border-radius: 9px;
+	border-radius: 50%;
 	background: #d63638;
 	color: #fff;
 	font-size: 11px;

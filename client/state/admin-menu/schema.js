@@ -67,9 +67,37 @@ const menuItemsSite = {
 	additionalProperties: false,
 };
 
+const groupsSite = {
+	type: 'array',
+	items: {
+		type: 'object',
+		required: [ 'id', 'label' ],
+		properties: {
+			id: { type: 'string' },
+			label: { type: 'string' },
+			default_expanded: { type: 'boolean' },
+			signal: {
+				type: 'object',
+				properties: {
+					attention: { type: 'boolean' },
+					count: { type: 'integer' },
+				},
+			},
+		},
+		additionalProperties: false,
+	},
+};
+
 export const menusSchema = {
 	type: 'object',
 	patternProperties: {
 		'^\\d+$': menuItemsSite,
+	},
+};
+
+export const groupsSchema = {
+	type: 'object',
+	patternProperties: {
+		'^\\d+$': groupsSite,
 	},
 };

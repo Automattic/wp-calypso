@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import { isP2Theme } from 'calypso/lib/site/utils';
+import { getAdminMenuGroups } from 'calypso/state/admin-menu/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -15,8 +16,8 @@ import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import MySitesSidebarUnifiedSidebarGroup from './sidebar-group';
 import useSiteMenuItems from './use-site-menu-items';
-import groupMenuItems from './utils/group-menu-items';
 import { isItemSelected } from './utils';
+import groupMenuItems from './utils/group-menu-items';
 import 'calypso/state/admin-menu/init';
 import 'calypso/state/admin-sidebar/expand-state/init';
 
@@ -35,6 +36,7 @@ export const MySitesSidebarUnifiedBody = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const groups = useSelector( ( state ) => getAdminMenuGroups( state, siteId ) );
 	const isP2Site =
 		useSelector( ( state ) => isSiteWPForTeams( state, siteId ) ) ||
 		( site?.options?.theme_slug && isP2Theme( site?.options?.theme_slug ) );
@@ -43,12 +45,9 @@ export const MySitesSidebarUnifiedBody = ( {
 	// since WP Admin is considered a separate area from Calypso on those sites.
 	const shouldOpenExternalLinksInCurrentTab = ! isJetpack || isSiteAtomic;
 
-	// Phase 1 redesign: partition the flat menu into top-level items + group
-	// sections. `groups[]` is sourced from the schema-extended /wpcom/v2/admin-menu
-	// response (Phase 1 task 1.1, Jetpack PR #48632). Until that endpoint ships,
-	// `groups` stays undefined and `groupMenuItems` returns every item in
-	// `ungroupedItems` — behaviour identical to the legacy flat shape.
-	const groups = undefined;
+	// Phase 1 redesign: partition the flat menu into top-level items plus group
+	// sections. Until the endpoint emits `groups[]`, all items remain ungrouped
+	// and the legacy flat shape is preserved.
 	const { ungroupedItems, groupedSections } = useMemo(
 		() => groupMenuItems( menuItems ?? [], groups ),
 		[ menuItems, groups ]
@@ -104,7 +103,7 @@ export const MySitesSidebarUnifiedBody = ( {
 			{ ungroupedItems.map( ( item, i ) => renderItem( item, i ) ) }
 			{ groupedSections.map( ( section ) => (
 				<MySitesSidebarUnifiedSidebarGroup
-					key={ section.group.id }
+					key={ `group-${ section.group.id }` }
 					group={ section.group }
 				>
 					{ section.items.map( ( item, i ) => renderItem( item, i ) ) }

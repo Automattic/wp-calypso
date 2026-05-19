@@ -64,8 +64,13 @@ const sanitizeMenuItem = ( menuItem, siteSlug, wpAdminUrl ) => {
 export const handleSuccess =
 	( { siteId }, menuData ) =>
 	( dispatch, getState ) => {
-		if ( ! Array.isArray( menuData ) ) {
-			return dispatch( receiveAdminMenu( siteId, menuData ) );
+		const hasRedesignedEnvelope =
+			menuData && ! Array.isArray( menuData ) && Array.isArray( menuData.menu );
+		const rawMenuItems = hasRedesignedEnvelope ? menuData.menu : menuData;
+		const groups = hasRedesignedEnvelope && Array.isArray( menuData.groups ) ? menuData.groups : [];
+
+		if ( ! Array.isArray( rawMenuItems ) ) {
+			return dispatch( receiveAdminMenu( siteId, rawMenuItems, groups ) );
 		}
 
 		// Sanitize menu data.
@@ -76,7 +81,8 @@ export const handleSuccess =
 		return dispatch(
 			receiveAdminMenu(
 				siteId,
-				menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, siteSlug, wpAdminUrl ) )
+				rawMenuItems.map( ( menuItem ) => sanitizeMenuItem( menuItem, siteSlug, wpAdminUrl ) ),
+				groups
 			)
 		);
 	};

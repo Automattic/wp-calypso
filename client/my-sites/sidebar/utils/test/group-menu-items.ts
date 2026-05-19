@@ -37,6 +37,8 @@ describe( 'groupMenuItems()', () => {
 			'users',
 			'yoast-seo',
 			'woocommerce',
+			'sensei-lms',
+			'jetpack',
 		] );
 	} );
 
@@ -60,6 +62,8 @@ describe( 'groupMenuItems()', () => {
 		expect( pluginsSection.items.map( ( item ) => item.slug ) ).toEqual( [
 			'yoast-seo',
 			'woocommerce',
+			'sensei-lms',
+			'jetpack',
 		] );
 	} );
 
@@ -77,7 +81,7 @@ describe( 'groupMenuItems()', () => {
 		expect( yoast?.signal ).toEqual( {
 			count: 3,
 			numeric_badge: null,
-			badge: '3',
+			badge: null,
 			inline_text: null,
 			inline_icon: null,
 			attention: true,
@@ -104,11 +108,10 @@ describe( 'groupMenuItems()', () => {
 		expect( groupedSections[ 0 ].group.default_expanded ).toBe( false );
 	} );
 
-	it( 'preserves orphan items whose group_id has no metadata via synthesised group', () => {
+	it( 'preserves orphan items whose group_id has no metadata as ungrouped items', () => {
 		// Defensive degradation: if the endpoint returns items referencing a
 		// group_id that isn't listed in groups[], we don't drop them silently.
-		// The orphan path falls back to ungrouped today (per the implementation:
-		// items lacking group metadata fall through to `ungroupedItems`).
+		// Items lacking group metadata fall through to `ungroupedItems`.
 		const result = groupMenuItems( fixtureMenuOrphanGroup, [] );
 		expect( result.groupedSections ).toEqual( [] );
 		expect( result.ungroupedItems.map( ( item ) => item.slug ) ).toEqual( [

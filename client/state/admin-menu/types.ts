@@ -85,14 +85,35 @@ export interface AdminMenuGroup {
 	};
 }
 
+export type AdminMenuLayoutPosition =
+	| {
+			kind: 'top_level';
+			index: number;
+	  }
+	| {
+			kind: 'in_group';
+			group_id: string;
+			index: number;
+	  };
+
+export interface AdminMenuLayoutDelta {
+	version: number;
+	updated_at?: number;
+	overrides: Array< {
+		itemId: string;
+		position: AdminMenuLayoutPosition;
+	} >;
+	cleared?: string[];
+}
+
 /**
- * The `/wpcom/v2/admin-menu` response shape Calypso reads. Only `menu` +
- * `groups` are surfaced in the redesigned shape; the existing endpoint
- * already returns `menu` and remains source-of-truth for everything else.
+ * The `/wpcom/v2/admin-menu` response shape Calypso reads. The legacy endpoint
+ * returns a flat `AdminMenuItem[]`; the redesigned envelope returns this shape.
  */
 export interface AdminMenuResponse {
 	menu: AdminMenuItem[];
 	groups?: AdminMenuGroup[];
+	layoutDelta?: AdminMenuLayoutDelta;
 }
 
 /**

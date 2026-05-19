@@ -80,7 +80,6 @@ export function groupMenuItems(
 	// ungrouped — same defensive degradation as the public plugin.
 	const ungroupedItems: AdminMenuItem[] = [];
 	const itemsByGroupId = new Map< string, AdminMenuItem[] >();
-	const groupOrder: string[] = []; // First-encounter order, for output stability.
 
 	for ( const item of menu ) {
 		const groupId = typeof item?.group_id === 'string' ? item.group_id : null;
@@ -90,16 +89,12 @@ export function groupMenuItems(
 		}
 		if ( ! itemsByGroupId.has( groupId ) ) {
 			itemsByGroupId.set( groupId, [] );
-			groupOrder.push( groupId );
 		}
 		itemsByGroupId.get( groupId )!.push( item );
 	}
 
 	// Emit groups in `groups[]` metadata order (the canonical server-side
 	// ordering), filtered to those that actually picked up at least one item.
-	// First-encounter order is preserved as a fallback for any groups present
-	// in items but not in metadata (defensive — should not happen if the
-	// endpoint is consistent).
 	const seenGroupIds = new Set< string >();
 	const groupedSections: GroupedMenuSection[] = [];
 	for ( const group of groupsList ) {
@@ -112,31 +107,6 @@ export function groupMenuItems(
 			continue;
 		}
 		groupedSections.push( { group, items } );
-	}
-	// Defensive append for any group that had items but no metadata entry —
-	// preserve the items rather than drop them silently.
-	for ( const groupId of groupOrder ) {
-		if ( seenGroupIds.has( groupId ) ) {
-			continue;
-		}
-		const items = itemsByGroupId.get( groupId );
-		if ( ! items || items.length === 0 ) {
-			continue;
-		}
-		groupedSections.push( {
-			// Synthesise a minimal AdminMenuGroup for items lacking metadata.
-			// `default_expanded` defaults to `false` (matches the public plugin's
-			// expand-collapse priority chain — stored state wins, else
-			// auto-expand-on-current-URL, else collapsed); aggregate `signal`
-			// defaults to no-attention.
-			group: {
-				id: groupId,
-				label: groupId,
-				default_expanded: false,
-				signal: { attention: false, count: 0 },
-			},
-			items,
-		} );
 	}
 
 	return { ungroupedItems, groupedSections };

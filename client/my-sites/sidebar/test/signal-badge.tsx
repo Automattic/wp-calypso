@@ -36,25 +36,19 @@ describe( '<SignalBadge>', () => {
 	} );
 
 	it( 'renders the numeric_badge value as the badge (priority 1)', () => {
-		const { container } = render(
-			<SignalBadge signal={ { ...baseSignal, numeric_badge: 5 } } />
-		);
+		const { container } = render( <SignalBadge signal={ { ...baseSignal, numeric_badge: 5 } } /> );
 		const badge = container.querySelector( '.wp-admin-sidebar-item__badge' );
 		expect( badge ).toBeInTheDocument();
 		expect( badge ).toHaveTextContent( '5' );
 	} );
 
 	it( 'renders the count value when numeric_badge is null (priority 2 — issue #39 fix)', () => {
-		const { container } = render(
-			<SignalBadge signal={ { ...baseSignal, count: 3 } } />
-		);
+		const { container } = render( <SignalBadge signal={ { ...baseSignal, count: 3 } } /> );
 		expect( container.querySelector( '.wp-admin-sidebar-item__badge' ) ).toHaveTextContent( '3' );
 	} );
 
 	it( 'renders the badge string when numeric paths are absent (priority 3)', () => {
-		const { container } = render(
-			<SignalBadge signal={ { ...baseSignal, badge: 'NEW' } } />
-		);
+		const { container } = render( <SignalBadge signal={ { ...baseSignal, badge: 'NEW' } } /> );
 		expect( container.querySelector( '.wp-admin-sidebar-item__badge' ) ).toHaveTextContent( 'NEW' );
 	} );
 
@@ -74,10 +68,7 @@ describe( '<SignalBadge>', () => {
 
 	it( 'allows overriding the badge SR label', () => {
 		render(
-			<SignalBadge
-				signal={ { ...baseSignal, numeric_badge: 2 } }
-				badgeLabel="2 plugin updates"
-			/>
+			<SignalBadge signal={ { ...baseSignal, numeric_badge: 2 } } badgeLabel="2 plugin updates" />
 		);
 		expect( screen.getByText( '2' ) ).toHaveAttribute( 'aria-label', '2 plugin updates' );
 	} );
@@ -103,9 +94,7 @@ describe( '<SignalBadge>', () => {
 
 	it( 'renders numeric_badge AND inline_text together', () => {
 		const { container } = render(
-			<SignalBadge
-				signal={ { ...baseSignal, numeric_badge: 2, inline_text: 'BETA' } }
-			/>
+			<SignalBadge signal={ { ...baseSignal, numeric_badge: 2, inline_text: 'BETA' } } />
 		);
 		expect( container.querySelector( '.wp-admin-sidebar-item__badge' ) ).toHaveTextContent( '2' );
 		expect( container.querySelector( '.wp-admin-sidebar-item__inline-text' ) ).toHaveTextContent(
@@ -139,9 +128,7 @@ describe( '<SignalBadge>', () => {
 		// We can't introspect computed styles in jsdom, but verify the text
 		// content is preserved verbatim — the styling is asserted in the
 		// stylesheet's snapshot.
-		const { container } = render(
-			<SignalBadge signal={ { ...baseSignal, numeric_badge: 99 } } />
-		);
+		const { container } = render( <SignalBadge signal={ { ...baseSignal, numeric_badge: 99 } } /> );
 		expect( container.querySelector( '.wp-admin-sidebar-item__badge' ) ).toHaveTextContent( '99' );
 	} );
 } );

@@ -152,7 +152,8 @@ export const MySitesSidebarUnifiedSidebarGroup = ( {
 	// need attention when the group is collapsed.
 	const attentionLabel =
 		showAttentionDot && typeof group.signal?.count === 'number' && group.signal.count > 0
-			? translate( '%(count)d items need attention', {
+			? translate( '%(count)d item needs attention', '%(count)d items need attention', {
+					count: group.signal.count,
 					args: { count: group.signal.count },
 			  } )
 			: translate( 'Items need attention' );

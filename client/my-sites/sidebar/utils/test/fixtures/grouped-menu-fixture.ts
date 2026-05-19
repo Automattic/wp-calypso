@@ -153,8 +153,8 @@ export const fixtureMenuWithEmptyGroup: AdminMenuItem[] = [
 
 /**
  * Edge-case fixture: items reference a `group_id` that has no metadata in
- * `groups[]`. The utility should still preserve those items via the
- * defensive synthesised-metadata path.
+ * `groups[]`. The utility should preserve those items by keeping them
+ * ungrouped.
  */
 export const fixtureMenuOrphanGroup: AdminMenuItem[] = [
 	{ slug: 'dashboard', title: 'Dashboard', type: 'menu-item', group_id: null },
