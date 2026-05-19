@@ -60,12 +60,17 @@ import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-s
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
-import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
+import {
+	localizeThemesPath,
+	shouldEnableThemesColorScheme,
+	shouldSelectSite,
+} from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -169,6 +174,7 @@ class ThemeSheet extends Component {
 		retired: PropTypes.bool,
 		// Connected props
 		isLoggedIn: PropTypes.bool,
+		isThemesColorSchemeEnabled: PropTypes.bool,
 		siteCount: PropTypes.number,
 		isActive: PropTypes.bool,
 		isThemePurchased: PropTypes.bool,
@@ -1430,15 +1436,16 @@ const ThemeSheetWithOptions = ( props ) => {
 		/>,
 		{
 			bodyClass: 'is-themes-dark-mode',
-			enabled: ! props.isSiteRoute && props.isLoggedIn,
+			enabled: props.isThemesColorSchemeEnabled,
 			Provider: ClassicColorSchemeProvider,
 		}
 	);
 };
 
 export default connect(
-	( state, { id } ) => {
+	( state, { id, isSiteRoute } ) => {
 		const themeId = id;
+		const isLoggedIn = isUserLoggedIn( state );
 		const site = getSelectedSite( state );
 		const productionSiteId = site ? getProductionSiteId( site ) : null;
 		const siteId = getSelectedSiteId( state );
@@ -1498,7 +1505,12 @@ export default connect(
 			isWpcomTheme,
 			isWpcomStaging,
 			productionSiteSlug,
-			isLoggedIn: isUserLoggedIn( state ),
+			isLoggedIn,
+			isThemesColorSchemeEnabled: shouldEnableThemesColorScheme( {
+				isSiteRoute,
+				isLoggedIn,
+				dashboardOptIn: hasDashboardOptIn( state ),
+			} ),
 			siteCount: getCurrentUserSiteCount( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isAtomic,
