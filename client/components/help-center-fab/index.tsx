@@ -58,9 +58,9 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 	};
 
 	const label = isHelpCenterShown
-		? /* translators: Tooltip on the floating Help button when the Help Center panel is open. */
+		? /* translators: Accessible label on the floating Help button when the Help Center panel is open. */
 		  __( 'Close help' )
-		: /* translators: Tooltip on the floating Help button that opens the Help Center. */
+		: /* translators: Accessible label on the floating Help button that opens the Help Center. */
 		  __( 'Help' );
 
 	return (
@@ -79,7 +79,6 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 				className={ clsx( 'help-center-fab', { 'is-active': isHelpCenterShown } ) }
 				onClick={ handleClick }
 				label={ label }
-				showTooltip
 				aria-haspopup="dialog"
 				aria-expanded={ isHelpCenterShown }
 			>
