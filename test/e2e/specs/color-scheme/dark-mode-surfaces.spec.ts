@@ -20,6 +20,7 @@ const TOKEN_ALIASES = {
 	'--color-text': '--dashboard__text-color',
 	'--wp-components-color-background': '--dashboard-surface__background-color',
 } as const;
+const MINIMUM_NORMAL_TEXT_CONTRAST_RATIO = 4.5;
 
 type TokenName = ( typeof REQUIRED_TOKENS )[ number ];
 
@@ -136,14 +137,27 @@ function parseRgb( value: string ): RGB | null {
 	};
 }
 
-function luminance( color: RGB ) {
+function brightness( color: RGB ) {
 	return 0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue;
 }
 
+function relativeLuminance( color: RGB ) {
+	function normalizeChannel( channel: number ) {
+		const value = channel / 255;
+		return value <= 0.03928 ? value / 12.92 : Math.pow( ( value + 0.055 ) / 1.055, 2.4 );
+	}
+
+	return (
+		0.2126 * normalizeChannel( color.red ) +
+		0.7152 * normalizeChannel( color.green ) +
+		0.0722 * normalizeChannel( color.blue )
+	);
+}
+
 function contrastRatio( a: RGB, b: RGB ) {
-	const lighter = Math.max( luminance( a ), luminance( b ) );
-	const darker = Math.min( luminance( a ), luminance( b ) );
-	return ( lighter + 5 ) / ( darker + 5 );
+	const lighter = Math.max( relativeLuminance( a ), relativeLuminance( b ) );
+	const darker = Math.min( relativeLuminance( a ), relativeLuminance( b ) );
+	return ( lighter + 0.05 ) / ( darker + 0.05 );
 }
 
 function normalizeColor( color: string ) {
@@ -192,10 +206,10 @@ async function expectSharedDarkTokens( page: Page ) {
 	expect( text, '--dashboard__text-color resolves to rgb' ).not.toBeNull();
 	expect( gray800, '--wp-components-color-gray-800 resolves to rgb' ).not.toBeNull();
 
-	expect( luminance( background as RGB ) ).toBeLessThan( 80 );
-	expect( luminance( surface as RGB ) ).toBeLessThan( 100 );
-	expect( luminance( text as RGB ) ).toBeGreaterThan( 150 );
-	expect( luminance( gray800 as RGB ) ).toBeGreaterThan( 150 );
+	expect( brightness( background as RGB ) ).toBeLessThan( 80 );
+	expect( brightness( surface as RGB ) ).toBeLessThan( 100 );
+	expect( brightness( text as RGB ) ).toBeGreaterThan( 150 );
+	expect( brightness( gray800 as RGB ) ).toBeGreaterThan( 150 );
 
 	return resolvedTokens;
 }
@@ -238,11 +252,13 @@ async function expectNoObviousLightSurface( locator: Locator ) {
 
 	expect( background, 'surface background resolves to rgb' ).not.toBeNull();
 	expect( text, 'surface text resolves to rgb' ).not.toBeNull();
-	expect( luminance( background as RGB ) ).toBeLessThan( 130 );
-	expect( contrastRatio( background as RGB, text as RGB ) ).toBeGreaterThan( 2 );
+	expect( brightness( background as RGB ) ).toBeLessThan( 130 );
+	expect( contrastRatio( background as RGB, text as RGB ) ).toBeGreaterThanOrEqual(
+		MINIMUM_NORMAL_TEXT_CONTRAST_RATIO
+	);
 
 	if ( border && border.alpha > 0 ) {
-		expect( luminance( border ) ).toBeLessThan( 245 );
+		expect( brightness( border ) ).toBeLessThan( 245 );
 	}
 }
 
@@ -289,12 +305,13 @@ async function expectSelectedDarkModeControl( page: Page ) {
 }
 
 test.describe( 'Dashboard dark-mode surface', { tag: [ tags.DASHBOARD_PR ] }, () => {
-	test( 'applies shared dark-mode tokens on sites and appearance routes', async ( {
+	test( 'applies shared dark-mode tokens on sites, site overview, and appearance routes', async ( {
 		accountGivenByEnvironment,
 		page,
 		pageDashboard,
 	} ) => {
 		const assertNoPageIssues = collectPageIssues( page );
+		const siteSlug = accountGivenByEnvironment.getSiteURL( { protocol: false } );
 		await forceDarkModePreference( page );
 
 		await test.step( `Given I am authenticated as '${ accountGivenByEnvironment.accountName }'`, async () => {
@@ -312,6 +329,21 @@ test.describe( 'Dashboard dark-mode surface', { tag: [ tags.DASHBOARD_PR ] }, ()
 					'.components-surface.components-card',
 					'.dataviews-wrapper',
 					'.dashboard-dataviews-empty-state',
+				] )
+			);
+		} );
+
+		await test.step( 'And the site overview route renders in dark mode', async () => {
+			await pageDashboard.visitPath( `sites/${ siteSlug }` );
+			await page.getByRole( 'main' ).waitFor();
+			await expectDarkModeRoot( page );
+			await expectSharedDarkTokens( page );
+			await expectNoObviousLightSurface( page.getByRole( 'main' ) );
+			await expectNoObviousLightSurface(
+				await firstVisibleLocator( page, [
+					'.site-overview-cards .components-card',
+					'.site-overview-cards > *',
+					'.components-card',
 				] )
 			);
 		} );
@@ -445,7 +477,7 @@ test.describe( 'Themes dark-mode surfaces', { tag: [ tags.CALYPSO_PR ] }, () => 
 
 			expect( normalizeColor( downloadIcon.fill ) ).toBe( normalizeColor( supportIcon.fill ) );
 			expect( iconColor, 'download/support card icons resolve to rgb' ).not.toBeNull();
-			expect( luminance( iconColor as RGB ) ).toBeGreaterThan( 120 );
+			expect( brightness( iconColor as RGB ) ).toBeGreaterThan( 120 );
 		} );
 
 		await test.step( 'And the Lente detail route keeps premium badge colors dark-compatible', async () => {
