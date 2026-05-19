@@ -51,7 +51,6 @@ const ReaderOnboardingRsm = ( {
 	const refreshFollowingStreams = useRefreshFollowingStreams();
 	const completionRecordedRef = useRef( false );
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
-	const [ hasCompletedWelcomeStep, setHasCompletedWelcomeStep ] = useState( false );
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
@@ -121,7 +120,6 @@ const ReaderOnboardingRsm = ( {
 
 	const handleWelcomeContinue = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }welcome_modal_continue` );
-		setHasCompletedWelcomeStep( true );
 		performStepCloseSideEffects( 'welcome' );
 		recordStepOpen( 'interests' );
 		setCurrentStep( 'interests' );
@@ -208,7 +206,7 @@ const ReaderOnboardingRsm = ( {
 			id: 'welcome',
 			title: translate( 'Welcome to Reader' ),
 			actionDispatch: () => openStep( 'welcome' ),
-			completed: hasCompletedWelcomeStep,
+			completed: !! hasSeenOnboarding,
 			disabled: false,
 		},
 		{
@@ -216,14 +214,14 @@ const ReaderOnboardingRsm = ( {
 			title: translate( 'Select some of your interests' ),
 			actionDispatch: () => openStep( 'interests' ),
 			completed: hasFollowedTags,
-			disabled: ! hasCompletedWelcomeStep,
+			disabled: false,
 		},
 		{
 			id: 'discover-sites',
 			title: translate( "Discover and subscribe to sites you'll love" ),
 			actionDispatch: () => openStep( 'discover' ),
 			completed: hasFollowedSites,
-			disabled: ! hasFollowedSites && ! hasFollowedTags,
+			disabled: ! hasFollowedTags,
 		},
 	];
 
