@@ -9,23 +9,29 @@ import { useMemo, useEffect, useRef } from 'react';
  *   - isLoading: boolean indicating if subscription data is being loaded (true until
  *     the first page of subscriptions arrives — matches existing fast-render semantics
  *     for callers that want to show partial data ASAP)
- *   - hasLoadedAllSubscriptions: boolean indicating whether the infinite query has
- *     fetched every page. Only `nonSelfSubscriptionsCount` is fully accurate once this
- *     is true — callers making count-based decisions (e.g. eligibility snapshots in
- *     onboarding) should gate on it instead of `isLoading`.
+ *   - hasLoadedAllSubscriptions: boolean indicating whether both the count and
+ *     site-subscriptions queries have fetched at least once since the component
+ *     mounted *and* every page of the infinite query has arrived. Only
+ *     `nonSelfSubscriptionsCount` (and the `blogCount === 0` branch of
+ *     `hasNonSelfSubscriptions`) is fully accurate once this is true — callers
+ *     making count-based decisions (e.g. eligibility snapshots in onboarding)
+ *     should gate on it instead of `isLoading`.
  *   - hasNonSelfSubscriptions: boolean indicating if user has any subscriptions to non-self-owned blogs
  *   - nonSelfSubscriptionsCount: number of subscriptions to non-self-owned blogs across
  *     the pages loaded so far. Only exact once `hasLoadedAllSubscriptions` is true; for
  *     users with many subscriptions this grows as additional pages stream in.
  */
 export function useSiteSubscriptions() {
-	const { data: subscriptionsCount, isLoading: isLoadingCount } =
-		SubscriptionManager.useSubscriptionsCountQuery();
+	const {
+		data: subscriptionsCount,
+		isLoading: isLoadingCount,
+		isFetching: isFetchingCount,
+	} = SubscriptionManager.useSubscriptionsCountQuery();
 	const {
 		data: siteSubscriptions,
 		isLoading: isLoadingSiteSubscriptions,
 		hasNextPage,
-		isFetching,
+		isFetching: isFetchingSiteSubscriptions,
 		isFetchingNextPage,
 		refetch: refetchSiteSubscriptions,
 	} = SubscriptionManager.useSiteSubscriptionsQuery();
@@ -34,34 +40,35 @@ export function useSiteSubscriptions() {
 	const isLoading = isLoadingCount || isLoadingSiteSubscriptions || isLoadingDependencies;
 	const blogCount = subscriptionsCount?.blogs ?? 0;
 
-	// The hook auto-triggers a refetch on mount when `blogCount > 0` (see effect
-	// below). Track whether *any* fetch — initial load or refetch — has actually
-	// been observed since mount; without this, a hot TanStack Query cache
-	// (warmed by another reader page in the same session) would make the hook
-	// expose `hasLoadedAllSubscriptions: true` on the first render against
-	// stale data, before the on-mount refetch has had a chance to flip
-	// `isFetching` true. Count-sensitive callers (onboarding eligibility
-	// snapshots) would then capture the pre-mount value and lock it in.
+	// Calypso persists successful React Query results across sessions by
+	// default (`client/state/should-dehydrate-query.ts`), so on mount both
+	// queries can hydrate with previously-cached data — including a stale
+	// `{ blogs: 0 }` from a prior session — before TanStack Query has had a
+	// chance to refetch. Track whether *any* fetch from either query has
+	// actually been observed since the hook mounted, and require it before
+	// declaring fully loaded. Otherwise a count-sensitive snapshot (e.g.
+	// onboarding eligibility) would capture the persisted value and lock it
+	// in, even when the real numbers differ.
 	const hasObservedFetchSinceMountRef = useRef( false );
 	useEffect( () => {
-		if ( isFetching || isFetchingNextPage ) {
+		if ( isFetchingCount || isFetchingSiteSubscriptions || isFetchingNextPage ) {
 			hasObservedFetchSinceMountRef.current = true;
 		}
-	}, [ isFetching, isFetchingNextPage ] );
-
-	// When `blogCount === 0` no on-mount refetch is scheduled (the effect below
-	// is a no-op) and there's nothing to wait for — the "no subs" answer is
-	// already the correct one. In every other case we must have seen a fetch
-	// resolve since the component mounted before declaring fully loaded.
-	const hasRefreshedSinceMount = blogCount === 0 || hasObservedFetchSinceMountRef.current;
+	}, [ isFetchingCount, isFetchingSiteSubscriptions, isFetchingNextPage ] );
 
 	// The underlying `useSiteSubscriptionsQuery` is an infinite query that auto-
 	// paginates after page 1, so `isLoading` flips to false once the first page
 	// arrives but later pages are still in flight. Callers that need the *exact*
 	// non-self count (e.g. onboarding eligibility) must wait until every page
-	// has been fetched — gate on this flag instead of `isLoading`.
+	// has been fetched AND a fetch has resolved since mount — gate on this flag
+	// instead of `isLoading`.
 	const hasLoadedAllSubscriptions =
-		! isLoading && ! hasNextPage && ! isFetching && ! isFetchingNextPage && hasRefreshedSinceMount;
+		! isLoading &&
+		! hasNextPage &&
+		! isFetchingCount &&
+		! isFetchingSiteSubscriptions &&
+		! isFetchingNextPage &&
+		hasObservedFetchSinceMountRef.current;
 
 	const nonSelfSubscriptionsCount = useMemo( () => {
 		if ( ! siteSubscriptions?.subscriptions ) {

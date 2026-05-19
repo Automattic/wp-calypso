@@ -161,19 +161,29 @@ describe( 'useSiteSubscriptions', () => {
 
 	// The underlying site-subscriptions query is an infinite query that
 	// auto-paginates; `isLoading` flips false after page 1 arrives even though
-	// later pages may still be in flight. `hasLoadedAllSubscriptions` is the
-	// signal callers should use when they need an exact count.
+	// later pages may still be in flight. Calypso also persists successful
+	// React Query results across sessions by default, so on mount both
+	// queries can hydrate with previously-cached data before a fresh fetch
+	// has had a chance to run. `hasLoadedAllSubscriptions` is the signal
+	// callers should use when they need an exact count — it gates on both
+	// queries having actually fetched since the hook mounted.
 	describe( 'hasLoadedAllSubscriptions', () => {
-		// Mocks the count query at 250 blogs and exposes a `setSiteQueryState`
-		// helper so tests can drive the site-subscriptions query through the
-		// fetch lifecycle (initial cached state → `isFetching: true` → final
-		// loaded state) across re-renders, just like the real hook sees it on
-		// mount.
-		const setupWithLifecycle = ( initialSiteQueryState: Record< string, unknown > ) => {
-			( SubscriptionManager.useSubscriptionsCountQuery as jest.Mock ).mockReturnValue( {
+		// Mocks both queries at "hot cache" defaults (data present, not
+		// fetching) and exposes setters so tests can drive each one through
+		// its mount-time fetch lifecycle.
+		const setupWithLifecycle = ( {
+			countOverrides = {},
+			siteOverrides = {},
+		}: {
+			countOverrides?: Record< string, unknown >;
+			siteOverrides?: Record< string, unknown >;
+		} = {} ) => {
+			const countQuery = {
 				data: { blogs: 250 },
 				isLoading: false,
-			} );
+				isFetching: false,
+				...countOverrides,
+			};
 			const siteQuery = {
 				data: { subscriptions: [ { is_owner: true } ] },
 				isLoading: false,
@@ -181,30 +191,37 @@ describe( 'useSiteSubscriptions', () => {
 				isFetching: false,
 				isFetchingNextPage: false,
 				refetch: jest.fn(),
-				...initialSiteQueryState,
+				...siteOverrides,
 			};
+			( SubscriptionManager.useSubscriptionsCountQuery as jest.Mock ).mockImplementation(
+				() => countQuery
+			);
 			( SubscriptionManager.useSiteSubscriptionsQuery as jest.Mock ).mockImplementation(
 				() => siteQuery
 			);
 			const renderResult = renderHook( () => useSiteSubscriptions() );
+			const setCountQueryState = ( next: Record< string, unknown > ) => {
+				Object.assign( countQuery, next );
+				renderResult.rerender();
+			};
 			const setSiteQueryState = ( next: Record< string, unknown > ) => {
 				Object.assign( siteQuery, next );
 				renderResult.rerender();
 			};
-			return { ...renderResult, setSiteQueryState };
+			return { ...renderResult, setCountQueryState, setSiteQueryState };
 		};
 
 		it( 'stays false on first render against a hot cache (no fetch observed since mount yet)', () => {
-			// All flags look "loaded" but the hook has never seen a fetch cycle —
-			// this is the warm-cache mount that would otherwise let a count-
-			// based snapshot capture stale data before the on-mount refetch fires.
-			const { result } = setupWithLifecycle( {} );
+			// Both queries look "loaded" but the hook has never seen a fetch cycle —
+			// this is the warm/persisted-cache mount that would otherwise let a
+			// count-based snapshot capture stale data before the mount refetch fires.
+			const { result } = setupWithLifecycle();
 
 			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
 		} );
 
-		it( 'becomes true once a fetch cycle (refetch) has been observed end-to-end', () => {
-			const { result, setSiteQueryState } = setupWithLifecycle( {} );
+		it( 'becomes true once a fetch cycle on the site-subscriptions query has been observed end-to-end', () => {
+			const { result, setSiteQueryState } = setupWithLifecycle();
 
 			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
 
@@ -212,16 +229,50 @@ describe( 'useSiteSubscriptions', () => {
 			setSiteQueryState( { isFetching: true } );
 			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
 
-			// Refetch completes: isFetching flips false again, ref has captured
-			// the fetch transition, so we're now genuinely loaded.
+			// Refetch completes: isFetching flips false, ref has captured the
+			// transition, so we're now genuinely loaded.
 			setSiteQueryState( { isFetching: false } );
 			expect( result.current.hasLoadedAllSubscriptions ).toBe( true );
+		} );
+
+		it( 'also tracks the count query — a count refetch alone is enough to satisfy the mount-gate', () => {
+			// Critical for the persisted `{ blogs: 0 }` case: with no site-subs
+			// refetch scheduled (the hook only triggers one when blogCount > 0),
+			// the count query's refetch must still satisfy the mount gate so
+			// that once it confirms the zero, the hook can declare loaded.
+			const { result, setCountQueryState } = setupWithLifecycle( {
+				countOverrides: { data: { blogs: 0 } },
+				siteOverrides: { data: { subscriptions: [] } },
+			} );
+
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
+
+			setCountQueryState( { isFetching: true } );
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
+
+			setCountQueryState( { isFetching: false } );
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( true );
+		} );
+
+		it( 'stays false while the count query is mid-refetch even though every other flag looks loaded', () => {
+			// Mirrors the persisted-zero hot-cache case: a stale `{ blogs: 0 }`
+			// is in the cache, the count query is refetching to get the real
+			// value, and we must not declare loaded yet — the real count might
+			// be much higher, which would change eligibility.
+			const { result } = setupWithLifecycle( {
+				countOverrides: { data: { blogs: 0 }, isFetching: true },
+				siteOverrides: { data: { subscriptions: [] } },
+			} );
+
+			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
 		} );
 
 		it( 'is false while later pages are still queued (hasNextPage)', () => {
 			// Drive a complete fetch first so the mount-gate is satisfied, then
 			// flip hasNextPage true — pagination should keep loaded=false.
-			const { result, setSiteQueryState } = setupWithLifecycle( { isFetching: true } );
+			const { result, setSiteQueryState } = setupWithLifecycle( {
+				siteOverrides: { isFetching: true },
+			} );
 
 			setSiteQueryState( { isFetching: false } );
 			expect( result.current.hasLoadedAllSubscriptions ).toBe( true );
@@ -231,7 +282,9 @@ describe( 'useSiteSubscriptions', () => {
 		} );
 
 		it( 'is false while a follow-up page is in flight (isFetchingNextPage)', () => {
-			const { result, setSiteQueryState } = setupWithLifecycle( { isFetching: true } );
+			const { result, setSiteQueryState } = setupWithLifecycle( {
+				siteOverrides: { isFetching: true },
+			} );
 
 			setSiteQueryState( { isFetching: false } );
 			expect( result.current.hasLoadedAllSubscriptions ).toBe( true );
@@ -241,7 +294,9 @@ describe( 'useSiteSubscriptions', () => {
 		} );
 
 		it( 'is false during any background refetch (isFetching)', () => {
-			const { result, setSiteQueryState } = setupWithLifecycle( { isFetching: true } );
+			const { result, setSiteQueryState } = setupWithLifecycle( {
+				siteOverrides: { isFetching: true },
+			} );
 
 			setSiteQueryState( { isFetching: false } );
 			expect( result.current.hasLoadedAllSubscriptions ).toBe( true );
@@ -254,6 +309,7 @@ describe( 'useSiteSubscriptions', () => {
 			( SubscriptionManager.useSubscriptionsCountQuery as jest.Mock ).mockReturnValue( {
 				data: { blogs: 250 },
 				isLoading: false,
+				isFetching: false,
 			} );
 			( SubscriptionManager.useSiteSubscriptionsQuery as jest.Mock ).mockReturnValue( {
 				data: undefined,
@@ -267,25 +323,6 @@ describe( 'useSiteSubscriptions', () => {
 			const { result } = renderHook( () => useSiteSubscriptions() );
 
 			expect( result.current.hasLoadedAllSubscriptions ).toBe( false );
-		} );
-
-		it( 'is true immediately when blogCount is 0 — no on-mount refetch is scheduled and there is nothing to wait for', () => {
-			( SubscriptionManager.useSubscriptionsCountQuery as jest.Mock ).mockReturnValue( {
-				data: { blogs: 0 },
-				isLoading: false,
-			} );
-			( SubscriptionManager.useSiteSubscriptionsQuery as jest.Mock ).mockReturnValue( {
-				data: { subscriptions: [] },
-				isLoading: false,
-				hasNextPage: false,
-				isFetching: false,
-				isFetchingNextPage: false,
-				refetch: jest.fn(),
-			} );
-
-			const { result } = renderHook( () => useSiteSubscriptions() );
-
-			expect( result.current.hasLoadedAllSubscriptions ).toBe( true );
 		} );
 	} );
 } );
