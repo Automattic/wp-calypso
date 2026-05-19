@@ -52,6 +52,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 	const inFlightTagOpsRef = useRef< Map< string, Promise< boolean > > >( new Map() );
 	const [ processingPacks, setProcessingPacks ] = useState< Set< string > >( new Set() );
 	const [ relaxedPackCriteria, setRelaxedPackCriteria ] = useState< Set< string > >( new Set() );
+	const [ hasFollowedOnPage, setHasFollowedOnPage ] = useState( false );
 	const { mutateAsync: followTag } = useMutation( followReadTagMutation( queryClient ) );
 	const { mutateAsync: unfollowTag } = useMutation( unfollowReadTagMutation( queryClient ) );
 
@@ -125,7 +126,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 		return followedBlogCount === pack.blogs.length;
 	};
 
-	const isContinueDisabled = followedTags.length < 3;
+	const isContinueDisabled = followedTags.length < 3 && ! hasFollowedOnPage;
 
 	const handleTopicChange = async ( checked: boolean, tag: string ): Promise< boolean > => {
 		const existingOperation = inFlightTagOpsRef.current.get( tag );
@@ -134,6 +135,10 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 		}
 
 		const operation = ( async (): Promise< boolean > => {
+			if ( checked ) {
+				setHasFollowedOnPage( true );
+			}
+
 			// Mark the tag as being processed.
 			setProcessingTags( ( current ) => new Set( current ).add( tag ) );
 
@@ -199,6 +204,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { onContinue, promptVe
 		}
 
 		setProcessingPacks( ( current ) => new Set( current ).add( pack.id ) );
+		setHasFollowedOnPage( true );
 		try {
 			// Follow tags in deterministic order so state updates don't race each other.
 			for ( const tag of pack.tags ) {

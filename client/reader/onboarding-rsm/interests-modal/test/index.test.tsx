@@ -171,7 +171,7 @@ describe( 'InterestsModal – most subscribed pack', () => {
 		jest.mocked( getPackBlogs ).mockReset().mockReturnValue( [] );
 	} );
 
-	it( 'renders the tagless pack with blog count from getPackBlogs( [], { directKey } ) and keeps Continue disabled after subscribe', async () => {
+	it( 'renders the tagless pack with blog count from getPackBlogs( [], { directKey } ) and enables Continue after subscribe', async () => {
 		const user = userEvent.setup();
 
 		jest.mocked( getTopicGroups ).mockReturnValue( [
@@ -198,7 +198,7 @@ describe( 'InterestsModal – most subscribed pack', () => {
 
 		await user.click( packCard );
 
-		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).not.toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
