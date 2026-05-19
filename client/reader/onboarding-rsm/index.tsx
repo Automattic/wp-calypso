@@ -97,7 +97,21 @@ const ReaderOnboardingRsm = ( {
 		! hasCompletedOnboarding &&
 		( startingCounts.followedSitesCount < 4 || startingCounts.followedTagsCount < 3 );
 
-	const forceShow = ! isLoading && ! hasNonSelfSubscriptions;
+	// Snapshot the "no non-self subscriptions" forceShow signal the first time
+	// the subscriptions query loads. Subscribing to a site inside the discover
+	// step (or any later step) would otherwise flip `hasNonSelfSubscriptions` to
+	// true and drop the modal mid-flow.
+	const [ startingForceShow, setStartingForceShow ] = useState< boolean | null >( null );
+	const [ hasFinished, setHasFinished ] = useState( false );
+
+	useEffect( () => {
+		if ( startingForceShow !== null || isLoading ) {
+			return;
+		}
+		setStartingForceShow( ! hasNonSelfSubscriptions );
+	}, [ startingForceShow, isLoading, hasNonSelfSubscriptions ] );
+
+	const forceShow = ! hasFinished && startingForceShow === true;
 
 	const shouldShowOnboarding =
 		forceShow || isEnabled( 'reader/force-onboarding' ) || !! meetsEligibility;
@@ -180,6 +194,7 @@ const ReaderOnboardingRsm = ( {
 		recordOnboardingCompleted();
 		performStepCloseSideEffects( 'discover' );
 		setCurrentStep( null );
+		setHasFinished( true );
 	};
 
 	const itemClickHandler = ( task: Task ) => {

@@ -438,3 +438,104 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		expect( screen.getByTestId( 'welcome-modal-content' ) ).toBeVisible();
 	} );
 } );
+
+describe( 'ReaderOnboardingRsm – forceShow snapshot', () => {
+	const getUseSiteSubscriptionsMock = () => {
+		const { useSiteSubscriptions } = jest.requireMock(
+			'../../following/use-site-subscriptions'
+		) as { useSiteSubscriptions: jest.Mock };
+		return useSiteSubscriptions;
+	};
+
+	const getPreferenceMock = () => {
+		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
+			getPreference: jest.Mock;
+		};
+		return getPreference;
+	};
+
+	// Suppress meetsEligibility entirely so this suite only exercises forceShow.
+	// Use 4 non-self follows + 3 tags so the snapshot makes meetsEligibility=false.
+	const seedAboveEligibilityThresholds = () => {
+		const { getReaderFollows } = jest.requireMock( 'calypso/state/reader/follows/selectors' ) as {
+			getReaderFollows: jest.Mock;
+		};
+		const { useFollowedReaderTags } = jest.requireMock( 'calypso/data/reader/use-reader-tags' ) as {
+			useFollowedReaderTags: jest.Mock;
+		};
+		getReaderFollows.mockReturnValue(
+			Array.from( { length: 4 }, ( _, i ) => ( { feed_ID: i + 1, is_owner: false } ) )
+		);
+		useFollowedReaderTags.mockImplementation( () => ( {
+			data: [ { slug: 'a' }, { slug: 'b' }, { slug: 'c' } ],
+			isPending: false,
+		} ) );
+	};
+
+	it( 'keeps the checklist visible mid-flow even when hasNonSelfSubscriptions flips to true', async () => {
+		seedAboveEligibilityThresholds();
+		const useSiteSubscriptions = getUseSiteSubscriptionsMock();
+		useSiteSubscriptions.mockImplementation( () => ( {
+			isLoading: false,
+			hasNonSelfSubscriptions: false,
+		} ) );
+
+		const { rerender } = renderWithProvider( <ReaderOnboardingRsm /> );
+
+		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
+
+		// Simulate the user subscribing to a site mid-flow.
+		useSiteSubscriptions.mockImplementation( () => ( {
+			isLoading: false,
+			hasNonSelfSubscriptions: true,
+		} ) );
+		rerender( <ReaderOnboardingRsm /> );
+
+		expect( screen.getByTestId( 'welcome-modal-content' ) ).toBeVisible();
+	} );
+
+	it( 'disables forceShow after the user clicks Finish on the subscribe step', async () => {
+		seedAboveEligibilityThresholds();
+		const useSiteSubscriptions = getUseSiteSubscriptionsMock();
+		useSiteSubscriptions.mockImplementation( () => ( {
+			isLoading: false,
+			hasNonSelfSubscriptions: false,
+		} ) );
+
+		// Flip the completion preference to true once the user clicks Finish so
+		// `meetsEligibility` also remains false after this point — mirrors the
+		// real Redux roundtrip without coupling to dispatch timing.
+		const getPreference = getPreferenceMock();
+		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+			key === READER_ONBOARDING_PREFERENCE_KEY ? false : null
+		);
+
+		const onRender = jest.fn();
+		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
+
+		// Drive the user through to Finish.
+		await screen.findByTestId( 'welcome-modal-content' );
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		await screen.findByTestId( 'subscribe-modal-content' );
+
+		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+			key === READER_ONBOARDING_PREFERENCE_KEY ? true : null
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		// Modal is closed, and forceShow is now off — onRender should report false
+		// even though hasNonSelfSubscriptions is still false.
+		await waitFor( () => {
+			expect( onRender ).toHaveBeenLastCalledWith( false );
+		} );
+		expect( screen.queryByTestId( 'subscribe-modal-content' ) ).not.toBeInTheDocument();
+	} );
+
+	afterEach( () => {
+		getPreferenceMock().mockReturnValue( null );
+	} );
+} );
