@@ -134,7 +134,6 @@
 		"purchases/new-payment-methods": true,
 		"purchases/split-cancel-remove": false,
 		"push-notifications": true,
-		"reader/achievements": true,
 		"reader/social": true,
 		"reader/full-errors": false,
 		"reader/msd-enabled": true,
