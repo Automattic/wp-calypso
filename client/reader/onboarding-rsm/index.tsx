@@ -28,10 +28,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import {
-	getReaderFollows,
-	getReaderFollowsLastSyncTime,
-} from 'calypso/state/reader/follows/selectors';
 import { useSiteSubscriptions } from '../following/use-site-subscriptions';
 import { getReloadStep } from './get-reload-step';
 import { useRefreshFollowingStreams } from './use-refresh-following-streams';
@@ -61,11 +57,13 @@ const ReaderOnboardingRsm = ( {
 	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
-	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
+	const {
+		isLoading: subscriptionsLoading,
+		hasNonSelfSubscriptions,
+		nonSelfSubscriptionsCount,
+	} = useSiteSubscriptions();
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedReaderTags();
-	const follows = useSelector( getReaderFollows );
-	const followsLastSyncTime = useSelector( getReaderFollowsLastSyncTime );
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
@@ -77,15 +75,18 @@ const ReaderOnboardingRsm = ( {
 	);
 
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) >= READER_ONBOARDING_MIN_FOLLOWED_TAGS;
-	const hasFollowedSites =
-		( follows?.filter( ( follow ) => ! follow.is_owner ).length ?? 0 ) >=
-		READER_ONBOARDING_MIN_FOLLOWED_SITES;
+	const hasFollowedSites = nonSelfSubscriptionsCount >= READER_ONBOARDING_MIN_FOLLOWED_SITES;
 
 	// Snapshot the user's tag/site follow counts the first time all eligibility
 	// inputs are loaded. Eligibility is then evaluated against the snapshot so it
 	// stays stable for the rest of the component's life — the modal won't
 	// disappear mid-flow as the user follows tags/sites during onboarding.
-	const eligibilityDataLoaded = preferencesLoaded && ! tagsPending && followsLastSyncTime !== null;
+	//
+	// `subscriptionsLoading` (from useSiteSubscriptions / TanStack Query) is only
+	// false once the subscriptions response has actually arrived, so the snapshot
+	// reflects the real starting count rather than an empty/stale value taken
+	// mid-sync.
+	const eligibilityDataLoaded = preferencesLoaded && ! tagsPending && ! subscriptionsLoading;
 	const [ startingCounts, setStartingCounts ] = useState< {
 		followedTagsCount: number;
 		followedSitesCount: number;
@@ -97,9 +98,9 @@ const ReaderOnboardingRsm = ( {
 		}
 		setStartingCounts( {
 			followedTagsCount: followedTags?.length ?? 0,
-			followedSitesCount: follows?.filter( ( follow ) => ! follow.is_owner ).length ?? 0,
+			followedSitesCount: nonSelfSubscriptionsCount,
 		} );
-	}, [ startingCounts, eligibilityDataLoaded, followedTags, follows ] );
+	}, [ startingCounts, eligibilityDataLoaded, followedTags, nonSelfSubscriptionsCount ] );
 
 	// Users registered on or after the cutoff date are eligible regardless of
 	// their follow counts — they're new enough that we still want to walk them
@@ -123,11 +124,11 @@ const ReaderOnboardingRsm = ( {
 	const [ hasFinished, setHasFinished ] = useState( false );
 
 	useEffect( () => {
-		if ( startingForceShow !== null || isLoading ) {
+		if ( startingForceShow !== null || subscriptionsLoading ) {
 			return;
 		}
 		setStartingForceShow( ! hasNonSelfSubscriptions );
-	}, [ startingForceShow, isLoading, hasNonSelfSubscriptions ] );
+	}, [ startingForceShow, subscriptionsLoading, hasNonSelfSubscriptions ] );
 
 	const forceShow = ! hasFinished && startingForceShow === true;
 
