@@ -13,29 +13,6 @@ const AsyncAgentsManager = lazy(
 );
 
 /**
- * Derive a section name from a TanStack Router `routeId`. The agent uses the
- * section name to scope its context, so we want the coarse area of the
- * product (e.g. `domains`, `emails`, `settings`) — not the full leaf path.
- *
- * For routes nested under `/sites/$siteSlug/...` we strip the prefix so a
- * site-scoped route (e.g. `/sites/$siteSlug/domains`) reports the same
- * section as the equivalent top-level route (`/domains`).
- */
-function deriveSectionName( routeId: string | undefined ): string {
-	if ( ! routeId ) {
-		return 'dashboard';
-	}
-	const segments = routeId.split( '/' ).filter( Boolean );
-	if ( segments.length === 0 ) {
-		return 'dashboard';
-	}
-	if ( segments[ 0 ] === 'sites' && segments.length >= 3 ) {
-		return segments[ 2 ];
-	}
-	return segments[ 0 ];
-}
-
-/**
  * Renders the unified Big Sky chat experience when the current user has opted
  * into "Enable the unified AI chat experience in Help Center" on
  * /wp-admin/profile.php. The eligibility check goes through the same
@@ -54,13 +31,9 @@ export default function OmnibarAgentsManager() {
 		...siteByIdQuery( omnibarSiteId ?? 0 ),
 		enabled: !! omnibarSiteId,
 	} );
-	const { isSiteSpecific, sectionName } = useRouterState( {
-		select: ( state ) => ( {
-			isSiteSpecific: state.matches.some(
-				( match ) => !! ( match.params as { siteSlug?: string } )?.siteSlug
-			),
-			sectionName: deriveSectionName( state.matches.at( -1 )?.routeId ),
-		} ),
+	const isSiteSpecific = useRouterState( {
+		select: ( state ) =>
+			state.matches.some( ( match ) => !! ( match.params as { siteSlug?: string } )?.siteSlug ),
 	} );
 
 	if ( ! shouldUseUnifiedAgent ) {
@@ -73,7 +46,7 @@ export default function OmnibarAgentsManager() {
 		<Suspense fallback={ null }>
 			<AsyncAgentsManager
 				currentUser={ user }
-				sectionName={ sectionName }
+				sectionName="dashboard"
 				site={ agentsManagerSite }
 				currentSiteId={ isSiteSpecific ? site?.ID : undefined }
 			/>
