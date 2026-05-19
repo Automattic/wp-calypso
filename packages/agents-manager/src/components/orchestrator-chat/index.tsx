@@ -456,6 +456,34 @@ export default function OrchestratorChat( {
 		displayedEmptyViewSuggestions = emptyViewSuggestions;
 	}
 
+	// When the host plugin populates `agentsManagerData.nudge` + `upgradeLink`,
+	// render any chat-stream error as an inline upgrade-nudge notice instead of
+	// the generic "Streaming error: …" toast. Opt-in by configuration: surfaces
+	// that don't set both keys keep the existing behavior.
+	const quotaNudge = useMemo( () => {
+		if ( ! error ) {
+			return undefined;
+		}
+		const data = (
+			window as unknown as {
+				agentsManagerData?: { nudge?: string; upgradeLink?: string };
+			}
+		 ).agentsManagerData;
+		if ( ! data?.nudge || ! data?.upgradeLink ) {
+			return undefined;
+		}
+		const upgradeLink = data.upgradeLink;
+		return {
+			message: data.nudge,
+			action: {
+				label: __( 'Upgrade' ),
+				onClick: () =>
+					window.open( upgradeLink, '_blank', 'noopener,noreferrer' ),
+			},
+			status: 'warning' as const,
+		};
+	}, [ error ] );
+
 	return (
 		<AgentChat
 			messages={ displayedMessages }
@@ -463,7 +491,8 @@ export default function OrchestratorChat( {
 			emptyViewSuggestions={ displayedEmptyViewSuggestions }
 			isProcessing={ isProcessing || ( isThinking && ! isBuildingSite ) }
 			thinkingMessage={ progressMessage }
-			error={ error }
+			error={ quotaNudge ? null : error }
+			notice={ quotaNudge }
 			onSubmit={ onSubmitWithImages }
 			onAbort={ abortCurrentRequest }
 			isLoadingConversation={ isLoadingConversation }
