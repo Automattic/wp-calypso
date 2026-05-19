@@ -104,7 +104,7 @@ function BetaProgramContent( { site }: { site: Site } ) {
 	);
 }
 
-const HEADER_AA_FLAG_KEY = 'dashboard_settings_wordpress_header_aa_2026_05';
+const HEADER_AA_FLAG_KEY = 'calypso_dashboard_settings_wordpress_header_aa_202605';
 const HEADER_DEFAULT_TITLE = 'WordPress';
 
 export default function WordPressSettings( { siteSlug }: { siteSlug: string } ) {
