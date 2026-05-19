@@ -227,7 +227,7 @@ function ReaderSidebarConnections( { path }: Props ) {
 					/>
 				) ) }
 				{ showEmptyHint && (
-					<li className="sidebar-connections__empty" aria-live="polite">
+					<li className="screen-reader-text">
 						{ translate( 'Nothing here yet — connect one below.' ) }
 					</li>
 				) }

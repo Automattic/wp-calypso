@@ -149,3 +149,89 @@ export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
 			};
 	}
 }
+
+/**
+ * Resolve the title + bullet copy for a secondary admin connection card.
+ *
+ * Secondary connections (any user connecting after the site owner) enable
+ * a narrower set of features than the owner connection. Every secondary
+ * card includes SSO since that is the universal benefit of a user
+ * connection. The remaining bullets reflect what a secondary admin can
+ * actually access per plugin.
+ */
+export function getSecondaryFeatureCardData( key: FeatureCardKey ): FeatureCardData {
+	switch ( key ) {
+		case 'a4a':
+			return {
+				title: __( 'Automattic for Agencies' ),
+				bullets: [
+					__( 'Access the agency dashboard to manage client sites.' ),
+					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
+				],
+			};
+
+		case 'woo':
+			return {
+				title: __( 'WooCommerce' ),
+				bullets: [
+					__( 'Run your store on the go with the Woo mobile app.' ),
+					__( 'Real-time order alerts and store analytics.' ),
+				],
+			};
+
+		case 'jetpack':
+			return {
+				title: __( 'Jetpack' ),
+				bullets: [
+					__( 'Access the activity log to track every change on your site.' ),
+					__( 'Sign in to WordPress via your WordPress.com account (SSO).' ),
+				],
+			};
+
+		case 'jetpack-backup':
+			return {
+				title: __( 'Jetpack VaultPress Backup' ),
+				bullets: [
+					__( 'Access the activity log to track every change on your site.' ),
+					__( 'Monitor backup status and restore from Jetpack Cloud.' ),
+				],
+			};
+
+		case 'jetpack-protect':
+			return {
+				title: __( 'Jetpack Protect' ),
+				bullets: [ __( 'View scan results and security status from Jetpack Cloud.' ) ],
+			};
+
+		case 'jetpack-boost':
+			return {
+				title: __( 'Jetpack Boost' ),
+				bullets: [ __( 'View performance scores and optimization status.' ) ],
+			};
+
+		case 'jetpack-search':
+			return {
+				title: __( 'Jetpack Search' ),
+				bullets: [ __( 'Manage search settings and customizations from Jetpack Cloud.' ) ],
+			};
+
+		case 'jetpack-social':
+			return {
+				title: __( 'Jetpack Social' ),
+				bullets: [ __( 'Publish and schedule social media shares.' ) ],
+			};
+
+		case 'jetpack-videopress':
+			return {
+				title: __( 'Jetpack VideoPress' ),
+				bullets: [ __( 'Manage videos and view analytics from Jetpack Cloud.' ) ],
+			};
+
+		case 'other':
+		default:
+			return {
+				title: __( 'Your active plugins' ),
+				bullets: [ __( 'Keep your site and account in sync with WordPress.com.' ) ],
+			};
+	}
+}

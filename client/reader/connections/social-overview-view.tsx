@@ -5,7 +5,7 @@ import {
 	useMastodonConnectionQuery,
 	useMastodonConnectionsQuery,
 } from '@automattic/api-queries';
-import { Card, Spinner } from '@wordpress/components';
+import { Button, Card, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -236,9 +236,9 @@ export function SocialOverviewView() {
 							'You haven’t connected any social accounts yet. Start with the network you already know best, or let your WordPress site do the work for you.'
 						) }
 					</p>
-					<a className="social-empty__cta" href="/reader/connections/new">
+					<Button variant="primary" href="/reader/connections/new">
 						{ translate( 'Pick a network →' ) }
-					</a>
+					</Button>
 				</Card>
 			) }
 

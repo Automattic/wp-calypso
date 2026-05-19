@@ -383,6 +383,15 @@ body.post-new-php.agents-manager-sidebar-container {
 		@include sidebar-open-base( '.edit-post-layout' );
 		@include editor-save-panel-open();
 
+		// Split-screen clips the editor shell for rounded corners. Gutenberg's
+		// desktop header grid can otherwise push the settings group past that
+		// clipped shell, cutting off the Publish button at the chat boundary.
+		&.is-split-screen .editor-header:has( > .editor-header__center ) {
+			grid-template:
+				auto / 60px minmax( 0, max-content ) minmax( 0, 1fr ) minmax( 0, max-content )
+				60px;
+		}
+
 		.editor-post-publish-panel {
 			top: $layout-spacing;
 			bottom: $layout-spacing;

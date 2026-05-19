@@ -287,7 +287,7 @@ class Layout extends Component {
 					/>
 				) }
 				<MasterbarComponent
-					siteId={ this.props.siteId }
+					siteId={ this.props.siteIdForLaunch }
 					section={ this.props.sectionGroup }
 					isCheckout={ this.props.sectionName === 'checkout' }
 					isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
@@ -308,7 +308,7 @@ class Layout extends Component {
 			<AsyncLoad
 				require={ loadCelebrateSiteLaunchModal }
 				placeholder={ null }
-				siteId={ this.props.siteId }
+				siteId={ this.props.siteIdForLaunch }
 			/>
 		);
 	}
@@ -472,12 +472,14 @@ export default withCurrentRoute(
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 
+		const siteId = getSelectedSiteId( state );
 		// Falls back to using the user's primary site if no site has been selected
-		// by the user yet
-		const siteId =
-			getSelectedSiteId( state ) ||
-			getMostRecentlySelectedSiteId( state ) ||
-			getPrimarySiteId( state );
+		// by the user yet. Only consumed by the masterbar launch button and the
+		// site launch celebration modal — other layout logic (sidebar type,
+		// universal header, color scheme, jetpack detection) must keep using the
+		// actually-selected site.
+		const siteIdForLaunch =
+			siteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isJetpack =
@@ -597,7 +599,8 @@ export default withCurrentRoute(
 			needsColorScheme,
 			isFetchingColorScheme: isFetchingAdminColor( state, siteId ),
 			siteId,
-			site: getSite( state, siteId ),
+			siteIdForLaunch,
+			site: getSite( state, siteIdForLaunch ),
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
 			// request to lack the newly authorized site, and when the request finishes after

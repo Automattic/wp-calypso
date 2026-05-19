@@ -692,3 +692,32 @@ html {
 .is-opacity-50 {
 	opacity: 0.5;
 }
+
+/* @wordpress/components Menu workaround for v33.x regression -------------------------- */
+/*
+ * In @wordpress/components 33.0.0, Menu.Popover was refactored to split the
+ * popover into MenuMotionRoot (carries the transition) + MenuSurface (receives
+ * Ariakit's data-enter/data-leave). Ariakit auto-detects animation by reading
+ * transition-duration on the element it manages — MenuSurface — but the
+ * refactor left that element without any transition. As a result Ariakit
+ * never sets data-enter, MenuMotionRoot's `:has(> [data-enter])` rule never
+ * matches, and the popover stays stuck at opacity: 0 (visible in DOM, invisible
+ * on screen). Affects every DataViews kebab/actions menu in A4A (sites
+ * dashboard, referral details, report details).
+ *
+ * Adding any transition to MenuSurface restores Ariakit's lifecycle. The
+ * visible motion stays on MenuMotionRoot; this transition isn't visible
+ * because MenuSurface's opacity never changes.
+ *
+ * Scoped to A4A only for now — the same bug affects other Calypso surfaces
+ * (/sites, /plugins/manage/sites, /p2s) but those will be unblocked once
+ * the upstream fix lands. See A4A-2655 and Gutenberg #77460. Remove once
+ * @wordpress/components ships a fix.
+ *
+ * Note: the selector deliberately starts with `.theme-a8c-for-agencies`
+ * (which lives on <body>) so it matches portaled popovers, which Ariakit
+ * appends as siblings of the page content under <body>.
+ */
+.theme-a8c-for-agencies [role="menu"][data-side] {
+	transition: opacity 200ms;
+}
