@@ -33,7 +33,7 @@ import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { type FlowV2, type ProvidedDependencies, type SubmitHandler } from '../../internals/types';
-import { getOnboardingStepperPosition } from './stepper-config';
+import { getOnboardingStepperPosition } from './step-counter-config';
 import type { DomainSuggestion } from '@automattic/api-core';
 
 function initialize() {

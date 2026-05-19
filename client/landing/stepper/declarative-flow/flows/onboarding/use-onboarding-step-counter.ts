@@ -1,6 +1,9 @@
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import { getOnboardingStepperPosition, ONBOARDING_STEPPER_GROUP_BY_SLUG } from './stepper-config';
+import {
+	getOnboardingStepperPosition,
+	ONBOARDING_STEPPER_GROUP_BY_SLUG,
+} from './step-counter-config';
 
 /**
  * Returns `{ current, total }` for the onboarding Stepper indicator.
