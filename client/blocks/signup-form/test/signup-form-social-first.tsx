@@ -106,4 +106,34 @@ describe( 'SignupFormSocialFirst', () => {
 			expect( screen.getByText( /Continue with PayPal/i ) ).toBeInTheDocument();
 		} );
 	} );
+
+	describe( 'isMobileCompactVariant', () => {
+		test( 'renders the mobile-compact wrapper class', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect(
+				container.querySelector( '.signup-form-social-first--mobile-compact' )
+			).toBeInTheDocument();
+		} );
+
+		test( 'omits the "Have an account? Log in" paragraph', () => {
+			const { container } = render(
+				<SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant />
+			);
+
+			expect(
+				container.querySelector( '.signup-form-social-first__login-link' )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'renders the default Terms of Service', () => {
+			render( <SignupFormSocialFirst { ...defaultProps } isMobileCompactVariant /> );
+
+			expect(
+				screen.getByText( /By continuing with any of the options listed/i )
+			).toBeInTheDocument();
+		} );
+	} );
 } );

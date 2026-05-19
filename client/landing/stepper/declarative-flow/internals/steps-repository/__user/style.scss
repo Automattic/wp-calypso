@@ -2,6 +2,7 @@
 @import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/shared/mixins/hide-content-accessibly";
 
 $gray-100: #101517;
 $gray-60: #50575e;
@@ -340,8 +341,11 @@ $breakpoint-mobile: 660px;
 			}
 		}
 
+		// Keep the provider name in the accessibility tree so screen readers
+		// announce "Continue with Google" instead of just "button". The buttons
+		// have no aria-label of their own — this span is their accessible name.
 		.social-buttons__service-name {
-			display: none;
+			@include hide-content-accessibly;
 		}
 
 		// "or" divider: cancel the negative margins the base CSS applies when the

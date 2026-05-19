@@ -163,39 +163,43 @@ const SignupFormSocialFirst = ( {
 		} );
 	};
 
+	// Shared by both the email-first (Woo) and mobile-compact branches so the
+	// conversion-critical existing-account redirect lives in one place.
+	const passwordlessFormProps = {
+		stepName,
+		flowName,
+		goToNextStep,
+		logInUrl,
+		queryArgs,
+		labelText: emailLabelText ?? __( 'Your email' ),
+		submitButtonLabel: __( 'Continue' ),
+		userEmail,
+		passDataToNextStep,
+		onCreateAccountError: ( error: { error: string }, email: string ) => {
+			if ( isExistingAccountError( error.error ) ) {
+				window.location.assign(
+					addQueryArgs(
+						{
+							email_address: email,
+							is_signup_existing_account: true,
+							redirect_to: queryArgs?.redirect_to,
+						},
+						logInUrl
+					)
+				);
+			}
+		},
+		onCreateAccountSuccess,
+		inputPlaceholder: isGravatar ? __( 'Enter your email address' ) : undefined,
+		submitButtonLoadingLabel: isGravatar ? __( 'Continue' ) : undefined,
+	};
+
 	let emailLoginComponent = null;
 	if ( isEmailFirstVariant ) {
 		emailLoginComponent = (
 			<>
 				<div className="signup-form-social-first-email">
-					<PasswordlessSignupForm
-						stepName={ stepName }
-						flowName={ flowName }
-						goToNextStep={ goToNextStep }
-						logInUrl={ logInUrl }
-						queryArgs={ queryArgs }
-						labelText={ emailLabelText ?? __( 'Your email' ) }
-						submitButtonLabel={ __( 'Continue' ) }
-						userEmail={ userEmail }
-						passDataToNextStep={ passDataToNextStep }
-						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( isExistingAccountError( error.error ) ) {
-								window.location.assign(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-											redirect_to: queryArgs?.redirect_to,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
-						onCreateAccountSuccess={ onCreateAccountSuccess }
-						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
-					/>
+					<PasswordlessSignupForm { ...passwordlessFormProps } />
 				</div>
 				<FormDivider isHorizontal />
 			</>
@@ -229,34 +233,7 @@ const SignupFormSocialFirst = ( {
 				/>
 				<FormDivider isHorizontal />
 				<div className="signup-form-social-first-email">
-					<PasswordlessSignupForm
-						stepName={ stepName }
-						flowName={ flowName }
-						goToNextStep={ goToNextStep }
-						logInUrl={ logInUrl }
-						queryArgs={ queryArgs }
-						labelText={ emailLabelText ?? __( 'Your email' ) }
-						submitButtonLabel={ __( 'Continue' ) }
-						userEmail={ userEmail }
-						passDataToNextStep={ passDataToNextStep }
-						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( isExistingAccountError( error.error ) ) {
-								window.location.assign(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-											redirect_to: queryArgs?.redirect_to,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
-						onCreateAccountSuccess={ onCreateAccountSuccess }
-						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
-					/>
+					<PasswordlessSignupForm { ...passwordlessFormProps } />
 				</div>
 				{ renderTermsOfService() }
 			</div>
