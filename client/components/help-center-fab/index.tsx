@@ -78,7 +78,7 @@ const HelpCenterFab = ( { sectionName }: HelpCenterFabProps ) => {
 			<Button
 				className={ clsx( 'help-center-fab', { 'is-active': isHelpCenterShown } ) }
 				onClick={ handleClick }
-				label={ label }
+				aria-label={ label }
 				aria-haspopup="dialog"
 				aria-expanded={ isHelpCenterShown }
 			>
