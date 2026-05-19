@@ -1,6 +1,6 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
 import clsx from 'clsx';
-import { isValidElement, useEffect, useRef, type ReactElement, type ReactNode } from 'react';
+import { isValidElement, useLayoutEffect, useRef, type ReactElement, type ReactNode } from 'react';
 import { useStepContainerV2Context } from '../../contexts/StepContainerV2Context';
 
 import './style.scss';
@@ -44,11 +44,12 @@ export const TopBar = ( {
 	// sheet, layout sidebars) get the right value. Without this, routes that
 	// render `Step.TopBar` but also force `<EmptyMasterbar />` (e.g. checkout
 	// invoked from a stepper-v2 flow) report `--masterbar-height: 0`, leaving the
-	// overlay misaligned. Uses `!important` to beat EmptyMasterbar's stylesheet.
-	useEffect( () => {
+	// overlay misaligned. Uses `!important` to beat EmptyMasterbar's stylesheet,
+	// and runs before paint so first-frame consumers don't see the stale value.
+	useLayoutEffect( () => {
 		const element = topBarRef.current;
 
-		if ( ! element || typeof ResizeObserver === 'undefined' ) {
+		if ( ! element ) {
 			return;
 		}
 
@@ -61,11 +62,14 @@ export const TopBar = ( {
 
 		publishHeight();
 
-		const observer = new ResizeObserver( publishHeight );
-		observer.observe( element );
+		let observer: ResizeObserver | undefined;
+		if ( typeof ResizeObserver !== 'undefined' ) {
+			observer = new ResizeObserver( publishHeight );
+			observer.observe( element );
+		}
 
 		return () => {
-			observer.disconnect();
+			observer?.disconnect();
 			root.style.removeProperty( '--masterbar-height' );
 		};
 	}, [] );
