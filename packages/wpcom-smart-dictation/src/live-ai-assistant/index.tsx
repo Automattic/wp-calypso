@@ -138,6 +138,14 @@ function getStatusLabel( status: ReturnType< typeof useRealtimeSession >[ 'statu
 	}
 }
 
+function formatRemainingTime( remainingMs: number ): string {
+	const totalSeconds = Math.max( 0, Math.ceil( remainingMs / 1000 ) );
+	const minutes = Math.floor( totalSeconds / 60 );
+	const seconds = totalSeconds % 60;
+
+	return `${ minutes }:${ seconds.toString().padStart( 2, '0' ) }`;
+}
+
 export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProps ) {
 	const locale = useLocale();
 	const instructions = useMemo(
@@ -148,6 +156,9 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 	const {
 		status,
 		error,
+		errorIntent,
+		sessionTimeLimitMs,
+		sessionTimeRemainingMs,
 		isMuted,
 		localStream,
 		transcript,
@@ -184,6 +195,12 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 		status === 'requesting-mic' ||
 		status === 'connecting' ||
 		status === 'ending';
+	const sessionTimeLimit = sessionTimeLimitMs ?? 0;
+	const sessionTimeRemaining = sessionTimeRemainingMs ?? 0;
+	const hasSessionTimeRemaining = sessionTimeLimit > 0;
+	const sessionTimeProgress = hasSessionTimeRemaining
+		? Math.max( 0, Math.min( 100, ( sessionTimeRemaining / sessionTimeLimit ) * 100 ) )
+		: 0;
 
 	const handleSessionToggle = () => {
 		if ( isSessionActive || isSessionBusy ) {
@@ -249,8 +266,10 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 						) }
 
 						{ error && (
-							<Notice.Root intent="error">
-								<Notice.Title>{ __( 'Error' ) }</Notice.Title>
+							<Notice.Root intent={ errorIntent }>
+								<Notice.Title>
+									{ errorIntent === 'warning' ? __( 'Notice' ) : __( 'Error' ) }
+								</Notice.Title>
 								<Notice.Description>{ error }</Notice.Description>
 							</Notice.Root>
 						) }
@@ -331,6 +350,27 @@ export function LiveAIAssistant( { contextualInstructions }: LiveAIAssistantProp
 								) }
 							</Button>
 						</div>
+						{ hasSessionTimeRemaining && (
+							<div className="live-ai-assistant__time">
+								<div className="live-ai-assistant__time-label">
+									<span>{ __( 'Daily quota' ) }</span>
+									<span>{ formatRemainingTime( sessionTimeRemaining ) }</span>
+								</div>
+								<div
+									className="live-ai-assistant__time-bar"
+									role="progressbar"
+									aria-label={ __( 'Daily quota' ) }
+									aria-valuemin={ 0 }
+									aria-valuemax={ 100 }
+									aria-valuenow={ Math.round( sessionTimeProgress ) }
+								>
+									<div
+										className="live-ai-assistant__time-bar-fill"
+										style={ { width: `${ sessionTimeProgress }%` } }
+									/>
+								</div>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>
