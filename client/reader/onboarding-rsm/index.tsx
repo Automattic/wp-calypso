@@ -57,7 +57,6 @@ const ReaderOnboardingRsm = ( {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const refreshFollowingStreams = useRefreshFollowingStreams();
-	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const {
@@ -79,6 +78,25 @@ const ReaderOnboardingRsm = ( {
 
 	const hasFollowedTags = ( followedTags?.length ?? 0 ) >= READER_ONBOARDING_MIN_FOLLOWED_TAGS;
 	const hasFollowedSites = nonSelfSubscriptionsCount >= READER_ONBOARDING_MIN_FOLLOWED_SITES;
+
+	// Component state that isn't paired with a snapshot effect. The snapshot
+	// states (`startingCounts`, `startingForceShow`) live next to the effects
+	// that fill them; everything else is grouped here.
+	//
+	// - `currentStep`: which onboarding modal body is mounted, or `null` when
+	//   the modal is closed.
+	// - `hasFinished`: latched on Finish in the discover step so `forceShow`
+	//   stays off for the rest of the session even before subscription
+	//   queries refresh.
+	// - `hasFollowedInInterestsStep`: tracks any subscribe action (tag follow
+	//   or pack subscribe) inside the interests step. Owned here so it
+	//   persists across remounts of `InterestsModal` — without that, a user
+	//   could subscribe to a tagless pack, advance to discover, click Back,
+	//   and find the relaxed Continue gate forgotten on the fresh modal.
+	const [ currentStep, setCurrentStep ] = useState< Step | null >( null );
+	const [ hasFinished, setHasFinished ] = useState( false );
+	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
+	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
 
 	// Snapshot the user's tag/site follow counts the first time all eligibility
 	// inputs are loaded. Eligibility is then evaluated against the snapshot so it
@@ -124,15 +142,6 @@ const ReaderOnboardingRsm = ( {
 	// step (or any later step) would otherwise flip `hasNonSelfSubscriptions` to
 	// true and drop the modal mid-flow.
 	const [ startingForceShow, setStartingForceShow ] = useState< boolean | null >( null );
-	const [ hasFinished, setHasFinished ] = useState( false );
-
-	// Tracks whether the user has used any subscribe action (individual tag
-	// follow or pack subscribe) inside the interests step. Owned by the parent
-	// so it persists across remounts of `InterestsModal` — without that, a
-	// user could subscribe to a tagless pack, advance to discover, click Back,
-	// and find the relaxed Continue gate forgotten on the fresh modal.
-	const [ hasFollowedInInterestsStep, setHasFollowedInInterestsStep ] = useState( false );
-	const markFollowedInInterestsStep = () => setHasFollowedInInterestsStep( true );
 
 	useEffect( () => {
 		if ( startingForceShow !== null || subscriptionsLoading ) {
